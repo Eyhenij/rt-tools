@@ -33,7 +33,7 @@ to the public entry that calls it.
 ### The header
 
 - **The header stays on top while the rows scroll under it.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.scss:thead`; scenario —
-- **A press on a sortable header asks for the ascending order, and on the column already sorted ascending — for the descending one.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-sort.logic.ts:dataTableNextSortOrder`; scenario `SC-UKV-302`
+- **A press on a sortable header asks for the ascending order, and on the column already sorted ascending — for the descending one.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-sort.logic.ts:dataTableNextSortOrder`; scenarios `SC-UKV-302`, `SC-UKV-1113`
 - **A sort is asked only for a column the table has.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.ts:onSortChange`; scenario —
 - **The header of a sorted column shows which way it is sorted.** — `projects/ui-kit-v2/src/lib/components/data-table/header-cell/rt-data-table-header-cell.component.html:data-table-header-sort`; scenario `SC-UKV-302`
 - **A header may carry an icon before or after its label and a hint on the label.** — `projects/ui-kit-v2/src/lib/components/data-table/header-cell/rt-data-table-header-cell.component.html:data-table-header-prefix`; scenario `SC-UKV-321`

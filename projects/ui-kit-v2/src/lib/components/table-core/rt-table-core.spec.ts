@@ -93,8 +93,12 @@ describe('ядро сортировки таблиц', () => {
         expect(rtNextSort(desc, 'name', 'repeats')).toEqual(asc);
     });
 
-    it('SC-UKV-1107 — круг rt-data-table считает от порядка таблицы, как первый кит', () => {
-        expect(rtNextSort(asc, 'city', 'repeats')).toEqual({ propertyName: 'city', sortDirection: EListSortOrder.DESC });
+    it('SC-UKV-1113 — другая колонка после возрастания встаёт по возрастанию в обоих кругах', () => {
+        const city: ISortModel<string> = { propertyName: 'city', sortDirection: EListSortOrder.ASC };
+
+        expect(rtNextSort(asc, 'city', 'repeats')).toEqual(city);
+        expect(rtNextSort(desc, 'city', 'repeats')).toEqual(city);
+        expect(rtNextSort(asc, 'city', 'clears')).toEqual(city);
     });
 
     it('SC-UKV-1107 — aria-sort одинаков для обеих таблиц', () => {

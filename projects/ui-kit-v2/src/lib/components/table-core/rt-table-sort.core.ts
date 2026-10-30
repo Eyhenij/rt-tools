@@ -24,21 +24,21 @@ export function rtSortDirectionOf(current: TNullable<ISortModel<string>>, proper
 /**
  * Следующий порядок после нажатия на шапку колонки.
  *
- * В круге `repeats` направление считается от порядка таблицы, а не от нажатой колонки: так считал
- * первый кит, и `rt-data-table` повторяет его как есть. Расхождение со спекой разбирает RT-3015.
+ * Оба круга смотрят на нажатую колонку: другая колонка встаёт по возрастанию, та, что идёт по
+ * возрастанию, — по убыванию. Круги расходятся только после убывания.
  */
 export function rtNextSort(current: TNullable<ISortModel<string>>, propertyName: string, cycle: TRtSortCycle): ISortModel<string> | null {
     const direction: string | undefined = current?.sortDirection?.toLowerCase();
-
-    if (cycle === 'repeats') {
-        return { propertyName, sortDirection: direction === EListSortOrder.ASC ? EListSortOrder.DESC : EListSortOrder.ASC };
-    }
 
     if (!rtIsSortedBy(current, propertyName)) {
         return { propertyName, sortDirection: EListSortOrder.ASC };
     }
 
-    return direction === EListSortOrder.ASC ? { propertyName, sortDirection: EListSortOrder.DESC } : null;
+    if (direction === EListSortOrder.ASC) {
+        return { propertyName, sortDirection: EListSortOrder.DESC };
+    }
+
+    return cycle === 'repeats' ? { propertyName, sortDirection: EListSortOrder.ASC } : null;
 }
 
 /** Значение `aria-sort` шапки: скринридер называет порядок колонки, а не только её имя. */

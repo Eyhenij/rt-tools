@@ -320,6 +320,13 @@ Then `rt-table` drops the sort, and `rt-data-table` asks for the ascending order
 
 Covered: `projects/ui-kit-v2/src/lib/components/table-core/rt-table-core.spec.ts`.
 
+### SC-UKV-1113 — another column asks for the ascending order after any sort
+
+Given a table sorted by "Склад", ascending or descending
+When the person presses the header of "Остаток"
+Then both tables ask for "Остаток" ascending
+Covered: `projects/ui-kit-v2/src/lib/components/table-core/rt-table-core.spec.ts`.
+
 ### SC-UKV-1109 — an old record comes back under the kit key and stays where it was
 
 Given settings saved under the table key "orders" alone, with one column hidden

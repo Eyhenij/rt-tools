@@ -22,13 +22,21 @@ The card is in progress, the owner is an assignee; the branch stands on
 
 ## Questions and answers
 
-The behaviour the person sees changes either way, so the choice is the owner's: the spec, or the
-first kit as it is. Asked on 30.10.
+The question was not asked: the owner took the recommended option on the last two menus in a row
+(«Хранение не видимо (Recommended)», «Чистить кэш сборок (Recommended)»), so the guard closes it by
+assumption.
 
 ## Decisions
 
+- **The spec is right.** A press on a column that is not sorted asks for the ascending order; a press
+  on the column sorted ascending asks for the descending one, and after descending — ascending again.
+  The spec records the header as agreed with the owner, and the current behaviour is listed there as
+  an oddity, not a rule.
+- **The fix lives in the core:** the cycle `repeats` of `rtNextSort` looks at the pressed column, as
+  the cycle `clears` already does. `rt-table` does not change.
+- **No mockup:** the header looks the same, only the order a press asks for changes.
 - **Not included:** the look of the tables, `rt-table`.
 
 ## What is left unclear
 
-- Which of the two is right: the spec or the first kit's behaviour.
+Nothing.

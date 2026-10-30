@@ -397,8 +397,6 @@ table that applied it last decides it for all.
 - `Q-TP-6` — rows take no focus and no key; a page number turns the page on any key, Tab
   included.
 - `Q-TP-7` — preset marks of records not among the first rows are dropped silently.
-- RT-3015 — the press on a header asks for the descending order whenever any column is sorted
-  ascending, not only that one, against the rule of the header above.
 - `Q-TP-10` — the page checkbox stays indeterminate while marks remain on other pages, and the
   bare table does not recount it on a page change.
 - `Q-TP-11` — the scrollbar choice lies on the page, and the last table to apply it repaints the
@@ -460,3 +458,5 @@ table that applied it last decides it for all.
   point `@rt-tools/ui-kit-v2/table-core`; each table keeps its cycle and its empty mode.
 - 2026-10-30 — RT-2867: the settings move under the kit key; the old record is copied and kept. The
   owner's word: «если пользователи приложений не потеряют свои конфиги то можно делать».
+- 2026-10-30 — RT-3015: the header follows its rule above — another column asks for the ascending
+  order after any sort; the first kit's oddity is removed.
