@@ -216,6 +216,7 @@ export const RT_KIT_LABELS_EN = {
     uiFilterStartsWith: 'Starts with',
     uiFilterValue: 'Filter value',
     uiFilters: 'Filters',
+    uiFiltersActive: 'Filters, applied',
     uiForward: 'Forward',
     uiHide: 'Hide',
     uiHideColumn: 'Hide column',
