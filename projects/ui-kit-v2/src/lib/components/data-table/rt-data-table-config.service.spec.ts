@@ -61,6 +61,9 @@ class StorageStub {
     }
 }
 
+/** Ключ кита для ключа приложения «orders». */
+const KIT_KEY: string = 'rt.data-table.config.orders';
+
 function columnOf(propName: keyof IEntity, label: string): IRtDataTable.Column<IEntity> {
     return {
         align: 'left',
@@ -110,10 +113,13 @@ describe('RtDataTableConfigService', () => {
     it('SC-UKV-317 — настройки, сохранённые первым китом под тем же ключом, читаются как есть', () => {
         service.initConfig('orders', [columnOf('id', 'Номер'), columnOf('title', 'Название')]);
 
-        expect(storage.readKeys).toEqual(['orders']);
+        // Под ключом кита пусто — служба идёт за старой записью.
+        storage.reads[0].next(undefined);
+
+        expect(storage.readKeys).toEqual([KIT_KEY, 'orders']);
 
         // Запись первого кита: частичные колонки с порядком, видимостью и шириной.
-        storage.reads[0].next({
+        storage.reads[1].next({
             isVerticalScrollbarShown: true,
             isHorizontalScrollbarShown: false,
             columns: [
@@ -132,14 +138,69 @@ describe('RtDataTableConfigService', () => {
         expect(config.isHorizontalScrollbarShown).toBe(false);
     });
 
-    it('запись уходит в форме первого кита', () => {
+    it('SC-UKV-1111 — правка уходит под ключ кита в форме первого кита', () => {
         service.updateConfig('orders', {
             isVerticalScrollbarShown: false,
             isHorizontalScrollbarShown: true,
             columns: [{ ...columnOf('id', 'Номер'), orderIndex: 3, hidden: true }],
         });
 
-        expect(storage.writes).toEqual(['set:orders']);
+        expect(storage.writes).toEqual([`set:${KIT_KEY}`]);
+        expect(storage.stored.get(KIT_KEY)).toEqual({
+            isVerticalScrollbarShown: false,
+            isHorizontalScrollbarShown: true,
+            columns: [{ displayName: 'Номер', propName: 'id', width: 'auto', orderIndex: 3, hidden: true, fixed: false }],
+        });
+    });
+
+    it('SC-UKV-1109 — старая запись копируется под ключ кита и остаётся на месте', () => {
+        const old: unknown = {
+            isVerticalScrollbarShown: false,
+            isHorizontalScrollbarShown: true,
+            columns: [
+                { propName: 'id', orderIndex: 0, hidden: true },
+                { propName: 'title', orderIndex: 1, hidden: false },
+            ],
+        };
+
+        service.initConfig('orders', [columnOf('id', 'Номер'), columnOf('title', 'Название')]);
+        storage.reads[0].next(undefined);
+        storage.reads[1].next(old);
+
+        expect(service.tableConfig().columns[0].hidden).toBe(true);
+        expect(storage.writes).toEqual([`set:${KIT_KEY}`]);
+        expect(storage.stored.get(KIT_KEY)).toBe(old);
+        expect(storage.writes.some((write: string) => write.startsWith('remove:'))).toBe(false);
+    });
+
+    it('SC-UKV-1110 — запись под ключом кита берётся, старая не читается', () => {
+        service.initConfig('orders', [columnOf('id', 'Номер'), columnOf('title', 'Название')]);
+        storage.reads[0].next({
+            isVerticalScrollbarShown: true,
+            isHorizontalScrollbarShown: false,
+            columns: [
+                { propName: 'title', orderIndex: 0, hidden: true },
+                { propName: 'id', orderIndex: 1, hidden: false },
+            ],
+        });
+
+        expect(storage.readKeys).toEqual([KIT_KEY]);
+        expect(propNames(service.tableConfig())).toEqual(['title', 'id']);
+        expect(service.tableConfig().isVerticalScrollbarShown).toBe(true);
+        expect(storage.writes).toEqual([]);
+    });
+
+    it('SC-UKV-1112 — сброс снимает обе записи, и следующее открытие рисует объявленные колонки', () => {
+        service.deleteConfig('orders');
+
+        expect(storage.writes).toEqual([`remove:${KIT_KEY}`, 'remove:orders']);
+
+        service.initConfig('orders', [columnOf('id', 'Номер'), columnOf('title', 'Название')]);
+        storage.reads[0].next(undefined);
+        storage.reads[1].next(undefined);
+
+        expect(propNames(service.tableConfig())).toEqual(['id', 'title']);
+        expect(service.tableConfig().columns.some((column: IRtDataTable.Column<IEntity>) => column.hidden)).toBe(false);
     });
 
     it('оставляет настройку последнего чтения, когда первое ответило позже второго', () => {
@@ -148,9 +209,12 @@ describe('RtDataTableConfigService', () => {
 
         expect(storage.reads).toHaveLength(2);
 
+        // Второе чтение нашло под ключом кита пусто и пошло за старой записью — это reads[2].
         storage.reads[1].next(undefined);
         storage.reads[0].next(undefined);
+        storage.reads[2].next(undefined);
 
+        expect(storage.reads).toHaveLength(3);
         expect(propNames(service.tableConfig())).toEqual(['title']);
     });
 
@@ -177,6 +241,7 @@ describe('RtDataTableConfigService', () => {
         service.initConfig('orders', [columnOf('id', 'Номер')]);
 
         storage.reads[0].next(undefined);
+        storage.reads[1].next(undefined);
 
         expect(propNames(service.tableConfig())).toEqual(['id']);
     });
@@ -189,17 +254,18 @@ describe('RtDataTableConfigService', () => {
         });
         service.deleteConfig('orders');
 
-        expect(storage.writes).toEqual(['set:orders']);
+        expect(storage.writes).toEqual([`set:${KIT_KEY}`]);
 
         storage.completeSet(0);
 
-        expect(storage.writes).toEqual(['set:orders', 'remove:orders']);
+        expect(storage.writes).toEqual([`set:${KIT_KEY}`, `remove:${KIT_KEY}`, 'remove:orders']);
     });
 
     it('SC-UKV-269 — под ключом без сохранённого видна только горизонтальная полоса', () => {
         service.initConfig('orders', [columnOf('id', 'Номер'), columnOf('title', 'Название')]);
 
         storage.reads[0].next(undefined);
+        storage.reads[1].next(undefined);
 
         expect(service.tableConfig().isHorizontalScrollbarShown).toBe(true);
         expect(service.tableConfig().isVerticalScrollbarShown).toBe(false);
@@ -210,6 +276,7 @@ describe('RtDataTableConfigService', () => {
 
         service.initConfig('orders', columns);
         storage.reads[0].next(undefined);
+        storage.reads[1].next(undefined);
 
         // Человек спрятал колонку, переставил порядок и показал вертикальную полосу.
         service.updateConfig('orders', {
@@ -223,7 +290,7 @@ describe('RtDataTableConfigService', () => {
 
         // Открыли снова тем же ключом — и хранилище отвечает ровно тем, что туда легло.
         service.initConfig('orders', columns);
-        storage.reads[1].next(storage.stored.get('orders'));
+        storage.reads[2].next(storage.stored.get(KIT_KEY));
 
         const config: IRtDataTable.Config.Data<IEntity> = service.tableConfig();
 

@@ -1,6 +1,6 @@
 # Plan — the saved settings of rt-data-table under the kit's key
 
-**Agreement:** `docs/specs/ui-kit-v2/proposed/data-table-config-registry-key/`
+**Draft:** `docs/specs/ui-kit-v2/proposed/data-table-config-registry-key/`
 
 ## Done sign
 

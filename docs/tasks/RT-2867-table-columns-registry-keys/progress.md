@@ -3,17 +3,17 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- Stage 1 goes on.
+- Stage 1 is done: the service spec 12 of 12, the kit typecheck green. Stage 2 goes on.
 
 ### Stage 1 — the key and the copy
 
-- [ ] 1. The prefix in the registry ← now
-- [ ] 2. The service reads, copies, writes and resets by the kit key
-- [ ] 3. Tests of the four scenarios, former tests brought to the new key
+- [x] 1. The prefix in the registry
+- [x] 2. The service reads, copies, writes and resets by the kit key
+- [x] 3. Tests of the four scenarios, former tests brought to the new key
 
 ### Stage 2 — closing
 
-- [ ] 1. The agreement merged into `table-full-port`
+- [ ] 1. The agreement merged into `table-full-port` ← now
 - [ ] 2. The kit tests, lint and the visual gate
 - [ ] 3. The folder taken apart, the PR into the RT-2866 branch
 
@@ -21,6 +21,8 @@
 
 - The two stores differ in the key and in the shape of the value; shared code between them is a few
   lines. Each keeps its own prefix under `rt.`.
+- The plan header named the agreement by the word «Agreement»; the guard reads only «Draft», so the
+  word was changed before the first stage. Nothing else in the plan moved.
 
 ## Sessions
 
