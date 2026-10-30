@@ -1,0 +1,28 @@
+<div data-story-root style="width: 100%; background: var(--rt-color-bg-surface)">
+    <!-- Поля — свойствами на теге полосы: она объявляет их на своём блоке, и с обёртки они не
+         доходят. 12 — число кадра «Телефон · Toolbar · фильтры за кнопкой»: шага 12 на шкале нет -->
+    <rt-toolbar
+        qa-dataid="story-toolbar-filters"
+        style="--rt-toolbar-padding-top: 12px; --rt-toolbar-padding-bottom: 12px; --rt-toolbar-padding-inline: 12px"
+        [filtersActive]="part !== 'off'">
+        <ng-template rtToolbarFilters let-place>
+            @if (place === 'panel') {
+                <rt-field label="Статус">
+                    <rt-select placeholder="Все" [options]="statusOptions" />
+                </rt-field>
+                <rt-field label="Оплата">
+                    <rt-select placeholder="Любая оплата" [options]="paymentOptions" />
+                </rt-field>
+            } @else {
+                <rt-select placeholder="Все" aria-label="Статус" [options]="statusOptions" />
+                <rt-select placeholder="Любая оплата" aria-label="Оплата" [options]="paymentOptions" />
+            }
+        </ng-template>
+
+        <ng-template rtToolbarRight>
+            <rt-icon-button icon="ico-plus" variant="primary" ariaLabel="Добавить" />
+            <rt-icon-button icon="sync" variant="primary" ariaLabel="Обновить" />
+            <rt-icon-button icon="sliders-v" variant="primary" ariaLabel="Настроить колонки" />
+        </ng-template>
+    </rt-toolbar>
+</div>
