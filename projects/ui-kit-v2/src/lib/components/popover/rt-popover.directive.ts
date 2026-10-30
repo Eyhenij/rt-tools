@@ -54,7 +54,8 @@ const FIT_VIEWPORT_MIN_HEIGHT_PX: number = 120;
  * Триггеры:
  * - `click` (default) — toggle по клику на host; outside-click закрывает.
  * - `hover` — открытие на `mouseenter`, закрытие с grace-периодом на `mouseleave`
- *   (наведение на панель удерживает её открытой).
+ *   (наведение на панель удерживает её открытой). Наведение судится только мышиное:
+ *   касание и перо открывают панель нажатием.
  * - `manual` — авто-listener'ы не вешаются; host сам зовёт `open()/close()`.
  *   Используется form-control'ами с собственным жестом (autocomplete — открытие
  *   по набору текста).
@@ -69,6 +70,7 @@ const FIT_VIEWPORT_MIN_HEIGHT_PX: number = 120;
     exportAs: 'rtPopover',
     host: {
         '(click)': 'onHostClick()',
+        '(pointerenter)': 'onHostPointerEnter($event)',
         '(mouseenter)': 'onHostMouseEnter()',
         '(mouseleave)': 'onHostMouseLeave($event)',
     },
@@ -85,6 +87,15 @@ export class RtPopoverDirective implements OnDestroy {
     #overlayRef: OverlayRef | null = null;
     #positionStrategy: FlexibleConnectedPositionStrategy | null = null;
     #hoverCloseTimer: ReturnType<typeof setTimeout> | null = null;
+
+    /**
+     * Чем пришёл последний указатель — на host или на панель. Касание браузер дублирует
+     * событиями мыши: наведение от него открывало меню профиля, нажатие того же касания
+     * падало на подложку и закрывало меню, а повторное наведение после снятия подложки
+     * открывало его снова. Указатель приходит раньше своих событий мыши, поэтому по нему
+     * наведение от касания и пера отличается от мышиного.
+     */
+    #pointerType: string = 'mouse';
 
     protected readonly isOpenState: WritableSignal<boolean> = signal<boolean>(false);
 
@@ -259,14 +270,25 @@ export class RtPopoverDirective implements OnDestroy {
     //     проверяют активный режим — это дешевле, чем условная подписка) ---
 
     protected onHostClick(): void {
-        if (this.trigger() !== 'click' || this.disabled()) {
+        if (this.disabled()) {
             return;
         }
-        this.toggle();
+        if (this.trigger() === 'click') {
+            this.toggle();
+        }
+        // Касанию наведения нет: в режиме hover его заменяет нажатие, и только открывает —
+        // закрывают нажатие снаружи и подложка
+        if (this.trigger() === 'hover') {
+            this.open();
+        }
+    }
+
+    protected onHostPointerEnter(event: PointerEvent): void {
+        this.#pointerType = event.pointerType;
     }
 
     protected onHostMouseEnter(): void {
-        if (this.trigger() !== 'hover') {
+        if (!this.#isMouseHover()) {
             return;
         }
         this.#clearHoverTimer();
@@ -274,7 +296,7 @@ export class RtPopoverDirective implements OnDestroy {
     }
 
     protected onHostMouseLeave(event: MouseEvent): void {
-        if (this.trigger() !== 'hover') {
+        if (!this.#isMouseHover()) {
             return;
         }
         if (this.#isNestedOverlay(event.relatedTarget)) {
@@ -338,13 +360,16 @@ export class RtPopoverDirective implements OnDestroy {
         // (grace-период) гасится; уход с панели планирует его заново. Без этого
         // hover-popover закрывался бы по таймеру, как только мышь покидает host.
         // Listeners живут на overlay-элементе и умирают вместе с ним в dispose().
+        overlayRef.overlayElement.addEventListener('pointerenter', (event: PointerEvent): void => {
+            this.#pointerType = event.pointerType;
+        });
         overlayRef.overlayElement.addEventListener('mouseenter', (): void => {
-            if (this.trigger() === 'hover') {
+            if (this.#isMouseHover()) {
                 this.#clearHoverTimer();
             }
         });
         overlayRef.overlayElement.addEventListener('mouseleave', (event: MouseEvent): void => {
-            if (this.trigger() === 'hover' && !this.#isNestedOverlay(event.relatedTarget)) {
+            if (this.#isMouseHover() && !this.#isNestedOverlay(event.relatedTarget)) {
                 this.#scheduleHoverClose();
             }
         });
@@ -406,6 +431,11 @@ export class RtPopoverDirective implements OnDestroy {
         const extra: string = this.panelClass().trim();
         const preset: string[] = materialPresetClassesOf(this.#elementRef.nativeElement);
         return extra ? [base, ...extra.split(/\s+/), ...preset] : [base, ...preset];
+    }
+
+    /** Режим hover и наведение мышью, а не событие мыши, порождённое касанием или пером. */
+    #isMouseHover(): boolean {
+        return this.trigger() === 'hover' && this.#pointerType === 'mouse';
     }
 
     #scheduleHoverClose(): void {
