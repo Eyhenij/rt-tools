@@ -120,10 +120,12 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `dense`         | `boolean` | `false`   | панель остаётся строкой и ниже порога ширины, не стекаясь в колонку |
 | `filtersActive` | `boolean` | `false`   | кнопка фильтров узкого места несёт точку включённого отбора         |
 
+Остальной вид решают объявленные слоты `[rtToolbarLeft]`, `[rtToolbarCenter]`,
+`[rtToolbarRight]` и `[rtToolbarFilters]`, а не входы.
+
+## Выходы
+
 | выход          | когда                                             |
 | -------------- | ------------------------------------------------- |
 | `filtersApply` | нажата «Применить» панели отборов; панель закрыта |
 | `filtersReset` | нажата «Сбросить» панели отборов; панель открыта  |
-
-Остальной вид решают объявленные слоты `[rtToolbarLeft]`, `[rtToolbarCenter]`,
-`[rtToolbarRight]` и `[rtToolbarFilters]`, а не входы.
