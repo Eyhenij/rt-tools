@@ -1,3 +1,10 @@
+# [0.38.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.37.0...rt-ui-kit-v2%400.38.0) (2026-10-30)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** меню профиля на узком экране стоит на затемнении (RT-2997) ([c0b10b6](https://github.com/Eyhenij/rt-tools/commit/c0b10b63068050811bca09cadcb0711dabe9681b))
+- **rt:ui-kit-v2:** стили вкладок, переписки и рабочего места проходят проверки токенов ([00b9768](https://github.com/Eyhenij/rt-tools/commit/00b9768fcad46f37696046875d2309cfe9c2af90))
+
 # [0.37.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.36.0...rt-ui-kit-v2%400.37.0) (2026-10-29)
 
 ### Features

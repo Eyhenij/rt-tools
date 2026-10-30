@@ -5,7 +5,7 @@
  * читалась бы как день без столбика, а не как день без загрузок. Заполнение чистое: период и
  * строки — доводы, часы машины не читаются.
  */
-import { DAY_MS, IUsageDayRow } from '@rt/message-bus-common';
+import { IUsageDayRow, USAGE_DAY_MS } from '@rt/message-bus-common';
 
 import { dayOf } from './observation-retention.util';
 import { IUsagePeriod, periodDays } from './usage-period.util';
@@ -22,7 +22,7 @@ export function usageDaysOf(period: IUsagePeriod, rows: readonly IUsageDayRow[])
     const days: IUsageDayRow[] = [];
 
     for (let index: number = 0; index < periodDays(period); index += 1) {
-        const day: string = dayOf(new Date(start + index * DAY_MS));
+        const day: string = dayOf(new Date(start + index * USAGE_DAY_MS));
 
         days.push(byDay.get(day) ?? emptyDay(day));
     }

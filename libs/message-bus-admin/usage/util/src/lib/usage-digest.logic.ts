@@ -7,7 +7,7 @@
  * чистыми и каркаса не знают.
  */
 import { TAdminText } from '@rt/message-bus-admin/common/core/util';
-import { DAY_MS } from '@rt/message-bus-common';
+import { USAGE_DAY_MS } from '@rt/message-bus-common';
 import { IRtBarList } from '@rt-tools/ui-kit-v2';
 
 import { skillKindKey } from './usage.columns';
@@ -95,7 +95,7 @@ export function kindRows(rows: readonly IUsage.Kind.State[], text: TAdminText): 
 
 /** Пара дней быстрого периода: последние `days` дней, сегодняшний включительно. */
 export function quickPeriod(days: TQuickPeriodDays, now: Date): { from: string; to: string } {
-    return { from: dayOf(new Date(now.getTime() - (days - 1) * DAY_MS)), to: dayOf(now) };
+    return { from: dayOf(new Date(now.getTime() - (days - 1) * USAGE_DAY_MS)), to: dayOf(now) };
 }
 
 /** Какой быстрый период стоит в адресе; никакой — `undefined`, и переключатель не подсвечен. */
