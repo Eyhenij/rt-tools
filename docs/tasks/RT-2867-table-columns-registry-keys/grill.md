@@ -29,6 +29,9 @@ for the sort and the filter. That assumption leaves the task with nothing to do 
 different, which is the whole complaint of the card. So the question goes to the owner, said so
 first.
 
+Asked on 30.10 with the options «Ключи реестра с переносом (Recommended)» and «Оставить, закрыть
+RT-2867». Answer: «ничего не понял?». The question is asked again in the words of the screen.
+
 ## Decisions
 
 - **Not included:** the look of the tables, RT-3015.
