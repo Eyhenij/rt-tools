@@ -5,9 +5,9 @@
 - **State:** `этап-идёт`
 - **Stage:** 3 of 4 — The measurement and the approvals
 - **Done:** the symptom reproduced, the directive fixed, SC-UKV-1082…1084 tested
-- **Next step:** ask the owner about the mockup frame of the profile menu on the backdrop
+- **Next step:** the owner's answer about the showcase goes into the approval record
 - **Uncommitted:** nothing
-- **Waiting for the owner:** the answer to «Макет: https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL/RT-Tools-DS?node-id=7332-17833. Одобряете?»
+- **Waiting for the owner:** the answer to «Витрина: Molecules/Navigation/PageHeader, история User Menu Narrow, совпадение с макетом 7 из 7. Одобряете?»
 - **PR:** not open yet
 
 ## Steps
@@ -21,8 +21,8 @@
 - [x] 2.3 Write the popover tests for SC-UKV-1082 and SC-UKV-1083
 - [x] 2.4 Write the page header test for SC-UKV-1084
 - [x] 3.1 Repeat the tap of stage 1 on the fixed showcase and count the backdrops
-- [>] 3.2 Ask the owner about the mockup frame of the profile menu on the backdrop
-- [ ] 3.3 Show the owner the showcase and ask about it
+- [x] 3.2 Ask the owner about the mockup frame of the profile menu on the backdrop
+- [>] 3.3 Show the owner the showcase and ask about it
 - [ ] 3.4 Write the approval record
 - [ ] 4.1 Merge the agreement into the popover backdrop spec
 - [ ] 4.2 Run the specs check, the types, the linters and the tests of the kit
