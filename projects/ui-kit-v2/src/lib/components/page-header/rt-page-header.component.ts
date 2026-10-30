@@ -52,6 +52,9 @@ import { IRtPageHeader } from './rt-page-header.model';
 
 const BEM_BLOCK: string = 'rt-page-header';
 
+/** Подложка узкой шапки: её вид задан в `rt-page-header-mobile.scss`, класс ставит и бургер */
+const PAGE_HEADER_MOBILE_BACKDROP: string = 'rt-page-header-mobile-backdrop';
+
 /**
  * Верхняя горизонтальная плашка-навигация для первого уровня доменных страниц.
  *
@@ -212,6 +215,12 @@ export class RtPageHeaderComponent {
 
     /** Узкий вьюпорт (≤1080px): инлайн-навигация прячется, показывается гамбургер. */
     protected readonly isNarrow: Signal<boolean> = this.#breakpoints.narrow;
+
+    /**
+     * Подложка меню профиля: на узком экране та же, что у меню разделов из бургера, на широком её
+     * нет — меню там открывается наведением. Поповер читает класс при первом открытии.
+     */
+    protected readonly userMenuBackdropClass: Signal<string> = computed((): string => (this.isNarrow() ? PAGE_HEADER_MOBILE_BACKDROP : ''));
 
     /**
      * id раскрытых разделов-аккордеонов в мобильной панели. Ключ — только раздел:

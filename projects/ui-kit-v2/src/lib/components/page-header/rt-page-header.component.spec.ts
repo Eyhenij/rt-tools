@@ -108,6 +108,47 @@ class PageHeaderHostComponent {
     public readonly items: ReadonlyArray<IRtPageHeader.Item> = ITEMS;
 }
 
+/** Подмена наблюдателя ширины: широкий экран, на котором разделы стоят в строке. */
+class WideBreakpointsService {
+    public readonly narrow: Signal<boolean> = signal(false).asReadonly();
+}
+
+/** Меню профиля приходит шаблоном — нужна host-обёртка. */
+@Component({
+    selector: 'rt-page-header-user-host',
+    template: `
+        <rt-page-header [items]="items" [user]="user" [userMenu]="menu" />
+        <ng-template #menu><span qa-dataid="host-user-menu">Профиль</span></ng-template>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtPageHeaderComponent],
+})
+class PageHeaderUserHostComponent {
+    public readonly items: ReadonlyArray<IRtPageHeader.Item> = ITEMS;
+    public readonly user: IRtPageHeader.User = { name: 'Иванов И.' };
+}
+
+/** Шапка с меню профиля на экране заданной ширины; меню открыто нажатием на имя */
+function openUserMenu(
+    breakpoints: typeof NarrowBreakpointsService | typeof WideBreakpointsService
+): ComponentFixture<PageHeaderUserHostComponent> {
+    const fixture: ComponentFixture<PageHeaderUserHostComponent> = createRtFixture(
+        PageHeaderUserHostComponent,
+        {},
+        {
+            providers: [
+                provideRouter([]),
+                { provide: WINDOW, useFactory: windowDouble },
+                { provide: BreakpointsService, useClass: breakpoints },
+            ],
+        }
+    );
+    (document.querySelector('[qa-dataid="header-user-menu"]') as HTMLElement).click();
+    fixture.detectChanges();
+
+    return fixture;
+}
+
 function scrollPastHeader(fixture: ComponentFixture<RtPageHeaderComponent>): void {
     ObserverDouble.last?.stick();
     fixture.detectChanges();
@@ -232,6 +273,26 @@ describe('RtPageHeaderComponent', (): void => {
         fixture.detectChanges();
 
         expect(document.querySelector('[qa-dataid="header-nav-mobile-trigger"]')).toBeNull();
+    });
+
+    it('SC-UKV-1080: на узком экране меню профиля стоит на затемнении меню разделов, и нажатие по нему меню закрывает', (): void => {
+        const fixture: ComponentFixture<PageHeaderUserHostComponent> = openUserMenu(NarrowBreakpointsService);
+        const backdrop: HTMLElement | null = document.querySelector('.cdk-overlay-backdrop.rt-page-header-mobile-backdrop');
+        expect(document.querySelector('[qa-dataid="host-user-menu"]')).not.toBeNull();
+        expect(backdrop).not.toBeNull();
+
+        backdrop?.click();
+        fixture.detectChanges();
+
+        expect(document.querySelector('[qa-dataid="host-user-menu"]')).toBeNull();
+    });
+
+    it('SC-UKV-1081: на широком экране меню профиля открывается без затемнения', (): void => {
+        openUserMenu(WideBreakpointsService);
+
+        // Сначала меню открыто, и только потом проверяется, что подложки под ним нет
+        expect(document.querySelector('[qa-dataid="host-user-menu"]')).not.toBeNull();
+        expect(document.querySelector('.cdk-overlay-backdrop')).toBeNull();
     });
 
     it('пустой набор разделов рисует шапку без пунктов', (): void => {

@@ -2,6 +2,8 @@
 // Лежит отдельно от стилей чата, чтобы оба файла уместились в предел длины.
 @layer rt-kit.components {
     .rt-chat {
+        --rt-chat-day-label-radius: var(--rt-radius-full);
+
         &__day[hidden] {
             display: none;
         }
@@ -19,7 +21,7 @@
 
         &__day-label {
             padding: var(--rt-space-1) calc(var(--rt-space-2) + var(--rt-space-1));
-            border-radius: var(--rt-radius-full);
+            border-radius: var(--rt-chat-day-label-radius);
             background: var(--rt-color-bg-surface);
             color: var(--rt-color-text-muted);
             font-size: var(--rt-text-xs);
@@ -34,6 +36,10 @@
         // время и знак доставки справа внизу
         &--messenger {
             --rt-chat-bubble-radius: var(--rt-radius-xl);
+            --rt-chat-bubble-corner-radius: var(--rt-radius-sm);
+            --rt-chat-messenger-border-width: var(--rt-border-width-thin);
+            --rt-chat-messenger-panel-radius: var(--rt-radius-lg);
+            --rt-chat-messenger-actions-shadow: var(--rt-shadow-sm);
             --rt-chat-bubble-own-bg: var(--rt-color-action-primary);
             --rt-chat-bubble-in-bg: var(--rt-color-bg-subtle);
 
@@ -46,7 +52,7 @@
                 --rt-toolbar-padding-top: 0;
                 --rt-toolbar-padding-bottom: calc(var(--rt-space-2) + var(--rt-space-1));
 
-                border-block-end: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+                border-block-end: var(--rt-chat-messenger-border-width) solid var(--rt-color-border-subtle);
 
                 .rt-toolbar__bar--left {
                     gap: calc(var(--rt-space-2) + var(--rt-space-1));
@@ -56,7 +62,7 @@
             // Реплики прижаты к низу ленты, к полю ответа: короткий разговор не висит под шапкой
             .rt-chat__thread {
                 padding: var(--rt-space-5) var(--rt-space-6);
-                border-radius: var(--rt-radius-lg);
+                border-radius: var(--rt-chat-messenger-panel-radius);
                 background: var(--rt-color-bg-surface);
                 gap: var(--rt-space-1);
 
@@ -67,7 +73,8 @@
 
             .rt-chat__message {
                 padding: var(--rt-space-2) calc(var(--rt-space-2) + var(--rt-space-1)) var(--rt-space-1);
-                border-radius: var(--rt-chat-bubble-radius) var(--rt-chat-bubble-radius) var(--rt-chat-bubble-radius) var(--rt-radius-sm);
+                border-radius: var(--rt-chat-bubble-radius) var(--rt-chat-bubble-radius) var(--rt-chat-bubble-radius)
+                    var(--rt-chat-bubble-corner-radius);
                 gap: var(--rt-space-0-5);
             }
 
@@ -79,7 +86,8 @@
             }
 
             .rt-chat__message--own {
-                border-radius: var(--rt-chat-bubble-radius) var(--rt-chat-bubble-radius) var(--rt-radius-sm) var(--rt-chat-bubble-radius);
+                border-radius: var(--rt-chat-bubble-radius) var(--rt-chat-bubble-radius) var(--rt-chat-bubble-corner-radius)
+                    var(--rt-chat-bubble-radius);
                 box-shadow: none;
             }
 
@@ -122,10 +130,10 @@
                 display: flex;
                 align-items: center;
                 padding: var(--rt-space-0-5);
-                border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
-                border-radius: var(--rt-radius-lg);
+                border: var(--rt-chat-messenger-border-width) solid var(--rt-color-border-subtle);
+                border-radius: var(--rt-chat-messenger-panel-radius);
                 background: var(--rt-color-bg-surface);
-                box-shadow: var(--rt-shadow-sm);
+                box-shadow: var(--rt-chat-messenger-actions-shadow);
                 gap: var(--rt-space-0-5);
             }
 

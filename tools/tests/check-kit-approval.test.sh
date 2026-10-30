@@ -10,11 +10,13 @@ CHECK="$TOOLS/check-kit-approval.mjs"
 SESSIONS="$(mktemp -d)"
 trap 'rm -rf "$SESSIONS"' EXIT
 
-# One owner message, one assistant message quoting the same words, one tool result with them.
+# One owner message, one assistant message quoting the same words, one tool result with them and
+# one answer from the question window.
 cat >"$SESSIONS/a.jsonl" <<'EOF'
 {"type":"user","message":{"role":"user","content":"Да, макет  одобряю"}}
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"витрину одобряю"}]}}
 {"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"витрину одобряю"}]}}
+{"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"answered"}]},"toolUseResult":{"questions":[],"answers":{"Витрина годится?":"Да, одобряю витрину (Рекомендую)"}}}
 EOF
 
 run() {
@@ -48,6 +50,8 @@ report "the record gives both quotes and the link" \
 # carried by a tool result are not the owner's.
 report "the owner's quote is found" \
     "$(run "console.log(m.ownerSaid('Да, макет одобряю', '$SESSIONS'))")" true
+report "an answer chosen in the question window is the owner's" \
+    "$(run "console.log(m.ownerSaid('Да, одобряю витрину', '$SESSIONS'))")" true
 report "the executor's own words are not the owner's" \
     "$(run "console.log(m.ownerSaid('витрину одобряю', '$SESSIONS'))")" false
 

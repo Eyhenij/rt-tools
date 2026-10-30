@@ -2,6 +2,8 @@
 // Лежит отдельно от стилей списка, чтобы оба файла уместились в предел длины.
 @layer rt-kit.components {
     .rt-thread-list--messenger {
+        --rt-thread-list-row-radius: var(--rt-radius-lg);
+
         padding: calc(var(--rt-space-1) * 1.5) var(--rt-space-2) 0;
         gap: var(--rt-space-0-5);
 
@@ -24,7 +26,7 @@
         // Выбор и непрочитанное видны по фону и по счётчику шаблона: левой полосы и точки нет
         .rt-thread-list__row {
             padding: calc(var(--rt-space-2) + var(--rt-space-0-5)) calc(var(--rt-space-2) + var(--rt-space-1));
-            border-radius: var(--rt-radius-lg);
+            border-radius: var(--rt-thread-list-row-radius);
             border-inline-start: none;
             gap: calc(var(--rt-space-2) + var(--rt-space-1));
 
