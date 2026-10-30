@@ -93,7 +93,10 @@ the entry is not sure the page belongs to the admin.
 - **The registration form draws the reCAPTCHA widget above the submit button when the realm requires a visible one.**
   The widget carries the site key of the realm and posts its answer with the form as
   `g-recaptcha-response`. Without the answer Keycloak refuses the registration. The invisible
-  reCAPTCHA is not drawn.
+  reCAPTCHA is not drawn. The widget stands on the axis of the form, and a form narrower than the
+  widget scales it down to fit.
+- **The reCAPTCHA widget takes the scheme of the page theme and is drawn anew when the theme switches.**
+  A light widget on the dark card reads as a foreign patch.
 - **The dark theme follows the system until the person switches it on the page.**
 - **The stand realm uses the theme, and the raising command builds it first.** Without the JAR the
   realm falls back to the standard look.

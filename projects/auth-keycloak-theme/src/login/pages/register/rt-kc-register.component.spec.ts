@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ThemeService } from '@rt-tools/ui-kit-v2';
 
+import { IRecaptchaApi, IRecaptchaParams } from '../../kc-recaptcha';
 import { IKcSubmitted, kcContextOf, kcNode, renderKcPage, submitForm, typeInto } from '../../../testing/kc-page-fixture';
 import { RtKcRegisterComponent } from './rt-kc-register.component';
 
@@ -83,24 +85,62 @@ describe('RtKcRegisterComponent', () => {
             recaptchaSiteKey: '6LeIxAcTAAAAAJcZVRqyHh71UZPB09XzwthjWJrm',
             recaptchaAction: 'register',
         });
+        const drawn: IRecaptchaParams[] = [];
+        // The Google script draws the widget into the node it gets and puts its answer there.
+        const api: IRecaptchaApi = {
+            ready: (done: () => void): void => done(),
+            render: (container: HTMLElement, params: IRecaptchaParams): number => {
+                const answer: HTMLTextAreaElement = document.createElement('textarea');
+                answer.name = 'g-recaptcha-response';
+                answer.value = `token-${params.theme}`;
+                container.appendChild(answer);
+                drawn.push(params);
+
+                return drawn.length;
+            },
+        };
+        Reflect.set(window, 'grecaptcha', api);
         const fixture: ComponentFixture<RtKcRegisterComponent> = await renderKcPage(RtKcRegisterComponent, context);
         const widget: HTMLElement | null = kcNode(fixture, 'kc-recaptcha');
-        // The Google script puts the answer of the widget into a text area inside the block.
-        const answer: HTMLTextAreaElement = document.createElement('textarea');
-        answer.name = 'g-recaptcha-response';
-        answer.value = 'token';
-        widget?.appendChild(answer);
         await typeInto(fixture, 'kc-email', 'ann@rt.localhost');
         await typeInto(fixture, 'kc-password', 'n3w-Pass!');
         await typeInto(fixture, 'kc-password-confirm', 'n3w-Pass!');
         const sent: IKcSubmitted = await submitForm(fixture, 'kc-register-form');
+        Reflect.deleteProperty(window, 'grecaptcha');
 
-        expect(widget?.classList.contains('g-recaptcha')).toBe(true);
-        expect(widget?.getAttribute('data-sitekey')).toBe('6LeIxAcTAAAAAJcZVRqyHh71UZPB09XzwthjWJrm');
-        expect(widget?.getAttribute('data-action')).toBe('register');
+        expect(drawn).toEqual([{ sitekey: '6LeIxAcTAAAAAJcZVRqyHh71UZPB09XzwthjWJrm', theme: 'light', action: 'register' }]);
         expect(widget?.nextElementSibling).toBe(kcNode(fixture, 'kc-register-submit'));
         expect(sent.sent).toBe(true);
-        expect(sent.fields['g-recaptcha-response']).toBe('token');
+        expect(sent.fields['g-recaptcha-response']).toBe('token-light');
+    });
+
+    it('SC-AUTH-90 — the widget takes the scheme of the page theme and is drawn anew when it switches', async () => {
+        const context: TRegisterContext = Object.assign(registerPage(), {
+            recaptchaRequired: true,
+            recaptchaVisible: true,
+            recaptchaSiteKey: 'site-key',
+        });
+        const themes: string[] = [];
+        const api: IRecaptchaApi = {
+            ready: (done: () => void): void => done(),
+            render: (container: HTMLElement, params: IRecaptchaParams): number => {
+                const answer: HTMLTextAreaElement = document.createElement('textarea');
+                answer.name = 'g-recaptcha-response';
+                container.appendChild(answer);
+                themes.push(params.theme);
+
+                return themes.length;
+            },
+        };
+        Reflect.set(window, 'grecaptcha', api);
+        const fixture: ComponentFixture<RtKcRegisterComponent> = await renderKcPage(RtKcRegisterComponent, context);
+        TestBed.inject(ThemeService).setTheme('dark');
+        await fixture.whenStable();
+        const answers: number = kcNode(fixture, 'kc-recaptcha')?.querySelectorAll('textarea').length ?? 0;
+        Reflect.deleteProperty(window, 'grecaptcha');
+
+        expect(themes).toEqual(['light', 'dark']);
+        expect(answers).toBe(1);
     });
 
     it('SC-AUTH-89 — no widget when the realm requires no reCAPTCHA or an invisible one', async () => {

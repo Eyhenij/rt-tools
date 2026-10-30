@@ -205,11 +205,17 @@ Then the document holds one script with that address, added after the page conte
 
 Given a realm that requires a visible reCAPTCHA with a site key
 When the registration page is drawn
-Then the form holds a `g-recaptcha` block with that site key right before the submit button, and
-an answer in it is posted as `g-recaptcha-response`
+Then the Google script draws the widget with that site key into a block right before the submit
+button, and an answer in it is posted as `g-recaptcha-response`
 
 ### SC-AUTH-89 — no widget without a visible reCAPTCHA
 
 Given a realm that requires no reCAPTCHA, and a realm that requires an invisible one
 When the registration page is drawn
-Then the form holds no `g-recaptcha` block
+Then the form holds no reCAPTCHA block
+
+### SC-AUTH-90 — the widget follows the page theme
+
+Given a realm that requires a visible reCAPTCHA and a page in the light theme
+When the person switches the page to the dark theme
+Then the widget is drawn anew in the dark scheme, and the form holds one answer field

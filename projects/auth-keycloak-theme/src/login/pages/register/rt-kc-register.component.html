@@ -55,13 +55,8 @@
         <input type="hidden" name="password-confirm" [value]="value().passwordConfirm" />
 
         @if (recaptchaSiteKey) {
-            <!-- Скрипт Google ищет блок флажка по этому классу, поэтому имя задано не директивой -->
-            <div
-                rtElem="captcha"
-                qa-dataid="kc-recaptcha"
-                [class]="['g-recaptcha'] | concatClasses"
-                [attr.data-sitekey]="recaptchaSiteKey"
-                [attr.data-action]="recaptchaAction"></div>
+            <!-- Флажок рисует скрипт Google внутрь блока, в цвет темы страницы -->
+            <div #captcha rtElem="captcha" qa-dataid="kc-recaptcha"></div>
         }
 
         <!-- Подпись кнопке рисует директива кита: содержимое ей отдавать нельзя, оно будет затёрто -->
