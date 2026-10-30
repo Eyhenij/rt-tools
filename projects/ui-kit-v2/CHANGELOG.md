@@ -1,3 +1,21 @@
+# [0.39.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.38.0...rt-ui-kit-v2%400.39.0) (2026-10-30)
+
+### Bug Fixes
+
+- main снова проходит typecheck, verify, сборку приложений и проверки дублей ([8714386](https://github.com/Eyhenij/rt-tools/commit/8714386a8e1311dcfd8005c1318162d56f841a4b))
+- **rt:ui-kit-v2:** витрина открывает панель только после шрифтов страницы ([3b7d006](https://github.com/Eyhenij/rt-tools/commit/3b7d006ac662af1b4ff6c0c5a19eb8e833a1dd74))
+- **rt:ui-kit-v2:** касание не даёт закрыться поповеру, а список языков идёт за прокруткой меню ([4c36929](https://github.com/Eyhenij/rt-tools/commit/4c369298105e845f093487073b2d5dd8e3832c7f))
+- **rt:ui-kit-v2:** касание открывает поповер наведения один раз ([82c345b](https://github.com/Eyhenij/rt-tools/commit/82c345b4afe08f6cdb32a047784904cba5d51062))
+- **rt:ui-kit-v2:** меню профиля в панели прокручивается только по вертикали ([92b02c0](https://github.com/Eyhenij/rt-tools/commit/92b02c06af7df7c85fa3dac3142b9513029a2ff5))
+- **rt:ui-kit-v2:** меню профиля на низком экране умещается в окно и прокручивается ([9b32a6d](https://github.com/Eyhenij/rt-tools/commit/9b32a6da7f32a0f7461306ed07d6ff18a6cc17f4))
+- **rt:ui-kit-v2:** начальный фокус панели отборов — на блоке полей, а не на стрелке назад ([de8e43b](https://github.com/Eyhenij/rt-tools/commit/de8e43bf020805c6af061d49174587052f21ee3d))
+- **rt:ui-kit-v2:** панель отборов закрывается с полосой и на широком месте, держит фокус, включённый отбор назван скринридеру ([3b656fa](https://github.com/Eyhenij/rt-tools/commit/3b656fa09afb5b4ecd3e4383ca6e8624f2df7c75))
+- **rt:ui-kit-v2:** панель отборов открывается одна, объявлена модальным диалогом и отдаёт фокус полосе на широком месте ([c37d7ad](https://github.com/Eyhenij/rt-tools/commit/c37d7ad4cd8bf5e45a23cbd331b0fb1148447598))
+
+### Features
+
+- **rt:ui-kit-v2:** на узком месте фильтры полосы уходят за кнопку и открываются панелью ([0bd2923](https://github.com/Eyhenij/rt-tools/commit/0bd292399bf74c9b7fa1f12e5a5eb023853fe694))
+
 # [0.38.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.37.0...rt-ui-kit-v2%400.38.0) (2026-10-30)
 
 ### Bug Fixes

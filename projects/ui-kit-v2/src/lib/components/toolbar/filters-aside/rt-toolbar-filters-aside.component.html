@@ -1,0 +1,19 @@
+<rt-aside size="sm" trapFocus modal [ariaLabel]="title()">
+    <rt-aside-header [title]="title()" />
+
+    <ng-container rtBlock="rt-toolbar-filters-aside">
+        <!-- Начальный фокус — на блоке полей, а не на стрелке: рамка фокуса не встаёт на кнопку, которую не нажимали -->
+        <div rtElem="fields" qa-dataid="toolbar-filters-fields" tabindex="-1" cdkFocusInitial>
+            <ng-container [ngTemplateOutlet]="data.template" [ngTemplateOutletContext]="{ $implicit: 'panel' }" />
+        </div>
+    </ng-container>
+
+    <rt-aside-footer [phoneCloseLabel]="false">
+        <button rtButton asideDismiss qa-dataid="toolbar-filters-reset" type="button" [label]="resetLabel()" (click)="onReset()">
+            <!-- empty: label is drawn by the directive -->
+        </button>
+        <button rtButton asidePrimary qa-dataid="toolbar-filters-apply" type="button" [label]="applyLabel()" (click)="onApply()">
+            <!-- empty: label is drawn by the directive -->
+        </button>
+    </rt-aside-footer>
+</rt-aside>

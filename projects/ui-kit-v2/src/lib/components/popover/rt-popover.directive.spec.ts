@@ -81,6 +81,14 @@ function setup(patch: IHostPatch = {}): ComponentFixture<PopoverHostComponent> {
     return fixture;
 }
 
+/** Приход указателя: в jsdom нет PointerEvent, и его тип добавляется к событию мыши. */
+function pointerEnter(pointerType: string): MouseEvent {
+    const event: MouseEvent = new MouseEvent('pointerenter');
+
+    Object.defineProperty(event, 'pointerType', { value: pointerType });
+    return event;
+}
+
 function clickTrigger(fixture: ComponentFixture<PopoverHostComponent>): void {
     el(fixture, '[qa-dataid="popover-trigger"]')?.nativeElement.click();
     fixture.detectChanges();
@@ -172,12 +180,66 @@ describe('RtPopoverDirective', (): void => {
             expect(panel()).toBeNull();
         });
 
-        it('клик в режиме наведения ничего не переключает', (): void => {
+        it('SC-UKV-1082: наведение, порождённое касанием, панель не открывает и уход её не закрывает', (): void => {
+            jest.useFakeTimers();
+            const fixture: ComponentFixture<PopoverHostComponent> = setup({ trigger: 'hover' });
+            const trigger: HTMLElement = el(fixture, '[qa-dataid="popover-trigger"]')?.nativeElement;
+
+            trigger.dispatchEvent(pointerEnter('touch'));
+            trigger.dispatchEvent(new MouseEvent('mouseenter'));
+            fixture.detectChanges();
+            expect(panel()).toBeNull();
+
+            clickTrigger(fixture);
+            trigger.dispatchEvent(new MouseEvent('mouseleave'));
+            jest.advanceTimersByTime(200);
+            fixture.detectChanges();
+
+            expect(panel()).not.toBeNull();
+        });
+
+        it('SC-UKV-1082: касание панели или host отменяет закрытие, которое запланировал уход мыши', (): void => {
+            jest.useFakeTimers();
+            const fixture: ComponentFixture<PopoverHostComponent> = setup({ trigger: 'hover' });
+            const trigger: HTMLElement = el(fixture, '[qa-dataid="popover-trigger"]')?.nativeElement;
+            trigger.dispatchEvent(pointerEnter('mouse'));
+            trigger.dispatchEvent(new MouseEvent('mouseenter'));
+            fixture.detectChanges();
+
+            trigger.dispatchEvent(new MouseEvent('mouseleave'));
+            panel()?.dispatchEvent(pointerEnter('touch'));
+            jest.advanceTimersByTime(200);
+            fixture.detectChanges();
+            expect(panel()).not.toBeNull();
+
+            trigger.dispatchEvent(pointerEnter('mouse'));
+            trigger.dispatchEvent(new MouseEvent('mouseleave'));
+            trigger.dispatchEvent(pointerEnter('touch'));
+            jest.advanceTimersByTime(200);
+            fixture.detectChanges();
+            expect(panel()).not.toBeNull();
+        });
+
+        it('мышь после касания снова открывает панель наведением', (): void => {
+            const fixture: ComponentFixture<PopoverHostComponent> = setup({ trigger: 'hover' });
+            const trigger: HTMLElement = el(fixture, '[qa-dataid="popover-trigger"]')?.nativeElement;
+            trigger.dispatchEvent(pointerEnter('touch'));
+
+            trigger.dispatchEvent(pointerEnter('mouse'));
+            trigger.dispatchEvent(new MouseEvent('mouseenter'));
+            fixture.detectChanges();
+
+            expect(panel()).not.toBeNull();
+        });
+
+        it('SC-UKV-1083: нажатие на host в режиме наведения открывает панель, и второе нажатие её не закрывает', (): void => {
             const fixture: ComponentFixture<PopoverHostComponent> = setup({ trigger: 'hover' });
 
             clickTrigger(fixture);
+            clickTrigger(fixture);
 
-            expect(panel()).toBeNull();
+            expect(panel()).not.toBeNull();
+            expect(fixture.componentInstance.openedCount).toBe(1);
         });
     });
 
