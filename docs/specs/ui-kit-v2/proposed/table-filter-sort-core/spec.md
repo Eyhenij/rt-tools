@@ -10,11 +10,10 @@ rules into the subdomain `table-filter`, the sort rules into `table-full-port`.
 
 ## Why
 
-The kit has two tables, and each keeps its own copy of the filter and of the sort. The copies have
-already drifted. `rt-data-table` drops a condition on any falsy value, so a condition «active = no»
-or «stock = 0» chosen from a list never reaches the application, and the person sees every row.
-`rt-data-table` also turns the sort descending when any column is sorted ascending, while its own
-spec says this happens only on that column. An edit made in one copy does not reach the other.
+The kit has two tables, and each keeps its own copy of the filter and of the sort. An edit made in
+one copy does not reach the other, and the copies differ in what counts as an empty value and in
+what the third press on a header does. The difference is deliberate: `rt-data-table` repeats the
+first kit. So the core holds both behaviours, and each table keeps its own; a person sees no change.
 
 ## Terminology
 
@@ -23,6 +22,7 @@ spec says this happens only on that column. An edit made in one copy does not re
 | **The core**       | one set of functions both tables compute their conditions and their sort with |
 | **A condition**    | one entry of the filter set: the column, the comparison and the value         |
 | **The sort cycle** | what a press on a sorted header asks for after the descending order           |
+| **The empty mode** | which values of a filter field remove the condition of its column             |
 
 ### What it is called in the interface
 
@@ -35,17 +35,16 @@ spec says this happens only on that column. An edit made in one copy does not re
 
 - **Both tables compute their conditions and their sort by the core.** Neither keeps a copy of its
   own; a table passes its inputs to the core and its outputs onwards.
-- **Only an empty string removes a condition.** `0` and `false` are values: a condition «stock = 0»
-  or «active = no» reaches the application in both tables.
-- **A change of the comparison on a column with a value adds its condition, whatever the value is.**
-  A column without a value asks nothing.
+- **A filter field removes its condition by the empty mode of its table.** In `rt-table` only an
+  empty string is empty, and `0` and `false` stay values. In `rt-data-table` any falsy value is
+  empty, as in the first kit. The mode is chosen inside the kit; neither table takes an input for it.
+- **A change of the comparison on a column with a value adds its condition.** What counts as a value
+  is said by the same empty mode. A column without a value asks nothing.
 - **A value equal to the one already in the condition reports nothing.** The table does not send
   the same set twice.
 - **A press on a sorted header follows the cycle of its table.** In `rt-table` the third press drops
   the sort: ascending, descending, none. In `rt-data-table` the press after the descending order asks
   for the ascending one again, as in the first kit.
-- **A press on the header of a column not sorted now asks for the ascending order, in both tables.**
-  The order of another column does not count.
 - **Both tables name the sort for assistive technology by the same values.** `aria-sort` is
   `ascending`, `descending` or `none`; a column of `rt-data-table` that cannot be sorted carries no
   `aria-sort` at all, as before.
@@ -54,6 +53,7 @@ spec says this happens only on that column. An edit made in one copy does not re
 
 - Row selection: RT-2866.
 - Column keys and declarations: RT-2867.
+- The press on a header of `rt-data-table` while another column is sorted ascending: RT-3015.
 - The look of both tables: the frames of the showcase stay as they are.
 - The first kit.
 
@@ -72,10 +72,13 @@ Not applicable: nothing is stored.
 
 ## Screens and states
 
+| State                                                                                               | What is visible |
+| --------------------------------------------------------------------------------------------------- | --------------- |
+| Nothing new: both tables draw the states they drew before. The two that differ between them stay as |
+| they are.                                                                                           |
+
 | State                                               | What is visible                                      |
 | --------------------------------------------------- | ---------------------------------------------------- |
-| `rt-data-table`, a list filter set to «no» or `0`   | the rows that match it, not every row                |
-| `rt-data-table`, column A ascending, a press on B   | B sorted ascending                                   |
 | `rt-data-table`, a column descending, a press on it | the same column ascending                            |
 | `rt-table`, a column descending, a press on it      | no arrow, the rows in the order the application gave |
 
@@ -101,8 +104,9 @@ Not applicable.
 
 - **The core keeps both sort cycles by a flag.** By the owner's answer «Ядро держит оба
   (Recommended)»: each table keeps the cycle its users already know.
-- **Only `''` is empty.** By the owner's question «как правильно?» and the answer given in chat:
-  `0` and `false` are real values of a condition, and dropping them shows every row.
+- **The core keeps both empty modes, each table keeps its own, and no input chooses it.** By the
+  owner's answers of 30.10: the filter mode is set like the sort cycle, and «Внутри кита
+  (Recommended)». A change a person does not see needs no frame.
 - **«Nothing changed» is the same set returned, not `null`.** An inner interface: both tables
   compare the set they got with the one they gave.
 
@@ -112,4 +116,5 @@ None.
 
 ## History of changes
 
-- 2026-10-30 — the epic «#2860 Таблицы»: one core of the filter and the sort for both tables.
+- 2026-10-30 — the epic «#2860 Таблицы»: one core of the filter and the sort for both tables; the
+  same day both empty modes stay, and the sort of another column goes to RT-3015.

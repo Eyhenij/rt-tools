@@ -3,20 +3,20 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 из 5 — the frame and the owner's approval
+- **Stage:** 2 из 5 — the core and its tests
 
 ### Stage 1 — the frame and the owner's approval
 
 - [x] 1. A Figma frame of `rt-data-table`: a list filter set to «Нет», column B pressed after A ascending.
 - [x] 2. The frame is measured and shown to the owner with what to look at.
-- [ ] 3. The owner's answer is written into the grill. ← now
+- [x] 3. The owner's answer is written into the grill.
 
-Frame: https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL/Design-System-V2?node-id=7377-496 — the page
-Data Table. Measured: three columns of 260 in every row, the filter row 50 high, no overlaps.
+The owner answered that the filter keeps both modes and that an unchanged look needs no frame. The
+frame is removed from Figma; the stage closes without an approval, by the owner's word.
 
 ### Stage 2 — the core and its tests
 
-- [ ] 1. Tests of the present behaviour of both tables pass before the edit.
+- [ ] 1. Tests of the present behaviour of both tables pass before the edit. ← now
 - [ ] 2. `table-core/` holds the filter and the sort with one aria type and the cycle flag.
 - [ ] 3. `rt-table-core.spec.ts` covers SC-UKV-1104…1108.
 
@@ -38,13 +38,26 @@ Data Table. Measured: three columns of 260 in every row, the filter row 50 high,
 - [ ] 2. `pnpm run check:all` is green.
 - [ ] 3. The folder is taken apart, the PR opens into the epic branch.
 
+## Stage revision of 30.10
+
+By the owner's answers of 30.10 (the grill) the work changes nothing a person sees. So, against the
+plan's wording:
+
+- Stage 2, step 3 covers SC-UKV-1104…1107; SC-UKV-1108 is taken out, its work is RT-3015.
+- Stage 3, step 2 checks that `false` still removes a condition in `rt-data-table` and that the
+  press on column B asks what it asks now.
+- Stage 4, step 1 writes no new story; step 2 confirms that no frame moved; step 3 tells the owner
+  the showcase did not change, with the gate's number.
+
 ## Decisions along the way
 
 - `rt-data-table` sends a number filter as a string, so `0` there never dropped a condition; the
   drop of `false` and `0` is seen only in a list filter.
-- The data-table sort asked descending after any ascending column, against its own spec; the core
-  follows the spec (SC-UKV-1108).
+- The empty mode and the sort cycle are flags of the core; each table passes its own.
+- The data-table sort asks descending after any ascending column, against its own spec: RT-3015,
+  in the epic plan.
 
 ## Sessions
 
-- 2026-10-30: grill closed, agreement, plan; stage 1 begun.
+- 2026-10-30: grill closed, agreement, plan; frame drawn and taken out by the owner's word; stage 2
+  begun.
