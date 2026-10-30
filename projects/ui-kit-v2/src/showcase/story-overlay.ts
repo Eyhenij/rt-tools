@@ -96,6 +96,25 @@ async function settle(): Promise<void> {
     await frame();
 }
 
+/**
+ * Ждёт, пока страница дорисуется до жеста: первая раскладка, затем шрифты, которые она
+ * запросила, затем ещё одна раскладка уже по ним.
+ *
+ * Панель CDK ставит к триггеру один раз и потом следует за ним только при прокрутке и смене
+ * окна. Жест, сделанный раньше шрифта кита, открывал панель «Ещё» шапки к ряду, набранному
+ * запасным начертанием: шрифт приходил, ряд становился шире, а панель оставалась на месте — на
+ * 31 точку левее эталона. Обвязка снимков шрифты тоже ждёт, но уже после `play`, когда панель
+ * поставлена.
+ *
+ * Шрифты ждутся после первой раскладки, а не до неё: загрузку начертания начинает раскладка, и
+ * до неё `document.fonts.ready` сходится на пустом наборе.
+ */
+async function drawn(): Promise<void> {
+    await settle();
+    await document.fonts.ready;
+    await settle();
+}
+
 /** Пауза для того, что появляется с задержкой. */
 async function pause(ms: number): Promise<void> {
     await new Promise<void>((resolve: () => void): void => {
@@ -154,7 +173,7 @@ function fire(marked: HTMLElement, gesture: IStoryOverlayGesture): void {
  * @param gesture — чем открывать: клавишей, набором текста, событием или щелчком (по умолчанию).
  */
 export async function openStoryOverlay(canvasElement: HTMLElement, gesture: IStoryOverlayGesture = {}): Promise<void> {
-    await settle();
+    await drawn();
 
     const marked: HTMLElement | null = canvasElement.querySelector<HTMLElement>(`[${STORY_TRIGGER_ATTRIBUTE}]`);
     if (marked !== null) {
@@ -175,7 +194,7 @@ export async function openStoryOverlay(canvasElement: HTMLElement, gesture: ISto
  * экране разом. Списку или меню это дало бы ровно одну открытую панель — последнюю.
  */
 export async function openStoryOverlays(canvasElement: HTMLElement, gesture: IStoryOverlayGesture = {}): Promise<void> {
-    await settle();
+    await drawn();
 
     const marked: readonly HTMLElement[] = Array.from(canvasElement.querySelectorAll<HTMLElement>(`[${STORY_TRIGGER_ATTRIBUTE}]`));
     for (const host of marked) {
