@@ -77,7 +77,8 @@
 
                             @if (tab.titleTemplate(); as titleTpl) {
                                 <ng-container [ngTemplateOutlet]="titleTpl" />
-                            } @else {
+                            } @else if (tab.label()) {
+                                <!-- Пустая подпись не рисуется: её зазор сдвигал значок вкладки без подписи с середины. -->
                                 <span rtElem="title">{{ tab.label() }}</span>
                             }
 

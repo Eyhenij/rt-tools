@@ -7,3 +7,15 @@ https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL/Design-System-V2?node-id=732
 shown in one question.
 
 - **Макет:** «Одобряю» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL/Design-System-V2?node-id=7330-2735
+
+The showcase was measured against the three frames by `node tools/kit-match.mjs numbers`: the
+tabs story `Molecules/Navigation/Tabs` IconBadge against `7327-531` (128 numbers), the story
+`Foundation/Design Tokens/Kit Clear Tabbable` against `7327-1317` (70), the multiselect row of
+`Molecules/Forms/FieldExtras` ClearTabbable against `7330-2735` (26). Tab widths and the inline
+badge position follow the label's text width, which Figma and the browser raster differently, and
+are left out on both sides; the badge is measured from the tab's right edge instead. Before the
+match the frame copies were brought to the kit's existing look where they drew it otherwise: the
+strip centres unselected tabs, the inline badge is 34 wide, the number field has no stepper, the
+date fields keep the calendar in a 32 px button.
+
+- **Совпадение:** 224 из 224 чисел

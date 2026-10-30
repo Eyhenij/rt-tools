@@ -379,13 +379,15 @@
 
             /* Кружок над правым верхним углом иконки, как `matBadge` у Material: из потока вынут, и
                вкладка той же ширины, что без бейджа. Привязан правым краем — длинное число растёт
-               на иконку, а не на подпись. */
+               на иконку, а не на подпись. Сторона кружка — его полная ширина: поля внутри неё, иначе
+               однозначное число шире 16 px. */
             &--overlay {
                 position: absolute;
                 top: calc(-1 * var(--rt-space-2));
                 right: calc(-1 * (var(--rt-space-1) + var(--rt-space-0-5)));
                 min-width: var(--rt-tab-item-badge-overlay-size);
                 height: var(--rt-tab-item-badge-overlay-size);
+                box-sizing: border-box;
                 padding: 0 var(--rt-space-1);
                 background-color: var(--rt-tab-item-badge-overlay-bg);
                 color: var(--rt-tab-item-badge-overlay-color);

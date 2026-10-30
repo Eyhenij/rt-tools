@@ -13,7 +13,7 @@
 
             <div class="app-kit-clear-tabbable__case">
                 <span class="app-kit-clear-tabbable__label">rt-input-number — крестик в фокусе</span>
-                <rt-input-number ariaLabel="Сумма" data-story-state="cross" [formControl]="amount" />
+                <rt-input-number ariaLabel="Сумма" prefix="₽" data-story-state="cross" [maxFractionDigits]="0" [formControl]="amount" />
             </div>
 
             <div class="app-kit-clear-tabbable__case">

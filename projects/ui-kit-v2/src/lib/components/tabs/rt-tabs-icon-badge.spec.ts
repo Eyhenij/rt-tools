@@ -19,6 +19,7 @@ import { RtTabsComponent } from './rt-tabs.component';
             <ng-template rtTab="overlay" label="Роли" glyph="group" badgePosition="overlay" [badge]="12">Роли</ng-template>
             <ng-template rtTab="inline" label="Отели" glyph="hotel" [badge]="3">Отели</ng-template>
             <ng-template rtTab="overlay-no-icon" label="Права" badgePosition="overlay" [badge]="5">Права</ng-template>
+            <ng-template rtTab="icon-only" glyph="grade" tooltip="Избранное" badgePosition="overlay" [badge]="3">Избранное</ng-template>
         </rt-tabs>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,20 +40,20 @@ function icon(fixture: ComponentFixture<IconBadgeHostComponent>, id: string): Rt
 }
 
 describe('RtTabsComponent — заливка иконки и бейдж над иконкой', (): void => {
-    it('SC-UKV-1080 — iconFill отдаёт иконке fill: значок Material рисуется залитым', (): void => {
+    it('SC-UKV-1082 — iconFill отдаёт иконке fill: значок Material рисуется залитым', (): void => {
         const fixture: ComponentFixture<IconBadgeHostComponent> = createRtFixture(IconBadgeHostComponent);
 
         expect(icon(fixture, 'glyph-filled').fill()).toBe(true);
         expect(tab(fixture, 'glyph-filled').querySelector('.rt-icon__glyph--filled')).not.toBeNull();
     });
 
-    it('SC-UKV-1080 — iconFill доходит и до иконки по имени кита', (): void => {
+    it('SC-UKV-1082 — iconFill доходит и до иконки по имени кита', (): void => {
         const fixture: ComponentFixture<IconBadgeHostComponent> = createRtFixture(IconBadgeHostComponent);
 
         expect(icon(fixture, 'name-filled').fill()).toBe(true);
     });
 
-    it('SC-UKV-1080 — без iconFill иконка остаётся контурной', (): void => {
+    it('SC-UKV-1082 — без iconFill иконка остаётся контурной', (): void => {
         const fixture: ComponentFixture<IconBadgeHostComponent> = createRtFixture(IconBadgeHostComponent);
 
         expect(tab(fixture, 'outlined').querySelector('.rt-icon__glyph')).not.toBeNull();
@@ -60,7 +61,7 @@ describe('RtTabsComponent — заливка иконки и бейдж над �
         expect(icon(fixture, 'outlined').fill()).toBe(false);
     });
 
-    it('SC-UKV-1083 — overlay ставит бейдж над иконкой, а не после подписи', (): void => {
+    it('SC-UKV-1085 — overlay ставит бейдж над иконкой, а не после подписи', (): void => {
         const fixture: ComponentFixture<IconBadgeHostComponent> = createRtFixture(IconBadgeHostComponent);
         const badges: NodeListOf<HTMLElement> = tab(fixture, 'overlay').querySelectorAll<HTMLElement>('.rt-tab-item__badge');
 
@@ -70,7 +71,7 @@ describe('RtTabsComponent — заливка иконки и бейдж над �
         expect(badges[0].textContent?.trim()).toBe('12');
     });
 
-    it('SC-UKV-1083 — без overlay бейдж стоит после подписи, как прежде', (): void => {
+    it('SC-UKV-1085 — без overlay бейдж стоит после подписи, как прежде', (): void => {
         const fixture: ComponentFixture<IconBadgeHostComponent> = createRtFixture(IconBadgeHostComponent);
         const badge: HTMLElement | null = tab(fixture, 'inline').querySelector<HTMLElement>('.rt-tab-item__badge');
 
@@ -79,11 +80,19 @@ describe('RtTabsComponent — заливка иконки и бейдж над �
         expect(badge?.closest('.rt-tab-item__icon-box')).toBeNull();
     });
 
-    it('SC-UKV-1083 — у вкладки без иконки overlay оставляет бейдж после подписи', (): void => {
+    it('SC-UKV-1085 — у вкладки без иконки overlay оставляет бейдж после подписи', (): void => {
         const fixture: ComponentFixture<IconBadgeHostComponent> = createRtFixture(IconBadgeHostComponent);
         const badge: HTMLElement | null = tab(fixture, 'overlay-no-icon').querySelector<HTMLElement>('.rt-tab-item__badge');
 
         expect(badge?.textContent?.trim()).toBe('5');
         expect(badge?.classList).not.toContain('rt-tab-item__badge--overlay');
+    });
+
+    it('SC-UKV-1085 — у вкладки без подписи нет пустой подписи: её зазор сдвигал значок с середины', (): void => {
+        const fixture: ComponentFixture<IconBadgeHostComponent> = createRtFixture(IconBadgeHostComponent);
+
+        expect(tab(fixture, 'icon-only').querySelector('.rt-tab-item__title')).toBeNull();
+        expect(tab(fixture, 'icon-only').querySelector('.rt-tab-item__badge--overlay')?.textContent?.trim()).toBe('3');
+        expect(tab(fixture, 'overlay').querySelector('.rt-tab-item__title')?.textContent?.trim()).toBe('Роли');
     });
 });

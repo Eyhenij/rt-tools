@@ -194,10 +194,12 @@
             flex-shrink: 0;
         }
 
+        /* Отступ считается от края хоста, а рамка стоит на кнопке внутри: её толщина входит в отступ,
+           иначе крестик на пиксель правее своего места. */
         &__clear--outside {
             position: absolute;
             top: 50%;
-            right: calc(var(--rt-input-padding-x) + var(--rt-size-4) + var(--rt-space-sm));
+            right: calc(var(--rt-input-border-width) + var(--rt-input-padding-x) + var(--rt-size-4) + var(--rt-space-sm));
             transform: translateY(-50%);
         }
 

@@ -233,7 +233,7 @@ function labelCases(appearance: IRtInput.Appearance): readonly ILabelCase[] {
                                     (cleared)="countClear()" />
                             </ng-template>
                         </app-story-row>
-                        <app-story-row [items]="clearCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                        <app-story-row [items]="clearCases" [itemLabel]="caseLabel" [slotWidth]="multiselectWidth">
                             <ng-template let-clearCase>
                                 <rt-multiselect
                                     ariaLabel="Города"
@@ -313,6 +313,9 @@ export class TestRtFieldExtrasComponent {
     ];
 
     public readonly cityOptions: readonly IRtSelect.Option<string>[] = CITIES;
+
+    /** Ширина множественного выбора по кадру: в 15rem чипы встают столбцом, в кадре — по два в строку. */
+    public readonly multiselectWidth: string = '20rem';
 
     public readonly clears: WritableSignal<number> = signal<number>(0);
 
