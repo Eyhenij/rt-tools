@@ -1,6 +1,6 @@
 # A hover popover under a touch
 
-**Status:** proposed · **Revision:** 30 October 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 30 October 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the popover of the second kit, the page header of the second kit
 **Laws:** `frontend-application`, `verifiability`
 **Procedures:** none
@@ -77,3 +77,20 @@ backdrop. On a screen lower than the menu, the menu ends at the bottom edge and 
 ### Several objects
 
 Not applicable.
+
+## Decisions
+
+- **The touch is told from the mouse by the pointer type, in the popover directive.** The section
+  menu and the "More" item of the header open on hover too and got the same double open.
+- **The fit and the scroll of the profile menu act only inside the popover panel.** Outside a
+  panel the menu draws at full height, as before.
+
+## Open questions
+
+None.
+
+## History of changes
+
+| Date       | What changed                                                |
+| ---------- | ----------------------------------------------------------- |
+| 2026-10-30 | The subdomain is written with scenarios 1082…1085 (RT-3000) |
