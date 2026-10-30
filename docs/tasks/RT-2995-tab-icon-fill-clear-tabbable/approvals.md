@@ -19,3 +19,8 @@ strip centres unselected tabs, the inline badge is 34 wide, the number field has
 date fields keep the calendar in a 32 px button. On the owner's remark «на макете нет нижнего серого бордера тонкого на табах» every strip got the kit's 1 px line under it, and its height and colour joined the match (15 numbers).
 
 - **Совпадение:** 239 из 239 чисел
+
+The corrected frames and the showcase were shown together in one question:
+
+- **Макет:** «Одобряю кадр и витрину» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL/Design-System-V2?node-id=7327-531
+- **Витрина:** «Одобряю кадр и витрину»

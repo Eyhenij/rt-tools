@@ -3,16 +3,16 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 4 — The showcase
+- **Stage:** 4 of 4 — Closing
 - **Done:** stage 1 — the frames `7327:531` and `7327:1317` approved; stage 2 — `iconFill` and
   `badgePosition` on `rtTab`, `components.formControl.clearTabbable`, four crosses on
   `clearTabIndex()`, specs `rt-tabs-icon-badge.spec.ts` (6) and `rt-clear-tabbable.spec.ts` (4).
   The whole kit run: 282 files green before the last two tests were fixed; both rerun green.
   The multiselect: frame `7330:2735` approved, the cross goes as a neighbouring button with
   `clearTabbable` (SC-UKV-1086), `rt-clear-tabbable.spec.ts` now 7 green, the multiselect spec 25.
-- **Next step:** the owner approves the showcase; then 4.1 — the agreement into `tab-additions` and `field-label-icon-actions`.
+- **Next step:** 4.1 — merge the agreement `docs/specs/ui-kit-v2/proposed/tab-icon-fill-clear-tabbable/` into `tab-additions` and `field-label-icon-actions`, bring the Overview pages and `CONTEXT.md` up to date.
 - **Uncommitted:** nothing.
-- **Waiting for the owner:** the showcase approval and a look at the four corrections of the frame copies.
+- **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
@@ -24,8 +24,8 @@
 - [x] 2.3 Bind the cross of the autocomplete, the number field, the date picker and the date range to `clearTabIndex()`.
 - [x] 2.4 Write the tests of SC-UKV-1082, SC-UKV-1083 and SC-UKV-1084.
 - [x] 3.1 Add the stories: a tab with `iconFill`, the fields with the cross by Tab from the kit setting.
-- [>] 3.2 Measure the showcase against the frame and show both to the owner; write the approval.
-- [ ] 4.1 Merge the agreement into `tab-additions` and `field-label-icon-actions`, bring the Overview pages and `CONTEXT.md` up to date.
+- [x] 3.2 Measure the showcase against the frame and show both to the owner; write the approval.
+- [>] 4.1 Merge the agreement into `tab-additions` and `field-label-icon-actions`, bring the Overview pages and `CONTEXT.md` up to date.
 - [ ] 4.2 Run the push set, take the folder apart, open the PR.
 
 ## Decisions along the way
