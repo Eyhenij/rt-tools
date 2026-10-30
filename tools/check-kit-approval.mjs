@@ -79,6 +79,14 @@ function ownerText(line) {
         return null;
     }
 
+    // An answer in the question window comes as a tool result, and only the harness fills its
+    // `answers`: the executor writes neither the field nor the choice in it.
+    const answers = entry.toolUseResult?.answers;
+
+    if (answers !== null && typeof answers === 'object') {
+        return Object.values(answers).join('\n');
+    }
+
     const content = entry.message.content;
 
     if (typeof content === 'string') {

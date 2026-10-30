@@ -26,6 +26,8 @@ No new words on the screen.
 - **A popover without a backdrop class leaves the page next to the panel open.**
 - **A backdrop class puts a backdrop under the panel, and a press on it closes the panel.**
 - **The mobile menu of the page header stands on a dimmed backdrop.**
+- **The profile menu stands on that backdrop only on a narrow screen.** A wide menu opens on hover, and a
+  backdrop would flash on every pass of the pointer.
 
 ## What is out of scope
 
@@ -80,6 +82,7 @@ None.
 
 ## History of changes
 
-| Date       | What changed                                      |
-| ---------- | ------------------------------------------------- |
-| 2026-10-29 | The subdomain is written with scenarios 1070…1072 |
+| Date       | What changed                                                                |
+| ---------- | --------------------------------------------------------------------------- |
+| 2026-10-29 | The subdomain is written with scenarios 1070…1072                           |
+| 2026-10-30 | The profile menu gets the backdrop on a narrow screen: 1080, 1081 (RT-2997) |

@@ -36,18 +36,21 @@
         }
 
         &__aside {
-            // Вкладки панели прижаты к своей линии того же цвета, низ полки вровень с низом шапки переписки
-            --rt-tabs-list-min-height: calc(56px + var(--rt-space-2) + var(--rt-space-1) + var(--rt-border-width-thin));
-            --rt-tabs-list-align: flex-end;
-            --rt-tabs-list-padding-inline: var(--rt-space-1);
-            --rt-tabs-list-border-color: var(--rt-color-border-strong);
-            --rt-tabs-content-padding-top: 0;
-
             display: flex;
             flex: 0 0 var(--rt-workspace-aside-size, 360px);
             flex-direction: column;
             border-inline-start: var(--rt-workspace-border-width) solid var(--rt-color-border-strong);
             min-inline-size: 0;
+
+            // Вкладки панели прижаты к своей линии того же цвета, низ полки вровень с низом шапки переписки.
+            // Значения ставятся на сами вкладки: у них свои по умолчанию, и наследование их не перебьёт
+            .rt-tabs {
+                --rt-tabs-list-min-height: calc(56px + var(--rt-space-2) + var(--rt-space-1) + var(--rt-border-width-thin));
+                --rt-tabs-list-align: flex-end;
+                --rt-tabs-list-padding-inline: var(--rt-space-1);
+                --rt-tabs-list-border-color: var(--rt-color-border-strong);
+                --rt-tabs-content-padding-top: 0;
+            }
         }
 
         &__handle {
@@ -174,6 +177,7 @@
         // Карточки: у каждой колонки своя рамка и скругление, зазор между ними держит ручка
         &--cards {
             --rt-workspace-card-gap: var(--rt-space-4);
+            --rt-workspace-card-radius: var(--rt-radius-xl);
 
             gap: 0;
 
@@ -182,7 +186,7 @@
             .rt-workspace__aside {
                 overflow: hidden;
                 border: var(--rt-workspace-border-width) solid var(--rt-color-border-subtle);
-                border-radius: var(--rt-radius-xl);
+                border-radius: var(--rt-workspace-card-radius);
                 background: var(--rt-color-bg-surface);
             }
 

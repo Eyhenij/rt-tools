@@ -19,6 +19,7 @@
     rt-toggle-button-group {
         --rt-toggle-button-group-track-bg: var(--rt-color-bg-surface-subtle);
         --rt-toggle-button-group-active-bg: var(--rt-color-bg-surface);
+        --rt-toggle-button-group-active-shadow: var(--rt-shadow-sm);
         --rt-toggle-button-group-height: 30px;
         --rt-toggle-button-group-transition-duration: var(--rt-duration-fast);
         --rt-toggle-button-group-focus-shadow: var(--rt-shadow-focus-ring);
@@ -88,7 +89,7 @@
                 // Выбранный сегмент — плашка над дорожкой: тень RT/Shadow/sm, как в макете сегмента
                 &--active {
                     background-color: var(--rt-toggle-button-group-active-bg);
-                    box-shadow: var(--rt-shadow-sm);
+                    box-shadow: var(--rt-toggle-button-group-active-shadow);
                     color: var(--rt-color-text-primary);
                 }
 

@@ -2,6 +2,11 @@
     .rt-tabs {
         --rt-tabs-border-width: var(--rt-border-width-thin);
         --rt-tabs-transition-duration: var(--rt-duration-fast);
+        --rt-tabs-list-align: stretch;
+        --rt-tabs-list-border-color: var(--rt-color-border-default);
+        --rt-tabs-list-min-height: auto;
+        --rt-tabs-list-padding-inline: 0;
+        --rt-tabs-content-padding-top: var(--rt-space-md);
 
         display: flex;
         -webkit-tap-highlight-color: transparent;
@@ -40,13 +45,13 @@
             position: relative;
             display: flex;
             box-sizing: border-box;
-            align-items: var(--rt-tabs-list-align, stretch);
-            border-bottom: var(--rt-tabs-border-width) solid var(--rt-tabs-list-border-color, var(--rt-color-border-default));
+            align-items: var(--rt-tabs-list-align);
+            border-bottom: var(--rt-tabs-border-width) solid var(--rt-tabs-list-border-color);
             margin: 0;
-            min-block-size: var(--rt-tabs-list-min-height, auto);
+            min-block-size: var(--rt-tabs-list-min-height);
             -ms-overflow-style: none;
             overflow-x: auto;
-            padding-inline: var(--rt-tabs-list-padding-inline, 0);
+            padding-inline: var(--rt-tabs-list-padding-inline);
             scrollbar-width: none;
             white-space: nowrap;
 
@@ -185,7 +190,7 @@
             min-height: 0;
             flex: 1 1 auto;
             flex-direction: column;
-            padding-top: var(--rt-tabs-content-padding-top, var(--rt-space-md));
+            padding-top: var(--rt-tabs-content-padding-top);
             gap: var(--rt-space-md);
             line-height: var(--rt-leading-relaxed);
 
