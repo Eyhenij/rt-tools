@@ -2,16 +2,27 @@
 
 ## Where we stand
 
-- **State:** `задача-взята`
-- **Waiting for the owner:** question 4 of the epic — the key of the saved columns of `rt-data-table`.
-  The plan is written after the answer: one answer moves the key with the old values, the other
-  closes the task.
+- **State:** `этап-идёт`
+- Stage 1 goes on.
+
+### Stage 1 — the key and the copy
+
+- [ ] 1. The prefix in the registry ← now
+- [ ] 2. The service reads, copies, writes and resets by the kit key
+- [ ] 3. Tests of the four scenarios, former tests brought to the new key
+
+### Stage 2 — closing
+
+- [ ] 1. The agreement merged into `table-full-port`
+- [ ] 2. The kit tests, lint and the visual gate
+- [ ] 3. The folder taken apart, the PR into the RT-2866 branch
 
 ## Decisions along the way
 
 - The two stores differ in the key and in the shape of the value; shared code between them is a few
-  lines. Keeping both keys leaves the task nothing to do.
+  lines. Each keeps its own prefix under `rt.`.
 
 ## Sessions
 
-- 2026-10-30: task taken after RT-2866 was handed over (#3019); question 4 asked.
+- 2026-10-30: task taken after RT-2866 was handed over (#3019); question 4 asked and answered; the
+  agreement and the plan written.

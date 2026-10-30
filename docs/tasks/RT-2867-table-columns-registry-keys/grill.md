@@ -32,10 +32,22 @@ first.
 Asked on 30.10 with the options «Ключи реестра с переносом (Recommended)» and «Оставить, закрыть
 RT-2867». Answer: «ничего не понял?». The question is asked again in the words of the screen.
 
+Asked again on 30.10: whether the saved columns of `rt-data-table` move under a kit key, with the
+old values carried over. Answer: «если пользователи приложений не потеряют свои конфиги то можно
+делать».
+
 ## Decisions
 
 - **Not included:** the look of the tables, RT-3015.
+- **The key moves under a prefix of its own, `rt.data-table.config.`.** The value of
+  `rt-data-table` has another shape than that of `rt-table`; one prefix would let one id read a
+  foreign value.
+- **The old record is copied, not moved.** The owner's condition is that nobody loses settings, and
+  a first-kit table in the same application may still read the old record.
+- **A reset removes both records.** Otherwise the old record is copied back on the next opening.
+- **Nothing changes on the screen, so no mockup is drawn** — the same ground as the owner's word on
+  RT-2865: «если вид не меняется зачем мне смотреть маке?».
 
 ## What is left unclear
 
-- Question 4: the key of the saved columns of `rt-data-table`.
+Nothing.
