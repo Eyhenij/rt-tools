@@ -5,8 +5,8 @@
 - **State:** `этап-идёт`
 - **Stage:** 3 of 4 — The showcase, the match and the approvals
 - **Done:** the agreement `toolbar-filters`; the slot `rtToolbarFilters`, the filter button, the filters panel, the heading line of the aside header, `phoneCloseLabel` of the aside footer; SC-UKV-1086…1092 tested
-- **Next step:** fit the Figma components to the kit — the title of Aside Header to weight 700, the body of frame 7349-4846 to 24 under the header, the label row of Field to the kit's height — then measure 7349-4846 again to 35 of 35
-- **Uncommitted:** the kit code, its tests and the stories `Organisms/Table/ToolbarFilters` — they are committed after the match with the mockup
+- **Next step:** the owner's answer about the showcase goes into the approval record
+- **Uncommitted:** nothing
 - **Waiting for the owner:** nothing
 - **PR:** not open yet
 
@@ -22,9 +22,9 @@
 - [x] 2.4 Keep the indicator dot uncut by the toolbar
 - [x] 2.5 Write the tests of the scenarios
 - [x] 3.1 Write the stories of the three states
-- [>] 3.2 Measure the stories against the frames and print the match line
-- [ ] 3.3 Draw the overlay of the whole block
-- [ ] 3.4 Show the owner the showcase and ask about it
+- [x] 3.2 Measure the stories against the frames and print the match line
+- [x] 3.3 Draw the overlay of the whole block
+- [>] 3.4 Show the owner the showcase and ask about it
 - [ ] 3.5 Write the approval record
 - [ ] 4.1 Merge the agreement into the kit spec
 - [ ] 4.2 Run the specs check, the types, the linters and the tests of the kit
@@ -67,3 +67,18 @@
   line height `normal` (24.5 high); the body of `rt-aside` 24 under the header (80), so the first
   field at 104; `rt-field` = label row 17 (14, weight 500, line height `normal`) + 4 + control 40 +
   4 + an empty messages row 0 = 65; the gap between fields 16, so the second field at 185.
+- Figma fitted to the kit by the owner's word «Макет под кит (Рекомендую)»: the title of the Aside
+  Header component 4658:3234 is Montserrat Bold with line height auto (the text style detached on
+  that node); in frame 7349-4846 the body starts 24 under the header, and the two Field instances
+  override the label line height to auto (17) and add 4 at the bottom for the empty messages row.
+  Field 7349:3600 is a remote component and cannot be edited in this file, so the fit lives in the
+  frame's instances. The match after the fit: the toolbar 20 of 20, the panel 35 of 35 — 55 of 55.
+- One more divergence of the same kind, fitted by the same word: the select value is 16 in the kit
+  on a phone and was 14 in the frame; the two instances now carry 16. The match: the toolbar 20 of
+  20, the panel 36 of 36 — 56 of 56. References of the three stories taken by
+  `node tools/visual-gate.mjs ui-kit-v2 --update 'toolbar-filters'` (3 of 3). The overlay of the
+  whole block: the toolbar 0.26% of pixels, the panel 1.76% — the letters, the 1-point difference
+  of the footer button widths that follows the text width (119/133 in Figma, 118/134 in the
+  showcase), and in the image browser the label row of `rt-field` one point taller, since its line
+  height `normal` comes from the machine's font metrics; on this machine the field stands at 125 as
+  in the frame.

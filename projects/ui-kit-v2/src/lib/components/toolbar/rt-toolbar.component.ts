@@ -3,16 +3,26 @@ import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
+    computed,
     contentChild,
     Directive,
+    inject,
     input,
     InputSignalWithTransform,
+    output,
+    OutputEmitterRef,
     Signal,
     TemplateRef,
     ViewEncapsulation,
 } from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+
+import { BreakpointsService, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtAsideService } from '@rt-tools/ui-kit-v2/aside';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtToolbarFiltersAsideComponent } from './filters-aside/rt-toolbar-filters-aside.component';
+import { IRtToolbar } from './rt-toolbar.model';
 
 /**
  * Маркер-директива для контента в левой секции тулбара.
@@ -66,6 +76,33 @@ export class RtToolbarCenterDirective {}
 export class RtToolbarRightDirective {}
 
 /**
+ * Маркер-директива для отборов списка. На широком экране они стоят в левой секции после её
+ * содержимого, на узком — за кнопкой фильтров, которая открывает панель отборов. Контекст шаблона
+ * — место, где он нарисован: `bar` или `panel`.
+ *
+ * @example
+ * ```html
+ * <rt-toolbar [filtersActive]="hasFilter()" (filtersReset)="reset()">
+ *     <ng-template rtToolbarFilters let-place>
+ *         <rt-select [label]="place === 'panel' ? 'Статус' : null" … />
+ *     </ng-template>
+ * </rt-toolbar>
+ * ```
+ */
+@Directive({
+    selector: '[rtToolbarFilters]',
+})
+export class RtToolbarFiltersDirective {
+    public static ngTemplateContextGuard(
+        _directive: RtToolbarFiltersDirective,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars -- второй довод стража контекста шаблона стоит только в типе-предикате; убрать его нечем, подпись задаёт каркас
+        context: unknown
+    ): context is IRtToolbar.IFiltersContext {
+        return true;
+    }
+}
+
+/**
  * Универсальный тулбар с тремя секциями: left, center, right.
  * Секции задаются `<ng-template>` с директивами-маркерами и подставляются через `ngTemplateOutlet`.
  * Каждый модуль/фича подключает `rt-toolbar` в своём layout и наполняет нужные секции.
@@ -104,13 +141,30 @@ const BEM_BLOCK: string = 'rt-toolbar';
         BlockDirective,
         ElemDirective,
         ModDirective,
+        RtIconButtonComponent,
     ],
     host: {
         class: BEM_BLOCK,
         '[class.rt-toolbar--dense]': 'dense()',
+        '[class.rt-toolbar--filters-collapsed]': 'collapsed()',
     },
 })
 export class RtToolbarComponent {
+    readonly #narrow: Signal<boolean> = inject(BreakpointsService).narrow;
+    readonly #asideService: RtAsideService = inject(RtAsideService);
+
+    protected readonly filtersLabel: Signal<string> = rtKitLabel('uiFilters');
+
+    protected readonly filtersTpl: Signal<TemplateRef<IRtToolbar.IFiltersContext> | undefined> = contentChild(RtToolbarFiltersDirective, {
+        read: TemplateRef,
+    });
+
+    /** Отборы ушли за кнопку: они объявлены, а место узкое. */
+    protected readonly collapsed: Signal<boolean> = computed((): boolean => this.filtersTpl() !== undefined && this.#narrow());
+
+    /** Отборы стоят в левой секции: они объявлены, а место широкое. */
+    protected readonly filtersInBar: Signal<boolean> = computed((): boolean => this.filtersTpl() !== undefined && !this.#narrow());
+
     protected readonly leftTpl: Signal<TemplateRef<unknown> | undefined> = contentChild(RtToolbarLeftDirective, { read: TemplateRef });
 
     protected readonly centerTpl: Signal<TemplateRef<unknown> | undefined> = contentChild(RtToolbarCenterDirective, { read: TemplateRef });
@@ -125,4 +179,32 @@ export class RtToolbarComponent {
     public readonly dense: InputSignalWithTransform<boolean, boolean | string> = input<boolean, boolean | string>(false, {
         transform: booleanAttribute,
     });
+
+    /** Включён хотя бы один отбор: кнопка фильтров узкого экрана несёт точку в углу значка. */
+    public readonly filtersActive: InputSignalWithTransform<boolean, boolean | string> = input<boolean, boolean | string>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Нажата «Применить» панели отборов; панель после этого закрыта. */
+    public readonly filtersApply: OutputEmitterRef<void> = output<void>();
+
+    /** Нажата «Сбросить» панели отборов; панель остаётся открытой. */
+    public readonly filtersReset: OutputEmitterRef<void> = output<void>();
+
+    protected openFilters(): void {
+        const template: TemplateRef<IRtToolbar.IFiltersContext> | undefined = this.filtersTpl();
+        if (template === undefined) {
+            return;
+        }
+
+        this.#asideService.open<RtToolbarFiltersAsideComponent, IRtToolbar.IFiltersPanelData>(RtToolbarFiltersAsideComponent, {
+            data: {
+                template,
+                reset: (): void => this.filtersReset.emit(),
+                apply: (): void => this.filtersApply.emit(),
+            },
+            position: 'right',
+            backdropClass: 'rt-aside-backdrop',
+        });
+    }
 }

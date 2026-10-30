@@ -1,9 +1,14 @@
-@if (leftTpl() || centerTpl() || rightTpl()) {
+@if (leftTpl() || centerTpl() || rightTpl() || filtersTpl()) {
     <ng-container rtBlock="rt-toolbar">
         <div rtElem="bars">
-            @if (leftTpl()) {
+            @if (leftTpl() || filtersInBar()) {
                 <div rtElem="bar" qa-dataid="toolbar-bar" data-slot="left" [rtMod]="{ left: true }">
                     <ng-container [ngTemplateOutlet]="leftTpl() ?? null" />
+
+                    <!-- На широком месте отборы стоят в полосе сами, после содержимого левой секции -->
+                    @if (filtersInBar()) {
+                        <ng-container [ngTemplateOutlet]="filtersTpl() ?? null" [ngTemplateOutletContext]="{ $implicit: 'bar' }" />
+                    }
                 </div>
             }
 
@@ -13,8 +18,21 @@
                 </div>
             }
 
-            @if (rightTpl()) {
+            @if (rightTpl() || collapsed()) {
                 <div rtElem="bar" qa-dataid="toolbar-bar" data-slot="right" [rtMod]="{ right: true }">
+                    <!-- На узком месте отборы уходят за кнопку: она первая в ряду кнопок полосы -->
+                    @if (collapsed()) {
+                        <rt-icon-button
+                            rtElem="filters-trigger"
+                            qa-dataid="toolbar-filters-trigger"
+                            icon="filter"
+                            variant="primary"
+                            [ariaLabel]="filtersLabel()"
+                            [tooltip]="filtersLabel()"
+                            [indicator]="filtersActive()"
+                            (clicked)="openFilters()" />
+                    }
+
                     <ng-container [ngTemplateOutlet]="rightTpl() ?? null" />
                 </div>
             }

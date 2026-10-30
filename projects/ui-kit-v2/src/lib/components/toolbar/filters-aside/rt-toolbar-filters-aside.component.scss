@@ -1,0 +1,17 @@
+@layer rt-kit.components {
+    /* rt-toolbar-filters-aside — панель отборов полосы на узком экране. ViewEncapsulation.None. */
+    .rt-toolbar-filters-aside {
+        --rt-toolbar-filters-aside-gap: var(--rt-space-md);
+
+        /* Поля отборов — одно под другим во всю ширину тела панели. */
+        &__fields {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-toolbar-filters-aside-gap);
+
+            > * {
+                width: 100%;
+            }
+        }
+    }
+}
