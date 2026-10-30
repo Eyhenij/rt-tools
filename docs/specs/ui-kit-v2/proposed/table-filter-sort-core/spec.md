@@ -79,6 +79,24 @@ Not applicable: nothing is stored.
 | `rt-data-table`, a column descending, a press on it | the same column ascending                            |
 | `rt-table`, a column descending, a press on it      | no arrow, the rows in the order the application gave |
 
+## Cross-cutting requirements
+
+### Locales
+
+Not applicable: the core holds no words.
+
+### SEO
+
+Not applicable.
+
+### Mobile layout
+
+Not applicable: the core draws nothing; the cards of `rt-table` sort by the same core.
+
+### Several objects
+
+Not applicable.
+
 ## Decisions
 
 - **The core keeps both sort cycles by a flag.** By the owner's answer «Ядро держит оба
@@ -87,3 +105,11 @@ Not applicable: nothing is stored.
   `0` and `false` are real values of a condition, and dropping them shows every row.
 - **«Nothing changed» is the same set returned, not `null`.** An inner interface: both tables
   compare the set they got with the one they gave.
+
+## Open questions
+
+None.
+
+## History of changes
+
+- 2026-10-30 — the epic «#2860 Таблицы»: one core of the filter and the sort for both tables.
