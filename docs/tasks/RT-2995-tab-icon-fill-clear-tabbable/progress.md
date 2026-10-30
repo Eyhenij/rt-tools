@@ -19,12 +19,8 @@
   multiselect with the cross by Tab from the kit setting, the measurement against the three frames
   by `tools/kit-match.mjs`, and «одобряете?» on the showcase. The showcase on 6007 is the owner's:
   work with the running one.
-- **Uncommitted:** nothing after the last commit.
-- **Waiting for the owner:** no
-- **Main is red apart from this work, task RT-2996:** typecheck of the chat spec (4 errors),
-  `check:tokens-styles` 12 divergences in the messenger styles, `check:tokens-graph` 5 fallbacks in
-  `rt-tabs.component.scss`. This branch touches that file, so its push waits for RT-2996 or goes
-  with it.
+- **Uncommitted:** the part `iconBadge` of the tab matrix and its story `IconBadge`; the icons in it wait for the owner.
+- **Waiting for the owner:** how the showcase draws the filled icons of the frame `7327:531`.
 - **PR:** not open yet
 
 ## Steps
@@ -63,42 +59,16 @@
 - **The branch commits are signed by rt-tools-dev.** The tree guard refuses any other signature;
   the first commit was re-signed before any push. Affected stage: none.
 
+- **The showcase cannot draw the frame's filled icons as the kit stands.** The second showcase loads no
+  Material Symbols font, so a glyph outside the kit list is drawn as its word. A kit name fills only
+  in the material preset and only where a material drawing lies: of `star`, `bookmark` and `flag`
+  only `star` has one. Affected stage: 3.
+- **Main merged, RT-2996 closed as done by #3002.** The owner chose «Закрыть, взять RT-2995».
+  Affected stage: none.
+
 ## Sessions
 
 ### 2026-10-29
 
 - Task RT-2995 created outside an epic, branch from main, card in progress.
 - The application sent a third request, a badge over the tab icon; the owner put it into this task.
-
-## Handover of the session
-
-### Work
-
-RT-2995 "Вкладка заливает иконку, крестик очистки доходит по Tab от умолчания кита". Working tree —
-`/Users/sviatoslavkhutornoy/WebstormProjects/rt-tools`, branch
-`RT-2995-tab-icon-fill-clear-tabbable` (from main, card in progress, not pushed, no PR). Work
-outside an epic. The owner's last word: «делай обе задачи» — RT-2995 and RT-2996.
-
-### Where to look
-
-The progress and the plan arrive by the hook. The grill and `approvals.md` lie in the task folder.
-RT-2996 has its whole description in the issue: `gh issue view 2996`.
-
-### Done and the next step
-
-Done: stages 1 and 2 with the multiselect; `Playground` of the tab takes the two new inputs.
-Next step: RT-2996 first — its branch from `origin/main`, fix the chat spec types, the messenger
-styles for `check:tokens-styles`, the five tab token fallbacks for `check:tokens-graph`; then merge
-main into this branch and go on with 3.1 as «Next step» above says.
-
-### What to keep in mind
-
-- RT-2996 is not a branch yet; `task:new` already created the issue, its folder was removed —
-  `git checkout -b RT-2996-kit2-main-checks-red origin/main` and `npm run task:move -- 2996
-in-progress`, then the task folder from the template.
-- The assignment row of `rt-tools` in `.claude/rt-kit/assignments.md` names RT-2995 in this branch
-  only; for RT-2996 the row is rewritten with the owner's word «делай обе задачи».
-- Commits are signed by rt-tools-dev, the owner: «2 не важно».
-- The showcase on 6007 is the owner's; nothing was raised by this session.
-- Figma file: Design System V2, key `vyV42sJXccfKNG8yFSCpSL`, session frames `7327:531`,
-  `7327:1317`, `7330:2735`.
