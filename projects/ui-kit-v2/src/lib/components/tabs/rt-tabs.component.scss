@@ -256,11 +256,6 @@
     .rt-tab-item {
         --rt-tab-item-border-width: var(--rt-border-width-thin);
         --rt-tab-item-badge-radius: var(--rt-radius-full);
-        --rt-tab-item-badge-bg: var(--rt-color-bg-surface-subtle);
-        --rt-tab-item-badge-color: var(--rt-color-text-muted);
-        --rt-tab-item-badge-overlay-size: var(--rt-size-4);
-        --rt-tab-item-badge-overlay-bg: var(--rt-color-action-primary);
-        --rt-tab-item-badge-overlay-color: var(--rt-color-action-on-primary);
         --rt-tab-item-transition-duration: var(--rt-duration-fast);
         --rt-tab-item-close-size: var(--rt-size-5);
         --rt-tab-item-close-radius: var(--rt-radius-full);
@@ -371,8 +366,8 @@
             justify-content: center;
             padding: 0 var(--rt-space-2);
             border-radius: var(--rt-tab-item-badge-radius);
-            background-color: var(--rt-tab-item-badge-bg);
-            color: var(--rt-tab-item-badge-color);
+            background-color: var(--rt-color-bg-surface-subtle);
+            color: var(--rt-color-text-muted);
             font-size: var(--rt-text-xs);
             font-weight: var(--rt-font-weight-medium);
             line-height: var(--rt-leading-none);
@@ -385,12 +380,12 @@
                 position: absolute;
                 top: calc(-1 * var(--rt-space-2));
                 right: calc(-1 * (var(--rt-space-1) + var(--rt-space-0-5)));
-                min-width: var(--rt-tab-item-badge-overlay-size);
-                height: var(--rt-tab-item-badge-overlay-size);
+                min-width: var(--rt-size-4);
+                height: var(--rt-size-4);
                 box-sizing: border-box;
                 padding: 0 var(--rt-space-1);
-                background-color: var(--rt-tab-item-badge-overlay-bg);
-                color: var(--rt-tab-item-badge-overlay-color);
+                background-color: var(--rt-color-action-primary);
+                color: var(--rt-color-action-on-primary);
                 font-size: var(--rt-text-2xs);
             }
         }
@@ -437,9 +432,6 @@
         // Черта выбранной вкладки входит в её высоту, как в компоненте Tab дизайн-системы: вкладка
         // выше соседних на толщину черты, и при прижатии полосы к низу подпись стоит выше их подписей
         &--selected {
-            --rt-tab-item-badge-bg: var(--rt-color-action-primary-soft);
-            --rt-tab-item-badge-color: var(--rt-color-action-primary);
-
             color: var(--rt-color-action-primary);
             cursor: default;
 
@@ -449,6 +441,11 @@
 
             &:after {
                 background-color: var(--rt-color-action-primary);
+            }
+
+            .rt-tab-item__badge:not(.rt-tab-item__badge--overlay) {
+                background-color: var(--rt-color-action-primary-soft);
+                color: var(--rt-color-action-primary);
             }
         }
 
