@@ -25,6 +25,7 @@
 | `scrollStep`        | `'fixed' \| 'page' \| 'third'` | `'fixed'`      |
 | `animationDuration` | `string \| number \| null`     | `null`         |
 | `preserveContent`   | `boolean`                      | `false`        |
+| `dense`             | `boolean`                      | `false`        |
 
 Выходы: `activeIdChange: IRtTabs.Id`, `tabClose: IRtTabs.Id` — просьба закрыть вкладку с `closable`.
 
