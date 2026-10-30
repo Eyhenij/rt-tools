@@ -10,9 +10,9 @@ https://www.figma.com/design/I3fuRHUIcEhw6WPIsd29nP/Villa-Manager-V1?node-id=885
 
 ## Одобрения
 
-- **Макет:** «Да, одобряю (Рекомендую)» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL/RT-Tools-DS?node-id=7332-17833
+- **Макет:** «Макет одобряю» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL/RT-Tools-DS?node-id=7332-17833
 - **Совпадение:** 6 из 6 чисел
-- **Витрина:** «Да, одобряю витрину (Рекомендую)»
+- **Витрина:** «Витрину одобряю»
 
 ## Решения
 
