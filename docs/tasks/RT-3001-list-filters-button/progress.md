@@ -7,7 +7,7 @@
 - **Done:** the agreement `toolbar-filters`; the slot `rtToolbarFilters`, the filter button, the filters panel, the heading line of the aside header, `phoneCloseLabel` of the aside footer; SC-UKV-1086…1092 tested
 - **Next step:** the owner's answer about the showcase goes into the approval record
 - **Uncommitted:** nothing
-- **Waiting for the owner:** nothing
+- **Waiting for the owner:** the answer about the showcase on port 6017, built from this branch: the stories FilterOff, FilterOn and PanelOpen
 - **PR:** not open yet
 
 ## Steps
