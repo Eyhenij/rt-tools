@@ -1,8 +1,20 @@
-import { ChangeDetectionStrategy, Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core';
+import {
+    afterNextRender,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    effect,
+    ElementRef,
+    inject,
+    Signal,
+    signal,
+    viewChild,
+    WritableSignal,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
-import { IRtField, RtButtonDirective, RtFieldComponent, RtIconComponent, RtInputComponent } from '@rt-tools/ui-kit-v2';
+import { BlockDirective, ElemDirective, ModDirective, WINDOW } from '@rt-tools/core';
+import { IRtField, RtButtonDirective, RtFieldComponent, RtIconComponent, RtInputComponent, ThemeService } from '@rt-tools/ui-kit-v2';
 import { map } from 'rxjs';
 
 import { KC_CONTEXT, TKcContext, TKcPageContext } from '../../kc-context';
@@ -10,6 +22,7 @@ import { holdInvalidSubmit, loginPlaceholder, MISMATCH_ERROR, refusedValue, same
 import { backLinkText, KC_MESSAGES, plainMessage, TKcMessages } from '../../kc-i18n';
 import { EKcPolicyRule, IKcPolicyRule, passwordRuleMet, registrationRulesOf, RULE_MESSAGE } from '../../kc-password-rules';
 import { IKcProviderButton, providerButtonsOf } from '../../kc-providers';
+import { drawRecaptcha, IRecaptchaApi, whenRecaptchaReady } from '../../kc-recaptcha';
 import { RtKcMessageComponent } from '../../message/rt-kc-message.component';
 
 const BEM_BLOCK: string = 'rt-kc-page';
@@ -54,6 +67,13 @@ export class RtKcRegisterComponent {
     readonly #i18n: TKcMessages = inject(KC_MESSAGES);
     readonly #page: TKcContext = inject(KC_CONTEXT);
     readonly #rules: readonly IKcPolicyRule[] = registrationRulesOf(this.#page);
+    readonly #theme: ThemeService = inject(ThemeService);
+    // The constructors of the page, `MutationObserver` among them, are declared on the global object.
+    readonly #view: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;
+    /** The Google script once it is ready; `null` while it is on its way. */
+    readonly #recaptcha: WritableSignal<IRecaptchaApi | null> = signal<IRecaptchaApi | null>(null);
+
+    protected readonly captcha: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('captcha');
 
     protected readonly context: TRegisterContext = this.#page as TRegisterContext;
     protected readonly form: FormGroup<{
@@ -122,6 +142,13 @@ export class RtKcRegisterComponent {
     };
 
     protected readonly providers: readonly IKcProviderButton[] = providerButtonsOf(this.#page);
+    /**
+     * The site key of the reCAPTCHA widget, or `null` when the realm asks for no visible widget. The
+     * script Keycloak lists for the page renders the widget and puts its answer into the form.
+     */
+    protected readonly recaptchaSiteKey: string | null =
+        this.context.recaptchaRequired && this.context.recaptchaVisible ? (this.context.recaptchaSiteKey ?? null) : null;
+    protected readonly recaptchaAction: string | null = this.context.recaptchaAction ?? null;
 
     constructor() {
         // The confirmation is compared with the password, so a change of the password checks it again.
@@ -134,6 +161,22 @@ export class RtKcRegisterComponent {
                 control.markAsTouched();
             }
         }
+        // The widget takes the scheme of the page theme and is drawn anew when the theme switches.
+        afterNextRender((): void => {
+            whenRecaptchaReady(this.#view, (api: IRecaptchaApi): void => this.#recaptcha.set(api));
+        });
+        effect((): void => {
+            const api: IRecaptchaApi | null = this.#recaptcha();
+            const block: HTMLElement | undefined = this.captcha()?.nativeElement;
+            if (api === null || block === undefined || this.recaptchaSiteKey === null) {
+                return;
+            }
+            drawRecaptcha(api, block, {
+                sitekey: this.recaptchaSiteKey,
+                theme: this.#theme.isDark() ? 'dark' : 'light',
+                ...(this.recaptchaAction === null ? {} : { action: this.recaptchaAction }),
+            });
+        });
     }
 
     protected send(event: Event): void {
