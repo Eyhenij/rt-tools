@@ -314,12 +314,12 @@ describe('RtChatComponent', (): void => {
 
             expect(hostClasses(fixture)).toContain('rt-chat--messenger');
             const days: HTMLElement[] = qaAll(fixture, 'chat-day').map((node: DebugElement): HTMLElement => node.nativeElement);
-            expect(days.map((day: HTMLElement): boolean => day.hidden)).toEqual([false, true]);
+            expect(days.map((day: HTMLElement): boolean => day.hidden === true)).toEqual([false, true]);
             expect(textOf(qa(fixture, 'chat-day'))).toBe('today');
-            const prompt: HTMLElement = qa(fixture, 'chat-composer-prompt').nativeElement;
+            const prompt: HTMLElement = qa(fixture, 'chat-composer-prompt')?.nativeElement as HTMLElement;
             expect(qa(fixture, 'chat-composer-rich')).toBeNull();
             expect(qa(fixture, 'chat-composer')).toBeNull();
-            const attach: HTMLElement = qa(fixture, 'chat-composer-tools-attach').nativeElement;
+            const attach: HTMLElement = qa(fixture, 'chat-composer-tools-attach')?.nativeElement as HTMLElement;
             expect(prompt.contains(attach)).toBe(true);
             expect(attach.hidden).toBe(false);
 
@@ -332,7 +332,7 @@ describe('RtChatComponent', (): void => {
             const fixture: ComponentFixture<RtChatComponent> = setup({ messages: [message()] });
 
             expect(hostClasses(fixture)).not.toContain('rt-chat--messenger');
-            expect((qa(fixture, 'chat-day').nativeElement as HTMLElement).hidden).toBe(true);
+            expect((qa(fixture, 'chat-day')?.nativeElement as HTMLElement).hidden).toBe(true);
             expect(qa(fixture, 'chat-message-author')).not.toBeNull();
         });
     });
