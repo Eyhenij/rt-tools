@@ -252,8 +252,7 @@ Rules that decide what goes in a matrix:
   harness waits for `document.fonts.ready` before the shot, not before `play`: a component that
   sizes itself from its text — autosize, a `ResizeObserver` — measures with the fallback font and
   keeps that size once the real one arrives. A story step that types or measures awaits
-  `document.fonts.ready` first. An overlay opened in `play` is the same case: CDK places the panel
-  against its trigger once, so `openStoryOverlay` waits for the fonts before the gesture.
+  `document.fonts.ready` first.
 - **A state class misses a node drawn after the resize.** The showcase hands out interaction
   states once, when the story renders. The narrow frame resizes the window after that, and a node
   the breakpoints service draws only then gets no state class. A state of such a node is shown by a
