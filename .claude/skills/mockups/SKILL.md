@@ -4,7 +4,7 @@ kind: rule
 law: mockups
 description: Rule under the mockups law. Load when a screen is drawn or changed in a design tool, before the first frame and before the mockups are shown to the owner. Names the kit copy, the spec read before drawing, the agreement checked against mockups. Pattern mockups-measure.
 ---
-<!-- rt-kit v0.33.1 · rules/mockups.needs-mockups.md · fb22b3cc900c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · rules/mockups.needs-mockups.md · c607634a8576 · правится надстройкой, не здесь -->
 
 # Mockups — how it works here
 
@@ -39,7 +39,7 @@ flowchart TD
     B -->|No| D[A sample is asked per screen]
     C --> E{A component of the kit goes on the sheet}
     D --> E
-    E -->|Yes| F[Its lines and spacing are checked against the kit styles in code]
+    E -->|Yes| F[It is measured in the running showcase and compared with the copy by numbers]
     E -->|No| G[The frames are drawn]
     F --> G
     G --> H[The coordinates of the frames are measured]
@@ -53,9 +53,11 @@ flowchart TD
 ## How the law applies here
 
 - **A kit component on a design-tool sheet is a copy of the kit, and the copy drifts.** The source
-  of look is the kit's styles in code. Before a component from the sheet goes into a mockup, its
-  visible lines and spacing are checked against the kit's styles. A divergence is a question to the
-  owner, and the answer is fixed once in the copy.
+  of look is the kit's styles in code. Before a component from the sheet goes into a mockup, it is
+  measured in the running showcase, and its sizes, alignment and controls are compared with the
+  bounds of the copy's nodes by numbers. Reading the styles does not show what the layout computes:
+  the height of a row, where unselected items sit, a control that replaces an icon. A divergence is
+  a question to the owner, and the answer is fixed once in the copy.
 - **A mockup of behaviour the tree already has starts with reading the spec of its domain.** A
   screen in a design tool looks like work without code, so exploration stops at the sheet of earlier
   mockups. How a payment is taken, what a window asks and which fields a form holds are already
