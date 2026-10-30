@@ -1,9 +1,17 @@
 import { IButton } from '@rt-tools/ui-kit-v2/core';
 import { IRtConfirmPopover } from '@rt-tools/ui-kit-v2/confirm-popover';
 import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
+import { IRtServiceLogo } from '@rt-tools/ui-kit-v2/service-logo';
 import { IRtTimeline } from '@rt-tools/ui-kit-v2/timeline';
 
 export namespace IRtWorkspaceDetails {
+    /** Верх сведений о человеке: знак канала, имя и контакт по центру над строками */
+    export interface Profile {
+        sign: IRtServiceLogo.Item | null;
+        name: string;
+        contact: string;
+    }
+
     export interface Row {
         label: string;
         value: string;

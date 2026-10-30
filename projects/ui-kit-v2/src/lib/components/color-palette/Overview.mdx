@@ -1,6 +1,6 @@
 import { Meta, Title } from '@storybook/addon-docs/blocks';
 
-<Meta title="Organisms/Forms/ColorPalette/Overview" />
+<Meta title="Molecules/Forms/ColorPalette/Overview" />
 
 <Title>ColorPalette — `rt-color-palette`</Title>
 
@@ -53,7 +53,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 Материальный набор повторяет образцы приложения: круги 30px без рамки через 10px, выбранный — полое
 кольцо 3px своего цвета со свечением 5px, круг под указателем растёт. Кнопка своего цвета стоит в
-16px под сеткой, серая (`--mat-sys-on-surface-variant`) 16/400; свой образец — последний в сетке.
+16px под сеткой, серая (`--rt-sys-on-surface-variant`) 16/400; свой образец — последний в сетке.
 Пустое значение только для чтения — белый круг. Панель — 256×320 со скруглением 6px и тенью
 `0 8px 16px` серого цвета.
 
@@ -100,14 +100,15 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 Достались от `RtFormControlBase` — общей основы полей кита. Палитра читает `disabled`, `controlId` и
 `ariaLabel`; размер, кнопку очистки и рамку она не рисует, и эти входы ничего не меняют.
 
-| вход        | тип                    | умолчание |
-| ----------- | ---------------------- | --------- |
-| `size`      | `'sm' \| 'md' \| 'lg'` | `'md'`    |
-| `disabled`  | `boolean`              | `false`   |
-| `controlId` | `string \| null`       | `null`    |
-| `ariaLabel` | `string \| null`       | `null`    |
-| `clearable` | `boolean`              | `true`    |
-| `bordered`  | `boolean`              | `true`    |
+| вход            | тип                    | умолчание |
+| --------------- | ---------------------- | --------- |
+| `size`          | `'sm' \| 'md' \| 'lg'` | `'md'`    |
+| `disabled`      | `boolean`              | `false`   |
+| `controlId`     | `string \| null`       | `null`    |
+| `ariaLabel`     | `string \| null`       | `null`    |
+| `clearable`     | `boolean`              | `true`    |
+| `clearTabbable` | `boolean`              | `false`   |
+| `bordered`      | `boolean`              | `true`    |
 
 ## Выходы
 

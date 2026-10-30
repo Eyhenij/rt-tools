@@ -1,0 +1,27 @@
+import { Meta, Title } from '@storybook/addon-docs/blocks';
+
+<Meta title="Molecules/Chat/UsageRing/Overview" />
+
+<Title>UsageRing — `rt-usage-ring`</Title>
+
+Кольцо расхода: доля потраченного лимита дугой по кругу. С порога предупреждения дуга оранжевая.
+
+```html
+<rt-usage-ring [value]="usedPercent()" [hint]="usageHint()" />
+```
+
+## Входы
+
+| вход     | тип      | умолчание |
+| -------- | -------- | --------- |
+| `value`  | `number` | `0`       |
+| `warnAt` | `number` | `80`      |
+| `hint`   | `string` | `''`      |
+
+## Когда применять
+
+- Ряд действий поля ввода ИИ-чата: сколько лимита ушло за период.
+
+## Когда не применять
+
+- **Ход длинной операции**: [`rt-progress-bar`](./?path=/docs/atoms-feedback-progressbar-overview--docs).

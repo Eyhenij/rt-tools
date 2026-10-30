@@ -27,6 +27,7 @@
                             rtElem="field"
                             qa-dataid="dynamic-selector-edit-field"
                             [ngModel]="draft()"
+                            [ngModelOptions]="{ standalone: true }"
                             (ngModelChange)="draft.set($event ?? '')"
                             (keydown.enter)="onEditApply(row)" />
                     } @else if (titleTpl(); as tpl) {
@@ -114,7 +115,7 @@
                     [ariaLabel]="resetLabel()"
                     [tooltip]="isNarrow() ? '' : resetLabel()"
                     [disabled]="resetDisabled() || disabled()"
-                    (clicked)="resetClicked.emit()" />
+                    (clicked)="onReset()" />
                 <rt-icon-button
                     rtElem="clear"
                     qa-dataid="dynamic-selector-clear"
@@ -125,7 +126,7 @@
                     [ariaLabel]="clearLabel()"
                     [tooltip]="isNarrow() ? '' : clearLabel()"
                     [disabled]="clearDisabled() || disabled()"
-                    (clicked)="cleared.emit()" />
+                    (clicked)="onClear()" />
             }
         </div>
     }

@@ -54,6 +54,11 @@ refusal in the executor's own turn.
   there is no work; the missing row is the table saying nothing at all.
 - **The refusal names both epics: the assigned one and the one being taken.** A refusal without the
   numbers is read as a defect of the check, and the work goes on past it.
+- **The refusal says that the owner's message naming this work is the move of the assignment.**
+  Told only «the owner moves the assignment», the executor stopped after a direct order and asked
+  the owner a second time. A message of the owner that names this work is that move: the row is
+  written with their words, and the work goes on. A question goes to the owner only when no message
+  of theirs names the work.
 - **Every call that takes work is judged, not only the branch.** Three calls start work, and two of
   them go past the delivery guard entirely: a task created under someone else's epic and a card
   moved into the work column are both work taken.

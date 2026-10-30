@@ -1,6 +1,6 @@
 import { Meta, Title } from '@storybook/addon-docs/blocks';
 
-<Meta title="Organisms/Chat/RichEditor/Overview" />
+<Meta title="Molecules/Chat/RichEditor/Overview" />
 
 <Title>RichEditor — `rt-rich-editor`</Title>
 
@@ -95,14 +95,15 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 Достались от `RtFormControlBase` — общей основы полей кита; в ней же они и меняются, сразу для
 всех наследников.
 
-| вход        | тип                    | умолчание | здесь                                     |
-| ----------- | ---------------------- | --------- | ----------------------------------------- |
-| `size`      | `'sm' \| 'md' \| 'lg'` | `'md'`    | принимается, но не рисуется               |
-| `disabled`  | `boolean`              | `false`   | читается один раз, при создании редактора |
-| `controlId` | `string \| null`       | `null`    | —                                         |
-| `ariaLabel` | `string \| null`       | `null`    | —                                         |
-| `clearable` | `boolean`              | `true`    | принимается, но не рисуется               |
-| `bordered`  | `boolean`              | `true`    | принимается, но не рисуется               |
+| вход            | тип                    | умолчание | здесь                                     |
+| --------------- | ---------------------- | --------- | ----------------------------------------- |
+| `size`          | `'sm' \| 'md' \| 'lg'` | `'md'`    | принимается, но не рисуется               |
+| `disabled`      | `boolean`              | `false`   | читается один раз, при создании редактора |
+| `controlId`     | `string \| null`       | `null`    | —                                         |
+| `ariaLabel`     | `string \| null`       | `null`    | —                                         |
+| `clearable`     | `boolean`              | `true`    | принимается, но не рисуется               |
+| `clearTabbable` | `boolean`              | `false`   |
+| `bordered`      | `boolean`              | `true`    | принимается, но не рисуется               |
 
 ## Выходы
 
@@ -118,4 +119,4 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 - [`rt-delta-view`](./?path=/docs/molecules-data-deltaview-overview--docs) — показ той же модели без редактирования.
 - [`rt-textarea`](./?path=/docs/atoms-forms-textarea-overview--docs) — когда форматирование не нужно.
-- [`rt-message-composer`](./?path=/docs/organisms-chat-messagecomposer-overview--docs) — редактор в режиме переписки.
+- [`rt-message-composer`](./?path=/docs/molecules-chat-messagecomposer-overview--docs) — редактор в режиме переписки.

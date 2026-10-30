@@ -1,0 +1,104 @@
+@layer rt-kit.components {
+    /* Хост пузырька: точка отсчёта для угла. Слой кита ниже слоёв приложения, и хост, которому
+       нужна своя позиция, задаёт её правилом приложения. */
+    .rt-badge-host {
+        position: relative;
+    }
+
+    /* rt-badge — пузырёк-счётчик на углу хоста. Узел ставит директива `rtBadge`. С `--overlap`
+       центр пузырька стоит на углу хоста, без него пузырёк начинается у края хоста и подпись не
+       накрывает. По вертикали центр пузырька в обоих случаях на верхнем или нижнем крае. */
+    .rt-badge {
+        --rt-badge-size: var(--rt-size-5);
+        --rt-badge-font-size: var(--rt-text-2xs);
+        --rt-badge-padding-inline: var(--rt-space-1);
+        --rt-badge-radius: var(--rt-radius-full);
+        --rt-badge-bg: var(--rt-color-action-primary);
+        --rt-badge-color: var(--rt-color-action-on-primary);
+        --rt-badge-shift: calc(var(--rt-badge-size) / 2);
+
+        position: absolute;
+        z-index: 1;
+        display: inline-flex;
+        min-width: var(--rt-badge-size);
+        height: var(--rt-badge-size);
+        box-sizing: border-box;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--rt-badge-radius);
+        background: var(--rt-badge-bg);
+        color: var(--rt-badge-color);
+        font-family: var(--rt-font-family-sans);
+        font-size: var(--rt-badge-font-size);
+        font-style: normal;
+        font-weight: var(--rt-font-weight-semibold);
+        line-height: 1;
+        padding-inline: var(--rt-badge-padding-inline);
+        pointer-events: none;
+        white-space: nowrap;
+
+        &--size--sm {
+            --rt-badge-size: var(--rt-size-4);
+            --rt-badge-font-size: var(--rt-text-3xs);
+        }
+
+        &--position--above-after,
+        &--position--above-before {
+            bottom: calc(100% - var(--rt-badge-shift));
+        }
+
+        &--position--below-after,
+        &--position--below-before {
+            top: calc(100% - var(--rt-badge-shift));
+        }
+
+        &--position--above-after,
+        &--position--below-after {
+            left: 100%;
+        }
+
+        &--position--above-before,
+        &--position--below-before {
+            right: 100%;
+        }
+
+        &--overlap#{&}--position--above-after,
+        &--overlap#{&}--position--below-after {
+            left: calc(100% - var(--rt-badge-shift));
+        }
+
+        &--overlap#{&}--position--above-before,
+        &--overlap#{&}--position--below-before {
+            right: calc(100% - var(--rt-badge-shift));
+        }
+
+        &--color--secondary {
+            --rt-badge-bg: var(--rt-color-action-secondary);
+            --rt-badge-color: var(--rt-color-action-on-secondary);
+        }
+
+        &--color--info {
+            --rt-badge-bg: var(--rt-color-action-info);
+            --rt-badge-color: var(--rt-color-action-on-info);
+        }
+
+        &--color--success {
+            --rt-badge-bg: var(--rt-color-action-success);
+            --rt-badge-color: var(--rt-color-action-on-success);
+        }
+
+        &--color--warning {
+            --rt-badge-bg: var(--rt-color-action-warning);
+            --rt-badge-color: var(--rt-color-action-on-warning);
+        }
+
+        &--color--danger {
+            --rt-badge-bg: var(--rt-color-action-danger);
+            --rt-badge-color: var(--rt-color-action-on-danger);
+        }
+
+        &--hidden {
+            display: none;
+        }
+    }
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/git-guard-delivery-folder.sh, hooks/git-guard-delivery-epic.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
+# Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
 #
 # The delivery law demands three things nothing usually checks: an edit starts from a task visible
@@ -318,6 +318,13 @@ fi
 [ -f "$rt_hooks_dir/git-guard-delivery-signature.sh" ] \
     && . "$rt_hooks_dir/git-guard-delivery-signature.sh" 2>/dev/null
 command -v rt_delivery_signature >/dev/null 2>&1 && rt_delivery_signature
+
+# --- the push into a merged branch -----------------------------------------------------------
+# The helper next door — `git-guard-delivery-merged.sh`. No helper — the push is not judged by it.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/git-guard-delivery-merged.sh" ] \
+    && . "$rt_hooks_dir/git-guard-delivery-merged.sh" 2>/dev/null
+command -v rt_delivery_merged >/dev/null 2>&1 && rt_delivery_merged
 
 # --- leaving draft ---------------------------------------------------------------------------
 # The subject lives in a helper next door — `git-guard-delivery-draft.sh`, by the same technique as

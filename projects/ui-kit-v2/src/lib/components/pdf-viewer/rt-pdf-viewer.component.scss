@@ -1,0 +1,231 @@
+@use '../../../styles/breakpoints' as bp;
+
+@layer rt-kit.components {
+    /* rt-pdf-viewer — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
+       `.rt-pdf-viewer` — сам хост (шаблон начинается с ng-container, класс ставит host). */
+
+    .rt-pdf-viewer {
+        // Документ читают на тёмном в обеих темах: белый лист на светлой подложке теряет край.
+        // Поэтому цвета взяты со ступеней серого, а не с назначений темы, и стоят своими
+        // свойствами — потребитель перекрывает их правилом той же цели.
+        --rt-pdf-viewer-bg: var(--rt-neutral-900);
+        --rt-pdf-viewer-bar-bg: color-mix(in srgb, var(--rt-neutral-900) 35%, var(--rt-neutral-950));
+        --rt-pdf-viewer-bar-height: var(--rt-control-height-2xl);
+        --rt-pdf-viewer-text-color: var(--rt-neutral-0);
+        --rt-pdf-viewer-muted-color: var(--rt-neutral-200);
+        --rt-pdf-viewer-page-bg: var(--rt-neutral-0);
+        --rt-pdf-viewer-page-shadow: var(--rt-shadow-md);
+        --rt-pdf-viewer-page-gap: var(--rt-space-4);
+        --rt-pdf-viewer-toolbar-bg: var(--rt-neutral-800);
+        --rt-pdf-viewer-toolbar-radius: var(--rt-radius-full);
+        --rt-pdf-viewer-divider-width: var(--rt-border-width-thin);
+        --rt-pdf-viewer-divider-color: color-mix(in srgb, var(--rt-neutral-0) 20%, transparent);
+        --rt-pdf-viewer-control-radius: var(--rt-radius-md);
+        --rt-pdf-viewer-control-bg: color-mix(in srgb, var(--rt-neutral-0) 10%, transparent);
+        --rt-pdf-viewer-control-bg-hover: color-mix(in srgb, var(--rt-neutral-0) 24%, transparent);
+
+        display: block;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        background: var(--rt-pdf-viewer-bg);
+        color: var(--rt-pdf-viewer-text-color);
+
+        // Обёртка существует ради ловушки фокуса: display: contents ломает ловушку
+        &__surface {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            inset: 0;
+        }
+
+        &__bar {
+            display: flex;
+            height: var(--rt-pdf-viewer-bar-height);
+            flex: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--rt-space-4);
+            background: var(--rt-pdf-viewer-bar-bg);
+            gap: var(--rt-space-4);
+        }
+
+        // Имя файла сжимается первым: кнопки справа не уходят за край ни при каком имени
+        &__title {
+            display: flex;
+            min-width: 0;
+            align-items: center;
+            gap: var(--rt-space-2);
+        }
+
+        &__file-icon {
+            flex: none;
+            color: var(--rt-pdf-viewer-text-color);
+        }
+
+        // Обрезанное имя целиком видно в подсказке: оно же стоит в title
+        &__file-name {
+            overflow: hidden;
+            min-width: 0;
+            font-size: var(--rt-text-sm);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__actions {
+            display: flex;
+            flex: none;
+            align-items: center;
+            gap: var(--rt-space-2);
+        }
+
+        // Кнопки полосы — тот же вид управляющего элемента поверх тёмного, что у просмотра фото
+        &__actions rt-icon-button {
+            --rt-icon-button-color: var(--rt-pdf-viewer-text-color);
+            --rt-icon-button-color-bg-hover: var(--rt-pdf-viewer-control-bg-hover);
+
+            border-radius: var(--rt-pdf-viewer-control-radius);
+            background: var(--rt-pdf-viewer-control-bg);
+        }
+
+        &__scroller {
+            position: relative;
+            overflow: auto;
+            flex: 1 1 auto;
+            overscroll-behavior: contain;
+
+            // Место под полосу прокрутки занято с самого начала: «по ширине» меряется до того, как
+            // страницы встанут, и полоса, появившись после, давала бы прокрутку вбок
+            scrollbar-gutter: stable;
+        }
+
+        // Столбец шире окна, когда страница увеличена: иначе левый край листа уходил бы за край
+        // прокрутки и до него нельзя было бы дотянуться
+        &__column {
+            display: flex;
+            width: max-content;
+            min-width: 100%;
+            box-sizing: border-box;
+            flex-direction: column;
+            align-items: center;
+            padding: var(--rt-space-4) var(--rt-space-4) var(--rt-space-24);
+            gap: var(--rt-pdf-viewer-page-gap);
+        }
+
+        &__page {
+            flex: none;
+            background: var(--rt-pdf-viewer-page-bg);
+            box-shadow: var(--rt-pdf-viewer-page-shadow);
+        }
+
+        &__canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        // Индикатор и отказ стоят по центру окна под полосой, поверх пустого столбца
+        &__center {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--rt-space-4);
+            inset: var(--rt-pdf-viewer-bar-height) 0 0;
+        }
+
+        // Свойства заглушки объявлены на её же блоке — перекрываются правилом сильнее его
+        & &__error {
+            --rt-empty-state-title-color: var(--rt-pdf-viewer-text-color);
+
+            .rt-empty-state__description {
+                color: var(--rt-pdf-viewer-muted-color);
+            }
+        }
+
+        // Белая кнопка на тёмном: та же кнопка кита, перекрашенная своими свойствами
+        & &__error-download {
+            --rt-btn-bg: var(--rt-pdf-viewer-page-bg);
+            --rt-btn-bg-hover: var(--rt-neutral-100);
+            --rt-btn-bg-active: var(--rt-neutral-200);
+            --rt-btn-color: var(--rt-neutral-900);
+        }
+
+        &__toolbar {
+            position: absolute;
+            bottom: var(--rt-space-6);
+            left: 50%;
+            display: flex;
+            align-items: center;
+            padding: var(--rt-space-1) var(--rt-space-2);
+            border-radius: var(--rt-pdf-viewer-toolbar-radius);
+            background: var(--rt-pdf-viewer-toolbar-bg);
+            gap: var(--rt-space-1);
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
+
+        &__toolbar rt-icon-button {
+            --rt-icon-button-color: var(--rt-pdf-viewer-text-color);
+            --rt-icon-button-color-bg-hover: var(--rt-pdf-viewer-control-bg-hover);
+        }
+
+        &__counter,
+        &__zoom {
+            padding: 0 var(--rt-space-2);
+            font-size: var(--rt-text-sm);
+            font-variant-numeric: tabular-nums;
+        }
+
+        // Подпись масштаба не дёргает кнопки при смене «75%» на «100%»
+        &__zoom {
+            min-width: var(--rt-size-12);
+            text-align: center;
+        }
+
+        &__divider,
+        &__fit-divider {
+            width: var(--rt-pdf-viewer-divider-width);
+            height: var(--rt-size-5);
+            margin: 0 var(--rt-space-1);
+            background: var(--rt-pdf-viewer-divider-color);
+        }
+
+        & &__fit {
+            --rt-btn-color: var(--rt-pdf-viewer-text-color);
+            --rt-btn-bg-hover: var(--rt-pdf-viewer-control-bg-hover);
+        }
+
+        @include bp.place-max(bp.$rt-bp-sm) {
+            --rt-pdf-viewer-bar-height: var(--rt-control-height-xl);
+
+            &__fit,
+            &__fit-divider {
+                display: none;
+            }
+        }
+    }
+
+    /* Печатный лист: страницы картинками в конце <body>. Вне печати его не видно, а при печати
+       не видно ничего, кроме него, — ни полосы, ни плашки, ни страницы приложения под окном. */
+    .rt-pdf-viewer-print {
+        display: none;
+
+        &__page {
+            display: block;
+            width: 100%;
+            break-after: page;
+            break-inside: avoid;
+        }
+    }
+
+    @media print {
+        .rt-pdf-viewer-printing body > :not(.rt-pdf-viewer-print) {
+            display: none;
+        }
+
+        .rt-pdf-viewer-printing .rt-pdf-viewer-print {
+            display: block;
+        }
+    }
+}

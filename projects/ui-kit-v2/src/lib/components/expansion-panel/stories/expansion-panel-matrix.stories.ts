@@ -33,6 +33,15 @@ export const States: TStory = {
     parameters: { pseudo: storyPseudoParameters('.rt-expansion-panel__header') },
 };
 
+/** Действия заголовка — флажок и кнопка в строке заголовка, вне кнопки-переключателя. */
+export const HeaderActions: TStory = { args: { part: 'actions' } };
+
+/** Группа панелей: слева раскрытие одной сворачивает соседей, справа с `multi` — нет. */
+export const Group: TStory = { args: { part: 'group' } };
+
+/** Сохранение тела: в левой панели набранный текст переживает сворачивание, в правой — нет. */
+export const PreserveContent: TStory = { args: { part: 'preserve' } };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };

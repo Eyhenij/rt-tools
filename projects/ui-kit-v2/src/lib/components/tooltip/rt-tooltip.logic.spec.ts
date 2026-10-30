@@ -1,6 +1,6 @@
 import { ConnectedPosition } from '@angular/cdk/overlay';
 
-import { isTooltipTextCut, tooltipPositions } from './rt-tooltip.logic';
+import { isTooltipTextCut, tooltipPlacement, tooltipPositions } from './rt-tooltip.logic';
 
 describe('isTooltipTextCut', (): void => {
     it('текст шире коробки — обрезан', (): void => {
@@ -52,5 +52,14 @@ describe('tooltipPositions', (): void => {
         tooltipPositions('top')[0].offsetY = 99;
 
         expect(tooltipPositions('top')[0].offsetY).toBe(-6);
+    });
+});
+
+describe('tooltipPlacement', (): void => {
+    it('SC-UKV-1007 — своя сторона, затем сторона из настроек кита, затем сторона кита по набору', (): void => {
+        expect(tooltipPlacement('left', 'bottom', false)).toBe('left');
+        expect(tooltipPlacement(null, 'right', true)).toBe('right');
+        expect(tooltipPlacement(null, null, false)).toBe('top');
+        expect(tooltipPlacement(null, null, true)).toBe('bottom');
     });
 });

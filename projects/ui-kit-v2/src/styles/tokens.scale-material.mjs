@@ -31,6 +31,7 @@ export const scaleMaterial = [
     { name: `--rt-mat-neutral-35`, value: `#ccc` },
     { name: `--rt-mat-neutral-40`, value: `#a3a3a3` },
     { name: `--rt-mat-neutral-60`, value: `#747474` },
+    { name: `--rt-mat-neutral-70`, value: `#3f3e43` },
     { name: `--rt-mat-neutral-80`, value: `#323033` },
     { name: `--rt-mat-neutral-100`, value: `#181818` },
     {

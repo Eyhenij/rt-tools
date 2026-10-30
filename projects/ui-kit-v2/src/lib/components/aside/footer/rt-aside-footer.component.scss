@@ -11,9 +11,11 @@
         margin: var(--rt-aside-footer-margin, var(--rt-aside-inset));
         border-block-start: var(--rt-aside-footer-border-width) solid var(--rt-color-border-subtle);
 
+        /* Кнопки стоят в одну строку на любой ширине: на телефоне первая подписана коротко и
+           строка помещается без переноса. */
         &__content {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             justify-content: var(--rt-aside-footer-justify, space-between);
             gap: var(--rt-aside-footer-gap, var(--rt-space-sm));
         }

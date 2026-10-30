@@ -1,21 +1,6 @@
 import { CdkDrag, CdkDragDrop, CdkDragHandle, CdkDropList } from '@angular/cdk/drag-drop';
 import { NgTemplateOutlet } from '@angular/common';
-import {
-    booleanAttribute,
-    inject,
-    input,
-    output,
-    signal,
-    ChangeDetectionStrategy,
-    Component,
-    InputSignal,
-    InputSignalWithTransform,
-    OutputEmitterRef,
-    Signal,
-    TemplateRef,
-    ViewEncapsulation,
-    WritableSignal,
-} from '@angular/core';
+import { inject, signal, ChangeDetectionStrategy, Component, Signal, TemplateRef, ViewEncapsulation, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
@@ -27,6 +12,8 @@ import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { IRtIcon, TRtRadius } from '@rt-tools/ui-kit-v2/core';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { IRtDynamicSelector } from '../rt-dynamic-selector.model';
+import { RtDynamicSelectorPartsService } from '../rt-dynamic-selector-parts.service';
+import { IRtDynamicSelectorParts } from '../rt-dynamic-selector-parts.model';
 
 const BEM_BLOCK: string = 'rt-dynamic-selector-list';
 
@@ -64,9 +51,11 @@ const BEM_BLOCK: string = 'rt-dynamic-selector-list';
 })
 export class RtDynamicSelectorListComponent<TItem> {
     readonly #breakpoints: BreakpointsService = inject(BreakpointsService);
+    readonly #source: IRtDynamicSelectorParts.ListSource<TItem> =
+        inject<RtDynamicSelectorPartsService<TItem>>(RtDynamicSelectorPartsService).list;
 
     /** На узком экране подсказки кнопок не показываются: наведения там нет. */
-    protected readonly isNarrow: Signal<boolean> = this.#breakpoints.narrow;
+    protected readonly isNarrow: Signal<boolean> = this.#breakpoints.viewportNarrow;
     protected readonly dragLabel: Signal<string> = rtKitLabel('dynamicSelectorDrag');
     protected readonly removeLabel: Signal<string> = rtKitLabel('dynamicSelectorRemove');
     protected readonly editLabel: Signal<string> = rtKitLabel('dynamicSelectorEdit');
@@ -79,56 +68,21 @@ export class RtDynamicSelectorListComponent<TItem> {
     protected readonly editedIndex: WritableSignal<number | null> = signal<number | null>(null);
     protected readonly draft: WritableSignal<string> = signal<string>('');
 
-    public readonly rows: InputSignal<ReadonlyArray<IRtDynamicSelector.ListRow<TItem>>> = input<
-        ReadonlyArray<IRtDynamicSelector.ListRow<TItem>>
-    >([]);
-    public readonly draggable: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
-        transform: booleanAttribute,
-    });
-    public readonly editable: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
-        transform: booleanAttribute,
-    });
-    public readonly disabled: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
-        transform: booleanAttribute,
-    });
-    /** Полоса под строками; приглашение вызывающего встаёт на её место. */
-    public readonly actionsShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
-        transform: booleanAttribute,
-    });
-    /** Сброс и очистка в полосе; без них в полосе остаётся кнопка добавления. */
-    public readonly resetClearShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
-        transform: booleanAttribute,
-    });
-    /** Корзина строк; без неё строки двигаются и правятся, но не убираются. */
-    public readonly removeShown: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
-        transform: booleanAttribute,
-    });
-    public readonly resetDisabled: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
-        transform: booleanAttribute,
-    });
-    public readonly clearDisabled: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
-        transform: booleanAttribute,
-    });
-    /** Шаг скругления кнопок-иконок списка; по умолчанию они круглые. */
-    public readonly buttonRadius: InputSignal<TRtRadius | null> = input<TRtRadius | null>('full');
-    /** Значок кнопки «Очистить список»; по умолчанию крестик. */
-    public readonly clearIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>('close');
-    /** Название строки переносится; `false` ведёт его одной строкой с многоточием и подсказкой при обрезке. */
-    public readonly titleWrap: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, {
-        transform: booleanAttribute,
-    });
-    public readonly titleTpl: InputSignal<TemplateRef<IRtDynamicSelector.RowContext<TItem>> | null> = input<TemplateRef<
-        IRtDynamicSelector.RowContext<TItem>
-    > | null>(null);
-    public readonly controlsTpl: InputSignal<TemplateRef<IRtDynamicSelector.RowContext<TItem>> | null> = input<TemplateRef<
-        IRtDynamicSelector.RowContext<TItem>
-    > | null>(null);
-
-    public readonly removed: OutputEmitterRef<unknown> = output<unknown>();
-    public readonly moved: OutputEmitterRef<IRtDynamicSelector.Move> = output<IRtDynamicSelector.Move>();
-    public readonly edited: OutputEmitterRef<IRtDynamicSelector.TextEdit> = output<IRtDynamicSelector.TextEdit>();
-    public readonly resetClicked: OutputEmitterRef<void> = output<void>();
-    public readonly cleared: OutputEmitterRef<void> = output<void>();
+    /* Строки и настройки приходят от корня: список стоит только внутри него. */
+    protected readonly rows: Signal<ReadonlyArray<IRtDynamicSelector.ListRow<TItem>>> = this.#source.rows;
+    protected readonly draggable: Signal<boolean> = this.#source.draggable;
+    protected readonly editable: Signal<boolean> = this.#source.editable;
+    protected readonly disabled: Signal<boolean> = this.#source.disabled;
+    protected readonly actionsShown: Signal<boolean> = this.#source.actionsShown;
+    protected readonly resetClearShown: Signal<boolean> = this.#source.resetClearShown;
+    protected readonly removeShown: Signal<boolean> = this.#source.removeShown;
+    protected readonly resetDisabled: Signal<boolean> = this.#source.resetDisabled;
+    protected readonly clearDisabled: Signal<boolean> = this.#source.clearDisabled;
+    protected readonly buttonRadius: Signal<TRtRadius | null> = this.#source.buttonRadius;
+    protected readonly clearIcon: Signal<IRtIcon.Name> = this.#source.clearIcon;
+    protected readonly titleWrap: Signal<boolean> = this.#source.titleWrap;
+    protected readonly titleTpl: Signal<TemplateRef<IRtDynamicSelector.RowContext<TItem>> | null> = this.#source.titleTpl;
+    protected readonly controlsTpl: Signal<TemplateRef<IRtDynamicSelector.RowContext<TItem>> | null> = this.#source.controlsTpl;
 
     /** Строка, взятая из чужого списка, ничего не меняет; брошенная на своё место — тоже. */
     protected onDrop(event: CdkDragDrop<unknown>): void {
@@ -136,12 +90,12 @@ export class RtDynamicSelectorListComponent<TItem> {
             return;
         }
 
-        this.moved.emit({ from: event.previousIndex, to: event.currentIndex });
+        this.#source.move({ from: event.previousIndex, to: event.currentIndex });
     }
 
     protected onRemove(row: IRtDynamicSelector.ListRow<TItem>): void {
         if (!row.locked && !this.disabled()) {
-            this.removed.emit(row.key);
+            this.#source.remove(row.key);
         }
     }
 
@@ -151,11 +105,19 @@ export class RtDynamicSelectorListComponent<TItem> {
     }
 
     protected onEditApply(row: IRtDynamicSelector.ListRow<TItem>): void {
-        this.edited.emit({ previous: row.label, next: this.draft() });
+        this.#source.edit({ previous: row.label, next: this.draft() });
         this.editedIndex.set(null);
     }
 
     protected onEditCancel(): void {
         this.editedIndex.set(null);
+    }
+
+    protected onReset(): void {
+        this.#source.reset();
+    }
+
+    protected onClear(): void {
+        this.#source.clear();
     }
 }

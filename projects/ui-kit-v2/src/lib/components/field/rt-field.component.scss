@@ -1,5 +1,28 @@
 @layer rt-kit.components {
     .rt-field {
+        --rt-field-floating-start: calc(var(--rt-input-padding-x) + var(--rt-input-border-width));
+        --rt-field-floating-rest-start: var(--rt-field-floating-start);
+        --rt-field-floating-duration: var(--rt-duration-fast);
+
+        /* Поднятая подпись начинается за скруглением угла: на изгибе верхней рамки ещё нет, и
+           разрыв там не виден — подпись легла бы на изгиб без просвета слева. */
+        --rt-field-raised-start: max(
+            var(--rt-field-floating-start),
+            calc(min(var(--rt-input-radius), var(--rt-input-height) / 2) + var(--rt-space-2))
+        );
+        --rt-field-notch-start: calc(var(--rt-field-raised-start) - var(--rt-space-1));
+        --rt-field-notch-depth: calc(2 * var(--rt-input-border-width));
+
+        /* Ширину подписи на рамке ставит компонент замером; до замера разрыва нет. */
+        --rt-field-notch-width: 0px;
+
+        /* Высота залитого поля Material: подпись лежит внутри поля над значением. Она равна средней
+           высоте поля — под набором это высота Material при выбранной плотности. */
+        --rt-field-fill-height: var(--rt-input-height-md);
+
+        /* Ярус подписи над контролом — внутри поля: `isolation` не пускает её над страницей. */
+        --rt-field-floating-z: var(--rt-z-sticky);
+
         display: flex;
         flex-direction: column;
         gap: var(--rt-field-gap);
@@ -14,10 +37,21 @@
             color: var(--rt-field-label-color);
             font-size: var(--rt-field-label-font-size);
             font-weight: var(--rt-field-label-font-weight);
+
+            /* Межбуквенный интервал подписи — ручка приложения: кит её не объявляет, без неё интервал
+               наследуется от приложения, как раньше. */
+            letter-spacing: var(--rt-field-label-letter-spacing, inherit);
         }
 
         &__required {
+            margin-left: var(--rt-field-required-gap);
             color: var(--rt-field-required-color);
+        }
+
+        /* Недействительное поле красит звёздочку цветом ошибки. Своим видом кита она красная и так;
+           материальный набор красит её цветом подписи и до ошибки. */
+        &--invalid &__required {
+            color: var(--rt-field-error-color);
         }
 
         /* Зона значения: проецируемый контрол или read-only текст. Задаёт размер/цвет
@@ -47,13 +81,28 @@
         /* Зона сообщений под контролом. С резервом (reserveHintSpace) hint и ошибка
            кладутся в одну ячейку грида: скрытый hint продолжает задавать высоту, и
            подмена сообщения не двигает форму ни вниз, ни вверх. Без hint высоту
-           держит min-height в одну строку — считаем по error-шрифту, он крупнее. */
+           держит min-height в одну строку — считаем по error-шрифту, он крупнее.
+           Под набором это строка подсказки Material: своя высота строки и отступ над ней. Отступ
+           есть, только когда строке есть что держать: резерв или сообщение. Своим видом кита
+           строка прежняя. Строка считается в `border-box`, и отступ входит в её наименьшую высоту: так
+           она та же и у приложения, которое ставит `border-box` всем узлам своим правилом вне слоёв. */
         &__messages {
             display: grid;
+            box-sizing: border-box;
+
+            /* Своим видом высота строки наследуется от приложения, как раньше: правило стоит только под набором. */
+            &:is(.rt-preset-material *, [data-preset='material'] *) {
+                line-height: var(--rt-field-messages-line-height);
+            }
+
+            &--reserved,
+            &:has(> *) {
+                padding-top: var(--rt-field-messages-padding-top);
+            }
 
             &--reserved {
                 font-size: var(--rt-field-error-font-size);
-                min-block-size: 1lh;
+                min-block-size: calc(1lh + var(--rt-field-messages-padding-top));
 
                 > * {
                     grid-area: 1 / 1;

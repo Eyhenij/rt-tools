@@ -132,4 +132,19 @@ table '| rt-tools | — | — | 2026-09-17 |'
 report "SC-AK-1115 — без назначения очередь не спрашивается" \
     "$(stale_of '{"exists":true,"open":false}')" ''
 
+# --- SC-AK-1232 — отказ называет слово владельца переносом назначения ------------------------
+# Отказ кончался словами «назначение переносит владелец», и исполнитель после прямого поручения
+# остановился и спросил владельца второй раз: поручение и было тем переносом.
+OWNER_WORD='names this work is that'
+printf 'rt-worktree-9\n' > "$TREE/.claude/rt-kit/tree-name"
+table '| rt-tools | 1870 | docs/plans/one-kit.md | 2026-09-17 |'
+report "SC-AK-1232 — нет строки: слово владельца названо" "$(fault_of 1870 | grep -c "$OWNER_WORD")" 1
+printf 'rt-tools\n' > "$TREE/.claude/rt-kit/tree-name"
+table '| rt-tools | — | — | 2026-09-17 |'
+report "SC-AK-1232 — прочерк: слово владельца названо" "$(fault_of 1870 | grep -c "$OWNER_WORD")" 1
+table '| rt-tools | 1870 | docs/plans/one-kit.md | 2026-09-17 |'
+report "SC-AK-1232 — чужой эпик: слово владельца названо" "$(fault_of 2208 | grep -c "$OWNER_WORD")" 1
+report "SC-AK-1232 — закрытый эпик: слово владельца названо" \
+    "$(stale_of '{"exists":true,"open":false}' | grep -c "$OWNER_WORD")" 1
+
 suite_result "назначение эпика рабочей копии"

@@ -1,3 +1,5 @@
+@use '../../../styles/breakpoints' as bp;
+
 @layer rt-kit.components {
     .rt-toolbar {
         /* Раскладка полосы — свойства блока: обёртка и приложение переставляют их снаружи.
@@ -93,7 +95,7 @@
     // Мобилка: три зоны не влезают в строку — стекаем в колонку на всю ширину
     // (фильтр → поиск → действия), поиск растягивается. `--dense` (компактная
     // шапка вроде rt-chat) из стекинга исключён — остаётся в одну строку.
-    @media (width <= 768px) {
+    @include bp.place-max(768px) {
         .rt-toolbar:not(.rt-toolbar--dense) {
             .rt-toolbar__bars {
                 flex-direction: column;

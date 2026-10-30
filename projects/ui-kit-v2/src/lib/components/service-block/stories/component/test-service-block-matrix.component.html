@@ -1,0 +1,50 @@
+@switch (part) {
+    @case ('content') {
+        <app-story-presets caption="Состав в обоих наборах">
+            <ng-template>
+                <app-story-row slotWidth="30.75rem" [items]="contentCases" [itemLabel]="caseLabel">
+                    <ng-template let-contentCase>
+                        <rt-service-block [logos]="contentCase.logos" [name]="contentCase.name" [description]="contentCase.description" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('width') {
+        <app-story-presets caption="Место панели и место телефона: на узком описание переносится">
+            <ng-template>
+                <app-story-row slotWidth="30.75rem" [items]="panelWidths">
+                    <ng-template>
+                        <rt-service-block [logos]="widthCase.logos" [name]="widthCase.name" [description]="widthCase.description" />
+                    </ng-template>
+                </app-story-row>
+                <app-story-row slotWidth="18rem" [items]="phoneWidths">
+                    <ng-template>
+                        <rt-service-block [logos]="widthCase.logos" [name]="widthCase.name" [description]="widthCase.description" />
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('presets') {
+        <app-story-presets caption="Блок службы в обоих наборах" fill>
+            <ng-template>
+                <rt-service-block [logos]="single" [name]="serviceName" [description]="serviceDescription" />
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-presets caption="Блок службы в обеих темах в обоих наборах" fill>
+            <ng-template>
+                <app-story-themes fill>
+                    <ng-template>
+                        <rt-service-block [logos]="single" [name]="serviceName" [description]="serviceDescription" />
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}

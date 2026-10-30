@@ -18,6 +18,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
   карточки.
 - Кнопка-переключатель — тогда `active` превращается в `aria-pressed`.
 - Рисунок не из набора кита — `[icon]="null"` и рисунок внутри кнопки, история `Content`.
+- Переход на страницу приложения — вход `link`: кнопка рисуется ссылкой `<a href>` того же вида,
+  её можно открыть в новой вкладке, история `Link`.
 
 ## Когда не применять
 
@@ -48,19 +50,23 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Состояния
 
-| состояние       | чем задаётся            | что меняется                                    |
-| --------------- | ----------------------- | ----------------------------------------------- |
-| обычное         | —                       | заливка по палитре                              |
-| наведение       | `:hover:not(:disabled)` | заливка уходит в свою пару для наведения        |
-| нажатие         | `:active`               | заливка ещё на ступень                          |
-| фокус с клавиши | `:focus-visible`        | кольцо фокуса                                   |
-| нажата          | вход `active`           | заливка как у наведения + `aria-pressed="true"` |
-| загрузка        | вход `loading`          | кольцо вместо иконки, клик наружу не уходит     |
-| отключена       | вход `disabled`         | палитра гасится, клик не проходит               |
+| состояние       | чем задаётся                                     | что меняется                                    |
+| --------------- | ------------------------------------------------ | ----------------------------------------------- |
+| обычное         | —                                                | заливка по палитре                              |
+| наведение       | `:hover:not(:disabled)`                          | заливка уходит в свою пару для наведения        |
+| нажатие         | `:active`                                        | заливка ещё на ступень                          |
+| фокус с клавиши | `:focus-visible`, кроме фокуса от мыши и касания | кольцо фокуса                                   |
+| нажата          | вход `active`                                    | заливка как у наведения + `aria-pressed="true"` |
+| загрузка        | вход `loading`                                   | кольцо вместо иконки, клик наружу не уходит     |
+| отключена       | вход `disabled`                                  | палитра гасится, клик не проходит               |
 
 `loading` — это `disabled` плюс кольцо. Наведение, нажатие и фокус смотрятся аддоном
 псевдосостояний: признак ставится на host, а стилизована `<button>` внутри шаблона, поэтому
 аддону передан спуск до неё.
+
+Кольцо фокуса не рисуется при фокусе от мыши и касания, как у `rtButton`: источник фокуса CDK
+пишет классами `cdk-*-focused` на `<button>` внутри. Показ —
+[`FocusOrigin`](./?path=/story/atoms-buttons-button--focus-origin) у кнопки.
 
 ## Доступность
 
@@ -88,32 +94,40 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход                 | тип                                                                                         | умолчание                   |
-| -------------------- | ------------------------------------------------------------------------------------------- | --------------------------- |
-| `icon`               | `IRtIcon.Name \| null` — нужен он или `glyph`; побеждает имя; без обоих — вложенное         | `null`                      |
-| `glyph`              | `string \| null` — имя Material, рисуется как `glyph` у `rt-icon`                           | `null`                      |
-| `ariaLabel`          | `string`                                                                                    | **обязателен**              |
-| `variant`            | `'primary' \| 'secondary' \| 'ghost' \| 'danger' \| 'success' \| 'warning'`                 | `'ghost'`                   |
-| `size`               | `'2xs' \| 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`                                    | `'md'`                      |
-| `iconSize`           | `IRtIcon.Size \| null`                                                                      | `null` → от размера кнопки  |
-| `iconColor`          | `IRtIcon.Color`                                                                             | `'current'`                 |
-| `iconFill`           | `boolean`                                                                                   | `false`                     |
-| `radius`             | `TRtRadius \| null` — шаг общей шкалы                                                       | `null` → `md`               |
-| `type`               | `'button' \| 'submit'`                                                                      | `'button'`                  |
-| `tooltip`            | `string`                                                                                    | `''` — пусто, подсказки нет |
-| `tooltipHideOnClick` | `boolean` — `false` у переключателя: подсказка остаётся после клика и меняет текст на месте | `true`                      |
-| `tabIndex`           | `number`                                                                                    | `0`                         |
-| `loading`            | `boolean`                                                                                   | `false`                     |
-| `disabled`           | `boolean`                                                                                   | `false`                     |
-| `active`             | `boolean`                                                                                   | `false`                     |
-| `expanded`           | `boolean \| null` — раскрыта ли панель кнопки, пишется в `aria-expanded`                    | `null` — атрибута нет       |
-| `indicator`          | `boolean`                                                                                   | `false`                     |
+| вход                 | тип                                                                                         | умолчание                          |
+| -------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------- |
+| `icon`               | `IRtIcon.Name \| null` — нужен он или `glyph`; побеждает имя; без обоих — вложенное         | `null`                             |
+| `glyph`              | `string \| null` — имя Material, рисуется как `glyph` у `rt-icon`                           | `null`                             |
+| `ariaLabel`          | `string`                                                                                    | **обязателен**                     |
+| `variant`            | `'primary' \| 'secondary' \| 'ghost' \| 'danger' \| 'success' \| 'warning'`                 | `'ghost'`                          |
+| `size`               | `'2xs' \| 'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'`                                    | `'md'`                             |
+| `iconSize`           | `IRtIcon.Size \| null`                                                                      | `null` → от размера кнопки         |
+| `iconColor`          | `IRtIcon.Color`                                                                             | `'current'`                        |
+| `iconFill`           | `boolean`                                                                                   | `false`                            |
+| `radius`             | `TRtRadius \| null` — шаг общей шкалы                                                       | `null` → `md`                      |
+| `type`               | `'button' \| 'submit'`                                                                      | `'button'`                         |
+| `tooltip`            | `string`                                                                                    | `''` — пусто, подсказки нет        |
+| `tooltipHideOnClick` | `boolean` — `false` у переключателя: подсказка остаётся после клика и меняет текст на месте | из `provideRtKit`, без него `true` |
+| `tabIndex`           | `number`                                                                                    | `0`                                |
+| `loading`            | `boolean`                                                                                   | `false`                            |
+| `disabled`           | `boolean`                                                                                   | `false`                            |
+| `active`             | `boolean`                                                                                   | `false`                            |
+| `expanded`           | `boolean \| null` — раскрыта ли панель кнопки, пишется в `aria-expanded`                    | `null` — атрибута нет              |
+| `ariaHaspopup`       | `'menu' \| 'listbox' \| 'tree' \| 'grid' \| 'dialog' \| null` — пишется в `aria-haspopup`   | `null` — атрибута нет              |
+| `link`               | `RouterLink['routerLink']` — маршрут приложения: рисуется ссылка `<a href>` того же вида    | `null` — кнопка                    |
+| `indicator`          | `boolean`                                                                                   | `false`                            |
 
 ## Выходы
 
 | выход     | тип          | когда                                          |
 | --------- | ------------ | ---------------------------------------------- |
 | `clicked` | `MouseEvent` | клик; в загрузке и отключении наружу не уходит |
+
+## Методы
+
+| метод             | что делает                          |
+| ----------------- | ----------------------------------- |
+| `focus(options?)` | фокусирует кнопку или ссылку внутри |
 
 ## Рядом
 

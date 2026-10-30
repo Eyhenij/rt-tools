@@ -21,7 +21,8 @@ import { IRtTooltip } from '../../rt-tooltip.model';
             label="Наведите курсор"
             aria-label="Наведите курсор"
             [rtTooltip]="text"
-            [rtTooltipPlacement]="placement"></button>
+            [rtTooltipPlacement]="placement"
+            [rtTooltipShowDelay]="showDelay"></button>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -33,4 +34,5 @@ import { IRtTooltip } from '../../rt-tooltip.model';
 export class TestRtTooltipComponent {
     public text: string = 'Текст подсказки';
     public placement: IRtTooltip.Placement = 'top';
+    public showDelay: number | null = null;
 }

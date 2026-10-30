@@ -1,0 +1,37 @@
+@switch (part) {
+    @case ('size') {
+        <app-story-presets caption="Размер × число знаков в обоих наборах">
+            <ng-template>
+                <app-story-grid [rows]="sizes" [columns]="counts" [columnLabel]="countLabel">
+                    <ng-template let-size let-count="col">
+                        <rt-service-logo [size]="size" [logos]="rows[count - 1]" />
+                    </ng-template>
+                </app-story-grid>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('icon') {
+        <app-story-presets caption="Знак значком кита во всех размерах и поверх знаков-картинок">
+            <ng-template>
+                <app-story-grid [rows]="sizes" [columns]="iconCases" [columnLabel]="iconCaseLabel">
+                    <ng-template let-size let-iconCase="col">
+                        <rt-service-logo [size]="size" [logos]="iconCase.logos" />
+                    </ng-template>
+                </app-story-grid>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('themes') {
+        <app-story-presets caption="Круг светлый в обеих темах в обоих наборах">
+            <ng-template>
+                <app-story-themes>
+                    <ng-template>
+                        <rt-service-logo [logos]="mixedRow" />
+                    </ng-template>
+                </app-story-themes>
+            </ng-template>
+        </app-story-presets>
+    }
+}

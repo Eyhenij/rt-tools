@@ -20,7 +20,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Когда не применять
 
-- **Файлы перетаскивают в область** — [`rt-file-drop`](./?path=/docs/organisms-filedrop-overview--docs).
+- **Файлы перетаскивают в область** — [`rt-file-drop`](./?path=/docs/molecules-forms-filedrop-overview--docs).
 - **Только показать уже загруженное** — [`rt-file-list`](./?path=/docs/molecules-files-filelist-overview--docs)
   с [`rt-file-card`](./?path=/docs/molecules-files-filecard-overview--docs): поле выбора здесь лишнее.
 
@@ -83,14 +83,15 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 Достались от `RtFormControlBase` — общей основы полей кита; в ней же они и меняются, сразу для
 всех наследников.
 
-| вход        | тип                    | умолчание | здесь                           |
-| ----------- | ---------------------- | --------- | ------------------------------- |
-| `size`      | `'sm' \| 'md' \| 'lg'` | `'md'`    | принимается, но не рисуется     |
-| `disabled`  | `boolean`              | `false`   | —                               |
-| `controlId` | `string \| null`       | `null`    | —                               |
-| `ariaLabel` | `string \| null`       | `null`    | —                               |
-| `clearable` | `boolean`              | `true`    | крестик стоит у каждой карточки |
-| `bordered`  | `boolean`              | `true`    | принимается, но не рисуется     |
+| вход            | тип                    | умолчание | здесь                           |
+| --------------- | ---------------------- | --------- | ------------------------------- |
+| `size`          | `'sm' \| 'md' \| 'lg'` | `'md'`    | принимается, но не рисуется     |
+| `disabled`      | `boolean`              | `false`   | —                               |
+| `controlId`     | `string \| null`       | `null`    | —                               |
+| `ariaLabel`     | `string \| null`       | `null`    | —                               |
+| `clearable`     | `boolean`              | `true`    | крестик стоит у каждой карточки |
+| `clearTabbable` | `boolean`              | `false`   |
+| `bordered`      | `boolean`              | `true`    | принимается, но не рисуется     |
 
 ## Выходы
 
@@ -99,6 +100,6 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Рядом
 
-- [`rt-file-drop`](./?path=/docs/organisms-filedrop-overview--docs) — приём файлов перетаскиванием.
+- [`rt-file-drop`](./?path=/docs/molecules-forms-filedrop-overview--docs) — приём файлов перетаскиванием.
 - [`rt-file-card`](./?path=/docs/molecules-files-filecard-overview--docs) — чем нарисован каждый выбранный файл.
 - [`rt-field`](./?path=/docs/molecules-forms-field-overview--docs) — подпись, ошибка, режим чтения.

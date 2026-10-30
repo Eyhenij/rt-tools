@@ -34,12 +34,14 @@ import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
+import { RtServiceLogoComponent } from '@rt-tools/ui-kit-v2/service-logo';
 import { RtSkeletonComponent } from '@rt-tools/ui-kit-v2/skeleton';
 import {
     RtThreadListFiltersDirective,
     RtThreadListRowActionsDirective,
     RtThreadListRowDirective,
     RtThreadListSearchDirective,
+    RtThreadListTabsDirective,
 } from './rt-thread-list.directives';
 import { IRtThreadList } from './rt-thread-list.model';
 
@@ -64,7 +66,7 @@ const PREVIEW_ICONS: readonly IRtIcon.Name[] = ['user', 'users', 'user'];
 @Component({
     selector: 'rt-thread-list',
     templateUrl: './rt-thread-list.component.html',
-    styleUrls: ['./rt-thread-list.component.scss'],
+    styleUrls: ['./rt-thread-list.component.scss', './rt-thread-list-messenger.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
@@ -78,6 +80,7 @@ const PREVIEW_ICONS: readonly IRtIcon.Name[] = ['user', 'users', 'user'];
         RtIconButtonComponent,
         RtInputComponent,
         RtPopoverDirective,
+        RtServiceLogoComponent,
         RtSkeletonComponent,
         BlockDirective,
         ElemDirective,
@@ -87,6 +90,7 @@ const PREVIEW_ICONS: readonly IRtIcon.Name[] = ['user', 'users', 'user'];
     hostDirectives: [{ directive: RtRadiusDirective, inputs: ['radius'] }],
     host: {
         class: BEM_BLOCK,
+        '[class.rt-thread-list--messenger]': 'messenger()',
     },
 })
 export class RtThreadListComponent<TRow extends IRtThreadList.Row> implements OnInit {
@@ -125,6 +129,8 @@ export class RtThreadListComponent<TRow extends IRtThreadList.Row> implements On
 
     protected readonly searchTemplate: Signal<RtThreadListSearchDirective | undefined> = contentChild(RtThreadListSearchDirective);
 
+    protected readonly tabsTemplate: Signal<RtThreadListTabsDirective | undefined> = contentChild(RtThreadListTabsDirective);
+
     public readonly rows: InputSignal<readonly TRow[]> = input<readonly TRow[]>([]);
 
     public readonly activeId: InputSignal<IRtThreadList.TRowId | null> = input<IRtThreadList.TRowId | null>(null);
@@ -150,6 +156,11 @@ export class RtThreadListComponent<TRow extends IRtThreadList.Row> implements On
     });
 
     public readonly filtersActive: InputSignalWithTransform<boolean, boolean | string> = input<boolean, boolean | string>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Вид мессенджера: колонка с полями, строки карточками со скруглением, без левой полосы */
+    public readonly messenger: InputSignalWithTransform<boolean, boolean | string> = input<boolean, boolean | string>(false, {
         transform: booleanAttribute,
     });
 

@@ -1,0 +1,142 @@
+<ng-container rtBlock="rt-ai-prompt-input">
+    @if (hintAbove()) {
+        <p rtElem="hint" qa-dataid="ai-prompt-input-hint" [rtMod]="{ above: true }">{{ hintText() }}</p>
+    }
+
+    <div rtElem="box" qa-dataid="ai-prompt-input-box" [rtMod]="boxMods()">
+        @if (attachments() && files().length) {
+            <div rtElem="files" qa-dataid="ai-prompt-input-files">
+                @for (file of files(); track $index) {
+                    <rt-file-card
+                        showRemove
+                        qa-dataid="ai-prompt-input-file"
+                        size="sm"
+                        [name]="file.name"
+                        [sizeBytes]="file.size"
+                        [disabled]="locked()"
+                        (removed)="removeFile($index)" />
+                }
+            </div>
+        }
+
+        <textarea
+            #textEl
+            rtElem="input"
+            qa-dataid="ai-prompt-input-field"
+            cdkTextareaAutosize
+            [attr.aria-label]="t().chatComposerAria"
+            [placeholder]="placeholderText()"
+            [value]="text()"
+            [disabled]="locked()"
+            [cdkAutosizeMinRows]="minRows()"
+            [cdkAutosizeMaxRows]="maxRows()"
+            (input)="onInput($event)"
+            (keydown)="onKeydown($event)"></textarea>
+
+        <div rtElem="actions">
+            @if (attachments()) {
+                <input
+                    #fileEl
+                    qa-dataid="ai-prompt-input-file-input"
+                    type="file"
+                    hidden
+                    multiple
+                    [attr.accept]="accept() || null"
+                    (change)="onFilesPicked($event)" />
+                <rt-icon-button
+                    qa-dataid="ai-prompt-input-attach"
+                    icon="ico-plus"
+                    iconColor="muted"
+                    size="sm"
+                    variant="ghost"
+                    [ariaLabel]="t().chatAttachAria"
+                    [tooltip]="t().chatAttachTooltip"
+                    [disabled]="locked()"
+                    (clicked)="openPicker()" />
+            }
+
+            <ng-content select="[rtPromptInputStart]" />
+
+            <div rtElem="controls">
+                <ng-content select="[rtPromptInputEnd]" />
+
+                @if (model()) {
+                    <button
+                        rtButton
+                        rtElem="control"
+                        qa-dataid="ai-prompt-input-model"
+                        type="button"
+                        theme="secondary"
+                        appearance="text"
+                        size="sm"
+                        [label]="model()"
+                        [attr.aria-label]="t().aiPromptModelAria + ': ' + model()"
+                        [disabled]="disabled()"
+                        (click)="pick('model')"></button>
+                }
+
+                @if (effort()) {
+                    <button
+                        rtButton
+                        rtElem="control"
+                        qa-dataid="ai-prompt-input-effort"
+                        type="button"
+                        theme="secondary"
+                        appearance="text"
+                        size="sm"
+                        [rtMod]="{ muted: true }"
+                        [label]="effort()"
+                        [attr.aria-label]="t().aiPromptEffortAria + ': ' + effort()"
+                        [disabled]="disabled()"
+                        (click)="pick('effort')"></button>
+                }
+
+                @if (mode()) {
+                    <button
+                        rtButton
+                        rtElem="control"
+                        qa-dataid="ai-prompt-input-mode"
+                        type="button"
+                        theme="secondary"
+                        appearance="text"
+                        size="sm"
+                        [rtMod]="{ muted: true }"
+                        [label]="mode()"
+                        [attr.aria-label]="t().aiPromptModeAria + ': ' + mode()"
+                        [disabled]="disabled()"
+                        (click)="pick('mode')"></button>
+                }
+
+                @if (hasUsage()) {
+                    <rt-usage-ring qa-dataid="ai-prompt-input-usage" [value]="usage() ?? 0" [warnAt]="usageWarnAt()" [hint]="usageHint()" />
+                }
+
+                @if (isStoppable()) {
+                    <rt-icon-button
+                        qa-dataid="ai-prompt-input-stop"
+                        icon="stop"
+                        size="sm"
+                        variant="primary"
+                        [ariaLabel]="t().chatStopAria"
+                        [tooltip]="t().chatStopLabel"
+                        (clicked)="stop()" />
+                } @else {
+                    <rt-icon-button
+                        qa-dataid="ai-prompt-input-send"
+                        icon="arrow-up"
+                        size="sm"
+                        variant="primary"
+                        [ariaLabel]="t().chatSendAria"
+                        [tooltip]="t().chatSendLabel"
+                        [loading]="sending()"
+                        [disabled]="!canSend()"
+                        (clicked)="submit()" />
+                }
+            </div>
+        </div>
+    </div>
+
+    @if (hintBelow()) {
+        <p rtElem="hint" qa-dataid="ai-prompt-input-hint">{{ hintText() }}</p>
+    }
+</ng-container>

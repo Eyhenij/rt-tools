@@ -202,6 +202,8 @@ export class RtMenuComponent {
 
     protected onKeydown(event: KeyboardEvent): void {
         if (event.key === 'Escape') {
+            // Escape закрывает один слой: меню, а не боковую панель или окно под ним.
+            event.stopPropagation();
             this.close();
             this.#focusTrigger();
             return;

@@ -39,11 +39,11 @@
         :is(.rt-preset-material, [data-preset='material']) & {
             --rt-speed-menu-gap: var(--rt-size-4);
             --rt-speed-menu-inset: calc(var(--rt-size-6) + var(--rt-size-1));
-            --rt-speed-menu-action-bg: var(--mat-sys-primary-container, var(--rt-mat-neutral-25));
-            --rt-speed-menu-action-color: var(--mat-sys-on-primary-container, var(--rt-color-text-primary));
+            --rt-speed-menu-action-bg: var(--rt-sys-primary-container, var(--rt-mat-neutral-25));
+            --rt-speed-menu-action-color: var(--rt-sys-on-primary-container, var(--rt-color-text-primary));
             --rt-icon-step-md: var(--rt-size-6);
-            --rt-speed-menu-action-shadow: var(--mat-sys-level3, var(--rt-mat-shadow-fab));
-            --rt-speed-menu-action-shadow-hover: var(--mat-sys-level4, var(--rt-mat-shadow-fab-hover));
+            --rt-speed-menu-action-shadow: var(--rt-sys-level3, var(--rt-mat-shadow-fab));
+            --rt-speed-menu-action-shadow-hover: var(--rt-sys-level4, var(--rt-mat-shadow-fab-hover));
             --rt-speed-menu-duration: calc(var(--rt-duration-fast) * 5 / 6);
             --rt-speed-menu-stagger: calc(var(--rt-duration-fast) * 5 / 12);
         }
@@ -98,7 +98,7 @@
        ступень первого кита. */
     :root[data-theme='dark'] :is(.rt-preset-material, [data-preset='material']) .rt-speed-menu__panel,
     html.rt-theme-dark :is(.rt-preset-material, [data-preset='material']) .rt-speed-menu__panel {
-        --rt-speed-menu-action-bg: var(--mat-sys-primary-container, var(--rt-mat-dark-20));
+        --rt-speed-menu-action-bg: var(--rt-sys-primary-container, var(--rt-mat-dark-20));
     }
 
     @for $step from 1 through 7 {

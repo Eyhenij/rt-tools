@@ -1,6 +1,4 @@
-import { rtTreeBranchState, rtTreeLeaves } from '@rt-tools/ui-kit-v2/select';
-import { splitTitleByWords } from '@rt-tools/ui-kit-v2/side-menu';
-import { IRtSideMenu } from '@rt-tools/ui-kit-v2/side-menu';
+import { IRtMatchPart, rtMatchParts, rtTreeBranchState, rtTreeLeaves } from '@rt-tools/ui-kit-v2/core';
 import { IRtTree } from './rt-tree.model';
 
 /**
@@ -93,11 +91,9 @@ export function rtTreeSelectAll<TValue>(rows: ReadonlyArray<IRtTree.Row<TValue>>
  */
 export function rtTreeLabelParts<TValue>(node: TNode<TValue>, term: string): IRtTree.LabelParts {
     return {
-        label: splitTitleByWords(node.label, term),
-        description: splitTitleByWords(node.description ?? '', term),
-        badges: (node.badges ?? []).map((badge: IRtTree.Badge): ReadonlyArray<IRtSideMenu.TitlePart> =>
-            splitTitleByWords(badge.text, term)
-        ),
+        label: rtMatchParts(node.label, term),
+        description: rtMatchParts(node.description ?? '', term),
+        badges: (node.badges ?? []).map((badge: IRtTree.Badge): ReadonlyArray<IRtMatchPart> => rtMatchParts(badge.text, term)),
     };
 }
 

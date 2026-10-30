@@ -2,7 +2,7 @@
     rtBlock="rt-radio-button"
     qa-dataid="radio-button-control"
     role="radio"
-    tabindex="0"
+    [attr.tabindex]="tabIndex()"
     [rtMod]="{ checked: isChecked(), disabled: isDisabled(), card: card() }"
     [attr.aria-checked]="isChecked()"
     [attr.aria-disabled]="isDisabled()"

@@ -25,6 +25,12 @@
         }
     </header>
 
+    @if (tabsTemplate(); as tabs) {
+        <div rtElem="tabs" qa-dataid="thread-list-tabs">
+            <ng-container [ngTemplateOutlet]="tabs.templateRef" />
+        </div>
+    }
+
     <ng-template #rowButton let-row>
         <button
             rtElem="row"
@@ -39,8 +45,19 @@
                 overdue: !!row.overdue,
             }"
             (click)="onSelect(row.id, $event)">
-            <ng-container [ngTemplateOutlet]="rowTemplate()?.templateRef ?? null" [ngTemplateOutletContext]="{ $implicit: row }" />
+            @if (row.sign; as sign) {
+                <rt-service-logo rtElem="row-sign" qa-dataid="thread-list-row-sign" [size]="messenger() ? 'sm' : 'xs'" [logos]="[sign]" />
+                <span rtElem="row-content">
+                    <ng-container [ngTemplateOutlet]="rowContent" [ngTemplateOutletContext]="{ $implicit: row }" />
+                </span>
+            } @else {
+                <ng-container [ngTemplateOutlet]="rowContent" [ngTemplateOutletContext]="{ $implicit: row }" />
+            }
         </button>
+    </ng-template>
+
+    <ng-template #rowContent let-row>
+        <ng-container [ngTemplateOutlet]="rowTemplate()?.templateRef ?? null" [ngTemplateOutletContext]="{ $implicit: row }" />
     </ng-template>
 
     <ng-template #filtersPanel>

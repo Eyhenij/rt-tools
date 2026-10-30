@@ -16,8 +16,8 @@
 ```
 
 Основные входы: `messages`, `hasThread`, `canReply`, `replyBlockReason`, `loading`, `fetching`,
-`sending`, `attachments`, `accept`, `formatting`, `title`, `showRefresh`, `showExpand`, `fill`,
-`typingText`. Выходы: `send`, `refresh`, `typing` и события по сообщениям (повтор, удаление).
+`sending`, `attachments`, `accept`, `formatting`, `title`, `sign`, `showRefresh`, `showExpand`,
+`fill`, `typingText`. Выходы: `send`, `refresh`, `typing` и события по сообщениям (повтор, удаление).
 
 ## Главное, что нужно знать
 
@@ -31,6 +31,10 @@ rtChatMessageActions let-message>` рисуется в меню «…» у ре�
 
 **Шапка появляется только вместе с кнопками**: `showHeader = showRefresh || showExpand`.
 Один `title` шапку не создаёт.
+
+**Знак канала — вход `sign`, круг [`rt-service-logo`](../../../../lib/components/service-logo/CONTEXT.md)
+размера `xs` перед заголовком.** Стоит в левой полосе тулбара, отступ до заголовка — её же, 8. Шапку
+сам не создаёт, как и `title`.
 
 **Поле ответа гейтится `canReply`.** Когда отвечать нельзя, вместо него рисуется причина
 из `replyBlockReason`.
@@ -48,4 +52,7 @@ rtChatMessageActions let-message>` рисуется в меню «…» у ре�
 - Режим `formatting` подменяет простое поле [`rt-rich-editor`](../rich-editor/CONTEXT.md);
   тот грузит Quill динамическим импортом.
 - Неотправленное сообщение (`status: 'failed'`) получает кнопку повтора.
+- Недоставленное (`status: 'undelivered'`): ответ записан, служба собеседника его не приняла. Значок
+  предупреждения и подпись `rtKit.chatStatusUndelivered`, кнопки повтора нет — повтор записал бы ответ
+  второй раз.
 - Файлы можно бросать прямо в ленту — чат обёрнут в [`rt-file-drop`](../../../../lib/components/file-drop/CONTEXT.md).

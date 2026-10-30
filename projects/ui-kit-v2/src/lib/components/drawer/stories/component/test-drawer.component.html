@@ -1,0 +1,40 @@
+<div class="app-drawer__frame">
+    <rt-drawer-container class="app-drawer__area">
+        <rt-drawer
+            ariaLabel="Фильтры"
+            [mode]="mode"
+            [position]="position"
+            [hasBackdrop]="hasBackdrop"
+            [disableClose]="disableClose"
+            [resizable]="resizable"
+            [overflow]="overflow"
+            [autoFocus]="autoFocus"
+            [width]="autoWidth ? null : width()"
+            [(opened)]="opened"
+            (widthChange)="onWidth($event)"
+            (openedStart)="note('openedStart')"
+            (closedStart)="note('closedStart')"
+            (afterOpened)="note('afterOpened')"
+            (afterClosed)="note('afterClosed')"
+            (backdropClick)="note('backdropClick')">
+            <div class="app-drawer__filters">
+                <strong>Фильтры</strong>
+                <label>
+                    Город
+                    <input qa-dataid="drawer-demo-city" />
+                </label>
+                <span>Ширина: {{ autoWidth ? 'по содержимому' : width() + 'px' }}</span>
+                <div class="app-drawer__flyout" qa-dataid="drawer-demo-flyout">Подпанель сбоку</div>
+            </div>
+        </rt-drawer>
+        <section class="app-drawer__report">
+            <button rtButton type="button" qa-dataid="drawer-demo-toggle" (click)="opened.set(!opened())">
+                {{ opened() ? 'Скрыть фильтры' : 'Показать фильтры' }}
+            </button>
+            <p>
+                Отчёт по продажам за квартал. Содержимое сужается, когда панель стоит рядом, и остаётся на месте, когда она ложится поверх.
+            </p>
+            <p qa-dataid="drawer-demo-events">События: {{ events().join(' → ') || 'нет' }}</p>
+        </section>
+    </rt-drawer-container>
+</div>

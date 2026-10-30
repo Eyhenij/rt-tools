@@ -1,0 +1,11 @@
+<ng-container rtBlock="rt-service-block">
+    <rt-service-logo rtElem="logo" qa-dataid="service-block-logo" [logos]="logos()" />
+
+    <div rtElem="text">
+        <p rtElem="name" qa-dataid="service-block-name">{{ name() }}</p>
+
+        @if (description(); as text) {
+            <p rtElem="description" qa-dataid="service-block-description">{{ text }}</p>
+        }
+    </div>
+</ng-container>

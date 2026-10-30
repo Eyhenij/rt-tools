@@ -15,7 +15,12 @@ import { RtWorkspaceAsideDirective, RtWorkspaceCenterDirective, RtWorkspaceListD
 @Component({
     selector: 'rt-workspace-host',
     template: `
-        <rt-workspace [hasActive]="hasActive" [storageKey]="storageKey" [listDefaultWidth]="listDefaultWidth" [listMinWidth]="listMinWidth">
+        <rt-workspace
+            [hasActive]="hasActive"
+            [cards]="cards"
+            [storageKey]="storageKey"
+            [listDefaultWidth]="listDefaultWidth"
+            [listMinWidth]="listMinWidth">
             <ng-template rtWorkspaceList><span qa-dataid="slot-list">Список</span></ng-template>
             <ng-template rtWorkspaceCenter><span qa-dataid="slot-center">Карточка</span></ng-template>
             <ng-template rtWorkspaceAside><span qa-dataid="slot-aside">Подробности</span></ng-template>
@@ -26,6 +31,7 @@ import { RtWorkspaceAsideDirective, RtWorkspaceCenterDirective, RtWorkspaceListD
 })
 class WorkspaceHostComponent {
     public hasActive: boolean = false;
+    public cards: boolean = false;
     public storageKey: string | null = null;
     public listDefaultWidth: number = 320;
     public listMinWidth: number = 240;
@@ -106,6 +112,16 @@ describe('RtWorkspaceComponent', (): void => {
 
         expect(textOf(qa(fixture, 'workspace-list'))).toBe('Список');
         expect(textOf(qa(fixture, 'workspace-aside'))).toBe('Подробности');
+    });
+
+    describe('карточки', (): void => {
+        it('SC-UKV-1065 — колонки стоят карточками только по входу cards', (): void => {
+            const plain: HTMLElement = setup().nativeElement.querySelector('rt-workspace');
+            const cards: HTMLElement = setup({ cards: true }).nativeElement.querySelector('rt-workspace');
+
+            expect(plain.classList.contains('rt-workspace--cards')).toBe(false);
+            expect(cards.classList.contains('rt-workspace--cards')).toBe(true);
+        });
     });
 
     describe('необъявленные слоты', (): void => {

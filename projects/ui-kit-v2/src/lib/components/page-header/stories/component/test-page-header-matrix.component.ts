@@ -7,11 +7,13 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtIconButtonComponent } from '../../../icon-button/rt-icon-button.component';
 import { RtToggleButtonGroupComponent } from '../../../toggle-button-group/rt-toggle-button-group.component';
 import { IRtToggleButtonGroup } from '../../../toggle-button-group/rt-toggle-button-group.model';
+import { RtProfileMenuComponent } from '../../../profile-menu/rt-profile-menu.component';
+import { PROFILE_MENU_LOCALES } from '../../../profile-menu/stories/component/test-profile-menu.data';
 import { IRtPageHeader } from '../../rt-page-header.model';
 import { RtPageHeaderComponent } from '../../rt-page-header.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TPageHeaderMatrixPart = 'items' | 'user' | 'presets' | 'themes' | 'panel' | 'compact';
+export type TPageHeaderMatrixPart = 'items' | 'user' | 'user-menu' | 'presets' | 'themes' | 'panel' | 'compact' | 'more';
 
 /** Признак прокручиваемой обёртки сжатой истории: по нему шаг `play` прокручивает страницу. */
 export const PAGE_HEADER_COMPACT_SCROLL_ATTRIBUTE: string = 'data-story-scroll';
@@ -100,6 +102,34 @@ interface IPageHeaderUserCase {
                 </div>
             }
 
+            @case ('user-menu') {
+                <!-- Меню профиля открывает история нажатием на имя: на узком экране оно стоит на
+                     той же подложке, что меню разделов из бургера -->
+                <rt-page-header
+                    ariaLabel="Разделы"
+                    [items]="flatItems"
+                    [user]="menuUser"
+                    [userMenu]="profileMenu"
+                    [attr.data-story-trigger]="triggerAttribute" />
+                <ng-template #profileMenu>
+                    <rt-profile-menu
+                        userName="Анна Смирнова"
+                        organizationName="Вилла Лотос"
+                        organizationChange="allowed"
+                        passwordChange
+                        locale="ru"
+                        [locales]="profileLocales" />
+                </ng-template>
+            }
+
+            @case ('more') {
+                <!-- Пары здесь нет нарочно: панель «Ещё» живёт в оверлее, и открытая панель в истории
+                     ровно одна — вторая половина пары открыла бы вторую. -->
+                <div class="app-page-header-matrix__more-slot">
+                    <rt-page-header ariaLabel="Разделы" [items]="moreItems" [user]="user" [attr.data-story-trigger]="triggerAttribute" />
+                </div>
+            }
+
             @case ('compact') {
                 <!-- Пары здесь нет нарочно: сжатая полоса показывается прокруткой, и корень показа
                      несёт сам ящик прокрутки. Пара забрала бы корень себе, и кадр встал бы до
@@ -123,6 +153,13 @@ interface IPageHeaderUserCase {
            снизу она вышла бы за нижний край окна. */
         .app-page-header-matrix__panel-slot {
             padding-bottom: 20rem;
+        }
+
+        /* Узкий ящик: разделам не хватает ширины ряда, и часть их уходит в «Ещё». Запас снизу —
+           под открытую панель. */
+        .app-page-header-matrix__more-slot {
+            width: 40rem;
+            padding-bottom: 24rem;
         }
 
         /* Сжатие наступает на прокрутке, поэтому шапка стоит в прокручиваемой обёртке, а
@@ -153,6 +190,7 @@ interface IPageHeaderUserCase {
     imports: [
         // components
         RtPageHeaderComponent,
+        RtProfileMenuComponent,
         RtToggleButtonGroupComponent,
         RtIconButtonComponent,
 
@@ -166,6 +204,8 @@ export class TestRtPageHeaderMatrixComponent {
     public part: TPageHeaderMatrixPart = 'items';
 
     public readonly triggerAttribute: string = STORY_TRIGGER_ATTRIBUTE;
+    public readonly menuUser: IRtPageHeader.User = { name: 'Анна' };
+    public readonly profileLocales: typeof PROFILE_MENU_LOCALES = PROFILE_MENU_LOCALES;
 
     public readonly scrollAttribute: string = PAGE_HEADER_COMPACT_SCROLL_ATTRIBUTE;
 
@@ -236,6 +276,19 @@ export class TestRtPageHeaderMatrixComponent {
         { id: 'tours', label: 'Туры', route: '/tours', icon: 'chart-bar' },
         { id: 'clients', label: 'Клиенты', route: '/clients', icon: 'users', unread: true },
         { id: 'reports', label: 'Отчёты', route: '/reports' },
+        this.mixedItems[1],
+    ];
+
+    /**
+     * Разделы для «Ещё»: в узкий ящик встают не все. «Отчёты» менее важны и уходят первыми,
+     * «Справочники» с панелью уходят следом — в «Ещё» они встают заголовком с пунктами групп.
+     */
+    public readonly moreItems: ReadonlyArray<IRtPageHeader.Item> = [
+        { id: 'tours', label: 'Туры', route: '/tours' },
+        { id: 'orders', label: 'Заявки', route: '/orders', unread: true },
+        { id: 'clients', label: 'Клиенты', route: '/clients' },
+        { id: 'reports', label: 'Отчёты', route: '/reports', priority: -1 },
+        { id: 'payments', label: 'Платежи', route: '/payments' },
         this.mixedItems[1],
     ];
 

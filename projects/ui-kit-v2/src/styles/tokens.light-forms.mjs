@@ -93,6 +93,7 @@ export const lightForms = [
     {
         name: `--rt-input-color-text-placeholder`,
         value: `var(--rt-color-text-muted)`,
+        dark: `var(--rt-color-text-muted)`,
     },
     {
         name: `--rt-input-icon-color`,
@@ -106,6 +107,26 @@ export const lightForms = [
     {
         name: `--rt-input-gap`,
         value: `var(--rt-space-sm)`,
+    },
+    {
+        name: `--rt-input-caret-color`,
+        value: `auto`,
+    },
+    {
+        name: `--rt-input-min-width`,
+        value: `0px`,
+    },
+    {
+        name: `--rt-input-fill-edge`,
+        value: `var(--rt-input-border-width)`,
+    },
+    {
+        name: `--rt-input-fill-focus-shadow`,
+        value: `var(--rt-input-focus-shadow)`,
+    },
+    {
+        name: `--rt-input-fill-focus-shadow-error`,
+        value: `var(--rt-input-focus-shadow-error)`,
     },
     {
         lead: `    /* Sizes (single-line height scale) */`,
@@ -242,6 +263,62 @@ export const lightForms = [
         space: true,
         name: `--rt-input-disabled-opacity`,
         value: `var(--rt-opacity-disabled)`,
+    },
+    {
+        name: `--rt-input-disabled-field-opacity`,
+        value: `var(--rt-input-disabled-opacity)`,
+    },
+    {
+        name: `--rt-input-color-border-disabled`,
+        value: `var(--rt-input-color-border)`,
+    },
+    {
+        name: `--rt-input-color-text-disabled`,
+        value: `var(--rt-input-color-text)`,
+    },
+    {
+        name: `--rt-input-color-placeholder-disabled`,
+        value: `var(--rt-input-color-text-placeholder)`,
+    },
+    {
+        name: `--rt-input-clear-size`,
+        value: `var(--rt-control-height-sm)`,
+    },
+    {
+        name: `--rt-input-clear-icon-size`,
+        value: `var(--rt-size-4)`,
+    },
+    {
+        name: `--rt-input-clear-color`,
+        value: `var(--rt-neutral-600)`,
+        dark: `var(--rt-neutral-600)`,
+    },
+    {
+        name: `--rt-input-clear-offset-end`,
+        value: `0px`,
+    },
+    {
+        name: `--rt-input-clear-bg`,
+        value: `transparent`,
+        dark: `transparent`,
+    },
+    {
+        name: `--rt-input-clear-bg-hover`,
+        value: `var(--rt-icon-button-color-bg-hover)`,
+        dark: `var(--rt-icon-button-color-bg-hover)`,
+    },
+    {
+        name: `--rt-input-clear-radius`,
+        value: `var(--rt-radius-md)`,
+    },
+    {
+        name: `--rt-input-clear-offset-start`,
+        value: `0px`,
+    },
+    {
+        name: `--rt-input-fill-color-bg-disabled`,
+        value: `var(--rt-color-bg-surface-subtle-2)`,
+        dark: `var(--rt-color-bg-surface-subtle-2)`,
     },
     {
         name: `--rt-input-focus-shadow`,
@@ -381,5 +458,24 @@ export const lightForms = [
         space: true,
         name: `--rt-toggle-shadow-border`,
         value: `inset 0 0 0 var(--rt-border-width-thin) var(--rt-toggle-color-border)`,
+    },
+    {
+        lead: `    /* Группа переключателей видом «чипы»: отдельные пункты с обводкой. Цвета — здесь, на корне:
+       они не зависят от размера группы; размеры объявлены на самом хосте группы. Выбранный пункт
+       в своём виде кита — мягкая марка, обводка у него та же, что у невыбранного. */`,
+        space: true,
+        name: `--rt-toggle-chip-color-border`,
+        value: `var(--rt-color-border-default)`,
+        dark: `var(--rt-color-border-default)`,
+    },
+    {
+        name: `--rt-toggle-chip-color-text`,
+        value: `var(--rt-color-text-muted)`,
+        dark: `var(--rt-color-text-muted)`,
+    },
+    {
+        name: `--rt-toggle-chip-color-bg-selected`,
+        value: `var(--rt-color-action-primary-subtle)`,
+        dark: `var(--rt-color-action-primary-subtle)`,
     },
 ];

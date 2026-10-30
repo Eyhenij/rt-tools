@@ -68,6 +68,11 @@ The guard has no interface: only the executor sees it — as the text of a refus
   choice "fix or wait" brought right after a refusal stopped work no guard held. The menu and a
   question in prose are judged alike; the line is named by the tree profile; a read or a status
   command does not count as work. A turn without a refusal is not judged by this sign.
+- **After a refused menu, a list of options in prose is a question too.** The menu was refused, and
+  the executor gave the same options as a numbered list without a question mark and ended the turn.
+  In a turn where the menu was refused, a numbered list of two or more items under a line ending
+  with a colon counts as a question. The menu refusal says that the same question in prose does not
+  walk around it. Outside such a turn a list is not judged: many ordinary reports carry one.
 - **A question that offers the owner to walk around a check does not leave.** A "yes" to it still
   sends red work past the check. The menu with its options and a question in prose are judged alike:
   past the check, a bypass line, a disabled rule, a hook switched off. A question about how to fix

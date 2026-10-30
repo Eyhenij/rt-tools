@@ -72,11 +72,17 @@ export const FOREIGN_PAGE_ORIGIN = `http://host.docker.internal:${FOREIGN_PORT}`
 /** Имя базы стенда. Названо отдельно: `CREATE DATABASE` не принимает адреса. */
 export const STAND_DATABASE = textFromEnv('E2E_DATABASE', 'message_bus_e2e');
 
-/** Адрес хранилища стенда. Имя базы своё, пользователь и порт — те же, что у рабочей. */
-export const STAND_DATABASE_URL = `postgresql://message_bus:message_bus@localhost:55432/${STAND_DATABASE}`;
+/**
+ * Порт хранилища стенда. По умолчанию — рабочий; CI называет свой, потому что раннер стоит на
+ * машине разработчика, и рабочий порт там держит его собственная база.
+ */
+export const DATABASE_PORT = intFromEnv('E2E_DB_PORT', 55432);
+
+/** Адрес хранилища стенда. Имя базы своё, пользователь тот же, что у рабочей. */
+export const STAND_DATABASE_URL = `postgresql://message_bus:message_bus@localhost:${DATABASE_PORT}/${STAND_DATABASE}`;
 
 /** Адрес того же хранилища для служебных команд: заведение базы стенда идёт не изнутри неё. */
-export const SERVER_DATABASE_URL = 'postgresql://message_bus:message_bus@localhost:55432/message_bus';
+export const SERVER_DATABASE_URL = `postgresql://message_bus:message_bus@localhost:${DATABASE_PORT}/message_bus`;
 
 /**
  * Keycloak стенда. Образ браузера пересылает его порт на машину, так что браузер и приёмник видят

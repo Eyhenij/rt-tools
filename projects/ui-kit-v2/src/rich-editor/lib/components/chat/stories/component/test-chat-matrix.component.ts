@@ -3,7 +3,16 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { StoryRowComponent } from '../../../../../../showcase/story-row.component';
 import { StoryPresetsComponent } from '../../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../../showcase/story-themes.component';
+import { RtIconButtonComponent } from '../../../../../../lib/components/icon-button/rt-icon-button.component';
 import { RtMenuItemComponent } from '../../../../../../lib/components/menu/rt-menu-item.component';
+import { IRtServiceLogo } from '../../../../../../lib/components/service-logo/rt-service-logo.model';
+import { PLACEHOLDER_MARK_BLOCK } from '../../../../../../lib/components/service-logo/stories/component/story-placeholder-marks';
+import {
+    RtWorkspaceAsideDirective,
+    RtWorkspaceCenterDirective,
+    RtWorkspaceListDirective,
+} from '../../../../../../lib/components/workspace/rt-workspace.directives';
+import { RtWorkspaceComponent } from '../../../../../../lib/components/workspace/rt-workspace.component';
 import { RtChatMessageActionsDirective } from '../../rt-chat-message-actions.directive';
 import { RtChatComponent } from '../../rt-chat.component';
 import { ERtChatMessageStatus, IRtChat } from '../../rt-chat.model';
@@ -11,7 +20,18 @@ import { CHAT_MESSAGES, CHAT_PEER } from './chat.fixture';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TChatMatrixPart =
-    'thread' | 'messageKind' | 'status' | 'messageActions' | 'reply' | 'typing' | 'header' | 'loading' | 'presets' | 'themes';
+    | 'thread'
+    | 'messageKind'
+    | 'status'
+    | 'messageActions'
+    | 'reply'
+    | 'typing'
+    | 'header'
+    | 'sign'
+    | 'messenger'
+    | 'loading'
+    | 'presets'
+    | 'themes';
 
 const NOW: string = '2026-03-14T16:02:00.000Z';
 
@@ -203,6 +223,77 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
                 </app-story-presets>
             }
 
+            @case ('sign') {
+                <app-story-presets caption="Знак канала и строка под заголовком в шапке в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="signCases" [itemLabel]="caseLabel">
+                            <ng-template let-item>
+                                <div
+                                    style="box-sizing: border-box; inline-size: 100%; block-size: 22rem; padding: 1rem; border: 1px solid var(--rt-color-border-subtle); border-radius: var(--rt-radius-lg); background-color: var(--rt-color-bg-surface)">
+                                    <rt-chat
+                                        style="height: 100%"
+                                        hasThread
+                                        canReply
+                                        showRefresh
+                                        placeholder="Написать сообщение"
+                                        title="Анна Смирнова"
+                                        [messages]="messages"
+                                        [sign]="item.sign"
+                                        [subtitle]="item.subtitle" />
+                                </div>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('messenger') {
+                <app-story-presets
+                    caption="Вид мессенджера в рабочем месте с карточками: метка дня, свой пузырь цвета действия, поле в одну строку и ряд кнопок">
+                    <ng-template>
+                        <div
+                            style="box-sizing: border-box; inline-size: 100%; block-size: 40rem; padding: 1rem; background-color: var(--rt-color-bg-page)">
+                            <rt-workspace cards hasActive style="block-size: 100%">
+                                <ng-template rtWorkspaceList>
+                                    <div style="padding: 1rem">Список разговоров</div>
+                                </ng-template>
+                                <ng-template rtWorkspaceCenter>
+                                    <rt-chat
+                                        style="height: 100%; padding: 1rem"
+                                        messenger
+                                        hasThread
+                                        canReply
+                                        attachments
+                                        placeholder="Написать сообщение"
+                                        title="№12 Анна Смирнова"
+                                        subtitle="WhatsApp · +66 81 234 5678"
+                                        [messages]="messengerMessages"
+                                        [sign]="signCases[1].sign">
+                                        <rt-icon-button
+                                            rtChatComposerTools
+                                            icon="bolt"
+                                            variant="ghost"
+                                            size="sm"
+                                            iconColor="muted"
+                                            ariaLabel="Быстрые ответы" />
+                                        <rt-icon-button
+                                            rtChatComposerTools
+                                            icon="clock"
+                                            variant="ghost"
+                                            size="sm"
+                                            iconColor="muted"
+                                            ariaLabel="Отправить позже" />
+                                    </rt-chat>
+                                </ng-template>
+                                <ng-template rtWorkspaceAside>
+                                    <div style="padding: 1rem">Сведения о госте</div>
+                                </ng-template>
+                            </rt-workspace>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('loading') {
                 <app-story-presets caption="Загрузка и догрузка в обоих наборах">
                     <ng-template>
@@ -270,7 +361,12 @@ const NOW: string = '2026-03-14T16:02:00.000Z';
         // components
         RtChatComponent,
         RtChatMessageActionsDirective,
+        RtIconButtonComponent,
         RtMenuItemComponent,
+        RtWorkspaceAsideDirective,
+        RtWorkspaceCenterDirective,
+        RtWorkspaceComponent,
+        RtWorkspaceListDirective,
 
         // showcase
         StoryPresetsComponent,
@@ -290,6 +386,14 @@ export class TestRtChatMatrixComponent {
         { id: 12, author: 'Вы', own: true, status: ERtChatMessageStatus.Sent, text: 'Доставлено', createdAt: NOW },
         { id: 13, author: 'Вы', own: true, status: ERtChatMessageStatus.Read, text: 'Прочитано', createdAt: NOW },
         { id: 14, author: 'Вы', own: true, status: ERtChatMessageStatus.Failed, text: 'Не ушло', createdAt: NOW },
+        {
+            id: 15,
+            author: 'Вы',
+            own: true,
+            status: ERtChatMessageStatus.Undelivered,
+            text: 'Записано, служба гостя не приняла',
+            createdAt: NOW,
+        },
     ];
 
     public readonly threadCases: readonly { name: string; hasThread: boolean; messages: readonly IRtChat.Message[] }[] = [
@@ -332,6 +436,43 @@ export class TestRtChatMatrixComponent {
         { name: 'с обновлением', refresh: true, expand: false },
         { name: 'с разворотом', refresh: false, expand: true },
         { name: 'обе кнопки', refresh: true, expand: true },
+    ];
+
+    /** Знак компании — заглушка витрины: знаков чужих компаний в пакете нет. Сайт — значок кита. */
+    /** Вчерашний вопрос и сегодняшний разговор: метки дней видны над первым сообщением каждого дня */
+    public readonly messengerMessages: readonly IRtChat.Message[] = [
+        {
+            id: 1,
+            author: 'Анна',
+            own: false,
+            text: 'Добрый день! Есть свободные даты на март?',
+            createdAt: new Date(Date.now() - 86_400_000).toISOString(),
+        },
+        { id: 2, author: 'Анна', own: false, text: 'Можно заехать на час раньше?', createdAt: new Date().toISOString() },
+        {
+            id: 3,
+            author: 'Вы',
+            own: true,
+            text: 'Здравствуйте! Да, дом будет готов к 13:00.',
+            createdAt: new Date().toISOString(),
+            status: ERtChatMessageStatus.Read,
+        },
+        {
+            id: 4,
+            author: 'Вы',
+            own: true,
+            text: 'Ключи оставлю у охраны на въезде.',
+            createdAt: new Date().toISOString(),
+            status: ERtChatMessageStatus.Read,
+        },
+        { id: 5, author: 'Анна', own: false, text: 'Спасибо, отлично!', createdAt: new Date().toISOString() },
+    ];
+
+    public readonly signCases: readonly { name: string; sign: IRtServiceLogo.Item | null; subtitle: string }[] = [
+        { name: 'без знака', sign: null, subtitle: '' },
+        { name: 'знак картинкой', sign: PLACEHOLDER_MARK_BLOCK, subtitle: '' },
+        { name: 'сайт — значок кита', sign: { icon: 'globe', label: 'Сайт' }, subtitle: '' },
+        { name: 'строка под заголовком', sign: PLACEHOLDER_MARK_BLOCK, subtitle: 'WhatsApp · +66 81 234 5678' },
     ];
 
     public readonly loadingCases: readonly { name: string; loading: boolean; fetching: boolean; empty: boolean }[] = [

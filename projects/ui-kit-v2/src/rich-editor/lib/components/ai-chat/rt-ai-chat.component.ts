@@ -29,10 +29,12 @@ import { BooleanInput } from '@angular/cdk/coercion';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import {
+    IRtAiPromptInput,
     IRtIcon,
     IRtSideMenu,
     IRtThreadList,
     RT_KIT_LABELS,
+    RtAiPromptInputComponent,
     RtButtonDirective,
     RtCopyValueComponent,
     RtEmptyStateComponent,
@@ -46,13 +48,11 @@ import {
     RtThreadListComponent,
     RtThreadListRowActionsDirective,
     RtThreadListRowDirective,
-    splitSideMenuTitle,
+    rtMatchParts,
     TRtKitLabelMap,
 } from '@rt-tools/ui-kit-v2';
 
 import { nextAtBottom, RT_CHAT_PIN_RETRY_DELAYS_MS } from '../chat/rt-chat-thread.logic';
-import { IRtMessageComposer } from '../message-composer/rt-message-composer.model';
-import { RtMessageComposerComponent } from '../message-composer/rt-message-composer.component';
 import { RtAiChatAnswerComponent } from './answer/rt-ai-chat-answer.component';
 import { RtAiChatCopyComponent } from './copy/rt-ai-chat-copy.component';
 import { RtAiChatMessageExtraDirective } from './rt-ai-chat.directives';
@@ -106,7 +106,7 @@ interface IThreadRow extends IRtThreadList.Row {
         RtMenuComponent,
         RtMenuItemComponent,
         RtMessageComponent,
-        RtMessageComposerComponent,
+        RtAiPromptInputComponent,
         RtPromptSuggestionComponent,
         RtSpinnerComponent,
         RtThreadListComponent,
@@ -125,7 +125,7 @@ export class RtAiChatComponent {
     readonly #injector: Injector = inject(Injector);
     readonly #clipboard: Clipboard = inject(Clipboard);
 
-    protected readonly composer: Signal<RtMessageComposerComponent | undefined> = viewChild(RtMessageComposerComponent);
+    protected readonly composer: Signal<RtAiPromptInputComponent | undefined> = viewChild(RtAiPromptInputComponent);
     protected readonly backButton: Signal<ElementRef<HTMLElement> | undefined> = viewChild('back', { read: ElementRef });
     protected readonly feed: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('feed');
 
@@ -140,6 +140,8 @@ export class RtAiChatComponent {
     protected readonly emptyTitleText: Signal<string> = computed((): string => this.emptyTitle() || this.t().aiEmptyTitle);
     protected readonly emptyDescriptionText: Signal<string> = computed((): string => this.emptyDescription() || this.t().aiEmptyText);
     protected readonly disclaimerText: Signal<string> = computed((): string => this.disclaimer() ?? this.t().aiDisclaimer);
+
+    protected readonly disclaimerAbove: Signal<boolean> = computed((): boolean => this.disclaimerPosition() === 'above');
 
     /** Значение признака одних значков на шапке: только материальный набор, свой — без признака. */
     protected readonly headerIconSign: Signal<IRtIcon.Preset | null> = computed((): IRtIcon.Preset | null =>
@@ -170,7 +172,7 @@ export class RtAiChatComponent {
             id: thread.id,
             hasUnread: (thread.unreadCount ?? 0) > 0,
             title: thread.title,
-            titleParts: splitSideMenuTitle(thread.title, query),
+            titleParts: rtMatchParts(thread.title, query),
             time: thread.time ?? '',
             unreadCount: thread.unreadCount ?? 0,
         }));
@@ -199,6 +201,24 @@ export class RtAiChatComponent {
 
     /** Подпись под полем сообщения; `null` — подпись кита, пустая строка — без подписи. */
     public readonly disclaimer: InputSignal<string | null> = input<string | null>(null);
+
+    /** Где стоит подпись: под полем, а где места под ним нет — над полем. */
+    public readonly disclaimerPosition: InputSignal<IRtAiPromptInput.HintPosition> = input<IRtAiPromptInput.HintPosition>('below');
+
+    /** Подпись модели в ряду поля. Пусто — кнопки модели нет. */
+    public readonly model: InputSignal<string> = input<string>('');
+
+    /** Подпись усилия в ряду поля. Пусто — кнопки усилия нет. */
+    public readonly effort: InputSignal<string> = input<string>('');
+
+    /** Подпись режима в ряду поля. Пусто — кнопки режима нет. */
+    public readonly mode: InputSignal<string> = input<string>('');
+
+    /** Потраченная доля лимита в процентах. `null` — кольца расхода нет. */
+    public readonly usage: InputSignal<number | null> = input<number | null>(null);
+
+    /** Подсказка кольца расхода: доля и дата сброса словами приложения. */
+    public readonly usageHint: InputSignal<string> = input<string>('');
 
     /** Ответ пишется: поле сообщения в режиме остановки, подсказки и новая беседа выключены. */
     public readonly sending: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
@@ -291,6 +311,9 @@ export class RtAiChatComponent {
 
     public readonly feedbackChange: OutputEmitterRef<IRtAiChat.FeedbackChange> = output<IRtAiChat.FeedbackChange>();
 
+    /** Нажата кнопка модели, усилия или режима в ряду поля: что она открывает, решает приложение. */
+    public readonly controlPicked: OutputEmitterRef<IRtAiPromptInput.Control> = output<IRtAiPromptInput.Control>();
+
     constructor() {
         afterRenderEffect((): void => {
             this.messages();
@@ -324,7 +347,7 @@ export class RtAiChatComponent {
         this.#lastScrollTop = el.scrollTop;
     }
 
-    protected onSubmitted(value: IRtMessageComposer.SubmitPayload): void {
+    protected onSubmitted(value: IRtAiPromptInput.SubmitPayload): void {
         const text: string = value.text.trim();
         if (!text) {
             return;
