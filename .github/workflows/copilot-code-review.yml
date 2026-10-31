@@ -1,0 +1,27 @@
+name: Copilot code review setup
+
+# Где идёт автоматическое ревью Copilot. Copilot берёт из этого файла задание
+# `copilot-setup-steps` и запускает ревью на его машине. Без файла ревью шло на облачной машине
+# GitHub.
+#
+# Машина — одноразовый раннер Ubuntu x64 в контейнере на машине владельца, метка
+# `rt-copilot-review` (`deploy/copilot-runner/`). Раннер проверок здесь не участвует: рядом с ним
+# ключ прода и сокет Docker.
+#
+# Copilot читает файл с главной ветки. Запуск на PR, правящем этот файл, проверяет раннер до
+# слияния
+on:
+    workflow_dispatch:
+    pull_request:
+        paths:
+            - .github/workflows/copilot-code-review.yml
+
+permissions:
+    contents: read
+
+jobs:
+    copilot-setup-steps:
+        runs-on: rt-copilot-review
+        timeout-minutes: 30
+        steps:
+            - uses: actions/checkout@v7
