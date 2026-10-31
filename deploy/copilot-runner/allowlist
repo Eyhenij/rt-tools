@@ -1,0 +1,8 @@
+^github\.com$
+^api\.github\.com$
+^codeload\.github\.com$
+^uploads\.github\.com$
+^([a-z0-9-]+\.)*actions\.githubusercontent\.com$
+^(objects|objects-origin|github-releases|github-registry-files|release-assets|user-images)\.githubusercontent\.com$
+^productionresultssa[0-9]+\.blob\.core\.windows\.net$
+^([a-z0-9-]+\.)*githubcopilot\.com$
