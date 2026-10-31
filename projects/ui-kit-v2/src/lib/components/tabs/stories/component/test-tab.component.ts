@@ -28,7 +28,9 @@ import { IRtIcon } from '../../../icon/rt-icon.model';
                         [titleTemplate]="titleTemplate"
                         [icon]="icon"
                         [iconColor]="iconColor"
+                        [iconFill]="iconFill"
                         [badge]="badge"
+                        [badgePosition]="badgePosition"
                         [badgeTitle]="badgeTitle"
                         [badgeAriaLabel]="badgeAriaLabel"
                         [disabled]="disabled"
@@ -59,7 +61,9 @@ export class TestRtTabComponent {
     public titleTemplate: TemplateRef<unknown> | null = null;
     public icon: IRtIcon.Name | null = null;
     public iconColor: IRtTabs.TitleColor = 'current';
+    public iconFill: boolean = false;
     public badge: string | number | null = null;
+    public badgePosition: IRtTabs.BadgePosition = 'inline';
     public badgeTitle: string = '';
     public badgeAriaLabel: string = '';
     public disabled: boolean = false;

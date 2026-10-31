@@ -44,6 +44,9 @@ id from `.claude/rt-kit/browser-device-id`, otherwise the hook will not let you 
 Check **with numbers**, not by eye: `getComputedStyle`, `getBoundingClientRect`, contrast,
 matching centres, viewport bounds. "Looks fine" is not a result.
 
+A review of a screen as a whole — accessibility, layout, writing, typography and polish in one
+report — goes by the skill `interface-review` where the tree has it laid out.
+
 Remember how the stand differs from the development server: the incremental build can go stale
 piece by piece, and if the live render diverges from what the same address returns by `curl`,
 say so separately — it is not a code bug. What is true only on the stand — pattern

@@ -1,0 +1,20 @@
+// Обвязка витрины: крестик очистки в обходе по Tab от умолчания кита.
+.app-kit-clear-tabbable {
+    &__cases {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-16);
+        inline-size: 20rem;
+    }
+
+    &__case {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rt-space-8);
+    }
+
+    &__label {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-2xs);
+    }
+}

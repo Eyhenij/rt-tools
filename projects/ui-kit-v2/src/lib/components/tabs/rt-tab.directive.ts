@@ -57,8 +57,19 @@ export class RtTabDirective {
     /** Семантический цвет иконки заголовка. */
     public readonly iconColor: InputSignal<IRtTabs.TitleColor> = input<IRtTabs.TitleColor>('current');
 
+    /**
+     * Залитый рисунок иконки — уходит в `fill` у `rt-icon`. Значок Material заливается всегда, имя
+     * кита — в материальном наборе: в своём наборе у него один рисунок. Дефолт `false`.
+     */
+    public readonly iconFill: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
     /** Значение бейджа справа от заголовка (число/строка). `null` — без бейджа. */
     public readonly badge: InputSignal<string | number | null> = input<string | number | null>(null);
+
+    /** Где стоит бейдж: после подписи или кружком над углом иконки. Дефолт `'inline'`. */
+    public readonly badgePosition: InputSignal<IRtTabs.BadgePosition> = input<IRtTabs.BadgePosition>('inline');
 
     /**
      * Подсказка при наведении на бейдж. Подсказка самой кнопки занята неверной вкладкой,
@@ -142,6 +153,14 @@ export class RtTabDirective {
      * Крестик — отдельная кнопка, и без имени диктор назвал бы её просто «кнопка».
      */
     public readonly closeLabel: Signal<string> = computed((): string => this.closeTooltip() || this.#t_uiClose());
+
+    /** У вкладки есть иконка — по имени кита или по значку Material. */
+    public readonly hasIcon: Signal<boolean> = computed((): boolean => Boolean(this.icon() || this.glyph()));
+
+    /** Бейдж стоит над иконкой: попросили `overlay`, бейдж есть и есть над чем стоять. */
+    public readonly badgeOverlay: Signal<boolean> = computed(
+        (): boolean => this.badgePosition() === 'overlay' && this.badge() !== null && this.hasIcon()
+    );
 
     /** Крестик рисуется только у доступной вкладки: отключённую закрыть нельзя. */
     public readonly showClose: Signal<boolean> = computed((): boolean => this.closable() && !this.disabled());

@@ -8,14 +8,19 @@
 
 Общие входы, которые получает каждый наследник:
 
-| вход        | тип                    | умолчание |
-| ----------- | ---------------------- | --------- |
-| `size`      | `'sm' \| 'md' \| 'lg'` | `'md'`    |
-| `disabled`  | `boolean`              | `false`   |
-| `controlId` | `string \| null`       | `null`    |
-| `ariaLabel` | `string \| null`       | `null`    |
-| `clearable` | `boolean`              | `true`    |
-| `bordered`  | `boolean`              | `true`    |
+| вход            | тип                    | умолчание                                                |
+| --------------- | ---------------------- | -------------------------------------------------------- |
+| `size`          | `'sm' \| 'md' \| 'lg'` | `'md'`                                                   |
+| `disabled`      | `boolean`              | `false`                                                  |
+| `controlId`     | `string \| null`       | `null`                                                   |
+| `ariaLabel`     | `string \| null`       | `null`                                                   |
+| `clearable`     | `boolean`              | `true`                                                   |
+| `clearTabbable` | `boolean`              | `formControl.clearTabbable` настроек кита, иначе `false` |
+| `bordered`      | `boolean`              | `true`                                                   |
+
+Крестик очистки идёт по Tab, когда поле или настройки кита (`provideRtKit`, узел `formControl`)
+просят об этом; вход на самом поле сильнее настроек. Шаблон наследника ставит крестику
+`[tabindex]="clearTabIndex()"`, а не постоянный `-1`.
 
 ## Главное, что нужно знать
 

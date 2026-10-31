@@ -92,11 +92,15 @@ the entry is not sure the page belongs to the admin.
   the widgets it finds in the page on load.
 - **The registration form draws the reCAPTCHA widget above the submit button when the realm requires a visible one.**
   The widget carries the site key of the realm and posts its answer with the form as
-  `g-recaptcha-response`. Without the answer Keycloak refuses the registration. The invisible
-  reCAPTCHA is not drawn. The widget stands on the axis of the form, and a form narrower than the
-  widget scales it down to fit.
+  `g-recaptcha-response`. Without the answer Keycloak refuses the registration. The condition is
+  the one of the standard page: a Keycloak that names neither the visibility nor the action knows
+  only the visible check, and gets the widget too. The widget stands on the axis of the form, and a
+  form narrower than the widget scales it down to fit.
 - **The reCAPTCHA widget takes the scheme of the page theme and is drawn anew when the theme switches.**
-  A light widget on the dark card reads as a foreign patch.
+  A light widget on the dark card reads as a foreign patch. A ticked widget keeps its scheme: drawn
+  anew, it would drop the answer, and the form would leave without it.
+- **The page waits for the Google script only while it draws the widget.** Without the widget, after
+  leaving the page and after the script failed to load, nothing watches the document for it.
 - **The dark theme follows the system until the person switches it on the page.**
 - **The stand realm uses the theme, and the raising command builds it first.** Without the JAR the
   realm falls back to the standard look.
@@ -108,6 +112,9 @@ the entry is not sure the page belongs to the admin.
 ## What is out of scope
 
 - The account console and the admin console of Keycloak keep their standard themes.
+- The invisible reCAPTCHA and the enterprise reCAPTCHA. The page draws no widget for the first, and
+  registration in such a realm is refused for lack of an answer; the second is waited for and
+  never found.
 - The providers of the stand realm and their secrets — the end-to-end task of the epic.
 - Publishing the package — the end-to-end task of the epic.
 
@@ -184,3 +191,5 @@ None.
 - 2026-10-06 — the password requirements under the two password fields, task RT-2570.
 - 2026-10-14 — the registration page, the realm logo and the provider marks, task RT-2837.
 - 2026-10-30 — the page scripts and the reCAPTCHA widget on the registration page, task RT-3003.
+- 2026-10-30 — the widget on a Keycloak without the visibility sign, a ticked widget through a theme
+  switch, the wait for the script ended, task RT-3013.

@@ -97,9 +97,19 @@ export namespace IRtKitConfig {
         showDelay?: number;
     }
 
+    /**
+     * Умолчания полей общей базы: ввода, автокомплита, числа, дат, выбора и прочих. Вход на поле
+     * перебивает их.
+     */
+    export interface FormControl {
+        /** Доходит ли крестик очистки по Tab. Умолчание кита — не доходит. */
+        clearTabbable?: boolean;
+    }
+
     /** Умолчания по узлам: каждое действует на одну семью и перебивает общее. */
     export interface Components {
         button?: Button;
+        formControl?: FormControl;
         aside?: Aside;
         dataTable?: DataTable;
         dataList?: DataList;
