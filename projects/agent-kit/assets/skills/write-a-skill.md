@@ -30,6 +30,16 @@ third case, and only it is here.
 3. **Show the owner.** A skill acts on all future sessions, and creating it silently is not
    allowed.
 
+## When the owner hands over the text
+
+A text the owner wrote is carried, not rewritten. Before the first split it lands whole in the
+task folder: a request cut with `[…]` leaves nothing to compare against. Headings keep their case
+and wording, sentences their words, code samples stay whole. What the shape of a skill forces —
+the declaration, "When to use", a link in place of "above" — goes into a list of deviations, one
+line each. Before the first commit a script compares every heading and paragraph of the source
+with the skill files and prints what is missing or changed. A size limit the text does not fit
+splits the text into files, never shortens it.
+
 ## What is in the file
 
 ```
@@ -49,8 +59,9 @@ not. It stands in the system prompt next to the descriptions of all the others, 
 goes by them.
 
 It answers two questions: what the skill gives and when to load it. Write in the third person,
-up to 1024 characters: the first sentence — what it does, the second — "Load when…", the third —
-what is not in it and where to look for that.
+up to three hundred characters: the first sentence — what it does, the second — "Load when…", the
+third — what is not in it and where to look for that. Where the tree has the descriptions check
+laid out, it refuses a longer declaration.
 
 ```
 ✓ Creating a new skill — one with no law above it. Load when asked to create, write or
@@ -104,7 +115,9 @@ link deeper than one level is not followed at all.
 - [ ] not one line repeats the neighbouring skill;
 - [ ] nothing that goes stale by itself: versions, numbers, dates;
 - [ ] at least one ready-made sample, not only an explanation;
-- [ ] links go one level deep, no deeper.
+- [ ] links go one level deep, no deeper;
+- [ ] where the tree has the descriptions check laid out, it is green before the first commit,
+      not only before the push.
 
 ## So that the skill gets loaded
 
