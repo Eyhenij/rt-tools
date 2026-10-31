@@ -18,7 +18,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, ControlValueAccessor, NgControl, ValidationErrors, Validators } from '@angular/forms';
 
-import { IRtInput } from '@rt-tools/ui-kit-v2/core';
+import { IRtInput, IRtKitConfig, rtKitDefault } from '@rt-tools/ui-kit-v2/core';
 
 /**
  * Базовый класс input-семейства common/ui. Владеет единым CVA-ядром:
@@ -72,6 +72,11 @@ function stateOf(control: AbstractControl): IControlState {
 export abstract class RtFormControlBase<TValue> implements ControlValueAccessor, OnInit {
     readonly #ngControl: NgControl | null = inject(NgControl, { self: true, optional: true });
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
+    readonly #clearTabbableDefault: boolean = rtKitDefault(
+        'formControl',
+        (it: IRtKitConfig.FormControl): boolean | undefined => it.clearTabbable,
+        false
+    );
 
     #onChange: (value: TValue) => void = (): void => undefined;
     #onTouched: () => void = (): void => undefined;
@@ -142,12 +147,15 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
     });
 
     /**
-     * Ставит крестик очистки в порядок обхода по Tab. По умолчанию `false`: крестик достаётся мышью,
-     * а Tab идёт от поля к полю, как прежде. Учитывают его поле ввода и выбор из списка.
+     * Ставит крестик очистки в порядок обхода по Tab. Умолчание — `formControl.clearTabbable` из
+     * настроек кита, без него `false`: крестик достаётся мышью, а Tab идёт от поля к полю.
      */
-    public readonly clearTabbable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
-        transform: booleanAttribute,
-    });
+    public readonly clearTabbable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(
+        this.#clearTabbableDefault,
+        {
+            transform: booleanAttribute,
+        }
+    );
 
     /**
      * Подпись `rt-field` в материальном наборе ложится внутрь этого контрола, на место подсказки.

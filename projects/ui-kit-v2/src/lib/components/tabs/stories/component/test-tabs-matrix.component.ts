@@ -18,6 +18,7 @@ export type TTabsMatrixPart =
     | 'scrollArrows'
     | 'closable'
     | 'iconOnly'
+    | 'iconBadge'
     | 'headerOnly'
     | 'presets'
     | 'themes';
@@ -233,6 +234,66 @@ export type TTabsMatrixPart =
                 </app-story-presets>
             }
 
+            @case ('iconBadge') {
+                <!-- Рисунки кита: заливку iconFill берёт материальный набор, свой рисует значок одним рисунком. -->
+                <app-story-presets caption="Заливка иконки и бейдж над её углом в обоих наборах">
+                    <ng-template>
+                        <app-story-row slotWidth="40rem" [items]="iconBadgeCases">
+                            <ng-template let-iconBadgeCase>
+                                @switch (iconBadgeCase) {
+                                    @case ('иконки контурные') {
+                                        <rt-tabs activeId="fav">
+                                            <ng-template rtTab="fav" icon="star" label="Избранное">Избранное</ng-template>
+                                            <ng-template rtTab="marks" icon="bookmark" label="Метки">Метки</ng-template>
+                                            <ng-template rtTab="flags" icon="flag" label="Флаги">Флаги</ng-template>
+                                        </rt-tabs>
+                                    }
+                                    @case ('iconFill') {
+                                        <rt-tabs activeId="fav">
+                                            <ng-template rtTab="fav" icon="star" iconFill label="Избранное">Избранное</ng-template>
+                                            <ng-template rtTab="marks" icon="bookmark" label="Метки">Метки</ng-template>
+                                            <ng-template rtTab="flags" icon="flag" iconFill label="Флаги">Флаги</ng-template>
+                                        </rt-tabs>
+                                    }
+                                    @case ('бейдж после подписи') {
+                                        <rt-tabs activeId="fav">
+                                            <ng-template rtTab="fav" icon="star" label="Избранное" [badge]="3">Избранное</ng-template>
+                                            <ng-template rtTab="marks" icon="bookmark" label="Метки" [badge]="12">Метки</ng-template>
+                                            <ng-template rtTab="flags" icon="flag" label="Флаги">Флаги</ng-template>
+                                        </rt-tabs>
+                                    }
+                                    @case ('бейдж над иконкой') {
+                                        <rt-tabs activeId="fav">
+                                            <ng-template rtTab="fav" icon="star" label="Избранное" badgePosition="overlay" [badge]="3">
+                                                Избранное
+                                            </ng-template>
+                                            <ng-template rtTab="marks" icon="bookmark" label="Метки" badgePosition="overlay" [badge]="12">
+                                                Метки
+                                            </ng-template>
+                                            <ng-template rtTab="flags" icon="flag" label="Флаги">Флаги</ng-template>
+                                            <ng-template rtTab="plain" label="Без иконки" badgePosition="overlay" [badge]="5">
+                                                Без иконки
+                                            </ng-template>
+                                        </rt-tabs>
+                                    }
+                                    @case ('только иконка') {
+                                        <rt-tabs activeId="fav">
+                                            <ng-template rtTab="fav" icon="star" tooltip="Избранное" badgePosition="overlay" [badge]="3">
+                                                Избранное
+                                            </ng-template>
+                                            <ng-template rtTab="marks" icon="bookmark" tooltip="Метки" badgePosition="overlay" [badge]="12">
+                                                Метки
+                                            </ng-template>
+                                            <ng-template rtTab="flags" icon="flag" tooltip="Флаги">Флаги</ng-template>
+                                        </rt-tabs>
+                                    }
+                                }
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('headerOnly') {
                 <app-story-presets caption="Только полоса: вкладки в середине панели, без своей панели содержимого">
                     <ng-template>
@@ -304,6 +365,15 @@ export class TestRtTabsMatrixComponent {
     ];
 
     public readonly iconCases: readonly string[] = ['glyph и подсказка', 'glyph и подпись'];
+
+    /** Полосы кадра RT-2995 в его порядке: заливка иконки, затем бейдж после подписи и над иконкой. */
+    public readonly iconBadgeCases: readonly string[] = [
+        'иконки контурные',
+        'iconFill',
+        'бейдж после подписи',
+        'бейдж над иконкой',
+        'только иконка',
+    ];
 
     /** Где стоят стрелки прокрутки: поверх вкладок и в своих местах по краям. */
     public readonly arrowPlacements: readonly IRtTabs.ScrollArrows[] = ['overlay', 'inline'];

@@ -126,6 +126,9 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `clearTabbable` | `boolean`              | `false`   |
 | `bordered`      | `boolean`              | `true`    |
 
+С `clearTabbable` крестик — соседняя кнопка поверх своего места в строке, а не кнопка внутри
+указателя: вложенную кнопку скринридер не объявляет, а Enter на ней открыл бы список.
+
 ## Выходы
 
 Своих выходов нет: значение уходит через `ControlValueAccessor`, то есть в связанный контрол
