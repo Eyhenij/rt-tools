@@ -44,8 +44,12 @@ input() {
     jq -n --arg c "$1" --arg d "$2" '{session_id:"tests",tool_name:"Bash",tool_input:{command:$c},cwd:$d}'
 }
 
+# The parsed hook fields of the caller are dropped: run from the push gate, the set inherits the
+# parsed `git push` of the outer hook, and the guard would judge that instead of the input given.
 run_guard() {
-    input "$2" "$1" | CLAUDE_PROJECT_DIR="$1" RT_E2E_BASE=main bash "$GUARD" 2>/dev/null
+    input "$2" "$1" | env -u RT_HOOK_PARSED -u RT_HOOK_INPUT -u RT_HOOK_TOOL -u RT_HOOK_CMD \
+        -u RT_HOOK_FILE -u RT_HOOK_CWD -u RT_HOOK_SOURCE \
+        CLAUDE_PROJECT_DIR="$1" RT_E2E_BASE=main bash "$GUARD" 2>/dev/null
 }
 
 # The decision: PASS or deny.
