@@ -117,6 +117,15 @@ The sections below are this tree's articles: the law's technique is named by the
       declaration lives on the block itself and beats everything that came by inheritance from
       above.
 
+- **A kit component's stylesheet stays under the component-style budget of the applications that
+  build the kit from source.** The budget is 9 kB per component, and no kit check counts it: the
+  styles linter, the token checks and the kit build all pass a block over it. Only the production
+  build of an application in the push set refuses it, and then three applications fail at once.
+  So a block gets its own property only for the four judged families; colour and size take the
+  token directly. An edit that adds properties to a block is checked by the production build of one
+  such application before the push.
+  <!-- rt-when: *.scss -->
+
 - **A query about the size of a box is asked of a box whose size does not come from its content.**
   The sign that opens such a query also contains the element in both directions: an element whose
   height comes from what the consumer put inside it collapses to nothing under it, and the frame

@@ -193,3 +193,20 @@ Then the focus goes straight to the field, and the panel carries no `tabindex`; 
 panel keeps `tabindex="0"` and takes the focus first, as before
 
 Покрытие: частичное — тест проверяет атрибут панели; переход фокуса по Tab проверен в витрине.
+
+### SC-UKV-1099 — a tab fills its icon when it asks for it
+
+Given tabs where one tab has `iconFill` and an icon by `glyph`, and another has `iconFill` and an icon by `icon`
+When the tab strip is drawn
+Then the icon of each such tab gets `fill`: the glyph is drawn filled, the kit name is filled under the material preset; the tabs without `iconFill` keep the outlined icon
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-icon-badge.spec.ts`.
+
+### SC-UKV-1102 — a tab puts its badge over the icon when it asks for it
+
+Given tabs with an icon and a badge: one with `badgePosition` `'overlay'`, one without it, one with `'overlay'` and no icon, one with no title
+When the tab strip is drawn
+Then the badge of the first stands over the icon corner, and the tab is as wide as without a badge. The second keeps the badge after the title, and so does the tab without an icon. The tab without a title draws no empty title
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-icon-badge.spec.ts`.
+Покрытие: частичное — ширину вкладки jsdom не меряет; её меряет витрина против макета.

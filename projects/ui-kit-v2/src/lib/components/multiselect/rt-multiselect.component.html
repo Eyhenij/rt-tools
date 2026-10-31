@@ -52,20 +52,43 @@
                 </span>
             }
             @if (showClearButton()) {
-                <rt-icon-button
-                    rtElem="clear"
-                    qa-dataid="multiselect-clear"
-                    icon="ico-close"
-                    size="sm"
-                    variant="ghost"
-                    iconColor="muted"
-                    [ariaLabel]="t().uiClear"
-                    [tabIndex]="-1"
-                    (clicked)="clear($event)" />
+                @if (clearTabbable()) {
+                    <!-- Место крестика в строке: сам крестик в порядке Tab стоит рядом с кнопкой, ниже. -->
+                    <span rtElem="clear-slot" aria-hidden="true"></span>
+                } @else {
+                    <rt-icon-button
+                        rtElem="clear"
+                        qa-dataid="multiselect-clear"
+                        icon="ico-close"
+                        size="sm"
+                        variant="ghost"
+                        iconColor="muted"
+                        [ariaLabel]="t().uiClear"
+                        [tabIndex]="-1"
+                        (clicked)="clear($event)" />
+                }
             }
             <rt-icon rtElem="chevron" name="chevron-down" size="sm" color="muted" />
         }
     </button>
+
+    @if (showClearButton() && clearTabbable() && !triggerTpl()) {
+        <!--
+            Крестик в порядке обхода — соседняя кнопка поверх своего места в строке, а не кнопка в
+            кнопке: вложенную кнопку скринридер не объявляет, а её Enter открывал бы список.
+        -->
+        <rt-icon-button
+            rtElem="clear"
+            qa-dataid="multiselect-clear"
+            icon="ico-close"
+            size="sm"
+            variant="ghost"
+            iconColor="muted"
+            [rtMod]="{ outside: true }"
+            [ariaLabel]="t().uiClear"
+            [tabIndex]="0"
+            (clicked)="clear($event)" />
+    }
 
     <ng-template #panelTpl>
         <div

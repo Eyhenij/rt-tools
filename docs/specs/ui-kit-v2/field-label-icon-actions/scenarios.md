@@ -191,3 +191,27 @@ When its inner field is shown, and the select panel and the agent edit are opene
 Then the console gets no NG01354 warning, and the host form keeps only its own controls
 
 Covered: `projects/ui-kit-v2/src/lib/components/rt-host-form-ngmodel.spec.ts`.
+
+### SC-UKV-1100 — the kit settings put the clearing cross into the Tab order
+
+Given the kit settings with `formControl.clearTabbable` on
+When a field of the shared base with a value is drawn without `clearTabbable` of its own
+Then its clearing cross is in the Tab order; with `clearTabbable` off on the field it is not; without the setting it is not
+
+Covered: `projects/ui-kit-v2/src/lib/components/form-control/rt-clear-tabbable.spec.ts`.
+
+### SC-UKV-1101 — the autocomplete, the number field and the date fields obey `clearTabbable`
+
+Given an autocomplete, a number field, a date picker and a date range, each with a value and `clearTabbable`
+When they are drawn
+Then the clearing cross of each is in the Tab order; without `clearTabbable` it is not
+
+Covered: `projects/ui-kit-v2/src/lib/components/form-control/rt-clear-tabbable.spec.ts`.
+
+### SC-UKV-1103 — the cross of the multiselect goes by Tab as a button next to the trigger
+
+Given a multiselect with a chosen value and `clearTabbable`
+When the person presses Tab from the trigger and then Enter
+Then the focus lands on the cross, a button outside the trigger, and Enter clears the choice without opening the list; without `clearTabbable` the cross stays out of the Tab order
+
+Covered: `projects/ui-kit-v2/src/lib/components/form-control/rt-clear-tabbable.spec.ts`.

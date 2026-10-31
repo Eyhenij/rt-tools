@@ -351,6 +351,13 @@
             flex-shrink: 0;
         }
 
+        /* Опора бейджа над иконкой: вкладка не знает, где иконка, и кружок ставится от её коробки. */
+        &__icon-box {
+            position: relative;
+            display: inline-flex;
+            flex-shrink: 0;
+        }
+
         &__badge {
             display: inline-flex;
             min-width: 18px;
@@ -364,6 +371,23 @@
             font-size: var(--rt-text-xs);
             font-weight: var(--rt-font-weight-medium);
             line-height: var(--rt-leading-none);
+
+            /* Кружок над правым верхним углом иконки, как `matBadge` у Material: из потока вынут, и
+               вкладка той же ширины, что без бейджа. Привязан правым краем — длинное число растёт
+               на иконку, а не на подпись. Сторона кружка — его полная ширина: поля внутри неё, иначе
+               однозначное число шире 16 px. */
+            &--overlay {
+                position: absolute;
+                top: calc(-1 * var(--rt-space-2));
+                right: calc(-1 * (var(--rt-space-1) + var(--rt-space-0-5)));
+                min-width: var(--rt-size-4);
+                height: var(--rt-size-4);
+                box-sizing: border-box;
+                padding: 0 var(--rt-space-1);
+                background-color: var(--rt-color-action-primary);
+                color: var(--rt-color-action-on-primary);
+                font-size: var(--rt-text-2xs);
+            }
         }
 
         /* Крестик закрываемой вкладки: подложка при наведении отделяет его от самой вкладки,
@@ -419,7 +443,7 @@
                 background-color: var(--rt-color-action-primary);
             }
 
-            .rt-tab-item__badge {
+            .rt-tab-item__badge:not(.rt-tab-item__badge--overlay) {
                 background-color: var(--rt-color-action-primary-soft);
                 color: var(--rt-color-action-primary);
             }

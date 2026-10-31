@@ -40,6 +40,12 @@ export namespace IRtTabs {
     /** Сторона размещения header-контрола относительно полосы вкладок. */
     export type ControlSide = 'left' | 'right';
 
+    /**
+     * Где стоит бейдж вкладки: `inline` — после подписи, как прежде; `overlay` — кружком над правым
+     * верхним углом иконки, не меняя ширины вкладки. У вкладки без иконки бейдж всегда `inline`.
+     */
+    export type BadgePosition = 'inline' | 'overlay';
+
     /** Семантический цвет иконки/бейджа вкладки — маппится на палитру `rt-icon`. */
     export type TitleColor = IRtIcon.Color;
 }

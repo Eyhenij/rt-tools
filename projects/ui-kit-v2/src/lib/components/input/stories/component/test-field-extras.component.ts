@@ -7,6 +7,7 @@ import { StoryPresetsComponent } from '../../../../../showcase/story-presets.com
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { STORY_STATE_FOCUS_VISIBLE, STORY_STATE_FOCUS_WITHIN } from '../../../../../showcase/story-states';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
+import { RtMultiselectComponent } from '../../../multiselect/rt-multiselect.component';
 import { RtSelectOptionDirective } from '../../../select/rt-select-option.directive';
 import { RtSelectComponent } from '../../../select/rt-select.component';
 import { IRtSelect } from '../../../select/rt-select.model';
@@ -46,6 +47,20 @@ interface IClearCase {
     readonly tabbable: boolean;
     readonly text: FormControl<string | null>;
     readonly color: FormControl<string | null>;
+    readonly cities: FormControl<string[] | null>;
+}
+
+/** Города множественного выбора: четыре, чтобы за тремя чипами встал счётчик остальных. */
+const CITIES: readonly IRtSelect.Option<string>[] = [
+    { value: 'msk', label: 'Москва' },
+    { value: 'kzn', label: 'Казань' },
+    { value: 'nsk', label: 'Новосибирск' },
+    { value: 'ekb', label: 'Екатеринбург' },
+];
+
+/** Все четыре города выбраны: крестик поля виден, и за чипами стоит «+1». */
+function allCities(): FormControl<string[] | null> {
+    return new FormControl<string[] | null>(CITIES.map((city: IRtSelect.Option<string>): string => city.value));
 }
 
 const COLORS: readonly IRtSelect.Option<string>[] = [
@@ -88,6 +103,7 @@ function labelCases(appearance: IRtInput.Appearance): readonly ILabelCase[] {
     imports: [
         ReactiveFormsModule,
         RtInputComponent,
+        RtMultiselectComponent,
         RtSelectComponent,
         RtSelectOptionDirective,
         StoryPresetsComponent,
@@ -217,6 +233,16 @@ function labelCases(appearance: IRtInput.Appearance): readonly ILabelCase[] {
                                     (cleared)="countClear()" />
                             </ng-template>
                         </app-story-row>
+                        <app-story-row [items]="clearCases" [itemLabel]="caseLabel" [slotWidth]="multiselectWidth">
+                            <ng-template let-clearCase>
+                                <rt-multiselect
+                                    ariaLabel="Города"
+                                    [clearTabbable]="clearCase.tabbable"
+                                    [options]="cityOptions"
+                                    [formControl]="clearCase.cities"
+                                    (cleared)="countClear()" />
+                            </ng-template>
+                        </app-story-row>
                         <p class="app-field-extras-note">Событий cleared: {{ clears() }}</p>
                     </ng-template>
                 </app-story-presets>
@@ -282,9 +308,14 @@ export class TestRtFieldExtrasComponent {
     public readonly searches: WritableSignal<number> = signal<number>(0);
 
     public readonly clearCases: readonly IClearCase[] = [
-        { name: 'как прежде', tabbable: false, text: control('Анна'), color: control('#d32f2f') },
-        { name: 'clearTabbable', tabbable: true, text: control('Анна'), color: control('#d32f2f') },
+        { name: 'как прежде', tabbable: false, text: control('Анна'), color: control('#d32f2f'), cities: allCities() },
+        { name: 'clearTabbable', tabbable: true, text: control('Анна'), color: control('#d32f2f'), cities: allCities() },
     ];
+
+    public readonly cityOptions: readonly IRtSelect.Option<string>[] = CITIES;
+
+    /** Ширина множественного выбора по кадру: в 15rem чипы встают столбцом, в кадре — по два в строку. */
+    public readonly multiselectWidth: string = '20rem';
 
     public readonly clears: WritableSignal<number> = signal<number>(0);
 

@@ -37,6 +37,9 @@ export const Closable: TStory = { args: { part: 'closable' } };
 /** Вкладки из значка Material: имя для чтения с экрана и подсказка — из `tooltip`, в том числе у отключённой. */
 export const IconOnly: TStory = { args: { part: 'iconOnly' } };
 
+/** Заливка иконки (`iconFill`) и бейдж над её правым верхним углом (`badgePosition: 'overlay'`). */
+export const IconBadge: TStory = { args: { part: 'iconBadge' } };
+
 /** Только полоса: вкладки служат навигацией в середине `rt-toolbar`, панели содержимого нет. */
 export const HeaderOnly: TStory = { args: { part: 'headerOnly' } };
 
