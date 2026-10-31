@@ -55,9 +55,9 @@
         <input type="hidden" name="password-confirm" [value]="value().passwordConfirm" />
 
         @if (recaptchaSiteKey) {
-            <!-- Флажок рисует скрипт Google внутрь блока, в цвет темы страницы. Пустой узел держит его
-                 место, пока скрипт грузится, и потом заменяется флажком -->
-            <div #captcha rtElem="captcha" qa-dataid="kc-recaptcha"><div></div></div>
+            <!-- Место флажка держит узел captcha-slot с первой отрисовки; скрипт Google рисует флажок
+                 в его дочерний узел, в цвет темы страницы -->
+            <div rtElem="captcha" qa-dataid="kc-recaptcha"><div #captcha rtElem="captcha-slot"></div></div>
         }
 
         <!-- Подпись кнопке рисует директива кита: содержимое ей отдавать нельзя, оно будет затёрто -->

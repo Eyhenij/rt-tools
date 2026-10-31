@@ -207,7 +207,7 @@ Given a realm that requires a visible reCAPTCHA with a site key
 When the registration page is drawn
 Then the Google script draws the widget with that site key into a block right before the submit
 button, and an answer in it is posted as `g-recaptcha-response`; while the script is on its way, an
-empty node holds the place of the widget
+empty slot holds the place of the widget
 
 ### SC-AUTH-89 — no widget without a visible reCAPTCHA
 
@@ -227,3 +227,27 @@ Given a registration page that asks for the Google script before the frame added
 frame added it and before it loaded
 When the script is added and loads
 Then the page gets the script once, after its load and not before
+
+### SC-AUTH-92 — the page watches the document for the Google script only while it needs it
+
+Given a registration page without reCAPTCHA, and a page with it that the person leaves
+When each page is drawn, and the second is left
+Then the first never watches the document, and the second stops watching it on leaving
+
+### SC-AUTH-93 — a Google script that failed to load ends the wait
+
+Given a registration page waiting for the Google script
+When the script fails to load
+Then the page stops waiting and never calls the script
+
+### SC-AUTH-94 — a Keycloak without the visibility sign gets the widget
+
+Given a realm that requires reCAPTCHA, on a Keycloak that names neither its visibility nor its action
+When the registration page is drawn
+Then the widget is drawn with the site key of the realm, as on the standard page
+
+### SC-AUTH-95 — a ticked widget keeps its answer through a theme switch
+
+Given a registration page whose widget the person has ticked
+When the person switches the page theme
+Then the widget is not drawn anew, and its answer stays in the form

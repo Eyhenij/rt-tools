@@ -3,6 +3,7 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
+    DestroyRef,
     effect,
     ElementRef,
     inject,
@@ -22,7 +23,7 @@ import { holdInvalidSubmit, loginPlaceholder, MISMATCH_ERROR, refusedValue, same
 import { backLinkText, KC_MESSAGES, plainMessage, TKcMessages } from '../../kc-i18n';
 import { EKcPolicyRule, IKcPolicyRule, passwordRuleMet, registrationRulesOf, RULE_MESSAGE } from '../../kc-password-rules';
 import { IKcProviderButton, providerButtonsOf } from '../../kc-providers';
-import { drawRecaptcha, IRecaptchaApi, whenRecaptchaReady } from '../../kc-recaptcha';
+import { drawRecaptcha, ERecaptchaTheme, IRecaptchaApi, recaptchaSiteKeyOf, whenRecaptchaReady } from '../../kc-recaptcha';
 import { RtKcMessageComponent } from '../../message/rt-kc-message.component';
 
 const BEM_BLOCK: string = 'rt-kc-page';
@@ -68,10 +69,13 @@ export class RtKcRegisterComponent {
     readonly #page: TKcContext = inject(KC_CONTEXT);
     readonly #rules: readonly IKcPolicyRule[] = registrationRulesOf(this.#page);
     readonly #theme: ThemeService = inject(ThemeService);
+    readonly #destroyRef: DestroyRef = inject(DestroyRef);
     // The constructors of the page, `MutationObserver` among them, are declared on the global object.
     readonly #view: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;
     /** The Google script once it is ready; `null` while it is on its way. */
     readonly #recaptcha: WritableSignal<IRecaptchaApi | null> = signal<IRecaptchaApi | null>(null);
+    /** The id Google gave the drawn widget; `null` until it is drawn. */
+    #widget: number | null = null;
 
     protected readonly captcha: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('captcha');
 
@@ -142,13 +146,8 @@ export class RtKcRegisterComponent {
     };
 
     protected readonly providers: readonly IKcProviderButton[] = providerButtonsOf(this.#page);
-    /**
-     * The site key of the reCAPTCHA widget, or `null` when the realm asks for no visible widget. The
-     * script Keycloak lists for the page renders the widget and puts its answer into the form.
-     */
-    protected readonly recaptchaSiteKey: string | null =
-        this.context.recaptchaRequired && this.context.recaptchaVisible ? (this.context.recaptchaSiteKey ?? null) : null;
-    protected readonly recaptchaAction: string | null = this.context.recaptchaAction ?? null;
+    /** The site key of the reCAPTCHA widget, or `null` when the realm asks for no visible widget. */
+    protected readonly recaptchaSiteKey: string | null = recaptchaSiteKeyOf(this.context);
 
     constructor() {
         // The confirmation is compared with the password, so a change of the password checks it again.
@@ -161,21 +160,27 @@ export class RtKcRegisterComponent {
                 control.markAsTouched();
             }
         }
-        // The widget takes the scheme of the page theme and is drawn anew when the theme switches.
+        // The page waits for the Google script only when it draws the widget, and stops on leaving.
         afterNextRender((): void => {
-            whenRecaptchaReady(this.#view, (api: IRecaptchaApi): void => this.#recaptcha.set(api));
-        });
-        effect((): void => {
-            const api: IRecaptchaApi | null = this.#recaptcha();
-            const block: HTMLElement | undefined = this.captcha()?.nativeElement;
-            if (api === null || block === undefined || this.recaptchaSiteKey === null) {
+            if (this.recaptchaSiteKey === null) {
                 return;
             }
-            drawRecaptcha(api, block, {
-                sitekey: this.recaptchaSiteKey,
-                theme: this.#theme.isDark() ? 'dark' : 'light',
-                ...(this.recaptchaAction === null ? {} : { action: this.recaptchaAction }),
-            });
+            const stop: () => void = whenRecaptchaReady(this.#view, (api: IRecaptchaApi): void => this.#recaptcha.set(api));
+            this.#destroyRef.onDestroy(stop);
+        });
+        // The widget takes the scheme of the page theme and is drawn anew when the theme switches —
+        // until the person ticks it: drawn anew, it would drop the answer.
+        effect((): void => {
+            const api: IRecaptchaApi | null = this.#recaptcha();
+            const slot: HTMLElement | undefined = this.captcha()?.nativeElement;
+            const theme: ERecaptchaTheme = this.#theme.isDark() ? ERecaptchaTheme.Dark : ERecaptchaTheme.Light;
+            if (api === null || slot === undefined || this.recaptchaSiteKey === null) {
+                return;
+            }
+            if (this.#widget !== null && api.getResponse(this.#widget) !== '') {
+                return;
+            }
+            this.#widget = drawRecaptcha(api, slot, { sitekey: this.recaptchaSiteKey, theme });
         });
     }
 
