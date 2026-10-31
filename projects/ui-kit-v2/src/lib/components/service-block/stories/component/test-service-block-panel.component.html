@@ -18,9 +18,9 @@
                     <section rtBlock="app-service-block-panel-webhook" qa-dataid="service-block-panel-webhook">
                         <h3 rtElem="title">Адрес извещений</h3>
                         <rt-message severity="info">Добавьте его в Stripe: Разработчикам → Вебхуки</rt-message>
-                        <rt-copy-cell framed qa-dataid="service-block-panel-webhook-url">
-                            https://rent-ops.com/payments/stripe/platform
-                        </rt-copy-cell>
+                        <!-- Перенос после «/stripe/», как в макете; без пробелов вокруг <wbr>, иначе пробел уйдёт и в текст, и в копируемое -->
+                        <!-- prettier-ignore -->
+                        <rt-copy-cell framed qa-dataid="service-block-panel-webhook-url">https://rent-ops.com/payments/stripe/<wbr />platform</rt-copy-cell>
                     </section>
                 </div>
             </div>
