@@ -13,6 +13,13 @@ export enum ERtStorageKeys {
     /** Префикс, а не полный ключ: итоговый вид — `rt.table.columns.<tableId>`. */
     TableColumnsPrefix = 'rt.table.columns.',
 
+    /**
+     * Префикс настроек `rt-data-table`: итоговый вид — `rt.data-table.config.<ключ приложения>`.
+     * Свой, а не `TableColumnsPrefix`: форма записи другая, и один ключ на обе таблицы дал бы
+     * одной прочитать чужое.
+     */
+    DataTableConfigPrefix = 'rt.data-table.config.',
+
     /** Настройки боковых меню: один объект, в нём каждое меню под своим номером. */
     SideMenu = 'rt.side-menu',
 }

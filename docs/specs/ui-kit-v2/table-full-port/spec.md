@@ -122,6 +122,14 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 - **The header stays on top while the rows scroll under it.**
 - **A press on a sortable header asks for the ascending order, and on the column already sorted
   ascending — for the descending one.** The family never asks to drop the sort.
+- **Both tables compute their conditions and their sort by the core.** Neither keeps a copy of its
+  own; a table passes its inputs to the core and its outputs onwards.
+- **A press on a sorted header follows the cycle of its table.** In `rt-table` the third press drops
+  the sort: ascending, descending, none. In `rt-data-table` the press after the descending order asks
+  for the ascending one again, as in the first kit.
+- **Both tables name the sort for assistive technology by the same values.** `aria-sort` is
+  `ascending`, `descending` or `none`; a column of `rt-data-table` that cannot be sorted carries no
+  `aria-sort` at all.
 - **A sort is asked only for a column the table has.** A property name matching no declared
   column is not handed to the application.
 - **The header of a sorted column shows which way it is sorted.**
@@ -199,8 +207,15 @@ by the subdomain next to this one, `docs/specs/ui-kit-v2/table-selection/`.
   when the table is opened again.**
 - **Saved settings whose set of columns differs from the declared one are dropped, and the table
   is drawn by the declaration.**
-- **Settings the first kit saved under a storage key are read by the family under the same key.**
-  The shape of the saved record is the first kit's.
+- **`rt-data-table` writes its settings under the kit key.** The prefix stands in the kit's
+  registry next to the one of `rt-table`; both start with `rt.`. The shape of the saved record is
+  the first kit's.
+- **An old record is copied under the kit key on the first read and is not erased.** The person sees
+  their columns as before. The old record stays because a table of the first kit in the same
+  application may read it.
+- **A record under the kit key wins over an old one.**
+- **A reset of the settings removes both records.** Otherwise the old record would be copied back on
+  the next read, and the reset would undo itself.
 - **A table with no saved settings shows the horizontal scrollbar and hides the vertical one.**
 - **A hidden scrollbar hides the bar, not the scrolling.**
 - **The scrollbar choice is applied to the whole page: every table of the family on it shows the
@@ -272,8 +287,8 @@ Not applicable: nothing here makes a call.
 
 ## Data
 
-The column settings are kept in the browser's database under the storage key the application
-gives: per column its property, shown name, width, order and visibility, and the two scrollbar
+The column settings are kept in the browser's database under `rt.data-table.config.` followed by
+the storage key the application gives; a record under the bare storage key is the old one: per column its property, shown name, width, order and visibility, and the two scrollbar
 flags. The selection lives while the screen is open and is not saved.
 
 ## Screens and states
@@ -350,7 +365,11 @@ table that applied it last decides it for all.
   "our own from the first kit" closes `Q-TP-16`.
 - **The application moves without edits.** The owner's word "yes, without edits" closes
   `Q-TP-18` — the declaration keeps every field of the first kit's — and `Q-TP-19` — the settings
-  the first kit saved are read under the same key.
+  the first kit saved are read under the same key. Since RT-2867 that key is read once, when the kit
+  key is empty, and its record is copied under the kit key.
+- **The kit key copies the old record, it does not move it.** The owner's condition is that no one
+  loses settings; a first-kit table in the same application may still read the old record. The
+  prefix is not `rt.table.columns.`: the record of `rt-data-table` has another shape.
 - **The first kit's behaviour is copied as it is, oddities included.** The owner's word "copy as
   is, we discuss it in detail later" closes `Q-TP-4`, `Q-TP-6`, `Q-TP-7`, `Q-TP-10`, `Q-TP-11`,
   `Q-TP-14`, `Q-TP-15`, `Q-TP-20`, `Q-TP-21` and `Q-TP-22`; the list below keeps them for that
@@ -435,3 +454,9 @@ table that applied it last decides it for all.
   select hint reads "Choose filter".
 - 8 October 2026 — task RT-2644: the filter row with its scenarios moved to the subdomain
   `table-full-port-filter-row`, as the spec outgrew the length limit.
+- 2026-10-30 — RT-2865: the filter and the sort of both tables are computed by one core in the entry
+  point `@rt-tools/ui-kit-v2/table-core`; each table keeps its cycle and its empty mode.
+- 2026-10-30 — RT-2867: the settings move under the kit key; the old record is copied and kept. The
+  owner's word: «если пользователи приложений не потеряют свои конфиги то можно делать».
+- 2026-10-30 — RT-3015: the header follows its rule above — another column asks for the ascending
+  order after any sort; the first kit's oddity is removed.

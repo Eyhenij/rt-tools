@@ -15,7 +15,7 @@ A rule of this tree under the law `docs/constitution/mockups.md`. The owner's wo
 
 | In the law          | Here                                                                                   |
 | ------------------- | -------------------------------------------------------------------------------------- |
-| a visible edit      | a file of `projects/ui-kit/src` or `projects/ui-kit-v2/src`; specs, stories, showcase pages and snapshot references are not one |
+| a visible edit      | a file of `projects/ui-kit/src` or `projects/ui-kit-v2/src`; specs, stories, showcase pages, snapshot references, pure logic (`*.logic.ts`, `*.core.ts`), barrels (`index.ts`) and the storage files named in the check (the key registry, the settings services) are not one |
 | the mockup          | a frame in Figma, named by its link with `node-id`                                      |
 | approved            | the owner's answer to the question «одобряете?», written down word for word: a chat message or a choice in the question window |
 | the approval record | the file approvals.md in the task folder, the same lines in the archive record after it |
