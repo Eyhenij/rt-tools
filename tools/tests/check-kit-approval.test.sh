@@ -41,6 +41,12 @@ report "the core of the tables goes without them" \
     "$(run "console.log(m.isVisibleKitFile('projects/ui-kit-v2/src/lib/components/table-core/rt-table-sort.core.ts'))")" false
 report "a barrel goes without them" \
     "$(run "console.log(m.isVisibleKitFile('projects/ui-kit-v2/src/lib/components/table-core/index.ts'))")" false
+report "the key registry goes without them" \
+    "$(run "console.log(m.isVisibleKitFile('projects/ui-kit-v2/src/lib/platform/storage-keys.enum.ts'))")" false
+report "a storage service goes without them" \
+    "$(run "console.log(m.isVisibleKitFile('projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-config.service.ts'))")" false
+report "a service outside the storage list still needs them" \
+    "$(run "console.log(m.isVisibleKitFile('projects/ui-kit-v2/src/lib/platform/theme.service.ts'))")" true
 report "a component class still needs them" \
     "$(run "console.log(m.isVisibleKitFile('projects/ui-kit-v2/src/lib/components/x/x.component.ts'))")" true
 report "a file outside the kits goes without them" \

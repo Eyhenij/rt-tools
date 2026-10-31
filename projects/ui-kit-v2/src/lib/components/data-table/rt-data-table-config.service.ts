@@ -1,13 +1,13 @@
 import { DestroyRef, Injectable, Signal, WritableSignal, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { Observable, Subject } from 'rxjs';
-import { concatMap, map, switchMap, take, takeUntil } from 'rxjs/operators';
+import { Observable, of, Subject } from 'rxjs';
+import { concatMap, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 
 import { IDBStorageService } from '@rt-tools/core';
 import { areArraysEqual, TNullable } from '@rt-tools/utils';
 
-import { IRtDataTable } from '@rt-tools/ui-kit-v2/core';
+import { ERtStorageKeys, IRtDataTable } from '@rt-tools/ui-kit-v2/core';
 
 /** Настройка, как её держит хранилище: столбцы там лежат частичными. Форма — первого кита. */
 interface IStoredConfig<ENTITY_TYPE> {
@@ -25,7 +25,16 @@ interface IConfigRead<ENTITY_TYPE> {
 /** Просьба записи или снятия: обе идут одним потоком, чтобы не разойтись порядком. */
 type TConfigWrite<ENTITY_TYPE> =
     | { readonly kind: 'set'; readonly storageKey: string; readonly config: IRtDataTable.Config.Data<ENTITY_TYPE> }
+    | { readonly kind: 'copy'; readonly storageKey: string; readonly stored: IStoredConfig<ENTITY_TYPE> }
     | { readonly kind: 'remove'; readonly storageKey: string };
+
+/**
+ * Ключ, под которым таблица держит настройки: префикс кита и ключ, данный приложением.
+ * Запись под одним ключом приложения — старая: её оставил первый кит или прежняя версия этого.
+ */
+export function dataTableConfigKeyOf(storageKey: string): string {
+    return `${ERtStorageKeys.DataTableConfigPrefix}${storageKey}`;
+}
 
 /**
  * Порядок имён колонок для сверки двух наборов.
@@ -41,8 +50,9 @@ export function comparePropNames(a: PropertyKey | undefined, b: PropertyKey | un
 /**
  * Настройки таблицы в хранилище браузера: порядок и видимость столбцов, полосы прокрутки.
  *
- * Перенесено из первого кита как есть: ключ — тот, что дало приложение, форма записи — та же.
- * Поэтому настройки, сохранённые таблицей первого кита, читаются здесь без переделки.
+ * Форма записи — первого кита. Ключ — кита: `dataTableConfigKeyOf`. Старая запись под одним
+ * ключом приложения читается, когда под ключом кита пусто, и копируется под него; сама она остаётся,
+ * потому что её может читать таблица первого кита в том же приложении.
  */
 @Injectable()
 export class RtDataTableConfigService<ENTITY_TYPE> {
@@ -78,8 +88,7 @@ export class RtDataTableConfigService<ENTITY_TYPE> {
         this.#readSource
             .pipe(
                 switchMap((read: IConfigRead<ENTITY_TYPE>): Observable<IRtDataTable.Config.Data<ENTITY_TYPE>> =>
-                    this.#iDBStorageService.get(read.storageKey).pipe(
-                        take(1),
+                    this.#savedOf(read.storageKey).pipe(
                         takeUntil(this.#updatedSource),
                         map((savedConfig: TNullable<IStoredConfig<ENTITY_TYPE>>): IRtDataTable.Config.Data<ENTITY_TYPE> =>
                             this.#configOf(read.config, savedConfig)
@@ -106,18 +115,48 @@ export class RtDataTableConfigService<ENTITY_TYPE> {
 
     public updateConfig(storageKey: string, config: IRtDataTable.Config.Data<ENTITY_TYPE>): void {
         this.#updatedSource.next();
-        this.#writeSource.next({ kind: 'set', storageKey, config });
+        this.#writeSource.next({ kind: 'set', storageKey: dataTableConfigKeyOf(storageKey), config });
         this.#tableConfig.set(config);
     }
 
+    /** Снимает обе записи: оставленная старая скопировалась бы обратно при следующем открытии. */
     public deleteConfig(storageKey: string): void {
+        this.#writeSource.next({ kind: 'remove', storageKey: dataTableConfigKeyOf(storageKey) });
         this.#writeSource.next({ kind: 'remove', storageKey });
+    }
+
+    /**
+     * Сохранённое под ключом кита, а если там пусто — старая запись, скопированная под него.
+     * Копия идёт тем же потоком записи, что и правки, и порядка с ними не теряет.
+     */
+    #savedOf(storageKey: string): Observable<TNullable<IStoredConfig<ENTITY_TYPE>>> {
+        const kitKey: string = dataTableConfigKeyOf(storageKey);
+
+        return this.#iDBStorageService.get(kitKey).pipe(
+            take(1),
+            switchMap((saved: TNullable<IStoredConfig<ENTITY_TYPE>>): Observable<TNullable<IStoredConfig<ENTITY_TYPE>>> =>
+                saved
+                    ? of(saved)
+                    : this.#iDBStorageService.get(storageKey).pipe(
+                          take(1),
+                          tap((old: TNullable<IStoredConfig<ENTITY_TYPE>>): void => {
+                              if (old) {
+                                  this.#writeSource.next({ kind: 'copy', storageKey: kitKey, stored: old });
+                              }
+                          })
+                      )
+            )
+        );
     }
 
     /** Обращение к хранилищу под просьбу записи или снятия. */
     #writeOf(write: TConfigWrite<ENTITY_TYPE>): Observable<unknown> {
         if (write.kind === 'remove') {
             return this.#iDBStorageService.remove(write.storageKey);
+        }
+
+        if (write.kind === 'copy') {
+            return this.#iDBStorageService.set(write.storageKey, write.stored);
         }
 
         const storedColumns: Array<Partial<IRtDataTable.Column<ENTITY_TYPE>>> = write.config.columns.map(
