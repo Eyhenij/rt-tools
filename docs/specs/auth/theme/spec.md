@@ -1,6 +1,6 @@
 # The entry screens of the module
 
-**Status:** in force · **Revision:** 2026-10-05 · **Scenario prefix:** `SC-AUTH`
+**Status:** in force · **Revision:** 2026-10-31 · **Scenario prefix:** `SC-AUTH`
 **Depends on:** none
 **Laws:** `reuse-first`, `verifiability`
 **Procedures:** none
@@ -100,7 +100,8 @@ the entry is not sure the page belongs to the admin.
   A light widget on the dark card reads as a foreign patch. A ticked widget keeps its scheme: drawn
   anew, it would drop the answer, and the form would leave without it.
 - **The page waits for the Google script only while it draws the widget.** Without the widget, after
-  leaving the page and after the script failed to load, nothing watches the document for it.
+  leaving the page, after the script failed to load and after it loaded without its API, nothing
+  watches the document or the script for it: a loaded script does not load a second time.
 - **The dark theme follows the system until the person switches it on the page.**
 - **The stand realm uses the theme, and the raising command builds it first.** Without the JAR the
   realm falls back to the standard look.
@@ -193,3 +194,4 @@ None.
 - 2026-10-30 — the page scripts and the reCAPTCHA widget on the registration page, task RT-3003.
 - 2026-10-30 — the widget on a Keycloak without the visibility sign, a ticked widget through a theme
   switch, the wait for the script ended, task RT-3013.
+- 2026-10-31 — a script loaded without its API ends the wait, task RT-3025.
