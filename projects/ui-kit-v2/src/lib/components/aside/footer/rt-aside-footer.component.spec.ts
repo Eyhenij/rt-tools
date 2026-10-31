@@ -25,6 +25,26 @@ function setup(): ComponentFixture<AsideFooterHostComponent> {
     return createRtFixture(AsideFooterHostComponent);
 }
 
+/** Подвал в раскладке start: позитивный глагол стоит первым. */
+@Component({
+    selector: 'rt-aside-footer-start-host',
+    template: `
+        <rt-aside-footer layout="start">
+            <button asideDismiss qa-dataid="host-dismiss" type="button">Закрыть</button>
+            <button asidePrimary qa-dataid="host-primary" type="button">Сохранить</button>
+        </rt-aside-footer>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtAsideFooterComponent],
+})
+class AsideFooterStartHostComponent {}
+
+function orderOf(fixture: ComponentFixture<unknown>): string[] {
+    const footer: HTMLElement = qa(fixture, 'aside-footer')?.nativeElement as HTMLElement;
+
+    return Array.from(footer.querySelectorAll('[qa-dataid]')).map((node: Element): string => node.getAttribute('qa-dataid') ?? '');
+}
+
 /** Подвал с кнопками кита, как его собирает приложение: со своим видом, значком и обёрткой слота. */
 @Component({
     selector: 'rt-aside-footer-look-host',
@@ -79,12 +99,15 @@ describe('RtAsideFooterComponent', (): void => {
     it('порядок кнопок задаёт подвал, а не разметка потребителя', (): void => {
         // Иначе «Сохранить» и «Отмена» менялись бы местами от экрана к экрану.
         const fixture: ComponentFixture<AsideFooterHostComponent> = setup();
-        const footer: HTMLElement = qa(fixture, 'aside-footer')?.nativeElement as HTMLElement;
-        const order: string[] = Array.from(footer.querySelectorAll('[qa-dataid]')).map(
-            (node: Element): string => node.getAttribute('qa-dataid') ?? ''
-        );
 
-        expect(order).toEqual(['host-dismiss', 'host-primary']);
+        expect(orderOf(fixture)).toEqual(['host-dismiss', 'host-primary']);
+    });
+
+    it('в раскладке start глагол стоит первым в разметке, и Tab идёт по кнопкам в видимом порядке', (): void => {
+        // Порядок, заданный только стилем, Tab и экранный диктор не видят: они идут по разметке.
+        const fixture: ComponentFixture<AsideFooterStartHostComponent> = createRtFixture(AsideFooterStartHostComponent);
+
+        expect(orderOf(fixture)).toEqual(['host-primary', 'host-dismiss']);
     });
 
     it('содержимое мимо слотов в подвал не попадает', (): void => {

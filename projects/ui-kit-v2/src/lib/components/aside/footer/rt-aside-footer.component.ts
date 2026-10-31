@@ -12,6 +12,7 @@ import {
     Signal,
     ViewEncapsulation,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
@@ -77,7 +78,7 @@ function slotLook(host: HTMLElement | undefined, dismissLook: IButton.PlaceLook,
     styleUrl: './rt-aside-footer.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
-    imports: [BlockDirective, ElemDirective],
+    imports: [BlockDirective, ElemDirective, NgTemplateOutlet],
     host: {
         class: BEM_BLOCK,
         '[class.rt-aside-footer--start]': "layout() === 'start'",

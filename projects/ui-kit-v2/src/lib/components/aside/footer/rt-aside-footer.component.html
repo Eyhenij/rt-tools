@@ -1,6 +1,14 @@
+<ng-template #dismissSlot><ng-content select="[asideDismiss]" /></ng-template>
+<ng-template #primarySlot><ng-content select="[asidePrimary]" /></ng-template>
+
 <ng-container rtBlock="rt-aside-footer">
     <footer rtElem="content" qa-dataid="aside-footer">
-        <ng-content select="[asideDismiss]" />
-        <ng-content select="[asidePrimary]" />
+        @if (layout() === 'start') {
+            <ng-container [ngTemplateOutlet]="primarySlot" />
+            <ng-container [ngTemplateOutlet]="dismissSlot" />
+        } @else {
+            <ng-container [ngTemplateOutlet]="dismissSlot" />
+            <ng-container [ngTemplateOutlet]="primarySlot" />
+        }
     </footer>
 </ng-container>
