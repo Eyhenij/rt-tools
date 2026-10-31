@@ -59,9 +59,9 @@ not. It stands in the system prompt next to the descriptions of all the others, 
 goes by them.
 
 It answers two questions: what the skill gives and when to load it. Write in the third person,
-up to three hundred characters — where the tree has the descriptions check laid out, it refuses a
-longer one: the first sentence — what it does, the second — "Load when…", the third — what is not
-in it and where to look for that.
+up to three hundred characters: the first sentence — what it does, the second — "Load when…", the
+third — what is not in it and where to look for that. Where the tree has the descriptions check
+laid out, it refuses a longer declaration.
 
 ```
 ✓ Creating a new skill — one with no law above it. Load when asked to create, write or
@@ -116,9 +116,8 @@ link deeper than one level is not followed at all.
 - [ ] nothing that goes stale by itself: versions, numbers, dates;
 - [ ] at least one ready-made sample, not only an explanation;
 - [ ] links go one level deep, no deeper;
-- [ ] the descriptions check is green — before the first commit, not before the push;
-- [ ] a text the owner handed over is compared with the skill by a script, and every difference
-      stands in the list of deviations.
+- [ ] where the tree has the descriptions check laid out, it is green before the first commit,
+      not only before the push.
 
 ## So that the skill gets loaded
 

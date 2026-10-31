@@ -108,7 +108,7 @@ and from sorting out the cargo it needs one step: the list of what is not sorted
   it. "No" to even one — the resource stays this tree's own resource, on a par with a package one:
   the same shape, the same law above, its own branch in the gate map. This is held by the boundary
   check, and it stands in the push gate.
-- **A new package resource leaves with its spec in the same commit.** `npm run
-  check:spec-coverage` and `node tools/check-descriptions.mjs` run before the first commit of a
-  new skill, rule or pattern, not at the push gate: a red found at review costs a second commit
-  and a second review round.
+- **A new package resource passes the spec and description checks before its first commit.**
+  `npm run check:spec-coverage` and `node tools/check-descriptions.mjs` run before the first
+  commit of a new skill, rule or pattern, not only at the push gate: a red found at review costs a
+  second commit and a second review round.
