@@ -1,4 +1,5 @@
 import {
+    booleanAttribute,
     contentChildren,
     effect,
     inject,
@@ -7,6 +8,7 @@ import {
     Component,
     ElementRef,
     InputSignal,
+    InputSignalWithTransform,
     Signal,
     ViewEncapsulation,
 } from '@angular/core';
@@ -95,6 +97,14 @@ export class RtAsideFooterComponent {
     /** Раскладка кнопок: `between` по умолчанию, `start` — панель подключения службы. */
     public readonly layout: InputSignal<TRtAsideFooterLayout> = input<TRtAsideFooterLayout>('between');
 
+    /**
+     * На телефоне кнопка слота `[asideDismiss]` читается «Закрыть»: так она названа у всех панелей.
+     * `false` оставляет подпись потребителя — у панели фильтров эта кнопка «Сбросить», а не выход.
+     */
+    public readonly phoneCloseLabel: InputSignalWithTransform<boolean, boolean | string> = input<boolean, boolean | string>(true, {
+        transform: booleanAttribute,
+    });
+
     constructor() {
         effect((): void => {
             const hosts: readonly ElementRef<HTMLElement>[] = this.hosts();
@@ -102,7 +112,7 @@ export class RtAsideFooterComponent {
             const dismissLook: IButton.PlaceLook = {
                 appearance: start ? 'text' : 'outlined',
                 theme: 'secondary',
-                ...(this.#phone() ? { label: this.#closeLabel() } : {}),
+                ...(this.#phone() && this.phoneCloseLabel() ? { label: this.#closeLabel() } : {}),
             };
             const primaryLook: IButton.PlaceLook = start ? PRIMARY_START_LOOK : PRIMARY_LOOK;
 

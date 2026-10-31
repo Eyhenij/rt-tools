@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Служба цикла раннера ревью Copilot на машине владельца.
+    Ставит её `setup.sh`: подставляет домашнюю папку вместо __HOME__ и кладёт копию в
+    ~/Library/LaunchAgents/. Лог — ~/Library/Logs/rt-copilot-runner.log
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.rt-tools.copilot-runner</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>__HOME__/.local/share/rt-copilot-runner/runner-loop.sh</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>__HOME__/Library/Logs/rt-copilot-runner.log</string>
+    <key>StandardErrorPath</key>
+    <string>__HOME__/Library/Logs/rt-copilot-runner.log</string>
+</dict>
+</plist>

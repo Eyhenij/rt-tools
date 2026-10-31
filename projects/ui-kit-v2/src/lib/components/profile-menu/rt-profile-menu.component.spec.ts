@@ -1,3 +1,4 @@
+import { CdkScrollable } from '@angular/cdk/scrolling';
 import { OutputEmitterRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -144,5 +145,11 @@ describe('RtProfileMenuComponent', (): void => {
 
             expect(sent).toHaveLength(0);
         });
+    });
+
+    it('SC-UKV-1085: меню заявляет себя прокручиваемым, и открытый в нём список следует за полем', (): void => {
+        const fixture: ComponentFixture<RtProfileMenuComponent> = setup();
+
+        expect(fixture.debugElement.injector.get(CdkScrollable).getElementRef().nativeElement).toBe(fixture.nativeElement);
     });
 });
