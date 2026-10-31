@@ -52,28 +52,33 @@ function scriptOf(view: Window): HTMLScriptElement | undefined {
 /**
  * Calls back once the Google script is ready. The frame of the page adds the script after the
  * first draw, and the page may ask before that: then the call waits for the script to be added
- * and for its `load`. A script that failed to load ends the wait. The returned function ends it
- * too, and after it the callback never comes.
+ * and for its `load`. A script that failed to load ends the wait, and so does one that loaded
+ * without its API: it will not load a second time. A script that loaded before the page asked
+ * cannot be told from one still loading, so the page waits for it until the returned function
+ * ends the wait; after that the callback never comes.
  */
 export function whenRecaptchaReady(view: Window & typeof globalThis, done: (api: IRecaptchaApi) => void): () => void {
     let stopped: boolean = false;
     let release: () => void = (): void => undefined;
-    const wait: () => void = (): void => {
+    const takeApi: () => boolean = (): boolean => {
         const api: IRecaptchaApi | null = recaptchaOf(view);
-        if (api !== null) {
-            api.ready((): void => {
-                if (!stopped) {
-                    done(api);
-                }
-            });
+        api?.ready((): void => {
+            if (!stopped) {
+                done(api);
+            }
+        });
 
+        return api !== null;
+    };
+    const wait: () => void = (): void => {
+        if (takeApi()) {
             return;
         }
         const script: HTMLScriptElement | undefined = scriptOf(view);
         if (script !== undefined) {
             const loaded: () => void = (): void => {
                 release();
-                wait();
+                takeApi();
             };
             release = (): void => {
                 script.removeEventListener('load', loaded);

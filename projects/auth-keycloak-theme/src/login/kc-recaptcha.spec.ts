@@ -75,6 +75,23 @@ describe('whenRecaptchaReady', () => {
         expect(got).toEqual([]);
     });
 
+    it('SC-AUTH-96 — a script that loaded without its API ends the wait and sets no new one on it', () => {
+        const script: HTMLScriptElement = addScript();
+        const got: IRecaptchaApi[] = [];
+        whenRecaptchaReady(window, (api: IRecaptchaApi): void => {
+            got.push(api);
+        });
+        const listen: jest.SpyInstance = jest.spyOn(script, 'addEventListener');
+        script.dispatchEvent(new Event('load'));
+        const listened: number = listen.mock.calls.length;
+        listen.mockRestore();
+        Reflect.set(window, 'grecaptcha', API);
+        script.dispatchEvent(new Event('load'));
+
+        expect(listened).toBe(0);
+        expect(got).toEqual([]);
+    });
+
     it('SC-AUTH-92 — a wait ended by the page stops watching the document and never calls back', async () => {
         const disconnect: jest.SpyInstance = jest.spyOn(MutationObserver.prototype, 'disconnect');
         const got: IRecaptchaApi[] = [];
