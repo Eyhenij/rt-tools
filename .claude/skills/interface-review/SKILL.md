@@ -2,7 +2,7 @@
 name: interface-review
 description: Reviews an interface as one system: accessibility, layout, writing, typography and polish, in that order, into one ranked findings table and one verdict. Load when asked to review or audit a screen, a flow, a component or a Figma frame. The domain rules are in interface-review-principles.
 ---
-<!-- rt-kit v0.33.1 · skills/interface-review.needs-app.md · 560e634cdfc4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · skills/interface-review.needs-app.md · b29340acbfda · правится надстройкой, не здесь -->
 
 # Review the interface as one system
 
@@ -96,7 +96,7 @@ Treat a review request as read-only. Do not edit source code unless the user als
 the findings. When implementation is requested, preserve the consolidated report as the change
 scope and re-run the relevant verification afterward.
 
-## Review output format
+## Review Output Format
 
 Always use the following sections.
 
@@ -136,8 +136,8 @@ are no findings, omit the table and state "No actionable interface findings."
 
 ### Annotate the frame
 
-Every row in the findings table also lands on the canvas as a card, by `interface-review-annotate`.
-If the file is view-only or the user asked for the report only, output the table alone and say the
+Every row in the findings table also lands on the canvas as a card. Where the tree has
+`interface-review-annotate` laid out, the card shape and placement are there. If the file is view-only or the user asked for the report only, output the table alone and say the
 frame was not annotated.
 
 ### Considered but Rejected
@@ -170,7 +170,7 @@ End with exactly one:
 - `Needs changes` — only `MEDIUM` or `LOW` findings remain.
 - `Approve` — no actionable findings remain and the claimed coverage was verified.
 
-## Common mistakes
+## Common Mistakes
 
 | Mistake | Fix |
 | --- | --- |

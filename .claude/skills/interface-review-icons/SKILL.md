@@ -2,7 +2,7 @@
 name: interface-review-icons
 description: Icon recipes for an interface review: stroke matched to text weight, one SVG recolored per state, outline by default and fill when active, render size, RTL mirroring. Load when an icon finding is worded or fixed. Icon swaps are in interface-review-motion-states.
 ---
-<!-- rt-kit v0.33.1 · skills/interface-review-icons.needs-app.md · 58a065801657 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · skills/interface-review-icons.needs-app.md · bbd76b83bda6 · правится надстройкой, не здесь -->
 
 # Icons
 
@@ -15,7 +15,7 @@ interface.
   assets per state, filled icons everywhere, an icon that blurs at small size, or an arrow that
   points the wrong way in RTL.
 
-## Match icon stroke to text weight
+## Match Icon Stroke to Text Weight
 
 An icon next to text should carry the same optical weight as the text, or the pair looks mismatched:
 a hairline icon beside semibold text reads as broken, a heavy icon beside regular text shouts.
@@ -49,7 +49,7 @@ Two related consistency rules:
 - **Size icons relative to the text's cap height**, typically `1em`–`1.25em` when inline with text,
   so the pair scales together.
 
-## One SVG, recolored per state
+## One SVG, Recolored per State
 
 Never ship separate icon assets for default/hover/selected/disabled states. Use a single SVG drawn
 with `currentColor` and let CSS state drive the color:
@@ -76,7 +76,7 @@ with `currentColor` and let CSS state drive the color:
 Hardcoded fills inside the SVG (`fill="#666"`) break this; strip them to `currentColor` when
 importing icons.
 
-## Outline default, fill active
+## Outline Default, Fill Active
 
 When an icon set offers outline and filled variants, use them as a state pair, not interchangeably:
 
@@ -96,7 +96,7 @@ When an icon set offers outline and filled variants, use them as a state pair, n
 The swap between variants is a contextual icon animation; use the exact cross-fade values in
 `interface-review-motion-states`.
 
-## Design at render size
+## Design at Render Size
 
 An icon that looks great at 48px can collapse into mush at 16px. Details that read at large sizes
 (thin interior lines, tight counters, fine texture) blur or alias when small.

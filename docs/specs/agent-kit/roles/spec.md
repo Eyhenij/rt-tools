@@ -1,6 +1,6 @@
 # The roles, the skills, the blanks and the declarations the package ships
 
-**Status:** in force · **Revision:** 2026-09-10 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-10-31 · **Scenario prefix:** `SC-AK`
 **Depends on:** `docs/specs/agent-kit/rules/spec.md`
 **Laws:** `project-documentation`
 **Procedures:** none

@@ -2,7 +2,7 @@
 name: interface-review-performance
 description: Performance recipes for an interface review: transition only what changes instead of transition all, and will-change only for compositor properties on a seen stutter. Load when such a finding is worded or fixed. The animations are in interface-review-motion.
 ---
-<!-- rt-kit v0.33.1 · skills/interface-review-performance.needs-app.md · 7ed30eb9800c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · skills/interface-review-performance.needs-app.md · e2dc3c6df784 · правится надстройкой, не здесь -->
 
 # Performance
 
@@ -13,7 +13,7 @@ Transition specificity and GPU compositing hints.
 - A finding of `interface-review` is about `transition: all`, an unintended transition on a
   property nobody meant to animate, a first-frame stutter, or `will-change` on everything.
 
-## Transition only what changes
+## Transition Only What Changes
 
 Never use `transition: all` or Tailwind's `transition-all`. Always specify the exact properties that
 change. (Tailwind's bare `transition` maps to a curated default list of colors, opacity, shadow and
@@ -26,7 +26,7 @@ transforms, not to `all`; still prefer naming exactly what changes.)
   shadows)
 - Prevents browser optimizations
 
-### CSS example
+### CSS Example
 
 ```css
 /* Good: only transition what changes */
@@ -52,14 +52,14 @@ transforms, not to `all`; still prefer naming exactly what changes.)
 <button className="transition-all duration-150 ease-out">
 ```
 
-### Tailwind `transition-transform` note
+### Tailwind `transition-transform` Note
 
 `transition-transform` in Tailwind maps to `transition-property: transform, translate, scale,
 rotate`, so it covers all transform-related properties, not just `transform`. Use this when you're
 only animating transforms. For multiple non-transform properties, use the bracket syntax:
 `transition-[scale,opacity,filter]`.
 
-## Use `will-change` sparingly
+## Use `will-change` Sparingly
 
 `will-change` hints the browser to pre-promote an element to its own GPU compositing layer. Without
 it, the browser promotes the element only when the animation starts; that one-time layer promotion
@@ -93,7 +93,7 @@ anyway.
 }
 ```
 
-### Useful properties
+### Useful Properties
 
 | Property | GPU-compositable | Worth using `will-change` |
 | --- | --- | --- |
@@ -104,7 +104,7 @@ anyway.
 | `top`, `left`, `width`, `height` | No | No |
 | `background`, `border`, `color` | No | No |
 
-### When to skip
+### When to Skip
 
 Modern browsers are already good at optimizing on their own. Only add `will-change` when you notice
 first-frame stutter; Safari in particular benefits from it. Don't add it preemptively to every

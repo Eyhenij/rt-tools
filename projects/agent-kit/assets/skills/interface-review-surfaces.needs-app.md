@@ -12,7 +12,7 @@ Border radius, optical alignment, shadows, and image outlines.
 - A finding of `interface-review` is about nested radii, an off-center icon, a border used for
   depth or an image edge, and the fix needs code.
 
-## Concentric border radius
+## Concentric Border Radius
 
 When nesting rounded elements, the outer radius must equal the inner radius plus the padding between
 them:
@@ -47,7 +47,7 @@ concentric math.
 }
 ```
 
-### Tailwind example
+### Tailwind Example
 
 ```tsx
 // Good: outer radius accounts for padding
@@ -69,11 +69,11 @@ Mismatched border radii on closely nested surfaces is a common source of visual 
 concentrically when the layers share a visible, even inset; preserve an established component token
 when the layers are independent or the padding is intentionally asymmetric.
 
-## Optical alignment
+## Optical Alignment
 
 When geometric centering looks off, align optically instead.
 
-### Buttons with text and icon
+### Buttons with Text + Icon
 
 When an icon makes otherwise symmetric padding look unbalanced, use slightly less padding on the
 icon side. A useful starting point is: `icon-side padding = text-side padding - 2px`.
@@ -99,7 +99,7 @@ icon side. A useful starting point is: `icon-side padding = text-side padding - 
 </button>
 ```
 
-### Play button triangles
+### Play Button Triangles
 
 Play icons are triangular and their geometric center is not their visual center. Shift slightly
 right:
@@ -116,7 +116,7 @@ right:
 }
 ```
 
-### Asymmetric icons — stars, arrows, carets
+### Asymmetric Icons (Stars, Arrows, Carets)
 
 Some icons have uneven visual weight. The best fix is adjusting the SVG directly so no extra
 margin/padding is needed in the component code.
@@ -131,7 +131,7 @@ margin/padding is needed in the component code.
 </span>
 ```
 
-## Shadows instead of borders
+## Shadows Instead of Borders
 
 For **buttons, cards, and containers** that use a border for depth or elevation, prefer replacing it
 with a subtle `box-shadow`. Shadows adapt to any background since they use transparency; solid
@@ -141,7 +141,7 @@ colors don't work well on backgrounds other than the ones they were designed for
 **Do not apply this to dividers** (`border-b`, `border-t`, side borders) or any border whose purpose
 is layout separation rather than element depth. Those should stay as borders.
 
-### Shadow as border, light mode
+### Shadow as Border (Light Mode)
 
 The shadow is comprised of three layers. The first acts as a 1px border ring, the second adds subtle
 lift, and the third provides ambient depth:
@@ -159,7 +159,7 @@ lift, and the third provides ambient depth:
 }
 ```
 
-### Shadow as border, dark mode
+### Shadow as Border (Dark Mode)
 
 In dark mode, simplify to a single white ring, since layered depth shadows aren't visible on dark
 backgrounds:
@@ -171,7 +171,7 @@ backgrounds:
 --shadow-border-hover: 0 0 0 1px oklch(1 0 0 / 0.13);
 ```
 
-### Usage with a hover transition
+### Usage with Hover Transition
 
 Apply the variable and add `transition-[box-shadow]` for a smooth hover:
 
@@ -188,7 +188,7 @@ Apply the variable and add `transition-[box-shadow]` for a smooth hover:
 }
 ```
 
-### When to use shadows and when borders
+### When to Use Shadows vs. Borders
 
 | Use shadows | Use borders |
 | --- | --- |
@@ -198,12 +198,12 @@ Apply the variable and add `transition-[box-shadow]` for a smooth hover:
 | Elements on varied backgrounds | Hairline separators in dense UI |
 | Hover/focus states for lift effect | |
 
-## Image outlines
+## Image Outlines
 
 Add a subtle `1px` outline with low opacity to images. This creates consistent depth, especially in
 design systems where other elements use borders or shadows.
 
-### Color rules — non-negotiable
+### Color rules (non-negotiable)
 
 - **Light mode**: pure black, `oklch(0 0 0 / 0.1)`.
 - **Dark mode**: pure white, `oklch(1 0 0 / 0.1)`.
@@ -213,7 +213,7 @@ design systems where other elements use borders or shadows.
 - Never match the outline to the project's accent or ink color. The outline is a neutral separator,
   not a themed element.
 
-### Light mode
+### Light Mode
 
 ```css
 img {
@@ -222,7 +222,7 @@ img {
 }
 ```
 
-### Dark mode
+### Dark Mode
 
 ```css
 img {
@@ -231,7 +231,7 @@ img {
 }
 ```
 
-### Tailwind with dark mode
+### Tailwind with Dark Mode
 
 ```tsx
 <img

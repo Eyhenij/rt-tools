@@ -95,7 +95,7 @@ Treat a review request as read-only. Do not edit source code unless the user als
 the findings. When implementation is requested, preserve the consolidated report as the change
 scope and re-run the relevant verification afterward.
 
-## Review output format
+## Review Output Format
 
 Always use the following sections.
 
@@ -135,8 +135,8 @@ are no findings, omit the table and state "No actionable interface findings."
 
 ### Annotate the frame
 
-Every row in the findings table also lands on the canvas as a card, by `interface-review-annotate`.
-If the file is view-only or the user asked for the report only, output the table alone and say the
+Every row in the findings table also lands on the canvas as a card. Where the tree has
+`interface-review-annotate` laid out, the card shape and placement are there. If the file is view-only or the user asked for the report only, output the table alone and say the
 frame was not annotated.
 
 ### Considered but Rejected
@@ -169,7 +169,7 @@ End with exactly one:
 - `Needs changes` — only `MEDIUM` or `LOW` findings remain.
 - `Approve` — no actionable findings remain and the claimed coverage was verified.
 
-## Common mistakes
+## Common Mistakes
 
 | Mistake | Fix |
 | --- | --- |

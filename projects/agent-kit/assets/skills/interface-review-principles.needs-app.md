@@ -10,9 +10,6 @@ description: The rules an interface review judges by: accessibility, layout, wri
 - An interface review is running by `interface-review`, and a finding needs the rule it breaks.
 - A fix is worded, and the exact value the principle prescribes is needed.
 
-The domains go in the review order. A finding is assigned to the domain that owns the underlying
-rule.
-
 ## Accessibility
 
 Accessibility is not a compliance checkbox bolted on at the end; it is the floor for interface
