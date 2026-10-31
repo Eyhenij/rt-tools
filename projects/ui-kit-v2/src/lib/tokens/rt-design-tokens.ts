@@ -149,6 +149,7 @@ export type TRtDesignTokenName =
     | '--rt-field-label-font-size'
     | '--rt-field-label-font-weight'
     | '--rt-field-label-help-gap'
+    | '--rt-field-label-line-height'
     | '--rt-field-messages-line-height'
     | '--rt-field-messages-padding-top'
     | '--rt-field-required-color'
@@ -949,6 +950,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-field-label-font-size',
     '--rt-field-label-font-weight',
     '--rt-field-label-help-gap',
+    '--rt-field-label-line-height',
     '--rt-field-messages-line-height',
     '--rt-field-messages-padding-top',
     '--rt-field-required-color',

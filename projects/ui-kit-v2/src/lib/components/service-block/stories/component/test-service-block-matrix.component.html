@@ -47,4 +47,33 @@
             </ng-template>
         </app-story-presets>
     }
+
+    @case ('form') {
+        <app-story-presets caption="Блок в теле панели: под чертой шаг строк на любой ширине окна" fill>
+            <ng-template>
+                <div rtBlock="rt-form" qa-dataid="service-block-form">
+                    <rt-service-block
+                        qa-dataid="service-block-form-block"
+                        [logos]="single"
+                        [name]="serviceName"
+                        [description]="serviceDescription" />
+
+                    <div rtElem="item" qa-dataid="service-block-form-keys">
+                        <div rtElem="controls">
+                            <div rtElem="control-item">
+                                <rt-field label="Секретный ключ">
+                                    <rt-input qa-dataid="service-block-form-secret" placeholder="sk_live_…" />
+                                </rt-field>
+                            </div>
+                            <div rtElem="control-item">
+                                <rt-field label="Секрет подписи">
+                                    <rt-input qa-dataid="service-block-form-hook-secret" placeholder="whsec_…" />
+                                </rt-field>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </app-story-presets>
+    }
 }

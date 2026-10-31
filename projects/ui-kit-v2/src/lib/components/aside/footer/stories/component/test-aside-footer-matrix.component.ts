@@ -4,12 +4,12 @@ import { StoryPresetsComponent } from '../../../../../../showcase/story-presets.
 import { StoryRowComponent } from '../../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../../showcase/story-themes.component';
 import { RtButtonDirective } from '../../../../button/rt-button.directive';
-import { RtAsideFooterComponent } from '../../rt-aside-footer.component';
+import { RtAsideFooterComponent, TRtAsideFooterLayout } from '../../rt-aside-footer.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TAsideFooterMatrixPart = 'zones' | 'presets' | 'themes';
+export type TAsideFooterMatrixPart = 'zones' | 'layouts' | 'presets' | 'themes';
 
-/** Набор зон футера: своих входов у него нет — вид задаётся тем, что в него спроецировали. */
+/** Набор зон футера: какие зоны в него спроецировали. */
 interface IAsideFooterZoneCase {
     readonly name: string;
     readonly dismiss: boolean;
@@ -20,9 +20,9 @@ interface IAsideFooterZoneCase {
 /**
  * Матрицы `rt-aside-footer` для витрины.
  *
- * У футера нет ни одного входа: он слот композиции, и весь его вид — раскладка по краям и
- * верхняя граница. Показывать его нечем, кроме разметки с проекцией содержимого, поэтому
- * матрица перебирает не значения оси, а наборы спроецированных зон.
+ * Футер — слот композиции: вид его кнопок задают вход `layout` и то, что в него
+ * спроецировали. Матрица перебирает наборы спроецированных зон и обе раскладки; подпись
+ * `phoneCloseLabel` видна только на телефоне и показана историей панели подключения службы.
  *
  * Случай «содержимое без атрибута» стоит в ряду нарочно: футер принимает только две именованные
  * зоны, и кнопка без `asideDismiss` или `asidePrimary` не отрисуется вовсе. В кадре это видно
@@ -51,6 +51,17 @@ interface IAsideFooterZoneCase {
                             @if (zoneCase.stray) {
                                 <button rtButton>Без атрибута</button>
                             }
+                        </rt-aside-footer>
+                    </ng-template>
+                </app-story-row>
+            }
+
+            @case ('layouts') {
+                <app-story-row caption="Раскладки футера" [items]="layouts" [slotWidth]="layoutWidth">
+                    <ng-template let-layout>
+                        <rt-aside-footer class="app-aside-footer-matrix__footer" [layout]="layout">
+                            <button rtButton asideDismiss label="Закрыть без сохранения"></button>
+                            <button rtButton asidePrimary icon="check" label="Сохранить"></button>
                         </rt-aside-footer>
                     </ng-template>
                 </app-story-row>
@@ -105,6 +116,12 @@ export class TestRtAsideFooterMatrixComponent {
 
     /** Ширина ячейки: футер занимает всю ширину панели и по содержимому схлопнулся бы. */
     public readonly footerWidth: string = '20rem';
+
+    /** Ширина ячейки раскладок: обе кнопки с полной подписью занимают 373, и в 20rem не помещаются. */
+    public readonly layoutWidth: string = '30rem';
+
+    /** Обе раскладки: `between` — панель записи, `start` — панель подключения службы. */
+    public readonly layouts: readonly TRtAsideFooterLayout[] = ['between', 'start'];
 
     public readonly zoneCases: readonly IAsideFooterZoneCase[] = [
         { name: 'только «Закрыть»', dismiss: true, primary: false, stray: false },

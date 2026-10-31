@@ -1,0 +1,26 @@
+@layer rt-kit.components {
+    /* Панель занимает всю высоту окна истории, как в кадре: без заданной высоты она схлопнулась бы
+       по содержимому, и подвал встал бы сразу под последним полем. Селектор на элемент длиннее
+       правила кита `rt-aside .rt-aside`: оба стоят в одном слое, и решает специфичность. */
+    app-service-block-panel rt-aside .rt-aside {
+        height: 100vh;
+    }
+
+    /* Раздел адреса извещений, как в эталоне: заголовок 16, промежуток 12, отступ 8 сверху сверх
+       промежутка формы. Своего раздела в ките нет, история собирает его из сообщения и ячейки. */
+    .app-service-block-panel-webhook {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        padding-top: var(--rt-space-sm);
+        gap: calc(var(--rt-space-sm) + var(--rt-space-xs));
+
+        &__title {
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-md);
+            font-weight: var(--rt-font-weight-semibold);
+            line-height: var(--rt-leading-normal);
+        }
+    }
+}

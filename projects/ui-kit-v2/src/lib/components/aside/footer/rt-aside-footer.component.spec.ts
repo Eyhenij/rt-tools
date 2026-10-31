@@ -25,6 +25,26 @@ function setup(): ComponentFixture<AsideFooterHostComponent> {
     return createRtFixture(AsideFooterHostComponent);
 }
 
+/** Подвал в раскладке start: позитивный глагол стоит первым. */
+@Component({
+    selector: 'rt-aside-footer-start-host',
+    template: `
+        <rt-aside-footer layout="start">
+            <button asideDismiss qa-dataid="host-dismiss" type="button">Закрыть</button>
+            <button asidePrimary qa-dataid="host-primary" type="button">Сохранить</button>
+        </rt-aside-footer>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtAsideFooterComponent],
+})
+class AsideFooterStartHostComponent {}
+
+function orderOf(fixture: ComponentFixture<unknown>): string[] {
+    const footer: HTMLElement = qa(fixture, 'aside-footer')?.nativeElement as HTMLElement;
+
+    return Array.from(footer.querySelectorAll('[qa-dataid]')).map((node: Element): string => node.getAttribute('qa-dataid') ?? '');
+}
+
 /** Подвал с кнопками кита, как его собирает приложение: со своим видом, значком и обёрткой слота. */
 @Component({
     selector: 'rt-aside-footer-look-host',
@@ -64,6 +84,20 @@ function setupLook(phone: boolean = false): ComponentFixture<AsideFooterLookHost
     return fixture;
 }
 
+/** Подвал панели подключения: раскладка start с кнопками кита. */
+@Component({
+    selector: 'rt-aside-footer-start-look-host',
+    template: `
+        <rt-aside-footer layout="start">
+            <button rtButton asideDismiss qa-dataid="look-dismiss" type="button" label="Закрыть без сохранения"></button>
+            <button rtButton asidePrimary qa-dataid="look-primary" type="button" icon="check" label="Сохранить"></button>
+        </rt-aside-footer>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtAsideFooterComponent, RtButtonDirective],
+})
+class AsideFooterStartLookHostComponent {}
+
 function classesOf(fixture: ComponentFixture<unknown>, id: string): DOMTokenList {
     return (qa(fixture, id)?.nativeElement as HTMLElement).classList;
 }
@@ -79,12 +113,15 @@ describe('RtAsideFooterComponent', (): void => {
     it('порядок кнопок задаёт подвал, а не разметка потребителя', (): void => {
         // Иначе «Сохранить» и «Отмена» менялись бы местами от экрана к экрану.
         const fixture: ComponentFixture<AsideFooterHostComponent> = setup();
-        const footer: HTMLElement = qa(fixture, 'aside-footer')?.nativeElement as HTMLElement;
-        const order: string[] = Array.from(footer.querySelectorAll('[qa-dataid]')).map(
-            (node: Element): string => node.getAttribute('qa-dataid') ?? ''
-        );
 
-        expect(order).toEqual(['host-dismiss', 'host-primary']);
+        expect(orderOf(fixture)).toEqual(['host-dismiss', 'host-primary']);
+    });
+
+    it('в раскладке start глагол стоит первым в разметке, и Tab идёт по кнопкам в видимом порядке', (): void => {
+        // Порядок, заданный только стилем, Tab и экранный диктор не видят: они идут по разметке.
+        const fixture: ComponentFixture<AsideFooterStartHostComponent> = createRtFixture(AsideFooterStartHostComponent);
+
+        expect(orderOf(fixture)).toEqual(['host-primary', 'host-dismiss']);
     });
 
     it('содержимое мимо слотов в подвал не попадает', (): void => {
@@ -119,5 +156,17 @@ describe('RtAsideFooterComponent', (): void => {
 
         const phone: ComponentFixture<AsideFooterLookHostComponent> = setupLook(true);
         expect(textOf(qa(phone, 'look-dismiss'))).toBe('Close');
+    });
+
+    it('в раскладке start на телефоне подпись «Закрыть» остаётся полной', (): void => {
+        // Кнопки там стоят столбиком во всю ширину, и короткая подпись не нужна.
+        const fixture: ComponentFixture<AsideFooterStartLookHostComponent> = createRtFixture(
+            AsideFooterStartLookHostComponent,
+            {},
+            { providers: [{ provide: BreakpointsService, useClass: PhoneBreakpointsService }] }
+        );
+        fixture.detectChanges();
+
+        expect(textOf(qa(fixture, 'look-dismiss'))).toBe('Закрыть без сохранения');
     });
 });
