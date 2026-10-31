@@ -103,4 +103,7 @@ to the public entry that calls it.
 ### The narrow screen
 
 - **Below the kit's threshold the table keeps its columns and scrolls sideways; it never turns into cards.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.scss:.rt-data-table`; scenario `SC-UKV-313`
+- **Both tables compute their conditions and their sort by the core.** — `projects/ui-kit-v2/src/lib/components/table-core/rt-table-filter.core.ts:rtFiltersWithValue`, `projects/ui-kit-v2/src/lib/components/table-core/rt-table-sort.core.ts:rtNextSort`, called by `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-sort.logic.ts:dataTableNextSortOrder` and `projects/ui-kit-v2/src/lib/components/table/rt-table-sort.logic.ts:nextSort`; scenarios `SC-UKV-1104`, `SC-UKV-1107`
+- **A press on a sorted header follows the cycle of its table.** — `projects/ui-kit-v2/src/lib/components/table-core/rt-table-sort.core.ts:rtNextSort`; scenario `SC-UKV-1107`
+- **Both tables name the sort for assistive technology by the same values.** — `projects/ui-kit-v2/src/lib/components/table-core/rt-table-sort.core.ts:rtAriaSortOf`, the attribute dropped — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-sort.logic.ts:dataTableAriaSort`
 - **Below the threshold no hint of the family is shown, the pagination bar narrower than 460 px shows «page N of M» between the arrows, and the toolbar puts the search on a line of its own.** — `projects/ui-kit-v2/src/lib/components/pagination/rt-pagination.component.html:compact`; scenario `SC-UKV-313`

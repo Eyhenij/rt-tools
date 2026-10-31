@@ -122,6 +122,14 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 - **The header stays on top while the rows scroll under it.**
 - **A press on a sortable header asks for the ascending order, and on the column already sorted
   ascending — for the descending one.** The family never asks to drop the sort.
+- **Both tables compute their conditions and their sort by the core.** Neither keeps a copy of its
+  own; a table passes its inputs to the core and its outputs onwards.
+- **A press on a sorted header follows the cycle of its table.** In `rt-table` the third press drops
+  the sort: ascending, descending, none. In `rt-data-table` the press after the descending order asks
+  for the ascending one again, as in the first kit.
+- **Both tables name the sort for assistive technology by the same values.** `aria-sort` is
+  `ascending`, `descending` or `none`; a column of `rt-data-table` that cannot be sorted carries no
+  `aria-sort` at all.
 - **A sort is asked only for a column the table has.** A property name matching no declared
   column is not handed to the application.
 - **The header of a sorted column shows which way it is sorted.**
@@ -378,6 +386,8 @@ table that applied it last decides it for all.
 - `Q-TP-6` — rows take no focus and no key; a page number turns the page on any key, Tab
   included.
 - `Q-TP-7` — preset marks of records not among the first rows are dropped silently.
+- RT-3015 — the press on a header asks for the descending order whenever any column is sorted
+  ascending, not only that one, against the rule of the header above.
 - `Q-TP-10` — the page checkbox stays indeterminate while marks remain on other pages, and the
   bare table does not recount it on a page change.
 - `Q-TP-11` — the scrollbar choice lies on the page, and the last table to apply it repaints the
@@ -435,3 +445,5 @@ table that applied it last decides it for all.
   select hint reads "Choose filter".
 - 8 October 2026 — task RT-2644: the filter row with its scenarios moved to the subdomain
   `table-full-port-filter-row`, as the spec outgrew the length limit.
+- 2026-10-30 — RT-2865: the filter and the sort of both tables are computed by one core in the entry
+  point `@rt-tools/ui-kit-v2/table-core`; each table keeps its cycle and its empty mode.

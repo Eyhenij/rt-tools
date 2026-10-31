@@ -1,7 +1,11 @@
+import { rtFilterOf, rtFiltersWithOperator, rtFiltersWithValue, TRtFilterEmptyMode, TRtFilterValue } from '@rt-tools/ui-kit-v2/table-core';
 import { EFilterOperatorType, FILTER_OPERATORS, IFilterModel, TFilterOperatorType } from '@rt-tools/utils';
 
 /** Значение отбора в том виде, в каком его отдаёт приложению первый кит. */
-export type TRtDataTableFilterValue = string | number | boolean;
+export type TRtDataTableFilterValue = TRtFilterValue;
+
+/** Пустым у `rt-data-table` считается любое ложное значение, как в первом ките. */
+const DATA_TABLE_EMPTY_MODE: TRtFilterEmptyMode = 'falsy';
 
 /**
  * Значок вида сравнения — имя первого кита; набор кита рисует его по перечню соответствий.
@@ -37,33 +41,27 @@ export function dataTableColumnFilter<KEY extends string>(
     propertyName: KEY,
     defaultOperator: TFilterOperatorType
 ): IFilterModel<KEY> {
-    return (
-        filters.find((filter: IFilterModel<KEY>) => filter.propertyName === propertyName) ?? {
-            propertyName,
-            operatorType: defaultOperator,
-            value: '',
-        }
-    );
+    return rtFilterOf(filters, propertyName) ?? { propertyName, operatorType: defaultOperator, value: '' };
+}
+
+/** Тот же набор от ядра значит «ничего не поменялось» — таблица отвечает на это `null`. */
+function changedOrNull<KEY extends string>(
+    before: ReadonlyArray<IFilterModel<KEY>>,
+    after: ReadonlyArray<IFilterModel<KEY>>
+): IFilterModel<KEY>[] | null {
+    return after === before ? null : [...after];
 }
 
 /**
- * Набор условий после смены значения колонки; `null` — приложению сообщать нечего.
- * Пустое значение снимает условие колонки, значение на колонке без условия добавляет его.
+ * Набор условий после смены значения колонки — по ядру таблиц в режиме `falsy`; `null` — приложению
+ * сообщать нечего. Любое ложное значение снимает условие колонки, как в первом ките.
  */
 export function dataTableFiltersWithValue<KEY extends string>(
     filters: ReadonlyArray<IFilterModel<KEY>>,
     current: IFilterModel<KEY>,
     value: TRtDataTableFilterValue
 ): IFilterModel<KEY>[] | null {
-    const hasCondition: boolean = filters.some((filter: IFilterModel<KEY>) => filter.propertyName === current.propertyName);
-
-    if (hasCondition) {
-        return value
-            ? filters.map((filter: IFilterModel<KEY>) => (filter.propertyName === current.propertyName ? { ...filter, value } : filter))
-            : filters.filter((filter: IFilterModel<KEY>) => filter.propertyName !== current.propertyName);
-    }
-
-    return value ? [...filters, { propertyName: current.propertyName, operatorType: current.operatorType, value }] : null;
+    return changedOrNull(filters, rtFiltersWithValue(filters, current.propertyName, current.operatorType, value, DATA_TABLE_EMPTY_MODE));
 }
 
 /** Набор условий после смены вида сравнения; `null` — ни условия, ни значения, спрашивать нечего. */
@@ -72,15 +70,7 @@ export function dataTableFiltersWithOperator<KEY extends string>(
     current: IFilterModel<KEY>,
     operatorType: TFilterOperatorType
 ): IFilterModel<KEY>[] | null {
-    const hasCondition: boolean = filters.some((filter: IFilterModel<KEY>) => filter.propertyName === current.propertyName);
-
-    if (hasCondition) {
-        return filters.map((filter: IFilterModel<KEY>) =>
-            filter.propertyName === current.propertyName ? { ...filter, operatorType } : filter
-        );
-    }
-
-    return current.value ? [...filters, { operatorType, propertyName: current.propertyName, value: current.value }] : null;
+    return changedOrNull(filters, rtFiltersWithOperator(filters, current.propertyName, operatorType, current.value, DATA_TABLE_EMPTY_MODE));
 }
 
 /**

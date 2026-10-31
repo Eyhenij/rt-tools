@@ -311,3 +311,11 @@ Given a list with more records than fit on one page
 When the application sets `isPaginationShown` to false
 Then the pagination bar is not in the markup, and it comes back once the switch is on again
 Covered: `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.pagination.spec.ts`.
+
+### SC-UKV-1107 — each table keeps its own sort cycle
+
+Given a column sorted descending
+When the person presses its header
+Then `rt-table` drops the sort, and `rt-data-table` asks for the ascending order
+
+Covered: `projects/ui-kit-v2/src/lib/components/table-core/rt-table-core.spec.ts`.

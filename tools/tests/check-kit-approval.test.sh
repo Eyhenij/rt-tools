@@ -35,6 +35,14 @@ report "a snapshot reference goes without them" \
     "$(run "console.log(m.isVisibleKitFile('projects/ui-kit-v2/src/__snapshots__/a.png'))")" false
 report "a showcase page goes without them" \
     "$(run "console.log(m.isVisibleKitFile('projects/ui-kit-v2/src/lib/components/x/Overview.mdx'))")" false
+report "pure logic goes without them" \
+    "$(run "console.log(m.isVisibleKitFile('projects/ui-kit-v2/src/lib/components/x/x.logic.ts'))")" false
+report "the core of the tables goes without them" \
+    "$(run "console.log(m.isVisibleKitFile('projects/ui-kit-v2/src/lib/components/table-core/rt-table-sort.core.ts'))")" false
+report "a barrel goes without them" \
+    "$(run "console.log(m.isVisibleKitFile('projects/ui-kit-v2/src/lib/components/table-core/index.ts'))")" false
+report "a component class still needs them" \
+    "$(run "console.log(m.isVisibleKitFile('projects/ui-kit-v2/src/lib/components/x/x.component.ts'))")" true
 report "a file outside the kits goes without them" \
     "$(run "console.log(m.isVisibleKitFile('apps/message-bus-admin/src/app/a.html'))")" false
 

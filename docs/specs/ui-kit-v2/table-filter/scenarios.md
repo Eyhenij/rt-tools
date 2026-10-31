@@ -180,3 +180,29 @@ Then the filter row is not seen at all: the card view hides it together with the
 Not covered: it cannot be closed by a test with an identifier — the hiding is done by the
 component's own styles, and a component test raises the markup without them. It is checked by the
 narrow frame of the story `Organisms/Table/Table › Filters`.
+
+### SC-UKV-1104 — each table removes a condition by its own empty mode
+
+Given a column with a filter in `rt-table` and in `rt-data-table`
+When the person commits `''`, `0` or `false` as its value
+Then `''` removes the condition in both tables; `0` and `false` reach the application as values in
+`rt-table` and remove the condition in `rt-data-table`
+
+Covered: `projects/ui-kit-v2/src/lib/components/table-core/rt-table-core.spec.ts`.
+
+### SC-UKV-1105 — a change of the comparison adds the condition of a column with a value
+
+Given a column of either table with a value and no condition yet
+When the person changes its comparison
+Then the condition with the new comparison and the value reaches the application; a column whose
+value is empty by the mode of its table asks nothing
+
+Covered: `projects/ui-kit-v2/src/lib/components/table-core/rt-table-core.spec.ts`.
+
+### SC-UKV-1106 — the same value reports nothing
+
+Given a column of either table with a condition
+When the person commits the value the condition already holds
+Then the table sends nothing
+
+Covered: `projects/ui-kit-v2/src/lib/components/table-core/rt-table-core.spec.ts`.

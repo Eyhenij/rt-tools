@@ -24,7 +24,11 @@ import { join } from 'node:path';
 const KITS = { 'ui-kit': 'projects/ui-kit/', 'ui-kit-v2': 'projects/ui-kit-v2/' };
 const RULE = 'kit-approval';
 
-/** A file the person sees in a kit: the components' code, templates, styles, tokens, icons. */
+/**
+ * A file the person sees in a kit: the components' code, templates, styles, tokens, icons. Pure
+ * logic — `*.logic.ts` and `*.core.ts` — draws nothing, and its behaviour is held by its specs; a
+ * barrel `index.ts` only gives out what its neighbours declare.
+ */
 export function isVisibleKitFile(path) {
     const kit = Object.values(KITS).find((root) => path.startsWith(`${root}src/`));
 
@@ -32,7 +36,9 @@ export function isVisibleKitFile(path) {
         return false;
     }
 
-    return !/(\.spec\.ts|\.stories\.ts|\.mdx|\.md)$|\/__snapshots__\/|\/stories\/|\/testing\/|\/showcase\//.test(path);
+    return !/(\.spec\.ts|\.stories\.ts|\.logic\.ts|\.core\.ts|\/index\.ts|\.mdx|\.md)$|\/__snapshots__\/|\/stories\/|\/testing\/|\/showcase\//.test(
+        path
+    );
 }
 
 function spawnOk(command, args) {
