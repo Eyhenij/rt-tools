@@ -1,4 +1,11 @@
-import { dataTableWithEntity, dataTableWithoutPageEntities, dataTableWithPageEntities } from '@rt-tools/ui-kit-v2/data-table';
+import {
+    rtExcludedAfterEntity,
+    rtExcludedAfterPageMarked,
+    rtExcludedAfterPageUnmarked,
+    rtSelectedAfterPage,
+} from '@rt-tools/ui-kit-v2/table-core';
+
+// «Отметить все» считает ядро таблиц; здесь — прежние имена, которые список уже отдавал приложениям.
 
 /** Отметки и исключения после смены страницы: пришедшие строки отмечаются, кроме исключённых. */
 export function dataListSelectedAfterPage<ENTITY_TYPE, KEY extends keyof ENTITY_TYPE>(
@@ -7,9 +14,7 @@ export function dataListSelectedAfterPage<ENTITY_TYPE, KEY extends keyof ENTITY_
     excluded: ReadonlyArray<ENTITY_TYPE>,
     keyExp: KEY
 ): ENTITY_TYPE[] {
-    const excludedKeys: Array<ENTITY_TYPE[KEY]> = excluded.map((entity: ENTITY_TYPE) => entity[keyExp]);
-
-    return dataTableWithPageEntities(selected, page, keyExp).filter((entity: ENTITY_TYPE) => !excludedKeys.includes(entity[keyExp]));
+    return rtSelectedAfterPage(selected, page, excluded, keyExp);
 }
 
 /** Исключения после отметки или снятия одной записи под «отметить все». */
@@ -19,7 +24,7 @@ export function dataListExcludedAfterEntity<ENTITY_TYPE, KEY extends keyof ENTIT
     checked: boolean,
     keyExp: KEY
 ): ENTITY_TYPE[] {
-    return dataTableWithEntity(excluded, entity, !checked, keyExp);
+    return rtExcludedAfterEntity(excluded, entity, checked, keyExp);
 }
 
 /** Исключения после отметки всей страницы под «отметить все»: её записи уходят из исключений. */
@@ -28,7 +33,7 @@ export function dataListExcludedAfterPageMarked<ENTITY_TYPE, KEY extends keyof E
     page: ReadonlyArray<ENTITY_TYPE>,
     keyExp: KEY
 ): ENTITY_TYPE[] {
-    return dataTableWithoutPageEntities(excluded, page, keyExp);
+    return rtExcludedAfterPageMarked(excluded, page, keyExp);
 }
 
 /** Исключения после снятия всей страницы под «отметить все»: её записи становятся исключениями. */
@@ -37,5 +42,5 @@ export function dataListExcludedAfterPageUnmarked<ENTITY_TYPE, KEY extends keyof
     page: ReadonlyArray<ENTITY_TYPE>,
     keyExp: KEY
 ): ENTITY_TYPE[] {
-    return dataTableWithPageEntities(excluded, page, keyExp);
+    return rtExcludedAfterPageUnmarked(excluded, page, keyExp);
 }
