@@ -1,5 +1,6 @@
 import {
     booleanAttribute,
+    computed,
     contentChildren,
     effect,
     inject,
@@ -81,7 +82,7 @@ function slotLook(host: HTMLElement | undefined, dismissLook: IButton.PlaceLook,
     imports: [BlockDirective, ElemDirective, NgTemplateOutlet],
     host: {
         class: BEM_BLOCK,
-        '[class.rt-aside-footer--start]': "layout() === 'start'",
+        '[class.rt-aside-footer--start]': 'start()',
     },
 })
 export class RtAsideFooterComponent {
@@ -95,12 +96,16 @@ export class RtAsideFooterComponent {
         read: ElementRef,
     });
 
+    /** Раскладка `start`: её читают шаблон, класс хоста и вид кнопок. */
+    protected readonly start: Signal<boolean> = computed((): boolean => this.layout() === 'start');
+
     /** Раскладка кнопок: `between` по умолчанию, `start` — панель подключения службы. */
     public readonly layout: InputSignal<TRtAsideFooterLayout> = input<TRtAsideFooterLayout>('between');
 
     /**
      * На телефоне кнопка слота `[asideDismiss]` читается «Закрыть»: так она названа у всех панелей.
      * `false` оставляет подпись потребителя — у панели фильтров эта кнопка «Сбросить», а не выход.
+     * В раскладке `start` подпись не сокращается: там кнопки стоят столбиком во всю ширину.
      */
     public readonly phoneCloseLabel: InputSignalWithTransform<boolean, boolean | string> = input<boolean, boolean | string>(true, {
         transform: booleanAttribute,
@@ -109,11 +114,11 @@ export class RtAsideFooterComponent {
     constructor() {
         effect((): void => {
             const hosts: readonly ElementRef<HTMLElement>[] = this.hosts();
-            const start: boolean = this.layout() === 'start';
+            const start: boolean = this.start();
             const dismissLook: IButton.PlaceLook = {
                 appearance: start ? 'text' : 'outlined',
                 theme: 'secondary',
-                ...(this.#phone() && this.phoneCloseLabel() ? { label: this.#closeLabel() } : {}),
+                ...(this.#phone() && this.phoneCloseLabel() && !start ? { label: this.#closeLabel() } : {}),
             };
             const primaryLook: IButton.PlaceLook = start ? PRIMARY_START_LOOK : PRIMARY_LOOK;
 

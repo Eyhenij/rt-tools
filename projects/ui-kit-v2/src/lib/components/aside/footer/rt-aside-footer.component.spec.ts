@@ -84,6 +84,20 @@ function setupLook(phone: boolean = false): ComponentFixture<AsideFooterLookHost
     return fixture;
 }
 
+/** Подвал панели подключения: раскладка start с кнопками кита. */
+@Component({
+    selector: 'rt-aside-footer-start-look-host',
+    template: `
+        <rt-aside-footer layout="start">
+            <button rtButton asideDismiss qa-dataid="look-dismiss" type="button" label="Закрыть без сохранения"></button>
+            <button rtButton asidePrimary qa-dataid="look-primary" type="button" icon="check" label="Сохранить"></button>
+        </rt-aside-footer>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtAsideFooterComponent, RtButtonDirective],
+})
+class AsideFooterStartLookHostComponent {}
+
 function classesOf(fixture: ComponentFixture<unknown>, id: string): DOMTokenList {
     return (qa(fixture, id)?.nativeElement as HTMLElement).classList;
 }
@@ -142,5 +156,17 @@ describe('RtAsideFooterComponent', (): void => {
 
         const phone: ComponentFixture<AsideFooterLookHostComponent> = setupLook(true);
         expect(textOf(qa(phone, 'look-dismiss'))).toBe('Close');
+    });
+
+    it('в раскладке start на телефоне подпись «Закрыть» остаётся полной', (): void => {
+        // Кнопки там стоят столбиком во всю ширину, и короткая подпись не нужна.
+        const fixture: ComponentFixture<AsideFooterStartLookHostComponent> = createRtFixture(
+            AsideFooterStartLookHostComponent,
+            {},
+            { providers: [{ provide: BreakpointsService, useClass: PhoneBreakpointsService }] }
+        );
+        fixture.detectChanges();
+
+        expect(textOf(qa(fixture, 'look-dismiss'))).toBe('Закрыть без сохранения');
     });
 });

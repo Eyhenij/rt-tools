@@ -55,8 +55,14 @@
             line-height: var(--rt-leading-normal);
         }
 
+        /* В рамке значение переносится, а не обрезается: адрес в форме читают целиком, и на
+           телефоне он идёт в две строки, как в эталоне панели подключения. Без переноса строка
+           значения распирала форму шире панели. */
         &--framed &__content {
             flex: 1 1 auto;
+            overflow-wrap: anywhere;
+            text-overflow: clip;
+            white-space: normal;
         }
     }
 

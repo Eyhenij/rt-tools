@@ -3,7 +3,7 @@
 
 <ng-container rtBlock="rt-aside-footer">
     <footer rtElem="content" qa-dataid="aside-footer">
-        @if (layout() === 'start') {
+        @if (start()) {
             <ng-container [ngTemplateOutlet]="primarySlot" />
             <ng-container [ngTemplateOutlet]="dismissSlot" />
         } @else {
