@@ -71,9 +71,13 @@ export function whenRecaptchaReady(view: Window & typeof globalThis, done: (api:
         }
         const script: HTMLScriptElement | undefined = scriptOf(view);
         if (script !== undefined) {
+            // A script that loaded and left no API will not load again, so the wait ends here
+            // instead of listening for a second `load` that never comes.
             const loaded: () => void = (): void => {
                 release();
-                wait();
+                if (recaptchaOf(view) !== null) {
+                    wait();
+                }
             };
             release = (): void => {
                 script.removeEventListener('load', loaded);

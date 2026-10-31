@@ -240,6 +240,12 @@ Given a registration page waiting for the Google script
 When the script fails to load
 Then the page stops waiting and never calls the script
 
+### SC-AUTH-96 — a Google script that loaded without its API ends the wait
+
+Given a registration page waiting for the Google script
+When the script loads and the window still has no reCAPTCHA API
+Then the page stops waiting, does not wait for that script again, and never calls back
+
 ### SC-AUTH-94 — a Keycloak without the visibility sign gets the widget
 
 Given a realm that requires reCAPTCHA, on a Keycloak that names neither its visibility nor its action

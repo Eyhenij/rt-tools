@@ -4,9 +4,9 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 1 of 1 — Fix
-- **Done:** the task folder is written
-- **Next step:** write the scenario SC-AUTH-96
-- **Uncommitted:** the task folder, the assignment row
+- **Done:** SC-AUTH-96 written, its spec red on the old code and green on the fix; theme 54 of 54
+- **Next step:** commit the fix, run the auth e2e suite
+- **Uncommitted:** the scenario, the spec, the fix, this progress
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
@@ -14,10 +14,10 @@
 
 - `[x]` done · `[>]` going on right now · `[ ]` not begun
 
-- [>] 1.1 Write the scenario SC-AUTH-96
-- [ ] 1.2 Write the spec of SC-AUTH-96
-- [ ] 1.3 End the wait on a load without grecaptcha
-- [ ] 1.4 Commit the fix
+- [x] 1.1 Write the scenario SC-AUTH-96
+- [x] 1.2 Write the spec of SC-AUTH-96
+- [x] 1.3 End the wait on a load without grecaptcha
+- [>] 1.4 Commit the fix
 
 ## Sessions
 
