@@ -2,7 +2,7 @@
 name: write-a-skill
 description: Creating a new skill — one with no law above it — a showcase, a generator, a third-party service, a working technique of this tree. Load when asked to create, write or rewrite a skill. The shape of a rule and a pattern is not here — that is pattern spec-driven-rule.
 ---
-<!-- rt-kit v0.33.1 · skills/write-a-skill.md · bc7d59ca03ee · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · skills/write-a-skill.md · 656811490db4 · правится надстройкой, не здесь -->
 
 # How a skill is created
 
@@ -31,6 +31,16 @@ third case, and only it is here.
 3. **Show the owner.** A skill acts on all future sessions, and creating it silently is not
    allowed.
 
+## When the owner hands over the text
+
+A text the owner wrote is carried, not rewritten. Before the first split it lands whole in the
+task folder: a request cut with `[…]` leaves nothing to compare against. Headings keep their case
+and wording, sentences their words, code samples stay whole. What the shape of a skill forces —
+the declaration, "When to use", a link in place of "above" — goes into a list of deviations, one
+line each. Before the first commit a script compares every heading and paragraph of the source
+with the skill files and prints what is missing or changed. A size limit the text does not fit
+splits the text into files, never shortens it.
+
 ## What is in the file
 
 ```
@@ -50,8 +60,9 @@ not. It stands in the system prompt next to the descriptions of all the others, 
 goes by them.
 
 It answers two questions: what the skill gives and when to load it. Write in the third person,
-up to 1024 characters: the first sentence — what it does, the second — "Load when…", the third —
-what is not in it and where to look for that.
+up to three hundred characters — where the tree has the descriptions check laid out, it refuses a
+longer one: the first sentence — what it does, the second — "Load when…", the third — what is not
+in it and where to look for that.
 
 ```
 ✓ Creating a new skill — one with no law above it. Load when asked to create, write or
@@ -105,7 +116,10 @@ link deeper than one level is not followed at all.
 - [ ] not one line repeats the neighbouring skill;
 - [ ] nothing that goes stale by itself: versions, numbers, dates;
 - [ ] at least one ready-made sample, not only an explanation;
-- [ ] links go one level deep, no deeper.
+- [ ] links go one level deep, no deeper;
+- [ ] the descriptions check is green — before the first commit, not before the push;
+- [ ] a text the owner handed over is compared with the skill by a script, and every difference
+      stands in the list of deviations.
 
 ## So that the skill gets loaded
 

@@ -77,10 +77,20 @@ skill_for() {
                     return 0
                     ;;
 
+                # A skill of the rules package: the same two rules as the layers below, and the
+                # shape of a skill on top. Without it a skill is written, split and carried over
+                # from an owner's text with no rule about any of that loaded.
+                */projects/agent-kit/assets/skills/*)
+                    printf '%s\n' 'spec-driven'
+                    printf '%s\n' 'agent-kit-source'
+                    printf '%s\n' 'write-a-skill'
+                    return 0
+                    ;;
+
                 # The source texts of the rules package. The default sorts them out by the file
                 # name and takes an edit of a check to that check's rule, and a law and a rule to
                 # the wording rule: the layers' structure is not loaded at all then.
-                */projects/agent-kit/assets/laws/* | */projects/agent-kit/assets/rules/* | */projects/agent-kit/assets/patterns/* | */projects/agent-kit/assets/skills/*)
+                */projects/agent-kit/assets/laws/* | */projects/agent-kit/assets/rules/* | */projects/agent-kit/assets/patterns/*)
                     printf '%s\n' 'spec-driven'
                     printf '%s\n' 'agent-kit-source'
                     return 0
