@@ -100,8 +100,9 @@ the entry is not sure the page belongs to the admin.
   A light widget on the dark card reads as a foreign patch. A ticked widget keeps its scheme: drawn
   anew, it would drop the answer, and the form would leave without it.
 - **The page waits for the Google script only while it draws the widget.** Without the widget, after
-  leaving the page, after the script failed to load and after it loaded without its API, nothing
-  watches the document or the script for it: a loaded script does not load a second time.
+  leaving the page, after the awaited script failed to load and after it loaded without its API,
+  nothing watches the document or the script for it. A script that loaded before the page asked
+  cannot be told from one still loading, and the page waits for it until it is left.
 - **The dark theme follows the system until the person switches it on the page.**
 - **The stand realm uses the theme, and the raising command builds it first.** Without the JAR the
   realm falls back to the standard look.
