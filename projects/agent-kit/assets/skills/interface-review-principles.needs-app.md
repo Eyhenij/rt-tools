@@ -1,6 +1,6 @@
 ---
 name: interface-review-principles
-description: The principles an interface review judges by — accessibility, layout, writing, typography and UI polish, each as numbered rules with exact values. Load during an interface review, after the core skill, to judge a finding and to word its fix. The run order and the report form are not here — that is interface-review; the recipes with code are in interface-review-surfaces, -motion, -icons and -performance.
+description: The rules an interface review judges by: accessibility, layout, writing, typography and UI polish, with exact values. Load during an interface review to judge a finding and word its fix. The run order and the report form are in interface-review.
 ---
 
 # The five domains of an interface review
@@ -171,7 +171,7 @@ share one set of rules.
 3. **Heading sizes descend with level.** Within a coherent page hierarchy, map heading levels to
    descending steps of the type scale: a visually subordinate heading should not accidentally
    overpower its parent. Adjacent levels may share a size toward the small end of the scale as long
-   as weight or spacing keeps them distinct. Pick semantic heading elements per the accessibility
+   as weight or spacing keeps them distinct. Pick semantic heading elements per the Accessibility
    principles above; this section controls only their visual treatment.
 4. **Line-height by role.** Headings tighter, around `1.1`. Body copy `1.5` to `1.6`. Prefer unitless
    values so line-height scales with the font size; fixed values like `24px` do not. Tight
@@ -204,7 +204,8 @@ share one set of rules.
 Great interfaces rarely come from a single thing. It's usually a collection of small details that
 compound into a great experience. This section assumes an animation belongs; deciding whether it
 belongs at all, and what it costs the user at its trigger frequency, is a separate question worth
-asking before reaching for the recipes in `interface-review-motion`.
+asking before reaching for the recipes in `interface-review-motion` and
+`interface-review-motion-states`.
 
 1. **Concentric border radius.** Outer radius = inner radius + padding. Mismatched radii on nested
    elements is the most common thing that makes interfaces feel off.
@@ -248,6 +249,8 @@ asking before reaching for the recipes in `interface-review-motion`.
 14. **One SVG, recolored per state.** Icons use `currentColor` and get their states (hover, selected,
     disabled) from CSS color and opacity, never from separate assets. Outline variant is the
     default; fill variant marks the active state.
+
+### UI polish: common mistakes
 
 | Mistake | Fix |
 | --- | --- |

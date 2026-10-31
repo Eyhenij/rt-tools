@@ -1,6 +1,6 @@
 ---
 name: interface-review-icons
-description: Recipes for icons in an interface review, with HTML, CSS and Tailwind code. Covers stroke matched to text weight, one SVG recolored per state, outline by default and fill when active, render size and RTL mirroring. Load when a finding about an icon's weight, state, size or direction is worded or implemented. Icon animation is in interface-review-motion, accessible names in interface-review-principles.
+description: Icon recipes for an interface review: stroke matched to text weight, one SVG recolored per state, outline by default and fill when active, render size, RTL mirroring. Load when an icon finding is worded or fixed. Icon swaps are in interface-review-motion-states.
 ---
 
 # Icons
@@ -93,7 +93,7 @@ When an icon set offers outline and filled variants, use them as a state pair, n
 ```
 
 The swap between variants is a contextual icon animation; use the exact cross-fade values in
-`interface-review-motion`.
+`interface-review-motion-states`.
 
 ## Design at render size
 

@@ -1,6 +1,6 @@
 ---
 name: interface-review-surfaces
-description: Recipes for surfaces in an interface review — concentric border radius, optical alignment of icons and buttons, shadows instead of depth borders, image outlines — with CSS and Tailwind code. Load when a finding about radii, alignment, elevation or image edges is worded or implemented. The principles and the report are not here — that is interface-review-principles and interface-review.
+description: Surface recipes for an interface review: concentric radii, optical alignment, shadows instead of depth borders, image outlines, with CSS and Tailwind code. Load when such a finding is worded or fixed. The rules are in interface-review-principles.
 ---
 
 # Surfaces
@@ -25,6 +25,8 @@ This rule is most useful when nested surfaces are close together. If padding is 
 treat the layers as separate surfaces and choose each radius independently instead of forcing strict
 concentric math.
 
+### Example
+
 ```css
 /* Good: concentric radii */
 .card {
@@ -44,6 +46,8 @@ concentric math.
   border-radius: 12px;
 }
 ```
+
+### Tailwind example
 
 ```tsx
 // Good: outer radius accounts for padding
@@ -209,19 +213,25 @@ design systems where other elements use borders or shadows.
 - Never match the outline to the project's accent or ink color. The outline is a neutral separator,
   not a themed element.
 
+### Light mode
+
 ```css
-/* Light mode */
 img {
   outline: 1px solid oklch(0 0 0 / 0.1);
   outline-offset: -1px; /* draw the ring just inside the image edge */
 }
+```
 
-/* Dark mode */
+### Dark mode
+
+```css
 img {
   outline: 1px solid oklch(1 0 0 / 0.1);
   outline-offset: -1px;
 }
 ```
+
+### Tailwind with dark mode
 
 ```tsx
 <img

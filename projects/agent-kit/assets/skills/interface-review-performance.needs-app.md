@@ -1,6 +1,6 @@
 ---
 name: interface-review-performance
-description: Recipes for animation performance in an interface review — transition only the properties that change instead of transition all, and will-change only for compositor properties and only on a seen first-frame stutter — with CSS and Tailwind code. Load when a finding about transition properties or will-change is worded or implemented. The animations themselves are in interface-review-motion.
+description: Performance recipes for an interface review: transition only what changes instead of transition all, and will-change only for compositor properties on a seen stutter. Load when such a finding is worded or fixed. The animations are in interface-review-motion.
 ---
 
 # Performance
@@ -18,10 +18,14 @@ Never use `transition: all` or Tailwind's `transition-all`. Always specify the e
 change. (Tailwind's bare `transition` maps to a curated default list of colors, opacity, shadow and
 transforms, not to `all`; still prefer naming exactly what changes.)
 
-- `transition: all` forces the browser to watch every property for changes.
-- It causes unexpected transitions on properties you didn't intend to animate (colors, padding,
-  shadows).
-- It prevents browser optimizations.
+### Why
+
+- `transition: all` forces the browser to watch every property for changes
+- Causes unexpected transitions on properties you didn't intend to animate (colors, padding,
+  shadows)
+- Prevents browser optimizations
+
+### CSS example
 
 ```css
 /* Good: only transition what changes */
@@ -37,6 +41,8 @@ transforms, not to `all`; still prefer naming exactly what changes.)
 }
 ```
 
+### Tailwind
+
 ```tsx
 // Good: explicit properties
 <button className="transition-[scale,background-color] duration-150 ease-out">
@@ -44,6 +50,8 @@ transforms, not to `all`; still prefer naming exactly what changes.)
 // Bad: transition all
 <button className="transition-all duration-150 ease-out">
 ```
+
+### Tailwind `transition-transform` note
 
 `transition-transform` in Tailwind maps to `transition-property: transform, translate, scale,
 rotate`, so it covers all transform-related properties, not just `transform`. Use this when you're
@@ -59,6 +67,8 @@ can cause a micro-stutter on the first frame.
 This particularly helps when an element is changing `scale`, `rotation`, or moving around with
 `transform`. For other properties, it doesn't help much: the browser can't composite them on the GPU
 anyway.
+
+### Rules
 
 ```css
 /* Good: specific property that benefits from GPU compositing */
@@ -82,6 +92,8 @@ anyway.
 }
 ```
 
+### Useful properties
+
 | Property | GPU-compositable | Worth using `will-change` |
 | --- | --- | --- |
 | `transform` | Yes | Yes |
@@ -90,6 +102,8 @@ anyway.
 | `clip-path` | Newer Chromium only | Rarely; not reliable cross-browser |
 | `top`, `left`, `width`, `height` | No | No |
 | `background`, `border`, `color` | No | No |
+
+### When to skip
 
 Modern browsers are already good at optimizing on their own. Only add `will-change` when you notice
 first-frame stutter; Safari in particular benefits from it. Don't add it preemptively to every

@@ -1,8 +1,8 @@
 ---
 name: interface-review
-description: Reviews an interface as one system — accessibility, layout, writing, typography and polish in that order — and consolidates the findings into one ranked table with a single verdict. Load when asked to review, audit or critique a screen, a flow, a component or a Figma frame. The principles of the five domains are in interface-review-principles, the cards on a Figma frame in interface-review-annotate, the recipes in interface-review-surfaces, -motion, -icons and -performance.
+description: Reviews an interface as one system: accessibility, layout, writing, typography and polish, in that order, into one ranked findings table and one verdict. Load when asked to review or audit a screen, a flow, a component or a Figma frame. The domain rules are in interface-review-principles.
 ---
-<!-- rt-kit v0.33.1 · skills/interface-review.needs-app.md · 4e2e7135d51f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · skills/interface-review.needs-app.md · 560e634cdfc4 · правится надстройкой, не здесь -->
 
 # Review the interface as one system
 
@@ -20,9 +20,10 @@ experience, then consolidate into one prioritized verdict.
   change scope.
 
 The principles each finding is judged by are in `interface-review-principles`. The cards on a Figma
-frame are in `interface-review-annotate`. Recipes: surfaces — `interface-review-surfaces`,
-animations — `interface-review-motion`, icons — `interface-review-icons`, transitions and
-compositing — `interface-review-performance`.
+frame are in `interface-review-annotate`; it is laid out only in a tree with mockups. Recipes:
+surfaces — `interface-review-surfaces`, entrances and exits — `interface-review-motion`, icon swaps,
+press feedback and page load — `interface-review-motion-states`, icons — `interface-review-icons`,
+transitions and compositing — `interface-review-performance`.
 
 ## How to look
 
@@ -36,8 +37,8 @@ full speed.
 **Match the project's styling system.** Before writing any fix, check how the codebase styles
 things and express every change in that system: Tailwind utilities in a Tailwind project, plain
 declarations in CSS, CSS Modules, styled-components or StyleX. Preserve the project's component
-library, tokens, and density, and its established motion language except where a principle
-prescribes an exact interaction pattern. Never introduce a second styling approach just to apply a
+library, tokens, and density, and its established motion language except where a principle in
+`interface-review-principles` prescribes an exact interaction pattern. Never introduce a second styling approach just to apply a
 fix.
 
 Treat numeric values as starting points for interfaces without an established density or spacing
@@ -135,14 +136,14 @@ are no findings, omit the table and state "No actionable interface findings."
 
 ### Annotate the frame
 
-When the review artifact is a Figma frame, every row in the findings table also lands on the canvas
-as a card, by `interface-review-annotate`. If the file is view-only or the user asked for the
-report only, output the table alone and say the frame was not annotated.
+Every row in the findings table also lands on the canvas as a card, by `interface-review-annotate`.
+If the file is view-only or the user asked for the report only, output the table alone and say the
+frame was not annotated.
 
 ### Considered but Rejected
 
-Record candidates considered but deliberately rejected. A candidate is rejected when the principle
-permits the current implementation, evidence is insufficient, the project convention is
+Record candidates considered but deliberately rejected. A candidate is rejected when the principle in
+`interface-review-principles` permits the current implementation, evidence is insufficient, the project convention is
 intentional, or the proposed change would add complexity without user benefit.
 
 Include 1–3 candidates in `quick` mode and 2–5 in `full` mode:
