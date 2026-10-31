@@ -251,3 +251,9 @@ Then the widget is drawn with the site key of the realm, as on the standard page
 Given a registration page whose widget the person has ticked
 When the person switches the page theme
 Then the widget is not drawn anew, and its answer stays in the form
+
+### SC-AUTH-96 — a Google script that loaded without its API ends the wait
+
+Given a registration page waiting for the Google script
+When the script loads and the page still has no `grecaptcha`
+Then the page stops waiting, sets no new wait on the same script and never calls back
