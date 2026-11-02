@@ -53,6 +53,13 @@ rows where that column answers.
 - **An empty value takes the column out of the set of conditions and does not travel as an empty
   condition.** A condition with nothing in it asks the consumer to answer "everything matches", and
   a consumer who reads it literally returns no rows at all.
+- **A filter field removes its condition by the empty mode of its table.** In `rt-table` only an
+  empty string is empty, and `0` and `false` stay values. In `rt-data-table` any falsy value is
+  empty, as in the first kit. The mode is chosen inside the kit; neither table takes an input for it.
+- **A change of the comparison on a column with a value adds its condition.** What counts as a value
+  is said by the same empty mode. A column without a value asks nothing.
+- **A value equal to the one already in the condition reports nothing.** The table does not send
+  the same set twice.
 - **A typed value is reported when the field is left or Enter is pressed, and a chosen one at once.**
   A consumer asks the server by the set of conditions, and a set sent on every keystroke asks it once
   per letter: the answers then come back out of order, and the list shows the reply to a value the
@@ -166,6 +173,9 @@ Not applicable: the family holds no data of a workspace.
 - **The operator list belongs to the column rather than to the kind.** Two text columns want
   different lists — a name is searched by "contains", a code by "equals" — and a list derived from
   the kind alone cannot tell them apart.
+- **Both tables keep their own empty mode, and the core of the tables holds both.** By the owner's
+  answers of 30.10.2026: the filter mode is set like the sort cycle, and «Внутри кита
+  (Recommended)». `rt-data-table` repeats the first kit, where `0` and `false` removed a condition.
 
 ## Open questions
 
@@ -180,3 +190,5 @@ Not applicable: the family holds no data of a workspace.
 - 2026-09-18 — the subdomain is started by RT-2226. The filter in the header cell is named as work
   of its own by the domain of the list with its own toolbar, and the port of the table left it
   deliberately untouched.
+- 2026-10-30 — RT-2865: the filter of both tables is computed by one core; each table keeps its
+  empty mode.

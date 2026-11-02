@@ -1,40 +1,28 @@
-import { EListSortOrder, TListSortOrderType, ISortModel } from '@rt-tools/utils';
+import { rtAriaSortOf, rtNextSort, rtSortDirectionOf, TRtAriaSort } from '@rt-tools/ui-kit-v2/table-core';
+import { TListSortOrderType, ISortModel } from '@rt-tools/utils';
 
 import { IRtTable } from './rt-table.model';
 
 /** Значение атрибута `aria-sort` заголовка: направление либо его отсутствие. */
-export type TRtTableAriaSort = 'ascending' | 'descending' | 'none';
+export type TRtTableAriaSort = TRtAriaSort;
 
 /**
- * Следующее состояние сортировки при нажатии на заголовок колонки.
- *
- * Порядок кругов: по возрастанию → по убыванию → без сортировки. Третье состояние
- * нужно, чтобы пользователь мог вернуть исходный порядок, не перезагружая список.
+ * Следующее состояние сортировки при нажатии на заголовок колонки — по ядру таблиц, круг `clears`:
+ * по возрастанию → по убыванию → без сортировки. Третье состояние нужно, чтобы пользователь мог
+ * вернуть исходный порядок, не перезагружая список.
  */
 export function nextSort(current: ISortModel<string> | null, propertyName: string): ISortModel<string> | null {
-    if (current === null || current.propertyName !== propertyName) {
-        return { propertyName, sortDirection: EListSortOrder.ASC };
-    }
-    if (current.sortDirection === EListSortOrder.ASC) {
-        return { propertyName, sortDirection: EListSortOrder.DESC };
-    }
-
-    return null;
+    return rtNextSort(current, propertyName, 'clears');
 }
 
 /** Направление сортировки по этой колонке либо `null`, когда сортирует другая. */
 export function sortDirectionOf(current: ISortModel<string> | null, propertyName: string): TListSortOrderType | null {
-    return current !== null && current.propertyName === propertyName ? current.sortDirection : null;
+    return rtSortDirectionOf(current, propertyName);
 }
 
 /** Значение `aria-sort` заголовка: направление читается скринридером с самой колонки. */
 export function ariaSortOf(current: ISortModel<string> | null, propertyName: string): TRtTableAriaSort {
-    const direction: TListSortOrderType | null = sortDirectionOf(current, propertyName);
-    if (direction === null) {
-        return 'none';
-    }
-
-    return direction === EListSortOrder.ASC ? 'ascending' : 'descending';
+    return rtAriaSortOf(current, propertyName);
 }
 
 /**

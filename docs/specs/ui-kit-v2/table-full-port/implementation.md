@@ -33,7 +33,7 @@ to the public entry that calls it.
 ### The header
 
 - **The header stays on top while the rows scroll under it.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.scss:thead`; scenario —
-- **A press on a sortable header asks for the ascending order, and on the column already sorted ascending — for the descending one.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-sort.logic.ts:dataTableNextSortOrder`; scenario `SC-UKV-302`
+- **A press on a sortable header asks for the ascending order, and on the column already sorted ascending — for the descending one.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-sort.logic.ts:dataTableNextSortOrder`; scenarios `SC-UKV-302`, `SC-UKV-1113`
 - **A sort is asked only for a column the table has.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.ts:onSortChange`; scenario —
 - **The header of a sorted column shows which way it is sorted.** — `projects/ui-kit-v2/src/lib/components/data-table/header-cell/rt-data-table-header-cell.component.html:data-table-header-sort`; scenario `SC-UKV-302`
 - **A header may carry an icon before or after its label and a hint on the label.** — `projects/ui-kit-v2/src/lib/components/data-table/header-cell/rt-data-table-header-cell.component.html:data-table-header-prefix`; scenario `SC-UKV-321`
@@ -73,7 +73,10 @@ to the public entry that calls it.
 - **The panel's save is unavailable until something in it changed; cancel closes it and changes nothing.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-settings.logic.ts:dataListSettingsChanged`; scenario `SC-UKV-306`
 - **Saved settings are kept in the browser's database under the table's storage key and come back when the table is opened again.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-config.service.ts:initConfig`; scenario `SC-UKV-271`
 - **Saved settings whose set of columns differs from the declared one are dropped, and the table is drawn by the declaration.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-config.service.ts:comparePropNames`; scenario `SC-UKV-272`
-- **Settings the first kit saved under a storage key are read by the family under the same key.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.model.ts:Config`; scenario `SC-UKV-317`
+- **`rt-data-table` writes its settings under the kit key.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-config.service.ts:dataTableConfigKeyOf`; scenario `SC-UKV-1111`
+- **An old record is copied under the kit key on the first read and is not erased.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-config.service.ts:initConfig`; scenarios `SC-UKV-1109`, `SC-UKV-317`
+- **A record under the kit key wins over an old one.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-config.service.ts:initConfig`; scenario `SC-UKV-1110`
+- **A reset of the settings removes both records.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-config.service.ts:deleteConfig`; scenario `SC-UKV-1112`
 - **A table with no saved settings shows the horizontal scrollbar and hides the vertical one.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-config.service.ts:tableConfig`; scenario `SC-UKV-269`
 - **A hidden scrollbar hides the bar, not the scrolling.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts:SCROLLBAR_HIDDEN`, `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list-scrollbar.logic.ts:dataListScrollbarStandard`; scenario `SC-UKV-270`
 - **The scrollbar choice is applied to the whole page: every table of the family on it shows the choice last applied.** — `projects/ui-kit-v2/src/lib/components/data-list/rt-data-list.component.ts:SCROLLBAR_SIZE`; scenario `SC-UKV-273`
@@ -103,4 +106,7 @@ to the public entry that calls it.
 ### The narrow screen
 
 - **Below the kit's threshold the table keeps its columns and scrolls sideways; it never turns into cards.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.scss:.rt-data-table`; scenario `SC-UKV-313`
+- **Both tables compute their conditions and their sort by the core.** — `projects/ui-kit-v2/src/lib/components/table-core/rt-table-filter.core.ts:rtFiltersWithValue`, `projects/ui-kit-v2/src/lib/components/table-core/rt-table-sort.core.ts:rtNextSort`, called by `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-sort.logic.ts:dataTableNextSortOrder` and `projects/ui-kit-v2/src/lib/components/table/rt-table-sort.logic.ts:nextSort`; scenarios `SC-UKV-1104`, `SC-UKV-1107`
+- **A press on a sorted header follows the cycle of its table.** — `projects/ui-kit-v2/src/lib/components/table-core/rt-table-sort.core.ts:rtNextSort`; scenario `SC-UKV-1107`
+- **Both tables name the sort for assistive technology by the same values.** — `projects/ui-kit-v2/src/lib/components/table-core/rt-table-sort.core.ts:rtAriaSortOf`, the attribute dropped — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-sort.logic.ts:dataTableAriaSort`
 - **Below the threshold no hint of the family is shown, the pagination bar narrower than 460 px shows «page N of M» between the arrows, and the toolbar puts the search on a line of its own.** — `projects/ui-kit-v2/src/lib/components/pagination/rt-pagination.component.html:compact`; scenario `SC-UKV-313`
