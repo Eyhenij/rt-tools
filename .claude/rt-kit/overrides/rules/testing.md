@@ -2,9 +2,9 @@
 
 The tree holds both libraries and applications, and the rule applies to them differently. The
 libraries have no end-to-end runs at all: the visible state is shown by the showcase, and it is
-confirmed by a story frame. There is one end-to-end suite in the tree — the suite of the
-receiver's admin panel — and everything the law says about a stand, data and the request path
-applies to it alone.
+confirmed by a story frame. There are two end-to-end suites in the tree — the suite of the
+receiver's admin panel and the suite of the entry example — and everything the law says about a
+stand, data and the request path applies to them alone.
 
 - **The runner of the package specs is Jest with `jest-preset-angular`, not Vitest.** One project
   per package; everything the rule says about the Vitest config has nothing to apply to here. The
@@ -24,6 +24,29 @@ applies to it alone.
 
 The completeness of a test is checked by nothing, and the tree agreed on no way of substituting
 modules: a double is written by hand.
+
+## End-to-end coverage of a change
+
+The first article of the law's section of the same name is held here by a guard at opening a PR.
+The second is held by nothing: the push gate runs the suites, and by the law its run is not the
+executor's check.
+
+- **The suite a path demands is named by the subject of the path.** The subjects are named by the
+  tree profile: the receiver, its libraries, the schema and the rollout demand the admin panel's
+  suite; the entry packages and the theme demand the entry suite; the second kit demands both. The
+  push gate raises the same suites by the same subjects.
+- **A PR does not open while the branch changes code a suite walks and adds or edits no test of
+  that suite.** The test is a `*.spec.ts` of the suite: a README, a stand script or a re-shot
+  snapshot walks no new behaviour. The base, the head and the tree are read from the command.
+- **The bypass is the line `E2E-skip: <reason>` in the body of a commit that changes code.** The
+  reason is at least three characters, without `<`, and says what closes the gap. A line in a commit
+  of texts only lifts nothing.
+- **A change of a root setting or the build harness demands no suite.** It acts on every subject,
+  and the push gate runs all suites for it.
+
+Not checked by anything: that the executor ran the suites and named their output, and what the
+reason of the bypass promises. Neither is a PR opened in the browser or a draft lifted by
+`gh pr ready`.
 
 ## Pitfalls of this tree
 
