@@ -4,12 +4,13 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `разбор-закрыт`
+- **State:** `договорённость-записана`
 - **Stage:** 0 of 0 — the plan is not written yet
 - **Done:** the task is assigned to the owner and stands in the work column; the branch is taken
-  from the main branch; the grill is closed by assumptions from the exploration.
-- **Next step:** write the product agreement in `docs/specs/ui-kit-v2/proposed/`, then draw the
-  pinned column in the Figma file of the second kit and show it to the owner.
+  from the main branch; the grill is closed by assumptions from the exploration; the agreement lies
+  in `docs/specs/ui-kit-v2/proposed/table-pinned-column/`, scenarios SC-UKV-1114 to SC-UKV-1121.
+- **Next step:** draw the pinned column in the Figma file of the second kit (rule `kit-approval`),
+  measure it and show it to the owner with its link.
 - **Uncommitted:** nothing after the first commit of the folder.
 - **Waiting for the owner:** no
 - **PR:** not open yet
