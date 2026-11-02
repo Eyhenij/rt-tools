@@ -17,7 +17,7 @@ export type TCopyCellStoryPart = 'playground' | 'framed';
  */
 @Component({
     selector: 'app-copy-cell',
-    // native-ok: обёртка истории витрины — показ живёт рядом с историей, а не отдельным файлом разметки
+    // native-ok: обёртка истории с изменяемым состоянием для контролов — в ките такой нет, и в пакет она не уезжает
     template: `
         @switch (part) {
             @case ('framed') {
