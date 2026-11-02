@@ -8,8 +8,7 @@ Rewritten by every session, not appended to.
 - **Stage:** 3 of 3 — Showcase, measurement and approval
 - **Done:** the agreement lies in `docs/specs/ui-kit-v2/proposed/table-pinned-column/`, scenarios
   SC-UKV-1114 to SC-UKV-1121; the mockup is approved by «тень ок»; the plan is written.
-- **Next step:** 3.3 — re-take the snapshots of the table stories and of every story that draws
-  `rt-table`, after looking at each frame.
+- **Next step:** 3.4 — show the showcase to the owner and record the answer in `approvals.md`.
 - **Measured against the mockup** (`node tools/kit-match.mjs numbers`, frame start-0, the other
   five frames give the same numbers): 14 of 17 match — scroller 375, scroll range 185, columns
   150/140/140/130 (c480251fe, fixed layout in the story), padding 8/20, font 14/500, text and header
@@ -42,6 +41,12 @@ Rewritten by every session, not appended to.
   `calc(50px - 2 * padding - border)`, compact `calc(36px - …)`; widths keep their meaning. Measured:
   density story 50/36, pinned story every row 50 with columns 150/140/140/130;
   `kit-match numbers` 17 of 17. Table specs 159 of 159. Every table snapshot moves with it.
+- **Snapshot comparison** (`node tools/visual-gate.mjs ui-kit-v2`): 957 of 978 match; the 21 that
+  differ all lie in five files — the table, its row, the filter header, the pinned story (no
+  reference yet) and the bookings template. Every difference is the shorter row; frames looked at
+  by eye before the re-take: two-line cells grow past 50, nothing is cut. Re-taken 20 and written 1
+  (the pinned story), then a second run of the gate: 978 of 978 tests, 972 of 972 snapshots. The story sweep
+  `tools/story-sweep-v2.mjs` was refused by the browser-profile guard and did not run.
 - **Mockup:** https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=7448-2186 — page Table,
   six frames of width 375: left and right pin, scroll start, middle and end, two in the dark theme.
 - **Uncommitted:** nothing.
@@ -57,8 +62,8 @@ Rewritten by every session, not appended to.
 - [x] 2.3 Cover the function by unit tests with the scenario ids.
 - [x] 3.1 Add a story of the pinned column with the frames of the mockup.
 - [x] 3.2 Measure the showcase against the mockup and make the numbers match.
-- [>] 3.3 Cover the browser scenarios by a visual snapshot of the story.
-- [ ] 3.4 Show the showcase to the owner and record the answer.
+- [x] 3.3 Cover the browser scenarios by a visual snapshot of the story.
+- [>] 3.4 Show the showcase to the owner and record the answer.
 
 ## Decisions along the way
 
