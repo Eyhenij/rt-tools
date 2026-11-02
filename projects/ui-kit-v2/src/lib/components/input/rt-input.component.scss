@@ -204,6 +204,10 @@
             letter-spacing: var(--rt-input-letter-spacing, normal);
             outline: none;
 
+            /* Длинное значение и подсказка, не влезшие в поле, кончаются многоточием, как в макете
+               поля, а не обрезаются посреди знака. */
+            text-overflow: ellipsis;
+
             &::placeholder {
                 color: var(--rt-input-color-text-placeholder);
                 opacity: 1;

@@ -21,3 +21,13 @@ When the field is drawn
 Then the native field is declared by the same type that was named
 
 Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input.component.spec.ts`.
+
+### SC-UKV-1116 — a value longer than the field ends with an ellipsis
+
+Given a field narrower than its hint
+When the field is drawn
+Then the hint ends with an ellipsis at the right edge of the field
+
+Не покрыто: the spec environment computes no layout, and truncation is a matter of the field's
+styles. The promise is held by the frame of the story Molecules/ServiceBlock/Panel `Phone`, where
+the hints of the three key fields are longer than the fields.

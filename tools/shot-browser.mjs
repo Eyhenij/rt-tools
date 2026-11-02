@@ -68,7 +68,19 @@ const SHOT_PORT = intFromEnv('E2E_SHOT_PORT', SHOT_DEFAULTS.port);
  * стартовала бы вовсе. Флаг браузера, объявляющий адрес защищённым, облегчённый браузер образа не
  * читает, поэтому внутри образа стоит пересылка: `localhost` с этими портами ведёт на машину.
  */
-const FORWARDED_PORTS = [intFromEnv('E2E_ADMIN_PORT', 4310), 58080];
+const FORWARDED_PORTS = [intFromEnv('E2E_ADMIN_PORT', 4310), 58080, ...extraForwardedPorts()];
+
+/**
+ * Порты, которые зовущий просит переслать сверх стенда, через запятую: так визуальный гейт отдаёт
+ * порт своей витрины. Адрес машины в её сети браузер образа не зовёт: сеть Docker с тем же
+ * диапазоном забирает маршрут к ней.
+ */
+function extraForwardedPorts() {
+    return (process.env['E2E_SHOT_FORWARD'] ?? '')
+        .split(',')
+        .map(Number)
+        .filter((port) => Number.isInteger(port) && port > 0);
+}
 
 /** Путь входа: он стоит в адресе и тем отличает наш браузер от чужого, занявшего тот же порт. */
 const SHOT_PATH = '/shot';
@@ -154,6 +166,10 @@ async function startShotBrowser() {
             SHOT_CONTAINER,
             '-p',
             `${SHOT_PORT}:3000`,
+            // Имя машины для пересылки портов. Docker Desktop даёт его сам, Docker на Linux — только
+            // по этому доводу; на Docker Desktop довод называет тот же адрес и ничего не меняет.
+            '--add-host',
+            'host.docker.internal:host-gateway',
             ...SHOT_LOCALE,
             '-v',
             `${ROOT}node_modules:/tree/node_modules`,

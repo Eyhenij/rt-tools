@@ -1,6 +1,6 @@
 # The block of a service
 
-**Status:** in force · **Revision:** 2026-10-22 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-02 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the logo of a service — the mark of the block is drawn by it
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
@@ -44,6 +44,11 @@ and the panels of one application stop lining up at the first edit of one of the
 
 - **A line in the subtle border colour, 1 thick, stands 20 under the block.** It runs the whole
   width of the block.
+
+- **In the kit's form the next section stands 16 under the line at every width.** The form keeps
+  its own gap between sections, 32 on a wide screen and 16 on a narrow one; the block standing
+  right in the form takes the difference off it, so the first field under the line stands at 16
+  at 1440, 768 and 375 alike.
 
 - **The block takes the whole width of its place, and the text wraps instead of being cut.** On a
   narrow place the description and the name go onto further lines; a word longer than the place
@@ -115,3 +120,5 @@ None.
 ## History of changes
 
 - 2026-10-22 — written by the task RT-2934.
+- 2026-11-02 — the task RT-2994: the block standing right in the kit's form leaves 16 to the next
+  section at every width, scenario `SC-UKV-1114`.
