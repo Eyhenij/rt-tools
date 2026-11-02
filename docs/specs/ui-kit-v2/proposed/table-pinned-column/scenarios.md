@@ -30,21 +30,24 @@ Not covered: the code is not written yet.
 Given the same table scrolled to the start
 When it is drawn, and then scrolled sideways by 200 pixels
 Then at the start the pinned edge has no shadow, and after the scroll it has one
-Not covered: the code is not written yet.
+Covered: `projects/ui-kit-v2/src/lib/components/table/rt-table-pinned-edges.spec.ts`.
+Покрытие: частичное — the spec checks which edge is hidden; the shadow on screen is checked by the story snapshot.
 
 ### SC-UKV-1118 — the right pin carries a shadow until the scroll reaches the end
 
 Given a table of nine columns, the last column pinned right, scrolled to the start
 When it is drawn, and then scrolled to the end
 Then at the start the pinned edge has a shadow, and at the end it has none
-Not covered: the code is not written yet.
+Covered: `projects/ui-kit-v2/src/lib/components/table/rt-table-pinned-edges.spec.ts`.
+Покрытие: частичное — the spec checks which edge is hidden; the shadow on screen is checked by the story snapshot.
 
 ### SC-UKV-1119 — a table that fits shows no shadow
 
 Given a table whose columns fit in the container, one column pinned left
 When it is drawn
 Then the pinned edge has no shadow
-Not covered: the code is not written yet.
+Covered: `projects/ui-kit-v2/src/lib/components/table/rt-table-pinned-edges.spec.ts`.
+Покрытие: частичное — the spec checks which edge is hidden; the shadow on screen is checked by the story snapshot.
 
 ### SC-UKV-1120 — the application changes the background and the shadow by tokens
 
