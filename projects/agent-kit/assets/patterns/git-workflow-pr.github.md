@@ -139,6 +139,25 @@ no longer on the server: the push will not update it but create it anew, and the
 stays outside the main branch. The push answer says this with a new-branch mark instead of a list
 of commits — otherwise it looks exactly like a successful push.
 
+**After a push that carries a merge of the base, the PR's count is matched against the comparison
+of the branches.** The host counts the commits and files of a PR from the base commit it stored
+when the PR opened or was last retargeted, and a push does not always move it. The base merged into
+the branch then shows inside the PR as its own work: a PR with 30 commits of its own read as 153
+with 371 files, while the comparison of the same branches answered 30 at the same minute. The count
+is asked from both sides:
+
+```bash
+$GH api "repos/$REPO/pulls/321" --jq '{base: .base.sha[0:9], commits: .commits, files: .changed_files}'
+$GH api "repos/$REPO/compare/<база>...<ветка>" --jq '{ahead: .ahead_by, behind: .behind_by}'
+```
+
+`commits` other than `ahead` is cured by setting the same base again — the host recounts the PR in
+the same answer:
+
+```bash
+$GH api -X PATCH "repos/$REPO/pulls/321" -f base=<база> --jq '{base: .base.sha[0:9], commits: .commits}'
+```
+
 **The run's outcome is read by a separate call, not by the wait's return code.** The client
 command that waits for the run's end returns zero on red too: it waited for the end, not for
 success. Read as an outcome, this zero makes green what fell, and what was said to the owner
@@ -195,7 +214,8 @@ push gate — below is what it does not know.
 12. **The work queue matches** — `npm run check:board`. The task is on the board, with an
     assignee and the number in the title; one PR per task, and it closes the task whole.
 13. **The PR state is read, not derived from return codes** — author `<бот>`, reviewer — the
-    owner, labels the same as on the task. The owner is told what was read.
+    owner, labels the same as on the task, the commit count equal to `ahead_by` of the branch
+    comparison. The owner is told what was read.
 14. **The set is taken from the pipeline file, not assembled from memory.** The push gate is
     narrower by design: it stands between the command and the push, and everything longer than
     seconds is taken out of it. What the pipeline runs is written in its file — that list is
