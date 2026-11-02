@@ -32,8 +32,14 @@ Rewritten by every session, not appended to.
 - **Total row:** the owner chose «Только в истории (Recommended)»; the story wrapper gives the footer
   cells the kit cell height and padding, measured 66.5 high with 8/20 padding in all six frames
   (c0c693ff4). The Overview of `rt-table` got the section about the pinned column (120e1c160).
+- **Shadow on every row and stronger** (owner: «с тенью только хедер и футер, при чем на футере
+  плохо видно тень», then «Усилить (Recommended)»): the story's guest cell clipped the shadow by its
+  own `overflow: hidden` — the ellipsis moved to an inner element and the Overview names the
+  condition (f4d11deaf); the shadow token went 12% → 16% light and 48% → 64% dark, the four
+  gradients of the mockup with it. Measured: shadow opacity and 0.16/0.64 on all five rows of every
+  frame; caption gap 12, frame gaps 24 and 48 as in the mockup.
 - **Waiting for the owner:** whether the kit row height 67 against 50 is fixed here or by a task of
-  its own.
+  its own — the question went unanswered while the shadow was reported.
 - **Mockup:** https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=7448-2186 — page Table,
   six frames of width 375: left and right pin, scroll start, middle and end, two in the dark theme.
 - **Uncommitted:** nothing.
@@ -53,6 +59,9 @@ Rewritten by every session, not appended to.
 - [ ] 3.4 Show the showcase to the owner and record the answer.
 
 ## Decisions along the way
+
+- **The shadow is 16% black light and 64% dark instead of the approved 12% and 48%.** The owner
+  found it weak on the total row and chose «Усилить (Recommended)»; the mockup gradients follow.
 
 - **The row of this working copy in the assignment table is rewritten to RT-2907.** The owner said
   «разрешаю» to that edit. The branch could not be taken while the row named a closed task.

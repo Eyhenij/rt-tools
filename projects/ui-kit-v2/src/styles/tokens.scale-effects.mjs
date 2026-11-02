@@ -24,7 +24,7 @@ export const scaleEffects = [
     },
     {
         name: `--rt-shadow-xl`,
-        value: `0 20px 25px -5px rgb(0 0 0 / 12%), 0 8px 10px -6px rgb(0 0 0 / 8%)`,
+        value: `0 20px 25px -5px rgb(0 0 0 / 16%), 0 8px 10px -6px rgb(0 0 0 / 8%)`,
     },
     {
         name: `--rt-shadow-card`,
@@ -253,13 +253,13 @@ export const scaleEffects = [
         note: `наведение поверх приглушённой поверхности: она сама стоит на четырёх процентах`,
     },
     {
-        name: `--rt-overlay-black-12`,
-        value: `rgb(0 0 0 / 12%)`,
+        name: `--rt-overlay-black-16`,
+        value: `rgb(0 0 0 / 16%)`,
         note: `тень у края закреплённой колонки таблицы`,
     },
     {
-        name: `--rt-overlay-black-48`,
-        value: `rgb(0 0 0 / 48%)`,
+        name: `--rt-overlay-black-64`,
+        value: `rgb(0 0 0 / 64%)`,
         note: `та же тень на графите`,
     },
     {

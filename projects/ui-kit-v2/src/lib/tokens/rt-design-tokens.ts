@@ -402,10 +402,10 @@ export type TRtDesignTokenName =
     | '--rt-neutral-950'
     | '--rt-opacity-disabled'
     | '--rt-overlay-amber-16'
-    | '--rt-overlay-black-12'
+    | '--rt-overlay-black-16'
     | '--rt-overlay-black-4'
-    | '--rt-overlay-black-48'
     | '--rt-overlay-black-50'
+    | '--rt-overlay-black-64'
     | '--rt-overlay-black-8'
     | '--rt-overlay-brand-24'
     | '--rt-overlay-brand-8'
@@ -1205,10 +1205,10 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-neutral-950',
     '--rt-opacity-disabled',
     '--rt-overlay-amber-16',
-    '--rt-overlay-black-12',
+    '--rt-overlay-black-16',
     '--rt-overlay-black-4',
-    '--rt-overlay-black-48',
     '--rt-overlay-black-50',
+    '--rt-overlay-black-64',
     '--rt-overlay-black-8',
     '--rt-overlay-brand-24',
     '--rt-overlay-brand-8',

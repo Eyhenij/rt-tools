@@ -21,11 +21,11 @@ export const lightParts = [
     },
     {
         lead: `    /* Table (rt-table) — тень у края закреплённой колонки, пока под ней есть прокрученное
-       содержимое. На графите тень гуще: двенадцать процентов чёрного на нём не видны. */`,
+       содержимое. На графите тень гуще: шестнадцать процентов чёрного на нём не видны. */`,
         space: true,
         name: `--rt-color-table-pinned-shadow`,
-        value: `var(--rt-overlay-black-12)`,
-        dark: `var(--rt-overlay-black-48)`,
+        value: `var(--rt-overlay-black-16)`,
+        dark: `var(--rt-overlay-black-64)`,
     },
     {
         lead: `    /* Залитое поле (вид fill у поля ввода, числа, даты и выбора) — черта снизу. Своё имя,

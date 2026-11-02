@@ -2,7 +2,7 @@
    шире него, поэтому контейнер прокручивается вбок. Ширины колонок взяты из макета. */
 .app-table-pinned {
     display: grid;
-    gap: var(--rt-space-6) var(--rt-space-8);
+    gap: var(--rt-space-6) var(--rt-space-12);
     grid-template-columns: repeat(2, 375px);
 
     &__frame {
@@ -12,7 +12,7 @@
     }
 
     &__caption {
-        margin-bottom: var(--rt-space-3);
+        margin-bottom: calc(var(--rt-space-1) * 3);
         font-size: var(--rt-text-sm);
     }
 
