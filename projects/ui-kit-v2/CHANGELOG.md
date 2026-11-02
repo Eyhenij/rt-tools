@@ -1,3 +1,28 @@
+## [0.39.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.39.0...rt-ui-kit-v2%400.39.1) (2026-11-02)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** блок службы в форме отбивается от следующего раздела на 16 на всех ширинах ([7a24909](https://github.com/Eyhenij/rt-tools/commit/7a249097e1fbefa139abdcb6368c93bd531e3297))
+- **rt:ui-kit-v2:** в раскладке start подвала aside Tab идёт по кнопкам в видимом порядке ([26374dd](https://github.com/Eyhenij/rt-tools/commit/26374dd789b62a74268f214ac14ba5bf978ad4ee))
+- **rt:ui-kit-v2:** витрина RT-2995 совпала с кадрами 224 из 224 ([355e3db](https://github.com/Eyhenij/rt-tools/commit/355e3db6be471e50b3527409d487a49bef622a8f))
+- **rt:ui-kit-v2:** витрина не рисует знак Stripe и ключи вида sk_live ([26038cc](https://github.com/Eyhenij/rt-tools/commit/26038ccfea1a99c5ee407313b13c3cadc2a7e1d5))
+- **rt:ui-kit-v2:** панель подключения службы совпадает с эталоном кита ([97a58df](https://github.com/Eyhenij/rt-tools/commit/97a58dfa2a06c36d68c38c07206bdb0c5bc89d48))
+- **rt:ui-kit-v2:** панель подключения совпадает с эталоном на 540 и 375 до пикселя ([9caf6a6](https://github.com/Eyhenij/rt-tools/commit/9caf6a6b1523726e04cca856e79353096ded2894))
+- **rt:ui-kit-v2:** подвал панели без раскладки start, история панели по одобренному макету ([d76ad35](https://github.com/Eyhenij/rt-tools/commit/d76ad35b941472be58201baf85d97687cd2c3af5))
+- **rt:ui-kit-v2:** стили вкладок уложились в бюджет приложений ([4176b6c](https://github.com/Eyhenij/rt-tools/commit/4176b6c49efb256879805af800dc36cd4c98d973))
+- **rt:ui-kit-v2:** токены поля собираются из исходника, адреса копии в исключениях проверки ([41cddc1](https://github.com/Eyhenij/rt-tools/commit/41cddc1e49873a58edc2499d89677bd4da703993))
+- **rt:ui-kit-v2:** шапка rt-data-table просит возрастание у нажатой колонки, сброс гасит начатое чтение ([161750e](https://github.com/Eyhenij/rt-tools/commit/161750e211951fe79ce1ecf0d223f520cbe06a20))
+- **rt:ui-kit-v2:** шапка rt-data-table ставит другую колонку по возрастанию ([32de54e](https://github.com/Eyhenij/rt-tools/commit/32de54e483a1f9ebc06fb02b56b340914c5da3bc))
+- **rt:ui-kit-v2:** шапка панели и поле своим видом кита держат высоты строк макета ([0869305](https://github.com/Eyhenij/rt-tools/commit/0869305fb672ab28a37d71817b0cedf7d18fbfa3))
+
+### Features
+
+- **rt:ui-kit-v2:** rt-data-table хранит настройки под ключом кита и не теряет старые ([43dbbbd](https://github.com/Eyhenij/rt-tools/commit/43dbbbd28e67113afebdea0b29080e6c2a893043))
+- **rt:ui-kit-v2:** витрина показывает заливку иконки вкладки, бейдж над ней и крестик по Tab ([8665b3f](https://github.com/Eyhenij/rt-tools/commit/8665b3f491acf328cfa82881cc6bcb7b675d6398))
+- **rt:ui-kit-v2:** вкладка заливает иконку и ставит бейдж над ней, крестик полей доходит по Tab от умолчания кита ([d1d600b](https://github.com/Eyhenij/rt-tools/commit/d1d600bb0bc02bcb5909078d0f51041ea43f032c))
+- **rt:ui-kit-v2:** крестик мультиселекта доходит по Tab соседней кнопкой, как у выбора ([55ff5ad](https://github.com/Eyhenij/rt-tools/commit/55ff5ad4323506cbb61eaa90e288d0a957311191))
+- **rt:ui-kit-v2:** песочница вкладки берёт iconFill и badgePosition ([97dca06](https://github.com/Eyhenij/rt-tools/commit/97dca066d93da65d8dc875754c4541b2eb0ff67b))
+
 # [0.39.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.38.0...rt-ui-kit-v2%400.39.0) (2026-10-30)
 
 ### Bug Fixes
