@@ -19,15 +19,6 @@ export interface IServiceBlockPanelField {
     readonly hint: string;
 }
 
-/** Знак службы из кадра: в пакет он не уезжает, история его рисует ради сверки с макетом. */
-const STRIPE_MARK: string =
-    'data:image/svg+xml;utf8,' +
-    encodeURIComponent(
-        '<svg width="44" height="32" viewBox="0 0 44 32" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-            '<path d="M24.6347 12.2C21.7387 11.1253 20.16 10.2987 20.16 8.988C20.16 7.88 21.0707 7.248 22.6947 7.248C25.664 7.248 28.7147 8.392 30.8147 9.42267L32.0013 2.09733C30.336 1.3 26.9293 0 22.22 0C18.8893 0 16.1187 0.872 14.1387 2.496C12.08 4.196 11.0093 6.656 11.0093 9.624C11.0093 15.0093 14.2987 17.304 19.644 19.2493C23.0907 20.476 24.2373 21.348 24.2373 22.6933C24.2373 24 23.1173 24.7533 21.0987 24.7533C18.5987 24.7533 14.4787 23.5253 11.7787 21.9413L10.5787 29.348C12.9 30.6533 17.18 32 21.6187 32C25.14 32 28.076 31.168 30.056 29.5827C32.2747 27.8427 33.4227 25.268 33.4227 21.94C33.4227 16.436 30.0573 14.1387 24.6307 12.2H24.6347Z" fill="#635BFF"/>' +
-            '</svg>'
-    );
-
 /**
  * Демонстрационная обёртка для витрины: панель подключения службы целиком, как эталон кита
  * «Stripe · 540» на странице «Панель подключения службы». Шапка, блок службы, три поля, адрес
@@ -60,22 +51,25 @@ const STRIPE_MARK: string =
     ],
 })
 export class TestRtServiceBlockPanelComponent {
-    public readonly logos: readonly IRtServiceLogo.Item[] = [{ src: STRIPE_MARK, label: 'Stripe' }];
+    /**
+     * Знак — значок карты из кита, а не знак самой службы: чужих товарных знаков витрина не рисует.
+     */
+    public readonly logos: readonly IRtServiceLogo.Item[] = [{ icon: 'credit-card', label: 'Stripe' }];
 
     public readonly fields: readonly IServiceBlockPanelField[] = [
         {
             label: 'Секретный ключ',
-            placeholder: 'sk_live_51PxQ8kL2mN7vR4tYb9cZ3wE6hJ1aF0dK5sG8pU2xV4nM7qT3a41c',
+            placeholder: 'demo_secret_9f3b2c7a1e5d4086b2c9e7f1a3d5b8c0e2f4a6b8c0d2e4f6a8',
             hint: 'Лежит в кабинете Stripe: Разработчикам → Ключи API',
         },
         {
             label: 'Ключ подписи вебхука',
-            placeholder: 'whsec_Hq7Lm2Nx9Pz4Rt6Vb8Kc3Wd5Yf1Gs0J9f02',
+            placeholder: 'demo_signing_4c8e2a6f0b3d7915e8a2c4f6b0d3e7',
             hint: 'Появится в Stripe, когда добавите адрес извещений ниже',
         },
         {
             label: 'Публикуемый ключ',
-            placeholder: 'pk_live_51PxQ8kL2mN7vR4tYb9cZ3wE6hJ1aF0dK5sG8pU2xR9mW4c7c2e',
+            placeholder: 'demo_public_7b1d5f9a3c6e0824d7b1f5a9c3e6d0b4f8a2c6e0d4b8f2a6',
             hint: 'Лежит рядом с секретным: Разработчикам → Ключи API',
         },
     ];

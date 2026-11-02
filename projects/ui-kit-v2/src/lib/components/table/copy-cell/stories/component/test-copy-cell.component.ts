@@ -52,5 +52,5 @@ export class TestRtCopyCellComponent {
     /** Ширина ячейки ряда: узкая, как форма панели на телефоне, чтобы длинный адрес перенёсся. */
     public readonly framedWidth: string = '20rem';
 
-    public readonly framedValues: readonly string[] = ['sk_test_51Hx', 'https://example.com/payments/hooks/platform'];
+    public readonly framedValues: readonly string[] = ['demo_key_51Hx', 'https://example.com/payments/hooks/platform'];
 }
