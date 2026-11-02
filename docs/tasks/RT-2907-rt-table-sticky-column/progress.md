@@ -9,10 +9,12 @@ Rewritten by every session, not appended to.
 - **Done:** the task is assigned to the owner and stands in the work column; the branch is taken
   from the main branch; the grill is closed by assumptions from the exploration; the agreement lies
   in `docs/specs/ui-kit-v2/proposed/table-pinned-column/`, scenarios SC-UKV-1114 to SC-UKV-1121.
-- **Next step:** draw the pinned column in the Figma file of the second kit (rule `kit-approval`),
-  measure it and show it to the owner with its link.
+- **Next step:** after the owner approves the mockup, write the plan with stages and the approval
+  record; on a refusal, fix the frames and show them again.
+- **Mockup:** https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=7448-2186 — page Table,
+  six frames of width 375: left and right pin, scroll start, middle and end, two in the dark theme.
 - **Uncommitted:** nothing after the first commit of the folder.
-- **Waiting for the owner:** no
+- **Waiting for the owner:** the answer to «одобряете?» about the mockup.
 - **PR:** not open yet
 
 ## Steps
