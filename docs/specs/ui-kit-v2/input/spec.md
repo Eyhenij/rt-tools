@@ -1,6 +1,6 @@
 # The field of input
 
-**Status:** in force · **Revision:** 2026-08-20 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-02 · **Scenario prefix:** `SC-UKV`
 **Depends on:** none
 **Laws:** `frontend-application`, `reuse-first`
 **Procedures:** none
@@ -38,6 +38,9 @@ application itself.
 - **The check of what was entered stays with the application.** The type declares the kind of the
   value to the browser, not a requirement of it: the field has a check of the form of its own and it
   does not depend on the type.
+- **A value or a hint longer than the field ends with an ellipsis.** It is not cut in the middle of
+  a character: the reader sees that the text goes on. The whole value stays in the field and is
+  read by moving the caret.
 
 ## What is out of scope
 
@@ -99,3 +102,5 @@ Not applicable.
 
 - 2026-08-20 — created by merging the agreement about the type of address. The first subdomain that
   describes the surface of a component, not a check of the look.
+- 2026-11-02 — the task RT-2994: a value or a hint longer than the field ends with an ellipsis,
+  scenario `SC-UKV-1116`.
