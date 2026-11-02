@@ -33,7 +33,7 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:net';
-import { networkInterfaces, tmpdir } from 'node:os';
+import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -184,38 +184,15 @@ async function main() {
         return false;
     }
 
-    /**
-     * The name of the machine on its own network, so that both sides reach the showcase by one
-     * address: the shooting browser lives in an image, and `localhost` there is its own.
-     *
-     * The showcase is therefore raised on every interface rather than on the loopback alone — bound
-     * to the loopback it answers neither the image nor the machine's own network name.
-     */
-    function machineAddress() {
-        for (const cards of Object.values(networkInterfaces())) {
-            for (const card of cards ?? []) {
-                if (card.family === 'IPv4' && !card.internal) {
-                    return card.address;
-                }
-            }
-        }
-
-        return '';
-    }
-
     const port = await freePort();
 
     /*
-     * A showcase shot by the machine's own browser stays on the loopback: it is reached from this very
-     * machine, and its own name would only widen who can reach it. The one shot in an image is reached
-     * by the machine's network name — `localhost` inside the image is the image's own.
+     * Both sides reach the showcase as `localhost`. The image's browser forwards this port to the
+     * machine through `host.docker.internal`, the same way it reaches the e2e stand. The machine's
+     * address on its own network is not used: a Docker network whose range covers that network
+     * takes the route to it, and the image's browser stops reaching the showcase at all.
      */
-    const host = KITS[kit].image ? machineAddress() : 'localhost';
-
-    if (!host) {
-        console.error('\n  The machine has no network name of its own, and the image has no way to reach the showcase by one.\n');
-        process.exit(1);
-    }
+    const host = 'localhost';
 
     const url = `http://${host}:${port}`;
 
@@ -319,6 +296,8 @@ async function main() {
               env: {
                   ...process.env,
                   STORYBOOK_URL: url,
+                  // The image's browser forwards the showcase port to the machine.
+                  ...(KITS[kit].image ? { E2E_SHOT_FORWARD: String(port) } : {}),
                   // A reference appears on the disk only in a re-take session: in an ordinary run a
                   // missing reference is a refusal, not a reason to append it.
                   RT_SNAPSHOT_UPDATE: retakes ? '1' : '0',
