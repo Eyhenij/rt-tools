@@ -5,8 +5,9 @@ technique and travels between repositories whole, while everything below is true
 goes stale at every renaming.
 
 The tree publishes libraries and holds two applications — the cargo receiver and the admin panel
-to it. It has one end-to-end suite, the admin panel's: `apps/message-bus-admin-e2e`, Playwright,
-its own stand of production builds and its own database. Everything else is checked by a call —
+to it. It has two end-to-end suites on Playwright: the admin panel's, `apps/message-bus-admin-e2e`,
+with its own stand of production builds and its own database, and the entry example's,
+`apps/auth-example-e2e`, on the auth stand. Everything else is checked by a call —
 components, services, pure functions and the receiver's handlers — and the visible state of the
 kit is shown by the showcase.
 
@@ -35,6 +36,9 @@ the server side does not know it at all.
 - **a sample pure-function spec** — `projects/utils/src/lib/functions/transform-string-input/transform-string-input.spec.ts`
 - **the mapping of package paths for Jest** — `projects/ui-kit/jest.config.ts`
 - **the admin panel's end-to-end suite** — `apps/message-bus-admin-e2e/` — the stand in `stand/`, the specs in `src/`, the README next to them
+- **the entry example's end-to-end suite** — `apps/auth-example-e2e/` — the specs in `src/`
+- **the subjects of paths and the suites they raise** — `.claude/rt-kit/project.sh` — `rt_push_touched` and `rt_push_checks`
+- **the end-to-end coverage guard at opening a PR** — `.claude/hooks/e2e-coverage-guard.sh`, its scenarios in `tools/tests/e2e-coverage-guard.test.sh`
 
 ## Where the articles are carried out
 

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.33.1 · laws/verifiability.md · b00c35eb2527 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · laws/verifiability.md · 6b540ff71cbe · правится надстройкой, не здесь -->
 # Law on verifiability
 
 What counts as confirmation that work is done. The law is needed because a retelling looks as
@@ -177,3 +177,18 @@ replace it.
 - **A demonstration lives next to the code of the state and is edited by the same change.** A
   drifted demonstration is convincing: it looks like a current description, and the longer it stays
   unchanged, the more so.
+
+## End-to-end coverage of a change
+
+A unit test proves a part, and the person meets the whole: the page, the request, the server
+answer and the redirect together. A change green in its specs and never walked end to end
+reaches the owner as the first one who walks it.
+
+- **Behaviour a change adds or alters is covered by an end-to-end test in the same change.** A
+  scenario of the change without an end-to-end test that walks it is uncovered, whatever the unit
+  tests say.
+- **The end-to-end suites the change touches are run by the executor before the hand-over, and
+  their output is named.** The run of the hand-over gate is not the executor's check: its output
+  is not seen, and "it passed the gate" says nothing about what ran.
+- **A behaviour that no end-to-end suite can walk says so in words and says what closes it.** A
+  silent gap looks the same as a covered change.

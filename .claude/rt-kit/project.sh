@@ -285,8 +285,11 @@ rt_push_check_heavy() {
 # An empty list of what was touched does not count as a subject: there is nothing to compare
 # against, and silence here would read as "there is nothing to change". Such a call ends with a
 # non-zero code, and the caller runs the whole set.
+#
+# The second argument is the head to compare, the checked-out branch by default: the end-to-end
+# coverage guard judges a PR whose head the command names.
 rt_push_touched() {
-    _changed="$(git diff --name-only "$1"...HEAD 2>/dev/null)"
+    _changed="$(git diff --name-only "$1"..."${2:-HEAD}" 2>/dev/null)"
     [ -z "$_changed" ] && return 1
 
     _subjects=''
@@ -311,13 +314,18 @@ rt_push_touched() {
             # The entry module: its packages, the example, its suite and the stand. The receiver and
             # the admin panel take the packages as sources, so a package edit is the receiver's
             # subject too: an edit of the packages broke both images, and the gate did not build them.
+            # The theme is no package: Keycloak takes it from the auth stand, and neither the
+            # receiver nor the admin panel builds it.
+            projects/auth-keycloak-theme/*) _add auth ;;
             projects/auth-*) _add auth; _add receiver ;;
             apps/auth-example*|deploy/auth/*) _add auth ;;
             # The receiver, the admin panel, its end-to-end suite, the rollout and the database
             # schema.
-            apps/message-bus*|deploy/*|prisma/*) _add receiver ;;
-            # Everything else — the shared libraries, the root settings, the build harness, the
-            # pipeline. They cannot be split between the subjects: they act on any of them.
+            # The libraries of the receiver and the admin panel are theirs alone: no other subject
+            # imports them.
+            apps/message-bus*|libs/message-bus-*|deploy/*|prisma/*) _add receiver ;;
+            # Everything else — the root settings, the build harness, the pipeline. They cannot be
+            # split between the subjects: they act on any of them.
             *) _add everything ;;
         esac
     done
