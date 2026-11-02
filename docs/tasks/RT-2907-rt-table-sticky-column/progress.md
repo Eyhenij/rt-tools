@@ -16,10 +16,16 @@ Rewritten by every session, not appended to.
   Two differences from the mockup: the total row is 21.5 high and unpadded — `rt-table` styles no
   `cdk-footer-cell` at all; the guest names wrap into two lines (row 67 high) where the mockup cuts
   them with an ellipsis at a 150 column.
+- **After the ellipsis fix** the guest name is cut and carries its full text in the cell title, but
+  the row stays 67 high: every cell content is one line (18–22), the height is the kit cell itself —
+  `height: 50px` plus the vertical padding plus the border, the same in every `rt-table` story. The
+  Figma table cell is 50 high: that is a difference of the kit against its mockup, older than this
+  task. The column widths come out 171/118/151/120 instead of 150/140/140/130: the table lays its
+  columns out by content. Both go to the owner at the measurement instead of being fixed here.
+- **Waiting for the owner:** whether the total row style goes into the kit or into the story only.
 - **Mockup:** https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=7448-2186 — page Table,
   six frames of width 375: left and right pin, scroll start, middle and end, two in the dark theme.
 - **Uncommitted:** nothing.
-- **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps

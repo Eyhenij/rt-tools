@@ -5,7 +5,7 @@
             <table class="app-table-pinned__table" rt-table ariaLabel="Брони" [dataSource]="rows" [columns]="columns" [cards]="false">
                 <ng-container cdkColumnDef="guest" [sticky]="frame.pin === 'start'">
                     <th *cdkHeaderCellDef cdk-header-cell>Гость</th>
-                    <td *cdkCellDef="let row" cdk-cell>{{ row.guest }}</td>
+                    <td *cdkCellDef="let row" cdk-cell class="app-table-pinned__guest" [attr.title]="row.guest">{{ row.guest }}</td>
                     <td *cdkFooterCellDef cdk-footer-cell class="app-table-pinned__total">Итого</td>
                 </ng-container>
                 <ng-container cdkColumnDef="dates">

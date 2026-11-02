@@ -44,6 +44,14 @@
         --rt-table-row-bg: var(--rt-color-bg-surface-subtle);
     }
 
+    /* Имя гостя обрезается многоточием, как в макете; полное имя — в подсказке ячейки. */
+    &__guest {
+        overflow: hidden;
+        max-width: 150px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
     &__total {
         font-weight: var(--rt-font-weight-semibold);
     }
