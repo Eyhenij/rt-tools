@@ -5,10 +5,10 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 3 — Background and shadow of the pinned cell
+- **Stage:** 2 of 3 — The shadow follows the scroll
 - **Done:** the agreement lies in `docs/specs/ui-kit-v2/proposed/table-pinned-column/`, scenarios
   SC-UKV-1114 to SC-UKV-1121; the mockup is approved by «тень ок»; the plan is written.
-- **Next step:** the row background token and the inherited background of a pinned cell.
+- **Next step:** the pure function of hidden pinned edges and its unit tests.
 - **Mockup:** https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=7448-2186 — page Table,
   six frames of width 375: left and right pin, scroll start, middle and end, two in the dark theme.
 - **Uncommitted:** nothing.
@@ -17,10 +17,10 @@ Rewritten by every session, not appended to.
 
 ## Steps
 
-- [>] 1.1 Give every table row a background from a token, and make a pinned cell inherit it.
-- [ ] 1.2 Draw the edge shadow on the CDK border cell of each pin from shadow tokens, hidden by default.
-- [ ] 1.3 Name the new tokens in the component description next to the code.
-- [ ] 2.1 Write a pure function that says which pinned edge has hidden content, from the scroll position and the sizes.
+- [x] 1.1 Give every table row a background from a token, and make a pinned cell inherit it.
+- [x] 1.2 Draw the edge shadow on the CDK border cell of each pin from shadow tokens, hidden by default.
+- [x] 1.3 Name the new tokens in the component description next to the code.
+- [>] 2.1 Write a pure function that says which pinned edge has hidden content, from the scroll position and the sizes.
 - [ ] 2.2 Make the table watch the nearest ancestor that scrolls sideways and mark the hidden edges by host modifiers.
 - [ ] 2.3 Cover the function by unit tests with the scenario ids.
 - [ ] 3.1 Add a story of the pinned column with the frames of the mockup.

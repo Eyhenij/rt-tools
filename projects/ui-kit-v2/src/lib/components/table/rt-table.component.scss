@@ -7,6 +7,10 @@
     .rt-table {
         --rt-table-border-width: var(--rt-border-width-thin);
         --rt-table-card-radius: var(--rt-radius-md);
+        --rt-table-row-bg: transparent;
+        --rt-table-pinned-bg: var(--rt-color-bg-surface);
+        --rt-table-pinned-shadow-color: var(--rt-color-table-pinned-shadow);
+        --rt-table-pinned-shadow-width: 12px;
 
         position: relative;
         display: table;
@@ -146,21 +150,68 @@
             }
         }
 
+        /* Цвет строки — свойство строки, а не правило фона: его же берёт закреплённая ячейка.
+           Цвета наведения и проблемной строки полупрозрачны, поэтому закреплённая ячейка кладёт
+           цвет строки поверх непрозрачной подложки — иначе под ней просвечивали бы колонки,
+           уезжающие при прокрутке вбок. Строка итога получает свой цвет тем же свойством. */
+        .cdk-row,
+        .cdk-footer-row {
+            background: var(--rt-table-row-bg);
+        }
+
         .cdk-row {
             &:hover {
-                background: var(--rt-color-bg-hover);
+                --rt-table-row-bg: var(--rt-color-bg-hover);
             }
 
             /* Опт-ин подсветка проблемной строки (просрочка и т.п.): потребитель
                вешает класс `rt-table__row--danger` на строку. Составной селектор с
                `.cdk-row` нужен, чтобы danger-фон держался и при :hover. */
             &.rt-table__row--danger {
-                background: var(--rt-color-state-danger-bg);
+                --rt-table-row-bg: var(--rt-color-state-danger-bg);
 
                 &:hover {
-                    background: var(--rt-color-state-danger-bg);
+                    --rt-table-row-bg: var(--rt-color-state-danger-bg);
                 }
             }
+        }
+
+        /* Закреплённая колонка: CDK ставит ячейке `position: sticky` и класс `cdk-table-sticky`.
+           Шапка уже залита поверхностью и правила не требует. */
+        .cdk-cell.cdk-table-sticky,
+        .cdk-footer-cell.cdk-table-sticky {
+            background: linear-gradient(var(--rt-table-row-bg), var(--rt-table-row-bg)), var(--rt-table-pinned-bg);
+        }
+
+        /* Тень у края: крайнюю ячейку закрепления CDK помечает классом `…-border-elem-<сторона>`.
+           Тень видна, пока под колонкой есть прокрученное содержимое — это говорят модификаторы
+           хоста `--hidden-start` и `--hidden-end`, которые таблица ставит по прокрутке. */
+        .cdk-table-sticky-border-elem-left,
+        .cdk-table-sticky-border-elem-right {
+            &:after {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: var(--rt-table-pinned-shadow-width);
+                content: '';
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+
+        .cdk-table-sticky-border-elem-left:after {
+            left: 100%;
+            background: linear-gradient(to right, var(--rt-table-pinned-shadow-color), transparent);
+        }
+
+        .cdk-table-sticky-border-elem-right:after {
+            right: 100%;
+            background: linear-gradient(to left, var(--rt-table-pinned-shadow-color), transparent);
+        }
+
+        &--hidden-start .cdk-table-sticky-border-elem-left:after,
+        &--hidden-end .cdk-table-sticky-border-elem-right:after {
+            opacity: 1;
         }
 
         /* Строки-ссылки: курсор + focus-ring. Активацию (click/Enter/Space) и
@@ -354,6 +405,8 @@
        на bg-surface — иначе список выпирает более светлой плитой над страницей. */
     :root[data-theme='dark'] .rt-table,
     html.rt-theme-dark .rt-table {
+        --rt-table-pinned-bg: var(--rt-color-bg-page);
+
         background: var(--rt-color-bg-page);
 
         .cdk-header-cell,

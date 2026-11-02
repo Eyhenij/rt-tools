@@ -253,6 +253,16 @@ export const scaleEffects = [
         note: `наведение поверх приглушённой поверхности: она сама стоит на четырёх процентах`,
     },
     {
+        name: `--rt-overlay-black-12`,
+        value: `rgb(0 0 0 / 12%)`,
+        note: `тень у края закреплённой колонки таблицы`,
+    },
+    {
+        name: `--rt-overlay-black-48`,
+        value: `rgb(0 0 0 / 48%)`,
+        note: `та же тень на графите`,
+    },
+    {
         name: `--rt-overlay-white-4`,
         value: `rgb(255 255 255 / 4%)`,
     },
