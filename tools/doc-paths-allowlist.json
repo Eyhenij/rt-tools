@@ -32,11 +32,11 @@
     },
     ".claude/rt-kit/tree-name": {
       "reason": "a file of the working copy, deliberately outside version control: each copy writes its own name there, and a fresh copy has none until the owner names it, so the address reads as dead in every copy but the named ones",
-      "task": "RT-2994"
+      "task": "RT-3037"
     },
     ".claude/handoff/": {
       "reason": "a directory of the working copy, deliberately outside version control: the session-closing hook creates it on the first handover, so a fresh copy has none and the address reads as dead there",
-      "task": "RT-2994"
+      "task": "RT-3037"
     },
     ".claude/rt-kit/observations/": {
       "reason": "the line is named in order to say that the tree has none: the text warns about exactly what was taken away or not yet created",
