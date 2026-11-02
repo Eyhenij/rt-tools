@@ -8,7 +8,14 @@ Rewritten by every session, not appended to.
 - **Stage:** 3 of 3 — Showcase, measurement and approval
 - **Done:** the agreement lies in `docs/specs/ui-kit-v2/proposed/table-pinned-column/`, scenarios
   SC-UKV-1114 to SC-UKV-1121; the mockup is approved by «тень ок»; the plan is written.
-- **Next step:** open the story `Organisms/Table/Table` → `PinnedColumn` on the showcase at :6007 and look at the six frames by eye; then the measurement against the mockup.
+- **Next step:** fix the two differences the showcase showed, then measure against the mockup.
+- **Seen in the showcase on 2 November** (story `organisms-table-table--pinned-column`, :6007, Chrome):
+  all six frames are 375 wide over a 560 table; the scroll is 0, 120, 0 and 185 as planned; the host
+  modifiers and the shadow opacity match the mockup in every frame (shadow 1 at left-120, right-0
+  and both dark frames, 0 at left-0 and right-end); the pinned cell hides the scrolled columns.
+  Two differences from the mockup: the total row is 21.5 high and unpadded — `rt-table` styles no
+  `cdk-footer-cell` at all; the guest names wrap into two lines (row 67 high) where the mockup cuts
+  them with an ellipsis at a 150 column.
 - **Mockup:** https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=7448-2186 — page Table,
   six frames of width 375: left and right pin, scroll start, middle and end, two in the dark theme.
 - **Uncommitted:** nothing.
@@ -69,8 +76,10 @@ background, the edge shadow by the token `--rt-color-table-pinned-shadow`, the s
 host modifiers `rt-table--hidden-start` and `rt-table--hidden-end`, eight unit tests.
 Next step: stage 3, step 3.1 — the story `PinnedColumn` is written and committed
 (`projects/ui-kit-v2/src/lib/components/table/stories/table-pinned.stories.ts` and its wrapper), passes
-lint and the typecheck, and has not been seen in the showcase yet. Look at it by eye, fix what differs
-from the mockup, then measure by `tools/kit-match.mjs`, take the snapshot, show the owner.
+lint and the typecheck, and was looked at in the showcase: see «Seen in the showcase» above for the
+two differences. Decide whether the footer cell style belongs to the kit (then it is a kit edit of
+its own, named to the owner) or to the story, fix the name wrapping, then measure by
+`tools/kit-match.mjs`, take the snapshot, show the owner.
 
 ### What to keep in mind
 
@@ -84,7 +93,8 @@ from the mockup, then measure by `tools/kit-match.mjs`, take the snapshot, show 
 - The second kit demands both end-to-end suites at PR opening: either a test of a suite is edited,
   or the commit body carries `E2E-skip: <reason>`.
 - The showcase of the second kit runs on port 6007 and belongs to the owner: use the running one,
-  do not raise one beside it. On 2 November nothing listened on 6007.
+  do not raise one beside it. On 2 November the session raised it by the owner's word «поднимай»
+  under serve-guard as `ui-kit-v2-storybook`; it was left running for the next session.
 - The story turns the cards off (`[cards]="false"`): on a narrow screen `rt-table` otherwise shows
   cards, and a pinned column lives only in the table view. Hover is not shown in the story.
 - The session was stopped at the window fill threshold; the owner asked «что от меня нужно?» and
