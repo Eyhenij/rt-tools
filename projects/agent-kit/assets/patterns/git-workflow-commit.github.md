@@ -169,6 +169,17 @@ A name without a number (`feat/…`, `fix/…`) is legitimate while the branch l
 trial and an analysis. No PR opens from it: an edit that reaches the main branch starts with a
 task.
 
+**A local branch that continues an open PR under another name is tied to the PR's branch before
+the first push.** Otherwise it has no upstream: the push goes nowhere by itself, and the turn-exit
+guard counts every commit as not handed over while all of them already stand in the PR. The tie
+and the push name the PR's branch:
+
+```bash
+git branch --set-upstream-to=origin/<ветка PR>
+git push origin HEAD:<ветка PR>
+git rev-list --count @{u}..HEAD   # 0 — everything is on the host
+```
+
 ## The task column moves together with the work
 
 Branch created — the task is no longer in `📋 Backlog` but in progress. PR opened — it awaits

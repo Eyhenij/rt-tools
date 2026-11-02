@@ -680,10 +680,6 @@
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"
     },
-    "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/table/copy-cell/stories/component/test-copy-cell.component.ts": {
-      "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
-      "task": "RT-476"
-    },
     "inline-template ×1 @ projects/ui-kit-v2/src/lib/components/table/settings-panel/stories/component/test-table-settings-panel.component.ts": {
       "reason": "a showcase story's wrapper: the story aims at the wrapper rather than at the kit's component — the component's input is a signal one, and there is nothing to bind a changeable showcase value to it with",
       "task": "RT-476"

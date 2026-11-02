@@ -58,7 +58,8 @@ createServer((request, response) => {
     response.writeHead(200, { 'content-type': FILE_KINDS[extname(file)] ?? 'application/octet-stream' });
     createReadStream(file).pipe(response);
     /*
-     * Слушается всё, а не только петля: браузер съёмки живёт в образе, и петля там своя. Машину
-     * он зовёт её сетевым именем, и на петле она ему не отвечает вовсе.
+     * Слушается всё, а не только петля: браузер съёмки живёт в образе, и петля там своя. Свой
+     * `localhost` он пересылает на машину через `host.docker.internal`, а этот адрес приходит не
+     * на петлю машины.
      */
 }).listen(Number(port), '0.0.0.0', () => process.stdout.write(`раздача ${ROOT} на порту ${port}\n`));

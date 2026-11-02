@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load for creating a task and a branch, commit and push — the creation command with all four steps, moving the column, merging two tasks into one, working as the machine account, skipping the document requirement. Opening a PR — pattern git-workflow-pr.
 ---
-<!-- rt-kit v0.33.1 · patterns/git-workflow-commit.github.md · 09cf532f1304 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · patterns/git-workflow-commit.github.md · fae1cad32185 · правится надстройкой, не здесь -->
 
 # Task, branch and commit
 
@@ -169,6 +169,17 @@ have an assignee.
 A name without a number (`feat/…`, `fix/…`) is legitimate while the branch lives locally — for a
 trial and an analysis. No PR opens from it: an edit that reaches the main branch starts with a
 task.
+
+**A local branch that continues an open PR under another name is tied to the PR's branch before
+the first push.** Otherwise it has no upstream: the push goes nowhere by itself, and the turn-exit
+guard counts every commit as not handed over while all of them already stand in the PR. The tie
+and the push name the PR's branch:
+
+```bash
+git branch --set-upstream-to=origin/<ветка PR>
+git push origin HEAD:<ветка PR>
+git rev-list --count @{u}..HEAD   # 0 — everything is on the host
+```
 
 ## The task column moves together with the work
 

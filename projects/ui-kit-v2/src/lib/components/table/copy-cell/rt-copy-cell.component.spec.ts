@@ -22,7 +22,7 @@ class ClipboardDouble {
 @Component({
     selector: 'rt-copy-cell-host',
     template: `
-        <rt-copy-cell [value]="value()" [revealOnHover]="revealOnHover()">
+        <rt-copy-cell [value]="value()" [revealOnHover]="revealOnHover()" [framed]="framed()">
             <span>#7 — Тур в Сочи</span>
         </rt-copy-cell>
     `,
@@ -32,6 +32,7 @@ class ClipboardDouble {
 class CopyCellHostComponent {
     public readonly value: WritableSignal<string | number | null> = signal<string | number | null>(null);
     public readonly revealOnHover: WritableSignal<boolean> = signal<boolean>(true);
+    public readonly framed: WritableSignal<boolean> = signal<boolean>(false);
 }
 
 let clipboard: ClipboardDouble;
@@ -160,5 +161,20 @@ describe('RtCopyCellComponent', (): void => {
         fixture.detectChanges();
 
         expect(classesOf(el(fixture, 'rt-copy-cell'))).toContain('rt-copy-cell--static');
+    });
+
+    it('SC-UKV-1115 — ячейка в рамке поля держит кнопку видимой, и нажатие по-прежнему копирует', (): void => {
+        const fixture: ComponentFixture<CopyCellHostComponent> = setup();
+
+        expect(classesOf(el(fixture, 'rt-copy-cell'))).not.toContain('rt-copy-cell--framed');
+
+        fixture.componentInstance.framed.set(true);
+        fixture.detectChanges();
+
+        expect(classesOf(el(fixture, 'rt-copy-cell'))).toEqual(expect.arrayContaining(['rt-copy-cell--framed', 'rt-copy-cell--static']));
+
+        pressCopy(fixture);
+
+        expect(clipboard.copied).toEqual(['#7 — Тур в Сочи']);
     });
 });

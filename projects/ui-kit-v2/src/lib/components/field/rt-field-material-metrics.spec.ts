@@ -143,7 +143,7 @@ describe('поле материального набора против поля
         const label: HTMLElement = (fixture.nativeElement as HTMLElement).querySelector('.rt-field__label') as HTMLElement;
 
         expect(label.textContent).toBe('Гостиница*');
-        expect(SEMANTIC).toContain('--rt-field-required-gap: var(--rt-space-1);');
+        expect(SEMANTIC).toContain('--rt-field-required-gap: var(--rt-space-0-5);');
         expect(PRESET).toContain('--rt-field-required-gap: 0px;');
     });
 

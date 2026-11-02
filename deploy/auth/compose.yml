@@ -96,6 +96,10 @@ services:
             RT_GOOGLE_ENABLED: ${RT_GOOGLE_ENABLED:-false}
             RT_GOOGLE_CLIENT_ID: ${RT_GOOGLE_CLIENT_ID:-not-set}
             RT_GOOGLE_CLIENT_SECRET: ${RT_GOOGLE_CLIENT_SECRET:-not-set}
+            # Порт админки стенда сквозных тестов. Своя рабочая копия поднимает стенд на своём порту
+            # переменной `E2E_ADMIN_PORT`, и вход Keycloak пускает обратно и на него; без переменной
+            # это 4310, порт стенда по умолчанию, и он уже есть в списке клиента.
+            RT_E2E_ADMIN_PORT: ${E2E_ADMIN_PORT:-4310}
             # Без кэша файл накладывается и тогда, когда он не менялся: правка в консоли
             # возвращается к файлу при следующем подъёме.
             IMPORT_CACHE_ENABLED: 'false'
