@@ -8,7 +8,8 @@ Rewritten by every session, not appended to.
 - **Stage:** 3 of 3 — Showcase, measurement and approval
 - **Done:** the agreement lies in `docs/specs/ui-kit-v2/proposed/table-pinned-column/`, scenarios
   SC-UKV-1114 to SC-UKV-1121; the mockup is approved by «тень ок»; the plan is written.
-- **Next step:** fix the two differences the showcase showed, then measure against the mockup.
+- **Next step:** 3.2 — raise the showcase again and measure it against the mockup; name the row
+  height 67 against 50 and the column widths to the owner there.
 - **Seen in the showcase on 2 November** (story `organisms-table-table--pinned-column`, :6007, Chrome):
   all six frames are 375 wide over a 560 table; the scroll is 0, 120, 0 and 185 as planned; the host
   modifiers and the shadow opacity match the mockup in every frame (shadow 1 at left-120, right-0
@@ -22,7 +23,11 @@ Rewritten by every session, not appended to.
   Figma table cell is 50 high: that is a difference of the kit against its mockup, older than this
   task. The column widths come out 171/118/151/120 instead of 150/140/140/130: the table lays its
   columns out by content. Both go to the owner at the measurement instead of being fixed here.
-- **Waiting for the owner:** whether the total row style goes into the kit or into the story only.
+- **Total row:** the owner chose «Только в истории (Recommended)»; the story wrapper gives the footer
+  cells the kit cell height and padding, measured 66.5 high with 8/20 padding in all six frames
+  (c0c693ff4). The Overview of `rt-table` got the section about the pinned column (120e1c160).
+- **Waiting for the owner:** «потуши что не используешь чтобы систему не грузить» — the showcase on
+  :6007 is stopped; step 3.2 raises it again when the owner says to go on.
 - **Mockup:** https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=7448-2186 — page Table,
   six frames of width 375: left and right pin, scroll start, middle and end, two in the dark theme.
 - **Uncommitted:** nothing.
@@ -36,8 +41,8 @@ Rewritten by every session, not appended to.
 - [x] 2.1 Write a pure function that says which pinned edge has hidden content, from the scroll position and the sizes.
 - [x] 2.2 Make the table watch the nearest ancestor that scrolls sideways and mark the hidden edges by host modifiers.
 - [x] 2.3 Cover the function by unit tests with the scenario ids.
-- [>] 3.1 Add a story of the pinned column with the frames of the mockup.
-- [ ] 3.2 Measure the showcase against the mockup and make the numbers match.
+- [x] 3.1 Add a story of the pinned column with the frames of the mockup.
+- [>] 3.2 Measure the showcase against the mockup and make the numbers match.
 - [ ] 3.3 Cover the browser scenarios by a visual snapshot of the story.
 - [ ] 3.4 Show the showcase to the owner and record the answer.
 
@@ -62,46 +67,42 @@ Rewritten by every session, not appended to.
 
 ## Handover of the session
 
-### Work
+Put together by a hook before the compaction of the context (auto).
 
-RT-2907 "Закреплённая колонка rt-table без фона и тени, задать токенами". Working tree —
-`/Users/sviatoslavkhutornoy/WebstormProjects/rt-tools`, branch `RT-2907-rt-table-sticky-column`
-(from `main`, in progress, not pushed). PR: not open yet.
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools
+**Branch:** RT-2907-rt-table-sticky-column
 
-### Where to look
+### Where we stand at the minute of the compaction
 
-The progress and the plan arrive at session start through the hook. The grill and the approval
-record lie in the task folder; the agreement — `docs/specs/ui-kit-v2/proposed/table-pinned-column/`.
-The mockup — Figma file `vyV42sJXccfKNG8yFSCpSL`, page Table, node `7448:2186`, six frames of width
-375 (left and right pin, scroll start, 120 and end, two in the dark theme).
+- **State:** `этап-идёт`
+- **Stage:** 3 of 3 — Showcase, measurement and approval
+- **Next step:** 3.2 — raise the showcase again and measure it against the mockup; name the row
+  height 67 against 50 and the column widths to the owner there.
+- **PR:** not open yet
 
-### Done and the next step
+The progress in full — `docs/tasks/RT-2907-rt-table-sticky-column/progress.md`; the plan lies next to it.
 
-Done: stages 1 and 2 are closed and committed — the row background property, the pinned cell
-background, the edge shadow by the token `--rt-color-table-pinned-shadow`, the scroll watcher with
-host modifiers `rt-table--hidden-start` and `rt-table--hidden-end`, eight unit tests.
-Next step: stage 3, step 3.1 — the story `PinnedColumn` is written and committed
-(`projects/ui-kit-v2/src/lib/components/table/stories/table-pinned.stories.ts` and its wrapper), passes
-lint and the typecheck, and was looked at in the showcase: see «Seen in the showcase» above for the
-two differences. Decide whether the footer cell style belongs to the kit (then it is a kit edit of
-its own, named to the owner) or to the story, fix the name wrapping, then measure by
-`tools/kit-match.mjs`, take the snapshot, show the owner.
+### Uncommitted
 
-### What to keep in mind
+```
+none
+```
 
-- Commits are signed `SVIATASLAU KHUTARNY <sviathut@gmail.com>`; the address stands in
-  `RT_HUMAN_EMAILS` of the tree profile.
-- The mockup draws the dark-theme table on `bg/surface`, while the kit's table in the dark theme
-  stands on `bg-page`; the code follows the kit. Name this difference to the owner at the showcase
-  measurement.
-- In the light theme the hover row colour is 4% black and barely visible; it is the kit token, not
-  changed by this task.
-- The second kit demands both end-to-end suites at PR opening: either a test of a suite is edited,
-  or the commit body carries `E2E-skip: <reason>`.
-- The showcase of the second kit runs on port 6007 and belongs to the owner: use the running one,
-  do not raise one beside it. On 2 November the session raised it by the owner's word «поднимай»
-  under serve-guard as `ui-kit-v2-storybook`; it was left running for the next session.
-- The story turns the cards off (`[cards]="false"`): on a narrow screen `rt-table` otherwise shows
-  cards, and a pinned column lives only in the table view. Hover is not shown in the story.
-- The session was stopped at the window fill threshold; the owner asked «что от меня нужно?» and
-  got the answer: the second approval of the showcase.
+### Commits over the main branch
+
+```
+cfc617bf6 feat(rt:ui-kit-v2): имя гостя в истории закреплённой колонки обрезается, как в макете
+a68d09c6a docs: что показала витрина закреплённой колонки RT-2907
+40943a58f feat(rt:ui-kit-v2): история закреплённой колонки rt-table по кадрам макета
+723265a02 docs: передача сессии по RT-2907 перед этапом витрины
+272c7c312 feat(rt:ui-kit-v2): тень у края закреплённой колонки rt-table следует прокрутке
+f66110f9e feat(rt:ui-kit-v2): закреплённая ячейка rt-table берёт фон строки и тень у края
+3fcb9d854 docs: план RT-2907 и одобрение макета закреплённой колонки
+57cc785b3 docs: макет закреплённой колонки RT-2907 ждёт одобрения владельца
+c2d5565a3 docs(rt:ui-kit-v2): договорённость о закреплённой колонке rt-table
+825929e04 chore: адрес владельца в списке людей, подписывающих коммиты
+bedafcbcd docs: задача RT-2907 взята, строка назначения копии и папка задачи
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.
