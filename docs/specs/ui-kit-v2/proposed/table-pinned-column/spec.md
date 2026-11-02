@@ -77,10 +77,33 @@ Not applicable: the edit is visual and stores nothing.
 
 ## Cross-cutting requirements
 
-- **Both themes.** The tokens have a light and a dark value.
-- **Narrow screen.** The case the task came from: a phone with a pinned first column.
-- **Performance.** The shadow is switched by a scroll listener outside change detection, with no
-  layout read per frame beyond the scroll position.
+### Refusal codes
+
+Not applicable: the edit is visual and refuses nothing.
+
+### Locales
+
+The kit adds no text: the shadow and the background carry no words, and the dictionary of the kit
+gets nothing.
+
+### SEO
+
+Not applicable: the shadow is switched in the browser by the scroll, and a page drawn on the server
+gives the table without it.
+
+### Mobile layout
+
+The case the task came from: a phone with a pinned first column. Both themes give the tokens a
+light and a dark value.
+
+### Several objects
+
+Several tables on one page each watch their own scroll container and switch their own shadow.
+
+### Performance
+
+The shadow is switched by a scroll listener outside change detection, with no layout read per frame
+beyond the scroll position.
 
 ## Decisions
 
@@ -90,10 +113,19 @@ Not applicable: the edit is visual and stores nothing.
   watches the nearest ancestor that scrolls sideways. Rejected: a permanent shadow, because the task
   asks for none without scroll.
 
+- **The shadow lies past the edge of the pinned cell, so that cell clips nothing.** An application
+  that cuts a long value with an ellipsis puts the cut on an element inside the cell: the cell's own
+  `overflow: hidden` cuts the shadow off with the text. Rejected: a shadow inside the cell, which
+  would cover the cell's own content instead of the scrolled columns.
+- **The shadow is 16% black in the light theme and 64% in the dark one.** The owner approved 12% and
+  48% with the mockup, then found the shadow weak on the grey total row and chose to strengthen it.
+- **A table row is 50 high together with its padding and line, as in the mockup.** The kit cell
+  counted its 50 without them, and every row came out 67, the dense row 45 instead of 36. The owner
+  chose to fix it in this task, so every `rt-table` changes height with it.
+
 ## Open questions
 
-- The look of the shadow (depth, colour in the dark theme) is decided by the mockup the owner
-  approves.
+None left: the look of the shadow is set by the approved mockup and the decisions above.
 
 ## History of changes
 
