@@ -4,27 +4,39 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `договорённость-записана`
-- **Stage:** 0 of 0 — the plan is not written yet
-- **Done:** the task is assigned to the owner and stands in the work column; the branch is taken
-  from the main branch; the grill is closed by assumptions from the exploration; the agreement lies
-  in `docs/specs/ui-kit-v2/proposed/table-pinned-column/`, scenarios SC-UKV-1114 to SC-UKV-1121.
-- **Next step:** after the owner approves the mockup, write the plan with stages and the approval
-  record; on a refusal, fix the frames and show them again.
+- **State:** `этап-идёт`
+- **Stage:** 1 of 3 — Background and shadow of the pinned cell
+- **Done:** the agreement lies in `docs/specs/ui-kit-v2/proposed/table-pinned-column/`, scenarios
+  SC-UKV-1114 to SC-UKV-1121; the mockup is approved by «тень ок»; the plan is written.
+- **Next step:** the row background token and the inherited background of a pinned cell.
 - **Mockup:** https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=7448-2186 — page Table,
   six frames of width 375: left and right pin, scroll start, middle and end, two in the dark theme.
-- **Uncommitted:** nothing after the first commit of the folder.
-- **Waiting for the owner:** the answer to «одобряете?» about the mockup.
+- **Uncommitted:** nothing.
+- **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-The plan is not written yet.
+- [>] 1.1 Give every table row a background from a token, and make a pinned cell inherit it.
+- [ ] 1.2 Draw the edge shadow on the CDK border cell of each pin from shadow tokens, hidden by default.
+- [ ] 1.3 Name the new tokens in the component description next to the code.
+- [ ] 2.1 Write a pure function that says which pinned edge has hidden content, from the scroll position and the sizes.
+- [ ] 2.2 Make the table watch the nearest ancestor that scrolls sideways and mark the hidden edges by host modifiers.
+- [ ] 2.3 Cover the function by unit tests with the scenario ids.
+- [ ] 3.1 Add a story of the pinned column with the frames of the mockup.
+- [ ] 3.2 Measure the showcase against the mockup and make the numbers match.
+- [ ] 3.3 Cover the browser scenarios by a visual snapshot of the story.
+- [ ] 3.4 Show the showcase to the owner and record the answer.
 
 ## Decisions along the way
 
 - **The row of this working copy in the assignment table is rewritten to RT-2907.** The owner said
   «разрешаю» to that edit. The branch could not be taken while the row named a closed task.
+- **Commits are signed `SVIATASLAU KHUTARNY <sviathut@gmail.com>`.** The owner set it by
+  `git config` and said «добавь мой» about the signature list of the tree profile. The first commit
+  was signed by another address, and it was made again under this one.
+- **«тень ок» is recorded as the mockup approval.** The owner was asked whether the shadow suits,
+  the rest of the frames repeats the kit look.
 
 ## Sessions
 
@@ -33,3 +45,4 @@ The plan is not written yet.
 - RT-2907 checked as untaken: no assignee, no branch, no PR, no folder, no comments.
 - Assigned to `treble3d`, moved from Backlog to In progress.
 - Exploration of `rt-table`: no rule styles a pinned cell; the background lives on the row.
+- The mockup is drawn on page Table of the second kit's Figma file and approved.
