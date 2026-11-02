@@ -23,7 +23,7 @@ const PANEL_SNAPSHOT: IStorySnapshotHost = { snapshot: { viewport: { width: 1440
 
 export const Panel: TStory = { parameters: PANEL_SNAPSHOT };
 
-/** Окно телефона 375 × 902, как кадр эталона «Stripe · 375»: панель во весь экран, кнопки столбиком. */
+/** Окно телефона 375 × 902, как кадр эталона «Stripe · 375»: панель во весь экран, кнопки в одну строку. */
 const PHONE_SNAPSHOT: IStorySnapshotHost = { snapshot: { viewport: { width: 375, height: 902 }, fullPage: true } };
 
 export const Phone: TStory = { parameters: PHONE_SNAPSHOT };
