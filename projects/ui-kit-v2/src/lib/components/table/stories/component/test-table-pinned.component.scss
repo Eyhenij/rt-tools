@@ -1,0 +1,50 @@
+/* Кадры закреплённой колонки: сетка два в ряд, как в макете. Ширина контейнера — 375, таблица
+   шире него, поэтому контейнер прокручивается вбок. Ширины колонок взяты из макета. */
+.app-table-pinned {
+    display: grid;
+    gap: var(--rt-space-6) var(--rt-space-8);
+    grid-template-columns: repeat(2, 375px);
+
+    &__frame {
+        margin: 0;
+        background: var(--rt-color-bg-page);
+        color: var(--rt-color-text-primary);
+    }
+
+    &__caption {
+        margin-bottom: var(--rt-space-3);
+        font-size: var(--rt-text-sm);
+    }
+
+    &__scroller {
+        width: 375px;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    &__table {
+        min-width: 560px;
+
+        .cdk-column-guest {
+            width: 150px;
+        }
+
+        .cdk-column-dates,
+        .cdk-column-status {
+            width: 140px;
+        }
+
+        .cdk-column-sum {
+            width: 130px;
+        }
+    }
+
+    /* Строка итога: цвет строки задаёт приложение тем же свойством, что берёт закреплённая ячейка. */
+    &__footer {
+        --rt-table-row-bg: var(--rt-color-bg-surface-subtle);
+    }
+
+    &__total {
+        font-weight: var(--rt-font-weight-semibold);
+    }
+}

@@ -8,7 +8,7 @@ Rewritten by every session, not appended to.
 - **Stage:** 3 of 3 — Showcase, measurement and approval
 - **Done:** the agreement lies in `docs/specs/ui-kit-v2/proposed/table-pinned-column/`, scenarios
   SC-UKV-1114 to SC-UKV-1121; the mockup is approved by «тень ок»; the plan is written.
-- **Next step:** a story of `rt-table` with the six frames of the mockup at width 375, then the measurement against the mockup.
+- **Next step:** open the story `Organisms/Table/Table` → `PinnedColumn` on the showcase at :6007 and look at the six frames by eye; then the measurement against the mockup.
 - **Mockup:** https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=7448-2186 — page Table,
   six frames of width 375: left and right pin, scroll start, middle and end, two in the dark theme.
 - **Uncommitted:** nothing.
@@ -67,8 +67,10 @@ The mockup — Figma file `vyV42sJXccfKNG8yFSCpSL`, page Table, node `7448:2186`
 Done: stages 1 and 2 are closed and committed — the row background property, the pinned cell
 background, the edge shadow by the token `--rt-color-table-pinned-shadow`, the scroll watcher with
 host modifiers `rt-table--hidden-start` and `rt-table--hidden-end`, eight unit tests.
-Next step: stage 3 — a story of `rt-table` repeating the six mockup frames, the measurement against
-the mockup by `tools/kit-match.mjs`, the visual snapshot, then the showcase shown to the owner.
+Next step: stage 3, step 3.1 — the story `PinnedColumn` is written and committed
+(`projects/ui-kit-v2/src/lib/components/table/stories/table-pinned.stories.ts` and its wrapper), passes
+lint and the typecheck, and has not been seen in the showcase yet. Look at it by eye, fix what differs
+from the mockup, then measure by `tools/kit-match.mjs`, take the snapshot, show the owner.
 
 ### What to keep in mind
 
@@ -82,4 +84,8 @@ the mockup by `tools/kit-match.mjs`, the visual snapshot, then the showcase show
 - The second kit demands both end-to-end suites at PR opening: either a test of a suite is edited,
   or the commit body carries `E2E-skip: <reason>`.
 - The showcase of the second kit runs on port 6007 and belongs to the owner: use the running one,
-  do not raise one beside it.
+  do not raise one beside it. On 2 November nothing listened on 6007.
+- The story turns the cards off (`[cards]="false"`): on a narrow screen `rt-table` otherwise shows
+  cards, and a pinned column lives only in the table view. Hover is not shown in the story.
+- The session was stopped at the window fill threshold; the owner asked «что от меня нужно?» and
+  got the answer: the second approval of the showcase.
