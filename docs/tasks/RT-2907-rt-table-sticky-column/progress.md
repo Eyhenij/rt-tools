@@ -8,8 +8,14 @@ Rewritten by every session, not appended to.
 - **Stage:** 3 of 3 — Showcase, measurement and approval
 - **Done:** the agreement lies in `docs/specs/ui-kit-v2/proposed/table-pinned-column/`, scenarios
   SC-UKV-1114 to SC-UKV-1121; the mockup is approved by «тень ок»; the plan is written.
-- **Next step:** 3.2 — raise the showcase again and measure it against the mockup; name the row
-  height 67 against 50 and the column widths to the owner there.
+- **Next step:** 3.2 — the row height 67 against 50 goes to the owner; the rest of the
+  measurement matches.
+- **Measured against the mockup** (`node tools/kit-match.mjs numbers`, frame start-0, the other
+  five frames give the same numbers): 14 of 17 match — scroller 375, scroll range 185, columns
+  150/140/140/130 (c480251fe, fixed layout in the story), padding 8/20, font 14/500, text and header
+  colours, the problem row and the total row backgrounds, the total weight 600. Header, row and total
+  heights are 67/67/66.5 against 50: the kit cell is `height: 50px` without its padding and border
+  since 3e9fa507d.
 - **Seen in the showcase on 2 November** (story `organisms-table-table--pinned-column`, :6007, Chrome):
   all six frames are 375 wide over a 560 table; the scroll is 0, 120, 0 and 185 as planned; the host
   modifiers and the shadow opacity match the mockup in every frame (shadow 1 at left-120, right-0
@@ -26,8 +32,8 @@ Rewritten by every session, not appended to.
 - **Total row:** the owner chose «Только в истории (Recommended)»; the story wrapper gives the footer
   cells the kit cell height and padding, measured 66.5 high with 8/20 padding in all six frames
   (c0c693ff4). The Overview of `rt-table` got the section about the pinned column (120e1c160).
-- **Waiting for the owner:** «потуши что не используешь чтобы систему не грузить» — the showcase on
-  :6007 is stopped; step 3.2 raises it again when the owner says to go on.
+- **Waiting for the owner:** whether the kit row height 67 against 50 is fixed here or by a task of
+  its own.
 - **Mockup:** https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=7448-2186 — page Table,
   six frames of width 375: left and right pin, scroll start, middle and end, two in the dark theme.
 - **Uncommitted:** nothing.
@@ -76,8 +82,14 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — Showcase, measurement and approval
-- **Next step:** 3.2 — raise the showcase again and measure it against the mockup; name the row
-  height 67 against 50 and the column widths to the owner there.
+- **Next step:** 3.2 — the row height 67 against 50 goes to the owner; the rest of the
+  measurement matches.
+- **Measured against the mockup** (`node tools/kit-match.mjs numbers`, frame start-0, the other
+  five frames give the same numbers): 14 of 17 match — scroller 375, scroll range 185, columns
+  150/140/140/130 (c480251fe, fixed layout in the story), padding 8/20, font 14/500, text and header
+  colours, the problem row and the total row backgrounds, the total weight 600. Header, row and total
+  heights are 67/67/66.5 against 50: the kit cell is `height: 50px` without its padding and border
+  since 3e9fa507d.
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-2907-rt-table-sticky-column/progress.md`; the plan lies next to it.
