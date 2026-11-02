@@ -5,9 +5,10 @@
 - **State:** `разбор-закрыт`
 - **Stage:** 0 — the plan is not written yet
 - **Done:** the task is taken, the branch stands on RT-3041, the grill is closed with the owner's answers
-- **Next step:** the product agreement for the unit and the sign «growth is worse», then the Figma mockup for the owner
+- **Next step:** after the owner's word on the mockup — the product agreement and the plan
 - **Uncommitted:** nothing
-- **Waiting for the owner:** no
+- **Waiting for the owner:** the approval of the mockup on the Stat Tile page of the second kit file:
+  the variant property Growth=better|worse, five report tiles (points and «growth is worse»), two dark tiles
 - **PR:** not open yet
 
 ## Decisions along the way
