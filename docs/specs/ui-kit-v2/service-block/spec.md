@@ -1,6 +1,6 @@
 # The block of a service
 
-**Status:** in force · **Revision:** 2026-10-22 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-02 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the logo of a service — the mark of the block is drawn by it
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
@@ -120,3 +120,5 @@ None.
 ## History of changes
 
 - 2026-10-22 — written by the task RT-2934.
+- 2026-11-02 — the task RT-2994: the block standing right in the kit's form leaves 16 to the next
+  section at every width, scenario `SC-UKV-1114`.

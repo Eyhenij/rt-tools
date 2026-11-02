@@ -35,3 +35,13 @@ Then the description goes onto further lines, and the mark keeps its size
 
 Не покрыто: the spec environment applies no component styles, and wrapping is a matter of layout.
 The promise is held by the frame of the widths.
+
+### SC-UKV-1114 — right in the form the next section stands 16 under the line
+
+Given the block standing right in the kit's form, and a section of fields after it
+When the form is drawn in a window of 1440, 768 and 375
+Then the first field of the next section stands 16 under the line of the block at every width
+
+Не покрыто: the spec environment computes no layout, and the gap is a matter of the form's styles.
+The promise is held by the frames of the stories Molecules/ServiceBlock/Panel — `Panel` at 1440,
+`InForm` at 768 and `Phone` at 375.
