@@ -48,10 +48,12 @@
     &__footer {
         --rt-table-row-bg: var(--rt-color-bg-surface-subtle);
 
-        /* Ячейки итога кит не оформляет: высота и отступы взяты у обычной ячейки таблицы. */
+        /* Ячейки итога кит не оформляет: высота, отступы и нижняя линия взяты у обычной ячейки
+           таблицы. */
         .cdk-footer-cell {
-            height: 50px;
+            height: calc(50px - 2 * var(--rt-space-2) - var(--rt-table-border-width));
             padding: var(--rt-space-2) var(--rt-space-5);
+            border-bottom: var(--rt-table-border-width) solid var(--rt-color-border-subtle);
         }
     }
 

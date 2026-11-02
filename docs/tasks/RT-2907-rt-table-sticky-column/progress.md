@@ -8,8 +8,8 @@ Rewritten by every session, not appended to.
 - **Stage:** 3 of 3 — Showcase, measurement and approval
 - **Done:** the agreement lies in `docs/specs/ui-kit-v2/proposed/table-pinned-column/`, scenarios
   SC-UKV-1114 to SC-UKV-1121; the mockup is approved by «тень ок»; the plan is written.
-- **Next step:** 3.2 — the row height 67 against 50 goes to the owner; the rest of the
-  measurement matches.
+- **Next step:** 3.3 — re-take the snapshots of the table stories and of every story that draws
+  `rt-table`, after looking at each frame.
 - **Measured against the mockup** (`node tools/kit-match.mjs numbers`, frame start-0, the other
   five frames give the same numbers): 14 of 17 match — scroller 375, scroll range 185, columns
   150/140/140/130 (c480251fe, fixed layout in the story), padding 8/20, font 14/500, text and header
@@ -38,8 +38,10 @@ Rewritten by every session, not appended to.
   condition (f4d11deaf); the shadow token went 12% → 16% light and 48% → 64% dark, the four
   gradients of the mockup with it. Measured: shadow opacity and 0.16/0.64 on all five rows of every
   frame; caption gap 12, frame gaps 24 and 48 as in the mockup.
-- **Waiting for the owner:** whether the kit row height 67 against 50 is fixed here or by a task of
-  its own — the question went unanswered while the shadow was reported.
+- **Row height fixed in the kit** (owner: «Чинить в этой задаче»): the cell height is
+  `calc(50px - 2 * padding - border)`, compact `calc(36px - …)`; widths keep their meaning. Measured:
+  density story 50/36, pinned story every row 50 with columns 150/140/140/130;
+  `kit-match numbers` 17 of 17. Table specs 159 of 159. Every table snapshot moves with it.
 - **Mockup:** https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=7448-2186 — page Table,
   six frames of width 375: left and right pin, scroll start, middle and end, two in the dark theme.
 - **Uncommitted:** nothing.
@@ -54,11 +56,14 @@ Rewritten by every session, not appended to.
 - [x] 2.2 Make the table watch the nearest ancestor that scrolls sideways and mark the hidden edges by host modifiers.
 - [x] 2.3 Cover the function by unit tests with the scenario ids.
 - [x] 3.1 Add a story of the pinned column with the frames of the mockup.
-- [>] 3.2 Measure the showcase against the mockup and make the numbers match.
-- [ ] 3.3 Cover the browser scenarios by a visual snapshot of the story.
+- [x] 3.2 Measure the showcase against the mockup and make the numbers match.
+- [>] 3.3 Cover the browser scenarios by a visual snapshot of the story.
 - [ ] 3.4 Show the showcase to the owner and record the answer.
 
 ## Decisions along the way
+
+- **The kit row height is fixed in this task.** The owner chose «Чинить в этой задаче»: the cell
+  is 50 with its padding and line as in the mockup, not 67; all `rt-table` users get it.
 
 - **The shadow is 16% black light and 64% dark instead of the approved 12% and 48%.** The owner
   found it weak on the total row and chose «Усилить (Recommended)»; the mockup gradients follow.
@@ -91,8 +96,8 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — Showcase, measurement and approval
-- **Next step:** 3.2 — the row height 67 against 50 goes to the owner; the rest of the
-  measurement matches.
+- **Next step:** 3.3 — re-take the snapshots of the table stories and of every story that draws
+  `rt-table`, after looking at each frame.
 - **Measured against the mockup** (`node tools/kit-match.mjs numbers`, frame start-0, the other
   five frames give the same numbers): 14 of 17 match — scroller 375, scroll range 185, columns
   150/140/140/130 (c480251fe, fixed layout in the story), padding 8/20, font 14/500, text and header

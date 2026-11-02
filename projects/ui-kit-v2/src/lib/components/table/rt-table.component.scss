@@ -24,7 +24,10 @@
         &__filter-cell,
         &__skeleton-cell {
             position: relative;
-            height: 50px;
+
+            /* Строка в 50 по макету вместе с отступами и нижней линией: высота ячейки таблицы
+               считается без них. Ширина ячейки остаётся шириной содержимого — её задают приложения. */
+            height: calc(50px - 2 * var(--rt-space-2) - var(--rt-table-border-width));
             padding: var(--rt-space-2) var(--rt-space-5);
             border-bottom: var(--rt-table-border-width) solid var(--rt-color-border-subtle);
 
@@ -237,7 +240,7 @@
             .cdk-header-cell,
             .cdk-cell,
             .rt-table__skeleton-cell {
-                height: 36px;
+                height: calc(36px - 2 * var(--rt-space-xs) - var(--rt-table-border-width));
                 padding: var(--rt-space-xs) var(--rt-space-sm);
             }
         }
