@@ -13,6 +13,8 @@ export default {
             control: { type: 'select' },
         },
         revealOnHover: { control: { type: 'boolean' } },
+        framed: { control: { type: 'boolean' } },
+        part: { table: { disable: true } },
     },
 } as Meta<TestRtCopyCellComponent>;
 
@@ -26,5 +28,9 @@ export const Playground: TStory = {
         value: null,
         variant: 'ghost',
         revealOnHover: true,
+        framed: false,
     },
 };
+
+/** Ячейка в рамке поля: короткое значение в строку, длинный адрес переносится на вторую. */
+export const Framed: TStory = { args: { part: 'framed' } };
