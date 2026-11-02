@@ -4,11 +4,12 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 3 of 3 — Showcase, measurement and approval
 - **Done:** the agreement lies in `docs/specs/ui-kit-v2/proposed/table-pinned-column/`, scenarios
   SC-UKV-1114 to SC-UKV-1121; the mockup is approved by «тень ок»; the plan is written.
-- **Next step:** 3.4 — show the showcase to the owner and record the answer in `approvals.md`.
+- **Next step:** close the work — merge the agreement into the domain spec, take the task folder
+  apart, run the delivery set, send the branch to the host and open the PR.
 - **Measured against the mockup** (`node tools/kit-match.mjs numbers`, frame start-0, the other
   five frames give the same numbers): 14 of 17 match — scroller 375, scroll range 185, columns
   150/140/140/130 (c480251fe, fixed layout in the story), padding 8/20, font 14/500, text and header
@@ -63,7 +64,7 @@ Rewritten by every session, not appended to.
 - [x] 3.1 Add a story of the pinned column with the frames of the mockup.
 - [x] 3.2 Measure the showcase against the mockup and make the numbers match.
 - [x] 3.3 Cover the browser scenarios by a visual snapshot of the story.
-- [>] 3.4 Show the showcase to the owner and record the answer.
+- [x] 3.4 Show the showcase to the owner and record the answer.
 
 ## Decisions along the way
 
@@ -99,7 +100,7 @@ Put together by a hook before the compaction of the context (auto).
 
 ### Where we stand at the minute of the compaction
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 3 of 3 — Showcase, measurement and approval
 - **Next step:** 3.3 — re-take the snapshots of the table stories and of every story that draws
   `rt-table`, after looking at each frame.
