@@ -24,17 +24,21 @@ command gives five today. Both entries carry `"task": "RT-3037"` and a reason of
 
 ### 1. The two entries
 
-- 1.1 Take the branch from the previous branch of the chain, `RT-3036-pr-base-refresh`.
-- 1.2 Add `.claude/rt-kit/tree-name` and `.claude/handoff/` to the `paths` of
-  `tools/doc-paths-allowlist.json`, each with its reason and `"task": "RT-3037"`.
-- 1.3 Run `node tools/check-doc-paths.mjs` in a fresh detached copy of the branch: zero
-  divergences.
+- **Steps:**
+    1. Take the branch from the previous branch of the chain, `RT-3036-pr-base-refresh`.
+    2. Add `.claude/rt-kit/tree-name` and `.claude/handoff/` to the `paths` of `tools/doc-paths-allowlist.json`, each with its reason and `"task": "RT-3037"`.
+    3. Run `node tools/check-doc-paths.mjs` in a fresh detached copy of the branch: zero divergences.
+- **Readiness sign:** a fresh detached copy of the branch has neither file and gives no divergence.
+- **Verified by:** `node tools/check-doc-paths.mjs` — «no divergences» in that copy.
 
 ### 2. Hand-over
 
-- 2.1 The push set `rt_push_checks` whole, green.
-- 2.2 The folder taken apart into `docs/archive/RT-3037-doc-paths-copy-files.md`.
-- 2.3 The PR into the base of the chain, the column moved to review.
+- **Steps:**
+    1. The push set `rt_push_checks` whole, green.
+    2. The folder taken apart into `docs/archive/RT-3037-doc-paths-copy-files.md`.
+    3. The PR into the base of the chain, the column moved to review.
+- **Readiness sign:** the PR is open with a reviewer, the card stands in review.
+- **Verified by:** `npm run check:board` — no line about RT-3037.
 
 ## What the work does not do
 

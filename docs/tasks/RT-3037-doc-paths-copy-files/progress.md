@@ -30,3 +30,8 @@
   into `RT-3036-pr-base-refresh` and this branch was moved onto it, the list holds both lines, and a
   fresh detached copy of the branch gives «documents checked 1056, no divergences». This branch
   edits no line of the list. Affected stage of the plan: 1.
+- **The plan's stages were rewritten into the form of the template, their steps unchanged.** The
+  plan listed the steps as bare lines, and `node tools/check-work-steps.mjs` refused: «the progress
+  carries a list of steps, and the plan names none». The steps now stand under `- **Steps:**` with a
+  readiness sign and a command per stage; no step was added, removed or renamed. Affected stage of
+  the plan: 1 and 2.
