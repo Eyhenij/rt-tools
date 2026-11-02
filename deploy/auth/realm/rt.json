@@ -72,11 +72,21 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
-      "redirectUris": ["http://localhost:4200/*", "http://localhost:4310/*", "http://localhost:4320/*", "http://localhost:4377/*"],
-      "webOrigins": ["http://localhost:4200", "http://localhost:4310", "http://localhost:4320", "http://localhost:4377"],
+      "redirectUris": [
+        "http://localhost:4200/*",
+        "http://localhost:4310/*",
+        "http://localhost:4320/*",
+        "http://localhost:$(env:RT_E2E_ADMIN_PORT)/*"
+      ],
+      "webOrigins": [
+        "http://localhost:4200",
+        "http://localhost:4310",
+        "http://localhost:4320",
+        "http://localhost:$(env:RT_E2E_ADMIN_PORT)"
+      ],
       "attributes": {
         "pkce.code.challenge.method": "S256",
-        "post.logout.redirect.uris": "http://localhost:4200/*##http://localhost:4310/*##http://localhost:4320/*##http://localhost:4377/*"
+        "post.logout.redirect.uris": "http://localhost:4200/*##http://localhost:4310/*##http://localhost:4320/*##http://localhost:$(env:RT_E2E_ADMIN_PORT)/*"
       }
     },
     {
