@@ -1,3 +1,5 @@
+@use '../../../../styles/breakpoints' as bp;
+
 @layer rt-kit.components {
     /* rt-aside-footer — footer-слот side-sheet'а. ViewEncapsulation.None. */
 
@@ -5,10 +7,13 @@
         --rt-aside-footer-border-width: var(--rt-border-width-thin);
 
         /* Отступ и поля футера — ручки приложения; без них отступ только сверху, а поля — инсет
-           панели. Верхний разделитель не на всю ширину: поля отбивают футер по горизонтали на тот
-           же инсет, что и контентная зона, и border-block-start совпадает по краям с контентом. */
+           панели по бокам и снизу. Верхний разделитель не на всю ширину: поля отбивают футер по
+           горизонтали на тот же инсет, что и контентная зона, и border-block-start совпадает по
+           краям с контентом. Сверху поля нет: от последнего элемента до черты отбивает нижний
+           отступ контентной зоны, 24, как в макете панели. С полем сверху выходило 48, и на
+           телефоне содержимое панели подключения уходило под прокрутку. */
         padding: var(--rt-aside-footer-inset, var(--rt-aside-inset) 0 0);
-        margin: var(--rt-aside-footer-margin, var(--rt-aside-inset));
+        margin: var(--rt-aside-footer-margin, 0 var(--rt-aside-inset) var(--rt-aside-inset));
         border-block-start: var(--rt-aside-footer-border-width) solid var(--rt-color-border-subtle);
 
         /* Кнопки стоят в одну строку на любой ширине: на телефоне первая подписана коротко и
@@ -18,6 +23,25 @@
             flex-wrap: nowrap;
             justify-content: var(--rt-aside-footer-justify, space-between);
             gap: var(--rt-aside-footer-gap, var(--rt-space-sm));
+        }
+
+        /* Раскладка start: позитивный глагол первым, обе кнопки у левого края. Порядок задаёт
+           разметка, а не стиль: Tab и экранный диктор идут по кнопкам в том же порядке, что глаз. */
+        &--start &__content {
+            justify-content: var(--rt-aside-footer-justify, flex-start);
+        }
+
+        /* На телефоне раскладка start ставит кнопки столбиком во всю ширину, глагол сверху, как в
+           эталоне панели подключения на 375. Подпись «Закрыть» при этом остаётся полной: места
+           хватает. Кнопка может стоять в обёртке слота — тогда во всю ширину тянется и она. */
+        @media (width <= #{bp.$rt-bp-sm}) {
+            &--start &__content {
+                flex-direction: column;
+            }
+
+            &--start &__content > * > .rt-button {
+                width: 100%;
+            }
         }
 
         &:empty {

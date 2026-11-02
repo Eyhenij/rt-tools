@@ -398,6 +398,7 @@
     --rt-field-gap: var(--rt-space-xs);
     --rt-field-label-font-size: var(--rt-text-sm);
     --rt-field-label-font-weight: var(--rt-font-weight-medium);
+    --rt-field-label-line-height: var(--rt-leading-none);
     --rt-field-label-color: var(--rt-color-text-muted);
     --rt-field-label-help-gap: var(--rt-space-xs);
     --rt-field-hint-font-size: var(--rt-text-xs);
@@ -407,7 +408,7 @@
     --rt-field-messages-padding-top: 0px;
     --rt-field-error-color: var(--rt-color-state-danger);
     --rt-field-required-color: var(--rt-color-state-danger);
-    --rt-field-required-gap: var(--rt-space-1);
+    --rt-field-required-gap: var(--rt-space-0-5);
     --rt-field-value-font-size: var(--rt-text-sm);
     --rt-field-value-color: var(--rt-color-text-primary);
     --rt-field-value-empty-color: var(--rt-color-text-muted);

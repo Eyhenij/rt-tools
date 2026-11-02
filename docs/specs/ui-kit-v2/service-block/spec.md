@@ -45,6 +45,11 @@ and the panels of one application stop lining up at the first edit of one of the
 - **A line in the subtle border colour, 1 thick, stands 20 under the block.** It runs the whole
   width of the block.
 
+- **In the kit's form the next section stands 16 under the line at every width.** The form keeps
+  its own gap between sections, 32 on a wide screen and 16 on a narrow one; the block standing
+  right in the form takes the difference off it, so the first field under the line stands at 16
+  at 1440, 768 and 375 alike.
+
 - **The block takes the whole width of its place, and the text wraps instead of being cut.** On a
   narrow place the description and the name go onto further lines; a word longer than the place
   breaks.

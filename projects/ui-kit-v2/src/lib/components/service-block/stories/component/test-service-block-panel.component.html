@@ -1,0 +1,47 @@
+<rt-aside width="540px" ariaLabel="Оплата тарифов" qa-dataid="service-block-panel">
+    <rt-aside-header title="Оплата тарифов" overline="Настройка подключения" />
+
+    <div rtBlock="rt-form" qa-dataid="service-block-panel-form">
+        <rt-service-block qa-dataid="service-block-panel-block" name="Stripe" description="Приём оплаты тарифов картой" [logos]="logos" />
+
+        <div rtElem="item">
+            <div rtElem="controls">
+                @for (field of fields; track field.label) {
+                    <div rtElem="control-item">
+                        <rt-field [label]="field.label" [hint]="field.hint" [required]="true">
+                            <rt-input qa-dataid="service-block-panel-input" [clearable]="false" [placeholder]="field.placeholder" />
+                        </rt-field>
+                    </div>
+                }
+
+                <div rtElem="control-item">
+                    <section rtBlock="app-service-block-panel-webhook" qa-dataid="service-block-panel-webhook">
+                        <h3 rtElem="title">Адрес извещений</h3>
+                        <rt-message severity="info">Добавьте его в Stripe: Разработчикам → Вебхуки</rt-message>
+                        <!-- Перенос после «/stripe/», как в макете; без пробелов вокруг <wbr>, иначе пробел уйдёт и в текст, и в копируемое -->
+                        <!-- prettier-ignore -->
+                        <rt-copy-cell framed qa-dataid="service-block-panel-webhook-url">https://rent-ops.com/payments/stripe/<wbr />platform</rt-copy-cell>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <rt-aside-footer layout="start">
+        <button
+            rtButton
+            asideDismiss
+            type="button"
+            label="Закрыть без сохранения"
+            aria-label="Закрыть без сохранения"
+            qa-dataid="service-block-panel-dismiss"></button>
+        <button
+            rtButton
+            asidePrimary
+            type="button"
+            icon="check"
+            label="Сохранить"
+            aria-label="Сохранить"
+            qa-dataid="service-block-panel-save"></button>
+    </rt-aside-footer>
+</rt-aside>

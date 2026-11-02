@@ -30,6 +30,14 @@
       "reason": "a file of the machine, deliberately outside version control: the check reads the tree by `git ls-files` and does not see it on any machine, so the address reads as dead everywhere while the file is in place",
       "task": "RT-1871"
     },
+    ".claude/rt-kit/tree-name": {
+      "reason": "a file of the working copy, deliberately outside version control: each copy writes its own name there, and a fresh copy has none until the owner names it, so the address reads as dead in every copy but the named ones",
+      "task": "RT-2994"
+    },
+    ".claude/handoff/": {
+      "reason": "a directory of the working copy, deliberately outside version control: the session-closing hook creates it on the first handover, so a fresh copy has none and the address reads as dead there",
+      "task": "RT-2994"
+    },
     ".claude/rt-kit/observations/": {
       "reason": "the line is named in order to say that the tree has none: the text warns about exactly what was taken away or not yet created",
       "task": "RT-396"

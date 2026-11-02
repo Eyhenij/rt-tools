@@ -78,7 +78,8 @@ const RESET_DELAY_MS: number = 2000;
     ],
     host: {
         class: BEM_BLOCK,
-        '[class.rt-copy-cell--static]': '!revealOnHover()',
+        '[class.rt-copy-cell--static]': '!revealOnHover() || framed()',
+        '[class.rt-copy-cell--framed]': 'framed()',
         '(mouseenter)': 'measureTruncation()',
         '(focusin)': 'measureTruncation()',
     },
@@ -104,7 +105,7 @@ export class RtCopyCellComponent {
      */
     protected readonly hint: WritableSignal<string> = signal('');
 
-    protected readonly iconName: Signal<IRtIcon.Name> = computed((): IRtIcon.Name => (this.copied() ? 'check' : 'copy'));
+    protected readonly iconName: Signal<IRtIcon.Name> = computed((): IRtIcon.Name => (this.copied() ? 'check' : 'ico-copy'));
 
     protected readonly actionLabel: Signal<string> = computed((): string => (this.copied() ? this.#copiedLabel() : this.#copyLabel()));
 
@@ -123,6 +124,14 @@ export class RtCopyCellComponent {
      * для hover.
      */
     public readonly revealOnHover: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
+    /**
+     * Ячейка в рамке поля ввода: фон, рамка и радиус поля, значение кеглем поля, кнопка видна
+     * всегда. Так адрес для копирования стоит в форме панели, где строки таблицы для наведения нет.
+     */
+    public readonly framed: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
 

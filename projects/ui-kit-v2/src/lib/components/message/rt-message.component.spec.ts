@@ -53,7 +53,7 @@ describe('RtMessageComponent', (): void => {
 
     describe('иконка', (): void => {
         it.each<[IRtTag.Severity, string]>([
-            ['info', '#rt-icon-ico-info'],
+            ['info', '#rt-icon-info-circle'],
             ['success', '#rt-icon-check'],
             ['warning', '#rt-icon-ico-warning'],
             ['danger', '#rt-icon-ico-error'],

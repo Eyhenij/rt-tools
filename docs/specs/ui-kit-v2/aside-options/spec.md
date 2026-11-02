@@ -51,6 +51,11 @@ options, the stream and the properties are invisible to them.
 - **The footer sets the look of its buttons.** The button in the dismiss slot is outlined with the
   secondary theme. The button in the primary slot is filled with the primary theme and carries no
   icon. The application's inputs of these buttons do not change it.
+- **The `start` layout puts the positive verb first.** The primary button keeps its own icon, the
+  dismiss button is drawn as text right after it, and both stand at the left edge. The order is
+  the order of the markup, so Tab and a screen reader meet the buttons in the order they are seen.
+  On a phone, 480 points and narrower, the two buttons stand in a column at full width, the verb on
+  top, and the dismiss button keeps its own label.
 - **The footer buttons stand in one row at any width.** On a phone, 480 points and narrower, the
   dismiss button is labelled with the kit's short «Close».
 - **The cancel button of the confirm popover is outlined with the secondary theme.**
