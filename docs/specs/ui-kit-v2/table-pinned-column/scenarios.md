@@ -8,14 +8,16 @@ The numbers continue the numbering of the second kit. Until a scenario is covere
 Given a table of nine columns in a container narrower than the table, the first column pinned left
 When the container is scrolled sideways by 200 pixels
 Then the computed background of every pinned body cell is not transparent
-Not covered: the code is not written yet.
+Not covered: a test has no layout, and this is a style rule. The snapshot of the story
+`organisms-table-table--pinned-column` holds it in the scrolled frames.
 
 ### SC-UKV-1115 — a pinned cell takes the background of a hovered row
 
 Given the same table
 When the pointer is over the second body row
 Then the pinned cell of that row has the hover colour of the row
-Not covered: the code is not written yet.
+Not covered: hover is not in the frame of the story, and a test has no layout. The pinned cell
+reads the same row property the hover rule reassigns, and nothing else checks it.
 
 ### SC-UKV-1116 — a pinned cell keeps the colour of a problem row and of the total row
 
@@ -23,7 +25,8 @@ Given the same table with the third row marked as a problem and a total row
 When it is drawn
 Then the pinned cell of the third row has the problem colour, and the pinned cell of the total row
 has the colour of the total row
-Not covered: the code is not written yet.
+Not covered: a test has no layout, and this is a style rule. The snapshot of the story
+`organisms-table-table--pinned-column` holds both rows in all six frames.
 
 ### SC-UKV-1117 — the left pin carries a shadow only while content is hidden behind it
 
@@ -54,11 +57,13 @@ Covered: `projects/ui-kit-v2/src/lib/components/table/rt-table-pinned-edges.spec
 Given the same table, and the application sets new values of the pinned cell tokens
 When it is drawn and scrolled
 Then the pinned cell and its shadow take the new values
-Not covered: the code is not written yet.
+Not covered: a test has no layout. The story sets `--rt-table-row-bg` on its total row, and the
+snapshot holds the pinned cell in that colour; the shadow token is not overridden anywhere.
 
 ### SC-UKV-1121 — the dark theme gives a solid background and a visible shadow
 
 Given the same table in the dark theme, scrolled sideways
 When it is drawn
 Then the pinned cell is not transparent, and the shadow differs from the surface colour
-Not covered: the code is not written yet.
+Not covered: a test has no layout, and this is a style rule. The snapshot of the story
+`organisms-table-table--pinned-column` holds it in the two dark frames.

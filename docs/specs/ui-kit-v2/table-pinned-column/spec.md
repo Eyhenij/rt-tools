@@ -1,6 +1,6 @@
 # A pinned column of the second kit's table
 
-**Status:** proposed · **Revision:** 2 November 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2 November 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the second kit's table `rt-table`; the kit's styling tokens and the dark theme
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
@@ -130,3 +130,4 @@ None left: the look of the shadow is set by the approved mockup and the decision
 ## History of changes
 
 - 2 November 2026 — proposed by task RT-2907.
+- 2 November 2026 — in force with RT-2907: the shadow is 16% and 64%, the table row is 50 high.
