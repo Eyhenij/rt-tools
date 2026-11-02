@@ -69,10 +69,12 @@ report "SC-AK-506 — у шага есть местная команда" "$(gat
 # отметки без него не кладут — порядок разбора знают раньше правки.
 # Судится тот файл, который в дереве есть: проба на снятый перечень долга ждала бы правила от
 # карты гейта, а карта потеряла его вместе с самим перечнем — и краснела бы вечно.
+# Путь дан от нейтрального корня: корень рабочей копии под `.claude/worktrees/` попадает в раннюю
+# ветку карты `*/.claude/*`, и проба молчала бы в любой рабочей копии.
 own_rule() {
     (CLAUDE_PROJECT_DIR="$TREE_ROOT" . "$TREE_ROOT/.claude/rt-kit/gate-map.sh"; skill_for edit "$1" '') | grep -cE 'cargo-triage'
 }
-report "SC-AK-505 — правка команды отметки требует своего правила" "$(own_rule "$TREE_ROOT/tools/cargo-mark.mjs")" 1
+report "SC-AK-505 — правка команды отметки требует своего правила" "$(own_rule /tree/tools/cargo-mark.mjs)" 1
 report "SC-AK-505 — правило лежит своим, без шапки раскладки" \
     "$(grep -c 'rt-kit v' "$TREE_ROOT/.claude/skills/cargo-triage/SKILL.md")" 0
 
