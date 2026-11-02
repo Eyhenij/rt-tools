@@ -166,6 +166,10 @@ async function startShotBrowser() {
             SHOT_CONTAINER,
             '-p',
             `${SHOT_PORT}:3000`,
+            // Имя машины для пересылки портов. Docker Desktop даёт его сам, Docker на Linux — только
+            // по этому доводу; на Docker Desktop довод называет тот же адрес и ничего не меняет.
+            '--add-host',
+            'host.docker.internal:host-gateway',
             ...SHOT_LOCALE,
             '-v',
             `${ROOT}node_modules:/tree/node_modules`,

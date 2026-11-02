@@ -33,7 +33,8 @@ reloads the page without end, and the runner's injected script does not survive 
 
 The showcase is reached as `localhost` from both sides: inside the image the shot browser forwards
 the showcase port to the machine through `host.docker.internal`, the same way it reaches the e2e
-stand. The machine's address on its own network is not used: a Docker network whose range covers
+stand. The image is started with `--add-host host.docker.internal:host-gateway`: Docker Desktop
+gives that name by itself, Docker on Linux only by this flag. The machine's address on its own network is not used: a Docker network whose range covers
 that network takes the route, and every story fails on a load timeout. A harness that cuts the shot
 off from a foreign network counts the showcase address as its own — otherwise it severs every lazy
 chunk of the very showcase it is shooting, and the run comes back with a `ChunkLoadError` at every
