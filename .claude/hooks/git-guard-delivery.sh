@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/git-guard-delivery.sh · c52c47c94ea5 · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/git-guard-delivery.sh · 17e4ea32667b · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
@@ -299,9 +299,16 @@ if [ -n "$branch_arg" ]; then
         # The signature: the address of the machine account is declared by the tree, and the working
         # copy does not know it — which means the very first commit will travel under someone else's
         # signature, and after the push that is fixed only by a force push.
+        #
+        # A person the tree named in RT_HUMAN_EMAILS signs with their own mail lawfully: the push
+        # accepts it, and refusing it here left such a person no way to start a branch at all.
         if [ -n "$commit_email" ]; then
             tree_email="$(git config user.email 2>/dev/null)"
-            [ -n "$tree_email" ] && [ "$tree_email" != "$commit_email" ] \
+            human_email=''
+            for one in ${RT_HUMAN_EMAILS:-}; do
+                [ "$tree_email" = "$one" ] && human_email=1 && break
+            done
+            [ -n "$tree_email" ] && [ "$tree_email" != "$commit_email" ] && [ -z "$human_email" ] \
                 && fault "the working copy signs commits as «${tree_email}», while the tree declared the email of the machine account «${commit_email}». The very first commit leaves under a foreign signature: git config user.email \"${commit_email}\"."
         fi
 

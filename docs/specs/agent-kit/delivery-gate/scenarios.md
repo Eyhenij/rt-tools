@@ -163,6 +163,15 @@ Then the guard lets the call through silently
 
 Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
 
+### SC-AK-1234 — the mail of a person named by the tree holds up no branch creation
+
+Given the tree declared the mail of a machine record and named the mails of people, and the working
+copy signs commits with one of those people's mails
+When a branch with a task number is created
+Then the guard lets the call through silently, the same way the push accepts that mail
+
+Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
+
 ### SC-AK-386 — a branch from a named fresh base is created
 
 Given the tip of the main branch lies in the base named by the command
