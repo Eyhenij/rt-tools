@@ -1,5 +1,3 @@
-@use '../../../../styles/breakpoints' as bp;
-
 @layer rt-kit.components {
     /* rt-aside-footer — footer-слот side-sheet'а. ViewEncapsulation.None. */
 
@@ -23,25 +21,6 @@
             flex-wrap: nowrap;
             justify-content: var(--rt-aside-footer-justify, space-between);
             gap: var(--rt-aside-footer-gap, var(--rt-space-sm));
-        }
-
-        /* Раскладка start: позитивный глагол первым, обе кнопки у левого края. Порядок задаёт
-           разметка, а не стиль: Tab и экранный диктор идут по кнопкам в том же порядке, что глаз. */
-        &--start &__content {
-            justify-content: var(--rt-aside-footer-justify, flex-start);
-        }
-
-        /* На телефоне раскладка start ставит кнопки столбиком во всю ширину, глагол сверху, как в
-           эталоне панели подключения на 375. Подпись «Закрыть» при этом остаётся полной: места
-           хватает. Кнопка может стоять в обёртке слота — тогда во всю ширину тянется и она. */
-        @media (width <= #{bp.$rt-bp-sm}) {
-            &--start &__content {
-                flex-direction: column;
-            }
-
-            &--start &__content > * > .rt-button {
-                width: 100%;
-            }
         }
 
         &:empty {

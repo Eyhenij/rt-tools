@@ -1,5 +1,5 @@
 <rt-aside width="540px" ariaLabel="Оплата тарифов" qa-dataid="service-block-panel">
-    <rt-aside-header title="Оплата тарифов" overline="Настройка подключения" />
+    <rt-aside-header title="Настройка подключения" overline="Оплата тарифов" />
 
     <div rtBlock="rt-form" qa-dataid="service-block-panel-form">
         <rt-service-block qa-dataid="service-block-panel-block" name="Stripe" description="Приём оплаты тарифов картой" [logos]="logos" />
@@ -27,21 +27,14 @@
         </div>
     </div>
 
-    <rt-aside-footer layout="start">
+    <rt-aside-footer>
         <button
             rtButton
             asideDismiss
             type="button"
-            label="Закрыть без сохранения"
-            aria-label="Закрыть без сохранения"
+            label="Закрыть и не сохранять"
+            aria-label="Закрыть и не сохранять"
             qa-dataid="service-block-panel-dismiss"></button>
-        <button
-            rtButton
-            asidePrimary
-            type="button"
-            icon="check"
-            label="Сохранить"
-            aria-label="Сохранить"
-            qa-dataid="service-block-panel-save"></button>
+        <button rtButton asidePrimary type="button" label="Сохранить" aria-label="Сохранить" qa-dataid="service-block-panel-save"></button>
     </rt-aside-footer>
 </rt-aside>
