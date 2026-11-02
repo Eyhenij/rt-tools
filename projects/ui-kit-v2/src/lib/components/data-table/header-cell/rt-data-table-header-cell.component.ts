@@ -134,7 +134,7 @@ export class RtDataTableHeaderCellComponent<T = Record<string, unknown>> {
         const propertyName: TNullable<string> = this.sortModel()?.propertyName;
 
         if (propertyName) {
-            this.sortChange.emit({ propertyName, sortDirection: dataTableNextSortOrder(this.currentSortModel()) });
+            this.sortChange.emit({ propertyName, sortDirection: dataTableNextSortOrder(this.currentSortModel(), propertyName) });
         }
     }
 }

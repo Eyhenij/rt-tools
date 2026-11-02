@@ -460,3 +460,5 @@ table that applied it last decides it for all.
   owner's word: «если пользователи приложений не потеряют свои конфиги то можно делать».
 - 2026-10-30 — RT-3015: the header follows its rule above — another column asks for the ascending
   order after any sort; the first kit's oddity is removed.
+- 2026-11-02 — review of the epic PR: the header of `rt-data-table` passes the pressed column to the
+  core, so the rule reaches the table and not only the core; a reset cancels a read still running.

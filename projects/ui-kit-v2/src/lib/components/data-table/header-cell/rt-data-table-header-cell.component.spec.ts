@@ -85,6 +85,16 @@ describe('RtDataTableHeaderCellComponent', () => {
         ]);
     });
 
+    it('SC-UKV-1113 — после возрастания по другой колонке шапка просит свою по возрастанию', () => {
+        const fixture: ComponentFixture<HeaderHostComponent> = setup();
+
+        fixture.componentInstance.current.set({ propertyName: 'stock', sortDirection: EListSortOrder.ASC });
+        fixture.detectChanges();
+        press(fixture);
+
+        expect(fixture.componentInstance.asked).toEqual([{ propertyName: 'title', sortDirection: 'asc' }]);
+    });
+
     it('после убывания снова просит возрастание: снятия порядка нет', () => {
         const fixture: ComponentFixture<HeaderHostComponent> = setup();
 

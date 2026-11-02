@@ -119,8 +119,12 @@ export class RtDataTableConfigService<ENTITY_TYPE> {
         this.#tableConfig.set(config);
     }
 
-    /** Снимает обе записи: оставленная старая скопировалась бы обратно при следующем открытии. */
+    /**
+     * Снимает обе записи: оставленная старая скопировалась бы обратно при следующем открытии.
+     * Начатое чтение гасится первым: его поздняя копия встала бы за снятием и вернула сброшенное.
+     */
     public deleteConfig(storageKey: string): void {
+        this.#updatedSource.next();
         this.#writeSource.next({ kind: 'remove', storageKey: dataTableConfigKeyOf(storageKey) });
         this.#writeSource.next({ kind: 'remove', storageKey });
     }

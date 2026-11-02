@@ -203,6 +203,21 @@ describe('RtDataTableConfigService', () => {
         expect(service.tableConfig().columns.some((column: IRtDataTable.Column<IEntity>) => column.hidden)).toBe(false);
     });
 
+    it('SC-UKV-1112 — сброс во время чтения старой записи не возвращает её под ключ кита', () => {
+        const stored: IRtDataTable.Config.Data<IEntity> = {
+            isVerticalScrollbarShown: true,
+            isHorizontalScrollbarShown: false,
+            columns: [{ ...columnOf('title', 'Название'), orderIndex: 0 }],
+        };
+
+        service.initConfig('orders', [columnOf('id', 'Номер'), columnOf('title', 'Название')]);
+        storage.reads[0].next(undefined);
+        service.deleteConfig('orders');
+        storage.reads[1].next(stored);
+
+        expect(storage.writes).toEqual([`remove:${KIT_KEY}`, 'remove:orders']);
+    });
+
     it('оставляет настройку последнего чтения, когда первое ответило позже второго', () => {
         service.initConfig('orders', [columnOf('id', 'Первый состав')]);
         service.initConfig('orders', [columnOf('title', 'Второй состав')]);

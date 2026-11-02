@@ -4,9 +4,12 @@ import { EListSortOrder, ISortModel, TListSortOrderType, TNullable } from '@rt-t
 /**
  * Какой порядок просит нажатие на шапку — как в первом ките, круг `repeats` ядра таблиц: по
  * возрастанию, а после возрастания по убыванию. Снятия порядка нет: после убывания снова возрастание.
+ *
+ * `propertyName` — нажатая колонка: порядок по другой колонке, даже возрастающий, просит у неё
+ * возрастание. Без неё колонкой считается та, по которой порядок уже стоит, — так звали раньше.
  */
-export function dataTableNextSortOrder(current: TNullable<ISortModel<string>>): TListSortOrderType {
-    return rtNextSort(current, current?.propertyName ?? '', 'repeats')?.sortDirection ?? EListSortOrder.ASC;
+export function dataTableNextSortOrder(current: TNullable<ISortModel<string>>, propertyName?: string): TListSortOrderType {
+    return rtNextSort(current, propertyName ?? current?.propertyName ?? '', 'repeats')?.sortDirection ?? EListSortOrder.ASC;
 }
 
 /** Порядок таблицы сейчас стоит по этой колонке. */
