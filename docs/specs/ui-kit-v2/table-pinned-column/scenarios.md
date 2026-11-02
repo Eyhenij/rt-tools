@@ -3,7 +3,7 @@
 The numbers continue the numbering of the second kit. Until a scenario is covered it carries a
 `Not covered:` mark with the reason.
 
-### SC-UKV-1114 — a pinned body cell hides the column scrolled under it
+### SC-UKV-1122 — a pinned body cell hides the column scrolled under it
 
 Given a table of nine columns in a container narrower than the table, the first column pinned left
 When the container is scrolled sideways by 200 pixels
@@ -11,7 +11,7 @@ Then the computed background of every pinned body cell is not transparent
 Not covered: a test has no layout, and this is a style rule. The snapshot of the story
 `organisms-table-table--pinned-column` holds it in the scrolled frames.
 
-### SC-UKV-1115 — a pinned cell takes the background of a hovered row
+### SC-UKV-1123 — a pinned cell takes the background of a hovered row
 
 Given the same table
 When the pointer is over the second body row
@@ -19,7 +19,7 @@ Then the pinned cell of that row has the hover colour of the row
 Not covered: hover is not in the frame of the story, and a test has no layout. The pinned cell
 reads the same row property the hover rule reassigns, and nothing else checks it.
 
-### SC-UKV-1116 — a pinned cell keeps the colour of a problem row and of the total row
+### SC-UKV-1124 — a pinned cell keeps the colour of a problem row and of the total row
 
 Given the same table with the third row marked as a problem and a total row
 When it is drawn
