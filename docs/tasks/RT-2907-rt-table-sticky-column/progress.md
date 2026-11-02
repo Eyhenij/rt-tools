@@ -46,3 +46,40 @@ Rewritten by every session, not appended to.
 - Assigned to `treble3d`, moved from Backlog to In progress.
 - Exploration of `rt-table`: no rule styles a pinned cell; the background lives on the row.
 - The mockup is drawn on page Table of the second kit's Figma file and approved.
+
+## Handover of the session
+
+### Work
+
+RT-2907 "Закреплённая колонка rt-table без фона и тени, задать токенами". Working tree —
+`/Users/sviatoslavkhutornoy/WebstormProjects/rt-tools`, branch `RT-2907-rt-table-sticky-column`
+(from `main`, in progress, not pushed). PR: not open yet.
+
+### Where to look
+
+The progress and the plan arrive at session start through the hook. The grill and the approval
+record lie in the task folder; the agreement — `docs/specs/ui-kit-v2/proposed/table-pinned-column/`.
+The mockup — Figma file `vyV42sJXccfKNG8yFSCpSL`, page Table, node `7448:2186`, six frames of width
+375 (left and right pin, scroll start, 120 and end, two in the dark theme).
+
+### Done and the next step
+
+Done: stages 1 and 2 are closed and committed — the row background property, the pinned cell
+background, the edge shadow by the token `--rt-color-table-pinned-shadow`, the scroll watcher with
+host modifiers `rt-table--hidden-start` and `rt-table--hidden-end`, eight unit tests.
+Next step: stage 3 — a story of `rt-table` repeating the six mockup frames, the measurement against
+the mockup by `tools/kit-match.mjs`, the visual snapshot, then the showcase shown to the owner.
+
+### What to keep in mind
+
+- Commits are signed `SVIATASLAU KHUTARNY <sviathut@gmail.com>`; the address stands in
+  `RT_HUMAN_EMAILS` of the tree profile.
+- The mockup draws the dark-theme table on `bg/surface`, while the kit's table in the dark theme
+  stands on `bg-page`; the code follows the kit. Name this difference to the owner at the showcase
+  measurement.
+- In the light theme the hover row colour is 4% black and barely visible; it is the kit token, not
+  changed by this task.
+- The second kit demands both end-to-end suites at PR opening: either a test of a suite is edited,
+  or the commit body carries `E2E-skip: <reason>`.
+- The showcase of the second kit runs on port 6007 and belongs to the owner: use the running one,
+  do not raise one beside it.
