@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
+# rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__terminal__run_in_terminal
 # rt-hook-timeout: 1800
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh
 # The guard of the checks before a push. PreToolUse on the push call.
@@ -39,15 +39,17 @@ input="$RT_HOOK_INPUT"
 
 tool="$(rt_hook_tool)"
 case "$tool" in
-    # The environment terminal and the universal runner put the command into the same field.
-    Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
+    # The environment terminal, the universal runner and the session terminal tab put the command
+    # into the same field. Left out of this list, the tab carried a push past the gate after two
+    # refusals: the tree has no git hook, and nothing else would have run the set.
+    Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool | mcp__terminal__run_in_terminal) ;;
     *) exit 0 ;;
 esac
 
 cmd="$(rt_hook_cmd)"
 
 # A push call is recognised by two signs at once — the `git` command at the start of the line or
-# after a separator, and the word `push` as a separate word. By the same technique as the delivery
+# after a separator, and `push` as its subcommand, looked for below. By the same technique as the delivery
 # guard: the substring "git push" alone does not catch a push — the credentials helper and the
 # request header are put between them by `-c` keys, and that is exactly the form pushed with here.
 # While the sign was a substring, the whole gate set was not run at all on such a push, and the
@@ -61,7 +63,17 @@ printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git([[:space:]]|\$)|(^|[;&|[:space
 # refused a command that sends nothing anywhere. The stash is cut out of the line, and the sign is
 # counted on the remainder: in a compound command a real push may stand next to it.
 probe="$(printf '%s' "$cmd" | sed -E 's/git[[:space:]]+stash[[:space:]]+push/git stash/g')"
-printf '%s' "$probe" | grep -qE '(^|[[:space:]])push([[:space:]]|$)' || exit 0
+
+# A push is the subcommand `push` of the same `git` call: it is looked for after `git` and its
+# keys, up to the nearest command separator. The word anywhere in the line was the former sign, and
+# a read of pipeline runs filtered by the event `push` ran the whole set for more than ten minutes,
+# then refused a command that sends nothing. A key value may hold spaces inside quotes — the request
+# header is passed so. The newlines become separators: a loop written over several lines is one text.
+git_key='([^[:space:]"'"'"']|"[^"]*"|'"'"'[^'"'"']*'"'"')+'
+push_call="(${RT_CMD_BOUND}|(^|[;&|[:space:]])(do|then|else)[[:space:]]+)git([[:space:]]+(-[cC][[:space:]]+${git_key}|--?[A-Za-z][A-Za-z-]*(=${git_key})?))*[[:space:]]+push([[:space:]][^;&|]*)?\$"
+flat="$(printf '%s' "$probe" | tr '\n' ';')"
+calls="$(printf '%s' "$flat" | sed -E 's/(&&|\|\||[;&|])/\n&/g' | grep -E "$push_call")"
+[ -n "$calls" ] || exit 0
 
 # A dry-run push sends nothing: there is no point running the whole set for it.
 case "$cmd" in
@@ -104,8 +116,33 @@ fi
 
 # Several pushes in one command, or a push inside a loop, are refused whole. The set runs once
 # per call on the tree that lies there, and every other branch leaves unchecked.
-pushes="$(printf '%s' "$probe" | grep -oE "${RT_CMD_BOUND}git([[:space:]]+-c[[:space:]]+[^[:space:]]+)*[[:space:]]+push([[:space:]]|\$)" | wc -l | tr -d ' ')"
-if [ "${pushes:-0}" -gt 1 ] || printf '%s' "$probe" | grep -qE '(^|[;&|[:space:]])(do|then|else)[[:space:]]+git[[:space:]].*push'; then
+#
+# Several recipients in one call are several pushes too: `--all`, `--mirror` and two refs after the
+# remote send several branches, while the set judges the current one. The loop is looked for over
+# the whole text: matched line by line, `do` and the push stood on different lines and passed.
+pushes="$(printf '%s\n' "$calls" | grep -c .)"
+looped=false
+printf '%s' "$flat" | grep -qE "(^|[;&|[:space:]])(do|then|else)[;[:space:]]+(.*[;&|])?[[:space:]]*git([[:space:]].*)?[[:space:]]push([[:space:]]|;|\$)" && looped=true
+# The words after `push`: the first plain word is the remote, the rest are refs. A key that takes
+# its value as the next word skips it. A deletion sends no branch, and this guard does not judge it.
+several_refs=false
+words=0
+skip_next=false
+for word in $(printf '%s\n' "$calls" | head -1 | sed -E 's/^.*[[:space:]]push([[:space:]]|$)//'); do
+    if [ "$skip_next" = true ]; then
+        skip_next=false
+        continue
+    fi
+    case "$word" in
+        --all | --mirror) several_refs=true ;;
+        --delete | -d) several_refs=false; break ;;
+        -o | --push-option | --repo | --receive-pack | --exec) skip_next=true ;;
+        -*) ;;
+        *) words=$((words + 1)) ;;
+    esac
+done
+[ "$words" -gt 2 ] && several_refs=true
+if [ "${pushes:-0}" -gt 1 ] || [ "$looped" = true ] || [ "$several_refs" = true ]; then
     push_deny "BLOCKED: several pushes by one command. The gate set runs once per call, on the tree that lies there — every other branch leaves for the hosting unchecked. Push each branch by a separate call, after switching to it."
 fi
 
