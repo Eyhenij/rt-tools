@@ -24,7 +24,7 @@ export const scaleEffects = [
     },
     {
         name: `--rt-shadow-xl`,
-        value: `0 20px 25px -5px rgb(0 0 0 / 16%), 0 8px 10px -6px rgb(0 0 0 / 8%)`,
+        value: `0 20px 25px -5px rgb(0 0 0 / 12%), 0 8px 10px -6px rgb(0 0 0 / 8%)`,
     },
     {
         name: `--rt-shadow-card`,

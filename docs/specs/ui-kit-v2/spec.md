@@ -1,6 +1,6 @@
 # The second kit
 
-**Status:** in force · **Revision:** 2026-08-17 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-03 · **Scenario prefix:** `SC-UKV`
 **Depends on:** named in the subdomains — each names its own
 **Laws:** `verifiability`, `delivery`, `frontend-application`
 **Procedures:** none
@@ -247,3 +247,5 @@ change of its own.
   application's own component stays sized by its content, and on a narrow screen the left bar is
   never wider than the window. Before, the wrapped filters of a list grew to 400px each and left the
   window edge on a narrow screen. Task RT-2789.
+- 2026-11-03 — a pinned column of the table got a subdomain of its own. Its scenarios arrived with
+  the numbers `SC-UKV-1122`…`SC-UKV-1124`. Task RT-2907.

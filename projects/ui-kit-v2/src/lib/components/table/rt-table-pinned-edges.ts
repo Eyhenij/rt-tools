@@ -52,7 +52,17 @@ export class RtTablePinnedEdges {
 
     #observer: ResizeObserver | null = null;
 
-    readonly #onChange: () => void = (): void => this.#report();
+    /** Ширины контейнера меряются при запуске и при смене размеров, а не на каждой прокрутке. */
+    #scrollWidth: number = 0;
+
+    #clientWidth: number = 0;
+
+    readonly #onScroll: () => void = (): void => this.#report();
+
+    readonly #onResize: () => void = (): void => {
+        this.#measure();
+        this.#report();
+    };
 
     constructor(changed: (edges: IRtTablePinnedEdges) => void) {
         this.#changed = changed;
@@ -68,29 +78,38 @@ export class RtTablePinnedEdges {
         }
 
         this.#container = container;
-        container.addEventListener('scroll', this.#onChange, { passive: true });
-
-        // Окно без наблюдателя — старые движки: края пересчитываются только прокруткой.
-        if (typeof ResizeObserver !== 'undefined') {
-            this.#observer = new ResizeObserver(this.#onChange);
+        // Окно без наблюдателя — старые движки: ширины меряются на каждой прокрутке, как раньше.
+        const resizable: boolean = typeof ResizeObserver !== 'undefined';
+        container.addEventListener('scroll', resizable ? this.#onScroll : this.#onResize, { passive: true });
+        if (resizable) {
+            this.#observer = new ResizeObserver(this.#onResize);
             this.#observer.observe(container);
             this.#observer.observe(table);
         }
 
-        this.#report();
+        this.#onResize();
     }
 
     public stop(): void {
-        this.#container?.removeEventListener('scroll', this.#onChange);
+        this.#container?.removeEventListener('scroll', this.#onScroll);
+        this.#container?.removeEventListener('scroll', this.#onResize);
         this.#observer?.disconnect();
         this.#container = null;
         this.#observer = null;
     }
 
+    #measure(): void {
+        const container: HTMLElement | null = this.#container;
+        if (container) {
+            this.#scrollWidth = container.scrollWidth;
+            this.#clientWidth = container.clientWidth;
+        }
+    }
+
     #report(): void {
         const container: HTMLElement | null = this.#container;
         if (container) {
-            this.#changed(hiddenEdges(container.scrollLeft, container.scrollWidth, container.clientWidth));
+            this.#changed(hiddenEdges(container.scrollLeft, this.#scrollWidth, this.#clientWidth));
         }
     }
 }
