@@ -1,5 +1,7 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
+import { RtCardComponent } from '../../../card/rt-card.component';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
@@ -13,7 +15,7 @@ const DELTA_LABEL: string = 'к прошлой неделе';
 const YEAR_LABEL: string = 'к прошлому году';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TStatTileMatrixPart = 'delta' | 'baseline' | 'parts' | 'unit' | 'growth' | 'presets' | 'themes';
+export type TStatTileMatrixPart = 'delta' | 'baseline' | 'parts' | 'unit' | 'growth' | 'framed' | 'presets' | 'themes';
 
 /** Случай изменения — подпись для ряда и само значение входа. */
 interface IStatTileDeltaCase {
@@ -95,35 +97,51 @@ interface IStatTilePartsCase {
             }
 
             @case ('unit') {
-                <app-story-presets caption="Единица изменения в обоих наборах">
+                <app-story-presets caption="Единица изменения в обеих темах в обоих наборах">
                     <ng-template>
-                        <app-story-row [items]="unitCases" [itemLabel]="rowsCaseLabel">
-                            <ng-template let-rowsCase>
-                                <rt-stat-tile
-                                    [label]="rowsCase.label"
-                                    [value]="rowsCase.value"
-                                    [growthIsWorse]="rowsCase.growthIsWorse"
-                                    [deltaPrimary]="rowsCase.deltaPrimary"
-                                    [deltaSecondary]="rowsCase.deltaSecondary" />
+                        <app-story-themes>
+                            <ng-template>
+                                <app-story-row [items]="unitCases" [itemLabel]="rowsCaseLabel">
+                                    <ng-template let-rowsCase>
+                                        <ng-container *ngTemplateOutlet="tile; context: { $implicit: rowsCase }" />
+                                    </ng-template>
+                                </app-story-row>
                             </ng-template>
-                        </app-story-row>
+                        </app-story-themes>
                     </ng-template>
                 </app-story-presets>
             }
 
             @case ('growth') {
-                <app-story-presets caption="Рост лучше и рост хуже в обоих наборах">
+                <app-story-presets caption="Рост лучше и рост хуже в обеих темах в обоих наборах">
                     <ng-template>
-                        <app-story-row [items]="growthCases" [itemLabel]="rowsCaseLabel">
-                            <ng-template let-rowsCase>
-                                <rt-stat-tile
-                                    [label]="rowsCase.label"
-                                    [value]="rowsCase.value"
-                                    [growthIsWorse]="rowsCase.growthIsWorse"
-                                    [deltaPrimary]="rowsCase.deltaPrimary"
-                                    [deltaSecondary]="rowsCase.deltaSecondary" />
+                        <app-story-themes>
+                            <ng-template>
+                                <app-story-row [items]="growthCases" [itemLabel]="rowsCaseLabel">
+                                    <ng-template let-rowsCase>
+                                        <ng-container *ngTemplateOutlet="tile; context: { $implicit: rowsCase }" />
+                                    </ng-template>
+                                </app-story-row>
                             </ng-template>
-                        </app-story-row>
+                        </app-story-themes>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('framed') {
+                <app-story-presets caption="Плитки в карточке с рамкой, как в отчётах, в обеих темах в обоих наборах">
+                    <ng-template>
+                        <app-story-themes>
+                            <ng-template>
+                                <div class="app-stat-tile-matrix__report">
+                                    @for (rowsCase of framedCases; track rowsCase.name) {
+                                        <rt-card class="app-stat-tile-matrix__card">
+                                            <ng-container *ngTemplateOutlet="tile; context: { $implicit: rowsCase }" />
+                                        </rt-card>
+                                    }
+                                </div>
+                            </ng-template>
+                        </app-story-themes>
                     </ng-template>
                 </app-story-presets>
             }
@@ -147,12 +165,7 @@ interface IStatTilePartsCase {
                                     <rt-stat-tile label="Визиты" value="1 240" [deltaPrimary]="deltaCase.delta" />
                                 }
                                 @for (rowsCase of themeGrowthCases; track rowsCase.name) {
-                                    <rt-stat-tile
-                                        [label]="rowsCase.label"
-                                        [value]="rowsCase.value"
-                                        [growthIsWorse]="rowsCase.growthIsWorse"
-                                        [deltaPrimary]="rowsCase.deltaPrimary"
-                                        [deltaSecondary]="rowsCase.deltaSecondary" />
+                                    <ng-container *ngTemplateOutlet="tile; context: { $implicit: rowsCase }" />
                                 }
                             </ng-template>
                         </app-story-themes>
@@ -160,10 +173,36 @@ interface IStatTilePartsCase {
                 </app-story-presets>
             }
         }
+
+        <ng-template #tile let-rowsCase>
+            <rt-stat-tile
+                [label]="rowsCase.label"
+                [value]="rowsCase.value"
+                [growthIsWorse]="rowsCase.growthIsWorse"
+                [deltaPrimary]="rowsCase.deltaPrimary"
+                [deltaSecondary]="rowsCase.deltaSecondary" />
+        </ng-template>
+    `,
+    styles: `
+        /* Ряд отчёта: плитки одной ширины в карточках, как их ставит приложение. */
+        .app-stat-tile-matrix__report {
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: repeat(3, 17.5rem);
+        }
+
+        /* Хост карточки — сетка: так её статья тянется на высоту ряда, и карточки ряда равны. */
+        .app-stat-tile-matrix__card {
+            display: grid;
+        }
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        // angular
+        NgTemplateOutlet,
+
         // components
+        RtCardComponent,
         RtStatTileComponent,
 
         // showcase
@@ -301,6 +340,16 @@ export class TestRtStatTileMatrixComponent {
 
     /** В тёмной теме — оба смысла роста рядом. */
     public readonly themeGrowthCases: readonly IStatTileRowsCase[] = this.growthCases.slice(1, 3);
+
+    /** Ряд отчёта: проценты, пункты, ноль и оба смысла роста — каждая плитка в своей карточке. */
+    public readonly framedCases: readonly IStatTileRowsCase[] = [
+        this.unitCases[0],
+        this.unitCases[1],
+        this.unitCases[3],
+        this.growthCases[1],
+        this.growthCases[2],
+        this.growthCases[3],
+    ];
 
     public readonly rowsCaseLabel: (value: IStatTileRowsCase) => string = (value: IStatTileRowsCase): string => value.name;
 

@@ -27,6 +27,8 @@ export const Unit: TStory = { args: { part: 'unit' } };
 
 export const Growth: TStory = { args: { part: 'growth' } };
 
+export const Framed: TStory = { args: { part: 'framed' } };
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };

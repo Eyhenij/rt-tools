@@ -7,8 +7,8 @@
 - **Done:** stage 1 — the unit, the points label and the «growth is worse» input, 28 tile tests
   green; the stories Unit and Growth are added, the dark tiles stand in Themes, and the colours are
   measured in both themes and both presets
-- **Next step:** after the owner's word on the showcase — stage 3, the agreement merges into the kit
-  spec
+- **Next step:** after the owner's word on the showcase — the approval line, the push gate set, the
+  folder taken apart and the PR on RT-3041; the agreement is already merged into the kit spec
 - **Uncommitted:** nothing
 - **Waiting for the owner:** the showcase approval — stories Unit, Growth and Themes of
   Molecules/Data/StatTile
