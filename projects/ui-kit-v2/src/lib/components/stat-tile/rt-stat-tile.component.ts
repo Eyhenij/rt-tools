@@ -130,13 +130,14 @@ export class RtStatTileComponent {
         computed((): Record<string, string> => ({ value: signedNumber(this.deltaSecondary()?.percent ?? 0) }))
     );
 
+    /** Подписи кита для шаблона — приставка годового чипа. */
+    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
+
     /**
      * Дельта к предыдущему периоду — рядом со значением. Пустая база (`percent`
      * = null) не рисуется вовсе: «—» рядом с цифрой читается как поломка, а не
      * как «сравнивать не с чем».
      */
-    protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
-
     protected readonly primaryDelta: Signal<IDeltaRow | null> = computed((): IDeltaRow | null =>
         this.#visibleDelta('primary', this.deltaPrimary(), this.#primaryPoints())
     );
