@@ -30,6 +30,9 @@ import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 
 const BEM_BLOCK: string = 'rt-input-number';
 
+/** Значок стрелки шага в поле `sm`: в шкале значков такой ступени нет. */
+const SMALL_STEP_ICON_PX: number = 10;
+
 /**
  * Парсит строку в `number | null` по разделителям локали: `groupSep` и любые
  * пробелы удаляются, оставшийся разделитель дробной части приводится к точке.
@@ -189,6 +192,11 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
     // есть результат очистки, поэтому при нём кнопка сброса не нужна.
     protected readonly hasValue: Signal<boolean> = computed(
         (): boolean => this.displayValue() !== '' && this.value() !== null && this.value() !== 0
+    );
+
+    /** Значок стрелки: в поле `sm` он 10 px, как в макете, в остальных — ступень `xs` (12 px). */
+    protected readonly stepIconSize: Signal<IRtIcon.SizeInput> = computed((): IRtIcon.SizeInput =>
+        this.size() === 'sm' ? SMALL_STEP_ICON_PX : 'xs'
     );
 
     /** Шаг вверх возможен, пока значение не дошло до `max`; пустое поле шагает всегда. */

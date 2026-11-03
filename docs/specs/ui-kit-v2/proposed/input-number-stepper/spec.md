@@ -55,6 +55,12 @@ The arrows carry kit labels as their accessible names: «Увеличить» an
 
 - **A read-only field shows no arrows.** It shows the value as text.
 
+- **The two arrows are one glyph, the lower one turned over.** The kit's up and down chevrons are
+  drawn differently and read as arrows of two sizes at 12 px.
+
+- **The small field has smaller arrows, and no field grows for them.** In `sm` the column is 16×24
+  with a 10 px glyph, in `md` and `lg` it is 20×32 with a 12 px glyph.
+
 - **The arrows take no Tab stop.** The keyboard path is the Up and Down keys in the field itself.
 
 ## What is out of scope

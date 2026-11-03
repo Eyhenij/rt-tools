@@ -197,4 +197,33 @@ describe('RtInputNumberComponent — стрелки шага', (): void => {
         expect(arrow(fixture, 'up')?.getAttribute('aria-label')).toBe('Increase');
         expect(arrow(fixture, 'down')?.getAttribute('aria-label')).toBe('Decrease');
     });
+
+    it('SC-UKV-1144 — обе стрелки рисуют один значок, нижняя — перевёрнутым', (): void => {
+        const fixture: ComponentFixture<StepHostComponent> = setup({ value: 10 });
+        const up: HTMLElement | null | undefined = arrow(fixture, 'up')?.querySelector('rt-icon');
+        const down: HTMLElement | null | undefined = arrow(fixture, 'down')?.querySelector('rt-icon');
+
+        expect(up?.querySelector('use')?.getAttribute('href')).toBe('#rt-icon-chevron-up');
+        expect(down?.querySelector('use')?.getAttribute('href')).toBe('#rt-icon-chevron-up');
+        expect(up?.classList).not.toContain('rt-input-number__step-icon--flipped');
+        expect(down?.classList).toContain('rt-input-number__step-icon--flipped');
+    });
+
+    it('SC-UKV-1145 — в поле sm значок стрелки 10 px, в поле md — 12 px', (): void => {
+        const small: ComponentFixture<RtInputNumberComponent> = createRtFixture(
+            RtInputNumberComponent,
+            { size: 'sm' },
+            { providers: [RU_LOCALE] }
+        );
+        const medium: ComponentFixture<RtInputNumberComponent> = createRtFixture(
+            RtInputNumberComponent,
+            { size: 'md' },
+            { providers: [RU_LOCALE] }
+        );
+        const smallIcon: HTMLElement = qa(small, 'input-number-step-up')?.nativeElement.querySelector('rt-icon') as HTMLElement;
+        const mediumIcon: HTMLElement = qa(medium, 'input-number-step-up')?.nativeElement.querySelector('rt-icon') as HTMLElement;
+
+        expect(smallIcon.style.width).toBe('10px');
+        expect(mediumIcon.style.width).toBe('var(--rt-icon-step-xs, var(--rt-size-3))');
+    });
 });

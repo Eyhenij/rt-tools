@@ -62,6 +62,18 @@ Given a read-only field with the value 10
 When the field is drawn
 Then it has no arrows
 
+### SC-UKV-1144 — the two arrows are one glyph, the lower one turned over
+
+Given a field with arrows
+When the field is drawn
+Then both arrows draw the up chevron, and the lower one carries the turned-over mark
+
+### SC-UKV-1145 — the small field has smaller arrows
+
+Given a field of size `sm` and a field of size `md`
+When the fields are drawn
+Then the arrow glyph is 10 px in the `sm` field and 12 px in the `md` field
+
 ### SC-UKV-1143 — the arrows take no Tab stop
 
 Given a field with arrows
