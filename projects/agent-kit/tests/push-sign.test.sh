@@ -231,17 +231,22 @@ gate "SC-AK-406 — слитный -bимя переключением не сч
 
 # SC-AK-405, SC-AK-406. Точка старта новой ветки решает, сменилось ли дерево. Слитное имя `-bимя`
 # — значение ключа, а не точка старта; `HEAD` и `@` — текущая вершина; `-` — предыдущая ветка;
-# `--` после точки старта её не отменяет.
+# `--` после точки старта её не отменяет. Без нового имени слова после первого — пути: файлы
+# восстанавливаются из него, ветка остаётся та же. Так же `--ours`, `-p` и `--pathspec-from-file`.
 for form in 'checkout -bRT-72-new origin/main' 'switch -cRT-72-new origin/main' \
     'checkout -BRT-72-new origin/main' 'switch -CRT-72-new origin/main' \
     'checkout -b RT-72-new -' 'checkout -b RT-72-new main --' 'checkout main --' 'switch main --' \
-    'switch --orphan RT-72-new'; do
+    'switch --orphan RT-72-new' 'checkout main' 'checkout -f main' 'checkout --detach main' \
+    'switch --detach main'; do
     gate "SC-AK-405 — git $form перед пушем — другое дерево, отбито" "$RED_GATE" \
         "git $form && git push origin RT-72-new" deny
 done
 for form in 'checkout -b RT-72-new HEAD' 'switch -c RT-72-new HEAD' 'checkout -b RT-72-new @' \
     'checkout main -- notes.txt' 'checkout -bRT-72-new HEAD' 'checkout -b RT-72-new --conflict merge' \
-    'checkout -b RT-72-new head' 'checkout --orphan RT-72-new'; do
+    'checkout -b RT-72-new head' 'checkout --orphan RT-72-new' 'checkout main .' \
+    'checkout main notes.txt' 'checkout main notes.txt other.txt' 'checkout -b RT-72-new .' \
+    'checkout -b RT-72-new main notes.txt' 'checkout --ours notes.txt' 'checkout --theirs notes.txt' \
+    'checkout -p main' 'checkout --pathspec-from-file=list main' 'checkout --detach'; do
     gate "SC-AK-406 — git $form перед пушем — дерево то же, проходит" "$RED_GATE" \
         "git $form && git push origin RT-72-new" PASS
 done

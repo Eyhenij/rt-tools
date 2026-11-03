@@ -56,10 +56,13 @@ own turn.
   git call.
 - **A branch switch is found by the same parse as the push.** A pattern over the line did not see
   `git checkout` inside `bash -c` or `eval`, and the set ran on the former branch. A new branch
-  from another start point and `gh pr checkout` are a switch; files restored after `--`, a new
-  branch from the current tip and a switch after the push are not. The start point is the first
-  word after the new name: a name glued to the key (`-bnew`) is its value, `-` is the previous
-  branch, `HEAD` and `@` are the current tip, and a `--` after the start point does not cancel it.
+  from another start point and `gh pr checkout` are a switch; files restored, a new branch from the
+  current tip and a switch after the push are not. The start point is the first word after the new
+  name: a name glued to the key (`-bnew`) is its value, `-` is the previous branch, `HEAD` and `@`
+  are the current tip, and a `--` after the start point does not cancel it. A `.` or a second word
+  after the new name are paths, and git refuses such a call whole. Without a new name, the words
+  after the first one are paths: `git checkout main notes.txt` restores the file from `main` and
+  keeps the branch. `--ours`, `--theirs`, `-p` and `--pathspec-from-file` restore files too.
 - **Several recipients in one push are several pushes.** `--all`, `--mirror`, `--branches`, a ref
   with `*` and two refs after the remote send several branches, while the set judges only the
   current one. A ref with a brace expansion is several refs. A word in quotes or a `$( )` is one ref;
@@ -94,7 +97,12 @@ own turn.
   under another one is not judged until the wrapper is added.
 - **What the parse counts too strictly.** `shift` inside a function body is not followed, and a ref
   with braces in quotes counts as several refs: both give a refusal the push did not need, and the
-  push is split into separate calls.
+  push is split into separate calls. One path without `--` reads as a branch: `git checkout
+notes.txt` and `git checkout -b new notes.txt` count as a switch, since the text does not tell a
+  file from a ref.
+- **A move of the branch tip in the same command.** `git reset --hard`, `merge`, `pull`, `rebase` and
+  `cherry-pick` before a push change what leaves, and they are not read as a switch. Refusing them
+  would refuse the usual "merge main, then push" in one command; the owner decides on it.
 - **A command without `git` in its text that a shell reads from its input.** It is not refused as
   unreadable: without the word the parse has no sign of a push at all.
 
@@ -154,7 +162,8 @@ None open.
   second review the parse learns wrapper keys with values, a heredoc with a bare delimiter,
   function definitions, `--repo` and the branch switch; after the executor's own review it reads a
   heredoc inside `$( )`, line continuations, `$'…'`, call words of a function and a shell given its
-  commands on the input.
+  commands on the input. After the third and the fourth review the start point of a new branch is
+  read by git's own rules, and files restored without `--` are no switch.
 
 ## Scenarios
 

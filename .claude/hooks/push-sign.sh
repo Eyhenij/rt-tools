@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/push-sign.sh · ed7b07a87777 · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/push-sign.sh · f4a303c7e57b · правится надстройкой, не здесь
 # The parse of a command for the push gate. NOT a guard: it has no `rt-hook:` declaration and hooks
 # into no agent event. The push gate sources it and calls `rt_push_calls` with the command text on
 # the input; it stands apart because the guard with it inside crossed the length limit for code.
@@ -32,8 +32,8 @@
 # does not see.
 #
 # Two more lines. `switch` — a move to another tree: a switch to an existing branch, a new branch
-# from another start point, `gh pr checkout`; restoring files after `--` and a new branch from the
-# current tip are no switch. `opaque` — commands the parse cannot read: a shell reading them from
+# from another start point, `gh pr checkout`; restoring files — after `--`, after a tree word, by
+# `--ours`, `-p` — and a new branch from the current tip are no switch. `opaque` — commands the parse cannot read: a shell reading them from
 # its input, `source` of a substitution, or a text whose function calls grow without bound.
 #
 # FAIL-OPEN: no perl — no output, and the guard passes, like any other breakage of it.
@@ -380,21 +380,31 @@ sub words {
             my $x = $a[$k];
             if ($x eq "--") { $paths = 1 if $k + 1 < @a; last; }
             if ($x eq "-") { push @pos, $x; next; }
+            if ($sub eq "checkout" && $x =~ /^--(patch|ours|theirs|pathspec-from-file)(=.*)?$/) {
+                $paths = 1; $k++ if $1 eq "pathspec-from-file" && !defined $2; next;
+            }
             if ($x =~ /^--(orphan|create|force-create)(=.*)?$/) {
                 next if $sub eq "checkout" && $1 ne "orphan";
                 $new = 1; $orphan = 1 if $1 eq "orphan"; $k++ unless defined $2; next;
             }
             if ($x eq "--conflict") { $k++; next; }
             if ($x =~ /^-([A-Za-z].*)$/s && $x !~ /^--/) {
-                if ($1 =~ /^[A-Za-z]*?[$letters](.*)$/s) { $new = 1; $k++ unless length $1; }
+                my $c = $1;
+                $paths = 1 if $sub eq "checkout" && $c =~ /^[^$letters]*p/;
+                if ($c =~ /^[A-Za-z]*?[$letters](.*)$/s) { $new = 1; $k++ unless length $1; }
                 next;
             }
             next if $x =~ /^-/;
             push @pos, $x;
         }
-        my $tip = qr/^(?:HEAD|head|\@|\@\{HEAD\}|HEAD\@\{0\}|\@\{0\})$/;
-        if ($new) { push @out, "switch" if (@pos && $pos[0] !~ $tip) || ($orphan && $sub eq "switch"); }
-        elsif (!$paths && @pos && $pos[0] ne ".") { push @out, "switch"; }
+        # A start point is the first word after the new name; `.` and a second word are paths, and
+        # git refuses the whole call then. Without a new name, checkout reads the words after the
+        # first one as paths: the files are restored from it, and the branch stays.
+        my $tip = qr/^(?:HEAD|head|\@|\@\{HEAD\}|HEAD\@\{0\}|\@\{0\}|\.)$/;
+        if ($new) {
+            push @out, "switch" if (@pos == 1 && $pos[0] !~ $tip) || ($orphan && $sub eq "switch");
+        }
+        elsif (!$paths && @pos && $pos[0] ne "." && !($sub eq "checkout" && @pos > 1)) { push @out, "switch"; }
         return $loop;
     }
     return $loop unless $sub eq "push";
