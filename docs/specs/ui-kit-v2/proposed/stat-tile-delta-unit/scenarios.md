@@ -27,11 +27,11 @@ Then the primary row is written in points and the year row in percent
 
 Not covered: no code yet.
 
-### SC-UKV-1128 — an empty base is drawn as a dash in any unit
+### SC-UKV-1128 — a row with an unknown base is not drawn in any unit
 
 Given a delta row in points without a value
 When the tile draws the row
-Then a dash without colour and without a unit stands in place of the delta
+Then neither the delta next to the value nor the year chip is drawn
 
 Not covered: no code yet.
 

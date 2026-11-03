@@ -2,17 +2,36 @@
 
 ## Where we stand
 
-- **State:** `договорённость-записана`
-- **Stage:** 0 — the plan is not written yet
-- **Done:** the task is taken, the branch stands on RT-3041, the grill is closed with the owner's
-  answers; the mockup is compared with the application's analytics mockups and fixed; the product
-  agreement lies in `docs/specs/ui-kit-v2/proposed/stat-tile-delta-unit/`
-- **Next step:** after the owner's word on the mockup — the plan
+- **State:** `этап-идёт`
+- **Stage:** 1 из 3 — Code and tests
+- **Done:** the task is taken, the grill is closed, the agreement is written, the owner approved the
+  mockup, the plan is written
+- **Next step:** stage 1, step 1 — the unit field on the delta model
 - **Uncommitted:** nothing
-- **Waiting for the owner:** the approval of the mockup on the Stat Tile page of the second kit file:
-  the variant property Growth=better|worse, six report tiles (points, zero points and «growth is
-  worse»), two dark tiles
+- **Waiting for the owner:** nothing
 - **PR:** not open yet
+
+## Stage steps
+
+### 1. Code and tests
+
+1. [ ] Add the unit field to the delta model ← now
+2. [ ] Add the points label to the kit labels
+3. [ ] Write the delta text by its unit
+4. [ ] Add the «growth is worse» input and the colour sense
+5. [ ] Cover SC-UKV-1125…1132 by unit tests
+
+### 2. Showcase
+
+1. [ ] Add the unit and the colour sense to the stories
+2. [ ] Check the stories by eye against the mockup
+3. [ ] Get the owner's word on the showcase
+
+### 3. Hand-in
+
+1. [ ] Merge the agreement into the kit spec
+2. [ ] Run the push gate set
+3. [ ] Take the task folder apart and open the PR
 
 ## Decisions along the way
 
@@ -32,6 +51,8 @@
   mockups. Percent in the kit mockup is now written with a space, as the kit code writes it; a
   zero-points tile is added.
 - The product agreement is written: scenarios SC-UKV-1125…1132.
+- The owner approved the mockup. The agreement now hides a row with an unknown base, as the tile
+  does today, instead of a dash; the plan is written.
 
 ## Handover of the session
 
@@ -42,9 +63,9 @@ Put together by a hook before the compaction of the context (auto).
 
 ### Where we stand at the minute of the compaction
 
-- **State:** `разбор-закрыт`
+- **State:** `договорённость-записана`
 - **Stage:** 0 — the plan is not written yet
-- **Next step:** after the owner's word on the mockup — the product agreement and the plan
+- **Next step:** after the owner's word on the mockup — the plan
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-2927-rt-stat-tile-delta-unit/progress.md`; the plan lies next to it.
@@ -58,6 +79,7 @@ none
 ### Commits over the main branch
 
 ```
+676b62742 docs: договорённость RT-2927 — единица разницы и «рост хуже» у плитки
 ad9d494f1 docs: макет плитки RT-2927 ждёт слова владельца
 4bffa468e docs: разбор RT-2927 — единица разницы и признак «рост хуже» у плитки
 27c69ab0a docs(rt:agent-kit): сценарии заведения ветки укладываются в предел длины файла

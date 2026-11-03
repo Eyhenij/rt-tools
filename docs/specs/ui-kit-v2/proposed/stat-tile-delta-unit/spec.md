@@ -42,10 +42,10 @@ as now: «+12 %».
   each take their own unit.
 
 - **Points are written by a kit label with a value parameter.** The sign and the decimal comma are
-  put as for percent: «+10 п.п.», «−7 п.п.», «0 п.п.», «+2,5 п.п.».
+  put as for percent: «+10 п.п.», «-7 п.п.», «0 п.п.», «+2,5 п.п.».
 
-- **A zero or unknown base is drawn as a dash in any unit.** The dash gets neither a unit nor a
-  colour.
+- **A row with an unknown base is not drawn in any unit.** The tile hides it today in percent, and
+  points keep that: a dash next to the value reads as a breakage.
 
 - **«Growth is worse» is a tile sign, and it paints both rows.** Growth is then red, a fall green,
   zero stays without colour.
@@ -84,7 +84,7 @@ states:
 
 - percent and points — growing, falling, at zero;
 - «growth is worse» — growth red with an up arrow, a fall green with a down arrow;
-- an empty base — a dash without colour;
+- an unknown base — the row is not drawn;
 - the same states in the dark theme.
 
 ## Cross-cutting requirements
@@ -120,3 +120,4 @@ None.
 ## History of changes
 
 - 3 November 2026 — the agreement is written before the code.
+- 3 November 2026 — an unknown base hides the row, as the tile does today, instead of a dash.
