@@ -2,14 +2,14 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
-- **Stage:** 2 из 3 — Showcase
+- **State:** `этапы-кончились`
+- **Stage:** 3 из 3 — Closing
 - **Done:** stage 1 — the step labels, the `step` and `stepper` inputs, the arrows and the keys;
   15 arrow tests green. The sm field has smaller arrows by the approved mockup: column 16×24,
   glyph 10, field stays 32 tall. Match with the mockup — 171 of 171 numbers, md and sm
-- **Next step:** the owner's word on the showcase
+- **Next step:** the push gate set, then the archive record and the PR
 - **Uncommitted:** nothing
-- **Waiting for the owner:** the word on the showcase — Stepper and Size stories, 171 of 171 numbers
+- **Waiting for the owner:** no
 - **After this task:** stop, RT-2895 is not taken — «после этой задачи стоп»
 - **PR:** not open yet
 
@@ -22,9 +22,9 @@
 - [x] 1.5 Cover SC-UKV-1133…1143 by unit tests
 - [x] 2.1 Add the arrows to the field stories
 - [x] 2.2 Check the stories by eye and by measurement against the mockup
-- [>] 2.3 Get the owner's word on the showcase
-- [ ] 3.1 Merge the agreement into the kit spec
-- [ ] 3.2 Run the push gate set
+- [x] 2.3 Get the owner's word on the showcase
+- [x] 3.1 Merge the agreement into the kit spec
+- [>] 3.2 Run the push gate set
 - [ ] 3.3 Take the task folder apart and open the PR
 
 ## Decisions along the way
@@ -62,9 +62,9 @@ Put together by a hook before the compaction of the context (auto).
 
 ### Where we stand at the minute of the compaction
 
-- **State:** `этап-идёт`
-- **Stage:** 2 из 3 — Showcase
-- **Next step:** the owner's word on the showcase
+- **State:** `этапы-кончились`
+- **Stage:** 3 из 3 — Closing
+- **Next step:** the push gate set, then the archive record and the PR
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-2890-rt-input-number-stepper/progress.md`; the plan lies next to it.

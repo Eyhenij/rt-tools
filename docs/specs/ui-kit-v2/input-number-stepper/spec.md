@@ -1,7 +1,7 @@
 # Step arrows in the number field
 
-**Status:** proposed · **Revision:** 3 November 2026 · **Scenario prefix:** `SC-UKV`
-**Dependencies:** kit labels — the arrows are named by two kit labels; kit icons `chevron-up`, `chevron-down`
+**Status:** in force · **Revision:** 3 November 2026 · **Scenario prefix:** `SC-UKV`
+**Dependencies:** kit labels — the arrows are named by two kit labels; the kit icon `chevron-up`
 **Законы:** `verifiability`, `frontend-application`
 **Procedures:** none
 
@@ -67,3 +67,64 @@ The arrows carry kit labels as their accessible names: «Увеличить» an
 
 - Repeating the step while a mouse button is held.
 - Changing the value by the mouse wheel.
+
+## Contract
+
+The field gets two inputs: `step` — a number, one by default, and `stepper` — a boolean, on by
+default. The other inputs and the value the form gets do not change.
+
+### Refusal codes
+
+Not applicable: the component requests nothing and refuses nothing.
+
+## Data
+
+Not applicable: the field draws what the form gives it and stores nothing.
+
+## Screens and states
+
+The mockup is the stepper set of the second kit file, node 6875:432, with the `Size=md` and
+`Size=sm` variants, and the number field set 4652:2958. The states:
+
+- hover on the up arrow and on the down arrow;
+- the up arrow disabled on `max`, the down arrow disabled on `min`;
+- a disabled field with both arrows disabled;
+- a field without arrows;
+- the small field with the smaller arrows;
+- the same states in the dark theme and under the material preset.
+
+## Cross-cutting requirements
+
+### Locales
+
+The two arrow names are kit labels and are translated like every kit label.
+
+### SEO
+
+Not applicable: a library component.
+
+### Mobile layout
+
+Unchanged: the arrows take the right edge of the field, and the field keeps its height in every size.
+
+### Several objects
+
+Not applicable.
+
+## Decisions
+
+- **The down arrow is the up glyph turned over.** The owner's word: «как на макете должно быть ,
+  разбирайся». The kit's down chevron is lopsided at 12 px, and the mockup draws one glyph.
+- **The small field gets smaller arrows.** The owner's word: «по стрелочкам для инпута маленького
+  размера стрелочки нужны меньшего размера». The mockup got the `Size=sm` variant.
+
+## Open questions
+
+None.
+
+## History of changes
+
+- 3 November 2026 — the agreement is written before the code.
+- 3 November 2026 — one glyph for both arrows and smaller arrows in the small field.
+- 3 November 2026 — the agreement is rolled out and merges into the description of the second kit.
+  Task RT-2890.
