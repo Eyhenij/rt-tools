@@ -18,8 +18,8 @@
 - [x] 1.3 Draw the arrows in the field after the clear button
 - [x] 1.4 Handle the Up and Down keys in the field
 - [x] 1.5 Cover SC-UKV-1133…1143 by unit tests
-- [>] 2.1 Add the arrows to the field stories
-- [ ] 2.2 Check the stories by eye and by measurement against the mockup
+- [x] 2.1 Add the arrows to the field stories
+- [>] 2.2 Check the stories by eye and by measurement against the mockup
 - [ ] 2.3 Get the owner's word on the showcase
 - [ ] 3.1 Merge the agreement into the kit spec
 - [ ] 3.2 Run the push gate set
@@ -29,6 +29,11 @@
 
 - **The branch is taken from RT-2927, not from the main branch** — the chain goes on: RT-2927 stands
   on RT-3041, and the owner's mail in the signature list lives there until they merge.
+
+- **The up and down arrows look different, and the cause is the icons themselves** — the kit's
+  `chevron-up` and `chevron-down` (and the mockup's glyphs) have one arm heavier than the other and
+  are not mirror copies; at 12 px that reads as a different size. The owner asked about it; the
+  choice of glyph waits for their word. Affected stage of the plan: 2.
 
 ## Sessions
 
