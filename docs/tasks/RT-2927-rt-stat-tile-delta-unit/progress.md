@@ -14,27 +14,19 @@
   Molecules/Data/StatTile
 - **PR:** not open yet
 
-## Stage steps
+## Steps
 
-### 1. Code and tests
-
-1. [x] Add the unit field to the delta model
-2. [x] Add the points label to the kit labels
-3. [x] Write the delta text by its unit
-4. [x] Add the «growth is worse» input and the colour sense
-5. [x] Cover SC-UKV-1125…1132 by unit tests
-
-### 2. Showcase
-
-1. [x] Add the unit and the colour sense to the stories
-2. [x] Check the stories by eye against the mockup
-3. [ ] Get the owner's word on the showcase ← now
-
-### 3. Hand-in
-
-1. [ ] Merge the agreement into the kit spec
-2. [ ] Run the push gate set
-3. [ ] Take the task folder apart and open the PR
+- [x] 1.1 Add the unit field to the delta model
+- [x] 1.2 Add the points label to the kit labels
+- [x] 1.3 Write the delta text by its unit
+- [x] 1.4 Add the «growth is worse» input and the colour sense
+- [x] 1.5 Cover SC-UKV-1125…1132 by unit tests
+- [x] 2.1 Add the unit and the colour sense to the stories
+- [x] 2.2 Check the stories by eye against the mockup
+- [>] 2.3 Get the owner's word on the showcase
+- [ ] 3.1 Merge the agreement into the kit spec
+- [ ] 3.2 Run the push gate set
+- [ ] 3.3 Take the task folder apart and open the PR
 
 ## Decisions along the way
 
