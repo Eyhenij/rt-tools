@@ -270,6 +270,7 @@ export const RT_KIT_LABELS_EN = {
     uiOpenCalendar: 'Open the calendar',
     uiPageOf: 'Page {{page}} of {{last}}',
     uiPagination: 'Pagination',
+    uiPercentagePoints: '{{value}} pp',
     uiPerPage: 'Items per page:',
     uiPeriod: 'Period',
     uiPickAgent: 'Select an agent',

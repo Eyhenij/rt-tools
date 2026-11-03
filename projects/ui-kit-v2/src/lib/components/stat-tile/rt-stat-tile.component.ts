@@ -1,4 +1,16 @@
-import { computed, inject, input, ChangeDetectionStrategy, Component, InputSignal, Signal, ViewEncapsulation } from '@angular/core';
+import { BooleanInput } from '@angular/cdk/coercion';
+import {
+    booleanAttribute,
+    computed,
+    inject,
+    input,
+    ChangeDetectionStrategy,
+    Component,
+    InputSignal,
+    InputSignalWithTransform,
+    Signal,
+    ViewEncapsulation,
+} from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
@@ -37,28 +49,26 @@ function directionOf(percent: number | null): IRtStatTile.Direction {
 }
 
 /**
- * Нулевая база — «—»: «+100 %» от нуля вводит в заблуждение, «∞» нечитаемо.
- * Дробная часть — через запятую, как и остальные проценты в интерфейсе: кит
- * форматирует сам, потому что не может зависеть от логики приложений.
+ * Число со знаком роста. Дробная часть — через запятую, как и остальные
+ * проценты в интерфейсе: кит форматирует сам, потому что не может зависеть от
+ * логики приложений.
  */
-function percentText(percent: number | null): string {
-    if (percent === null) {
-        return '—';
-    }
-    const sign: string = percent > 0 ? '+' : '';
-    return `${sign}${String(percent).replace('.', ',')} %`;
+function signedNumber(value: number): string {
+    const sign: string = value > 0 ? '+' : '';
+    return `${sign}${String(value).replace('.', ',')}`;
 }
 
-function deltaRow(key: string, delta: IRtStatTile.Delta | null): IDeltaRow | null {
-    if (!delta) {
-        return null;
-    }
-    const direction: IRtStatTile.Direction = directionOf(delta.percent);
+/**
+ * Строка изменения с известной базой. Пункты пишутся переведённой подписью
+ * («+10 п.п.», «+10 pp») — её текст приходит готовым, проценты кит дописывает сам.
+ */
+function deltaRow(key: string, delta: IRtStatTile.Delta, percent: number, pointsText: string): IDeltaRow {
+    const direction: IRtStatTile.Direction = directionOf(percent);
     return {
         key,
         direction,
         label: delta.label,
-        text: percentText(delta.percent),
+        text: delta.unit === 'points' ? pointsText : `${signedNumber(percent)} %`,
         baseline: delta.baseline ?? '',
         icon: DIRECTION_ICONS[direction],
     };
@@ -72,8 +82,12 @@ function deltaRow(key: string, delta: IRtStatTile.Delta | null): IDeltaRow | nul
  * готовыми строками, `percent` — посчитанным числом. Так плитка не знает ни про
  * валюты, ни про методику метрик и остаётся общей для любого домена.
  *
- * Нулевая база показывается как «—»: «+100 %» от нуля вводит в заблуждение, а
- * «∞» нечитаемо.
+ * Строка с неизвестной базой не рисуется: «+100 %» от нуля вводит в
+ * заблуждение, а «—» рядом с цифрой читается как поломка.
+ *
+ * Цвет строки говорит, хорошо изменение или плохо, а стрелка — только знак
+ * числа: у метрики, где рост хуже (отмены, потерянная выручка), рост красный и
+ * со стрелкой вверх.
  */
 @Component({
     selector: 'rt-stat-tile',
@@ -105,6 +119,17 @@ export class RtStatTileComponent {
 
     readonly #baselineLine: Signal<string> = rtKitLabel('uiBaseline', this.#baselineParams);
 
+    /** Пункты — тоже параметром подписи: порядок числа и единицы знает язык, а не кит. */
+    readonly #primaryPoints: Signal<string> = rtKitLabel(
+        'uiPercentagePoints',
+        computed((): Record<string, string> => ({ value: signedNumber(this.deltaPrimary()?.percent ?? 0) }))
+    );
+
+    readonly #yearPoints: Signal<string> = rtKitLabel(
+        'uiPercentagePoints',
+        computed((): Record<string, string> => ({ value: signedNumber(this.deltaSecondary()?.percent ?? 0) }))
+    );
+
     /**
      * Дельта к предыдущему периоду — рядом со значением. Пустая база (`percent`
      * = null) не рисуется вовсе: «—» рядом с цифрой читается как поломка, а не
@@ -112,10 +137,14 @@ export class RtStatTileComponent {
      */
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
-    protected readonly primaryDelta: Signal<IDeltaRow | null> = computed((): IDeltaRow | null => this.#visibleDelta(this.deltaPrimary()));
+    protected readonly primaryDelta: Signal<IDeltaRow | null> = computed((): IDeltaRow | null =>
+        this.#visibleDelta('primary', this.deltaPrimary(), this.#primaryPoints())
+    );
 
     /** Годовое сравнение — отдельным компактным чипом, без слов в строке. */
-    protected readonly yearDelta: Signal<IDeltaRow | null> = computed((): IDeltaRow | null => this.#visibleDelta(this.deltaSecondary()));
+    protected readonly yearDelta: Signal<IDeltaRow | null> = computed((): IDeltaRow | null =>
+        this.#visibleDelta('year', this.deltaSecondary(), this.#yearPoints())
+    );
 
     /**
      * База сравнения — короткой строкой «было X» и ничем больше: всё остальное
@@ -142,10 +171,18 @@ export class RtStatTileComponent {
     /** Пояснение методики — нативный title на иконке подсказки. */
     public readonly hint: InputSignal<string | null> = input<string | null>(null);
 
-    #visibleDelta(delta: IRtStatTile.Delta | null): IDeltaRow | null {
+    /**
+     * Рост метрики плох для владельца (отмены, потерянная выручка): рост обеих
+     * строк красный, падение зелёное. Стрелка по-прежнему показывает знак числа.
+     */
+    public readonly growthIsWorse: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    #visibleDelta(key: string, delta: IRtStatTile.Delta | null, pointsText: string): IDeltaRow | null {
         if (!delta || delta.percent === null) {
             return null;
         }
-        return deltaRow('primary', delta);
+        return deltaRow(key, delta, delta.percent, pointsText);
     }
 }

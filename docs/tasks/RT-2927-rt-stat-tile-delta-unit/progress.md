@@ -3,29 +3,32 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 из 3 — Code and tests
-- **Done:** the task is taken, the grill is closed, the agreement is written, the owner approved the
-  mockup, the plan is written
-- **Next step:** stage 1, step 1 — the unit field on the delta model
+- **Stage:** 2 из 3 — Showcase
+- **Done:** stage 1 — the unit, the points label and the «growth is worse» input, 28 tile tests
+  green; the stories Unit and Growth are added, the dark tiles stand in Themes, and the colours are
+  measured in both themes and both presets
+- **Next step:** after the owner's word on the showcase — stage 3, the agreement merges into the kit
+  spec
 - **Uncommitted:** nothing
-- **Waiting for the owner:** nothing
+- **Waiting for the owner:** the showcase approval — stories Unit, Growth and Themes of
+  Molecules/Data/StatTile
 - **PR:** not open yet
 
 ## Stage steps
 
 ### 1. Code and tests
 
-1. [ ] Add the unit field to the delta model ← now
-2. [ ] Add the points label to the kit labels
-3. [ ] Write the delta text by its unit
-4. [ ] Add the «growth is worse» input and the colour sense
-5. [ ] Cover SC-UKV-1125…1132 by unit tests
+1. [x] Add the unit field to the delta model
+2. [x] Add the points label to the kit labels
+3. [x] Write the delta text by its unit
+4. [x] Add the «growth is worse» input and the colour sense
+5. [x] Cover SC-UKV-1125…1132 by unit tests
 
 ### 2. Showcase
 
-1. [ ] Add the unit and the colour sense to the stories
-2. [ ] Check the stories by eye against the mockup
-3. [ ] Get the owner's word on the showcase
+1. [x] Add the unit and the colour sense to the stories
+2. [x] Check the stories by eye against the mockup
+3. [ ] Get the owner's word on the showcase ← now
 
 ### 3. Hand-in
 
@@ -53,6 +56,10 @@
 - The product agreement is written: scenarios SC-UKV-1125…1132.
 - The owner approved the mockup. The agreement now hides a row with an unknown base, as the tile
   does today, instead of a dash; the plan is written.
+- Stage 1 is closed: `pnpm exec nx test @rt-tools/ui-kit-v2 --testFile=rt-stat-tile.component.spec.ts`
+  gives 28 passed, typecheck and linters are clean. Scenarios 1129…1132 carry partial coverage: the
+  colour is held by the styles and was measured in the showcase — growth red #dc2626 and a fall
+  green #059669 under «growth is worse», in both themes and both presets.
 
 ## Handover of the session
 
