@@ -57,7 +57,9 @@ own turn.
 - **A branch switch is found by the same parse as the push.** A pattern over the line did not see
   `git checkout` inside `bash -c` or `eval`, and the set ran on the former branch. A new branch
   from another start point and `gh pr checkout` are a switch; files restored after `--`, a new
-  branch from the current tip and a switch after the push are not.
+  branch from the current tip and a switch after the push are not. The start point is the first
+  word after the new name: a name glued to the key (`-bnew`) is its value, `-` is the previous
+  branch, `HEAD` and `@` are the current tip, and a `--` after the start point does not cancel it.
 - **Several recipients in one push are several pushes.** `--all`, `--mirror`, `--branches`, a ref
   with `*` and two refs after the remote send several branches, while the set judges only the
   current one. A ref with a brace expansion is several refs. A word in quotes or a `$( )` is one ref;

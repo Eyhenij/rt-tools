@@ -10,7 +10,8 @@ When the command comes to the push gate guard
 Then the set is not run: `push` is not the subcommand of a `git` call. A push with `-c` and `-C`
 keys before the subcommand is recognised as before
 
-Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`,
+`projects/agent-kit/tests/push-sign.test.sh`.
 
 ### SC-AK-1238 — several recipients in one push are refused
 
@@ -19,7 +20,7 @@ holds a push
 When the command comes to the push gate guard
 Then it is refused as several pushes; a push of one branch passes as before
 
-Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+Covered: `projects/agent-kit/tests/push-sign.test.sh`.
 
 ### SC-AK-1239 — a push typed into the terminal tab is judged by the set
 

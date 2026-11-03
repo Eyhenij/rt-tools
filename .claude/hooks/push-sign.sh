@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/push-sign.sh · b8e38d4a729d · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/push-sign.sh · ed7b07a87777 · правится надстройкой, не здесь
 # The parse of a command for the push gate. NOT a guard: it has no `rt-hook:` declaration and hooks
 # into no agent event. The push gate sources it and calls `rt_push_calls` with the command text on
 # the input; it stands apart because the guard with it inside crossed the length limit for code.
@@ -373,12 +373,28 @@ sub words {
     return $loop unless $j < @w;
     my $sub = $w[$j];
     if ($sub eq "checkout" || $sub eq "switch") {
+        my $letters = $sub eq "checkout" ? "bB" : "cC";
         my @a = @w[$j + 1 .. $#w];
-        return $loop if grep { $_ eq "--" || $_ eq "." } @a;
-        my $create = $sub eq "checkout" ? qr/^(-[A-Za-z]*[bB].*|--orphan)$/ : qr/^(-[A-Za-z]*[cC].*|--create|--force-create|--orphan)$/;
-        my ($new, @pos) = (0);
-        for my $x (@a) { if ($x =~ $create) { $new = 1; next; } next if $x =~ /^-/; push @pos, $x; }
-        push @out, "switch" unless $new && @pos <= 1;
+        my ($new, $orphan, $paths, @pos) = (0, 0, 0);
+        for (my $k = 0; $k < @a; $k++) {
+            my $x = $a[$k];
+            if ($x eq "--") { $paths = 1 if $k + 1 < @a; last; }
+            if ($x eq "-") { push @pos, $x; next; }
+            if ($x =~ /^--(orphan|create|force-create)(=.*)?$/) {
+                next if $sub eq "checkout" && $1 ne "orphan";
+                $new = 1; $orphan = 1 if $1 eq "orphan"; $k++ unless defined $2; next;
+            }
+            if ($x eq "--conflict") { $k++; next; }
+            if ($x =~ /^-([A-Za-z].*)$/s && $x !~ /^--/) {
+                if ($1 =~ /^[A-Za-z]*?[$letters](.*)$/s) { $new = 1; $k++ unless length $1; }
+                next;
+            }
+            next if $x =~ /^-/;
+            push @pos, $x;
+        }
+        my $tip = qr/^(?:HEAD|head|\@|\@\{HEAD\}|HEAD\@\{0\}|\@\{0\})$/;
+        if ($new) { push @out, "switch" if (@pos && $pos[0] !~ $tip) || ($orphan && $sub eq "switch"); }
+        elsif (!$paths && @pos && $pos[0] ne ".") { push @out, "switch"; }
         return $loop;
     }
     return $loop unless $sub eq "push";

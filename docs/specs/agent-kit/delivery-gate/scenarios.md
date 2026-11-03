@@ -202,7 +202,8 @@ When the command comes to the push gate guard
 Then it is refused whole, and the refusal names the lawful move: first switch, then push by a
 separate command — the gate set is run by the former branch, not by the one going to the hosting
 
-Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`,
+`projects/agent-kit/tests/push-sign.test.sh`.
 
 ### SC-AK-1204 — several pushes in one command are refused
 
@@ -222,7 +223,8 @@ Given one command holds the creation of a new branch from the current tip and a 
 When the command comes to the push gate guard
 Then it passes: for a fresh branch the tree is the same as it was, and the set is run by it
 
-Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`,
+`projects/agent-kit/tests/push-sign.test.sh`.
 
 ### SC-AK-407 — a dry push judges no shape of the command
 
