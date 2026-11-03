@@ -3,15 +3,15 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 из 3 — Showcase
+- **Stage:** 3 из 3 — Hand-in
 - **Done:** stage 1 — the unit, the points label and the «growth is worse» input, 28 tile tests
   green; the stories Unit and Growth are added, the dark tiles stand in Themes, and the colours are
   measured in both themes and both presets
 - **Next step:** after the owner's word on the showcase — the approval line, the push gate set, the
   folder taken apart and the PR on RT-3041; the agreement is already merged into the kit spec
 - **Uncommitted:** nothing
-- **Waiting for the owner:** the showcase approval — stories Unit, Growth and Themes of
-  Molecules/Data/StatTile
+- **Waiting for the owner:** nothing — the showcase is approved after the stories got both themes
+  and the Framed story
 - **PR:** not open yet
 
 ## Steps
@@ -23,9 +23,9 @@
 - [x] 1.5 Cover SC-UKV-1125…1132 by unit tests
 - [x] 2.1 Add the unit and the colour sense to the stories
 - [x] 2.2 Check the stories by eye against the mockup
-- [>] 2.3 Get the owner's word on the showcase
+- [x] 2.3 Get the owner's word on the showcase
 - [x] 3.1 Merge the agreement into the kit spec
-- [ ] 3.2 Run the push gate set
+- [>] 3.2 Run the push gate set
 - [ ] 3.3 Take the task folder apart and open the PR
 
 ## Decisions along the way
