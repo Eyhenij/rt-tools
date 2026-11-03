@@ -183,19 +183,7 @@ interface IStatTilePartsCase {
                 [deltaSecondary]="rowsCase.deltaSecondary" />
         </ng-template>
     `,
-    styles: `
-        /* Ряд отчёта: плитки одной ширины в карточках, как их ставит приложение. */
-        .app-stat-tile-matrix__report {
-            display: grid;
-            gap: 1rem;
-            grid-template-columns: repeat(3, 17.5rem);
-        }
-
-        /* Хост карточки — сетка: так её статья тянется на высоту ряда, и карточки ряда равны. */
-        .app-stat-tile-matrix__card {
-            display: grid;
-        }
-    `,
+    styleUrl: './test-stat-tile-matrix.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // angular
