@@ -101,6 +101,12 @@ RT_PULL_CLOSES_LINE='^Closes[[:space:]]+#{number}([^0-9]|$)'
 RT_BOARD_BACKLOG='📋 Backlog'
 RT_BOARD_EPIC_LABEL='epic'
 
+# The heavy steps of the push set run ahead, by `bash .claude/hooks/git-guard-push-ahead.sh` in the
+# background, and the push guard only reads their marks. A branch of the second kit takes the
+# showcase snapshots, the admin suite and the auth stand — over 30 minutes, past the hook limit: the
+# guard was cut by the limit and the push stood with no verdict (task RT-3092).
+RT_PUSH_HEAVY_AHEAD=1
+
 # What the records about finished work that outstayed their retention are removed by. The work
 # guard does not judge this command: the records age by the calendar, and the retention step turns
 # red by itself, without an edit in the branch — while in an epic's branch, where work is brought
@@ -271,9 +277,10 @@ EOF
 }
 
 # The heavy steps of this tree past the package default: the showcase snapshots raise a showcase
-# and shoot it, minutes each, and the package does not know their name.
+# and shoot it, minutes each, and the package does not know their name. The auth stand raises
+# three containers and waits for Keycloak.
 rt_push_check_heavy() {
-    case "$1" in *visual-gate*) return 0 ;; esac
+    case "$1" in *visual-gate* | *serve:auth*) return 0 ;; esac
 
     rt_push_check_heavy_default "$1"
 }
