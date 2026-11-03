@@ -2,22 +2,23 @@
 
 ## Where we stand
 
-- **State:** `замысел-записан`
-- **Stage:** 1 из 3 — Code and tests
-- **Done:** the grill, the agreement with SC-UKV-1133…1143 and the plan
-- **Next step:** after the owner's word on the mockup — the step labels and the step logic
+- **State:** `этап-идёт`
+- **Stage:** 2 из 3 — Showcase
+- **Done:** stage 1 — the step labels, the `step` and `stepper` inputs, the arrows and the keys;
+  44 field tests green, 13 of them on the arrows
+- **Next step:** the arrows in the field stories
 - **Uncommitted:** nothing
-- **Waiting for the owner:** the word on the mockup, page Input Number of the kit file
+- **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Add the step labels to the kit labels
-- [ ] 1.2 Add the `step` and `stepper` inputs and the step logic
-- [ ] 1.3 Draw the arrows in the field after the clear button
-- [ ] 1.4 Handle the Up and Down keys in the field
-- [ ] 1.5 Cover SC-UKV-1133…1143 by unit tests
-- [ ] 2.1 Add the arrows to the field stories
+- [x] 1.1 Add the step labels to the kit labels
+- [x] 1.2 Add the `step` and `stepper` inputs and the step logic
+- [x] 1.3 Draw the arrows in the field after the clear button
+- [x] 1.4 Handle the Up and Down keys in the field
+- [x] 1.5 Cover SC-UKV-1133…1143 by unit tests
+- [>] 2.1 Add the arrows to the field stories
 - [ ] 2.2 Check the stories by eye and by measurement against the mockup
 - [ ] 2.3 Get the owner's word on the showcase
 - [ ] 3.1 Merge the agreement into the kit spec

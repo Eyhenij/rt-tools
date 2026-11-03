@@ -9,6 +9,7 @@
         --rt-input-number-radius: var(--rt-input-radius);
         --rt-input-number-fill-radius: var(--rt-radius-sm);
         --rt-input-number-color-border-hover: var(--rt-color-text-primary);
+        --rt-input-number-step-radius: var(--rt-radius-sm);
 
         /* Толщина боковой рамки: от неё под материальным набором считается отступ текста. */
         --rt-input-number-edge: var(--rt-input-border-width);
@@ -181,6 +182,43 @@
         &__prefix,
         &__clear {
             flex-shrink: 0;
+        }
+
+        /* Стрелки шага — столбец двух кнопок в конце поля, после крестика. */
+        &__stepper {
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        &__step {
+            display: inline-flex;
+            width: var(--rt-size-5);
+            height: var(--rt-size-4);
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: none;
+            border-radius: var(--rt-input-number-step-radius);
+            background: transparent;
+            color: var(--rt-color-text-muted);
+            cursor: pointer;
+
+            &:hover:not(:disabled) {
+                background-color: var(--rt-color-bg-hover);
+                color: var(--rt-color-text-primary);
+            }
+
+            /* Стрелка у границы и в выключенном поле гаснет: состояние ниже наведения. */
+            &:disabled {
+                color: var(--rt-color-text-disabled);
+                cursor: not-allowed;
+            }
+        }
+
+        /* Значок берёт цвет кнопки и не перехватывает нажатие. */
+        &__step-icon {
+            pointer-events: none;
         }
 
         /* Текстовый префикс (напр. «₽»): приглушён, неинтерактивен. */
