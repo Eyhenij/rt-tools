@@ -24,7 +24,7 @@
 - [x] 2.1 Add the unit and the colour sense to the stories
 - [x] 2.2 Check the stories by eye against the mockup
 - [>] 2.3 Get the owner's word on the showcase
-- [ ] 3.1 Merge the agreement into the kit spec
+- [x] 3.1 Merge the agreement into the kit spec
 - [ ] 3.2 Run the push gate set
 - [ ] 3.3 Take the task folder apart and open the PR
 

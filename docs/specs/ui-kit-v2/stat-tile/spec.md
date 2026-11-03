@@ -1,12 +1,11 @@
 # Delta unit and «growth is worse» on the stat tile
 
-**Status:** proposed · **Revision:** 3 November 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 3 November 2026 · **Scenario prefix:** `SC-UKV`
 **Dependencies:** kit labels — points are written by a kit label with a value parameter
 **Законы:** `verifiability`, `frontend-application`
 **Procedures:** none
 
-A product agreement written before the code. It merges into the description of the second kit by
-the last commit of the PR, keeping its scenario numbers.
+A subdomain of the second kit about the delta rows of `rt-stat-tile`, written by task RT-2927.
 
 ## Why
 
@@ -121,3 +120,5 @@ None.
 
 - 3 November 2026 — the agreement is written before the code.
 - 3 November 2026 — an unknown base hides the row, as the tile does today, instead of a dash.
+- 3 November 2026 — the agreement is rolled out and merges into the description of the second kit.
+  Task RT-2927.
