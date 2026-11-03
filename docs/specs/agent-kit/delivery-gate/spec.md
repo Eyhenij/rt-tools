@@ -137,17 +137,8 @@ refuses the push.
   not fall under this — for a fresh branch the tree is the same as it was.
 - **Several pushes in one command, or a push inside a loop, refuse the command whole.** The set runs
   once per call, on the tree that lies there, and every other branch leaves unchecked. A loop body
-  after `do`, `then` or `else` is read as a command of its own.
-- **A push is the subcommand `push` of the same `git` call.** It is looked for after `git` and its
-  keys, up to the nearest command separator. The word in another command of the line, in a filter
-  or in quotes is no push: a read of pipeline runs filtered by the event `push` ran the whole set
-  for more than ten minutes and then refused a command that sends nothing.
-- **Several recipients in one push are several pushes.** `--all`, `--mirror` and two refs after the
-  remote send several branches, while the set judges only the current one. A loop is looked for over
-  the whole command text, not line by line: written over several lines, it passed as one push.
-- **A push typed into the session terminal tab is judged like a shell call.** The tab tool puts the
-  command into the same field. Left out of the guard's list, it carried a push past the gate after
-  two refusals.
+  after `do`, `then` or `else` is read as a command of its own. What counts as a push and how many
+  branches one call sends is the subdomain `push-sign`.
 - **The identity of the machine record is confirmed by the answer of the hosting, not by recognising
   a string.** A familiar look of a string is never a confirmation: the miss looked familiar. What
   exactly to ask with the tree knows — for a limited record a search by number answers "not found"
