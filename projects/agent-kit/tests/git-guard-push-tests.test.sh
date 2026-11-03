@@ -46,6 +46,28 @@ gate "SC-AK-1237 — пуш с ключами -c и -C узнаётся" "$RED_G
 gate "SC-AK-1237 — пуш после другой команды git узнаётся" "$RED_GATE" \
     'git fetch origin && git push origin RT-72-gate' deny
 
+# SC-AK-1237. Команда разбирается так, как её читает оболочка. Разделитель в кавычках значения
+# ключа не режет вызов; push внутри скобок, условия, цикла, подстановки, `bash -c` и `eval`
+# исполняется и судится набором. Текст в кавычках и тело heredoc — данные.
+gate "SC-AK-1237 — ключ -c с ; в кавычках пуш не прячет" "$RED_GATE" \
+    "git -c 'http.extraheader=A; B' push origin RT-72-gate" deny
+gate "SC-AK-1237 — ключ -c с & в кавычках пуш не прячет" "$RED_GATE" \
+    "git -c 'http.extraheader=A & B' push origin RT-72-gate" deny
+gate "SC-AK-1237 — ключ -c с | в кавычках пуш не прячет" "$RED_GATE" \
+    "git -c 'http.extraheader=A | B' push origin RT-72-gate" deny
+gate "SC-AK-1237 — пуш в фигурных скобках узнаётся" "$RED_GATE" '{ git push origin RT-72-gate; }' deny
+gate "SC-AK-1237 — пуш в обратных кавычках узнаётся" "$RED_GATE" 'echo `git push origin RT-72-gate`' deny
+gate "SC-AK-1237 — пуш в подстановке узнаётся" "$RED_GATE" 'echo "$(git push origin RT-72-gate)"' deny
+gate "SC-AK-1237 — пуш в bash -c узнаётся" "$RED_GATE" "bash -c 'git push origin RT-72-gate'" deny
+gate "SC-AK-1237 — пуш в eval узнаётся" "$RED_GATE" 'eval git push origin RT-72-gate' deny
+gate "SC-AK-1237 — пуш в условии if узнаётся" "$RED_GATE" 'if git push origin RT-72-gate; then :; fi' deny
+gate "SC-AK-1237 — пробный пуш рядом с настоящим набор не снимает" "$RED_GATE" \
+    'git push --dry-run origin RT-72-gate && git push origin RT-72-gate' deny
+gate "SC-AK-1237 — пуш в тексте в кавычках пушем не считается" "$RED_GATE" 'echo "x; git push "' PASS
+gate "SC-AK-1237 — пуш в теле heredoc пушем не считается" "$RED_GATE" "cat > notes.txt <<'EOF'
+git push origin RT-72-gate
+EOF" PASS
+
 # SC-AK-1238. Несколько получателей в одном пуше — несколько пушей: набор судит только текущую
 # ветку. Цикл ищется по всему тексту команды, а не по строке. Набор здесь зелёный: отказ даёт
 # только разбор получателей.
@@ -61,6 +83,26 @@ gate "SC-AK-1238 — пуш одной ветки с ключом и значе�
     'git push --push-option ci.skip origin RT-72-gate' PASS
 gate "SC-AK-1238 — пуш со ссылкой источник:цель проходит" "$RED_GATE" \
     'git push origin HEAD:RT-72-gate' PASS
+gate "SC-AK-1238 — пуш шаблоном ссылок отбит" "$RED_GATE" \
+    "git push origin 'refs/heads/*:refs/heads/*'" deny
+gate "SC-AK-1238 — пуш в условии цикла while отбит" "$RED_GATE" \
+    'while git push origin RT-72-gate; do :; done' deny
+gate "SC-AK-1238 — пуш после цикла проходит" "$RED_GATE" \
+    'for f in a; do echo "$f"; done; git push origin RT-72-gate' PASS
+gate "SC-AK-1238 — пуш после if проходит" "$RED_GATE" \
+    'if true; then echo; fi; git push origin RT-72-gate' PASS
+gate "SC-AK-1238 — пуш внутри if проходит" "$RED_GATE" \
+    'if true; then git push origin RT-72-gate; fi' PASS
+gate "SC-AK-1238 — одна ветка через подстановку проходит" "$RED_GATE" \
+    'git push origin "$(git branch --show-current)"' PASS
+gate "SC-AK-1238 — значение ключа с пробелом проходит" "$RED_GATE" \
+    'git push --push-option="a b" origin RT-72-gate' PASS
+gate "SC-AK-1238 — значение --receive-pack с пробелом проходит" "$RED_GATE" \
+    'git push --receive-pack="git receive-pack" origin RT-72-gate' PASS
+gate "SC-AK-1238 — удаление двух веток получателей не считает" "$RED_GATE" \
+    'git push origin :a :b' PASS
+gate "SC-AK-1238 — перенаправление вывода получателем не считается" "$RED_GATE" \
+    'git push origin RT-72-gate 2>&1' PASS
 printf 'rt_push_checks() { printf "%%s\\n" false; }\n' > "$RED_GATE/.claude/rt-kit/project.sh"
 
 # SC-AK-1239. Пуш, набранный во вкладке терминала сессии, судится как вызов оболочки.

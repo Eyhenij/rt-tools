@@ -34,9 +34,19 @@ own turn.
   keys, up to the nearest command separator. The word in another command of the line, in a filter
   or in quotes is no push: a read of pipeline runs filtered by the event `push` ran the whole set
   for more than ten minutes and then refused a command that sends nothing.
-- **Several recipients in one push are several pushes.** `--all`, `--mirror` and two refs after the
-  remote send several branches, while the set judges only the current one. A loop is looked for over
-  the whole command text, not line by line: written over several lines, it passed as one push.
+- **The command is parsed as the shell reads it, not by patterns over the line.** A separator
+  inside quotes does not cut a call: `-c 'h: a; b'` hid the push behind it. Quoted text is data,
+  except where the shell runs it — `$( )`, backticks, the string of `bash -c`, the words of `eval`.
+  A push after `{`, `if` or `while` is a push. A heredoc body is data.
+- **Several recipients in one push are several pushes.** `--all`, `--mirror`, `--branches`, a ref
+  with `*` and two refs after the remote send several branches, while the set judges only the
+  current one. A word in quotes or a `$( )` is one ref; a ref that starts with `:` deletes and is not
+  counted.
+- **A push in the body or the condition of a loop is several pushes; a push after it is one.** The
+  loop runs from `for`, `while` or `until` to its `done`. A push inside `if` or after `done` is one
+  push: the former sign took `then` and everything after a loop for a loop.
+- **A dry run of one call does not cover a real push next to it.** `--dry-run` and `-n` free only the
+  call they stand in.
 - **A push typed into the session terminal tab is judged like a shell call.** The tab tool puts the
   command into the same field. Left out of the guard's list, it carried a push past the gate after
   two refusals.
@@ -48,6 +58,11 @@ own turn.
   is the subdomain `delivery-merged`.
 - **The gate set itself.** What runs before a push and how a red line is named is the subdomain
   `delivery-gate`.
+- **A push the text does not show.** A git alias for `push`, a word glued from parts (`pu""sh`), a
+  script file that pushes, a variable run as a command. The parse reads the command text, and these
+  are visible only when the command runs: a pre-push git hook holds them, task RT-3046.
+- **A shell without perl.** The parse goes by perl, and without it the guard passes, as it does on
+  any breakage of its own.
 
 ## Contract
 
@@ -86,10 +101,13 @@ Not applicable: the guard judges one command of one turn.
 
 ## Decisions
 
-- **A key value may hold spaces inside quotes.** The request header is passed by `-c` in that form,
-  and a parse by spaces alone lost the push behind it.
-- **Newlines become separators before the parse.** A loop over several lines is one text: matched
-  line by line, `do` and the push stood apart.
+- **The parse is written in perl inside the guard, not by patterns of grep and sed.** The first
+  version by patterns was green on 52 cases and, at review, let through seven push forms and
+  refused five lawful pushes. Quotes, nested substitutions and loop boundaries need a reader of
+  words, and perl stands on every machine git does. Rejected: node — the guard runs before any
+  package is built.
+- **A loop is counted by its keywords, not by the position of `do`.** A loop over several lines and
+  a push after `done` both read right only when `for`, `while`, `until` and `done` are counted.
 
 ## Open questions
 
@@ -97,7 +115,8 @@ None open.
 
 ## History of changes
 
-- 3 November 2026 — the subdomain is created by task RT-3044 from three intake records.
+- 3 November 2026 — the subdomain is created by task RT-3044 from three intake records. After the
+  owner's review of PR #3083 the parse by patterns is replaced by a parse of shell words.
 
 ## Scenarios
 

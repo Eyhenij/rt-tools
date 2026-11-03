@@ -1,6 +1,6 @@
 # The delivery guards and the push gate
 
-**Status:** in force · **Revision:** 2026-08-20 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-03 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `delivery`, `verifiability`
 **Procedures:** none
@@ -330,6 +330,8 @@ The open questions of the domain are shared, and they live in the spec next to i
 
 ## History of changes
 
+- 2026-11-03 — what counts as a push and how many branches one call sends moved into the subdomain
+  `push-sign`, task RT-3044.
 - 2026-09-21 — the push gate names every red light check by one refusal, task RT-2302.
 
 - 2026-09-05 — creating a branch is recognised with a flag before `-b`, task RT-1799.
