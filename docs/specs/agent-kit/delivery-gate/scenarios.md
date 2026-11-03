@@ -218,7 +218,7 @@ Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
 ### SC-AK-406 — creating a new branch in the same command refuses no push
 
-Given one command holds the creation of a new branch and a push to it
+Given one command holds the creation of a new branch from the current tip and a push to it
 When the command comes to the push gate guard
 Then it passes: for a fresh branch the tree is the same as it was, and the set is run by it
 

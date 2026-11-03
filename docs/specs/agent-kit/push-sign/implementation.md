@@ -5,6 +5,10 @@ statement: a removed statement is removed together with its line.
 
 - **A push is the subcommand `push` of the same `git` call.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:push_calls` — scenario SC-AK-1237
 - **The command is parsed as the shell reads it, not by patterns over the line.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:push_calls` — the perl parse inside the guard; scenario SC-AK-1237
+- **A command the parse cannot read is refused when its text names a push.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:opaque` — the parse gives the line `opaque`; scenario SC-AK-1237
+- **A wrapper is passed together with its keys and their values.** — `projects/agent-kit/assets/hooks/push-sign.sh:wrap` — the list of wrappers and of their keys that take a value; scenario SC-AK-1237
+- **A function body is judged at the call, not at the definition.** — `projects/agent-kit/assets/hooks/push-sign.sh:body_end` — the body is kept by its name and parsed when the name is called; scenario SC-AK-1237
+- **A branch switch is found by the same parse as the push.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:push_calls` — the parse gives the line `switch`; scenario SC-AK-405
 - **A push in the body or the condition of a loop is several pushes; a push after it is one.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:looped` — scenario SC-AK-1238
 - **A dry run of one call does not cover a real push next to it.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:pushes` — only calls marked real are counted; scenario SC-AK-1237
 - **Several recipients in one push are several pushes.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:several_refs` — scenario SC-AK-1238

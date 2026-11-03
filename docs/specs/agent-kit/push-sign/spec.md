@@ -37,14 +37,37 @@ own turn.
 - **The command is parsed as the shell reads it, not by patterns over the line.** A separator
   inside quotes does not cut a call: `-c 'h: a; b'` hid the push behind it. Quoted text is data,
   except where the shell runs it — `$( )`, backticks, the string of `bash -c`, the words of `eval`.
-  A push after `{`, `if` or `while` is a push. A heredoc body is data.
+  A push after `{`, `if` or `while` is a push. The body of a heredoc with a quoted delimiter is
+  data; with a bare delimiter its `$( )` and backticks run, and they are parsed. A heredoc given to
+  a shell runs whole and is parsed whole, and so does a here-string `<<<` and a shell reading
+  `/dev/stdin`. A heredoc inside `$( )`, a line continuation, `$'…'`, arithmetic `(( ))` and a `}`
+  without `;` before it, which zsh accepts, are read the way the shell reads them: an apostrophe in
+  a commit message hid the push after it.
+- **A command the parse cannot read is refused when its text names a push.** A shell reading its
+  commands from a pipe, `source` of a substitution, function calls that grow without bound: what
+  they run is seen only when they run, and a silent pass would let the push leave unchecked.
+- **A wrapper is passed together with its keys and their values.** `time -p`, `timeout -s KILL`,
+  `sudo -u`: a key value taken for the command name hid the push behind it. The string of `env -S`
+  is parsed as a command. The zsh precommand modifiers `noglob`, `nocorrect`, `-` and `=git` stand
+  before the command the same way.
+- **A function body is judged at the call, not at the definition.** A definition sends nothing,
+  and the former sign refused it as a push; a call of the function is judged as the push in its
+  body, with the call words put in place of `$@` and `$1`. A function named `git` does not hide the
+  git call.
+- **A branch switch is found by the same parse as the push.** A pattern over the line did not see
+  `git checkout` inside `bash -c` or `eval`, and the set ran on the former branch. A new branch
+  from another start point and `gh pr checkout` are a switch; files restored after `--`, a new
+  branch from the current tip and a switch after the push are not.
 - **Several recipients in one push are several pushes.** `--all`, `--mirror`, `--branches`, a ref
   with `*` and two refs after the remote send several branches, while the set judges only the
-  current one. A word in quotes or a `$( )` is one ref; a ref that starts with `:` deletes and is not
-  counted.
+  current one. A ref with a brace expansion is several refs. A word in quotes or a `$( )` is one ref;
+  a ref that starts with `:` deletes and is not counted. With `--repo` every word after the keys counts as a ref: git takes the first of them for
+  the remote, and the sign errs towards a needless refusal rather than an unseen push.
 - **A push in the body or the condition of a loop is several pushes; a push after it is one.** The
   loop runs from `for`, `while` or `until` to its `done`. A push inside `if` or after `done` is one
-  push: the former sign took `then` and everything after a loop for a loop.
+  push: the former sign took `then` and everything after a loop for a loop. The zsh loops
+  `foreach … end` and `repeat` are loops too. `xargs`, `parallel`, `find -exec` and `watch` run
+  their command more than once, and a push under them is a push in a loop.
 - **A dry run of one call does not cover a real push next to it.** `--dry-run` and `-n` free only the
   call they stand in.
 - **A push typed into the session terminal tab is judged like a shell call.** The tab tool puts the
@@ -62,7 +85,16 @@ own turn.
   script file that pushes, a variable run as a command. The parse reads the command text, and these
   are visible only when the command runs: a pre-push git hook holds them, task RT-3046.
 - **A shell without perl.** The parse goes by perl, and without it the guard passes, as it does on
-  any breakage of its own.
+  any breakage of its own. The case stands in the `FAIL-OPEN` line of the guard header and has a
+  test of its own; it is not in `Requires`, because that line names package resources, and perl
+  is none.
+- **A wrapper the list does not name.** The list holds the wrappers this tree calls; a command
+  under another one is not judged until the wrapper is added.
+- **What the parse counts too strictly.** `shift` inside a function body is not followed, and a ref
+  with braces in quotes counts as several refs: both give a refusal the push did not need, and the
+  push is split into separate calls.
+- **A command without `git` in its text that a shell reads from its input.** It is not refused as
+  unreadable: without the word the parse has no sign of a push at all.
 
 ## Contract
 
@@ -116,7 +148,11 @@ None open.
 ## History of changes
 
 - 3 November 2026 — the subdomain is created by task RT-3044 from three intake records. After the
-  owner's review of PR #3083 the parse by patterns is replaced by a parse of shell words.
+  owner's review of PR #3083 the parse by patterns is replaced by a parse of shell words. After the
+  second review the parse learns wrapper keys with values, a heredoc with a bare delimiter,
+  function definitions, `--repo` and the branch switch; after the executor's own review it reads a
+  heredoc inside `$( )`, line continuations, `$'…'`, call words of a function and a shell given its
+  commands on the input.
 
 ## Scenarios
 

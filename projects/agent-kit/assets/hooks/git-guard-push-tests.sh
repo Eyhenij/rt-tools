@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__terminal__run_in_terminal
 # rt-hook-timeout: 1800
-# Requires: hooks/profile-check.sh, hooks/deny-tail.sh
+# Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/push-sign.sh
 # The guard of the checks before a push. PreToolUse on the push call.
 #
 # A push is the entry into the pipeline: a merge into the main branch starts the rollout, and
@@ -25,7 +25,8 @@
 # no network or no remote — the base is empty, and the profile falls back to a full run: the gate
 # may turn out stricter than needed, but NEVER weaker.
 #
-# FAIL-OPEN: not a repository, broken input, no profile — pass.
+# FAIL-OPEN: not a repository, broken input, no profile, no parse file `push-sign.sh`, no perl —
+# pass.
 
 # Its own name in the observations: the refusal is written by the shared deny tail, not by the guard.
 RT_GUARD_NAME=git-guard-push-tests
@@ -54,164 +55,19 @@ case "$cmd" in
     *) exit 0 ;;
 esac
 
-# The push calls are found by a parse of the command as the shell reads it, not by patterns over
-# the line. A push is the subcommand `push` of a `git` call, after the keys of `git` itself: `-c`
-# and `-C` carry the credentials helper and the request header, and that is the form pushed with
-# here. Patterns over the line missed in both directions. They cut `-c 'h: a; b'` at the `;`
-# inside the quotes and let that push through; they did not see `git` after `{`, `if`, `while`,
-# backticks, `bash -c` and `eval`; and they read the word in a filter of another command as a push,
-# running the whole set for more than ten minutes on a command that sends nothing.
-#
-# Quoted text is data, except where the shell runs it: `$( )`, backticks, the string of `bash -c`
-# and the words of `eval` are parsed as commands. A heredoc body is data. A stashed edit is no
-# push — `git stash push` has the subcommand `stash` and sends nothing outside.
-#
-# One line per push call: whether it stands inside a loop (`for`, `while`, `until`, from the
-# keyword to its `done`), whether it sends several branches, whether it is a dry run. Several
-# branches are `--all`, `--mirror`, `--branches`, a ref with `*`, or two refs after the remote; a
-# ref that starts with `:` deletes and is not counted. `$( )` and a quoted word stay one word.
-#
-# FAIL-OPEN: no perl — no parse, and the guard passes, like any other breakage of it.
-command -v perl >/dev/null 2>&1 || exit 0
-push_calls="$(printf '%s' "$cmd" | perl -e '
-use strict; use warnings;
-local $/; my $text = <STDIN>; $text = "" unless defined $text;
-my @out;
-sub balanced {
-    my ($s, $i) = @_; my $n = length $s; my $d = 1; my $st = $i;
-    while ($i < $n) {
-        my $c = substr($s, $i, 1);
-        if ($c eq "\x27") { my $e = index($s, "\x27", $i + 1); $i = $e < 0 ? $n : $e + 1; next; }
-        if ($c eq "\"") { $i++; while ($i < $n && substr($s, $i, 1) ne "\"") { $i++ if substr($s, $i, 1) eq "\\"; $i++; } $i++; next; }
-        if ($c eq "\\") { $i += 2; next; }
-        $d++ if $c eq "(";
-        if ($c eq ")") { $d--; return (substr($s, $st, $i - $st), $i + 1) if $d == 0; }
-        $i++;
-    }
-    return (substr($s, $st), $n);
-}
-sub tokenize {
-    my ($s) = @_; my $n = length $s; my $i = 0; my @t; my @heredocs;
-    my ($w, $have, @subs) = ("", 0);
-    my $flush = sub { push @t, { t => "w", v => $w, subs => [@subs] } if $have; $w = ""; $have = 0; @subs = (); };
-    while ($i < $n) {
-        my $c = substr($s, $i, 1);
-        if ($c eq "\n") {
-            $flush->(); push @t, { t => "s" }; $i++;
-            while (my $h = shift @heredocs) {
-                my ($delim, $strip) = @$h;
-                while ($i < $n) {
-                    my $e = index($s, "\n", $i); my $line = $e < 0 ? substr($s, $i) : substr($s, $i, $e - $i);
-                    $i = $e < 0 ? $n : $e + 1; $line =~ s/^\t+// if $strip; last if $line eq $delim;
-                }
-            }
-            next;
-        }
-        if ($c eq " " || $c eq "\t") { $flush->(); $i++; next; }
-        if ($c eq "#" && !$have) { my $e = index($s, "\n", $i); $i = $e < 0 ? $n : $e; next; }
-        if ($c eq "\\") { $w .= substr($s, $i + 1, 1) if $i + 1 < $n && substr($s, $i + 1, 1) ne "\n"; $have = 1; $i += 2; next; }
-        if ($c eq "\x27") { my $e = index($s, "\x27", $i + 1); $e = $n if $e < 0; $w .= substr($s, $i + 1, $e - $i - 1); $have = 1; $i = $e + 1; next; }
-        if ($c eq "\"") {
-            $i++; $have = 1;
-            while ($i < $n) {
-                my $d = substr($s, $i, 1);
-                if ($d eq "\"") { $i++; last; }
-                if ($d eq "\\" && $i + 1 < $n) { $w .= substr($s, $i + 1, 1); $i += 2; next; }
-                if ($d eq "\$" && substr($s, $i + 1, 1) eq "(") { my ($in, $j) = balanced($s, $i + 2); push @subs, $in; $w .= "\$(...)"; $i = $j; next; }
-                if ($d eq "`") { my $e = index($s, "`", $i + 1); $e = $n if $e < 0; push @subs, substr($s, $i + 1, $e - $i - 1); $w .= "`...`"; $i = $e + 1; next; }
-                $w .= $d; $i++;
-            }
-            next;
-        }
-        if ($c eq "\$" && substr($s, $i + 1, 1) eq "(") { my ($in, $j) = balanced($s, $i + 2); push @subs, $in; $w .= "\$(...)"; $have = 1; $i = $j; next; }
-        if ($c eq "`") { my $e = index($s, "`", $i + 1); $e = $n if $e < 0; push @subs, substr($s, $i + 1, $e - $i - 1); $w .= "`...`"; $have = 1; $i = $e + 1; next; }
-        if (substr($s, $i, 2) eq "<<" && substr($s, $i, 3) ne "<<<") {
-            $flush->(); $i += 2; my $strip = 0;
-            if (substr($s, $i, 1) eq "-") { $strip = 1; $i++; }
-            $i++ while $i < $n && substr($s, $i, 1) =~ /[ \t]/;
-            my $delim = "";
-            while ($i < $n && substr($s, $i, 1) !~ /[\s;&|<>()]/) { my $x = substr($s, $i, 1); $delim .= $x unless $x =~ /["\x27\\]/; $i++; }
-            push @heredocs, [$delim, $strip]; next;
-        }
-        if ($c =~ /[<>]/ || ($c eq "&" && substr($s, $i + 1, 1) eq ">")) {
-            if ($have && $w =~ /^\d+$/) { $w = ""; $have = 0; @subs = (); } else { $flush->(); }
-            $i++ while $i < $n && substr($s, $i, 1) =~ /[<>&|]/;
-            push @t, { t => "r" }; next;
-        }
-        if ($c =~ /[;&|()]/) {
-            $flush->(); push @t, { t => "s" };
-            my $two = substr($s, $i, 2); $i += ($two =~ /^(&&|\|\||;;|\|&)$/) ? 2 : 1; next;
-        }
-        $w .= $c; $have = 1; $i++;
-    }
-    $flush->(); return @t;
-}
-sub parse {
-    my ($s, $loop) = @_; my @cmd;
-    for my $tok (tokenize($s), { t => "s" }) {
-        if ($tok->{t} eq "s") { $loop = command(\@cmd, $loop) if @cmd; @cmd = (); next; }
-        push @cmd, $tok;
-    }
-    return $loop;
-}
-sub command {
-    my ($c, $loop) = @_; my @w; my $target = 0;
-    for my $x (@$c) {
-        if ($x->{t} eq "r") { $target = 1; next; }
-        parse($_, $loop) for @{ $x->{subs} };
-        if ($target) { $target = 0; next; }
-        push @w, $x->{v};
-    }
-    while (@w) {
-        my $k = $w[0];
-        if ($k =~ /^[A-Za-z_][A-Za-z0-9_]*=/) { shift @w; next; }
-        if ($k eq "while" || $k eq "until") { $loop++; shift @w; next; }
-        if ($k eq "for" || $k eq "select") { return $loop + 1; }
-        if ($k eq "done") { $loop-- if $loop > 0; shift @w; next; }
-        if ($k =~ /^(if|then|else|elif|fi|do|\{|\}|!|time)$/) { shift @w; next; }
-        if ($k =~ /^(command|nohup|exec|caffeinate|setsid|builtin|env|sudo|nice|ionice|stdbuf|timeout)$/) {
-            shift @w;
-            shift @w while @w && ($w[0] =~ /^-/ || $w[0] =~ /^[A-Za-z_][A-Za-z0-9_]*=/ || $w[0] =~ /^[0-9.]+[smhd]?$/);
-            next;
-        }
-        last;
-    }
-    return $loop unless @w;
-    (my $name = $w[0]) =~ s{.*/}{};
-    if ($name =~ /^(bash|sh|zsh|dash|ksh)$/) {
-        for my $j (1 .. $#w) { if ($w[$j] =~ /^-[a-z]*c[a-z]*$/ && defined $w[$j + 1]) { parse($w[$j + 1], $loop); last; } }
-        return $loop;
-    }
-    if ($name eq "eval") { parse(join(" ", @w[1 .. $#w]), $loop) if @w > 1; return $loop; }
-    return $loop unless $name eq "git";
-    my $j = 1;
-    while ($j < @w && $w[$j] =~ /^-/) { my $o = $w[$j++]; $j++ if $o =~ /^(-c|-C|--git-dir|--work-tree|--namespace|--exec-path|--config-env)$/; }
-    return $loop unless $j < @w && $w[$j] eq "push";
-    my ($dry, $several, $delete, @pos) = (0, 0, 0);
-    my @a = @w[$j + 1 .. $#w];
-    for (my $k = 0; $k < @a; $k++) {
-        my $x = $a[$k];
-        if ($x eq "--dry-run" || $x eq "-n") { $dry = 1; next; }
-        if ($x =~ /^--(all|mirror|branches)$/) { $several = 1; next; }
-        if ($x eq "--delete" || $x eq "-d") { $delete = 1; next; }
-        if ($x =~ /^(-o|--push-option|--repo|--receive-pack|--exec)$/) { $k++; next; }
-        next if $x =~ /^-/;
-        push @pos, $x;
-    }
-    shift @pos;
-    my @refs = $delete ? () : grep { !/^\+?:/ } @pos;
-    $several = 1 if @refs > 1 || grep { /\*/ } @refs;
-    push @out, join(" ", ($loop > 0 ? "loop" : "flat"), ($several ? "several" : "one"), ($dry ? "dry" : "real"));
-    return $loop;
-}
-parse($text, 0);
-print "$_\n" for @out;
-' 2>/dev/null)"
+# The push calls and the branch switches are found by the parse in `push-sign.sh`: one line per
+# call, read below. No parse file or no perl — no lines, and the guard passes.
+# shellcheck disable=SC1090
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/push-sign.sh" 2>/dev/null || true
+command -v rt_push_calls >/dev/null 2>&1 || exit 0
+push_calls="$(printf '%s' "$cmd" | rt_push_calls)"
 
 # A dry-run push sends nothing: there is no point running the whole set for it. A dry run of one
 # call does not cover a real push next to it in the same command.
 pushes="$(printf '%s\n' "$push_calls" | grep -c ' real$')"
-[ "${pushes:-0}" -gt 0 ] || exit 0
+opaque=false
+printf '%s\n' "$push_calls" | grep -qx 'opaque' && printf '%s' "$cmd" | grep -q 'git' && opaque=true
+[ "${pushes:-0}" -gt 0 ] || [ "$opaque" = true ] || exit 0
 
 # The refusal of this gate. The shared deny tail — the two lawful moves and the lawful form of a
 # bypass — may not be laid out; then there is no tail, and the reason stays as it was.
@@ -231,6 +87,13 @@ ${deny_tail_text}"
     exit 0
 }
 
+# Commands the parse cannot read are refused when the text names a push: a shell reading its
+# commands from the input, `source` of a substitution, function calls that grow without bound. What
+# such a command runs is seen only when it runs, and a silent pass would let a push leave unchecked.
+if [ "$opaque" = true ]; then
+    push_deny "BLOCKED: the command names a push, and the guard cannot read what it runs — a shell reading commands from its input, \`source\` of a substitution, or function calls that grow without bound. Run the push as a separate plain command: \`git push <remote> <branch>\`."
+fi
+
 # A branch switch in the same command is refused whole.
 #
 # The guard is a parse of the command BEFORE it runs: it runs the set in the tree that lies there
@@ -240,10 +103,12 @@ ${deny_tail_text}"
 # file that is not in the pushed branch at all — it was looking at the branch the same command was
 # leaving.
 #
-# What is judged is a switch to an existing branch. Creating a new one (`checkout -b`, `switch -c`)
-# does not fall here: a fresh branch has the same tree as it had.
-if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git[[:space:]]+(checkout|switch)[[:space:]]+" &&
-    ! printf '%s' "$cmd" | grep -qE 'git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)([[:space:]]|$)'; then
+# What is judged is a switch to another tree before the push. Creating a new branch from the current
+# tip (`checkout -b`, `switch -c`) and restoring files after `--` do not fall here: the tree stays.
+# A new branch from another start point does. A switch after the push changes nothing the set
+# judged. The switch is found by the same parse as the push: a pattern over the line did not see
+# `git checkout` inside `bash -c` or `eval`.
+if printf '%s\n' "$push_calls" | awk '$0 == "switch" { s = 1 } / real$/ && s { f = 1 } END { exit !f }'; then
     push_deny "BLOCKED: switching the branch and pushing by one command. The gate set runs on the tree that lies there at the minute the command is parsed — that is, on the FORMER branch, not the one that leaves for the hosting. A green set then reads as a check of what left, though it checked something else. Split the calls: switch first, then push by a separate command."
 fi
 
