@@ -21,6 +21,20 @@ when the epic is over.
   input, the turn came out empty, and edits and commands made in it counted as nothing. The refusal
   «nothing was done in this turn» then repeats on every exit, whatever is done. **Address:** rules
   layer — `hooks/turn-exit-verdict.sh`, the same edit as task RT-3067.
+- **Work on the hosting does not count as work of the turn.** The turn after the review of PR #3083
+  pushed the fix, rewrote the PR body, answered the review and asked for a review again. The guard
+  then refused with «nothing was done in this turn — neither an edit nor a command changing the
+  tree» four times in a row: a push and a call to the hosting do not change the working tree.
+  **Address:** rules layer — `hooks/turn-exit-verdict.sh`, the same edit as task RT-3067.
+  The same happened after the push of the third review fix: the commit, the push, the PR body,
+  the reply and the review request were done in one turn, and the guard refused three times with
+  the same text. The owner's order quoted in « » released nothing, since it lay outside the
+  window. The grill gate then refused the question about it until a tree edit came first.
+- **A move of the branch tip in the same command is not judged.** `git reset --hard <ref>`,
+  `git merge`, `git pull`, `git rebase` and `git cherry-pick` before a push change what leaves,
+  while the set ran on the tree before them. Only `checkout`, `switch` and `gh pr checkout` are
+  read as a switch. Refusing them would refuse the usual "merge main, then push" in one command.
+  Whether to judge them is the owner's decision. **Address:** rules layer — `hooks/push-sign.sh`.
 
 From the rules review of the closed task:
 

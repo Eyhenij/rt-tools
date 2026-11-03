@@ -109,7 +109,10 @@ notes.txt` and `git checkout -b new notes.txt` count as a switch, since the text
 ## Contract
 
 The subdomain has no procedures and no interface: it is the parse of a command inside the push gate
-guard. Its surface is the tool list in the guard header and the command text of the call.
+guard. Its surface is the tool list in the guard header, the command text of the call, and the lines
+the parse returns to the guard: one line per push call — whether it stands in a loop, whether it
+sends several branches, whether it is a dry run — and the lines `switch` and `opaque`. The guard
+reads these lines and nothing else of the parse.
 
 ### Refusal codes
 
@@ -163,7 +166,9 @@ None open.
   function definitions, `--repo` and the branch switch; after the executor's own review it reads a
   heredoc inside `$( )`, line continuations, `$'…'`, call words of a function and a shell given its
   commands on the input. After the third and the fourth review the start point of a new branch is
-  read by git's own rules, and files restored without `--` are no switch.
+  read by git's own rules, and files restored without `--` are no switch. After the review of the
+  pull request the companion binds every statement to the parse itself, and the lines the parse
+  returns to the guard are named in the contract.
 
 ## Scenarios
 
