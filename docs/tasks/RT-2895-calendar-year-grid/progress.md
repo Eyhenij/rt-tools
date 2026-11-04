@@ -6,18 +6,18 @@ Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
 - **Stage:** 1 of 6 — Agreement
-- **Done:** the task taken, the grill and the plan written, the agreement drafted in `proposed/`
+- **Done:** the agreement in `proposed/calendar-year-grid` committed; the Calendar frames got a panel surface each
 - **Next step:** record the mockup approval, then stage 2
 - **Uncommitted:** no
-- **Waiting for the owner:** the approval of the Figma frames `6887:785`
+- **Waiting for the owner:** the approval of the Figma frames `6887:785` and `6887:524`
 - **PR:** not open yet
 
 ## Steps
 
 - `[x]` done · `[>]` going on right now · `[ ]` not begun
 
-- [>] 1.1 Write the product agreement in `docs/specs/ui-kit-v2/proposed/calendar-year-grid/`
-- [ ] 1.2 Record the mockup approval in `approvals.md`
+- [x] 1.1 Write the product agreement in `docs/specs/ui-kit-v2/proposed/calendar-year-grid/`
+- [>] 1.2 Record the mockup approval in `approvals.md`
 - [ ] 2.1 Add the year span, the year cells and their bounds to `rt-date-panel.logic.ts`
 - [ ] 2.2 Cover them by unit tests with scenario numbers
 - [ ] 3.1 Make the year in the month grid header a button that opens the year grid
