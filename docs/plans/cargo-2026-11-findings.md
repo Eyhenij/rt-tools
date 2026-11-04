@@ -82,7 +82,9 @@ From the rules review of the closed task:
   longer than the silence limit of the app, and the session was cut off before the push left; a
   set run ahead in the background warms the nx cache, but the snapshot runs are not cached.
   **Address:** names of this tree — the subjects of `rt_push_touched` in
-  `.claude/rt-kit/project.sh`; rules layer — the run ahead of PR #3094.
+  `.claude/rt-kit/project.sh`; rules layer — the run ahead of PR #3094. An edit that puts
+  `.husky/*` among the paths without a heavy step was refused by the auto mode classifier of the
+  app as a bypass of the checks, so it waits for the owner's word.
 
 ## Left unresolved
 
