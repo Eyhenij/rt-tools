@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 6 — Year grid logic
-- **Done:** the agreement committed; in Figma each Calendar frame got its own panel surface, Calendar Day lies in one row with captions, the dark theme repeats the light spacing
-- **Next step:** the year span, the year cells and their bounds in `rt-date-panel.logic.ts`
+- **Stage:** 3 of 6 — Date choice panel
+- **Done:** the agreement committed; in Figma each Calendar frame got its own panel surface, the mockup approved; the year span logic and its tests (SC-UKV-1146–1148) are green
+- **Next step:** the year in the month grid header becomes a button that opens the year grid
 - **Uncommitted:** no
 - **Waiting for the owner:** nothing
 - **PR:** not open yet
@@ -18,9 +18,9 @@ Rewritten by every session, not appended to.
 
 - [x] 1.1 Write the product agreement in `docs/specs/ui-kit-v2/proposed/calendar-year-grid/`
 - [x] 1.2 Record the mockup approval in `approvals.md`
-- [>] 2.1 Add the year span, the year cells and their bounds to `rt-date-panel.logic.ts`
-- [ ] 2.2 Cover them by unit tests with scenario numbers
-- [ ] 3.1 Make the year in the month grid header a button that opens the year grid
+- [x] 2.1 Add the year span, the year cells and their bounds to `rt-date-panel.logic.ts`
+- [x] 2.2 Cover them by unit tests with scenario numbers
+- [>] 3.1 Make the year in the month grid header a button that opens the year grid
 - [ ] 3.2 Draw the year grid by the frame `6887:688` and cover the panel by tests
 - [ ] 4.1 Give the range calendar a pressable month title opening the month grid
 - [ ] 4.2 Draw the month and year grids by the frames `6887:721` and `6887:753` and cover them by tests
@@ -47,8 +47,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 6 — Year grid logic
-- **Next step:** the year span, the year cells and their bounds in `rt-date-panel.logic.ts`
+- **Stage:** 3 of 6 — Date choice panel
+- **Next step:** the year in the month grid header becomes a button that opens the year grid
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-2895-calendar-year-grid/progress.md`; the plan lies next to it.
