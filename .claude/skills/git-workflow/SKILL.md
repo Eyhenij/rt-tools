@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub. Load for a task and a branch, commit, push, opening a PR and merging. Names the pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — deploy-flow, audit — queue-audit.
 ---
-<!-- rt-kit v0.33.1 · rules/git-workflow.github.md · 7ff62cccfac2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · rules/git-workflow.github.md · 409562db317d · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 
@@ -132,6 +132,16 @@ flowchart TD
   person, a task by the work queue, and both read with a token other than the creating one.
 - **A refusal is read before it is bypassed by a second way.** It can be an early sign of a write
   limit, and a bypass by another call carries the sign away: the discrepancy surfaces at the owner.
+- **A push is sent only by the path the push guard stands on.** A terminal tab, a process outside
+  the session or a script run elsewhere carries the same command past the gate. A send cut off by
+  the session's end is asked of the host and repeated by the same path.
+- **A review of a foreign branch starts with the gate set run on its tip.** Reading the diff misses
+  what the set judges by the whole tree: a word, a sentence length, a file limit. The output goes
+  into the review, and a later push into that branch is run again.
+- **Where the git hook does not run, the set is taken from the tree profile whole, at the minute of
+  the run.** The profile is read together with the package default it calls, as the push guard
+  reads it. A list from memory, from a copy made earlier or from the profile alone drops checks:
+  the profile names the set, the task names only the work.
 - **The branch number and the PR title number are checked on the spot, the task state — by the
   board.** The format is read from the command text and works offline; the second tier needs
   something to ask with.

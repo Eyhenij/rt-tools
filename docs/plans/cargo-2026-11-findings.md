@@ -36,6 +36,15 @@ when the epic is over.
   read as a switch. Refusing them would refuse the usual "merge main, then push" in one command.
   Whether to judge them is the owner's decision. **Address:** rules layer — `hooks/push-sign.sh`.
 
+## RT-3045 — the delivery rule names the path of a push, a review and the set by the profile
+
+- **The profile alone prints part of the gate set and stays silent about it.** `rt_push_checks`
+  of this tree calls `rt_push_checks_default`. Sourced without the package default, it prints 31
+  lines of 46, and the missing function is named on stderr only. Through RT-3044 the executor ran
+  the set from such a copy: 15 checks never ran, among them `check-glossary` and
+  `check-archive-age`, and the push guard refused on both. **Address:** rules layer — a command
+  that prints or runs the set whole, as the guard reads it.
+
 From the rules review of the closed task:
 
 - **The push gate set does not hold the file length check.** The branch took
