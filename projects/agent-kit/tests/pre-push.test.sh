@@ -107,13 +107,19 @@ report "без профиля хук пропускает" "$(push_code "$BARE_T
 # --- раскладка -----------------------------------------------------------------------------
 # SC-AK-1246. Хук — ресурс пакета: раскладка кладёт его в каталог хуков дерева исполняемым и с
 # шапкой, как всякий хук. Без собранного пакета сценарий не идёт, и это сказано вслух.
+#
+# Раскладка идёт копией собранного пакета вне дерева, как у потребителя. Собранный пакет рядом с
+# исходниками сверяет время их правки и отказывает, если они моложе сборки: время сдвигается и без
+# правки, и сценарий краснел на наборе перед пушем, не дойдя до хука.
 LAID="$(mktemp -d)"
+PACKAGE="$(mktemp -d)"
 git -C "$LAID" init -q 2>/dev/null
 mkdir -p "$LAID/.claude"
 printf '{"layout":{"hooks":".claude/hooks"},"variants":{"host":"github"},"only":["hooks/pre-push.sh"]}\n' \
     > "$LAID/.claude/rt-kit.json"
 if [ -f "$TREE_ROOT/dist/agent-kit/bin/agent-kit.js" ]; then
-    (cd "$LAID" && node "$TREE_ROOT/dist/agent-kit/bin/agent-kit.js" sync >/dev/null 2>&1)
+    cp -R "$TREE_ROOT/dist/agent-kit" "$PACKAGE/agent-kit"
+    (cd "$LAID" && node "$PACKAGE/agent-kit/bin/agent-kit.js" sync >/dev/null 2>&1)
     [ -x "$LAID/.claude/hooks/pre-push.sh" ] && laid=да || laid=нет
     report "SC-AK-1246 — раскладка кладёт хук исполняемым" "$laid" да
     report "SC-AK-1246 — у разложенного хука шапка раскладки" \
@@ -122,6 +128,6 @@ else
     echo "  SC-AK-1246 не шёл: пакет не собран — pnpm run build:agent-kit"
 fi
 
-rm -rf "$RED" "$GREEN" "$MARKED" "$GUARD_GREEN" "$GUARD_RED" "$OTHER" "$DELETE" "$PIPE" "$BARE_TREE" "$LAID"
+rm -rf "$RED" "$GREEN" "$MARKED" "$GUARD_GREEN" "$GUARD_RED" "$OTHER" "$DELETE" "$PIPE" "$BARE_TREE" "$LAID" "$PACKAGE"
 
 suite_result "git-хук перед пушем"

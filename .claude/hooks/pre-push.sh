@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/pre-push.sh · 8e55688c1558 · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/pre-push.sh · 9bd3006d97d6 · правится надстройкой, не здесь
 # The checks before a push, as a hook of git itself, not of the agent.
 #
 # NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The version control
@@ -36,18 +36,16 @@
 repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
 cd "$repo_root" 2>/dev/null || exit 0
 
-zero='0000000000000000000000000000000000000000'
 tip="$(git rev-parse --verify --quiet HEAD 2>/dev/null)"
 
 # The refs being pushed come on the input, a line each: local ref, local sha, remote ref, remote
-# sha. What is judged is the commit each one sends.
+# sha. What is judged is the commit each one sends. A deletion comes with a sha of zeros only, of
+# any length; a real commit that merely starts with zeros is judged like any other.
 sends=0
 foreign=""
 while read -r local_ref local_sha _remote_ref _remote_sha; do
     [ -z "$local_sha" ] && continue
-    case "$local_sha" in
-        "$zero" | 0000000*) continue ;;
-    esac
+    [ -z "$(printf '%s' "$local_sha" | tr -d 0)" ] && continue
     sends=$((sends + 1))
     commit="$(git rev-parse --verify --quiet "${local_sha}^{commit}" 2>/dev/null)"
     [ -n "$commit" ] && [ "$commit" = "$tip" ] && continue
