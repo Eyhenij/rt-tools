@@ -8,6 +8,12 @@
         /* Толщина черты между вариантами и месяцами и над подвалом. */
         --rt-date-range-panel-divider-width: var(--rt-border-width-thin);
 
+        /* Скругление ячеек сеток и кнопки года. */
+        --rt-date-range-panel-cell-radius: var(--rt-radius-md);
+
+        /* Рамка текущих месяца и года: тонкая линия цвета действия внутри ячейки. */
+        --rt-date-range-panel-current-ring: inset 0 0 0 var(--rt-border-width-thin) var(--rt-color-action-primary);
+
         display: flex;
         flex-direction: column;
         padding: var(--rt-space-4);
@@ -76,7 +82,7 @@
         &__year {
             padding: var(--rt-space-1) var(--rt-space-2);
             border: none;
-            border-radius: var(--rt-radius-md);
+            border-radius: var(--rt-date-range-panel-cell-radius);
             background: none;
             color: inherit;
             cursor: pointer;
@@ -100,17 +106,18 @@
 
         &__cell {
             border: none;
-            border-radius: var(--rt-radius-md);
+            border-radius: var(--rt-date-range-panel-cell-radius);
             background: none;
             color: var(--rt-color-text-primary);
             cursor: pointer;
             font: inherit;
             font-size: var(--rt-text-sm);
             font-variant-numeric: tabular-nums;
+            font-weight: var(--rt-font-weight-medium);
             min-block-size: calc(var(--rt-size-12) + var(--rt-space-2));
 
             &:hover:not(:disabled, [aria-pressed='true']) {
-                background: var(--rt-color-bg-subtle);
+                background: var(--rt-color-bg-hover);
             }
 
             &:focus-visible {
@@ -120,7 +127,8 @@
 
             /* Текущие месяц и год обведены тонкой линией цвета действия, как сегодняшний день. */
             &[data-current]:not([aria-pressed='true']) {
-                box-shadow: inset 0 0 0 var(--rt-border-width-thin) var(--rt-color-action-primary);
+                box-shadow: var(--rt-date-range-panel-current-ring);
+                color: var(--rt-color-action-primary);
             }
 
             &[aria-pressed='true'] {
@@ -129,9 +137,8 @@
             }
 
             &:disabled {
-                color: var(--rt-color-text-muted);
+                color: var(--rt-color-text-disabled);
                 cursor: not-allowed;
-                opacity: 0.45;
             }
         }
 
