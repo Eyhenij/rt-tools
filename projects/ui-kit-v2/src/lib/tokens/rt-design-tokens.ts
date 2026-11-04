@@ -104,6 +104,7 @@ export type TRtDesignTokenName =
     | '--rt-color-stepper-current-subtle'
     | '--rt-color-stepper-progress'
     | '--rt-color-stepper-track'
+    | '--rt-color-table-bg'
     | '--rt-color-table-head-bg'
     | '--rt-color-table-pinned-shadow'
     | '--rt-color-text-disabled'
@@ -908,6 +909,7 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-color-stepper-current-subtle',
     '--rt-color-stepper-progress',
     '--rt-color-stepper-track',
+    '--rt-color-table-bg',
     '--rt-color-table-head-bg',
     '--rt-color-table-pinned-shadow',
     '--rt-color-text-disabled',

@@ -1,6 +1,6 @@
 # A pinned column of the second kit's table
 
-**Status:** in force · **Revision:** 2 November 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 4 November 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the second kit's table `rt-table`; the kit's styling tokens and the dark theme
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
@@ -39,6 +39,10 @@ The person sees no label: only the background of the cells and the shadow at the
 - **A pinned edge carries no shadow when nothing is hidden behind it.** At the start of the scroll
   the left pin has no shadow, at the end the right pin has none, and a table that fits has none.
 - **The shadow follows the scroll at once, with no wait for another event.**
+- **A shadow that is not shown takes no room.** An invisible shadow standing past the last pinned
+  column used to widen the scroll area by its own width and gave a table that fits a sideways scroll.
+- **In right-to-left writing the shadow follows the logical edge.** The column pinned at the start
+  carries its shadow while content is hidden behind the start, whichever physical side that is.
 
 ### Tokens and themes
 
@@ -47,6 +51,9 @@ The person sees no label: only the background of the cells and the shadow at the
 - **A column pinned left and a column pinned right behave alike, each with its shadow on its own
   pinned edge.**
 - **Both themes give a solid background and a visible shadow.**
+- **The table takes its background from the nearest theme around it.** A light piece inside a dark
+  page draws the table light: the background is a theme token, not a rule that reads the dark sign
+  on any ancestor.
 
 ## What is out of scope
 
