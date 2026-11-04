@@ -38,7 +38,9 @@ turn.
 ## Rules
 
 The guard of the conversation — the questions to the owner — is a subdomain of its own,
-`docs/specs/agent-kit/turn-guards/grill/`.
+`docs/specs/agent-kit/turn-guards/grill/`. The guard of the exits is split in two:
+`docs/specs/agent-kit/turn-guards/exit/` and, for a turn under an open epic,
+`docs/specs/agent-kit/turn-guards/exit-epic/`.
 
 - **A squeeze summary is never a real remark of the owner.** It retells turns that have already
   ended: a request carried out yesterday reads in it as said now, and a turn refused by it pays for

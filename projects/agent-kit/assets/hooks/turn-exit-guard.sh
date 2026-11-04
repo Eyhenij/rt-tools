@@ -179,7 +179,7 @@ next_step=""
 command -v rt_te_verdict >/dev/null 2>&1 || exit 0
 rt_te_verdict
 
-[ -z "$verdict" ] && exit 0
+[ -z "$verdict" ] && exit 0 # also a turn woken while an own background task runs, SC-AK-1247
 
 # Every sign of the verdict becomes a variable of its own name; the commands go apart, they are text.
 eval "$(printf '%s' "$verdict" | jq -r 'del(.ran) | to_entries[] | "\(.key)=\(.value | tostring | @sh)"' 2>/dev/null)"
