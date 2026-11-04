@@ -165,6 +165,7 @@ export class RtDatePanelComponent {
     /** Выбранный год — год значения; текущий — год сегодняшнего дня. */
     protected readonly chosenYear: Signal<string | null> = computed((): string | null => this.draftDay()?.slice(0, YEAR_LEN) ?? null);
     protected readonly currentYear: Signal<string> = computed((): string => this.today().slice(0, YEAR_LEN));
+    protected readonly currentMonth: Signal<string> = computed((): string => this.today().slice(0, MONTH_LEN));
     protected readonly canPrevYears: Signal<boolean> = computed((): boolean =>
         rtDateCanPageYears(this.yearStart(), -1, this.min(), this.max())
     );

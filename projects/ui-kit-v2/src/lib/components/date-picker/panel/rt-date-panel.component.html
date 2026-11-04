@@ -66,6 +66,7 @@
                                 qa-dataid="date-panel-month"
                                 type="button"
                                 [attr.data-key]="cell.key"
+                                [attr.data-current]="cell.key === currentMonth() ? '' : null"
                                 [attr.aria-pressed]="cell.key === shownMonth()"
                                 [disabled]="cell.disabled"
                                 (click)="pickMonth(cell)">

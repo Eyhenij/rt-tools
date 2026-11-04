@@ -246,6 +246,13 @@ describe('RtDatePanelComponent', (): void => {
         expect(el(fixture, '[qa-dataid="date-panel-year-cell"][data-current]')?.nativeElement.getAttribute('data-key')).toBe('2026');
     });
 
+    it('SC-UKV-1149 — the current month is outlined in the month grid', (): void => {
+        const { fixture }: IPanel = setup({ type: 'date', value: '2026-03-15' });
+        press(fixture, qa(fixture, 'calendar-month-title'));
+
+        expect(el(fixture, '[qa-dataid="date-panel-month"][data-current]')?.nativeElement.getAttribute('data-key')).toBe('2026-09');
+    });
+
     it('SC-UKV-1150 — a picked year opens the month grid of that year', (): void => {
         const { fixture }: IPanel = setup({ type: 'date', value: '2026-09-15' });
         openYears(fixture);
