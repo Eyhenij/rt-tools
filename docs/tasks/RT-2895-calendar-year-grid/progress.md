@@ -39,6 +39,8 @@ Rewritten by every session, not appended to.
 
 - **The mockup was redrawn as whole panels at the owner's word** — «На макетах недостаточно наполнения? Я же просил наполнить макет». The block «Панели кита» (`7523:2313`) draws both panels whole with every cell state. Its sizes are those of the live panels, and the match is taken against it. The snapshots move after the showcase approval. Affected stage of the plan: 5.
 
+- **The match is taken from the outer edge of the panel** — «отличается от фигмы!!! отступы и бордеры я заметил!!!». The Figma frames drew the border inside, the showcase draws it outside the content. The frames grew by the border, the middle grid column and the period summary box took the browser sizes; 178 of 178 numbers. Affected stage of the plan: 5.
+
 ## Handover of the session
 
 Put together by a hook before the compaction of the context (auto).
@@ -58,13 +60,24 @@ The progress in full — `docs/tasks/RT-2895-calendar-year-grid/progress.md`; th
 ### Uncommitted
 
 ```
- M docs/tasks/RT-2895-calendar-year-grid/progress.md
-?? docs/specs/ui-kit-v2/proposed/calendar-year-grid/
+none
 ```
 
 ### Commits over the main branch
 
 ```
+23bfe97d9 docs: совпадение витрины RT-2895 с макетом 148 из 148
+42deb65db fix(rt:ui-kit-v2): ячейки сеток месяцев и годов по ячейке периода макета
+afe173a6f docs: привязки правил договорённости RT-2895 к коду
+97d48575a docs: одобрение полного макета панелей RT-2895 и совпадение 44 из 44
+c8cb6b63d feat(rt:ui-kit-v2): текущий месяц обведён в сетке месяцев панели даты
+6c14b0615 feat(rt:ui-kit-v2): сетки месяцев и годов в панели выбора периода
+ef970baf3 feat(rt:ui-kit-v2): сетка годов в панели выбора даты
+f8410dae6 feat(rt:ui-kit-v2): логика сетки годов панели даты
+aefd00eac docs: одобрение макета RT-2895, этап 2
+3460ddea6 docs: прогресс RT-2895 — правки страницы календаря в Figma
+14b53f62e docs: прогресс RT-2895 — договорённость готова, ждёт одобрения макета
+0b926498a docs(rt:ui-kit-v2): договорённость о сетке годов и сетке месяцев выбора периода
 320ce21f1 docs: папка задачи RT-2895 и строка назначения копии
 59998db7b chore: строка копии в таблице назначений возвращена к главной ветке
 27c69ab0a docs(rt:agent-kit): сценарии заведения ветки укладываются в предел длины файла
