@@ -166,8 +166,8 @@ None open.
   function definitions, `--repo` and the branch switch; after the executor's own review it reads a
   heredoc inside `$( )`, line continuations, `$'…'`, call words of a function and a shell given its
   commands on the input. After the third and the fourth review the start point of a new branch is
-  read by git's own rules, and files restored without `--` are no switch. After the review of the
-  pull request the statements the parse carries out are bound to the parse, the ones the guard
+  read by git's own rules, and files restored without `--` are no switch. After the review of
+  request #3083 the statements the parse carries out are bound to the parse, the ones the guard
   decides stay bound to the guard, and the lines the parse returns to the guard are named in the
   contract.
 
