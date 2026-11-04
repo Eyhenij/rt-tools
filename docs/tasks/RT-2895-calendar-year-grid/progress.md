@@ -6,7 +6,7 @@ Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
 - **Stage:** 1 of 6 — Agreement
-- **Done:** the agreement in `proposed/calendar-year-grid` committed; the Calendar frames got a panel surface each
+- **Done:** the agreement committed; in Figma each Calendar frame got its own panel surface, Calendar Day lies in one row with captions, the dark theme repeats the light spacing
 - **Next step:** record the mockup approval, then stage 2
 - **Uncommitted:** no
 - **Waiting for the owner:** the approval of the Figma frames `6887:785` and `6887:524`
@@ -34,6 +34,8 @@ Rewritten by every session, not appended to.
 
 - **The branch stands on `RT-3041-branch-signature-human`** — from the main branch the branch guard
   does not accept the owner's signature yet; the fix waits in PR #3042. Affected stage of the plan: none.
+
+- **The Figma page was tidied at the owner's word** — «поправь макет сейчас все кадры под одним фоном», «макет темной темы сделай отступы как на макете светлой темы», «Calendar Day сделай нормальный понятный макет, добавь аннотации с пояснениями краткими». Affected stage of the plan: none.
 
 ## Handover of the session
 
