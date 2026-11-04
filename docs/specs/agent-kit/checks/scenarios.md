@@ -484,3 +484,15 @@ When the spec audit reads the row
 Then it does not refuse
 
 Covered: `projects/agent-kit/tests/checks-specs-colon.test.sh`.
+
+### SC-AK-1250 — a long scenario prefix is read, and a table row is named
+
+Given a scenario heading with a prefix of eight letters and no width named by the tree
+When the spec audit reads the scenarios
+Then the heading is taken as a scenario; with the width narrowed to six it is not taken again
+
+Given a table row that begins with a scenario number
+When the spec audit reads the scenarios
+Then it names the row as a scenario written as a table row
+
+Covered: `projects/agent-kit/tests/checks-specs.test.sh`.
