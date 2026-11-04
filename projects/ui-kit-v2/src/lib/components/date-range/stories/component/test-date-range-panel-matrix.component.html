@@ -41,6 +41,34 @@
         </app-story-presets>
     }
 
+    @case ('months') {
+        <app-story-presets caption="Выбор месяца в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="selectedCases" [itemLabel]="caseLabel">
+                    <ng-template let-monthCase>
+                        <div [style]="surface">
+                            <rt-date-range-panel [value]="monthCase.value" [now]="now" />
+                        </div>
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
+    @case ('years') {
+        <app-story-presets caption="Выбор года в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="selectedCases" [itemLabel]="caseLabel">
+                    <ng-template let-yearCase>
+                        <div [style]="surface">
+                            <rt-date-range-panel [value]="yearCase.value" [now]="now" />
+                        </div>
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
     @case ('sheet') {
         <!--
             Раскладка нижней шторки: панель на ширине телефона. Шторку саму по себе показывает

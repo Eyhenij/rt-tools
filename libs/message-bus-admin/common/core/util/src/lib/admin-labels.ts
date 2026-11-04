@@ -278,6 +278,8 @@ const RT_KIT_LABELS_RU: Partial<Record<TRtKitLabelKey, string>> = Object.freeze(
     uiPageOf: 'Страница {{page}} из {{last}}',
     uiPagination: 'Страницы',
     uiPerPage: 'Строк на странице:',
+    uiPickMonth: 'выберите месяц',
+    uiPickYear: 'выберите год',
     uiPrevMonth: 'Предыдущий месяц',
     uiPrevPage: 'Предыдущая страница',
     uiPrevYear: 'Предыдущий год',

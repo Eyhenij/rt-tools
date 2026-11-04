@@ -175,4 +175,62 @@ describe('RtDateRangePanelComponent', (): void => {
         expect(textOf(qa(fixture, 'date-range-title'))).toBe('Period');
         expect(textOf(qa(fixture, 'date-range-summary'))).toBe('7 days');
     });
+
+    function cellKeys(fixture: ComponentFixture<RtDateRangePanelComponent>, id: string): string[] {
+        return qaAll(fixture, id).map((node: DebugElement): string => (node.nativeElement as HTMLElement).getAttribute('data-key') ?? '');
+    }
+
+    it('SC-UKV-1151 — the month title of the period panel opens its month grid', (): void => {
+        const { fixture }: IPanel = setup({ value: { start: '2026-10-12', end: '2026-10-15' } });
+        expect(titles(fixture)).toEqual(['Октябрь 2026', 'Ноябрь 2026']);
+
+        press(fixture, qaAll(fixture, 'calendar-month-title')[0]);
+        expect(qa(fixture, 'date-range-calendar')).toBeNull();
+        expect(textOf(qa(fixture, 'date-range-year'))).toBe('2026');
+        expect(cellKeys(fixture, 'date-range-month').length).toBe(12);
+        expect(el(fixture, '[qa-dataid="date-range-month"][aria-pressed="true"]')?.nativeElement.getAttribute('data-key')).toBe('2026-10');
+        expect(el(fixture, '[qa-dataid="date-range-month"][data-current]')?.nativeElement.getAttribute('data-key')).toBe('2026-09');
+    });
+
+    it('SC-UKV-1152 — the period year grid shows twelve years and pages by twelve', (): void => {
+        const { fixture }: IPanel = setup({ value: { start: '2026-10-12', end: '2026-10-15' } });
+        press(fixture, qaAll(fixture, 'calendar-month-title')[0]);
+        press(fixture, qa(fixture, 'date-range-year'));
+
+        expect(textOf(qa(fixture, 'date-range-span'))).toContain('2024 – 2035');
+        expect(cellKeys(fixture, 'date-range-year-cell')[0]).toBe('2024');
+        expect(cellKeys(fixture, 'date-range-year-cell').length).toBe(12);
+        press(fixture, el(fixture, '[qa-dataid="date-range-next-years"] [qa-dataid="icon-button-control"]'));
+        expect(cellKeys(fixture, 'date-range-year-cell')[0]).toBe('2036');
+        expect(nav(fixture, 'date-range-prev-years').disabled).toBe(false);
+    });
+
+    it('SC-UKV-1153 — a picked month returns to its days as the first of the two months', (): void => {
+        const { fixture }: IPanel = setup({ value: { start: '2026-10-12', end: '2026-10-15' } });
+        press(fixture, qaAll(fixture, 'calendar-month-title')[1]);
+        press(fixture, qa(fixture, 'date-range-year'));
+        press(fixture, el(fixture, '[qa-dataid="date-range-year-cell"][data-key="2027"]'));
+        expect(textOf(qa(fixture, 'date-range-year'))).toBe('2027');
+
+        press(fixture, el(fixture, '[qa-dataid="date-range-month"][data-key="2027-03"]'));
+        expect(titles(fixture)).toEqual(['Март 2027', 'Апрель 2027']);
+    });
+
+    it('SC-UKV-1154 — Escape in a period grid returns one view back, in the days it closes', (): void => {
+        const { fixture, closed }: IPanel = setup({ value: { start: '2026-10-12', end: '2026-10-15' } });
+        press(fixture, qaAll(fixture, 'calendar-month-title')[0]);
+        press(fixture, qa(fixture, 'date-range-year'));
+        const escape: () => void = (): void => {
+            fixture.nativeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+            fixture.detectChanges();
+        };
+
+        escape();
+        expect(qa(fixture, 'date-range-months')).not.toBeNull();
+        escape();
+        expect(qa(fixture, 'date-range-calendar')).not.toBeNull();
+        expect(closed).not.toHaveBeenCalled();
+        escape();
+        expect(closed).toHaveBeenCalledTimes(1);
+    });
 });

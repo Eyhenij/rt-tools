@@ -5,11 +5,11 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 4 of 6 — Period choice panel
-- **Done:** the agreement committed; in Figma each Calendar frame got its own panel surface, the mockup approved; the year logic and the date panel year grid are done, SC-UKV-1146–1150 and 1154 green
-- **Next step:** the range calendar gets a pressable month title opening the month grid
+- **Stage:** 5 of 6 — Showcase and match
+- **Done:** the agreement committed; in Figma each Calendar frame got its own panel surface, the mockup approved; the year logic and both panels have the grids, SC-UKV-1146–1154 green, stories Years and Months added
+- **Next step:** the owner decides how the grids are matched to Figma: the existing panels are narrower than the frames
 - **Uncommitted:** no
-- **Waiting for the owner:** nothing
+- **Waiting for the owner:** the choice of how the grids are matched to the Figma frames
 - **PR:** not open yet
 
 ## Steps
@@ -22,9 +22,9 @@ Rewritten by every session, not appended to.
 - [x] 2.2 Cover them by unit tests with scenario numbers
 - [x] 3.1 Make the year in the month grid header a button that opens the year grid
 - [x] 3.2 Draw the year grid by the frame `6887:688` and cover the panel by tests
-- [>] 4.1 Give the range calendar a pressable month title opening the month grid
-- [ ] 4.2 Draw the month and year grids by the frames `6887:721` and `6887:753` and cover them by tests
-- [ ] 5.1 Add the new views to the panel matrix stories and take their snapshots
+- [x] 4.1 Give the range calendar a pressable month title opening the month grid
+- [x] 4.2 Draw the month and year grids by the frames `6887:721` and `6887:753` and cover them by tests
+- [>] 5.1 Add the new views to the panel matrix stories and take their snapshots
 - [ ] 5.2 Measure the showcase against the Figma frames and record the match line
 - [ ] 5.3 Show the showcase to the owner and record the second approval
 - [ ] 6.1 Merge the agreement into the domain specs
@@ -47,8 +47,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 4 of 6 — Period choice panel
-- **Next step:** the range calendar gets a pressable month title opening the month grid
+- **Stage:** 5 of 6 — Showcase and match
+- **Next step:** the owner decides how the grids are matched to Figma: the existing panels are narrower than the frames
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-2895-calendar-year-grid/progress.md`; the plan lies next to it.

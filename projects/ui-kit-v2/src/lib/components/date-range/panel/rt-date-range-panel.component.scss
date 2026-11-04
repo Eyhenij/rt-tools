@@ -54,6 +54,87 @@
             min-inline-size: calc(var(--rt-size-10) * 14 + var(--rt-space-6));
         }
 
+        /* Сетки месяцев и годов: на месте двух месяцев и той же ширины, четыре ячейки в ряд. */
+        &__grid {
+            flex: 1 1 auto;
+            min-inline-size: calc(var(--rt-size-10) * 14 + var(--rt-space-6));
+        }
+
+        &__grid-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--rt-space-4);
+        }
+
+        /* Подсказка заголовка «2026 · выберите месяц»: год в ней — кнопка к сетке годов. */
+        &__hint {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+        }
+
+        &__year {
+            padding: var(--rt-space-1) var(--rt-space-2);
+            border: none;
+            border-radius: var(--rt-radius-md);
+            background: none;
+            color: inherit;
+            cursor: pointer;
+            font: inherit;
+
+            &:hover {
+                background: var(--rt-color-bg-subtle);
+            }
+
+            &:focus-visible {
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
+            }
+        }
+
+        &__cells {
+            display: grid;
+            gap: var(--rt-space-2);
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        &__cell {
+            border: none;
+            border-radius: var(--rt-radius-md);
+            background: none;
+            color: var(--rt-color-text-primary);
+            cursor: pointer;
+            font: inherit;
+            font-size: var(--rt-text-sm);
+            font-variant-numeric: tabular-nums;
+            min-block-size: calc(var(--rt-size-12) + var(--rt-space-2));
+
+            &:hover:not(:disabled, [aria-pressed='true']) {
+                background: var(--rt-color-bg-subtle);
+            }
+
+            &:focus-visible {
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
+            }
+
+            /* Текущие месяц и год обведены тонкой линией цвета действия, как сегодняшний день. */
+            &[data-current]:not([aria-pressed='true']) {
+                box-shadow: inset 0 0 0 var(--rt-border-width-thin) var(--rt-color-action-primary);
+            }
+
+            &[aria-pressed='true'] {
+                background: var(--rt-color-action-primary);
+                color: var(--rt-color-action-on-primary);
+            }
+
+            &:disabled {
+                color: var(--rt-color-text-muted);
+                cursor: not-allowed;
+                opacity: 0.45;
+            }
+        }
+
         &__footer {
             display: flex;
             align-items: center;
@@ -91,6 +172,10 @@
 
         &--sheet &__preset {
             flex: 0 0 auto;
+        }
+
+        &--sheet &__grid {
+            min-inline-size: 0;
         }
 
         &--sheet &__calendar {

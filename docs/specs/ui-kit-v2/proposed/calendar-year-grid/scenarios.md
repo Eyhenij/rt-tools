@@ -39,15 +39,11 @@ Given the period panel shows October and November 2026
 When the person presses the title «Октябрь 2026»
 Then twelve months of 2026 are shown four in a row, with the year and arrows above
 
-Not covered: no code yet.
-
 ### SC-UKV-1152 — the period year grid shows four years in a row
 
 Given the period month grid shows 2026
 When the person presses the year in its header
 Then twelve years 2024 – 2035 are shown four in a row
-
-Not covered: no code yet.
 
 ### SC-UKV-1153 — a picked month returns to its days
 
@@ -55,12 +51,8 @@ Given a month grid is open in the period panel
 When the person picks March 2027
 Then the panel shows the days of March 2027 as the first of its two months
 
-Not covered: no code yet.
-
 ### SC-UKV-1154 — Escape in a grid returns one view back
 
 Given the year grid is open from the month grid
 When the person presses Escape
 Then the month grid is shown and the panel stays open
-
-Not covered: no code yet.
