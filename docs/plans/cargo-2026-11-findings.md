@@ -74,6 +74,20 @@ From the rules review of the closed task:
   prints the set whole; what the tree lacks is a command that runs it whole, as the guard reads
   it. **Address:** rules layer — such a command next to the state review.
 
+## RT-3046 — the git hook before a push
+
+- **A branch that touches a root setting cannot be pushed from the session.** One line in
+  `.husky/pre-push` falls into the «everything» subject of `rt_push_checks`, and the set takes both
+  showcase snapshot runs, both end-to-end suites and both image builds. The session guard ran it
+  longer than the silence limit of the app, and the session was cut off before the push left; a
+  set run ahead in the background warms the nx cache, but the snapshot runs are not cached.
+  **Address:** names of this tree — the subjects of `rt_push_touched` in
+  `.claude/rt-kit/project.sh`; rules layer — the run ahead of PR #3094. An edit that puts
+  `.husky/*` among the paths without a heavy step was refused by the auto mode classifier of the
+  app as a bypass of the checks, so it waits for the owner's word. The question about it was
+  refused by the grill gate four times in a row: each refusal counts as a new one, and the next
+  question needs a tree edit after it.
+
 ## Left unresolved
 
 - **The turn exit guard findings of RT-3044** — they are closed by task RT-3067, which is the 24th in the epic order.
