@@ -1,3 +1,4 @@
 # Одобрения
 
-- **Макет:** «Одобряю» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL/?node-id=6887-785
+- **Макет:** «Одобряю» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL/?node-id=7523-2313
+- **Совпадение:** 44 из 44 чисел

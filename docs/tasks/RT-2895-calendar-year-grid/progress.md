@@ -7,9 +7,9 @@ Rewritten by every session, not appended to.
 - **State:** `этап-идёт`
 - **Stage:** 5 of 6 — Showcase and match
 - **Done:** the agreement committed; in Figma each Calendar frame got its own panel surface, the mockup approved; the year logic and both panels have the grids, SC-UKV-1146–1154 green, stories Years and Months added
-- **Next step:** the owner decides how the grids are matched to Figma: the existing panels are narrower than the frames
+- **Next step:** the owner approves the showcase; then the snapshots of the new stories
 - **Uncommitted:** no
-- **Waiting for the owner:** the choice of how the grids are matched to the Figma frames
+- **Waiting for the owner:** the showcase approval
 - **PR:** not open yet
 
 ## Steps
@@ -24,9 +24,9 @@ Rewritten by every session, not appended to.
 - [x] 3.2 Draw the year grid by the frame `6887:688` and cover the panel by tests
 - [x] 4.1 Give the range calendar a pressable month title opening the month grid
 - [x] 4.2 Draw the month and year grids by the frames `6887:721` and `6887:753` and cover them by tests
-- [>] 5.1 Add the new views to the panel matrix stories and take their snapshots
-- [ ] 5.2 Measure the showcase against the Figma frames and record the match line
-- [ ] 5.3 Show the showcase to the owner and record the second approval
+- [x] 5.1 Add the new views to the panel matrix stories and take their snapshots
+- [x] 5.2 Measure the showcase against the Figma frames and record the match line
+- [>] 5.3 Show the showcase to the owner and record the second approval
 - [ ] 6.1 Merge the agreement into the domain specs
 - [ ] 6.2 Take the task folder apart into the archive record
 
@@ -36,6 +36,8 @@ Rewritten by every session, not appended to.
   does not accept the owner's signature yet; the fix waits in PR #3042. Affected stage of the plan: none.
 
 - **The Figma page was tidied at the owner's word** — «поправь макет сейчас все кадры под одним фоном», «макет темной темы сделай отступы как на макете светлой темы», «Calendar Day сделай нормальный понятный макет, добавь аннотации с пояснениями краткими». Affected stage of the plan: none.
+
+- **The mockup was redrawn as whole panels at the owner's word** — «На макетах недостаточно наполнения? Я же просил наполнить макет». The block «Панели кита» (`7523:2313`) draws both panels whole with every cell state. Its sizes are those of the live panels, and the match is taken against it. The snapshots move after the showcase approval. Affected stage of the plan: 5.
 
 ## Handover of the session
 
@@ -48,7 +50,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 5 of 6 — Showcase and match
-- **Next step:** the owner decides how the grids are matched to Figma: the existing panels are narrower than the frames
+- **Next step:** the owner approves the showcase; then the snapshots of the new stories
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-2895-calendar-year-grid/progress.md`; the plan lies next to it.
