@@ -7,9 +7,9 @@ Rewritten by every session, not appended to.
 - **State:** `этап-идёт`
 - **Stage:** 5 of 6 — Showcase and match
 - **Done:** the agreement committed; in Figma each Calendar frame got its own panel surface, the mockup approved; the year logic and both panels have the grids, SC-UKV-1146–1154 green, stories Years and Months added
-- **Next step:** the owner approves the sheet frames `7539:574` and `7539:595`; then the 20px side padding of both panels in the sheet, the match and the showcase approval
+- **Next step:** the owner approves the showcase — the grids and both panels in the sheet; then the snapshots of the changed stories
 - **Uncommitted:** no
-- **Waiting for the owner:** the approval of the sheet mockup
+- **Waiting for the owner:** the showcase approval
 - **PR:** not open yet
 
 ## Steps
@@ -41,7 +41,7 @@ Rewritten by every session, not appended to.
 
 - **The match is taken from the outer edge of the panel** — «отличается от фигмы!!! отступы и бордеры я заметил!!!». The Figma frames drew the border inside, the showcase draws it outside the content. The frames grew by the border, the middle grid column and the period summary box took the browser sizes; 178 of 178 numbers. Affected stage of the plan: 5.
 
-- **The side padding of both panels in the sheet joins this task** — «почему не включить в эту задачу?». In the sheet the panel drops its side padding, and the sheet body has none, so days and arrows touch the screen edge. The frames `7539:574` and `7539:595` draw both panels with 20px, the padding of the sheet header and footer. The code waits for the mockup approval. Affected stage of the plan: 5.
+- **The side padding of both panels in the sheet joins this task** — «почему не включить в эту задачу?». In the sheet the panel drops its side padding, and the sheet body has none, so days and arrows touch the screen edge. The frames `7539:574` and `7539:595` draw both panels with 20px, the padding of the sheet header and footer. The mockup is approved, both panels take `--rt-space-5` in the sheet; the sheet frames match the showcase 84 of 84. Affected stage of the plan: 5.
 
 ## Handover of the session
 
