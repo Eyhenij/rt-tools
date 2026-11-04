@@ -41,6 +41,8 @@ Rewritten by every session, not appended to.
 
 - **The match is taken from the outer edge of the panel** — «отличается от фигмы!!! отступы и бордеры я заметил!!!». The Figma frames drew the border inside, the showcase draws it outside the content. The frames grew by the border, the middle grid column and the period summary box took the browser sizes; 178 of 178 numbers. Affected stage of the plan: 5.
 
+- **The side padding of both panels in the sheet joins this task** — «почему не включить в эту задачу?». In the sheet the panel drops its side padding, and the sheet body has none, so days and arrows touch the screen edge. The frames `7539:574` and `7539:595` draw both panels with 20px, the padding of the sheet header and footer. The code waits for the mockup approval. Affected stage of the plan: 5.
+
 ## Handover of the session
 
 Put together by a hook before the compaction of the context (auto).
