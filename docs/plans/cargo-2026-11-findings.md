@@ -76,9 +76,13 @@ From the rules review of the closed task:
 
 ## RT-3046 — the git hook before a push
 
-- **`git push --no-verify` skips the git hook, and the session guard does not refuse it.** The
-  hook now holds a push the session guard does not see; the key removes that hold by git's design.
-  **Address:** rules layer — `hooks/push-sign.sh` and `hooks/git-guard-push-tests.sh`.
+- **A branch that touches a root setting cannot be pushed from the session.** One line in
+  `.husky/pre-push` falls into the «everything» subject of `rt_push_checks`, and the set takes both
+  showcase snapshot runs, both end-to-end suites and both image builds. The session guard ran it
+  longer than the silence limit of the app, and the session was cut off before the push left; a
+  set run ahead in the background warms the nx cache, but the snapshot runs are not cached.
+  **Address:** names of this tree — the subjects of `rt_push_touched` in
+  `.claude/rt-kit/project.sh`; rules layer — the run ahead of PR #3094.
 
 ## Left unresolved
 

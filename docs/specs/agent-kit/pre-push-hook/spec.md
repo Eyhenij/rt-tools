@@ -53,8 +53,9 @@ There is no interface: the hook is seen as its lines in the push output and as a
 
 ## What is out of scope
 
-- **`git push --no-verify`.** It skips the hook by git's design. Refusing it is the work of the
-  session guard, and the guard does not refuse it yet.
+- **A skip of the hooks.** `git push --no-verify`, `-c core.hooksPath=<path>` and `HUSKY=0` skip
+  the git hook by git's design. Inside the session they are refused by the subdomain
+  `no-verify-guard`; outside it nothing refuses them.
 - **The per-check marks of a set run ahead.** The mark here holds one commit and the whole set; a
   run ahead of the push is another subdomain's work.
 - **The wiring in a tree without a hooks manager.** The template header names the copy command,
