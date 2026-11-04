@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/git-guard-push-tests.sh · 4e6fb7f96510 · правится надстройкой, не здесь
-# rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
+# rt-kit v0.33.1 · hooks/git-guard-push-tests.sh · 57e7e0c5a489 · правится надстройкой, не здесь
+# rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__terminal__run_in_terminal
 # rt-hook-timeout: 1800
-# Requires: hooks/profile-check.sh, hooks/deny-tail.sh
+# Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/push-sign.sh
 # The guard of the checks before a push. PreToolUse on the push call.
 #
 # A push is the entry into the pipeline: a merge into the main branch starts the rollout, and
@@ -26,7 +26,8 @@
 # no network or no remote — the base is empty, and the profile falls back to a full run: the gate
 # may turn out stricter than needed, but NEVER weaker.
 #
-# FAIL-OPEN: not a repository, broken input, no profile — pass.
+# FAIL-OPEN: not a repository, broken input, no profile, no parse file `push-sign.sh`, no perl —
+# pass.
 
 # Its own name in the observations: the refusal is written by the shared deny tail, not by the guard.
 RT_GUARD_NAME=git-guard-push-tests
@@ -40,34 +41,34 @@ input="$RT_HOOK_INPUT"
 
 tool="$(rt_hook_tool)"
 case "$tool" in
-    # The environment terminal and the universal runner put the command into the same field.
-    Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
+    # The environment terminal, the universal runner and the session terminal tab put the command
+    # into the same field. Left out of this list, the tab carried a push past the gate after two
+    # refusals: the tree has no git hook, and nothing else would have run the set.
+    Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool | mcp__terminal__run_in_terminal) ;;
     *) exit 0 ;;
 esac
 
 cmd="$(rt_hook_cmd)"
 
-# A push call is recognised by two signs at once — the `git` command at the start of the line or
-# after a separator, and the word `push` as a separate word. By the same technique as the delivery
-# guard: the substring "git push" alone does not catch a push — the credentials helper and the
-# request header are put between them by `-c` keys, and that is exactly the form pushed with here.
-# While the sign was a substring, the whole gate set was not run at all on such a push, and the
-# silence of the guard read as "green".
-# A loop body starts after `do`, `then` or `else`: a push there is a push too.
-printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git([[:space:]]|\$)|(^|[;&|[:space:]])(do|then|else)[[:space:]]+git[[:space:]]" || exit 0
-
-# A stashed edit is never a push: `git stash push` puts the edit into the stash of this same
-# machine and sends nothing outside. The word `push` in it stands separate, and without this line
-# the guard ran the whole set on it and then refused the call on the first red check — that is, it
-# refused a command that sends nothing anywhere. The stash is cut out of the line, and the sign is
-# counted on the remainder: in a compound command a real push may stand next to it.
-probe="$(printf '%s' "$cmd" | sed -E 's/git[[:space:]]+stash[[:space:]]+push/git stash/g')"
-printf '%s' "$probe" | grep -qE '(^|[[:space:]])push([[:space:]]|$)' || exit 0
-
-# A dry-run push sends nothing: there is no point running the whole set for it.
+# Without the word there is no push at all, and the parse below is not paid for.
 case "$cmd" in
-    *--dry-run*) exit 0 ;;
+    *push*) ;;
+    *) exit 0 ;;
 esac
+
+# The push calls and the branch switches are found by the parse in `push-sign.sh`: one line per
+# call, read below. No parse file or no perl — no lines, and the guard passes.
+# shellcheck disable=SC1090
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/push-sign.sh" 2>/dev/null || true
+command -v rt_push_calls >/dev/null 2>&1 || exit 0
+push_calls="$(printf '%s' "$cmd" | rt_push_calls)"
+
+# A dry-run push sends nothing: there is no point running the whole set for it. A dry run of one
+# call does not cover a real push next to it in the same command.
+pushes="$(printf '%s\n' "$push_calls" | grep -c ' real$')"
+opaque=false
+printf '%s\n' "$push_calls" | grep -qx 'opaque' && printf '%s' "$cmd" | grep -q 'git' && opaque=true
+[ "${pushes:-0}" -gt 0 ] || [ "$opaque" = true ] || exit 0
 
 # The refusal of this gate. The shared deny tail — the two lawful moves and the lawful form of a
 # bypass — may not be laid out; then there is no tail, and the reason stays as it was.
@@ -87,6 +88,13 @@ ${deny_tail_text}"
     exit 0
 }
 
+# Commands the parse cannot read are refused when the text names a push: a shell reading its
+# commands from the input, `source` of a substitution, function calls that grow without bound. What
+# such a command runs is seen only when it runs, and a silent pass would let a push leave unchecked.
+if [ "$opaque" = true ]; then
+    push_deny "BLOCKED: the command names a push, and the guard cannot read what it runs — a shell reading commands from its input, \`source\` of a substitution, or function calls that grow without bound. Run the push as a separate plain command: \`git push <remote> <branch>\`."
+fi
+
 # A branch switch in the same command is refused whole.
 #
 # The guard is a parse of the command BEFORE it runs: it runs the set in the tree that lies there
@@ -96,17 +104,26 @@ ${deny_tail_text}"
 # file that is not in the pushed branch at all — it was looking at the branch the same command was
 # leaving.
 #
-# What is judged is a switch to an existing branch. Creating a new one (`checkout -b`, `switch -c`)
-# does not fall here: a fresh branch has the same tree as it had.
-if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git[[:space:]]+(checkout|switch)[[:space:]]+" &&
-    ! printf '%s' "$cmd" | grep -qE 'git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)([[:space:]]|$)'; then
+# What is judged is a switch to another tree before the push. Creating a new branch from the current
+# tip (`checkout -b`, `switch -c`) and restoring files do not fall here: the tree stays. A new
+# branch from another start point does. A switch after the push changes nothing the set judged.
+# The switch is found by the same parse as the push: a pattern over the line did not see
+# `git checkout` inside `bash -c` or `eval`.
+switched=false
+printf '%s\n' "$push_calls" | awk '$0 == "switch" { s = 1 } / real$/ && s { f = 1 } END { exit !f }' && switched=true
+if [ "$switched" = true ]; then
     push_deny "BLOCKED: switching the branch and pushing by one command. The gate set runs on the tree that lies there at the minute the command is parsed — that is, on the FORMER branch, not the one that leaves for the hosting. A green set then reads as a check of what left, though it checked something else. Split the calls: switch first, then push by a separate command."
 fi
 
 # Several pushes in one command, or a push inside a loop, are refused whole. The set runs once
 # per call on the tree that lies there, and every other branch leaves unchecked.
-pushes="$(printf '%s' "$probe" | grep -oE "${RT_CMD_BOUND}git([[:space:]]+-c[[:space:]]+[^[:space:]]+)*[[:space:]]+push([[:space:]]|\$)" | wc -l | tr -d ' ')"
-if [ "${pushes:-0}" -gt 1 ] || printf '%s' "$probe" | grep -qE '(^|[;&|[:space:]])(do|then|else)[[:space:]]+git[[:space:]].*push'; then
+# A push after `done` or inside `if` is one push; a push in the body or the condition of a loop is
+# not. Several recipients in one call are several pushes too, and the parse above names them.
+looped=false
+printf '%s\n' "$push_calls" | grep -q '^loop .* real$' && looped=true
+several_refs=false
+printf '%s\n' "$push_calls" | grep -q ' several real$' && several_refs=true
+if [ "${pushes:-0}" -gt 1 ] || [ "$looped" = true ] || [ "$several_refs" = true ]; then
     push_deny "BLOCKED: several pushes by one command. The gate set runs once per call, on the tree that lies there — every other branch leaves for the hosting unchecked. Push each branch by a separate call, after switching to it."
 fi
 

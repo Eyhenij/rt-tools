@@ -1,6 +1,6 @@
 # The delivery guards and the push gate
 
-**Status:** in force · **Revision:** 2026-08-20 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-03 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `delivery`, `verifiability`
 **Procedures:** none
@@ -133,11 +133,13 @@ refuses the push.
   it in the same command is recognised as before.
 - **Switching a branch in the same command refuses the push whole.** The guard takes the command
   apart before it is run, and it runs the set in the tree that lies now: a compound "switch and push"
-  passes the gate by the former branch, checking the wrong thing silently. Creating a new branch does
-  not fall under this — for a fresh branch the tree is the same as it was.
+  passes the gate by the former branch, checking the wrong thing silently. A new branch from the
+  current tip and files restored after `--` do not fall under this — the tree stays as it was; a new
+  branch from another start point and `gh pr checkout` do. A switch after the push is not judged.
 - **Several pushes in one command, or a push inside a loop, refuse the command whole.** The set runs
   once per call, on the tree that lies there, and every other branch leaves unchecked. A loop body
-  after `do`, `then` or `else` is read as a command of its own.
+  after `do`, `then` or `else` is read as a command of its own. What counts as a push and how many
+  branches one call sends is the subdomain `push-sign`.
 - **The identity of the machine record is confirmed by the answer of the hosting, not by recognising
   a string.** A familiar look of a string is never a confirmation: the miss looked familiar. What
   exactly to ask with the tree knows — for a limited record a search by number answers "not found"
@@ -329,6 +331,9 @@ The open questions of the domain are shared, and they live in the spec next to i
 
 ## History of changes
 
+- 2026-11-03 — what counts as a push and how many branches one call sends moved into the subdomain
+  `push-sign`, task RT-3044. The branch switch is found by the same parse; a new branch from
+  another start point is a switch, a switch after the push is not judged.
 - 2026-09-21 — the push gate names every red light check by one refusal, task RT-2302.
 
 - 2026-09-05 — creating a branch is recognised with a flag before `-b`, task RT-1799.

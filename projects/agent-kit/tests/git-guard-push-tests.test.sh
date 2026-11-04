@@ -33,6 +33,33 @@ gate "пробный пуш набора не гоняет" "$RED_GATE" 'git pus
 gate "чтение истории пушем не считается" "$RED_GATE" 'git log --oneline -5' PASS
 gate "слово push без команды git пушем не считается" "$RED_GATE" 'npm run push' PASS
 
+# SC-AK-1237. Пуш — подкоманда того же вызова git. Чтение запусков конвейера с отбором по событию
+# push гоняло весь набор дольше десяти минут, а потом отбивало команду, которая ничего не шлёт.
+gate "SC-AK-1237 — слово push в отборе другой команды пушем не считается" "$RED_GATE" \
+    "git fetch origin && gh run list --json event --jq '.[] | select(.event == push)'" PASS
+gate "SC-AK-1237 — слово push в тексте другой команды пушем не считается" "$RED_GATE" \
+    'git fetch origin && echo push later' PASS
+gate "SC-AK-1237 — слово push после ключа git пушем не считается" "$RED_GATE" \
+    'git log --grep push -5' PASS
+gate "SC-AK-1237 — пуш с ключами -c и -C узнаётся" "$RED_GATE" \
+    'git -C . -c credential.helper= push origin RT-72-gate' deny
+gate "SC-AK-1237 — пуш после другой команды git узнаётся" "$RED_GATE" \
+    'git fetch origin && git push origin RT-72-gate' deny
+
+# Формы команды, которые разбор читает как пуш, несколько пушей и переключение ветки, проверяет
+# набор `push-sign.test.sh`.
+
+# SC-AK-1239. Пуш, набранный во вкладке терминала сессии, судится как вызов оболочки.
+terminal_gate() {
+    local label="$1" dir="$2" cmd="$3" want="$4" out
+    out="$(CLAUDE_PROJECT_DIR="$dir" input_cmd "$cmd" mcp__terminal__run_in_terminal "$dir" \
+        | CLAUDE_PROJECT_DIR="$dir" "$HOOKS/git-guard-push-tests.sh" 2>/dev/null \
+        | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null)"
+    report "$label" "${out:-PASS}" "$want"
+}
+terminal_gate "SC-AK-1239 — пуш во вкладке терминала отбит красным набором" "$RED_GATE" \
+    'git push origin RT-72-gate' deny
+
 printf 'rt_push_checks() { printf "%%s\\n" true; }\n' > "$RED_GATE/.claude/rt-kit/project.sh"
 gate "зелёный набор пуш не задерживает" "$RED_GATE" 'git push origin RT-72-gate' PASS
 rm -rf "$RED_GATE"
