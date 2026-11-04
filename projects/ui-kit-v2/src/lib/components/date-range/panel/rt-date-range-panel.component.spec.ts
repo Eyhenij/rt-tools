@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { signal, DebugElement } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
@@ -232,5 +235,16 @@ describe('RtDateRangePanelComponent', (): void => {
         expect(closed).not.toHaveBeenCalled();
         escape();
         expect(closed).toHaveBeenCalledTimes(1);
+    });
+
+    /* Раскладку среда спеков не считает, поэтому проверяется правило шторки в стилях панели;
+       сам отступ на экране закрывает кадр истории Sheet. */
+    it('SC-UKV-1156 — в шторке панель периода держит боковой отступ шапки и подвала шторки', () => {
+        const styles: string = readFileSync(join(__dirname, 'rt-date-range-panel.component.scss'), 'utf8');
+        const start: number = styles.indexOf('&--sheet {');
+        const sheet: string = styles.slice(start, styles.indexOf('}', start));
+
+        expect(start).toBeGreaterThan(-1);
+        expect(sheet).toContain('padding-inline: var(--rt-space-5);');
     });
 });
