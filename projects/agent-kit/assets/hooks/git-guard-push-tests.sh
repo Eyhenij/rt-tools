@@ -104,11 +104,13 @@ fi
 # leaving.
 #
 # What is judged is a switch to another tree before the push. Creating a new branch from the current
-# tip (`checkout -b`, `switch -c`) and restoring files after `--` do not fall here: the tree stays.
-# A new branch from another start point does. A switch after the push changes nothing the set
-# judged. The switch is found by the same parse as the push: a pattern over the line did not see
+# tip (`checkout -b`, `switch -c`) and restoring files do not fall here: the tree stays. A new
+# branch from another start point does. A switch after the push changes nothing the set judged.
+# The switch is found by the same parse as the push: a pattern over the line did not see
 # `git checkout` inside `bash -c` or `eval`.
-if printf '%s\n' "$push_calls" | awk '$0 == "switch" { s = 1 } / real$/ && s { f = 1 } END { exit !f }'; then
+switched=false
+printf '%s\n' "$push_calls" | awk '$0 == "switch" { s = 1 } / real$/ && s { f = 1 } END { exit !f }' && switched=true
+if [ "$switched" = true ]; then
     push_deny "BLOCKED: switching the branch and pushing by one command. The gate set runs on the tree that lies there at the minute the command is parsed — that is, on the FORMER branch, not the one that leaves for the hosting. A green set then reads as a check of what left, though it checked something else. Split the calls: switch first, then push by a separate command."
 fi
 
