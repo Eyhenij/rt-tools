@@ -4,10 +4,10 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `замысел-записан`
+- **State:** `этап-идёт`
 - **Stage:** 1 of 6 — Agreement
-- **Done:** the task taken, the branch from the signature-fix branch, the grill and the plan written
-- **Next step:** the product agreement, after the owner approves the mockup
+- **Done:** the task taken, the grill and the plan written, the agreement drafted in `proposed/`
+- **Next step:** record the mockup approval, then stage 2
 - **Uncommitted:** no
 - **Waiting for the owner:** the approval of the Figma frames `6887:785`
 - **PR:** not open yet
@@ -34,3 +34,40 @@ Rewritten by every session, not appended to.
 
 - **The branch stands on `RT-3041-branch-signature-human`** — from the main branch the branch guard
   does not accept the owner's signature yet; the fix waits in PR #3042. Affected stage of the plan: none.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools
+**Branch:** RT-2895-calendar-year-grid
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 1 of 6 — Agreement
+- **Next step:** record the mockup approval, then stage 2
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-2895-calendar-year-grid/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M docs/tasks/RT-2895-calendar-year-grid/progress.md
+?? docs/specs/ui-kit-v2/proposed/calendar-year-grid/
+```
+
+### Commits over the main branch
+
+```
+320ce21f1 docs: папка задачи RT-2895 и строка назначения копии
+59998db7b chore: строка копии в таблице назначений возвращена к главной ветке
+27c69ab0a docs(rt:agent-kit): сценарии заведения ветки укладываются в предел длины файла
+b65558967 docs: папка RT-3041 разобрана в запись архива
+861468d41 chore: адрес владельца в списке людей, подписывающих коммиты
+37dd58795 fix(rt:agent-kit): заведение ветки принимает подпись человека из RT_HUMAN_EMAILS
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.
