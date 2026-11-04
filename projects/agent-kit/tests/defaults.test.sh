@@ -231,6 +231,32 @@ report "SC-AK-256 — сверка раскладки стоит в наборе
     "$(rt_push_checks '' | grep -c 'agent-kit sync --check')" 1
 report "SC-AK-256 — сверка идёт раньше долгого прогона" \
     "$(rt_push_checks '' | head -n 1 | grep -c 'agent-kit sync --check')" 1
+# SC-AK-1248. Без файла прогона сценариев гардов строка их прогона выпадала из набора молча, и
+# пуш, правящий гарды, не гонял ни одного сценария. Теперь набор называет недостающий файл.
+HOOKS_REPO="$(mktemp -d)"
+git -C "$HOOKS_REPO" init -q 2>/dev/null
+git -C "$HOOKS_REPO" -c user.name=t -c user.email=t@t -c commit.gpgsign=false commit -q --allow-empty -m base
+git -C "$HOOKS_REPO" branch base
+gap_lines() { CLAUDE_PROJECT_DIR="$HOOKS_REPO" rt_push_checks "$1" | grep -c 'guard scenarios'; }
+mkdir -p "$HOOKS_REPO/docs"
+printf 'x\n' > "$HOOKS_REPO/docs/a.md"
+git -C "$HOOKS_REPO" add -A && git -C "$HOOKS_REPO" -c user.name=t -c user.email=t@t -c commit.gpgsign=false commit -q -m docs
+report "SC-AK-1248 — ветка без правки гардов строки не получает" "$(gap_lines base)" 0
+mkdir -p "$HOOKS_REPO/.claude/hooks"
+printf '#!/bin/sh\n' > "$HOOKS_REPO/.claude/hooks/guard.sh"
+git -C "$HOOKS_REPO" add -A && git -C "$HOOKS_REPO" -c user.name=t -c user.email=t@t -c commit.gpgsign=false commit -q -m hook
+report "SC-AK-1248 — правка гарда без файла прогона называет файл" \
+    "$(CLAUDE_PROJECT_DIR="$HOOKS_REPO" rt_push_checks base | grep 'guard scenarios' | grep -c "$RT_HOOKS_TESTS")" 1
+report "SC-AK-1248 — строка о недостающем файле проходит" \
+    "$(gap="$(CLAUDE_PROJECT_DIR="$HOOKS_REPO" rt_push_checks base | grep 'guard scenarios')" \
+        && [ -n "$gap" ] && (cd "$HOOKS_REPO" && eval "$gap") >/dev/null && echo да)" да
+report "SC-AK-1248 — без базы строки нет" "$(gap_lines '')" 0
+mkdir -p "$HOOKS_REPO/.claude/hooks/tests"
+printf '#!/bin/sh\nexit 0\n' > "$HOOKS_REPO/.claude/hooks/tests/run.sh"
+chmod +x "$HOOKS_REPO/.claude/hooks/tests/run.sh"
+report "SC-AK-1248 — с файлом прогона строки нет" "$(gap_lines base)" 0
+rm -rf "$HOOKS_REPO"
+
 mkdir -p "$TREE/tools" "$TREE/.claude/hooks/tests"
 printf '' > "$TREE/tools/check-specs.mjs"
 printf '#!/bin/sh\nexit 0\n' > "$TREE/.claude/hooks/tests/run.sh"

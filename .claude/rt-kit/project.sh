@@ -202,8 +202,10 @@ node tools/check-kit-approval.mjs
 bash tools/tests/run.sh
 EOF
 
+    # The guard scenarios run here by `nx affected -t test-hooks` below, not by a run file, so the
+    # package line naming a missing run file would be false in this tree.
     rt_push_checks_default "$1" \
-        | grep -vE 'agent-kit sync --check|nx (run-many|affected) -t lint test build|stylelint "\*\*/\*\.scss"|tools/check-(specs|dupes|push-gate)\.mjs'
+        | grep -vE 'agent-kit sync --check|nx (run-many|affected) -t lint test build|stylelint "\*\*/\*\.scss"|tools/check-(specs|dupes|push-gate)\.mjs|guard scenarios:'
 
     cat <<'EOF'
 pnpm exec nx affected -t lint typecheck test build --parallel
