@@ -7,9 +7,9 @@ Rewritten by every session, not appended to.
 - **State:** `этап-идёт`
 - **Stage:** 5 of 6 — Showcase and match
 - **Done:** the agreement committed; in Figma each Calendar frame got its own panel surface, the mockup approved; the year logic and both panels have the grids, SC-UKV-1146–1154 green, stories Years and Months added
-- **Next step:** the owner approves the showcase; then the snapshots of the new stories
+- **Next step:** the owner approves the sheet frames `7539:574` and `7539:595`; then the 20px side padding of both panels in the sheet, the match and the showcase approval
 - **Uncommitted:** no
-- **Waiting for the owner:** the showcase approval
+- **Waiting for the owner:** the approval of the sheet mockup
 - **PR:** not open yet
 
 ## Steps
