@@ -36,22 +36,15 @@ when the epic is over.
   read as a switch. Refusing them would refuse the usual "merge main, then push" in one command.
   Whether to judge them is the owner's decision. **Address:** rules layer — `hooks/push-sign.sh`.
 
-## RT-3045 — the delivery rule names the path of a push, a review and the set by the profile
-
-- **The profile alone prints part of the gate set and stays silent about it.** `rt_push_checks`
-  of this tree calls `rt_push_checks_default`. Sourced without the package default, it prints 31
-  lines of 46, and the missing function is named on stderr only. Through RT-3044 the executor ran
-  the set from such a copy: 15 checks never ran, among them `check-glossary` and
-  `check-archive-age`, and the push guard refused on both. **Address:** rules layer — a command
-  that prints or runs the set whole, as the guard reads it.
-
 From the rules review of the closed task:
 
-- **The push gate set does not hold the file length check.** The branch took
-  `docs/specs/agent-kit/delivery-gate/scenarios.md` to 519 lines against the limit of 500, the
-  whole set before the push was green, and `node tools/check-file-size.mjs` refused only when run by
-  hand. The scenarios were moved into the subdomain `push-sign` by the same branch. **Address:**
-  names of this tree — `rt_push_checks` in `.claude/rt-kit/project.sh`.
+- **The file length check was missed by a partial copy of the set, not by the set.** The branch
+  took `docs/specs/agent-kit/delivery-gate/scenarios.md` to 519 lines against the limit of 500, the
+  set run by hand before the push was green, and `node tools/check-file-size.mjs` refused only when
+  run apart. The check stands in the set through the package default; the copy that was run had
+  been read from the profile alone, as the RT-3045 finding below describes. The scenarios were
+  moved into the subdomain `push-sign` by the same branch. **Address:** closed by the RT-3045
+  article about running the set whole.
 - **`specs:for` lists several specs for one file, and the first one was taken.** For
   `hooks/git-guard-push-tests.sh` it printed `checks/spec.md` first, with one binding, and
   `delivery-gate/spec.md` second, with ten. The move to `in_work` named the first. **Address:**
@@ -71,6 +64,16 @@ From the rules review of the closed task:
   disputable record there, and `cargo:close` moves a foreign record only into «fixed» and
   «released». **Address:** names of this tree — the rule `cargo-triage`.
 
+## RT-3045 — the delivery rule names the path of a push, a review and the set by the profile
+
+- **The profile alone prints part of the gate set and stays silent about it.** `rt_push_checks`
+  of this tree calls `rt_push_checks_default`. Sourced without the package default, it prints 31
+  lines of 46, and the missing function is named on stderr only. Through RT-3044 the executor ran
+  the set from such a copy: 15 checks never ran, among them `check-glossary` and
+  `check-archive-age`, and the push guard refused on both. The state review `agent-kit doctor`
+  prints the set whole; what the tree lacks is a command that runs it whole, as the guard reads
+  it. **Address:** rules layer — such a command next to the state review.
+
 ## Left unresolved
 
-- **The finding above** — it is closed by task RT-3067, which is the 24th in the epic order.
+- **The turn exit guard findings of RT-3044** — they are closed by task RT-3067, which is the 24th in the epic order.
