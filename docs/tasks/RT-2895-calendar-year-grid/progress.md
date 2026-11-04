@@ -5,11 +5,11 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 6 — Agreement
+- **Stage:** 2 of 6 — Year grid logic
 - **Done:** the agreement committed; in Figma each Calendar frame got its own panel surface, Calendar Day lies in one row with captions, the dark theme repeats the light spacing
-- **Next step:** record the mockup approval, then stage 2
+- **Next step:** the year span, the year cells and their bounds in `rt-date-panel.logic.ts`
 - **Uncommitted:** no
-- **Waiting for the owner:** the approval of the Figma frames `6887:785` and `6887:524`
+- **Waiting for the owner:** nothing
 - **PR:** not open yet
 
 ## Steps
@@ -17,8 +17,8 @@ Rewritten by every session, not appended to.
 - `[x]` done · `[>]` going on right now · `[ ]` not begun
 
 - [x] 1.1 Write the product agreement in `docs/specs/ui-kit-v2/proposed/calendar-year-grid/`
-- [>] 1.2 Record the mockup approval in `approvals.md`
-- [ ] 2.1 Add the year span, the year cells and their bounds to `rt-date-panel.logic.ts`
+- [x] 1.2 Record the mockup approval in `approvals.md`
+- [>] 2.1 Add the year span, the year cells and their bounds to `rt-date-panel.logic.ts`
 - [ ] 2.2 Cover them by unit tests with scenario numbers
 - [ ] 3.1 Make the year in the month grid header a button that opens the year grid
 - [ ] 3.2 Draw the year grid by the frame `6887:688` and cover the panel by tests
@@ -47,8 +47,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 6 — Agreement
-- **Next step:** record the mockup approval, then stage 2
+- **Stage:** 2 of 6 — Year grid logic
+- **Next step:** the year span, the year cells and their bounds in `rt-date-panel.logic.ts`
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-2895-calendar-year-grid/progress.md`; the plan lies next to it.
