@@ -5,11 +5,11 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 5 of 6 — Showcase and match
-- **Done:** the agreement committed; in Figma each Calendar frame got its own panel surface, the mockup approved; the year logic and both panels have the grids, SC-UKV-1146–1154 green, stories Years and Months added
-- **Next step:** the owner approves the showcase — the grids and both panels in the sheet; then the snapshots of the changed stories
+- **Stage:** 6 of 6 — Closing
+- **Done:** the agreement committed; the mockup and the showcase approved, 262 of 262 numbers; the year logic and both panels have the grids, SC-UKV-1146–1154 green; both panels keep 20px in the sheet
+- **Next step:** retake the snapshots of the changed stories, merge the agreement into the domain specs
 - **Uncommitted:** no
-- **Waiting for the owner:** the showcase approval
+- **Waiting for the owner:** nothing
 - **PR:** not open yet
 
 ## Steps
@@ -26,8 +26,8 @@ Rewritten by every session, not appended to.
 - [x] 4.2 Draw the month and year grids by the frames `6887:721` and `6887:753` and cover them by tests
 - [x] 5.1 Add the new views to the panel matrix stories and take their snapshots
 - [x] 5.2 Measure the showcase against the Figma frames and record the match line
-- [>] 5.3 Show the showcase to the owner and record the second approval
-- [ ] 6.1 Merge the agreement into the domain specs
+- [x] 5.3 Show the showcase to the owner and record the second approval
+- [>] 6.1 Merge the agreement into the domain specs
 - [ ] 6.2 Take the task folder apart into the archive record
 
 ## Decisions along the way
