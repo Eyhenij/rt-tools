@@ -88,7 +88,8 @@ own turn.
   `delivery-gate`.
 - **A push the text does not show.** A git alias for `push`, a word glued from parts (`pu""sh`), a
   script file that pushes, a variable run as a command. The parse reads the command text, and these
-  are visible only when the command runs: a pre-push git hook holds them, task RT-3046.
+  are visible only when the command runs: the git hook before a push holds them, the subdomain
+  `pre-push-hook`.
 - **A shell without perl.** The parse goes by perl, and without it the guard passes, as it does on
   any breakage of its own. The case stands in the `FAIL-OPEN` line of the guard header and has a
   test of its own; it is not in `Requires`, because that line names package resources, and perl

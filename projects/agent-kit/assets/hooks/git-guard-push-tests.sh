@@ -42,7 +42,8 @@ tool="$(rt_hook_tool)"
 case "$tool" in
     # The environment terminal, the universal runner and the session terminal tab put the command
     # into the same field. Left out of this list, the tab carried a push past the gate after two
-    # refusals: the tree has no git hook, and nothing else would have run the set.
+    # refusals: the tree had no git hook, and nothing else would have run the set. The git hook
+    # `pre-push` now runs it for a push this guard does not see.
     Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool | mcp__terminal__run_in_terminal) ;;
     *) exit 0 ;;
 esac
@@ -287,8 +288,14 @@ if [ ! -f "$gap_mark" ]; then
     : >"$gap_mark" 2>/dev/null || true
 fi
 
+# A green set leaves the commit it judged in the mark of the git directory. The git hook `pre-push`
+# runs the same set before every push, whatever sent it, and lets through a push of exactly this
+# commit at once: the call this guard just let through would otherwise wait for the set twice.
 if [ -z "$failed" ]; then
     rt_push_gate_note green
+    green_mark="$(git rev-parse --git-path rt-kit-push-green 2>/dev/null)"
+    green_tip="$(git rev-parse --verify --quiet HEAD 2>/dev/null)"
+    [ -n "$green_mark" ] && [ -n "$green_tip" ] && printf '%s\n' "$green_tip" >"$green_mark" 2>/dev/null
     exit 0
 fi
 

@@ -74,6 +74,7 @@ subdomains are the ones the rule groups had already drawn.
 | [The audit of the work queue](board/spec.md)                             | the run on the tip, the link with an epic, the lag of a branch, whose eyes the state was read by  |
 | [The delivery guards and the push gate](delivery-gate/spec.md)           | the base of a branch, the signature of a machine commit, the completeness of the gate set         |
 | [What the push gate counts as a push](push-sign/spec.md)                 | the subcommand of `git`, several recipients, a loop, the branch switch, the terminal tab          |
+| [The git hook before a push](pre-push-hook/spec.md)                      | the gate set on a push the session guard does not see, the mark of a judged commit                |
 | [The epic in the delivery guards](delivery-epic/spec.md)                 | the base of a task branch and of its request, the declaration of an epic, the request of the epic |
 | [Conducting work by commands](work/spec.md)                              | creating a task, closing a session, the task folder on the merge                                  |
 | [Observations and cargo outward](observations/spec.md)                   | an observation and a digest, proposals and blocks, the send, the snapshot of overrides            |

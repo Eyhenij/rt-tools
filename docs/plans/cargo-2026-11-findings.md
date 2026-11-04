@@ -74,6 +74,12 @@ From the rules review of the closed task:
   prints the set whole; what the tree lacks is a command that runs it whole, as the guard reads
   it. **Address:** rules layer — such a command next to the state review.
 
+## RT-3046 — the git hook before a push
+
+- **`git push --no-verify` skips the git hook, and the session guard does not refuse it.** The
+  hook now holds a push the session guard does not see; the key removes that hold by git's design.
+  **Address:** rules layer — `hooks/push-sign.sh` and `hooks/git-guard-push-tests.sh`.
+
 ## Left unresolved
 
 - **The turn exit guard findings of RT-3044** — they are closed by task RT-3067, which is the 24th in the epic order.
