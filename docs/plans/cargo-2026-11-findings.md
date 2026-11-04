@@ -84,7 +84,9 @@ From the rules review of the closed task:
   **Address:** names of this tree — the subjects of `rt_push_touched` in
   `.claude/rt-kit/project.sh`; rules layer — the run ahead of PR #3094. An edit that puts
   `.husky/*` among the paths without a heavy step was refused by the auto mode classifier of the
-  app as a bypass of the checks, so it waits for the owner's word.
+  app as a bypass of the checks, so it waits for the owner's word. The question about it was
+  refused by the grill gate four times in a row: each refusal counts as a new one, and the next
+  question needs a tree edit after it.
 
 ## Left unresolved
 
