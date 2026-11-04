@@ -189,14 +189,15 @@ flowchart TD
   beside it what the default printed and the set did not take. A tree writing its override blind
   added a repeat to it.
 - **A push is sent only by the path the push guard stands on.** A terminal, a process or a script
-  started outside the session carries the same command past the gate. A send cut off by the
-  session's end is asked of the host and repeated by the same path.
+  started outside the session carries the same command past the gate, unless the tree wired the
+  git hook `pre-push`: then git runs the set there too. A send cut off by the session's end is
+  asked of the host and repeated by the same path.
 - **A review of a foreign branch starts with the gate set run on its tip.** Reading the diff misses
   what the set judges by the whole tree: a word, a file limit. A check that stands only on an edit,
   such as the wording one, is run over the changed texts apart. The output goes into the review,
   and a later push into that branch is run again.
-- **Where the session's push guard does not fire, the set is run whole, as read at the minute of
-  the run.** It is read from the state review or from the tree profile together with the package
+- **Where neither the session's push guard nor the git hook fires, the set is run whole, as read
+  at the minute of the run.** It is read from the state review or from the tree profile together with the package
   default it calls. A list from memory, from a copy made earlier or from the profile alone drops
   checks: the profile names the set, the task names only the work.
 - **An exclusion reason naming a task is judged on whether that task is alive.** A deferral with a

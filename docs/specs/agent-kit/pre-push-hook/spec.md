@@ -34,10 +34,20 @@ There is no interface: the hook is seen as its lines in the push output and as a
   `rt_push_checks <base>` from the package default and the tree profile, read the way the session
   guard reads it, every line run and every red one named. A red set cancels the push: git does not
   send it.
+- **The hook and the session guard run the set by one code.** The profile is read with the root of
+  the repository the push goes from, not with a root the caller exported. After a red check no
+  heavy one starts, and those not started are named. A check that exits with the skip code is named
+  apart and refuses nothing; a skip code of 0 or 1 is not taken, because 1 is the exit of any
+  failure.
 - **A commit the session guard judged green runs no second set.** The guard writes the tip it let
   through into the mark of green, and a push of exactly that commit passes at once. The next commit
   is not covered by the mark. Without it a session push would wait for a fifteen-minute set twice,
-  and the session would be cut off.
+  and the session would be cut off. The mark lies in the shared git directory, so a push from a
+  second working copy sees it.
+- **The mark of green is written only for a set that judged the commit.** A set where every check
+  was skipped judged nothing. A working copy with uncommitted edits to tracked files was judged
+  together with them, not the commit alone. Files outside the history do not count: a working copy
+  keeps folders of other tasks, and the mark would never be written.
 - **The hook lets through only a push of the tip.** The set judges the tree the working copy stands
   on. A push of another branch, of a tag on another commit or of an older commit is refused with
   the refs named: a green set would read as a check of what left, though it checked something else.
@@ -49,7 +59,8 @@ There is no interface: the hook is seen as its lines in the push output and as a
 - **The hook is a package resource laid out with the other hooks.** The layout puts it into the
   hooks directory of the tree, executable and with the layout header. It has no `rt-hook:` header
   and enters no agent settings: git calls it, and the tree wires it to git by its hooks manager or by
-  the copy command the template header names.
+  the calling line the template header names. The hook stays where the layout put it, next to the
+  shared set code; a hook without that code next to it says that no check ran.
 
 ## What is out of scope
 
@@ -58,8 +69,11 @@ There is no interface: the hook is seen as its lines in the push output and as a
   `no-verify-guard`; outside it nothing refuses them.
 - **The per-check marks of a set run ahead.** The mark here holds one commit and the whole set; a
   run ahead of the push is another subdomain's work.
-- **The wiring in a tree without a hooks manager.** The template header names the copy command,
+- **The wiring in a tree without a hooks manager.** The template header names the calling line,
   as the commit message template does; nothing installs the hook by itself.
+- **A dry run.** Git calls the hook for `git push --dry-run` too and gives it no sign of that, so a
+  dry run runs the whole set and is refused on a red one. A green dry run writes the mark, and the
+  real push after it passes without a second set.
 - **A dirty working copy.** The set runs on the tree as it lies, as the session guard runs it;
   what is not committed is judged together with what leaves.
 
@@ -67,7 +81,8 @@ There is no interface: the hook is seen as its lines in the push output and as a
 
 The subdomain has no procedures and no interface. Its surface is what git gives the hook — the
 remote name and address as arguments, a line per pushed ref on the input — its exit code, the
-lines it prints to the error stream, and the mark of green it reads and the session guard writes.
+lines it prints to the error stream, and the mark of green it reads and writes, as the session
+guard writes it.
 
 ### Refusal codes
 
@@ -75,8 +90,8 @@ Not applicable: the hook answers git by a non-zero exit code and a text, not by 
 
 ## Data
 
-One file: the mark of green in the git directory of the working copy, one line with a commit. It is
-written by the session guard and by the hook itself on a green set, and read by the hook.
+One file: the mark of green in the shared git directory, one line with a commit. It is written by
+the session guard and by the hook itself on a green set of a clean copy, and read by the hook.
 
 ## Screens and states
 
@@ -118,6 +133,9 @@ None open.
 
 - 4 November 2026 — the subdomain is created by task RT-3046 from an intake analysis of another
   tree: a kit branch pushed from a foreign session past the kit's gate.
+- 4 November 2026 — by the review of the same task: the hook and the guard run the set by one code,
+  the root is taken from the repository, the mark lies in the shared git directory and is written
+  only on a clean copy; a dry run is named out of scope.
 
 ## Scenarios
 
