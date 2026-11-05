@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/git-guard-push-tests.sh · 11a70a0bfab5 · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/git-guard-push-tests.sh · a3a394704ddd · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__terminal__run_in_terminal
 # rt-hook-timeout: 1800
-# Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/push-sign.sh, hooks/push-set.sh
+# Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/push-sign.sh, hooks/push-set.sh, hooks/git-guard-push-marks.sh
 # The guard of the checks before a push. PreToolUse on the push call.
 #
 # A push is the entry into the pipeline: a merge into the main branch starts the rollout, and
@@ -204,88 +204,21 @@ if ! rt_needs rt_push_checks git-guard-push-tests; then
     exit 0
 fi
 
-# The base and the marks of a green run — the helper next door, `git-guard-push-marks.sh`, shared
-# with the command that runs the set ahead. No helper — the base is the main branch, no mark is
-# read and none is written: the former behaviour, the set whole.
-# shellcheck disable=SC1090
-[ -f "$rt_hooks_dir/git-guard-push-marks.sh" ] && . "$rt_hooks_dir/git-guard-push-marks.sh" 2>/dev/null
-command -v rt_push_mark_has >/dev/null 2>&1 || rt_push_mark_has() { return 1; }
-command -v rt_push_mark_put >/dev/null 2>&1 || rt_push_mark_put() { return 0; }
-command -v rt_push_mark_clean >/dev/null 2>&1 || rt_push_mark_clean() { return 1; }
-command -v rt_push_heavy_ahead >/dev/null 2>&1 || rt_push_heavy_ahead() { return 1; }
-command -v rt_push_mark_key >/dev/null 2>&1 || rt_push_mark_key() { return 1; }
-
-main_branch="${RT_MAIN_BRANCH:-main}"
-base=''
-if command -v rt_push_base >/dev/null 2>&1; then
-    base="$(rt_push_base "$main_branch")"
-elif git fetch --quiet origin "$main_branch" 2>/dev/null && git rev-parse --verify --quiet "origin/$main_branch" >/dev/null 2>&1; then
-    base="origin/$main_branch"
-fi
-
-# The code by which a check declares that there was nothing to look at: neither "it matched" nor
-# "a divergence". Before, such a check said so by a line of output and exited with zero — in the
-# set that zero stood next to the passed ones and differed from them in nothing, while the summary
-# read as checked whole. It does not refuse the push: a check with nothing to look at is not a
-# breakage.
-rt_skip_code="${RT_SKIP_CODE:-7}"
+base="$(rt_push_set_base)"
 
 # Every red among the light checks is named by one refusal. The gate used to leave on the first red
 # one, and each fix opened the next reason by a push of its own: three pushes in a row went so on one
-# branch — a repeated function, a name shared by two kits, a paint probe. After the first red a
-# heavy check is not started: the push is refused anyway, and its minutes buy nothing.
-command -v rt_push_check_heavy >/dev/null 2>&1 || rt_push_check_heavy() { return 1; }
-
-failed=""
-output=""
-skipped=""
-held=""
-ahead=""
-ran=0
-while IFS= read -r check; do
-    [ -z "$check" ] && continue
-    # Green on this very tree against this very base — not run again: the snapshots and the
-    # end-to-end suites have no cache of their own, and a second push of the same tree paid for
-    # them whole.
-    if rt_push_mark_has "$check" "$base"; then
-        ran=$((ran + 1))
-        continue
-    fi
-    # A tree that runs its heavy steps ahead does not run them here: inside the guard they hit the
-    # hook limit, and a guard cut by the limit lets the call through with no verdict.
-    if rt_push_heavy_ahead && rt_push_check_heavy "$check"; then
-        ahead="${ahead}${ahead:+
-}${check}"
-        continue
-    fi
-    if [ -n "$failed" ] && rt_push_check_heavy "$check"; then
-        held="${held}${held:+
-}${check}"
-        continue
-    fi
-    ran=$((ran + 1))
-    key_before=''
-    rt_push_mark_clean && key_before="$(rt_push_mark_key "$check" "$base" 2>/dev/null)"
-    out="$(eval "$check" 2>&1)"
-    status=$?
-    if [ "$status" -eq 0 ]; then
-        rt_push_mark_put "$check" "$base" "$key_before"
-        continue
-    fi
-    if [ "$status" -eq "$rt_skip_code" ]; then
-        skipped="${skipped}${skipped:+
-}${check}"
-        continue
-    fi
-    failed="${failed}${failed:+
-}${check}"
-    output="${output}${output:+
-
-}── ${check}
-$(printf '%s' "$out" | tail -n 25)"
-done <<EOF
-$(rt_push_checks "$base")
-EOF
+# branch — a repeated function, a name shared by two kits, a paint probe. A check with nothing to look
+# at exits with the skip code: before, it said so by a line of output and exited with zero, and in the
+# set that zero stood next to the passed ones and differed from them in nothing.
+rt_push_set_ask_ahead=1
+rt_push_set_run "$base"
+failed="$rt_push_set_failed"
+output="$rt_push_set_output"
+skipped="$rt_push_set_skipped"
+held="$rt_push_set_held"
+ahead="$rt_push_set_ahead"
+ran="$rt_push_set_ran"
 
 # Heavy steps with no mark are named in one refusal together with the red light ones: the command
 # that runs them ahead goes to the background, where no hook limit cuts it, and the push after it

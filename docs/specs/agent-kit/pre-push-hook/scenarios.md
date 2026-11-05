@@ -38,7 +38,7 @@ shared set code lies next to it. Without a built package the scenario is red, no
 
 Covered: `projects/agent-kit/tests/pre-push.test.sh`.
 
-### SC-AK-1247 — a deletion runs no set
+### SC-AK-1261 — a deletion runs no set
 
 Given the set of the profile is red
 When a remote branch is deleted by `git push --delete`
@@ -46,7 +46,7 @@ Then the push leaves: a deletion sends no tree
 
 Covered: `projects/agent-kit/tests/pre-push.test.sh`.
 
-### SC-AK-1248 — under the pipeline the hook passes
+### SC-AK-1262 — under the pipeline the hook passes
 
 Given the set of the profile is red
 When the push is sent with `CI` set
@@ -54,7 +54,7 @@ Then the push leaves without the set
 
 Covered: `projects/agent-kit/tests/pre-push.test.sh`.
 
-### SC-AK-1249 — several refs in one push are judged one by one
+### SC-AK-1263 — several refs in one push are judged one by one
 
 Given the working copy stands on a task branch
 When the branch is pushed together with `main` and a tag on another commit
@@ -62,7 +62,7 @@ Then the whole push is refused, the branch does not reach the remote, and both f
 
 Covered: `projects/agent-kit/tests/pre-push.test.sh`.
 
-### SC-AK-1250 — the set is read from the package default and the tree override, by this repository's root
+### SC-AK-1264 — the set is read from the package default and the tree override, by this repository's root
 
 Given the package default and the tree override each name a red check
 When the branch is pushed
@@ -71,7 +71,7 @@ still read by the root of the repository the push goes from
 
 Covered: `projects/agent-kit/tests/pre-push.test.sh`.
 
-### SC-AK-1251 — after a red check no heavy one starts
+### SC-AK-1265 — after a red check no heavy one starts
 
 Given the set holds a red check and a heavy one after it
 When the branch is pushed
@@ -79,7 +79,7 @@ Then the heavy check does not run, and the refusal names it among those not star
 
 Covered: `projects/agent-kit/tests/pre-push.test.sh`.
 
-### SC-AK-1252 — a skipped check is named and judges nothing
+### SC-AK-1266 — a skipped check is named and judges nothing
 
 Given every check of the set exits with the skip code
 When the branch is pushed
@@ -110,5 +110,21 @@ Covered: `projects/agent-kit/tests/pre-push.test.sh`.
 Given the hook is wired by a line in the directory a hooks manager sets as the hooks path
 When the set is red and the branch is pushed
 Then the push is refused. A hook whose set code is missing next to it says that no check ran
+
+Covered: `projects/agent-kit/tests/pre-push.test.sh`.
+
+### SC-AK-1259 — the hook does not start a check green on this tree
+
+Given a check that left a per-check mark on a pushed tree
+When an empty commit keeps the tree and the mark of the commit is gone
+Then the push leaves and the check is not started again
+
+Covered: `projects/agent-kit/tests/pre-push.test.sh`.
+
+### SC-AK-1260 — the hook starts a heavy step itself in a tree that runs them ahead
+
+Given a tree declaring that its heavy steps run ahead, and no mark on such a step
+When the branch is pushed through the git hook
+Then the hook starts the step and the push leaves
 
 Covered: `projects/agent-kit/tests/pre-push.test.sh`.

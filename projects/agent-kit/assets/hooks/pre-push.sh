@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # The checks before a push, as a hook of git itself, not of the agent.
 #
-# Requires: hooks/push-set.sh
+# Requires: hooks/push-set.sh, hooks/git-guard-push-marks.sh
 #
 # NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The version control
 # calls it before every push, whatever sent it: the session guard of the push stands only on the
