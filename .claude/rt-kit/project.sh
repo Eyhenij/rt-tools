@@ -55,7 +55,7 @@ RT_TASK_BOT='rt-tools-dev'
 # the second half of the signature check: the machine account and these people are known, and
 # everything else is refused — a commit under an account the tree never declared used to pass in
 # silence.
-RT_HUMAN_EMAILS='72300075+Eyhenij@users.noreply.github.com 41898282+github-actions[bot]@users.noreply.github.com'
+RT_HUMAN_EMAILS='72300075+Eyhenij@users.noreply.github.com 41898282+github-actions[bot]@users.noreply.github.com sviathut@gmail.com'
 
 RT_PULL_TOKEN_VAR='GH_TOKEN'
 RT_PULL_TOKEN_HINT='GH_TOKEN=$(cat ~/.config/rt-tools-bot-token)'

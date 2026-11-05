@@ -1,6 +1,6 @@
 # The second kit
 
-**Status:** in force · **Revision:** 2026-08-17 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-03 · **Scenario prefix:** `SC-UKV`
 **Depends on:** named in the subdomains — each names its own
 **Laws:** `verifiability`, `delivery`, `frontend-application`
 **Procedures:** none
@@ -93,6 +93,7 @@ agreement about their own subject and describe the surface of a component, not a
 | [The header's «More» item](page-header-more/spec.md)                             | the sections that did not fit the header's row: the fit by importance, the panel, the highlight                                                 |
 | [The width of the page place](place-width/spec.md)                               | the width the thresholds count from: the page place, the root, the overlays                                                                     |
 | [The hint of a cut value in the copy cell](copy-cell-first-hover/spec.md)        | the hint with the whole value of a cut copy cell, from the first hover                                                                          |
+| [A pinned column of the table](table-pinned-column/spec.md)                      | the pinned cell of `rt-table` keeps its row colour and casts a shadow while content scrolls under it                                            |
 | [The copy cell in the frame of a field](copy-cell-framed/spec.md)                | the input `framed`: the cell in the frame of a field with its button always visible                                                             |
 | [The label on the border and actionable icons](field-label-icon-actions/spec.md) | the option template of the select, the label on the border, actionable icons, the cross in the Tab order, the length limit                      |
 | [The look of a field under the material preset](field-material-look/spec.md)     | the label inside, the filled field, the colours, the insets, the cross and the line under a field, as in Material                               |
@@ -246,3 +247,5 @@ change of its own.
   application's own component stays sized by its content, and on a narrow screen the left bar is
   never wider than the window. Before, the wrapped filters of a list grew to 400px each and left the
   window edge on a narrow screen. Task RT-2789.
+- 2026-11-03 — a pinned column of the table got a subdomain of its own. Its scenarios arrived with
+  the numbers `SC-UKV-1122`…`SC-UKV-1124`. Task RT-2907.

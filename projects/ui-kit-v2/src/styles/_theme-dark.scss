@@ -87,6 +87,8 @@
     /* Шапка таблицы — та же подложка роли, что в светлой: ответ стоит, чтобы тёмная тема
        выигрывала у материального набора и на этом имени. */
     --rt-color-table-head-bg: var(--rt-color-bg-surface-subtle);
+    --rt-color-table-pinned-shadow: var(--rt-overlay-black-64);
+    --rt-color-table-bg: var(--rt-color-bg-page);
     --rt-color-field-fill-underline: var(--rt-color-border-strong);
 
     /* Навигация — вся шкала серых разворачивается: подложка уходит глубже
