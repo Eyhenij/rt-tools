@@ -1,6 +1,6 @@
 # The kit's own panel of the date field
 
-**Status:** in force · **Revision:** 2026-09-29 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-04 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the popover directive, the bottom sheet, the calendar and the breakpoints service of
 the kit
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
@@ -51,6 +51,28 @@ kit. The mockup draws a panel of its own for all three types, the same in every 
 - **The date panel shows a month with paging, and its title opens a choice of month and year.** A
   month picked in that choice returns to its days.
 
+- **In the date panel the year in the header of the month grid is a button that opens the year
+  grid.** The arrows next to it still page the year one by one.
+
+- **The year grid shows twelve years: three in a row in the date panel, four in a row in the period
+  panel.**
+
+- **The span is a block of twelve that holds the shown year.** The spans are laid every twelve years
+  from 2024: the year 2026 opens 2024 – 2035, the year 2040 opens 2036 – 2047. The header shows the
+  span as «first – last».
+
+- **The arrows of the year grid page the span by twelve years and stop at the bounds.** An arrow is
+  switched off when the whole next span lies outside `min` and `max`.
+
+- **A year outside `min` and `max` is unavailable, the chosen year is filled, the current year is
+  outlined.** The chosen year is the year of the value; the current year is the year of today.
+
+- **A year picked in the year grid opens the month grid of that year.**
+
+- **A month outside the bounds is unavailable in both panels.**
+
+- **Escape in a month or a year grid returns one view back instead of closing the panel.**
+
 - **Today is outlined and the chosen day is filled.** Both marks stay when the month is paged back to
   them.
 
@@ -73,6 +95,10 @@ kit. The mockup draws a panel of its own for all three types, the same in every 
 - **On a narrow screen the panel opens in the kit's bottom sheet, with days of 44px under a finger.**
   For a date with time a switch «Дата | Время» shows the month or the columns. The narrow sign is
   the breakpoints service's, as elsewhere in the kit.
+
+- **In the bottom sheet the panel keeps the 20px side padding of the sheet header and footer.** The
+  body of the sheet has no side padding of its own, and without it the days and the arrows touch
+  the edge of the screen.
 
 - **The names of months and weekdays follow the locale of the application.** The buttons of the
   panel carry the kit's labels.
@@ -100,6 +126,8 @@ None of its own. The draft lives while the panel is open and is dropped when it 
 | -------------------------------- | ----------------------------------------------------------- |
 | a date, the panel open           | the month of the value or of today, «Сегодня» below         |
 | the choice of month and year     | twelve months and the year with paging                      |
+| the year grid                    | twelve years three in a row, the span and arrows above      |
+| a cell of the grids              | default, hover, chosen, current, unavailable                |
 | a time, the panel open           | the hours and minutes columns, «Сейчас» and «Готово»        |
 | a date with time, the panel open | the month and the columns side by side, «Применить»         |
 | a narrow screen                  | the same inside the bottom sheet; a date with time switches |
@@ -121,7 +149,8 @@ Not applicable: the kit is not indexed.
 ### Mobile layout
 
 On a narrow screen the panel opens in the bottom sheet; days are 44px, and a date with time switches
-between the month and the columns.
+between the month and the columns. The panel keeps 20px at the sides, and the grids take the rest of
+the width.
 
 ### Several objects
 
@@ -144,3 +173,4 @@ None.
   own.
 - 2026-09-30 — the field shows and reads the date in the order of the interface language, as the
   mockup of the range field shows it.
+- 2026-11-04 — the task RT-2895 adds the year grid and the 20px side padding in the bottom sheet.
