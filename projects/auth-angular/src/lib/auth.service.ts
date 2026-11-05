@@ -1,7 +1,7 @@
 import { computed, DOCUMENT, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { callerFromClaims, ICaller, IKeycloakClaims } from '@rt-tools/auth-contract';
 
-import { IRtAuthConfig, keycloakInitOptions, RT_AUTH_CONFIG, RT_AUTH_ORGANIZATION } from './auth.config';
+import { carriesEntryAnswer, IRtAuthConfig, keycloakInitOptions, RT_AUTH_CONFIG, RT_AUTH_ORGANIZATION } from './auth.config';
 import { RT_KEYCLOAK, TRtKeycloak } from './keycloak';
 import { meetsRequirement, TRtPermissionRequirement } from './requirement';
 import { isTokenRecipient } from './token-recipient';
@@ -55,10 +55,16 @@ export class RtAuthService {
         this.#keycloak.onAuthRefreshSuccess = (): void => this.#read();
         this.#keycloak.onAuthLogout = (): void => this.#caller.set(null);
         this.#keycloak.onTokenExpired = (): void => void this.refresh();
-        await withinLimit(
-            this.#keycloak.init(keycloakInitOptions(this.#config, this.#document.baseURI)),
-            this.#config.silentCheckTimeoutMs ?? SILENT_CHECK_TIMEOUT_MS
-        );
+        const href: string = this.#document.location?.href ?? this.#document.baseURI;
+        const entryAnswer: boolean = carriesEntryAnswer(href);
+        const start: Promise<boolean> = this.#keycloak.init(keycloakInitOptions(this.#config, this.#document.baseURI, entryAnswer));
+        if (entryAnswer) {
+            // The exchange of the code is not the silent check: cut by its limit, it sends the
+            // person back to the entry form they have just passed.
+            await start;
+        } else {
+            await withinLimit(start, this.#config.silentCheckTimeoutMs ?? SILENT_CHECK_TIMEOUT_MS);
+        }
         this.#read();
     }
 

@@ -44,6 +44,10 @@ export class KeycloakDouble implements TRtKeycloak {
     public refreshFails: boolean = false;
     /** Whether the silent check never answers, as when Keycloak is down. */
     public silentCheckSilent: boolean = false;
+    /** How long the start takes, in milliseconds, as when Keycloak answers late. */
+    public initDelayMs: number = 0;
+    /** The claims a late start brings at its end, as the exchange of a code does. */
+    public claimsOnStart: IKeycloakClaims | null = null;
     public readonly initCalls: KeycloakInitOptions[] = [];
     public readonly updateCalls: number[] = [];
     public readonly loginCalls: (KeycloakLoginOptions | undefined)[] = [];
@@ -67,6 +71,18 @@ export class KeycloakDouble implements TRtKeycloak {
         this.initCalls.push(options);
         if (this.silentCheckSilent) {
             return new Promise<boolean>((): void => undefined);
+        }
+        if (this.initDelayMs > 0) {
+            return new Promise<boolean>((resolve: (value: boolean) => void): void => {
+                setTimeout((): void => {
+                    const claims: IKeycloakClaims | null = this.claimsOnStart;
+                    if (claims) {
+                        this.signIn(claims);
+                        this.onAuthSuccess?.();
+                    }
+                    resolve(this.authenticated);
+                }, this.initDelayMs);
+            });
         }
         return Promise.resolve(this.authenticated);
     }

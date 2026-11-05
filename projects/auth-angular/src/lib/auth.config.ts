@@ -45,11 +45,22 @@ export const RT_AUTH_ORGANIZATION: InjectionToken<Signal<string | null>> = new I
  * session comes back only from Keycloak. The frame that watches the session is off — browsers
  * block its cookie, and the token refresh finds an ended session anyway.
  */
-export function keycloakInitOptions(config: IRtAuthConfig, baseUri: string): KeycloakInitOptions {
-    return {
-        onLoad: 'check-sso',
-        pkceMethod: 'S256',
-        silentCheckSsoRedirectUri: config.silentCheckSsoRedirectUri ?? new URL('silent-check-sso.html', baseUri).href,
-        checkLoginIframe: false,
-    };
+export function keycloakInitOptions(config: IRtAuthConfig, baseUri: string, entryAnswer: boolean = false): KeycloakInitOptions {
+    const options: KeycloakInitOptions = { onLoad: 'check-sso', pkceMethod: 'S256', checkLoginIframe: false };
+    if (entryAnswer) {
+        // The address already carries the code: the adapter exchanges it and asks Keycloak nothing
+        // more, so neither the silent frame nor its cookie probe is raised.
+        return options;
+    }
+    return { ...options, silentCheckSsoRedirectUri: config.silentCheckSsoRedirectUri ?? new URL('silent-check-sso.html', baseUri).href };
+}
+
+/**
+ * Whether the address is the return from the Keycloak entry form: its fragment carries the code
+ * and the state of the request the adapter sent.
+ */
+export function carriesEntryAnswer(href: string): boolean {
+    const hash: string = new URL(href).hash.slice(1);
+    const params: URLSearchParams = new URLSearchParams(hash);
+    return params.has('code') && params.has('state');
 }

@@ -36,6 +36,8 @@ Not applicable: the package has no screens. The entry form is the theme of the m
 - **The entry uses the code flow with PKCE.** The client of an admin is public and has no secret.
 - **After a reload the session comes back through the silent check, without a password.** If the
   browser blocks the frame, the next entry passes without a form while the Keycloak session lives.
+- **The return from the entry form exchanges the code without the silent check and its limit.**
+  Otherwise a late cookie probe cuts the exchange, and the person is sent back to the form.
 - **The caller is read by the contract for the client of the admin.** Otherwise the client shows
   a section by a right the server refuses.
 - **The token goes only to a recipient the application named.** Otherwise a request to a foreign

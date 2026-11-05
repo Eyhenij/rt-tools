@@ -45,6 +45,48 @@ describe('RtAuthService', () => {
         expect(auth.authenticated()).toBe(false);
     });
 
+    describe('the return from the entry form', () => {
+        const ENTRY_ANSWER: string = '#state=s-1&session_state=k-1&code=c-1';
+
+        afterEach((): void => {
+            window.history.replaceState(null, '', window.location.pathname);
+        });
+
+        it('SC-AUTH-97 — an address with the answer of Keycloak starts the adapter without the silent check', async () => {
+            window.history.replaceState(null, '', `${window.location.pathname}${ENTRY_ANSWER}`);
+            const double: KeycloakDouble = new KeycloakDouble();
+
+            await startAuth(double);
+
+            expect(double.initCalls).toHaveLength(1);
+            expect(double.initCalls[0]).not.toHaveProperty('silentCheckSsoRedirectUri');
+            expect(double.initCalls[0].onLoad).toBe('check-sso');
+            expect(double.initCalls[0].pkceMethod).toBe('S256');
+        });
+
+        it('SC-AUTH-97 — the exchange of the code is not cut by the limit of the silent check', async () => {
+            window.history.replaceState(null, '', `${window.location.pathname}${ENTRY_ANSWER}`);
+            const double: KeycloakDouble = new KeycloakDouble();
+            double.claimsOnStart = claimsWith(['orders:read']);
+            double.initDelayMs = 50;
+
+            const auth: RtAuthService = await startAuth(double, { ...TEST_CONFIG, silentCheckTimeoutMs: 10 });
+
+            expect(auth.authenticated()).toBe(true);
+        });
+
+        it('SC-AUTH-97 — an address without the answer keeps the silent check and its limit', async () => {
+            const double: KeycloakDouble = new KeycloakDouble();
+            double.claimsOnStart = claimsWith(['orders:read']);
+            double.initDelayMs = 50;
+
+            const auth: RtAuthService = await startAuth(double, { ...TEST_CONFIG, silentCheckTimeoutMs: 10 });
+
+            expect(double.initCalls[0].silentCheckSsoRedirectUri).toBe(new URL('silent-check-sso.html', document.baseURI).href);
+            expect(auth.authenticated()).toBe(false);
+        });
+    });
+
     it('SC-AUTH-37 — the exit goes through Keycloak', async () => {
         const double: KeycloakDouble = new KeycloakDouble();
         double.signIn(claimsWith(['orders:read']));
