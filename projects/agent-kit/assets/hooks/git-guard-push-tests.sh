@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__terminal__run_in_terminal
 # rt-hook-timeout: 1800
-# Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/push-sign.sh
+# Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/push-sign.sh, hooks/push-set.sh
 # The guard of the checks before a push. PreToolUse on the push call.
 #
 # A push is the entry into the pipeline: a merge into the main branch starts the rollout, and
@@ -25,8 +25,8 @@
 # no network or no remote — the base is empty, and the profile falls back to a full run: the gate
 # may turn out stricter than needed, but NEVER weaker.
 #
-# FAIL-OPEN: not a repository, broken input, no profile, no parse file `push-sign.sh`, no perl —
-# pass.
+# FAIL-OPEN: not a repository, broken input, no profile, no parse file `push-sign.sh`, no set file
+# `push-set.sh`, no perl — pass.
 
 # Its own name in the observations: the refusal is written by the shared deny tail, not by the guard.
 RT_GUARD_NAME=git-guard-push-tests
@@ -163,10 +163,10 @@ fi
 # `_default` suffix. There is neither — the hook passes: an empty guard is better than a guard
 # that refuses at random.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
-    # shellcheck disable=SC1090
-    [ -f "$profile" ] && . "$profile" 2>/dev/null
-done
+# The set itself is run by the code it shares with the git hook `pre-push`.
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/push-set.sh" 2>/dev/null || exit 0
+rt_push_set_profile "$rt_hooks_dir" "${CLAUDE_PROJECT_DIR:-.}"
 
 # A word about a missing profile function: a hook that exited silently is indistinguishable from a
 # working one. The file may not be laid out — then the former, silent behaviour stays.
@@ -198,55 +198,19 @@ if ! rt_needs rt_push_checks git-guard-push-tests; then
     exit 0
 fi
 
-main_branch="${RT_MAIN_BRANCH:-main}"
-base=''
-if git fetch --quiet origin "$main_branch" 2>/dev/null && git rev-parse --verify --quiet "origin/$main_branch" >/dev/null 2>&1; then
-    base="origin/$main_branch"
-fi
-
-# The code by which a check declares that there was nothing to look at: neither "it matched" nor
-# "a divergence". Before, such a check said so by a line of output and exited with zero — in the
-# set that zero stood next to the passed ones and differed from them in nothing, while the summary
-# read as checked whole. It does not refuse the push: a check with nothing to look at is not a
-# breakage.
-rt_skip_code="${RT_SKIP_CODE:-7}"
+base="$(rt_push_set_base)"
 
 # Every red among the light checks is named by one refusal. The gate used to leave on the first red
 # one, and each fix opened the next reason by a push of its own: three pushes in a row went so on one
-# branch — a repeated function, a name shared by two kits, a paint probe. After the first red a
-# heavy check is not started: the push is refused anyway, and its minutes buy nothing.
-command -v rt_push_check_heavy >/dev/null 2>&1 || rt_push_check_heavy() { return 1; }
-
-failed=""
-output=""
-skipped=""
-held=""
-ran=0
-while IFS= read -r check; do
-    [ -z "$check" ] && continue
-    if [ -n "$failed" ] && rt_push_check_heavy "$check"; then
-        held="${held}${held:+
-}${check}"
-        continue
-    fi
-    ran=$((ran + 1))
-    out="$(eval "$check" 2>&1)"
-    status=$?
-    [ "$status" -eq 0 ] && continue
-    if [ "$status" -eq "$rt_skip_code" ]; then
-        skipped="${skipped}${skipped:+
-}${check}"
-        continue
-    fi
-    failed="${failed}${failed:+
-}${check}"
-    output="${output}${output:+
-
-}── ${check}
-$(printf '%s' "$out" | tail -n 25)"
-done <<EOF
-$(rt_push_checks "$base")
-EOF
+# branch — a repeated function, a name shared by two kits, a paint probe. A check with nothing to look
+# at exits with the skip code: before, it said so by a line of output and exited with zero, and in the
+# set that zero stood next to the passed ones and differed from them in nothing.
+rt_push_set_run "$base"
+failed="$rt_push_set_failed"
+output="$rt_push_set_output"
+skipped="$rt_push_set_skipped"
+held="$rt_push_set_held"
+ran="$rt_push_set_ran"
 
 # What was skipped is named aloud even when the set passed: silence about it is exactly the
 # indistinguishability this code was created for. The push goes through at that — there is no
@@ -288,14 +252,13 @@ if [ ! -f "$gap_mark" ]; then
     : >"$gap_mark" 2>/dev/null || true
 fi
 
-# A green set leaves the commit it judged in the mark of the git directory. The git hook `pre-push`
-# runs the same set before every push, whatever sent it, and lets through a push of exactly this
-# commit at once: the call this guard just let through would otherwise wait for the set twice.
+# A green set leaves the commit it judged in the mark of the shared git directory. The git hook
+# `pre-push` runs the same set before every push, whatever sent it, and lets through a push of
+# exactly this commit at once: the call this guard just let through would otherwise wait for the set
+# twice. The mark is not written when every check was skipped or the copy has uncommitted edits.
 if [ -z "$failed" ]; then
     rt_push_gate_note green
-    green_mark="$(git rev-parse --git-path rt-kit-push-green 2>/dev/null)"
-    green_tip="$(git rev-parse --verify --quiet HEAD 2>/dev/null)"
-    [ -n "$green_mark" ] && [ -n "$green_tip" ] && printf '%s\n' "$green_tip" >"$green_mark" 2>/dev/null
+    rt_push_mark_write
     exit 0
 fi
 

@@ -87,6 +87,11 @@ From the rules review of the closed task:
   app as a bypass of the checks, so it waits for the owner's word. The question about it was
   refused by the grill gate four times in a row: each refusal counts as a new one, and the next
   question needs a tree edit after it.
+- **A dry run of a push now costs the whole set.** Git calls the hook `pre-push` for
+  `git push --dry-run` too and gives it no sign of that. Inside the session the guard frees a dry
+  run, and the git hook then runs the full set behind it; a green dry run at least writes the mark,
+  and the real push after it runs no second set. **Address:** rules layer — the hook could tell a
+  dry run apart only by reading the parent process, which is not portable.
 
 ## Left unresolved
 
