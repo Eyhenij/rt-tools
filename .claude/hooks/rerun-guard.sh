@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/rerun-guard.sh · 5f1d1fbbfd49 · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/rerun-guard.sh · 95b01d458ffe · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh
 # Guard of the rerun: a fallen run is not rerun until its log has been read.
@@ -52,11 +52,19 @@ for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../d
     [ -f "$profile" ] && . "$profile" 2>/dev/null
 done
 
-# The rerun call: the rerun word as a separate word next to the word for a run.
+# The rerun call: the rerun word as a separate word next to the word for a run. The GitLab client
+# retries a job instead — `glab ci retry <id>` — and reads its log by `glab ci trace <id>`; a guard
+# waiting only for `run rerun` let such a retry through unread.
 host_cli="${RT_HOST_CLI:-gh}"
-printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}${host_cli}([[:space:]]|\$)" || exit 0
-printf '%s' "$cmd" | grep -qE '(^|[[:space:]])(run|workflow)([[:space:]]|$)' || exit 0
-printf '%s' "$cmd" | grep -qE '(^|[[:space:]])rerun([[:space:]]|$)' || exit 0
+retry_re='(^|[[:space:]])ci[[:space:]]+retry([[:space:]]|$)'
+printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}(${host_cli}|glab)([[:space:]]|\$)" || exit 0
+if printf '%s' "$cmd" | grep -qE "$retry_re"; then
+    log_cmd="glab ci trace"
+else
+    printf '%s' "$cmd" | grep -qE '(^|[[:space:]])(run|workflow)([[:space:]]|$)' || exit 0
+    printf '%s' "$cmd" | grep -qE '(^|[[:space:]])rerun([[:space:]]|$)' || exit 0
+    log_cmd="${host_cli} run view"
+fi
 
 # The run number. Not named — the guard stays silent: there is nothing to judge.
 run_id="$(printf '%s' "$cmd" | grep -oE '(^|[[:space:]])[0-9]{6,}([[:space:]]|$)' | tr -d ' ' | head -1)"
@@ -71,13 +79,13 @@ transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/nu
 seen="$(jq -s -r --arg id "$run_id" '
     [.[] | select(.type == "assistant") | (.message.content // [])[] | select(.type == "tool_use")
        | ((.input.command // "") | tostring)] as $used
-    | (($used | join("\n")) | test("run[[:space:]]+view[^\\n]*" + $id + "|" + $id + "[^\\n]*--log")) as $read
+    | (($used | join("\n")) | test("run[[:space:]]+view[^\\n]*" + $id + "|" + $id + "[^\\n]*--log|ci[[:space:]]+(trace|view)[^\\n]*" + $id)) as $read
     | if $read then "read" else "not-read" end
 ' "$transcript" 2>/dev/null)"
 
 [ "$seen" = "read" ] && exit 0
 
-reason="BLOCKED by rerun-guard: a rerun of the run ${run_id} without its output read. Red on a run comes in two kinds, and in the list they look the same: a hosting refusal on the preparation step is cured by a rerun, a defect of the branch is not cured by it at all, and the circle repeats until the output is opened. Read the output of this run — ${host_cli} run view ${run_id} --log-failed — and repeat the call. The guard judges the order, not the cause of the fall: what is written in the output you judge yourself."
+reason="BLOCKED by rerun-guard: a rerun of the run ${run_id} without its output read. Red on a run comes in two kinds, and in the list they look the same: a hosting refusal on the preparation step is cured by a rerun, a defect of the branch is not cured by it at all, and the circle repeats until the output is opened. Read the output of this run — ${log_cmd} ${run_id}$([ "$log_cmd" = "glab ci trace" ] || printf ' --log-failed') — and repeat the call. The guard judges the order, not the cause of the fall: what is written in the output you judge yourself."
 
 # The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
 # The file may not be laid out — then there is no tail, and the refusal reason stays as it is.

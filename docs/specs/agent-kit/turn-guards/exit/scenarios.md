@@ -8,7 +8,8 @@ of the scenarios of the domain next to it; a turn under an open epic is in
 
 ### SC-AK-647 — handing in the work without beginning the next one does not end the turn
 
-Given a request was opened over the turn, and nothing was done on the next work
+Given a request was opened over the turn by `gh pr create` or by `glab mr create`, and nothing was
+done on the next work
 When the guard of the exits judges the end of the turn
 Then the turn is given back: the handing in ends the past work, not the turn
 
@@ -81,7 +82,8 @@ Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 ### SC-AK-296 — a turn in which nothing was done on the work does not close
 
 Given the work stands in a state it is moved from by the executor
-When the turn ends, and over it there was neither an edit nor a command changing the tree
+When the turn ends, and over it there was neither an edit nor a command changing the tree; a
+reading by `gh` or by `glab` is not such a command
 Then the guard gives the turn back and names the next step from the progress of the work
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
@@ -96,7 +98,8 @@ Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
 ### SC-AK-298 — a command changing the tree releases the turn
 
-Given a command changing the tree or its state went over the turn
+Given a command changing the tree or its state went over the turn, a merge or a retry by `glab`
+among them
 When the turn ends
 Then the guard stays silent
 

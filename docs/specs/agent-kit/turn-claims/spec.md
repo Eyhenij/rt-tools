@@ -75,6 +75,10 @@ they do not speak at all.
   named by a past form; «deletes» and «to delete» describe the command.
 - **A gate before push called fixed is confirmed by a run of the gate set in the same turn.** The
   fix is shown by the gate passing, and the phrase was once said with not one run behind it.
+- **A statement is confirmed by a command of the GitLab client on a par with the GitHub client.**
+  A guard waiting only for `gh` refuses a GitLab tree every statement about a request, a pipeline, a
+  merge or a task, and every negated one. The forms of both clients stand side by side in the same
+  rows, not in the tree profile: a word in the profile is one more setting to forget.
 - **The refusal names as the first exit the removal of the statement, not the launch of the
   command.** In a turn where the owner asked for no command, a launch for the sake of lifting the
   refusal leads into a delivery more dangerous than the one the guard watches.

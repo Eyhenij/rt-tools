@@ -22,6 +22,7 @@ statement: a removed statement is removed together with its line.
 - **A negated statement is confirmed by a reading command.** — `projects/agent-kit/assets/hooks/claim-guard.sh:read_proof` — the negation is glued to the next word, and `negated_re` finds it. Scenario SC-AK-1198.
 - **A description of what a command does is not a statement about a done action.** — `projects/agent-kit/assets/hooks/claim-guard.sh:claims` — the row about deleting names past forms only. Scenario SC-AK-1198.
 - **A gate before push called fixed is confirmed by a run of the gate set in the same turn.** — `projects/agent-kit/assets/hooks/claim-guard.sh:claims` — a row of its own. Scenario SC-AK-1198.
+- **A statement is confirmed by a command of the GitLab client on a par with the GitHub client.** — `projects/agent-kit/assets/hooks/claim-guard.sh:claims` — the rows about a merge, a run, a request and a task. The negated ones go by `projects/agent-kit/assets/hooks/claim-guard.sh:read_proof`. Scenario SC-AK-1270.
 - **The refusal names as the first exit the removal of the statement, not the launch of the command.** — `projects/agent-kit/assets/hooks/claim-guard.sh:reason`; scenario SC-AK-764
 - **A wrong conclusion the guard does not judge.** — `projects/agent-kit/assets/hooks/claim-guard.sh:claim-guard`
 - **The guard of the statements lets the work through at any breakage.** — `projects/agent-kit/assets/hooks/claim-guard.sh:transcript`

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/turn-exit-guard.sh · 6d868cbbc61f · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/turn-exit-guard.sh · 371f4359f552 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh, hooks/turn-exit-epic.sh
 # Turn exit guard: a turn in which nothing was done on the work does not end until the work is
@@ -283,7 +283,7 @@ fi
 # state is not allowed.
 case "$state" in
     этапы-кончились | разбор-кончился)
-        if ! printf '%s' "$commands" | grep -qE 'gh[[:space:]]+pr[[:space:]]+create'; then
+        if ! printf '%s' "$commands" | grep -qE "$handover_re"; then
             if [ "$state" = "этапы-кончились" ]; then
                 action="merge the agreement, bring the texts up to what was done and run the suite"
             else
