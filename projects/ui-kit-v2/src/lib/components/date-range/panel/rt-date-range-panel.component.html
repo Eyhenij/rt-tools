@@ -23,22 +23,110 @@
             }
         </div>
 
-        <rt-calendar
-            rtElem="calendar"
-            qa-dataid="date-range-calendar"
-            grid
-            [months]="months()"
-            [weekdayLabels]="weekdays()"
-            [canPrev]="canPrev()"
-            [canNext]="canNext()"
-            [activeKey]="activeKey()"
-            [prevAriaLabel]="t().uiPrevMonth"
-            [nextAriaLabel]="t().uiNextMonth"
-            (prevMonth)="page(-1)"
-            (nextMonth)="page(1)"
-            (dayClick)="pickDay($event)"
-            (dayHover)="onHover($event)"
-            (gridKey)="onGridKey($event)" />
+        @if (view() === 'days') {
+            <rt-calendar
+                rtElem="calendar"
+                qa-dataid="date-range-calendar"
+                grid
+                titleAction
+                [months]="months()"
+                [weekdayLabels]="weekdays()"
+                [canPrev]="canPrev()"
+                [canNext]="canNext()"
+                [activeKey]="activeKey()"
+                [prevAriaLabel]="t().uiPrevMonth"
+                [nextAriaLabel]="t().uiNextMonth"
+                (prevMonth)="page(-1)"
+                (nextMonth)="page(1)"
+                (dayClick)="pickDay($event)"
+                (dayHover)="onHover($event)"
+                (gridKey)="onGridKey($event)"
+                (titleClick)="openMonths($event)" />
+        } @else if (view() === 'months') {
+            <div rtElem="grid" qa-dataid="date-range-months" role="group" [attr.aria-label]="t().uiChooseMonth">
+                <div rtElem="grid-header">
+                    <rt-icon-button
+                        qa-dataid="date-range-prev-year"
+                        icon="chevron-left"
+                        variant="secondary"
+                        radius="full"
+                        [ariaLabel]="t().uiPrevYear"
+                        [disabled]="!canPrevYear()"
+                        (clicked)="pageYear(-1)" />
+                    <span rtElem="hint">
+                        <button
+                            rtElem="year"
+                            qa-dataid="date-range-year"
+                            type="button"
+                            [attr.aria-label]="t().uiChooseYear"
+                            (click)="openYears()">
+                            {{ year() }}
+                        </button>
+                        · {{ t().uiPickMonth }}
+                    </span>
+                    <rt-icon-button
+                        qa-dataid="date-range-next-year"
+                        icon="chevron-right"
+                        variant="secondary"
+                        radius="full"
+                        [ariaLabel]="t().uiNextYear"
+                        [disabled]="!canNextYear()"
+                        (clicked)="pageYear(1)" />
+                </div>
+                <div rtElem="cells">
+                    @for (cell of monthCells(); track cell.key) {
+                        <button
+                            rtElem="cell"
+                            qa-dataid="date-range-month"
+                            type="button"
+                            [attr.data-key]="cell.key"
+                            [attr.data-current]="cell.key === currentMonth() ? '' : null"
+                            [attr.aria-pressed]="cell.key === chosenMonth()"
+                            [disabled]="cell.disabled"
+                            (click)="pickMonth(cell)">
+                            {{ cell.label }}
+                        </button>
+                    }
+                </div>
+            </div>
+        } @else {
+            <div rtElem="grid" qa-dataid="date-range-years" role="group" [attr.aria-label]="t().uiChooseYear">
+                <div rtElem="grid-header">
+                    <rt-icon-button
+                        qa-dataid="date-range-prev-years"
+                        icon="chevron-left"
+                        variant="secondary"
+                        radius="full"
+                        [ariaLabel]="t().uiPrevYears"
+                        [disabled]="!canPrevYears()"
+                        (clicked)="pageYears(-1)" />
+                    <span rtElem="hint" qa-dataid="date-range-span">{{ yearSpan() }} · {{ t().uiPickYear }}</span>
+                    <rt-icon-button
+                        qa-dataid="date-range-next-years"
+                        icon="chevron-right"
+                        variant="secondary"
+                        radius="full"
+                        [ariaLabel]="t().uiNextYears"
+                        [disabled]="!canNextYears()"
+                        (clicked)="pageYears(1)" />
+                </div>
+                <div rtElem="cells">
+                    @for (cell of yearCells(); track cell.key) {
+                        <button
+                            rtElem="cell"
+                            qa-dataid="date-range-year-cell"
+                            type="button"
+                            [attr.data-key]="cell.key"
+                            [attr.data-current]="cell.key === currentYear() ? '' : null"
+                            [attr.aria-pressed]="cell.key === chosenYear()"
+                            [disabled]="cell.disabled"
+                            (click)="pickYear(cell)">
+                            {{ cell.label }}
+                        </button>
+                    }
+                </div>
+            </div>
+        }
     </div>
 
     <div rtElem="footer">

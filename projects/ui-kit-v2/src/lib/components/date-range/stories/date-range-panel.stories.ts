@@ -43,6 +43,47 @@ export const Selecting: TStory = {
 /** Дни за границами выключены, листание упирается в месяцы границ, варианты за границей выключены. */
 export const Bounds: TStory = { args: { part: 'bounds' } };
 
+/** Кадр перерисовки: Angular успевает отрисовать панель после нажатия. */
+function frame(): Promise<void> {
+    return new Promise<void>((resolve: () => void): void => {
+        requestAnimationFrame((): void => resolve());
+    });
+}
+
+/** Нажать первое название месяца в каждой панели. */
+async function openMonths(canvasElement: HTMLElement): Promise<void> {
+    for (const panel of Array.from(canvasElement.querySelectorAll<HTMLElement>('rt-date-range-panel'))) {
+        panel.querySelector<HTMLButtonElement>('[qa-dataid="calendar-month-title"]')?.click();
+    }
+    await frame();
+}
+
+/** Выбор месяца: `play` нажимает название первого месяца — сетка месяцев четыре в ряд. */
+export const Months: TStory = {
+    args: { part: 'months' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openMonths(canvasElement);
+        if (canvasElement.querySelector('[qa-dataid="date-range-months"]') === null) {
+            throw new Error('DateRangePanel/Months: the choice of months did not open');
+        }
+    },
+};
+
+/** Выбор года: `play` открывает выбор месяца и нажимает год в его заголовке. */
+export const Years: TStory = {
+    args: { part: 'years' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openMonths(canvasElement);
+        for (const year of Array.from(canvasElement.querySelectorAll<HTMLButtonElement>('[qa-dataid="date-range-year"]'))) {
+            year.click();
+        }
+        await frame();
+        if (canvasElement.querySelector('[qa-dataid="date-range-years"]') === null) {
+            throw new Error('DateRangePanel/Years: the choice of years did not open');
+        }
+    },
+};
+
 /** Раскладка нижней шторки: заголовок, варианты строкой, один месяц, дни под палец. */
 export const Sheet: TStory = { args: { part: 'sheet' } };
 

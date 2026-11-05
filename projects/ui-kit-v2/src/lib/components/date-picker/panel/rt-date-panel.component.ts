@@ -33,6 +33,7 @@ import { IRtToggleButtonGroup } from '@rt-tools/ui-kit-v2/toggle-button-group';
 import {
     rtDateAddMonths,
     rtDateCanPage,
+    rtDateCanPageYears,
     rtDateFirstDay,
     rtDateGridKey,
     rtDateInBounds,
@@ -44,6 +45,9 @@ import {
     rtDateTimeColumns,
     rtDateWeekdays,
     rtDateWrite,
+    RT_DATE_YEAR_SPAN,
+    rtDateYearSpanStart,
+    rtDateYears,
 } from '../rt-date-panel.logic';
 import { IRtDatePicker } from '../rt-date-picker.model';
 
@@ -51,11 +55,14 @@ const BEM_BLOCK: string = 'rt-date-panel';
 const MONTH_LEN: number = 7;
 const YEAR_LEN: number = 4;
 
-type TView = 'days' | 'months';
+type TView = 'days' | 'months' | 'years';
 type TTab = 'date' | 'time';
 
+/** Куда Escape возвращает из каждого вида; из дней — никуда, панель закрывается. */
+const ESCAPE_BACK: Readonly<Record<TView, TView | null>> = { days: null, months: 'days', years: 'months' };
+
 /**
- * Панель rt-date-picker: месяц с листанием и выбором месяца и года, колонки часов и минут,
+ * Панель rt-date-picker: месяц с листанием, сетки месяцев и годов, колонки часов и минут,
  * подвал с «Сегодня», «Сейчас», «Готово» или «Применить» — по типу значения.
  *
  * Панель не пишет в форму: готовое значение уходит событием `picked`, просьба закрыться —
@@ -83,7 +90,7 @@ type TTab = 'date' | 'time';
         class: BEM_BLOCK,
         '[class.rt-date-panel--sheet]': 'sheet()',
         '[class.rt-date-panel--with-time]': "type() !== 'date'",
-        '(keydown.escape)': 'closed.emit()',
+        '(keydown.escape)': 'onEscape()',
     },
 })
 export class RtDatePanelComponent {
@@ -144,6 +151,26 @@ export class RtDatePanelComponent {
     );
     protected readonly canNextYear: Signal<boolean> = computed((): boolean =>
         rtDateInBounds(String(this.year() + 1), this.min(), this.max())
+    );
+
+    /** Первый год блока, который показывает сетка годов. */
+    protected readonly yearStart: WritableSignal<number> = linkedSignal((): number => rtDateYearSpanStart(this.year()));
+    protected readonly yearCells: Signal<IRtDatePicker.YearCell[]> = computed((): IRtDatePicker.YearCell[] =>
+        rtDateYears(this.yearStart(), this.min(), this.max())
+    );
+    protected readonly yearSpan: Signal<string> = computed((): string => {
+        const cells: IRtDatePicker.YearCell[] = this.yearCells();
+        return `${cells[0].label} – ${cells[cells.length - 1].label}`;
+    });
+    /** Выбранный год — год значения; текущий — год сегодняшнего дня. */
+    protected readonly chosenYear: Signal<string | null> = computed((): string | null => this.draftDay()?.slice(0, YEAR_LEN) ?? null);
+    protected readonly currentYear: Signal<string> = computed((): string => this.today().slice(0, YEAR_LEN));
+    protected readonly currentMonth: Signal<string> = computed((): string => this.today().slice(0, MONTH_LEN));
+    protected readonly canPrevYears: Signal<boolean> = computed((): boolean =>
+        rtDateCanPageYears(this.yearStart(), -1, this.min(), this.max())
+    );
+    protected readonly canNextYears: Signal<boolean> = computed((): boolean =>
+        rtDateCanPageYears(this.yearStart(), 1, this.min(), this.max())
     );
 
     protected readonly draftHour: Signal<number | null> = computed((): number | null => this.#part(0));
@@ -255,6 +282,30 @@ export class RtDatePanelComponent {
     protected pickMonth(cell: IRtDatePicker.MonthCell): void {
         this.shownMonth.set(cell.key);
         this.view.set('days');
+    }
+
+    protected openYears(): void {
+        this.yearStart.set(rtDateYearSpanStart(this.year()));
+        this.view.set('years');
+    }
+
+    protected pageYears(delta: number): void {
+        this.yearStart.update((start: number): number => start + delta * RT_DATE_YEAR_SPAN);
+    }
+
+    protected pickYear(cell: IRtDatePicker.YearCell): void {
+        this.year.set(Number(cell.key));
+        this.view.set('months');
+    }
+
+    /** Escape в сетке годов или месяцев возвращает на вид назад; в днях закрывает панель. */
+    protected onEscape(): void {
+        const back: TView | null = ESCAPE_BACK[this.view()];
+        if (back === null) {
+            this.closed.emit();
+            return;
+        }
+        this.view.set(back);
     }
 
     /** «Готово» и «Применить»: черновик уходит значением, панель закрывается. */
