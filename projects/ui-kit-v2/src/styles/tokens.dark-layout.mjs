@@ -184,6 +184,12 @@ export const darkLayout = [
         name: `--rt-color-table-head-bg`,
     },
     {
+        name: `--rt-color-table-pinned-shadow`,
+    },
+    {
+        name: `--rt-color-table-bg`,
+    },
+    {
         name: `--rt-color-field-fill-underline`,
     },
     {

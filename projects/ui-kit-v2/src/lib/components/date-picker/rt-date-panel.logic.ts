@@ -191,6 +191,30 @@ export function rtDateMonths(year: number, locale: string, min: string | null, m
     });
 }
 
+/** Год, от которого отсчитываются блоки сетки годов: макет рисует 2024 – 2035 вокруг 2026. */
+const YEAR_SPAN_ORIGIN: number = 2024;
+
+/** Лет в одном блоке сетки годов. */
+export const RT_DATE_YEAR_SPAN: number = 12;
+
+/** Первый год блока из двенадцати лет, в котором лежит `year`. */
+export function rtDateYearSpanStart(year: number): number {
+    return YEAR_SPAN_ORIGIN + Math.floor((year - YEAR_SPAN_ORIGIN) / RT_DATE_YEAR_SPAN) * RT_DATE_YEAR_SPAN;
+}
+
+/** Двенадцать лет блока, начиная со `start`; год за границей выключен. */
+export function rtDateYears(start: number, min: string | null, max: string | null): IRtDatePicker.YearCell[] {
+    return Array.from({ length: RT_DATE_YEAR_SPAN }, (_: unknown, i: number): IRtDatePicker.YearCell => {
+        const key: string = String(start + i);
+        return { key, label: key, disabled: !rtDateInBounds(key, min, max) };
+    });
+}
+
+/** Можно ли листать блок лет на `delta` блоков: в соседнем блоке есть хоть один год внутри границ. */
+export function rtDateCanPageYears(start: number, delta: number, min: string | null, max: string | null): boolean {
+    return rtDateYears(start + delta * RT_DATE_YEAR_SPAN, min, max).some((cell: IRtDatePicker.YearCell): boolean => !cell.disabled);
+}
+
 /** Граница времени для дня: у даты со временем действует только в день самой границы. */
 function timeBound(bound: string | null, day: string | null): string | null {
     if (bound === null || bound.length <= TIME_LEN) {

@@ -22,6 +22,12 @@ Given there are more analyses than fit onto a page
 When the owner opens the section
 Then they see the first page, the fresh analyses on top, and the number of the pages under the list
 
+### SC-MB-425 — a row of the list is 50 high, as in the kit mockup
+
+Given the section of the incident analyses is open with a full page
+When the owner looks at the list
+Then every row of one line is 50 points high together with its padding and line
+
 ### SC-MB-48 — while the list is being read, the reading is visible in the place of the rows
 
 Given the reading of the page has not answered yet

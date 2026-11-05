@@ -1,0 +1,34 @@
+@for (frame of frames; track frame.id) {
+    <figure class="app-table-pinned__frame" [attr.data-theme]="frame.dark ? 'dark' : 'light'">
+        <figcaption class="app-table-pinned__caption">{{ frame.caption }}</figcaption>
+        <div class="app-table-pinned__scroller" qa-dataid="table-pinned-scroller" [attr.data-pinned-frame]="frame.id">
+            <table class="app-table-pinned__table" rt-table ariaLabel="Брони" [dataSource]="rows" [columns]="columns" [cards]="false">
+                <ng-container cdkColumnDef="guest" [sticky]="frame.pin === 'start'">
+                    <th *cdkHeaderCellDef cdk-header-cell>Гость</th>
+                    <td *cdkCellDef="let row" cdk-cell [attr.title]="row.guest">
+                        <span class="app-table-pinned__guest">{{ row.guest }}</span>
+                    </td>
+                    <td *cdkFooterCellDef cdk-footer-cell class="app-table-pinned__total">Итого</td>
+                </ng-container>
+                <ng-container cdkColumnDef="dates">
+                    <th *cdkHeaderCellDef cdk-header-cell>Даты</th>
+                    <td *cdkCellDef="let row" cdk-cell>{{ row.dates }}</td>
+                    <td *cdkFooterCellDef cdk-footer-cell>3 брони</td>
+                </ng-container>
+                <ng-container cdkColumnDef="status">
+                    <th *cdkHeaderCellDef cdk-header-cell>Статус</th>
+                    <td *cdkCellDef="let row" cdk-cell><rt-tag [value]="row.status" [severity]="row.severity" /></td>
+                    <td *cdkFooterCellDef cdk-footer-cell></td>
+                </ng-container>
+                <ng-container cdkColumnDef="sum" [stickyEnd]="frame.pin === 'end'">
+                    <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
+                    <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
+                    <td *cdkFooterCellDef cdk-footer-cell class="app-table-pinned__total">118 500 ₽</td>
+                </ng-container>
+                <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
+                <tr *cdkRowDef="let row; columns: columns" cdk-row [class.rt-table__row--danger]="row.problem"></tr>
+                <tr *cdkFooterRowDef="columns" cdk-footer-row class="app-table-pinned__footer"></tr>
+            </table>
+        </div>
+    </figure>
+}
