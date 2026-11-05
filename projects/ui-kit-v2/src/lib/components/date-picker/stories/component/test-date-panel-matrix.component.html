@@ -56,6 +56,25 @@
         </app-story-presets>
     }
 
+    @case ('years') {
+        <app-story-presets caption="Выбор года в обоих наборах">
+            <ng-template>
+                <app-story-row [items]="monthCases" [itemLabel]="caseLabel">
+                    <ng-template let-yearCase>
+                        <div [style]="surface">
+                            <rt-date-panel
+                                [type]="yearCase.type"
+                                [value]="yearCase.value"
+                                [min]="yearCase.min"
+                                [max]="yearCase.max"
+                                [now]="now" />
+                        </div>
+                    </ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-presets>
+    }
+
     @case ('sheet') {
         <!--
             Раскладка нижней шторки: панель на ширине телефона. Шторку саму по себе показывает

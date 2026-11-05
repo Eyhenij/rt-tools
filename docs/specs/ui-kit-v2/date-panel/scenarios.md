@@ -113,3 +113,60 @@ Then the text reads `01.08.2026`, the empty field hints `дд.мм.гггг` und
 the typed text becomes the value `2026-08-15`
 
 Covered by the spec of the date text module and the component spec of the field.
+
+### SC-UKV-1146 — the year in the month grid header opens the year grid
+
+Given the date panel shows the month grid of 2026
+When the person presses the year in its header
+Then twelve years 2024 – 2035 are shown three in a row, and the header shows «2024 – 2035»
+
+Covered by the spec of the date logic module and the component spec of the panel.
+
+### SC-UKV-1147 — the arrows page the span by twelve years
+
+Given the year grid shows 2024 – 2035
+When the person presses the forward arrow
+Then the grid shows 2036 – 2047
+
+Covered by the spec of the date logic module and the component spec of the panel.
+
+### SC-UKV-1148 — a year outside the bounds is unavailable
+
+Given the field has `min` 2026-01-01
+When the year grid shows 2024 – 2035
+Then 2024 and 2025 are unavailable, and the back arrow is switched off
+
+Covered by the spec of the date logic module and the component spec of the panel.
+
+### SC-UKV-1149 — the chosen year is filled and the current year is outlined
+
+Given the value is in 2027 and today is in 2026
+When the year grid opens
+Then 2027 carries the chosen mark and 2026 the current mark
+
+Covered by the component spec of the panel.
+
+### SC-UKV-1150 — a picked year opens the month grid of that year
+
+Given the year grid is open
+When the person picks 2030
+Then the month grid of 2030 is shown
+
+Covered by the component spec of the panel.
+
+### SC-UKV-1154 — Escape in a grid returns one view back
+
+Given the year grid is open from the month grid
+When the person presses Escape
+Then the month grid is shown and the panel stays open
+
+Covered by the component specs of the date panel and the period panel.
+
+### SC-UKV-1155 — in the bottom sheet the panel keeps 20px at the sides
+
+Given a narrow screen and a date field
+When the panel opens in the bottom sheet
+Then the arrows, the days and the footer stand 20px from the sides of the sheet
+
+Покрытие: частичное — the component spec of the panel checks the rule of the sheet in the panel
+styles; the distance on the screen is shown by the frame of the story Sheet.
