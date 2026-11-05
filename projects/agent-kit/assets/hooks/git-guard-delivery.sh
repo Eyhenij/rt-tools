@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
+# Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-pipeline.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
 #
 # The delivery law demands three things nothing usually checks: an edit starts from a task visible
@@ -403,6 +403,10 @@ if [ -n "$title" ]; then
             || fault "the title of the request carries the number ${title_number}, the branch — ${number}. The task, the branch and the PR carry one and the same number."
     fi
 fi
+
+# A draft into a base the pipeline does not wake for waits for nothing. No helper — not judged.
+[ -f "$rt_hooks_dir/git-guard-delivery-pipeline.sh" ] && . "$rt_hooks_dir/git-guard-delivery-pipeline.sh" 2>/dev/null
+command -v rt_delivery_pull_draft >/dev/null 2>&1 && rt_delivery_pull_draft "$cmd"
 
 # The main branch is merged in before the PR opens: otherwise the reviewer sees someone else's edit
 # mixed in with his own, and the checks run from an outdated base.

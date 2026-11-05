@@ -1,6 +1,6 @@
 # The epic in the delivery guards
 
-**Status:** in force · **Revision:** 2026-09-21 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-05 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `delivery`, `work-conduct`
 **Procedures:** none
@@ -50,6 +50,10 @@ their own turn.
 - **A chain base is lawful while its history carries the epic branch.** A chain PR goes on the
   previous branch, and the branch of the task below stands on the epic branch. A base without the
   epic branch in its history is refused the same as the main branch.
+- **A draft is refused on a base the pipeline does not wake for.** A draft waits for a run, and no
+  run comes to such a base, so a PR of a task into its epic branch would wait for nothing. The bases
+  are read from the `pull_request` trigger of the pipeline file the tree named for the push gate.
+  Where the file, the setting or a branch filter is absent, the draft is not judged.
 - **The freshness asked before a request of such a task is the epic's, not the main branch's.** The
   request goes into the epic, and it is the divergence with the epic that shows in the diff; the main
   branch reaches the task through the epic.
@@ -142,3 +146,4 @@ None.
 - 2026-09-21 — the subdomain was created: the rules about the epic and their scenarios moved here
   from the subdomain of the delivery guards, and the freshness of the main branch began to be asked
   of the base as well.
+- 2026-11-05 — a draft on a base the pipeline does not wake for is refused by task RT-3047.
