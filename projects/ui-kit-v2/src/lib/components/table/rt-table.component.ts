@@ -15,6 +15,7 @@ import {
 } from '@angular/cdk/table';
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
@@ -25,6 +26,7 @@ import {
     ElementRef,
     forwardRef,
     inject,
+    Injector,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -41,7 +43,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective, WINDOW } from '@rt-tools/core';
 import { IFilterModel, ISortModel } from '@rt-tools/utils';
 
 import { TRtKitLabelKey, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
@@ -62,6 +64,7 @@ import { RtRowHasActionsPipe } from './rt-table-row-actions.pipe';
 import { RtTableColumnSettings } from './rt-table-column-settings';
 import { displayedColumnKeys } from './rt-table-columns.logic';
 import { filterCellsOf } from './rt-table-filter.logic';
+import { IRtTablePinnedEdges, RtTablePinnedEdges } from './rt-table-pinned-edges';
 import { nextSort } from './rt-table-sort.logic';
 import { IRtTable } from './rt-table.model';
 
@@ -132,6 +135,8 @@ const DEFAULT_EMPTY_KEY: TRtKitLabelKey = 'uiNoRows';
         '[class.rt-table--fetching]': 'fetching()',
         '[class.rt-table--empty]': 'isEmpty()',
         '[class.rt-table--cards]': 'showCards()',
+        '[class.rt-table--hidden-start]': 'hiddenEdges().start',
+        '[class.rt-table--hidden-end]': 'hiddenEdges().end',
         '[attr.role]': 'hostRole',
         '[attr.aria-label]': 'ariaLabel()',
         '[attr.aria-busy]': "isInitialLoading() || fetching() ? 'true' : null",
@@ -142,8 +147,20 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
 
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #breakpoints: BreakpointsService = inject(BreakpointsService);
+    readonly #injector: Injector = inject(Injector);
+    readonly #host: HTMLElement = inject(ElementRef).nativeElement as HTMLElement;
+    readonly #window: Window = inject(WINDOW);
 
     readonly #dataSourceVersion: WritableSignal<number> = signal<number>(0);
+
+    /** Под какой закреплённой колонкой есть прокрученное содержимое — по нему видна тень у края. */
+    readonly #hiddenEdges: WritableSignal<IRtTablePinnedEdges> = signal<IRtTablePinnedEdges>(
+        { start: false, end: false },
+        { equal: (a: IRtTablePinnedEdges, b: IRtTablePinnedEdges): boolean => a.start === b.start && a.end === b.end }
+    );
+
+    /** Следит за прокруткой контейнера потребителя: таблица сама вбок не прокручивается. */
+    readonly #pinnedEdges: RtTablePinnedEdges = new RtTablePinnedEdges((edges: IRtTablePinnedEdges): void => this.#hiddenEdges.set(edges));
 
     /**
      * Выбранная сортировка. Заводится от входа `[sort]` и переключается заголовками:
@@ -179,6 +196,9 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
      * остаются висеть вне таблицы. Считается один раз — тег хоста по ходу жизни не меняется.
      */
     protected readonly hostRole: 'table' | null = (inject(ElementRef).nativeElement as HTMLElement).tagName === 'RT-TABLE' ? 'table' : null;
+
+    /** Скрытые края для модификаторов хоста `--hidden-start` и `--hidden-end`. */
+    protected readonly hiddenEdges: Signal<IRtTablePinnedEdges> = this.#hiddenEdges.asReadonly();
 
     /** `true` когда initial-load в полёте и entities ещё нет — рендерим skeleton rows. */
     protected readonly isInitialLoading: Signal<boolean> = computed((): boolean => this.loading() && this.#hasData() === false);
@@ -384,6 +404,7 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
         }
 
         this.#columnSettings.start();
+        afterNextRender((): void => this.#pinnedEdges.watch(this.#host, this.#window), { injector: this.#injector });
         this.#columnSettings
             .saved()
             .pipe(takeUntilDestroyed(this.#destroyRef))
@@ -395,6 +416,7 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
             this.removeColumnDef(this.actionsColumnDef);
         }
         this.#columnSettings.stop();
+        this.#pinnedEdges.stop();
         super.ngOnDestroy();
     }
 
