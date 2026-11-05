@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/git-guard-delivery.sh · 232fff4eccc5 · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/git-guard-delivery.sh · dc966beef54e · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-pipeline.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
@@ -323,27 +323,23 @@ fi
 # the length limit, and the signature is the most separate of its subjects. No helper — the
 # signature is not judged, and the work goes on: the same fail-open as with the other conditions.
 # shellcheck disable=SC1090
-[ -f "$rt_hooks_dir/git-guard-delivery-signature.sh" ] \
-    && . "$rt_hooks_dir/git-guard-delivery-signature.sh" 2>/dev/null
+[ -f "$rt_hooks_dir/git-guard-delivery-signature.sh" ] && . "$rt_hooks_dir/git-guard-delivery-signature.sh" 2>/dev/null
 command -v rt_delivery_signature >/dev/null 2>&1 && rt_delivery_signature
 
 # --- the push into a merged branch -----------------------------------------------------------
 # The helper next door — `git-guard-delivery-merged.sh`. No helper — the push is not judged by it.
 # shellcheck disable=SC1090
-[ -f "$rt_hooks_dir/git-guard-delivery-merged.sh" ] \
-    && . "$rt_hooks_dir/git-guard-delivery-merged.sh" 2>/dev/null
+[ -f "$rt_hooks_dir/git-guard-delivery-merged.sh" ] && . "$rt_hooks_dir/git-guard-delivery-merged.sh" 2>/dev/null
 command -v rt_delivery_merged >/dev/null 2>&1 && rt_delivery_merged
 
 # --- leaving draft ---------------------------------------------------------------------------
 # The subject lives in a helper next door — `git-guard-delivery-draft.sh`, by the same technique as
 # the signature. No helper — leaving draft is not judged, and the work goes on.
 # shellcheck disable=SC1090
-[ -f "$rt_hooks_dir/git-guard-delivery-draft.sh" ] \
-    && . "$rt_hooks_dir/git-guard-delivery-draft.sh" 2>/dev/null
+[ -f "$rt_hooks_dir/git-guard-delivery-draft.sh" ] && . "$rt_hooks_dir/git-guard-delivery-draft.sh" 2>/dev/null
 command -v rt_delivery_draft_ready >/dev/null 2>&1 && rt_delivery_draft_ready
 
 # --- merging a PR --------------------------------------------------------------------------
-#
 # The second line of the same condition that stands at the opening of a PR: it catches a merge going
 # by command. We look for the command from the start of the line or after a separator, not anywhere
 # in the text. Otherwise the guard refuses a message where `gh pr merge` is merely mentioned in
@@ -418,7 +414,6 @@ command -v rt_delivery_pull_draft >/dev/null 2>&1 && rt_delivery_pull_draft "$cm
 
 # The main branch is merged in before the PR opens: otherwise the reviewer sees someone else's edit
 # mixed in with his own, and the checks run from an outdated base.
-#
 # There are two tiers. The first reads the local tip and works without the network. The second asks
 # the remote reference: without it, silence means only "the local reference is not older than the
 # branch", while it reads as "the main branch is merged in". No answer from the network — a silent
