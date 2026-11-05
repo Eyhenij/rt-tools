@@ -16,7 +16,7 @@ const STORY_NOW: Date = new Date(2026, 9, 20, 10, 37);
 const SAMPLE_RANGE: IRtDateRange.Value = { start: '2026-10-12', end: '2026-10-15' };
 
 /** Какую матрицу панели рисовать: у каждой своя история, и выбирает её этот вход. */
-export type TDateRangePanelMatrixPart = 'selected' | 'selecting' | 'bounds' | 'sheet' | 'themes';
+export type TDateRangePanelMatrixPart = 'selected' | 'selecting' | 'bounds' | 'months' | 'years' | 'sheet' | 'themes';
 
 /** Случай панели: значение и границы. */
 interface IDateRangePanelCase {

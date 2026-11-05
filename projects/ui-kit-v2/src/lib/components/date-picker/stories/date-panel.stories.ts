@@ -39,6 +39,28 @@ export const Months: TStory = {
     },
 };
 
+/** Выбор года: `play` открывает выбор месяца, затем нажимает год в его заголовке. */
+export const Years: TStory = {
+    args: { part: 'years' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        const frame: () => Promise<void> = (): Promise<void> =>
+            new Promise<void>((resolve: () => void): void => {
+                requestAnimationFrame((): void => resolve());
+            });
+        for (const title of Array.from(canvasElement.querySelectorAll<HTMLButtonElement>('[qa-dataid="calendar-month-title"]'))) {
+            title.click();
+        }
+        await frame();
+        for (const year of Array.from(canvasElement.querySelectorAll<HTMLButtonElement>('[qa-dataid="date-panel-year"]'))) {
+            year.click();
+        }
+        await frame();
+        if (canvasElement.querySelector('[qa-dataid="date-panel-years"]') === null) {
+            throw new Error('DatePanel/Years: the choice of years did not open');
+        }
+    },
+};
+
 /** Раскладка нижней шторки: дни под палец, у даты со временем — переключатель «Дата | Время». */
 export const Sheet: TStory = { args: { part: 'sheet' } };
 
