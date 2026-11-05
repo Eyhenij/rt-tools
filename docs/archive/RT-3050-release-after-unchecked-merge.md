@@ -1,6 +1,6 @@
 # RT-3050 — пакет выпускался с main, куда вошёл PR без прогона
 
-Задача RT-3050 эпика RT-3043, ветка `RT-3050-release-after-unchecked-merge` от
+Задача RT-3050 эпика RT-3043, PR #3126, ветка `RT-3050-release-after-unchecked-merge` от
 `RT-3043-cargo-2026-11`, 06.11.2026. Папка `docs/tasks/RT-3050-release-after-unchecked-merge/`
 разобрана в эту запись. Порядок эпика лежит в `docs/plans/cargo-2026-11.md`.
 
