@@ -13,7 +13,7 @@ import { RtInputNumberComponent } from '../../rt-input-number.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TInputNumberMatrixPart =
-    'size' | 'prefix' | 'fraction' | 'filling' | 'bordered' | 'appearance' | 'states' | 'presets' | 'themes';
+    'size' | 'prefix' | 'fraction' | 'filling' | 'bordered' | 'appearance' | 'states' | 'stepper' | 'presets' | 'themes';
 
 /** Случай с подписью и своим значением: у числового поля значение приходит только формой. */
 interface IInputNumberCase {
@@ -52,6 +52,15 @@ interface IInputNumberThemeCase extends IInputNumberCase {
 interface IInputNumberStateCase extends IInputNumberThemeCase {
     /** Плоский режим чтения включает вмещающее поле, поэтому ячейка обёрнута в `rt-field`. */
     readonly flat: boolean;
+}
+
+/** Стрелки шага: наведение на каждую, обе границы, выключенное поле и поле без стрелок. */
+interface IInputNumberStepperCase extends IInputNumberThemeCase {
+    readonly min: number | null;
+    readonly max: number | null;
+    readonly stepper: boolean;
+    /** Признак наведения на одну из стрелок; поле при этом в фокусе, как в макете. */
+    readonly state: 'hover-up' | 'hover-down' | null;
 }
 
 function amount(value: number | null): FormControl<number | null> {
@@ -200,6 +209,30 @@ function invalid(): FormControl<number | null> {
                 </app-story-presets>
             }
 
+            @case ('stepper') {
+                <app-story-presets caption="Стрелки шага в обеих темах в обоих наборах">
+                    <ng-template>
+                        <app-story-themes>
+                            <ng-template>
+                                <app-story-row [items]="stepperCases" [itemLabel]="caseLabel" [slotWidth]="fieldWidth">
+                                    <ng-template let-stepperCase>
+                                        <rt-input-number
+                                            [min]="stepperCase.min"
+                                            [max]="stepperCase.max"
+                                            [maxFractionDigits]="0"
+                                            [stepper]="stepperCase.stepper"
+                                            [disabled]="stepperCase.disabled"
+                                            [ariaLabel]="stepperCase.name"
+                                            [formControl]="stepperCase.control"
+                                            [attr.data-story-state]="stepperCase.state" />
+                                    </ng-template>
+                                </app-story-row>
+                            </ng-template>
+                        </app-story-themes>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('presets') {
                 <app-story-presets caption="Поле в обоих наборах">
                     <ng-template>
@@ -294,6 +327,15 @@ export class TestRtInputNumberMatrixComponent {
         { name: 'отключено со значением', control: amount(1500), disabled: true, flat: false },
         { name: 'только чтение', control: amount(1234567.89), disabled: false, flat: true },
         { name: 'только чтение без значения', control: amount(null), disabled: false, flat: true },
+    ];
+
+    public readonly stepperCases: readonly IInputNumberStepperCase[] = [
+        { name: 'наведение на верхнюю', control: amount(11), min: null, max: null, stepper: true, disabled: false, state: 'hover-up' },
+        { name: 'наведение на нижнюю', control: amount(9), min: null, max: null, stepper: true, disabled: false, state: 'hover-down' },
+        { name: 'на максимуме', control: amount(20), min: 1, max: 20, stepper: true, disabled: false, state: null },
+        { name: 'на минимуме', control: amount(1), min: 1, max: 20, stepper: true, disabled: false, state: null },
+        { name: 'отключено', control: amount(10), min: null, max: null, stepper: true, disabled: true, state: null },
+        { name: 'без стрелок', control: amount(10), min: null, max: null, stepper: false, disabled: false, state: null },
     ];
 
     public readonly themeCases: readonly IInputNumberThemeCase[] = [

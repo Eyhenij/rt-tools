@@ -27,6 +27,7 @@
             [disabled]="isDisabled()"
             [value]="displayValue()"
             (input)="onInput($event)"
+            (keydown)="onKeydown($event)"
             (blur)="onBlur()" />
         @if (showClearButton()) {
             <rt-icon-button
@@ -39,6 +40,30 @@
                 [ariaLabel]="t().uiClear"
                 [tabIndex]="clearTabIndex()"
                 (clicked)="clear($event)" />
+        }
+        @if (stepper()) {
+            <span rtElem="stepper" qa-dataid="input-number-stepper">
+                <button
+                    type="button"
+                    rtElem="step"
+                    qa-dataid="input-number-step-up"
+                    tabindex="-1"
+                    [attr.aria-label]="t().uiIncrease"
+                    [disabled]="!canStepUp()"
+                    (click)="stepBy(1)">
+                    <rt-icon rtElem="step-icon" name="chevron-up" [size]="stepIconSize()" />
+                </button>
+                <button
+                    type="button"
+                    rtElem="step"
+                    qa-dataid="input-number-step-down"
+                    tabindex="-1"
+                    [attr.aria-label]="t().uiDecrease"
+                    [disabled]="!canStepDown()"
+                    (click)="stepBy(-1)">
+                    <rt-icon rtElem="step-icon" name="chevron-up" [size]="stepIconSize()" [rtMod]="{ flipped: true }" />
+                </button>
+            </span>
         }
     }
 </ng-container>
