@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { signal, DebugElement } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
@@ -197,5 +200,97 @@ describe('RtDatePanelComponent', (): void => {
         const { fixture }: IPanel = setup({ type: 'date', value: '2026-09-15' });
 
         expect(textOf(qaAll(fixture, 'calendar-weekday')[0])).toBe('пн');
+    });
+
+    /** Открыть сетку годов из сетки месяцев значения. */
+    function openYears(fixture: ComponentFixture<RtDatePanelComponent>): void {
+        press(fixture, qa(fixture, 'calendar-month-title'));
+        press(fixture, qa(fixture, 'date-panel-year'));
+    }
+
+    function yearKeys(fixture: ComponentFixture<RtDatePanelComponent>): string[] {
+        return qaAll(fixture, 'date-panel-year-cell').map((node: DebugElement): string => textOf(node));
+    }
+
+    it('SC-UKV-1146 — the year in the month grid header opens the year grid', (): void => {
+        const { fixture }: IPanel = setup({ type: 'date', value: '2026-09-15' });
+        openYears(fixture);
+
+        expect(qa(fixture, 'date-panel-months')).toBeNull();
+        expect(textOf(qa(fixture, 'date-panel-span'))).toBe('2024 – 2035');
+        expect(yearKeys(fixture)).toEqual(['2024', '2025', '2026', '2027', '2028', '2029', '2030', '2031', '2032', '2033', '2034', '2035']);
+    });
+
+    it('SC-UKV-1147 — the arrows page the span by twelve years', (): void => {
+        const { fixture }: IPanel = setup({ type: 'date', value: '2026-09-15' });
+        openYears(fixture);
+
+        press(fixture, iconButton(fixture, 'date-panel-next-years'));
+        expect(textOf(qa(fixture, 'date-panel-span'))).toBe('2036 – 2047');
+        press(fixture, iconButton(fixture, 'date-panel-prev-years'));
+        press(fixture, iconButton(fixture, 'date-panel-prev-years'));
+        expect(textOf(qa(fixture, 'date-panel-span'))).toBe('2012 – 2023');
+    });
+
+    it('SC-UKV-1148 — a year outside the bounds is unavailable, and the back arrow is off', (): void => {
+        const { fixture }: IPanel = setup({ type: 'date', value: '2026-09-15', min: '2026-01-01' });
+        openYears(fixture);
+
+        expect(cell(fixture, 'date-panel-year-cell', '2025')?.nativeElement.disabled).toBe(true);
+        expect(cell(fixture, 'date-panel-year-cell', '2026')?.nativeElement.disabled).toBe(false);
+        expect(iconButton(fixture, 'date-panel-prev-years')?.nativeElement.disabled).toBe(true);
+    });
+
+    it('SC-UKV-1149 — the chosen year is filled and the current year is outlined', (): void => {
+        const { fixture }: IPanel = setup({ type: 'date', value: '2027-03-15' });
+        openYears(fixture);
+
+        expect(pressedLabels(fixture, 'date-panel-year-cell')).toEqual(['2027']);
+        expect(el(fixture, '[qa-dataid="date-panel-year-cell"][data-current]')?.nativeElement.getAttribute('data-key')).toBe('2026');
+    });
+
+    it('SC-UKV-1149 — the current month is outlined in the month grid', (): void => {
+        const { fixture }: IPanel = setup({ type: 'date', value: '2026-03-15' });
+        press(fixture, qa(fixture, 'calendar-month-title'));
+
+        expect(el(fixture, '[qa-dataid="date-panel-month"][data-current]')?.nativeElement.getAttribute('data-key')).toBe('2026-09');
+    });
+
+    it('SC-UKV-1150 — a picked year opens the month grid of that year', (): void => {
+        const { fixture }: IPanel = setup({ type: 'date', value: '2026-09-15' });
+        openYears(fixture);
+
+        press(fixture, cell(fixture, 'date-panel-year-cell', '2030') ?? null);
+        expect(qa(fixture, 'date-panel-years')).toBeNull();
+        expect(textOf(qa(fixture, 'date-panel-year'))).toBe('2030');
+        expect(qa(fixture, 'date-panel-month')?.nativeElement.getAttribute('data-key')).toBe('2030-01');
+    });
+
+    it('SC-UKV-1154 — Escape in a grid returns one view back, in the days it closes', (): void => {
+        const { fixture, closed }: IPanel = setup({ type: 'date', value: '2026-09-15' });
+        openYears(fixture);
+        const escape: () => void = (): void => {
+            fixture.nativeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+            fixture.detectChanges();
+        };
+
+        escape();
+        expect(qa(fixture, 'date-panel-months')).not.toBeNull();
+        escape();
+        expect(qa(fixture, 'date-panel-calendar')).not.toBeNull();
+        expect(closed).not.toHaveBeenCalled();
+        escape();
+        expect(closed).toHaveBeenCalledTimes(1);
+    });
+
+    /* Раскладку среда спеков не считает, поэтому проверяется правило шторки в стилях панели;
+       сам отступ на экране закрывает кадр истории Sheet. */
+    it('SC-UKV-1155 — в шторке панель держит боковой отступ шапки и подвала шторки', () => {
+        const styles: string = readFileSync(join(__dirname, 'rt-date-panel.component.scss'), 'utf8');
+        const start: number = styles.indexOf('&--sheet {');
+        const sheet: string = styles.slice(start, styles.indexOf('}', start));
+
+        expect(start).toBeGreaterThan(-1);
+        expect(sheet).toContain('padding-inline: var(--rt-space-5);');
     });
 });

@@ -1,6 +1,7 @@
 import { ERtCalendarDayState, IRtCalendar } from '../calendar/rt-calendar.model';
 import {
     rtDateCanPage,
+    rtDateCanPageYears,
     rtDateFirstDay,
     rtDateGridKey,
     rtDateInBounds,
@@ -12,6 +13,8 @@ import {
     rtDateTimeColumns,
     rtDateWeekdays,
     rtDateWrite,
+    rtDateYearSpanStart,
+    rtDateYears,
 } from './rt-date-panel.logic';
 import { IRtDatePicker } from './rt-date-picker.model';
 
@@ -134,5 +137,28 @@ describe('rt-date-panel.logic', () => {
         expect(today).toEqual(['2026-09-29']);
         expect(days[14].state).toBe(ERtCalendarDayState.Chosen);
         expect(days[13].state).toBe(ERtCalendarDayState.Free);
+    });
+
+    it('SC-UKV-1146 — the span is the block of twelve holding the year, 2024 – 2035 around 2026', () => {
+        expect(rtDateYearSpanStart(2026)).toBe(2024);
+        expect(rtDateYearSpanStart(2035)).toBe(2024);
+        expect(rtDateYearSpanStart(2040)).toBe(2036);
+        expect(rtDateYearSpanStart(2023)).toBe(2012);
+        const keys: string[] = rtDateYears(2024, null, null).map((cell: IRtDatePicker.YearCell): string => cell.key);
+        expect(keys).toEqual(['2024', '2025', '2026', '2027', '2028', '2029', '2030', '2031', '2032', '2033', '2034', '2035']);
+    });
+
+    it('SC-UKV-1147 — the arrows page the span by twelve years', () => {
+        expect(rtDateYears(2024 + 12, null, null)[0].label).toBe('2036');
+        expect(rtDateCanPageYears(2024, 1, null, null)).toBe(true);
+        expect(rtDateCanPageYears(2024, -1, null, null)).toBe(true);
+    });
+
+    it('SC-UKV-1148 — a year outside the bounds is unavailable, and the arrow stops at the bound', () => {
+        const offs: boolean[] = rtDateYears(2024, '2026-01-01', '2034-06-30').map((cell: IRtDatePicker.YearCell): boolean => cell.disabled);
+        expect(offs).toEqual([true, true, false, false, false, false, false, false, false, false, false, true]);
+        expect(rtDateCanPageYears(2024, -1, '2026-01-01', null)).toBe(false);
+        expect(rtDateCanPageYears(2024, 1, null, '2035-12-31')).toBe(false);
+        expect(rtDateCanPageYears(2024, 1, null, '2036-01-01')).toBe(true);
     });
 });
