@@ -1,4 +1,4 @@
-import { BrowserContext, expect, Page, test } from '@playwright/test';
+import { BrowserContext, expect, Page, Route, test } from '@playwright/test';
 
 import { ACCOUNT, STAND_PASSWORD } from '../stand/stand.mjs';
 import { enterOnRealmScreen, expectRealmScreen, openSection, qa, SECTION, signIn } from './support/admin';
@@ -33,6 +33,26 @@ test.describe('вход и адреса разделов', () => {
         await expect(page).toHaveURL(new RegExp(`${SECTION.postmortems.path}$`));
         await expect(page.getByRole('heading', { name: SECTION.postmortems.title })).toBeVisible();
         await expect(qa(page, SECTION.postmortems.row).first()).toBeVisible();
+    });
+
+    test('SC-AUTH-97 — возврат с формы входа не ждёт пробы куки Keycloak', async ({ page }: { page: Page }) => {
+        let returned: boolean = false;
+        let probesAfterReturn: number = 0;
+        // Проба, ответившая позже предела тихой проверки, обрезала обмен кода и снова вела на форму
+        await page.route('**/3p-cookies/step1.html', async (route: Route): Promise<void> => {
+            if (returned) {
+                probesAfterReturn += 1;
+                await new Promise<void>((resolve: () => void): void => void setTimeout(resolve, 6_000));
+            }
+            await route.continue();
+        });
+        await page.goto(SECTION.postmortems.path);
+        await expectRealmScreen(page);
+        returned = true;
+        await signIn(page);
+
+        await expect(qa(page, SECTION.postmortems.table)).toBeVisible({ timeout: 4_000 });
+        expect(probesAfterReturn).toBe(0);
     });
 
     test('SC-MB-46 — адрес раздела переживает перезагрузку', async ({ page }: { page: Page }) => {
