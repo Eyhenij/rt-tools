@@ -22,8 +22,23 @@ import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { rtKitLabel, RT_KIT_LABELS, RT_KIT_LOCALE, TRtKitLabelKey, TRtKitLabelMap, TRtKitLabelParams } from '@rt-tools/ui-kit-v2/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtCalendarComponent } from '@rt-tools/ui-kit-v2/calendar';
+import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { IRtCalendar } from '@rt-tools/ui-kit-v2/calendar';
-import { rtDateAddMonths, rtDateCanPage, rtDateFirstDay, rtDateGridKey, rtDateNow, rtDateWeekdays } from '@rt-tools/ui-kit-v2/date-picker';
+import {
+    rtDateAddMonths,
+    rtDateCanPage,
+    rtDateCanPageYears,
+    rtDateFirstDay,
+    rtDateGridKey,
+    rtDateInBounds,
+    rtDateMonths,
+    rtDateNow,
+    rtDateWeekdays,
+    rtDateYears,
+    rtDateYearSpanStart,
+    IRtDatePicker,
+    RT_DATE_YEAR_SPAN,
+} from '@rt-tools/ui-kit-v2/date-picker';
 import {
     rtRangeDates,
     rtRangeDays,
@@ -37,6 +52,12 @@ import { ERtDateRangePreset, IRtDateRange } from '../rt-date-range.model';
 
 const BEM_BLOCK: string = 'rt-date-range-panel';
 const MONTH_LEN: number = 7;
+const YEAR_LEN: number = 4;
+
+type TView = 'days' | 'months' | 'years';
+
+/** Куда Escape возвращает из каждого вида; из дней — никуда, панель закрывается. */
+const ESCAPE_BACK: Readonly<Record<TView, TView | null>> = { days: null, months: 'days', years: 'months' };
 
 /** Подпись каждого быстрого варианта в наборе кита. */
 const PRESET_LABELS: Readonly<Record<ERtDateRangePreset, TRtKitLabelKey>> = {
@@ -85,11 +106,12 @@ interface IPresetView {
         // components
         RtButtonDirective,
         RtCalendarComponent,
+        RtIconButtonComponent,
     ],
     host: {
         class: BEM_BLOCK,
         '[class.rt-date-range-panel--sheet]': 'sheet()',
-        '(keydown.escape)': 'closed.emit()',
+        '(keydown.escape)': 'onEscape()',
     },
 })
 export class RtDateRangePanelComponent {
@@ -135,6 +157,38 @@ export class RtDateRangePanelComponent {
     protected readonly canPrev: Signal<boolean> = computed((): boolean => rtDateCanPage(this.shownMonth(), -1, this.min(), this.max()));
     /** Вперёд листается, пока последний показанный месяц не упёрся в границу. */
     protected readonly canNext: Signal<boolean> = computed((): boolean => rtDateCanPage(this.#lastShown(), 1, this.min(), this.max()));
+
+    /** Вид панели: дни, сетка месяцев года или сетка годов. */
+    protected readonly view: WritableSignal<TView> = signal<TView>('days');
+    protected readonly year: WritableSignal<number> = linkedSignal((): number => Number(this.shownMonth().slice(0, YEAR_LEN)));
+    protected readonly yearStart: WritableSignal<number> = linkedSignal((): number => rtDateYearSpanStart(this.year()));
+    protected readonly monthCells: Signal<IRtDatePicker.MonthCell[]> = computed((): IRtDatePicker.MonthCell[] =>
+        rtDateMonths(this.year(), this.#locale(), this.min(), this.max())
+    );
+    protected readonly yearCells: Signal<IRtDatePicker.YearCell[]> = computed((): IRtDatePicker.YearCell[] =>
+        rtDateYears(this.yearStart(), this.min(), this.max())
+    );
+    protected readonly yearSpan: Signal<string> = computed((): string => {
+        const cells: IRtDatePicker.YearCell[] = this.yearCells();
+        return `${cells[0].label} – ${cells[cells.length - 1].label}`;
+    });
+    /** Выбранные месяц и год — месяц и год начала периода; текущие — сегодняшние. */
+    protected readonly chosenMonth: Signal<string | null> = computed((): string | null => this.start()?.slice(0, MONTH_LEN) ?? null);
+    protected readonly chosenYear: Signal<string | null> = computed((): string | null => this.start()?.slice(0, YEAR_LEN) ?? null);
+    protected readonly currentMonth: Signal<string> = computed((): string => this.today().slice(0, MONTH_LEN));
+    protected readonly currentYear: Signal<string> = computed((): string => this.today().slice(0, YEAR_LEN));
+    protected readonly canPrevYear: Signal<boolean> = computed((): boolean =>
+        rtDateInBounds(String(this.year() - 1), this.min(), this.max())
+    );
+    protected readonly canNextYear: Signal<boolean> = computed((): boolean =>
+        rtDateInBounds(String(this.year() + 1), this.min(), this.max())
+    );
+    protected readonly canPrevYears: Signal<boolean> = computed((): boolean =>
+        rtDateCanPageYears(this.yearStart(), -1, this.min(), this.max())
+    );
+    protected readonly canNextYears: Signal<boolean> = computed((): boolean =>
+        rtDateCanPageYears(this.yearStart(), 1, this.min(), this.max())
+    );
 
     protected readonly presets: Signal<IPresetView[]> = computed((): IPresetView[] => {
         const labels: TRtKitLabelMap = this.t();
@@ -232,6 +286,46 @@ export class RtDateRangePanelComponent {
 
     protected page(delta: number): void {
         this.shownMonth.set(rtDateAddMonths(this.shownMonth(), delta));
+    }
+
+    /** Название месяца открывает сетку месяцев его года. */
+    protected openMonths(month: IRtCalendar.Month): void {
+        this.year.set(Number(month.key.slice(0, YEAR_LEN)));
+        this.view.set('months');
+    }
+
+    protected pageYear(delta: number): void {
+        this.year.update((year: number): number => year + delta);
+    }
+
+    /** Выбранный месяц становится первым из показанных. */
+    protected pickMonth(cell: IRtDatePicker.MonthCell): void {
+        this.shownMonth.set(cell.key);
+        this.view.set('days');
+    }
+
+    protected openYears(): void {
+        this.yearStart.set(rtDateYearSpanStart(this.year()));
+        this.view.set('years');
+    }
+
+    protected pageYears(delta: number): void {
+        this.yearStart.update((start: number): number => start + delta * RT_DATE_YEAR_SPAN);
+    }
+
+    protected pickYear(cell: IRtDatePicker.YearCell): void {
+        this.year.set(Number(cell.key));
+        this.view.set('months');
+    }
+
+    /** Escape в сетке годов или месяцев возвращает на вид назад; в днях закрывает панель. */
+    protected onEscape(): void {
+        const back: TView | null = ESCAPE_BACK[this.view()];
+        if (back === null) {
+            this.closed.emit();
+            return;
+        }
+        this.view.set(back);
     }
 
     protected reset(): void {
