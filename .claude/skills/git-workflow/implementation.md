@@ -40,6 +40,7 @@ consequence of a merge.
 - **gathering the branch state before a PR** — `.claude/skills/git-workflow/scripts/gather-context.sh`
 - **the forms of the PR description and of the changelog** — `.claude/skills/git-workflow/REFERENCE.md`
 - **the main branch, delivery and push guards** — `.claude/hooks/git-guard-main.sh`, `git-guard-delivery.sh`, `git-guard-push-tests.sh`
+- **the heavy steps of the push set run ahead** — `.claude/rt-kit/project.sh:RT_PUSH_HEAVY_AHEAD` — 1. The snapshots, the end-to-end suites, the affected build and the auth stand run by `bash .claude/hooks/git-guard-push-ahead.sh` in the background. The push guard only reads their green marks: inside it they outgrew the 30-minute hook limit (task RT-3092)
 - **the guard of the pair "an edit and its document"** — `.claude/hooks/docs-guard.sh`
 - **the tree profile for the guards** — `.claude/rt-kit/project.sh`
 - **the commit subject check** — `commitlint.config.cjs`, called by a git hook from `.husky/commit-msg`

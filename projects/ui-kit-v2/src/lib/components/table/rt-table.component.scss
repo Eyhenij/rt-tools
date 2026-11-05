@@ -7,20 +7,32 @@
     .rt-table {
         --rt-table-border-width: var(--rt-border-width-thin);
         --rt-table-card-radius: var(--rt-radius-md);
+        --rt-table-row-bg: transparent;
+        --rt-table-pinned-bg: var(--rt-color-table-bg);
+        --rt-table-pinned-shadow-color: var(--rt-color-table-pinned-shadow);
+        --rt-table-pinned-shadow-width: 12px;
 
         position: relative;
         display: table;
         width: 100%;
-        background: var(--rt-color-bg-surface);
+        background: var(--rt-color-table-bg);
         border-collapse: collapse;
         color: var(--rt-color-text-primary);
+
+        /* Строка в 50 по макету вместе с отступами и нижней линией. Высота стоит на строке, а не на
+           ячейке: высоту ячейки браузер считает по модели размеров страницы, и под сбросом
+           `box-sizing: border-box` у приложения строка выходила в 37. Ширину ячеек задают приложения. */
+        .cdk-header-row,
+        .cdk-row,
+        &__skeleton-row {
+            height: 50px;
+        }
 
         .cdk-header-cell,
         .cdk-cell,
         &__filter-cell,
         &__skeleton-cell {
             position: relative;
-            height: 50px;
             padding: var(--rt-space-2) var(--rt-space-5);
             border-bottom: var(--rt-table-border-width) solid var(--rt-color-border-subtle);
 
@@ -55,7 +67,7 @@
         .cdk-header-cell {
             /* Верхняя грань таблицы — только у шапки (низ даёт border-bottom строк). */
             border-top: var(--rt-table-border-width) solid var(--rt-color-border-subtle);
-            background: var(--rt-color-bg-surface);
+            background: var(--rt-color-table-bg);
             color: var(--rt-color-text-muted);
         }
 
@@ -146,21 +158,72 @@
             }
         }
 
+        /* Цвет строки — свойство строки, а не правило фона: его же берёт закреплённая ячейка.
+           Цвета наведения и проблемной строки полупрозрачны, поэтому закреплённая ячейка кладёт
+           цвет строки поверх непрозрачной подложки — иначе под ней просвечивали бы колонки,
+           уезжающие при прокрутке вбок. Строка итога получает свой цвет тем же свойством. */
+        .cdk-row,
+        .cdk-footer-row {
+            background: var(--rt-table-row-bg);
+        }
+
         .cdk-row {
             &:hover {
-                background: var(--rt-color-bg-hover);
+                --rt-table-row-bg: var(--rt-color-bg-hover);
             }
 
             /* Опт-ин подсветка проблемной строки (просрочка и т.п.): потребитель
                вешает класс `rt-table__row--danger` на строку. Составной селектор с
                `.cdk-row` нужен, чтобы danger-фон держался и при :hover. */
             &.rt-table__row--danger {
-                background: var(--rt-color-state-danger-bg);
+                --rt-table-row-bg: var(--rt-color-state-danger-bg);
 
                 &:hover {
-                    background: var(--rt-color-state-danger-bg);
+                    --rt-table-row-bg: var(--rt-color-state-danger-bg);
                 }
             }
+        }
+
+        /* Закреплённая колонка: CDK ставит ячейке `position: sticky` и класс `cdk-table-sticky`.
+           Шапка уже залита поверхностью и правила не требует. */
+        .cdk-cell.cdk-table-sticky,
+        .cdk-footer-cell.cdk-table-sticky {
+            background: linear-gradient(var(--rt-table-row-bg), var(--rt-table-row-bg)), var(--rt-table-pinned-bg);
+        }
+
+        /* Тень у края: крайнюю ячейку закрепления CDK помечает классом `…-border-elem-<сторона>`.
+           Тень видна, пока под колонкой есть прокрученное содержимое — это говорят модификаторы
+           хоста `--hidden-start` и `--hidden-end`, которые таблица ставит по прокрутке. Без скрытого
+           края псевдоэлемента нет вовсе: невидимый, он всё равно выходил за край таблицы и давал
+           лишнюю прокрутку вбок. */
+        .cdk-table-sticky-border-elem-left,
+        .cdk-table-sticky-border-elem-right {
+            &:after {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: var(--rt-table-pinned-shadow-width);
+                pointer-events: none;
+            }
+        }
+
+        .cdk-table-sticky-border-elem-left:after {
+            left: 100%;
+            background: linear-gradient(to right, var(--rt-table-pinned-shadow-color), transparent);
+        }
+
+        .cdk-table-sticky-border-elem-right:after {
+            right: 100%;
+            background: linear-gradient(to left, var(--rt-table-pinned-shadow-color), transparent);
+        }
+
+        /* Начало и конец — логические края, а класс CDK называет физическую сторону: при письме
+           справа налево колонка у начала получает `…-right`. */
+        &--hidden-start:dir(ltr) .cdk-table-sticky-border-elem-left:after,
+        &--hidden-end:dir(ltr) .cdk-table-sticky-border-elem-right:after,
+        &--hidden-start:dir(rtl) .cdk-table-sticky-border-elem-right:after,
+        &--hidden-end:dir(rtl) .cdk-table-sticky-border-elem-left:after {
+            content: '';
         }
 
         /* Строки-ссылки: курсор + focus-ring. Активацию (click/Enter/Space) и
@@ -183,10 +246,15 @@
         }
 
         &--density--compact {
+            .cdk-header-row,
+            .cdk-row,
+            .rt-table__skeleton-row {
+                height: 36px;
+            }
+
             .cdk-header-cell,
             .cdk-cell,
             .rt-table__skeleton-cell {
-                height: 36px;
                 padding: var(--rt-space-xs) var(--rt-space-sm);
             }
         }
@@ -207,7 +275,7 @@
             /* Только нижняя грань — как у строк: верхнюю даёт border-bottom шапки
                (иначе двойная линия), боковые не рисуем (нет периметра). */
             border-bottom: var(--rt-table-border-width) solid var(--rt-color-border-subtle);
-            background: var(--rt-color-bg-surface);
+            background: var(--rt-color-table-bg);
             color: var(--rt-color-text-muted);
             text-align: center;
         }
@@ -229,7 +297,7 @@
 
         &__overlay-backdrop {
             position: absolute;
-            background: var(--rt-color-bg-surface);
+            background: var(--rt-color-table-bg);
             inset: 0;
             opacity: 0.72;
         }
@@ -348,18 +416,5 @@
 
         /* Шаг входа `radius` переназначает скругление карточки узкого вида; у широкого вида углов нет. */
         @include kv.radius-steps('--rt-table-card-radius');
-    }
-
-    /* В тёмной теме таблица сливается с фоном контента (bg-page), а не поднимается
-       на bg-surface — иначе список выпирает более светлой плитой над страницей. */
-    :root[data-theme='dark'] .rt-table,
-    html.rt-theme-dark .rt-table {
-        background: var(--rt-color-bg-page);
-
-        .cdk-header-cell,
-        .rt-table__empty,
-        .rt-table__overlay-backdrop {
-            background: var(--rt-color-bg-page);
-        }
     }
 }

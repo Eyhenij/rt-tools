@@ -1,6 +1,6 @@
 # The date range field of the kit
 
-**Status:** in force · **Revision:** 2026-09-30 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-04 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the calendar, the popover directive, the bottom sheet, the breakpoints service and
 the text of the date field of the kit
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
@@ -74,6 +74,20 @@ months, presets and a summary of the chosen days.
   in a row on top that scrolls sideways, the days are 44px under a finger, and the summary shows the
   number of days. The narrow sign is the breakpoints service's, as elsewhere in the kit.
 
+- **In the period panel the month title of each calendar is a button that opens the month grid.**
+  The month grid shows four months in a row with the year and paging by year in the header.
+
+- **The year in the header of the period month grid opens the year grid, four years in a row.** The
+  span and its paging are those of the date panel.
+
+- **A month picked in a month grid returns to the days of that month.** In the period panel the
+  picked month becomes the first of the two shown months.
+
+- **Escape in a month or a year grid returns one view back instead of closing the panel.**
+
+- **In the bottom sheet the period panel keeps the 20px side padding of the sheet header and
+  footer.** The row of presets scrolls sideways inside that padding.
+
 - **The names of months, weekdays and the summary follow the locale of the application.** The number
   of days takes the plural form of that locale; the presets and the buttons carry the kit's labels.
 
@@ -105,6 +119,8 @@ None of its own. The draft lives while the panel is open and is dropped when it 
 | the panel, a range picked   | two months with the range, the summary, «Применить» on            |
 | the panel, the end awaited  | the start and the future range under the pointer, «Применить» off |
 | a narrow screen             | the bottom sheet: the preset row, one month, the day count        |
+| the month grid              | twelve months four in a row, the year and arrows above            |
+| the year grid               | twelve years four in a row, the span and arrows above             |
 
 ## Cross-cutting requirements
 
@@ -123,7 +139,7 @@ Not applicable: the kit is not indexed.
 ### Mobile layout
 
 On a narrow screen the panel opens in the bottom sheet with one month, the presets in a row that
-scrolls sideways, days of 44px and the day count in the footer.
+scrolls sideways, days of 44px and the day count in the footer. The panel keeps 20px at the sides.
 
 ### Several objects
 
@@ -146,3 +162,5 @@ None.
 ## History of changes
 
 - 2026-09-30 — written by the task RT-2373 of the epic RT-2370, which gives the kit a range field.
+- 2026-11-04 — the task RT-2895 adds the month and year grids and the 20px side padding in the
+  bottom sheet.
