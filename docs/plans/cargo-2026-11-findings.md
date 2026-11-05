@@ -114,6 +114,13 @@ From the rules review of the closed task:
   `git-workflow-merge` pattern names this path.
 - **`npm run spec:next-id` does not see scenarios written in the working tree.** It answered 1259
   with 1259 already on disk. **Address:** rules layer — the id command.
+- **A merge of main into an epic branch replaces the row of the copy.** The merge pattern takes the
+  table of assignments by the base's side whole, so the row of the epic was lost and the next task
+  branch was refused. The header of the table says a session does not edit it, while the refusal
+  says to write the row. **Address:** rules layer — the merge pattern and the two texts agreed.
+- **A push from a copy with untracked folders is refused for marks, while the git hook passes it.**
+  `rt_push_mark_clean` counts files outside history, and the comment at `rt_push_mark_write` says
+  they do not count. **Address:** rules layer — one definition of a clean copy.
 
 ## Left unresolved
 

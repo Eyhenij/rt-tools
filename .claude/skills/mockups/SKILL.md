@@ -2,9 +2,9 @@
 name: mockups
 kind: rule
 law: mockups
-description: Rule under the mockups law. Load when a screen is drawn or changed in a design tool, before the first frame and before the mockups are shown to the owner. Names the kit copy, the spec read before drawing, the agreement checked against mockups. Pattern mockups-measure.
+description: Rule under the mockups law. Load when a screen is drawn or changed in a design tool, before the mockups are shown to the owner and before an audit of them is called finished. Names the kit copy, the spec read before drawing, the agreement checked against mockups. Pattern mockups-measure.
 ---
-<!-- rt-kit v0.33.1 · rules/mockups.needs-mockups.md · 49b05bb48a60 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · rules/mockups.needs-mockups.md · e9e225596310 · правится надстройкой, не здесь -->
 
 # Mockups — how it works here
 
@@ -69,12 +69,11 @@ flowchart TD
   owner as a question. Found after the code, it costs a code edit and an agreement edit together.
 - **A mockup is measured by node coordinates before it is shown.** The technique is the pattern
   `mockups-measure`.
-- **An audit of mockups is accepted by a picture of every component page next to the code of its
-  template.** Names, properties and the list of variants say what a node is called, not what it
-  draws: an arc drawn as a sector and a rounded field drawn as a capsule keep correct names. Each
-  page is captured and compared in shape with the template and its styles, and a doubtful shape is
-  read from the node properties and searched across the file. The report names what was compared by
-  pictures and what was not.
+- **An audit of a design file is accepted only when every page that draws a kit component is
+  captured and compared with the code of that component.** Names, properties and the list of
+  variants say what a node is called, not what it draws: an arc drawn as a sector and a rounded
+  field drawn as a capsule keep correct names. A page not captured leaves the audit open. The
+  technique is the pattern `mockups-measure`.
 - **A design-tool call asks the rules gate for this rule,** like the browser driver does for its
   own: without that the measurement pattern stays unread for the whole mockup task.
 
