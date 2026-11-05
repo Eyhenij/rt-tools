@@ -306,7 +306,7 @@ rm -f "$DISPATCH_DIR/turn-exit-guard.sh" "$DISPATCH_DIR/turn-exit-patterns.sh" \
     "$DISPATCH_DIR/turn-exit-verdict.sh" "$REAL_TURN" "$WORK_TURN"
 rm -rf "$REAL_REPO"
 
-# --- SC-AK-1260 — ответы нескольких веток доходят одним объектом --------------------------------
+# --- SC-AK-1268 — ответы нескольких веток доходят одним объектом --------------------------------
 # Два объекта подряд — уже не один JSON: агент читал их сырым текстом, и законы со сменой дел
 # приходили в сессию обрезанными.
 rm -f "$DISPATCH_DIR"/*.sh 2>/dev/null
@@ -322,22 +322,49 @@ INPUT_START='{"source":"startup","cwd":"/tmp"}'
 say_branch a_laws SessionStart '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"законы"}}'
 say_branch b_map SessionStart 'карта хода'
 MERGED="$(dispatch_says SessionStart "$INPUT_START")"
-report "SC-AK-1260 — два ответа разбираются как один объект" \
+report "SC-AK-1268 — два ответа разбираются как один объект" \
     "$(printf '%s' "$MERGED" | jq -s 'length' 2>/dev/null)" 1
-report "SC-AK-1260 — в контексте оба текста" \
+report "SC-AK-1268 — в контексте оба текста" \
     "$(printf '%s' "$MERGED" | jq -r '.hookSpecificOutput.additionalContext' 2>/dev/null | grep -cE '^(законы|карта хода)$')" 2
-report "SC-AK-1260 — имя события проставлено" \
+report "SC-AK-1268 — имя события проставлено" \
     "$(printf '%s' "$MERGED" | jq -r '.hookSpecificOutput.hookEventName' 2>/dev/null)" SessionStart
 rm -f "$DISPATCH_DIR/b_map.sh"
-report "SC-AK-1260 — один ответ выходит как есть" \
-    "$(dispatch_says SessionStart "$INPUT_START")" '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"законы"}}'
 rm -f "$DISPATCH_DIR/a_laws.sh"
+# Один ответ сверяется побайтно файлами: подстановка команды срезала бы хвост и скрыла разницу.
+# Хвостовые переводы строки сводятся к одному — и без него, и при двух.
+ONE='{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"законы"}}'
+WANT_FILE="$(mktemp)"; GOT_FILE="$(mktemp)"
+printf '%s\n' "$ONE" > "$WANT_FILE"
+for tail_nl in '' '\n\n'; do
+    {
+        printf '#!/usr/bin/env bash\n'
+        printf '# rt-hook: SessionStart\n'
+        printf "printf '%%s%s' '%s'\n" "$tail_nl" "$ONE"
+    } > "$DISPATCH_DIR/a_one.sh"
+    printf '%s' "$INPUT_START" | bash "$DISPATCH_DIR/dispatch.sh" SessionStart > "$GOT_FILE" 2>/dev/null
+    if cmp -s "$WANT_FILE" "$GOT_FILE"; then got=same; else got=differs; fi
+    report "SC-AK-1268 — один ответ выходит как есть, хвост «${tail_nl:-нет}» сведён к одной строке" "$got" same
+done
+rm -f "$DISPATCH_DIR/a_one.sh" "$WANT_FILE" "$GOT_FILE"
+
+# Два системных сообщения соединяются пустой строкой, а простой текст встаёт после контекстов
+# объектов — порядок, записанный в правиле.
+say_branch a_sys PreToolUse '{"systemMessage":"первое"}'
+say_branch b_sys PreToolUse '{"systemMessage":"второе"}'
+report "SC-AK-1268 — два системных сообщения соединены пустой строкой" \
+    "$(dispatch_says PreToolUse "$INPUT_BASH" | jq -r '.systemMessage' 2>/dev/null)" "$(printf 'первое\n\nвторое')"
+rm -f "$DISPATCH_DIR/a_sys.sh" "$DISPATCH_DIR/b_sys.sh"
+say_branch a_text SessionStart 'простой текст'
+say_branch b_obj SessionStart '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"контекст"}}'
+report "SC-AK-1268 — простой текст встаёт после контекстов объектов" \
+    "$(dispatch_says SessionStart "$INPUT_START" | jq -r '.hookSpecificOutput.additionalContext' 2>/dev/null)" "$(printf 'контекст\n\nпростой текст')"
+rm -f "$DISPATCH_DIR/a_text.sh" "$DISPATCH_DIR/b_obj.sh"
 say_branch a_note Stop '{"systemMessage":"первое"}'
 say_branch b_note Stop 'второе'
 STOP_OUT="$(dispatch_says Stop '{"cwd":"/tmp"}')"
-report "SC-AK-1260 — в конце хода текст уходит в системное сообщение" \
+report "SC-AK-1268 — в конце хода текст уходит в системное сообщение" \
     "$(printf '%s' "$STOP_OUT" | jq -r '.systemMessage' 2>/dev/null | grep -cE '^(первое|второе)$')" 2
-report "SC-AK-1260 — в конце хода поля контекста нет" \
+report "SC-AK-1268 — в конце хода поля контекста нет" \
     "$(printf '%s' "$STOP_OUT" | jq -r 'has("hookSpecificOutput")' 2>/dev/null)" false
 rm -f "$DISPATCH_DIR/a_note.sh" "$DISPATCH_DIR/b_note.sh"
 

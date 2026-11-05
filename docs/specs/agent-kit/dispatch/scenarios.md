@@ -176,12 +176,23 @@ Then the entry is written as before
 
 Covered: `projects/agent-kit/src/lib/hooks-map.spec.ts`.
 
-### SC-AK-1260 — the answers of several branches are one object
+### SC-AK-1268 — the answers of several branches are one object
 
 Given two branches answer one event: one prints an object with a context, the other a plain text
 When the dispatcher gives the answers out
-Then the agent gets one object whose context holds both texts and whose event name is the event; a
-single branch's answer arrives byte for byte, and at the end of a turn the text goes into the system
-message
+Then the agent gets one object whose context holds both texts, the plain text after the context, and
+whose event name is the event
+
+Given two branches answer one event, each with a system message
+When the dispatcher gives the answers out
+Then the system message holds both texts joined by an empty line
+
+Given one branch answers, with no trailing line break or with two
+When the dispatcher gives the answer out
+Then it arrives byte for byte with one trailing line break
+
+Given two branches answer the end of a turn
+When the dispatcher gives the answers out
+Then both texts go into the system message, and there is no context field
 
 Covered: `projects/agent-kit/tests/dispatch.test.sh`.
