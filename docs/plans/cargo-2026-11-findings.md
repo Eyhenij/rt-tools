@@ -93,6 +93,16 @@ From the rules review of the closed task:
   and the real push after it runs no second set. **Address:** rules layer — the hook could tell a
   dry run apart only by reading the parent process, which is not portable.
 
+## RT-3047 — a draft on a base without a run
+
+- **The turn exit guard names a command the tree refuses.** Its refusal says
+  `npm run task:new -- <number>   # if there is no folder at all`, and `task:new` answers
+  `unknown flag <number>`. **Address:** rules layer — the text in `turn-exit-guard.sh`.
+- **A push of an epic task keeps hitting the root setting finding.** `.husky/pre-push` stays in the
+  difference with the main branch until the epic is merged, so the session is cut off on every task
+  of the epic. RT-3046 was pushed by the owner from a terminal twice. **Address:** names of this
+  tree — the owner's word on the `.husky/*` line of RT-3046 above.
+
 ## Left unresolved
 
 - **The turn exit guard findings of RT-3044** — they are closed by task RT-3067, which is the 24th in the epic order.
