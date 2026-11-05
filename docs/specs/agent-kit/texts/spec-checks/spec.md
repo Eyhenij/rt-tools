@@ -118,6 +118,10 @@ layer" next to it.
   leading elsewhere.
 - **A scenario and the title of its test are edited by one change.** Having drifted apart, they leave
   the run green while it checks something else.
+- **A pattern skipped in a hosting variant counts as skipped.** The package carries some patterns
+  only as variants — `status-report-table.github.md` — and the rule names the pattern without the
+  variant: read with it, a lawful skip turned the rule red as having no pattern at all. Everything
+  after the first dot of the name is the variant: a pattern name holds no dot.
 - **A rule whose patterns the tree skipped at the layout demands no pattern.** A skip is a choice of
   the tree, not forgotten work: the rule about the procedures of the backend lands where there is no
   backend at all. Demanding a pattern there means demanding a file that has nothing to say, and the
@@ -224,6 +228,8 @@ a portable text is taken out of the check of the addresses.
 The open questions of the domain are shared, and they live in the spec next to it.
 
 ## History of changes
+
+- 2026-11-05 — a pattern skipped in a hosting variant counts as skipped.
 
 - 2026-09-06 — a subheading inside a section does not end the list of items, and the refusal about an
   empty section names what stands instead of the items. It arrived as a proposal from the intake.
