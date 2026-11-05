@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__terminal__run_in_terminal
 # rt-hook-timeout: 1800
-# Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/push-sign.sh, hooks/push-set.sh
+# Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/push-sign.sh, hooks/push-set.sh, hooks/git-guard-push-marks.sh
 # The guard of the checks before a push. PreToolUse on the push call.
 #
 # A push is the entry into the pipeline: a merge into the main branch starts the rollout, and
@@ -21,9 +21,14 @@
 #
 # The base is taken from the remote, not from the local main branch: the local one falls behind or
 # diverges silently. That has happened already — the local one stood at a merge wiped from the
-# history by a force push, and the set counted against it would have been the wrong one. There is
-# no network or no remote — the base is empty, and the profile falls back to a full run: the gate
-# may turn out stricter than needed, but NEVER weaker.
+# history by a force push, and the set counted against it would have been the wrong one. A stacked
+# branch is counted against the remote copy of the branch it was created from — the helper
+# `git-guard-push-marks.sh` says when. There is no network or no remote — the base is empty, and
+# the profile falls back to a full run: the gate may turn out stricter than needed, but NEVER weaker.
+#
+# A check green on the same tree against the same base is not run again, and a tree that declares
+# `RT_PUSH_HEAVY_AHEAD=1` runs its heavy steps ahead by `git-guard-push-ahead.sh`: the guard only
+# reads their marks. The hook limit is 30 minutes, and the heavy steps of one tree outgrew it.
 #
 # FAIL-OPEN: not a repository, broken input, no profile, no parse file `push-sign.sh`, no set file
 # `push-set.sh`, no perl — pass.
@@ -205,12 +210,38 @@ base="$(rt_push_set_base)"
 # branch — a repeated function, a name shared by two kits, a paint probe. A check with nothing to look
 # at exits with the skip code: before, it said so by a line of output and exited with zero, and in the
 # set that zero stood next to the passed ones and differed from them in nothing.
+rt_push_set_ask_ahead=1
 rt_push_set_run "$base"
 failed="$rt_push_set_failed"
 output="$rt_push_set_output"
 skipped="$rt_push_set_skipped"
 held="$rt_push_set_held"
+ahead="$rt_push_set_ahead"
 ran="$rt_push_set_ran"
+
+# Heavy steps with no mark are named in one refusal together with the red light ones: the command
+# that runs them ahead goes to the background, where no hook limit cuts it, and the push after it
+# passes from the marks.
+if [ -n "$ahead" ]; then
+    rt_push_gate_note ahead
+    ahead_cmd="bash ${rt_hooks_dir#"$PWD"/}/git-guard-push-ahead.sh"
+    dirty_line=""
+    rt_push_mark_clean || dirty_line="
+
+The working copy holds edits outside the index: a mark is trusted only on a clean copy. Commit first."
+    red_line=""
+    [ -n "$failed" ] && red_line="
+
+Red among the light checks:
+${failed}
+
+$(printf '%s' "$output" | tr -d '\000')"
+    push_deny "BLOCKED: the heavy steps of this tree run ahead, not inside the guard — inside it they hit the hook limit, and a guard cut by the limit lets the call through with no verdict. No green mark for this tree and base:
+
+${ahead}
+
+Run them in the background by \`${ahead_cmd}\` (the Bash call with run_in_background), wait for its end and push again: the push then passes from the marks.${dirty_line}${red_line}"
+fi
 
 # What was skipped is named aloud even when the set passed: silence about it is exactly the
 # indistinguishability this code was created for. The push goes through at that — there is no

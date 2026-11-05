@@ -97,3 +97,37 @@ Then it reads «12–15 октября» with the label for few days under `ru`,
 label for other under `en`
 
 Covered by the spec of the range logic module.
+
+### SC-UKV-1151 — the month title of the period panel opens its month grid
+
+Given the period panel shows October and November 2026
+When the person presses the title «Октябрь 2026»
+Then twelve months of 2026 are shown four in a row, with the year and arrows above
+
+Covered by the component spec of the panel.
+
+### SC-UKV-1152 — the period year grid shows four years in a row
+
+Given the period month grid shows 2026
+When the person presses the year in its header
+Then twelve years 2024 – 2035 are shown four in a row
+
+Covered by the component spec of the panel.
+
+### SC-UKV-1153 — a picked month returns to its days
+
+Given a month grid is open in the period panel
+When the person picks March 2027
+Then the panel shows the days of March 2027 as the first of its two months
+
+Covered by the component spec of the panel.
+
+### SC-UKV-1156 — in the bottom sheet the period panel keeps 20px at the sides
+
+Given a narrow screen and a period field
+When the panel opens in the bottom sheet
+Then the title, the presets row, the arrows, the days and the footer stand 20px from the sides of
+the sheet
+
+Покрытие: частичное — the component spec of the panel checks the rule of the sheet in the panel
+styles; the distance on the screen is shown by the frame of the story Sheet.

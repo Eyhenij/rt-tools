@@ -60,6 +60,11 @@ own turn.
 - **The title of a request opened in another repository is judged by the title form of that
   repository.** The task key of a neighbouring tree is its own. Judged by the session's form, a lawful
   title of that tree is refused as a title without a number.
+- **The guard of the main branch takes its name from the profile of the tree the commit runs in.**
+  The other delivery guards read it there, and a guessed name refused a commit into a branch the
+  tree does not have while letting one into its real main branch through. The setting is read from
+  the tree's own profile, not from the package default; the pointer of the remote repository is
+  asked only where the tree named nothing.
 - **A tree that declared no profile is not judged by the form at all.** A foreign tree is not
   accountable to this guard, and a refusal on a lawful name has no bypass.
 
@@ -119,6 +124,8 @@ Not applicable: the guard judges one command of one turn.
 None.
 
 ## History of changes
+
+- 2026-11-04 — the guard of the main branch takes its name from the tree profile.
 
 - 2026-10-07 — a path from the home directory names the tree of execution, and the title of a
   request in another repository is judged by that repository's form.

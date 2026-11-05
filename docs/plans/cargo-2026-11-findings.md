@@ -103,6 +103,18 @@ From the rules review of the closed task:
   of the epic. RT-3046 was pushed by the owner from a terminal twice. **Address:** names of this
   tree — the owner's word on the `.husky/*` line of RT-3046 above.
 
+## RT-3114 — main into the epic branch
+
+- **Conflict marks in a laid-out hook refuse every shell call.** A merge that conflicts in
+  `.claude/hooks/` leaves the guard with a syntax error, and `git merge --abort` is refused too. Only
+  the edit tool repairs it. **Address:** rules layer — a guard that fails on its own syntax.
+- **The base guard and the plan guard close a circle.** A task branch needs the main tip in the epic
+  branch, and a merge carrying a code edit needs a plan in a task folder. It was opened by merging in
+  the local epic branch and taking the task branch from it. **Address:** rules layer — the
+  `git-workflow-merge` pattern names this path.
+- **`npm run spec:next-id` does not see scenarios written in the working tree.** It answered 1259
+  with 1259 already on disk. **Address:** rules layer — the id command.
+
 ## Left unresolved
 
 - **The turn exit guard findings of RT-3044** — they are closed by task RT-3067, which is the 24th in the epic order.

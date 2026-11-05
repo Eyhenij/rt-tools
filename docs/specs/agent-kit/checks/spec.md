@@ -234,6 +234,11 @@ outward is watched by is said by the subdomain of the delivery guards.
   words, and nothing keeps it from naming a suite directory inside a source root. Walked twice, it
   gives every reference twice: coverage counts places, and a refusal names a place the tree has
   only one of.
+- **The width of a scenario prefix is a setting, and a scenario written as a table row is named.**
+  The heading and the test reference are read by one width, two to ten letters unless the tree
+  names its own: a tree writing longer prefixes had not one of its 403 scenarios recognised. A table
+  row beginning with a scenario number is reported as a discrepancy, not read: it carries no promise
+  line and no coverage mark.
 
 ## What is out of scope
 

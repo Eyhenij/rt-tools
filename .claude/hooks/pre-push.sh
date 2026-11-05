@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/pre-push.sh · 5882be163868 · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/pre-push.sh · 6e1288d00fef · правится надстройкой, не здесь
 # The checks before a push, as a hook of git itself, not of the agent.
 #
-# Requires: hooks/push-set.sh
+# Requires: hooks/push-set.sh, hooks/git-guard-push-marks.sh
 #
 # NOT a guard: it has no `rt-hook:` declaration and hooks into no agent event. The version control
 # calls it before every push, whatever sent it: the session guard of the push stands only on the

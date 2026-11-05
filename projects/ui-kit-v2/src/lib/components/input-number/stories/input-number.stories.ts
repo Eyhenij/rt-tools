@@ -14,6 +14,8 @@ export default {
         max: { control: { type: 'number' } },
         minFractionDigits: { control: { type: 'number' } },
         maxFractionDigits: { control: { type: 'number' } },
+        step: { control: { type: 'number' } },
+        stepper: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtInputNumberComponent>;
 
@@ -29,5 +31,7 @@ export const Playground: TStory = {
         max: null,
         minFractionDigits: 0,
         maxFractionDigits: 2,
+        step: 1,
+        stepper: true,
     },
 };

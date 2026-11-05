@@ -16,10 +16,6 @@
       "reason": "RT-274: the active tile's backdrop is painted by a scale step right in the rule",
       "task": "RT-272"
     },
-    "a dark block projects/ui-kit-v2/src/lib/components/table/rt-table.component.scss": {
-      "reason": "RT-274: the table substitutes the background by an assignment in the theme rule instead of the component's own property",
-      "task": "RT-272"
-    },
     "a scale step in the dark --rt-shadow-card-soft": {
       "reason": "RT-386: the shadow is declared by the scale and rewritten by the dark theme; bringing the scales and assignments to the canon is the subject of the line's seventh position",
       "task": "RT-272"

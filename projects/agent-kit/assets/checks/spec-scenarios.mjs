@@ -26,8 +26,14 @@ import {
  * passed green with thirteen of its scenarios not counted at all.
  */
 const SCENARIO_HEADING_START = /^###\s+SC-/;
+/**
+ * A table row begun by a scenario number. Such a row carries no promise line and no coverage mark,
+ * so it is named rather than read: a tree kept 203 scenarios this way, and the repeated numbers hid
+ * exactly there.
+ */
+const SCENARIO_ROW = /^\|\s*SC-[A-Z]+-\d+\s*\|/;
 
-/** The headings of a file that begin as a scenario and are not taken by the template. */
+/** The lines of a file that begin as a scenario and are not taken by the template. */
 function unparsedHeadings(file) {
     const found = [];
     read(file)
@@ -35,6 +41,8 @@ function unparsedHeadings(file) {
         .forEach((line, index) => {
             if (SCENARIO_HEADING_START.test(line) && !SCENARIO_HEADING.test(line)) {
                 found.push({ file, line: index + 1, text: line.trim() });
+            } else if (SCENARIO_ROW.test(line)) {
+                found.push({ file, line: index + 1, text: line.trim(), row: true });
             }
         });
 

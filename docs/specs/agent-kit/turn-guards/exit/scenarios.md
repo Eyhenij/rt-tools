@@ -3,7 +3,8 @@
 A subdomain of the domain "The guards of the end of a turn". Here are the scenarios of one guard —
 the one that judges the end of a turn: what a turn lawfully ends with, what is never its end and
 which tiers name the kind of the stop by name. The other guards of the end of a turn are in the list
-of the scenarios of the domain next to it.
+of the scenarios of the domain next to it; a turn under an open epic is in
+`docs/specs/agent-kit/turn-guards/exit-epic/`.
 
 ### SC-AK-647 — handing in the work without beginning the next one does not end the turn
 
@@ -413,65 +414,12 @@ same question releases the turn
 
 Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
 
-### SC-AK-1117 — under an open epic a turn with work and a second pass are judged
-
-Given the table of the epic names unfinished tasks, and the turn ended with an edit, or the guard
-judges the same turn for the second time
-When the guard of the exits judges the end of the turn
-Then the turn is given back, and the refusal names the unfinished tasks; a question after work, a
-refusal as the last action and the word of the owner release the turn as before
-
-Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
-
-### SC-AK-1118 — a handover written by hand under an open epic
-
-Given the table of the epic names unfinished tasks, and the turn ran the handover command by hand
-When the guard of the exits judges the end of the turn
-Then the turn is given back; the refusal of the window guard as the last action releases it
-
-Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
-
-### SC-AK-1119 — an unreadable epic keeps the former behaviour
-
-Given the table of the epic answers with a non-zero code or is absent
-When the guard of the exits judges the end of the turn
-Then a turn with work and a second pass are released as before, and an empty turn is given back
-
-Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
-
-### SC-AK-1120 — the owner's standing word quoted in the waiting line
-
-Given the waiting line of the progress quotes the owner's word in « », and the epic is open.
-When the guard of the exits judges the end of the turn.
-Then the turn passes with work and without it. Without a quote the line releases nothing.
-
-Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
-
 ### SC-AK-1122 — a refused closing call does not release the turn
 
 Given the last tool result of the turn is the refusal of the guard of the closing tool, and the
 epic is open.
 When the guard of the exits judges the end of the turn.
 Then the turn is not released; the refusal of another guard releases it as before.
-
-Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
-
-### SC-AK-1128 — a branch named by an epic plan is not judged by the tier of the taken task
-
-Given the branch has the shape of a task branch, there is no task folder at it, and a plan in the
-plans directory names the branch in its header line
-When the guard of the exits judges the end of the turn
-Then the tier of the taken task is skipped. A turn with work passes, an empty turn is given back by
-the second sign. A plan naming another branch releases nothing.
-
-Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
-
-### SC-AK-1129 — a closed epic releases the whole turn
-
-Given the table of the epic is read and prints not a single unfinished task
-When the guard of the exits judges the end of the turn
-Then the turn is released whatever tier it reached: an empty turn, a second pass, a handover by
-hand and words about waiting for the word of the owner all pass
 
 Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
 
@@ -492,5 +440,15 @@ nothing after it
 When the turn ends
 Then the guard gives the turn back and names the launch in the background; a launch with no work
 before it is refused the same, and work after the launch releases the turn
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1247 — a turn woken by an own notification ends while another own task runs
+
+Given the session sent two commands to the background, and the notification about the first one
+woke the session
+When the turn holds no tool call and ends
+Then the guard releases it while the second command has no notification of its end; after the
+notification about the second one the same empty turn is refused as before
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.

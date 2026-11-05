@@ -40,6 +40,12 @@ const DEFAULTS = {
      * Empty — the suites are searched for under the source roots alone, as before.
      */
     testRoots: [],
+    /**
+     * How many capitals a scenario prefix holds, from and to: the heading and the test reference are
+     * read by one width. A tree writing ten-letter prefixes had none of its scenarios recognised
+     * while the width stood at six.
+     */
+    scenarioPrefixWidth: [2, 10],
     /** Where never to go: the build, the dependencies, the generated. */
     skippedDirs: ['node_modules', 'dist', '.git', '.nx', 'tmp', 'coverage', 'worktrees', 'gen', 'generated'],
     /** Where the project texts lie. */

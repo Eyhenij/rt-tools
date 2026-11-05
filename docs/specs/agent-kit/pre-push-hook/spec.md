@@ -39,6 +39,9 @@ There is no interface: the hook is seen as its lines in the push output and as a
   heavy one starts, and those not started are named. A check that exits with the skip code is named
   apart and refuses nothing; a skip code of 0 or 1 is not taken, because 1 is the exit of any
   failure.
+- **The hook reads the per-check marks and starts a heavy step itself.** A check green on the same
+  tree against the same base is not started again, whoever marked it. Only the session guard names
+  a heavy step for a run ahead, because it works under a hook limit; the git hook has no such limit.
 - **A commit the session guard judged green runs no second set.** The guard writes the tip it let
   through into the mark of green, and a push of exactly that commit passes at once. The next commit
   is not covered by the mark. Without it a session push would wait for a fifteen-minute set twice,
@@ -67,8 +70,8 @@ There is no interface: the hook is seen as its lines in the push output and as a
 - **A skip of the hooks.** `git push --no-verify`, `-c core.hooksPath=<path>` and `HUSKY=0` skip
   the git hook by git's design. Inside the session they are refused by the subdomain
   `no-verify-guard`; outside it nothing refuses them.
-- **The per-check marks of a set run ahead.** The mark here holds one commit and the whole set; a
-  run ahead of the push is another subdomain's work.
+- **The run ahead of the push.** The command that starts the heavy steps belongs to the subdomain
+  `push-gate-ahead`; the hook only reads the marks it leaves.
 - **The wiring in a tree without a hooks manager.** The template header names the calling line,
   as the commit message template does; nothing installs the hook by itself.
 - **A dry run.** Git calls the hook for `git push --dry-run` too and gives it no sign of that, so a
@@ -118,9 +121,9 @@ one such ref refuses the whole push.
 
 ## Decisions
 
-- **The mark is a file of its own, not a shared store of check results.** A store of per-check
-  results is being built by other work and is not in the package yet; this task does not wait for
-  it. When it lands, the hook may read it instead of the single commit.
+- **The mark of a commit stays next to the per-check marks.** It lets a push through without
+  reading the profile, so the session guard's green tip costs the hook nothing; the per-check marks
+  answer for a commit no set judged whole.
 - **A push of a commit other than the tip is refused, not judged by checking it out.** Checking a
   commit out inside a hook would move the working copy under the user's feet; the refusal names
   the branch to switch to instead.

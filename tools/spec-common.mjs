@@ -1,4 +1,4 @@
-// rt-kit v0.33.1 · checks/spec-common.mjs · 915abfb9279b · правится надстройкой, не здесь
+// rt-kit v0.33.1 · checks/spec-common.mjs · 2afc4b77a3e2 · правится надстройкой, не здесь
 /**
  * What is shared by every subject of the spec audit: what counts as a domain, how the tree is
  * read and how a document is cut into sections and bullets.
@@ -42,12 +42,15 @@ const SKIPPED_DIRS = CONFIG.skippedDirs;
 /**
  * `### SC-BK-03 — a request for dates already taken`
  *
- * The number is accepted from one digit to four, the prefix from two letters to six. A heading the
+ * The number is accepted from one digit to four, the prefix by the width the tree names, two to ten
+ * letters unless it names its own. A heading the
  * template did not take used to start no scenario and give no refusal: this tree crossed a
  * thousand scenarios and lost the whole thousandth series at once — neither in coverage nor in
  * debts, with a green audit. Now such a heading is named as a discrepancy of its own.
  */
-const SCENARIO_HEADING = /^###\s+(SC-([A-Z]{2,6})-(\d{1,4}))\s+—\s+(.+?)\s*$/;
+const [PREFIX_MIN, PREFIX_MAX] = CONFIG.scenarioPrefixWidth ?? [2, 10];
+const PREFIX = `[A-Z]{${PREFIX_MIN},${PREFIX_MAX}}`;
+const SCENARIO_HEADING = new RegExp(`^###\\s+(SC-(${PREFIX})-(\\d{1,4}))\\s+—\\s+(.+?)\\s*$`);
 /**
  * The keys of a spec are read under two names, English and the owner's. A tree translates its
  * specs one domain at a time, and a key that moved instead of learning the second name takes the
@@ -83,7 +86,7 @@ const UNCOVERED = /^(?:Not covered|Не покрыто):\s*\S/;
 /** The test exists, but checks not everything promised or goes another way */
 const PARTIAL = /^(?:Coverage:\s*partial|Покрытие:\s*частичное)\s*—\s*\S/;
 /** A mention of the scenario in the title of a test; the number is as long as in the heading */
-const SCENARIO_REFERENCE = /\bSC-[A-Z]{2,6}-\d{1,4}\b/g;
+const SCENARIO_REFERENCE = new RegExp(`\\bSC-${PREFIX}-\\d{1,4}\\b`, 'g');
 /** The promise line of a scenario; its continuations go with an indent */
 const PROMISE = /^(?:Then|Тогда)\s+\S/;
 /**

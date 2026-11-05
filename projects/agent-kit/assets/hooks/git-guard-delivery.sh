@@ -298,9 +298,16 @@ if [ -n "$branch_arg" ]; then
         # The signature: the address of the machine account is declared by the tree, and the working
         # copy does not know it — which means the very first commit will travel under someone else's
         # signature, and after the push that is fixed only by a force push.
+        #
+        # A person the tree named in RT_HUMAN_EMAILS signs with their own mail lawfully: the push
+        # accepts it, and refusing it here left such a person no way to start a branch at all.
         if [ -n "$commit_email" ]; then
             tree_email="$(git config user.email 2>/dev/null)"
-            [ -n "$tree_email" ] && [ "$tree_email" != "$commit_email" ] \
+            human_email=''
+            for one in ${RT_HUMAN_EMAILS:-}; do
+                [ "$tree_email" = "$one" ] && human_email=1 && break
+            done
+            [ -n "$tree_email" ] && [ "$tree_email" != "$commit_email" ] && [ -z "$human_email" ] \
                 && fault "the working copy signs commits as «${tree_email}», while the tree declared the email of the machine account «${commit_email}». The very first commit leaves under a foreign signature: git config user.email \"${commit_email}\"."
         fi
 
@@ -315,27 +322,23 @@ fi
 # the length limit, and the signature is the most separate of its subjects. No helper — the
 # signature is not judged, and the work goes on: the same fail-open as with the other conditions.
 # shellcheck disable=SC1090
-[ -f "$rt_hooks_dir/git-guard-delivery-signature.sh" ] \
-    && . "$rt_hooks_dir/git-guard-delivery-signature.sh" 2>/dev/null
+[ -f "$rt_hooks_dir/git-guard-delivery-signature.sh" ] && . "$rt_hooks_dir/git-guard-delivery-signature.sh" 2>/dev/null
 command -v rt_delivery_signature >/dev/null 2>&1 && rt_delivery_signature
 
 # --- the push into a merged branch -----------------------------------------------------------
 # The helper next door — `git-guard-delivery-merged.sh`. No helper — the push is not judged by it.
 # shellcheck disable=SC1090
-[ -f "$rt_hooks_dir/git-guard-delivery-merged.sh" ] \
-    && . "$rt_hooks_dir/git-guard-delivery-merged.sh" 2>/dev/null
+[ -f "$rt_hooks_dir/git-guard-delivery-merged.sh" ] && . "$rt_hooks_dir/git-guard-delivery-merged.sh" 2>/dev/null
 command -v rt_delivery_merged >/dev/null 2>&1 && rt_delivery_merged
 
 # --- leaving draft ---------------------------------------------------------------------------
 # The subject lives in a helper next door — `git-guard-delivery-draft.sh`, by the same technique as
 # the signature. No helper — leaving draft is not judged, and the work goes on.
 # shellcheck disable=SC1090
-[ -f "$rt_hooks_dir/git-guard-delivery-draft.sh" ] \
-    && . "$rt_hooks_dir/git-guard-delivery-draft.sh" 2>/dev/null
+[ -f "$rt_hooks_dir/git-guard-delivery-draft.sh" ] && . "$rt_hooks_dir/git-guard-delivery-draft.sh" 2>/dev/null
 command -v rt_delivery_draft_ready >/dev/null 2>&1 && rt_delivery_draft_ready
 
 # --- merging a PR --------------------------------------------------------------------------
-#
 # The second line of the same condition that stands at the opening of a PR: it catches a merge going
 # by command. We look for the command from the start of the line or after a separator, not anywhere
 # in the text. Otherwise the guard refuses a message where `gh pr merge` is merely mentioned in
@@ -410,7 +413,6 @@ command -v rt_delivery_pull_draft >/dev/null 2>&1 && rt_delivery_pull_draft "$cm
 
 # The main branch is merged in before the PR opens: otherwise the reviewer sees someone else's edit
 # mixed in with his own, and the checks run from an outdated base.
-#
 # There are two tiers. The first reads the local tip and works without the network. The second asks
 # the remote reference: without it, silence means only "the local reference is not older than the
 # branch", while it reads as "the main branch is merged in". No answer from the network — a silent

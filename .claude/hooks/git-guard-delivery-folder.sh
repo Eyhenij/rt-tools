@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/git-guard-delivery-folder.sh · 53a25a42c07e · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/git-guard-delivery-folder.sh · 9c134bca00bb · правится надстройкой, не здесь
 # Delivery conditions about the task folder. NOT a guard: it has no `rt-hook:` declaration and it
 # hooks into no agent event. The delivery guard sources it — the same way it sources the refusal
 # tail and the observation record.
@@ -69,14 +69,30 @@ rt_delivery_open_folder() {
         return 0
     fi
 
-    [ -n "$archive_dir" ] || return 0
     _base="$(git merge-base "$main_branch" HEAD 2>/dev/null)"
     [ -z "$_base" ] && return 0
+
+    # SC-AK-1249: the draft the plan named, still lying in the branch, would reach main unmerged.
+    _draft="$(rt_branch_plan_draft "$_folder" "$_base")"
+    [ -n "$_draft" ] && [ -n "$(git ls-tree -d --name-only HEAD -- "${_draft%/}" 2>/dev/null)" ] \
+        && fault "the branch carries the unmerged agreement «${_draft}» its plan named — merge its rules and scenarios into the domain spec, remove the directory by a commit and repeat. If the work is merged in parts, put the comment «# Task-folder-skip: <reason>» into the command."
+
+    [ -n "$archive_dir" ] || return 0
     rt_folder_was_in_branch "$_base" "$_folder" || return 0
 
     _gained="$(git diff --name-only --diff-filter=A "$_base" HEAD -- "$archive_dir" 2>/dev/null | head -1)"
     [ -z "$_gained" ] \
         && fault "the task folder was deleted, but the branch added nothing to «${archive_dir}». Deleting is cheaper than taking apart — and together with the folder the analysis of the request is gone, the only record of the words of the owner. Move what explains the decisions taken as one file with a telling name and repeat."
+}
+
+# The draft agreement the plan of the branch named by the line `**Draft:** \`path\``. The plan is
+# read from the history: by the time the PR opens the folder is taken apart, and the last commit
+# touching the plan is the one that removed it — then its parent still holds the plan.
+rt_branch_plan_draft() {
+    _commit="$(git log -1 --format=%H "$2..HEAD" -- "$1/plan.md" 2>/dev/null)"
+    [ -n "$_commit" ] || return 0
+    { git show "$_commit:$1/plan.md" 2>/dev/null || git show "$_commit^:$1/plan.md" 2>/dev/null; } \
+        | sed -nE 's/^\*\*Draft:\*\*[[:space:]]*`([^`]+)`.*/\1/p' | head -1
 }
 
 # Condition for leaving draft: the same subject between opening and merging. The owner reads a PR

@@ -41,6 +41,13 @@ export namespace IRtDatePicker {
         disabled: boolean;
     }
 
+    /** Ячейка выбора года: `key` — `YYYY`. */
+    export interface YearCell {
+        key: string;
+        label: string;
+        disabled: boolean;
+    }
+
     /** Момент, разобранный на день `YYYY-MM-DD` и время `HH:mm`. */
     export interface Moment {
         day: string;
