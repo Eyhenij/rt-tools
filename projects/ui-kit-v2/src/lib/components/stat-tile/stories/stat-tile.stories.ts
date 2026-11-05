@@ -13,6 +13,7 @@ export default {
         deltaPrimary: { control: false },
         deltaSecondary: { control: false },
         hint: { control: { type: 'text' } },
+        growthIsWorse: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtStatTileComponent>;
 
@@ -27,5 +28,6 @@ export const Playground: TStory = {
         deltaPrimary: { percent: 12.5, label: 'к прошлой неделе', baseline: '1 100' },
         deltaSecondary: { percent: 8, label: 'к прошлому году' },
         hint: 'Считается по уникальным',
+        growthIsWorse: false,
     },
 };

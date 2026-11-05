@@ -104,7 +104,9 @@ export type TRtDesignTokenName =
     | '--rt-color-stepper-current-subtle'
     | '--rt-color-stepper-progress'
     | '--rt-color-stepper-track'
+    | '--rt-color-table-bg'
     | '--rt-color-table-head-bg'
+    | '--rt-color-table-pinned-shadow'
     | '--rt-color-text-disabled'
     | '--rt-color-text-inverse'
     | '--rt-color-text-link'
@@ -402,8 +404,10 @@ export type TRtDesignTokenName =
     | '--rt-neutral-950'
     | '--rt-opacity-disabled'
     | '--rt-overlay-amber-16'
+    | '--rt-overlay-black-16'
     | '--rt-overlay-black-4'
     | '--rt-overlay-black-50'
+    | '--rt-overlay-black-64'
     | '--rt-overlay-black-8'
     | '--rt-overlay-brand-24'
     | '--rt-overlay-brand-8'
@@ -905,7 +909,9 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-color-stepper-current-subtle',
     '--rt-color-stepper-progress',
     '--rt-color-stepper-track',
+    '--rt-color-table-bg',
     '--rt-color-table-head-bg',
+    '--rt-color-table-pinned-shadow',
     '--rt-color-text-disabled',
     '--rt-color-text-inverse',
     '--rt-color-text-link',
@@ -1203,8 +1209,10 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-neutral-950',
     '--rt-opacity-disabled',
     '--rt-overlay-amber-16',
+    '--rt-overlay-black-16',
     '--rt-overlay-black-4',
     '--rt-overlay-black-50',
+    '--rt-overlay-black-64',
     '--rt-overlay-black-8',
     '--rt-overlay-brand-24',
     '--rt-overlay-brand-8',
