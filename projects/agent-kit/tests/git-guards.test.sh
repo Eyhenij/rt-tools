@@ -328,6 +328,22 @@ mg "SC-AK-528 — снос без записи в архив отбивает и
     'gh pr create --title "[RT-44] Сделано" --body x' deny
 rm -rf "$WIPED"
 
+# SC-AK-1249. Папка разобрана, а договорённость из шапки плана осталась в proposed/: прежде
+# заявка открывалась, и договорённость уезжала в главную невлитой.
+DRAFT="$(fixture_repo_branched main RT-45-probe)"
+fixture_commit "$DRAFT" docs/tasks/RT-45-probe/plan.md '**Draft:** `docs/specs/d/proposed/f/`' 'docs: замысел'
+fixture_commit "$DRAFT" docs/specs/d/proposed/f/spec.md 'договорённость' 'docs: договорённость'
+fixture_commit "$DRAFT" docs/archive/razbor.md 'что решали' 'docs: разбор в архив'
+fixture_remove "$DRAFT" docs/tasks/RT-45-probe 'docs: папка разобрана'
+mg "SC-AK-1249 — невлитая договорённость отбивает открытие" "$DRAFT" 'gh pr create --title "[RT-45] Сделано" --body x' deny
+expect_reason "SC-AK-1249 — отказ называет каталог договорённости" git-guard-delivery.sh \
+    "$(input_cmd 'gh pr create --title "[RT-45] Сделано" --body x' Bash "$DRAFT")" 'docs/specs/d/proposed/f'
+mg "SC-AK-1249 — обход папки снимает и договорённость" "$DRAFT" \
+    'gh pr create --title "[RT-45] Сделано" --body x # Task-folder-skip: работа вливается частями' PASS
+fixture_remove "$DRAFT" docs/specs/d/proposed/f 'docs: договорённость влита'
+mg "SC-AK-1249 — влитая договорённость не мешает" "$DRAFT" 'gh pr create --title "[RT-45] Сделано" --body x' PASS
+rm -rf "$DRAFT"
+
 # Работа, у которой папки не было вовсе, прибыли в архиве не должна.
 BARE_TASK="$(fixture_repo_branched main RT-45-probe)"
 fixture_commit "$BARE_TASK" src/probe.ts 'export const x = 1;' 'feat: правка'
