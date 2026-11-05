@@ -194,4 +194,16 @@ expect_claim "SC-AK-1198 — починенная проверка перед pu
         "$(ran 'pnpm run check:all')" "$(answered 'ok')" \
         "$(told 'Проверка перед push починена.')")")" PASS
 
+# --- SC-AK-1270 — команды клиента GitLab подтверждают наравне с командами GitHub ----------------
+expect_claim "SC-AK-1270 — «PR открыт» после открытия через glab" \
+    "$(input_stop "$(transcript "$(say 'открывай')" "$(ran 'glab mr create --draft --title x')" "$(told 'PR открыт.')")")" PASS
+expect_claim "SC-AK-1270 — «прогон зелёный» после чтения конвейера через glab" \
+    "$(input_stop "$(transcript "$(say 'что там')" "$(ran 'glab ci status')" "$(told 'Прогон зелёный.')")")" PASS
+expect_claim "SC-AK-1270 — «влита в main» после слияния через glab" \
+    "$(input_stop "$(transcript "$(say 'вливай')" "$(ran 'glab mr merge 5')" "$(told 'Правка влита в main.')")")" PASS
+expect_claim "SC-AK-1270 — «задача заведена» после заведения через glab" \
+    "$(input_stop "$(transcript "$(say 'заведи')" "$(ran 'glab issue create --title x')" "$(told 'Задача заведена.')")")" PASS
+expect_claim "SC-AK-1270 — «не влита» после чтения заявки через glab" \
+    "$(input_stop "$(transcript "$(say 'что с правкой')" "$(ran 'glab mr view 5')" "$(told 'Правка не влита в main.')")")" PASS
+
 suite_result "гард утверждения"

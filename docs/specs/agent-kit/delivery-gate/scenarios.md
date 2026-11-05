@@ -254,14 +254,14 @@ Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 ### SC-AK-411 — a restart of a step without a read journal is refused
 
 Given the journal of the fallen step was not read during the turn
-When a call to restart that step goes
+When a call to restart that step goes — `gh run rerun <id>` or `glab ci retry <id>`
 Then the call is refused, and the refusal names the step and the command the journal is read by
 
 Covered: `projects/agent-kit/tests/rerun-guard.test.sh`.
 
 ### SC-AK-412 — a restart after a read journal passes
 
-Given during the same turn the journal of this step was read
+Given during the same turn the journal of this step was read by `gh run view` or `glab ci trace`
 When a restart call goes
 Then it passes: the guard judges the order, not the cause of the fall
 

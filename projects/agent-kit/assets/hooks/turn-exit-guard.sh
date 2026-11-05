@@ -282,7 +282,7 @@ fi
 # state is not allowed.
 case "$state" in
     этапы-кончились | разбор-кончился)
-        if ! printf '%s' "$commands" | grep -qE 'gh[[:space:]]+pr[[:space:]]+create'; then
+        if ! printf '%s' "$commands" | grep -qE "$handover_re"; then
             if [ "$state" = "этапы-кончились" ]; then
                 action="merge the agreement, bring the texts up to what was done and run the suite"
             else
