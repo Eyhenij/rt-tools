@@ -124,3 +124,30 @@ When the guard judges the opening, and the audit reads the open request
 Then the guard refuses and names the epic branch, and the audit names the request
 
 Covered: `projects/agent-kit/tests/guard-epic-base.test.sh`, `projects/agent-kit/tests/checks-board-epic-base.test.sh`.
+
+### SC-AK-1256 — a draft on a base the pipeline does not wake for is refused
+
+Given the pipeline file narrows its `pull_request` trigger to a list of branches
+When a request opens with `--draft` or `-d` into a base outside the list, a branch of its `push`
+section included
+Then the guard refuses and names the base, the file, its branches and the way out
+
+Covered: `projects/agent-kit/tests/git-guards-draft-base.test.sh`.
+
+### SC-AK-1257 — a draft where a run comes, and a request that is no draft, are not judged
+
+Given the same pipeline file
+When a draft opens into a listed branch, into a branch its pattern covers or with no base named, or
+a request opens without a draft, with `--draft=false` or with the word in its title
+Then the draft condition stays silent
+
+Covered: `projects/agent-kit/tests/git-guards-draft-base.test.sh`.
+
+### SC-AK-1258 — the list is read from the tree, and what cannot be read is not judged
+
+Given the inline form of the branch list
+When a draft opens into a base outside and inside it
+Then the first is refused and the second is not. A trigger without a branch filter, a
+`pull_request_target` trigger, a missing pipeline file and a tree without the setting are not judged
+
+Covered: `projects/agent-kit/tests/git-guards-draft-base.test.sh`.
