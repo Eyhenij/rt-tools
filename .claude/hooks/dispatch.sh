@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/dispatch.sh · 0f3f3c8ea2ac · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/dispatch.sh · ddf8594dd769 · правится надстройкой, не здесь
 # The dispatcher of agent events. NOT a guard: it has no `rt-hook:` declaration — on the contrary,
 # it reads such declarations in the others. In the agent settings it stands alone on an event
 # instead of a list.
@@ -142,11 +142,64 @@ EOF
         exit 0
     fi
 
-    [ -n "$branch_out" ] && collected="${collected}${branch_out}
+    # Each answer is kept apart, as a JSON string per line: glued together, two objects are no longer
+    # one answer, and the merge at the end needs to know where one ends.
+    if [ -n "$branch_out" ]; then
+        answers="${answers:-}$(printf '%s' "$branch_out" | jq -Rsc . 2>/dev/null)
 "
+        collected="${collected}${branch_out}
+"
+        count=$((${count:-0} + 1))
+    fi
 done
 
-# Not one branch refused: what they printed is given out — hints and digests.
-[ -n "${collected:-}" ] && printf '%s' "$collected"
+# The answers of several branches are merged into one object. Objects printed one after another are
+# no longer one answer: the agent read them as raw text, and the laws and the handover of a session
+# start arrived cut. The texts of the context and of the system message are joined by an empty line,
+# the plain text of a branch goes into the context, the other fields are taken in the order of the
+# branches. An event without a context field keeps the text in the system message.
+rt_dispatch_merge() {
+    case "$event" in
+        SessionStart | UserPromptSubmit | PreToolUse | PostToolUse) with_context=true ;;
+        *) with_context=false ;;
+    esac
+    printf '%s' "$answers" | jq -sc --arg ev "$event" --argjson ctx "$with_context" '
+        map(. as $s | (try ($s | fromjson) catch null) as $j
+            | if ($j | type) == "object" then {obj: $j} else {text: ($s | sub("\\s+$"; ""))} end)
+        | [.[] | .obj // empty] as $objs
+        | ([$objs[] | .hookSpecificOutput.additionalContext // empty]
+            + [.[] | .text // empty | select(length > 0)]) as $texts
+        | [$objs[] | .systemMessage // empty] as $sys
+        | (reduce $objs[] as $o ({};
+            . * ($o | del(.systemMessage)
+                | if (.hookSpecificOutput | type) == "object"
+                  then .hookSpecificOutput |= del(.additionalContext) else . end))) as $base
+        | if $ctx then
+            $base
+            | if ($texts | length) > 0 then
+                .hookSpecificOutput = ((.hookSpecificOutput // {})
+                    + {hookEventName: $ev, additionalContext: ($texts | join("\n\n"))})
+              else . end
+            | if ($sys | length) > 0 then .systemMessage = ($sys | join("\n\n")) else . end
+          else
+            ($base | del(.hookSpecificOutput))
+            | if (($sys + $texts) | length) > 0 then .systemMessage = (($sys + $texts) | join("\n\n"))
+              else . end
+          end
+    ' 2>/dev/null
+}
+
+# Not one branch refused: what they printed is given out — hints and digests. A single answer goes
+# out as it is; where the merge has no parser, the former glued output is better than silence.
+if [ "${count:-0}" -gt 1 ]; then
+    merged="$(rt_dispatch_merge)"
+    if [ -n "$merged" ]; then
+        printf '%s\n' "$merged"
+    else
+        printf '%s' "$collected"
+    fi
+elif [ -n "${collected:-}" ]; then
+    printf '%s' "$collected"
+fi
 
 exit 0

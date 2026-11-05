@@ -106,7 +106,8 @@ The guard of the conversation — the questions to the owner — is a subdomain 
   command.** A draft is read by the owner as "the work is not finished", and the next task taken
   instead of finishing leaves what is ready invisible. This is asked by a command of the same turn —
   by lifting the draft, by reading the run or by the check of the work queue; the guard does not touch
-  the network.
+  the network. The GitLab client counts on a par: `glab mr update --ready` or `-r` lifts the draft,
+  and `glab ci` reads the pipeline.
 - **A step of closing the work does not count as taking the next task.** Moving the task being closed
   into the column of the review and removing its folder are mandatory steps of the closing, and both
   stand in the same turn the request was opened by. The sign of taking lists what taking happens to
@@ -127,7 +128,9 @@ The guard of the conversation — the questions to the owner — is a subdomain 
   not an exit of a turn: it looks like work better than any other — it is full, it names numbers and
   states, and the emptiness behind it is visible neither to the owner nor to the session itself.
 - **What counts as work is an edit of a file and a command that changes the tree.** Reading, searching
-  and conversation do not count as it: they are what fills a turn that has stalled.
+  and conversation do not count as it: they are what fills a turn that has stalled. A command of the
+  GitLab client is judged on a par with the same command of `gh`. A merge or a retry is work, and a
+  reading subcommand is not.
 - **A word about a stop is judged by the remark of the owner, not by the words of the executor.**
   Otherwise the stop is declared by whoever finds it convenient at that minute.
 - **The word of the owner about a stop said a turn earlier holds until their later order to work, and
