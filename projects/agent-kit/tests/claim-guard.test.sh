@@ -194,4 +194,12 @@ expect_claim "SC-AK-1198 — починенная проверка перед pu
         "$(ran 'pnpm run check:all')" "$(answered 'ok')" \
         "$(told 'Проверка перед push починена.')")")" PASS
 
+# --- SC-AK-1262 — команды клиента GitLab подтверждают наравне с командами GitHub ----------------
+expect_claim "SC-AK-1262 — «PR открыт» после открытия через glab" \
+    "$(input_stop "$(transcript "$(say 'открывай')" "$(ran 'glab mr create --draft --title x')" "$(told 'PR открыт.')")")" PASS
+expect_claim "SC-AK-1262 — «прогон зелёный» после чтения конвейера через glab" \
+    "$(input_stop "$(transcript "$(say 'что там')" "$(ran 'glab ci status')" "$(told 'Прогон зелёный.')")")" PASS
+expect_claim "SC-AK-1262 — «влита в main» после слияния через glab" \
+    "$(input_stop "$(transcript "$(say 'вливай')" "$(ran 'glab mr merge 5')" "$(told 'Правка влита в main.')")")" PASS
+
 suite_result "гард утверждения"

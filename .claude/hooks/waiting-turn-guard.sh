@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/waiting-turn-guard.sh · b2ebb819e432 · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/waiting-turn-guard.sh · cfdea4640893 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh
 # Waiting guard: a turn that tells the owner about someone else's step does not end until it holds
@@ -85,7 +85,8 @@ taken_path_re='/tasks/'
 # Lifting the draft is the obvious case; reading the run is the one where there is nothing to lift
 # yet, but the executor looked instead of saying "waiting". Two ready PRs stood as drafts precisely
 # because the next task was taken instead of this, not on top of it.
-ready_re='pr[[:space:]]+ready|run[[:space:]]+(list|view|watch)|pr[[:space:]]+checks|check-runs|check:board|board\.mjs'
+# The GitLab client lifts the draft by an update with a flag and reads the pipeline by `ci`.
+ready_re='pr[[:space:]]+ready|run[[:space:]]+(list|view|watch)|pr[[:space:]]+checks|check-runs|check:board|board\.mjs|glab[^|;&]*mr[[:space:]]+update[^|;&]*--ready|glab[^|;&]*ci[[:space:]]+(status|view|list|trace|get)'
 
 # A run started or rerun in the turn. Its outcome does not call by itself: a rerun went through in
 # one line between other things, its state was read once — «queued» — and the turn ended by a lawful

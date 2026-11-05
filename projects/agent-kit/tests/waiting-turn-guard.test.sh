@@ -97,6 +97,12 @@ expect_stop "SC-AK-583 — снятый черновик требование с
 expect_stop "SC-AK-583 — сверка очереди работ показывает то же" \
     "$(input_stop "$(transcript "$(say 'открывай PR')" "$(ran 'gh pr create --draft --title x')" "$(ran 'npm run check:board')" "$(ran 'npm run task:move -- 11 in-progress')")")" PASS
 
+# --- SC-AK-1262 — отданная работа доводится и в дереве на GitLab --------------------------------
+expect_stop "SC-AK-1262 — снятый через glab черновик требование снимает" \
+    "$(input_stop "$(transcript "$(say 'открывай')" "$(ran 'glab mr create --draft --title x')" "$(ran 'glab mr update 11 --ready')" "$(ran 'npm run task:move -- 11 in-progress')")")" PASS
+expect_stop "SC-AK-1262 — чтение конвейера через glab показывает то же" \
+    "$(input_stop "$(transcript "$(say 'открывай')" "$(ran 'glab mr create --draft --title x')" "$(ran 'glab ci status --branch RT-1-probe')" "$(ran 'npm run task:move -- 11 in-progress')")")" PASS
+
 # --- SC-AK-248 — ход без открытия PR гард ожидания не судит ------------------------------------
 expect_stop "SC-AK-248 — PR не открывали" \
     "$(input_stop "$(transcript "$(say 'почини стили')" "$(ran 'pnpm run lint')" "$(reply 'Зелено.')")")" PASS

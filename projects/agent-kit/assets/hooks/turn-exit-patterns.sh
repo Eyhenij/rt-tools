@@ -66,7 +66,8 @@ standing_work_re='работай[^.]{0,40}(без остановок|без па
 
 # Handing work over and starting the next. The rule calls handed-over work a lawful end of a turn —
 # but on a condition: the next one is started, and an ACTION has been done on it, not spoken.
-handover_re='gh[[:space:]]+pr[[:space:]]+create'
+# The GitLab client opens a merge request — the same handing over.
+handover_re='gh[[:space:]]+pr[[:space:]]+create|glab[^|;&]*mr[[:space:]]+create'
 started_re='task:new|task:move|board\.mjs[[:space:]]+move|git[[:space:]]+checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|git[[:space:]]+switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c'
 
 # How many steps of the plan are not done yet. The progress mirrors the steps of the plan with a

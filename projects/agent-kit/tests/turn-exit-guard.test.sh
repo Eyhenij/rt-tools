@@ -305,6 +305,11 @@ expect_stop "SC-AK-650 — ход без открытия заявки этим 
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git commit -q -m fix')")")" PASS
 expect_reason "SC-AK-651 — отказ об отдаче называет команду заведения следующей" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft --title x')")")" 'task:new'
+# SC-AK-1262: заявка, открытая клиентом GitLab, — та же отдача работы.
+expect_stop "SC-AK-1262 — отдача через glab без начала следующей ход не кончает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git push origin HEAD')" "$(ran 'glab mr create --draft --title x')")")" BLOCK
+expect_stop "SC-AK-1262 — отдача через glab с заведённой следующей ход отпускает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'glab mr create --draft --title x')" "$(ran 'npm run task:new -- следующая')")")" PASS
 
 # --- снятая папка задачи ----------------------------------------------------------------------
 # Папка разбирается ДО открытия заявки, и между этими двумя движениями работа не отдана никому.
