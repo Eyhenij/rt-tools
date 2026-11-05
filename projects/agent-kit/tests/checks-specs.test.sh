@@ -210,6 +210,9 @@ report "SC-AK-241 — правило без паттерна названо" "$(
 printf '{ "skip": ["patterns/skipped-rule-do.md"] }\n' > "$SPEC_TREE/.claude/rt-kit.json"
 report "SC-AK-241 — пропущенный паттерн правило не краснит" "$(specs_says 'has no pattern at all')" 0
 
+printf '{ "skip": ["patterns/skipped-rule-do.github.md"] }\n' > "$SPEC_TREE/.claude/rt-kit.json"
+report "SC-AK-1261 — паттерн, пропущенный в варианте хостинга, правило не краснит" "$(specs_says 'has no pattern at all')" 0
+
 rm -rf "$SPEC_TREE/.claude/skills/skipped-rule" "$SPEC_TREE/.claude/rt-kit.json"
 # --- SC-AK-238…240 — символом якоря считается любая буква ------------------------------------
 #

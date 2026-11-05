@@ -184,6 +184,16 @@ Then there is no line "the rule has not a single pattern" about it: a skip is a 
 
 Covered: `projects/agent-kit/tests/checks-specs.test.sh`.
 
+### SC-AK-1261 — a pattern skipped in a hosting variant counts as skipped
+
+Given the rule names its only pattern, and the tree skips that pattern by its hosting variant —
+`patterns/<name>.github.md`
+When the check of the specs goes
+Then there is no line "the rule has not a single pattern" about it, the same as for a skip without a
+variant
+
+Covered: `projects/agent-kit/tests/checks-specs.test.sh`.
+
 ### SC-AK-242 — an article with a verdict instead of an address does not turn the check red
 
 Given a row of the companion names, instead of an address, the verdict "Not carried out" with a
