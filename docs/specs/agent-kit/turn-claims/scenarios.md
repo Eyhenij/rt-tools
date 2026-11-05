@@ -270,3 +270,16 @@ When the turn ends without a reading command, or without a run of the gate set
 Then the guard refuses it; the reading command lifts the first, the run lifts the second
 
 Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
+
+### SC-AK-1270 — a statement is confirmed by a command of the GitLab client
+
+Given the turn told the owner the request is open, the pipeline is green, the work is merged or the
+task is created, after the matching `glab` command
+When the turn ends
+Then the claim guard lets it through
+
+Given the turn told the owner the work is not merged, after a reading by `glab mr view`
+When the turn ends
+Then the claim guard lets it through
+
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/claim-guard.sh · 11e3af1f7a6b · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/claim-guard.sh · ff69c9d11fd6 · правится надстройкой, не здесь
 # rt-hook: Stop
 # The claim guard: what is said to the owner about the state of the tree carries the command that
 # showed it. Stop.
@@ -144,22 +144,22 @@ claims=(
     # phrase was once said with not one run behind it.
     '@проверк[аи] перед (push|пушем|отправкой)[^.]{0,30}(починен|исправлен)§git push|check:all|pnpm (run|exec)§прогон набора перед push — `git push` или `pnpm run check:all`'
     '@запушен[аоы]?|@запушил[а]?|@пуш прошёл|@ветка уехала§git push§`git push`'
-    '(PR|правка|ветка|работа)[^.]{0,20}@(влит|слит|смержен)|@влит[оа] в|@слит[оа] в§git merge|gh pr merge§`git merge` или `gh pr merge`'
+    '(PR|правка|ветка|работа)[^.]{0,20}@(влит|слит|смержен)|@влит[оа] в|@слит[оа] в§git merge|gh pr merge|glab mr merge§`git merge`, `gh pr merge` или `glab mr merge`'
     '(ветки|ветка|файлы|файл|папка|каталог)[^.]{0,40}@(снят|удал[её]н|удалил|почищен|почистил|вычищен|вычистил)|@снят[оыа] с§git branch|git push .*--delete|git rm|gh api|rm §команду удаления — `git branch -d`, `git push --delete` или `git rm`'
-    '@прогон (зелёный|прошёл|кончился)|@конвейер зелёный|@проверки на PR зелёные§gh run§`gh run list` или `gh run view`'
-    '@(работа|правка|задача) готова|@можно вливать|@PR открыт|@черновик снят§gh pr §`gh pr create`, `gh pr view` или `gh pr ready`'
+    '@прогон (зелёный|прошёл|кончился)|@конвейер зелёный|@проверки на PR зелёные§gh run|glab ci§`gh run list`, `gh run view` или `glab ci status`'
+    '@(работа|правка|задача) готова|@можно вливать|@PR открыт|@черновик снят§gh pr |glab mr §`gh pr create`, `gh pr view`, `gh pr ready` или `glab mr`'
     # Waiting for someone else's step is a claim about the state too, and there is something in it
     # to lie with: a run is green for an hour, and sometimes never starts at all. Said without a
     # command, it leaves finished work a draft, and the owner learns of it last — that is exactly
     # how it went twice in one day.
-    '@жд[уёя][^.]{0,20}прогон|@дожида[ею][^.]{0,20}прогон|@прогон[^.]{0,20}(ещё идёт|не встал|не кончился|не дошёл)|@черновик[^.]{0,30}(не снимаю|сниму|снимется)§gh run|gh pr checks|check-runs|check:board|board\.mjs§команду о прогоне — `gh run list`, `gh pr checks` или сверку очереди работ'
-    '@задача заведена|@задача (в|переведена в) колонк|@колонка переведена§gh issue|gh api|task:new|task:move|board\.mjs§команду очереди работ — заведение задачи или перевод колонки'
+    '@жд[уёя][^.]{0,20}прогон|@дожида[ею][^.]{0,20}прогон|@прогон[^.]{0,20}(ещё идёт|не встал|не кончился|не дошёл)|@черновик[^.]{0,30}(не снимаю|сниму|снимется)§gh run|gh pr checks|glab ci|check-runs|check:board|board\.mjs§команду о прогоне — `gh run list`, `gh pr checks` или сверку очереди работ'
+    '@задача заведена|@задача (в|переведена в) колонк|@колонка переведена§gh issue|gh api|glab issue|glab api|task:new|task:move|board\.mjs§команду очереди работ — заведение задачи или перевод колонки'
     '(в дереве|в репозитории|здесь|такого файла|такой команды)[^.]{0,30}(нет|не бывает)|@не заводили|@нигде не встречается§grep|rg |ls |find |git ls-files|git grep|git log|cat §команду поиска — `grep`, `git ls-files` или обход каталога'
 )
 
 # A negated claim is a statement about the tree too, but the action command cannot show it: «not
 # pushed» is shown by a read of the branch state, not by a push.
-read_proof='git (status|log|ls-remote|branch|show|rev-parse|fetch|diff)|gh (pr|run|api|issue)|ls |grep|board\.mjs'
+read_proof='git (status|log|ls-remote|branch|show|rev-parse|fetch|diff)|gh (pr|run|api|issue)|glab (mr|ci|api|issue)|ls |grep|board\.mjs'
 
 for row in "${claims[@]}"; do
     words="${row%%§*}"

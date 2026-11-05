@@ -63,7 +63,8 @@ not by a person.
   turn it opens holds nothing to do: what it waits for is still running. The turn after the last own
   task finished is judged as before — its result is acted on in that turn.
 - **Handed-in work ends a turn only together with the next one begun.** On the next one an action
-  must be done, not said.
+  must be done, not said. A request opened by `glab mr create` is handed-in work on a par with one
+  opened by `gh pr create`.
 - **A task taken without a task folder does not end the turn.** Creating a branch and moving the
   column do not count as the start of the work.
 - **A closed stage is confirmed by the command of the check of the same turn.**

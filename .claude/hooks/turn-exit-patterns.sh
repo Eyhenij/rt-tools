@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/turn-exit-patterns.sh · 4c32044a1204 · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/turn-exit-patterns.sh · 06d174e9706f · правится надстройкой, не здесь
 # The patterns of the turn-exit guard. NOT a guard: it has no `rt-hook:` declaration and hooks into
 # no agent event. The turn-exit guard sources it — the same way guards source the shared reading of
 # the input and the deny tail. It was moved out when the guard outgrew the file length limit: the
@@ -18,7 +18,7 @@
 # of the two changes the tree, and to the pattern they were indistinguishable from writing to a
 # working file: it saw the arrow itself and did not ask where it led. What stays as the sign is an
 # edit of a file by the editing tool and the commands listed here.
-work_re='git (add|commit|push|checkout|merge|rm)|npm run|pnpm (run|exec)|nx (build|test|run)|gh (pr|issue|api|run)|task:(new|move)|mkdir|cp |mv |rm |sed -i|tee '
+work_re='git (add|commit|push|checkout|merge|rm)|npm run|pnpm (run|exec)|nx (build|test|run)|gh (pr|issue|api|run)|glab (mr|ci|issue|api)|task:(new|move)|mkdir|cp |mv |rm |sed -i|tee '
 
 # Exploration. The same words as in the work pattern, but the subcommand is a reading one:
 # switching a branch, pulling, looking through the history, reading PRs and runs. The work pattern
@@ -30,7 +30,7 @@ work_re='git (add|commit|push|checkout|merge|rm)|npm run|pnpm (run|exec)|nx (bui
 # Exploration looks like work better than anything else: it has commands, numbers and exact answers.
 # That is what makes it dangerous — a turn stuffed with it reads as full both to the owner and to
 # the session itself.
-read_re='^[[:space:]]*(([^[:space:]]*/)?git[[:space:]]+(show|log|ls-tree|ls-files|ls-remote|diff|status|branch|tag|rev-parse|remote|describe|blame|fetch|pull|(checkout|switch)(?!([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-[bc][[:space:]]))|([^[:space:]]*/)?gh[[:space:]]+(pr|issue|run|repo)[[:space:]]+(list|view|status|checks|diff|download|logs))([[:space:]]|$)'
+read_re='^[[:space:]]*(([^[:space:]]*/)?git[[:space:]]+(show|log|ls-tree|ls-files|ls-remote|diff|status|branch|tag|rev-parse|remote|describe|blame|fetch|pull|(checkout|switch)(?!([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-[bc][[:space:]]))|([^[:space:]]*/)?gh[[:space:]]+(pr|issue|run|repo)[[:space:]]+(list|view|status|checks|diff|download|logs)|([^[:space:]]*/)?glab[[:space:]]+(mr|issue|ci|repo)[[:space:]]+(list|view|status|diff|trace|get))([[:space:]]|$)'
 
 # The parts of a compound command are judged one by one: a turn gathers reading and work into one
 # line through `&&`, and judging it whole would release exploration on the very first changing part.
@@ -67,7 +67,8 @@ standing_work_re='работай[^.]{0,40}(без остановок|без па
 
 # Handing work over and starting the next. The rule calls handed-over work a lawful end of a turn —
 # but on a condition: the next one is started, and an ACTION has been done on it, not spoken.
-handover_re='gh[[:space:]]+pr[[:space:]]+create'
+# The GitLab client opens a merge request — the same handing over.
+handover_re='gh[[:space:]]+pr[[:space:]]+create|glab[^|;&]*mr[[:space:]]+create'
 started_re='task:new|task:move|board\.mjs[[:space:]]+move|git[[:space:]]+checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|git[[:space:]]+switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c'
 
 # How many steps of the plan are not done yet. The progress mirrors the steps of the plan with a

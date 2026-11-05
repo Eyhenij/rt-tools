@@ -30,6 +30,7 @@ whole.
 - **A scenario number of one digit the check sees on a par with two and three.** — `projects/agent-kit/assets/checks/spec-common.mjs:SCENARIO_HEADING`
 - **A scenario number is issued once and is not used a second time.** — `projects/agent-kit/assets/rules/spec-driven.md:spec-driven`
 - **A scenario and the title of its test are edited by one change.** — `projects/agent-kit/assets/patterns/spec-driven-domain.md:spec-driven-domain`
+- **A pattern skipped in a hosting variant counts as skipped.** — `projects/agent-kit/assets/checks/check-specs.mjs:skippedPatterns` — the name is cut at its first dot; scenario `SC-AK-1269`
 - **A rule whose patterns the tree skipped at the layout demands no pattern.** — `projects/agent-kit/assets/checks/check-specs.mjs:skippedPatterns`
 - **The taking of a portable text out of the check of the addresses is older than the new requirement.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:PORTABLE_DIRS`
 - **A table of refusal codes does not count as a procedure.** — `projects/agent-kit/assets/checks/spec-contract.mjs:contractRows` — a row with a number in the second cell is skipped; scenario SC-AK-688

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.33.1 · checks/check-specs.mjs · 74f2c74dcbdd · правится надстройкой, не здесь
+// rt-kit v0.33.1 · checks/check-specs.mjs · b50b301f5172 · правится надстройкой, не здесь
 /**
  * The check that a domain spec has not diverged from the code.
  *
@@ -330,7 +330,11 @@ const skippedPatterns = () => {
     try {
         const skip = JSON.parse(read(path)).skip ?? [];
 
-        return new Set(skip.map((resource) => resource.match(/^patterns\/(.+)\.md$/)?.[1]).filter(Boolean));
+        // A pattern carried only as a hosting variant is skipped by its variant name —
+        // `status-report-table.github.md` — while the rule names it without the variant. A pattern
+        // name holds no dot — `patternsNamedBy` below reads it as `[\w-]+` — so everything after the
+        // first one is the variant. A dot let into that sample breaks this cut in silence.
+        return new Set(skip.map((resource) => resource.match(/^patterns\/([^./]+)(?:\.[^/]+)?\.md$/)?.[1]).filter(Boolean));
     } catch {
         return new Set();
     }

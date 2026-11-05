@@ -66,6 +66,14 @@ edit guards and the turn-closing guards.
 - **The refusal of a branch is given to the agent as it is, and the branches after it are not
   called.** The exit code and the output belong to the guard: the dispatcher does not rewrite them and
   adds no text of its own to them.
+- **The answers of several branches reach the agent as one object.** Objects printed one after
+  another are no longer one answer, and the agent reads them as raw text: the laws and the handover
+  of a session start arrived cut. The texts of the context and of the system message are joined by an
+  empty line, the plain text of a branch goes into the context after the contexts of the objects,
+  and the other fields are taken in the order of the branches. An answer that parses but is not an
+  object — `null`, an array, `true` — is taken as plain text. An event without a context field keeps
+  the text in the system message. A single answer is given out as it is, with its trailing line
+  breaks folded into one; where the agent has no parser, the answers are glued as before.
 - **What is laid out and needs a record in the setting of the agent reaches it.** A guard is called
   not by a file but by a record, and one laid out without it is indistinguishable from a working one
   from outside: the file lies there, it is committed, the audit is green — and the call its body is
@@ -165,5 +173,7 @@ Not applicable.
   when it matters to two branches which comes first.
 
 ## History of changes
+
+- 2026-11-05 — the answers of several branches reach the agent as one object.
 
 - 2026-08-23 — the subdomain was created.
