@@ -58,13 +58,14 @@ not by a person.
   agent tool or a command sent behind the turn is an announcement of intent: what was sent asks
   nothing on the way and goes no faster for being waited on. While it runs, what does not depend on
   it is done, and the launch stands anywhere in the turn but last.
+- **An empty turn woken by a notification about an own background task ends while another own
+  background task still runs.** The notification is written under the role of the owner, and the
+  turn it opens holds nothing to do: what it waits for is still running. The turn after the last own
+  task finished is judged as before — its result is acted on in that turn.
 - **Handed-in work ends a turn only together with the next one begun.** On the next one an action
   must be done, not said.
 - **A task taken without a task folder does not end the turn.** Creating a branch and moving the
   column do not count as the start of the work.
-- **A branch named by the header of an epic plan is an epic branch, and the tier of the taken task
-  does not judge it.** The epic plan is written by the command that creates the epic and outlives
-  the merge. A plan naming another branch releases nothing.
 - **A closed stage is confirmed by the command of the check of the same turn.**
 - **A next step rewritten into the progress is begun by the same turn.** After the last edit of the
   progress the turn holds work other than the commit and the push of it — an edit outside the task
@@ -82,27 +83,10 @@ not by a person.
   leaves that refusal out of the release sign, and the turn is judged by what stood before it.
 - **A question at the head of an empty turn in a running stage is a stop.** The parts of the stage
   that do not depend on the answer go first, and the question by the tool after them.
-- **Under an open epic a turn that ended with work does not end.** The work stands where it stood;
-  the refusal names the unfinished tasks of the epic and the next step. Outside an epic the turn is
-  released as before.
-- **The end of an epic read from the table releases the whole turn on the way to a refusal.** The
-  table was read and printed not a single task: the stop is lawful there, and the refusal of any
-  tier lets the turn go — an empty turn, a second pass, a handover by hand, words about waiting for
-  a word. An epic that cannot be read — no table, no epic behind the branch, the main branch after
-  the merge — releases nothing, and the turn is judged as before.
-- **Under an open epic a second pass over the turn is judged again.** The first refusal named the
-  next step, and a turn ending again without a lawful exit is the same stop.
-- **A handover written by hand releases a turn only outside an open epic.** On compaction the
-  handover is written by the hook, not by a command of the turn; the refusal of the window guard
-  releases as any refusal.
-- **The epic is read once per turn and only on the way to a refusal.** The reading goes to the
-  hosting by the same command that prints the table of the epic to the owner.
-- **The owner's standing word quoted in the line «Waiting for the owner» releases the turn.** The
-  guard reads their word, not a retelling: a line without a quote releases nothing, and the quote
-  holds until the owner rewrites the line.
 
 ## What is out of scope
 
+A turn under an open epic is a subdomain of its own, `docs/specs/agent-kit/turn-guards/exit-epic/`.
 The guard of the conversation, the guard of the incident, the guard of the window of the session and
 the guard of waiting — they are in the domain next to it. The statements about the state of the tree
 are judged by the guard of the statements: this guard reads actions, not text.
@@ -176,3 +160,6 @@ Not applicable: the guard judges one turn of one session.
   turn does not end on the commit of it alone.
 - 2026-09-18 — a launch in the background as the last action: a role or a command sent behind the
   turn is an announcement of intent, and the turn does not end on it.
+- 2026-11-04 — a turn woken by a notification about an own background task ends while another own
+  task runs. The rules of a turn under an open epic left for the subdomain `exit-epic`: the
+  scenario file outgrew the length limit.
