@@ -199,6 +199,10 @@ work was not asked
 When the guard of waiting judges the end of the turn
 Then the turn is given back; a lifted draft and the check of the work queue lift the requirement
 
+Given the request was opened by `glab mr create`
+When the turn lifts the draft by `glab mr update --ready` or `-r`, or reads the pipeline by `glab ci`
+Then the requirement is lifted the same as by the commands of `gh`
+
 Covered: `projects/agent-kit/tests/waiting-turn-guard.test.sh`.
 
 ### SC-AK-591 — a written plan does not let the turn go
@@ -223,7 +227,8 @@ When the guard judges the end of the turn
 Then the turn is refused and the refusal names the mandatory action of the state: the edit lies in a
 branch the owner does not see, and the former state they read as work not done
 
-Given by the same turn a request was opened and the next work was begun, or the owner said to stop
+Given by the same turn a request was opened by `gh` or by `glab` and the next work was begun, or the
+owner said to stop
 When the guard judges the end of the turn
 Then the turn is let go: the lawful exits are not locked by a state
 

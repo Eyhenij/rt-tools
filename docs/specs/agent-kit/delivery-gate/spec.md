@@ -177,7 +177,8 @@ refuses the push.
   list of runs they look the same: a refusal of the hosting on the preparation step is cured by a
   restart, a defect of the branch is not cured by it at all, and the round repeats until the journal
   is opened. The guard judges the order — the journal before the restart — not the cause of the fall:
-  what is written in the journal a person judges.
+  what is written in the journal a person judges. A pipeline step retried by `glab ci retry <id>` is
+  judged the same, and its journal is read by `glab ci trace <id>`.
 - **The journal of that very step counts as read.** In the list of the runs the steps stand side by side,
   and the journal of a neighbouring one says nothing about ours. The number in the reading is checked
   against the number in the restart.

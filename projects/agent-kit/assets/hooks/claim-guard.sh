@@ -152,13 +152,13 @@ claims=(
     # command, it leaves finished work a draft, and the owner learns of it last — that is exactly
     # how it went twice in one day.
     '@жд[уёя][^.]{0,20}прогон|@дожида[ею][^.]{0,20}прогон|@прогон[^.]{0,20}(ещё идёт|не встал|не кончился|не дошёл)|@черновик[^.]{0,30}(не снимаю|сниму|снимется)§gh run|gh pr checks|glab ci|check-runs|check:board|board\.mjs§команду о прогоне — `gh run list`, `gh pr checks` или сверку очереди работ'
-    '@задача заведена|@задача (в|переведена в) колонк|@колонка переведена§gh issue|gh api|task:new|task:move|board\.mjs§команду очереди работ — заведение задачи или перевод колонки'
+    '@задача заведена|@задача (в|переведена в) колонк|@колонка переведена§gh issue|gh api|glab issue|glab api|task:new|task:move|board\.mjs§команду очереди работ — заведение задачи или перевод колонки'
     '(в дереве|в репозитории|здесь|такого файла|такой команды)[^.]{0,30}(нет|не бывает)|@не заводили|@нигде не встречается§grep|rg |ls |find |git ls-files|git grep|git log|cat §команду поиска — `grep`, `git ls-files` или обход каталога'
 )
 
 # A negated claim is a statement about the tree too, but the action command cannot show it: «not
 # pushed» is shown by a read of the branch state, not by a push.
-read_proof='git (status|log|ls-remote|branch|show|rev-parse|fetch|diff)|gh (pr|run|api|issue)|ls |grep|board\.mjs'
+read_proof='git (status|log|ls-remote|branch|show|rev-parse|fetch|diff)|gh (pr|run|api|issue)|glab (mr|ci|api|issue)|ls |grep|board\.mjs'
 
 for row in "${claims[@]}"; do
     words="${row%%§*}"

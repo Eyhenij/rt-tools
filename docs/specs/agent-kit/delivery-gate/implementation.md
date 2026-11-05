@@ -34,7 +34,7 @@ whole.
 - **The verb of a command is looked for in its position, not as a substring across the whole line.** — `projects/agent-kit/assets/hooks/git-guard-main.sh:verbs` — scenario SC-AK-832
 - **Creating a branch is recognised with a flag between the verb and `-b` too.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:branch_arg` — the same sample stands in the guards of the request conflict, of the push set, of waiting and in the watchman of the turn exits; scenario SC-AK-872
 - **The push gate writes an observation line for every outcome of its own.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:rt_push_gate_note` — scenario SC-AK-835
-- **A fallen step of the pipeline is not restarted while its journal is not read.** — `projects/agent-kit/assets/hooks/rerun-guard.sh:seen`
+- **A fallen step of the pipeline is not restarted while its journal is not read.** — `projects/agent-kit/assets/hooks/rerun-guard.sh:seen` — the retry of the GitLab client is recognised by `projects/agent-kit/assets/hooks/rerun-guard.sh:retry_re`
 - **The journal of that very step counts as read.** — `projects/agent-kit/assets/hooks/rerun-guard.sh:run_id`
 - **A restart without a named number of a step is not judged.** — `projects/agent-kit/assets/hooks/rerun-guard.sh:run_id`
 - **The body of a request carries the section about the remaining step from the minute it is opened.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:pull_body_section` — scenario SC-AK-685

@@ -271,19 +271,15 @@ Then the guard refuses it; the reading command lifts the first, the run lifts th
 
 Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
 
-### SC-AK-1262 — the commands of the GitLab client count on a par with those of GitHub
+### SC-AK-1270 — a statement is confirmed by a command of the GitLab client
 
-Given a tree on GitLab, where the request is opened by `glab mr create`
-When the turn lifts the draft by `glab mr update --ready` or reads the pipeline by `glab ci status`
-Then the waiting guard lets the turn end, and the turn-exit guard reads the opening as handed-over work
-
-Given the turn told the owner the request is open, the pipeline is green or the work is merged,
-after the matching `glab` command
+Given the turn told the owner the request is open, the pipeline is green, the work is merged or the
+task is created, after the matching `glab` command
 When the turn ends
 Then the claim guard lets it through
 
-Given a pipeline step is retried by `glab ci retry <id>`
-When its trace was not read in the same turn
-Then the rerun guard refuses and names `glab ci trace <id>`; after the read it lets the retry through
+Given the turn told the owner the work is not merged, after a reading by `glab mr view`
+When the turn ends
+Then the claim guard lets it through
 
-Covered: `projects/agent-kit/tests/claim-guard.test.sh`, `projects/agent-kit/tests/waiting-turn-guard.test.sh`, `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/rerun-guard.test.sh`.
+Covered: `projects/agent-kit/tests/claim-guard.test.sh`.
