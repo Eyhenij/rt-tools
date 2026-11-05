@@ -98,3 +98,12 @@ When the guard judges the opening
 Then it lets the title through: the form is taken from the repository the command runs in
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
+
+### SC-AK-1252 — the main branch is named by the tree profile
+
+Given a tree with no remote repository, whose own profile names `develop` as the main branch
+When a commit is made in `develop` and then in `main`
+Then the guard refuses the commit into `develop` and lets the one into `main` through; a tree whose
+profile names nothing keeps guessing by the remote pointer, as before
+
+Covered: `projects/agent-kit/tests/git-guard-main.test.sh`.
