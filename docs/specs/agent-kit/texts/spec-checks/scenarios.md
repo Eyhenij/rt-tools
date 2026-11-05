@@ -184,13 +184,17 @@ Then there is no line "the rule has not a single pattern" about it: a skip is a 
 
 Covered: `projects/agent-kit/tests/checks-specs.test.sh`.
 
-### SC-AK-1261 — a pattern skipped in a hosting variant counts as skipped
+### SC-AK-1269 — a pattern skipped in a hosting variant counts as skipped
 
 Given the rule names its only pattern, and the tree skips that pattern by its hosting variant —
 `patterns/<name>.github.md`
 When the check of the specs goes
 Then there is no line "the rule has not a single pattern" about it, the same as for a skip without a
-variant
+variant — whatever the variant is: `.gitlab`, `.azure` or two of them, `.needs-admin.github`
+
+Given the tree skips a pattern of another rule, in a hosting variant
+When the check of the specs goes
+Then the rule is still named as having not a single pattern
 
 Covered: `projects/agent-kit/tests/checks-specs.test.sh`.
 
