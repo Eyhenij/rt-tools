@@ -14,8 +14,8 @@ Pattern of the rule `task-flow`. What must be true meanwhile — the law
 
 - The stages of the plan are closed.
 - `npm run check:specs` listed the agreement in its "time to merge" section.
-- The spec is measured for length right after the merge: one that has grown is split by the same
-  commit.
+- The spec is measured for length before the merge and right after it: one already over the limit is
+  split by a commit of its own first, one that has grown is split by the same commit.
 - The domain texts are brought up to what the work did.
 - The gate suite is run whole — after the merge and the texts, not before them.
 - The task folder is taken apart, and the PR opens — a draft or ready, by the base.
@@ -39,10 +39,17 @@ By one of the last commits of the branch, before the PR opens. By then the code 
 npm run check:specs   # the "time to merge" section names the ready directories
 ```
 
-**The spec is measured for length in the same turn.** Merging is a known move that grows a spec. One
-merge took it to 572 lines against a limit of 500, and the executor learned of it from the push
-guard's refusal — after the commit. One that has grown is split into subdomains right here, not on
-the push.
+**The spec is measured for length before the merge, and again in the same turn after it.** Merging
+is a known move that grows a spec. One merge took it to 572 lines against a limit of 500, and the
+executor learned of it from the push guard's refusal — after the commit. One that has grown is split
+into subdomains right here, not on the push.
+
+A spec grows by direct edits too, and a measure taken only after the merge leaves that excess to
+every next merge: one domain spec stood at 885 lines and its scenarios at 1293 before any of nine
+waiting agreements. So the measure goes first: a spec already over the limit is split by a commit
+of its own, and the agreement merges after it. The same holds for a rule or a scenario added to a
+spec directly, with no agreement: the room is measured before the edit, not learned from the push
+set after the work.
 
 The order of the move:
 
