@@ -142,3 +142,12 @@ Then it refuses by the same field, names the age of the choice and removes the m
 lets the call through and is updated, and without a pinned profile the guard stays silent
 
 Covered: `projects/agent-kit/tests/browser-guard-require-select.test.sh`.
+
+### SC-AK-1259 — a driver installed as a plugin is refused
+
+Given the second or the third browser driver is installed as a plugin, and its tools carry the plugin
+name in front of the server name
+When the guard judges a call of such a tool
+Then it refuses it the same as a call by the plain name, and a call of the pinned extension passes
+
+Covered: `projects/agent-kit/tests/browser-guard-drivers.test.sh`.

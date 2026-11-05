@@ -54,6 +54,9 @@ turn.
 - **A foreign device sign is refused before the call, and the freshness mark is set by its
   outcome.** Before the call all that is known is that the profile was requested; the session is
   marked by a connection that took place.
+- **A second driver installed as a plugin is refused the same as one installed by hand.** A plugin
+  puts its own name in front of the server name, and a guard that knew only the plain name let the
+  same driver open the browser past the pinned profile.
 - **Raising the browser by a driver of one's own is refused, and the refusal names the file.** In
   the command line such a launch is not visible at all — there stand only the interpreter name and a
   path.
@@ -143,6 +146,8 @@ not name it gets no guards at it; the package has no sign of its own.
 The open questions of the domain are shared, and they live in the spec next to it.
 
 ## History of changes
+
+- 2026-11-05 — a second driver installed as a plugin is refused the same as one installed by hand.
 
 - 2026-09-10 — the refusal of a listing and of a switch was written down. The guard stood in the
   package from the start with neither an article nor a probe: its behaviour was held by the code
