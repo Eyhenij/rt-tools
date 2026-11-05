@@ -306,6 +306,41 @@ rm -f "$DISPATCH_DIR/turn-exit-guard.sh" "$DISPATCH_DIR/turn-exit-patterns.sh" \
     "$DISPATCH_DIR/turn-exit-verdict.sh" "$REAL_TURN" "$WORK_TURN"
 rm -rf "$REAL_REPO"
 
+# --- SC-AK-1260 — ответы нескольких веток доходят одним объектом --------------------------------
+# Два объекта подряд — уже не один JSON: агент читал их сырым текстом, и законы со сменой дел
+# приходили в сессию обрезанными.
+rm -f "$DISPATCH_DIR"/*.sh 2>/dev/null
+cp "$ASSETS/hooks/dispatch.sh" "$ASSETS/hooks/hook-input.sh" "$ASSETS/hooks/utf8.sh" "$DISPATCH_DIR/" 2>/dev/null
+say_branch() {
+    {
+        printf '#!/usr/bin/env bash\n'
+        printf '# rt-hook: %s\n' "$2"
+        printf 'cat <<%sOUT%s\n%s\nOUT\n' "'" "'" "$3"
+    } > "$DISPATCH_DIR/$1.sh"
+}
+INPUT_START='{"source":"startup","cwd":"/tmp"}'
+say_branch a_laws SessionStart '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"законы"}}'
+say_branch b_map SessionStart 'карта хода'
+MERGED="$(dispatch_says SessionStart "$INPUT_START")"
+report "SC-AK-1260 — два ответа разбираются как один объект" \
+    "$(printf '%s' "$MERGED" | jq -s 'length' 2>/dev/null)" 1
+report "SC-AK-1260 — в контексте оба текста" \
+    "$(printf '%s' "$MERGED" | jq -r '.hookSpecificOutput.additionalContext' 2>/dev/null | grep -cE '^(законы|карта хода)$')" 2
+report "SC-AK-1260 — имя события проставлено" \
+    "$(printf '%s' "$MERGED" | jq -r '.hookSpecificOutput.hookEventName' 2>/dev/null)" SessionStart
+rm -f "$DISPATCH_DIR/b_map.sh"
+report "SC-AK-1260 — один ответ выходит как есть" \
+    "$(dispatch_says SessionStart "$INPUT_START")" '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"законы"}}'
+rm -f "$DISPATCH_DIR/a_laws.sh"
+say_branch a_note Stop '{"systemMessage":"первое"}'
+say_branch b_note Stop 'второе'
+STOP_OUT="$(dispatch_says Stop '{"cwd":"/tmp"}')"
+report "SC-AK-1260 — в конце хода текст уходит в системное сообщение" \
+    "$(printf '%s' "$STOP_OUT" | jq -r '.systemMessage' 2>/dev/null | grep -cE '^(первое|второе)$')" 2
+report "SC-AK-1260 — в конце хода поля контекста нет" \
+    "$(printf '%s' "$STOP_OUT" | jq -r 'has("hookSpecificOutput")' 2>/dev/null)" false
+rm -f "$DISPATCH_DIR/a_note.sh" "$DISPATCH_DIR/b_note.sh"
+
 rm -rf "$DISPATCH_DIR"
 
 suite_result "диспетчер событий"

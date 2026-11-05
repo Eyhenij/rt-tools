@@ -9,6 +9,7 @@ statement: a removed statement is removed together with its line.
 - **All the event declarations of a file are read, not the first one.** — `projects/agent-kit/assets/hooks/dispatch.sh:matched` — the declarations are walked, a matched branch is called once; scenario SC-AK-577
 - **The refusal of a branch arrives as a decision in the output on a par with the exit code.** — `projects/agent-kit/assets/hooks/dispatch.sh:branch_out` — the output of a branch is read by the parser, and on a refusal decision the walk stops; scenario SC-AK-578
 - **The refusal of a branch is given to the agent as it is, and the branches after it are not called.** — Not checked by a machine: this is the order of the walk in `projects/agent-kit/assets/hooks/dispatch.sh`. This is held by the scenario SC-AK-524.
+- **The answers of several branches reach the agent as one object.** — `projects/agent-kit/assets/hooks/dispatch.sh:rt_dispatch_merge` — the answers are kept apart and merged at the end; scenario `SC-AK-1260`
 - **A guard called directly works as before.** — `projects/agent-kit/assets/hooks/hook-input.sh:rt_hook_field` — the field is asked of the environment, the parse goes only without it.
 - **The input stream is read by a command, not by a substitution.** — `projects/agent-kit/assets/hooks/hook-input.sh:rt_hook_read`
 - **A broken dispatcher does not jam the work.** — Not checked by a machine: these are the early exits in `projects/agent-kit/assets/hooks/dispatch.sh`. This is held by the scenario SC-AK-525.
