@@ -113,6 +113,11 @@ flowchart TD
   component that lived where values are short gets a value four times longer in its new place. It
   behaves differently while staying the same code. The test does not see this at all: clipping by
   the browser is not reflected in the markup, and the text comes out of it whole.
+- **An edit of a shared wrapper is checked on every screen it wraps.** A frame, a layout or a shell
+  edited for one page changes the rest under it, and those pages show in no diff. The list of screens
+  is read from what the wrapper shows, its routes or its uses, not from the page the task named. The
+  one page checked reads as the whole edit checked, and the rest break for the first person to open
+  them.
 - **The stand proxy supplies what the application recognises the request's tenant by.** A tree that
   keeps several organisations behind one application tells them apart by a header. The rendering
   server puts its own host there, and the application answers every call with a refusal. From
