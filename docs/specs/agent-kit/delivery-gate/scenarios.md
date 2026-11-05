@@ -148,8 +148,7 @@ Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
 
 ### SC-AK-372 — creating a branch refuses a foreign mail of the commits
 
-Given the tree declared the mail of a machine record, and the working copy signs commits with
-another
+Given the tree declared a machine mail, and the working copy signs commits with another one
 When a branch with a task number is created
 Then the creation is refused, and the refusal holds both mails — the found one and the declared one
 
@@ -160,6 +159,14 @@ Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
 Given the mail of the working copy matched the declared one, or the tree declared no mail at all
 When a branch with a task number is created
 Then the guard lets the call through silently
+
+Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
+
+### SC-AK-1234 — the mail of a person named by the tree holds up no branch creation
+
+Given the working copy signs commits with a mail the tree named in its list of people
+When a branch with a task number is created
+Then the guard lets the call through silently, the same way the push accepts that mail
 
 Covered: `projects/agent-kit/tests/git-guards-readiness.test.sh`.
 

@@ -36,6 +36,23 @@ export const States: TStory = {
     parameters: { pseudo: STORY_PSEUDO_PARAMETERS },
 };
 
+/**
+ * Наведение на одну стрелку при фокусе поля, как в макете: признак стоит на хосте, класс
+ * наведения аддон вешает на свою стрелку, а кольцо фокуса — на сам хост.
+ */
+export const Stepper: TStory = {
+    args: { part: 'stepper' },
+    parameters: {
+        pseudo: {
+            hover: [
+                "[data-story-state='hover-up'] [qa-dataid='input-number-step-up']",
+                "[data-story-state='hover-down'] [qa-dataid='input-number-step-down']",
+            ],
+            focusWithin: ["[data-story-state='hover-up']", "[data-story-state='hover-down']"],
+        },
+    },
+};
+
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };

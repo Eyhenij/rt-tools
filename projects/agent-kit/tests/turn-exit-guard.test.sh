@@ -463,5 +463,29 @@ expect_stop "SC-AK-1199 — поручение после слова остан�
         "$(say 'продолжай работу')" "$(reply)" "$(said 'Стою по слову «не двигайся дальше».')")")" BLOCK
 state_is 'этап-идёт'
 
+# --- SC-AK-1247 — ход, разбуженный уведомлением о своей фоновой задаче ----------------------
+# Уведомление, будящее сессию, пишется под ролью владельца и открывает ход, в котором делать
+# нечего: ждать осталось вторую задачу. Ход из одного уведомления отпускается, пока своя задача
+# ещё идёт; после уведомления о последней пустой ход отказывается, как прежде.
+ran_bg_id() {
+    jq -c -n --arg c "$1" --arg i "$2" \
+        '{type:"assistant",message:{content:[{type:"tool_use",id:$i,name:"Bash",input:{command:$c,run_in_background:true}}]}}'
+}
+notified() {
+    jq -c -n --arg i "$1" --arg s "${2:-completed}" '{type:"user",origin:{kind:"task-notification"},
+        message:{content:("<task-notification>\n<task-id>b1</task-id>\n<tool-use-id>" + $i
+            + "</tool-use-id>\n<status>" + $s + "</status>\n</task-notification>")}}'
+}
+state_is 'этап-идёт'
+expect_stop "SC-AK-1247 — пустой ход по уведомлению, пока вторая своя задача идёт, отпускается" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran_bg_id 'node a.mjs' t1)" "$(ran_bg_id 'node b.mjs' t2)" \
+        "$(edited)" "$(notified t1)")")" PASS
+expect_stop "SC-AK-1247 — пустой ход по уведомлению о последней своей задаче не отпускается" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran_bg_id 'node a.mjs' t1)" "$(ran_bg_id 'node b.mjs' t2)" \
+        "$(edited)" "$(notified t1)" "$(said 'Жду вторую.')" "$(notified t2)")")" BLOCK
+expect_stop "SC-AK-1247 — пустой ход после слова владельца, пока задача идёт, не отпускается" \
+    "$(input_stop "$(transcript "$(ran_bg_id 'node a.mjs' t1)" "$(ran_bg_id 'node b.mjs' t2)" \
+        "$(say 'продолжай')" "$(reply)")")" BLOCK
+
 
 suite_result "проверка выхода из хода"

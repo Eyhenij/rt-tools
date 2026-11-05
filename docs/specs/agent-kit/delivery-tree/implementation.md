@@ -7,6 +7,7 @@ statement: a removed statement is removed together with its line.
 - **The tree of execution is taken from the command itself.** — `projects/agent-kit/assets/hooks/git-guard-delivery-tree.sh:rt_delivery_exec_dir`
 - **A path from the home directory names the tree the same as a full path.** — `projects/agent-kit/assets/hooks/git-guard-delivery-tree.sh:rt_delivery_exec_dir`
 - **Without a move the tree of the session answers.** — `projects/agent-kit/assets/hooks/git-guard-delivery-tree.sh:rt_delivery_branch_form_ok`
+- **The guard of the main branch takes its name from the profile of the tree the commit runs in.** — `projects/agent-kit/assets/hooks/git-guard-main.sh:declared` — scenario `SC-AK-1252`
 - **A tree that declared no profile is not judged by the form at all.** — `projects/agent-kit/assets/hooks/git-guard-delivery-tree.sh:rt_delivery_branch_form_ok`
 - **A second working copy is for reading, and a sending call goes from the copy of the session.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:moved_root`
 - **A second copy is told by the shared `.git` directory, not by the root.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:moved_repo`

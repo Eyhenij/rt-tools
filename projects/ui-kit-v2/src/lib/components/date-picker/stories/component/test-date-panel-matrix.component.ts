@@ -19,7 +19,7 @@ const DATE: IRtDatePicker.Type = 'date';
 const DATETIME: IRtDatePicker.Type = 'datetime-local';
 
 /** Какую матрицу панели рисовать: у каждой своя история, и выбирает её этот вход. */
-export type TDatePanelMatrixPart = 'types' | 'bounds' | 'months' | 'sheet' | 'themes';
+export type TDatePanelMatrixPart = 'types' | 'bounds' | 'months' | 'years' | 'sheet' | 'themes';
 
 /** Случай панели: тип, значение и границы. */
 interface IDatePanelCase {

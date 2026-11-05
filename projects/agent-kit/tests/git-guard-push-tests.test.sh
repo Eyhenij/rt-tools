@@ -242,8 +242,6 @@ report "SC-AK-820 — второй пуш той же сессии молчит"
 rm -f "${TMPDIR:-/tmp}/rt-kit-push-gate-gap-$GAP_SESSION"
 rm -rf "$GAP_GATE"
 
-suite_result "гард проверок перед пушем"
-
 # --- SC-AK-1166. Один отказ называет все красные лёгкие проверки ------------------------------
 # Набор выходил на первой красной, и каждая починка открывала следующую причину своим пушем: на
 # одной ветке так ушло три пуша подряд. Тяжёлая проверка после первой красной не запускается —
@@ -273,3 +271,76 @@ case "$all_red_says" in
     *) report "SC-AK-1166 — отложенная тяжёлая названа" нет да ;;
 esac
 rm -rf "$ALL_RED"
+
+# --- SC-AK-1240. Ветка из стопки считается от ветки, из которой взята ----------------------------
+# От главной ветка из стопки платила за всю стопку под собой: ветка второго кита на третьем этаже
+# не влезала в предел хука вовсе. Родитель читается из журнала ветки, и берётся, только когда его
+# копия на сервере есть и лежит в истории головы.
+push_base() {
+    (cd "$1" && . "$HOOKS/git-guard-push-marks.sh" && rt_push_base main)
+}
+
+STACK_REMOTE="$(mktemp -d)"
+git init -q --bare "$STACK_REMOTE" 2>/dev/null
+STACK="$(fixture_repo_branched main RT-80-low)"
+git -C "$STACK" remote add origin "$STACK_REMOTE"
+fixture_commit "$STACK" low.txt низ 'feat: низ стопки'
+git -C "$STACK" push -q origin main RT-80-low 2>/dev/null
+git -C "$STACK" checkout -q -b RT-81-top RT-80-low 2>/dev/null
+fixture_commit "$STACK" top.txt верх 'feat: верх стопки'
+report "SC-AK-1240 — ветка из стопки считается от ветки, из которой взята" "$(push_base "$STACK")" origin/RT-80-low
+
+git -C "$STACK" checkout -q -b RT-82-own main 2>/dev/null
+report "SC-AK-1240 — ветка от главной считается от главной" "$(push_base "$STACK")" origin/main
+
+git -C "$STACK" checkout -q RT-81-top 2>/dev/null
+git -C "$STACK" push -q origin --delete RT-80-low 2>/dev/null
+git -C "$STACK" branch -q -D -r origin/RT-80-low 2>/dev/null
+report "SC-AK-1240 — родитель, снятый с сервера, возвращает главную" "$(push_base "$STACK")" origin/main
+rm -rf "$STACK" "$STACK_REMOTE"
+
+# --- SC-AK-1241. Зелёное на том же дереве второй раз не гоняется ---------------------------------
+# У снимков витрины и сквозных наборов нет своего кэша: вторая отправка того же дерева платила за
+# них целиком. Отметка верит только чистой копии: проверки идут по рабочей копии, а уезжают коммиты.
+MARK="$(fixture_repo_branched main RT-83-mark)"
+MARK_RUNS="$(mktemp)"
+fixture_commit "$MARK" .claude/rt-kit/project.sh \
+    "rt_push_checks() { printf '%s\\n' 'echo run >> $MARK_RUNS'; }" 'chore: профиль'
+gate "SC-AK-1241 — первая отправка гонит набор" "$MARK" 'git push origin RT-83-mark' PASS
+gate "SC-AK-1241 — вторая отправка того же дерева проходит" "$MARK" 'git push origin RT-83-mark' PASS
+report "SC-AK-1241 — зелёная проверка второй раз не прогнана" "$(grep -c run "$MARK_RUNS")" 1
+printf 'правка\n' > "$MARK/dirty.txt"
+gate "SC-AK-1241 — на грязной копии набор гонится снова" "$MARK" 'git push origin RT-83-mark' PASS
+report "SC-AK-1241 — грязная копия отметке не верит" "$(grep -c run "$MARK_RUNS")" 2
+rm -rf "$MARK" "$MARK_RUNS"
+
+# --- SC-AK-1242. Тяжёлые шаги идут заранее, а не внутри гарда -------------------------------------
+# Внутри гарда тяжёлый шаг упирается в предел хука, а гард, срезанный пределом, пропускает вызов
+# без вердикта. Дерево, объявившее запуск заранее, получает отказ сразу и команду, которая гонит
+# шаги в фоне; отправка после неё проходит по отметкам.
+AHEAD="$(fixture_repo_branched main RT-84-ahead)"
+AHEAD_RUNS="$(mktemp)"
+fixture_commit "$AHEAD" .claude/rt-kit/project.sh "RT_PUSH_HEAVY_AHEAD=1
+rt_push_check_heavy() { case \"\$1\" in *heavy*) return 0 ;; esac; return 1; }
+rt_push_checks() { printf '%s\\n' 'true' 'echo heavy >> $AHEAD_RUNS'; }" 'chore: профиль'
+gate "SC-AK-1242 — тяжёлый шаг без отметки отбит сразу" "$AHEAD" 'git push origin RT-84-ahead' deny
+report "SC-AK-1242 — гард тяжёлый шаг сам не гонит" "$(grep -c heavy "$AHEAD_RUNS")" 0
+ahead_says="$(CLAUDE_PROJECT_DIR="$AHEAD" input_cmd 'git push origin RT-84-ahead' Bash "$AHEAD" \
+    | CLAUDE_PROJECT_DIR="$AHEAD" "$HOOKS/git-guard-push-tests.sh" 2>/dev/null \
+    | jq -r '.hookSpecificOutput.permissionDecisionReason // ""' 2>/dev/null)"
+case "$ahead_says" in
+    *'git-guard-push-ahead.sh'*) report "SC-AK-1242 — отказ называет команду запуска заранее" да да ;;
+    *) report "SC-AK-1242 — отказ называет команду запуска заранее" нет да ;;
+esac
+(cd "$AHEAD" && bash "$HOOKS/git-guard-push-ahead.sh" >/dev/null 2>&1)
+report "SC-AK-1242 — запуск заранее зелёный" "$?" 0
+gate "SC-AK-1242 — после запуска заранее отправка проходит" "$AHEAD" 'git push origin RT-84-ahead' PASS
+report "SC-AK-1242 — тяжёлый шаг прогнан один раз" "$(grep -c heavy "$AHEAD_RUNS")" 1
+printf 'правка\n' > "$AHEAD/dirty.txt"
+(cd "$AHEAD" && bash "$HOOKS/git-guard-push-ahead.sh" >/dev/null 2>&1)
+report "SC-AK-1242 — запуск заранее на грязной копии не начат" "$?" 3
+rm -rf "$AHEAD" "$AHEAD_RUNS"
+
+# Итог — последней строкой: стоявший посреди файла, он не считал сценарии ниже себя, и их провал
+# не доходил до кода выхода набора.
+suite_result "гард проверок перед пушем"

@@ -470,6 +470,19 @@ report "SC-AK-913 — пункт английского раздела проч�
 # как ссылка на сценарий, которого здесь нет.
 report "SC-AK-914 — английская отметка непокрытого прочитана" "$(specs_says "$(printf 'SC-%s-01 is mentioned in no test' EP)")" 0
 
+# SC-AK-1250. Префикс длиннее шести букв не брался шаблоном, и дерево с такими префиксами не
+# получало ни одного сценария. Номера собираются из частей: литерал читался бы сверкой этого дерева.
+LONG="$(printf 'LONG%s' PRFX)"
+spec_dir docs/specs/longpfx 'Длинный' "$LONG"
+report "SC-AK-1250 — восьмибуквенный префикс взят шаблоном" "$(specs_says "not taken by the template.*SC-$LONG")" 0
+report "SC-AK-1250 — сценарий с длинным префиксом посчитан" "$(specs_says "SC-$LONG-01 is mentioned in no test")" 1
+mkdir -p "$SPEC_TREE/.claude/rt-kit"
+printf '{ "scenarioPrefixWidth": [2, 6] }\n' > "$SPEC_TREE/.claude/rt-kit/checks.json"
+report "SC-AK-1250 — суженная настройкой ширина префикс не берёт" "$(specs_says "not taken by the template.*SC-$LONG")" 1
+rm -f "$SPEC_TREE/.claude/rt-kit/checks.json"
+printf '\n| SC-%s-02 | строкой таблицы |\n' "$LONG" >> "$SPEC_TREE/docs/specs/longpfx/scenarios.md"
+report "SC-AK-1250 — сценарий строкой таблицы назван" "$(specs_says "written as a table row.*SC-$LONG-02")" 1
+
 rm -rf "$SPEC_TREE"
 
 suite_result "проверки: спеки"

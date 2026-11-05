@@ -1,0 +1,15 @@
+@layer rt-kit.components {
+    /* Ряд отчёта: плитки одной ширины в карточках, как их ставит приложение. */
+    .app-stat-tile-matrix {
+        &__report {
+            display: grid;
+            gap: var(--rt-space-4);
+            grid-template-columns: repeat(3, 17.5rem);
+        }
+
+        /* Хост карточки — сетка: так её статья тянется на высоту ряда, и карточки ряда равны. */
+        &__card {
+            display: grid;
+        }
+    }
+}

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/git-guard-main.sh · 0a7a758d1ff4 · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/git-guard-main.sh · 497b43c99567 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh, hooks/guard-note.sh
 # Guard of the main branch. PreToolUse on a commit call.
@@ -8,9 +8,9 @@
 # on them entirely — rule `git-workflow`. A direct commit there is almost always a miss: "stayed on
 # main after merging the previous PR".
 #
-# The name of the main branch is not hard-wired as a string: first the pointer of the remote
-# repository is asked, then the existing `origin/main` and `origin/master` are tried, and only at
-# the end `main` is taken.
+# The name of the main branch is not hard-wired as a string: first `RT_MAIN_BRANCH` of the tree
+# profile is read, then the pointer of the remote repository is asked, then the existing
+# `origin/main` and `origin/master` are tried, and only at the end `main` is taken.
 #
 # FAIL-OPEN: not a repository, no git, a detached HEAD, broken input — pass. A broken guard must not
 # get in the way of work.
@@ -100,7 +100,20 @@ git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 branch="$(git branch --show-current 2>/dev/null)"
 [ -z "$branch" ] && exit 0   # a detached HEAD is not about this case
 
-default="$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null | sed 's#^origin/##')"
+# The name is read from the tree's own profile — the one the commit runs in — as the other delivery
+# guards read it. Not through the package default: that one always says `main`, and a tree on
+# `master` that named nothing would lose the guessing below. The profile is loaded in a subshell, so
+# nothing it declares leaks into the guard.
+top="$(git rev-parse --show-toplevel 2>/dev/null)"
+declared="$(
+    # shellcheck disable=SC1090,SC1091
+    [ -n "$top" ] && [ -f "$top/.claude/rt-kit/project.sh" ] \
+        && . "$top/.claude/rt-kit/project.sh" >/dev/null 2>&1 </dev/null
+    printf '%s' "${RT_MAIN_BRANCH:-}"
+)"
+
+default="$declared"
+[ -z "$default" ] && default="$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null | sed 's#^origin/##')"
 if [ -z "$default" ]; then
     for candidate in main master; do
         if git show-ref --verify --quiet "refs/remotes/origin/$candidate" 2>/dev/null; then

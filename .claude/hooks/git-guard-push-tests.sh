@@ -22,9 +22,14 @@
 #
 # The base is taken from the remote, not from the local main branch: the local one falls behind or
 # diverges silently. That has happened already — the local one stood at a merge wiped from the
-# history by a force push, and the set counted against it would have been the wrong one. There is
-# no network or no remote — the base is empty, and the profile falls back to a full run: the gate
-# may turn out stricter than needed, but NEVER weaker.
+# history by a force push, and the set counted against it would have been the wrong one. A stacked
+# branch is counted against the remote copy of the branch it was created from — the helper
+# `git-guard-push-marks.sh` says when. There is no network or no remote — the base is empty, and
+# the profile falls back to a full run: the gate may turn out stricter than needed, but NEVER weaker.
+#
+# A check green on the same tree against the same base is not run again, and a tree that declares
+# `RT_PUSH_HEAVY_AHEAD=1` runs its heavy steps ahead by `git-guard-push-ahead.sh`: the guard only
+# reads their marks. The hook limit is 30 minutes, and the heavy steps of one tree outgrew it.
 #
 # FAIL-OPEN: not a repository, broken input, no profile, no parse file `push-sign.sh`, no set file
 # `push-set.sh`, no perl — pass.
@@ -199,19 +204,112 @@ if ! rt_needs rt_push_checks git-guard-push-tests; then
     exit 0
 fi
 
-base="$(rt_push_set_base)"
+# The base and the marks of a green run — the helper next door, `git-guard-push-marks.sh`, shared
+# with the command that runs the set ahead. No helper — the base is the main branch, no mark is
+# read and none is written: the former behaviour, the set whole.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/git-guard-push-marks.sh" ] && . "$rt_hooks_dir/git-guard-push-marks.sh" 2>/dev/null
+command -v rt_push_mark_has >/dev/null 2>&1 || rt_push_mark_has() { return 1; }
+command -v rt_push_mark_put >/dev/null 2>&1 || rt_push_mark_put() { return 0; }
+command -v rt_push_mark_clean >/dev/null 2>&1 || rt_push_mark_clean() { return 1; }
+command -v rt_push_heavy_ahead >/dev/null 2>&1 || rt_push_heavy_ahead() { return 1; }
+command -v rt_push_mark_key >/dev/null 2>&1 || rt_push_mark_key() { return 1; }
+
+main_branch="${RT_MAIN_BRANCH:-main}"
+base=''
+if command -v rt_push_base >/dev/null 2>&1; then
+    base="$(rt_push_base "$main_branch")"
+elif git fetch --quiet origin "$main_branch" 2>/dev/null && git rev-parse --verify --quiet "origin/$main_branch" >/dev/null 2>&1; then
+    base="origin/$main_branch"
+fi
+
+# The code by which a check declares that there was nothing to look at: neither "it matched" nor
+# "a divergence". Before, such a check said so by a line of output and exited with zero — in the
+# set that zero stood next to the passed ones and differed from them in nothing, while the summary
+# read as checked whole. It does not refuse the push: a check with nothing to look at is not a
+# breakage.
+rt_skip_code="${RT_SKIP_CODE:-7}"
 
 # Every red among the light checks is named by one refusal. The gate used to leave on the first red
 # one, and each fix opened the next reason by a push of its own: three pushes in a row went so on one
-# branch — a repeated function, a name shared by two kits, a paint probe. A check with nothing to look
-# at exits with the skip code: before, it said so by a line of output and exited with zero, and in the
-# set that zero stood next to the passed ones and differed from them in nothing.
-rt_push_set_run "$base"
-failed="$rt_push_set_failed"
-output="$rt_push_set_output"
-skipped="$rt_push_set_skipped"
-held="$rt_push_set_held"
-ran="$rt_push_set_ran"
+# branch — a repeated function, a name shared by two kits, a paint probe. After the first red a
+# heavy check is not started: the push is refused anyway, and its minutes buy nothing.
+command -v rt_push_check_heavy >/dev/null 2>&1 || rt_push_check_heavy() { return 1; }
+
+failed=""
+output=""
+skipped=""
+held=""
+ahead=""
+ran=0
+while IFS= read -r check; do
+    [ -z "$check" ] && continue
+    # Green on this very tree against this very base — not run again: the snapshots and the
+    # end-to-end suites have no cache of their own, and a second push of the same tree paid for
+    # them whole.
+    if rt_push_mark_has "$check" "$base"; then
+        ran=$((ran + 1))
+        continue
+    fi
+    # A tree that runs its heavy steps ahead does not run them here: inside the guard they hit the
+    # hook limit, and a guard cut by the limit lets the call through with no verdict.
+    if rt_push_heavy_ahead && rt_push_check_heavy "$check"; then
+        ahead="${ahead}${ahead:+
+}${check}"
+        continue
+    fi
+    if [ -n "$failed" ] && rt_push_check_heavy "$check"; then
+        held="${held}${held:+
+}${check}"
+        continue
+    fi
+    ran=$((ran + 1))
+    key_before=''
+    rt_push_mark_clean && key_before="$(rt_push_mark_key "$check" "$base" 2>/dev/null)"
+    out="$(eval "$check" 2>&1)"
+    status=$?
+    if [ "$status" -eq 0 ]; then
+        rt_push_mark_put "$check" "$base" "$key_before"
+        continue
+    fi
+    if [ "$status" -eq "$rt_skip_code" ]; then
+        skipped="${skipped}${skipped:+
+}${check}"
+        continue
+    fi
+    failed="${failed}${failed:+
+}${check}"
+    output="${output}${output:+
+
+}── ${check}
+$(printf '%s' "$out" | tail -n 25)"
+done <<EOF
+$(rt_push_checks "$base")
+EOF
+
+# Heavy steps with no mark are named in one refusal together with the red light ones: the command
+# that runs them ahead goes to the background, where no hook limit cuts it, and the push after it
+# passes from the marks.
+if [ -n "$ahead" ]; then
+    rt_push_gate_note ahead
+    ahead_cmd="bash ${rt_hooks_dir#"$PWD"/}/git-guard-push-ahead.sh"
+    dirty_line=""
+    rt_push_mark_clean || dirty_line="
+
+The working copy holds edits outside the index: a mark is trusted only on a clean copy. Commit first."
+    red_line=""
+    [ -n "$failed" ] && red_line="
+
+Red among the light checks:
+${failed}
+
+$(printf '%s' "$output" | tr -d '\000')"
+    push_deny "BLOCKED: the heavy steps of this tree run ahead, not inside the guard — inside it they hit the hook limit, and a guard cut by the limit lets the call through with no verdict. No green mark for this tree and base:
+
+${ahead}
+
+Run them in the background by \`${ahead_cmd}\` (the Bash call with run_in_background), wait for its end and push again: the push then passes from the marks.${dirty_line}${red_line}"
+fi
 
 # What was skipped is named aloud even when the set passed: silence about it is exactly the
 # indistinguishability this code was created for. The push goes through at that — there is no

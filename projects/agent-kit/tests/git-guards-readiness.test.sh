@@ -151,6 +151,17 @@ printf 'RT_COMMIT_EMAIL="%s"\n' "$BOT_MAIL" > "$MAIL/.claude/rt-kit/project.sh"
 git -C "$MAIL" config user.email "$BOT_MAIL" 2>/dev/null
 dlv "SC-AK-373 — совпавшая почта заведение ветки не задерживает" "$MAIL" \
     'git checkout -b RT-97-new' PASS
+
+# Человек, названный деревом, подписывает своим адресом: пуш его принимает, и заведение ветки
+# тоже. Чужой адрес рядом с ним по-прежнему отбит.
+printf 'RT_COMMIT_EMAIL="%s"\nRT_HUMAN_EMAILS="%s"\n' "$BOT_MAIL" 'owner@example.com' \
+    > "$MAIL/.claude/rt-kit/project.sh"
+git -C "$MAIL" config user.email 'owner@example.com' 2>/dev/null
+dlv "SC-AK-1234 — почта человека из профиля заведение ветки не задерживает" "$MAIL" \
+    'git checkout -b RT-97-new' PASS
+git -C "$MAIL" config user.email 'stranger@example.com' 2>/dev/null
+dlv "SC-AK-1234 — чужая почта при названных людях всё так же отбита" "$MAIL" \
+    'git checkout -b RT-97-new' deny
 rm -rf "$MAIL"
 
 # --- снятие черновика --------------------------------------------------------------------------------

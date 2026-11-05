@@ -162,7 +162,12 @@ for (const domain of domains) {
     // the count silently: the coverage marks under it are not read either, and a test referring to
     // its number does not turn red — references are looked for among the parsed ones.
     for (const heading of walk(base, (name) => name === 'scenarios.md').flatMap(unparsedHeadings)) {
-        report(`${heading.file}:${heading.line}`, `the scenario heading is not taken by the template and counts as ordinary prose: ${heading.text}`);
+        report(
+            `${heading.file}:${heading.line}`,
+            heading.row
+                ? `the scenario is written as a table row, not as a heading, and the audit does not read it: ${heading.text}`
+                : `the scenario heading is not taken by the template and counts as ordinary prose: ${heading.text}`
+        );
     }
 
     // The prefix belongs to the domain together with its subdomains, not to a separate directory.
