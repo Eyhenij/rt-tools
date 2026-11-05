@@ -18,7 +18,7 @@ whole.
 - **The freshness of the local reference to the main branch is asked when the branch is created too.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:remote_head`
 - **The task number is taken out of the branch name by the profile, not by the guard.** — `projects/agent-kit/assets/defaults/project.sh:rt_task_branch_number_default`
 - **A branch without a task number gets no delivery conditions.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:branch_arg`
-- **The push gate calls what the tree laid out.** — `projects/agent-kit/assets/defaults/project.sh:rt_push_checks_default`
+- **The push gate calls what the tree laid out.** — `projects/agent-kit/assets/defaults/push.sh:rt_push_checks_default`
 - **The identity of the machine record is confirmed by the answer of the hosting, not by recognising a string.** — `projects/agent-kit/assets/rules/git-workflow.github.md:git-workflow`
 - **The work queue demands no token of the machine record.** — `projects/agent-kit/assets/checks/board.github.mjs:botToken`
 - **The commit signature and the work with the queue are different properties of the machine record.** — `projects/agent-kit/assets/defaults/project.sh:RT_COMMIT_EMAIL`
@@ -29,7 +29,7 @@ whole.
 - **The completeness check itself stands in the gate set.** — `.claude/rt-kit/project.sh:rt_push_checks`
 - **Switching a branch in the same command refuses the push whole.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:checkout`
 - **Several pushes in one command, or a push inside a loop, refuse the command whole.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:pushes` — scenario SC-AK-1204
-- **A heavy step of the set is picked by the composition of the edit.** — `projects/agent-kit/assets/defaults/project.sh:rt_push_docs_only_default`
+- **A heavy step of the set is picked by the composition of the edit.** — `projects/agent-kit/assets/defaults/push.sh:rt_push_docs_only_default`
 - **A postponed edit does not count as a push.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:probe`
 - **The verb of a command is looked for in its position, not as a substring across the whole line.** — `projects/agent-kit/assets/hooks/git-guard-main.sh:verbs` — scenario SC-AK-832
 - **Creating a branch is recognised with a flag between the verb and `-b` too.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:branch_arg` — the same sample stands in the guards of the request conflict, of the push set, of waiting and in the watchman of the turn exits; scenario SC-AK-872
@@ -49,4 +49,4 @@ whole.
 - **The guard once per session names what its set is narrower than the pipeline by.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:gap_mark` — the mark lives in the temporary file directory and is keyed by the session sign; scenario SC-AK-820
 - **A refusal of the push gate names three moves, not two.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:reason` — scenario SC-AK-851
 - **What is disputed is not put into the known list.** — `projects/agent-kit/assets/checks/check-doc-paths.mjs:ALLOWLIST` — the same is said in the refusal text of the address check; scenario SC-AK-851
-- **A refusal of the push gate names every red light check at once.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:held` — the heavy ones are named by `projects/agent-kit/assets/defaults/project.sh:rt_push_check_heavy_default`. A tree adds its own by `rt_push_check_heavy`; scenario SC-AK-1166
+- **A refusal of the push gate names every red light check at once.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:held` — the heavy ones are named by `projects/agent-kit/assets/defaults/push.sh:rt_push_check_heavy_default`. A tree adds its own by `rt_push_check_heavy`; scenario SC-AK-1166
