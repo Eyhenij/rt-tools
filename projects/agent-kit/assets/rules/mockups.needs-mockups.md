@@ -68,6 +68,12 @@ flowchart TD
   owner as a question. Found after the code, it costs a code edit and an agreement edit together.
 - **A mockup is measured by node coordinates before it is shown.** The technique is the pattern
   `mockups-measure`.
+- **An audit of mockups is accepted by a picture of every component page next to the code of its
+  template.** Names, properties and the list of variants say what a node is called, not what it
+  draws: an arc drawn as a sector and a rounded field drawn as a capsule keep correct names. Each
+  page is captured and compared in shape with the template and its styles, and a doubtful shape is
+  read from the node properties and searched across the file. The report names what was compared by
+  pictures and what was not.
 - **A design-tool call asks the rules gate for this rule,** like the browser driver does for its
   own: without that the measurement pattern stays unread for the whole mockup task.
 
