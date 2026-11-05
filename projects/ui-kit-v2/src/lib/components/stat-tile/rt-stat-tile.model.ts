@@ -8,15 +8,23 @@ export namespace IRtStatTile {
     export type Direction = 'up' | 'down' | 'flat' | 'unknown';
 
     /**
+     * Единица изменения: проценты к базе или процентные пункты — разница двух
+     * долей (занятость с 68 % до 78 % выросла на 10 п.п., а не на 15 %).
+     */
+    export type Unit = 'percent' | 'points';
+
+    /**
      * Изменение к одной базе сравнения.
      *
-     * - `percent` — уже посчитанное изменение в процентах; `null` означает
-     *   «база нулевая или данных нет», и плитка рисует «—», а не «+100 %».
+     * - `percent` — уже посчитанное изменение в единицах `unit`; `null` означает
+     *   «база нулевая или данных нет», и строка не рисуется вовсе.
+     * - `unit` — единица числа, по умолчанию проценты.
      * - `label` — подпись базы («к прошлому периоду», «к прошлому году»).
      * - `baseline` — необязательное «было X» той же строкой.
      */
     export interface Delta {
         readonly percent: number | null;
+        readonly unit?: Unit;
         readonly label: string;
         readonly baseline?: string;
     }

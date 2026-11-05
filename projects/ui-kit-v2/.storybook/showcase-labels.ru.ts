@@ -263,6 +263,7 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     uiOpenCalendar: 'Открыть календарь',
     uiPageOf: 'Стр. {{page}} из {{last}}',
     uiPagination: 'Постраничная навигация',
+    uiPercentagePoints: '{{value}} п.п.',
     uiPerPage: 'На странице:',
     uiPeriod: 'Период',
     uiPickAgent: 'Выберите агента',

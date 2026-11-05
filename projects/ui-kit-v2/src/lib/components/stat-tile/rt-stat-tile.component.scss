@@ -99,6 +99,27 @@
                 white-space: nowrap;
             }
 
+            /* Рост хуже: цвета строк меняются местами, стрелки остаются по знаку числа. */
+            &--growth-worse {
+                .rt-stat-tile__delta--direction--up {
+                    color: var(--rt-color-state-danger);
+                }
+
+                .rt-stat-tile__delta--direction--down {
+                    color: var(--rt-color-state-success);
+                }
+
+                .rt-stat-tile__year--direction--up {
+                    background: var(--rt-color-state-danger-bg);
+                    color: var(--rt-color-state-danger);
+                }
+
+                .rt-stat-tile__year--direction--down {
+                    background: var(--rt-color-state-success-bg);
+                    color: var(--rt-color-state-success);
+                }
+            }
+
             /* Вторичная метрика прижата к низу: строки «было …» может не быть,
                и без прижатия плитки в ряду разъезжались бы по базовой линии. */
             &__secondary {

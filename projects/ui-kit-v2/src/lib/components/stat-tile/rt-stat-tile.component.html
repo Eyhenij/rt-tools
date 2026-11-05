@@ -1,4 +1,4 @@
-<article rtBlock="rt-stat-tile" qa-dataid="stat-tile">
+<article rtBlock="rt-stat-tile" qa-dataid="stat-tile" [rtMod]="{ 'growth-worse': growthIsWorse() }">
     <header rtElem="head">
         <span rtElem="label" qa-dataid="stat-tile-label">{{ label() }}</span>
         @if (hint(); as hintText) {
