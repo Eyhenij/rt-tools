@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/write-targets.sh · b5c88f83e5a8 · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/write-targets.sh · 7bbee922350e · правится надстройкой, не здесь
 # Write targets named by the shell command outright: redirection, `tee`, an in-place edit, a copy
 # over the top, and for an interpreter — the paths from its body. Prints one per line.
 #
@@ -63,6 +63,27 @@ rt_write_targets() {
                 tag = t
             }
         }
+    ')"
+
+    # An arrow inside quotes is text of the command, not a redirection: `echo "a->b"` and the code
+    # of `node -e "[1].map(x => x)"` read as writes into `b` and `x)` and were refused as edits.
+    # The quote state is kept per line; a backslash outside single quotes escapes the next sign.
+    rt_wt_shell="$(printf '%s\n' "$rt_wt_shell" | awk -v sq="'" '
+        function drop_quoted_arrows(s,   out, i, c, q, n) {
+            out = ""; q = ""; n = length(s)
+            for (i = 1; i <= n; i++) {
+                c = substr(s, i, 1)
+                if (c == "\\" && q != sq && i < n) { out = out c substr(s, i + 1, 1); i++; continue }
+                if (q != "") {
+                    if (c == q) { q = "" } else if (c == ">") { continue }
+                } else if (c == "\"" || c == sq || c == "`") {
+                    q = c
+                }
+                out = out c
+            }
+            return out
+        }
+        { print drop_quoted_arrows($0) }
     ')"
 
     {

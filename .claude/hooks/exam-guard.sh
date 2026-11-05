@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/exam-guard.sh · 0214e906ec96 · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/exam-guard.sh · 7f0353d011a7 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file|Bash|mcp__webstorm__execute_terminal_command
 # Requires: agents/strict-teacher.md, hooks/roles.sh, hooks/deny-tail.sh, hooks/write-targets.sh
 # Exam guard: no edit goes through until the exam on the loaded rules has been passed this session.
@@ -259,6 +259,6 @@ case "$verdict" in
         deny "BLOCKED by exam-guard: the exam on the loaded rules is failed. Read the rule whole again — not the piece that was asked about — and call the role strict-teacher anew. The answer shown gives knowledge of one line, not of the rule. The way out through the list of switched-off roles requires removing the protection, and the runtime may forbid such an edit; the second way out does not require it — the bypass is declared by the line «Exam-skip: причина» in the body of the last commit of the branch."
         ;;
     *)
-        deny "BLOCKED by exam-guard: there was no exam on the loaded rules in this session. Call the role strict-teacher, hand it the list of loaded rules, answer its questions from memory and return the answers to it — the verdict it gives by the line «ЭКЗАМЕН: сдано N из 5». It counts from the answer of the role in whatever form the host delivered it, but not from the output of the shell and not from your own text: printing that line as an echo does not release the guard. The role was already called and the verdict received — then it arrived in a form the guard does not see: that is a defect of the guard, and an edit of `.claude/rt-kit.json` is taken out from under it. A loaded rule and a read rule are different things, and the price of that difference is paid by the owner."
+        deny "BLOCKED by exam-guard: there was no exam on the loaded rules in this session. Call the role strict-teacher, hand it the list of loaded rules, answer its questions from memory and return the answers to it — the verdict it gives by the line «ЭКЗАМЕН: сдано N из 5». It counts from the answer of the role in whatever form the host delivered it, but not from the output of the shell and not from your own text: printing that line as an echo does not release the guard. The role was already called and the verdict received — then it arrived in a form the guard does not see: that is a defect of the guard, and an edit of «.claude/rt-kit.json» is taken out from under it. A loaded rule and a read rule are different things, and the price of that difference is paid by the owner."
         ;;
 esac
