@@ -90,7 +90,7 @@ say "SC-AK-761 — тот же довод у другого интерпрета
 say "SC-AK-761 — поиск слова по дереву проходит" "grep -rn 'chromium.launch' projects" PASS
 say "SC-AK-761 — счётчик совпадений проходит" "grep -c 'chromium.launch' README.md" PASS
 
-# --- SC-AK-1259. Драйвер из плагина отбивается так же, как поставленный руками ------------
+# --- SC-AK-1267. Драйвер из плагина отбивается так же, как поставленный руками ------------
 tool_call() {
     local label="$1" tool="$2" want="$3" got
     if input_cmd '' "$tool" "$TMP" | "$HOOKS/browser-guard-no-other-drivers.sh" >/dev/null 2>&1; then
@@ -100,11 +100,34 @@ tool_call() {
     fi
     report "$label" "$got" "$want"
 }
-tool_call "SC-AK-1259 — второй драйвер по обычному имени отбит" mcp__playwright__browser_navigate DENY
-tool_call "SC-AK-1259 — второй драйвер из плагина отбит" mcp__plugin_playwright_playwright__browser_navigate DENY
-tool_call "SC-AK-1259 — третий драйвер по обычному имени отбит" mcp__chrome-devtools__navigate_page DENY
-tool_call "SC-AK-1259 — третий драйвер из плагина отбит" mcp__plugin_chrome-devtools-mcp_chrome-devtools__navigate_page DENY
-tool_call "SC-AK-1259 — закреплённое расширение проходит" mcp__claude-in-chrome__navigate PASS
+tool_call "SC-AK-1267 — второй драйвер по обычному имени отбит" mcp__playwright__browser_navigate DENY
+tool_call "SC-AK-1267 — второй драйвер из плагина отбит" mcp__plugin_playwright_playwright__browser_navigate DENY
+tool_call "SC-AK-1267 — третий драйвер по обычному имени отбит" mcp__chrome-devtools__navigate_page DENY
+tool_call "SC-AK-1267 — третий драйвер из плагина отбит" mcp__plugin_chrome-devtools-mcp_chrome-devtools__navigate_page DENY
+tool_call "SC-AK-1267 — закреплённое расширение проходит" mcp__claude-in-chrome__navigate PASS
+
+# Вторая половина правки — строка `# rt-hook:`: по ней диспетчер решает, звать ли гард вообще.
+# Прямой вызов гарда её не читает, и откат одной этой строки оставлял набор зелёным, а дефект
+# возвращался. Поэтому имя инструмента прогоняется через диспетчер.
+DISPATCH_DIR="$(mktemp -d)"
+cp "$ASSETS/hooks/dispatch.sh" "$ASSETS/hooks/hook-input.sh" "$ASSETS/hooks/utf8.sh" \
+    "$ASSETS/hooks/deny-tail.sh" "$ASSETS/hooks/browser-guard-no-other-drivers.sh" "$DISPATCH_DIR/" 2>/dev/null
+dispatched() {
+    local label="$1" tool="$2" want="$3" got
+    if input_cmd '' "$tool" "$TMP" | bash "$DISPATCH_DIR/dispatch.sh" PreToolUse >/dev/null 2>&1; then
+        got="PASS"
+    else
+        got="DENY"
+    fi
+    report "$label" "$got" "$want"
+}
+dispatched "SC-AK-1267 — диспетчер зовёт гард на драйвер из плагина" \
+    mcp__plugin_playwright_playwright__browser_navigate DENY
+dispatched "SC-AK-1267 — диспетчер зовёт гард на третий драйвер из плагина" \
+    mcp__plugin_chrome-devtools-mcp_chrome-devtools__navigate_page DENY
+dispatched "SC-AK-1267 — через диспетчер закреплённое расширение проходит" \
+    mcp__claude-in-chrome__navigate PASS
+rm -rf "$DISPATCH_DIR"
 
 # --- SC-AK-762. Ненастроенное дерево ----------------------------------------------------
 

@@ -56,7 +56,9 @@ turn.
   marked by a connection that took place.
 - **A second driver installed as a plugin is refused the same as one installed by hand.** A plugin
   puts its own name in front of the server name, and a guard that knew only the plain name let the
-  same driver open the browser past the pinned profile.
+  same driver open the browser past the pinned profile. The driver is known by its server name —
+  `playwright` or `chrome-devtools` — plain or after the plugin name; the same driver registered
+  by hand under another server name passes, and that is the known boundary of the guard.
 - **Raising the browser by a driver of one's own is refused, and the refusal names the file.** In
   the command line such a launch is not visible at all — there stand only the interpreter name and a
   path.
