@@ -10,7 +10,7 @@ statement: a removed statement is removed together with its line.
 - **The rule of the conduct of work names the transition between states among what a turn does not end with.** — `projects/agent-kit/assets/checks/check-state-next.mjs:BOUNDARY`
 - **The check lets through a tree where there is no rule of the conduct of work.** — `projects/agent-kit/assets/checks/check-state-next.mjs:RULE`
 - **The refusal names the state, the leading pattern and the heading of the section.** — `projects/agent-kit/assets/checks/check-state-next.mjs:problems`
-- **A check of its own is created, with a command of its own and a line of its own in the suite of the push gate.** — `projects/agent-kit/assets/defaults/project.sh:rt_push_checks_default`
+- **A check of its own is created, with a command of its own and a line of its own in the suite of the push gate.** — `projects/agent-kit/assets/defaults/push.sh:rt_push_checks_default`
 - **The wording is its own at every section.** — `projects/agent-kit/assets/checks/check-state-next.mjs:twin`
 - **The map of the turn says the same thing in the same words by meaning.** — `projects/agent-kit/assets/checks/check-state-next.mjs:MAP`
 - **The law of the conduct of work names this by an article.** — `projects/agent-kit/assets/checks/check-state-next.mjs:LAW`

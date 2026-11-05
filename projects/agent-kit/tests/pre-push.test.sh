@@ -119,35 +119,35 @@ report "SC-AK-1245 — метка на чужом коммите отменен�
 git -C "$OTHER" -c user.name=probe -c user.email=probe@example.com tag -a -m 'метка' v2 HEAD 2>/dev/null
 report "SC-AK-1245 — метка на вершине копии проходит" "$(push_code "$OTHER" origin v2)" 0
 
-# SC-AK-1249. Несколько ссылок в одном пуше судятся по одной: каждая чужая названа, и одной
+# SC-AK-1263. Несколько ссылок в одном пуше судятся по одной: каждая чужая названа, и одной
 # хватает, чтобы отменить весь пуш.
 MANY="$(hooked_repo true)"
 fixture_commit "$MANY" work.txt 'работа' 'chore: работа ветки'
 git -C "$MANY" -c user.name=probe -c user.email=probe@example.com tag -a -m 'метка' v1 main 2>/dev/null
-report "SC-AK-1249 — пуш вершины вместе с чужой ссылкой отменён" "$(push_code "$MANY" origin RT-90-hook main v1)" 1
-report "SC-AK-1249 — вершина с отменённым пушем не ушла" "$(remote_has "$MANY" RT-90-hook)" нет
+report "SC-AK-1263 — пуш вершины вместе с чужой ссылкой отменён" "$(push_code "$MANY" origin RT-90-hook main v1)" 1
+report "SC-AK-1263 — вершина с отменённым пушем не ушла" "$(remote_has "$MANY" RT-90-hook)" нет
 said="$(push_says "$MANY" origin RT-90-hook main v1)"
 case "$said" in
-    *refs/heads/main*refs/tags/v1*) report "SC-AK-1249 — отказ называет каждую чужую ссылку" да да ;;
-    *) report "SC-AK-1249 — отказ называет каждую чужую ссылку" нет да ;;
+    *refs/heads/main*refs/tags/v1*) report "SC-AK-1263 — отказ называет каждую чужую ссылку" да да ;;
+    *) report "SC-AK-1263 — отказ называет каждую чужую ссылку" нет да ;;
 esac
 
 # --- где хук не судит ----------------------------------------------------------------------
-# SC-AK-1247. Удаление не отправляет дерева: судить нечего, и красный набор его не держит.
+# SC-AK-1261. Удаление не отправляет дерева: судить нечего, и красный набор его не держит.
 DELETE="$(hooked_repo false)"
 git -C "$DELETE" -c core.hooksPath=/dev/null push -q origin RT-90-hook main 2>/dev/null
-report "SC-AK-1247 — удаление ветки набора не гоняет" "$(push_code "$DELETE" origin --delete main)" 0
+report "SC-AK-1261 — удаление ветки набора не гоняет" "$(push_code "$DELETE" origin --delete main)" 0
 
-# SC-AK-1248. Конвейер — свой гейт: под `CI` хук пропускает и красный набор.
+# SC-AK-1262. Конвейер — свой гейт: под `CI` хук пропускает и красный набор.
 PIPE="$(hooked_repo false)"
-report "SC-AK-1248 — в конвейере хук пропускает" \
+report "SC-AK-1262 — в конвейере хук пропускает" \
     "$(cd "$PIPE" && CI=true git push -q origin RT-90-hook >/dev/null 2>&1 && printf 0 || printf 1)" 0
 
 BARE_TREE="$(hooked_repo '')"
 report "без профиля хук пропускает" "$(push_code "$BARE_TREE" origin RT-90-hook)" 0
 
 # --- профиль ------------------------------------------------------------------------------
-# SC-AK-1250. Набор собирается из умолчания пакета и надстройки дерева, и корень берётся у
+# SC-AK-1264. Набор собирается из умолчания пакета и надстройки дерева, и корень берётся у
 # репозитория, из которого идёт пуш. Корень, унаследованный от сессии другой копии, читал файлы
 # той копии: набор сужался молча, а хук уходил зелёным.
 LAYERED="$(profiled_repo 'rt_push_checks() { rt_push_checks_default; printf "%s\n" "test override = x"; }')"
@@ -156,39 +156,60 @@ printf '%s\n' 'rt_push_checks_default() { printf "%s\n" "test default = x"; }' \
     > "$LAYERED/.claude/rt-kit/defaults/project.sh"
 said="$(push_says "$LAYERED" origin RT-90-hook)"
 case "$said" in
-    *'red checks: 2'*'test default = x'*'test override = x'*) report "SC-AK-1250 — красные из умолчания и из надстройки названы обе" да да ;;
-    *) report "SC-AK-1250 — красные из умолчания и из надстройки названы обе" нет да ;;
+    *'red checks: 2'*'test default = x'*'test override = x'*) report "SC-AK-1264 — красные из умолчания и из надстройки названы обе" да да ;;
+    *) report "SC-AK-1264 — красные из умолчания и из надстройки названы обе" нет да ;;
 esac
 
 ROOTED="$(profiled_repo 'rt_push_checks() { [ -f "$CLAUDE_PROJECT_DIR/probe-root" ] && printf "%s\n" false; }')"
 : > "$ROOTED/probe-root"
 ELSEWHERE="$(mktemp -d)"
-report "SC-AK-1250 — чужой корень сессии набор не сужает" \
+report "SC-AK-1264 — чужой корень сессии набор не сужает" \
     "$(cd "$ROOTED" && env -u CI CLAUDE_PROJECT_DIR="$ELSEWHERE" git push -q origin RT-90-hook >/dev/null 2>&1 && printf 0 || printf 1)" 1
 
-# SC-AK-1251. После красной тяжёлая проверка не стартует: пуш отменён всё равно, и её минуты
+# SC-AK-1265. После красной тяжёлая проверка не стартует: пуш отменён всё равно, и её минуты
 # ничего не покупают. Не начатая названа.
 HEAVY="$(profiled_repo 'rt_push_checks() { printf "%s\n" false "touch heavy-ran"; }
 rt_push_check_heavy() { case "$1" in touch*) return 0 ;; esac; return 1; }')"
 said="$(push_says "$HEAVY" origin RT-90-hook)"
 [ -f "$HEAVY/heavy-ran" ] && heavy=да || heavy=нет
-report "SC-AK-1251 — тяжёлая после красной не стартовала" "$heavy" нет
+report "SC-AK-1265 — тяжёлая после красной не стартовала" "$heavy" нет
 case "$said" in
-    *'Not started after the red ones'*'touch heavy-ran'*) report "SC-AK-1251 — не начатая тяжёлая названа" да да ;;
-    *) report "SC-AK-1251 — не начатая тяжёлая названа" нет да ;;
+    *'Not started after the red ones'*'touch heavy-ran'*) report "SC-AK-1265 — не начатая тяжёлая названа" да да ;;
+    *) report "SC-AK-1265 — не начатая тяжёлая названа" нет да ;;
 esac
 
-# SC-AK-1252. Проверка, которой не на что было смотреть, называется вслух. Набор из одних таких
+# SC-AK-1259. Проверка, зелёная на этом дереве, второй раз не стартует, даже если отметки коммита
+# уже нет. Рабочие файлы стенда исключены из копии: отметке верят только на чистой.
+PER_CHECK="$(profiled_repo 'rt_push_checks() { printf "%s\n" "touch check-ran"; }')"
+cp "$HOOKS/git-guard-push-marks.sh" "$PER_CHECK/.claude/hooks/"
+printf '.claude/\ncheck-ran\n' >> "$PER_CHECK/.git/info/exclude"
+report "SC-AK-1259 — первый пуш прошёл" "$(push_code "$PER_CHECK" origin RT-90-hook)" 0
+rm -f "$PER_CHECK/check-ran" "$(git -C "$PER_CHECK" rev-parse --path-format=absolute --git-common-dir)/rt-kit-push-green"
+git -C "$PER_CHECK" -c user.name=t -c user.email=t@t commit -q --allow-empty -m 'тот же срез' 2>/dev/null
+report "SC-AK-1259 — второй пуш прошёл" "$(push_code "$PER_CHECK" origin RT-90-hook)" 0
+[ -f "$PER_CHECK/check-ran" ] && again=да || again=нет
+report "SC-AK-1259 — зелёная проверка не стартовала снова" "$again" нет
+
+# SC-AK-1260. Запуск заранее нужен только проверке в сессии: у git-хука нет предела времени.
+AHEAD="$(profiled_repo 'RT_PUSH_HEAVY_AHEAD=1
+rt_push_checks() { printf "%s\n" "touch heavy-ran"; }
+rt_push_check_heavy() { return 0; }')"
+cp "$HOOKS/git-guard-push-marks.sh" "$AHEAD/.claude/hooks/"
+report "SC-AK-1260 — пуш прошёл" "$(push_code "$AHEAD" origin RT-90-hook)" 0
+[ -f "$AHEAD/heavy-ran" ] && heavy=да || heavy=нет
+report "SC-AK-1260 — тяжёлый шаг запущен хуком" "$heavy" да
+
+# SC-AK-1266. Проверка, которой не на что было смотреть, называется вслух. Набор из одних таких
 # не судил ничего, и отметки он не пишет. Код пропуска 1 — не код пропуска: им выходит любой отказ.
 SKIPPED="$(profiled_repo 'rt_push_checks() { printf "%s\n" "exit 7"; }')"
 said="$(push_says "$SKIPPED" origin RT-90-hook)"
 case "$said" in
-    *'nothing to look at'*'exit 7'*) report "SC-AK-1252 — пропущенная проверка названа" да да ;;
-    *) report "SC-AK-1252 — пропущенная проверка названа" нет да ;;
+    *'nothing to look at'*'exit 7'*) report "SC-AK-1266 — пропущенная проверка названа" да да ;;
+    *) report "SC-AK-1266 — пропущенная проверка названа" нет да ;;
 esac
-report "SC-AK-1252 — набор из одних пропусков отметки не пишет" "$(mark_of "$SKIPPED")" ""
+report "SC-AK-1266 — набор из одних пропусков отметки не пишет" "$(mark_of "$SKIPPED")" ""
 KNIFE="$(hooked_repo false)"
-report "SC-AK-1252 — код пропуска 1 красную проверку не пропускает" \
+report "SC-AK-1266 — код пропуска 1 красную проверку не пропускает" \
     "$(cd "$KNIFE" && env -u CI RT_SKIP_CODE=1 git push -q origin RT-90-hook >/dev/null 2>&1 && printf 0 || printf 1)" 1
 
 # --- отметка и рабочая копия --------------------------------------------------------------
@@ -263,6 +284,6 @@ fi
 git -C "$SHARED" worktree remove --force "$SECOND" 2>/dev/null
 rm -rf "$RED" "$GREEN" "$MARKED" "$GUARD_GREEN" "$GUARD_RED" "$OTHER" "$MANY" "$DELETE" "$PIPE" "$BARE_TREE" \
     "$LAYERED" "$ROOTED" "$ELSEWHERE" "$HEAVY" "$SKIPPED" "$KNIFE" "$DIRTY" "$CLEAN" "$SHARED" "${SECOND%/second}" \
-    "$MANAGED" "$ALONE" "$LAID" "$PACKAGE"
+    "$MANAGED" "$ALONE" "$LAID" "$PACKAGE" "$PER_CHECK" "$AHEAD"
 
 suite_result "git-хук перед пушем"

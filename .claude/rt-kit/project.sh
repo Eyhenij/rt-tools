@@ -55,7 +55,7 @@ RT_TASK_BOT='rt-tools-dev'
 # the second half of the signature check: the machine account and these people are known, and
 # everything else is refused — a commit under an account the tree never declared used to pass in
 # silence.
-RT_HUMAN_EMAILS='72300075+Eyhenij@users.noreply.github.com 41898282+github-actions[bot]@users.noreply.github.com'
+RT_HUMAN_EMAILS='72300075+Eyhenij@users.noreply.github.com 41898282+github-actions[bot]@users.noreply.github.com sviathut@gmail.com'
 
 RT_PULL_TOKEN_VAR='GH_TOKEN'
 RT_PULL_TOKEN_HINT='GH_TOKEN=$(cat ~/.config/rt-tools-bot-token)'
@@ -100,6 +100,12 @@ RT_PULL_CLOSES_LINE='^Closes[[:space:]]+#{number}([^0-9]|$)'
 # stays covered by nothing: the guard matches the whole name and knows no second one.
 RT_BOARD_BACKLOG='📋 Backlog'
 RT_BOARD_EPIC_LABEL='epic'
+
+# The heavy steps of the push set run ahead, by `bash .claude/hooks/git-guard-push-ahead.sh` in the
+# background, and the push guard only reads their marks. A branch of the second kit takes the
+# showcase snapshots, the admin suite and the auth stand — over 30 minutes, past the hook limit: the
+# guard was cut by the limit and the push stood with no verdict (task RT-3092).
+RT_PUSH_HEAVY_AHEAD=1
 
 # What the records about finished work that outstayed their retention are removed by. The work
 # guard does not judge this command: the records age by the calendar, and the retention step turns
@@ -196,8 +202,10 @@ node tools/check-kit-approval.mjs
 bash tools/tests/run.sh
 EOF
 
+    # The guard scenarios run here by `nx affected -t test-hooks` below, not by a run file, so the
+    # package line naming a missing run file would be false in this tree.
     rt_push_checks_default "$1" \
-        | grep -vE 'agent-kit sync --check|nx (run-many|affected) -t lint test build|stylelint "\*\*/\*\.scss"|tools/check-(specs|dupes|push-gate)\.mjs'
+        | grep -vE 'agent-kit sync --check|nx (run-many|affected) -t lint test build|stylelint "\*\*/\*\.scss"|tools/check-(specs|dupes|push-gate)\.mjs|guard scenarios:'
 
     cat <<'EOF'
 pnpm exec nx affected -t lint typecheck test build --parallel
@@ -271,9 +279,10 @@ EOF
 }
 
 # The heavy steps of this tree past the package default: the showcase snapshots raise a showcase
-# and shoot it, minutes each, and the package does not know their name.
+# and shoot it, minutes each, and the package does not know their name. The auth stand raises
+# three containers and waits for Keycloak.
 rt_push_check_heavy() {
-    case "$1" in *visual-gate*) return 0 ;; esac
+    case "$1" in *visual-gate* | *serve:auth*) return 0 ;; esac
 
     rt_push_check_heavy_default "$1"
 }

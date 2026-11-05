@@ -261,3 +261,13 @@ as before; the same holds for the data of `write`, `write_text` and `writeFileSy
 of `os.replace` and of the receiver of `write_text` stay
 
 Covered: `projects/agent-kit/tests/shell-write-paths.test.sh`.
+
+### SC-AK-1251 — an arrow inside quotes is not a write target
+
+Given the command passes a string with an arrow in it — `echo "a->b"`, the code of `node -e` with
+an arrow function, a message in single or back quotes
+When the shared parse takes the write targets out of the command text
+Then it names nothing, while `echo x > out` next to it still names `out`, and an arrow after an
+escaped quote outside quotes is still a redirection
+
+Covered: `projects/agent-kit/tests/shell-write-paths.test.sh`.

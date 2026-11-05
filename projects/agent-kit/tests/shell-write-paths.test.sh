@@ -90,4 +90,15 @@ OSREPLACE="$(printf "python3 - <<'PY'\nimport os\nos.replace('docs/a.tmp', 'docs
 report "SC-AK-1209 — os.replace целью называет конец переноса" \
     "$(names "$OSREPLACE" 'docs/a.md')" 1
 
+report "SC-AK-1251 — стрелка в двойных кавычках путей не отдаёт" \
+    "$(count 'echo "a->b"')" 0
+report "SC-AK-1251 — стрелочная функция в коде node -e путей не отдаёт" \
+    "$(count 'node -e "[1].map(x => x)"')" 0
+report "SC-AK-1251 — стрелка в одинарных и обратных кавычках путей не отдаёт" \
+    "$(count "echo 'a > b' \`echo c > d\`")" 0
+report "SC-AK-1251 — перенаправление после кавычек называет путь" \
+    "$(names 'echo "a->b" > out' 'out')" 1
+report "SC-AK-1251 — экранированная кавычка не открывает строку" \
+    "$(names 'echo \" > out' 'out')" 1
+
 suite_result "разбор путей записи из текста команды"

@@ -30,6 +30,9 @@ import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 
 const BEM_BLOCK: string = 'rt-input-number';
 
+/** Значок стрелки шага в поле `sm`: в шкале значков такой ступени нет. */
+const SMALL_STEP_ICON_PX: number = 10;
+
 /**
  * Парсит строку в `number | null` по разделителям локали: `groupSep` и любые
  * пробелы удаляются, оставшийся разделитель дробной части приводится к точке.
@@ -66,6 +69,24 @@ function clamp(value: number, min: number | null, max: number | null): number {
         result = max;
     }
     return result;
+}
+
+/** Число знаков после точки в записи числа: у 0,25 — два, у 3 — ноль. */
+function fractionDigitsOf(value: number): number {
+    const text: string = String(value);
+    const dot: number = text.indexOf('.');
+    return dot < 0 ? 0 : Math.min(20, text.length - dot - 1);
+}
+
+/**
+ * Значение после шага стрелкой. Пустое поле шагает от нуля, как числовое поле
+ * браузера. Сумма округляется до знаков шага и значения — иначе 0,1 + 0,2 даёт
+ * 0,30000000000000004, — и зажимается в диапазон.
+ */
+function stepValue(current: number | null, delta: number, min: number | null, max: number | null): number {
+    const base: number = current ?? 0;
+    const digits: number = Math.max(fractionDigitsOf(base), fractionDigitsOf(delta));
+    return clamp(Number((base + delta).toFixed(digits)), min, max);
 }
 
 /**
@@ -173,8 +194,27 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
         (): boolean => this.displayValue() !== '' && this.value() !== null && this.value() !== 0
     );
 
-    /** Вид рамки: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
+    /** Значок стрелки: в поле `sm` он 10 px, как в макете, в остальных — ступень `xs` (12 px). */
+    protected readonly stepIconSize: Signal<IRtIcon.SizeInput> = computed((): IRtIcon.SizeInput =>
+        this.size() === 'sm' ? SMALL_STEP_ICON_PX : 'xs'
+    );
+
+    /** Шаг вверх возможен, пока значение не дошло до `max`; пустое поле шагает всегда. */
+    protected readonly canStepUp: Signal<boolean> = computed((): boolean => {
+        const value: number | null = this.value();
+        const max: number | null = this.max();
+        return !this.isDisabled() && (value === null || max === null || value < max);
+    });
+
+    /** Шаг вниз возможен, пока значение не дошло до `min`. */
+    protected readonly canStepDown: Signal<boolean> = computed((): boolean => {
+        const value: number | null = this.value();
+        const min: number | null = this.min();
+        return !this.isDisabled() && (value === null || min === null || value > min);
+    });
+
     public override readonly fieldLabelInside: boolean = true;
+    /** Вид рамки: `outline` — рамка со всех сторон, `fill` — залитое поле с чертой снизу. */
     public readonly appearance: InputSignal<IRtInput.Appearance> = input<IRtInput.Appearance>('outline');
 
     public readonly displayText: Signal<string> = computed((): string => this.displayValue());
@@ -192,6 +232,14 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
      * год, номер дома, код. У года разделитель превращает `2026` в `2 026`.
      */
     public readonly grouped: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
+    /** Сколько прибавляет и вычитает одна стрелка или клавиша «вверх» и «вниз». */
+    public readonly step: InputSignal<number> = input<number>(1);
+
+    /** Показывать ли стрелки шага справа в поле. Клавиши шагают и без них. */
+    public readonly stepper: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
 
@@ -213,7 +261,8 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
      * по этой зоне сам по себе не фокусирует поле. Перехватываем mousedown и
      * переводим фокус в input — но только если клик не пришёлся на само поле
      * (там нужно нативное позиционирование курсора) и не на интерактивный
-     * постфикс (крестик-очистка со своим обработчиком).
+     * постфикс (крестик-очистка со своим обработчиком). Стрелки шага фокус не
+     * забирают: нажатие на них оставляет его в поле, как в макете.
      */
     protected onHostMousedown(event: MouseEvent): void {
         if (this.isDisabled()) {
@@ -221,7 +270,7 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
         }
         const field: HTMLInputElement | undefined = this.fieldEl()?.nativeElement;
         const target: HTMLElement = event.target as HTMLElement;
-        if (!field || target === field || target.closest('button, rt-icon-button')) {
+        if (!field || target === field || target.closest('rt-icon-button')) {
             return;
         }
         event.preventDefault();
@@ -287,6 +336,31 @@ export class RtInputNumberComponent extends RtFormControlBase<number | null> {
         this.displayValue.set(formatted);
         this.emitChange(rounded);
         this.markTouched();
+    }
+
+    /**
+     * Шаг стрелкой: `1` — вверх, `-1` — вниз. Стрелка к достигнутой границе и
+     * выключенное поле не шагают. Значение уходит в форму сразу, как при наборе.
+     */
+    protected stepBy(direction: 1 | -1): void {
+        if (!(direction > 0 ? this.canStepUp() : this.canStepDown())) {
+            return;
+        }
+        const next: number = stepValue(this.value(), direction * this.step(), this.min(), this.max());
+        const formatted: string = formatNumber(next, this.minFractionDigits(), this.maxFractionDigits(), this.#locale, this.grouped());
+        const rounded: number = parseNumber(formatted, this.#groupSep) ?? next;
+        this.value.set(rounded);
+        this.displayValue.set(formatted);
+        this.emitChange(rounded);
+    }
+
+    /** Клавиши «вверх» и «вниз» шагают, как стрелки, и не двигают каретку в край текста. */
+    protected onKeydown(event: KeyboardEvent): void {
+        if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') {
+            return;
+        }
+        event.preventDefault();
+        this.stepBy(event.key === 'ArrowUp' ? 1 : -1);
     }
 
     /**

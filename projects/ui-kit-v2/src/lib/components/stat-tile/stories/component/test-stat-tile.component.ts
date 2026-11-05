@@ -17,7 +17,8 @@ import { IRtStatTile } from '../../rt-stat-tile.model';
             [secondary]="secondary"
             [deltaPrimary]="deltaPrimary"
             [deltaSecondary]="deltaSecondary"
-            [hint]="hint" />
+            [hint]="hint"
+            [growthIsWorse]="growthIsWorse" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -32,4 +33,5 @@ export class TestRtStatTileComponent {
     public deltaPrimary: IRtStatTile.Delta | null = { percent: 12.5, label: 'к прошлой неделе', baseline: '1 100' };
     public deltaSecondary: IRtStatTile.Delta | null = { percent: 8, label: 'к прошлому году' };
     public hint: string | null = 'Считается по уникальным';
+    public growthIsWorse: boolean = false;
 }

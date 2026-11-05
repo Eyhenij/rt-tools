@@ -1,6 +1,6 @@
 # The second kit
 
-**Status:** in force · **Revision:** 2026-08-17 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-03 · **Scenario prefix:** `SC-UKV`
 **Depends on:** named in the subdomains — each names its own
 **Laws:** `verifiability`, `delivery`, `frontend-application`
 **Procedures:** none
@@ -54,6 +54,7 @@ agreement about their own subject and describe the surface of a component, not a
 | [The field and a signal form](signal-forms/spec.md)                              | where a field of the set takes the state of the form from and what happens to both bindings                                                     |
 | [The form dictionary of a panel](form-dictionary/spec.md)                        | the hierarchy of the form of a panel, where the gap comes from, what the consumer does not write                                                |
 | [The digits of a number field](number-grouping/spec.md)                          | what a field separates the digits of a number by and where a consumer says a number is solid                                                    |
+| [The step arrows of a number field](input-number-stepper/spec.md)                | the step, the two arrows and the Up and Down keys; the arrow at a range edge is disabled, the small field has smaller arrows                    |
 | [A boolean input and the bare attribute](boolean-input-attribute/spec.md)        | what a boolean input of the kit accepts, and which input is boolean by declared type alone                                                      |
 | [The settings of the kit and the theme](kit-settings-theme/spec.md)              | what an application sets the look of the kit at the start by, the three states of the theme, a node with a theme of its own                     |
 | [One rounding input](radius-scale/spec.md)                                       | the scale of steps, the default of the mockup, the step on the host and the components without the input                                        |
@@ -93,7 +94,9 @@ agreement about their own subject and describe the surface of a component, not a
 | [The header's «More» item](page-header-more/spec.md)                             | the sections that did not fit the header's row: the fit by importance, the panel, the highlight                                                 |
 | [The width of the page place](place-width/spec.md)                               | the width the thresholds count from: the page place, the root, the overlays                                                                     |
 | [The hint of a cut value in the copy cell](copy-cell-first-hover/spec.md)        | the hint with the whole value of a cut copy cell, from the first hover                                                                          |
+| [A pinned column of the table](table-pinned-column/spec.md)                      | the pinned cell of `rt-table` keeps its row colour and casts a shadow while content scrolls under it                                            |
 | [The copy cell in the frame of a field](copy-cell-framed/spec.md)                | the input `framed`: the cell in the frame of a field with its button always visible                                                             |
+| [The delta of the stat tile](stat-tile/spec.md)                                  | the unit of a delta row — percent or percentage points — and the «growth is worse» sign that swaps the colours, not the arrow                   |
 | [The label on the border and actionable icons](field-label-icon-actions/spec.md) | the option template of the select, the label on the border, actionable icons, the cross in the Tab order, the length limit                      |
 | [The look of a field under the material preset](field-material-look/spec.md)     | the label inside, the filled field, the colours, the insets, the cross and the line under a field, as in Material                               |
 | [What the tabs give from Material](tab-additions/spec.md)                        | the closable tab and its cross, the tooltip, the strip without panels, manual activation, scroll arrows, motion, preserved bodies               |
@@ -246,3 +249,5 @@ change of its own.
   application's own component stays sized by its content, and on a narrow screen the left bar is
   never wider than the window. Before, the wrapped filters of a list grew to 400px each and left the
   window edge on a narrow screen. Task RT-2789.
+- 2026-11-03 — a pinned column of the table got a subdomain of its own. Its scenarios arrived with
+  the numbers `SC-UKV-1122`…`SC-UKV-1124`. Task RT-2907.

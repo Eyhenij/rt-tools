@@ -64,6 +64,27 @@ rt_write_targets() {
         }
     ')"
 
+    # An arrow inside quotes is text of the command, not a redirection: `echo "a->b"` and the code
+    # of `node -e "[1].map(x => x)"` read as writes into `b` and `x)` and were refused as edits.
+    # The quote state is kept per line; a backslash outside single quotes escapes the next sign.
+    rt_wt_shell="$(printf '%s\n' "$rt_wt_shell" | awk -v sq="'" '
+        function drop_quoted_arrows(s,   out, i, c, q, n) {
+            out = ""; q = ""; n = length(s)
+            for (i = 1; i <= n; i++) {
+                c = substr(s, i, 1)
+                if (c == "\\" && q != sq && i < n) { out = out c substr(s, i + 1, 1); i++; continue }
+                if (q != "") {
+                    if (c == q) { q = "" } else if (c == ">") { continue }
+                } else if (c == "\"" || c == sq || c == "`") {
+                    q = c
+                }
+                out = out c
+            }
+            return out
+        }
+        { print drop_quoted_arrows($0) }
+    ')"
+
     {
         printf '%s' "$rt_wt_shell" \
             | tr "\"'\`" '   ' \

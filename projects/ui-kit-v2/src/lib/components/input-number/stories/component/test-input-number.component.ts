@@ -18,7 +18,9 @@ import { IRtIcon } from '../../../icon/rt-icon.model';
             [min]="min"
             [max]="max"
             [minFractionDigits]="minFractionDigits"
-            [maxFractionDigits]="maxFractionDigits" />
+            [maxFractionDigits]="maxFractionDigits"
+            [step]="step"
+            [stepper]="stepper" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -34,4 +36,6 @@ export class TestRtInputNumberComponent {
     public max: number | null = null;
     public minFractionDigits: number = 0;
     public maxFractionDigits: number = 2;
+    public step: number = 1;
+    public stepper: boolean = true;
 }

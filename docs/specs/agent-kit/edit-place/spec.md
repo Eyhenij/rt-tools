@@ -75,6 +75,11 @@ turn.
   was taken as a write target, and an edit that wrote nothing into the tree was refused twice by it.
   The bodies are parsed apart, by the interpreter branch, and what stands before the body is named
   as before.
+- **An arrow inside quotes is text of the command, not a redirection.** A string argument with an
+  arrow in it — a message, the code of an interpreter — read as a write into the word after the
+  arrow, and a command that wrote nothing was refused as an edit. The shell parse drops every `>`
+  inside single, double or back quotes before it looks for a redirection; a backslash outside
+  single quotes escapes the next sign, and every new line starts outside quotes.
 - **Muted output is never a sign of a write, inside a body either.** A redirection into the empty
   device and into the error stream is removed before the parse — by the same technique the shell write
   sign removes it. Otherwise a body that writes nothing gives out all its paths again: a command with
