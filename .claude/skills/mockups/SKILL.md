@@ -2,9 +2,9 @@
 name: mockups
 kind: rule
 law: mockups
-description: Rule under the mockups law. Load when a screen is drawn or changed in a design tool, before the mockups are shown to the owner and before an audit of them is called finished. Names the kit copy, the spec read before drawing, the agreement checked against mockups. Pattern mockups-measure.
+description: Rule under the mockups law. Load when a screen is drawn or changed in a design tool, before the mockups are shown to the owner and when a design file is audited. Names the kit copy, the spec read before drawing, the agreement checked against mockups. Pattern mockups-measure.
 ---
-<!-- rt-kit v0.33.1 · rules/mockups.needs-mockups.md · e9e225596310 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · rules/mockups.needs-mockups.md · a367fd4ea714 · правится надстройкой, не здесь -->
 
 # Mockups — how it works here
 
@@ -17,6 +17,7 @@ the code is written; here — what it is called in this tree, where it lives and
 | ----------------------------------- | ---------------------------------------------------------------------------- |
 | mockup                              | a frame on a sheet of the design tool                                        |
 | the screen the mockup draws         | the page or panel in the application that carries the same name              |
+| a sheet of the design file          | a file page, never a page of the application                                 |
 | the description of the behaviour    | the domain spec in `docs/specs/<domain>/`                                    |
 | the agreement                       | the product agreement of the task, `docs/specs/<domain>/proposed/<feature>/` |
 | approved                            | shown to the owner and accepted in their words                               |
@@ -69,11 +70,11 @@ flowchart TD
   owner as a question. Found after the code, it costs a code edit and an agreement edit together.
 - **A mockup is measured by node coordinates before it is shown.** The technique is the pattern
   `mockups-measure`.
-- **An audit of a design file is accepted only when every page that draws a kit component is
-  captured and compared with the code of that component.** Names, properties and the list of
-  variants say what a node is called, not what it draws: an arc drawn as a sector and a rounded
-  field drawn as a capsule keep correct names. A page not captured leaves the audit open. The
-  technique is the pattern `mockups-measure`.
+- **An audit of a design file is accepted only when every file page that draws a kit component is
+  captured, measured and compared with the code of that component.** Names, properties and the list
+  of variants say what a node is called, not what it draws: an arc drawn as a sector and a rounded
+  field drawn as a capsule keep correct names. The technique and the report are the pattern
+  `mockups-measure`.
 - **A design-tool call asks the rules gate for this rule,** like the browser driver does for its
   own: without that the measurement pattern stays unread for the whole mockup task.
 

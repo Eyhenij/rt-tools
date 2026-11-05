@@ -118,9 +118,16 @@ From the rules review of the closed task:
   table of assignments by the base's side whole, so the row of the epic was lost and the next task
   branch was refused. The header of the table says a session does not edit it, while the refusal
   says to write the row. **Address:** rules layer — the merge pattern and the two texts agreed.
+
+## RT-3049 — an audit of a design file
+
 - **A push from a copy with untracked folders is refused for marks, while the git hook passes it.**
   `rt_push_mark_clean` counts files outside history, and the comment at `rt_push_mark_write` says
   they do not count. **Address:** rules layer — one definition of a clean copy.
+- **Moving the base of a chain PR to the main branch starts no run.** The pipeline wakes for a PR
+  into the main branch, while the retarget sends an event it does not listen to: #3116 stood clean
+  with no check at all, and the page reads as ready. The stack pattern names the retarget and is
+  silent about the run. **Address:** rules layer — the stack pattern names how the run is started.
 
 ## Left unresolved
 
