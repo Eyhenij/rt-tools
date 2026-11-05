@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-hook: PreToolUse mcp__playwright__.*|mcp__chrome-devtools__.*|Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
+# rt-hook: PreToolUse mcp__playwright__.*|mcp__chrome-devtools__.*|mcp__plugin_.*_playwright__.*|mcp__plugin_.*_chrome-devtools__.*|Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh
 # Guard of the bypass routes to the browser. PreToolUse.
 #
@@ -45,10 +45,13 @@ deny() {
     exit 2
 }
 
+# A driver installed as a plugin carries the plugin name in front of the server name —
+# `mcp__plugin_<plugin>_<server>__<tool>`. The plugin name is chosen by its publisher, so it is
+# matched by a sample: the plain name alone let the same driver open the browser past the profile.
 case "$tool" in
-    mcp__playwright__*)
+    mcp__playwright__* | mcp__plugin_*_playwright__*)
         deny "The second browser driver is not used in this project — no sign-in was made in its profile." ;;
-    mcp__chrome-devtools__*)
+    mcp__chrome-devtools__* | mcp__plugin_*_chrome-devtools__*)
         deny "The third browser driver is not used in this project — it does not ask for the pinned profile." ;;
 esac
 
