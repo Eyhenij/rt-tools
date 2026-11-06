@@ -50,7 +50,8 @@ nothing.
 
 `apps/message-bus` and `apps/message-bus-admin`. Set by the owner on 6 November 2026.
 
-- **Mission:** collect the feedback from the applications that consume the rules package.
+- **Mission:** collect the feedback from the applications that consume the rules package, and improve
+  the package step by step on the basis of that feedback.
 - **It is not:** a general message bus, or the chat service.
 
 ## The entry module
