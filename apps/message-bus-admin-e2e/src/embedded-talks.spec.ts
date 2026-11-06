@@ -20,6 +20,9 @@ import { expectScreen } from './support/shot';
 /** Адрес админки потребителя со встроенным разделом. */
 const PAGE: string = `${EMBED_PAGE_URL}?site=${encodeURIComponent(CHAT.embed.key)}`;
 
+/** Сколько реплик заполняет ленту в низком окне: дальше она прокручивается. */
+const FEED_FILLERS: number = 8;
+
 /** Разметка страницы переписок: она лежит в рамке, поставленной тегом. */
 function inside(page: Page): FrameLocator {
     return page.frameLocator('rt-chat-talks iframe');
@@ -118,5 +121,43 @@ test.describe('встраиваемая страница переписок', ()
 
         // ширины колонок стол помнит своим ключом, и ручки между колонками — разделители
         await expect(inside(page).locator('[role="separator"]')).toHaveCount(2);
+    });
+
+    test('SC-CH-117 — своя реплика ведёт ленту вниз, даже если человек ушёл читать историю', async ({ page }: { page: Page }) => {
+        // низкое окно: лента перерастает свою колонку за несколько реплик
+        await page.setViewportSize({ width: 1280, height: 480 });
+        await openConsumerAdmin(page);
+        await rows(page).last().click();
+
+        const remarks: Locator = inside(page).locator('[qa-dataid="chat-message-text"]');
+        const thread: Locator = qaInside(page, 'chat-thread');
+
+        await expect(remarks.first()).toBeVisible();
+
+        const before: number = await remarks.count();
+
+        const reply: (text: string, total: number) => Promise<void> = async (text: string, total: number): Promise<void> => {
+            await qaInside(page, 'message-composer-input').fill(text);
+            await qaInside(page, 'message-composer-send').click();
+            await expect(remarks).toHaveCount(total);
+        };
+
+        for (let sent: number = 1; sent <= FEED_FILLERS; sent += 1) {
+            await reply(`Реплика ${sent}`, before + sent);
+        }
+
+        // положительная пара: лента длиннее окна, и уехать от низа есть куда
+        const gapOf: () => Promise<number> = (): Promise<number> =>
+            thread.evaluate((node: Element): number => node.scrollHeight - node.clientHeight - node.scrollTop);
+
+        await thread.evaluate((node: Element): void => {
+            node.scrollTop = 0;
+        });
+        await expect.poll(gapOf).toBeGreaterThan(0);
+
+        await reply('Реплика из истории', before + FEED_FILLERS + 1);
+
+        await expect.poll(gapOf).toBeLessThanOrEqual(1);
+        await expect(remarks.last()).toBeInViewport();
     });
 });
