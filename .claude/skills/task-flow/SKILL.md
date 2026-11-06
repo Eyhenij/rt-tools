@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of work from the owner's request to the merge. Load at the start of any work, when editing task folders and product agreements, and when returning to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. End of a turn — turn-conduct.
 ---
-<!-- rt-kit v0.33.1 · rules/task-flow.md · b4d55d437d48 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · rules/task-flow.md · 9525281364b9 · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -33,7 +33,7 @@ with a guard does.
 | the epic plan | a record outside the task folder: the folder dies with the merge, the epic outlives it; the directory — in the rule's companion |
 | the task folder before the task is created | `docs/tasks/_draft-<slug>/` — outside history while there is no number |
 | exploration | an `Explore` or `general-purpose` session before the first question to the owner |
-| the plan review by roles | `.claude/workflows/plan.js` — need, agreement, critique, plan |
+| the plan review by roles | `.claude/workflows/plan.js` — need, points, agreement, critique, plan |
 
 ## Where it lives
 
@@ -247,6 +247,9 @@ flowchart TD
 - **The epic plan names how the branches of its tasks stand, on a par with their order.** Two
   arrangements: each branch from the epic branch, or a stack — each from the previous. The
   arrangement written in the plan is the epic's decision, not that of whoever creates the branch.
+- **The plan names the points: the epic its milestone, the task the change a person will see.** The
+  role `product-strategist` tries to prove the miss twice: in the plan review and before the PR
+  opens. A proved miss is fixed or named to the owner.
 - **The PR of the epic opens when its last folder is taken apart, and not a task earlier.** A folder
   left in the epic branch reaches the main branch with it. Until then the epic branch is not
   offered to a person at all — the merge button on it means the whole epic.

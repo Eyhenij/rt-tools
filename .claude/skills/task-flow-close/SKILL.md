@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when bringing work to readiness — merging the product agreement into the domain spec, bringing the domain texts up to date with what was done, opening the PR as a draft or ready by its base and leaving draft.
 ---
-<!-- rt-kit v0.33.1 · patterns/task-flow-close.md · 7538b72b86ad · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · patterns/task-flow-close.md · b61fae49835a · правится надстройкой, не здесь -->
 
 # Closing the work
 
@@ -128,6 +128,10 @@ What was done at this step is written into the PR body: what was re-read, what w
 nothing was changed — why. The form of the section — pattern `git-workflow-pr-body`. The body fits
 the host's length limit — Azure DevOps takes 4000 characters — so the report is one line per text,
 not prose: a body over the limit refuses the opening call, and it gets cut in a hurry.
+
+**The role `product-strategist` reviews the work while the folder still lies here.** It runs the sign
+of each point in the plan and tries to prove the miss. A proved miss is fixed now or goes into the PR
+body. Before the PR of an epic the same call judges the milestone.
 
 **Next move:** the updated texts are committed, and in the same turn the task folder is taken apart
 — by the last commit of the branch, pattern `task-flow-archive`.

@@ -128,6 +128,10 @@ nothing was changed — why. The form of the section — pattern `git-workflow-p
 the host's length limit — Azure DevOps takes 4000 characters — so the report is one line per text,
 not prose: a body over the limit refuses the opening call, and it gets cut in a hurry.
 
+**The role `product-strategist` reviews the work while the folder still lies here.** It runs the sign
+of each point in the plan and tries to prove the miss. A proved miss is fixed now or goes into the PR
+body. Before the PR of an epic the same call judges the milestone.
+
 **Next move:** the updated texts are committed, and in the same turn the task folder is taken apart
 — by the last commit of the branch, pattern `task-flow-archive`.
 

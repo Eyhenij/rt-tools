@@ -28,6 +28,7 @@ it refuses with.
 - **The epic plan** — `docs/plans/`, named by the key `plansDir` in `.claude/rt-kit/checks.json`: the creation command lays the draft of a plan there
 - **The review roles** — `.claude/agents/spec-writer.md`, `.claude/agents/spec-critic.md`
 - **The pipeline after the grill** — `.claude/workflows/plan.js`
+- **The missions document** — `docs/product/missions.md`: the role `product-strategist` judges a milestone against it
 
 ## What is not done without the owner word
 
@@ -119,6 +120,7 @@ articles of the rule have no bindings — that is the debt that lay here before 
 - **An epic is not closed by a sign confirmed by reading alone.** — **Not checked.** The sign of the end of an epic is prose in its plan; a machine has nothing to tell what was read from what was checked. It is held by naming every sign aloud, together with a command or a measurement, when the epic is closed
 - **The tasks of an epic are created all at once, by the same turn as the epic itself.** — **Not checked.** The work queue audit judges the epic label against the plan only by the pair «card and plan», and it does not reconcile the makeup of tasks with the order table. Whether one of ten was created or all ten is invisible to it
 - **The epic plan names how the branches of its tasks stand, on a par with their order.** — **Not checked.** The epic plans lie in `docs/plans/`, and they have no line about the arrangement of branches. The work queue audit reads the makeup of tasks, not the base of their branches. It is held by the article; the price of the arrangement shows only after the requests are opened — by how many of them the run stalled on.
+- **The plan names the points: the epic its milestone, the task the change a person will see.** — `.claude/workflows/plan.js:points` — the planning call of the role `.claude/agents/product-strategist.md`; the review call before the PR is held by the pattern `task-flow-close`. The section in `docs/tasks/_template/plan.md` is filled by hand, and no guard reads it.
 - **The epic plan lies where it is found without the network and after the merge.** — `tools/task-new.mjs:writeEpicPlan` — the command lays the draft in the directory named by `plansDir` and writes the path to it into the card; a plan moved by hand afterwards nothing checks
 - **Closed work is reviewed by the rules as a closing step, not as a separate request.** — **Not checked.** Starting the review role is a move of the executor, and it leaves no trace in the tree; the technique is the command `/skill-curator`
 - **Two requirements — two guards, and one can be lifted without losing the other.** — `.claude/hooks/task-flow-draft-guard.sh:draft` — the agreement is judged by its own guard, and the task folder and the state by `.claude/hooks/task-flow-guard.sh:folder_archived`; the parsing of the call is shared — `.claude/hooks/task-flow-context.sh:rt_task_flow_context`

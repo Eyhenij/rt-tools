@@ -1,9 +1,10 @@
 export const meta = {
     name: 'plan',
-    description: 'After the grill with the owner: whether the work is needed, the product agreement, its adversarial review and the implementation plan',
+    description: 'After the grill with the owner: whether the work is needed, whether it reaches its points, the product agreement, its adversarial review and the implementation plan',
     whenToUse: 'The grill of the owner\'s request is closed, the task folder is created, the code is not written yet',
     phases: [
         { title: 'Need', detail: 'what the work gives and what is dropped from it' },
+        { title: 'Points', detail: 'where the product stands, the point of the work and the milestone' },
         { title: 'Agreement', detail: 'the feature spec in proposed/ from the grill' },
         { title: 'Critique', detail: 'what is left unsaid in the agreement' },
         { title: 'Plan', detail: 'stages with readiness signs and the split into tasks' },
@@ -29,6 +30,20 @@ const WORTH = {
         gives: { type: 'string', description: 'what the owner will get' },
         drop: { type: 'array', items: { type: 'string' }, description: 'what is dropped without losing the goal' },
         risks: { type: 'array', items: { type: 'string' } },
+    },
+};
+
+const POINTS = {
+    type: 'object',
+    additionalProperties: false,
+    required: ['verdict', 'start', 'point', 'sign', 'milestone', 'misses'],
+    properties: {
+        verdict: { type: 'string', enum: ['reaches', 'longer route', 'does not reach'] },
+        start: { type: 'string', description: 'point A: where the product stands now' },
+        point: { type: 'string', description: 'the change a person will see after this work' },
+        sign: { type: 'string', description: 'what shows the point is reached, and who sees it' },
+        milestone: { type: 'string', description: 'point G: the milestone of the epic' },
+        misses: { type: 'array', items: { type: 'string' }, description: 'the proved misses of the route' },
     },
 };
 
@@ -115,6 +130,20 @@ if (worth.verdict === 'postpone') {
     return { worth, stopped: 'the analyst proposed to postpone — the decision is the owner\'s' };
 }
 
+phase('Points');
+const points = await agent(
+    `The grill of the owner's request — \`${grill}\`. Read it in full, together with the epic plan.\n\n` +
+        `This is the planning mode. Name where the product stands, the point this work must reach and ` +
+        `the milestone of the epic, and try to prove that the route misses them.`,
+    { agentType: 'product-strategist', label: 'points', schema: POINTS }
+);
+log(`Points: ${points.verdict}; misses: ${points.misses.length}`);
+
+if (points.verdict === 'does not reach') {
+    log('The work does not start: the route misses its milestone, and the decision belongs to the owner.');
+    return { worth, points, stopped: 'the route does not reach the milestone — the decision is the owner\'s' };
+}
+
 phase('Agreement');
 const draft = await agent(
     `The grill of the owner's request — \`${grill}\`. Read it in full and write the product agreement ` +
@@ -147,4 +176,4 @@ log(`Plan: tasks: ${plan.tasks.length}, stages: ${plan.steps.length}`);
 
 // Nothing is written to disk from here: the plan and the gaps go to the owner, and `plan.md`
 // is written by the main agent — only it asks the owner questions.
-return { worth, draft, critique: critique.findings, plan };
+return { worth, points, draft, critique: critique.findings, plan };
