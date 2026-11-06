@@ -27,6 +27,9 @@ type TStory = StoryObj<TestRtDataTableMatrixComponent>;
 /** Каждый вид колонки по разу: так видно, чем готовая ячейка рисует значение каждого вида. */
 export const Columns: TStory = { args: { part: 'columns' } };
 
+/** Размер значка ячейки задаёт колонка: без поля 24px, `sm` — 16px, `md` — 20px. */
+export const IconSizes: TStory = { args: { part: 'icons' } };
+
 export const Sort: TStory = { args: { part: 'sort' } };
 
 /**

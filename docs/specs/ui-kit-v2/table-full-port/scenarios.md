@@ -354,3 +354,10 @@ Given settings under the kit key and an old record under "orders"
 When the settings of the table with the key "orders" are reset
 Then both records are removed, and the next opening draws the declared columns
 Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-config.service.spec.ts`.
+
+### SC-UKV-1157 — the column gives the cell icon its size
+
+Given a column whose icon is declared with the size `sm` and a column whose icon has no size
+When the cells are drawn
+Then the first icon is drawn at the `sm` step, 16 pixels, and the second at `lg`, 24 pixels, as before
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.spec.ts`.

@@ -181,6 +181,18 @@ describe('RtDataTableCellComponent', () => {
         expect(icon.style.color).toBe('red');
     });
 
+    it('SC-UKV-1157 — колонка задаёт значку ячейки размер', () => {
+        const fixture: ComponentFixture<CellHostComponent> = setup({ icon: { glyph: 'star', placement: 'left', size: 'sm' } });
+
+        expect((fixture.debugElement.query(By.directive(RtIconComponent)).componentInstance as RtIconComponent).size()).toBe('sm');
+    });
+
+    it('SC-UKV-1157 — без размера в колонке значок ячейки 24px, как был', () => {
+        const fixture: ComponentFixture<CellHostComponent> = setup({ icon: { glyph: 'star', placement: 'left' } });
+
+        expect((fixture.debugElement.query(By.directive(RtIconComponent)).componentInstance as RtIconComponent).size()).toBe('lg');
+    });
+
     it('SC-UKV-266 — у копируемой ячейки с пустым значением кнопки копирования нет', () => {
         const fixture: ComponentFixture<CellHostComponent> = setup({ copyable: true }, { id: 1, share: null, title: null });
 

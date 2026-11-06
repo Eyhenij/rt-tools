@@ -34,6 +34,15 @@
             &--filled {
                 font-variation-settings: 'FILL' 1;
             }
+
+            /* Размер значка из описания колонки — те же ступени, что у значка кита. */
+            &--sm {
+                --rt-data-table-cell-glyph-size: var(--rt-size-4);
+            }
+
+            &--md {
+                --rt-data-table-cell-glyph-size: var(--rt-size-5);
+            }
         }
 
         &__prefix,

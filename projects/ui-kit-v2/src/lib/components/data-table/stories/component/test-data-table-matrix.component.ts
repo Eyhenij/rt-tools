@@ -11,12 +11,13 @@ import {
     ITestDataTableRow,
     TEST_DATA_TABLE_COLUMNS,
     TEST_DATA_TABLE_FILTER_COLUMNS,
+    TEST_DATA_TABLE_ICON_COLUMNS,
     TEST_DATA_TABLE_ROWS,
     TEST_DATA_TABLE_SHORT_COLUMNS,
 } from './test-data-table.rows';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TDataTableMatrixPart = 'columns' | 'sort' | 'filters' | 'selection' | 'actions' | 'clickable' | 'presets' | 'themes';
+export type TDataTableMatrixPart = 'columns' | 'icons' | 'sort' | 'filters' | 'selection' | 'actions' | 'clickable' | 'presets' | 'themes';
 
 /** Случай оси порядка: свой заголовок и своё состояние. */
 interface ISortCase {
@@ -108,6 +109,14 @@ const CLICKABLE_CASES: readonly { readonly name: string; readonly clickable: boo
                 <app-story-presets single caption="Все виды колонок">
                     <ng-template>
                         <app-data-table-cell storageKey="story-columns" [columns]="allColumns" [rows]="rows" />
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('icons') {
+                <app-story-presets single caption="Размер значка ячейки">
+                    <ng-template>
+                        <app-data-table-cell storageKey="story-icons" [columns]="iconColumns" [rows]="rows" />
                     </ng-template>
                 </app-story-presets>
             }
@@ -234,6 +243,7 @@ export class TestRtDataTableMatrixComponent {
 
     public readonly rows: ITestDataTableRow[] = TEST_DATA_TABLE_ROWS;
     public readonly allColumns: Array<IRtDataTable.Column<ITestDataTableRow>> = TEST_DATA_TABLE_COLUMNS;
+    public readonly iconColumns: Array<IRtDataTable.Column<ITestDataTableRow>> = TEST_DATA_TABLE_ICON_COLUMNS;
     public readonly shortColumns: Array<IRtDataTable.Column<ITestDataTableRow>> = TEST_DATA_TABLE_SHORT_COLUMNS;
     public readonly filterColumns: Array<IRtDataTable.Column<ITestDataTableRow>> = TEST_DATA_TABLE_FILTER_COLUMNS;
 

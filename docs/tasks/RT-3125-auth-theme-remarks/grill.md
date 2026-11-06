@@ -51,3 +51,37 @@ In this session: «пока заведи тикет и возьми в рабо�
 ## Decisions
 
 ## What is left unclear
+
+## A kit edit joined to this task: the 16 px icon in the table cell
+
+Relayed by the application session on 2026-11-06, the owner's words: «передай в соседнюю сессию
+пусть возьмет эту правку кита». In this session: «Выполни эту задачу здесь: «Kit: 16 px icon in the
+rt-data-table cell»», then «размер иконки в ячейке таблицы можно задавать конфигом или как-то еще».
+
+The cell of `rt-data-table` (Figma «Data Table Cell», Kind=icon left / icon right in Design System
+V2) needs a 16 px icon instead of 24 px. The nested icon size is locked in the Figma component, and
+an instance cannot change it. The application's permissions table shows a tick and a cross in its
+cells and wants them the size of the Icon Button sm icons in the group row.
+
+### What the tree holds
+
+- `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.html` draws
+  the column icon with a fixed `size="lg"` (24 px).
+- The application can already draw any icon size through its own `rtDataTableIcon` template.
+
+### The mockup
+
+Design System V2, page «Data Table», set «Data Table Cell»
+(https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=6981-510): a variant property
+«Icon size» (`lg` default, `sm`) added; every existing variant is `lg`; two new variants
+«Kind=icon left, Icon size=sm» (7569:496) and «Kind=icon right, Icon size=sm» (7569:500). Measured:
+cell 220×50, icon 16×16, icon centre y 24.5 = text centre y 24.5, gap 8, text starts at x 44
+(was 52 with the 24 px icon).
+
+### Questions and answers
+
+| Question                                                                           | The owner's answer                                                                                                                    |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| How is the icon size set: a column field, a table-wide config or a style property? | «Поле в описании колонки» — `icon.size: 'sm' \| 'md' \| 'lg'`, default `lg` as now; in Figma an Icon size property on Data Table Cell |
+
+The owner on where it goes: «так ты же уже работаешь над задаче по пунктам 15-21 включи в нее».

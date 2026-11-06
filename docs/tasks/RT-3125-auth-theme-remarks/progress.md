@@ -17,10 +17,7 @@
   `rt-tools-RT-3125.md`). `check:specs` passed; the theme is 0.3.0 (0.2.1 was never released).
   Build the JAR with `JAVA_HOME=/opt/homebrew/opt/openjdk`.
 - **Uncommitted:** nothing.
-- **Waiting for the owner:** «я должен был сначала апрувнуть правки на макетах» and «доделай что
-  осталось потом ко мне» — items 15 and 20 are finished; nothing is pushed until the owner
-  approves the before/after comparison (0.2.0 against the branch JAR, served from the scratchpad
-  on 127.0.0.1:58200).
+- **Waiting for the owner:** no — the theme comparison and the kit edit are approved («Одобряю»).
 - **PR:** not open yet
 
 ## Steps
@@ -78,6 +75,17 @@
   (`kc-address-text.ts`, SC-AUTH-101), so it breaks only after the `@`. The comparison page also
   shows the realm logo from the realm HTML display name: the owner asked why only the realm name
   shows. Affected stages: 1, 4.
+- **A kit edit joined this task: the cell of `rt-data-table` takes its icon size from the
+  column.** The application session relayed it; the owner put it here: «так ты же уже работаешь над
+  задаче по пунктам 15-21 включи в нее». The owner chose «Поле в описании колонки»:
+  `icon.size: 'sm' | 'md' | 'lg'`, default `lg`. Figma «Data Table Cell» got an «Icon size»
+  property (mockup «Одобряю»), the showcase story `IconSizes` (showcase «Одобряю»), scenario
+  SC-UKV-1157. The Figma copy of the cell itself drifted from the kit before this edit (padding 20
+  against 10, height 50 against 55) — named to the owner, not fixed here. Affected stages: 1, 4.
+- **The captcha frame sits a pixel further in on the right and at the bottom.** The owner: «вижу
+  чутка рамку справа и снизу». Measured at 4x: 2px clears top and left, 3px right and bottom; the
+  slot cuts `inset(2px 3px 3px 2px)`. The owner approved the theme comparison: «Одобряю».
+  Affected stage: 1.
 - **The stand is a Keycloak of my own**, container `rt3125-keycloak` on 58180 with `rt3125-mailpit`
   on 58125, both removed. The rt-auth stand was up under another session with another JAR and was
   not touched. Affected stage: 2.
