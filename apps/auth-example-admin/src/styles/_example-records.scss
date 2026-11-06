@@ -21,6 +21,14 @@
         margin: 0;
     }
 
+    &__chat {
+        display: flex;
+        min-block-size: 0;
+        block-size: 360px;
+        border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+        border-radius: var(--rt-radius-md);
+    }
+
     &__person {
         overflow: hidden;
         max-inline-size: 240px;

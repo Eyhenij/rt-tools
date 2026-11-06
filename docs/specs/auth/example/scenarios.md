@@ -14,6 +14,12 @@ Given a reader in the admin
 When the records screen opens
 Then the row «Signed in as» shows their name on one line and their email on the next
 
+### SC-AUTH-98 — the ready-reply button puts its text into the reply field
+
+Given a reader on the records screen
+When they press the ready-reply button of the correspondence
+Then the reply field holds the text with the cursor after the last character, and no new message appears
+
 ### SC-AUTH-48 — a wrong password keeps the person on the entry screen
 
 Given the stand and a reader

@@ -50,6 +50,22 @@ test.describe('the account row of the records screen', () => {
     });
 });
 
+test.describe('the correspondence of the records screen', () => {
+    test('SC-AUTH-98 — the ready-reply button puts its text into the reply field', async ({ page }) => {
+        await signIn(page, 'reader');
+        const field: Locator = page.getByTestId('chat-composer-prompt').locator('textarea');
+        const text: string = 'Thank you for writing. We will answer today.';
+        await expect(page.getByTestId('records-chat')).toContainText('Can I check out at two?');
+
+        await page.getByTestId('records-quick-reply').click();
+
+        await expect(field).toHaveValue(text);
+        await expect(field).toBeFocused();
+        expect(await field.evaluate((node: HTMLTextAreaElement): number | null => node.selectionStart)).toBe(text.length);
+        await expect(page.getByTestId('records-chat')).not.toContainText(text);
+    });
+});
+
 test.describe('the layout of the entry screen', () => {
     test('SC-AUTH-55 — an error under a field does not move the form', async ({ page }) => {
         await page.goto('/');
