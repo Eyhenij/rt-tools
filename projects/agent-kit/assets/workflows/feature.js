@@ -133,11 +133,17 @@ const verdict = await agent(
 );
 
 phase('Points');
-const points = await agent(
-    `The user's original request:\n\n${task}\n\nWhat was done:\n${done.join('\n')}\n\n` +
-        `This is the review mode. Read the points in the task plan and the epic plan, run the sign of each ` +
-        `and try to prove the miss.`,
-    { agentType: 'product-strategist', label: 'points', phase: 'Points' }
-);
+// A role a session has not registered costs this phase, not the done work above it.
+let points = null;
+try {
+    points = await agent(
+        `The user's original request:\n\n${task}\n\nWhat was done:\n${done.join('\n')}\n\n` +
+            `This is the review mode. Read the points in the task plan and the epic plan, run the sign of each ` +
+            `and try to prove the miss.`,
+        { agentType: 'product-strategist', label: 'points', phase: 'Points' }
+    );
+} catch (error) {
+    log(`Points: the role did not run: ${error.message}`);
+}
 
 return { plan, done, findings, blockers, verdict, points };

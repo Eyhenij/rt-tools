@@ -1,4 +1,4 @@
-// rt-kit v0.33.1 · workflows/feature.js · 4b83edf5ea79 · правится надстройкой, не здесь
+// rt-kit v0.33.1 · workflows/feature.js · 7bc66b0e78ee · правится надстройкой, не здесь
 export const meta = {
     name: 'feature',
     description: 'A plan from the PM, implementation step by step, a fan of QA checks and acceptance against the original request',
@@ -134,11 +134,17 @@ const verdict = await agent(
 );
 
 phase('Points');
-const points = await agent(
-    `The user's original request:\n\n${task}\n\nWhat was done:\n${done.join('\n')}\n\n` +
-        `This is the review mode. Read the points in the task plan and the epic plan, run the sign of each ` +
-        `and try to prove the miss.`,
-    { agentType: 'product-strategist', label: 'points', phase: 'Points' }
-);
+// A role a session has not registered costs this phase, not the done work above it.
+let points = null;
+try {
+    points = await agent(
+        `The user's original request:\n\n${task}\n\nWhat was done:\n${done.join('\n')}\n\n` +
+            `This is the review mode. Read the points in the task plan and the epic plan, run the sign of each ` +
+            `and try to prove the miss.`,
+        { agentType: 'product-strategist', label: 'points', phase: 'Points' }
+    );
+} catch (error) {
+    log(`Points: the role did not run: ${error.message}`);
+}
 
 return { plan, done, findings, blockers, verdict, points };

@@ -147,17 +147,22 @@ if (worth.verdict === 'postpone') {
 }
 
 phase('Points');
-const points = await agent(
-    `The grill of the owner's request — \`${grill}\`. Read it in full, together with the epic plan when ` +
-        `the work has one.\n\n` +
-        `Dropped from the work: ${worth.drop.join('; ') || '— nothing'}.\n\n` +
-        `This is the planning mode. Name where the product stands, the point this work must reach and ` +
-        `the milestone of the epic, and try to prove that the route misses them.`,
-    { agentType: 'product-strategist', label: 'points', schema: POINTS }
-);
-
 // The role advises and stops nothing: whether work goes on is the owner's decision, and they read
-// the misses in the result. A role that returned nothing costs the phase, not the pipeline.
+// the misses in the result. A role that is missing or returned nothing costs the phase, not the
+// pipeline: a session registers roles when it starts, so a new role is unknown to an older session.
+let points = null;
+try {
+    points = await agent(
+        `The grill of the owner's request — \`${grill}\`. Read it in full, together with the epic plan when ` +
+            `the work has one.\n\n` +
+            `Dropped from the work: ${worth.drop.join('; ') || '— nothing'}.\n\n` +
+            `This is the planning mode. Name where the product stands, the point this work must reach and ` +
+            `the milestone of the epic, and try to prove that the route misses them.`,
+        { agentType: 'product-strategist', label: 'points', schema: POINTS }
+    );
+} catch (error) {
+    log(`Points: the role did not run: ${error.message}`);
+}
 const misses = points?.misses ?? [];
 const missesText = misses.map((m) => `- ${m.miss}: ${m.step}`).join('\n') || '— none';
 log(`Points: ${points?.verdict ?? 'no reply'}; misses: ${misses.length}`);
