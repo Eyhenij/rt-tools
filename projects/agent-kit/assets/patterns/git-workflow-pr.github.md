@@ -174,6 +174,40 @@ This is not written as bare GraphQL by project, item and field option ids: the c
 them itself, and a query assembled from memory silently sets the wrong column — the board has no
 refusal for that.
 
+## Answering under remarks
+
+Remarks arrive on a PR in two places: a comment on a line and the text of a review. Both are read
+at once, before the first edit:
+
+```bash
+gh api repos/<владелец>/<репозиторий>/pulls/<номер>/comments --paginate \
+    --jq '.[] | {id, user: .user.login, path, body}'
+gh api repos/<владелец>/<репозиторий>/pulls/<номер>/reviews --paginate \
+    --jq '.[] | select(.body != "") | {id, user: .user.login, body}'
+```
+
+The person is asked by the asking tool whether to answer under them, in the turn the remarks were
+read. The answer holds for this PR. Silence is not a yes: a message on the host stays there, and
+it goes out under an account the person answers for.
+
+After a yes every remark gets its own answer, once the edit has reached the host: a commit named
+before the push does not exist for the reader yet.
+
+```bash
+gh api -X POST repos/<владелец>/<репозиторий>/pulls/<номер>/comments/<id>/replies \
+    -F body=@ответ.md
+```
+
+The text of a review has no thread of its own, so the answer to it goes into the PR conversation:
+
+```bash
+gh api -X POST repos/<владелец>/<репозиторий>/issues/<номер>/comments -F body=@ответ.md
+```
+
+An answer is written in the owner's language and names one of two things: the commit that closes
+the remark, or why the remark is declined. The count of answers is compared with the count of
+remarks read at the start: a remark left without one is a remark the person checks again by hand.
+
 ## What is checked before the PR is published
 
 There are no checks on the PR itself: the rollout starts with a push into the main branch, and
