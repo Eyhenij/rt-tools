@@ -23,10 +23,10 @@
 
     &__chat {
         display: flex;
-        min-block-size: 0;
-        block-size: 360px;
         border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
         border-radius: var(--rt-radius-md);
+        block-size: 360px;
+        min-block-size: 0;
     }
 
     &__person {
