@@ -46,3 +46,12 @@ When the run ahead starts
 Then it does not run anything and exits with 3
 
 Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+
+### SC-AK-1166 — the push gate names every red light check by one refusal
+
+Given the gate set holds two red light checks, a green one between them and a heavy one after them
+When the guard judges the push
+Then the refusal names both red lines and the tail of each output. The green one is not named. The
+heavy one is not started and is named as held
+
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.

@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub. Load for a task and a branch, commit, push, opening a PR and merging. Names the pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — deploy-flow, audit — queue-audit.
 ---
-<!-- rt-kit v0.33.1 · rules/git-workflow.github.md · 7ff62cccfac2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · rules/git-workflow.github.md · ac3d797ae30e · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 
@@ -132,6 +132,18 @@ flowchart TD
   person, a task by the work queue, and both read with a token other than the creating one.
 - **A refusal is read before it is bypassed by a second way.** It can be an early sign of a write
   limit, and a bypass by another call carries the sign away: the discrepancy surfaces at the owner.
+- **A push is sent only by the path the push guard stands on.** A terminal, a process or a script
+  started outside the session carries the same command past the gate, unless the tree wired the
+  git hook `pre-push`: then git runs the set there too. A send cut off by the session's end is
+  asked of the host and repeated by the same path.
+- **A review of a foreign branch starts with the gate set run on its tip.** Reading the diff misses
+  what the set judges by the whole tree: a word, a file limit. A check that stands only on an edit,
+  such as the wording one, is run over the changed texts apart. The output goes into the review,
+  and a later push into that branch is run again.
+- **Where neither the session's push guard nor the git hook fires, the set is run whole, as read
+  at the minute of the run.** It is read from the state review or from the tree profile together with the package
+  default it calls. A list from memory, from a copy made earlier or from the profile alone drops
+  checks: the profile names the set, the task names only the work.
 - **The branch number and the PR title number are checked on the spot, the task state — by the
   board.** The format is read from the command text and works offline; the second tier needs
   something to ask with.
