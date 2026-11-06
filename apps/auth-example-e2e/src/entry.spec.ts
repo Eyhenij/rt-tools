@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { PEOPLE, STAND_PASSWORD } from '../stand/stand.mjs';
-import { ILateCookieProbe, lateCookieProbe } from './support/cookie-probe';
+import { lateCookieProbe, PEOPLE, STAND_PASSWORD } from '../stand/stand.mjs';
 import { enterOnRealmScreen, expectEntryScreen, signIn } from './support/example';
 
 test.describe('the entry', () => {
@@ -13,7 +12,7 @@ test.describe('the entry', () => {
     });
 
     test('SC-AUTH-97 — the return from the entry form does not wait for the cookie probe of Keycloak', async ({ page }) => {
-        const probe: ILateCookieProbe = await lateCookieProbe(page);
+        const probe: Awaited<ReturnType<typeof lateCookieProbe>> = await lateCookieProbe(page);
         await page.goto('/');
         await expectEntryScreen(page);
         probe.arm();

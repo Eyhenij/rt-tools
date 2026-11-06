@@ -10,6 +10,9 @@
  * client returns a person to both ports.
  */
 
+/** The late cookie probe of Keycloak: one helper for every suite, taken here like the seeding. */
+export { lateCookieProbe } from '../../../tools/keycloak-cookie-probe.mjs';
+
 /** Keycloak of the stand, raised by `pnpm run serve:auth`. */
 export const KEYCLOAK_ORIGIN = 'http://localhost:58080';
 

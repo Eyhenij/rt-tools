@@ -1,8 +1,7 @@
 import { BrowserContext, expect, Page, test } from '@playwright/test';
 
-import { ACCOUNT, STAND_PASSWORD } from '../stand/stand.mjs';
+import { ACCOUNT, lateCookieProbe, STAND_PASSWORD } from '../stand/stand.mjs';
 import { enterOnRealmScreen, expectRealmScreen, openSection, qa, SECTION, signIn } from './support/admin';
-import { ILateCookieProbe, lateCookieProbe } from './support/cookie-probe';
 
 /**
  * Вход в админку и адреса разделов.
@@ -38,7 +37,7 @@ test.describe('вход и адреса разделов', () => {
 
     test('SC-AUTH-97 — возврат с формы входа не ждёт пробы куки Keycloak', async ({ page }: { page: Page }) => {
         // Проба, ответившая позже предела тихой проверки, обрезала обмен кода и снова вела на форму
-        const probe: ILateCookieProbe = await lateCookieProbe(page);
+        const probe: Awaited<ReturnType<typeof lateCookieProbe>> = await lateCookieProbe(page);
         await page.goto(SECTION.postmortems.path);
         await expectRealmScreen(page);
         probe.arm();

@@ -24,6 +24,9 @@
  * живут в разных процессах, но окружение у них общее, и оба читают одно и то же.
  */
 
+/** Поздняя проба куки Keycloak: один помощник на все наборы, берётся отсюда, как и засев людей. */
+export { lateCookieProbe } from '../../../tools/keycloak-cookie-probe.mjs';
+
 /** Целое из окружения. Пусто, не число или не положительное — умолчание. */
 function intFromEnv(name, fallback) {
     const raw = Number(process.env[name]);
