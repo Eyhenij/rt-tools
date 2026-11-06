@@ -27,10 +27,10 @@ whole.
 - **An exception is declared with a reason and next to the set.** — `tools/check-push-gate.mjs:pipelineSteps`
 - **A tree without a pipeline file gets no audit.** — `tools/check-push-gate.mjs:pipelineSteps`
 - **The completeness check itself stands in the gate set.** — `.claude/rt-kit/project.sh:rt_push_checks`
-- **Switching a branch in the same command refuses the push whole.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:checkout`
+- **Switching a branch in the same command refuses the push whole.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:switched` — the parse gives the line `switch`, and the guard refuses it before a real push
 - **Several pushes in one command, or a push inside a loop, refuse the command whole.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:pushes` — scenario SC-AK-1204
 - **A heavy step of the set is picked by the composition of the edit.** — `projects/agent-kit/assets/defaults/push.sh:rt_push_docs_only_default`
-- **A postponed edit does not count as a push.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:probe`
+- **A postponed edit does not count as a push.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:push_calls` — the subcommand of `git stash push` is `stash`
 - **The verb of a command is looked for in its position, not as a substring across the whole line.** — `projects/agent-kit/assets/hooks/git-guard-main.sh:verbs` — scenario SC-AK-832
 - **Creating a branch is recognised with a flag between the verb and `-b` too.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:branch_arg` — the same sample stands in the guards of the request conflict, of the push set, of waiting and in the watchman of the turn exits; scenario SC-AK-872
 - **The push gate writes an observation line for every outcome of its own.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:rt_push_gate_note` — scenario SC-AK-835

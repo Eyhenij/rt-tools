@@ -209,7 +209,8 @@ When the command comes to the push gate guard
 Then it is refused whole, and the refusal names the lawful move: first switch, then push by a
 separate command — the gate set is run by the former branch, not by the one going to the hosting
 
-Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`,
+`projects/agent-kit/tests/push-sign.test.sh`.
 
 ### SC-AK-1204 — several pushes in one command are refused
 
@@ -225,11 +226,12 @@ Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
 ### SC-AK-406 — creating a new branch in the same command refuses no push
 
-Given one command holds the creation of a new branch and a push to it
+Given one command holds the creation of a new branch from the current tip and a push to it
 When the command comes to the push gate guard
 Then it passes: for a fresh branch the tree is the same as it was, and the set is run by it
 
-Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`,
+`projects/agent-kit/tests/push-sign.test.sh`.
 
 ### SC-AK-407 — a dry push judges no shape of the command
 
@@ -488,12 +490,3 @@ the last word
 Then it reads the body from the file and stays silent about the section; a file without it refuses
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
-
-### SC-AK-1166 — the push gate names every red light check by one refusal
-
-Given the gate set holds two red light checks, a green one between them and a heavy one after them
-When the guard judges the push
-Then the refusal names both red lines and the tail of each output. The green one is not named. The
-heavy one is not started and is named as held
-
-Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
