@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: Stop
-# Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh, hooks/turn-exit-epic.sh
+# Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh, hooks/turn-exit-epic.sh, hooks/turn-exit-role.sh
 # Turn exit guard: a turn in which nothing was done on the work does not end until the work is
 # handed over. Stop.
 #
@@ -24,6 +24,7 @@
 #   4. A guard refusal — it ends the turn by the rule.
 #   5. The session handover is written — the window has run out.
 #   6. The owner said to stop.
+#   7. The session runs as a role with no edit tool: its report is its work, `turn-exit-role.sh`.
 #
 # Under an open epic the second and the fifth do not release, and a second pass is judged again:
 # until the epic is closed the executor does not stop on its own. The tiers lie in `turn-exit-epic.sh`.
@@ -86,6 +87,7 @@ git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 
 root="$(git rev-parse --show-toplevel 2>/dev/null)"
 [ -z "$root" ] && exit 0
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/turn-exit-role.sh" 2>/dev/null && rt_te_read_only_role && exit 0
 
 # The tiers of the open epic lie in a neighbouring file. A second pass over the same turn is judged
 # only under an open epic: outside it the guard has said its piece once and lets go.
