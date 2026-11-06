@@ -51,6 +51,8 @@ export class RtKcInfoComponent {
             return { href: this.#context.client.baseUrl, label: backLinkText(this.#i18n.msgStr('backToApplication')) };
         }
 
-        return null;
+        // The confirmed address names neither the application nor a next step: without this the
+        // page ends the entry with nowhere to go.
+        return { href: this.#context.url.loginUrl, label: backLinkText(this.#i18n.msgStr('backToLogin')) };
     }
 }

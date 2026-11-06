@@ -1,6 +1,6 @@
 # The entry screens of the module
 
-**Status:** in force · **Revision:** 2026-10-31 · **Scenario prefix:** `SC-AUTH`
+**Status:** in force · **Revision:** 2026-11-06 · **Scenario prefix:** `SC-AUTH`
 **Depends on:** none
 **Laws:** `reuse-first`, `verifiability`
 **Procedures:** none
@@ -56,12 +56,27 @@ the entry is not sure the page belongs to the admin.
   card is no longer an empty plane.
 - **The card is glass: a semi-transparent background with a blur of what lies behind it.** The dots
   show through its edge softly and do not cross the text.
-- **The language list and the theme switch stand in the first row of the card, on its right edge.**
-  They do not hang in the corner of the window over the dots.
+- **On a wide screen the language list and the theme switch stand in the top right corner of the window, on a glass pad of their own.**
+  The pad repeats the card glass with a thinner ground, so the list does not merge with the page.
+  The owner asked for it on the mockup.
+- **On a narrow screen the language list and the theme switch stand in the first row of the card, on its right edge.**
+  The corner of the window is the corner of the card there.
+- **The language list keeps one width for every language.** The switches do not jump on a change.
+- **Every language in the list is named by its own name in itself, with a capital letter.**
+  Keycloak names some by its message in lower case and some by the tag alone.
+- **The links between the entry pages carry the language of the page.** The person keeps the
+  language they chose from the sign-in to the registration, the reset and back.
 - **A link back to the sign-in or to the application is plain text without a chevron.** Keycloak
   starts these two messages with «, and the theme drops it.
 - **A link forward to the next step is plain text without a chevron.** Keycloak starts it with »,
   and the theme drops it the same way.
+- **A message page that names neither the application nor a next step leads back to the sign-in.**
+  Without it the page that confirms the address ends the entry with nowhere to go. A page Keycloak
+  tells to skip the link draws none.
+- **The text of a page stands on the axis of the card, in balanced lines.** An address at the end
+  of a sentence moves to the next line whole and breaks only when it does not fit the card.
+- **The reCAPTCHA widget stands without the frame Google draws around it.** The frame lies in the
+  frame of Google, and the slot cuts its pixel off.
 - **A page the theme does not draw starts the standard layout in a root of its own.** The page markup
   holds only the theme root, and without its own root the standard layout leaves the page empty.
 - **Under the new password and its confirmation the page lists every requirement of the realm password policy.**
@@ -196,3 +211,6 @@ None.
 - 2026-10-30 — the widget on a Keycloak without the visibility sign, a ticked widget through a theme
   switch, the wait for the script ended, task RT-3013.
 - 2026-10-31 — a script loaded without its API ends the wait, task RT-3025.
+- 2026-11-06 — the switches in the corner of a wide window, the language names and the language on
+  the links, the way on from a message page, the page text on the axis, the widget without its
+  frame, task RT-3125.

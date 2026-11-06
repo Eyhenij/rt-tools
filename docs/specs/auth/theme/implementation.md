@@ -17,9 +17,16 @@ without a line and a line without a rule is a divergence.
 - **The card of a page has an outline and a shadow.** — `projects/auth-keycloak-theme/src/styles.scss:login__card`
 - **Behind the card the kit's dot field drifts over a soft radial gradient.** — `projects/auth-keycloak-theme/src/login/shell/rt-kc-root.component.html:rt-dot-field`. The gradient stands at `projects/auth-keycloak-theme/src/styles.scss:radial-gradient`
 - **The card is glass: a semi-transparent background with a blur of what lies behind it.** — `projects/auth-keycloak-theme/src/styles.scss:backdrop-filter`
-- **The language list and the theme switch stand in the first row of the card, on its right edge.** — `projects/auth-keycloak-theme/src/login/shell/rt-kc-root.component.html:kc-chrome`. The pinning of the kit is cancelled at `projects/auth-keycloak-theme/src/styles.scss:login__chrome`
+- **On a wide screen the language list and the theme switch stand in the top right corner of the window, on a glass pad of their own.** — `projects/auth-keycloak-theme/src/styles.scss:login__chrome`. The block stands beside the card at `projects/auth-keycloak-theme/src/login/shell/rt-kc-root.component.html:kc-chrome`
+- **On a narrow screen the language list and the theme switch stand in the first row of the card, on its right edge.** — `projects/auth-keycloak-theme/src/styles.scss:grid-area`
+- **The language list keeps one width for every language.** — `projects/auth-keycloak-theme/src/styles.scss:login__locales`
+- **Every language in the list is named by its own name in itself, with a capital letter.** — `projects/auth-keycloak-theme/src/login/kc-language-name.ts:languageNameOf`, called at `projects/auth-keycloak-theme/src/login/shell/rt-kc-root.component.ts:languageNameOf`
+- **The links between the entry pages carry the language of the page.** — `projects/auth-keycloak-theme/src/login/kc-locale-links.ts:withLocaleLinks`, called at `projects/auth-keycloak-theme/src/login/kc-app.config.ts:withLocaleLinks`
 - **A link back to the sign-in or to the application is plain text without a chevron.** — `projects/auth-keycloak-theme/src/login/kc-i18n.ts:backLinkText`
 - **A link forward to the next step is plain text without a chevron.** — `projects/auth-keycloak-theme/src/login/kc-i18n.ts:backLinkText`. The link stands at `projects/auth-keycloak-theme/src/login/pages/info/rt-kc-info.component.ts:proceedWithAction`
+- **A message page that names neither the application nor a next step leads back to the sign-in.** — `projects/auth-keycloak-theme/src/login/pages/info/rt-kc-info.component.ts:backToLogin`
+- **The text of a page stands on the axis of the card, in balanced lines.** — `projects/auth-keycloak-theme/src/styles.scss:text-wrap`
+- **The reCAPTCHA widget stands without the frame Google draws around it.** — `projects/auth-keycloak-theme/src/styles.scss:clip-path`
 - **A page the theme does not draw starts the standard layout in a root of its own.** — `projects/auth-keycloak-theme/src/login/kc-standard-root.ts:placeStandardRoot`
 - **Under the new password and its confirmation the page lists every requirement of the realm password policy.** — `projects/auth-keycloak-theme/src/login/kc-password-rules.ts:passwordRulesOf`. The list stands at `projects/auth-keycloak-theme/src/login/pages/update-password/rt-kc-update-password.component.html:kc-password-rules`
 - **A requirement the typed password meets is marked as met while the person types.** — `projects/auth-keycloak-theme/src/login/kc-password-rules.ts:passwordRuleMet`

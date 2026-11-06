@@ -14,6 +14,7 @@ import { provideRtIcons, provideRtKit, provideRtKitLabels, ThemeService } from '
 import { KC_CONTEXT, KC_PAGE, TKcContext } from './kc-context';
 import { KC_MESSAGES, plainMessages, TKcMessages } from './kc-i18n';
 import { kitTranslatorFor } from './kc-kit-labels';
+import { withLocaleLinks } from './kc-locale-links';
 
 /**
  * The application of one theme page. Keycloak serves the build under the resources address of the
@@ -37,7 +38,7 @@ export function themeAppConfig(context: TKcContext, i18n: TKcMessages, page: Typ
             provideAppInitializer((): void => {
                 inject(ThemeService);
             }),
-            { provide: KC_CONTEXT, useValue: context },
+            { provide: KC_CONTEXT, useValue: withLocaleLinks(context, languageTag) },
             { provide: KC_MESSAGES, useValue: plainMessages(i18n) },
             { provide: KC_PAGE, useValue: page },
         ],

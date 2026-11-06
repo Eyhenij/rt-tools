@@ -108,11 +108,32 @@ When it is open
 Then the card background is semi-transparent with a blur behind it, the viewport carries a radial
 gradient, and the dot field canvas is drawn and lies under the card
 
-### SC-AUTH-64 — the language list and the theme switch stand inside the card
+### SC-AUTH-64 — the language list and the theme switch stand beside the card, not inside its glass
 
 Given any theme page
 When it is drawn
-Then the block with the language list and the theme switch is a child of the card
+Then the block with the language list and the theme switch is a sibling of the card in the viewport
+
+### SC-AUTH-97 — every language is named by its own name with a capital letter
+
+Given a realm whose languages Keycloak names in different forms or by the tag alone
+When the language list is built
+Then each language is named in itself with a capital letter, and a tag the browser does not know
+keeps the Keycloak name
+
+### SC-AUTH-98 — the links between the entry pages carry the language of the page
+
+Given a page drawn in a language
+When the theme reads the addresses of the sign-in, the registration, the reset and the restart
+Then each of them carries `kc_locale` with that language, and the form address stays as it is
+
+### SC-AUTH-99 — a message page without a next step leads to the sign-in
+
+Given a message page that names neither the application nor a next step and is not told to skip
+the link
+When it is drawn
+Then it shows a button back to the sign-in; a page with a next step keeps it, and a page told to
+skip the link draws none
 
 ### SC-AUTH-65 — a link back is plain text without a chevron
 
