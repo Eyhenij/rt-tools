@@ -17,7 +17,10 @@
   `rt-tools-RT-3125.md`). `check:specs` passed; the theme is 0.3.0 (0.2.1 was never released).
   Build the JAR with `JAVA_HOME=/opt/homebrew/opt/openjdk`.
 - **Uncommitted:** nothing.
-- **Waiting for the owner:** no
+- **Waiting for the owner:** «я должен был сначала апрувнуть правки на макетах» and «доделай что
+  осталось потом ко мне» — items 15 and 20 are finished; nothing is pushed until the owner
+  approves the before/after comparison (0.2.0 against the branch JAR, served from the scratchpad
+  on 127.0.0.1:58200).
 - **PR:** not open yet
 
 ## Steps
@@ -66,6 +69,15 @@
   «account updated» with `skipLink: true`, which the theme respects. The fallback to the sign-in is
   covered by SC-AUTH-99 and the info layout with its button measured on «Email address validation».
   Affected stage: 2.
+- **The edits went into code before the owner approved them on mockups.** Only item 17 had a
+  mockup. The comparison shown afterwards found two items open: 15 — only Google's outer 1 px line
+  is cut, the widget's own grey frame and shadow stay; 20 — a long address still breaks at its
+  hyphen at 1440. The owner: «рамку капчи вино на темной теме, доделай что осталось потом ко мне».
+  Done: the slot cuts 2 px (the frame with its outer line) — the light line is gone on the dark
+  theme; the address stands as two inline blocks, its name with `@` and its domain
+  (`kc-address-text.ts`, SC-AUTH-101), so it breaks only after the `@`. The comparison page also
+  shows the realm logo from the realm HTML display name: the owner asked why only the realm name
+  shows. Affected stages: 1, 4.
 - **The stand is a Keycloak of my own**, container `rt3125-keycloak` on 58180 with `rt3125-mailpit`
   on 58125, both removed. The rt-auth stand was up under another session with another JAR and was
   not touched. Affected stage: 2.
@@ -81,3 +93,36 @@
   clip off at 3× zoom); validation page text centred, address whole on its own line at 375, bottom
   padding 65 as on the login form. Keycloak default CSP blocks the Google frame — the stand realm
   needed `frame-src https://www.google.com`.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools/.claude/worktrees/RT-3125
+**Branch:** RT-3125-auth-theme-remarks
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 4 of 4 — Delivery
+- **Next step:** session handover at window fill 46 %. In a new session in the worktree
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-3125-auth-theme-remarks/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+none
+```
+
+### Commits over the main branch
+
+```
+d86e26498 docs: передача RT-3125 на границе окна
+4ba00737f chore(rt:auth): тема входа 0.3.0
+a1f33ce88 fix(rt:auth): семь замечаний к экранам входа и регистрации темы
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

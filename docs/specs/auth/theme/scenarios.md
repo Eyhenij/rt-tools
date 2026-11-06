@@ -135,6 +135,13 @@ When it is drawn
 Then it shows a button back to the sign-in; a page with a next step keeps it, and a page told to
 skip the link draws none
 
+### SC-AUTH-101 — an address in a page text breaks only at its `@`
+
+Given a page sentence that names the address of the person
+When the page draws it
+Then the address stands as its name with the `@` and its domain, the text around it as it was; a
+sentence that does not name the address stays whole
+
 ### SC-AUTH-65 — a link back is plain text without a chevron
 
 Given the reset page

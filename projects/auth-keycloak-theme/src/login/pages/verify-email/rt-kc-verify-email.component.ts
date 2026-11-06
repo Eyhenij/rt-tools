@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
+import { addressTextOf, IAddressText } from '../../kc-address-text';
 import { KC_CONTEXT, TKcPageContext } from '../../kc-context';
 import { KC_MESSAGES, TKcMessages } from '../../kc-i18n';
 import { RtKcMessageComponent } from '../../message/rt-kc-message.component';
@@ -22,7 +23,10 @@ export class RtKcVerifyEmailComponent {
 
     protected readonly context: TVerifyContext = inject(KC_CONTEXT) as TVerifyContext;
     protected readonly title: string = this.#i18n.msgStr('emailVerifyTitle');
-    protected readonly sent: string = this.#i18n.msgStr('emailVerifyInstruction1', this.context.user?.email ?? '');
+    protected readonly sent: IAddressText = addressTextOf(
+        this.#i18n.msgStr('emailVerifyInstruction1', this.context.user?.email ?? ''),
+        this.context.user?.email ?? ''
+    );
     protected readonly resend: string = this.#i18n.msgStr('emailVerifyInstruction2');
     protected readonly resendLink: string = this.#i18n.msgStr('doClickHere');
     protected readonly resendTail: string = this.#i18n.msgStr('emailVerifyInstruction3');

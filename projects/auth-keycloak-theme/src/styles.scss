@@ -126,6 +126,14 @@ body {
     text-wrap: balance;
 }
 
+/* A piece of an address moves to the next line whole: a browser would break it at a hyphen. Longer
+   than the card, it still breaks inside. */
+.login__address {
+    display: inline-block;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
 .login__check {
     display: flex;
     align-items: center;
@@ -203,10 +211,10 @@ body {
     min-height: var(--rt-kc-captcha-height);
     margin-bottom: calc(var(--rt-kc-captcha-height) * (var(--rt-kc-captcha-scale) - 1));
 
-    /* Google draws a one pixel frame around the widget inside its own frame of the page, where no
-       style of the theme reaches. The slot cuts that pixel off on every side, with the rounding of
-       the widget corner. */
-    clip-path: inset(1px round 2px);
+    /* Google draws a frame around the widget inside its own frame of the page, where no style of the
+       theme reaches; with its outer line it takes two pixels, and the light line shows on the dark
+       theme. The slot cuts both off on every side, with the rounding of the widget corner. */
+    clip-path: inset(2px round 3px);
     scale: var(--rt-kc-captcha-scale);
     transform-origin: center top;
 }

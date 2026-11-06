@@ -73,10 +73,12 @@ the entry is not sure the page belongs to the admin.
 - **A message page that names neither the application nor a next step leads back to the sign-in.**
   Without it the page that confirms the address ends the entry with nowhere to go. A page Keycloak
   tells to skip the link draws none.
-- **The text of a page stands on the axis of the card, in balanced lines.** An address at the end
-  of a sentence moves to the next line whole and breaks only when it does not fit the card.
+- **The text of a page stands on the axis of the card, in balanced lines.**
+- **An address in a page text breaks only at its `@`.** Its name with the `@` and its domain each
+  move to the next line whole, and a piece longer than the card breaks inside; a browser would
+  otherwise break it at a hyphen of the domain.
 - **The reCAPTCHA widget stands without the frame Google draws around it.** The frame lies in the
-  frame of Google, and the slot cuts its pixel off.
+  frame of Google, takes two pixels with its outer line, and the slot cuts both off in either theme.
 - **A page the theme does not draw starts the standard layout in a root of its own.** The page markup
   holds only the theme root, and without its own root the standard layout leaves the page empty.
 - **Under the new password and its confirmation the page lists every requirement of the realm password policy.**
