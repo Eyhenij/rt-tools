@@ -48,10 +48,9 @@ nothing.
 
 ## The intake
 
-`apps/message-bus` and `apps/message-bus-admin`.
+`apps/message-bus` and `apps/message-bus-admin`. Set by the owner on 6 November 2026.
 
-- **Mission:** the owner of the rules sees what really goes wrong in each project, and every report
-  gets an answer about what became of it.
+- **Mission:** collect the feedback from the applications that consume the rules package.
 - **It is not:** a general message bus, or the chat service.
 
 ## The entry module
