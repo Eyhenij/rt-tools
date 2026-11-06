@@ -285,6 +285,9 @@ RT_PULL_BODY_SECTION="${RT_PULL_BODY_SECTION:-}"
 # The section with the table of points, judged the same way: named by the tree, silent otherwise.
 RT_PULL_POINTS_SECTION="${RT_PULL_POINTS_SECTION:-}"
 
+# The section with the table of the critic, judged the same way.
+RT_PULL_GOAL_SECTION="${RT_PULL_GOAL_SECTION:-}"
+
 # The PR body line closing the branch's task (`{number}`); the keyword is the hosting's, so silent.
 RT_PULL_CLOSES_LINE="${RT_PULL_CLOSES_LINE:-}"
 

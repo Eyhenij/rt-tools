@@ -8,6 +8,7 @@ export const meta = {
         { title: 'Agreement', detail: 'the feature spec in proposed/ from the grill' },
         { title: 'Critique', detail: 'what is left unsaid in the agreement' },
         { title: 'Plan', detail: 'stages with readiness signs and the split into tasks' },
+        { title: 'Goal', detail: 'the critic compares the plan with the owner\'s words' },
     ],
 };
 
@@ -201,6 +202,20 @@ const plan = await agent(
 );
 log(`Plan: tasks: ${plan.tasks.length}, stages: ${plan.steps.length}`);
 
+phase('Goal');
+// A role a session has not registered costs this phase, not the plan above it.
+let goal = null;
+try {
+    goal = await agent(
+        `The owner's words are the quoted request in \`${grill}\`; read that section only.\n\n` +
+            `The plan under review:\n${JSON.stringify(plan, null, 1)}\n\n` +
+            `This is the plan mode. Try to prove the plan does not lead to what the owner asked for.`,
+        { agentType: 'goal-critic', label: 'goal', phase: 'Goal' }
+    );
+} catch (error) {
+    log(`Goal: the role did not run: ${error.message}`);
+}
+
 // Nothing is written to disk from here: the plan and the gaps go to the owner, and `plan.md`
 // is written by the main agent — only it asks the owner questions.
-return { worth, points, draft, critique: critique.findings, plan };
+return { worth, points, draft, critique: critique.findings, plan, goal };

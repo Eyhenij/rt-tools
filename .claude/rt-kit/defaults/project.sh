@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · defaults/project.sh · 64cb313c0cee · правится надстройкой, не здесь
+# rt-kit v0.33.1 · defaults/project.sh · ee7b3862d78a · правится надстройкой, не здесь
 # Tree profile: what checks an edit here and what counts as reinvention.
 #
 # The package default. Everything the trees of this workshop have in common lives here: the Nx
@@ -285,6 +285,9 @@ RT_PULL_BODY_SECTION="${RT_PULL_BODY_SECTION:-}"
 
 # The section with the table of points, judged the same way: named by the tree, silent otherwise.
 RT_PULL_POINTS_SECTION="${RT_PULL_POINTS_SECTION:-}"
+
+# The section with the table of the critic, judged the same way.
+RT_PULL_GOAL_SECTION="${RT_PULL_GOAL_SECTION:-}"
 
 # The PR body line closing the branch's task (`{number}`); the keyword is the hosting's, so silent.
 RT_PULL_CLOSES_LINE="${RT_PULL_CLOSES_LINE:-}"

@@ -1,4 +1,4 @@
-// rt-kit v0.33.1 · workflows/feature.js · 7bc66b0e78ee · правится надстройкой, не здесь
+// rt-kit v0.33.1 · workflows/feature.js · 730176f8cf45 · правится надстройкой, не здесь
 export const meta = {
     name: 'feature',
     description: 'A plan from the PM, implementation step by step, a fan of QA checks and acceptance against the original request',
@@ -9,6 +9,7 @@ export const meta = {
         { title: 'Check', detail: 'QA as a fan: tests, build, browser, adversarial review' },
         { title: 'Acceptance', detail: 'the PM checks what was done against the original request' },
         { title: 'Points', detail: 'the signs of the points are run, and the miss is proved or refuted' },
+        { title: 'Goal', detail: 'the critic compares the result with the original request' },
     ],
 };
 
@@ -147,4 +148,21 @@ try {
     log(`Points: the role did not run: ${error.message}`);
 }
 
-return { plan, done, findings, blockers, verdict, points };
+phase('Goal');
+// The critic gets the request and nothing the pipeline wrote about the work: that is its whole value.
+let goal = null;
+try {
+    // Only the grill holds a quote. The task string is the session's wording, and the critic is told so.
+    const words = args?.grill
+        ? `The owner's words are the quoted request in \`${args.grill}\`; read that section only.`
+        : `No quote of the owner was passed. The session worded the task as follows:\n\n${task}`;
+    goal = await agent(
+        `${words}\n\nThis is the result mode. The result is the working tree and its diff against the base ` +
+            `branch. Try to prove the goal is not met.`,
+        { agentType: 'goal-critic', label: 'goal', phase: 'Goal' }
+    );
+} catch (error) {
+    log(`Goal: the role did not run: ${error.message}`);
+}
+
+return { plan, done, findings, blockers, verdict, points, goal };

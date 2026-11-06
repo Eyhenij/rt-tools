@@ -146,8 +146,8 @@ Workflow(name: "plan", args: "docs/tasks/_draft-<slug>")
 ```
 
 Need → the points (`product-strategist`) → the product agreement (`spec-writer`) → its adversarial
-review (`spec-critic`) → the plan and the breakdown (`project-manager`). Gaps the roles could not
-close return to the owner — the main agent carries them, and the misses of the route with them.
+review (`spec-critic`) → the plan and the breakdown (`project-manager`) → `goal-critic`. Gaps the
+roles could not close return to the owner — the main agent carries them, and the route's misses.
 
 The agreement that came out of the pipeline is checked against `grill.md` line by line before work
 by it. The role writes the text without seeing the owner and can turn their answer into its

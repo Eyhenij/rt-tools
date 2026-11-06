@@ -494,6 +494,6 @@ Covered: `projects/agent-kit/tests/git-guards.test.sh`.
 
 Given the tree named the sample of the section, and the body of the request does not carry it
 When a call to open a request goes
-Then the guard refuses it and names the role; with the heading or with no sample it stays silent
+Then the guard refuses it and names the role, for the points and for the critic alike; with the heading or with no sample it stays silent
 
 Covered: `projects/agent-kit/tests/delivery-points-section.test.sh`.

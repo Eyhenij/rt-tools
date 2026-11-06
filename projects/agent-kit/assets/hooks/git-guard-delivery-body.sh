@@ -15,7 +15,9 @@ rt_delivery_pull_body() {
     # without a body is checked by the guard elsewhere. The flag is recognised only as a separate
     # word: the tail `-b` of a branch name in the base argument read as the body flag, and the next
     # word of the command became the body.
-    [ -z "$pull_body_section" ] && [ -z "$pull_points_section" ] && [ -z "$pull_closes_line" ] && return 0
+    local pull_goal_section="${RT_PULL_GOAL_SECTION:-}"
+    [ -z "$pull_body_section" ] && [ -z "$pull_points_section" ] && [ -z "$pull_goal_section" ] \
+        && [ -z "$pull_closes_line" ] && return 0
     command -v perl >/dev/null 2>&1 || return 0
 
     local body body_file closes
@@ -42,6 +44,11 @@ rt_delivery_pull_body() {
     # the merge. The guard sees the heading, not whether the signs were run.
     if [ -n "$pull_points_section" ] && ! printf '%s' "$body" | grep -qE "$pull_points_section"; then
         fault "the body of the request carries no section with the table of points. The owner decides on the request page whether the work reached its point. Run the role product-strategist and put its table of points into the body; a sign not run is written as not run."
+    fi
+
+    # The table of the critic: the session's own points prove nothing about what the owner asked for.
+    if [ -n "$pull_goal_section" ] && ! printf '%s' "$body" | grep -qE "$pull_goal_section"; then
+        fault "the body of the request carries no section with the table of the critic. Give the role goal-critic the owner's words verbatim and the result, and put its table into the body word for word."
     fi
 
     # The line that closes the task. Without it the merged task stays open on the board, and the
