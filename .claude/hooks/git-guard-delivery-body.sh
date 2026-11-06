@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/git-guard-delivery-body.sh · f5d9c4666927 · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/git-guard-delivery-body.sh · 99fac57dd529 · правится надстройкой, не здесь
 # The body of a PR being opened, for the delivery guard: the section about the remaining step, the
 # table of points and the line that closes the task.
 #
@@ -48,8 +48,17 @@ rt_delivery_pull_body() {
     fi
 
     # The table of the critic: the session's own points prove nothing about what the owner asked for.
-    if [ -n "$pull_goal_section" ] && ! printf '%s' "$body" | grep -qE "$pull_goal_section"; then
-        fault "the body of the request carries no section with the table of the critic. Give the role goal-critic the owner's words verbatim and the result, and put its table into the body word for word."
+    # A heading alone is not a table: a header, a divider and one row make three lines.
+    if [ -n "$pull_goal_section" ]; then
+        local goal_rows
+        goal_rows="$(printf '%s\n' "$body" | awk -v head="$pull_goal_section" '
+            $0 ~ head { inside = 1; next }
+            /^## / { inside = 0 }
+            inside && /^\|/ { rows++ }
+            END { print rows + 0 }
+        ')"
+        [ "$goal_rows" -ge 3 ] \
+            || fault "the body of the request carries no section with the table of the critic. Give the role goal-critic the owner's words verbatim and the result, and put its table into the body word for word."
     fi
 
     # The line that closes the task. Without it the merged task stays open on the board, and the
