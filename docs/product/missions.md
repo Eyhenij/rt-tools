@@ -56,10 +56,11 @@ nothing.
 
 ## The entry module
 
-The `@rt-tools/auth-*` packages and `apps/auth-example-admin`.
+The `@rt-tools/auth-*` packages and `apps/auth-example-admin`. Accepted by the owner on 6 November 2026.
 
-- **Mission:** a person signs in safely and the same way in every application, and a new application
-  has working sign-in and rights from its first day.
+- **Mission:** sign-in and rights live outside the applications, in one place. A person signs in
+  safely and the same way everywhere, access is managed in one place, and an application neither
+  keeps passwords nor writes its own sign-in.
 - **It is not:** a directory of organisations, or a base for custom Keycloak extensions.
 
 ## The CMS
