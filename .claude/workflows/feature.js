@@ -1,4 +1,4 @@
-// rt-kit v0.33.1 · workflows/feature.js · 730176f8cf45 · правится надстройкой, не здесь
+// rt-kit v0.33.1 · workflows/feature.js · 508cb9febc22 · правится надстройкой, не здесь
 export const meta = {
     name: 'feature',
     description: 'A plan from the PM, implementation step by step, a fan of QA checks and acceptance against the original request',
@@ -13,10 +13,11 @@ export const meta = {
     ],
 };
 
-// The task arrives as a string in args; without it the scenario is meaningless.
-const task = typeof args === 'string' ? args : (args?.task ?? '');
-if (!task) {
-    throw new Error('A task is needed: pass it as a string in args');
+// The grill is required alongside the task: without the owner's words the Goal phase has nothing to
+// compare the result with, and a string call would spend the whole run to learn that at the end.
+const task = args?.task ?? '';
+if (!task || !args?.grill) {
+    throw new Error('A task and the grill are needed: pass { task, grill } in args');
 }
 
 const PLAN = {
@@ -152,12 +153,10 @@ phase('Goal');
 // The critic gets the request and nothing the pipeline wrote about the work: that is its whole value.
 let goal = null;
 try {
-    // Only the grill holds a quote. The task string is the session's wording, and the critic is told so.
-    const words = args?.grill
-        ? `The owner's words are the quoted request in \`${args.grill}\`; read that section only.`
-        : `No quote of the owner was passed. The session worded the task as follows:\n\n${task}`;
+    // Only the grill holds a quote: the task string is the session's wording.
     goal = await agent(
-        `${words}\n\nThis is the result mode. The result is the working tree and its diff against the base ` +
+        `The owner's words are the quoted request in \`${args.grill}\`; read that section only.\n\n` +
+            `This is the result mode. The result is the working tree and its diff against the base ` +
             `branch. Try to prove the goal is not met.`,
         { agentType: 'goal-critic', label: 'goal', phase: 'Goal' }
     );
