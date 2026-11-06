@@ -1,3 +1,35 @@
+## [0.39.2](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.39.1...rt-ui-kit-v2%400.39.2) (2026-11-06)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** витрина RT-2907 принята, история в слое кита, тень названа общей для набора ([c03afee](https://github.com/Eyhenij/rt-tools/commit/c03afeeb9b33593d641b09ed16d03d4fd69c3fb7))
+- **rt:ui-kit-v2:** замечания ревью Copilot по таблице ([f216723](https://github.com/Eyhenij/rt-tools/commit/f216723a5b12ff8f608e04702fe314906e0e48f4))
+- **rt:ui-kit-v2:** замечания ревью по закреплённой колонке ([06ea6f4](https://github.com/Eyhenij/rt-tools/commit/06ea6f42accf8c9393c7fec733ac029f64635806))
+- **rt:ui-kit-v2:** значение rt-detail-row сохраняет переносы из текста ([b70704e](https://github.com/Eyhenij/rt-tools/commit/b70704eeb4a8a88c67f61907738a550a6314f682))
+- **rt:ui-kit-v2:** панели даты и периода в шторке держат боковой отступ 20px ([3c33a5c](https://github.com/Eyhenij/rt-tools/commit/3c33a5c69fd2ea94ff9a7a12f3c68b0fb7827cd8))
+- **rt:ui-kit-v2:** строка rt-table высотой 50 вместе с отступами, как в макете ([7b8714d](https://github.com/Eyhenij/rt-tools/commit/7b8714d488caa55737a759f5a5a3d3b50c80b132))
+- **rt:ui-kit-v2:** тень закреплённой колонки видна во всех строках истории ([f4d11de](https://github.com/Eyhenij/rt-tools/commit/f4d11deaf72a1067684c06c703f614243ad4ecdd))
+- **rt:ui-kit-v2:** ячейки сеток месяцев и годов по ячейке периода макета ([42deb65](https://github.com/Eyhenij/rt-tools/commit/42deb65dbeb2affff03df666a20f0d581b0a6aff))
+
+### Features
+
+- **rt:ui-kit-v2:** витрина плитки — обе темы и плитки в карточке ([36bb35d](https://github.com/Eyhenij/rt-tools/commit/36bb35d214b5ad01ed2803631ac614d74accd0b3))
+- **rt:ui-kit-v2:** витрина стрелок шага — история Stepper и описание поля ([3383eda](https://github.com/Eyhenij/rt-tools/commit/3383eda81879dd80afe53972d8ba2b806dc369c0))
+- **rt:ui-kit-v2:** закреплённая ячейка rt-table берёт фон строки и тень у края ([f66110f](https://github.com/Eyhenij/rt-tools/commit/f66110f9ee92118dc9d0d619d69e0c8f83758e95))
+- **rt:ui-kit-v2:** имя гостя в истории закреплённой колонки обрезается, как в макете ([cfc617b](https://github.com/Eyhenij/rt-tools/commit/cfc617bf6c557527fc5921aa3629e2a99e8a98a2))
+- **rt:ui-kit-v2:** история закреплённой колонки rt-table по кадрам макета ([40943a5](https://github.com/Eyhenij/rt-tools/commit/40943a58f11013e38c892db13666f4b19b2db5d0))
+- **rt:ui-kit-v2:** логика сетки годов панели даты ([f8410da](https://github.com/Eyhenij/rt-tools/commit/f8410dae65048f49f2fc6e81e57d9928f173d028))
+- **rt:ui-kit-v2:** мелкие стрелки шага в поле sm и обе стрелки одним значком ([073545c](https://github.com/Eyhenij/rt-tools/commit/073545c586f108f91c8ccf9ad6d3963b43394b44))
+- **rt:ui-kit-v2:** плитка показателя пишет разницу в пунктах и знает «рост хуже» ([b3a2d2d](https://github.com/Eyhenij/rt-tools/commit/b3a2d2dc7212d035c278c372dd43ff2885664364))
+- **rt:ui-kit-v2:** сетка годов в панели выбора даты ([ef970ba](https://github.com/Eyhenij/rt-tools/commit/ef970baf34726ee7d1de3981659e8ec4b4542fb7))
+- **rt:ui-kit-v2:** сетки месяцев и годов в панели выбора периода ([6c14b06](https://github.com/Eyhenij/rt-tools/commit/6c14b0615fafd7f1709aaf32c91d2f1fb4e66faa))
+- **rt:ui-kit-v2:** стрелки шага в поле числа ([308641a](https://github.com/Eyhenij/rt-tools/commit/308641a28e57ec1619a7a4af35aae89c2727a2f5))
+- **rt:ui-kit-v2:** строка итога в истории закреплённой колонки получает отступы ячейки ([c0c693f](https://github.com/Eyhenij/rt-tools/commit/c0c693ff48cc218921e3dfc227d69c4b037a7dd9))
+- **rt:ui-kit-v2:** текущий месяц обведён в сетке месяцев панели даты ([c8cb6b6](https://github.com/Eyhenij/rt-tools/commit/c8cb6b63def790387eaba1a8d0d2d6150c55813f))
+- **rt:ui-kit-v2:** тень закреплённой колонки гуще — 16% в светлой теме и 64% в тёмной ([daca7e8](https://github.com/Eyhenij/rt-tools/commit/daca7e8d02bce4fd915116c7f86af3b378eca862))
+- **rt:ui-kit-v2:** тень у края закреплённой колонки rt-table следует прокрутке ([272c7c3](https://github.com/Eyhenij/rt-tools/commit/272c7c3123f8f2ba967627b4ac271162021a8ad6))
+- **rt:ui-kit-v2:** ширины колонок в истории закреплённой колонки совпадают с макетом ([c480251](https://github.com/Eyhenij/rt-tools/commit/c480251fe2f016f49661b620376990221daa3d75))
+
 ## [0.39.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.39.0...rt-ui-kit-v2%400.39.1) (2026-11-02)
 
 ### Bug Fixes

@@ -3,6 +3,7 @@
 The first column is the rule verbatim, as it is written in the "Rules" section of the spec.
 
 - **The example admin opens only to a person who entered through Keycloak.** — `apps/auth-example-admin/src/app/example.routes.ts:EXAMPLE_ROUTES`
+- **The account row shows the name and the email of the person on two lines.** — `apps/auth-example-admin/src/app/records/records.logic.ts:accountLines`
 - **The list of records is shown to a reader, the form of a new record only to an editor.** — `apps/auth-example-admin/src/app/records/records.page.html:rtIfPermission`
 - **The example server refuses a call without the right with 403, whatever the screen shows.** — `apps/auth-example-api/src/app/records.controller.ts:RecordsController`
 - **A token near its end is refreshed without a new entry.** — `apps/auth-example-admin/src/app/example.config.ts:EXAMPLE_CONFIG`
