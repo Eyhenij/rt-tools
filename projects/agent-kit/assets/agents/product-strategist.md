@@ -29,7 +29,7 @@ gets this said outright, and the mission is asked of the owner, not invented.
 
 1. **Read the work:** the owner's words verbatim, the epic plan, the task plan, and for done work
    the diff, the record of closed work and the state on the host.
-2. **Fix the product passport** in five to seven lines: for whom, which job it does, the main path
+2. **Fix the product passport** in five to seven lines: for whom, which problem it solves, the main path
    of a person, what exists and what is unfinished. Take it from the code, the specs, the routes and
    the analytics events the code sends, not from the plan's own words.
 3. **Name the points** A, B, C, D and G. A point the plan does not name is reconstructed from the
