@@ -7,9 +7,15 @@
 - **Done:** all seven remarks in the code and checked on a stand of my own (Keycloak 26.8.1 — the
   version of the application); the spec rules, bindings and scenarios SC-AUTH-64, 97–99 rewritten;
   theme unit tests 61/61, lint and styles lint green. Stand and browser tab stopped.
-- **Next step:** 4.1 — the push gate set (`rt_push_checks` in `.claude/rt-kit/project.sh`), then
-  the folder into the archive, push, draft PR. `check:specs` passed; the theme is 0.3.0 (0.2.1 was
-  never released).
+- **Next step:** session handover at window fill 46 %. In a new session in the worktree
+  `.claude/worktrees/RT-3125`: take this folder apart into `docs/archive/RT-3125-auth-theme-remarks.md`
+  (the grill whole plus «Decisions along the way»; skills `doc-style`, `archive-record`), commit, then
+  push — the push set raises the auth stand and runs `auth-example-e2e` for this branch, and the
+  owner's standing word lets the gate raise and stop it; then the PR as a draft to the owner
+  (reviewer Eyhenij), then after the merge `publish-auth-keycloak-theme.yml` → 0.3.0, and the
+  version with the JAR sha256 goes to the requesting session (note in its shared folder
+  `rt-tools-RT-3125.md`). `check:specs` passed; the theme is 0.3.0 (0.2.1 was never released).
+  Build the JAR with `JAVA_HOME=/opt/homebrew/opt/openjdk`.
 - **Uncommitted:** nothing.
 - **Waiting for the owner:** no
 - **PR:** not open yet
