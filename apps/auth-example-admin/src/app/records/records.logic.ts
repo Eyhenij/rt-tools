@@ -16,6 +16,11 @@ export const REFUSAL_WORDS: Readonly<Record<'forbidden' | 'invalid' | 'unavailab
 const FORBIDDEN: number = 403;
 const BAD_REQUEST: number = 400;
 
+/** The value of the account row: the name and the email, each on a line of its own. */
+export function accountLines(name: string | null, email: string | null): string {
+    return [name, email].filter((line: string | null): line is string => !!line).join('\n');
+}
+
 /**
  * The line the page shows above the list for a refused call.
  *

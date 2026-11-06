@@ -36,6 +36,8 @@ between two packages shows only when they work together.
 
 - **The example admin opens only to a person who entered through Keycloak.** A person who is not
   signed in is sent to the entry screen of the realm.
+- **The account row shows the name and the email of the person on two lines.** A part the entry
+  did not give out is left out, and the row keeps one line.
 - **The list of records is shown to a reader, the form of a new record only to an editor.** A
   person without the right does not see the part, not a disabled one.
 - **The example server refuses a call without the right with 403, whatever the screen shows.** The
