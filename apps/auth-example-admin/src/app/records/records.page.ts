@@ -5,11 +5,11 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RtAuthService, RtIfPermissionDirective } from '@rt-tools/auth-angular';
 import { ICaller } from '@rt-tools/auth-contract';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { RtButtonDirective, RtEmptyStateComponent, RtInputComponent, RtMessageComponent } from '@rt-tools/ui-kit-v2';
+import { RtButtonDirective, RtDetailRowComponent, RtEmptyStateComponent, RtInputComponent, RtMessageComponent } from '@rt-tools/ui-kit-v2';
 import { catchError, concatMap, EMPTY, Observable, Subject, switchMap, tap } from 'rxjs';
 
 import { RecordsApiService } from './records-api.service';
-import { IRecordLine, refusalText } from './records.logic';
+import { accountLines, IRecordLine, refusalText } from './records.logic';
 
 const BEM_BLOCK: string = 'example-records';
 
@@ -36,6 +36,7 @@ const BEM_BLOCK: string = 'example-records';
         RtIfPermissionDirective,
 
         // components
+        RtDetailRowComponent,
         RtEmptyStateComponent,
         RtInputComponent,
         RtMessageComponent,
@@ -58,6 +59,10 @@ export class RecordsPage {
     protected readonly personName: Signal<string> = computed((): string => {
         const caller: ICaller | null = this.#auth.caller();
         return caller?.name ?? caller?.email ?? '';
+    });
+    protected readonly account: Signal<string> = computed((): string => {
+        const caller: ICaller | null = this.#auth.caller();
+        return accountLines(caller?.name ?? null, caller?.email ?? null);
     });
 
     constructor() {

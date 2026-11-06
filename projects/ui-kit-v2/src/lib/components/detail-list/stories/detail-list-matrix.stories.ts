@@ -21,6 +21,8 @@ export const Loading: TStory = { args: { part: 'loading' } };
 
 export const Value: TStory = { args: { part: 'value' } };
 
+export const Multiline: TStory = { args: { part: 'multiline' }, parameters: { snapshot: { fullPage: true } } };
+
 export const Length: TStory = { args: { part: 'length' } };
 
 export const Edges: TStory = { args: { part: 'edges' } };

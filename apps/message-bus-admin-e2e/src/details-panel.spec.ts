@@ -50,6 +50,8 @@ test.describe('панель подробностей', () => {
             await expect(qa(page, panelQa(panel.row, 'header'))).toBeVisible();
             await expect(qa(page, panel.row)).toBeVisible();
             await expect(detailValue(page, panel.row)).not.toHaveText('');
+            // значение кита сохраняет переносы из текста и переносит длинную строку по ширине
+            await expect(detailValue(page, panel.row)).toHaveCSS('white-space', 'pre-line');
 
             await expectScreen(page, `details-panel-${panel.section}`);
         });
