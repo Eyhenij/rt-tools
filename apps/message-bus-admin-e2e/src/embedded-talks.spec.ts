@@ -150,10 +150,17 @@ test.describe('встраиваемая страница переписок', ()
         const gapOf: () => Promise<number> = (): Promise<number> =>
             thread.evaluate((node: Element): number => node.scrollHeight - node.clientHeight - node.scrollTop);
 
-        await thread.evaluate((node: Element): void => {
-            node.scrollTop = 0;
-        });
-        await expect.poll(gapOf).toBeGreaterThan(0);
+        // Подтягивание к низу после реплики может опередить событие прокрутки и вернуть ленту вниз.
+        // Зазор читается в следующем кадре, после этого события: если он есть, уход вверх засчитан.
+        const gapAfterScrollUp: () => Promise<number> = (): Promise<number> =>
+            thread.evaluate(async (node: Element): Promise<number> => {
+                node.scrollTop = 0;
+                await new Promise<number>((resolve: FrameRequestCallback): number => requestAnimationFrame(resolve));
+
+                return node.scrollHeight - node.clientHeight - node.scrollTop;
+            });
+
+        await expect.poll(gapAfterScrollUp).toBeGreaterThan(0);
 
         await reply('Реплика из истории', before + FEED_FILLERS + 1);
 
