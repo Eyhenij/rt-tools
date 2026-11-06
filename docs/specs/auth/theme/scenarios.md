@@ -114,7 +114,7 @@ Given any theme page
 When it is drawn
 Then the block with the language list and the theme switch is a sibling of the card in the viewport
 
-### SC-AUTH-97 — every language is named by its own name with a capital letter
+### SC-AUTH-102 — every language is named by its own name with a capital letter
 
 Given a realm whose languages Keycloak names in different forms or by the tag alone
 When the language list is built
