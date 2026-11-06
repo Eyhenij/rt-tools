@@ -1,6 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
-import { REFUSAL_WORDS, refusalText } from './records.logic';
+import { accountLines, REFUSAL_WORDS, refusalText } from './records.logic';
+
+describe('accountLines', () => {
+    it('puts the name and the email on two lines', () => {
+        expect(accountLines('Rita Reader', 'reader@example.test')).toBe('Rita Reader\nreader@example.test');
+    });
+
+    it('leaves one line when a part is missing', () => {
+        expect(accountLines(null, 'reader@example.test')).toBe('reader@example.test');
+        expect(accountLines('Rita Reader', null)).toBe('Rita Reader');
+    });
+});
 
 describe('refusalText', () => {
     it('names a refusal by the right for 403', () => {

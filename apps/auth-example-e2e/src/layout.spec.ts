@@ -1,5 +1,6 @@
 import { expect, Locator, test } from '@playwright/test';
 
+import { PEOPLE } from '../stand/stand.mjs';
 import { expectEntryScreen, signIn } from './support/example';
 
 /** A title longer than any line of the column, without a space to break at. */
@@ -34,6 +35,18 @@ test.describe('the layout of the records screen', () => {
         const field: { y: number; height: number } = await boxOf(page.getByTestId('records-new-title'));
         const add: { y: number; height: number } = await boxOf(page.getByTestId('records-new-submit'));
         expect(Math.abs(field.y + field.height / 2 - (add.y + add.height / 2))).toBeLessThan(2);
+    });
+});
+
+test.describe('the account row of the records screen', () => {
+    test('SC-AUTH-97 — the name and the email stand on two lines', async ({ page }) => {
+        await signIn(page, 'reader');
+        const value: Locator = page.getByTestId('records-account').getByTestId('detail-row-value');
+
+        await expect(value).toHaveCSS('white-space', 'pre-line');
+        await expect
+            .poll((): Promise<string> => value.innerText())
+            .toBe(`${PEOPLE.reader.firstName} ${PEOPLE.reader.lastName}\n${PEOPLE.reader.email}`);
     });
 });
 

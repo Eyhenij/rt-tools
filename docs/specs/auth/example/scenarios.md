@@ -8,6 +8,12 @@ Given the stand and a reader
 When they open the example admin and enter their address and password on the screen of the realm
 Then the admin opens with the list of records and their name
 
+### SC-AUTH-97 — the account row shows the name and the email on two lines
+
+Given a reader in the admin
+When the records screen opens
+Then the row «Signed in as» shows their name on one line and their email on the next
+
 ### SC-AUTH-48 — a wrong password keeps the person on the entry screen
 
 Given the stand and a reader
