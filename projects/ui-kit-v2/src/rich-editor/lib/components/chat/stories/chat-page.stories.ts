@@ -13,3 +13,9 @@ export default {
 } as Meta<TestRtChatPageComponent>;
 
 export const Page: StoryObj<TestRtChatPageComponent> = {};
+
+/**
+ * Гость задал вопрос. Молния в поле ответа открывает готовые ответы, вкладка «Подсказки» предлагает
+ * следующий шаг. Нажатие ставит текст в поле ответа через `setDraft`, гостю ничего не уходит.
+ */
+export const QuickReplies: StoryObj<TestRtChatPageComponent> = { args: { drafting: true } };
