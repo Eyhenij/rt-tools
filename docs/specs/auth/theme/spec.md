@@ -58,22 +58,27 @@ the entry is not sure the page belongs to the admin.
   show through its edge softly and do not cross the text.
 - **On a wide screen the language list and the theme switch stand in the top right corner of the window, on a glass pad of their own.**
   The pad repeats the card glass with a thinner ground, so the list does not merge with the page.
-  The owner asked for it on the mockup.
+  The owner asked for it on the mockup. The wide screen starts at the wide threshold: below it the
+  margin beside the card is narrower than the pad, and the pad would lie over the card.
 - **On a narrow screen the language list and the theme switch stand in the first row of the card, on its right edge.**
   The corner of the window is the corner of the card there.
 - **The language list keeps one width for every language.** The switches do not jump on a change.
 - **Every language in the list is named by its own name in itself, with a capital letter.**
   Keycloak names some by its message in lower case and some by the tag alone.
-- **The links between the entry pages carry the language of the page.** The person keeps the
-  language they chose from the sign-in to the registration, the reset and back.
+- **The links between the entry pages carry the language a person chose in the list.** The person
+  keeps it from the sign-in to the registration, the reset and back. A language from the
+  application or the browser stays off the links. Keycloak keeps `kc_locale` in a cookie and in the
+  profile, above the language the application asks for, so the next entry would open in the old one.
 - **A link back to the sign-in or to the application is plain text without a chevron.** Keycloak
   starts these two messages with «, and the theme drops it.
 - **A link forward to the next step is plain text without a chevron.** Keycloak starts it with »,
   and the theme drops it the same way.
-- **A message page that names neither the application nor a next step leads back to the sign-in.**
-  Without it the page that confirms the address ends the entry with nowhere to go. A page Keycloak
-  tells to skip the link draws none.
-- **The text of a page stands on the axis of the card, in balanced lines.**
+- **A message page that names neither the application nor a next step leads back to the sign-in of its open entry.**
+  Without it the page that confirms the address ends the entry with nowhere to go. A page outside an
+  open entry draws none: after a sign-out or in another browser the sign-in opens an error page. A
+  page Keycloak tells to skip the link draws none either.
+- **The text of the address confirmation stands on the axis of the card, in balanced lines.** The
+  other pages keep their text at the left edge.
 - **An address in a page text breaks only at its `@`.** Its name with the `@` and its domain each
   move to the next line whole, and a piece longer than the card breaks inside; a browser would
   otherwise break it at a hyphen of the domain.

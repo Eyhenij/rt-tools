@@ -53,10 +53,11 @@ Every other Keycloak page keeps the standard Keycloakify layout.
   storage of the kit.
 - **Provider buttons** come from the realm list. Google and Apple get their own marks.
 - **The language** is chosen from a drop-down list when the realm has two or more. Every language is
-  named in itself with a capital letter, and the links between the entry pages keep the chosen one.
+  named in itself with a capital letter, and the links between the entry pages keep the one chosen
+  in the list.
 - **The switches** of the language and the theme stand in the top right corner of the window on a
-  glass pad of their own from 768 pixels wide, and in the first row of the card below that.
-- **A message page** without a next step leads back to the sign-in.
+  glass pad of their own from 1080 pixels wide, and in the first row of the card below that.
+- **A message page** without a next step leads back to the sign-in while its entry is open.
 - **The forms** use the large fields and buttons of the kit, and every field keeps the line for its
   error, so an error does not move the form.
 

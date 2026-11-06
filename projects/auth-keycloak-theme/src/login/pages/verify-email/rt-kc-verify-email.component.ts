@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { addressTextOf, IAddressText } from '../../kc-address-text';
 import { KC_CONTEXT, TKcPageContext } from '../../kc-context';
@@ -13,7 +13,7 @@ type TVerifyContext = TKcPageContext<'login-verify-email.ftl'>;
 /** `login-verify-email.ftl` — the realm sent a letter and waits for the address to be confirmed. */
 @Component({
     selector: 'rt-kc-verify-email',
-    imports: [BlockDirective, ElemDirective, RtKcMessageComponent],
+    imports: [BlockDirective, ElemDirective, ModDirective, RtKcMessageComponent],
     templateUrl: './rt-kc-verify-email.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: { class: BEM_BLOCK },

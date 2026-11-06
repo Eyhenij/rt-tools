@@ -2,9 +2,9 @@
     <div rtElem="viewport">
         <rt-dot-field qa-dataid="kc-dot-field" />
 
-        <!-- Переключатели стоят вне карточки: стекло карточки держит потомков с position: fixed
-             внутри себя, и в угол окна на широком экране их не вынести. На узком экране они
-             ложатся поверх первой строки карточки той же клеткой сетки -->
+        <!-- The switches stand outside the card: its glass holds a child with position: fixed inside
+             itself, and on a wide screen they could not reach the corner of the window. On a narrow
+             screen they lie over the first row of the card in the same grid cell. -->
         <div rtElem="chrome" qa-dataid="kc-chrome">
             @if (localeOptions.length > 0) {
                 <rt-select

@@ -32,7 +32,7 @@ async function startStandard(context: TKcContext): Promise<void> {
 async function startTheme(context: TKcContext, page: Type<unknown>): Promise<void> {
     const loaded: ReturnType<typeof getI18n> = getI18n({ kcContext: context });
     const current: TKcMessages = (await loaded.prI18n_currentLanguage) ?? loaded.i18n;
-    await bootstrapApplication(RtKcRootComponent, themeAppConfig(context, current, page));
+    await bootstrapApplication(RtKcRootComponent, themeAppConfig(context, current, page, window.location.search));
 }
 
 // Outside Keycloak there is no context and nothing to draw.

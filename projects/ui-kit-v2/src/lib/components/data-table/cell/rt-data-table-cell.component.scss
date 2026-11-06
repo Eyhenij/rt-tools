@@ -8,6 +8,12 @@
         --rt-data-table-cell-transition-duration: var(--rt-duration-fast);
         --rt-data-table-cell-glyph-size: var(--rt-size-6);
 
+        /* Значок набора в ячейке идёт теми же ступенями, что глиф: предок, сменивший ступень
+           значка для своих детей, иначе развёл бы их размеры в одной колонке. */
+        --rt-icon-step-sm: var(--rt-size-4);
+        --rt-icon-step-md: var(--rt-size-5);
+        --rt-icon-step-lg: var(--rt-size-6);
+
         position: relative;
         display: flex;
         width: 100%;
@@ -35,13 +41,13 @@
                 font-variation-settings: 'FILL' 1;
             }
 
-            /* Размер значка из описания колонки — те же ступени, что у значка кита. */
+            /* Размер значка из описания колонки — те же ступени, что у значка кита в ячейке. */
             &--sm {
-                --rt-data-table-cell-glyph-size: var(--rt-size-4);
+                --rt-data-table-cell-glyph-size: var(--rt-icon-step-sm);
             }
 
             &--md {
-                --rt-data-table-cell-glyph-size: var(--rt-size-5);
+                --rt-data-table-cell-glyph-size: var(--rt-icon-step-md);
             }
         }
 

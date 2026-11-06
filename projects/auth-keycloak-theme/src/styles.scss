@@ -33,6 +33,10 @@ body {
  * lies over the body gradient of the kit.
  */
 .login__viewport {
+    /* The width of the card, read by the card and by the narrow-screen column it shares with the
+       switches: one number, so the two cannot part when it changes. */
+    --rt-kc-card-width: 400px;
+
     position: relative;
     overflow: hidden;
     background: radial-gradient(120% 90% at 50% 0%, var(--rt-color-bg-subtle) 0%, var(--rt-color-bg-surface-auth-card) 65%);
@@ -44,9 +48,11 @@ body {
 /**
  * The language list and the theme switch. On a wide screen they stay where the kit pins them, in
  * the top right corner of the window, on a glass pad of their own: without it the list merges with
- * the page under it. The pad repeats the card glass with a thinner ground.
+ * the page under it. The pad repeats the card glass with a thinner ground. The corner starts from
+ * the wide threshold, not the middle one: between them the margin beside the centred card is
+ * narrower than the pad, and the pad would lie over the card and the fields scrolling under it.
  */
-@media (width >= bp.$rt-bp-md) {
+@media (width >= bp.$rt-bp-lg) {
     .login__chrome {
         padding: var(--rt-space-sm);
         border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
@@ -63,10 +69,10 @@ body {
  * outside the card in the markup — its glass would hold a fixed child inside it — so the card and
  * the switches share one grid cell as wide as the card, and the switches take its top right corner.
  */
-@media (width < bp.$rt-bp-md) {
+@media (width < bp.$rt-bp-lg) {
     .login__viewport {
         display: grid;
-        grid-template-columns: minmax(0, 400px);
+        grid-template-columns: minmax(0, var(--rt-kc-card-width));
         place-content: center;
     }
 
@@ -91,6 +97,7 @@ body {
  */
 .login__card {
     z-index: 1;
+    max-width: var(--rt-kc-card-width);
     padding-top: var(--rt-space-20);
     border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
     backdrop-filter: blur(1.25rem) saturate(140%);
@@ -111,17 +118,21 @@ body {
     text-transform: uppercase;
 }
 
-/**
- * The text of a page stands on the axis of the card, under the title, the way the login form
- * stands. Its lines are balanced, so an address at the end of a sentence moves to the next line
- * whole together with a few words instead of hanging alone; it breaks inside only when it does not
- * fit the card at all.
- */
 .login__text {
     margin: 0;
     color: var(--rt-color-text-primary);
     font-size: var(--rt-text-sm);
     overflow-wrap: break-word;
+}
+
+/**
+ * The text of the address confirmation stands on the axis of the card, under the title, the way the
+ * login form stands. Its lines are balanced, so an address at the end of a sentence moves to the
+ * next line whole together with a few words instead of hanging alone; it breaks inside only when it
+ * does not fit the card at all. The other pages keep their text at the left edge: a reset
+ * instruction and a list of actions read worse centred.
+ */
+.login__text--centered {
     text-align: center;
     text-wrap: balance;
 }

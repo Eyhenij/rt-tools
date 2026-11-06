@@ -16,6 +16,18 @@ interface IKcNextStep {
 }
 
 /**
+ * Whether the sign-in address leads into an open entry. Keycloak names the tab of the entry in the
+ * address only while that entry exists; without it the address opens an error page.
+ */
+function hasOpenEntry(loginUrl: string): boolean {
+    try {
+        return new URL(loginUrl, 'https://relative.invalid').searchParams.has('tab_id');
+    } catch {
+        return false;
+    }
+}
+
+/**
  * `info.ftl` — a message of the realm. A person who opens an invitation letter lands here first:
  * the page names the actions ahead and leads to the first of them.
  */
@@ -52,7 +64,13 @@ export class RtKcInfoComponent {
         }
 
         // The confirmed address names neither the application nor a next step: without this the
-        // page ends the entry with nowhere to go.
+        // page ends the entry with nowhere to go. The sign-in leads back only into an entry that is
+        // still open — outside one, after a sign-out or in another browser, it opens Keycloak's
+        // error page instead of the form, and the page then stays without a button, as before.
+        if (!hasOpenEntry(this.#context.url.loginUrl)) {
+            return null;
+        }
+
         return { href: this.#context.url.loginUrl, label: backLinkText(this.#i18n.msgStr('backToLogin')) };
     }
 }

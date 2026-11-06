@@ -193,6 +193,18 @@ describe('RtDataTableCellComponent', () => {
         expect((fixture.debugElement.query(By.directive(RtIconComponent)).componentInstance as RtIconComponent).size()).toBe('lg');
     });
 
+    it('SC-UKV-1157 — глиф без пары в перечне получает ту же ступень размера, без размера — свою 24px', () => {
+        const small: ComponentFixture<CellHostComponent> = setup({ icon: { glyph: 'pets', placement: 'left', size: 'sm' } });
+        const plain: ComponentFixture<CellHostComponent> = setup({ icon: { glyph: 'pets', placement: 'left' } });
+
+        const glyphClasses: (fixture: ComponentFixture<CellHostComponent>) => string[] = (
+            fixture: ComponentFixture<CellHostComponent>
+        ): string[] => [...(qa(fixture, 'data-table-cell-glyph')?.nativeElement as HTMLElement).classList];
+
+        expect(glyphClasses(small)).toContain('rt-data-table-cell__glyph--sm');
+        expect(glyphClasses(plain).filter((name: string): boolean => /--(sm|md|lg)$/.test(name))).toEqual([]);
+    });
+
     it('SC-UKV-266 — у копируемой ячейки с пустым значением кнопки копирования нет', () => {
         const fixture: ComponentFixture<CellHostComponent> = setup({ copyable: true }, { id: 1, share: null, title: null });
 

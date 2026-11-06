@@ -118,22 +118,24 @@ Then the block with the language list and the theme switch is a sibling of the c
 
 Given a realm whose languages Keycloak names in different forms or by the tag alone
 When the language list is built
-Then each language is named in itself with a capital letter, and a tag the browser does not know
-keeps the Keycloak name
+Then each language is named in itself with a capital letter, Chinese by its script; a tag the
+browser does not know or cannot read keeps the Keycloak name, and the page still draws
 
-### SC-AUTH-98 — the links between the entry pages carry the language of the page
+### SC-AUTH-98 — the links between the entry pages carry the language a person chose
 
 Given a page drawn in a language
 When the theme reads the addresses of the sign-in, the registration, the reset and the restart
-Then each of them carries `kc_locale` with that language, and the form address stays as it is
+Then each of them carries `kc_locale` with that language only when the person chose it in the
+language list; a language that came from the application or the browser leaves the links as they
+are, and the form address stays as it is
 
-### SC-AUTH-99 — a message page without a next step leads to the sign-in
+### SC-AUTH-99 — a message page without a next step leads to the sign-in of its entry
 
 Given a message page that names neither the application nor a next step and is not told to skip
 the link
-When it is drawn
-Then it shows a button back to the sign-in; a page with a next step keeps it, and a page told to
-skip the link draws none
+When it is drawn inside an entry that is still open
+Then it shows a button back to the sign-in of that entry, with the chosen language; a page with no
+open entry, a page with a next step and a page told to skip the link draw no such button
 
 ### SC-AUTH-101 — an address in a page text breaks only at its `@`
 

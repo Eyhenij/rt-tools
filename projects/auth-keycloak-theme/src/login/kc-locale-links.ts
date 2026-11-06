@@ -22,13 +22,30 @@ export function withLocale(href: string, languageTag: string): string {
 }
 
 /**
- * The context whose links between the entry pages carry the language of the page.
+ * Whether the person chose the language of this page in the language list. The list opens the page
+ * by its own address with `kc_locale`, and the links below pass it on, so the parameter in the page
+ * address is the sign of a choice; a language from the application or the browser comes without it.
+ */
+export function isLocaleChosen(pageSearch: string): boolean {
+    return new URLSearchParams(pageSearch).has('kc_locale');
+}
+
+/**
+ * The context whose links between the entry pages carry the language the person chose.
  *
  * The language a person chose lives in the entry of one browser tab. A link that names it opens
  * the next page in it whatever Keycloak keeps or the application asked for: a restarted entry and
  * an application that passes its own language on every new entry no longer take it back.
+ *
+ * A language nobody chose is left off the links. Keycloak keeps `kc_locale` in a cookie and in the
+ * profile of the person, and both stand above the language the application asks for: a link that
+ * named the application's language would pin it, and the next entry in another language of the
+ * application would open in the old one.
  */
-export function withLocaleLinks(context: TKcContext, languageTag: string): TKcContext {
+export function withLocaleLinks(context: TKcContext, languageTag: string, chosen: boolean): TKcContext {
+    if (!chosen) {
+        return context;
+    }
     const url: Record<string, unknown> = { ...context.url };
     for (const key of ENTRY_LINKS) {
         const href: unknown = url[key];
