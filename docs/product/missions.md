@@ -67,14 +67,15 @@ The `@rt-tools/auth-*` packages and `apps/auth-example-admin`. Accepted by the o
 
 The `@rt-tools/cms-*` packages.
 
-- **Mission:** the person who runs a site publishes and changes its pages and articles without a
-  developer.
+- **Mission:** content is separated from code. The person who runs a product changes its pages and
+  articles without a developer and a release, and a developer describes the content once.
 - **It is not:** a content storage, or a finished site.
 
 ## The chat with the visitors
 
 `apps/chat-widget`, `apps/chat-talks-embed` and `apps/chat-talks-page`.
 
-- **Mission:** a visitor asks a question on a site and gets an answer from a person, and nothing is
-  lost on the way.
+- **Mission:** on a platform, a person reaches the one who can help them: a guest writes to a
+  manager, a manager writes to the operators of the platform. Every conversation stays in one place
+  with its history, an answer reaches the person, and nothing is lost.
 - **It is not:** an answering bot, calls or a general messenger.
