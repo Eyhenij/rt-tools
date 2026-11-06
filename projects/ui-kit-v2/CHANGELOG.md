@@ -1,3 +1,9 @@
+# [0.40.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.39.2...rt-ui-kit-v2%400.40.0) (2026-11-06)
+
+### Features
+
+- **rt:ui-kit-v2:** чат принимает готовый текст в поле ответа методом setDraft ([9996f73](https://github.com/Eyhenij/rt-tools/commit/9996f7346c4b7c63e3c1069c0632dd2f7a957bc4))
+
 ## [0.39.2](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.39.1...rt-ui-kit-v2%400.39.2) (2026-11-06)
 
 ### Bug Fixes

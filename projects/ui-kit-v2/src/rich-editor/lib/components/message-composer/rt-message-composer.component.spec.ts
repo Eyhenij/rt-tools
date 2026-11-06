@@ -275,6 +275,20 @@ describe('RtMessageComposerComponent', (): void => {
 
             expect(quillInstances.at(-1)?.focused).toBe(true);
         });
+
+        it('SC-UKV-1158 — в режиме форматирования текст встаёт в редактор, курсор в конце', async (): Promise<void> => {
+            resetQuillInstances();
+            const fixture: ComponentFixture<RtMessageComposerComponent> = setup({ formatting: true });
+            await new Promise<void>((resolve: () => void): void => {
+                setTimeout(resolve, 0);
+            });
+
+            fixture.componentInstance.setDraft('Готовый ответ');
+
+            expect(quillInstances.at(-1)?.getText()).toBe('Готовый ответ\n');
+            expect(quillInstances.at(-1)?.focused).toBe(true);
+            expect(quillInstances.at(-1)?.selection).toBe('Готовый ответ'.length);
+        });
     });
 
     describe('вложения', (): void => {

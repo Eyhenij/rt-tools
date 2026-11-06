@@ -7,9 +7,9 @@
 
 ## Why
 
-Thirty-five files of the package are described by no spec, and they are what is left after the
-laws, the rules, the patterns, the guards and the checks: nine roles, eleven skills that stand under
-no law, one session command, twelve blanks and two declarations of the tree.
+Some files of the package were described by no spec, and they are what is left after the laws, the
+rules, the patterns, the guards and the checks: the roles, the skills that stand under no law, one
+session command, the blanks and the declarations of the tree.
 
 They have nothing in common with the ladder above them, and that is exactly why they were left
 last: a role is not a text about the product, a blank is not a statement about anything at all, a

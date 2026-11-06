@@ -30,6 +30,8 @@ consequence of a merge.
 - **the machine work account** — `rt-tools-dev` — a commit is signed by it, a task is created and a PR is opened by it; it is never a reviewer
 - **the token substitution into a call** — `.claude/rt-kit/project.sh:RT_PULL_TOKEN_VAR` — `GH_TOKEN`; the ready-made line for the guard's refusal is there too, `RT_PULL_TOKEN_HINT`
 - **the request body section about the remaining step** — `.claude/rt-kit/project.sh:RT_PULL_BODY_SECTION` — the heading «Оставшийся шаг»: the delivery guard demands it in the body of every request
+- **the request body section with the table of points** — `.claude/rt-kit/project.sh:RT_PULL_POINTS_SECTION` — the heading «Точки»: the delivery guard demands it when a request opens
+- **the request body section with the table of the critic** — `.claude/rt-kit/project.sh:RT_PULL_GOAL_SECTION` — the heading «Цель»: the delivery guard demands it when a request opens
 - **the line that closes the task** — `.claude/rt-kit/project.sh:RT_PULL_CLOSES_LINE` — `Closes #<номер>` with the branch's number: the delivery guard demands it in the body of every request, whatever the base
 
 ## Where it lives
@@ -93,6 +95,7 @@ silent about.
 - **An edit brought to a commit is brought to the host in the same turn.** — Not carried out: the executor's working tree is seen by no check. Held by this article.
 - **The working tree is emptied before the PR opens, not after.** — Not carried out: the executor's working tree is seen by no check. The delivery guard judges the opening call, not what is left uncommitted next to it. Held by this article.
 - **A push into a branch that has an open PR is followed by rereading its body.** — Not carried out: no check reads a PR body at all. The queue audit judges the fact of a run on the tip, not what the body says about it. Held by this article.
+- **On remarks to a PR the person is asked whether to answer under them, and after a yes each one gets an answer.** — **Not checked by anything.** An edit made for a remark looks like any other, and the question to the person leaves no trace on the host. Held by this article and by the section about remarks in the pattern `git-workflow-pr`.
 - **The draft is not lifted while the PR has no review.** — `.claude/hooks/git-guard-delivery-draft.sh:rt_pull_state` — the PR state arrives from `tools/board.mjs`, and a requested reviewer or a review left by someone other than the author counts as a review.
 - **The task key is set once, and all three name forms derive from it.** — `.claude/rt-kit/checks.json:taskKey` — from there it is taken by the task creation, by the delivery guard and by the queue audit.
 - **An unset key refuses work with the queue on the spot.** — `tools/board.mjs:TASK_KEY` — an empty value ends the very first call with a refusal saying where the key is set.

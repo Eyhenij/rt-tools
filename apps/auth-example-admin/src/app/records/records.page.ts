@@ -1,17 +1,26 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, Signal, signal, WritableSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, Signal, signal, viewChild, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { RtAuthService, RtIfPermissionDirective } from '@rt-tools/auth-angular';
 import { ICaller } from '@rt-tools/auth-contract';
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
-import { RtButtonDirective, RtDetailRowComponent, RtEmptyStateComponent, RtInputComponent, RtMessageComponent } from '@rt-tools/ui-kit-v2';
+import {
+    RtButtonDirective,
+    RtDetailRowComponent,
+    RtEmptyStateComponent,
+    RtIconButtonComponent,
+    RtInputComponent,
+    RtMessageComponent,
+} from '@rt-tools/ui-kit-v2';
+import { IRtChat, RtChatComponent } from '@rt-tools/ui-kit-v2/rich-editor';
 import { catchError, concatMap, EMPTY, Observable, Subject, switchMap, tap } from 'rxjs';
 
 import { RecordsApiService } from './records-api.service';
 import { accountLines, IRecordLine, refusalText } from './records.logic';
 
 const BEM_BLOCK: string = 'example-records';
+const READY_REPLY: string = 'Thank you for writing. We will answer today.';
 
 /**
  * The records page: the list for a reader, the form of a new record for an editor, the exit.
@@ -36,8 +45,10 @@ const BEM_BLOCK: string = 'example-records';
         RtIfPermissionDirective,
 
         // components
+        RtChatComponent,
         RtDetailRowComponent,
         RtEmptyStateComponent,
+        RtIconButtonComponent,
         RtInputComponent,
         RtMessageComponent,
     ],
@@ -50,6 +61,10 @@ export class RecordsPage {
     readonly #loadSource: Subject<void> = new Subject<void>();
     readonly #createSource: Subject<string> = new Subject<string>();
 
+    protected readonly chat: Signal<RtChatComponent | undefined> = viewChild(RtChatComponent);
+    protected readonly messages: readonly IRtChat.Message[] = [
+        { id: 1, author: 'Guest', own: false, text: 'Can I check out at two?', createdAt: new Date().toISOString() },
+    ];
     protected readonly records: WritableSignal<readonly IRecordLine[]> = signal<readonly IRecordLine[]>([]);
     protected readonly refusal: WritableSignal<string | null> = signal<string | null>(null);
     protected readonly form: FormGroup<{ title: FormControl<string> }> = new FormGroup({
@@ -96,6 +111,11 @@ export class RecordsPage {
     protected create(): void {
         this.refusal.set(null);
         this.#createSource.next(this.form.controls.title.value);
+    }
+
+    /** The ready reply stands in the reply field: the person reads it and sends it themselves. */
+    protected insertReply(): void {
+        this.chat()?.setDraft(READY_REPLY);
     }
 
     protected signOut(): void {

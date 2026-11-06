@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when bringing work to readiness — merging the product agreement into the domain spec, bringing the domain texts up to date with what was done, opening the PR as a draft or ready by its base and leaving draft.
 ---
-<!-- rt-kit v0.33.1 · patterns/task-flow-close.md · 7538b72b86ad · правится надстройкой, не здесь -->
+<!-- rt-kit v0.34.0 · patterns/task-flow-close.md · 4b1f2d58f71f · правится надстройкой, не здесь -->
 
 # Closing the work
 
@@ -17,7 +17,7 @@ Pattern of the rule `task-flow`. What must be true meanwhile — the law
 - `npm run check:specs` listed the agreement in its "time to merge" section.
 - The spec is measured for length before the merge and right after it: one already over the limit is
   split by a commit of its own first, one that has grown is split by the same commit.
-- The domain texts are brought up to what the work did.
+- The domain texts are up to date, and `product-strategist` reviews the work against its points.
 - The gate suite is run whole — after the merge and the texts, not before them.
 - The task folder is taken apart, and the PR opens — a draft or ready, by the base.
 - The run on the head is green, and the draft is lifted from the PR.
@@ -101,14 +101,12 @@ and all the rules need not be read.
 What is stale lies most often in four places, and all four are read whole:
 
 - **"What of the law is not here" in a rule.** The spec audit does not read this section, so an
-  untruth lives there as long as it likes. For three tasks in a row a rule wrote that the tree
-  lacked the needed mechanism — and it was there;
+  untruth lives there as long as it likes;
 - **"What is not included" in a domain spec.** A task boundary was written there, and the task is
   long closed;
 - **"Where it lives" in a rule.** Files move, the paths in the table stay;
-- **A statement of a companion about what the tree does not have.** It is written when the subject
-  does not exist yet and lives on words about emptiness — no domain specs here, not a scenario
-  created, six records. One piece of work creates the subject, and nobody rereads the companion.
+- **A statement of a companion about what the tree does not have.** Written before the subject
+  exists, it lives on words about emptiness, and nobody rereads it once the subject appears.
 
 ```bash
 # where the rule and the specs speak of what the work touched
@@ -121,13 +119,19 @@ grep -rn -iE "(нет|ни одного|пока|всего|записей) [0-9
 
 **A law is not edited in the branch.** An article of a law is an agreement with the owner, and the
 owner changes it. The work diverged from it — the ready-made text of the article is written: into
-the progress and into the PR body. The law file is edited after the answer. The same with
-application laws: payments, locales and access are the same agreement, only about this application.
+the progress and into the PR body. The law file is edited after the answer, an application law too.
 
 What was done at this step is written into the PR body: what was re-read, what was changed, and if
 nothing was changed — why. The form of the section — pattern `git-workflow-pr-body`. The body fits
-the host's length limit — Azure DevOps takes 4000 characters — so the report is one line per text,
-not prose: a body over the limit refuses the opening call, and it gets cut in a hurry.
+the host's length limit — Azure DevOps takes 4000 characters — so the report is one line per text.
+
+**The role `product-strategist` reviews the work while the folder still lies here.** It runs the sign
+of each point in the plan and tries to prove the miss. A proved miss is fixed now or named in the PR
+body next to the table of points. Before the PR of an epic the same call judges the milestone.
+
+**The role `goal-critic` compares the result with the owner's words in the same state.** It gets the
+words verbatim and the result, without the plan or an account of the work. A session calls it before
+saying the work is done. Its reply is not reworded: a disagreement goes under it as a session line.
 
 **Next move:** the updated texts are committed, and in the same turn the task folder is taken apart
 — by the last commit of the branch, pattern `task-flow-archive`.

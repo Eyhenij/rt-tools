@@ -7,13 +7,16 @@ export const meta = {
         { title: 'Implementation', detail: 'one step at a time — the working tree is shared by all' },
         { title: 'Check', detail: 'QA as a fan: tests, build, browser, adversarial review' },
         { title: 'Acceptance', detail: 'the PM checks what was done against the original request' },
+        { title: 'Points', detail: 'the signs of the points are run, and the miss is proved or refuted' },
+        { title: 'Goal', detail: 'the critic compares the result with the original request' },
     ],
 };
 
-// The task arrives as a string in args; without it the scenario is meaningless.
-const task = typeof args === 'string' ? args : (args?.task ?? '');
-if (!task) {
-    throw new Error('A task is needed: pass it as a string in args');
+// The grill is required alongside the task: without the owner's words the Goal phase has nothing to
+// compare the result with, and a string call would spend the whole run to learn that at the end.
+const task = args?.task ?? '';
+if (!task || !args?.grill) {
+    throw new Error('A task and the grill are needed: pass { task, grill } in args');
 }
 
 const PLAN = {
@@ -131,4 +134,29 @@ const verdict = await agent(
     { agentType: 'project-manager', label: 'acceptance', phase: 'Acceptance' }
 );
 
-return { plan, done, findings, blockers, verdict };
+phase('Points');
+// A role a session has not registered costs this phase, not the done work above it.
+let points = null;
+try {
+    points = await agent(
+        `The user's original request:\n\n${task}\n\nWhat was done:\n${done.join('\n')}\n\n` +
+            `This is the review mode. Read the points in the task plan and the epic plan, run the sign of each ` +
+            `and try to prove the miss.`,
+        { agentType: 'product-strategist', label: 'points', phase: 'Points' }
+    );
+} catch (error) {
+    log(`Points: the role did not run: ${error.message}`);
+}
+
+phase('Goal');
+// The critic gets the request and nothing the pipeline wrote about the work: that is its whole value.
+// A run without it ends in a failure and not in a result that looks judged.
+// Only the grill holds a quote: the task string is the session's wording.
+const goal = await agent(
+    `The owner's words are the quoted request in \`${args.grill}\`; read that section only.\n\n` +
+        `This is the result mode. The result is the working tree and its diff against the base ` +
+        `branch. Try to prove the goal is not met.`,
+    { agentType: 'goal-critic', label: 'goal', phase: 'Goal' }
+);
+
+return { plan, done, findings, blockers, verdict, points, goal };

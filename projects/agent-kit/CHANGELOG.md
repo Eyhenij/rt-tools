@@ -1,3 +1,44 @@
+# [0.34.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.33.1...rt-agent-kit%400.34.0) (2026-11-06)
+
+### Bug Fixes
+
+- **rt:agent-kit:** feature требует разбор, настройки таблиц описаны в README ([c5f663a](https://github.com/Eyhenij/rt-tools/commit/c5f663aaf28d1edd8d0fb947c6817d32e9a9f432))
+- **rt:agent-kit:** восстановление файлов без `--` не считается переключением ветки ([14bffea](https://github.com/Eyhenij/rt-tools/commit/14bffeadcb3ee3e7e473495cc5b713f9eb8ab0ed)), closes [#3083](https://github.com/Eyhenij/rt-tools/issues/3083)
+- **rt:agent-kit:** диспетчер сводит ответы нескольких сторожей в один JSON ([71909f6](https://github.com/Eyhenij/rt-tools/commit/71909f6ea4f74c8bede999001ee5af934d562d6a))
+- **rt:agent-kit:** заведение ветки принимает подпись человека из RT_HUMAN_EMAILS ([37dd587](https://github.com/Eyhenij/rt-tools/commit/37dd587953376df9ded51c111ec545d36047af53))
+- **rt:agent-kit:** заголовок раздела критика без таблицы не открывает заявку ([e6355c1](https://github.com/Eyhenij/rt-tools/commit/e6355c156162015ea4b4db5be6feed5cc3c3f1e4))
+- **rt:agent-kit:** конвейеры без критика падают, замечания читаются во всех местах ([8717482](https://github.com/Eyhenij/rt-tools/commit/87174821faf0edd11f7385323abb5066db2c143f))
+- **rt:agent-kit:** набор перед пушем называет отсутствующий файл сценариев сторожей ([5bf5a14](https://github.com/Eyhenij/rt-tools/commit/5bf5a1422719b258794c7dbbf45b10ac62899932))
+- **rt:agent-kit:** навык ревью интерфейса — заголовки владельца дословно, условная ссылка на карточки ([5dfb798](https://github.com/Eyhenij/rt-tools/commit/5dfb79818bfb44ac7d810c9567faed823809ab3b))
+- **rt:agent-kit:** навык ревью интерфейса — текст владельца целиком, описания в пределе, спека ролей ([1584da6](https://github.com/Eyhenij/rt-tools/commit/1584da68e41ada1dd005c4c39eac016d9fa6c27a))
+- **rt:agent-kit:** остальные места сторожей хода узнают glab, статьи в своих поддоменах ([c52aece](https://github.com/Eyhenij/rt-tools/commit/c52aeced39b0d30f0f6ac124fe494d8fca308f70))
+- **rt:agent-kit:** открытие PR отбивается, пока договорённость из плана лежит невлитой ([8aef62a](https://github.com/Eyhenij/rt-tools/commit/8aef62a02c7db5cc13529d77eb0e44c8c096c762))
+- **rt:agent-kit:** переключение ветки судится по точке старта новой ветки ([f7497ac](https://github.com/Eyhenij/rt-tools/commit/f7497ace6e70443969fb538a08372e24aa8fec91)), closes [#3083](https://github.com/Eyhenij/rt-tools/issues/3083)
+- **rt:agent-kit:** правки правил по ревью — условие у проверки описаний, фраза о пределе короче ([9ab0e21](https://github.com/Eyhenij/rt-tools/commit/9ab0e21c2d152aeea5dab86b3d3e06040e2c430d))
+- **rt:agent-kit:** проверка отправки и git-хук идут одним циклом с отметками main ([62f5c38](https://github.com/Eyhenij/rt-tools/commit/62f5c38f40ed927b9e5ca2e9e1cd40b513abbfa3))
+- **rt:agent-kit:** проверка перед push разбирает команду как оболочка, а не шаблонами ([e6a94f2](https://github.com/Eyhenij/rt-tools/commit/e6a94f2e62869d03847ce211f9633de0a7884e58)), closes [#3083](https://github.com/Eyhenij/rt-tools/issues/3083)
+- **rt:agent-kit:** проверка перед push узнаёт push по подкоманде git и стоит на вкладке терминала ([40e7445](https://github.com/Eyhenij/rt-tools/commit/40e744539af005615833f16cc4027b78cf764bf5))
+- **rt:agent-kit:** проверка сценариев узнаёт длинные префиксы и называет сценарии строками таблицы ([9e03deb](https://github.com/Eyhenij/rt-tools/commit/9e03deb6b860e450814cc123e3fdee21b27cbb35))
+- **rt:agent-kit:** пропуск паттерна в варианте хостинга засчитывается проверкой описаний ([a60ca70](https://github.com/Eyhenij/rt-tools/commit/a60ca70b1a1d1ea6d82f3bf21029f897d0075814))
+- **rt:agent-kit:** пустой ход по уведомлению своей фоновой задачи отпускается, пока идёт вторая ([1e3488f](https://github.com/Eyhenij/rt-tools/commit/1e3488f96be8a3b260c25d75517c759819f0e2bd))
+- **rt:agent-kit:** разбор push читает обёртки, функции, heredoc и переключение ветки как оболочка ([eb0cfb8](https://github.com/Eyhenij/rt-tools/commit/eb0cfb806a83a07737f08492b4aa5a244ddbeb16)), closes [#3083](https://github.com/Eyhenij/rt-tools/issues/3083)
+- **rt:agent-kit:** сторож главной ветки берёт её имя из профиля дерева ([e728a9d](https://github.com/Eyhenij/rt-tools/commit/e728a9d0e8c64c79453f12502d19f58c9ad3aed7))
+- **rt:agent-kit:** сторож посторонних драйверов браузера ловит драйверы из плагинов ([5d444a3](https://github.com/Eyhenij/rt-tools/commit/5d444a320e25dc6e787c444f114f3fc064274b18))
+- **rt:agent-kit:** сторожа хода узнают команды glab ([bfa2319](https://github.com/Eyhenij/rt-tools/commit/bfa231989d62c5687b1aa93af43143e4f75de5dc))
+- **rt:agent-kit:** стрелка в кавычках не считается записью в файл ([4898421](https://github.com/Eyhenij/rt-tools/commit/489842121882d1231c7fb42ecbe66fc18a69b925))
+- **rt:agent-kit:** хук pre-push и проверка сессии гоняют набор одним кодом ([7be37a3](https://github.com/Eyhenij/rt-tools/commit/7be37a3d3a25ff5eff306d5c65a8320a2fdd322c)), closes [#3101](https://github.com/Eyhenij/rt-tools/issues/3101)
+- **rt:agent-kit:** хук pre-push узнаёт удаление по нулям во всей строке, сценарий раскладки не зависит от времени исходников ([02b4e36](https://github.com/Eyhenij/rt-tools/commit/02b4e36452106204a61c44519e0f642d53e48310))
+- **rt:agent-kit:** черновик PR отказывает на базе, где конвейер не запускается ([38d0638](https://github.com/Eyhenij/rt-tools/commit/38d063848f929cf16830cc56e6f34d1a0a713b06))
+
+### Features
+
+- **rt:agent-kit:** git-хук pre-push гонит набор проверок на любом push ([b4c801b](https://github.com/Eyhenij/rt-tools/commit/b4c801b4488eb892ab24acfa69fc7c1cb67b0022))
+- **rt:agent-kit:** критик goal-critic сравнивает результат со словами владельца ([0a997ef](https://github.com/Eyhenij/rt-tools/commit/0a997ef3dfdefdc0befa040ebf7676a1adbfc83f))
+- **rt:agent-kit:** набор перед push — от родительской ветки, по отметкам и заранее ([2089459](https://github.com/Eyhenij/rt-tools/commit/20894593b211769e5bda5c421c28f02ed16ffc88))
+- **rt:agent-kit:** навык ревью интерфейса одной системой ([0c931ba](https://github.com/Eyhenij/rt-tools/commit/0c931bad307c3cbf43284c0aaa44de7d4a54995c))
+- **rt:agent-kit:** проверка поставки требует таблицу точек в теле PR ([dae95e1](https://github.com/Eyhenij/rt-tools/commit/dae95e1cd8246621b0781f8084a23ddba2149624))
+- **rt:agent-kit:** роль product-strategist сверяет работу с точкой и вехой ([12b3bf1](https://github.com/Eyhenij/rt-tools/commit/12b3bf162526c167bce642ed76a3f00f8375d5a6))
+
 ## [0.33.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.33.0...rt-agent-kit%400.33.1) (2026-10-22)
 
 # [0.33.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.32.0...rt-agent-kit%400.33.0) (2026-10-22)

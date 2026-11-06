@@ -176,6 +176,39 @@ An open MR means the task awaits review — the list is moved in the same motion
 npm run task:move -- 86 in-review
 ```
 
+## Answering under remarks
+
+Remarks on an MR live in discussions, a thread each: a note on a line and a single note in the
+conversation are both among them. They are read at once, before the first edit:
+
+```bash
+glab api projects/:id/merge_requests/<номер>/discussions --paginate \
+    | jq '.[] | {id, notes: [.notes[] | select(.system | not) | {author: .author.username, body}]}'
+```
+
+The person is asked by the asking tool whether to answer under them, in the turn the remarks were
+read. The answer holds for this MR. Silence is not a yes: a message on the host stays there, and
+it goes out under an account the person answers for.
+
+After a yes every discussion gets its own answer, once the edit has reached the host: a commit
+named before the push does not exist for the reader yet.
+
+```bash
+glab api -X POST projects/:id/merge_requests/<номер>/discussions/<id>/notes \
+    -f "body=$(cat ответ.md)"
+```
+
+A comment outside a discussion has no thread of its own, so the answer to it goes under the MR:
+
+```bash
+glab mr note <номер> --message "$(cat ответ.md)"
+```
+
+An answer is written in the owner's language and names one of two things: the commit that closes
+the remark, or why the remark is declined. The count of answers is compared with the count of
+discussions read at the start: a remark left without one is a remark the person checks again by
+hand.
+
 ## What is checked before the MR is published
 
 There are no checks on the MR itself until the pipeline is started, and a push starts it.

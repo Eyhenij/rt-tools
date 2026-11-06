@@ -160,6 +160,36 @@ An open PR means the work item awaits review — the state is moved in the same 
 npm run task:move -- 86 in-review
 ```
 
+## Answering under remarks
+
+Remarks on a PR live in threads, and the client has no command for them, so they go through the
+REST call of the same client. They are read at once, before the first edit:
+
+```bash
+az devops invoke --area git --resource pullRequestThreads \
+    --route-parameters project=<проект> repositoryId=<репозиторий> pullRequestId=<номер> \
+    --api-version 7.1 --query "value[?comments[0].commentType=='text'].{id:id, text:comments[0].content}"
+```
+
+The person is asked by the asking tool whether to answer under them, in the turn the remarks were
+read. The answer holds for this PR. Silence is not a yes: a message on the host stays there, and
+it goes out under an account the person answers for.
+
+After a yes every thread gets its own answer, once the edit has reached the host: a commit named
+before the push does not exist for the reader yet.
+
+```bash
+az devops invoke --area git --resource pullRequestThreadComments --http-method POST \
+    --route-parameters project=<проект> repositoryId=<репозиторий> pullRequestId=<номер> threadId=<id> \
+    --in-file ответ.json --api-version 7.1
+```
+
+The file holds `{"content": "<текст>", "commentType": 1}`.
+
+An answer is written in the owner's language and names one of two things: the commit that closes
+the remark, or why the remark is declined. The count of answers is compared with the count of
+threads read at the start: a remark left without one is a remark the person checks again by hand.
+
 ## What is checked before the PR is published
 
 The pipeline sees only what was sent, and it is sent by a push. Linters, unit tests and hook

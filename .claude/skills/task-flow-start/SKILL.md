@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load at the start of work from the owner — exploration before the first question, the six mandatory questions, the product agreement, creating the task, the branch and the folder. Returning to work — pattern task-flow-resume.
 ---
-<!-- rt-kit v0.33.1 · patterns/task-flow-start.md · 35d4b240401c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.34.0 · patterns/task-flow-start.md · 2eeef8cf00f0 · правится надстройкой, не здесь -->
 
 # Starting the work
 
@@ -146,9 +146,9 @@ There will be no more questions — from here on, the roles:
 Workflow(name: "plan", args: "docs/tasks/_draft-<slug>")
 ```
 
-Need → the product agreement (`spec-writer`) → its adversarial review (`spec-critic`) → the plan and
-the breakdown (`project-manager`). Gaps the roles could not close return to the owner — the main
-agent carries them.
+Need → the points (`product-strategist`) → the product agreement (`spec-writer`) → its adversarial
+review (`spec-critic`) → the plan and the breakdown (`project-manager`) → `goal-critic`. Gaps the
+roles could not close return to the owner — the main agent carries them, and the route's misses.
 
 The agreement that came out of the pipeline is checked against `grill.md` line by line before work
 by it. The role writes the text without seeing the owner and can turn their answer into its

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/turn-exit-patterns.sh · 06d174e9706f · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/turn-exit-patterns.sh · 06d174e9706f · правится надстройкой, не здесь
 # The patterns of the turn-exit guard. NOT a guard: it has no `rt-hook:` declaration and hooks into
 # no agent event. The turn-exit guard sources it — the same way guards source the shared reading of
 # the input and the deny tail. It was moved out when the guard outgrew the file length limit: the

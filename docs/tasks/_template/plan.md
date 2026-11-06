@@ -1,4 +1,4 @@
-<!-- rt-kit v0.33.1 · samples/tasks/_template/plan.md · ed21de452f19 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.34.0 · samples/tasks/_template/plan.md · 18166cded496 · правится надстройкой, не здесь -->
 # Plan
 
 **Task:** <KEY>-<number> · **Branch:** <branch>
@@ -13,6 +13,13 @@ stands `**Behaviour:** unchanged — <the owner's reason>`; an empty reason is n
 
 After it is written this file is not edited. A stage revision goes to `progress.md` as a decision
 along the way.
+
+## Points
+
+- **A:** <where the product stands now>
+- **This task reaches:** <the change a person will see>
+- **Sign:** <the command, the page or the number that shows it, and who sees it>
+- **Milestone G of the epic:** <the point named in the epic plan>
 
 ## Task footprint
 

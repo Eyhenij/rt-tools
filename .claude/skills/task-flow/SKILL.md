@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of work from the owner's request to the merge. Load at the start of any work, when editing task folders and product agreements, and when returning to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. End of a turn — turn-conduct.
 ---
-<!-- rt-kit v0.33.1 · rules/task-flow.md · b4d55d437d48 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.34.0 · rules/task-flow.md · 6a93330f7970 · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -33,7 +33,7 @@ with a guard does.
 | the epic plan | a record outside the task folder: the folder dies with the merge, the epic outlives it; the directory — in the rule's companion |
 | the task folder before the task is created | `docs/tasks/_draft-<slug>/` — outside history while there is no number |
 | exploration | an `Explore` or `general-purpose` session before the first question to the owner |
-| the plan review by roles | `.claude/workflows/plan.js` — need, agreement, critique, plan |
+| the plan review by roles | `.claude/workflows/plan.js` — need, points, agreement, critique, plan, goal |
 
 ## Where it lives
 
@@ -208,7 +208,7 @@ flowchart TD
   A finding named by no exit condition goes to the section on what the work does not do, and is
   filed as a task.
 - **Done work is marked only in the progress.** "Where we stand" is rewritten by every session, not
-  appended: it is the first thing the next session reads.
+  appended.
 - **The plan names the steps of every stage, and the progress mirrors them with a mark each.** The
   plan is not edited after it is written, the marks change every turn; a line nobody can call done
   is not a step.
@@ -228,11 +228,11 @@ flowchart TD
   whole or does not take it. Work outside an epic exists only by
   the owner's word about that work, said about that work.
 - **The epic branch is taken before the first task of the epic, not with it.** Taken later, it
-  leaves the first task standing on the main branch.
+  leaves the first task on the main branch.
 - **The epic card moves to in progress by the same turn that takes its first task.** The owner
-  follows the epic by one card: left where it was declared, the card reads as never started.
+  follows the epic by one card: left in place, it reads as never started.
 - **The next task is taken from the epic plan, and the queue list is asked only where there is no
-  epic.** By a list of numbers someone else's epic cannot be told from one's own.
+  epic.** A list of numbers does not tell someone else's epic from one's own.
 - **Which epic this working copy leads is read from the table of assignments, and the owner writes
   it.** A card of the queue is not an order; a guard refuses every call that takes work until
   their word.
@@ -241,18 +241,23 @@ flowchart TD
 - **The tasks of an epic are created all at once, by the same turn as the epic itself.** Creating
   them one at a time hides the volume.
 - **A task of an epic is linked to the epic card as a sub-issue, not only named in the plan.** The
-  board reads no text: without the link a task of an epic looks exactly like a task outside one.
-  Closed tasks are linked too — the share of what is done counts them.
-
+  board reads no text: without the link it looks like a task outside one. Closed tasks are linked.
 - **The epic plan names how the branches of its tasks stand, on a par with their order.** Two
-  arrangements: each branch from the epic branch, or a stack — each from the previous. The
-  arrangement written in the plan is the epic's decision, not that of whoever creates the branch.
+  arrangements: each branch from the epic branch, or a stack — each from the previous. The written
+  arrangement binds whoever creates the branch.
+- **The plan names the points: the epic its milestone, the task the change a person will see.** The
+  role `product-strategist` tries to prove the miss in planning and before the PR. A proved miss is
+  fixed or named to the owner; no pipeline stops. Every PR body carries the table of points.
+- **Work is judged by the role `goal-critic` against the owner's words.** A plan is no evidence to
+  it, its reply is not edited, and the PR body carries its table.
+- **A mission is set by the owner.** A session only proposes a wording from its analysis and waits
+  for approval.
 - **The PR of the epic opens when its last folder is taken apart, and not a task earlier.** A folder
-  left in the epic branch reaches the main branch with it. Until then the epic branch is not
-  offered to a person at all — the merge button on it means the whole epic.
-- **The epic plan lies where it is found without the network and after the merge.** The card does
-  not hold the task order, and the task folder dies with the merge. What the owner names along the
-  way is appended there by the turn that accepted it.
+  left in the epic branch reaches the main branch with it. Until then nobody is offered the epic
+  branch: its button means the whole epic.
+- **The epic plan lies where it is found without the network and after the merge.** The card holds
+  no task order, and the folder dies with the merge. What the owner names along the way is appended
+  there by the turn that took it.
 - **Building by a sample begins with reading the sample itself, whole, by walking the directories.**
 - **What acts on the tree, not on the edit, lies outside the index.** The path to the sample and the
   permission to work outside the epic do not belong to the branch and live next to the handover. A
@@ -290,7 +295,7 @@ The guard judges by the edit paths, not by whether the work changes behaviour. A
 sign of its own: the appraisal "behaviour does not change" would be assigned by whoever it hinders.
 
 Nothing of the grill itself is checked: the guard sees a file edit and knows nothing of the
-exploration, the six questions or the answers. An empty table passes the same as a filled one.
+exploration, the six questions or the answers.
 
 The conversation guard judges shared words between the question's topic and the owner's last
 message, not meaning; its refusal names the lawful move.

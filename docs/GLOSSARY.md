@@ -1,4 +1,4 @@
-<!-- rt-kit v0.33.1 · docs/GLOSSARY.md · 273a520229c5 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.34.0 · docs/GLOSSARY.md · bcdde4b47e81 · правится надстройкой, не здесь -->
 # Project glossary
 
 Words that mean something definite in this tree. Read before writing a spec, a rule, a comment,
@@ -51,6 +51,10 @@ sections through the override; they merge here by heading, and a package edit do
 - **Handover** — the text that closes a session: working tree, branch, task, where the progress lies, what is done, the next step, what was special about the session. Placed outside the tree and not committed
 - **Epic** — a series of tasks on one theme in an assigned order, wider than one branch. Lives in two places: a card with the epic label and a plan next to it. Not called a work line
 - **Archive** — records of what has happened: what explains a closed decision. Not edited after the rollout
+- **Mission** — what a product exists for and what changes for whom. A session only proposes a wording; the owner's approval sets it. It names no features. A milestone that serves no mission is a finding
+- **Point** — a change a person can observe after a task, with a sign that shows it is reached. A is where the product stands now, B, C and D are the points of the tasks. A written rule, a merged PR and a green check are steps, not points
+- **Milestone** — point G: the state of the product an epic exists for. Not a date and not a part of the work
+- **Product passport** — five to seven lines fixed while planning: for whom, which problem, the main path of a person, what exists and what is unfinished
 
 ## Checks
 

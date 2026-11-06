@@ -2,7 +2,7 @@
 name: interface-review-motion
 description: Motion recipes for an interface review: interruptible transitions, staggered entrances, subtle exits, with CSS and Motion code. Load when a finding about an entrance, an exit or an interrupted animation is worded or fixed. Icon swaps and press feedback are in interface-review-motion-states.
 ---
-<!-- rt-kit v0.33.1 · skills/interface-review-motion.needs-app.md · 428008b908f8 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.34.0 · skills/interface-review-motion.needs-app.md · 428008b908f8 · правится надстройкой, не здесь -->
 
 # Animations
 

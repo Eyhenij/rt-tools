@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub. Load for a task and a branch, commit, push, opening a PR and merging. Names the pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — deploy-flow, audit — queue-audit.
 ---
-<!-- rt-kit v0.33.1 · rules/git-workflow.github.md · ac3d797ae30e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.34.0 · rules/git-workflow.github.md · 1536bf412c17 · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 
@@ -232,6 +232,9 @@ flowchart TD
 - **A push into a branch that has an open PR is followed by rereading its body.** The statement
   about a green run names the tip by its sha, and moving the tip makes it false in silence: no check
   reads a PR body.
+- **On remarks to a PR the person is asked whether to answer under them, and after a yes each one
+  gets an answer.** Edits alone leave the discussion silent, and the person reads the whole diff
+  again. The word holds for that PR, not for the next.
 - **The draft is not lifted while the PR has no review.** The guard reads the requested reviewer and
   the review left: a lifted draft reads as "may be merged", and there is nobody to merge.
 - **The PR merge is pressed by a person, not by the work's executor.** Button and merge call are

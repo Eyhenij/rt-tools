@@ -27,7 +27,15 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { IQuillDelta, RT_KIT_LABELS, RtFileCardComponent, RtIconButtonComponent, rtKitLabel, TRtKitLabelMap } from '@rt-tools/ui-kit-v2';
+import {
+    IQuillDelta,
+    RT_KIT_LABELS,
+    rtCaretToEnd,
+    RtFileCardComponent,
+    RtIconButtonComponent,
+    rtKitLabel,
+    TRtKitLabelMap,
+} from '@rt-tools/ui-kit-v2';
 
 import { RtRichEditorComponent, TRtRichEditorToolbar } from '../rich-editor/rt-rich-editor.component';
 import { IRtMessageComposer } from './rt-message-composer.model';
@@ -253,6 +261,20 @@ export class RtMessageComposerComponent {
             return;
         }
         this.textInput()?.nativeElement.focus();
+    }
+
+    /** Заменяет черновик и ставит курсор в конец; выбранные файлы остаются. */
+    public setDraft(text: string): void {
+        if (this.formatting()) {
+            this.form.controls.delta.setValue(text === '' ? null : { ops: [{ insert: `${text}\n` }] });
+            this.richEditor()?.focusAtEnd();
+            return;
+        }
+        this.form.controls.message.setValue(text);
+        const node: HTMLTextAreaElement | undefined = this.textInput()?.nativeElement;
+        if (node) {
+            rtCaretToEnd(node);
+        }
     }
 
     protected onKeydown(event: KeyboardEvent): void {

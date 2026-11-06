@@ -1,129 +1,216 @@
-<app-story-presets caption="Страница переписки: список, разговор и сведения о госте">
-    <ng-template>
-        <div style="box-sizing: border-box; inline-size: 1400px; block-size: 720px; background: var(--rt-color-bg-surface)">
-            <rt-workspace cards hasActive listDefaultWidth="337" asideDefaultWidth="358" style="block-size: 100%">
-                <ng-template rtWorkspaceList>
-                    <rt-thread-list messenger searchPlaceholder="Поиск" [rows]="rows" [activeId]="12">
-                        <ng-template rtThreadListFilters>
-                            <span>Канал</span>
-                        </ng-template>
-                        <ng-template rtThreadListTabs>
-                            <rt-toggle-button-group fullWidth size="md" ariaLabel="Вкладки списка" value="all" [options]="tabOptions" />
-                        </ng-template>
-                        <ng-template rtThreadListRow let-row>
-                            <div style="display: flex; align-items: center; gap: 0.75rem; min-inline-size: 0; inline-size: 100%">
-                                <div style="display: grid; flex: 1; gap: 0.125rem; min-inline-size: 0; line-height: 1.5">
+@if (drafting) {
+    <!-- Пары наборов нет: вторая половина повторила бы тот же показ и не добавила бы ничего нового. -->
+    <ng-container [ngTemplateOutlet]="page" />
+} @else {
+    <app-story-presets caption="Страница переписки: список, разговор и сведения о госте">
+        <ng-template>
+            <ng-container [ngTemplateOutlet]="page" />
+        </ng-template>
+    </app-story-presets>
+}
+
+<ng-template #page>
+    <div style="box-sizing: border-box; inline-size: 1400px; block-size: 720px; background: var(--rt-color-bg-surface)">
+        <rt-workspace cards hasActive listDefaultWidth="337" asideDefaultWidth="358" style="block-size: 100%">
+            <ng-template rtWorkspaceList>
+                <rt-thread-list messenger searchPlaceholder="Поиск" [rows]="rows" [activeId]="12">
+                    <ng-template rtThreadListFilters>
+                        <span>Канал</span>
+                    </ng-template>
+                    <ng-template rtThreadListTabs>
+                        <rt-toggle-button-group fullWidth size="md" ariaLabel="Вкладки списка" value="all" [options]="tabOptions" />
+                    </ng-template>
+                    <ng-template rtThreadListRow let-row>
+                        <div style="display: flex; align-items: center; gap: 0.75rem; min-inline-size: 0; inline-size: 100%">
+                            <div style="display: grid; flex: 1; gap: 0.125rem; min-inline-size: 0; line-height: 1.5">
+                                <span
+                                    style="
+                                        overflow: hidden;
+                                        font-size: var(--rt-text-sm);
+                                        font-weight: var(--rt-font-weight-semibold);
+                                        text-overflow: ellipsis;
+                                        white-space: nowrap;
+                                    "
+                                    [style.color]="row.id === 12 ? 'var(--rt-color-action-primary)' : 'var(--rt-color-text-primary)'">
+                                    {{ row.title }}
+                                </span>
+                                <span
+                                    style="
+                                        overflow: hidden;
+                                        color: var(--rt-color-text-muted);
+                                        font-size: var(--rt-text-xs);
+                                        text-overflow: ellipsis;
+                                        white-space: nowrap;
+                                    ">
+                                    {{ drafting && row.id === 12 ? 'Можно выехать в 14:00?' : row.preview }}
+                                </span>
+                            </div>
+                            <div style="display: grid; justify-items: end; align-content: start; line-height: 1.5">
+                                <span
+                                    style="display: flex; align-items: center; gap: 0.25rem; font-size: var(--rt-text-xs)"
+                                    [style.color]="row.unread > 0 ? 'var(--rt-color-action-primary)' : 'var(--rt-color-text-muted)'">
+                                    @if (row.read) {
+                                        <rt-icon name="check-double" size="xs" style="color: var(--rt-color-action-primary)" />
+                                    }
+                                    {{ row.time }}
+                                </span>
+                                @if (row.unread > 0) {
                                     <span
                                         style="
-                                            overflow: hidden;
-                                            font-size: var(--rt-text-sm);
+                                            display: grid;
+                                            place-items: center;
+                                            min-inline-size: 1.25rem;
+                                            block-size: 1.25rem;
+                                            box-sizing: border-box;
+                                            padding-inline: 0.375rem;
+                                            border-radius: var(--rt-radius-full);
+                                            background: var(--rt-color-action-primary);
+                                            color: var(--rt-color-action-on-primary);
+                                            font-size: var(--rt-text-2xs);
                                             font-weight: var(--rt-font-weight-semibold);
-                                            text-overflow: ellipsis;
-                                            white-space: nowrap;
-                                        "
-                                        [style.color]="row.id === 12 ? 'var(--rt-color-action-primary)' : 'var(--rt-color-text-primary)'">
-                                        {{ row.title }}
-                                    </span>
-                                    <span
-                                        style="
-                                            overflow: hidden;
-                                            color: var(--rt-color-text-muted);
-                                            font-size: var(--rt-text-xs);
-                                            text-overflow: ellipsis;
-                                            white-space: nowrap;
                                         ">
-                                        {{ row.preview }}
+                                        {{ row.unread }}
                                     </span>
-                                </div>
-                                <div style="display: grid; justify-items: end; align-content: start; line-height: 1.5">
-                                    <span
-                                        style="display: flex; align-items: center; gap: 0.25rem; font-size: var(--rt-text-xs)"
-                                        [style.color]="row.unread > 0 ? 'var(--rt-color-action-primary)' : 'var(--rt-color-text-muted)'">
-                                        @if (row.read) {
-                                            <rt-icon name="check-double" size="xs" style="color: var(--rt-color-action-primary)" />
-                                        }
-                                        {{ row.time }}
-                                    </span>
-                                    @if (row.unread > 0) {
-                                        <span
+                                } @else {
+                                    <span style="block-size: 1.25rem"></span>
+                                }
+                            </div>
+                        </div>
+                    </ng-template>
+                </rt-thread-list>
+            </ng-template>
+
+            <ng-template rtWorkspaceCenter>
+                <rt-chat
+                    fill
+                    messenger
+                    hasThread
+                    canReply
+                    attachments
+                    placeholder="Напишите сообщение…"
+                    title="№12 Анна Смирнова"
+                    subtitle="WhatsApp · +66 81 234 5678"
+                    [messages]="drafting ? draftingMessages : messages"
+                    [sign]="sign">
+                    <ng-template rtChatMessageButtons>
+                        <rt-icon-button icon="reply" variant="ghost" size="sm" ariaLabel="Ответить" />
+                    </ng-template>
+                    <ng-template rtChatMessageActions>
+                        <rt-menu-item icon="reply" label="Ответить" />
+                        <rt-menu-item icon="copy" label="Скопировать текст" />
+                    </ng-template>
+                    <div rtChatHeaderActions style="display: flex; gap: 0.25rem">
+                        <rt-icon-button icon="calendar-plus" variant="ghost" size="sm" ariaLabel="Завести бронь" />
+                        <rt-menu icon="ellipsis-v" triggerSize="sm" ariaLabel="Действия с перепиской">
+                            <rt-menu-item icon="archive" label="Перенести в архив" />
+                        </rt-menu>
+                    </div>
+                    <rt-icon-button
+                        rtChatComposerTools
+                        rtPopoverTrigger="click"
+                        qa-dataid="story-quick-replies"
+                        icon="bolt"
+                        variant="ghost"
+                        size="sm"
+                        iconColor="muted"
+                        ariaLabel="Быстрые ответы"
+                        [rtPopover]="drafting ? replies : null"
+                        [rtPopoverPositions]="quickRepliesPositions" />
+                    <rt-icon-button
+                        rtChatComposerTools
+                        icon="clock"
+                        variant="ghost"
+                        size="sm"
+                        iconColor="muted"
+                        ariaLabel="Отправить позже" />
+                </rt-chat>
+            </ng-template>
+
+            <ng-template rtWorkspaceAside>
+                <rt-tabs dense [activeId]="drafting ? 'hints' : 'guest'">
+                    <ng-template rtTab="hints" label="Подсказки">
+                        @if (drafting) {
+                            <div style="display: grid; gap: 1rem; padding: 1.25rem 1.5rem 0">
+                                <p
+                                    qa-dataid="story-hints-text"
+                                    style="margin: 0; color: var(--rt-color-text-muted); font-size: var(--rt-text-xs); line-height: 15px">
+                                    Ассистент читает переписку и предлагает следующий шаг. Нажмите на подсказку, и текст встанет в поле
+                                    ответа.
+                                </p>
+                                <div style="display: grid; gap: 0.5rem">
+                                    @for (hint of hints; track hint.draft) {
+                                        <button
+                                            type="button"
                                             style="
-                                                display: grid;
-                                                place-items: center;
-                                                min-inline-size: 1.25rem;
-                                                block-size: 1.25rem;
-                                                box-sizing: border-box;
-                                                padding-inline: 0.375rem;
-                                                border-radius: var(--rt-radius-full);
-                                                background: var(--rt-color-action-primary);
-                                                color: var(--rt-color-action-on-primary);
-                                                font-size: var(--rt-text-2xs);
-                                                font-weight: var(--rt-font-weight-semibold);
-                                            ">
-                                            {{ row.unread }}
-                                        </span>
-                                    } @else {
-                                        <span style="block-size: 1.25rem"></span>
+                                                display: flex;
+                                                align-items: center;
+                                                gap: 0.5rem;
+                                                padding: 0.5rem 1rem;
+                                                border: 0;
+                                                border-radius: var(--rt-radius-lg);
+                                                background: var(--rt-color-bg-surface-subtle);
+                                                color: var(--rt-color-text-primary);
+                                                font: inherit;
+                                                font-size: var(--rt-text-sm);
+                                                font-weight: var(--rt-font-weight-medium);
+                                                line-height: 17px;
+                                                text-align: start;
+                                                cursor: pointer;
+                                            "
+                                            [attr.qa-dataid]="'story-hint-' + $index"
+                                            (click)="insert(hint.draft)">
+                                            <span style="flex: 1">{{ hint.label }}</span>
+                                            <rt-icon name="arrow-right" size="sm" style="color: var(--rt-color-text-muted)" />
+                                        </button>
                                     }
                                 </div>
                             </div>
-                        </ng-template>
-                    </rt-thread-list>
-                </ng-template>
+                        }
+                    </ng-template>
+                    <ng-template rtTab="guest" label="Гость">
+                        <rt-workspace-details [rows]="details" [profile]="profile" />
+                    </ng-template>
+                    <ng-template rtTab="channels" label="Каналы" />
+                    <ng-template rtTab="site" label="Сайт" />
+                    <ng-template rtTab="bookings" label="Брони" />
+                </rt-tabs>
+            </ng-template>
+        </rt-workspace>
+    </div>
+</ng-template>
 
-                <ng-template rtWorkspaceCenter>
-                    <rt-chat
-                        fill
-                        messenger
-                        hasThread
-                        canReply
-                        attachments
-                        placeholder="Напишите сообщение…"
-                        title="№12 Анна Смирнова"
-                        subtitle="WhatsApp · +66 81 234 5678"
-                        [messages]="messages"
-                        [sign]="sign">
-                        <ng-template rtChatMessageButtons>
-                            <rt-icon-button icon="reply" variant="ghost" size="sm" ariaLabel="Ответить" />
-                        </ng-template>
-                        <ng-template rtChatMessageActions>
-                            <rt-menu-item icon="reply" label="Ответить" />
-                            <rt-menu-item icon="copy" label="Скопировать текст" />
-                        </ng-template>
-                        <div rtChatHeaderActions style="display: flex; gap: 0.25rem">
-                            <rt-icon-button icon="calendar-plus" variant="ghost" size="sm" ariaLabel="Завести бронь" />
-                            <rt-menu icon="ellipsis-v" triggerSize="sm" ariaLabel="Действия с перепиской">
-                                <rt-menu-item icon="archive" label="Перенести в архив" />
-                            </rt-menu>
-                        </div>
-                        <rt-icon-button
-                            rtChatComposerTools
-                            icon="bolt"
-                            variant="ghost"
-                            size="sm"
-                            iconColor="muted"
-                            ariaLabel="Быстрые ответы" />
-                        <rt-icon-button
-                            rtChatComposerTools
-                            icon="clock"
-                            variant="ghost"
-                            size="sm"
-                            iconColor="muted"
-                            ariaLabel="Отправить позже" />
-                    </rt-chat>
-                </ng-template>
-
-                <ng-template rtWorkspaceAside>
-                    <rt-tabs dense activeId="guest">
-                        <ng-template rtTab="hints" label="Подсказки" />
-                        <ng-template rtTab="guest" label="Гость">
-                            <rt-workspace-details [rows]="details" [profile]="profile" />
-                        </ng-template>
-                        <ng-template rtTab="channels" label="Каналы" />
-                        <ng-template rtTab="site" label="Сайт" />
-                        <ng-template rtTab="bookings" label="Брони" />
-                    </rt-tabs>
-                </ng-template>
-            </rt-workspace>
-        </div>
-    </ng-template>
-</app-story-presets>
+<ng-template #replies>
+    <div
+        style="
+            display: grid;
+            box-sizing: border-box;
+            inline-size: 210px;
+            padding: 0.25rem;
+            border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-radius-md);
+            background: var(--rt-overlay-menu-bg);
+            box-shadow: var(--rt-overlay-menu-shadow);
+        "
+        qa-dataid="story-quick-replies-panel">
+        @for (reply of quickReplies; track reply) {
+            <button
+                type="button"
+                style="
+                    padding: 0.5rem 1rem;
+                    border: 0;
+                    border-radius: var(--rt-radius-sm);
+                    background: transparent;
+                    color: var(--rt-color-text-primary);
+                    font: inherit;
+                    font-size: var(--rt-text-sm);
+                    line-height: 1.5;
+                    text-align: start;
+                    cursor: pointer;
+                "
+                [attr.qa-dataid]="'story-quick-reply-' + $index"
+                (click)="insert(reply)">
+                {{ reply }}
+            </button>
+        }
+    </div>
+</ng-template>

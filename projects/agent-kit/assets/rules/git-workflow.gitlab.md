@@ -112,6 +112,9 @@ flowchart TD
 - **A push into a branch that has an open PR is followed by rereading its body.** The statement
   about a green run names the tip by its sha, and moving the tip makes it false in silence: no check
   reads a PR body.
+- **On remarks to a PR the person is asked whether to answer under them, and after a yes each one
+  gets an answer.** Edits alone leave the discussion silent, and the person reads the whole diff
+  again. The word holds for that PR, not for the next.
 - **The draft is lifted by a separate call — `glab mr update <номер> --ready`.** With it the
   executor answers for readiness: checks passed, no rework left, the work matches the task. Lifting
   the draft and asking to merge are one turn, not two days.

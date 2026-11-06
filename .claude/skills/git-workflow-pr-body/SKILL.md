@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when the PR body is written or edited — the Closes line and how the task closes when the base is not the main branch, reviewer, assignee and labels by the opening call, the four sections of the body. Opening the PR itself — pattern git-workflow-pr.
 ---
-<!-- rt-kit v0.33.1 · patterns/git-workflow-pr-body.github.md · b2cffe60e0d5 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.34.0 · patterns/git-workflow-pr-body.github.md · 7139273899d8 · правится надстройкой, не здесь -->
 
 # The PR body and the link to the task
 
@@ -99,9 +99,14 @@ things about the tree, and the tree has changed since.
 
 ## PR body sample
 
-Four sections, and one order between them: the link line, what was done, what confirms it, the
-remaining step. A section with nothing to say says so in words — an empty heading and a removed
-heading read alike and mean different things.
+Six sections, and one order between them: the link line, what was done, the points, the goal, what
+confirms it, the remaining step. A section with nothing to say says so in words — an empty heading
+and a removed heading read alike and mean different things.
+
+The table of points comes from the reply of the role `product-strategist`: a sign not run is
+written as not run, and its point as not reached. The table of the goal comes from the reply of the
+role `goal-critic`. Both go in word for word, and the critic reads the finished body against the
+replies.
 
 ```markdown
 Closes #86
@@ -109,6 +114,18 @@ Closes #86
 ## Что сделано
 
 - <правка, названная тем, что она меняет для читателя, а не тем, какие файлы задела>
+
+## Точки
+
+| Точка | Признак | Результат |
+| --- | --- | --- |
+| <изменение, которое увидит человек> | <команда, страница или число> | <вывод признака: достигнута или промах> |
+
+## Цель
+
+| Слова владельца | Что показывает результат | Итог |
+| --- | --- | --- |
+| <дословная цитата> | <что видно в результате> | <выполнено или нет> |
 
 ## Чем подтверждено
 
