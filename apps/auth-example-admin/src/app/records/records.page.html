@@ -13,6 +13,8 @@
             (click)="signOut()"></button>
     </header>
 
+    <rt-detail-row label="Signed in as" qa-dataid="records-account">{{ account() }}</rt-detail-row>
+
     @if (refusal(); as text) {
     <rt-message severity="danger" qa-dataid="records-refusal">{{ text }}</rt-message>
     } @if (canRead()) {
