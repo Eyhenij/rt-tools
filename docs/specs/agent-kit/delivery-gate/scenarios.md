@@ -483,10 +483,17 @@ Covered: `projects/agent-kit/tests/git-guards.test.sh`,
 
 ### SC-AK-884 — a branch name with the tail -b in the base argument does not count as a request body
 
-Given the body of the request lies in a file, and the base is named by a branch whose name ends with
-`-b`
+Given the body of the request lies in a file, and the name of the base branch ends with `-b`
 When the guard judges the opening of the request — with arguments after the name and with the name as
 the last word
 Then it reads the body from the file and stays silent about the section; a file without it refuses
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`.
+
+### SC-AK-1271 — a body without the section with the table of points refuses opening a request
+
+Given the tree named the sample of the section, and the body of the request does not carry it
+When a call to open a request goes
+Then the guard refuses it and names the role, for the points and for the critic alike; with the heading or with no sample it stays silent
+
+Covered: `projects/agent-kit/tests/delivery-points-section.test.sh`.
