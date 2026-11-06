@@ -3,13 +3,13 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 4 — The texts and the version
+- **Stage:** 4 of 4 — Delivery
 - **Done:** all seven remarks in the code and checked on a stand of my own (Keycloak 26.8.1 — the
   version of the application); the spec rules, bindings and scenarios SC-AUTH-64, 97–99 rewritten;
   theme unit tests 61/61, lint and styles lint green. Stand and browser tab stopped.
-- **Next step:** run `npm run check:specs` and fix what it names in `docs/specs/auth/theme/`, then
-  3.2 — raise the theme version in `projects/auth-keycloak-theme/package.json` (0.2.1 → 0.3.0: the
-  look changes), then stage 4.
+- **Next step:** 4.1 — the push gate set (`rt_push_checks` in `.claude/rt-kit/project.sh`), then
+  the folder into the archive, push, draft PR. `check:specs` passed; the theme is 0.3.0 (0.2.1 was
+  never released).
 - **Uncommitted:** nothing.
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -25,9 +25,9 @@
 - [x] 2.1 The theme JAR is built and the stand is raised
 - [x] 2.2 The screens are measured at 1440, 768 and 375 in both themes
 - [x] 2.3 The stand is stopped
-- [>] 3.1 The spec rules, their bindings and the scenarios say what the theme does now
-- [ ] 3.2 The theme version is raised
-- [ ] 4.1 The check set passes
+- [x] 3.1 The spec rules, their bindings and the scenarios say what the theme does now
+- [x] 3.2 The theme version is raised
+- [>] 4.1 The check set passes
 - [ ] 4.2 The task folder is taken apart into the archive
 - [ ] 4.3 The PR opens and is shown to the owner
 - [ ] 4.4 After the merge the theme release is published

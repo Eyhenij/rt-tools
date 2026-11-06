@@ -49,10 +49,14 @@ Every other Keycloak page keeps the standard Keycloakify layout.
   own, so the screens say what the realm mails say. The kit labels follow the same locale.
 - **The forms post the fields of the standard theme** — `username`, `password`, `password-new` and
   the rest. The kit inputs hold the values, and named hidden fields carry them in a plain submit.
-- **The theme follows the system** until a person switches it above the card. The choice lives in
-  the browser storage of the kit.
+- **The theme follows the system** until a person switches it. The choice lives in the browser
+  storage of the kit.
 - **Provider buttons** come from the realm list. Google and Apple get their own marks.
-- **The language** is chosen from a drop-down list above the card when the realm has two or more.
+- **The language** is chosen from a drop-down list when the realm has two or more. Every language is
+  named in itself with a capital letter, and the links between the entry pages keep the chosen one.
+- **The switches** of the language and the theme stand in the top right corner of the window on a
+  glass pad of their own from 768 pixels wide, and in the first row of the card below that.
+- **A message page** without a next step leads back to the sign-in.
 - **The forms** use the large fields and buttons of the kit, and every field keeps the line for its
   error, so an error does not move the form.
 
