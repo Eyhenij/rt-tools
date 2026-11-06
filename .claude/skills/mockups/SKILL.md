@@ -4,7 +4,7 @@ kind: rule
 law: mockups
 description: Rule under the mockups law. Load when a screen is drawn or changed in a design tool, before the mockups are shown to the owner and when a design file is audited. Names the kit copy, the spec read before drawing, the agreement checked against mockups. Pattern mockups-measure.
 ---
-<!-- rt-kit v0.33.1 · rules/mockups.needs-mockups.md · a367fd4ea714 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.34.0 · rules/mockups.needs-mockups.md · a367fd4ea714 · правится надстройкой, не здесь -->
 
 # Mockups — how it works here
 

@@ -2,7 +2,7 @@
 name: interface-review-principles
 description: The rules an interface review judges by: accessibility, layout, writing, typography and UI polish, with exact values. Load during an interface review to judge a finding and word its fix. The run order and the report form are in interface-review.
 ---
-<!-- rt-kit v0.33.1 · skills/interface-review-principles.needs-app.md · 0055bc5ec661 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.34.0 · skills/interface-review-principles.needs-app.md · 0055bc5ec661 · правится надстройкой, не здесь -->
 
 # The five domains of an interface review
 

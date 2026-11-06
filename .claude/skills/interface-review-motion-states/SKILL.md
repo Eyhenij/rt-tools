@@ -2,7 +2,7 @@
 name: interface-review-motion-states
 description: Recipes for animated state changes in an interface review: contextual icon swaps with exact values, scale on press, no animation on page load, with CSS, Tailwind and Motion code. Load when such a finding is worded or fixed. Entrances and exits are in interface-review-motion.
 ---
-<!-- rt-kit v0.33.1 · skills/interface-review-motion-states.needs-app.md · f7056abf9ad1 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.34.0 · skills/interface-review-motion-states.needs-app.md · f7056abf9ad1 · правится надстройкой, не здесь -->
 
 # Animated state changes
 
