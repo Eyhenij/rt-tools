@@ -181,13 +181,13 @@ describe('RtDataTableCellComponent', () => {
         expect(icon.style.color).toBe('red');
     });
 
-    it('SC-UKV-1157 — колонка задаёт значку ячейки размер', () => {
+    it('SC-UKV-1162 — колонка задаёт значку ячейки размер', () => {
         const fixture: ComponentFixture<CellHostComponent> = setup({ icon: { glyph: 'star', placement: 'left', size: 'sm' } });
 
         expect((fixture.debugElement.query(By.directive(RtIconComponent)).componentInstance as RtIconComponent).size()).toBe('sm');
     });
 
-    it('SC-UKV-1157 — размер не из списка даёт значку ячейки 24px, как без размера', () => {
+    it('SC-UKV-1162 — размер не из списка даёт значку ячейки 24px, как без размера', () => {
         const fixture: ComponentFixture<CellHostComponent> = setup({
             icon: { glyph: 'star', placement: 'left', size: 'xl' as IRtDataTable.IconSize },
         });
@@ -195,13 +195,13 @@ describe('RtDataTableCellComponent', () => {
         expect((fixture.debugElement.query(By.directive(RtIconComponent)).componentInstance as RtIconComponent).size()).toBe('lg');
     });
 
-    it('SC-UKV-1157 — без размера в колонке значок ячейки 24px, как был', () => {
+    it('SC-UKV-1162 — без размера в колонке значок ячейки 24px, как был', () => {
         const fixture: ComponentFixture<CellHostComponent> = setup({ icon: { glyph: 'star', placement: 'left' } });
 
         expect((fixture.debugElement.query(By.directive(RtIconComponent)).componentInstance as RtIconComponent).size()).toBe('lg');
     });
 
-    it('SC-UKV-1157 — глиф без пары в перечне получает ту же ступень размера, без размера — свою 24px', () => {
+    it('SC-UKV-1162 — глиф без пары в перечне получает ту же ступень размера, без размера — свою 24px', () => {
         const small: ComponentFixture<CellHostComponent> = setup({ icon: { glyph: 'pets', placement: 'left', size: 'sm' } });
         const plain: ComponentFixture<CellHostComponent> = setup({ icon: { glyph: 'pets', placement: 'left' } });
 

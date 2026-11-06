@@ -355,7 +355,7 @@ When the settings of the table with the key "orders" are reset
 Then both records are removed, and the next opening draws the declared columns
 Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-config.service.spec.ts`.
 
-### SC-UKV-1157 — the column gives the cell icon its size
+### SC-UKV-1162 — the column gives the cell icon its size
 
 Given a column whose icon is declared with the size `sm` and a column whose icon has no size
 When the cells are drawn

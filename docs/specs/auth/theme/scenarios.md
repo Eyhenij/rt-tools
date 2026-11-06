@@ -121,7 +121,7 @@ When the language list is built
 Then each language is named in itself with a capital letter, Chinese by its script; a tag the
 browser does not know or cannot read keeps the Keycloak name, and the page still draws
 
-### SC-AUTH-98 — the links between the entry pages carry the language a person chose
+### SC-AUTH-103 — the links between the entry pages carry the language a person chose
 
 Given a page drawn in a language
 When the theme reads the addresses of the sign-in, the registration, the reset and the restart

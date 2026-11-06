@@ -3,7 +3,7 @@ import { TKcPageContext } from './kc-context';
 import { isLocaleChosen, withLocale, withLocaleLinks } from './kc-locale-links';
 
 describe('withLocaleLinks', () => {
-    it('SC-AUTH-98 — the links between the entry pages carry the language the person chose', () => {
+    it('SC-AUTH-103 — the links between the entry pages carry the language the person chose', () => {
         const context: TKcPageContext<'login.ftl'> = kcContextOf('login.ftl');
 
         const linked: TKcPageContext<'login.ftl'> = withLocaleLinks(context, 'ru', true) as TKcPageContext<'login.ftl'>;
@@ -20,7 +20,7 @@ describe('withLocaleLinks', () => {
         expect(linked.url.loginAction).toBe(context.url.loginAction);
     });
 
-    it('SC-AUTH-98 — a language nobody chose leaves the links as they are', () => {
+    it('SC-AUTH-103 — a language nobody chose leaves the links as they are', () => {
         const context: TKcPageContext<'login.ftl'> = kcContextOf('login.ftl');
 
         expect(withLocaleLinks(context, 'en', false)).toBe(context);
@@ -28,7 +28,7 @@ describe('withLocaleLinks', () => {
         expect(isLocaleChosen('?client_id=admin&kc_locale=ru')).toBe(true);
     });
 
-    it('SC-AUTH-98 — a link keeps its own parameters and replaces a former language', () => {
+    it('SC-AUTH-103 — a link keeps its own parameters and replaces a former language', () => {
         expect(withLocale('/realms/rt/login-actions/registration?client_id=admin&kc_locale=en', 'ru')).toBe(
             '/realms/rt/login-actions/registration?client_id=admin&kc_locale=ru'
         );
@@ -37,7 +37,7 @@ describe('withLocaleLinks', () => {
         );
     });
 
-    it('SC-AUTH-98 — the rest of a link stays as Keycloak wrote it', () => {
+    it('SC-AUTH-103 — the rest of a link stays as Keycloak wrote it', () => {
         expect(withLocale('/realms/rt/auth?scope=openid%20profile&redirect_uri=https://a.example/b#top', 'ru')).toBe(
             '/realms/rt/auth?scope=openid%20profile&redirect_uri=https://a.example/b&kc_locale=ru#top'
         );
