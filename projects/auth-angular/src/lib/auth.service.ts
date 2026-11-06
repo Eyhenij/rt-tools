@@ -1,9 +1,10 @@
 import { computed, DOCUMENT, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { callerFromClaims, ICaller, IKeycloakClaims } from '@rt-tools/auth-contract';
 
-import { carriesEntryAnswer, IRtAuthConfig, keycloakInitOptions, RT_AUTH_CONFIG, RT_AUTH_ORGANIZATION } from './auth.config';
+import { IRtAuthConfig, RT_AUTH_CONFIG, RT_AUTH_ORGANIZATION } from './auth.config';
 import { RT_KEYCLOAK, TRtKeycloak } from './keycloak';
 import { meetsRequirement, TRtPermissionRequirement } from './requirement';
+import { IRtAuthStartPlan, startPlan } from './start-plan';
 import { isTokenRecipient } from './token-recipient';
 
 /** A token that expires sooner than this is refreshed before a request leaves. */
@@ -11,13 +12,6 @@ export const MIN_VALIDITY_SECONDS: number = 30;
 
 /** The minimal validity that makes the adapter refresh the token whatever is left of it. */
 const FORCE_REFRESH: number = -1;
-
-/**
- * How long the start waits for the silent check by default. The adapter itself waits for it
- * without a limit: a Keycloak that is down, or one that refuses the return address, would leave
- * the admin unstarted for good.
- */
-export const SILENT_CHECK_TIMEOUT_MS: number = 5000;
 
 /** Waits for the start of the adapter, but no longer than the limit. */
 function withinLimit(start: Promise<boolean>, limitMs: number): Promise<void> {
@@ -47,8 +41,10 @@ export class RtAuthService {
     public readonly authenticated: Signal<boolean> = computed((): boolean => this.#caller() !== null);
 
     /**
-     * Starts the adapter and brings the session back through the silent check. A check that has
-     * not answered within the limit leaves nobody signed in, and the admin starts anyway.
+     * Starts the adapter and brings the session back. On the return from the entry form the
+     * adapter only exchanges the code, by a limit of its own; on any other address it runs the
+     * silent check. A start that has not answered within its limit leaves nobody signed in, and
+     * the admin starts anyway.
      */
     public async init(): Promise<void> {
         this.#keycloak.onAuthSuccess = (): void => this.#read();
@@ -56,15 +52,8 @@ export class RtAuthService {
         this.#keycloak.onAuthLogout = (): void => this.#caller.set(null);
         this.#keycloak.onTokenExpired = (): void => void this.refresh();
         const href: string = this.#document.location?.href ?? this.#document.baseURI;
-        const entryAnswer: boolean = carriesEntryAnswer(href);
-        const start: Promise<boolean> = this.#keycloak.init(keycloakInitOptions(this.#config, this.#document.baseURI, entryAnswer));
-        if (entryAnswer) {
-            // The exchange of the code is not the silent check: cut by its limit, it sends the
-            // person back to the entry form they have just passed.
-            await start;
-        } else {
-            await withinLimit(start, this.#config.silentCheckTimeoutMs ?? SILENT_CHECK_TIMEOUT_MS);
-        }
+        const plan: IRtAuthStartPlan = startPlan(this.#config, this.#document.baseURI, href);
+        await withinLimit(this.#keycloak.init(plan.options), plan.limitMs);
         this.#read();
     }
 

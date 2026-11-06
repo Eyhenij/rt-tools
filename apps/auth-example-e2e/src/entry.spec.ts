@@ -1,6 +1,7 @@
-import { expect, Route, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 import { PEOPLE, STAND_PASSWORD } from '../stand/stand.mjs';
+import { ILateCookieProbe, lateCookieProbe } from './support/cookie-probe';
 import { enterOnRealmScreen, expectEntryScreen, signIn } from './support/example';
 
 test.describe('the entry', () => {
@@ -12,23 +13,14 @@ test.describe('the entry', () => {
     });
 
     test('SC-AUTH-97 — the return from the entry form does not wait for the cookie probe of Keycloak', async ({ page }) => {
-        let returned: boolean = false;
-        let probesAfterReturn: number = 0;
-        // A probe that answers late on the return would cut the exchange of the code by the limit.
-        await page.route('**/3p-cookies/step1.html', async (route: Route): Promise<void> => {
-            if (returned) {
-                probesAfterReturn += 1;
-                await new Promise<void>((resolve: () => void): void => void setTimeout(resolve, 6_000));
-            }
-            await route.continue();
-        });
+        const probe: ILateCookieProbe = await lateCookieProbe(page);
         await page.goto('/');
         await expectEntryScreen(page);
-        returned = true;
+        probe.arm();
         await enterOnRealmScreen(page, PEOPLE.reader.email, STAND_PASSWORD);
 
-        await expect(page.getByTestId('records-person')).toBeVisible({ timeout: 4_000 });
-        expect(probesAfterReturn).toBe(0);
+        await expect(page.getByTestId('records-person')).toBeVisible();
+        expect(probe.calls()).toBe(0);
     });
 
     test('SC-AUTH-48 — a wrong password keeps the person on the entry screen', async ({ page }) => {

@@ -5,7 +5,8 @@ The first column is the rule verbatim, as it is written in the "Rules" section o
 - **The tokens live only in the memory of the page.** — `projects/auth-angular/src/lib/auth.config.ts:keycloakInitOptions`
 - **The entry uses the code flow with PKCE.** — `projects/auth-angular/src/lib/auth.config.ts:keycloakInitOptions`
 - **After a reload the session comes back through the silent check, without a password.** — `projects/auth-angular/src/lib/auth.config.ts:keycloakInitOptions`
-- **The return from the entry form exchanges the code without the silent check and its limit.** — `projects/auth-angular/src/lib/auth.config.ts:carriesEntryAnswer`
+- **The return from the entry form exchanges the code without the silent check.** — `projects/auth-angular/src/lib/start-plan.ts:startPlan`
+- **The exchange of the code waits by a limit of its own, thirty seconds by default.** — `projects/auth-angular/src/lib/auth.config.ts:CODE_EXCHANGE_TIMEOUT_MS`
 - **The caller is read by the contract for the client of the admin.** — `projects/auth-angular/src/lib/auth.service.ts:RtAuthService`
 - **The token goes only to a recipient the application named.** — `projects/auth-angular/src/lib/token-recipient.ts:isTokenRecipient`
 - **A token that expires within thirty seconds is refreshed before the request.** — `projects/auth-angular/src/lib/auth.service.ts:MIN_VALIDITY_SECONDS`

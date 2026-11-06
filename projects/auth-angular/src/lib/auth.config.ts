@@ -26,7 +26,26 @@ export interface IRtAuthConfig {
      * it the admin starts with nobody signed in.
      */
     readonly silentCheckTimeoutMs?: number;
+    /**
+     * How long the start waits for the exchange of the code on the return from the entry form, in
+     * milliseconds; by default thirty seconds. Past it the admin starts with nobody signed in.
+     */
+    readonly codeExchangeTimeoutMs?: number;
 }
+
+/**
+ * How long the start waits for the silent check by default. The adapter itself waits for it
+ * without a limit: a Keycloak that is down, or one that refuses the return address, would leave
+ * the admin unstarted for good.
+ */
+export const SILENT_CHECK_TIMEOUT_MS: number = 5000;
+
+/**
+ * How long the start waits for the exchange of the code by default. It is longer than the limit of
+ * the silent check: cut, the exchange sends the person back to the form they have just passed,
+ * while a hung one would leave a blank page.
+ */
+export const CODE_EXCHANGE_TIMEOUT_MS: number = 30_000;
 
 export const RT_AUTH_CONFIG: InjectionToken<IRtAuthConfig> = new InjectionToken<IRtAuthConfig>('RT_AUTH_CONFIG');
 
@@ -45,22 +64,11 @@ export const RT_AUTH_ORGANIZATION: InjectionToken<Signal<string | null>> = new I
  * session comes back only from Keycloak. The frame that watches the session is off — browsers
  * block its cookie, and the token refresh finds an ended session anyway.
  */
-export function keycloakInitOptions(config: IRtAuthConfig, baseUri: string, entryAnswer: boolean = false): KeycloakInitOptions {
-    const options: KeycloakInitOptions = { onLoad: 'check-sso', pkceMethod: 'S256', checkLoginIframe: false };
-    if (entryAnswer) {
-        // The address already carries the code: the adapter exchanges it and asks Keycloak nothing
-        // more, so neither the silent frame nor its cookie probe is raised.
-        return options;
-    }
-    return { ...options, silentCheckSsoRedirectUri: config.silentCheckSsoRedirectUri ?? new URL('silent-check-sso.html', baseUri).href };
-}
-
-/**
- * Whether the address is the return from the Keycloak entry form: its fragment carries the code
- * and the state of the request the adapter sent.
- */
-export function carriesEntryAnswer(href: string): boolean {
-    const hash: string = new URL(href).hash.slice(1);
-    const params: URLSearchParams = new URLSearchParams(hash);
-    return params.has('code') && params.has('state');
+export function keycloakInitOptions(config: IRtAuthConfig, baseUri: string): KeycloakInitOptions {
+    return {
+        onLoad: 'check-sso',
+        pkceMethod: 'S256',
+        silentCheckSsoRedirectUri: config.silentCheckSsoRedirectUri ?? new URL('silent-check-sso.html', baseUri).href,
+        checkLoginIframe: false,
+    };
 }

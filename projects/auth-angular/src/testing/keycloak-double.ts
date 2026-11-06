@@ -42,11 +42,14 @@ export class KeycloakDouble implements TRtKeycloak {
     public onTokenExpired?: () => void;
     /** Whether a refresh fails, as when the Keycloak session has ended. */
     public refreshFails: boolean = false;
-    /** Whether the silent check never answers, as when Keycloak is down. */
+    /** Whether the start never answers, as when Keycloak is down; it outweighs the two below. */
     public silentCheckSilent: boolean = false;
     /** How long the start takes, in milliseconds, as when Keycloak answers late. */
     public initDelayMs: number = 0;
-    /** The claims a late start brings at its end, as the exchange of a code does. */
+    /**
+     * The claims a late start brings at its end, as the exchange of a code does. Read only with
+     * `initDelayMs` above zero: a start without a delay keeps the session set by `signIn`.
+     */
     public claimsOnStart: IKeycloakClaims | null = null;
     public readonly initCalls: KeycloakInitOptions[] = [];
     public readonly updateCalls: number[] = [];

@@ -1,7 +1,16 @@
 import { claimsWith, KeycloakDouble, startAuth, TEST_CONFIG } from '../testing/keycloak-double';
 import { RtAuthService } from './auth.service';
 
+/** Puts the code answer of Keycloak into the address, as the return from the entry form does. */
+function onTheReturnFromTheForm(): void {
+    window.history.replaceState(null, '', `${window.location.pathname}#state=s-1&session_state=k-1&code=c-1`);
+}
+
 describe('RtAuthService', () => {
+    afterEach((): void => {
+        window.history.replaceState(null, '', window.location.pathname);
+    });
+
     it('SC-AUTH-26 — the adapter starts with PKCE, the silent check and no storage', async () => {
         const double: KeycloakDouble = new KeycloakDouble();
 
@@ -45,46 +54,38 @@ describe('RtAuthService', () => {
         expect(auth.authenticated()).toBe(false);
     });
 
-    describe('the return from the entry form', () => {
-        const ENTRY_ANSWER: string = '#state=s-1&session_state=k-1&code=c-1';
+    it('SC-AUTH-97 — the exchange of the code is not cut by the limit of the silent check', async () => {
+        onTheReturnFromTheForm();
+        const double: KeycloakDouble = new KeycloakDouble();
+        double.claimsOnStart = claimsWith(['orders:read']);
+        double.initDelayMs = 50;
 
-        afterEach((): void => {
-            window.history.replaceState(null, '', window.location.pathname);
-        });
+        const auth: RtAuthService = await startAuth(double, { ...TEST_CONFIG, silentCheckTimeoutMs: 10 });
 
-        it('SC-AUTH-97 — an address with the answer of Keycloak starts the adapter without the silent check', async () => {
-            window.history.replaceState(null, '', `${window.location.pathname}${ENTRY_ANSWER}`);
-            const double: KeycloakDouble = new KeycloakDouble();
+        expect(double.initCalls[0]).not.toHaveProperty('silentCheckSsoRedirectUri');
+        expect(auth.authenticated()).toBe(true);
+    });
 
-            await startAuth(double);
+    it('SC-AUTH-98 — an exchange of the code that hangs past its own limit lets the admin start with nobody signed in', async () => {
+        onTheReturnFromTheForm();
+        const double: KeycloakDouble = new KeycloakDouble();
+        double.silentCheckSilent = true;
 
-            expect(double.initCalls).toHaveLength(1);
-            expect(double.initCalls[0]).not.toHaveProperty('silentCheckSsoRedirectUri');
-            expect(double.initCalls[0].onLoad).toBe('check-sso');
-            expect(double.initCalls[0].pkceMethod).toBe('S256');
-        });
+        const auth: RtAuthService = await startAuth(double, { ...TEST_CONFIG, codeExchangeTimeoutMs: 10 });
 
-        it('SC-AUTH-97 — the exchange of the code is not cut by the limit of the silent check', async () => {
-            window.history.replaceState(null, '', `${window.location.pathname}${ENTRY_ANSWER}`);
-            const double: KeycloakDouble = new KeycloakDouble();
-            double.claimsOnStart = claimsWith(['orders:read']);
-            double.initDelayMs = 50;
+        expect(double.initCalls).toHaveLength(1);
+        expect(auth.authenticated()).toBe(false);
+    });
 
-            const auth: RtAuthService = await startAuth(double, { ...TEST_CONFIG, silentCheckTimeoutMs: 10 });
+    it('SC-AUTH-76 — without the code answer a late start is cut by the limit of the silent check', async () => {
+        const double: KeycloakDouble = new KeycloakDouble();
+        double.claimsOnStart = claimsWith(['orders:read']);
+        double.initDelayMs = 50;
 
-            expect(auth.authenticated()).toBe(true);
-        });
+        const auth: RtAuthService = await startAuth(double, { ...TEST_CONFIG, silentCheckTimeoutMs: 10 });
 
-        it('SC-AUTH-97 — an address without the answer keeps the silent check and its limit', async () => {
-            const double: KeycloakDouble = new KeycloakDouble();
-            double.claimsOnStart = claimsWith(['orders:read']);
-            double.initDelayMs = 50;
-
-            const auth: RtAuthService = await startAuth(double, { ...TEST_CONFIG, silentCheckTimeoutMs: 10 });
-
-            expect(double.initCalls[0].silentCheckSsoRedirectUri).toBe(new URL('silent-check-sso.html', document.baseURI).href);
-            expect(auth.authenticated()).toBe(false);
-        });
+        expect(double.initCalls[0].silentCheckSsoRedirectUri).toBe(new URL('silent-check-sso.html', document.baseURI).href);
+        expect(auth.authenticated()).toBe(false);
     });
 
     it('SC-AUTH-37 — the exit goes through Keycloak', async () => {
