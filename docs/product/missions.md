@@ -1,77 +1,79 @@
 # The missions of the products
 
-**Status: draft, not in force.** A session wrote this text, and the owner has not accepted it. Until
-they do, the role `product-strategist` reads it as a question to the owner, not as a norm.
+**Status: draft, not in force,** except where a section says the owner accepted it. A session wrote
+the rest, and until the owner accepts them the role `product-strategist` reads them as a question to
+the owner, not as a norm.
 
-A product here is what a person installs or opens. A mission says for whom the product exists and what
-changes for them; it does not list features. Once accepted, work is judged against it: a milestone of
-an epic that serves no mission here is a finding of the role.
+A product here is what a person installs or opens. A mission says what the person at the end gets,
+not what the developer calls or what the code holds. It does not list features. Once accepted, work
+is judged against it: a milestone of an epic that serves no mission here is a finding of the role.
 
 The owner sets the missions. A session proposes a wording from its analysis of the project and waits
 for approval; it does not set or change one on its own: a mission that moves to fit the work checks
 nothing.
 
-## The rules package
+## The second kit
 
-`@rt-tools/agent-kit`, for a repository where an agent writes the code.
+`@rt-tools/ui-kit-v2`. Accepted by the owner on 6 November 2026.
 
-- **Mission:** the agent works in any repository by the same checked rules from the first command, and
-  what one repository learned reaches the others.
-- **It is not:** a rule set for one repository, or a replacement for the reviewer.
+- **Mission:** the person behind the screen gets a clear, whole and convenient interface, and the
+  team gets it fast, without making again the decisions already made. Any screen built from the kit
+  looks and works like a considered product, even when one developer built it without a designer.
+- **It is not:** a kit tied to the look of one application, or a home for screens with subject logic.
 
 ## The first kit
 
-`@rt-tools/ui-kit`, for applications already built on it.
+`@rt-tools/ui-kit`.
 
-- **Mission:** existing applications keep working and get fixes without rewriting a screen.
-- **It is not:** a place for a new look: that is the second kit.
+- **Mission:** people who use an application on this kit keep a working interface until that
+  application moves to the second kit.
+- **It is not:** a kit for new applications, or a place for new components.
 
-## The second kit
+## The rules package
 
-`@rt-tools/ui-kit-v2`, for a team that builds an Angular interface.
+`@rt-tools/agent-kit`. Accepted by the owner on 6 November 2026.
 
-- **Mission:** a new application gets a whole accessible interface from one set of components and
-  tokens, without writing styles of its own.
-- **It is not:** an application framework, or a kit tied to the look of one product.
+- **Mission:** a person says what they want and gets a working result that matches their words,
+  without watching over the agent, at any size of project. A mistake corrected once does not come
+  back in any of their projects.
+- **It is not:** a collection of advice, or an installer of files.
 
 ## The foundation
 
-`@rt-tools/core`, `@rt-tools/store` and `@rt-tools/utils`, for whoever writes an Angular application
-or a kit.
+`@rt-tools/core`, `@rt-tools/store` and `@rt-tools/utils`.
 
-- **Mission:** the state, the types and the helpers every application writes again are written once
-  and tested once.
-- **It is not:** a framework of its own, or a home for what only one kit needs.
+- **Mission:** applications behave the same in what nobody sees, because that code exists once and a
+  fix reaches all of them.
+- **It is not:** a collection of functions for every case: what one consumer needs stays with them.
 
 ## The intake
 
-`apps/message-bus` and `apps/message-bus-admin`, for the owner of the rules package.
+`apps/message-bus` and `apps/message-bus-admin`.
 
-- **Mission:** what repositories report about the rules reaches one place, gets read and gets an
-  answer, so the rules change by evidence.
-- **It is not:** a public service, or a work queue of its own.
+- **Mission:** the owner of the rules sees what really goes wrong in each project, and every report
+  gets an answer about what became of it.
+- **It is not:** a general message bus, or the chat service.
 
 ## The entry module
 
-The `@rt-tools/auth-*` packages and `apps/auth-example-admin`, for an admin application.
+The `@rt-tools/auth-*` packages and `apps/auth-example-admin`.
 
-- **Mission:** an admin application gets one sign-in and rights by installing packages, without
-  writing its own.
-- **It is not:** a sign-in for public sites, or a replacement for Keycloak.
+- **Mission:** a person signs in safely and the same way in every application, and a new application
+  has working sign-in and rights from its first day.
+- **It is not:** a directory of organisations, or a base for custom Keycloak extensions.
 
 ## The CMS
 
-The `@rt-tools/cms-*` packages, for an application that keeps pages and articles.
+The `@rt-tools/cms-*` packages.
 
-- **Mission:** an application that keeps pages and articles installs its content handling instead of
-  writing it again.
-- **It is not:** a hosted content service, or a page builder for visitors.
+- **Mission:** the person who runs a site publishes and changes its pages and articles without a
+  developer.
+- **It is not:** a content storage, or a finished site.
 
 ## The chat with the visitors
 
-`apps/chat-widget`, `apps/chat-talks-embed` and `apps/chat-talks-page`, for a public site and the
-person who answers it.
+`apps/chat-widget`, `apps/chat-talks-embed` and `apps/chat-talks-page`.
 
-- **Mission:** a visitor writes on a site and gets an answer from the admin application, with nothing
+- **Mission:** a visitor asks a question on a site and gets an answer from a person, and nothing is
   lost on the way.
-- **It is not:** a support desk, or a marketing channel.
+- **It is not:** an answering bot, calls or a general messenger.
