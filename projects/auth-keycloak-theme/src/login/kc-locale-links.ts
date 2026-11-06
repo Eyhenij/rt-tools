@@ -6,19 +6,29 @@ import { TKcContext } from './kc-context';
  */
 const ENTRY_LINKS: readonly string[] = Object.freeze(['loginUrl', 'registrationUrl', 'loginResetCredentialsUrl', 'loginRestartFlowUrl']);
 
-/** The base a relative address is read against; nothing is ever asked of it. */
-const RELATIVE_BASE: string = 'https://relative.invalid';
-
-/** The address with `kc_locale` set to the language; an address it cannot read stays as it is. */
+/**
+ * The address with `kc_locale` set to the language. The rest of the address stays as Keycloak wrote
+ * it, byte for byte: a rebuilt query writes a space as `+` and escapes the slashes of a return
+ * address, and nothing about the next page should depend on how the language got onto the link.
+ */
 export function withLocale(href: string, languageTag: string): string {
-    try {
-        const parsed: URL = new URL(href, RELATIVE_BASE);
-        parsed.searchParams.set('kc_locale', languageTag);
+    const hashAt: number = href.indexOf('#');
+    const head: string = hashAt === -1 ? href : href.slice(0, hashAt);
+    const hash: string = hashAt === -1 ? '' : href.slice(hashAt);
+    const queryAt: number = head.indexOf('?');
+    const path: string = queryAt === -1 ? head : head.slice(0, queryAt);
+    const pairs: string[] =
+        queryAt === -1
+            ? []
+            : head
+                  .slice(queryAt + 1)
+                  .split('&')
+                  .filter((pair: string): boolean => pair !== '');
+    const kept: string[] = pairs.filter((pair: string): boolean => pair.split('=')[0] !== 'kc_locale');
 
-        return parsed.origin === RELATIVE_BASE ? `${parsed.pathname}${parsed.search}${parsed.hash}` : parsed.toString();
-    } catch {
-        return href;
-    }
+    const query: string = [...kept, 'kc_locale=' + encodeURIComponent(languageTag)].join('&');
+
+    return `${path}?${query}${hash}`;
 }
 
 /**

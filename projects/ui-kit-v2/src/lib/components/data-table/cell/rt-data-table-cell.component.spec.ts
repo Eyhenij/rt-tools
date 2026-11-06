@@ -187,6 +187,14 @@ describe('RtDataTableCellComponent', () => {
         expect((fixture.debugElement.query(By.directive(RtIconComponent)).componentInstance as RtIconComponent).size()).toBe('sm');
     });
 
+    it('SC-UKV-1157 — размер не из списка даёт значку ячейки 24px, как без размера', () => {
+        const fixture: ComponentFixture<CellHostComponent> = setup({
+            icon: { glyph: 'star', placement: 'left', size: 'xl' as IRtDataTable.IconSize },
+        });
+
+        expect((fixture.debugElement.query(By.directive(RtIconComponent)).componentInstance as RtIconComponent).size()).toBe('lg');
+    });
+
     it('SC-UKV-1157 — без размера в колонке значок ячейки 24px, как был', () => {
         const fixture: ComponentFixture<CellHostComponent> = setup({ icon: { glyph: 'star', placement: 'left' } });
 

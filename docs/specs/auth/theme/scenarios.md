@@ -129,13 +129,13 @@ Then each of them carries `kc_locale` with that language only when the person ch
 language list; a language that came from the application or the browser leaves the links as they
 are, and the form address stays as it is
 
-### SC-AUTH-99 — a message page without a next step leads to the sign-in of its entry
+### SC-AUTH-99 — a message page at the end of a flow leads back to the application
 
-Given a message page that names neither the application nor a next step and is not told to skip
-the link
-When it is drawn inside an entry that is still open
-Then it shows a button back to the sign-in of that entry, with the chosen language; a page with no
-open entry, a page with a next step and a page told to skip the link draw no such button
+Given a message page Keycloak draws at the end of a flow without an entry — the address confirmed
+from a letter — and tells to skip the link
+When it is drawn for a client with an address
+Then it shows a button back to the application at that address; a client without an address
+leaves the page without a button, and a page with a next step keeps that step
 
 ### SC-AUTH-101 — an address in a page text breaks only at its `@`
 

@@ -36,4 +36,12 @@ describe('withLocaleLinks', () => {
             'https://auth.example.com/realms/rt/protocol/openid-connect/auth?client_id=admin&kc_locale=de'
         );
     });
+
+    it('SC-AUTH-98 — the rest of a link stays as Keycloak wrote it', () => {
+        expect(withLocale('/realms/rt/auth?scope=openid%20profile&redirect_uri=https://a.example/b#top', 'ru')).toBe(
+            '/realms/rt/auth?scope=openid%20profile&redirect_uri=https://a.example/b&kc_locale=ru#top'
+        );
+        expect(withLocale('/realms/rt/login-actions/authenticate', 'zh-TW')).toBe('/realms/rt/login-actions/authenticate?kc_locale=zh-TW');
+        expect(withLocale('#', 'ru')).toBe('?kc_locale=ru#');
+    });
 });

@@ -16,18 +16,6 @@ interface IKcNextStep {
 }
 
 /**
- * Whether the sign-in address leads into an open entry. Keycloak names the tab of the entry in the
- * address only while that entry exists; without it the address opens an error page.
- */
-function hasOpenEntry(loginUrl: string): boolean {
-    try {
-        return new URL(loginUrl, 'https://relative.invalid').searchParams.has('tab_id');
-    } catch {
-        return false;
-    }
-}
-
-/**
  * `info.ftl` — a message of the realm. A person who opens an invitation letter lands here first:
  * the page names the actions ahead and leads to the first of them.
  */
@@ -50,8 +38,12 @@ export class RtKcInfoComponent {
     protected readonly next: IKcNextStep | null = this.#nextStep();
 
     #nextStep(): IKcNextStep | null {
+        // A page Keycloak tells to skip the link is the end of a flow that ran without an entry:
+        // the address confirmed from a letter, the account updated, the sign-out done. Its sign-in
+        // address opens «Cookie not found» there, so the way on is the application itself — its
+        // address starts a fresh entry. Without one the page has nowhere to lead, as before.
         if (this.#context.skipLink) {
-            return null;
+            return this.#backToApplication();
         }
         if (this.#context.pageRedirectUri) {
             return { href: this.#context.pageRedirectUri, label: backLinkText(this.#i18n.msgStr('backToApplication')) };
@@ -59,18 +51,13 @@ export class RtKcInfoComponent {
         if (this.#context.actionUri) {
             return { href: this.#context.actionUri, label: backLinkText(this.#i18n.msgStr('proceedWithAction')) };
         }
-        if (this.#context.client.baseUrl) {
-            return { href: this.#context.client.baseUrl, label: backLinkText(this.#i18n.msgStr('backToApplication')) };
-        }
 
-        // The confirmed address names neither the application nor a next step: without this the
-        // page ends the entry with nowhere to go. The sign-in leads back only into an entry that is
-        // still open — outside one, after a sign-out or in another browser, it opens Keycloak's
-        // error page instead of the form, and the page then stays without a button, as before.
-        if (!hasOpenEntry(this.#context.url.loginUrl)) {
-            return null;
-        }
+        return this.#backToApplication();
+    }
 
-        return { href: this.#context.url.loginUrl, label: backLinkText(this.#i18n.msgStr('backToLogin')) };
+    #backToApplication(): IKcNextStep | null {
+        const baseUrl: string | undefined = this.#context.client.baseUrl;
+
+        return baseUrl ? { href: baseUrl, label: backLinkText(this.#i18n.msgStr('backToApplication')) } : null;
     }
 }

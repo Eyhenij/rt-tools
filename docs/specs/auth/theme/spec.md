@@ -73,10 +73,10 @@ the entry is not sure the page belongs to the admin.
   starts these two messages with «, and the theme drops it.
 - **A link forward to the next step is plain text without a chevron.** Keycloak starts it with »,
   and the theme drops it the same way.
-- **A message page that names neither the application nor a next step leads back to the sign-in of its open entry.**
-  Without it the page that confirms the address ends the entry with nowhere to go. A page outside an
-  open entry draws none: after a sign-out or in another browser the sign-in opens an error page. A
-  page Keycloak tells to skip the link draws none either.
+- **A message page at the end of a flow leads back to the application when its client has an address.**
+  Keycloak tells the page to skip the link after an address confirmed from a letter, and the page
+  ends there with nowhere to go. The sign-in address opens «Cookie not found» outside an entry,
+  checked on the stand; the address of the application starts a fresh entry instead.
 - **The text of the address confirmation stands on the axis of the card, in balanced lines.** The
   other pages keep their text at the left edge.
 - **An address in a page text breaks only at its `@`.** Its name with the `@` and its domain each

@@ -359,5 +359,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-config.
 
 Given a column whose icon is declared with the size `sm` and a column whose icon has no size
 When the cells are drawn
-Then the first icon is drawn at the `sm` step, 16 pixels, and the second at `lg`, 24 pixels, as before
-Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.spec.ts`.
+Then the first icon is drawn at the `sm` step, 16 pixels, and the second at `lg`, 24 pixels, as before;
+a glyph with no pair in the map takes the same steps, and a size outside the list draws 24 pixels
+Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.spec.ts`;
+the pixels are measured by the step of the `IconSizes` story on every snapshot run.

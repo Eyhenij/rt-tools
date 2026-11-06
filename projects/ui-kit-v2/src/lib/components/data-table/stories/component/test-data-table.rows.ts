@@ -115,6 +115,11 @@ export const TEST_DATA_TABLE_ICON_COLUMNS: Array<IRtDataTable.Column<ITestDataTa
         transform: toDay,
         icon: { glyph: 'close', placement: 'left', size: 'md' },
     }),
+    columnOf('sum', 'Глиф sm — 16px', ERtDataTableColumnType.CURRENCY, {
+        align: 'right',
+        transform: toMoney,
+        icon: { glyph: 'pets', placement: 'left', size: 'sm' },
+    }),
 ];
 
 /**

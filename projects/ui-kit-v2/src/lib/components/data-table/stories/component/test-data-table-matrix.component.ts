@@ -119,6 +119,11 @@ const CLICKABLE_CASES: readonly { readonly name: string; readonly clickable: boo
                         <app-data-table-cell storageKey="story-icons" [columns]="iconColumns" [rows]="rows" />
                     </ng-template>
                 </app-story-presets>
+
+                <p class="app-data-table-matrix__note">
+                    Последняя колонка — глиф шрифта Material Symbols для имени без пары в перечне кита. Шрифт кит не везёт, и витрина его не
+                    подключает: в рамке 16px видно начало слова. С подключённым шрифтом на этом месте стоит значок того же размера.
+                </p>
             }
 
             @case ('sort') {
@@ -226,6 +231,7 @@ const CLICKABLE_CASES: readonly { readonly name: string; readonly clickable: boo
             }
         }
     `,
+    styleUrl: './test-data-table-matrix.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // showcase
