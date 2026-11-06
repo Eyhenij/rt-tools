@@ -128,6 +128,10 @@ flowchart TD
   shown names the branch it was built from. One such showing cost two turns: the owner repeated a
   remark whose edit had long been made, and the executor set about explaining a defect already
   fixed.
+- **An edit of a shared frame is checked on every screen under it.** A frame, a layout or a shell
+  edited for one page changes the rest under it, and those pages show in no diff. The list of screens
+  is read from what the frame shows, not from the page the task named, and the suite that walks them
+  runs before the push. The one page checked reads as the whole edit checked.
 - **The work branch keeps the tip of main merged in the whole time, not only before delivery.** A
   branch that has fallen behind builds into a stand with neither others' edits nor one's own
   neighbouring ones. What is shown on it describes a tree nobody has. The tip is pulled in when its

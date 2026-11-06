@@ -73,6 +73,8 @@ subdomains are the ones the rule groups had already drawn.
 | [The checks of the tree](checks/spec.md)                                 | file length, uniformity, declarations of markup classes, repeats                                  |
 | [The audit of the work queue](board/spec.md)                             | the run on the tip, the link with an epic, the lag of a branch, whose eyes the state was read by  |
 | [The delivery guards and the push gate](delivery-gate/spec.md)           | the base of a branch, the signature of a machine commit, the completeness of the gate set         |
+| [What the push gate counts as a push](push-sign/spec.md)                 | the subcommand of `git`, several recipients, a loop, the branch switch, the terminal tab          |
+| [The git hook before a push](pre-push-hook/spec.md)                      | the gate set on a push the session guard does not see, the mark of a judged commit                |
 | [The push set from its marks and ahead](push-gate-ahead/spec.md)         | the base of a stacked branch, green marks by tree, heavy steps run outside the hook limit         |
 | [The guard scenarios in the push set](push-gate-hooks/spec.md)           | a push editing the guards in a tree without a run file names the missing file                     |
 | [An unmerged agreement at opening a PR](delivery-agreement/spec.md)      | a PR does not open while the draft the plan named lies in the branch                              |

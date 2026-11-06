@@ -36,7 +36,7 @@ whole.
 - **The companions are taken out of the weight count.** — `projects/agent-kit/assets/checks/check-file-size.mjs:companion` — the companion of a rule and the scenario list of a spec.
 - **A tree that named no weight number and no text roots is judged by lines alone.** — `projects/agent-kit/assets/checks/check-file-size.mjs:PROSE_CHARS` — zero switches the weight count off entirely, and the second figure is not printed in the digest.
 - **A check declares a skip by the exit code, not by a line of output.** — `projects/agent-kit/assets/checks/check-schema-drift.mjs:SKIP` — scenario `SC-AK-678`
-- **A skipped check is named aloud but refuses no push.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:rt_skip_code` — scenario `SC-AK-679`
+- **A skipped check is named aloud but refuses no push.** — `projects/agent-kit/assets/hooks/push-set.sh:rt_push_set_run` — scenario `SC-AK-679`
 - **A check that could not do its work refuses, it does not skip.** — `projects/agent-kit/assets/checks/check-schema-drift.mjs:main` — an unforeseen failure and a comparison that did not run give back a non-zero code; scenario `SC-AK-549`
 - **"There is nowhere to check" stops being a skip when the branch touched the subject of the check.** — `projects/agent-kit/assets/checks/check-schema-drift.mjs:unavailable` — scenario `SC-AK-822`
 - **The shadow database is created by the check itself.** — `projects/agent-kit/assets/checks/check-schema-drift.mjs:main` — the client goes to the storage through an adapter and creates nothing; scenario `SC-AK-924`

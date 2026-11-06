@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
+# rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__terminal__run_in_terminal
 # rt-hook-timeout: 1800
-# Requires: hooks/profile-check.sh, hooks/deny-tail.sh
+# Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/push-sign.sh, hooks/push-set.sh, hooks/git-guard-push-marks.sh
 # The guard of the checks before a push. PreToolUse on the push call.
 #
 # A push is the entry into the pipeline: a merge into the main branch starts the rollout, and
@@ -30,7 +30,8 @@
 # `RT_PUSH_HEAVY_AHEAD=1` runs its heavy steps ahead by `git-guard-push-ahead.sh`: the guard only
 # reads their marks. The hook limit is 30 minutes, and the heavy steps of one tree outgrew it.
 #
-# FAIL-OPEN: not a repository, broken input, no profile — pass.
+# FAIL-OPEN: not a repository, broken input, no profile, no parse file `push-sign.sh`, no set file
+# `push-set.sh`, no perl — pass.
 
 # Its own name in the observations: the refusal is written by the shared deny tail, not by the guard.
 RT_GUARD_NAME=git-guard-push-tests
@@ -44,34 +45,35 @@ input="$RT_HOOK_INPUT"
 
 tool="$(rt_hook_tool)"
 case "$tool" in
-    # The environment terminal and the universal runner put the command into the same field.
-    Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool) ;;
+    # The environment terminal, the universal runner and the session terminal tab put the command
+    # into the same field. Left out of this list, the tab carried a push past the gate after two
+    # refusals: the tree had no git hook, and nothing else would have run the set. The git hook
+    # `pre-push` now runs it for a push this guard does not see.
+    Bash | mcp__webstorm__execute_terminal_command | mcp__webstorm__execute_tool | mcp__terminal__run_in_terminal) ;;
     *) exit 0 ;;
 esac
 
 cmd="$(rt_hook_cmd)"
 
-# A push call is recognised by two signs at once — the `git` command at the start of the line or
-# after a separator, and the word `push` as a separate word. By the same technique as the delivery
-# guard: the substring "git push" alone does not catch a push — the credentials helper and the
-# request header are put between them by `-c` keys, and that is exactly the form pushed with here.
-# While the sign was a substring, the whole gate set was not run at all on such a push, and the
-# silence of the guard read as "green".
-# A loop body starts after `do`, `then` or `else`: a push there is a push too.
-printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git([[:space:]]|\$)|(^|[;&|[:space:]])(do|then|else)[[:space:]]+git[[:space:]]" || exit 0
-
-# A stashed edit is never a push: `git stash push` puts the edit into the stash of this same
-# machine and sends nothing outside. The word `push` in it stands separate, and without this line
-# the guard ran the whole set on it and then refused the call on the first red check — that is, it
-# refused a command that sends nothing anywhere. The stash is cut out of the line, and the sign is
-# counted on the remainder: in a compound command a real push may stand next to it.
-probe="$(printf '%s' "$cmd" | sed -E 's/git[[:space:]]+stash[[:space:]]+push/git stash/g')"
-printf '%s' "$probe" | grep -qE '(^|[[:space:]])push([[:space:]]|$)' || exit 0
-
-# A dry-run push sends nothing: there is no point running the whole set for it.
+# Without the word there is no push at all, and the parse below is not paid for.
 case "$cmd" in
-    *--dry-run*) exit 0 ;;
+    *push*) ;;
+    *) exit 0 ;;
 esac
+
+# The push calls and the branch switches are found by the parse in `push-sign.sh`: one line per
+# call, read below. No parse file or no perl — no lines, and the guard passes.
+# shellcheck disable=SC1090
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/push-sign.sh" 2>/dev/null || true
+command -v rt_push_calls >/dev/null 2>&1 || exit 0
+push_calls="$(printf '%s' "$cmd" | rt_push_calls)"
+
+# A dry-run push sends nothing: there is no point running the whole set for it. A dry run of one
+# call does not cover a real push next to it in the same command.
+pushes="$(printf '%s\n' "$push_calls" | grep -c ' real$')"
+opaque=false
+printf '%s\n' "$push_calls" | grep -qx 'opaque' && printf '%s' "$cmd" | grep -q 'git' && opaque=true
+[ "${pushes:-0}" -gt 0 ] || [ "$opaque" = true ] || exit 0
 
 # The refusal of this gate. The shared deny tail — the two lawful moves and the lawful form of a
 # bypass — may not be laid out; then there is no tail, and the reason stays as it was.
@@ -91,6 +93,13 @@ ${deny_tail_text}"
     exit 0
 }
 
+# Commands the parse cannot read are refused when the text names a push: a shell reading its
+# commands from the input, `source` of a substitution, function calls that grow without bound. What
+# such a command runs is seen only when it runs, and a silent pass would let a push leave unchecked.
+if [ "$opaque" = true ]; then
+    push_deny "BLOCKED: the command names a push, and the guard cannot read what it runs — a shell reading commands from its input, \`source\` of a substitution, or function calls that grow without bound. Run the push as a separate plain command: \`git push <remote> <branch>\`."
+fi
+
 # A branch switch in the same command is refused whole.
 #
 # The guard is a parse of the command BEFORE it runs: it runs the set in the tree that lies there
@@ -100,17 +109,26 @@ ${deny_tail_text}"
 # file that is not in the pushed branch at all — it was looking at the branch the same command was
 # leaving.
 #
-# What is judged is a switch to an existing branch. Creating a new one (`checkout -b`, `switch -c`)
-# does not fall here: a fresh branch has the same tree as it had.
-if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git[[:space:]]+(checkout|switch)[[:space:]]+" &&
-    ! printf '%s' "$cmd" | grep -qE 'git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)([[:space:]]|$)'; then
+# What is judged is a switch to another tree before the push. Creating a new branch from the current
+# tip (`checkout -b`, `switch -c`) and restoring files do not fall here: the tree stays. A new
+# branch from another start point does. A switch after the push changes nothing the set judged.
+# The switch is found by the same parse as the push: a pattern over the line did not see
+# `git checkout` inside `bash -c` or `eval`.
+switched=false
+printf '%s\n' "$push_calls" | awk '$0 == "switch" { s = 1 } / real$/ && s { f = 1 } END { exit !f }' && switched=true
+if [ "$switched" = true ]; then
     push_deny "BLOCKED: switching the branch and pushing by one command. The gate set runs on the tree that lies there at the minute the command is parsed — that is, on the FORMER branch, not the one that leaves for the hosting. A green set then reads as a check of what left, though it checked something else. Split the calls: switch first, then push by a separate command."
 fi
 
 # Several pushes in one command, or a push inside a loop, are refused whole. The set runs once
 # per call on the tree that lies there, and every other branch leaves unchecked.
-pushes="$(printf '%s' "$probe" | grep -oE "${RT_CMD_BOUND}git([[:space:]]+-c[[:space:]]+[^[:space:]]+)*[[:space:]]+push([[:space:]]|\$)" | wc -l | tr -d ' ')"
-if [ "${pushes:-0}" -gt 1 ] || printf '%s' "$probe" | grep -qE '(^|[;&|[:space:]])(do|then|else)[[:space:]]+git[[:space:]].*push'; then
+# A push after `done` or inside `if` is one push; a push in the body or the condition of a loop is
+# not. Several recipients in one call are several pushes too, and the parse above names them.
+looped=false
+printf '%s\n' "$push_calls" | grep -q '^loop .* real$' && looped=true
+several_refs=false
+printf '%s\n' "$push_calls" | grep -q ' several real$' && several_refs=true
+if [ "${pushes:-0}" -gt 1 ] || [ "$looped" = true ] || [ "$several_refs" = true ]; then
     push_deny "BLOCKED: several pushes by one command. The gate set runs once per call, on the tree that lies there — every other branch leaves for the hosting unchecked. Push each branch by a separate call, after switching to it."
 fi
 
@@ -150,10 +168,10 @@ fi
 # `_default` suffix. There is neither — the hook passes: an empty guard is better than a guard
 # that refuses at random.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
-    # shellcheck disable=SC1090
-    [ -f "$profile" ] && . "$profile" 2>/dev/null
-done
+# The set itself is run by the code it shares with the git hook `pre-push`.
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/push-set.sh" 2>/dev/null || exit 0
+rt_push_set_profile "$rt_hooks_dir" "${CLAUDE_PROJECT_DIR:-.}"
 
 # A word about a missing profile function: a hook that exited silently is indistinguishable from a
 # working one. The file may not be laid out — then the former, silent behaviour stays.
@@ -185,88 +203,21 @@ if ! rt_needs rt_push_checks git-guard-push-tests; then
     exit 0
 fi
 
-# The base and the marks of a green run — the helper next door, `git-guard-push-marks.sh`, shared
-# with the command that runs the set ahead. No helper — the base is the main branch, no mark is
-# read and none is written: the former behaviour, the set whole.
-# shellcheck disable=SC1090
-[ -f "$rt_hooks_dir/git-guard-push-marks.sh" ] && . "$rt_hooks_dir/git-guard-push-marks.sh" 2>/dev/null
-command -v rt_push_mark_has >/dev/null 2>&1 || rt_push_mark_has() { return 1; }
-command -v rt_push_mark_put >/dev/null 2>&1 || rt_push_mark_put() { return 0; }
-command -v rt_push_mark_clean >/dev/null 2>&1 || rt_push_mark_clean() { return 1; }
-command -v rt_push_heavy_ahead >/dev/null 2>&1 || rt_push_heavy_ahead() { return 1; }
-command -v rt_push_mark_key >/dev/null 2>&1 || rt_push_mark_key() { return 1; }
-
-main_branch="${RT_MAIN_BRANCH:-main}"
-base=''
-if command -v rt_push_base >/dev/null 2>&1; then
-    base="$(rt_push_base "$main_branch")"
-elif git fetch --quiet origin "$main_branch" 2>/dev/null && git rev-parse --verify --quiet "origin/$main_branch" >/dev/null 2>&1; then
-    base="origin/$main_branch"
-fi
-
-# The code by which a check declares that there was nothing to look at: neither "it matched" nor
-# "a divergence". Before, such a check said so by a line of output and exited with zero — in the
-# set that zero stood next to the passed ones and differed from them in nothing, while the summary
-# read as checked whole. It does not refuse the push: a check with nothing to look at is not a
-# breakage.
-rt_skip_code="${RT_SKIP_CODE:-7}"
+base="$(rt_push_set_base)"
 
 # Every red among the light checks is named by one refusal. The gate used to leave on the first red
 # one, and each fix opened the next reason by a push of its own: three pushes in a row went so on one
-# branch — a repeated function, a name shared by two kits, a paint probe. After the first red a
-# heavy check is not started: the push is refused anyway, and its minutes buy nothing.
-command -v rt_push_check_heavy >/dev/null 2>&1 || rt_push_check_heavy() { return 1; }
-
-failed=""
-output=""
-skipped=""
-held=""
-ahead=""
-ran=0
-while IFS= read -r check; do
-    [ -z "$check" ] && continue
-    # Green on this very tree against this very base — not run again: the snapshots and the
-    # end-to-end suites have no cache of their own, and a second push of the same tree paid for
-    # them whole.
-    if rt_push_mark_has "$check" "$base"; then
-        ran=$((ran + 1))
-        continue
-    fi
-    # A tree that runs its heavy steps ahead does not run them here: inside the guard they hit the
-    # hook limit, and a guard cut by the limit lets the call through with no verdict.
-    if rt_push_heavy_ahead && rt_push_check_heavy "$check"; then
-        ahead="${ahead}${ahead:+
-}${check}"
-        continue
-    fi
-    if [ -n "$failed" ] && rt_push_check_heavy "$check"; then
-        held="${held}${held:+
-}${check}"
-        continue
-    fi
-    ran=$((ran + 1))
-    key_before=''
-    rt_push_mark_clean && key_before="$(rt_push_mark_key "$check" "$base" 2>/dev/null)"
-    out="$(eval "$check" 2>&1)"
-    status=$?
-    if [ "$status" -eq 0 ]; then
-        rt_push_mark_put "$check" "$base" "$key_before"
-        continue
-    fi
-    if [ "$status" -eq "$rt_skip_code" ]; then
-        skipped="${skipped}${skipped:+
-}${check}"
-        continue
-    fi
-    failed="${failed}${failed:+
-}${check}"
-    output="${output}${output:+
-
-}── ${check}
-$(printf '%s' "$out" | tail -n 25)"
-done <<EOF
-$(rt_push_checks "$base")
-EOF
+# branch — a repeated function, a name shared by two kits, a paint probe. A check with nothing to look
+# at exits with the skip code: before, it said so by a line of output and exited with zero, and in the
+# set that zero stood next to the passed ones and differed from them in nothing.
+rt_push_set_ask_ahead=1
+rt_push_set_run "$base"
+failed="$rt_push_set_failed"
+output="$rt_push_set_output"
+skipped="$rt_push_set_skipped"
+held="$rt_push_set_held"
+ahead="$rt_push_set_ahead"
+ran="$rt_push_set_ran"
 
 # Heavy steps with no mark are named in one refusal together with the red light ones: the command
 # that runs them ahead goes to the background, where no hook limit cuts it, and the push after it
@@ -332,8 +283,13 @@ if [ ! -f "$gap_mark" ]; then
     : >"$gap_mark" 2>/dev/null || true
 fi
 
+# A green set leaves the commit it judged in the mark of the shared git directory. The git hook
+# `pre-push` runs the same set before every push, whatever sent it, and lets through a push of
+# exactly this commit at once: the call this guard just let through would otherwise wait for the set
+# twice. The mark is not written when every check was skipped or the copy has uncommitted edits.
 if [ -z "$failed" ]; then
     rt_push_gate_note green
+    rt_push_mark_write
     exit 0
 fi
 
