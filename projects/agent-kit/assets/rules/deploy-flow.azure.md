@@ -89,9 +89,10 @@ flowchart TD
   builds go on the PR check pipeline, the rollout does not: it is held by the main-branch
   condition on its step, and a PR image does not leave for the registry.
 - **A package the tree's own applications install is released from a tip their end-to-end suites
-  ran on.** A release pipeline builds the package and runs no suite of an application, so a PR that
-  entered the main branch past the pipeline reaches them first after the release. When such a PR
-  came after the last green run, those suites run on the tip of the main branch before the release.
+  went green on.** Where the release pipeline runs none of these suites, a PR merged past the
+  pipeline reaches them first after the release. When a PR without a green run of its own entered
+  the main branch after the last green run of a PR merged into it, those suites must go green on
+  the tip of the main branch before the release.
 - **A divergence of production from the main branch is visible by the work queue audit.** A work
   item leaves the queue by a merge, but a merge is not yet production: a failed or unstarted rollout
   touches neither the item nor its state, and there is nowhere to notice it. The audit asks for
