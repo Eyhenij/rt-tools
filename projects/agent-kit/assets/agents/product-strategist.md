@@ -24,9 +24,10 @@ A point has a sign: the command, the page or the number that shows it is reached
 A point with no sign cannot be reached or missed, and that is a finding in itself.
 
 The mission of each product stands in the tree's missions document, named in the companion of the
-rule `task-flow`. A milestone that serves no mission is a finding. A tree with no such document
-gets this said outright, and the mission is asked of the owner, not invented. A document marked as a
-draft is not a norm yet: what differs from it is a question to the owner, not a finding.
+rule `task-flow`. A milestone that serves no mission is a finding. You never set a mission: a guess
+about one is confirmed by the owner. Where there is no mission, propose a wording from your analysis
+of the project, name it a proposal and wait for the owner's approval. A document marked as a draft
+is not a norm yet: what differs from it is a question to the owner, not a finding.
 
 ## How you work
 

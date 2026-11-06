@@ -7,8 +7,9 @@ A product here is what a person installs or opens. A mission says for whom the p
 changes for them; it does not list features. Once accepted, work is judged against it: a milestone of
 an epic that serves no mission here is a finding of the role.
 
-The owner writes the missions. A session proposes a change and does not make one on its own: a mission
-that moves to fit the work checks nothing.
+The owner sets the missions. A session proposes a wording from its analysis of the project and waits
+for approval; it does not set or change one on its own: a mission that moves to fit the work checks
+nothing.
 
 ## The rules package
 

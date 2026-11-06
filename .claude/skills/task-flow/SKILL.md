@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of work from the owner's request to the merge. Load at the start of any work, when editing task folders and product agreements, and when returning to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. End of a turn — turn-conduct.
 ---
-<!-- rt-kit v0.33.1 · rules/task-flow.md · 056554b6b416 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · rules/task-flow.md · 354d728b8b42 · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -208,7 +208,7 @@ flowchart TD
   A finding named by no exit condition goes to the section on what the work does not do, and is
   filed as a task.
 - **Done work is marked only in the progress.** "Where we stand" is rewritten by every session, not
-  appended: it is the first thing the next session reads.
+  appended.
 - **The plan names the steps of every stage, and the progress mirrors them with a mark each.** The
   plan is not edited after it is written, the marks change every turn; a line nobody can call done
   is not a step.
@@ -250,9 +250,11 @@ flowchart TD
 - **The plan names the points: the epic its milestone, the task the change a person will see.** The
   role `product-strategist` tries to prove the miss in planning and before the PR. A proved miss is
   fixed or named to the owner, and no pipeline stops. Every PR body carries the table of points.
+- **A mission is set by the owner.** A session only proposes a wording from its analysis and waits
+  for approval.
 - **The PR of the epic opens when its last folder is taken apart, and not a task earlier.** A folder
-  left in the epic branch reaches the main branch with it. Until then the epic branch is not
-  offered to a person at all — the merge button on it means the whole epic.
+  left in the epic branch reaches the main branch with it. Until then the epic branch is offered to
+  nobody: its merge button means the whole epic.
 - **The epic plan lies where it is found without the network and after the merge.** The card does
   not hold the task order, and the task folder dies with the merge. What the owner names along the
   way is appended there by the turn that accepted it.
@@ -293,7 +295,7 @@ The guard judges by the edit paths, not by whether the work changes behaviour. A
 sign of its own: the appraisal "behaviour does not change" would be assigned by whoever it hinders.
 
 Nothing of the grill itself is checked: the guard sees a file edit and knows nothing of the
-exploration, the six questions or the answers. An empty table passes the same as a filled one.
+exploration, the six questions or the answers.
 
 The conversation guard judges shared words between the question's topic and the owner's last
 message, not meaning; its refusal names the lawful move.
