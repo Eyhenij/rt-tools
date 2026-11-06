@@ -178,12 +178,12 @@ npm run task:move -- 86 in-review
 
 ## Answering under remarks
 
-Remarks on an MR live in discussions, a thread each, and a note on a line is one of them. They are
-read at once, before the first edit:
+Remarks on an MR live in discussions, a thread each: a note on a line and a single note in the
+conversation are both among them. They are read at once, before the first edit:
 
 ```bash
 glab api projects/:id/merge_requests/<номер>/discussions --paginate \
-    | jq '.[] | select(.individual_note | not) | {id, notes: [.notes[] | {author: .author.username, body}]}'
+    | jq '.[] | {id, notes: [.notes[] | select(.system | not) | {author: .author.username, body}]}'
 ```
 
 The person is asked by the asking tool whether to answer under them, in the turn the remarks were

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/git-guard-delivery.sh · dc966beef54e · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/git-guard-delivery.sh · 575c40529907 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-pipeline.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
@@ -118,6 +118,7 @@ pull_token_hint="${RT_PULL_TOKEN_HINT:-}"
 # the pattern is named by the tree, not by the package: the package does not know someone else's
 # words, and an invented default would match nothing.
 pull_body_section="${RT_PULL_BODY_SECTION:-}"
+pull_points_section="${RT_PULL_POINTS_SECTION:-}"
 # The line that closes the task on the merge, with `{number}` in place of the task number. Its keyword
 # belongs to the hosting, so the sample is named by the tree, as the section above.
 pull_closes_line="${RT_PULL_CLOSES_LINE:-}"

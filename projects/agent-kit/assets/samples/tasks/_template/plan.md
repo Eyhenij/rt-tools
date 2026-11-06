@@ -13,6 +13,13 @@ stands `**Behaviour:** unchanged — <the owner's reason>`; an empty reason is n
 After it is written this file is not edited. A stage revision goes to `progress.md` as a decision
 along the way.
 
+## Points
+
+- **A:** <where the product stands now>
+- **This task reaches:** <the change a person will see>
+- **Sign:** <the command, the page or the number that shows it, and who sees it>
+- **Milestone G of the epic:** <the point named in the epic plan>
+
 ## Task footprint
 
 <What the work touches. Filled in by the exploration before the grill and confirmed by the owner.

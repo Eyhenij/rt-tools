@@ -7,7 +7,7 @@ import { RtDetailListComponent } from '../../rt-detail-list.component';
 import { RtDetailRowComponent } from '../../rt-detail-row.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TDetailListMatrixPart = 'loading' | 'value' | 'length' | 'edges' | 'presets' | 'themes';
+export type TDetailListMatrixPart = 'loading' | 'value' | 'multiline' | 'length' | 'edges' | 'presets' | 'themes';
 
 /**
  * Матрицы состояний `rt-detail-list` и `rt-detail-row` для витрины.
@@ -64,6 +64,16 @@ export type TDetailListMatrixPart = 'loading' | 'value' | 'length' | 'edges' | '
                         }
                     </ng-template>
                 </app-story-row>
+            }
+
+            @case ('multiline') {
+                <div style="width: 20rem">
+                    <rt-detail-list>
+                        @for (row of multilineRows; track row.label) {
+                            <rt-detail-row [label]="row.label">{{ row.value }}</rt-detail-row>
+                        }
+                    </rt-detail-list>
+                </div>
             }
 
             @case ('length') {
@@ -150,6 +160,12 @@ export class TestRtDetailListMatrixComponent {
         { label: 'Подписан', value: '14 марта 2024' },
         { label: 'Действует до', value: '14 марта 2027' },
         { label: 'Сумма', value: '148 000 ₽' },
+    ];
+
+    public readonly multilineRows: readonly { label: string; value: string }[] = [
+        { label: 'Гость', value: 'Анна Смирнова' },
+        { label: 'Устройство', value: 'Chrome 130, macOS\nSafari 18, iPhone' },
+        { label: 'Примечание', value: 'Гость просил оставить заказ у двери и позвонить за час до приезда курьера' },
     ];
 
     public readonly loadings: readonly boolean[] = [false, true];

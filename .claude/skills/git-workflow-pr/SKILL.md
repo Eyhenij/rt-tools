@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load for opening a PR and everything around it — title format, draft and leaving it, reading the PR state, the checklist. The link to the task, reviewer, labels and the body sample — pattern git-workflow-pr-body; creating the task and committing — git-workflow-commit.
 ---
-<!-- rt-kit v0.33.1 · patterns/git-workflow-pr.github.md · 0d50ba68867b · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · patterns/git-workflow-pr.github.md · 39043493a1e3 · правится надстройкой, не здесь -->
 
 # The PR
 
@@ -177,14 +177,16 @@ refusal for that.
 
 ## Answering under remarks
 
-Remarks arrive on a PR in two places: a comment on a line and the text of a review. Both are read
-at once, before the first edit:
+Remarks arrive on a PR in three places: a comment on a line, the text of a review and a comment in
+the conversation. All three are read at once, before the first edit:
 
 ```bash
 gh api repos/<владелец>/<репозиторий>/pulls/<номер>/comments --paginate \
     --jq '.[] | {id, user: .user.login, path, body}'
 gh api repos/<владелец>/<репозиторий>/pulls/<номер>/reviews --paginate \
     --jq '.[] | select(.body != "") | {id, user: .user.login, body}'
+gh api repos/<владелец>/<репозиторий>/issues/<номер>/comments --paginate \
+    --jq '.[] | {id, user: .user.login, body}'
 ```
 
 The person is asked by the asking tool whether to answer under them, in the turn the remarks were
