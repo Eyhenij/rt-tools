@@ -98,9 +98,12 @@ things about the tree, and the tree has changed since.
 
 ## PR body sample
 
-Four sections, and one order between them: the link line, what was done, what confirms it, the
-remaining step. A section with nothing to say says so in words — an empty heading and a removed
-heading read alike and mean different things.
+Five sections, and one order between them: the link line, what was done, the points, what confirms
+it, the remaining step. A section with nothing to say says so in words — an empty heading and a
+removed heading read alike and mean different things.
+
+The table of points comes from the reply of the role `product-strategist`: a sign not run is
+written as not run, and its point as not reached.
 
 ```markdown
 Closes #86
@@ -108,6 +111,12 @@ Closes #86
 ## Что сделано
 
 - <правка, названная тем, что она меняет для читателя, а не тем, какие файлы задела>
+
+## Точки
+
+| Точка | Признак | Результат |
+| --- | --- | --- |
+| <изменение, которое увидит человек> | <команда, страница или число> | <вывод признака: достигнута или промах> |
 
 ## Чем подтверждено
 

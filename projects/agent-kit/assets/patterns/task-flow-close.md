@@ -16,7 +16,7 @@ Pattern of the rule `task-flow`. What must be true meanwhile — the law
 - `npm run check:specs` listed the agreement in its "time to merge" section.
 - The spec is measured for length before the merge and right after it: one already over the limit is
   split by a commit of its own first, one that has grown is split by the same commit.
-- The domain texts are brought up to what the work did.
+- The domain texts are up to date, and `product-strategist` reviews the work against its points.
 - The gate suite is run whole — after the merge and the texts, not before them.
 - The task folder is taken apart, and the PR opens — a draft or ready, by the base.
 - The run on the head is green, and the draft is lifted from the PR.
@@ -129,8 +129,8 @@ the host's length limit — Azure DevOps takes 4000 characters — so the report
 not prose: a body over the limit refuses the opening call, and it gets cut in a hurry.
 
 **The role `product-strategist` reviews the work while the folder still lies here.** It runs the sign
-of each point in the plan and tries to prove the miss. A proved miss is fixed now or goes into the PR
-body. Before the PR of an epic the same call judges the milestone.
+of each point in the plan and tries to prove the miss. A proved miss is fixed now or named in the PR
+body next to the table of points. Before the PR of an epic the same call judges the milestone.
 
 **Next move:** the updated texts are committed, and in the same turn the task folder is taken apart
 — by the last commit of the branch, pattern `task-flow-archive`.

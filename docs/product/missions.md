@@ -1,8 +1,11 @@
 # The missions of the products
 
-A product here is what a person outside the repository installs or opens. A mission says for whom the
-product exists and what changes for them; it does not list features. Work is judged against it: a
-milestone of an epic that serves no mission here is a finding of the role `product-strategist`.
+**Status: draft, not in force.** A session wrote this text, and the owner has not accepted it. Until
+they do, the role `product-strategist` reads it as a question to the owner, not as a norm.
+
+A product here is what a person installs or opens. A mission says for whom the product exists and what
+changes for them; it does not list features. Once accepted, work is judged against it: a milestone of
+an epic that serves no mission here is a finding of the role.
 
 The owner writes the missions. A session proposes a change and does not make one on its own: a mission
 that moves to fit the work checks nothing.
@@ -59,8 +62,8 @@ The `@rt-tools/auth-*` packages and `apps/auth-example-admin`, for an admin appl
 
 The `@rt-tools/cms-*` packages, for an application that keeps pages and articles.
 
-- **Mission:** an application gets the block editor, the content model and the admin screens as
-  packages instead of writing them again.
+- **Mission:** an application that keeps pages and articles installs its content handling instead of
+  writing it again.
 - **It is not:** a hosted content service, or a page builder for visitors.
 
 ## The chat with the visitors

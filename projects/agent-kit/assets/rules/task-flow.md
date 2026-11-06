@@ -247,8 +247,8 @@ flowchart TD
   arrangements: each branch from the epic branch, or a stack — each from the previous. The
   arrangement written in the plan is the epic's decision, not that of whoever creates the branch.
 - **The plan names the points: the epic its milestone, the task the change a person will see.** The
-  role `product-strategist` tries to prove the miss twice: in the plan review and before the PR
-  opens. A proved miss is fixed or named to the owner.
+  role `product-strategist` tries to prove the miss in planning and before the PR. A proved miss is
+  fixed or named to the owner, and no pipeline stops. Every PR body carries the table of points.
 - **The PR of the epic opens when its last folder is taken apart, and not a task earlier.** A folder
   left in the epic branch reaches the main branch with it. Until then the epic branch is not
   offered to a person at all — the merge button on it means the whole epic.

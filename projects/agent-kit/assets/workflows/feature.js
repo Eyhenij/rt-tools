@@ -7,6 +7,7 @@ export const meta = {
         { title: 'Implementation', detail: 'one step at a time — the working tree is shared by all' },
         { title: 'Check', detail: 'QA as a fan: tests, build, browser, adversarial review' },
         { title: 'Acceptance', detail: 'the PM checks what was done against the original request' },
+        { title: 'Points', detail: 'the signs of the points are run, and the miss is proved or refuted' },
     ],
 };
 
@@ -131,4 +132,12 @@ const verdict = await agent(
     { agentType: 'project-manager', label: 'acceptance', phase: 'Acceptance' }
 );
 
-return { plan, done, findings, blockers, verdict };
+phase('Points');
+const points = await agent(
+    `The user's original request:\n\n${task}\n\nWhat was done:\n${done.join('\n')}\n\n` +
+        `This is the review mode. Read the points in the task plan and the epic plan, run the sign of each ` +
+        `and try to prove the miss.`,
+    { agentType: 'product-strategist', label: 'points', phase: 'Points' }
+);
+
+return { plan, done, findings, blockers, verdict, points };
