@@ -54,7 +54,7 @@ describe('RtAuthService', () => {
         expect(auth.authenticated()).toBe(false);
     });
 
-    it('SC-AUTH-97 — the exchange of the code is not cut by the limit of the silent check', async () => {
+    it('SC-AUTH-100 — the exchange of the code is not cut by the limit of the silent check', async () => {
         onTheReturnFromTheForm();
         const double: KeycloakDouble = new KeycloakDouble();
         double.claimsOnStart = claimsWith(['orders:read']);

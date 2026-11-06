@@ -35,7 +35,7 @@ test.describe('вход и адреса разделов', () => {
         await expect(qa(page, SECTION.postmortems.row).first()).toBeVisible();
     });
 
-    test('SC-AUTH-97 — возврат с формы входа не ждёт пробы куки Keycloak', async ({ page }: { page: Page }) => {
+    test('SC-AUTH-100 — возврат с формы входа не ждёт пробы куки Keycloak', async ({ page }: { page: Page }) => {
         // Проба, ответившая позже предела тихой проверки, обрезала обмен кода и снова вела на форму
         const probe: Awaited<ReturnType<typeof lateCookieProbe>> = await lateCookieProbe(page);
         await page.goto(SECTION.postmortems.path);

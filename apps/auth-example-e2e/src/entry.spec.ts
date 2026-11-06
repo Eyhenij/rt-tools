@@ -11,7 +11,7 @@ test.describe('the entry', () => {
         await expect(page.getByTestId('records-empty').or(page.getByTestId('records-list'))).toBeVisible();
     });
 
-    test('SC-AUTH-97 — the return from the entry form does not wait for the cookie probe of Keycloak', async ({ page }) => {
+    test('SC-AUTH-100 — the return from the entry form does not wait for the cookie probe of Keycloak', async ({ page }) => {
         const probe: Awaited<ReturnType<typeof lateCookieProbe>> = await lateCookieProbe(page);
         await page.goto('/');
         await expectEntryScreen(page);

@@ -6,7 +6,7 @@ const BASE_URI: string = 'https://admin.test/';
 const SILENT_PAGE: string = 'https://admin.test/silent-check-sso.html';
 
 describe('startPlan', () => {
-    it('SC-AUTH-97 — an address with the code answer of Keycloak starts the adapter without the silent check', () => {
+    it('SC-AUTH-100 — an address with the code answer of Keycloak starts the adapter without the silent check', () => {
         const plan: IRtAuthStartPlan = startPlan(TEST_CONFIG, BASE_URI, `${BASE_URI}records#state=s-1&session_state=k-1&code=c-1`);
 
         expect(plan.options).not.toHaveProperty('silentCheckSsoRedirectUri');
