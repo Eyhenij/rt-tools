@@ -129,6 +129,16 @@ From the rules review of the closed task:
   with no check at all, and the page reads as ready. The stack pattern names the retarget and is
   silent about the run. **Address:** rules layer — the stack pattern names how the run is started.
 
+## RT-3050 — a release after a merge without a run
+
+- **The admin stand collides with a pipeline run on the same machine.** The run holds the stand's
+  database port, and all stands share one sign-in container on a fixed port. Ten tests failed within
+  a minute, and the refusal did not name the port. **Address:** this tree — the stand takes free
+  ports by itself, and the sign-in container gets a port per stand.
+- **The turn exit guard and the question guard close a circle at the owner's review.** A PR waiting
+  for review is no exit, the next task is forbidden by the owner, and a question is refused after any
+  guard refusal in the turn. **Address:** rules layer — task RT-3067.
+
 ## Left unresolved
 
 - **The turn exit guard findings of RT-3044** — they are closed by task RT-3067, which is the 24th in the epic order.
