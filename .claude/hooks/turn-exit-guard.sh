@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/turn-exit-guard.sh · f2c8c0f790b8 · правится надстройкой, не здесь
+# rt-kit v0.33.1 · hooks/turn-exit-guard.sh · e797e1169da2 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh, hooks/turn-exit-epic.sh, hooks/turn-exit-role.sh
 # Turn exit guard: a turn in which nothing was done on the work does not end until the work is
@@ -40,8 +40,7 @@
 # FAIL-OPEN: on any error, a missing `jq`, a missing turn record, task folder or state line the
 # turn is ALLOWED (exit 0). A broken guard has no right to jam the conversation.
 
-# Its own name in the observations: the refusal is written by the shared deny tail, not by the
-# guard itself.
+# Its own name in the observations: the shared deny tail writes the refusal, not the guard.
 RT_GUARD_NAME=turn-exit-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
@@ -175,9 +174,8 @@ next_step=""
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/turn-exit-patterns.sh" 2>/dev/null || exit 0
 [ -n "${work_re:-}" ] || exit 0
 
-# The parsing of the turn record lies in a neighbouring file: the guard crossed the file length
-# limit, and the parsing reads apart from the tiers that apply its answer. Without the file the
-# guard stays silent — fail-open, as on any breakage of its own.
+# The parsing of the turn record lies in a neighbouring file, apart from the tiers that apply its
+# answer. Without the file the guard stays silent — fail-open, as on any breakage of its own.
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/turn-exit-verdict.sh" 2>/dev/null || exit 0
 command -v rt_te_verdict >/dev/null 2>&1 || exit 0
 rt_te_verdict
