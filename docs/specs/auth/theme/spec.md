@@ -78,7 +78,8 @@ the entry is not sure the page belongs to the admin.
   move to the next line whole, and a piece longer than the card breaks inside; a browser would
   otherwise break it at a hyphen of the domain.
 - **The reCAPTCHA widget stands without the frame Google draws around it.** The frame lies in the
-  frame of Google, takes two pixels with its outer line, and the slot cuts both off in either theme.
+  frame of Google, sits a pixel further in on the right and at the bottom, and the slot cuts it off
+  in either theme.
 - **A page the theme does not draw starts the standard layout in a root of its own.** The page markup
   holds only the theme root, and without its own root the standard layout leaves the page empty.
 - **Under the new password and its confirmation the page lists every requirement of the realm password policy.**

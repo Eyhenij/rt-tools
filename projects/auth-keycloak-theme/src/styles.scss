@@ -212,9 +212,10 @@ body {
     margin-bottom: calc(var(--rt-kc-captcha-height) * (var(--rt-kc-captcha-scale) - 1));
 
     /* Google draws a frame around the widget inside its own frame of the page, where no style of the
-       theme reaches; with its outer line it takes two pixels, and the light line shows on the dark
-       theme. The slot cuts both off on every side, with the rounding of the widget corner. */
-    clip-path: inset(2px round 3px);
+       theme reaches, and the light line shows on the dark theme. The frame sits one pixel further in
+       on the right and at the bottom: measured at 4x, 2px clears the top and left edges, 3px the
+       right and bottom ones. The slot cuts it off with the rounding of the widget corner. */
+    clip-path: inset(2px 3px 3px 2px round 3px);
     scale: var(--rt-kc-captcha-scale);
     transform-origin: center top;
 }
