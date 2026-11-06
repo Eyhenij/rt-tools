@@ -43,6 +43,7 @@ export class QuillMock {
     public readonly bindings: Record<string, IQuillMockBinding>;
     public enabled: boolean = true;
     public focused: boolean = false;
+    public selection: number | null = null;
 
     constructor(_host?: unknown, options?: IQuillMockOptions) {
         this.bindings = options?.modules?.keyboard?.bindings ?? {};
@@ -75,6 +76,14 @@ export class QuillMock {
 
     public focus(): void {
         this.focused = true;
+    }
+
+    public getLength(): number {
+        return this.getText().length;
+    }
+
+    public setSelection(index: number): void {
+        this.selection = index;
     }
 
     /**

@@ -15,6 +15,19 @@
 
     <rt-detail-row label="Signed in as" qa-dataid="records-account">{{ account() }}</rt-detail-row>
 
+    <div rtElem="chat" qa-dataid="records-chat">
+        <rt-chat fill messenger hasThread canReply title="Support" placeholder="Write a message…" [messages]="messages">
+            <rt-icon-button
+                rtChatComposerTools
+                qa-dataid="records-quick-reply"
+                icon="bolt"
+                variant="ghost"
+                size="sm"
+                ariaLabel="Insert a ready reply"
+                (clicked)="insertReply()" />
+        </rt-chat>
+    </div>
+
     @if (refusal(); as text) {
     <rt-message severity="danger" qa-dataid="records-refusal">{{ text }}</rt-message>
     } @if (canRead()) {
