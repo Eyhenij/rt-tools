@@ -150,17 +150,13 @@ try {
 
 phase('Goal');
 // The critic gets the request and nothing the pipeline wrote about the work: that is its whole value.
-let goal = null;
-try {
-    // Only the grill holds a quote: the task string is the session's wording.
-    goal = await agent(
-        `The owner's words are the quoted request in \`${args.grill}\`; read that section only.\n\n` +
-            `This is the result mode. The result is the working tree and its diff against the base ` +
-            `branch. Try to prove the goal is not met.`,
-        { agentType: 'goal-critic', label: 'goal', phase: 'Goal' }
-    );
-} catch (error) {
-    log(`Goal: the role did not run: ${error.message}`);
-}
+// A run without it ends in a failure and not in a result that looks judged.
+// Only the grill holds a quote: the task string is the session's wording.
+const goal = await agent(
+    `The owner's words are the quoted request in \`${args.grill}\`; read that section only.\n\n` +
+        `This is the result mode. The result is the working tree and its diff against the base ` +
+        `branch. Try to prove the goal is not met.`,
+    { agentType: 'goal-critic', label: 'goal', phase: 'Goal' }
+);
 
 return { plan, done, findings, blockers, verdict, points, goal };

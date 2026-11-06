@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of work from the owner's request to the merge. Load at the start of any work, when editing task folders and product agreements, and when returning to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. End of a turn — turn-conduct.
 ---
-<!-- rt-kit v0.33.1 · rules/task-flow.md · 799684a18ab7 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.33.1 · rules/task-flow.md · 6a93330f7970 · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -249,7 +249,7 @@ flowchart TD
   role `product-strategist` tries to prove the miss in planning and before the PR. A proved miss is
   fixed or named to the owner; no pipeline stops. Every PR body carries the table of points.
 - **Work is judged by the role `goal-critic` against the owner's words.** A plan is no evidence to
-  it, its reply is not edited, and no PR opens without its table.
+  it, its reply is not edited, and the PR body carries its table.
 - **A mission is set by the owner.** A session only proposes a wording from its analysis and waits
   for approval.
 - **The PR of the epic opens when its last folder is taken apart, and not a task earlier.** A folder
