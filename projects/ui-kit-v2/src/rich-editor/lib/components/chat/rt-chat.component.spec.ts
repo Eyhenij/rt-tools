@@ -206,7 +206,7 @@ describe('RtChatComponent', (): void => {
 
         it('SC-UKV-1159 — выбранные файлы остаются', (): void => {
             const fixture: ComponentFixture<RtChatComponent> = setup({ canReply: true, attachments: true });
-            fixture.componentRef.instance.onFilesDropped([new File(['x'], 'договор.pdf')]);
+            fixture.debugElement.query(By.css('rt-file-drop')).triggerEventHandler('filesDropped', [new File(['x'], 'договор.pdf')]);
             fixture.detectChanges();
 
             fixture.componentInstance.setDraft(TEXT);
