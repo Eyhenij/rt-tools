@@ -130,35 +130,40 @@
                 <rt-tabs dense [activeId]="drafting ? 'hints' : 'guest'">
                     <ng-template rtTab="hints" label="Подсказки">
                         @if (drafting) {
-                            <div style="display: grid; gap: 0.5rem; padding: 0.75rem 1.5rem">
-                                <p style="margin: 0; color: var(--rt-color-text-muted); font-size: var(--rt-text-xs); line-height: 1.5">
+                            <div style="display: grid; gap: 1rem; padding: 1.25rem 1.5rem 0">
+                                <p
+                                    qa-dataid="story-hints-text"
+                                    style="margin: 0; color: var(--rt-color-text-muted); font-size: var(--rt-text-xs); line-height: 15px">
                                     Ассистент читает переписку и предлагает следующий шаг. Нажмите на подсказку, и текст встанет в поле
                                     ответа.
                                 </p>
-                                @for (hint of hints; track hint.draft) {
-                                    <button
-                                        type="button"
-                                        style="
-                                            display: flex;
-                                            align-items: center;
-                                            gap: 0.5rem;
-                                            padding: 0.5rem 1rem;
-                                            border: 0;
-                                            border-radius: var(--rt-radius-md);
-                                            background: var(--rt-color-bg-surface-subtle);
-                                            color: var(--rt-color-text-primary);
-                                            font: inherit;
-                                            font-size: var(--rt-text-sm);
-                                            line-height: 1.25;
-                                            text-align: start;
-                                            cursor: pointer;
-                                        "
-                                        [attr.qa-dataid]="'story-hint-' + $index"
-                                        (click)="insert(hint.draft)">
-                                        <span style="flex: 1">{{ hint.label }}</span>
-                                        <rt-icon name="arrow-right" size="sm" />
-                                    </button>
-                                }
+                                <div style="display: grid; gap: 0.5rem">
+                                    @for (hint of hints; track hint.draft) {
+                                        <button
+                                            type="button"
+                                            style="
+                                                display: flex;
+                                                align-items: center;
+                                                gap: 0.5rem;
+                                                padding: 0.5rem 1rem;
+                                                border: 0;
+                                                border-radius: var(--rt-radius-lg);
+                                                background: var(--rt-color-bg-surface-subtle);
+                                                color: var(--rt-color-text-primary);
+                                                font: inherit;
+                                                font-size: var(--rt-text-sm);
+                                                font-weight: var(--rt-font-weight-medium);
+                                                line-height: 17px;
+                                                text-align: start;
+                                                cursor: pointer;
+                                            "
+                                            [attr.qa-dataid]="'story-hint-' + $index"
+                                            (click)="insert(hint.draft)">
+                                            <span style="flex: 1">{{ hint.label }}</span>
+                                            <rt-icon name="arrow-right" size="sm" style="color: var(--rt-color-text-muted)" />
+                                        </button>
+                                    }
+                                </div>
                             </div>
                         }
                     </ng-template>
@@ -178,19 +183,22 @@
     <div
         style="
             display: grid;
-            inline-size: 13rem;
-            padding-block: var(--rt-overlay-menu-padding-y);
+            box-sizing: border-box;
+            inline-size: 210px;
+            padding: 0.25rem;
             border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
             border-radius: var(--rt-radius-md);
             background: var(--rt-overlay-menu-bg);
             box-shadow: var(--rt-overlay-menu-shadow);
-        ">
+        "
+        qa-dataid="story-quick-replies-panel">
         @for (reply of quickReplies; track reply) {
             <button
                 type="button"
                 style="
-                    padding: 0.625rem 1rem;
+                    padding: 0.5rem 1rem;
                     border: 0;
+                    border-radius: var(--rt-radius-sm);
                     background: transparent;
                     color: var(--rt-color-text-primary);
                     font: inherit;
