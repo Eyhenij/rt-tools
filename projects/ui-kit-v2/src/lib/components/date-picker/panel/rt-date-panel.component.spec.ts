@@ -95,6 +95,23 @@ describe('RtDatePanelComponent', (): void => {
         expect(qa(fixture, 'date-panel-now')).toBeNull();
     });
 
+    it('SC-UKV-1172 — a date panel without «Today» draws no footer, and a day still chooses', (): void => {
+        const { fixture, picked }: IPanel = setup({ type: 'date', value: '2026-03-15', isTodayButtonShown: false });
+
+        expect(day(fixture, '2026-03-20')).not.toBeNull();
+        expect(qa(fixture, 'date-panel-today')).toBeNull();
+        expect(el(fixture, '.rt-date-panel__footer')).toBeNull();
+
+        press(fixture, day(fixture, '2026-03-20'));
+        expect(picked).toEqual(['2026-03-20']);
+    });
+
+    it('SC-UKV-1172 — the input touches only the date: other types keep their footer', (): void => {
+        const { fixture }: IPanel = setup({ type: 'datetime-local', value: '2026-03-15T09:30', isTodayButtonShown: false });
+
+        expect(qa(fixture, 'date-panel-apply')).not.toBeNull();
+    });
+
     it('SC-UKV-423 — «Today» is switched off when today lies outside the bounds', (): void => {
         const { fixture, picked }: IPanel = setup({ type: 'date', value: '', max: '2026-09-01' });
         const today: HTMLButtonElement = qa(fixture, 'date-panel-today')?.nativeElement as HTMLButtonElement;

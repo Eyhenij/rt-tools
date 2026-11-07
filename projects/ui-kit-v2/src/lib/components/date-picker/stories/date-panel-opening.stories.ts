@@ -35,6 +35,13 @@ export const BottomSheet: TStory = {
     play: open,
 };
 
+/** Узкий экран: дата без кнопки «Сегодня», подвала у панели нет. */
+export const BottomSheetWithoutToday: TStory = {
+    args: { place: 'sheet', type: 'date', value: '2026-03-15', isTodayButtonShown: false },
+    parameters: { snapshot: { fullPage: true, overlay: SHEET_PANEL } },
+    play: open,
+};
+
 /** Узкий экран: дата со временем, переключатель «Дата | Время» над месяцем. */
 export const BottomSheetDateTime: TStory = {
     args: { place: 'sheet' },

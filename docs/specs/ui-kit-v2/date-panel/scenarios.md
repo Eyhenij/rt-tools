@@ -178,3 +178,11 @@ When it imports `RtDatePanelComponent` from the entry point `date-picker`
 Then it gets the same panel the field draws
 
 Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1172 — a date panel without the button «Сегодня»
+
+Given a panel of the type `date` with `isTodayButtonShown` set to false
+When it is drawn
+Then it has no footer, and a click on a day still chooses and closes
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.

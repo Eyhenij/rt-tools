@@ -182,6 +182,8 @@ export class RtDatePanelComponent {
     );
 
     protected readonly todayOff: Signal<boolean> = computed((): boolean => !rtDateInBounds(this.today(), this.min(), this.max()));
+    /** У даты в подвале только «Сегодня»: без неё пустая черта не рисуется. */
+    protected readonly hasFooter: Signal<boolean> = computed((): boolean => this.type() !== 'date' || this.isTodayButtonShown());
     /** Черновик собирается в значение и лежит в границах. */
     protected readonly canApply: Signal<boolean> = computed((): boolean => this.#draftValue() !== '');
     protected readonly tabs: Signal<IRtToggleButtonGroup.Option<TTab>[]> = computed((): IRtToggleButtonGroup.Option<TTab>[] => [
@@ -203,6 +205,11 @@ export class RtDatePanelComponent {
     });
     /** Раскладка нижней шторки: дни под палец, у даты со временем — переключатель «Дата | Время». */
     public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Показывать ли «Сегодня» в подвале у типа `date`. Выключена — подвала у даты нет. */
+    public readonly isTodayButtonShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
 

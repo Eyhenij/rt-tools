@@ -149,53 +149,55 @@
         }
     </div>
 
-    <div rtElem="footer">
-        @switch (type()) {
-            @case ('date') {
-                <button
-                    rtButton
-                    qa-dataid="date-panel-today"
-                    theme="secondary"
-                    appearance="text"
-                    size="sm"
-                    type="button"
-                    [label]="t().uiToday"
-                    [attr.aria-label]="t().uiToday"
-                    [disabled]="todayOff()"
-                    (click)="pickToday()"></button>
+    @if (hasFooter()) {
+        <div rtElem="footer">
+            @switch (type()) {
+                @case ('date') {
+                    <button
+                        rtButton
+                        qa-dataid="date-panel-today"
+                        theme="secondary"
+                        appearance="text"
+                        size="sm"
+                        type="button"
+                        [label]="t().uiToday"
+                        [attr.aria-label]="t().uiToday"
+                        [disabled]="todayOff()"
+                        (click)="pickToday()"></button>
+                }
+                @case ('time') {
+                    <button
+                        rtButton
+                        qa-dataid="date-panel-now"
+                        theme="secondary"
+                        appearance="text"
+                        size="sm"
+                        type="button"
+                        [label]="t().uiNow"
+                        [attr.aria-label]="t().uiNow"
+                        (click)="pickNow()"></button>
+                    <button
+                        rtButton
+                        qa-dataid="date-panel-done"
+                        size="sm"
+                        type="button"
+                        [label]="t().uiDone"
+                        [attr.aria-label]="t().uiDone"
+                        [disabled]="!canApply()"
+                        (click)="apply()"></button>
+                }
+                @default {
+                    <button
+                        rtButton
+                        qa-dataid="date-panel-apply"
+                        size="sm"
+                        type="button"
+                        [label]="t().uiApply"
+                        [attr.aria-label]="t().uiApply"
+                        [disabled]="!canApply()"
+                        (click)="apply()"></button>
+                }
             }
-            @case ('time') {
-                <button
-                    rtButton
-                    qa-dataid="date-panel-now"
-                    theme="secondary"
-                    appearance="text"
-                    size="sm"
-                    type="button"
-                    [label]="t().uiNow"
-                    [attr.aria-label]="t().uiNow"
-                    (click)="pickNow()"></button>
-                <button
-                    rtButton
-                    qa-dataid="date-panel-done"
-                    size="sm"
-                    type="button"
-                    [label]="t().uiDone"
-                    [attr.aria-label]="t().uiDone"
-                    [disabled]="!canApply()"
-                    (click)="apply()"></button>
-            }
-            @default {
-                <button
-                    rtButton
-                    qa-dataid="date-panel-apply"
-                    size="sm"
-                    type="button"
-                    [label]="t().uiApply"
-                    [attr.aria-label]="t().uiApply"
-                    [disabled]="!canApply()"
-                    (click)="apply()"></button>
-            }
-        }
-    </div>
+        </div>
+    }
 </ng-container>

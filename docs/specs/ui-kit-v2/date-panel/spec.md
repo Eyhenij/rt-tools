@@ -108,6 +108,9 @@ kit. The mockup draws a panel of its own for all three types, the same in every 
   `sheet`, `picked` and `closed`. The consumer holds the popover or the bottom sheet, creates the
   panel anew on every opening, closes it on `closed` and gives the popover its surface.
 
+- **The input `isTodayButtonShown` hides «Сегодня» of a date panel.** It is shown by default. Without
+  the button a date panel has no footer, and the footers of the other types stay.
+
 ## What is out of scope
 
 - The date range field — the subdomain `date-range` next to this one.
@@ -130,6 +133,7 @@ None of its own. The draft lives while the panel is open and is dropped when it 
 | state                            | what is drawn                                               |
 | -------------------------------- | ----------------------------------------------------------- |
 | a date, the panel open           | the month of the value or of today, «Сегодня» below         |
+| a date without the button        | the month alone, no footer                                  |
 | the choice of month and year     | twelve months and the year with paging                      |
 | the year grid                    | twelve years three in a row, the span and arrows above      |
 | a cell of the grids              | default, hover, chosen, current, unavailable                |
@@ -179,4 +183,5 @@ None.
 - 2026-09-30 — the field shows and reads the date in the order of the interface language, as the
   mockup of the range field shows it.
 - 2026-11-04 — the task RT-2895 adds the year grid and the 20px side padding in the bottom sheet.
-- 2026-11-07 — the task RT-3159 gives the panel out of the entry point.
+- 2026-11-07 — the task RT-3159 gives the panel out of the entry point and adds the input
+  `isTodayButtonShown`.

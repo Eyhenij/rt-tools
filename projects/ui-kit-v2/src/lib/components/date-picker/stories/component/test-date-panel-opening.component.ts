@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Signal, signal, viewChild, WritableSignal } from '@angular/core';
 
 import { STORY_TRIGGER_ATTRIBUTE } from '../../../../../showcase/story-overlay';
@@ -38,8 +39,10 @@ export type TDatePanelOpeningPlace = 'popover' | 'sheet';
             <button
                 rtButton
                 type="button"
+                appearance="outlined"
+                icon="clock"
                 qa-dataid="date-panel-opening-popover"
-                [label]="value"
+                [label]="value | date: (type === 'date' ? 'd MMMM' : 'd MMMM, HH:mm') : undefined : 'ru'"
                 [rtPopover]="panelTpl"
                 [attr.data-story-trigger]="triggerAttribute"></button>
         } @else {
@@ -47,8 +50,10 @@ export type TDatePanelOpeningPlace = 'popover' | 'sheet';
                 <button
                     rtButton
                     type="button"
+                    appearance="outlined"
+                    icon="clock"
                     qa-dataid="date-panel-opening-sheet"
-                    [label]="value"
+                    [label]="value | date: (type === 'date' ? 'd MMMM' : 'd MMMM, HH:mm') : undefined : 'ru'"
                     [attr.data-story-trigger]="triggerAttribute"
                     (click)="sheetOpen.set(true)"></button>
 
@@ -56,6 +61,7 @@ export type TDatePanelOpeningPlace = 'popover' | 'sheet';
                     @if (sheetOpen()) {
                         <rt-date-panel
                             sheet
+                            [isTodayButtonShown]="isTodayButtonShown"
                             [type]="type"
                             [value]="value"
                             [now]="now"
@@ -68,6 +74,9 @@ export type TDatePanelOpeningPlace = 'popover' | 'sheet';
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        // angular
+        DatePipe,
+
         // components
         RtBottomSheetComponent,
         RtButtonDirective,
@@ -81,6 +90,7 @@ export class TestRtDatePanelOpeningComponent {
     public place: TDatePanelOpeningPlace = 'popover';
     public type: IRtDatePicker.Type = 'datetime-local';
     public value: string = '2026-03-15T09:30';
+    public isTodayButtonShown: boolean = true;
 
     public readonly now: Date = STORY_NOW;
     public readonly triggerAttribute: string = STORY_TRIGGER_ATTRIBUTE;
@@ -92,7 +102,8 @@ export class TestRtDatePanelOpeningComponent {
         'background-color: var(--rt-color-bg-surface); box-shadow: var(--rt-overlay-select-shadow)';
 
     /** Экран телефона: шторка считает своё место от него, а не от окна. */
-    public readonly phone: string = 'position: relative; contain: paint; inline-size: 22.5rem; block-size: 44rem';
+    public readonly phone: string =
+        'box-sizing: border-box; position: relative; contain: paint; inline-size: 22.5rem; block-size: 45rem; padding: 1rem';
 
     public closePopover(): void {
         this.popover()?.close();
