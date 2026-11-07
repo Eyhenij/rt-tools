@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when an edit of a rule, a hook, a check or a role is chosen and when its result is judged. The worst driver from the report, one metric and its direction in the task, the verdict from the next report, and the plain name of an edit that moved nothing.
 ---
-<!-- rt-kit v0.34.0 · patterns/task-flow-cycle.md · a1e20572acec · правится надстройкой, не здесь -->
+<!-- rt-kit v0.34.0 · patterns/task-flow-cycle.md · 1ecd9c22c48c · правится надстройкой, не здесь -->
 
 # The improvement cycle
 
@@ -39,7 +39,7 @@ data means no cycle: the text says so, and nothing is chosen by a guess.
 The task changes one thing and carries one line:
 
 ```markdown
-**Metric:** the share of empty refusals of `git-guard-push`, down. Baseline: 0.42 over 30 days.
+**Metric:** empty refusals of `git-guard-push`, down. Baseline: 0.42 over 30 days, noise 0.05.
 ```
 
 - **The direction is a word, not a target.** A target needs a baseline first, and two weeks of data
@@ -54,7 +54,8 @@ The same trees are compared, on a version with the edit against themselves befor
 not installed the version does not count.
 
 - **The executor who made the edit gives no verdict.** The role `goal-critic` reads the numbers.
-- **A movement below the noise is not a result.** The noise is named with the baseline.
+- **A movement below the noise is not a result.** The noise is the spread of the metric between the
+  weeks of the baseline, and it is named with it.
 
 ### An edit that moved nothing is named so
 

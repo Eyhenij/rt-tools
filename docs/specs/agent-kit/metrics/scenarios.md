@@ -291,7 +291,7 @@ Then the numbers of the former read are gone, and one action repeats the read
 ### SC-AK-1332 — a release names its metric
 
 Given a release of the package is started
-When its metric field holds a metric with a direction, or a reason why it has none
+When its metric field holds a metric the reports show with a direction, or a reason why it has none
 Then the line stands under the heading of the new version in the journal
 And any other value stops the release before anything is built, and the journal stays as it was
 

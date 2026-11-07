@@ -43,6 +43,10 @@ own? What does it add that the owner did not ask for?
 **Result.** For every requirement, what can the owner do now that they could not before, shown from
 their side? What stands only in a branch, only in a text, or only on this machine?
 
+**Cycle.** The prompt gives the metric of an edit, its direction, baseline and noise, and the report
+after it. Over the same trees, did the number move past the noise in that direction? If not, the
+verdict is «не сдвинулось», with both numbers. The executor's explanation of why is not evidence.
+
 **PR description.** The prompt gives the description and the replies of the roles. Every "done" and
 "reached" in the description is tried against the result. A word of a role that differs from its
 reply is a miss, whatever the session's reason was.

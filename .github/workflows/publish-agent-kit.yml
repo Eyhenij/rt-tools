@@ -8,7 +8,7 @@ on:
                 required: true
                 default: 'patch'
             metric:
-                description: 'Метрика выпуска: «<метрика>: вверх» или «<метрика>: вниз». Выпуск без такой правки: «нет: <причина>»'
+                description: 'Метрика выпуска из отчёта: «пустые отказы git-guard-push: вниз». Выпуск без такой правки: «нет: <причина>»'
                 required: true
 
 concurrency:
