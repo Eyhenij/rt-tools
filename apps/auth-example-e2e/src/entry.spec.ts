@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { PEOPLE } from '../stand/stand.mjs';
+import { lateCookieProbe, PEOPLE, STAND_PASSWORD } from '../stand/stand.mjs';
 import { enterOnRealmScreen, expectEntryScreen, signIn } from './support/example';
 
 test.describe('the entry', () => {
@@ -9,6 +9,17 @@ test.describe('the entry', () => {
 
         await expect(page.getByTestId('records-person')).toHaveText(`${PEOPLE.reader.firstName} ${PEOPLE.reader.lastName}`);
         await expect(page.getByTestId('records-empty').or(page.getByTestId('records-list'))).toBeVisible();
+    });
+
+    test('SC-AUTH-100 — the return from the entry form does not wait for the cookie probe of Keycloak', async ({ page }) => {
+        const probe: Awaited<ReturnType<typeof lateCookieProbe>> = await lateCookieProbe(page);
+        await page.goto('/');
+        await expectEntryScreen(page);
+        probe.arm();
+        await enterOnRealmScreen(page, PEOPLE.reader.email, STAND_PASSWORD);
+
+        await expect(page.getByTestId('records-person')).toBeVisible();
+        expect(probe.calls()).toBe(0);
     });
 
     test('SC-AUTH-48 — a wrong password keeps the person on the entry screen', async ({ page }) => {

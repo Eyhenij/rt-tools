@@ -29,8 +29,15 @@ export const appConfig: ApplicationConfig = {
 
 The application starts after the silent check has answered, so the first navigation already sees
 the session. The start waits for it five seconds at most: past that the admin starts with nobody
-signed in, and a Keycloak that is down does not leave a blank page. The page of the silent check ships in the package and is published by the
-application next to `index.html`:
+signed in, and a Keycloak that is down does not leave a blank page.
+
+On the return from the entry form the address carries the code answer of Keycloak. Then the start
+runs no silent check: the adapter only exchanges the code, and the start waits for that thirty
+seconds at most. A late cookie probe of Keycloak would otherwise cut the exchange and send the
+person back to the form.
+
+The page of the silent check ships in the package and is published by the application next to
+`index.html`:
 
 ```json
 { "glob": "silent-check-sso.html", "input": "node_modules/@rt-tools/auth-angular/src/assets", "output": "/" }
@@ -45,6 +52,7 @@ application next to `index.html`:
 | `forbiddenPath`             | Where a person without the rights of a route goes; without it they stay   |
 | `logoutRedirectUri`         | Where Keycloak returns after the exit; by default the base of the admin   |
 | `silentCheckTimeoutMs`      | How long the start waits for the silent check; by default 5000            |
+| `codeExchangeTimeoutMs`     | How long the start waits for the exchange of the code; by default 30000   |
 
 ## The session
 
