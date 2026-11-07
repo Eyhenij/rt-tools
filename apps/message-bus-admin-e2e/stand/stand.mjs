@@ -91,7 +91,7 @@ export const SERVER_DATABASE_URL = `postgresql://message_bus:message_bus@localho
  * Keycloak стенда. Образ браузера пересылает его порт на машину, так что браузер и приёмник видят
  * Keycloak одним адресом, и выдавший в токене тот же, что назван приёмнику.
  */
-export const KEYCLOAK_ORIGIN = 'http://localhost:58080';
+export const KEYCLOAK_ORIGIN = `http://localhost:${intFromEnv('E2E_KEYCLOAK_PORT', 58080)}`;
 export const REALM = 'rt';
 export const CLIENT = 'rt-message-bus-admin';
 /** Служебный клиент команд груза: приёмник стенда принимает его токен с правами админки. */

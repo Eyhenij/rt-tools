@@ -13,6 +13,13 @@ ports, and the run does not touch the data of the working database. The suite ta
 panel address from `E2E_ADMIN_PORT` and the receiver one from `E2E_API_PORT`; the defaults stand
 in `apps/message-bus-admin-e2e/stand/stand.mjs`.
 
+The set before a push raises every stand on the names of its working copy. The function
+`rt_stand_env` of the tree profile derives the ports and `COMPOSE_PROJECT_NAME` from the path of the
+copy, so two copies run at once and neither touches the Keycloak of the other. It overrides what
+the session environment holds: settings copied between copies pin one value for all of them.
+`RT_STAND_KEEP=1` keeps the environment for one run on a port a foreign process holds. A manual run
+takes the defaults, and those stay what the documents name.
+
 There is no site and no rendering server in this tree, so the lines of the pattern about them are
 not carried out here.
 
