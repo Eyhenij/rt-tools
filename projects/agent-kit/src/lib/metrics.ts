@@ -69,6 +69,8 @@ export interface IMetricsReport {
     readonly emptyRefusals: number;
     /** Запуски по родам шага. Пусто: запусков не записано, и строк в отчёте нет. */
     readonly runs: readonly IRunMetric[];
+    /** Сообщения человека по набору образцов. Ноль: записей нет, и строка без данных о них скажет. */
+    readonly corrections: number;
     readonly gate: readonly ICount[];
     readonly gateRefusals: number;
     readonly rules: number;
@@ -189,9 +191,7 @@ export function runsOf(observations: readonly IObservation[]): readonly IRunMetr
 }
 
 /** Имена метрик, которым записи уже есть: остальные отчёт называет словами. */
-function noDataOf(comparedRefusals: number, runs: readonly IRunMetric[]): readonly string[] {
-    const counted: readonly string[] = [...(comparedRefusals > 0 ? ['Пустые отказы'] : []), ...(runs.length > 0 ? ['Пустые запуски'] : [])];
-
+function noDataOf(counted: readonly (string | false)[]): readonly string[] {
     return NOT_RECORDED_YET.filter((name: string): boolean => !counted.includes(name));
 }
 
@@ -210,6 +210,7 @@ export function metricsOf(read: IReadResult, summary: ISummary, rules: number, e
     const repeats: number = guards.reduce((sum: number, guard: IGuardMetric): number => sum + guard.repeats, 0);
     const comparedRefusals: number = guards.reduce((sum: number, guard: IGuardMetric): number => sum + guard.compared, 0);
     const runs: readonly IRunMetric[] = runsOf(read.observations);
+    const corrections: number = read.observations.filter((entry: IObservation): boolean => entry.event === 'owner-correction').length;
 
     return {
         refusals,
@@ -217,6 +218,7 @@ export function metricsOf(read: IReadResult, summary: ISummary, rules: number, e
         guards,
         comparedRefusals,
         runs,
+        corrections,
         rules,
         entryChars,
         days: summary.days,
@@ -231,7 +233,11 @@ export function metricsOf(read: IReadResult, summary: ISummary, rules: number, e
         gateRefusals: summary.denials.reduce((sum: number, rule: ICount): number => sum + rule.count, 0),
         deadRules: full ? summary.unused : null,
         deadRuleShare: full ? percent(summary.unused.length, rules) : null,
-        noData: noDataOf(comparedRefusals, runs),
+        noData: noDataOf([
+            comparedRefusals > 0 && 'Пустые отказы',
+            runs.length > 0 && 'Пустые запуски',
+            corrections > 0 && 'Правки владельца',
+        ]),
         outside: OUTSIDE_THE_TREE,
     };
 }
@@ -308,6 +314,7 @@ export function metricsLines(report: IMetricsReport): readonly string[] {
         `отказы шлюза правил: ${report.gateRefusals}`,
         ...topLines(report.gate.map((rule: ICount): string => `  ${rule.name}: ${rule.count}`)),
         ...runLines(report.runs),
+        ...(report.corrections > 0 ? ['', `правки владельца: ${report.corrections}`] : []),
         '',
         ...deadRuleLines(report),
         '',

@@ -50,6 +50,16 @@
           }
         ]
       }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/dispatch.sh UserPromptSubmit"
+          }
+        ]
+      }
     ]
   },
   "autoCompactWindow": 1000000,

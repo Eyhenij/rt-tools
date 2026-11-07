@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/metric-marks.sh · 77a04c95994b · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/metric-marks.sh · 98bb4b514466 · правится надстройкой, не здесь
 # Signs of content and of calls for the package metrics. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The refusal record and the push set source it.
 #
@@ -77,6 +77,53 @@ rt_refusal_empty() {
     printf '%s' "$sign" > "$file" 2>/dev/null
 
     if [ "$sign" = "$previous" ]; then printf '1'; else printf '0'; fi
+}
+
+# The mark of a branch, by name of kind. The name of a branch is the tree's own, so it stays out of
+# the file name too.
+rt_branch_mark() {
+    local dir
+    dir="$(rt_marks_dir)"
+    [ -n "$dir" ] && [ -n "$2" ] && printf '%s/%s-%s' "$dir" "$1" "$(printf '%s' "$2" | cksum 2>/dev/null | cut -d' ' -f1)"
+}
+
+# The sign of a handover: the commit and the tree of the head at the moment a request is ready and
+# has a reviewer. The first one stays: the work is judged against what was handed over first, and a
+# later hand-over of the same branch would wash the change out of the count. The copy on the
+# hosting goes first, because that is what the reviewer reads.
+#
+#   rt_handover_mark <branch>
+rt_handover_mark() {
+    local branch="$1" file root ref commit tree
+    file="$(rt_branch_mark handover "$branch")"
+    [ -n "$file" ] && [ ! -f "$file" ] || return 0
+    root="$(rt_sign_root)"
+    for ref in "refs/remotes/origin/$branch" "refs/heads/$branch"; do
+        commit="$(git -C "$root" rev-parse --verify --quiet "$ref^{commit}" 2>/dev/null)"
+        tree="$(git -C "$root" rev-parse --verify --quiet "$ref^{tree}" 2>/dev/null)"
+        if [ -n "$commit" ] && [ -n "$tree" ]; then
+            printf '%s %s\n' "$commit" "$tree" > "$file" 2>/dev/null
+            return 0
+        fi
+    done
+    return 0
+}
+
+# One owner correction on the current branch: a line of the counter, `before` or `after` the
+# handover. The message itself never gets here. First-pass acceptance reads the `after` lines.
+#
+#   rt_correction_mark <session>
+rt_correction_mark() {
+    local session="$1" branch file handover
+    branch="$(git -C "$(rt_sign_root)" symbolic-ref --quiet --short HEAD 2>/dev/null)"
+    file="$(rt_branch_mark corrections "$branch")"
+    handover="$(rt_branch_mark handover "$branch")"
+    if [ -n "$file" ]; then
+        if [ -f "$handover" ]; then printf 'after\n'; else printf 'before\n'; fi >> "$file" 2>/dev/null
+    fi
+    command -v rt_note >/dev/null 2>&1 || return 0
+    rt_note owner-correction "sid=$session"
+    return 0
 }
 
 # The kind of a step by the command of the check. The list is closed: a kind leaves the tree, and

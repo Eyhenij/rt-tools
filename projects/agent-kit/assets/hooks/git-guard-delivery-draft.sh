@@ -16,6 +16,21 @@
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
+# The handover for the metrics: the call passed every condition, so the request is ready and has a
+# reviewer. A guard is the only one who sees that moment. No mark file — nothing is kept.
+rt_delivery_handover() {
+    # shellcheck disable=SC1091
+    . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/metric-marks.sh" 2>/dev/null || return 0
+    rt_handover_mark "$1"
+    return 0
+}
+
+# A request that opens ready is handed over at once; a draft is handed over when it leaves draft.
+rt_delivery_open_handover() {
+    printf '%s' "$1" | grep -qE '[[:space:]](--draft|-d)([[:space:]=]|$)' || rt_delivery_handover "$2"
+    return 0
+}
+
 rt_delivery_draft_ready() {
     # --- leaving draft ----------------------------------------------------------------------
     #
@@ -88,5 +103,7 @@ rt_delivery_draft_ready() {
         command -v rt_delivery_ready_folder >/dev/null 2>&1 && rt_delivery_ready_folder "$pull_head"
 
         deny_faults
+        # The head comes from the hosting: without its answer the number may name another branch.
+        [ -z "$pull_head" ] || rt_delivery_handover "$pull_head"
     fi
 }

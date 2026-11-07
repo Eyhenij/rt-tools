@@ -176,5 +176,3 @@ recorded
 Given a message matching the set of patterns
 When the hook counts it
 Then the counter of the branch grows, and the text stands in no file of the rules layer
-
-Not covered: no code yet.

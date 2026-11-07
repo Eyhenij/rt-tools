@@ -191,6 +191,18 @@ describe('запуски', () => {
     });
 });
 
+describe('правки владельца', () => {
+    it('SC-AK-1290 — отчёт считает правки и снимает их со строки без данных', () => {
+        const lines: readonly string[] = metricsLines(
+            reportOf([line('owner-correction', '', 's1'), line('owner-correction', '', 's2')], ['testing'])
+        );
+
+        expect(lines).toContain('правки владельца: 2');
+        expect(lines.find((text: string): boolean => text.startsWith('нет данных:'))).toContain('Принято с первого раза');
+        expect(lines.find((text: string): boolean => text.startsWith('нет данных:'))).not.toContain('Правки владельца');
+    });
+});
+
 describe('metricsLines', () => {
     it('SC-AK-1293 — отчёт называет метрики без данных словами, а не нулём', () => {
         const lines: readonly string[] = metricsLines(reportOf([line('guard-deny', 'grill-gate', 's1')], ['testing']));

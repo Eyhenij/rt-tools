@@ -2,7 +2,7 @@
 # События метрик: что дерево решает у себя и какой ответ уходит в наблюдение. Подпись содержимого
 # остаётся в дереве, в строку наблюдения попадает только ответ.
 #
-# Сценарии договорённости: SC-AK-1277, SC-AK-1278, SC-AK-1279.
+# Сценарии договорённости: SC-AK-1277, SC-AK-1278, SC-AK-1279, SC-AK-1290.
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 echo "СОБЫТИЯ МЕТРИК"
@@ -20,6 +20,11 @@ refuse_in() {
     CLAUDE_PROJECT_DIR="$tree" RT_GUARD_NAME=probe-guard \
         RT_HOOK_INPUT="{\"session_id\":\"$session\",\"tool_input\":{\"command\":\"$call\"}}" \
         bash -c '. "$1/guard-note.sh"; rt_guard_note' _ "$HOOKS"
+}
+
+# Сколько наблюдений этого рода записано.
+notes_count() {
+    cat "$1/.claude/rt-kit/observations/"*.jsonl 2>/dev/null | grep -c "\"ev\":\"$2\""
 }
 
 # Признак пустого отказа в записи с этим номером, считая от первой.
@@ -193,6 +198,79 @@ touch -t 202601010000 "$marks/runs-2026-01-01" "$marks/counted-pulls"
 note_run 1 green
 report "старая метка снята" "$(ls "$marks" | grep -c 'runs-2026-01-01')" "0"
 report "чужой файл меток остался" "$(ls "$marks" | grep -c 'counted-pulls')" "1"
+rm -rf "$tree"
+
+# --- Передача на ревью ----------------------------------------------------------------------
+
+# Метка передачи ветки: коммит и дерево головы. Имя файла считается той же записью, что в проверке.
+handover_of() {
+    CLAUDE_PROJECT_DIR="$1" bash -c '. "$1/metric-marks.sh"; cat "$(rt_branch_mark handover "$2")" 2>/dev/null' _ "$HOOKS" "$2"
+}
+
+open_in() {
+    input_cmd "$2" Bash "$1" | CLAUDE_PROJECT_DIR="$1" "$HOOKS/git-guard-delivery.sh" >/dev/null 2>&1
+}
+
+tree="$(fixture_repo_branched main RT-7-probe)"
+open_in "$tree" 'gh pr create --title "[RT-7] Сделано" --base main --draft --body x'
+report "передача: черновик ещё не передан" "$(handover_of "$tree" RT-7-probe)" ""
+open_in "$tree" 'gh pr create --title "[RT-7] Сделано" --base main --body x'
+want="$(git -C "$tree" rev-parse HEAD) $(git -C "$tree" rev-parse 'HEAD^{tree}')"
+report "передача: открытие готовой заявки оставляет подпись" "$(handover_of "$tree" RT-7-probe)" "$want"
+fixture_commit "$tree" extra.txt 'body' 'chore: правка после передачи'
+open_in "$tree" 'gh pr create --title "[RT-7] Сделано" --base main --body x'
+report "передача: первая подпись остаётся" "$(handover_of "$tree" RT-7-probe)" "$want"
+rm -rf "$tree"
+
+# Снятие черновика: голова приходит с хостинга.
+tree="$(fixture_repo_branched main RT-8-probe)"
+mkdir -p "$tree/.claude/rt-kit"
+printf 'rt_pull_state() { printf "%%s" %s; }\n' \
+    "'{\"exists\":true,\"number\":9,\"draft\":true,\"reviewed\":true,\"conflicting\":false,\"branch\":\"RT-8-probe\"}'" \
+    > "$tree/.claude/rt-kit/project.sh"
+open_in "$tree" 'gh pr ready 9'
+report "передача: снятие черновика оставляет подпись" \
+    "$(handover_of "$tree" RT-8-probe)" "$(git -C "$tree" rev-parse HEAD) $(git -C "$tree" rev-parse 'HEAD^{tree}')"
+rm -rf "$tree"
+
+# Отказ передачей не считается: заявка не ушла.
+tree="$(fixture_repo_branched main RT-9-probe)"
+fixture_commit "$tree" docs/tasks/RT-9-probe/plan.md 'план' 'docs: папка задачи'
+open_in "$tree" 'gh pr create --title "[RT-9] Сделано" --base main --body x'
+report "передача: отказанная заявка подписи не оставляет" "$(handover_of "$tree" RT-9-probe)" ""
+rm -rf "$tree"
+
+# --- SC-AK-1290. Сообщение считается и не хранится ----------------------------------------
+
+prompt_in() {
+    jq -n --arg p "$2" --arg d "$1" '{session_id:"session-one",prompt:$p,cwd:$d}' \
+        | CLAUDE_PROJECT_DIR="$1" "$HOOKS/owner-corrections.sh"
+}
+
+corrections_of() {
+    CLAUDE_PROJECT_DIR="$1" bash -c '. "$1/metric-marks.sh"; cat "$(rt_branch_mark corrections work)" 2>/dev/null' _ "$HOOKS" \
+        | tr '\n' ' '
+}
+
+tree="$(fixture_metric_tree)"
+report "SC-AK-1290 — хук молчит" "$(prompt_in "$tree" 'Это неправильно, особое слово девять')" ""
+report "SC-AK-1290 — счётчик ветки вырос" "$(corrections_of "$tree")" "before "
+report "SC-AK-1290 — наблюдение записано" "$(notes_count "$tree" owner-correction)" "1"
+report "SC-AK-1290 — текста нет ни в одном файле" \
+    "$(grep -rl 'особое слово девять' "$tree/.claude" 2>/dev/null | wc -l | tr -d ' ')" "0"
+prompt_in "$tree" 'Спасибо, отлично'
+report "SC-AK-1290 — сообщение мимо образцов не считается" "$(corrections_of "$tree")" "before "
+prompt_in "$tree" '<task-notification>это неправильно</task-notification>'
+report "SC-AK-1290 — сообщение приложения не считается" "$(corrections_of "$tree")" "before "
+CLAUDE_PROJECT_DIR="$tree" RT_HOOK_INPUT="{\"cwd\":\"$tree\"}" \
+    bash -c '. "$1/metric-marks.sh"; rt_handover_mark work' _ "$HOOKS"
+prompt_in "$tree" 'Переделай заголовок'
+report "SC-AK-1290 — правка после передачи названа" "$(corrections_of "$tree")" "before after "
+rm -rf "$tree"
+
+# Вне репозитория ветки нет: счётчика нет, а наблюдение и ход не страдают.
+tree="$(fixture_tree)"
+report "SC-AK-1290 — вне репозитория хук молчит" "$(prompt_in "$tree" 'это неправильно')" ""
 rm -rf "$tree"
 
 # --- Отказ в пользу работы ----------------------------------------------------------------

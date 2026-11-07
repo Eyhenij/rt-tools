@@ -484,7 +484,6 @@ fi
 [ -f "$rt_hooks_dir/git-guard-delivery-body.sh" ] && . "$rt_hooks_dir/git-guard-delivery-body.sh" 2>/dev/null
 command -v rt_delivery_pull_body >/dev/null 2>&1 && rt_delivery_pull_body
 
-
 # The task folder is taken apart before the PR opens, not after the approval: the owner merges as
 # soon as he sees green, and no room is left for a closing commit — three times in a row the folder
 # travelled into the main branch without being taken apart. After the cleanup the progress guard
@@ -494,5 +493,6 @@ rt_delivery_open_folder
 # Everything that did not come together is named here, all at once: up to this line the conditions
 # were being collected, each of which used to refuse the call on its own.
 deny_faults
+command -v rt_delivery_open_handover >/dev/null 2>&1 && rt_delivery_open_handover "$cmd" "$branch"
 
 exit 0
