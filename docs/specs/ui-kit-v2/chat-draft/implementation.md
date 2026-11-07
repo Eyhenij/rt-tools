@@ -17,3 +17,4 @@ tree, or the tree holds what the spec is silent about.
 - **The chosen files stay.** — `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.component.ts:setDraft`; scenario `SC-UKV-1159`
 - **A closed field takes nothing.** — `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.component.ts:composerDisabled`; scenario `SC-UKV-1160`
 - **The method is not typing.** — `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.component.ts:setDraft`; scenario `SC-UKV-1161`
+- **The chosen files of the draft are read by a method of their own.** — `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.component.ts:draftFiles`; scenarios `SC-UKV-1169`, `SC-UKV-1170`

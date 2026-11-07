@@ -404,6 +404,11 @@ export class RtChatComponent {
         return this.hasThread() && this.canReply() ? rtChatReadDraft(this.#replyFields()) : '';
     }
 
+    /** Файлы, выбранные к черновику. Вложений нет или нет поля — пустой список. */
+    public draftFiles(): readonly File[] {
+        return this.hasThread() && this.canReply() ? this.selectedFiles() : [];
+    }
+
     protected onSubmit(): void {
         // Кнопка уже дизейблится по `canSend` — guard лишь страхует от submit в
         // обход кнопки (программный/Enter), молча и без подсветки поля.

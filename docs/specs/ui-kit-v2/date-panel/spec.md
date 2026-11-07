@@ -1,6 +1,6 @@
 # The kit's own panel of the date field
 
-**Status:** in force · **Revision:** 2026-11-04 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-07 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the popover directive, the bottom sheet, the calendar and the breakpoints service of
 the kit
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
@@ -103,6 +103,11 @@ kit. The mockup draws a panel of its own for all three types, the same in every 
 - **The names of months and weekdays follow the locale of the application.** The buttons of the
   panel carry the kit's labels.
 
+- **The entry point `date-picker` gives out the panel for a choice without a text field.** The
+  selector, the inputs and the outputs stay the same: `type`, `value`, `min`, `max`, `minuteStep`,
+  `sheet`, `picked` and `closed`. The consumer holds the popover or the bottom sheet, creates the
+  panel anew on every opening, closes it on `closed` and gives the popover its surface.
+
 ## What is out of scope
 
 - The date range field — the subdomain `date-range` next to this one.
@@ -174,3 +179,4 @@ None.
 - 2026-09-30 — the field shows and reads the date in the order of the interface language, as the
   mockup of the range field shows it.
 - 2026-11-04 — the task RT-2895 adds the year grid and the 20px side padding in the bottom sheet.
+- 2026-11-07 — the task RT-3159 gives the panel out of the entry point.

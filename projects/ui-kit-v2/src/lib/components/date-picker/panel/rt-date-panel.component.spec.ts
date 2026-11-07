@@ -7,6 +7,7 @@ import { ComponentFixture } from '@angular/core/testing';
 import { RT_KIT_LOCALE } from '../../../i18n';
 import { createRtFixture, el, qa, qaAll, textOf } from '../../../../testing/rt-kit-testing';
 import { RtDatePanelComponent } from './rt-date-panel.component';
+import { RtDatePanelComponent as RtDatePanelFromEntry } from '../index';
 
 interface IPanel {
     fixture: ComponentFixture<RtDatePanelComponent>;
@@ -57,6 +58,10 @@ describe('RtDatePanelComponent', (): void => {
 
     afterEach((): void => {
         jest.useRealTimers();
+    });
+
+    it('SC-UKV-1171 — the entry point gives out the panel the field draws', (): void => {
+        expect(RtDatePanelFromEntry).toBe(RtDatePanelComponent);
     });
 
     it('SC-UKV-421 — the month pages, and its title opens a choice of month and year', (): void => {

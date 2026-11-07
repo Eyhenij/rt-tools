@@ -102,6 +102,27 @@ describe('RtChatComponent: поле ответа', (): void => {
 
             expect(fixture.componentInstance.draftText()).toBe('');
         });
+
+        it('SC-UKV-1169 — метод отдаёт выбранные файлы и текст не трогает', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({ canReply: true, attachments: true });
+            const file: File = new File(['x'], 'план.pdf');
+            fixture.componentInstance.setDraft(TEXT);
+            fixture.debugElement.query(By.css('rt-file-drop')).triggerEventHandler('filesDropped', [file]);
+            fixture.detectChanges();
+
+            expect(fixture.componentInstance.draftFiles()).toEqual([file]);
+            expect(fixture.componentInstance.draftText()).toBe(TEXT);
+            expect(qaAll(fixture, 'chat-composer-file').length).toBe(1);
+        });
+
+        it('SC-UKV-1170 — без файлов и без поля ответа метод возвращает пустой список', (): void => {
+            const withField: ComponentFixture<RtChatComponent> = setup({ canReply: true, attachments: true });
+            const noField: ComponentFixture<RtChatComponent> = setup({ canReply: false });
+
+            expect(qaAll(withField, 'chat-composer-file').length).toBe(0);
+            expect(withField.componentInstance.draftFiles()).toEqual([]);
+            expect(noField.componentInstance.draftFiles()).toEqual([]);
+        });
     });
 
     describe('подстановка текста', (): void => {

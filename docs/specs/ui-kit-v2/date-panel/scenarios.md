@@ -170,3 +170,11 @@ Then the arrows, the days and the footer stand 20px from the sides of the sheet
 
 Покрытие: частичное — the component spec of the panel checks the rule of the sheet in the panel
 styles; the distance on the screen is shown by the frame of the story Sheet.
+
+### SC-UKV-1171 — the entry point gives out the panel
+
+Given a consumer that needs a choice of date without a text field
+When it imports `RtDatePanelComponent` from the entry point `date-picker`
+Then it gets the same panel the field draws
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.

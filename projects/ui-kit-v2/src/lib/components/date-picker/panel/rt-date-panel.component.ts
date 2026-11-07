@@ -62,11 +62,13 @@ type TTab = 'date' | 'time';
 const ESCAPE_BACK: Readonly<Record<TView, TView | null>> = { days: null, months: 'days', years: 'months' };
 
 /**
- * Панель rt-date-picker: месяц с листанием, сетки месяцев и годов, колонки часов и минут,
- * подвал с «Сегодня», «Сейчас», «Готово» или «Применить» — по типу значения.
+ * Панель выбора даты и времени: месяц с листанием, сетки месяцев и годов, колонки часов и минут,
+ * подвал с «Сегодня», «Сейчас», «Готово» или «Применить» — по типу значения. Её открывает
+ * rt-date-picker, а без текстового поля она стоит в поповере или в rt-bottom-sheet потребителя.
  *
  * Панель не пишет в форму: готовое значение уходит событием `picked`, просьба закрыться —
- * `closed`. Черновик живёт, пока панель открыта; поле создаёт её заново на каждое открытие.
+ * `closed`. Черновик живёт, пока панель открыта, поэтому её создают заново на каждое открытие.
+ * Поверхности у панели нет: фон, рамку и тень даёт то, во что её положили.
  * Вся арифметика дат — в `rt-date-panel.logic`.
  */
 @Component({
@@ -189,9 +191,11 @@ export class RtDatePanelComponent {
 
     /** Тип значения: дата, время или дата со временем. */
     public readonly type: InputSignal<IRtDatePicker.Type> = input.required<IRtDatePicker.Type>();
-    /** Значение поля в форме нативного input'а; пустая строка — пусто. */
+    /** Значение в форме нативного input'а: `YYYY-MM-DD`, `HH:mm`, `YYYY-MM-DDTHH:mm`; пустая строка — пусто. */
     public readonly value: InputSignal<string> = input<string>('');
+    /** Нижняя граница в форме значения; `null` — границы нет. */
     public readonly min: InputSignal<string | null> = input<string | null>(null);
+    /** Верхняя граница в форме значения; `null` — границы нет. */
     public readonly max: InputSignal<string | null> = input<string | null>(null);
     /** Шаг колонки минут. */
     public readonly minuteStep: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(5, {
@@ -203,14 +207,14 @@ export class RtDatePanelComponent {
     });
 
     /**
-     * Момент, от которого считаются «сегодня» и «Сейчас». Поле его не задаёт — панель читает часы
-     * сама; задаёт витрина, чтобы кадр не менялся день ото дня.
+     * Момент, от которого считаются «сегодня» и «Сейчас». Без него панель читает часы сама; задаёт
+     * его витрина, чтобы кадр не менялся день ото дня.
      */
     public readonly now: InputSignal<Date | null> = input<Date | null>(null);
 
-    /** Готовое значение: панель просит поле его записать. */
+    /** Готовое значение в форме `value`: панель просит его записать. */
     public readonly picked: OutputEmitterRef<string> = output<string>();
-    /** Панель просит закрыть себя. */
+    /** Панель просит закрыть себя: после выбора, а также по Escape в днях. */
     public readonly closed: OutputEmitterRef<void> = output<void>();
 
     constructor() {
