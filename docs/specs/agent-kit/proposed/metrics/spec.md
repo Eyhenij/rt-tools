@@ -27,7 +27,8 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
 - **An accepted task** — a merged request of a task. A request whose head is an epic branch is not
   counted.
 - **First-pass acceptance** — an accepted task with no change after the handover and no owner
-  correction after the handover.
+  correction after the handover. A correction counts against the last branch handed over, whichever
+  branch the session stands on: the executor takes the next task right after a handover.
 - **A change after the handover** — a difference of the tree of the head against the kept sign that
   is not a merge of the base. A rewrite of history counts as a change.
 - **An owner correction** — a message of a person that matches the fixed visible set of patterns.
@@ -105,7 +106,8 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
 - **An outcome is read by the sending, not at the merge.** A merge often happens in a browser with no
   session open. The sending asks the profile function `rt_pull_outcomes` for requests merged or closed
   since its last read. A tree without that function sends no outcomes, and the report counts it apart.
-  A read that broke off is named as a broken read, not as a tree with nobody to ask.
+  A read that broke off, even on one request, is named as a broken read, not as a tree with nobody to
+  ask, and the day of the last read stays.
 - **A request is counted once.** The tree keeps the numbers it counted in a file that does not leave.
   An older request read later does not change an outcome already counted.
 

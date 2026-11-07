@@ -156,6 +156,17 @@ describe('итоги словами', () => {
         expect(lines).toContain('заявок без передачи: 3, в главное число они не входят');
     });
 
+    it('SC-AK-1293 — ноль правок не печатается: о них говорит строка без данных', () => {
+        const lines: readonly string[] = outcomeLines(
+            { accepted: 2, closed: 0, firstPass: 2, lost: 0, noHandover: 0 },
+            EOutcomesRead.Read,
+            0
+        );
+
+        expect(lines).toContain('принято с первого раза: 2 из 2');
+        expect(lines.join('\n')).not.toContain('правки владельца');
+    });
+
     it('с десяти задач появляется доля', () => {
         const lines: readonly string[] = outcomeLines(
             { accepted: 10, closed: 0, firstPass: 7, lost: 3, noHandover: 0 },

@@ -254,6 +254,15 @@ tree="$(fixture_tree)"
 report "SC-AK-1290 — вне репозитория хук молчит" "$(prompt_in "$tree" 'это неправильно')" ""
 rm -rf "$tree"
 
+# Правка уже со следующей ветки: исполнитель берёт новую задачу сразу после передачи.
+tree="$(fixture_metric_tree)"
+CLAUDE_PROJECT_DIR="$tree" RT_HOOK_INPUT="{\"cwd\":\"$tree\"}" bash -c \
+    '. "$1/metric-marks.sh"; rt_handover_mark work' _ "$HOOKS"
+git -C "$tree" checkout -q -b next-task
+prompt_in "$tree" 'Это неправильно'
+report "SC-AK-1300 — правка со следующей ветки идёт к переданной" "$(corrections_of "$tree")" "after "
+rm -rf "$tree"
+
 # --- SC-AK-1291. Вызов роли и команды ------------------------------------------------------
 
 # Дерево с ролью пакета, своей ролью и командой пакета.
@@ -278,6 +287,17 @@ role_in() {
 role_end() {
     jq -n --arg r "$2" --arg a "$3" '{session_id:"s",hook_event_name:"SubagentStop",agent_type:$r,last_assistant_message:$a}' \
         | CLAUDE_PROJECT_DIR="$1" "$HOOKS/role-calls.sh"
+}
+
+# Конец роли, сдавшей отчёт инструментом: текста в событии нет, ответ лежит в её записи.
+role_handback() {
+    local record
+    record="$(mktemp)"
+    jq -cn --arg a "$3" '{message:{role:"assistant",content:[{type:"tool_use",name:"SubagentHandback",input:{message:$a}}]}}' > "$record"
+    jq -cn '{message:{role:"user",content:[{type:"tool_result",content:[{type:"text",text:"delivered"}]}]}}' >> "$record"
+    jq -n --arg r "$2" --arg p "$record" '{session_id:"s",hook_event_name:"SubagentStop",agent_type:$r,agent_transcript_path:$p}' \
+        | CLAUDE_PROJECT_DIR="$1" "$HOOKS/role-calls.sh"
+    rm -f "$record"
 }
 
 # Вызов роли изнутри другой роли: вход несёт тип той, что работает.
@@ -309,6 +329,10 @@ role_end "$tree" goal-critic 'Не могу ответить.'
 role_end "$tree" secret-name 'Цель не достигнута.'
 role_end "$tree" general-purpose 'Цель не достигнута.'
 report "SC-AK-1291 — приговор по первой строке при конце роли" "$(field_of "$tree" role-verdict verdict)" "refused passed "
+role_handback "$tree" goal-critic 'Цель частично достигнута.
+
+Таблица: цель достигнута.'
+report "SC-AK-1291 — приговор из записи роли, сдавшей отчёт инструментом" "$(field_of "$tree" role-verdict verdict)" "refused passed refused "
 report "SC-AK-1291 — имя своей роли из дерева не уходит" "$(cat "$tree/.claude/rt-kit/observations/"*.jsonl | grep -c 'secret-name')" "0"
 jq -n '{session_id:"s",prompt:"/feedback что-то мешает"}' | CLAUDE_PROJECT_DIR="$tree" "$HOOKS/role-calls.sh"
 jq -n '{session_id:"s",prompt:"/secret-cmd"}' | CLAUDE_PROJECT_DIR="$tree" "$HOOKS/role-calls.sh"

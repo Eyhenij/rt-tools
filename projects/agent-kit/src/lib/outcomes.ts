@@ -213,7 +213,7 @@ export function outcomeLines(metric: IOutcomeMetric | null, state: EOutcomesRead
         '',
         `принято с первого раза: ${metric.firstPass} из ${counted}${share}`,
         `принято задач: ${metric.accepted}, закрыто без слияния: ${metric.closed}, откатов и повторных заявок: ${metric.lost}`,
-        `правки владельца: ${corrections}${perTask}`,
+        ...(corrections > 0 ? [`правки владельца: ${corrections}${perTask}`] : []),
         ...apart,
         ...fault,
     ];

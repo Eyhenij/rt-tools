@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/role-calls.sh · 5bac18955cc6 · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/role-calls.sh · 5e0580a1d2de · правится надстройкой, не здесь
 # rt-hook: PostToolUse Agent|Task
 # rt-hook: UserPromptSubmit
 # rt-hook: SubagentStop
@@ -59,13 +59,30 @@ rt_pass_words() {
     esac
 }
 
-# The verdict by the first line of the last message of the role. Neither word — no verdict.
+# The answer of a role. A role that hands its report back by a tool ends with no text, so the host
+# gives the event an empty last message, and the answer is the last report in its record.
+rt_role_answer() {
+    local answer path
+    answer="$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.last_assistant_message // empty' 2>/dev/null)"
+    if [ -n "$answer" ]; then
+        printf '%s' "$answer"
+        return 0
+    fi
+    path="$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.agent_transcript_path // empty' 2>/dev/null)"
+    [ -f "$path" ] || return 0
+    tail -n 20 "$path" 2>/dev/null \
+        | jq -c 'select(.message.content? | type == "array") | .message.content[]
+                 | select(.type? == "tool_use" and .name? == "SubagentHandback") | .input.message // empty' 2>/dev/null \
+        | tail -n 1 | jq -r '.' 2>/dev/null
+}
+
+# The verdict by the first line of the answer of the role. Neither word — no verdict.
 rt_verdict_of() {
     local refusal pass line
     refusal="$(rt_refusal_words "$1")"
     pass="$(rt_pass_words "$1")"
     [ -n "$refusal" ] || return 0
-    line="$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.last_assistant_message // empty' 2>/dev/null | awk 'NF { print; exit }')"
+    line="$(rt_role_answer | awk 'NF { print; exit }')"
     if printf '%s' "$line" | grep -qiE "$refusal"; then
         printf 'refused'
     elif printf '%s' "$line" | grep -qiE "$pass"; then

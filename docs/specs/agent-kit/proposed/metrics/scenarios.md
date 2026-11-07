@@ -28,6 +28,19 @@ Given a task counted as first-pass by one read and an older request of that task
 When the outcomes are read again
 Then the counted outcome stays
 
+### SC-AK-1300 — a correction after the next branch is taken counts against the handed-over one
+
+Given a handed-over branch and a session already standing on the next branch
+When the owner's message matches the set of patterns
+Then the counter of the handed-over branch gets an `after` line
+
+### SC-AK-1301 — a broken read loses no request
+
+Given a hosting that answers the list of requests and fails on the commits of one of them
+When the outcomes are read
+Then the reader exits with the code of a broken read, prints no request and the day of the last read
+stays
+
 ### SC-AK-1274 — a merge of the base after the handover keeps first-pass
 
 Given a handed-over request whose branch took only a merge of its base

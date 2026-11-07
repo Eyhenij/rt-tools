@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/pull-outcomes.sh · da5f433a07dd · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/pull-outcomes.sh · 0828670b5322 · правится надстройкой, не здесь
 # The facts about closed requests, one JSON object per line. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The report and the sending call it.
 #
@@ -33,7 +33,12 @@ done
 command -v rt_pull_outcomes >/dev/null 2>&1 || exit 3
 command -v jq >/dev/null 2>&1 || exit 3
 
-pulls="$(rt_pull_outcomes "$1" 2>/dev/null)" || exit 3
+# The function is there, so a failure of it is a broken read, and a broken read is not «nobody to
+# ask»: code 4 keeps the day of the last read where it was, and the next read takes the request again.
+pulls="$(rt_pull_outcomes "$1" 2>/dev/null)"
+code=$?
+[ "$code" = 3 ] && exit 3
+[ "$code" = 0 ] || exit 4
 
 printf '%s\n' "$pulls" | while IFS= read -r pull; do
     [ -n "$pull" ] || continue

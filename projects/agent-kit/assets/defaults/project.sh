@@ -369,10 +369,10 @@ rt_conflicting_pulls_default() {
 # A request never handed over counts apart, so the hosting is asked no more about it: one call per
 # request made a first read of a busy tree outlive the report.
 rt_pull_outcomes_default() {
-    command -v gh >/dev/null 2>&1 || return 1
-    command -v jq >/dev/null 2>&1 || return 1
+    command -v gh >/dev/null 2>&1 || return 3
+    command -v jq >/dev/null 2>&1 || return 3
     list="$(gh pr list --state all --limit 1000 --search "closed:>=$1" \
-        --json number,state,headRefName,title,closedAt 2>/dev/null)" || return 1
+        --json number,state,headRefName,title,closedAt 2>/dev/null)" || return 4
     printf '%s' "$list" | jq -c '.[] | select(.state != "OPEN")' | while IFS= read -r pull; do
         number="$(printf '%s' "$pull" | jq -r '.number')"
         head="$(printf '%s' "$pull" | jq -r '.headRefName')"
@@ -382,7 +382,7 @@ rt_pull_outcomes_default() {
         if ! command -v rt_handover_known >/dev/null 2>&1 || rt_handover_known "$head"; then
             commits="$(gh api "repos/{owner}/{repo}/pulls/$number/commits?per_page=100" \
                 --jq '[.[] | {sha, tree: .commit.tree.sha, parents: (.parents | length)}]' 2>/dev/null)"
-            [ -n "$commits" ] || continue
+            [ -n "$commits" ] || return 4
             [ -z "$task" ] || labels="$(gh api "repos/{owner}/{repo}/issues/$task" --jq '[.labels[].name]' 2>/dev/null)"
         fi
         printf '%s' "$pull" | jq -c --argjson commits "$commits" --argjson labels "${labels:-[]}" \

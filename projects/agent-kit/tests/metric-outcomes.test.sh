@@ -156,7 +156,24 @@ rm -rf "$tree" "$host"
 # Спросить некого: без клиента хостинга код говорит об этом, а не печатает пустоту.
 tree="$(fixture_metric_tree)"
 (cd "$tree" && PATH="/usr/bin:/bin" CLAUDE_PROJECT_DIR="$tree" bash "$HOOKS/pull-outcomes.sh" 2026-07-01 >/dev/null 2>&1)
-report "итоги: без клиента хостинга код 3" "$?" "$(command -v gh | grep -q '^/usr/bin\|^/bin' && echo 0 || echo 3)"
+after_call=$?
+
+# Сбой одного вызова — обрыв чтения: заявка не теряется молча, день чтения стоит.
+broken="$(mktemp -d)"
+cat > "$broken/gh" <<'EOF'
+#!/usr/bin/env bash
+[ "$1 $2" = 'pr list' ] || exit 1
+printf '%s' '[{"number":41,"state":"MERGED","headRefName":"RT-8-probe","title":"[RT-8] X","closedAt":"2026-08-10T10:00:00Z"}]'
+EOF
+chmod +x "$broken/gh"
+CLAUDE_PROJECT_DIR="$tree" RT_HOOK_INPUT="{\"cwd\":\"$tree\"}" bash -c \
+    '. "$1/metric-marks.sh"; printf "c1 t1\n" > "$(rt_branch_mark handover RT-8-probe)"' _ "$HOOKS"
+out="$(outcomes_in "$tree" "$broken")"
+report "SC-AK-1301 — сбой вызова даёт код обрыва" "$?" "4"
+report "SC-AK-1301 — заявка не прочитана наполовину" "$out" ""
+rm -rf "$broken"
+
+report "итоги: без клиента хостинга код 3" "$after_call" "$(command -v gh | grep -q '^/usr/bin\|^/bin' && echo 0 || echo 3)"
 rm -rf "$tree"
 
 suite_result

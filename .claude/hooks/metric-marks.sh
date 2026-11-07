@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/metric-marks.sh · f953efba75ed · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/metric-marks.sh · 6dd7a384f7df · правится надстройкой, не здесь
 # Signs of content and of calls for the package metrics. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The refusal record and the push set source it.
 #
@@ -105,6 +105,7 @@ rt_handover_mark() {
         tree="$(git -C "$root" rev-parse --verify --quiet "$ref^{tree}" 2>/dev/null)"
         if [ -n "$commit" ] && [ -n "$tree" ]; then
             printf '%s %s\n' "$commit" "$tree" > "$file" 2>/dev/null
+            printf '%s\n' "$branch" > "$(dirname "$file")/handover-last" 2>/dev/null
             return 0
         fi
     done
@@ -128,16 +129,23 @@ rt_handover_pending_file() {
 }
 
 # One owner correction on the current branch: a line of the counter, `before` or `after` the
-# handover. The message itself never gets here. First-pass acceptance reads the `after` lines.
+# handover. The message itself never gets here. First-pass acceptance reads the `after` lines. The
+# executor takes the next task right after a handover, so the last branch handed over gets the line
+# too: by the current branch alone a correction of the handed work would count against nothing.
 #
 #   rt_correction_mark <session>
 rt_correction_mark() {
-    local session="$1" branch file handover
+    local session="$1" branch file handover last=''
     branch="$(git -C "$(rt_sign_root)" symbolic-ref --quiet --short HEAD 2>/dev/null)"
     file="$(rt_branch_mark corrections "$branch")"
     handover="$(rt_branch_mark handover "$branch")"
     if [ -n "$file" ]; then
         if [ -f "$handover" ]; then printf 'after\n'; else printf 'before\n'; fi >> "$file" 2>/dev/null
+    fi
+    handover="$(rt_marks_dir)/handover-last"
+    [ -f "$handover" ] && last="$(cat "$handover" 2>/dev/null)"
+    if [ -n "$last" ] && [ "$last" != "$branch" ]; then
+        printf 'after\n' >> "$(rt_branch_mark corrections "$last")" 2>/dev/null
     fi
     command -v rt_note >/dev/null 2>&1 || return 0
     rt_note owner-correction "sid=$session"
