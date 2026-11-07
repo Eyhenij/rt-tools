@@ -32,7 +32,10 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
   after a handover.
 - **A change after the handover** — a difference of the tree of the head against the kept sign that
   is not a merge of the base. A rewrite of history counts as a change.
-- **An owner correction** — a message of a person that matches the fixed visible set of patterns.
+- **An owner correction** — a message of a person that matches the fixed visible set of patterns. Any
+  swearing from a person is a sure sign that the agent does bad work, whichever words it takes. The
+  owner's word: «если от человека поступают ругательста - это верный признак что агент делает плохую
+  работу, любые ругательства».
 - **An empty refusal** — a refusal by a guard equal to its previous refusal in the session: the same
   content of the tree and the same refused call. A guard at the end of a turn has no call, so the
   content alone decides. A refusal of the rules gate is not an empty refusal: it is read by the
@@ -275,8 +278,9 @@ Assumptions of the executor, each named so it can be overruled:
 ## Open questions
 
 - **The accuracy of the patterns of an owner correction.** The set was widened on a sample the owner
-  read, 36 of 255 messages against 15 before, and it holds no swearing, so 8 of 63 swearing messages
-  count. Questions such as «почему он в драфте?» count too. The first cycle measures it again.
+  read, 36 of 255 messages against 15 before. It holds no swearing words, so the hook sees 8 of 63
+  swearing messages, though each of them is a correction by the definition above. Questions such as
+  «почему он в драфте?» count too. The first cycle measures it again.
 
 ## History of changes
 
