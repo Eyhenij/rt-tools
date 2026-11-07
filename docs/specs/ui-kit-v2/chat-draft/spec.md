@@ -34,6 +34,13 @@ The method has no words on the screen: the person sees the text appear in the fi
 - **The chosen files stay.** The method touches the text only.
 - **A closed field takes nothing.** The method does nothing there, and the draft stays as it was.
 - **The method is not typing.** The correspondence sends no typing signal for it.
+- **A label stands in place of the time.** Day labels still count from `createdAt`.
+- **An icon stands in place of the status icon, at its size.** The icons of a failed and of an
+  undelivered message stay: they warn of an error.
+- **The bar stands above the frame of every reply field.** An empty bar takes no place, and there is
+  no bar without a field.
+- **The draft is read as plain text in all reply fields.** Files stay out of it, and with no field
+  the answer is an empty string.
 
 ## What is out of scope
 

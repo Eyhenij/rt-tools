@@ -187,6 +187,9 @@ test.describe('раздел чата', () => {
         // положительная пара к отсутствию: реплики в ленте есть, и нарисованы они метками кита
         await expect(qa(page, 'chat-message').first()).toBeVisible();
         await expect(qa(page, 'chat-message-side')).toHaveCount(0);
+
+        // раздел ничего не кладёт в слот над полем, и пустой слот места не занимает
+        await expect(qa(page, 'chat-composer-bar')).toBeHidden();
     });
 
     test('SC-CH-82 — отбитая реплика уходит заново из ленты, и второй рядом не встаёт', async ({ page }: { page: Page }) => {

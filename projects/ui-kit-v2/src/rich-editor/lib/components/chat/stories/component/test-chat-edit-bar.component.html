@@ -1,0 +1,37 @@
+<div
+    qa-dataid="story-composer-bar"
+    style="
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem 0.75rem;
+        border-inline-start: 3px solid var(--rt-color-action-primary);
+        border-radius: 0.5rem;
+        background: var(--rt-color-bg-subtle);
+        font-size: 0.75rem;
+        line-height: 1.25;
+    ">
+    <div style="display: grid; flex: 1; gap: 0.125rem; min-inline-size: 0">
+        <span style="color: var(--rt-color-action-primary); font-weight: 600">Правка сообщения</span>
+        <span style="overflow: hidden; color: var(--rt-color-text-muted); text-overflow: ellipsis; white-space: nowrap">
+            Да, поздний выезд до 14:00 подтверждаю.
+        </span>
+    </div>
+    <!-- native-ok: rt-button не даёт текстовую кнопку без высоты и отступов, а кадр рисует ссылку в строке -->
+    <button
+        type="button"
+        qa-dataid="story-composer-bar-cancel"
+        aria-label="Отменить правку"
+        style="
+            padding: 0;
+            border: 0;
+            background: none;
+            color: var(--rt-color-action-primary);
+            cursor: pointer;
+            font: inherit;
+            font-weight: 500;
+        ">
+        Отменить
+    </button>
+</div>

@@ -42,6 +42,15 @@ import { IRtMessageComposer } from './rt-message-composer.model';
 
 const BEM_BLOCK: string = 'rt-message-composer';
 
+/** Текст тела Quill без разметки и без перевода строки, которым Quill заканчивает документ. */
+function rtComposerDeltaText(delta: IQuillDelta | null): string {
+    const ops: IQuillDelta['ops'] = delta?.ops ?? [];
+    return ops
+        .map((op: IQuillDelta['ops'][number]): string => op.insert)
+        .join('')
+        .replace(/\n$/, '');
+}
+
 /** Текст в поле выше полутора строк — он перенёсся, и капсула берёт скругление высокой. */
 function rtComposerWraps(node: HTMLTextAreaElement): boolean {
     const style: CSSStyleDeclaration = getComputedStyle(node);
@@ -275,6 +284,11 @@ export class RtMessageComposerComponent {
         if (node) {
             rtCaretToEnd(node);
         }
+    }
+
+    /** Текст поля без разметки: форматирование читается как обычный текст, файлы сюда не входят. */
+    public draftText(): string {
+        return this.formatting() ? rtComposerDeltaText(this.form.controls.delta.value) : this.form.controls.message.value;
     }
 
     protected onKeydown(event: KeyboardEvent): void {

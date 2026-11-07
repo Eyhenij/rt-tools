@@ -163,7 +163,10 @@
                                     }
                                     <span rtElem="message-footer">
                                         <span rtElem="message-date" qa-dataid="chat-message-date">
-                                            {{ m.createdAt | date: (messenger() ? 'shortTime' : 'short') : undefined : locale() }}
+                                            {{
+                                                m.dateLabel ||
+                                                    (m.createdAt | date: (messenger() ? 'shortTime' : 'short') : undefined : locale())
+                                            }}
                                         </span>
                                         @if (m.status) {
                                             <span
@@ -193,9 +196,15 @@
                                                          (серый/синий) различает доставлено и прочитано. -->
                                                     <rt-icon
                                                         rtElem="status-icon"
-                                                        [size]="messenger() ? 'xs' : 'sm'"
-                                                        [name]="m.status === MessageStatus.Sending ? 'clock' : 'check-double'" />
+                                                        size="sm"
+                                                        [name]="
+                                                            m.dateIcon || (m.status === MessageStatus.Sending ? 'clock' : 'check-double')
+                                                        " />
                                                 }
+                                            </span>
+                                        } @else if (m.dateIcon) {
+                                            <span rtElem="message-status" qa-dataid="chat-message-date-icon">
+                                                <rt-icon rtElem="status-icon" size="sm" [name]="m.dateIcon" />
                                             </span>
                                         }
                                     </span>
@@ -217,6 +226,8 @@
             </div>
 
             @if (canReply()) {
+                <!-- Содержимое потребителя над рамкой поля; пустой слот места не занимает -->
+                <div rtElem="composer-bar" qa-dataid="chat-composer-bar"><ng-content select="[rtChatComposerBar]" /></div>
                 @if (messenger()) {
                     <!-- Поле ответа мессенджера: одна рамка, скрепка и кнопки потребителя внутри неё слева -->
                     <input
