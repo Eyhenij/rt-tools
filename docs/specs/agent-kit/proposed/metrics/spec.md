@@ -140,7 +140,10 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
   themselves before it. A movement below the noise named with the baseline reads «не сдвинулось».
 - **The role `goal-critic` gives the verdict from the numbers of the report.** The executor who made
   the edit does not.
-- **The epic closes when one edit chosen by the report has its result in the next report.**
+- **The epic closes when the report collects data from the enrolled trees.** The receiver is rolled
+  out and the package is released from the main branch, so the epic merges first.
+- **The first cycle is a task of its own after two weeks of data.** One edit chosen by the report has
+  its result in the next report.
 
 ## Articles this agreement changes
 
