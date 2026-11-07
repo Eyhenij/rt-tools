@@ -238,6 +238,18 @@ Given an accepted request and a rollback of it on different days
 When their day lines are added up
 Then the sums match those of one day, and the sum of rollbacks is taken away once
 
+### SC-AK-1323 — a move of a record leaves one line of its own
+
+Given a record whose step changes, and a note attached to a record that stays on its step
+When the intake writes them
+Then only the change of the step lands in the transitions
+
+### SC-AK-1324 — an analysis carries the resource it is about
+
+Given an analysis with the line of its resource, and an older one without it
+When the sending reads them
+Then the first carries the resource, the second carries none, and the intake keeps both
+
 ### SC-AK-1285 — the automatic sending carries no proposal, analysis or digest
 
 Given a tree with unsent proposals and analyses

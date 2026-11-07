@@ -1,7 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
+import { ECargoKind } from './cargo-kind';
 import { ECargoState } from './cargo-state';
-import { cargoStateData, cargoStateMove, cargoStateWrites, ECargoStateMove, ICargoStateAsk } from './cargo-state-move';
+import {
+    cargoStateData,
+    cargoStateMove,
+    cargoStateWrites,
+    cargoTransitions,
+    ECargoStateMove,
+    ICargoJudgedMove,
+    ICargoStateAsk,
+} from './cargo-state-move';
 
 describe('cargoStateMove', () => {
     it('SC-MB-174 — возврат из «в работе» в «новое» проходит', () => {
@@ -99,5 +108,22 @@ describe('cargoStateMove — карантин', () => {
         expect(cargoStateMove(ECargoState.InWork, ECargoState.Quarantined)).toBe(ECargoStateMove.Denied);
         expect(cargoStateMove(ECargoState.Fixed, ECargoState.Quarantined)).toBe(ECargoStateMove.Denied);
         expect(cargoStateMove(ECargoState.Released, ECargoState.Quarantined)).toBe(ECargoStateMove.Denied);
+    });
+});
+
+describe('cargoTransitions', () => {
+    const moved: ICargoJudgedMove = { ask: { key: 'a', state: ECargoState.Fixed }, outcome: { move: ECargoStateMove.Allowed } };
+    const same: ICargoJudgedMove = { ask: { key: 'b', state: ECargoState.Fixed }, outcome: { move: ECargoStateMove.Same } };
+    const denied: ICargoJudgedMove = { ask: { key: 'c', state: ECargoState.Fixed }, outcome: { move: ECargoStateMove.Denied } };
+    const missing: ICargoJudgedMove = { ask: { key: 'd', state: ECargoState.Fixed }, outcome: { move: null } };
+
+    it('SC-AK-1323 — журнал получает только настоящую смену шага', () => {
+        expect(cargoTransitions(ECargoKind.Postmortem, [moved, same, denied, missing], (key: string): string => `id-${key}`)).toEqual([
+            { kind: ECargoKind.Postmortem, recordId: 'id-a', state: ECargoState.Fixed },
+        ]);
+    });
+
+    it('SC-AK-1323 — запись, которой нет, переход не оставляет', () => {
+        expect(cargoTransitions(ECargoKind.Proposal, [moved], (): undefined => undefined)).toEqual([]);
     });
 });

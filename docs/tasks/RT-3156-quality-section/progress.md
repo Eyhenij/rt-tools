@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 4 — Данные
-- **Done:** ветка, папка, план
-- **Next step:** добавить `Postmortem.resource` и таблицу `RecordTransition`
+- **Stage:** 2 of 4 — Счёт и операция чтения
+- **Done:** ресурс разбора, журнал переходов
+- **Next step:** написать чистый счёт раздела по строкам дня
 - **Uncommitted:** нет
 - **Waiting for the owner:** нет, #3162, #3163, #3164 и #3165 на ревью, работа идёт стопкой
 - **PR:** not open yet
@@ -18,10 +18,10 @@ The steps of the plan, all of them, with a mark each. Rewritten by every turn th
 
 - `[x]` done · `[>]` going on right now · `[ ]` not begun
 
-- [>] 1.1 Добавить `Postmortem.resource` и таблицу `RecordTransition` с миграцией
-- [ ] 1.2 Везти ресурс разбора в грузе пакета
-- [ ] 1.3 Писать переход записи при смене её шага
-- [ ] 2.1 Написать чистый счёт раздела по строкам дня
+- [x] 1.1 Добавить `Postmortem.resource` и таблицу `RecordTransition` с миграцией
+- [x] 1.2 Везти ресурс разбора в грузе пакета
+- [x] 1.3 Писать переход записи при смене её шага
+- [>] 2.1 Написать чистый счёт раздела по строкам дня
 - [ ] 2.2 Написать операцию `GET /api/usage/quality`
 - [ ] 2.3 Посчитать повторные ошибки по разборам и версиям фикса
 - [ ] 3.1 Завести библиотеки раздела и маршрут

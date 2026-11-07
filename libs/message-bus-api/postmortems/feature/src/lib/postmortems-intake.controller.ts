@@ -15,7 +15,7 @@ import { IIntakeAccepted } from '@rt-tools/agent-kit/cargo';
 import { TreeOperation } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { IPostmortemRow, writePostmortems } from '@rt/message-bus-api/postmortems/data-access';
-import { POSTMORTEM_ITEM_FIELDS } from '@rt/message-bus-api/postmortems/util';
+import { POSTMORTEM_ITEM_FIELDS, postmortemResourceOf } from '@rt/message-bus-api/postmortems/util';
 import { IRequestTree, ITreeBearingRequest, treeOf } from '@rt/message-bus-api/trees/util';
 import {
     CARGO_ITEMS_FIELDS,
@@ -37,7 +37,7 @@ const CARGO_KIND: string = 'разборы происшествий';
 
 /** Строка записи: поля уже проверены на наличие, здесь берётся их текст. */
 function rowOf(item: TCargoBody): IPostmortemRow {
-    return { file: String(item['file']), text: String(item['text']) };
+    return { file: String(item['file']), text: String(item['text']), resource: postmortemResourceOf(item['resource']) };
 }
 
 @Controller('intake')

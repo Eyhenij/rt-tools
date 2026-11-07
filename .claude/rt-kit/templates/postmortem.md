@@ -1,7 +1,9 @@
-<!-- rt-kit v0.34.0 · templates/postmortem.md · 63f388050c00 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.34.0 · templates/postmortem.md · 5aa51751a5f9 · правится надстройкой, не здесь -->
 # <what the miss was, not on which task it happened>
 
 <date>. <One line: where the work was going and how far it got.>
+
+**Resource:** <the resource of the package the miss is about, by its identifier, such as `rules/testing.md`>
 
 ## What happened
 

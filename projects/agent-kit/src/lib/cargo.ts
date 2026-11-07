@@ -121,6 +121,8 @@ export interface IProposalsCargo extends ICargoHead {
 export interface IPostmortemItem {
     readonly file: string;
     readonly text: string;
+    /** Ресурс пакета, о котором разбор: по нему считаются повторные ошибки. */
+    readonly resource?: string;
 }
 
 export interface IPostmortemsCargo extends ICargoHead {
