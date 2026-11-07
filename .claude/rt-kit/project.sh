@@ -29,22 +29,33 @@ RT_STANDS='the receiver http://localhost:3000, the admin panel http://localhost:
 # gets the same block, and no setting has to be remembered in a new copy. The block starts at 30000
 # and ends below 40000, past the ports the documents name and the browser of the frames takes.
 #
-# A variable given by hand wins. A manual run does not read this file and takes the defaults.
+# The names are set whatever the environment holds. The session settings of a machine pin such
+# variables, and they are copied between copies with the settings file: there a value that looks
+# given by hand is the same value in every copy, and the run lands on the port of the runner. Names
+# the set does derive are dropped for the same reason: the name of the browser of the frames and of
+# the stand database fall back to what is derived from the path or to the default of a separate
+# database. `RT_STAND_KEEP=1` keeps the environment as it is, for one run on a port taken by a
+# foreign process.
+#
+# A manual run does not read this file and takes the defaults.
 rt_stand_env() {
+    [ -n "${RT_STAND_KEEP:-}" ] && return 0
+
     _sum="$(printf '%s' "$PWD" | cksum | cut -d' ' -f1)"
     _block=$((30000 + _sum % 500 * 20))
 
-    export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-rt-stand-$((_sum % 500))}"
-    export E2E_API_PORT="${E2E_API_PORT:-$_block}"
-    export E2E_ADMIN_PORT="${E2E_ADMIN_PORT:-$((_block + 1))}"
-    export E2E_FOREIGN_PORT="${E2E_FOREIGN_PORT:-$((_block + 2))}"
-    export E2E_DB_PORT="${E2E_DB_PORT:-$((_block + 3))}"
-    export E2E_KEYCLOAK_PORT="${E2E_KEYCLOAK_PORT:-$((_block + 4))}"
-    export E2E_KEYCLOAK_DB_PORT="${E2E_KEYCLOAK_DB_PORT:-$((_block + 5))}"
-    export E2E_MAIL_PORT="${E2E_MAIL_PORT:-$((_block + 6))}"
-    export E2E_SMTP_PORT="${E2E_SMTP_PORT:-$((_block + 7))}"
-    export E2E_EXAMPLE_API_PORT="${E2E_EXAMPLE_API_PORT:-$((_block + 8))}"
-    export E2E_EXAMPLE_ADMIN_PORT="${E2E_EXAMPLE_ADMIN_PORT:-$((_block + 9))}"
+    unset E2E_DATABASE E2E_SHOT_CONTAINER E2E_SHOT_PORT
+    export COMPOSE_PROJECT_NAME="rt-stand-$((_sum % 500))"
+    export E2E_API_PORT="$_block"
+    export E2E_ADMIN_PORT="$((_block + 1))"
+    export E2E_FOREIGN_PORT="$((_block + 2))"
+    export E2E_DB_PORT="$((_block + 3))"
+    export E2E_KEYCLOAK_PORT="$((_block + 4))"
+    export E2E_KEYCLOAK_DB_PORT="$((_block + 5))"
+    export E2E_MAIL_PORT="$((_block + 6))"
+    export E2E_SMTP_PORT="$((_block + 7))"
+    export E2E_EXAMPLE_API_PORT="$((_block + 8))"
+    export E2E_EXAMPLE_ADMIN_PORT="$((_block + 9))"
 }
 rt_stand_env
 

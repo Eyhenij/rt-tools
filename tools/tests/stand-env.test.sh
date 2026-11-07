@@ -45,9 +45,18 @@ done)"
 report 'all ten names are set' "$(printf '%s\n' "$ports" | grep -c '^[0-9]')" '10'
 report 'no two names share a port' "$(printf '%s\n' "$ports" | grep '^[0-9]' | sort -u | wc -l | tr -d ' ')" '10'
 
-# A name given by hand wins: a person who knows the port is taken names another one for one run.
-given="$(cd "$ONE" && E2E_KEYCLOAK_PORT=61234 bash -c ". '$ROOT/.claude/rt-kit/project.sh'; printenv E2E_KEYCLOAK_PORT")"
-report 'a variable given by hand wins' "$given" '61234'
+# A name pinned by the settings of a session loses: the same value stands in every copy.
+pinned="$(cd "$ONE" && E2E_DB_PORT=55462 bash -c ". '$ROOT/.claude/rt-kit/project.sh'; printenv E2E_DB_PORT")"
+if [ "$pinned" != '55462' ]; then lost='yes'; else lost='no'; fi
+report 'a port pinned by the session settings loses' "$lost" 'yes'
+
+# The shared name of the browser of the frames goes away, and the name from the path comes back.
+shot="$(cd "$ONE" && E2E_SHOT_CONTAINER=shared bash -c ". '$ROOT/.claude/rt-kit/project.sh'; printenv E2E_SHOT_CONTAINER || echo gone")"
+report 'a pinned name of the frames browser is dropped' "$shot" 'gone'
+
+# The sign keeps the environment: a person who knows the port is taken names another for one run.
+kept="$(cd "$ONE" && RT_STAND_KEEP=1 E2E_KEYCLOAK_PORT=61234 bash -c ". '$ROOT/.claude/rt-kit/project.sh'; printenv E2E_KEYCLOAK_PORT")"
+report 'the keep sign leaves the environment as it is' "$kept" '61234'
 
 rm -rf "$ONE" "$TWO"
 

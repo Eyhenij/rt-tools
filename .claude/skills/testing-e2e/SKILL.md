@@ -4,7 +4,7 @@ kind: pattern
 rule: testing
 description: Pattern of rule testing. Load when editing and running end-to-end tests in any end-to-end suite of the tree (apps/*-e2e) — what an end-to-end test closes, ready-made run commands, a stand from the production build behind real nginx, test switches. Not for unit tests — that is pattern testing-unit.
 ---
-<!-- rt-kit v0.34.0 · patterns/testing-e2e.md · 837bee562a82 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.34.0 · patterns/testing-e2e.md · 9ff76f450c13 · правится надстройкой, не здесь -->
 
 # End-to-end tests
 
@@ -211,8 +211,10 @@ in `apps/message-bus-admin-e2e/stand/stand.mjs`.
 
 The set before a push raises every stand on the names of its working copy. The function
 `rt_stand_env` of the tree profile derives the ports and `COMPOSE_PROJECT_NAME` from the path of the
-copy, so two copies run at once and neither touches the Keycloak of the other. A variable given by
-hand wins. A manual run takes the defaults, and those stay what the documents name.
+copy, so two copies run at once and neither touches the Keycloak of the other. It overrides what
+the session environment holds: settings copied between copies pin one value for all of them.
+`RT_STAND_KEEP=1` keeps the environment for one run on a port a foreign process holds. A manual run
+takes the defaults, and those stay what the documents name.
 
 There is no site and no rendering server in this tree, so the lines of the pattern about them are
 not carried out here.
