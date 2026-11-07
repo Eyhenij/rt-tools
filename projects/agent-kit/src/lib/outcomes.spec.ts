@@ -32,7 +32,7 @@ function pull(fields: Partial<IPullFact>): IPullFact {
         epic: false,
         closed: '2026-08-10',
         handover: HANDED,
-        corrections: 0,
+        corrections: [],
         commits: [{ sha: 'c1', tree: 't1', parents: 1 }],
         ...fields,
     };
@@ -48,7 +48,7 @@ describe('итог заявки', () => {
     });
 
     it('SC-AK-1273 — правка владельца после передачи снимает первую приёмку', () => {
-        expect(outcomeOf(pull({ corrections: 1 }))).toBe(EOutcome.Changed);
+        expect(outcomeOf(pull({ corrections: ['2026-08-09'] }))).toBe(EOutcome.Changed);
     });
 
     it('SC-AK-1274 — слияние базы после передачи первую приёмку не снимает', () => {
@@ -127,6 +127,11 @@ describe('новые итоги', () => {
         const fresh: readonly ICountedPull[] = newOutcomes([pull({ number: 10, closed: '2026-08-10', handover: null })], later);
 
         expect(fresh.map((entry: ICountedPull): EOutcome => entry.outcome)).toEqual([EOutcome.NoHandover]);
+    });
+
+    it('SC-AK-1302 — правка в течение трёх дней после слияния снимает первую приёмку, позже нет', () => {
+        expect(outcomeOf(pull({ closed: '2026-08-10', corrections: ['2026-08-13'] }))).toBe(EOutcome.Changed);
+        expect(outcomeOf(pull({ closed: '2026-08-10', corrections: ['2026-08-14'] }))).toBe(EOutcome.FirstPass);
     });
 
     it('снятая первая приёмка уходит из числа, но задача остаётся принятой', () => {
@@ -209,7 +214,7 @@ describe('итоги словами', () => {
 });
 
 describe('collectOutcomes', () => {
-    const TODAY: string = '2026-08-12';
+    const TODAY: string = '2026-08-14';
     let root: string;
 
     /** Дерево с разложенным чтением и профилем, который отдаёт эти строки. */
@@ -255,9 +260,9 @@ describe('collectOutcomes', () => {
         );
 
         collectOutcomes(root, TODAY, '0.34.0');
-        collectOutcomes(root, '2026-08-13', '0.34.0');
+        collectOutcomes(root, '2026-08-15', '0.34.0');
 
-        expect(readFileSync(join(root, 'asked'), 'utf8').trim().split('\n')).toEqual(['2026-07-13', TODAY]);
+        expect(readFileSync(join(root, 'asked'), 'utf8').trim().split('\n')).toEqual(['2026-07-15', '2026-08-11']);
     });
 
     it('SC-AK-1276 — итог пишется один раз, номера в наблюдения не попадают', () => {
@@ -275,6 +280,15 @@ describe('collectOutcomes', () => {
         expect(outcomes()).toEqual(['first-pass']);
         expect(readFileSync(join(root, OBSERVATIONS_DIR, `${TODAY}.jsonl`), 'utf8')).toContain('"res":"first-pass"');
         expect(readFileSync(join(root, OBSERVATIONS_DIR, `${TODAY}.jsonl`), 'utf8')).not.toContain('777');
+    });
+
+    it('SC-AK-1302 — заявка моложе трёх дней ждёт, следующее чтение берёт её снова', () => {
+        treeWith([JSON.stringify({ ...pull({ number: 778, closed: '2026-08-12' }), head: 'RT-5-probe' })]);
+
+        expect(collectOutcomes(root, TODAY, '0.34.0')).toBe(EOutcomesRead.Read);
+        expect(outcomes()).toEqual([]);
+        expect(collectOutcomes(root, '2026-08-15', '0.34.0')).toBe(EOutcomesRead.Read);
+        expect(outcomes()).toEqual(['no-handover']);
     });
 
     it('заявка без подписи передачи записана отдельным итогом', () => {

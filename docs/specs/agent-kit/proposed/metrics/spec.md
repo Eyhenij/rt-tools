@@ -27,8 +27,9 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
 - **An accepted task** — a merged request of a task. A request whose head is an epic branch is not
   counted.
 - **First-pass acceptance** — an accepted task with no change after the handover and no owner
-  correction after the handover. A correction counts against the last branch handed over, whichever
-  branch the session stands on: the executor takes the next task right after a handover.
+  correction after the handover up to three days past the merge. A correction counts against the last
+  branch handed over, whichever branch the session stands on: the executor takes the next task right
+  after a handover.
 - **A change after the handover** — a difference of the tree of the head against the kept sign that
   is not a merge of the base. A rewrite of history counts as a change.
 - **An owner correction** — a message of a person that matches the fixed visible set of patterns.
@@ -62,6 +63,9 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
   tasks among accepted tasks and requests closed unmerged. Every other metric explains its movement.
 - **A request without a handover sign counts apart.** It stays out of the main metric, and the report
   names how many there are: a share read without that number hides the requests it never saw.
+- **A merge is not yet an acceptance by a person.** The executor approves and merges by the owner's
+  standing word, so an outcome is decided three days after the merge, and a correction in those days
+  takes first-pass away. The owner's word is «Правка в течение 3 дней (Recommended)».
 - **A revert takes first-pass away.** A revert, or a new request naming the same task within 14 days,
   moves that task out of first-pass.
 - **Three result metrics follow the mission.** First-pass acceptance, owner corrections per accepted
@@ -270,8 +274,9 @@ Assumptions of the executor, each named so it can be overruled:
 
 ## Open questions
 
-- **The accuracy of the patterns of an owner correction.** It is measured on a sample the owner reads,
-  on the first cycle.
+- **The accuracy of the patterns of an owner correction.** The set was widened on a sample the owner
+  read, 36 of 255 messages against 15 before, and it holds no swearing, so 8 of 63 swearing messages
+  count. Questions such as «почему он в драфте?» count too. The first cycle measures it again.
 
 ## History of changes
 

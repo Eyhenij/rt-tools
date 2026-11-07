@@ -19,6 +19,9 @@ export const LOST_WITHIN_DAYS: number = 14;
 /** С этого числа задач отчёт показывает долю: доля из трёх вводит в заблуждение. */
 export const SHARE_FROM_TASKS: number = 10;
 
+/** Сколько дней после слияния правка владельца ещё снимает первую приёмку. Итог решается после них. */
+export const SETTLE_DAYS: number = 3;
+
 /** Сколько ждать хостинга: отчёт не должен висеть на нём. */
 const HOSTING_TIMEOUT_MS: number = 120_000;
 
@@ -63,8 +66,8 @@ export interface IPullFact {
     /** День закрытия, `ГГГГ-ММ-ДД`. */
     readonly closed: string;
     readonly handover: { readonly commit: string; readonly tree: string } | null;
-    /** Правки владельца после передачи. */
-    readonly corrections: number;
+    /** Дни правок владельца после передачи, `ГГГГ-ММ-ДД`. */
+    readonly corrections: readonly string[];
     /** Коммиты заявки от старых к новым. */
     readonly commits: readonly ICommitFact[];
 }
@@ -105,6 +108,13 @@ export function changedAfterHandover(fact: IPullFact): boolean {
     return at < 0 || fact.commits.slice(at + 1).some((commit: ICommitFact): boolean => commit.parents < 2);
 }
 
+/** Была ли правка до конца срока: слияние делает исполнитель, и само оно приёмкой человека не является. */
+function correctedInTime(fact: IPullFact): boolean {
+    const edge: string = dayBefore(fact.closed, -SETTLE_DAYS);
+
+    return fact.corrections.some((day: string): boolean => byText(day, edge) <= 0);
+}
+
 /** Итог заявки. `null`: заявка не считается, это эпик или откат. */
 export function outcomeOf(fact: IPullFact): EOutcome | null {
     if (fact.epic || fact.revert) {
@@ -117,7 +127,7 @@ export function outcomeOf(fact: IPullFact): EOutcome | null {
         return EOutcome.Closed;
     }
 
-    return changedAfterHandover(fact) || fact.corrections > 0 ? EOutcome.Changed : EOutcome.FirstPass;
+    return changedAfterHandover(fact) || correctedInTime(fact) ? EOutcome.Changed : EOutcome.FirstPass;
 }
 
 /** Задача потеряла первую приёмку этой заявкой: откат или новая заявка той же задачи в срок. */
@@ -300,16 +310,18 @@ function readCounted(root: string): readonly ICountedPull[] {
  * Запись идёт из отчёта, а не из проверки: в момент слияния сессии может не быть вовсе.
  */
 export function collectOutcomes(root: string, today: string, version: string): EOutcomesRead {
+    const settled: string = dayBefore(today, SETTLE_DAYS);
     const { state, facts }: IFactsRead = readFacts(root, sinceOf(root, today));
 
     if (state !== EOutcomesRead.Read) {
         return state;
     }
-    const fresh: readonly ICountedPull[] = newOutcomes(facts, readCounted(root));
+    const ripe: readonly IPullFact[] = facts.filter((fact: IPullFact): boolean => byText(fact.closed, settled) <= 0);
+    const fresh: readonly ICountedPull[] = newOutcomes(ripe, readCounted(root));
     const stamp: string = `${today}T00:00:00Z`;
 
     mkdirSync(join(root, OBSERVATIONS_DIR, '.marks'), { recursive: true });
-    writeFileSync(lastReadPath(root), `${today}\n`);
+    writeFileSync(lastReadPath(root), `${settled}\n`);
     for (const pull of fresh) {
         const note: string = JSON.stringify({ t: stamp, ev: 'task-outcome', res: pull.outcome, v: version });
 

@@ -230,7 +230,7 @@ prompt_in() {
 
 corrections_of() {
     CLAUDE_PROJECT_DIR="$1" bash -c '. "$1/metric-marks.sh"; cat "$(rt_branch_mark corrections work)" 2>/dev/null' _ "$HOOKS" \
-        | tr '\n' ' '
+        | cut -d' ' -f1 | tr '\n' ' '
 }
 
 tree="$(fixture_metric_tree)"
@@ -239,6 +239,8 @@ report "SC-AK-1290 — счётчик ветки вырос" "$(corrections_of "
 report "SC-AK-1290 — наблюдение записано" "$(notes_count "$tree" owner-correction)" "1"
 report "SC-AK-1290 — текста нет ни в одном файле" \
     "$(grep -rl 'особое слово девять' "$tree/.claude" 2>/dev/null | wc -l | tr -d ' ')" "0"
+report "SC-AK-1290 — вопрос с недовольством считается" \
+    "$(tree2="$(fixture_metric_tree)"; prompt_in "$tree2" 'почему ты опять не гонял тесты?'; corrections_of "$tree2"; rm -rf "$tree2")" "before "
 prompt_in "$tree" 'Спасибо, отлично'
 report "SC-AK-1290 — сообщение мимо образцов не считается" "$(corrections_of "$tree")" "before "
 prompt_in "$tree" '<task-notification>это неправильно</task-notification>'

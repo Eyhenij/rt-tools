@@ -116,7 +116,7 @@ host="$(fixture_host)"
 CLAUDE_PROJECT_DIR="$tree" RT_HOOK_INPUT="{\"cwd\":\"$tree\"}" bash -c '
     . "$1/metric-marks.sh"
     printf "c1 t1\n" > "$(rt_branch_mark handover RT-5-probe)"
-    printf "before\nafter\nafter\n" > "$(rt_branch_mark corrections RT-5-probe)"' _ "$HOOKS"
+    printf "before 2026-08-01\nafter 2026-08-02\nafter 2026-08-03\n" > "$(rt_branch_mark corrections RT-5-probe)"' _ "$HOOKS"
 out="$(outcomes_in "$tree" "$host")"
 report "итоги: открытая заявка не читается" "$(printf '%s\n' "$out" | grep -c .)" "3"
 report "итоги: без подписи коммиты не спрашиваются" "$(printf '%s\n' "$out" | sed -n 2p | jq -c '.commits')" '[]'
@@ -124,7 +124,7 @@ report "итоги: слитая заявка названа" "$(printf '%s\n' "
     '[31,true,5,false,false,"2026-08-10"]'
 report "итоги: коммиты заявки дошли" "$(printf '%s\n' "$out" | sed -n 1p | jq -c '.commits')" '[{"sha":"c1","tree":"t1","parents":1}]'
 report "итоги: подпись передачи присоединена" "$(printf '%s\n' "$out" | sed -n 1p | jq -c '.handover')" '{"commit":"c1","tree":"t1"}'
-report "итоги: считаются правки после передачи" "$(printf '%s\n' "$out" | sed -n 1p | jq -r '.corrections')" "2"
+report "итоги: считаются правки после передачи" "$(printf '%s\n' "$out" | sed -n 1p | jq -c '.corrections')" '["2026-08-02","2026-08-03"]'
 report "итоги: имя ветки наружу не выходит" "$(printf '%s' "$out" | grep -c 'probe')" "0"
 report "итоги: заявка без метки без подписи" "$(printf '%s\n' "$out" | sed -n 2p | jq -c '[.handover,.merged]')" '[null,false]'
 report "итоги: откат называет задачу из заголовка" "$(printf '%s\n' "$out" | sed -n 3p | jq -c '[.task,.revert]')" '[5,true]'

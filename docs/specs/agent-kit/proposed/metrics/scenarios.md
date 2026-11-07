@@ -41,6 +41,14 @@ When the outcomes are read
 Then the reader exits with the code of a broken read, prints no request and the day of the last read
 stays
 
+### SC-AK-1302 — a correction within three days of the merge takes first-pass away
+
+Given a merged request with a correction on the third day after the merge, and another with a
+correction on the fourth
+When the outcomes are read three days after the merge or later
+Then the first is accepted and not first-pass, the second stays first-pass, and a request merged less
+than three days ago waits for the next read
+
 ### SC-AK-1274 — a merge of the base after the handover keeps first-pass
 
 Given a handed-over request whose branch took only a merge of its base

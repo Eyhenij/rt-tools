@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/pull-outcomes.sh · 0828670b5322 · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/pull-outcomes.sh · be7a4594982f · правится надстройкой, не здесь
 # The facts about closed requests, one JSON object per line. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The report and the sending call it.
 #
@@ -44,14 +44,14 @@ printf '%s\n' "$pulls" | while IFS= read -r pull; do
     [ -n "$pull" ] || continue
     head="$(printf '%s' "$pull" | jq -r '.head // empty' 2>/dev/null)"
     handover=''
-    corrections=0
+    corrections='[]'
     if [ -n "$head" ]; then
         file="$(rt_branch_mark handover "$head")"
         [ -f "$file" ] && handover="$(cat "$file" 2>/dev/null)"
         file="$(rt_branch_mark corrections "$head")"
-        [ -f "$file" ] && corrections="$(grep -c '^after$' "$file" 2>/dev/null)"
+        [ -f "$file" ] && corrections="$(sed -n 's/^after //p' "$file" 2>/dev/null | jq -R . | jq -cs . 2>/dev/null)"
     fi
-    printf '%s' "$pull" | jq -c --arg sign "$handover" --argjson after "${corrections:-0}" '
+    printf '%s' "$pull" | jq -c --arg sign "$handover" --argjson after "${corrections:-[]}" '
         del(.head)
         + { corrections: $after,
             handover: (if $sign == "" then null
