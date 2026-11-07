@@ -21,8 +21,9 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
 
 ## Terminology
 
-- **A handover** — the moment a request is ready and has a reviewer. A guard keeps the sign of the
-  tree of its head at that moment, in a file that does not leave the tree.
+- **A handover** — the moment a request is ready and has a reviewer. A hook after the call keeps the
+  sign of the tree of its head, in a file that does not leave the tree. A call that was refused or
+  failed hands nothing over.
 - **An accepted task** — a merged request of a task. A request whose head is an epic branch is not
   counted.
 - **First-pass acceptance** — an accepted task with no change after the handover and no owner
@@ -31,8 +32,11 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
   is not a merge of the base. A rewrite of history counts as a change.
 - **An owner correction** — a message of a person that matches the fixed visible set of patterns.
 - **An empty refusal** — a refusal by a guard equal to its previous refusal in the session: the same
-  content of the tree and the same refused call.
-- **A wasted run** — a red run whose content sign appears again in a later run of the same day.
+  content of the tree and the same refused call. A guard at the end of a turn has no call, so the
+  content alone decides. A refusal of the rules gate is not an empty refusal: it is read by the
+  numbers of the texts.
+- **A wasted run** — a red run of a check whose content sign appears again in a later run of the same
+  check on the same day.
 - **A day line** — the numeric record of one working copy for one day, the only thing the automatic
   sending carries.
 - **A baseline** — the value of a metric over two weeks or the first ten accepted tasks, whichever
@@ -55,6 +59,8 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
 
 - **First-pass acceptance is the main metric of the package.** Its value is the share of first-pass
   tasks among accepted tasks and requests closed unmerged. Every other metric explains its movement.
+- **A request without a handover sign counts apart.** It stays out of the main metric, and the report
+  names how many there are: a share read without that number hides the requests it never saw.
 - **A revert takes first-pass away.** A revert, or a new request naming the same task within 14 days,
   moves that task out of first-pass.
 - **Three result metrics follow the mission.** First-pass acceptance, owner corrections per accepted
@@ -66,13 +72,14 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
   loaded, the share of laid-out rules not loaded in 30 days, the cost of the entry and the share of
   exams passed the first time. The first three are never read without the cost of the entry.
 - **A guard declares the rule it enforces.** A refusal by such a guard after that rule was loaded in
-  the session counts against the rule: its text taught nothing. Gate refusals after a context squeeze
-  are not counted, because the record of loads dies with it.
+  the session counts against the rule: its text taught nothing. A gate refusal for a rule already
+  loaded in that session is not counted: the gate's record of loads dies with a context squeeze, and
+  the observations survive it.
 - **Guards are judged by empty refusals and by minutes.** The share of empty refusals per guard, and
   the minutes of wasted runs per kind of step.
 - **Roles and commands are judged by calls and verdicts.** The count of calls per role and command,
-  and for a role that gives a verdict the share of work it refused. Only package names and numbers
-  are recorded.
+  and for a role that gives a verdict the share of work it refused. A verdict is read when the role
+  ends, because a role usually runs in the background. Only package names and numbers are recorded.
 - **Delivery is judged by three numbers.** Days from a received record to its fix, the share of trees
   on the latest two versions seen, and the share of package sections a tree replaces by an override.
 - **A report names its own completeness.** It states how many enrolled trees sent a day line in the
@@ -90,14 +97,17 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
   intake refuses it. A key of a day line comes from a closed list in the package.
 - **A person's message is counted by a hook, and the executor takes no part.** The hook adds to a
   counter of the current branch and does not keep the message.
-- **Every run writes one line.** The gate, the git hook and the run ahead each write an outcome from a
-  closed list, the seconds, and the kind of step, whether a session is open or not.
+- **Every run of a check writes one line.** The gate, the git hook and the run ahead each write an
+  outcome from a closed list, the seconds, and the kind of step, whether a session is open or not. A
+  run from a second copy writes into the main one: the heavy steps run there.
 - **A content sign covers uncommitted edits.** Otherwise a red run fixed in the working copy would read
   as wasted.
 - **An outcome is read by the sending, not at the merge.** A merge often happens in a browser with no
   session open. The sending asks the profile function `rt_pull_outcomes` for requests merged or closed
   since its last read. A tree without that function sends no outcomes, and the report counts it apart.
+  A read that broke off is named as a broken read, not as a tree with nobody to ask.
 - **A request is counted once.** The tree keeps the numbers it counted in a file that does not leave.
+  An older request read later does not change an outcome already counted.
 
 ### What sends it
 
@@ -150,7 +160,7 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
 | Spec                         | Article                                                                               | Change                                                                      |
 | ---------------------------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | `observations/spec.md`       | «Network telemetry and background sending» in the out-of-scope list                   | Removed                                                                     |
-| `observations/spec.md`       | «New kinds of events» in the out-of-scope list                                        | The closed list gains the run line and the exam verdict                     |
+| `observations/spec.md`       | «New kinds of events» in the out-of-scope list                                        | The closed list gains the run line, the exam verdict and the events below   |
 | `observations/spec.md`       | The writing «is switched off whole»                                                   | Stays for `observe`. `send` is a second key                                 |
 | `observations/spec.md`       | «Measuring the session time and the token cost» in the out-of-scope list              | Stays. A run's seconds measure a check, not a session                       |
 | `observations/spec.md`       | «Observations older than the keeping time are removed by the digest»                  | The one-tree report removes them too and names what it removed              |
@@ -160,6 +170,9 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
 | `message-bus/usage/spec.md`  | A digest over several trees and the screen of guard refusals in the out-of-scope list | Moved in by this agreement, at the owner's request                          |
 | `context-cost/spec.md`       | The command «goes to no network»                                                      | Stays. The sending reads the number itself                                  |
 | `exam/spec.md`               | «No storage of its own»                                                               | The exam guard writes a verdict line                                        |
+
+The events the closed list gains besides those: `owner-correction`, `role-call`, `role-verdict`,
+`command-call`, `edit-seen` and `task-outcome`.
 
 ## What is out of scope
 

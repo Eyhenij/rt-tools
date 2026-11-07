@@ -38,15 +38,20 @@ const NOT_AN_EDIT: readonly string[] = ['command', 'browser', 'design'];
 function callsOf(observations: readonly IObservation[]): readonly ICallMetric[] {
     const calls: Map<string, ICallMetric> = new Map();
 
-    for (const entry of observations.filter((one: IObservation): boolean => KINDS_OF_CALLS.includes(one.event))) {
+    for (const entry of observations) {
         const seen: ICallMetric = calls.get(entry.resource) ?? { name: entry.resource, calls: 0, verdicts: 0, refused: 0 };
 
-        calls.set(entry.resource, {
-            ...seen,
-            calls: seen.calls + 1,
-            verdicts: seen.verdicts + (entry.verdict ? 1 : 0),
-            refused: seen.refused + (entry.verdict === 'refused' ? 1 : 0),
-        });
+        if (KINDS_OF_CALLS.includes(entry.event)) {
+            calls.set(entry.resource, { ...seen, calls: seen.calls + 1 });
+        }
+        // Приговор приходит отдельной строкой, когда роль кончила работу: чаще всего она идёт в фоне.
+        if (entry.event === 'role-verdict') {
+            calls.set(entry.resource, {
+                ...seen,
+                verdicts: seen.verdicts + 1,
+                refused: seen.refused + (entry.verdict === 'refused' ? 1 : 0),
+            });
+        }
     }
 
     return [...calls.values()].sort(
@@ -85,6 +90,26 @@ function refusalsAfterLoad(observations: readonly IObservation[]): readonly ICou
         .sort((left: ICount, right: ICount): number => right.count - left.count || byText(left.name, right.name));
 }
 
+/**
+ * Отказы шлюза по правке файла. Отказ по уже загруженному в этой сессии правилу не считается: он
+ * случился потому, что запись загрузок погибла со сжатием окна, а не потому, что правила не читали.
+ */
+function editsRefusedOf(observations: readonly IObservation[]): number {
+    const loaded: Set<string> = new Set();
+    let refused: number = 0;
+
+    for (const entry of observations) {
+        if (entry.event === 'skill-load') {
+            loaded.add(`${entry.session} ${entry.resource}`);
+        }
+        if (entry.event === 'gate-deny' && !NOT_AN_EDIT.includes(entry.kind) && !loaded.has(`${entry.session} ${entry.resource}`)) {
+            refused += 1;
+        }
+    }
+
+    return refused;
+}
+
 export function usageOf(observations: readonly IObservation[]): IUsageMetric {
     const exams: { readonly sessions: number; readonly firstPass: number } = examsOf(observations);
 
@@ -95,9 +120,7 @@ export function usageOf(observations: readonly IObservation[]): IUsageMetric {
         refusalsAfterLoad: refusalsAfterLoad(observations),
         refusalsWithRule: observations.filter((entry: IObservation): boolean => entry.event === 'guard-deny' && Boolean(entry.rule)).length,
         edits: observations.filter((entry: IObservation): boolean => entry.event === 'edit-seen').length,
-        editsRefused: observations.filter(
-            (entry: IObservation): boolean => entry.event === 'gate-deny' && !NOT_AN_EDIT.includes(entry.kind)
-        ).length,
+        editsRefused: editsRefusedOf(observations),
     };
 }
 

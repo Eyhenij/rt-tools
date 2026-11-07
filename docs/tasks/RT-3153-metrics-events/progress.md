@@ -53,9 +53,9 @@ Put together by a hook before the compaction of the context (auto).
 
 ### Where we stand at the minute of the compaction
 
-- **State:** `этап-идёт`
-- **Stage:** 1 of 5 — пустые отказы
-- **Next step:** подпись содержимого дерева и вызова
+- **State:** `этапы-кончились`
+- **Stage:** 5 of 5 — роли, экзамен и правила
+- **Next step:** таблицы ролей, набор перед отправкой, разбор папки
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3153-metrics-events/progress.md`; the plan lies next to it.
@@ -63,14 +63,28 @@ The progress in full — `docs/tasks/RT-3153-metrics-events/progress.md`; the pl
 ### Uncommitted
 
 ```
- M projects/agent-kit/assets/hooks/guard-note.sh
- M projects/agent-kit/src/lib/observations.ts
-?? projects/agent-kit/assets/hooks/metric-marks.sh
+ M projects/agent-kit/assets/defaults/project.sh
+ M projects/agent-kit/assets/hooks/git-guard-delivery-draft.sh
+ M projects/agent-kit/assets/hooks/metric-marks.sh
+ M projects/agent-kit/assets/hooks/role-calls.sh
+ M projects/agent-kit/src/lib/metric-usage.spec.ts
+ M projects/agent-kit/src/lib/metric-usage.ts
+ M projects/agent-kit/src/lib/metrics.ts
+ M projects/agent-kit/src/lib/outcomes.spec.ts
+ M projects/agent-kit/src/lib/outcomes.ts
+ M projects/agent-kit/tests/metric-events.test.sh
+?? projects/agent-kit/assets/hooks/handover-mark.sh
 ```
 
 ### Commits over the main branch
 
 ```
+3bd9c9ba3 test(rt:agent-kit): состав полей отказа дополнен признаком и правилом
+8c58a31b1 feat(rt:agent-kit): отчёт считает роли, экзамены и правила
+1aa68ff77 feat(rt:agent-kit): отчёт считает главную метрику
+c1b9f01b6 feat(rt:agent-kit): передача на ревью и правки владельца
+1a4523562 feat(rt:agent-kit): отчёт считает запуски и потерянные минуты
+4b5c6f9eb feat(rt:agent-kit): отчёт считает пустые отказы проверок
 97bd0eceb docs(rt:agent-kit): папка задачи RT-3153
 871604260 Merge remote-tracking branch 'origin/RT-3151-agent-kit-metrics' into RT-3152-metrics-catalog
 df0ff2925 Merge remote-tracking branch 'origin/main' into RT-3151-agent-kit-metrics

@@ -7,7 +7,7 @@
  * номера заявок и задач остаются в дереве.
  */
 import { execFileSync } from 'node:child_process';
-import { appendFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
+import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { dayBefore, IObservation, KEEP_DAYS, OBSERVATIONS_DIR } from './observations.js';
@@ -22,7 +22,13 @@ export const SHARE_FROM_TASKS: number = 10;
 /** Сколько ждать хостинга: отчёт не должен висеть на нём. */
 const HOSTING_TIMEOUT_MS: number = 120_000;
 
+/** Код, которым `pull-outcomes.sh` говорит «спросить некого». */
+const NOBODY_TO_ASK: number = 3;
+
 const COUNTED_FILE: string = 'counted-pulls';
+
+/** День последнего чтения: следующее читает от него, а не весь срок. */
+const LAST_READ_FILE: string = 'outcomes-read';
 
 export enum EOutcome {
     FirstPass = 'first-pass',
@@ -30,6 +36,15 @@ export enum EOutcome {
     Closed = 'closed',
     /** Первая приёмка снята откатом или новой заявкой той же задачи. */
     Lost = 'lost',
+    /** Заявка не передавалась: подписи нет, в главное число она не входит и называется отдельно. */
+    NoHandover = 'no-handover',
+}
+
+/** Чем кончилось чтение итогов. Причины разные, и подменять одну другой отчёт не должен. */
+export enum EOutcomesRead {
+    Read = 'read',
+    NobodyToAsk = 'nobody-to-ask',
+    Failed = 'failed',
 }
 
 export interface ICommitFact {
@@ -70,6 +85,8 @@ export interface IOutcomeMetric {
     readonly firstPass: number;
     /** Откаты и новые заявки той же задачи. */
     readonly lost: number;
+    /** Заявки без подписи передачи: они вне главного числа, и их видно отдельно. */
+    readonly noHandover: number;
 }
 
 /** Менялось ли дерево головы после передачи. Слияние базы изменением не считается. */
@@ -88,10 +105,13 @@ export function changedAfterHandover(fact: IPullFact): boolean {
     return at < 0 || fact.commits.slice(at + 1).some((commit: ICommitFact): boolean => commit.parents < 2);
 }
 
-/** Итог заявки. `null`: заявка не считается, это эпик, откат или она не передавалась. */
+/** Итог заявки. `null`: заявка не считается, это эпик или откат. */
 export function outcomeOf(fact: IPullFact): EOutcome | null {
-    if (fact.epic || fact.revert || !fact.handover) {
+    if (fact.epic || fact.revert) {
         return null;
+    }
+    if (!fact.handover) {
+        return EOutcome.NoHandover;
     }
     if (!fact.merged) {
         return EOutcome.Closed;
@@ -107,7 +127,14 @@ function lostBy(fact: IPullFact, counted: readonly ICountedPull[]): ICountedPull
     }
     const from: string = dayBefore(fact.closed, LOST_WITHIN_DAYS);
     const same: readonly ICountedPull[] = counted.filter((pull: ICountedPull): boolean => pull.task === fact.task);
-    const passed: boolean = same.some((pull: ICountedPull): boolean => pull.outcome === EOutcome.FirstPass && byText(pull.day, from) >= 0);
+    // Снимает только заявка, закрытая позже: старая заявка, дочитанная вторым чтением, итог не меняет.
+    const passed: boolean = same.some(
+        (pull: ICountedPull): boolean =>
+            pull.outcome === EOutcome.FirstPass &&
+            byText(pull.day, from) >= 0 &&
+            byText(pull.day, fact.closed) <= 0 &&
+            pull.number < fact.number
+    );
     const already: boolean = same.some((pull: ICountedPull): boolean => pull.outcome === EOutcome.Lost);
 
     return passed && !already ? { number: fact.number, task: fact.task, day: fact.closed, outcome: EOutcome.Lost } : null;
@@ -154,16 +181,29 @@ export function outcomeMetricOf(observations: readonly IObservation[]): IOutcome
         accepted: passed + (counts.get(EOutcome.Changed) ?? 0),
         closed: counts.get(EOutcome.Closed) ?? 0,
         firstPass: Math.max(passed - lost, 0),
+        noHandover: counts.get(EOutcome.NoHandover) ?? 0,
         lost,
     };
 }
 
-/** Итоги словами. До десяти задач стоит счёт, а не доля. Главное число идёт первым в отчёте. */
-export function outcomeLines(metric: IOutcomeMetric | null, asked: boolean, corrections: number): readonly string[] {
-    const notAsked: readonly string[] = asked ? [] : ['итоги заявок: спросить некого, функция профиля `rt_pull_outcomes` не ответила'];
+/** Есть ли чему делить: заявки без подписи главного числа не дают. */
+export function hasMainNumber(metric: IOutcomeMetric | null): boolean {
+    return metric !== null && metric.accepted + metric.closed > 0;
+}
 
-    if (!metric) {
-        return notAsked.length ? ['', ...notAsked] : [];
+const READ_FAULT: Readonly<Record<EOutcomesRead, string>> = {
+    [EOutcomesRead.Read]: '',
+    [EOutcomesRead.NobodyToAsk]: 'итоги заявок: спросить некого, в дереве нет функции профиля `rt_pull_outcomes` или клиента хостинга',
+    [EOutcomesRead.Failed]: 'итоги заявок: чтение оборвалось, числа ниже могут отставать',
+};
+
+/** Итоги словами. До десяти задач стоит счёт, а не доля. Главное число идёт первым в отчёте. */
+export function outcomeLines(metric: IOutcomeMetric | null, state: EOutcomesRead, corrections: number): readonly string[] {
+    const fault: readonly string[] = READ_FAULT[state] ? [READ_FAULT[state]] : [];
+    const apart: readonly string[] = metric?.noHandover ? [`заявок без передачи: ${metric.noHandover}, в главное число они не входят`] : [];
+
+    if (!metric || !hasMainNumber(metric)) {
+        return fault.length || apart.length ? ['', ...fault, ...apart] : [];
     }
     const counted: number = metric.accepted + metric.closed;
     const share: string = counted >= SHARE_FROM_TASKS ? ` (${Math.round((metric.firstPass / counted) * 100)}%)` : '';
@@ -173,32 +213,62 @@ export function outcomeLines(metric: IOutcomeMetric | null, asked: boolean, corr
         '',
         `принято с первого раза: ${metric.firstPass} из ${counted}${share}`,
         `принято задач: ${metric.accepted}, закрыто без слияния: ${metric.closed}, откатов и повторных заявок: ${metric.lost}`,
-        `правки владельца на задачу: ${corrections}${perTask}`,
-        ...notAsked,
+        `правки владельца: ${corrections}${perTask}`,
+        ...apart,
+        ...fault,
     ];
 }
 
-/** Факты с хостинга. `null`: спросить некого, и такое дерево считается отдельно. */
-function readFacts(root: string, since: string): readonly IPullFact[] | null {
+interface IFactsRead {
+    readonly state: EOutcomesRead;
+    readonly facts: readonly IPullFact[];
+}
+
+/** Причина обрыва чтения: код «спросить некого» отличается от сети и предела времени. */
+function faultOf(failure: unknown): IFactsRead {
+    const nobody: boolean = failure instanceof Error && Reflect.get(failure, 'status') === NOBODY_TO_ASK;
+
+    return { state: nobody ? EOutcomesRead.NobodyToAsk : EOutcomesRead.Failed, facts: [] };
+}
+
+/** Факты с хостинга. Дерево без функции считается отдельно, а не падает. */
+function readFacts(root: string, since: string): IFactsRead {
     const path: string = join(root, '.claude', 'hooks', 'pull-outcomes.sh');
 
     if (!existsSync(path)) {
-        return null;
+        return { state: EOutcomesRead.NobodyToAsk, facts: [] };
     }
     try {
-        return execFileSync(path, [since], {
+        const out: string = execFileSync(path, [since], {
             cwd: root,
             env: { ...process.env, CLAUDE_PROJECT_DIR: root },
             encoding: 'utf8',
             timeout: HOSTING_TIMEOUT_MS,
             stdio: ['ignore', 'pipe', 'ignore'],
-        })
-            .split('\n')
-            .filter((line: string): boolean => line.trim() !== '')
-            .map((line: string): IPullFact => JSON.parse(line) as IPullFact);
-    } catch {
-        return null;
+        });
+
+        return {
+            state: EOutcomesRead.Read,
+            facts: out
+                .split('\n')
+                .filter((line: string): boolean => line.trim() !== '')
+                .map((line: string): IPullFact => JSON.parse(line) as IPullFact),
+        };
+    } catch (failure: unknown) {
+        return faultOf(failure);
     }
+}
+
+function lastReadPath(root: string): string {
+    return join(root, OBSERVATIONS_DIR, '.marks', LAST_READ_FILE);
+}
+
+/** С какого дня читать: от прошлого чтения, но не дальше срока хранения. */
+function sinceOf(root: string, today: string): string {
+    const edge: string = dayBefore(today, KEEP_DAYS);
+    const last: string = existsSync(lastReadPath(root)) ? readFileSync(lastReadPath(root), 'utf8').trim() : '';
+
+    return byText(last, edge) > 0 ? last : edge;
 }
 
 function countedPath(root: string): string {
@@ -225,22 +295,21 @@ function readCounted(root: string): readonly ICountedPull[] {
 }
 
 /**
- * Читает закрытые заявки и дописывает новые итоги. Возвращает, было ли кого спросить.
+ * Читает заявки, закрытые с прошлого чтения, и дописывает новые итоги.
  *
  * Запись идёт из отчёта, а не из проверки: в момент слияния сессии может не быть вовсе.
  */
-export function collectOutcomes(root: string, today: string, version: string): boolean {
-    const facts: readonly IPullFact[] | null = readFacts(root, dayBefore(today, KEEP_DAYS));
+export function collectOutcomes(root: string, today: string, version: string): EOutcomesRead {
+    const { state, facts }: IFactsRead = readFacts(root, sinceOf(root, today));
 
-    if (facts === null) {
-        return false;
+    if (state !== EOutcomesRead.Read) {
+        return state;
     }
     const fresh: readonly ICountedPull[] = newOutcomes(facts, readCounted(root));
     const stamp: string = `${today}T00:00:00Z`;
 
-    if (fresh.length) {
-        mkdirSync(join(root, OBSERVATIONS_DIR, '.marks'), { recursive: true });
-    }
+    mkdirSync(join(root, OBSERVATIONS_DIR, '.marks'), { recursive: true });
+    writeFileSync(lastReadPath(root), `${today}\n`);
     for (const pull of fresh) {
         const note: string = JSON.stringify({ t: stamp, ev: 'task-outcome', res: pull.outcome, v: version });
 
@@ -248,5 +317,5 @@ export function collectOutcomes(root: string, today: string, version: string): b
         appendFileSync(join(root, OBSERVATIONS_DIR, `${today}.jsonl`), `${note}\n`);
     }
 
-    return true;
+    return EOutcomesRead.Read;
 }

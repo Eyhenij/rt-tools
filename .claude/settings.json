@@ -60,6 +60,16 @@
           }
         ]
       }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/dispatch.sh SubagentStop"
+          }
+        ]
+      }
     ]
   },
   "autoCompactWindow": 1000000,

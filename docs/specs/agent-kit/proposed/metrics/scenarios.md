@@ -9,6 +9,25 @@ Given a request handed over and merged with its head tree unchanged and no owner
 When the sending reads the outcomes
 Then the day line counts one accepted task and one first-pass task
 
+### SC-AK-1297 — only a call that ran hands a request over
+
+Given a ready request with a reviewer, and the same request as a draft, without a reviewer, refused by
+another guard or failed
+When the hook after the call runs, if it runs at all
+Then only the first leaves a handover sign
+
+### SC-AK-1298 — a request without a handover sign counts apart
+
+Given a merged request with no handover sign
+When the outcomes are read
+Then it stays out of the main metric, and the report names their count
+
+### SC-AK-1299 — an older request read later keeps the counted outcome
+
+Given a task counted as first-pass by one read and an older request of that task found by the next
+When the outcomes are read again
+Then the counted outcome stays
+
 ### SC-AK-1274 — a merge of the base after the handover keeps first-pass
 
 Given a handed-over request whose branch took only a merge of its base

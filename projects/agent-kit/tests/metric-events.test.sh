@@ -160,6 +160,27 @@ report "SC-AK-1279 — подпись не ушла в запись" \
     "ev kind res secs t v "
 rm -rf "$tree"
 
+# Запуск из второй копии пишет в основную: тяжёлые шаги идут оттуда, и их минуты нельзя терять.
+tree="$(fixture_set_tree)"
+copy="$(mktemp -d)/copy"
+git -C "$tree" worktree add -q -b second "$copy" 2>/dev/null
+mkdir -p "$copy/.claude/rt-kit"
+cp "$tree/.claude/rt-kit/project.sh" "$copy/.claude/rt-kit/project.sh"
+: > "$copy/red"
+set_in "$copy"
+report "SC-AK-1279 — запуски из второй копии лежат в основной" "$(runs_of "$tree" res | tr '\n' ' ')" "green red "
+report "SC-AK-1279 — во второй копии записей нет" "$(ls "$copy/.claude/rt-kit/observations" 2>/dev/null | wc -l | tr -d ' ')" "0"
+rm -rf "$tree" "$(dirname "$copy")"
+
+# Каталог наблюдений не попадает в историю и в дереве, которое про него ничего не знает.
+tree="$(fixture_metric_tree)"
+report "каталог наблюдений: до первой записи игнора нет" \
+    "$(git -C "$tree" check-ignore -q .claude/rt-kit/observations/x.jsonl && echo под || echo нет)" "нет"
+CLAUDE_PROJECT_DIR="$tree" RT_GUARD_NAME=probe-guard RT_HOOK_INPUT='{"session_id":"s"}' \
+    bash -c '. "$1/guard-note.sh"; rt_guard_note' _ "$HOOKS"
+report "каталог наблюдений: git его не берёт" "$(git -C "$tree" add -n -A 2>/dev/null | grep -c 'observations')" "0"
+rm -rf "$tree"
+
 # Запуск заранее пишет те же строки, сессия для этого не нужна.
 tree="$(fixture_set_tree)"
 : > "$tree/red"
@@ -207,19 +228,46 @@ handover_of() {
     CLAUDE_PROJECT_DIR="$1" bash -c '. "$1/metric-marks.sh"; cat "$(rt_branch_mark handover "$2")" 2>/dev/null' _ "$HOOKS" "$2"
 }
 
-open_in() {
+guard_in() {
     input_cmd "$2" Bash "$1" | CLAUDE_PROJECT_DIR="$1" "$HOOKS/git-guard-delivery.sh" >/dev/null 2>&1
 }
 
+# Конец вызова: подпись кладёт хук после него, а не проверка до него.
+after_in() {
+    local answer="${3:-}"
+    [ -n "$answer" ] || answer='{}'
+    jq -n --arg c "$2" --arg d "$1" --argjson r "$answer" \
+        '{session_id:"tests",tool_name:"Bash",tool_input:{command:$c},cwd:$d,tool_response:$r}' \
+        | CLAUDE_PROJECT_DIR="$1" "$HOOKS/handover-mark.sh" >/dev/null 2>&1
+}
+
+open_in() {
+    guard_in "$1" "$2"
+    after_in "$1" "$2"
+}
+
+READY='gh pr create --title "[RT-7] Сделано" --base main --reviewer owner --body x'
 tree="$(fixture_repo_branched main RT-7-probe)"
-open_in "$tree" 'gh pr create --title "[RT-7] Сделано" --base main --draft --body x'
-report "передача: черновик ещё не передан" "$(handover_of "$tree" RT-7-probe)" ""
+open_in "$tree" 'gh pr create --title "[RT-7] Сделано" --base main --draft --reviewer owner --body x'
+report "SC-AK-1297 — передача:черновик ещё не передан" "$(handover_of "$tree" RT-7-probe)" ""
 open_in "$tree" 'gh pr create --title "[RT-7] Сделано" --base main --body x'
+report "SC-AK-1297 — передача:заявка без проверяющего не передана" "$(handover_of "$tree" RT-7-probe)" ""
+guard_in "$tree" "$READY"
+report "SC-AK-1297 — передача:до конца вызова подписи нет" "$(handover_of "$tree" RT-7-probe)" ""
+after_in "$tree" "$READY" '{"exit_code":1}'
+report "SC-AK-1297 — передача:упавший вызов подписи не оставляет" "$(handover_of "$tree" RT-7-probe)" ""
+open_in "$tree" "$READY"
 want="$(git -C "$tree" rev-parse HEAD) $(git -C "$tree" rev-parse 'HEAD^{tree}')"
-report "передача: открытие готовой заявки оставляет подпись" "$(handover_of "$tree" RT-7-probe)" "$want"
+report "SC-AK-1297 — передача:открытие готовой заявки оставляет подпись" "$(handover_of "$tree" RT-7-probe)" "$want"
 fixture_commit "$tree" extra.txt 'body' 'chore: правка после передачи'
-open_in "$tree" 'gh pr create --title "[RT-7] Сделано" --base main --body x'
-report "передача: первая подпись остаётся" "$(handover_of "$tree" RT-7-probe)" "$want"
+open_in "$tree" "$READY"
+report "SC-AK-1297 — передача:первая подпись остаётся" "$(handover_of "$tree" RT-7-probe)" "$want"
+rm -rf "$tree"
+
+# Проверка пропустила, а следующая в ряду отказала: хук после вызова не приходит, подписи нет.
+tree="$(fixture_repo_branched main RT-7-probe)"
+guard_in "$tree" "$READY"
+report "SC-AK-1297 — передача:отказанный другой проверкой вызов подписи не оставляет" "$(handover_of "$tree" RT-7-probe)" ""
 rm -rf "$tree"
 
 # Снятие черновика: голова приходит с хостинга.
@@ -229,7 +277,7 @@ printf 'rt_pull_state() { printf "%%s" %s; }\n' \
     "'{\"exists\":true,\"number\":9,\"draft\":true,\"reviewed\":true,\"conflicting\":false,\"branch\":\"RT-8-probe\"}'" \
     > "$tree/.claude/rt-kit/project.sh"
 open_in "$tree" 'gh pr ready 9'
-report "передача: снятие черновика оставляет подпись" \
+report "SC-AK-1297 — передача:снятие черновика оставляет подпись" \
     "$(handover_of "$tree" RT-8-probe)" "$(git -C "$tree" rev-parse HEAD) $(git -C "$tree" rev-parse 'HEAD^{tree}')"
 rm -rf "$tree"
 
@@ -237,7 +285,7 @@ rm -rf "$tree"
 tree="$(fixture_repo_branched main RT-9-probe)"
 fixture_commit "$tree" docs/tasks/RT-9-probe/plan.md 'план' 'docs: папка задачи'
 open_in "$tree" 'gh pr create --title "[RT-9] Сделано" --base main --body x'
-report "передача: отказанная заявка подписи не оставляет" "$(handover_of "$tree" RT-9-probe)" ""
+report "SC-AK-1297 — передача:отказанная заявка подписи не оставляет" "$(handover_of "$tree" RT-9-probe)" ""
 rm -rf "$tree"
 
 # --- SC-AK-1290. Сообщение считается и не хранится ----------------------------------------
@@ -311,14 +359,38 @@ CLAUDE_PROJECT_DIR="$tree" RT_HOOK_INPUT="{\"cwd\":\"$tree\"}" bash -c '
     printf "before\nafter\nafter\n" > "$(rt_branch_mark corrections RT-5-probe)"' _ "$HOOKS"
 out="$(outcomes_in "$tree" "$host")"
 report "итоги: открытая заявка не читается" "$(printf '%s\n' "$out" | grep -c .)" "3"
+report "итоги: без подписи коммиты не спрашиваются" "$(printf '%s\n' "$out" | sed -n 2p | jq -c '.commits')" '[]'
 report "итоги: слитая заявка названа" "$(printf '%s\n' "$out" | sed -n 1p | jq -c '[.number,.merged,.task,.revert,.epic,.closed]')" \
     '[31,true,5,false,false,"2026-08-10"]'
 report "итоги: коммиты заявки дошли" "$(printf '%s\n' "$out" | sed -n 1p | jq -c '.commits')" '[{"sha":"c1","tree":"t1","parents":1}]'
 report "итоги: подпись передачи присоединена" "$(printf '%s\n' "$out" | sed -n 1p | jq -c '.handover')" '{"commit":"c1","tree":"t1"}'
 report "итоги: считаются правки после передачи" "$(printf '%s\n' "$out" | sed -n 1p | jq -r '.corrections')" "2"
 report "итоги: имя ветки наружу не выходит" "$(printf '%s' "$out" | grep -c 'probe')" "0"
-report "итоги: заявка без метки без подписи" "$(printf '%s\n' "$out" | sed -n 2p | jq -c '[.handover,.epic,.merged]')" '[null,true,false]'
+report "итоги: заявка без метки без подписи" "$(printf '%s\n' "$out" | sed -n 2p | jq -c '[.handover,.merged]')" '[null,false]'
 report "итоги: откат называет задачу из заголовка" "$(printf '%s\n' "$out" | sed -n 3p | jq -c '[.task,.revert]')" '[5,true]'
+rm -rf "$tree" "$host"
+
+# Эпик узнаётся по метке карточки, как его узнаёт проверка поставки.
+tree="$(fixture_metric_tree)"
+host="$(fixture_host)"
+CLAUDE_PROJECT_DIR="$tree" RT_HOOK_INPUT="{\"cwd\":\"$tree\"}" bash -c \
+    '. "$1/metric-marks.sh"; printf "c1 t1\n" > "$(rt_branch_mark handover RT-6-probe)"' _ "$HOOKS"
+report "итоги: эпик по метке карточки" "$(outcomes_in "$tree" "$host" | sed -n 2p | jq -c '.epic')" 'true'
+rm -rf "$tree" "$host"
+
+# Сотня заявок без подписи: один вызов хостинга, а не две сотни.
+tree="$(fixture_metric_tree)"
+host="$(mktemp -d)"
+cat > "$host/gh" <<'EOF'
+#!/usr/bin/env bash
+printf '%s\n' "$*" >> "$GH_LOG"
+jq -cn '[range(100) | {number:., state:"MERGED", headRefName:"RT-\(.)-probe", title:"[RT-\(.)] X", closedAt:"2026-08-10T10:00:00Z"}]'
+EOF
+chmod +x "$host/gh"
+export GH_LOG="$host/log"
+report "итоги: все заявки прочитаны" "$(outcomes_in "$tree" "$host" | grep -c .)" "100"
+report "итоги: заявки без подписи стоят один вызов" "$(wc -l < "$GH_LOG" | tr -d ' ')" "1"
+unset GH_LOG
 rm -rf "$tree" "$host"
 
 # Спросить некого: без клиента хостинга код говорит об этом, а не печатает пустоту.
@@ -334,15 +406,28 @@ fixture_roles() {
     local dir
     dir="$(fixture_metric_tree)"
     mkdir -p "$dir/.claude/agents" "$dir/.claude/commands"
-    printf -- '<!-- rt-kit v0.34.0 · agents/goal-critic.md · abc -->\n' > "$dir/.claude/agents/goal-critic.md"
-    printf 'своя роль\n' > "$dir/.claude/agents/secret-name.md"
-    printf -- '<!-- rt-kit v0.34.0 · commands/feedback.md · abc -->\n' > "$dir/.claude/commands/feedback.md"
+    # Шапка раскладки — как у настоящего файла: за блоком описания, а не первой строкой.
+    printf -- '---\nname: goal-critic\ndescription: x\ntools: Read\nmodel: opus\n---\n\n<!-- rt-kit v0.34.0 · agents/goal-critic.md · abc -->\n' \
+        > "$dir/.claude/agents/goal-critic.md"
+    printf -- '---\nname: secret-name\n---\n\nсвоя роль\n' > "$dir/.claude/agents/secret-name.md"
+    printf -- '---\ndescription: x\n---\n\n<!-- rt-kit v0.34.0 · commands/feedback.md · abc -->\n' > "$dir/.claude/commands/feedback.md"
     printf '%s' "$dir"
 }
 
 role_in() {
-    jq -n --arg r "$2" --arg a "$3" \
-        '{session_id:"s",tool_name:"Agent",tool_input:{subagent_type:$r},tool_response:{content:[{type:"text",text:$a}]}}' \
+    jq -n --arg r "$2" '{session_id:"s",tool_name:"Agent",tool_input:{subagent_type:$r},tool_response:{status:"async_launched"}}' \
+        | CLAUDE_PROJECT_DIR="$1" "$HOOKS/role-calls.sh"
+}
+
+# Конец роли: приговор читается отсюда.
+role_end() {
+    jq -n --arg r "$2" --arg a "$3" '{session_id:"s",hook_event_name:"SubagentStop",agent_type:$r,last_assistant_message:$a}' \
+        | CLAUDE_PROJECT_DIR="$1" "$HOOKS/role-calls.sh"
+}
+
+# Вызов роли изнутри другой роли: вход несёт тип той, что работает.
+role_inside() {
+    jq -n --arg r "$2" '{session_id:"s",hook_event_name:"PostToolUse",agent_type:"goal-critic",tool_name:"Agent",tool_input:{subagent_type:$r},tool_response:{status:"async_launched"}}' \
         | CLAUDE_PROJECT_DIR="$1" "$HOOKS/role-calls.sh"
 }
 
@@ -352,15 +437,23 @@ field_of() {
 }
 
 tree="$(fixture_roles)"
-report "SC-AK-1291 — хук роли молчит" "$(role_in "$tree" goal-critic 'Цель не достигнута.')" ""
-role_in "$tree" goal-critic 'Цель достигнута.'
-role_in "$tree" goal-critic 'Async agent launched successfully'
-role_in "$tree" secret-name 'ответ'
-role_in "$tree" general-purpose 'ответ'
+report "SC-AK-1291 — хук роли молчит" "$(role_in "$tree" goal-critic)" ""
+role_in "$tree" goal-critic
+role_in "$tree" secret-name
+role_in "$tree" general-purpose
 report "SC-AK-1291 — роль пакета по имени, своя постоянным словом, встроенной нет" "$(field_of "$tree" role-call res)" \
-    "goal-critic goal-critic goal-critic tree-own "
-report "SC-AK-1291 — приговор по первой строке, запуск в фоне приговором не считается" "$(field_of "$tree" role-call verdict)" \
-    "refused passed нет нет "
+    "goal-critic goal-critic tree-own "
+report "SC-AK-1291 — вызов приговора не несёт: роль ещё работает" "$(notes_count "$tree" role-verdict)" "0"
+role_inside "$tree" goal-critic
+report "SC-AK-1291 — вызов изнутри роли считается вызовом" "$(notes_count "$tree" role-call)" "4"
+role_end "$tree" goal-critic 'Цель не достигнута.
+
+Таблица: цель достигнута в трёх строках.'
+role_end "$tree" goal-critic 'Цель достигнута.'
+role_end "$tree" goal-critic 'Не могу ответить.'
+role_end "$tree" secret-name 'Цель не достигнута.'
+role_end "$tree" general-purpose 'Цель не достигнута.'
+report "SC-AK-1291 — приговор по первой строке при конце роли" "$(field_of "$tree" role-verdict verdict)" "refused passed "
 report "SC-AK-1291 — имя своей роли из дерева не уходит" "$(cat "$tree/.claude/rt-kit/observations/"*.jsonl | grep -c 'secret-name')" "0"
 jq -n '{session_id:"s",prompt:"/feedback что-то мешает"}' | CLAUDE_PROJECT_DIR="$tree" "$HOOKS/role-calls.sh"
 jq -n '{session_id:"s",prompt:"/secret-cmd"}' | CLAUDE_PROJECT_DIR="$tree" "$HOOKS/role-calls.sh"

@@ -11,6 +11,8 @@ import {
     changedAfterHandover,
     collectOutcomes,
     EOutcome,
+    EOutcomesRead,
+    hasMainNumber,
     ICountedPull,
     IPullFact,
     newOutcomes,
@@ -83,12 +85,15 @@ describe('итог заявки', () => {
             closed: 1,
             firstPass: 1,
             lost: 0,
+            noHandover: 0,
         });
     });
 
-    it('заявка эпика и заявка без подписи передачи не считаются', () => {
+    it('SC-AK-1298 — заявка эпика не считается, заявка без подписи названа отдельно и вне главного числа', () => {
         expect(outcomeOf(pull({ epic: true }))).toBeNull();
-        expect(outcomeOf(pull({ handover: null }))).toBeNull();
+        expect(outcomeOf(pull({ handover: null }))).toBe(EOutcome.NoHandover);
+        expect(outcomeMetricOf([outcome(EOutcome.NoHandover)])).toMatchObject({ accepted: 0, closed: 0, noHandover: 1 });
+        expect(hasMainNumber(outcomeMetricOf([outcome(EOutcome.NoHandover)]))).toBe(false);
     });
 });
 
@@ -117,12 +122,20 @@ describe('новые итоги', () => {
         expect(fresh.map((entry: ICountedPull): EOutcome => entry.outcome)).toEqual([EOutcome.FirstPass]);
     });
 
+    it('SC-AK-1299 — старая заявка, дочитанная вторым чтением, посчитанный итог не меняет', () => {
+        const later: readonly ICountedPull[] = [{ number: 11, task: 5, day: '2026-08-12', outcome: EOutcome.FirstPass }];
+        const fresh: readonly ICountedPull[] = newOutcomes([pull({ number: 10, closed: '2026-08-10', handover: null })], later);
+
+        expect(fresh.map((entry: ICountedPull): EOutcome => entry.outcome)).toEqual([EOutcome.NoHandover]);
+    });
+
     it('снятая первая приёмка уходит из числа, но задача остаётся принятой', () => {
         expect(outcomeMetricOf([outcome(EOutcome.FirstPass), outcome(EOutcome.Lost)])).toEqual({
             accepted: 1,
             closed: 0,
             firstPass: 0,
             lost: 1,
+            noHandover: 0,
         });
     });
 
@@ -133,27 +146,54 @@ describe('новые итоги', () => {
 
 describe('итоги словами', () => {
     it('SC-AK-1276 — одна принятая и одна закрытая без слияния читаются как один из двух', () => {
-        const lines: readonly string[] = outcomeLines({ accepted: 1, closed: 1, firstPass: 1, lost: 0 }, true, 0);
+        const lines: readonly string[] = outcomeLines(
+            { accepted: 1, closed: 1, firstPass: 1, lost: 0, noHandover: 3 },
+            EOutcomesRead.Read,
+            0
+        );
 
         expect(lines).toContain('принято с первого раза: 1 из 2');
+        expect(lines).toContain('заявок без передачи: 3, в главное число они не входят');
     });
 
     it('с десяти задач появляется доля', () => {
-        const lines: readonly string[] = outcomeLines({ accepted: 10, closed: 0, firstPass: 7, lost: 3 }, true, 5);
+        const lines: readonly string[] = outcomeLines(
+            { accepted: 10, closed: 0, firstPass: 7, lost: 3, noHandover: 0 },
+            EOutcomesRead.Read,
+            5
+        );
 
         expect(lines).toContain('принято с первого раза: 7 из 10 (70%)');
-        expect(lines).toContain('правки владельца на задачу: 5, на задачу 0.5');
+        expect(lines).toContain('правки владельца: 5, на задачу 0.5');
     });
 
     it('дерево, где спросить некого, названо, а не показывает ноль', () => {
-        const lines: readonly string[] = outcomeLines(null, false, 0);
+        const lines: readonly string[] = outcomeLines(null, EOutcomesRead.NobodyToAsk, 0);
 
         expect(lines.join('\n')).toContain('спросить некого');
         expect(lines.join('\n')).not.toContain('принято с первого раза');
     });
 
+    it('оборванное чтение не называется отсутствием функции', () => {
+        const lines: readonly string[] = outcomeLines(null, EOutcomesRead.Failed, 0);
+
+        expect(lines.join('\n')).toContain('чтение оборвалось');
+        expect(lines.join('\n')).not.toContain('спросить некого');
+    });
+
+    it('только заявки без подписи: главного числа нет, их счёт виден', () => {
+        const lines: readonly string[] = outcomeLines(
+            { accepted: 0, closed: 0, firstPass: 0, lost: 0, noHandover: 231 },
+            EOutcomesRead.Read,
+            0
+        );
+
+        expect(lines).toContain('заявок без передачи: 231, в главное число они не входят');
+        expect(lines.join('\n')).not.toContain('0 из 0');
+    });
+
     it('без записей и с ответом хостинга строк нет: о них говорит строка без данных', () => {
-        expect(outcomeLines(null, true, 0)).toEqual([]);
+        expect(outcomeLines(null, EOutcomesRead.Read, 0)).toEqual([]);
     });
 });
 
@@ -193,7 +233,20 @@ describe('collectOutcomes', () => {
     });
 
     it('спросить некого: функции профиля нет, и это названо', () => {
-        expect(collectOutcomes(root, TODAY, '0.34.0')).toBe(false);
+        expect(collectOutcomes(root, TODAY, '0.34.0')).toBe(EOutcomesRead.NobodyToAsk);
+    });
+
+    it('следующее чтение идёт от прошлого, а не за весь срок', () => {
+        treeWith([]);
+        writeFileSync(
+            join(root, '.claude', 'rt-kit', 'project.sh'),
+            `rt_pull_outcomes() { printf '%s\\n' "$1" >> "$CLAUDE_PROJECT_DIR/asked"; }\n`
+        );
+
+        collectOutcomes(root, TODAY, '0.34.0');
+        collectOutcomes(root, '2026-08-13', '0.34.0');
+
+        expect(readFileSync(join(root, 'asked'), 'utf8').trim().split('\n')).toEqual(['2026-07-13', TODAY]);
     });
 
     it('SC-AK-1276 — итог пишется один раз, номера в наблюдения не попадают', () => {
@@ -206,17 +259,17 @@ describe('collectOutcomes', () => {
             env: { ...process.env, CLAUDE_PROJECT_DIR: root },
         });
 
-        expect(collectOutcomes(root, TODAY, '0.34.0')).toBe(true);
-        expect(collectOutcomes(root, TODAY, '0.34.0')).toBe(true);
+        expect(collectOutcomes(root, TODAY, '0.34.0')).toBe(EOutcomesRead.Read);
+        expect(collectOutcomes(root, TODAY, '0.34.0')).toBe(EOutcomesRead.Read);
         expect(outcomes()).toEqual(['first-pass']);
         expect(readFileSync(join(root, OBSERVATIONS_DIR, `${TODAY}.jsonl`), 'utf8')).toContain('"res":"first-pass"');
         expect(readFileSync(join(root, OBSERVATIONS_DIR, `${TODAY}.jsonl`), 'utf8')).not.toContain('777');
     });
 
-    it('заявка без подписи передачи не считается', () => {
+    it('заявка без подписи передачи записана отдельным итогом', () => {
         treeWith([JSON.stringify({ ...pull({ number: 777, handover: null }), head: 'RT-5-probe' })]);
 
-        expect(collectOutcomes(root, TODAY, '0.34.0')).toBe(true);
-        expect(outcomes()).toEqual([]);
+        expect(collectOutcomes(root, TODAY, '0.34.0')).toBe(EOutcomesRead.Read);
+        expect(outcomes()).toEqual(['no-handover']);
     });
 });

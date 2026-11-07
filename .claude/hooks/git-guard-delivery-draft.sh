@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/git-guard-delivery-draft.sh · 08bb85942508 · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/git-guard-delivery-draft.sh · 9b30c8c0306c · правится надстройкой, не здесь
 # Leaving draft, for the delivery guard: does the PR have a review, does it conflict, and was it
 # opened by the right account.
 #
@@ -17,18 +17,24 @@
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
 
-# The handover for the metrics: the call passed every condition, so the request is ready and has a
-# reviewer. A guard is the only one who sees that moment. No mark file — nothing is kept.
+# The handover for the metrics: the call passed every condition here. The next guard in the row may
+# still refuse it, so the branch is only announced: `handover-mark.sh` keeps the sign after the call.
+# No mark file — nothing is kept.
 rt_delivery_handover() {
+    local pending
     # shellcheck disable=SC1091
     . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/metric-marks.sh" 2>/dev/null || return 0
-    rt_handover_mark "$1"
+    pending="$(rt_handover_pending_file "$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.session_id // empty' 2>/dev/null)" "$cmd")"
+    [ -z "$pending" ] || printf '%s' "$1" > "$pending" 2>/dev/null
     return 0
 }
 
-# A request that opens ready is handed over at once; a draft is handed over when it leaves draft.
+# A request that opens ready and names a reviewer is handed over at once. A draft is handed over when
+# it leaves draft, and that guard demands a reviewer itself.
 rt_delivery_open_handover() {
-    printf '%s' "$1" | grep -qE '[[:space:]](--draft|-d)([[:space:]=]|$)' || rt_delivery_handover "$2"
+    printf '%s' "$1" | grep -qE '[[:space:]](--draft|-d)([[:space:]=]|$)' && return 0
+    printf '%s' "$1" | grep -qE '[[:space:]](--reviewer|-r)([[:space:]=])' || return 0
+    rt_delivery_handover "$2"
     return 0
 }
 

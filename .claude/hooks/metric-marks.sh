@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/metric-marks.sh · ee86a11a4943 · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/metric-marks.sh · f953efba75ed · правится надстройкой, не здесь
 # Signs of content and of calls for the package metrics. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The refusal record and the push set source it.
 #
@@ -20,12 +20,14 @@
 # How long a mark about a refusal or a run lives. It compares neighbours, and a month covers them.
 RT_MARKS_KEEP_DAYS=30
 
-# The marks directory of this tree. An empty string — observations are off.
+# The marks directory of this tree. An empty string — observations are off. The directory ignores
+# itself: a fresh tree has no line about it, and `git add -A` would carry the signs into its history.
 rt_marks_dir() {
     local dir
     dir="$(rt_observe_dir 2>/dev/null)"
     [ -n "$dir" ] || return 0
     mkdir -p "$dir/.marks" 2>/dev/null || return 0
+    [ -f "$dir/.gitignore" ] || printf '*\n' > "$dir/.gitignore" 2>/dev/null
     printf '%s' "$dir/.marks"
 }
 
@@ -109,6 +111,22 @@ rt_handover_mark() {
     return 0
 }
 
+# Was this branch handed over. The default of `rt_pull_outcomes` asks the hosting only about those: a
+# request without a sign counts apart, and asking about each of a hundred took two minutes.
+rt_handover_known() {
+    local file
+    file="$(rt_branch_mark handover "$1")"
+    [ -n "$file" ] && [ -f "$file" ]
+}
+
+# The file of a handover about to happen. A guard passes the call before it runs, and another guard
+# may still refuse it, so the guard only announces the branch, and the hook after the call keeps it.
+rt_handover_pending_file() {
+    local dir
+    dir="$(rt_marks_dir)"
+    [ -n "$dir" ] && printf '%s/pending-%s' "$dir" "$(printf '%s %s' "$1" "$2" | cksum 2>/dev/null | cut -d' ' -f1)"
+}
+
 # One owner correction on the current branch: a line of the counter, `before` or `after` the
 # handover. The message itself never gets here. First-pass acceptance reads the `after` lines.
 #
@@ -141,7 +159,7 @@ rt_run_kind() {
 
 # Old marks go by age. Only these kinds: a file that counts something once must outlive them.
 rt_marks_prune() {
-    find "$1" -type f \( -name 'refusal-*' -o -name 'runs-*' -o -name 'exam-*' \) \
+    find "$1" -type f \( -name 'refusal-*' -o -name 'runs-*' -o -name 'exam-*' -o -name 'pending-*' \) \
         -mtime "+$RT_MARKS_KEEP_DAYS" -delete 2>/dev/null
     return 0
 }
@@ -172,6 +190,11 @@ rt_exam_note() {
 #   rt_run_note <content sign> <started, epoch seconds> <green|red|skipped> <check command>
 rt_run_note() {
     local sign="$1" started="$2" outcome="$3" check="$4" now seconds dir file id last wasted=''
+    # Every copy writes into the main one: the heavy steps run from a second copy, and their minutes
+    # are the ones the report exists for. One tree has one report, whichever copy ran the check.
+    local CLAUDE_PROJECT_DIR="${CLAUDE_PROJECT_DIR:-}" main
+    main="$(git -C "$(rt_sign_root)" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)"
+    [ -n "$main" ] && CLAUDE_PROJECT_DIR="$(dirname "$main")"
     now="$(date +%s 2>/dev/null)"
     seconds=$((${now:-0} - ${started:-0}))
     [ "$seconds" -ge 0 ] || seconds=0

@@ -366,19 +366,25 @@ rt_conflicting_pulls_default() {
 # `hooks/pull-outcomes.sh`. A failing exit code means «nobody to ask», and such a tree is counted
 # apart. The task comes from the title: the head of a revert request names the request, not the task.
 # An epic is told by the label of its card, as the delivery guard tells it: a request carries none.
+# A request never handed over counts apart, so the hosting is asked no more about it: one call per
+# request made a first read of a busy tree outlive the report.
 rt_pull_outcomes_default() {
     command -v gh >/dev/null 2>&1 || return 1
     command -v jq >/dev/null 2>&1 || return 1
-    list="$(gh pr list --state all --limit 100 --search "closed:>=$1" \
+    list="$(gh pr list --state all --limit 1000 --search "closed:>=$1" \
         --json number,state,headRefName,title,closedAt 2>/dev/null)" || return 1
     printf '%s' "$list" | jq -c '.[] | select(.state != "OPEN")' | while IFS= read -r pull; do
         number="$(printf '%s' "$pull" | jq -r '.number')"
+        head="$(printf '%s' "$pull" | jq -r '.headRefName')"
         task="$(printf '%s' "$pull" | jq -r '(.title | capture("\\[[A-Za-z]+-(?<n>[0-9]+)\\]").n)? // empty')"
-        commits="$(gh api "repos/{owner}/{repo}/pulls/$number/commits?per_page=100" \
-            --jq '[.[] | {sha, tree: .commit.tree.sha, parents: (.parents | length)}]' 2>/dev/null)"
-        [ -n "$commits" ] || continue
+        commits='[]'
         labels='[]'
-        [ -z "$task" ] || labels="$(gh api "repos/{owner}/{repo}/issues/$task" --jq '[.labels[].name]' 2>/dev/null)"
+        if ! command -v rt_handover_known >/dev/null 2>&1 || rt_handover_known "$head"; then
+            commits="$(gh api "repos/{owner}/{repo}/pulls/$number/commits?per_page=100" \
+                --jq '[.[] | {sha, tree: .commit.tree.sha, parents: (.parents | length)}]' 2>/dev/null)"
+            [ -n "$commits" ] || continue
+            [ -z "$task" ] || labels="$(gh api "repos/{owner}/{repo}/issues/$task" --jq '[.labels[].name]' 2>/dev/null)"
+        fi
         printf '%s' "$pull" | jq -c --argjson commits "$commits" --argjson labels "${labels:-[]}" \
             --arg task "$task" --arg epic "${RT_BOARD_EPIC_LABEL:-}" '{
             number,

@@ -15,8 +15,10 @@ function linesOf(usage: IUsageMetric): readonly string[] {
 describe('вызовы ролей', () => {
     it('SC-AK-1291 — роль пакета считается по имени, своя роль дерева постоянным словом', () => {
         const usage: IUsageMetric = usageOf([
-            line('role-call', 'goal-critic', 's1', { verdict: 'refused' }),
-            line('role-call', 'goal-critic', 's1', { verdict: 'passed' }),
+            line('role-call', 'goal-critic', 's1'),
+            line('role-verdict', 'goal-critic', 's1', { verdict: 'refused' }),
+            line('role-call', 'goal-critic', 's1'),
+            line('role-verdict', 'goal-critic', 's1', { verdict: 'passed' }),
             line('role-call', 'tree-own', 's1'),
             line('command-call', 'feedback', 's1'),
         ]);
@@ -89,6 +91,20 @@ describe('доля правок', () => {
         expect(usage.editsRefused).toBe(1);
         expect(linesOf(usage)).toContain('правки до загрузки правила: 1 из 4 (25%)');
         expect(usageCounted(usage)).toContain('Доля правок до загрузки правила');
+    });
+});
+
+describe('сжатие окна', () => {
+    it('отказ шлюза по уже загруженному правилу в долю правок не входит', () => {
+        const usage: IUsageMetric = usageOf([
+            line('edit-seen', '', 's1'),
+            line('skill-load', 'testing', 's1'),
+            line('gate-deny', 'testing', 's1', { kind: 'ts' }),
+            line('gate-deny', 'doc-style', 's1', { kind: 'md' }),
+        ]);
+
+        expect(usage.edits).toBe(1);
+        expect(usage.editsRefused).toBe(1);
     });
 });
 

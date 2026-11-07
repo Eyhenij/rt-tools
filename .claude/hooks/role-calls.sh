@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/role-calls.sh · 5f951af0ffcd · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/role-calls.sh · 5bac18955cc6 · правится надстройкой, не здесь
 # rt-hook: PostToolUse Agent|Task
 # rt-hook: UserPromptSubmit
+# rt-hook: SubagentStop
 # Requires: hooks/hook-input.sh, hooks/observe.sh
 #
 # Counts the calls of roles and commands for the package metrics. A role nobody calls is judged the
@@ -13,7 +14,9 @@
 #
 # THE VERDICT. A role that gives one says it in its first line, and the table below is the whole
 # knowledge about it: the words of a refusal, in both languages a role answers in. A role outside the
-# table is counted by calls. Only the answer goes into the record, the text stays where it is.
+# table is counted by calls. Only the answer goes into the record, the text stays where it is. It is
+# read when the role ends, not when it is called: a role usually runs in the background, and at the
+# call its answer is only the fact of the launch.
 #
 # FAIL-OPEN: no input, no parser, no record — exit with zero and no output. This hook never refuses.
 
@@ -33,7 +36,8 @@ sid="$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.session_id // empty' 2>/dev/null)"
 rt_called_name() {
     local file="$1" name="$2"
     [ -f "$file" ] || return 0
-    if head -n 3 "$file" 2>/dev/null | grep -q 'rt-kit v'; then
+    # The layout header stands after the front matter of the file, so the top lines are not enough.
+    if head -n 12 "$file" 2>/dev/null | grep -q 'rt-kit v'; then
         printf '%s' "$name"
     else
         printf 'tree-own'
@@ -55,18 +59,13 @@ rt_pass_words() {
     esac
 }
 
-# The verdict by the first line of the answer. A role sent to the background answers with the fact of
-# its launch, and that is neither word: such a call counts as a call, not as a pass.
+# The verdict by the first line of the last message of the role. Neither word — no verdict.
 rt_verdict_of() {
     local refusal pass line
     refusal="$(rt_refusal_words "$1")"
     pass="$(rt_pass_words "$1")"
     [ -n "$refusal" ] || return 0
-    line="$(printf '%s' "$RT_HOOK_INPUT" | jq -r '
-        .tool_response // empty
-        | if type == "string" then .
-          elif (type == "object" and (.content | type) == "array") then (.content | map(.text? // "") | join("\n"))
-          else "" end' 2>/dev/null | awk 'NF { print; exit }')"
+    line="$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.last_assistant_message // empty' 2>/dev/null | awk 'NF { print; exit }')"
     if printf '%s' "$line" | grep -qiE "$refusal"; then
         printf 'refused'
     elif printf '%s' "$line" | grep -qiE "$pass"; then
@@ -86,10 +85,20 @@ if [ -n "$prompt" ]; then
     exit 0
 fi
 
+# A role that ended: only the verdict is written here, the call was counted when it was made. The
+# event is asked by name: a call made inside a role carries the type of that role too.
+if [ "$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.hook_event_name // empty' 2>/dev/null)" = SubagentStop ]; then
+    ended="$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.agent_type // empty' 2>/dev/null)"
+    name="$(rt_called_name "$root/.claude/agents/$ended.md" "$ended")"
+    verdict="$(rt_verdict_of "$name")"
+    [ -z "$verdict" ] || rt_note role-verdict "res=$name" "sid=$sid" "verdict=$verdict"
+    exit 0
+fi
+
 role="$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.tool_input.subagent_type // empty' 2>/dev/null)"
 [ -n "$role" ] || exit 0
 name="$(rt_called_name "$root/.claude/agents/$role.md" "$role")"
 [ -n "$name" ] || exit 0
 
-rt_note role-call "res=$name" "sid=$sid" "verdict=$(rt_verdict_of "$name")"
+rt_note role-call "res=$name" "sid=$sid"
 exit 0

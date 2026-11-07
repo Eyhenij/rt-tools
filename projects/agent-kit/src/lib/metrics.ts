@@ -15,7 +15,7 @@ import { IEnvironment, IOutcomeOfCommand, noObservationLines, sweptLine } from '
 import { dayBefore, ICount, IObservation, IReadResult, ISummary, readObservations, summarize } from './observations.js';
 import { IUsageMetric, usageCounted, usageLines, usageOf } from './metric-usage.js';
 import { byText } from './order.js';
-import { collectOutcomes, IOutcomeMetric, outcomeLines, outcomeMetricOf } from './outcomes.js';
+import { collectOutcomes, EOutcomesRead, hasMainNumber, IOutcomeMetric, outcomeLines, outcomeMetricOf } from './outcomes.js';
 import { laidOutSkills } from './snapshot.js';
 
 /** Отрезок отчёта, когда он не назван: столько дней наблюдения лежат на диске. */
@@ -74,8 +74,8 @@ export interface IMetricsReport {
     readonly corrections: number;
     /** Итоги задач. `null`: итогов не записано. */
     readonly outcomes: IOutcomeMetric | null;
-    /** Было ли кого спросить об итогах: дерево без функции профиля считается отдельно. */
-    readonly outcomesAsked: boolean;
+    /** Чем кончилось чтение итогов: дерево, где спросить некого, считается отдельно. */
+    readonly outcomesRead: EOutcomesRead;
     readonly usage: IUsageMetric;
     readonly gate: readonly ICount[];
     readonly gateRefusals: number;
@@ -215,7 +215,7 @@ export function metricsOf(
     rules: number,
     entryChars: number | null,
     today: string,
-    outcomesAsked: boolean = true
+    outcomesRead: EOutcomesRead = EOutcomesRead.Read
 ): IMetricsReport {
     const guards: readonly IGuardMetric[] = guardsOf(read.observations);
     const full: boolean = coversFullPeriod(read, summary.days, today);
@@ -235,7 +235,7 @@ export function metricsOf(
         runs,
         corrections,
         outcomes,
-        outcomesAsked,
+        outcomesRead,
         usage,
         rules,
         entryChars,
@@ -252,7 +252,7 @@ export function metricsOf(
         deadRules: full ? summary.unused : null,
         deadRuleShare: full ? percent(summary.unused.length, rules) : null,
         noData: noDataOf([
-            outcomes !== null && 'Принято с первого раза',
+            hasMainNumber(outcomes) && 'Принято с первого раза',
             comparedRefusals > 0 && 'Пустые отказы',
             runs.length > 0 && 'Пустые запуски',
             corrections > 0 && 'Правки владельца',
@@ -318,7 +318,7 @@ export function metricsLines(report: IMetricsReport): readonly string[] {
         `прочитано дней: ${report.daysRead.length}, с ${report.daysRead[0]} по ${report.daysRead[report.daysRead.length - 1]}`,
         `нет данных: ${report.noData.join(', ')}`,
         `вне этого отчёта: ${report.outside.join(', ')}`,
-        ...outcomeLines(report.outcomes, report.outcomesAsked, report.corrections),
+        ...outcomeLines(report.outcomes, report.outcomesRead, report.corrections),
         '',
         `отказы проверок: ${report.refusals}, на сессию ${report.refusalsPerSession}`,
         `повторы подряд: ${report.repeats} (${report.repeatShare}%)`,
@@ -335,7 +335,7 @@ export function metricsLines(report: IMetricsReport): readonly string[] {
         `отказы шлюза правил: ${report.gateRefusals}`,
         ...topLines(report.gate.map((rule: ICount): string => `  ${rule.name}: ${rule.count}`)),
         ...runLines(report.runs),
-        ...(report.corrections > 0 ? ['', `правки владельца: ${report.corrections}`] : []),
+        ...(report.corrections > 0 && !hasMainNumber(report.outcomes) ? ['', `правки владельца: ${report.corrections}`] : []),
         ...usageLines(report.usage, topLines),
         '',
         ...deadRuleLines(report),
@@ -376,11 +376,11 @@ export function metrics(env: IEnvironment, options: IMetricsOptions): IOutcomeOf
         };
     }
 
-    const asked: boolean = collectOutcomes(env.root, options.today, env.version);
+    const read: EOutcomesRead = collectOutcomes(env.root, options.today, env.version);
     const result: IReadResult = readObservations(env.root, options.today, options.days);
     const known: readonly string[] = laidOutSkills(config, env.assetsDir);
     const summary: ISummary = summarize(result.observations, known, options.days);
-    const report: IMetricsReport = metricsOf(result, summary, known.length, entryCharsOf(env.root), options.today, asked);
+    const report: IMetricsReport = metricsOf(result, summary, known.length, entryCharsOf(env.root), options.today, read);
 
     if (options.json) {
         return { code: 0, lines: [JSON.stringify(report)] };
