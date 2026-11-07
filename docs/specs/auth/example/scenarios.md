@@ -14,7 +14,7 @@ Given a reader in the admin
 When the records screen opens
 Then the row «Signed in as» shows their name on one line and their email on the next
 
-### SC-AUTH-98 — the ready-reply button puts its text into the reply field
+### SC-AUTH-104 — the ready-reply button puts its text into the reply field
 
 Given a reader on the records screen
 When they press the ready-reply button of the correspondence

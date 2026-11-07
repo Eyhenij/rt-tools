@@ -51,7 +51,7 @@ test.describe('the account row of the records screen', () => {
 });
 
 test.describe('the correspondence of the records screen', () => {
-    test('SC-AUTH-98 — the ready-reply button puts its text into the reply field', async ({ page }) => {
+    test('SC-AUTH-104 — the ready-reply button puts its text into the reply field', async ({ page }) => {
         await signIn(page, 'reader');
         const field: Locator = page.getByTestId('chat-composer-prompt').locator('textarea');
         const text: string = 'Thank you for writing. We will answer today.';
