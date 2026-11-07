@@ -3,17 +3,32 @@
  *
  * Сценарии договорённости `docs/specs/agent-kit/proposed/metrics/`.
  */
-import { IGuardMetric, IMetricsReport, guardsOf, metricsLines, metricsOf } from './metrics.js';
-import { IObservation, ISummary, summarize } from './observations.js';
+import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+import { IEnvironment, init, IOutcomeOfCommand } from './commands.js';
+import { CONFIG_PATH } from './config.js';
+import { IGuardMetric, IMetricsReport, guardsOf, metrics, metricsLines, metricsOf } from './metrics.js';
+import { IObservation, IReadResult, ISummary, OBSERVATIONS_DIR, summarize } from './observations.js';
+
+const TODAY: string = '2026-08-12';
 
 function line(event: string, resource: string, session: string): IObservation {
     return { event, resource, kind: '', session, version: '0.34.0' };
 }
 
+/** Первый день полного отрезка до сегодняшнего включительно. */
+const FIRST_OF_FULL_PERIOD: string = '2026-07-14';
+
+function readOf(observations: readonly IObservation[]): IReadResult {
+    return { observations, swept: [], silent: false, daysRead: [FIRST_OF_FULL_PERIOD, TODAY] };
+}
+
 function reportOf(observations: readonly IObservation[], known: readonly string[]): IMetricsReport {
     const summary: ISummary = summarize(observations, known, 30);
 
-    return metricsOf(observations, summary, known.length, 1200);
+    return metricsOf(readOf(observations), summary, known.length, 1200, TODAY);
 }
 
 describe('guardsOf', () => {
@@ -113,13 +128,169 @@ describe('metricsLines', () => {
         expect(lines).toContain('отказы проверок: 1, на сессию 1');
         expect(noData).toContain('Принято с первого раза');
         expect(noData).toContain('Пустые запуски');
+        expect(noData).toContain('Отказы после загрузки правила');
+        expect(noData).toContain('Доля правок до загрузки правила');
         expect(lines.join('\n')).not.toContain('Принято с первого раза: 0');
     });
 
     it('SC-AK-1293 — вес входа без данных назван словами', () => {
         const observations: readonly IObservation[] = [line('skill-load', 'testing', 's1')];
-        const report: IMetricsReport = metricsOf(observations, summarize(observations, ['testing'], 30), 1, null);
+        const report: IMetricsReport = metricsOf(readOf(observations), summarize(observations, ['testing'], 30), 1, null, TODAY);
 
         expect(metricsLines(report)).toContain('вес входа: нет данных');
+    });
+});
+
+describe('metrics', () => {
+    let root: string;
+    let env: IEnvironment;
+
+    const observed: (day: string) => void = (day: string): void => {
+        const dir: string = join(root, OBSERVATIONS_DIR);
+        const text: string = JSON.stringify({ t: `${day}T09:00:00Z`, ev: 'guard-deny', res: 'grill-gate', sid: '1', v: '0.1.0' });
+
+        mkdirSync(dir, { recursive: true });
+        writeFileSync(join(dir, `${day}.jsonl`), `${text}\n`, 'utf8');
+    };
+    const report: (json?: boolean, days?: number) => IOutcomeOfCommand = (json: boolean = false, days: number = 30): IOutcomeOfCommand =>
+        metrics(env, { days, json, today: TODAY });
+    const said: (outcome: IOutcomeOfCommand) => string = (outcome: IOutcomeOfCommand): string => outcome.lines.join('\n');
+
+    beforeEach((): void => {
+        root = mkdtempSync(join(tmpdir(), 'agent-kit-metrics-'));
+        env = { root, version: '0.1.0', assetsDir: join(__dirname, '..', '..', 'assets') };
+        init(root, [], { host: 'github' });
+    });
+
+    afterEach((): void => {
+        rmSync(root, { recursive: true, force: true });
+    });
+
+    it('SC-AK-1294 — отчёт называет прочитанные дни, а запрошенный отрезок их не подменяет', () => {
+        observed('2026-08-01');
+        observed('2026-08-12');
+
+        const text: string = said(report(false, 60));
+
+        expect(text).toContain('метрики дерева за 60 дн.');
+        expect(text).toContain('прочитано дней: 2, с 2026-08-01 по 2026-08-12');
+    });
+
+    it('SC-AK-1294 — снятые по сроку файлы названы и в тексте, и в JSON', () => {
+        observed('2026-06-01');
+        observed('2026-08-12');
+
+        expect(said(report())).toContain('снято по сроку хранения (30 дн.): 1');
+        expect(readdirSync(join(root, OBSERVATIONS_DIR))).toEqual(['2026-08-12.jsonl']);
+
+        observed('2026-06-02');
+
+        expect(JSON.parse(report(true).lines[0]).swept).toEqual(['2026-06-02.jsonl']);
+    });
+
+    it('SC-AK-1294 — без снятых файлов строки о них нет', () => {
+        observed('2026-08-12');
+
+        const text: string = said(report());
+
+        // положительная пара: отчёт напечатан, строки нет
+        expect(text).toContain('отказы проверок: 1');
+        expect(text).not.toContain('снято по сроку');
+    });
+
+    it('SC-AK-1295 — записи не велось: причина словами, а не нули', () => {
+        const text: string = said(report());
+
+        expect(text).toContain('записи не велось');
+        expect(text).not.toContain('отказы проверок: 0');
+        expect(text).not.toContain('мёртвые правила');
+    });
+
+    it('SC-AK-1295 — записи не велось: JSON говорит об этом полем', () => {
+        const parsed: IMetricsReport = JSON.parse(report(true).lines[0]);
+
+        expect(parsed.silent).toBe(true);
+        expect(parsed.daysRead).toEqual([]);
+    });
+
+    it('SC-AK-1295 — за отрезок пусто, а раньше записи были: так и сказано', () => {
+        observed('2026-08-01');
+
+        const text: string = said(report(false, 3));
+
+        expect(text).toContain('записи велись раньше');
+        expect(text).not.toContain('отказы проверок: 0');
+    });
+
+    it('SC-AK-1295 — выключенная запись названа выключенной', () => {
+        const config: Record<string, unknown> = JSON.parse(readFileSync(join(root, CONFIG_PATH), 'utf8'));
+
+        writeFileSync(join(root, CONFIG_PATH), JSON.stringify({ ...config, observe: false }), 'utf8');
+
+        expect(said(report())).toContain('выключена');
+        expect(JSON.parse(report(true).lines[0])).toEqual({ observe: false, silent: true });
+    });
+
+    it('SC-AK-1295 — за полный срок хранения отчёт не советует отрезок длиннее', () => {
+        observed('2026-06-01');
+
+        const text: string = said(report());
+
+        expect(text).toContain('записи велись раньше');
+        expect(text).toContain('снято по сроку хранения (30 дн.): 1');
+        expect(text).not.toContain('--days');
+    });
+
+    it('SC-AK-1293 — за короткий отрезок мёртвые правила не считаются ни в тексте, ни в JSON', () => {
+        observed(FIRST_OF_FULL_PERIOD);
+        observed(TODAY);
+
+        const parsed: IMetricsReport = JSON.parse(report(true, 3).lines[0]);
+
+        expect(said(report(false, 3))).toContain('мёртвые правила: нет данных, они считаются за 30 дн. записей');
+        expect(parsed.deadRules).toBeNull();
+        expect(parsed.deadRuleShare).toBeNull();
+    });
+
+    it('SC-AK-1293 — дерево записывает недавно: мёртвые правила не считаются за полный отрезок', () => {
+        observed('2026-08-10');
+        observed(TODAY);
+
+        expect(said(report())).toContain('мёртвые правила: нет данных');
+        expect(JSON.parse(report(true).lines[0]).deadRules).toBeNull();
+    });
+
+    it('SC-AK-1293 — записи покрывают отрезок: мёртвые правила посчитаны, и простой первых дней не мешает', () => {
+        observed('2026-07-20');
+        observed(TODAY);
+
+        const parsed: IMetricsReport = JSON.parse(report(true).lines[0]);
+
+        expect(parsed.deadRuleShare).not.toBeNull();
+        expect(said(report())).toContain(`мёртвые правила: ${parsed.deadRules?.length} из ${parsed.rules}`);
+    });
+
+    it('SC-AK-1293 — отчёт называет метрики, которые считает только общий отчёт', () => {
+        observed('2026-08-12');
+
+        expect(said(report())).toContain('вне этого отчёта: Повторы ошибок, Полнота отчёта, Выпуск');
+        expect(JSON.parse(report(true).lines[0]).outside).toContain('Повторы ошибок');
+    });
+
+    it('SC-AK-1292 — обрезанный список говорит, сколько строк осталось', () => {
+        observed(FIRST_OF_FULL_PERIOD);
+        observed(TODAY);
+
+        const dead: number = JSON.parse(report(true).lines[0]).deadRules.length;
+
+        expect(dead).toBeGreaterThan(8);
+        expect(said(report())).toContain(`  и ещё ${dead - 8}`);
+    });
+
+    it('SC-AK-1295 — без конфига отчёт отказывает', () => {
+        rmSync(join(root, CONFIG_PATH));
+
+        expect(report().code).toBe(1);
+        expect(said(report())).toContain('init');
     });
 });

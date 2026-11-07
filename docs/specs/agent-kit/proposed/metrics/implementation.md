@@ -1,7 +1,8 @@
 # Binding — the product metrics of the rules package
 
-There is no code yet, so this file holds no `file:symbol` bindings. It lists where each part is
-expected, so that the merge into the package spec shows where to look.
+Only the report of one tree has code: `projects/agent-kit/src/lib/metrics.ts:metrics`. The rest of the
+agreement has none yet, so this file lists where each part is expected, and the merge into the
+package spec shows where to look.
 
 | Part                                                             | Where it is expected               | Task    |
 | ---------------------------------------------------------------- | ---------------------------------- | ------- |

@@ -16,8 +16,8 @@ The package counts loads and refusals, so an edit of a rule is justified by opin
 helped stays unknown.
 
 This agreement names the metrics, the numbers each tree sends by itself, and the loop that turns
-them into edits. One copy of this tree shows the size of the question: in 33 days one guard refused
-668 times, and 420 of those refusals came in a row in one session.
+them into edits. One copy of this tree shows the size of the question: in 33 days with records one guard refused
+669 times, and 395 of those refusals came right after its own refusal in the same session.
 
 ## Terminology
 
@@ -127,7 +127,12 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
 ### The loop
 
 - **The report of a cycle is the section over all enrolled trees.** `agent-kit metrics` is the partial
-  view of one tree, without completeness, repeats and delivery.
+  view of one tree, without completeness, repeated mistakes and delivery.
+- **The partial view names what it read.** The days it found, between which dates, and the files it
+  removed by the keeping time stand in the report and in its JSON, because a reading removes them. A
+  tree with no observations gets a sentence instead of zeros. A list cut short says how many lines it
+  left out. The dead rules are counted only when the requested period is 30 days or more and the
+  records reach its first week. Otherwise the text says there is no data, and the JSON carries null.
 - **A cycle begins with the report.** The worst driver of the main metric is named with its numbers.
 - **One task changes one thing and names the metric it should move.** The task and the release note
   carry the metric and the direction.
@@ -145,6 +150,7 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
 | `observations/spec.md`       | «New kinds of events» in the out-of-scope list                                        | The closed list gains the run line and the exam verdict                     |
 | `observations/spec.md`       | The writing «is switched off whole»                                                   | Stays for `observe`. `send` is a second key                                 |
 | `observations/spec.md`       | «Measuring the session time and the token cost» in the out-of-scope list              | Stays. A run's seconds measure a check, not a session                       |
+| `observations/spec.md`       | «Observations older than the keeping time are removed by the digest»                  | The one-tree report removes them too and names what it removed              |
 | `observations/cargo/spec.md` | «Nothing goes outward that a person did not send by a command»                        | Holds for proposals, analyses and the digest. Day lines leave by themselves |
 | `observations/cargo/spec.md` | «The cargo goes by the same request as the rest … only by a command»                  | The same exception                                                          |
 | `observations/cargo/spec.md` | «A resource name the package does not ship leaves as a constant word»                 | Day lines carry no such name                                                |

@@ -12,8 +12,8 @@
  */
 import { costOf, CostUnavailableError } from './cost.js';
 import { IConfig, readConfig } from './config.js';
-import { IEnvironment, IOutcomeOfCommand } from './commands.js';
-import { ICount, IObservation, IReadResult, ISummary, readObservations, summarize } from './observations.js';
+import { IEnvironment, IOutcomeOfCommand, noObservationLines, sweptLine } from './commands.js';
+import { dayBefore, ICount, IObservation, IReadResult, ISummary, readObservations, summarize } from './observations.js';
 import { byText } from './order.js';
 import { laidOutSkills } from './snapshot.js';
 
@@ -22,6 +22,9 @@ export const METRICS_DEFAULT_DAYS: number = 30;
 
 /** Сколько строк с худшими ресурсами печатает отчёт. */
 const TOP_LINES: number = 8;
+
+/** На столько дней первая запись может опоздать к началу отрезка: в первые дни дерево могло простаивать. */
+const FIRST_RECORD_SLACK_DAYS: number = 7;
 
 /** Отказы одного гарда за отрезок. */
 export interface IGuardMetric {
@@ -35,6 +38,12 @@ export interface IGuardMetric {
 
 export interface IMetricsReport {
     readonly days: number;
+    /** Записи не велось ни разу: нули отчёта ничего не значат. */
+    readonly silent: boolean;
+    /** Дни, за которые файл нашёлся: запрошенный отрезок бывает длиннее срока хранения. */
+    readonly daysRead: readonly string[];
+    /** Файлы, снятые чтением по сроку хранения. */
+    readonly swept: readonly string[];
     readonly sessions: number;
     readonly refusals: number;
     readonly refusalsPerSession: number;
@@ -44,12 +53,15 @@ export interface IMetricsReport {
     readonly gate: readonly ICount[];
     readonly gateRefusals: number;
     readonly rules: number;
-    readonly deadRules: readonly string[];
-    readonly deadRuleShare: number;
+    /** `null`: записи не покрывают полный отрезок, и не загруженным выглядит почти всё. */
+    readonly deadRules: readonly string[] | null;
+    readonly deadRuleShare: number | null;
     /** Вес входа сессии в символах. `null`: посчитать было не на чем. */
     readonly entryChars: number | null;
     /** Числа, для которых наблюдений ещё нет: отчёт называет их, а не молчит. */
     readonly noData: readonly string[];
+    /** Числа, которые считает только отчёт по всем приложениям. */
+    readonly outside: readonly string[];
 }
 
 export interface IMetricsOptions {
@@ -63,17 +75,22 @@ export interface IMetricsOptions {
 const NOT_RECORDED_YET: readonly string[] = [
     'Принято с первого раза',
     'Правки владельца',
-    'Повторы ошибок',
+    'Отказы после загрузки правила',
+    'Доля правок до загрузки правила',
     'Пустые отказы',
     'Пустые запуски',
     'Экзамены с первого раза',
     'Вызовы ролей и команд',
+    'Доля работы, отказанной ролью',
 ];
+
+/** Метрики, которые считает только отчёт по всем приложениям. */
+const OUTSIDE_THE_TREE: readonly string[] = ['Повторы ошибок', 'Полнота отчёта', 'Выпуск'];
 
 const percent: (part: number, whole: number) => number = (part: number, whole: number): number =>
     whole > 0 ? Math.round((part / whole) * 100) : 0;
 
-const byLoss: (left: IGuardMetric, right: IGuardMetric) => number = (left: IGuardMetric, right: IGuardMetric): number =>
+const byRepeats: (left: IGuardMetric, right: IGuardMetric) => number = (left: IGuardMetric, right: IGuardMetric): number =>
     right.repeats - left.repeats || right.refusals - left.refusals || byText(left.name, right.name);
 
 /**
@@ -109,17 +126,20 @@ export function guardsOf(observations: readonly IObservation[]): readonly IGuard
 
             return { name, refusals: count, repeats: repeated, repeatShare: percent(repeated, count) };
         })
-        .sort(byLoss);
+        .sort(byRepeats);
+}
+
+/** Покрывают ли записи полный отрезок: только тогда незагруженное правило считается мёртвым. */
+function coversFullPeriod(read: IReadResult, days: number, today: string): boolean {
+    const edge: string = dayBefore(today, METRICS_DEFAULT_DAYS - 1 - FIRST_RECORD_SLACK_DAYS);
+
+    return days >= METRICS_DEFAULT_DAYS && read.daysRead.length > 0 && byText(read.daysRead[0], edge) <= 0;
 }
 
 /** Отчёт за отрезок: сводка уже посчитала загрузки, отказы шлюза и неиспользованные правила. */
-export function metricsOf(
-    observations: readonly IObservation[],
-    summary: ISummary,
-    rules: number,
-    entryChars: number | null
-): IMetricsReport {
-    const guards: readonly IGuardMetric[] = guardsOf(observations);
+export function metricsOf(read: IReadResult, summary: ISummary, rules: number, entryChars: number | null, today: string): IMetricsReport {
+    const guards: readonly IGuardMetric[] = guardsOf(read.observations);
+    const full: boolean = coversFullPeriod(read, summary.days, today);
     const refusals: number = guards.reduce((sum: number, guard: IGuardMetric): number => sum + guard.refusals, 0);
     const repeats: number = guards.reduce((sum: number, guard: IGuardMetric): number => sum + guard.repeats, 0);
 
@@ -130,15 +150,38 @@ export function metricsOf(
         rules,
         entryChars,
         days: summary.days,
+        silent: read.silent,
+        daysRead: read.daysRead,
+        swept: read.swept,
         sessions: summary.sessions,
         refusalsPerSession: summary.sessions > 0 ? Math.round(refusals / summary.sessions) : 0,
         repeatShare: percent(repeats, refusals),
         gate: summary.denials,
         gateRefusals: summary.denials.reduce((sum: number, rule: ICount): number => sum + rule.count, 0),
-        deadRules: summary.unused,
-        deadRuleShare: percent(summary.unused.length, rules),
+        deadRules: full ? summary.unused : null,
+        deadRuleShare: full ? percent(summary.unused.length, rules) : null,
         noData: NOT_RECORDED_YET,
+        outside: OUTSIDE_THE_TREE,
     };
+}
+
+/** Первые строки списка и счёт остальных: обрезанный список не должен читаться как полный. */
+function topLines(lines: readonly string[]): readonly string[] {
+    const rest: number = lines.length - TOP_LINES;
+
+    return [...lines.slice(0, TOP_LINES), ...(rest > 0 ? [`  и ещё ${rest}`] : [])];
+}
+
+/** Мёртвые правила словами: без полного отрезка вместо числа стоит причина. */
+function deadRuleLines(report: IMetricsReport): readonly string[] {
+    if (report.deadRules === null) {
+        return [`мёртвые правила: нет данных, они считаются за ${METRICS_DEFAULT_DAYS} дн. записей`];
+    }
+
+    return [
+        `мёртвые правила: ${report.deadRules.length} из ${report.rules} (${report.deadRuleShare}%)`,
+        ...topLines(report.deadRules.map((name: string): string => `  ${name}`)),
+    ];
 }
 
 /** Отчёт словами: сначала то, чего нет, чтобы частичный вид не читался как полный. */
@@ -147,21 +190,25 @@ export function metricsLines(report: IMetricsReport): readonly string[] {
 
     return [
         `метрики дерева за ${report.days} дн.: сессий ${report.sessions}`,
+        `прочитано дней: ${report.daysRead.length}, с ${report.daysRead[0]} по ${report.daysRead[report.daysRead.length - 1]}`,
         `нет данных: ${report.noData.join(', ')}`,
+        `вне этого отчёта: ${report.outside.join(', ')}`,
         '',
         `отказы проверок: ${report.refusals}, на сессию ${report.refusalsPerSession}`,
         `повторы подряд: ${report.repeats} (${report.repeatShare}%)`,
-        ...report.guards
-            .slice(0, TOP_LINES)
-            .map((guard: IGuardMetric): string => `  ${guard.name}: ${guard.refusals}, повторов ${guard.repeats} (${guard.repeatShare}%)`),
+        ...topLines(
+            report.guards.map(
+                (guard: IGuardMetric): string => `  ${guard.name}: ${guard.refusals}, повторов ${guard.repeats} (${guard.repeatShare}%)`
+            )
+        ),
         '',
         `отказы шлюза правил: ${report.gateRefusals}`,
-        ...report.gate.slice(0, TOP_LINES).map((rule: ICount): string => `  ${rule.name}: ${rule.count}`),
+        ...topLines(report.gate.map((rule: ICount): string => `  ${rule.name}: ${rule.count}`)),
         '',
-        `мёртвые правила: ${report.deadRules.length} из ${report.rules} (${report.deadRuleShare}%)`,
-        ...report.deadRules.slice(0, TOP_LINES).map((name: string): string => `  ${name}`),
+        ...deadRuleLines(report),
         '',
         `вес входа: ${entry}`,
+        ...(report.swept.length ? ['', sweptLine(report.swept)] : []),
     ];
 }
 
@@ -186,13 +233,24 @@ export function metrics(env: IEnvironment, options: IMetricsOptions): IOutcomeOf
     }
 
     if (!config.observe) {
-        return { code: 0, lines: ['запись наблюдений выключена ключом `observe`: считать не по чему'] };
+        return {
+            code: 0,
+            lines: [
+                options.json
+                    ? JSON.stringify({ observe: false, silent: true })
+                    : 'запись наблюдений выключена ключом `observe`: считать не по чему',
+            ],
+        };
     }
 
     const result: IReadResult = readObservations(env.root, options.today, options.days);
     const known: readonly string[] = laidOutSkills(config, env.assetsDir);
     const summary: ISummary = summarize(result.observations, known, options.days);
-    const report: IMetricsReport = metricsOf(result.observations, summary, known.length, entryCharsOf(env.root));
+    const report: IMetricsReport = metricsOf(result, summary, known.length, entryCharsOf(env.root), options.today);
 
-    return { code: 0, lines: options.json ? [JSON.stringify(report)] : metricsLines(report) };
+    if (options.json) {
+        return { code: 0, lines: [JSON.stringify(report)] };
+    }
+
+    return { code: 0, lines: noObservationLines(result, options.days) ?? metricsLines(report) };
 }

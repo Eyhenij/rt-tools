@@ -152,13 +152,30 @@ Not covered: no code yet.
 Given observations of a period
 When `agent-kit metrics` counts them
 Then a refusal right after the same guard's refusal in that session counts as a repeat, and the
-report names the refusals, the gate refusals, the dead rules and the cost of the entry
+report names the refusals, the gate refusals, the dead rules and the cost of the entry. A list cut
+short says how many lines it left out
 
 ### SC-AK-1293 — the report names what it does not know
 
 Given a metric with no signal in the observations yet
 When the report is printed
-Then it stands in a line saying there is no data, not as a zero
+Then it stands in a line saying there is no data, not as a zero. The dead rules without the records
+of a full period do the same, and the JSON carries null for them. A metric only the report over all
+trees counts stands in a line of its own
+
+### SC-AK-1294 — the report names the days it read and the files it removed
+
+Given observations of a period, some older than the keeping time
+When `agent-kit metrics` is printed as text or as JSON
+Then the days found, the first and the last of them and the files removed stand in the report, and a
+requested period longer than the days found does not stand for them
+
+### SC-AK-1295 — a tree without observations gets a sentence, not zeros
+
+Given a tree with no observation directory, a period with no observations or the writing switched off
+When the report is printed
+Then it names the reason in words and prints no zero, and its JSON carries the sign that nothing was
+recorded
 
 ### SC-AK-1290 — a person's message is counted without being kept
 
