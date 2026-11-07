@@ -10,8 +10,10 @@
 echo "the stand names of a working copy"
 
 ROOT="$(cd "$TOOLS/.." && pwd)"
-ONE="$(mktemp -d)"
-TWO="$(mktemp -d)"
+# Constant paths: random ones fall into one block once in five hundred runs.
+ONE=/tmp/rt-stand-env-one
+TWO=/tmp/rt-stand-env-two
+mkdir -p "$ONE" "$TWO"
 
 # One variable of the stand, as the profile leaves it for the steps of the set in the given folder.
 name_in() {
@@ -57,6 +59,20 @@ report 'a pinned name of the frames browser is dropped' "$shot" 'gone'
 # The sign keeps the environment: a person who knows the port is taken names another for one run.
 kept="$(cd "$ONE" && RT_STAND_KEEP=1 E2E_KEYCLOAK_PORT=61234 bash -c ". '$ROOT/.claude/rt-kit/project.sh'; printenv E2E_KEYCLOAK_PORT")"
 report 'the keep sign leaves the environment as it is' "$kept" '61234'
+
+# A subfolder is the same copy: the session guard reads the profile from the folder of the session.
+report 'a subfolder gets the names of its copy' \
+    "$(name_in "$ROOT/tools" COMPOSE_PROJECT_NAME)" "$(name_in "$ROOT" COMPOSE_PROJECT_NAME)"
+
+# The copies of this machine do not share a block: a match brings the shared stand back in silence.
+copies="$(git -C "$ROOT" worktree list --porcelain | sed -n 's/^worktree //p')"
+blocks="$(printf '%s\n' "$copies" | while IFS= read -r copy; do
+    [ -d "$copy" ] && name_in "$copy" COMPOSE_PROJECT_NAME && echo
+done | grep -c .)"
+unique="$(printf '%s\n' "$copies" | while IFS= read -r copy; do
+    [ -d "$copy" ] && name_in "$copy" COMPOSE_PROJECT_NAME && echo
+done | grep . | sort -u | wc -l | tr -d ' ')"
+report 'the copies of the machine hold different blocks' "$unique" "$blocks"
 
 rm -rf "$ONE" "$TWO"
 
