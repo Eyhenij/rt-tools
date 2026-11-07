@@ -6,7 +6,7 @@ records has code in `projects/agent-kit/assets/hooks/metric-marks.sh:rt_tree_sig
 `projects/agent-kit/assets/hooks/role-calls.sh:rt_verdict_of` and
 `projects/agent-kit/assets/hooks/pull-outcomes.sh:rt_pull_outcomes`. The rest of the agreement has
 none yet, so this file lists where each part is expected, and the merge into the package spec shows
-where to look.
+where to look. The day line and its operation are bound in `docs/specs/message-bus/usage/implementation.md`.
 
 | Part                                                             | Where it is expected               | Task    |
 | ---------------------------------------------------------------- | ---------------------------------- | ------- |

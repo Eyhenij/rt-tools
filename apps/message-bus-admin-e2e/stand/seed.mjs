@@ -14,6 +14,7 @@
  * Прогон стирает базу целиком перед засевом.
  */
 import { spawn } from 'node:child_process';
+import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 import { seedPeople } from './seed-account.mjs';
@@ -28,6 +29,7 @@ import {
     STAND_AUTH_ENV,
     STAND_DATABASE,
     STAND_DATABASE_URL,
+    STAND_TREE_TOKEN_FILE,
     TREES,
 } from './stand.mjs';
 
@@ -478,6 +480,7 @@ export async function seed() {
     const operator = await seedPeople();
     await seedChat(sql, operator);
     const tokens = await trees();
+    writeFileSync(STAND_TREE_TOKEN_FILE, tokens.get(TREES[0].slug));
     await postmortems(tokens);
     await proposals(tokens);
     await summaries(tokens);

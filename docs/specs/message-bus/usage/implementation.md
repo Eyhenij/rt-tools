@@ -16,6 +16,15 @@ or the code holds what the spec is silent about.
 - **A row is kept a year from the day of the line, and older rows are removed by the cleaning of the intake every night.** — `libs/message-bus-api/observations/feature/src/lib/observation-retention.service.ts:ObservationRetentionService`. The moment — `libs/message-bus-api/observations/util/src/lib/observation-retention.util.ts:nextSweepAt`, the term `OBSERVATION_KEEP_DAYS`
 - **The digest of a month stays as it was.** — `libs/message-bus-api/observations/feature/src/lib/summary-intake.controller.ts:SummaryIntakeController` — untouched by the lines
 
+## The day lines of the metrics
+
+- **A day line is taken in by an operation of its own, by the tree token.** — `libs/message-bus-api/observations/feature/src/lib/metrics-intake.controller.ts:MetricsIntakeController`
+- **A key of a day line comes from a closed list declared by the package.** — `projects/agent-kit/src/lib/cargo.ts:isMetricKey`
+- **A value of a day line is a whole number from zero up.** — `projects/agent-kit/src/lib/cargo.ts:isMetricValue`
+- **A day line replaces the stored one of its tree, copy and day.** — `libs/message-bus-api/observations/data-access/src/lib/metrics-day.queries.ts:writeMetricsDay`
+- **A day line with an older stamp is refused with `metrics-stale` and changes nothing.** — `libs/message-bus-api/observations/data-access/src/lib/metrics-day.queries.ts:writeMetricsDay`
+- **A day line is kept a year, and the night cleaning removes older ones.** — `libs/message-bus-api/observations/data-access/src/lib/metrics-day.queries.ts:sweepMetricsDaysBefore`
+
 ## The reading
 
 - **The usage is counted by the storage, not by the rows in memory.** — `libs/message-bus-api/observations/data-access/src/lib/usage.queries.ts:readUsage` — a grouped query of the storage by its own text

@@ -76,6 +76,10 @@ export enum ERefusal {
     ChatEntryStale = 'chatEntryStale',
     /** Признак встраиваемой страницы истёк: страница берёт новый той же дорогой. */
     ChatEntryExpired = 'chatEntryExpired',
+    /** Ключ строки дня вне закрытого списка или значение не целое. */
+    MetricsFieldRefused = 'metrics-field-refused',
+    /** Лежит более новая строка этого дня. */
+    MetricsStale = 'metrics-stale',
 }
 
 /** Подстановки отказа: причина названа кодом, а значения идут рядом по имени. */
@@ -133,6 +137,8 @@ const SAID: Readonly<Record<ERefusal, string>> = {
     [ERefusal.ChatEntryRejected]: 'страница переписок не открылась',
     [ERefusal.ChatEntryStale]: 'подпись входа устарела',
     [ERefusal.ChatEntryExpired]: 'вход устарел, обновите страницу',
+    [ERefusal.MetricsFieldRefused]: 'поле «{{field}}» строки дня не принято',
+    [ERefusal.MetricsStale]: 'за {{day}} лежит более новая строка дня',
 };
 
 /**
