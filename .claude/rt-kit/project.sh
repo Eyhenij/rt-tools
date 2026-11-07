@@ -19,6 +19,35 @@
 # came to name showcases alone while three applications stood on disk.
 RT_STANDS='the receiver http://localhost:3000, the admin panel http://localhost:4200, the end-to-end stand http://localhost:3310 and http://localhost:4310, the ui-kit showcase http://localhost:6006, the ui-kit-v2 showcase http://localhost:6007'
 
+# The names of the stand of this working copy, for the steps of the set before a push. The profile
+# is sourced into the shell that runs the steps, so what is exported here reaches each of them, and
+# the lines of the set stay as they are: the pipeline matching reads them by their text.
+#
+# Several copies run the set on one machine. On the shared defaults the second one re-creates the
+# Keycloak under the tests of the first, and the failure reads as a defect of the branch. The path
+# of a copy is unique on the machine, so a block of twenty ports is derived from it: the same copy
+# gets the same block, and no setting has to be remembered in a new copy. The block starts at 30000
+# and ends below 40000, past the ports the documents name and the browser of the frames takes.
+#
+# A variable given by hand wins. A manual run does not read this file and takes the defaults.
+rt_stand_env() {
+    _sum="$(printf '%s' "$PWD" | cksum | cut -d' ' -f1)"
+    _block=$((30000 + _sum % 500 * 20))
+
+    export COMPOSE_PROJECT_NAME="${COMPOSE_PROJECT_NAME:-rt-stand-$((_sum % 500))}"
+    export E2E_API_PORT="${E2E_API_PORT:-$_block}"
+    export E2E_ADMIN_PORT="${E2E_ADMIN_PORT:-$((_block + 1))}"
+    export E2E_FOREIGN_PORT="${E2E_FOREIGN_PORT:-$((_block + 2))}"
+    export E2E_DB_PORT="${E2E_DB_PORT:-$((_block + 3))}"
+    export E2E_KEYCLOAK_PORT="${E2E_KEYCLOAK_PORT:-$((_block + 4))}"
+    export E2E_KEYCLOAK_DB_PORT="${E2E_KEYCLOAK_DB_PORT:-$((_block + 5))}"
+    export E2E_MAIL_PORT="${E2E_MAIL_PORT:-$((_block + 6))}"
+    export E2E_SMTP_PORT="${E2E_SMTP_PORT:-$((_block + 7))}"
+    export E2E_EXAMPLE_API_PORT="${E2E_EXAMPLE_API_PORT:-$((_block + 8))}"
+    export E2E_EXAMPLE_ADMIN_PORT="${E2E_EXAMPLE_ADMIN_PORT:-$((_block + 9))}"
+}
+rt_stand_env
+
 # The shape of the number in a PR title and the task state by number are taken from the package as
 # they are.
 #

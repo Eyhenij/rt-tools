@@ -54,11 +54,11 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "serviceAccountsEnabled": false,
-      "redirectUris": ["http://localhost:4210/*", "http://localhost:4410/*"],
-      "webOrigins": ["http://localhost:4210", "http://localhost:4410"],
+      "redirectUris": ["http://localhost:4210/*", "http://localhost:4410/*", "http://localhost:$(env:RT_E2E_EXAMPLE_ADMIN_PORT)/*"],
+      "webOrigins": ["http://localhost:4210", "http://localhost:4410", "http://localhost:$(env:RT_E2E_EXAMPLE_ADMIN_PORT)"],
       "attributes": {
         "pkce.code.challenge.method": "S256",
-        "post.logout.redirect.uris": "http://localhost:4210/*##http://localhost:4410/*",
+        "post.logout.redirect.uris": "http://localhost:4210/*##http://localhost:4410/*##http://localhost:$(env:RT_E2E_EXAMPLE_ADMIN_PORT)/*",
         "access.token.lifespan": "40"
       }
     },

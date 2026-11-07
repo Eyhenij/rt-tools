@@ -24,8 +24,9 @@ import { argon2id } from 'hash-wasm';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const COMPOSE = ['compose', '-f', join(ROOT, 'deploy/auth/compose.yml')];
-const BASE = 'http://localhost:58080';
-const MAIL = 'http://localhost:58025';
+// The ports of the stand of this working copy: the set before a push names its own.
+const BASE = `http://localhost:${process.env.E2E_KEYCLOAK_PORT || 58080}`;
+const MAIL = `http://localhost:${process.env.E2E_MAIL_PORT || 58025}`;
 const REALM = 'rt';
 const CLIENT = 'rt-example-admin';
 const DISPLAY_NAME = 'RT';
