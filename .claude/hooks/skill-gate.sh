@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/skill-gate.sh · 6f7c81a34185 · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/skill-gate.sh · 4ff6e928b8ac · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*|mcp__figma__use_figma
 # Requires: hooks/deny-tail.sh
 # The rules gate: it does not let a file be edited until the rule it falls under has been loaded.
@@ -144,6 +144,17 @@ EOF
         kind="design"
         ;;
     *) exit 0 ;;
+esac
+
+# Every file edit the gate sees, with a rule or without one: the share of edits that met a rule not
+# yet loaded needs its denominator. A call of a tool is not an edit.
+case "$kind" in
+    command | browser | design | '') ;;
+    *)
+        # shellcheck disable=SC1091
+        . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/observe.sh" 2>/dev/null \
+            && rt_note edit-seen "kind=$kind" "sid=$sid"
+        ;;
 esac
 
 [ -z "$req" ] && exit 0

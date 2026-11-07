@@ -9,7 +9,45 @@ Given a request handed over and merged with its head tree unchanged and no owner
 When the sending reads the outcomes
 Then the day line counts one accepted task and one first-pass task
 
-Not covered: no code yet.
+### SC-AK-1297 — only a call that ran hands a request over
+
+Given a ready request with a reviewer, and the same request as a draft, without a reviewer, refused by
+another guard or failed
+When the hook after the call runs, if it runs at all
+Then only the first leaves a handover sign
+
+### SC-AK-1298 — a request without a handover sign counts apart
+
+Given a merged request with no handover sign
+When the outcomes are read
+Then it stays out of the main metric, and the report names their count
+
+### SC-AK-1299 — an older request read later keeps the counted outcome
+
+Given a task counted as first-pass by one read and an older request of that task found by the next
+When the outcomes are read again
+Then the counted outcome stays
+
+### SC-AK-1300 — a correction after the next branch is taken counts against the handed-over one
+
+Given a handed-over branch and a session already standing on the next branch
+When the owner's message matches the set of patterns
+Then the counter of the handed-over branch gets an `after` line
+
+### SC-AK-1301 — a broken read loses no request
+
+Given a hosting that answers the list of requests and fails on the commits of one of them
+When the outcomes are read
+Then the reader exits with the code of a broken read, prints no request and the day of the last read
+stays
+
+### SC-AK-1302 — a correction within three days of the merge takes first-pass away
+
+Given a merged request with a correction on the third day after the merge, and another with a
+correction on the fourth
+When the outcomes are read three days after the merge or later
+Then the first is accepted and not first-pass, the second stays first-pass, and a request merged less
+than three days ago waits for the next read
 
 ### SC-AK-1274 — a merge of the base after the handover keeps first-pass
 
@@ -17,15 +55,11 @@ Given a handed-over request whose branch took only a merge of its base
 When the sending reads the outcomes
 Then the task stays first-pass
 
-Not covered: no code yet.
-
 ### SC-AK-1275 — a rewrite of history after the handover takes first-pass away
 
 Given a handed-over request whose head was rewritten with another tree
 When the sending reads the outcomes
 Then the task is accepted and not first-pass
-
-Not covered: no code yet.
 
 ### SC-AK-1276 — a request closed unmerged lowers the main metric
 
@@ -33,15 +67,11 @@ Given one merged first-pass task and one request closed unmerged
 When the report counts the period
 Then first-pass acceptance reads one of two
 
-Not covered: no code yet.
-
 ### SC-AK-1277 — a repeat of the same refusal counts as empty
 
 Given a guard that refused a call
 When it refuses the same call on the same content in the same session
 Then the second refusal is counted as empty
-
-Not covered: no code yet.
 
 ### SC-AK-1278 — an edit between two refusals keeps the second one honest
 
@@ -49,15 +79,11 @@ Given a guard that refused a call
 When an uncommitted edit changes the content and the guard refuses again
 Then the second refusal is not counted as empty
 
-Not covered: no code yet.
-
 ### SC-AK-1279 — a red run repeated on the same content counts as wasted
 
 Given a red run on some content
 When a later run of that day goes on the same content
 Then the minutes of the red run are counted as wasted for its kind of step
-
-Not covered: no code yet.
 
 ### SC-AK-1280 — a day line carries whole numbers from the closed list only
 
@@ -145,8 +171,6 @@ Given a session that calls a role of the package and a role of the tree's own
 When the calls are recorded
 Then the package role is counted by its name, and the tree's own role by a constant word
 
-Not covered: no code yet.
-
 ### SC-AK-1292 — the report of one tree counts repeated refusals and dead rules
 
 Given observations of a period
@@ -182,5 +206,3 @@ recorded
 Given a message matching the set of patterns
 When the hook counts it
 Then the counter of the branch grows, and the text stands in no file of the rules layer
-
-Not covered: no code yet.

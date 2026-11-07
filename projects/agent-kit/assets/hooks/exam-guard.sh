@@ -252,6 +252,11 @@ if [ "$ready" = "1" ]; then
     esac
 fi
 
+# The verdict for the metrics. No mark file — nothing is recorded, and the guard judges as before.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/metric-marks.sh" 2>/dev/null \
+    && rt_exam_note "$verdict" "$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.session_id // empty' 2>/dev/null)"
+
 case "$verdict" in
     passed) exit 0 ;;
     failed)

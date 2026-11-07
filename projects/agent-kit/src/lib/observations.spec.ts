@@ -55,7 +55,23 @@ describe('строка наблюдения', (): void => {
             kind: 'scss',
             session: '42',
             version: '0.5.1',
+            empty: null,
+            seconds: null,
+            wasted: null,
+            rule: '',
+            verdict: '',
         });
+    });
+
+    it('SC-AK-1279 — секунды запуска читаются только целым числом', (): void => {
+        expect(parseObservation(note('run', { secs: '240', wasted: '0' }))).toMatchObject({ seconds: 240, wasted: 0 });
+        expect(parseObservation(note('run', { secs: 'долго' }))?.seconds).toBeNull();
+    });
+
+    it('SC-AK-1277 — признак пустого отказа читается парой значений, чужое значение признаком не считается', (): void => {
+        expect(parseObservation(note('guard-deny', { empty: '1' }))?.empty).toBe(true);
+        expect(parseObservation(note('guard-deny', { empty: '0' }))?.empty).toBe(false);
+        expect(parseObservation(note('guard-deny', { empty: '2' }))?.empty).toBeNull();
     });
 
     it('битая строка пропускается, а не роняет разбор', (): void => {

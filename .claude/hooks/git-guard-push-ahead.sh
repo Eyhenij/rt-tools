@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/git-guard-push-ahead.sh · 0d90b14d7e5b · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/git-guard-push-ahead.sh · cdc628b63bb0 · правится надстройкой, не здесь
 # The push set run ahead of the push: every check of `rt_push_checks <base>`, a green mark for each
 # that passed. The push guard then reads the marks instead of running the steps again.
 #
@@ -39,6 +39,11 @@ command -v rt_push_checks >/dev/null 2>&1 || {
     exit "$not_started"
 }
 command -v rt_push_check_heavy >/dev/null 2>&1 || rt_push_check_heavy() { return 1; }
+# The line of a run for the metrics. No file — the checks run and record nothing.
+# shellcheck disable=SC1091
+[ -f "$rt_hooks_dir/metric-marks.sh" ] && . "$rt_hooks_dir/metric-marks.sh" 2>/dev/null
+command -v rt_run_note >/dev/null 2>&1 || rt_run_note() { return 0; }
+command -v rt_tree_sign >/dev/null 2>&1 || rt_tree_sign() { return 0; }
 
 # A mark vouches for the tree of the head, and the checks run over the working copy: with edits
 # outside the index the run would write marks for content that does not leave.
@@ -50,6 +55,7 @@ rt_push_mark_clean || {
 base="$(rt_push_base "${RT_MAIN_BRANCH:-main}")"
 skip_code="${RT_SKIP_CODE:-7}"
 printf 'push ahead: base %s, tree %s\n' "${base:-none}" "$(git rev-parse --short 'HEAD^{tree}')"
+sign="$(rt_tree_sign .)"
 
 red=""
 while IFS= read -r check; do
@@ -69,11 +75,14 @@ while IFS= read -r check; do
     status=$?
     took=$(($(date +%s) - started))
     if [ "$status" -eq 0 ]; then
+        rt_run_note "$sign" "$started" green "$check"
         rt_push_mark_put "$check" "$base" "$key_before"
         printf '+ green in %ss: %s\n' "$took" "$check"
     elif [ "$status" -eq "$skip_code" ]; then
+        rt_run_note "$sign" "$started" skipped "$check"
         printf '~ nothing to look at: %s\n' "$check"
     else
+        rt_run_note "$sign" "$started" red "$check"
         red="${red}${red:+
 }${check}"
         printf '✗ red in %ss: %s\n%s\n' "$took" "$check" "$(printf '%s' "$out" | tail -n 25)"

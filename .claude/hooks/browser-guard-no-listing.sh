@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/browser-guard-no-listing.sh · ebeed41f172c · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/browser-guard-no-listing.sh · 7691925f0f6d · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__(list_connected_browsers|switch_browser)
 # Requires: hooks/deny-tail.sh
 # Guard against listing and switching browsers. PreToolUse.
@@ -14,6 +14,7 @@
 # Its own name in the observations: the refusal is recorded by the shared deny tail, not by the
 # guard itself.
 RT_GUARD_NAME=browser-guard-no-listing
+RT_GUARD_RULE=browser-verification
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 

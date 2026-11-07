@@ -1,8 +1,12 @@
 # Binding — the product metrics of the rules package
 
-Only the report of one tree has code: `projects/agent-kit/src/lib/metrics.ts:metrics`. The rest of the
-agreement has none yet, so this file lists where each part is expected, and the merge into the
-package spec shows where to look.
+The report of one tree has code in `projects/agent-kit/src/lib/metrics.ts:metrics`, and what a tree
+records has code in `projects/agent-kit/assets/hooks/metric-marks.sh:rt_tree_sign`,
+`projects/agent-kit/assets/hooks/owner-corrections.sh:RT_CORRECTION_PATTERNS`,
+`projects/agent-kit/assets/hooks/role-calls.sh:rt_verdict_of` and
+`projects/agent-kit/assets/hooks/pull-outcomes.sh:rt_pull_outcomes`. The rest of the agreement has
+none yet, so this file lists where each part is expected, and the merge into the package spec shows
+where to look.
 
 | Part                                                             | Where it is expected               | Task    |
 | ---------------------------------------------------------------- | ---------------------------------- | ------- |

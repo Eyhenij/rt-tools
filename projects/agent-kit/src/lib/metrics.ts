@@ -1,12 +1,11 @@
 /**
  * Метрики пакета по наблюдениям одного дерева.
  *
- * Это частичный вид: он считает то, что наблюдения уже знают. Итог задачи, правки владельца и
- * минуты проверок появятся вместе с новыми событиями, и до тех пор отчёт называет их словами
- * «нет данных», а не нулём: ноль здесь читался бы как хороший результат.
+ * Это частичный вид: он считает то, что наблюдения знают. Числа, для которых записей ещё нет,
+ * отчёт называет словами «нет данных», а не нулём: ноль здесь читался бы как хороший результат.
  *
- * Пустой отказ требует признака содержимого дерева, которого в наблюдениях ещё нет. Поэтому здесь
- * считается повтор: тот же гард в той же сессии отказал сразу после своего же отказа.
+ * Повтор смотрит только на порядок отказов, пустой отказ ещё и на содержимое: его решает дерево и
+ * пишет ответ в наблюдение. Итог задачи считает `outcomes.ts`.
  *
  * Загрузки, отказы шлюза и неиспользованные правила берутся из готовой сводки `summarize`.
  */
@@ -14,7 +13,9 @@ import { costOf, CostUnavailableError } from './cost.js';
 import { IConfig, readConfig } from './config.js';
 import { IEnvironment, IOutcomeOfCommand, noObservationLines, sweptLine } from './commands.js';
 import { dayBefore, ICount, IObservation, IReadResult, ISummary, readObservations, summarize } from './observations.js';
+import { IUsageMetric, usageCounted, usageLines, usageOf } from './metric-usage.js';
 import { byText } from './order.js';
+import { collectOutcomes, EOutcomesRead, hasMainNumber, IOutcomeMetric, outcomeLines, outcomeMetricOf } from './outcomes.js';
 import { laidOutSkills } from './snapshot.js';
 
 /** Отрезок отчёта, когда он не назван: столько дней наблюдения лежат на диске. */
@@ -34,6 +35,20 @@ export interface IGuardMetric {
     readonly repeats: number;
     /** Доля повторов в процентах, целым числом. */
     readonly repeatShare: number;
+    /** Отказы, записанные с признаком пустого: записи старых версий его не несут. */
+    readonly compared: number;
+    /** Отказы на том же вызове и том же содержимом. */
+    readonly empty: number;
+}
+
+/** Запуски одного рода шага за отрезок. */
+export interface IRunMetric {
+    readonly kind: string;
+    readonly runs: number;
+    readonly seconds: number;
+    /** Красные запуски, за которыми пошёл запуск на том же содержимом. */
+    readonly wastedRuns: number;
+    readonly wastedSeconds: number;
 }
 
 export interface IMetricsReport {
@@ -50,6 +65,18 @@ export interface IMetricsReport {
     readonly repeats: number;
     readonly repeatShare: number;
     readonly guards: readonly IGuardMetric[];
+    /** Отказы с признаком пустого. Ноль: сравнивать ещё не с чем, и строки в отчёте нет. */
+    readonly comparedRefusals: number;
+    readonly emptyRefusals: number;
+    /** Запуски по родам шага. Пусто: запусков не записано, и строк в отчёте нет. */
+    readonly runs: readonly IRunMetric[];
+    /** Сообщения человека по набору образцов. Ноль: записей нет, и строка без данных о них скажет. */
+    readonly corrections: number;
+    /** Итоги задач. `null`: итогов не записано. */
+    readonly outcomes: IOutcomeMetric | null;
+    /** Чем кончилось чтение итогов: дерево, где спросить некого, считается отдельно. */
+    readonly outcomesRead: EOutcomesRead;
+    readonly usage: IUsageMetric;
     readonly gate: readonly ICount[];
     readonly gateRefusals: number;
     readonly rules: number;
@@ -93,6 +120,13 @@ const percent: (part: number, whole: number) => number = (part: number, whole: n
 const byRepeats: (left: IGuardMetric, right: IGuardMetric) => number = (left: IGuardMetric, right: IGuardMetric): number =>
     right.repeats - left.repeats || right.refusals - left.refusals || byText(left.name, right.name);
 
+/** Один к счёту имени, если случай состоялся. */
+function tally(counts: Map<string, number>, name: string, happened: boolean): void {
+    if (happened) {
+        counts.set(name, (counts.get(name) ?? 0) + 1);
+    }
+}
+
 /**
  * Отказы гардов с повторами.
  *
@@ -102,17 +136,18 @@ const byRepeats: (left: IGuardMetric, right: IGuardMetric) => number = (left: IG
 export function guardsOf(observations: readonly IObservation[]): readonly IGuardMetric[] {
     const refusals: Map<string, number> = new Map();
     const repeats: Map<string, number> = new Map();
+    const compared: Map<string, number> = new Map();
+    const empties: Map<string, number> = new Map();
     const lastOfSession: Map<string, string> = new Map();
 
     for (const entry of observations) {
         const key: string = entry.event === 'guard-deny' ? `guard-deny:${entry.resource}` : entry.event;
 
         if (entry.event === 'guard-deny') {
-            refusals.set(entry.resource, (refusals.get(entry.resource) ?? 0) + 1);
-
-            if (entry.session !== '' && lastOfSession.get(entry.session) === key) {
-                repeats.set(entry.resource, (repeats.get(entry.resource) ?? 0) + 1);
-            }
+            tally(refusals, entry.resource, true);
+            tally(repeats, entry.resource, entry.session !== '' && lastOfSession.get(entry.session) === key);
+            tally(compared, entry.resource, typeof entry.empty === 'boolean');
+            tally(empties, entry.resource, entry.empty === true);
         }
 
         if (entry.session !== '') {
@@ -124,9 +159,46 @@ export function guardsOf(observations: readonly IObservation[]): readonly IGuard
         .map(([name, count]: [string, number]): IGuardMetric => {
             const repeated: number = repeats.get(name) ?? 0;
 
-            return { name, refusals: count, repeats: repeated, repeatShare: percent(repeated, count) };
+            return {
+                name,
+                refusals: count,
+                repeats: repeated,
+                repeatShare: percent(repeated, count),
+                compared: compared.get(name) ?? 0,
+                empty: empties.get(name) ?? 0,
+            };
         })
         .sort(byRepeats);
+}
+
+/** Запуски по родам шага: потерянные минуты сверху, они и есть причина смотреть на этот список. */
+export function runsOf(observations: readonly IObservation[]): readonly IRunMetric[] {
+    const kinds: Map<string, IRunMetric> = new Map();
+
+    for (const entry of observations) {
+        if (entry.event !== 'run') {
+            continue;
+        }
+        const seen: IRunMetric = kinds.get(entry.kind) ?? { kind: entry.kind, runs: 0, seconds: 0, wastedRuns: 0, wastedSeconds: 0 };
+        const wasted: number | null = entry.wasted ?? null;
+
+        kinds.set(entry.kind, {
+            ...seen,
+            runs: seen.runs + 1,
+            seconds: seen.seconds + (entry.seconds ?? 0),
+            wastedRuns: seen.wastedRuns + (wasted === null ? 0 : 1),
+            wastedSeconds: seen.wastedSeconds + (wasted ?? 0),
+        });
+    }
+
+    return [...kinds.values()].sort(
+        (left: IRunMetric, right: IRunMetric): number => right.wastedSeconds - left.wastedSeconds || byText(left.kind, right.kind)
+    );
+}
+
+/** Имена метрик, которым записи уже есть: остальные отчёт называет словами. */
+function noDataOf(counted: readonly (string | false)[]): readonly string[] {
+    return NOT_RECORDED_YET.filter((name: string): boolean => !counted.includes(name));
 }
 
 /** Покрывают ли записи полный отрезок: только тогда незагруженное правило считается мёртвым. */
@@ -137,16 +209,34 @@ function coversFullPeriod(read: IReadResult, days: number, today: string): boole
 }
 
 /** Отчёт за отрезок: сводка уже посчитала загрузки, отказы шлюза и неиспользованные правила. */
-export function metricsOf(read: IReadResult, summary: ISummary, rules: number, entryChars: number | null, today: string): IMetricsReport {
+export function metricsOf(
+    read: IReadResult,
+    summary: ISummary,
+    rules: number,
+    entryChars: number | null,
+    today: string,
+    outcomesRead: EOutcomesRead = EOutcomesRead.Read
+): IMetricsReport {
     const guards: readonly IGuardMetric[] = guardsOf(read.observations);
     const full: boolean = coversFullPeriod(read, summary.days, today);
     const refusals: number = guards.reduce((sum: number, guard: IGuardMetric): number => sum + guard.refusals, 0);
     const repeats: number = guards.reduce((sum: number, guard: IGuardMetric): number => sum + guard.repeats, 0);
+    const comparedRefusals: number = guards.reduce((sum: number, guard: IGuardMetric): number => sum + guard.compared, 0);
+    const runs: readonly IRunMetric[] = runsOf(read.observations);
+    const corrections: number = read.observations.filter((entry: IObservation): boolean => entry.event === 'owner-correction').length;
+    const outcomes: IOutcomeMetric | null = outcomeMetricOf(read.observations);
+    const usage: IUsageMetric = usageOf(read.observations);
 
     return {
         refusals,
         repeats,
         guards,
+        comparedRefusals,
+        runs,
+        corrections,
+        outcomes,
+        outcomesRead,
+        usage,
         rules,
         entryChars,
         days: summary.days,
@@ -154,13 +244,20 @@ export function metricsOf(read: IReadResult, summary: ISummary, rules: number, e
         daysRead: read.daysRead,
         swept: read.swept,
         sessions: summary.sessions,
+        emptyRefusals: guards.reduce((sum: number, guard: IGuardMetric): number => sum + guard.empty, 0),
         refusalsPerSession: summary.sessions > 0 ? Math.round(refusals / summary.sessions) : 0,
         repeatShare: percent(repeats, refusals),
         gate: summary.denials,
         gateRefusals: summary.denials.reduce((sum: number, rule: ICount): number => sum + rule.count, 0),
         deadRules: full ? summary.unused : null,
         deadRuleShare: full ? percent(summary.unused.length, rules) : null,
-        noData: NOT_RECORDED_YET,
+        noData: noDataOf([
+            hasMainNumber(outcomes) && 'Принято с первого раза',
+            comparedRefusals > 0 && 'Пустые отказы',
+            runs.length > 0 && 'Пустые запуски',
+            corrections > 0 && 'Правки владельца',
+            ...usageCounted(usage),
+        ]),
         outside: OUTSIDE_THE_TREE,
     };
 }
@@ -184,6 +281,34 @@ function deadRuleLines(report: IMetricsReport): readonly string[] {
     ];
 }
 
+const minutes: (seconds: number) => number = (seconds: number): number => Math.round(seconds / 60);
+
+/** Запуски словами. Нет записей: строк нет, о них говорит строка без данных. */
+function runLines(runs: readonly IRunMetric[]): readonly string[] {
+    if (!runs.length) {
+        return [];
+    }
+    const total: (pick: (run: IRunMetric) => number) => number = (pick: (run: IRunMetric) => number): number =>
+        runs.reduce((sum: number, run: IRunMetric): number => sum + pick(run), 0);
+
+    return [
+        '',
+        `запуски: ${total((run: IRunMetric): number => run.runs)}, минут ${minutes(total((run: IRunMetric): number => run.seconds))}`,
+        `пустые запуски: ${total((run: IRunMetric): number => run.wastedRuns)}, минут ${minutes(total((run: IRunMetric): number => run.wastedSeconds))}`,
+        ...topLines(
+            runs.map(
+                (run: IRunMetric): string =>
+                    `  ${run.kind}: ${run.runs}, минут ${minutes(run.seconds)}, пустых ${run.wastedRuns}, минут ${minutes(run.wastedSeconds)}`
+            )
+        ),
+    ];
+}
+
+/** Хвост строки проверки: без записей с признаком он молчит, а не показывает ноль. */
+function emptyOfGuard(guard: IGuardMetric): string {
+    return guard.compared > 0 ? `, пустых ${guard.empty} (${percent(guard.empty, guard.compared)}%)` : '';
+}
+
 /** Отчёт словами: сначала то, чего нет, чтобы частичный вид не читался как полный. */
 export function metricsLines(report: IMetricsReport): readonly string[] {
     const entry: string = report.entryChars === null ? 'нет данных' : `${report.entryChars} символов`;
@@ -193,17 +318,25 @@ export function metricsLines(report: IMetricsReport): readonly string[] {
         `прочитано дней: ${report.daysRead.length}, с ${report.daysRead[0]} по ${report.daysRead[report.daysRead.length - 1]}`,
         `нет данных: ${report.noData.join(', ')}`,
         `вне этого отчёта: ${report.outside.join(', ')}`,
+        ...outcomeLines(report.outcomes, report.outcomesRead, report.corrections),
         '',
         `отказы проверок: ${report.refusals}, на сессию ${report.refusalsPerSession}`,
         `повторы подряд: ${report.repeats} (${report.repeatShare}%)`,
+        ...(report.comparedRefusals === 0
+            ? []
+            : [`пустые отказы: ${report.emptyRefusals} (${percent(report.emptyRefusals, report.comparedRefusals)}%)`]),
         ...topLines(
             report.guards.map(
-                (guard: IGuardMetric): string => `  ${guard.name}: ${guard.refusals}, повторов ${guard.repeats} (${guard.repeatShare}%)`
+                (guard: IGuardMetric): string =>
+                    `  ${guard.name}: ${guard.refusals}, повторов ${guard.repeats} (${guard.repeatShare}%)${emptyOfGuard(guard)}`
             )
         ),
         '',
         `отказы шлюза правил: ${report.gateRefusals}`,
         ...topLines(report.gate.map((rule: ICount): string => `  ${rule.name}: ${rule.count}`)),
+        ...runLines(report.runs),
+        ...(report.corrections > 0 && !hasMainNumber(report.outcomes) ? ['', `правки владельца: ${report.corrections}`] : []),
+        ...usageLines(report.usage, topLines),
         '',
         ...deadRuleLines(report),
         '',
@@ -243,10 +376,11 @@ export function metrics(env: IEnvironment, options: IMetricsOptions): IOutcomeOf
         };
     }
 
+    const read: EOutcomesRead = collectOutcomes(env.root, options.today, env.version);
     const result: IReadResult = readObservations(env.root, options.today, options.days);
     const known: readonly string[] = laidOutSkills(config, env.assetsDir);
     const summary: ISummary = summarize(result.observations, known, options.days);
-    const report: IMetricsReport = metricsOf(result, summary, known.length, entryCharsOf(env.root), options.today);
+    const report: IMetricsReport = metricsOf(result, summary, known.length, entryCharsOf(env.root), options.today, read);
 
     if (options.json) {
         return { code: 0, lines: [JSON.stringify(report)] };

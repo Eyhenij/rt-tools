@@ -9,7 +9,7 @@ import { join } from 'node:path';
 
 import { IEnvironment, init, IOutcomeOfCommand } from './commands.js';
 import { CONFIG_PATH } from './config.js';
-import { IGuardMetric, IMetricsReport, guardsOf, metrics, metricsLines, metricsOf } from './metrics.js';
+import { IGuardMetric, IMetricsReport, IRunMetric, guardsOf, metrics, metricsLines, metricsOf, runsOf } from './metrics.js';
 import { IObservation, IReadResult, ISummary, OBSERVATIONS_DIR, summarize } from './observations.js';
 
 const TODAY: string = '2026-08-12';
@@ -39,7 +39,7 @@ describe('guardsOf', () => {
             line('guard-deny', 'turn-exit-guard', 's1'),
         ]);
 
-        expect(guards).toEqual([{ name: 'turn-exit-guard', refusals: 3, repeats: 2, repeatShare: 67 }]);
+        expect(guards).toEqual([{ name: 'turn-exit-guard', refusals: 3, repeats: 2, repeatShare: 67, compared: 0, empty: 0 }]);
     });
 
     it('SC-AK-1292 — строка соседней сессии повтор не прерывает', () => {
@@ -116,6 +116,90 @@ describe('metricsOf', () => {
         expect(report.refusalsPerSession).toBe(0);
         expect(report.repeatShare).toBe(0);
         expect(report.deadRuleShare).toBe(0);
+    });
+});
+
+describe('пустые отказы', () => {
+    function refused(guard: string, empty: boolean | null): IObservation {
+        return { ...line('guard-deny', guard, 's1'), empty };
+    }
+
+    it('SC-AK-1277 — пустые отказы считаются по каждой проверке', () => {
+        const report: IMetricsReport = reportOf(
+            [refused('grill-gate', false), refused('grill-gate', true), refused('claim-guard', false)],
+            ['testing']
+        );
+
+        expect(report.guards.find((guard: IGuardMetric): boolean => guard.name === 'grill-gate')).toMatchObject({ compared: 2, empty: 1 });
+        expect(report.emptyRefusals).toBe(1);
+        expect(report.comparedRefusals).toBe(3);
+        expect(metricsLines(report)).toContain('пустые отказы: 1 (33%)');
+        expect(metricsLines(report)).toContain('  grill-gate: 2, повторов 1 (50%), пустых 1 (50%)');
+    });
+
+    it('SC-AK-1277 — метрика уходит из строки без данных с первой записью с признаком', () => {
+        const noData: string | undefined = metricsLines(reportOf([refused('grill-gate', false)], ['testing'])).find(
+            (text: string): boolean => text.startsWith('нет данных:')
+        );
+
+        expect(noData).toContain('Пустые запуски');
+        expect(noData).not.toContain('Пустые отказы');
+    });
+
+    it('SC-AK-1277 — записи старой версии не считаются нулём', () => {
+        const lines: readonly string[] = metricsLines(reportOf([refused('grill-gate', null)], ['testing']));
+
+        expect(lines.find((text: string): boolean => text.startsWith('нет данных:'))).toContain('Пустые отказы');
+        expect(lines).toContain('отказы проверок: 1, на сессию 1');
+        expect(lines.join('\n')).not.toContain('пустые отказы:');
+    });
+});
+
+describe('запуски', () => {
+    function run(kind: string, seconds: number, wasted: number | null): IObservation {
+        return { event: 'run', resource: 'red', kind, session: '', version: '0.34.0', seconds, wasted };
+    }
+
+    it('SC-AK-1279 — минуты красного запуска считаются потерянными для его рода шага', () => {
+        const runs: readonly IRunMetric[] = runsOf([run('e2e', 240, null), run('e2e', 180, 240), run('tests', 60, null)]);
+
+        expect(runs).toEqual([
+            { kind: 'e2e', runs: 2, seconds: 420, wastedRuns: 1, wastedSeconds: 240 },
+            { kind: 'tests', runs: 1, seconds: 60, wastedRuns: 0, wastedSeconds: 0 },
+        ]);
+    });
+
+    it('SC-AK-1279 — ноль секунд потерянного запуска всё равно считается запуском', () => {
+        expect(runsOf([run('check', 0, 0)])[0]).toMatchObject({ wastedRuns: 1, wastedSeconds: 0 });
+    });
+
+    it('SC-AK-1279 — отчёт показывает минуты и снимает метрику со строки без данных', () => {
+        const lines: readonly string[] = metricsLines(reportOf([run('e2e', 240, null), run('e2e', 180, 240)], ['testing']));
+
+        expect(lines).toContain('запуски: 2, минут 7');
+        expect(lines).toContain('пустые запуски: 1, минут 4');
+        expect(lines).toContain('  e2e: 2, минут 7, пустых 1, минут 4');
+        expect(lines.find((text: string): boolean => text.startsWith('нет данных:'))).toContain('Принято с первого раза');
+        expect(lines.find((text: string): boolean => text.startsWith('нет данных:'))).not.toContain('Пустые запуски');
+    });
+
+    it('SC-AK-1279 — без записей о запусках их строк в отчёте нет', () => {
+        const lines: readonly string[] = metricsLines(reportOf([line('guard-deny', 'grill-gate', 's1')], ['testing']));
+
+        expect(lines).toContain('отказы проверок: 1, на сессию 1');
+        expect(lines.join('\n')).not.toContain('запуски:');
+    });
+});
+
+describe('правки владельца', () => {
+    it('SC-AK-1290 — отчёт считает правки и снимает их со строки без данных', () => {
+        const lines: readonly string[] = metricsLines(
+            reportOf([line('owner-correction', '', 's1'), line('owner-correction', '', 's2')], ['testing'])
+        );
+
+        expect(lines).toContain('правки владельца: 2');
+        expect(lines.find((text: string): boolean => text.startsWith('нет данных:'))).toContain('Принято с первого раза');
+        expect(lines.find((text: string): boolean => text.startsWith('нет данных:'))).not.toContain('Правки владельца');
     });
 });
 

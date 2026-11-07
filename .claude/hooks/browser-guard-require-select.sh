@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/browser-guard-require-select.sh · cfa8684a5232 · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/browser-guard-require-select.sh · e534ea6c73b3 · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__.*
 # Requires: hooks/deny-tail.sh
 # Guard of the freshness of the browser choice. PreToolUse on all the other extension calls.
@@ -24,6 +24,7 @@
 # Its own name in the observations: the refusal is written by the shared deny tail, not by the
 # guard itself.
 RT_GUARD_NAME=browser-guard-require-select
+RT_GUARD_RULE=browser-verification
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

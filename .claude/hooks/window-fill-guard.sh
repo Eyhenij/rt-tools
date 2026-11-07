@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/window-fill-guard.sh · ae4afcaa7f5e · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/window-fill-guard.sh · 15234599b4eb · правится надстройкой, не здесь
 # rt-hook: PostToolUse .*
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh
 # rt-hook: PreToolUse .*
@@ -35,6 +35,7 @@
 
 # Its own name in the observations: the refusal is written by the shared deny tail, not by the guard.
 RT_GUARD_NAME=window-fill-guard
+RT_GUARD_RULE=turn-conduct
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
