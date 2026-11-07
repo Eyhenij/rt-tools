@@ -2,7 +2,7 @@
  * Итог задачи: сценарии договорённости `docs/specs/agent-kit/proposed/metrics/`.
  */
 import { execFileSync } from 'node:child_process';
-import { chmodSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -19,6 +19,7 @@ import {
     outcomeLines,
     outcomeMetricOf,
     outcomeOf,
+    sharedMarksDir,
 } from './outcomes.js';
 
 const HANDED: IPullFact['handover'] = { commit: 'c1', tree: 't1' };
@@ -210,6 +211,30 @@ describe('итоги словами', () => {
 
     it('без записей и с ответом хостинга строк нет: о них говорит строка без данных', () => {
         expect(outcomeLines(null, EOutcomesRead.Read, 0)).toEqual([]);
+    });
+});
+
+describe('sharedMarksDir', () => {
+    it('вне git учёт лежит в самой копии', () => {
+        const root: string = mkdtempSync(join(tmpdir(), 'rt-marks-'));
+
+        expect(sharedMarksDir(root)).toBe(join(root, OBSERVATIONS_DIR, '.marks'));
+        rmSync(root, { recursive: true, force: true });
+    });
+
+    it('вторая копия дерева пишет учёт в основную', () => {
+        const main: string = realpathSync(mkdtempSync(join(tmpdir(), 'rt-marks-')));
+        const second: string = `${main}-second`;
+        const git: (...args: readonly string[]) => string = (...args: readonly string[]): string =>
+            execFileSync('git', ['-C', main, '-c', 'user.name=t', '-c', 'user.email=t@t', ...args], { encoding: 'utf8' });
+
+        git('init', '-q');
+        git('commit', '-q', '--allow-empty', '-m', 'first');
+        git('worktree', 'add', '-q', second);
+
+        expect(sharedMarksDir(second)).toBe(join(main, OBSERVATIONS_DIR, '.marks'));
+        rmSync(main, { recursive: true, force: true });
+        rmSync(second, { recursive: true, force: true });
     });
 });
 

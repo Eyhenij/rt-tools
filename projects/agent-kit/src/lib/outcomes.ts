@@ -8,7 +8,7 @@
  */
 import { execFileSync } from 'node:child_process';
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 
 import { dayBefore, IObservation, KEEP_DAYS, OBSERVATIONS_DIR } from './observations.js';
 import { byText } from './order.js';
@@ -269,8 +269,26 @@ function readFacts(root: string, since: string): IFactsRead {
     }
 }
 
+/**
+ * Учёт итогов один на дерево, а не на копию: иначе две копии посчитают одну заявку дважды. Вне git
+ * копия одна, и учёт лежит в ней.
+ */
+export function sharedMarksDir(root: string): string {
+    try {
+        // eslint-disable-next-line sonarjs/no-os-command-from-path -- путь к git у каждой машины свой, и пакет его не знает
+        const common: string = execFileSync('git', ['-C', root, 'rev-parse', '--path-format=absolute', '--git-common-dir'], {
+            encoding: 'utf8',
+            stdio: ['ignore', 'pipe', 'ignore'],
+        }).trim();
+
+        return join(common ? dirname(common) : root, OBSERVATIONS_DIR, '.marks');
+    } catch {
+        return join(root, OBSERVATIONS_DIR, '.marks');
+    }
+}
+
 function lastReadPath(root: string): string {
-    return join(root, OBSERVATIONS_DIR, '.marks', LAST_READ_FILE);
+    return join(sharedMarksDir(root), LAST_READ_FILE);
 }
 
 /** С какого дня читать: от прошлого чтения, но не дальше срока хранения. */
@@ -282,7 +300,7 @@ function sinceOf(root: string, today: string): string {
 }
 
 function countedPath(root: string): string {
-    return join(root, OBSERVATIONS_DIR, '.marks', COUNTED_FILE);
+    return join(sharedMarksDir(root), COUNTED_FILE);
 }
 
 function parseCounted(line: string): ICountedPull | null {
@@ -320,7 +338,8 @@ export function collectOutcomes(root: string, today: string, version: string): E
     const fresh: readonly ICountedPull[] = newOutcomes(ripe, readCounted(root));
     const stamp: string = `${today}T00:00:00Z`;
 
-    mkdirSync(join(root, OBSERVATIONS_DIR, '.marks'), { recursive: true });
+    mkdirSync(sharedMarksDir(root), { recursive: true });
+    mkdirSync(join(root, OBSERVATIONS_DIR), { recursive: true });
     writeFileSync(lastReadPath(root), `${settled}\n`);
     for (const pull of fresh) {
         const note: string = JSON.stringify({ t: stamp, ev: 'task-outcome', res: pull.outcome, v: version });

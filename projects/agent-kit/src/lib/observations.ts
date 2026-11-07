@@ -190,7 +190,7 @@ function isBefore(day: string, edge: string): boolean {
 }
 
 /** Записи одного дня из его файла. Строка, которая не разбирается, пропускается молча. */
-function observationsOfDay(path: string): readonly IObservation[] {
+export function observationsOfDay(path: string): readonly IObservation[] {
     const found: IObservation[] = [];
 
     for (const line of readFileSync(path, 'utf8').split('\n')) {
