@@ -38,8 +38,12 @@ export class RtKcInfoComponent {
     protected readonly next: IKcNextStep | null = this.#nextStep();
 
     #nextStep(): IKcNextStep | null {
+        // A page Keycloak tells to skip the link is the end of a flow that ran without an entry:
+        // the address confirmed from a letter, the account updated, the sign-out done. Its sign-in
+        // address opens «Cookie not found» there, so the way on is the application itself — its
+        // address starts a fresh entry. Without one the page has nowhere to lead, as before.
         if (this.#context.skipLink) {
-            return null;
+            return this.#backToApplication();
         }
         if (this.#context.pageRedirectUri) {
             return { href: this.#context.pageRedirectUri, label: backLinkText(this.#i18n.msgStr('backToApplication')) };
@@ -47,10 +51,13 @@ export class RtKcInfoComponent {
         if (this.#context.actionUri) {
             return { href: this.#context.actionUri, label: backLinkText(this.#i18n.msgStr('proceedWithAction')) };
         }
-        if (this.#context.client.baseUrl) {
-            return { href: this.#context.client.baseUrl, label: backLinkText(this.#i18n.msgStr('backToApplication')) };
-        }
 
-        return null;
+        return this.#backToApplication();
+    }
+
+    #backToApplication(): IKcNextStep | null {
+        const baseUrl: string | undefined = this.#context.client.baseUrl;
+
+        return baseUrl ? { href: baseUrl, label: backLinkText(this.#i18n.msgStr('backToApplication')) } : null;
     }
 }

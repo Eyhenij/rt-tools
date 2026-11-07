@@ -101,6 +101,28 @@ export const TEST_DATA_TABLE_SHORT_COLUMNS: Array<IRtDataTable.Column<ITestDataT
 ];
 
 /**
+ * Размер значка ячейки: значок 24px по умолчанию, 16px — `sm`, 20px — `md`, слева и справа от
+ * значения. Галочка и крестик стоят так, как их ставит таблица прав.
+ */
+export const TEST_DATA_TABLE_ICON_COLUMNS: Array<IRtDataTable.Column<ITestDataTableRow>> = [
+    columnOf('city', 'Без размера — 24px', ERtDataTableColumnType.TEXT, { icon: { glyph: 'info', placement: 'left' } }),
+    columnOf('title', 'sm слева — 16px', ERtDataTableColumnType.TEXT, { icon: { glyph: 'info', placement: 'left', size: 'sm' } }),
+    columnOf('active', 'sm справа — 16px', ERtDataTableColumnType.BOOLEAN, {
+        transform: toYesNo,
+        icon: { glyph: 'done', placement: 'right', size: 'sm' },
+    }),
+    columnOf('signed', 'md слева — 20px', ERtDataTableColumnType.DATE, {
+        transform: toDay,
+        icon: { glyph: 'close', placement: 'left', size: 'md' },
+    }),
+    columnOf('sum', 'Глиф sm — 16px', ERtDataTableColumnType.CURRENCY, {
+        align: 'right',
+        transform: toMoney,
+        icon: { glyph: 'pets', placement: 'left', size: 'sm' },
+    }),
+];
+
+/**
  * Тот же короткий состав с отбором: у «Договора» — поле, у «Города» — список, у «Суммы» отбора
  * нет вовсе. Третья колонка нужна именно за этим: без неё не видно, что колонка без отбора
  * держит в строке пустое место, а не пропадает из неё.

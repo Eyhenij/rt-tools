@@ -106,6 +106,8 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   was cut.** A column may give its own hint text instead of the value.
 - **The column may put an icon before or after the value, and the icon's style is a free line of
   style the column computes per row from the value.**
+- **The column gives the cell icon its size, 16, 20 or 24 pixels, and without it the icon is 24.**
+  The step is the kit icon's; the head of the column does not read it.
 - **The column declaration takes every field of the first kit's, the ones nothing draws
   included.** A link, a class name, the two filtering flags, the fixed flag and the icon's hint,
   visibility and colour are accepted and change nothing, as in the first kit.

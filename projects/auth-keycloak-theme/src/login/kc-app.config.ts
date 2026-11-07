@@ -14,12 +14,13 @@ import { provideRtIcons, provideRtKit, provideRtKitLabels, ThemeService } from '
 import { KC_CONTEXT, KC_PAGE, TKcContext } from './kc-context';
 import { KC_MESSAGES, plainMessages, TKcMessages } from './kc-i18n';
 import { kitTranslatorFor } from './kc-kit-labels';
+import { isLocaleChosen, withLocaleLinks } from './kc-locale-links';
 
 /**
  * The application of one theme page. Keycloak serves the build under the resources address of the
  * theme, so the kit icons are asked there and not at the root of the host.
  */
-export function themeAppConfig(context: TKcContext, i18n: TKcMessages, page: Type<unknown>): ApplicationConfig {
+export function themeAppConfig(context: TKcContext, i18n: TKcMessages, page: Type<unknown>, pageSearch: string): ApplicationConfig {
     const languageTag: string = i18n.currentLanguage.languageTag;
 
     return {
@@ -37,7 +38,7 @@ export function themeAppConfig(context: TKcContext, i18n: TKcMessages, page: Typ
             provideAppInitializer((): void => {
                 inject(ThemeService);
             }),
-            { provide: KC_CONTEXT, useValue: context },
+            { provide: KC_CONTEXT, useValue: withLocaleLinks(context, languageTag, isLocaleChosen(pageSearch)) },
             { provide: KC_MESSAGES, useValue: plainMessages(i18n) },
             { provide: KC_PAGE, useValue: page },
         ],

@@ -6,6 +6,7 @@ import { IRtSelect, RtDotFieldComponent, RtSelectComponent, RtThemeToggleCompone
 
 import { KC_CONTEXT, KC_PAGE, TKcContext } from '../kc-context';
 import { KC_MESSAGES, TKcMessages } from '../kc-i18n';
+import { languageNameOf } from '../kc-language-name';
 import { loadPageScripts } from '../kc-page-scripts';
 import { IKcRealmLogo, realmLogoOf } from '../kc-realm-logo';
 
@@ -54,7 +55,7 @@ export class RtKcRootComponent {
     protected readonly localeOptions: ReadonlyArray<IRtSelect.Option<string>> =
         this.#languages.length > 1
             ? this.#languages.map((language: IKcLanguage): IRtSelect.Option<string> => ({
-                  label: language.label,
+                  label: languageNameOf(language.languageTag, language.label),
                   value: language.languageTag,
               }))
             : [];
