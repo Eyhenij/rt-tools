@@ -47,7 +47,7 @@ export class MetricsIntakeController {
         }
 
         // Проверка головы уже прошла, и тело здесь — набор полей: `cargoFault` отбил бы остальное
-        const parsed: IParsedMetricsDay | IMetricsDayFault = parseMetricsDay(body as TCargoBody);
+        const parsed: IParsedMetricsDay | IMetricsDayFault = parseMetricsDay(body as TCargoBody, new Date());
 
         if (isMetricsDayFault(parsed)) {
             throw new BadRequestException(refusalBody(ERefusal.MetricsFieldRefused, { field: parsed.field }));

@@ -4,13 +4,16 @@
  * Список ключей объявляет пакет, потому что отправитель обязан выбросить то же самое, что приём
  * отказывает. Чужой ключ отказывает всю строку: половина дня читалась бы как весь день.
  */
-import { isMetricKey, isMetricValue, METRIC_KEYS_CAP } from '@rt-tools/agent-kit/cargo';
+import { isMetricKey, isMetricOrigin, isMetricValue, isMetricVersion, METRIC_KEYS_CAP } from '@rt-tools/agent-kit/cargo';
 import { isCargoBody, TCargoBody } from '@rt/message-bus-common';
 
-import { OBSERVATION_DAY, OBSERVATION_FIELD_BYTES } from './observation.const';
+import { OBSERVATION_DAY } from './observation.const';
 
 /** Обязательные поля строки дня. */
 export const METRICS_DAY_FIELDS: readonly string[] = ['schema', 'tree', 'origin', 'day', 'version', 'stamp', 'metrics'];
+
+/** Запас на часы машины и пояс дерева: день и штамп дальше него ещё не наступили. */
+const AHEAD_MS: number = 86_400_000;
 
 /** Строка дня, готовая лечь в хранилище: дерево добавляет приём из токена. */
 export interface IParsedMetricsDay {
@@ -30,23 +33,33 @@ export function isMetricsDayFault(found: IParsedMetricsDay | IMetricsDayFault): 
     return 'field' in found;
 }
 
-function textFault(body: TCargoBody, field: string): IMetricsDayFault | null {
-    const value: unknown = body[field];
+/** Календарный день не позже завтрашнего: `2026-02-30` и `9999-12-31` срок хранения не снимет. */
+function dayOk(value: unknown, now: Date): boolean {
+    if (typeof value !== 'string' || !OBSERVATION_DAY.test(value)) {
+        return false;
+    }
+    const moment: number = Date.parse(`${value}T00:00:00Z`);
 
-    return typeof value === 'string' && value !== '' && Buffer.byteLength(value) <= OBSERVATION_FIELD_BYTES ? null : { field };
+    return !Number.isNaN(moment) && new Date(moment).toISOString().slice(0, 10) === value && moment <= now.getTime() + AHEAD_MS;
 }
 
-function headFault(body: TCargoBody): IMetricsDayFault | null {
-    const text: IMetricsDayFault | null = textFault(body, 'origin') ?? textFault(body, 'version');
+/** Штамп из будущего закрыл бы день для всех следующих строк копии. */
+function stampOk(value: unknown, now: Date): boolean {
+    return isMetricValue(value) && Number(value) <= now.getTime() + AHEAD_MS;
+}
 
-    if (text) {
-        return text;
+function headFault(body: TCargoBody, now: Date): IMetricsDayFault | null {
+    if (!isMetricOrigin(body['origin'])) {
+        return { field: 'origin' };
     }
-    if (typeof body['day'] !== 'string' || !OBSERVATION_DAY.test(body['day'])) {
+    if (!isMetricVersion(body['version'])) {
+        return { field: 'version' };
+    }
+    if (!dayOk(body['day'], now)) {
         return { field: 'day' };
     }
 
-    return isMetricValue(body['stamp']) ? null : { field: 'stamp' };
+    return stampOk(body['stamp'], now) ? null : { field: 'stamp' };
 }
 
 function metricsFault(metrics: unknown): IMetricsDayFault | null {
@@ -61,8 +74,8 @@ function metricsFault(metrics: unknown): IMetricsDayFault | null {
 }
 
 /** Строка дня или поле, из-за которого она не принята. */
-export function parseMetricsDay(body: TCargoBody): IParsedMetricsDay | IMetricsDayFault {
-    const fault: IMetricsDayFault | null = headFault(body) ?? metricsFault(body['metrics']);
+export function parseMetricsDay(body: TCargoBody, now: Date): IParsedMetricsDay | IMetricsDayFault {
+    const fault: IMetricsDayFault | null = headFault(body, now) ?? metricsFault(body['metrics']);
 
     if (fault) {
         return fault;

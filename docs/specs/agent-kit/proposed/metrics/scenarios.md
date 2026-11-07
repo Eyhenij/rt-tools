@@ -131,6 +131,13 @@ Given a stored day line with a later stamp
 When a line of the same tree, copy and day arrives with an earlier stamp
 Then the intake refuses it with `metrics-stale`, and the stored line stays
 
+### SC-AK-1304 — the head of a day line carries no words of the tree
+
+Given a day line with a path as its copy sign, a text as its version, a day outside the calendar or
+past tomorrow, or a stamp past tomorrow
+When it reaches the intake
+Then the intake refuses it with `metrics-field-refused`, names the field and stores nothing
+
 ### SC-AK-1285 — the automatic sending carries no proposal, analysis or digest
 
 Given a tree with unsent proposals and analyses

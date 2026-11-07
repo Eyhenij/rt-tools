@@ -20,6 +20,9 @@ or the code holds what the spec is silent about.
 
 - **A day line is taken in by an operation of its own, by the tree token.** — `libs/message-bus-api/observations/feature/src/lib/metrics-intake.controller.ts:MetricsIntakeController`
 - **A key of a day line comes from a closed list declared by the package.** — `projects/agent-kit/src/lib/cargo.ts:isMetricKey`
+- **A resource name is judged by its form at the intake and by the package list at the sender.** — `projects/agent-kit/src/lib/cargo.ts:METRIC_RESOURCE_NAME`
+- **The copy sign and the version are judged by their form.** — `projects/agent-kit/src/lib/cargo.ts:isMetricOrigin`
+- **A day and a stamp lie in the calendar and not past tomorrow.** — `libs/message-bus-api/observations/util/src/lib/metrics-day.util.ts:parseMetricsDay`
 - **A value of a day line is a whole number from zero up.** — `projects/agent-kit/src/lib/cargo.ts:isMetricValue`
 - **A day line replaces the stored one of its tree, copy and day.** — `libs/message-bus-api/observations/data-access/src/lib/metrics-day.queries.ts:writeMetricsDay`
 - **A day line with an older stamp is refused with `metrics-stale` and changes nothing.** — `libs/message-bus-api/observations/data-access/src/lib/metrics-day.queries.ts:writeMetricsDay`

@@ -92,6 +92,13 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
 - **A key of a day line comes from a closed list declared by the package.** A resource key takes the
   form `<base>:<name>`. Any other key refuses the line with `metrics-field-refused`, and the code names
   the field, not its value.
+- **A resource name is judged by its form at the intake and by the package list at the sender.** The
+  list of the intake lags behind the package, and a new name would refuse the whole line. A path, a
+  sum and a long text do not pass the form; a word that looks like a name does.
+- **The copy sign and the version are judged by their form.** A path or a text in either refuses the
+  line, so the head of a line carries no words of the tree.
+- **A day and a stamp lie in the calendar and not past tomorrow.** A later day is never removed by age,
+  and a later stamp closes the day for every next line of the copy.
 - **A value of a day line is a whole number from zero up.** The same code refuses the rest.
 - **A day line replaces the stored one of its tree, copy and day.** The sending carries the window
   whole, so a repeat changes nothing, and an equal stamp is taken in.
@@ -218,7 +225,7 @@ refuse:
 | a line of an unknown event kind or without a session | `400` | the day and the place of the line            |
 | a field of a line longer than its cap                | `400` | the day, the place of the line and the field |
 | more lines than the cap                              | `413` | the cap and how many arrived                 |
-| a day line with a key or a value outside the list    | `400` | `metrics-field-refused` and the field        |
+| a day line with a field outside its list or form     | `400` | `metrics-field-refused` and the field        |
 | a day line with an older stamp                       | `409` | `metrics-stale`                              |
 | the period is longer than four hundred days          | `400` | the limit                                    |
 | the period is not two days, or `to` is before `from` | `400` | what is missing or reversed                  |

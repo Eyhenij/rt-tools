@@ -4,12 +4,14 @@ import { describe, expect, it } from 'vitest';
 
 import { IMetricsDayFault, IParsedMetricsDay, isMetricsDayFault, parseMetricsDay } from './metrics-day.util';
 
+const NOW: Date = new Date('2026-11-07T12:00:00Z');
+
 function body(metrics: unknown, over: TCargoBody = {}): TCargoBody {
     return { origin: 'copy-1', day: '2026-11-07', version: '0.35.0', stamp: 1_700_000_000_000, metrics, ...over };
 }
 
 function faultOf(cargo: TCargoBody): string {
-    const found: IParsedMetricsDay | IMetricsDayFault = parseMetricsDay(cargo);
+    const found: IParsedMetricsDay | IMetricsDayFault = parseMetricsDay(cargo, NOW);
 
     return isMetricsDayFault(found) ? found.field : '';
 }
@@ -29,7 +31,7 @@ describe('parseMetricsDay', () => {
     });
 
     it('штамп становится моментом', () => {
-        const found: IParsedMetricsDay | IMetricsDayFault = parseMetricsDay(body({ sessions: 2 }));
+        const found: IParsedMetricsDay | IMetricsDayFault = parseMetricsDay(body({ sessions: 2 }), NOW);
 
         expect(found).toMatchObject({ day: '2026-11-07', stamp: new Date(1_700_000_000_000), metrics: { sessions: 2 } });
     });
@@ -40,6 +42,29 @@ describe('parseMetricsDay', () => {
 
     it('SC-AK-1280 — путь в имени ресурса не проходит', () => {
         expect(faultOf(body({ 'guardRefusals:src/app/secret': 1 }))).toBe('guardRefusals:src/app/secret');
+    });
+
+    it('SC-AK-1280 — сумма в имени ресурса не проходит', () => {
+        const key: string = `runs:${'a1'.repeat(32)}`;
+
+        expect(faultOf(body({ [key]: 1 }))).toBe(key);
+    });
+
+    it('SC-AK-1304 — признак копии и версия с текстом отказываются по имени поля', () => {
+        expect(faultOf(body({ sessions: 1 }, { origin: '/Users/one/secret task' }))).toBe('origin');
+        expect(faultOf(body({ sessions: 1 }, { version: 'заголовок задачи' }))).toBe('version');
+    });
+
+    it('SC-AK-1304 — день вне календаря или из будущего отказывается', () => {
+        expect(faultOf(body({ sessions: 1 }, { day: '2026-99-99' }))).toBe('day');
+        expect(faultOf(body({ sessions: 1 }, { day: '2026-02-30' }))).toBe('day');
+        expect(faultOf(body({ sessions: 1 }, { day: '9999-12-31' }))).toBe('day');
+        expect(faultOf(body({ sessions: 1 }, { day: '2026-11-08' }))).toBe('');
+    });
+
+    it('SC-AK-1304 — штамп из будущего отказывается и не падает в хранилище', () => {
+        expect(faultOf(body({ sessions: 1 }, { stamp: Number.MAX_SAFE_INTEGER }))).toBe('stamp');
+        expect(faultOf(body({ sessions: 1 }, { stamp: NOW.getTime() + 2 * 86_400_000 }))).toBe('stamp');
     });
 
     it('SC-AK-1280 — значение не целое или меньше нуля отказывается', () => {

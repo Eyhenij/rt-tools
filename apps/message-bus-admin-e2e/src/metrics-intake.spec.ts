@@ -1,13 +1,14 @@
 import { APIRequestContext, APIResponse, expect, test } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 
+import { metricsDayRows } from '../stand/metrics-day-rows.mjs';
 import { API_ORIGIN, STAND_TREE_TOKEN_FILE, TREES } from '../stand/stand.mjs';
 
 /**
  * Строка дня через настоящую операцию и настоящую базу стенда.
  *
- * Читать записанное пока нечем: раздел «Качество» приходит отдельной задачей. Поэтому запись
- * проверяется штампом: отказ более старой строке возможен, только если новая легла.
+ * Операции чтения пока нет: раздел «Качество» приходит отдельной задачей. Поэтому записанное спека
+ * читает из базы стенда напрямую.
  */
 
 interface IDayLine {
@@ -30,6 +31,7 @@ test.describe('строка дня', () => {
         expect((await send(request, origin, line)).status()).toBe(200);
         expect((await send(request, origin, line)).status()).toBe(200);
         expect(await (await send(request, origin, line)).json()).toEqual({ tree: TREES[0].slug, day: '2026-11-07' });
+        expect(await metricsDayRows(origin)).toEqual([line.metrics]);
     });
 
     test('SC-AK-1303 — более старая строка получает код и запись не меняет', async ({ request }) => {
@@ -41,16 +43,15 @@ test.describe('строка дня', () => {
 
         expect(older.status()).toBe(409);
         expect((await older.json()).code).toBe('metrics-stale');
-        expect((await send(request, origin, { stamp: 300, metrics: { sessions: 5 } })).status()).toBe(200);
+        expect(await metricsDayRows(origin)).toEqual([{ sessions: 5 }]);
     });
 
     test('SC-AK-1280 — чужой ключ получает код и строка не ложится', async ({ request }) => {
-        const answer: APIResponse = await send(request, `foreign-${test.info().project.name}`, {
-            stamp: 100,
-            metrics: { taskTitle: 1 },
-        });
+        const origin: string = `foreign-${test.info().project.name}`;
+        const answer: APIResponse = await send(request, origin, { stamp: 100, metrics: { taskTitle: 1 } });
 
         expect(answer.status()).toBe(400);
         expect((await answer.json()).code).toBe('metrics-field-refused');
+        expect(await metricsDayRows(origin)).toEqual([]);
     });
 });

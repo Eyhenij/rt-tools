@@ -136,7 +136,9 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
   name it. `send: false` stops the sending and keeps the writing. `observe: false` stops both, whatever
   `send` says. A change of either key is an observation.
 - **A failed send leaves a trace.** It writes its last result beside the mark: the code, the time and
-  the reason. `agent-kit doctor` and the session start name a failure older than a day.
+  the reason. `agent-kit doctor` and the session start name a failure older than a day. The next line
+  that gets through carries that code as a number, and a tree whose token is refused sends nothing,
+  so the section reads it as a silent tree.
 - **A refused token or a found leak stops the tries.** They resume when the token file or the cargo
   changes.
 - **A run marked as a test sends nothing.**
