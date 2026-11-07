@@ -89,4 +89,4 @@ None.
 - 2026-11-04 — the subdomain was created: thirteen tasks of a consuming tree merged with their
   agreements unmerged, and the work spec has no room for another scenario. Task RT-3087.
 - 2026-11-07 — the condition moved to a PR into the main branch: the agreement of a whole epic refused
-  the PR of its first task. The PR of the epic now reads the plans of all its tasks. Task RT-3152.
+  the PR of its first task. The PR of the epic now reads the plans of all its tasks. Task RT-3160.
