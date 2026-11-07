@@ -172,6 +172,9 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
 - **A cycle begins with the report.** The worst driver of the main metric is named with its numbers.
 - **One task changes one thing and names the metric it should move.** The task and the release note
   carry the metric and the direction.
+- **A release of the package does not start without its metric.** The journal is assembled from
+  commits, so the required field of the release run is the template. A release with no such edit names
+  the reason instead: silence cannot be told from a forgotten field.
 - **A cycle compares the same trees.** Only trees on a version holding the edit are compared, against
   themselves before it. A movement below the noise named with the baseline reads «не сдвинулось».
 - **The role `goal-critic` gives the verdict from the numbers of the report.** The executor who made

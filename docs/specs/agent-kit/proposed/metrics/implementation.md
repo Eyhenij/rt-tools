@@ -8,7 +8,8 @@ records has code in `projects/agent-kit/assets/hooks/metric-marks.sh:rt_tree_sig
 `projects/agent-kit/assets/hooks/pull-outcomes.sh:rt_pull_outcomes`. The rest of the agreement has
 none yet, so this file lists where each part is expected, and the merge into the package spec shows
 where to look. The day line, its operation and the section «Качество» are bound in
-`docs/specs/message-bus/usage/implementation.md`.
+`docs/specs/message-bus/usage/implementation.md`. The loop is the pattern
+`projects/agent-kit/assets/patterns/task-flow-cycle.md`.
 
 | Part                                                             | Where it is expected               | Task    |
 | ---------------------------------------------------------------- | ---------------------------------- | ------- |

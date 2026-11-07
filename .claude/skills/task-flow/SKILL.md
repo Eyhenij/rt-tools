@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of work from the owner's request to the merge. Load at the start of any work, when editing task folders and product agreements, and when returning to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. End of a turn — turn-conduct.
 ---
-<!-- rt-kit v0.34.0 · rules/task-flow.md · 6a93330f7970 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.34.0 · rules/task-flow.md · 51c72f8588b4 · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -196,12 +196,12 @@ flowchart TD
   rule by rule before the first stage: a rule with no stage is found at the merge review, when the
   code is written.
 - **A stage's readiness sign is taken from the output of a command run while the plan is written.**
-  Written by a guess, it is checked at the stage itself — latest of everything that depended on it.
+  Written by a guess, it fails at the stage itself.
 - **A plan for work that ports a technique from outside is written by a measurement of one's own
   code.** Reading the sample says how it is built; what is needed here is said by a count over
   one's own files.
 - **A count that becomes the measure of the work is bounded by the declaration, not by the file.**
-  A file holds neighbouring sets too: a count over it came out twice the real measure.
+  A file holds neighbouring sets too.
 - **Waiting for one part of a stage is never a stop of the stage.** The parts independent of what is
   awaited are done in the same turn; the owner is told what is done and what is left for their step.
 - **A finding made mid-stage is checked against the plan's exit conditions before the first edit.**
@@ -322,3 +322,4 @@ nothing counts; it is held by reading both texts in a row on every such edit.
 - `task-flow-resume` — returning to unfinished work in a new session.
 - `task-flow-close` — lifting the draft, merging the agreement, bringing the texts up to date.
 - `task-flow-archive` — taking the task folder apart, the move to the archive, review by the rules.
+- `task-flow-cycle` — an edit chosen by the report and judged by the next one.

@@ -1,0 +1,66 @@
+#!/usr/bin/env node
+/**
+ * The metric of a package release, written under the heading of the new version in the journal.
+ *
+ * The journal is assembled from commits, so there is no template file to fill in: the field of the
+ * release run is that template, and this command is what makes it binding. The release calls it right
+ * after the journal is appended to, before anything is built or published, so a refusal stops the
+ * release while nothing has left yet.
+ *
+ * Two forms are accepted. `<metric>: вверх` or `<metric>: вниз` names the number the release should
+ * move and the direction. `нет: <reason>` names why the release moves none: a repair owes no movement,
+ * but silence cannot be told from a forgotten field.
+ *
+ * A non-zero code is a refusal, and it names the form.
+ */
+import { readFileSync, writeFileSync } from 'node:fs';
+
+const FILE = process.argv[2];
+const VALUE = (process.argv[3] ?? '').trim();
+
+const MOVED = /^(.+?):\s*(вверх|вниз)$/;
+const NOT_MOVED = /^нет:\s*(.+)$/;
+const HEADING = /^#{1,2} \[/;
+
+/** The line of the journal, or `null` for a value in neither form. */
+function lineOf(value) {
+    const none = NOT_MOVED.exec(value);
+
+    if (none) {
+        return `**Метрика выпуска:** нет. ${none[1]}`;
+    }
+
+    const moved = MOVED.exec(value);
+
+    return moved ? `**Метрика выпуска:** ${moved[1]}, ${moved[2]}` : null;
+}
+
+function main() {
+    const line = lineOf(VALUE);
+
+    if (line === null) {
+        console.error(
+            'release-metric: the release names its metric. ' +
+                `Write «<метрика>: вверх», «<метрика>: вниз» or «нет: <причина>», got «${VALUE}»`
+        );
+
+        return 1;
+    }
+
+    const lines = readFileSync(FILE, 'utf8').split('\n');
+    const at = lines.findIndex((one) => HEADING.test(one));
+
+    if (at === -1) {
+        console.error(`release-metric: ${FILE} has no heading of a version — there is nothing to write under`);
+
+        return 1;
+    }
+
+    lines.splice(at + 1, 0, '', line);
+    writeFileSync(FILE, lines.join('\n'));
+    console.log(`release-metric: ${FILE} — ${line}`);
+
+    return 0;
+}
+
+process.exitCode = main();
