@@ -154,6 +154,8 @@ export interface IReadResult {
     readonly swept: readonly string[];
     /** Каталога нет вовсе — записи не велось ни разу. */
     readonly silent: boolean;
+    /** Дни отрезка, за которые файл нашёлся: запрошенный отрезок бывает длиннее срока хранения. */
+    readonly daysRead: readonly string[];
 }
 
 /** Раньше ли день черты. Дни записаны `ГГГГ-ММ-ДД`, и порядок строк у них хронологический. */
@@ -185,13 +187,14 @@ function observationsOfDay(path: string): readonly IObservation[] {
 export function readObservations(root: string, today: string, days: number): IReadResult {
     const dir: string = join(root, OBSERVATIONS_DIR);
     if (!existsSync(dir)) {
-        return { observations: [], swept: [], silent: true };
+        return { observations: [], swept: [], silent: true, daysRead: [] };
     }
 
     const since: string = dayBefore(today, days - 1);
     const keepFrom: string = dayBefore(today, KEEP_DAYS);
     const observations: IObservation[] = [];
     const swept: string[] = [];
+    const daysRead: string[] = [];
 
     for (const name of readdirSync(dir).sort(byText)) {
         const day: string | null = dayOf(name);
@@ -208,10 +211,11 @@ export function readObservations(root: string, today: string, days: number): IRe
             // а в этот отчёт не идёт
         } else {
             observations.push(...observationsOfDay(join(dir, name)));
+            daysRead.push(day);
         }
     }
 
-    return { observations, swept, silent: false };
+    return { observations, swept, daysRead, silent: false };
 }
 
 const countBy: (values: readonly string[]) => readonly ICount[] = (values: readonly string[]): readonly ICount[] => {

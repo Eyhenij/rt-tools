@@ -42,7 +42,7 @@ The terms of the subjects live in the subdomains. What is shared by the domain:
 ### What it is called in the interface
 
 The package has no interface beyond the launch line. The consumer sees `init`, `sync`,
-`sync --check`, `doctor`, `list`, `stats`, `cost`, `propose` and their output. What each of them
+`sync --check`, `doctor`, `list`, `stats`, `metrics`, `cost`, `propose` and their output. What each of them
 does is named by the subdomain it belongs to.
 
 ## Rules
