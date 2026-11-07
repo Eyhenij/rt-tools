@@ -23,7 +23,7 @@
 # A guard refusal into the observations. The name is taken from `RT_GUARD_NAME`, the session id
 # from the hook input; without a name nothing is written.
 rt_guard_note() {
-    local rt_gn_dir rt_gn_sid rt_gn_name
+    local rt_gn_dir rt_gn_sid rt_gn_name rt_gn_empty=''
     # A default, not a bare read: a guard may be written to abort on an undeclared variable, and a
     # record that reads it bare brings such a guard down whole — on every call, not on a refusal.
     rt_gn_name="${RT_GUARD_NAME:-}"
@@ -37,7 +37,12 @@ rt_guard_note() {
     rt_gn_sid="$(printf '%s' "${RT_HOOK_INPUT:-}" | jq -r '.session_id // empty' 2>/dev/null)"
 
     if [ -n "$rt_gn_sid" ]; then
-        rt_note guard-deny "res=$rt_gn_name" "sid=$rt_gn_sid"
+        # shellcheck disable=SC1090
+        [ -f "$rt_gn_dir/metric-marks.sh" ] && . "$rt_gn_dir/metric-marks.sh" 2>/dev/null
+        command -v rt_refusal_empty >/dev/null 2>&1 \
+            && rt_gn_empty="$(rt_refusal_empty "$rt_gn_name" "$rt_gn_sid" \
+                "$(printf '%s' "${RT_HOOK_INPUT:-}" | jq -c '.tool_input // empty' 2>/dev/null)")"
+        rt_note guard-deny "res=$rt_gn_name" "sid=$rt_gn_sid" "empty=$rt_gn_empty"
     else
         rt_note guard-deny "res=$rt_gn_name"
     fi

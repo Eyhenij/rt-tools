@@ -41,15 +41,11 @@ Given a guard that refused a call
 When it refuses the same call on the same content in the same session
 Then the second refusal is counted as empty
 
-Not covered: no code yet.
-
 ### SC-AK-1278 — an edit between two refusals keeps the second one honest
 
 Given a guard that refused a call
 When an uncommitted edit changes the content and the guard refuses again
 Then the second refusal is not counted as empty
-
-Not covered: no code yet.
 
 ### SC-AK-1279 — a red run repeated on the same content counts as wasted
 

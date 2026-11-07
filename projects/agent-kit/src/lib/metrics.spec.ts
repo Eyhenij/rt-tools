@@ -39,7 +39,7 @@ describe('guardsOf', () => {
             line('guard-deny', 'turn-exit-guard', 's1'),
         ]);
 
-        expect(guards).toEqual([{ name: 'turn-exit-guard', refusals: 3, repeats: 2, repeatShare: 67 }]);
+        expect(guards).toEqual([{ name: 'turn-exit-guard', refusals: 3, repeats: 2, repeatShare: 67, compared: 0, empty: 0 }]);
     });
 
     it('SC-AK-1292 — строка соседней сессии повтор не прерывает', () => {
@@ -116,6 +116,42 @@ describe('metricsOf', () => {
         expect(report.refusalsPerSession).toBe(0);
         expect(report.repeatShare).toBe(0);
         expect(report.deadRuleShare).toBe(0);
+    });
+});
+
+describe('пустые отказы', () => {
+    function refused(guard: string, empty: boolean | null): IObservation {
+        return { ...line('guard-deny', guard, 's1'), empty };
+    }
+
+    it('SC-AK-1277 — пустые отказы считаются по каждой проверке', () => {
+        const report: IMetricsReport = reportOf(
+            [refused('grill-gate', false), refused('grill-gate', true), refused('claim-guard', false)],
+            ['testing']
+        );
+
+        expect(report.guards.find((guard: IGuardMetric): boolean => guard.name === 'grill-gate')).toMatchObject({ compared: 2, empty: 1 });
+        expect(report.emptyRefusals).toBe(1);
+        expect(report.comparedRefusals).toBe(3);
+        expect(metricsLines(report)).toContain('пустые отказы: 1 (33%)');
+        expect(metricsLines(report)).toContain('  grill-gate: 2, повторов 1 (50%), пустых 1 (50%)');
+    });
+
+    it('SC-AK-1277 — метрика уходит из строки без данных с первой записью с признаком', () => {
+        const noData: string | undefined = metricsLines(reportOf([refused('grill-gate', false)], ['testing'])).find(
+            (text: string): boolean => text.startsWith('нет данных:')
+        );
+
+        expect(noData).toContain('Пустые запуски');
+        expect(noData).not.toContain('Пустые отказы');
+    });
+
+    it('SC-AK-1277 — записи старой версии не считаются нулём', () => {
+        const lines: readonly string[] = metricsLines(reportOf([refused('grill-gate', null)], ['testing']));
+
+        expect(lines.find((text: string): boolean => text.startsWith('нет данных:'))).toContain('Пустые отказы');
+        expect(lines).toContain('отказы проверок: 1, на сессию 1');
+        expect(lines.join('\n')).not.toContain('пустые отказы:');
     });
 });
 

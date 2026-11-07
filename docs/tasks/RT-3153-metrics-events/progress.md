@@ -3,19 +3,19 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 5 — пустые отказы
-- **Done:** задача взята, ветка от RT-3152, план написан
-- **Next step:** подпись содержимого дерева и вызова
+- **Stage:** 2 of 5 — запуски и минуты
+- **Done:** первый этап: пустые отказы считаются по каждой проверке
+- **Next step:** строка запуска с исходом, секундами и родом шага
 - **Uncommitted:** нет
 - **Waiting for the owner:** нет
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Подпись содержимого дерева и вызова в отдельном файле меток
-- [ ] 1.2 Запись guard-deny с признаком пустого отказа
-- [ ] 1.3 Счёт пустых отказов в отчёте
-- [ ] 2.1 Строка запуска с исходом, секундами и родом шага
+- [x] 1.1 Подпись содержимого дерева и вызова в отдельном файле меток
+- [x] 1.2 Запись guard-deny с признаком пустого отказа
+- [x] 1.3 Счёт пустых отказов в отчёте
+- [>] 2.1 Строка запуска с исходом, секундами и родом шага
 - [ ] 2.2 Пустой запуск по подписи содержимого за день
 - [ ] 2.3 Счёт минут в отчёте
 - [ ] 3.1 Метка передачи при открытии PR и снятии черновика
@@ -29,3 +29,48 @@
 - [ ] 5.4 Знаменатель доли правок
 
 ## Decisions along the way
+
+- Запись `empty=0` пишется наравне с `empty=1`: без неё отчёт не отличит ноль от старых записей без признака.
+- Подпись дерева не читает каталог наблюдений: в дереве, которое его не игнорирует, своя запись выглядела бы правкой.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/eyhenij/WebstormProjects/rt-tools/.claude/worktrees/rt-3049-push
+**Branch:** RT-3153-metrics-events
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 1 of 5 — пустые отказы
+- **Next step:** подпись содержимого дерева и вызова
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-3153-metrics-events/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M projects/agent-kit/assets/hooks/guard-note.sh
+ M projects/agent-kit/src/lib/observations.ts
+?? projects/agent-kit/assets/hooks/metric-marks.sh
+```
+
+### Commits over the main branch
+
+```
+97bd0eceb docs(rt:agent-kit): папка задачи RT-3153
+871604260 Merge remote-tracking branch 'origin/RT-3151-agent-kit-metrics' into RT-3152-metrics-catalog
+df0ff2925 Merge remote-tracking branch 'origin/main' into RT-3151-agent-kit-metrics
+f05fe69c7 fix(rt:agent-kit): договорённость эпика не держит PR его задач
+edc86bc27 fix(rt:agent-kit): отчёт называет прочитанные дни и удалённые файлы
+cb66fd5e0 docs(rt:agent-kit): описание пакета укладывается в предел длины
+ad74252bc docs(rt:agent-kit): папка задачи RT-3152 разобрана в запись архива
+b1e471525 feat(rt:agent-kit): команда metrics считает качество пакета по наблюдениям дерева
+09aedadd7 docs(rt:agent-kit): договорённость о метриках пакета правил
+4811f6680 docs(rt:agent-kit): план эпика RT-3151 о метриках пакета правил
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

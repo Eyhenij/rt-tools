@@ -55,7 +55,14 @@ describe('строка наблюдения', (): void => {
             kind: 'scss',
             session: '42',
             version: '0.5.1',
+            empty: null,
         });
+    });
+
+    it('SC-AK-1277 — признак пустого отказа читается парой значений, чужое значение признаком не считается', (): void => {
+        expect(parseObservation(note('guard-deny', { empty: '1' }))?.empty).toBe(true);
+        expect(parseObservation(note('guard-deny', { empty: '0' }))?.empty).toBe(false);
+        expect(parseObservation(note('guard-deny', { empty: '2' }))?.empty).toBeNull();
     });
 
     it('битая строка пропускается, а не роняет разбор', (): void => {
