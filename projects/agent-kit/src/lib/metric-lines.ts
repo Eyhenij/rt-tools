@@ -8,23 +8,11 @@
 import { IAsset } from './assets.js';
 import { isMetricKey, isMetricValue } from './cargo.js';
 import { ICallMetric, IUsageMetric, usageOf } from './metric-usage.js';
+import { ITreeFacts } from './metric-send-mark.js';
 import { guardsOf, IGuardMetric, IRunMetric, runsOf } from './metrics.js';
 import { IObservation } from './observations.js';
 import { OWN_RESOURCE, packaged } from './observations-cargo.js';
 import { IOutcomeMetric, outcomeMetricOf } from './outcomes.js';
-
-/** Числа дерева на момент отправки: они про дерево, а не про день, и едут только сегодняшней строкой. */
-export interface ITreeFacts {
-    readonly rulesLaidOut: number;
-    readonly rulesDead: number | null;
-    readonly sectionsTotal: number;
-    readonly sectionsOverridden: number;
-    readonly entryChars: number | null;
-    readonly outcomesBroken: number;
-    /** Итоги спросить некого: дерево без функции не то же самое, что дерево без итогов. */
-    readonly outcomesUnread: number;
-    readonly sendFault: number;
-}
 
 type TMetrics = Record<string, number>;
 
@@ -135,7 +123,7 @@ function factNumbers(metrics: TMetrics, facts: ITreeFacts): void {
 }
 
 /**
- * Числа одного дня. `facts` приходит только у сегодняшней строки.
+ * Числа одного дня. `facts` приходит у сегодняшней строки и у дней, чьи числа хранит метка отправки.
  *
  * Последний фильтр не сторож, а граница: ключ, не прошедший проверку, отказал бы у приёмника всю
  * строку, и один странный род запуска стоил бы дереву целого дня.

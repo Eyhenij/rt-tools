@@ -14,7 +14,8 @@ import { CARGO_SCHEMA_VERSION, ICargoOverride, IMetricsDayCargo, isMetricVersion
 import { IEnvironment, IOutcomeOfCommand } from './commands.js';
 import { CONFIG_PATH, IConfig, readConfig } from './config.js';
 import { dropFileLock, takeFileLock } from './file-lock.js';
-import { dayMetrics, ITreeFacts } from './metric-lines.js';
+import { dayMetrics } from './metric-lines.js';
+import { ESendFault, ISendMark, ITreeFacts, marksDir, markPath, readSendMark } from './metric-send-mark.js';
 import { IMetricsReport, METRICS_DEFAULT_DAYS, reportOf } from './metrics.js';
 import { dayBefore, IObservation, KEEP_DAYS, OBSERVATIONS_DIR, observationsOfDay, openMarksDir, readObservations } from './observations.js';
 import { byText } from './order.js';
@@ -32,35 +33,6 @@ const DAY_FILE: RegExp = /^(\d{4}-\d{2}-\d{2})\.jsonl$/;
 /** Код строки, которую отказала сама отправка: до приёма она не дошла. */
 const LEAK_STATUS: number = -1;
 
-/** Причина сбоя числом: в строке дня текста быть не может. */
-export enum ESendFault {
-    None = 0,
-    Network = 1,
-    TokenRefused = 2,
-    LineRefused = 3,
-    Intake = 4,
-    Leak = 5,
-}
-
-/** Что отправка помнит о себе. Лежит в копии: у каждой свой отрезок и свой сбой. */
-export interface ISendMark {
-    readonly tried: number;
-    readonly succeeded: number;
-    /** День последней удачной отправки: окно идёт от него. */
-    readonly day: string;
-    readonly fault: ESendFault;
-    readonly reason: string;
-    /** Сумма токена, который приём отказал: новый файл снимает остановку. */
-    readonly refusedToken: string;
-    /** С какой минуты отправка не удаётся: начало сессии называет сбой старше суток, а не попытку. */
-    readonly faultSince: number;
-    /**
-     * Числа дерева по дням окна. Приём замещает день целиком, а считаются они только на сегодня, поэтому
-     * повтор дня без них стёр бы лежащие на приёме.
-     */
-    readonly factsByDay: Readonly<Record<string, ITreeFacts>>;
-}
-
 export interface ISendOptions {
     /** Запустила проверка: ни строки на экран, срок и отказанный токен соблюдаются. */
     readonly quiet: boolean;
@@ -71,17 +43,6 @@ export interface ISendOptions {
     readonly ship: TShip;
 }
 
-const EMPTY_MARK: ISendMark = {
-    tried: 0,
-    succeeded: 0,
-    day: '',
-    fault: ESendFault.None,
-    reason: '',
-    refusedToken: '',
-    faultSince: 0,
-    factsByDay: {},
-};
-
 /** Чем удачная отправка чистит следы сбоя. */
 const CLEAN_MARK: Pick<ISendMark, 'fault' | 'reason' | 'refusedToken' | 'faultSince'> = {
     fault: ESendFault.None,
@@ -89,23 +50,6 @@ const CLEAN_MARK: Pick<ISendMark, 'fault' | 'reason' | 'refusedToken' | 'faultSi
     refusedToken: '',
     faultSince: 0,
 };
-
-function marksDir(root: string): string {
-    return join(root, OBSERVATIONS_DIR, '.marks');
-}
-
-function markPath(root: string): string {
-    return join(marksDir(root), 'send.json');
-}
-
-/** Метка копии. Битая читается как пустая: отправка не должна остановиться из-за своей записи. */
-export function readSendMark(root: string): ISendMark {
-    try {
-        return { ...EMPTY_MARK, ...(JSON.parse(readFileSync(markPath(root), 'utf8')) as Partial<ISendMark>) };
-    } catch {
-        return EMPTY_MARK;
-    }
-}
 
 function writeSendMark(root: string, mark: ISendMark): void {
     writeFileSync(markPath(root), `${JSON.stringify(mark)}\n`);
@@ -357,30 +301,4 @@ export async function sendMetrics(env: IEnvironment, options: ISendOptions): Pro
     } finally {
         dropFileLock(lock);
     }
-}
-
-/**
- * Что сказать при раскладке, если она включила отправку. Дерево с адресом начинает слать числа без
- * новых шагов, и узнать об этом из молчания нельзя.
- */
-export function sendEnrolledLines(config: IConfig, written: readonly string[]): readonly string[] {
-    if (!config.intake || !config.send || !written.some((path: string): boolean => path.endsWith('metric-send-start.sh'))) {
-        return [];
-    }
-
-    return ['отправка чисел включена: дерево с адресом приёма шлёт строки дня само, выключает ключ `send: false`'];
-}
-
-/** Сбой отправки словами: его называют `doctor` и начало сессии. Пусто: сбоя нет. */
-export function sendFaultLines(root: string): readonly string[] {
-    const mark: ISendMark = readSendMark(root);
-    const config: IConfig | null = readConfig(root);
-    const noToken: boolean = Boolean(config?.intake) && config?.send !== false && !readToken(root, config?.token ?? '');
-
-    return [
-        // Токен лежит вне дерева, а настройка в истории: вторая машина того же дерева молчит именно так.
-        ...(noToken ? ['числа дерева не уходят: адрес приёма есть, файла токена на этой машине нет'] : []),
-        ...(mark.fault === ESendFault.None ? [] : [`последняя отправка чисел не удалась: ${mark.reason}`]),
-        ...(mark.refusedToken ? ['попытки остановлены, пока файл токена не сменится'] : []),
-    ];
 }

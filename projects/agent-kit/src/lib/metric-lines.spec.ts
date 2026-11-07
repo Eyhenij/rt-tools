@@ -1,6 +1,7 @@
 import { IAsset } from './assets.js';
 import { isMetricKey } from './cargo.js';
-import { dayMetrics, ITreeFacts } from './metric-lines.js';
+import { dayMetrics } from './metric-lines.js';
+import { ITreeFacts } from './metric-send-mark.js';
 import { IObservation } from './observations.js';
 import { EOutcome } from './outcomes.js';
 
@@ -21,7 +22,7 @@ const FACTS: ITreeFacts = {
     sectionsOverridden: 5,
     entryChars: 9000,
     outcomesBroken: 1,
-    outcomesUnread: 0,
+    outcomesUnread: 1,
     sendFault: 2,
 };
 

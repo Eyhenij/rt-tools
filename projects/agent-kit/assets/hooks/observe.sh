@@ -161,6 +161,7 @@ rt_send_fault_line() {
         token="$(jq -r '.token // ""' "$config" 2>/dev/null)"
         case "$token" in
             '' | /*) ;;
+            '~/'*) token="$HOME/${token#'~/'}" ;;
             *) token="$root/$token" ;;
         esac
         [ -n "$token" ] && [ -f "$token" ] \

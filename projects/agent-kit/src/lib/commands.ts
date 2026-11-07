@@ -4,7 +4,7 @@
  * а `process.exit` зовёт только точка входа — иначе ни одну из них нельзя было бы проверить
  * спекой, не перехватывая поток вывода.
  */
-import { sendEnrolledLines, sendFaultLines } from './metric-send.js';
+import { sendEnrolledLines, sendFaultLines } from './metric-send-mark.js';
 import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 

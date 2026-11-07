@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/observe.sh · 47b42a1b268d · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/observe.sh · 79c3a571d456 · правится надстройкой, не здесь
 # Recording observations about the rules layer. NOT a guard: it has no `rt-hook:` declaration and it
 # hooks into no agent event. The guards source it — the same way the gate sources the map.
 #
@@ -162,6 +162,7 @@ rt_send_fault_line() {
         token="$(jq -r '.token // ""' "$config" 2>/dev/null)"
         case "$token" in
             '' | /*) ;;
+            '~/'*) token="$HOME/${token#'~/'}" ;;
             *) token="$root/$token" ;;
         esac
         [ -n "$token" ] && [ -f "$token" ] \
