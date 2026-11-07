@@ -1,3 +1,15 @@
+# [0.41.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.40.0...rt-ui-kit-v2%400.41.0) (2026-11-07)
+
+### Bug Fixes
+
+- **rt:auth:** замечания ревью темы входа и ячейки таблицы ([488b4db](https://github.com/Eyhenij/rt-tools/commit/488b4db17e5c51d11473f641b8a2e52f76cd0835))
+- **rt:auth:** кнопка после подтверждения почты ведёт в приложение, замер значков в витрине ([4c93863](https://github.com/Eyhenij/rt-tools/commit/4c938638fd64a75f87d040d195c515191e5a3dc6))
+
+### Features
+
+- **rt:ui-kit-v2:** колонка rt-data-table задаёт размер значка ячейки ([2ea5ff9](https://github.com/Eyhenij/rt-tools/commit/2ea5ff9c3e1601319860ca184e92e4c7f9459d29))
+- **rt:ui-kit-v2:** подпись срока, полоса над полем, чтение черновика, вид мессенджера по кадрам ([9c31084](https://github.com/Eyhenij/rt-tools/commit/9c310841d0f4674b5a4f5430ef8c8e8f1434202b))
+
 # [0.40.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.39.2...rt-ui-kit-v2%400.40.0) (2026-11-06)
 
 ### Features
