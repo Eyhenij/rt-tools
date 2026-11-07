@@ -1,5 +1,5 @@
 /**
- * Использование слоя правил: сценарии договорённости `docs/specs/agent-kit/proposed/metrics/`.
+ * Использование слоя правил: сценарии `docs/specs/agent-kit/metrics/`.
  */
 import { IUsageMetric, usageCounted, usageLines, usageOf } from './metric-usage.js';
 import { IObservation } from './observations.js';

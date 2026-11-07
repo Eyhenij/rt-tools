@@ -1,6 +1,6 @@
 # Observations
 
-**Status:** in force · **Revision:** 2026-09-05 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-08 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `observability`, `work-conduct`, `delivery`, `frontend-application`, `verifiability`
 **Procedures:** none
@@ -15,7 +15,7 @@ replaced and what it refused, and the tree sign tells trees apart without naming
 What of the learned goes outward and how — proposals, a word mid-work, sending the cargo, creating
 a tree in the intake and marking the records — is the neighbouring subdomain "Cargo outward" next
 to it. Text goes outward only by a command of a person. The day lines of numbers leave by themselves, and
-no guard waits for the network: the agreement on the metrics of the package names how.
+no guard waits for the network: the neighbouring subdomain "Metrics" names how.
 
 ## Terminology
 
@@ -51,7 +51,8 @@ no guard waits for the network: the agreement on the metrics of the package name
   observation at any event.
 - **The writing of observations is switched off by a setting of the tree.** The setting key switches
   it off whole, not in parts: the package stands with those we know nothing about too, and writing
-  without the tree's knowledge is not allowed.
+  without the tree's knowledge is not allowed. A second key, `send`, stops only the sending of the
+  day lines and keeps the writing.
 - **A guard that could not write an observation lets the action through.** An observation is a side
   duty of the guard, and its breakage has no right to stop the work: the rule of refusing in favour
   of the work acts here the same as in the guard itself.
@@ -81,7 +82,7 @@ no guard waits for the network: the agreement on the metrics of the package name
 - **The digest answers for a stretch of days, not for all time.** The stretch is named by an argument
   of the launch; without the argument three days are taken.
 - **Observations older than the keeping time are removed by the digest.** A directory that only grows
-  stops being opened in a year.
+  stops being opened in a year. The report of one tree removes them too and names what it removed.
 - **An override is counted as a state, not as an event.** The snapshot is taken by the layout at the
   moment of the request, it is not put together from records of when the override was created. An
   event at the layout would create a second source of the same truth, and the history "when it was
@@ -119,9 +120,10 @@ no guard waits for the network: the agreement on the metrics of the package name
 - Gathering observations from several machines into one place on the tree: observations live in
   the tree of the machine they worked on. The sending carries the lines of every machine to the
   intake, and it is the intake that counts across them — the subdomain "Cargo outward".
-- **Measuring the session time and the token cost.** Named by the owner outright.
-- **New kinds of events and guards created for the sake of observation.** Observations are given off
-  by the guards that already catch their own business.
+- **Measuring the session time and the token cost.** Named by the owner outright. The seconds of a
+  run measure a check, not a session.
+- **Guards created for the sake of observation.** Observations are given off by the guards that
+  already catch their own business. New kinds of events come only from the list in the data section.
 - **A personal, per-machine step of the switch on top of the tree setting.** The command is one, and
   the tree setting is enough.
 - **The content of an override.** What goes outward is that a section was replaced, not what with.
@@ -148,14 +150,22 @@ Not applicable: the answer is an exit code and text, not named codes.
 
 **An observation** — one line per event, in a file per day:
 
-| Field            | What is in it                                                                                  |
-| ---------------- | ---------------------------------------------------------------------------------------------- |
-| time             | the moment of the event                                                                        |
-| kind             | what happened: a rule loaded, a refusal by the gate, a refusal of a guard, a layout divergence |
-| resource         | the name of the rule or the guard — the name of the package resource, and only it              |
-| the kind of file | the extension or a known kind of the rules layer; there is no path                             |
-| version          | the version of the package that laid the resource out                                          |
-| session          | a short sign the sessions are counted by; the session name is not recovered from it            |
+| Field            | What is in it                                                                       |
+| ---------------- | ----------------------------------------------------------------------------------- |
+| time             | the moment of the event                                                             |
+| kind             | what happened, from the closed list below                                           |
+| resource         | the name of the rule or the guard — the name of the package resource, and only it   |
+| the kind of file | the extension or a known kind of the rules layer; there is no path                  |
+| version          | the version of the package that laid the resource out                               |
+| session          | a short sign the sessions are counted by; the session name is not recovered from it |
+
+The closed list of kinds: `skill-load`, `gate-deny`, `guard-deny`, `push-gate`, `run`,
+`exam-verdict`, `owner-correction`, `role-call`, `role-verdict`, `command-call`, `edit-seen`,
+`task-outcome` and `settings-change`. The kinds after the first four serve the metrics of the
+package. They stay in the tree, and their counts leave in the day line.
+
+A line may also carry the seconds of a run, the sign of an empty refusal, the rule a guard declared
+or the verdict of a role. None of these fields names anything of the tree.
 
 ## Screens and states
 
@@ -215,6 +225,8 @@ The open questions of the domain are shared, and they live in the spec next to i
 
 ## History of changes
 
+- 2026-11-08 — the metrics of the package moved in: the closed list of kinds grew, `send` became a
+  second key, and the report of one tree removes old files too.
 - 2026-09-05 — the subdomain of the cargo outward was split out of this spec, which had outgrown the
   length limit. The rules, scenarios and bindings of proposals, sending, creating a tree and marking
   moved into it as they were: the scenario numbers were not recounted.

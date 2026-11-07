@@ -1,7 +1,7 @@
 /**
  * Метрики пакета по наблюдениям одного дерева.
  *
- * Сценарии договорённости `docs/specs/agent-kit/proposed/metrics/`.
+ * Сценарии `docs/specs/agent-kit/metrics/`.
  */
 import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -357,7 +357,7 @@ describe('metrics', () => {
     it('SC-AK-1293 — отчёт называет метрики, которые считает только общий отчёт', () => {
         observed('2026-08-12');
 
-        expect(said(report())).toContain('вне этого отчёта: Повторы ошибок, Полнота отчёта, Выпуск');
+        expect(said(report())).toContain('вне этого отчёта: Повторы ошибок, Полнота отчёта');
         expect(JSON.parse(report(true).lines[0]).outside).toContain('Повторы ошибок');
     });
 

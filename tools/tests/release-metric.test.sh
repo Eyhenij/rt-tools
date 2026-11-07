@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # The scenarios of the metric of a package release: the release does not start without one.
 #
-# Covers SC-AK-1332 of the spec `docs/specs/agent-kit/proposed/metrics`.
+# Covers SC-AK-1332 of the spec `docs/specs/agent-kit/metrics`.
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 echo "the metric of a package release"

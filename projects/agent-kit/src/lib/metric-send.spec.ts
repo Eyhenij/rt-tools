@@ -1,5 +1,5 @@
 /**
- * Отправка строк дня: сценарии договорённости `docs/specs/agent-kit/proposed/metrics/`.
+ * Отправка строк дня: сценарии `docs/specs/agent-kit/metrics/`.
  */
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';

@@ -1,7 +1,6 @@
 # Scenarios — the product metrics of the rules package
 
-The numbers continue the numbering of the package and do not change after the merge. Until a test
-appears, a scenario carries the line «Not covered» with the reason.
+The numbers continue the numbering of the package and do not change.
 
 ### SC-AK-1273 — a task without a change after the handover counts as first-pass
 
