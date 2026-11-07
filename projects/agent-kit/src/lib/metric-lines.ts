@@ -52,7 +52,9 @@ function outcomeNumbers(metrics: TMetrics, outcomes: IOutcomeMetric | null): voi
     }
     add(metrics, 'tasksAccepted', outcomes.accepted);
     add(metrics, 'tasksClosed', outcomes.closed);
-    add(metrics, 'tasksFirstPass', outcomes.firstPass);
+    // Откат приходит не в день приёмки, поэтому вычитать его в строке дня нельзя: разность за два дня
+    // разошлась бы с разностью за один. Вычитает тот, кто складывает дни.
+    add(metrics, 'tasksFirstPass', outcomes.passed);
     add(metrics, 'tasksLost', outcomes.lost);
     add(metrics, 'tasksNoHandover', outcomes.noHandover);
 }

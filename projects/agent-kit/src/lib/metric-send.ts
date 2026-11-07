@@ -6,17 +6,17 @@
  * то, что уже не получилось: сбой пишется в метку, а не на экран.
  */
 import { createHash, randomBytes } from 'node:crypto';
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { collectAssets, IAsset } from './assets.js';
-import { CARGO_SCHEMA_VERSION, ICargoOverride, IMetricsDayCargo } from './cargo.js';
+import { CARGO_SCHEMA_VERSION, ICargoOverride, IMetricsDayCargo, isMetricVersion } from './cargo.js';
 import { IEnvironment, IOutcomeOfCommand } from './commands.js';
 import { CONFIG_PATH, IConfig, readConfig } from './config.js';
 import { dropFileLock, takeFileLock } from './file-lock.js';
 import { dayMetrics, ITreeFacts } from './metric-lines.js';
 import { IMetricsReport, METRICS_DEFAULT_DAYS, reportOf } from './metrics.js';
-import { dayBefore, IObservation, KEEP_DAYS, OBSERVATIONS_DIR, observationsOfDay, readObservations } from './observations.js';
+import { dayBefore, IObservation, KEEP_DAYS, OBSERVATIONS_DIR, observationsOfDay, openMarksDir, readObservations } from './observations.js';
 import { byText } from './order.js';
 import { collectOutcomes, EOutcomesRead } from './outcomes.js';
 import { ILeak, leaksIn } from './proposals.js';
@@ -52,12 +52,13 @@ export interface ISendMark {
     readonly reason: string;
     /** Сумма токена, который приём отказал: новый файл снимает остановку. */
     readonly refusedToken: string;
+    /** С какой минуты отправка не удаётся: начало сессии называет сбой старше суток, а не попытку. */
+    readonly faultSince: number;
     /**
-     * Числа дерева последней дошедшей строки дня. Приём замещает день целиком, и без них первая строка
-     * следующего дня стёрла бы эти числа за вчера: считаются они только на сегодня.
+     * Числа дерева по дням окна. Приём замещает день целиком, а считаются они только на сегодня, поэтому
+     * повтор дня без них стёр бы лежащие на приёме.
      */
-    readonly facts: ITreeFacts | null;
-    readonly factsDay: string;
+    readonly factsByDay: Readonly<Record<string, ITreeFacts>>;
 }
 
 export interface ISendOptions {
@@ -77,12 +78,17 @@ const EMPTY_MARK: ISendMark = {
     fault: ESendFault.None,
     reason: '',
     refusedToken: '',
-    facts: null,
-    factsDay: '',
+    faultSince: 0,
+    factsByDay: {},
 };
 
 /** Чем удачная отправка чистит следы сбоя. */
-const CLEAN_MARK: Pick<ISendMark, 'fault' | 'reason' | 'refusedToken'> = { fault: ESendFault.None, reason: '', refusedToken: '' };
+const CLEAN_MARK: Pick<ISendMark, 'fault' | 'reason' | 'refusedToken' | 'faultSince'> = {
+    fault: ESendFault.None,
+    reason: '',
+    refusedToken: '',
+    faultSince: 0,
+};
 
 function marksDir(root: string): string {
     return join(root, OBSERVATIONS_DIR, '.marks');
@@ -138,6 +144,19 @@ function dayOf(root: string, day: string): readonly IObservation[] {
     const path: string = join(root, OBSERVATIONS_DIR, `${day}.jsonl`);
 
     return existsSync(path) ? observationsOfDay(path) : [];
+}
+
+/**
+ * Версия дня берётся из его записей. Вчерашний день уходит заново каждое утро, и версия пакета на эту
+ * минуту перенесла бы последний день перед обновлением в счёт после него.
+ */
+function versionOfDay(observations: readonly IObservation[], version: string): string {
+    const written: string | undefined = observations
+        .map((entry: IObservation): string => entry.version)
+        .filter((one: string): boolean => isMetricVersion(one))
+        .at(-1);
+
+    return written ?? version;
 }
 
 function factsOf(env: IEnvironment, config: IConfig, today: string, read: EOutcomesRead, fault: ESendFault): ITreeFacts {
@@ -200,7 +219,7 @@ interface IShipOutcome {
 
 /** Сбой держится в числах своего дня: следующая удачная строка того же дня не должна его снять. */
 function faultOfDay(mark: ISendMark, today: string): ESendFault {
-    return mark.fault || (mark.factsDay === today ? (mark.facts?.sendFault ?? ESendFault.None) : ESendFault.None);
+    return mark.fault || (mark.factsByDay[today]?.sendFault ?? ESendFault.None);
 }
 
 /**
@@ -226,15 +245,6 @@ function stopsTheWindow(shipped: IShipped): boolean {
     return fault !== ESendFault.LineRefused && fault !== ESendFault.Leak;
 }
 
-/** Числа дерева идут с сегодняшней строкой и с днём, когда их считали в прошлый раз. */
-function factsOfDay(day: string, today: string, fresh: ITreeFacts, mark: ISendMark): ITreeFacts | null {
-    if (day === today) {
-        return fresh;
-    }
-
-    return day === mark.factsDay ? mark.facts : null;
-}
-
 /** Строки окна по одной: сбой останавливает отправку, следующая попытка начнёт с того же дня. */
 async function shipLines(work: ISendWork, mark: ISendMark, today: string): Promise<IShipOutcome> {
     const { env, config, tree, options } = work;
@@ -247,14 +257,15 @@ async function shipLines(work: ISendWork, mark: ISendMark, today: string): Promi
     let sent: ITreeFacts | null = null;
 
     for (const day of windowDays(names, mark.day, today)) {
+        const observations: readonly IObservation[] = dayOf(env.root, day);
         const cargo: IMetricsDayCargo = {
             tree,
             origin,
             day,
             schema: CARGO_SCHEMA_VERSION,
-            version: env.version,
+            version: versionOfDay(observations, env.version),
             stamp: options.now.getTime(),
-            metrics: dayMetrics(dayOf(env.root, day), assets, factsOfDay(day, today, fresh, mark)),
+            metrics: dayMetrics(observations, assets, day === today ? fresh : (mark.factsByDay[day] ?? null)),
         };
         const shipped: IShipped = await shipLine(work, cargo);
 
@@ -277,6 +288,7 @@ function failed(mark: ISendMark, shipped: IShipped, token: string, now: Date): I
     return {
         ...mark,
         tried: now.getTime(),
+        faultSince: mark.faultSince || now.getTime(),
         fault,
         reason: (fault === ESendFault.Leak ? shipped.said : `${shipped.status || 'нет ответа'}: ${shipped.said}`).slice(0, 200),
         refusedToken: fault === ESendFault.TokenRefused ? tokenSign(token) : '',
@@ -289,10 +301,10 @@ async function sendLocked(work: ISendWork, mark: ISendMark, today: string): Prom
     writeSendMark(env.root, { ...mark, tried: options.now.getTime() });
 
     const { stopped, facts }: IShipOutcome = await shipLines(work, mark, today);
-    const kept: ISendMark = facts ? { ...mark, facts, factsDay: today } : mark;
+    const counted: Readonly<Record<string, ITreeFacts>> = facts ? { [today]: facts } : {};
     const next: ISendMark = stopped
-        ? failed(kept, stopped, token, options.now)
-        : { ...kept, ...CLEAN_MARK, tried: options.now.getTime(), succeeded: options.now.getTime(), day: today };
+        ? failed({ ...mark, factsByDay: { ...mark.factsByDay, ...counted } }, stopped, token, options.now)
+        : { ...mark, ...CLEAN_MARK, factsByDay: counted, tried: options.now.getTime(), succeeded: options.now.getTime(), day: today };
 
     writeSendMark(env.root, next);
 
@@ -326,9 +338,9 @@ export async function sendMetrics(env: IEnvironment, options: ISendOptions): Pro
     const tree: string = treeSlugOf(options.remote, config.tree);
 
     if (!config.intake || !token || !tree) {
-        return said(options, 0, ['адреса приёма, токена или признака дерева нет: запрос не уходит']);
+        return said(options, 1, ['адреса приёма, токена или признака дерева нет: запрос не уходит']);
     }
-    mkdirSync(marksDir(env.root), { recursive: true });
+    openMarksDir(marksDir(env.root));
 
     const mark: ISendMark = readSendMark(env.root);
     const lock: string = join(marksDir(env.root), 'send.lock');
@@ -362,13 +374,13 @@ export function sendEnrolledLines(config: IConfig, written: readonly string[]): 
 /** Сбой отправки словами: его называют `doctor` и начало сессии. Пусто: сбоя нет. */
 export function sendFaultLines(root: string): readonly string[] {
     const mark: ISendMark = readSendMark(root);
-
-    if (mark.fault === ESendFault.None) {
-        return [];
-    }
+    const config: IConfig | null = readConfig(root);
+    const noToken: boolean = Boolean(config?.intake) && config?.send !== false && !readToken(root, config?.token ?? '');
 
     return [
-        `последняя отправка чисел не удалась: ${mark.reason}`,
+        // Токен лежит вне дерева, а настройка в истории: вторая машина того же дерева молчит именно так.
+        ...(noToken ? ['числа дерева не уходят: адрес приёма есть, файла токена на этой машине нет'] : []),
+        ...(mark.fault === ESendFault.None ? [] : [`последняя отправка чисел не удалась: ${mark.reason}`]),
         ...(mark.refusedToken ? ['попытки остановлены, пока файл токена не сменится'] : []),
     ];
 }

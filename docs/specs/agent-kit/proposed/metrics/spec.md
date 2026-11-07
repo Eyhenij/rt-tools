@@ -134,6 +134,10 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
 - **The numbers of a tree are kept with the day they were counted on.** The intake replaces a day
   whole, so the morning send of yesterday carries them from the mark. A failure code stays in every
   line of its day.
+- **A day leaves under the version of its records.** A repeated day must not move into the count after
+  an update.
+- **The first-pass count of a line is gross.** A rollback lands on a later day, so the difference is
+  taken by whoever adds the days.
 - **A refused line closes its own day only.** The other days go on, today's too, and the failure stays
   named.
 - **The automatic sending has no path to proposals, analyses or the digest.** They hold text and leave
@@ -141,12 +145,13 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
 - **A tree without an intake address and a token file sends nothing.** Both are required. The hook
   marks the start before the process, so such a tree starts one process in 15 minutes.
 - **A copy without a build of the package asks the main copy.** A tree with an address and nothing to
-  send with, or with a build that cannot send, is named at the session start.
+  send with, or with a build that cannot send, is named at the session start. So is a token file this
+  machine does not have: the token lies outside the tree, and a second machine would stay silent.
 - **Enrolled trees send by default, and the change is named.** The release note and `agent-kit sync`
   name it. `send: false` stops the sending and keeps the writing. `observe: false` stops both, whatever
   `send` says. A change of either key is an observation.
 - **A failed send leaves a trace.** It writes its last result beside the mark: the code, the time and
-  the reason. `agent-kit doctor` and the session start name a failure older than a day. The next line
+  the reason. `agent-kit doctor` and the session start name a failure that started more than a day ago. The next line
   that gets through carries that code as a number, and a tree whose token is refused sends nothing,
   so the section reads it as a silent tree.
 - **A refused token or a found leak stops the tries.** They resume when the token file or the cargo

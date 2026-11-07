@@ -2,6 +2,7 @@ import { IAsset } from './assets.js';
 import { isMetricKey } from './cargo.js';
 import { dayMetrics, ITreeFacts } from './metric-lines.js';
 import { IObservation } from './observations.js';
+import { EOutcome } from './outcomes.js';
 
 const ASSETS: readonly IAsset[] = [
     { id: 'rules/testing.md', kind: 'rules', name: 'testing', text: '', target: '', executable: false },
@@ -20,6 +21,7 @@ const FACTS: ITreeFacts = {
     sectionsOverridden: 5,
     entryChars: 9000,
     outcomesBroken: 1,
+    outcomesUnread: 0,
     sendFault: 2,
 };
 
@@ -43,6 +45,19 @@ describe('dayMetrics', () => {
             'ruleLoads:testing': 2,
             'gateRefusals:testing': 1,
         });
+    });
+
+    it('SC-AK-1322 — приёмка и откат разных дней складываются так же, как одного', () => {
+        const passed: IObservation = seen('task-outcome', EOutcome.FirstPass);
+        const lost: IObservation = seen('task-outcome', EOutcome.Lost);
+
+        const first: Readonly<Record<string, number>> = dayMetrics([passed], ASSETS, null);
+        const second: Readonly<Record<string, number>> = dayMetrics([lost], ASSETS, null);
+        const same: Readonly<Record<string, number>> = dayMetrics([passed, lost], ASSETS, null);
+
+        expect(first).toMatchObject({ tasksFirstPass: 1 });
+        expect(second).toMatchObject({ tasksLost: 1 });
+        expect(same).toMatchObject({ tasksFirstPass: 1, tasksLost: 1 });
     });
 
     it('SC-AK-1305 — имя, которого пакет не везёт, уходит словом own', () => {

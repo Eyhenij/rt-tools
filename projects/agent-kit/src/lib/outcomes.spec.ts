@@ -87,6 +87,7 @@ describe('итог заявки', () => {
             firstPass: 1,
             lost: 0,
             noHandover: 0,
+            passed: 1,
         });
     });
 
@@ -142,6 +143,7 @@ describe('новые итоги', () => {
             firstPass: 0,
             lost: 1,
             noHandover: 0,
+            passed: 1,
         });
     });
 
@@ -153,7 +155,7 @@ describe('новые итоги', () => {
 describe('итоги словами', () => {
     it('SC-AK-1276 — одна принятая и одна закрытая без слияния читаются как один из двух', () => {
         const lines: readonly string[] = outcomeLines(
-            { accepted: 1, closed: 1, firstPass: 1, lost: 0, noHandover: 3 },
+            { accepted: 1, closed: 1, firstPass: 1, lost: 0, noHandover: 3, passed: 1 },
             EOutcomesRead.Read,
             0
         );
@@ -164,7 +166,7 @@ describe('итоги словами', () => {
 
     it('SC-AK-1293 — ноль правок не печатается: о них говорит строка без данных', () => {
         const lines: readonly string[] = outcomeLines(
-            { accepted: 2, closed: 0, firstPass: 2, lost: 0, noHandover: 0 },
+            { accepted: 2, closed: 0, firstPass: 2, lost: 0, noHandover: 0, passed: 2 },
             EOutcomesRead.Read,
             0
         );
@@ -175,7 +177,7 @@ describe('итоги словами', () => {
 
     it('с десяти задач появляется доля', () => {
         const lines: readonly string[] = outcomeLines(
-            { accepted: 10, closed: 0, firstPass: 7, lost: 3, noHandover: 0 },
+            { accepted: 10, closed: 0, firstPass: 7, lost: 3, noHandover: 0, passed: 10 },
             EOutcomesRead.Read,
             5
         );
@@ -200,7 +202,7 @@ describe('итоги словами', () => {
 
     it('только заявки без подписи: главного числа нет, их счёт виден', () => {
         const lines: readonly string[] = outcomeLines(
-            { accepted: 0, closed: 0, firstPass: 0, lost: 0, noHandover: 231 },
+            { accepted: 0, closed: 0, firstPass: 0, lost: 0, noHandover: 231, passed: 0 },
             EOutcomesRead.Read,
             0
         );

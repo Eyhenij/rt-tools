@@ -213,6 +213,31 @@ Given a day file older than the keeping term
 When the send reads the observations
 Then the file stays, and the report names it when it sweeps
 
+### SC-AK-1319 — a day leaves under its own version
+
+Given a day written under an older version of the package
+When the morning send repeats that day
+Then the line carries the version of its records, and a word that is no version gives way to the
+version of the package
+
+### SC-AK-1320 — a tree with an address and no token is named
+
+Given a tree whose config names a token file this machine does not have
+When `agent-kit doctor` runs or a session starts
+Then the absence is named, and it is silent with the file in place
+
+### SC-AK-1321 — the marks of the sending stay out of the history
+
+Given a tree where nothing has written the ignore file yet
+When the first send runs
+Then the observations directory is ignored before a mark lands in it
+
+### SC-AK-1322 — the first-pass count adds up across days
+
+Given an accepted request and a rollback of it on different days
+When their day lines are added up
+Then the sums match those of one day, and the sum of rollbacks is taken away once
+
 ### SC-AK-1285 — the automatic sending carries no proposal, analysis or digest
 
 Given a tree with unsent proposals and analyses

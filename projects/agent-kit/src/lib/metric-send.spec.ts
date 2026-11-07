@@ -1,7 +1,7 @@
 /**
  * Отправка строк дня: сценарии договорённости `docs/specs/agent-kit/proposed/metrics/`.
  */
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -157,6 +157,42 @@ describe('sendMetrics', () => {
         expect(yesterday?.metrics).toMatchObject({ sessions: 1 });
     });
 
+    it('SC-AK-1311 — день, отказанный на повторе, не теряет числа', async () => {
+        config();
+        observed('2026-11-06', '{"t":"2026-11-06T10:00:00Z","ev":"skill-load","res":"testing","sid":"1","v":"0.35.0"}');
+        await send(answering(), { now: new Date('2026-11-06T12:00:00Z') });
+        await send(answeringByDay({ '2026-11-06': 400 }));
+        await send(answeringByDay({ '2026-11-06': 400 }), { now: new Date('2026-11-08T09:00:00Z') });
+
+        const calls: ICalls = answering();
+
+        await send(calls, { now: new Date('2026-11-09T09:00:00Z') });
+
+        const line: IMetricsDayCargo | undefined = calls.bodies.find((one: IMetricsDayCargo): boolean => one.day === '2026-11-06');
+
+        expect(line?.metrics).toHaveProperty('sectionsTotal');
+    });
+
+    it('SC-AK-1286 — срок сбоя идёт от первой неудачи, а не от попытки', async () => {
+        config();
+        await send(answering(503, 'нет'));
+        await send(answering(503, 'нет'), { force: true, now: new Date(NOW.getTime() + 60 * 60 * 1000) });
+
+        expect(readSendMark(root).faultSince).toBe(NOW.getTime());
+
+        await send(answering(), { force: true, now: new Date(NOW.getTime() + 2 * 60 * 60 * 1000) });
+
+        expect(readSendMark(root).faultSince).toBe(0);
+    });
+
+    it('SC-AK-1282 — команда человека без токена отвечает отказом', async () => {
+        config({ token: 'no-such-file' });
+
+        const done: IOutcomeOfCommand = await send(answering(), { quiet: false });
+
+        expect(done.code).toBe(1);
+    });
+
     it('SC-AK-1312 — код сбоя держится во всех строках своего дня', async () => {
         config();
         await send(answering(503, 'нет'));
@@ -180,7 +216,7 @@ describe('sendMetrics', () => {
 
         expect(calls.bodies.map((one: IMetricsDayCargo): string => one.day)).toEqual(['2026-11-05', '2026-11-07']);
         expect(readSendMark(root).fault).toBe(ESendFault.LineRefused);
-        expect(readSendMark(root).factsDay).toBe('2026-11-07');
+        expect(Object.keys(readSendMark(root).factsByDay)).toEqual(['2026-11-07']);
     });
 
     it('сбой сети останавливает окно: дальше стучаться незачем', async () => {
@@ -218,6 +254,37 @@ describe('sendMetrics', () => {
         await send(calls);
 
         expect(calls.bodies[0]?.metrics).toMatchObject({ 'ruleLoads:testing': 1 });
+    });
+
+    it('SC-AK-1319 — вчерашний день уходит под своей версией', async () => {
+        config();
+        observed('2026-11-06', '{"t":"2026-11-06T10:00:00Z","ev":"skill-load","res":"testing","sid":"1","v":"0.34.0"}');
+        observed('2026-11-07', '{"t":"2026-11-07T10:00:00Z","ev":"skill-load","res":"testing","sid":"1","v":"dev"}');
+        const calls: ICalls = answering();
+
+        await send(calls);
+
+        expect(calls.bodies.map((one: IMetricsDayCargo): string => one.version)).toEqual(['0.34.0', '0.35.0']);
+    });
+
+    it('SC-AK-1320 — адрес есть, токена нет: это названо', () => {
+        config({ token: 'no-such-file' });
+
+        expect(sendFaultLines(root).join('\n')).toContain('файла токена на этой машине нет');
+    });
+
+    it('SC-AK-1320 — токен на месте: строки нет', () => {
+        config();
+
+        expect(sendFaultLines(root)).toEqual([]);
+    });
+
+    it('SC-AK-1321 — метки отправки не идут в историю', async () => {
+        config();
+
+        await send(answering());
+
+        expect(readFileSync(join(root, OBSERVATIONS_DIR, '.gitignore'), 'utf8')).toBe('*\n');
     });
 
     it('SC-AK-1315 — раскладка называет включённую отправку', () => {

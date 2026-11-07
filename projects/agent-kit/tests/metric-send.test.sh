@@ -114,14 +114,41 @@ if [ $((ended - started)) -lt 2000 ]; then got=вернулась; else got=жд
 report "SC-AK-1281 — проверка не ждёт отправку" "$got" вернулась
 
 tree="$(fixture_send_tree)"
-printf '{"fault":1,"tried":1000,"reason":"нет ответа"}\n' > "$tree/.claude/rt-kit/observations/.marks/send.json"
+printf '{"fault":1,"faultSince":1000,"tried":%s000,"reason":"нет ответа"}\n' "$(date +%s)" > "$tree/.claude/rt-kit/observations/.marks/send.json"
 got="$(event_in "$tree" SessionStart)"
 case "$got" in *"нет ответа"*) got=названа ;; esac
 report "SC-AK-1286 — начало сессии называет старый сбой" "$got" названа
 
 tree="$(fixture_send_tree)"
-printf '{"fault":0,"tried":1000,"reason":""}\n' > "$tree/.claude/rt-kit/observations/.marks/send.json"
+printf 'tree-token\n' > "$tree/token-file"
+printf '{"intake":"https://intake.invalid","token":"token-file"}\n' > "$tree/.claude/rt-kit.json"
+printf '{"fault":0,"faultSince":0,"tried":1000,"reason":""}\n' > "$tree/.claude/rt-kit/observations/.marks/send.json"
 report "сбоя нет — начало сессии молчит" "$(event_in "$tree" SessionStart)" ""
+
+tree="$(fixture_send_tree)"
+spaced="$tree/a b"
+mkdir -p "$spaced"
+cp -R "$tree/.claude" "$spaced/.claude"
+cp -R "$tree/node_modules" "$spaced/node_modules"
+cat > "$spaced/node_modules/.bin/agent-kit" <<EOF
+#!/usr/bin/env bash
+printf '%s\n' "\$*" >> "$spaced/called"
+EOF
+git -C "$spaced" init -q
+note_in "$spaced"
+got="$(called_in "$spaced")"
+case "$got" in *"send --quiet"*) got=запущена ;; esac
+report "SC-AK-1307 — путь с пробелом запуск не ломает" "$got" запущена
+
+tree="$(fixture_send_tree ',"token":"no-such-file"')"
+report "SC-AK-1320 — адрес есть, токена нет: начало сессии это называет" \
+    "$(event_in "$tree" SessionStart | grep -c 'no token file')" 1
+
+tree="$(fixture_send_tree)"
+printf 'tree-token\n' > "$tree/token-file"
+printf '{"intake":"https://intake.invalid","token":"token-file"}\n' > "$tree/.claude/rt-kit.json"
+report "SC-AK-1320 — токен на месте: начало сессии о нём молчит" \
+    "$(event_in "$tree" SessionStart | grep -c 'no token file')" 0
 
 # Вторая копия без своей сборки спрашивает основную.
 tree="$(fixture_send_tree)"

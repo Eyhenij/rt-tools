@@ -11,7 +11,7 @@ import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } fr
 import { dirname, join } from 'node:path';
 
 import { dropFileLock, takeFileLock } from './file-lock.js';
-import { dayBefore, IObservation, KEEP_DAYS, OBSERVATIONS_DIR } from './observations.js';
+import { dayBefore, IObservation, KEEP_DAYS, OBSERVATIONS_DIR, openMarksDir } from './observations.js';
 import { byText } from './order.js';
 
 /** Срок, в который откат или новая заявка той же задачи снимают первую приёмку. */
@@ -87,6 +87,8 @@ export interface IOutcomeMetric {
     readonly closed: number;
     /** Первая приёмка за вычетом снятых. */
     readonly firstPass: number;
+    /** Сколько принято с первого раза, откаты не вычтены: приёмник складывает это по дням. */
+    readonly passed: number;
     /** Откаты и новые заявки той же задачи. */
     readonly lost: number;
     /** Заявки без подписи передачи: они вне главного числа, и их видно отдельно. */
@@ -194,6 +196,7 @@ export function outcomeMetricOf(observations: readonly IObservation[]): IOutcome
         firstPass: Math.max(passed - lost, 0),
         noHandover: counts.get(EOutcome.NoHandover) ?? 0,
         lost,
+        passed,
     };
 }
 
@@ -358,7 +361,7 @@ export function collectOutcomes(root: string, today: string, version: string, no
     if (!existsSync(pullHook(root))) {
         return EOutcomesRead.NobodyToAsk;
     }
-    mkdirSync(sharedMarksDir(root), { recursive: true });
+    openMarksDir(sharedMarksDir(root));
     // Учёт общий, а между чтением и записью идёт запрос к хостингу: без замка две копии посчитали бы
     // одну заявку дважды. Вторая выходит без чтения: всё, что есть, запишет первая.
     if (!takeFileLock(lock, now)) {

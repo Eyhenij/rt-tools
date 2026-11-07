@@ -10,8 +10,8 @@
  * Дата приходит доводом, а не берётся из часов: сводка за отрезок дней иначе не проверяется
  * спекой — вчерашний файл фикстуры завтра оказывается позавчерашним.
  */
-import { existsSync, readFileSync, readdirSync, rmSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { byText } from './order.js';
 
 /** Куда `observe.sh` пишет наблюдения. Путь от корня дерева. */
@@ -202,6 +202,19 @@ export function observationsOfDay(path: string): readonly IObservation[] {
     }
 
     return found;
+}
+
+/**
+ * Каталог меток. Запись о том, что каталог наблюдений не идёт в историю, заводится сразу: признак копии,
+ * попавший в коммит, дал бы двум машинам один признак, и их дни затирали бы друг друга.
+ */
+export function openMarksDir(dir: string): void {
+    const ignore: string = join(dirname(dir), '.gitignore');
+
+    mkdirSync(dir, { recursive: true });
+    if (!existsSync(ignore)) {
+        writeFileSync(ignore, '*\n');
+    }
 }
 
 /**
