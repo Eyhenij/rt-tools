@@ -37,6 +37,10 @@ export interface IObservation {
     readonly version: string;
     /** Отказ равен предыдущему отказу этого гарда. `null`: запись не сравнивала. */
     readonly empty?: boolean | null;
+    /** Секунды запуска. `null`: строка не про запуск. */
+    readonly seconds?: number | null;
+    /** Секунды красного запуска на том же содержимом перед этим. `null`: такого не было. */
+    readonly wasted?: number | null;
 }
 
 /** Сколько раз что-то встретилось. Порядок — по убыванию, при равенстве по имени. */
@@ -131,6 +135,10 @@ const EMPTY_SIGN: Readonly<Record<string, boolean>> = { '0': false, '1': true };
 
 const emptyOf: (value: unknown) => boolean | null = (value: unknown): boolean | null => EMPTY_SIGN[textOf(value)] ?? null;
 
+/** Целое число из строки записи: всё остальное читается как отсутствие значения. */
+const wholeOf: (value: unknown) => number | null = (value: unknown): number | null =>
+    /^\d+$/u.test(textOf(value)) ? Number(textOf(value)) : null;
+
 /**
  * Одна строка наблюдения. Битая пропускается молча: наблюдение — побочная запись гарда, и
  * оборванная на полуслове строка не имеет права уронить сводку.
@@ -151,6 +159,8 @@ export function parseObservation(line: string): IObservation | null {
                   session: textOf(found['sid']),
                   version: textOf(found['v']),
                   empty: emptyOf(found['empty']),
+                  seconds: wholeOf(found['secs']),
+                  wasted: wholeOf(found['wasted']),
               }
             : null;
     } catch {

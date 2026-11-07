@@ -9,7 +9,7 @@ import { join } from 'node:path';
 
 import { IEnvironment, init, IOutcomeOfCommand } from './commands.js';
 import { CONFIG_PATH } from './config.js';
-import { IGuardMetric, IMetricsReport, guardsOf, metrics, metricsLines, metricsOf } from './metrics.js';
+import { IGuardMetric, IMetricsReport, IRunMetric, guardsOf, metrics, metricsLines, metricsOf, runsOf } from './metrics.js';
 import { IObservation, IReadResult, ISummary, OBSERVATIONS_DIR, summarize } from './observations.js';
 
 const TODAY: string = '2026-08-12';
@@ -152,6 +152,42 @@ describe('пустые отказы', () => {
         expect(lines.find((text: string): boolean => text.startsWith('нет данных:'))).toContain('Пустые отказы');
         expect(lines).toContain('отказы проверок: 1, на сессию 1');
         expect(lines.join('\n')).not.toContain('пустые отказы:');
+    });
+});
+
+describe('запуски', () => {
+    function run(kind: string, seconds: number, wasted: number | null): IObservation {
+        return { event: 'run', resource: 'red', kind, session: '', version: '0.34.0', seconds, wasted };
+    }
+
+    it('SC-AK-1279 — минуты красного запуска считаются потерянными для его рода шага', () => {
+        const runs: readonly IRunMetric[] = runsOf([run('e2e', 240, null), run('e2e', 180, 240), run('tests', 60, null)]);
+
+        expect(runs).toEqual([
+            { kind: 'e2e', runs: 2, seconds: 420, wastedRuns: 1, wastedSeconds: 240 },
+            { kind: 'tests', runs: 1, seconds: 60, wastedRuns: 0, wastedSeconds: 0 },
+        ]);
+    });
+
+    it('SC-AK-1279 — ноль секунд потерянного запуска всё равно считается запуском', () => {
+        expect(runsOf([run('check', 0, 0)])[0]).toMatchObject({ wastedRuns: 1, wastedSeconds: 0 });
+    });
+
+    it('SC-AK-1279 — отчёт показывает минуты и снимает метрику со строки без данных', () => {
+        const lines: readonly string[] = metricsLines(reportOf([run('e2e', 240, null), run('e2e', 180, 240)], ['testing']));
+
+        expect(lines).toContain('запуски: 2, минут 7');
+        expect(lines).toContain('пустые запуски: 1, минут 4');
+        expect(lines).toContain('  e2e: 2, минут 7, пустых 1, минут 4');
+        expect(lines.find((text: string): boolean => text.startsWith('нет данных:'))).toContain('Принято с первого раза');
+        expect(lines.find((text: string): boolean => text.startsWith('нет данных:'))).not.toContain('Пустые запуски');
+    });
+
+    it('SC-AK-1279 — без записей о запусках их строк в отчёте нет', () => {
+        const lines: readonly string[] = metricsLines(reportOf([line('guard-deny', 'grill-gate', 's1')], ['testing']));
+
+        expect(lines).toContain('отказы проверок: 1, на сессию 1');
+        expect(lines.join('\n')).not.toContain('запуски:');
     });
 });
 

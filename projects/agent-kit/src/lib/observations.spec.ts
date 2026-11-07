@@ -56,7 +56,14 @@ describe('строка наблюдения', (): void => {
             session: '42',
             version: '0.5.1',
             empty: null,
+            seconds: null,
+            wasted: null,
         });
+    });
+
+    it('SC-AK-1279 — секунды запуска читаются только целым числом', (): void => {
+        expect(parseObservation(note('run', { secs: '240', wasted: '0' }))).toMatchObject({ seconds: 240, wasted: 0 });
+        expect(parseObservation(note('run', { secs: 'долго' }))?.seconds).toBeNull();
     });
 
     it('SC-AK-1277 — признак пустого отказа читается парой значений, чужое значение признаком не считается', (): void => {

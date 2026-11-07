@@ -53,8 +53,6 @@ Given a red run on some content
 When a later run of that day goes on the same content
 Then the minutes of the red run are counted as wasted for its kind of step
 
-Not covered: no code yet.
-
 ### SC-AK-1280 — a day line carries whole numbers from the closed list only
 
 Given a day line with a key outside the list or a value that is not a whole number

@@ -40,6 +40,16 @@ export interface IGuardMetric {
     readonly empty: number;
 }
 
+/** Запуски одного рода шага за отрезок. */
+export interface IRunMetric {
+    readonly kind: string;
+    readonly runs: number;
+    readonly seconds: number;
+    /** Красные запуски, за которыми пошёл запуск на том же содержимом. */
+    readonly wastedRuns: number;
+    readonly wastedSeconds: number;
+}
+
 export interface IMetricsReport {
     readonly days: number;
     /** Записи не велось ни разу: нули отчёта ничего не значат. */
@@ -57,6 +67,8 @@ export interface IMetricsReport {
     /** Отказы с признаком пустого. Ноль: сравнивать ещё не с чем, и строки в отчёте нет. */
     readonly comparedRefusals: number;
     readonly emptyRefusals: number;
+    /** Запуски по родам шага. Пусто: запусков не записано, и строк в отчёте нет. */
+    readonly runs: readonly IRunMetric[];
     readonly gate: readonly ICount[];
     readonly gateRefusals: number;
     readonly rules: number;
@@ -151,6 +163,38 @@ export function guardsOf(observations: readonly IObservation[]): readonly IGuard
         .sort(byRepeats);
 }
 
+/** Запуски по родам шага: потерянные минуты сверху, они и есть причина смотреть на этот список. */
+export function runsOf(observations: readonly IObservation[]): readonly IRunMetric[] {
+    const kinds: Map<string, IRunMetric> = new Map();
+
+    for (const entry of observations) {
+        if (entry.event !== 'run') {
+            continue;
+        }
+        const seen: IRunMetric = kinds.get(entry.kind) ?? { kind: entry.kind, runs: 0, seconds: 0, wastedRuns: 0, wastedSeconds: 0 };
+        const wasted: number | null = entry.wasted ?? null;
+
+        kinds.set(entry.kind, {
+            ...seen,
+            runs: seen.runs + 1,
+            seconds: seen.seconds + (entry.seconds ?? 0),
+            wastedRuns: seen.wastedRuns + (wasted === null ? 0 : 1),
+            wastedSeconds: seen.wastedSeconds + (wasted ?? 0),
+        });
+    }
+
+    return [...kinds.values()].sort(
+        (left: IRunMetric, right: IRunMetric): number => right.wastedSeconds - left.wastedSeconds || byText(left.kind, right.kind)
+    );
+}
+
+/** Имена метрик, которым записи уже есть: остальные отчёт называет словами. */
+function noDataOf(comparedRefusals: number, runs: readonly IRunMetric[]): readonly string[] {
+    const counted: readonly string[] = [...(comparedRefusals > 0 ? ['Пустые отказы'] : []), ...(runs.length > 0 ? ['Пустые запуски'] : [])];
+
+    return NOT_RECORDED_YET.filter((name: string): boolean => !counted.includes(name));
+}
+
 /** Покрывают ли записи полный отрезок: только тогда незагруженное правило считается мёртвым. */
 function coversFullPeriod(read: IReadResult, days: number, today: string): boolean {
     const edge: string = dayBefore(today, METRICS_DEFAULT_DAYS - 1 - FIRST_RECORD_SLACK_DAYS);
@@ -165,12 +209,14 @@ export function metricsOf(read: IReadResult, summary: ISummary, rules: number, e
     const refusals: number = guards.reduce((sum: number, guard: IGuardMetric): number => sum + guard.refusals, 0);
     const repeats: number = guards.reduce((sum: number, guard: IGuardMetric): number => sum + guard.repeats, 0);
     const comparedRefusals: number = guards.reduce((sum: number, guard: IGuardMetric): number => sum + guard.compared, 0);
+    const runs: readonly IRunMetric[] = runsOf(read.observations);
 
     return {
         refusals,
         repeats,
         guards,
         comparedRefusals,
+        runs,
         rules,
         entryChars,
         days: summary.days,
@@ -185,7 +231,7 @@ export function metricsOf(read: IReadResult, summary: ISummary, rules: number, e
         gateRefusals: summary.denials.reduce((sum: number, rule: ICount): number => sum + rule.count, 0),
         deadRules: full ? summary.unused : null,
         deadRuleShare: full ? percent(summary.unused.length, rules) : null,
-        noData: NOT_RECORDED_YET.filter((name: string): boolean => name !== 'Пустые отказы' || comparedRefusals === 0),
+        noData: noDataOf(comparedRefusals, runs),
         outside: OUTSIDE_THE_TREE,
     };
 }
@@ -206,6 +252,29 @@ function deadRuleLines(report: IMetricsReport): readonly string[] {
     return [
         `мёртвые правила: ${report.deadRules.length} из ${report.rules} (${report.deadRuleShare}%)`,
         ...topLines(report.deadRules.map((name: string): string => `  ${name}`)),
+    ];
+}
+
+const minutes: (seconds: number) => number = (seconds: number): number => Math.round(seconds / 60);
+
+/** Запуски словами. Нет записей: строк нет, о них говорит строка без данных. */
+function runLines(runs: readonly IRunMetric[]): readonly string[] {
+    if (!runs.length) {
+        return [];
+    }
+    const total: (pick: (run: IRunMetric) => number) => number = (pick: (run: IRunMetric) => number): number =>
+        runs.reduce((sum: number, run: IRunMetric): number => sum + pick(run), 0);
+
+    return [
+        '',
+        `запуски: ${total((run: IRunMetric): number => run.runs)}, минут ${minutes(total((run: IRunMetric): number => run.seconds))}`,
+        `пустые запуски: ${total((run: IRunMetric): number => run.wastedRuns)}, минут ${minutes(total((run: IRunMetric): number => run.wastedSeconds))}`,
+        ...topLines(
+            runs.map(
+                (run: IRunMetric): string =>
+                    `  ${run.kind}: ${run.runs}, минут ${minutes(run.seconds)}, пустых ${run.wastedRuns}, минут ${minutes(run.wastedSeconds)}`
+            )
+        ),
     ];
 }
 
@@ -238,6 +307,7 @@ export function metricsLines(report: IMetricsReport): readonly string[] {
         '',
         `отказы шлюза правил: ${report.gateRefusals}`,
         ...topLines(report.gate.map((rule: ICount): string => `  ${rule.name}: ${rule.count}`)),
+        ...runLines(report.runs),
         '',
         ...deadRuleLines(report),
         '',
