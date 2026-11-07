@@ -2,7 +2,8 @@
  * Счёт раздела «Качество». Строки дня несут суммы одной копии за один день, здесь они складываются.
  *
  * Откат приходит не в день приёмки, поэтому принятые с первого раза в строке идут без вычета, и вычитает
- * этот счёт. Дерево и версия сужают только таблицу причин: три числа итога всегда про всё.
+ * этот счёт. Дерево и версия сужают и числа итога, и таблицу причин: цикл сверяет одно дерево с самим
+ * собой. Полнота остаётся про все деревья.
  */
 import {
     compareReleaseVersions,
@@ -21,8 +22,6 @@ import {
 
 /** Сколько дней после установки фикса ошибка на том же ресурсе считается повтором. */
 const REPEAT_WINDOW_DAYS: number = 30;
-
-const DAY_MS: number = 24 * 60 * 60 * 1000;
 
 type TDriverField = keyof Omit<IQualityDriverRow, 'resource' | 'loss'>;
 
@@ -70,6 +69,9 @@ export interface IQualityInput {
     readonly today: string;
     readonly tree: string;
     readonly version: string;
+    /** Страница таблицы причин, с единицы. */
+    readonly page: number;
+    readonly size: number;
     readonly anyLine: boolean;
     readonly trees: readonly ITreeChoice[];
     /** Строки периода. */
@@ -103,7 +105,11 @@ function correctionsOf(rows: readonly IQualityDayRow[]): IQualityCorrections {
 }
 
 function dayAfter(day: string, days: number): string {
-    return new Date(Date.parse(`${day}T00:00:00Z`) + days * DAY_MS).toISOString().slice(0, 10);
+    const date: Date = new Date(`${day}T00:00:00Z`);
+
+    date.setUTCDate(date.getUTCDate() + days);
+
+    return date.toISOString().slice(0, 10);
 }
 
 /** С какого дня дерево стоит на версии с фиксом. `null`: ещё не поставило. */
@@ -138,38 +144,45 @@ function repeatsOf(input: IQualityInput): IQualityRepeats {
         (one: IQualityRecord): boolean =>
             one.resource !== null && one.releaseVersion !== null && one.fixed !== null && one.fixed.localeCompare(edge) <= 0
     );
-    const repeated: readonly IQualityRecord[] = input.records.filter(
-        (one: IQualityRecord): boolean =>
-            inPeriod(one.arrived, input) && fixes.some((fix: IQualityRecord): boolean => repeatsFix(fix, one, input))
+    const seen: readonly IQualityRecord[] = input.records.filter(
+        (one: IQualityRecord): boolean => inPeriod(one.arrived, input) && (!input.tree || one.tree === input.tree)
     );
-    const unnamed: number = input.records.filter(
-        (one: IQualityRecord): boolean => one.resource === null && inPeriod(one.arrived, input)
-    ).length;
+    const repeated: readonly IQualityRecord[] = fixes.filter((fix: IQualityRecord): boolean =>
+        seen.some((one: IQualityRecord): boolean => repeatsFix(fix, one, input))
+    );
+    const unnamed: number = seen.filter((one: IQualityRecord): boolean => one.resource === null).length;
 
     return { repeats: repeated.length, fixes: fixes.length, share: shareOf(repeated.length, fixes.length), unnamed };
 }
 
-/** Последняя строка каждого дерева: сбой читается по ней. */
-function latestOf(rows: readonly IQualityDayRow[]): readonly IQualityDayRow[] {
-    const latest: Map<string, IQualityDayRow> = new Map();
+/** Строки последнего дня каждого дерева: у дерева бывает несколько копий, и сбой любой из них виден. */
+function latestOf(rows: readonly IQualityDayRow[]): readonly (readonly IQualityDayRow[])[] {
+    const lastDays: Map<string, string> = new Map();
 
     for (const row of rows) {
-        const held: IQualityDayRow | undefined = latest.get(row.tree.slug);
-
-        if (!held || row.day.localeCompare(held.day) > 0) {
-            latest.set(row.tree.slug, row);
+        if (row.day.localeCompare(lastDays.get(row.tree.slug) ?? '') > 0) {
+            lastDays.set(row.tree.slug, row.day);
         }
     }
 
-    return [...latest.values()];
+    return [...lastDays].map(([tree, day]: [string, string]): readonly IQualityDayRow[] =>
+        rows.filter((row: IQualityDayRow): boolean => row.tree.slug === tree && row.day === day)
+    );
+}
+
+function failedOf(rows: readonly IQualityDayRow[]): IQualityDayRow | undefined {
+    return rows.find((row: IQualityDayRow): boolean => (row.metrics['sendFault'] ?? 0) > 0);
 }
 
 function completenessOf(input: IQualityInput): IQualityCompleteness {
-    const latest: readonly IQualityDayRow[] = latestOf(input.fresh);
+    const latest: readonly (readonly IQualityDayRow[])[] = latestOf(input.fresh);
     const faults: readonly IQualityTreeFault[] = latest
-        .filter((row: IQualityDayRow): boolean => (row.metrics['sendFault'] ?? 0) > 0)
-        .map((row: IQualityDayRow): IQualityTreeFault => ({ tree: row.tree, fault: row.metrics['sendFault'] ?? 0 }));
-    const silent: number = latest.filter((row: IQualityDayRow): boolean => (row.metrics['outcomesUnread'] ?? 0) > 0).length;
+        .map(failedOf)
+        .filter((row: IQualityDayRow | undefined): row is IQualityDayRow => row !== undefined)
+        .map((row: IQualityDayRow): IQualityTreeFault => ({ tree: row.tree, fault: row.metrics['sendFault'] }));
+    const silent: number = latest.filter((rows: readonly IQualityDayRow[]): boolean =>
+        rows.some((row: IQualityDayRow): boolean => (row.metrics['outcomesUnread'] ?? 0) > 0)
+    ).length;
 
     return { enrolled: input.trees.length, sent: latest.length, withOutcomes: latest.length - silent, faults };
 }
@@ -219,16 +232,23 @@ function narrowed(input: IQualityInput): readonly IQualityDayRow[] {
 }
 
 export function qualityOf(input: IQualityInput): IQualityReport {
+    const rows: readonly IQualityDayRow[] = narrowed(input);
+    const drivers: readonly IQualityDriverRow[] = driversOf(rows);
+    const skip: number = (input.page - 1) * input.size;
+
     return {
         from: input.from,
         to: input.to,
         anyLine: input.anyLine,
-        firstPass: firstPassOf(input.rows),
-        corrections: correctionsOf(input.rows),
+        anyInPeriod: rows.length > 0,
+        firstPass: firstPassOf(rows),
+        corrections: correctionsOf(rows),
         repeats: repeatsOf(input),
         completeness: completenessOf(input),
-        drivers: driversOf(narrowed(input)),
-        trees: input.trees,
+        rows: drivers.slice(skip, skip + input.size),
+        total: drivers.length,
+        page: input.page,
+        size: input.size,
         versions: orderedReleaseVersions([...new Set(input.rows.map((row: IQualityDayRow): string => row.version))]),
     };
 }

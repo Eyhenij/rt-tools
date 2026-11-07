@@ -9,7 +9,7 @@ import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { ECargoKind, ITreeChoice } from '@rt/message-bus-common';
 
 /** Период и сужение, какими их спросили. */
-export type TQualityAsked = Pick<IQualityInput, 'from' | 'to' | 'today' | 'tree' | 'version'>;
+export type TQualityAsked = Pick<IQualityInput, 'from' | 'to' | 'today' | 'tree' | 'version' | 'page' | 'size'>;
 
 interface IStoredTree extends ITreeChoice {
     readonly id: string;
@@ -95,13 +95,13 @@ async function records(prisma: PrismaService): Promise<readonly IQualityRecord[]
 }
 
 async function firstSeen(prisma: PrismaService, trees: readonly IStoredTree[]): Promise<readonly IQualityFirstSeen[]> {
-    const rows: readonly IStoredVersion[] = await prisma.metricsDay.groupBy({ by: ['treeId', 'version'], _min: { day: true } });
-
-    return rows.map((row: IStoredVersion): IQualityFirstSeen => ({
-        tree: trees.find((tree: IStoredTree): boolean => tree.id === row.treeId)?.slug ?? '',
-        version: row.version,
-        day: row._min.day ?? '',
-    }));
+    return (await prisma.metricsDay.groupBy({ by: ['treeId', 'version'], _min: { day: true } })).map(
+        (row: IStoredVersion): IQualityFirstSeen => ({
+            tree: trees.find((tree: IStoredTree): boolean => tree.id === row.treeId)?.slug ?? '',
+            version: row.version,
+            day: row._min.day ?? '',
+        })
+    );
 }
 
 /** Всё, что нужно счёту раздела. */

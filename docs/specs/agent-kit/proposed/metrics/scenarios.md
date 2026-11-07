@@ -256,6 +256,7 @@ Given a period with fewer than ten counted tasks
 When the section reads it
 Then the count stands instead of the share; from ten tasks the share appears, and requests closed
 unmerged lower it
+And a day with a line but no task says there is no data instead of zeros
 
 ### SC-AK-1326 — the completeness line names trees and the last failure
 
@@ -263,17 +264,37 @@ Given trees that sent lines in the last seven days, one of them with a failed la
 When the section reads them
 Then it names how many sent, how many give outcomes, and the failed tree with its reason
 
-### SC-AK-1327 — the table of drivers is sorted by the loss and narrowed apart
+### SC-AK-1327 — the table of drivers is sorted by the loss, and the filters narrow the numbers too
 
 Given lines of two trees and two versions
 When a tree or a version is chosen
-Then the table narrows, and the three result metrics stay over all trees
+Then the table and the three result metrics narrow, and the completeness line stays over all trees
 
 ### SC-AK-1328 — a repeated mistake is counted against the version with the fix
 
 Given a fix older than a month and records on the same resource
 When a record arrives from a tree on the fixed version, within a month of installing it
-Then it counts as a repeat; an older record, another resource and a fresh fix do not count
+Then the fix counts as repeated; an older record, another resource and a fresh fix do not count
+And with no fix old enough the tile says there is no data instead of zeros
+
+### SC-AK-1329 — no enrolled tree sent a line
+
+Given no day line has ever arrived
+When a person opens the section
+Then the result metrics are not shown, and the empty table names the command that enrols a tree
+
+### SC-AK-1330 — a read failed
+
+Given the read of the section is refused
+When a person sees the refusal
+Then the numbers of the former read are gone, and one action repeats the read
+
+### SC-AK-1331 — a period with no line
+
+Given day lines exist on other days
+When a person chooses a period with no line
+Then the result metrics are not shown, the completeness line stays, and the empty table asks for
+another period
 
 ### SC-AK-1285 — the automatic sending carries no proposal, analysis or digest
 

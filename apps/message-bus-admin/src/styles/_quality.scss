@@ -1,0 +1,35 @@
+/**
+ * Сводка раздела «Качество» над таблицей: плитки чисел итога, под ними строка полноты и сбои отправки.
+ *
+ * Плитки сами складываются в один столбец на узком экране: столбец не уже плитки с подписью.
+ */
+
+.admin-quality {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rt-space-sm);
+
+    &__tiles {
+        display: grid;
+        gap: var(--rt-space-md);
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        transition: opacity var(--rt-duration-base);
+
+        /** Прежние числа на время перечитывания притушены: пустая сетка мигала бы на смене отбора. */
+        &--reading {
+            opacity: var(--rt-opacity-disabled);
+        }
+    }
+
+    &__completeness {
+        margin: 0;
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+    }
+
+    &__fault {
+        margin: 0;
+        color: var(--rt-color-state-error-text);
+        font-size: var(--rt-text-sm);
+    }
+}

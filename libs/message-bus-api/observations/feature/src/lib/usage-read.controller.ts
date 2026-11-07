@@ -14,8 +14,8 @@
  * самых загружаемых скилов и пять самых отказываемых. Своя операция, а не поля страницы: страница
  * меняется с порядком и номером, сводка — только с периодом.
  *
- * `GET /api/usage/quality` — раздел «Качество»: три числа итога, полнота и таблица причин по всем деревьям.
- * Дерево и версия здесь необязательны и сужают только таблицу.
+ * `GET /api/usage/quality` — раздел «Качество», право `quality:read`: три числа итога, полнота и таблица
+ * причин. Дерево и версия необязательны и сужают числа и таблицу, полнота остаётся про все деревья.
  */
 import { BadRequestException, Controller, Get, NotFoundException, Param, Query } from '@nestjs/common';
 
@@ -51,13 +51,17 @@ import {
     IUsageSessionRow,
     pageAsked,
     pageFault,
+    QUALITY_SORTABLE,
     refusalBody,
     TRight,
     USAGE_SORTABLE,
 } from '@rt/message-bus-common';
 
-/** Право, которым закрыты все три операции. */
+/** Право, которым закрыто чтение использования. */
 const READ_RIGHT: TRight = 'usage:read';
+
+/** Право раздела «Качество»: свой раздел закрывается своим правом. */
+const QUALITY_RIGHT: TRight = 'quality:read';
 
 /** Сколько скилов несёт каждый из двух списков сводки. */
 const USAGE_DIGEST_TOP: number = 5;
@@ -110,18 +114,21 @@ export class UsageReadController {
 
     /** Раздел «Качество» за период. Пустого периода не бывает: строк нет — считаются нули. */
     @Get('quality')
-    @RequiresRight(READ_RIGHT)
+    @RequiresRight(QUALITY_RIGHT)
     public async quality(@Query() query: Record<string, unknown>, now: Date = new Date()): Promise<IQualityReport> {
-        const fault: string | null = usagePeriodFault(query);
+        const fault: string | null = pageFault(query, QUALITY_SORTABLE) ?? usagePeriodFault(query);
 
         if (fault) {
             throw new BadRequestException(fault);
         }
         const period: IUsagePeriod = usagePeriodOf(query, now);
+        const { page, size }: IPageAsked = pageAsked(query, QUALITY_SORTABLE);
 
         return qualityOf(
             await readQualityInput(this.#prisma, {
                 ...period,
+                page,
+                size,
                 today: now.toISOString().slice(0, 10),
                 tree: usageTreeOf(query),
                 version: qualityVersionOf(query),

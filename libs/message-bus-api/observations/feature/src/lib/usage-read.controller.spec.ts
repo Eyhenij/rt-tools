@@ -211,7 +211,7 @@ describe('UsageReadController — раздел «Качество»', () => {
 
     it('SC-AK-1325 — операция закрыта правом раздела', () => {
         expect(Reflect.getMetadata(OPERATION_ACCESS, UsageReadController.prototype.quality)).toBeDefined();
-        expect(Reflect.getMetadata(OPERATION_RIGHT, UsageReadController.prototype.quality)).toBe('usage:read');
+        expect(Reflect.getMetadata(OPERATION_RIGHT, UsageReadController.prototype.quality)).toBe('quality:read');
     });
 
     it('SC-AK-1325 — операция складывает строки периода и называет полноту', async () => {
@@ -219,7 +219,8 @@ describe('UsageReadController — раздел «Качество»', () => {
 
         expect(report.anyLine).toBe(true);
         expect(report.firstPass).toEqual({ counted: 2, firstPass: 1, share: null, noHandover: 0 });
-        expect(report.drivers[0]).toMatchObject({ resource: 'one-guard', empty: 3, loss: 3 });
+        expect(report.rows[0]).toMatchObject({ resource: 'one-guard', empty: 3, loss: 3 });
+        expect(report).toMatchObject({ total: 1, page: 1, size: 20 });
         expect(report.completeness).toMatchObject({ enrolled: 1, sent: 1 });
     });
 

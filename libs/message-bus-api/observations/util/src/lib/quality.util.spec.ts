@@ -2,7 +2,15 @@ import { describe, expect, it } from 'vitest';
 
 import { IQualityReport, ITreeChoice } from '@rt/message-bus-common';
 
-import { IQualityDayRow, IQualityInput, IQualityRecord, qualityFreshFrom, qualityOf, qualityVersionOf } from './quality.util';
+import {
+    IQualityDayRow,
+    IQualityFirstSeen,
+    IQualityInput,
+    IQualityRecord,
+    qualityFreshFrom,
+    qualityOf,
+    qualityVersionOf,
+} from './quality.util';
 
 const ONE: ITreeChoice = { slug: 'one', name: 'Первое' };
 const TWO: ITreeChoice = { slug: 'two', name: 'Второе' };
@@ -18,6 +26,8 @@ function report(over: Partial<IQualityInput>): IQualityReport {
         today: '2026-11-07',
         tree: '',
         version: '',
+        page: 1,
+        size: 20,
         anyLine: true,
         trees: [ONE, TWO],
         rows: [],
@@ -72,14 +82,16 @@ describe('qualityOf', () => {
             line({ tasksAccepted: 3, 'guardEmpty:b': 9 }, { tree: TWO, version: '0.34.0' }),
         ];
 
-        expect(report({ rows }).drivers.map((row: { resource: string }): string => row.resource)).toEqual(['b', 'e2e', 'a']);
+        expect(report({ rows }).rows.map((row: { resource: string }): string => row.resource)).toEqual(['b', 'e2e', 'a']);
 
         const narrow: IQualityReport = report({ rows, tree: 'one' });
 
-        expect(narrow.drivers.map((row: { resource: string }): string => row.resource)).toEqual(['e2e', 'a']);
-        expect(narrow.drivers[0]).toMatchObject({ wastedRuns: 2, wastedSeconds: 90, loss: 2 });
-        expect(narrow.corrections.accepted).toBe(5);
-        expect(report({ rows, version: '0.34.0' }).drivers).toHaveLength(1);
+        expect(narrow.rows.map((row: { resource: string }): string => row.resource)).toEqual(['e2e', 'a']);
+        expect(narrow.rows[0]).toMatchObject({ wastedRuns: 2, wastedSeconds: 90, loss: 2 });
+        expect(narrow.corrections.accepted).toBe(2);
+        expect(report({ rows }).corrections.accepted).toBe(5);
+        expect(report({ rows, tree: 'three' }).anyInPeriod).toBe(false);
+        expect(report({ rows, version: '0.34.0' }).rows).toHaveLength(1);
         expect(report({ rows }).versions).toEqual(['0.34.0', '0.35.0']);
     });
 
@@ -108,6 +120,40 @@ describe('qualityOf', () => {
         expect(done.repeats).toEqual({ repeats: 1, fixes: 1, share: null, unnamed: 1 });
     });
 
+    it('SC-AK-1328 — дерево в отборе считает только свои повторы, а фиксы пакета остаются в знаменателе', () => {
+        const fix: IQualityRecord = {
+            id: 'fix',
+            tree: 'one',
+            resource: 'a',
+            arrived: '2026-06-01',
+            releaseVersion: '0.30.0',
+            fixed: '2026-06-02',
+        };
+        const records: readonly IQualityRecord[] = [
+            fix,
+            { id: 'again', tree: 'one', resource: 'a', arrived: '2026-10-20', releaseVersion: null, fixed: null },
+            { id: 'quiet', tree: 'two', resource: null, arrived: '2026-10-20', releaseVersion: null, fixed: null },
+        ];
+        const firstSeen: readonly IQualityFirstSeen[] = [
+            { tree: 'one', version: '0.30.0', day: '2026-10-10' },
+            { tree: 'two', version: '0.30.0', day: '2026-10-10' },
+        ];
+
+        expect(report({ records, firstSeen, tree: 'one' }).repeats).toMatchObject({ repeats: 1, fixes: 1, unnamed: 0 });
+        expect(report({ records, firstSeen, tree: 'two' }).repeats).toMatchObject({ repeats: 0, fixes: 1, unnamed: 1 });
+    });
+
+    it('SC-AK-1328 — два повтора одного фикса считаются одним фиксом, и доля не уходит за сто', () => {
+        const records: readonly IQualityRecord[] = [
+            { id: 'fix', tree: 'one', resource: 'a', arrived: '2026-06-01', releaseVersion: '0.30.0', fixed: '2026-06-02' },
+            { id: 'first', tree: 'one', resource: 'a', arrived: '2026-10-20', releaseVersion: null, fixed: null },
+            { id: 'second', tree: 'one', resource: 'a', arrived: '2026-10-21', releaseVersion: null, fixed: null },
+        ];
+        const firstSeen: readonly IQualityFirstSeen[] = [{ tree: 'one', version: '0.30.0', day: '2026-10-10' }];
+
+        expect(report({ records, firstSeen }).repeats).toMatchObject({ repeats: 1, fixes: 1 });
+    });
+
     it('SC-AK-1328 — фикс моложе месяца в долю не входит', () => {
         const fresh: IQualityRecord = {
             id: 'fix',
@@ -119,6 +165,29 @@ describe('qualityOf', () => {
         };
 
         expect(report({ records: [fresh] }).repeats.fixes).toBe(0);
+    });
+});
+
+describe('qualityOf — период без строк', () => {
+    it('SC-AK-1331 — ответ говорит, что за период строк нет, хотя в другие дни они были', () => {
+        expect(report({ rows: [] }).anyInPeriod).toBe(false);
+        expect(report({ rows: [line({ sessions: 1 })] }).anyInPeriod).toBe(true);
+    });
+});
+
+describe('qualityOf — две копии одного дерева', () => {
+    it('SC-AK-1326 — сбой одной копии виден, даже если вторая в тот же день отправила без сбоя', () => {
+        const clean: IQualityDayRow = line({ sessions: 1 }, { day: '2026-11-07' });
+        const failed: IQualityDayRow = line({ sessions: 1, sendFault: 2 }, { day: '2026-11-07' });
+
+        expect(report({ fresh: [clean, failed] }).completeness).toMatchObject({ sent: 1, faults: [{ tree: ONE, fault: 2 }] });
+    });
+
+    it('SC-AK-1326 — сбой прошлого дня снят более свежей строкой', () => {
+        const old: IQualityDayRow = line({ sendFault: 1 }, { day: '2026-11-05' });
+        const fresh: IQualityDayRow = line({ sessions: 1 }, { day: '2026-11-06' });
+
+        expect(report({ fresh: [old, fresh] }).completeness.faults).toEqual([]);
     });
 });
 
