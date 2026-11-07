@@ -10,7 +10,11 @@
 echo "the stand names of a working copy"
 
 ROOT="$(cd "$TOOLS/.." && pwd)"
-# Constant paths: random ones fall into one block once in five hundred runs.
+# The sign of keeping the environment turns the derivation off, and it is the subject here.
+unset RT_STAND_KEEP
+
+# Constant paths: random ones fall into one block once in five hundred runs. They are not removed:
+# the sets of two copies run at once, and a removal would pull the folder from under the other.
 ONE=/tmp/rt-stand-env-one
 TWO=/tmp/rt-stand-env-two
 mkdir -p "$ONE" "$TWO"
@@ -73,7 +77,5 @@ unique="$(printf '%s\n' "$copies" | while IFS= read -r copy; do
     [ -d "$copy" ] && name_in "$copy" COMPOSE_PROJECT_NAME && echo
 done | grep . | sort -u | wc -l | tr -d ' ')"
 report 'the copies of the machine hold different blocks' "$unique" "$blocks"
-
-rm -rf "$ONE" "$TWO"
 
 suite_result 'stand names'

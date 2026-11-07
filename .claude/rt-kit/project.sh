@@ -35,7 +35,7 @@ RT_STANDS='the receiver http://localhost:3000, the admin panel http://localhost:
 # the set does derive are dropped for the same reason: the name of the browser of the frames and of
 # the stand database fall back to what is derived from the path or to the default of a separate
 # database. `RT_STAND_KEEP=1` keeps the environment as it is, for one run on a port taken by a
-# foreign process.
+# foreign process. Every name is then given by hand: one left out falls to the shared default.
 #
 # A manual run does not read this file and takes the defaults.
 rt_stand_env() {
