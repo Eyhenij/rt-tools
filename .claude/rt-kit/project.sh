@@ -41,8 +41,9 @@ RT_STANDS='the receiver http://localhost:3000, the admin panel http://localhost:
 rt_stand_env() {
     [ -n "${RT_STAND_KEEP:-}" ] && return 0
 
-    # The root, not the folder: a session in a subfolder is the same copy.
-    _sum="$(printf '%s' "$(git rev-parse --show-toplevel 2>/dev/null || pwd)" | cksum | cut -d' ' -f1)"
+    # The root, not the folder: a session in a subfolder is the same copy. Inside a git hook `GIT_DIR`
+    # is set, and the root would then be the current folder.
+    _sum="$(printf '%s' "$(unset GIT_DIR GIT_WORK_TREE; git rev-parse --show-toplevel 2>/dev/null || pwd)" | cksum | cut -d' ' -f1)"
     _block=$((30000 + _sum % 500 * 20))
 
     unset E2E_DATABASE E2E_SHOT_CONTAINER E2E_SHOT_PORT

@@ -68,6 +68,11 @@ report 'the keep sign leaves the environment as it is' "$kept" '61234'
 report 'a subfolder gets the names of its copy' \
     "$(name_in "$ROOT/tools" COMPOSE_PROJECT_NAME)" "$(name_in "$ROOT" COMPOSE_PROJECT_NAME)"
 
+# A push from a terminal runs the set inside a git hook, and git names its directory in the environment.
+report 'a subfolder keeps the names under a git hook' \
+    "$(export GIT_DIR="$(git -C "$ROOT" rev-parse --absolute-git-dir)"; name_in "$ROOT/tools" COMPOSE_PROJECT_NAME)" \
+    "$(name_in "$ROOT" COMPOSE_PROJECT_NAME)"
+
 # The copies of this machine do not share a block: a match brings the shared stand back in silence.
 copies="$(git -C "$ROOT" worktree list --porcelain | sed -n 's/^worktree //p')"
 blocks="$(printf '%s\n' "$copies" | while IFS= read -r copy; do
