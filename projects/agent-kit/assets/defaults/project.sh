@@ -365,24 +365,30 @@ rt_conflicting_pulls_default() {
 # default asks GitHub, and another hosting declares the function by the same shape, which is named in
 # `hooks/pull-outcomes.sh`. A failing exit code means «nobody to ask», and such a tree is counted
 # apart. The task comes from the title: the head of a revert request names the request, not the task.
+# An epic is told by the label of its card, as the delivery guard tells it: a request carries none.
 rt_pull_outcomes_default() {
     command -v gh >/dev/null 2>&1 || return 1
     command -v jq >/dev/null 2>&1 || return 1
     list="$(gh pr list --state all --limit 100 --search "closed:>=$1" \
-        --json number,state,headRefName,title,closedAt,labels 2>/dev/null)" || return 1
+        --json number,state,headRefName,title,closedAt 2>/dev/null)" || return 1
     printf '%s' "$list" | jq -c '.[] | select(.state != "OPEN")' | while IFS= read -r pull; do
         number="$(printf '%s' "$pull" | jq -r '.number')"
+        task="$(printf '%s' "$pull" | jq -r '(.title | capture("\\[[A-Za-z]+-(?<n>[0-9]+)\\]").n)? // empty')"
         commits="$(gh api "repos/{owner}/{repo}/pulls/$number/commits?per_page=100" \
             --jq '[.[] | {sha, tree: .commit.tree.sha, parents: (.parents | length)}]' 2>/dev/null)"
         [ -n "$commits" ] || continue
-        printf '%s' "$pull" | jq -c --argjson commits "$commits" --arg epic "${RT_BOARD_EPIC_LABEL:-}" '{
-            number, commits,
+        labels='[]'
+        [ -z "$task" ] || labels="$(gh api "repos/{owner}/{repo}/issues/$task" --jq '[.labels[].name]' 2>/dev/null)"
+        printf '%s' "$pull" | jq -c --argjson commits "$commits" --argjson labels "${labels:-[]}" \
+            --arg task "$task" --arg epic "${RT_BOARD_EPIC_LABEL:-}" '{
+            number,
+            commits: $commits,
             head: .headRefName,
             merged: (.state == "MERGED"),
             closed: (.closedAt // "" | .[0:10]),
-            task: ((.title | capture("\\[[A-Za-z]+-(?<n>[0-9]+)\\]").n | tonumber)? // null),
+            task: (if $task == "" then null else ($task | tonumber) end),
             revert: (.title | startswith("Revert")),
-            epic: ($epic != "" and ([.labels[].name] | index($epic) != null))
+            epic: ($epic != "" and ($labels | index($epic) != null))
         }'
     done
 }

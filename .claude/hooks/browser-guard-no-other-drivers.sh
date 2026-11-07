@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/browser-guard-no-other-drivers.sh · 95e2616b8129 · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/browser-guard-no-other-drivers.sh · 4552669bdd06 · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__playwright__.*|mcp__chrome-devtools__.*|mcp__plugin_.*_playwright__.*|mcp__plugin_.*_chrome-devtools__.*|Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh
 # Guard of the bypass routes to the browser. PreToolUse.
@@ -24,6 +24,7 @@
 # Own name in the observations: the refusal is written by the shared refusal tail, not by the
 # guard itself.
 RT_GUARD_NAME=browser-guard-no-other-drivers
+RT_GUARD_RULE=browser-verification
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

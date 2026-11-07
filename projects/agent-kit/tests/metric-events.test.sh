@@ -2,7 +2,7 @@
 # События метрик: что дерево решает у себя и какой ответ уходит в наблюдение. Подпись содержимого
 # остаётся в дереве, в строку наблюдения попадает только ответ.
 #
-# Сценарии договорённости: SC-AK-1277, SC-AK-1278, SC-AK-1279, SC-AK-1290.
+# Сценарии договорённости: SC-AK-1277, SC-AK-1278, SC-AK-1279, SC-AK-1290, SC-AK-1291.
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 echo "СОБЫТИЯ МЕТРИК"
@@ -283,11 +283,13 @@ fixture_host() {
 #!/usr/bin/env bash
 case "$1 $2" in
     'pr list')
-        printf '%s' '[{"number":31,"state":"MERGED","headRefName":"RT-5-probe","title":"[RT-5] Сделано","closedAt":"2026-08-10T10:00:00Z","labels":[]},
-{"number":32,"state":"CLOSED","headRefName":"RT-6-probe","title":"[RT-6] Брошено","closedAt":"2026-08-11T10:00:00Z","labels":[{"name":"epic"}]},
-{"number":33,"state":"OPEN","headRefName":"RT-7-probe","title":"[RT-7] Идёт","closedAt":null,"labels":[]},
-{"number":34,"state":"MERGED","headRefName":"revert-31-RT-5-probe","title":"Revert \"[RT-5] Сделано\"","closedAt":"2026-08-12T10:00:00Z","labels":[]}]'
+        printf '%s' '[{"number":31,"state":"MERGED","headRefName":"RT-5-probe","title":"[RT-5] Сделано","closedAt":"2026-08-10T10:00:00Z"},
+{"number":32,"state":"CLOSED","headRefName":"RT-6-probe","title":"[RT-6] Брошено","closedAt":"2026-08-11T10:00:00Z"},
+{"number":33,"state":"OPEN","headRefName":"RT-7-probe","title":"[RT-7] Идёт","closedAt":null},
+{"number":34,"state":"MERGED","headRefName":"revert-31-RT-5-probe","title":"Revert \"[RT-5] Сделано\"","closedAt":"2026-08-12T10:00:00Z"}]'
         ;;
+    'api repos/{owner}/{repo}/issues/6') printf '%s' '["epic"]' ;;
+    'api repos/{owner}/{repo}/issues/'*) printf '%s' '["bug"]' ;;
     api*) printf '%s' '[{"sha":"c1","tree":"t1","parents":1}]' ;;
 esac
 EOF
@@ -311,6 +313,7 @@ out="$(outcomes_in "$tree" "$host")"
 report "итоги: открытая заявка не читается" "$(printf '%s\n' "$out" | grep -c .)" "3"
 report "итоги: слитая заявка названа" "$(printf '%s\n' "$out" | sed -n 1p | jq -c '[.number,.merged,.task,.revert,.epic,.closed]')" \
     '[31,true,5,false,false,"2026-08-10"]'
+report "итоги: коммиты заявки дошли" "$(printf '%s\n' "$out" | sed -n 1p | jq -c '.commits')" '[{"sha":"c1","tree":"t1","parents":1}]'
 report "итоги: подпись передачи присоединена" "$(printf '%s\n' "$out" | sed -n 1p | jq -c '.handover')" '{"commit":"c1","tree":"t1"}'
 report "итоги: считаются правки после передачи" "$(printf '%s\n' "$out" | sed -n 1p | jq -r '.corrections')" "2"
 report "итоги: имя ветки наружу не выходит" "$(printf '%s' "$out" | grep -c 'probe')" "0"
@@ -322,6 +325,83 @@ rm -rf "$tree" "$host"
 tree="$(fixture_metric_tree)"
 (cd "$tree" && PATH="/usr/bin:/bin" CLAUDE_PROJECT_DIR="$tree" bash "$HOOKS/pull-outcomes.sh" 2026-07-01 >/dev/null 2>&1)
 report "итоги: без клиента хостинга код 3" "$?" "$(command -v gh | grep -q '^/usr/bin\|^/bin' && echo 0 || echo 3)"
+rm -rf "$tree"
+
+# --- SC-AK-1291. Вызов роли и команды ------------------------------------------------------
+
+# Дерево с ролью пакета, своей ролью и командой пакета.
+fixture_roles() {
+    local dir
+    dir="$(fixture_metric_tree)"
+    mkdir -p "$dir/.claude/agents" "$dir/.claude/commands"
+    printf -- '<!-- rt-kit v0.34.0 · agents/goal-critic.md · abc -->\n' > "$dir/.claude/agents/goal-critic.md"
+    printf 'своя роль\n' > "$dir/.claude/agents/secret-name.md"
+    printf -- '<!-- rt-kit v0.34.0 · commands/feedback.md · abc -->\n' > "$dir/.claude/commands/feedback.md"
+    printf '%s' "$dir"
+}
+
+role_in() {
+    jq -n --arg r "$2" --arg a "$3" \
+        '{session_id:"s",tool_name:"Agent",tool_input:{subagent_type:$r},tool_response:{content:[{type:"text",text:$a}]}}' \
+        | CLAUDE_PROJECT_DIR="$1" "$HOOKS/role-calls.sh"
+}
+
+# Значение поля в записях этого рода, через пробел.
+field_of() {
+    cat "$1/.claude/rt-kit/observations/"*.jsonl 2>/dev/null | jq -r "select(.ev == \"$2\") | .$3 // \"нет\"" | tr '\n' ' '
+}
+
+tree="$(fixture_roles)"
+report "SC-AK-1291 — хук роли молчит" "$(role_in "$tree" goal-critic 'Цель не достигнута.')" ""
+role_in "$tree" goal-critic 'Цель достигнута.'
+role_in "$tree" goal-critic 'Async agent launched successfully'
+role_in "$tree" secret-name 'ответ'
+role_in "$tree" general-purpose 'ответ'
+report "SC-AK-1291 — роль пакета по имени, своя постоянным словом, встроенной нет" "$(field_of "$tree" role-call res)" \
+    "goal-critic goal-critic goal-critic tree-own "
+report "SC-AK-1291 — приговор по первой строке, запуск в фоне приговором не считается" "$(field_of "$tree" role-call verdict)" \
+    "refused passed нет нет "
+report "SC-AK-1291 — имя своей роли из дерева не уходит" "$(cat "$tree/.claude/rt-kit/observations/"*.jsonl | grep -c 'secret-name')" "0"
+jq -n '{session_id:"s",prompt:"/feedback что-то мешает"}' | CLAUDE_PROJECT_DIR="$tree" "$HOOKS/role-calls.sh"
+jq -n '{session_id:"s",prompt:"/secret-cmd"}' | CLAUDE_PROJECT_DIR="$tree" "$HOOKS/role-calls.sh"
+jq -n '{session_id:"s",prompt:"обычное сообщение"}' | CLAUDE_PROJECT_DIR="$tree" "$HOOKS/role-calls.sh"
+report "SC-AK-1291 — команда пакета по имени, чужой нет" "$(field_of "$tree" command-call res)" "feedback "
+rm -rf "$tree"
+
+# --- Экзамен, правило проверки, знаменатель правок ------------------------------------------
+
+tree="$(fixture_metric_tree)"
+exam_note() { CLAUDE_PROJECT_DIR="$tree" bash -c '. "$1/metric-marks.sh"; rt_exam_note "$2" "$3"' _ "$HOOKS" "$1" "$2"; }
+exam_note failed s1
+exam_note failed s1
+exam_note passed s1
+exam_note none s1
+report "экзамен: приговор пишется раз на сессию" "$(field_of "$tree" exam-verdict res)" "failed passed "
+rm -rf "$tree"
+
+tree="$(fixture_metric_tree)"
+CLAUDE_PROJECT_DIR="$tree" RT_GUARD_NAME=probe-guard RT_GUARD_RULE=doc-style RT_HOOK_INPUT='{"session_id":"s"}' \
+    bash -c '. "$1/guard-note.sh"; rt_guard_note' _ "$HOOKS"
+report "правило: отказ несёт объявленное правило" "$(field_of "$tree" guard-deny rule)" "doc-style "
+rm -rf "$tree"
+
+# Объявленное правило существует в пакете: имя, которому ничто не отвечает, считалось бы вечно нулём.
+unknown=0
+for hook in "$HOOKS"/*.sh; do
+    rule="$(sed -n 's/^RT_GUARD_RULE=//p' "$hook")"
+    [ -z "$rule" ] || ls "$ASSETS/rules/$rule".* >/dev/null 2>&1 || unknown=$((unknown + 1))
+done
+report "правило: объявлено только существующее" "$unknown" "0"
+report "правило: объявление есть у проверок" "$(grep -l '^RT_GUARD_RULE=' "$HOOKS"/*.sh | wc -l | tr -d ' ')" "27"
+
+tree="$(fixture_tree)"
+gate_in() {
+    jq -n --arg f "$tree/$1" '{session_id:"s",tool_name:"Edit",tool_input:{file_path:$f,new_string:"x"}}' \
+        | CLAUDE_PROJECT_DIR="$tree" "$HOOKS/skill-gate.sh" >/dev/null 2>&1
+}
+gate_in docs/note.txt
+gate_in tools/run.mjs
+report "доля правок: шлюз считает каждую правку" "$(notes_count "$tree" edit-seen)" "2"
 rm -rf "$tree"
 
 # --- Отказ в пользу работы ----------------------------------------------------------------

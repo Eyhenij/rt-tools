@@ -41,6 +41,10 @@ export interface IObservation {
     readonly seconds?: number | null;
     /** Секунды красного запуска на том же содержимом перед этим. `null`: такого не было. */
     readonly wasted?: number | null;
+    /** Правило, которое объявила проверка. Пусто: не объявляла. */
+    readonly rule?: string;
+    /** Приговор роли. Пусто: роль его не даёт. */
+    readonly verdict?: string;
 }
 
 /** Сколько раз что-то встретилось. Порядок — по убыванию, при равенстве по имени. */
@@ -161,6 +165,8 @@ export function parseObservation(line: string): IObservation | null {
                   empty: emptyOf(found['empty']),
                   seconds: wholeOf(found['secs']),
                   wasted: wholeOf(found['wasted']),
+                  rule: textOf(found['rule']),
+                  verdict: textOf(found['verdict']),
               }
             : null;
     } catch {

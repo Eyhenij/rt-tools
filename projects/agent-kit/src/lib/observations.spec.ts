@@ -58,6 +58,8 @@ describe('строка наблюдения', (): void => {
             empty: null,
             seconds: null,
             wasted: null,
+            rule: '',
+            verdict: '',
         });
     });
 

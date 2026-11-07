@@ -138,9 +138,28 @@ rt_run_kind() {
     esac
 }
 
-# Old marks go by age. Only these two kinds: a file that counts something once must outlive them.
+# Old marks go by age. Only these kinds: a file that counts something once must outlive them.
 rt_marks_prune() {
-    find "$1" -type f \( -name 'refusal-*' -o -name 'runs-*' \) -mtime "+$RT_MARKS_KEEP_DAYS" -delete 2>/dev/null
+    find "$1" -type f \( -name 'refusal-*' -o -name 'runs-*' -o -name 'exam-*' \) \
+        -mtime "+$RT_MARKS_KEEP_DAYS" -delete 2>/dev/null
+    return 0
+}
+
+# The verdict of an exam, once per session and verdict: the guard reads the whole session on every
+# call it judges, and each of those calls would otherwise read as a new exam.
+#
+#   rt_exam_note <passed|failed> <session>
+rt_exam_note() {
+    local verdict="$1" session="$2" dir mark
+    case "$verdict" in passed | failed) ;; *) return 0 ;; esac
+    [ -n "$session" ] || return 0
+    dir="$(rt_marks_dir)"
+    [ -n "$dir" ] || return 0
+    mark="$dir/exam-$(printf '%s' "$session $verdict" | cksum 2>/dev/null | cut -d' ' -f1)"
+    [ ! -f "$mark" ] || return 0
+    : > "$mark" 2>/dev/null
+    command -v rt_note >/dev/null 2>&1 || return 0
+    rt_note exam-verdict "res=$verdict" "sid=$session"
     return 0
 }
 

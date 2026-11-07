@@ -13,6 +13,7 @@ import { costOf, CostUnavailableError } from './cost.js';
 import { IConfig, readConfig } from './config.js';
 import { IEnvironment, IOutcomeOfCommand, noObservationLines, sweptLine } from './commands.js';
 import { dayBefore, ICount, IObservation, IReadResult, ISummary, readObservations, summarize } from './observations.js';
+import { IUsageMetric, usageCounted, usageLines, usageOf } from './metric-usage.js';
 import { byText } from './order.js';
 import { collectOutcomes, IOutcomeMetric, outcomeLines, outcomeMetricOf } from './outcomes.js';
 import { laidOutSkills } from './snapshot.js';
@@ -75,6 +76,7 @@ export interface IMetricsReport {
     readonly outcomes: IOutcomeMetric | null;
     /** Было ли кого спросить об итогах: дерево без функции профиля считается отдельно. */
     readonly outcomesAsked: boolean;
+    readonly usage: IUsageMetric;
     readonly gate: readonly ICount[];
     readonly gateRefusals: number;
     readonly rules: number;
@@ -223,6 +225,7 @@ export function metricsOf(
     const runs: readonly IRunMetric[] = runsOf(read.observations);
     const corrections: number = read.observations.filter((entry: IObservation): boolean => entry.event === 'owner-correction').length;
     const outcomes: IOutcomeMetric | null = outcomeMetricOf(read.observations);
+    const usage: IUsageMetric = usageOf(read.observations);
 
     return {
         refusals,
@@ -233,6 +236,7 @@ export function metricsOf(
         corrections,
         outcomes,
         outcomesAsked,
+        usage,
         rules,
         entryChars,
         days: summary.days,
@@ -252,6 +256,7 @@ export function metricsOf(
             comparedRefusals > 0 && 'Пустые отказы',
             runs.length > 0 && 'Пустые запуски',
             corrections > 0 && 'Правки владельца',
+            ...usageCounted(usage),
         ]),
         outside: OUTSIDE_THE_TREE,
     };
@@ -331,6 +336,7 @@ export function metricsLines(report: IMetricsReport): readonly string[] {
         ...topLines(report.gate.map((rule: ICount): string => `  ${rule.name}: ${rule.count}`)),
         ...runLines(report.runs),
         ...(report.corrections > 0 ? ['', `правки владельца: ${report.corrections}`] : []),
+        ...usageLines(report.usage, topLines),
         '',
         ...deadRuleLines(report),
         '',

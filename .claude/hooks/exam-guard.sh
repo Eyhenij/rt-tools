@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/exam-guard.sh · 7f0353d011a7 · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/exam-guard.sh · d457e32512b7 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file|Bash|mcp__webstorm__execute_terminal_command
 # Requires: agents/strict-teacher.md, hooks/roles.sh, hooks/deny-tail.sh, hooks/write-targets.sh
 # Exam guard: no edit goes through until the exam on the loaded rules has been passed this session.
@@ -252,6 +252,11 @@ if [ "$ready" = "1" ]; then
             ;;
     esac
 fi
+
+# The verdict for the metrics. No mark file — nothing is recorded, and the guard judges as before.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/metric-marks.sh" 2>/dev/null \
+    && rt_exam_note "$verdict" "$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.session_id // empty' 2>/dev/null)"
 
 case "$verdict" in
     passed) exit 0 ;;

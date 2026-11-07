@@ -27,6 +27,7 @@
 
 # The guard's name for the observations: it is written by the shared deny tail.
 RT_GUARD_NAME=browser-guard-device-id
+RT_GUARD_RULE=browser-verification
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

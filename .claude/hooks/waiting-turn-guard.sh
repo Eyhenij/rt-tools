@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/waiting-turn-guard.sh · 6db54934dccd · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/waiting-turn-guard.sh · 29f9631dabbc · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh
 # Waiting guard: a turn that tells the owner about someone else's step does not end until it holds
@@ -35,6 +35,7 @@
 
 # Its own name in observations: the refusal is written by the shared deny tail, not by the guard.
 RT_GUARD_NAME=waiting-turn-guard
+RT_GUARD_RULE=turn-conduct
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

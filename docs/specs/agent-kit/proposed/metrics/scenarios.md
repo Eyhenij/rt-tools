@@ -131,8 +131,6 @@ Given a session that calls a role of the package and a role of the tree's own
 When the calls are recorded
 Then the package role is counted by its name, and the tree's own role by a constant word
 
-Not covered: no code yet.
-
 ### SC-AK-1292 — the report of one tree counts repeated refusals and dead rules
 
 Given observations of a period
