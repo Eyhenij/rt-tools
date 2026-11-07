@@ -139,6 +139,27 @@ Then the write is refused
 
 Not covered: no code yet.
 
+### SC-AK-1291 — a call of a role or a command is counted by its package name
+
+Given a session that calls a role of the package and a role of the tree's own
+When the calls are recorded
+Then the package role is counted by its name, and the tree's own role by a constant word
+
+Not covered: no code yet.
+
+### SC-AK-1292 — the report of one tree counts repeated refusals and dead rules
+
+Given observations of a period
+When `agent-kit metrics` counts them
+Then a refusal right after the same guard's refusal in that session counts as a repeat, and the
+report names the refusals, the gate refusals, the dead rules and the cost of the entry
+
+### SC-AK-1293 — the report names what it does not know
+
+Given a metric with no signal in the observations yet
+When the report is printed
+Then it stands in a line saying there is no data, not as a zero
+
 ### SC-AK-1290 — a person's message is counted without being kept
 
 Given a message matching the set of patterns

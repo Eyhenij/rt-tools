@@ -70,6 +70,9 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
   are not counted, because the record of loads dies with it.
 - **Guards are judged by empty refusals and by minutes.** The share of empty refusals per guard, and
   the minutes of wasted runs per kind of step.
+- **Roles and commands are judged by calls and verdicts.** The count of calls per role and command,
+  and for a role that gives a verdict the share of work it refused. Only package names and numbers
+  are recorded.
 - **Delivery is judged by three numbers.** Days from a received record to its fix, the share of trees
   on the latest two versions seen, and the share of package sections a tree replaces by an override.
 - **A report names its own completeness.** It states how many enrolled trees sent a day line in the
@@ -155,7 +158,6 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
 - The text of any message, and any judgement of a text in the intake.
 - Session time, token cost and any comparison between people.
 - The minutes of CI runs: a tree does not see them, and the report says so.
-- Metrics of roles and commands: no signal exists yet.
 - Targets before the baseline.
 
 ## Contract
