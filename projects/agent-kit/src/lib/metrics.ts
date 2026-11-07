@@ -1,12 +1,11 @@
 /**
  * Метрики пакета по наблюдениям одного дерева.
  *
- * Это частичный вид: он считает то, что наблюдения уже знают. Итог задачи, правки владельца и
- * минуты проверок появятся вместе с новыми событиями, и до тех пор отчёт называет их словами
- * «нет данных», а не нулём: ноль здесь читался бы как хороший результат.
+ * Это частичный вид: он считает то, что наблюдения знают. Числа, для которых записей ещё нет,
+ * отчёт называет словами «нет данных», а не нулём: ноль здесь читался бы как хороший результат.
  *
- * Пустой отказ требует признака содержимого дерева, которого в наблюдениях ещё нет. Поэтому здесь
- * считается повтор: тот же гард в той же сессии отказал сразу после своего же отказа.
+ * Повтор смотрит только на порядок отказов, пустой отказ ещё и на содержимое: его решает дерево и
+ * пишет ответ в наблюдение. Итог задачи считает `outcomes.ts`.
  *
  * Загрузки, отказы шлюза и неиспользованные правила берутся из готовой сводки `summarize`.
  */
@@ -15,6 +14,7 @@ import { IConfig, readConfig } from './config.js';
 import { IEnvironment, IOutcomeOfCommand, noObservationLines, sweptLine } from './commands.js';
 import { dayBefore, ICount, IObservation, IReadResult, ISummary, readObservations, summarize } from './observations.js';
 import { byText } from './order.js';
+import { collectOutcomes, IOutcomeMetric, outcomeLines, outcomeMetricOf } from './outcomes.js';
 import { laidOutSkills } from './snapshot.js';
 
 /** Отрезок отчёта, когда он не назван: столько дней наблюдения лежат на диске. */
@@ -71,6 +71,10 @@ export interface IMetricsReport {
     readonly runs: readonly IRunMetric[];
     /** Сообщения человека по набору образцов. Ноль: записей нет, и строка без данных о них скажет. */
     readonly corrections: number;
+    /** Итоги задач. `null`: итогов не записано. */
+    readonly outcomes: IOutcomeMetric | null;
+    /** Было ли кого спросить об итогах: дерево без функции профиля считается отдельно. */
+    readonly outcomesAsked: boolean;
     readonly gate: readonly ICount[];
     readonly gateRefusals: number;
     readonly rules: number;
@@ -203,7 +207,14 @@ function coversFullPeriod(read: IReadResult, days: number, today: string): boole
 }
 
 /** Отчёт за отрезок: сводка уже посчитала загрузки, отказы шлюза и неиспользованные правила. */
-export function metricsOf(read: IReadResult, summary: ISummary, rules: number, entryChars: number | null, today: string): IMetricsReport {
+export function metricsOf(
+    read: IReadResult,
+    summary: ISummary,
+    rules: number,
+    entryChars: number | null,
+    today: string,
+    outcomesAsked: boolean = true
+): IMetricsReport {
     const guards: readonly IGuardMetric[] = guardsOf(read.observations);
     const full: boolean = coversFullPeriod(read, summary.days, today);
     const refusals: number = guards.reduce((sum: number, guard: IGuardMetric): number => sum + guard.refusals, 0);
@@ -211,6 +222,7 @@ export function metricsOf(read: IReadResult, summary: ISummary, rules: number, e
     const comparedRefusals: number = guards.reduce((sum: number, guard: IGuardMetric): number => sum + guard.compared, 0);
     const runs: readonly IRunMetric[] = runsOf(read.observations);
     const corrections: number = read.observations.filter((entry: IObservation): boolean => entry.event === 'owner-correction').length;
+    const outcomes: IOutcomeMetric | null = outcomeMetricOf(read.observations);
 
     return {
         refusals,
@@ -219,6 +231,8 @@ export function metricsOf(read: IReadResult, summary: ISummary, rules: number, e
         comparedRefusals,
         runs,
         corrections,
+        outcomes,
+        outcomesAsked,
         rules,
         entryChars,
         days: summary.days,
@@ -234,6 +248,7 @@ export function metricsOf(read: IReadResult, summary: ISummary, rules: number, e
         deadRules: full ? summary.unused : null,
         deadRuleShare: full ? percent(summary.unused.length, rules) : null,
         noData: noDataOf([
+            outcomes !== null && 'Принято с первого раза',
             comparedRefusals > 0 && 'Пустые отказы',
             runs.length > 0 && 'Пустые запуски',
             corrections > 0 && 'Правки владельца',
@@ -298,6 +313,7 @@ export function metricsLines(report: IMetricsReport): readonly string[] {
         `прочитано дней: ${report.daysRead.length}, с ${report.daysRead[0]} по ${report.daysRead[report.daysRead.length - 1]}`,
         `нет данных: ${report.noData.join(', ')}`,
         `вне этого отчёта: ${report.outside.join(', ')}`,
+        ...outcomeLines(report.outcomes, report.outcomesAsked, report.corrections),
         '',
         `отказы проверок: ${report.refusals}, на сессию ${report.refusalsPerSession}`,
         `повторы подряд: ${report.repeats} (${report.repeatShare}%)`,
@@ -354,10 +370,11 @@ export function metrics(env: IEnvironment, options: IMetricsOptions): IOutcomeOf
         };
     }
 
+    const asked: boolean = collectOutcomes(env.root, options.today, env.version);
     const result: IReadResult = readObservations(env.root, options.today, options.days);
     const known: readonly string[] = laidOutSkills(config, env.assetsDir);
     const summary: ISummary = summarize(result.observations, known, options.days);
-    const report: IMetricsReport = metricsOf(result, summary, known.length, entryCharsOf(env.root), options.today);
+    const report: IMetricsReport = metricsOf(result, summary, known.length, entryCharsOf(env.root), options.today, asked);
 
     if (options.json) {
         return { code: 0, lines: [JSON.stringify(report)] };

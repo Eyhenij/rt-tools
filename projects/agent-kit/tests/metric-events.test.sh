@@ -273,6 +273,57 @@ tree="$(fixture_tree)"
 report "SC-AK-1290 — вне репозитория хук молчит" "$(prompt_in "$tree" 'это неправильно')" ""
 rm -rf "$tree"
 
+# --- Итоги заявок: значение по умолчанию и соединение с метками ---------------------------
+
+# Поддельный клиент хостинга: список заявок и коммиты одной из них. Настоящий клиент здесь не зовётся.
+fixture_host() {
+    local dir
+    dir="$(mktemp -d)"
+    cat > "$dir/gh" <<'EOF'
+#!/usr/bin/env bash
+case "$1 $2" in
+    'pr list')
+        printf '%s' '[{"number":31,"state":"MERGED","headRefName":"RT-5-probe","title":"[RT-5] Сделано","closedAt":"2026-08-10T10:00:00Z","labels":[]},
+{"number":32,"state":"CLOSED","headRefName":"RT-6-probe","title":"[RT-6] Брошено","closedAt":"2026-08-11T10:00:00Z","labels":[{"name":"epic"}]},
+{"number":33,"state":"OPEN","headRefName":"RT-7-probe","title":"[RT-7] Идёт","closedAt":null,"labels":[]},
+{"number":34,"state":"MERGED","headRefName":"revert-31-RT-5-probe","title":"Revert \"[RT-5] Сделано\"","closedAt":"2026-08-12T10:00:00Z","labels":[]}]'
+        ;;
+    api*) printf '%s' '[{"sha":"c1","tree":"t1","parents":1}]' ;;
+esac
+EOF
+    chmod +x "$dir/gh"
+    printf '%s' "$dir"
+}
+
+# Значение по умолчанию читается как его зовёт разложенное дерево.
+outcomes_in() {
+    (cd "$1" && PATH="$2:$PATH" CLAUDE_PROJECT_DIR="$1" RT_BOARD_EPIC_LABEL=epic \
+        bash "$HOOKS/pull-outcomes.sh" 2026-07-01 2>/dev/null)
+}
+
+tree="$(fixture_metric_tree)"
+host="$(fixture_host)"
+CLAUDE_PROJECT_DIR="$tree" RT_HOOK_INPUT="{\"cwd\":\"$tree\"}" bash -c '
+    . "$1/metric-marks.sh"
+    printf "c1 t1\n" > "$(rt_branch_mark handover RT-5-probe)"
+    printf "before\nafter\nafter\n" > "$(rt_branch_mark corrections RT-5-probe)"' _ "$HOOKS"
+out="$(outcomes_in "$tree" "$host")"
+report "итоги: открытая заявка не читается" "$(printf '%s\n' "$out" | grep -c .)" "3"
+report "итоги: слитая заявка названа" "$(printf '%s\n' "$out" | sed -n 1p | jq -c '[.number,.merged,.task,.revert,.epic,.closed]')" \
+    '[31,true,5,false,false,"2026-08-10"]'
+report "итоги: подпись передачи присоединена" "$(printf '%s\n' "$out" | sed -n 1p | jq -c '.handover')" '{"commit":"c1","tree":"t1"}'
+report "итоги: считаются правки после передачи" "$(printf '%s\n' "$out" | sed -n 1p | jq -r '.corrections')" "2"
+report "итоги: имя ветки наружу не выходит" "$(printf '%s' "$out" | grep -c 'probe')" "0"
+report "итоги: заявка без метки без подписи" "$(printf '%s\n' "$out" | sed -n 2p | jq -c '[.handover,.epic,.merged]')" '[null,true,false]'
+report "итоги: откат называет задачу из заголовка" "$(printf '%s\n' "$out" | sed -n 3p | jq -c '[.task,.revert]')" '[5,true]'
+rm -rf "$tree" "$host"
+
+# Спросить некого: без клиента хостинга код говорит об этом, а не печатает пустоту.
+tree="$(fixture_metric_tree)"
+(cd "$tree" && PATH="/usr/bin:/bin" CLAUDE_PROJECT_DIR="$tree" bash "$HOOKS/pull-outcomes.sh" 2026-07-01 >/dev/null 2>&1)
+report "итоги: без клиента хостинга код 3" "$?" "$(command -v gh | grep -q '^/usr/bin\|^/bin' && echo 0 || echo 3)"
+rm -rf "$tree"
+
 # --- Отказ в пользу работы ----------------------------------------------------------------
 
 # Вне репозитория сравнивать есть что, и запись не падает. Без записи наблюдений нет и меток.

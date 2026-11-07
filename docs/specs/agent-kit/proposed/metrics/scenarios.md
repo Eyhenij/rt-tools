@@ -9,15 +9,11 @@ Given a request handed over and merged with its head tree unchanged and no owner
 When the sending reads the outcomes
 Then the day line counts one accepted task and one first-pass task
 
-Not covered: no code yet.
-
 ### SC-AK-1274 — a merge of the base after the handover keeps first-pass
 
 Given a handed-over request whose branch took only a merge of its base
 When the sending reads the outcomes
 Then the task stays first-pass
-
-Not covered: no code yet.
 
 ### SC-AK-1275 — a rewrite of history after the handover takes first-pass away
 
@@ -25,15 +21,11 @@ Given a handed-over request whose head was rewritten with another tree
 When the sending reads the outcomes
 Then the task is accepted and not first-pass
 
-Not covered: no code yet.
-
 ### SC-AK-1276 — a request closed unmerged lowers the main metric
 
 Given one merged first-pass task and one request closed unmerged
 When the report counts the period
 Then first-pass acceptance reads one of two
-
-Not covered: no code yet.
 
 ### SC-AK-1277 — a repeat of the same refusal counts as empty
 
