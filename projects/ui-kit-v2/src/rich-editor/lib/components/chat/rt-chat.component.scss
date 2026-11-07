@@ -176,6 +176,24 @@
             }
         }
 
+        &__composer-bar {
+            display: flex;
+            flex: 0 0 auto;
+            flex-direction: column;
+
+            // Колонка держит шаг `--rt-space-4`, а полоса стоит вплотную к полю: 8px по кадру
+            margin-block-end: calc(var(--rt-space-2) - var(--rt-space-4));
+
+            &:empty {
+                display: none;
+            }
+
+            &:not(:empty) + .rt-chat__composer,
+            &:not(:empty) + .rt-chat__composer-rich {
+                margin-top: 0;
+            }
+        }
+
         &__footer-slot {
             display: flex;
             flex-direction: column;
@@ -298,14 +316,17 @@
 
         &__message-footer {
             display: flex;
+            min-width: 0;
             align-items: center;
             gap: var(--rt-space-1);
         }
 
         &__message-date {
+            min-width: 0;
             color: var(--rt-chat-bubble-date);
             font-size: var(--rt-text-xs);
             line-height: var(--rt-leading-none);
+            overflow-wrap: anywhere;
         }
 
         // Пер-месседж статус своего сообщения: часы / двойной чек / «!»+retry.

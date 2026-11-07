@@ -21,6 +21,7 @@ import { accountLines, IRecordLine, refusalText } from './records.logic';
 
 const BEM_BLOCK: string = 'example-records';
 const READY_REPLY: string = 'Thank you for writing. We will answer today.';
+const SCHEDULED_LABEL: string = 'Goes out on 8 November at 10:00';
 
 /**
  * The records page: the list for a reader, the form of a new record for an editor, the exit.
@@ -64,7 +65,17 @@ export class RecordsPage {
     protected readonly chat: Signal<RtChatComponent | undefined> = viewChild(RtChatComponent);
     protected readonly messages: readonly IRtChat.Message[] = [
         { id: 1, author: 'Guest', own: false, text: 'Can I check out at two?', createdAt: new Date().toISOString() },
+        {
+            id: 2,
+            author: 'You',
+            own: true,
+            text: 'Yes, a late check-out is confirmed.',
+            createdAt: new Date().toISOString(),
+            dateLabel: SCHEDULED_LABEL,
+            dateIcon: 'clock',
+        },
     ];
+    protected readonly draftPreview: WritableSignal<string> = signal<string>('');
     protected readonly records: WritableSignal<readonly IRecordLine[]> = signal<readonly IRecordLine[]>([]);
     protected readonly refusal: WritableSignal<string | null> = signal<string | null>(null);
     protected readonly form: FormGroup<{ title: FormControl<string> }> = new FormGroup({
@@ -116,6 +127,11 @@ export class RecordsPage {
     /** The ready reply stands in the reply field: the person reads it and sends it themselves. */
     protected insertReply(): void {
         this.chat()?.setDraft(READY_REPLY);
+    }
+
+    /** The bar above the field repeats what the person typed: the page reads the field, it does not hold it. */
+    protected showDraft(): void {
+        this.draftPreview.set(this.chat()?.draftText() ?? '');
     }
 
     protected signOut(): void {

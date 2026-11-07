@@ -8,6 +8,9 @@
 
 The brief, word for word:
 
+> Папка: `/Users/eyhenij/WebstormProjects/rt-tools`. В артефактах кита приложение и его задачи не
+> называются: только то, что делает код.
+>
 > Сделай в `RtChatComponent` (`rich-editor`) три малых дополнения. Порядок обычный: сверка с макетом,
 > код, сторибук с наложением на кадр, показ владельцу. Пуш, PR и выпуск только после его слова
 > «одобряю». Нового состояния пузыря нет.
@@ -61,7 +64,17 @@ The six questions are closed by the brief:
 **Куда поставить задачу?** Варианты меню: «Отдельно вне эпика» и «Новый эпик кита».
 Отдельно вне эпика
 
+**Почему так много расхождений?**
+54 расхождения идут от шести причин в готовом пузыре и отступах чата. 36 из них стоят на подписи,
+значке и высоте подвала: дополнения унаследовали стиль времени и статуса, как велит бриф.
+
+**Витрина, совпадение 138 из 192. Одобряете?**
+Витрину сейчас одобряю, но заведи эпик и задачи на приведение этой витри к макету
+
 ## Decisions
+
+- **The 54 divergences leave for the epic RT-3143, and this task ships at 138 of 192.** The owner
+  approved the showcase on that condition, and the four tasks RT-3144–RT-3147 hold them.
 
 - **The work runs outside an epic, its branch from main and its PR into main.** The owner chose it.
   Rejected: a new epic with one task, the owner did not take it.

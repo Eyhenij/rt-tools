@@ -1,4 +1,4 @@
-import { IQuillDelta } from '@rt-tools/ui-kit-v2';
+import { IQuillDelta, IRtIcon } from '@rt-tools/ui-kit-v2';
 
 /**
  * Модель общего чат-компонента `rt-chat`: один корневой неймспейс
@@ -70,6 +70,13 @@ export namespace IRtChat {
         delta?: IQuillDelta | null;
         /** ISO-дата создания. */
         createdAt: string;
+        /** Готовая подпись вместо времени `createdAt`. Подписи дней считаются от `createdAt` и так. */
+        dateLabel?: string;
+        /**
+         * Значок на месте значка статуса, размером как он. Статусы «не ушло» и «не доставлено»
+         * сильнее: их значок предупреждает об ошибке.
+         */
+        dateIcon?: IRtIcon.Name;
         /** URL вложения (если есть) — наличие включает карточку файла. */
         fileUrl?: string | null;
         /** Имя вложения для отображения в карточке. */

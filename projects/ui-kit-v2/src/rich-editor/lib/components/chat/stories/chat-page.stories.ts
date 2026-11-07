@@ -22,3 +22,15 @@ export const QuickReplies: StoryObj<TestRtChatPageComponent> = {
     args: { drafting: true },
     parameters: { snapshot: { fullPage: true } },
 };
+
+/** Ответ стоит в ленте и уйдёт позже: `dateLabel` вместо времени, `dateIcon` на месте статуса. */
+export const Scheduled: StoryObj<TestRtChatPageComponent> = {
+    args: { drafting: true, scheduled: true },
+    parameters: { snapshot: { fullPage: true } },
+};
+
+/** Тот же ответ открыт на правку: полоса стоит над полем в слоте `rtChatComposerBar`. */
+export const ComposerBar: StoryObj<TestRtChatPageComponent> = {
+    args: { drafting: true, scheduled: true, editing: true },
+    parameters: { snapshot: { fullPage: true } },
+};

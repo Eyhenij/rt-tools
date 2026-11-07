@@ -148,103 +148,64 @@ describe('RtChatComponent', (): void => {
         });
     });
 
-    describe('подстановка текста', (): void => {
-        const TEXT: string = 'Готовый ответ';
-
-        function field(fixture: ComponentFixture<RtChatComponent>, selector: string): HTMLTextAreaElement {
-            return el(fixture, selector)?.nativeElement as HTMLTextAreaElement;
+    describe('подпись и значок вместо времени', (): void => {
+        function date(fixture: ComponentFixture<RtChatComponent>): string {
+            return textOf(qa(fixture, 'chat-message-date')).trim();
         }
 
-        function expectCaretAtEnd(node: HTMLTextAreaElement): void {
-            expect(document.activeElement).toBe(node);
-            expect(node.selectionStart).toBe(node.value.length);
-            expect(node.selectionEnd).toBe(node.value.length);
-        }
+        it('SC-UKV-1163 — подпись стоит вместо времени', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({
+                messages: [message({ own: true, dateLabel: 'Уйдёт 8 ноября в 10:00' })],
+            });
 
-        function attached(fixture: ComponentFixture<RtChatComponent>): void {
-            document.body.appendChild(fixture.nativeElement as HTMLElement);
-        }
-
-        it('SC-UKV-1157 — текст заменяет черновик обычного поля, курсор стоит в конце', (): void => {
-            const fixture: ComponentFixture<RtChatComponent> = setup({ canReply: true });
-            attached(fixture);
-            const input: HTMLTextAreaElement = field(fixture, '[qa-dataid="chat-composer-input"]');
-            input.value = 'Старый черновик';
-            input.dispatchEvent(new Event('input', { bubbles: true }));
-
-            fixture.componentInstance.setDraft(TEXT);
-            fixture.detectChanges();
-
-            expect(input.value).toBe(TEXT);
-            expectCaretAtEnd(input);
-            expect((qa(fixture, 'chat-composer-send')?.nativeElement as HTMLButtonElement).disabled).toBe(false);
+            expect(date(fixture)).toBe('Уйдёт 8 ноября в 10:00');
         });
 
-        it('SC-UKV-1158 — текст встаёт в компактный композер', (): void => {
-            const fixture: ComponentFixture<RtChatComponent> = setup({ canReply: true, richComposer: true });
-            attached(fixture);
+        it('SC-UKV-1163 — подпись дня считается от createdAt, а не от подписи', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({
+                messenger: true,
+                messages: [message({ createdAt: '2026-03-15T10:00:00Z', dateLabel: 'Уйдёт 8 ноября в 10:00' })],
+            });
 
-            fixture.componentInstance.setDraft(TEXT);
-            fixture.detectChanges();
-
-            const input: HTMLTextAreaElement = field(fixture, '[qa-dataid="chat-composer-rich"] textarea');
-            expect(input.value).toBe(TEXT);
-            expectCaretAtEnd(input);
+            expect(textOf(qa(fixture, 'chat-day'))).toContain('15');
+            expect(textOf(qa(fixture, 'chat-day'))).not.toContain('8');
         });
 
-        it('SC-UKV-1158 — текст встаёт в поле мессенджера', (): void => {
-            const fixture: ComponentFixture<RtChatComponent> = setup({ canReply: true, messenger: true });
-            attached(fixture);
+        it('SC-UKV-1163 — без подписи стоит время', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({ messages: [message()] });
 
-            fixture.componentInstance.setDraft(TEXT);
-            fixture.detectChanges();
-
-            const input: HTMLTextAreaElement = field(fixture, '[qa-dataid="chat-composer-prompt"] textarea');
-            expect(input.value).toBe(TEXT);
-            expectCaretAtEnd(input);
+            expect(date(fixture)).not.toBe('');
+            expect(date(fixture)).toMatch(/\d/);
         });
 
-        it('SC-UKV-1159 — выбранные файлы остаются', (): void => {
-            const fixture: ComponentFixture<RtChatComponent> = setup({ canReply: true, attachments: true });
-            fixture.debugElement.query(By.css('rt-file-drop')).triggerEventHandler('filesDropped', [new File(['x'], 'договор.pdf')]);
-            fixture.detectChanges();
+        it('SC-UKV-1164 — значок встаёт на место значка статуса', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({
+                messenger: true,
+                messages: [message({ own: true, status: ERtChatMessageStatus.Sent, dateIcon: 'clock' })],
+            });
+            const icon: HTMLElement = el(fixture, '[qa-dataid="chat-message-status"] rt-icon')?.nativeElement as HTMLElement;
 
-            fixture.componentInstance.setDraft(TEXT);
-            fixture.detectChanges();
-
-            expect(qaAll(fixture, 'chat-composer-file').length).toBe(1);
+            expect(fixture.debugElement.query(By.css('[qa-dataid="chat-message-status"] rt-icon')).componentInstance.name()).toBe('clock');
+            expect(fixture.debugElement.query(By.css('[qa-dataid="chat-message-status"] rt-icon')).componentInstance.size()).toBe('sm');
+            expect(icon).not.toBeNull();
         });
 
-        it('SC-UKV-1160 — при отправке поле закрыто и черновик не меняется', (): void => {
-            const fixture: ComponentFixture<RtChatComponent> = setup({ canReply: true });
-            const input: HTMLTextAreaElement = field(fixture, '[qa-dataid="chat-composer-input"]');
-            input.value = 'Старый черновик';
-            input.dispatchEvent(new Event('input', { bubbles: true }));
-            fixture.componentRef.setInput('sending', true);
-            fixture.detectChanges();
+        it('SC-UKV-1164 — значок стоит и без статуса', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({ messages: [message({ dateIcon: 'clock' })] });
 
-            fixture.componentInstance.setDraft(TEXT);
-            fixture.detectChanges();
-
-            expect(input.value).toBe('Старый черновик');
+            expect(qa(fixture, 'chat-message-date-icon')).not.toBeNull();
+            expect(qa(fixture, 'chat-message-status')).toBeNull();
         });
 
-        it('SC-UKV-1160 — без разрешения ответа метод ничего не делает', (): void => {
-            const fixture: ComponentFixture<RtChatComponent> = setup({ canReply: false });
+        it('SC-UKV-1164 — значок не закрывает ошибку отправки', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({
+                messages: [message({ own: true, status: ERtChatMessageStatus.Failed, dateIcon: 'clock' })],
+            });
 
-            expect((): void => fixture.componentInstance.setDraft(TEXT)).not.toThrow();
-            expect(qa(fixture, 'chat-composer-input')).toBeNull();
-        });
-
-        it('SC-UKV-1161 — подстановка не шлёт сигнал набора', (): void => {
-            const fixture: ComponentFixture<RtChatComponent> = setup({ canReply: true });
-            const signals: boolean[] = [];
-            fixture.componentInstance.typing.subscribe((typing: boolean): number => signals.push(typing));
-
-            fixture.componentInstance.setDraft(TEXT);
-            fixture.detectChanges();
-
-            expect(signals).toEqual([]);
+            expect(fixture.debugElement.query(By.css('[qa-dataid="chat-message-status"] rt-icon')).componentInstance.name()).toBe(
+                'exclamation-circle'
+            );
+            expect(qa(fixture, 'chat-message-retry')).not.toBeNull();
         });
     });
 

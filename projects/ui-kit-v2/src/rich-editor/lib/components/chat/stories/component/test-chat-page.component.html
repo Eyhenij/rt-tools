@@ -90,8 +90,11 @@
                     placeholder="Напишите сообщение…"
                     title="№12 Анна Смирнова"
                     subtitle="WhatsApp · +66 81 234 5678"
-                    [messages]="drafting ? draftingMessages : messages"
+                    [messages]="scheduled ? scheduledMessages : drafting ? draftingMessages : messages"
                     [sign]="sign">
+                    @if (editing) {
+                        <app-chat-edit-bar rtChatComposerBar />
+                    }
                     <ng-template rtChatMessageButtons>
                         <rt-icon-button icon="reply" variant="ghost" size="sm" ariaLabel="Ответить" />
                     </ng-template>
