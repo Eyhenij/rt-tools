@@ -156,7 +156,7 @@ describe('FailureFilter', () => {
         new FailureFilter().catch(new NotFoundException(), hostWith('/api/intake/observations', response));
 
         expect(response.code).toBe(HttpStatus.NOT_FOUND);
-        expect(response.body).toEqual({ message: 'приёмник принимает роды: summary, observations, proposals, postmortems' });
+        expect(response.body).toEqual({ message: 'приёмник принимает роды: summary, observations, metrics, proposals, postmortems' });
     });
 
     it('SC-MB-28 — операции выдачи токена у приёмника не находится', () => {

@@ -25,6 +25,9 @@ function storage(rows: IStoredRow[], failing: boolean = false): PrismaService {
     };
 
     return {
+        metricsDay: {
+            deleteMany: async (): Promise<{ count: number }> => ({ count: 0 }),
+        },
         observation: {
             findMany: async (args: Record<string, unknown>): Promise<unknown[]> => {
                 if (failing) {
