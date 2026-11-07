@@ -1,65 +1,59 @@
-<!-- rt-kit v0.34.0 · samples/tasks/_template/plan.md · 18166cded496 · правится надстройкой, не здесь -->
-
 # Plan
 
-**Task:** <KEY>-<number> · **Branch:** <branch>
-**Draft:** `<path to the product agreement>`
+**Task:** RT-3155 · **Branch:** RT-3155-metrics-intake
+**Draft:** `docs/specs/agent-kit/proposed/metrics/spec.md`
 **Behaviour:** changes
-
-A tree that writes the agreement straight into the domain spec names it instead of the draft:
-`**Spec:** `<path to the spec>``.
-
-Work that does not touch application code needs no agreement — then instead of the draft line
-stands `**Behaviour:** unchanged — <the owner's reason>`; an empty reason is not accepted.
-
-After it is written this file is not edited. A stage revision goes to `progress.md` as a decision
-along the way.
 
 ## Points
 
-- **A:** <where the product stands now>
-- **This task reaches:** <the change a person will see>
-- **Sign:** <the command, the page or the number that shows it, and who sees it>
-- **Milestone G of the epic:** <the point named in the epic plan>
+- **A:** наблюдения уходят в приёмник только командой человека. Числа метрик приёмнику негде хранить.
+- **This task reaches:** приёмник принимает строку дня с числами метрик от старой и от новой версии пакета, а повторная отправка дня не меняет итог.
+- **Sign:** тесты операции и запрос к настоящей базе стенда: две отправки одного дня дают одну запись, старый штамп получает отказ.
+- **Milestone G of the epic:** пакет готов улучшаться по числам: эпик влит, приёмник выкачен, пакет выпущен, отчёт собирает данные.
 
 ## Task footprint
 
-<What the work touches. Filled in by exploration before the grill and confirmed by the owner. By
-this same table, at closing, one sees what of the specs, rules and patterns has gone stale: what
-is named here is read twice — before the work and after it.>
-
-| What  | Where                         |
-| ----- | ----------------------------- |
-| Specs | `docs/specs/<domain>/`        |
-| Laws  | `docs/constitution/<name>.md` |
-| Rules | `.claude/skills/<name>/`      |
-| Code  | `projects/<package>/`         |
+| What  | Where                                                                                                              |
+| ----- | ------------------------------------------------------------------------------------------------------------------ |
+| Specs | `docs/specs/agent-kit/proposed/metrics/`, `docs/specs/message-bus/intake/`                                         |
+| Laws  | `docs/constitution/verifiability.md`, `docs/constitution/entity-models.md`                                         |
+| Rules | `.claude/skills/testing/`, `.claude/skills/git-workflow-migration/`                                                |
+| Code  | `projects/agent-kit/src/lib/cargo.ts`, `libs/message-bus-api/observations/`, `libs/message-bus-common/`, `prisma/` |
 
 ## What counts as done
 
-- <a statement that can be checked>
+- `POST /api/intake/metrics` принимает строку дня по договорённости и замещает запись дерева, копии и дня.
+- Строка со старым штампом получает `metrics-stale`, ключ вне списка или дробное значение получает `metrics-field-refused`.
+- Закрытый список ключей лежит в пакете, приёмник берёт его оттуда.
+- Запись старше года снимается ночным снятием.
+- Прежние роды груза принимаются как раньше.
+
+`Postmortem.resource` и `RecordTransition` читает только раздел «Качество», поэтому они уходят в RT-3156.
 
 ## Stages
 
-### 1. <name>
+### 1. Закрытый список и разбор строки дня
 
 - **Steps:**
-    1. <what is done first>
-    2. <what is done after it>
-- **Readiness sign:** <what must become true>
-- **Verified by:** `<command>` — <what in its output means "it matched">
+    1. Объявить в пакете список ключей и форму строки дня
+    2. Написать разбор строки дня с отказами
+- **Readiness sign:** разбор принимает строку со всеми ключами и отказывает на чужом ключе и дробном значении.
+- **Verified by:** `pnpm exec nx test message-bus-api-observations-util` — зелёные сценарии SC-AK-1280.
 
-The steps are the smallest unit of the work, and they are written here in full: the progress
-mirrors this list with its marks, and a check matches the two by number and by name. A step is
-named by what is done, not by what is thought over — a line nobody can call done is not a step.
+### 2. Таблица и запись
 
-The command is written in backticks: the turn exit guard reads it and does not let out a turn in
-which the stage is declared closed and the command was not run. An acceptance written in prose
-cannot be confirmed by anything. The command is run right here, while the plan is written, not at
-the end of the stage: its output is what names the readiness sign. A sign written by a guess is
-sometimes impossible to meet — the line the stage must put out comes from an unconfigured tree
-rather than from the work — and that is found out latest of everything that depended on it.
+- **Steps:**
+    1. Добавить таблицу `MetricsDay` и миграцию
+    2. Написать замещение дня со сравнением штампа
+    3. Добавить снятие по сроку в год
+- **Readiness sign:** цепочка миграций совпадает со схемой, старый штамп не меняет запись.
+- **Verified by:** `npm run check:schema` — код 0, и запрос к базе стенда.
 
-## What this work does not do
+### 3. Операция приёма
 
-- <neighbouring work that is not dragged in here, and where it is created>
+- **Steps:**
+    1. Написать операцию `POST /api/intake/metrics`
+    2. Добавить коды отказов и тексты
+    3. Обновить спеку приёма и сценарии
+- **Readiness sign:** операция отвечает как в договорённости, отказы названы кодами.
+- **Verified by:** тесты контроллера и настоящий запрос к стенду.

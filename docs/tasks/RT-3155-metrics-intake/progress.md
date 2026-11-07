@@ -1,18 +1,16 @@
-<!-- rt-kit v0.34.0 · samples/tasks/_template/progress.md · 512b40ac0229 · правится надстройкой, не здесь -->
-
 # Progress
 
 ## Where we stand
 
 Rewritten by every session, not appended to.
 
-- **State:** `<name from the state list of rule task-flow>`
-- **Stage:** <number> of <total> — <name>
-- **Done:** <briefly>
-- **Next step:** <what is done first in the new session>
-- **Uncommitted:** <what lies in the tree outside the index>
-- **Waiting for the owner:** <what exactly, or "no"; the owner's standing word about a stop is quoted in « »>
-- **PR:** <number and state, or "not open yet">
+- **State:** `этап-идёт`
+- **Stage:** 1 of 3 — Закрытый список и разбор строки дня
+- **Done:** ветка, папка, план
+- **Next step:** объявить в пакете список ключей
+- **Uncommitted:** нет
+- **Waiting for the owner:** нет, #3162 и #3163 на ревью, работа идёт стопкой
+- **PR:** not open yet
 
 ## Steps
 
@@ -20,20 +18,15 @@ The steps of the plan, all of them, with a mark each. Rewritten by every turn th
 
 - `[x]` done · `[>]` going on right now · `[ ]` not begun
 
-Exactly one step carries `[>]`. The numbers and the names are copied from the plan and not
-reworded: a check matches the two lists, and the turn exit guard counts what is not done yet.
-
-- [x] 1.1 <name of the first step of the first stage>
-- [>] 1.2 <name of the second step of the first stage>
-- [ ] 2.1 <name of the first step of the second stage>
+- [>] 1.1 Объявить в пакете список ключей и форму строки дня
+- [ ] 1.2 Написать разбор строки дня с отказами
+- [ ] 2.1 Добавить таблицу `MetricsDay` и миграцию
+- [ ] 2.2 Написать замещение дня со сравнением штампа
+- [ ] 2.3 Добавить снятие по сроку в год
+- [ ] 3.1 Написать операцию `POST /api/intake/metrics`
+- [ ] 3.2 Добавить коды отказов и тексты
+- [ ] 3.3 Обновить спеку приёма и сценарии
 
 ## Decisions along the way
 
-- **<decision>** — <reason>. Affected stage of the plan: <number>.
-
-## Sessions
-
-### <date>
-
-- <what was done, in numbers: files, commits, what is green>
-- <what we stumbled on and what caught it>
+## Session log
