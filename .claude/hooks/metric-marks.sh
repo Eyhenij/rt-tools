@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/metric-marks.sh · bd61476c6b3f · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/metric-marks.sh · e03b6627b920 · правится надстройкой, не здесь
 # Signs of content and of calls for the package metrics. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The refusal record and the push set source it.
 #
@@ -29,6 +29,15 @@ rt_marks_dir() {
     mkdir -p "$dir/.marks" 2>/dev/null || return 0
     [ -f "$dir/.gitignore" ] || printf '*\n' > "$dir/.gitignore" 2>/dev/null
     printf '%s' "$dir/.marks"
+}
+
+# The marks one tree shares across its copies. A request is handed over from one copy and read by
+# another, and a sign left in the first one would put the request outside the main metric for good.
+rt_shared_marks_dir() {
+    local CLAUDE_PROJECT_DIR="${CLAUDE_PROJECT_DIR:-}" main
+    main="$(git -C "$(rt_sign_root)" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)"
+    [ -n "$main" ] && CLAUDE_PROJECT_DIR="$(dirname "$main")"
+    rt_marks_dir
 }
 
 # The copy a guard judges: the session may stand in a working copy other than the project root, and
@@ -85,7 +94,7 @@ rt_refusal_empty() {
 # the file name too.
 rt_branch_mark() {
     local dir
-    dir="$(rt_marks_dir)"
+    dir="$(rt_shared_marks_dir)"
     [ -n "$dir" ] && [ -n "$2" ] && printf '%s/%s-%s' "$dir" "$1" "$(printf '%s' "$2" | cksum 2>/dev/null | cut -d' ' -f1)"
 }
 
@@ -144,7 +153,7 @@ rt_correction_mark() {
     if [ -n "$file" ]; then
         if [ -f "$handover" ]; then printf 'after %s\n' "$day"; else printf 'before %s\n' "$day"; fi >> "$file" 2>/dev/null
     fi
-    handover="$(rt_marks_dir)/handover-last"
+    handover="$(rt_shared_marks_dir)/handover-last"
     [ -f "$handover" ] && last="$(cat "$handover" 2>/dev/null)"
     if [ -n "$last" ] && [ "$last" != "$branch" ]; then
         printf 'after %s\n' "$day" >> "$(rt_branch_mark corrections "$last")" 2>/dev/null

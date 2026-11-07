@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/rule-source-guard.sh · 8ea7573c1b3b · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/rule-source-guard.sh · 4b4bf6a7308b · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/write-targets.sh, hooks/guard-note.sh
 # Guard of the place of the edit: the rules layer is fixed where it is broken, not where it is seen.
@@ -109,6 +109,14 @@ while IFS= read -r candidate; do
         */.claude/rt-kit/observations/*)
             deny "BLOCKED by rule-source-guard: «${candidate#"$root"/}» lies in the observations directory, and only the guards write there. An edit by hand makes the numbers of the package a statement of the one who wrote them." \
                 "the way out is to do the work the observation records, not to write the observation"
+            ;;
+        */.claude/rt-kit.json)
+            # Both keys decide what the numbers of the package are, and the one those numbers judge
+            # must not switch them off. The owner edits them by hand.
+            if printf '%s' "$input" | jq -r '.tool_input | tostring' 2>/dev/null | grep -qE '(^|[^[:alnum:]_-])(send|observe)([^[:alnum:]_-]|$)'; then
+                deny "BLOCKED by rule-source-guard: the keys «send» and «observe» of «${candidate#"$root"/}» decide what the numbers of the package are, and a session does not edit them." \
+                    "the way out is to name the change to the owner: they edit these two keys by hand"
+            fi
             ;;
     esac
     [ -f "$candidate" ] || continue

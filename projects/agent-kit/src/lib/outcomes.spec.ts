@@ -238,6 +238,28 @@ describe('sharedMarksDir', () => {
     });
 });
 
+describe('замок учёта', () => {
+    it('SC-AK-1316 — вторая копия выходит без чтения', () => {
+        const root: string = mkdtempSync(join(tmpdir(), 'rt-lock-'));
+        const hook: string = join(root, '.claude', 'hooks', 'pull-outcomes.sh');
+        const asked: string = join(root, 'asked');
+        const now: number = Date.parse('2026-11-07T12:00:00Z');
+
+        mkdirSync(join(root, '.claude', 'hooks'), { recursive: true });
+        writeFileSync(hook, `#!/usr/bin/env bash\nprintf 'x\\n' >> "${asked}"\n`);
+        chmodSync(hook, 0o755);
+
+        collectOutcomes(root, '2026-11-07', '0.35.0', now);
+        expect(readFileSync(asked, 'utf8')).toBe('x\n');
+
+        writeFileSync(join(sharedMarksDir(root), 'outcomes.lock'), '');
+        collectOutcomes(root, '2026-11-07', '0.35.0', Date.now());
+        expect(readFileSync(asked, 'utf8')).toBe('x\n');
+
+        rmSync(root, { recursive: true, force: true });
+    });
+});
+
 describe('collectOutcomes', () => {
     const TODAY: string = '2026-08-14';
     let root: string;

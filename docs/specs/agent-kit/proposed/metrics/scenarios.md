@@ -134,6 +134,85 @@ Given observations of a rule, a guard and a role of the tree's own
 When the day line is built
 Then each is counted under the word `own`, and the name stands nowhere in the line
 
+### SC-AK-1306 — a request handed over from one copy keeps its sign in another
+
+Given a request handed over from a second copy of the tree
+When the main copy reads the outcomes
+Then the sign and the corrections of the branch are found, and the request counts as handed over
+
+### SC-AK-1307 — a line reaches the intake with no command of a person
+
+Given a tree with an address and a token, and an observation of the day
+When the session ends
+Then the real command leaves by itself, and the intake receives the line of that day
+
+### SC-AK-1308 — a run marked as a test sends nothing
+
+Given a run of the suites with an address in its fixture
+When a guard records an observation
+Then no process starts
+
+### SC-AK-1309 — a tree without a token starts one process in 15 minutes
+
+Given a tree with an address and no token file
+When guards record many observations
+Then the sending starts once
+
+### SC-AK-1310 — a session does not edit the two keys
+
+Given a session in a tree with the guard laid out
+When the executor writes `send` or `observe` into the config
+Then the write is refused, and a change the owner made is an observation
+
+### SC-AK-1311 — the numbers of a tree survive the next day
+
+Given a day line sent with the numbers of the tree
+When the next day sends that day again
+Then the line still carries them
+
+### SC-AK-1312 — a send fault stays in the lines of its day
+
+Given a failed send and two later sends of the same day
+When the second of them goes out
+Then the line still carries the code of the failure
+
+### SC-AK-1313 — a refused old line does not close the day of today
+
+Given an old line the intake refuses
+When the send goes on
+Then the line of today reaches the intake, and the failure stays named
+
+### SC-AK-1314 — a line with the address of the tree does not leave
+
+Given a key that carries the root or the remote address of the tree
+When the send reaches that line
+Then the line does not leave, and the failure is named; a copy whose last name matches a word of a
+key is not judged
+
+### SC-AK-1315 — the layout names the sending it turned on
+
+Given a tree with an intake address
+When `agent-kit sync` lays out the hook of the sending
+Then the output names that the tree now sends by itself
+
+### SC-AK-1316 — two copies do not count one request twice
+
+Given two copies that read the outcomes at the same time
+When the second finds the lock of the first
+Then it leaves without reading
+
+### SC-AK-1317 — a tree that cannot be asked differs from a tree without outcomes
+
+Given a tree without the profile function
+When its line leaves
+Then the line carries `outcomesUnread`, and a tree that was read does not
+
+### SC-AK-1318 — the sending leaves the sweep to the report
+
+Given a day file older than the keeping term
+When the send reads the observations
+Then the file stays, and the report names it when it sweeps
+
 ### SC-AK-1285 — the automatic sending carries no proposal, analysis or digest
 
 Given a tree with unsent proposals and analyses

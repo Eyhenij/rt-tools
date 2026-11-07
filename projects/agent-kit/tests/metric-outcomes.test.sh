@@ -2,7 +2,7 @@
 # Передача заявки и чтение итогов: когда появляется подпись передачи и что отчёт узнаёт от хостинга.
 # Подпись остаётся в дереве, в строку наблюдения попадает только итог.
 #
-# Сценарии договорённости: SC-AK-1297.
+# Сценарии договорённости: SC-AK-1306, SC-AK-1297.
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 echo "ПЕРЕДАЧА И ИТОГИ ЗАЯВОК"
@@ -79,6 +79,12 @@ tree="$(fixture_repo_branched main RT-9-probe)"
 fixture_commit "$tree" docs/tasks/RT-9-probe/plan.md 'план' 'docs: папка задачи'
 open_in "$tree" 'gh pr create --title "[RT-9] Сделано" --base main --body x'
 report "SC-AK-1297 — передача:отказанная заявка подписи не оставляет" "$(handover_of "$tree" RT-9-probe)" ""
+
+second="$tree-second"
+git -C "$tree" worktree add -q -b RT-11-probe "$second" 2>/dev/null
+CLAUDE_PROJECT_DIR="$second" bash -c '. "$1/metric-marks.sh"; printf "c2 t2\n" > "$(rt_branch_mark handover RT-11-probe)"' _ "$HOOKS"
+report "SC-AK-1306 — подпись второй копии видна из основной" "$(handover_of "$tree" RT-11-probe)" "c2 t2"
+rm -rf "$second"
 rm -rf "$tree"
 
 # --- Итоги заявок: значение по умолчанию и соединение с метками ---------------------------

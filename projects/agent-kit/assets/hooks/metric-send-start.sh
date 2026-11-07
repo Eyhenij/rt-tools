@@ -9,6 +9,9 @@
 # The start also names a send that failed more than a day ago. The sending itself stays silent: it
 # runs behind the work, and the only place its failure can reach a person is the opening of a session.
 #
+# A second copy has no command of its own more often than not, so the main copy is asked as well,
+# and a tree with an address and nothing to send with is named at the start too.
+#
 # FAIL-OPEN: no `jq`, no mark, no address, no package command — the session goes on. A side job has no
 # right to stop it, so this hook prints no refusal at all and always exits with zero.
 
@@ -24,6 +27,7 @@ case "$event" in
         rt_send_start --session-end
         ;;
     SessionStart)
+        rt_send_keys_note
         rt_send_start
         rt_send_fault_line
         ;;

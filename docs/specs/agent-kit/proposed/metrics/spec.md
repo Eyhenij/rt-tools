@@ -112,10 +112,12 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
   as wasted.
 - **An outcome is read by the sending, not at the merge.** A merge often happens in a browser with no
   session open. The sending asks the profile function `rt_pull_outcomes` for requests merged or closed
-  since its last read. A tree without that function sends no outcomes, and the report counts it apart.
+  since its last read. A tree without that function sends no outcomes and says so by the key `outcomesUnread`, and the
+  report counts it apart.
   A read that broke off, even on one request, is named as a broken read, not as a tree with nobody to
   ask, and the day of the last read stays.
 - **A request is counted once.** The tree keeps the numbers it counted in a file that does not leave.
+  The file and the signs of a request lie in the store shared by the copies of the tree, under a lock.
   An older request read later does not change an outcome already counted.
 
 ### What sends it
@@ -129,9 +131,17 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
   the lock.
 - **The window runs from the last success, at most the keeping term.**
 - **A send holds a lock of its copy, and a second one exits.**
+- **The numbers of a tree are kept with the day they were counted on.** The intake replaces a day
+  whole, so the morning send of yesterday carries them from the mark. A failure code stays in every
+  line of its day.
+- **A refused line closes its own day only.** The other days go on, today's too, and the failure stays
+  named.
 - **The automatic sending has no path to proposals, analyses or the digest.** They hold text and leave
   by a command of a person.
-- **A tree without an intake address and a token file sends nothing.** Both are required.
+- **A tree without an intake address and a token file sends nothing.** Both are required. The hook
+  marks the start before the process, so such a tree starts one process in 15 minutes.
+- **A copy without a build of the package asks the main copy.** A tree with an address and nothing to
+  send with, or with a build that cannot send, is named at the session start.
 - **Enrolled trees send by default, and the change is named.** The release note and `agent-kit sync`
   name it. `send: false` stops the sending and keeps the writing. `observe: false` stops both, whatever
   `send` says. A change of either key is an observation.

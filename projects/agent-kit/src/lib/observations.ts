@@ -208,9 +208,10 @@ export function observationsOfDay(path: string): readonly IObservation[] {
  * Наблюдения за отрезок и уборка того, что старше срока хранения.
  *
  * Уборка идёт здесь, а не отдельной командой: каталог растёт от работы, а не от запусков, и
- * команда, о которой надо помнить, до второго месяца не доживает.
+ * команда, о которой надо помнить, до второго месяца не доживает. Тихая отправка читает с
+ * `sweep: false`: снятое по сроку обязан назвать отчёт, а она ничего не печатает.
  */
-export function readObservations(root: string, today: string, days: number): IReadResult {
+export function readObservations(root: string, today: string, days: number, sweep: boolean = true): IReadResult {
     const dir: string = join(root, OBSERVATIONS_DIR);
     if (!existsSync(dir)) {
         return { observations: [], swept: [], silent: true, daysRead: [] };
@@ -230,8 +231,10 @@ export function readObservations(root: string, today: string, days: number): IRe
         }
 
         if (isBefore(day, keepFrom)) {
-            rmSync(join(dir, name), { force: true });
-            swept.push(name);
+            if (sweep) {
+                rmSync(join(dir, name), { force: true });
+                swept.push(name);
+            }
         } else if (isBefore(day, since)) {
             // День старше запрошенного отрезка, но моложе черты хранения: файл остаётся лежать,
             // а в этот отчёт не идёт

@@ -21,6 +21,8 @@ export interface ITreeFacts {
     readonly sectionsOverridden: number;
     readonly entryChars: number | null;
     readonly outcomesBroken: number;
+    /** Итоги спросить некого: дерево без функции не то же самое, что дерево без итогов. */
+    readonly outcomesUnread: number;
     readonly sendFault: number;
 }
 
@@ -126,6 +128,7 @@ function factNumbers(metrics: TMetrics, facts: ITreeFacts): void {
     add(metrics, 'sectionsOverridden', facts.sectionsOverridden);
     add(metrics, 'entryChars', facts.entryChars ?? 0);
     add(metrics, 'outcomesBroken', facts.outcomesBroken);
+    add(metrics, 'outcomesUnread', facts.outcomesUnread);
     add(metrics, 'sendFault', facts.sendFault);
 }
 
@@ -141,6 +144,7 @@ export function dayMetrics(observations: readonly IObservation[], assets: readon
 
     add(metrics, 'sessions', sessionsOf(observations));
     add(metrics, 'ownerCorrections', countOf(observations, 'owner-correction'));
+    add(metrics, 'settingsChanged', countOf(observations, 'settings-change'));
     outcomeNumbers(metrics, outcomeMetricOf(observations));
     usageNumbers(metrics, usage);
     guardNumbers(metrics, guardsOf(observations), assets);
