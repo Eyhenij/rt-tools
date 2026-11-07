@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { OPERATION_ACCESS, OPERATION_RIGHT } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { IUsageDigest, IUsagePage, IUsageRow, IUsageSessionRow } from '@rt/message-bus-common';
+import { IQualityReport, IUsageDigest, IUsagePage, IUsageRow, IUsageSessionRow } from '@rt/message-bus-common';
 
 import { UsageReadController } from './usage-read.controller';
 
@@ -183,5 +183,56 @@ describe('UsageReadController', () => {
 
         await expect(controller.usage({ ...PERIOD })).rejects.toBeInstanceOf(NotFoundException);
         await expect(controller.usage({ tree: 'other-tree', ...PERIOD })).rejects.toThrow('не известно приёмнику');
+    });
+});
+
+describe('UsageReadController — раздел «Качество»', () => {
+    const NOW: Date = new Date('2026-11-07T12:00:00Z');
+    const LINE: unknown = {
+        day: '2026-11-05',
+        version: '0.35.0',
+        metrics: { tasksAccepted: 2, tasksFirstPass: 2, tasksLost: 1, 'guardEmpty:one-guard': 3 },
+        tree: { slug: 'own-tree', name: 'Своё' },
+    };
+
+    /** Двойник хранилища: те таблицы, которые читает раздел. */
+    function storage(lines: readonly unknown[]): PrismaService {
+        return {
+            tree: { findMany: async (): Promise<unknown[]> => [{ id: 'tree-1', slug: 'own-tree', name: 'Своё' }] },
+            metricsDay: {
+                findMany: async (): Promise<readonly unknown[]> => lines,
+                groupBy: async (): Promise<unknown[]> => [],
+                count: async (): Promise<number> => lines.length,
+            },
+            postmortem: { findMany: async (): Promise<unknown[]> => [] },
+            recordTransition: { findMany: async (): Promise<unknown[]> => [] },
+        } as unknown as PrismaService;
+    }
+
+    it('SC-AK-1325 — операция закрыта правом раздела', () => {
+        expect(Reflect.getMetadata(OPERATION_ACCESS, UsageReadController.prototype.quality)).toBeDefined();
+        expect(Reflect.getMetadata(OPERATION_RIGHT, UsageReadController.prototype.quality)).toBe('usage:read');
+    });
+
+    it('SC-AK-1325 — операция складывает строки периода и называет полноту', async () => {
+        const report: IQualityReport = await new UsageReadController(storage([LINE])).quality(PERIOD, NOW);
+
+        expect(report.anyLine).toBe(true);
+        expect(report.firstPass).toEqual({ counted: 2, firstPass: 1, share: null, noHandover: 0 });
+        expect(report.drivers[0]).toMatchObject({ resource: 'one-guard', empty: 3, loss: 3 });
+        expect(report.completeness).toMatchObject({ enrolled: 1, sent: 1 });
+    });
+
+    it('SC-AK-1325 — ни одной строки: экран узнаёт об этом полем', async () => {
+        const report: IQualityReport = await new UsageReadController(storage([])).quality({}, NOW);
+
+        expect(report.anyLine).toBe(false);
+        expect(report.from.localeCompare(report.to)).toBeLessThan(0);
+    });
+
+    it('SC-AK-1325 — кривой период отказывает', async () => {
+        await expect(new UsageReadController(storage([])).quality({ from: 'вчера', to: '2026-11-01' }, NOW)).rejects.toThrow(
+            BadRequestException
+        );
     });
 });

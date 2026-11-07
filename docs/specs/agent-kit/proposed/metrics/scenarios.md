@@ -250,6 +250,31 @@ Given an analysis with the line of its resource, and an older one without it
 When the sending reads them
 Then the first carries the resource, the second carries none, and the intake keeps both
 
+### SC-AK-1325 — fewer than ten tasks give a count, not a share
+
+Given a period with fewer than ten counted tasks
+When the section reads it
+Then the count stands instead of the share; from ten tasks the share appears, and requests closed
+unmerged lower it
+
+### SC-AK-1326 — the completeness line names trees and the last failure
+
+Given trees that sent lines in the last seven days, one of them with a failed last send
+When the section reads them
+Then it names how many sent, how many give outcomes, and the failed tree with its reason
+
+### SC-AK-1327 — the table of drivers is sorted by the loss and narrowed apart
+
+Given lines of two trees and two versions
+When a tree or a version is chosen
+Then the table narrows, and the three result metrics stay over all trees
+
+### SC-AK-1328 — a repeated mistake is counted against the version with the fix
+
+Given a fix older than a month and records on the same resource
+When a record arrives from a tree on the fixed version, within a month of installing it
+Then it counts as a repeat; an older record, another resource and a fresh fix do not count
+
 ### SC-AK-1285 — the automatic sending carries no proposal, analysis or digest
 
 Given a tree with unsent proposals and analyses

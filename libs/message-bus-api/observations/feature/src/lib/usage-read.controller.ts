@@ -13,6 +13,9 @@
  * `GET /api/usage/digest` — сводка периода для графика и списков над таблицей: дни, роды, пять
  * самых загружаемых скилов и пять самых отказываемых. Своя операция, а не поля страницы: страница
  * меняется с порядком и номером, сводка — только с периодом.
+ *
+ * `GET /api/usage/quality` — раздел «Качество»: три числа итога, полнота и таблица причин по всем деревьям.
+ * Дерево и версия здесь необязательны и сужают только таблицу.
  */
 import { BadRequestException, Controller, Get, NotFoundException, Param, Query } from '@nestjs/common';
 
@@ -20,16 +23,26 @@ import { RequiresRight } from '@rt/message-bus-api/access/util';
 import {
     findTreeIdBySlug,
     IUsageAsked,
+    readQualityInput,
     readUsage,
     readUsageDays,
     readUsageKinds,
     readUsageSessions,
 } from '@rt/message-bus-api/observations/data-access';
-import { IUsagePeriod, usageDaysOf, usagePeriodFault, usagePeriodOf, usageTreeOf } from '@rt/message-bus-api/observations/util';
+import {
+    IUsagePeriod,
+    qualityOf,
+    qualityVersionOf,
+    usageDaysOf,
+    usagePeriodFault,
+    usagePeriodOf,
+    usageTreeOf,
+} from '@rt/message-bus-api/observations/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import {
     ERefusal,
     IPageAsked,
+    IQualityReport,
     IUsageDayRow,
     IUsageDigest,
     IUsageKindRow,
@@ -93,6 +106,27 @@ export class UsageReadController {
             top: loaded.rows.filter((row: IUsageRow): boolean => row.loads > 0),
             denied: denied.rows.filter((row: IUsageRow): boolean => row.denials > 0),
         };
+    }
+
+    /** Раздел «Качество» за период. Пустого периода не бывает: строк нет — считаются нули. */
+    @Get('quality')
+    @RequiresRight(READ_RIGHT)
+    public async quality(@Query() query: Record<string, unknown>, now: Date = new Date()): Promise<IQualityReport> {
+        const fault: string | null = usagePeriodFault(query);
+
+        if (fault) {
+            throw new BadRequestException(fault);
+        }
+        const period: IUsagePeriod = usagePeriodOf(query, now);
+
+        return qualityOf(
+            await readQualityInput(this.#prisma, {
+                ...period,
+                today: now.toISOString().slice(0, 10),
+                tree: usageTreeOf(query),
+                version: qualityVersionOf(query),
+            })
+        );
     }
 
     /** Сессии одного скила за период, свежий день первым. */
