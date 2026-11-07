@@ -4,6 +4,7 @@
  * а `process.exit` зовёт только точка входа — иначе ни одну из них нельзя было бы проверить
  * спекой, не перехватывая поток вывода.
  */
+import { sendFaultLines } from './metric-send.js';
 import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -1366,6 +1367,7 @@ export function doctor(env: IEnvironment, since: string = ''): IOutcomeOfCommand
         ...pushGateLines(root, config.layout.defaults ?? DEFAULT_LAYOUT.defaults),
         ...localValueLines(root, assetsDir, config),
         ...replacedLines(config, assetsDir, root),
+        ...sendFaultLines(root),
         ...(since ? addedInReplacedLines(config, assetsDir, root, since) : []),
         ...thresholdLines(root),
         `значений в конфиге: ${Object.keys(config.vars).length}`,

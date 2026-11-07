@@ -102,6 +102,14 @@ while IFS= read -r candidate; do
         /*) ;;
         *) candidate="$root/$candidate" ;;
     esac
+    # The observations are what the numbers of the package are counted from, and a hand in them
+    # turns a report into a statement of the one who edited it. Only the guards write here.
+    case "$candidate" in
+        */.claude/rt-kit/observations/*)
+            deny "BLOCKED by rule-source-guard: «${candidate#"$root"/}» lies in the observations directory, and only the guards write there. An edit by hand makes the numbers of the package a statement of the one who wrote them." \
+                "the way out is to do the work the observation records, not to write the observation"
+            ;;
+    esac
     [ -f "$candidate" ] || continue
 
     # The header stands at the beginning of the file, but not on the first line: in a script `#!`

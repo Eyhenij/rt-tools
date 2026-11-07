@@ -91,15 +91,11 @@ Given a day line with a key outside the list or a value that is not a whole numb
 When the sender builds the body
 Then that field is dropped, and the intake refuses it if it arrives
 
-Coverage: partial — the intake side has a test, the sender arrives with RT-3154.
-
 ### SC-AK-1281 — a guard does not wait for the network
 
 Given a tree with an intake address that does not answer
 When a guard records an observation
 Then the guard returns without waiting and the line stays on disk
-
-Not covered: no code yet.
 
 ### SC-AK-1282 — a tree without an address or a token sends nothing
 
@@ -107,23 +103,17 @@ Given a tree that lacks an intake address or a token file
 When a guard or the session end starts the sending
 Then no request leaves the machine
 
-Not covered: no code yet.
-
 ### SC-AK-1283 — the sending tries at most once in 15 minutes
 
 Given a copy that tried 5 minutes ago
 When a guard starts the sending
 Then no second process runs, and the session end still sends
 
-Not covered: no code yet.
-
 ### SC-AK-1284 — two sends of one copy do not double a day
 
 Given two sends of one copy started together
 When both reach their end
 Then one holds the lock, the other exits, and the day is stored once
-
-Coverage: partial — the intake stores a day once, the lock arrives with RT-3154.
 
 ### SC-AK-1303 — an older day line is refused and changes nothing
 
@@ -138,13 +128,17 @@ past tomorrow, or a stamp past tomorrow
 When it reaches the intake
 Then the intake refuses it with `metrics-field-refused`, names the field and stores nothing
 
+### SC-AK-1305 — a name the package does not ship leaves as a constant word
+
+Given observations of a rule, a guard and a role of the tree's own
+When the day line is built
+Then each is counted under the word `own`, and the name stands nowhere in the line
+
 ### SC-AK-1285 — the automatic sending carries no proposal, analysis or digest
 
 Given a tree with unsent proposals and analyses
 When the automatic sending runs
 Then its request carries day lines only
-
-Not covered: no code yet.
 
 ### SC-AK-1286 — a refused token stops the tries and names the failure
 
@@ -152,15 +146,11 @@ Given a tree whose token the intake refuses
 When the sending fails
 Then it does not try again until the token file changes, and `agent-kit doctor` names the failure
 
-Not covered: no code yet.
-
 ### SC-AK-1287 — a dead session is sent by the next start
 
 Given a session that ended without its last send
 When a session of that copy starts
 Then the lines of the window leave
-
-Not covered: no code yet.
 
 ### SC-AK-1288 — `send: false` stops the sending and keeps the writing
 
@@ -168,15 +158,11 @@ Given a tree with `send: false`
 When a guard records an observation
 Then the line is written and no request leaves
 
-Not covered: no code yet.
-
 ### SC-AK-1289 — a direct edit of the observations directory is refused
 
 Given a session in a tree with the guard laid out
 When the executor writes to the observations directory
 Then the write is refused
-
-Not covered: no code yet.
 
 ### SC-AK-1291 — a call of a role or a command is counted by its package name
 

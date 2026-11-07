@@ -90,5 +90,56 @@ rt_note() {
     line="$line,\"v\":\"$(rt_observe_version)\"}"
 
     printf '%s\n' "$line" >> "$dir/$day.jsonl" 2>/dev/null || return 0
+    rt_send_start 2>/dev/null
+    return 0
+}
+
+# The package command of this tree: a consumer has it installed, the tree of sources has it built. An
+# empty string means there is nothing to send with.
+rt_send_command() {
+    local root="$1"
+    if [ -x "$root/node_modules/.bin/agent-kit" ]; then
+        printf '%s' "$root/node_modules/.bin/agent-kit"
+    elif [ -f "$root/dist/agent-kit/bin/agent-kit.js" ]; then
+        printf 'node %s' "$root/dist/agent-kit/bin/agent-kit.js"
+    fi
+}
+
+# Starts the sending in a process of its own and returns at once: a guard stands on every call and
+# never waits for the network. The 15 minutes are asked of the mark's time first, so a guard pays
+# for one `find`, not for a process. The command checks the same limit itself, because a person can
+# call it too.
+#
+#   rt_send_start [--session-end]
+rt_send_start() {
+    local root="${CLAUDE_PROJECT_DIR:-.}" config command dir
+    config="$root/.claude/rt-kit.json"
+    dir="$(rt_observe_dir)"
+    [ -n "$dir" ] && [ -f "$config" ] || return 0
+    if [ -z "${1:-}" ] && [ -n "$(find "$dir/.marks/send.json" -mmin -15 2>/dev/null)" ]; then
+        return 0
+    fi
+    command -v jq >/dev/null 2>&1 || return 0
+    [ "$(jq -r 'if (.intake // "") == "" or .send == false then "off" else "on" end' "$config" 2>/dev/null)" = "on" ] || return 0
+    command="$(rt_send_command "$root")"
+    [ -n "$command" ] || return 0
+
+    # shellcheck disable=SC2086
+    (nohup $command send --quiet ${1:-} --root "$root" >/dev/null 2>&1 &) >/dev/null 2>&1
+    return 0
+}
+
+# A line about a send that failed more than a day ago. Silence: nothing failed, or it is too fresh to
+# bother a person with — the next try may well go through.
+rt_send_fault_line() {
+    local dir mark
+    dir="$(rt_observe_dir)"
+    mark="$dir/.marks/send.json"
+    [ -n "$dir" ] && [ -f "$mark" ] || return 0
+    command -v jq >/dev/null 2>&1 || return 0
+    jq -r --argjson now "$(date +%s)" \
+        'select(.fault != 0 and ($now * 1000 - .tried) > 86400000)
+         | "The numbers of this tree have not reached the intake: \(.reason). `agent-kit doctor` names the way out."' \
+        "$mark" 2>/dev/null
     return 0
 }

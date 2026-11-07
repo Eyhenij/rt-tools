@@ -14,8 +14,8 @@ replaced and what it refused, and the tree sign tells trees apart without naming
 
 What of the learned goes outward and how — proposals, a word mid-work, sending the cargo, creating
 a tree in the intake and marking the records — is the neighbouring subdomain "Cargo outward" next
-to it. Nothing goes outward that a person did not send by a command: not one guard goes into the
-network.
+to it. Text goes outward only by a command of a person. The day lines of numbers leave by themselves, and
+no guard waits for the network: the agreement on the metrics of the package names how.
 
 ## Terminology
 
@@ -116,7 +116,6 @@ network.
 
 ## What is out of scope
 
-- Network telemetry and background sending: only what was sent by a command goes outward.
 - Gathering observations from several machines into one place on the tree: observations live in
   the tree of the machine they worked on. The sending carries the lines of every machine to the
   intake, and it is the intake that counts across them — the subdomain "Cargo outward".
