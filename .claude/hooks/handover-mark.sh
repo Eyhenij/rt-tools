@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/handover-mark.sh · 1690905ad8d5 · правится надстройкой, не здесь
+# rt-kit v0.35.0 · hooks/handover-mark.sh · 1690905ad8d5 · правится надстройкой, не здесь
 # rt-hook: PostToolUse Bash
 # Requires: hooks/hook-input.sh, hooks/metric-marks.sh, hooks/git-guard-delivery.sh
 #

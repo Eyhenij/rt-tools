@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · defaults/push.sh · 1a07a9c6c0c3 · правится надстройкой, не здесь
+# rt-kit v0.35.0 · defaults/push.sh · 1a07a9c6c0c3 · правится надстройкой, не здесь
 # The push set: what runs before a push, which of it is heavy, and whether the branch touched only
 # texts.
 #

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/docs-guard.sh · 3cd3936e5820 · правится надстройкой, не здесь
+# rt-kit v0.35.0 · hooks/docs-guard.sh · 3cd3936e5820 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|NotebookEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Guard of the pair "an edit and its document". PreToolUse.

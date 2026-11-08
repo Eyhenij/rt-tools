@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/browser-guard-require-select.sh · e534ea6c73b3 · правится надстройкой, не здесь
+# rt-kit v0.35.0 · hooks/browser-guard-require-select.sh · e534ea6c73b3 · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__.*
 # Requires: hooks/deny-tail.sh
 # Guard of the freshness of the browser choice. PreToolUse on all the other extension calls.

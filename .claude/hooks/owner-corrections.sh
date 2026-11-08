@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/owner-corrections.sh · d15313820b06 · правится надстройкой, не здесь
+# rt-kit v0.35.0 · hooks/owner-corrections.sh · d15313820b06 · правится надстройкой, не здесь
 # rt-hook: UserPromptSubmit
 # Requires: hooks/hook-input.sh, hooks/metric-marks.sh
 #

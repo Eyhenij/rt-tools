@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of work from the owner's request to the merge. Load at the start of any work, when editing task folders and product agreements, and when returning to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. End of a turn — turn-conduct.
 ---
-<!-- rt-kit v0.34.0 · rules/task-flow.md · 551ae817285c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.35.0 · rules/task-flow.md · 6da284695a72 · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -264,13 +264,11 @@ flowchart TD
 - **What acts on the tree, not on the edit, lies outside the index.** The path to the sample and the
   permission to work outside the epic do not belong to the branch and live next to the handover. A
   number in the permitted list repeats the owner's word, not replaces it.
-- **Closed work is reviewed by the rules as a closing step, not as a separate request.** What was
-  loaded and what was missing is seen only by the session that led the work.
-- **The review of closed work goes to the background, and the executor takes the next task.** The
-  digest is gathered before the launch, the findings are accepted in one turn.
-- **The review's findings wait for the owner, and only the digest of observations leaves for the
-  package.** A proposal sent unreviewed becomes the work of someone who did not order it. The digest
-  is always sent: it says what was used and is never an opinion.
+- **Closed work is reviewed by the rules in the background, right after the PR, and its findings
+  wait for the owner.** Only the session that led the work sees what was loaded and what was
+  missing, and it takes the next task meanwhile. A proposal sent unreviewed becomes the work of
+  someone who did not order it; only the digest of observations leaves, always. The technique is
+  the pattern `task-flow-archive`.
 - **The cheap closing step goes before the costly one, and the run — after the merge.** A run
   before the merge checks what will not reach main.
 - **The agreement merges into the domain spec by one of the last commits of the branch, before the
@@ -296,12 +294,14 @@ trace. The owner judges both.
 The guard judges by the edit paths, not by whether the work changes behaviour. A refactoring gets no
 sign of its own: the appraisal "behaviour does not change" would be assigned by whoever it hinders.
 
-Nothing of the grill itself is checked.
+Nothing of the grill itself is checked: the guard sees a file edit and knows nothing of the
+exploration, the six questions or the answers.
 
 The conversation guard judges shared words between the question's topic and the owner's last
 message, not meaning; its refusal names the lawful move.
 
-Nothing watches the plan's immutability.
+Nothing watches the plan's immutability: an edit along the way is told from the original record only
+by history.
 
 Nothing checks that the texts match what was done: the machine cannot see what went stale in a rule
 or a spec. This is held by the closing step and the task footprint in the plan. A rule and a spec

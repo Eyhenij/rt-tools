@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/git-guard-delivery-folder.sh · e9dc850b4056 · правится надстройкой, не здесь
+# rt-kit v0.35.0 · hooks/git-guard-delivery-folder.sh · e9dc850b4056 · правится надстройкой, не здесь
 # Delivery conditions about the task folder. NOT a guard: it has no `rt-hook:` declaration and it
 # hooks into no agent event. The delivery guard sources it — the same way it sources the refusal
 # tail and the observation record.

@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when bringing work to readiness — merging the product agreement into the domain spec, bringing the domain texts up to date with what was done, opening the PR as a draft or ready by its base and leaving draft.
 ---
-<!-- rt-kit v0.34.0 · patterns/task-flow-close.md · 4b1f2d58f71f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.35.0 · patterns/task-flow-close.md · 41b90c4a12c1 · правится надстройкой, не здесь -->
 
 # Closing the work
 
@@ -205,12 +205,6 @@ judged at all. Without the guard the section is held only by whoever writes the 
 The work queue audit still does not read the body: the miss is caught at the minute of opening, that
 is, where one call still fixes it.
 
-An open PR is re-read by the account that will merge it, not by the one that opened it. The host's
-answer to the author says only that the call went through: the right to open and the visibility of
-what was opened are different things, and the second is checked only from the reader's side. An
-invisible PR gives itself away by nothing — it is in the answer to its author, it carries labels,
-and the owner's review queue is simply empty.
-
 The difference between the section and the spoken word is one, and it is all. The owner reads a
 message only if they return to the conversation, and the section they see where they look when
 pressing the button.
@@ -292,6 +286,11 @@ git fetch origin && git merge origin/main         # the main branch is merged in
 
 A folder left in the epic branch reaches the main branch with it: what one branch needed becomes the
 tree's for good. A foreign folder, arrived with a merge of the main branch, is not touched.
+
+**A step of the milestone that the merge does not make gets a holder before the request opens.** A
+release, a rollout, an install in the consumers and a task taken out of the epic belong to no task
+of it, and after the merge nothing keeps them: each becomes a task in the work queue in the same
+turn, and the body of the request names their numbers.
 
 The body is written the same way as a task's, and its "Что сделано" is the list of the tasks by
 number: the reviewer opens one page instead of five. The plan of the epic stays in the tree — it

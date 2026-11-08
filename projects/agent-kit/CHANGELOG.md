@@ -1,3 +1,34 @@
+# [0.35.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.34.0...rt-agent-kit%400.35.0) (2026-11-08)
+
+**Метрика выпуска:** нет. метрики только появились, базы ещё нет
+
+### Bug Fixes
+
+- **rt:agent-kit:** вторая проверка ролей по записи метрик ([78d9c92](https://github.com/Eyhenij/rt-tools/commit/78d9c92cb856c7d6d39b4025272450b5405d4c2a))
+- **rt:agent-kit:** договорённость эпика не держит PR его задач ([f05fe69](https://github.com/Eyhenij/rt-tools/commit/f05fe69c78fe1f219255a106525eb93ad5cd1d24))
+- **rt:agent-kit:** находки ролей по записи метрик ([335a33c](https://github.com/Eyhenij/rt-tools/commit/335a33cc217fbe14914b1e3e9bf601d9603733f9))
+- **rt:agent-kit:** находки ролей по отправке чисел ([663c30f](https://github.com/Eyhenij/rt-tools/commit/663c30f5b5875a402adc449eb5a29a6d15f908ae))
+- **rt:agent-kit:** отчёт называет прочитанные дни и удалённые файлы ([edc86bc](https://github.com/Eyhenij/rt-tools/commit/edc86bc277335b505672c5e40ea4d9dd56965d38))
+- **rt:agent-kit:** поле метрики принимает только имена из отчётов ([13f6ff5](https://github.com/Eyhenij/rt-tools/commit/13f6ff512d2652769ca6d9baff5ef49dafe9aec9))
+- **rt:agent-kit:** правила говорят то, что показал разбор эпика ([d784a43](https://github.com/Eyhenij/rt-tools/commit/d784a432c53105eb38ed5985f76de7681a34c9d0))
+- **rt:agent-kit:** числа складываются по дням и не теряются на повторе ([f57c932](https://github.com/Eyhenij/rt-tools/commit/f57c9327546f13ce0435e60de8821df088c6dcdc))
+- **rt:message-bus:** голова строки дня не несёт слов из дерева ([76ba46e](https://github.com/Eyhenij/rt-tools/commit/76ba46e5ddde92fd5f795df6af1636a67c95843f))
+
+### Features
+
+- **rt:agent-kit:** команда metrics считает качество пакета по наблюдениям дерева ([b1e4715](https://github.com/Eyhenij/rt-tools/commit/b1e471525d2585af02e2e2eec604b67a036b4785))
+- **rt:agent-kit:** команда send шлёт строки дня ([5f04901](https://github.com/Eyhenij/rt-tools/commit/5f04901d8d54fb683a5160a28f3a90b46ee7f98b))
+- **rt:agent-kit:** отчёт считает главную метрику ([1aa68ff](https://github.com/Eyhenij/rt-tools/commit/1aa68ff77e6a22e8e3357d1b8e4cd4eac15c8cc0))
+- **rt:agent-kit:** отчёт считает запуски и потерянные минуты ([1a45235](https://github.com/Eyhenij/rt-tools/commit/1a452356219388d05bb4405449ff40e4b95233ae))
+- **rt:agent-kit:** отчёт считает пустые отказы проверок ([4b5c6f9](https://github.com/Eyhenij/rt-tools/commit/4b5c6f9ebf489ba08973137f9b503594d41f627d))
+- **rt:agent-kit:** отчёт считает роли, экзамены и правила ([8c58a31](https://github.com/Eyhenij/rt-tools/commit/8c58a31b1037c0ae0c48c5bd72c491842976e2cd))
+- **rt:agent-kit:** передача на ревью и правки владельца ([c1b9f01](https://github.com/Eyhenij/rt-tools/commit/c1b9f01b64ac734c662e71549f60c475b0ef13e6))
+- **rt:agent-kit:** правка называет метрику, а выпуск её требует ([b062187](https://github.com/Eyhenij/rt-tools/commit/b062187cf5452a3d87bf47ae48ff79f9ca5781c0))
+- **rt:agent-kit:** три дня на правку после слияния и шире образцы правок ([6c21035](https://github.com/Eyhenij/rt-tools/commit/6c210359f133ce2905f763ff3679121c73b98e78))
+- **rt:agent-kit:** числа уходят без команды человека ([68c5173](https://github.com/Eyhenij/rt-tools/commit/68c5173487fa959c44dea27ceb0b846e7c222445))
+- **rt:message-bus:** приёмник хранит числа метрик по дням ([a799a5a](https://github.com/Eyhenij/rt-tools/commit/a799a5ac0fe94e0caa09d6c2ee356575a9b73082)), closes [#3155](https://github.com/Eyhenij/rt-tools/issues/3155)
+- **rt:message-bus:** разбор несёт ресурс, смена шага записи остаётся в журнале ([92769eb](https://github.com/Eyhenij/rt-tools/commit/92769ebc95cf66664cd84808dfd0ba52a9acb207))
+
 # [0.34.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.33.1...rt-agent-kit%400.34.0) (2026-11-06)
 
 ### Bug Fixes

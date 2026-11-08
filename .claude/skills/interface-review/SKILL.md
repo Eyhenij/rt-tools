@@ -2,7 +2,7 @@
 name: interface-review
 description: Reviews an interface as one system: accessibility, layout, writing, typography and polish, in that order, into one ranked findings table and one verdict. Load when asked to review or audit a screen, a flow, a component or a Figma frame. The domain rules are in interface-review-principles.
 ---
-<!-- rt-kit v0.34.0 · skills/interface-review.needs-app.md · b29340acbfda · правится надстройкой, не здесь -->
+<!-- rt-kit v0.35.0 · skills/interface-review.needs-app.md · b29340acbfda · правится надстройкой, не здесь -->
 
 # Review the interface as one system
 
