@@ -311,6 +311,13 @@ describe('RtDatePanelComponent', (): void => {
         expect(control).toBeTruthy();
         expect(control.className).toMatch(/--ghost\b/);
         expect(control.className).not.toMatch(/--secondary\b/);
+
+        press(fixture, qa(fixture, 'calendar-month-title'));
+        const yearArrow: HTMLElement = iconButton(fixture, 'date-panel-prev-year')?.nativeElement as HTMLElement;
+
+        expect(yearArrow).toBeTruthy();
+        expect(yearArrow.className).toMatch(/--ghost\b/);
+        expect(yearArrow.className).not.toMatch(/--secondary\b/);
     });
 
     /* Раскладку и цвета среда спеков не считает, поэтому проверяются правила в стилях панели; вид на

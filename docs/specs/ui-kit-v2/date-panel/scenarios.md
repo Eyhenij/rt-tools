@@ -250,8 +250,8 @@ the screen is shown by the frame of the story BottomSheetDateTime.
 ### SC-UKV-1180 — the month arrows have no backing
 
 Given a date panel
-When the month is drawn
-Then its arrows are drawn without a backing
+When the month is drawn, and then its title opens the choice of month and year
+Then the arrows of the month and of the year are drawn without a backing
 
 Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
 

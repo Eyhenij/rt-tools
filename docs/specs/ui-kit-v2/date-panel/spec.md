@@ -132,7 +132,8 @@ kit. The mockup draws a panel of its own for all three types, the same in every 
 - **The switch «Дата | Время» of the bottom sheet is of the middle size and stands in the centre.**
   Its width follows its segments.
 
-- **The month arrows have no backing.** This holds for every calendar of the kit.
+- **The month arrows have no backing.** This holds for every calendar of the kit and for the arrows
+  of the month and year grids in this panel and in the period panel.
 
 - **The number of today is in the action colour and semibold until the day is chosen.** This holds
   for every calendar of the kit; the outline of today stays.
