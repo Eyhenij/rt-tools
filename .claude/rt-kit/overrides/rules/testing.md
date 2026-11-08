@@ -33,8 +33,11 @@ executor's check.
 
 - **The suite a path demands is named by the subject of the path.** The subjects are named by the
   tree profile: the receiver, its libraries, the schema and the rollout demand the admin panel's
-  suite; the entry packages and the theme demand the entry suite; the second kit demands both. The
-  push gate raises the same suites by the same subjects.
+  suite; the entry packages and the theme demand the entry suite. The push gate raises the same
+  suites by the same subjects, and for the second kit it raises both. At opening a PR a second-kit
+  edit demands the suite of an application only when it reaches what that application draws — a
+  component it names, one drawn inside it, or a kit file outside the components: a test in an
+  application without a calendar checks nothing about the calendar.
 - **A PR does not open while the branch changes code a suite walks and adds or edits no test of
   that suite.** The test is a `*.spec.ts` of the suite: a README, a stand script or a re-shot
   snapshot walks no new behaviour. The base, the head and the tree are read from the command.
