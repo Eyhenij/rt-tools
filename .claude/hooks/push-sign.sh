@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/push-sign.sh · f4a303c7e57b · правится надстройкой, не здесь
+# rt-kit v0.35.0 · hooks/push-sign.sh · f4a303c7e57b · правится надстройкой, не здесь
 # The parse of a command for the push gate. NOT a guard: it has no `rt-hook:` declaration and hooks
 # into no agent event. The push gate sources it and calls `rt_push_calls` with the command text on
 # the input; it stands apart because the guard with it inside crossed the length limit for code.

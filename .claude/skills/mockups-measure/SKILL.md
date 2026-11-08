@@ -4,7 +4,7 @@ kind: pattern
 rule: mockups
 description: Pattern of rule mockups. Load before frames are shown to the owner and when a design file is audited — reading the bounds of frames and buttons in one call, overlapping pairs, tops of a row, comparing a file page with the code. Not for a running application — that is the rule browser-verification.
 ---
-<!-- rt-kit v0.34.0 · patterns/mockups-measure.needs-mockups.md · 59ecca950866 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.35.0 · patterns/mockups-measure.needs-mockups.md · 59ecca950866 · правится надстройкой, не здесь -->
 
 # Measuring a mockup
 
