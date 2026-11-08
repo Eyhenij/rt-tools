@@ -8,9 +8,10 @@
  */
 import { execFileSync } from 'node:child_process';
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 
-import { dayBefore, IObservation, KEEP_DAYS, OBSERVATIONS_DIR } from './observations.js';
+import { dropFileLock, takeFileLock } from './file-lock.js';
+import { dayBefore, IObservation, KEEP_DAYS, OBSERVATIONS_DIR, openMarksDir } from './observations.js';
 import { byText } from './order.js';
 
 /** Срок, в который откат или новая заявка той же задачи снимают первую приёмку. */
@@ -86,6 +87,8 @@ export interface IOutcomeMetric {
     readonly closed: number;
     /** Первая приёмка за вычетом снятых. */
     readonly firstPass: number;
+    /** Сколько принято с первого раза, откаты не вычтены: приёмник складывает это по дням. */
+    readonly passed: number;
     /** Откаты и новые заявки той же задачи. */
     readonly lost: number;
     /** Заявки без подписи передачи: они вне главного числа, и их видно отдельно. */
@@ -193,6 +196,7 @@ export function outcomeMetricOf(observations: readonly IObservation[]): IOutcome
         firstPass: Math.max(passed - lost, 0),
         noHandover: counts.get(EOutcome.NoHandover) ?? 0,
         lost,
+        passed,
     };
 }
 
@@ -229,6 +233,10 @@ export function outcomeLines(metric: IOutcomeMetric | null, state: EOutcomesRead
     ];
 }
 
+function pullHook(root: string): string {
+    return join(root, '.claude', 'hooks', 'pull-outcomes.sh');
+}
+
 interface IFactsRead {
     readonly state: EOutcomesRead;
     readonly facts: readonly IPullFact[];
@@ -243,13 +251,8 @@ function faultOf(failure: unknown): IFactsRead {
 
 /** Факты с хостинга. Дерево без функции считается отдельно, а не падает. */
 function readFacts(root: string, since: string): IFactsRead {
-    const path: string = join(root, '.claude', 'hooks', 'pull-outcomes.sh');
-
-    if (!existsSync(path)) {
-        return { state: EOutcomesRead.NobodyToAsk, facts: [] };
-    }
     try {
-        const out: string = execFileSync(path, [since], {
+        const out: string = execFileSync(pullHook(root), [since], {
             cwd: root,
             env: { ...process.env, CLAUDE_PROJECT_DIR: root },
             encoding: 'utf8',
@@ -269,8 +272,26 @@ function readFacts(root: string, since: string): IFactsRead {
     }
 }
 
+/**
+ * Учёт итогов один на дерево, а не на копию: иначе две копии посчитают одну заявку дважды. Вне git
+ * копия одна, и учёт лежит в ней.
+ */
+export function sharedMarksDir(root: string): string {
+    try {
+        // eslint-disable-next-line sonarjs/no-os-command-from-path -- путь к git у каждой машины свой, и пакет его не знает
+        const common: string = execFileSync('git', ['-C', root, 'rev-parse', '--path-format=absolute', '--git-common-dir'], {
+            encoding: 'utf8',
+            stdio: ['ignore', 'pipe', 'ignore'],
+        }).trim();
+
+        return join(common ? dirname(common) : root, OBSERVATIONS_DIR, '.marks');
+    } catch {
+        return join(root, OBSERVATIONS_DIR, '.marks');
+    }
+}
+
 function lastReadPath(root: string): string {
-    return join(root, OBSERVATIONS_DIR, '.marks', LAST_READ_FILE);
+    return join(sharedMarksDir(root), LAST_READ_FILE);
 }
 
 /** С какого дня читать: от прошлого чтения, но не дальше срока хранения. */
@@ -282,7 +303,7 @@ function sinceOf(root: string, today: string): string {
 }
 
 function countedPath(root: string): string {
-    return join(root, OBSERVATIONS_DIR, '.marks', COUNTED_FILE);
+    return join(sharedMarksDir(root), COUNTED_FILE);
 }
 
 function parseCounted(line: string): ICountedPull | null {
@@ -304,12 +325,7 @@ function readCounted(root: string): readonly ICountedPull[] {
         .filter((pull: ICountedPull | null): pull is ICountedPull => pull !== null);
 }
 
-/**
- * Читает заявки, закрытые с прошлого чтения, и дописывает новые итоги.
- *
- * Запись идёт из отчёта, а не из проверки: в момент слияния сессии может не быть вовсе.
- */
-export function collectOutcomes(root: string, today: string, version: string): EOutcomesRead {
+function collectLocked(root: string, today: string, version: string): EOutcomesRead {
     const settled: string = dayBefore(today, SETTLE_DAYS);
     const { state, facts }: IFactsRead = readFacts(root, sinceOf(root, today));
 
@@ -320,7 +336,7 @@ export function collectOutcomes(root: string, today: string, version: string): E
     const fresh: readonly ICountedPull[] = newOutcomes(ripe, readCounted(root));
     const stamp: string = `${today}T00:00:00Z`;
 
-    mkdirSync(join(root, OBSERVATIONS_DIR, '.marks'), { recursive: true });
+    mkdirSync(join(root, OBSERVATIONS_DIR), { recursive: true });
     writeFileSync(lastReadPath(root), `${settled}\n`);
     for (const pull of fresh) {
         const note: string = JSON.stringify({ t: stamp, ev: 'task-outcome', res: pull.outcome, v: version });
@@ -330,4 +346,30 @@ export function collectOutcomes(root: string, today: string, version: string): E
     }
 
     return EOutcomesRead.Read;
+}
+
+/**
+ * Читает заявки, закрытые с прошлого чтения, и дописывает новые итоги.
+ *
+ * Запись идёт из отчёта, а не из проверки: в момент слияния сессии может не быть вовсе.
+ */
+export function collectOutcomes(root: string, today: string, version: string, now: number = Date.now()): EOutcomesRead {
+    const lock: string = join(sharedMarksDir(root), 'outcomes.lock');
+
+    // Дереву без хука каталог меток не заводится: по пустому каталогу наблюдений отчёт узнаёт, что
+    // записи не велось.
+    if (!existsSync(pullHook(root))) {
+        return EOutcomesRead.NobodyToAsk;
+    }
+    openMarksDir(sharedMarksDir(root));
+    // Учёт общий, а между чтением и записью идёт запрос к хостингу: без замка две копии посчитали бы
+    // одну заявку дважды. Вторая выходит без чтения: всё, что есть, запишет первая.
+    if (!takeFileLock(lock, now)) {
+        return EOutcomesRead.Read;
+    }
+    try {
+        return collectLocked(root, today, version);
+    } finally {
+        dropFileLock(lock);
+    }
 }

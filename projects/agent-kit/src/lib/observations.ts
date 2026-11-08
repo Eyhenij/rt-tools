@@ -10,8 +10,8 @@
  * Дата приходит доводом, а не берётся из часов: сводка за отрезок дней иначе не проверяется
  * спекой — вчерашний файл фикстуры завтра оказывается позавчерашним.
  */
-import { existsSync, readFileSync, readdirSync, rmSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { byText } from './order.js';
 
 /** Куда `observe.sh` пишет наблюдения. Путь от корня дерева. */
@@ -190,7 +190,7 @@ function isBefore(day: string, edge: string): boolean {
 }
 
 /** Записи одного дня из его файла. Строка, которая не разбирается, пропускается молча. */
-function observationsOfDay(path: string): readonly IObservation[] {
+export function observationsOfDay(path: string): readonly IObservation[] {
     const found: IObservation[] = [];
 
     for (const line of readFileSync(path, 'utf8').split('\n')) {
@@ -205,12 +205,26 @@ function observationsOfDay(path: string): readonly IObservation[] {
 }
 
 /**
+ * Каталог меток. Запись о том, что каталог наблюдений не идёт в историю, заводится сразу: признак копии,
+ * попавший в коммит, дал бы двум машинам один признак, и их дни затирали бы друг друга.
+ */
+export function openMarksDir(dir: string): void {
+    const ignore: string = join(dirname(dir), '.gitignore');
+
+    mkdirSync(dir, { recursive: true });
+    if (!existsSync(ignore)) {
+        writeFileSync(ignore, '*\n');
+    }
+}
+
+/**
  * Наблюдения за отрезок и уборка того, что старше срока хранения.
  *
  * Уборка идёт здесь, а не отдельной командой: каталог растёт от работы, а не от запусков, и
- * команда, о которой надо помнить, до второго месяца не доживает.
+ * команда, о которой надо помнить, до второго месяца не доживает. Тихая отправка читает с
+ * `sweep: false`: снятое по сроку обязан назвать отчёт, а она ничего не печатает.
  */
-export function readObservations(root: string, today: string, days: number): IReadResult {
+export function readObservations(root: string, today: string, days: number, sweep: boolean = true): IReadResult {
     const dir: string = join(root, OBSERVATIONS_DIR);
     if (!existsSync(dir)) {
         return { observations: [], swept: [], silent: true, daysRead: [] };
@@ -230,8 +244,10 @@ export function readObservations(root: string, today: string, days: number): IRe
         }
 
         if (isBefore(day, keepFrom)) {
-            rmSync(join(dir, name), { force: true });
-            swept.push(name);
+            if (sweep) {
+                rmSync(join(dir, name), { force: true });
+                swept.push(name);
+            }
         } else if (isBefore(day, since)) {
             // День старше запрошенного отрезка, но моложе черты хранения: файл остаётся лежать,
             // а в этот отчёт не идёт

@@ -13,7 +13,7 @@ overrides, the proposals addressed "package" and the incident analyses; what a p
 disk by — the review of a closed task or a word mid-work; how a tree is created in the intake and
 what it marks its records with after the review.
 
-Nothing goes outward that a person did not send by a command: not one guard goes into the network.
+Text goes outward only by a command of a person, and the day lines of numbers are the one exception.
 The observations themselves, the digest and the snapshot of the overrides are the neighbouring
 subdomain "Observations" next to it.
 
@@ -98,8 +98,8 @@ subdomain "Observations" next to it.
   would read as written by hand while a hand-written one stopped being named.
 - **The intake address is read from a setting of the tree.** Nailed into the code, it would name a
   foreign tree in the package texts, and it would leave the tree no choice of where to send.
-- **Nothing goes outward that a person did not send by a command.** Not one guard goes into the
-  network, there is no background sending.
+- **Nothing goes outward that a person did not send by a command.** The exception is the day line: it
+  carries numbers only and leaves by itself. A proposal, an analysis and the digest have no other way.
 - **An unfamiliar argument ends the sending, it is not skipped silently.** The only action of this
   command is irreversible and goes outward, and "the argument is surplus" is here
   indistinguishable from "the command did nothing": a call with the help argument, made for the sake
@@ -239,8 +239,8 @@ subdomain "Observations" next to it.
   checksum, the path is absent as before; the cargo carries no more about the tree than the digest.
 - **A broken line does not leave and does not stop the cargo.** The reading of the day file skips it,
   as the digest does: an observation is a side record of a guard.
-- **The cargo goes by the same request as the rest, with the tree token, and only by a command.** No
-  background sending: the line "nothing goes outward that a person did not send by a command" holds.
+- **The cargo goes by the same request as the rest, with the tree token, and only by a command.** The
+  automatic sending carries day lines and has no path to this cargo.
 - **The check for a tree address covers the observation cargo.** After the substitution below a
   resource name is always a package name, so what is left to judge are the free fields of a line.
 - **A resource name the package does not ship leaves as a constant word, not as itself.** A tree

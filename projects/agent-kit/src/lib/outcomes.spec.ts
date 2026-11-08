@@ -2,7 +2,7 @@
  * Итог задачи: сценарии договорённости `docs/specs/agent-kit/proposed/metrics/`.
  */
 import { execFileSync } from 'node:child_process';
-import { chmodSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -19,6 +19,7 @@ import {
     outcomeLines,
     outcomeMetricOf,
     outcomeOf,
+    sharedMarksDir,
 } from './outcomes.js';
 
 const HANDED: IPullFact['handover'] = { commit: 'c1', tree: 't1' };
@@ -86,6 +87,7 @@ describe('итог заявки', () => {
             firstPass: 1,
             lost: 0,
             noHandover: 0,
+            passed: 1,
         });
     });
 
@@ -141,6 +143,7 @@ describe('новые итоги', () => {
             firstPass: 0,
             lost: 1,
             noHandover: 0,
+            passed: 1,
         });
     });
 
@@ -152,7 +155,7 @@ describe('новые итоги', () => {
 describe('итоги словами', () => {
     it('SC-AK-1276 — одна принятая и одна закрытая без слияния читаются как один из двух', () => {
         const lines: readonly string[] = outcomeLines(
-            { accepted: 1, closed: 1, firstPass: 1, lost: 0, noHandover: 3 },
+            { accepted: 1, closed: 1, firstPass: 1, lost: 0, noHandover: 3, passed: 1 },
             EOutcomesRead.Read,
             0
         );
@@ -163,7 +166,7 @@ describe('итоги словами', () => {
 
     it('SC-AK-1293 — ноль правок не печатается: о них говорит строка без данных', () => {
         const lines: readonly string[] = outcomeLines(
-            { accepted: 2, closed: 0, firstPass: 2, lost: 0, noHandover: 0 },
+            { accepted: 2, closed: 0, firstPass: 2, lost: 0, noHandover: 0, passed: 2 },
             EOutcomesRead.Read,
             0
         );
@@ -174,7 +177,7 @@ describe('итоги словами', () => {
 
     it('с десяти задач появляется доля', () => {
         const lines: readonly string[] = outcomeLines(
-            { accepted: 10, closed: 0, firstPass: 7, lost: 3, noHandover: 0 },
+            { accepted: 10, closed: 0, firstPass: 7, lost: 3, noHandover: 0, passed: 10 },
             EOutcomesRead.Read,
             5
         );
@@ -199,7 +202,7 @@ describe('итоги словами', () => {
 
     it('только заявки без подписи: главного числа нет, их счёт виден', () => {
         const lines: readonly string[] = outcomeLines(
-            { accepted: 0, closed: 0, firstPass: 0, lost: 0, noHandover: 231 },
+            { accepted: 0, closed: 0, firstPass: 0, lost: 0, noHandover: 231, passed: 0 },
             EOutcomesRead.Read,
             0
         );
@@ -210,6 +213,52 @@ describe('итоги словами', () => {
 
     it('без записей и с ответом хостинга строк нет: о них говорит строка без данных', () => {
         expect(outcomeLines(null, EOutcomesRead.Read, 0)).toEqual([]);
+    });
+});
+
+describe('sharedMarksDir', () => {
+    it('вне git учёт лежит в самой копии', () => {
+        const root: string = mkdtempSync(join(tmpdir(), 'rt-marks-'));
+
+        expect(sharedMarksDir(root)).toBe(join(root, OBSERVATIONS_DIR, '.marks'));
+        rmSync(root, { recursive: true, force: true });
+    });
+
+    it('вторая копия дерева пишет учёт в основную', () => {
+        const main: string = realpathSync(mkdtempSync(join(tmpdir(), 'rt-marks-')));
+        const second: string = `${main}-second`;
+        const git: (...args: readonly string[]) => string = (...args: readonly string[]): string =>
+            execFileSync('git', ['-C', main, '-c', 'user.name=t', '-c', 'user.email=t@t', ...args], { encoding: 'utf8' });
+
+        git('init', '-q');
+        git('commit', '-q', '--allow-empty', '-m', 'first');
+        git('worktree', 'add', '-q', second);
+
+        expect(sharedMarksDir(second)).toBe(join(main, OBSERVATIONS_DIR, '.marks'));
+        rmSync(main, { recursive: true, force: true });
+        rmSync(second, { recursive: true, force: true });
+    });
+});
+
+describe('замок учёта', () => {
+    it('SC-AK-1316 — вторая копия выходит без чтения', () => {
+        const root: string = mkdtempSync(join(tmpdir(), 'rt-lock-'));
+        const hook: string = join(root, '.claude', 'hooks', 'pull-outcomes.sh');
+        const asked: string = join(root, 'asked');
+        const now: number = Date.parse('2026-11-07T12:00:00Z');
+
+        mkdirSync(join(root, '.claude', 'hooks'), { recursive: true });
+        writeFileSync(hook, `#!/usr/bin/env bash\nprintf 'x\\n' >> "${asked}"\n`);
+        chmodSync(hook, 0o755);
+
+        collectOutcomes(root, '2026-11-07', '0.35.0', now);
+        expect(readFileSync(asked, 'utf8')).toBe('x\n');
+
+        writeFileSync(join(sharedMarksDir(root), 'outcomes.lock'), '');
+        collectOutcomes(root, '2026-11-07', '0.35.0', Date.now());
+        expect(readFileSync(asked, 'utf8')).toBe('x\n');
+
+        rmSync(root, { recursive: true, force: true });
     });
 });
 

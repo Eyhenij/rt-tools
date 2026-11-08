@@ -197,7 +197,9 @@ export const METRIC_KEYS: readonly string[] = [
     'sectionsOverridden',
     'refusalsWithRule',
     'outcomesBroken',
+    'outcomesUnread',
     'sendFault',
+    'settingsChanged',
 ];
 
 /** Числа строки дня по ресурсу пакета или роду шага: ключ пишется `<основа>:<имя>`. */

@@ -357,6 +357,21 @@ function entryCharsOf(root: string): number | null {
     }
 }
 
+/** Отчёт по прочитанному: его собирают и команда, и отправка строк дня. */
+export function reportOf(
+    env: IEnvironment,
+    config: IConfig,
+    today: string,
+    result: IReadResult,
+    days: number,
+    outcomesRead: EOutcomesRead
+): IMetricsReport {
+    const known: readonly string[] = laidOutSkills(config, env.assetsDir);
+    const summary: ISummary = summarize(result.observations, known, days);
+
+    return metricsOf(result, summary, known.length, entryCharsOf(env.root), today, outcomesRead);
+}
+
 /** Команда `agent-kit metrics`: частичный вид одного дерева. */
 export function metrics(env: IEnvironment, options: IMetricsOptions): IOutcomeOfCommand {
     const config: IConfig | null = readConfig(env.root);
@@ -378,9 +393,7 @@ export function metrics(env: IEnvironment, options: IMetricsOptions): IOutcomeOf
 
     const read: EOutcomesRead = collectOutcomes(env.root, options.today, env.version);
     const result: IReadResult = readObservations(env.root, options.today, options.days);
-    const known: readonly string[] = laidOutSkills(config, env.assetsDir);
-    const summary: ISummary = summarize(result.observations, known, options.days);
-    const report: IMetricsReport = metricsOf(result, summary, known.length, entryCharsOf(env.root), options.today, read);
+    const report: IMetricsReport = reportOf(env, config, options.today, result, options.days, read);
 
     if (options.json) {
         return { code: 0, lines: [JSON.stringify(report)] };

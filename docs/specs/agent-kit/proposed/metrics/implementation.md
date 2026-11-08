@@ -2,6 +2,7 @@
 
 The report of one tree has code in `projects/agent-kit/src/lib/metrics.ts:metrics`, and what a tree
 records has code in `projects/agent-kit/assets/hooks/metric-marks.sh:rt_tree_sign`,
+`projects/agent-kit/src/lib/metric-send.ts:sendMetrics`, `projects/agent-kit/assets/hooks/observe.sh:rt_send_start`,
 `projects/agent-kit/assets/hooks/owner-corrections.sh:RT_CORRECTION_PATTERNS`,
 `projects/agent-kit/assets/hooks/role-calls.sh:rt_verdict_of` and
 `projects/agent-kit/assets/hooks/pull-outcomes.sh:rt_pull_outcomes`. The rest of the agreement has

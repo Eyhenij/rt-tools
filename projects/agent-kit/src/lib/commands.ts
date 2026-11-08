@@ -4,6 +4,7 @@
  * а `process.exit` зовёт только точка входа — иначе ни одну из них нельзя было бы проверить
  * спекой, не перехватывая поток вывода.
  */
+import { sendEnrolledLines, sendFaultLines } from './metric-send-mark.js';
 import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -866,6 +867,7 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
             ...(result.written.length
                 ? [`разложено файлов: ${result.written.length}`, ...result.written.map((path: string): string => `  ${path}`)]
                 : ['всё уже разложено']),
+            ...sendEnrolledLines(config, result.written),
             ...boundLines(result),
             ...(result.bound?.unreadable === false ? [] : unboundLines(result)),
             ...driftedLines(result),
@@ -1366,6 +1368,7 @@ export function doctor(env: IEnvironment, since: string = ''): IOutcomeOfCommand
         ...pushGateLines(root, config.layout.defaults ?? DEFAULT_LAYOUT.defaults),
         ...localValueLines(root, assetsDir, config),
         ...replacedLines(config, assetsDir, root),
+        ...sendFaultLines(root),
         ...(since ? addedInReplacedLines(config, assetsDir, root, since) : []),
         ...thresholdLines(root),
         `значений в конфиге: ${Object.keys(config.vars).length}`,
