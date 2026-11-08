@@ -348,6 +348,64 @@ rt_push_touched() {
     printf '%s' "$_subjects"
 }
 
+# Whether the second-kit part of a change reaches what an application draws. A zero code — it
+# reaches, a non-zero one — the change touches only components the application never draws.
+#
+# The first argument is the changed paths, one per line; the rest are the source roots of the
+# application. A kit file outside a component directory — tokens, styles, services — reaches every
+# application. A component is drawn when the application names one of its classes, or when a drawn
+# component names it: a field draws its icon button inside, and an edit of the button reaches the
+# field's screen too.
+#
+# The subject `kit2` alone said that every suite walks every kit component: an edit of the calendar
+# demanded a test in an application that has no calendar, and that test could check nothing.
+rt_kit2_reaches() {
+    _changed="$1"
+    shift
+    _kit='projects/ui-kit-v2/src'
+    _dir_re='^(projects/ui-kit-v2/src/(rich-editor/)?lib/components/[^/]+)/'
+
+    _hit=' '
+    for _f in $(printf '%s\n' "$_changed" | grep '^projects/ui-kit-v2/'); do
+        # What no application loads: the showcase, its snapshot references, the specs and the texts.
+        case "$_f" in
+            projects/ui-kit-v2/.storybook/* | projects/ui-kit-v2/src/showcase/* | */stories/* | *.spec.ts | *.md | *.mdx) continue ;;
+        esac
+        _d="$(printf '%s' "$_f" | sed -nE "s#${_dir_re}.*#\\1#p")"
+        [ -z "$_d" ] && return 0
+        _hit="$_hit$_d "
+    done
+    [ "$_hit" = ' ' ] && return 1
+
+    # Which component directory declares each kit class: `<class> <directory>` per line.
+    _index="$(grep -rEo --include='*.ts' --exclude='*.spec.ts' --exclude-dir=stories \
+        '^export (abstract )?(class|function|const|interface|type|enum|namespace) Rt[A-Za-z0-9_]*' "$_kit" 2>/dev/null \
+        | sed -nE "s#${_dir_re}[^:]*:export (abstract )?[a-z]+ (Rt[A-Za-z0-9_]*)#\\4 \\1#p")"
+
+    _seen=' '
+    _names=' '
+    _queue="$(grep -rhoE --include='*.ts' --include='*.html' 'Rt[A-Z][A-Za-z0-9_]*' "$@" 2>/dev/null | sort -u)"
+    while [ -n "$_queue" ]; do
+        _next=''
+        for _s in $_queue; do
+            case "$_names" in *" $_s "*) continue ;; esac
+            _names="$_names$_s "
+            for _d in $(printf '%s\n' "$_index" | awk -v s="$_s" '$1 == s { print $2 }'); do
+                case "$_seen" in *" $_d "*) continue ;; esac
+                _seen="$_seen$_d "
+                _next="$_next $(grep -rhoE --include='*.ts' --exclude='*.spec.ts' --exclude-dir=stories \
+                    'Rt[A-Z][A-Za-z0-9_]*' "$_d" 2>/dev/null | sort -u | tr '\n' ' ')"
+            done
+        done
+        _queue="$_next"
+    done
+
+    for _d in $_hit; do
+        case "$_seen" in *" $_d "*) return 0 ;; esac
+    done
+    return 1
+}
+
 # Whether the branch touched only texts. A zero code — only texts, otherwise — code.
 #
 # An empty list of what was touched does not count as a textual edit: there is nothing to compare

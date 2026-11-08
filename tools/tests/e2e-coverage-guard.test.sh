@@ -117,6 +117,27 @@ commit "$E" projects/auth-keycloak-theme/src/a.ts 'export const a = 1;' 'fix: th
 report "a root edit together with a theme edit is refused" "$(decision "$E" "$OPEN")" deny
 report "the refusal names the entry suite" "$(reason_has "$E" "$OPEN" 'apps/auth-example-e2e/')" yes
 
+# --- a second-kit edit and what an application draws ---------------------------------------------
+
+# The entry example draws a field, the field draws an icon button inside, and nobody draws the
+# calendar. The admin panel has no sources in this repository, so it draws nothing.
+repo RT-13-probe L
+git -C "$L" checkout -q main
+commit "$L" apps/auth-example/src/app.ts 'import { RtInputComponent } from "@rt-tools/ui-kit-v2";' 'feat: example'
+commit "$L" projects/ui-kit-v2/src/lib/components/input/rt-input.component.ts \
+    "$(printf 'import { RtIconButtonComponent } from "../icon-button/rt-icon-button.component";\nexport class RtInputComponent {}')" 'feat: input'
+commit "$L" projects/ui-kit-v2/src/lib/components/icon-button/rt-icon-button.component.ts 'export class RtIconButtonComponent {}' 'feat: button'
+commit "$L" projects/ui-kit-v2/src/lib/components/calendar/rt-calendar.component.ts 'export class RtCalendarComponent {}' 'feat: calendar'
+publish "$L" main
+git -C "$L" checkout -q RT-13-probe
+git -C "$L" merge -q --ff-only main
+commit "$L" projects/ui-kit-v2/src/lib/components/calendar/rt-calendar.component.ts 'export class RtCalendarComponent { a = 1; }' 'fix: calendar'
+commit "$L" projects/ui-kit-v2/.storybook/__snapshots__/calendar.png 'png' 'test: snapshot'
+report "a calendar edit no application draws demands no suite" "$(decision "$L" "$OPEN")" PASS
+commit "$L" projects/ui-kit-v2/src/lib/components/icon-button/rt-icon-button.component.ts 'export class RtIconButtonComponent { a = 1; }' 'fix: button'
+report "a button drawn inside the example's field names the entry suite" "$(reason_has "$L" "$OPEN" 'apps/auth-example-e2e/')" yes
+report "the same button does not name the suite of an application that does not draw it" "$(reason_has "$L" "$OPEN" 'apps/message-bus-admin-e2e/')" no
+
 # --- what counts as a test -----------------------------------------------------------------------
 
 repo RT-6-probe F
