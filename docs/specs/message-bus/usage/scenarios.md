@@ -194,6 +194,16 @@ loaded first, the list of the kinds and the list of the refusals
 
 Covered: `apps/message-bus-admin-e2e/src/usage-section.spec.ts`, `libs/message-bus-admin/usage/util/src/lib/usage-digest.logic.spec.ts`.
 
+### SC-MB-426 — the end of the period opens a month with the days before the start crossed out
+
+Given the table of a tree is shown for August 2026
+When the person opens the end of the period by the button of its field
+Then the month of August is shown with its weeks filled by five days of July and six of
+September; the July days stand before the start of the period and are crossed out, the September
+ones are not, and the arrow back has no backing and is switched off
+
+Covered: `apps/message-bus-admin-e2e/src/usage-section.spec.ts`.
+
 ### SC-MB-358 — the quick period puts the pair of days into the address
 
 Given the table of a tree is shown

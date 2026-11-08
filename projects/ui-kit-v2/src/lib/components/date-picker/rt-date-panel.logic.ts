@@ -173,13 +173,44 @@ export function rtDateMonth(month: string, ctx: IRtDatePicker.MonthContext): IRt
     return { key: month, label: monthTitle(month, ctx.locale), leadingBlanks, days };
 }
 
-/** Короткие имена дней недели по локали, начиная с её первого дня. */
+/** День соседнего месяца: бледный, за границей выбора ещё и зачёркнут. */
+function outsideDay(ms: number, min: string | null, max: string | null): IRtCalendar.OutsideDay {
+    const key: string = msToDay(ms);
+    return { key, dayOfMonth: Number(key.slice(8)), crossed: !rtDateInBounds(key, min, max) };
+}
+
+/**
+ * Месяц панели даты: тот же месяц, что у поля, но сетка дописана днями соседних месяцев до полных
+ * недель, а дни за границей выбора зачёркнуты, как занятые.
+ */
+export function rtDatePanelMonth(month: string, ctx: IRtDatePicker.MonthContext): IRtCalendar.Month {
+    const base: IRtCalendar.Month = rtDateMonth(month, ctx);
+    const first: number = dayToMs(base.days[0].key);
+    const last: number = dayToMs(base.days[base.days.length - 1].key);
+    const lead: number = base.leadingBlanks.length;
+    const tail: number = (WEEK - ((lead + base.days.length) % WEEK)) % WEEK;
+    return {
+        ...base,
+        days: base.days.map((day: IRtCalendar.Day): IRtCalendar.Day => (day.disabled ? { ...day, state: ERtCalendarDayState.Busy } : day)),
+        leadingDays: Array.from({ length: lead }, (_: unknown, i: number): IRtCalendar.OutsideDay =>
+            outsideDay(first - (lead - i) * DAY_LENGTH_MS, ctx.min, ctx.max)
+        ),
+        trailingDays: Array.from({ length: tail }, (_: unknown, i: number): IRtCalendar.OutsideDay =>
+            outsideDay(last + (i + 1) * DAY_LENGTH_MS, ctx.min, ctx.max)
+        ),
+    };
+}
+
+/** Короткие имена дней недели по локали, начиная с её первого дня, с заглавной буквы: «Пн», «Mon». */
 export function rtDateWeekdays(locale: string): string[] {
     const format: Intl.DateTimeFormat = new Intl.DateTimeFormat(locale, { weekday: 'short', timeZone: 'UTC' });
     // 2024-01-01 — понедельник.
     const monday: number = Date.UTC(2024, 0, 1);
     const shift: number = rtDateFirstDay(locale) - 1;
-    return Array.from({ length: WEEK }, (_: unknown, i: number): string => format.format(monday + ((i + shift) % WEEK) * DAY_LENGTH_MS));
+    return Array.from({ length: WEEK }, (_: unknown, i: number): string => {
+        const name: string = format.format(monday + ((i + shift) % WEEK) * DAY_LENGTH_MS);
+        return name.charAt(0).toLocaleUpperCase(locale) + name.slice(1);
+    });
 }
 
 /** Двенадцать месяцев года для выбора месяца; месяц за границей выключен. */

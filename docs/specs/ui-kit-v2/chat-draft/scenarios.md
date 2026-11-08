@@ -90,3 +90,19 @@ When the consumer calls `draftText`
 Then the files stay and the answer holds the text only
 
 Covered: `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat-reply-field.component.spec.ts`.
+
+### SC-UKV-1169 — the chosen files of the draft are read
+
+Given the reply field holds a text and a chosen file
+When the consumer calls `draftFiles`
+Then the method returns that file, and the text and the file stay in the field
+
+Covered: `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat-reply-field.component.spec.ts`.
+
+### SC-UKV-1170 — no file or no field gives an empty list
+
+Given no chosen file, or no reply field at all
+When the consumer calls `draftFiles`
+Then the method returns an empty list
+
+Covered: `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat-reply-field.component.spec.ts`.

@@ -7,6 +7,7 @@ import { ComponentFixture } from '@angular/core/testing';
 import { RT_KIT_LOCALE } from '../../../i18n';
 import { createRtFixture, el, qa, qaAll, textOf } from '../../../../testing/rt-kit-testing';
 import { RtDatePanelComponent } from './rt-date-panel.component';
+import { RtDatePanelComponent as RtDatePanelFromEntry } from '../index';
 
 interface IPanel {
     fixture: ComponentFixture<RtDatePanelComponent>;
@@ -59,6 +60,10 @@ describe('RtDatePanelComponent', (): void => {
         jest.useRealTimers();
     });
 
+    it('SC-UKV-1171 — the entry point gives out the panel the field draws', (): void => {
+        expect(RtDatePanelFromEntry).toBe(RtDatePanelComponent);
+    });
+
     it('SC-UKV-421 — the month pages, and its title opens a choice of month and year', (): void => {
         const { fixture }: IPanel = setup({ type: 'date', value: '2026-09-15' });
         expect(textOf(qa(fixture, 'calendar-month-title'))).toBe('Сентябрь 2026');
@@ -88,6 +93,23 @@ describe('RtDatePanelComponent', (): void => {
         press(fixture, qa(fixture, 'date-panel-today'));
         expect(picked).toEqual(['2026-09-20', '2026-09-29']);
         expect(qa(fixture, 'date-panel-now')).toBeNull();
+    });
+
+    it('SC-UKV-1172 — a date panel without «Today» draws no footer, and a day still chooses', (): void => {
+        const { fixture, picked }: IPanel = setup({ type: 'date', value: '2026-03-15', isTodayButtonShown: false });
+
+        expect(day(fixture, '2026-03-20')).not.toBeNull();
+        expect(qa(fixture, 'date-panel-today')).toBeNull();
+        expect(el(fixture, '.rt-date-panel__footer')).toBeNull();
+
+        press(fixture, day(fixture, '2026-03-20'));
+        expect(picked).toEqual(['2026-03-20']);
+    });
+
+    it('SC-UKV-1172 — the input touches only the date: other types keep their footer', (): void => {
+        const { fixture }: IPanel = setup({ type: 'datetime-local', value: '2026-03-15T09:30', isTodayButtonShown: false });
+
+        expect(qa(fixture, 'date-panel-apply')).not.toBeNull();
     });
 
     it('SC-UKV-423 — «Today» is switched off when today lies outside the bounds', (): void => {
@@ -196,10 +218,131 @@ describe('RtDatePanelComponent', (): void => {
         expect(el(fixture, '[qa-dataid="calendar-day"][data-today]')?.nativeElement.getAttribute('data-iso')).toBe('2026-03-10');
     });
 
-    it('SC-UKV-429 — the weekday names follow the locale of the application', (): void => {
+    it('SC-UKV-429 — the weekday names follow the locale of the application and start with a capital', (): void => {
         const { fixture }: IPanel = setup({ type: 'date', value: '2026-09-15' });
 
-        expect(textOf(qaAll(fixture, 'calendar-weekday')[0])).toBe('пн');
+        expect(textOf(qaAll(fixture, 'calendar-weekday')[0])).toBe('Пн');
+    });
+
+    it('SC-UKV-1173 — days of the neighbouring months fill the weeks, pale and not pressable', (): void => {
+        // Сентябрь 2026 начинается во вторник и кончается в среду: один день августа, четыре октября.
+        const { fixture, picked }: IPanel = setup({ type: 'date', value: '2026-09-15', min: '2026-09-01' });
+        const outside: DebugElement[] = qaAll(fixture, 'calendar-outside-day');
+
+        expect(outside.map((node: DebugElement): string => node.nativeElement.getAttribute('data-iso'))).toEqual([
+            '2026-08-31',
+            '2026-10-01',
+            '2026-10-02',
+            '2026-10-03',
+            '2026-10-04',
+        ]);
+        expect(outside[0].nativeElement.tagName).toBe('SPAN');
+        expect(outside[0].nativeElement.hasAttribute('data-crossed')).toBe(true);
+        expect(outside[1].nativeElement.hasAttribute('data-crossed')).toBe(false);
+
+        press(fixture, outside[1]);
+        expect(picked).toEqual([]);
+    });
+
+    it('SC-UKV-1174 — a day of the month outside the bounds is crossed out and switched off', (): void => {
+        const { fixture }: IPanel = setup({ type: 'date', value: '2026-09-15', min: '2026-09-10' });
+
+        expect(day(fixture, '2026-09-09')?.nativeElement.getAttribute('data-state')).toBe('busy');
+        expect((day(fixture, '2026-09-09')?.nativeElement as HTMLButtonElement).disabled).toBe(true);
+        expect(day(fixture, '2026-09-10')?.nativeElement.getAttribute('data-state')).toBe('free');
+    });
+
+    it('SC-UKV-1175 — each time column carries its title above it', (): void => {
+        const { fixture }: IPanel = setup({ type: 'time', value: '09:00' });
+
+        expect(textOf(qa(fixture, 'date-panel-hours-title'))).toBe(
+            qa(fixture, 'date-panel-hours')?.nativeElement.getAttribute('aria-label')
+        );
+        expect(textOf(qa(fixture, 'date-panel-minutes-title'))).toBe(
+            qa(fixture, 'date-panel-minutes')?.nativeElement.getAttribute('aria-label')
+        );
+        expect(textOf(qa(fixture, 'date-panel-hours-title'))).not.toBe('');
+    });
+
+    it('SC-UKV-1176 — the popover of a date with time has «Now» and «Reset» in the footer', (): void => {
+        const { fixture, picked, closed }: IPanel = setup({ type: 'datetime-local', value: '2026-09-15T09:00' });
+
+        press(fixture, qa(fixture, 'date-panel-now'));
+        expect(day(fixture, '2026-09-29')?.nativeElement.getAttribute('data-state')).toBe('chosen');
+        expect(pressedLabels(fixture, 'date-panel-hour')).toEqual(['10']);
+        expect(picked).toEqual([]);
+
+        press(fixture, qa(fixture, 'date-panel-reset'));
+        expect(picked).toEqual(['']);
+        expect(closed).toHaveBeenCalledTimes(1);
+    });
+
+    it('SC-UKV-1177 — the sheet of a date with time shows the chosen value in the footer', (): void => {
+        const { fixture }: IPanel = setup({ type: 'datetime-local', value: '2026-09-15T09:00', sheet: true });
+
+        expect(qa(fixture, 'date-panel-value')).not.toBeNull();
+        expect(textOf(qa(fixture, 'date-panel-value'))).toBe('15.09.2026, 09:00');
+        expect(qa(fixture, 'date-panel-now')).toBeNull();
+        expect(qa(fixture, 'date-panel-reset')).toBeNull();
+    });
+
+    it('SC-UKV-1178 — «Now» and «Reset» of the popover are text buttons in the action colour', (): void => {
+        const { fixture }: IPanel = setup({ type: 'datetime-local', value: '2026-09-15T09:00' });
+
+        for (const id of ['date-panel-now', 'date-panel-reset']) {
+            const classes: DOMTokenList = (qa(fixture, id)?.nativeElement as HTMLElement).classList;
+            expect(classes).toContain('rt-button--text');
+            expect(classes).not.toContain('rt-button--secondary');
+        }
+    });
+
+    it('SC-UKV-1179 — the switch «Date | Time» of the sheet is of the middle size and not stretched', (): void => {
+        const { fixture }: IPanel = setup({ type: 'datetime-local', value: '2026-09-15T09:00', sheet: true });
+        const classes: DOMTokenList = (qa(fixture, 'date-panel-tabs')?.nativeElement as HTMLElement).classList;
+
+        expect(classes).toContain('rt-toggle-button-group--md');
+        expect(classes).not.toContain('rt-toggle-button-group--full-width');
+    });
+
+    it('SC-UKV-1180 — the month arrows have no backing', (): void => {
+        const { fixture }: IPanel = setup({ type: 'date', value: '2026-09-15' });
+        const control: HTMLElement = iconButton(fixture, 'calendar-prev-month')?.nativeElement as HTMLElement;
+
+        expect(control).toBeTruthy();
+        expect(control.className).toMatch(/--ghost\b/);
+        expect(control.className).not.toMatch(/--secondary\b/);
+
+        press(fixture, qa(fixture, 'calendar-month-title'));
+        const yearArrow: HTMLElement = iconButton(fixture, 'date-panel-prev-year')?.nativeElement as HTMLElement;
+
+        expect(yearArrow).toBeTruthy();
+        expect(yearArrow.className).toMatch(/--ghost\b/);
+        expect(yearArrow.className).not.toMatch(/--secondary\b/);
+    });
+
+    /* Раскладку и цвета среда спеков не считает, поэтому проверяются правила в стилях панели; вид на
+       экране закрывают кадры историй DatePanelOpening. */
+    it('SC-UKV-1181 — a time cell is a strip of the column with the number at its left edge, set off by a line', (): void => {
+        const styles: string = readFileSync(join(__dirname, 'rt-date-panel.component.scss'), 'utf8');
+        const start: number = styles.indexOf('&__column &__cell {');
+        const cellRule: string = styles.slice(start, styles.indexOf('&__footer', start));
+
+        expect(start).toBeGreaterThan(-1);
+        expect(cellRule).toContain('text-align: start;');
+        expect(cellRule).toContain('background: var(--rt-color-action-primary-subtle);');
+        expect(styles).toContain('&__time:not(:first-child) {');
+        expect(styles).toContain('border-inline-start: var(--rt-date-panel-divider-width) solid var(--rt-color-border-subtle);');
+    });
+
+    it('SC-UKV-1182 — the number of today is in the action colour and semibold until the day is chosen', (): void => {
+        const { fixture }: IPanel = setup({ type: 'date', value: '2026-09-15' });
+        const styles: string = readFileSync(join(__dirname, '../../calendar/rt-calendar.component.scss'), 'utf8');
+
+        expect(el(fixture, '[qa-dataid="calendar-day"][data-today]')).not.toBeNull();
+        expect(styles).toContain(
+            "&[data-today]:not([data-state='start'], [data-state='end'], [data-state='chosen'], [data-state='in-range']) {"
+        );
+        expect(styles).toContain('&__day[data-today] &__day-num {');
     });
 
     /** Открыть сетку годов из сетки месяцев значения. */

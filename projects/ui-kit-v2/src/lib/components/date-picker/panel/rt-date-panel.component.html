@@ -3,7 +3,7 @@
         <rt-toggle-button-group
             rtElem="tabs"
             qa-dataid="date-panel-tabs"
-            fullWidth
+            size="md"
             [ariaLabel]="t().uiDate + ' | ' + t().uiTime"
             [options]="tabs()"
             [value]="tab()"
@@ -37,7 +37,8 @@
                         <rt-icon-button
                             qa-dataid="date-panel-prev-year"
                             icon="chevron-left"
-                            variant="secondary"
+                            variant="ghost"
+                            iconColor="muted"
                             radius="full"
                             [ariaLabel]="t().uiPrevYear"
                             [disabled]="!canPrevYear()"
@@ -53,7 +54,8 @@
                         <rt-icon-button
                             qa-dataid="date-panel-next-year"
                             icon="chevron-right"
-                            variant="secondary"
+                            variant="ghost"
+                            iconColor="muted"
                             radius="full"
                             [ariaLabel]="t().uiNextYear"
                             [disabled]="!canNextYear()"
@@ -81,7 +83,8 @@
                         <rt-icon-button
                             qa-dataid="date-panel-prev-years"
                             icon="chevron-left"
-                            variant="secondary"
+                            variant="ghost"
+                            iconColor="muted"
                             radius="full"
                             [ariaLabel]="t().uiPrevYears"
                             [disabled]="!canPrevYears()"
@@ -90,7 +93,8 @@
                         <rt-icon-button
                             qa-dataid="date-panel-next-years"
                             icon="chevron-right"
-                            variant="secondary"
+                            variant="ghost"
+                            iconColor="muted"
                             radius="full"
                             [ariaLabel]="t().uiNextYears"
                             [disabled]="!canNextYears()"
@@ -117,85 +121,118 @@
 
         @if (showTime()) {
             <div rtElem="time" qa-dataid="date-panel-time">
-                <div rtElem="column" qa-dataid="date-panel-hours" role="group" [attr.aria-label]="t().uiHours">
-                    @for (cell of columns().hours; track cell.value) {
-                        <button
-                            #timeCell
-                            rtElem="cell"
-                            qa-dataid="date-panel-hour"
-                            type="button"
-                            [attr.aria-pressed]="cell.value === draftHour()"
-                            [disabled]="cell.disabled"
-                            (click)="pickHour(cell.value)">
-                            {{ cell.label }}
-                        </button>
-                    }
+                <div rtElem="time-group">
+                    <span rtElem="time-title" qa-dataid="date-panel-hours-title" aria-hidden="true">{{ t().uiHours }}</span>
+                    <div rtElem="column" qa-dataid="date-panel-hours" role="group" [attr.aria-label]="t().uiHours">
+                        @for (cell of columns().hours; track cell.value) {
+                            <button
+                                #timeCell
+                                rtElem="cell"
+                                qa-dataid="date-panel-hour"
+                                type="button"
+                                [attr.aria-pressed]="cell.value === draftHour()"
+                                [disabled]="cell.disabled"
+                                (click)="pickHour(cell.value)">
+                                {{ cell.label }}
+                            </button>
+                        }
+                    </div>
                 </div>
-                <div rtElem="column" qa-dataid="date-panel-minutes" role="group" [attr.aria-label]="t().uiMinutes">
-                    @for (cell of columns().minutes; track cell.value) {
-                        <button
-                            #timeCell
-                            rtElem="cell"
-                            qa-dataid="date-panel-minute"
-                            type="button"
-                            [attr.aria-pressed]="cell.value === draftMinute()"
-                            [disabled]="cell.disabled"
-                            (click)="pickMinute(cell.value)">
-                            {{ cell.label }}
-                        </button>
-                    }
+                <div rtElem="time-group">
+                    <span rtElem="time-title" qa-dataid="date-panel-minutes-title" aria-hidden="true">{{ t().uiMinutes }}</span>
+                    <div rtElem="column" qa-dataid="date-panel-minutes" role="group" [attr.aria-label]="t().uiMinutes">
+                        @for (cell of columns().minutes; track cell.value) {
+                            <button
+                                #timeCell
+                                rtElem="cell"
+                                qa-dataid="date-panel-minute"
+                                type="button"
+                                [attr.aria-pressed]="cell.value === draftMinute()"
+                                [disabled]="cell.disabled"
+                                (click)="pickMinute(cell.value)">
+                                {{ cell.label }}
+                            </button>
+                        }
+                    </div>
                 </div>
             </div>
         }
     </div>
 
-    <div rtElem="footer">
-        @switch (type()) {
-            @case ('date') {
-                <button
-                    rtButton
-                    qa-dataid="date-panel-today"
-                    theme="secondary"
-                    appearance="text"
-                    size="sm"
-                    type="button"
-                    [label]="t().uiToday"
-                    [attr.aria-label]="t().uiToday"
-                    [disabled]="todayOff()"
-                    (click)="pickToday()"></button>
+    @if (hasFooter()) {
+        <div rtElem="footer">
+            @switch (type()) {
+                @case ('date') {
+                    <button
+                        rtButton
+                        qa-dataid="date-panel-today"
+                        theme="secondary"
+                        appearance="text"
+                        size="sm"
+                        type="button"
+                        [label]="t().uiToday"
+                        [attr.aria-label]="t().uiToday"
+                        [disabled]="todayOff()"
+                        (click)="pickToday()"></button>
+                }
+                @case ('time') {
+                    <button
+                        rtButton
+                        qa-dataid="date-panel-now"
+                        theme="secondary"
+                        appearance="text"
+                        size="sm"
+                        type="button"
+                        [label]="t().uiNow"
+                        [attr.aria-label]="t().uiNow"
+                        (click)="pickNow()"></button>
+                    <button
+                        rtButton
+                        qa-dataid="date-panel-done"
+                        size="sm"
+                        type="button"
+                        [label]="t().uiDone"
+                        [attr.aria-label]="t().uiDone"
+                        [disabled]="!canApply()"
+                        (click)="apply()"></button>
+                }
+                @default {
+                    @if (sheet()) {
+                        <span rtElem="value" qa-dataid="date-panel-value">{{ draftText() }}</span>
+                    } @else {
+                        <button
+                            rtButton
+                            rtElem="lead"
+                            qa-dataid="date-panel-now"
+                            theme="primary"
+                            appearance="text"
+                            size="sm"
+                            type="button"
+                            [label]="t().uiNow"
+                            [attr.aria-label]="t().uiNow"
+                            (click)="pickNow()"></button>
+                        <button
+                            rtButton
+                            qa-dataid="date-panel-reset"
+                            theme="primary"
+                            appearance="text"
+                            size="sm"
+                            type="button"
+                            [label]="t().uiReset"
+                            [attr.aria-label]="t().uiReset"
+                            (click)="reset()"></button>
+                    }
+                    <button
+                        rtButton
+                        qa-dataid="date-panel-apply"
+                        size="sm"
+                        type="button"
+                        [label]="t().uiApply"
+                        [attr.aria-label]="t().uiApply"
+                        [disabled]="!canApply()"
+                        (click)="apply()"></button>
+                }
             }
-            @case ('time') {
-                <button
-                    rtButton
-                    qa-dataid="date-panel-now"
-                    theme="secondary"
-                    appearance="text"
-                    size="sm"
-                    type="button"
-                    [label]="t().uiNow"
-                    [attr.aria-label]="t().uiNow"
-                    (click)="pickNow()"></button>
-                <button
-                    rtButton
-                    qa-dataid="date-panel-done"
-                    size="sm"
-                    type="button"
-                    [label]="t().uiDone"
-                    [attr.aria-label]="t().uiDone"
-                    [disabled]="!canApply()"
-                    (click)="apply()"></button>
-            }
-            @default {
-                <button
-                    rtButton
-                    qa-dataid="date-panel-apply"
-                    size="sm"
-                    type="button"
-                    [label]="t().uiApply"
-                    [attr.aria-label]="t().uiApply"
-                    [disabled]="!canApply()"
-                    (click)="apply()"></button>
-            }
-        }
-    </div>
+        </div>
+    }
 </ng-container>

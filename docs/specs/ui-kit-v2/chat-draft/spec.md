@@ -1,6 +1,6 @@
 # A ready text in the reply field of a correspondence
 
-**Status:** in force · **Revision:** 2026-11-06 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-07 · **Scenario prefix:** `SC-UKV`
 **Depends on:** none
 **Laws:** `frontend-application`, `reuse-first`
 **Procedures:** none
@@ -41,6 +41,8 @@ The method has no words on the screen: the person sees the text appear in the fi
   no bar without a field.
 - **The draft is read as plain text in all reply fields.** Files stay out of it, and with no field
   the answer is an empty string.
+- **The chosen files of the draft are read by a method of their own.** The text stays as it is, and
+  with no field or no file the answer is an empty list.
 
 ## What is out of scope
 
@@ -101,6 +103,7 @@ Not applicable.
 ## History of changes
 
 - 2026-11-06 — created by the work about the method `setDraft`.
+- 2026-11-07 — the task RT-3159 adds the method `draftFiles`.
 
 ## Scenarios
 
