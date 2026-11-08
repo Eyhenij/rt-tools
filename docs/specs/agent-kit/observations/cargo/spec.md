@@ -1,6 +1,6 @@
 # Cargo outward
 
-**Status:** in force · **Revision:** 2026-09-14 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-08 · **Scenario prefix:** `SC-AK`
 **Depends on:** `message-bus` (where the cargo goes and where the marking goes)
 **Laws:** `observability`, `work-conduct`, `delivery`, `frontend-application`, `verifiability`
 **Procedures:** none
@@ -13,7 +13,7 @@ overrides, the proposals addressed "package" and the incident analyses; what a p
 disk by — the review of a closed task or a word mid-work; how a tree is created in the intake and
 what it marks its records with after the review.
 
-Nothing goes outward that a person did not send by a command: not one guard goes into the network.
+Text goes outward only by a command of a person, and the day lines of numbers are the one exception.
 The observations themselves, the digest and the snapshot of the overrides are the neighbouring
 subdomain "Observations" next to it.
 
@@ -98,8 +98,8 @@ subdomain "Observations" next to it.
   would read as written by hand while a hand-written one stopped being named.
 - **The intake address is read from a setting of the tree.** Nailed into the code, it would name a
   foreign tree in the package texts, and it would leave the tree no choice of where to send.
-- **Nothing goes outward that a person did not send by a command.** Not one guard goes into the
-  network, there is no background sending.
+- **Nothing goes outward that a person did not send by a command.** The exception is the day line: it
+  carries numbers only and leaves by itself. A proposal, an analysis and the digest have no other way.
 - **An unfamiliar argument ends the sending, it is not skipped silently.** The only action of this
   command is irreversible and goes outward, and "the argument is surplus" is here
   indistinguishable from "the command did nothing": a call with the help argument, made for the sake
@@ -239,8 +239,8 @@ subdomain "Observations" next to it.
   checksum, the path is absent as before; the cargo carries no more about the tree than the digest.
 - **A broken line does not leave and does not stop the cargo.** The reading of the day file skips it,
   as the digest does: an observation is a side record of a guard.
-- **The cargo goes by the same request as the rest, with the tree token, and only by a command.** No
-  background sending: the line "nothing goes outward that a person did not send by a command" holds.
+- **The cargo goes by the same request as the rest, with the tree token, and only by a command.** The
+  automatic sending carries day lines and has no path to this cargo.
 - **The check for a tree address covers the observation cargo.** After the substitution below a
   resource name is always a package name, so what is left to judge are the free fields of a line.
 - **A resource name the package does not ship leaves as a constant word, not as itself.** A tree
@@ -249,7 +249,7 @@ subdomain "Observations" next to it.
   send: a tree with such names could send nothing, ever. The package has no use for the name of a
   rule it does not ship, and that a load was of the tree's own the intake reads from the kind
   beside it. A refusal line carries no kind, so the substitution covers every event, not the load
-  alone.
+  alone. The keys of a day line take the same word, so they carry no such name.
 - **The schema version of the cargo rises.** A tree on the former edition sends three kinds, and the
   intake takes them as before; the version says which edition the lines came from.
 - **The dry run names the observation cargo with the number of lines and days.** What leaves is
@@ -344,6 +344,10 @@ Not applicable: the answer is an exit code and text, not named codes.
 the ready text, the occasion, what it is closed by — which overrides of the tree the arrived edit
 will remove — and, after the sending, a link to the created record. It is put by two movements — the
 closed-work review and the feedback command — and the file of both is one: the one for today.
+
+**An incident analysis** may carry the line `**Resource:**` with the package resource the miss is
+about. The intake keeps it, and repeated mistakes are matched by it. An analysis without the line
+is counted apart.
 
 **The marking** creates and edits no files of its own in the tree: it reads the intake address and
 the tree token from the package setting, and the state of a record lives at the intake.
@@ -443,6 +447,8 @@ The open questions of the domain are shared, and they live in the spec next to i
 
 ## History of changes
 
+- 2026-11-08 — the metrics of the package moved in: the day lines are the one thing that leaves by
+  itself, and an incident analysis gained the optional line `**Resource:**`.
 - 2026-09-14 — the agreement of task RT-2098 about the observation lines leaving for the intake was
   merged in: ten rules, scenarios `SC-AK-1099`…`SC-AK-1103`, bindings on the reading of the days and
   the sending. The question of the window length of the observation cargo went to the domain spec.

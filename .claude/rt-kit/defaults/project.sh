@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · defaults/project.sh · ee7b3862d78a · правится надстройкой, не здесь
+# rt-kit v0.34.0 · defaults/project.sh · 92105ef98b39 · правится надстройкой, не здесь
 # Tree profile: what checks an edit here and what counts as reinvention.
 #
 # The package default. Everything the trees of this workshop have in common lives here: the Nx
@@ -362,6 +362,44 @@ rt_conflicting_pulls_default() {
     printf '%s' "$state" | jq -r '.conflicting[]? | "#\(.number) \(.branch)"'
 }
 
+# The requests merged or closed since a day, for the package metrics: one JSON object per line. The
+# default asks GitHub, and another hosting declares the function by the same shape, which is named in
+# `hooks/pull-outcomes.sh`. A failing exit code means «nobody to ask», and such a tree is counted
+# apart. The task comes from the title: the head of a revert request names the request, not the task.
+# An epic is told by the label of its card, as the delivery guard tells it: a request carries none.
+# A request never handed over counts apart, so the hosting is asked no more about it: one call per
+# request made a first read of a busy tree outlive the report.
+rt_pull_outcomes_default() {
+    command -v gh >/dev/null 2>&1 || return 3
+    command -v jq >/dev/null 2>&1 || return 3
+    list="$(gh pr list --state all --limit 1000 --search "closed:>=$1" \
+        --json number,state,headRefName,title,closedAt 2>/dev/null)" || return 4
+    printf '%s' "$list" | jq -c '.[] | select(.state != "OPEN")' | while IFS= read -r pull; do
+        number="$(printf '%s' "$pull" | jq -r '.number')"
+        head="$(printf '%s' "$pull" | jq -r '.headRefName')"
+        task="$(printf '%s' "$pull" | jq -r '(.title | capture("\\[[A-Za-z]+-(?<n>[0-9]+)\\]").n)? // empty')"
+        commits='[]'
+        labels='[]'
+        if ! command -v rt_handover_known >/dev/null 2>&1 || rt_handover_known "$head"; then
+            commits="$(gh api "repos/{owner}/{repo}/pulls/$number/commits?per_page=100" \
+                --jq '[.[] | {sha, tree: .commit.tree.sha, parents: (.parents | length)}]' 2>/dev/null)"
+            [ -n "$commits" ] || return 4
+            [ -z "$task" ] || labels="$(gh api "repos/{owner}/{repo}/issues/$task" --jq '[.labels[].name]' 2>/dev/null)"
+        fi
+        printf '%s' "$pull" | jq -c --argjson commits "$commits" --argjson labels "${labels:-[]}" \
+            --arg task "$task" --arg epic "${RT_BOARD_EPIC_LABEL:-}" '{
+            number,
+            commits: $commits,
+            head: .headRefName,
+            merged: (.state == "MERGED"),
+            closed: (.closedAt // "" | .[0:10]),
+            task: (if $task == "" then null else ($task | tonumber) end),
+            revert: (.title | startswith("Revert")),
+            epic: ($epic != "" and ($labels | index($epic) != null))
+        }'
+    done
+}
+
 # What counts as reinvention in this tree. One line per "pattern<tab>replacement". The patterns are
 # narrow on purpose: the guard checks only NEW text, and a wide pattern would refuse an edit that
 # creates nothing new.
@@ -409,6 +447,7 @@ rt_docs_pair_for() { rt_docs_pair_for_default "$@"; }
 rt_lint_for() { rt_lint_for_default "$@"; }
 rt_task_branch_ok() { rt_task_branch_ok_default "$@"; }
 rt_task_branch_number() { rt_task_branch_number_default "$@"; }
+rt_pull_outcomes() { rt_pull_outcomes_default "$@"; }
 rt_reinvented_in() { rt_reinvented_in_default "$@"; }
 rt_is_app_code() { rt_is_app_code_default "$@"; }
 # The directory of the rules package sources in this tree, from the root. Empty — the tree does not

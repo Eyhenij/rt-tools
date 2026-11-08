@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/git-guard-delivery-signature.sh · fefc08d23d99 · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/git-guard-delivery-signature.sh · 0ed5e90c08ce · правится надстройкой, не здесь
 # The signature of a machine commit for the delivery guard: whose commit it is, whether it is signed
 # with the right mail and what to do if it is not.
 #
@@ -20,6 +20,25 @@
 # although the calling guard has already done it: an empty pattern would turn the sign into a search
 # for a word over the whole line, that is, into a refusal on every mention of the command.
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
+
+rt_delivery_branch_signature() {
+    # The signature: the address of the machine account is declared by the tree, and the working
+    # copy does not know it — which means the very first commit will travel under someone else's
+    # signature, and after the push that is fixed only by a force push.
+    #
+    # A person the tree named in RT_HUMAN_EMAILS signs with their own mail lawfully: the push
+    # accepts it, and refusing it here left such a person no way to start a branch at all.
+    if [ -n "$commit_email" ]; then
+        tree_email="$(git config user.email 2>/dev/null)"
+        human_email=''
+        for one in ${RT_HUMAN_EMAILS:-}; do
+            [ "$tree_email" = "$one" ] && human_email=1 && break
+        done
+        [ -n "$tree_email" ] && [ "$tree_email" != "$commit_email" ] && [ -z "$human_email" ] \
+            && fault "the working copy signs commits as «${tree_email}», while the tree declared the email of the machine account «${commit_email}». The very first commit leaves under a foreign signature: git config user.email \"${commit_email}\"."
+    fi
+    return 0
+}
 
 rt_delivery_signature() {
 # --- the signature of a machine commit ----------------------------------------------------

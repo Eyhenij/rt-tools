@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/claim-guard.sh · ff69c9d11fd6 · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/claim-guard.sh · bb2c57232baa · правится надстройкой, не здесь
 # rt-hook: Stop
 # The claim guard: what is said to the owner about the state of the tree carries the command that
 # showed it. Stop.
@@ -36,6 +36,7 @@
 
 # Its own name in the observations: the refusal is written by the shared deny tail, not by the guard.
 RT_GUARD_NAME=claim-guard
+RT_GUARD_RULE=turn-conduct
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/push-set.sh · b40f9cdd6775 · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/push-set.sh · 512f91216efd · правится надстройкой, не здесь
 # The gate set before a push, one way for both who run it. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The session guard of the push and the git hook
 # `pre-push` source it and call its functions.
@@ -38,6 +38,11 @@ rt_push_set_profile() {
     command -v rt_push_mark_clean >/dev/null 2>&1 || rt_push_mark_clean() { return 1; }
     command -v rt_push_mark_key >/dev/null 2>&1 || rt_push_mark_key() { return 1; }
     command -v rt_push_heavy_ahead >/dev/null 2>&1 || rt_push_heavy_ahead() { return 1; }
+    # The line of a run for the metrics. No file — the set runs and records nothing.
+    # shellcheck disable=SC1091
+    [ -f "$hooks_dir/metric-marks.sh" ] && . "$hooks_dir/metric-marks.sh" 2>/dev/null
+    command -v rt_run_note >/dev/null 2>&1 || rt_run_note() { return 0; }
+    command -v rt_tree_sign >/dev/null 2>&1 || rt_tree_sign() { return 0; }
     return 0
 }
 
@@ -65,9 +70,10 @@ rt_push_set_base() {
 # named in `rt_push_set_ahead` instead of being started. The git hook has no such limit, leaves the
 # variable empty and runs the step itself.
 rt_push_set_run() {
-    local base="$1" check out status key_before skip_code="${RT_SKIP_CODE:-7}"
+    local base="$1" check out status key_before skip_code="${RT_SKIP_CODE:-7}" sign started
     case "$skip_code" in '' | 0 | 1 | *[!0-9]*) skip_code=7 ;; esac
     command -v rt_push_check_heavy >/dev/null 2>&1 || rt_push_check_heavy() { return 1; }
+    sign="$(rt_tree_sign .)"
 
     rt_push_set_failed=""
     rt_push_set_output=""
@@ -96,18 +102,22 @@ rt_push_set_run() {
         rt_push_set_ran=$((rt_push_set_ran + 1))
         key_before=""
         rt_push_mark_clean && key_before="$(rt_push_mark_key "$check" "$base" 2>/dev/null)"
+        started="$(date +%s 2>/dev/null)"
         out="$(eval "$check" 2>&1 </dev/null)"
         status=$?
         if [ "$status" -eq 0 ]; then
             rt_push_set_passed=$((rt_push_set_passed + 1))
             rt_push_mark_put "$check" "$base" "$key_before"
+            rt_run_note "$sign" "$started" green "$check"
             continue
         fi
         if [ "$status" -eq "$skip_code" ]; then
             rt_push_set_skipped="${rt_push_set_skipped}${rt_push_set_skipped:+
 }${check}"
+            rt_run_note "$sign" "$started" skipped "$check"
             continue
         fi
+        rt_run_note "$sign" "$started" red "$check"
         rt_push_set_failed="${rt_push_set_failed}${rt_push_set_failed:+
 }${check}"
         rt_push_set_output="${rt_push_set_output}${rt_push_set_output:+

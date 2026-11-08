@@ -118,6 +118,11 @@ export interface IConfig {
      */
     readonly observe: boolean;
     /**
+     * Уходят ли строки дня сами. Умолчание — да: дерево, заведшее адрес и токен, уже согласилось. `false`
+     * останавливает отправку и оставляет запись. Выключенный `observe` гасит и её.
+     */
+    readonly send: boolean;
+    /**
      * Роли слоя правил, которые дерево выключило, именами файлов без расширения:
      * `["strict-teacher"]`. Выключается обязательность вызова, а не сама роль: файл роли
      * остаётся разложенным и зовётся руками, а гард при выключенной роли выходит молча.
@@ -281,6 +286,7 @@ export function parseConfig(text: string): IConfig {
         has: idList(raw['has'], 'has'),
         // Выключателем считается только явное «нет»: ключа нет — запись идёт, как и у гарда.
         observe: raw['observe'] !== false,
+        send: raw['send'] !== false,
         rolesOff: idList(raw['rolesOff'], 'rolesOff'),
         intake: textOf(raw['intake'], 'intake'),
         token: textOf(raw['token'], 'token'),

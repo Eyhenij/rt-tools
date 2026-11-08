@@ -23,6 +23,8 @@
  * имя задаёт тот, кто знает, что идёт не один, — конвейер. Настройка прогонщика и подъём стенда
  * живут в разных процессах, но окружение у них общее, и оба читают одно и то же.
  */
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 /** Поздняя проба куки Keycloak: один помощник на все наборы, берётся отсюда, как и засев людей. */
 export { lateCookieProbe } from '../../../tools/keycloak-cookie-probe.mjs';
@@ -75,6 +77,9 @@ export const FOREIGN_PAGE_ORIGIN = `http://host.docker.internal:${FOREIGN_PORT}`
 /** Имя базы стенда. Названо отдельно: `CREATE DATABASE` не принимает адреса. */
 export const STAND_DATABASE = textFromEnv('E2E_DATABASE', 'message_bus_e2e');
 
+/** Файл с токеном первого дерева: команда печатает токен один раз, а операции приёма зовёт спека. */
+export const STAND_TREE_TOKEN_FILE = join(tmpdir(), `rt-stand-${API_PORT}-tree-token`);
+
 /**
  * Порт хранилища стенда. По умолчанию — рабочий; CI называет свой, потому что раннер стоит на
  * машине разработчика, и рабочий порт там держит его собственная база.
@@ -123,6 +128,7 @@ export const ALL_RIGHTS = Object.freeze([
     'proposals:manage',
     'summaries:read',
     'usage:read',
+    'quality:read',
     'invites:read',
     'invites:manage',
     'chat:read',
@@ -134,6 +140,7 @@ export const WATCHER_RIGHTS = Object.freeze([
     'proposals:read',
     'summaries:read',
     'usage:read',
+    'quality:read',
     'invites:read',
     'chat:read',
 ]);
@@ -341,6 +348,7 @@ export const SECTIONS = Object.freeze({
     proposals: '/proposals',
     summaries: '/summaries',
     usage: '/usage',
+    quality: '/quality',
     invites: '/invites',
     chat: '/chat',
 });

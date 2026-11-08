@@ -1,0 +1,13 @@
+{
+  "name": "message-bus-admin-usage-feature-quality",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/message-bus-admin/usage/feature/quality/src",
+  "prefix": "admin",
+  "projectType": "library",
+  "tags": ["scope:message-bus-admin-usage-feature-quality"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

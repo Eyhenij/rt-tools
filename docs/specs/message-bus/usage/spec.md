@@ -1,6 +1,6 @@
 # Usage of the rules in the sessions of the trees — the intake, the reading and the section
 
-**Status:** in force · **Revision:** 2026-09-15 · **Scenario prefix:** `SC-MB`
+**Status:** in force · **Revision:** 2026-11-08 · **Scenario prefix:** `SC-MB`
 **Depends on:** `agent-kit` (the observation lines are read from the tree and sent by it)
 **Laws:** `verifiability`, `entity-models`, `lists`, `reuse-first`, `frontend-application`, `lib-imports`, `observability`
 **Procedures:** none — the operations are declared by the controllers of the intake
@@ -43,16 +43,17 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
 
 ### What it is called in the interface
 
-| In the agreement        | On the screen                                                                                        |
-| ----------------------- | ---------------------------------------------------------------------------------------------------- |
-| the section             | «Использование» in the row of the sections, after «Сводки деревьев»                                  |
-| the usage of a skill    | a row of the table; the columns «Скил», «Род», «Загрузок», «Сессий», «Отказов»                       |
-| the kind of a skill     | «правило», «паттерн», «скил пакета», «свой скил дерева»                                              |
-| the filters             | the tree and the period above the table; the period is two days, the default is the last thirty days |
-| the quick period        | a toggle «7 дней», «30 дней», «90 дней» next to the day pickers                                      |
-| the digest of a period  | the cards above the table: «Загрузки по дням», «Топ скилов», «По роду», «Отказы»                     |
-| the sessions of a skill | the panel «Сессии» opened by a row: a list of day, session sign and how many times                   |
-| the right               | `usage:read` — a person with it sees the section and reads the usage                                 |
+| In the agreement          | On the screen                                                                                        |
+| ------------------------- | ---------------------------------------------------------------------------------------------------- |
+| the section               | «Использование» in the row of the sections, after «Сводки деревьев»                                  |
+| the usage of a skill      | a row of the table; the columns «Скил», «Род», «Загрузок», «Сессий», «Отказов»                       |
+| the kind of a skill       | «правило», «паттерн», «скил пакета», «свой скил дерева»                                              |
+| the filters               | the tree and the period above the table; the period is two days, the default is the last thirty days |
+| the quick period          | a toggle «7 дней», «30 дней», «90 дней» next to the day pickers                                      |
+| the digest of a period    | the cards above the table: «Загрузки по дням», «Топ скилов», «По роду», «Отказы»                     |
+| the sessions of a skill   | the panel «Сессии» opened by a row: a list of day, session sign and how many times                   |
+| the section of the result | «Качество» in the row of the sections, after «Использование»; the right `quality:read`               |
+| the right                 | `usage:read` — a person with it sees the section and reads the usage                                 |
 
 ## Rules
 
@@ -84,6 +85,29 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
   for every kind of event.
 - **The digest of a month stays as it was.** The lines do not replace it: the digest answers "how
   are things now" by the last run, the lines answer "how much and by whom" over a period.
+
+**The day lines of the metrics.**
+
+- **A day line is taken in by an operation of its own, by the tree token.** The automatic sending
+  carries numbers only, so it does not share a body with the cargo that carries text.
+- **A key of a day line comes from a closed list declared by the package.** A resource key takes the
+  form `<base>:<name>`. Any other key refuses the line with `metrics-field-refused`, and the code names
+  the field, not its value.
+- **A resource name is judged by its form at the intake and by the package list at the sender.** The
+  list of the intake lags behind the package, and a new name would refuse the whole line. A path, a
+  sum and a long text do not pass the form; a word that looks like a name does.
+- **The copy sign and the version are judged by their form.** A path or a text in either refuses the
+  line, so the head of a line carries no words of the tree.
+- **A day and a stamp lie in the calendar and not past tomorrow.** A later day is never removed by age,
+  and a later stamp closes the day for every next line of the copy.
+- **A value of a day line is a whole number from zero up.** The same code refuses the rest.
+- **A day line replaces the stored one of its tree, copy and day.** The sending carries the window
+  whole, so a repeat changes nothing, and an equal stamp is taken in.
+- **A day line with an older stamp is refused with `metrics-stale` and changes nothing.** The stamp is
+  compared in the update itself: two sends of one copy arrive at once, and a check by reading would
+  let the older one win.
+- **A day line is kept a year, and the night cleaning removes older ones.** A failure of that removal
+  is a line of the journal and does not stop the removal of the observation rows.
 
 **The reading.**
 
@@ -152,17 +176,28 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
   acceptance of the work is a tree sending its lines and the section showing, for that tree and the
   days of the window, the same loads as `agent-kit stats` printed on the tree; a section checked by
   reading its own code is not checked.
+- **The section «Качество» is a list page on the common base, and the answer of its operation is a page.** The table of drivers takes the address, the refusal, the repeat and the cards from the base, and
+  the three result metrics arrive in the same answer above the rows.
+- **The section «Качество» is closed by a right of its own, `quality:read`.** Two menu items never share a right: closing one of them would close the other.
+- **A tree and a version narrow the result metrics and the table of drivers, and completeness stays over all trees.** A cycle compares one tree with itself, so a number that does not narrow cannot show a movement. A version is matched exactly. A tree narrows repeated mistakes to its own records, against all fixes of the package. A version does not touch them: a record does not carry the version of its tree.
+- **A tile with nothing to count says there is no data.** A day with no task and a package with no fix older than a month have no result, and zeros there read as one.
+- **Fewer than ten tasks give a count, not a share.** A share of three misleads. Requests closed unmerged count in the denominator, and a rollback is
+  subtracted when the days are added up.
+- **The table of drivers is sorted by the loss: empty refusals, gate refusals, refusals after a load and wasted runs.** A refusal that stopped a real mistake is shown and is not a loss.
+- **A repeated mistake is a fix older than a month with a new record on its resource, within a month of installing the version with it.** A younger fix has had nothing to work on. A record without a resource is counted apart: there is
+  nothing to match it with.
+- **The completeness line names how many trees sent numbers over seven days, and a tree whose last send failed is named with the reason.** A share over half of the trees reads as a share over all of them unless the screen says so.
+- **A section with no day line at all names the command that enrols a tree in its empty table.** The result metrics are not drawn: zeros over nothing read as a result.
+- **A period with no day line draws no result metrics and asks for another period, and the completeness line stays.** Zeros there are not a result either, and completeness does not depend on the period.
 
 ## What is out of scope
 
-- **A digest over several trees.** The section shows one tree over one period; the digest over
-  trees stays out of scope by the word of the owner, as the domain spec says.
 - **The session time and the token cost.** Named by the owner outright.
 - **Editing or deleting the lines from the admin application.** The lines are what the tree sent;
   the only removal is by age.
-- **A screen of the refusals of the guards and the outcomes of the push gate.** The lines land and
-  are kept; the first screen is about the loads, with the refusals of the gate as a column next to
-  them. A screen of the rest is a work of its own when the owner asks.
+- **A screen of the outcomes of the push gate.** The lines land and are kept. The refusals of the
+  guards over all trees stand in the section «Качество». A screen of the rest is a work of its own
+  when the owner asks.
 - **Naming a session.** The tree sends a checksum, and the intake stores what it sent.
 - **A comparison with the equal period before.** One period at a time.
 
@@ -171,6 +206,7 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
 | Operation                      | What it does                                                                                     |
 | ------------------------------ | ------------------------------------------------------------------------------------------------ |
 | POST /api/intake/observations  | takes the observation cargo in by the tree token: a day of a copy is replaced whole              |
+| POST /api/intake/metrics       | takes a day line in by the tree token: a line of a copy and a day replaces the stored one        |
 | GET /api/usage                 | a page of the usage of the skills of a tree: `tree`, `from`, `to`, `page`, `size`, `sort`, `dir` |
 | GET /api/usage/:skill/sessions | the sessions of one skill of a tree over the period: `tree`, `from`, `to`; newest day first      |
 | GET /api/usage/digest          | the digest of the period of a tree: `tree`, `from`, `to`; the days, the kinds, the two tops      |
@@ -178,6 +214,9 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
 The body of the intake operation is the observation cargo as the sending side declares it: `{ schema,
 tree, origin, days: [{ day, lines: [{ t, ev, res, kind?, sid, v, skill? }] }] }`. The form is declared
 once, in the cargo module of the package, and the intake reads it from the same declaration.
+
+The body of the day line is `{ schema, tree, origin, day, version, stamp, metrics }`, and the form and
+the list of keys are declared in the same module. Its answer is `200` with `{ tree, day }`.
 
 The answer of the intake names the tree, how many days were replaced and how many rows landed. The
 answer of the usage is a page `{ rows, total, page, size, from, to }` of rows `{ skill, kind, loads,
@@ -187,20 +226,28 @@ with `days` of `{ day, loads, sessions, denials }` for every day of the period, 
 loads }`, and `top`, `denied` of the rows of the table. All three readings are closed by
 `usage:read`.
 
+`GET /api/usage/quality` answers a page `{ rows, total, page, size, from, to, anyLine, firstPass,
+corrections, repeats, completeness, versions, anyInPeriod }` of rows of drivers by resource. The tree and the
+version are optional and narrow the result numbers and the rows; `completeness` and `versions` stay whole. It is closed by `quality:read`.
+
 ### Refusal codes
 
-Not applicable: the intake answers with a code of the answer of HTTP, not with named codes of the
-domain. Where it is obliged to refuse:
+Not applicable: the intake answers with a code of the answer of HTTP, not with `Code.X` of a procedure.
+A refusal of a day line also carries the word of the shared list of refusals. Where it is obliged to
+refuse:
 
 | What happened                                        | Code  | What it says                                 |
 | ---------------------------------------------------- | ----- | -------------------------------------------- |
 | a line of an unknown event kind or without a session | `400` | the day and the place of the line            |
 | a field of a line longer than its cap                | `400` | the day, the place of the line and the field |
 | more lines than the cap                              | `413` | the cap and how many arrived                 |
+| a day line with a field outside its list or form     | `400` | `metrics-field-refused` and the field        |
+| a day line with an older stamp                       | `409` | `metrics-stale`                              |
 | the period is longer than four hundred days          | `400` | the limit                                    |
 | the period is not two days, or `to` is before `from` | `400` | what is missing or reversed                  |
 | the tree is not named or not found                   | `404` | that the tree is not known                   |
 | no right `usage:read`                                | `403` | that the right is missing                    |
+| no right `quality:read`                              | `403` | that the right is missing                    |
 
 The rest — the token, the schema version, the weight, the storage — as at every operation of the
 intake.
@@ -226,14 +273,19 @@ Indexed by the pair "tree — day" and by "tree — origin — day": the reading
 period, the intake replaces a day of a copy. No uniqueness: two lines of one session may be equal to
 the character, and the tree sends what it wrote.
 
+**A day line** — one row per tree, copy and day, in a table of its own: the tree, the copy sign, the
+day, the package version, the stamp and the map of numbers as it arrived. The triple is unique, and the
+storage holds that: two sends of one copy arrive at once. A day is indexed for the night cleaning.
+
 ## Screens and states
 
-| Screen                      | States                                                                                                                               |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| The section «Использование» | reading: the former rows dimmed under the sign of reading · rows · empty state of the base · one message of the bus at a failure     |
-| The digest                  | reading: the cards under the sign of reading · the chart and the lists · an empty period: zero bars and the empty state of the lists |
-| The filters                 | the tree not chosen: the table is empty and asks for a tree · the tree chosen and the period default · the period edited             |
-| The panel «Сессии»          | opening: the sign of reading · rows of day, sign and count · empty: the skill had no load over the period                            |
+| Screen                      | States                                                                                                                                                  |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| The section «Использование» | reading: the former rows dimmed under the sign of reading · rows · empty state of the base · one message of the bus at a failure                        |
+| The section «Качество»      | reading: the skeleton · the tiles and the table · no day line: the enrolling command · a send failed: the tree and the reason · a read failed: a repeat |
+| The digest                  | reading: the cards under the sign of reading · the chart and the lists · an empty period: zero bars and the empty state of the lists                    |
+| The filters                 | the tree not chosen: the table is empty and asks for a tree · the tree chosen and the period default · the period edited                                |
+| The panel «Сессии»          | opening: the sign of reading · rows of day, sign and count · empty: the skill had no load over the period                                               |
 
 ## Cross-cutting requirements
 
@@ -287,6 +339,14 @@ the intake and summed together at the reading: the owner asks about the tree, no
 
 ## History of changes
 
+- 2026-11-08 — the agreement on the metrics merged: its scenarios stand in
+  `docs/specs/agent-kit/metrics/`. The digest over several trees and the refusals of the guards
+  left "out of scope" at the request of the owner, and the section «Качество» shows them.
+- 2026-11-08 — the section «Качество», task RT-3156. The scenarios stand in the package agreement on
+  the metrics. The agreement named the right `usage:read`; the section got a right of its own,
+  because two menu items never share one.
+- 2026-11-07 — the day lines of the metrics of the rules package: the operation, the table and the
+  removal by age, task RT-3155. The scenarios stand in the package agreement on the metrics.
 - 2026-09-15 — the digest of the period: the operation, the cards above the table, the quick
   period. The owner named the sample screen and its charts; the line about charts in "out of
   scope" had misread the owner's word about a digest over several trees.
