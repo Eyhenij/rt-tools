@@ -1,6 +1,6 @@
 # Cargo outward
 
-**Status:** in force · **Revision:** 2026-09-14 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-08 · **Scenario prefix:** `SC-AK`
 **Depends on:** `message-bus` (where the cargo goes and where the marking goes)
 **Laws:** `observability`, `work-conduct`, `delivery`, `frontend-application`, `verifiability`
 **Procedures:** none
@@ -249,7 +249,7 @@ subdomain "Observations" next to it.
   send: a tree with such names could send nothing, ever. The package has no use for the name of a
   rule it does not ship, and that a load was of the tree's own the intake reads from the kind
   beside it. A refusal line carries no kind, so the substitution covers every event, not the load
-  alone.
+  alone. The keys of a day line take the same word, so they carry no such name.
 - **The schema version of the cargo rises.** A tree on the former edition sends three kinds, and the
   intake takes them as before; the version says which edition the lines came from.
 - **The dry run names the observation cargo with the number of lines and days.** What leaves is
@@ -344,6 +344,10 @@ Not applicable: the answer is an exit code and text, not named codes.
 the ready text, the occasion, what it is closed by — which overrides of the tree the arrived edit
 will remove — and, after the sending, a link to the created record. It is put by two movements — the
 closed-work review and the feedback command — and the file of both is one: the one for today.
+
+**An incident analysis** may carry the line `**Resource:**` with the package resource the miss is
+about. The intake keeps it, and repeated mistakes are matched by it. An analysis without the line
+is counted apart.
 
 **The marking** creates and edits no files of its own in the tree: it reads the intake address and
 the tree token from the package setting, and the state of a record lives at the intake.
@@ -443,6 +447,8 @@ The open questions of the domain are shared, and they live in the spec next to i
 
 ## History of changes
 
+- 2026-11-08 — the metrics of the package moved in: the day lines are the one thing that leaves by
+  itself, and an incident analysis gained the optional line `**Resource:**`.
 - 2026-09-14 — the agreement of task RT-2098 about the observation lines leaving for the intake was
   merged in: ten rules, scenarios `SC-AK-1099`…`SC-AK-1103`, bindings on the reading of the days and
   the sending. The question of the window length of the observation cargo went to the domain spec.

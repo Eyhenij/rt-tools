@@ -1,21 +1,18 @@
 # The product metrics of the rules package
 
-**Status:** proposed · **Revision:** 7 November 2026 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 8 November 2026 · **Scenario prefix:** `SC-AK`
 **Depends on:** `observations`, `observations/cargo`, `context-cost`, `exam`, `message-bus/usage`, `message-bus/intake`, `message-bus/access-rights`, `message-bus/cargo-state`
 **Laws:** `observability`, `verifiability`, `work-conduct`, `entity-models`, `lists`, `frontend-application`
 **Procedures:** none
 
-A product agreement written before the code. It merges into the package spec as a subdomain by the
-last commit of the epic, with the same scenario numbers.
-
 ## Why
 
 The mission of the package says a person gets a working result that matches their words, without
-watching over the agent, and a corrected mistake does not come back. Nothing measures that today.
-The package counts loads and refusals, so an edit of a rule is justified by opinion, and whether it
-helped stays unknown.
+watching over the agent, and a corrected mistake does not come back. Counts of loads and refusals
+measure none of that, so an edit of a rule stayed justified by opinion, and whether it helped stayed
+unknown.
 
-This agreement names the metrics, the numbers each tree sends by itself, and the loop that turns
+This subdomain names the metrics, the numbers each tree sends by itself, and the loop that turns
 them into edits. One copy of this tree shows the size of the question: in 33 days with records one guard refused
 669 times, and 395 of those refusals came right after its own refusal in the same session.
 
@@ -88,8 +85,6 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
 - **Roles and commands are judged by calls and verdicts.** The count of calls per role and command,
   and for a role that gives a verdict the share of work it refused. A verdict is read when the role
   ends, because a role usually runs in the background. Only package names and numbers are recorded.
-- **Delivery is judged by three numbers.** Days from a received record to its fix, the share of trees
-  on the latest two versions seen, and the share of package sections a tree replaces by an override.
 - **A report names its own completeness.** It states how many enrolled trees sent a day line in the
   last seven days, how many send outcomes, and which last send failed.
 - **A metric has no target until it has a baseline.** The owner names targets after the baseline. A
@@ -149,13 +144,13 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
   machine does not have: the token lies outside the tree, and a second machine would stay silent.
 - **Enrolled trees send by default, and the change is named.** The release note and `agent-kit sync`
   name it. `send: false` stops the sending and keeps the writing. `observe: false` stops both, whatever
-  `send` says. A change of either key is an observation.
-- **A failed send leaves a trace.** It writes its last result beside the mark: the code, the time and
+  `send` says. A change of `send` is an observation. With `observe: false` nothing is recorded, and
+  the silence of the tree says so.
+- **A failed send leaves a trace.** It writes its last result into the mark: the code, the time and
   the reason. `agent-kit doctor` and the session start name a failure that started more than a day ago. The next line
   that gets through carries that code as a number, and a tree whose token is refused sends nothing,
   so the section reads it as a silent tree.
-- **A refused token or a found leak stops the tries.** They resume when the token file or the cargo
-  changes.
+- **A refused token stops the tries.** They resume when the token file changes.
 - **A run marked as a test sends nothing.**
 - **The observations directory is refused to direct edits.** A guard refuses a write there and to the
   two keys, so the executor cannot edit the data that judges it.
@@ -163,7 +158,7 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
 ### The loop
 
 - **The report of a cycle is the section over all enrolled trees.** `agent-kit metrics` is the partial
-  view of one tree, without completeness, repeated mistakes and delivery.
+  view of one tree, without completeness and repeated mistakes.
 - **The partial view names what it read.** The days it found, between which dates, and the files it
   removed by the keeping time stand in the report and in its JSON, because a reading removes them. A
   tree with no observations gets a sentence instead of zeros. A list cut short says how many lines it
@@ -172,34 +167,15 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
 - **A cycle begins with the report.** The worst driver of the main metric is named with its numbers.
 - **One task changes one thing and names the metric it should move.** The task and the release note
   carry the metric and the direction.
+- **A release of the package does not start without its metric.** The journal is assembled from
+  commits, so the required field of the release run is the template. A metric is a name the reports
+  show, with a resource name after it at most, because a word of one's own cannot be judged by the
+  next report. A release with no such
+  edit names the reason instead: silence cannot be told from a forgotten field.
 - **A cycle compares the same trees.** Only trees on a version holding the edit are compared, against
   themselves before it. A movement below the noise named with the baseline reads «не сдвинулось».
 - **The role `goal-critic` gives the verdict from the numbers of the report.** The executor who made
   the edit does not.
-- **The epic closes when the report collects data from the enrolled trees.** The receiver is rolled
-  out and the package is released from the main branch, so the epic merges first.
-- **The first cycle is a task of its own after two weeks of data.** One edit chosen by the report has
-  its result in the next report.
-
-## Articles this agreement changes
-
-| Spec                         | Article                                                                               | Change                                                                             |
-| ---------------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `observations/spec.md`       | «Network telemetry and background sending» in the out-of-scope list                   | Removed                                                                            |
-| `observations/spec.md`       | «New kinds of events» in the out-of-scope list                                        | The closed list gains the run line, the exam verdict and the events below          |
-| `observations/spec.md`       | The writing «is switched off whole»                                                   | Stays for `observe`. `send` is a second key                                        |
-| `observations/spec.md`       | «Measuring the session time and the token cost» in the out-of-scope list              | Stays. A run's seconds measure a check, not a session                              |
-| `observations/spec.md`       | «Observations older than the keeping time are removed by the digest»                  | The one-tree report removes them too and names what it removed                     |
-| `observations/cargo/spec.md` | «Nothing goes outward that a person did not send by a command»                        | Holds for proposals, analyses and the digest. Day lines leave by themselves        |
-| `observations/cargo/spec.md` | «The cargo goes by the same request as the rest … only by a command»                  | The same exception                                                                 |
-| `observations/cargo/spec.md` | «A resource name the package does not ship leaves as a constant word»                 | Day lines carry no such name                                                       |
-| `message-bus/usage/spec.md`  | A digest over several trees and the screen of guard refusals in the out-of-scope list | Moved in by this agreement, at the owner's request                                 |
-| `context-cost/spec.md`       | The command «goes to no network»                                                      | Stays. The sending reads the number itself                                         |
-| `observations/cargo/spec.md` | The shape of an incident analysis                                                     | Gains an optional line `**Resource:**`, which the repeated mistakes are matched by |
-| `exam/spec.md`               | «No storage of its own»                                                               | The exam guard writes a verdict line                                               |
-
-The events the closed list gains besides those: `owner-correction`, `role-call`, `role-verdict`,
-`command-call`, `edit-seen` and `task-outcome`.
 
 ## What is out of scope
 
@@ -223,19 +199,22 @@ The copy sign is a random value made at the first send and kept in the ignored d
 
 ### Refusal codes
 
-| Code                    | When                                                               |
-| ----------------------- | ------------------------------------------------------------------ |
-| `metrics-field-refused` | a key is outside the closed list, or a value is not a whole number |
-| `metrics-stale`         | the stamp is older than the stored one                             |
+Not applicable: the intake answers with an HTTP code and a word of the shared list, not with
+`Code.X` of a procedure. The words of a refused day line:
+
+| When                                                               | HTTP  | The word                |
+| ------------------------------------------------------------------ | ----- | ----------------------- |
+| a key is outside the closed list, or a value is not a whole number | `400` | `metrics-field-refused` |
+| the stamp is older than the stored one                             | `409` | `metrics-stale`         |
 
 The refusals of the tree token and of the body size are those of the observation cargo.
 
 ## Data
 
-A new table `MetricsDay` holds a tree, a copy sign, a day, a version, a stamp and a JSON map of whole
+The table `MetricsDay` holds a tree, a copy sign, a day, a version, a stamp and a JSON map of whole
 numbers, unique by tree, copy and day. The keeping term is a year, as for observations.
 
-`Postmortem` gets a nullable `resource`. An analysis without it is counted apart. A new table
+`Postmortem` carries a nullable `resource`. An analysis without it is counted apart. The table
 `RecordTransition` holds a record, its status and the moment of the move. Nothing here keeps text.
 
 ## Screens and states
@@ -302,7 +281,26 @@ Assumptions of the executor, each named so it can be overruled:
   read, 36 of 255 messages against 15 before. It holds no swearing words, so the hook sees 8 of 63
   swearing messages, though each of them is a correction by the definition above. Questions such as
   «почему он в драфте?» count too. The first cycle measures it again.
+- **The three numbers of delivery have no count.** The section was promised the days from a received
+  record to its fix, the share of trees on the latest two versions seen and the share of package
+  sections a tree replaces by an override. A tree sends `sectionsTotal` and `sectionsOverridden`, and
+  no report reads them. The other two numbers are counted nowhere. The owner either drops the promise
+  or opens a task.
+- **A found leak does not stop the tries.** A line whose keys carry the tree address does not leave
+  until they change, and the failure is named. The copy still tries every 15 minutes, while a refused
+  token stops that. Whether a leak needs the same stop is not decided.
+- **What closes the epic has no check.** The report was meant to collect data from the enrolled
+  trees before the epic counts as closed, and the receiver goes out from the main branch, so the
+  epic merges first. It is read by the completeness line, and the owner names the number.
+- **Nothing starts the first cycle.** It was promised as a task of its own after two weeks of data:
+  one edit chosen by the report, with its result in the next report. Only the epic plan holds it, as
+  task RT-3158.
 
 ## History of changes
 
+- 8 November 2026 — merged into the package spec as a subdomain, with the old scenario numbers. The
+  articles it changed were edited in their own specs. Three rules without a place in code left for
+  the open questions: delivery, the close of the epic and the first cycle. A found leak left the rule
+  about a refused token for the same reason. Only a change of `send` is an observation, because
+  nothing is recorded under `observe: false`.
 - 7 November 2026 — proposed, then rewritten after the review by the role `spec-critic`.

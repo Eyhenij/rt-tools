@@ -7,6 +7,9 @@ on:
                 description: 'Specify version: patch, minor, major, or specific version (e.g. 1.2.3)'
                 required: true
                 default: 'patch'
+            metric:
+                description: 'Метрика выпуска из отчёта: «пустые отказы git-guard-push: вниз». Выпуск без такой правки: «нет: <причина>»'
+                required: true
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
@@ -47,9 +50,13 @@ jobs:
                   sudo apt-get install jq
 
             - name: Update version
+              env:
+                  RELEASE_METRIC: ${{ github.event.inputs.metric }}
               run: |
                   node update-version-agent-kit.cjs ${{ github.event.inputs.version }}
                   pnpm run changelog:agent-kit
+                  # Отказ останавливает выпуск до сборки и публикации: журнал ещё никуда не ушёл.
+                  node tools/release-metric.mjs projects/agent-kit/CHANGELOG.md "$RELEASE_METRIC"
                   # Журнал делится тем же движением, которое его растит. Прежде длину его мерил
                   # гейт пуша — то есть после того, как журнал уже приехал в главную ветку: он
                   # встал на 530 строках при пределе 500, и из дерева перестала пушиться любая

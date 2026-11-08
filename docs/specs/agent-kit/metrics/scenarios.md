@@ -1,7 +1,6 @@
 # Scenarios — the product metrics of the rules package
 
-The numbers continue the numbering of the package and do not change after the merge. Until a test
-appears, a scenario carries the line «Not covered» with the reason.
+The numbers continue the numbering of the package and do not change.
 
 ### SC-AK-1273 — a task without a change after the handover counts as first-pass
 
@@ -288,6 +287,15 @@ Then the result metrics are not shown, and the empty table names the command tha
 Given the read of the section is refused
 When a person sees the refusal
 Then the numbers of the former read are gone, and one action repeats the read
+
+### SC-AK-1332 — a release names its metric
+
+Given a release of the package is started
+When its metric field holds a metric the reports show with a direction, or a reason why it has none
+Then the line stands under the heading of the new version in the journal
+And any other value stops the release before anything is built, and the journal stays as it was
+
+Covered: `tools/tests/release-metric.test.sh`.
 
 ### SC-AK-1331 — a period with no line
 

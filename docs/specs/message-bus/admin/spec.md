@@ -250,8 +250,8 @@ issuing and revocation — `docs/specs/message-bus/invites/`; the entry — `doc
 
 ## What is out of scope
 
-- **A digest over several trees and charts.** The word of the owner: the lists are shown, and a digest is
-  appointed when there are three trees.
+- **Charts.** The word of the owner: the lists are shown. The digest over trees is the section
+  «Качество».
 - **The entry and the accounts.** What a person introduces themselves to the intake by and how their
   record is created — the subdomain `docs/specs/message-bus/admin-auth/`.
 - **The edit of the taken-in cargo.** The admin application reads, it does not edit — the state of a

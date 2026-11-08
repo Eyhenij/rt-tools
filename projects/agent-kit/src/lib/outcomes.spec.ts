@@ -1,5 +1,5 @@
 /**
- * Итог задачи: сценарии договорённости `docs/specs/agent-kit/proposed/metrics/`.
+ * Итог задачи: сценарии `docs/specs/agent-kit/metrics/`.
  */
 import { execFileSync } from 'node:child_process';
 import { chmodSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';

@@ -112,7 +112,7 @@ const NOT_RECORDED_YET: readonly string[] = [
 ];
 
 /** Метрики, которые считает только отчёт по всем приложениям. */
-const OUTSIDE_THE_TREE: readonly string[] = ['Повторы ошибок', 'Полнота отчёта', 'Выпуск'];
+const OUTSIDE_THE_TREE: readonly string[] = ['Повторы ошибок', 'Полнота отчёта'];
 
 const percent: (part: number, whole: number) => number = (part: number, whole: number): number =>
     whole > 0 ? Math.round((part / whole) * 100) : 0;

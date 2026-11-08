@@ -1,6 +1,6 @@
 # Usage of the rules in the sessions of the trees — the intake, the reading and the section
 
-**Status:** in force · **Revision:** 2026-11-07 · **Scenario prefix:** `SC-MB`
+**Status:** in force · **Revision:** 2026-11-08 · **Scenario prefix:** `SC-MB`
 **Depends on:** `agent-kit` (the observation lines are read from the tree and sent by it)
 **Laws:** `verifiability`, `entity-models`, `lists`, `reuse-first`, `frontend-application`, `lib-imports`, `observability`
 **Procedures:** none — the operations are declared by the controllers of the intake
@@ -192,14 +192,12 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
 
 ## What is out of scope
 
-- **A digest over several trees.** The section shows one tree over one period; the digest over
-  trees stays out of scope by the word of the owner, as the domain spec says.
 - **The session time and the token cost.** Named by the owner outright.
 - **Editing or deleting the lines from the admin application.** The lines are what the tree sent;
   the only removal is by age.
-- **A screen of the refusals of the guards and the outcomes of the push gate.** The lines land and
-  are kept; the first screen is about the loads, with the refusals of the gate as a column next to
-  them. A screen of the rest is a work of its own when the owner asks.
+- **A screen of the outcomes of the push gate.** The lines land and are kept. The refusals of the
+  guards over all trees stand in the section «Качество». A screen of the rest is a work of its own
+  when the owner asks.
 - **Naming a session.** The tree sends a checksum, and the intake stores what it sent.
 - **A comparison with the equal period before.** One period at a time.
 
@@ -341,6 +339,9 @@ the intake and summed together at the reading: the owner asks about the tree, no
 
 ## History of changes
 
+- 2026-11-08 — the agreement on the metrics merged: its scenarios stand in
+  `docs/specs/agent-kit/metrics/`. The digest over several trees and the refusals of the guards
+  left "out of scope" at the request of the owner, and the section «Качество» shows them.
 - 2026-11-08 — the section «Качество», task RT-3156. The scenarios stand in the package agreement on
   the metrics. The agreement named the right `usage:read`; the section got a right of its own,
   because two menu items never share one.
