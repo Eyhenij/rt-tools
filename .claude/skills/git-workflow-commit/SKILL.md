@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load for creating a task and a branch, commit and push — the creation command with all four steps, moving the column, merging two tasks into one, working as the machine account, skipping the document requirement. Opening a PR — pattern git-workflow-pr.
 ---
-<!-- rt-kit v0.34.0 · patterns/git-workflow-commit.github.md · fae1cad32185 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.34.0 · patterns/git-workflow-commit.github.md · 6c108a1f1545 · правится надстройкой, не здесь -->
 
 # Task, branch and commit
 
@@ -202,9 +202,11 @@ and nobody was waiting to review it.
 
 ## The commit is signed by the bot
 
-The token is read into a variable and not printed; author and committer are set by variables of
-the same command. `git config` will not do — the config is shared with the main tree and would
-rewrite the signature to the owner:
+The token is read into a variable and not printed; author and committer are set by variables
+prefixed to `git commit` itself. `git config` will not do — the config is shared with the main tree
+and would rewrite the signature to the owner. `export` will not do either: it reaches every later
+command of the call, and a set before a push started by the same call runs the hook scenarios under
+the bot's mail — the ones comparing a mail fall on a sound tree:
 
 ```bash
 TOKEN=$(tr -d '\n' < ~/.config/<дерево>-bot-token)

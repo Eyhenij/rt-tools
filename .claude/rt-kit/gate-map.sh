@@ -150,6 +150,11 @@ skill_for() {
                     printf '%s\n' 'testing'
                     return 0
                     ;;
+                # The closed set of rights and the realm description: a new right starts here.
+                */libs/message-bus-common/src/lib/rights.ts | */deploy/auth/realm/*)
+                    printf '%s\n' 'permissions'
+                    return 0
+                    ;;
                 # The receiver's access guard: the refusal without a sign-in and without a right is
                 # held by it, and the access rule is bound here. The branch stands before the
                 # general server one.
