@@ -1,3 +1,18 @@
+# [0.42.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.41.0...rt-ui-kit-v2%400.42.0) (2026-11-08)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** календарь на узком экране не прячет единственный месяц ([4fafc63](https://github.com/Eyhenij/rt-tools/commit/4fafc63d20a0b1e075c96eb5188eef001b123d7d))
+- **rt:ui-kit-v2:** стрелки сеток месяцев и лет без подложки в обеих панелях ([10adc33](https://github.com/Eyhenij/rt-tools/commit/10adc3333dd8425e1b84993b1c3386a00abaf960))
+- **rt:ui-kit-v2:** шаблон истории открытия панели даты в своём файле ([adab2de](https://github.com/Eyhenij/rt-tools/commit/adab2dea97833b50069506a2201dcacae07788f4))
+
+### Features
+
+- **rt:ui-kit-v2:** панель даты в виде одобренного макета ([0b50d74](https://github.com/Eyhenij/rt-tools/commit/0b50d7427e1a8a01ef7e94c2b047f9e1f07f1169))
+- **rt:ui-kit-v2:** панель даты выдана из пакета, чат отдаёт файлы черновика методом draftFiles ([7567260](https://github.com/Eyhenij/rt-tools/commit/7567260c0105fdeafe7ce6c16ba3d72295d98827))
+- **rt:ui-kit-v2:** панель даты по одобренным кадрам, стрелки и сегодняшний день во всех календарях ([262d20f](https://github.com/Eyhenij/rt-tools/commit/262d20f0ac8f39129810e6aa6c7ad4129035542d))
+- **rt:ui-kit-v2:** панель даты получила вход isTodayButtonShown ([f3e8155](https://github.com/Eyhenij/rt-tools/commit/f3e815581d3258cb6e3be41b877e5168918526b2))
+
 # [0.41.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.40.0...rt-ui-kit-v2%400.41.0) (2026-11-07)
 
 ### Bug Fixes
