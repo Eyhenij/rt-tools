@@ -103,6 +103,12 @@ and from sorting out the cargo it needs one step: the list of what is not sorted
 - **A release is not started from here.** Merging the package's request publishes nothing:
   publishing is a separate decision of the owner and a separate manual run. The gathering says
   what has accumulated for a release, and stops.
+- **A release names its metric.** The run of the release has a required field: `<метрика>: вверх`,
+  `<метрика>: вниз`, or `нет: <причина>` for a release of repairs. `tools/release-metric.mjs` refuses
+  any other value before anything is built, and writes the line under the heading of the version. A
+  metric is a name the reports show, with a resource name after it at most; the list stands in the
+  command.
+  How the metric is chosen is the pattern `task-flow-cycle`.
 - **A resource the consumer does not carry out is never a package resource.** The sign is two
   questions to it: does the consumer have what it speaks of, and is there anybody there to call
   it. "No" to even one — the resource stays this tree's own resource, on a par with a package one:

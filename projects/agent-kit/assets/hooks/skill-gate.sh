@@ -145,6 +145,17 @@ EOF
     *) exit 0 ;;
 esac
 
+# Every file edit the gate sees, with a rule or without one: the share of edits that met a rule not
+# yet loaded needs its denominator. A call of a tool is not an edit.
+case "$kind" in
+    command | browser | design | '') ;;
+    *)
+        # shellcheck disable=SC1091
+        . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/observe.sh" 2>/dev/null \
+            && rt_note edit-seen "kind=$kind" "sid=$sid"
+        ;;
+esac
+
 [ -z "$req" ] && exit 0
 
 # The map may name several rules: the domain rule and the one that acts as a second layer. The

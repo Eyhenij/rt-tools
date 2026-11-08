@@ -10,8 +10,8 @@
  * Дата приходит доводом, а не берётся из часов: сводка за отрезок дней иначе не проверяется
  * спекой — вчерашний файл фикстуры завтра оказывается позавчерашним.
  */
-import { existsSync, readFileSync, readdirSync, rmSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import { byText } from './order.js';
 
 /** Куда `observe.sh` пишет наблюдения. Путь от корня дерева. */
@@ -35,6 +35,16 @@ export interface IObservation {
     /** Признак сессии: считает заходы, имени сессии не выдаёт. */
     readonly session: string;
     readonly version: string;
+    /** Отказ равен предыдущему отказу этого гарда. `null`: запись не сравнивала. */
+    readonly empty?: boolean | null;
+    /** Секунды запуска. `null`: строка не про запуск. */
+    readonly seconds?: number | null;
+    /** Секунды красного запуска на том же содержимом перед этим. `null`: такого не было. */
+    readonly wasted?: number | null;
+    /** Правило, которое объявила проверка. Пусто: не объявляла. */
+    readonly rule?: string;
+    /** Приговор роли. Пусто: роль его не даёт. */
+    readonly verdict?: string;
 }
 
 /** Сколько раз что-то встретилось. Порядок — по убыванию, при равенстве по имени. */
@@ -122,6 +132,17 @@ export function dayBefore(today: string, days: number): string {
     return Number.isNaN(at) ? today : new Date(at - days * 86_400_000).toISOString().slice(0, 10);
 }
 
+const textOf: (value: unknown) => string = (value: unknown): string => (typeof value === 'string' ? value : '');
+
+/** Признак пустого отказа. Значение вне пары читается как отсутствие признака. */
+const EMPTY_SIGN: Readonly<Record<string, boolean>> = { '0': false, '1': true };
+
+const emptyOf: (value: unknown) => boolean | null = (value: unknown): boolean | null => EMPTY_SIGN[textOf(value)] ?? null;
+
+/** Целое число из строки записи: всё остальное читается как отсутствие значения. */
+const wholeOf: (value: unknown) => number | null = (value: unknown): number | null =>
+    /^\d+$/u.test(textOf(value)) ? Number(textOf(value)) : null;
+
 /**
  * Одна строка наблюдения. Битая пропускается молча: наблюдение — побочная запись гарда, и
  * оборванная на полуслове строка не имеет права уронить сводку.
@@ -137,10 +158,15 @@ export function parseObservation(line: string): IObservation | null {
         return typeof event === 'string' && event
             ? {
                   event,
-                  resource: typeof found['res'] === 'string' ? found['res'] : '',
-                  kind: typeof found['kind'] === 'string' ? found['kind'] : '',
-                  session: typeof found['sid'] === 'string' ? found['sid'] : '',
-                  version: typeof found['v'] === 'string' ? found['v'] : '',
+                  resource: textOf(found['res']),
+                  kind: textOf(found['kind']),
+                  session: textOf(found['sid']),
+                  version: textOf(found['v']),
+                  empty: emptyOf(found['empty']),
+                  seconds: wholeOf(found['secs']),
+                  wasted: wholeOf(found['wasted']),
+                  rule: textOf(found['rule']),
+                  verdict: textOf(found['verdict']),
               }
             : null;
     } catch {
@@ -154,6 +180,8 @@ export interface IReadResult {
     readonly swept: readonly string[];
     /** Каталога нет вовсе — записи не велось ни разу. */
     readonly silent: boolean;
+    /** Дни отрезка, за которые файл нашёлся: запрошенный отрезок бывает длиннее срока хранения. */
+    readonly daysRead: readonly string[];
 }
 
 /** Раньше ли день черты. Дни записаны `ГГГГ-ММ-ДД`, и порядок строк у них хронологический. */
@@ -162,7 +190,7 @@ function isBefore(day: string, edge: string): boolean {
 }
 
 /** Записи одного дня из его файла. Строка, которая не разбирается, пропускается молча. */
-function observationsOfDay(path: string): readonly IObservation[] {
+export function observationsOfDay(path: string): readonly IObservation[] {
     const found: IObservation[] = [];
 
     for (const line of readFileSync(path, 'utf8').split('\n')) {
@@ -177,21 +205,36 @@ function observationsOfDay(path: string): readonly IObservation[] {
 }
 
 /**
+ * Каталог меток. Запись о том, что каталог наблюдений не идёт в историю, заводится сразу: признак копии,
+ * попавший в коммит, дал бы двум машинам один признак, и их дни затирали бы друг друга.
+ */
+export function openMarksDir(dir: string): void {
+    const ignore: string = join(dirname(dir), '.gitignore');
+
+    mkdirSync(dir, { recursive: true });
+    if (!existsSync(ignore)) {
+        writeFileSync(ignore, '*\n');
+    }
+}
+
+/**
  * Наблюдения за отрезок и уборка того, что старше срока хранения.
  *
  * Уборка идёт здесь, а не отдельной командой: каталог растёт от работы, а не от запусков, и
- * команда, о которой надо помнить, до второго месяца не доживает.
+ * команда, о которой надо помнить, до второго месяца не доживает. Тихая отправка читает с
+ * `sweep: false`: снятое по сроку обязан назвать отчёт, а она ничего не печатает.
  */
-export function readObservations(root: string, today: string, days: number): IReadResult {
+export function readObservations(root: string, today: string, days: number, sweep: boolean = true): IReadResult {
     const dir: string = join(root, OBSERVATIONS_DIR);
     if (!existsSync(dir)) {
-        return { observations: [], swept: [], silent: true };
+        return { observations: [], swept: [], silent: true, daysRead: [] };
     }
 
     const since: string = dayBefore(today, days - 1);
     const keepFrom: string = dayBefore(today, KEEP_DAYS);
     const observations: IObservation[] = [];
     const swept: string[] = [];
+    const daysRead: string[] = [];
 
     for (const name of readdirSync(dir).sort(byText)) {
         const day: string | null = dayOf(name);
@@ -201,17 +244,20 @@ export function readObservations(root: string, today: string, days: number): IRe
         }
 
         if (isBefore(day, keepFrom)) {
-            rmSync(join(dir, name), { force: true });
-            swept.push(name);
+            if (sweep) {
+                rmSync(join(dir, name), { force: true });
+                swept.push(name);
+            }
         } else if (isBefore(day, since)) {
             // День старше запрошенного отрезка, но моложе черты хранения: файл остаётся лежать,
             // а в этот отчёт не идёт
         } else {
             observations.push(...observationsOfDay(join(dir, name)));
+            daysRead.push(day);
         }
     }
 
-    return { observations, swept, silent: false };
+    return { observations, swept, daysRead, silent: false };
 }
 
 const countBy: (values: readonly string[]) => readonly ICount[] = (values: readonly string[]): readonly ICount[] => {

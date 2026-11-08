@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/end-conversation-guard.sh · 5224ca469e09 · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/end-conversation-guard.sh · 7cf377b4b722 · правится надстройкой, не здесь
 # rt-hook: PreToolUse .*EndConversation.*
 # Requires: hooks/deny-tail.sh
 # The guard of the end of the conversation: the executor does not end the session. PreToolUse on
@@ -19,6 +19,7 @@
 
 # Its own name in the observations: the refusal is recorded by the shared deny tail.
 RT_GUARD_NAME=end-conversation-guard
+RT_GUARD_RULE=turn-conduct
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

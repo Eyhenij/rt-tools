@@ -1,4 +1,4 @@
-<!-- rt-kit v0.34.0 · samples/tasks/_template/plan.md · 18166cded496 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.34.0 · samples/tasks/_template/plan.md · 5be5d5d0425f · правится надстройкой, не здесь -->
 # Plan
 
 **Task:** <KEY>-<number> · **Branch:** <branch>
@@ -20,6 +20,7 @@ along the way.
 - **This task reaches:** <the change a person will see>
 - **Sign:** <the command, the page or the number that shows it, and who sees it>
 - **Milestone G of the epic:** <the point named in the epic plan>
+- **Metric:** <only for an edit of a rule, a hook, a check or a role: the number, the direction, the baseline — pattern `task-flow-cycle`>
 
 ## Task footprint
 

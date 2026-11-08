@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/task-flow-guard.sh · c0d7c60dbb35 · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/task-flow-guard.sh · 4cc17bc0c705 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/task-flow-context.sh, hooks/profile-check.sh, hooks/deny-tail.sh
 # PreToolUse guard for Edit|Write|MultiEdit: code is not written before the plan.
@@ -27,6 +27,7 @@
 # Its own name in the observations: the refusal is written by the shared deny tail, not by the
 # guard itself.
 RT_GUARD_NAME=task-flow-guard
+RT_GUARD_RULE=task-flow
 
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 

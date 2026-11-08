@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { MetricsIntakeController } from './metrics-intake.controller';
 import { ObservationRetentionService } from './observation-retention.service';
 import { ObservationsIntakeController } from './observations-intake.controller';
 import { SummariesReadController } from './summaries-read.controller';
@@ -18,7 +19,13 @@ import { UsageReadController } from './usage-read.controller';
  * читались бы как одна поверхность с двумя дверьми.
  */
 @Module({
-    controllers: [SummaryIntakeController, ObservationsIntakeController, SummariesReadController, UsageReadController],
+    controllers: [
+        SummaryIntakeController,
+        ObservationsIntakeController,
+        MetricsIntakeController,
+        SummariesReadController,
+        UsageReadController,
+    ],
     providers: [ObservationRetentionService],
 })
 export class ObservationsModule {}

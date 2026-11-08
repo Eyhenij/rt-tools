@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/prose-style-guard.sh · ba0ca0f52ce4 · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/prose-style-guard.sh · 541a4e97646e · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: checks/check-prose-style.mjs, hooks/deny-tail.sh, hooks/write-targets.sh
 # Prose guard: officialese and words that are not written in this tree do not reach the file.
@@ -22,6 +22,7 @@
 # Its own name in the observations: the refusal is recorded by the shared deny tail, not by the
 # guard itself.
 RT_GUARD_NAME=prose-style-guard
+RT_GUARD_RULE=doc-style
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

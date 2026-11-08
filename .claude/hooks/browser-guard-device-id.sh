@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/browser-guard-device-id.sh · ce71c4fe5ecc · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/browser-guard-device-id.sh · d8a5fb58882f · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__select_browser
 # rt-hook: PostToolUse mcp__claude-in-chrome__select_browser
 # Requires: hooks/deny-tail.sh
@@ -28,6 +28,7 @@
 
 # The guard's name for the observations: it is written by the shared deny tail.
 RT_GUARD_NAME=browser-guard-device-id
+RT_GUARD_RULE=browser-verification
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

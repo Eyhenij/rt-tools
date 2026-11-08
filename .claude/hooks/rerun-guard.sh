@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/rerun-guard.sh · 95b01d458ffe · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/rerun-guard.sh · f79bf0482015 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh
 # Guard of the rerun: a fallen run is not rerun until its log has been read.
@@ -24,6 +24,7 @@
 # Its own name in the observations: the refusal is written by the shared deny tail, not by the
 # guard itself.
 RT_GUARD_NAME=rerun-guard
+RT_GUARD_RULE=testing
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

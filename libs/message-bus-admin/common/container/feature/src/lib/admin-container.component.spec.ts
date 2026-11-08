@@ -88,9 +88,9 @@ describe('AdminContainerComponent', () => {
     });
 
     it('SC-MB-142 — разделы приходят в шапку декларацией меню, а колонки с ними нет', () => {
-        signedInWith(['postmortems:read', 'proposals:read', 'summaries:read', 'usage:read', 'invites:read', 'chat:read']);
+        signedInWith(['postmortems:read', 'proposals:read', 'summaries:read', 'usage:read', 'quality:read', 'invites:read', 'chat:read']);
 
-        expect(shownSections().length).toBe(6);
+        expect(shownSections().length).toBe(7);
         expect(fixture.debugElement.query(By.css('rt-section-nav'))).toBeNull();
     });
 
@@ -110,8 +110,8 @@ describe('AdminContainerComponent', () => {
     it('SC-MB-301 — пока ответ о вошедшем не приехал, не скрывается ничего', () => {
         // Права неизвестны, а не пусты: скрыв по пустому набору, админка спрятала бы разделы у
         // того, у кого они есть, — и человек остался бы на пустом экране без выхода с него.
-        // Шесть — все пункты декларации
-        expect(shownSections().length).toBe(6);
+        // Семь — все пункты декларации
+        expect(shownSections().length).toBe(7);
     });
 
     it('SC-MB-302 — вошедшему без единого права разделов в шапке не показывают', () => {

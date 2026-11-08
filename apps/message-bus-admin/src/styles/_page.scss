@@ -100,6 +100,10 @@
 
         > .rt-table {
             width: 100%;
+        }
+
+        /** В режиме карточек ширину держит экран: иначе длинная пустота уходит за край. */
+        > .rt-table:not(.rt-table--cards) {
             min-width: max-content;
         }
     }

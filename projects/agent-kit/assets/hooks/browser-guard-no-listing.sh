@@ -13,6 +13,7 @@
 # Its own name in the observations: the refusal is recorded by the shared deny tail, not by the
 # guard itself.
 RT_GUARD_NAME=browser-guard-no-listing
+RT_GUARD_RULE=browser-verification
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 

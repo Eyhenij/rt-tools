@@ -35,6 +35,7 @@ interface IStored {
 class PrismaDouble {
     public readonly postmortems: IStored[] = [];
     public readonly proposals: IStored[] = [];
+    public readonly transitions: unknown[] = [];
 
     public get postmortem(): Record<string, (args: Record<string, unknown>) => Promise<unknown>> {
         return this.#tableOf(this.postmortems, 'file');
@@ -42,6 +43,16 @@ class PrismaDouble {
 
     public get proposal(): Record<string, (args: Record<string, unknown>) => Promise<unknown>> {
         return this.#tableOf(this.proposals, 'digest');
+    }
+
+    public get recordTransition(): Record<string, (args: { data: unknown[] }) => Promise<{ count: number }>> {
+        return {
+            createMany: async (args: { data: unknown[] }): Promise<{ count: number }> => {
+                this.transitions.push(...args.data);
+
+                return { count: args.data.length };
+            },
+        };
     }
 
     public async $transaction(operations: Promise<unknown>[]): Promise<unknown[]> {
