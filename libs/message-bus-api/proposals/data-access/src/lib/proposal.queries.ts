@@ -18,6 +18,8 @@ import {
     cargoStateMove,
     cargoStateOf,
     cargoStateWrites,
+    cargoTransitions,
+    ECargoKind,
     ECargoState,
     ECargoStateMove,
     ICargoCloseOutcome,
@@ -384,9 +386,9 @@ export async function moveProposalStates(
         return [];
     }
 
-    const rows: { digest: string; state: string }[] = await prisma.proposal.findMany({
+    const rows: { id: string; digest: string; state: string }[] = await prisma.proposal.findMany({
         where: { treeId, digest: { in: asked.map((one: ICargoStateAsk): string => one.key) } },
-        select: { digest: true, state: true },
+        select: { id: true, digest: true, state: true },
     });
     const stored: Map<string, ECargoState> = new Map(
         rows.map((row: { digest: string; state: string }): [string, ECargoState] => [row.digest, cargoStateOf(row.state)])
@@ -404,15 +406,19 @@ export async function moveProposalStates(
         .map((one: { ask: ICargoStateAsk }): ICargoStateAsk => one.ask);
 
     if (written.length > 0) {
-        await prisma.$transaction(
-            written.map((ask: ICargoStateAsk) =>
+        const idOf: (key: string) => string | undefined = (key: string): string | undefined =>
+            rows.find((row: { digest: string }): boolean => row.digest === key)?.id;
+
+        await prisma.$transaction([
+            ...written.map((ask: ICargoStateAsk) =>
                 prisma.proposal.update({
                     where: { treeId_digest: { treeId, digest: ask.key } },
                     data: cargoStateData(ask),
                     select: { id: true },
                 })
-            )
-        );
+            ),
+            prisma.recordTransition.createMany({ data: cargoTransitions(ECargoKind.Proposal, judged, idOf) }),
+        ]);
     }
 
     return judged.map((one: { outcome: ICargoStateOutcome }): ICargoStateOutcome => one.outcome);
@@ -462,11 +468,14 @@ export async function closeProposals(prisma: PrismaService, asked: readonly ICar
         .map((one: { ask: ICargoStateAsk }): ICargoStateAsk => one.ask);
 
     if (written.length > 0) {
-        await prisma.$transaction(
-            written.map((ask: ICargoStateAsk) =>
+        await prisma.$transaction([
+            ...written.map((ask: ICargoStateAsk) =>
                 prisma.proposal.update({ where: { id: ask.key }, data: cargoCloseData(ask), select: { id: true } })
-            )
-        );
+            ),
+            prisma.recordTransition.createMany({
+                data: cargoTransitions(ECargoKind.Proposal, judged, (key: string): string => key),
+            }),
+        ]);
     }
 
     return judged.map((one: { outcome: ICargoCloseOutcome }): ICargoCloseOutcome => one.outcome);

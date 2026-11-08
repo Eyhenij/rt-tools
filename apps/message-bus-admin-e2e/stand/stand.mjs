@@ -128,6 +128,7 @@ export const ALL_RIGHTS = Object.freeze([
     'proposals:manage',
     'summaries:read',
     'usage:read',
+    'quality:read',
     'invites:read',
     'invites:manage',
     'chat:read',
@@ -139,6 +140,7 @@ export const WATCHER_RIGHTS = Object.freeze([
     'proposals:read',
     'summaries:read',
     'usage:read',
+    'quality:read',
     'invites:read',
     'chat:read',
 ]);
@@ -346,6 +348,7 @@ export const SECTIONS = Object.freeze({
     proposals: '/proposals',
     summaries: '/summaries',
     usage: '/usage',
+    quality: '/quality',
     invites: '/invites',
     chat: '/chat',
 });

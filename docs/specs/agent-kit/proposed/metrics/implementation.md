@@ -7,7 +7,8 @@ records has code in `projects/agent-kit/assets/hooks/metric-marks.sh:rt_tree_sig
 `projects/agent-kit/assets/hooks/role-calls.sh:rt_verdict_of` and
 `projects/agent-kit/assets/hooks/pull-outcomes.sh:rt_pull_outcomes`. The rest of the agreement has
 none yet, so this file lists where each part is expected, and the merge into the package spec shows
-where to look. The day line and its operation are bound in `docs/specs/message-bus/usage/implementation.md`.
+where to look. The day line, its operation and the section «Качество» are bound in
+`docs/specs/message-bus/usage/implementation.md`.
 
 | Part                                                             | Where it is expected               | Task    |
 | ---------------------------------------------------------------- | ---------------------------------- | ------- |
@@ -15,5 +16,5 @@ where to look. The day line and its operation are bound in `docs/specs/message-b
 | The run line, the signs, the correction hook, the outcome reader | `projects/agent-kit/assets/hooks/` | RT-3153 |
 | The day line, its table and its operation                        | `libs/message-bus-api/`            | RT-3155 |
 | The sending, the lock, the mark                                  | `projects/agent-kit/src/lib/`      | RT-3154 |
-| The section «Качество»                                           | `libs/message-bus-admin/`          | RT-3156 |
+| The section «Качество»                                           | `libs/message-bus-admin/usage/`    | RT-3156 |
 | The rule of the loop                                             | `projects/agent-kit/assets/rules/` | RT-3157 |

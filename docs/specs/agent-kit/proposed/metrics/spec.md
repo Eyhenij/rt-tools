@@ -73,9 +73,9 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
   moves that task out of first-pass.
 - **Three result metrics follow the mission.** First-pass acceptance, owner corrections per accepted
   task, and repeated mistakes.
-- **A repeated mistake is counted against the version that carries its fix.** It is a new record, or a
-  second arrival of a known one, on the same resource from a tree on a version at or after the fix,
-  within 30 days of that tree installing it. Only fixes older than 30 days enter the share.
+- **A repeated mistake is counted against the version that carries its fix.** It is a new record on the
+  same resource from a tree on a version at or after the fix, within 30 days of that tree installing
+  it. The share counts fixes with such a record among fixes older than 30 days.
 - **Texts are judged by four numbers, read together.** The share of edits that met a rule not yet
   loaded, the share of laid-out rules not loaded in 30 days, the cost of the entry and the share of
   exams passed the first time. The first three are never read without the cost of the entry.
@@ -183,19 +183,20 @@ them into edits. One copy of this tree shows the size of the question: in 33 day
 
 ## Articles this agreement changes
 
-| Spec                         | Article                                                                               | Change                                                                      |
-| ---------------------------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `observations/spec.md`       | «Network telemetry and background sending» in the out-of-scope list                   | Removed                                                                     |
-| `observations/spec.md`       | «New kinds of events» in the out-of-scope list                                        | The closed list gains the run line, the exam verdict and the events below   |
-| `observations/spec.md`       | The writing «is switched off whole»                                                   | Stays for `observe`. `send` is a second key                                 |
-| `observations/spec.md`       | «Measuring the session time and the token cost» in the out-of-scope list              | Stays. A run's seconds measure a check, not a session                       |
-| `observations/spec.md`       | «Observations older than the keeping time are removed by the digest»                  | The one-tree report removes them too and names what it removed              |
-| `observations/cargo/spec.md` | «Nothing goes outward that a person did not send by a command»                        | Holds for proposals, analyses and the digest. Day lines leave by themselves |
-| `observations/cargo/spec.md` | «The cargo goes by the same request as the rest … only by a command»                  | The same exception                                                          |
-| `observations/cargo/spec.md` | «A resource name the package does not ship leaves as a constant word»                 | Day lines carry no such name                                                |
-| `message-bus/usage/spec.md`  | A digest over several trees and the screen of guard refusals in the out-of-scope list | Moved in by this agreement, at the owner's request                          |
-| `context-cost/spec.md`       | The command «goes to no network»                                                      | Stays. The sending reads the number itself                                  |
-| `exam/spec.md`               | «No storage of its own»                                                               | The exam guard writes a verdict line                                        |
+| Spec                         | Article                                                                               | Change                                                                             |
+| ---------------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `observations/spec.md`       | «Network telemetry and background sending» in the out-of-scope list                   | Removed                                                                            |
+| `observations/spec.md`       | «New kinds of events» in the out-of-scope list                                        | The closed list gains the run line, the exam verdict and the events below          |
+| `observations/spec.md`       | The writing «is switched off whole»                                                   | Stays for `observe`. `send` is a second key                                        |
+| `observations/spec.md`       | «Measuring the session time and the token cost» in the out-of-scope list              | Stays. A run's seconds measure a check, not a session                              |
+| `observations/spec.md`       | «Observations older than the keeping time are removed by the digest»                  | The one-tree report removes them too and names what it removed                     |
+| `observations/cargo/spec.md` | «Nothing goes outward that a person did not send by a command»                        | Holds for proposals, analyses and the digest. Day lines leave by themselves        |
+| `observations/cargo/spec.md` | «The cargo goes by the same request as the rest … only by a command»                  | The same exception                                                                 |
+| `observations/cargo/spec.md` | «A resource name the package does not ship leaves as a constant word»                 | Day lines carry no such name                                                       |
+| `message-bus/usage/spec.md`  | A digest over several trees and the screen of guard refusals in the out-of-scope list | Moved in by this agreement, at the owner's request                                 |
+| `context-cost/spec.md`       | The command «goes to no network»                                                      | Stays. The sending reads the number itself                                         |
+| `observations/cargo/spec.md` | The shape of an incident analysis                                                     | Gains an optional line `**Resource:**`, which the repeated mistakes are matched by |
+| `exam/spec.md`               | «No storage of its own»                                                               | The exam guard writes a verdict line                                               |
 
 The events the closed list gains besides those: `owner-correction`, `role-call`, `role-verdict`,
 `command-call`, `edit-seen` and `task-outcome`.
@@ -240,15 +241,18 @@ numbers, unique by tree, copy and day. The keeping term is a year, as for observ
 ## Screens and states
 
 The section «Качество» stands in the admin application after «Использование», under the right
-`usage:read`. The read operation is `GET /api/usage/quality`.
+`quality:read`. The read operation is `GET /api/usage/quality`.
 
 At the top stand the three result metrics over a period with the completeness line. Below stands a
-table of drivers by resource, sorted by the loss. A tree and a version narrow it.
+table of drivers by resource, sorted by the loss. A tree and a version narrow the result metrics and
+the table, and the completeness line stays over all enrolled trees.
 
 | State                         | What the screen shows                                           |
 | ----------------------------- | --------------------------------------------------------------- |
 | reading                       | the skeleton of the section                                     |
 | no enrolled tree sent a line  | the command that enrols a tree                                  |
+| no line in the chosen period  | the completeness line and a request for another period          |
+| no task or fix to count       | «no data» on that tile instead of zeros                         |
 | fewer than ten accepted tasks | the count instead of a share, because a share of three misleads |
 | a tree's last send failed     | its name and the reason beside the completeness line            |
 | a read failed                 | the refusal text and a repeat action                            |

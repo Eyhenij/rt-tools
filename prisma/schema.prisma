@@ -259,6 +259,8 @@ model Postmortem {
     quarantineNote String?
     /// Закрыл ли запись издатель редакции, а не приславшее её дерево — как у предложения.
     closedByPublisher Boolean @default(false)
+    /// Ресурс пакета, о котором разбор. Разбор без него считается отдельно.
+    resource  String?
     arrivedAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
@@ -266,6 +268,22 @@ model Postmortem {
     @@index([treeId])
     @@index([releaseVersion])
     @@map("postmortem")
+}
+
+/// Смена шага записи: разбора или предложения. По ней считаются дни от приезда записи до фикса.
+/// Текста здесь нет, а запись живёт и после того, как груз снят.
+model RecordTransition {
+    id       String     @id @default(uuid())
+    /// Род записи: разбор или предложение.
+    kind     String
+    /// Идентификатор записи в её таблице.
+    recordId String
+    /// На какой шаг запись перешла.
+    state    CargoState
+    at       DateTime   @default(now())
+
+    @@index([recordId])
+    @@map("record_transition")
 }
 
 /// Сторона сообщения: кто его написал. Двух слов хватает на весь эпик — отвечают посетителю
