@@ -111,6 +111,22 @@ kit. The mockup draws a panel of its own for all three types, the same in every 
 - **The input `isTodayButtonShown` hides «Сегодня» of a date panel.** It is shown by default. Without
   the button a date panel has no footer, and the footers of the other types stay.
 
+- **The month of the panel is filled to whole weeks by days of the neighbouring months.** Such a day
+  is pale and cannot be pressed. A neighbouring day outside the bounds is also crossed out.
+
+- **A day of the month outside the bounds is crossed out and switched off.** The weekday names start
+  with a capital letter, in this panel and in the period panel.
+
+- **Each time column carries its title above it: «Часы» and «Минуты».**
+
+- **The popover of a date with time has «Сейчас» on the left of the footer and «Сбросить» next to
+  «Применить».** «Сейчас» sets today and the current time into the draft. «Сбросить» makes the value
+  empty and closes the panel.
+
+- **The bottom sheet of a date with time shows the chosen value on the left of the footer.** It
+  shows it instead of «Сейчас» and «Сбросить». The value is written in the order of the interface
+  language.
+
 ## What is out of scope
 
 - The date range field — the subdomain `date-range` next to this one.
@@ -185,3 +201,6 @@ None.
 - 2026-11-04 — the task RT-2895 adds the year grid and the 20px side padding in the bottom sheet.
 - 2026-11-07 — the task RT-3159 gives the panel out of the entry point and adds the input
   `isTodayButtonShown`.
+- 2026-11-08 — the task RT-3159 adds the days of the neighbouring months, the crossed-out days
+  outside the bounds, the titles of the time columns and the footers «Сейчас», «Сбросить» and the
+  value in the sheet.

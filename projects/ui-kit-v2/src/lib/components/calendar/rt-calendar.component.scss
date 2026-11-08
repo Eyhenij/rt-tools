@@ -175,6 +175,23 @@
             font-weight: var(--rt-font-weight-medium);
         }
 
+        /* День соседнего месяца: стоит в сетке как день, бледный, не нажимается. За границей
+           выбора ещё и зачёркнут, как занятый день. */
+        &__outside {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-medium);
+            min-block-size: var(--rt-calendar-day-size);
+            opacity: 0.45;
+
+            &[data-crossed] {
+                text-decoration: line-through;
+            }
+        }
+
         &__day-sublabel {
             font-size: var(--rt-text-2xs);
             opacity: 0.75;

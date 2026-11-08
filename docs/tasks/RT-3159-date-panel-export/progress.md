@@ -4,8 +4,8 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 3 из 3 — Показ владельцу
-- **Done:** панель выдана, метод `draftFiles` добавлен, вход `isTodayButtonShown` добавлен, истории и спеки написаны, кадр `7586:2554` дополнен телефоном без «Сегодня», числа 110 из 110
-- **Next step:** показать витрину и записать ответ
+- **Done:** панель выдана, метод `draftFiles` добавлен, вход `isTodayButtonShown` добавлен. Вид одобренных кадров перенесён в кит: соседние дни, зачёркнутые дни за границей, «Пн» с заглавной, подписи «Часы» и «Минуты», «Сейчас» и «Сбросить» в поповере, значение в подвале шторки, история с кнопкой-иконкой, заголовок шторки через `[sheetHeader]`. Сценарии SC-UKV-1173…1177. Числа: поповер `7586:2559` 59 из 59, шторка даты со временем `7586:2677` 19 из 19, всего 78 из 78. В кадре колонки опущены на 0,5, подписи «Сейчас» и «Сбросить» сдвинуты к значениям кода, верх шторки опущен на 6,5 к отступам `rt-bottom-sheet`. Эталоны дат пересняты: 13 обновлены, 1 новый, каждый просмотрен
+- **Next step:** пересъёмка эталонов, коммит, показ витрины владельцу и сессии-заказчику
 - **Uncommitted:** правки кода, историй, спеков и эталонов
 - **Waiting for the owner:** витрина нового вида. Макет одобрен 08.11 («Одобряю макет»), «Пн» с заглавной в обеих панелях («В обеих панелях»). Пуш, PR и выпуск только после слова «одобряю»
 - **Review of the requesting session (2026-11-08):** дефект 7 (сетка дней пропадала на узком окне) исправлен в `rt-calendar.component.scss`, эталоны календаря пересняты. Владелец через сессию-заказчика велел перенести в кит вид одобренных кадров: заголовки «Часы» и «Минуты», серые дни соседних месяцев, зачёркнутые дни до `min`, «Пн» с заглавной (задевает панель даты и панель периода), «Сейчас» и «Сбросить» в подвале даты со временем, значение слева в подвале шторки, история с кнопкой-иконкой, заголовок шторки через слот `[sheetHeader]`. Порядок: кадр в Figma кита, одобрение владельца, код
@@ -58,12 +58,20 @@ The progress in full — `docs/tasks/RT-3159-date-panel-export/progress.md`; the
 ### Uncommitted
 
 ```
- M docs/tasks/RT-3159-date-panel-export/progress.md
+ M projects/ui-kit-v2/src/lib/components/calendar/rt-calendar.component.html
+ M projects/ui-kit-v2/src/lib/components/calendar/rt-calendar.component.scss
+ M projects/ui-kit-v2/src/lib/components/calendar/rt-calendar.model.ts
+ M projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.html
+ M projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.scss
+ M projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.ts
+ M projects/ui-kit-v2/src/lib/components/date-picker/rt-date-panel.logic.ts
 ```
 
 ### Commits over the main branch
 
 ```
+4fafc63d2 fix(rt:ui-kit-v2): календарь на узком экране не прячет единственный месяц
+f32fb94d8 docs(rt:ui-kit-v2): вход isTodayButtonShown в таблице панели и в поповере истории
 f3e815581 feat(rt:ui-kit-v2): панель даты получила вход isTodayButtonShown
 7567260c0 feat(rt:ui-kit-v2): панель даты выдана из пакета, чат отдаёт файлы черновика методом draftFiles
 5b4978f07 docs(rt:ui-kit-v2): план выдачи панели даты и чтения файлов черновика

@@ -105,6 +105,33 @@
             gap: var(--rt-space-1);
         }
 
+        /* Колонка времени с подписью над ней: подпись не прокручивается вместе с ячейками. */
+        &__time-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-2);
+        }
+
+        &__time-title {
+            padding: var(--rt-space-1) 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            text-align: center;
+        }
+
+        /* Первая кнопка подвала прижата влево, остальные стоят справа. */
+        &__lead {
+            margin-inline-end: auto;
+        }
+
+        /* Выбранное значение в подвале шторки: слева, напротив «Применить». */
+        &__value {
+            align-self: center;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+            margin-inline-end: auto;
+        }
+
         &__column {
             position: relative;
             display: flex;
@@ -197,7 +224,7 @@
             justify-content: center;
         }
 
-        &--sheet &__column {
+        &--sheet &__time-group {
             flex: 1 1 0;
         }
     }

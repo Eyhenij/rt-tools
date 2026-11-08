@@ -36,8 +36,14 @@ async function open({ canvasElement }: { canvasElement: HTMLElement }): Promise<
     await openStoryOverlay(canvasElement);
 }
 
+/** Нижняя граница витрины: дни до 10 марта зачёркнуты. */
+const STORY_MIN: string = '2026-03-10T00:00';
+
 /** Широкий экран: панель в поповере под кнопкой, поверхность даёт потребитель. */
-export const Popover: TStory = { args: { place: 'popover' }, play: open };
+export const Popover: TStory = { args: { place: 'popover', min: STORY_MIN }, play: open };
+
+/** Широкий экран: поповер открывает чужая кнопка-иконка с часами. */
+export const PopoverFromIconButton: TStory = { args: { place: 'icon', min: STORY_MIN }, play: open };
 
 /** Узкий экран: дата, панель с входом `sheet` в `rt-bottom-sheet`. */
 export const BottomSheet: TStory = {
@@ -53,9 +59,12 @@ export const BottomSheetWithoutToday: TStory = {
     play: open,
 };
 
-/** Узкий экран: дата со временем, переключатель «Дата | Время» над месяцем. */
+/**
+ * Узкий экран: дата со временем, переключатель «Дата | Время» над месяцем. Заголовок шторки даёт
+ * потребитель, выбранное значение стоит слева в подвале.
+ */
 export const BottomSheetDateTime: TStory = {
-    args: { place: 'sheet' },
+    args: { place: 'sheet', min: STORY_MIN, sheetTitle: 'Когда отправить' },
     parameters: SHEET_SNAPSHOT,
     play: open,
 };

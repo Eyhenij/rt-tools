@@ -4,6 +4,7 @@ import { ChangeDetectionStrategy, Component, Signal, signal, viewChild, Writable
 import { STORY_TRIGGER_ATTRIBUTE } from '../../../../../showcase/story-overlay';
 import { RtBottomSheetComponent } from '../../../bottom-sheet/rt-bottom-sheet.component';
 import { RtButtonDirective } from '../../../button/rt-button.directive';
+import { RtIconButtonComponent } from '../../../icon-button/rt-icon-button.component';
 import { RtPopoverDirective } from '../../../popover/rt-popover.directive';
 import { RtDatePanelComponent } from '../../panel/rt-date-panel.component';
 import { IRtDatePicker } from '../../rt-date-picker.model';
@@ -12,7 +13,7 @@ import { IRtDatePicker } from '../../rt-date-picker.model';
 const STORY_NOW: Date = new Date(2026, 2, 10, 10, 37);
 
 /** Где стоит панель: у каждого места своя история. */
-export type TDatePanelOpeningPlace = 'popover' | 'sheet';
+export type TDatePanelOpeningPlace = 'popover' | 'icon' | 'sheet';
 
 /**
  * Панель без текстового поля: кнопка открывает выбор, готовое значение подписывает кнопку. Ни
@@ -29,19 +30,28 @@ export type TDatePanelOpeningPlace = 'popover' | 'sheet';
 @Component({
     selector: 'app-date-panel-opening',
     template: `
-        @if (place === 'popover') {
-            <ng-template #panelTpl>
-                <div [style]="surface">
-                    <rt-date-panel
-                        [isTodayButtonShown]="isTodayButtonShown"
-                        [type]="type"
-                        [value]="value"
-                        [now]="now"
-                        (picked)="value = $event"
-                        (closed)="closePopover()" />
-                </div>
-            </ng-template>
+        <ng-template #panelTpl>
+            <div [style]="surface">
+                <rt-date-panel
+                    [isTodayButtonShown]="isTodayButtonShown"
+                    [type]="type"
+                    [value]="value"
+                    [min]="min"
+                    [now]="now"
+                    (picked)="value = $event"
+                    (closed)="closePopover()" />
+            </div>
+        </ng-template>
 
+        @if (place === 'icon') {
+            <rt-icon-button
+                icon="clock"
+                variant="secondary"
+                qa-dataid="date-panel-opening-icon"
+                [ariaLabel]="iconLabel"
+                [rtPopover]="panelTpl"
+                [attr.data-story-trigger]="triggerAttribute" />
+        } @else if (place === 'popover') {
             <button
                 rtButton
                 type="button"
@@ -64,12 +74,16 @@ export type TDatePanelOpeningPlace = 'popover' | 'sheet';
                     (click)="sheetOpen.set(true)"></button>
 
                 <rt-bottom-sheet [open]="sheetOpen()" (openChange)="sheetOpen.set($event)">
+                    @if (sheetTitle) {
+                        <span sheetHeader qa-dataid="date-panel-opening-title">{{ sheetTitle }}</span>
+                    }
                     @if (sheetOpen()) {
                         <rt-date-panel
                             sheet
                             [isTodayButtonShown]="isTodayButtonShown"
                             [type]="type"
                             [value]="value"
+                            [min]="min"
                             [now]="now"
                             (picked)="value = $event"
                             (closed)="sheetOpen.set(false)" />
@@ -87,6 +101,7 @@ export type TDatePanelOpeningPlace = 'popover' | 'sheet';
         RtBottomSheetComponent,
         RtButtonDirective,
         RtDatePanelComponent,
+        RtIconButtonComponent,
         RtPopoverDirective,
     ],
 })
@@ -97,6 +112,13 @@ export class TestRtDatePanelOpeningComponent {
     public type: IRtDatePicker.Type = 'datetime-local';
     public value: string = '2026-03-15T09:30';
     public isTodayButtonShown: boolean = true;
+    public min: string | null = null;
+
+    /** Заголовок шторки: его даёт потребитель через слот `[sheetHeader]`, у панели своего нет. */
+    public sheetTitle: string = '';
+
+    /** Подпись кнопки-иконки для читалки экрана. */
+    public readonly iconLabel: string = 'Выбрать дату и время';
 
     public readonly now: Date = STORY_NOW;
     public readonly triggerAttribute: string = STORY_TRIGGER_ATTRIBUTE;

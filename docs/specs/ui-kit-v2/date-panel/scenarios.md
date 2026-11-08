@@ -101,7 +101,8 @@ Covered by the component spec of the field.
 
 Given the application's locale `ru`
 When the month is counted
-Then its title and weekday names are the Russian ones and the week starts on Monday
+Then its title and weekday names are the Russian ones, the weekday names start with a capital
+letter, and the week starts on Monday
 
 Covered by the spec of the date logic module.
 
@@ -184,5 +185,47 @@ Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.
 Given a panel of the type `date` with `isTodayButtonShown` set to false
 When it is drawn
 Then it has no footer, and a click on a day still chooses and closes
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1173 — days of the neighbouring months fill the weeks
+
+Given a date panel on September 2026 with `min` set to `2026-09-01`
+When it is drawn
+Then August 31 and October 1 to 4 stand in the grid, pale, and a click on them chooses nothing;
+August 31 is crossed out
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1174 — a day outside the bounds is crossed out
+
+Given a date panel with `min` set to `2026-09-10`
+When September is drawn
+Then September 9 is crossed out and switched off, and September 10 can be chosen
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1175 — the time columns carry titles
+
+Given a panel of the type `time`
+When it is drawn
+Then the title «Часы» stands above the hours and «Минуты» above the minutes
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1176 — «Сейчас» and «Сбросить» in the popover of a date with time
+
+Given a popover panel of the type `datetime-local`
+When «Сейчас» is pressed
+Then today and the current time are chosen in the draft and nothing is applied
+And when «Сбросить» is pressed, the value becomes empty and the panel closes
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1177 — the sheet shows the chosen value in the footer
+
+Given a sheet panel of the type `datetime-local` with the value `2026-09-15T09:00`
+When it is drawn
+Then the footer shows «15.09.2026, 09:00» on the left and has no «Сейчас» and «Сбросить»
 
 Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.

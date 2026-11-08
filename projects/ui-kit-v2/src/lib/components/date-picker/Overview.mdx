@@ -45,8 +45,9 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 **Панель без поля.** `RtDatePanelComponent` выдаётся из этой же точки входа: кнопка открывает выбор
 даты и времени в поповере или в `rt-bottom-sheet`. Раздел `Molecules/Forms/DatePanelOpening`
-показывает оба места: `Popover`, `BottomSheet`, `BottomSheetDateTime` и `BottomSheetWithoutToday`
-без кнопки «Сегодня». Входы: `type`, `value`, `min`, `max`, `minuteStep`, `sheet`,
+показывает оба места: `Popover`, `PopoverFromIconButton` с кнопкой-иконкой, `BottomSheet`,
+`BottomSheetDateTime` с заголовком шторки от потребителя и `BottomSheetWithoutToday` без кнопки
+«Сегодня». Входы: `type`, `value`, `min`, `max`, `minuteStep`, `sheet`,
 `isTodayButtonShown`. Выходы: `picked` со значением и `closed` с просьбой закрыть панель.
 Панель создают заново на каждое открытие, а фон и рамку поповера даёт потребитель.
 

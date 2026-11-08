@@ -37,9 +37,9 @@ import {
     rtDateFirstDay,
     rtDateGridKey,
     rtDateInBounds,
-    rtDateMonth,
     rtDateMonths,
     rtDateNow,
+    rtDatePanelMonth,
     rtDateSplit,
     rtDateTime,
     rtDateTimeColumns,
@@ -50,6 +50,7 @@ import {
     rtDateYears,
 } from '../rt-date-panel.logic';
 import { IRtDatePicker } from '../rt-date-picker.model';
+import { rtDateLayout, rtDateText } from '../rt-date-text.logic';
 
 const BEM_BLOCK: string = 'rt-date-panel';
 const MONTH_LEN: number = 7;
@@ -134,7 +135,7 @@ export class RtDatePanelComponent {
     );
 
     protected readonly months: Signal<IRtCalendar.Month[]> = computed((): IRtCalendar.Month[] => [
-        rtDateMonth(this.shownMonth(), {
+        rtDatePanelMonth(this.shownMonth(), {
             locale: this.#locale(),
             today: this.today(),
             chosen: this.draftDay(),
@@ -186,6 +187,11 @@ export class RtDatePanelComponent {
     protected readonly hasFooter: Signal<boolean> = computed((): boolean => this.type() !== 'date' || this.isTodayButtonShown());
     /** Черновик собирается в значение и лежит в границах. */
     protected readonly canApply: Signal<boolean> = computed((): boolean => this.#draftValue() !== '');
+    /** Черновик даты со временем текстом для подвала шторки: `15.03.2026, 09:30`; не собран — пусто. */
+    protected readonly draftText: Signal<string> = computed((): string => {
+        const parts: string[] = this.#draftValue().split('T');
+        return parts.length < 2 ? '' : `${rtDateText(parts[0], 'date', rtDateLayout(this.#locale()))}, ${parts[1]}`;
+    });
     protected readonly tabs: Signal<IRtToggleButtonGroup.Option<TTab>[]> = computed((): IRtToggleButtonGroup.Option<TTab>[] => [
         { value: 'date', label: this.t().uiDate },
         { value: 'time', label: this.t().uiTime },
@@ -325,6 +331,11 @@ export class RtDatePanelComponent {
         if (value !== '') {
             this.#emit(value);
         }
+    }
+
+    /** «Сбросить»: значение становится пустым, панель закрывается. */
+    protected reset(): void {
+        this.#emit('');
     }
 
     #emit(value: string): void {
