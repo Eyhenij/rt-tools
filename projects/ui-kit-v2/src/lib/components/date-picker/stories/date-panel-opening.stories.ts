@@ -68,3 +68,14 @@ export const BottomSheetDateTime: TStory = {
     parameters: SHEET_SNAPSHOT,
     play: open,
 };
+
+/** Узкий экран: дата со временем на вкладке «Время» — колонки делят ширину, выбранная ячейка во всю колонку. */
+export const BottomSheetTime: TStory = {
+    args: { place: 'sheet', min: STORY_MIN, sheetTitle: 'Когда отправить' },
+    parameters: SHEET_SNAPSHOT,
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement);
+        const options: NodeListOf<HTMLElement> = document.querySelectorAll('[qa-dataid="toggle-button-group-option"]');
+        options[1]?.click();
+    },
+};

@@ -102,7 +102,19 @@
 
         &__time {
             display: flex;
-            gap: var(--rt-space-1);
+            gap: var(--rt-space-2);
+        }
+
+        /* Колонки времени рядом с месяцем отделены чертой на всю высоту тела. */
+        &__time:not(:first-child) {
+            align-self: stretch;
+            border-inline-start: var(--rt-date-panel-divider-width) solid var(--rt-color-border-subtle);
+            padding-inline-start: var(--rt-space-4);
+        }
+
+        /* Переключатель «Дата | Время» по ширине своих сегментов, по центру. */
+        &__tabs {
+            align-self: center;
         }
 
         /* Колонка времени с подписью над ней: подпись не прокручивается вместе с ячейками. */
@@ -180,6 +192,20 @@
                 color: var(--rt-color-text-muted);
                 cursor: not-allowed;
                 opacity: 0.45;
+            }
+        }
+
+        /* Ячейка времени — полоса на ширину колонки, число у левого края. Выбранная ячейка залита
+           бледным цветом действия, число тёмное и полужирное. */
+        &__column &__cell {
+            min-inline-size: calc(var(--rt-size-10) * 1.5);
+            padding-inline: var(--rt-space-4) 0;
+            text-align: start;
+
+            &[aria-pressed='true'] {
+                background: var(--rt-color-action-primary-subtle);
+                color: var(--rt-color-text-primary);
+                font-weight: var(--rt-font-weight-semibold);
             }
         }
 

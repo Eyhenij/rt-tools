@@ -286,6 +286,58 @@ describe('RtDatePanelComponent', (): void => {
         expect(qa(fixture, 'date-panel-reset')).toBeNull();
     });
 
+    it('SC-UKV-1178 — «Now» and «Reset» of the popover are text buttons in the action colour', (): void => {
+        const { fixture }: IPanel = setup({ type: 'datetime-local', value: '2026-09-15T09:00' });
+
+        for (const id of ['date-panel-now', 'date-panel-reset']) {
+            const classes: DOMTokenList = (qa(fixture, id)?.nativeElement as HTMLElement).classList;
+            expect(classes).toContain('rt-button--text');
+            expect(classes).not.toContain('rt-button--secondary');
+        }
+    });
+
+    it('SC-UKV-1179 — the switch «Date | Time» of the sheet is of the middle size and not stretched', (): void => {
+        const { fixture }: IPanel = setup({ type: 'datetime-local', value: '2026-09-15T09:00', sheet: true });
+        const classes: DOMTokenList = (qa(fixture, 'date-panel-tabs')?.nativeElement as HTMLElement).classList;
+
+        expect(classes).toContain('rt-toggle-button-group--md');
+        expect(classes).not.toContain('rt-toggle-button-group--full-width');
+    });
+
+    it('SC-UKV-1180 — the month arrows have no backing', (): void => {
+        const { fixture }: IPanel = setup({ type: 'date', value: '2026-09-15' });
+        const control: HTMLElement = iconButton(fixture, 'calendar-prev-month')?.nativeElement as HTMLElement;
+
+        expect(control).toBeTruthy();
+        expect(control.className).toMatch(/--ghost\b/);
+        expect(control.className).not.toMatch(/--secondary\b/);
+    });
+
+    /* Раскладку и цвета среда спеков не считает, поэтому проверяются правила в стилях панели; вид на
+       экране закрывают кадры историй DatePanelOpening. */
+    it('SC-UKV-1181 — a time cell is a strip of the column with the number at its left edge, set off by a line', (): void => {
+        const styles: string = readFileSync(join(__dirname, 'rt-date-panel.component.scss'), 'utf8');
+        const start: number = styles.indexOf('&__column &__cell {');
+        const cellRule: string = styles.slice(start, styles.indexOf('&__footer', start));
+
+        expect(start).toBeGreaterThan(-1);
+        expect(cellRule).toContain('text-align: start;');
+        expect(cellRule).toContain('background: var(--rt-color-action-primary-subtle);');
+        expect(styles).toContain('&__time:not(:first-child) {');
+        expect(styles).toContain('border-inline-start: var(--rt-date-panel-divider-width) solid var(--rt-color-border-subtle);');
+    });
+
+    it('SC-UKV-1182 — the number of today is in the action colour and semibold until the day is chosen', (): void => {
+        const { fixture }: IPanel = setup({ type: 'date', value: '2026-09-15' });
+        const styles: string = readFileSync(join(__dirname, '../../calendar/rt-calendar.component.scss'), 'utf8');
+
+        expect(el(fixture, '[qa-dataid="calendar-day"][data-today]')).not.toBeNull();
+        expect(styles).toContain(
+            "&[data-today]:not([data-state='start'], [data-state='end'], [data-state='chosen'], [data-state='in-range']) {"
+        );
+        expect(styles).toContain('&__day[data-today] &__day-num {');
+    });
+
     /** Открыть сетку годов из сетки месяцев значения. */
     function openYears(fixture: ComponentFixture<RtDatePanelComponent>): void {
         press(fixture, qa(fixture, 'calendar-month-title'));

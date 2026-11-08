@@ -229,3 +229,47 @@ When it is drawn
 Then the footer shows «15.09.2026, 09:00» on the left and has no «Сейчас» and «Сбросить»
 
 Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1178 — «Сейчас» and «Сбросить» in the action colour
+
+Given a popover panel of the type `datetime-local`
+When it is drawn
+Then «Сейчас» and «Сбросить» are text buttons in the action colour
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1179 — the switch of the sheet is narrow
+
+Given a sheet panel of the type `datetime-local`
+When it is drawn
+Then the switch «Дата | Время» is of the middle size, as wide as its segments and in the centre
+
+Покрытие: частичное — the spec checks the size and the absence of the full width; the centre on
+the screen is shown by the frame of the story BottomSheetDateTime.
+
+### SC-UKV-1180 — the month arrows have no backing
+
+Given a date panel
+When the month is drawn
+Then its arrows are drawn without a backing
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1181 — a time cell is a strip of the column
+
+Given a popover panel of the type `datetime-local` with the hour 09 chosen
+When it is drawn
+Then the chosen hour is a pale strip over the column with a dark semibold number at its left edge,
+and a line sets the time columns off from the month
+
+Покрытие: частичное — the spec checks the rules in the panel styles; the look on the screen is
+shown by the frames of the stories Popover and BottomSheetTime.
+
+### SC-UKV-1182 — the number of today is in the action colour
+
+Given a date panel whose month holds today
+When it is drawn
+Then the number of today is in the action colour and semibold, inside its outline
+
+Покрытие: частичное — the spec checks the rules in the calendar styles; the colour on the screen is
+shown by the frames of the date stories.

@@ -140,6 +140,11 @@
                 box-shadow: var(--rt-calendar-today-ring);
             }
 
+            /* Число сегодняшнего дня — цвета действия и полужирное, пока день не залит выбором. */
+            &[data-today]:not([data-state='start'], [data-state='end'], [data-state='chosen'], [data-state='in-range']) {
+                color: var(--rt-color-action-primary);
+            }
+
             &:focus-visible {
                 outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
                 outline-offset: var(--rt-focus-ring-offset);
@@ -173,6 +178,10 @@
         &__day-num {
             font-size: var(--rt-text-sm);
             font-weight: var(--rt-font-weight-medium);
+        }
+
+        &__day[data-today] &__day-num {
+            font-weight: var(--rt-font-weight-semibold);
         }
 
         /* День соседнего месяца: стоит в сетке как день, бледный, не нажимается. За границей

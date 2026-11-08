@@ -127,6 +127,20 @@ kit. The mockup draws a panel of its own for all three types, the same in every 
   shows it instead of «Сейчас» and «Сбросить». The value is written in the order of the interface
   language.
 
+- **«Сейчас» and «Сбросить» are text buttons in the action colour.**
+
+- **The switch «Дата | Время» of the bottom sheet is of the middle size and stands in the centre.**
+  Its width follows its segments.
+
+- **The month arrows have no backing.** This holds for every calendar of the kit.
+
+- **The number of today is in the action colour and semibold until the day is chosen.** This holds
+  for every calendar of the kit; the outline of today stays.
+
+- **A time cell is a strip of the column with the number at its left edge.** The chosen cell is
+  filled with the pale action colour, and its number is dark and semibold. Next to the month the
+  time columns are set off by a line over the whole height of the body.
+
 ## What is out of scope
 
 - The date range field — the subdomain `date-range` next to this one.
@@ -203,4 +217,6 @@ None.
   `isTodayButtonShown`.
 - 2026-11-08 — the task RT-3159 adds the days of the neighbouring months, the crossed-out days
   outside the bounds, the titles of the time columns and the footers «Сейчас», «Сбросить» and the
-  value in the sheet.
+  value in the sheet. The same day it brings the look of the approved frames: «Сейчас» and
+  «Сбросить» in the action colour, time cells as strips with a line before them, the narrow switch
+  of the sheet, the arrows without a backing and today in the action colour in every calendar.
