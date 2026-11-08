@@ -32,7 +32,13 @@ export type TDatePanelOpeningPlace = 'popover' | 'sheet';
         @if (place === 'popover') {
             <ng-template #panelTpl>
                 <div [style]="surface">
-                    <rt-date-panel [type]="type" [value]="value" [now]="now" (picked)="value = $event" (closed)="closePopover()" />
+                    <rt-date-panel
+                        [isTodayButtonShown]="isTodayButtonShown"
+                        [type]="type"
+                        [value]="value"
+                        [now]="now"
+                        (picked)="value = $event"
+                        (closed)="closePopover()" />
                 </div>
             </ng-template>
 

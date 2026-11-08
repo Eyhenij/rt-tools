@@ -7,7 +7,7 @@
 - **Done:** панель выдана, метод `draftFiles` добавлен, вход `isTodayButtonShown` добавлен, истории и спеки написаны, кадр `7586:2554` дополнен телефоном без «Сегодня», числа 110 из 110
 - **Next step:** показать витрину и записать ответ
 - **Uncommitted:** правки кода, историй, спеков и эталонов
-- **Waiting for the owner:** ответ о кадре `7586:2554` и о витрине, и выбор, нужна ли история со списком сроков. Пуш, PR и выпуск только после слова «одобряю»
+- **Waiting for the owner:** витрина не одобрена, владелец велел запросить ревью у сессии-заказчика. Макет и витрина ждут ответа после ревью. Пуш, PR и выпуск только после слова «одобряю»
 - **PR:** not open yet
 
 ## Steps
@@ -57,22 +57,13 @@ The progress in full — `docs/tasks/RT-3159-date-panel-export/progress.md`; the
 ### Uncommitted
 
 ```
- M docs/specs/ui-kit-v2/date-panel/implementation.md
- M docs/specs/ui-kit-v2/date-panel/scenarios.md
- M docs/specs/ui-kit-v2/date-panel/spec.md
  M docs/tasks/RT-3159-date-panel-export/progress.md
- M projects/ui-kit-v2/src/lib/components/date-picker/Overview.mdx
- M projects/ui-kit-v2/src/lib/components/date-picker/panel/CONTEXT.md
- M projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.html
- M projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts
- M projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.ts
- M projects/ui-kit-v2/src/lib/components/date-picker/stories/component/test-date-panel-opening.component.ts
- M projects/ui-kit-v2/src/lib/components/date-picker/stories/date-panel-opening.stories.ts
 ```
 
 ### Commits over the main branch
 
 ```
+f3e815581 feat(rt:ui-kit-v2): панель даты получила вход isTodayButtonShown
 7567260c0 feat(rt:ui-kit-v2): панель даты выдана из пакета, чат отдаёт файлы черновика методом draftFiles
 5b4978f07 docs(rt:ui-kit-v2): план выдачи панели даты и чтения файлов черновика
 ```
