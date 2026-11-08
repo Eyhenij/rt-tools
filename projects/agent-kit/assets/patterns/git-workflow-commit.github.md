@@ -201,9 +201,11 @@ and nobody was waiting to review it.
 
 ## The commit is signed by the bot
 
-The token is read into a variable and not printed; author and committer are set by variables of
-the same command. `git config` will not do — the config is shared with the main tree and would
-rewrite the signature to the owner:
+The token is read into a variable and not printed; author and committer are set by variables
+prefixed to `git commit` itself. `git config` will not do — the config is shared with the main tree
+and would rewrite the signature to the owner. `export` will not do either: it reaches every later
+command of the call, and a set before a push started by the same call runs the hook scenarios under
+the bot's mail — the ones comparing a mail fall on a sound tree:
 
 ```bash
 TOKEN=$(tr -d '\n' < ~/.config/<дерево>-bot-token)
