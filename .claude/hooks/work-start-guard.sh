@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/work-start-guard.sh · 6364e25f539a · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/work-start-guard.sh · b900135d6429 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/profile-check.sh
 # Work-start guard: a turn that edited application code does not end unless the owner asked for
@@ -33,6 +33,7 @@
 # Its own name in the observations: the refusal is written by the shared deny tail, not by the
 # guard itself.
 RT_GUARD_NAME=work-start-guard
+RT_GUARD_RULE=task-flow
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

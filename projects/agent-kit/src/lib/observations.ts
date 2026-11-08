@@ -35,6 +35,16 @@ export interface IObservation {
     /** Признак сессии: считает заходы, имени сессии не выдаёт. */
     readonly session: string;
     readonly version: string;
+    /** Отказ равен предыдущему отказу этого гарда. `null`: запись не сравнивала. */
+    readonly empty?: boolean | null;
+    /** Секунды запуска. `null`: строка не про запуск. */
+    readonly seconds?: number | null;
+    /** Секунды красного запуска на том же содержимом перед этим. `null`: такого не было. */
+    readonly wasted?: number | null;
+    /** Правило, которое объявила проверка. Пусто: не объявляла. */
+    readonly rule?: string;
+    /** Приговор роли. Пусто: роль его не даёт. */
+    readonly verdict?: string;
 }
 
 /** Сколько раз что-то встретилось. Порядок — по убыванию, при равенстве по имени. */
@@ -122,6 +132,17 @@ export function dayBefore(today: string, days: number): string {
     return Number.isNaN(at) ? today : new Date(at - days * 86_400_000).toISOString().slice(0, 10);
 }
 
+const textOf: (value: unknown) => string = (value: unknown): string => (typeof value === 'string' ? value : '');
+
+/** Признак пустого отказа. Значение вне пары читается как отсутствие признака. */
+const EMPTY_SIGN: Readonly<Record<string, boolean>> = { '0': false, '1': true };
+
+const emptyOf: (value: unknown) => boolean | null = (value: unknown): boolean | null => EMPTY_SIGN[textOf(value)] ?? null;
+
+/** Целое число из строки записи: всё остальное читается как отсутствие значения. */
+const wholeOf: (value: unknown) => number | null = (value: unknown): number | null =>
+    /^\d+$/u.test(textOf(value)) ? Number(textOf(value)) : null;
+
 /**
  * Одна строка наблюдения. Битая пропускается молча: наблюдение — побочная запись гарда, и
  * оборванная на полуслове строка не имеет права уронить сводку.
@@ -137,10 +158,15 @@ export function parseObservation(line: string): IObservation | null {
         return typeof event === 'string' && event
             ? {
                   event,
-                  resource: typeof found['res'] === 'string' ? found['res'] : '',
-                  kind: typeof found['kind'] === 'string' ? found['kind'] : '',
-                  session: typeof found['sid'] === 'string' ? found['sid'] : '',
-                  version: typeof found['v'] === 'string' ? found['v'] : '',
+                  resource: textOf(found['res']),
+                  kind: textOf(found['kind']),
+                  session: textOf(found['sid']),
+                  version: textOf(found['v']),
+                  empty: emptyOf(found['empty']),
+                  seconds: wholeOf(found['secs']),
+                  wasted: wholeOf(found['wasted']),
+                  rule: textOf(found['rule']),
+                  verdict: textOf(found['verdict']),
               }
             : null;
     } catch {

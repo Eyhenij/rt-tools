@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.34.0 · hooks/git-guard-push-tests.sh · a3a394704ddd · правится надстройкой, не здесь
+# rt-kit v0.34.0 · hooks/git-guard-push-tests.sh · bd6ba861da91 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__terminal__run_in_terminal
 # rt-hook-timeout: 1800
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/push-sign.sh, hooks/push-set.sh, hooks/git-guard-push-marks.sh
@@ -36,6 +36,7 @@
 
 # Its own name in the observations: the refusal is written by the shared deny tail, not by the guard.
 RT_GUARD_NAME=git-guard-push-tests
+RT_GUARD_RULE=git-workflow
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
