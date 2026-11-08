@@ -209,6 +209,8 @@ export const ADMIN_LABELS = {
     [ERefusal.ChatEntryRejected]: 'Страница переписок не открылась',
     [ERefusal.ChatEntryStale]: 'Подпись входа устарела',
     [ERefusal.ChatEntryExpired]: 'Вход устарел, обновите страницу',
+    [ERefusal.MetricsFieldRefused]: 'Поле «{{field}}» строки дня не принято',
+    [ERefusal.MetricsStale]: 'За {{day}} лежит более новая строка дня',
 } as const;
 
 /** Ключ подписи админки. Опечатка в шаблоне не доживает до собранного экрана. */

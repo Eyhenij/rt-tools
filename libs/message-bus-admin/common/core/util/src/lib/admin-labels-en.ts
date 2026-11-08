@@ -197,4 +197,6 @@ export const ADMIN_LABELS_EN: Record<TAdminLabelKey, string> = Object.freeze({
     [ERefusal.ChatEntryRejected]: 'The page of the talks did not open',
     [ERefusal.ChatEntryStale]: 'The signature of the entry is stale',
     [ERefusal.ChatEntryExpired]: 'The entry is stale, refresh the page',
+    [ERefusal.MetricsFieldRefused]: 'The field «{{field}}» of the day line is not accepted',
+    [ERefusal.MetricsStale]: 'A newer day line is stored for {{day}}',
 });

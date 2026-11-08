@@ -53,6 +53,7 @@ model Tree {
     proposals    Proposal[]
     invites      TreeInvite[]
     observations Observation[]
+    metricsDays  MetricsDay[]
 
     @@map("tree")
 }
@@ -159,6 +160,30 @@ model Observation {
     @@index([treeId, day])
     @@index([treeId, origin, day])
     @@map("observation")
+}
+
+/// Строка дня одной рабочей копии: только числа, дерево шлёт её само. Новая заменяет прежнюю, и
+/// порядок решает штамп сборки: повторная отправка дня итог не меняет.
+model MetricsDay {
+    id        String   @id @default(uuid())
+    treeId    String
+    tree      Tree     @relation(fields: [treeId], references: [id], onDelete: Cascade)
+    /// Признак рабочей копии: случайное значение, заведённое при первой отправке.
+    origin    String
+    /// День в форме `2026-09-14`.
+    day       String
+    /// Версия пакета, собравшая строку.
+    version   String
+    /// Когда строка собрана. Более старая не заменяет более новую.
+    stamp     DateTime
+    /// Числа дня по ключам из закрытого списка пакета.
+    metrics   Json
+    /// Когда строка приехала: по этому полю отчёт видит, кто слал данные за неделю.
+    updatedAt DateTime @updatedAt
+
+    @@unique([treeId, origin, day])
+    @@index([day])
+    @@map("metrics_day")
 }
 
 /// Предложение по слою правил. Копится, а не замещается: сводка отвечает на вопрос «как дела

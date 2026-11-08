@@ -91,7 +91,7 @@ Given a day line with a key outside the list or a value that is not a whole numb
 When the sender builds the body
 Then that field is dropped, and the intake refuses it if it arrives
 
-Not covered: no code yet.
+Coverage: partial — the intake side has a test, the sender arrives with RT-3154.
 
 ### SC-AK-1281 — a guard does not wait for the network
 
@@ -123,7 +123,20 @@ Given two sends of one copy started together
 When both reach their end
 Then one holds the lock, the other exits, and the day is stored once
 
-Not covered: no code yet.
+Coverage: partial — the intake stores a day once, the lock arrives with RT-3154.
+
+### SC-AK-1303 — an older day line is refused and changes nothing
+
+Given a stored day line with a later stamp
+When a line of the same tree, copy and day arrives with an earlier stamp
+Then the intake refuses it with `metrics-stale`, and the stored line stays
+
+### SC-AK-1304 — the head of a day line carries no words of the tree
+
+Given a day line with a path as its copy sign, a text as its version, a day outside the calendar or
+past tomorrow, or a stamp past tomorrow
+When it reaches the intake
+Then the intake refuses it with `metrics-field-refused`, names the field and stores nothing
 
 ### SC-AK-1285 — the automatic sending carries no proposal, analysis or digest
 
