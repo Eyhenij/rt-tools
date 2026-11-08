@@ -36,6 +36,9 @@ Not applicable: the stand has no screens of its own. The entry screens belong to
   realm edited by hand in the console lives on one machine and is lost with its volume.
 - **The stand takes no port another stand on the machine already holds.** Keycloak, its database and
   the mail catcher listen on ports outside those of the other applications of the tree.
+- **Two working copies run the stand at once, each on its own names.** The set before a push derives
+  the ports and the compose project name from the path of the copy. On shared names the second copy
+  re-creates the Keycloak under the tests of the first.
 - **The stand sends mail to a local catcher, not out.** Otherwise invitations and password recovery
   reach real addresses.
 - **The example client uses the code flow with PKCE and does not accept a password grant.** The

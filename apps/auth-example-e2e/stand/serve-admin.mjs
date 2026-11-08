@@ -8,13 +8,16 @@
  *
  * Every path that is not a file of the build is answered by the page of the application: a route
  * is opened by a direct link, and Keycloak returns the person to such a link.
+ *
+ * The build carries the address of Keycloak of the default stand. A stand on a port of its own
+ * serves the scripts with that address replaced: the build itself stays what a person gets.
  */
-import { createReadStream, existsSync, statSync } from 'node:fs';
+import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs';
 import { createServer, request as httpRequest } from 'node:http';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { ADMIN_PORT, API_PORT } from './stand.mjs';
+import { ADMIN_PORT, API_PORT, BUILT_KEYCLOAK_ORIGIN, KEYCLOAK_ORIGIN } from './stand.mjs';
 
 const BROWSER_DIR = fileURLToPath(new URL('../../../dist/apps/auth-example-admin/browser', import.meta.url));
 
@@ -29,6 +32,10 @@ const TYPES = Object.freeze({
 
 function sendFile(response, path) {
     response.writeHead(200, { 'content-type': TYPES[extname(path)] ?? 'application/octet-stream' });
+    if (extname(path) === '.js' && KEYCLOAK_ORIGIN !== BUILT_KEYCLOAK_ORIGIN) {
+        response.end(readFileSync(path, 'utf8').replaceAll(BUILT_KEYCLOAK_ORIGIN, KEYCLOAK_ORIGIN));
+        return;
+    }
     createReadStream(path).pipe(response);
 }
 

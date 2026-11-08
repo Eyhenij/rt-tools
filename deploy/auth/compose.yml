@@ -4,7 +4,9 @@
 #   pnpm run check:auth-stand  — опросить поднятый стенд
 #
 # Порты лежат вне портов остальных стендов дерева: 58080 — Keycloak, 55434 — его база,
-# 58025 — окно перехватчика почты, 51025 — его SMTP.
+# 58025 — окно перехватчика почты, 51025 — его SMTP. Это умолчания: набор перед отправкой поднимает
+# стенд на именах своей копии. Порты приходят переменными `E2E_*`, имя проекта — переменной
+# `COMPOSE_PROJECT_NAME`, и она сильнее строки `name` ниже.
 #
 # Пароли здесь простые намеренно: стенд локальный, наружу его порты не выходят.
 
@@ -18,7 +20,7 @@ services:
             POSTGRES_PASSWORD: keycloak
             POSTGRES_DB: keycloak
         ports:
-            - '55434:5432'
+            - '${E2E_KEYCLOAK_DB_PORT:-55434}:5432'
         volumes:
             # Восемнадцатый Postgres ждёт одну точку монтирования на весь каталог.
             - keycloak-db:/var/lib/postgresql
@@ -32,8 +34,8 @@ services:
     mailpit:
         image: axllent/mailpit:v1.27
         ports:
-            - '58025:8025'
-            - '51025:1025'
+            - '${E2E_MAIL_PORT:-58025}:8025'
+            - '${E2E_SMTP_PORT:-51025}:1025'
         healthcheck:
             test: ['CMD', '/mailpit', 'readyz']
             interval: 5s
@@ -57,7 +59,7 @@ services:
             KC_BOOTSTRAP_ADMIN_USERNAME: admin
             KC_BOOTSTRAP_ADMIN_PASSWORD: admin
         ports:
-            - '58080:8080'
+            - '${E2E_KEYCLOAK_PORT:-58080}:8080'
         # Тема экранов входа: JAR собирает `build:auth-keycloak-theme`, команда подъёма зовёт его
         # первой. Без файла Docker создал бы на этом месте пустой каталог.
         volumes:
@@ -100,6 +102,8 @@ services:
             # переменной `E2E_ADMIN_PORT`, и вход Keycloak пускает обратно и на него; без переменной
             # это 4310, порт стенда по умолчанию, и он уже есть в списке клиента.
             RT_E2E_ADMIN_PORT: ${E2E_ADMIN_PORT:-4310}
+            # То же для админки примера: без переменной это 4410, он уже есть в списке клиента.
+            RT_E2E_EXAMPLE_ADMIN_PORT: ${E2E_EXAMPLE_ADMIN_PORT:-4410}
             # Без кэша файл накладывается и тогда, когда он не менялся: правка в консоли
             # возвращается к файлу при следующем подъёме.
             IMPORT_CACHE_ENABLED: 'false'

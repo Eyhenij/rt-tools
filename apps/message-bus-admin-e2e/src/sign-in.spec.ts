@@ -35,6 +35,15 @@ test.describe('вход и адреса разделов', () => {
         await expect(qa(page, SECTION.postmortems.row).first()).toBeVisible();
     });
 
+    test('SC-AUTH-105 — форма входа открывается на Keycloak своей копии', async ({ page }: { page: Page }) => {
+        // Порт берётся из окружения набора, а не из файла стенда: подмена в файле вернула бы общий Keycloak
+        const port: string = process.env['E2E_KEYCLOAK_PORT'] ?? '58080';
+        await page.goto(SECTION.postmortems.path);
+        await expectRealmScreen(page);
+
+        expect(new URL(page.url()).port).toBe(port);
+    });
+
     test('SC-AUTH-100 — возврат с формы входа не ждёт пробы куки Keycloak', async ({ page }: { page: Page }) => {
         // Проба, ответившая позже предела тихой проверки, обрезала обмен кода и снова вела на форму
         const probe: Awaited<ReturnType<typeof lateCookieProbe>> = await lateCookieProbe(page);

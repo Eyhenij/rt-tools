@@ -43,6 +43,12 @@ Then the realm matches the file again
 
 Not covered: the command `check:auth-stand` asks a raised stand. It runs in the gate before sending and in the pipeline, and the audit of specs reads only `.spec.ts` files
 
+### SC-AUTH-105 — the entry form opens on the Keycloak of the working copy
+
+Given a working copy that derived its own stand names before a push
+When a closed section of the admin is opened
+Then the entry form opens on the Keycloak port of that copy, not on the shared one
+
 ### SC-AUTH-53 — the entry page offers Google exactly when the stand holds the keys of the owner
 
 Given the stand raised with or without the keys of Google

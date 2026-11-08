@@ -6,6 +6,7 @@ password, the refresh of the token, the exit and the rights on the screen and on
 - The scenarios — `docs/specs/auth/example/scenarios.md`, SC-AUTH-47…52.
 - Run: `pnpm exec nx run auth-example-e2e:e2e`. The stand is raised by the suite itself: Keycloak by
   `pnpm run serve:auth`, the people of the stand anew, the production builds of the example on
-  ports 3410 and 4410.
+  ports 3410 and 4410. The set before a push gives each working copy ports of its own; the names of
+  the variables stand in `apps/auth-example-e2e/stand/stand.mjs`.
 - The suite takes no frames and runs the browser of the machine. The first time it is installed by
   `pnpm exec playwright install chromium`.
