@@ -29,69 +29,7 @@ export type TDatePanelOpeningPlace = 'popover' | 'icon' | 'sheet';
  */
 @Component({
     selector: 'app-date-panel-opening',
-    template: `
-        <ng-template #panelTpl>
-            <div [style]="surface">
-                <rt-date-panel
-                    [isTodayButtonShown]="isTodayButtonShown"
-                    [type]="type"
-                    [value]="value"
-                    [min]="min"
-                    [now]="now"
-                    (picked)="value = $event"
-                    (closed)="closePopover()" />
-            </div>
-        </ng-template>
-
-        @if (place === 'icon') {
-            <rt-icon-button
-                icon="clock"
-                variant="secondary"
-                qa-dataid="date-panel-opening-icon"
-                [ariaLabel]="iconLabel"
-                [rtPopover]="panelTpl"
-                [attr.data-story-trigger]="triggerAttribute" />
-        } @else if (place === 'popover') {
-            <button
-                rtButton
-                type="button"
-                appearance="outlined"
-                icon="clock"
-                qa-dataid="date-panel-opening-popover"
-                [label]="value | date: (type === 'date' ? 'd MMMM' : 'd MMMM, HH:mm') : undefined : 'ru'"
-                [rtPopover]="panelTpl"
-                [attr.data-story-trigger]="triggerAttribute"></button>
-        } @else {
-            <div [style]="phone">
-                <button
-                    rtButton
-                    type="button"
-                    appearance="outlined"
-                    icon="clock"
-                    qa-dataid="date-panel-opening-sheet"
-                    [label]="value | date: (type === 'date' ? 'd MMMM' : 'd MMMM, HH:mm') : undefined : 'ru'"
-                    [attr.data-story-trigger]="triggerAttribute"
-                    (click)="sheetOpen.set(true)"></button>
-
-                <rt-bottom-sheet [open]="sheetOpen()" (openChange)="sheetOpen.set($event)">
-                    @if (sheetTitle) {
-                        <span sheetHeader qa-dataid="date-panel-opening-title">{{ sheetTitle }}</span>
-                    }
-                    @if (sheetOpen()) {
-                        <rt-date-panel
-                            sheet
-                            [isTodayButtonShown]="isTodayButtonShown"
-                            [type]="type"
-                            [value]="value"
-                            [min]="min"
-                            [now]="now"
-                            (picked)="value = $event"
-                            (closed)="sheetOpen.set(false)" />
-                    }
-                </rt-bottom-sheet>
-            </div>
-        }
-    `,
+    templateUrl: './test-date-panel-opening.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // angular
