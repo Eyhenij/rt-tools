@@ -12,7 +12,8 @@ export CLAUDE_PROJECT_DIR="$TREE"
 # Правила, которые в этом дереве есть. Всё, что карта назовёт сверх них, гейт требовать не
 # вправе: дерево отказалось от предметного слоя списком, и загружать такое имя нечем.
 for rule in testing component-structure styling-bem typescript-conventions angular-patterns \
-    doc-style spec-driven task-flow dependencies platform-access git-workflow shared-code deploy-flow; do
+    doc-style spec-driven task-flow dependencies platform-access git-workflow shared-code deploy-flow \
+    epic-flow; do
     mkdir -p "$TREE/.claude/skills/$rule"
     printf -- '---\nname: %s\nkind: rule\n---\n' "$rule" > "$TREE/.claude/skills/$rule/SKILL.md"
 done
@@ -373,6 +374,16 @@ g "SC-AK-1333 — роль из рабочей копии правила не т
 c "SC-AK-1333 — запись командой в рабочую копию требует правило" \
     "printf x > $TREE/.claude/worktrees/copy/docs/tasks/RT-1-x/plan.md" Bash task-flow
 rm -f "$TREE/.claude/rt-kit/gate-map.sh"
+gate_session_reset
+
+# SC-AK-1335 — объявление эпика и заведение его задач требуют правило эпика вторым слоем.
+gate_session_load git-workflow
+c "SC-AK-1335 — объявление эпика требует правило эпика" \
+    "npm run task:new -- --epic --title 'Возможность' --slug x" Bash epic-flow
+c "SC-AK-1335 — задача эпика требует правило эпика" \
+    "npm run task:new -- --epic-of 12 --title 'Дефект'" Bash epic-flow
+c "SC-AK-1335 — задача вне эпика правила эпика не требует" \
+    "npm run task:new -- --title 'Дефект'" Bash PASS
 gate_session_reset
 
 suite_result "гейт правил"

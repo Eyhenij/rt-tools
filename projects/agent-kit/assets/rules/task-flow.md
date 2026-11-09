@@ -2,13 +2,14 @@
 name: task-flow
 kind: rule
 law: work-conduct
-description: Rule under the work-conduct law — the course of work from the owner's request to the merge. Load at the start of any work, when editing task folders and product agreements, and when returning to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. End of a turn — turn-conduct.
+description: Rule under the work-conduct law — the course of one task from the request to the merge. Load at the start of any work, when editing task folders and product agreements, and on return to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. Epics — epic-flow, turns — turn-conduct.
 ---
 
 # Work conduct — how it works here
 
 Rule under the law `docs/constitution/work-conduct.md`. The law says what must be true about the
 course of work; here — what it is called in this tree, where it lives and what is not checked here.
+How a series of tasks is held together as one epic — rule `epic-flow` under the same law.
 
 **Cold part:** `pitfalls.md` next to it — traps and conduct from incident analyses. Loaded on
 demand, not with the rule: an ordinary decision does not need it — whoever analyses a miss or argues
@@ -27,9 +28,6 @@ with a guard does.
 | the plan | `docs/tasks/<ветка>/plan.md` — the task footprint and stages with readiness signs; not edited after it is written |
 | the progress | `docs/tasks/<ветка>/progress.md` — "Where we stand", decisions along the way, session entries; the only place where done work is marked |
 | the product agreement written before the code | `docs/specs/<домен>/proposed/<фича>/` — the feature spec; survives the merge and merges into the domain spec |
-| an epic — the unit of delivery | a card in the work queue with the epic label, a branch of its own from the main branch and a plan next to it: the opportunity, the tasks, their order |
-| the epic branch | `<КЛЮЧ>-<номер эпика>-<короткий-slug>`; the branches of its tasks are taken from it, and their PRs go into it |
-| the epic plan | a record outside the task folder: the folder dies with the merge, the epic outlives it; the directory — in the rule's companion |
 | the task folder before the task is created | `docs/tasks/_draft-<slug>/` — outside history while there is no number |
 | exploration | an `Explore` or `general-purpose` session before the first question to the owner |
 | the plan review by roles | `.claude/workflows/plan.js` — need, points, agreement, critique, plan, goal |
@@ -51,7 +49,7 @@ The state is declared in the "Where we stand" section of the progress by the mac
 | State | Entry | Mandatory action | Pattern |
 | --- | --- | --- | --- |
 | `просьба-не-разобрана` | the owner's message about new work | exploration over the tree, then questions | `task-flow-start` |
-| `эпик-заведён` | the epic card, all its tasks and its plan lie in the queue | take the epic branch from the main branch; with the first task the epic card moves to in progress | `task-flow-start` |
+| `эпик-заведён` | the epic card, all its tasks and its plan lie in the queue | take the epic branch from the main branch; with the first task the epic card moves to in progress | `epic-flow-declare` |
 | `разбор-закрыт` | the owner's answers lie on disk | a product agreement, or the reason there is none | `task-flow-start` |
 | `договорённость-записана` | the draft lies, or the reason is named | create the task, the branch from the epic branch, and the folder | `task-flow-start` |
 | `задача-взята` | task in the work column, branch by number, folder | write the plan | `task-flow-start` |
@@ -223,27 +221,6 @@ flowchart TD
 - **Work ordered in words becomes a task in the queue in the same turn.** Even if it will not be
   done now: a draft folder has no number, and one session knows of it. Postponed work names a
   date; postponed silently, it reads as done.
-- **Work begins with the epic, and a task outside one is not taken.** The main branch takes the
-  whole or does not take it. Work outside an epic exists only by
-  the owner's word about that work, said about that work.
-- **The epic branch is taken before the first task of the epic, not with it.** Taken later, it
-  leaves the first task on the main branch.
-- **The epic card moves to in progress by the same turn that takes its first task.** The owner
-  follows the epic by one card: left in place, it reads as never started.
-- **The next task is taken from the epic plan, and the queue list is asked only where there is no
-  epic.** A list of numbers does not tell someone else's epic from one's own.
-- **Which epic this working copy leads is read from the table of assignments, and the owner writes
-  it.** A card of the queue is not an order; a guard refuses every call that takes work until
-  their word.
-- **An epic is not closed by a sign confirmed by reading alone.** What is checkable by eye is
-  called checked only with a command and its output.
-- **The tasks of an epic are created all at once, by the same turn as the epic itself.** Creating
-  them one at a time hides the volume.
-- **A task of an epic is linked to the epic card as a sub-issue, not only named in the plan.** The
-  board reads no text: without the link it looks like a task outside one. Closed tasks are linked.
-- **The epic plan names how the branches of its tasks stand, on a par with their order.** Two
-  arrangements: each branch from the epic branch, or a stack — each from the previous. The written
-  arrangement binds whoever creates the branch.
 - **The plan names the points: the epic its milestone, the task the change a person will see.** The
   role `product-strategist` tries to prove the miss in planning and before the PR. A proved miss is
   fixed or named to the owner; no pipeline stops. Every PR body carries the table of points.
@@ -253,12 +230,6 @@ flowchart TD
   it, its reply is not edited, and the PR body carries its table.
 - **A mission is set by the owner.** A session only proposes a wording from its analysis and waits
   for approval.
-- **The PR of the epic opens when its last folder is taken apart, and not a task earlier.** A folder
-  left in the epic branch reaches the main branch with it. Until then nobody is offered the epic
-  branch: its button means the whole epic.
-- **The epic plan lies where it is found without the network and after the merge.** The card holds
-  no task order, and the folder dies with the merge. What the owner names along the way is appended
-  there by the turn that took it.
 - **Building by a sample begins with reading the sample itself, whole, by walking the directories.**
 - **What acts on the tree, not on the edit, lies outside the index.** The path to the sample and the
   permission to work outside the epic do not belong to the branch and live next to the handover. A

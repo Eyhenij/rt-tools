@@ -487,16 +487,6 @@ stay writes, and code as an argument stays a write when it holds a call that wri
 
 Covered: `projects/agent-kit/tests/defaults.test.sh`.
 
-### SC-AK-1333 — a working copy gets the same rule as the main copy
-
-Given the edited file lies in a working copy, and the working copy lies inside the agent directory of
-the tree
-When the rules gate picks a rule, by an edit or by a command that writes the file
-Then it reads the path as it stands in the main copy: a map branch that lets the agent directory
-through does not let through every file of the copy
-
-Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
-
 ### SC-AK-999 — the scenario suite is not moved by the environment standing around it
 
 Given the environment holds `GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE` or `CLAUDE_PROJECT_DIR`

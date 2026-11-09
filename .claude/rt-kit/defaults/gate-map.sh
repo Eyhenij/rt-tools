@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.35.0 · defaults/gate-map.sh · ed9237a1c8fb · правится надстройкой, не здесь
+# rt-kit v0.35.0 · defaults/gate-map.sh · c7989df2f782 · правится надстройкой, не здесь
 # Map "what is edited — which rule". The package default: real paths, not samples.
 #
 # The trees of this workshop are built alike — Nx, `apps/` and `libs/`, the same extensions and the
@@ -221,6 +221,12 @@ skill_for_default() {
             # left to answer for it. Required as the SECOND layer, on top of the delivery rule.
             rt_gate_invokes "$target" "(gh[[:space:]]+pr|glab[[:space:]]+mr)[[:space:]]+merge" \
                 && printf '%s\n' 'task-flow'
+
+            # Declaring an epic and creating its tasks follow the rule of the epic: the card, the
+            # plan and every task at once. Required as the SECOND layer, on top of the delivery rule.
+            rt_gate_invokes "$target" "[^[:space:]]*task:new" \
+                && printf '%s' "$target" | grep -qE -- '--epic(-of)?([[:space:]=]|$)' \
+                && printf '%s\n' 'epic-flow'
 
             # A request to a running application: what lies here is not the code but what answers on
             # the port. The reply of the previous session's build is indistinguishable from the
