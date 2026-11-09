@@ -16,6 +16,7 @@
         &__rest {
             display: flex;
             min-width: 0;
+            min-height: 0;
             flex: 1 1 0;
             flex-direction: column;
         }
@@ -34,8 +35,10 @@
         }
 
         &__page {
-            flex: 1 1 auto;
-            padding: var(--rt-space-4) var(--rt-space-5);
+            overflow: hidden;
+            min-height: 0;
+            flex: 1 1 0;
+            padding: var(--rt-space-4) var(--rt-space-5) 0;
         }
 
         &__assistant {
@@ -47,11 +50,20 @@
         }
 
         @media (width <= 768px) {
+            height: 100dvh;
             flex-direction: column;
+
+            &__page {
+                padding: calc(var(--rt-space-2) + var(--rt-space-1)) var(--rt-space-4) var(--rt-space-2);
+                background-color: var(--rt-color-bg-surface);
+            }
 
             &__assistant {
                 position: absolute;
+                z-index: var(--rt-z-fixed);
                 width: 100%;
+                background-color: var(--rt-color-bg-surface);
+                border-inline-start: 0;
                 inset: 0;
             }
         }

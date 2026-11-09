@@ -31,6 +31,7 @@
                 (scroll)="onTabListScroll()">
                 @for (tab of visibleTabs(); track tab.id()) {
                     @let focusable = tab.id() === focusId();
+                    @let closeShown = tab.showClose() && (closeOn() === 'all' || tab.id() === selectedId());
                     <!-- Вкладка — обёртка из двух кнопок: самой вкладки и крестика рядом с ней, не внутри,
                          потому что кнопка в кнопке недопустима. Нажатие в любом месте обёртки выбирает
                          вкладку; крестик своё нажатие дальше не пускает. -->
@@ -54,7 +55,7 @@
                             qa-dataid="tabs-tab"
                             type="button"
                             role="tab"
-                            [rtMod]="{ closable: tab.showClose() }"
+                            [rtMod]="{ closable: closeShown }"
                             [id]="'rt-tab-' + tab.id()"
                             [attr.aria-disabled]="tab.disabled() || null"
                             [attr.aria-label]="tab.ariaLabel()"
@@ -70,7 +71,7 @@
                                     <rt-icon
                                         rtElem="icon"
                                         size="sm"
-                                        [name]="tab.icon()"
+                                        [name]="tab.shownIcon()"
                                         [glyph]="tab.glyph()"
                                         [color]="tab.iconColor()"
                                         [fill]="tab.iconFill()" />
@@ -95,7 +96,7 @@
                             }
                         </button>
 
-                        @if (tab.showClose()) {
+                        @if (closeShown) {
                             <!-- В таб-порядке только у вкладки в фокусе: Tab с неё идёт на её крестик, дальше — из полосы. -->
                             <button
                                 rtElem="close"

@@ -32,8 +32,8 @@ describe('pageBarFit', (): void => {
         expect(fit(0, 0, 3)).toEqual({ mode: 'one', rowFilters: 3 });
     });
 
-    it('actions take 40 each with a gap of 8, and no actions take no room', (): void => {
-        expect(actionsWidthOf(3)).toBe(136);
+    it('actions take 32 each with a gap of 8, and no actions take no room', (): void => {
+        expect(actionsWidthOf(3)).toBe(112);
         expect(actionsWidthOf(0)).toBe(0);
     });
 });

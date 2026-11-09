@@ -1,6 +1,5 @@
 @layer rt-kit.components {
     .rt-page-bar {
-        --rt-page-bar-control-radius: var(--rt-radius-md);
         --rt-page-bar-control-border-width: var(--rt-border-width-thin);
         --rt-page-bar-dot-radius: var(--rt-radius-full);
 
@@ -71,22 +70,18 @@
 
         &__more {
             width: 185px;
-            height: 40px;
             flex: none;
-            padding: 0;
-            border: var(--rt-page-bar-control-border-width) solid var(--rt-color-border-default);
-            border-radius: var(--rt-page-bar-control-radius);
-            background: transparent;
-            color: var(--rt-color-text-primary);
-            cursor: pointer;
-            font-family: inherit;
-            font-size: var(--rt-text-sm);
         }
 
         &__filters-trigger {
             position: relative;
             display: inline-flex;
             flex: none;
+        }
+
+        /* Кнопка действий на телефоне, пока её меню открыто. */
+        .rt-menu--open .rt-icon-button {
+            background-color: var(--rt-nav-item-color-bg-active);
         }
 
         &__dot {

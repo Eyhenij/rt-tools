@@ -45,9 +45,19 @@
         <div rtElem="row" qa-dataid="page-bar-second-row">
             <ng-container [ngTemplateOutlet]="filterRow" [ngTemplateOutletContext]="{ wide: false }" />
             @if (moreFilters().length > 0) {
-                <button rtElem="more" type="button" qa-dataid="page-bar-more-filters" rtPopoverAlign="end" [rtPopover]="morePanel">
-                    {{ t().uiMoreFilters }} · {{ moreFilters().length }}
-                </button>
+                <button
+                    rtButton
+                    rtElem="more"
+                    type="button"
+                    theme="secondary"
+                    appearance="outlined"
+                    size="sm"
+                    icon="ico-plus"
+                    qa-dataid="page-bar-more-filters"
+                    rtPopoverAlign="end"
+                    [label]="t().uiMoreFilters + ' · ' + moreFilters().length"
+                    [attr.aria-label]="t().uiMoreFilters + ' · ' + moreFilters().length"
+                    [rtPopover]="morePanel"></button>
             }
         </div>
     }
@@ -84,7 +94,7 @@
                 @for (action of actions(); track action.id) {
                     <rt-icon-button
                         qa-dataid="page-bar-action"
-                        size="md"
+                        size="sm"
                         variant="primary"
                         [attr.data-id]="action.id"
                         [icon]="action.icon"

@@ -3,11 +3,11 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 6 of 7 — Сверка с макетом и показ витрины
-- **Done:** вкладки «Ещё», рейка, панель, кнопки в ряду с вкладками, компактная шапка и шапка телефона; числа витрины совпали с кадрами: 240 из 240. Повторяющиеся части макетов стали компонентами: «Части вертикального режима» на листе Page Header и «Части режима «Ещё»» на листе Tabs.
-- **Next step:** показать витрину владельцу и записать ответ.
-- **Uncommitted:** нет, код лежит в коммите после сверки.
-- **Waiting for the owner:** ответ о витрине.
+- **Stage:** 7 of 7 — Закрытие
+- **Done:** вкладки «Ещё», рейка, панель, кнопки в ряду с вкладками, компактная шапка и шапка телефона; макеты и витрина сверены, числа сняты заново: 250 из 250. Владелец одобрил витрину после сверки: «Одобряю».
+- **Next step:** собрать витрину, обойти все истории, закоммитить, влить договорённость в спеку.
+- **Uncommitted:** крестик только у выбранной вкладки (`closeOn`), маленькие кнопки, поиск и отборы в строке; новое меню телефона `rt-page-phone-menu` без логотипа; поле `active` у кнопки подвала, чат на весь экран телефона, ширины колонок таблицы как в кадрах, пять отборов во второй строке, рейка с прокруткой, история меню вкладки.
+- **Waiting for the owner:** nothing. Содержимое чата расходится с кадрами: текст ответа 12 против 14, нет «+» в поле ввода; это готовый компонент чата, в задачу не входит.
 - **PR:** not open yet
 
 ## Steps
@@ -29,8 +29,8 @@
 - [x] 5.2 Подключить отборы к `rt-bottom-sheet`, действия к меню
 - [x] 5.3 Показать состояния в витрине на ширине 375
 - [x] 6.1 Снять числа витрины и сравнить с кадрами
-- [>] 6.2 Показать витрину владельцу и записать ответ
-- [ ] 7.1 Влить договорённость в спеку и обновить `CONTEXT.md` компонентов
+- [x] 6.2 Показать витрину владельцу и записать ответ
+- [>] 7.1 Влить договорённость в спеку и обновить `CONTEXT.md` компонентов
 - [ ] 7.2 Разобрать папку задачи и открыть запрос
 
 ## Decisions along the way
@@ -56,3 +56,57 @@
 - Владелец одобрил макеты: «Одобряю».
 - Кнопка профиля горизонтальной шапки вынесена в свою часть `user/`: шаблон шапки с веткой рейки вышел за 500 строк. Классы и стили кнопки остались у шапки, тесты шапки зелёные.
 - Подсказка у раздела с панелью убрана: она ложилась поверх заголовка группы панели, а панель сама называет содержимое. Подпись для чтения с экрана осталась.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools
+**Branch:** RT-3181-page-header-vertical
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 6 of 7 — Сверка с макетом и показ витрины
+- **Next step:** показать витрину владельцу и записать ответ.
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-3181-page-header-vertical/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M docs/specs/ui-kit-v2/proposed/page-header-vertical/scenarios.md
+ M docs/specs/ui-kit-v2/proposed/page-header-vertical/spec.md
+ M docs/tasks/RT-3181-page-header-vertical/approvals.md
+ M docs/tasks/RT-3181-page-header-vertical/progress.md
+ M projects/ui-kit-v2/.storybook/preview.ts
+ M projects/ui-kit-v2/src/lib/components/page-header/CONTEXT.md
+ M projects/ui-kit-v2/src/lib/components/page-header/Overview.mdx
+ M projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.component.html
+ M projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.component.scss
+ M projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.logic.spec.ts
+ M projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.logic.ts
+ M projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-actions.component.html
+ M projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-actions.component.scss
+ M projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-rail.component.html
+ M projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-rail.component.spec.ts
+ M projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-rail.component.ts
+ D projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-rail.logic.spec.ts
+ D projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-rail.logic.ts
+ M projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.model.ts
+ M projects/ui-kit-v2/src/lib/components/page-header/stories/component/test-page-header-vertical.component.html
+```
+
+### Commits over the main branch
+
+```
+118d48d36 feat(rt:ui-kit-v2): вертикальное меню и компактная шапка страницы
+de5327e00 feat(rt:ui-kit-v2): режим вкладок «Ещё» и меню вкладки по правой кнопке
+d138da36b docs(rt:ui-kit-v2): договорённость о вертикальном меню и режиме вкладок «Ещё»
+3f0407e66 docs(rt:ui-kit-v2): макеты вертикального меню и вкладок одобрены
+0c7a898ea docs(rt:ui-kit-v2): папка задачи вертикального меню
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

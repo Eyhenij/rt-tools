@@ -96,8 +96,11 @@ height from the table, so the vertical layout comes with a compact page header.
   button, the actions button, and the assistant, notifications and profile buttons.
 - **The page title takes the width left over and truncates, and the buttons never leave the
   screen.** Measured at 375.
-- **The burger opens the sections as the side menu's narrow column 240 wide, with «Back» for nested
-  items.**
+- **The burger opens the sections as a menu of the vertical layout, a column 240 wide with rows 48
+  high and no logo.** A section with a panel opens its items in place, and «Back» returns to the
+  sections. The kit's side menu stays as it is and is not used here.
+- **The phone menu takes the theme colours of the wide layout.** The list of sections is painted as
+  the rail, and an opened section as the section panel.
 - **The filters button opens the bottom sheet with search and all filters.** A dot on the button
   says filters are applied.
 - **The actions button opens the kit menu with the page's actions.**

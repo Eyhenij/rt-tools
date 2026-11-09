@@ -75,6 +75,17 @@ describe('RtTabsComponent — режим «Ещё»', (): void => {
         document.querySelector('.cdk-overlay-container')?.replaceChildren();
     });
 
+    it('SC-UKV-1206 — the open trigger shows its state', (): void => {
+        const fixture: ComponentFixture<TabsMoreHostComponent> = setup(120);
+        const trigger: HTMLElement | null = host(fixture).querySelector<HTMLElement>('[qa-dataid="tabs-more"]');
+
+        expect(trigger?.classList.contains('rt-tab-item__trigger--open')).toBe(false);
+
+        openMenu(fixture);
+
+        expect(trigger?.classList.contains('rt-tab-item__trigger--open')).toBe(true);
+    });
+
     it('SC-UKV-1183 — лишние вкладки стоят в меню, а не в ряду', (): void => {
         const fixture: ComponentFixture<TabsMoreHostComponent> = setup(300);
 

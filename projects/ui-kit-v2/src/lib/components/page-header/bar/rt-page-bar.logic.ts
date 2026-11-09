@@ -27,9 +27,9 @@ export namespace IRtPageBarFit {
     }
 }
 
-/** Ширина панели действий: кнопки по 40 с промежутком 8. */
+/** Ширина панели действий: кнопки по 32 с промежутком 8. */
 export function actionsWidthOf(count: number): number {
-    return count > 0 ? count * 48 - 8 : 0;
+    return count > 0 ? count * 40 - 8 : 0;
 }
 
 function filtersInSecondRow(content: number, count: number, hasSearch: boolean): number {

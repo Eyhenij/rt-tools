@@ -1,0 +1,54 @@
+<div class="app-page-table__window">
+    <table rt-table #table="rtTable" class="app-page-table__table" showRowActions [dataSource]="rows()" [columnsConfig]="columns()">
+        <ng-container cdkColumnDef="dates">
+            <th *cdkHeaderCellDef cdk-header-cell>Даты</th>
+            <td *cdkCellDef="let row" cdk-cell>{{ row.dates }}</td>
+        </ng-container>
+        <ng-container cdkColumnDef="place">
+            <th *cdkHeaderCellDef cdk-header-cell>Объект</th>
+            <td *cdkCellDef="let row" cdk-cell>{{ row.place }}</td>
+        </ng-container>
+        <ng-container cdkColumnDef="guest">
+            <th *cdkHeaderCellDef cdk-header-cell>Гость</th>
+            <td *cdkCellDef="let row" cdk-cell>{{ row.guest }}</td>
+        </ng-container>
+        <ng-container cdkColumnDef="contact">
+            <th *cdkHeaderCellDef cdk-header-cell>Контакт</th>
+            <td *cdkCellDef="let row" cdk-cell>{{ row.contact }}</td>
+        </ng-container>
+        <ng-container cdkColumnDef="party">
+            <th *cdkHeaderCellDef cdk-header-cell>Состав</th>
+            <td *cdkCellDef="let row" cdk-cell>{{ row.party }}</td>
+        </ng-container>
+        <ng-container cdkColumnDef="source">
+            <th *cdkHeaderCellDef cdk-header-cell>Источник</th>
+            <td *cdkCellDef="let row" cdk-cell><rt-tag [value]="row.source.value" [severity]="row.source.severity" /></td>
+        </ng-container>
+        <ng-container cdkColumnDef="status">
+            <th *cdkHeaderCellDef cdk-header-cell>Статус</th>
+            <td *cdkCellDef="let row" cdk-cell><rt-tag [value]="row.status.value" [severity]="row.status.severity" /></td>
+        </ng-container>
+        <ng-container cdkColumnDef="payment">
+            <th *cdkHeaderCellDef cdk-header-cell>Оплата</th>
+            <td *cdkCellDef="let row" cdk-cell>
+                @if (row.payment; as payment) {
+                    <rt-tag [value]="payment.value" [severity]="payment.severity" />
+                } @else {
+                    —
+                }
+            </td>
+        </ng-container>
+        <ng-container cdkColumnDef="sum">
+            <th *cdkHeaderCellDef cdk-header-cell>Сумма</th>
+            <td *cdkCellDef="let row" cdk-cell>{{ row.sum }}</td>
+        </ng-container>
+
+        <ng-template rtTableRowActions let-row [rtTableRowActionsRowType]="rows()">
+            <rt-menu-item icon="ico-eye" [label]="'Открыть ' + row.guest" />
+        </ng-template>
+
+        <tr *cdkHeaderRowDef="table.displayedColumns()" cdk-header-row></tr>
+        <tr *cdkRowDef="let row; columns: table.displayedColumns()" cdk-row></tr>
+    </table>
+</div>
+<rt-pagination class="app-page-table__pagination" [pageModel]="pageModel()" />

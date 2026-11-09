@@ -23,12 +23,11 @@ import { BlockDirective, ElemDirective, ModDirective, WINDOW } from '@rt-tools/c
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
-import { IRtSideMenu, RtSideMenuComponent } from '@rt-tools/ui-kit-v2/side-menu';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { ERtPageHeaderEntry, IRtPageHeaderView } from '../rt-page-header.logic';
 import { IRtPageHeader } from '../rt-page-header.model';
-import { railMenuItems } from './rt-page-rail.logic';
 import { RtPageActionsComponent } from './rt-page-actions.component';
+import { RtPagePhoneMenuComponent } from './rt-page-phone-menu.component';
 
 const BEM_BLOCK: string = 'rt-page-rail';
 
@@ -37,8 +36,8 @@ const PANEL_CLOSE_DELAY_MS: number = 150;
 
 /**
  * Вертикальная шапка: рейка 50 с разделами и панель раздела 220 поверх страницы. На телефоне та же
- * часть становится строкой 50: бургер открывает разделы столбцом `rt-side-menu`. Адрес и подсветку
- * считает `rt-page-header`: у одного списка разделов одна подсветка в обоих видах.
+ * часть становится строкой 50: бургер открывает разделы столбцом `rt-page-phone-menu`. Адрес и
+ * подсветку считает `rt-page-header`: у одного списка разделов одна подсветка в обоих видах.
  */
 @Component({
     selector: 'rt-page-rail',
@@ -52,7 +51,7 @@ const PANEL_CLOSE_DELAY_MS: number = 150;
         RouterLinkActive,
         RtIconComponent,
         RtPageActionsComponent,
-        RtSideMenuComponent,
+        RtPagePhoneMenuComponent,
         RtTooltipDirective,
         BlockDirective,
         ElemDirective,
@@ -62,7 +61,7 @@ const PANEL_CLOSE_DELAY_MS: number = 150;
         class: BEM_BLOCK,
         '(mouseleave)': 'schedulePanelClose()',
         '(mouseenter)': 'cancelPanelClose()',
-        '(document:keydown.escape)': 'closePanel()',
+        '(document:keydown.escape)': 'closeAll()',
         '(document:click)': 'onDocumentClick($event)',
     },
 })
@@ -89,10 +88,6 @@ export class RtPageRailComponent {
 
     /** Столбец телефона открыт бургером. */
     protected readonly phoneMenuOpen: WritableSignal<boolean> = signal<boolean>(false);
-
-    protected readonly phoneItems: Signal<IRtSideMenu.Item[]> = computed((): IRtSideMenu.Item[] => railMenuItems(this.sections()));
-
-    protected readonly phoneActiveIds: Signal<ReadonlyArray<string>> = computed((): ReadonlyArray<string> => [...this.activeIds()]);
 
     public readonly sections: InputSignal<ReadonlyArray<IRtPageHeaderView.Section>> =
         input.required<ReadonlyArray<IRtPageHeaderView.Section>>();
@@ -133,6 +128,11 @@ export class RtPageRailComponent {
     protected closePanel(): void {
         this.cancelPanelClose();
         this.#openId.set(null);
+    }
+
+    protected closeAll(): void {
+        this.closePanel();
+        this.phoneMenuOpen.set(false);
     }
 
     protected schedulePanelClose(): void {

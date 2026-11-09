@@ -8,7 +8,8 @@
             [attr.data-id]="item.id"
             [attr.aria-label]="item.label"
             [attr.aria-disabled]="item.disabled || null"
-            [rtMod]="{ disabled: item.disabled ?? false }"
+            [attr.aria-pressed]="item.active ?? null"
+            [rtMod]="{ disabled: item.disabled ?? false, active: item.active ?? false }"
             [rtTooltip]="placement() === 'rail' ? item.label : ''"
             (click)="item.disabled || itemClick.emit(item.id)">
             <span rtElem="plate">

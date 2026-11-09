@@ -126,6 +126,21 @@ describe('rt-page-rail', (): void => {
         expect(qaAll(fixture, 'rail-panel')).toHaveLength(0);
     });
 
+    it('SC-UKV-1207 — a switched-on foot button carries its look and says it is pressed', (): void => {
+        const fixture: ComponentFixture<RtPageHeaderComponent> = setup({
+            railActions: [
+                { id: 'assistant', label: 'Ассистент', icon: 'book', active: true },
+                { id: 'bell', label: 'Уведомления', icon: 'book' },
+            ],
+        });
+        const [assistant, bell]: DebugElement[] = qaAll(fixture, 'page-action');
+
+        expect((assistant.nativeElement as HTMLElement).classList).toContain('rt-page-actions__item--active');
+        expect((assistant.nativeElement as HTMLElement).getAttribute('aria-pressed')).toBe('true');
+        expect((bell.nativeElement as HTMLElement).classList).not.toContain('rt-page-actions__item--active');
+        expect((bell.nativeElement as HTMLElement).hasAttribute('aria-pressed')).toBe(false);
+    });
+
     it('SC-UKV-1193 — without a foot the rail draws neither the foot nor the profile', (): void => {
         expect(qa(setup(), 'rail-foot')).not.toBeNull();
 

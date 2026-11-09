@@ -22,6 +22,9 @@ export namespace IRtTabs {
     /** Что делать, когда вкладки не встают: прокручивать полосу (`scroll`) или уносить лишние в меню (`more`). */
     export type Overflow = 'scroll' | 'more';
 
+    /** У каких вкладок ряда виден крестик. */
+    export type CloseOn = 'all' | 'selected';
+
     /** Контекст шаблона меню вкладки: id вкладки, на которой нажали правую кнопку. */
     export interface ContextMenuContext {
         readonly $implicit: Id;

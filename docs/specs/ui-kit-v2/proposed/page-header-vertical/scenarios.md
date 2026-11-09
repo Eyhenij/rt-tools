@@ -105,6 +105,48 @@ Given the phone bottom sheet with filters is open
 When the apply button is pressed
 Then the bar reports it and the sheet closes
 
+### SC-UKV-1201 — the close button only on the selected tab
+
+Given tabs with `closeOn="selected"` and several closable tabs
+When the strip is drawn
+Then only the selected tab has a close button in the row, and menu rows keep theirs
+
+### SC-UKV-1205 — a pinned tab draws the pin itself and may be closed
+
+Given a pinned tab without an icon of its own that is also closable
+When the strip is drawn
+Then the tab shows the pin icon and its close button
+
+### SC-UKV-1202 — the phone menu lists the sections without a logo
+
+Given a header in the vertical layout at a phone width
+When the burger is pressed
+Then a column lists every section in order, marks the active one and holds no logo
+
+### SC-UKV-1203 — a section with a panel opens in place
+
+Given the phone menu is open
+When a section with a panel is pressed
+Then its items replace the list, and «Back» returns to the sections
+
+### SC-UKV-1204 — choosing an item closes the phone menu
+
+Given the phone menu is open
+When an item is chosen
+Then the choice is reported and the column closes, and a disabled item does neither
+
+### SC-UKV-1206 — the open «More» trigger shows its state
+
+Given a strip in the «More» mode with tabs in the menu
+When the trigger is pressed
+Then the trigger carries its open look
+
+### SC-UKV-1207 — a switched-on foot button shows it
+
+Given a foot button whose item is marked active, such as the open assistant
+When the rail or the tab row draws it
+Then it carries the active look and says that it is pressed, and its neighbours do not
+
 ### SC-UKV-1198 — the assistant narrows the page
 
 Given a window wider than 768

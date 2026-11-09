@@ -14,6 +14,11 @@
             visibility: hidden;
         }
 
+        .rt-tab-item__trigger--open {
+            background-color: var(--rt-color-bg-hover);
+            color: var(--rt-color-text-primary);
+        }
+
         .rt-tab-item__more-dot {
             width: var(--rt-size-2);
             height: var(--rt-size-2);

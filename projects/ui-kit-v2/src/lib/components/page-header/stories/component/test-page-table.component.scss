@@ -1,0 +1,81 @@
+@layer rt-kit.components {
+    /* Содержимое страницы кадров: таблица в окне с прокруткой и подвал пагинации под ней. */
+    .app-page-table {
+        display: flex;
+        height: 100%;
+        min-height: 0;
+        flex-direction: column;
+
+        &__window {
+            overflow: auto hidden;
+            min-height: 0;
+            flex: 1 1 0;
+        }
+
+        /* Подвал кадров: высота 40, кнопки и поле 32, подпись в одну строку. */
+        &__pagination {
+            --rt-pagination-padding-y: var(--rt-space-1);
+            --rt-pagination-padding-x: var(--rt-space-1);
+            --rt-pagination-box-size: var(--rt-control-height-sm);
+            --rt-pagination-field-height: var(--rt-control-height-sm);
+            --rt-pagination-per-page-label-white-space: nowrap;
+
+            flex: none;
+        }
+
+        @media (width > 768px) {
+            &__table {
+                min-width: 1570px;
+                table-layout: fixed;
+            }
+
+            &__table th {
+                box-sizing: border-box;
+            }
+
+            /* Длинное значение в широкой таблице кадров — в одну строку с многоточием. */
+            &__table td {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            /* Ширины колонок кадров: в сумме 1570. */
+            .cdk-column-dates {
+                width: 230px;
+            }
+
+            .cdk-column-place {
+                width: 170px;
+            }
+
+            .cdk-column-guest {
+                width: 180px;
+            }
+
+            .cdk-column-contact {
+                width: 200px;
+            }
+
+            .cdk-column-party {
+                width: 110px;
+            }
+
+            .cdk-column-source {
+                width: 130px;
+            }
+
+            .cdk-column-status {
+                width: 190px;
+            }
+
+            .cdk-column-payment {
+                width: 170px;
+            }
+
+            .cdk-column-sum {
+                width: 190px;
+            }
+        }
+    }
+}

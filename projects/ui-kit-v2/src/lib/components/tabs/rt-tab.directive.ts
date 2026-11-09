@@ -163,8 +163,13 @@ export class RtTabDirective {
      */
     public readonly closeLabel: Signal<string> = computed((): string => this.closeTooltip() || this.#t_uiClose());
 
+    /** Какая иконка рисуется: своя, а у закреплённой без своей — кнопка закрепления. */
+    public readonly shownIcon: Signal<IRtIcon.Name | null> = computed(
+        (): IRtIcon.Name | null => this.icon() ?? (this.pinned() && !this.glyph() ? 'pin' : null)
+    );
+
     /** У вкладки есть иконка — по имени кита или по значку Material. */
-    public readonly hasIcon: Signal<boolean> = computed((): boolean => Boolean(this.icon() || this.glyph()));
+    public readonly hasIcon: Signal<boolean> = computed((): boolean => Boolean(this.shownIcon() || this.glyph()));
 
     /** Бейдж стоит над иконкой: попросили `overlay`, бейдж есть и есть над чем стоять. */
     public readonly badgeOverlay: Signal<boolean> = computed(

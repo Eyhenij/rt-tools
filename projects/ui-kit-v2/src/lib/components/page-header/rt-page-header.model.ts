@@ -29,6 +29,8 @@ export namespace IRtPageHeader {
          * У раздела с панелью точка горит и от признака любого пункта внутри.
          */
         readonly unread?: boolean;
+        /** Кнопка подвала рейки включена: например, открыт ассистент. У разделов поле не читается. */
+        readonly active?: boolean;
         /** Панель второго уровня: колонка → группа → пункт. */
         readonly columns?: ReadonlyArray<Column>;
         /**

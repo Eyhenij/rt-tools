@@ -125,10 +125,12 @@
                 [attr.aria-label]="t().bottomSheetClose"
                 (click)="phoneMenuOpen.set(false)"></button>
             <div rtElem="phone-column">
-                <rt-side-menu
-                    [activeMenuIds]="phoneActiveIds()"
-                    [menuItems]="phoneItems()"
-                    (closeMobileMenuAction)="phoneMenuOpen.set(false)" />
+                <rt-page-phone-menu
+                    [sections]="sections()"
+                    [activeIds]="activeIds()"
+                    [navLabel]="navLabel()"
+                    (itemClick)="itemClick.emit($event)"
+                    (closed)="phoneMenuOpen.set(false)" />
             </div>
         </div>
     }

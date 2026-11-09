@@ -54,8 +54,10 @@
         /* Подвал рейки на широком экране: столбец ячеек 50, те же плашки 36, что у разделов.
            Ряд вкладок: кнопки стоят над линией полосы, а не по центру с ней. */
         @media (width > 768px) {
+            /* Линия полосы идёт и под кнопками, вместе с отступом ряда вкладок перед ними. */
             &:not(&--rail) {
-                margin-block-end: var(--rt-page-actions-plate-border-width);
+                border-block-end: var(--rt-page-actions-plate-border-width) solid var(--rt-color-border-default);
+                margin-inline-start: calc(-1 * var(--rt-space-md));
             }
 
             &--rail {
@@ -84,6 +86,17 @@
 
             &--rail &__item:hover &__plate {
                 background-color: var(--rt-nav-item-color-bg-active);
+            }
+
+            /* Включённая кнопка: в рейке как выбранный раздел, в ряду вкладок заливка на всю кнопку. */
+            &--rail &__item--active &__plate {
+                border-color: var(--rt-color-border-default);
+                background-color: var(--rt-nav-item-color-bg-active);
+            }
+
+            &:not(&--rail) &__item--active {
+                background-color: var(--rt-nav-item-color-bg-active);
+                color: var(--rt-nav-item-color-hover);
             }
 
             &--rail &__marker {

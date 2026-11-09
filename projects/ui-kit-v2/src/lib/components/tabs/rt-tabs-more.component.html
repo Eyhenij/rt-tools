@@ -13,12 +13,13 @@
         rtPopoverOffsetY="6"
         [attr.aria-expanded]="morePopover.isOpen()"
         [attr.tabindex]="tabs().length ? 0 : -1"
+        [rtMod]="{ open: morePopover.isOpen() }"
         [rtPopover]="moreTpl">
         <span rtElem="title">{{ t().uiNavMore }}</span>
         @if (hasError()) {
             <span rtElem="more-dot" role="img" qa-dataid="tabs-more-dot" [attr.aria-label]="t().uiTabInvalid"></span>
         }
-        <rt-icon name="chevron-down" color="current" size="xs" />
+        <rt-icon color="current" size="xs" [name]="morePopover.isOpen() ? 'chevron-up' : 'chevron-down'" />
     </button>
 </div>
 

@@ -209,6 +209,9 @@ export class RtTabsComponent {
         transform: booleanAttribute,
     });
 
+    /** У каких вкладок ряда виден крестик. Строки меню «Ещё» его показывают всегда. */
+    public readonly closeOn: InputSignal<IRtTabs.CloseOn> = input<IRtTabs.CloseOn>('all');
+
     /** Скроллить область контента при переполнении. */
     public readonly contentScrollable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
