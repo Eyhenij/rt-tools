@@ -2,36 +2,17 @@
 
 ## Where we stand
 
-Rewritten by every session, not appended to.
+- **State:** `этап-идёт`
+- **Stage:** 1 из 1 — Пять правок
+- **Done:** задача заведена, ветка взята
+- **Next step:** шаблон плана и task-flow-cycle
 
-- **State:** `<name from the state list of rule task-flow>`
-- **Stage:** <number> of <total> — <name>
-- **Done:** <briefly>
-- **Next step:** <what is done first in the new session>
-- **Uncommitted:** <what lies in the tree outside the index>
-- **Waiting for the owner:** <what exactly, or "no"; the owner's standing word about a stop is quoted in « »>
-- **PR:** <number and state, or "not open yet">
-
-## Steps
-
-The steps of the plan, all of them, with a mark each. Rewritten by every turn that moves the work.
-
-- `[x]` done · `[>]` going on right now · `[ ]` not begun
-
-Exactly one step carries `[>]`. The numbers and the names are copied from the plan and not
-reworded: a check matches the two lists, and the turn exit guard counts what is not done yet.
-
-- [x] 1.1 <name of the first step of the first stage>
-- [>] 1.2 <name of the second step of the first stage>
-- [ ] 2.1 <name of the first step of the second stage>
+- [>] 1.1 Шаблон плана и task-flow-cycle
+- [ ] 1.2 Две ловушки в agent-kit-source
+- [ ] 1.3 Указатель состояния в spec-driven-rule
+- [ ] 1.4 Requires в epic-flow и правило epic-stop-guard
+- [ ] 1.5 Установка файлов из пакета и проверки
 
 ## Decisions along the way
 
-- **<decision>** — <reason>. Affected stage of the plan: <number>.
-
-## Sessions
-
-### <date>
-
-- <what was done, in numbers: files, commits, what is green>
-- <what we stumbled on and what caught it>
+- Первый коммит папки ушёл с файлами шаблона: запись трёх файлов отказала проверка правил, а команда коммита в том же ходе прошла. Содержимое пришло вторым коммитом.

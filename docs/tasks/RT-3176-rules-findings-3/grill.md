@@ -1,33 +1,33 @@
 # Grill
 
-<Work begun from cargo that arrived names its records here — by full keys, as the intake reading
-prints them. Eight characters are not enough: a mark with a short key is refused with the line
-«the tree has no such record». This file leaves for the archive, and after the folder is taken apart
-the keys live only here.>
-
 ## The owner request
 
-> <verbatim, in the owner's language, without retelling>
+> Все пять (Recommended)
+
+Ответ владельца в меню на вопрос «Разбор задачи RT-3174 по правилам дал 5 предложений к текстам
+правил. Какие вносить? (Я внесу выбранное отдельной задачей после слияния #3175.)». Варианты были:
+«Все пять», «Только 1–2 про метрику», «Только 3–5», «Пока ничего».
 
 ## What the tree already has
 
-<Findings of the exploration: specs on the subject, the laws and rules the work touches, a
-ready-made sample nearby. Filled in before the first question to the owner.>
-
-## What the rules already say
-
-<What was found in the laws and rules on the subject of the question. The owner is not asked
-what already has a written answer.>
+1. Шаблон плана (`projects/agent-kit/assets/samples/tasks/_template/plan.md`) требует метрику для
+   любой правки правила, проверки или роли. Паттерн `task-flow-cycle` говорит, что починке метрика
+   не нужна.
+2. В `task-flow-cycle` есть пункт «A rising count taken for a worse rule», но в нём нет случая, когда
+   починка расширила обзор проверки.
+3. В `agent-kit-source` нет ловушек про сборку пакета во время набора перед push и про проверку
+   снятия запрета на отказе и постороннем ответе.
+4. В `spec-driven-rule` нет пункта о разделе-указателе под заголовком состояния.
+5. В `epic-flow` нет строки `Requires`.
+6. У `epic-stop-guard.sh` стоит `RT_GUARD_RULE=task-flow`, а его статья лежит в `turn-conduct`.
 
 ## Questions and answers
 
-**<question>**
-<the owner's answer in their words>
+Вопросов нет: владелец выбрал все пять предложений.
 
 ## Decisions
 
-- **<decision>** — <reason>. Rejected: <what and why>.
-
-## What is left unclear
-
-- <a question that was not asked, and why it does not block the work>
+- **Одна задача, вне эпика.** Владелец выбрал все пять в одном меню.
+- **Тексты взяты из предложений роли `skill-curator`**, место в каждом файле проверяется до правки.
+- **Строка `RT_GUARD_RULE` у `epic-stop-guard.sh` входит в задачу.** Роль назвала её рядом с пятью
+  предложениями, правка — одна строка.

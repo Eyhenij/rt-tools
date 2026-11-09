@@ -1,64 +1,38 @@
 # Plan
 
 **Task:** RT-3176 · **Branch:** RT-3176-rules-findings-3
-**Draft:** `<path to the product agreement>`
-**Behaviour:** changes
-
-A tree that writes the agreement straight into the domain spec names it instead of the draft:
-`**Spec:** `<path to the spec>``.
-
-Work that does not touch application code needs no agreement — then instead of the draft line
-stands `**Behaviour:** unchanged — <the owner's reason>`; an empty reason is not accepted.
-
-After it is written this file is not edited. A stage revision goes to `progress.md` as a decision
-along the way.
+**Behaviour:** unchanged — правки в текстах правил, шаблоне плана и одной строке проверки, без кода приложений; слово владельца «Все пять».
 
 ## Points
 
-- **A:** <where the product stands now>
-- **This task reaches:** <the change a person will see>
-- **Sign:** <the command, the page or the number that shows it, and who sees it>
-- **Milestone G of the epic:** <the point named in the epic plan>
-- **Metric:** <only for an edit of a rule, a hook, a check or a role: the number, the direction, the baseline — pattern `task-flow-cycle`>
+- **A:** тексты правил не предупреждают о пяти промахах задачи RT-3174.
+- **This task reaches:** исполнитель, который читает шаблон плана, `task-flow-cycle`, `agent-kit-source`, `spec-driven-rule` и `epic-flow`, находит там эти пять случаев до того, как наступит на них.
+- **Sign:** пять текстов есть в пакете и в установленных файлах, `pnpm -s run agent-kit:check` сходится с пакетом.
+- **Milestone G of the epic:** вне эпика.
+- **Metric:** нет: починка текстов по разбору закрытой задачи.
 
 ## Task footprint
 
-<What the work touches. Filled in by exploration before the grill and confirmed by the owner. By
-this same table, at closing, one sees what of the specs, rules and patterns has gone stale: what
-is named here is read twice — before the work and after it.>
-
-| What  | Where                         |
-| ----- | ----------------------------- |
-| Specs | `docs/specs/<domain>/`        |
-| Laws  | `docs/constitution/<name>.md` |
-| Rules | `.claude/skills/<name>/`      |
-| Code  | `projects/<package>/`         |
+| What     | Where                                                                                                             |
+| -------- | ----------------------------------------------------------------------------------------------------------------- |
+| Template | `projects/agent-kit/assets/samples/tasks/_template/plan.md`                                                       |
+| Patterns | `projects/agent-kit/assets/patterns/task-flow-cycle.md`, `projects/agent-kit/assets/patterns/spec-driven-rule.md` |
+| Rules    | `projects/agent-kit/assets/rules/epic-flow.md`, `.claude/skills/agent-kit-source/SKILL.md`                        |
+| Hooks    | `projects/agent-kit/assets/hooks/epic-stop-guard.sh`                                                              |
 
 ## What counts as done
 
-- <a statement that can be checked>
+- Пять предложений внесены, у `epic-stop-guard.sh` верное правило, проверки текстов и тесты пакета зелёные.
 
 ## Stages
 
-### 1. <name>
+### 1. Пять правок
 
 - **Steps:**
-    1. <what is done first>
-    2. <what is done after it>
-- **Readiness sign:** <what must become true>
-- **Verified by:** `<command>` — <what in its output means "it matched">
-
-The steps are the smallest unit of the work, and they are written here in full: the progress
-mirrors this list with its marks, and a check matches the two by number and by name. A step is
-named by what is done, not by what is thought over — a line nobody can call done is not a step.
-
-The command is written in backticks: the turn exit guard reads it and does not let out a turn in
-which the stage is declared closed and the command was not run. An acceptance written in prose
-cannot be confirmed by anything. The command is run right here, while the plan is written, not at
-the end of the stage: its output is what names the readiness sign. A sign written by a guess is
-sometimes impossible to meet — the line the stage must put out comes from an unconfigured tree
-rather than from the work — and that is found out latest of everything that depended on it.
-
-## What this work does not do
-
-- <neighbouring work that is not dragged in here, and where it is created>
+    1. Шаблон плана и task-flow-cycle
+    2. Две ловушки в agent-kit-source
+    3. Указатель состояния в spec-driven-rule
+    4. Requires в epic-flow и правило epic-stop-guard
+    5. Установка файлов из пакета и проверки
+- **Readiness sign:** проверки текстов и тесты пакета зелёные, установка сходится с пакетом.
+- **Verified by:** `pnpm -s run agent-kit:check` — строка «разложенное сходится с пакетом».
