@@ -11,6 +11,8 @@ Rule under the law `docs/constitution/work-conduct.md`. The law says that the ma
 whole or does not take it; here — how a series of tasks is held together as one epic. The course of
 one task is rule `task-flow`, the end of a turn is `turn-conduct`, both under the same law.
 
+**Requires:** `hooks/tree-assignment-guard.sh`, `checks/tree-assignment.mjs`
+
 ## What it is called here
 
 | In the law | Here |

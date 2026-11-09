@@ -118,3 +118,13 @@ and from sorting out the cargo it needs one step: the list of what is not sorted
   `npm run check:spec-coverage` and `node tools/check-descriptions.mjs` run before the first
   commit of a new skill, rule or pattern, not only at the push gate: a red found at review costs a
   second commit and a second review round.
+- **Nothing builds the package while the push set runs.** The set calls `pnpm run agent-kit:check`,
+  and its build begins by removing `dist/agent-kit`. A role or a second session that builds the
+  package in the same minute — the metrics report of the pattern `task-flow-cycle` builds it too —
+  leaves the set reading half an output, and the set falls on a layout nobody broke. Roles run
+  before the set or after it, not beside it.
+- **A guard released by the owner's word is tested on a refusal and on an unrelated answer, not
+  only on consent.** A release that checks only that an answer exists passes «Позже», «Пока ничего»
+  and an answer about something else alike: the release of task creation after the end of an epic
+  went out so and was narrowed by the next commit. The scenarios of such a release carry a consent,
+  a refusal and an off-topic answer.

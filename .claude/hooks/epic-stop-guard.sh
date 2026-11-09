@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.35.0 · hooks/epic-stop-guard.sh · cc5b3a2efb35 · правится надстройкой, не здесь
+# rt-kit v0.35.0 · hooks/epic-stop-guard.sh · c6f371c3f89e · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, checks/epic-table.github.mjs
 # Guard of the stop at the end of an epic. PreToolUse on a call that takes new work.
@@ -25,7 +25,7 @@
 # Its own name in the observations: the refusal is written by the shared deny tail, not by the
 # guard itself.
 RT_GUARD_NAME=epic-stop-guard
-RT_GUARD_RULE=task-flow
+RT_GUARD_RULE=turn-conduct
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

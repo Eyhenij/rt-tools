@@ -2,16 +2,16 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 1 из 1 — Пять правок
-- **Done:** задача заведена, ветка взята
-- **Next step:** шаблон плана и task-flow-cycle
+- **Done:** пять правок внесены и установлены, у `epic-stop-guard.sh` правило `turn-conduct`
+- **Next step:** разбор папки в архив и PR
 
-- [>] 1.1 Шаблон плана и task-flow-cycle
-- [ ] 1.2 Две ловушки в agent-kit-source
-- [ ] 1.3 Указатель состояния в spec-driven-rule
-- [ ] 1.4 Requires в epic-flow и правило epic-stop-guard
-- [ ] 1.5 Установка файлов из пакета и проверки
+- [x] 1.1 Шаблон плана и task-flow-cycle
+- [x] 1.2 Две ловушки в agent-kit-source
+- [x] 1.3 Указатель состояния в spec-driven-rule
+- [x] 1.4 Requires в epic-flow и правило epic-stop-guard
+- [x] 1.5 Установка файлов из пакета и проверки
 
 ## Decisions along the way
 

@@ -19,7 +19,7 @@ along the way.
 - **This task reaches:** <the change a person will see>
 - **Sign:** <the command, the page or the number that shows it, and who sees it>
 - **Milestone G of the epic:** <the point named in the epic plan>
-- **Metric:** <only for an edit of a rule, a hook, a check or a role: the number, the direction, the baseline — pattern `task-flow-cycle`>
+- **Metric:** <only for an improvement of a rule, a hook, a check or a role: the number, the direction, the baseline — pattern `task-flow-cycle`; a repair writes «нет: <what was broken>»>
 
 ## Task footprint
 
