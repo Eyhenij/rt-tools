@@ -1,6 +1,6 @@
 @layer rt-kit.components {
     .app-rail-screen {
-        --rt-app-rail-screen-logo-radius: calc(var(--rt-radius-sm) + var(--rt-space-0-5));
+        --rt-app-rail-screen-logo-radius: var(--rt-radius-md);
 
         display: flex;
         height: 800px;
