@@ -116,13 +116,41 @@ if [ -n "$taken" ] && [ -n "$transcript" ] && [ -f "$transcript" ]; then
     [ "$named" = "true" ] && exit 0
 fi
 
+# A created task has no number yet, so no menu answer can name it, and the owner's answer to «create
+# a task for these findings?» left the call refused. The word of the owner here is their latest
+# answer to a menu: no message of theirs stands after it, and the answer is not a refusal.
+if [ -z "$taken" ] && [ -n "$transcript" ] && [ -f "$transcript" ] \
+    && printf '%s' "$cmd" | grep -qE 'task:new|task-new\.mjs' 2>/dev/null; then
+    latest="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
+        [.[] | select(.type == "user")
+            | select(((.isMeta // false) or (.isCompactSummary // false)) | not)
+            | (.message.content // "")
+            | if type == "string" then {said: .}
+              elif type == "array" then (map(
+                  if .type == "text" then {said: (.text // "")}
+                  elif .type == "tool_result" then ((.content
+                      | if type == "string" then . elif type == "array"
+                        then (map(if type == "object" then (.text // "") else "" end) | join(" ")) else "" end)
+                      | if test("^(The user answered|Your questions have been answered):")
+                        then {menu: ([match("\"=\"([^\"]*)\""; "g") | .captures[0].string] | first // "")}
+                        else empty end)
+                  else empty end) | .[])
+              else empty end]
+        | (last // {})
+        | if (.menu // "") != ""
+              and ((.menu | test("^\\s*(нет|не\\s|no\\b|стоп|stop|отмен|cancel|подожд|wait)"; "i")) | not)
+          then "yes" else "no" end
+    ' 2>/dev/null)"
+    [ "$latest" = "yes" ] && exit 0
+fi
+
 root="$(git rev-parse --show-toplevel 2>/dev/null)"
 checks="$(jq -r '.layout.checks // "tools"' "$root/.claude/rt-kit.json" 2>/dev/null)"
 if [ -z "$checks" ] || [ "$checks" = null ]; then
     checks=tools
 fi
 
-reason="Refused: the epic is over — every task of it is merged or handed over by a request, and this call takes new work. The end of an epic is a stop: print the table by «npm run epic:table» (or «node $checks/epic-table.mjs»), tell the owner what was done on each task and what confirms it, and say outright that the session waits for their orders. New work is taken by their word, not by the count of what is left: their message or their answer to a menu that names the number of this work releases the call. A new epic the owner has declared needs the bypass line in the calls that create its card, its tasks and its branch; once the branch of the new epic is taken, the guard reads that epic and stops refusing."
+reason="Refused: the epic is over — every task of it is merged or handed over by a request, and this call takes new work. The end of an epic is a stop: print the table by «npm run epic:table» (or «node $checks/epic-table.mjs»), tell the owner what was done on each task and what confirms it, and say outright that the session waits for their orders. New work is taken by their word, not by the count of what is left: their message or their answer to a menu that names the number of this work releases the call; a task being created has no number yet, and it is released by the latest answer of the owner to a menu when that answer is not a refusal. A new epic the owner has declared needs the bypass line in the calls that create its card, its tasks and its branch; once the branch of the new epic is taken, the guard reads that epic and stops refusing."
 
 # shellcheck disable=SC1090
 [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
