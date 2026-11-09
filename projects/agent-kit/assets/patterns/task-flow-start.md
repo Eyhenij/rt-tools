@@ -171,6 +171,9 @@ The grill ended with one task — the step is skipped. Several came out, and the
 matters — the epic is declared and its branch is taken by the pattern `epic-flow-declare`, and the
 work comes back here with its first task.
 
+**Next move:** one task — the task, the branch and the folder below; a series — the pattern
+`epic-flow-declare`, in the same turn.
+
 ### State `договорённость-записана`: the task, the branch, the folder
 
 ```bash

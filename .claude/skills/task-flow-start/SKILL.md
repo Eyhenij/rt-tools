@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load at the start of work from the owner — exploration before the first question, the six mandatory questions, the product agreement, creating the task, the branch and the folder. Returning to work — pattern task-flow-resume.
 ---
-<!-- rt-kit v0.35.0 · patterns/task-flow-start.md · 28584193544c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.35.0 · patterns/task-flow-start.md · dcd20af08312 · правится надстройкой, не здесь -->
 
 # Starting the work
 
@@ -171,6 +171,9 @@ first.
 The grill ended with one task — the step is skipped. Several came out, and the order between them
 matters — the epic is declared and its branch is taken by the pattern `epic-flow-declare`, and the
 work comes back here with its first task.
+
+**Next move:** one task — the task, the branch and the folder below; a series — the pattern
+`epic-flow-declare`, in the same turn.
 
 ### State `договорённость-записана`: the task, the branch, the folder
 
