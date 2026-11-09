@@ -80,6 +80,10 @@ are prose of the plan, and no check reads them; they are held by whoever creates
 Nothing tells a sign of the end of an epic checked by a command from one confirmed by reading: both
 leave the same line in the plan.
 
+The rules gate demands this rule only where an epic is declared or a task of it is created. Taking
+the epic branch, choosing the next task and opening the request of the epic do not demand it: the
+rule is loaded there by its description.
+
 ## Patterns
 
 - `epic-flow-declare` — declaring an epic with its card, plan and tasks, then taking its branch.

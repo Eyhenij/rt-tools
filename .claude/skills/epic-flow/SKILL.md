@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the epic as the unit of delivery. Load when an epic is declared, its branch is taken, its next task is chosen and its request into the main branch opens. Pattern epic-flow-declare. One task — task-flow.
 ---
-<!-- rt-kit v0.35.0 · rules/epic-flow.md · 08bc4dbfb4fd · правится надстройкой, не здесь -->
+<!-- rt-kit v0.35.0 · rules/epic-flow.md · 30d15b095d77 · правится надстройкой, не здесь -->
 
 # Epics — how it works here
 
@@ -80,6 +80,10 @@ are prose of the plan, and no check reads them; they are held by whoever creates
 
 Nothing tells a sign of the end of an epic checked by a command from one confirmed by reading: both
 leave the same line in the plan.
+
+The rules gate demands this rule only where an epic is declared or a task of it is created. Taking
+the epic branch, choosing the next task and opening the request of the epic do not demand it: the
+rule is loaded there by its description.
 
 ## Patterns
 
