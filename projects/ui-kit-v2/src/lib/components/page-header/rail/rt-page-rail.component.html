@@ -1,0 +1,146 @@
+<ng-container rtBlock="rt-page-rail">
+    <button
+        rtElem="burger"
+        type="button"
+        qa-dataid="rail-burger"
+        [attr.aria-label]="t().uiNavMenu"
+        [attr.aria-expanded]="phoneMenuOpen()"
+        (click)="phoneMenuOpen.set(true)">
+        <rt-icon name="bars" size="md" />
+    </button>
+
+    <div rtElem="logo"><ng-content select="[rtRailLogo]" /></div>
+
+    <nav rtElem="sections" qa-dataid="rail-sections" [attr.aria-label]="navLabel()">
+        @for (section of sections(); track section.id) {
+            @switch (section.kind) {
+                @case (EntryKind.Panel) {
+                    <button
+                        rtElem="item"
+                        type="button"
+                        qa-dataid="rail-item"
+                        [rtMod]="{ active: activeIds().has(section.id), open: openSection()?.id === section.id }"
+                        [attr.data-id]="section.id"
+                        [attr.aria-label]="section.label"
+                        [attr.aria-haspopup]="true"
+                        [attr.aria-expanded]="openSection()?.id === section.id"
+                        (mouseenter)="openPanel(section.id)"
+                        (click)="togglePanel(section.id, $event)">
+                        <ng-container [ngTemplateOutlet]="plate" [ngTemplateOutletContext]="{ $implicit: section }" />
+                    </button>
+                }
+                @case (EntryKind.Link) {
+                    <a
+                        rtElem="item"
+                        qa-dataid="rail-item"
+                        rtTooltipPlacement="right"
+                        routerLinkActive="rt-page-rail__item--active"
+                        [attr.data-id]="section.id"
+                        [attr.aria-label]="section.label"
+                        [routerLink]="section.route"
+                        [routerLinkActiveOptions]="{ exact: section.routerLinkActiveExact }"
+                        [rtTooltip]="section.label"
+                        (mouseenter)="closePanel()">
+                        <ng-container [ngTemplateOutlet]="plate" [ngTemplateOutletContext]="{ $implicit: section }" />
+                    </a>
+                }
+                @default {
+                    <button
+                        rtElem="item"
+                        type="button"
+                        qa-dataid="rail-item"
+                        rtTooltipPlacement="right"
+                        [rtMod]="{ disabled: section.disabled }"
+                        [attr.data-id]="section.id"
+                        [attr.aria-label]="section.label"
+                        [attr.aria-disabled]="section.disabled || null"
+                        [rtTooltip]="section.label"
+                        (mouseenter)="closePanel()"
+                        (click)="section.disabled || itemClick.emit(section.id)">
+                        <ng-container [ngTemplateOutlet]="plate" [ngTemplateOutletContext]="{ $implicit: section }" />
+                    </button>
+                }
+            }
+        }
+    </nav>
+
+    <div rtElem="page"><ng-content select="[rtRailPage]" /></div>
+
+    @if (foot()) {
+        <rt-page-actions
+            placement="rail"
+            qa-dataid="rail-foot"
+            [items]="footItems()"
+            [user]="user()"
+            [userMenu]="userMenu()"
+            (itemClick)="itemClick.emit($event)"
+            (userClick)="userClick.emit()" />
+    }
+
+    @if (openSection(); as section) {
+        <div rtElem="panel" role="menu" qa-dataid="rail-panel" [attr.data-id]="section.id">
+            @for (group of section.panelGroups; track group.id) {
+                <div rtElem="group" role="group" [attr.aria-label]="group.label || null">
+                    @if (group.label) {
+                        <div rtElem="group-title">{{ group.label }}</div>
+                    }
+                    @for (entry of group.items; track entry.id) {
+                        @if (entry.kind === EntryKind.Link) {
+                            <a
+                                rtElem="panel-item"
+                                role="menuitem"
+                                qa-dataid="rail-panel-item"
+                                routerLinkActive="rt-page-rail__panel-item--active"
+                                [attr.data-id]="entry.id"
+                                [routerLink]="entry.route"
+                                [routerLinkActiveOptions]="{ exact: entry.routerLinkActiveExact }"
+                                (click)="closePanel()">
+                                {{ entry.label }}
+                            </a>
+                        } @else {
+                            <button
+                                rtElem="panel-item"
+                                type="button"
+                                role="menuitem"
+                                qa-dataid="rail-panel-item"
+                                [rtMod]="{ disabled: entry.disabled }"
+                                [attr.data-id]="entry.id"
+                                [attr.aria-disabled]="entry.disabled || null"
+                                (click)="entry.disabled || onEntryClick(entry.id)">
+                                {{ entry.label }}
+                            </button>
+                        }
+                    }
+                </div>
+            }
+        </div>
+    }
+
+    @if (phoneMenuOpen()) {
+        <div rtElem="phone-menu" qa-dataid="rail-phone-menu">
+            <button
+                rtElem="phone-backdrop"
+                type="button"
+                qa-dataid="rail-phone-backdrop"
+                [attr.aria-label]="t().bottomSheetClose"
+                (click)="phoneMenuOpen.set(false)"></button>
+            <div rtElem="phone-column">
+                <rt-side-menu
+                    [activeMenuIds]="phoneActiveIds()"
+                    [menuItems]="phoneItems()"
+                    (closeMobileMenuAction)="phoneMenuOpen.set(false)" />
+            </div>
+        </div>
+    }
+</ng-container>
+
+<ng-template #plate let-section>
+    <span rtBlock="rt-page-rail-plate">
+        @if (section.icon; as icon) {
+            <rt-icon size="sm" [name]="icon" />
+        }
+        @if (section.unread) {
+            <span rtElem="marker" role="img" qa-dataid="rail-marker" [attr.aria-label]="t().uiNavUnread"></span>
+        }
+    </span>
+</ng-template>

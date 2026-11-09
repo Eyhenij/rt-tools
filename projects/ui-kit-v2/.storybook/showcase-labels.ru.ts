@@ -247,6 +247,8 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     uiMainNav: 'Основная навигация',
     uiMinutes: 'Минуты',
     uiMore: 'Подробнее',
+    uiMoreFilters: 'Ещё отборы',
+    uiPageFilters: 'Отборы',
     uiMoreActions: 'Ещё действия',
     uiMoveStage: 'Перевести',
     uiMoveStageAria: 'Перевести этап',

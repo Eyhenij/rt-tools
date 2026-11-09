@@ -1,0 +1,33 @@
+<ng-container rtBlock="rt-page-header">
+    @if (menu(); as menuTpl) {
+        <button
+            rtElem="user"
+            type="button"
+            qa-dataid="header-user-menu"
+            #userPopover="rtPopover"
+            rtPopoverTrigger="hover"
+            rtPopoverAlign="end"
+            rtPopoverFitViewport
+            rtPopoverOffsetY="14"
+            [rtPopoverBackdropClass]="backdropClass()"
+            [rtMod]="{ isOpen: userPopover.isOpen() }"
+            [attr.aria-haspopup]="true"
+            [attr.aria-expanded]="userPopover.isOpen()"
+            [rtPopover]="menuTpl"
+            (click)="userPopover.open()">
+            <ng-container [ngTemplateOutlet]="body" />
+        </button>
+    } @else {
+        <button rtElem="user" type="button" qa-dataid="header-user" (click)="userClick.emit()">
+            <ng-container [ngTemplateOutlet]="body" />
+        </button>
+    }
+
+    <ng-template #body>
+        <span rtElem="user-avatar" aria-hidden="true">{{ avatar() }}</span>
+        <span rtElem="user-name" qa-dataid="header-user-name">{{ name() }}</span>
+        <span rtElem="user-caret" aria-hidden="true">
+            <rt-icon name="chevron-up-down" size="xs" />
+        </span>
+    </ng-template>
+</ng-container>

@@ -1,0 +1,102 @@
+@layer rt-kit.components {
+    /* Ряд вкладок и шапка телефона: кнопки 32, точка в потоке за иконкой. */
+    .rt-page-actions {
+        --rt-page-actions-plate-radius: var(--rt-radius-md);
+        --rt-page-actions-plate-border-width: var(--rt-border-width-thin);
+        --rt-page-actions-marker-radius: var(--rt-radius-full);
+
+        display: flex;
+        flex: none;
+        align-items: center;
+        gap: var(--rt-space-2);
+        padding-inline: var(--rt-space-2);
+
+        &__item {
+            display: inline-flex;
+            height: 32px;
+            flex: none;
+            align-items: center;
+            padding: 0 var(--rt-space-2);
+            border: 0;
+            background: transparent;
+            color: var(--rt-nav-item-color);
+            cursor: pointer;
+
+            &:hover {
+                color: var(--rt-nav-item-color-hover);
+            }
+
+            &:focus-visible {
+                outline: 1px dashed var(--rt-nav-color-focus);
+                outline-offset: -1px;
+            }
+
+            &--disabled {
+                color: var(--rt-nav-color-disabled);
+                cursor: default;
+            }
+        }
+
+        &__plate {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--rt-space-2);
+        }
+
+        &__marker {
+            width: var(--rt-nav-marker-size);
+            height: var(--rt-nav-marker-size);
+            flex: none;
+            border-radius: var(--rt-page-actions-marker-radius);
+            background-color: var(--rt-nav-marker-color);
+        }
+
+        /* Подвал рейки на широком экране: столбец ячеек 50, те же плашки 36, что у разделов.
+           Ряд вкладок: кнопки стоят над линией полосы, а не по центру с ней. */
+        @media (width > 768px) {
+            &:not(&--rail) {
+                margin-block-end: var(--rt-page-actions-plate-border-width);
+            }
+
+            &--rail {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0;
+                padding-inline: 0;
+            }
+
+            &--rail &__item {
+                width: 50px;
+                height: 50px;
+                justify-content: center;
+                padding: 0;
+            }
+
+            &--rail &__plate {
+                position: relative;
+                width: 36px;
+                height: 36px;
+                box-sizing: border-box;
+                justify-content: center;
+                border: var(--rt-page-actions-plate-border-width) solid transparent;
+                border-radius: var(--rt-page-actions-plate-radius);
+            }
+
+            &--rail &__item:hover &__plate {
+                background-color: var(--rt-nav-item-color-bg-active);
+            }
+
+            &--rail &__marker {
+                position: absolute;
+                top: calc(var(--rt-space-1) - var(--rt-page-actions-plate-border-width));
+                right: calc(var(--rt-space-1) - var(--rt-page-actions-plate-border-width));
+            }
+        }
+
+        /* Телефон: кнопки примыкают друг к другу через 4. */
+        @media (width <= 768px) {
+            gap: var(--rt-space-1);
+            padding-inline: 0;
+        }
+    }
+}

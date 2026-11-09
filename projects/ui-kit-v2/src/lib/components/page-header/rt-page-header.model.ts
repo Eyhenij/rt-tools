@@ -1,6 +1,9 @@
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
 export namespace IRtPageHeader {
+    /** Вид шапки: разделы в ряд или рейкой по левому краю окна. */
+    export type Layout = 'horizontal' | 'vertical';
+
     /**
      * Описание пункта верхней навигации — раздела первого уровня или пункта
      * панели второго.

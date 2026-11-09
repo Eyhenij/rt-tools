@@ -90,14 +90,26 @@ Given a window 375 wide and a long page title
 When the header is drawn
 Then every button stands inside the screen and the title truncates
 
+Not covered: a test has no layout at all. The places of the buttons are seen by a frame of the
+showcase at the phone width, by the story `BarOneRow`.
+
 ### SC-UKV-1197 — phone filters open in a bottom sheet
 
 Given a phone width
 When the filters button is pressed
 Then the bottom sheet opens with the filters
 
+### SC-UKV-1200 — the apply button closes the bottom sheet
+
+Given the phone bottom sheet with filters is open
+When the apply button is pressed
+Then the bar reports it and the sheet closes
+
 ### SC-UKV-1198 — the assistant narrows the page
 
 Given a window wider than 768
 When the assistant opens
 Then it stands to the right of the page and the page narrows by 420
+
+Not covered: a test has no layout at all. The widths are seen by a frame of the showcase, by the
+stories `Assistant` and `TabsAssistant`. That the bar follows the narrowed width is SC-UKV-1194.

@@ -1,0 +1,156 @@
+@layer rt-kit.components {
+    .rt-page-bar {
+        --rt-page-bar-control-radius: var(--rt-radius-md);
+        --rt-page-bar-control-border-width: var(--rt-border-width-thin);
+        --rt-page-bar-dot-radius: var(--rt-radius-full);
+
+        position: relative;
+        display: flex;
+        min-width: 0;
+        box-sizing: border-box;
+        flex-direction: column;
+        padding: var(--rt-space-2) var(--rt-space-5);
+        gap: var(--rt-space-2);
+
+        /* Линия лежит поверх и высоты не отнимает. У строки телефона линия своя, у рейки. */
+        &:not(&--narrow):after {
+            position: absolute;
+            height: var(--rt-page-bar-control-border-width);
+            background-color: var(--rt-color-border-default);
+            content: '';
+            inset: auto 0 0;
+            pointer-events: none;
+        }
+
+        &__row {
+            display: flex;
+            min-width: 0;
+            height: 40px;
+            align-items: center;
+            gap: calc(var(--rt-space-2) + var(--rt-space-1));
+        }
+
+        &__title {
+            overflow: hidden;
+            min-width: 0;
+            flex: 0 1 auto;
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-xl);
+            font-weight: var(--rt-font-weight-semibold);
+            line-height: 24px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__spacer {
+            flex: 1 1 0;
+        }
+
+        &__search {
+            min-width: 0;
+            max-width: 540px;
+            flex: 1 1 0;
+        }
+
+        &__filter {
+            width: 150px;
+            flex: none;
+
+            &--wide {
+                width: 170px;
+            }
+        }
+
+        &__actions {
+            display: flex;
+            flex: none;
+            gap: var(--rt-space-2);
+            margin-inline-start: auto;
+        }
+
+        &__more {
+            width: 185px;
+            height: 40px;
+            flex: none;
+            padding: 0;
+            border: var(--rt-page-bar-control-border-width) solid var(--rt-color-border-default);
+            border-radius: var(--rt-page-bar-control-radius);
+            background: transparent;
+            color: var(--rt-color-text-primary);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: var(--rt-text-sm);
+        }
+
+        &__filters-trigger {
+            position: relative;
+            display: inline-flex;
+            flex: none;
+        }
+
+        &__dot {
+            position: absolute;
+            top: calc(var(--rt-space-1) + var(--rt-space-0-5));
+            right: var(--rt-space-1);
+            width: 4px;
+            height: 4px;
+            border-radius: var(--rt-page-bar-dot-radius);
+            background-color: var(--rt-nav-marker-color);
+            pointer-events: none;
+        }
+
+        &__sheet {
+            display: flex;
+            flex-direction: column;
+            gap: calc(var(--rt-space-2) + var(--rt-space-1));
+            padding-block-end: var(--rt-space-4);
+            padding-inline: var(--rt-space-5);
+        }
+
+        &__apply {
+            flex: 1 1 auto;
+        }
+
+        /* Узкий вид: заголовок забирает остаток и усекается, кнопки с экрана не уходят. */
+        &--narrow &__row {
+            height: 32px;
+            gap: var(--rt-space-1);
+        }
+
+        &--narrow &__title {
+            flex: 1 1 0;
+            font-size: var(--rt-text-md);
+            line-height: 20px;
+        }
+
+        &--narrow &__spacer {
+            display: none;
+        }
+
+        @media (width <= 768px) {
+            min-width: 0;
+            flex: 1 1 0;
+            padding: 0;
+        }
+    }
+
+    /* Меню действий узкого вида открывается под строкой шапки 50, а не под кнопкой 32. */
+    .rt-page-bar-menu {
+        margin-block-start: calc((50px - 32px) / 2);
+
+        .rt-menu__panel {
+            min-width: 220px;
+            box-sizing: border-box;
+        }
+    }
+
+    .rt-page-bar-more {
+        display: flex;
+        width: 240px;
+        box-sizing: border-box;
+        flex-direction: column;
+        padding: var(--rt-space-2);
+        gap: var(--rt-space-2);
+    }
+}

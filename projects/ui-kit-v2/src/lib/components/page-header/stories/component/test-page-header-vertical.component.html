@@ -1,0 +1,74 @@
+<div data-story-root class="app-rail-screen">
+    <rt-page-header
+        data-story-trigger
+        layout="vertical"
+        [items]="items"
+        [user]="user"
+        [userMenu]="profileMenu"
+        [railFoot]="phone || tabs === 0"
+        [railActions]="railActions">
+        <span rtRailLogo class="app-rail-screen__logo"></span>
+        @if (phone) {
+            <ng-container ngProjectAs="[rtRailPage]">
+                <ng-container [ngTemplateOutlet]="barTpl" />
+            </ng-container>
+        }
+    </rt-page-header>
+
+    <div class="app-rail-screen__rest">
+        @if (tabs > 0) {
+            <rt-tabs class="app-rail-screen__tabs" overflow="more" headerOnly [activeId]="tabs > 1 ? 'tab-2' : 'tab-1'">
+                @for (tab of tabList; track tab) {
+                    <ng-template
+                        [rtTab]="'tab-' + tab"
+                        [label]="tabLabels[tab - 1] || 'Вкладка ' + tab"
+                        [pinned]="tabs > 1 && tab === 1"
+                        [icon]="tabs > 1 && tab === 1 ? 'pin' : null"
+                        [closable]="tab === 2">
+                        <span></span>
+                    </ng-template>
+                }
+                @if (!phone) {
+                    <ng-template rtTabsControl>
+                        <rt-page-actions [items]="railActions" [user]="user" [userMenu]="profileMenu" />
+                    </ng-template>
+                }
+            </rt-tabs>
+        }
+        @if (bar && !phone) {
+            <ng-container [ngTemplateOutlet]="barTpl" />
+        }
+        <main class="app-rail-screen__page">Страница</main>
+    </div>
+
+    @if (assistant) {
+        <aside class="app-rail-screen__assistant" data-qa="assistant">
+            <rt-chat style="height: 100%" canReply title="Ассистент" placeholder="Написать сообщение" [messages]="messages" />
+        </aside>
+    }
+</div>
+
+<ng-template #profileMenu>
+    <rt-profile-menu
+        userName="Анна Смирнова"
+        organizationName="Вилла Лотос"
+        organizationChange="allowed"
+        passwordChange
+        locale="ru"
+        [locales]="profileLocales" />
+</ng-template>
+
+<ng-template #barTpl>
+    @if (bar) {
+        <rt-page-bar [pageTitle]="pageTitle" [actions]="barActions" [filtersActive]="filtersActive">
+            <ng-template rtPageBarSearch>
+                <rt-input iconLeft="search" placeholder="Поиск по гостю и почте" />
+            </ng-template>
+            @for (name of shownFilters; track name) {
+                <ng-template rtPageBarFilter>
+                    <rt-select [placeholder]="name" [options]="options" />
+                </ng-template>
+            }
+        </rt-page-bar>
+    }
+</ng-template>

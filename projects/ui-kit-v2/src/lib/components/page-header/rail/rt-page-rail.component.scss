@@ -1,0 +1,274 @@
+@layer rt-kit.components {
+    /* Рейка 50 по левому краю окна. На телефоне та же часть становится строкой 50: порог свой,
+       телефонный, а не общий узкий экран: планшет оставляет рейку. */
+    .rt-page-rail {
+        --rt-page-rail-border-width: var(--rt-border-width-thin);
+        --rt-page-rail-plate-radius: var(--rt-radius-md);
+        --rt-page-rail-marker-radius: var(--rt-radius-full);
+        --rt-page-rail-transition-duration: var(--rt-duration-fast);
+
+        position: sticky;
+        z-index: var(--rt-z-sticky);
+        top: 0;
+        display: flex;
+        width: 50px;
+        height: 100dvh;
+        box-sizing: border-box;
+        flex: none;
+        flex-direction: column;
+        background-color: var(--rt-nav-header-color-bg);
+
+        /* Граница лежит поверх рейки и ширины не отнимает: пункт занимает все 50, плашка стоит в 7 от края. */
+        &:after {
+            position: absolute;
+            width: var(--rt-page-rail-border-width);
+            background-color: var(--rt-color-border-default);
+            content: '';
+            inset-block: 0;
+            inset-inline-end: 0;
+            pointer-events: none;
+        }
+
+        &__burger {
+            display: none;
+            width: 36px;
+            height: 36px;
+            flex: none;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: var(--rt-nav-item-color);
+            cursor: pointer;
+        }
+
+        &__logo {
+            display: flex;
+            height: 64px;
+            box-sizing: border-box;
+            flex: none;
+            justify-content: center;
+            padding-top: var(--rt-space-5);
+        }
+
+        /* Разделы не встают: прокручивается только этот список, подвал стоит на месте. */
+        &__sections {
+            display: flex;
+            min-height: 0;
+            flex: 1 1 auto;
+            flex-direction: column;
+            -ms-overflow-style: none;
+            overflow-y: auto;
+            scrollbar-width: none;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+        }
+
+        &__item {
+            display: flex;
+            width: 100%;
+            height: 50px;
+            flex: none;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: var(--rt-nav-item-color);
+            cursor: pointer;
+            text-decoration: none;
+
+            &:hover .rt-page-rail-plate,
+            &--open .rt-page-rail-plate {
+                background-color: var(--rt-nav-item-color-bg-active);
+                color: var(--rt-nav-item-color-hover);
+            }
+
+            &--active .rt-page-rail-plate {
+                border-color: var(--rt-color-border-default);
+                background-color: var(--rt-nav-item-color-bg-active);
+            }
+
+            &:focus-visible {
+                outline: none;
+            }
+
+            &:focus-visible .rt-page-rail-plate {
+                outline: 1px dashed var(--rt-nav-color-focus);
+                outline-offset: 1px;
+            }
+
+            &--disabled {
+                color: var(--rt-nav-color-disabled);
+                cursor: default;
+            }
+
+            &--disabled:hover .rt-page-rail-plate {
+                background-color: transparent;
+                color: inherit;
+            }
+        }
+
+        &__page {
+            display: none;
+        }
+
+        /* Панель поверх страницы и вкладок: страница и вкладки на месте. */
+        &__panel {
+            position: fixed;
+            z-index: var(--rt-z-dropdown);
+            top: 0;
+            bottom: 0;
+            left: 50px;
+            display: flex;
+            overflow: hidden auto;
+            width: 220px;
+            box-sizing: border-box;
+            flex-direction: column;
+            padding: var(--rt-space-5) calc(var(--rt-space-2) + var(--rt-space-1));
+            background-color: var(--rt-nav-panel-color-bg);
+            gap: var(--rt-space-8);
+        }
+
+        /* Граница панели тоже лежит поверх: столбец пунктов шириной 196, как в макете. */
+        &__panel:after {
+            position: absolute;
+            width: var(--rt-page-rail-border-width);
+            background-color: var(--rt-color-border-default);
+            content: '';
+            inset-block: 0;
+            inset-inline-end: 0;
+            pointer-events: none;
+        }
+
+        &__group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--rt-space-0-5);
+        }
+
+        &__group-title {
+            display: flex;
+            height: 32px;
+            align-items: center;
+            color: var(--rt-nav-panel-group-color);
+            font-size: var(--rt-nav-panel-group-font-size);
+            font-weight: var(--rt-nav-panel-group-font-weight);
+            padding-inline: var(--rt-space-2);
+        }
+
+        &__panel-item {
+            display: flex;
+            width: 100%;
+            height: 32px;
+            box-sizing: border-box;
+            align-items: center;
+            padding: var(--rt-nav-panel-item-padding);
+            border: 0;
+            border-radius: var(--rt-page-rail-plate-radius);
+            background: transparent;
+            color: var(--rt-nav-panel-item-color);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: var(--rt-nav-panel-item-font-size);
+            font-weight: var(--rt-nav-panel-item-font-weight);
+            text-align: start;
+            text-decoration: none;
+
+            &:hover {
+                background-color: var(--rt-nav-panel-item-color-bg-hover);
+            }
+
+            &--active,
+            &--active:hover {
+                background-color: var(--rt-nav-panel-item-color-bg-active);
+                color: var(--rt-nav-panel-item-color-active);
+            }
+
+            &--disabled {
+                color: var(--rt-nav-color-disabled);
+                cursor: default;
+            }
+        }
+
+        /* Столбец 240 поверх страницы на подложке: как `rt-side-menu` на узком экране. */
+        &__phone-backdrop {
+            position: absolute;
+            padding: 0;
+            border: 0;
+            background: var(--rt-color-bg-overlay);
+            cursor: pointer;
+            inset: 0;
+        }
+
+        &__phone-column {
+            position: relative;
+            display: flex;
+            width: 240px;
+            height: 100%;
+        }
+
+        &__phone-menu {
+            position: fixed;
+            z-index: var(--rt-z-fixed);
+            inset: 0;
+        }
+
+        @media (width <= 768px) {
+            width: 100%;
+            height: 50px;
+            flex-direction: row;
+            align-items: center;
+            gap: var(--rt-space-1);
+            padding-inline: calc(var(--rt-space-2) + var(--rt-space-1)) var(--rt-space-2);
+
+            &:after {
+                width: auto;
+                height: var(--rt-page-rail-border-width);
+                inset: auto 0 0;
+            }
+
+            &__burger {
+                display: flex;
+            }
+
+            &__logo,
+            &__sections {
+                display: none;
+            }
+
+            &__page {
+                display: flex;
+                min-width: 0;
+                flex: 1 1 auto;
+                align-items: center;
+            }
+        }
+    }
+
+    .rt-page-rail-plate {
+        position: relative;
+        display: flex;
+        width: 36px;
+        height: 36px;
+        box-sizing: border-box;
+        align-items: center;
+        justify-content: center;
+        border: var(--rt-page-rail-border-width) solid transparent;
+        border-radius: var(--rt-page-rail-plate-radius);
+        transition: background-color var(--rt-page-rail-transition-duration) linear;
+
+        &__marker {
+            position: absolute;
+            top: calc(var(--rt-space-1) - var(--rt-page-rail-border-width));
+            right: calc(var(--rt-space-1) - var(--rt-page-rail-border-width));
+            width: var(--rt-nav-marker-size);
+            height: var(--rt-nav-marker-size);
+            border-radius: var(--rt-page-rail-marker-radius);
+            background-color: var(--rt-nav-marker-color);
+        }
+    }
+}

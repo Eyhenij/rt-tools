@@ -1,0 +1,27 @@
+<ng-container rtBlock="rt-page-actions">
+    @for (item of items(); track item.id) {
+        <button
+            rtElem="item"
+            type="button"
+            qa-dataid="page-action"
+            rtTooltipPlacement="right"
+            [attr.data-id]="item.id"
+            [attr.aria-label]="item.label"
+            [attr.aria-disabled]="item.disabled || null"
+            [rtMod]="{ disabled: item.disabled ?? false }"
+            [rtTooltip]="placement() === 'rail' ? item.label : ''"
+            (click)="item.disabled || itemClick.emit(item.id)">
+            <span rtElem="plate">
+                @if (item.icon; as icon) {
+                    <rt-icon size="sm" [name]="icon" />
+                }
+                @if (item.unread) {
+                    <span rtElem="marker" qa-dataid="page-action-marker"></span>
+                }
+            </span>
+        </button>
+    }
+    @if (user(); as u) {
+        <rt-page-user [placement]="placement()" [user]="u" [userMenu]="userMenu()" (userClick)="userClick.emit()" />
+    }
+</ng-container>

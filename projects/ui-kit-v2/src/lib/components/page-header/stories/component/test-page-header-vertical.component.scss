@@ -1,0 +1,59 @@
+@layer rt-kit.components {
+    .app-rail-screen {
+        --rt-app-rail-screen-logo-radius: calc(var(--rt-radius-sm) + var(--rt-space-0-5));
+
+        display: flex;
+        height: 800px;
+        background: var(--rt-color-bg-page);
+        contain: paint;
+
+        @media (width > 768px) {
+            .rt-page-rail {
+                height: 100%;
+            }
+        }
+
+        &__rest {
+            display: flex;
+            min-width: 0;
+            flex: 1 1 0;
+            flex-direction: column;
+        }
+
+        & &__tabs {
+            --rt-tabs-list-padding-inline: var(--rt-space-2) 0;
+
+            background-color: var(--rt-nav-header-color-bg);
+        }
+
+        &__logo {
+            width: 24px;
+            height: 24px;
+            border-radius: var(--rt-app-rail-screen-logo-radius);
+            background-color: var(--rt-color-action-primary);
+        }
+
+        &__page {
+            flex: 1 1 auto;
+            padding: var(--rt-space-4) var(--rt-space-5);
+        }
+
+        &__assistant {
+            width: 420px;
+            height: 100%;
+            box-sizing: border-box;
+            flex: none;
+            border-inline-start: 1px solid var(--rt-color-border-default);
+        }
+
+        @media (width <= 768px) {
+            flex-direction: column;
+
+            &__assistant {
+                position: absolute;
+                width: 100%;
+                inset: 0;
+            }
+        }
+    }
+}

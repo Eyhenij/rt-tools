@@ -1,0 +1,107 @@
+<ng-container rtBlock="rt-page-bar">
+    <div rtElem="row">
+        <h1 rtElem="title" qa-dataid="page-bar-title" #title [attr.title]="pageTitle()">{{ pageTitle() }}</h1>
+
+        @switch (mode()) {
+            @case ('narrow') {
+                <span rtElem="spacer"></span>
+                @if (filters().length > 0 || search()) {
+                    <span rtElem="filters-trigger">
+                        <rt-icon-button
+                            icon="filter"
+                            size="sm"
+                            qa-dataid="page-bar-filters"
+                            [ariaLabel]="filtersActive() ? t().uiFiltersActive : t().uiFilters"
+                            (click)="sheetOpen.set(true)" />
+                        @if (filtersActive()) {
+                            <span rtElem="dot" qa-dataid="page-bar-filters-dot"></span>
+                        }
+                    </span>
+                }
+                @if (actions().length > 0) {
+                    <rt-menu qa-dataid="page-bar-actions-menu" triggerSize="sm" panelClass="rt-page-bar-menu" [ariaLabel]="t().uiActions">
+                        @for (action of actions(); track action.id) {
+                            <rt-menu-item
+                                [icon]="action.icon"
+                                [label]="action.label"
+                                [attr.disabled]="action.disabled || null"
+                                (click)="action.disabled || actionClick.emit(action.id)" />
+                        }
+                    </rt-menu>
+                }
+            }
+            @case ('one') {
+                <ng-container [ngTemplateOutlet]="filterRow" [ngTemplateOutletContext]="{ wide: true }" />
+                <ng-container [ngTemplateOutlet]="actionRow" />
+            }
+            @default {
+                <span rtElem="spacer"></span>
+                <ng-container [ngTemplateOutlet]="actionRow" />
+            }
+        }
+    </div>
+
+    @if (mode() === 'two') {
+        <div rtElem="row" qa-dataid="page-bar-second-row">
+            <ng-container [ngTemplateOutlet]="filterRow" [ngTemplateOutletContext]="{ wide: false }" />
+            @if (moreFilters().length > 0) {
+                <button rtElem="more" type="button" qa-dataid="page-bar-more-filters" rtPopoverAlign="end" [rtPopover]="morePanel">
+                    {{ t().uiMoreFilters }} · {{ moreFilters().length }}
+                </button>
+            }
+        </div>
+    }
+
+    @if (isNarrow() && sheetOpen()) {
+        <rt-bottom-sheet [open]="true" (openChange)="sheetOpen.set($event)">
+            <span sheetHeader>{{ t().uiPageFilters }}</span>
+            <div rtElem="sheet" qa-dataid="page-bar-sheet">
+                @if (search(); as searchSlot) {
+                    <ng-container [ngTemplateOutlet]="searchSlot.templateRef" />
+                }
+                @for (filter of filters(); track filter) {
+                    <ng-container [ngTemplateOutlet]="filter.templateRef" />
+                }
+            </div>
+            <button sheetFooter rtButton rtElem="apply" type="button" qa-dataid="page-bar-apply" (click)="onApply()">
+                {{ t().uiApply }}
+            </button>
+        </rt-bottom-sheet>
+    }
+
+    <ng-template #filterRow let-wide="wide">
+        @if (search(); as searchSlot) {
+            <div rtElem="search"><ng-container [ngTemplateOutlet]="searchSlot.templateRef" /></div>
+        }
+        @for (filter of rowFilters(); track filter) {
+            <div rtElem="filter" [rtMod]="{ wide: wide }"><ng-container [ngTemplateOutlet]="filter.templateRef" /></div>
+        }
+    </ng-template>
+
+    <ng-template #actionRow>
+        @if (actions().length > 0) {
+            <div rtElem="actions">
+                @for (action of actions(); track action.id) {
+                    <rt-icon-button
+                        qa-dataid="page-bar-action"
+                        size="md"
+                        variant="primary"
+                        [attr.data-id]="action.id"
+                        [icon]="action.icon"
+                        [ariaLabel]="action.label"
+                        [tooltip]="action.label"
+                        [disabled]="action.disabled ?? false"
+                        (click)="actionClick.emit(action.id)" />
+                }
+            </div>
+        }
+    </ng-template>
+
+    <ng-template #morePanel>
+        <div rtBlock="rt-page-bar-more" qa-dataid="page-bar-more-panel">
+            @for (filter of moreFilters(); track filter) {
+                <ng-container [ngTemplateOutlet]="filter.templateRef" />
+            }
+        </div>
+    </ng-template>
+</ng-container>
