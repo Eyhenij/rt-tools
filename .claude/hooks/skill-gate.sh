@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.35.0 · hooks/skill-gate.sh · 4ff6e928b8ac · правится надстройкой, не здесь
+# rt-kit v0.35.0 · hooks/skill-gate.sh · 8833aa27a9d7 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*|mcp__figma__use_figma
 # Requires: hooks/deny-tail.sh
 # The rules gate: it does not let a file be edited until the rule it falls under has been loaded.
@@ -52,6 +52,16 @@ for map in "$rt_hooks_dir/../rt-kit/defaults/gate-map.sh" "$rt_hooks_dir/../defa
 done
 command -v skill_for >/dev/null 2>&1 || exit 0
 
+# A working copy of the tree lies inside the tree's own agent directory, and the map branch for
+# that directory caught every file of the copy: the gate demanded nothing there. The path is
+# brought to the form it has in the main copy before the map reads it.
+rt_gate_copy_path() {
+    case "$1" in
+        */.claude/worktrees/*/*) printf '%s' "$1" | sed -E 's#/\.claude/worktrees/[^/]+/#/#' ;;
+        *) printf '%s' "$1" ;;
+    esac
+}
+
 req=""
 target=""
 kind=""
@@ -73,6 +83,7 @@ case "$tool" in
             "${CLAUDE_PROJECT_DIR:-.}"/*) ;;
             *) exit 0 ;;
         esac
+        target="$(rt_gate_copy_path "$target")"
         # The edit text goes to the map as a second argument: there are rules that come into
         # force not from WHAT file is edited but from WHAT is written into it — a call to the
         # runtime arrives in an ordinary service, and a setting number in an ordinary class.
@@ -128,6 +139,7 @@ case "$tool" in
                     "${CLAUDE_PROJECT_DIR:-.}"/*) ;;
                     *) continue ;;
                 esac
+                written_path="$(rt_gate_copy_path "$written_path")"
                 more="$(skill_for edit "$written_path" "" 2>/dev/null)"
                 [ -n "$more" ] && req="$req $more"
             done <<EOF

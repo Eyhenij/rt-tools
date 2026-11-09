@@ -48,7 +48,8 @@ function lineOf(value) {
     const none = NOT_MOVED.exec(value);
 
     if (none) {
-        return `**Метрика выпуска:** нет. ${none[1]}`;
+        // The reason opens a sentence after the full stop, so it starts with a capital letter.
+        return `**Метрика выпуска:** нет. ${none[1].charAt(0).toUpperCase()}${none[1].slice(1)}`;
     }
 
     const moved = MOVED.exec(value);
