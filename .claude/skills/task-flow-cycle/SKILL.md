@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when an edit of a rule, a hook, a check or a role is chosen and when its result is judged. The worst driver from the report, one metric and its direction in the task, the verdict from the next report, and the plain name of an edit that moved nothing.
 ---
-<!-- rt-kit v0.35.0 · patterns/task-flow-cycle.md · d8a592b1151b · правится надстройкой, не здесь -->
+<!-- rt-kit v0.35.0 · patterns/task-flow-cycle.md · 62d892bac895 · правится надстройкой, не здесь -->
 
 # The improvement cycle
 
@@ -69,8 +69,9 @@ the next cycle starts from the report again.
   edit. The line stands in the task before the first commit.
 - **Reading one's own tree as the package.** One tree is the partial view: it lacks completeness and
   repeated mistakes.
-- **A rising count taken for a worse rule.** More refusals also come from more work. A share is read
-  against its denominator.
+- **A rising count taken for a worse rule.** More refusals also come from more work, and from a
+  repair that widened what a guard reads: a guard that starts seeing a new place refuses more and is
+  right. A share is read against its denominator, and a repair names no metric at all.
 
 ## The report in this tree
 

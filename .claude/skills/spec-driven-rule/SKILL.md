@@ -4,7 +4,7 @@ kind: pattern
 rule: spec-driven
 description: Pattern of rule spec-driven. Load when creating or editing a law in docs/constitution, a rule or a pattern in .claude/skills — ready-made headers, the section set of each layer, the binding table, the sign that a rule is due for splitting. Not for a domain spec — that is pattern spec-driven-domain.
 ---
-<!-- rt-kit v0.35.0 · patterns/spec-driven-rule.md · 27e8998650f1 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.35.0 · patterns/spec-driven-rule.md · 6e1e66791401 · правится надстройкой, не здесь -->
 
 # Law, rule and pattern
 
@@ -261,3 +261,7 @@ reference — it changes how a story is written.
   next to it. The same pass checks the shape of the code — a sample declaring fields unlike the
   tree declares them teaches breaking the language rule, and the rule that forbids it will not
   know.
+- A split left a pointer under the old state heading and cut its next-move line together with the
+  moved text. A heading of the form «State `name`» keeps every duty of a state section wherever it
+  stands, and the check of the next move reads it so: the pointer names its own next move, or the
+  heading leaves with the text.

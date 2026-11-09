@@ -224,8 +224,9 @@ flowchart TD
 - **The plan names the points: the epic its milestone, the task the change a person will see.** The
   role `product-strategist` tries to prove the miss in planning and before the PR. A proved miss is
   fixed or named to the owner; no pipeline stops. Every PR body carries the table of points.
-- **An edit of a rule names the metric it should move, and the next report judges it.** An edit that
-  moved nothing is named so. The technique is the pattern `task-flow-cycle`.
+- **An improvement of a rule names the metric it should move, and the next report judges it.** A repair
+  names what was broken instead. An edit that moved nothing is named so. The technique is the
+  pattern `task-flow-cycle`.
 - **Work is judged by the role `goal-critic` against the owner's words.** A plan is no evidence to
   it, its reply is not edited, and the PR body carries its table.
 - **A mission is set by the owner.** A session only proposes a wording from its analysis and waits

@@ -68,5 +68,6 @@ the next cycle starts from the report again.
   edit. The line stands in the task before the first commit.
 - **Reading one's own tree as the package.** One tree is the partial view: it lacks completeness and
   repeated mistakes.
-- **A rising count taken for a worse rule.** More refusals also come from more work. A share is read
-  against its denominator.
+- **A rising count taken for a worse rule.** More refusals also come from more work, and from a
+  repair that widened what a guard reads: a guard that starts seeing a new place refuses more and is
+  right. A share is read against its denominator, and a repair names no metric at all.
