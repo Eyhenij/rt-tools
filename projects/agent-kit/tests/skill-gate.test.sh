@@ -360,5 +360,19 @@ c "SC-AK-850 — упоминание в поиске вызовом не счи
     'grep -rn "gh pr create --body" docs/' Bash PASS
 gate_session_reset
 
+# SC-AK-1333 — рабочая копия лежит в каталоге агента самого дерева. Карта дерева, которая
+# отпускает этот каталог целиком, без приведения пути отпускала бы и каждый файл копии.
+printf 'skill_for() { case "$2" in */.claude/*) return 0 ;; esac; skill_for_default "$@"; }\n' \
+    > "$TREE/.claude/rt-kit/gate-map.sh"
+g "SC-AK-1333 — компонент из рабочей копии требует правило" \
+    "$TREE/.claude/worktrees/copy/libs/site/x/ui/src/lib/a.component.ts" component-structure
+g "SC-AK-1333 — папка задачи из рабочей копии требует правило" \
+    "$TREE/.claude/worktrees/copy/docs/tasks/RT-1-x/plan.md" task-flow
+g "SC-AK-1333 — роль из рабочей копии правила не требует" \
+    "$TREE/.claude/worktrees/copy/.claude/agents/qa-engineer.md" PASS
+c "SC-AK-1333 — запись командой в рабочую копию требует правило" \
+    "printf x > $TREE/.claude/worktrees/copy/docs/tasks/RT-1-x/plan.md" Bash task-flow
+rm -f "$TREE/.claude/rt-kit/gate-map.sh"
+gate_session_reset
 
 suite_result "гейт правил"
