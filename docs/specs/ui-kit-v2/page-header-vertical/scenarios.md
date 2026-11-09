@@ -91,7 +91,7 @@ When the header is drawn
 Then every button stands inside the screen and the title truncates
 
 Not covered: a test has no layout at all. The places of the buttons are seen by a frame of the
-showcase at the phone width, by the story `BarOneRow`.
+showcase at the phone width, by the story `PhonePage`.
 
 ### SC-UKV-1197 — phone filters open in a bottom sheet
 

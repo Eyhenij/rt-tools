@@ -1,13 +1,14 @@
 # The vertical menu and the tabs «More» mode
 
-**Status:** proposed · **Revision:** 9 November 2026 · **Scenario prefix:** `SC-UKV`
-**Depends on:** the page header, the tabs, the kit menu, the bottom sheet, the AI chat
+**Status:** in force · **Revision:** 9 November 2026 · **Scenario prefix:** `SC-UKV`
+**Depends on:** the page header, the tabs, the kit menu, the bottom sheet
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`, `mockups`
 **Procedures:** none
 
-The agreement of task RT-3181. It extends two parts of the second kit by one change, as the owner
-asked: `rt-page-header` gains a vertical layout and `rt-tabs` gains a «More» mode. The approved
-frames are the node `7626:734` of the sheet Page Header and the node `7658:534` of the sheet Tabs.
+A subdomain of the second kit, written by task RT-3181. It extends two parts by one change, as the
+owner asked: `rt-page-header` gains a vertical layout and `rt-tabs` gains a «More» mode. The
+approved frames are the node `7626:734` of the sheet Page Header and the node `7658:534` of the
+sheet Tabs.
 
 ## Why
 
@@ -46,12 +47,16 @@ height from the table, so the vertical layout comes with a compact page header.
 - **The menu row shows what the tab shows: icon, badge, error mark, disabled state and cross.**
 - **An error inside the menu puts a dot on the «More» trigger.**
 - **Closing a row tab brings the first menu tab into the row.**
-- **The menu opens 4 below the trigger with its right edge on the trigger's right edge.**
+- **The menu opens under the trigger with its right edge on the trigger's right edge.**
 - **A menu of more than eight rows scrolls inside, and its height stays 282.**
 - **The trigger is never drawn as selected.** The selected tab is always in the row.
+- **The open trigger carries its open look.** The chevron turns up while the menu is open.
 - **The scroll mode stays the default, and a strip that names no mode behaves as before.**
 - **A right click on a tab opens the menu the application declares for it.** The application holds
   the tab set, so it declares the pin and close items and acts on them.
+- **A strip may show the close cross on the selected tab only.** Every closable tab keeps its
+  cross by default.
+- **A pinned tab without an icon of its own draws a pin, and it may still carry a close cross.**
 
 ### The rail and the section panel
 
@@ -65,6 +70,8 @@ height from the table, so the vertical layout comes with a compact page header.
   the tabs do not move.
 - **The section panel is 220 wide and takes the window's whole height.**
 - **The profile menu opens above the avatar, 8 from the rail.**
+- **A switched-on foot button carries the look of the selected item and says it is pressed.** The
+  open assistant is such a button.
 
 ### The tab view
 
@@ -75,9 +82,6 @@ height from the table, so the vertical layout comes with a compact page header.
 
 ### The assistant
 
-- **The open assistant stands to the right of the page and narrows it.** The chat is 420 wide and
-  never covers the page.
-- **On a window of 768 and narrower the assistant takes the whole screen.**
 - **The compact page header follows the width of the page, not of the window.** Narrowed by the
   assistant, it moves its filters and actions into buttons as a phone does.
 
@@ -113,7 +117,9 @@ height from the table, so the vertical layout comes with a compact page header.
 - The kit default of the pagination height: the compact footer of the frames is set by the custom
   properties the pagination already has.
 - Dragging tabs to reorder them: no approved frame draws it.
-- The chat itself: `rt-ai-chat` is placed as it is, and only its place on the screen is agreed here.
+- The chat itself and its place: the application puts `rt-ai-chat` 420 wide to the right of the
+  page, or over the whole screen at 768 and narrower. The showcase shows that layout; the kit only
+  follows the narrowed page width.
 
 ## Contract
 
@@ -181,4 +187,6 @@ Not applicable: one window has one rail.
 
 ## History of changes
 
-- 9 November 2026 — written by task RT-3181 after the owner approved the frames.
+- 9 November 2026 — written by task RT-3181 after the owner approved the frames; merged into the
+  kit spec by the same task, with the rules the work added: the cross on the selected tab only, the
+  pin of a pinned tab, the open trigger look and the switched-on foot button.
