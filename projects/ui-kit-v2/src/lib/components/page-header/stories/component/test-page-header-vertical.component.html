@@ -1,4 +1,4 @@
-<div data-story-root data-story-trigger class="app-rail-screen" [style.height.px]="screenHeight">
+<div data-story-root class="app-rail-screen" [attr.data-story-trigger]="overlay ? '' : null" [style.height.px]="screenHeight">
     <rt-page-header
         layout="vertical"
         [items]="sections"

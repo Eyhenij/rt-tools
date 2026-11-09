@@ -38,6 +38,37 @@ const SHORT_SCREEN: number = 560;
 
 const BURGER: string = '[qa-dataid="rail-burger"]';
 
+interface IShotSize {
+    readonly width: number;
+    readonly height: number;
+}
+
+interface IShot {
+    readonly snapshot: { readonly fullPage?: boolean; readonly overlay?: string; readonly viewport?: IShotSize };
+}
+
+/** Окно кадра телефона. Съёмка не читает окно витрины, без размера телефон снялся бы в 1280. */
+const PHONE_VIEW: IShotSize = { width: 375, height: 812 };
+
+/** Панель открывается жестом: в общем слое перекрытий, где съёмка ищет её сама. */
+const OPENED: IShot = { snapshot: { fullPage: true } };
+
+const PHONE_SHOT: IShot = { snapshot: { viewport: PHONE_VIEW } };
+
+const PHONE_OPENED: IShot = { snapshot: { fullPage: true, viewport: PHONE_VIEW } };
+
+/**
+ * Панель стоит вне общего слоя перекрытий: панель раздела, меню телефона, шторка и меню действий.
+ * Съёмка сверяет названный узел, иначе она ждала бы панель в слое, где её нет.
+ */
+function openedAt(overlay: string, viewport?: IShotSize): IShot {
+    return { snapshot: { fullPage: true, overlay, viewport } };
+}
+
+const PANEL: string = '[qa-dataid="rail-panel"]';
+
+const PHONE_MENU: string = 'rt-page-phone-menu';
+
 const TABS_MORE: string = '[qa-dataid="tabs-more"]';
 
 function openOn(selector: string): TPlay {
@@ -64,14 +95,14 @@ export const RailDisabled: TStory = { args: { bar: true, disabledSection: true }
 export const RailShort: TStory = { args: { bar: true, manySections: true, screenHeight: SHORT_SCREEN } };
 
 export const PanelOpen: TStory = {
-    parameters: { snapshot: { fullPage: true } },
-    args: { bar: true },
+    parameters: openedAt(PANEL),
+    args: { bar: true, overlay: true },
     play: openPanel,
 };
 
 export const ProfileOpen: TStory = {
-    parameters: { snapshot: { fullPage: true } },
-    args: { bar: true },
+    parameters: OPENED,
+    args: { bar: true, overlay: true },
     play: openOn('[qa-dataid="page-user"]'),
 };
 
@@ -97,8 +128,8 @@ export const TabMenuOpen: TStory = {
 export const TabsMore: TStory = { args: { bar: true, tabs: MANY_TABS } };
 
 export const TabsMoreOpen: TStory = {
-    parameters: { snapshot: { fullPage: true } },
-    args: { bar: true, tabs: MANY_TABS },
+    parameters: OPENED,
+    args: { bar: true, tabs: MANY_TABS, overlay: true },
     play: openOn(TABS_MORE),
 };
 
@@ -114,8 +145,8 @@ export const TabsAssistantScroll: TStory = { args: { bar: true, tabs: MANY_TABS,
 
 export const TabsAssistantMoreOpenDark: TStory = {
     globals: DARK,
-    parameters: { snapshot: { fullPage: true } },
-    args: { bar: true, tabs: MANY_TABS, assistant: true },
+    parameters: OPENED,
+    args: { bar: true, tabs: MANY_TABS, assistant: true, overlay: true },
     play: openOn(TABS_MORE),
 };
 
@@ -126,60 +157,60 @@ export const TabsDark: TStory = { globals: DARK, args: { bar: true, tabs: 5 } };
 export const FiltersApplied: TStory = { args: { bar: true, filtersActive: true } };
 
 export const TabsPanelOpen: TStory = {
-    parameters: { snapshot: { fullPage: true } },
-    args: { bar: true, tabs: 5 },
+    parameters: openedAt(PANEL),
+    args: { bar: true, tabs: 5, overlay: true },
     play: openPanel,
 };
 
 /** Страница на телефоне целиком: бургер открывает меню, пункты переходят, отборы и действия работают. */
-export const PhonePage: TStory = { globals: PHONE, args: { bar: true, tabs: 5 } };
+export const PhonePage: TStory = { globals: PHONE, parameters: PHONE_SHOT, args: { bar: true, tabs: 5 } };
 
-export const PhoneWithoutTabs: TStory = { globals: PHONE, args: { bar: true } };
+export const PhoneWithoutTabs: TStory = { globals: PHONE, parameters: PHONE_SHOT, args: { bar: true } };
 
 export const PhoneMenu: TStory = {
     globals: PHONE,
-    parameters: { snapshot: { fullPage: true } },
-    args: { bar: true, tabs: 5 },
+    parameters: openedAt(PHONE_MENU, PHONE_VIEW),
+    args: { bar: true, tabs: 5, overlay: true },
     play: openOn(BURGER),
 };
 
 export const PhoneMenuDisabled: TStory = {
     globals: PHONE,
-    parameters: { snapshot: { fullPage: true } },
-    args: { bar: true, tabs: 5, disabledSection: true },
+    parameters: openedAt(PHONE_MENU, PHONE_VIEW),
+    args: { bar: true, tabs: 5, disabledSection: true, overlay: true },
     play: openOn(BURGER),
 };
 
 /** Раздел с панелью открыт на месте списка: «Назад» и пункты с названиями групп. */
 export const PhoneMenuNested: TStory = {
     globals: PHONE,
-    parameters: { snapshot: { fullPage: true } },
-    args: { bar: true, tabs: 5 },
+    parameters: openedAt(PHONE_MENU, PHONE_VIEW),
+    args: { bar: true, tabs: 5, overlay: true },
     play: openPhoneSection,
 };
 
 export const PhoneTabsMore: TStory = {
     globals: PHONE,
-    parameters: { snapshot: { fullPage: true } },
-    args: { bar: true, tabs: PHONE_TABS },
+    parameters: PHONE_OPENED,
+    args: { bar: true, tabs: PHONE_TABS, overlay: true },
     play: openOn(TABS_MORE),
 };
 
 export const PhoneFilters: TStory = {
     globals: PHONE,
-    parameters: { snapshot: { fullPage: true } },
-    args: { bar: true, tabs: 5 },
+    parameters: openedAt('[qa-dataid="page-bar-sheet"]', PHONE_VIEW),
+    args: { bar: true, tabs: 5, overlay: true },
     play: openOn('[qa-dataid="page-bar-filters"]'),
 };
 
 /** Меню действий и точка на кнопке отборов: отборы применены. */
 export const PhoneActions: TStory = {
     globals: PHONE,
-    parameters: { snapshot: { fullPage: true } },
-    args: { bar: true, tabs: 5, filtersActive: true },
+    parameters: openedAt('.rt-page-bar-menu', PHONE_VIEW),
+    args: { bar: true, tabs: 5, filtersActive: true, overlay: true },
     play: openOn('[qa-dataid="page-bar-actions-menu"] button'),
 };
 
-export const PhoneAssistant: TStory = { globals: PHONE, args: { bar: true, tabs: 5, assistant: true } };
+export const PhoneAssistant: TStory = { globals: PHONE, parameters: PHONE_SHOT, args: { bar: true, tabs: 5, assistant: true } };
 
-export const PhoneDark: TStory = { globals: DARK_PHONE, args: { bar: true, tabs: 5 } };
+export const PhoneDark: TStory = { globals: DARK_PHONE, parameters: PHONE_SHOT, args: { bar: true, tabs: 5 } };

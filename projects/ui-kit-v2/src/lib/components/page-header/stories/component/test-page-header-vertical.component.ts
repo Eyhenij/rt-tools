@@ -111,6 +111,8 @@ export class TestRtPageHeaderVerticalComponent {
     public disabledSection: boolean = false;
     public manySections: boolean = false;
     public screenHeight: number | null = null;
+    /** История открывает панель жестом: съёмка ждёт её и не снимает кадр без неё. */
+    public overlay: boolean = false;
     public user: IRtPageHeader.User = { name: 'Анна' };
 
     constructor() {
