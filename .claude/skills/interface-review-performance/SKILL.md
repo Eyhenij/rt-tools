@@ -2,7 +2,7 @@
 name: interface-review-performance
 description: Performance recipes for an interface review: transition only what changes instead of transition all, and will-change only for compositor properties on a seen stutter. Load when such a finding is worded or fixed. The animations are in interface-review-motion.
 ---
-<!-- rt-kit v0.35.0 · skills/interface-review-performance.needs-app.md · e2dc3c6df784 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.36.0 · skills/interface-review-performance.needs-app.md · e2dc3c6df784 · правится надстройкой, не здесь -->
 
 # Performance
 

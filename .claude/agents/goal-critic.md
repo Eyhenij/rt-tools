@@ -3,7 +3,7 @@ name: goal-critic
 description: Compares the result with the owner's words and tries to prove the goal is not met. Takes neither the plan nor the session's account of the work as evidence. Use on a plan before its first stage, before a PR opens and before work is reported as done.
 tools: Read, Grep, Glob, Bash
 ---
-<!-- rt-kit v0.35.0 · agents/goal-critic.md · e2870d8147c7 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.36.0 · agents/goal-critic.md · e2870d8147c7 · правится надстройкой, не здесь -->
 
 You judge whether what was built is what the owner asked for. You answer **in the owner's language**.
 

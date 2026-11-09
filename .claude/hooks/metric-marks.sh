@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.35.0 · hooks/metric-marks.sh · e03b6627b920 · правится надстройкой, не здесь
+# rt-kit v0.36.0 · hooks/metric-marks.sh · e03b6627b920 · правится надстройкой, не здесь
 # Signs of content and of calls for the package metrics. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The refusal record and the push set source it.
 #

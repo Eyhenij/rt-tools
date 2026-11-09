@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.35.0 · hooks/git-guard-delivery-pipeline.sh · 9b381930fb0d · правится надстройкой, не здесь
+# rt-kit v0.36.0 · hooks/git-guard-delivery-pipeline.sh · 9b381930fb0d · правится надстройкой, не здесь
 # A draft on a base the pipeline does not wake for, for the delivery guard. NOT a guard: it has no
 # `rt-hook:` declaration and hooks into no agent event. The delivery guard sources it and calls
 # `rt_delivery_pull_draft` with the command text on a PR opening.

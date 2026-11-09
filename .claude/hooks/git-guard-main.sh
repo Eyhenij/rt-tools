@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.35.0 · hooks/git-guard-main.sh · a63130008e62 · правится надстройкой, не здесь
+# rt-kit v0.36.0 · hooks/git-guard-main.sh · a63130008e62 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh, hooks/guard-note.sh
 # Guard of the main branch. PreToolUse on a commit call.

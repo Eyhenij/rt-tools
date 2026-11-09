@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the epic as the unit of delivery. Load when an epic is declared, its branch is taken, its next task is chosen and its request into the main branch opens. Pattern epic-flow-declare. One task — task-flow.
 ---
-<!-- rt-kit v0.35.0 · rules/epic-flow.md · 090605032264 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.36.0 · rules/epic-flow.md · 090605032264 · правится надстройкой, не здесь -->
 
 # Epics — how it works here
 

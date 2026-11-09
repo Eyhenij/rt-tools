@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.35.0 · hooks/pre-push.sh · 6e1288d00fef · правится надстройкой, не здесь
+# rt-kit v0.36.0 · hooks/pre-push.sh · 6e1288d00fef · правится надстройкой, не здесь
 # The checks before a push, as a hook of git itself, not of the agent.
 #
 # Requires: hooks/push-set.sh, hooks/git-guard-push-marks.sh

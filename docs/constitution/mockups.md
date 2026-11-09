@@ -1,4 +1,4 @@
-<!-- rt-kit v0.35.0 · laws/mockups.needs-mockups.md · e4825f293ad5 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.36.0 · laws/mockups.needs-mockups.md · e4825f293ad5 · правится надстройкой, не здесь -->
 # Law on mockups
 
 What the owner sees before the code is written. The owner reads a screen by its picture, and a

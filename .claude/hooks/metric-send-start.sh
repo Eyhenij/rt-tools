@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.35.0 · hooks/metric-send-start.sh · 8230e33bf0c7 · правится надстройкой, не здесь
+# rt-kit v0.36.0 · hooks/metric-send-start.sh · 8230e33bf0c7 · правится надстройкой, не здесь
 # rt-hook: SessionStart startup|resume|compact|clear
 # rt-hook: Stop
 # rt-hook: SessionEnd

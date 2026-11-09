@@ -2,7 +2,7 @@
 name: interface-review-surfaces
 description: Surface recipes for an interface review: concentric radii, optical alignment, shadows instead of depth borders, image outlines, with CSS and Tailwind code. Load when such a finding is worded or fixed. The rules are in interface-review-principles.
 ---
-<!-- rt-kit v0.35.0 · skills/interface-review-surfaces.needs-app.md · 6d118a9e3f81 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.36.0 · skills/interface-review-surfaces.needs-app.md · 6d118a9e3f81 · правится надстройкой, не здесь -->
 
 # Surfaces
 

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.35.0 · templates/postmortem.md · 5aa51751a5f9 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.36.0 · templates/postmortem.md · 5aa51751a5f9 · правится надстройкой, не здесь -->
 # <what the miss was, not on which task it happened>
 
 <date>. <One line: where the work was going and how far it got.>

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.35.0 · hooks/pull-outcomes.sh · be7a4594982f · правится надстройкой, не здесь
+# rt-kit v0.36.0 · hooks/pull-outcomes.sh · be7a4594982f · правится надстройкой, не здесь
 # The facts about closed requests, one JSON object per line. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The report and the sending call it.
 #

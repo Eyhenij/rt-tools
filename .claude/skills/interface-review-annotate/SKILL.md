@@ -2,7 +2,7 @@
 name: interface-review-annotate
 description: Puts the findings of an interface review on a Figma canvas as cards beside the frame: card anatomy, the Plugin API build sequence, placement, connectors. Load when a reviewed Figma frame is to be annotated. The review itself is in interface-review.
 ---
-<!-- rt-kit v0.35.0 · skills/interface-review-annotate.needs-mockups.md · ebeea095d28e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.36.0 · skills/interface-review-annotate.needs-mockups.md · ebeea095d28e · правится надстройкой, не здесь -->
 
 # Annotate the frame
 

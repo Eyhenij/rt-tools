@@ -2,7 +2,7 @@
 name: interface-review-icons
 description: Icon recipes for an interface review: stroke matched to text weight, one SVG recolored per state, outline by default and fill when active, render size, RTL mirroring. Load when an icon finding is worded or fixed. Icon swaps are in interface-review-motion-states.
 ---
-<!-- rt-kit v0.35.0 · skills/interface-review-icons.needs-app.md · bbd76b83bda6 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.36.0 · skills/interface-review-icons.needs-app.md · bbd76b83bda6 · правится надстройкой, не здесь -->
 
 # Icons
 
