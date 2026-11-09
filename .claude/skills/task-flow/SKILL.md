@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of one task from the request to the merge. Load at the start of any work, when editing task folders and product agreements, and on return to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. Epics — epic-flow, turns — turn-conduct.
 ---
-<!-- rt-kit v0.35.0 · rules/task-flow.md · 1b907db0ae1d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.35.0 · rules/task-flow.md · 918900c22353 · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -225,8 +225,9 @@ flowchart TD
 - **The plan names the points: the epic its milestone, the task the change a person will see.** The
   role `product-strategist` tries to prove the miss in planning and before the PR. A proved miss is
   fixed or named to the owner; no pipeline stops. Every PR body carries the table of points.
-- **An edit of a rule names the metric it should move, and the next report judges it.** An edit that
-  moved nothing is named so. The technique is the pattern `task-flow-cycle`.
+- **An improvement of a rule names the metric it should move, and the next report judges it.** A repair
+  names what was broken instead. An edit that moved nothing is named so. The technique is the
+  pattern `task-flow-cycle`.
 - **Work is judged by the role `goal-critic` against the owner's words.** A plan is no evidence to
   it, its reply is not edited, and the PR body carries its table.
 - **A mission is set by the owner.** A session only proposes a wording from its analysis and waits
