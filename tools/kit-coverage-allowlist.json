@@ -90,7 +90,17 @@
     "ng-template[rtThreadListRowActions]": "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-matrix.stories.ts",
     "rt-ai-chat-answer": "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-matrix.stories.ts",
     "rt-ai-chat-copy": "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-matrix.stories.ts",
-    "ng-template[rtAiChatMessageExtra]": "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-matrix.stories.ts"
+    "ng-template[rtAiChatMessageExtra]": "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-matrix.stories.ts",
+    "[rtPageBarFilter]": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header-vertical.stories.ts",
+    "[rtPageBarSearch]": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header-vertical.stories.ts",
+    "rt-page-bar": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header-vertical.stories.ts",
+    "rt-page-actions": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header-vertical.stories.ts",
+    "rt-page-phone-menu": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header-vertical.stories.ts",
+    "rt-page-rail": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header-vertical.stories.ts",
+    "rt-page-user": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header-vertical.stories.ts",
+    "rt-page-header-user": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header.stories.ts",
+    "rt-tabs-more": "projects/ui-kit-v2/src/lib/components/tabs/stories/tabs-more.stories.ts",
+    "rt-tabs-context-menu": "projects/ui-kit-v2/src/lib/components/tabs/stories/tabs-more.stories.ts"
   },
   "noPlayground": {
     "toolbar": "Содержимое панели приходит проекцией шаблонов в три места, и страница с входами их не задаёт: витрина умеет подставлять значения, а не разметку. Единственный вход — плотность — показан своей осью."

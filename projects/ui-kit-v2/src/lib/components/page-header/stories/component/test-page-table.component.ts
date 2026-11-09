@@ -9,7 +9,17 @@ import {
     CdkRow,
     CdkRowDef,
 } from '@angular/cdk/table';
-import { ChangeDetectionStrategy, Component, InputSignal, Signal, ViewEncapsulation, computed, input } from '@angular/core';
+import { BooleanInput } from '@angular/cdk/coercion';
+import {
+    booleanAttribute,
+    ChangeDetectionStrategy,
+    Component,
+    InputSignalWithTransform,
+    Signal,
+    ViewEncapsulation,
+    computed,
+    input,
+} from '@angular/core';
 
 import { IPageModel } from '@rt-tools/utils';
 
@@ -80,5 +90,7 @@ export class TestRtPageTableComponent {
         totalCount: this.phone() ? this.rows().length : WIDE_TOTAL,
     }));
 
-    public readonly phone: InputSignal<boolean> = input<boolean>(false);
+    public readonly phone: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 }

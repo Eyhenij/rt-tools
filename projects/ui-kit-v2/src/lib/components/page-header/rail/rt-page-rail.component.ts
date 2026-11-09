@@ -1,4 +1,6 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import {
+    booleanAttribute,
     computed,
     inject,
     input,
@@ -9,6 +11,7 @@ import {
     DestroyRef,
     ElementRef,
     InputSignal,
+    InputSignalWithTransform,
     OutputEmitterRef,
     Signal,
     TemplateRef,
@@ -101,7 +104,9 @@ export class RtPageRailComponent {
     public readonly userMenu: InputSignal<TemplateRef<unknown> | null> = input<TemplateRef<unknown> | null>(null);
 
     /** Подвал рейки: вид с вкладками его убирает и ставит те же кнопки в ряд с вкладками. */
-    public readonly foot: InputSignal<boolean> = input<boolean>(true);
+    public readonly foot: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
 
     public readonly footItems: InputSignal<ReadonlyArray<IRtPageHeader.Item>> = input<ReadonlyArray<IRtPageHeader.Item>>([]);
 
