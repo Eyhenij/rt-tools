@@ -23,6 +23,7 @@
 | `activation`        | `'auto' \| 'manual'`           | `'auto'`       |
 | `scrollArrows`      | `'overlay' \| 'inline'`        | `'overlay'`    |
 | `scrollStep`        | `'fixed' \| 'page' \| 'third'` | `'fixed'`      |
+| `overflow`          | `'scroll' \| 'more'`           | `'scroll'`     |
 | `animationDuration` | `string \| number \| null`     | `null`         |
 | `preserveContent`   | `boolean`                      | `false`        |
 | `dense`             | `boolean`                      | `false`        |
@@ -47,6 +48,8 @@
 | `glyph`                           | `string \| null` — значок Material                | `null`                |
 | `tooltip`                         | `string` — подсказка, и у отключённой             | `''`                  |
 | `closable`                        | `boolean`                                         | `false`               |
+| `pinned`                          | `boolean`                                         | `false`               |
+| `contextMenu`                     | `TemplateRef<ContextMenuContext> \| null`         | `null`                |
 | `closeTooltip`                    | `string` — подсказка крестика                     | `''`                  |
 | `closeTooltipPlacement`           | `IRtTooltip.Placement \| null`                    | `null`                |
 
@@ -118,5 +121,9 @@
 - `preserveContent`: тело создаётся при первом открытии вкладки и дальше живёт; неактивное скрыто
   (`hidden`, `inert`, `aria-hidden`, вне таб-порядка) с якорем `tabs-panel-idle`. Уходит при смене
   живое тело прежней вкладки. Тело вкладки, убранной из набора, уничтожается вместе с ней.
+- `overflow="more"`: полоса не прокручивается, лишние вкладки уходят в меню «Ещё» в конце ряда.
+  Вкладка меню остаётся в разметке скрытой: ряд читает её ширину при каждом пересчёте. Выбранная
+  вкладка всегда в ряду, из меню она встаёт последней и вытесняет соседа. Подбор ряда решает чистая
+  функция `rtTabsFitRow`. Вертикальная полоса режима не знает и остаётся как есть.
 - `scrollArrows="inline"`: при переполнении обе стрелки стоят по краям, полоса между ними уже;
   стрелка, в сторону которой прокручивать некуда, бледная и не нажимается.

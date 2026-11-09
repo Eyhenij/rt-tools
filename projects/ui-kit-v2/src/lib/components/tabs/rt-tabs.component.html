@@ -9,22 +9,24 @@
         }
 
         <div rtElem="tab-list-wrapper" [rtMod]="{ inline: scrollArrows() === 'inline', overflowing: overflowing() }">
-            <div
-                rtElem="rest"
-                qa-dataid="tabs-scroll-prev"
-                [rtMod]="{ before: true, visible: restBeforeVisible(), inactive: !restBeforeVisible() }"
-                (mousedown)="onRestPointerDown('before', $event)"
-                (mouseup)="onRestPointerUp()"
-                (mouseleave)="onRestPointerLeave()">
-                <rt-icon name="chevron-left" color="current" size="sm" />
-            </div>
+            @if (!moreMode()) {
+                <div
+                    rtElem="rest"
+                    qa-dataid="tabs-scroll-prev"
+                    [rtMod]="{ before: true, visible: restBeforeVisible(), inactive: !restBeforeVisible() }"
+                    (mousedown)="onRestPointerDown('before', $event)"
+                    (mouseup)="onRestPointerUp()"
+                    (mouseleave)="onRestPointerLeave()">
+                    <rt-icon name="chevron-left" color="current" size="sm" />
+                </div>
+            }
 
             <div
                 #tabList
                 rtElem="tab-list"
                 qa-dataid="tabs-tab-list"
                 role="tablist"
-                [rtMod]="{ stretch: stretch(), direction: direction(), ink: ink.box() !== null }"
+                [rtMod]="{ stretch: stretch(), direction: direction(), ink: ink.box() !== null, more: moreMode() }"
                 [attr.aria-orientation]="direction()"
                 (scroll)="onTabListScroll()">
                 @for (tab of visibleTabs(); track tab.id()) {
@@ -40,9 +42,13 @@
                             disabled: tab.disabled(),
                             invalid: tab.invalid(),
                             stretch: stretch(),
+                            inMore: more.ids().has(tab.id()),
                         }"
+                        [style.order]="more.order().get(tab.id())"
+                        [attr.inert]="more.ids().has(tab.id()) || null"
                         [attr.data-tabitem]="tab.id()"
-                        (click)="selectTab(tab.id())">
+                        (click)="selectTab(tab.id())"
+                        (contextmenu)="contextMenu.open($event, tab)">
                         <button
                             rtElem="trigger"
                             qa-dataid="tabs-tab"
@@ -108,6 +114,10 @@
                     </div>
                 }
 
+                @if (moreMode()) {
+                    <rt-tabs-more [tabs]="more.moreTabs()" (pick)="selectTab($event)" (closeTab)="onMoreClose($event)" />
+                }
+
                 <!-- Полоса выбранной вкладки — одна на всю полосу: так она переезжает между вкладками. -->
                 <span
                     rtElem="ink"
@@ -117,15 +127,17 @@
                     [style.translate]="ink.translate()"></span>
             </div>
 
-            <div
-                rtElem="rest"
-                qa-dataid="tabs-scroll-next"
-                [rtMod]="{ after: true, visible: restAfterVisible(), inactive: !restAfterVisible() }"
-                (mousedown)="onRestPointerDown('after', $event)"
-                (mouseup)="onRestPointerUp()"
-                (mouseleave)="onRestPointerLeave()">
-                <rt-icon name="chevron-right" color="current" size="sm" />
-            </div>
+            @if (!moreMode()) {
+                <div
+                    rtElem="rest"
+                    qa-dataid="tabs-scroll-next"
+                    [rtMod]="{ after: true, visible: restAfterVisible(), inactive: !restAfterVisible() }"
+                    (mousedown)="onRestPointerDown('after', $event)"
+                    (mouseup)="onRestPointerUp()"
+                    (mouseleave)="onRestPointerLeave()">
+                    <rt-icon name="chevron-right" color="current" size="sm" />
+                </div>
+            }
         </div>
 
         @if (rightControls().length) {
@@ -136,6 +148,8 @@
             </div>
         }
     </div>
+
+    <rt-tabs-context-menu #contextMenu />
 
     <!-- Уходящая панель стоит поверх: место ей задаёт замер, сделанный до смены. Сохранённые
          тела посещённых вкладок скрыты и вне таб-порядка. -->

@@ -1,3 +1,5 @@
+import { Signal } from '@angular/core';
+
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
 /**
@@ -16,6 +18,42 @@ export namespace IRtTabs {
      * переводят фокус, а открывают Enter и Space.
      */
     export type Activation = 'auto' | 'manual';
+
+    /** Что делать, когда вкладки не встают: прокручивать полосу (`scroll`) или уносить лишние в меню (`more`). */
+    export type Overflow = 'scroll' | 'more';
+
+    /** Контекст шаблона меню вкладки: id вкладки, на которой нажали правую кнопку. */
+    export interface ContextMenuContext {
+        readonly $implicit: Id;
+    }
+
+    /** Что нужно ряду от полосы. Тип вкладки — параметр: директива сама читает эту модель. */
+    export interface MoreRowDeps<TAB> {
+        readonly enabled: Signal<boolean>;
+        readonly visible: Signal<readonly TAB[]>;
+        readonly selectedId: Signal<Id | null>;
+    }
+
+    /** Вкладка ряда с замеренной шириной: вход подбора ряда в режиме «Ещё». */
+    export interface MoreSlot {
+        readonly id: Id;
+        readonly width: number;
+        readonly pinned: boolean;
+    }
+
+    /** Замеры полосы: всё, из чего подбирается ряд. */
+    export interface MoreFit {
+        readonly slots: ReadonlyArray<MoreSlot>;
+        readonly selectedId: Id | null;
+        readonly moreWidth: number;
+        readonly available: number;
+    }
+
+    /** Раскладка: ряд в порядке показа и вкладки меню в порядке объявления. */
+    export interface MoreLayout {
+        readonly row: ReadonlyArray<Id>;
+        readonly more: ReadonlyArray<Id>;
+    }
 
     /**
      * Где стоят стрелки прокрутки переполненной полосы: `overlay` — поверх вкладок, только в ту

@@ -1,0 +1,111 @@
+@layer rt-kit.components {
+    /* Панель рисуется в CDK Overlay, вне блока вкладок: свойства объявлены на ней самой. */
+    .rt-tabs-more-menu {
+        --rt-tabs-more-menu-radius: var(--rt-overlay-menu-radius);
+        --rt-tabs-more-menu-border-width: var(--rt-border-width-thin);
+        --rt-tabs-more-menu-shadow: var(--rt-overlay-menu-shadow);
+        --rt-tabs-more-menu-row-radius: var(--rt-radius-sm);
+        --rt-tabs-more-menu-close-radius: var(--rt-radius-full);
+        --rt-tabs-more-menu-max-height: 282px;
+
+        display: flex;
+        overflow: hidden auto;
+        width: var(--rt-size-60);
+        max-height: var(--rt-tabs-more-menu-max-height);
+        box-sizing: border-box;
+        flex-direction: column;
+        padding: var(--rt-overlay-menu-padding-y) var(--rt-space-xs);
+        border: var(--rt-tabs-more-menu-border-width) solid var(--rt-color-border-subtle);
+        border-radius: var(--rt-tabs-more-menu-radius);
+        background: var(--rt-overlay-menu-bg);
+        box-shadow: var(--rt-tabs-more-menu-shadow);
+
+        &__row {
+            display: flex;
+            min-height: var(--rt-overlay-menu-item-min-height);
+            flex: none;
+            align-items: center;
+            border-radius: var(--rt-tabs-more-menu-row-radius);
+            padding-inline-end: var(--rt-space-2);
+
+            &:hover:not(.rt-tabs-more-menu__row--disabled) {
+                background: var(--rt-color-bg-hover);
+            }
+
+            &--disabled {
+                opacity: var(--rt-opacity-disabled);
+            }
+
+            &--invalid {
+                color: var(--rt-color-state-danger);
+            }
+        }
+
+        &__pick {
+            display: flex;
+            min-width: 0;
+            flex: 1 1 auto;
+            align-items: center;
+            padding: var(--rt-overlay-menu-item-padding-y) var(--rt-overlay-menu-item-padding-x);
+            border: 0;
+            background: none;
+            color: var(--rt-color-text-primary);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-overlay-menu-item-weight);
+            gap: var(--rt-space-sm);
+            outline: none;
+            text-align: start;
+
+            &:focus-visible {
+                background: var(--rt-color-bg-hover);
+            }
+
+            &[aria-disabled='true'] {
+                cursor: default;
+            }
+
+            .rt-tabs-more-menu__row--invalid & {
+                color: inherit;
+            }
+        }
+
+        &__icon {
+            flex: none;
+        }
+
+        &__label {
+            overflow: hidden;
+            min-width: 0;
+            flex: 1 1 auto;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__badge {
+            flex: none;
+            color: var(--rt-color-text-muted);
+        }
+
+        &__close {
+            display: inline-flex;
+            width: var(--rt-size-5);
+            height: var(--rt-size-5);
+            flex: none;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            border: 0;
+            border-radius: var(--rt-tabs-more-menu-close-radius);
+            background: transparent;
+            color: var(--rt-color-text-muted);
+            cursor: pointer;
+
+            &:hover {
+                background: var(--rt-color-bg-hover);
+                color: var(--rt-color-text-primary);
+            }
+        }
+    }
+}

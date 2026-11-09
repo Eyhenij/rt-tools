@@ -34,8 +34,12 @@ import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtTabDirective } from './rt-tab.directive';
 import { RtTabsArrowPress, TRtTabsScrollDirection } from './rt-tabs.arrow-press';
 import { RtTabsFollow } from './rt-tabs.follow';
+import { rtTabsKeyTarget, rtTabsSelectedId } from './rt-tabs.keys';
 import { RtTabsControlDirective } from './rt-tabs-control.directive';
+import { RtTabsContextMenuComponent } from './rt-tabs-context-menu.component';
+import { RtTabsMoreComponent } from './rt-tabs-more.component';
 import { IRtTabs } from './rt-tabs.model';
+import { RtTabsMoreRow } from './rt-tabs.more-row';
 import { RtTabsInk, RtTabsPanels } from './rt-tabs.motion';
 import { rtTabsIntoViewTarget, RtTabsScroller } from './rt-tabs.scroll';
 
@@ -71,7 +75,8 @@ const BEM_BLOCK: string = 'rt-tabs';
 @Component({
     selector: 'rt-tabs',
     templateUrl: './rt-tabs.component.html',
-    styleUrl: './rt-tabs.component.scss',
+    // Панель меню рисуется в CDK Overlay и нужна и меню «Ещё», и меню вкладки: свой файл, а не их.
+    styleUrls: ['./rt-tabs.component.scss', './rt-tabs-more-menu.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
@@ -80,6 +85,8 @@ const BEM_BLOCK: string = 'rt-tabs';
 
         // standalone components / directives
         RtIconComponent,
+        RtTabsContextMenuComponent,
+        RtTabsMoreComponent,
         RtTooltipDirective,
         BlockDirective,
         ElemDirective,
@@ -125,22 +132,17 @@ export class RtTabsComponent {
      * видимых незаблокированных вкладок, поэтому корректно реагирует на
      * асинхронную загрузку/смену набора вкладок.
      */
-    protected readonly selectedId: Signal<IRtTabs.Id | null> = computed((): IRtTabs.Id | null => {
-        const enabled: readonly RtTabDirective[] = this.visibleTabs().filter((tab: RtTabDirective): boolean => !tab.disabled());
-        const candidate: IRtTabs.Id | null = this.activeId() ?? this.#internalId();
-        const candidateValid: boolean = candidate !== null && enabled.some((tab: RtTabDirective): boolean => tab.id() === candidate);
+    protected readonly selectedId: Signal<IRtTabs.Id | null> = computed((): IRtTabs.Id | null =>
+        rtTabsSelectedId(
+            this.visibleTabs()
+                .filter((tab: RtTabDirective): boolean => !tab.disabled())
+                .map((tab: RtTabDirective): IRtTabs.Id => tab.id()),
+            this.activeId() ?? this.#internalId()
+        )
+    );
 
-        let result: IRtTabs.Id | null;
-        if (candidateValid) {
-            result = candidate;
-        } else if (enabled.length) {
-            result = enabled[0].id();
-        } else {
-            result = null;
-        }
-
-        return result;
-    });
+    /** Режим «Ещё» работает только в горизонтальной полосе. */
+    protected readonly moreMode: Signal<boolean> = computed((): boolean => this.overflow() === 'more' && this.direction() === 'horizontal');
 
     /** Активная вкладка целиком (для рендера панели). */
     protected readonly activeTab: Signal<RtTabDirective | null> = computed(
@@ -181,8 +183,15 @@ export class RtTabsComponent {
         }
     );
 
+    /** Ряд и меню режима «Ещё». */
+    protected readonly more: RtTabsMoreRow = new RtTabsMoreRow(this.#win, this.tabListRef, {
+        enabled: this.moreMode,
+        visible: this.visibleTabs,
+        selectedId: this.selectedId,
+    });
+
     /** Полоса выбранной вкладки: одна на всю полосу, переезжает при смене выбора. */
-    protected readonly ink: RtTabsInk = new RtTabsInk(this.#win, this.tabListRef, { visible: this.visibleTabs, active: this.activeTab });
+    protected readonly ink: RtTabsInk = new RtTabsInk(this.#win, this.tabListRef, { visible: this.more.rowTabs, active: this.activeTab });
 
     /** Контролируемый активный id. `null` — компонент сам выбирает первую вкладку. */
     public readonly activeId: InputSignal<IRtTabs.Id | null> = input<IRtTabs.Id | null>(null);
@@ -224,6 +233,9 @@ export class RtTabsComponent {
 
     /** Стрелки и Home/End открывают вкладку сразу (`auto`) или только переводят фокус (`manual`). */
     public readonly activation: InputSignal<IRtTabs.Activation> = input<IRtTabs.Activation>('auto');
+
+    /** Вкладки не встают: полоса прокручивается (`scroll`) или лишние уходят в меню «Ещё» (`more`). */
+    public readonly overflow: InputSignal<IRtTabs.Overflow> = input<IRtTabs.Overflow>('scroll');
 
     /** Стрелки прокрутки поверх вкладок (`overlay`) или в своих местах по краям полосы (`inline`). */
     public readonly scrollArrows: InputSignal<IRtTabs.ScrollArrows> = input<IRtTabs.ScrollArrows>('overlay');
@@ -325,6 +337,11 @@ export class RtTabsComponent {
         this.#close(tab, event.currentTarget instanceof HTMLElement && event.currentTarget.matches(':focus'));
     }
 
+    /** Крестик строки меню: фокус остаётся на месте, выбор не меняется. */
+    protected onMoreClose(tab: RtTabDirective): void {
+        this.#close(tab, false);
+    }
+
     /**
      * Навигация по вкладкам с клавиатуры. Шаг считается от вкладки в фокусе: в ручном режиме она
      * не совпадает с активной. Enter и Space ловит сама кнопка — они дают click и выбор.
@@ -335,26 +352,14 @@ export class RtTabsComponent {
             return;
         }
 
-        const enabled: readonly RtTabDirective[] = this.visibleTabs().filter((item: RtTabDirective): boolean => !item.disabled());
+        const enabled: readonly RtTabDirective[] = this.more.rowTabs().filter((item: RtTabDirective): boolean => !item.disabled());
 
         if (!enabled.length) {
             return;
         }
 
-        const isVertical: boolean = this.direction() === 'vertical';
-        const nextKey: string = isVertical ? 'ArrowDown' : 'ArrowRight';
-        const prevKey: string = isVertical ? 'ArrowUp' : 'ArrowLeft';
         const currentIndex: number = enabled.findIndex((item: RtTabDirective): boolean => item.id() === tab.id());
-
-        // Карта клавиша → целевой индекс (без if/else-if цепочки).
-        const moveByKey: ReadonlyMap<string, number> = new Map<string, number>([
-            [nextKey, (currentIndex + 1) % enabled.length],
-            [prevKey, (currentIndex - 1 + enabled.length) % enabled.length],
-            ['Home', 0],
-            ['End', enabled.length - 1],
-        ]);
-
-        const targetIndex: number | undefined = moveByKey.get(event.key);
+        const targetIndex: number | undefined = rtTabsKeyTarget(event.key, this.direction(), currentIndex, enabled.length);
 
         if (targetIndex === undefined) {
             return;
@@ -437,7 +442,7 @@ export class RtTabsComponent {
     #updateRestVisibility(): void {
         const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
 
-        if (!list || this.direction() !== 'horizontal') {
+        if (!list || this.direction() !== 'horizontal' || this.moreMode()) {
             this.restBeforeVisible.set(false);
             this.restAfterVisible.set(false);
             return;
@@ -468,7 +473,7 @@ export class RtTabsComponent {
         const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
         const tab: HTMLElement | null | undefined = list?.querySelector<HTMLElement>(`[data-tabitem="${id}"]`);
 
-        if (!list || !tab) {
+        if (!list || !tab || this.moreMode()) {
             return;
         }
 
@@ -478,14 +483,7 @@ export class RtTabsComponent {
         const target: number | null = rtTabsIntoViewTarget(list, tab, inset);
         this.#scrolledId = id;
 
-        if (target !== null && first) {
-            this.#scroller.stop();
-            list.scrollLeft = target;
-        } else if (target !== null) {
-            this.#scroller.to(target);
-        } else {
-            // вкладка целиком в зоне видимости — прокрутка не нужна
-        }
+        this.#scroller.place(target, first);
 
         // Сразу — для прокрутки без движения; плавную ведут события прокрутки самой полосы.
         this.#updateRestVisibility();

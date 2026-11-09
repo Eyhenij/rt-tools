@@ -42,6 +42,12 @@ Given a closable tab stands in the menu
 When its cross is pressed
 Then `tabClose` names that tab and the tab is not selected
 
+### SC-UKV-1199 — a right click opens the menu the application declares
+
+Given a tab declares its menu
+When the tab gets a right click
+Then the menu opens with the items of the application and the browser menu does not open
+
 ### SC-UKV-1190 — the header stays horizontal by default
 
 Given a header names no layout

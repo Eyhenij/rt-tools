@@ -1,0 +1,24 @@
+@layer rt-kit.components {
+    /* Пункт стоит в ряду последним; пустой остаётся в разметке, чтобы ряд знал его ширину заранее. */
+    .rt-tabs-more {
+        --rt-tabs-more-dot-radius: var(--rt-radius-full);
+
+        display: inline-flex;
+        order: 9999;
+
+        &--idle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        .rt-tab-item__more-dot {
+            width: var(--rt-size-2);
+            height: var(--rt-size-2);
+            border-radius: var(--rt-tabs-more-dot-radius);
+            background-color: var(--rt-color-state-danger);
+        }
+    }
+}

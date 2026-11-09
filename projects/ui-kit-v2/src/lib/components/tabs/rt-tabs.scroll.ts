@@ -127,6 +127,20 @@ export class RtTabsScroller {
         return this.#target ?? this.#list()?.nativeElement.scrollLeft ?? 0;
     }
 
+    /** Ставит полосу на цель: сразу (`instant`) или плавно. `null` — вкладка уже видна целиком. */
+    public place(target: number | null, instant: boolean): void {
+        const list: HTMLElement | undefined = this.#list()?.nativeElement;
+        if (target === null || !list) {
+            return;
+        }
+        if (instant) {
+            this.stop();
+            list.scrollLeft = target;
+            return;
+        }
+        this.to(target);
+    }
+
     /** Прокручивает полосу к `left`; новая прокрутка заменяет идущую. */
     public to(left: number): void {
         const list: HTMLElement | undefined = this.#list()?.nativeElement;

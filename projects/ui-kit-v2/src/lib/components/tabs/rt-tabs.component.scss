@@ -74,6 +74,11 @@
                 justify-content: space-between;
             }
 
+            /* Режим «Ещё»: полоса не прокручивается, лишние вкладки стоят в меню. */
+            &--more {
+                overflow-x: clip;
+            }
+
             /* Полосу рисует общий элемент, и своя полоса выбранной вкладки гаснет. У неверной
                вкладки своя полоса остаётся: она красная и у невыбранной. */
             &--ink .rt-tab-item--selected:not(.rt-tab-item--invalid):after {
@@ -297,6 +302,15 @@
             inset-inline: 0;
             pointer-events: none;
             translate: 0 var(--rt-tab-item-border-width);
+        }
+
+        /* Вкладка меню остаётся в разметке ради замера: ряд читает её ширину при каждом пересчёте. */
+        &--in-more {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            visibility: hidden;
         }
 
         &:hover:not(.rt-tab-item--disabled, .rt-tab-item--selected) {

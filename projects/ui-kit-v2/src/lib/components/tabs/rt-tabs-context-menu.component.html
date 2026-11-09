@@ -1,0 +1,21 @@
+@if (state(); as menu) {
+    <ng-template
+        cdkConnectedOverlay
+        cdkConnectedOverlayHasBackdrop
+        cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+        [cdkConnectedOverlayOpen]="true"
+        [cdkConnectedOverlayOrigin]="menu.point"
+        (backdropClick)="close()"
+        (detach)="close()"
+        (overlayKeydown)="onKeydown($event)">
+        <div
+            rtBlock="rt-tabs-more-menu"
+            role="menu"
+            tabindex="-1"
+            qa-dataid="tabs-context-menu"
+            (click)="close()"
+            (keydown.enter)="close()">
+            <ng-container [ngTemplateOutlet]="menu.template" [ngTemplateOutletContext]="menu.context" />
+        </div>
+    </ng-template>
+}

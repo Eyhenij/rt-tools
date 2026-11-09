@@ -1,0 +1,66 @@
+<!-- Пункт выглядит как вкладка и берёт её блок: второй набор тех же правил разошёлся бы с первым. -->
+<div rtBlock="rt-tab-item" role="presentation">
+    <button
+        rtElem="trigger"
+        qa-dataid="tabs-more"
+        type="button"
+        role="tab"
+        aria-haspopup="menu"
+        aria-selected="false"
+        #morePopover="rtPopover"
+        rtPopoverAlign="end"
+        rtPopoverFitViewport
+        rtPopoverOffsetY="6"
+        [attr.aria-expanded]="morePopover.isOpen()"
+        [attr.tabindex]="tabs().length ? 0 : -1"
+        [rtPopover]="moreTpl">
+        <span rtElem="title">{{ t().uiNavMore }}</span>
+        @if (hasError()) {
+            <span rtElem="more-dot" role="img" qa-dataid="tabs-more-dot" [attr.aria-label]="t().uiTabInvalid"></span>
+        }
+        <rt-icon name="chevron-down" color="current" size="xs" />
+    </button>
+</div>
+
+<ng-template #moreTpl>
+    <div rtBlock="rt-tabs-more-menu" role="menu" qa-dataid="tabs-more-menu">
+        @for (tab of tabs(); track tab.id()) {
+            <div rtElem="row" role="none" [rtMod]="{ disabled: tab.disabled(), invalid: tab.invalid() }">
+                <button
+                    rtElem="pick"
+                    qa-dataid="tabs-more-item"
+                    type="button"
+                    role="menuitem"
+                    [attr.aria-disabled]="tab.disabled() || null"
+                    [attr.data-id]="tab.id()"
+                    [rtTooltip]="tab.buttonTooltip()"
+                    (click)="pick.emit(tab.id()); morePopover.close()">
+                    @if (tab.hasIcon()) {
+                        <rt-icon
+                            rtElem="icon"
+                            size="sm"
+                            [name]="tab.icon()"
+                            [glyph]="tab.glyph()"
+                            [color]="tab.iconColor()"
+                            [fill]="tab.iconFill()" />
+                    }
+                    <span rtElem="label">{{ tab.label() }}</span>
+                    @if (tab.badge() !== null) {
+                        <span rtElem="badge">{{ tab.badge() }}</span>
+                    }
+                </button>
+                @if (tab.showClose()) {
+                    <button
+                        rtElem="close"
+                        qa-dataid="tabs-more-close"
+                        type="button"
+                        [attr.aria-label]="tab.closeLabel()"
+                        [attr.data-id]="tab.id()"
+                        (click)="closeTab.emit(tab)">
+                        <rt-icon name="close" color="current" size="xs" />
+                    </button>
+                }
+            </div>
+        }
+    </div>
+</ng-template>

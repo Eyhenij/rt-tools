@@ -112,6 +112,15 @@ export class RtTabDirective {
         transform: booleanAttribute,
     });
 
+    /** Закреплённая вкладка: в режиме «Ещё» стоит первой и в меню не уходит. */
+    public readonly pinned: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Пункты меню вкладки по правой кнопке. Нет шаблона — у вкладки остаётся меню браузера. */
+    public readonly contextMenu: InputSignal<TemplateRef<IRtTabs.ContextMenuContext> | null> =
+        input<TemplateRef<IRtTabs.ContextMenuContext> | null>(null);
+
     /** Подсказка крестика закрываемой вкладки. Пусто — подсказки нет. */
     public readonly closeTooltip: InputSignal<string> = input<string>('');
 
