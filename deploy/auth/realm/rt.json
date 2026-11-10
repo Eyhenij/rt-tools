@@ -160,6 +160,9 @@
           "name": "usage:read"
         },
         {
+          "name": "quality:read"
+        },
+        {
           "name": "chat:read"
         },
         {
