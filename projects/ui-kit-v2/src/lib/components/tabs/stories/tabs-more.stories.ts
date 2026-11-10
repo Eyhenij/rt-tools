@@ -41,6 +41,8 @@ export const MoreContextMenu: TStory = {
     },
 };
 
+export const MoreLimit: TStory = { args: { part: 'limit' } };
+
 export const MoreLong: TStory = { args: { part: 'long' }, parameters: { snapshot: MENU_FRAME }, play: openMore };
 
 export const MoreThemes: TStory = { args: { part: 'themes' } };

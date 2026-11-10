@@ -140,12 +140,22 @@
         }
     }
 
+    /* Панель «Ещё отборы» рисуется в перекрытии, вне поддерева шапки, и подложку несёт сама: у панели
+       поповера своего фона нет, и без неё таблица под панелью просвечивала. Поверхность — как у меню кита. */
     .rt-page-bar-more {
+        --rt-page-bar-more-radius: var(--rt-overlay-menu-radius);
+        --rt-page-bar-more-border-width: var(--rt-border-width-thin);
+        --rt-page-bar-more-shadow: var(--rt-overlay-menu-shadow);
+
         display: flex;
         width: 240px;
         box-sizing: border-box;
         flex-direction: column;
         padding: var(--rt-space-2);
+        border: var(--rt-page-bar-more-border-width) solid var(--rt-color-border-subtle);
+        border-radius: var(--rt-page-bar-more-radius);
+        background-color: var(--rt-overlay-menu-bg);
+        box-shadow: var(--rt-page-bar-more-shadow);
         gap: var(--rt-space-2);
     }
 }

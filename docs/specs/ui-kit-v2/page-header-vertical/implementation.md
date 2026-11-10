@@ -21,6 +21,9 @@ in the tree, and the scenario it is checked by.
 - **A right click on a tab opens the menu the application declares for it.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-context-menu.component.ts:RtTabsContextMenuComponent`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tab.directive.ts:contextMenu`; scenario `SC-UKV-1199`
 - **A strip may show the close cross on the selected tab only.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.component.ts:closeOn`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.component.html:closeShown`; scenario `SC-UKV-1201`
 - **A pinned tab without an icon of its own draws a pin, and it may still carry a close cross.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tab.directive.ts:shownIcon`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tab.directive.ts:showClose`; scenario `SC-UKV-1205`
+- **The row holds at most ten tabs, pinned ones included, even when there is room.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.more.ts:freeLimit`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.more-row.ts:RT_TABS_MORE_LIMIT`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.component.ts:moreLimit`; scenario `SC-UKV-1208`
+- **A menu row shows its close cross only under the pointer or keyboard focus.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-more-menu.scss:__close`; scenario `SC-UKV-1209`
+- **The scroll arrows are compact buttons that lie over the tab edge or beside the tabs.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-arrows.scss:__arrow`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.component.ts:scrollArrows`; scenario `SC-UKV-1210`
 
 ## The rail and the section panel
 

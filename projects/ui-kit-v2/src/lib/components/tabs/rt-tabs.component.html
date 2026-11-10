@@ -17,7 +17,7 @@
                     (mousedown)="onRestPointerDown('before', $event)"
                     (mouseup)="onRestPointerUp()"
                     (mouseleave)="onRestPointerLeave()">
-                    <rt-icon name="chevron-left" color="current" size="sm" />
+                    <span rtElem="arrow"><rt-icon name="chevron-left" color="current" size="sm" /></span>
                 </div>
             }
 
@@ -136,7 +136,7 @@
                     (mousedown)="onRestPointerDown('after', $event)"
                     (mouseup)="onRestPointerUp()"
                     (mouseleave)="onRestPointerLeave()">
-                    <rt-icon name="chevron-right" color="current" size="sm" />
+                    <span rtElem="arrow"><rt-icon name="chevron-right" color="current" size="sm" /></span>
                 </div>
             }
         </div>

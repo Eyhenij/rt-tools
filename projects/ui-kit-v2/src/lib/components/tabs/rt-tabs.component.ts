@@ -15,6 +15,7 @@ import {
     input,
     InputSignal,
     InputSignalWithTransform,
+    numberAttribute,
     output,
     OutputEmitterRef,
     Signal,
@@ -34,14 +35,14 @@ import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtTabDirective } from './rt-tab.directive';
 import { RtTabsArrowPress, TRtTabsScrollDirection } from './rt-tabs.arrow-press';
 import { RtTabsFollow } from './rt-tabs.follow';
-import { rtTabsKeyTarget, rtTabsSelectedId } from './rt-tabs.keys';
+import { rtTabsKeyTargetId, rtTabsSelectedId } from './rt-tabs.keys';
 import { RtTabsControlDirective } from './rt-tabs-control.directive';
 import { RtTabsContextMenuComponent } from './rt-tabs-context-menu.component';
 import { RtTabsMoreComponent } from './rt-tabs-more.component';
 import { IRtTabs } from './rt-tabs.model';
-import { RtTabsMoreRow } from './rt-tabs.more-row';
+import { RT_TABS_MORE_LIMIT, RtTabsMoreRow } from './rt-tabs.more-row';
 import { RtTabsInk, RtTabsPanels } from './rt-tabs.motion';
-import { rtTabsIntoViewTarget, RtTabsScroller } from './rt-tabs.scroll';
+import { rtTabsIntoViewTarget, rtTabsRestShown, RtTabsScroller } from './rt-tabs.scroll';
 
 /** Дебаунс пересчёта видимости стрелок прокрутки на resize/scroll (мс). */
 const REST_DEBOUNCE_MS: number = 50;
@@ -76,7 +77,7 @@ const BEM_BLOCK: string = 'rt-tabs';
     selector: 'rt-tabs',
     templateUrl: './rt-tabs.component.html',
     // Панель меню рисуется в CDK Overlay и нужна и меню «Ещё», и меню вкладки: свой файл, а не их.
-    styleUrls: ['./rt-tabs.component.scss', './rt-tabs-more-menu.scss'],
+    styleUrls: ['./rt-tabs.component.scss', './rt-tabs-arrows.scss', './rt-tabs-more-menu.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
@@ -188,6 +189,7 @@ export class RtTabsComponent {
         enabled: this.moreMode,
         visible: this.visibleTabs,
         selectedId: this.selectedId,
+        limit: computed((): number => this.moreLimit()),
     });
 
     /** Полоса выбранной вкладки: одна на всю полосу, переезжает при смене выбора. */
@@ -239,6 +241,15 @@ export class RtTabsComponent {
 
     /** Вкладки не встают: полоса прокручивается (`scroll`) или лишние уходят в меню «Ещё» (`more`). */
     public readonly overflow: InputSignal<IRtTabs.Overflow> = input<IRtTabs.Overflow>('scroll');
+
+    /**
+     * Сколько вкладок вместе с закреплёнными стоит в ряду режима «Ещё», даже если места больше:
+     * остальные уходят в меню. Выбранная из меню или новая встаёт на место последней, а прежняя
+     * последняя уезжает в меню. В режиме прокрутки не действует.
+     */
+    public readonly moreLimit: InputSignalWithTransform<number, unknown> = input<number, unknown>(RT_TABS_MORE_LIMIT, {
+        transform: (value: unknown): number => numberAttribute(value, RT_TABS_MORE_LIMIT),
+    });
 
     /** Стрелки прокрутки поверх вкладок (`overlay`) или в своих местах по краям полосы (`inline`). */
     public readonly scrollArrows: InputSignal<IRtTabs.ScrollArrows> = input<IRtTabs.ScrollArrows>('overlay');
@@ -355,21 +366,17 @@ export class RtTabsComponent {
             return;
         }
 
-        const enabled: readonly RtTabDirective[] = this.more.rowTabs().filter((item: RtTabDirective): boolean => !item.disabled());
+        const enabled: readonly IRtTabs.Id[] = this.more
+            .rowTabs()
+            .filter((item: RtTabDirective): boolean => !item.disabled())
+            .map((item: RtTabDirective): IRtTabs.Id => item.id());
+        const targetId: IRtTabs.Id | undefined = rtTabsKeyTargetId(enabled, tab.id(), event.key, this.direction());
 
-        if (!enabled.length) {
-            return;
-        }
-
-        const currentIndex: number = enabled.findIndex((item: RtTabDirective): boolean => item.id() === tab.id());
-        const targetIndex: number | undefined = rtTabsKeyTarget(event.key, this.direction(), currentIndex, enabled.length);
-
-        if (targetIndex === undefined) {
+        if (targetId === undefined) {
             return;
         }
 
         event.preventDefault();
-        const targetId: IRtTabs.Id = enabled[targetIndex].id();
 
         if (this.activation() === 'manual') {
             this.#focusedId.set(targetId);
@@ -444,18 +451,11 @@ export class RtTabsComponent {
 
     #updateRestVisibility(): void {
         const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
+        const shown: IRtTabs.RestShown =
+            list && this.direction() === 'horizontal' && !this.moreMode() ? rtTabsRestShown(list) : { before: false, after: false };
 
-        if (!list || this.direction() !== 'horizontal' || this.moreMode()) {
-            this.restBeforeVisible.set(false);
-            this.restAfterVisible.set(false);
-            return;
-        }
-
-        const scrolledRight: number = list.scrollWidth - list.scrollLeft - list.clientWidth;
-
-        this.restBeforeVisible.set(list.scrollLeft > 0);
-        // 1px — погрешность субпиксельного scrollWidth
-        this.restAfterVisible.set(scrolledRight > 1);
+        this.restBeforeVisible.set(shown.before);
+        this.restAfterVisible.set(shown.after);
     }
 
     /** `again` — вкладки сменили размер: та же вкладка встаёт на место ещё раз. */

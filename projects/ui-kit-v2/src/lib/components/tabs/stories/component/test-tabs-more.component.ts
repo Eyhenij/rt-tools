@@ -9,7 +9,7 @@ import { RtTabsComponent } from '../../rt-tabs.component';
 import { IRtTabs } from '../../rt-tabs.model';
 
 /** Какую матрицу режима «Ещё» рисовать: у каждой оси своя история. */
-export type TTabsMorePart = 'widths' | 'dense' | 'states' | 'closable' | 'long' | 'themes';
+export type TTabsMorePart = 'widths' | 'limit' | 'dense' | 'states' | 'closable' | 'long' | 'themes';
 
 const SECTIONS: readonly string[] = ['Главная', 'Все заявки', 'Календарь', 'Контакты', 'Отзывы', 'Смены', 'Все счета', 'Транзакции'];
 
@@ -48,6 +48,9 @@ export class TestRtTabsMoreComponent {
     protected readonly open: WritableSignal<readonly string[]> = signal<readonly string[]>(SECTIONS);
 
     protected readonly active: WritableSignal<IRtTabs.Id> = signal<IRtTabs.Id>('pin');
+
+    /** Выбор полосы с лимитом: выбранная из меню встаёт на место последней в ряду. */
+    protected readonly limitActive: WritableSignal<IRtTabs.Id> = signal<IRtTabs.Id>('Склад');
 
     public part: TTabsMorePart = 'widths';
 

@@ -35,6 +35,7 @@ export namespace IRtTabs {
         readonly enabled: Signal<boolean>;
         readonly visible: Signal<readonly TAB[]>;
         readonly selectedId: Signal<Id | null>;
+        readonly limit: Signal<number>;
     }
 
     /** Вкладка ряда с замеренной шириной: вход подбора ряда в режиме «Ещё». */
@@ -50,6 +51,14 @@ export namespace IRtTabs {
         readonly selectedId: Id | null;
         readonly moreWidth: number;
         readonly available: number;
+        /** Сколько вкладок вместе с закреплёнными может стоять в ряду; без значения — сколько влезет. */
+        readonly limit?: number;
+    }
+
+    /** Видимость стрелок прокрутки у краёв полосы. */
+    export interface RestShown {
+        readonly before: boolean;
+        readonly after: boolean;
     }
 
     /** Раскладка: ряд в порядке показа и вкладки меню в порядке объявления. */

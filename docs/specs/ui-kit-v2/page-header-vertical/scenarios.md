@@ -24,6 +24,24 @@ Given a pinned tab and a width that fits only one tab
 When the row is fitted
 Then the pinned tab stands first in the row
 
+### SC-UKV-1208 — the row holds no more tabs than its limit
+
+Given a strip in the «More» mode with room for every tab and a limit lower than their count
+When the row is fitted
+Then the row holds as many tabs as the limit, and a tab picked in the menu takes the last place
+
+### SC-UKV-1209 — a menu row shows its cross only under the pointer
+
+Given the «More» menu is open and its tabs are closable
+When the pointer rests on one row
+Then only that row shows its close cross
+
+### SC-UKV-1210 — the scroll arrows are compact buttons
+
+Given a strip in the scroll mode is narrower than its tabs
+When the arrows are drawn over the tabs or beside them
+Then each arrow is a 24 button whose rounding and colours the application may set
+
 ### SC-UKV-1187 — a strip without a mode still scrolls
 
 Given a strip names no overflow mode

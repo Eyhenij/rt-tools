@@ -24,6 +24,31 @@
         </app-story-presets>
     }
 
+    @case ('limit') {
+        <app-story-presets caption="Лимит ряда: места на все, но в ряду не больше 10 вкладок, и 5 при moreLimit=5">
+            <ng-template>
+                <div style="display: flex; flex-direction: column; gap: 24px; width: 1200px">
+                    <rt-tabs overflow="more" headerOnly dense activeId="Главная">
+                        @for (section of longSections; track section) {
+                            <ng-template [rtTab]="section" [label]="section" />
+                        }
+                    </rt-tabs>
+                    <rt-tabs
+                        overflow="more"
+                        headerOnly
+                        dense
+                        moreLimit="5"
+                        [activeId]="limitActive()"
+                        (activeIdChange)="limitActive.set($event)">
+                        @for (section of longSections; track section) {
+                            <ng-template [rtTab]="section" [label]="section" />
+                        }
+                    </rt-tabs>
+                </div>
+            </ng-template>
+        </app-story-presets>
+    }
+
     @case ('dense') {
         <app-story-presets caption="Плотная полоса">
             <ng-template>

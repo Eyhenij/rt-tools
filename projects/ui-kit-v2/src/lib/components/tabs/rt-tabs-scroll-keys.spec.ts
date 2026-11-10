@@ -82,7 +82,11 @@ function arrow(fixture: THostFixture, id: string): HTMLElement {
 }
 
 function compiledStyles(): string {
-    return sass.compile(join(__dirname, 'rt-tabs.component.scss')).css.replace(/\s+/g, ' ');
+    // Стрелки прокрутки живут в своём файле стилей: собираются оба, как их подключает компонент.
+    return ['rt-tabs.component.scss', 'rt-tabs-arrows.scss']
+        .map((file: string): string => sass.compile(join(__dirname, file)).css)
+        .join(' ')
+        .replace(/\s+/g, ' ');
 }
 
 /** Тело правила по началу его селектора. */

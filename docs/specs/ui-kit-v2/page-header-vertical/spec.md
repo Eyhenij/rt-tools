@@ -56,6 +56,12 @@ height from the table, so the vertical layout comes with a compact page header.
   the tab set, so it declares the pin and close items and acts on them.
 - **A strip may show the close cross on the selected tab only.** Every closable tab keeps its
   cross by default.
+- **The row holds at most ten tabs, pinned ones included, even when there is room.** The strip may
+  name another limit. A tab picked in the menu or opened anew takes the place of the last row tab,
+  and that tab goes to the menu.
+- **A menu row shows its close cross only under the pointer or keyboard focus.**
+- **The scroll arrows are compact buttons that lie over the tab edge or beside the tabs.** The
+  application sets their rounding, background, colour and shadow.
 - **A pinned tab without an icon of its own draws a pin, and it may still carry a close cross.**
 
 ### The rail and the section panel

@@ -112,6 +112,13 @@ export const BarTwoRows: TStory = { args: { bar: true, pageTitle: LONG_TITLE, fi
 
 export const BarMoreFilters: TStory = { args: { bar: true, pageTitle: LONG_TITLE, filterCount: 7 } };
 
+/** Панель «Ещё отборы» открыта над таблицей: у неё своя подложка, таблица под ней не просвечивает. */
+export const BarMoreFiltersOpen: TStory = {
+    parameters: openedAt('[qa-dataid="page-bar-more-panel"]'),
+    args: { bar: true, overlay: true, pageTitle: LONG_TITLE, filterCount: 7 },
+    play: openOn('[qa-dataid="page-bar-more-filters"]'),
+};
+
 export const Tabs: TStory = { args: { bar: true, tabs: 5 } };
 
 /** Меню выбранной вкладки по правой кнопке. */

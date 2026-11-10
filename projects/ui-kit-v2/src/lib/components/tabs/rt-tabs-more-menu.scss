@@ -102,6 +102,15 @@
             color: var(--rt-color-text-muted);
             cursor: pointer;
 
+            /* Крестик виден у строки под указателем и у строки с фокусом клавиатуры. Прячется
+               прозрачностью, а не display: строка не меняет ширину, кнопка остаётся в обходе Tab. */
+            opacity: 0;
+
+            .rt-tabs-more-menu__row:hover &,
+            .rt-tabs-more-menu__row:focus-within & {
+                opacity: 1;
+            }
+
             &:hover {
                 background: var(--rt-color-bg-hover);
                 color: var(--rt-color-text-primary);

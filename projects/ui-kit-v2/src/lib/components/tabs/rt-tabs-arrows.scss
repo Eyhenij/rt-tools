@@ -1,0 +1,100 @@
+@layer rt-kit.components {
+    /* Стрелки прокрутки полосы вкладок. Свой файл: правила вкладок упираются в бюджет стилей
+       компонента у приложений, которые собирают кит из исходников.
+
+       `__rest` — место стрелки у края полосы, `__arrow` — сама компактная кнопка в нём. Скругление,
+       фон и цвет кнопки потребитель задаёт свойствами `--rt-tabs-arrow-*` на `rt-tabs`. */
+    .rt-tabs {
+        --rt-tabs-arrow-size: var(--rt-size-6);
+        --rt-tabs-arrow-inset: var(--rt-space-1);
+        --rt-tabs-arrow-radius: var(--rt-radius-sm);
+        --rt-tabs-arrow-shadow: var(--rt-shadow-sm);
+        --rt-tabs-arrow-bg: var(--rt-color-bg-surface);
+        --rt-tabs-arrow-bg-hover: var(--rt-color-bg-hover);
+        --rt-tabs-arrow-color: var(--rt-color-text-muted);
+        --rt-tabs-arrow-color-hover: var(--rt-color-text-primary);
+        --rt-tabs-arrow-fade: var(--rt-color-bg-surface);
+
+        /* Поверх вкладок: кнопка лежит у края полосы и чуть заходит на крайнюю вкладку, а под ней
+           текст вкладки гаснет в цвет полосы — `--rt-tabs-arrow-fade`, если полоса не белая. */
+        &__rest {
+            position: absolute;
+            z-index: 1;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding-inline: var(--rt-tabs-arrow-inset);
+            visibility: hidden;
+
+            &--before {
+                left: 0;
+                background: linear-gradient(to right, var(--rt-tabs-arrow-fade) 70%, transparent);
+            }
+
+            &--after {
+                right: 0;
+                background: linear-gradient(to left, var(--rt-tabs-arrow-fade) 70%, transparent);
+            }
+
+            &--visible {
+                visibility: visible;
+            }
+        }
+
+        &__arrow {
+            display: flex;
+            width: var(--rt-tabs-arrow-size);
+            height: var(--rt-tabs-arrow-size);
+            flex: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--rt-tabs-arrow-radius);
+            background-color: var(--rt-tabs-arrow-bg);
+            box-shadow: var(--rt-tabs-arrow-shadow);
+            color: var(--rt-tabs-arrow-color);
+            transition:
+                color var(--rt-tabs-transition-duration) linear,
+                background-color var(--rt-tabs-transition-duration) linear;
+
+            .rt-tabs__rest:hover & {
+                background-color: var(--rt-tabs-arrow-bg-hover);
+                color: var(--rt-tabs-arrow-color-hover);
+            }
+        }
+
+        /* Рядом с вкладками: при переполнении обе стрелки стоят по краям, полоса между ними уже.
+           Стрелка в сторону, куда прокручивать некуда, бледнеет и не нажимается. Черта снизу
+           продолжает черту полосы под стрелками, тени у кнопки здесь нет: она не лежит поверх. */
+        &__tab-list-wrapper--inline {
+            align-items: stretch;
+
+            .rt-tabs__rest {
+                position: static;
+                display: none;
+                flex-shrink: 0;
+                border-bottom: var(--rt-tabs-border-width) solid var(--rt-tabs-list-border-color);
+                background: none;
+            }
+
+            .rt-tabs__arrow {
+                box-shadow: none;
+            }
+
+            &.rt-tabs__tab-list-wrapper--overflowing .rt-tabs__rest {
+                display: flex;
+                visibility: visible;
+            }
+
+            .rt-tabs__rest--inactive {
+                cursor: default;
+                pointer-events: none;
+
+                .rt-tabs__arrow {
+                    color: var(--rt-color-text-disabled);
+                }
+            }
+        }
+    }
+}

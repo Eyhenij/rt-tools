@@ -23,6 +23,7 @@
 
         & &__tabs {
             --rt-tabs-list-padding-inline: var(--rt-space-2) 0;
+            --rt-tabs-arrow-fade: var(--rt-nav-header-color-bg);
 
             background-color: var(--rt-nav-header-color-bg);
         }

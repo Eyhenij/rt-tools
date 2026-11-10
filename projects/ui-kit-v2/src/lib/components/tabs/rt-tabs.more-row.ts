@@ -4,6 +4,9 @@ import { RtTabDirective } from './rt-tab.directive';
 import { IRtTabs } from './rt-tabs.model';
 import { rtTabsFitRow } from './rt-tabs.more';
 
+/** Сколько вкладок по умолчанию стоит в ряду режима «Ещё». */
+export const RT_TABS_MORE_LIMIT: number = 10;
+
 const EMPTY_LAYOUT: IRtTabs.MoreLayout = { row: [], more: [] };
 
 function sameLayout(a: IRtTabs.MoreLayout, b: IRtTabs.MoreLayout): boolean {
@@ -59,6 +62,7 @@ export class RtTabsMoreRow {
             deps.visible();
             deps.selectedId();
             deps.enabled();
+            deps.limit();
             this.#watchSizes();
             this.#measure();
         });
@@ -101,6 +105,7 @@ export class RtTabsMoreRow {
                 slots,
                 available,
                 selectedId: this.#deps.selectedId(),
+                limit: this.#deps.limit(),
                 moreWidth: list.querySelector<HTMLElement>('.rt-tabs-more')?.getBoundingClientRect().width ?? 0,
             })
         );

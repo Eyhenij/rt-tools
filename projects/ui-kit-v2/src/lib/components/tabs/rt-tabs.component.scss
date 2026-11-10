@@ -115,67 +115,6 @@
             }
         }
 
-        &__rest {
-            position: absolute;
-            z-index: 1;
-            top: 0;
-            bottom: 0;
-            display: flex;
-            width: var(--rt-control-height-lg);
-            align-items: center;
-            justify-content: center;
-            background-color: var(--rt-color-bg-surface);
-            color: var(--rt-color-text-muted);
-            cursor: pointer;
-            transition: color var(--rt-tabs-transition-duration) linear;
-            visibility: hidden;
-
-            &:hover {
-                color: var(--rt-color-text-primary);
-            }
-
-            &--before {
-                left: 0;
-                border-right: var(--rt-tabs-border-width) solid var(--rt-color-border-default);
-            }
-
-            &--after {
-                right: 0;
-                border-left: var(--rt-tabs-border-width) solid var(--rt-color-border-default);
-            }
-
-            &--visible {
-                visibility: visible;
-            }
-        }
-
-        /* Стрелки в своих местах: при переполнении обе стоят по краям, полоса между ними уже.
-           Стрелка в сторону, куда прокручивать некуда, бледнеет и не нажимается. Черта снизу
-           продолжает черту полосы под стрелками. */
-        &__tab-list-wrapper--inline {
-            align-items: stretch;
-
-            .rt-tabs__rest {
-                position: static;
-                display: none;
-                flex-shrink: 0;
-                border: 0;
-                border-bottom: var(--rt-tabs-border-width) solid var(--rt-color-border-default);
-                background-color: transparent;
-            }
-
-            &.rt-tabs__tab-list-wrapper--overflowing .rt-tabs__rest {
-                display: flex;
-                visibility: visible;
-            }
-
-            .rt-tabs__rest--inactive {
-                color: var(--rt-color-text-disabled);
-                cursor: default;
-                pointer-events: none;
-            }
-        }
-
         &__controls {
             display: flex;
             flex-shrink: 0;
