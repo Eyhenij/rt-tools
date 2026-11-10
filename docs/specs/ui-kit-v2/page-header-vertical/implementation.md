@@ -23,7 +23,8 @@ in the tree, and the scenario it is checked by.
 - **A pinned tab without an icon of its own draws a pin, and it may still carry a close cross.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tab.directive.ts:shownIcon`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tab.directive.ts:showClose`; scenario `SC-UKV-1205`
 - **The row holds at most ten tabs, pinned ones included, even when there is room.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.more.ts:freeLimit`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.more-row.ts:RT_TABS_MORE_LIMIT`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.component.ts:moreLimit`; scenario `SC-UKV-1208`
 - **A menu row shows its close cross only under the pointer or keyboard focus.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-more-menu.scss:__close`; scenario `SC-UKV-1209`
-- **The scroll arrows are compact buttons that lie over the tab edge or beside the tabs.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-arrows.scss:__arrow`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.component.ts:scrollArrows`; scenario `SC-UKV-1210`
+- **The scroll arrows are compact buttons that lie over the tab edge or beside the tabs.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-arrows.scss:__arrow`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.component.ts:arrowLook`; scenario `SC-UKV-1210`
+- **A strip that does not choose the compact look keeps the full-height square arrow.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-arrows.scss:__rest`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.component.ts:arrowLook`; scenario `SC-UKV-1217`
 
 ## The rail and the section panel
 

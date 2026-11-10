@@ -61,7 +61,9 @@ height from the table, so the vertical layout comes with a compact page header.
   and that tab goes to the menu.
 - **A menu row shows its close cross only under the pointer or keyboard focus.**
 - **The scroll arrows are compact buttons that lie over the tab edge or beside the tabs.** The
-  application sets their rounding, background, colour and shadow.
+  application sets their rounding, background, colour and shadow. The compact look is chosen by an
+  input; the vertical header takes it.
+- **A strip that does not choose the compact look keeps the full-height square arrow.**
 - **A pinned tab without an icon of its own draws a pin, and it may still carry a close cross.**
 
 ### The rail and the section panel

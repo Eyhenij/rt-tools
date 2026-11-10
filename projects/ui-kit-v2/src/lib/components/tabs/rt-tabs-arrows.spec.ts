@@ -32,8 +32,18 @@ describe('RtTabsComponent — стрелки прокрутки и крести�
         ).toContain('opacity: 1');
     });
 
+    it('SC-UKV-1217 — без выбора вида стрелка — квадрат во всю высоту полосы', (): void => {
+        const css: string = compiled('rt-tabs-arrows.scss');
+        const rest: string = ruleBody(css, '.rt-tabs__rest {');
+
+        expect(rest).toContain('width: var(--rt-control-height-lg)');
+        expect(rest).toContain('top: 0');
+        expect(rest).toContain('bottom: 0');
+        expect(ruleBody(css, '.rt-tabs__arrow {')).toContain('display: contents');
+    });
+
     it('SC-UKV-1210 — стрелка — компактная кнопка со скруглением и цветами из свойств', (): void => {
-        const body: string = ruleBody(compiled('rt-tabs-arrows.scss'), '.rt-tabs__arrow {');
+        const body: string = ruleBody(compiled('rt-tabs-arrows.scss'), '.rt-tabs__tab-list-wrapper--compact .rt-tabs__arrow {');
 
         expect(body).toContain('width: var(--rt-tabs-arrow-size)');
         expect(body).toContain('height: var(--rt-tabs-arrow-size)');

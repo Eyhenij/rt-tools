@@ -75,6 +75,12 @@ export namespace IRtTabs {
     export type ScrollArrows = 'overlay' | 'inline';
 
     /**
+     * Вид стрелки прокрутки: `block` — квадрат во всю высоту полосы, базовый вид вкладок;
+     * `compact` — кнопка 24 со скруглением и тенью, под которой текст крайней вкладки гаснет.
+     */
+    export type ArrowLook = 'block' | 'compact';
+
+    /**
      * На сколько сдвигает полосу одно нажатие на стрелку: `fixed` — на 80 px, как прежде; `page` —
      * на видимую ширину, `third` — на её треть, как у Material.
      */

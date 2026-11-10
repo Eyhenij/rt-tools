@@ -8,7 +8,9 @@
             </div>
         }
 
-        <div rtElem="tab-list-wrapper" [rtMod]="{ inline: scrollArrows() === 'inline', overflowing: overflowing() }">
+        <div
+            rtElem="tab-list-wrapper"
+            [rtMod]="{ inline: scrollArrows() === 'inline', overflowing: overflowing(), compact: arrowLook() === 'compact' }">
             @if (!moreMode()) {
                 <div
                     rtElem="rest"

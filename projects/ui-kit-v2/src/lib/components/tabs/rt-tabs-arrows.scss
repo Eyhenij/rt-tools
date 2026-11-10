@@ -2,8 +2,9 @@
     /* Стрелки прокрутки полосы вкладок. Свой файл: правила вкладок упираются в бюджет стилей
        компонента у приложений, которые собирают кит из исходников.
 
-       `__rest` — место стрелки у края полосы, `__arrow` — сама компактная кнопка в нём. Скругление,
-       фон и цвет кнопки потребитель задаёт свойствами `--rt-tabs-arrow-*` на `rt-tabs`. */
+       `__rest` — место стрелки у края полосы, `__arrow` — значок в нём. Базовый вид — квадрат во всю
+       высоту полосы. Компактный (`arrowLook="compact"`) — кнопка `__arrow`, её скругление, фон и цвет
+       потребитель задаёт свойствами `--rt-tabs-arrow-*` на `rt-tabs`. */
     .rt-tabs {
         --rt-tabs-arrow-size: var(--rt-size-6);
         --rt-tabs-arrow-inset: var(--rt-space-1);
@@ -15,27 +16,33 @@
         --rt-tabs-arrow-color-hover: var(--rt-color-text-primary);
         --rt-tabs-arrow-fade: var(--rt-color-bg-surface);
 
-        /* Поверх вкладок: кнопка лежит у края полосы и чуть заходит на крайнюю вкладку, а под ней
-           текст вкладки гаснет в цвет полосы — `--rt-tabs-arrow-fade`, если полоса не белая. */
         &__rest {
             position: absolute;
             z-index: 1;
             top: 0;
             bottom: 0;
             display: flex;
+            width: var(--rt-control-height-lg);
             align-items: center;
+            justify-content: center;
+            background-color: var(--rt-color-bg-surface);
+            color: var(--rt-color-text-muted);
             cursor: pointer;
-            padding-inline: var(--rt-tabs-arrow-inset);
+            transition: color var(--rt-tabs-transition-duration) linear;
             visibility: hidden;
+
+            &:hover {
+                color: var(--rt-color-text-primary);
+            }
 
             &--before {
                 left: 0;
-                background: linear-gradient(to right, var(--rt-tabs-arrow-fade) 70%, transparent);
+                border-right: var(--rt-tabs-border-width) solid var(--rt-color-border-default);
             }
 
             &--after {
                 right: 0;
-                background: linear-gradient(to left, var(--rt-tabs-arrow-fade) 70%, transparent);
+                border-left: var(--rt-tabs-border-width) solid var(--rt-color-border-default);
             }
 
             &--visible {
@@ -43,30 +50,14 @@
             }
         }
 
+        /* В базовом виде у значка своей коробки нет: он стоит в месте стрелки, как до компактного вида. */
         &__arrow {
-            display: flex;
-            width: var(--rt-tabs-arrow-size);
-            height: var(--rt-tabs-arrow-size);
-            flex: none;
-            align-items: center;
-            justify-content: center;
-            border-radius: var(--rt-tabs-arrow-radius);
-            background-color: var(--rt-tabs-arrow-bg);
-            box-shadow: var(--rt-tabs-arrow-shadow);
-            color: var(--rt-tabs-arrow-color);
-            transition:
-                color var(--rt-tabs-transition-duration) linear,
-                background-color var(--rt-tabs-transition-duration) linear;
-
-            .rt-tabs__rest:hover & {
-                background-color: var(--rt-tabs-arrow-bg-hover);
-                color: var(--rt-tabs-arrow-color-hover);
-            }
+            display: contents;
         }
 
-        /* Рядом с вкладками: при переполнении обе стрелки стоят по краям, полоса между ними уже.
+        /* Стрелки в своих местах: при переполнении обе стоят по краям, полоса между ними уже.
            Стрелка в сторону, куда прокручивать некуда, бледнеет и не нажимается. Черта снизу
-           продолжает черту полосы под стрелками, тени у кнопки здесь нет: она не лежит поверх. */
+           продолжает черту полосы под стрелками. */
         &__tab-list-wrapper--inline {
             align-items: stretch;
 
@@ -74,12 +65,9 @@
                 position: static;
                 display: none;
                 flex-shrink: 0;
-                border-bottom: var(--rt-tabs-border-width) solid var(--rt-tabs-list-border-color);
-                background: none;
-            }
-
-            .rt-tabs__arrow {
-                box-shadow: none;
+                border: 0;
+                border-bottom: var(--rt-tabs-border-width) solid var(--rt-color-border-default);
+                background-color: transparent;
             }
 
             &.rt-tabs__tab-list-wrapper--overflowing .rt-tabs__rest {
@@ -88,10 +76,62 @@
             }
 
             .rt-tabs__rest--inactive {
+                color: var(--rt-color-text-disabled);
                 cursor: default;
                 pointer-events: none;
+            }
+        }
+
+        /* Компактный вид. Поверх вкладок кнопка лежит у края полосы и чуть заходит на крайнюю
+           вкладку, а под ней текст вкладки гаснет в цвет полосы — `--rt-tabs-arrow-fade`. */
+        &__tab-list-wrapper--compact {
+            .rt-tabs__rest {
+                width: auto;
+                border: 0;
+                padding-inline: var(--rt-tabs-arrow-inset);
+            }
+
+            .rt-tabs__rest--before {
+                background: linear-gradient(to right, var(--rt-tabs-arrow-fade) 70%, transparent);
+            }
+
+            .rt-tabs__rest--after {
+                background: linear-gradient(to left, var(--rt-tabs-arrow-fade) 70%, transparent);
+            }
+
+            .rt-tabs__arrow {
+                display: flex;
+                width: var(--rt-tabs-arrow-size);
+                height: var(--rt-tabs-arrow-size);
+                flex: none;
+                align-items: center;
+                justify-content: center;
+                border-radius: var(--rt-tabs-arrow-radius);
+                background-color: var(--rt-tabs-arrow-bg);
+                box-shadow: var(--rt-tabs-arrow-shadow);
+                color: var(--rt-tabs-arrow-color);
+                transition:
+                    color var(--rt-tabs-transition-duration) linear,
+                    background-color var(--rt-tabs-transition-duration) linear;
+            }
+
+            .rt-tabs__rest:hover .rt-tabs__arrow {
+                background-color: var(--rt-tabs-arrow-bg-hover);
+                color: var(--rt-tabs-arrow-color-hover);
+            }
+
+            /* Рядом с вкладками тени у кнопки нет: она не лежит поверх. */
+            &.rt-tabs__tab-list-wrapper--inline {
+                .rt-tabs__rest {
+                    border-bottom: var(--rt-tabs-border-width) solid var(--rt-tabs-list-border-color);
+                    background: none;
+                }
 
                 .rt-tabs__arrow {
+                    box-shadow: none;
+                }
+
+                .rt-tabs__rest--inactive .rt-tabs__arrow {
                     color: var(--rt-color-text-disabled);
                 }
             }

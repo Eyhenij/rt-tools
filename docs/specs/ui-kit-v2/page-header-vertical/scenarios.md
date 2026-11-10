@@ -39,8 +39,16 @@ Then only that row shows its close cross
 ### SC-UKV-1210 — the scroll arrows are compact buttons
 
 Given a strip in the scroll mode is narrower than its tabs
+And the strip chose the compact arrow look
 When the arrows are drawn over the tabs or beside them
 Then each arrow is a 24 button whose rounding and colours the application may set
+
+### SC-UKV-1217 — the base tabs keep the square arrow
+
+Given a strip in the scroll mode is narrower than its tabs
+And the strip chose no arrow look
+When the arrows are drawn
+Then each arrow is a square as high as the strip, as before the vertical header
 
 ### SC-UKV-1211 — a stretched tab comes back from the menu on a wider strip
 

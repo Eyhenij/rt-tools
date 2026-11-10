@@ -16,6 +16,7 @@ export type TTabsMatrixPart =
     | 'stretch'
     | 'edges'
     | 'scrollArrows'
+    | 'compactArrows'
     | 'closable'
     | 'iconOnly'
     | 'iconBadge'
@@ -178,6 +179,24 @@ export type TTabsMatrixPart =
                                      вкладок, вылезая за половину, — переполнения, ради которого стрелки, тогда нет. -->
                                 <div style="width: 24rem">
                                     <rt-tabs activeId="t1" [scrollArrows]="placement">
+                                        @for (index of many; track index) {
+                                            <ng-template [rtTab]="'t' + index" [label]="'Раздел ' + index">Содержимое</ng-template>
+                                        }
+                                    </rt-tabs>
+                                </div>
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('compactArrows') {
+                <app-story-presets caption="Компактные стрелки (arrowLook=compact): кнопка 24 поверх гаснущего края и в своих местах">
+                    <ng-template>
+                        <app-story-row slotWidth="24rem" [items]="arrowPlacements">
+                            <ng-template let-placement>
+                                <div style="width: 24rem">
+                                    <rt-tabs activeId="t1" arrowLook="compact" [scrollArrows]="placement">
                                         @for (index of many; track index) {
                                             <ng-template [rtTab]="'t' + index" [label]="'Раздел ' + index">Содержимое</ng-template>
                                         }

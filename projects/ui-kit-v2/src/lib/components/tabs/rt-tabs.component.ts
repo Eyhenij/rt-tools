@@ -242,17 +242,16 @@ export class RtTabsComponent {
     /** Вкладки не встают: полоса прокручивается (`scroll`) или лишние уходят в меню «Ещё» (`more`). */
     public readonly overflow: InputSignal<IRtTabs.Overflow> = input<IRtTabs.Overflow>('scroll');
 
-    /**
-     * Сколько вкладок вместе с закреплёнными стоит в ряду режима «Ещё», даже если места больше:
-     * остальные уходят в меню. Выбранная из меню или новая встаёт на место последней, а прежняя
-     * последняя уезжает в меню. В режиме прокрутки не действует.
-     */
+    /** Предел вкладок в ряду «Ещё» вместе с закреплёнными; выбранная из меню встаёт на место последней. */
     public readonly moreLimit: InputSignalWithTransform<number, unknown> = input<number, unknown>(RT_TABS_MORE_LIMIT, {
         transform: (value: unknown): number => numberAttribute(value, RT_TABS_MORE_LIMIT),
     });
 
     /** Стрелки прокрутки поверх вкладок (`overlay`) или в своих местах по краям полосы (`inline`). */
     public readonly scrollArrows: InputSignal<IRtTabs.ScrollArrows> = input<IRtTabs.ScrollArrows>('overlay');
+
+    /** Вид стрелки: квадрат во всю высоту полосы (`block`) или компактная кнопка 24 (`compact`). */
+    public readonly arrowLook: InputSignal<IRtTabs.ArrowLook> = input<IRtTabs.ArrowLook>('block');
 
     /** Шаг нажатия на стрелку: 80 px (`fixed`), видимая ширина полосы (`page`) или её треть (`third`), как у Material. */
     public readonly scrollStep: InputSignal<IRtTabs.ScrollStep> = input<IRtTabs.ScrollStep>('fixed');
