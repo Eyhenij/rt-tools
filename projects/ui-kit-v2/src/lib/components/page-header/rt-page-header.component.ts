@@ -171,8 +171,8 @@ export class RtPageHeaderComponent {
         read: RtPopoverDirective,
     });
 
-    /** Сжатое состояние: шапка липкая и прилипла к верху. */
-    protected readonly compact: Signal<boolean> = computed((): boolean => this.stickyCompact() && this.#stuck());
+    /** Сжатое состояние: шапка липкая, прилипла к верху и стоит в горизонтальном виде — у рейки его нет. */
+    protected readonly compact: Signal<boolean> = computed((): boolean => this.stickyCompact() && this.#stuck() && !this.isVertical());
 
     /** Разделы в кругах сжатой полосы: первые с иконкой, число — по входу. */
     protected readonly compactSections: Signal<ReadonlyArray<IRtPageHeaderView.Section>> = computed(
@@ -289,12 +289,9 @@ export class RtPageHeaderComponent {
             }
         });
 
-        // Рейка не прилипает и сжатой полосы не имеет: наблюдать в этом виде нечего.
-        afterNextRender((): void => {
-            if (!this.isVertical()) {
-                this.#observeStuck();
-            }
-        });
+        // Наблюдение ставится при любом виде: вид меняется на ходу, а у рейки сжатой полосы нет — её
+        // гасит `compact`, а не отсутствие наблюдателя.
+        afterNextRender((): void => this.#observeStuck());
 
         // Ряд пересчитывается при смене состава и подписей — и разделов, и самого «Ещё»: ширины
         // пунктов меняются вместе с ними. Смену ширины шапки и шрифт, пришедший после первой

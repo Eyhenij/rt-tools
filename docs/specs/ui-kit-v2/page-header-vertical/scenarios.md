@@ -42,6 +42,42 @@ Given a strip in the scroll mode is narrower than its tabs
 When the arrows are drawn over the tabs or beside them
 Then each arrow is a 24 button whose rounding and colours the application may set
 
+### SC-UKV-1211 — a stretched tab comes back from the menu on a wider strip
+
+Given a stretched strip in the «More» mode with a tab in the menu
+When the strip grows wide enough for every tab
+Then the tab returns to the row, because each tab is measured by its content
+
+### SC-UKV-1212 — a focused tab that left for the menu gives up the tab order
+
+Given the manual activation and the focus moved by the arrows to a tab
+When that tab leaves for the menu
+Then the selected tab takes the tab order back
+
+### SC-UKV-1213 — Delete closes only a tab whose cross is shown
+
+Given the close cross is shown only on the selected tab
+When Delete is pressed on an unselected closable tab
+Then no request to close it is sent
+
+### SC-UKV-1214 — a disabled menu row neither picks nor closes the menu
+
+Given the «More» menu holds a disabled tab
+When that row is pressed
+Then the selection stays and the menu stays open
+
+### SC-UKV-1215 — a second touch on a rail section closes its panel
+
+Given a rail section opened its panel by a touch or a key
+When the same section is pressed again the same way
+Then the panel closes, and a mouse press after hover keeps it open
+
+### SC-UKV-1216 — the header shrinks after it turns horizontal at runtime
+
+Given a sticky header was drawn as the rail and turned horizontal later
+When the page scrolls past its top
+Then the header shrinks into the compact strip
+
 ### SC-UKV-1187 — a strip without a mode still scrolls
 
 Given a strip names no overflow mode

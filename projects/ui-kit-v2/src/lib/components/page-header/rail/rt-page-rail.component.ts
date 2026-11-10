@@ -127,7 +127,8 @@ export class RtPageRailComponent {
     protected togglePanel(id: string, event: Event): void {
         event.stopPropagation();
         // Наведение успело открыть панель, и нажатие мышью её не закрывает: так работает и шапка.
-        this.#openId.set(id);
+        const byMouse: boolean = 'pointerType' in event && event.pointerType === 'mouse';
+        this.#openId.set(!byMouse && this.#openId() === id ? null : id);
     }
 
     protected closePanel(): void {

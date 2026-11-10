@@ -152,12 +152,12 @@ export class RtTabsComponent {
 
     /**
      * Вкладка в таб-порядке: та, на которую стрелками перевели фокус в ручном режиме, иначе
-     * активная. Фокус на вкладке, которой больше нет или которая отключилась, не держится.
+     * активная. Фокус на вкладке, которой больше нет, которая отключилась или ушла в меню, не держится.
      */
     protected readonly focusId: Signal<IRtTabs.Id | null> = computed((): IRtTabs.Id | null => {
         const focused: IRtTabs.Id | null = this.#focusedId();
         const valid: boolean =
-            focused !== null && this.visibleTabs().some((tab: RtTabDirective): boolean => tab.id() === focused && !tab.disabled());
+            focused !== null && this.more.rowTabs().some((tab: RtTabDirective): boolean => tab.id() === focused && !tab.disabled());
 
         return valid ? focused : this.selectedId();
     });
@@ -409,11 +409,11 @@ export class RtTabsComponent {
     }
 
     /**
-     * Delete на закрываемой вкладке. Фокус после перерисовки встаёт на активную вкладку: закрытая
-     * пропадёт из шапки, и фокус иначе упал бы на страницу.
+     * Delete на вкладке с видимым крестиком: при `closeOn="selected"` — только на выбранной. Фокус после
+     * перерисовки встаёт на активную вкладку: закрытая пропадёт из шапки, и фокус иначе упал бы на страницу.
      */
     #closeByKey(event: KeyboardEvent, tab: RtTabDirective): void {
-        if (!tab.showClose()) {
+        if (!tab.showClose() || (this.closeOn() === 'selected' && tab.id() !== this.selectedId())) {
             return;
         }
 

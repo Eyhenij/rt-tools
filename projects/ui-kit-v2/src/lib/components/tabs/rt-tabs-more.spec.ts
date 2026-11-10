@@ -5,6 +5,7 @@ import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { RtTabDirective } from './rt-tab.directive';
 import { RtTabsComponent } from './rt-tabs.component';
 import { IRtTabs } from './rt-tabs.model';
+import { RT_TABS_MEASURE_CLASS } from './rt-tabs.more-row';
 
 const TAB_WIDTH: number = 100;
 const MORE_WIDTH: number = 84;
@@ -18,7 +19,12 @@ function stubWidths(stripWidth: () => number): void {
         } else if (this.classList.contains('rt-tabs-more')) {
             width = MORE_WIDTH;
         } else if (this.hasAttribute('data-tabitem')) {
-            width = TAB_WIDTH;
+            // Растянутая вкладка ряда вне замера занимает всю полосу, как растяжка в браузере.
+            const stretched: boolean =
+                this.classList.contains('rt-tab-item--stretch') &&
+                !this.classList.contains('rt-tab-item--in-more') &&
+                !this.parentElement?.classList.contains(RT_TABS_MEASURE_CLASS);
+            width = stretched ? stripWidth() : TAB_WIDTH;
         }
         return { width, height: 30, top: 0, left: 0, right: width, bottom: 30, x: 0, y: 0, toJSON: (): string => '' };
     });
@@ -27,11 +33,17 @@ function stubWidths(stripWidth: () => number): void {
 @Component({
     selector: 'rt-tabs-more-host',
     template: `
-        <rt-tabs [overflow]="overflow()" [activeId]="activeId()" (tabClose)="closed.set($event)">
+        <rt-tabs
+            [overflow]="overflow()"
+            [activeId]="activeId()"
+            [stretch]="stretch()"
+            [activation]="activation()"
+            [moreLimit]="limit()"
+            (tabClose)="closed.set($event)">
             <ng-template rtTab="a" label="A" [contextMenu]="tabMenu">A</ng-template>
             <ng-template rtTab="b" label="B">B</ng-template>
             <ng-template rtTab="c" label="C" closable>C</ng-template>
-            <ng-template rtTab="d" label="D" [invalid]="invalid()">D</ng-template>
+            <ng-template rtTab="d" label="D" [invalid]="invalid()" [disabled]="disabled()">D</ng-template>
         </rt-tabs>
         <ng-template #tabMenu let-id>
             <button type="button" qa-dataid="tab-menu-item">Закрыть {{ id }}</button>
@@ -45,10 +57,37 @@ class TabsMoreHostComponent {
     public readonly activeId: WritableSignal<IRtTabs.Id | null> = signal<IRtTabs.Id | null>('a');
     public readonly invalid: WritableSignal<boolean> = signal<boolean>(false);
     public readonly closed: WritableSignal<IRtTabs.Id | null> = signal<IRtTabs.Id | null>(null);
+    public readonly stretch: WritableSignal<boolean> = signal<boolean>(false);
+    public readonly activation: WritableSignal<IRtTabs.Activation> = signal<IRtTabs.Activation>('auto');
+    public readonly limit: WritableSignal<number> = signal<number>(10);
+    public readonly disabled: WritableSignal<boolean> = signal<boolean>(false);
+}
+
+/** Двойник наблюдателя размера: в jsdom его нет, а смена ширины полосы подаётся вызовом `resize`. */
+class ResizeDouble {
+    public static all: ResizeDouble[] = [];
+
+    constructor(private readonly callback: ResizeObserverCallback) {
+        ResizeDouble.all.push(this);
+    }
+
+    public observe(): void {}
+
+    public disconnect(): void {
+        ResizeDouble.all = ResizeDouble.all.filter((watch: ResizeDouble): boolean => watch !== this);
+    }
+
+    public static resize(): void {
+        ResizeDouble.all.forEach((watch: ResizeDouble): void => watch.callback([], watch as unknown as ResizeObserver));
+    }
 }
 
 function host(fixture: ComponentFixture<TabsMoreHostComponent>): HTMLElement {
     return fixture.nativeElement as HTMLElement;
+}
+
+function tabIndexOf(fixture: ComponentFixture<TabsMoreHostComponent>, id: string): string | null {
+    return host(fixture).querySelector(`[data-tabid="${id}"]`)?.getAttribute('tabindex') ?? null;
 }
 
 function hiddenTabs(fixture: ComponentFixture<TabsMoreHostComponent>): string[] {
@@ -166,6 +205,58 @@ describe('RtTabsComponent — режим «Ещё»', (): void => {
         fixture.detectChanges();
 
         expect(fixture.componentInstance.closed()).toBe('c');
+        expect(host(fixture).querySelector('[data-tabid="a"]')?.getAttribute('aria-selected')).toBe('true');
+    });
+
+    it('SC-UKV-1211 — растянутая вкладка возвращается из меню, когда полоса стала шире', (): void => {
+        let width: number = 300;
+        stubWidths((): number => width);
+        Object.defineProperty(window, 'ResizeObserver', { value: ResizeDouble, configurable: true, writable: true });
+        try {
+            const fixture: ComponentFixture<TabsMoreHostComponent> = createRtFixture(TabsMoreHostComponent);
+            fixture.componentInstance.stretch.set(true);
+            fixture.detectChanges();
+            expect(hiddenTabs(fixture)).toEqual(['c', 'd']);
+
+            width = 800;
+            ResizeDouble.resize();
+            fixture.detectChanges();
+
+            expect(hiddenTabs(fixture)).toEqual([]);
+        } finally {
+            Reflect.deleteProperty(window, 'ResizeObserver');
+            ResizeDouble.all = [];
+        }
+    });
+
+    it('SC-UKV-1212 — вкладка в фокусе, ушедшая в меню, отдаёт таб-порядок выбранной', (): void => {
+        const fixture: ComponentFixture<TabsMoreHostComponent> = setup(800);
+        fixture.componentInstance.activation.set('manual');
+        fixture.detectChanges();
+        host(fixture)
+            .querySelector('[data-tabid="a"]')
+            ?.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true }));
+        fixture.detectChanges();
+        expect(tabIndexOf(fixture, 'd')).toBe('0');
+
+        fixture.componentInstance.limit.set(2);
+        fixture.detectChanges();
+
+        expect(hiddenTabs(fixture)).toEqual(['c', 'd']);
+        expect(tabIndexOf(fixture, 'a')).toBe('0');
+        expect(tabIndexOf(fixture, 'd')).toBe('-1');
+    });
+
+    it('SC-UKV-1214 — отключённая строка меню не выбирает вкладку и не закрывает меню', (): void => {
+        const fixture: ComponentFixture<TabsMoreHostComponent> = setup(300);
+        fixture.componentInstance.disabled.set(true);
+        fixture.detectChanges();
+        openMenu(fixture);
+
+        document.querySelector<HTMLElement>('[qa-dataid="tabs-more-item"][data-id="d"]')?.click();
+        fixture.detectChanges();
+
+        expect(document.querySelector('[qa-dataid="tabs-more-item"][data-id="d"]')).not.toBeNull();
         expect(host(fixture).querySelector('[data-tabid="a"]')?.getAttribute('aria-selected')).toBe('true');
     });
 });

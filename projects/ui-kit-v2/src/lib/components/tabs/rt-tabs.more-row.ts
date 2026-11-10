@@ -9,6 +9,9 @@ export const RT_TABS_MORE_LIMIT: number = 10;
 
 const EMPTY_LAYOUT: IRtTabs.MoreLayout = { row: [], more: [] };
 
+/** Модификатор полосы на время замера: растянутые вкладки сжимаются до своего содержимого. */
+export const RT_TABS_MEASURE_CLASS: string = 'rt-tabs__tab-list--measure';
+
 function sameLayout(a: IRtTabs.MoreLayout, b: IRtTabs.MoreLayout): boolean {
     return a.row.join() === b.row.join() && a.more.join() === b.more.join();
 }
@@ -58,12 +61,19 @@ export class RtTabsMoreRow {
         this.#list = list;
         this.#deps = deps;
 
+        // Наблюдение ставится заново только на новый набор вкладок: каждое новое наблюдение даёт
+        // стартовый замер, а смена выбора и лимита пересчитывает ряд без него.
+        afterRenderEffect((): void => {
+            deps.visible();
+            deps.enabled();
+            this.#watchSizes();
+        });
+
         afterRenderEffect((): void => {
             deps.visible();
             deps.selectedId();
             deps.enabled();
             deps.limit();
-            this.#watchSizes();
             this.#measure();
         });
 
@@ -95,11 +105,15 @@ export class RtTabsMoreRow {
         if (available <= 0) {
             return;
         }
+        // Растянутая вкладка меряется по содержимому: с растяжкой ряд всегда заполнен целиком, и
+        // ушедшая в меню вкладка не вернулась бы в него на широком окне. Класс снимается до отрисовки.
+        list.classList.add(RT_TABS_MEASURE_CLASS);
         const slots: IRtTabs.MoreSlot[] = this.#deps.visible().map((tab: RtTabDirective): IRtTabs.MoreSlot => ({
             id: tab.id(),
             pinned: tab.pinned(),
             width: list.querySelector<HTMLElement>(`[data-tabitem="${tab.id()}"]`)?.getBoundingClientRect().width ?? 0,
         }));
+        list.classList.remove(RT_TABS_MEASURE_CLASS);
         this.#layout.set(
             rtTabsFitRow({
                 slots,

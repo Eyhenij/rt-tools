@@ -55,4 +55,13 @@ export class RtTabsMoreComponent {
     public readonly pick: OutputEmitterRef<IRtTabs.Id> = output<IRtTabs.Id>();
 
     public readonly closeTab: OutputEmitterRef<RtTabDirective> = output<RtTabDirective>();
+
+    /** Отключённая строка ничего не выбирает и меню не закрывает: нажатие на неё — пустое. */
+    protected onPick(tab: RtTabDirective, popover: RtPopoverDirective): void {
+        if (tab.disabled()) {
+            return;
+        }
+        this.pick.emit(tab.id());
+        popover.close();
+    }
 }

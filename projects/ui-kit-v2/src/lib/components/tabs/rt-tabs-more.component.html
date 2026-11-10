@@ -35,7 +35,7 @@
                     [attr.aria-disabled]="tab.disabled() || null"
                     [attr.data-id]="tab.id()"
                     [rtTooltip]="tab.buttonTooltip()"
-                    (click)="pick.emit(tab.id()); morePopover.close()">
+                    (click)="onPick(tab, morePopover)">
                     @if (tab.hasIcon()) {
                         <rt-icon
                             rtElem="icon"

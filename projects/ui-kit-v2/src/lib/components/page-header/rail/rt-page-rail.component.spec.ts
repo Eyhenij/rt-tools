@@ -39,9 +39,24 @@ class ObserverDouble {
     public disconnect(): void {}
 }
 
+/** Двойник наблюдателя пересечения: прокрутка за верх подаётся вызовом `stick`. */
+class StuckDouble extends ObserverDouble {
+    public static last: StuckDouble | null = null;
+
+    constructor(private readonly callback: IntersectionObserverCallback) {
+        super();
+        StuckDouble.last = this;
+    }
+
+    public stick(): void {
+        const entry: IntersectionObserverEntry = { intersectionRatio: 0.97, isIntersecting: true } as IntersectionObserverEntry;
+        this.callback([entry], this as unknown as IntersectionObserver);
+    }
+}
+
 function windowDouble(): Window & typeof globalThis {
     return {
-        IntersectionObserver: ObserverDouble,
+        IntersectionObserver: StuckDouble,
         ResizeObserver: ObserverDouble,
         getComputedStyle: (): Partial<CSSStyleDeclaration> => ({ columnGap: '4px' }),
     } as unknown as Window & typeof globalThis;
@@ -105,6 +120,47 @@ describe('rt-page-rail', (): void => {
         document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
         fixture.detectChanges();
         expect(qaAll(fixture, 'rail-panel')).toHaveLength(0);
+    });
+
+    it('SC-UKV-1215 — a second touch on the same section closes its panel', (): void => {
+        const fixture: ComponentFixture<RtPageHeaderComponent> = setup();
+
+        itemOf(fixture, 'money').click();
+        fixture.detectChanges();
+        expect(qaAll(fixture, 'rail-panel')).toHaveLength(1);
+
+        itemOf(fixture, 'money').click();
+        fixture.detectChanges();
+        expect(qaAll(fixture, 'rail-panel')).toHaveLength(0);
+    });
+
+    it('SC-UKV-1215 — a mouse press after hover keeps the panel open', (): void => {
+        const fixture: ComponentFixture<RtPageHeaderComponent> = setup();
+        const press: MouseEvent = new MouseEvent('click', { bubbles: true });
+        Object.defineProperty(press, 'pointerType', { value: 'mouse' });
+
+        itemOf(fixture, 'money').dispatchEvent(new MouseEvent('mouseenter'));
+        fixture.detectChanges();
+        itemOf(fixture, 'money').dispatchEvent(press);
+        fixture.detectChanges();
+
+        expect(qaAll(fixture, 'rail-panel')).toHaveLength(1);
+    });
+
+    it('SC-UKV-1216 — a header turned horizontal at runtime shrinks on scroll', (): void => {
+        const fixture: ComponentFixture<RtPageHeaderComponent> = setup({ stickyCompact: true });
+        const compact: () => boolean = (): boolean =>
+            (fixture.nativeElement as HTMLElement).classList.contains('rt-page-header--is-compact');
+
+        StuckDouble.last?.stick();
+        fixture.detectChanges();
+        expect(StuckDouble.last).not.toBeNull();
+        expect(compact()).toBe(false);
+
+        fixture.componentRef.setInput('layout', 'horizontal');
+        fixture.detectChanges();
+
+        expect(compact()).toBe(true);
     });
 
     it('SC-UKV-1192 — a plain panel item reports its click and closes the panel', (): void => {

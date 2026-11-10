@@ -59,7 +59,7 @@
                             [id]="'rt-tab-' + tab.id()"
                             [attr.aria-disabled]="tab.disabled() || null"
                             [attr.aria-label]="tab.ariaLabel()"
-                            [attr.aria-keyshortcuts]="tab.showClose() ? 'Delete' : null"
+                            [attr.aria-keyshortcuts]="closeShown ? 'Delete' : null"
                             [attr.data-tabid]="tab.id()"
                             [attr.aria-selected]="tab.id() === selectedId()"
                             [attr.aria-controls]="headerOnly() ? null : 'rt-tabpanel-' + tab.id()"

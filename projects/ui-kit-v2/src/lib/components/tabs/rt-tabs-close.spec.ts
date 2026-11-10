@@ -32,7 +32,7 @@ class TabsCloseHostComponent {
 @Component({
     selector: 'rt-tabs-close-on-host',
     template: `
-        <rt-tabs activeId="a" closeOn="selected">
+        <rt-tabs activeId="a" closeOn="selected" (tabClose)="closed.set($event)">
             <ng-template rtTab="a" label="А" closable>А</ng-template>
             <ng-template rtTab="b" label="Б" closable>Б</ng-template>
         </rt-tabs>
@@ -40,7 +40,9 @@ class TabsCloseHostComponent {
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [RtTabsComponent, RtTabDirective],
 })
-class TabsCloseOnHostComponent {}
+class TabsCloseOnHostComponent {
+    public readonly closed: WritableSignal<string | null> = signal<string | null>(null);
+}
 
 @Component({
     selector: 'rt-tabs-pinned-host',
@@ -99,6 +101,32 @@ describe('RtTabsComponent — подсказка крестика закрыва
 
             expect(closes).toHaveLength(1);
             expect(closes[0].closest('[data-tabitem]')?.getAttribute('data-tabitem')).toBe('a');
+        });
+    });
+
+    describe('SC-UKV-1213 — Delete closes only a tab whose cross is shown', (): void => {
+        function pressDelete(fixture: ComponentFixture<TabsCloseOnHostComponent>, id: string): void {
+            (fixture.nativeElement as HTMLElement)
+                .querySelector(`[data-tabid="${id}"]`)
+                ?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Delete', bubbles: true }));
+            fixture.detectChanges();
+        }
+
+        it('SC-UKV-1213 — Delete on an unselected tab without a cross asks nothing', (): void => {
+            const fixture: ComponentFixture<TabsCloseOnHostComponent> = createRtFixture(TabsCloseOnHostComponent);
+
+            pressDelete(fixture, 'b');
+
+            expect(fixture.componentInstance.closed()).toBeNull();
+            expect((fixture.nativeElement as HTMLElement).querySelector('[data-tabid="b"]')?.hasAttribute('aria-keyshortcuts')).toBe(false);
+        });
+
+        it('SC-UKV-1213 — Delete on the selected tab with its cross asks to close it', (): void => {
+            const fixture: ComponentFixture<TabsCloseOnHostComponent> = createRtFixture(TabsCloseOnHostComponent);
+
+            pressDelete(fixture, 'a');
+
+            expect(fixture.componentInstance.closed()).toBe('a');
         });
     });
 
