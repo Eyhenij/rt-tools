@@ -254,6 +254,8 @@ export const RT_KIT_LABELS_EN = {
     uiMainNav: 'Main navigation',
     uiMinutes: 'Minutes',
     uiMore: 'More',
+    uiMoreFilters: 'More filters',
+    uiPageFilters: 'Filters',
     uiMoreActions: 'More actions',
     uiMoveStage: 'Move',
     uiMoveStageAria: 'Move stage',

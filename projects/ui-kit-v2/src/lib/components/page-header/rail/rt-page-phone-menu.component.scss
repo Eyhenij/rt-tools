@@ -1,0 +1,129 @@
+@layer rt-kit.components {
+    .rt-page-phone-menu {
+        --rt-page-phone-menu-row-radius: var(--rt-radius-md);
+        --rt-page-phone-menu-marker-radius: var(--rt-radius-full);
+        --rt-page-phone-menu-border-width: var(--rt-border-width-thin);
+
+        display: flex;
+        overflow: hidden auto;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        flex-direction: column;
+
+        /* Список разделов красится как рейка, открытый раздел как панель раздела. */
+        &__list {
+            display: flex;
+            box-sizing: border-box;
+            flex: 1 0 auto;
+            flex-direction: column;
+            padding: var(--rt-space-2);
+            background-color: var(--rt-nav-header-color-bg);
+            gap: var(--rt-space-1);
+
+            &--panel {
+                background-color: var(--rt-nav-panel-color-bg);
+            }
+        }
+
+        &__group-title {
+            display: flex;
+            height: 32px;
+            flex: none;
+            align-items: center;
+            color: var(--rt-nav-panel-group-color);
+            font-size: var(--rt-nav-panel-group-font-size);
+            font-weight: var(--rt-nav-panel-group-font-weight);
+            padding-inline: var(--rt-space-4);
+        }
+
+        &__row {
+            display: flex;
+            width: 100%;
+            height: 48px;
+            box-sizing: border-box;
+            flex: none;
+            align-items: center;
+            padding: 0 var(--rt-space-4);
+            border: var(--rt-page-phone-menu-border-width) solid transparent;
+            border-radius: var(--rt-page-phone-menu-row-radius);
+            background: transparent;
+            color: var(--rt-nav-item-color);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-medium);
+            gap: calc(var(--rt-space-2) + var(--rt-space-1));
+            text-align: start;
+            text-decoration: none;
+
+            &:hover {
+                background-color: var(--rt-nav-item-color-bg-active);
+                color: var(--rt-nav-item-color-hover);
+            }
+
+            &--active {
+                border-color: var(--rt-color-border-default);
+                background-color: var(--rt-nav-item-color-bg-active);
+                font-weight: var(--rt-font-weight-semibold);
+            }
+
+            &--disabled,
+            &--disabled:hover {
+                background: transparent;
+                color: var(--rt-nav-color-disabled);
+                cursor: default;
+            }
+        }
+
+        &__list--panel &__row {
+            color: var(--rt-nav-panel-item-color);
+
+            &:hover {
+                background-color: var(--rt-nav-panel-item-color-bg-hover);
+            }
+
+            &--active,
+            &--active:hover {
+                border-color: transparent;
+                background-color: var(--rt-nav-panel-item-color-bg-active);
+                color: var(--rt-nav-panel-item-color-active);
+            }
+
+            &--disabled,
+            &--disabled:hover {
+                background: transparent;
+                color: var(--rt-nav-color-disabled);
+            }
+        }
+
+        &__icon {
+            position: relative;
+            display: flex;
+            flex: none;
+        }
+
+        &__marker {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: var(--rt-nav-marker-size);
+            height: var(--rt-nav-marker-size);
+            border-radius: var(--rt-page-phone-menu-marker-radius);
+            background-color: var(--rt-nav-marker-color);
+        }
+
+        &__label {
+            overflow: hidden;
+            min-width: 0;
+            flex: 1 1 auto;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__arrow {
+            display: flex;
+            flex: none;
+        }
+    }
+}

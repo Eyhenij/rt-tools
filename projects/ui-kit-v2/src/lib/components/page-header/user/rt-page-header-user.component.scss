@@ -1,0 +1,6 @@
+@layer rt-kit.components {
+    /* Кнопка стоит в ряду шапки прямым участником: своего места у этой части нет. */
+    .rt-page-header-user {
+        display: contents;
+    }
+}

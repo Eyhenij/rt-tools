@@ -1,0 +1,75 @@
+<ng-container rtBlock="rt-page-phone-menu">
+    <nav rtElem="list" qa-dataid="phone-menu-list" [attr.aria-label]="navLabel() || null" [rtMod]="{ panel: !!openSection() }">
+        @if (openSection(); as section) {
+            <button rtElem="row" type="button" qa-dataid="phone-menu-back" (click)="back()">
+                <span rtElem="icon"><rt-icon name="arrow-left" [size]="20" /></span>
+                <span rtElem="label">{{ t().uiBack }}</span>
+            </button>
+            @for (group of section.panelGroups; track group.id) {
+                @if (group.label) {
+                    <div rtElem="group-title" qa-dataid="phone-menu-group">{{ group.label }}</div>
+                }
+                @for (entry of group.items; track entry.id) {
+                    <ng-container [ngTemplateOutlet]="row" [ngTemplateOutletContext]="{ $implicit: entry }" />
+                }
+            }
+        } @else {
+            @for (section of sections(); track section.id) {
+                @if (section.kind === EntryKind.Panel) {
+                    <button
+                        rtElem="row"
+                        type="button"
+                        qa-dataid="phone-menu-row"
+                        [rtMod]="{ active: activeIds().has(section.id) }"
+                        [attr.data-id]="section.id"
+                        (click)="openPanel(section.id)">
+                        <ng-container [ngTemplateOutlet]="icon" [ngTemplateOutletContext]="{ $implicit: section }" />
+                        <span rtElem="label" [attr.title]="section.label">{{ section.label }}</span>
+                        <span rtElem="arrow"><rt-icon name="arrow-right" [size]="16" /></span>
+                    </button>
+                } @else {
+                    <ng-container [ngTemplateOutlet]="row" [ngTemplateOutletContext]="{ $implicit: section }" />
+                }
+            }
+        }
+    </nav>
+
+    <ng-template #row let-entry>
+        @if (entry.kind === EntryKind.Link) {
+            <a
+                rtElem="row"
+                qa-dataid="phone-menu-row"
+                routerLinkActive="rt-page-phone-menu__row--active"
+                [attr.data-id]="entry.id"
+                [routerLink]="entry.route"
+                [routerLinkActiveOptions]="{ exact: entry.routerLinkActiveExact }"
+                (click)="closed.emit()">
+                <ng-container [ngTemplateOutlet]="icon" [ngTemplateOutletContext]="{ $implicit: entry }" />
+                <span rtElem="label" [attr.title]="entry.label">{{ entry.label }}</span>
+            </a>
+        } @else {
+            <button
+                rtElem="row"
+                type="button"
+                qa-dataid="phone-menu-row"
+                [rtMod]="{ disabled: entry.disabled }"
+                [attr.data-id]="entry.id"
+                [attr.aria-disabled]="entry.disabled || null"
+                (click)="onButton(entry)">
+                <ng-container [ngTemplateOutlet]="icon" [ngTemplateOutletContext]="{ $implicit: entry }" />
+                <span rtElem="label" [attr.title]="entry.label">{{ entry.label }}</span>
+            </button>
+        }
+    </ng-template>
+
+    <ng-template #icon let-entry>
+        @if (entry.icon; as name) {
+            <span rtElem="icon">
+                <rt-icon [name]="name" [size]="20" />
+                @if (entry.unread) {
+                    <span rtElem="marker" role="img" qa-dataid="phone-menu-marker" [attr.aria-label]="t().uiNavUnread"></span>
+                }
+            </span>
+        }
+    </ng-template>
+</ng-container>

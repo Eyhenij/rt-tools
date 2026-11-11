@@ -1,0 +1,72 @@
+@layer rt-kit.components {
+    .app-rail-screen {
+        --rt-app-rail-screen-logo-radius: var(--rt-radius-md);
+
+        display: flex;
+        height: 800px;
+        background: var(--rt-color-bg-page);
+        contain: paint;
+
+        @media (width > 768px) {
+            .rt-page-rail {
+                height: 100%;
+            }
+        }
+
+        &__rest {
+            display: flex;
+            min-width: 0;
+            min-height: 0;
+            flex: 1 1 0;
+            flex-direction: column;
+        }
+
+        & &__tabs {
+            --rt-tabs-list-padding-inline: var(--rt-space-2) 0;
+            --rt-tabs-arrow-fade: var(--rt-nav-header-color-bg);
+
+            background-color: var(--rt-nav-header-color-bg);
+        }
+
+        &__logo {
+            width: 24px;
+            height: 24px;
+            border-radius: var(--rt-app-rail-screen-logo-radius);
+            background-color: var(--rt-color-action-primary);
+        }
+
+        &__page {
+            overflow: hidden;
+            min-height: 0;
+            flex: 1 1 0;
+            padding: var(--rt-space-4) var(--rt-space-5) 0;
+        }
+
+        &__assistant {
+            width: 420px;
+            height: 100%;
+            box-sizing: border-box;
+            flex: none;
+            border-inline-start: 1px solid var(--rt-color-border-default);
+        }
+
+        @media (width <= 768px) {
+            height: 100dvh;
+            flex-direction: column;
+
+            &__page {
+                padding: calc(var(--rt-space-2) + var(--rt-space-1)) var(--rt-space-4) var(--rt-space-2);
+                background-color: var(--rt-color-bg-surface);
+            }
+
+            &__assistant {
+                position: absolute;
+                z-index: var(--rt-z-fixed);
+                width: 100%;
+                background-color: var(--rt-color-bg-surface);
+                border-inline-start: 0;
+                inset: 0;
+            }
+        }
+    }
+}
