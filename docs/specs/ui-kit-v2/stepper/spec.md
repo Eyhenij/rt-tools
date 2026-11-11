@@ -43,11 +43,23 @@ The label reads «Шаг 3 из 4 · Гости» or any text the application gi
 - **The label of a middle step is centred over its point and never goes past the bar.** It stands
   in a segment centred on the point, as wide as twice the distance to the nearer edge.
 
+- **A middle step near an edge takes the whole bar, pressed to that edge.** When the centred
+  segment is narrower than half the bar, the label stands like the label of the first or the last
+  step: on sixteen steps «Шаг 2 из 16» starts at the left edge, «Шаг 15 из 16» ends at the right.
+
 - **A label wider than its segment wraps, and the bar grows down.** The points and the description
   move down by the added lines.
 
 - **The current point follows the same number as the label and the fill.** A number past the set is
   held at the last step, a number below zero at the first.
+
+- **The application insets the points from the edges.** One property on `rt-stepper` or a parent
+  moves the track, the points and the label inwards by the same distance; by default it is zero and
+  the look does not move.
+
+- **The halo of the current point is never cut by the bar.** On the first and the last step it goes
+  4 px past the bar edge; a parent that clips its content gives the stepper an inset of at least
+  4 px.
 
 - **The label line is 18 px high, as on the mockup.** A wrapped label does not run over itself.
 
@@ -79,8 +91,9 @@ Not applicable: the component draws what the application gives it and stores not
 The mockup is the `Stepper` set of the second kit file, node 6924:485, with the `Steps` and
 `Current` properties, and the frame of widths, node 7796:946. The states:
 
-- three of four, five steps, seven steps;
-- widths 280, 327, 480 and 720;
+- three of four, five steps, seven steps, sixteen steps;
+- widths 280, 327, 480, 560 and 720;
+- sixteen steps with the points inset by 8 px;
 - the first and the last step with a long label;
 - the dark theme.
 
@@ -105,8 +118,8 @@ Not applicable.
 ## Decisions
 
 - **A middle label wraps inside its segment instead of sliding to the edge.** A design tool cannot
-  move a text by its own width, and the code repeats the mockup. The price: on seven steps at 327 px
-  the label of the second step takes two lines.
+  move a text by its own width, and the code repeats the mockup. Near an edge the segment would be
+  narrower than half the bar, so there the label takes the whole bar pressed to that edge.
 
 ## Open questions
 
@@ -118,3 +131,5 @@ None.
 - 11 November 2026 — the colours of the stepper became consumer handles.
 - 11 November 2026 — the agreement is rolled out and stands as the subdomain of the second kit.
   Task RT-3188.
+- 11 November 2026 — sixteen steps, the inset of the points and the label pressed to the near edge,
+  asked for by the wizard of creating an object. Task RT-3188.

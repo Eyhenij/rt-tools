@@ -20,15 +20,41 @@ const BOOKING_DESCRIPTION: string = 'Оплатите бронь в течени
 /** Имена шагов мастера с макета; последний шаг всегда «Готово». */
 const BOOKING_NAMES: readonly string[] = ['Даты', 'Оплата', 'Гости', 'Документы', 'Проверка', 'Договор'];
 
+/** Имена шагов мастера заведения объекта с макета: экран на шаг, всего шестнадцать. */
+const WIZARD_NAMES: readonly string[] = [
+    'Тип',
+    'Адрес',
+    'Комнаты',
+    'Удобства',
+    'Фото',
+    'Описание',
+    'Цены',
+    'Календарь',
+    'Правила',
+    'Гости',
+    'Оплата',
+    'Документы',
+    'Контакты',
+    'Проверка',
+    'Публикация',
+];
+
+/** Отступ точек от краёв у мастера на шестнадцать шагов, как на макете. */
+const WIZARD_INSET: number = 8;
+
 /** Случай кадра ширин: подпись, ширина места и набор с текущим шагом. */
 interface IStepperWidthCase extends IStepperCase {
     readonly width: number;
+    /** Отступ точек от краёв; у таких случаев место обрезает содержимое, и ореол виден целиком. */
+    readonly inset: number | null;
 }
 
 /** Набор из `total` шагов, как на макете: «Шаг N из M · имя»; подпись текущего можно заменить. */
 function bookingSteps(total: number, current: number, label?: string): readonly IRtStepper.Step[] {
+    const names: readonly string[] = total > BOOKING_NAMES.length + 1 ? WIZARD_NAMES : BOOKING_NAMES;
+
     return Array.from({ length: total }, (_value: unknown, index: number): IRtStepper.Step => {
-        const name: string = index === total - 1 ? 'Готово' : BOOKING_NAMES[index];
+        const name: string = index === total - 1 ? 'Готово' : names[index];
         const text: string = index === current && label ? label : `Шаг ${index + 1} из ${total} · ${name}`;
 
         return { label: text, description: BOOKING_DESCRIPTION };
@@ -37,7 +63,18 @@ function bookingSteps(total: number, current: number, label?: string): readonly 
 
 /** Случай кадра ширин; номер текущего — с нуля, как во входе компонента. */
 function widthCase(name: string, width: number, total: number, current: number, label?: string): IStepperWidthCase {
-    return { width, name: `${name} · ширина ${width}`, steps: bookingSteps(total, current, label), currentIndex: current };
+    return { width, inset: null, name: `${name} · ширина ${width}`, steps: bookingSteps(total, current, label), currentIndex: current };
+}
+
+/** Случай мастера на шестнадцать шагов с отступом точек 8; номер текущего — с нуля. */
+function wizardCase(name: string, width: number, current: number): IStepperWidthCase {
+    return {
+        width,
+        inset: WIZARD_INSET,
+        name: `16 шагов, ${name}, отступ точек ${WIZARD_INSET} · ширина ${width}`,
+        steps: bookingSteps(16, current),
+        currentIndex: current,
+    };
 }
 
 /** Случай набора шагов: имя для подписи ячейки, сам набор и номер текущего шага. */
@@ -138,7 +175,10 @@ const STEPS_INSTRUCTION: readonly IRtStepper.Step[] = [
                             @for (item of widths; track item.name) {
                                 <div style="display: flex; flex-direction: column; gap: 12px">
                                     <p style="margin: 0; font-size: 11px">{{ item.name }}</p>
-                                    <div [style.width.px]="item.width">
+                                    <div
+                                        [style.width.px]="item.width"
+                                        [style.overflow]="item.inset === null ? null : 'hidden'"
+                                        [style.--rt-stepper-inset.px]="item.inset">
                                         <rt-stepper [steps]="item.steps" [currentIndex]="item.currentIndex" />
                                     </div>
                                 </div>
@@ -309,6 +349,14 @@ export class TestRtStepperMatrixComponent {
         widthCase('Узкая панель: последний шаг, длинная подпись', 327, 4, 3, 'Шаг 4 из 4 · Проверка данных и подтверждение бронирования'),
         widthCase('Наименьшая ширина: 5 шагов, текущий третий', 280, 5, 2),
         widthCase('Широкая панель: 4 шага, текущий второй', 720, 4, 1),
+        wizardCase('первый', 560, 0),
+        wizardCase('второй', 560, 1),
+        wizardCase('девятый', 560, 8),
+        wizardCase('последний', 560, 15),
+        wizardCase('первый', 327, 0),
+        wizardCase('второй', 327, 1),
+        wizardCase('пятнадцатый', 327, 14),
+        wizardCase('последний', 327, 15),
     ];
 
     public readonly colorSteps: readonly IRtStepper.Step[] = bookingSteps(4, 1);

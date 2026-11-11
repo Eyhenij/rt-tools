@@ -756,6 +756,7 @@ export type TRtConsumerHandleName =
     | '--rt-side-menu-sub-item-letter-spacing'
     | '--rt-stepper-current-color'
     | '--rt-stepper-description-color'
+    | '--rt-stepper-inset'
     | '--rt-stepper-label-color'
     | '--rt-stepper-line-color'
     | '--rt-stepper-mark-complete-bg'
@@ -1579,6 +1580,7 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-side-menu-sub-item-letter-spacing',
     '--rt-stepper-current-color',
     '--rt-stepper-description-color',
+    '--rt-stepper-inset',
     '--rt-stepper-label-color',
     '--rt-stepper-line-color',
     '--rt-stepper-mark-complete-bg',

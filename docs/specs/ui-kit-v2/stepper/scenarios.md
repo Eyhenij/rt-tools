@@ -31,3 +31,10 @@ Then the label segment starts at a third of the bar, takes two thirds and the la
 Given a bar of three steps and the current number 99
 When it is drawn
 Then the last point is current and the two before it are passed
+
+### SC-UKV-1234 — a middle step near an edge takes the whole bar
+
+Given a bar of sixteen steps
+When the second step is current
+Then its label takes the whole bar and is pressed to the left edge
+And when the fifteenth step is current, its label is pressed to the right edge

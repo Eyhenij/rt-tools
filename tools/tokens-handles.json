@@ -203,6 +203,7 @@
     "--rt-stepper-label-color": "the label of the current step; the default is the current point colour",
     "--rt-stepper-description-color": "the description under the stepper bar; the default is --rt-color-text-primary",
     "--rt-stepper-point-shadow": "the halo of the current stepper point; the default is --rt-shadow-step-indicator",
+    "--rt-stepper-inset": "the inset of the stepper track, points and label from the bar edges; the default is 0",
     "--rt-stepper-line-color": "the line between the marks of the step list; the default is --rt-color-border-default",
     "--rt-stepper-step-label-color": "the step label in the step list; the default is --rt-color-text-primary",
     "--rt-stepper-step-description-color": "the step description in the step list; the default is --rt-color-text-muted",
