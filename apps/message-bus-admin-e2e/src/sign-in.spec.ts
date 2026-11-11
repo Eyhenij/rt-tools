@@ -1,6 +1,6 @@
 import { BrowserContext, expect, Page, test } from '@playwright/test';
 
-import { ACCOUNT, STAND_PASSWORD } from '../stand/stand.mjs';
+import { ACCOUNT, lateCookieProbe, STAND_PASSWORD } from '../stand/stand.mjs';
 import { enterOnRealmScreen, expectRealmScreen, openSection, qa, SECTION, signIn } from './support/admin';
 
 /**
@@ -33,6 +33,18 @@ test.describe('вход и адреса разделов', () => {
         await expect(page).toHaveURL(new RegExp(`${SECTION.postmortems.path}$`));
         await expect(page.getByRole('heading', { name: SECTION.postmortems.title })).toBeVisible();
         await expect(qa(page, SECTION.postmortems.row).first()).toBeVisible();
+    });
+
+    test('SC-AUTH-100 — возврат с формы входа не ждёт пробы куки Keycloak', async ({ page }: { page: Page }) => {
+        // Проба, ответившая позже предела тихой проверки, обрезала обмен кода и снова вела на форму
+        const probe: Awaited<ReturnType<typeof lateCookieProbe>> = await lateCookieProbe(page);
+        await page.goto(SECTION.postmortems.path);
+        await expectRealmScreen(page);
+        probe.arm();
+        await signIn(page);
+
+        await expect(qa(page, SECTION.postmortems.table)).toBeVisible();
+        expect(probe.calls()).toBe(0);
     });
 
     test('SC-MB-46 — адрес раздела переживает перезагрузку', async ({ page }: { page: Page }) => {

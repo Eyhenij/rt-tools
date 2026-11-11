@@ -176,14 +176,16 @@ refusal for that.
 
 ## Answering under remarks
 
-Remarks arrive on a PR in two places: a comment on a line and the text of a review. Both are read
-at once, before the first edit:
+Remarks arrive on a PR in three places: a comment on a line, the text of a review and a comment in
+the conversation. All three are read at once, before the first edit:
 
 ```bash
 gh api repos/<владелец>/<репозиторий>/pulls/<номер>/comments --paginate \
     --jq '.[] | {id, user: .user.login, path, body}'
 gh api repos/<владелец>/<репозиторий>/pulls/<номер>/reviews --paginate \
     --jq '.[] | select(.body != "") | {id, user: .user.login, body}'
+gh api repos/<владелец>/<репозиторий>/issues/<номер>/comments --paginate \
+    --jq '.[] | {id, user: .user.login, body}'
 ```
 
 The person is asked by the asking tool whether to answer under them, in the turn the remarks were

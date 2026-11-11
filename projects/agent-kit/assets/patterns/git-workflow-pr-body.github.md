@@ -98,12 +98,14 @@ things about the tree, and the tree has changed since.
 
 ## PR body sample
 
-Five sections, and one order between them: the link line, what was done, the points, what confirms
-it, the remaining step. A section with nothing to say says so in words — an empty heading and a
-removed heading read alike and mean different things.
+Six sections, and one order between them: the link line, what was done, the points, the goal, what
+confirms it, the remaining step. A section with nothing to say says so in words — an empty heading
+and a removed heading read alike and mean different things.
 
 The table of points comes from the reply of the role `product-strategist`: a sign not run is
-written as not run, and its point as not reached.
+written as not run, and its point as not reached. The table of the goal comes from the reply of the
+role `goal-critic`. Both go in word for word, and the critic reads the finished body against the
+replies.
 
 ```markdown
 Closes #86
@@ -117,6 +119,12 @@ Closes #86
 | Точка | Признак | Результат |
 | --- | --- | --- |
 | <изменение, которое увидит человек> | <команда, страница или число> | <вывод признака: достигнута или промах> |
+
+## Цель
+
+| Слова владельца | Что показывает результат | Итог |
+| --- | --- | --- |
+| <дословная цитата> | <что видно в результате> | <выполнено или нет> |
 
 ## Чем подтверждено
 

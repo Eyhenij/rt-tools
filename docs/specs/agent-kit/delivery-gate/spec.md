@@ -100,8 +100,9 @@ refuses the push.
   written in the language of the request, and an invented default would match nothing; not named by
   the tree, the section is not judged at all.
 - **The body of a request carries the section with the table of points.** The owner decides on the
-  request page whether the work reached its point. The sample is named by the tree; the guard sees
-  the heading and does not know whether the signs were run.
+  request page whether the work reached its point. The section with the table of the critic is
+  judged the same way. The samples are named by the tree; the guard sees the headings and does not
+  know whether the roles were run.
 - **The body carries the line that closes the task of the branch.** Without it the merged task stays
   open on the board, and the work queue audit names that only after the merge. The number is the
   branch's, not the one the executor remembers; the sample is named by the tree, because the keyword

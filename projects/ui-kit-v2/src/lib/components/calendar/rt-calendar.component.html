@@ -4,7 +4,8 @@
             rtElem="nav"
             qa-dataid="calendar-prev-month"
             icon="chevron-left"
-            variant="secondary"
+            variant="ghost"
+            iconColor="muted"
             radius="full"
             [ariaLabel]="prevAriaLabel()"
             [disabled]="!canPrev()"
@@ -17,7 +18,8 @@
             rtElem="nav"
             qa-dataid="calendar-next-month"
             icon="chevron-right"
-            variant="secondary"
+            variant="ghost"
+            iconColor="muted"
             radius="full"
             [ariaLabel]="nextAriaLabel()"
             [disabled]="!canNext()"
@@ -34,9 +36,22 @@
                     @for (weekday of weekdayLabels(); track $index) {
                         <span rtElem="weekday" qa-dataid="calendar-weekday">{{ weekday }}</span>
                     }
-                    @for (blank of month.leadingBlanks; track blank) {
-                        <!-- Пустая ячейка сетки до первого дня месяца: занимает место и ничего не красит. -->
-                        <span qa-dataid="calendar-blank" aria-hidden="true"></span>
+                    @if (month.leadingDays) {
+                        @for (day of month.leadingDays; track day.key) {
+                            <span
+                                rtElem="outside"
+                                qa-dataid="calendar-outside-day"
+                                aria-hidden="true"
+                                [attr.data-iso]="day.key"
+                                [attr.data-crossed]="day.crossed ? '' : null">
+                                {{ day.dayOfMonth }}
+                            </span>
+                        }
+                    } @else {
+                        @for (blank of month.leadingBlanks; track blank) {
+                            <!-- Пустая ячейка сетки до первого дня месяца: занимает место и ничего не красит. -->
+                            <span qa-dataid="calendar-blank" aria-hidden="true"></span>
+                        }
                     }
                     @for (day of month.days; track day.key) {
                         <button
@@ -67,6 +82,16 @@
                                 <span rtElem="day-sublabel" qa-dataid="calendar-day-price">{{ day.sublabel }}</span>
                             }
                         </button>
+                    }
+                    @for (day of month.trailingDays ?? []; track day.key) {
+                        <span
+                            rtElem="outside"
+                            qa-dataid="calendar-outside-day"
+                            aria-hidden="true"
+                            [attr.data-iso]="day.key"
+                            [attr.data-crossed]="day.crossed ? '' : null">
+                            {{ day.dayOfMonth }}
+                        </span>
                     }
                 </div>
             </div>

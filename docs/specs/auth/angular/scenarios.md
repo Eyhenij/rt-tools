@@ -79,3 +79,17 @@ Then the adapter is asked to end the session with the return address of the admi
 Given Keycloak that does not answer the silent check
 When the package starts the adapter
 Then the admin starts after the limit with nobody signed in
+
+### SC-AUTH-100 — the return from the entry form does not wait for the silent check
+
+Given a person who has just passed the entry form of Keycloak
+And a cookie probe of Keycloak that answers later than the limit of the silent check
+When the admin starts on the return address
+Then the person is signed in without a second trip to the form
+
+### SC-AUTH-98 — an exchange of the code that never ends does not hold the start
+
+Given a person who has just passed the entry form of Keycloak
+And a Keycloak that never answers the exchange of the code
+When the admin starts on the return address
+Then the admin starts after the limit of the exchange with nobody signed in

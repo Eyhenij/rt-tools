@@ -1,3 +1,4 @@
+import { ECargoKind } from './cargo-kind';
 import { ECargoState } from './cargo-state';
 
 /**
@@ -141,6 +142,35 @@ export function cargoStateWrites(
     const attached: boolean = fixNote !== null || releaseVersion !== null || quarantineNote !== null;
 
     return move === ECargoStateMove.Allowed || (move === ECargoStateMove.Same && attached);
+}
+
+/** Смена шага, какой она ложится в журнал переходов. */
+export interface ICargoTransition {
+    readonly kind: ECargoKind;
+    readonly recordId: string;
+    readonly state: ECargoState;
+}
+
+/** Правка записи и её разрешённость: столько знают все четыре места, где шаг меняется. */
+export interface ICargoJudgedMove {
+    readonly ask: { readonly key: string; readonly state: ECargoState };
+    readonly outcome: { readonly move: ECargoStateMove | null };
+}
+
+/**
+ * Переходы, которые оставляет правка. Приложенная к тому же шагу заметка переходом не считается:
+ * дни до фикса считаются от смены шага.
+ */
+export function cargoTransitions(
+    kind: ECargoKind,
+    judged: readonly ICargoJudgedMove[],
+    idOf: (key: string) => string | undefined
+): ICargoTransition[] {
+    return judged.flatMap((one: ICargoJudgedMove): ICargoTransition[] => {
+        const recordId: string | undefined = idOf(one.ask.key);
+
+        return one.outcome.move === ECargoStateMove.Allowed && recordId ? [{ kind, recordId, state: one.ask.state }] : [];
+    });
 }
 
 /** Что ложится в запись: состояние и те приложенные значения, которые строка принесла. */

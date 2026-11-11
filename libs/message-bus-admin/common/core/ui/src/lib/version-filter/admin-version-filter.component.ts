@@ -50,12 +50,15 @@ export class AdminVersionFilterComponent {
      */
     protected readonly options: Signal<readonly IRtSelect.Option<string>[]> = computed(() => [
         { label: this.#text.text('filterVersionAll'), value: ALL_VERSIONS },
-        { label: this.#text.text('filterVersionNone'), value: CARGO_VERSION_NONE },
+        ...(this.noneChoice() ? [{ label: this.#text.text('filterVersionNone'), value: CARGO_VERSION_NONE }] : []),
         ...this.versions().map((version: string): IRtSelect.Option<string> => ({ label: version, value: version })),
     ]);
 
     /** Встретившиеся версии, упорядоченные приёмником. Пусто — записей с версией ещё нет. */
     public readonly versions: InputSignal<readonly string[]> = input<readonly string[]>([]);
+
+    /** Есть ли пункт «без версии». У раздела, где версия есть у каждой строки, он всегда давал бы пустоту. */
+    public readonly noneChoice: InputSignal<boolean> = input<boolean>(true);
 
     /** Выбранная версия либо слово «без версии». Пусто — записи всех версий. */
     public readonly version: InputSignal<string> = input<string>(ALL_VERSIONS);

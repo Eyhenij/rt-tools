@@ -4,6 +4,9 @@ import { adminTabTitle } from '@rt/message-bus-admin/common/core/util';
 /** Адрес раздела. Назван здесь и читается пунктом меню: два объявления разошлись бы молча. */
 export const USAGE_ROUTE: string = 'usage';
 
+/** Адрес раздела «Качество». Операция и право у него свои, а слой стора общий с разделом использования. */
+export const QUALITY_ROUTE: string = 'quality';
+
 /**
  * Маршруты раздела использования правил.
  *
@@ -19,6 +22,11 @@ export const usageRoutes: Route[] = [
         path: USAGE_ROUTE,
         title: adminTabTitle('sectionUsage'),
         loadComponent: async () => (await import('@rt/message-bus-admin/usage/feature/list')).AdminUsageListComponent,
+    },
+    {
+        path: QUALITY_ROUTE,
+        title: adminTabTitle('sectionQuality'),
+        loadComponent: async () => (await import('@rt/message-bus-admin/usage/feature/quality')).AdminUsageQualityComponent,
     },
     {
         // Адрес панели называет раздел, потому что аутлет один на всю админку. Совпадение полное

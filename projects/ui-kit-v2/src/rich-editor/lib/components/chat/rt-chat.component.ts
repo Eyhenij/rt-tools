@@ -58,7 +58,8 @@ import { IRtMessageComposer } from '../message-composer/rt-message-composer.mode
 import { TRtRichEditorToolbar } from '../rich-editor/rt-rich-editor.component';
 import { pickedFiles, rtChatCanSend, withAppendedFiles, withoutFileAt } from './rt-chat-files.logic';
 import { rtChatDayLabels } from './rt-chat-days.logic';
-import { nextAtBottom, pinToBottomDeferred } from './rt-chat-thread.logic';
+import { IRtChatReplyFields, rtChatReadDraft, rtChatSyncReplyDisabled, rtChatWriteDraft } from './rt-chat-reply.logic';
+import { RtChatThreadFollow } from './rt-chat-thread.logic';
 import { typingDraft, RtChatTypingTracker } from './rt-chat-typing.logic';
 import { ERtChatMessageStatus, IRtChat } from './rt-chat.model';
 
@@ -129,20 +130,23 @@ export class RtChatComponent {
 
     protected readonly locale: Signal<string> = inject(RT_KIT_LOCALE);
 
-    /** Читатель у нижнего края. Плоское поле, не сигнал: afterRenderEffect не перезапускается на scroll. */
-    #atBottom: boolean = true;
-
-    /** Прошлый scrollTop треда — для различения прокрутки вверх и роста контента. */
-    #lastScrollTop: number = 0;
-
-    /** One-shot: своё отправленное сообщение всегда прокручивает тред вниз. */
-    #forceScroll: boolean = false;
+    readonly #follow: RtChatThreadFollow = new RtChatThreadFollow();
 
     /** Отрезок набора в поле ответа: наружу уходит одно «начал» и одно «перестал» на отрезок. */
     readonly #typingTracker: RtChatTypingTracker = new RtChatTypingTracker((typing: boolean): void => this.typing.emit(typing));
 
     /** Текущее значение композера — источник реактивности для `canSend`. */
     readonly #formValue: Signal<Partial<{ message: string; files: File[] }>>;
+
+    /** Поле ответа того вида, который сейчас стоит: черновик читается и пишется через него. */
+    readonly #replyFields: Signal<IRtChatReplyFields> = computed((): IRtChatReplyFields => ({
+        messenger: this.messenger(),
+        rich: this.richComposer(),
+        prompt: this.promptInput(),
+        composer: this.messageComposer(),
+        message: this.replyForm.controls.message,
+        textarea: this.composerInputEl()?.nativeElement,
+    }));
 
     /**
      * Скролл-контейнер треда — для автопрокрутки к последнему сообщению.
@@ -153,6 +157,14 @@ export class RtChatComponent {
     /** Скрытый нативный input — открывается кнопкой-скрепкой внутри поля ввода. */
     protected readonly composerFileEl: Signal<ElementRef<HTMLInputElement> | undefined> =
         viewChild<ElementRef<HTMLInputElement>>('composerFileEl');
+
+    /** Поля ответа трёх видов: метод `setDraft` пишет в то, которое сейчас стоит. */
+    protected readonly composerInputEl: Signal<ElementRef<HTMLTextAreaElement> | undefined> =
+        viewChild<ElementRef<HTMLTextAreaElement>>('composerInputEl');
+
+    protected readonly messageComposer: Signal<RtMessageComposerComponent | undefined> = viewChild(RtMessageComposerComponent);
+
+    protected readonly promptInput: Signal<RtAiPromptInputComponent | undefined> = viewChild(RtAiPromptInputComponent);
 
     protected readonly attachmentFallbackName: Signal<string> = rtKitLabel(ATTACHMENT_FALLBACK_KEY);
 
@@ -308,7 +320,6 @@ export class RtChatComponent {
         transform: booleanAttribute,
     });
 
-    /** Показать иконку refresh в шапке. */
     /**
      * Вид мессенджера: без подписи автора, свой пузырь цвета действия, время без даты, над
      * сообщениями дня — его подпись, поле ответа в одну строку с рядом кнопок под ним.
@@ -367,40 +378,35 @@ export class RtChatComponent {
             initialValue: this.replyForm.value,
         });
 
-        // После рендера, зависящего от треда, лента прокручивается к последнему сообщению — если оно
-        // своё (forceScroll) или читатель у нижнего края; ушедшего читать историю входящее не дёргает.
         afterRenderEffect((): void => {
             this.messages();
             this.loading();
             this.fetching();
             this.expanded();
-            const el: HTMLElement | undefined = this.thread()?.nativeElement;
-            if (el === undefined) {
-                return;
-            }
-            if (this.#forceScroll || this.#atBottom) {
-                el.scrollTop = el.scrollHeight;
-                this.#atBottom = true;
-                pinToBottomDeferred(
-                    (): HTMLElement | undefined => this.thread()?.nativeElement,
-                    (): boolean => this.#atBottom
-                );
-            }
-            this.#forceScroll = false;
+            this.#follow.rendered((): HTMLElement | undefined => this.thread()?.nativeElement);
         });
 
-        // `formControlName`-инпуты игнорируют атрибут `disabled` — состояние ввода
-        // держим через сам контрол: блок при рефреше треда или отправке in-flight.
-        effect((): void => {
-            const blocked: boolean = this.composerDisabled();
-            if (blocked && this.replyForm.enabled) {
-                this.replyForm.disable({ emitEvent: false });
-                return;
-            }
-            if (!blocked && this.replyForm.disabled) {
-                this.replyForm.enable({ emitEvent: false });
-            }
-        });
+        effect((): void => rtChatSyncReplyDisabled(this.replyForm, this.composerDisabled()));
+    }
+
+    /**
+     * Заменяет черновик в поле ответа и ставит курсор в конец: так приложение подставляет готовый
+     * текст. Выбранные файлы остаются, сигнала набора нет, закрытое поле не меняется.
+     */
+    public setDraft(text: string): void {
+        if (this.hasThread() && this.canReply() && !this.composerDisabled()) {
+            rtChatWriteDraft(this.#replyFields(), text);
+        }
+    }
+
+    /** Текст поля ответа в виде, который сейчас на экране. Файлы сюда не входят, поля нет — пустая строка. */
+    public draftText(): string {
+        return this.hasThread() && this.canReply() ? rtChatReadDraft(this.#replyFields()) : '';
+    }
+
+    /** Файлы, выбранные к черновику. Вложений нет или нет поля — пустой список. */
+    public draftFiles(): readonly File[] {
+        return this.hasThread() && this.canReply() ? this.selectedFiles() : [];
     }
 
     protected onSubmit(): void {
@@ -411,8 +417,7 @@ export class RtChatComponent {
         }
         const text: string = this.replyForm.controls.message.value.trim();
         const files: File[] = this.replyForm.controls.files.value;
-        // Своё сообщение всегда прокручивает тред вниз — независимо от позиции.
-        this.#forceScroll = true;
+        this.#follow.force();
         this.#typingTracker.stop();
         this.send.emit({ text, files: this.attachments() ? files : undefined });
         this.replyForm.reset({ message: '', files: [] });
@@ -427,8 +432,7 @@ export class RtChatComponent {
 
     /** Релей submit'а от `rt-message-composer` (rich-режим) наружу как `send`. */
     protected onComposerSubmit(payload: IRtMessageComposer.SubmitPayload): void {
-        // Своё сообщение всегда прокручивает тред вниз — независимо от позиции.
-        this.#forceScroll = true;
+        this.#follow.force();
         this.#typingTracker.stop();
         this.send.emit({
             text: payload.text,
@@ -479,12 +483,9 @@ export class RtChatComponent {
     /** Признак «читатель у нижнего края» обновляется по прокрутке: на нём стоит автопрокрутка. */
     protected onThreadScroll(): void {
         const el: HTMLElement | undefined = this.thread()?.nativeElement;
-        if (el === undefined) {
-            return;
+        if (el !== undefined) {
+            this.#follow.scrolled(el);
         }
-
-        this.#atBottom = nextAtBottom(this.#atBottom, this.#lastScrollTop, el);
-        this.#lastScrollTop = el.scrollTop;
     }
 
     protected toggleExpand(): void {

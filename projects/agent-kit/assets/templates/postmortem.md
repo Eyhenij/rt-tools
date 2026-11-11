@@ -2,6 +2,8 @@
 
 <date>. <One line: where the work was going and how far it got.>
 
+**Resource:** <the resource of the package the miss is about, by its identifier, such as `rules/testing.md`>
+
 ## What happened
 
 <What the executor did and in what way it was wrong. Without appraisals: the mechanism is

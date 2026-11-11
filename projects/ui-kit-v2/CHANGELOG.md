@@ -1,3 +1,36 @@
+# [0.42.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.41.0...rt-ui-kit-v2%400.42.0) (2026-11-08)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** календарь на узком экране не прячет единственный месяц ([4fafc63](https://github.com/Eyhenij/rt-tools/commit/4fafc63d20a0b1e075c96eb5188eef001b123d7d))
+- **rt:ui-kit-v2:** стрелки сеток месяцев и лет без подложки в обеих панелях ([10adc33](https://github.com/Eyhenij/rt-tools/commit/10adc3333dd8425e1b84993b1c3386a00abaf960))
+- **rt:ui-kit-v2:** шаблон истории открытия панели даты в своём файле ([adab2de](https://github.com/Eyhenij/rt-tools/commit/adab2dea97833b50069506a2201dcacae07788f4))
+
+### Features
+
+- **rt:ui-kit-v2:** панель даты в виде одобренного макета ([0b50d74](https://github.com/Eyhenij/rt-tools/commit/0b50d7427e1a8a01ef7e94c2b047f9e1f07f1169))
+- **rt:ui-kit-v2:** панель даты выдана из пакета, чат отдаёт файлы черновика методом draftFiles ([7567260](https://github.com/Eyhenij/rt-tools/commit/7567260c0105fdeafe7ce6c16ba3d72295d98827))
+- **rt:ui-kit-v2:** панель даты по одобренным кадрам, стрелки и сегодняшний день во всех календарях ([262d20f](https://github.com/Eyhenij/rt-tools/commit/262d20f0ac8f39129810e6aa6c7ad4129035542d))
+- **rt:ui-kit-v2:** панель даты получила вход isTodayButtonShown ([f3e8155](https://github.com/Eyhenij/rt-tools/commit/f3e815581d3258cb6e3be41b877e5168918526b2))
+
+# [0.41.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.40.0...rt-ui-kit-v2%400.41.0) (2026-11-07)
+
+### Bug Fixes
+
+- **rt:auth:** замечания ревью темы входа и ячейки таблицы ([488b4db](https://github.com/Eyhenij/rt-tools/commit/488b4db17e5c51d11473f641b8a2e52f76cd0835))
+- **rt:auth:** кнопка после подтверждения почты ведёт в приложение, замер значков в витрине ([4c93863](https://github.com/Eyhenij/rt-tools/commit/4c938638fd64a75f87d040d195c515191e5a3dc6))
+
+### Features
+
+- **rt:ui-kit-v2:** колонка rt-data-table задаёт размер значка ячейки ([2ea5ff9](https://github.com/Eyhenij/rt-tools/commit/2ea5ff9c3e1601319860ca184e92e4c7f9459d29))
+- **rt:ui-kit-v2:** подпись срока, полоса над полем, чтение черновика, вид мессенджера по кадрам ([9c31084](https://github.com/Eyhenij/rt-tools/commit/9c310841d0f4674b5a4f5430ef8c8e8f1434202b))
+
+# [0.40.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.39.2...rt-ui-kit-v2%400.40.0) (2026-11-06)
+
+### Features
+
+- **rt:ui-kit-v2:** чат принимает готовый текст в поле ответа методом setDraft ([9996f73](https://github.com/Eyhenij/rt-tools/commit/9996f7346c4b7c63e3c1069c0632dd2f7a957bc4))
+
 ## [0.39.2](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.39.1...rt-ui-kit-v2%400.39.2) (2026-11-06)
 
 ### Bug Fixes

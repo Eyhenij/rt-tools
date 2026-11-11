@@ -4,6 +4,7 @@
  * leave the build order to memory.
  */
 @use '../../ui-kit-v2/src/styles/index';
+@use '../../ui-kit-v2/src/styles/breakpoints' as bp;
 
 /**
  * The page base. The kit declares the font and the page colour but does not put them on the page:
@@ -32,6 +33,10 @@ body {
  * lies over the body gradient of the kit.
  */
 .login__viewport {
+    /* The width of the card, read by the card and by the narrow-screen column it shares with the
+       switches: one number, so the two cannot part when it changes. */
+    --rt-kc-card-width: 400px;
+
     position: relative;
     overflow: hidden;
     background: radial-gradient(120% 90% at 50% 0%, var(--rt-color-bg-subtle) 0%, var(--rt-color-bg-surface-auth-card) 65%);
@@ -41,14 +46,49 @@ body {
 }
 
 /**
- * The language list and the theme switch stand in the first row of the card, on its right edge.
- * The kit pins the block to the corner of the window; inside the card it is pinned to the corner of
- * the card instead and takes the top padding above the realm name.
+ * The language list and the theme switch. On a wide screen they stay where the kit pins them, in
+ * the top right corner of the window, on a glass pad of their own: without it the list merges with
+ * the page under it. The pad repeats the card glass with a thinner ground. The corner starts from
+ * the wide threshold, not the middle one: between them the margin beside the centred card is
+ * narrower than the pad, and the pad would lie over the card and the fields scrolling under it.
  */
-.login__card .login__chrome {
-    position: absolute;
-    top: var(--rt-space-5);
-    right: var(--rt-space-5);
+@media (width >= bp.$rt-bp-lg) {
+    .login__chrome {
+        padding: var(--rt-space-sm);
+        border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
+        border-radius: var(--rt-radius-lg);
+        backdrop-filter: blur(1.25rem) saturate(140%);
+        background-color: color-mix(in srgb, var(--rt-color-bg-surface) 60%, transparent);
+        box-shadow: var(--rt-shadow-card);
+    }
+}
+
+/**
+ * On a narrow screen the corner of the window is the corner of the card, and the switches stand in
+ * the first row of the card, on its right edge, over the top padding above the realm logo. They lie
+ * outside the card in the markup — its glass would hold a fixed child inside it — so the card and
+ * the switches share one grid cell as wide as the card, and the switches take its top right corner.
+ */
+@media (width < bp.$rt-bp-lg) {
+    .login__viewport {
+        display: grid;
+        grid-template-columns: minmax(0, var(--rt-kc-card-width));
+        place-content: center;
+    }
+
+    .login__card,
+    .login__chrome {
+        grid-area: 1 / 1;
+    }
+
+    .login__chrome {
+        position: relative;
+        z-index: 2;
+        top: auto;
+        right: auto;
+        margin: var(--rt-space-5) var(--rt-space-5) 0 0;
+        place-self: start end;
+    }
 }
 
 /**
@@ -57,6 +97,7 @@ body {
  */
 .login__card {
     z-index: 1;
+    max-width: var(--rt-kc-card-width);
     padding-top: var(--rt-space-20);
     border: var(--rt-border-width-thin) solid var(--rt-color-border-default);
     backdrop-filter: blur(1.25rem) saturate(140%);
@@ -81,6 +122,26 @@ body {
     margin: 0;
     color: var(--rt-color-text-primary);
     font-size: var(--rt-text-sm);
+    overflow-wrap: break-word;
+}
+
+/**
+ * The text of the address confirmation stands on the axis of the card, under the title, the way the
+ * login form stands. Its lines are balanced, so an address at the end of a sentence moves to the
+ * next line whole together with a few words instead of hanging alone; it breaks inside only when it
+ * does not fit the card at all. The other pages keep their text at the left edge: a reset
+ * instruction and a list of actions read worse centred.
+ */
+.login__text--centered {
+    text-align: center;
+    text-wrap: balance;
+}
+
+/* A piece of an address moves to the next line whole: a browser would break it at a hyphen. Longer
+   than the card, it still breaks inside. */
+.login__address {
+    display: inline-block;
+    max-width: 100%;
     overflow-wrap: anywhere;
 }
 
@@ -160,6 +221,12 @@ body {
     min-width: var(--rt-kc-captcha-width);
     min-height: var(--rt-kc-captcha-height);
     margin-bottom: calc(var(--rt-kc-captcha-height) * (var(--rt-kc-captcha-scale) - 1));
+
+    /* Google draws a frame around the widget inside its own frame of the page, where no style of the
+       theme reaches, and the light line shows on the dark theme. The frame sits one pixel further in
+       on the right and at the bottom: measured at 4x, 2px clears the top and left edges, 3px the
+       right and bottom ones. The slot cuts it off with the rounding of the widget corner. */
+    clip-path: inset(2px 3px 3px 2px round 3px);
     scale: var(--rt-kc-captcha-scale);
     transform-origin: center top;
 }
@@ -211,7 +278,9 @@ body {
     flex-shrink: 0;
 }
 
+/** The language list keeps one width for every language, so the switches do not jump on a change. */
 .login__locales {
     display: flex;
+    width: 132px;
     gap: var(--rt-space-1);
 }

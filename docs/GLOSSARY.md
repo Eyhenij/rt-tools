@@ -1,4 +1,4 @@
-<!-- rt-kit v0.33.1 · docs/GLOSSARY.md · bcdde4b47e81 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · docs/GLOSSARY.md · dad30a8da01f · правится надстройкой, не здесь -->
 # Project glossary
 
 Words that mean something definite in this tree. Read before writing a spec, a rule, a comment,
@@ -29,6 +29,8 @@ sections through the override; they merge here by heading, and a package edit do
 - **Layout** — the transfer of a resource from the package into the tree, by its kind and by the layer settings
 - **Laid-out file** — a file in the tree with the package header. Edited through the override, not in place: an in-place edit is lost on the next layout
 - **Override** — a file of the tree that merges with the laid-out file by section headings
+- **Trait** — what a tree has: a storage, an admin, an application, a code graph. Named in a list in the tree settings; a resource that needs a trait is laid out only to a tree that named it
+- **Code graph** — a build artefact next to the tree: which file calls, imports and contains what. Answers relations, not numbers or behaviour; it is fresh when it was built from the head
 - **Disabled role** — a role whose call the tree no longer treats as mandatory: the guard stays silent about it. Named in a list in the tree settings, not removed from the layout, and called by hand
 - **Observation** — a line about an event of the rules layer: a rule was loaded, a gate refused, a guard declined. Written by a guard, lives in the tree, leaves as counters. Not called a log
 - **Digest** — what the observations say over a span of days: what was used, what never was, what people stumbled on

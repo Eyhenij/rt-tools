@@ -34,7 +34,7 @@ export type TPageMark = 'hint' | 'columns' | 'refresh' | 'fault' | 'retry';
  * роли не имеют ни отбора, ни панели подробностей: их панели правят и открываются кнопкой и
  * меню строки, а не нажатием на строку.
  */
-export type TSectionName = 'postmortems' | 'proposals' | 'summaries' | 'usage' | 'invites' | 'chat';
+export type TSectionName = 'postmortems' | 'proposals' | 'summaries' | 'usage' | 'quality' | 'invites' | 'chat';
 
 /** Разделы админки: адрес, заголовок экрана и `qa-dataid` его таблицы и строк. */
 export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.freeze({
@@ -69,6 +69,15 @@ export const SECTION: Readonly<Record<TSectionName, ISectionMarks>> = Object.fre
         table: 'chat-talks',
         row: 'chat-talk',
         details: 'chat-feed',
+    }),
+    quality: Object.freeze({
+        path: SECTIONS.quality,
+        title: 'Качество',
+        prefix: 'quality',
+        table: 'quality-table',
+        row: 'quality-row',
+        // Строка таблицы причин ничего не открывает: панели у раздела нет.
+        details: '',
     }),
     usage: Object.freeze({
         path: SECTIONS.usage,

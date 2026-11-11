@@ -4,6 +4,7 @@
  * а `process.exit` зовёт только точка входа — иначе ни одну из них нельзя было бы проверить
  * спекой, не перехватывая поток вывода.
  */
+import { sendEnrolledLines, sendFaultLines } from './metric-send-mark.js';
 import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -866,6 +867,7 @@ export function sync(env: IEnvironment, check: boolean): IOutcomeOfCommand {
             ...(result.written.length
                 ? [`разложено файлов: ${result.written.length}`, ...result.written.map((path: string): string => `  ${path}`)]
                 : ['всё уже разложено']),
+            ...sendEnrolledLines(config, result.written),
             ...boundLines(result),
             ...(result.bound?.unreadable === false ? [] : unboundLines(result)),
             ...driftedLines(result),
@@ -1066,6 +1068,11 @@ function pushGateOutcomeLines(summary: ISummary): string[] {
     ];
 }
 
+/** Что снято по сроку хранения: чтение наблюдений удаляет файлы, и об этом говорится вслух. */
+export function sweptLine(swept: readonly string[]): string {
+    return `снято по сроку хранения (${KEEP_DAYS} дн.): ${swept.length}`;
+}
+
 /** Сводка строками: загруженное, незагруженное, отбивки гейта и отказы гардов. */
 function statsLines(summary: ISummary, swept: readonly string[], days: number, version: string, laidOut: number): string[] {
     return [
@@ -1122,9 +1129,33 @@ function statsLines(summary: ISummary, swept: readonly string[], days: number, v
                   '  — стоял и не понадобился или стоял и не работал, по сводке это одно и то же',
               ]
             : []),
-        ...(swept.length ? ['', `снято по сроку хранения (${KEEP_DAYS} дн.): ${swept.length}`] : []),
+        ...(swept.length ? ['', sweptLine(swept)] : []),
         '',
         `пакет v${version}`,
+    ];
+}
+
+/**
+ * Слова про отрезок без наблюдений, `null` — наблюдения есть.
+ *
+ * Нули на их месте читались бы как «всё хорошо», поэтому сводка и отчёт о метриках говорят одно.
+ */
+export function noObservationLines(result: IReadResult, days: number): readonly string[] | null {
+    if (result.silent) {
+        return [
+            'наблюдений нет: записи не велось ни разу',
+            `их пишут гарды в ${OBSERVATIONS_DIR}/ — проверь, что гарды разложены и подключены в ${SETTINGS_PATH}`,
+        ];
+    }
+
+    if (result.observations.length) {
+        return null;
+    }
+
+    return [
+        `наблюдений за ${days} дн. нет ни одного, а записи велись раньше`,
+        ...(result.swept.length ? [sweptLine(result.swept)] : []),
+        ...(days < KEEP_DAYS ? [`возьми отрезок длиннее: \`--days ${KEEP_DAYS}\``] : []),
     ];
 }
 
@@ -1171,25 +1202,10 @@ export function stats(env: IEnvironment, options: IStatsOptions): IOutcomeOfComm
         return { code: 0, lines: [JSON.stringify({ ...summary, swept: result.swept })] };
     }
 
-    if (result.silent) {
-        return {
-            code: 0,
-            lines: [
-                'наблюдений нет: записи не велось ни разу',
-                `их пишут гарды в ${OBSERVATIONS_DIR}/ — проверь, что гарды разложены и подключены в ${SETTINGS_PATH}`,
-            ],
-        };
-    }
+    const empty: readonly string[] | null = noObservationLines(result, days);
 
-    if (!summary.total) {
-        return {
-            code: 0,
-            lines: [
-                `наблюдений за ${days} дн. нет ни одного, а записи велись раньше`,
-                ...(result.swept.length ? [`снято по сроку хранения (${KEEP_DAYS} дн.): ${result.swept.length}`] : []),
-                'возьми отрезок длиннее: `--days 14`',
-            ],
-        };
+    if (empty) {
+        return { code: 0, lines: empty };
     }
 
     return {
@@ -1352,6 +1368,7 @@ export function doctor(env: IEnvironment, since: string = ''): IOutcomeOfCommand
         ...pushGateLines(root, config.layout.defaults ?? DEFAULT_LAYOUT.defaults),
         ...localValueLines(root, assetsDir, config),
         ...replacedLines(config, assetsDir, root),
+        ...sendFaultLines(root),
         ...(since ? addedInReplacedLines(config, assetsDir, root, since) : []),
         ...thresholdLines(root),
         `значений в конфиге: ${Object.keys(config.vars).length}`,

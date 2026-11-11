@@ -3,8 +3,10 @@
 
     <rt-kc-message />
 
-    <p rtElem="text" qa-dataid="kc-verify-sent">{{ sent }}</p>
-    <p rtElem="text">
+    <!-- One line: a line break between the pieces would put a space before the full stop after the address. -->
+    <!-- prettier-ignore -->
+    <p rtElem="text" qa-dataid="kc-verify-sent" [rtMod]="{ centered: true }">{{ sent.before }}@for (piece of sent.address; track $index) {<span rtElem="address">{{ piece }}</span>}{{ sent.after }}</p>
+    <p rtElem="text" [rtMod]="{ centered: true }">
         {{ resend }}
         <a rtElem="link" qa-dataid="kc-verify-resend" [href]="context.url.loginAction">{{ resendLink }}</a>
         {{ resendTail }}

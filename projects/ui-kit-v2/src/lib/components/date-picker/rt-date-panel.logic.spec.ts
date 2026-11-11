@@ -123,7 +123,7 @@ describe('rt-date-panel.logic', () => {
         expect(month.leadingBlanks.length).toBe(1);
         expect(month.days.length).toBe(30);
         expect(rtDateFirstDay('ru')).toBe(1);
-        expect(rtDateWeekdays('ru')[0]).toBe('пн');
+        expect(rtDateWeekdays('ru')[0]).toBe('Пн');
         expect(rtDateFirstDay('en-US')).toBe(7);
         expect(rtDateWeekdays('en-US')[0]).toBe('Sun');
         expect(rtDateMonth('2026-09', { ...RU, locale: 'en-US' }).leadingBlanks.length).toBe(2);

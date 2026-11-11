@@ -260,3 +260,7 @@ reference — it changes how a story is written.
   next to it. The same pass checks the shape of the code — a sample declaring fields unlike the
   tree declares them teaches breaking the language rule, and the rule that forbids it will not
   know.
+- A split left a pointer under the old state heading and cut its next-move line together with the
+  moved text. A heading of the form «State `name`» keeps every duty of a state section wherever it
+  stands, and the check of the next move reads it so: the pointer names its own next move, or the
+  heading leaves with the text.

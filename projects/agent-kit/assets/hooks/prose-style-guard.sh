@@ -21,6 +21,7 @@
 # Its own name in the observations: the refusal is recorded by the shared deny tail, not by the
 # guard itself.
 RT_GUARD_NAME=prose-style-guard
+RT_GUARD_RULE=doc-style
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

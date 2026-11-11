@@ -52,6 +52,18 @@ describe('AdminVersionFilterComponent', () => {
         expect(shown[2].label).toBe('0.9.0');
     });
 
+    it('раздел без записей вне версии снимает пункт «без версии»', () => {
+        fixture.componentRef.setInput('noneChoice', false);
+        fixture.detectChanges();
+
+        expect(optionsOf(fixture).map((option: IRtSelect.Option<string>): string => option.value)).toEqual([
+            '',
+            '0.9.0',
+            '0.10.0',
+            'hotfix-3',
+        ]);
+    });
+
     it('SC-MB-242 — снятие отбора поднимается наверх пустой строкой, а не пустотой', () => {
         const picked: string[] = [];
 

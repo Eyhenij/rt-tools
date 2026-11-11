@@ -61,6 +61,13 @@ export function overridesOf(resource: string, packaged: string, override: string
         });
 }
 
+/** Сколько разделов пакета разложено в дерево: без этого числа доля заменённых ничего не значит. */
+export function packageSections(config: IConfig, assetsDir: string): number {
+    return chosenEntries(readCatalog(assetsDir), config)
+        .filter((entry: IEntryOfCatalog): boolean => entry.id.endsWith('.md'))
+        .reduce((sum: number, entry: IEntryOfCatalog): number => sum + parseDocument(entry.text).sections.length, 0);
+}
+
 /** Что дерево держит поверх текста пакета — по всем ресурсам, которые оно разложило. */
 export function treeSnapshot(config: IConfig, assetsDir: string, root: string): ICargoOverride[] {
     return chosenEntries(readCatalog(assetsDir), config).flatMap((entry: IEntryOfCatalog): ICargoOverride[] => {

@@ -10,7 +10,7 @@ mandatory action is done, the work stays in the same state.
 ## States and mandatory actions
 
 - `просьба-не-разобрана` — explore the tree, then ask; leads `task-flow-start`
-- `эпик-заведён` — take the epic branch from the main branch; leads `task-flow-start`
+- `эпик-заведён` — take the epic branch from the main branch; leads `epic-flow-declare`
 - `разбор-закрыт` — the product agreement or the reason there is none; leads `task-flow-start`
 - `договорённость-записана` — create the task, the branch from the epic branch, and the folder; leads `task-flow-start`
 - `задача-взята` — write the plan; leads `task-flow-start`

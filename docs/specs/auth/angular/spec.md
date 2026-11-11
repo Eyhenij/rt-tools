@@ -36,6 +36,13 @@ Not applicable: the package has no screens. The entry form is the theme of the m
 - **The entry uses the code flow with PKCE.** The client of an admin is public and has no secret.
 - **After a reload the session comes back through the silent check, without a password.** If the
   browser blocks the frame, the next entry passes without a form while the Keycloak session lives.
+- **The return from the entry form exchanges the code without the silent check.** Otherwise a
+  late cookie probe cuts the exchange, and the person is sent back to the form. The return is
+  known by a code and a state in the address fragment. A state the adapter did not send ends in a
+  full redirect to Keycloak without a form, and the person comes back with a known one.
+- **The exchange of the code waits by a limit of its own, thirty seconds by default.** It is longer
+  than the limit of the silent check, and past it the admin starts with nobody signed in. Otherwise
+  a hung exchange leaves a blank page.
 - **The caller is read by the contract for the client of the admin.** Otherwise the client shows
   a section by a right the server refuses.
 - **The token goes only to a recipient the application named.** Otherwise a request to a foreign

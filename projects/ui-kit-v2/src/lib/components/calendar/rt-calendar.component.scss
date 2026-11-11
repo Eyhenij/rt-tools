@@ -140,6 +140,11 @@
                 box-shadow: var(--rt-calendar-today-ring);
             }
 
+            /* Число сегодняшнего дня — цвета действия и полужирное, пока день не залит выбором. */
+            &[data-today]:not([data-state='start'], [data-state='end'], [data-state='chosen'], [data-state='in-range']) {
+                color: var(--rt-color-action-primary);
+            }
+
             &:focus-visible {
                 outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
                 outline-offset: var(--rt-focus-ring-offset);
@@ -175,6 +180,27 @@
             font-weight: var(--rt-font-weight-medium);
         }
 
+        &__day[data-today] &__day-num {
+            font-weight: var(--rt-font-weight-semibold);
+        }
+
+        /* День соседнего месяца: стоит в сетке как день, бледный, не нажимается. За границей
+           выбора ещё и зачёркнут, как занятый день. */
+        &__outside {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-medium);
+            min-block-size: var(--rt-calendar-day-size);
+            opacity: 0.45;
+
+            &[data-crossed] {
+                text-decoration: line-through;
+            }
+        }
+
         &__day-sublabel {
             font-size: var(--rt-text-2xs);
             opacity: 0.75;
@@ -185,8 +211,9 @@
                 grid-template-columns: 1fr;
             }
 
-            /* на мобиле показываем один месяц — навигация листает по одному */
-            &__month:last-child {
+            /* на мобиле показываем один месяц — навигация листает по одному. Прячется только второй
+               из двух: единственный месяц тоже последний, и без `:not(:first-child)` пропадала сетка */
+            &__month:last-child:not(:first-child) {
                 display: none;
             }
         }

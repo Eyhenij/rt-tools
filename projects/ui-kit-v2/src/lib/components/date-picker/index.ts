@@ -1,3 +1,4 @@
+export * from './panel/rt-date-panel.component';
 export * from './rt-date-picker.component';
 export * from './rt-date-picker.model';
 export * from './rt-date-panel.logic';

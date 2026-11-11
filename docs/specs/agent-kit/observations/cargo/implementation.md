@@ -17,7 +17,7 @@ whole.
 - **A mark whose value the sending never writes is named as written by hand.** — `projects/agent-kit/src/lib/proposals.ts:ownMark` — the form is written by `markProposals` and read by `OWN_MARK` in the same module; scenario SC-AK-1090
 - **A sent proposal is marked by the month that accepted it and does not go a second time.** — `projects/agent-kit/src/lib/proposals.ts:markSent`
 - **The intake address is read from a setting of the tree.** — `projects/agent-kit/src/lib/config.ts:intake`
-- **Nothing goes outward that a person did not send by a command.** — `projects/agent-kit/src/lib/shipment.ts:propose`
+- **Nothing goes outward that a person did not send by a command.** — `projects/agent-kit/src/lib/shipment.ts:propose` — the day line, the exception, is started by `projects/agent-kit/assets/hooks/metric-send-start.sh:rt_send_start`
 - **An unfamiliar argument ends the sending, it is not skipped silently.** — `projects/agent-kit/src/lib/argv.ts:unknownFlagsIn`
 - **The summing-up tells what arrived from several trees from what arrived from one.** — `.claude/commands/agent-kit-digest.md:overrides`
 - **Releasing a version stays a separate decision of the owner.** — `.claude/commands/agent-kit-digest.md:ARGUMENTS`

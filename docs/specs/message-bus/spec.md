@@ -143,9 +143,8 @@ the limit is split further by the same technique.
 
 The boundaries of the subjects are named in the subdomains. What is shared across the domain:
 
-- **A digest over several trees and charts.** The word of the owner: the lists are shown, and a
-  digest is appointed when there are three trees. The usage of one tree over a period is a section
-  of its own — the subdomain of the usage; a digest over trees stays out.
+- **Charts.** The word of the owner: the lists are shown. The usage of one tree over a period and the
+  digest over trees are sections of their own — the subdomain of the usage.
 - **The edit of the taken-in cargo by a person.** The text, the address and the resource of a record
   are carried by the intake of the cargo, and there is no second way to them. The state of a record
   is edited by the tree with its token — the subdomain of the edit of a state; a person in the admin

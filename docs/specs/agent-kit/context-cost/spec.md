@@ -1,6 +1,6 @@
 # The cost of context is counted by a command
 
-**Status:** in force · **Revision:** 25 August 2026 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 8 November 2026 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `verifiability`, `project-documentation`
 **Procedures:** none
@@ -47,7 +47,8 @@ Not applicable: the command has no screen, it answers with the output of the lau
   they are not: a letter outside Latin has twice as many bytes. One number out of the two hides half
   the picture.
 - **The command writes nothing and goes to no network.** It answers a question, it does not edit the
-  tree, and it will work for whoever has no network at all.
+  tree, and it will work for whoever has no network at all. The sending of the day lines reads the
+  number by itself.
 - **The output is machine-readable on demand.** By this the numbers are put into an epic plan and
   into the review of closed work without being retyped by hand.
 
@@ -138,6 +139,8 @@ Not applicable: the command counts one tree — the one from whose root it was c
 
 ## History of changes
 
+- 2026-11-08 — the sending of the day lines reads the cost of the entry, and the command stays
+  away from the network.
 - 2026-08-25 — the agreement was created. Task RT-1126, epic RT-1125.
 - 2026-08-25 — the token count was replaced by a count of characters and bytes: the owner's decision
   about money. The question about writing systems was taken out of this agreement and closed in the

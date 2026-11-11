@@ -101,7 +101,8 @@ Covered by the component spec of the field.
 
 Given the application's locale `ru`
 When the month is counted
-Then its title and weekday names are the Russian ones and the week starts on Monday
+Then its title and weekday names are the Russian ones, the weekday names start with a capital
+letter, and the week starts on Monday
 
 Covered by the spec of the date logic module.
 
@@ -170,3 +171,105 @@ Then the arrows, the days and the footer stand 20px from the sides of the sheet
 
 Покрытие: частичное — the component spec of the panel checks the rule of the sheet in the panel
 styles; the distance on the screen is shown by the frame of the story Sheet.
+
+### SC-UKV-1171 — the entry point gives out the panel
+
+Given a consumer that needs a choice of date without a text field
+When it imports `RtDatePanelComponent` from the entry point `date-picker`
+Then it gets the same panel the field draws
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1172 — a date panel without the button «Сегодня»
+
+Given a panel of the type `date` with `isTodayButtonShown` set to false
+When it is drawn
+Then it has no footer, and a click on a day still chooses and closes
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1173 — days of the neighbouring months fill the weeks
+
+Given a date panel on September 2026 with `min` set to `2026-09-01`
+When it is drawn
+Then August 31 and October 1 to 4 stand in the grid, pale, and a click on them chooses nothing;
+August 31 is crossed out
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1174 — a day outside the bounds is crossed out
+
+Given a date panel with `min` set to `2026-09-10`
+When September is drawn
+Then September 9 is crossed out and switched off, and September 10 can be chosen
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1175 — the time columns carry titles
+
+Given a panel of the type `time`
+When it is drawn
+Then the title «Часы» stands above the hours and «Минуты» above the minutes
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1176 — «Сейчас» and «Сбросить» in the popover of a date with time
+
+Given a popover panel of the type `datetime-local`
+When «Сейчас» is pressed
+Then today and the current time are chosen in the draft and nothing is applied
+And when «Сбросить» is pressed, the value becomes empty and the panel closes
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1177 — the sheet shows the chosen value in the footer
+
+Given a sheet panel of the type `datetime-local` with the value `2026-09-15T09:00`
+When it is drawn
+Then the footer shows «15.09.2026, 09:00» on the left and has no «Сейчас» and «Сбросить»
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1178 — «Сейчас» and «Сбросить» in the action colour
+
+Given a popover panel of the type `datetime-local`
+When it is drawn
+Then «Сейчас» and «Сбросить» are text buttons in the action colour
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1179 — the switch of the sheet is narrow
+
+Given a sheet panel of the type `datetime-local`
+When it is drawn
+Then the switch «Дата | Время» is of the middle size, as wide as its segments and in the centre
+
+Покрытие: частичное — the spec checks the size and the absence of the full width; the centre on
+the screen is shown by the frame of the story BottomSheetDateTime.
+
+### SC-UKV-1180 — the month arrows have no backing
+
+Given a date panel
+When the month is drawn, and then its title opens the choice of month and year
+Then the arrows of the month and of the year are drawn without a backing
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/panel/rt-date-panel.component.spec.ts`.
+
+### SC-UKV-1181 — a time cell is a strip of the column
+
+Given a popover panel of the type `datetime-local` with the hour 09 chosen
+When it is drawn
+Then the chosen hour is a pale strip over the column with a dark semibold number at its left edge,
+and a line sets the time columns off from the month
+
+Покрытие: частичное — the spec checks the rules in the panel styles; the look on the screen is
+shown by the frames of the stories Popover and BottomSheetTime.
+
+### SC-UKV-1182 — the number of today is in the action colour
+
+Given a date panel whose month holds today
+When it is drawn
+Then the number of today is in the action colour and semibold, inside its outline
+
+Покрытие: частичное — the spec checks the rules in the calendar styles; the colour on the screen is
+shown by the frames of the date stories.

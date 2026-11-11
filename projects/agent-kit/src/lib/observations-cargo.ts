@@ -35,7 +35,7 @@ const KIND_BY_ASSET: Readonly<Record<string, TSkillKind>> = { rules: 'rule', pat
 export const OWN_RESOURCE: string = 'own';
 
 /** Везёт ли пакет ресурс с таким именем. Судятся все роды, а не одни скилы: имя хука тоже пакетное. */
-function packaged(name: string, assets: readonly IAsset[]): boolean {
+export function packaged(name: string, assets: readonly IAsset[]): boolean {
     return assets.some((asset: IAsset): boolean => asset.name === name);
 }
 

@@ -29,7 +29,8 @@ waiting for orders.
 - **The stop** — a turn that ends with the table of the epic's tasks and the line saying the session
   waits for orders, and takes no new work.
 - **The owner's word** — an order to take work after the stop: their message or their answer to a
-  menu that names the number of the work, or the named line in the call itself.
+  menu that names the number of the work, the latest answer to a menu for a task being created, or
+  the named line in the call itself.
 
 ### What it is called in the interface
 
@@ -57,6 +58,10 @@ There is no interface: the guard answers with a refusal in the executor's own tu
 - **The owner's message or menu answer that names the number of the work releases the call.** An
   owner who forbade writing the line left the executor one way out — stopping the work they had just
   set. The number is read from the call; the words of the executor do not count.
+- **A task being created is released by the latest answer of the owner to a menu.** It has no number
+  yet, so no answer can name it. The answer has to agree to a task: a word of a task or of creating
+  it, or a plain «yes», and a new epic needs the word of an epic. A refusal, an answer to an
+  unrelated question or a message of the owner after the answer leaves the call refused.
 - **The state of the epic is asked by the same command that prints the table.** A second reader of
   the same tasks would diverge from the first in silence: one would count a task finished, the other
   would not.

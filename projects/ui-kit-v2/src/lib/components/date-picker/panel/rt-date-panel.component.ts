@@ -37,9 +37,9 @@ import {
     rtDateFirstDay,
     rtDateGridKey,
     rtDateInBounds,
-    rtDateMonth,
     rtDateMonths,
     rtDateNow,
+    rtDatePanelMonth,
     rtDateSplit,
     rtDateTime,
     rtDateTimeColumns,
@@ -50,6 +50,7 @@ import {
     rtDateYears,
 } from '../rt-date-panel.logic';
 import { IRtDatePicker } from '../rt-date-picker.model';
+import { rtDateLayout, rtDateText } from '../rt-date-text.logic';
 
 const BEM_BLOCK: string = 'rt-date-panel';
 const MONTH_LEN: number = 7;
@@ -62,11 +63,13 @@ type TTab = 'date' | 'time';
 const ESCAPE_BACK: Readonly<Record<TView, TView | null>> = { days: null, months: 'days', years: 'months' };
 
 /**
- * Панель rt-date-picker: месяц с листанием, сетки месяцев и годов, колонки часов и минут,
- * подвал с «Сегодня», «Сейчас», «Готово» или «Применить» — по типу значения.
+ * Панель выбора даты и времени: месяц с листанием, сетки месяцев и годов, колонки часов и минут,
+ * подвал с «Сегодня», «Сейчас», «Готово» или «Применить» — по типу значения. Её открывает
+ * rt-date-picker, а без текстового поля она стоит в поповере или в rt-bottom-sheet потребителя.
  *
  * Панель не пишет в форму: готовое значение уходит событием `picked`, просьба закрыться —
- * `closed`. Черновик живёт, пока панель открыта; поле создаёт её заново на каждое открытие.
+ * `closed`. Черновик живёт, пока панель открыта, поэтому её создают заново на каждое открытие.
+ * Поверхности у панели нет: фон, рамку и тень даёт то, во что её положили.
  * Вся арифметика дат — в `rt-date-panel.logic`.
  */
 @Component({
@@ -132,7 +135,7 @@ export class RtDatePanelComponent {
     );
 
     protected readonly months: Signal<IRtCalendar.Month[]> = computed((): IRtCalendar.Month[] => [
-        rtDateMonth(this.shownMonth(), {
+        rtDatePanelMonth(this.shownMonth(), {
             locale: this.#locale(),
             today: this.today(),
             chosen: this.draftDay(),
@@ -180,8 +183,15 @@ export class RtDatePanelComponent {
     );
 
     protected readonly todayOff: Signal<boolean> = computed((): boolean => !rtDateInBounds(this.today(), this.min(), this.max()));
+    /** У даты в подвале только «Сегодня»: без неё пустая черта не рисуется. */
+    protected readonly hasFooter: Signal<boolean> = computed((): boolean => this.type() !== 'date' || this.isTodayButtonShown());
     /** Черновик собирается в значение и лежит в границах. */
     protected readonly canApply: Signal<boolean> = computed((): boolean => this.#draftValue() !== '');
+    /** Черновик даты со временем текстом для подвала шторки: `15.03.2026, 09:30`; не собран — пусто. */
+    protected readonly draftText: Signal<string> = computed((): string => {
+        const parts: string[] = this.#draftValue().split('T');
+        return parts.length < 2 ? '' : `${rtDateText(parts[0], 'date', rtDateLayout(this.#locale()))}, ${parts[1]}`;
+    });
     protected readonly tabs: Signal<IRtToggleButtonGroup.Option<TTab>[]> = computed((): IRtToggleButtonGroup.Option<TTab>[] => [
         { value: 'date', label: this.t().uiDate },
         { value: 'time', label: this.t().uiTime },
@@ -189,9 +199,11 @@ export class RtDatePanelComponent {
 
     /** Тип значения: дата, время или дата со временем. */
     public readonly type: InputSignal<IRtDatePicker.Type> = input.required<IRtDatePicker.Type>();
-    /** Значение поля в форме нативного input'а; пустая строка — пусто. */
+    /** Значение в форме нативного input'а: `YYYY-MM-DD`, `HH:mm`, `YYYY-MM-DDTHH:mm`; пустая строка — пусто. */
     public readonly value: InputSignal<string> = input<string>('');
+    /** Нижняя граница в форме значения; `null` — границы нет. */
     public readonly min: InputSignal<string | null> = input<string | null>(null);
+    /** Верхняя граница в форме значения; `null` — границы нет. */
     public readonly max: InputSignal<string | null> = input<string | null>(null);
     /** Шаг колонки минут. */
     public readonly minuteStep: InputSignalWithTransform<number, NumberInput> = input<number, NumberInput>(5, {
@@ -202,15 +214,20 @@ export class RtDatePanelComponent {
         transform: booleanAttribute,
     });
 
+    /** Показывать ли «Сегодня» в подвале у типа `date`. Выключена — подвала у даты нет. */
+    public readonly isTodayButtonShown: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
     /**
-     * Момент, от которого считаются «сегодня» и «Сейчас». Поле его не задаёт — панель читает часы
-     * сама; задаёт витрина, чтобы кадр не менялся день ото дня.
+     * Момент, от которого считаются «сегодня» и «Сейчас». Без него панель читает часы сама; задаёт
+     * его витрина, чтобы кадр не менялся день ото дня.
      */
     public readonly now: InputSignal<Date | null> = input<Date | null>(null);
 
-    /** Готовое значение: панель просит поле его записать. */
+    /** Готовое значение в форме `value`: панель просит его записать. */
     public readonly picked: OutputEmitterRef<string> = output<string>();
-    /** Панель просит закрыть себя. */
+    /** Панель просит закрыть себя: после выбора, а также по Escape в днях. */
     public readonly closed: OutputEmitterRef<void> = output<void>();
 
     constructor() {
@@ -314,6 +331,11 @@ export class RtDatePanelComponent {
         if (value !== '') {
             this.#emit(value);
         }
+    }
+
+    /** «Сбросить»: значение становится пустым, панель закрывается. */
+    protected reset(): void {
+        this.#emit('');
     }
 
     #emit(value: string): void {

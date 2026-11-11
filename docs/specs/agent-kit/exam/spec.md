@@ -1,6 +1,6 @@
 # The exam on the loaded rules
 
-**Status:** in force · **Revision:** 2026-08-23 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-08 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `verifiability`, `work-conduct`
 **Procedures:** none
@@ -102,8 +102,9 @@ exit code.
 
 ## Data
 
-There is no storage of its own: the verdict is read from the record of the turn, the list of
-switched-off roles from the setting of the tree.
+There is no storage the guard judges by: the verdict is read from the record of the turn, the list
+of switched-off roles from the setting of the tree. For the metrics of the package the guard writes
+one observation per session and verdict, and it does not read that line back.
 
 ## Screens and states
 
@@ -149,6 +150,7 @@ The open questions of the domain are shared, and they live in the spec next to i
 
 ## History of changes
 
+- 2026-11-08 — the guard writes a verdict line for the metrics of the package.
 - 2026-08-23 — the subdomain was split off from the subdomain of the edit guards, which had outgrown
   the length limit. The rules, the scenarios and the bindings of the exam moved here unchanged: the
   scenario numbers were not recounted.

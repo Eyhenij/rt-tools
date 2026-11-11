@@ -148,6 +148,67 @@ describe('RtChatComponent', (): void => {
         });
     });
 
+    describe('подпись и значок вместо времени', (): void => {
+        function date(fixture: ComponentFixture<RtChatComponent>): string {
+            return textOf(qa(fixture, 'chat-message-date')).trim();
+        }
+
+        it('SC-UKV-1163 — подпись стоит вместо времени', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({
+                messages: [message({ own: true, dateLabel: 'Уйдёт 8 ноября в 10:00' })],
+            });
+
+            expect(date(fixture)).toBe('Уйдёт 8 ноября в 10:00');
+        });
+
+        it('SC-UKV-1163 — подпись дня считается от createdAt, а не от подписи', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({
+                messenger: true,
+                messages: [message({ createdAt: '2026-03-15T10:00:00Z', dateLabel: 'Уйдёт 8 ноября в 10:00' })],
+            });
+
+            expect(textOf(qa(fixture, 'chat-day'))).toContain('15');
+            expect(textOf(qa(fixture, 'chat-day'))).not.toContain('8');
+        });
+
+        it('SC-UKV-1163 — без подписи стоит время', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({ messages: [message()] });
+
+            expect(date(fixture)).not.toBe('');
+            expect(date(fixture)).toMatch(/\d/);
+        });
+
+        it('SC-UKV-1164 — значок встаёт на место значка статуса', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({
+                messenger: true,
+                messages: [message({ own: true, status: ERtChatMessageStatus.Sent, dateIcon: 'clock' })],
+            });
+            const icon: HTMLElement = el(fixture, '[qa-dataid="chat-message-status"] rt-icon')?.nativeElement as HTMLElement;
+
+            expect(fixture.debugElement.query(By.css('[qa-dataid="chat-message-status"] rt-icon')).componentInstance.name()).toBe('clock');
+            expect(fixture.debugElement.query(By.css('[qa-dataid="chat-message-status"] rt-icon')).componentInstance.size()).toBe('sm');
+            expect(icon).not.toBeNull();
+        });
+
+        it('SC-UKV-1164 — значок стоит и без статуса', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({ messages: [message({ dateIcon: 'clock' })] });
+
+            expect(qa(fixture, 'chat-message-date-icon')).not.toBeNull();
+            expect(qa(fixture, 'chat-message-status')).toBeNull();
+        });
+
+        it('SC-UKV-1164 — значок не закрывает ошибку отправки', (): void => {
+            const fixture: ComponentFixture<RtChatComponent> = setup({
+                messages: [message({ own: true, status: ERtChatMessageStatus.Failed, dateIcon: 'clock' })],
+            });
+
+            expect(fixture.debugElement.query(By.css('[qa-dataid="chat-message-status"] rt-icon')).componentInstance.name()).toBe(
+                'exclamation-circle'
+            );
+            expect(qa(fixture, 'chat-message-retry')).not.toBeNull();
+        });
+    });
+
     describe('набор текста', (): void => {
         function typeInto(fixture: ComponentFixture<RtChatComponent>, field: HTMLTextAreaElement | HTMLInputElement, value: string): void {
             field.value = value;

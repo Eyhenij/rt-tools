@@ -27,6 +27,7 @@
 # Own name in the observations: the refusal is written by the shared refusal tail, not by the
 # guard itself.
 RT_GUARD_NAME=task-flow-draft-guard
+RT_GUARD_RULE=task-flow
 
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 

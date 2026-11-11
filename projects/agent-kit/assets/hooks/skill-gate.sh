@@ -51,6 +51,16 @@ for map in "$rt_hooks_dir/../rt-kit/defaults/gate-map.sh" "$rt_hooks_dir/../defa
 done
 command -v skill_for >/dev/null 2>&1 || exit 0
 
+# A working copy of the tree lies inside the tree's own agent directory, and the map branch for
+# that directory caught every file of the copy: the gate demanded nothing there. The path is
+# brought to the form it has in the main copy before the map reads it.
+rt_gate_copy_path() {
+    case "$1" in
+        */.claude/worktrees/*/*) printf '%s' "$1" | sed -E 's#/\.claude/worktrees/[^/]+/#/#' ;;
+        *) printf '%s' "$1" ;;
+    esac
+}
+
 req=""
 target=""
 kind=""
@@ -72,6 +82,7 @@ case "$tool" in
             "${CLAUDE_PROJECT_DIR:-.}"/*) ;;
             *) exit 0 ;;
         esac
+        target="$(rt_gate_copy_path "$target")"
         # The edit text goes to the map as a second argument: there are rules that come into
         # force not from WHAT file is edited but from WHAT is written into it — a call to the
         # runtime arrives in an ordinary service, and a setting number in an ordinary class.
@@ -127,6 +138,7 @@ case "$tool" in
                     "${CLAUDE_PROJECT_DIR:-.}"/*) ;;
                     *) continue ;;
                 esac
+                written_path="$(rt_gate_copy_path "$written_path")"
                 more="$(skill_for edit "$written_path" "" 2>/dev/null)"
                 [ -n "$more" ] && req="$req $more"
             done <<EOF
@@ -143,6 +155,17 @@ EOF
         kind="design"
         ;;
     *) exit 0 ;;
+esac
+
+# Every file edit the gate sees, with a rule or without one: the share of edits that met a rule not
+# yet loaded needs its denominator. A call of a tool is not an edit.
+case "$kind" in
+    command | browser | design | '') ;;
+    *)
+        # shellcheck disable=SC1091
+        . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/observe.sh" 2>/dev/null \
+            && rt_note edit-seen "kind=$kind" "sid=$sid"
+        ;;
 esac
 
 [ -z "$req" ] && exit 0

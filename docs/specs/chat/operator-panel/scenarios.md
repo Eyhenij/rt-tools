@@ -85,8 +85,8 @@ Then the event with that message arrives in the stream
 
 Given an operator of a site and a talk with messages of both sides on it
 When they open that talk
-Then the thread and the field of the answer are the nodes of the ready-made chat, and the section
-has no message view of its own
+Then the thread and the field of the answer are the nodes of the ready-made chat, the section has
+no message view of its own, and the empty bar above the field takes no place
 
 ### SC-CH-81 — a remark that has left without an answer of the service stands as sending
 

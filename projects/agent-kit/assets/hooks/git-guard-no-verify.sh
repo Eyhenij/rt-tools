@@ -26,6 +26,7 @@
 # in the way of work.
 
 RT_GUARD_NAME=git-guard-no-verify
+RT_GUARD_RULE=git-workflow
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

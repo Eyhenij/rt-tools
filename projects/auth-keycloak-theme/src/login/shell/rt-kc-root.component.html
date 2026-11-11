@@ -2,23 +2,26 @@
     <div rtElem="viewport">
         <rt-dot-field qa-dataid="kc-dot-field" />
 
+        <!-- The switches stand outside the card: its glass holds a child with position: fixed inside
+             itself, and on a wide screen they could not reach the corner of the window. On a narrow
+             screen they lie over the first row of the card in the same grid cell. -->
+        <div rtElem="chrome" qa-dataid="kc-chrome">
+            @if (localeOptions.length > 0) {
+                <rt-select
+                    rtElem="locales"
+                    qa-dataid="kc-locales"
+                    size="sm"
+                    [clearable]="false"
+                    [ariaLabel]="languagesLabel"
+                    [options]="localeOptions"
+                    [formControl]="locale"
+                    (selectionChange)="switchLocale($event)" />
+            }
+
+            <rt-theme-toggle qa-dataid="kc-theme" />
+        </div>
+
         <section rtElem="card" qa-dataid="kc-card">
-            <div rtElem="chrome" qa-dataid="kc-chrome">
-                @if (localeOptions.length > 0) {
-                    <rt-select
-                        rtElem="locales"
-                        qa-dataid="kc-locales"
-                        size="sm"
-                        [clearable]="false"
-                        [ariaLabel]="languagesLabel"
-                        [options]="localeOptions"
-                        [formControl]="locale"
-                        (selectionChange)="switchLocale($event)" />
-                }
-
-                <rt-theme-toggle qa-dataid="kc-theme" />
-            </div>
-
             @if (logo; as shown) {
                 <img rtElem="logo" qa-dataid="kc-logo" [src]="shown.src" [alt]="shown.alt" />
             } @else {

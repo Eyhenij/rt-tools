@@ -1,6 +1,6 @@
 # The kit's own panel of the date field
 
-**Status:** in force · **Revision:** 2026-11-04 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-07 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the popover directive, the bottom sheet, the calendar and the breakpoints service of
 the kit
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
@@ -103,6 +103,45 @@ kit. The mockup draws a panel of its own for all three types, the same in every 
 - **The names of months and weekdays follow the locale of the application.** The buttons of the
   panel carry the kit's labels.
 
+- **The entry point `date-picker` gives out the panel for a choice without a text field.** The
+  selector, the inputs and the outputs stay the same: `type`, `value`, `min`, `max`, `minuteStep`,
+  `sheet`, `picked` and `closed`. The consumer holds the popover or the bottom sheet, creates the
+  panel anew on every opening, closes it on `closed` and gives the popover its surface.
+
+- **The input `isTodayButtonShown` hides «Сегодня» of a date panel.** It is shown by default. Without
+  the button a date panel has no footer, and the footers of the other types stay.
+
+- **The month of the panel is filled to whole weeks by days of the neighbouring months.** Such a day
+  is pale and cannot be pressed. A neighbouring day outside the bounds is also crossed out.
+
+- **A day of the month outside the bounds is crossed out and switched off.** The weekday names start
+  with a capital letter, in this panel and in the period panel.
+
+- **Each time column carries its title above it: «Часы» and «Минуты».**
+
+- **The popover of a date with time has «Сейчас» on the left of the footer and «Сбросить» next to
+  «Применить».** «Сейчас» sets today and the current time into the draft. «Сбросить» makes the value
+  empty and closes the panel.
+
+- **The bottom sheet of a date with time shows the chosen value on the left of the footer.** It
+  shows it instead of «Сейчас» and «Сбросить». The value is written in the order of the interface
+  language.
+
+- **«Сейчас» and «Сбросить» are text buttons in the action colour.**
+
+- **The switch «Дата | Время» of the bottom sheet is of the middle size and stands in the centre.**
+  Its width follows its segments.
+
+- **The month arrows have no backing.** This holds for every calendar of the kit and for the arrows
+  of the month and year grids in this panel and in the period panel.
+
+- **The number of today is in the action colour and semibold until the day is chosen.** This holds
+  for every calendar of the kit; the outline of today stays.
+
+- **A time cell is a strip of the column with the number at its left edge.** The chosen cell is
+  filled with the pale action colour, and its number is dark and semibold. Next to the month the
+  time columns are set off by a line over the whole height of the body.
+
 ## What is out of scope
 
 - The date range field — the subdomain `date-range` next to this one.
@@ -125,6 +164,7 @@ None of its own. The draft lives while the panel is open and is dropped when it 
 | state                            | what is drawn                                               |
 | -------------------------------- | ----------------------------------------------------------- |
 | a date, the panel open           | the month of the value or of today, «Сегодня» below         |
+| a date without the button        | the month alone, no footer                                  |
 | the choice of month and year     | twelve months and the year with paging                      |
 | the year grid                    | twelve years three in a row, the span and arrows above      |
 | a cell of the grids              | default, hover, chosen, current, unavailable                |
@@ -174,3 +214,10 @@ None.
 - 2026-09-30 — the field shows and reads the date in the order of the interface language, as the
   mockup of the range field shows it.
 - 2026-11-04 — the task RT-2895 adds the year grid and the 20px side padding in the bottom sheet.
+- 2026-11-07 — the task RT-3159 gives the panel out of the entry point and adds the input
+  `isTodayButtonShown`.
+- 2026-11-08 — the task RT-3159 adds the days of the neighbouring months, the crossed-out days
+  outside the bounds, the titles of the time columns and the footers «Сейчас», «Сбросить» and the
+  value in the sheet. The same day it brings the look of the approved frames: «Сейчас» and
+  «Сбросить» in the action colour, time cells as strips with a line before them, the narrow switch
+  of the sheet, the arrows without a backing and today in the action colour in every calendar.

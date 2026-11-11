@@ -25,9 +25,12 @@ The subdomain does not come outward. The refusal is read by the executor.
 
 ## Rules
 
-- **A PR does not open while the draft named by the plan of the branch lies in the branch.** The
-  refusal names the directory. A plan that named no draft, a draft already merged and removed, and
-  the folder-skip bypass let the opening through as before.
+- **A PR into the main branch does not open while a draft named by a plan of the branch lies in the
+  branch.** The refusal names the directory. A plan that named no draft, a draft already merged and
+  removed, and the folder-skip bypass let the opening through as before.
+- **A PR into an epic or into a lower branch of a stack does not wait for the draft.** Such a PR
+  does not reach the main branch, and the draft of an epic lives until its last task. The PR of the
+  epic is judged by the plans of all its tasks.
 
 ## What is out of scope
 
@@ -45,8 +48,8 @@ Not applicable: the refusal comes as text naming the directory of the draft.
 
 ## Data
 
-The subdomain holds no data of its own. It reads the last plan of the branch from its history and
-the tree of the head.
+The subdomain holds no data of its own. It reads the base the command names, every plan the branch
+touched from its history, and the tree of the head.
 
 ## Screens and states
 
@@ -85,3 +88,5 @@ None.
 
 - 2026-11-04 — the subdomain was created: thirteen tasks of a consuming tree merged with their
   agreements unmerged, and the work spec has no room for another scenario. Task RT-3087.
+- 2026-11-07 — the condition moved to a PR into the main branch: the agreement of a whole epic refused
+  the PR of its first task. The PR of the epic now reads the plans of all its tasks. Task RT-3160.

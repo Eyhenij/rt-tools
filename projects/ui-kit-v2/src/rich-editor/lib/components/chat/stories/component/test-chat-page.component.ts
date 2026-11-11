@@ -1,6 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ConnectedPosition } from '@angular/cdk/overlay';
+import { NgTemplateOutlet } from '@angular/common';
+import { afterNextRender, ChangeDetectionStrategy, Component, Signal, viewChild } from '@angular/core';
 
 import { StoryPresetsComponent } from '../../../../../../showcase/story-presets.component';
+import { RtPopoverDirective } from '../../../../../../lib/components/popover/rt-popover.directive';
 import { RtIconComponent } from '../../../../../../lib/components/icon/rt-icon.component';
 import { RtIconButtonComponent } from '../../../../../../lib/components/icon-button/rt-icon-button.component';
 import { RtMenuItemComponent } from '../../../../../../lib/components/menu/rt-menu-item.component';
@@ -28,6 +31,10 @@ import { RtWorkspaceComponent } from '../../../../../../lib/components/workspace
 import { RtChatMessageActionsDirective, RtChatMessageButtonsDirective } from '../../rt-chat-message-actions.directive';
 import { RtChatComponent } from '../../rt-chat.component';
 import { ERtChatMessageStatus, IRtChat } from '../../rt-chat.model';
+import { TestRtChatEditBarComponent } from './test-chat-edit-bar.component';
+
+/** Текст отложенной реплики: он же стоит в готовых ответах и в поле кадра правки. */
+const SCHEDULED_TEXT: string = 'Да, поздний выезд до 14:00 подтверждаю.';
 
 /** Строка списка разговоров: номер с именем, последняя реплика, время и число непрочитанных */
 interface IPageRow extends IRtThreadList.Row {
@@ -83,6 +90,10 @@ function today(hours: number, minutes: number): string {
     templateUrl: './test-chat-page.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        // directives
+        NgTemplateOutlet,
+        RtPopoverDirective,
+
         // components
         RtChatComponent,
         RtChatMessageActionsDirective,
@@ -106,10 +117,41 @@ function today(hours: number, minutes: number): string {
 
         // showcase
         StoryPresetsComponent,
+        TestRtChatEditBarComponent,
     ],
 })
 export class TestRtChatPageComponent {
+    protected readonly chat: Signal<RtChatComponent | undefined> = viewChild(RtChatComponent);
+    protected readonly quickRepliesPopover: Signal<RtPopoverDirective | undefined> = viewChild(RtPopoverDirective);
+
+    /** Показ вставки: молния открывает готовые ответы, вкладка «Подсказки» показывает следующий шаг. */
+    public drafting: boolean = false;
+
+    /** Показ подписи срока: в ленте стоит ответ, который уйдёт позже. */
+    public scheduled: boolean = false;
+
+    /** Показ полосы над полем: тот же ответ открыт на правку. */
+    public editing: boolean = false;
+
     public readonly sign: IRtServiceLogo.ImageItem = WHATSAPP;
+
+    /** Панель ответов стоит над кнопкой, у левого края, как в кадре. */
+    public readonly quickRepliesPositions: readonly ConnectedPosition[] = [
+        { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom', offsetY: -4 },
+    ];
+
+    public readonly quickReplies: readonly string[] = [SCHEDULED_TEXT, 'К сожалению, в этот день выезд до 12:00: ждём новых гостей.'];
+
+    public readonly hints: ReadonlyArray<{ readonly label: string; readonly draft: string }> = [
+        {
+            label: 'Предложить трансфер из аэропорта: «Могу заказать вам машину из аэропорта к заезду.»',
+            draft: 'Могу заказать вам машину из аэропорта к заезду.',
+        },
+        {
+            label: 'Напомнить о предоплате по заявке №58: срок до 27 октября',
+            draft: 'Напоминаю о предоплате по заявке №58: срок до 27 октября.',
+        },
+    ];
 
     public readonly tabOptions: ReadonlyArray<IRtToggleButtonGroup.Option<string>> = [
         { value: 'all', label: 'Все' },
@@ -178,6 +220,26 @@ export class TestRtChatPageComponent {
         { id: 4, author: 'Анна', own: false, text: 'Спасибо, отлично!', createdAt: today(13, 5) },
     ];
 
+    /** Тот же разговор, но гость спросил о выезде: на этот вопрос молния предлагает два ответа. */
+    public readonly draftingMessages: readonly IRtChat.Message[] = [
+        ...this.messages.slice(0, 3),
+        { id: 4, author: 'Анна', own: false, text: 'Можно выехать в 14:00?', createdAt: today(13, 5) },
+    ];
+
+    /** Ответ ещё не ушёл: вместо времени стоит срок, вместо галочек — часы. */
+    public readonly scheduledMessages: readonly IRtChat.Message[] = [
+        ...this.draftingMessages,
+        {
+            id: 5,
+            author: 'Вы',
+            own: true,
+            text: SCHEDULED_TEXT,
+            createdAt: today(13, 6),
+            dateLabel: 'Уйдёт 8 ноября в 10:00',
+            dateIcon: 'clock',
+        },
+    ];
+
     public readonly profile: IRtWorkspaceDetails.Profile = {
         sign: WHATSAPP,
         name: 'Анна Смирнова',
@@ -190,4 +252,20 @@ export class TestRtChatPageComponent {
         { label: 'Язык', value: 'Английский' },
         { label: 'Устройство', value: 'Телефон · Safari · iOS' },
     ];
+
+    constructor() {
+        // Кадр правки держит текст в поле, а курсор в кадр не попадает
+        afterNextRender((): void => {
+            if (this.editing) {
+                this.chat()?.setDraft(SCHEDULED_TEXT);
+                (document.activeElement as HTMLElement | null)?.blur();
+            }
+        });
+    }
+
+    /** Ответ и подсказка встают в поле через `setDraft`: гостю ничего не уходит. */
+    protected insert(text: string): void {
+        this.quickRepliesPopover()?.close();
+        this.chat()?.setDraft(text);
+    }
 }

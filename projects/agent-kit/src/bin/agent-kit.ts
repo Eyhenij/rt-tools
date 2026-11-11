@@ -21,6 +21,8 @@ import { httpReadOwn, httpShip } from '../lib/ship.js';
 import { fate } from '../lib/fate.js';
 import { propose } from '../lib/shipment.js';
 import { treeSlugOf } from '../lib/tree-mark.js';
+import { sendMetrics } from '../lib/metric-send.js';
+import { METRICS_DEFAULT_DAYS, metrics } from '../lib/metrics.js';
 import { DEFAULT_DAYS } from '../lib/observations.js';
 import { staleBuild } from '../lib/freshness.js';
 import { packageRootFrom } from '../lib/package-root.js';
@@ -42,6 +44,11 @@ const USAGE: readonly string[] = [
     '  stats           свести наблюдения: чем пользовались, чем ни разу, обо что спотыкались',
     '  stats --days N  за сколько дней; без довода — за три',
     '  stats --json    то же машиночитаемо — этим сводку прикладывают к предложению',
+    '  metrics         метрики дерева: отказы, повторы, мёртвые правила, вес входа',
+    '  metrics --days N  за сколько дней; без довода — за тридцать',
+    '  metrics --json  то же машиночитаемо',
+    '  send            отправить строки дня: только числа, без разборов и предложений',
+    '  send --quiet    то же молча: так зовут проверки',
     '  propose         отправить груз в приём: сводку со снимком надстроек, предложения и разборы',
     '  fate            судьба своих записей в приёме и надстройки, которые пора снять',
     '  propose --dry-run   показать, что уехало бы, и ничего не отправлять',
@@ -305,6 +312,28 @@ function runStats(env: IEnvironment, argv: readonly string[]): IOutcomeOfCommand
     });
 }
 
+/** Метрики дерева: отрезок из флага, сегодняшний день — с края. */
+function runMetrics(env: IEnvironment, argv: readonly string[]): IOutcomeOfCommand {
+    const spoken: number = Number(optionOf(argv, '--days', ''));
+
+    return metrics(env, {
+        days: Number.isFinite(spoken) && spoken > 0 ? Math.floor(spoken) : METRICS_DEFAULT_DAYS,
+        today: new Date().toISOString().slice(0, 10),
+        json: argv.includes('--json'),
+    });
+}
+
+/** Строки дня: только числа, зовут проверки и человек. Часы берутся здесь же, на краю. */
+function runSend(env: IEnvironment, argv: readonly string[]): Promise<IOutcomeOfCommand> {
+    return sendMetrics(env, {
+        quiet: argv.includes('--quiet'),
+        force: argv.includes('--session-end'),
+        now: new Date(),
+        remote: remoteOf(env.root),
+        ship: httpShip,
+    });
+}
+
 /**
  * Отправка накопленного.
  *
@@ -370,6 +399,8 @@ const COMMANDS: Readonly<Record<string, TCommandRun>> = {
     sync: (env: IEnvironment, argv: readonly string[]): IOutcomeOfCommand => sync(env, argv.includes('--check')),
     cost: runCost,
     stats: runStats,
+    metrics: runMetrics,
+    send: runSend,
     propose: runPropose,
     fate: runFate,
     enroll: runEnroll,

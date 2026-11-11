@@ -1,6 +1,6 @@
 # The entry screens of the module
 
-**Status:** in force · **Revision:** 2026-10-31 · **Scenario prefix:** `SC-AUTH`
+**Status:** in force · **Revision:** 2026-11-06 · **Scenario prefix:** `SC-AUTH`
 **Depends on:** none
 **Laws:** `reuse-first`, `verifiability`
 **Procedures:** none
@@ -56,12 +56,35 @@ the entry is not sure the page belongs to the admin.
   card is no longer an empty plane.
 - **The card is glass: a semi-transparent background with a blur of what lies behind it.** The dots
   show through its edge softly and do not cross the text.
-- **The language list and the theme switch stand in the first row of the card, on its right edge.**
-  They do not hang in the corner of the window over the dots.
+- **On a wide screen the language list and the theme switch stand in the top right corner of the window, on a glass pad of their own.**
+  The pad repeats the card glass with a thinner ground, so the list does not merge with the page.
+  The owner asked for it on the mockup. The wide screen starts at the wide threshold: below it the
+  margin beside the card is narrower than the pad, and the pad would lie over the card.
+- **On a narrow screen the language list and the theme switch stand in the first row of the card, on its right edge.**
+  The corner of the window is the corner of the card there.
+- **The language list keeps one width for every language.** The switches do not jump on a change.
+- **Every language in the list is named by its own name in itself, with a capital letter.**
+  Keycloak names some by its message in lower case and some by the tag alone.
+- **The links between the entry pages carry the language a person chose in the list.** The person
+  keeps it from the sign-in to the registration, the reset and back. A language from the
+  application or the browser stays off the links. Keycloak keeps `kc_locale` in a cookie and in the
+  profile, above the language the application asks for, so the next entry would open in the old one.
 - **A link back to the sign-in or to the application is plain text without a chevron.** Keycloak
   starts these two messages with «, and the theme drops it.
 - **A link forward to the next step is plain text without a chevron.** Keycloak starts it with »,
   and the theme drops it the same way.
+- **A message page at the end of a flow leads back to the application when its client has an address.**
+  Keycloak tells the page to skip the link after an address confirmed from a letter, and the page
+  ends there with nowhere to go. The sign-in address opens «Cookie not found» outside an entry,
+  checked on the stand; the address of the application starts a fresh entry instead.
+- **The text of the address confirmation stands on the axis of the card, in balanced lines.** The
+  other pages keep their text at the left edge.
+- **An address in a page text breaks only at its `@`.** Its name with the `@` and its domain each
+  move to the next line whole, and a piece longer than the card breaks inside; a browser would
+  otherwise break it at a hyphen of the domain.
+- **The reCAPTCHA widget stands without the frame Google draws around it.** The frame lies in the
+  frame of Google, sits a pixel further in on the right and at the bottom, and the slot cuts it off
+  in either theme.
 - **A page the theme does not draw starts the standard layout in a root of its own.** The page markup
   holds only the theme root, and without its own root the standard layout leaves the page empty.
 - **Under the new password and its confirmation the page lists every requirement of the realm password policy.**
@@ -196,3 +219,6 @@ None.
 - 2026-10-30 — the widget on a Keycloak without the visibility sign, a ticked widget through a theme
   switch, the wait for the script ended, task RT-3013.
 - 2026-10-31 — a script loaded without its API ends the wait, task RT-3025.
+- 2026-11-06 — the switches in the corner of a wide window, the language names and the language on
+  the links, the way on from a message page, the page text on the axis, the widget without its
+  frame, task RT-3125.

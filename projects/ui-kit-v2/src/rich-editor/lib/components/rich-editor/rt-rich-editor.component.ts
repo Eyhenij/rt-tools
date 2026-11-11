@@ -155,6 +155,12 @@ export class RtRichEditorComponent extends RtFormControlBase<IQuillDelta | null>
         this.#quill?.focus();
     }
 
+    /** Ставит фокус в редактор, а курсор — за последний символ; до загрузки Quill ничего не делает. */
+    public focusAtEnd(): void {
+        this.#quill?.focus();
+        this.#quill?.setSelection(this.#quill.getLength() - 1);
+    }
+
     public ngOnDestroy(): void {
         this.#quill = null;
         this.mounted.set(false);

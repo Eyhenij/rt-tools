@@ -72,6 +72,11 @@ silent about.
   header; the intake keeps no sign-in of its own.
 - The default "closed" is held not by an agreement but by the check having no branch "nothing is
   declared — let through". Removing that branch would open every new operation outward silently.
+- A new right is added to the closed set in code and nowhere else. The receiver sends the set to
+  Keycloak as client roles at its own start, when the environment names the sync client
+  (`projects/auth-server/src/lib/catalog-sync.ts`); a role line in `deploy/auth/realm/rt.json` adds
+  nothing and makes the branch an edit of the entry module, with its end-to-end suite demanded.
+  Giving the role to a person stays a step by hand.
 
 ## What this is checked by
 

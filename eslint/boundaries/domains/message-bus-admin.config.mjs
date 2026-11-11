@@ -346,6 +346,20 @@ export const messageBusAdminBoundaries = [
         ],
     },
     {
+        sourceTag: 'scope:message-bus-admin-usage-feature-quality',
+        onlyDependOnLibsWithTags: [
+            USAGE_DATA_ACCESS,
+            USAGE_UI,
+            USAGE_UTIL,
+            CORE_FEATURE,
+            CORE_UI,
+            CORE_DATA_ACCESS,
+            CORE_UTIL,
+            CONTRACT,
+            PACKAGE,
+        ],
+    },
+    {
         sourceTag: 'scope:message-bus-admin-usage-feature-sessions-aside',
         onlyDependOnLibsWithTags: [USAGE_DATA_ACCESS, USAGE_UI, USAGE_UTIL, CORE_UTIL, CONTRACT, PACKAGE],
     },
@@ -353,6 +367,7 @@ export const messageBusAdminBoundaries = [
         sourceTag: 'scope:message-bus-admin-usage-shell',
         onlyDependOnLibsWithTags: [
             'scope:message-bus-admin-usage-feature-list',
+            'scope:message-bus-admin-usage-feature-quality',
             'scope:message-bus-admin-usage-feature-sessions-aside',
             USAGE_UTIL,
             CORE_UTIL,

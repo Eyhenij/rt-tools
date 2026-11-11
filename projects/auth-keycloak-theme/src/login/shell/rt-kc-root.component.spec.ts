@@ -6,7 +6,7 @@ import { RtKcRegisterComponent } from '../pages/register/rt-kc-register.componen
 import { RtKcRootComponent } from './rt-kc-root.component';
 
 describe('RtKcRootComponent', () => {
-    it('SC-AUTH-64 — the language list and the theme switch stand inside the card', async () => {
+    it('SC-AUTH-64 — the language list and the theme switch stand beside the card, not inside its glass', async () => {
         const fixture: ComponentFixture<RtKcRootComponent> = await renderKcPage(
             RtKcRootComponent,
             kcContextOf('login.ftl'),
@@ -16,7 +16,9 @@ describe('RtKcRootComponent', () => {
         const card: HTMLElement | null = kcNode(fixture, 'kc-card');
 
         expect(card).not.toBeNull();
-        expect(chrome?.parentElement).toBe(card);
+        expect(chrome).not.toBeNull();
+        expect(chrome?.parentElement).toBe(card?.parentElement);
+        expect(card?.contains(chrome)).toBe(false);
         expect(chrome?.querySelector('rt-theme-toggle')).not.toBeNull();
     });
 

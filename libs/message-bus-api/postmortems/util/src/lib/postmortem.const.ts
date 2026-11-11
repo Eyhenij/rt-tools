@@ -11,3 +11,11 @@
 
 /** Обязательные поля одной записи. */
 export const POSTMORTEM_ITEM_FIELDS: readonly string[] = ['file', 'text'];
+
+/** Вид имени ресурса пакета: `rules/testing.md`. Текста и пути дерева здесь быть не может. */
+const RESOURCE_NAME: RegExp = /^[a-z][a-z0-9-]*\/[a-z0-9][a-z0-9./-]{0,118}$/;
+
+/** Ресурс разбора. Поле необязательное: разбор старого пакета его не несёт, чужая форма читается как его отсутствие. */
+export function postmortemResourceOf(value: unknown): string | null {
+    return typeof value === 'string' && RESOURCE_NAME.test(value) ? value : null;
+}

@@ -39,6 +39,12 @@ export function rtPromptCanSend(text: string, files: number, busy: boolean): boo
     return !busy && (text.trim().length > 0 || files > 0);
 }
 
+/** Ставит фокус в поле, а курсор — за последний символ. */
+export function rtCaretToEnd(node: HTMLTextAreaElement): void {
+    node.focus();
+    node.setSelectionRange(node.value.length, node.value.length);
+}
+
 /**
  * Поле ввода ИИ-чата: одна рамка, текст сверху, ряд действий внутри рамки снизу.
  *
@@ -198,6 +204,16 @@ export class RtAiPromptInputComponent {
     /** Ставит фокус в поле. */
     public focus(): void {
         this.textInput()?.nativeElement.focus();
+    }
+
+    /** Заменяет черновик и ставит курсор в конец: значение пишется в узел сразу, не ждёт отрисовки. */
+    public setDraft(text: string): void {
+        this.text.set(text);
+        const node: HTMLTextAreaElement | undefined = this.textInput()?.nativeElement;
+        if (node) {
+            node.value = text;
+            rtCaretToEnd(node);
+        }
     }
 
     protected onInput(event: Event): void {

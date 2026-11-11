@@ -26,7 +26,26 @@ export interface IRtAuthConfig {
      * it the admin starts with nobody signed in.
      */
     readonly silentCheckTimeoutMs?: number;
+    /**
+     * How long the start waits for the exchange of the code on the return from the entry form, in
+     * milliseconds; by default thirty seconds. Past it the admin starts with nobody signed in.
+     */
+    readonly codeExchangeTimeoutMs?: number;
 }
+
+/**
+ * How long the start waits for the silent check by default. The adapter itself waits for it
+ * without a limit: a Keycloak that is down, or one that refuses the return address, would leave
+ * the admin unstarted for good.
+ */
+export const SILENT_CHECK_TIMEOUT_MS: number = 5000;
+
+/**
+ * How long the start waits for the exchange of the code by default. It is longer than the limit of
+ * the silent check: cut, the exchange sends the person back to the form they have just passed,
+ * while a hung one would leave a blank page.
+ */
+export const CODE_EXCHANGE_TIMEOUT_MS: number = 30_000;
 
 export const RT_AUTH_CONFIG: InjectionToken<IRtAuthConfig> = new InjectionToken<IRtAuthConfig>('RT_AUTH_CONFIG');
 

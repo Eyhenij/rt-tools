@@ -1,0 +1,15 @@
+<div style="box-sizing: border-box; background: var(--rt-color-bg-surface)" [style.block-size.px]="height" [style.inline-size.px]="width">
+    <rt-chat
+        fill
+        messenger
+        hasThread
+        canReply
+        placeholder="Ответ гостю"
+        title="№12 Анна Смирнова"
+        subtitle="WhatsApp · +66 81 234 5678"
+        [messages]="messages()">
+        @if (editing) {
+            <app-chat-edit-bar rtChatComposerBar />
+        }
+    </rt-chat>
+</div>

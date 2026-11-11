@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/tree-assignment-guard.sh · 3be53fe0faeb · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/tree-assignment-guard.sh · bf930d83ffbc · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh, checks/tree-assignment.mjs
 # Guard of the assignment of an epic to a working copy. PreToolUse on a call that takes new work
@@ -21,6 +21,7 @@
 # Its own name in the observations: the refusal is written by the shared deny tail, not by the
 # guard itself.
 RT_GUARD_NAME=tree-assignment-guard
+RT_GUARD_RULE=epic-flow
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

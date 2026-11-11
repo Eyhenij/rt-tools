@@ -147,3 +147,27 @@ Do it in this same turn; the launch may stand anywhere in the turn but last.
 
 The guard judges one turn: the next session is not refused." "the turn ended on a launch in the background."
 }
+
+# The state requirement after the folder is gone. It reads the history of the branch, as the tiers
+# above do, and lives here because the guard reached the file length limit.
+#
+# The same thing, but there is nothing left on disk to declare it with: the task folder is taken
+# apart before the PR opens, and the progress goes away with it. The sign is taken from the branch
+# history — the folder removed by its commit.
+#
+# A turn must not be released by that sign: the folder is removed BEFORE the PR, and between these
+# two movements the work is handed over to nobody. A turn caught in that gap used to leave here
+# with zero — and it was exactly one step short of the handover, and it did not make it. The sign
+# therefore only lifts the state requirement: from there the turn is judged by the second sign,
+# like any other. A turn in which the PR was opened or read passes the second sign by itself — it
+# counts a call of the hosting client as work.
+folder_archived() {
+    [ -n "$branch" ] || return 1
+    [ -n "$(git ls-tree -d --name-only HEAD -- "$tasks_dir/$branch" 2>/dev/null | head -1)" ] && return 1
+    main_branch="${RT_MAIN_BRANCH:-main}"
+    base="$(git merge-base "$main_branch" HEAD 2>/dev/null)"
+    [ -z "$base" ] && return 1
+    had="$(git ls-tree -d --name-only "$base" -- "$tasks_dir/$branch" 2>/dev/null | head -1)"
+    [ -z "$had" ] && had="$(git log "$base..HEAD" --diff-filter=A --name-only --pretty=format: -- "$tasks_dir/$branch" 2>/dev/null | head -1)"
+    [ -n "$had" ]
+}

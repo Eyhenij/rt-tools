@@ -16,6 +16,8 @@ import {
     cargoStateMove,
     cargoStateOf,
     cargoStateWrites,
+    cargoTransitions,
+    ECargoKind,
     ECargoState,
     ECargoStateMove,
     ICargoCloseOutcome,
@@ -36,6 +38,8 @@ import {
 export interface IPostmortemRow {
     readonly file: string;
     readonly text: string;
+    /** Ресурс пакета, о котором разбор. Старые разборы его не несут. */
+    readonly resource?: string | null;
 }
 
 /**
@@ -357,8 +361,8 @@ export async function writePostmortems(prisma: PrismaService, treeId: string, it
 
             return prisma.postmortem.upsert({
                 where: { treeId_file: { treeId, file: item.file } },
-                create: { treeId, file: item.file, text: item.text },
-                update: arrival,
+                create: { treeId, file: item.file, text: item.text, resource: item.resource ?? null },
+                update: { ...arrival, resource: item.resource ?? null },
                 select: { id: true },
             });
         })
@@ -388,9 +392,9 @@ export async function movePostmortemStates(
         return [];
     }
 
-    const rows: { file: string; state: string }[] = await prisma.postmortem.findMany({
+    const rows: { id: string; file: string; state: string }[] = await prisma.postmortem.findMany({
         where: { treeId, file: { in: asked.map((one: ICargoStateAsk): string => one.key) } },
-        select: { file: true, state: true },
+        select: { id: true, file: true, state: true },
     });
     const stored: Map<string, ECargoState> = new Map(
         rows.map((row: { file: string; state: string }): [string, ECargoState] => [row.file, cargoStateOf(row.state)])
@@ -408,15 +412,19 @@ export async function movePostmortemStates(
         .map((one: { ask: ICargoStateAsk }): ICargoStateAsk => one.ask);
 
     if (written.length > 0) {
-        await prisma.$transaction(
-            written.map((ask: ICargoStateAsk) =>
+        const idOf: (key: string) => string | undefined = (key: string): string | undefined =>
+            rows.find((row: { file: string }): boolean => row.file === key)?.id;
+
+        await prisma.$transaction([
+            ...written.map((ask: ICargoStateAsk) =>
                 prisma.postmortem.update({
                     where: { treeId_file: { treeId, file: ask.key } },
                     data: cargoStateData(ask),
                     select: { id: true },
                 })
-            )
-        );
+            ),
+            prisma.recordTransition.createMany({ data: cargoTransitions(ECargoKind.Postmortem, judged, idOf) }),
+        ]);
     }
 
     return judged.map((one: { outcome: ICargoStateOutcome }): ICargoStateOutcome => one.outcome);
@@ -462,11 +470,14 @@ export async function closePostmortems(prisma: PrismaService, asked: readonly IC
         .map((one: { ask: ICargoStateAsk }): ICargoStateAsk => one.ask);
 
     if (written.length > 0) {
-        await prisma.$transaction(
-            written.map((ask: ICargoStateAsk) =>
+        await prisma.$transaction([
+            ...written.map((ask: ICargoStateAsk) =>
                 prisma.postmortem.update({ where: { id: ask.key }, data: cargoCloseData(ask), select: { id: true } })
-            )
-        );
+            ),
+            prisma.recordTransition.createMany({
+                data: cargoTransitions(ECargoKind.Postmortem, judged, (key: string): string => key),
+            }),
+        ]);
     }
 
     return judged.map((one: { outcome: ICargoCloseOutcome }): ICargoCloseOutcome => one.outcome);

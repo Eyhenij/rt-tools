@@ -108,11 +108,41 @@ When it is open
 Then the card background is semi-transparent with a blur behind it, the viewport carries a radial
 gradient, and the dot field canvas is drawn and lies under the card
 
-### SC-AUTH-64 — the language list and the theme switch stand inside the card
+### SC-AUTH-64 — the language list and the theme switch stand beside the card, not inside its glass
 
 Given any theme page
 When it is drawn
-Then the block with the language list and the theme switch is a child of the card
+Then the block with the language list and the theme switch is a sibling of the card in the viewport
+
+### SC-AUTH-102 — every language is named by its own name with a capital letter
+
+Given a realm whose languages Keycloak names in different forms or by the tag alone
+When the language list is built
+Then each language is named in itself with a capital letter, Chinese by its script; a tag the
+browser does not know or cannot read keeps the Keycloak name, and the page still draws
+
+### SC-AUTH-103 — the links between the entry pages carry the language a person chose
+
+Given a page drawn in a language
+When the theme reads the addresses of the sign-in, the registration, the reset and the restart
+Then each of them carries `kc_locale` with that language only when the person chose it in the
+language list; a language that came from the application or the browser leaves the links as they
+are, and the form address stays as it is
+
+### SC-AUTH-99 — a message page at the end of a flow leads back to the application
+
+Given a message page Keycloak draws at the end of a flow without an entry — the address confirmed
+from a letter — and tells to skip the link
+When it is drawn for a client with an address
+Then it shows a button back to the application at that address; a client without an address
+leaves the page without a button, and a page with a next step keeps that step
+
+### SC-AUTH-101 — an address in a page text breaks only at its `@`
+
+Given a page sentence that names the address of the person
+When the page draws it
+Then the address stands as its name with the `@` and its domain, the text around it as it was; a
+sentence that does not name the address stays whole
 
 ### SC-AUTH-65 — a link back is plain text without a chevron
 

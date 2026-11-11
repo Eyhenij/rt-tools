@@ -42,7 +42,7 @@ The terms of the subjects live in the subdomains. What is shared by the domain:
 ### What it is called in the interface
 
 The package has no interface beyond the launch line. The consumer sees `init`, `sync`,
-`sync --check`, `doctor`, `list`, `stats`, `cost`, `propose` and their output. What each of them
+`sync --check`, `doctor`, `list`, `stats`, `metrics`, `cost`, `propose` and their output. What each of them
 does is named by the subdomain it belongs to.
 
 ## Rules
@@ -81,6 +81,7 @@ subdomains are the ones the rule groups had already drawn.
 | [The epic in the delivery guards](delivery-epic/spec.md)                 | the base of a task branch and of its request, the declaration of an epic, the request of the epic |
 | [Conducting work by commands](work/spec.md)                              | creating a task, closing a session, the task folder on the merge                                  |
 | [Observations and cargo outward](observations/spec.md)                   | an observation and a digest, proposals and blocks, the send, the snapshot of overrides            |
+| [The product metrics](metrics/spec.md)                                   | first-pass acceptance, what a tree counts and sends by itself, the loop from a report to an edit  |
 | [The boundary of the package](package-boundary/spec.md)                  | what is carried to a consumer and what stays with the package's own tree, the sign and check      |
 | [The cost of context](context-cost/spec.md)                              | what the weight of the input, of a rule and of the layer is counted by; why on the spot           |
 | [The publish checks](publish-checks/spec.md)                             | imports from neighbours against the published version of the neighbour, the lock after publish    |

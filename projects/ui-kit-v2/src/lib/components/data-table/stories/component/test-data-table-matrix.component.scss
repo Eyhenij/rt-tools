@@ -1,0 +1,10 @@
+@layer rt-kit.components {
+    /* Пояснение под матрицей: почему в колонке глифа видно начало слова, а не значок. Ширина —
+       две ступени по 400px, чтобы строка не тянулась на всю витрину. */
+    .app-data-table-matrix__note {
+        max-width: calc(var(--rt-size-100) * 2);
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-sm);
+        line-height: var(--rt-leading-relaxed);
+    }
+}

@@ -125,6 +125,18 @@ describe('разборы происшествий', () => {
     it('каталога нет вовсе — это не отказ', () => {
         expect(readPostmortems(treeRoot(), 'docs/postmortems')).toEqual([]);
     });
+
+    it('SC-AK-1324 — разбор несёт свой ресурс, старый разбор без него читается как раньше', () => {
+        const carrying: string = '# Разбор\n\n**Resource:** `rules/testing.md`\n\nМеханизм.\n';
+
+        put('docs/postmortems/a.md', carrying);
+        put('docs/postmortems/b.md', '# Разбор\n');
+
+        expect(readPostmortems(treeRoot(), 'docs/postmortems')).toEqual([
+            { file: 'a.md', text: carrying, resource: 'rules/testing.md' },
+            { file: 'b.md', text: '# Разбор\n' },
+        ]);
+    });
 });
 
 describe('propose', () => {

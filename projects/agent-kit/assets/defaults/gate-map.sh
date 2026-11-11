@@ -221,6 +221,12 @@ skill_for_default() {
             rt_gate_invokes "$target" "(gh[[:space:]]+pr|glab[[:space:]]+mr)[[:space:]]+merge" \
                 && printf '%s\n' 'task-flow'
 
+            # Declaring an epic and creating its tasks follow the rule of the epic: the card, the
+            # plan and every task at once. Required as the SECOND layer, on top of the delivery rule.
+            rt_gate_invokes "$target" "[^[:space:]]*task:new" \
+                && printf '%s' "$target" | grep -qE -- '--epic(-of)?([[:space:]=]|$)' \
+                && printf '%s\n' 'epic-flow'
+
             # A request to a running application: what lies here is not the code but what answers on
             # the port. The reply of the previous session's build is indistinguishable from the
             # reply of the live branch. Both signs are needed — the client call AND the address: the

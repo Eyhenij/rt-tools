@@ -107,6 +107,9 @@ export function summaryCargo(
     };
 }
 
+/** Строка разбора с его ресурсом: имя стоит в обратных кавычках или без них. */
+const POSTMORTEM_RESOURCE: RegExp = /^\*\*Resource:\*\*\s+`?([a-z][a-z0-9-]*\/[a-z0-9./-]+)`?\s*$/m;
+
 /**
  * Разборы происшествий, как они лежат на дереве.
  *
@@ -126,7 +129,12 @@ export function readPostmortems(root: string, dir: string): IPostmortemItem[] {
             // промаха, — и в приёме встало бы записью, которой нечего сказать.
             .filter((file: string): boolean => file.endsWith('.md') && file !== 'README.md')
             .sort(byText)
-            .map((file: string): IPostmortemItem => ({ file, text: readFileSync(join(path, file), 'utf8') }))
+            .map((file: string): IPostmortemItem => {
+                const text: string = readFileSync(join(path, file), 'utf8');
+                const resource: string | undefined = POSTMORTEM_RESOURCE.exec(text)?.[1];
+
+                return resource ? { file, text, resource } : { file, text };
+            })
     );
 }
 

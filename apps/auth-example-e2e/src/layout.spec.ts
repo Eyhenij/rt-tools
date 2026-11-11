@@ -50,6 +50,41 @@ test.describe('the account row of the records screen', () => {
     });
 });
 
+test.describe('the correspondence of the records screen', () => {
+    test('SC-AUTH-104 — the ready-reply button puts its text into the reply field', async ({ page }) => {
+        await signIn(page, 'reader');
+        const field: Locator = page.getByTestId('chat-composer-prompt').locator('textarea');
+        const text: string = 'Thank you for writing. We will answer today.';
+        await expect(page.getByTestId('records-chat')).toContainText('Can I check out at two?');
+
+        await page.getByTestId('records-quick-reply').click();
+
+        await expect(field).toHaveValue(text);
+        await expect(field).toBeFocused();
+        expect(await field.evaluate((node: HTMLTextAreaElement): number | null => node.selectionStart)).toBe(text.length);
+        await expect(page.getByTestId('records-chat')).not.toContainText(text);
+    });
+
+    test('SC-AUTH-106 — a scheduled reply shows its label, and the bar repeats the draft above the field', async ({ page }) => {
+        await signIn(page, 'reader');
+        const field: Locator = page.getByTestId('chat-composer-prompt').locator('textarea');
+        const bar: Locator = page.getByTestId('records-draft-preview');
+        await expect(page.getByTestId('chat-message-date').nth(1)).toHaveText('Goes out on 8 November at 10:00');
+        await expect(page.getByTestId('chat-message-date-icon')).toBeVisible();
+        await expect(page.getByTestId('chat-composer-bar')).toBeHidden();
+
+        await field.fill('First draft');
+        await page.getByTestId('records-read-draft').click();
+        await expect(bar).toHaveText('Draft: First draft');
+
+        await field.fill('Second draft');
+        await page.getByTestId('records-read-draft').click();
+        await expect(bar).toHaveText('Draft: Second draft');
+        await expect(field).toHaveValue('Second draft');
+        expect((await boxOf(bar)).y).toBeLessThan((await boxOf(field)).y);
+    });
+});
+
 test.describe('the layout of the entry screen', () => {
     test('SC-AUTH-55 — an error under a field does not move the form', async ({ page }) => {
         await page.goto('/');

@@ -11,6 +11,11 @@ You have neither `Write` nor `Edit`, and you change neither the code nor the tex
 reading and for running the sign of a point: `git log`, `ls`, `grep`, `find`, `gh` reads, the tree's
 read commands and the command a sign names.
 
+A copy a sign needs goes into a directory named after you under the session's scratchpad, and
+nothing is removed — neither by `rm` nor by a cleanup at the end: the scratchpad is shared with the
+session that called you, and a removing command waits in the background for a permission nobody
+answers.
+
 ## The points
 
 - **A** — where the product stands now, by what the tree and the host show today.

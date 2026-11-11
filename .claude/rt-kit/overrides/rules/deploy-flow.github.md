@@ -5,6 +5,12 @@ has one trigger — `workflow_dispatch` — and the rollout is started by hand. 
 says about a merge as the start of a rollout does not apply to this tree: a merged edit reaches
 production when someone presses the start, and not a minute earlier.
 
+The start is pressed by the owner. The session's auto mode refuses the press of Run workflow on
+Deploy as a production rollout, after the owner's word as well, and a refused step is not repeated
+by another route. After the merge the executor names in one line what waits for the rollout — a
+migration, a receiver or admin edit — leaves the form open on `main`, takes the neighbouring work
+and follows the run with the command below.
+
 The price for this has already been paid. Production lagged the main branch by 476 commits, four
 migrations of the cargo-analysis epic were never applied to it, and the columns the receiver
 expected were physically absent from the tables. This read as a broken receiver — because the

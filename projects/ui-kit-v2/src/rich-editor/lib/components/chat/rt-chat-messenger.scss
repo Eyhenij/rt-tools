@@ -1,5 +1,7 @@
 // Вид мессенджера чата: метки дней, ряд кнопок под полем, пузыри мягкие, свой — цвета действия.
 // Лежит отдельно от стилей чата, чтобы оба файла уместились в предел длины.
+@use '../../../../styles/breakpoints' as bp;
+
 @layer rt-kit.components {
     .rt-chat {
         --rt-chat-day-label-radius: var(--rt-radius-full);
@@ -32,19 +34,24 @@
             }
         }
 
-        // Вид мессенджера: пузырь мягкий, свой — цвета действия, пузырь гостя серый на белой ленте,
-        // время и знак доставки справа внизу
+        // Вид мессенджера: пузырь мягкий, свой — цвета действия, пузырь гостя белый с тенью на белой
+        // ленте, время и знак доставки справа внизу
         &--messenger {
             --rt-chat-bubble-radius: var(--rt-radius-xl);
             --rt-chat-bubble-corner-radius: var(--rt-radius-sm);
             --rt-chat-messenger-border-width: var(--rt-border-width-thin);
             --rt-chat-messenger-panel-radius: var(--rt-radius-lg);
             --rt-chat-messenger-actions-shadow: var(--rt-shadow-sm);
+            --rt-chat-bubble-in-shadow: var(--rt-shadow-sm);
             --rt-chat-bubble-own-bg: var(--rt-color-action-primary);
-            --rt-chat-bubble-in-bg: var(--rt-color-bg-subtle);
+            --rt-chat-bubble-in-bg: var(--rt-color-bg-surface);
 
             box-sizing: border-box;
             padding: var(--rt-space-4);
+
+            @include bp.place-max(bp.$rt-bp-md) {
+                padding: calc(var(--rt-space-2) + var(--rt-space-1));
+            }
 
             // Высоту шапке дают имя и строка под ним, плотная полоса панели здесь не нужна
             .rt-chat__header {
@@ -69,12 +76,29 @@
                 > :first-child {
                     margin-block-start: auto;
                 }
+
+                @include bp.place-max(bp.$rt-bp-sm) {
+                    padding-inline: calc(var(--rt-space-2) + var(--rt-space-1));
+                }
+            }
+
+            // Строка занимает всю ленту: кнопки у реплики стоят рядом и не отнимают ширину пузыря
+            .rt-chat__message-row {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .rt-chat__message-row--own {
+                justify-content: flex-end;
             }
 
             .rt-chat__message {
+                max-width: round(min(85%, 320px), 1px);
+                box-sizing: border-box;
                 padding: var(--rt-space-2) calc(var(--rt-space-2) + var(--rt-space-1)) var(--rt-space-1);
                 border-radius: var(--rt-chat-bubble-radius) var(--rt-chat-bubble-radius) var(--rt-chat-bubble-radius)
                     var(--rt-chat-bubble-corner-radius);
+                box-shadow: var(--rt-chat-bubble-in-shadow);
                 gap: var(--rt-space-0-5);
             }
 
@@ -103,22 +127,13 @@
 
             .rt-chat__message-text {
                 font-size: var(--rt-text-sm);
-                line-height: round(1em * var(--rt-leading-tight), 1px);
+                line-height: round(1em * var(--rt-leading-snug), 1px);
             }
 
             .rt-chat__message--own .rt-chat__message-text,
             .rt-chat__message--own .rt-chat__message-date,
             .rt-chat__message--own .rt-chat__message-status {
                 color: var(--rt-color-action-on-primary);
-            }
-
-            // На своём пузыре время и галочки тише текста: время прозрачнее, галочки чуть плотнее
-            .rt-chat__message--own .rt-chat__message-date {
-                opacity: 0.75;
-            }
-
-            .rt-chat__message--own .rt-chat__message-status {
-                opacity: 0.85;
             }
 
             .rt-chat__message-footer {
@@ -143,7 +158,6 @@
 
             .rt-chat__message-date {
                 font-size: var(--rt-text-2xs);
-                line-height: round(1em * var(--rt-leading-tight), 1px);
             }
 
             .rt-chat__message-author {

@@ -14,11 +14,14 @@
  * Прогон стирает базу целиком перед засевом.
  */
 import { spawn } from 'node:child_process';
+import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 import { seedPeople } from './seed-account.mjs';
 import { seedChat } from './seed-chat.mjs';
 import { seedObservations } from './seed-observations.mjs';
+import { BLANK_POSTMORTEM, MARKUP_POSTMORTEM } from './seed-postmortems.mjs';
+import { seedQuality, seedQualityRepeat } from './seed-quality.mjs';
 import { checkNothingDrifts } from './seed-self-check.mjs';
 import {
     API_ORIGIN,
@@ -28,6 +31,7 @@ import {
     STAND_AUTH_ENV,
     STAND_DATABASE,
     STAND_DATABASE_URL,
+    STAND_TREE_TOKEN_FILE,
     TREES,
 } from './stand.mjs';
 
@@ -41,65 +45,6 @@ const POSTMORTEMS_ONE = 23;
 
 /** Сколько разборов у второго дерева. */
 const POSTMORTEMS_TWO = 5;
-
-/**
- * Разбор, несущий всю разметку, которую панель обязана показать узлами.
- *
- * Собран так, чтобы каждый пункт перечня разметки был на нём виден: заголовок, три строки
- * подряд, таблица, список, блок кода с названным языком и две ссылки — наружу и чужой схемы.
- * Рядом с ними лежит сырой HTML: строка скрипта и парный тег начертания. Разбирать их
- * разборщику нечем, и показаны они обязаны быть видимым текстом — исполниться не должно ничто.
- *
- * Строка внутри блока кода нарочно длиннее панели: ею проверяется, что вбок прокручивается сам
- * блок, а панель держит свою ширину.
- */
-const MARKUP_POSTMORTEM = Object.freeze({
-    file: 'markup-case.md',
-    text: [
-        '# Разбор с разметкой',
-        '',
-        'Случай заведён засевом стенда: он проверяет показ разметки, а не описывает происшествие.',
-        'Эта строка идёт сразу за предыдущей, без пустой строки между ними.',
-        'И эта — тоже: три строки обязаны показаться тремя, а не склеиться в одну.',
-        '',
-        '## Что приехало сырым HTML',
-        '',
-        '<script>window.__standScriptRan = true;</script>',
-        '',
-        '<b>жирным это не становится</b>',
-        '',
-        '## Таблица разбора',
-        '',
-        '| Признак | Значение      |',
-        '| ------- | ------------- |',
-        '| Дерево  | Стенд первый  |',
-        '| Род     | Случай набора |',
-        '',
-        '## Что делать',
-        '',
-        '- прочитать журнал задания',
-        '- назвать причину словами',
-        '- завести задачу на починку',
-        '',
-        '```ts',
-        "const stand = { markup: true, note: 'строка кода нарочно длиннее панели, чтобы вбок прокручивался сам блок, а панель держала свою ширину' };",
-        '```',
-        '',
-        'Наружу ведёт [страница набора](https://example.org/stand), а [этот адрес](javascript:alert) ссылкой не становится.',
-    ].join('\n'),
-});
-
-/**
- * Разбор, у которого текст — одни пробелы.
- *
- * Приём такой текст берёт: обязательные поля он проверяет на наличие, а не на содержимое. Панель
- * при этом обязана не рисовать раздела про текст вовсе — пустой раздел с заголовком читался бы
- * как потерянное содержимое.
- *
- * Лежит он у второго дерева: там записи помещаются на одну страницу, и спека находит его
- * отбором, а не проходом по страницам.
- */
-const BLANK_POSTMORTEM = Object.freeze({ file: 'stand-second-blank.md', text: '   \n  \n' });
 
 /** Запуск команды с ожиданием её конца. Возвращает вывод целиком. */
 function run(command, args, { env = {}, input = null } = {}) {
@@ -161,7 +106,7 @@ async function database() {
 /** Вычистка: набор начинает с пустого хранилища, чтобы числа на экране не зависели от прошлых прогонов. */
 async function wipe() {
     await sql(
-        'TRUNCATE TABLE "postmortem", "proposal", "month_record", "tree_invite", "tree_token", "tree", "chat_space", "chat_message", "chat_conversation", "chat_visitor", "chat_site", "chat_operator" CASCADE;'
+        'TRUNCATE TABLE "record_transition", "postmortem", "proposal", "month_record", "tree_invite", "tree_token", "tree", "chat_space", "chat_message", "chat_conversation", "chat_visitor", "chat_site", "chat_operator" CASCADE;'
     );
 }
 
@@ -478,14 +423,17 @@ export async function seed() {
     const operator = await seedPeople();
     await seedChat(sql, operator);
     const tokens = await trees();
+    writeFileSync(STAND_TREE_TOKEN_FILE, tokens.get(TREES[0].slug));
     await postmortems(tokens);
     await proposals(tokens);
     await summaries(tokens);
     await seedObservations(intake, tokens);
+    await seedQuality(intake, tokens);
     await invites();
     await keys();
     await moments();
     await states();
+    await seedQualityRepeat(sql);
     await checkNothingDrifts(sql);
 }
 

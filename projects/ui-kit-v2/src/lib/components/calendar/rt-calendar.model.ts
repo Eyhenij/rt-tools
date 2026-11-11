@@ -38,11 +38,24 @@ export namespace IRtCalendar {
         day: Day;
     }
 
-    /** View-модель месяца: подпись, пустые ячейки до первого дня, дни. */
+    /** День соседнего месяца в начале или в конце сетки: бледный, не нажимается. */
+    export interface OutsideDay {
+        key: string;
+        dayOfMonth: number;
+        /** День за границей выбора — ещё и зачёркнут. */
+        crossed: boolean;
+    }
+
+    /**
+     * View-модель месяца: подпись, пустые ячейки до первого дня, дни. Дни соседних месяцев
+     * необязательны: заданы — встают на место пустых ячеек и дописывают последнюю неделю.
+     */
     export interface Month {
         key: string;
         label: string;
         leadingBlanks: readonly number[];
         days: readonly Day[];
+        leadingDays?: readonly OutsideDay[];
+        trailingDays?: readonly OutsideDay[];
     }
 }

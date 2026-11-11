@@ -114,3 +114,15 @@ When the executor creates the branch of that work
 Then the guard refuses: the question is written by the executor
 
 Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
+
+### SC-AK-1334 — a task being created is released by the latest answer to a menu
+
+Given the epic is over, and the call creates a task that has no number yet
+When the guard looks for the word of the owner
+Then the latest answer of the owner to a menu releases the call when it agrees to a task — a word
+of a task, of creating it, or a plain «yes» — and is not a refusal such as «not now» or «later»; an
+answer to an unrelated question, or a message of the owner after the answer, leaves the call refused.
+A new epic needs the word of an epic in the answer, and a branch or a column move still needs its
+number
+
+Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.

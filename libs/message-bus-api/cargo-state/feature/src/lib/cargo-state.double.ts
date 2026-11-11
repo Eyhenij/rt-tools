@@ -30,6 +30,17 @@ export interface IStored {
 export class PrismaDouble {
     public readonly postmortems: IStored[] = [];
     public readonly proposals: IStored[] = [];
+    public readonly transitions: unknown[] = [];
+
+    public get recordTransition(): Record<string, (args: { data: unknown[] }) => Promise<{ count: number }>> {
+        return {
+            createMany: async (args: { data: unknown[] }): Promise<{ count: number }> => {
+                this.transitions.push(...args.data);
+
+                return { count: args.data.length };
+            },
+        };
+    }
 
     public get postmortem(): Record<string, (args: Record<string, unknown>) => Promise<unknown>> {
         return this.#tableOf(this.postmortems, 'file');
@@ -58,7 +69,7 @@ export class PrismaDouble {
 
                 return rows
                     .filter((row: IStored): boolean => row.treeId === where['treeId'] && asked.includes(row.key))
-                    .map((row: IStored): Record<string, string> => ({ [keyField]: row.key, state: row.state }));
+                    .map((row: IStored): Record<string, string> => ({ id: `id-${row.key}`, [keyField]: row.key, state: row.state }));
             },
             update: async (args: Record<string, unknown>): Promise<{ id: string }> => {
                 const key: Record<string, string> = Object.values(args['where'] as Record<string, unknown>)[0] as Record<string, string>;

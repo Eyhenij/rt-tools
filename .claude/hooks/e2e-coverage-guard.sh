@@ -15,6 +15,11 @@
 #   auth, kit2      — the suite `apps/auth-example-e2e/`;
 #   receiver, kit2  — the suite `apps/message-bus-admin-e2e/`.
 #
+# For `kit2` the profile function `rt_kit2_reaches` narrows this: a suite is demanded only when the
+# change touches a kit component its application draws, directly or inside another one, or a kit
+# file outside the components. The showcase, the snapshot references, the specs and the texts of
+# the kit reach no application.
+#
 # The subject «everything» demands nothing: a root setting or the build harness acts on every
 # subject, and no single suite can be named for it.
 #
@@ -109,8 +114,20 @@ need_suite() {
     printf '%s\n' "$changed" | grep -qE "^$1.*\\.spec\\.ts\$" && return 0
     missing="${missing}${missing:+, }$1"
 }
-case " $touched " in *' auth '* | *' kit2 '*) need_suite 'apps/auth-example-e2e/' ;; esac
-case " $touched " in *' receiver '* | *' kit2 '*) need_suite 'apps/message-bus-admin-e2e/' ;; esac
+# A second-kit change demands the suite of an application only when it reaches what that application
+# draws. Without the profile function every kit change demands every suite, as before.
+kit2_reaches() {
+    command -v rt_kit2_reaches >/dev/null 2>&1 || return 0
+    (cd "$root" && rt_kit2_reaches "$changed" "$@")
+}
+case " $touched " in
+    *' auth '*) need_suite 'apps/auth-example-e2e/' ;;
+    *' kit2 '*) kit2_reaches apps/auth-example projects/auth-* && need_suite 'apps/auth-example-e2e/' ;;
+esac
+case " $touched " in
+    *' receiver '*) need_suite 'apps/message-bus-admin-e2e/' ;;
+    *' kit2 '*) kit2_reaches apps/message-bus-admin libs/message-bus-admin && need_suite 'apps/message-bus-admin-e2e/' ;;
+esac
 [ -z "$missing" ] && exit 0
 
 # The bypass counts only in a commit that changes code itself.

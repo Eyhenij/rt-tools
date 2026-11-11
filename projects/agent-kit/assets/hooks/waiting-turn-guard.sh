@@ -34,6 +34,7 @@
 
 # Its own name in observations: the refusal is written by the shared deny tail, not by the guard.
 RT_GUARD_NAME=waiting-turn-guard
+RT_GUARD_RULE=turn-conduct
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true

@@ -1,0 +1,28 @@
+<ng-container rtBlock="admin-quality">
+    @if (view(); as shown) {
+        @if (tilesShown()) {
+            <div rtElem="tiles" qa-dataid="quality-tiles" [rtMod]="{ reading: reading() }">
+                @for (tile of shown.tiles; track tile.key) {
+                    <rt-stat-tile
+                        [attr.qa-dataid]="'quality-tile-' + tile.key"
+                        [hint]="tile.hint"
+                        [label]="tile.label"
+                        [secondary]="tile.secondary"
+                        [value]="tile.value" />
+                }
+            </div>
+        }
+
+        <p rtElem="completeness" qa-dataid="quality-completeness">{{ shown.completeness }}</p>
+
+        @for (fault of shown.faults; track fault.tree) {
+            <p rtElem="fault" qa-dataid="quality-send-fault">{{ fault.tree }}: {{ fault.text }}</p>
+        }
+    } @else {
+        <div rtElem="tiles" qa-dataid="quality-reading">
+            @for (placeholder of placeholders; track placeholder) {
+                <rt-skeleton height="120px" />
+            }
+        </div>
+    }
+</ng-container>

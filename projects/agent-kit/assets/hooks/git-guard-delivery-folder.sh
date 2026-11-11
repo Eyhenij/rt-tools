@@ -71,10 +71,21 @@ rt_delivery_open_folder() {
     _base="$(git merge-base "$main_branch" HEAD 2>/dev/null)"
     [ -z "$_base" ] && return 0
 
-    # SC-AK-1249: the draft the plan named, still lying in the branch, would reach main unmerged.
-    _draft="$(rt_branch_plan_draft "$_folder" "$_base")"
-    [ -n "$_draft" ] && [ -n "$(git ls-tree -d --name-only HEAD -- "${_draft%/}" 2>/dev/null)" ] \
-        && fault "the branch carries the unmerged agreement «${_draft}» its plan named — merge its rules and scenarios into the domain spec, remove the directory by a commit and repeat. If the work is merged in parts, put the comment «# Task-folder-skip: <reason>» into the command."
+    # SC-AK-1249: a draft a plan of the branch named, still lying in the branch, would reach main
+    # unmerged. SC-AK-1296: a request into an epic or into a lower branch does not reach main, and
+    # the draft of an epic lives until its last task. The request of the epic is judged by the plans
+    # of all its tasks.
+    _into="$(rt_delivery_open_base)"
+    if [ "${_into:-$main_branch}" = "$main_branch" ]; then
+        while IFS= read -r _plan; do
+            [ -n "$_plan" ] || continue
+            _draft="$(rt_branch_plan_draft "${_plan%/plan.md}" "$_base")"
+            [ -n "$_draft" ] && [ -n "$(git ls-tree -d --name-only HEAD -- "${_draft%/}" 2>/dev/null)" ] \
+                && fault "the branch carries the unmerged agreement «${_draft}» its plan named — merge its rules and scenarios into the domain spec, remove the directory by a commit and repeat. If the work is merged in parts, put the comment «# Task-folder-skip: <reason>» into the command."
+        done <<EOF
+$(git log --format= --name-only "$_base..HEAD" -- "$tasks_dir/*/plan.md" 2>/dev/null | sort -u)
+EOF
+    fi
 
     [ -n "$archive_dir" ] || return 0
     rt_folder_was_in_branch "$_base" "$_folder" || return 0
@@ -82,6 +93,16 @@ rt_delivery_open_folder() {
     _gained="$(git diff --name-only --diff-filter=A "$_base" HEAD -- "$archive_dir" 2>/dev/null | head -1)"
     [ -z "$_gained" ] \
         && fault "the task folder was deleted, but the branch added nothing to «${archive_dir}». Deleting is cheaper than taking apart — and together with the folder the analysis of the request is gone, the only record of the words of the owner. Move what explains the decisions taken as one file with a telling name and repeat."
+}
+
+# The base the opening command names. Absent — the host takes the default branch: an empty answer.
+rt_delivery_open_base() {
+    command -v perl >/dev/null 2>&1 || return 0
+    printf '%s' "$cmd" | perl -0ne '
+        if (/(?:^|\s)(?:--base|-B)(?:=|\s+)(?:"((?:[^"\\]|\\.)*)"|\x27([^\x27]*)\x27|(\S+))/s) {
+            print defined $1 ? $1 : (defined $2 ? $2 : $3);
+        }
+    ' 2>/dev/null
 }
 
 # The draft agreement the plan of the branch named by the line `**Draft:** \`path\``. The plan is

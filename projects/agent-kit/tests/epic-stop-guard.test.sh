@@ -170,6 +170,36 @@ stop_word "SC-AK-1207 — номер только в вопросе меню н�
 stop_word "SC-AK-1207 — результат команды с номером не пропускает" 'git checkout -b RT-1999-probe main' \
     "$(turn "$(said 'что дальше')" "$(answered 'issue RT-1999 answered by the bot')")" deny
 
+# --- SC-AK-1334 — у создаваемой задачи номера нет, её пускает последний ответ меню ----------
+# Ответ «Одна задача на четыре находки» номера не называл, и заведение задачи стояло под отказом.
+NEW_TASK='npm run task:new -- --title "Находки после выпуска" --label documentation'
+stop_word "SC-AK-1334 — ответ меню пускает заведение задачи" "$NEW_TASK" \
+    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Как завести находки?"="Одна задача на все находки (Recommended)"')")" PASS
+stop_word "SC-AK-1334 — второй вид ответа меню тоже пускает" "$NEW_TASK" \
+    "$(turn "$(said 'что дальше')" "$(answered 'Your questions have been answered: "Заводить?"="Заводи". You can now continue with these answers in mind.')")" PASS
+stop_word "SC-AK-1334 — отказ в меню не пускает" "$NEW_TASK" \
+    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Заводить задачу?"="Нет, подожди"')")" deny
+stop_word "SC-AK-1334 — сообщение владельца после ответа меню не пускает" "$NEW_TASK" \
+    "$(turn "$(answered 'The user answered: "Заводить задачу?"="Заводи (Recommended)"')" "$(said 'стоп, сначала отчёт')")" deny
+stop_word "SC-AK-1334 — «пока ничего» в меню не пускает" "$NEW_TASK" \
+    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Как завести находки?"="Пока ничего"')")" deny
+stop_word "SC-AK-1334 — «позже» в меню не пускает" "$NEW_TASK" \
+    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Заводить задачу?"="Позже, задачу заведём завтра"')")" deny
+stop_word "SC-AK-1334 — ответ на посторонний вопрос не пускает" "$NEW_TASK" \
+    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Какой цвет у кнопки?"="Синий (Recommended)"')")" deny
+stop_word "SC-AK-1334 — прямое «да» пускает" "$NEW_TASK" \
+    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Заводить?"="Да"')")" PASS
+stop_word "SC-AK-1334 — ответ о задаче эпик не объявляет" \
+    "npm run task:new -- --epic --title 'Возможность' --slug x" \
+    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Как завести находки?"="Одна задача на все находки (Recommended)"')")" deny
+stop_word "SC-AK-1334 — ответ об эпике эпик объявляет" \
+    "npm run task:new -- --epic --title 'Возможность' --slug x" \
+    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Как вести работу?"="Новый эпик (Recommended)"')")" PASS
+stop_word "SC-AK-1334 — без ответа меню заведение отбито" "$NEW_TASK" \
+    "$(turn "$(said 'продолжай')")" deny
+stop_word "SC-AK-1334 — ответ меню без номера ветку не пускает" 'git checkout -b RT-1999-probe main' \
+    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Как завести находки?"="Одна задача на все находки (Recommended)"')")" deny
+
 rm -rf "$TURNS"
 
 rm -rf "$STOP_TREE"

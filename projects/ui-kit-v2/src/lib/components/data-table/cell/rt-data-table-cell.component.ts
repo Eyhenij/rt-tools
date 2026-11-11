@@ -122,8 +122,27 @@ export class RtDataTableCellComponent<T = Record<string, unknown>> {
         return icon && !this.kitIcon() ? icon.glyph : null;
     });
 
-    /** Залитый глиф — как залитый значок набора: контурным его делает `outlined` колонки. */
-    protected readonly glyphMods: Signal<Record<string, boolean>> = computed(() => ({ filled: this.icon()?.outlined !== true }));
+    /**
+     * Размер значка из описания колонки; без него 24px, как было. Описание колонки приходит и из
+     * сохранённых настроек, мимо типов: размер не из списка тоже даёт 24px, иначе значок набора
+     * взял бы свою ступень, а глиф остался бы прежним.
+     */
+    protected readonly iconSize: Signal<IRtDataTable.IconSize> = computed(() => {
+        const size: unknown = this.icon()?.size;
+
+        return size === 'sm' || size === 'md' ? size : 'lg';
+    });
+
+    /**
+     * Залитый глиф — как залитый значок набора: контурным его делает `outlined` колонки. Размер
+     * глифа идёт той же ступенью, что значок набора; 24px задаёт сам элемент, и для `lg` своего
+     * признака нет.
+     */
+    protected readonly glyphMods: Signal<Record<string, boolean>> = computed(() => ({
+        filled: this.icon()?.outlined !== true,
+        sm: this.iconSize() === 'sm',
+        md: this.iconSize() === 'md',
+    }));
 
     protected readonly iconContext: Signal<IRtDataTableIconContext<T> | null> = computed(() => {
         const icon: IRtDataTable.Icon | null = this.icon();

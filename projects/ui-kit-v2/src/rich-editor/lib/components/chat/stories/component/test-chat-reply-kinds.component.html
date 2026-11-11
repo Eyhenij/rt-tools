@@ -1,0 +1,18 @@
+<div
+    style="
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        padding: 1rem;
+        background: var(--rt-color-bg-surface);
+    ">
+    @for (kind of kinds; track kind.title) {
+        <div style="display: grid; gap: 0.5rem; grid-template-rows: auto 28rem auto; min-inline-size: 0">
+            <strong>{{ kind.title }}</strong>
+            <rt-chat fill hasThread canReply [messenger]="kind.messenger" [richComposer]="kind.rich" [messages]="messages">
+                <app-chat-edit-bar rtChatComposerBar />
+            </rt-chat>
+            <span qa-dataid="story-draft-text">draftText(): {{ drafts()[$index] }}</span>
+        </div>
+    }
+</div>

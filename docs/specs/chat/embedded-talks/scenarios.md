@@ -41,6 +41,11 @@ Under a live sign the page draws the list of the talks of its site, the feed of 
 the box of the answer. An answer sent from the page arrives into the feed as a remark of the
 operator.
 
+### SC-CH-117 — an own answer brings the feed to its end
+
+The person scrolled up to read the history of a long feed and sends an answer. The feed goes to its
+end, and the answer stands in view.
+
 ### SC-CH-90 — a talk is closed from the embedded page
 
 The person of the consumer closes a talk. The row of the list changes its state, and the visitor of
