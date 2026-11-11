@@ -322,11 +322,8 @@ rt_push_touched() {
             # The check of the auth stand is the script of a heavy step and goes before the rest of
             # the checks.
             tools/auth-stand-check.mjs) _add auth ;;
-            docs/*|*.md|.claude/*|projects/agent-kit/*|tools/*) ;;
-            # A code graph is data read by the session, and nothing builds from it. It stands above
-            # the subjects: a rebuilt project graph lies inside the project directory, and the
-            # case of that directory would raise its heavy step for a graph alone.
-            graphify-out/*|*/graphify-out/*) ;;
+            # A code graph is data the session reads; above the subjects, as it lies inside a project.
+            docs/*|*.md|.claude/*|projects/agent-kit/*|tools/*|graphify-out/*|*/graphify-out/*) ;;
             # The kits — each with a showcase of its own.
             projects/ui-kit/*) _add kit1 ;;
             projects/ui-kit-v2/*) _add kit2 ;;

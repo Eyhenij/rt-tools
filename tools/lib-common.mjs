@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/lib-common.mjs · 6c6cbad86adc · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/lib-common.mjs · d246694e7671 · правится надстройкой, не здесь
 /**
  * Common to every subject of the lib layout audit: the layer set of each domain form, reading the
  * tree, the list of accepted debts and how a lib path yields its name, tag and alias.
@@ -52,7 +52,8 @@ const report = (path, message) => problems.push(`${path}: ${message}`);
 
 const readJson = (path) => JSON.parse(readFileSync(join(ROOT, path), 'utf8'));
 const isDir = (path) => existsSync(join(ROOT, path)) && statSync(join(ROOT, path)).isDirectory();
-const IGNORED_DIRS = ['src', 'node_modules'];
+/** The sources of a lib and everything the tree never walks into. */
+const IGNORED_DIRS = ['src', ...CONFIG.skippedDirs];
 const dirsIn = (path) =>
     isDir(path)
         ? readdirSync(join(ROOT, path), { withFileTypes: true })
