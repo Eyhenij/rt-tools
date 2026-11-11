@@ -60,10 +60,77 @@ Role rules-reviewer, 11.11.2026 (decisions pending):
   «PR refused while the branch carries its folder» belongs to `task-flow` (drop from
   `git-workflow.github`, fix the three flows).
 
+Decisions:
+
+| Finding            | Closed by                                                                                       |
+| ------------------ | ----------------------------------------------------------------------------------------------- |
+| D2, pairs          | c2feb92a2 — flows take the folder apart before the PR; the refusal article stays in `task-flow` |
+| D3, D10, D12       | 18dc62744 — checks text, build in item 6, six body sections                                     |
+| D4, D5             | 21d868e16 — the lag counts from the last successful rollout; a stopped database refuses         |
+| D7, G4             | e37948b38 — an empty run has two meanings; the rollback goes in two releases                    |
+| D8, D9             | 938baeec6 — the base, not main; merge without rebase; the conflict line names the base          |
+| D11, D13, D14, D15 | e48d9a8c5 — conditional rollout, Azure title, the tree's rollout pipeline, scopes               |
+| D16                | 65d93221d — `origin/<база>...HEAD`, item number fixed                                           |
+| G2                 | 76b97b6c4 — four move rows in `queue-audit-read`                                                |
+| D1, D6, G1, G3, G5 | RT-3219 — the GitLab and Azure variants lack whole articles; no room in this task               |
+
 ## Decisions along the way
+
+- GitLab and Azure gaps go to RT-3219: they add articles to two rules each, and the family review
+  only aligns what already stands.
 
 ## Sessions
 
 ### 2026-11-11
 
 - Folder, plan; baseline: 43 articles of the family held by memory, 23 pairs of repeats.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/eyhenij/WebstormProjects/rt-role-exit
+**Branch:** RT-3194-rev-delivery
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 1 of 3 — Findings
+- **Next step:** the binding comparison, then the rest of the findings
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-3194-rev-delivery/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M docs/plans/agent-kit-revision.md
+```
+
+### Commits over the main branch
+
+```
+76b97b6c4 docs(rt:agent-kit): чтение сверки очереди называет ход на каждую её строку
+e37948b38 docs(rt:agent-kit): пустой прогон и откат миграции описаны без противоречий
+e48d9a8c5 docs(rt:agent-kit): общие паттерны поставки не несут имён одного дерева и одного хостинга
+938baeec6 fix(rt:agent-kit): ветка задачи сверяется со своей базой, а не с main
+21d868e16 docs(rt:agent-kit): выкатка и миграции говорят об одном и том же одинаково
+18dc62744 docs(rt:agent-kit): список перед PR не спорит с правилом о сборке и прогоне
+c2feb92a2 docs(rt:agent-kit): схемы поставки разбирают папку задачи до PR, повторы с task-flow убраны
+13ca73ae9 Merge branch 'RT-3193-rev-work-conduct' into RT-3194-rev-delivery
+e6096933b docs(rt:agent-kit): две статьи закона о ведении работы приведены к правилам
+65d93221d docs(rt:agent-kit): список перед PR сверяет ветку с её базой, а не с main
+0f6687b98 docs(rt:agent-kit): папка задачи RT-3194
+858d5cc31 fix(rt:agent-kit): хвосты ревизии семьи о ведении работы, найденные ролями
+28f553085 docs(rt:agent-kit): у состояния «влито» есть раздел в паттерне, который его ведёт
+4b602b083 chore(rt:agent-kit): графы кода и граф правил пересобраны на голове ветки
+4b1232615 docs(rt:agent-kit): папка задачи RT-3193 разобрана в архив
+3f1406cb2 docs(rt:agent-kit): тексты семьи закона о ведении работы сверены между собой и с кодом
+32cba00f5 docs(rt:agent-kit): паттерны task-flow без повторов, свежесть графа в истории
+bac1536c0 docs(rt:agent-kit): правило task-flow называет конвейер feature.js
+492d43cc4 docs(rt:agent-kit): папка задачи RT-3193
+b8876cdb9 [RT-3192] Связи между текстами пакета правил собраны в граф с отчётом для ревизии (#3213)
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.
