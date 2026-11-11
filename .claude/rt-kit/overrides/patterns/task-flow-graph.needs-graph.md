@@ -12,8 +12,10 @@ graphify explain "<node>" --graph projects/ui-kit-v2/graphify-out/graph.json
 In a project graph `source_file` is counted from the project directory, not from the root:
 `src/lib/const/dash.const.ts` in the graph of `projects/utils`.
 
-All graphs are built by one command, not by `graphify update .`: it walks every directory and
-stamps the head on a graph whose topology did not change. Named directories are built alone.
+All graphs are built by one command, not by `graphify update .`: it walks every directory, cuts the
+path of the copy out of the node ids and stamps the head on every graph. A graph built by bare
+`graphify update` keeps that path and merges with the graph on disk into duplicates. Named
+directories are built alone.
 
 ```bash
 npm run graph:build

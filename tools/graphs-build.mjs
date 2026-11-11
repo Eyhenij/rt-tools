@@ -17,8 +17,8 @@
  * the named directories.
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { existsSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { basename, join, resolve } from 'node:path';
 
 const ROOT = process.cwd();
 const PROJECT_PARENTS = ['projects', 'apps', 'libs'];
@@ -48,21 +48,35 @@ function absoluteSlug(target) {
         .replace(/^_+/, '')}_`;
 }
 
+/**
+ * The prefix graphify puts before the ids of the members of a file lying straight in the graphed
+ * directory: the name of that directory. For a project it is the project name and the same in any
+ * copy; for the root it is the name of the copy itself, so the root graph gets a constant one.
+ */
+function rootPrefix() {
+    return `"${basename(ROOT)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '_')}_`;
+}
+
 /** Makes the graph a function of the head alone: ids without the copy path, the head stamped. */
 function settle(target) {
     const file = join(ROOT, target, 'graphify-out', 'graph.json');
     const head = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).stdout.trim();
-    const text = readFileSync(file, 'utf8');
-    writeFileSync(
-        file,
-        text
-            .split(`"${absoluteSlug(target)}`)
-            .join('"')
-            .replace(/"built_at_commit": "[0-9a-f]*"/, `"built_at_commit": "${head}"`)
-    );
+    let text = readFileSync(file, 'utf8')
+        .split(`"${absoluteSlug(target)}`)
+        .join('"');
+    if (resolve(ROOT, target) === ROOT) {
+        text = text.split(rootPrefix()).join('"root_');
+    }
+    writeFileSync(file, text.replace(/"built_at_commit": "[0-9a-f]*"/, `"built_at_commit": "${head}"`));
 }
 
 function build(target) {
+    // `graphify update` merges what it extracts into the graph on disk. That graph has settled ids,
+    // the fresh extraction has the copy ones, and the merge keeps both: every shell node twice. The
+    // extraction cache stays, so the graph is put together anew without reading the code again.
+    rmSync(join(ROOT, target, 'graphify-out', 'graph.json'), { force: true });
     const started = Date.now();
     const run = spawnSync('graphify', ['update', target, '--force'], { cwd: ROOT, encoding: 'utf8' });
     const seconds = ((Date.now() - started) / 1000).toFixed(1);
@@ -70,17 +84,7 @@ function build(target) {
         console.error(`graphs-build: graphify is not installed — ${run.error.message}`);
         process.exit(1);
     }
-    const said = `${run.stdout}${run.stderr}`;
-    // graphify leaves a graph whose topology did not change untouched, and its `built_at_commit`
-    // then names an older head. The graph is proven equal to this head, so the field is moved to
-    // it: otherwise the freshness check reads a stale commit and asks for a rebuild that changes
-    // nothing.
-    if (run.status === 0 && /No code-graph topology changes/.test(said)) {
-        settle(target);
-        console.log(`= ${target}: unchanged, stamped with the head in ${seconds}s`);
-        return true;
-    }
-    const rebuilt = /Rebuilt: ([^\n]+)/.exec(said);
+    const rebuilt = /Rebuilt: ([^\n]+)/.exec(`${run.stdout}${run.stderr}`);
     if (run.status !== 0 || !rebuilt) {
         console.error(`graphs-build: ${target} failed in ${seconds}s\n${run.stdout}${run.stderr}`);
         return false;

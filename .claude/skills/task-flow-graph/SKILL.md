@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when the tree holds a code graph and a domain is explored or a shared symbol is about to be edited. Not for a claim about behaviour, a number or a rule text — those are read from the code and the documents.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-graph.needs-graph.md · 4eb83fd4e401 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-graph.needs-graph.md · 0a6718aa4445 · правится надстройкой, не здесь -->
 
 # Working with the tree's code graph
 
@@ -108,8 +108,10 @@ graphify explain "<node>" --graph projects/ui-kit-v2/graphify-out/graph.json
 In a project graph `source_file` is counted from the project directory, not from the root:
 `src/lib/const/dash.const.ts` in the graph of `projects/utils`.
 
-All graphs are built by one command, not by `graphify update .`: it walks every directory and
-stamps the head on a graph whose topology did not change. Named directories are built alone.
+All graphs are built by one command, not by `graphify update .`: it walks every directory, cuts the
+path of the copy out of the node ids and stamps the head on every graph. A graph built by bare
+`graphify update` keeps that path and merges with the graph on disk into duplicates. Named
+directories are built alone.
 
 ```bash
 npm run graph:build
