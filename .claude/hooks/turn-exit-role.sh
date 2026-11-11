@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.33.1 · hooks/turn-exit-role.sh · a29644a324c1 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/turn-exit-role.sh · a29644a324c1 · правится надстройкой, не здесь
 # The role a session runs as, for the turn-exit guard. NOT a guard: it has no `rt-hook:` declaration
 # and hooks into no agent event. The guard sources it right after the root of the tree is known.
 #
