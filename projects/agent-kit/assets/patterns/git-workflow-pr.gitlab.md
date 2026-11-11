@@ -228,8 +228,8 @@ know.
    the domain spec and an edit of its behaviour — that stays with the author.
 5. **Text and layout checks are green** — those the tree created in `tools/`. Which ones exist
    here — the rule's `implementation.md`.
-6. **All applications of the tree build** — `nx build` for each. The push gate does not run the
-   build.
+6. **All applications of the tree build** — `nx build` for each; the push gate runs the build of
+   what the branch touched, and an application nothing touched is built here.
 7. **Visible text is entered in all translation locales** — by the dictionary completeness test,
    if the tree is translated.
 8. **A layout edit is confirmed by a measurement**, not by a look, and captured on a narrow

@@ -103,7 +103,7 @@ and the request to merge goes in the turn that opened it.
 ## The link to the task and the body
 
 The `Closes #<номер>` line, the reviewer, the assignee and the labels set by the opening call,
-the four sections of the body and how the task closes when the base is not the main branch —
+the six sections of the body and how the task closes when the base is not the main branch —
 pattern `git-workflow-pr-body`. The pattern was split out of this one by the length limit.
 
 ## The PR state is read, not guessed
@@ -212,9 +212,9 @@ remarks read at the start: a remark left without one is a remark the person chec
 
 ## What is checked before the PR is published
 
-There are no checks on the PR itself: the rollout starts with a push into the main branch, and
-before the merge nobody runs anything. Linters, unit tests and hook scenarios are taken by the
-push gate — below is what it does not know.
+Where the pipeline wakes for the base, it checks the PR before the merge; where it does not, the
+push gate is the only check. Linters, unit tests, the build and hook scenarios are taken by the
+push gate either way — below is what it does not know.
 
 1. **The base is merged into this branch** — for a task branch that is the epic branch, for an epic branch the main one: `git fetch origin && git merge origin/<база>`.
    Base freshness is not inherited between branches of one session: the second and the third
@@ -232,8 +232,8 @@ push gate — below is what it does not know.
 5. **Text and layout checks are green** — those the tree created in `tools/`: scenarios against
    tests, paths in documents, lib layout, duplicates and classes without a rule. Which ones
    exist here — the rule's `implementation.md`.
-6. **All applications of the tree build** — `nx build` for each. The push gate does not run the
-   build: it is longer than anything it can do between the command and the push.
+6. **All applications of the tree build** — `nx build` for each; the push gate runs the build of
+   what the branch touched, and an application nothing touched is built here.
 7. **Visible text is entered in all translation locales** — by the dictionary completeness test,
    if the tree is translated.
 8. **A layout edit is confirmed by a measurement**, not by a look, and captured on a narrow
@@ -241,7 +241,7 @@ push gate — below is what it does not know.
 9. **A markup edit of the public site is checked on the production build in all translation
    locales** — the search visibility rule of the tree that has one.
 10. **The PR body is assembled by the sample** — starts with the line `Closes #<номер>`, carries
-    the sections "What was done", "What confirms it" and "Remaining step", and labels, reviewer
+    the six sections of pattern `git-workflow-pr-body` — the points and the goal tables among them — and labels, reviewer
     and assignee are set. By this moment the remaining step section says no steps are left: the
     draft is lifted after the folder is taken apart, not before.
 11. **The PR title carries the task number and names it done:** `[<КЛЮЧ>-<номер>] <Что сделано>`,
