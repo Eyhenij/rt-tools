@@ -31,6 +31,7 @@ with a guard does.
 | the task folder before the task is created | `docs/tasks/_draft-<slug>/` — outside history while there is no number |
 | exploration | an `Explore` or `general-purpose` session before the first question to the owner |
 | the plan review by roles | `.claude/workflows/plan.js` — need, points, agreement, critique, plan, goal |
+| a large edit carried by roles | `.claude/workflows/feature.js` — plan, implementation, check, acceptance, points, goal |
 
 ## Where it lives
 

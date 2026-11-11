@@ -10543,6 +10543,16 @@
       "source_location": "L1",
       "weight": 1,
       "source": "rule_task_flow",
+      "target": "pipeline_feature_js",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/rules/task-flow.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_task_flow",
       "target": "pipeline_plan_js",
       "confidence_score": 1
     },
@@ -16768,5 +16778,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "7a131d20c8359fbb243aeb84e8f22062424c354c"
+  "built_at_commit": "492d43cc49fa96e291c604d956b2faced777db41"
 }

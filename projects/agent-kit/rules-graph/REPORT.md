@@ -1,14 +1,13 @@
 # Report of the rules graph
 
-Built by `npm run graph:rules` from `7a131d20c`: 351 nodes, 1279 links.
+Built by `npm run graph:rules` from `492d43cc4`: 351 nodes, 1280 links.
 The graph is `projects/agent-kit/rules-graph/graph.json`; graphify reads it with `--graph`. Every list below is
 debt for the revision of a law family to sort out, not a refusal.
 
-## Resources nothing links to — 1
+## Resources nothing links to — 0
 
 No other text names them in its header, a `Requires` line, an import, a binding or in backticks.
 
-- **pipeline:** feature.js
 
 ## Rules nothing executes — 0
 
