@@ -29,7 +29,9 @@ npm run check:schema
 It applies the chain to a shadow database — the same as the working one, with the suffix
 `_gate_shadow` — compares it with the schema and tears it down. One's own database is not
 touched: an audit against it would judge the state of the machine, not of the repository. A
-stopped docker and a production address the check skips silently.
+production address the check skips. A stopped docker it skips only where the branch did not touch
+the storage; a branch that edited the schema or the migrations is refused, and the refusal names
+how to bring the database up — rule `deploy-flow`.
 
 When there is no database at hand at all, the same chain is run on a one-off container:
 

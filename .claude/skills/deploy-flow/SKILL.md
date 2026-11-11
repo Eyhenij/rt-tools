@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub — the part about the rollout. Load when an edit goes to production — merge into the main branch, the pipeline, images and tags, storage migrations. Patterns git-workflow-migration, -restart, -docker, -secrets. Task and branch — rule git-workflow.
 ---
-<!-- rt-kit v0.37.0 · rules/deploy-flow.github.md · 59a61f785d78 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/deploy-flow.github.md · 480456513073 · правится надстройкой, не здесь -->
 
 # Rollout — how it works here
 
@@ -44,7 +44,7 @@ flowchart TD
     G --> H[Old images are removed, the last three sha stay as rollback depth]
     H --> I{Production answers with what was rolled out}
     I -->|No| J[Rollout analysis: the restart goes by sha, not by the latest tag]
-    I -->|Yes| K[The work queue audit reads the last run of the main branch]
+    I -->|Yes| K[The work queue audit counts the lag of the main branch from the last successful rollout]
     C --> K
     J --> K
 ```

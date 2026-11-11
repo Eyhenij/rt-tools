@@ -4,18 +4,19 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 1 of 3 — Findings
-- **Done:** the folder, the plan; the role rules-reviewer started over the family
-- **Next step:** read the role's findings, run the binding comparison
+- **Done:** the role's findings; fixed D2, D3, D9 (pr checklist), D10, D12, D16 and both pairs with
+  `task-flow`; RT-3193 merged in by the stack
+- **Next step:** the binding comparison, then the rest of the findings
 - **Uncommitted:** no
-- **Waiting for the owner:** no
+- **Waiting for the owner:** no; the push of RT-3193 waits for the main copy to leave RT-3178
 - **PR:** not open yet
 
 ## Steps
 
 - `[x]` done · `[>]` going on right now · `[ ]` not begun
 
-- [>] 1.1 Run the role rules-reviewer over the whole family
-- [ ] 1.2 Compare rule articles with the companion bindings and hook code
+- [x] 1.1 Run the role rules-reviewer over the whole family
+- [>] 1.2 Compare rule articles with the companion bindings and hook code
 - [ ] 1.3 Write the findings list into the progress with a decision for each
 - [ ] 2.1 Edit the package texts by the findings
 - [ ] 2.2 Build the package and lay out the tree
