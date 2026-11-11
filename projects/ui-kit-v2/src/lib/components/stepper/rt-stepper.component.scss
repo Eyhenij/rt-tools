@@ -14,6 +14,7 @@
 
         .rt-stepper {
             --rt-stepper-radius: var(--rt-radius-full);
+            --rt-stepper-halo: var(--rt-stepper-point-shadow, var(--rt-shadow-step-indicator));
             --rt-stepper-transition-duration: var(--rt-duration-fast);
 
             display: flex;
@@ -110,7 +111,7 @@
                 &--current {
                     background: var(--rt-stepper-current-color, var(--rt-color-stepper-current));
                     block-size: 16px;
-                    box-shadow: var(--rt-stepper-point-shadow, var(--rt-shadow-step-indicator));
+                    box-shadow: var(--rt-stepper-halo);
                     inline-size: 16px;
                 }
             }
