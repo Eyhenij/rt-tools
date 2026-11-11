@@ -4,7 +4,8 @@
  * project directory under `projects/`, `apps/` and `libs/`.
  *
  * The graphs are built by `graphify update`, which reads the syntax of the code and asks no
- * language model, so the same head gives the same graph on any machine. Only `graph.json` of each
+ * language model. graphify names shell nodes by the absolute path of the copy; the command cuts that
+ * path out, so the same head gives the same graph in any copy. Only `graph.json` of each
  * graph lies in history; the cache, the report and the HTML view are rebuilt by this same command
  * and are ignored.
  *
@@ -17,7 +18,7 @@
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 
 const ROOT = process.cwd();
 const PROJECT_PARENTS = ['projects', 'apps', 'libs'];
@@ -35,11 +36,30 @@ function projectDirs() {
     });
 }
 
-function stampHead(target) {
+/**
+ * The slug graphify builds the ids of shell nodes from: the absolute path of the graphed directory,
+ * lower case, every run of other characters turned into `_`. Left in place, it puts the home
+ * directory and the copy name into history, and a rebuild in another copy rewrites every such id.
+ */
+function absoluteSlug(target) {
+    return `${resolve(ROOT, target)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '_')
+        .replace(/^_+/, '')}_`;
+}
+
+/** Makes the graph a function of the head alone: ids without the copy path, the head stamped. */
+function settle(target) {
     const file = join(ROOT, target, 'graphify-out', 'graph.json');
     const head = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).stdout.trim();
     const text = readFileSync(file, 'utf8');
-    writeFileSync(file, text.replace(/"built_at_commit": "[0-9a-f]*"/, `"built_at_commit": "${head}"`));
+    writeFileSync(
+        file,
+        text
+            .split(`"${absoluteSlug(target)}`)
+            .join('"')
+            .replace(/"built_at_commit": "[0-9a-f]*"/, `"built_at_commit": "${head}"`)
+    );
 }
 
 function build(target) {
@@ -56,7 +76,7 @@ function build(target) {
     // it: otherwise the freshness check reads a stale commit and asks for a rebuild that changes
     // nothing.
     if (run.status === 0 && /No code-graph topology changes/.test(said)) {
-        stampHead(target);
+        settle(target);
         console.log(`= ${target}: unchanged, stamped with the head in ${seconds}s`);
         return true;
     }
@@ -65,6 +85,7 @@ function build(target) {
         console.error(`graphs-build: ${target} failed in ${seconds}s\n${run.stdout}${run.stderr}`);
         return false;
     }
+    settle(target);
     console.log(`+ ${target}: ${rebuilt[1]} in ${seconds}s`);
     return true;
 }
