@@ -215,14 +215,14 @@ There are no checks on the MR itself until the pipeline is started, and a push s
 Linters, unit tests and hook scenarios are taken by the push gate — below is what it does not
 know.
 
-1. **The main branch is merged into this branch** — `git fetch origin && git merge origin/main`.
+1. **The base is merged into this branch** — `git fetch origin && git merge origin/<база>`.
    Everything checked below is checked from this base: an MR from a diverged branch shows the
    reviewer the edit mixed with someone else's. Order and conflict resolution — pattern
    `git-workflow-merge`.
-2. **The branch holds only the edit it was created for** — `git diff main...HEAD --stat`. A
+2. **The branch holds only the edit it was created for** — `git diff origin/<база>...HEAD --stat`. A
    foreign domain in the file list means the edit has spread, and it must be brought back within
    its bounds.
-3. **No mock, no substituted response, no debug line** — `git diff main...HEAD` is read whole,
+3. **No mock, no substituted response, no debug line** — `git diff origin/<база>...HEAD` is read whole,
    not by file names. They go to production silently and corrupt real data.
 4. **The document goes in the same commit.** `docs-guard` names the pair, but it does not know
    the domain spec and an edit of its behaviour — that stays with the author.
@@ -239,7 +239,7 @@ know.
 10. **The MR description is assembled by the sample** — starts with the line `Closes #<номер>`,
     carries the sections "What was done", "What confirms it" and "Remaining step", and labels,
     reviewer and assignee are set. By this moment the remaining step section says no steps are
-    left: the draft is lifted after the folder is taken apart, not before.
+    left: the folder is taken apart before the MR opens.
 11. **The MR title carries the task number and names it done:** `[<КЛЮЧ>-<номер>] <Что
 сделано>`, with the same number as the task and the branch name.
 12. **The work queue matches** — `npm run check:board`.

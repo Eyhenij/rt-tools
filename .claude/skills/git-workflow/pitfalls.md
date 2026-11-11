@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · pitfalls/git-workflow.github.md · 5c0888ea2ce6 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · pitfalls/git-workflow.github.md · 2a12a04d4114 · правится надстройкой, не здесь -->
 # Delivery — cold part
 
 Pitfalls: traps already stepped on in a tree on GitHub. Loaded not with the rule but on demand —
@@ -216,7 +216,7 @@ a guard.
 - **A set rewritten as lines looks complete.** In one tree six checks lay next to the ones being
   run and were run by neither the gate nor the pipeline: eight lines out of fourteen read as the
   whole set, and the difference showed only by comparison with the package default.
-- **The gate set is never narrower than the pipeline set.** Twice in a row an edit that passed the
+- **A green gate read as "everything is green locally".** Twice in a row an edit that passed the
   gate whole was refused by the pipeline — and both times a green gate was read as "everything is
   green locally". Hence the requirement to refuse the push on a step missing from the set, rather
   than print a warning next to it.
@@ -262,10 +262,6 @@ a guard.
   package default loses exactly the checks the package will add in its next edition. One's own
   line instead of the default is lawful where it covers the same thing more strictly or calls the
   named script.
-- **A draft whose branch carries the task folder means work in progress, not abandoned work.**
-  Both signs are needed together: a green run on the tip without the folder taken apart says the
-  work is not handed over yet. A tree that named no machine account does not get this audit at
-  all.
 - **The mergeability mark is not cleared even by a declared union of both sides.** The hosting
   counts the union as its own device and reads no merge settings: until the branch has absorbed
   main and that has reached the hosting, the PR stands conflicting with the divergence resolved

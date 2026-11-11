@@ -75,7 +75,7 @@ A conflict marker shows the place, not the edit: the branch's side in it is its 
 together with everything that lay in the file before it.
 
 ```bash
-git diff "$(git merge-base origin/main HEAD)" HEAD -- docs/BACKLOG.md
+git diff "$(git merge-base origin/<база> HEAD)" HEAD -- docs/BACKLOG.md
 ```
 
 ## What the branch appended is checked against the work queue, not carried over by default

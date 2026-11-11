@@ -230,6 +230,8 @@ Given an open PR without a conflict, and there is no run at its tip
 When the check of the work queue goes
 Then the line speaks of a lost event and calls to bring it back — there the reason really is in it
 
+Covered: `projects/agent-kit/tests/checks-board.test.sh`.
+
 ### SC-AK-1338 — a conflicting request into an epic branch gets no line about a run
 
 Given an open PR into an epic branch conflicts with its base, and there is no run at its tip

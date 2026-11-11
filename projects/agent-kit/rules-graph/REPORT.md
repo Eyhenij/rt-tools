@@ -1,6 +1,6 @@
 # Report of the rules graph
 
-Built by `npm run graph:rules` from `eb988bfe0`: 351 nodes, 1294 links.
+Built by `npm run graph:rules` from `1c4e52a48`: 351 nodes, 1294 links.
 The graph is `projects/agent-kit/rules-graph/graph.json`; graphify reads it with `--graph`. Every list below is
 debt for the revision of a law family to sort out, not a refusal.
 
@@ -49,15 +49,15 @@ Of 46 words of the package glossary, these are said by no text of the package or
 
 - none
 
-## Texts that state the same thing — 19
+## Texts that state the same thing — 17
 
 Pairs of texts whose bold statements share at least 60% of their words, with the
 number of such statements and the first of them.
 
 - `projects/agent-kit/assets/laws/entity-models.md` and `projects/agent-kit/assets/rules/entity-models.md` — 3: «The contract side is not written by hand.» / «The contract side is not written by hand — it is declared as an alias.»
-- `projects/agent-kit/assets/pitfalls/git-workflow.github.md` and `projects/agent-kit/assets/rules/git-workflow.github.md` — 3: «The gate set is never narrower than the pipeline set.» / «The push gate set is never narrower than the pipeline set.»
 - `projects/agent-kit/assets/rules/git-workflow.azure.md` and `projects/agent-kit/assets/rules/queue-audit.github.md` — 3: «A lagging state is found by the queue audit, not by eye.» / «A lagging column is found by the queue audit, not by eye.»
 - `projects/agent-kit/assets/rules/git-workflow.gitlab.md` and `projects/agent-kit/assets/rules/queue-audit.github.md` — 3: «A lagging list is found by the queue audit, not by eye.» / «A lagging column is found by the queue audit, not by eye.»
+- `projects/agent-kit/assets/pitfalls/git-workflow.github.md` and `projects/agent-kit/assets/rules/git-workflow.github.md` — 2: «Draft is not lifted from a branch that does not merge.» / «The draft is not lifted from a branch that does not merge.»
 - `projects/agent-kit/assets/laws/code-structure.md` and `projects/agent-kit/assets/rules/typescript-conventions.md` — 1: «A type is taken from the package where it is declared.» / «A type is taken from the package where it is declared.»
 - `projects/agent-kit/assets/laws/delivery.md` and `projects/agent-kit/assets/rules/git-workflow.azure.md` — 1: «The work queue holds tasks, not PRs about them.» / «The board holds work items, not PRs about them.»
 - `projects/agent-kit/assets/laws/delivery.md` and `projects/agent-kit/assets/rules/git-workflow.github.md` — 1: «The work queue holds tasks, not PRs about them.» / «The board holds tasks, not PRs about them.»
@@ -67,8 +67,6 @@ number of such statements and the first of them.
 - `projects/agent-kit/assets/laws/project-documentation.md` and `projects/agent-kit/assets/rules/doc-style.md` — 1: «An image is edited by the same change as the text it depicts.» / «A diagram is edited by the same change as the text it depicts.»
 - `projects/agent-kit/assets/laws/verifiability.md` and `projects/agent-kit/assets/rules/testing.md` — 1: «A test switched off by an environment flag does not count as coverage.» / «An end-to-end test switched off by an environment variable does not count as coverage.»
 - `projects/agent-kit/assets/patterns/autonomous-work-run.md` and `projects/agent-kit/assets/rules/autonomous-work.md` — 1: «The branch was created from main by habit.» / «A branch created from main by habit breaks the chain.»
-- `projects/agent-kit/assets/pitfalls/git-workflow.github.md` and `projects/agent-kit/assets/rules/git-workflow.azure.md` — 1: «The gate set is never narrower than the pipeline set.» / «The push gate set is never narrower than the pipeline set.»
-- `projects/agent-kit/assets/pitfalls/git-workflow.github.md` and `projects/agent-kit/assets/rules/git-workflow.gitlab.md` — 1: «The gate set is never narrower than the pipeline set.» / «The push gate set is never narrower than the pipeline set.»
 - `projects/agent-kit/assets/rules/doc-style.md` and `projects/agent-kit/assets/rules/git-workflow.azure.md` — 1: «A document goes in the same commit as the change it describes.» / «A document goes in the same commit as the edit.»
 - `projects/agent-kit/assets/rules/doc-style.md` and `projects/agent-kit/assets/rules/git-workflow.github.md` — 1: «A document goes in the same commit as the change it describes.» / «A document goes in the same commit as the edit.»
 - `projects/agent-kit/assets/rules/doc-style.md` and `projects/agent-kit/assets/rules/git-workflow.gitlab.md` — 1: «A document goes in the same commit as the change it describes.» / «A document goes in the same commit as the edit.»

@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load for opening a PR and everything around it — title format, draft and leaving it, reading the PR state, the checklist. The link to the task, reviewer, labels and the body sample — pattern git-workflow-pr-body; creating the task and committing — git-workflow-commit.
 ---
-<!-- rt-kit v0.37.0 · patterns/git-workflow-pr.github.md · 81fae4b5aee2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/git-workflow-pr.github.md · d47e0c7ecb7e · правится надстройкой, не здесь -->
 
 # The PR
 
@@ -244,7 +244,7 @@ push gate either way — below is what it does not know.
 10. **The PR body is assembled by the sample** — starts with the line `Closes #<номер>`, carries
     the six sections of pattern `git-workflow-pr-body` — the points and the goal tables among them — and labels, reviewer
     and assignee are set. By this moment the remaining step section says no steps are left: the
-    draft is lifted after the folder is taken apart, not before.
+    folder is taken apart before the PR opens.
 11. **The PR title carries the task number and names it done:** `[<КЛЮЧ>-<номер>] <Что сделано>`,
     with the same number as the task and the branch name. The infinitive of the task does not
     carry into it, nor do the commit type and scope.
@@ -257,7 +257,7 @@ push gate either way — below is what it does not know.
     narrower by design: it stands between the command and the push, and everything longer than
     seconds is taken out of it. What the pipeline runs is written in its file — that list is
     repeated locally; a green gate is not completeness of the set.
-15. **The set is revised after merging the main branch in.** It is chosen by what the branch now
+15. **The set is revised after merging the base in.** It is chosen by what the branch now
     carries, not by what the author edited. A branch that touched no line of the showcase runs
     the showcase snapshots: since the merge the pipeline runs them on its code, and the red
     comes to its PR.

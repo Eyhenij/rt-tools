@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load before a push, when taking a task and after every known merge — reading all your open PRs at once, telling lag apart from a conflict in files, checking the local head against the hosting.
 ---
-<!-- rt-kit v0.37.0 · patterns/git-workflow-freshness.md · 338388d16e1d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/git-workflow-freshness.md · 468956e305bd · правится надстройкой, не здесь -->
 
 # Freshness of open PRs
 
@@ -32,7 +32,7 @@ By one command over all one's own open PRs, not the one whose branch is checked 
 | Field                | What it says                                                                      |
 | -------------------- | --------------------------------------------------------------------------------- |
 | `mergeable`          | `MERGEABLE` — the button can be pressed; `CONFLICTING` — it cannot; `UNKNOWN` — not counted yet |
-| `mergeStateStatus`   | `BEHIND` — lags behind main; `DIRTY` — a dispute in files; `BLOCKED` — awaits review |
+| `mergeStateStatus`   | `BEHIND` — lags behind its base; `DIRTY` — a dispute in files; `BLOCKED` — awaits review |
 | `isDraft`            | a draft: the host locks the merge button whatever the run's colour                |
 | `statusCheckRollup`  | the run on the tip: an empty list means no run at all, not "green"                |
 
@@ -49,7 +49,7 @@ git fetch origin
 git merge-tree "$(git merge-base origin/<база> <ветка>)" origin/<база> <ветка> | grep -c '^<<<<<<<'
 ```
 
-Zero — the branch merely lags, and merging main in cures it. Above zero — a dispute in files,
+Zero — the branch merely lags, and merging its base in cures it. Above zero — a dispute in files,
 and each is resolved by file kind: pattern `git-workflow-merge`.
 
 ## What is done with what was found
@@ -63,7 +63,7 @@ and each is resolved by file kind: pattern `git-workflow-merge`.
 | a draft with a green run               | the draft is lifted — its merge button is locked                   |
 | the PR opened by a person, not by the machine | it can no longer get a reviewer: it is created anew by the machine account |
 
-Within one branch the order is one: merge main in → run the gate set → push → reread the state
+Within one branch the order is one: merge the base in → run the gate set → push → reread the state
 from the host. Rereading is part of the work, not a report on it.
 
 ## The local tip is checked against the one on the host

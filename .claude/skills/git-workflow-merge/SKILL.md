@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when the base of a branch is merged into it and a conflict is resolved — the merge order, handling by file kind, checking what was appended against the work queue, re-reading the body of the open request. Branch and commit — pattern git-workflow-commit.
 ---
-<!-- rt-kit v0.37.0 · patterns/git-workflow-merge.md · cc3685ebb51c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/git-workflow-merge.md · 6e19b3387ec7 · правится надстройкой, не здесь -->
 
 # Merging the base of a branch into it
 
@@ -76,7 +76,7 @@ A conflict marker shows the place, not the edit: the branch's side in it is its 
 together with everything that lay in the file before it.
 
 ```bash
-git diff "$(git merge-base origin/main HEAD)" HEAD -- docs/BACKLOG.md
+git diff "$(git merge-base origin/<база> HEAD)" HEAD -- docs/BACKLOG.md
 ```
 
 ## What the branch appended is checked against the work queue, not carried over by default

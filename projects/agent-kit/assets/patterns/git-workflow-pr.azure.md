@@ -195,14 +195,14 @@ threads read at the start: a remark left without one is a remark the person chec
 The pipeline sees only what was sent, and it is sent by a push. Linters, unit tests and hook
 scenarios are taken by the push gate — below is what it does not know.
 
-1. **The main branch is merged into this branch** — `git fetch origin && git merge origin/main`.
+1. **The base is merged into this branch** — `git fetch origin && git merge origin/<база>`.
    Everything checked below is checked from this base: a PR from a diverged branch shows the
    reviewer the edit mixed with someone else's. Order and conflict resolution — pattern
    `git-workflow-merge`.
-2. **The branch holds only the edit it was created for** — `git diff main...HEAD --stat`. A
+2. **The branch holds only the edit it was created for** — `git diff origin/<база>...HEAD --stat`. A
    foreign domain in the file list means the edit has spread, and it must be brought back within
    its bounds.
-3. **No mock, no substituted response, no debug line** — `git diff main...HEAD` is read whole,
+3. **No mock, no substituted response, no debug line** — `git diff origin/<база>...HEAD` is read whole,
    not by file names. They go to production silently and corrupt real data.
 4. **The document goes in the same commit.** `docs-guard` names the pair, but it does not know
    the domain spec and an edit of its behaviour — that stays with the author.
@@ -218,8 +218,8 @@ scenarios are taken by the push gate — below is what it does not know.
    locales** — the search visibility rule of the tree that has one.
 10. **The PR is bound to the work item**, reviewer and assignee are set, and the body is
     assembled by the sample — the sections "What was done", "What confirms it" and "Remaining
-    step". By this moment the remaining step section says no steps are left: the draft is
-    lifted after the folder is taken apart, not before.
+    step". By this moment the remaining step section says no steps are left: the folder is
+    taken apart before the PR opens.
 11. **The PR title carries the work item number and names the work done:** `[<номер>] <Что
 сделано>`, with the same number as the work item and the branch name.
 12. **The work queue matches** — `npm run check:board`.

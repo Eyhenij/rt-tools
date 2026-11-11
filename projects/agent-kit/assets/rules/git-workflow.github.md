@@ -165,7 +165,8 @@ flowchart TD
   opens.** The trigger either wakes for it as for one into main, or does not, and then the push
   gate is the only check behind the work — pattern `git-workflow-stack`.
 - **One's own drafts are judged all at once, not only the checked-out branch's.** Two signs — a
-  green run on the tip and a folder taken apart; a folder still there means ongoing work.
+  green run on the tip and a folder taken apart. A folder stands in a draft only one opened past
+  the folder refusal, and there it means ongoing work.
 - **One's own open PRs are reread in three places: before a push, on taking a task and after every
   known merge.** A neighbouring merge stales the rest that second. Technique —
   `git-workflow-freshness`.
