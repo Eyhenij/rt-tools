@@ -232,6 +232,12 @@ flowchart TD
 - **A mission is set by the owner.** A session only proposes a wording from its analysis and waits
   for approval.
 - **Building by a sample begins with reading the sample itself, whole, by walking the directories.**
+- **Exploration of a tree that holds a code graph begins with the graph, and the graph is checked
+  before it answers.** A tree without a graph has no such step. In every turn, before the first
+  answer taken from it, the commit the graph was built from is compared with the head: a stale graph
+  is rebuilt, or the turn names why not. The graph answers what calls, imports and contains what;
+  numbers, behaviour and the texts of laws, rules and specs are read from the code and the documents.
+  Otherwise a stale graph reads as fresh, and a domain read file by file loses what was not opened.
 - **What acts on the tree, not on the edit, lies outside the index.** The path to the sample and the
   permission to work outside the epic do not belong to the branch and live next to the handover. A
   number in the permitted list repeats the owner's word, not replaces it.
@@ -294,3 +300,5 @@ nothing counts; it is held by reading both texts in a row on every such edit.
 - `task-flow-close` — lifting the draft, merging the agreement, bringing the texts up to date.
 - `task-flow-archive` — taking the task folder apart, the move to the archive, review by the rules.
 - `task-flow-cycle` — an edit chosen by the report and judged by the next one.
+- `graphify-work` — where the tree holds a code graph: the freshness check, the domain inventory and
+  what the graph never answers.
