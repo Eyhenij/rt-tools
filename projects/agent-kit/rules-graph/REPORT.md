@@ -1,6 +1,6 @@
 # Report of the rules graph
 
-Built by `npm run graph:rules` from `13ca73ae9`: 351 nodes, 1291 links.
+Built by `npm run graph:rules` from `eb988bfe0`: 351 nodes, 1294 links.
 The graph is `projects/agent-kit/rules-graph/graph.json`; graphify reads it with `--graph`. Every list below is
 debt for the revision of a law family to sort out, not a refusal.
 
@@ -9,11 +9,11 @@ debt for the revision of a law family to sort out, not a refusal.
 No other text names them in its header, a `Requires` line, an import, a binding or in backticks.
 
 
-## Rules nothing executes — 0
+## Rules nothing executes — 1
 
 No `Requires` line and no binding of the companion to code: a hook, a check, a linter rule or a test.
 
-- none
+- dependencies
 
 Not laid out in this tree, so their executors are unknown here: api-layer, shared-code.
 
@@ -21,27 +21,27 @@ Not laid out in this tree, so their executors are unknown here: api-layer, share
 
 Articles the companion of the rule marks «Not checked» or «Not carried out», of all its articles.
 
-- git-workflow — 27 of 80
+- git-workflow — 26 of 79
 - turn-conduct — 25 of 69
 - task-flow — 24 of 59
 - observability — 14 of 29
 - testing — 14 of 42
-- deploy-flow — 13 of 28
 - browser-verification — 12 of 23
+- deploy-flow — 12 of 28
 - reuse-first — 9 of 18
 - autonomous-work — 8 of 11
 - doc-style — 7 of 21
 - spec-driven — 6 of 31
 - status-report — 5 of 10
 - epic-flow — 4 of 11
+- dependencies — 3 of 5
 - typescript-conventions — 3 of 10
 - angular-patterns — 2 of 5
-- dependencies — 2 of 5
+- queue-audit — 2 of 10
 - styling-bem — 2 of 12
 - component-structure — 1 of 4
 - lib-layers — 1 of 9
 - platform-access — 1 of 3
-- queue-audit — 1 of 10
 
 ## Glossary words used nowhere — 0
 
