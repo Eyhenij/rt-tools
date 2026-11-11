@@ -1,0 +1,27 @@
+## The graphs of this tree
+
+The tree holds 27 graphs, not one: the graph of the whole repository at the root and the graph of
+every directory under `projects/`, `apps/` and `libs/`, each in its own `graphify-out/`. A question
+about one package is asked of its graph — it is smaller and has no neighbours' nodes; a question
+across packages is asked of the root one.
+
+```bash
+graphify explain "<node>" --graph projects/ui-kit-v2/graphify-out/graph.json
+```
+
+In a project graph `source_file` is counted from the project directory, not from the root:
+`src/lib/const/dash.const.ts` in the graph of `projects/utils`.
+
+All graphs are built by one command, not by `graphify update .`: it walks every directory and
+stamps the head on a graph whose topology did not change. Named directories are built alone.
+
+```bash
+npm run graph:build
+npm run graph:build -- projects/utils apps/message-bus
+```
+
+Only `graph.json` lies in history, and a graph comes in the commit after the one it was built from:
+`built_at_commit` names the parent of the commit that carries it. `git log <built_at_commit>..HEAD`
+lists at least that commit; the graph is stale when the list holds a code file. A graph after a merge
+of two branches has no `built_at_commit` at all — the merge driver joins both sides, and the result
+was built from no head.

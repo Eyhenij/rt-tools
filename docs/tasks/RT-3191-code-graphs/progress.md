@@ -6,8 +6,8 @@ Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — The trait and the closing
-- **Done:** the build command; 27 graphs committed; ignore rules; the merge driver
-- **Next step:** the trait `graph` and the layout
+- **Done:** stages 1 and 2; the trait `graph` laid out with this tree's section; `CLAUDE.md`
+- **Next step:** the push gate set
 - **Uncommitted:** nothing of the steps
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -19,9 +19,9 @@ Rewritten by every session, not appended to.
 - [x] 2.1 Ignore rules for the rest of `graphify-out/`
 - [x] 2.2 The merge driver in `.gitattributes` and in the install step
 - [x] 2.3 The graph files left out of nx inputs and of prettier
-- [>] 3.1 The trait `graph` in `.claude/rt-kit.json` and the layout
-- [ ] 3.2 The command in `CLAUDE.md`
-- [ ] 3.3 The push gate set
+- [x] 3.1 The trait `graph` in `.claude/rt-kit.json` and the layout
+- [x] 3.2 The command in `CLAUDE.md`
+- [>] 3.3 The push gate set
 - [ ] 3.4 The task folder taken apart into the archive
 - [ ] 3.5 PR into the epic branch
 
