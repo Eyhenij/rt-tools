@@ -1,3 +1,5 @@
+import { Signal } from '@angular/core';
+
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
 /**
@@ -17,12 +19,66 @@ export namespace IRtTabs {
      */
     export type Activation = 'auto' | 'manual';
 
+    /** Что делать, когда вкладки не встают: прокручивать полосу (`scroll`) или уносить лишние в меню (`more`). */
+    export type Overflow = 'scroll' | 'more';
+
+    /** У каких вкладок ряда виден крестик. */
+    export type CloseOn = 'all' | 'selected';
+
+    /** Контекст шаблона меню вкладки: id вкладки, на которой нажали правую кнопку. */
+    export interface ContextMenuContext {
+        readonly $implicit: Id;
+    }
+
+    /** Что нужно ряду от полосы. Тип вкладки — параметр: директива сама читает эту модель. */
+    export interface MoreRowDeps<TAB> {
+        readonly enabled: Signal<boolean>;
+        readonly visible: Signal<readonly TAB[]>;
+        readonly selectedId: Signal<Id | null>;
+        readonly limit: Signal<number>;
+    }
+
+    /** Вкладка ряда с замеренной шириной: вход подбора ряда в режиме «Ещё». */
+    export interface MoreSlot {
+        readonly id: Id;
+        readonly width: number;
+        readonly pinned: boolean;
+    }
+
+    /** Замеры полосы: всё, из чего подбирается ряд. */
+    export interface MoreFit {
+        readonly slots: ReadonlyArray<MoreSlot>;
+        readonly selectedId: Id | null;
+        readonly moreWidth: number;
+        readonly available: number;
+        /** Сколько вкладок вместе с закреплёнными может стоять в ряду; без значения — сколько влезет. */
+        readonly limit?: number;
+    }
+
+    /** Видимость стрелок прокрутки у краёв полосы. */
+    export interface RestShown {
+        readonly before: boolean;
+        readonly after: boolean;
+    }
+
+    /** Раскладка: ряд в порядке показа и вкладки меню в порядке объявления. */
+    export interface MoreLayout {
+        readonly row: ReadonlyArray<Id>;
+        readonly more: ReadonlyArray<Id>;
+    }
+
     /**
      * Где стоят стрелки прокрутки переполненной полосы: `overlay` — поверх вкладок, только в ту
      * сторону, куда можно прокрутить; `inline` — обе в своих местах по краям, полоса между ними уже,
      * стрелка в сторону, куда прокручивать некуда, неактивна.
      */
     export type ScrollArrows = 'overlay' | 'inline';
+
+    /**
+     * Вид стрелки прокрутки: `block` — квадрат во всю высоту полосы, базовый вид вкладок;
+     * `compact` — кнопка 24 со скруглением и тенью, под которой текст крайней вкладки гаснет.
+     */
+    export type ArrowLook = 'block' | 'compact';
 
     /**
      * На сколько сдвигает полосу одно нажатие на стрелку: `fixed` — на 80 px, как прежде; `page` —

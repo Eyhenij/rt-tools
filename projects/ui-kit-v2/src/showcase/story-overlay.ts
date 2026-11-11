@@ -151,7 +151,9 @@ function fire(marked: HTMLElement, gesture: IStoryOverlayGesture): void {
     const trigger: HTMLElement = triggerOf(marked, gesture.within ?? '');
 
     if (gesture.event === undefined) {
-        trigger.focus();
+        // Без прокрутки, как при нажатии мышью: фокус на кнопке у нижнего края сдвигал страницу, и
+        // под неподвижным указателем съёмки въезжал чужой пункт со своей подсказкой.
+        trigger.focus({ preventScroll: true });
     }
 
     if (gesture.text !== undefined && trigger instanceof HTMLInputElement) {
