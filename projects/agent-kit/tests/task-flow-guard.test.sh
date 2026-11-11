@@ -392,6 +392,13 @@ report "SC-AK-1337 — конфликт слияния во второй коп�
     "$(in_copy "$(bash_copy_json "$NO_PLAN" "git checkout --theirs $COMP")")" PASS
 report "SC-AK-1337 — код вне конфликта во второй копии отбивается" \
     "$(in_copy "$(edit_copy_json "$NO_PLAN" "$OTHER")")" deny
+
+# Та же отданная работа, в копию вливается соседняя ветка с конфликтом: исключение для конфликта
+# не подходит, и решает история копии. Именно здесь старый признак подменял корень деревом сессии.
+git -C "$HANDED" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false \
+    merge -q RT-60-other --no-edit >/dev/null 2>&1
+report "SC-AK-1336 — при идущем слиянии правка командой вне конфликта проходит" \
+    "$(in_copy "$(bash_copy_json "$HANDED" "printf x > $OTHER")")" PASS
 rm -rf "$HANDED" "$NO_PLAN" "$SESSION_TREE"
 
 # --- отказ в пользу работы ----------------------------------------------------------------
