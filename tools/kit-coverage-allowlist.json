@@ -100,7 +100,8 @@
     "rt-page-user": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header-vertical.stories.ts",
     "rt-page-header-user": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header.stories.ts",
     "rt-tabs-more": "projects/ui-kit-v2/src/lib/components/tabs/stories/tabs-more.stories.ts",
-    "rt-tabs-context-menu": "projects/ui-kit-v2/src/lib/components/tabs/stories/tabs-more.stories.ts"
+    "rt-tabs-context-menu": "projects/ui-kit-v2/src/lib/components/tabs/stories/tabs-more.stories.ts",
+    "[rtTabsMenuKeys]": "projects/ui-kit-v2/src/lib/components/tabs/stories/tabs-more.stories.ts"
   },
   "noPlayground": {
     "toolbar": "Содержимое панели приходит проекцией шаблонов в три места, и страница с входами их не задаёт: витрина умеет подставлять значения, а не разметку. Единственный вход — плотность — показан своей осью."
