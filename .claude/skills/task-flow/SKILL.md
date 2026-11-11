@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of one task from the request to the merge. Load at the start of any work, when editing task folders and product agreements, and on return to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. Epics — epic-flow, turns — turn-conduct.
 ---
-<!-- rt-kit v0.36.0 · rules/task-flow.md · 3d2881eda3cf · правится надстройкой, не здесь -->
+<!-- rt-kit v0.36.0 · rules/task-flow.md · 3c4c96b34ddb · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -233,13 +233,13 @@ flowchart TD
 - **A mission is set by the owner.** A session only proposes a wording from its analysis and waits
   for approval.
 - **Building by a sample begins with reading the sample itself, whole, by walking the directories.**
-- **Exploration of a tree that holds a code graph begins with the graph.** A tree without a graph on
-  disk has no such step; a tree with one names the trait `graph` in its settings, and the technique
-  is the pattern `task-flow-graph`. In every turn, before the first exploration, the commit the graph
-  was built from is compared with the head, and a stale graph is rebuilt. Relations are taken from
-  the graph; numbers, behaviour and texts — from the code and the documents. A turn where the graph
-  exists and was not used names the reason: an answer about behaviour, numbers or texts, or a stale
-  graph not rebuilt. Otherwise a stale graph reads as fresh.
+- **Exploration of a tree that holds a code graph begins with the graph.** A tree with a graph names
+  the trait `graph` in its settings, and the technique is the pattern `task-flow-graph`; a tree that
+  does not name it has no such step. In every turn, before the first exploration, the commit the
+  graph was built from is compared with the head and the difference is read; a stale graph is
+  rebuilt, or the turn names why not and takes no answer from it. Relations are taken from the
+  graph; numbers, behaviour and texts — from the code and the documents. A turn where the graph
+  exists and was not used names the reason. Otherwise a stale graph reads as fresh.
 - **What acts on the tree, not on the edit, lies outside the index.** The path to the sample and the
   permission to work outside the epic do not belong to the branch and live next to the handover. A
   number in the permitted list repeats the owner's word, not replaces it.

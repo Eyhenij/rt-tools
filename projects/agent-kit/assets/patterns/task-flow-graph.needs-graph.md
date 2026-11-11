@@ -24,9 +24,6 @@ applies.
 - A question of the shape of the tree: which files belong to a domain, where the procedures of a
   service lie.
 
-Not for a claim about behaviour, a number, a limit or the text of a rule: those are read from the
-code and the documents.
-
 ## Freshness
 
 The build records the commit it was made from. It is compared with the head in every turn, before
@@ -37,14 +34,21 @@ python3 -c "import json;print(json.load(open('graphify-out/graph.json'))['built_
 git rev-parse HEAD
 ```
 
-Equal — the graph describes the head. Behind — the graph is stale, and a rebuild re-extracts code
-files and calls no model:
+Equal — the graph describes the head. Behind — the graph is stale, and the difference is read before
+anything else: it names the files whose relations the graph no longer knows.
+
+```bash
+git log --oneline --stat <built_at_commit>..HEAD
+```
+
+A rebuild re-extracts code files and calls no model:
 
 ```bash
 graphify update .
 ```
 
-A stale graph is not a source: the turn names that it was not rebuilt, and no answer cites it.
+A stale graph not rebuilt is not a source: the turn names why it was not rebuilt, and no answer
+cites it.
 
 ## The inventory
 
