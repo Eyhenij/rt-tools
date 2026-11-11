@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of one task from the request to the merge. Load at the start of any work, when editing task folders and product agreements, and on return to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. Epics — epic-flow, turns — turn-conduct.
 ---
-<!-- rt-kit v0.36.0 · rules/task-flow.md · 604310e7610c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.36.0 · rules/task-flow.md · 0d93b862714c · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -235,11 +235,13 @@ flowchart TD
 - **Building by a sample begins with reading the sample itself, whole, by walking the directories.**
 - **Exploration of a tree that holds a code graph begins with the graph, and the graph is checked
   before it answers.** A tree without a graph has no such step; a tree with one names the trait
-  `graph` in its settings, and only then is the pattern laid out to it. In every turn, before the first
-  answer taken from it, the commit the graph was built from is compared with the head: a stale graph
-  is rebuilt, or the turn names why not. The graph answers what calls, imports and contains what;
+  `graph` in its settings, and only then is the pattern laid out to it. In every turn, before the
+  first exploration, the commit the graph was built from is compared with the head: a stale graph is
+  rebuilt, or the turn names why not. The graph answers what calls, imports and contains what;
   numbers, behaviour and the texts of laws, rules and specs are read from the code and the documents.
-  Otherwise a stale graph reads as fresh, and a domain read file by file loses what was not opened.
+  A turn where the graph exists and was not used names the reason: an answer about behaviour,
+  numbers or texts, or a stale graph not rebuilt. Otherwise a stale graph reads as fresh, and a
+  domain read file by file loses what was not opened.
 - **What acts on the tree, not on the edit, lies outside the index.** The path to the sample and the
   permission to work outside the epic do not belong to the branch and live next to the handover. A
   number in the permitted list repeats the owner's word, not replaces it.
@@ -302,5 +304,5 @@ nothing counts; it is held by reading both texts in a row on every such edit.
 - `task-flow-close` — lifting the draft, merging the agreement, bringing the texts up to date.
 - `task-flow-archive` — taking the task folder apart, the move to the archive, review by the rules.
 - `task-flow-cycle` — an edit chosen by the report and judged by the next one.
-- `graphify-work` — where the tree holds a code graph: the freshness check, the domain inventory and
+- `graphify-work` — where the tree names the trait `graph`: the freshness check, the domain inventory and
   what the graph never answers.
