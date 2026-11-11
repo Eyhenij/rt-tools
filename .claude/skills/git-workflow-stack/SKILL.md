@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when pieces of work follow one another or more than two branches already stand on one base — chained branching from the previous one, the PR base, merging bottom-up, re-merging main on an actual conflict. One conflict — pattern git-workflow-merge.
 ---
-<!-- rt-kit v0.37.0 · patterns/git-workflow-stack.md · 6ee2f61fb0fb · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/git-workflow-stack.md · ecf5b2942443 · правится надстройкой, не здесь -->
 
 # A stack of PRs from one base
 
@@ -115,7 +115,7 @@ gh pr list --state open --json number,headRefName,baseRefName \
   their own commits on top are not, and nobody is told. Such a branch is alive only while
   somebody remembers it — two pieces of work stayed in branches like that and were found by a
   list of branches, not by a list of PRs. After a merge out of order the branches of the chain
-  are listed and each is either rebased onto main anew or closed by word.
+  are listed and each either takes main in by a merge or is closed by word.
 - **Ready branches are not hoarded.** A chain does not cancel that the unit of work is a merged
   PR: it only makes safe the length that has piled up anyway.
 

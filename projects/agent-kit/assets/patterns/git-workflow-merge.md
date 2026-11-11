@@ -36,7 +36,8 @@ git diff --name-only --diff-filter=U     # what ended up in conflict
 
 The signature stands in the command itself: that command creates the merge commit, not a
 separate `git commit`, and there is nothing to change its signature with later — a merge that
-left with a person's signature is refused at push and fixed by rebasing onto the main branch.
+left with a person's signature is refused at push and is made again before the push: the unsent
+merge commit is dropped and the merge repeated with the signature.
 
 The conflict list is read whole before the first resolution: the file kind decides the
 technique, and different files of one merge are resolved differently.
@@ -62,7 +63,8 @@ GIT_COMMITTER_NAME="<бот>" GIT_COMMITTER_EMAIL="<номер>+<бот>@users.n
 
 The signature variables stand on the carry-over command itself. A cherry-pick keeps the commit's
 author and sets as committer whoever calls it — that is, a person; the check set before a push
-reads the committer, and this is then fixed by a rebase, not by editing one commit.
+reads the committer, and the unsent carry-over is then made again with the signature, not
+edited commit by commit.
 
 The fallen-off branch is removed on both sides in the same turn — otherwise it stands in the
 list as unclosed work.
@@ -164,10 +166,11 @@ lives its own life, and the local ref is silent about it: it describes the day i
 Before a PR is called ready to merge, the lag is asked from the host:
 
 ```bash
-/opt/homebrew/bin/gh api repos/<владелец>/<репозиторий>/compare/<главная>...<ветка> --jq .behind_by
+/opt/homebrew/bin/gh api repos/<владелец>/<репозиторий>/compare/<база>...<ветка> --jq .behind_by
 ```
 
-Zero — the PR is ready. Above zero — main is merged in, the check set is revised by what the
+The base is the one the PR goes into: the epic branch for a task, the previous branch in a chain,
+main for an epic. Zero — the PR is ready. Above zero — the base is merged in, the check set is revised by what the
 branch now carries, and the run goes anew: green steps of the past run mean nothing after the
 merge.
 

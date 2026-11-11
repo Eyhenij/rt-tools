@@ -283,7 +283,9 @@ conflicting_json() {
 }
 export STUB_PULLS="$(conflicting_json CONFLICTING)"
 report "SC-AK-425 — конфликтующая заявка названа расхождением" "$(board_code)" 1
-report "SC-AK-425 — сказано, с чем конфликт" "$(board_says 'it conflicts with the main branch')" 1
+report "SC-AK-425 — сказано, с чем конфликт" "$(board_says 'it conflicts with its base')" 1
+export STUB_PULLS="$(printf '[{"number":701,"title":"[RT-700] Правка","headRefName":"RT-700-probe","headRefOid":"%s","baseRefName":"RT-690-epic","isDraft":false,"body":"Closes #700","mergeable":"CONFLICTING"}]' "$HEAD_SHA")"
+report "SC-AK-425 — база названа по имени: у задачи это ветка эпика" "$(board_says 'conflicts with its base «RT-690-epic»')" 1
 
 # SC-AK-426 — «ещё не посчитано» конфликтом не считается: хостинг считает сливаемость заново
 # после каждой правки главной ветки, и строка краснела бы на каждой свежей вершине.

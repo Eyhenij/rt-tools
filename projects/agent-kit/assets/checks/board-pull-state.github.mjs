@@ -156,8 +156,10 @@ export function checkConflicting(pull, report) {
         return;
     }
 
+    // The host counts mergeability against the base of the PR: for a task that is the epic branch.
+    const base = pull.baseRefName ? `«${pull.baseRefName}»` : 'branch';
     report(
-        `PR #${pull.number}: it conflicts with the main branch — merge it into the task branch, resolve the conflict and push; ` +
+        `PR #${pull.number}: it conflicts with its base ${base} — merge the base into the PR branch, resolve the conflict and push; ` +
             `the owner cannot merge this request, and on the page that shows only inside it`
     );
 }

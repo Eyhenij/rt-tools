@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/board-pull-state.github.mjs · 98b972d989a6 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/board-pull-state.github.mjs · 8fbb87a1d81a · правится надстройкой, не здесь
 /**
  * The state of an open request read by its tip: a run pushed out of the queue, a missing run, a
  * finished piece of work left as a draft, a conflict. Lives in a file of its own — the audit of
@@ -157,8 +157,10 @@ export function checkConflicting(pull, report) {
         return;
     }
 
+    // The host counts mergeability against the base of the PR: for a task that is the epic branch.
+    const base = pull.baseRefName ? `«${pull.baseRefName}»` : 'branch';
     report(
-        `PR #${pull.number}: it conflicts with the main branch — merge it into the task branch, resolve the conflict and push; ` +
+        `PR #${pull.number}: it conflicts with its base ${base} — merge the base into the PR branch, resolve the conflict and push; ` +
             `the owner cannot merge this request, and on the page that shows only inside it`
     );
 }

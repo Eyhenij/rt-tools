@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load before a push, when taking a task and after every known merge — reading all your open PRs at once, telling lag apart from a conflict in files, checking the local head against the hosting.
 ---
-<!-- rt-kit v0.37.0 · patterns/git-workflow-freshness.md · d4d8e242afb8 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/git-workflow-freshness.md · 31389f00fadf · правится надстройкой, не здесь -->
 
 # Freshness of open PRs
 
@@ -46,7 +46,7 @@ merge, and it answers offline:
 
 ```bash
 git fetch origin
-git merge-tree "$(git merge-base origin/main <ветка>)" origin/main <ветка> | grep -c '^<<<<<<<'
+git merge-tree "$(git merge-base origin/<база> <ветка>)" origin/<база> <ветка> | grep -c '^<<<<<<<'
 ```
 
 Zero — the branch merely lags, and merging main in cures it. Above zero — a dispute in files,
@@ -56,7 +56,7 @@ and each is resolved by file kind: pattern `git-workflow-merge`.
 
 | Found                                  | What is done                                                       |
 | -------------------------------------- | ------------------------------------------------------------------ |
-| lagging, no dispute                    | main is merged into the branch and pushed in the same turn         |
+| lagging, no dispute                    | the base is merged into the branch and pushed in the same turn     |
 | a dispute in files                     | resolution by file kind, then a push                               |
 | no run on the tip                      | the tip is rerun or waited for — neither one has a colour          |
 | a draft with a green run               | the draft is lifted — its merge button is locked                   |

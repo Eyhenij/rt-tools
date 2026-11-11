@@ -45,7 +45,7 @@ merge, and it answers offline:
 
 ```bash
 git fetch origin
-git merge-tree "$(git merge-base origin/main <ветка>)" origin/main <ветка> | grep -c '^<<<<<<<'
+git merge-tree "$(git merge-base origin/<база> <ветка>)" origin/<база> <ветка> | grep -c '^<<<<<<<'
 ```
 
 Zero — the branch merely lags, and merging main in cures it. Above zero — a dispute in files,
@@ -55,7 +55,7 @@ and each is resolved by file kind: pattern `git-workflow-merge`.
 
 | Found                                  | What is done                                                       |
 | -------------------------------------- | ------------------------------------------------------------------ |
-| lagging, no dispute                    | main is merged into the branch and pushed in the same turn         |
+| lagging, no dispute                    | the base is merged into the branch and pushed in the same turn     |
 | a dispute in files                     | resolution by file kind, then a push                               |
 | no run on the tip                      | the tip is rerun or waited for — neither one has a colour          |
 | a draft with a green run               | the draft is lifted — its merge button is locked                   |
