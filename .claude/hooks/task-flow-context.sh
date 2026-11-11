@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/task-flow-context.sh · be11457d9f7d · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/task-flow-context.sh · d236633aba79 · правится надстройкой, не здесь
 # Shared parsing for the work-conduct guards. NOT a guard: it has no `rt-hook:` declaration and
 # is not attached to any agent event. The guards themselves source it — the same way they source
 # the shared refusal tail.
@@ -180,9 +180,18 @@ EOF
     [ -z "$RT_TF_PATH" ] && return 1
     RT_TF_CANDIDATES="$rt_tf_candidates"
 
-    # The branch is looked at where the edit will go: a worktree has one of its own.
-    rt_tf_workdir="$(rt_hook_cwd)"
-    [ -z "$rt_tf_workdir" ] && rt_tf_workdir="${CLAUDE_PROJECT_DIR:-.}"
+    # The branch is looked at where the edit will go: a worktree has one of its own. The edited
+    # file names that copy itself — the directory of the call may stay in another copy while a
+    # tool writes by the full path — so the nearest existing directory of the file is asked first,
+    # and the directory of the call only when that is not a working copy.
+    rt_tf_workdir="$(dirname "$RT_TF_PATH")"
+    while [ ! -d "$rt_tf_workdir" ] && [ "$rt_tf_workdir" != / ]; do
+        rt_tf_workdir="$(dirname "$rt_tf_workdir")"
+    done
+    if ! git -C "$rt_tf_workdir" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        rt_tf_workdir="$(rt_hook_cwd)"
+        [ -z "$rt_tf_workdir" ] && rt_tf_workdir="${CLAUDE_PROJECT_DIR:-.}"
+    fi
     cd "$rt_tf_workdir" 2>/dev/null || return 1
     git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 1
 
