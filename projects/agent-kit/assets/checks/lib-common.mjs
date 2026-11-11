@@ -51,7 +51,8 @@ const report = (path, message) => problems.push(`${path}: ${message}`);
 
 const readJson = (path) => JSON.parse(readFileSync(join(ROOT, path), 'utf8'));
 const isDir = (path) => existsSync(join(ROOT, path)) && statSync(join(ROOT, path)).isDirectory();
-const IGNORED_DIRS = ['src', 'node_modules'];
+/** The sources of a lib and everything the tree never walks into. */
+const IGNORED_DIRS = ['src', ...CONFIG.skippedDirs];
 const dirsIn = (path) =>
     isDir(path)
         ? readdirSync(join(ROOT, path), { withFileTypes: true })

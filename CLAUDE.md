@@ -56,6 +56,10 @@ pnpm run storybook:ui-kit-v2   # the second kit, port 6007
 # View dependency graph
 pnpm run graph
 
+# Rebuild the code graphs: the root one and one per directory under projects/, apps/ and libs/.
+# Only graph.json goes into history; how a session reads them is the pattern task-flow-graph
+pnpm run graph:build
+
 # Lay out the laws from @rt-tools/agent-kit / verify what is laid out
 pnpm run agent-kit:sync
 pnpm run agent-kit:check

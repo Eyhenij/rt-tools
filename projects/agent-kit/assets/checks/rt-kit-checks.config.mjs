@@ -46,8 +46,23 @@ const DEFAULTS = {
      * while the width stood at six.
      */
     scenarioPrefixWidth: [2, 10],
-    /** Where never to go: the build, the dependencies, the generated. */
-    skippedDirs: ['node_modules', 'dist', '.git', '.nx', 'tmp', 'coverage', 'worktrees', 'gen', 'generated'],
+    /**
+     * Where never to go: the build, the dependencies, the generated. `graphify-out` is the code graph
+     * of a tree with the trait `graph`: it lies inside a project and a lib root, and a walk that went
+     * in read its page as markup and its cache as a lib without layers.
+     */
+    skippedDirs: [
+        'node_modules',
+        'dist',
+        '.git',
+        '.nx',
+        'tmp',
+        'coverage',
+        'worktrees',
+        'gen',
+        'generated',
+        'graphify-out',
+    ],
     /** Where the project texts lie. */
     docsDir: 'docs',
     /** What is set aside: the checks stay silent about it — it describes the past, not the tree. */
