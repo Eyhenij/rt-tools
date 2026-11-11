@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load before a push, when taking a task and after every known merge — reading all your open PRs at once, telling lag apart from a conflict in files, checking the local head against the hosting.
 ---
-<!-- rt-kit v0.37.0 · patterns/git-workflow-freshness.md · 31389f00fadf · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/git-workflow-freshness.md · 338388d16e1d · правится надстройкой, не здесь -->
 
 # Freshness of open PRs
 
@@ -58,7 +58,8 @@ and each is resolved by file kind: pattern `git-workflow-merge`.
 | -------------------------------------- | ------------------------------------------------------------------ |
 | lagging, no dispute                    | the base is merged into the branch and pushed in the same turn     |
 | a dispute in files                     | resolution by file kind, then a push                               |
-| no run on the tip                      | the tip is rerun or waited for — neither one has a colour          |
+| no run on the tip, the base wakes it   | the tip is rerun or waited for — neither one has a colour          |
+| no run, the base does not wake it      | nothing to wait for: the green push gate on the tip stands for it  |
 | a draft with a green run               | the draft is lifted — its merge button is locked                   |
 | the PR opened by a person, not by the machine | it can no longer get a reviewer: it is created anew by the machine account |
 

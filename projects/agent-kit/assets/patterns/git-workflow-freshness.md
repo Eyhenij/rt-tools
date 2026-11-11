@@ -57,7 +57,8 @@ and each is resolved by file kind: pattern `git-workflow-merge`.
 | -------------------------------------- | ------------------------------------------------------------------ |
 | lagging, no dispute                    | the base is merged into the branch and pushed in the same turn     |
 | a dispute in files                     | resolution by file kind, then a push                               |
-| no run on the tip                      | the tip is rerun or waited for — neither one has a colour          |
+| no run on the tip, the base wakes it   | the tip is rerun or waited for — neither one has a colour          |
+| no run, the base does not wake it      | nothing to wait for: the green push gate on the tip stands for it  |
 | a draft with a green run               | the draft is lifted — its merge button is locked                   |
 | the PR opened by a person, not by the machine | it can no longer get a reviewer: it is created anew by the machine account |
 
