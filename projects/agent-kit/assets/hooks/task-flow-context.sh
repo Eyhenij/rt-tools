@@ -163,9 +163,11 @@ rt_task_flow_context() {
             ! git -C "$rt_tf_askdir" ls-files --error-unmatch -- "$rt_tf_candidate" >/dev/null 2>&1; then
             continue
         fi
+        # A relative path belongs to the directory the command runs in. The project directory of the
+        # session is a different tree once the session moved into a second working copy.
         case "$rt_tf_candidate" in
             /*) ;;
-            *) rt_tf_candidate="${CLAUDE_PROJECT_DIR:-.}/$rt_tf_candidate" ;;
+            *) rt_tf_candidate="$rt_tf_askdir/$rt_tf_candidate" ;;
         esac
         if rt_is_app_code "$rt_tf_candidate" || rt_tf_laid_out "$rt_tf_candidate"; then
             RT_TF_PATH="$rt_tf_candidate"

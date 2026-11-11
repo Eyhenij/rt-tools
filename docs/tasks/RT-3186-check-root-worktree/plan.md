@@ -1,63 +1,73 @@
 # Plan
 
 **Task:** RT-3186 · **Branch:** RT-3186-check-root-worktree
-**Draft:** `<path to the product agreement>`
+**Spec:** `docs/specs/agent-kit/work-guard/spec.md`
 **Behaviour:** changes
-
-A tree that writes the agreement straight into the domain spec names it instead of the draft:
-`**Spec:** `<path to the spec>``.
-
-Work that does not touch application code needs no agreement — then instead of the draft line
-stands `**Behaviour:** unchanged — <the owner's reason>`; an empty reason is not accepted.
-
-After it is written this file is not edited. A stage revision goes to `progress.md` as a decision
-along the way.
 
 ## Points
 
-- **A:** <where the product stands now>
-- **This task reaches:** <the change a person will see>
-- **Sign:** <the command, the page or the number that shows it, and who sees it>
-- **Milestone G of the epic:** <the point named in the epic plan>
+- **A:** a session started in one tree and working in a second working copy of the same repository
+  gets every edit there refused by the plan guard, even after the task folder is taken apart by a
+  commit of the branch; resolving a merge conflict there is refused too.
+- **This task reaches:** in a second working copy the plan guard judges the history of that copy:
+  an edit after the folder is taken apart passes, a conflict of a standing merge is resolved.
+- **Sign:** `bash projects/agent-kit/tests/task-flow-guard.test.sh` — the scenarios SC-AK-1336 and
+  SC-AK-1337 pass, and they fail on the code before the edit.
+- **Milestone G of the epic:** none — work outside an epic by the owner's word.
 
 ## Task footprint
 
-<What the work touches. Filled in by exploration before the grill and confirmed by the owner. By
-this same table, at closing, one sees what of the specs, rules and patterns has gone stale: what
-is named here is read twice — before the work and after it.>
-
-| What  | Where                         |
-| ----- | ----------------------------- |
-| Specs | `docs/specs/<domain>/`        |
-| Laws  | `docs/constitution/<name>.md` |
-| Rules | `.claude/skills/<name>/`      |
-| Code  | `projects/<package>/`         |
+| What  | Where                                                                                                                                                         |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Specs | `docs/specs/agent-kit/work-guard/`                                                                                                                            |
+| Laws  | `docs/constitution/work-conduct.md`                                                                                                                           |
+| Rules | `.claude/skills/task-flow/`                                                                                                                                   |
+| Code  | `projects/agent-kit/assets/defaults/project.sh`, `projects/agent-kit/assets/hooks/task-flow-context.sh`, `projects/agent-kit/assets/hooks/task-flow-guard.sh` |
+| Tests | `projects/agent-kit/tests/task-flow-guard.test.sh`                                                                                                            |
 
 ## What counts as done
 
-- <a statement that can be checked>
+- `rt_is_app_code_default` changes no variable of the guard that calls it.
+- A relative path named by a command is resolved against the working copy the command runs in, not
+  against the tree the session started in.
+- A path in a second working copy of the same repository is judged as application code of that
+  copy; a path in another repository or outside any is not.
+- In a second working copy an edit after the folder is taken apart passes, and a file in conflict
+  of a standing merge is resolved.
 
 ## Stages
 
-### 1. <name>
+### 1. Agreement
 
 - **Steps:**
-    1. <what is done first>
-    2. <what is done after it>
-- **Readiness sign:** <what must become true>
-- **Verified by:** `<command>` — <what in its output means "it matched">
+    1. Rule about the second working copy in the work-guard spec
+    2. Scenarios SC-AK-1336 and SC-AK-1337 in the work-guard scenarios
+- **Readiness sign:** the rule and both scenarios stand in the spec.
+- **Verified by:** `npm run check:specs` — no divergences.
 
-The steps are the smallest unit of the work, and they are written here in full: the progress
-mirrors this list with its marks, and a check matches the two by number and by name. A step is
-named by what is done, not by what is thought over — a line nobody can call done is not a step.
+### 2. Code and tests
 
-The command is written in backticks: the turn exit guard reads it and does not let out a turn in
-which the stage is declared closed and the command was not run. An acceptance written in prose
-cannot be confirmed by anything. The command is run right here, while the plan is written, not at
-the end of the stage: its output is what names the readiness sign. A sign written by a guess is
-sometimes impossible to meet — the line the stage must put out comes from an unconfigured tree
-rather than from the work — and that is found out latest of everything that depended on it.
+- **Steps:**
+    1. Scenarios in the guard test fail on the old code
+    2. The profile default keeps its variables to itself and knows a second working copy
+    3. The guard context and the merge exception resolve paths against the working copy of the call
+    4. The guard test passes whole
+- **Readiness sign:** the guard test passes, the two new scenarios included.
+- **Verified by:** `bash projects/agent-kit/tests/task-flow-guard.test.sh` — the last line names no
+  failure.
+
+### 3. Closing
+
+- **Steps:**
+    1. Bindings in the work-guard companion
+    2. Layout and the push gate set
+    3. The task folder taken apart into the archive
+    4. PR into main
+- **Readiness sign:** the set is green and the PR is open.
+- **Verified by:** `pnpm run agent-kit:check` — the layout matches the package.
 
 ## What this work does not do
 
-- <neighbouring work that is not dragged in here, and where it is created>
+- Other guards that take `CLAUDE_PROJECT_DIR` as the tree root (the push gate, the skill gate, the
+  delivery guard) are not touched: the delivery law says the call goes from the copy the session
+  stands in, and the push gate refuses a foreign copy on purpose.

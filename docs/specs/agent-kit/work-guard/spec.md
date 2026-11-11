@@ -72,6 +72,11 @@ turn.
   carries no folder by the rule. Main is merged into it while the work runs, and a refused conflict
   has no lawful way out. A resolved file and any other code file of the same merge are judged as
   before.
+- **In a second working copy the guard judges that copy, not the tree the session started in.** A
+  path named by a command is taken from the copy the command runs in, and a path in a second working
+  copy of the same repository is application code of that copy. The branch, the plan and the history
+  of a taken-apart folder are read there too. Otherwise a session that moved into a second copy gets
+  every edit after the tidy-up refused by the history of a foreign branch.
 
 - **The keys of the task folder are read under two names, English and Russian.** The samples of a
   task folder in the package carry the English keys — `## Where we stand`, `**State:**`, `**Draft:**`,
