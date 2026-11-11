@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of one task from the request to the merge. Load at the start of any work, when editing task folders and product agreements, and on return to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. Epics — epic-flow, turns — turn-conduct.
 ---
-<!-- rt-kit v0.36.0 · rules/task-flow.md · 5f3057e3737e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.36.0 · rules/task-flow.md · 604310e7610c · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -234,7 +234,8 @@ flowchart TD
   for approval.
 - **Building by a sample begins with reading the sample itself, whole, by walking the directories.**
 - **Exploration of a tree that holds a code graph begins with the graph, and the graph is checked
-  before it answers.** A tree without a graph has no such step. In every turn, before the first
+  before it answers.** A tree without a graph has no such step; a tree with one names the trait
+  `graph` in its settings, and only then is the pattern laid out to it. In every turn, before the first
   answer taken from it, the commit the graph was built from is compared with the head: a stale graph
   is rebuilt, or the turn names why not. The graph answers what calls, imports and contains what;
   numbers, behaviour and the texts of laws, rules and specs are read from the code and the documents.

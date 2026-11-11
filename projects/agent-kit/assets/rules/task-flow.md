@@ -233,7 +233,8 @@ flowchart TD
   for approval.
 - **Building by a sample begins with reading the sample itself, whole, by walking the directories.**
 - **Exploration of a tree that holds a code graph begins with the graph, and the graph is checked
-  before it answers.** A tree without a graph has no such step. In every turn, before the first
+  before it answers.** A tree without a graph has no such step; a tree with one names the trait
+  `graph` in its settings, and only then is the pattern laid out to it. In every turn, before the first
   answer taken from it, the commit the graph was built from is compared with the head: a stale graph
   is rebuilt, or the turn names why not. The graph answers what calls, imports and contains what;
   numbers, behaviour and the texts of laws, rules and specs are read from the code and the documents.

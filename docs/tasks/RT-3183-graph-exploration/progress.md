@@ -31,6 +31,10 @@
   the layout put one file, `.claude/skills/task-flow/SKILL.md`; the pattern got no copy here;
   `agent-kit:check` — «разложенное сходится с пакетом v0.36.0»; `check:specs` — no divergences;
   the package unit tests — 566 of 566.
+- **The article names the trait `graph`** — the `product-strategist` finding: the pattern is laid
+  out only to a tree that names the trait, and nothing told a tree with a graph to name it. The
+  article goes to every tree, so it carries that condition. After the edit: 305 lines, 22 615
+  characters; layout, size and specs checks green.
 - **The second task of the cascade, RT-3184, is closed as lapsed.** The refusal the third proposal
   describes is printed by the sending tree's own guard, which the package does not ship. The
   package turn-exit guard does not read a task branch outside an epic as one under an open epic:
