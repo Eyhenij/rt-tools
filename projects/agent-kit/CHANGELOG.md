@@ -1,3 +1,18 @@
+# [0.37.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.36.0...rt-agent-kit%400.37.0) (2026-11-11)
+
+**Метрика выпуска:** нет. Новая статья и паттерн для деревьев с графом кода, отчёты пакета не считают, открывал ли ход граф
+
+### Bug Fixes
+
+- **rt:agent-kit:** статья о графе кода короче, паттерн называет связи как инструмент ([6615e53](https://github.com/Eyhenij/rt-tools/commit/6615e53ed6eaf9f96f6d72b490ec577c11410979))
+- **rt:agent-kit:** шаг графа кода задан свойством, разница читается до ответа ([95a482b](https://github.com/Eyhenij/rt-tools/commit/95a482b0098932f99faaa53bb4145f6b4f03a9f6))
+
+### Features
+
+- **rt:agent-kit:** разведка в дереве с графом кода начинается с графа ([d5e9ad4](https://github.com/Eyhenij/rt-tools/commit/d5e9ad4fd41dd47829a1d2c0c375e11566e9765f))
+- **rt:agent-kit:** статья о графе кода называет свойство graph ([ec162af](https://github.com/Eyhenij/rt-tools/commit/ec162af0245aea849ab648cc238cc5574a144bf5))
+- **rt:agent-kit:** статья о графе кода сверяет граф перед первой разведкой хода ([119df4f](https://github.com/Eyhenij/rt-tools/commit/119df4fdb9147ef4236bb7dfea5b4ff5c99d5c11))
+
 # [0.36.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.35.0...rt-agent-kit%400.36.0) (2026-11-09)
 
 **Метрика выпуска:** нет. Починки проверок и выделка правила epic-flow
