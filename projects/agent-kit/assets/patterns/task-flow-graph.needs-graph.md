@@ -48,7 +48,8 @@ graphify update .
 ```
 
 A stale graph not rebuilt is not a source: the turn names why it was not rebuilt, and no answer
-cites it.
+cites it. A turn where the graph exists and was not used names one of two reasons: the answer is
+about behaviour, numbers or texts, or the graph is stale and was not rebuilt.
 
 ## The inventory
 
@@ -62,13 +63,14 @@ python3 -c "import json,collections;g=json.load(open('graphify-out/graph.json'))
 ## The relations
 
 ```bash
-graphify explain "<file>"                # a file or a symbol and its neighbours
+graphify explain "<node>"                # a node and its neighbours
 graphify affected "<symbol>" --depth 2   # who depends on it, reverse traversal
 graphify path "<caller>" "<callee>"      # the chain between two nodes
 ```
 
-`explain` answers with `imports`, `imports_from`, `calls`, `contains` and `re-exports`; `affected`
-is the reverse traversal an edit of a shared symbol needs.
+A node is named by a file name or a symbol, not by a path: `board.mjs` is found, `tools/board.mjs`
+is not. `explain` answers with `imports`, `imports_from`, `calls`, `contains` and `re_exports`;
+`affected` is the reverse traversal an edit of a shared symbol needs.
 
 ## What the graph never answers
 
@@ -83,7 +85,7 @@ is the reverse traversal an edit of a shared symbol needs.
 
 - **A free-text query looks like the entry point and is not.** `graphify query` walks breadth-first
   over the words of the question and starts from whatever token it matched: it answers with
-  neighbours of a word, not with the domain. `explain` is asked by a file or a symbol.
+  neighbours of a word, not with the domain. `explain` is asked by a file name or a symbol.
 - **A barrel file distorts a path.** `index.ts` nodes stand between a caller and a callee, and
   `graphify path` returns a chain through re-exports that no reader would walk. `affected` on the
   symbol is used instead, and the relations are read.
