@@ -38,6 +38,10 @@ and what was filtered out.
 | the PR has no reviewer                               | request the reviewer by a REST call                           |
 | the last run of the main branch is red               | fix the main branch before new work                           |
 | a task and its epic name each other one way only     | link the task as a sub-issue, or name it in the epic plan     |
+| a task folder with no open task                      | take it apart into the archive by a commit, rule `task-flow`  |
+| production lags behind the main branch               | roll out, or name to the owner why the rollout waits          |
+| a PR card stands on the board                        | remove the card: the board holds tasks, not PRs               |
+| an open task stands in a closing column              | move it back to review or work: the merge closes it, not the column |
 
 ## Common misses
 
