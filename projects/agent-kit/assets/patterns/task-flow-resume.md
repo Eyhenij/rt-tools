@@ -201,6 +201,15 @@ and the assignment guard refuses taking it until the owner names the work.
 **Next move:** an action is done on the next task — a task, a branch or a folder is created. The
 turn ends after it, not after words about it.
 
+## State `влито`: the epic plan learns of the merge
+
+A person merged the PR, and the epic plan still names the task as in work. The row moves to merged
+in the branch of the next task, by its first commit: the epic branch carries no edits of its own. A
+lesson the task left for the following ones goes into the section of the plan about what was learned
+along the way, in the same commit.
+
+**Next move:** the work of the next task goes on — the merge needs no turn of its own.
+
 ## Common misses
 
 - **Confirmation is command output or a measurement, not a retelling.** "Checked, it works" a

@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when returning to unfinished work in a new session. What is already in the context, what not to ask the owner, how to edit "Where we stand", how to record a decision along the way and a stage revision. Not for starting work — that is pattern task-flow-start.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-resume.md · 00d71e26def2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-resume.md · 20fbb6a7680f · правится надстройкой, не здесь -->
 
 # Returning to unfinished work
 
@@ -201,6 +201,15 @@ and the assignment guard refuses taking it until the owner names the work.
 
 **Next move:** an action is done on the next task — a task, a branch or a folder is created. The
 turn ends after it, not after words about it.
+
+## State `влито`: the epic plan learns of the merge
+
+A person merged the PR, and the epic plan still names the task as in work. The row moves to merged
+in the branch of the next task, by its first commit: the epic branch carries no edits of its own. A
+lesson the task left for the following ones goes into the section of the plan about what was learned
+along the way, in the same commit.
+
+**Next move:** the work of the next task goes on — the merge needs no turn of its own.
 
 ## Common misses
 
