@@ -1,6 +1,6 @@
 # The stepper bar
 
-**Status:** agreement before the code · **Revision:** 11 November 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 11 November 2026 · **Scenario prefix:** `SC-UKV`
 **Dependencies:** the `stepper/*` colour tokens of the kit
 **Законы:** `verifiability`, `frontend-application`
 **Procedures:** none
@@ -115,3 +115,6 @@ None.
 ## History of changes
 
 - 11 November 2026 — the agreement is written before the code. Task RT-3188.
+- 11 November 2026 — the colours of the stepper became consumer handles.
+- 11 November 2026 — the agreement is rolled out and stands as the subdomain of the second kit.
+  Task RT-3188.
