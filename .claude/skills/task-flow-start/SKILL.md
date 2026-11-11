@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load at the start of work from the owner — exploration before the first question, the six mandatory questions, the product agreement, creating the task, the branch and the folder. Returning to work — pattern task-flow-resume.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-start.md · 3d86b57c26c8 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-start.md · f89a45f841f2 · правится надстройкой, не здесь -->
 
 # Starting the work
 
@@ -271,7 +271,7 @@ window fill limit, a guard's refusal, a question to the owner or handed-in work 
 begun; a pattern read to the end is not among them.
 
 **Next move:** the first stage is done in the same turn, and it is declared closed after its command
-from the "Checked by" line has passed.
+from the "Verified by" line has passed.
 
 ## Common misses
 

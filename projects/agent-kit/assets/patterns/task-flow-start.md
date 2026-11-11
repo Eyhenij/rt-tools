@@ -270,7 +270,7 @@ window fill limit, a guard's refusal, a question to the owner or handed-in work 
 begun; a pattern read to the end is not among them.
 
 **Next move:** the first stage is done in the same turn, and it is declared closed after its command
-from the "Checked by" line has passed.
+from the "Verified by" line has passed.
 
 ## Common misses
 
