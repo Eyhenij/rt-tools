@@ -1,8 +1,8 @@
 ---
-name: graphify-work
+name: task-flow-graph
 kind: pattern
 rule: task-flow
-description: Pattern of rule task-flow. Load when a tree holds a code graph and a domain is to be explored or a shared symbol edited — the freshness check, the domain inventory, explain and affected, and what the graph never answers.
+description: Pattern of rule task-flow. Load when the tree holds a code graph and a domain is explored or a shared symbol is about to be edited. Not for a claim about behaviour, a number or a rule text — those are read from the code and the documents.
 ---
 
 # Working with the tree's code graph
@@ -10,9 +10,12 @@ description: Pattern of rule task-flow. Load when a tree holds a code graph and 
 Pattern of the rule `task-flow`. What must be true meanwhile — the law
 `docs/constitution/work-conduct.md`.
 
-The graph is a build artefact: it lies next to the tree, outside version control, and is rebuilt
-from the code. It answers relations, not behaviour. The tool is not part of the package, and the
-pattern is laid out only to a tree that names the trait `graph`.
+The graph is a build artefact of the tool `graphify`: it lies next to the tree and is rebuilt from
+the code. It answers relations, not behaviour. The tool is not part of the package, and the pattern
+is laid out only to a tree that names the trait `graph`. A copy that names the trait and has no
+artefact on disk — a fresh clone, a new working tree — builds it by `graphify update .` before the
+first exploration of the turn, or the turn names that there is no graph, and none of the steps below
+applies.
 
 ## When to use
 
@@ -26,8 +29,8 @@ code and the documents.
 
 ## Freshness
 
-The build records the commit it was made from. It is compared with the head before the first answer
-taken from the graph:
+The build records the commit it was made from. It is compared with the head in every turn, before
+the first exploration:
 
 ```bash
 python3 -c "import json;print(json.load(open('graphify-out/graph.json'))['built_at_commit'])"
@@ -80,7 +83,6 @@ is the reverse traversal an edit of a shared symbol needs.
 - **A barrel file distorts a path.** `index.ts` nodes stand between a caller and a callee, and
   `graphify path` returns a chain through re-exports that no reader would walk. `affected` on the
   symbol is used instead, and the relations are read.
-- **A graph that was never checked reads as fresh.** The build names its commit; without comparing
-  it with the head, an old graph answers about old code and nothing turns red.
-- **The graph points where to read, and the claim is read there.** A statement about behaviour, a
-  number or a text is taken from the code or the document, never from the graph.
+- **A rebuild after deleted code keeps the old graph.** `graphify update` does not overwrite
+  `graph.json` when the rebuild has fewer nodes, and `built_at_commit` stays old: after an edit that
+  removes code it is run with `--force`, and the commit is compared again.
