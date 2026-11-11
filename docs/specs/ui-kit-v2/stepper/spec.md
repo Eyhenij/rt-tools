@@ -51,6 +51,10 @@ The label reads «Шаг 3 из 4 · Гости» or any text the application gi
 
 - **The label line is 18 px high, as on the mockup.** A wrapped label does not run over itself.
 
+- **Every colour of the stepper is a property of its host, and the application overrides it.** One
+  rule on `rt-stepper` or on a parent repaints the track, the fill, the current point, the labels
+  and the marks of the list; by default they take the theme tokens, and the look does not move.
+
 ## What is out of scope
 
 - The vertical list (`orientation="vertical"`): it is unchanged.

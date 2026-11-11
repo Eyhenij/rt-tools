@@ -12,7 +12,33 @@ import { IRtStepper } from '../../rt-stepper.model';
 const STEP_DESCRIPTION: string = 'Готовим договор и согласуем условия.';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TStepperMatrixPart = 'position' | 'length' | 'description' | 'edges' | 'vertical' | 'presets' | 'themes';
+export type TStepperMatrixPart = 'position' | 'length' | 'description' | 'edges' | 'widths' | 'colors' | 'vertical' | 'presets' | 'themes';
+
+/** Описание шага на кадре ширин — то же, что на макете. */
+const BOOKING_DESCRIPTION: string = 'Оплатите бронь в течение суток, иначе она будет отменена.';
+
+/** Имена шагов мастера с макета; последний шаг всегда «Готово». */
+const BOOKING_NAMES: readonly string[] = ['Даты', 'Оплата', 'Гости', 'Документы', 'Проверка', 'Договор'];
+
+/** Случай кадра ширин: подпись, ширина места и набор с текущим шагом. */
+interface IStepperWidthCase extends IStepperCase {
+    readonly width: number;
+}
+
+/** Набор из `total` шагов, как на макете: «Шаг N из M · имя»; подпись текущего можно заменить. */
+function bookingSteps(total: number, current: number, label?: string): readonly IRtStepper.Step[] {
+    return Array.from({ length: total }, (_value: unknown, index: number): IRtStepper.Step => {
+        const name: string = index === total - 1 ? 'Готово' : BOOKING_NAMES[index];
+        const text: string = index === current && label ? label : `Шаг ${index + 1} из ${total} · ${name}`;
+
+        return { label: text, description: BOOKING_DESCRIPTION };
+    });
+}
+
+/** Случай кадра ширин; номер текущего — с нуля, как во входе компонента. */
+function widthCase(name: string, width: number, total: number, current: number, label?: string): IStepperWidthCase {
+    return { width, name: `${name} · ширина ${width}`, steps: bookingSteps(total, current, label), currentIndex: current };
+}
 
 /** Случай набора шагов: имя для подписи ячейки, сам набор и номер текущего шага. */
 interface IStepperCase {
@@ -101,6 +127,39 @@ const STEPS_INSTRUCTION: readonly IRtStepper.Step[] = [
                                 <rt-stepper [steps]="item.steps" [currentIndex]="item.currentIndex" />
                             </ng-template>
                         </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('widths') {
+                <app-story-presets caption="Любой шаг на любой ширине в обоих наборах">
+                    <ng-template>
+                        <div style="display: flex; flex-direction: column; gap: 40px">
+                            @for (item of widths; track item.name) {
+                                <div style="display: flex; flex-direction: column; gap: 12px">
+                                    <p style="margin: 0; font-size: 11px">{{ item.name }}</p>
+                                    <div [style.width.px]="item.width">
+                                        <rt-stepper [steps]="item.steps" [currentIndex]="item.currentIndex" />
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('colors') {
+                <app-story-presets caption="Цвета, переопределённые приложением, в обоих наборах">
+                    <ng-template>
+                        <div
+                            style="--rt-stepper-current-color: var(--rt-color-action-success); --rt-stepper-progress-color: var(--rt-color-action-danger); --rt-stepper-label-color: var(--rt-color-action-success); --rt-stepper-line-color: var(--rt-color-action-danger)">
+                            <div style="width: 30rem">
+                                <rt-stepper [steps]="colorSteps" [currentIndex]="1" />
+                            </div>
+                            <div style="width: 20rem; margin-block-start: 24px">
+                                <rt-stepper orientation="vertical" [steps]="stepsThree" [currentIndex]="1" />
+                            </div>
+                        </div>
                     </ng-template>
                 </app-story-presets>
             }
@@ -233,6 +292,26 @@ export class TestRtStepperMatrixComponent {
         { name: 'отрицательный номер', steps: STEPS_THREE, currentIndex: -3 },
         { name: 'пустой набор', steps: [], currentIndex: 0 },
     ];
+
+    /**
+     * Кадр ширин — тот же набор случаев, что кадр «Ширины и состояния» в макете: третий из
+     * четырёх, пять и семь шагов, узкая панель 327, наименьшая ширина 280, широкая 720 и длинные
+     * подписи первого и последнего шага.
+     */
+    public readonly widths: readonly IStepperWidthCase[] = [
+        widthCase('По умолчанию: 4 шага, текущий второй', 480, 4, 1),
+        widthCase('3 из 4', 480, 4, 2),
+        widthCase('5 шагов, текущий четвёртый', 480, 5, 3),
+        widthCase('Узкая панель: 4 шага, текущий второй', 327, 4, 1),
+        widthCase('Узкая панель: 3 из 4', 327, 4, 2),
+        widthCase('Узкая панель: 7 шагов, текущий второй', 327, 7, 1),
+        widthCase('Узкая панель: первый шаг, длинная подпись', 327, 4, 0, 'Шаг 1 из 4 · Даты заезда и выезда для всей группы гостей'),
+        widthCase('Узкая панель: последний шаг, длинная подпись', 327, 4, 3, 'Шаг 4 из 4 · Проверка данных и подтверждение бронирования'),
+        widthCase('Наименьшая ширина: 5 шагов, текущий третий', 280, 5, 2),
+        widthCase('Широкая панель: 4 шага, текущий второй', 720, 4, 1),
+    ];
+
+    public readonly colorSteps: readonly IRtStepper.Step[] = bookingSteps(4, 1);
 
     public readonly stepsInstruction: readonly IRtStepper.Step[] = STEPS_INSTRUCTION;
 

@@ -1,62 +1,83 @@
 @use '../../../styles/mixins' as kv;
 
 @layer rt-kit.components {
-    /* rt-stepper — линейный прогресс-степпер в common/ui. ViewEncapsulation.None.
+    /* rt-stepper — полоса прогресса по шагам и вертикальный список. ViewEncapsulation.None.
        Хост адресуется по имени элемента, а не по классу блока: класс `.rt-stepper` висит
        и на `<rt-stepper>`, и на корне шаблона, поэтому правила блока вложены в хост —
        так они достаются только корню шаблона. */
 
     rt-stepper {
+        /* Цвета степпера — свойства хоста: приложение переопределяет их правилом на `rt-stepper`
+           или на родителе. По умолчанию — токены темы, вид не меняется. */
+        --rt-stepper-track-color: var(--rt-color-stepper-track);
+        --rt-stepper-progress-color: var(--rt-color-stepper-progress);
+        --rt-stepper-current-color: var(--rt-color-stepper-current);
+        --rt-stepper-label-color: var(--rt-stepper-current-color);
+        --rt-stepper-description-color: var(--rt-color-text-primary);
+        --rt-stepper-point-shadow: var(--rt-shadow-step-indicator);
+        --rt-stepper-line-color: var(--rt-color-border-default);
+        --rt-stepper-step-label-color: var(--rt-color-text-primary);
+        --rt-stepper-step-description-color: var(--rt-color-text-muted);
+        --rt-stepper-mark-complete-bg: var(--rt-stepper-progress-color);
+        --rt-stepper-mark-complete-color: var(--rt-color-text-inverse);
+        --rt-stepper-mark-current-bg: var(--rt-stepper-current-color);
+        --rt-stepper-mark-current-color: var(--rt-neutral-950);
+        --rt-stepper-mark-upcoming-bg: var(--rt-stepper-track-color);
+        --rt-stepper-mark-upcoming-color: var(--rt-color-text-primary);
+        --rt-stepper-mark-neutral-bg: var(--rt-color-text-muted);
+        --rt-stepper-mark-neutral-color: var(--rt-color-text-inverse);
+
         display: block;
 
         .rt-stepper {
             --rt-stepper-radius: var(--rt-radius-full);
-            --rt-stepper-point-shadow: var(--rt-shadow-step-indicator);
             --rt-stepper-transition-duration: var(--rt-duration-fast);
 
             display: flex;
             flex-direction: column;
             gap: var(--rt-space-4);
 
+            /* Подпись над полосой, под ней полоса с точками. Подпись в несколько строк
+               растит полосу вниз, точки и описание сдвигаются за ней. */
             &__rail {
-                position: relative;
-                block-size: 39px;
+                display: flex;
+                flex-direction: column;
             }
 
+            /* Отрезок подписи (`margin-inline-start` и `inline-size`) задаётся инлайном:
+               по центру над точкой, на крайних шагах — вся полоса и прижим к краю. */
             &__label {
-                position: absolute;
                 margin: 0;
-                color: var(--rt-color-stepper-current);
+                color: var(--rt-stepper-label-color);
                 font-size: var(--rt-text-xs);
                 font-weight: var(--rt-font-weight-regular);
-                inset-block-start: 0;
                 letter-spacing: var(--rt-letter-spacing-wide);
-                line-height: var(--rt-leading-none);
-                transition: left var(--rt-stepper-transition-duration) ease-out;
-                white-space: nowrap;
+                line-height: var(--rt-leading-normal);
+                overflow-wrap: anywhere;
+                transition:
+                    margin-inline-start var(--rt-stepper-transition-duration) ease-out,
+                    inline-size var(--rt-stepper-transition-duration) ease-out;
 
-                /* Подпись висит над активной точкой (`left` задаётся инлайном):
-                   на крайних шагах прижимаем к краю точки, иначе центрируем. */
                 &--anchor--start {
-                    transform: translateX(0);
+                    text-align: start;
                 }
 
                 &--anchor--center {
-                    transform: translateX(-50%);
+                    text-align: center;
                 }
 
                 &--anchor--end {
-                    transform: translateX(-100%);
+                    text-align: end;
                 }
             }
 
+            /* Полоса 21 px: 5 px просвета под подписью и 16 px под точки, точки прижаты к низу.
+               Подпись в 18 px и полоса дают те же 39 px, что и макет. */
             &__track-band {
-                position: absolute;
+                position: relative;
                 display: flex;
-                align-items: center;
-                block-size: 16px;
-                inset-block-end: 0;
-                inset-inline: 0;
+                align-items: flex-end;
+                block-size: 21px;
             }
 
             &__track,
@@ -64,18 +85,17 @@
                 position: absolute;
                 border-radius: var(--rt-stepper-radius);
                 block-size: 2px;
-                inset-block-start: 50%;
+                inset-block-end: 7px;
                 inset-inline-start: 0;
-                transform: translateY(-50%);
             }
 
             &__track {
-                background: var(--rt-color-stepper-track);
+                background: var(--rt-stepper-track-color);
                 inset-inline-end: 0;
             }
 
             &__progress {
-                background: var(--rt-color-stepper-progress);
+                background: var(--rt-stepper-progress-color);
                 transition: width var(--rt-stepper-transition-duration) ease-out;
             }
 
@@ -92,7 +112,7 @@
 
             &__point {
                 border-radius: var(--rt-stepper-radius);
-                background: var(--rt-color-stepper-track);
+                background: var(--rt-stepper-track-color);
                 block-size: 8px;
                 inline-size: 8px;
                 transition:
@@ -101,11 +121,11 @@
                     background var(--rt-stepper-transition-duration) ease-out;
 
                 &--complete {
-                    background: var(--rt-color-stepper-progress);
+                    background: var(--rt-stepper-progress-color);
                 }
 
                 &--current {
-                    background: var(--rt-color-stepper-current);
+                    background: var(--rt-stepper-current-color);
                     block-size: 16px;
                     box-shadow: var(--rt-stepper-point-shadow);
                     inline-size: 16px;
@@ -114,7 +134,7 @@
 
             &__description {
                 margin: 0;
-                color: var(--rt-color-text-primary);
+                color: var(--rt-stepper-description-color);
                 font-size: var(--rt-text-xs);
                 letter-spacing: var(--rt-letter-spacing-wide);
                 line-height: var(--rt-leading-snug);
@@ -130,10 +150,9 @@
         &.rt-stepper--vertical > .rt-stepper {
             --rt-stepper-mark-size: var(--rt-size-6);
             --rt-stepper-mark-font-size: var(--rt-text-xs);
-            --rt-stepper-mark-bg: var(--rt-color-text-muted);
-            --rt-stepper-mark-color: var(--rt-color-text-inverse);
+            --rt-stepper-mark-bg: var(--rt-stepper-mark-neutral-bg);
+            --rt-stepper-mark-color: var(--rt-stepper-mark-neutral-color);
             --rt-stepper-line-width: var(--rt-border-width-thin);
-            --rt-stepper-line-color: var(--rt-color-border-default);
             --rt-stepper-item-gap: var(--rt-space-6);
 
             padding: 0;
@@ -162,21 +181,20 @@
                     inset-inline-start: calc((var(--rt-stepper-mark-size) - var(--rt-stepper-line-width)) / 2);
                 }
 
-                /* Цифра пройденного шага — цвет, обратный тексту: прогресс в тёмной теме светлый. */
                 &--state--complete {
-                    --rt-stepper-mark-bg: var(--rt-color-stepper-progress);
-                    --rt-stepper-mark-color: var(--rt-color-text-inverse);
+                    --rt-stepper-mark-bg: var(--rt-stepper-mark-complete-bg);
+                    --rt-stepper-mark-color: var(--rt-stepper-mark-complete-color);
                 }
 
                 /* Янтарь текущего шага один в обеих темах, и цифра на нём одна — тёмная. */
                 &--state--current {
-                    --rt-stepper-mark-bg: var(--rt-color-stepper-current);
-                    --rt-stepper-mark-color: var(--rt-neutral-950);
+                    --rt-stepper-mark-bg: var(--rt-stepper-mark-current-bg);
+                    --rt-stepper-mark-color: var(--rt-stepper-mark-current-color);
                 }
 
                 &--state--upcoming {
-                    --rt-stepper-mark-bg: var(--rt-color-stepper-track);
-                    --rt-stepper-mark-color: var(--rt-color-text-primary);
+                    --rt-stepper-mark-bg: var(--rt-stepper-mark-upcoming-bg);
+                    --rt-stepper-mark-color: var(--rt-stepper-mark-upcoming-color);
                 }
             }
 
@@ -204,7 +222,7 @@
             }
 
             .rt-stepper__step-label {
-                color: var(--rt-color-text-primary);
+                color: var(--rt-stepper-step-label-color);
                 font-size: var(--rt-text-sm);
                 line-height: var(--rt-leading-snug);
                 overflow-wrap: anywhere;
@@ -212,7 +230,7 @@
 
             .rt-stepper__step-description {
                 margin: 0;
-                color: var(--rt-color-text-muted);
+                color: var(--rt-stepper-step-description-color);
                 font-size: var(--rt-text-xs);
                 line-height: var(--rt-leading-snug);
             }
