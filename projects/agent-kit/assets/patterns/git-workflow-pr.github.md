@@ -222,10 +222,10 @@ push gate — below is what it does not know.
    moves ahead — most often by the same executor's own PR. Everything checked below is checked
    from this base: a PR from a diverged branch shows the reviewer the edit mixed with someone
    else's. Order and conflict resolution — pattern `git-workflow-merge`.
-2. **The branch holds only the edit it was created for** — `git diff main...HEAD --stat`. A
+2. **The branch holds only the edit it was created for** — `git diff origin/<база>...HEAD --stat`. A
    foreign domain in the file list means the edit has spread, and it must be brought back within
    its bounds.
-3. **No mock, no substituted response, no debug line** — `git diff main...HEAD` is read whole,
+3. **No mock, no substituted response, no debug line** — `git diff origin/<база>...HEAD` is read whole,
    not by file names. They go to production silently and corrupt real data.
 4. **The document goes in the same commit.** `docs-guard` names the pair, but it does not know
    the domain spec and an edit of its behaviour — that stays with the author.
@@ -267,8 +267,8 @@ still missing. Items 1–15 are then passed before `gh pr ready`, and an unmet i
 is not lifted — not that the PR does not open.
 
 Where it does not wake, the same list is about opening: there is no second state to hold the work
-in, so an unmet item means the PR does not open yet. Item 1 changes with it — no run is asked for,
-and its place is taken by the push gate, green before the sending.
+in, so an unmet item means the PR does not open yet. No item asks for a run there: its place is
+taken by the push gate, green before the sending.
 
 Right after publishing the task is moved to review — `npm run task:move -- <номер>
 in-review` — and `npm run check:board` is run once more: before the PR opens it does not judge
