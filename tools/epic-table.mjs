@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/epic-table.github.mjs · afe0faeb480e · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/epic-table.github.mjs · 3b425b2da0c6 · правится надстройкой, не здесь
 /**
  * The table of the epic's tasks: the order from the plan, the state from the hosting.
  *
@@ -164,11 +164,12 @@ function rowOf(number, board, pulls) {
 /**
  * Why the epic exists, in one sentence — the first phrase of the section the plan opens with.
  *
- * A plan whose first section is worded otherwise loses the phrase, and the paragraph then names
- * only the count of the tasks: that is the open question `Q-WC-9` of the subdomain.
+ * The draft of the plan opens with «Что даёт»; plans written before it open with «Зачем». A plan
+ * whose first section is worded otherwise loses the phrase, and the paragraph then names only the
+ * count of the tasks.
  */
 function whyOf(plan) {
-    const section = /^##\s+Зачем\s*$/m.exec(plan);
+    const section = /^##\s+(?:Что даёт|Зачем)\s*$/m.exec(plan);
     if (!section) {
         return '';
     }

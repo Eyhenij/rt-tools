@@ -98,9 +98,11 @@ flowchart TD
 
 ## What of the law is not here
 
-None of the agreements on the shape of the reply is checked by machine: the reply to the owner does
-not land in the tree, and there is nothing to read it. It is held by the memory of whoever replies,
-and a violation is visible only to the owner — by looking for a row in the text and not finding it.
+One article is checked: a statement about the state of the tree needs a command of the same turn,
+and the claim guard of rule `turn-conduct` reads the reply for it. The shape of the reply — the
+paragraph, the table, all the tasks in the plan's order — is checked by nothing: it is held by the
+memory of whoever replies, and a violation is visible only to the owner, by looking for a row in the
+text and not finding it.
 
 ## Patterns
 

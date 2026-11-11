@@ -17,7 +17,7 @@ Pattern of the rule `epic-flow`. What must be true meanwhile — the law
 
 ## State `договорённость-записана`: a series of tasks is declared an epic
 
-The grill ended with one task — the step is skipped. Several came out, and the order between them
+The grill ended with one task — no epic is declared for it, pattern `task-flow-start`. Several came out, and the order between them
 matters — the epic is declared here, before the first of them, and twice. As a card in the work
 queue with the epic label, and as a plan next to it.
 
@@ -31,7 +31,7 @@ it points into emptiness. Everything the epic cannot be created without is asked
 made — an administrator alone can take a made one off the board. What the call does not write — a
 file of epics, an index of plans — the tree lists as hand steps of the same commit as the plan.
 
-The draft is filled in by hand, and three things in it are derived from nothing: the opportunity in
+The draft is filled in by hand, and three things in it are derived from nothing: the capability in
 one phrase, the makeup of the tasks in order, and how the branches of the tasks stand. A set without
 an order is no order: two tasks whose order rested on understanding went into work the other way
 round, and the second was redone under the first. The assigned order holds to the end of the epic; a
@@ -41,8 +41,10 @@ The cards for all the tasks are created at once, right here — by the same call
 every row of the makeup. The issued numbers return to the same table: "take the next" answers with a
 number from now on.
 
-**Next move:** the declared epic is committed together with the task numbers, and in the same turn
-its branch is taken.
+**Next move:** the branch of the epic is taken, and the declared plan with the task numbers is
+committed into it — a commit on the main branch is refused. The row of the table of assignments that
+gives the epic to this working copy is the owner's: it is asked for in the same turn, and until it
+lies in the main branch the assignment guard reads the old epic.
 
 ## State `эпик-заведён`: the branch of the epic
 
@@ -53,7 +55,7 @@ git checkout -b <КЛЮЧ>-<номер эпика>-<slug> origin/main
 The branch is taken before the first task of the epic, not with it: taken later, it leaves the first
 task standing on the main branch, and the epic starts as half of itself already merged.
 
-The plan of the epic is committed into it and the branch is pushed at once — the branches of the
+The plan of the epic is committed into it right after it is taken, and the branch is pushed at once — the branches of the
 tasks are taken from it, and one that exists only on the machine is a base nobody else has. The card
 names the branch: the reader comes to the epic from the queue, and the queue holds no branches.
 

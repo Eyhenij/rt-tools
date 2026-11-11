@@ -22,9 +22,9 @@ The rule is `task-flow`; the articles that hold the law stand there.
   forbids the permitted work as many times as branches are created before the merge. The refusal
   names the file and is silent about the record belonging to the branch. While the permission lives
   in the repository, the number is appended in every new branch.
-- **The name of another tree is not written into repository files, but the path to a sample is.**
-  Both things live next to the session handover for exactly that reason: a full path is lawful
-  there, and in the repository — only a reference without the name.
+- **The name of another tree is not written into repository files, and the full path to a sample
+  carries it.** So the full path lives next to the session handover, where it is lawful, and the
+  repository holds only a reference without the name.
 - **The line "Waiting for the owner" in the progress outlives the reason it was written for.** It
   lies on disk, enters the context in the next session and reads as the current state — so it is
   removed in the same turn in which the owner answered. Otherwise the wait confirms itself: three
@@ -140,9 +140,9 @@ The rule is `task-flow`; the articles that hold the law stand there.
   prescribes it.
 
 
-- **The work queue does not end with the epic.** An epic occupied by other executors or finished
-  means the next task from the queue, not a stop: "no free tasks in the epic" is never an answer to
-  "what to do", because it is the queue that answers that question, not the epic. It is asked by the
+- **A task of the epic that is not free is not the end of the epic.** Tasks taken by other executors
+  leave the epic going on, and the next free task of the same epic is taken; a finished epic is a
+  stop with the table of its tasks, rule `turn-conduct`. Which tasks are left is asked by the
   command, not recalled from the handover: a statement in the handed-over text describes the tree
   and the day it was written in.
 - **A closing step of the work does not count as taking the next task.** Moving the task being
@@ -155,19 +155,15 @@ The rule is `task-flow`; the articles that hold the law stand there.
   passes afterwards.
 - **A stack of branches costs more, and its price is named.** A PR into a neighbouring branch does
   not start the pipeline declared for the main base; merging the base closes the next PR as merged
-  although its edits are not in main; a conflict is resolved anew in every branch of the stack.
-  Tasks that follow one another in code lawfully live as branches from main, as long as the next
-  edit does not rest on the code of the previous one.
+  although its edits are not in the epic branch; a conflict is resolved anew in every branch of the
+  stack. Tasks that follow one another in code lawfully live as branches from the epic branch, as
+  long as the next edit does not rest on the code of the previous one.
 
 - **A find in the middle of a stage feels like part of the current work when the subject is
   adjacent.** It has no sign of its own: before the first edit the find is not in the tree, and
   after it the files of neighbouring work do not differ from one's own. So the plan's list of exit
   conditions is checked, not the feeling — otherwise the two pieces of work lose their separate
   rollback.
-
-## Executor behaviour — from incident analyses
-
-Moves out of the rule in the next task of the epic.
 
 ## What stood in the articles
 
@@ -257,6 +253,5 @@ they are for whoever investigates a miss or argues with a guard.
   cards, one card at a time.
 - **The task order says nothing about how the branches stand**, and the numbers of the created
   tasks return to the order section by the same edit.
-- **A finished epic is named to the owner by the same turn that takes work outside it.**
 - **A retelling of a sample in the grill and in the epic plan is not the sample.**
 - **The review of closed work ends with an edit of the rules layer or a proposal outward.**

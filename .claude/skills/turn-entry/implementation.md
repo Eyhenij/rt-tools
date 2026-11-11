@@ -5,7 +5,7 @@ The names and bindings of this tree, next to the rule `SKILL.md` beside it.
 ## What it is called here
 
 - **In the rule** — Here
-- **the handover directory** — `.claude/handoff/` — outside history, a file per branch; the directory is set by `RT_HANDOFF_DIR` of the profile
+- **the handover directory** — the section «Handover of the session» of the task progress first; `.claude/handoff/`, outside history, a file per branch, only for work without a task folder; the directory is set by `RT_HANDOFF_DIR` of the profile
 - **the turn map** — `.claude/rt-kit/defaults/turn-map.md` — a resource of the defaults kind, laid out by the package
 - **the entry hook** — `.claude/hooks/turn-entry-load.sh`, declared in `.claude/settings.json`
 - **the map check** — `tools/check-turn-map.mjs`, the command `pnpm run check:turn-map`

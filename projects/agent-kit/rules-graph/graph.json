@@ -2836,7 +2836,7 @@
       "installed": true,
       "articles": 11,
       "unheld": 4,
-      "bound_code": 14
+      "bound_code": 16
     },
     {
       "label": "git-workflow",
@@ -3012,8 +3012,8 @@
       "name": "status-report",
       "installed": true,
       "articles": 10,
-      "unheld": 7,
-      "bound_code": 7
+      "unheld": 5,
+      "bound_code": 9
     },
     {
       "label": "styling-bem",
@@ -3041,9 +3041,9 @@
       "kind": "rule",
       "name": "task-flow",
       "installed": true,
-      "articles": 57,
-      "unheld": 23,
-      "bound_code": 52
+      "articles": 59,
+      "unheld": 24,
+      "bound_code": 59
     },
     {
       "label": "testing",
@@ -3072,8 +3072,8 @@
       "name": "turn-conduct",
       "installed": true,
       "articles": 69,
-      "unheld": 27,
-      "bound_code": 64
+      "unheld": 25,
+      "bound_code": 67
     },
     {
       "label": "turn-entry",
@@ -7859,6 +7859,16 @@
     {
       "relation": "mentions",
       "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/patterns/task-flow-resume.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "pattern_task_flow_resume",
+      "target": "rule_turn_conduct",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
       "source_file": "projects/agent-kit/assets/patterns/task-flow-start.md",
       "source_location": "L1",
       "weight": 1,
@@ -8114,6 +8124,16 @@
       "weight": 1,
       "source": "pitfalls_task_flow",
       "target": "rule_task_flow",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/pitfalls/task-flow.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "pitfalls_task_flow",
+      "target": "rule_turn_conduct",
       "confidence_score": 1
     },
     {
@@ -9123,6 +9143,16 @@
       "source_location": "L1",
       "weight": 1,
       "source": "rule_epic_flow",
+      "target": "hook_git_guard_delivery_epic_sh",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/epic-flow/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_epic_flow",
       "target": "hook_git_guard_delivery_folder_sh",
       "confidence_score": 1
     },
@@ -9164,6 +9194,16 @@
       "weight": 1,
       "source": "rule_epic_flow",
       "target": "hook_tree_assignment_guard_sh",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/rules/epic-flow.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_epic_flow",
+      "target": "law_delivery",
       "confidence_score": 1
     },
     {
@@ -10127,6 +10167,16 @@
       "confidence_score": 1
     },
     {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/rules/status-report.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_status_report",
+      "target": "rule_turn_conduct",
+      "confidence_score": 1
+    },
+    {
       "relation": "executed_by",
       "confidence": "EXTRACTED",
       "source_file": ".claude/skills/styling-bem/implementation.md",
@@ -10303,6 +10353,16 @@
       "source_location": "L1",
       "weight": 1,
       "source": "rule_task_flow",
+      "target": "hook_epic_stop_guard_sh",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/task-flow/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_task_flow",
       "target": "hook_git_guard_delivery_body_sh",
       "confidence_score": 1
     },
@@ -10314,6 +10374,16 @@
       "weight": 1,
       "source": "rule_task_flow",
       "target": "hook_git_guard_delivery_folder_sh",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/task-flow/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_task_flow",
+      "target": "hook_git_guard_delivery_pipeline_sh",
       "confidence_score": 1
     },
     {
@@ -10414,6 +10484,16 @@
       "weight": 1,
       "source": "rule_task_flow",
       "target": "hook_task_flow_guard_sh",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/task-flow/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_task_flow",
+      "target": "hook_tree_assignment_guard_sh",
       "confidence_score": 1
     },
     {
@@ -10853,6 +10933,16 @@
       "source_location": "L1",
       "weight": 1,
       "source": "rule_turn_conduct",
+      "target": "hook_tree_assignment_guard_sh",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/turn-conduct/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_turn_conduct",
       "target": "hook_turn_exit_epic_sh",
       "confidence_score": 1
     },
@@ -10907,6 +10997,16 @@
       "confidence_score": 1
     },
     {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/turn-conduct/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_turn_conduct",
+      "target": "hook_work_start_guard_sh",
+      "confidence_score": 1
+    },
+    {
       "relation": "applies_law",
       "confidence": "EXTRACTED",
       "source_file": "projects/agent-kit/assets/rules/turn-conduct.md",
@@ -10934,6 +11034,16 @@
       "weight": 1,
       "source": "rule_turn_conduct",
       "target": "pitfalls_turn_conduct",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/rules/turn-conduct.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_turn_conduct",
+      "target": "rule_status_report",
       "confidence_score": 1
     },
     {
@@ -16778,5 +16888,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "492d43cc49fa96e291c604d956b2faced777db41"
+  "built_at_commit": "32cba00f53d0375d13128b164c361a9fc240145b"
 }

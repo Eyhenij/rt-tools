@@ -2,7 +2,7 @@
 description: Closing the session — the main branch pulled, merged branches removed, the handover written
 argument-hint: '[empty | <what to add to the handover in your own words>]'
 ---
-<!-- rt-kit v0.37.0 · commands/next-session.md · 6ea1e6d3fe83 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · commands/next-session.md · 06ded9e713ed · правится надстройкой, не здесь -->
 
 Close the session: bring the tree to the main branch, remove the merged branches and write the
 handover for the next session. The owner's addition to the handover: `$ARGUMENTS`
@@ -129,7 +129,8 @@ its own, without retelling.
 
 ## 7. Hand over the result
 
-The last line — the path to the handover: the owner pastes it into a new session with one paste.
+The last line — the path to the handover. The owner pastes nothing: the entry hook serves it to the
+next session on the same branch.
 Before it: what became of the main branch, which branches were removed, which stayed unmerged.
 Do not retell the handover content — the owner will read it anyway.
 

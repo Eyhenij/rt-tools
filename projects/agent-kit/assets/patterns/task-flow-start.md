@@ -167,7 +167,8 @@ first.
 
 ### State `договорённость-записана`: a series of tasks is declared an epic
 
-The grill ended with one task — the step is skipped. Several came out, and the order between them
+The grill ended with one task — no epic is declared for it: it goes into the epic in work, or, by the
+owner's word, outside any epic with `--outside-epic`. Several came out, and the order between them
 matters — the epic is declared and its branch is taken by the pattern `epic-flow-declare`, and the
 work comes back here with its first task.
 

@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law. Load when the owner asked where the work stands — "what is the status", "which epic", "what are you doing now". Names the shape of the reply — a paragraph about the epic and a table of its tasks — and what backs a cell about the tree. Pattern status-report-table.
 ---
-<!-- rt-kit v0.37.0 · rules/status-report.md · b52f4e7f38bb · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/status-report.md · 9afbbd6c4096 · правится надстройкой, не здесь -->
 
 # Status report — how it works here
 
@@ -99,9 +99,11 @@ flowchart TD
 
 ## What of the law is not here
 
-None of the agreements on the shape of the reply is checked by machine: the reply to the owner does
-not land in the tree, and there is nothing to read it. It is held by the memory of whoever replies,
-and a violation is visible only to the owner — by looking for a row in the text and not finding it.
+One article is checked: a statement about the state of the tree needs a command of the same turn,
+and the claim guard of rule `turn-conduct` reads the reply for it. The shape of the reply — the
+paragraph, the table, all the tasks in the plan's order — is checked by nothing: it is held by the
+memory of whoever replies, and a violation is visible only to the owner, by looking for a row in the
+text and not finding it.
 
 ## Patterns
 
