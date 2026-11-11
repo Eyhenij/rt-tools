@@ -44,7 +44,7 @@ open PR reads as an invitation to merge, so unfinished work opens it as a draft 
 a draft's completion itself:
 
 ```bash
-AZURE_DEVOPS_EXT_PAT="$TOKEN" az repos pr create --draft true --title '[<КЛЮЧ>-86] …' \
+AZURE_DEVOPS_EXT_PAT="$TOKEN" az repos pr create --draft true --title '[86] …' \
     --description "$(cat тело.md)"
 ```
 

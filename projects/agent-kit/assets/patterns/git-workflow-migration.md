@@ -19,7 +19,7 @@ Pattern of the rule `deploy-flow`. What must be true meanwhile — the law
 ## The chain is run by one command
 
 Local `lint`, `test`, `check:all` and the builds do not touch the migration order at all, and the
-step `Migrations match schema` in `.github/workflows/deploy.yml` goes after the merge. The check
+step `Migrations match schema` of the rollout pipeline goes after the merge. The check
 stands as a push gate and is called by hand:
 
 ```bash

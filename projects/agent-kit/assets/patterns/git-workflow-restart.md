@@ -18,7 +18,7 @@ Pattern of the rule `deploy-flow`. What must be true meanwhile — the law
 
 ## The command must carry the sha
 
-`.github/workflows/deploy.yml` rolls out images by the commit sha. Without the variable
+The rollout pipeline of the tree rolls out images by the commit sha. Without the variable
 `docker compose` substitutes the default `latest`, and `latest` in the registry lags behind the
 main branch — production silently rolls back to the old image and keeps answering:
 

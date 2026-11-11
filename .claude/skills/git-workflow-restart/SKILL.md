@@ -4,7 +4,7 @@ kind: pattern
 rule: deploy-flow
 description: Pattern of rule deploy-flow. Load for a manual production restart — after editing .env.prod, when investigating a rollout, when starting a container on the server. Ready-made commands with the image tag by sha and what to check the result against. Migrations — pattern git-workflow-migration.
 ---
-<!-- rt-kit v0.37.0 · patterns/git-workflow-restart.md · 5d54f9ea612d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/git-workflow-restart.md · 0ab2f5308bc4 · правится надстройкой, не здесь -->
 
 # A manual production restart
 
@@ -19,7 +19,7 @@ Pattern of the rule `deploy-flow`. What must be true meanwhile — the law
 
 ## The command must carry the sha
 
-`.github/workflows/deploy.yml` rolls out images by the commit sha. Without the variable
+The rollout pipeline of the tree rolls out images by the commit sha. Without the variable
 `docker compose` substitutes the default `latest`, and `latest` in the registry lags behind the
 main branch — production silently rolls back to the old image and keeps answering:
 
