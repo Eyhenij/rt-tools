@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 3 — The build command
-- **Done:** the build command `npm run graph:build`
-- **Next step:** all graphs built and committed
+- **Stage:** 2 of 3 — The graph in history
+- **Done:** the build command; 27 graphs committed with the ignore rules
+- **Next step:** the merge driver
 - **Uncommitted:** nothing of the steps
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -15,9 +15,9 @@ Rewritten by every session, not appended to.
 ## Steps
 
 - [x] 1.1 The command builds the root graph and the graph of every project
-- [>] 1.2 All graphs are built and committed
-- [ ] 2.1 Ignore rules for the rest of `graphify-out/`
-- [ ] 2.2 The merge driver in `.gitattributes` and in the install step
+- [x] 1.2 All graphs are built and committed
+- [x] 2.1 Ignore rules for the rest of `graphify-out/`
+- [>] 2.2 The merge driver in `.gitattributes` and in the install step
 - [ ] 2.3 The graph files left out of nx inputs and of prettier
 - [ ] 3.1 The trait `graph` in `.claude/rt-kit.json` and the layout
 - [ ] 3.2 The command in `CLAUDE.md`
@@ -30,6 +30,9 @@ Rewritten by every session, not appended to.
 - **The ignore rules go in before the graphs.** The pre-commit hook runs prettier over every staged
   file, so a staged 40 MB `graph.json` would be rewritten by it. Steps 2.1 and the prettier half of
   2.3 land in the commit of step 1.2.
+- **nx leaves the graphs out by `.nxignore`, not by `namedInputs`.** A directory under `libs/` holds
+  several nx projects, and the root graph lies outside any project root; one ignore line covers
+  both. Measured: the full build 132 s, 27 graphs, 67 MB, the root graph 41 MB (2.1 MB gzip).
 - **A graph whose topology did not change gets the head stamped.** graphify leaves such a graph
   untouched with an older `built_at_commit`; the command moves the field to the head.
 
@@ -50,7 +53,7 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 3 — The build command
+- **Stage:** 2 of 3 — The graph in history
 - **Next step:** the build command
 - **PR:** not open yet
 

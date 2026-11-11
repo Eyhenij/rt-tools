@@ -127,3 +127,6 @@ tools/specs-for.mjs
 tools/task-new-queue.mjs
 tools/task-new.mjs
 tools/tree-assignment.mjs
+
+# Граф кода пишет graphify; форматирование переписало бы 40 МБ на каждом коммите.
+**/graphify-out/
