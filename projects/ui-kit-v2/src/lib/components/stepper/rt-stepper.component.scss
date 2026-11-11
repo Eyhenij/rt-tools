@@ -7,26 +7,9 @@
        так они достаются только корню шаблона. */
 
     rt-stepper {
-        /* Цвета степпера — свойства хоста: приложение переопределяет их правилом на `rt-stepper`
-           или на родителе. По умолчанию — токены темы, вид не меняется. */
-        --rt-stepper-track-color: var(--rt-color-stepper-track);
-        --rt-stepper-progress-color: var(--rt-color-stepper-progress);
-        --rt-stepper-current-color: var(--rt-color-stepper-current);
-        --rt-stepper-label-color: var(--rt-stepper-current-color);
-        --rt-stepper-description-color: var(--rt-color-text-primary);
-        --rt-stepper-point-shadow: var(--rt-shadow-step-indicator);
-        --rt-stepper-line-color: var(--rt-color-border-default);
-        --rt-stepper-step-label-color: var(--rt-color-text-primary);
-        --rt-stepper-step-description-color: var(--rt-color-text-muted);
-        --rt-stepper-mark-complete-bg: var(--rt-stepper-progress-color);
-        --rt-stepper-mark-complete-color: var(--rt-color-text-inverse);
-        --rt-stepper-mark-current-bg: var(--rt-stepper-current-color);
-        --rt-stepper-mark-current-color: var(--rt-neutral-950);
-        --rt-stepper-mark-upcoming-bg: var(--rt-stepper-track-color);
-        --rt-stepper-mark-upcoming-color: var(--rt-color-text-primary);
-        --rt-stepper-mark-neutral-bg: var(--rt-color-text-muted);
-        --rt-stepper-mark-neutral-color: var(--rt-color-text-inverse);
-
+        /* Цвета степпера переопределяются свойствами `--rt-stepper-*` на `rt-stepper` или на родителе.
+           Здесь они не объявляются: объявление на хосте перебило бы значение, унаследованное от
+           родителя. Умолчание — запасное значение в месте использования, токен темы. */
         display: block;
 
         .rt-stepper {
@@ -48,7 +31,7 @@
                по центру над точкой, на крайних шагах — вся полоса и прижим к краю. */
             &__label {
                 margin: 0;
-                color: var(--rt-stepper-label-color);
+                color: var(--rt-stepper-label-color, var(--rt-stepper-current-color, var(--rt-color-stepper-current)));
                 font-size: var(--rt-text-xs);
                 font-weight: var(--rt-font-weight-regular);
                 letter-spacing: var(--rt-letter-spacing-wide);
@@ -90,12 +73,12 @@
             }
 
             &__track {
-                background: var(--rt-stepper-track-color);
+                background: var(--rt-stepper-track-color, var(--rt-color-stepper-track));
                 inset-inline-end: 0;
             }
 
             &__progress {
-                background: var(--rt-stepper-progress-color);
+                background: var(--rt-stepper-progress-color, var(--rt-color-stepper-progress));
                 transition: width var(--rt-stepper-transition-duration) ease-out;
             }
 
@@ -112,7 +95,7 @@
 
             &__point {
                 border-radius: var(--rt-stepper-radius);
-                background: var(--rt-stepper-track-color);
+                background: var(--rt-stepper-track-color, var(--rt-color-stepper-track));
                 block-size: 8px;
                 inline-size: 8px;
                 transition:
@@ -121,20 +104,20 @@
                     background var(--rt-stepper-transition-duration) ease-out;
 
                 &--complete {
-                    background: var(--rt-stepper-progress-color);
+                    background: var(--rt-stepper-progress-color, var(--rt-color-stepper-progress));
                 }
 
                 &--current {
-                    background: var(--rt-stepper-current-color);
+                    background: var(--rt-stepper-current-color, var(--rt-color-stepper-current));
                     block-size: 16px;
-                    box-shadow: var(--rt-stepper-point-shadow);
+                    box-shadow: var(--rt-stepper-point-shadow, var(--rt-shadow-step-indicator));
                     inline-size: 16px;
                 }
             }
 
             &__description {
                 margin: 0;
-                color: var(--rt-stepper-description-color);
+                color: var(--rt-stepper-description-color, var(--rt-color-text-primary));
                 font-size: var(--rt-text-xs);
                 letter-spacing: var(--rt-letter-spacing-wide);
                 line-height: var(--rt-leading-snug);
@@ -150,8 +133,8 @@
         &.rt-stepper--vertical > .rt-stepper {
             --rt-stepper-mark-size: var(--rt-size-6);
             --rt-stepper-mark-font-size: var(--rt-text-xs);
-            --rt-stepper-mark-bg: var(--rt-stepper-mark-neutral-bg);
-            --rt-stepper-mark-color: var(--rt-stepper-mark-neutral-color);
+            --rt-stepper-mark-bg: var(--rt-stepper-mark-neutral-bg, var(--rt-color-text-muted));
+            --rt-stepper-mark-color: var(--rt-stepper-mark-neutral-color, var(--rt-color-text-inverse));
             --rt-stepper-line-width: var(--rt-border-width-thin);
             --rt-stepper-item-gap: var(--rt-space-6);
 
@@ -174,7 +157,7 @@
                 /* Линия от метки до метки следующего шага, с просветом у обеих. */
                 &:not(:last-child):after {
                     position: absolute;
-                    background: var(--rt-stepper-line-color);
+                    background: var(--rt-stepper-line-color, var(--rt-color-border-default));
                     content: '';
                     inline-size: var(--rt-stepper-line-width);
                     inset-block: calc(var(--rt-stepper-mark-size) + var(--rt-space-1)) var(--rt-space-1);
@@ -182,19 +165,25 @@
                 }
 
                 &--state--complete {
-                    --rt-stepper-mark-bg: var(--rt-stepper-mark-complete-bg);
-                    --rt-stepper-mark-color: var(--rt-stepper-mark-complete-color);
+                    --rt-stepper-mark-bg: var(
+                        --rt-stepper-mark-complete-bg,
+                        var(--rt-stepper-progress-color, var(--rt-color-stepper-progress))
+                    );
+                    --rt-stepper-mark-color: var(--rt-stepper-mark-complete-color, var(--rt-color-text-inverse));
                 }
 
                 /* Янтарь текущего шага один в обеих темах, и цифра на нём одна — тёмная. */
                 &--state--current {
-                    --rt-stepper-mark-bg: var(--rt-stepper-mark-current-bg);
-                    --rt-stepper-mark-color: var(--rt-stepper-mark-current-color);
+                    --rt-stepper-mark-bg: var(
+                        --rt-stepper-mark-current-bg,
+                        var(--rt-stepper-current-color, var(--rt-color-stepper-current))
+                    );
+                    --rt-stepper-mark-color: var(--rt-stepper-mark-current-color, var(--rt-neutral-950));
                 }
 
                 &--state--upcoming {
-                    --rt-stepper-mark-bg: var(--rt-stepper-mark-upcoming-bg);
-                    --rt-stepper-mark-color: var(--rt-stepper-mark-upcoming-color);
+                    --rt-stepper-mark-bg: var(--rt-stepper-mark-upcoming-bg, var(--rt-stepper-track-color, var(--rt-color-stepper-track)));
+                    --rt-stepper-mark-color: var(--rt-stepper-mark-upcoming-color, var(--rt-color-text-primary));
                 }
             }
 
@@ -222,7 +211,7 @@
             }
 
             .rt-stepper__step-label {
-                color: var(--rt-stepper-step-label-color);
+                color: var(--rt-stepper-step-label-color, var(--rt-color-text-primary));
                 font-size: var(--rt-text-sm);
                 line-height: var(--rt-leading-snug);
                 overflow-wrap: anywhere;
@@ -230,7 +219,7 @@
 
             .rt-stepper__step-description {
                 margin: 0;
-                color: var(--rt-stepper-step-description-color);
+                color: var(--rt-stepper-step-description-color, var(--rt-color-text-muted));
                 font-size: var(--rt-text-xs);
                 line-height: var(--rt-leading-snug);
             }
