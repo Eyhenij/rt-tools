@@ -1,0 +1,12 @@
+# What it is carried out by — the stepper bar
+
+The first column is the rule of the spec next to it verbatim. The second is where it is carried out
+in the tree, and the scenario it is checked by.
+
+- **The bar draws any number of steps and any current step.** — `projects/ui-kit-v2/src/lib/components/stepper/rt-stepper.component.ts:points`; scenario `SC-UKV-1229`
+- **The bar is as wide as the place it stands in.** — `projects/ui-kit-v2/src/lib/components/stepper/rt-stepper.component.scss:track-band`; checked by the showcase story of widths
+- **The label of the first step starts at the left edge, the label of the last ends at the right.** — `projects/ui-kit-v2/src/lib/components/stepper/rt-stepper.logic.ts:labelSegment`; scenarios `SC-UKV-1230`, `SC-UKV-1231`
+- **The label of a middle step is centred over its point and never goes past the bar.** — `projects/ui-kit-v2/src/lib/components/stepper/rt-stepper.logic.ts:labelSegment`; scenario `SC-UKV-1232`
+- **A label wider than its segment wraps, and the bar grows down.** — `projects/ui-kit-v2/src/lib/components/stepper/rt-stepper.component.scss:rail`; checked by the showcase story of long labels
+- **The current point follows the same number as the label and the fill.** — `projects/ui-kit-v2/src/lib/components/stepper/rt-stepper.component.ts:points`; scenario `SC-UKV-1233`
+- **The label line is 18 px high, as on the mockup.** — `projects/ui-kit-v2/src/lib/components/stepper/rt-stepper.component.scss:leading-normal`; checked by the match with the mockup
