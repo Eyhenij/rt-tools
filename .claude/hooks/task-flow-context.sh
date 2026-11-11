@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/task-flow-context.sh · 42e8f24496eb · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/task-flow-context.sh · be11457d9f7d · правится надстройкой, не здесь
 # Shared parsing for the work-conduct guards. NOT a guard: it has no `rt-hook:` declaration and
 # is not attached to any agent event. The guards themselves source it — the same way they source
 # the shared refusal tail.
@@ -164,9 +164,11 @@ rt_task_flow_context() {
             ! git -C "$rt_tf_askdir" ls-files --error-unmatch -- "$rt_tf_candidate" >/dev/null 2>&1; then
             continue
         fi
+        # A relative path belongs to the directory the command runs in. The project directory of the
+        # session is a different tree once the session moved into a second working copy.
         case "$rt_tf_candidate" in
             /*) ;;
-            *) rt_tf_candidate="${CLAUDE_PROJECT_DIR:-.}/$rt_tf_candidate" ;;
+            *) rt_tf_candidate="$rt_tf_askdir/$rt_tf_candidate" ;;
         esac
         if rt_is_app_code "$rt_tf_candidate" || rt_tf_laid_out "$rt_tf_candidate"; then
             RT_TF_PATH="$rt_tf_candidate"
