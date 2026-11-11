@@ -3,11 +3,12 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 3 — Findings
-- **Done:** the role's findings; fixed D2, D3, D9 (pr checklist), D10, D12, D16 and both pairs with
-  `task-flow`; RT-3193 merged in by the stack
-- **Next step:** the binding comparison, then the rest of the findings
-- **Uncommitted:** no
+- **Stage:** 3 of 3 — Closing
+- **Done:** every role finding closed or filed; the bindings of four companions match the hook
+  code; the audit counts a task lag against its base; RT-3219 and RT-3220 filed; the law of
+  RT-3193 brought back under the size limit and merged in
+- **Next step:** rebuild the rules graph and the code graphs, then the push gate
+- **Uncommitted:** the epic plan row and this progress
 - **Waiting for the owner:** no; the push of RT-3193 waits for the main copy to leave RT-3178
 - **PR:** not open yet
 
@@ -16,12 +17,12 @@
 - `[x]` done · `[>]` going on right now · `[ ]` not begun
 
 - [x] 1.1 Run the role rules-reviewer over the whole family
-- [>] 1.2 Compare rule articles with the companion bindings and hook code
-- [ ] 1.3 Write the findings list into the progress with a decision for each
-- [ ] 2.1 Edit the package texts by the findings
-- [ ] 2.2 Build the package and lay out the tree
-- [ ] 2.3 File tasks for findings that need code or another law
-- [ ] 3.1 Rebuild the rules graph and its report
+- [x] 1.2 Compare rule articles with the companion bindings and hook code
+- [x] 1.3 Write the findings list into the progress with a decision for each
+- [x] 2.1 Edit the package texts by the findings
+- [x] 2.2 Build the package and lay out the tree
+- [x] 2.3 File tasks for findings that need code or another law
+- [>] 3.1 Rebuild the rules graph and its report
 - [ ] 3.2 Run the push gate
 - [ ] 3.3 Take the task folder apart into the archive
 
@@ -73,6 +74,26 @@ Decisions:
 | D16                | 65d93221d — `origin/<база>...HEAD`, item number fixed                                           |
 | G2                 | 76b97b6c4 — four move rows in `queue-audit-read`                                                |
 | D1, D6, G1, G3, G5 | RT-3219 — the GitLab and Azure variants lack whole articles; no room in this task               |
+
+Binding comparison, 11.11.2026 — closed by a4288aea1 unless named:
+
+- git-workflow: force push and rebase — no guard refuses them; the turn-exit guard does count
+  unpushed commits; the body guard reads the body at opening; the reviewer clash is refused at
+  opening; the signature line was doubled with opposite verdicts; the main branch comes from the
+  profile first; 38 lines of 53.
+- deploy-flow: the rollout is `deploy.yml` images, not package publication; the empty-storage chain
+  runs in `check-schema-drift`; the build side cleans in part — the `deploy.yml` job does not
+  (RT-3220); the override no longer says the audit is blind to production lag.
+- dependencies: the waiting term is not set (RT-3220), the exclusion list exists; the ceiling count
+  command; the formatter boundary is held by nobody; Playwright is pinned in the manifest; the rule
+  no longer says the frozen install stands only in the rollout.
+- queue-audit: functions named in their real files; the long-work audit is inert here; the lag of a
+  task is counted against its base (SC-AK-1337), and a conflicting task PR gets no run line
+  (SC-AK-1338).
+- Not taken: the override article on the commit language needs no binding — it stands in its own
+  section, outside «How the law applies here».
+- RT-3074 (epic RT-3043): its first half — the rule contradicting itself about the production check —
+  is closed by 21d868e16; the rate-limit half stays with it.
 
 ## Decisions along the way
 
