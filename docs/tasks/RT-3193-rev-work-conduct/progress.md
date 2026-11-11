@@ -26,6 +26,20 @@
 
 ## Findings
 
+- **F1. No package text names `feature.js`.** Gap, rules graph report. Fixed: a row in the names
+  table of `task-flow`, commit `bac1536c0`.
+- **F2. `task-flow-graph` calls any lag behind the head stale.** A tree that keeps the graph in
+  history is always one commit behind. Fixed: a paragraph in the freshness section.
+- **F3. `task-flow-resume` repeats two misses of `task-flow-handoff`.** «A session that ended in
+  nothing» and «the uncommitted is named» are about writing the handover. Fixed: removed from
+  `task-flow-resume`.
+- **F4. The pitfalls of `task-flow` repeat a rule article.** «Waiting on one part of a stage is never
+  a stop of the stage» stands in the rule. Fixed: removed from the pitfalls.
+- **F5. Pairs with `git-workflow` from the report.** «The task is created by a command» in
+  `task-flow-start` and the three `git-workflow` pitfalls; «Opening a PR is refused while the branch
+  carries its task folder» in `task-flow` and `git-workflow.github`. Decision: the delivery family
+  revision RT-3194 decides where they live — the guard is a delivery guard.
+
 ## Decisions along the way
 
 ## Sessions

@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when returning to unfinished work in a new session. What is already in the context, what not to ask the owner, how to edit "Where we stand", how to record a decision along the way and a stage revision. Not for starting work — that is pattern task-flow-start.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-resume.md · 74da4459cfe6 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-resume.md · d23570bc3e48 · правится надстройкой, не здесь -->
 
 # Returning to unfinished work
 
@@ -193,10 +193,6 @@ turn ends after it, not after words about it.
 
 ## Common misses
 
-- **A session that ended in nothing is recorded too.** Otherwise the next one walks the same road:
-  "we tried this — it did not work, because" costs one line and saves a whole session.
-- **The uncommitted is named outright.** Work lives in the tree for weeks; the line "what lies
-  unsaved and why" is the only thing that makes it visible while there is no PR.
 - **Confirmation is command output or a measurement, not a retelling.** "Checked, it works" a
   session later cannot be told from "it seemed to work".
 - **A number from the handover and from "Where we stand" is recounted before it gets into any new

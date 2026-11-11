@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when the tree holds a code graph and a domain is explored or a shared symbol is about to be edited. Not for a claim about behaviour, a number or a rule text — those are read from the code and the documents.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-graph.needs-graph.md · 0a6718aa4445 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-graph.needs-graph.md · f008f33d14e9 · правится надстройкой, не здесь -->
 
 # Working with the tree's code graph
 
@@ -41,6 +41,10 @@ anything else: it names the files whose relations the graph no longer knows.
 ```bash
 git log --oneline --stat <built_at_commit>..HEAD
 ```
+
+A tree that keeps the graph in history is always one commit behind: the graph comes in the commit
+after the one it was built from. A difference that holds only graph files is that commit, and the
+graph describes the head; the graph is stale when the difference holds a code file.
 
 A rebuild re-extracts code files and calls no model:
 

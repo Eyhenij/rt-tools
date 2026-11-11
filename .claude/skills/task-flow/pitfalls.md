@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · pitfalls/task-flow.md · dd8ad614e7d3 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · pitfalls/task-flow.md · 520280d773d7 · правится надстройкой, не здесь -->
 # Work conduct — cold part
 
 Pitfalls and behaviour from incident analyses. Loaded not with the rule but on demand: an ordinary
@@ -75,12 +75,6 @@ The rule is `task-flow`; the articles that hold the law stand there.
   template: the work goes on, while the grill stays lying in an abandoned directory, and the next
   session questions the owner anew. The draft got its name from the words of the request, the branch
   from the terminology of the agreement; the same words, yet not the same.
-
-- **Waiting on one part of a stage is never a stop of the stage.** The parts that do not depend on
-  what is awaited are done in the same turn: to say "acceptance is pending" and touch nothing else
-  is a stop of the whole work for a reason that applies to a tenth of it. The rule speaks of the
-  task, and "one part is pending" is read by it as "the work is pending" — of five parts of a stage,
-  one was waiting.
 
 - **A line with a path is never an assignment.** An address names a file, not an action; read as an
   instruction, it gives the session work the owner did not ask for. The same with any line without a

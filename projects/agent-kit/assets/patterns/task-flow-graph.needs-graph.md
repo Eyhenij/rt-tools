@@ -41,6 +41,10 @@ anything else: it names the files whose relations the graph no longer knows.
 git log --oneline --stat <built_at_commit>..HEAD
 ```
 
+A tree that keeps the graph in history is always one commit behind: the graph comes in the commit
+after the one it was built from. A difference that holds only graph files is that commit, and the
+graph describes the head; the graph is stale when the difference holds a code file.
+
 A rebuild re-extracts code files and calls no model:
 
 ```bash

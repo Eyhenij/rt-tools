@@ -75,12 +75,6 @@ The rule is `task-flow`; the articles that hold the law stand there.
   session questions the owner anew. The draft got its name from the words of the request, the branch
   from the terminology of the agreement; the same words, yet not the same.
 
-- **Waiting on one part of a stage is never a stop of the stage.** The parts that do not depend on
-  what is awaited are done in the same turn: to say "acceptance is pending" and touch nothing else
-  is a stop of the whole work for a reason that applies to a tenth of it. The rule speaks of the
-  task, and "one part is pending" is read by it as "the work is pending" — of five parts of a stage,
-  one was waiting.
-
 - **A line with a path is never an assignment.** An address names a file, not an action; read as an
   instruction, it gives the session work the owner did not ask for. The same with any line without a
   verb: asking what to do with it is cheaper than writing fifty files past the request.
