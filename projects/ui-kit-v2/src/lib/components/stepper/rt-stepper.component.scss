@@ -67,12 +67,20 @@
                 block-size: 21px;
             }
 
+            /* Линия идёт от центра первой точки до центра последней: отступ — половина малой точки.
+               Заполнение считается в долях этой линии и кончается в центре текущей точки. */
+            &__line {
+                position: absolute;
+                block-size: 2px;
+                inset-block-end: 7px;
+                inset-inline: 4px;
+            }
+
             &__track,
             &__progress {
                 position: absolute;
                 border-radius: var(--rt-stepper-radius);
-                block-size: 2px;
-                inset-block-end: 7px;
+                inset-block: 0;
                 inset-inline-start: 0;
             }
 

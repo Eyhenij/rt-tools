@@ -5,6 +5,7 @@ in the tree, and the scenario it is checked by.
 
 - **The bar draws any number of steps and any current step.** — `projects/ui-kit-v2/src/lib/components/stepper/rt-stepper.component.ts:points`; scenario `SC-UKV-1229`
 - **The bar is as wide as the place it stands in.** — `projects/ui-kit-v2/src/lib/components/stepper/rt-stepper.component.scss:__track-band`; checked by the showcase story of widths
+- **The line runs from the centre of the first point to the centre of the last.** — `projects/ui-kit-v2/src/lib/components/stepper/rt-stepper.component.scss:__line`; checked by the showcase story of widths
 - **The label of the first step starts at the left edge, the label of the last ends at the right.** — `projects/ui-kit-v2/src/lib/components/stepper/rt-stepper.logic.ts:labelSegment`; scenarios `SC-UKV-1230`, `SC-UKV-1231`
 - **The label of a middle step is centred over its point and never goes past the bar.** — `projects/ui-kit-v2/src/lib/components/stepper/rt-stepper.logic.ts:labelSegment`; scenario `SC-UKV-1232`
 - **A middle step near an edge takes the whole bar, pressed to that edge.** — `projects/ui-kit-v2/src/lib/components/stepper/rt-stepper.logic.ts:HALF_BAR`; scenario `SC-UKV-1234`

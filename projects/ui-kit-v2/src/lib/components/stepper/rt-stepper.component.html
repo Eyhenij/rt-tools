@@ -51,8 +51,10 @@
                 </p>
             }
             <div rtElem="track-band">
-                <span rtElem="track" aria-hidden="true"></span>
-                <span rtElem="progress" qa-dataid="stepper-progress" aria-hidden="true" [style.width.%]="progressPercent()"></span>
+                <span rtElem="line" aria-hidden="true">
+                    <span rtElem="track"></span>
+                    <span rtElem="progress" qa-dataid="stepper-progress" [style.width.%]="progressPercent()"></span>
+                </span>
                 <ul rtElem="points">
                     @for (state of points(); track $index) {
                         <li

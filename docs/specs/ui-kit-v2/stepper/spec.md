@@ -37,6 +37,9 @@ The label reads «Шаг 3 из 4 · Гости» or any text the application gi
 - **The bar is as wide as the place it stands in.** From 280 px in a narrow panel to any width; the
   points and the fill keep their shares.
 
+- **The line runs from the centre of the first point to the centre of the last.** It does not stick
+  out past the end points, and the fill ends at the centre of the current point.
+
 - **The label of the first step starts at the left edge, the label of the last ends at the right.**
   Both may take the whole bar.
 
