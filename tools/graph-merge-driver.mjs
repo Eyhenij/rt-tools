@@ -7,8 +7,9 @@
  * a plain text merge of a 40 MB file, with conflict markers inside JSON. The driver joins the nodes
  * and the edges of both sides.
  *
- * Called by the install step. Outside a git repository — an image build, an unpacked archive —
- * there is no config to write to, and the step does nothing.
+ * Called by the install step, and only inside a git repository: an image build installs the
+ * dependencies before it copies `tools/`, so the install step asks git first and does not reach for
+ * this file there. The check below repeats it for a call by hand.
  */
 import { spawnSync } from 'node:child_process';
 
