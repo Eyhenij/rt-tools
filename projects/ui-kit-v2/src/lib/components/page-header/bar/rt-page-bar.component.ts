@@ -1,5 +1,5 @@
 import { BooleanInput } from '@angular/cdk/coercion';
-import { NgTemplateOutlet } from '@angular/common';
+import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import {
     afterRenderEffect,
     booleanAttribute,
@@ -8,6 +8,7 @@ import {
     contentChildren,
     inject,
     input,
+    linkedSignal,
     output,
     signal,
     viewChild,
@@ -72,6 +73,9 @@ export class RtPageBarComponent {
 
     readonly #titleWidth: WritableSignal<number> = signal<number>(0);
 
+    /** Сколько раз догружались шрифты: заголовок, замеренный запасным шрифтом, меряется снова. */
+    readonly #fontLoads: WritableSignal<number> = signal<number>(0);
+
     readonly #fit: Signal<IRtPageBarFit.Result> = computed((): IRtPageBarFit.Result =>
         pageBarFit({
             width: this.#width(),
@@ -102,7 +106,11 @@ export class RtPageBarComponent {
         (): ReadonlyArray<RtPageBarFilterDirective> => this.filters().slice(this.#fit().rowFilters)
     );
 
-    protected readonly sheetOpen: WritableSignal<boolean> = signal<boolean>(false);
+    /** Шторка отборов узкого вида: смена вида её закрывает, и при возврате в узкий она не открывается сама. */
+    protected readonly sheetOpen: WritableSignal<boolean> = linkedSignal<boolean, boolean>({
+        source: this.isNarrow,
+        computation: (): boolean => false,
+    });
 
     public readonly pageTitle: InputSignal<string> = input.required<string>();
 
@@ -122,19 +130,30 @@ export class RtPageBarComponent {
         const destroyRef: DestroyRef = inject(DestroyRef);
         let watch: ResizeObserver | null = null;
 
+        // Заголовок меряется в широком виде и заново после смены текста, шрифтов и возврата из узкого.
+        // В узком виде он растянут и мельче, и замер дал бы ширину строки, а не текста.
         afterRenderEffect((): void => {
-            this.pageTitle();
-            const title: HTMLElement | undefined = this.titleRef()?.nativeElement;
-            if (title !== undefined) {
-                this.#titleWidth.set(title.scrollWidth);
-            }
             if (watch === null && 'ResizeObserver' in this.#window) {
                 watch = new this.#window.ResizeObserver((): void => this.#width.set(this.#host.getBoundingClientRect().width));
                 watch.observe(this.#host);
             }
+            this.pageTitle();
+            this.#fontLoads();
+            const title: HTMLElement | undefined = this.titleRef()?.nativeElement;
+            if (title !== undefined && !this.isNarrow()) {
+                this.#titleWidth.set(title.scrollWidth);
+            }
         });
 
-        destroyRef.onDestroy((): void => watch?.disconnect());
+        const doc: Document = inject(DOCUMENT);
+        const fonts: FontFaceSet | null = 'fonts' in doc ? doc.fonts : null;
+        const onFontsLoaded: () => void = (): void => this.#fontLoads.update((count: number): number => count + 1);
+        fonts?.addEventListener('loadingdone', onFontsLoaded);
+
+        destroyRef.onDestroy((): void => {
+            watch?.disconnect();
+            fonts?.removeEventListener('loadingdone', onFontsLoaded);
+        });
     }
 
     protected onApply(): void {

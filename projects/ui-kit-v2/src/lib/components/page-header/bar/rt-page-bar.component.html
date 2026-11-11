@@ -24,8 +24,8 @@
                             <rt-menu-item
                                 [icon]="action.icon"
                                 [label]="action.label"
-                                [attr.disabled]="action.disabled || null"
-                                (click)="action.disabled || actionClick.emit(action.id)" />
+                                [disabled]="action.disabled ?? false"
+                                (selected)="actionClick.emit(action.id)" />
                         }
                     </rt-menu>
                 }

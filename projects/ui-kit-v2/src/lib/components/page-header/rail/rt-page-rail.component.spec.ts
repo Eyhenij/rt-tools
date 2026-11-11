@@ -70,6 +70,15 @@ function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture
     );
 }
 
+/** Касание: браузер шлёт наведение и сразу за ним нажатие с видом указателя `touch`. */
+function touch(target: HTMLElement): void {
+    const press: MouseEvent = new MouseEvent('click', { bubbles: true });
+
+    Object.defineProperty(press, 'pointerType', { value: 'touch' });
+    target.dispatchEvent(new MouseEvent('mouseenter'));
+    target.dispatchEvent(press);
+}
+
 function itemOf(fixture: ComponentFixture<RtPageHeaderComponent>, id: string): HTMLElement {
     const item: DebugElement | undefined = qaAll(fixture, 'rail-item').find(
         (node: DebugElement): boolean => (node.nativeElement as HTMLElement).dataset['id'] === id
@@ -113,7 +122,7 @@ describe('rt-page-rail', (): void => {
     it('SC-UKV-1192 — Escape closes the panel, and a touch opens it without hover', (): void => {
         const fixture: ComponentFixture<RtPageHeaderComponent> = setup();
 
-        itemOf(fixture, 'money').click();
+        touch(itemOf(fixture, 'money'));
         fixture.detectChanges();
         expect(qaAll(fixture, 'rail-panel')).toHaveLength(1);
 
@@ -123,6 +132,18 @@ describe('rt-page-rail', (): void => {
     });
 
     it('SC-UKV-1215 — a second touch on the same section closes its panel', (): void => {
+        const fixture: ComponentFixture<RtPageHeaderComponent> = setup();
+
+        touch(itemOf(fixture, 'money'));
+        fixture.detectChanges();
+        expect(qaAll(fixture, 'rail-panel')).toHaveLength(1);
+
+        touch(itemOf(fixture, 'money'));
+        fixture.detectChanges();
+        expect(qaAll(fixture, 'rail-panel')).toHaveLength(0);
+    });
+
+    it('SC-UKV-1215 — a key press opens and a second key press closes the panel', (): void => {
         const fixture: ComponentFixture<RtPageHeaderComponent> = setup();
 
         itemOf(fixture, 'money').click();

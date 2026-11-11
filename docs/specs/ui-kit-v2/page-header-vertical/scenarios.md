@@ -36,6 +36,9 @@ Given the «More» menu is open and its tabs are closable
 When the pointer rests on one row
 Then only that row shows its close cross
 
+Покрытие: частичное — тест читает правило в собранных стилях, а крестик под указателем виден только
+в браузере: тестовая среда наведения не рисует.
+
 ### SC-UKV-1210 — the scroll arrows are compact buttons
 
 Given a strip in the scroll mode is narrower than its tabs
@@ -49,6 +52,66 @@ Given a strip in the scroll mode is narrower than its tabs
 And the strip chose no arrow look
 When the arrows are drawn
 Then each arrow is a square as high as the strip, as before the vertical header
+
+### SC-UKV-1218 — a touch screen shows the cross of every menu row
+
+Given the «More» menu is open on a screen without hover
+When its rows are drawn
+Then each closable row shows its cross
+
+### SC-UKV-1219 — a disabled action stays disabled in the phone menu
+
+Given a phone width and a disabled page action
+When the actions menu opens
+Then the action looks disabled and its press reports nothing
+
+### SC-UKV-1220 — a long title alone keeps one row
+
+Given a bar without search and filters
+When its title is longer than the room
+Then the bar keeps one row and the title truncates
+
+### SC-UKV-1221 — a title changed in the narrow view is measured again
+
+Given the title changed while the bar was narrow
+When the bar is wide again
+Then its rows are fitted by the width of the new text, not of the stretched narrow title
+
+### SC-UKV-1222 — the filters sheet does not open by itself
+
+Given the filters sheet was open in the narrow view
+When the bar becomes wide and narrow again
+Then the sheet stays closed
+
+### SC-UKV-1223 — the tab menus work from the keyboard
+
+Given the «More» menu or the tab menu is opened from the keyboard
+When the arrows, Home and End are pressed and an item is chosen
+Then focus moves over the items and comes back where the menu was opened from
+
+### SC-UKV-1224 — pinned tabs that fill the limit still let the selected tab show
+
+Given as many pinned tabs as the row limit and a selected tab that is not pinned
+When the row is fitted
+Then the pinned tabs and the selected one stand in the row
+
+### SC-UKV-1225 — the «More» menu shows title templates and closes when emptied
+
+Given a tab with a title template and no label lies in the «More» menu
+When the menu opens and then its last tab leaves it
+Then the row shows the template, and the emptied menu closes
+
+### SC-UKV-1226 — the phone menu is a dialog
+
+Given a phone width
+When the burger is pressed, then the backdrop, or the screen widens
+Then the column takes focus as a dialog, and closed it returns focus to the burger
+
+### SC-UKV-1227 — a section without an icon shows its first letter
+
+Given a rail section declares no icon
+When the rail is drawn
+Then its item shows the first letter of the section name
 
 ### SC-UKV-1211 — a stretched tab comes back from the menu on a wider strip
 
@@ -91,6 +154,9 @@ Then the header shrinks into the compact strip
 Given a strip names no overflow mode
 When it is narrower than its tabs
 Then the scroll arrows show and no «More» trigger exists
+
+Покрытие: частичное — тестовая среда не считает размеров: тест видит стрелку и отсутствие «Ещё», а
+что стрелка видна на переполненной полосе, показывает кадр `scroll-arrows`.
 
 ### SC-UKV-1188 — an error in the menu marks the trigger
 

@@ -28,7 +28,7 @@ function windowDouble(): Window & typeof globalThis {
 @Component({
     selector: 'rt-page-bar-host',
     template: `
-        <rt-page-bar pageTitle="Все брони" [actions]="actions" [filtersActive]="active()" (actionClick)="clicked = $event">
+        <rt-page-bar [pageTitle]="title()" [actions]="actions" [filtersActive]="active()" (actionClick)="clicked = $event">
             <ng-template rtPageBarSearch><input qa-dataid="demo-search" /></ng-template>
             <ng-template rtPageBarFilter><span qa-dataid="demo-filter"></span></ng-template>
             <ng-template rtPageBarFilter><span qa-dataid="demo-filter"></span></ng-template>
@@ -40,7 +40,15 @@ function windowDouble(): Window & typeof globalThis {
 class PageBarHostComponent {
     public actions: ReadonlyArray<IRtPageBar.Action> = [{ id: 'new', label: 'Новая', icon: 'plus-circle' }];
     public active: WritableSignal<boolean> = signal<boolean>(false);
+    public title: WritableSignal<string> = signal<string>('Все брони');
     public clicked: string = '';
+}
+
+/** Новая ширина шапки: наблюдатель размеров сообщает её, как в браузере. */
+function resizeTo(fixture: ComponentFixture<PageBarHostComponent>, width: number): void {
+    hostWidth = width;
+    resize?.();
+    fixture.detectChanges();
 }
 
 function setup(width: number): ComponentFixture<PageBarHostComponent> {
@@ -105,6 +113,62 @@ describe('rt-page-bar', (): void => {
         fixture.detectChanges();
 
         expect(qa(fixture, 'page-bar-filters-dot')).not.toBeNull();
+    });
+
+    it('SC-UKV-1219 — a disabled action in the phone menu looks and acts disabled', (): void => {
+        const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
+        fixture.componentInstance.actions = [
+            { id: 'new', label: 'Новая', icon: 'plus-circle' },
+            { id: 'off', label: 'Нельзя', icon: 'plus-circle', disabled: true },
+        ];
+        fixture.detectChanges();
+
+        (
+            qa(fixture, 'page-bar-actions-menu')?.nativeElement.querySelector(
+                '[qa-dataid="menu-trigger"] [qa-dataid="icon-button-control"]'
+            ) as HTMLElement
+        ).click();
+        fixture.detectChanges();
+        const items: HTMLElement[] = Array.from(document.querySelectorAll<HTMLElement>('rt-menu-item'));
+        const off: HTMLElement | undefined = items.find((item: HTMLElement): boolean => item.textContent?.includes('Нельзя') ?? false);
+
+        expect(items).toHaveLength(2);
+        expect(off?.getAttribute('aria-disabled')).toBe('true');
+        expect(off?.classList).toContain('rt-menu-item--disabled');
+        off?.click();
+        expect(fixture.componentInstance.clicked).toBe('');
+    });
+
+    it('SC-UKV-1221 — a title changed in the narrow view is measured again in the wide one', (): void => {
+        const fixture: ComponentFixture<PageBarHostComponent> = setup(1390);
+        const bar: HTMLElement = fixture.nativeElement.querySelector('rt-page-bar');
+        // В узком виде заголовок растянут на всю строку, в широком — по тексту.
+        Object.defineProperty(qa(fixture, 'page-bar-title')?.nativeElement, 'scrollWidth', {
+            get: (): number => (bar.classList.contains('rt-page-bar--narrow') ? 900 : 113),
+        });
+
+        resizeTo(fixture, 375);
+        fixture.componentInstance.title.set('Брони за месяц');
+        fixture.detectChanges();
+        resizeTo(fixture, 1390);
+        fixture.detectChanges();
+
+        expect(qa(fixture, 'page-bar-second-row')).toBeNull();
+        expect(qaAll(fixture, 'demo-filter')).toHaveLength(2);
+    });
+
+    it('SC-UKV-1222 — the filters sheet does not open by itself on return to the narrow view', (): void => {
+        const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
+
+        (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+        expect(qa(fixture, 'page-bar-sheet')).not.toBeNull();
+
+        resizeTo(fixture, 1390);
+        resizeTo(fixture, 375);
+
+        expect(qa(fixture, 'page-bar-filters')).not.toBeNull();
+        expect(qa(fixture, 'page-bar-sheet')).toBeNull();
     });
 
     it('a pressed action reports its id', (): void => {

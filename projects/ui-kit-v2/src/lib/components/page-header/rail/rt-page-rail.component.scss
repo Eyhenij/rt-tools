@@ -261,6 +261,13 @@
         border-radius: var(--rt-page-rail-plate-radius);
         transition: background-color var(--rt-page-rail-transition-duration) linear;
 
+        /* Раздел без значка: список разделов общий с горизонтальной шапкой, где значок не обязателен. */
+        &__letter {
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-semibold);
+            line-height: 1;
+        }
+
         &__marker {
             position: absolute;
             top: calc(var(--rt-space-1) - var(--rt-page-rail-border-width));

@@ -24,7 +24,7 @@
 </div>
 
 <ng-template #moreTpl>
-    <div rtBlock="rt-tabs-more-menu" role="menu" qa-dataid="tabs-more-menu">
+    <div rtBlock="rt-tabs-more-menu" rtTabsMenuKeys role="menu" qa-dataid="tabs-more-menu">
         @for (tab of tabs(); track tab.id()) {
             <div rtElem="row" role="none" [rtMod]="{ disabled: tab.disabled(), invalid: tab.invalid() }">
                 <button
@@ -45,7 +45,13 @@
                             [color]="tab.iconColor()"
                             [fill]="tab.iconFill()" />
                     }
-                    <span rtElem="label">{{ tab.label() }}</span>
+                    <span rtElem="label">
+                        @if (tab.titleTemplate(); as titleTpl) {
+                            <ng-container [ngTemplateOutlet]="titleTpl" />
+                        } @else {
+                            {{ tab.label() }}
+                        }
+                    </span>
                     @if (tab.badge() !== null) {
                         <span rtElem="badge">{{ tab.badge() }}</span>
                     }

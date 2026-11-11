@@ -161,7 +161,8 @@ export const AssistantDark: TStory = { globals: DARK, args: { bar: true, assista
 
 export const TabsDark: TStory = { globals: DARK, args: { bar: true, tabs: 5 } };
 
-export const FiltersApplied: TStory = { args: { bar: true, filtersActive: true } };
+/** Точка на кнопке отборов видна только на телефоне: на широкой шапке отборы стоят в ряду. */
+export const FiltersApplied: TStory = { globals: PHONE, parameters: PHONE_SHOT, args: { bar: true, filtersActive: true } };
 
 export const TabsPanelOpen: TStory = {
     parameters: openedAt(PANEL),

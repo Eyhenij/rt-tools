@@ -1,11 +1,12 @@
 <ng-container rtBlock="rt-page-rail">
     <button
+        #burger
         rtElem="burger"
         type="button"
         qa-dataid="rail-burger"
         [attr.aria-label]="t().uiNavMenu"
         [attr.aria-expanded]="phoneMenuOpen()"
-        (click)="phoneMenuOpen.set(true)">
+        (click)="openPhoneMenu()">
         <rt-icon name="bars" size="md" />
     </button>
 
@@ -123,14 +124,14 @@
                 type="button"
                 qa-dataid="rail-phone-backdrop"
                 [attr.aria-label]="t().bottomSheetClose"
-                (click)="phoneMenuOpen.set(false)"></button>
-            <div rtElem="phone-column">
+                (click)="closePhoneMenu()"></button>
+            <div #phoneColumn rtElem="phone-column" role="dialog" aria-modal="true" [attr.aria-label]="t().uiNavMenu">
                 <rt-page-phone-menu
                     [sections]="sections()"
                     [activeIds]="activeIds()"
                     [navLabel]="navLabel()"
                     (itemClick)="itemClick.emit($event)"
-                    (closed)="phoneMenuOpen.set(false)" />
+                    (closed)="closePhoneMenu()" />
             </div>
         </div>
     }
@@ -140,6 +141,8 @@
     <span rtBlock="rt-page-rail-plate">
         @if (section.icon; as icon) {
             <rt-icon size="sm" [name]="icon" />
+        } @else {
+            <span rtElem="letter" aria-hidden="true" qa-dataid="rail-letter">{{ section.label.charAt(0) }}</span>
         }
         @if (section.unread) {
             <span rtElem="marker" role="img" qa-dataid="rail-marker" [attr.aria-label]="t().uiNavUnread"></span>

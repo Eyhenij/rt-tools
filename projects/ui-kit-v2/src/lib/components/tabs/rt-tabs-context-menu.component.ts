@@ -5,6 +5,7 @@ import { signal, ChangeDetectionStrategy, Component, TemplateRef, ViewEncapsulat
 import { BlockDirective } from '@rt-tools/core';
 
 import { RtTabDirective } from './rt-tab.directive';
+import { RtTabsMenuKeysDirective } from './rt-tabs-menu-keys.directive';
 import { IRtTabs } from './rt-tabs.model';
 
 const BEM_BLOCK: string = 'rt-tabs-context-menu';
@@ -26,7 +27,7 @@ interface IRtTabsContextMenuState {
     templateUrl: './rt-tabs-context-menu.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
-    imports: [CdkConnectedOverlay, NgTemplateOutlet, BlockDirective],
+    imports: [CdkConnectedOverlay, NgTemplateOutlet, RtTabsMenuKeysDirective, BlockDirective],
     host: { class: BEM_BLOCK },
 })
 export class RtTabsContextMenuComponent {
@@ -38,7 +39,16 @@ export class RtTabsContextMenuComponent {
             return;
         }
         event.preventDefault();
-        this.state.set({ template, point: { x: event.clientX, y: event.clientY }, context: { $implicit: tab.id() } });
+        this.state.set({ template, point: RtTabsContextMenuComponent.pointOf(event), context: { $implicit: tab.id() } });
+    }
+
+    /** Клавиша меню и Shift+F10 шлют событие без точки: меню встаёт под вкладкой. */
+    public static pointOf(event: MouseEvent): { readonly x: number; readonly y: number } {
+        if (event.clientX === 0 && event.clientY === 0 && event.target instanceof Element) {
+            const box: DOMRect = event.target.getBoundingClientRect();
+            return { x: box.left, y: box.bottom };
+        }
+        return { x: event.clientX, y: event.clientY };
     }
 
     protected close(): void {

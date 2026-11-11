@@ -1,15 +1,19 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import {
+    afterNextRender,
     booleanAttribute,
     computed,
     inject,
     input,
+    linkedSignal,
     output,
     signal,
+    viewChild,
     ChangeDetectionStrategy,
     Component,
     DestroyRef,
     ElementRef,
+    Injector,
     InputSignal,
     InputSignalWithTransform,
     OutputEmitterRef,
@@ -23,7 +27,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 
 import { BlockDirective, ElemDirective, ModDirective, WINDOW } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { BreakpointsService, RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
@@ -73,7 +77,12 @@ export class RtPageRailComponent {
 
     readonly #win: Window = inject(WINDOW);
 
+    readonly #injector: Injector = inject(Injector);
+
     #closeTimer: number | null = null;
+
+    /** Раздел, чью панель открыло наведение перед нажатием: касание шлёт его перед `click`. */
+    #hoverOpenedId: string | null = null;
 
     readonly #openId: WritableSignal<string | null> = signal<string | null>(null);
 
@@ -89,8 +98,15 @@ export class RtPageRailComponent {
             ) ?? null
     );
 
-    /** Столбец телефона открыт бургером. */
-    protected readonly phoneMenuOpen: WritableSignal<boolean> = signal<boolean>(false);
+    /** Столбец телефона открыт бургером. Смена ширины за порог узкого экрана его закрывает. */
+    protected readonly phoneMenuOpen: WritableSignal<boolean> = linkedSignal<boolean, boolean>({
+        source: inject(BreakpointsService).narrow,
+        computation: (): boolean => false,
+    });
+
+    protected readonly burgerRef: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('burger');
+
+    protected readonly phoneColumnRef: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('phoneColumn');
 
     public readonly sections: InputSignal<ReadonlyArray<IRtPageHeaderView.Section>> =
         input.required<ReadonlyArray<IRtPageHeaderView.Section>>();
@@ -120,25 +136,51 @@ export class RtPageRailComponent {
 
     protected openPanel(id: string): void {
         this.cancelPanelClose();
+        if (this.#openId() !== id) {
+            this.#hoverOpenedId = id;
+        }
         this.#openId.set(id);
     }
 
-    /** Касание и клавиатура: наведения нет, раздел открывает и закрывает само нажатие. */
+    /**
+     * Касание и клавиатура: раздел открывает и закрывает само нажатие. Нажатие, перед которым
+     * наведение открыло эту панель, её оставляет: так касание, которое шлёт наведение и нажатие
+     * подряд, открывает панель с первого раза. Нажатие мышью не закрывает панель никогда.
+     */
     protected togglePanel(id: string, event: Event): void {
         event.stopPropagation();
-        // Наведение успело открыть панель, и нажатие мышью её не закрывает: так работает и шапка.
         const byMouse: boolean = 'pointerType' in event && event.pointerType === 'mouse';
-        this.#openId.set(!byMouse && this.#openId() === id ? null : id);
+        const keep: boolean = byMouse || this.#hoverOpenedId === id;
+
+        this.#hoverOpenedId = null;
+        this.#openId.set(!keep && this.#openId() === id ? null : id);
     }
 
     protected closePanel(): void {
         this.cancelPanelClose();
+        this.#hoverOpenedId = null;
         this.#openId.set(null);
     }
 
     protected closeAll(): void {
         this.closePanel();
+        if (this.phoneMenuOpen()) {
+            this.closePhoneMenu();
+        }
+    }
+
+    /** Открытый столбец берёт фокус на первую строку: он окно поверх страницы. */
+    protected openPhoneMenu(): void {
+        this.phoneMenuOpen.set(true);
+        afterNextRender((): void => this.phoneColumnRef()?.nativeElement.querySelector<HTMLElement>('button, a[href]')?.focus(), {
+            injector: this.#injector,
+        });
+    }
+
+    /** Закрытый столбец возвращает фокус бургеру, откуда его открыли. */
+    protected closePhoneMenu(): void {
         this.phoneMenuOpen.set(false);
+        this.burgerRef()?.nativeElement.focus();
     }
 
     protected schedulePanelClose(): void {

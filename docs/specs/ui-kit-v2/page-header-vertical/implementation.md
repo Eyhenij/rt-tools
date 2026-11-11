@@ -21,10 +21,12 @@ in the tree, and the scenario it is checked by.
 - **A right click on a tab opens the menu the application declares for it.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-context-menu.component.ts:RtTabsContextMenuComponent`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tab.directive.ts:contextMenu`; scenario `SC-UKV-1199`
 - **A strip may show the close cross on the selected tab only.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.component.ts:closeOn`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.component.html:closeShown`; scenario `SC-UKV-1201`
 - **A pinned tab without an icon of its own draws a pin, and it may still carry a close cross.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tab.directive.ts:shownIcon`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tab.directive.ts:showClose`; scenario `SC-UKV-1205`
-- **The row holds at most ten tabs, pinned ones included, even when there is room.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.more.ts:freeLimit`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.more-row.ts:RT_TABS_MORE_LIMIT`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.component.ts:moreLimit`; scenario `SC-UKV-1208`
-- **A menu row shows its close cross only under the pointer or keyboard focus.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-more-menu.scss:__close`; scenario `SC-UKV-1209`
+- **The row holds at most ten tabs, pinned ones included, even when there is room.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.more.ts:freeLimit`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.more-row.ts:RT_TABS_MORE_LIMIT`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.component.ts:moreLimit`; scenarios `SC-UKV-1208`, `SC-UKV-1224`
+- **A menu row shows its close cross under the pointer, in keyboard focus and on a touch screen.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-more-menu.scss:__close`; scenarios `SC-UKV-1209`, `SC-UKV-1218`
 - **The scroll arrows are compact buttons that lie over the tab edge or beside the tabs.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-arrows.scss:__arrow`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.component.ts:arrowLook`; scenario `SC-UKV-1210`
 - **A strip that does not choose the compact look keeps the full-height square arrow.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-arrows.scss:__rest`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.component.ts:arrowLook`; scenario `SC-UKV-1217`
+- **The «More» menu and the tab menu work from the keyboard as the kit menu does.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-menu-keys.directive.ts:RtTabsMenuKeysDirective`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-context-menu.component.ts:pointOf`; scenario `SC-UKV-1223`
+- **A menu row of a tab with a title template shows that template, and an emptied menu closes.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-more.component.html:titleTemplate`, `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-more.component.ts:popover`; scenario `SC-UKV-1225`
 
 ## The rail and the section panel
 
@@ -34,6 +36,8 @@ in the tree, and the scenario it is checked by.
 - **Sections that do not fit the rail's height scroll inside the rail, and the foot stays in place.** — `projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-rail.component.scss:__sections`; scenario `SC-UKV-1191`
 - **A section caption shows as a tooltip to the right of its item.** — `projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-rail.component.html:rtTooltipPlacement`; scenario `SC-UKV-1191`
 - **A section with a panel opens the section panel over the page and over the tabs.** — `projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-rail.component.ts:openPanel`; scenario `SC-UKV-1192`
+- **A touch on a section opens its panel at once, and a second touch closes it.** — `projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-rail.component.ts:togglePanel`; scenario `SC-UKV-1215`
+- **A section without an icon shows the first letter of its name.** — `projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-rail.component.scss:__letter`; scenario `SC-UKV-1227`
 - **The section panel is 220 wide and takes the window's whole height.** — `projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-rail.component.scss:__panel`; scenario `SC-UKV-1192`
 - **The profile menu opens above the avatar, 8 from the rail.** — `projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-user.component.ts:RAIL_POSITIONS`; scenario `SC-UKV-1193`
 - **A switched-on foot button carries the look of the selected item and says it is pressed.** — `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.model.ts:active`, `projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-actions.component.scss:__item`; scenario `SC-UKV-1207`
@@ -54,6 +58,8 @@ in the tree, and the scenario it is checked by.
 - **A title and buttons that leave no room for the filters stand on the first row, and search and filters on the second.** — `projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.logic.ts:pageBarFit`; scenario `SC-UKV-1194`
 - **There is no third row: filters that do not fit go under the button «More filters» with their count.** — `projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.component.ts:moreFilters`; scenario `SC-UKV-1195`
 - **The bar is a separate part, and a page without it keeps its own heading.** — `projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.component.ts:RtPageBarComponent`; scenario `SC-UKV-1194`
+- **The title is measured by its text in the wide view, again after a change of text, fonts or view.** — `projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.component.ts:#fontLoads`; scenario `SC-UKV-1221`
+- **A bar without search and filters keeps one row: a long title truncates.** — `projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.logic.ts:pageBarFit`; scenario `SC-UKV-1220`
 
 ## The phone
 
@@ -61,6 +67,7 @@ in the tree, and the scenario it is checked by.
 - **The page title takes the width left over and truncates, and the buttons never leave the screen.** — `projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.component.scss:__title`; scenario `SC-UKV-1196`
 - **The burger opens the sections as a menu of the vertical layout, a column 240 wide with rows 48 high and no logo.** — `projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-phone-menu.component.ts:RtPagePhoneMenuComponent`, `projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-rail.component.scss:__phone-column`; scenarios `SC-UKV-1202`, `SC-UKV-1203`, `SC-UKV-1204`
 - **The phone menu takes the theme colours of the wide layout.** — `projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-phone-menu.component.scss:__row`; scenario `SC-UKV-1202`
-- **The filters button opens the bottom sheet with search and all filters.** — `projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.component.ts:sheetOpen`; scenarios `SC-UKV-1197`, `SC-UKV-1200`
-- **The actions button opens the kit menu with the page's actions.** — `projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.component.ts:actions`; scenario `SC-UKV-1197`
+- **The filters button opens the bottom sheet with search and all filters.** — `projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.component.ts:sheetOpen`; scenarios `SC-UKV-1197`, `SC-UKV-1200`, `SC-UKV-1222`
+- **The actions button opens the kit menu with the page's actions.** — `projects/ui-kit-v2/src/lib/components/page-header/bar/rt-page-bar.component.ts:actions`; scenarios `SC-UKV-1197`, `SC-UKV-1219`
+- **The phone menu is a dialog: it takes focus, gives it back to the burger and closes when the screen widens past the narrow threshold.** — `projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-rail.component.ts:openPhoneMenu`, `projects/ui-kit-v2/src/lib/components/page-header/rail/rt-page-rail.component.ts:phoneMenuOpen`; scenario `SC-UKV-1226`
 - **The tab strip stands under the header in the «More» mode.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.component.ts:moreMode`; scenario `SC-UKV-1183`

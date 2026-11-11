@@ -1,6 +1,34 @@
 import { join } from 'node:path';
 
+import { signal, ChangeDetectionStrategy, Component, WritableSignal } from '@angular/core';
+import { ComponentFixture } from '@angular/core/testing';
 import * as sass from 'sass';
+
+import { createRtFixture } from '../../../testing/rt-kit-testing';
+import { RtTabDirective } from './rt-tab.directive';
+import { RtTabsComponent } from './rt-tabs.component';
+import { IRtTabs } from './rt-tabs.model';
+
+@Component({
+    selector: 'rt-tabs-arrows-host',
+    template: `
+        <rt-tabs activeId="a" [arrowLook]="look()">
+            <ng-template rtTab="a" label="A">A</ng-template>
+        </rt-tabs>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtTabsComponent, RtTabDirective],
+})
+class TabsArrowsHostComponent {
+    public readonly look: WritableSignal<IRtTabs.ArrowLook> = signal<IRtTabs.ArrowLook>('block');
+}
+
+/** Есть ли на обёртке полосы модификатор компактного вида — им включаются правила `--compact`. */
+function compactWrapper(fixture: ComponentFixture<TabsArrowsHostComponent>): boolean {
+    const wrapper: Element | null = (fixture.nativeElement as HTMLElement).querySelector('.rt-tabs__tab-list-wrapper');
+    expect(wrapper).not.toBeNull();
+    return wrapper?.classList.contains('rt-tabs__tab-list-wrapper--compact') ?? false;
+}
 
 /** Собранные стили файла одной строкой: правило ищется по началу селектора. */
 function compiled(file: string): string {
@@ -30,6 +58,23 @@ describe('RtTabsComponent — стрелки прокрутки и крести�
                 '.rt-tabs-more-menu__row:hover .rt-tabs-more-menu__close, .rt-tabs-more-menu__row:focus-within .rt-tabs-more-menu__close {'
             )
         ).toContain('opacity: 1');
+    });
+
+    it('SC-UKV-1218 — без наведения крестик строки меню виден всегда', (): void => {
+        const css: string = compiled('rt-tabs-more-menu.scss');
+
+        expect(ruleBody(css, '@media (hover: none) { .rt-tabs-more-menu__close {')).toContain('opacity: 1');
+    });
+
+    it('SC-UKV-1217 — без выбора вида компактного модификатора нет, arrowLook="compact" его ставит', (): void => {
+        const fixture: ComponentFixture<TabsArrowsHostComponent> = createRtFixture(TabsArrowsHostComponent);
+        fixture.detectChanges();
+        expect(compactWrapper(fixture)).toBe(false);
+
+        fixture.componentInstance.look.set('compact');
+        fixture.detectChanges();
+
+        expect(compactWrapper(fixture)).toBe(true);
     });
 
     it('SC-UKV-1217 — без выбора вида стрелка — квадрат во всю высоту полосы', (): void => {

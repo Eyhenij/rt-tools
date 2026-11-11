@@ -58,13 +58,19 @@ height from the table, so the vertical layout comes with a compact page header.
   cross by default.
 - **The row holds at most ten tabs, pinned ones included, even when there is room.** The strip may
   name another limit. A tab picked in the menu or opened anew takes the place of the last row tab,
-  and that tab goes to the menu.
-- **A menu row shows its close cross only under the pointer or keyboard focus.**
+  and that tab goes to the menu. When pinned tabs alone fill the limit, the selected tab still
+  stands after them: pinned tabs never leave the row and the selected one is always seen, so the
+  row then holds one tab over the limit.
+- **A menu row shows its close cross under the pointer, in keyboard focus and on a touch screen.**
 - **The scroll arrows are compact buttons that lie over the tab edge or beside the tabs.** The
   application sets their rounding, background, colour and shadow. The compact look is chosen by an
   input; the vertical header takes it.
 - **A strip that does not choose the compact look keeps the full-height square arrow.**
 - **A pinned tab without an icon of its own draws a pin, and it may still carry a close cross.**
+- **The «More» menu and the tab menu work from the keyboard as the kit menu does.** The open menu
+  takes focus on its first item, the arrows, Home and End move it, and the closed menu returns focus
+  where it was opened from. The menu key opens the tab menu under the tab.
+- **A menu row of a tab with a title template shows that template, and an emptied menu closes.**
 
 ### The rail and the section panel
 
@@ -76,6 +82,9 @@ height from the table, so the vertical layout comes with a compact page header.
 - **A section caption shows as a tooltip to the right of its item.**
 - **A section with a panel opens the section panel over the page and over the tabs.** The page and
   the tabs do not move.
+- **A touch on a section opens its panel at once, and a second touch closes it.** A touch sends a
+  hover before its press, and the press after that hover keeps the panel.
+- **A section without an icon shows the first letter of its name.**
 - **The section panel is 220 wide and takes the window's whole height.**
 - **The profile menu opens above the avatar, 8 from the rail.**
 - **A switched-on foot button carries the look of the selected item and says it is pressed.** The
@@ -101,6 +110,9 @@ height from the table, so the vertical layout comes with a compact page header.
 - **There is no third row: filters that do not fit go under the button «More filters» with their
   count.**
 - **The bar is a separate part, and a page without it keeps its own heading.**
+- **The title is measured by its text in the wide view, again after a change of text, fonts or view.**
+  In the narrow view the title is stretched and smaller, so it is not measured there.
+- **A bar without search and filters keeps one row: a long title truncates.**
 
 ### The phone
 
@@ -114,8 +126,12 @@ height from the table, so the vertical layout comes with a compact page header.
 - **The phone menu takes the theme colours of the wide layout.** The list of sections is painted as
   the rail, and an opened section as the section panel.
 - **The filters button opens the bottom sheet with search and all filters.** A dot on the button
-  says filters are applied.
-- **The actions button opens the kit menu with the page's actions.**
+  says filters are applied. A change of the view closes the sheet, and it does not open by itself
+  on return.
+- **The actions button opens the kit menu with the page's actions.** A disabled action is disabled
+  there too.
+- **The phone menu is a dialog: it takes focus, gives it back to the burger and closes when the
+  screen widens past the narrow threshold.**
 - **The tab strip stands under the header in the «More» mode.** It shows the selected tab and
   «More»; header and strip together are 83.
 

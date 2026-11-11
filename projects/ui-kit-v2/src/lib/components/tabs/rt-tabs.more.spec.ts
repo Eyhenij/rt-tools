@@ -67,6 +67,24 @@ describe('rtTabsFitRow', (): void => {
         });
     });
 
+    it('SC-UKV-1183 — a row tab closed frees its place for the first tab of the menu', (): void => {
+        const five: ReadonlyArray<IRtTabs.MoreSlot> = [...ABCD, slot('e')];
+        const before: IRtTabs.MoreLayout = rtTabsFitRow({ slots: five, selectedId: 'a', moreWidth: 84, available: 300 });
+        const after: IRtTabs.MoreLayout = rtTabsFitRow({ slots: five.slice(1), selectedId: 'b', moreWidth: 84, available: 300 });
+
+        expect(before).toEqual({ row: ['a', 'b'], more: ['c', 'd', 'e'] });
+        expect(after).toEqual({ row: ['b', 'c'], more: ['d', 'e'] });
+    });
+
+    it('SC-UKV-1224 — pinned tabs that fill the limit still let the selected tab stand after them', (): void => {
+        const slots: ReadonlyArray<IRtTabs.MoreSlot> = [slot('p', 100, true), slot('q', 100, true), slot('r', 100, true), ...ABCD];
+
+        expect(rtTabsFitRow({ slots, selectedId: 'b', moreWidth: 84, available: 1000, limit: 3 })).toEqual({
+            row: ['p', 'q', 'r', 'b'],
+            more: ['a', 'c', 'd'],
+        });
+    });
+
     it('SC-UKV-1208 — a count within the limit leaves the menu empty', (): void => {
         expect(rtTabsFitRow({ slots: ABCD, selectedId: 'a', moreWidth: 84, available: 1000, limit: 4 }).more).toEqual([]);
     });
