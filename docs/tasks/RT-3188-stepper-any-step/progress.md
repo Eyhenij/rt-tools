@@ -3,13 +3,13 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 4 — the match and the showcase approval
-- **Done:** макет `Stepper` в Figma одобрен владельцем («Одобряю»): `Steps` 2–7 × `Current`, полоса
+- **Stage:** 4 of 4 — delivery
+- **Done:** витрина одобрена («Одобряю витрину»), совпадение 190 из 190; макет `Stepper` в Figma одобрен владельцем («Одобряю»): `Steps` 2–7 × `Current`, полоса
   по ширине родителя, подпись в отрезке вокруг точки; вертикальный режим и фон у всех кадров. Строка
   назначения копии вписана по слову «Разрешаю вписать». Ветка от `origin/main`, спека подобласти
   `stepper` и план записаны.
-- **Next step:** после одобрения витрины — строка «Витрина» в approvals.md, разбор папки, PR и выпуск.
-- **Uncommitted:** строка совпадения в approvals.md и эта запись.
+- **Next step:** 4.1 — статус спеки `stepper` «in force», запись в архив, разбор папки последним коммитом; затем 4.2 — push, PR и выпуск кита.
+- **Uncommitted:** ничего; ветка не отправлена.
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
@@ -22,8 +22,8 @@
 - [x] 2.3 Unit tests named by the scenarios
 - [x] 2.4 Showcase stories: three of four, five steps, width 327, long labels
 - [x] 3.1 The numbers of the Figma frames against the showcase
-- [>] 3.2 The overlay frame, the showcase shown to the owner
-- [ ] 4.1 The task folder is taken apart, the spec status becomes in force
+- [x] 3.2 The overlay frame, the showcase shown to the owner
+- [>] 4.1 The task folder is taken apart, the spec status becomes in force
 - [ ] 4.2 The PR and the kit release
 
 ## Decisions along the way
@@ -56,4 +56,34 @@
 - Измерение: в 10 примерах подпись внутри полосы, поле от края полосы не меньше 1 px.
 - Вертикальный режим: шаг строки 67 px, линия отстоит от меток на 4 px, как на снимке витрины.
 - Код: 35 тестов зелёные, типы зелёные, аудит спек зелёный. Совпадение кадра ширин: 190 из 190
-  чисел; наложение по умолчанию — 5,86 % пикселей, только текст и сглаживание краёв точек.
+  чисел; наложение по умолчанию — 5,86 % пикселей, только текст и сглаживание краёв точек.- Цвета: ручки `--rt-stepper-*` не объявляются на хосте (объявление перебивало родителя), 17 имён в
+  `tools/tokens-handles.json` и `Theming.mdx`, `rt-design-tokens.ts` пересобран.
+
+## Handover of the session
+
+### Work
+
+RT-3188 «Степпер второго кита не умеет любой шаг и узкую полосу». Рабочее дерево —
+`/Users/sviatoslavkhutornoy/WebstormProjects/rt-tools`, ветка `RT-3188-stepper-any-step` (в работе,
+от `origin/main`, upstream указывает на `origin/main` — при первом push задать `-u origin
+RT-3188-stepper-any-step`). PR не открыт, ветка не отправлена.
+
+### Where to look
+
+Прогресс и план приходят хуком. `approvals.md` в папке задачи держит все три строки одобрения.
+Спека — `docs/specs/ui-kit-v2/stepper/` (статус пока «agreement before the code»).
+
+### Done and the next step
+
+Сделано: макет Figma (полоса, вертикальный режим, фон) и код `rt-stepper` с историями `Widths` и
+`Colors`, оба одобрены владельцем; аудит спек и проверки токенов зелёные.
+Дальше: 4.1 — спеке статус «in force» и строка истории, запись в `docs/archive/`, разбор папки
+последним коммитом (паттерн `task-flow-archive`); 4.2 — push, PR (`git-workflow-pr`), выпуск кита.
+
+### What to keep in mind
+
+- Витрина второго кита поднята этой сессией на 6007 (фоновая задача); её можно остановить.
+- Набор push второго кита дольше сторожа (снимки и e2e без кэша): push может оборвать сессию.
+- Снимки `atoms-feedback-stepper--*` разойдутся: подпись теперь 18 px и стоит в отрезке; эталоны
+  переснимать адресно, а новые `widths` и `colors` снять впервые после взгляда.
+- Наложение по умолчанию лежит в папке заметок сеанса: `stepper-overlay-diff.png`.
