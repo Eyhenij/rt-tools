@@ -47,7 +47,7 @@ flowchart TD
     B --> C[The branch is named by the task number; the column moves in the same motion]
     C --> D{The edit is ready}
     D -->|No| C
-    D -->|Yes| E[Main is merged in, the gate set is run whole]
+    D -->|Yes| E[The base is merged in, the last commit takes the task folder apart, the gate set is run whole]
     E --> F{The branch carries a task number}
     F -->|No| G[The delivery guard refuses the opening: nothing in the queue stands behind the edit]
     F -->|Yes| H[The PR opens; what is not ready to merge goes as a draft]
@@ -55,7 +55,7 @@ flowchart TD
     I --> J{The run and the review are over}
     J -->|Run red| K[Fixed in the same branch]
     K --> J
-    J -->|Green| L[The last commit takes the task folder apart, the draft is lifted]
+    J -->|Green| L[The draft is lifted]
     L --> M[A person presses the merge: the executor asks and names the number]
     G --> B
 ```

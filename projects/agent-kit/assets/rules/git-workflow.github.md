@@ -53,7 +53,7 @@ flowchart TD
     B --> C[The branch is named by the task number and taken from the epic branch; the column moves in the same motion — the epic card too, on its first task]
     C --> D{The edit is ready}
     D -->|No| C
-    D -->|Yes| E[Main is merged in, the gate set is run whole]
+    D -->|Yes| E[The base is merged in, the last commit takes the task folder apart, the gate set is run whole]
     E --> F{The branch carries a task number}
     F -->|No| G[The delivery guard refuses the opening: nothing in the queue stands behind the edit]
     F -->|Yes| H[The PR opens: a draft where a run is waited for, ready where the pipeline does not wake]
@@ -61,7 +61,7 @@ flowchart TD
     I --> J{The run and the review are over}
     J -->|Run red| K[Fixed in the same branch]
     K --> J
-    J -->|Green| L[The last commit takes the task folder apart, and the draft, if there was one, is lifted]
+    J -->|Green| L[The draft, if there was one, is lifted]
     L --> M[A person presses the merge into the epic branch: the executor asks and names the number]
     M --> N{Tasks of the epic are left}
     N -->|Yes| B
@@ -166,8 +166,6 @@ flowchart TD
   gate is the only check behind the work — pattern `git-workflow-stack`.
 - **One's own drafts are judged all at once, not only the checked-out branch's.** Two signs — a
   green run on the tip and a folder taken apart; a folder still there means ongoing work.
-- **Opening a PR is refused while the branch carries its task folder.** Opening is the last point
-  where the executor still sees the refusal.
 - **One's own open PRs are reread in three places: before a push, on taking a task and after every
   known merge.** A neighbouring merge stales the rest that second. Technique —
   `git-workflow-freshness`.

@@ -2849,9 +2849,9 @@
       "kind": "rule",
       "name": "git-workflow",
       "installed": true,
-      "articles": 81,
+      "articles": 80,
       "unheld": 27,
-      "bound_code": 86
+      "bound_code": 85
     },
     {
       "label": "lib-layers",
@@ -16888,5 +16888,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "858d5cc31a1962f44b5f1a3b848bd61f8126d930"
+  "built_at_commit": "13ca73ae9cd59db977f149e8eac1714ff89b0026"
 }

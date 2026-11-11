@@ -282,8 +282,6 @@ from the "Verified by" line has passed.
 - **One grill produced several tasks — the common part leaves for the epic plan.** The task folder
   dies with the merge, and the task order outlives it; the directory is named by the rule's
   companion.
-- **The task is created by a command, not by four calls in a row.** The board is not bound to the
-  repository, and the task gets onto it only by an explicit addition.
 - **The branch slug is taken from the terminology of the agreement, not from the words of the
   request.** The agreement is written before the branch, and that is exactly where it drops the
   owner's word. The task title and the PR title can be fixed; the branch name after the PR opens —
