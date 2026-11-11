@@ -256,8 +256,8 @@ one session and keeps its whole context and state when it passes to the next.
   there at once. The epic plan is opened before a task is taken and answers in one call: which task
   is next, and whether it moved to a neighbouring epic.
 - **An ended epic is a stop: the owner is shown what was done and is asked for the next work.** While
-  the epic goes on, the next piece of work is taken silently; once it has ended, the next step is no
-  longer obvious to both. Work taken outside an ended epic without the owner's word leaves them sure
+  the epic goes on, the next work is taken silently; once it has ended, the next step is not
+  obvious to both. Work taken outside an ended epic without the owner's word leaves them sure
   the epic continues.
 - **An epic is not closed while even one sign of its end is confirmed only by reading.** A sign
   checked by eye closes the work only after a command or a measurement checks it, with their output.
