@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 /**
  * Builds the graph of concepts and rules of the rules package: every resource of the package and
- * every word of its glossary is a node, and a link is what one text says of another.
+ * every spec of it is a node, and a link is what one text says of another.
  *
  * graphify reads these texts as headings and joins each heading to its own file only: not one link
  * runs between two texts. The links live elsewhere — in the front matter (`law:`, `rule:`), in the
- * `Requires` line of a rule, in the bindings of the companions of this tree, in a resource name
- * written in backticks and in a glossary word met in the text. This command reads exactly those.
+ * `Requires` line of a rule or a hook, in an import between checks, in the bindings of the
+ * companions of this tree and in a resource name written in backticks. This command reads exactly
+ * those. The glossary words are counted for the report and stay out of the links.
  *
  * The graph keeps the graphify shape, so `graphify explain`, `affected` and `path` read it with
  * `--graph`. The report next to it lists what the revision of a law family starts from.
@@ -180,12 +181,27 @@ function nameIndex(nodes) {
     const index = new Map();
     const add = (key, id) => index.set(key, [...(index.get(key) ?? []), id]);
     for (const node of nodes.values()) {
-        add(node.name, node.id);
+        if (node.kind === 'pitfalls') {
+            // A pitfalls file shares the name of its rule, so it is reached only by its path.
+            add(`${node.name}/pitfalls.md`, node.id);
+            add(`pitfalls/${node.name}.md`, node.id);
+        } else if (node.kind !== 'spec' && node.kind !== 'term') {
+            add(node.name, node.id);
+        }
     }
     return (token) => {
         const bare = token.replace(/:[\w$.-]*$/, '').replace(/[.,;]+$/, '');
-        const file = bare.slice(bare.lastIndexOf('/') + 1);
-        return [...new Set([...(index.get(bare) ?? []), ...(bare.includes('/') ? (index.get(file) ?? []) : [])])];
+        const parts = bare.split('/');
+        const file = parts.at(-1);
+        // A variant file names the same resource: `board-gh.github.mjs` is `board-gh.mjs`.
+        const plain = file.replace(/\.(github|gitlab|azure|needs-[a-z-]+)(\.[a-z]+)$/, '$2');
+        const keys = [bare, file, plain, parts.slice(-2).join('/')];
+        // A text resource named by its path: `agents/qa-engineer.md`, `rules/git-workflow.github.md`,
+        // the laid-out `.claude/skills/testing/SKILL.md`.
+        if (plain.endsWith('.md')) {
+            keys.push(file === 'SKILL.md' ? (parts.at(-2) ?? '') : plain.slice(0, -'.md'.length));
+        }
+        return [...new Set(keys.flatMap((key) => index.get(key) ?? []))];
     };
 }
 
@@ -200,7 +216,19 @@ function termPattern(term) {
     return new RegExp(`(^|[^\\p{L}\\p{N}])${escaped}(e?s)?([^\\p{L}\\p{N}]|$)`, 'iu');
 }
 
-function collectLinks(nodes, texts, terms) {
+/**
+ * How many texts say each glossary word. The words stay out of the links of the graph: a short word
+ * is said by almost every text, and graphify, which shows the neighbours of a node by their degree,
+ * would show a rule's glossary words instead of its law, its patterns and its executors.
+ */
+function countTerms(texts, terms) {
+    return terms.map((term) => {
+        const pattern = termPattern(term.name);
+        return { ...term, uses: texts.filter(({ text }) => pattern.test(text)).length };
+    });
+}
+
+function collectLinks(nodes, texts) {
     const links = new Map();
     const lookup = nameIndex(nodes);
     const link = (source, target, relation, file) => {
@@ -221,8 +249,6 @@ function collectLinks(nodes, texts, terms) {
             });
         }
     };
-    const termPatterns = terms.map((term) => ({ id: term.id, pattern: termPattern(term.name) }));
-
     for (const { id, kind, name, file, text } of texts) {
         const head = frontMatter(text);
         if (head.law) {
@@ -234,17 +260,26 @@ function collectLinks(nodes, texts, terms) {
         if (kind === 'pitfalls') {
             link(id, `rule_${slug(name)}`, 'pitfalls_of', file);
         }
+        // A rule names its cold part as «`pitfalls.md` next to it», without its own name.
+        if (kind === 'rule' && backticked(text).includes('pitfalls.md')) {
+            link(id, `pitfalls_${slug(name)}`, 'mentions', file);
+        }
         const requires = /^\*\*Requires:\*\*([\s\S]*?)(\n\n|$)/m.exec(text);
         for (const token of requires ? backticked(requires[1]) : []) {
             lookup(token).forEach((target) => link(id, target, 'requires', file));
         }
+        // A hook names what it needs in its own header: `# Requires: hooks/deny-tail.sh, agents/x.md`.
+        for (const line of text.matchAll(/^# Requires:(.*)$/gm)) {
+            for (const token of line[1].split(/[\s,]+/).filter(Boolean)) {
+                lookup(token).forEach((target) => link(id, target, 'requires', file));
+            }
+        }
+        // A check and a pipeline reach their modules by import.
+        for (const imported of text.matchAll(/from '\.\/([^']+)'/g)) {
+            lookup(imported[1]).forEach((target) => link(id, target, 'imports', file));
+        }
         for (const token of backticked(text)) {
             lookup(token).forEach((target) => link(id, target, 'mentions', file));
-        }
-        for (const { id: term, pattern } of termPatterns) {
-            if (pattern.test(text)) {
-                link(id, term, 'uses_term', file);
-            }
         }
     }
 
@@ -252,16 +287,38 @@ function collectLinks(nodes, texts, terms) {
     // rule knows no paths, so this is the only place its hooks and checks are written down.
     for (const node of nodes.values()) {
         const companion = join(COMPANIONS, node.name, 'implementation.md');
-        if (node.kind !== 'rule' || !existsSync(join(ROOT, companion))) {
+        if (node.kind !== 'rule') {
             continue;
         }
-        for (const token of backticked(readFileSync(join(ROOT, companion), 'utf8'))) {
+        // A rule this tree does not lay out has no companion here: its executors are unknown, not absent.
+        node.installed = existsSync(join(ROOT, companion));
+        if (!node.installed) {
+            continue;
+        }
+        const companionText = readFileSync(join(ROOT, companion), 'utf8');
+        // An article the companion marks «Not checked» or «Not carried out» is held by memory alone.
+        // «Not applicable» is no debt: the tree has nothing the article speaks of.
+        const articles = (/^## Where the articles are carried out\n([\s\S]*?)(?=^## |(?![\s\S]))/m.exec(companionText)?.[1] ?? '')
+            .split('\n')
+            .filter((line) => line.startsWith('- **'));
+        node.articles = articles.length;
+        node.unheld = articles.filter((line) => /\*\* — (\*\*)?Not (checked|carried out)/.test(line)).length;
+        const tokens = backticked(companionText);
+        for (const token of tokens) {
             lookup(token)
                 .filter((target) => /^(hook|check)_/.test(target))
                 .forEach((target) => link(node.id, target, 'executed_by', companion));
         }
+        // An article is also carried out by code that is no resource of the package: a linter rule,
+        // a test, a module of the tree. Such a binding has no node to link to and is counted.
+        node.bound_code = tokens.filter((token) => /^[\w./-]+\.(ts|mjs|js|sh)(:[\w$.-]+)?$/.test(token) && token.includes('/')).length;
     }
-    return [...links.values()];
+    // A mention of a resource already joined by a header, a `Requires` line, an import or a binding
+    // says nothing more, and graphify keeps one link per pair: the mention would hide the rest.
+    const structural = new Set(
+        [...links.values()].filter((link) => link.relation !== 'mentions').map((link) => `${link.source} ${link.target}`)
+    );
+    return [...links.values()].filter((link) => link.relation !== 'mentions' || !structural.has(`${link.source} ${link.target}`));
 }
 
 /**
@@ -278,9 +335,8 @@ function collectStatements(texts) {
 
 const { nodes, texts } = collectResources();
 collectSpecs(nodes, texts, KINDS.length);
-const terms = collectTerms(KINDS.length + 1);
-terms.forEach((term) => nodes.set(term.id, term));
-const links = collectLinks(nodes, texts, terms);
+const terms = countTerms(texts, collectTerms(KINDS.length + 1));
+const links = collectLinks(nodes, texts);
 const head = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).stdout.trim();
 
 const graph = {
@@ -295,5 +351,5 @@ const graph = {
 
 mkdirSync(join(ROOT, OUT), { recursive: true });
 writeFileSync(join(ROOT, OUT, 'graph.json'), `${JSON.stringify(graph, null, 2)}\n`);
-const counts = writeReport(graph, collectStatements(texts), join(ROOT, OUT, 'REPORT.md'), relative(ROOT, join(ROOT, OUT)));
+const counts = writeReport(graph, terms, collectStatements(texts), join(ROOT, OUT, 'REPORT.md'), relative(ROOT, join(ROOT, OUT)));
 console.log(`rules-graph: ${graph.nodes.length} nodes, ${graph.links.length} links; ${counts}`);

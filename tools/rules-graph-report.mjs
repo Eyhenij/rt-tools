@@ -57,17 +57,20 @@ export function samePairs(statements) {
     return [...pairs.values()].sort((a, b) => b.count - a.count || a.first.localeCompare(b.first));
 }
 
-export function analyse(graph) {
+export function analyse(graph, terms) {
     const incoming = new Set(graph.links.filter((link) => link.source !== link.target).map((link) => link.target));
     const executed = new Set(
         graph.links.filter((link) => link.relation === 'requires' || link.relation === 'executed_by').map((link) => link.source)
     );
     // A spec is where a reader enters, not where a link leads: it is not listed as unlinked.
-    const resources = graph.nodes.filter((node) => node.kind !== 'term' && node.kind !== 'spec');
+    const resources = graph.nodes.filter((node) => node.kind !== 'spec');
+    const rules = resources.filter((node) => node.kind === 'rule');
     return {
         orphans: resources.filter((node) => !incoming.has(node.id)),
-        unexecuted: resources.filter((node) => node.kind === 'rule' && !executed.has(node.id)),
-        unused: graph.nodes.filter((node) => node.kind === 'term' && !incoming.has(node.id)),
+        unexecuted: rules.filter((node) => node.installed && !executed.has(node.id) && !node.bound_code),
+        uninstalled: rules.filter((node) => !node.installed),
+        unheld: rules.filter((node) => node.unheld > 0).sort((a, b) => b.unheld - a.unheld || a.name.localeCompare(b.name)),
+        unused: terms.filter((term) => term.uses === 0),
     };
 }
 
@@ -78,8 +81,9 @@ function byKind(nodes) {
     return kinds.map((kind) => `- **${kind}:** ${names(nodes.filter((node) => node.kind === kind))}`);
 }
 
-export function writeReport(graph, statements, path, outDir) {
-    const { orphans, unexecuted, unused } = analyse(graph);
+export function writeReport(graph, terms, statements, path, outDir) {
+    const { orphans, unexecuted, uninstalled, unheld, unused } = analyse(graph, terms);
+    const unheldTotal = unheld.reduce((sum, node) => sum + node.unheld, 0);
     const pairs = samePairs(statements);
     const lines = [
         '# Report of the rules graph',
@@ -90,17 +94,27 @@ export function writeReport(graph, statements, path, outDir) {
         '',
         `## Resources nothing links to — ${orphans.length}`,
         '',
-        'No other text names them in its header, its `Requires` line, a binding or in backticks.',
+        'No other text names them in its header, a `Requires` line, an import, a binding or in backticks.',
         '',
         ...byKind(orphans),
         '',
         `## Rules nothing executes — ${unexecuted.length}`,
         '',
-        'No `Requires` line and no binding of the companion to a hook or a check.',
+        'No `Requires` line and no binding of the companion to code: a hook, a check, a linter rule or a test.',
         '',
         `- ${names(unexecuted) || 'none'}`,
         '',
+        `Not laid out in this tree, so their executors are unknown here: ${names(uninstalled) || 'none'}.`,
+        '',
+        `## Articles nothing carries out — ${unheldTotal}`,
+        '',
+        'Articles the companion of the rule marks «Not checked» or «Not carried out», of all its articles.',
+        '',
+        ...(unheld.length > 0 ? unheld.map((node) => `- ${node.name} — ${node.unheld} of ${node.articles}`) : ['- none']),
+        '',
         `## Glossary words used nowhere — ${unused.length}`,
+        '',
+        `Of ${terms.length} words of the package glossary, these are said by no text of the package or its specs.`,
         '',
         `- ${names(unused) || 'none'}`,
         '',
@@ -113,5 +127,5 @@ export function writeReport(graph, statements, path, outDir) {
         '',
     ];
     writeFileSync(path, lines.join('\n'));
-    return `${orphans.length} unlinked, ${unexecuted.length} unexecuted rules, ${unused.length} unused words, ${pairs.length} pairs`;
+    return `${orphans.length} unlinked, ${unexecuted.length} unexecuted rules, ${unheldTotal} articles held by memory, ${unused.length} unused words, ${pairs.length} pairs`;
 }

@@ -1,24 +1,52 @@
 # Report of the rules graph
 
-Built by `npm run graph:rules` from `8a6eea2c7`: 397 nodes, 4713 links.
+Built by `npm run graph:rules` from `1348d6d5d`: 351 nodes, 1279 links.
 The graph is `projects/agent-kit/rules-graph/graph.json`; graphify reads it with `--graph`. Every list below is
 debt for the revision of a law family to sort out, not a refusal.
 
-## Resources nothing links to — 14
+## Resources nothing links to — 1
 
-No other text names them in its header, its `Requires` line, a binding or in backticks.
+No other text names them in its header, a `Requires` line, an import, a binding or in backticks.
 
-- **check:** board-epic-link.mjs, board-epic-plan.mjs, board-gh.mjs, board-long-work.mjs, board-paths.mjs, board-task-dirs.mjs, board-titles.mjs
 - **pipeline:** feature.js
-- **role:** business-analyst, conscience, prose-editor, qa-engineer, rules-reviewer, strict-teacher
 
-## Rules nothing executes — 11
+## Rules nothing executes — 0
 
-No `Requires` line and no binding of the companion to a hook or a check.
+No `Requires` line and no binding of the companion to code: a hook, a check, a linter rule or a test.
 
-- angular-patterns, api-layer, component-structure, dependencies, entity-conventions, entity-models, lists, navigation, observability, platform-access, shared-code
+- none
+
+Not laid out in this tree, so their executors are unknown here: api-layer, shared-code.
+
+## Articles nothing carries out — 184
+
+Articles the companion of the rule marks «Not checked» or «Not carried out», of all its articles.
+
+- git-workflow — 27 of 81
+- turn-conduct — 27 of 69
+- task-flow — 23 of 57
+- observability — 14 of 29
+- testing — 14 of 42
+- deploy-flow — 13 of 28
+- browser-verification — 12 of 23
+- reuse-first — 9 of 18
+- autonomous-work — 8 of 11
+- doc-style — 7 of 21
+- status-report — 7 of 10
+- spec-driven — 6 of 31
+- epic-flow — 4 of 11
+- typescript-conventions — 3 of 10
+- angular-patterns — 2 of 5
+- dependencies — 2 of 5
+- styling-bem — 2 of 12
+- component-structure — 1 of 4
+- lib-layers — 1 of 9
+- platform-access — 1 of 3
+- queue-audit — 1 of 10
 
 ## Glossary words used nowhere — 0
+
+Of 46 words of the package glossary, these are said by no text of the package or its specs.
 
 - none
 
