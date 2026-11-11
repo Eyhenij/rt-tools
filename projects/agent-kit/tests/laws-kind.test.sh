@@ -61,7 +61,7 @@ for law in "$LAWS"/*.md; do
     esac
 done
 report "SC-AK-1003 — признак закона объявлен в наборе признаков" "$unknown_traits" 0
-report "SC-AK-1003 — набор признаков не пуст" "$(printf '%s\n' "$declared" | grep -c .)" 5
+report "SC-AK-1003 — набор признаков не пуст" "$(printf '%s\n' "$declared" | grep -c .)" 6
 
 # --- SC-AK-1004 — закон без правила объявляет себя договорённостью до кода ------------------
 lawless=0
