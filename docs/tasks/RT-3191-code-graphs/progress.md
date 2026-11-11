@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 3 — The graph in history
-- **Done:** the build command; 27 graphs committed with the ignore rules
-- **Next step:** the merge driver
+- **Stage:** 3 of 3 — The trait and the closing
+- **Done:** the build command; 27 graphs committed; ignore rules; the merge driver
+- **Next step:** the trait `graph` and the layout
 - **Uncommitted:** nothing of the steps
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -17,9 +17,9 @@ Rewritten by every session, not appended to.
 - [x] 1.1 The command builds the root graph and the graph of every project
 - [x] 1.2 All graphs are built and committed
 - [x] 2.1 Ignore rules for the rest of `graphify-out/`
-- [>] 2.2 The merge driver in `.gitattributes` and in the install step
-- [ ] 2.3 The graph files left out of nx inputs and of prettier
-- [ ] 3.1 The trait `graph` in `.claude/rt-kit.json` and the layout
+- [x] 2.2 The merge driver in `.gitattributes` and in the install step
+- [x] 2.3 The graph files left out of nx inputs and of prettier
+- [>] 3.1 The trait `graph` in `.claude/rt-kit.json` and the layout
 - [ ] 3.2 The command in `CLAUDE.md`
 - [ ] 3.3 The push gate set
 - [ ] 3.4 The task folder taken apart into the archive
@@ -33,6 +33,12 @@ Rewritten by every session, not appended to.
 - **nx leaves the graphs out by `.nxignore`, not by `namedInputs`.** A directory under `libs/` holds
   several nx projects, and the root graph lies outside any project root; one ignore line covers
   both. Measured: the full build 132 s, 27 graphs, 67 MB, the root graph 41 MB (2.1 MB gzip).
+- **The merge driver drops `built_at_commit`.** A trial merge by `git merge-tree` of two branches,
+  each adding a node to one graph: no conflict marker, both nodes in the result, the field gone. A
+  merged graph was built from no head, so the pattern reads it as stale — that is the true answer.
+- **nx sign measured by the files, not by `HEAD~1`.** The commit of step 1.2 also carries the task
+  folder, and that marks the root project `@rt/workspace`. `nx show projects --affected --files=`
+  over the 27 graphs alone — `[]`.
 - **A graph whose topology did not change gets the head stamped.** graphify leaves such a graph
   untouched with an older `built_at_commit`; the command moves the field to the head.
 

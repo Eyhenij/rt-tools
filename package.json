@@ -107,7 +107,7 @@
     "changelog:agent-kit": "conventional-changelog -p angular -i projects/agent-kit/CHANGELOG.md -k projects/agent-kit/package.json --commit-path projects/agent-kit --tag-prefix rt-agent-kit@ && node tools/fold-unreleased-changelog.cjs projects/agent-kit/CHANGELOG.md",
     "changelog:ui-kit": "conventional-changelog -p angular -i projects/ui-kit/CHANGELOG.md -k projects/ui-kit/package.json --commit-path projects/ui-kit --tag-prefix rt-tools@ && node tools/fold-unreleased-changelog.cjs projects/ui-kit/CHANGELOG.md",
     "changelog:ui-kit-v2": "conventional-changelog -p angular -i projects/ui-kit-v2/CHANGELOG.md -k projects/ui-kit-v2/package.json --commit-path projects/ui-kit-v2 --tag-prefix rt-ui-kit-v2@ && node tools/fold-unreleased-changelog.cjs projects/ui-kit-v2/CHANGELOG.md",
-    "prepare": "husky",
+    "prepare": "husky && node tools/graph-merge-driver.mjs",
     "prisma:generate": "prisma generate",
     "postinstall": "rimraf .angular .nx && pnpm run prisma:generate",
     "preinstall": "npx only-allow pnpm",
