@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · laws/work-conduct.md · a6d42e72e95c · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · laws/work-conduct.md · ced98dcb4960 · правится надстройкой, не здесь -->
 # Law on work conduct
 
 The law sets how work is conducted from the moment a task is set until it is closed. Work outlasts
@@ -257,8 +257,8 @@ one session and keeps its whole context and state when it passes to the next.
   there at once. The epic plan is opened before a task is taken and answers in one call: which task
   is next, and whether it moved to a neighbouring epic.
 - **An ended epic is a stop: the owner is shown what was done and is asked for the next work.** While
-  the epic goes on, the next piece of work is taken silently; once it has ended, the next step is no
-  longer obvious to both. Work taken outside an ended epic without the owner's word leaves them sure
+  the epic goes on, the next work is taken silently; once it has ended, the next step is not
+  obvious to both. Work taken outside an ended epic without the owner's word leaves them sure
   the epic continues.
 - **An epic is not closed while even one sign of its end is confirmed only by reading.** A sign
   checked by eye closes the work only after a command or a measurement checks it, with their output.
