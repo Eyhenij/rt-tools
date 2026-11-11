@@ -242,14 +242,16 @@ try {
 
         checkConflicting(pull, report);
 
-        // The PR falling behind the main branch: the guard judges the base once, at the minute of
-        // opening, and a PR stands for days. Merged while behind, it carries into main a
-        // combination nobody checked — and the PR page does not show this: the run on it is green.
-        const behind = behindMain(pull.headRefName, MAIN_BRANCH, options);
+        // The PR falling behind its base: the guard judges the base once, at the minute of opening,
+        // and a PR stands for days. Merged while behind, it carries into the base a combination
+        // nobody checked — and the PR page does not show this: the run on it is green. The base of
+        // a task is the epic branch, and its lag behind main is the epic's, not the task's.
+        const base = pull.baseRefName || MAIN_BRANCH;
+        const behind = behindMain(pull.headRefName, base, options);
         if (behind > 0) {
             report(
-                `PR #${pull.number}: the branch lags «${MAIN_BRANCH}» by ${behind} commits — the run went from a base ` +
-                    `the main branch no longer carries. Merge the main branch in, revise the check set by what the branch carries now, and run again`
+                `PR #${pull.number}: the branch lags «${base}» by ${behind} commits — the run went from a base ` +
+                    `the branch no longer matches. Merge «${base}» in, revise the check set by what the branch carries now, and run again`
             );
         }
 

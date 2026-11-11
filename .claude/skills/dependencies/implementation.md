@@ -12,7 +12,7 @@ storage client and its adapter. The differences from the rule grow out of that.
 - **In the rule** — Here
 - **a dependency declaration** — `package.json` at the root — one manifest for the whole monorepo; the packages have their own `package.json`
 - **the snapshot of the installed tree** — `pnpm-lock.yaml` at the root
-- **a substitution of a foreign version** — `overrides` in `pnpm-workspace.yaml` — two kinds. Floors against vulnerabilities of the build graph are written as a bare package name. Ceilings are scoped by a `parent>child` key to the showcase snapshot runner, whose own Jest and Playwright chain stays where the references were taken. The count is asked, not written: `grep -c '>' pnpm-workspace.yaml` gives the ceilings, and the rest of the `overrides` entries are floors
+- **a substitution of a foreign version** — `overrides` in `pnpm-workspace.yaml` — two kinds. Floors against vulnerabilities of the build graph are written as a bare package name. Ceilings are scoped by a `parent>child` key to the showcase snapshot runner, whose own Jest and Playwright chain stays where the references were taken. The count is asked, not written: `grep -cE "^ +'?[@a-z0-9/._-]+>[@a-z]" pnpm-workspace.yaml` gives the ceilings, and the rest of the `overrides` entries are floors. A bare `grep -c '>'` also counts the floors written as a range `>=`
 - **the waiting term for a fresh version** — `minimumReleaseAgeExclude` in `pnpm-workspace.yaml`; the term itself is not set in the tree
 - **publishing one of our packages** — a manual start of the pipeline on GitHub, not `pnpm publish` from a machine
 
@@ -28,8 +28,8 @@ storage client and its adapter. The differences from the rule grow out of that.
 
 - **A package version is written as an exact number.** — `package.json:dependencies` — not a single entry with `^` or `~`; the request line in `pnpm-lock.yaml` matches the manifest, and `pnpm install --frozen-lockfile` accepts the lock without an edit. The substitutions of foreign versions in `pnpm-workspace.yaml` stay ranges on purpose: their meaning is «not below this version» for transitive dependencies that are not in the manifest at all, and an exact number there would pin a vulnerable branch.
 - **Substituted versions of foreign dependencies are gathered in one list, and it is revisited at every update.** — `pnpm-workspace.yaml:overrides` — floors against vulnerabilities of the build graph and ceilings scoped to the showcase snapshot runner. The list is revisited at every version bump. An entry whose parents no longer admit a version below its floor is dropped; a floor that fell behind the fixed version is raised; a ceiling is re-tried once the runner it protects takes the newer version.
-- **A fresh version waits first, and one needed before the term is written out separately.** — **Not carried out** in full: the waiting term is set by `minimumReleaseAge`, and there is no separate list «needed before the term» in the tree — an exception is written as a line in the same file.
-- **Only what the linter checks the formatting of gets reformatted.** — `.claude/rt-kit/project.sh:rt_lint_for` — the linter set of the tree; what they read gets reformatted, and nothing beyond that.
+- **A fresh version waits first, and one needed before the term is written out separately.** — **Not carried out** in part: the term itself is not set — `pnpm-workspace.yaml` and `.npmrc` hold no `minimumReleaseAge`, so a fresh version waits for nothing. The list «needed before the term» exists: `pnpm-workspace.yaml:minimumReleaseAgeExclude`, the versions of our own packages.
+- **Only what the linter checks the formatting of gets reformatted.** — **Not checked by anything.** The commit hook `.husky/pre-commit` and the `lint-staged` key of `package.json` reformat every staged file, `.md` and `.json` included. After a formatter upgrade the bound is held by the executor, who names the paths of the sweep.
 - **A package that carries styling is raised by a task of its own.** — **Not carried out** here: the tree does not read styling packages, it publishes them. A task of its own is created by the task creation command; the tree deliberately has no check for removed properties — it declares its own properties itself.
 
 ## What else is worth knowing when reading the code
@@ -57,7 +57,7 @@ set a bound and declare nothing, and each was found by a red run rather than by 
 - **The reference browser.** The visual references were taken by one Chromium build. A newer
   Playwright brings a newer Chromium, and native controls — the textarea grip, the scrollbar —
   are drawn a pixel differently; the run turns red on stories nobody edited. The bound is the
-  Playwright version in the same ceilings, and it moves only with a re-take of the references.
+  exact Playwright version in the manifest, and it moves only with a re-take of the references.
 - **The seeded data.** The faker version fixes the sample values. A newer one gives other names
   and other numbers, and every frame with data diverges by text alone. The bound is the exact
   faker version in the manifest.

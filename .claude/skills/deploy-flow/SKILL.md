@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub — the part about the rollout. Load when an edit goes to production — merge into the main branch, the pipeline, images and tags, storage migrations. Patterns git-workflow-migration, -restart, -docker, -secrets. Task and branch — rule git-workflow.
 ---
-<!-- rt-kit v0.37.0 · rules/deploy-flow.github.md · 480456513073 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/deploy-flow.github.md · de264685bf20 · правится надстройкой, не здесь -->
 
 # Rollout — how it works here
 
@@ -215,9 +215,9 @@ GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh run list \
 git rev-list --count <sha of the rollout>..origin/main
 ```
 
-From here comes the boundary of the work queue audit too. It asks the last run of the main
-branch, and a run of the main branch says nothing about production: a merge does not move it. The
-divergence of 476 commits was exactly what the audit stayed silent about.
+The work queue audit counts the same lag: it reads the last successful rollout and prints a line
+when production lags the main branch. A run of the main branch says nothing about production, and
+an audit that read it once stayed silent over a divergence of 476 commits.
 
 The state of production is invisible to a machine in the rest as well: whether production answers
 with the build it rolled out nobody asks. This is held by whoever rolled it out.

@@ -13,9 +13,9 @@ statement: a removed statement is removed together with its line.
 - **A tree whose runs were not asked about hears of it by a line of its own.** — `projects/agent-kit/assets/checks/check-board.github.mjs:HAS_PIPELINE`
 - **A draft at a green run at the tip is a divergence of the check.** — `projects/agent-kit/assets/checks/board-pull-state.github.mjs:checkReadyDraft`
 - **The colour of the run is asked about apart from its presence.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:verdictOnHead`
-- **A conflicting open PR is a divergence of the check.** — `projects/agent-kit/assets/checks/check-board.github.mjs:checkConflicting`
+- **A conflicting open PR is a divergence of the check.** — `projects/agent-kit/assets/checks/board-pull-state.github.mjs:checkConflicting`
 - **Mergeability that was not counted does not count as a conflict.** — `projects/agent-kit/assets/checks/board.github.mjs:conflicting`
-- **At a conflicting request the reason named is the conflict, not the loss of the event.** — `projects/agent-kit/assets/checks/check-board.github.mjs:checkHeadRun` — the line about the conflict is printed instead of the line about the event; scenarios SC-AK-670…672
+- **At a conflicting request the reason named is the conflict, not the loss of the event.** — `projects/agent-kit/assets/checks/board-pull-state.github.mjs:checkHeadRun` — the line about the conflict is printed instead of the line about the event; a request into a base other than main gets neither; scenarios SC-AK-670…672, SC-AK-1338
 - **A card carrying a title with a number is a task, whatever marks it wears.** — `projects/agent-kit/assets/checks/check-board.github.mjs:isCargo` — the mark sifts out only a card without a title with a number; scenario `SC-AK-923`
 - **The last run of the main branch is judged by the check: red and pushed out are divergences.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:lastMainRun` — the verdict `evicted` is put by the step count, as at a request tip; scenario `SC-AK-1104`
 - **A tree whose pipeline does not wake on a push to the main branch hears of it by a line of its own.** — `projects/agent-kit/assets/checks/board-runs.github.mjs:pipelineWakesOnPush` — the trigger is read from the text of the pipeline file; scenario `SC-AK-1104`
