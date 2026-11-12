@@ -8097,6 +8097,16 @@
       "confidence_score": 1
     },
     {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/pitfalls/git-workflow.github.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "pitfalls_git_workflow",
+      "target": "pattern_git_workflow_stack",
+      "confidence_score": 1
+    },
+    {
       "relation": "pitfalls_of",
       "confidence": "EXTRACTED",
       "source_file": "projects/agent-kit/assets/pitfalls/git-workflow.azure.md",
@@ -16948,5 +16958,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "230dcb5ed241ead145b5e21289cbeaa4bb35214c"
+  "built_at_commit": "da5ef1785932e9d79ade99de921d6e15582c56aa"
 }
