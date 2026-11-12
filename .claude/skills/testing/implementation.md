@@ -47,7 +47,7 @@ here" (the bold part of the item). An article without a line and a line without 
 divergence: the rule promises what the tree does not have, or the tree holds what the rule is
 silent about.
 
-- **The scenario id stands at the start of the test title, followed by a dash.** — **Not checked by anything.** Numbered scenarios exist for every domain under `docs/specs/`, but `tools/spec-common.mjs:SCENARIO_REFERENCE` finds an id on any line of a spec file: its place in the title and the dash nobody judges.
+- **The scenario id stands at the start of the test title, followed by a dash.** — **Not checked by anything.** Numbered scenarios exist for every domain under `docs/specs/` except `core` and `store`, which hold only proposals, but `tools/spec-common.mjs:SCENARIO_REFERENCE` finds an id on any line of a spec file: its place in the title and the dash nobody judges.
 - **A scenario without a test carries a mark with a reason.** — `tools/check-specs.mjs:hasTest` — a scenario with no test and no mark is refused; the branch above it refuses a mark next to an existing test, and `tools/spec-common.mjs:UNCOVERED` refuses an empty reason. The marks stand in the `scenarios.md` files.
 - **A test that does not follow the user's path is marked as partial coverage.** — `tools/spec-scenarios.mjs:promisesScreen` — a scenario that promises a screen and is covered only by a unit test is refused without the partial mark; the digest lists partial coverage as debt.
 - **A test mentioning a scenario that is not in the specs takes the check down.** — `tools/check-specs.mjs:references` — the test refers to an id that no `scenarios.md` carries, and the audit refuses.
@@ -57,7 +57,7 @@ silent about.
 - **A Connect procedure is checked by calling its method with a hand-written database double.** — `libs/message-bus-api/trees/feature/src/lib/enroll.controller.spec.ts:PrismaDouble` — the double is written by hand in every receiver spec: the filtering, the sorting and the creation of rows it does itself.
 - **A scenario whose "Then" names a person and what they see is closed by an end-to-end test.** — `tools/spec-scenarios.mjs:promisesScreen` — reads the person in "Then", and `tools/check-specs.mjs` refuses such a scenario covered only by a unit test. Which specs count as end-to-end is set by the key `e2eRoots` in `.claude/rt-kit/checks.json`: both suites, the admin panel's and the entry example's.
 - **An end-to-end test switched off by an environment variable does not count as coverage.** — `tools/spec-scenarios.mjs:environmentSwitches` — a spec switched by a variable is found, and its scenarios that promise a screen are refused without the partial mark. A switched-off test of a scenario that names no person still counts as covered — **not checked by anything**. Neither end-to-end suite has such a switch today.
-- **A procedure is also called by the end-to-end suite, not only by the test next to it.** — `apps/message-bus-admin-e2e/src/metrics-intake.spec.ts:send` — a spec calls the receiver directly by `request.post`, past the screen; so do the chat and quality specs. The search for a procedure's tests goes over the suite too.
+- **A procedure is also called by the end-to-end suite, not only by the test next to it.** — **Not checked by anything.** An example is `apps/message-bus-admin-e2e/src/metrics-intake.spec.ts:send`: a spec calls the receiver directly by `request.post`, past the screen; so do the chat and quality specs. The search for a procedure's tests goes over the suite too.
 - **The seed creates what a screen cannot open without, and nothing a guest would take for real.** — `apps/message-bus-admin-e2e/stand/seed.mjs:seed` — three trees named «Стенд первый» and on by the count, the reviews name a case of the suite, the proposals an edit of the suite. The chat seed creates the site settings a screen opens with — greeting, hours, time zone, hook address and a hook secret made by the stand; no keys of real services.
 - **An edit of a build step or of the pipeline is checked from scratch, and its PR waits for the run on itself.** — `.claude/hooks/git-guard-delivery-merge.sh:rt_delivery_merge_run` — a merge on a red or unfinished run at the tip is refused. **Not checked by anything** is the build from scratch: a guard sees the push, not whether the build ran past the cache. `.github/workflows/ci.yml` runs only on PRs into `main`.
 - **A created check goes into the push gate or the pipeline, not only into the umbrella target.** — `.claude/rt-kit/project.sh:rt_push_checks` — the line of the gate suite, and the step "E2E admin" in `.github/workflows/ci.yml`; the link between them is audited by `tools/check-push-gate.mjs`.
@@ -120,7 +120,7 @@ silent about.
 
 - `pnpm test` — all packages; `pnpm exec nx test @rt-tools/<package> --testFile=<path>` — one file.
 - `pnpm exec nx run message-bus-admin-e2e:e2e` — the admin panel's end-to-end suite; it raises the
-  stand itself and needs only the database container up.
+  stand itself, the database container and the identity server included, and needs Docker running.
 - `pnpm exec nx affected -t typecheck` — the types of the specs. Neither Jest nor Vitest checks
   them, and the linter here does not look at types: a spec object with a renamed field stays green
   in `test` until this target. A lib created later gets the target by the same two signs, without

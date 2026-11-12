@@ -4,7 +4,7 @@ kind: rule
 law: verifiability
 description: Rule under the verifiability law. Load for any check through the browser and for requests to the dev server. Names where the tree's applications run, what on the dev server cannot be trusted and what to measure instead of looking. Patterns browser-verification-stand, -measure.
 ---
-<!-- rt-kit v0.37.0 · rules/browser-verification.md · d29491cc28a8 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/browser-verification.md · cadbea789252 · правится надстройкой, не здесь -->
 
 # Checking the running application — how it works here
 
@@ -39,10 +39,10 @@ flowchart TD
     B -->|No| D{Who raises the stand}
     C --> E{The very application answers}
     E -->|Yes, built from this branch| F[A second instance is not raised]
-    E -->|Yes, built from another branch| W[It is left alone, and the stand is raised on a free port]
+    E -->|Yes, built from another branch| Y[It is left alone, and the stand is raised on a free port]
     E -->|No, a leftover of an earlier run| T[What took the port is stopped by process id; a refused stop — the stand goes on a free port]
     T --> D
-    W --> D
+    Y --> D
     D -->|Owner| U[They are told at once, and the check waits for their stand: the guard refuses the agent]
     D -->|Agent| V[The stand is raised]
     U --> G[The driver drives the browser on the pinned profile]
@@ -187,7 +187,7 @@ Nothing guards that a conclusion about layout is backed by a number: a check res
 
 ## Patterns
 
-- `browser-verification-stand` — an honest stand from the production build, signing in to a closed
+- `browser-verification-stand` — a stand from the production build, signing in to a closed
   application, sorting out a port.
 - `browser-verification-measure` — measurement instead of a look, pitfalls of the `computer` tool.
 
@@ -279,5 +279,5 @@ owner's word, 13 October 2026: «я просил если открыт все о
   by hand what the executor had to measure.
 - **Two or more connected browsers are named to the owner, and work through the browser waits.** The
   names in the list identify nothing, and a pick from them lands in a profile nobody chose.
-- **A check in the showcase is done live before the owner is asked to look.** «проверь живьем в
+- **Apart from that case: a check in the showcase is done live before the owner is asked to look.** «проверь живьем в
   сторибуке прежде чем мне смотреть»: a story handed over unopened makes the owner the tester.

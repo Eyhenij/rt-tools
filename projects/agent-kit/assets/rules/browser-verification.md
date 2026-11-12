@@ -38,10 +38,10 @@ flowchart TD
     B -->|No| D{Who raises the stand}
     C --> E{The very application answers}
     E -->|Yes, built from this branch| F[A second instance is not raised]
-    E -->|Yes, built from another branch| W[It is left alone, and the stand is raised on a free port]
+    E -->|Yes, built from another branch| Y[It is left alone, and the stand is raised on a free port]
     E -->|No, a leftover of an earlier run| T[What took the port is stopped by process id; a refused stop — the stand goes on a free port]
     T --> D
-    W --> D
+    Y --> D
     D -->|Owner| U[They are told at once, and the check waits for their stand: the guard refuses the agent]
     D -->|Agent| V[The stand is raised]
     U --> G[The driver drives the browser on the pinned profile]
@@ -186,7 +186,7 @@ Nothing guards that a conclusion about layout is backed by a number: a check res
 
 ## Patterns
 
-- `browser-verification-stand` — an honest stand from the production build, signing in to a closed
+- `browser-verification-stand` — a stand from the production build, signing in to a closed
   application, sorting out a port.
 - `browser-verification-measure` — measurement instead of a look, pitfalls of the `computer` tool.
 

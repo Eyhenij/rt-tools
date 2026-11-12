@@ -5,8 +5,8 @@ target `message-bus-admin-e2e`, and the entry example, `auth-example-e2e`, on th
 commands below are the first one's.
 
 ```bash
-pnpm run serve:stand                       # production builds on 3310 and 4310, its own seeded database
-pnpm exec nx e2e message-bus-admin-e2e     # against the raised stand
+pnpm exec nx run message-bus-admin-e2e:e2e # raises its own stand and takes it down
+pnpm run serve:stand                       # the same stand for looking by eye: 3310 and 4310, its own seeded database
 ```
 
 The stand raises the receiver, the admin panel and the database for itself: it takes no working

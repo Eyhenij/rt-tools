@@ -130,7 +130,7 @@ been pressed at all. The popup is closed and its absence awaited by the same pai
 
 A screen is ready when its data is, not when its heading is. A heading, a month title or a toolbar
 comes from the template and is drawn before the request answers. A check or a frame that waits for
-it reads an empty grid. The wait names a node that exists only with data: a row, a booking, a
+it reads an empty grid. The wait names a node that exists only with data: a row, a record, a
 selected record.
 
 After a change of the window width, layout values come from different sources at different

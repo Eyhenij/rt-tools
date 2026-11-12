@@ -2,10 +2,10 @@
 name: browser-verification-stand
 kind: pattern
 rule: browser-verification
-description: Pattern of rule browser-verification. Load when an honest stand is needed — the production build of the site, the admin stand, a stand behind real nginx, signing in to the admin, finding out what sits on a port. Not for layout measurements — that is pattern browser-verification-measure.
+description: Pattern of rule browser-verification. Load when a stand from the production build is needed — the build of the site, the admin stand, a stand behind real nginx, signing in to the admin, finding out what sits on a port. Not for layout measurements — that is pattern browser-verification-measure.
 ---
 
-# An honest stand
+# A stand from the production build
 
 Pattern of the rule `browser-verification`. What must be true — the law
 `docs/constitution/verifiability.md`.
@@ -158,7 +158,7 @@ docker run -d --name <prefix>-stand-nginx \
   pointed at the site port resets the cache past the process that keeps the redirect table in
   memory — and a working mechanism looks broken.
 
-## A stand lives exactly as long as the check
+## A stand is stopped when the check ends
 
 A stand is raised for one conclusion and is not needed after it. Abandoned, it hinders nothing and
 gives no signal. It has its own name, a free port, it takes almost no room — it can be seen only by
@@ -226,10 +226,10 @@ past session, and it answers 200 with old code.
   altogether. A look at the raised dev server is fit to understand what is going on on an
   unfamiliar screen and unfit as confirmation: the confirmation is a measurement on a stand from
   the production build.
-- **A build of everything silences every dev server of the owner, not only the API.** After
+- **A build of everything stops every dev server of the owner, not only the API.** After
   `nx run-many -t build` the client applications go down too. Build what you check
   (`npx nx build <application>`), not the whole tree. If the servers went down, the agent cannot bring them
-  back up — the guard is in the way, so the owner is told at once, not at the end of the session.
+  back up — the guard refuses it, so the owner is told at once, not at the end of the session.
   The push gate is such a build too: its set runs the build of everything affected. So the
   measurement is taken before the push or on a stand from the production build. The answer of the
   server, not its port, tells whether it survived.

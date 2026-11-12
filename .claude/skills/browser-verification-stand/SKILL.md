@@ -2,11 +2,11 @@
 name: browser-verification-stand
 kind: pattern
 rule: browser-verification
-description: Pattern of rule browser-verification. Load when an honest stand is needed — the production build of the site, the admin stand, a stand behind real nginx, signing in to the admin, finding out what sits on a port. Not for layout measurements — that is pattern browser-verification-measure.
+description: Pattern of rule browser-verification. Load when a stand from the production build is needed — the build of the site, the admin stand, a stand behind real nginx, signing in to the admin, finding out what sits on a port. Not for layout measurements — that is pattern browser-verification-measure.
 ---
-<!-- rt-kit v0.37.0 · patterns/browser-verification-stand.md · a549dad608ff · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/browser-verification-stand.md · e0d1b817ff74 · правится надстройкой, не здесь -->
 
-# An honest stand
+# A stand from the production build
 
 Pattern of the rule `browser-verification`. What must be true — the law
 `docs/constitution/verifiability.md`.
@@ -159,7 +159,7 @@ docker run -d --name <prefix>-stand-nginx \
   pointed at the site port resets the cache past the process that keeps the redirect table in
   memory — and a working mechanism looks broken.
 
-## A stand lives exactly as long as the check
+## A stand is stopped when the check ends
 
 A stand is raised for one conclusion and is not needed after it. Abandoned, it hinders nothing and
 gives no signal. It has its own name, a free port, it takes almost no room — it can be seen only by
@@ -227,10 +227,10 @@ past session, and it answers 200 with old code.
   altogether. A look at the raised dev server is fit to understand what is going on on an
   unfamiliar screen and unfit as confirmation: the confirmation is a measurement on a stand from
   the production build.
-- **A build of everything silences every dev server of the owner, not only the API.** After
+- **A build of everything stops every dev server of the owner, not only the API.** After
   `nx run-many -t build` the client applications go down too. Build what you check
   (`npx nx build <application>`), not the whole tree. If the servers went down, the agent cannot bring them
-  back up — the guard is in the way, so the owner is told at once, not at the end of the session.
+  back up — the guard refuses it, so the owner is told at once, not at the end of the session.
   The push gate is such a build too: its set runs the build of everything affected. So the
   measurement is taken before the push or on a stand from the production build. The answer of the
   server, not its port, tells whether it survived.
@@ -239,7 +239,8 @@ past session, and it answers 200 with old code.
 
 A section of this tree: there is no site and no rendering server here. There are three kinds of
 stands: the showcases of the two kits, the stand of the admin panel's end-to-end suite with its own
-seeded database, and the stand of the entry example with its own identity server.
+seeded database, and the stand of the entry example. Both end-to-end stands sign in through one
+identity server.
 
 | Role                  | Port  | Raised by                              |
 | --------------------- | ----- | -------------------------------------- |
@@ -250,9 +251,9 @@ seeded database, and the stand of the entry example with its own identity server
 | the dev receiver      | 3000  | `pnpm run serve:api`                   |
 | the dev admin panel   | 4200  | `pnpm run serve:admin`                 |
 | the dev database      | 55432 | `pnpm run serve:db`                    |
-| the entry example's receiver    | 3410  | the entry suite's stand, `apps/auth-example-e2e/stand/stand.mjs` |
+| the entry example's receiver    | 3410  | the entry suite's stand, `apps/auth-example-e2e/stand/up.mjs` |
 | the entry example's admin panel | 4410  | by the same call                   |
-| the entry example's identity server | 58080 | by the same call               |
+| the identity server, shared by both stands and the dev receiver | 58080 | `pnpm run serve:auth`; both stand scripts call it |
 
 The ports of the end-to-end stand are overridden by the variables `E2E_API_PORT` and
 `E2E_ADMIN_PORT` — they are declared in `apps/message-bus-admin-e2e/stand/stand.mjs`. The stand
@@ -266,5 +267,5 @@ answers with the wrong thing.
 
 A section of this tree: the production proxy is Caddy (`deploy/Caddyfile`), and no stand runs it.
 On a stand the admin panel goes to the receiver directly, forwarding `/api` to its port, and the
-showcase is static without a server. No conclusions about caching, redirects and headers are drawn
+showcases are served by their own dev server and have no proxy. No conclusions about caching, redirects and headers are drawn
 on these stands: there is nothing to draw them from.

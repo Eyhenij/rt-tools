@@ -2,7 +2,8 @@
 
 A section of this tree: there is no site and no rendering server here. There are three kinds of
 stands: the showcases of the two kits, the stand of the admin panel's end-to-end suite with its own
-seeded database, and the stand of the entry example with its own identity server.
+seeded database, and the stand of the entry example. Both end-to-end stands sign in through one
+identity server.
 
 | Role                  | Port  | Raised by                              |
 | --------------------- | ----- | -------------------------------------- |
@@ -13,9 +14,9 @@ seeded database, and the stand of the entry example with its own identity server
 | the dev receiver      | 3000  | `pnpm run serve:api`                   |
 | the dev admin panel   | 4200  | `pnpm run serve:admin`                 |
 | the dev database      | 55432 | `pnpm run serve:db`                    |
-| the entry example's receiver    | 3410  | the entry suite's stand, `apps/auth-example-e2e/stand/stand.mjs` |
+| the entry example's receiver    | 3410  | the entry suite's stand, `apps/auth-example-e2e/stand/up.mjs` |
 | the entry example's admin panel | 4410  | by the same call                   |
-| the entry example's identity server | 58080 | by the same call               |
+| the identity server, shared by both stands and the dev receiver | 58080 | `pnpm run serve:auth`; both stand scripts call it |
 
 The ports of the end-to-end stand are overridden by the variables `E2E_API_PORT` and
 `E2E_ADMIN_PORT` — they are declared in `apps/message-bus-admin-e2e/stand/stand.mjs`. The stand
@@ -29,5 +30,5 @@ answers with the wrong thing.
 
 A section of this tree: the production proxy is Caddy (`deploy/Caddyfile`), and no stand runs it.
 On a stand the admin panel goes to the receiver directly, forwarding `/api` to its port, and the
-showcase is static without a server. No conclusions about caching, redirects and headers are drawn
+showcases are served by their own dev server and have no proxy. No conclusions about caching, redirects and headers are drawn
 on these stands: there is nothing to draw them from.

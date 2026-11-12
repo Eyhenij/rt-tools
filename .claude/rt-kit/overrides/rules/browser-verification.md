@@ -11,5 +11,5 @@ owner's word, 13 October 2026: «я просил если открыт все о
   by hand what the executor had to measure.
 - **Two or more connected browsers are named to the owner, and work through the browser waits.** The
   names in the list identify nothing, and a pick from them lands in a profile nobody chose.
-- **A check in the showcase is done live before the owner is asked to look.** «проверь живьем в
+- **Apart from that case: a check in the showcase is done live before the owner is asked to look.** «проверь живьем в
   сторибуке прежде чем мне смотреть»: a story handed over unopened makes the owner the tester.

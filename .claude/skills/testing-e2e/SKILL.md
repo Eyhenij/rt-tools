@@ -4,7 +4,7 @@ kind: pattern
 rule: testing
 description: Pattern of rule testing. Load when editing and running end-to-end tests in any end-to-end suite of the tree (apps/*-e2e) — what an end-to-end test closes, ready-made run commands, a stand from the production build behind real nginx, test switches. Not for unit tests — that is pattern testing-unit.
 ---
-<!-- rt-kit v0.37.0 · patterns/testing-e2e.md · 29e88321c412 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/testing-e2e.md · 99f3ebdd1249 · правится надстройкой, не здесь -->
 
 # End-to-end tests
 
@@ -131,7 +131,7 @@ been pressed at all. The popup is closed and its absence awaited by the same pai
 
 A screen is ready when its data is, not when its heading is. A heading, a month title or a toolbar
 comes from the template and is drawn before the request answers. A check or a frame that waits for
-it reads an empty grid. The wait names a node that exists only with data: a row, a booking, a
+it reads an empty grid. The wait names a node that exists only with data: a row, a record, a
 selected record.
 
 After a change of the window width, layout values come from different sources at different
@@ -197,8 +197,8 @@ target `message-bus-admin-e2e`, and the entry example, `auth-example-e2e`, on th
 commands below are the first one's.
 
 ```bash
-pnpm run serve:stand                       # production builds on 3310 and 4310, its own seeded database
-pnpm exec nx e2e message-bus-admin-e2e     # against the raised stand
+pnpm exec nx run message-bus-admin-e2e:e2e # raises its own stand and takes it down
+pnpm run serve:stand                       # the same stand for looking by eye: 3310 and 4310, its own seeded database
 ```
 
 The stand raises the receiver, the admin panel and the database for itself: it takes no working
