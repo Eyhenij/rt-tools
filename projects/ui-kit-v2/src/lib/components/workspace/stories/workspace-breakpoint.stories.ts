@@ -19,13 +19,15 @@ type TStory = StoryObj<TestRtWorkspaceBreakpointComponent>;
 interface IFrame {
     readonly viewport: { readonly width: number; readonly height: number };
     readonly overlay?: string;
+    readonly fullPage: boolean;
 }
 
 const TABLET: { readonly viewport: { readonly value: string } } = { viewport: { value: 'tablet' } };
 const PHONE: { readonly viewport: { readonly value: string } } = { viewport: { value: 'phone' } };
 
-const TABLET_FRAME: IFrame = { viewport: { width: 768, height: 720 } };
-const PHONE_FRAME: IFrame = { viewport: { width: 375, height: 812 } };
+// Рабочий стол занимает окно целиком и сеткой витрины не рисуется: кадр — вся страница
+const TABLET_FRAME: IFrame = { viewport: { width: 768, height: 720 }, fullPage: true };
+const PHONE_FRAME: IFrame = { viewport: { width: 375, height: 812 }, fullPage: true };
 const PANEL: string = '[qa-dataid="workspace-aside-overlay-close"]';
 
 /** Планшет: список и середина рядом, панель сведений закрыта. */
