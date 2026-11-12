@@ -454,7 +454,7 @@ The guard judges one turn: the next session is not refused."
 elif [ -z "$state" ]; then
     reason="BLOCKED by turn-exit-guard: nothing was done in this turn — neither an edit nor a command changing the tree. This work has no task folder, and there is nowhere to take the state from, but that does not end the turn.
 
-A turn ends in four ways and there are no others: a question to the owner the rules do not answer; a refusal of a guard; a filled session window; work handed over with the next one begun. A command named and not run is not an exit: the line «сейчас запущу» is an announcement of intent, and that is named outright as a false end of a turn.
+A turn ends in four ways: a question to the owner the rules do not answer; a refusal of a guard; a filled session window; work handed over with the next one begun — outside an open epic. The end of the epic is the fifth. A command named and not run is not an exit: the line «сейчас запущу» is an announcement of intent, and that is named outright as a false end of a turn.
 
 Work by the word of the owner — «разложи», «обнови», «посмотри» — goes without a task and without a branch, and there is nothing to stop it by except this sign.
 
@@ -464,7 +464,7 @@ The guard judges one turn: the next session is not refused."
 else
     reason="BLOCKED by turn-exit-guard: the work is in the state '${state}', and nothing was done about it in this turn — neither an edit nor a command changing the tree.
 
-A turn ends in four ways and there are no others: a question to the owner the rules do not answer; a refusal of a guard; a filled session window; work handed over with the next one begun. A report about what was done is not an exit — it looks more like work than any other, and the emptiness behind it is invisible.
+A turn ends in four ways: a question to the owner the rules do not answer; a refusal of a guard; a filled session window; work handed over with the next one begun — outside an open epic. The end of the epic is the fifth. A report about what was done is not an exit — it looks more like work than any other, and the emptiness behind it is invisible.
 
 The next step is written in the progress: ${next_step}
 

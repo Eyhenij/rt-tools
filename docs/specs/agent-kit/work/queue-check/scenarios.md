@@ -111,9 +111,9 @@ Covered: `projects/agent-kit/tests/checks-board-pull.test.sh`.
 
 ### SC-AK-425 — a conflicting open PR is named a divergence
 
-Given an open PR conflicts with the main branch
+Given an open PR conflicts with its base — the epic branch for a task, main for an epic
 When the check of the work queue goes
-Then the check names it a divergence and says what the conflict is with: the guard judges one turn,
+Then the check names it a divergence and names the base the conflict is with: the guard judges one turn,
 while a conflict arrives into a handed-in PR by someone else's merge, without an action of the
 author
 
@@ -231,6 +231,15 @@ When the check of the work queue goes
 Then the line speaks of a lost event and calls to bring it back — there the reason really is in it
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
+
+### SC-AK-1338 — a conflicting request into an epic branch gets no line about a run
+
+Given an open PR into an epic branch conflicts with its base, and there is no run at its tip
+When the check of the work queue goes
+Then the conflict line names it, and no line promises a run after the conflict: the pipeline does
+not wake for that base at all
+
+Covered: `projects/agent-kit/tests/checks-board-epic-base.test.sh`.
 
 ### SC-AK-794 — a tree that named no mark of the cargo is judged as before
 

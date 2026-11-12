@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/board-pull-state.github.mjs · 98b972d989a6 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/board-pull-state.github.mjs · 4934b672fecf · правится надстройкой, не здесь
 /**
  * The state of an open request read by its tip: a run pushed out of the queue, a missing run, a
  * finished piece of work left as a draft, a conflict. Lives in a file of its own — the audit of
@@ -55,6 +55,17 @@ export function checkHeadRun(pull, report, mainBranch, options) {
         return;
     }
 
+    // A PR whose base is not the main branch gets no run at all: the workflow listens for PRs
+    // into the main branch and does not see events with another base. That is the order of
+    // handing in, not a discrepancy — every task of an epic is handed in exactly so — and the
+    // audit says nothing about it. The former line was wrong three times over: the event was not
+    // lost, reopening will not bring it back, and the base of a task request stays the epic
+    // branch to the merge. It is asked before the conflict: a conflicting task PR is named by the
+    // conflict line, and «no run while it conflicts» would promise a run that never comes.
+    if (pull.baseRefName && pull.baseRefName !== mainBranch) {
+        return;
+    }
+
     if (pull.mergeable === 'CONFLICTING') {
         report(
             `PR #${pull.number}: there is no run on the tip ${pull.headRefOid.slice(0, 8)} and there will be none while it conflicts — ` +
@@ -62,16 +73,6 @@ export function checkHeadRun(pull, report, mainBranch, options) {
                 `reopening the PR does not help here`
         );
 
-        return;
-    }
-
-    // A PR whose base is not the main branch gets no run at all: the workflow listens for PRs
-    // into the main branch and does not see events with another base. That is the order of
-    // handing in, not a discrepancy — every task of an epic is handed in exactly so — and the
-    // audit says nothing about it. The former line was wrong three times over: the event was not
-    // lost, reopening will not bring it back, and the base of a task request stays the epic
-    // branch to the merge.
-    if (pull.baseRefName && pull.baseRefName !== mainBranch) {
         return;
     }
 
@@ -157,8 +158,10 @@ export function checkConflicting(pull, report) {
         return;
     }
 
+    // The host counts mergeability against the base of the PR: for a task that is the epic branch.
+    const base = pull.baseRefName ? `«${pull.baseRefName}»` : 'branch';
     report(
-        `PR #${pull.number}: it conflicts with the main branch — merge it into the task branch, resolve the conflict and push; ` +
+        `PR #${pull.number}: it conflicts with its base ${base} — merge the base into the PR branch, resolve the conflict and push; ` +
             `the owner cannot merge this request, and on the page that shows only inside it`
     );
 }

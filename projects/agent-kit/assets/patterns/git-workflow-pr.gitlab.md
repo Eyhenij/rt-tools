@@ -215,21 +215,21 @@ There are no checks on the MR itself until the pipeline is started, and a push s
 Linters, unit tests and hook scenarios are taken by the push gate — below is what it does not
 know.
 
-1. **The main branch is merged into this branch** — `git fetch origin && git merge origin/main`.
+1. **The base is merged into this branch** — `git fetch origin && git merge origin/<база>`.
    Everything checked below is checked from this base: an MR from a diverged branch shows the
    reviewer the edit mixed with someone else's. Order and conflict resolution — pattern
    `git-workflow-merge`.
-2. **The branch holds only the edit it was created for** — `git diff main...HEAD --stat`. A
+2. **The branch holds only the edit it was created for** — `git diff origin/<база>...HEAD --stat`. A
    foreign domain in the file list means the edit has spread, and it must be brought back within
    its bounds.
-3. **No mock, no substituted response, no debug line** — `git diff main...HEAD` is read whole,
+3. **No mock, no substituted response, no debug line** — `git diff origin/<база>...HEAD` is read whole,
    not by file names. They go to production silently and corrupt real data.
 4. **The document goes in the same commit.** `docs-guard` names the pair, but it does not know
    the domain spec and an edit of its behaviour — that stays with the author.
 5. **Text and layout checks are green** — those the tree created in `tools/`. Which ones exist
    here — the rule's `implementation.md`.
-6. **All applications of the tree build** — `nx build` for each. The push gate does not run the
-   build.
+6. **All applications of the tree build** — `nx build` for each; the push gate runs the build of
+   what the branch touched, and an application nothing touched is built here.
 7. **Visible text is entered in all translation locales** — by the dictionary completeness test,
    if the tree is translated.
 8. **A layout edit is confirmed by a measurement**, not by a look, and captured on a narrow
@@ -239,16 +239,15 @@ know.
 10. **The MR description is assembled by the sample** — starts with the line `Closes #<номер>`,
     carries the sections "What was done", "What confirms it" and "Remaining step", and labels,
     reviewer and assignee are set. By this moment the remaining step section says no steps are
-    left: the draft is lifted after the folder is taken apart, not before.
+    left: the folder is taken apart before the MR opens.
 11. **The MR title carries the task number and names it done:** `[<КЛЮЧ>-<номер>] <Что
 сделано>`, with the same number as the task and the branch name.
 12. **The work queue matches** — `npm run check:board`.
 13. **The MR state is read, not derived from return codes.**
 14. **The set is taken from the pipeline file, not assembled from memory.** The push gate is
-    narrower by design: it stands between the command and the push, and everything longer than
-    seconds is taken out of it. What the pipeline runs is written in its file — that list is
-    repeated locally; a green gate is not completeness of the set.
-15. **The set is revised after merging the main branch in.** It is chosen by what the branch now
+    never narrower than the pipeline, and a check judges that. The declared exclusions of
+    the set are read in its settings and run by hand.
+15. **The set is revised after merging the base in.** It is chosen by what the branch now
     carries, not by what the author edited. A branch that touched no line of the showcase runs
     the showcase snapshots: since the merge the pipeline runs them on its code, and the red
     comes to its MR.

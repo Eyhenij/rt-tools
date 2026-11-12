@@ -54,6 +54,15 @@ branch; on a branch without a lag and where there is nothing to compare with, it
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
+### SC-AK-1337 — the lag of a task request is counted against its base, not against main
+
+Given an open request has the epic branch as its base, and its branch has fallen behind that base
+When the work queue audit reads the open requests
+Then the line names the epic branch and the number of the lag, and calls to merge that branch in;
+the lag of the epic branch behind main is not laid on the task
+
+Covered: `projects/agent-kit/tests/checks-board-epic-base.test.sh`.
+
 ### SC-AK-774 — a call refused by the unavailability of the hosting is repeated
 
 Given the hosting answers with an unavailability code — a five hundredth, a gateway one or its

@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.37.0 · rules/turn-conduct.md · 1a483b89fb89 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/turn-conduct.md · 2c67cffb120c · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 
@@ -20,7 +20,7 @@ demand, not with the rule.
 | In the law | Here |
 | --- | --- |
 | turn | one pass of the agent: from the owner's message to the reply |
-| a turn exit | one of the four ways to end a turn; what confirms each — the turn map |
+| a turn exit | one of the ways to end a turn listed below; what confirms each — the turn map |
 | the guard of turn exits | a guard at the turn's end: reads the declared work state and what the turn did in the tree |
 | a statement about the state of the tree | a word in the reply to the owner backed by a command of the same turn and its output |
 | the session handover | a section of the progress retelling it for a new session; a file outside the tree where there is no task folder |
@@ -28,11 +28,11 @@ demand, not with the rule.
 
 ## Turn exits
 
-A turn ends in four ways and no others: a question to the owner the rules do not answer **and no
-task in the work queue that can be taken without waiting for the answer**; a guard's refusal; a
+A turn ends in four ways: a question to the owner the rules do not answer **and no task of the epic plan
+to take without the answer**; a guard's refusal; a
 filled window where there is no compaction; work handed in, with the next begun. What confirms
-each, the turn map lists where the tree laid it out. While an epic has an unfinished task, a turn
-ends by these four alone; the end of the epic is the fifth.
+each, the turn map lists where the tree laid it out. While an epic has an unfinished task, the
+fourth does not end a turn: the next task is worked on in it. The end of the epic is the fifth.
 
 The queue is asked by a command in the same turn: "there are no tasks" is a statement about the
 tree, and the executor's memory does not confirm it. A turn where the owner's answer holds one
@@ -47,8 +47,7 @@ turn, and a state boundary looks like a finished piece better than any milestone
 Four ways to end a turn look like work and are not: a summary of someone else's step, a menu under
 an assigned order, a declaration of intent, and a command named but not run.
 
-A turn ending while an epic runs shows the owner their position by the handover's table: otherwise
-they cannot see the queue's state.
+A turn ending while an epic runs shows the owner their position by the epic's table: otherwise they cannot see the queue's state.
 
 ## Where it lives
 
@@ -103,7 +102,8 @@ flowchart TD
   lawful only where neither the rules nor the tree answer it; the list is written after all the
   executor could close is struck out.
 - **A menu under an assigned order.** A choice offered to the owner before the epic is over asks to
-  assign the order anew. No work left in the epic — say so: the epic is over — not "what next".
+  assign the order anew. No work left in the epic — say so, show its table and ask for the next
+  work.
 - **No order at all is a lawful state, and it is said, not filled.** A queue card is not an order.
   The turn names that there is no order and asks for one.
 - **A standing order is written into the progress in the owner's words.** Read once, «merge every
@@ -184,7 +184,8 @@ flowchart TD
   task. The count is read from the progress; lawful exits stay as they were.
 - **The word about a stop the guard reads from the owner, not from the executor.** Otherwise the
   stop is declared by whoever finds it convenient, and the ban holds until the first inconvenience.
-- **Until the epic is closed a turn ends only by one of the four exits.** A turn that ended with
+- **Until the epic is closed a turn ends only by a question, a refusal, the window or the owner's
+  word.** A turn that ended with
   work is a stop all the same, and so is a second pass over the same turn: the exit guard returns
   both with the next step named.
 - **The owner's standing word about a stop is quoted in the progress, in « », in the line «Waiting

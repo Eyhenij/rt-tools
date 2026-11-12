@@ -103,7 +103,7 @@ and the request to merge goes in the turn that opened it.
 ## The link to the task and the body
 
 The `Closes #<номер>` line, the reviewer, the assignee and the labels set by the opening call,
-the four sections of the body and how the task closes when the base is not the main branch —
+the six sections of the body and how the task closes when the base is not the main branch —
 pattern `git-workflow-pr-body`. The pattern was split out of this one by the length limit.
 
 ## The PR state is read, not guessed
@@ -212,28 +212,28 @@ remarks read at the start: a remark left without one is a remark the person chec
 
 ## What is checked before the PR is published
 
-There are no checks on the PR itself: the rollout starts with a push into the main branch, and
-before the merge nobody runs anything. Linters, unit tests and hook scenarios are taken by the
-push gate — below is what it does not know.
+Where the pipeline wakes for the base, it checks the PR before the merge; where it does not, the
+push gate is the only check. Linters, unit tests, the build and hook scenarios are taken by the
+push gate either way — below is what it does not know.
 
-1. **The base is merged into this branch** — for a task branch that is the epic branch, for an epic branch the main one: `git fetch origin && git merge origin/<база>`.
+1. **The base is merged into this branch before the PR opens** — for a task branch that is the epic branch, for an epic branch the main one: `git fetch origin && git merge origin/<база>`.
    Base freshness is not inherited between branches of one session: the second and the third
    are taken after their own `fetch`, not from the ref under the first. While work goes on, main
    moves ahead — most often by the same executor's own PR. Everything checked below is checked
    from this base: a PR from a diverged branch shows the reviewer the edit mixed with someone
    else's. Order and conflict resolution — pattern `git-workflow-merge`.
-2. **The branch holds only the edit it was created for** — `git diff main...HEAD --stat`. A
+2. **The branch holds only the edit it was created for** — `git diff origin/<база>...HEAD --stat`. A
    foreign domain in the file list means the edit has spread, and it must be brought back within
    its bounds.
-3. **No mock, no substituted response, no debug line** — `git diff main...HEAD` is read whole,
+3. **No mock, no substituted response, no debug line** — `git diff origin/<база>...HEAD` is read whole,
    not by file names. They go to production silently and corrupt real data.
 4. **The document goes in the same commit.** `docs-guard` names the pair, but it does not know
    the domain spec and an edit of its behaviour — that stays with the author.
 5. **Text and layout checks are green** — those the tree created in `tools/`: scenarios against
    tests, paths in documents, lib layout, duplicates and classes without a rule. Which ones
    exist here — the rule's `implementation.md`.
-6. **All applications of the tree build** — `nx build` for each. The push gate does not run the
-   build: it is longer than anything it can do between the command and the push.
+6. **All applications of the tree build** — `nx build` for each; the push gate runs the build of
+   what the branch touched, and an application nothing touched is built here.
 7. **Visible text is entered in all translation locales** — by the dictionary completeness test,
    if the tree is translated.
 8. **A layout edit is confirmed by a measurement**, not by a look, and captured on a narrow
@@ -241,9 +241,9 @@ push gate — below is what it does not know.
 9. **A markup edit of the public site is checked on the production build in all translation
    locales** — the search visibility rule of the tree that has one.
 10. **The PR body is assembled by the sample** — starts with the line `Closes #<номер>`, carries
-    the sections "What was done", "What confirms it" and "Remaining step", and labels, reviewer
+    the six sections of pattern `git-workflow-pr-body` — the points and the goal tables among them — and labels, reviewer
     and assignee are set. By this moment the remaining step section says no steps are left: the
-    draft is lifted after the folder is taken apart, not before.
+    folder is taken apart before the PR opens.
 11. **The PR title carries the task number and names it done:** `[<КЛЮЧ>-<номер>] <Что сделано>`,
     with the same number as the task and the branch name. The infinitive of the task does not
     carry into it, nor do the commit type and scope.
@@ -253,22 +253,20 @@ push gate — below is what it does not know.
     owner, labels the same as on the task, the commit count equal to `ahead_by` of the branch
     comparison. The owner is told what was read.
 14. **The set is taken from the pipeline file, not assembled from memory.** The push gate is
-    narrower by design: it stands between the command and the push, and everything longer than
-    seconds is taken out of it. What the pipeline runs is written in its file — that list is
-    repeated locally; a green gate is not completeness of the set.
-15. **The set is revised after merging the main branch in.** It is chosen by what the branch now
+    never narrower than the pipeline, and a check judges that. The declared exclusions of
+    the set are read in its settings and run by hand.
+15. **The set is revised after merging the base in.** It is chosen by what the branch now
     carries, not by what the author edited. A branch that touched no line of the showcase runs
     the showcase snapshots: since the merge the pipeline runs them on its code, and the red
     comes to its PR.
 
 Where the pipeline wakes for this base, the list is about lifting the draft: the PR opens as a
-draft earlier, while work goes on, and the person is shown what exists together with what is
-still missing. Items 1–15 are then passed before `gh pr ready`, and an unmet item means the draft
+draft after the task folder is taken apart and waits for the run. Items 1–15 are then passed before `gh pr ready`, and an unmet item means the draft
 is not lifted — not that the PR does not open.
 
 Where it does not wake, the same list is about opening: there is no second state to hold the work
-in, so an unmet item means the PR does not open yet. Item 1 changes with it — no run is asked for,
-and its place is taken by the push gate, green before the sending.
+in, so an unmet item means the PR does not open yet. No item asks for a run there: its place is
+taken by the push gate, green before the sending.
 
 Right after publishing the task is moved to review — `npm run task:move -- <номер>
 in-review` — and `npm run check:board` is run once more: before the PR opens it does not judge

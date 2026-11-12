@@ -4,7 +4,7 @@ kind: pattern
 rule: deploy-flow
 description: Pattern of rule deploy-flow. Load when editing prisma/schema.prisma and prisma/migrations/** — ready-made commands for a one-off container, writing the migration file through migrate diff, applying to the local database. Not for the commit — pattern git-workflow-commit; for the PR — git-workflow-pr.
 ---
-<!-- rt-kit v0.37.0 · patterns/git-workflow-migration.md · d5f7bbe50850 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/git-workflow-migration.md · 5e5748acda4f · правится надстройкой, не здесь -->
 
 # A migration and the chain run
 
@@ -20,7 +20,7 @@ Pattern of the rule `deploy-flow`. What must be true meanwhile — the law
 ## The chain is run by one command
 
 Local `lint`, `test`, `check:all` and the builds do not touch the migration order at all, and the
-step `Migrations match schema` in `.github/workflows/deploy.yml` goes after the merge. The check
+schema check of the pipeline goes after the push. The check
 stands as a push gate and is called by hand:
 
 ```bash
@@ -30,7 +30,9 @@ npm run check:schema
 It applies the chain to a shadow database — the same as the working one, with the suffix
 `_gate_shadow` — compares it with the schema and tears it down. One's own database is not
 touched: an audit against it would judge the state of the machine, not of the repository. A
-stopped docker and a production address the check skips silently.
+production address the check skips. A stopped docker it skips only where the branch did not touch
+the storage; a branch that edited the schema or the migrations is refused, and the refusal names
+how to bring the database up — rule `deploy-flow`.
 
 When there is no database at hand at all, the same chain is run on a one-off container:
 

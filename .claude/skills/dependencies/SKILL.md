@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law. Load when editing package.json, the lockfile and the workspace settings, and when upgrading any package. Names the exact version number instead of a range and the waiting period for a new version. Pattern dependencies-upgrade.
 ---
-<!-- rt-kit v0.37.0 · rules/dependencies.md · 6d8d5da30dd0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/dependencies.md · 39216a4388c2 · правится надстройкой, не здесь -->
 
 # Dependencies — how it works here
 
@@ -72,9 +72,9 @@ flowchart TD
 
 ## What of the law is not here
 
-Nobody checks that the declared versions match the snapshot: `--frozen-lockfile` stands only in the
-rollout, and it goes from a push to the main branch, that is, after the merge. Ranges are not
-checked either: one `^` in `package.json` passes every check of the tree.
+Nobody checks before the push that the declared versions match the snapshot: `--frozen-lockfile`
+stands in the pipeline or in the rollout, and both come after the push. Ranges are not checked
+either: one `^` in `package.json` passes every check of the tree.
 
 ## Patterns
 

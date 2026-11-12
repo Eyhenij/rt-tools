@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load before a push, when taking a task and after every known merge — reading all your open PRs at once, telling lag apart from a conflict in files, checking the local head against the hosting.
 ---
-<!-- rt-kit v0.37.0 · patterns/git-workflow-freshness.md · d4d8e242afb8 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/git-workflow-freshness.md · 7f0511fa5796 · правится надстройкой, не здесь -->
 
 # Freshness of open PRs
 
@@ -16,7 +16,7 @@ of branches from one base — `git-workflow-stack`.
 
 Three places, and in each the reading is mandatory:
 
-- before a push — main's tip may have moved while the work went on;
+- before a push — the base's tip may have moved while the work went on;
 - when taking a new task — the earlier PRs stayed open and will not remind of themselves;
 - after every merge that became known — it made all the others lag at once.
 
@@ -32,7 +32,7 @@ By one command over all one's own open PRs, not the one whose branch is checked 
 | Field                | What it says                                                                      |
 | -------------------- | --------------------------------------------------------------------------------- |
 | `mergeable`          | `MERGEABLE` — the button can be pressed; `CONFLICTING` — it cannot; `UNKNOWN` — not counted yet |
-| `mergeStateStatus`   | `BEHIND` — lags behind main; `DIRTY` — a dispute in files; `BLOCKED` — awaits review |
+| `mergeStateStatus`   | `BEHIND` — lags behind its base; `DIRTY` — a dispute in files; `BLOCKED` — awaits review |
 | `isDraft`            | a draft: the host locks the merge button whatever the run's colour                |
 | `statusCheckRollup`  | the run on the tip: an empty list means no run at all, not "green"                |
 
@@ -46,24 +46,25 @@ merge, and it answers offline:
 
 ```bash
 git fetch origin
-git merge-tree "$(git merge-base origin/main <ветка>)" origin/main <ветка> | grep -c '^<<<<<<<'
+git merge-tree "$(git merge-base origin/<база> <ветка>)" origin/<база> <ветка> | grep -c '^<<<<<<<'
 ```
 
-Zero — the branch merely lags, and merging main in cures it. Above zero — a dispute in files,
+Zero — the branch merely lags, and the host merges it itself. Above zero — a dispute in files,
 and each is resolved by file kind: pattern `git-workflow-merge`.
 
 ## What is done with what was found
 
 | Found                                  | What is done                                                       |
 | -------------------------------------- | ------------------------------------------------------------------ |
-| lagging, no dispute                    | main is merged into the branch and pushed in the same turn         |
+| lagging, no dispute, the PR is open    | nothing: the host merges it itself — pattern `git-workflow-stack`  |
 | a dispute in files                     | resolution by file kind, then a push                               |
-| no run on the tip                      | the tip is rerun or waited for — neither one has a colour          |
+| no run on the tip, the base wakes it   | the tip is rerun or waited for — neither one has a colour          |
+| no run, the base does not wake it      | nothing to wait for: the green push gate on the tip stands for it  |
 | a draft with a green run               | the draft is lifted — its merge button is locked                   |
 | the PR opened by a person, not by the machine | it can no longer get a reviewer: it is created anew by the machine account |
 
-Within one branch the order is one: merge main in → run the gate set → push → reread the state
-from the host. Rereading is part of the work, not a report on it.
+For a branch with a dispute the order is one: merge the base in → run the gate set → push → reread
+the state from the host. Rereading is part of the work, not a report on it.
 
 ## The local tip is checked against the one on the host
 
@@ -82,7 +83,7 @@ Diverged — the push is not done, and that is the first thing fixed.
 - The PR state read from memory of the previous turn: between turns a person merged a neighbouring work.
 - `UNKNOWN` read as "no conflicts" — the host was still counting.
 - The PR of the current branch was read, and the abandoned ones stayed lagging: all one's own open ones are asked.
-- Main merged in the working tree and not pushed: from outside that is "nothing done".
-- Lag was cured by resolving a conflict: there was no dispute in files at all, a merge would have sufficed.
+- The base merged in the working tree and not pushed: from outside that is "nothing done".
+- Lag was cured by resolving a conflict: there was no dispute in files at all, and the host merges such a branch itself.
 - A dispute resolved by choosing one side whole: the file kind decides the technique, and its sides differ.
-- The catch-up round started at a person's shout, not on its own: by that minute all PRs had already lagged.
+- The round of resolving started at a person's shout, not on its own: by that minute the PRs already conflicted.

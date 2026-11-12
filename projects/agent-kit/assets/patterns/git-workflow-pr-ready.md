@@ -45,7 +45,7 @@ gh run list --commit "$(gh pr view <номер> --json headRefOid --jq .headRefO
 
 ## Finish the handed-over first, then take new work
 
-An open PR is work in flight: its run ages, its branch lags behind main, its body describes the
+An open PR is work in flight: its run ages, its branch lags behind its base, its body describes the
 tree on the day it was written. All of this is cheap to fix today and expensive three tasks later.
 
 So the queue is this:
@@ -60,9 +60,10 @@ not have: they see a list of "being done", not a list of "done".
 ## The state is read at once
 
 What it is read with and how each field is read — pattern `git-workflow-freshness`; here only
-what is done with what was read. An empty run is handled on a par with a red one: a chain PR's
-base is not the main branch, and the base filter does not let such an event through to the
-pipeline.
+what is done with what was read. An empty run means two different things. On a base the
+pipeline wakes for it is handled on a par with a red one: the run is due and did not come. On a
+base it does not wake for — a chain PR, a task PR into its epic branch — no run is due, and the
+green push gate on the tip stands for it.
 
 ## A red run is analysed by step, not by PR
 

@@ -2761,7 +2761,7 @@
       "installed": true,
       "articles": 5,
       "unheld": 2,
-      "bound_code": 1
+      "bound_code": 0
     },
     {
       "label": "deploy-flow",
@@ -2775,8 +2775,8 @@
       "name": "deploy-flow",
       "installed": true,
       "articles": 28,
-      "unheld": 13,
-      "bound_code": 9
+      "unheld": 12,
+      "bound_code": 10
     },
     {
       "label": "doc-style",
@@ -2849,9 +2849,9 @@
       "kind": "rule",
       "name": "git-workflow",
       "installed": true,
-      "articles": 81,
-      "unheld": 27,
-      "bound_code": 86
+      "articles": 79,
+      "unheld": 26,
+      "bound_code": 89
     },
     {
       "label": "lib-layers",
@@ -2955,8 +2955,8 @@
       "name": "queue-audit",
       "installed": true,
       "articles": 10,
-      "unheld": 1,
-      "bound_code": 16
+      "unheld": 2,
+      "bound_code": 17
     },
     {
       "label": "reuse-first",
@@ -3013,7 +3013,7 @@
       "installed": true,
       "articles": 10,
       "unheld": 5,
-      "bound_code": 9
+      "bound_code": 10
     },
     {
       "label": "styling-bem",
@@ -3042,8 +3042,8 @@
       "name": "task-flow",
       "installed": true,
       "articles": 59,
-      "unheld": 24,
-      "bound_code": 59
+      "unheld": 23,
+      "bound_code": 60
     },
     {
       "label": "testing",
@@ -7389,6 +7389,16 @@
     {
       "relation": "mentions",
       "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/patterns/queue-audit-read.github.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "pattern_queue_audit_read",
+      "target": "rule_task_flow",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
       "source_file": "projects/agent-kit/assets/patterns/reuse-first-extend.md",
       "source_location": "L1",
       "weight": 1,
@@ -7614,6 +7624,16 @@
       "weight": 1,
       "source": "pattern_task_flow_archive",
       "target": "pattern_task_flow_close",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/patterns/task-flow-archive.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "pattern_task_flow_archive",
+      "target": "pattern_task_flow_resume",
       "confidence_score": 1
     },
     {
@@ -8074,6 +8094,16 @@
       "weight": 1,
       "source": "pitfalls_git_workflow",
       "target": "pattern_git_workflow_docker",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/pitfalls/git-workflow.github.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "pitfalls_git_workflow",
+      "target": "pattern_git_workflow_stack",
       "confidence_score": 1
     },
     {
@@ -9333,6 +9363,16 @@
       "source_location": "L1",
       "weight": 1,
       "source": "rule_git_workflow",
+      "target": "hook_git_guard_delivery_body_sh",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/git-workflow/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_git_workflow",
       "target": "hook_git_guard_delivery_conflict_sh",
       "confidence_score": 1
     },
@@ -9464,6 +9504,16 @@
       "weight": 1,
       "source": "rule_git_workflow",
       "target": "hook_push_set_sh",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/git-workflow/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_git_workflow",
+      "target": "hook_turn_exit_guard_sh",
       "confidence_score": 1
     },
     {
@@ -10133,6 +10183,16 @@
       "source_location": "L1",
       "weight": 1,
       "source": "rule_status_report",
+      "target": "check_board_runs_mjs",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/status-report/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_status_report",
       "target": "check_epic_table_mjs",
       "confidence_score": 1
     },
@@ -10344,6 +10404,16 @@
       "weight": 1,
       "source": "rule_task_flow",
       "target": "check_task_new_mjs",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/task-flow/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_task_flow",
+      "target": "check_tree_assignment_mjs",
       "confidence_score": 1
     },
     {
@@ -16888,5 +16958,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "858d5cc31a1962f44b5f1a3b848bd61f8126d930"
+  "built_at_commit": "da5ef1785932e9d79ade99de921d6e15582c56aa"
 }

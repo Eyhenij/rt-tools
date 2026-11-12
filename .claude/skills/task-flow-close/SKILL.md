@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when bringing work to readiness — merging the product agreement into the domain spec, bringing the domain texts up to date with what was done, opening the PR as a draft or ready by its base and leaving draft.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-close.md · 41b90c4a12c1 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-close.md · eae8df7842f5 · правится надстройкой, не здесь -->
 
 # Closing the work
 
@@ -141,8 +141,9 @@ saying the work is done. Its reply is not reworded: a disagreement goes under it
 The folder is taken apart and pushed, the work is cleaned up behind — and the PR opens. Whether it
 opens as a draft is decided by the bases the pipeline wakes for: where a run comes, a draft, and it
 is lifted on the green; where none comes, the PR opens ready and the push gate is the check behind
-it. From this minute the work waits for the owner, not for the machine, and the session does not end
-on it: the next task is taken by the same move, pattern `task-flow-resume`.
+it. From then the work waits for the owner, and the session does not end on it: the queue audit
+before the opening and the background rules review after it — pattern `task-flow-archive`; the
+next task is taken by the same move, pattern `task-flow-resume`.
 
 **Readiness is measured by what is told, not by what has passed.** A check the executor cannot pass
 for a reason outside the work — a refused permission, an unreachable environment, a key held by a

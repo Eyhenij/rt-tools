@@ -43,6 +43,8 @@ expect_stop "SC-AK-1117 — ход, кончившийся правкой, пр�
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" BLOCK
 expect_reason "SC-AK-1117 — отказ называет незакрытые задачи эпика" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" "RT-2 RT-3"
+expect_reason "SC-AK-1117 — отказ говорит, что отданная работа при открытом эпике ход не кончает" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" "work handed over does not end a turn"
 expect_stop "SC-AK-1117 — отданная работа со взятой следующей при открытом эпике не отпускается" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft')" "$(ran 'npm run task:move -- 3 in-progress')" "$(edited)")")" BLOCK
 expect_stop "SC-AK-1117 — второй проход при открытом эпике судится" \
