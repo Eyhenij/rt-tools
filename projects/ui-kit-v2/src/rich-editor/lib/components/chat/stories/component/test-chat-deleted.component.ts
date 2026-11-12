@@ -21,15 +21,7 @@ function today(hours: number, minutes: number): string {
  */
 @Component({
     selector: 'app-chat-deleted',
-    template: `
-        <app-story-themes caption="Снятые реплики в виде мессенджера">
-            <ng-template>
-                <div style="box-sizing: border-box; inline-size: 24rem; block-size: 16rem; background-color: var(--rt-color-bg-surface)">
-                    <rt-chat style="height: 100%" messenger hasThread title="№12 Анна Смирнова" [messages]="messages" />
-                </div>
-            </ng-template>
-        </app-story-themes>
-    `,
+    templateUrl: './test-chat-deleted.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
