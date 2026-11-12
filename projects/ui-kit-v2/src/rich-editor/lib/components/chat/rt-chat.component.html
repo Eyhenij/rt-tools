@@ -77,27 +77,25 @@
                                 [attr.data-status]="m.status || null"
                                 [attr.data-deleted]="m.deleted || null"
                                 [rtMod]="{ own: m.own }">
-                                @if (m.canDelete && !m.deleted) {
-                                    @if (m.deleteConfirm) {
-                                        <rt-icon-button
-                                            rtElem="message-delete"
-                                            qa-dataid="chat-message-delete"
-                                            icon="trash"
-                                            variant="ghost"
-                                            [ariaLabel]="t().chatDeleteAria"
-                                            [tooltip]="t().chatDeleteTooltip"
-                                            [rtConfirm]="m.deleteConfirm"
-                                            (confirmed)="deleteMessage.emit(m)" />
-                                    } @else {
-                                        <rt-icon-button
-                                            rtElem="message-delete"
-                                            qa-dataid="chat-message-delete"
-                                            icon="trash"
-                                            variant="ghost"
-                                            [ariaLabel]="t().chatDeleteAria"
-                                            [tooltip]="t().chatDeleteTooltip"
-                                            (clicked)="deleteMessage.emit(m)" />
-                                    }
+                                @if (m.canDelete && !m.deleted && m.deleteConfirm) {
+                                    <rt-icon-button
+                                        rtElem="message-delete"
+                                        qa-dataid="chat-message-delete"
+                                        icon="trash"
+                                        variant="ghost"
+                                        [ariaLabel]="t().chatDeleteAria"
+                                        [tooltip]="t().chatDeleteTooltip"
+                                        [rtConfirm]="m.deleteConfirm"
+                                        (confirmed)="deleteMessage.emit(m)" />
+                                } @else if (m.canDelete && !m.deleted) {
+                                    <rt-icon-button
+                                        rtElem="message-delete"
+                                        qa-dataid="chat-message-delete"
+                                        icon="trash"
+                                        variant="ghost"
+                                        [ariaLabel]="t().chatDeleteAria"
+                                        [tooltip]="t().chatDeleteTooltip"
+                                        (clicked)="deleteMessage.emit(m)" />
                                 }
                                 @if ((messageActions() || messageButtons()) && (m | rtChatMessageHasActions: messageHasActions())) {
                                     <div rtElem="message-actions" qa-dataid="chat-message-actions">
@@ -126,6 +124,28 @@
                                             <rt-delta-view rtElem="message-text" qa-dataid="chat-message-text" [delta]="m.delta" />
                                         } @else {
                                             <p rtElem="message-text" qa-dataid="chat-message-text">{{ m.text }}</p>
+                                        }
+                                        @if (m.canShowTranslation) {
+                                            <!-- Ошибка перевода: без текста узел пуст, и стили его прячут -->
+                                            <span
+                                                rtElem="message-translate-error"
+                                                qa-dataid="chat-message-translation-error"
+                                                role="alert"
+                                                [textContent]="m.translationError || ''"></span>
+                                            <button
+                                                rtElem="message-translate"
+                                                qa-dataid="chat-message-show-translation"
+                                                type="button"
+                                                [rtMod]="{ loading: !!m.translationLoading }"
+                                                [disabled]="!!m.translationLoading"
+                                                [attr.aria-busy]="m.translationLoading || null"
+                                                (click)="showTranslation.emit(m)">
+                                                <rt-spinner
+                                                    rtElem="message-translate-spinner"
+                                                    diameter="16"
+                                                    [color]="m.own && messenger() ? 'on-primary' : 'primary'" />
+                                                {{ t().chatShowTranslation }}
+                                            </button>
                                         }
                                         @if (m.attachments?.length) {
                                             @for (att of m.attachments; track att.id) {
@@ -163,7 +183,10 @@
                                     }
                                     <span rtElem="message-footer">
                                         <span rtElem="message-date" qa-dataid="chat-message-date">
-                                            {{
+                                            <!-- Подпись перевода и точка перед временем; без подписи узел пуст и точки нет -->
+                                            <span qa-dataid="chat-message-translation" [textContent]="m.translationLabel || ''"></span>
+                                            {{ m.translationLabel ? '· ' : ''
+                                            }}{{
                                                 m.dateLabel ||
                                                     (m.createdAt | date: (messenger() ? 'shortTime' : 'short') : undefined : locale())
                                             }}

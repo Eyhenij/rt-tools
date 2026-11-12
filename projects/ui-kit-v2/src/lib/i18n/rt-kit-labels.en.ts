@@ -70,6 +70,7 @@ export const RT_KIT_LABELS_EN = {
     chatRetryTooltip: 'Retry',
     chatSendAria: 'Send message',
     chatSendLabel: 'Send',
+    chatShowTranslation: 'Show translation',
     chatStatusFailed: 'Not sent',
     chatStatusRead: 'Read',
     chatStatusSending: 'Sending',
