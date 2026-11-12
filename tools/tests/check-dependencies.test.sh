@@ -103,8 +103,15 @@ tree '1.3.0' "$GLOB" "$TERM_LINE" 'prettier $(git diff --cached --name-only) --w
 verdict "the formatter called by the hook itself is refused" red
 says "the hook is named" 'husky/pre-commit'
 
-tree '1.3.0' "$GLOB" "$TERM_LINE" 'pnpm run prettier\nnpx lint-staged\n'
+printf '{\n  "scripts": { "fmt": "prettier --write ." },\n  "dependencies": { "left-pad": "1.3.0" }\n}\n' > "$WORK/package.json"
+printf 'pnpm run fmt\nnpx lint-staged\n' > "$WORK/.husky/pre-commit"
 verdict "the formatter called through a script of the manifest is refused" red
+
+printf '{\n  "scripts": { "fmt": "eslint --fix ." },\n  "dependencies": { "left-pad": "1.3.0" }\n}\n' > "$WORK/package.json"
+verdict "a script of the manifest without the formatter passes" green
+
+tree '1.3.0' "$GLOB" "$TERM_LINE" 'npx lint-staged # it runs prettier\n'
+verdict "a comment after a command is read past" green
 
 tree '1.3.0' "$GLOB" "$TERM_LINE" 'git diff --cached --name-only | xargs node_modules/.bin/prettier --write\n'
 verdict "the formatter called by its path in a pipe is refused" red
@@ -115,8 +122,32 @@ verdict "a comment naming the formatter passes" green
 printf '{\n  "devDependencies": { "left-pad": "^1.3.0" }\n}\n' > "$WORK/package.json"
 verdict "a range in the tool dependencies is refused" red
 
-printf '{\n  "dependencies": { "left-pad": "1.3.0" },\n  "lint-staged": { "**/*.md": ["eslint --fix", "prettier --write"] }\n}\n' > "$WORK/package.json"
-verdict "a list of commands with the formatter in it is judged" red
+printf '{\n  "dependencies": { "left-pad": "1.3.0" },\n  "lint-staged": { "libs/**/*.md": ["eslint --fix", "prettier --write"] }\n}\n' > "$WORK/package.json"
+verdict "a list of commands with the formatter in it is read" red
+says "the extension under the list is named" 'takes md'
+
+tree '1.3.0' 'apps*.ts' "$TERM_LINE" "$HOOK"
+verdict "a glob without a slash takes the whole tree" red
+
+tree '1.3.0' '{apps,libs}*/**/*.ts' "$TERM_LINE" "$HOOK"
+verdict "a directory name cut by a star is refused" red
+
+tree '1.3.0' 'projects/../docs/**/*.ts' "$TERM_LINE" "$HOOK"
+verdict "a glob that climbs out of a linted directory is refused" red
+
+tree '1.3.0' './apps/**/*.ts' "$TERM_LINE" "$HOOK"
+verdict "a glob that opens with the current directory is read" green
+
+tree '1.3.0' 'projects/*/src/**/*.ts' "$TERM_LINE" "$HOOK"
+verdict "a star below a linted directory passes" green
+
+tree '1.3.0' "$GLOB" 'minimumReleaseAge: 1440\nminimumReleaseAge: 0\n' "$HOOK"
+verdict "a term written twice is refused" red
+
+tree '1.3.0' "$GLOB" "$TERM_LINE" "$HOOK"
+printf '{ "**/*": "prettier --write" }\n' > "$WORK/.lintstagedrc.json"
+verdict "the runner set outside the manifest is refused" red
+rm "$WORK/.lintstagedrc.json"
 
 rm "$WORK/pnpm-workspace.yaml" "$WORK/.husky/pre-commit"
 printf '{\n  "dependencies": { "left-pad": "1.3.0" }\n}\n' > "$WORK/package.json"

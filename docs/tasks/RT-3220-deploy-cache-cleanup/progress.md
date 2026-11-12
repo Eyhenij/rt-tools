@@ -4,8 +4,8 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — Companions and closing
-- **Done:** stages 1 and 2; the companions are rewritten and the rules graph is rebuilt
-- **Next step:** the first review round
+- **Done:** stages 1 and 2; the companions are rewritten; two review rounds are run and their findings fixed
+- **Next step:** the push gate
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -23,8 +23,8 @@
 - [x] 2.4 Add the check to the push set
 - [x] 3.1 Rewrite the three bindings in the companions of both rules
 - [x] 3.2 Rebuild the rules graph and its report
-- [>] 3.3 Run the two review rounds and fix what they name
-- [ ] 3.4 Run the push gate
+- [x] 3.3 Run the two review rounds and fix what they name
+- [>] 3.4 Run the push gate
 - [ ] 3.5 Take the task folder apart into the archive
 
 ## Decisions along the way
@@ -51,3 +51,20 @@
 - **What the review found outside the task is filed as RT-3264 and RT-3265.** The push set leaves
   its images on the machine; the manual formatter command takes texts. Affected stage of the
   plan: 3.
+- **The rollout cleanup takes the default builder, not the named one.** The second review read the
+  log of the last rollout: the build declares `message-bus-builder` and builds through the default
+  builder, and the cache of the named one is empty. Which builder the rollout uses is task RT-3264.
+  Affected stage of the plan: 1.
+- **The done-sign about the companions is met for `dependencies` and not for `deploy-flow`.** The
+  companion of `deploy-flow` says the article is carried out for the build cache alone: the images
+  of the rollout and of the push set stay on the machine. The owner is told so in the PR body.
+  Affected stage of the plan: 3.
+- **Templates and the files the linter skips by name stay with the formatter.** No linter checks
+  their formatting; taking them out would leave templates without any form. The choice is the
+  executor's and is shown to the owner in the PR body. Affected stage of the plan: 2.
+- **Three texts outside the footprint are edited:** the description of production, the tree section
+  of the pattern `git-workflow-docker` and a new tree section of the rule `dependencies`. All three
+  spoke of what this work changed. The plan names `docs/specs/agent-kit/` in its footprint; the only
+  edit there is one scenario about the release journal. Affected stage of the plan: 3.
+- **Both review rounds ran on another model than the roles are set to.** The usual one refused by
+  its usage limit on the first call. Affected stage of the plan: 3.

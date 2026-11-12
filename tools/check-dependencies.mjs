@@ -43,6 +43,20 @@ const ALIAS = /^npm:.+@([^@]+)$/;
 /** The extensions a linter of this tree reads: the code linter, templates included, and the styles linter. */
 const LINTED = new Set(['js', 'mjs', 'cjs', 'ts', 'html', 'scss']);
 
+/** The files the staged-files runner reads its settings from besides the manifest. */
+const SETTINGS_FILES = [
+    '.lintstagedrc',
+    '.lintstagedrc.json',
+    '.lintstagedrc.yaml',
+    '.lintstagedrc.yml',
+    '.lintstagedrc.js',
+    '.lintstagedrc.cjs',
+    '.lintstagedrc.mjs',
+    'lint-staged.config.js',
+    'lint-staged.config.cjs',
+    'lint-staged.config.mjs'
+];
+
 /** The directories that have a lint run: the projects of the workspace and the linter's own rules. */
 const LINT_ROOTS = ['apps', 'libs', 'projects', 'tools/eslint-rules'];
 
@@ -56,15 +70,32 @@ export function extensionsOf(glob) {
     return single ? [single[1]] : ['*'];
 }
 
-// The directories a glob starts from: a brace list gives several, a glob that opens with a star
-// gives the whole tree.
+// The directories a glob starts from: a brace list gives several. A glob without a slash is matched
+// against the file name anywhere, and a glob that opens with a star takes the whole tree: both give
+// the whole tree. A head cut in the middle of a name, or one that climbs up, is no directory.
 export function rootsOf(glob) {
-    const head = glob.slice(0, glob.search(/\/?\*/) === -1 ? glob.length : glob.search(/\/?\*/));
+    const plain = glob.replace(/^\.\//, '');
+    if (!plain.includes('/')) {
+        return ['*'];
+    }
+    const star = plain.search(/[*?[]/);
+    const head = star === -1 ? plain : plain.slice(0, star);
     if (head === '') {
         return ['*'];
     }
-    const braces = /^\{([^}]+)\}(.*)$/.exec(head);
-    return braces ? braces[1].split(',').map((part) => `${part.trim()}${braces[2]}`) : [head];
+    const braces = /^\{([^{}]+)\}(.*)$/.exec(head);
+    const heads = braces ? braces[1].split(',').map((part) => `${part.trim()}${braces[2]}`) : [head];
+    return heads.map((one) => {
+        if (one.split('/').includes('..')) {
+            return '*';
+        }
+        return one.endsWith('/') ? one.slice(0, -1) : `${one}*`;
+    });
+}
+
+/** The scripts of the manifest a hook line calls: `pnpm run fmt`, `npm run fmt`, `pnpm fmt`. */
+function scriptsCalled(line, scripts) {
+    return Object.keys(scripts).filter((name) => new RegExp(`\\b(pnpm|npm|yarn)( run)? ${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(\\s|$)`).test(line));
 }
 
 function isRanged(version) {
@@ -87,7 +118,11 @@ function waitingTerm() {
     if (!existsSync(WORKSPACE)) {
         return [];
     }
-    const found = /^minimumReleaseAge:\s*['"]?([^\s'"#]+)['"]?\s*(#.*)?$/m.exec(readFileSync(WORKSPACE, 'utf8'));
+    const lines = [...readFileSync(WORKSPACE, 'utf8').matchAll(/^minimumReleaseAge:\s*['"]?([^\s'"#]+)['"]?\s*(#.*)?$/gm)];
+    if (lines.length > 1) {
+        return [`pnpm-workspace.yaml: minimumReleaseAge is written ${lines.length} times — which one is read is not visible`];
+    }
+    const found = lines[0];
     if (!found) {
         return ['pnpm-workspace.yaml: no minimumReleaseAge — the waiting term is left to the default of the package manager'];
     }
@@ -96,12 +131,17 @@ function waitingTerm() {
 
 function formatterPaths(manifest) {
     const findings = [];
+    const scripts = manifest.scripts ?? {};
     if (existsSync(COMMIT_HOOK)) {
         readFileSync(COMMIT_HOOK, 'utf8')
             .split('\n')
-            .filter((line) => !/^\s*#/.test(line) && /\bprettier\b/.test(line))
+            .map((line) => line.replace(/(^|\s)#.*$/, ''))
+            .filter((line) => /\bprettier\b/.test(line) || scriptsCalled(line, scripts).some((name) => /\bprettier\b/.test(scripts[name])))
             .forEach(() => findings.push('.husky/pre-commit: the formatter is called over every staged file — its paths belong in lint-staged'));
     }
+    SETTINGS_FILES.filter((name) => existsSync(join(ROOT, name))).forEach((name) =>
+        findings.push(`${name}: the staged-files runner is set outside package.json — the check reads the key of the manifest alone`)
+    );
     for (const [glob, command] of Object.entries(manifest['lint-staged'] ?? {})) {
         if (![command].flat().some((line) => /\bprettier\b/.test(line))) {
             continue;
@@ -110,7 +150,7 @@ function formatterPaths(manifest) {
         if (foreign.length > 0) {
             findings.push(`package.json lint-staged «${glob}»: the formatter takes ${foreign.join(', ')} — no linter reads these`);
         }
-        const outside = rootsOf(glob).filter((root) => !LINT_ROOTS.some((linted) => root === linted || root.startsWith(`${linted}/`)));
+        const outside = rootsOf(glob).filter((root) => !LINT_ROOTS.some((linted) => !root.endsWith('*') && (root === linted || root.startsWith(`${linted}/`))));
         if (outside.length > 0) {
             findings.push(`package.json lint-staged «${glob}»: the formatter starts from ${outside.join(', ')} — no lint run reads there`);
         }
