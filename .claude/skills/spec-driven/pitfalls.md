@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · pitfalls/spec-driven.md · 3f67ded290ad · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · pitfalls/spec-driven.md · 58de69340fd9 · правится надстройкой, не здесь -->
 # Project documentation — cold part
 
 Pitfalls: traps already stepped on. Loaded not with the rule but on demand — an ordinary
@@ -8,12 +8,13 @@ The rule is `spec-driven`; the articles that hold the law stand there.
 
 ## Pitfalls
 
-- **Do not create `tasks.md` in a spec.** Steps are a session artefact; their place is the branch
-  or the PR description. As soon as "steps" appear in the directory, the spec becomes a plan
+- **Do not create `tasks.md` in a spec.** Steps are a session artefact; their place is the plan in
+  the task folder. As soon as "steps" appear in the directory, the spec becomes a plan
   again and dies after the merge.
 - **A spec describes what is settled, not what is coming.** The only place where it speaks of the
-  future is `proposed/<feature>/`. After the rollout its text merges into the domain spec, the
-  directory is removed, the scenario identifiers do not change.
+  future is `proposed/<feature>/`. Its text merges into the domain spec by one of the last
+  commits of the branch, before the PR opens; the directory is removed, the scenario identifiers
+  do not change.
 - **Nothing checks the semantics of fields.** The check knows procedure names, failure codes and
   the link between scenarios and tests; what an empty field means, it does not know. So a
   `.proto` edit pulls in the specs of every domain whose procedures it touched, in the same

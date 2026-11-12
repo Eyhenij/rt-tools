@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing specs, laws and any skill. Names the three layers — law, rule, pattern — the mandatory sections, the binding to code and the link between scenarios and tests. Patterns spec-driven-domain, spec-driven-rule.
 ---
-<!-- rt-kit v0.37.0 · rules/spec-driven.md · 779e36257cab · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/spec-driven.md · 60efe2449486 · правится надстройкой, не здесь -->
 
 # Project documentation — how it works here
 
@@ -49,10 +49,10 @@ such a skill is created — skill `write-a-skill`.
 | In the law                        | Here                                                                                                 |
 | --------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | set of sections                   | `REQUIRED_HEADINGS` for a spec, "Articles" for a law                                                 |
-| a statement of a document         | an item of `## Правила` in a spec, `## Статьи` in a law, `## Как закон применяется здесь` in a rule |
+| a statement of a document         | an item of `## Rules` in a spec, `## Articles` in a law, `## How the law applies here` in a rule |
 | the place where it is carried out | a line in `implementation.md` next to it: `` `file:symbol` ``                                       |
 | promised behaviour                | scenario `SC-<PREFIX>-<NUMBER>` in `docs/specs/<domain>/scenarios.md`                                |
-| open question                     | `Q-<law letter>-<number>` in the law's "Open questions" section; tasks and commits refer to it, and the number is not reused after closing |
+| open question                     | `Q-<law letters>-<number>` in the law's "Open questions" section; tasks and commits refer to it, and the number is not reused after closing |
 | laws a domain applies             | the `**Законы:**` line in the spec header, names in quotes                                           |
 
 ## Where it lives
@@ -63,8 +63,8 @@ tree that keeps its code differently.
 
 ## Flow
 
-The flow of creating a text: which layer is written, how a statement is bound to code and what
-happens to a scenario after the rollout.
+The flow of creating a text: which layer is written, how a statement is bound to code and how a
+scenario keeps its number.
 
 ```mermaid
 flowchart TD
@@ -76,7 +76,7 @@ flowchart TD
     D --> G{The statement has a place in code}
     F --> G
     G -->|Yes| H[A binding line is placed; the link is checked both ways]
-    G -->|No| I[It is an intention: goes to open questions, not to rules]
+    G -->|No| I[A verdict line names who holds it; held by nobody, it is a law question]
     H --> J{A scenario is created}
     J -->|Yes| K[The number is issued new and never reused; the test title is edited by the same change]
     J -->|No| L[Done]
@@ -209,7 +209,7 @@ flowchart TD
 - **A decision from a spec goes to the layer, not to the archive.** What a spec is checked against
   the machine knows; where an accepted decision goes it does not know and will not: only whoever
   asks "will this still be true tomorrow" can tell a current requirement from an account of what
-  happened. This is held by the closed-work review step and the selection sign written there in
+  happened. This is held by the pattern `task-flow-archive` and the selection sign written there in
   advance.
 - **A name in an anchor is written as declared in code.** A private class field stands with a hash,
   and the name written without it names the wrong symbol: the check stays green, and the reader
@@ -240,7 +240,7 @@ flowchart TD
 ## The shape of a compressed article
 
 A rule loads whole into a session and pays for it every session, whatever the session works on. A
-measurement names where the weight is: 289 440 characters in twenty-nine loaded rules, the articles
+one-off measurement named where the weight was: 289 440 characters in twenty-nine rules, the articles
 section is 45% of them, and inside the section statements take 19%, their arguments 81%. So the
 argument is cut, not the statement: a removed statement changes the rule, a removed argument only
 its price. Room is measured before an article is added, not after the commit is refused: the size
@@ -298,8 +298,8 @@ refuses on a file edit more often than the others is the first to be marked.
 
 Section completeness of the law, the rule and the pattern themselves is checked by nothing here. The
 articles saying that a text is judged no more leniently than its copy, that an unchosen edition is
-judged the same as the chosen one and that the set of sections is declared apart from the sample are
-carried out where these texts are written — in the suite of the package that ships them. A consumer
+judged the same as the chosen one, that the set of sections is declared apart from the sample and
+that a requirement nobody formulated stays silent are carried out where these texts are written — in the suite of the package that ships them. A consumer
 tree holds laid-out copies, and its check must not turn red on someone else's miss. Agreement of two
 texts is looked for by reading.
 
@@ -319,11 +319,3 @@ up".
 - `spec-driven-domain` — creating and editing a domain spec, scenarios, binding.
 - `spec-driven-rule` — creating a law, a rule and a pattern.
 - `spec-driven-sweep` — a full review of a domain's binding, passes and their review.
-
-## Pitfalls
-
-- **The line requiring a neighbouring resource is checked by nothing, and a miss in it shows only by
-  counting.** A rule without it looks whole: sections in place, bindings match, the completeness
-  suite green. It is counted by one command over the rules directory, and the divergence reads at
-  once — how many rules declared requirements and how many refer to a neighbouring resource in
-  prose.
