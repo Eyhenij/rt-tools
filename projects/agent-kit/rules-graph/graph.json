@@ -3013,7 +3013,7 @@
       "installed": true,
       "articles": 10,
       "unheld": 5,
-      "bound_code": 9
+      "bound_code": 10
     },
     {
       "label": "styling-bem",
@@ -10133,6 +10133,16 @@
       "source_location": "L1",
       "weight": 1,
       "source": "rule_status_report",
+      "target": "check_board_runs_mjs",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/status-report/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_status_report",
       "target": "check_epic_table_mjs",
       "confidence_score": 1
     },
@@ -16888,5 +16898,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "858d5cc31a1962f44b5f1a3b848bd61f8126d930"
+  "built_at_commit": "fad2278c1339c9ff007d147c9a8d37f1190700cb"
 }
