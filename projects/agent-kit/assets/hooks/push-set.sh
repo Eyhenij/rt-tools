@@ -8,7 +8,7 @@
 # been checked at all. Here lives the single one.
 #
 #   rt_push_set_profile <hooks dir> <tree root> — the package default and the tree override
-#   rt_push_set_base                            — the main branch of the remote, or empty
+#   rt_push_set_base                            — the nearest remote branch, or empty
 #   rt_push_set_run <base>                      — every line of `rt_push_checks <base>`
 #   rt_push_mark_path / rt_push_mark_covers <commit> / rt_push_mark_write — the mark of green
 #
@@ -28,7 +28,7 @@ rt_push_set_profile() {
         # shellcheck disable=SC1090
         [ -f "$profile" ] && . "$profile" 2>/dev/null
     done
-    # The base of a stacked branch and the marks of a green run. No helper — the base is the main
+    # The base of the branch and the marks of a green run. No helper — the base is the main
     # branch, no mark is read and none is written: the set runs whole.
     # shellcheck disable=SC1091
     [ -f "$hooks_dir/git-guard-push-marks.sh" ] && . "$hooks_dir/git-guard-push-marks.sh" 2>/dev/null
