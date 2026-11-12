@@ -51,6 +51,10 @@ AZURE_DEVOPS_EXT_PAT="$TOKEN" az repos pr create --draft true --title '[86] …'
 The check pipeline does not start on a draft by default: a run's silence is not taken for a
 green run, and the set is run on one's own machine or by a manual start.
 
+A PR the pipeline does not wake for opens ready, without `--draft true`: the branch policies name the target branches that carry a build validation, and where no run
+comes a draft waits for nothing and costs a locked button and a second turn. The reviewer is set in
+the same turn, and the push gate is then the only check behind the work.
+
 Everything waiting for a pipeline run, a rework or an answer to a question goes as a draft. The
 question is asked in the PR itself, not kept in the executor's head: a person reads the PR, not
 the session's conversation.
@@ -81,6 +85,10 @@ AZURE_DEVOPS_EXT_PAT="$TOKEN" az repos pr create \
 
 Before the target branch is named, its presence on the host is checked: `git ls-remote --heads origin <ветка>`. An empty answer means the base was merged and removed; the request then takes the next branch up the chain as its base.
 
+The target branch is the epic branch, and in a chain the previous branch; into `main` goes only the
+PR of the epic itself. Whether completing a PR into the epic branch moves the bound work item is
+set by the completion option `--transition-work-items`, and the link line says what the tree chose.
+
 The reviewer is always the owner: without a review request the PR does not show in their queue.
 One PR closes the work item whole — half a task is not rolled out by one PR: a task has one
 branch, and work that does not fit it is split into tasks before the branch is created.
@@ -98,9 +106,14 @@ the branch after publishing: the PR states things about the tree, and the tree h
 
 ## PR body sample
 
-Four sections, and one order between them: the link line, what was done, what confirms it, the
-remaining step. A section with nothing to say says so in words — an empty heading and a removed
-heading read alike and mean different things.
+Six sections, and one order between them: the link line, what was done, the points, the goal, what
+confirms it, the remaining step. A section with nothing to say says so in words — an empty heading
+and a removed heading read alike and mean different things.
+
+The table of points comes from the reply of the role `product-strategist`: a sign not run is
+written as not run, and its point as not reached. The table of the goal comes from the reply of the
+role `goal-critic`. Both go in word for word, and the critic reads the finished body against the
+replies.
 
 ```markdown
 Закрывает рабочий элемент 86.
@@ -108,6 +121,18 @@ heading read alike and mean different things.
 ## Что сделано
 
 - <правка, названная тем, что она меняет для читателя, а не тем, какие файлы задела>
+
+## Точки
+
+| Точка | Признак | Результат |
+| --- | --- | --- |
+| <изменение, которое увидит человек> | <команда, страница или число> | <вывод признака: достигнута или промах> |
+
+## Цель
+
+| Слова владельца | Что показывает результат | Итог |
+| --- | --- | --- |
+| <дословная цитата> | <что видно в результате> | <выполнено или нет> |
 
 ## Чем подтверждено
 
@@ -217,7 +242,7 @@ scenarios are taken by the push gate — below is what it does not know.
 9. **A markup edit of the public site is checked on the production build in all translation
    locales** — the search visibility rule of the tree that has one.
 10. **The PR is bound to the work item**, reviewer and assignee are set, and the body is
-    assembled by the sample — the sections "What was done", "What confirms it" and "Remaining
+    assembled by the sample — the sections "What was done", "Points", "Goal", "What confirms it" and "Remaining
     step". By this moment the remaining step section says no steps are left: the folder is
     taken apart before the PR opens.
 11. **The PR title carries the work item number and names the work done:** `[<номер>] <Что

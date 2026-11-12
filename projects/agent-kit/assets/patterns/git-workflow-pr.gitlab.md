@@ -52,6 +52,10 @@ GITLAB_TOKEN="$TOKEN" glab mr create --draft --title '[<КЛЮЧ>-86] …' --des
 The draft sign here is the `Draft:` prefix in the MR title, and it is edited together with it:
 rewriting the title by hand lifts the draft without anyone noticing.
 
+An MR the pipeline does not wake for opens ready, without `--draft`: the pipeline file names the target branches it wakes for, and where no run
+comes a draft waits for nothing and costs a locked button and a second turn. The reviewer is set in
+the same turn, and the push gate is then the only check behind the work.
+
 Everything waiting for a pipeline run, a rework or an answer to a question goes as a draft. The
 question is asked in the MR itself, not kept in the executor's head: a person reads the MR, not
 the session's conversation.
@@ -84,6 +88,11 @@ GITLAB_TOKEN="$TOKEN" glab mr create \
 
 Before the target branch is named, its presence on the host is checked: `git ls-remote --heads origin <ветка>`. An empty answer means the base was merged and removed; the request then takes the next branch up the chain as its base.
 
+The target branch is the epic branch, and in a chain the previous branch; into `main` goes only the
+MR of the epic itself. The host closes the task by the `Closes` line only on a merge into the
+default branch: with another target the tree closes it by its pipeline or by hand, and the link
+line says which.
+
 The reviewer is always the owner: without a review request the MR does not show in their queue.
 The assignee is the same account the machine work goes from. Labels are read from the task, not
 picked from memory:
@@ -110,9 +119,14 @@ branch after publishing: the MR states things about the tree, and the tree has c
 
 ## MR description sample
 
-Four sections, and one order between them: the link line, what was done, what confirms it, the
-remaining step. A section with nothing to say says so in words — an empty heading and a removed
-heading read alike and mean different things.
+Six sections, and one order between them: the link line, what was done, the points, the goal, what
+confirms it, the remaining step. A section with nothing to say says so in words — an empty heading
+and a removed heading read alike and mean different things.
+
+The table of points comes from the reply of the role `product-strategist`: a sign not run is
+written as not run, and its point as not reached. The table of the goal comes from the reply of the
+role `goal-critic`. Both go in word for word, and the critic reads the finished description against the
+replies.
 
 ```markdown
 Closes #86
@@ -120,6 +134,18 @@ Closes #86
 ## Что сделано
 
 - <правка, названная тем, что она меняет для читателя, а не тем, какие файлы задела>
+
+## Точки
+
+| Точка | Признак | Результат |
+| --- | --- | --- |
+| <изменение, которое увидит человек> | <команда, страница или число> | <вывод признака: достигнута или промах> |
+
+## Цель
+
+| Слова владельца | Что показывает результат | Итог |
+| --- | --- | --- |
+| <дословная цитата> | <что видно в результате> | <выполнено или нет> |
 
 ## Чем подтверждено
 
@@ -237,7 +263,7 @@ know.
 9. **A markup edit of the public site is checked on the production build in all translation
    locales** — the search visibility rule of the tree that has one.
 10. **The MR description is assembled by the sample** — starts with the line `Closes #<номер>`,
-    carries the sections "What was done", "What confirms it" and "Remaining step", and labels,
+    carries the sections "What was done", "Points", "Goal", "What confirms it" and "Remaining step", and labels,
     reviewer and assignee are set. By this moment the remaining step section says no steps are
     left: the folder is taken apart before the MR opens.
 11. **The MR title carries the task number and names it done:** `[<КЛЮЧ>-<номер>] <Что
