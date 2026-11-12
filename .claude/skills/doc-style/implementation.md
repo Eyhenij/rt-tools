@@ -82,7 +82,6 @@ not in the wrong language.
 ## What this is checked by
 
 - `.claude/hooks/docs-guard.sh` on a commit — only those pairs where the link is mechanical.
-- `npm run check:docs` — the addresses named in the texts and the completeness of the archive
-  index.
+- `npm run check:docs` — the addresses named in the texts; no directory index is audited here.
 - `pnpm run agent-kit:check` — what is laid out matches the package and the override.
 - By reading: everything else in this rule the machine does not check.

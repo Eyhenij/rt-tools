@@ -51,7 +51,7 @@ such a skill is created — skill `write-a-skill`.
 | a statement of a document         | an item of `## Rules` in a spec, `## Articles` in a law, `## How the law applies here` in a rule |
 | the place where it is carried out | a line in `implementation.md` next to it: `` `file:symbol` ``                                       |
 | promised behaviour                | scenario `SC-<PREFIX>-<NUMBER>` in `docs/specs/<domain>/scenarios.md`                                |
-| open question                     | `Q-<law letters>-<number>` in the law's "Open questions" section; tasks and commits refer to it, and the number is not reused after closing |
+| open question                     | `Q-<law letters>-<number>` in a law's "Open questions", `Q-<number>` in a spec's; tasks and commits refer to it, and the number is not reused after closing |
 | laws a domain applies             | the `**Laws:**` line in the spec header, names in backticks; `**Законы:**` is the former form        |
 
 ## Where it lives
@@ -100,10 +100,10 @@ flowchart TD
   itself, and by that call a live symbol cannot be told from a forgotten one. The exception is a
   symbol declared in the suite harness itself or published outward by a package — there the caller
   is the test or the consumer by the very purpose of the file.
-- **A verdict is put by substance, not by the form of the address.** To the check these two look
-  alike, and to the reader of the companion
-  they do not: the first says "nothing here holds the requirement", the second "it holds, but there
-  is nothing to write it with". The second verdict names the form itself as the reason and lives
+- **A verdict is put by substance, not by the form of the address.** To the check two reasons for
+  a verdict look alike, and to the reader of the companion they do not: the first says "nothing
+  here holds the requirement", the second "it holds, but there is nothing to write it with". The
+  second verdict names the form itself as the reason and lives
   until the form is fixed; the article under it stays carried out and is not removed.
 - **A "not carried out" binding moves together with its article.** Otherwise the companion line
   keeps in the hot part an article with nothing behind it: removed alone, it leaves the binding

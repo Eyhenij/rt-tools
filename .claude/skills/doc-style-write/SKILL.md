@@ -4,7 +4,7 @@ kind: pattern
 rule: doc-style
 description: Pattern of rule doc-style. Load when writing any project prose — rules, specs, README, code comments, commit bodies, PR descriptions. Samples of "so" and "not so" for each wording convention. Not for the structure of a spec — that is rule spec-driven.
 ---
-<!-- rt-kit v0.37.0 · patterns/doc-style-write.md · 54d403ac0194 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/doc-style-write.md · dfa09699ee9b · правится надстройкой, не здесь -->
 
 # How to word
 
@@ -167,10 +167,10 @@ in the same turn the text is written.
 
 ## Do not retell what has a source
 
-- contract types and fields — `libs/common/proto/proto/<area>/v1/`, by link;
-- columns and indexes — `prisma/schema.prisma`;
+- contract types and fields — the contract description, by link;
+- columns and indexes — the storage schema;
 - numbers the owner edits (base price, min-nights, capacity) — only how they are applied;
-- layers and class names — the rule `lib-layers` and the code itself.
+- layers and class names — the code itself and, where it is laid out, the rule `lib-layers`.
 
 ## Code comments
 

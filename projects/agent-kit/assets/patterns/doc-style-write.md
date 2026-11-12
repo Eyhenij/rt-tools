@@ -166,10 +166,10 @@ in the same turn the text is written.
 
 ## Do not retell what has a source
 
-- contract types and fields — `libs/common/proto/proto/<area>/v1/`, by link;
-- columns and indexes — `prisma/schema.prisma`;
+- contract types and fields — the contract description, by link;
+- columns and indexes — the storage schema;
 - numbers the owner edits (base price, min-nights, capacity) — only how they are applied;
-- layers and class names — the rule `lib-layers` and the code itself.
+- layers and class names — the code itself and, where it is laid out, the rule `lib-layers`.
 
 ## Code comments
 

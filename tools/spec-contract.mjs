@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/spec-contract.mjs · 44dc1a01e7fc · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/spec-contract.mjs · 23df49dee1d1 · правится надстройкой, не здесь
 /**
  * The spec contract against what the code declares: the procedure table against the decorators,
  * the refusal codes against the throw points.
@@ -176,7 +176,7 @@ function checkRefusalCodes(file, text, roots) {
     for (const bullet of bullets) {
         const code = (bullet.text.match(/`([A-Za-z]\w*)`/) || [])[1];
         if (!code) {
-            report(file, `«Refusal codes» carries a line without a code in quotes: «${bullet.text.slice(0, 60)}…»`);
+            report(file, `«Refusal codes» carries a line without a code in backticks: «${bullet.text.slice(0, 60)}…»`);
             continue;
         }
         if (!thrown.has(code)) {

@@ -91,7 +91,7 @@ skills gate was done and covered by scenarios.
 
 ```bash
 # check what you are about to call "not done"
-grep -rn '<symbol>' libs apps .claude/hooks
+grep -rn '<symbol>' <source roots>
 grep -n '<name>' node_modules/<package>/types/*.d.ts
 ```
 
@@ -125,7 +125,7 @@ The document is not the only place promising that the work lives in it. A remove
 by one grep, including agent descriptions, skills, READMEs and code comments:
 
 ```bash
-grep -rn 'BACKLOG' --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=archive .
+grep -rn '<removed name>' --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=archive .
 ```
 
 ## Common misses

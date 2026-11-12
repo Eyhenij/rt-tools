@@ -4,7 +4,7 @@ kind: pattern
 rule: doc-style
 description: Pattern of rule doc-style. Load when a document has accumulated a list of work and must be sorted into what still holds and what is closed. The selection sign, a pass over the statements, a check against the work queue, the fate of the file itself. New text — pattern doc-style-write.
 ---
-<!-- rt-kit v0.37.0 · patterns/doc-style-sweep.md · 0a84f06d5c99 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/doc-style-sweep.md · eb878203c868 · правится надстройкой, не здесь -->
 
 # Sorting a document that has accumulated a work list
 
@@ -92,7 +92,7 @@ skills gate was done and covered by scenarios.
 
 ```bash
 # check what you are about to call "not done"
-grep -rn '<symbol>' libs apps .claude/hooks
+grep -rn '<symbol>' <source roots>
 grep -n '<name>' node_modules/<package>/types/*.d.ts
 ```
 
@@ -126,7 +126,7 @@ The document is not the only place promising that the work lives in it. A remove
 by one grep, including agent descriptions, skills, READMEs and code comments:
 
 ```bash
-grep -rn 'BACKLOG' --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=archive .
+grep -rn '<removed name>' --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=archive .
 ```
 
 ## Common misses

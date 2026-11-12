@@ -175,7 +175,7 @@ function checkRefusalCodes(file, text, roots) {
     for (const bullet of bullets) {
         const code = (bullet.text.match(/`([A-Za-z]\w*)`/) || [])[1];
         if (!code) {
-            report(file, `«Refusal codes» carries a line without a code in quotes: «${bullet.text.slice(0, 60)}…»`);
+            report(file, `«Refusal codes» carries a line without a code in backticks: «${bullet.text.slice(0, 60)}…»`);
             continue;
         }
         if (!thrown.has(code)) {
