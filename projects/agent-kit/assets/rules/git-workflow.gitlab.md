@@ -264,9 +264,10 @@ tier stays and works offline: the local ref answers the question "has the base l
 lies in the tree", the remote one — "has the ref itself gone stale". Without the second tier the
 guard's silence meant only the first and was read as the second.
 
-The epic of a task the delivery guard learns from the queue helper of the tree, and the base of an
-MR it reads from the flag `--base` alone. On this host the helper is written by the tree and the flag
-is `--target-branch`: until the tree gives both, the base from the epic branch is held by memory.
+The delivery guard reads the base of an MR from the flag `--base` alone, and here the flag is
+`--target-branch`. Without a queue helper of the tree it judges the branch by `main`; with one it
+refuses a lawful MR into the epic branch. Until the package reads this flag, the base from the epic
+branch and the choice between a draft and a ready MR are held by the executor.
 
 ## Patterns
 

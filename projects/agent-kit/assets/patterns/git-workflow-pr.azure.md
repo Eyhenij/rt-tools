@@ -69,9 +69,9 @@ solution is ready:
 AZURE_DEVOPS_EXT_PAT="$TOKEN" az repos pr update --id 86 --draft false
 ```
 
-Before the lifting the executor's silence means "not ready yet", after — "may be merged".
-Lifting the draft and asking to merge go in one turn: a lifted draft nobody told the person
-about waits for review just like one not lifted.
+Lifting the draft starts the run where a build validation stands on the target, and the merge is
+asked in the turn the run is read green. Where none stands, lifting and asking go in one turn: a
+lifted draft nobody told the person about waits for review just like one not lifted.
 
 ## The PR is bound to the work item at creation
 
@@ -146,25 +146,25 @@ replies.
 ## Оставшийся шаг
 
 Папка задачи разобрана коммитом `<sha>` — за работой убрано. Осталось дождаться прогона
-проверки; сливать после зелёного.
+проверки; сливать после зелёного. В окне Complete оставить отметку «Complete associated work items
+after merging»: рабочий элемент 86 закрывается этим запросом.
 ```
 
-The link line says what happens to the work item, and the "Remaining step" section repeats it for
-the one who presses Complete — the dialog offers the option, and the person chooses it there:
-
-```markdown
-Рабочий элемент 86 закрывается при завершении этого PR: в окне Complete оставить отметку
-«Complete associated work items after merging».
-```
+The link line says the work item closes with this PR, and the "Remaining step" section names the
+option for the one who presses Complete: the dialog remembers the last choice of that person.
 
 The "Remaining step" section stands last and is rewritten by the same call as the rest of the
-body — in the turn the run went green, or the draft is lifted:
+body — in the turn the run is read green:
 
 ```markdown
 ## Оставшийся шаг
 
-Не осталось: прогон зелёный. Можно вливать.
+Не осталось: прогон зелёный. Можно вливать, отметка «Complete associated work items after
+merging» в окне Complete остаётся.
 ```
+
+Where no build validation stands on the target, the section says from the opening that nothing is
+left and names the push gate as the only check, not a green run.
 
 It stands there because the merge decision is made on that page, not in the conversation: what
 was said to the owner aloud lives until the next reply, and the body lies right by the button.
@@ -256,8 +256,8 @@ scenarios are taken by the push gate — below is what it does not know.
    locales** — the search visibility rule of the tree that has one.
 10. **The PR is bound to the work item**, the reviewer is set, and the body is
     assembled by the sample — the sections "What was done", "Points", "Goal", "What confirms it" and "Remaining
-    step". By this moment the remaining step section says no steps are left: the folder is
-    taken apart before the PR opens.
+    step". By this moment the remaining step section names what is left: the run, where a build
+    validation stands on the target, or nothing. The folder is taken apart before the PR opens.
 11. **The PR title carries the work item number and names the work done:** `[<номер>] <Что
 сделано>`, with the same number as the work item and the branch name.
 12. **The work queue matches** — `npm run check:board`.
@@ -289,23 +289,26 @@ item asks for a run: its place is taken by the push gate, green before the sendi
 
 ## A chain of branches: the calls of this host
 
-The order is the pattern `git-workflow-stack`; its calls here:
+The order is the pattern `git-workflow-stack`, with one difference: here the upper PR is retargeted
+before the lower one completes, not after. The calls:
 
 ```bash
 # the upper PR, before the lower one completes; the file holds {"targetRefName": "refs/heads/<ветка эпика>"}
 az devops invoke --area git --resource pullRequests --http-method PATCH \
     --route-parameters project=<проект> repositoryId=<репозиторий> pullRequestId=87 \
     --in-file цель.json --api-version 7.1
+az repos pr show --id 87 --query targetRefName -o tsv              # reread: the call finds its resource by name
 az repos pr show --id 87 --query mergeStatus -o tsv                # whether the PR can be completed
 az boards work-item update --id 86 --state <закрытое состояние>    # an item the host did not move itself
 ```
 
 `az repos pr update` has no flag for the target branch, so the retargeting goes through the REST
-call. The upper PR is retargeted before the lower one is completed: completing with
-`--delete-source-branch true` removes the branch the upper PR targets.
+call. It goes first because completing with `--delete-source-branch true` removes the branch the
+upper PR targets.
 
-The host cuts a PR description at 4000 characters. When the two tables do not fit, their rows stay
-and the cells are shortened to the verdict; the full replies of the roles go into the first comment.
+The host takes no PR description longer than 4000 characters, so the length is counted before the
+call. When the two tables do not fit, their rows stay and the cells are shortened to the verdict;
+the word-for-word replies of the roles go into the first comment.
 
 ## Common misses
 

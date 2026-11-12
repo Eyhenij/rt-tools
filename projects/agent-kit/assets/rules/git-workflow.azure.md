@@ -57,7 +57,7 @@ flowchart TD
     F -->|No| G[The delivery guard refuses the opening: nothing in the queue stands behind the edit]
     F -->|Yes| H[The PR opens ready where only the run is waited for; a draft for a rework is lifted before the run]
     H --> I[The state moves to review, the executor takes the next work item]
-    I --> J{The run and the review are over}
+    I --> J{The run, where one comes, and the review are over}
     J -->|Run red| K[Fixed in the same branch]
     K --> J
     J -->|Green| L[The description says no step is left]
@@ -101,8 +101,7 @@ flowchart TD
   work.
 - **A PR in a chain has the previous branch as its base, not main.** `az repos pr create
   --target-branch <предыдущая ветка>` — otherwise the review shows the edit mixed with all under it.
-  The base is retargeted by the same motion that merges the lower one — the pattern
-  `git-workflow-stack`.
+  The base is retargeted before the lower one is completed — the calls are in the pattern `git-workflow-pr`.
 - **A chain is merged bottom-up, and the order stands in every PR description.** Branch kinship is
   invisible in the list, and the line "stands on !<number>" is the only place it is read.
 - **The lower branch of a chain does not rewrite history — neither `rebase` nor a force push.** The
@@ -150,9 +149,10 @@ flowchart TD
   gets an answer.** Edits alone leave the discussion silent, and the person reads the whole diff
   again. The word holds for that PR, not for the next.
 - **The draft is lifted by a separate call — `az repos pr update --id <номер> --draft false`.** With
-  it the executor answers for readiness: the push gate passed, no rework left, the work matches the work
-  item. Lifting the draft and asking to merge are one turn, and a PR opened ready needs no such
-  call.
+  it the executor answers for readiness: the push gate passed, no rework left, the work matches the
+  work item. Where a build validation stands on the target, the merge is asked after the green run,
+  not in the lifting turn; where none stands, lifting and asking are one turn. A PR opened ready
+  needs no such call.
 - **The PR merge is pressed by a person, not by the work's executor.** The Complete button, `az
   repos pr update --status completed` and auto-complete set by the executor are equal. The executor
   merges their own PR only when a person said so about this PR; said about one, it does not carry to
@@ -274,9 +274,9 @@ tier stays and works offline: the local ref answers the question "has the base l
 lies in the tree", the remote one — "has the ref itself gone stale". Without the second tier the
 guard's silence meant only the first and was read as the second.
 
-The epic of a work item the delivery guard learns from the queue helper of the tree, and the base
-of a PR it reads from the flag `--base` alone: here the helper is the tree's and the flag is
-`--target-branch`, so until the tree gives both the base from the epic branch is held by memory.
+The delivery guard reads the base of a PR from `--base` alone; here the flag is `--target-branch`.
+Without a queue helper it judges the branch by `main`, with one it refuses a lawful PR into the epic
+branch. Until the package reads the flag, the base and the draft-or-ready choice are the executor's.
 
 A PR that waits only for the run opens ready, and the law keeps such work under a draft: a declared
 deviation, the run does not start on a draft. Complete is then held only by a required build

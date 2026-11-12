@@ -140,7 +140,6 @@ flowchart TD
   is not yet a rollout: a failed one leaves the main branch ahead of the server, and merges on top
   go the same way. The lag is counted from the last successful rollout and does not tell "not
   started" from "failed".
-
 - **A check standing in the gate set refuses when it could not do its work.** "Nowhere to check" and
   "the check is broken" are different things: the first the tree names itself — no subject, no
   address set, the service not answering — and each such exit returns the skip code with its own
