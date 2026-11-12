@@ -105,8 +105,8 @@ flowchart TD
   <path>`, `restore <path>` and `clean -f` erase what is not committed. On a dirty tree the guard
   refuses and names the files; the bypass is `# discard: <reason>` in the command.
 - **The lower branch of a chain does not rewrite history — neither `rebase` nor a force push.** The
-  host closes the upper PR as merged once its diff goes empty. A lagging branch is fixed by merging
-  its base in.
+  host closes the upper PR as merged once its diff goes empty. Before its PR opens a branch
+  takes its base in; with the PR open — only on a conflict.
 - **A divergence inside a chain is resolved by the one who branches.** Both edits are theirs; the
   owner resolving the same at merge time owns neither.
 - **Unmet delivery conditions are named in one refusal.** The guard collects and prints them at

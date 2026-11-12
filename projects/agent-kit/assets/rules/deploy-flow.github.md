@@ -168,7 +168,7 @@ flowchart TD
   the owner's word replaces a check only when the owner was told the check did not run.
 - **The divergence of migrations from the schema is measured on a shadow storage, not on the one
   the pusher works with.** That one lawfully carries the trace of any unfinished branch, and a
-  check against it would hold up someone else's edit. The gate and the rollout call one and the
+  check against it would hold up someone else's edit. The gate and the pipeline call one and the
   same check — otherwise "matched" would mean different things in two places.
 - **Skipping the schema audit is lawful while the branch has not touched the storage.** A stopped
   database is a state of the machine, not a reason to refuse a documentation push; but a branch
@@ -182,7 +182,7 @@ flowchart TD
 
 - **A check standing in the gate set refuses when it could not do its work.** "Nowhere to check"
   and "the check is broken" are different things: the first the tree names itself — no subject, no
-  address set, the service not answering — and each such exit returns zero with its own line. The
+  address set, the service not answering — and each such exit returns the skip code with its own line. The
   second — a missing package, an empty name in the settings, an unexpected exception — returns a
   non-zero code and says that the check itself broke, not the subject. A shared zero for both makes
   a broken check indistinguishable from a passed one: the schema-to-migrations audit stood like that

@@ -2,7 +2,7 @@
 name: git-workflow-stack
 kind: pattern
 rule: git-workflow
-description: Pattern of rule git-workflow. Load when pieces of work follow one another or more than two branches already stand on one base — chained branching from the previous one, the PR base, merging bottom-up, re-merging main on an actual conflict. One conflict — pattern git-workflow-merge.
+description: Pattern of rule git-workflow. Load when pieces of work follow one another or more than two branches already stand on one base — chained branching from the previous one, the PR base, merging bottom-up, re-merging the base on an actual conflict. One conflict — pattern git-workflow-merge.
 ---
 
 # A stack of PRs from one base
@@ -105,8 +105,8 @@ gh pr list --state open --json number,headRefName,baseRefName \
 
 - **The lower branch's history is not rewritten.** Neither `rebase` nor a force push: the upper
   one's tip becomes reachable from its base, and the host closes the upper PR as merged — though
-  main has none of its edits. A lagging lower one is fixed by merging main into it and onward
-  upward.
+  main has none of its edits. A lower one that conflicts with its base is fixed by merging the base
+  into it — the epic branch for the first of the chain — and onward upward.
 - **A chain is not merged from the middle.** One merged out of order drags along everything
   under it — and the review of that work never happens.
 - **A branch whose base was merged past it is looked for by hand.** The host counts the lower
@@ -114,7 +114,7 @@ gh pr list --state open --json number,headRefName,baseRefName \
   their own commits on top are not, and nobody is told. Such a branch is alive only while
   somebody remembers it — two pieces of work stayed in branches like that and were found by a
   list of branches, not by a list of PRs. After a merge out of order the branches of the chain
-  are listed and each either takes main in by a merge or is closed by word.
+  are listed and each either takes its new base in by a merge or is closed by word.
 - **Ready branches are not hoarded.** A chain does not cancel that the unit of work is a merged
   PR: it only makes safe the length that has piled up anyway.
 
@@ -132,19 +132,22 @@ round.
 Branches of one base that append to the same texts bring each other down at every merge: the
 first merged makes the rest stale, the second merged — all but two, and so to the end. Opening
 all at once, the executor assigns themselves about half the square of their number in merges of
-main — and they do them, while a person presses the merges at their own pace.
+the base — and they do them, while a person presses the merges at their own pace.
 
 This is counted before opening, not after: closing surplus PRs is cheaper than keeping them, but
 the time spent on their bodies is gone by then.
 
-## Main is merged in on an actual conflict, not on a schedule
+## The base is merged in on an actual conflict, not on a schedule
 
 A lagging branch and a conflicting one are different things. A lagging one the host merges
 itself: edits of different places in one file are reconciled without a person. Only the one
-where both sides touched the same lines conflicts.
+where both sides touched the same lines conflicts. The base of a task branch is the epic branch
+or the branch under it; main is the base of the epic branch alone.
 
-So after someone else's merge, main is merged not into all open branches but into those the host
-said conflict. This is asked with one call for the whole stack:
+The boundary is the opening of the PR. Before it a branch takes its base in — the delivery guard
+demands that — and the epic branch takes main in while the work runs, as the law says. After it,
+and after someone else's merge, the base is merged not into all open branches but into those the
+host said conflict. This is asked with one call for the whole stack:
 
 ```bash
 gh pr list --state open --json number,headRefName,mergeable \
@@ -161,16 +164,17 @@ The call above knows only open PRs. A stack of local branches has no PRs at all:
 nothing to ask about it, and it lags whole — many branches, one tip, and that is the one usually
 looked at.
 
-The price grows with time. While there are no PRs, main's tip is merged into the lowest branch,
-and then each next one absorbs the previous by one merge. After opening, the same edit costs as
-many updated PRs as there are branches in the stack — and until then the delivery guard will not
-let a single one open: it demands main's tip as an ancestor of the branch.
+The price grows with time. While there are no PRs, the base's tip is merged into the lowest
+branch, and then each next one absorbs the previous by one merge. After opening, the same edit
+costs as many updated PRs as there are branches in the stack — and until then the delivery guard
+will not let a single one open: it demands the tip of the epic branch as an ancestor of the
+branch, and main's tip where the work has no epic.
 
 The sign is read offline, one command per branch:
 
 ```bash
 for br in $(git branch --format='%(refname:short)' --list '<КЛЮЧ>-*'); do
-    git merge-base --is-ancestor origin/<главная> "$br" || echo "$br отстала"
+    git merge-base --is-ancestor origin/<база> "$br" || echo "$br отстала"
 done
 ```
 
@@ -190,11 +194,11 @@ docs/archive/README.md merge=union
 The union is set only on indexes where an edit is always an addition. On text that gets
 rewritten it leaves both versions in the file.
 
-**The union of sides does not clear the mergeability mark, and main must not be merged in by
+**The union of sides does not clear the mergeability mark, and the base must not be merged in by
 it.** The host counts mergeability by its own technique and does not read merge settings: a
 branch that touched a unioned index is marked conflicting all the same. A stack asked from it
 answers "conflicting" whole, and merging by that answer is the same merging into all branches
-as without the union: the section on an actual conflict tells to merge main in on the fact, and
+as without the union: the section on an actual conflict tells to merge the base in on the fact, and
 the host names that fact for every branch of the stack. Fifteen PRs stood like that at once in
 one session. Checked with one command: the same merge without the driver gives a conflict
 marker, with the driver it goes clean — so the mark is held by the index, not by the edit.
@@ -210,7 +214,7 @@ The order is counted before the PRs open — by who edits which files:
 
 ```bash
 for b in $(git branch --list '<префикс>-*' --format='%(refname:short)'); do
-    git diff --name-only origin/main...$b
+    git diff --name-only origin/<база>...$b
 done | sort | uniq -c | sort -rn | head
 ```
 
@@ -227,7 +231,7 @@ the merge the first two are fixed already in main and cost a separate work.
 
 ```bash
 git fetch origin
-git checkout -b probe-merge origin/main
+git checkout -b probe-merge origin/<база>
 for b in <ветка-1> <ветка-2> <ветка-3>; do git merge --no-edit "origin/$b" || break; done
 npm run check:all
 git checkout - && git branch -D probe-merge
@@ -240,10 +244,10 @@ plan lives: a trial merge answers "what will collide", it does not replace the h
 
 - All PRs opened at once because the branches were ready. A branch's readiness does not say it
   is time to hand it over: as much is handed over as the owner has time to merge.
-- Main merged into all open branches after every foreign merge. Half of these merges changed
+- The base merged into all open branches after every foreign merge. Half of these merges changed
   nothing: the branches did not conflict, and their mergeability was not asked.
-- The state of the stack derived from one's own tree, not asked from the host. Locally merged
-  main says nothing about mergeability: between the merge and the owner's look main moves ahead.
+- The state of the stack derived from one's own tree, not asked from the host. A locally merged
+  base says nothing about mergeability: between the merge and the owner's look the base moves ahead.
 - The stack handed over without an order. The owner merges in list order, that is, by number —
   and two branches of one file land on each other exactly when a third stood between them.
 - Time spent on PR bodies instead of bringing the first to the merge. The body is needed by

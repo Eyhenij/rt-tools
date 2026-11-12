@@ -4,7 +4,7 @@ kind: pattern
 rule: deploy-flow
 description: Pattern of rule deploy-flow. Load when editing prisma/schema.prisma and prisma/migrations/** — ready-made commands for a one-off container, writing the migration file through migrate diff, applying to the local database. Not for the commit — pattern git-workflow-commit; for the PR — git-workflow-pr.
 ---
-<!-- rt-kit v0.37.0 · patterns/git-workflow-migration.md · 4b3ac4ba8c76 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/git-workflow-migration.md · 5e5748acda4f · правится надстройкой, не здесь -->
 
 # A migration and the chain run
 
@@ -20,7 +20,7 @@ Pattern of the rule `deploy-flow`. What must be true meanwhile — the law
 ## The chain is run by one command
 
 Local `lint`, `test`, `check:all` and the builds do not touch the migration order at all, and the
-step `Migrations match schema` of the rollout pipeline goes after the merge. The check
+schema check of the pipeline goes after the push. The check
 stands as a push gate and is called by hand:
 
 ```bash

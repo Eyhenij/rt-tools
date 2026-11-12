@@ -4,7 +4,7 @@ kind: pattern
 rule: epic-flow
 description: Pattern of rule epic-flow. Load when the grill gave a series of tasks — declaring the epic with its card, plan and all its tasks at once, then taking its branch from the main branch. One task — pattern task-flow-start.
 ---
-<!-- rt-kit v0.37.0 · patterns/epic-flow-declare.md · a0f0b37a61fe · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/epic-flow-declare.md · 759e10c16b27 · правится надстройкой, не здесь -->
 
 # Declaring an epic
 
@@ -38,14 +38,19 @@ an order is no order: two tasks whose order rested on understanding went into wo
 round, and the second was redone under the first. The assigned order holds to the end of the epic; a
 revision is the owner's decision.
 
-The cards for all the tasks are created at once, right here — by the same call with `--epic-of`, for
-every row of the makeup. The issued numbers return to the same table: "take the next" answers with a
-number from now on.
+The row of the table of assignments that gives the epic to this working copy is the owner's, and it
+is asked for right after the epic card is created, before the task cards: the assignment guard
+counts a call with `--epic-of` as taking work and refuses a number other than the assigned epic.
+The guard reads the table of the working copy, and the epic branch is taken from the main branch:
+the row lies in the main branch before the epic branch is taken, otherwise every branch of the
+epic reads the old epic.
+
+When the row stands, the cards for all the tasks are created at once — by the same call with
+`--epic-of`, for every row of the makeup. The issued numbers return to the same table: "take the
+next" answers with a number from now on.
 
 **Next move:** the branch of the epic is taken, and the declared plan with the task numbers is
-committed into it — a commit on the main branch is refused. The row of the table of assignments that
-gives the epic to this working copy is the owner's: it is asked for in the same turn, and until it
-lies in the main branch the assignment guard reads the old epic.
+committed into it — a commit on the main branch is refused.
 
 ## State `эпик-заведён`: the branch of the epic
 
