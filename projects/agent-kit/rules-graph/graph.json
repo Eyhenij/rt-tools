@@ -2726,8 +2726,8 @@
       "name": "autonomous-work",
       "installed": true,
       "articles": 11,
-      "unheld": 10,
-      "bound_code": 5
+      "unheld": 11,
+      "bound_code": 8
     },
     {
       "label": "browser-verification",
@@ -8525,6 +8525,16 @@
       "weight": 1,
       "source": "rule_autonomous_work",
       "target": "hook_turn_exit_guard_sh",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/autonomous-work/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_autonomous_work",
+      "target": "hook_turn_exit_verdict_sh",
       "confidence_score": 1
     },
     {
@@ -17089,5 +17099,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "57260e48a88401029c3177ac3582d0038fdb11ea"
+  "built_at_commit": "6efc7add649d740bae46cec8a8ebb16b502b09c4"
 }

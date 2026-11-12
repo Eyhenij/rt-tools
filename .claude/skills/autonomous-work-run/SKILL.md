@@ -4,7 +4,7 @@ kind: pattern
 rule: autonomous-work
 description: Pattern of rule autonomous-work. Load when the owner has left and the work runs through the night — the cycle of one piece of work, chained branching, a written default instead of a question, the list by morning, handling a guard refusal. Not for ordinary work — patterns task-flow-start and -resume.
 ---
-<!-- rt-kit v0.37.0 · patterns/autonomous-work-run.md · a7ec81f22470 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/autonomous-work-run.md · e98428fdb35b · правится надстройкой, не здесь -->
 
 # A night without the owner
 
@@ -35,6 +35,17 @@ indexes, counters, journals — and the owner will be the one to sort it out.
 ```bash
 git log --oneline --graph --decorate <база>..HEAD | head -20   # what the chain stands on now
 git branch --list '<КЛЮЧ>-*' --format='%(refname:short) %(upstream:short)'
+```
+
+The base moved during the night — it is merged into the previous branch locally, and only then the
+next one is created. Taking the base fresh instead breaks the chain:
+
+```bash
+git fetch origin
+git merge-base --is-ancestor origin/<база> <прошлая ветка> || {
+    git checkout <прошлая ветка> && git merge origin/<база>
+}
+git checkout -b <КЛЮЧ>-<номер>-<slug> <прошлая ветка>
 ```
 
 ## The cycle of one piece of work
@@ -73,6 +84,18 @@ line goes into the morning list.
 
 ```markdown
 - **<КЛЮЧ>-<номер> — <заголовок>.** Отложена: <какой вопрос и почему умолчания у него нет>.
+```
+
+A task stopped halfway — by red that cannot be fixed or by a question — goes back to its former
+column, and its line says the branch is not merged:
+
+```bash
+npm run task:move -- <номер> <прежняя колонка>
+```
+
+```markdown
+- **<КЛЮЧ>-<номер> — <заголовок>.** Остановлена: <что красное или какой вопрос>. Ветка
+  `<ветка>` не вливается; следующая работа идёт от `<последняя зелёная>`.
 ```
 
 ## The morning list

@@ -48,7 +48,7 @@ printf 'главная: %s · задачи: %s · передача: %s\n' \
 
 ## 4. Checks before the first work
 
-All four are made before the first task is taken. Each of them by morning costs a whole night: a
+All of them are made before the first task is taken. Each of them by morning costs a whole night: a
 session that runs into them at three o'clock has nobody to ask.
 
 ```bash
@@ -64,6 +64,10 @@ git log --oneline -1 "origin/${RT_MAIN_BRANCH:-main}"
   copy switch branches under each other.
 - **The tip of the main branch has moved.** The first branch of the night is created from a fresh
   base, not from the local ref: the local one is yesterday's snapshot and is silent about it.
+- **The epic branch does not carry the tip of the main branch.** Asked by
+  `git merge-base --is-ancestor "origin/${RT_MAIN_BRANCH:-main}" origin/<ветка эпика>`. The owner
+  is asked to have main merged into it now: at night that merge cannot be sent, and the first
+  branch of the night is refused on it.
 - **The source of the work is named.** An epic plan if there is one, the work queue otherwise. A
   night that takes tasks by their look at the list takes somebody else's first.
 
@@ -83,13 +87,21 @@ window, on a refusal, on the network — and what was not written vanishes with 
 does not survive such a break.
 
 The list lies next to the handover of the session, is created by this command with the boundary in
-its head, and is appended to after each closed piece of work. A file of the same night already on
-disk means a broken night resumed: it is read and continued, not written over.
+its head, and is appended to after each closed piece of work. A list of the last day already on
+disk means a broken night resumed — after midnight too: it is read and continued, not written over.
+The block reads the profile itself: the shell keeps nothing between calls.
 
 ```bash
-list="${RT_HANDOFF_DIR:-.claude/handoff}/$(date +%Y-%m-%d)-ночь.md"
-[ -f "$list" ] || printf '# Список к утру · ночь с %s\n\nГраница: %s\n\n' \
-    "$(date +%d.%m.%Y)" "$ARGUMENTS" > "$list"
+for profile in .claude/rt-kit/defaults/project.sh .claude/rt-kit/project.sh; do
+    [ -f "$profile" ] && . "$profile"
+done
+dir="${RT_HANDOFF_DIR:-.claude/handoff}"
+list="$(find "$dir" -maxdepth 1 -name '*-ночь.md' -mtime -1 2>/dev/null | sort | tail -1)"
+[ -n "$list" ] || {
+    list="$dir/$(date +%Y-%m-%d)-ночь.md"
+    printf '# Список к утру · ночь с %s\n\nГраница: %s\n\n' "$(date +%d.%m.%Y)" "$ARGUMENTS" > "$list"
+}
+echo "$list"
 ```
 
 A row per closed piece of work, and the row order is the merge order. The shape of the row and
@@ -99,6 +111,11 @@ the line of a postponed task are in the pattern `autonomous-work-run`.
 
 Then the work goes by the rule and the pattern. The night ends at the named boundary, and the last
 reply gives the list — the same one that lies in the file.
+
+Where a turn-exit guard holds a working turn under an open epic, silence does not end the night:
+the guard does not know the boundary. The last turn appends the list and ends with a question
+through the question tool — the night is over, the list is in the file. The owner answers it in the
+morning.
 
 ## What this command does not do
 
