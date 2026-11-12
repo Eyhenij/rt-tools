@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/check-specs.mjs · b50b301f5172 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/check-specs.mjs · 35413088aa9f · правится надстройкой, не здесь
 /**
  * The check that a domain spec has not diverged from the code.
  *
@@ -17,7 +17,7 @@
  *    decision, and four discount mechanics that were never started would have found no binding
  *    at all. The key of the link is the text of the rule itself, so it cannot be reworded while
  *    the binding is left unfixed. A rule without a binding is an intention, and it is written as
- *    an open question of a law — `Q-<law letter>-<number>`.
+ *    an open question of a law — `Q-<law letters>-<number>`.
  *
  * 2. THE CONTRACT AGAINST THE DECORATORS. The table of procedures is audited against what is
  *    declared in the domain's `*.procedure.ts`: `@RequiresPermission` / `@PublicProcedure` and

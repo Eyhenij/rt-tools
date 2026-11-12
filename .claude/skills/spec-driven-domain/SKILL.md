@@ -4,7 +4,7 @@ kind: pattern
 rule: spec-driven
 description: Pattern of rule spec-driven. Load when creating or editing a domain spec in docs/specs — the mandatory sections, the scenario form, binding a rule to code, the order of work from spec to code. Not for creating a law, a rule or a pattern — that is pattern spec-driven-rule.
 ---
-<!-- rt-kit v0.37.0 · patterns/spec-driven-domain.md · b7fa761a6f04 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/spec-driven-domain.md · e176ebe68199 · правится надстройкой, не здесь -->
 
 # Domain spec
 
@@ -104,8 +104,9 @@ itself:
 | One maximum discount is applied. | `libs/api/<domain>/util/src/lib/quote.calculator.ts:calculateQuote` |
 ```
 
-A rule that found no place in code is an intention: its place is "Open questions" as
-`Q-<law letter>-<number>`, not a formal anchor.
+A spec rule that found no place in code is an intention: its place is the spec's "Open questions"
+as `Q-<number>`, not a formal anchor. A rule article of the package goes the other way — a verdict
+line, the pattern `spec-driven-rule`.
 
 ## Scenario
 

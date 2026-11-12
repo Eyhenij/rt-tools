@@ -172,7 +172,7 @@ function checkRuleImplementation(specFile, text, mapFile, heading = ['## Rules',
             report(
                 mapFile,
                 `a statement without a binding: «${head.slice(0, 60)}…» — add a line with \`file:symbol\`, ` +
-                    'a verdict «Not carried out» with a reason, or move the statement into «Open questions» of the law as Q-<letter>-<number>'
+                    'a verdict «Not carried out» with a reason, or move the statement into «Open questions» of the law as Q-<law letters>-<number>'
             );
             continue;
         }
@@ -348,9 +348,9 @@ function checkTracedAnchors() {
                 mapFile,
                 others.length > elsewhere
                     ? `the binding leads into code called by a test alone: \`${symbol}\` is declared in \`${path}\` and outside tests is met nowhere — ` +
-                          'a test is not a call from the application; either the statement is carried out elsewhere, or its place is in «Open questions» of the law as Q-<letter>-<number>'
+                          'a test is not a call from the application; either the statement is carried out elsewhere, or its place is in «Open questions» of the law as Q-<law letters>-<number>'
                     : `the binding leads into dead code: \`${symbol}\` is declared in \`${path}\` and met nowhere else — ` +
-                          'either the statement is carried out elsewhere, or its place is in «Open questions» of the law as Q-<letter>-<number>'
+                          'either the statement is carried out elsewhere, or its place is in «Open questions» of the law as Q-<law letters>-<number>'
             );
         }
     }

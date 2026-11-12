@@ -75,7 +75,7 @@ flowchart TD
     D --> G{The statement has a place in code}
     F --> G
     G -->|Yes| H[A binding line is placed; the link is checked both ways]
-    G -->|No| I[A verdict line names who holds it; held by nobody, it is a law question]
+    G -->|No| I[A rule article: a verdict line, held by nobody — a law question; a spec rule: the spec's open questions]
     H --> J{A scenario is created}
     J -->|Yes| K[The number is issued new and never reused; the test title is edited by the same change]
     J -->|No| L[Done]

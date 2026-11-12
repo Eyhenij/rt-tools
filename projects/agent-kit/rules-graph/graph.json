@@ -7463,6 +7463,16 @@
       "source_location": "L1",
       "weight": 1,
       "source": "pattern_spec_driven_domain",
+      "target": "pattern_spec_driven_rule",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/patterns/spec-driven-domain.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "pattern_spec_driven_domain",
       "target": "rule_lists",
       "confidence_score": 1
     },
@@ -16948,5 +16958,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6082cf08cc0e4d7068763c03d802a82ac7addc6f"
+  "built_at_commit": "40f3ff9bb0217a6f563984f3d2c1a8390c2d91b7"
 }

@@ -103,8 +103,9 @@ itself:
 | One maximum discount is applied. | `libs/api/<domain>/util/src/lib/quote.calculator.ts:calculateQuote` |
 ```
 
-A rule that found no place in code is an intention: its place is "Open questions" as
-`Q-<law letter>-<number>`, not a formal anchor.
+A spec rule that found no place in code is an intention: its place is the spec's "Open questions"
+as `Q-<number>`, not a formal anchor. A rule article of the package goes the other way — a verdict
+line, the pattern `spec-driven-rule`.
 
 ## Scenario
 

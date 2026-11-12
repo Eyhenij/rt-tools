@@ -4,7 +4,7 @@ kind: pattern
 rule: doc-style
 description: Pattern of rule doc-style. Load when writing any project prose — rules, specs, README, code comments, commit bodies, PR descriptions. Samples of "so" and "not so" for each wording convention. Not for the structure of a spec — that is rule spec-driven.
 ---
-<!-- rt-kit v0.37.0 · patterns/doc-style-write.md · 571a03a833f4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/doc-style-write.md · 5891f3ca5fe1 · правится надстройкой, не здесь -->
 
 # How to word
 
@@ -49,8 +49,8 @@ directly, because the pitfall is the very place where people step on it.
 
 "Not planned", "will not be", "a separate feature on request" — that is the owner's intention,
 not a property of the system. What is not done — yes; why not — yes; what will never be done —
-no. Instead of a verdict — an open question `Q-<law letter>-<number>` with what the decision would
-change.
+no. Instead of a verdict — an open question, `Q-<law letters>-<number>` in a law and `Q-<number>` in a
+spec, with what the decision would change.
 
 The error is silent: a claim about the future has nothing to be checked against, it passes any
 check. That is how "there is no online payment and none is planned" got into the first live spec,

@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing specs, laws and any skill. Names the three layers — law, rule, pattern — the mandatory sections, the binding to code and the link between scenarios and tests. Patterns spec-driven-domain, spec-driven-rule.
 ---
-<!-- rt-kit v0.37.0 · rules/spec-driven.md · 60efe2449486 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/spec-driven.md · 05ebcf1240bc · правится надстройкой, не здесь -->
 
 # Project documentation — how it works here
 
@@ -76,7 +76,7 @@ flowchart TD
     D --> G{The statement has a place in code}
     F --> G
     G -->|Yes| H[A binding line is placed; the link is checked both ways]
-    G -->|No| I[A verdict line names who holds it; held by nobody, it is a law question]
+    G -->|No| I[A rule article: a verdict line, held by nobody — a law question; a spec rule: the spec's open questions]
     H --> J{A scenario is created}
     J -->|Yes| K[The number is issued new and never reused; the test title is edited by the same change]
     J -->|No| L[Done]
