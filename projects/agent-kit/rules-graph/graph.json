@@ -2760,8 +2760,8 @@
       "name": "dependencies",
       "installed": true,
       "articles": 5,
-      "unheld": 2,
-      "bound_code": 0
+      "unheld": 1,
+      "bound_code": 3
     },
     {
       "label": "deploy-flow",
@@ -2776,7 +2776,7 @@
       "installed": true,
       "articles": 29,
       "unheld": 13,
-      "bound_code": 11
+      "bound_code": 13
     },
     {
       "label": "doc-style",
@@ -17078,5 +17078,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "72e431fb7929ceabe1ff893b0686dc37d1024491"
+  "built_at_commit": "51fef1737f46fcdefaa7a13dcbb67458f3b25613"
 }
