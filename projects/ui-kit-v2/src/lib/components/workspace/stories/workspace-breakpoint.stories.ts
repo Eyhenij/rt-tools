@@ -31,7 +31,7 @@ const PHONE_FRAME: IFrame = { viewport: { width: 375, height: 812 }, fullPage: t
 const PANEL: string = '[qa-dataid="workspace-aside-overlay-close"]';
 
 /** Планшет: список и середина рядом, панель сведений закрыта. */
-export const Tablet: TStory = { globals: TABLET, parameters: { snapshot: TABLET_FRAME } };
+export const TabletColumns: TStory = { globals: TABLET, parameters: { snapshot: TABLET_FRAME } };
 
 /** Планшет: панель сведений открыта поверх окна. */
 export const TabletDetails: TStory = {
