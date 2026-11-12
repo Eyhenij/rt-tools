@@ -39686,13 +39686,13 @@
       "norm_label": "what gets fixed in the tree next"
     },
     {
-      "label": "code:bash (grep -rn 'BACKLOG' --exclude-dir=node_modules --exclude-dir=)",
+      "label": "code:bash (grep -rn '<removed name>' --exclude-dir=node_modules --exclu)",
       "file_type": "document",
       "source_file": "assets/patterns/doc-style-sweep.md",
       "source_location": "L127",
       "id": "patterns_doc_style_sweep_codeblock_5",
       "community": 75,
-      "norm_label": "code:bash (grep -rn 'backlog' --exclude-dir=node_modules --exclude-dir=)"
+      "norm_label": "code:bash (grep -rn '<removed name>' --exclude-dir=node_modules --exclu)"
     },
     {
       "label": "Common misses",
@@ -45674,7 +45674,7 @@
       "label": "code:bash (ls <rules directory> | wc -l)",
       "file_type": "document",
       "source_file": "assets/pitfalls/spec-driven.md",
-      "source_location": "L55",
+      "source_location": "L56",
       "id": "pitfalls_spec_driven_codeblock_1",
       "community": 329,
       "norm_label": "code:bash (ls <rules directory> | wc -l)"
@@ -45683,7 +45683,7 @@
       "label": "code:bash (ls <laws directory>/*.md | wc -l)",
       "file_type": "document",
       "source_file": "assets/pitfalls/spec-driven.md",
-      "source_location": "L72",
+      "source_location": "L73",
       "id": "pitfalls_spec_driven_codeblock_2",
       "community": 329,
       "norm_label": "code:bash (ls <laws directory>/*.md | wc -l)"
@@ -117368,7 +117368,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "assets/pitfalls/spec-driven.md",
-      "source_location": "L55",
+      "source_location": "L56",
       "weight": 1.0,
       "source": "pitfalls_spec_driven_pitfalls",
       "target": "pitfalls_spec_driven_codeblock_1",
@@ -117378,7 +117378,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "assets/pitfalls/spec-driven.md",
-      "source_location": "L72",
+      "source_location": "L73",
       "weight": 1.0,
       "source": "pitfalls_spec_driven_pitfalls",
       "target": "pitfalls_spec_driven_codeblock_2",
@@ -123606,5 +123606,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "786f6a0b69cd232cfd6a2cf6416501374733bbd2"
+  "built_at_commit": "54fcfa5312612cfb0670dc771b67a5a7ee88ac84"
 }
