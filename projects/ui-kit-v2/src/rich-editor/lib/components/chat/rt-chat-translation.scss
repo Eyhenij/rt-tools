@@ -1,0 +1,49 @@
+// Перевод реплики: кнопка «Показать перевод» под текстом. Подпись перевода стоит в строке времени
+// и своих правил не имеет. Лежит отдельно от стилей чата, чтобы файлы уместились в предел длины.
+@layer rt-kit.components {
+    .rt-chat {
+        --rt-chat-translate-outline-width: var(--rt-border-width-medium);
+        --rt-chat-translate-radius: var(--rt-radius-xs);
+
+        // Кнопка прижата к тексту: зазор пузыря между ними снят, как у строки того же абзаца
+        &__message-translate {
+            align-self: flex-start;
+            padding: 0;
+            border: 0;
+            border-radius: var(--rt-chat-translate-radius);
+            background: transparent;
+            color: var(--rt-color-action-primary);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: var(--rt-text-xs);
+            font-weight: var(--rt-font-weight-medium);
+            line-height: round(1em * var(--rt-leading-snug), 1px);
+            margin-block-start: calc(-1 * var(--rt-space-2));
+            text-align: start;
+
+            &:hover {
+                text-decoration: underline;
+            }
+
+            &:focus-visible {
+                outline: var(--rt-chat-translate-outline-width) solid var(--rt-color-border-focus);
+            }
+        }
+
+        &--messenger {
+            .rt-chat__message-translate {
+                margin-block-start: calc(-1 * var(--rt-space-0-5));
+            }
+
+            // На заливке цвета действия синяя кнопка не читается: она белая и подчёркнута
+            .rt-chat__message--own .rt-chat__message-translate {
+                color: var(--rt-color-action-on-primary);
+                text-decoration: underline;
+
+                &:focus-visible {
+                    outline-color: var(--rt-color-action-on-primary);
+                }
+            }
+        }
+    }
+}
