@@ -20,7 +20,7 @@ Given a bar of four steps with the last current
 When it is drawn
 Then the label segment is the whole bar and the label is aligned to its end
 
-### SC-UKV-1232 — the label of a middle step stands in a segment centred on its point
+### SC-UKV-1232 — the label of a middle step stands in a segment centred on the share of its step
 
 Given a bar of four steps with the third current
 When it is drawn

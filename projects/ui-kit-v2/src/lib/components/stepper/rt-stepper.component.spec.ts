@@ -28,7 +28,7 @@ describe('RtStepperComponent', (): void => {
         expect(textOf(qa(setup({ currentIndex: 1 }), 'stepper-label'))).toBe('Проверка');
     });
 
-    it('SC-UKV-1232 — подпись среднего шага стоит в отрезке полосы с центром над точкой', (): void => {
+    it('SC-UKV-1232 — подпись среднего шага стоит в отрезке полосы с центром на доле шага', (): void => {
         const label: HTMLElement = qa(setup({ currentIndex: 1 }), 'stepper-label')?.nativeElement as HTMLElement;
 
         expect(label.style.marginInlineStart).toBe('0%');

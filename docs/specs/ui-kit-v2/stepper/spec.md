@@ -43,8 +43,10 @@ The label reads «Шаг 3 из 4 · Гости» or any text the application gi
 - **The label of the first step starts at the left edge, the label of the last ends at the right.**
   Both may take the whole bar.
 
-- **The label of a middle step is centred over its point and never goes past the bar.** It stands
-  in a segment centred on the point, as wide as twice the distance to the nearer edge.
+- **The label of a middle step is centred on the share of its step and never goes past the bar.**
+  It stands in a segment centred on that share, as wide as twice the distance to the nearer edge.
+  The current point is wider than the rest, so its centre stands up to 4 px off the centre of the
+  segment.
 
 - **A middle step near an edge takes the whole bar, pressed to that edge.** When the centred
   segment is narrower than half the bar, the label stands like the label of the first or the last
@@ -72,7 +74,8 @@ The label reads «Шаг 3 из 4 · Гости» or any text the application gi
 
 ## What is out of scope
 
-- The vertical list (`orientation="vertical"`): it is unchanged.
+- The layout of the vertical list (`orientation="vertical"`): it is unchanged. Its colours became
+  host properties by the rule above.
 - Moving a label towards an edge by its own width: the mockup cannot draw it, so the code does not
   do it either.
 

@@ -10,7 +10,7 @@ describe('labelSegment', (): void => {
         expect(labelSegment(3, 4)).toEqual({ start: 0, size: 100, anchor: 'end' });
     });
 
-    it('SC-UKV-1232 — подпись третьего из четырёх стоит в отрезке с центром над точкой', (): void => {
+    it('SC-UKV-1232 — подпись третьего из четырёх стоит в отрезке с центром на доле шага', (): void => {
         const segment: IRtStepper.LabelSegment = labelSegment(2, 4);
 
         expect(segment.anchor).toBe('center');
