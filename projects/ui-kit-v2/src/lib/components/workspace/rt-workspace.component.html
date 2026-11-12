@@ -58,8 +58,11 @@
             (dblclick)="onHandleReset('aside')"
             (keydown)="onHandleKeydown($event, 'aside')"></div>
 
-        <section rtElem="aside" qa-dataid="workspace-aside" [rtMod]="{ open: asideOpen() }">
-            <ng-container [ngTemplateOutlet]="asideSlot()?.templateRef ?? null" [ngTemplateOutletContext]="slotContext" />
+        <!-- Панель, открытая поверх окна, рисует тот же шаблон сама: дважды он не выводится -->
+        <section rtElem="aside" qa-dataid="workspace-aside" [rtMod]="{ open: asideOpen(), overlay: asideOverlay() }">
+            <ng-container
+                [ngTemplateOutlet]="asideOverlay() ? null : (asideSlot()?.templateRef ?? null)"
+                [ngTemplateOutletContext]="slotContext" />
         </section>
     }
 </ng-container>
