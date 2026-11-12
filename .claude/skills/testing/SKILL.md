@@ -4,7 +4,7 @@ kind: rule
 law: verifiability
 description: Rule under the verifiability law. Load when editing any test file and anything in the tree's end-to-end suites. Names the scenario id in the title, moving a decision into a pure function and what an end-to-end test closes. Patterns testing-unit, testing-e2e.
 ---
-<!-- rt-kit v0.37.0 · rules/testing.md · cbf78dcfb917 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/testing.md · c0397d47d6ca · правится надстройкой, не здесь -->
 
 # Verifiability — how it works here
 
@@ -264,15 +264,13 @@ stand, data and the request path applies to them alone.
 - **The runner of the package specs is Jest with `jest-preset-angular`, not Vitest.** One project
   per package; everything the rule says about the Vitest config has nothing to apply to here. The
   end-to-end suite runs Playwright.
-- **Numbered scenarios exist for the receiver and do not for the kits.** The titles of the admin
-  panel's end-to-end specs carry a scenario number, and the scenarios themselves live in
-  `docs/specs/message-bus/`. The kits have none: the link between behaviour and test is held by a
-  word — the behaviour is named in the component's `CONTEXT.md` and named once more in the test
-  title.
-- **The end-to-end suite raises the stand itself, and it cannot be pointed elsewhere by an
-  environment variable.** Production builds of both applications, their own database, schema and
-  seeding come up by one command and go down with the run; the specs therefore have no switches
-  by the state of the stand.
+- **Numbered scenarios exist for the receiver and for both kits.** The scenarios live in
+  `docs/specs/message-bus/`, `docs/specs/ui-kit/` and `docs/specs/ui-kit-v2/`, and the test
+  titles carry their numbers; a second-kit component also names its behaviour in its
+  `CONTEXT.md`.
+- **The end-to-end suite raises the stand itself.** Production builds of both applications, their
+  own database, schema and seeding come up by one command and go down with the run; only the
+  ports move by variables. The specs therefore have no switches by the state of the stand.
 - **The ready-made code of a kit component's spec and of an application screen frame lies in the
   rule `ui-component-tests`.** There too are the substitutions nobody would think of, and the
   choice between a spec, a story snapshot, a screen frame and a measurement.

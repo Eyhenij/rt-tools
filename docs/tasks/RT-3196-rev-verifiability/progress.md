@@ -4,10 +4,10 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 1 of 3 — Findings
-- **Done:** the role rules-reviewer read the family; its findings D1, D2, D4–D18, G1–G9 and the
-  repeats are edited in the package texts and laid out; the binding comparison runs
-- **Next step:** compare the articles of testing and browser-verification with their companion
-  bindings and the code they name
+- **Done:** the role findings and the binding comparison are edited in the package texts, both
+  companions and the override of `testing`, and laid out; all text checks are green
+- **Next step:** decide what needs a task; the law text for D3 goes to the owner in the PR
+- **Metric now:** held by memory 26 → 24 (testing 12 of 42, browser-verification 12 of 23)
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -17,11 +17,11 @@
 - `[x]` done · `[>]` going on right now · `[ ]` not begun
 
 - [x] 1.1 Run the role rules-reviewer over the whole family
-- [>] 1.2 Compare rule articles with the companion bindings and hook code
-- [ ] 1.3 Write the findings list into the progress with a decision for each
-- [ ] 2.1 Edit the package texts by the findings
-- [ ] 2.2 Build the package and lay out the tree
-- [ ] 2.3 File tasks for findings that need code or another law
+- [x] 1.2 Compare rule articles with the companion bindings and hook code
+- [x] 1.3 Write the findings list into the progress with a decision for each
+- [x] 2.1 Edit the package texts by the findings
+- [x] 2.2 Build the package and lay out the tree
+- [>] 2.3 File tasks for findings that need code or another law
 - [ ] 3.1 Rebuild the rules graph and its report
 - [ ] 3.2 Run the push gate
 - [ ] 3.3 Take the task folder apart into the archive
@@ -40,17 +40,29 @@ The role read the family on the tip of RT-3195 (`ed2bb634b`). Room against the p
   broken check, the pipeline set before push, a spoken list of checks.
 - **P1–P16** near repeats, most between browser-verification and its patterns.
 
+Binding comparison, 12.11.2026: testing — 42 articles, 27 lines right; browser-verification — 23
+articles, 19 lines right. Wrong: stale verdicts where the spec audit already refuses (scenario
+without a test, partial coverage, a foreign id, direct calls), false bindings (`openSection`,
+`STAND_PASSWORD`, `prose-style-guard`, `serve-admin` as the real proxy, the known-list parser),
+symbols in other files, stale facts (two applications, `UI-KIT-V2-ISSUES.md` as the coverage
+list, no reverse proxy, the pipeline set, `e2eRoots` without the entry example's suite, the
+snapshot references outside history, the story sweep past the guard). All fixed in the companions;
+`e2eRoots` gets the second suite.
+
 Decisions on the role findings:
 
 - **D1, D2** fixed in the rule to the law: the known list only shrinks; a disputed red check is
   not a question to the owner — the executor fixes the check or the code.
-- **D3** a law question to the owner: is an unconfigured guard a broken check (the law: work goes
-  on) or a reason to stop (the rule)? The rule keeps its text until the answer.
+- **D3** asked of the owner. Their answer: «Не открывать браузер (Recommended)» — the rule is
+  right. The law article about a broken check needs the exception; its text goes to the owner in
+  the PR, the law is not edited in the branch.
+- `UI-KIT-V2-ISSUES.md`: the owner answered «[No preference]»; the file stays, the divergence
+  stays named in the doc-style companion.
 - **D4, D5, D7, D9, D10, D11, D12, D14, D15, D17, D18** fixed here to the side the role named right.
 - **D6** the rule names substitution as the fallback, as the pattern does.
 - **D8** the measure pattern names the tree's layout thresholds as the source of the sweep.
-- **D13** the dead `Q-FA-1` reference goes; the same id in two rules of other families is named
-  for RT-3209.
+- **D13** the dead `Q-FA-1` reference goes; the same id in `angular-patterns` and
+  `component-structure` is written into the card of RT-3198, the frontend-application family.
 - **D16** tree names in portable texts are replaced by placeholders where the text says it holds
   none.
 - **G1–G7** a rule line where something in the tree holds it, otherwise a line in "What of the law
