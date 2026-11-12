@@ -15193,7 +15193,7 @@
       "source_file": "assets/checks/spec-anchors.mjs",
       "source_location": "L1",
       "id": "assets_checks_spec_anchors_mjs",
-      "community": 73,
+      "community": 72,
       "norm_label": "spec-anchors.mjs"
     },
     {
@@ -15202,7 +15202,7 @@
       "source_file": "assets/checks/spec-anchors.mjs",
       "source_location": "L27",
       "id": "checks_spec_anchors_escapeforregexp",
-      "community": 73,
+      "community": 72,
       "norm_label": "escapeforregexp()"
     },
     {
@@ -15211,7 +15211,7 @@
       "source_file": "assets/checks/spec-anchors.mjs",
       "source_location": "L36",
       "id": "checks_spec_anchors_filehassymbol",
-      "community": 73,
+      "community": 72,
       "norm_label": "filehassymbol()"
     },
     {
@@ -15220,7 +15220,7 @@
       "source_file": "assets/checks/spec-anchors.mjs",
       "source_location": "L57",
       "id": "checks_spec_anchors_traced",
-      "community": 73,
+      "community": 72,
       "norm_label": "traced"
     },
     {
@@ -15229,7 +15229,7 @@
       "source_file": "assets/checks/spec-anchors.mjs",
       "source_location": "L60",
       "id": "checks_spec_anchors_ruleheadof",
-      "community": 73,
+      "community": 72,
       "norm_label": "ruleheadof()"
     },
     {
@@ -15238,7 +15238,7 @@
       "source_file": "assets/checks/spec-anchors.mjs",
       "source_location": "L94",
       "id": "checks_spec_anchors_rowsofmap",
-      "community": 73,
+      "community": 72,
       "norm_label": "rowsofmap()"
     },
     {
@@ -15247,7 +15247,7 @@
       "source_file": "assets/checks/spec-anchors.mjs",
       "source_location": "L110",
       "id": "checks_spec_anchors_checkruleimplementation",
-      "community": 73,
+      "community": 72,
       "norm_label": "checkruleimplementation()"
     },
     {
@@ -15256,7 +15256,7 @@
       "source_file": "assets/checks/spec-anchors.mjs",
       "source_location": "L229",
       "id": "checks_spec_anchors_filedeclaressymbol",
-      "community": 73,
+      "community": 72,
       "norm_label": "filedeclaressymbol()"
     },
     {
@@ -15265,7 +15265,7 @@
       "source_file": "assets/checks/spec-anchors.mjs",
       "source_location": "L243",
       "id": "checks_spec_anchors_symbolowners",
-      "community": 73,
+      "community": 72,
       "norm_label": "symbolowners()"
     },
     {
@@ -15274,7 +15274,7 @@
       "source_file": "assets/checks/spec-anchors.mjs",
       "source_location": "L280",
       "id": "checks_spec_anchors_publishedfiles",
-      "community": 73,
+      "community": 72,
       "norm_label": "publishedfiles()"
     },
     {
@@ -15283,7 +15283,7 @@
       "source_file": "assets/checks/spec-anchors.mjs",
       "source_location": "L312",
       "id": "checks_spec_anchors_checktracedanchors",
-      "community": 73,
+      "community": 72,
       "norm_label": "checktracedanchors()"
     },
     {
@@ -15292,7 +15292,7 @@
       "source_file": "assets/checks/spec-anchors.mjs",
       "source_location": "L376",
       "id": "checks_spec_anchors_law_reference",
-      "community": 73,
+      "community": 72,
       "norm_label": "law_reference"
     },
     {
@@ -15301,7 +15301,7 @@
       "source_file": "assets/checks/spec-anchors.mjs",
       "source_location": "L378",
       "id": "checks_spec_anchors_checkspeclaws",
-      "community": 73,
+      "community": 72,
       "norm_label": "checkspeclaws()"
     },
     {
@@ -16417,7 +16417,7 @@
       "source_file": "assets/checks/spec-scenarios.mjs",
       "source_location": "L1",
       "id": "assets_checks_spec_scenarios_mjs",
-      "community": 72,
+      "community": 71,
       "norm_label": "spec-scenarios.mjs"
     },
     {
@@ -16426,7 +16426,7 @@
       "source_file": "assets/checks/spec-scenarios.mjs",
       "source_location": "L37",
       "id": "checks_spec_scenarios_unparsedheadings",
-      "community": 72,
+      "community": 71,
       "norm_label": "unparsedheadings()"
     },
     {
@@ -16435,7 +16435,7 @@
       "source_file": "assets/checks/spec-scenarios.mjs",
       "source_location": "L52",
       "id": "checks_spec_scenarios_parsescenarios",
-      "community": 72,
+      "community": 71,
       "norm_label": "parsescenarios()"
     },
     {
@@ -16444,7 +16444,7 @@
       "source_file": "assets/checks/spec-scenarios.mjs",
       "source_location": "L135",
       "id": "checks_spec_scenarios_promisesscreen",
-      "community": 72,
+      "community": 71,
       "norm_label": "promisesscreen()"
     },
     {
@@ -16453,7 +16453,7 @@
       "source_file": "assets/checks/spec-scenarios.mjs",
       "source_location": "L149",
       "id": "checks_spec_scenarios_environmentswitches",
-      "community": 72,
+      "community": 71,
       "norm_label": "environmentswitches()"
     },
     {
@@ -16462,7 +16462,7 @@
       "source_file": "assets/checks/spec-scenarios.mjs",
       "source_location": "L184",
       "id": "checks_spec_scenarios_collectreferences",
-      "community": 72,
+      "community": 71,
       "norm_label": "collectreferences()"
     },
     {
@@ -18352,7 +18352,7 @@
       "source_file": "assets/checks/spec-common.mjs",
       "source_location": "L1",
       "id": "assets_checks_spec_common_mjs",
-      "community": 72,
+      "community": 71,
       "norm_label": "spec-common.mjs"
     },
     {
@@ -18361,7 +18361,7 @@
       "source_file": "assets/checks/spec-common.mjs",
       "source_location": "L20",
       "id": "checks_spec_common_not_domains",
-      "community": 72,
+      "community": 71,
       "norm_label": "not_domains"
     },
     {
@@ -18370,7 +18370,7 @@
       "source_file": "assets/checks/spec-common.mjs",
       "source_location": "L34",
       "id": "checks_spec_common_test_roots",
-      "community": 72,
+      "community": 71,
       "norm_label": "test_roots"
     },
     {
@@ -18379,7 +18379,7 @@
       "source_file": "assets/checks/spec-common.mjs",
       "source_location": "L38",
       "id": "checks_spec_common_source_roots",
-      "community": 72,
+      "community": 71,
       "norm_label": "source_roots"
     },
     {
@@ -18388,7 +18388,7 @@
       "source_file": "assets/checks/spec-common.mjs",
       "source_location": "L52",
       "id": "checks_spec_common_scenario_heading",
-      "community": 72,
+      "community": 71,
       "norm_label": "scenario_heading"
     },
     {
@@ -18397,7 +18397,7 @@
       "source_file": "assets/checks/spec-common.mjs",
       "source_location": "L65",
       "id": "checks_spec_common_codeof",
-      "community": 73,
+      "community": 72,
       "norm_label": "codeof()"
     },
     {
@@ -18406,7 +18406,7 @@
       "source_file": "assets/checks/spec-common.mjs",
       "source_location": "L79",
       "id": "checks_spec_common_istestfile",
-      "community": 73,
+      "community": 72,
       "norm_label": "istestfile()"
     },
     {
@@ -18415,7 +18415,7 @@
       "source_file": "assets/checks/spec-common.mjs",
       "source_location": "L88",
       "id": "checks_spec_common_scenario_reference",
-      "community": 72,
+      "community": 71,
       "norm_label": "scenario_reference"
     },
     {
@@ -18424,7 +18424,7 @@
       "source_file": "assets/checks/spec-common.mjs",
       "source_location": "L164",
       "id": "checks_spec_common_required_headings",
-      "community": 72,
+      "community": 71,
       "norm_label": "required_headings"
     },
     {
@@ -18433,7 +18433,7 @@
       "source_file": "assets/checks/spec-common.mjs",
       "source_location": "L184",
       "id": "checks_spec_common_problems",
-      "community": 72,
+      "community": 71,
       "norm_label": "problems"
     },
     {
@@ -18442,7 +18442,7 @@
       "source_file": "assets/checks/spec-common.mjs",
       "source_location": "L185",
       "id": "checks_spec_common_report",
-      "community": 73,
+      "community": 72,
       "norm_label": "report()"
     },
     {
@@ -18460,7 +18460,7 @@
       "source_file": "assets/checks/spec-common.mjs",
       "source_location": "L210",
       "id": "checks_spec_common_read",
-      "community": 72,
+      "community": 71,
       "norm_label": "read()"
     },
     {
@@ -18469,7 +18469,7 @@
       "source_file": "assets/checks/spec-common.mjs",
       "source_location": "L211",
       "id": "checks_spec_common_exists",
-      "community": 73,
+      "community": 72,
       "norm_label": "exists()"
     },
     {
@@ -18478,7 +18478,7 @@
       "source_file": "assets/checks/spec-common.mjs",
       "source_location": "L214",
       "id": "checks_spec_common_collectdomains",
-      "community": 72,
+      "community": 71,
       "norm_label": "collectdomains()"
     },
     {
@@ -18514,7 +18514,7 @@
       "source_file": "assets/checks/check-specs.mjs",
       "source_location": "L59",
       "id": "checks_check_specs_checkspecheadings",
-      "community": 73,
+      "community": 72,
       "norm_label": "checkspecheadings()"
     },
     {
@@ -18739,7 +18739,7 @@
       "source_file": "assets/checks/check-specs.mjs",
       "source_location": "L308",
       "id": "checks_check_specs_isproposedlaw",
-      "community": 72,
+      "community": 71,
       "norm_label": "isproposedlaw()"
     },
     {
@@ -18748,7 +18748,7 @@
       "source_file": "assets/checks/check-specs.mjs",
       "source_location": "L324",
       "id": "checks_check_specs_skippedpatterns",
-      "community": 72,
+      "community": 71,
       "norm_label": "skippedpatterns()"
     },
     {
@@ -28396,7 +28396,7 @@
       "source_file": "src/lib/metric-lines.ts",
       "source_location": "L1",
       "id": "src_lib_metric_lines_ts",
-      "community": 67,
+      "community": 73,
       "norm_label": "metric-lines.ts"
     },
     {
@@ -28405,7 +28405,7 @@
       "source_file": "src/lib/metric-lines.ts",
       "source_location": "L17",
       "id": "lib_metric_lines_tmetrics",
-      "community": 67,
+      "community": 73,
       "norm_label": "tmetrics"
     },
     {
@@ -28414,7 +28414,7 @@
       "source_file": "src/lib/metric-lines.ts",
       "source_location": "L19",
       "id": "lib_metric_lines_add",
-      "community": 67,
+      "community": 73,
       "norm_label": "add()"
     },
     {
@@ -28423,7 +28423,7 @@
       "source_file": "src/lib/metric-lines.ts",
       "source_location": "L25",
       "id": "lib_metric_lines_nameof",
-      "community": 67,
+      "community": 73,
       "norm_label": "nameof()"
     },
     {
@@ -28432,7 +28432,7 @@
       "source_file": "src/lib/metric-lines.ts",
       "source_location": "L29",
       "id": "lib_metric_lines_countof",
-      "community": 67,
+      "community": 73,
       "norm_label": "countof()"
     },
     {
@@ -28441,7 +28441,7 @@
       "source_file": "src/lib/metric-lines.ts",
       "source_location": "L33",
       "id": "lib_metric_lines_sessionsof",
-      "community": 67,
+      "community": 73,
       "norm_label": "sessionsof()"
     },
     {
@@ -28450,7 +28450,7 @@
       "source_file": "src/lib/metric-lines.ts",
       "source_location": "L37",
       "id": "lib_metric_lines_outcomenumbers",
-      "community": 67,
+      "community": 73,
       "norm_label": "outcomenumbers()"
     },
     {
@@ -28459,7 +28459,7 @@
       "source_file": "src/lib/metric-lines.ts",
       "source_location": "L50",
       "id": "lib_metric_lines_usagenumbers",
-      "community": 67,
+      "community": 73,
       "norm_label": "usagenumbers()"
     },
     {
@@ -28468,7 +28468,7 @@
       "source_file": "src/lib/metric-lines.ts",
       "source_location": "L58",
       "id": "lib_metric_lines_guardnumbers",
-      "community": 67,
+      "community": 73,
       "norm_label": "guardnumbers()"
     },
     {
@@ -28477,7 +28477,7 @@
       "source_file": "src/lib/metric-lines.ts",
       "source_location": "L68",
       "id": "lib_metric_lines_runnumbers",
-      "community": 67,
+      "community": 73,
       "norm_label": "runnumbers()"
     },
     {
@@ -28486,7 +28486,7 @@
       "source_file": "src/lib/metric-lines.ts",
       "source_location": "L78",
       "id": "lib_metric_lines_callnumbers",
-      "community": 67,
+      "community": 73,
       "norm_label": "callnumbers()"
     },
     {
@@ -28495,7 +28495,7 @@
       "source_file": "src/lib/metric-lines.ts",
       "source_location": "L100",
       "id": "lib_metric_lines_loadnumbers",
-      "community": 67,
+      "community": 73,
       "norm_label": "loadnumbers()"
     },
     {
@@ -28504,7 +28504,7 @@
       "source_file": "src/lib/metric-lines.ts",
       "source_location": "L114",
       "id": "lib_metric_lines_factnumbers",
-      "community": 67,
+      "community": 73,
       "norm_label": "factnumbers()"
     },
     {
@@ -28513,7 +28513,7 @@
       "source_file": "src/lib/metric-lines.ts",
       "source_location": "L131",
       "id": "lib_metric_lines_daymetrics",
-      "community": 67,
+      "community": 73,
       "norm_label": "daymetrics()"
     },
     {
@@ -30988,7 +30988,7 @@
       "source_file": "src/lib/outcomes.ts",
       "source_location": "L85",
       "id": "lib_outcomes_ioutcomemetric",
-      "community": 67,
+      "community": 4,
       "norm_label": "ioutcomemetric"
     },
     {
@@ -31051,7 +31051,7 @@
       "source_file": "src/lib/outcomes.ts",
       "source_location": "L179",
       "id": "lib_outcomes_outcomemetricof",
-      "community": 67,
+      "community": 73,
       "norm_label": "outcomemetricof()"
     },
     {
@@ -34237,7 +34237,7 @@
       "source_file": "src/lib/metrics.ts",
       "source_location": "L120",
       "id": "lib_metrics_byrepeats",
-      "community": 31,
+      "community": 4,
       "norm_label": "byrepeats()"
     },
     {
@@ -34246,7 +34246,7 @@
       "source_file": "src/lib/metrics.ts",
       "source_location": "L124",
       "id": "lib_metrics_tally",
-      "community": 67,
+      "community": 73,
       "norm_label": "tally()"
     },
     {
@@ -34255,7 +34255,7 @@
       "source_file": "src/lib/metrics.ts",
       "source_location": "L136",
       "id": "lib_metrics_guardsof",
-      "community": 67,
+      "community": 73,
       "norm_label": "guardsof()"
     },
     {
@@ -34264,7 +34264,7 @@
       "source_file": "src/lib/metrics.ts",
       "source_location": "L175",
       "id": "lib_metrics_runsof",
-      "community": 67,
+      "community": 73,
       "norm_label": "runsof()"
     },
     {
@@ -39758,13 +39758,13 @@
       "norm_label": "mandatory sections"
     },
     {
-      "label": "code:markdown (**Dependencies:** `catalog` (booking request contents), `ava)",
+      "label": "code:markdown (**Depends on:** `catalog` (booking request contents), `avail)",
       "file_type": "document",
       "source_file": "assets/patterns/spec-driven-domain.md",
       "source_location": "L81",
       "id": "patterns_spec_driven_domain_codeblock_2",
       "community": 104,
-      "norm_label": "code:markdown (**dependencies:** `catalog` (booking request contents), `ava)"
+      "norm_label": "code:markdown (**depends on:** `catalog` (booking request contents), `avail)"
     },
     {
       "label": "A rule and its binding",
@@ -40033,7 +40033,7 @@
       "source_file": "assets/patterns/git-workflow-commit.azure.md",
       "source_location": "L1",
       "id": "assets_patterns_git_workflow_commit_azure_md",
-      "community": 68,
+      "community": 67,
       "norm_label": "git-workflow-commit.azure.md"
     },
     {
@@ -40042,7 +40042,7 @@
       "source_file": "assets/patterns/git-workflow-commit.azure.md",
       "source_location": "L8",
       "id": "patterns_git_workflow_commit_azure_task_branch_and_commit",
-      "community": 68,
+      "community": 67,
       "norm_label": "task, branch and commit"
     },
     {
@@ -40051,7 +40051,7 @@
       "source_file": "assets/patterns/git-workflow-commit.azure.md",
       "source_location": "L13",
       "id": "patterns_git_workflow_commit_azure_when_to_use",
-      "community": 68,
+      "community": 67,
       "norm_label": "when to use"
     },
     {
@@ -40060,7 +40060,7 @@
       "source_file": "assets/patterns/git-workflow-commit.azure.md",
       "source_location": "L20",
       "id": "patterns_git_workflow_commit_azure_first_the_work_item_then_the_branch",
-      "community": 68,
+      "community": 67,
       "norm_label": "first the work item, then the branch"
     },
     {
@@ -40069,7 +40069,7 @@
       "source_file": "assets/patterns/git-workflow-commit.azure.md",
       "source_location": "L35",
       "id": "patterns_git_workflow_commit_azure_codeblock_1",
-      "community": 68,
+      "community": 67,
       "norm_label": "code:bash (npm run task:new -- --title '\u043f\u0438\u0441\u044c\u043c\u0430 \u0432\u043b\u0430\u0434\u0435\u043b\u044c\u0446\u0443 \u043d\u0435 \u0443\u0445\u043e\u0434\u044f\u0442 \u043c\u043e\u043b\u0447)"
     },
     {
@@ -40078,7 +40078,7 @@
       "source_file": "assets/patterns/git-workflow-commit.azure.md",
       "source_location": "L43",
       "id": "patterns_git_workflow_commit_azure_codeblock_2",
-      "community": 68,
+      "community": 67,
       "norm_label": "code:bash (az boards work-item create --type bug --title '[<\u043d\u043e\u043c\u0435\u0440>] ...' )"
     },
     {
@@ -40087,7 +40087,7 @@
       "source_file": "assets/patterns/git-workflow-commit.azure.md",
       "source_location": "L64",
       "id": "patterns_git_workflow_commit_azure_codeblock_3",
-      "community": 68,
+      "community": 67,
       "norm_label": "code:bash (npm run check:board)"
     },
     {
@@ -40096,7 +40096,7 @@
       "source_file": "assets/patterns/git-workflow-commit.azure.md",
       "source_location": "L72",
       "id": "patterns_git_workflow_commit_azure_two_tasks_fixed_by_one_edit",
-      "community": 68,
+      "community": 67,
       "norm_label": "two tasks fixed by one edit"
     },
     {
@@ -40105,7 +40105,7 @@
       "source_file": "assets/patterns/git-workflow-commit.azure.md",
       "source_location": "L77",
       "id": "patterns_git_workflow_commit_azure_codeblock_4",
-      "community": 68,
+      "community": 67,
       "norm_label": "code:bash (# what the absorbing item lacked is appended to its descript)"
     },
     {
@@ -40114,7 +40114,7 @@
       "source_file": "assets/patterns/git-workflow-commit.azure.md",
       "source_location": "L92",
       "id": "patterns_git_workflow_commit_azure_the_branch_is_created_by_a_separate_call",
-      "community": 68,
+      "community": 67,
       "norm_label": "the branch is created by a separate call"
     },
     {
@@ -40123,7 +40123,7 @@
       "source_file": "assets/patterns/git-workflow-commit.azure.md",
       "source_location": "L97",
       "id": "patterns_git_workflow_commit_azure_codeblock_5",
-      "community": 68,
+      "community": 67,
       "norm_label": "code:bash (\u2717 git checkout -b 85-guest-token && git commit -m 'feat(admi)"
     },
     {
@@ -40132,7 +40132,7 @@
       "source_file": "assets/patterns/git-workflow-commit.azure.md",
       "source_location": "L112",
       "id": "patterns_git_workflow_commit_azure_the_item_state_moves_together_with_the_work",
-      "community": 68,
+      "community": 67,
       "norm_label": "the item state moves together with the work"
     },
     {
@@ -40141,7 +40141,7 @@
       "source_file": "assets/patterns/git-workflow-commit.azure.md",
       "source_location": "L117",
       "id": "patterns_git_workflow_commit_azure_codeblock_6",
-      "community": 68,
+      "community": 67,
       "norm_label": "code:bash (npm run task:move -- 86 in-progress   # right after git chec)"
     },
     {
@@ -40150,7 +40150,7 @@
       "source_file": "assets/patterns/git-workflow-commit.azure.md",
       "source_location": "L124",
       "id": "patterns_git_workflow_commit_azure_codeblock_7",
-      "community": 68,
+      "community": 67,
       "norm_label": "code:bash (az boards work-item update --id 86 --state 'active')"
     },
     {
@@ -40159,7 +40159,7 @@
       "source_file": "assets/patterns/git-workflow-commit.azure.md",
       "source_location": "L134",
       "id": "patterns_git_workflow_commit_azure_the_commit_is_signed_by_the_machine_account",
-      "community": 68,
+      "community": 67,
       "norm_label": "the commit is signed by the machine account"
     },
     {
@@ -40168,7 +40168,7 @@
       "source_file": "assets/patterns/git-workflow-commit.azure.md",
       "source_location": "L142",
       "id": "patterns_git_workflow_commit_azure_codeblock_8",
-      "community": 68,
+      "community": 67,
       "norm_label": "code:bash (token=$(tr -d '\\n' < ~/.config/<\u0434\u0435\u0440\u0435\u0432\u043e>-bot-token))"
     },
     {
@@ -40177,7 +40177,7 @@
       "source_file": "assets/patterns/git-workflow-commit.azure.md",
       "source_location": "L158",
       "id": "patterns_git_workflow_commit_azure_the_document_goes_in_the_same_commit",
-      "community": 68,
+      "community": 67,
       "norm_label": "the document goes in the same commit"
     },
     {
@@ -40186,7 +40186,7 @@
       "source_file": "assets/patterns/git-workflow-commit.azure.md",
       "source_location": "L163",
       "id": "patterns_git_workflow_commit_azure_codeblock_9",
-      "community": 68,
+      "community": 67,
       "norm_label": "code:block9 (docs-skip: \u043f\u0440\u0430\u0432\u043a\u0430 \u0442\u043e\u043b\u044c\u043a\u043e \u0432 \u0442\u0435\u0441\u0442\u0430\u0445 \u0445\u0443\u043a\u0430, \u0437\u0435\u0440\u043a\u0430\u043b\u0430 \u0443 \u043d\u0435\u0433\u043e \u043d\u0435\u0442)"
     },
     {
@@ -40195,7 +40195,7 @@
       "source_file": "assets/patterns/git-workflow-commit.azure.md",
       "source_location": "L171",
       "id": "patterns_git_workflow_commit_azure_common_misses",
-      "community": 68,
+      "community": 67,
       "norm_label": "common misses"
     },
     {
@@ -46252,7 +46252,7 @@
       "source_file": "assets/samples/specs/_template/spec.md",
       "source_location": "L1",
       "id": "assets_samples_specs_template_spec_md",
-      "community": 69,
+      "community": 68,
       "norm_label": "spec.md"
     },
     {
@@ -46261,7 +46261,7 @@
       "source_file": "assets/samples/specs/_template/spec.md",
       "source_location": "L1",
       "id": "template_spec_domain",
-      "community": 69,
+      "community": 68,
       "norm_label": "<domain>"
     },
     {
@@ -46270,7 +46270,7 @@
       "source_file": "assets/samples/specs/_template/spec.md",
       "source_location": "L12",
       "id": "template_spec_why",
-      "community": 69,
+      "community": 68,
       "norm_label": "why"
     },
     {
@@ -46279,7 +46279,7 @@
       "source_file": "assets/samples/specs/_template/spec.md",
       "source_location": "L16",
       "id": "template_spec_terminology",
-      "community": 69,
+      "community": 68,
       "norm_label": "terminology"
     },
     {
@@ -46288,7 +46288,7 @@
       "source_file": "assets/samples/specs/_template/spec.md",
       "source_location": "L22",
       "id": "template_spec_what_it_is_called_in_the_interface",
-      "community": 69,
+      "community": 68,
       "norm_label": "what it is called in the interface"
     },
     {
@@ -46297,7 +46297,7 @@
       "source_file": "assets/samples/specs/_template/spec.md",
       "source_location": "L28",
       "id": "template_spec_rules",
-      "community": 69,
+      "community": 68,
       "norm_label": "rules"
     },
     {
@@ -46306,7 +46306,7 @@
       "source_file": "assets/samples/specs/_template/spec.md",
       "source_location": "L33",
       "id": "template_spec_what_is_out_of_scope",
-      "community": 69,
+      "community": 68,
       "norm_label": "what is out of scope"
     },
     {
@@ -46315,7 +46315,7 @@
       "source_file": "assets/samples/specs/_template/spec.md",
       "source_location": "L37",
       "id": "template_spec_contract",
-      "community": 69,
+      "community": 68,
       "norm_label": "contract"
     },
     {
@@ -46324,7 +46324,7 @@
       "source_file": "assets/samples/specs/_template/spec.md",
       "source_location": "L41",
       "id": "template_spec_refusal_codes",
-      "community": 69,
+      "community": 68,
       "norm_label": "refusal codes"
     },
     {
@@ -46333,7 +46333,7 @@
       "source_file": "assets/samples/specs/_template/spec.md",
       "source_location": "L47",
       "id": "template_spec_data",
-      "community": 69,
+      "community": 68,
       "norm_label": "data"
     },
     {
@@ -46342,7 +46342,7 @@
       "source_file": "assets/samples/specs/_template/spec.md",
       "source_location": "L51",
       "id": "template_spec_screens_and_states",
-      "community": 69,
+      "community": 68,
       "norm_label": "screens and states"
     },
     {
@@ -46351,7 +46351,7 @@
       "source_file": "assets/samples/specs/_template/spec.md",
       "source_location": "L55",
       "id": "template_spec_cross_cutting_requirements",
-      "community": 69,
+      "community": 68,
       "norm_label": "cross-cutting requirements"
     },
     {
@@ -46360,7 +46360,7 @@
       "source_file": "assets/samples/specs/_template/spec.md",
       "source_location": "L57",
       "id": "template_spec_locales",
-      "community": 69,
+      "community": 68,
       "norm_label": "locales"
     },
     {
@@ -46369,7 +46369,7 @@
       "source_file": "assets/samples/specs/_template/spec.md",
       "source_location": "L61",
       "id": "template_spec_seo",
-      "community": 69,
+      "community": 68,
       "norm_label": "seo"
     },
     {
@@ -46378,7 +46378,7 @@
       "source_file": "assets/samples/specs/_template/spec.md",
       "source_location": "L65",
       "id": "template_spec_mobile_layout",
-      "community": 69,
+      "community": 68,
       "norm_label": "mobile layout"
     },
     {
@@ -46387,7 +46387,7 @@
       "source_file": "assets/samples/specs/_template/spec.md",
       "source_location": "L69",
       "id": "template_spec_several_objects",
-      "community": 69,
+      "community": 68,
       "norm_label": "several objects"
     },
     {
@@ -46396,7 +46396,7 @@
       "source_file": "assets/samples/specs/_template/spec.md",
       "source_location": "L73",
       "id": "template_spec_decisions",
-      "community": 69,
+      "community": 68,
       "norm_label": "decisions"
     },
     {
@@ -46405,7 +46405,7 @@
       "source_file": "assets/samples/specs/_template/spec.md",
       "source_location": "L77",
       "id": "template_spec_open_questions",
-      "community": 69,
+      "community": 68,
       "norm_label": "open questions"
     },
     {
@@ -46414,7 +46414,7 @@
       "source_file": "assets/samples/specs/_template/spec.md",
       "source_location": "L81",
       "id": "template_spec_history_of_changes",
-      "community": 69,
+      "community": 68,
       "norm_label": "history of changes"
     },
     {
@@ -46988,7 +46988,7 @@
       "label": "Patterns",
       "file_type": "document",
       "source_file": "assets/rules/doc-style.md",
-      "source_location": "L280",
+      "source_location": "L281",
       "id": "rules_doc_style_patterns",
       "community": 151,
       "norm_label": "patterns"
@@ -46997,7 +46997,7 @@
       "label": "Skills without a law",
       "file_type": "document",
       "source_file": "assets/rules/doc-style.md",
-      "source_location": "L289",
+      "source_location": "L290",
       "id": "rules_doc_style_skills_without_a_law",
       "community": 151,
       "norm_label": "skills without a law"
@@ -49951,7 +49951,7 @@
       "source_file": "assets/commands/next-session.md",
       "source_location": "L1",
       "id": "assets_commands_next_session_md",
-      "community": 70,
+      "community": 69,
       "norm_label": "next-session.md"
     },
     {
@@ -49960,7 +49960,7 @@
       "source_file": "assets/commands/next-session.md",
       "source_location": "L13",
       "id": "commands_next_session_1_read_the_tree_profile",
-      "community": 70,
+      "community": 69,
       "norm_label": "1. read the tree profile"
     },
     {
@@ -49969,7 +49969,7 @@
       "source_file": "assets/commands/next-session.md",
       "source_location": "L18",
       "id": "commands_next_session_codeblock_1",
-      "community": 70,
+      "community": 69,
       "norm_label": "code:bash (for profile in .claude/rt-kit/defaults/project.sh .claude/rt)"
     },
     {
@@ -49978,7 +49978,7 @@
       "source_file": "assets/commands/next-session.md",
       "source_location": "L29",
       "id": "commands_next_session_2_stop_if_the_tree_holds_uncommitted_changes",
-      "community": 70,
+      "community": 69,
       "norm_label": "2. stop if the tree holds uncommitted changes"
     },
     {
@@ -49987,7 +49987,7 @@
       "source_file": "assets/commands/next-session.md",
       "source_location": "L31",
       "id": "commands_next_session_codeblock_2",
-      "community": 70,
+      "community": 69,
       "norm_label": "code:bash (git status --short)"
     },
     {
@@ -49996,7 +49996,7 @@
       "source_file": "assets/commands/next-session.md",
       "source_location": "L42",
       "id": "commands_next_session_3_find_out_whether_the_work_goes_by_the_rule",
-      "community": 70,
+      "community": 69,
       "norm_label": "3. find out whether the work goes by the rule"
     },
     {
@@ -50005,7 +50005,7 @@
       "source_file": "assets/commands/next-session.md",
       "source_location": "L44",
       "id": "commands_next_session_codeblock_3",
-      "community": 70,
+      "community": 69,
       "norm_label": "code:bash (git fetch --prune --quiet)"
     },
     {
@@ -50014,7 +50014,7 @@
       "source_file": "assets/commands/next-session.md",
       "source_location": "L53",
       "id": "commands_next_session_codeblock_4",
-      "community": 70,
+      "community": 69,
       "norm_label": "code:bash (git merge-base --is-ancestor head \"origin/${rt_main_branch:-)"
     },
     {
@@ -50023,7 +50023,7 @@
       "source_file": "assets/commands/next-session.md",
       "source_location": "L57",
       "id": "commands_next_session_4_bring_the_tree_to_the_main_branch",
-      "community": 70,
+      "community": 69,
       "norm_label": "4. bring the tree to the main branch"
     },
     {
@@ -50032,7 +50032,7 @@
       "source_file": "assets/commands/next-session.md",
       "source_location": "L62",
       "id": "commands_next_session_codeblock_5",
-      "community": 70,
+      "community": 69,
       "norm_label": "code:bash (git fetch origin \"${rt_main_branch:-main}:${rt_main_branch:-)"
     },
     {
@@ -50041,7 +50041,7 @@
       "source_file": "assets/commands/next-session.md",
       "source_location": "L75",
       "id": "commands_next_session_codeblock_6",
-      "community": 70,
+      "community": 69,
       "norm_label": "code:bash (git merge \"origin/${rt_main_branch:-main}\")"
     },
     {
@@ -50050,7 +50050,7 @@
       "source_file": "assets/commands/next-session.md",
       "source_location": "L82",
       "id": "commands_next_session_5_remove_the_branches",
-      "community": 70,
+      "community": 69,
       "norm_label": "5. remove the branches"
     },
     {
@@ -50059,7 +50059,7 @@
       "source_file": "assets/commands/next-session.md",
       "source_location": "L87",
       "id": "commands_next_session_codeblock_7",
-      "community": 70,
+      "community": 69,
       "norm_label": "code:bash (git branch --merged \"origin/${rt_main_branch:-main}\" \\)"
     },
     {
@@ -50068,7 +50068,7 @@
       "source_file": "assets/commands/next-session.md",
       "source_location": "L101",
       "id": "commands_next_session_codeblock_8",
-      "community": 70,
+      "community": 69,
       "norm_label": "code:bash (for b in $(git branch --no-merged \"origin/${rt_main_branch:-)"
     },
     {
@@ -50077,7 +50077,7 @@
       "source_file": "assets/commands/next-session.md",
       "source_location": "L109",
       "id": "commands_next_session_6_write_the_handover",
-      "community": 70,
+      "community": 69,
       "norm_label": "6. write the handover"
     },
     {
@@ -50086,7 +50086,7 @@
       "source_file": "assets/commands/next-session.md",
       "source_location": "L114",
       "id": "commands_next_session_codeblock_9",
-      "community": 70,
+      "community": 69,
       "norm_label": "code:bash (mkdir -p \"${rt_handoff_dir:-.claude/handoff}\")"
     },
     {
@@ -50095,7 +50095,7 @@
       "source_file": "assets/commands/next-session.md",
       "source_location": "L129",
       "id": "commands_next_session_7_hand_over_the_result",
-      "community": 70,
+      "community": 69,
       "norm_label": "7. hand over the result"
     },
     {
@@ -50104,7 +50104,7 @@
       "source_file": "assets/commands/next-session.md",
       "source_location": "L137",
       "id": "commands_next_session_what_the_command_does_not_do",
-      "community": 70,
+      "community": 69,
       "norm_label": "what the command does not do"
     },
     {
@@ -50986,7 +50986,7 @@
       "source_file": "assets/skills/interface-review.needs-app.md",
       "source_location": "L1",
       "id": "assets_skills_interface_review_needs_app_md",
-      "community": 71,
+      "community": 70,
       "norm_label": "interface-review.needs-app.md"
     },
     {
@@ -50995,7 +50995,7 @@
       "source_file": "assets/skills/interface-review.needs-app.md",
       "source_location": "L6",
       "id": "skills_interface_review_needs_app_review_the_interface_as_one_system",
-      "community": 71,
+      "community": 70,
       "norm_label": "review the interface as one system"
     },
     {
@@ -51004,7 +51004,7 @@
       "source_file": "assets/skills/interface-review.needs-app.md",
       "source_location": "L13",
       "id": "skills_interface_review_needs_app_when_to_use",
-      "community": 71,
+      "community": 70,
       "norm_label": "when to use"
     },
     {
@@ -51013,7 +51013,7 @@
       "source_file": "assets/skills/interface-review.needs-app.md",
       "source_location": "L27",
       "id": "skills_interface_review_needs_app_how_to_look",
-      "community": 71,
+      "community": 70,
       "norm_label": "how to look"
     },
     {
@@ -51022,7 +51022,7 @@
       "source_file": "assets/skills/interface-review.needs-app.md",
       "source_location": "L50",
       "id": "skills_interface_review_needs_app_how_to_run_a_review",
-      "community": 71,
+      "community": 70,
       "norm_label": "how to run a review"
     },
     {
@@ -51031,7 +51031,7 @@
       "source_file": "assets/skills/interface-review.needs-app.md",
       "source_location": "L52",
       "id": "skills_interface_review_needs_app_resolve_scope_and_mode_first",
-      "community": 71,
+      "community": 70,
       "norm_label": "resolve scope and mode first"
     },
     {
@@ -51040,7 +51040,7 @@
       "source_file": "assets/skills/interface-review.needs-app.md",
       "source_location": "L65",
       "id": "skills_interface_review_needs_app_recon_before_judgment",
-      "community": 71,
+      "community": 70,
       "norm_label": "recon before judgment"
     },
     {
@@ -51049,7 +51049,7 @@
       "source_file": "assets/skills/interface-review.needs-app.md",
       "source_location": "L72",
       "id": "skills_interface_review_needs_app_review_in_this_order",
-      "community": 71,
+      "community": 70,
       "norm_label": "review in this order"
     },
     {
@@ -51058,7 +51058,7 @@
       "source_file": "assets/skills/interface-review.needs-app.md",
       "source_location": "L85",
       "id": "skills_interface_review_needs_app_require_evidence",
-      "community": 71,
+      "community": 70,
       "norm_label": "require evidence"
     },
     {
@@ -51067,7 +51067,7 @@
       "source_file": "assets/skills/interface-review.needs-app.md",
       "source_location": "L92",
       "id": "skills_interface_review_needs_app_review_without_mutating_by_default",
-      "community": 71,
+      "community": 70,
       "norm_label": "review without mutating by default"
     },
     {
@@ -51076,7 +51076,7 @@
       "source_file": "assets/skills/interface-review.needs-app.md",
       "source_location": "L98",
       "id": "skills_interface_review_needs_app_review_output_format",
-      "community": 71,
+      "community": 70,
       "norm_label": "review output format"
     },
     {
@@ -51085,7 +51085,7 @@
       "source_file": "assets/skills/interface-review.needs-app.md",
       "source_location": "L102",
       "id": "skills_interface_review_needs_app_scope_and_coverage",
-      "community": 71,
+      "community": 70,
       "norm_label": "scope and coverage"
     },
     {
@@ -51094,7 +51094,7 @@
       "source_file": "assets/skills/interface-review.needs-app.md",
       "source_location": "L114",
       "id": "skills_interface_review_needs_app_findings",
-      "community": 71,
+      "community": 70,
       "norm_label": "findings"
     },
     {
@@ -51103,7 +51103,7 @@
       "source_file": "assets/skills/interface-review.needs-app.md",
       "source_location": "L136",
       "id": "skills_interface_review_needs_app_annotate_the_frame",
-      "community": 71,
+      "community": 70,
       "norm_label": "annotate the frame"
     },
     {
@@ -51112,7 +51112,7 @@
       "source_file": "assets/skills/interface-review.needs-app.md",
       "source_location": "L142",
       "id": "skills_interface_review_needs_app_considered_but_rejected",
-      "community": 71,
+      "community": 70,
       "norm_label": "considered but rejected"
     },
     {
@@ -51121,7 +51121,7 @@
       "source_file": "assets/skills/interface-review.needs-app.md",
       "source_location": "L157",
       "id": "skills_interface_review_needs_app_verification",
-      "community": 71,
+      "community": 70,
       "norm_label": "verification"
     },
     {
@@ -51130,7 +51130,7 @@
       "source_file": "assets/skills/interface-review.needs-app.md",
       "source_location": "L164",
       "id": "skills_interface_review_needs_app_verdict",
-      "community": 71,
+      "community": 70,
       "norm_label": "verdict"
     },
     {
@@ -51139,7 +51139,7 @@
       "source_file": "assets/skills/interface-review.needs-app.md",
       "source_location": "L172",
       "id": "skills_interface_review_needs_app_common_mistakes",
-      "community": 71,
+      "community": 70,
       "norm_label": "common mistakes"
     },
     {
@@ -118618,7 +118618,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "assets/rules/doc-style.md",
-      "source_location": "L280",
+      "source_location": "L281",
       "weight": 1.0,
       "source": "rules_doc_style_project_texts_how_it_works_here",
       "target": "rules_doc_style_patterns",
@@ -118628,7 +118628,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "assets/rules/doc-style.md",
-      "source_location": "L289",
+      "source_location": "L290",
       "weight": 1.0,
       "source": "rules_doc_style_project_texts_how_it_works_here",
       "target": "rules_doc_style_skills_without_a_law",
@@ -123606,5 +123606,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "cbbe137452ca6419fb8f2bc377f5f449a4684d11"
+  "built_at_commit": "786f6a0b69cd232cfd6a2cf6416501374733bbd2"
 }
