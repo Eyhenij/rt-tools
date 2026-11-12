@@ -58,7 +58,7 @@ apart from the one under check.
 ## Admin stand
 
 ```bash
-npx nx build admin --base-href=/
+npx nx build <admin application> --base-href=/
 ```
 
 Without `--base-href` the stand serves an empty page with no errors in the console. A stand that
@@ -99,7 +99,7 @@ it fills the same field without the classifier, but the bypassed ban is lifted n
 but from all of them at once. Normal mode left on removes confirmation from every later action of
 the session too, so the return is part of the sign-in, not a separate clean-up.
 
-The owner's stand is never a fallback path: it builds the main branch and says nothing about the
+The owner's stand is never a fallback path: it builds its own branch and says nothing about the
 edit in the working tree.
 
 ## API stand
@@ -218,17 +218,17 @@ past session, and it answers 200 with old code.
   than the check — a whole set of layout checks was left unrun exactly because the build was
   deemed dangerous without measuring. A build from the cache is not a measurement: it builds
   nothing at all, and that is visible by its duration.
-- Do not raise your own dev server: the site, the admin and the intake are already up by the
-  owner, and a second instance is refused by the guard.
+- Do not raise your own dev server where the tree says the owner raises them: the applications are
+  already up, and a second instance is refused by the guard.
 - **The owner's dev server is a place to look, not a place to check.** The conclusion that the
   screen is right is drawn on the production build behind the real proxy: server-side markup,
   locales, cache, redirects and headers on the dev server are either different or absent
   altogether. A look at the raised dev server is fit to understand what is going on on an
   unfamiliar screen and unfit as confirmation: the confirmation is a measurement on a stand from
   the production build.
-- **A build of everything silences all three dev servers of the owner, not only the API.** After
-  `nx run-many -t build` both the site and the admin go down. Build what you check
-  (`npx nx build site`), not the whole tree. If the servers went down, the agent cannot bring them
+- **A build of everything silences every dev server of the owner, not only the API.** After
+  `nx run-many -t build` the client applications go down too. Build what you check
+  (`npx nx build <application>`), not the whole tree. If the servers went down, the agent cannot bring them
   back up — the guard is in the way, so the owner is told at once, not at the end of the session.
   The push gate is such a build too: its set runs the build of everything affected. So the
   measurement is taken before the push or on a stand from the production build. The answer of the

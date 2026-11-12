@@ -52,9 +52,9 @@ flowchart TD
     H --> K
     K --> P{A scenario with that number exists in the specs}
     P -->|No| Q[The check turns red: the test refers to a scenario that does not exist]
-    P -->|Yes| R{The scenario promises a person something and the test follows their path}
-    R -->|No| S[Marked as partial coverage: goes into the digest as debt]
-    R -->|Yes| L{The scenario is left without a test}
+    P -->|Yes| R{The scenario promises a person something, and the test does not follow their path}
+    R -->|Yes| S[Marked as partial coverage: goes into the digest as debt]
+    R -->|No| L{The scenario is left without a test}
     L -->|Yes| M[Carries a mark with a reason: an empty one is not accepted]
     L -->|No| N[Done]
     S --> N
@@ -63,6 +63,7 @@ flowchart TD
 ```
 
 ## How the law applies here
+
 - **The scenario id stands at the start of the test title, followed by a dash.** One scenario is
   checked by several tests, one test closes several scenarios.
 - **A scenario without a test carries a mark with a reason.** An empty mark is not accepted, and
@@ -137,7 +138,7 @@ flowchart TD
   once and fixed, one that failed to recognise is never seen. And the tree's accepted way of
   calling the command — by full path, through a wrapper, with variable substitution — goes into
   the sign alongside the bare name: the bypass the command is called by every day is exactly
-  where the guard goes blind.
+  where the guard sees nothing.
 - **A test file is edited by the edit tool, the same as a document.** A refused shell command
   writes nothing while the reply looks like a done edit; the article in full is in `doc-style`.
 - **A check's known list is named and explains itself.** The first field of the list is the
@@ -255,7 +256,7 @@ flowchart TD
 
 Test completeness is not checked: the audit judges the path — end-to-end or unit — but not how
 much of the promise the test closed on that path. The path sign is read from the word "Then" and
-is deliberately taciturn: a scenario whose promise does not name a person does not fall under it
+is deliberately narrow: a scenario whose promise does not name a person does not fall under it
 at all, and the incompleteness mark there is still placed by hand.
 
 A coverage mark goes stale silently. The audit knows the scenario id against the test title, and

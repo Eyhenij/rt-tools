@@ -4,7 +4,7 @@ kind: pattern
 rule: browser-verification
 description: Pattern of rule browser-verification. Load when an honest stand is needed — the production build of the site, the admin stand, a stand behind real nginx, signing in to the admin, finding out what sits on a port. Not for layout measurements — that is pattern browser-verification-measure.
 ---
-<!-- rt-kit v0.37.0 · patterns/browser-verification-stand.md · aac296610f98 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/browser-verification-stand.md · a549dad608ff · правится надстройкой, не здесь -->
 
 # An honest stand
 
@@ -59,7 +59,7 @@ apart from the one under check.
 ## Admin stand
 
 ```bash
-npx nx build admin --base-href=/
+npx nx build <admin application> --base-href=/
 ```
 
 Without `--base-href` the stand serves an empty page with no errors in the console. A stand that
@@ -100,7 +100,7 @@ it fills the same field without the classifier, but the bypassed ban is lifted n
 but from all of them at once. Normal mode left on removes confirmation from every later action of
 the session too, so the return is part of the sign-in, not a separate clean-up.
 
-The owner's stand is never a fallback path: it builds the main branch and says nothing about the
+The owner's stand is never a fallback path: it builds its own branch and says nothing about the
 edit in the working tree.
 
 ## API stand
@@ -219,17 +219,17 @@ past session, and it answers 200 with old code.
   than the check — a whole set of layout checks was left unrun exactly because the build was
   deemed dangerous without measuring. A build from the cache is not a measurement: it builds
   nothing at all, and that is visible by its duration.
-- Do not raise your own dev server: the site, the admin and the intake are already up by the
-  owner, and a second instance is refused by the guard.
+- Do not raise your own dev server where the tree says the owner raises them: the applications are
+  already up, and a second instance is refused by the guard.
 - **The owner's dev server is a place to look, not a place to check.** The conclusion that the
   screen is right is drawn on the production build behind the real proxy: server-side markup,
   locales, cache, redirects and headers on the dev server are either different or absent
   altogether. A look at the raised dev server is fit to understand what is going on on an
   unfamiliar screen and unfit as confirmation: the confirmation is a measurement on a stand from
   the production build.
-- **A build of everything silences all three dev servers of the owner, not only the API.** After
-  `nx run-many -t build` both the site and the admin go down. Build what you check
-  (`npx nx build site`), not the whole tree. If the servers went down, the agent cannot bring them
+- **A build of everything silences every dev server of the owner, not only the API.** After
+  `nx run-many -t build` the client applications go down too. Build what you check
+  (`npx nx build <application>`), not the whole tree. If the servers went down, the agent cannot bring them
   back up — the guard is in the way, so the owner is told at once, not at the end of the session.
   The push gate is such a build too: its set runs the build of everything affected. So the
   measurement is taken before the push or on a stand from the production build. The answer of the
@@ -237,19 +237,22 @@ past session, and it answers 200 with old code.
 
 ## The ports and stands of this tree
 
-A section of this tree: there is no site and no rendering server here, and there are two stands —
-the showcase of the component set and the stand of the end-to-end suite with its own seeded
-database.
+A section of this tree: there is no site and no rendering server here. There are three kinds of
+stands: the showcases of the two kits, the stand of the admin panel's end-to-end suite with its own
+seeded database, and the stand of the entry example with its own identity server.
 
 | Role                  | Port  | Raised by                              |
 | --------------------- | ----- | -------------------------------------- |
-| the showcase          | 6006  | `pnpm run storybook:ui-kit-v1`         |
-| the built showcase    | 6007  | `pnpm run build-storybook:ui-kit-v1` and serving |
+| the first kit's showcase  | 6006  | `pnpm run storybook:ui-kit-v1`     |
+| the second kit's showcase | 6007  | `pnpm run storybook:ui-kit-v2`     |
 | the stand receiver    | 3310  | `pnpm run serve:stand`                 |
 | the stand admin panel | 4310  | by the same call                       |
 | the dev receiver      | 3000  | `pnpm run serve:api`                   |
 | the dev admin panel   | 4200  | `pnpm run serve:admin`                 |
 | the dev database      | 55432 | `pnpm run serve:db`                    |
+| the entry example's receiver    | 3410  | the entry suite's stand, `apps/auth-example-e2e/stand/stand.mjs` |
+| the entry example's admin panel | 4410  | by the same call                   |
+| the entry example's identity server | 58080 | by the same call               |
 
 The ports of the end-to-end stand are overridden by the variables `E2E_API_PORT` and
 `E2E_ADMIN_PORT` — they are declared in `apps/message-bus-admin-e2e/stand/stand.mjs`. The stand
@@ -261,7 +264,7 @@ answers with the wrong thing.
 
 ## Why there is no nginx stand here
 
-A section of this tree: none of the applications here has a proxy. The admin panel goes to the
-receiver directly, proxying `/api` to its port by its own dev config, and the showcase is static
-without a server. No conclusions about caching, redirects and headers are drawn on these stands:
-there is nothing to draw them from.
+A section of this tree: the production proxy is Caddy (`deploy/Caddyfile`), and no stand runs it.
+On a stand the admin panel goes to the receiver directly, forwarding `/api` to its port, and the
+showcase is static without a server. No conclusions about caching, redirects and headers are drawn
+on these stands: there is nothing to draw them from.

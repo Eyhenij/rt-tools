@@ -1,29 +1,11 @@
-## What of the law is not here
+## How the rule applies to this tree
 
-The tree holds both libraries and applications, and the rule applies to them differently. The
-libraries have no end-to-end runs at all: the visible state is shown by the showcase, and it is
-confirmed by a story frame. There are two end-to-end suites in the tree — the suite of the
-receiver's admin panel and the suite of the entry example — and everything the law says about a
-stand, data and the request path applies to them alone.
+The libraries have no end-to-end runs. What the law says about a stand, data and the request path
+applies to the two suites alone.
 
-- **The runner of the package specs is Jest with `jest-preset-angular`, not Vitest.** One project
-  per package; everything the rule says about the Vitest config has nothing to apply to here. The
-  end-to-end suite runs Playwright.
-- **Numbered scenarios exist for the receiver and for both kits.** The scenarios live in
-  `docs/specs/message-bus/`, `docs/specs/ui-kit/` and `docs/specs/ui-kit-v2/`, and the test
-  titles carry their numbers; a second-kit component also names its behaviour in its
-  `CONTEXT.md`.
-- **The end-to-end suite raises the stand itself.** Production builds of both applications, their
-  own database, schema and seeding come up by one command and go down with the run; only the
-  ports move by variables. The specs therefore have no switches by the state of the stand.
-- **The ready-made code of a kit component's spec and of an application screen frame lies in the
-  rule `ui-component-tests`.** There too are the substitutions nobody would think of, and the
-  choice between a spec, a story snapshot, a screen frame and a measurement.
-
-The completeness of a test is checked by nothing, and the tree agreed on no way of substituting
-modules: a double is written by hand. The author alone holds a test written before the code, a
-test returning the shared state, an empty input tested as three states and a list of checks read
-from output, not from memory.
+- **The runner of the package specs is Jest with `jest-preset-angular`, not Vitest.**
+- **The end-to-end suite raises the stand itself.** Only the ports and the database name move by
+  variables, so the specs have no switches.
 
 ## End-to-end coverage of a change
 

@@ -4,7 +4,7 @@ kind: rule
 law: verifiability
 description: Rule under the verifiability law. Load when editing any test file and anything in the tree's end-to-end suites. Names the scenario id in the title, moving a decision into a pure function and what an end-to-end test closes. Patterns testing-unit, testing-e2e.
 ---
-<!-- rt-kit v0.37.0 · rules/testing.md · c0397d47d6ca · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/testing.md · bcf1aa6ed9bf · правится надстройкой, не здесь -->
 
 # Verifiability — how it works here
 
@@ -53,9 +53,9 @@ flowchart TD
     H --> K
     K --> P{A scenario with that number exists in the specs}
     P -->|No| Q[The check turns red: the test refers to a scenario that does not exist]
-    P -->|Yes| R{The scenario promises a person something and the test follows their path}
-    R -->|No| S[Marked as partial coverage: goes into the digest as debt]
-    R -->|Yes| L{The scenario is left without a test}
+    P -->|Yes| R{The scenario promises a person something, and the test does not follow their path}
+    R -->|Yes| S[Marked as partial coverage: goes into the digest as debt]
+    R -->|No| L{The scenario is left without a test}
     L -->|Yes| M[Carries a mark with a reason: an empty one is not accepted]
     L -->|No| N[Done]
     S --> N
@@ -139,7 +139,7 @@ flowchart TD
   once and fixed, one that failed to recognise is never seen. And the tree's accepted way of
   calling the command — by full path, through a wrapper, with variable substitution — goes into
   the sign alongside the bare name: the bypass the command is called by every day is exactly
-  where the guard goes blind.
+  where the guard sees nothing.
 - **A test file is edited by the edit tool, the same as a document.** A refused shell command
   writes nothing while the reply looks like a done edit; the article in full is in `doc-style`.
 - **A check's known list is named and explains itself.** The first field of the list is the
@@ -255,36 +255,42 @@ flowchart TD
 
 ## What of the law is not here
 
-The tree holds both libraries and applications, and the rule applies to them differently. The
-libraries have no end-to-end runs at all: the visible state is shown by the showcase, and it is
-confirmed by a story frame. There are two end-to-end suites in the tree — the suite of the
-receiver's admin panel and the suite of the entry example — and everything the law says about a
-stand, data and the request path applies to them alone.
+Test completeness is not checked: the audit judges the path — end-to-end or unit — but not how
+much of the promise the test closed on that path. The path sign is read from the word "Then" and
+is deliberately narrow: a scenario whose promise does not name a person does not fall under it
+at all, and the incompleteness mark there is still placed by hand.
 
-- **The runner of the package specs is Jest with `jest-preset-angular`, not Vitest.** One project
-  per package; everything the rule says about the Vitest config has nothing to apply to here. The
-  end-to-end suite runs Playwright.
-- **Numbered scenarios exist for the receiver and for both kits.** The scenarios live in
-  `docs/specs/message-bus/`, `docs/specs/ui-kit/` and `docs/specs/ui-kit-v2/`, and the test
-  titles carry their numbers; a second-kit component also names its behaviour in its
-  `CONTEXT.md`.
-- **The end-to-end suite raises the stand itself.** Production builds of both applications, their
-  own database, schema and seeding come up by one command and go down with the run; only the
-  ports move by variables. The specs therefore have no switches by the state of the stand.
-- **The ready-made code of a kit component's spec and of an application screen frame lies in the
-  rule `ui-component-tests`.** There too are the substitutions nobody would think of, and the
-  choice between a spec, a story snapshot, a screen frame and a measurement.
+A coverage mark goes stale silently. The audit knows the scenario id against the test title, and
+the mark text under it is prose to it: it reads as a current description half a year after the
+debt was closed. The mark is re-read with the edit that touches its subject — otherwise nobody
+re-reads it. Module substitution has no package agreement: whether the tree writes doubles by
+hand is named by the companion.
 
-The completeness of a test is checked by nothing, and the tree agreed on no way of substituting
-modules: a double is written by hand. The author alone holds a test written before the code, a
-test returning the shared state, an empty input tested as three states and a list of checks read
-from output, not from memory.
+The author alone holds these articles of the law: a test written before the code and red before
+the change; a change with nothing to show red saying so; a test returning the shared state; an
+empty input tested as three states; a declaration read as text written as a literal; a list of
+checks read from output, not from memory; the analysis of a broken check shown to the owner. The
+push set and a check removed from it are `git-workflow`; layout thresholds — `browser-verification`.
+
+Observations of how the rules are used this rule does not keep at all: the kind of event, the
+place of writing and what goes outside are the subject of the observability law and the rule
+under it. It is named here so that an observation is not confused with coverage: coverage says
+what was checked, an observation what was used.
 
 ## Patterns
 
 - `testing-unit` — a test on a pure function, on a Connect procedure and a one-off proof test
   that is not committed.
 - `testing-e2e` — running end-to-end tests, a stand under real nginx, switches.
+
+## How the rule applies to this tree
+
+The libraries have no end-to-end runs. What the law says about a stand, data and the request path
+applies to the two suites alone.
+
+- **The runner of the package specs is Jest with `jest-preset-angular`, not Vitest.**
+- **The end-to-end suite raises the stand itself.** Only the ports and the database name move by
+  variables, so the specs have no switches.
 
 ## End-to-end coverage of a change
 

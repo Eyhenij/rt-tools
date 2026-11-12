@@ -1,6 +1,8 @@
 ## When this machine has no pinned profile
 
-A section of this tree. The owner's word, 13 October 2026: «я просил если открыт все один браузер
+A section of this tree. It limits two articles of the rule — the one about a refused profile
+choice and the one about an unconfigured guard — for one case: the profile file is absent. The
+owner's word, 13 October 2026: «я просил если открыт все один браузер
 то открывать его запиши это в правила!»
 
 - **One connected browser is the browser to drive.** The pinned profile file is absent and the list

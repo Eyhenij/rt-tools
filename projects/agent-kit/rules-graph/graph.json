@@ -2731,7 +2731,7 @@
       "installed": true,
       "articles": 23,
       "unheld": 12,
-      "bound_code": 23
+      "bound_code": 24
     },
     {
       "label": "component-structure",
@@ -3058,7 +3058,7 @@
       "installed": true,
       "articles": 42,
       "unheld": 12,
-      "bound_code": 46
+      "bound_code": 48
     },
     {
       "label": "turn-conduct",
@@ -8614,6 +8614,16 @@
       "weight": 1,
       "source": "rule_browser_verification",
       "target": "hook_dev_server_guard_sh",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/browser-verification/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_browser_verification",
+      "target": "hook_git_guard_delivery_epic_sh",
       "confidence_score": 1
     },
     {
@@ -17038,5 +17048,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "0a2e78be9b27c058981c3492aac7b3bc07f74442"
+  "built_at_commit": "d8253b404c37afaf431b66f9ab8dd02ddf152c48"
 }
