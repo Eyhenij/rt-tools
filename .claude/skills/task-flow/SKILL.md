@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of one task from the request to the merge. Load at the start of any work, when editing task folders and product agreements, and on return to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. Epics — epic-flow, turns — turn-conduct.
 ---
-<!-- rt-kit v0.37.0 · rules/task-flow.md · bcb1ecf63ad8 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/task-flow.md · d0af4ec46591 · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -98,7 +98,8 @@ flowchart TD
     F --> Z
     Z -->|No| Y[The epic is declared: a card, all its tasks and a plan — then its branch from the main branch]
     Z -->|Yes| G[Task, branch from the epic branch, task folder by branch name; the epic card moves with its first task]
-    Z -->|The owner's word about work outside an epic| G
+    Z -->|The owner's word about work outside an epic| X[Task, branch from the main branch, task folder by branch name]
+    X --> H
     Y --> G
     G --> H[A plan with stages; not edited after it is written]
     H --> I{Stage done}
@@ -245,8 +246,9 @@ flowchart TD
   names the reason. Relations are taken from the graph; numbers, behaviour and texts — from the code
   and the documents.
 - **What acts on the tree, not on the edit, lies outside the index.** The path to the sample and the
-  permission to work outside the epic do not belong to the branch and live next to the handover; the
-  progress names the sample by a reference to that place, without the other tree's name. A number in
+  permission to work outside the epic do not belong to the branch and live in the directory of
+  records that belong to no branch; the progress names the sample by a reference to that place,
+  without the other tree's name. A number in
   the permitted list repeats the owner's word, not replaces it.
 - **Closed work is reviewed by the rules in the background, right after the PR, and its findings
   wait for the owner.** Only the session that led the work sees what was loaded and what was

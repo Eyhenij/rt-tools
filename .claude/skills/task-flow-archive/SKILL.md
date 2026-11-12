@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when the texts are up to date and the task folder is taken apart by the last commit before the PR opens. The move to the archive, the work queue audit, the rules review of the closed work and what to do with the findings.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-archive.md · 9eb8798200d3 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-archive.md · d00b11d21928 · правится надстройкой, не здесь -->
 
 # Taking the task folder apart and the rules review of the work
 
@@ -66,12 +66,6 @@ when it ends: by that minute the folder is taken apart, and the branch may alrea
 removed. Neither date is set by the executor, so a move "from the folder to the epic plan" would
 rest on a coincidence that may never come. A finding noticed not by the review but along the way
 uses the same place.
-
-Findings that came back after the branch left travel by the branch of the next task: a push into a
-removed branch does not update it but creates it anew, and the commit stays outside main. By that
-minute the next task is already taken — its branch carries the cleanup after the previous one, in
-the same order in which someone else's task folder is taken apart. The epic is over and there is no
-next task — the findings leave as a task of their own.
 
 What leaves is filed as one file with a telling name, not a folder of three:
 
@@ -189,8 +183,9 @@ The form of the file — the findings template among the package templates.
 **Findings that came back after the branch left travel by the branch of the next task.** A push into
 a removed branch does not update it but creates it anew: the commit stays outside main and
 disappears with it. By then the next task is already taken — its branch carries the cleanup after
-the previous one. The epic is over and there is no next task — the findings leave as a task of their
-own.
+the previous one, in the same order in which someone else's task folder is taken apart. The epic is
+over and there is no next task — the findings go into the question to the owner together with the
+epic's table, and a task of their own is filed by the owner's word.
 
 **The cumulative findings file is split before the append, not after.** The length is looked at with
 one command before the first written line. A task's section takes tens of lines, and it crosses the

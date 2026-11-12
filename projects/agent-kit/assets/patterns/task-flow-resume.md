@@ -101,9 +101,12 @@ by the role pipeline:
 Workflow(name: "feature", args: { task: "<the plan stage>", grill: "docs/tasks/<ветка>/grill.md" })
 ```
 
-The pipeline makes a plan of its own, up to six steps, and does not read `plan.md`. So it is given
-one stage of the plan, not the task, and its steps are not new stages: the progress marks the steps
-of the plan as before, and the pipeline's acceptance is the readiness sign of that stage.
+The pipeline makes a plan of its own, up to six steps: its points role reads the task and epic plans,
+but its own steps do not come from `plan.md`. So it is given one stage of the plan, not the task,
+and its steps are not new stages: the progress marks the steps of the plan as before, and the
+pipeline's acceptance is the readiness sign of that stage. Its goal phase compares the result with
+the whole request of the grill, so for one stage its verdict "goal not met" is expected and is not
+the readiness sign.
 
 The "Where we stand" section is **rewritten**, not appended — it is the first thing the next session
 reads, and the only thing that survives trimming by size:
@@ -122,11 +125,11 @@ reads, and the only thing that survives trimming by size:
 
 The PR line is mandatory from the minute the stages are over and lives while the folder does. The
 folder leaves by the commit before the PR opens, so the line names what the closing still has to do;
-after the opening the PR state is read from the host by its number, and the branch history names
-the number. A PR reopened for remarks after the folder left keeps its state in the PR itself:
+after the opening the PR state is read from the host by its number, and the number is asked of the
+host by the branch. A PR reopened for remarks after the folder left keeps its state in the PR itself:
 
 ```markdown
-- **PR:** не открыт · осталось: сверка очереди, разбор папки
+- **PR:** не открыт · осталось: разбор папки, сверка очереди
 ```
 
 The waiting line carries the owner's standing word about a stop, quoted in « », when they gave
@@ -183,10 +186,10 @@ taken at once, by the same move with which the previous one went to review.
 Taken, not chosen: the order was assigned at planning and lies in the epic plan. A choice offered to
 the owner under an assigned order is a request to assign it anew.
 
-Work outside an epic has no plan with an order, and the next is taken from the work queue — by the
-same move and with the same ban on choosing aloud. The queue is asked by a command, not by memory of
-what the executor created themselves. An empty queue is a statement about the tree, and it is backed
-by command output.
+Work outside an epic has no plan with an order, and the next work after it is named by the owner:
+the turn asks them, it does not take a card. The queue is asked by a command, not by memory of what
+the executor created themselves, and what it holds goes into the question. An empty queue is a
+statement about the tree, and it is backed by command output.
 
 ```bash
 # what is assigned next — read in the epic plan, not asked
@@ -206,7 +209,9 @@ turn ends after it, not after words about it.
 A person merged the PR, and the epic plan still names the task as in work. The row moves to merged
 in the branch of the next task, by its first commit: the epic branch carries no edits of its own. A
 lesson the task left for the following ones goes into the section of the plan about what was learned
-along the way, in the same commit.
+along the way, in the same commit. The last task of the epic has no next branch, and the epic branch
+takes no edit of its own: its row stays "handed over", and the body of the epic PR into the main
+branch names its merge.
 
 **Next move:** the work of the next task goes on — the merge needs no turn of its own.
 

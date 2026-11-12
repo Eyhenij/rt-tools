@@ -66,12 +66,6 @@ removed. Neither date is set by the executor, so a move "from the folder to the 
 rest on a coincidence that may never come. A finding noticed not by the review but along the way
 uses the same place.
 
-Findings that came back after the branch left travel by the branch of the next task: a push into a
-removed branch does not update it but creates it anew, and the commit stays outside main. By that
-minute the next task is already taken — its branch carries the cleanup after the previous one, in
-the same order in which someone else's task folder is taken apart. The epic is over and there is no
-next task — the findings leave as a task of their own.
-
 What leaves is filed as one file with a telling name, not a folder of three:
 
 ```bash
@@ -188,8 +182,9 @@ The form of the file — the findings template among the package templates.
 **Findings that came back after the branch left travel by the branch of the next task.** A push into
 a removed branch does not update it but creates it anew: the commit stays outside main and
 disappears with it. By then the next task is already taken — its branch carries the cleanup after
-the previous one. The epic is over and there is no next task — the findings leave as a task of their
-own.
+the previous one, in the same order in which someone else's task folder is taken apart. The epic is
+over and there is no next task — the findings go into the question to the owner together with the
+epic's table, and a task of their own is filed by the owner's word.
 
 **The cumulative findings file is split before the append, not after.** The length is looked at with
 one command before the first written line. A task's section takes tens of lines, and it crosses the

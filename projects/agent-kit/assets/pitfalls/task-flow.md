@@ -23,8 +23,8 @@ The rule is `task-flow`; the articles that hold the law stand there.
   names the file and is silent about the record belonging to the branch. While the permission lives
   in the repository, the number is appended in every new branch.
 - **The name of another tree is not written into repository files, and the full path to a sample
-  carries it.** So the full path lives next to the session handover, where it is lawful, and the
-  repository holds only a reference without the name.
+  carries it.** So the full path lives in the directory of records that belong to no branch, where
+  it is lawful, and the repository holds only a reference without the name.
 - **The line "Waiting for the owner" in the progress outlives the reason it was written for.** It
   lies on disk, enters the context in the next session and reads as the current state — so it is
   removed in the same turn in which the owner answered. Otherwise the wait confirms itself: three
