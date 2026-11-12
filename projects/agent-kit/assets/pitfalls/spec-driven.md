@@ -23,7 +23,7 @@ The rule is `spec-driven`; the articles that hold the law stand there.
   markup attribute. The place where the rule is actually carried out is confirmed only by
   reading the code.
 - **An anchor in `tools/*.mjs` is checked by almost nothing:** liveness is counted only for
-  `.ts`, and the sources are walked over `apps`, `libs` and `prisma`. So a rule bound to a check
+  `.ts` and `.html`, and the sources are walked over the roots the tree names. So a rule bound to a check
   is read together with the check's body.
 - **A green check does not mean the structure is right.** Sidecars with bindings first lay next
   to the laws, and the check was green precisely because the structure matched what the check

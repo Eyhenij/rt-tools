@@ -55,7 +55,7 @@ The error is silent: a claim about the future has nothing to be checked against,
 check. That is how "there is no online payment and none is planned" got into the first live spec,
 while payment was in the plans.
 
-Hence also: what is not in `docs/PRD.md`, the product document does not claim. A guess made while
+Hence also: what is not in the product document, the product document does not claim. A guess made while
 retelling sounds more convincing than the source — it is shorter and more categorical.
 
 ## In plain words

@@ -52,7 +52,7 @@ such a skill is created — skill `write-a-skill`.
 | the place where it is carried out | a line in `implementation.md` next to it: `` `file:symbol` ``                                       |
 | promised behaviour                | scenario `SC-<PREFIX>-<NUMBER>` in `docs/specs/<domain>/scenarios.md`                                |
 | open question                     | `Q-<law letters>-<number>` in the law's "Open questions" section; tasks and commits refer to it, and the number is not reused after closing |
-| laws a domain applies             | the `**Законы:**` line in the spec header, names in quotes                                           |
+| laws a domain applies             | the `**Laws:**` line in the spec header, names in backticks; `**Законы:**` is the former form        |
 
 ## Where it lives
 
@@ -133,7 +133,7 @@ flowchart TD
 - **A law has a mandatory "Articles" section, and beyond it holds only open questions.** A law
   carries no history of edits and no arguments for an option chosen once: version control holds the
   history, and an argument with a rejected alternative is a trait of the work, and its place is the
-  rule's "Pitfalls". A closed question leaves the law, and an empty section kept for its heading
+  rule's cold part, `pitfalls.md`. A closed question leaves the law, and an empty section kept for its heading
   passed the check anyway.
 - **A proposed law requires no rule.** An agreement written down before the code has nothing to bind
   to, and demanding a rule would force creating one with anchors into places that do not exist. The
@@ -151,7 +151,7 @@ flowchart TD
 - **A rule declares the law it is written under.** A rule without a law is a set of techniques that
   does not show what exactly must be true.
 - **There are two layers of laws, and a law name is one for both.** The shared one lies in the
-  constitution root, an application law in `application/`; neither `law:` nor `**Законы:**` names
+  constitution root, an application law in `application/`; neither `law:` nor `**Laws:**` names
   the layer, so law names are unique across the whole constitution tree.
 - **A divergence between a rule and its companion is resolved in favour of the rule.** The companion
   names the tree's names and the bindings of the articles; it does not cancel them: read above the
@@ -208,8 +208,8 @@ flowchart TD
 - **A decision from a spec goes to the layer, not to the archive.** What a spec is checked against
   the machine knows; where an accepted decision goes it does not know and will not: only whoever
   asks "will this still be true tomorrow" can tell a current requirement from an account of what
-  happened. This is held by the pattern `task-flow-archive` and the selection sign written there in
-  advance.
+  happened. Where the pattern `task-flow-archive` is laid out, its step holds this, with the
+  selection sign written there in advance.
 - **A name in an anchor is written as declared in code.** A private class field stands with a hash,
   and the name written without it names the wrong symbol: the check stays green, and the reader
   cannot tell from the binding line whether this is the private method or the ordinary one next to

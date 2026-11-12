@@ -4,7 +4,7 @@ kind: pattern
 rule: spec-driven
 description: Pattern of rule spec-driven. Load when creating or editing a domain spec in docs/specs — the mandatory sections, the scenario form, binding a rule to code, the order of work from spec to code. Not for creating a law, a rule or a pattern — that is pattern spec-driven-rule.
 ---
-<!-- rt-kit v0.37.0 · patterns/spec-driven-domain.md · e176ebe68199 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/spec-driven-domain.md · da8e679316f3 · правится надстройкой, не здесь -->
 
 # Domain spec
 
@@ -68,7 +68,7 @@ starts with the decision itself.
 
 **A statement standing in another section of the same spec is not created as a second rule
 item.** The structure of a record lives in the data section, the order of calls in the contract
-section, the reason the domain exists in the `## Зачем` section: all three say what the rule would
+section, the reason the domain exists in the `## Why` section: all three say what the rule would
 say. The second copy diverges from the first silently, and there is nothing to notice it by — the
 audit knows a rule item against an anchor, and nobody compares two statements about one thing.
 The decision at that point leaves the decisions section whole: the place where the requirement
@@ -80,7 +80,7 @@ the lib roots whose procedures the domain serves. The legacy `**Законы:**`
 are accepted the same.
 
 ```markdown
-**Dependencies:** `catalog` (booking request contents), `availability` (date occupancy)
+**Depends on:** `catalog` (booking request contents), `availability` (date occupancy)
 **Laws:** `access`, `locales`, `lists`
 **Procedures:** `libs/api/<domain>`
 ```

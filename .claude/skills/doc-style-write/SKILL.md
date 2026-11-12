@@ -4,7 +4,7 @@ kind: pattern
 rule: doc-style
 description: Pattern of rule doc-style. Load when writing any project prose — rules, specs, README, code comments, commit bodies, PR descriptions. Samples of "so" and "not so" for each wording convention. Not for the structure of a spec — that is rule spec-driven.
 ---
-<!-- rt-kit v0.37.0 · patterns/doc-style-write.md · 5891f3ca5fe1 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/doc-style-write.md · 54d403ac0194 · правится надстройкой, не здесь -->
 
 # How to word
 
@@ -56,7 +56,7 @@ The error is silent: a claim about the future has nothing to be checked against,
 check. That is how "there is no online payment and none is planned" got into the first live spec,
 while payment was in the plans.
 
-Hence also: what is not in `docs/PRD.md`, the product document does not claim. A guess made while
+Hence also: what is not in the product document, the product document does not claim. A guess made while
 retelling sounds more convincing than the source — it is shorter and more categorical.
 
 ## In plain words

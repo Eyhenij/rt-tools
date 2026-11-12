@@ -12,7 +12,7 @@ token names are listed at all.
 
 - **In the rule** — Here
 - **a document** — a package README, a component `CONTEXT.md`, `TOKENS.md`, a decision in `docs/adr/`, a plan in `docs/plans/`, the changelog
-- **the pair "an edit and its document"** — by the guard itself: a rule and its companion; by the tree profile: a second-kit component and the `CONTEXT.md` next to it, the styling tokens and `TOKENS.md`, the production make-up (`docker-compose.prod.yml`, `deploy/Caddyfile`, `.github/workflows/deploy.yml`) and `docs/PROD.md`. The tree has no libs, so the README pairs never fire here
+- **the pair "an edit and its document"** — by the guard itself: a rule and its companion; by the tree profile: a second-kit component and the `CONTEXT.md` next to it, the styling tokens and `TOKENS.md`, the production make-up (`docker-compose.prod.yml`, `deploy/Caddyfile`, `.github/workflows/deploy.yml`) and `docs/PROD.md`. A lib for the guard is any directory with `project.json` — every package under `projects/`, `apps/` and `libs/`: creating or removing one, and moving a file between two, demands their READMEs
 - **the bypass mark** — the line `Docs-skip: <reason>` in the commit body; an empty reason is not accepted
 - **the project glossary** — `docs/GLOSSARY.md` — the shared part is brought by the package, the subject part is appended by the override
 

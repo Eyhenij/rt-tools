@@ -41,16 +41,16 @@ without a single bullet, and a pass over `- ` would not have seen it.
 
 ```bash
 # how much of what is in the file: items, paragraphs, sections
-grep -c '^- ' docs/BACKLOG.md
-grep -c '^## ' docs/BACKLOG.md
+grep -c '^- ' <backlog file>
+grep -c '^## ' <backlog file>
 ```
 
 A paragraph is judged by the same sign as an item.
 
 ## A task number stands in three places
 
-Before counting "items without a task", all the forms of writing it must be known. In this tree
-there are three:
+Before counting "items without a task", all the forms of writing it must be known. A tree
+usually has three:
 
 ```markdown
 ## Section — #149 ← in the heading

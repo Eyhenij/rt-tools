@@ -27,7 +27,7 @@ with a guard does.
 | understanding written where the work goes | `docs/tasks/<ветка>/grill.md` — the request verbatim, the owner's answers in their words, decisions with reasons |
 | the plan | `docs/tasks/<ветка>/plan.md` — the task footprint and stages with readiness signs; not edited after it is written |
 | the progress | `docs/tasks/<ветка>/progress.md` — "Where we stand", decisions along the way, session entries; the only place where done work is marked |
-| the product agreement written before the code | `docs/specs/<домен>/proposed/<фича>/` — the feature spec; survives the merge and merges into the domain spec |
+| the product agreement written before the code | `docs/specs/<домен>/proposed/<фича>/` — the feature spec; merges into the domain spec before the PR opens |
 | the task folder before the task is created | `docs/tasks/_draft-<slug>/` — outside history while there is no number |
 | exploration | an `Explore` or `general-purpose` session before the first question to the owner |
 | the plan review by roles | `.claude/workflows/plan.js` — need, points, agreement, critique, plan, goal |

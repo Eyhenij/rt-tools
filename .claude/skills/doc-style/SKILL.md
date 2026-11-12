@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing any .md including specs, and also code comments, commit bodies and PR descriptions. Names the path check, the pairs of an edit and its document, and what nothing checks in this tree. Ready-made wording is in pattern doc-style-write.
 ---
-<!-- rt-kit v0.37.0 · rules/doc-style.md · aa9ddd92886a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/doc-style.md · c3aa08c9a9ef · правится надстройкой, не здесь -->
 
 # Project texts — how it works here
 
@@ -186,9 +186,9 @@ flowchart TD
   the run turned red for something other than the branch's change.
   <!-- rt-when: *.md -->
 
-- **The removal by expiry travels as a commit of its own.** The check stands in the gate of every
-  branch and counts age by the calendar, so it refuses whatever branch reaches it first — commits
-  too, not only pushes. A task per record is no cure: one expires every day. The prune command
+- **The removal by expiry travels as a commit of its own.** The check stands in the push gate of
+  every branch and counts age by the calendar, so it refuses whatever branch reaches it first. A
+  task per record is no cure: one expires every day. The prune command
   drops the expired records; they go as a commit of their own, and the PR body names it unrelated.
   <!-- rt-when: *.md -->
 
@@ -198,7 +198,7 @@ flowchart TD
   <!-- rt-when: *.md -->
 
 - **A diagram is edited by the same change as the text it depicts.** A diverged diagram is read
-  instead of the text, being shorter, and derails the work. No check sees this: the diagram is set
+  instead of the text, being shorter, and the work goes by the wrong one. No check sees this: the diagram is set
   in words and is told from the text only by reading.
   <!-- rt-when: *.md -->
 
@@ -276,7 +276,8 @@ work queue is held by the author, and a task plan leaves with the work.
 
 A dropped word is purged from files by a search; in PR titles, commit subjects and task cards
 nothing finds it, and whoever drops the word holds it. Completeness of texts from the side of the
-work is asked by the closing step of `task-flow` and the pattern `doc-style-trace`; no check counts it.
+work is asked by the pattern `doc-style-trace` and, where the rule `task-flow` is laid out, by its
+closing step; no check counts it.
 
 ## Patterns
 

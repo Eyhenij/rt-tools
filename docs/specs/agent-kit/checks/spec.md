@@ -115,7 +115,7 @@ outward is watched by is said by the subdomain of the delivery guards.
 - **Data is taken out of the length count.** A locale dictionary and a build setting are read by
   search, not in a row; there is nothing in them to split.
 - **The archive and the task folder are taken out of the count.** The archive by construction lists
-  what is no longer in the tree, and the task folder dies with the merge.
+  what is no longer in the tree, and the task folder is taken apart before the PR opens.
 - **What is generated is taken out by directory, not by names.** The generator rewrites it whole, and
   there is nobody to argue with it about length.
 - **The length is counted the same way the linter counts it.** The number of line breaks plus one:
