@@ -184,10 +184,7 @@
                                     <span rtElem="message-footer">
                                         <span rtElem="message-date" qa-dataid="chat-message-date">
                                             <!-- Подпись перевода и точка перед временем; без подписи узел пуст и точки нет -->
-                                            <span
-                                                rtElem="message-translation"
-                                                qa-dataid="chat-message-translation"
-                                                [textContent]="m.translationLabel || ''"></span>
+                                            <span qa-dataid="chat-message-translation" [textContent]="m.translationLabel || ''"></span>
                                             {{ m.translationLabel ? '· ' : ''
                                             }}{{
                                                 m.dateLabel ||
