@@ -164,7 +164,7 @@ Closes #86 — задача закрывается конвейером дере
 ```
 
 ```markdown
-Задача #86 — закрывается рукой после слияния череды, с комментарием со ссылкой на этот MR.
+Closes #86 — закрывается рукой после слияния череды: хостинг читает строку только при слиянии в ветку по умолчанию.
 ```
 
 The "Remaining step" section stands last and is rewritten by the same call as the rest of the
@@ -305,7 +305,7 @@ yet. No item asks for a run there: its place is taken by the push gate, green be
 The order is the pattern `git-workflow-stack`; its calls here:
 
 ```bash
-glab mr update 87 --target-branch <ветка эпика>                 # the upper MR after the lower one is merged
+glab mr update 87 --target-branch <ветка эпика>                 # the upper MR, where the host did not retarget it
 glab mr view 87 --output json | jq -r '.detailed_merge_status'  # whether the button can be pressed
 glab issue close 86                                             # a task the host did not close itself
 ```

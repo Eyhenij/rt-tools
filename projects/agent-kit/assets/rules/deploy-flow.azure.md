@@ -81,7 +81,7 @@ flowchart TD
   the server disk whole. Three sha is the rollback depth, and fewer cannot be taken: a breakage
   noticed two rollouts later has nowhere left to roll back to.
 - **A production breakage that has happened is analysed in a record, not by a fix alone.** The fix
-  leaves as a branch, the task closes — and the reason the application stopped stays the knowledge
+  leaves as a branch, the work item closes — and the reason the application stopped stays the knowledge
   of one executor. The record names what broke, how it became visible and why the fix fixes the
   cause and not the sign; it lies among the records of what has happened, and the directory is named
   by the companion of the wording rule.
@@ -148,11 +148,10 @@ flowchart TD
   returns a non-zero code and says that the check itself broke, not the subject. A shared zero for
   both makes a broken check indistinguishable from a passed one: the schema-to-migrations audit
   stood like that in the gate set, checking nothing, and hid three causes at once behind its zero.
-- **The merge button and the manual rollout run get their requirement at the host.** The merge button and
-  the manual run of the rollout are pressed at the host, and the guards of the session do not stand
-  there. The requirement is set at the host — a branch policy or an approval on the environment — or
-  is named to the one who presses, in the section of the PR description about the remaining step,
-  before the press.
+- **The merge button and the manual rollout run get their requirement at the host.** Both are
+  pressed at the host, where the guards of the session do not stand. The requirement is set at the
+  host — a branch policy or an approval on the environment — or is named to the one who presses, in
+  the section of the PR description about the remaining step, before the press.
 
 ## What of the law is not here
 

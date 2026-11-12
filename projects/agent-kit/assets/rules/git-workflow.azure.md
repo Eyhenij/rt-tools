@@ -20,7 +20,7 @@ with the rule.
 | In the law                   | Here                                                                                                                                                                                                                     |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | main branch                  | `main`                                                                                                                                                                                                                   |
-| epic                         | a work item of kind `Epic`, title `[<номер>] <Возможность>`, its tasks are its children; a plan next to it: the order of tasks and how the branches stand                                                                |
+| epic                         | a work item of kind `Epic`, title `[<номер>] <Возможность>`, its work items are linked to it as children; a plan next to it: the order of tasks and how the branches stand                                                                |
 | epic branch                  | `<номер эпика>-<короткий-slug>`, taken from `main`. Branches of its work items are taken from it, and their PRs go into it                                                                                               |
 | PR of an epic                | PR into `main` from the epic branch; opens after all its work items are merged and their folders taken apart                                                                                                             |
 | separate branch              | `<номер рабочего элемента>-<короткий-slug>`, taken from the epic branch; the form — in `implementation.md`. A name without a number (`feat/…`, `fix/…`) is legitimate locally: no PR opens from it                                                   |
@@ -55,12 +55,12 @@ flowchart TD
     D -->|Yes| E[The base is merged in, the last commit takes the task folder apart, the gate set is run whole]
     E --> F{The branch carries a work item number}
     F -->|No| G[The delivery guard refuses the opening: nothing in the queue stands behind the edit]
-    F -->|Yes| H[The PR opens: a draft for a rework or a question, ready where only the run is waited for]
+    F -->|Yes| H[The PR opens ready where only the run is waited for; a draft for a rework is lifted before the run]
     H --> I[The state moves to review, the executor takes the next work item]
     I --> J{The run and the review are over}
     J -->|Run red| K[Fixed in the same branch]
     K --> J
-    J -->|Green| L[The draft, if there was one, is lifted]
+    J -->|Green| L[The description says no step is left]
     L --> M[A person presses the merge into the epic branch: the executor asks and names the number]
     M --> N{Work items of the epic are left}
     N -->|Yes| B
@@ -150,7 +150,7 @@ flowchart TD
   gets an answer.** Edits alone leave the discussion silent, and the person reads the whole diff
   again. The word holds for that PR, not for the next.
 - **The draft is lifted by a separate call — `az repos pr update --id <номер> --draft false`.** With
-  it the executor answers for readiness: checks passed, no rework left, the work matches the work
+  it the executor answers for readiness: the push gate passed, no rework left, the work matches the work
   item. Lifting the draft and asking to merge are one turn, and a PR opened ready needs no such
   call.
 - **The PR merge is pressed by a person, not by the work's executor.** The Complete button, `az
@@ -170,15 +170,12 @@ flowchart TD
   taken — the epic is in progress; the PR of the epic into `main` opens — the epic awaits review.
   `npm run task:move -- <номер эпика> in-progress`. Left in the initial state while its work items
   merge, the epic reads as never started. The states of an `Epic` are its own and are named in
-  `implementation.md` apart from the task's.
+  `implementation.md` apart from the work item's.
 - **A work item left in the initial state opens no PR.** By the work queue it reads as not taken,
   though the work is done and published. The tree names the initial state itself; unnamed — not
   judged.
-- **The board holds work items, not PRs about them.** The board shows what is done and what is left;
-  a PR answers another question — how exactly it was done — and opens from the item, where the link
-  to it stands by itself. Here that link is set at PR creation, so a separate card is not needed at
-  all, and one created lives its own life: there is no state for it, it never leaves the queue and
-  stays in it after the merge forever. The queue audit finds such cards, a line each.
+- **The board holds work items, not PRs about them.** The link to the item is set at PR creation; a
+  PR card has no state and never leaves the queue. The queue audit finds such cards, a line each.
 - **A lagging state is found by the queue audit, not by eye.** The audit judges the state by the PR
   both ways: an open PR with the item not in review, and review with no open PR — both
   discrepancies. The moment a work item is taken into work it cannot see: the branch is not on the
@@ -206,7 +203,8 @@ flowchart TD
 - **The build is in the set on a par with lint and unit tests.** The linter does not read types, and
   a type error in uncovered code lives until the merge.
 - **On a machine with several runners, any path from the home directory is shared.** Install
-  directory, container name, builder name and published port are per project.
+  directory, container name, builder name and published port are per project. A temporary directory
+  is not the answer: the package store lives there.
 - **The push gate set is never narrower than the pipeline set.** A pipeline step with neither a line
   in the set nor a declared exclusion refuses the push: a warning reads as permission.
 - **The final set before a push is read from the state review, not assembled in the head.** The "set
@@ -230,7 +228,8 @@ flowchart TD
 - **After merging the base in, the check set is revised by what the branch now carries.** Checking
   by what the author edited means checking half: the branch answers whole.
 - **The main branch is taken by the remote ref — in words and in actions.** The local one is
-  yesterday's snapshot and silent about it: by it a merged branch counts as unmerged.
+  yesterday's snapshot and silent about it: by it a merged branch counts as unmerged. Both sides of
+  a comparison are taken from `origin/`.
 - **A work item is bound to the PR at creation, not after.** `az repos pr create` takes
   `--work-items`; binding by a second command is bypassed silently when the token has no right to
   edit someone else's item, and the PR stays bound to nothing.
@@ -274,6 +273,14 @@ task state: something to ask with — it asks; no network or access — it skips
 tier stays and works offline: the local ref answers the question "has the base lagged what already
 lies in the tree", the remote one — "has the ref itself gone stale". Without the second tier the
 guard's silence meant only the first and was read as the second.
+
+The epic of a work item the delivery guard learns from the queue helper of the tree, and the base
+of a PR it reads from the flag `--base` alone: here the helper is the tree's and the flag is
+`--target-branch`, so until the tree gives both the base from the epic branch is held by memory.
+
+A PR that waits only for the run opens ready, and the law keeps such work under a draft: a declared
+deviation, the run does not start on a draft. Complete is then held only by a required build
+validation.
 
 ## Patterns
 

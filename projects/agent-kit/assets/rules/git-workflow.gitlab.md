@@ -206,7 +206,8 @@ flowchart TD
 - **The build is in the set on a par with lint and unit tests.** The linter does not read types, and
   a type error in uncovered code lives until the merge.
 - **On a machine with several runners, any path from the home directory is shared.** Install
-  directory, container name, builder name and published port are per project.
+  directory, container name, builder name and published port are per project. A temporary directory
+  is not the answer: the package store lives there.
 - **The push gate set is never narrower than the pipeline set.** A pipeline step with neither a line
   in the set nor a declared exclusion refuses the push: a warning reads as permission.
 - **The final set before a push is read from the state review, not assembled in the head.** The "set
@@ -230,7 +231,8 @@ flowchart TD
 - **After merging the base in, the check set is revised by what the branch now carries.** Checking
   by what the author edited means checking half: the branch answers whole.
 - **The main branch is taken by the remote ref — in words and in actions.** The local one is
-  yesterday's snapshot and silent about it: by it a merged branch counts as unmerged.
+  yesterday's snapshot and silent about it: by it a merged branch counts as unmerged. Both sides of
+  a comparison are taken from `origin/`.
 - **A merge by the "Merge when pipeline succeeds" button does not replace the checks before a
   push.** The pipeline sees only what is already pushed, and a pushed red branch occupies the work
   queue and looks ready for review.
@@ -261,6 +263,10 @@ task state: something to ask with — it asks; no network or access — it skips
 tier stays and works offline: the local ref answers the question "has the base lagged what already
 lies in the tree", the remote one — "has the ref itself gone stale". Without the second tier the
 guard's silence meant only the first and was read as the second.
+
+The epic of a task the delivery guard learns from the queue helper of the tree, and the base of an
+MR it reads from the flag `--base` alone. On this host the helper is written by the tree and the flag
+is `--target-branch`: until the tree gives both, the base from the epic branch is held by memory.
 
 ## Patterns
 

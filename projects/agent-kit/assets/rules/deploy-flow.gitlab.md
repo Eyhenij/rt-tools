@@ -125,8 +125,7 @@ flowchart TD
 - **The migration chain is run from an empty storage before the merge.** The apply order is
   lexicographic by directory name, and the timestamp is set at creation: a migration from a branch
   started earlier lands before the one it depends on.
-- **A migration without a reverse is merged only after a copy of the production storage, and the MR
-  body names the copy.** Rolling back the image does not bring a dropped column or table back. When
+- **A migration without a reverse is merged only after a copy of the production storage, and the MR description names the copy.** Rolling back the image does not bring a dropped column or table back. When
   the executor cannot reach the server, the owner is told which step is blocked and what opens it:
   the owner's word replaces a check only when the owner was told the check did not run.
 - **The divergence of migrations from the schema is measured on a shadow storage, not on the one
@@ -142,7 +141,6 @@ flowchart TD
   is not yet a rollout: a failed one leaves the main branch ahead of the server, and merges on top
   go the same way. The lag is counted from the last successful rollout and does not tell "not
   started" from "failed".
-
 - **A check standing in the gate set refuses when it could not do its work.** "Nowhere to check" and
   "the check is broken" are different things: the first the tree names itself — no subject, no
   address set, the service not answering — and each such exit returns the skip code with its own
@@ -150,11 +148,11 @@ flowchart TD
   returns a non-zero code and says that the check itself broke, not the subject. A shared zero for
   both makes a broken check indistinguishable from a passed one: the schema-to-migrations audit
   stood like that in the gate set, checking nothing, and hid three causes at once behind its zero.
-- **The merge button and the manual rollout run get their requirement at the host.** The merge button and
-  the manual run of the rollout are pressed at the host, and the guards of the session do not stand
-  there. The requirement is set at the host — a protected branch, the setting "Pipelines must
-  succeed" or a protected environment — or is named to the one who presses, in the section of the MR
-  description about the remaining step, before the press.
+- **The merge button and the manual rollout run get their requirement at the host.** Both are
+  pressed at the host, where the guards of the session do not stand. The requirement is set at the
+  host — a protected branch, the setting "Pipelines must succeed" or a protected environment — or is
+  named to the one who presses, in the section of the MR description about the remaining step,
+  before the press.
 
 ## What of the law is not here
 

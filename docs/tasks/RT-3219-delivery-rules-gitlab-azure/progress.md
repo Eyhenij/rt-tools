@@ -4,8 +4,8 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — Review and closing
-- **Done:** stages 1 and 2; the role `rules-reviewer` named 19 findings, the must-fix ones and four of the rest are fixed, the graph is rebuilt
-- **Next step:** the push gate, then the archive record and the PR body
+- **Done:** stages 1 and 2; the findings of `rules-reviewer` and of the first review round are fixed; RT-3261 and RT-3262 are filed for what is out of scope
+- **Next step:** merge the epic branch in, the second review round, the push gate, the archive record
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -32,9 +32,11 @@
   draft there, so a draft waiting for a run waits for nothing. Affected stage of the plan: 1.
 - **The calls of a chain for each host went into the PR patterns, not into the rules.** The Azure
   rule has about 800 characters of room. Affected stage of the plan: 2.
-- **Left as is, named by the role as optional:** the name «Merge when pipeline succeeds» in the
-  GitLab rule, the commit link form `AB#` in the Azure rule, the one-sided article about a ready
-  opening — the GitHub rule has the same. Affected stage of the plan: 3.
+- **What the role named optional went into task RT-3262:** the name «Merge when pipeline succeeds»,
+  the commit link form `AB#`, the one-sided article about a ready opening. Affected stage of the plan: 3.
+- **The base from the epic branch on GitLab and Azure is held by memory, and the rules say so.** The
+  delivery guard reads the base from `--base` alone; the code is task RT-3261. Affected stage of the
+  plan: 1.
 
 ## Sessions
 

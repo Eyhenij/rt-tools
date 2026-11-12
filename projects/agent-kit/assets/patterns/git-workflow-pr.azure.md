@@ -89,8 +89,9 @@ AZURE_DEVOPS_EXT_PAT="$TOKEN" az repos pr create \
 Before the target branch is named, its presence on the host is checked: `git ls-remote --heads origin <ветка>`. An empty answer means the base was merged and removed; the request then takes the next branch up the chain as its base.
 
 The target branch is the epic branch, and in a chain the previous branch; into `main` goes only the
-PR of the epic itself. Whether completing a PR into the epic branch moves the bound work item is
-set by the completion option `--transition-work-items`, and the link line says what the tree chose.
+PR of the epic itself. Completing a PR closes the bound work item on any target
+branch when the person leaves the option "Complete associated work items after merging" checked in
+the Complete dialog.
 
 The reviewer is always the owner: without a review request the PR does not show in their queue.
 One PR closes the work item whole — half a task is not rolled out by one PR: a task has one
@@ -148,16 +149,16 @@ replies.
 проверки; сливать после зелёного.
 ```
 
-With the epic branch as the target the link line says what happens to the work item, and the
-"Remaining step" section repeats it for the one who presses Complete — the dialog offers the option
-to complete the bound items, and the person chooses it there:
+The link line says what happens to the work item, and the "Remaining step" section repeats it for
+the one who presses Complete — the dialog offers the option, and the person chooses it there:
 
 ```markdown
-Рабочий элемент 86 — закрывается при слиянии эпика в main; при завершении этого PR оставить открытым.
+Рабочий элемент 86 закрывается при завершении этого PR: в окне Complete оставить отметку
+«Complete associated work items after merging».
 ```
 
 The "Remaining step" section stands last and is rewritten by the same call as the rest of the
-body — in the turn that lifts the draft:
+body — in the turn the run went green, or the draft is lifted:
 
 ```markdown
 ## Оставшийся шаг
@@ -232,7 +233,7 @@ The pipeline sees only what was sent, and it is sent by a push. Linters, unit te
 scenarios are taken by the push gate — below is what it does not know.
 
 1. **The base is merged into this branch** — `git fetch origin && git merge origin/<база>`: for a
-   task branch that is the epic branch, for an epic branch the main one.
+   work item branch that is the epic branch, for an epic branch the main one.
    Everything checked below is checked from this base: a PR from a diverged branch shows the
    reviewer the edit mixed with someone else's. Order and conflict resolution — pattern
    `git-workflow-merge`.
@@ -253,7 +254,7 @@ scenarios are taken by the push gate — below is what it does not know.
    screen — pattern `browser-verification-measure`.
 9. **A markup edit of the public site is checked on the production build in all translation
    locales** — the search visibility rule of the tree that has one.
-10. **The PR is bound to the work item**, reviewer and assignee are set, and the body is
+10. **The PR is bound to the work item**, the reviewer is set, and the body is
     assembled by the sample — the sections "What was done", "Points", "Goal", "What confirms it" and "Remaining
     step". By this moment the remaining step section says no steps are left: the folder is
     taken apart before the PR opens.
@@ -280,25 +281,31 @@ from the full set, and by it the reviewer decides what need not be rechecked. Th
 mistake here is not a red pipeline but trust in the section: once read as complete, from then on
 it is rechecked whole.
 
-Where the pipeline wakes for this target, the list is about lifting the draft: the PR opens as a
-draft after the task folder is taken apart and waits for the run. The items are then passed before
-`az repos pr update --id <номер> --draft false`, and an unmet item means the draft is not lifted.
-
-Where it does not wake, the same list is about opening: an unmet item means the PR does not open
-yet. No item asks for a run there: its place is taken by the push gate, green before the sending.
+The list is about opening: a PR that waits only for the run opens ready, so the items are passed
+before the opening, and an unmet item means the PR does not open yet. The run is then waited for on
+the open PR. A draft stands only for a rework or a question, and the same items are passed before
+`az repos pr update --id <номер> --draft false`. Where no build validation stands on the target, no
+item asks for a run: its place is taken by the push gate, green before the sending.
 
 ## A chain of branches: the calls of this host
 
 The order is the pattern `git-workflow-stack`; its calls here:
 
 ```bash
-az repos pr update --id 87 --target-branch <ветка эпика>           # the upper PR, before the lower one completes
+# the upper PR, before the lower one completes; the file holds {"targetRefName": "refs/heads/<ветка эпика>"}
+az devops invoke --area git --resource pullRequests --http-method PATCH \
+    --route-parameters project=<проект> repositoryId=<репозиторий> pullRequestId=87 \
+    --in-file цель.json --api-version 7.1
 az repos pr show --id 87 --query mergeStatus -o tsv                # whether the PR can be completed
 az boards work-item update --id 86 --state <закрытое состояние>    # an item the host did not move itself
 ```
 
-The upper PR is retargeted before the lower one is completed: completing with
+`az repos pr update` has no flag for the target branch, so the retargeting goes through the REST
+call. The upper PR is retargeted before the lower one is completed: completing with
 `--delete-source-branch true` removes the branch the upper PR targets.
+
+The host cuts a PR description at 4000 characters. When the two tables do not fit, their rows stay
+and the cells are shortened to the verdict; the full replies of the roles go into the first comment.
 
 ## Common misses
 
