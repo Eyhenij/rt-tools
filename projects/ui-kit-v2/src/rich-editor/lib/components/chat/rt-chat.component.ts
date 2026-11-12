@@ -78,7 +78,7 @@ const ATTACHMENT_FALLBACK_KEY: TRtKitLabelKey = 'chatAttachmentFallback';
 @Component({
     selector: 'rt-chat',
     templateUrl: './rt-chat.component.html',
-    styleUrls: ['./rt-chat.component.scss', './rt-chat-messenger.scss'],
+    styleUrls: ['./rt-chat.component.scss', './rt-chat-messenger.scss', './rt-chat-translation.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
@@ -362,6 +362,9 @@ export class RtChatComponent {
 
     /** Повторная отправка своего сообщения со статусом `failed`. */
     public readonly retryMessage: OutputEmitterRef<IRtChat.Message> = output<IRtChat.Message>();
+
+    /** Нажата кнопка «Показать перевод» под репликой: текст реплики меняет приложение. */
+    public readonly showTranslation: OutputEmitterRef<IRtChat.Message> = output<IRtChat.Message>();
 
     /**
      * Есть ли у реплики действия потребителя — гейт кнопки «…» у неё.

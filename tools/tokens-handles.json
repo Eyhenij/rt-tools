@@ -196,6 +196,24 @@
     "--rt-menu-container-color": "The application theme's menu container colour; until it is set the preset's colour works.",
     "--rt-input-letter-spacing": "The letter spacing of a field's value (input, number, select, textarea); until it is set the select inherits it from its parent and the native controls keep normal.",
     "--rt-field-label-letter-spacing": "The letter spacing of a field's label; until it is set the label inherits it from its parent.",
-    "--rt-pagination-field-font-size": "The font size of the pagination's per-page value; until it is set the value keeps the field's size --rt-input-font-size."
+    "--rt-pagination-field-font-size": "The font size of the pagination's per-page value; until it is set the value keeps the field's size --rt-input-font-size.",
+    "--rt-stepper-track-color": "the stepper track and the points ahead; the default is --rt-color-stepper-track",
+    "--rt-stepper-progress-color": "the stepper fill and the passed points; the default is --rt-color-stepper-progress",
+    "--rt-stepper-current-color": "the current stepper point; the default is --rt-color-stepper-current",
+    "--rt-stepper-label-color": "the label of the current step; the default is the current point colour",
+    "--rt-stepper-description-color": "the description under the stepper bar; the default is --rt-color-text-primary",
+    "--rt-stepper-point-shadow": "the halo of the current stepper point; the default is --rt-shadow-step-indicator",
+    "--rt-stepper-inset": "the inset of the stepper track, points and label from the bar edges; the default is 0",
+    "--rt-stepper-line-color": "the line between the marks of the step list; the default is --rt-color-border-default",
+    "--rt-stepper-step-label-color": "the step label in the step list; the default is --rt-color-text-primary",
+    "--rt-stepper-step-description-color": "the step description in the step list; the default is --rt-color-text-muted",
+    "--rt-stepper-mark-complete-bg": "the mark of a passed step; the default is the fill colour",
+    "--rt-stepper-mark-complete-color": "the digit of a passed step mark; the default is --rt-color-text-inverse",
+    "--rt-stepper-mark-current-bg": "the mark of the current step; the default is the current point colour",
+    "--rt-stepper-mark-current-color": "the digit of the current step mark; the default is --rt-neutral-950",
+    "--rt-stepper-mark-upcoming-bg": "the mark of a step ahead; the default is the track colour",
+    "--rt-stepper-mark-upcoming-color": "the digit of a step-ahead mark; the default is --rt-color-text-primary",
+    "--rt-stepper-mark-neutral-bg": "the mark of a list without a current step; the default is --rt-color-text-muted",
+    "--rt-stepper-mark-neutral-color": "the digit of such a mark; the default is --rt-color-text-inverse"
   }
 }

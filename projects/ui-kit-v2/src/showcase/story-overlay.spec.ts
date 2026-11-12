@@ -65,4 +65,14 @@ describe('story-overlay', () => {
 
         expect(opened).toBe(2);
     });
+
+    it('SC-UKV-1228 — нажатие ставит фокус без прокрутки страницы', async () => {
+        const trigger: HTMLButtonElement = canvas.querySelector('button') as HTMLButtonElement;
+        const focus: jest.SpyInstance = jest.spyOn(trigger, 'focus');
+        releaseFonts();
+
+        await openStoryOverlay(canvas);
+
+        expect(focus).toHaveBeenCalledWith({ preventScroll: true });
+    });
 });

@@ -67,6 +67,12 @@ export function rtTabsEasing(value: string): (progress: number) => number {
     };
 }
 
+/** Какие стрелки прокрутки видны у полосы: есть куда прокручивать назад и вперёд. */
+export function rtTabsRestShown(list: HTMLElement): IRtTabs.RestShown {
+    // 1px — погрешность субпиксельного scrollWidth
+    return { before: list.scrollLeft > 0, after: list.scrollWidth - list.scrollLeft - list.clientWidth > 1 };
+}
+
 /** Куда прокрутить полосу нажатием на стрелку: на шаг `step` от `from`, не дальше края. */
 export function rtTabsPageTarget(list: HTMLElement, from: number, back: boolean, step: IRtTabs.ScrollStep): number {
     const max: number = Math.max(0, list.scrollWidth - list.clientWidth);
@@ -125,6 +131,20 @@ export class RtTabsScroller {
     /** Положение, от которого считать следующий шаг: цель идущей прокрутки или текущее. */
     public from(): number {
         return this.#target ?? this.#list()?.nativeElement.scrollLeft ?? 0;
+    }
+
+    /** Ставит полосу на цель: сразу (`instant`) или плавно. `null` — вкладка уже видна целиком. */
+    public place(target: number | null, instant: boolean): void {
+        const list: HTMLElement | undefined = this.#list()?.nativeElement;
+        if (target === null || !list) {
+            return;
+        }
+        if (instant) {
+            this.stop();
+            list.scrollLeft = target;
+            return;
+        }
+        this.to(target);
     }
 
     /** Прокручивает полосу к `left`; новая прокрутка заменяет идущую. */

@@ -288,5 +288,10 @@
         &__user--is-open {
             background-color: var(--rt-nav-item-color-bg-active);
         }
+
+        /* Рейка сама держит своё место: хост в раскладке не участвует. */
+        &--vertical {
+            display: contents;
+        }
     }
 }

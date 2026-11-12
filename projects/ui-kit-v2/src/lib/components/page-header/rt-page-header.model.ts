@@ -1,6 +1,9 @@
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 
 export namespace IRtPageHeader {
+    /** Вид шапки: разделы в ряд или рейкой по левому краю окна. */
+    export type Layout = 'horizontal' | 'vertical';
+
     /**
      * Описание пункта верхней навигации — раздела первого уровня или пункта
      * панели второго.
@@ -26,6 +29,8 @@ export namespace IRtPageHeader {
          * У раздела с панелью точка горит и от признака любого пункта внутри.
          */
         readonly unread?: boolean;
+        /** Кнопка подвала рейки включена: например, открыт ассистент. У разделов поле не читается. */
+        readonly active?: boolean;
         /** Панель второго уровня: колонка → группа → пункт. */
         readonly columns?: ReadonlyArray<Column>;
         /**

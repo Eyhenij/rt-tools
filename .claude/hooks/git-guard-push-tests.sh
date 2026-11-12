@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-push-tests.sh · bd6ba861da91 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-push-tests.sh · 4336f13ae155 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__terminal__run_in_terminal
 # rt-hook-timeout: 1800
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/push-sign.sh, hooks/push-set.sh, hooks/git-guard-push-marks.sh
@@ -22,9 +22,9 @@
 #
 # The base is taken from the remote, not from the local main branch: the local one falls behind or
 # diverges silently. That has happened already — the local one stood at a merge wiped from the
-# history by a force push, and the set counted against it would have been the wrong one. A stacked
-# branch is counted against the remote copy of the branch it was created from — the helper
-# `git-guard-push-marks.sh` says when. There is no network or no remote — the base is empty, and
+# history by a force push, and the set counted against it would have been the wrong one. The base
+# is the remote branch the head has the fewest commits over — the helper `git-guard-push-marks.sh`
+# picks it. There is no network or no remote — the base is empty, and
 # the profile falls back to a full run: the gate may turn out stricter than needed, but NEVER weaker.
 #
 # A check green on the same tree against the same base is not run again, and a tree that declares

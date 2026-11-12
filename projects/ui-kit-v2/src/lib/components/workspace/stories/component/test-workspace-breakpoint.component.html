@@ -1,0 +1,26 @@
+<div style="block-size: 100dvh; overflow: hidden; background: var(--rt-color-bg-surface)">
+    <rt-workspace hasActive style="block-size: 100%" [singleColumnBreakpoint]="breakpoint" [asideOverlayWidth]="overlayWidth">
+        <ng-template rtWorkspaceList>
+            <div style="padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem">
+                <strong>Переписки</strong>
+                @for (row of rows; track row) {
+                    <span>{{ row }}</span>
+                }
+            </div>
+        </ng-template>
+        <ng-template rtWorkspaceCenter>
+            <div style="padding-block: 1rem; display: flex; flex-direction: column; gap: 0.5rem">
+                <strong>Анна Смирнова</strong>
+                <span>Добрый день! Можно заехать на час раньше?</span>
+            </div>
+        </ng-template>
+        <ng-template rtWorkspaceAside>
+            <div qa-dataid="breakpoint-details" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem">
+                <strong>Сведения о брони</strong>
+                <span>Гость: Анна Смирнова</span>
+                <span>Телефон: +7 900 123-45-67</span>
+                <span>Проживание, 3 ночи — 45 000 ₽</span>
+            </div>
+        </ng-template>
+    </rt-workspace>
+</div>

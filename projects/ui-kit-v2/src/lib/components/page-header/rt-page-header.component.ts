@@ -37,6 +37,8 @@ import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtPageHeaderMoreComponent } from './more/rt-page-header-more.component';
+import { RtPageRailComponent } from './rail/rt-page-rail.component';
+import { RtPageHeaderUserComponent } from './user/rt-page-header-user.component';
 import {
     activeSectionIds,
     compactSectionsOf,
@@ -94,6 +96,8 @@ const PAGE_HEADER_MOBILE_BACKDROP: string = 'rt-page-header-mobile-backdrop';
         RtPopoverDirective,
         RtTooltipDirective,
         RtPageHeaderMoreComponent,
+        RtPageRailComponent,
+        RtPageHeaderUserComponent,
         BlockDirective,
         ElemDirective,
         ModDirective,
@@ -102,6 +106,7 @@ const PAGE_HEADER_MOBILE_BACKDROP: string = 'rt-page-header-mobile-backdrop';
         class: BEM_BLOCK,
         '[class.rt-page-header--sticky]': 'stickyCompact()',
         '[class.rt-page-header--is-compact]': 'compact()',
+        '[class.rt-page-header--vertical]': 'isVertical()',
     },
 })
 export class RtPageHeaderComponent {
@@ -166,8 +171,8 @@ export class RtPageHeaderComponent {
         read: RtPopoverDirective,
     });
 
-    /** Сжатое состояние: шапка липкая и прилипла к верху. */
-    protected readonly compact: Signal<boolean> = computed((): boolean => this.stickyCompact() && this.#stuck());
+    /** Сжатое состояние: шапка липкая, прилипла к верху и стоит в горизонтальном виде — у рейки его нет. */
+    protected readonly compact: Signal<boolean> = computed((): boolean => this.stickyCompact() && this.#stuck() && !this.isVertical());
 
     /** Разделы в кругах сжатой полосы: первые с иконкой, число — по входу. */
     protected readonly compactSections: Signal<ReadonlyArray<IRtPageHeaderView.Section>> = computed(
@@ -231,6 +236,8 @@ export class RtPageHeaderComponent {
 
     protected readonly EntryKind: typeof ERtPageHeaderEntry = ERtPageHeaderEntry;
 
+    protected readonly isVertical: Signal<boolean> = computed((): boolean => this.layout() === 'vertical');
+
     public readonly items: InputSignal<ReadonlyArray<IRtPageHeader.Item>> = input<ReadonlyArray<IRtPageHeader.Item>>([]);
 
     public readonly user: InputSignal<IRtPageHeader.User | null> = input<IRtPageHeader.User | null>(null);
@@ -255,6 +262,17 @@ export class RtPageHeaderComponent {
         transform: numberAttribute,
     });
 
+    /** Вид шапки: разделы в ряд (`horizontal`) или рейкой по левому краю окна (`vertical`). */
+    public readonly layout: InputSignal<IRtPageHeader.Layout> = input<IRtPageHeader.Layout>('horizontal');
+
+    /** Кнопки подвала рейки: ассистент, уведомления. Нажатие приходит в `itemClick`. */
+    public readonly railActions: InputSignal<ReadonlyArray<IRtPageHeader.Item>> = input<ReadonlyArray<IRtPageHeader.Item>>([]);
+
+    /** Подвал рейки: вид с вкладками его убирает и ставит те же кнопки в ряд с вкладками. */
+    public readonly railFoot: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
     /** Своё имя навигации важнее умолчания */
     public readonly navAriaLabel: Signal<string> = computed((): string => this.ariaLabel() || this.#t_uiMainNav());
 
@@ -271,6 +289,8 @@ export class RtPageHeaderComponent {
             }
         });
 
+        // Наблюдение ставится при любом виде: вид меняется на ходу, а у рейки сжатой полосы нет — её
+        // гасит `compact`, а не отсутствие наблюдателя.
         afterNextRender((): void => this.#observeStuck());
 
         // Ряд пересчитывается при смене состава и подписей — и разделов, и самого «Ещё»: ширины
