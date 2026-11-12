@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · pitfalls/task-flow.md · eefe5ee6b4e7 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · pitfalls/task-flow.md · a23cb4ed4f82 · правится надстройкой, не здесь -->
 # Work conduct — cold part
 
 Pitfalls and behaviour from incident analyses. Loaded not with the rule but on demand: an ordinary
@@ -239,11 +239,11 @@ they are for whoever investigates a miss or argues with a guard.
 - **A run placed as the first closing step eats the session window.** It costs more than all the
   other steps together: the one who spent it hit the fill threshold on four binding lines — on work
   that would have taken a minute had it come first.
-- **Permission to work outside the assigned epic belongs to the working tree, not to the branch.**
-  Written into a repository file, it leaves with the branch: from a neighbouring one it is
-  invisible, and the epic guard refuses exactly the work the owner permitted. Its place is next to
-  the session handover. The list is filled by the executor and permitted by the owner: a number
-  written in by oneself is not a permission.
+- **Permission to work outside the assigned epic lies in the main branch, not in a task branch.**
+  Written into a task branch, it leaves with that branch: from a neighbouring one it is invisible,
+  and the epic guard refuses exactly the work the owner permitted. Its place is the table of
+  assignments in the main branch. The row repeats the owner's word: a number written in by oneself
+  is not a permission.
 - **A task moved to another epic is removed from the previous one's set in the same turn.** The move
   is two motions, and done by half it leaves the task in two sets at once: the epic looks unclosed
   with all its work done. The total is written where the set is edited: postponed, it is written

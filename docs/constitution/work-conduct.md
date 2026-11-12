@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · laws/work-conduct.md · 87339df65a14 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · laws/work-conduct.md · 7cb7e041a4fe · правится надстройкой, не здесь -->
 # Law on work conduct
 
 The law sets how work is conducted from the moment a task is set until it is closed. Work outlasts
@@ -175,8 +175,8 @@ one session and keeps its whole context and state when it passes to the next.
   declared reads as an epic nobody started, however many of its tasks are already done. The card
   moves by the same motion as the first task's, not by a separate step remembered later.
 - **An executor's session does not end together with the task.** The end of a task is no sign to
-  stop: only the window fill limit and the end of the epic are. A session closed on a finished task costs a
-  whole session to return to what was at hand.
+  stop; the epic's end is, until the owner's word. A session closed on a finished task costs a whole
+  session to return to the work.
 - **The window fill limit stops a session only where the tool does not compact the context itself.**
   Where compaction is declared and comes before the limit, the window is not the end of the session
   but its continuation: the context is compacted, the written state returns into it, and the work

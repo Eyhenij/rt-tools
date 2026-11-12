@@ -40,8 +40,11 @@ revision is the owner's decision.
 The row of the table of assignments that gives the epic to this working copy is the owner's, and it
 is asked for right after the epic card is created, before the task cards: the assignment guard
 counts a call with `--epic-of` as taking work and refuses a number other than the assigned epic.
+The guard reads the table of the working copy, and the epic branch is taken from the main branch:
+the row lies in the main branch before the epic branch is taken, otherwise every branch of the
+epic reads the old epic.
 
-The cards for all the tasks are created at once once the row stands — by the same call with
+When the row stands, the cards for all the tasks are created at once — by the same call with
 `--epic-of`, for every row of the makeup. The issued numbers return to the same table: "take the
 next" answers with a number from now on.
 

@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when returning to unfinished work in a new session. What is already in the context, what not to ask the owner, how to edit "Where we stand", how to record a decision along the way and a stage revision. Not for starting work — that is pattern task-flow-start.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-resume.md · 41ee7a9da3b2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-resume.md · ed3f10ba5afe · правится надстройкой, не здесь -->
 
 # Returning to unfinished work
 
@@ -199,8 +199,9 @@ statement about the tree, and it is backed by command output.
 
 Two things stop the session. The window fill limit — then comes the handover, pattern
 `task-flow-handoff`. And the end of the epic: the turn shows the table of its tasks and waits for
-the owner's word, rule `turn-conduct`. A card of the work queue outside the epic is not an order,
-and the assignment guard refuses taking it until the owner names the work.
+the owner's word, rule `turn-conduct`. A card of the work queue outside the epic is not an order.
+While the epic is assigned and open, no check refuses taking such a card — this article holds it;
+after the epic's end the epic-end guard refuses it until the owner names the work.
 
 **Next move:** an action is done on the next task — a task, a branch or a folder is created. The
 turn ends after it, not after words about it.
@@ -213,6 +214,20 @@ lesson the task left for the following ones goes into the section of the plan ab
 along the way, in the same commit. The last task of the epic has no next branch, and the epic branch
 takes no edit of its own: its row stays "handed over", and the body of the epic PR into the main
 branch names its merge.
+
+Work begun from cargo that arrived moves its records to "done" in the turn that learns of the merge,
+not at the folder's taking-apart: before the merge the edit is not in the tree, and the mark would
+claim what does not yet lie in main. The keys are taken from the archive and passed whole, as the
+intake read prints them:
+
+```bash
+npm run cargo:mark -- --state fixed \
+    --proposal <полный ключ> --proposal <полный ключ> \
+    --fix '<чем исправлено: статья правила, гард, проверка, правка кода>'
+```
+
+One fix per call, so the records go in batches by what closed them. The reply is read: "moved 0"
+means nothing moved.
 
 **Next move:** the work of the next task goes on — the merge needs no turn of its own.
 

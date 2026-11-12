@@ -28,7 +28,8 @@ merge go on without the executor and do not get faster from being watched.
 
 ## What a turn ends with
 
-While the epic runs there are four ways, and no others.
+There are four ways, and no others. While the epic runs the fourth does not end a turn: the next
+task goes on in it.
 
 - **a question to the owner that the rules do not answer** — the question is asked, and the rules were read in the same turn
 - **a guard refusal** — the refusal is named to the owner, no workaround was looked for
