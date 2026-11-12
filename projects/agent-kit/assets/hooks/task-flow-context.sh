@@ -163,9 +163,11 @@ rt_task_flow_context() {
             ! git -C "$rt_tf_askdir" ls-files --error-unmatch -- "$rt_tf_candidate" >/dev/null 2>&1; then
             continue
         fi
+        # A relative path belongs to the directory the command runs in. The project directory of the
+        # session is a different tree once the session moved into a second working copy.
         case "$rt_tf_candidate" in
             /*) ;;
-            *) rt_tf_candidate="${CLAUDE_PROJECT_DIR:-.}/$rt_tf_candidate" ;;
+            *) rt_tf_candidate="$rt_tf_askdir/$rt_tf_candidate" ;;
         esac
         if rt_is_app_code "$rt_tf_candidate" || rt_tf_laid_out "$rt_tf_candidate"; then
             RT_TF_PATH="$rt_tf_candidate"
@@ -177,9 +179,18 @@ EOF
     [ -z "$RT_TF_PATH" ] && return 1
     RT_TF_CANDIDATES="$rt_tf_candidates"
 
-    # The branch is looked at where the edit will go: a worktree has one of its own.
-    rt_tf_workdir="$(rt_hook_cwd)"
-    [ -z "$rt_tf_workdir" ] && rt_tf_workdir="${CLAUDE_PROJECT_DIR:-.}"
+    # The branch is looked at where the edit will go: a worktree has one of its own. The edited
+    # file names that copy itself — the directory of the call may stay in another copy while a
+    # tool writes by the full path — so the nearest existing directory of the file is asked first,
+    # and the directory of the call only when that is not a working copy.
+    rt_tf_workdir="$(dirname "$RT_TF_PATH")"
+    while [ ! -d "$rt_tf_workdir" ] && [ "$rt_tf_workdir" != / ]; do
+        rt_tf_workdir="$(dirname "$rt_tf_workdir")"
+    done
+    if ! git -C "$rt_tf_workdir" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        rt_tf_workdir="$(rt_hook_cwd)"
+        [ -z "$rt_tf_workdir" ] && rt_tf_workdir="${CLAUDE_PROJECT_DIR:-.}"
+    fi
     cd "$rt_tf_workdir" 2>/dev/null || return 1
     git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 1
 
