@@ -16,6 +16,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtStepLabelDirective } from './rt-step-label.directive';
+import { labelSegment } from './rt-stepper.logic';
 import { IRtStepper } from './rt-stepper.model';
 
 const BEM_BLOCK: string = 'rt-stepper';
@@ -43,8 +44,11 @@ function stepState(index: number, current: number): IRtStepper.StepState {
  * текущего шага. Шаги задаются через input `steps` (массив `IRtStepper.Step`
  * со связкой label + description), активный шаг — через `currentIndex`.
  *
- * Активная точка увеличена и подсвечивается янтарным; над ней висит подпись
- * текущего шага (тоже янтарная, выравнивается по краю на крайних шагах).
+ * Активная точка увеличена и подсвечивается янтарным; над ней стоит подпись
+ * текущего шага (тоже янтарная): по центру над точкой, на крайних шагах у края
+ * полосы, у среднего шага возле края — тоже у ближнего края. За полосу подпись не
+ * выходит, длинная переносится. Полоса тянется по ширине места, шагов сколько угодно;
+ * отступ точек от краёв задаёт приложение свойством `--rt-stepper-inset`.
  * Пройденные точки и заполненная часть полосы — progress-цвет; будущие точки
  * и трек — приглушённый цвет (в dark-теме оба ухода от яркого синего). Под
  * полосой — описание текущего шага, многоабзацное (`\n\n`). Сам список названий
@@ -126,20 +130,22 @@ export class RtStepperComponent {
     });
 
     /**
-     * Якорь подписи текущего шага: подпись висит над активной точкой и не должна
-     * вылезать за края рельсы. Первый шаг — выравнивание по левому краю точки,
-     * последний — по правому, остальные центрируются над точкой.
+     * Отрезок полосы под подписью текущего шага: подпись центрирована над точкой и не выходит за
+     * полосу, на первом шаге прижата к началу, на последнем к концу. Средний шаг, у которого над
+     * точкой меньше половины полосы, прижимается к ближнему краю. Считает чистая функция рядом.
      */
-    protected readonly labelAnchor: Signal<'start' | 'center' | 'end'> = computed((): 'start' | 'center' | 'end' => {
-        const total: number = this.steps().length;
-        const idx: number = this.#safeIndex();
-        if (idx <= 0) {
-            return 'start';
-        }
-        if (idx >= total - 1) {
-            return 'end';
-        }
-        return 'center';
+    protected readonly labelSegment: Signal<IRtStepper.LabelSegment> = computed((): IRtStepper.LabelSegment =>
+        labelSegment(this.#safeIndex(), this.steps().length)
+    );
+
+    /**
+     * Состояние каждой точки по зажатому номеру — тому же, что у подписи и заполнения: при номере
+     * за пределами набора текущей становится последняя точка, а не ни одна.
+     */
+    protected readonly points: Signal<readonly IRtStepper.StepState[]> = computed((): readonly IRtStepper.StepState[] => {
+        const current: number = this.#safeIndex();
+
+        return this.steps().map((_step: IRtStepper.Step, index: number): IRtStepper.StepState => stepState(index, current));
     });
 
     /** Абзацы описания текущего шага: бэк отдаёт плоскую строку, делим по `\n\n`. */
