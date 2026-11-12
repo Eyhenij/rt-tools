@@ -1,6 +1,6 @@
 # Report of the rules graph
 
-Built by `npm run graph:rules` from `ed2bb634b`: 351 nodes, 1302 links.
+Built by `npm run graph:rules` from `cbbe13745`: 351 nodes, 1302 links.
 The graph is `projects/agent-kit/rules-graph/graph.json`; graphify reads it with `--graph`. Every list below is
 debt for the revision of a law family to sort out, not a refusal.
 
