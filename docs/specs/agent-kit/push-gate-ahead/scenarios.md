@@ -13,9 +13,34 @@ Given a branch created from the main branch
 When the push guard picks the base
 Then the base is the remote main branch
 
-Given the parent branch was removed from the remote
+Given the parent branch was removed from the remote, and the working copy holds no ref of it
 When the push guard picks the base
 Then the base is the remote main branch: the gate may be stricter, never weaker
+
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+
+### SC-AK-1340 — the base is the nearest remote branch in the history of the head
+
+Given two remote branches lie in the history of the head, one nearer to it than the other
+When the push guard picks the base
+Then the base is the nearer one
+
+Given the lower branch of a chain was merged into the branch of the epic and removed from the
+remote, and the branch above it took the branch of the epic in
+When the push guard picks the base
+Then the base is the branch of the epic
+
+Given the lower branch was removed from the remote, and the working copy still holds its ref
+When the push guard picks the base
+Then the base is that ref: its content has already passed the set
+
+Given the branch has a remote copy of its own behind the head
+When the push guard picks the base
+Then that copy is not the base
+
+Given a branch whose reflog names no parent, and the call comes from a subdirectory
+When the push guard picks the base
+Then the base is the same as from the root of the tree
 
 Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 

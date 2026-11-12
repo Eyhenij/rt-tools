@@ -1,6 +1,6 @@
 # The push set against its base, from its marks and ahead
 
-**Status:** in force · **Revision:** 2026-11-03 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-12 · **Scenario prefix:** `SC-AK`
 **Depends on:** the subdomain of the delivery guards and the push gate
 **Laws:** `delivery`, `verifiability`
 **Procedures:** none
@@ -34,9 +34,10 @@ There is no interface: the guard answers with a refusal text, the run ahead with
 
 ## Rules
 
-- **A stacked branch is counted against its parent, while the parent's remote copy lies in the
-  history of the head.** A parent merged and removed, rewritten or moved past the head gives the
-  main branch back.
+- **The push set is counted against the nearest remote branch that lies in the history of the
+  head.** A stacked branch is so counted against the branch under it, a task branch against
+  the branch of its epic. The branch's own remote copy is not a candidate. No remote branch in the
+  history gives the main branch: the gate may be stricter, never weaker.
 - **A check green on the same tree against the same base is not run again.** The key is the check
   line, the tree of the head and the base commit.
 - **A mark is trusted and written only on a clean working copy.** The checks run over the working
@@ -95,9 +96,16 @@ Several working copies share the marks: a key holds the tree and the base, not t
 
 ## Decisions
 
-- **The parent is read from the branch reflog, not from the base of an open request.** A request is
-  a network call to the host on every push, and the first push of a stacked branch has no request
-  yet — exactly the costly one.
+- **The base is read from the remote refs of the working copy, not from the branch reflog and not
+  from an open request.** The reflog line is absent in a branch taken in another copy and names
+  nothing for a branch created from the checked-out head; a parent merged and removed from the
+  remote sent every branch above it to the main branch, and a branch of texts then ran two
+  snapshot sets, the end-to-end suites and two image builds — forty to sixty minutes. A request
+  is a call to the host on every push, and the first push of a branch has no request yet.
+- **The refs of branches removed from the remote are not pruned by the guard.** A lower branch
+  merged and removed stays the nearest one for the branch above it: its content has passed the
+  set and the review. Pruned, such a branch would be counted against the main one until it takes
+  its new base in, and the delivery rule takes the base in only on a conflict.
 - **The key holds the tree, not the commit.** An amended commit with the same content does not pay
   again.
 - **Light checks without a mark still run inside the guard.** They take seconds, and the refusal
@@ -111,3 +119,6 @@ None.
 
 - 2026-11-03 — the subdomain was created: the push of a kit branch did not fit the hook limit, and
   the scenario file of the delivery gate is at its length limit. Task RT-3092.
+- 2026-11-12 — the base is the nearest remote branch in the history of the head; the reflog line
+  is no longer read. A branch above a merged and removed one was counted against the main branch
+  and ran every heavy step. Task RT-3231.

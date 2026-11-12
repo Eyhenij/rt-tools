@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-push-marks.sh · f274dd9dece7 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-push-marks.sh · 5d9dc1f953f5 · правится надстройкой, не здесь
 # The base of the push set and the marks of a green run, shared by the push guard and by the
 # command that runs the set ahead (`git-guard-push-ahead.sh`).
 #
@@ -11,38 +11,43 @@
 
 # The base the contribution is counted against. Prints `origin/<branch>` or nothing.
 #
-# A stacked branch is counted against the branch it was created from, not against the main one:
-# against the main one it paid for the whole stack under it, and a branch of the second kit three
-# levels up did not fit the hook limit at all. The parent is read from the branch reflog — git
-# writes `branch: Created from <ref>` itself at `checkout -b` — and is taken only when its remote
-# copy exists and is an ancestor of the head. A parent merged and removed, rewritten or moved past
-# the head gives the main branch back: the gate may turn out stricter than needed, never weaker.
+# The base is the nearest remote branch that lies in the history of the head: what stands between
+# it and the head is exactly what this push adds to the remote. A stacked branch is so counted
+# against the branch under it and a task branch against the branch of its epic, not against the
+# main one: against the main one a branch of texts ran the snapshot sets, the end-to-end suites
+# and the image builds of the whole epic. The branch's own remote copy is not a candidate — the
+# set answers for the whole contribution of the branch, not for its last commit.
+#
+# The answer is read from the remote refs of the working copy after one fetch: no call to the
+# host, the same answer from any directory, and it works on the first push, when no request is
+# open yet. The refs of branches removed from the remote are not pruned here on purpose: a lower
+# branch merged and removed stays the nearest one for the branch above it, and its content has
+# already passed the set. No remote branch in the history gives the main branch: the gate may
+# turn out stricter than needed, never weaker.
 rt_push_base() {
-    local main="$1" branch from
-    git fetch --quiet origin "$main" 2>/dev/null
+    local main="$1" branch ref count best='' best_count=''
+    git fetch --quiet origin 2>/dev/null
     git rev-parse --verify --quiet "origin/$main" >/dev/null 2>&1 || return 0
 
     branch="$(git symbolic-ref --quiet --short HEAD 2>/dev/null)"
-    if [ -n "$branch" ]; then
-        from="$(git reflog show --format=%gs "refs/heads/$branch" 2>/dev/null \
-            | sed -n 's/^branch: Created from //p' | tail -n 1)"
-        from="${from#refs/remotes/}"
-        from="${from#refs/heads/}"
-        from="${from#origin/}"
-        case "$from" in
-            '' | HEAD | "$main" | "$branch") ;;
-            *)
-                if git fetch --quiet origin "$from" 2>/dev/null &&
-                    git rev-parse --verify --quiet "origin/$from" >/dev/null 2>&1 &&
-                    git merge-base --is-ancestor "origin/$from" HEAD 2>/dev/null; then
-                    printf 'origin/%s' "$from"
-                    return 0
-                fi
-                ;;
+    while IFS= read -r ref; do
+        case "$ref" in
+            '' | origin | origin/HEAD | "origin/$branch") continue ;;
         esac
-    fi
+        count="$(git rev-list --count "$ref..HEAD" 2>/dev/null)" || continue
+        case "$count" in '' | *[!0-9]*) continue ;; esac
+        # On a tie the main branch wins: a merged branch whose tip is the tip of the main one
+        # names the same commit, and the main one is the name every reader expects.
+        if [ -z "$best_count" ] || [ "$count" -lt "$best_count" ] ||
+            { [ "$count" -eq "$best_count" ] && [ "$ref" = "origin/$main" ]; }; then
+            best="$ref"
+            best_count="$count"
+        fi
+    done <<EOF
+$(git for-each-ref --merged HEAD --format='%(refname:short)' refs/remotes/origin 2>/dev/null)
+EOF
 
-    printf 'origin/%s' "$main"
+    printf '%s' "${best:-origin/$main}"
 }
 
 # A mark is trusted only on a clean working copy. The checks run over the working copy, while the

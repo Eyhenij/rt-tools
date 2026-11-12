@@ -297,6 +297,51 @@ git -C "$STACK" checkout -q RT-81-top 2>/dev/null
 git -C "$STACK" push -q origin --delete RT-80-low 2>/dev/null
 git -C "$STACK" branch -q -D -r origin/RT-80-low 2>/dev/null
 report "SC-AK-1240 — родитель, снятый с сервера, возвращает главную" "$(push_base "$STACK")" origin/main
+
+# --- SC-AK-1340. База — ближайшая ветка сервера в истории головы -----------------------------------
+# Нижнюю ветку цепочки сервер снимает при слиянии, и ветка над ней считалась от главной: ветка
+# текстов запускала снимки, сквозные наборы и сборку образов всего эпика. База читается по ссылкам
+# копии: без вызова хоста, одинаково из любого каталога и без записи о родителе в журнале ветки.
+stack_git() {
+    git -C "$STACK" -c user.name=probe -c user.email=probe@example.invalid -c commit.gpgsign=false "$@"
+}
+
+stack_git checkout -q -b RT-90-epic main 2>/dev/null
+fixture_commit "$STACK" epic.txt эпик 'feat: ветка эпика'
+stack_git push -q origin RT-90-epic 2>/dev/null
+stack_git checkout -q -b RT-91-low RT-90-epic 2>/dev/null
+fixture_commit "$STACK" low2.txt низ 'feat: нижняя ветка цепочки'
+stack_git push -q origin RT-91-low 2>/dev/null
+stack_git checkout -q -b RT-92-top RT-91-low 2>/dev/null
+fixture_commit "$STACK" top2.txt верх 'feat: верхняя ветка цепочки'
+report "SC-AK-1340 — из веток сервера в истории головы берётся ближайшая" "$(push_base "$STACK")" origin/RT-91-low
+
+stack_git push -q origin RT-92-top 2>/dev/null
+fixture_commit "$STACK" top3.txt ещё 'feat: вторая правка верхней ветки'
+report "SC-AK-1340 — своя копия ветки на сервере базой не считается" "$(push_base "$STACK")" origin/RT-91-low
+
+# Сервер снял нижнюю ветку, а ссылка на неё в копии осталась: её содержимое набор уже прошло.
+git -C "$STACK_REMOTE" update-ref -d refs/heads/RT-91-low 2>/dev/null
+report "SC-AK-1340 — ссылка снятой с сервера ветки остаётся базой" "$(push_base "$STACK")" origin/RT-91-low
+
+# Копия, где ссылки на нижнюю ветку нет: нижняя влита в ветку эпика коммитом слияния.
+stack_git checkout -q RT-90-epic 2>/dev/null
+stack_git merge -q --no-ff -m 'feat: нижняя ветка влита в ветку эпика' RT-91-low 2>/dev/null
+stack_git push -q origin RT-90-epic 2>/dev/null
+stack_git checkout -q RT-92-top 2>/dev/null
+stack_git branch -q -D -r origin/RT-91-low 2>/dev/null
+report "SC-AK-1340 — ветка эпика не принята и ссылки на нижнюю нет: база главная" "$(push_base "$STACK")" origin/main
+stack_git merge -q -m 'feat: ветка эпика принята' origin/RT-90-epic 2>/dev/null
+report "SC-AK-1340 — ветка приняла ветку эпика: база — ветка эпика" "$(push_base "$STACK")" origin/RT-90-epic
+
+# Ветка без записи о родителе в журнале и вызов из подкаталога дают тот же ответ.
+stack_git checkout -q -b RT-93-here 2>/dev/null
+mkdir -p "$STACK/sub"
+report "SC-AK-1340 — из подкаталога ответ тот же, что из корня" "$(push_base "$STACK/sub")" "$(push_base "$STACK")"
+case "$(push_base "$STACK")" in
+    origin/main | '') report "SC-AK-1340 — ветка без записи о родителе считается не от главной" нет да ;;
+    *) report "SC-AK-1340 — ветка без записи о родителе считается не от главной" да да ;;
+esac
 rm -rf "$STACK" "$STACK_REMOTE"
 
 # --- SC-AK-1241. Зелёное на том же дереве второй раз не гоняется ---------------------------------

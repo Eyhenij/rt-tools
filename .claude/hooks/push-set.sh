@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/push-set.sh · 512f91216efd · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/push-set.sh · ba3f3d9a2781 · правится надстройкой, не здесь
 # The gate set before a push, one way for both who run it. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The session guard of the push and the git hook
 # `pre-push` source it and call its functions.
@@ -9,7 +9,7 @@
 # been checked at all. Here lives the single one.
 #
 #   rt_push_set_profile <hooks dir> <tree root> — the package default and the tree override
-#   rt_push_set_base                            — the main branch of the remote, or empty
+#   rt_push_set_base                            — the nearest remote branch in the head, or empty
 #   rt_push_set_run <base>                      — every line of `rt_push_checks <base>`
 #   rt_push_mark_path / rt_push_mark_covers <commit> / rt_push_mark_write — the mark of green
 #
