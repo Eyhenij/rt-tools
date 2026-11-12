@@ -4,7 +4,7 @@ kind: pattern
 rule: doc-style
 description: Pattern of rule doc-style. Load when writing any project prose — rules, specs, README, code comments, commit bodies, PR descriptions. Samples of "so" and "not so" for each wording convention. Not for the structure of a spec — that is rule spec-driven.
 ---
-<!-- rt-kit v0.37.0 · patterns/doc-style-write.md · 6d62745fd39d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/doc-style-write.md · 571a03a833f4 · правится надстройкой, не здесь -->
 
 # How to word
 
@@ -144,7 +144,7 @@ task document and was reported to the owner as fact. Caught by a rebase, that is
 
 ```bash
 git fetch origin
-git show origin/main:<path to file>
+git show origin/<base branch>:<path to file>
 ```
 
 **A statement "all N such-and-such" is written after listing the routes by which a value reaches

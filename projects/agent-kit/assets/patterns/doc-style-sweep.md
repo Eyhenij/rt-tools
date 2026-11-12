@@ -69,7 +69,7 @@ An item has a task — that does not yet mean the task carries its content. Befo
 coverage is measured: how many of the item's significant words occur in the body of its task.
 
 ```bash
-/opt/homebrew/bin/gh issue list --state all --limit 400 --json number,title,body,state > /tmp/issues.json
+<host client> issue list --state all --limit 400 --json number,title,body,state > /tmp/issues.json
 ```
 
 An item covered by the body half or less is read by eye and sorted into three outcomes:

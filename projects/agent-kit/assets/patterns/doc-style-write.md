@@ -143,7 +143,7 @@ task document and was reported to the owner as fact. Caught by a rebase, that is
 
 ```bash
 git fetch origin
-git show origin/main:<path to file>
+git show origin/<base branch>:<path to file>
 ```
 
 **A statement "all N such-and-such" is written after listing the routes by which a value reaches

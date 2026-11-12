@@ -2,7 +2,7 @@
 
 The directory of the description of the past in this tree gains a record per closed piece of
 work, and it has no index: `indexedDirs` in the checks config is empty, so the rule's article
-about reconciling an index from both sides applies here to one specs directory. Why there is no
+about reconciling an index from both sides judges no directory here. Why there is no
 index at all the rule itself says; here — what came of that in the tree.
 
 - **A list every branch appends to the end of is not started here at all.** Two appends into one

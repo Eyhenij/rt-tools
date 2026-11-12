@@ -4,7 +4,7 @@ kind: pattern
 rule: doc-style
 description: Pattern of rule doc-style. Load when a document has accumulated a list of work and must be sorted into what still holds and what is closed. The selection sign, a pass over the statements, a check against the work queue, the fate of the file itself. New text — pattern doc-style-write.
 ---
-<!-- rt-kit v0.37.0 · patterns/doc-style-sweep.md · cf4050498eb4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/doc-style-sweep.md · d1367af7ff22 · правится надстройкой, не здесь -->
 
 # Sorting a document that has accumulated a work list
 
@@ -70,7 +70,7 @@ An item has a task — that does not yet mean the task carries its content. Befo
 coverage is measured: how many of the item's significant words occur in the body of its task.
 
 ```bash
-/opt/homebrew/bin/gh issue list --state all --limit 400 --json number,title,body,state > /tmp/issues.json
+<host client> issue list --state all --limit 400 --json number,title,body,state > /tmp/issues.json
 ```
 
 An item covered by the body half or less is read by eye and sorted into three outcomes:

@@ -106,7 +106,7 @@ flowchart TD
   refuses and names the files; the bypass is `# discard: <reason>` in the command.
 - **The lower branch of a chain does not rewrite history — neither `rebase` nor a force push.** The
   host closes the upper PR as merged once its diff goes empty. A lagging branch is fixed by merging
-  main in.
+  its base in.
 - **A divergence inside a chain is resolved by the one who branches.** Both edits are theirs; the
   owner resolving the same at merge time owns neither.
 - **Unmet delivery conditions are named in one refusal.** The guard collects and prints them at
@@ -220,7 +220,7 @@ flowchart TD
   host's `mergeable` field; a local merge does not derive it.
 - **An index that branches only append lines to is declared a union of both sides.** A conflict there
   is no dispute: both additions are needed whole. The declaration does **not** clear the mergeability
-  mark — it clears when the branch has absorbed main and that reached the host.
+  mark — it clears when the branch has absorbed its base and that reached the host.
 - **An edit brought to a commit is brought to the host in the same turn.** The owner sees the old
   state and reads it as "nothing done". What stays in the tree is named with a reason — in the
   owner's words, not a list of leftovers.
