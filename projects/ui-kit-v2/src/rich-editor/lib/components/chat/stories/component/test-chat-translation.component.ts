@@ -13,10 +13,34 @@ function today(hours: number, minutes: number): string {
 
 const GUEST: string = 'Анна Смирнова';
 const REPLY: string = 'Ключи оставлю у охраны на въезде.';
+const ERROR: string = 'Не удалось перевести';
+
+/** Реплика гостя в оригинале с кнопкой перевода: от неё берутся загрузка и ошибка. */
+const GUEST_ORIGINAL: IRtChat.Message = {
+    id: 0,
+    author: GUEST,
+    own: false,
+    text: 'Good afternoon! Can we check in an hour early?',
+    createdAt: today(12, 58),
+    translationLabel: 'Оригинал',
+    canShowTranslation: true,
+};
+
+/** Своя реплика в оригинале с кнопкой перевода. */
+const OWN_ORIGINAL: IRtChat.Message = {
+    id: 0,
+    author: 'Вы',
+    own: true,
+    text: REPLY,
+    createdAt: today(13, 2),
+    status: ERtChatMessageStatus.Read,
+    translationLabel: 'Оригинал',
+    canShowTranslation: true,
+};
 
 /**
  * Перевод реплики в обоих видах чата и в обеих темах: подпись перевода в строке времени и кнопка
- * «Показать перевод» под репликой, показанной в оригинале. Последнее нажатие кнопки выведено под
+ * «Показать перевод» под репликой, показанной в оригинале, её загрузка и ошибка перевода. Последнее нажатие кнопки выведено под
  * парой тем: событие уходит приложению, текст реплики кит не меняет.
  *
  * Ширина ящиков подобрана так, чтобы пузырь вышел шириной 280, как в кадре макета.
@@ -30,7 +54,7 @@ const REPLY: string = 'Ключи оставлю у охраны на въезд
             <ng-template>
                 <div style="display: flex; flex-direction: column; gap: 1rem">
                     <div
-                        style="box-sizing: border-box; inline-size: 420px; block-size: 30rem; background-color: var(--rt-color-bg-surface)">
+                        style="box-sizing: border-box; inline-size: 420px; block-size: 52rem; background-color: var(--rt-color-bg-surface)">
                         <rt-chat
                             style="height: 100%"
                             messenger
@@ -68,15 +92,9 @@ export class TestRtChatTranslationComponent {
             createdAt: today(12, 58),
             translationLabel: 'Переведено',
         },
-        {
-            id: 2,
-            author: GUEST,
-            own: false,
-            text: 'Good afternoon! Can we check in an hour early?',
-            createdAt: today(12, 58),
-            translationLabel: 'Оригинал',
-            canShowTranslation: true,
-        },
+        { ...GUEST_ORIGINAL, id: 2 },
+        { ...GUEST_ORIGINAL, id: 21, translationLoading: true },
+        { ...GUEST_ORIGINAL, id: 22, translationError: ERROR },
         {
             id: 3,
             author: 'Вы',
@@ -86,16 +104,9 @@ export class TestRtChatTranslationComponent {
             status: ERtChatMessageStatus.Read,
             translationLabel: 'Без перевода',
         },
-        {
-            id: 4,
-            author: 'Вы',
-            own: true,
-            text: REPLY,
-            createdAt: today(13, 2),
-            status: ERtChatMessageStatus.Read,
-            translationLabel: 'Оригинал',
-            canShowTranslation: true,
-        },
+        { ...OWN_ORIGINAL, id: 4 },
+        { ...OWN_ORIGINAL, id: 41, translationLoading: true },
+        { ...OWN_ORIGINAL, id: 42, translationError: ERROR },
     ];
 
     /** Обычный вид пишет дату целиком, поэтому время в кадре задано готовой подписью. */
@@ -109,16 +120,9 @@ export class TestRtChatTranslationComponent {
             dateLabel: '12:58',
             translationLabel: 'Переведено',
         },
-        {
-            id: 6,
-            author: GUEST,
-            own: false,
-            text: 'Good afternoon! Can we check in an hour early?',
-            createdAt: today(12, 58),
-            dateLabel: '12:58',
-            translationLabel: 'Оригинал',
-            canShowTranslation: true,
-        },
+        { ...GUEST_ORIGINAL, id: 6, dateLabel: '12:58' },
+        { ...GUEST_ORIGINAL, id: 61, dateLabel: '12:58', translationLoading: true },
+        { ...GUEST_ORIGINAL, id: 62, dateLabel: '12:58', translationError: ERROR },
         {
             id: 7,
             author: 'Вы',

@@ -35,6 +35,9 @@ reader needs a way back to the translation.
 - **The translation button stands under the text of a reply the application marked.** The kit does not decide which reply is shown as written.
 - **A press on the translation button reports the reply and changes nothing in the thread.** The text of the reply belongs to the application.
 - **On the filled bubble of one's own reply the translation button takes the colour of the text on the fill and is underlined.** The action colour is the fill itself there.
+- **While the translation loads, the translation button shows a spinner and takes no press.** The application sets the flag, and a second press would ask for the same translation twice.
+- **A failed translation shows the error text of the application as a line above the translation button.** The button stays and asks for the translation again.
+- **A reply without an error and without loading shows neither the error line nor the spinner.** The error line holds no place while it is empty.
 
 ## What is out of scope
 
@@ -59,6 +62,8 @@ Not applicable: nothing is stored.
 | ---------------------------------- | ------------------------------------------------ |
 | A translated reply                 | the caption and the time in one line             |
 | A reply shown as written           | the caption, the time and the translation button |
+| The translation loads              | a spinner before the muted translation button    |
+| The translation failed             | the error line above the translation button      |
 | A reply of one's own sent as it is | the caption of the application and the time      |
 | A reply without a caption          | as before                                        |
 
@@ -93,3 +98,4 @@ Not applicable.
 ## History of changes
 
 - 2026-11-12 — created by the task RT-3179.
+- 2026-11-12 — the loading and the error of a translation added by the owner's remark on the showcase.
