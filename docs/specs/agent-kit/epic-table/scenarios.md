@@ -87,7 +87,7 @@ come
 
 Covered: `projects/agent-kit/tests/epic-table.test.sh`.
 
-### SC-AK-1336 — a plan opened by the section the draft writes gives the paragraph
+### SC-AK-1341 — a plan opened by the section the draft writes gives the paragraph
 
 Given the plan of the epic opens with the section «Что даёт», as the draft of the plan writes it
 When the table is printed
