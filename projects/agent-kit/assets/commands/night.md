@@ -20,12 +20,8 @@ The boundary stands in the arguments — take it as it is written. There is none
 they are still here at the minute of the call, and by morning there will be nobody to ask. The
 question is one, and the work does not start before the answer.
 
-Write the boundary down at once: the session will be long, and the first message goes out of the
-window before the night ends.
-
-```bash
-printf 'граница ночи: %s\n' "$ARGUMENTS"
-```
+The boundary is written into the head of the morning list (section 6): the session will be long,
+and the first message goes out of the window before the night ends.
 
 ## 2. Raise the rule and the pattern
 
@@ -58,7 +54,7 @@ session that runs into them at three o'clock has nobody to ask.
 ```bash
 git status --short                  # uncommitted work
 git fetch origin                    # the tip of the main branch
-git log --oneline -1 origin/main
+git log --oneline -1 "origin/${RT_MAIN_BRANCH:-main}"
 ```
 
 - **The tree holds uncommitted changes.** Name them to the owner and ask what to do with them:
@@ -86,12 +82,14 @@ The law demands a trace on disk at every step: a session breaks off without warn
 window, on a refusal, on the network — and what was not written vanishes with it. The last reply
 does not survive such a break.
 
-The list lies next to the handover of the session, is created by this command and is appended to
-after each closed piece of work — not assembled at the end:
+The list lies next to the handover of the session, is created by this command with the boundary in
+its head, and is appended to after each closed piece of work. A file of the same night already on
+disk means a broken night resumed: it is read and continued, not written over.
 
 ```bash
-printf '# Список к утру · ночь с %s\n\n' "$(date +%d.%m.%Y)" \
-    > "${RT_HANDOFF_DIR:-.claude/handoff}/$(date +%Y-%m-%d)-ночь.md"
+list="${RT_HANDOFF_DIR:-.claude/handoff}/$(date +%Y-%m-%d)-ночь.md"
+[ -f "$list" ] || printf '# Список к утру · ночь с %s\n\nГраница: %s\n\n' \
+    "$(date +%d.%m.%Y)" "$ARGUMENTS" > "$list"
 ```
 
 A row per closed piece of work, and the row order is the merge order. The shape of the row and
@@ -99,13 +97,8 @@ the line of a postponed task are in the pattern `autonomous-work-run`.
 
 ## 7. The cycle
 
-Then the work goes by the rule and the pattern: a task from the source of the work, the branch
-from the previous one, the task folder, the plan, the stages, the folder taken apart into the
-description of the past. A default is written where the owner's answer would have been written. A
-guard's refusal is a step of the work, not the end of the night.
-
-The night ends at the named boundary, and the last reply gives the list — the same one that lies
-in the file.
+Then the work goes by the rule and the pattern. The night ends at the named boundary, and the last
+reply gives the list — the same one that lies in the file.
 
 ## What this command does not do
 

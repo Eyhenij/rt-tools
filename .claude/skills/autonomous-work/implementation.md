@@ -29,13 +29,13 @@ The first column is the article verbatim. An autonomous session is held by techn
 a single guard in the tree that would tell night from day, and this is said outright at every
 article.
 
-- **The branch of the next work is created from the previous one, not from main.** — **Not checked.** Not a single guard judges the base of a branch; it is held by the technique `git checkout -b RT-<number>-<slug> <the previous branch>` and by the order in the morning list
+- **The branch of the next work is created from the previous one, not from main.** — **Not checked.** No guard demands the previous branch as the base. `.claude/hooks/git-guard-delivery.sh` demands a base carrying the tip of main, and `.claude/hooks/git-guard-delivery-epic.sh:rt_epic_base` one carrying the epic branch. Without an epic, a main that moved during the night makes the first of them refuse the next chain branch and propose a branch from main — that would break the chain. It is held by the technique `git checkout -b RT-<number>-<slug> <the previous branch>` and by the order in the morning list
 - **Nothing goes outside during the night.** — **Not checked.** A push command at night differs in nothing from a daytime one, and the push gate lets it through; it is held by the owner word about the session
 - **A task that needs the owner's word is not taken at all.** — **Not checked.** The board does not know what a task is waiting for; it is held by the line of a postponed task in the morning list
 - **A default is written where the owner's answer would have been written.** — **Not checked.** It is written into the section «Decisions» of the grill — `docs/tasks/RT-<number>-<slug>/grill.md`; the completeness of the section is not judged by a machine
-- **The readiness sign is named as a command before the stage begins.** — `.claude/hooks/turn-exit-guard.sh:rt_te_deny` — the turn-exit guard reads the command from the line «Verified by» of the plan and does not release a turn where a stage is declared closed and the command was never run
-- **A red run is fixed in the same branch, not postponed.** — `.claude/rt-kit/project.sh:rt_push_checks` — the push gate set; at night it runs by the same call as in the daytime
-- **A guard's refusal is a work step, not the end of the session.** — **Not checked.** The guard does not know what happened after its refusal; it is held by technique
+- **The readiness sign is named as a command before the stage begins.** — **Not checked.** The turn-exit guard (`.claude/hooks/turn-exit-guard.sh`) only demands that the commands of a closed stage's line «Verified by» ran in the same turn. It does not demand the line itself, a command in it, or that it was written before the stage, and it does not read whether the command passed
+- **A red run is fixed in the same branch, not postponed.** — **Not checked.** The push gate set (`.claude/rt-kit/project.sh:rt_push_checks`) only lists commands, and its callers run on a push — and at night nothing is pushed. Even on a push it refuses red; it cannot tell a fix in the same branch from a postponed one
+- **A guard's refusal is a work step, not the end of the session.** — **Not checked.** One case is judged: the turn-exit guard refuses a turn that ends with a question in prose after the conversation guard refused. Any other refusal releases the turn, so whether the work went on after it nobody judges
 - **The morning list is written along the way, not recalled at the end.** — **Not checked.** The file is created by the command `/night`; that it was appended in time is invisible to a machine
 - **The session is started by the command `/night`, and the time boundary goes to it as an argument.** — `.claude/commands/night.md:ARGUMENTS` — the laid-out copy of the package command; the boundary comes in the arguments
 - **The command called without a boundary asks the owner for one and starts nothing.** — **Not checked.** No guard reads the arguments of a command; it is held by the text of the command
@@ -48,6 +48,10 @@ article.
   in the morning.
 - A cargo mark in the intake is not set at night: it states that the edit is in the main branch,
   while overnight the branches do not even leave for the hosting.
+- `.claude/hooks/cargo-mark-guard.sh` refuses a turn that removed the task folder by `git rm` while
+  the grill names cargo record keys and no mark was set. At night that mark must not be set, so a
+  night task taken from the cargo removes its folder by `rm -r`, as the archive pattern does: the
+  guard judges `git rm` alone.
 
 ## What this is checked by
 
