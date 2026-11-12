@@ -1,6 +1,6 @@
 # Report of the rules graph
 
-Built by `npm run graph:rules` from `b832cbab2`: 351 nodes, 1302 links.
+Built by `npm run graph:rules` from `4b22e7acc`: 351 nodes, 1302 links.
 The graph is `projects/agent-kit/rules-graph/graph.json`; graphify reads it with `--graph`. Every list below is
 debt for the revision of a law family to sort out, not a refusal.
 
@@ -23,20 +23,20 @@ Articles the companion of the rule marks «Not checked» or «Not carried out»,
 
 - git-workflow — 26 of 79
 - turn-conduct — 25 of 69
-- task-flow — 24 of 59
+- task-flow — 23 of 59
 - observability — 14 of 29
+- testing — 14 of 42
 - browser-verification — 12 of 23
 - deploy-flow — 12 of 28
-- testing — 12 of 42
 - reuse-first — 9 of 18
 - autonomous-work — 8 of 11
 - doc-style — 8 of 21
 - spec-driven — 6 of 31
 - status-report — 5 of 10
 - epic-flow — 4 of 11
-- dependencies — 3 of 5
 - typescript-conventions — 3 of 10
 - angular-patterns — 2 of 5
+- dependencies — 2 of 5
 - queue-audit — 2 of 10
 - styling-bem — 2 of 12
 - component-structure — 1 of 4

@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when returning to unfinished work in a new session. What is already in the context, what not to ask the owner, how to edit "Where we stand", how to record a decision along the way and a stage revision. Not for starting work — that is pattern task-flow-start.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-resume.md · 20fbb6a7680f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-resume.md · ed3f10ba5afe · правится надстройкой, не здесь -->
 
 # Returning to unfinished work
 
@@ -102,9 +102,12 @@ by the role pipeline:
 Workflow(name: "feature", args: { task: "<the plan stage>", grill: "docs/tasks/<ветка>/grill.md" })
 ```
 
-The pipeline makes a plan of its own, up to six steps, and does not read `plan.md`. So it is given
-one stage of the plan, not the task, and its steps are not new stages: the progress marks the steps
-of the plan as before, and the pipeline's acceptance is the readiness sign of that stage.
+The pipeline makes a plan of its own, up to six steps: its points role reads the task and epic plans,
+but its own steps do not come from `plan.md`. So it is given one stage of the plan, not the task,
+and its steps are not new stages: the progress marks the steps of the plan as before, and the
+pipeline's acceptance is the readiness sign of that stage. Its goal phase compares the result with
+the whole request of the grill, so for one stage its verdict "goal not met" is expected and is not
+the readiness sign.
 
 The "Where we stand" section is **rewritten**, not appended — it is the first thing the next session
 reads, and the only thing that survives trimming by size:
@@ -123,11 +126,11 @@ reads, and the only thing that survives trimming by size:
 
 The PR line is mandatory from the minute the stages are over and lives while the folder does. The
 folder leaves by the commit before the PR opens, so the line names what the closing still has to do;
-after the opening the PR state is read from the host by its number, and the branch history names
-the number. A PR reopened for remarks after the folder left keeps its state in the PR itself:
+after the opening the PR state is read from the host by its number, and the number is asked of the
+host by the branch. A PR reopened for remarks after the folder left keeps its state in the PR itself:
 
 ```markdown
-- **PR:** не открыт · осталось: сверка очереди, разбор папки
+- **PR:** не открыт · осталось: разбор папки, сверка очереди
 ```
 
 The waiting line carries the owner's standing word about a stop, quoted in « », when they gave
@@ -184,10 +187,10 @@ taken at once, by the same move with which the previous one went to review.
 Taken, not chosen: the order was assigned at planning and lies in the epic plan. A choice offered to
 the owner under an assigned order is a request to assign it anew.
 
-Work outside an epic has no plan with an order, and the next is taken from the work queue — by the
-same move and with the same ban on choosing aloud. The queue is asked by a command, not by memory of
-what the executor created themselves. An empty queue is a statement about the tree, and it is backed
-by command output.
+Work outside an epic has no plan with an order, and the next work after it is named by the owner:
+the turn asks them, it does not take a card. The queue is asked by a command, not by memory of what
+the executor created themselves, and what it holds goes into the question. An empty queue is a
+statement about the tree, and it is backed by command output.
 
 ```bash
 # what is assigned next — read in the epic plan, not asked
@@ -196,8 +199,9 @@ by command output.
 
 Two things stop the session. The window fill limit — then comes the handover, pattern
 `task-flow-handoff`. And the end of the epic: the turn shows the table of its tasks and waits for
-the owner's word, rule `turn-conduct`. A card of the work queue outside the epic is not an order,
-and the assignment guard refuses taking it until the owner names the work.
+the owner's word, rule `turn-conduct`. A card of the work queue outside the epic is not an order.
+While the epic is assigned and open, no check refuses taking such a card — this article holds it;
+after the epic's end the epic-end guard refuses it until the owner names the work.
 
 **Next move:** an action is done on the next task — a task, a branch or a folder is created. The
 turn ends after it, not after words about it.
@@ -207,7 +211,23 @@ turn ends after it, not after words about it.
 A person merged the PR, and the epic plan still names the task as in work. The row moves to merged
 in the branch of the next task, by its first commit: the epic branch carries no edits of its own. A
 lesson the task left for the following ones goes into the section of the plan about what was learned
-along the way, in the same commit.
+along the way, in the same commit. The last task of the epic has no next branch, and the epic branch
+takes no edit of its own: its row stays "handed over", and the body of the epic PR into the main
+branch names its merge.
+
+Work begun from cargo that arrived moves its records to "done" in the turn that learns of the merge,
+not at the folder's taking-apart: before the merge the edit is not in the tree, and the mark would
+claim what does not yet lie in main. The keys are taken from the archive and passed whole, as the
+intake read prints them:
+
+```bash
+npm run cargo:mark -- --state fixed \
+    --proposal <полный ключ> --proposal <полный ключ> \
+    --fix '<чем исправлено: статья правила, гард, проверка, правка кода>'
+```
+
+One fix per call, so the records go in batches by what closed them. The reply is read: "moved 0"
+means nothing moved.
 
 **Next move:** the work of the next task goes on — the merge needs no turn of its own.
 

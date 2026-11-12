@@ -28,6 +28,14 @@ describe('RtStepperComponent', (): void => {
         expect(textOf(qa(setup({ currentIndex: 1 }), 'stepper-label'))).toBe('Проверка');
     });
 
+    it('SC-UKV-1232 — подпись среднего шага стоит в отрезке полосы с центром на доле шага', (): void => {
+        const label: HTMLElement = qa(setup({ currentIndex: 1 }), 'stepper-label')?.nativeElement as HTMLElement;
+
+        expect(label.style.marginInlineStart).toBe('0%');
+        expect(label.style.inlineSize).toBe('100%');
+        expect(label.classList).toContain('rt-stepper__label--anchor--center');
+    });
+
     describe('точки', (): void => {
         it('пройденные помечены завершёнными, текущая — текущей', (): void => {
             const fixture: ComponentFixture<RtStepperComponent> = setup({ currentIndex: 1 });
@@ -36,6 +44,31 @@ describe('RtStepperComponent', (): void => {
             expect(points[0]).toContain('rt-stepper__point--complete');
             expect(points[1]).toContain('rt-stepper__point--current');
             expect(points[2]).not.toContain('rt-stepper__point--complete');
+        });
+
+        it('SC-UKV-1229 — третий из четырёх: две точки пройдены, третья текущая, заполнено две трети', (): void => {
+            const four: IRtStepper.Step[] = [...STEPS, { label: 'Ещё шаг' }];
+            const fixture: ComponentFixture<RtStepperComponent> = setup({ steps: four, currentIndex: 2 });
+            const points: string[][] = qaAll(fixture, 'stepper-point').map((node: DebugElement): string[] => classesOf(node));
+
+            expect(points.map((classes: string[]): boolean => classes.includes('rt-stepper__point--complete'))).toEqual([
+                true,
+                true,
+                false,
+                false,
+            ]);
+            expect(points[2]).toContain('rt-stepper__point--current');
+            expect(parseFloat(progressWidth(fixture))).toBeCloseTo(200 / 3);
+        });
+
+        it('SC-UKV-1233 — номер за пределами набора делает текущей последнюю точку', (): void => {
+            const points: string[][] = qaAll(setup({ currentIndex: 99 }), 'stepper-point').map((node: DebugElement): string[] =>
+                classesOf(node)
+            );
+
+            expect(points[2]).toContain('rt-stepper__point--current');
+            expect(points[0]).toContain('rt-stepper__point--complete');
+            expect(points[1]).toContain('rt-stepper__point--complete');
         });
 
         it('точки спрятаны от скринридера — прогресс он читает с самой полосы', (): void => {

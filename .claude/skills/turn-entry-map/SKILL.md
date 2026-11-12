@@ -4,7 +4,7 @@ kind: pattern
 rule: turn-entry
 description: Pattern of rule turn-entry. Load when editing the turn map and the hook that serves it — what goes into the map, how it differs from a rule, how the hook stays silent about what is missing and how that is checked. Not for the shape of the handover itself — that is pattern task-flow-handoff.
 ---
-<!-- rt-kit v0.37.0 · patterns/turn-entry-map.md · 65ecd8ee7470 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/turn-entry-map.md · 13dca48ce5a3 · правится надстройкой, не здесь -->
 
 # The turn map and its serving — ready-made code
 
@@ -45,7 +45,8 @@ yet.
 branch="$(git branch --show-current)"
 progress="$ROOT/${RT_TASKS_DIR:-docs/tasks}/$branch/progress.md"
 handoff="$ROOT/${RT_HANDOFF_DIR:-.claude/handoff}/$branch.md"
-section="$([ -r "$progress" ] && LC_ALL=C awk '$0 == "## Handover of the session" { on = 1; next }
+section="$([ -r "$progress" ] && LC_ALL=C awk '$0 == "## Handover of the session" ||
+    $0 == "## Передача захода" { on = 1; next }
     on && /^## / { on = 0 } on' "$progress")"
 if [ -n "$section" ]; then
     printf 'HANDOVER OF THE PAST SESSION\n\n%s\n' "$section"

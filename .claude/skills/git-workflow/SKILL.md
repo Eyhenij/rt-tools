@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub. Load for a task and a branch, commit, push, opening a PR and merging. Names the pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — deploy-flow, audit — queue-audit.
 ---
-<!-- rt-kit v0.37.0 · rules/git-workflow.github.md · 9b0542b23eef · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/git-workflow.github.md · 3a36aae9b164 · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 
@@ -106,8 +106,8 @@ flowchart TD
   <path>`, `restore <path>` and `clean -f` erase what is not committed. On a dirty tree the guard
   refuses and names the files; the bypass is `# discard: <reason>` in the command.
 - **The lower branch of a chain does not rewrite history — neither `rebase` nor a force push.** The
-  host closes the upper PR as merged once its diff goes empty. A lagging branch is fixed by merging
-  its base in.
+  host closes the upper PR as merged once its diff goes empty. Before its PR opens a branch
+  takes its base in; with the PR open — only on a conflict.
 - **A divergence inside a chain is resolved by the one who branches.** Both edits are theirs; the
   owner resolving the same at merge time owns neither.
 - **Unmet delivery conditions are named in one refusal.** The guard collects and prints them at

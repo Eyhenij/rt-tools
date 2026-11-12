@@ -110,9 +110,9 @@ RT_WINDOW_WARN_PCT="${RT_WINDOW_WARN_PCT:-40}"
 RT_WINDOW_STOP_PCT="${RT_WINDOW_STOP_PCT:-50}"
 RT_WINDOW_MARGIN_PCT="${RT_WINDOW_MARGIN_PCT:-5}"
 
-# Where the session handover is put. Outside the tree: the work state lives in the progress and is
-# committed, while the handover retells it for pasting into a new session and does not travel into
-# history.
+# Where the session-closing command puts the handover file. Outside the tree: the work state and the
+# handover section live in the progress and are committed, while the file retells them and does not
+# travel into history.
 RT_HANDOFF_DIR="${RT_HANDOFF_DIR:-.claude/handoff}"
 
 # The commands that pass after the stop threshold: the session closes with them. Refusing them would
@@ -168,15 +168,41 @@ rt_report_body_default() {
 # occurs outside the repository too, and an edit of a file outside the root does not dispose of this
 # branch's plan at all. The guards hand the whole absolute path here, and a substring pattern would
 # match the agent's home directory exactly as it matches the tree's code.
+#
+# A second working copy of the same repository is the same tree: a session that moved into it keeps
+# the project directory of the tree it started in, and its edits there are judged against the root
+# of that copy. Another repository stays outside. The variables carry a prefix of their own — the
+# function is called inside guards, and a bare name like `root` overwrote the guard's own.
 rt_is_app_code_default() {
-    root="${CLAUDE_PROJECT_DIR:-$PWD}"
+    rt_iac_root="${CLAUDE_PROJECT_DIR:-$PWD}"
     case "$1" in
-        "$root"/*) rel="${1#"$root"/}" ;;
-        /*) return 1 ;;
-        *) rel="$1" ;;
+        "$rt_iac_root"/*) rt_iac_rel="${1#"$rt_iac_root"/}" ;;
+        /*) rt_iac_rel="$(rt_copy_relative "$1" "$rt_iac_root")" || return 1 ;;
+        *) rt_iac_rel="$1" ;;
     esac
-    case "$rel" in
+    case "$rt_iac_rel" in
         apps/* | libs/* | projects/*) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
+# The path relative to the root of its working copy, when that copy belongs to the same repository
+# as the tree; nothing and a failure otherwise. The file may not exist yet, so the question goes to
+# the nearest directory on the way up that does.
+rt_copy_relative() {
+    rt_cr_dir="$(dirname "$1")"
+    while [ ! -d "$rt_cr_dir" ] && [ "$rt_cr_dir" != / ]; do
+        rt_cr_dir="$(dirname "$rt_cr_dir")"
+    done
+    rt_cr_top="$(git -C "$rt_cr_dir" rev-parse --show-toplevel 2>/dev/null)" || return 1
+    rt_cr_own="$(git -C "$rt_cr_dir" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)" || return 1
+    rt_cr_tree="$(git -C "$2" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)" || return 1
+    [ -n "$rt_cr_own" ] && [ "$rt_cr_own" = "$rt_cr_tree" ] || return 1
+    # git names the root by its real path, and a temporary directory on macOS is reached through a
+    # link; the named path is brought to the real one before the root is cut off.
+    rt_cr_real="$(cd "$rt_cr_dir" 2>/dev/null && pwd -P)${1#"$rt_cr_dir"}"
+    case "$rt_cr_real" in
+        "$rt_cr_top"/*) printf '%s' "${rt_cr_real#"$rt_cr_top"/}" ;;
         *) return 1 ;;
     esac
 }

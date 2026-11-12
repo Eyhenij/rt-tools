@@ -22,8 +22,6 @@ npm run graph:build
 npm run graph:build -- projects/utils apps/message-bus
 ```
 
-Only `graph.json` lies in history, and a graph comes in the commit after the one it was built from:
-`built_at_commit` names the parent of the commit that carries it. `git log <built_at_commit>..HEAD`
-lists at least that commit; the graph is stale when the list holds a code file. A graph after a merge
-of two branches has no `built_at_commit` at all — the merge driver joins both sides, and the result
+Only `graph.json` lies in history, and `built_at_commit` names the parent of the commit that carries
+it. A graph after a merge of two branches has no `built_at_commit` at all — the merge driver joins both sides, and the result
 was built from no head.

@@ -216,7 +216,7 @@ GIT_COMMITTER_NAME="<бот>" GIT_COMMITTER_EMAIL="<номер>+<бот>@users.n
 ```
 
 The subject — `type(scope): description`. Types: `feat`, `fix`, `refactor`, `docs`, `style`,
-`test`, `chore`, `perf`. Scopes are the tree's own, listed in `implementation.md`. A full stop
+`test`, `chore`, `perf`. Scopes are the tree's own, named in `implementation.md` by the commit check setting that lists them. A full stop
 at the end of the subject is not accepted; the length — up to 150 characters. The letter case is checked as well, by the `subject-case` rule of the commit check: a word in capitals, such as a file name, can trip it, so the allowed case is read in the commit check settings before the subject is written.
 
 ```

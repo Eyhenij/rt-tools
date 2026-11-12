@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/check-specs.mjs · 35413088aa9f · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/check-specs.mjs · 59d1d5c6c03e · правится надстройкой, не здесь
 /**
  * The check that a domain spec has not diverged from the code.
  *
@@ -17,7 +17,7 @@
  *    decision, and four discount mechanics that were never started would have found no binding
  *    at all. The key of the link is the text of the rule itself, so it cannot be reworded while
  *    the binding is left unfixed. A rule without a binding is an intention, and it is written as
- *    an open question of a law — `Q-<law letters>-<number>`.
+ *    an open question: `Q-<law letters>-<number>` in a law, `Q-<number>` in a spec.
  *
  * 2. THE CONTRACT AGAINST THE DECORATORS. The table of procedures is audited against what is
  *    declared in the domain's `*.procedure.ts`: `@RequiresPermission` / `@PublicProcedure` and
@@ -411,7 +411,7 @@ for (const scenario of byId.values()) {
         report(
             `${scenario.file}:${scenario.line}`,
             `${scenario.id} promises what a person sees, and ${off ? 'the end-to-end test for it is switched off by an environment variable' : 'only a unit test checks it'} ` +
-                `(${places[0].place}) — either the test goes the path of the user, or the scenario needs the mark «Покрытие: частичное»`
+                `(${places[0].place}) — either the test goes the path of the user, or the scenario needs the mark «Coverage: partial»`
         );
         continue;
     }
