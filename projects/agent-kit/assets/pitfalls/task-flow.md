@@ -23,8 +23,8 @@ The rule is `task-flow`; the articles that hold the law stand there.
   names the file and is silent about the record belonging to the branch. While the permission lives
   in the repository, the number is appended in every new branch.
 - **The name of another tree is not written into repository files, and the full path to a sample
-  carries it.** So the full path lives next to the session handover, where it is lawful, and the
-  repository holds only a reference without the name.
+  carries it.** So the full path lives in the directory of records that belong to no branch, where
+  it is lawful, and the repository holds only a reference without the name.
 - **The line "Waiting for the owner" in the progress outlives the reason it was written for.** It
   lies on disk, enters the context in the next session and reads as the current state — so it is
   removed in the same turn in which the owner answered. Otherwise the wait confirms itself: three
@@ -238,11 +238,11 @@ they are for whoever investigates a miss or argues with a guard.
 - **A run placed as the first closing step eats the session window.** It costs more than all the
   other steps together: the one who spent it hit the fill threshold on four binding lines — on work
   that would have taken a minute had it come first.
-- **Permission to work outside the assigned epic belongs to the working tree, not to the branch.**
-  Written into a repository file, it leaves with the branch: from a neighbouring one it is
-  invisible, and the epic guard refuses exactly the work the owner permitted. Its place is next to
-  the session handover. The list is filled by the executor and permitted by the owner: a number
-  written in by oneself is not a permission.
+- **Permission to work outside the assigned epic lies in the main branch, not in a task branch.**
+  Written into a task branch, it leaves with that branch: from a neighbouring one it is invisible,
+  and the epic guard refuses exactly the work the owner permitted. Its place is the table of
+  assignments in the main branch. The row repeats the owner's word: a number written in by oneself
+  is not a permission.
 - **A task moved to another epic is removed from the previous one's set in the same turn.** The move
   is two motions, and done by half it leaves the task in two sets at once: the epic looks unclosed
   with all its work done. The total is written where the set is edited: postponed, it is written

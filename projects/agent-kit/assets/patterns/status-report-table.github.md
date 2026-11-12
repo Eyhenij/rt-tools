@@ -42,7 +42,7 @@ The order of the epic's tasks is taken from its plan, not from the board: it is 
 and the task numbers on the board do not run in sequence.
 
 ```bash
-npm run epic:table -- <номер эпика>   # every row of the plan's task table, in its order
+<the command of the tree> <epic number>   # every row of the plan's task table, in its order
 ```
 
 The state of the PR — whether it is a draft, whether it merges with main, how many files:
