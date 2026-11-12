@@ -21,9 +21,9 @@
 - [x] 1.3 Write the findings list into the progress with a decision for each
 - [x] 2.1 Edit the package texts by the findings
 - [x] 2.2 Build the package and lay out the tree
-- [>] 2.3 File tasks for findings that need code or another law
-- [ ] 3.1 Rebuild the rules graph and its report
-- [ ] 3.2 Run the push gate
+- [x] 2.3 File tasks for findings that need code or another law
+- [x] 3.1 Rebuild the rules graph and its report
+- [>] 3.2 Run the push gate
 - [ ] 3.3 Take the task folder apart into the archive
 
 ## Findings
@@ -56,6 +56,9 @@ Decisions on the role findings:
 - **D3** asked of the owner. Their answer: «Не открывать браузер (Recommended)» — the rule is
   right. The law article about a broken check needs the exception; its text goes to the owner in
   the PR, the law is not edited in the branch.
+- Step 2.3 files no task: the code gaps left — two hooks without the `FAIL-OPEN` line, the first
+  field of a known list unchecked, the second-instance guard dropped by the tree — are named as
+  such in the bindings. The law text for D3 goes to the owner in the PR.
 - `UI-KIT-V2-ISSUES.md`: the owner answered «[No preference]»; the file stays, the divergence
   stays named in the doc-style companion.
 - **D4, D5, D7, D9, D10, D11, D12, D14, D15, D17, D18** fixed here to the side the role named right.
