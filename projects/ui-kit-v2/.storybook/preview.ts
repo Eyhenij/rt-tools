@@ -241,6 +241,7 @@ const preview: Preview = {
             options: {
                 narrow: { name: 'Узкий экран', styles: { width: '360px', height: '780px' } },
                 phone: { name: 'Телефон', styles: { width: '375px', height: '812px' } },
+                tablet: { name: 'Планшет', styles: { width: '768px', height: '720px' } },
             },
         },
         controls: {

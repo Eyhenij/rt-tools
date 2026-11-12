@@ -1,0 +1,4 @@
+# Одобрения
+
+- **Макет:** «макет RT-3180 тоже одобряю» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL/?node-id=7817-3327
+- **Совпадение:** 37 из 37 чисел
