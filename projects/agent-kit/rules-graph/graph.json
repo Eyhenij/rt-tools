@@ -2731,7 +2731,7 @@
       "installed": true,
       "articles": 23,
       "unheld": 12,
-      "bound_code": 21
+      "bound_code": 23
     },
     {
       "label": "component-structure",
@@ -3057,8 +3057,8 @@
       "name": "testing",
       "installed": true,
       "articles": 42,
-      "unheld": 14,
-      "bound_code": 39
+      "unheld": 12,
+      "bound_code": 46
     },
     {
       "label": "turn-conduct",
@@ -8613,6 +8613,16 @@
       "source_location": "L1",
       "weight": 1,
       "source": "rule_browser_verification",
+      "target": "hook_dev_server_guard_sh",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/browser-verification/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_browser_verification",
       "target": "hook_git_guard_delivery_sh",
       "confidence_score": 1
     },
@@ -10843,7 +10853,7 @@
       "source_location": "L1",
       "weight": 1,
       "source": "rule_testing",
-      "target": "hook_proposal_guard_sh",
+      "target": "check_spec_common_mjs",
       "confidence_score": 1
     },
     {
@@ -10853,7 +10863,27 @@
       "source_location": "L1",
       "weight": 1,
       "source": "rule_testing",
-      "target": "hook_prose_style_guard_sh",
+      "target": "check_spec_scenarios_mjs",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/testing/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_testing",
+      "target": "hook_git_guard_delivery_merge_sh",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/testing/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_testing",
+      "target": "hook_proposal_guard_sh",
       "confidence_score": 1
     },
     {
@@ -10924,6 +10954,16 @@
       "weight": 1,
       "source": "rule_testing",
       "target": "rule_doc_style",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/rules/testing.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_testing",
+      "target": "rule_git_workflow",
       "confidence_score": 1
     },
     {
@@ -16998,5 +17038,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "4b22e7acc9035d095e7fc913557db18454cc6e89"
+  "built_at_commit": "0a2e78be9b27c058981c3492aac7b3bc07f74442"
 }
