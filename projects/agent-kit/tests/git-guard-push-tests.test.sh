@@ -405,6 +405,48 @@ report "SC-AK-1340 — ветка эпика считается от главн�
 # Голова без ветки: своей копии на сервере назвать нечем, ответ — главная.
 stack_git checkout -q --detach RT-98-next 2>/dev/null
 report "SC-AK-1340 — голова без ветки считается от главной" "$(push_base "$STACK")" origin/main
+
+# Соседняя задача взята с новой вершины ветки эпика и отправлена: она так же близка, как ветка
+# эпика, и по имени стоит раньше. База — ветка, на которой стоят обе.
+stack_git checkout -q -b RT-10-sibling origin/RT-96-epic 2>/dev/null
+fixture_commit "$STACK" sibling.txt сосед 'feat: сосед с новой вершины эпика'
+stack_git push -q origin RT-10-sibling 2>/dev/null
+stack_git checkout -q RT-98-next 2>/dev/null
+report "SC-AK-1340 — сосед так же близок, как ветка эпика: база — ветка эпика" "$(push_base "$STACK")" origin/RT-96-epic
+
+# Ветка взята прямо от серверной ветки эпика и следит за ней: своей копией та от этого не стала.
+stack_git checkout -q -b RT-101-track --track origin/RT-96-epic 2>/dev/null
+fixture_commit "$STACK" track.txt слежение 'feat: ветка следит за веткой эпика'
+report "SC-AK-1340 — ветка следит за веткой эпика и считается от неё" "$(push_base "$STACK")" origin/RT-96-epic
+
+# Ветка сервера стоит на той же вершине, что главная: при равенстве остаётся главная.
+stack_git push -q origin origin/main:refs/heads/A-0-same 2>/dev/null
+stack_git checkout -q RT-95-solo 2>/dev/null
+stack_git merge -q -m 'feat: главная принята' origin/main 2>/dev/null
+report "SC-AK-1340 — при равенстве с другой веткой остаётся главная" "$(push_base "$STACK")" origin/main
+
+# Задача приняла главную ветку сама: принесённое главной в счёт не идёт, база — ветка эпика.
+stack_git checkout -q RT-101-track 2>/dev/null
+stack_git merge -q -m 'feat: задача приняла главную' origin/main 2>/dev/null
+report "SC-AK-1340 — задача приняла главную: база — ветка эпика" "$(push_base "$STACK")" origin/RT-96-epic
+
+# Ветка отправлена до первой правки: её копия лежит на вершине ветки эпика, и та остаётся базой.
+stack_git checkout -q -b RT-102-fresh origin/RT-96-epic 2>/dev/null
+stack_git push -q origin RT-102-fresh 2>/dev/null
+fixture_commit "$STACK" fresh.txt свежая 'feat: первая правка после отправки'
+report "SC-AK-1340 — ветка отправлена до первой правки: база — ветка эпика" "$(push_base "$STACK")" origin/RT-96-epic
+
+# Ветку эпика продвинул не хост, а чья-то отправка: отличить её от ветки, стоящей на этой, нечем.
+stack_git checkout -q -b RT-103-plain main 2>/dev/null
+fixture_commit "$STACK" plain1.txt основа 'feat: основа ветки'
+stack_git push -q origin RT-103-plain 2>/dev/null
+stack_git checkout -q -b RT-104-under RT-103-plain 2>/dev/null
+fixture_commit "$STACK" under.txt задача 'feat: задача на старой вершине'
+stack_git checkout -q RT-103-plain 2>/dev/null
+fixture_commit "$STACK" plain2.txt основа 'feat: основа ушла вперёд без хоста'
+stack_git push -q origin RT-103-plain 2>/dev/null
+stack_git checkout -q RT-104-under 2>/dev/null
+report "SC-AK-1340 — ветку продвинул не хост: база главная" "$(push_base "$STACK")" origin/main
 rm -rf "$STACK" "$STACK_REMOTE"
 
 # --- SC-AK-1241. Зелёное на том же дереве второй раз не гоняется ---------------------------------

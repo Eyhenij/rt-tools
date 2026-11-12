@@ -39,7 +39,7 @@ remote, and the working copy holds no ref of it
 When the push guard picks the base
 Then the base is the branch of the epic, whether or not the branch took it in
 
-Given a branch whose reflog names no parent, and the call comes from a subdirectory
+Given a branch made from the checked-out head, and the call comes from a subdirectory
 When the push guard picks the base
 Then the base is the same as from the root of the tree
 
@@ -63,6 +63,30 @@ Then that branch is not the base
 Given a head that is no branch
 When the push guard picks the base
 Then the base is the remote main branch
+
+Given a neighbouring task taken from the new tip of the branch of the epic, as near as that branch
+When the push guard picks the base
+Then the base is the branch of the epic, not the neighbour
+
+Given a branch taken straight from the remote branch of the epic, so that it tracks it
+When the push guard picks the base
+Then the base is the branch of the epic
+
+Given a remote branch at the same commit as the main branch
+When the push guard picks the base
+Then the base is the remote main branch
+
+Given a task that took the main branch in by itself
+When the push guard picks the base
+Then the base is the branch of the epic: what the main branch brought is not counted
+
+Given a branch pushed before its first commit
+When the push guard picks the base
+Then the base is the branch it lies on, not the main one
+
+Given a branch moved past the head by a plain push, not by a merge of the host
+When the push guard picks the base
+Then that branch is not the base
 
 Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 

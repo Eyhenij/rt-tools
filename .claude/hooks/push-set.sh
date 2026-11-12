@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/push-set.sh · cad8df3645e8 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/push-set.sh · abb9104e498c · правится надстройкой, не здесь
 # The gate set before a push, one way for both who run it. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The session guard of the push and the git hook
 # `pre-push` source it and call its functions.
@@ -29,7 +29,7 @@ rt_push_set_profile() {
         # shellcheck disable=SC1090
         [ -f "$profile" ] && . "$profile" 2>/dev/null
     done
-    # The base of a stacked branch and the marks of a green run. No helper — the base is the main
+    # The base of the branch and the marks of a green run. No helper — the base is the main
     # branch, no mark is read and none is written: the set runs whole.
     # shellcheck disable=SC1091
     [ -f "$hooks_dir/git-guard-push-marks.sh" ] && . "$hooks_dir/git-guard-push-marks.sh" 2>/dev/null

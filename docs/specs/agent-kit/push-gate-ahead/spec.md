@@ -36,7 +36,9 @@ There is no interface: the guard answers with a refusal text, the run ahead with
 
 - **The push set is counted against the remote branch the head has the fewest commits over.** A
   stacked branch is so counted against the branch under it, a task branch against the branch of
-  its epic. The main branch is a candidate always and wins a tie. A branch outside the history of
+  its epic. What the main branch already holds is not counted. The main branch is a candidate
+  always and wins a tie; of two other branches equally near, the one lying under the other is
+  taken. A branch outside the history of
   the head is a candidate only when a merge of the host moved it past the head. Three kinds of
   branches are no base: the branch's own remote copy, a branch that stands on that copy, and a
   branch a merge of the host brought into this one. A head that is no branch gets the main branch.
@@ -126,6 +128,21 @@ Several working copies share the marks: a key holds the tree and the base, not t
   that takes it in. The pipeline of a request into the main branch still runs over the whole.
 - **The answer depends on the remote refs the copy holds.** Working copies of one repository
   share them; a fresh clone holds no ref of a branch removed earlier and takes the next nearest.
+- **The own copy is told by the name of the branch, not by what the branch tracks.** A branch
+  taken straight from a remote one tracks that one, and the branch of the epic would pass for the
+  own copy. The price: a branch pushed under another name is counted against that copy, by its
+  last commits alone.
+- **Known limits, all of one cause — git does not record which branch was taken from which.**
+  A branch that stands on this one and carries a merge of the host passes for a base: the branch
+  of an epic with a second epic taken from it is then counted against that one, not against the
+  main branch. A merge the host made of the epic into a task makes the epic that task's content,
+  and the task is counted against the main branch. An epic moved by a plain push, not by the
+  host, is no candidate for a task on its older tip until the task takes it in. The first lets
+  the whole of an epic reach the main branch checked only by the pipeline of its request; the
+  other two cost a full set.
+- **The count is one call of git per remote branch.** Twenty branches take two seconds, three
+  hundred take a quarter of a minute; the refs of removed branches pile up, since they are never
+  pruned here.
 - **The key holds the tree, not the commit.** An amended commit with the same content does not pay
   again.
 - **Light checks without a mark still run inside the guard.** They take seconds, and the refusal

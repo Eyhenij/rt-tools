@@ -28,7 +28,7 @@ rt_push_set_profile() {
         # shellcheck disable=SC1090
         [ -f "$profile" ] && . "$profile" 2>/dev/null
     done
-    # The base of a stacked branch and the marks of a green run. No helper — the base is the main
+    # The base of the branch and the marks of a green run. No helper — the base is the main
     # branch, no mark is read and none is written: the set runs whole.
     # shellcheck disable=SC1091
     [ -f "$hooks_dir/git-guard-push-marks.sh" ] && . "$hooks_dir/git-guard-push-marks.sh" 2>/dev/null
