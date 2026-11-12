@@ -4,7 +4,7 @@ kind: rule
 law: verifiability
 description: Rule under the verifiability law. Load when editing any test file and anything in the tree's end-to-end suites. Names the scenario id in the title, moving a decision into a pure function and what an end-to-end test closes. Patterns testing-unit, testing-e2e.
 ---
-<!-- rt-kit v0.37.0 · rules/testing.md · c7bfb8749c31 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/testing.md · 460f63401d8c · правится надстройкой, не здесь -->
 
 # Verifiability — how it works here
 
@@ -23,8 +23,8 @@ together with the rule.
 | scenario              | `SC-<PREFIX>-<NUMBER>` in `docs/specs/<domain>/scenarios.md`                            |
 | test                  | `it(...)` in `*.spec.ts` next to the source — Vitest; an end-to-end test — Playwright   |
 | coverage digest       | the output of `npm run check:specs`: covered, partial, without tests                    |
-| uncovered mark        | the line `Не покрыто: <причина>` inside the scenario block                              |
-| partial-coverage mark | the line `Покрытие: частичное — <чего не хватает>`                                      |
+| uncovered mark        | the line `Not covered: <reason>` inside the scenario block; legacy `Не покрыто:`        |
+| partial-coverage mark | the line `Coverage: partial — <what is missing>`; legacy `Покрытие: частичное —`        |
 
 ## Where it lives
 
@@ -48,19 +48,19 @@ flowchart TD
     F --> H[The moment in time is taken as a parameter, not read from the machine clock]
     G --> H
     C --> I{The test is switched off by an environment variable}
-    I -->|Yes| J[Does not count as coverage: it is debt, and a mark next to a live test is a refusal]
+    I -->|Yes| J[Does not count as coverage: the scenario carries a partial-coverage mark with a reason]
     I -->|No| K[The test title carries the scenario number]
     H --> K
     K --> P{A scenario with that number exists in the specs}
     P -->|No| Q[The check turns red: the test refers to a scenario that does not exist]
-    P -->|Yes| R{The test follows the same path as the user}
-    R -->|No| S[Marked as partial coverage: goes into the digest as debt]
-    R -->|Yes| L{The scenario is left without a test}
+    P -->|Yes| R{The scenario promises a person something, and the test does not follow their path}
+    R -->|Yes| S[Marked as partial coverage: goes into the digest as debt]
+    R -->|No| L{The scenario is left without a test}
     L -->|Yes| M[Carries a mark with a reason: an empty one is not accepted]
     L -->|No| N[Done]
     S --> N
     M --> N
-    J --> N
+    J --> K
 ```
 
 ## How the law applies here
@@ -70,8 +70,8 @@ flowchart TD
 - **A scenario without a test carries a mark with a reason.** An empty mark is not accepted, and
   a mark next to an existing test is a refusal: it means the debt was closed and the mark not
   removed.
-- **A test that does not follow the user's path is marked as partial coverage.** It goes into the
-  digest as debt, not as coverage.
+- **A test that does not follow the user's path is marked as partial coverage.** This holds for a
+  scenario that promises a person something; it goes into the digest as debt, not as coverage.
 - **A scenario whose "Then" names a person and what they see is closed by an end-to-end test.**
   A unit test on the same computation stays debt: between a right decision and a person seeing
   it lies everything the unit test did not touch.
@@ -98,9 +98,7 @@ flowchart TD
 - **A procedure is also called by the end-to-end suite, not only by the test next to it.** The
   end-to-end suite has its own direct-call helper, and the test takes the server's answer from
   there instead of raising a screen for one field. So "there are no tests for the procedure" is
-  stated after a search for its name across the whole tree, end-to-end suite directories
-  included, not after no test file was found next to its file: six coverage marks in a row
-  declared closed work uncovered.
+  stated after a search for its name across the whole tree, end-to-end suites included.
 - **The seed creates what a screen cannot open without, and nothing a guest would take for
   real.** Content with an author — reviews, questions, discussions — a guest reads as written by
   people, and the stand is assembled from the same database as the check by eye. The owner's
@@ -118,17 +116,15 @@ flowchart TD
   gate, declaring in their own known lists that they fail on new code.
 - **A check that arrives by layout arrives with its place too.** The place is the name of the
   command that calls it and the line of the suite it stands in. A check without a place is
-  recognised only by the layout having put a new file, and the article above does not act on it:
-  it has nowhere to stand. That is how the length check arrived — by the same edition as the
-  article on its mandatory place.
+  recognised only by the layout having put a new file, and the article above has nowhere to put it.
 - **A test that irreversibly changes stand data is switched off by default.** `BASE_URL`
   redirects the run with one variable, and without the switch such a test would edit the data of
   someone else's stand.
 - **Tests that need nginx in front of the application wake together with `BASE_URL`.** A bare
   page server does not pass them: the redirects live in the proxy config.
 - **A linter rule that forbids a technique accepted here is switched off in the config, not
-  bypassed in every test.** The test switch is this tree's technique, and
-  `playwright/no-skipped-test` would forbid it in sixty-five places at once. The reason is
+  bypassed in every test.** Where a suite uses test switches, the linter rule
+  against skipped tests would forbid all of them at once. The reason is
   written next to the disabling line, and a targeted `eslint-disable` stays for what is forbidden
   for good reason.
 - **A guard lets the action through when it is itself broken.** No input parser, empty input,
@@ -143,11 +139,9 @@ flowchart TD
   once and fixed, one that failed to recognise is never seen. And the tree's accepted way of
   calling the command — by full path, through a wrapper, with variable substitution — goes into
   the sign alongside the bare name: the bypass the command is called by every day is exactly
-  where the guard goes blind.
-- **A test file is edited by the edit tool, the same as a document.** A guard judges a shell
-  command by its whole body, so the string a `sed` replaces counts as written. A refused command
-  writes nothing while the reply looks like a done edit: the file is reread before the next step.
-  The article in full is in the rule `doc-style`.
+  where the guard sees nothing.
+- **A test file is edited by the edit tool, the same as a document.** A refused shell command
+  writes nothing while the reply looks like a done edit; the article in full is in `doc-style`.
 - **A check's known list is named and explains itself.** The first field of the list is the
   check's name and a word that what is listed does not count as a refusal. Then either two keys —
   the accepted stays forever, the debt was gathered when the check was created and only shrinks —
@@ -160,9 +154,9 @@ flowchart TD
 - **Every entry carries its own reason and the number of the task that added it.** A prose reason
   for the whole list explains any of its lines and therefore explains none, and an entry without
   a number cannot be asked of anyone: whoever added it remembers by that day neither the occasion
-  nor their decision. An entry without a reason or a number makes the check refuse — and it is
-  added by the owner's word, not by the decision of the executor it is in the way of at that
-  minute.
+  nor their decision. An entry without a reason or a number makes the check refuse. Entries are
+  written when the check is created and are not added later — neither by the executor's decision
+  nor by the owner's word.
 - **A list entry nothing calls any more is removed together with what called it.** Such a line
   silently allows what the tree does not have, and the next reader takes it for a current
   explanation. Not every list has a dead-entry check, so it is removed by the same change that
@@ -178,9 +172,10 @@ flowchart TD
   the output of that step, then the decision. A rerun repeated before reading the output fixes
   not the cause but its symptom, and in history looks like work.
 - **A line is not added to the known list for a red check.** The list was gathered by the day the
-  check was created and has only shrunk since: an added line silences the signal, not the cause,
-  and in history looks the same as a fix. A place where the check is right by the letter and
-  wrong in substance is reviewed by the owner, and until their answer the check is right. An inline
+  check was created and has only shrunk since: an added line hides the signal, not the cause,
+  and in history looks the same as a fix. A place where the check looks right by the letter and
+  wrong in substance is fixed in the code; a check that is itself wrong is fixed in the check, by
+  the analysis the law names — not by a question to the owner. An inline
   mark that switches a check off for one place is the same line, written into the file instead of
   the list. It is not placed even for a moment.
 - **An exchange counts as read on both sides, not by the success of calls.** Sending and editing
@@ -260,36 +255,43 @@ flowchart TD
 
 ## What of the law is not here
 
-The tree holds both libraries and applications, and the rule applies to them differently. The
-libraries have no end-to-end runs at all: the visible state is shown by the showcase, and it is
-confirmed by a story frame. There are two end-to-end suites in the tree — the suite of the
-receiver's admin panel and the suite of the entry example — and everything the law says about a
-stand, data and the request path applies to them alone.
+Test completeness is not checked: the audit judges the path — end-to-end or unit — but not how
+much of the promise the test closed on that path. The path sign is read from the word "Then" and
+is deliberately narrow: a scenario whose promise does not name a person does not fall under it
+at all, and the incompleteness mark there is still placed by hand.
 
-- **The runner of the package specs is Jest with `jest-preset-angular`, not Vitest.** One project
-  per package; everything the rule says about the Vitest config has nothing to apply to here. The
-  end-to-end suite runs Playwright.
-- **Numbered scenarios exist for the receiver and do not for the kits.** The titles of the admin
-  panel's end-to-end specs carry a scenario number, and the scenarios themselves live in
-  `docs/specs/message-bus/`. The kits have none: the link between behaviour and test is held by a
-  word — the behaviour is named in the component's `CONTEXT.md` and named once more in the test
-  title.
-- **The end-to-end suite raises the stand itself, and it cannot be pointed elsewhere by an
-  environment variable.** Production builds of both applications, their own database, schema and
-  seeding come up by one command and go down with the run; the specs therefore have no switches
-  by the state of the stand.
-- **The ready-made code of a kit component's spec and of an application screen frame lies in the
-  rule `ui-component-tests`.** There too are the substitutions nobody would think of, and the
-  choice between a spec, a story snapshot, a screen frame and a measurement.
+A coverage mark goes out of date, and no check says so. The audit knows the scenario id against
+the test title, and
+the mark text under it is prose to it: it reads as a current description half a year after the
+debt was closed. The mark is re-read with the edit that touches its subject — otherwise nobody
+re-reads it. Module substitution has no package agreement: whether the tree writes doubles by
+hand is named by the companion.
 
-The completeness of a test is checked by nothing, and the tree agreed on no way of substituting
-modules: a double is written by hand.
+The author alone holds these articles of the law: a test written before the code and red before
+the change; a change with nothing to show red saying so; a test returning the shared state; an
+empty input tested as three states; a declaration read as text written as a literal; a list of
+checks read from output, not from memory; the analysis of a broken check shown to the owner. The
+push set and a check removed from it are `git-workflow`; layout thresholds — `browser-verification`.
+
+Observations of how the rules are used this rule does not keep at all: the kind of event, the
+place of writing and what goes outside are the subject of the observability law and the rule
+under it. It is named here so that an observation is not confused with coverage: coverage says
+what was checked, an observation what was used.
 
 ## Patterns
 
 - `testing-unit` — a test on a pure function, on a Connect procedure and a one-off proof test
   that is not committed.
 - `testing-e2e` — running end-to-end tests, a stand under real nginx, switches.
+
+## How the rule applies to this tree
+
+The libraries have no end-to-end runs. What the law says about a stand, data and the request path
+applies to the two suites alone.
+
+- **The runner of the package specs is Jest with `jest-preset-angular`, not Vitest.**
+- **The end-to-end suite raises the stand itself.** Only the ports and the database name move by
+  variables, so the specs have no switches.
 
 ## End-to-end coverage of a change
 

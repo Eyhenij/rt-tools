@@ -1,11 +1,12 @@
 ## The run in this tree
 
-A section of this tree: there is one end-to-end suite — the intake admin panel, the runner target
-`message-bus-admin-e2e`.
+A section of this tree: there are two end-to-end suites — the intake admin panel, the runner
+target `message-bus-admin-e2e`, and the entry example, `auth-example-e2e`, on the auth stand. The
+commands below are the first one's.
 
 ```bash
-pnpm run serve:stand                       # production builds on 3310 and 4310, its own seeded database
-pnpm exec nx e2e message-bus-admin-e2e     # against the raised stand
+pnpm exec nx run message-bus-admin-e2e:e2e # raises its own stand and takes it down
+pnpm run serve:stand                       # the same stand for looking by eye: 3310 and 4310, its own seeded database
 ```
 
 The stand raises the receiver, the admin panel and the database for itself: it takes no working

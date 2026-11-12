@@ -37,10 +37,12 @@ flowchart TD
     B -->|Yes| C[What exactly answers is found out]
     B -->|No| D{Who raises the stand}
     C --> E{The very application answers}
-    E -->|Yes| F[A second instance is not raised]
-    E -->|No| T[What took the port is stopped by process id, not by command name]
+    E -->|Yes, built from this branch| F[A second instance is not raised]
+    E -->|Yes, built from another branch| Y[It is left alone, and the stand is raised on a free port]
+    E -->|No, a leftover of an earlier run| T[What took the port is stopped by process id; a refused stop — the stand goes on a free port]
     T --> D
-    D -->|Owner| U[They are told at once, not at the end of the session: the guard refuses the agent]
+    Y --> D
+    D -->|Owner| U[They are told at once, and the check waits for their stand: the guard refuses the agent]
     D -->|Agent| V[The stand is raised]
     U --> G[The driver drives the browser on the pinned profile]
     V --> G
@@ -64,14 +66,16 @@ flowchart TD
   it is found out who answers on the port. An instance raised anew answers with its own build, not
   the one under check. Who raises the stand — the owner or the agent — is said in the tree's names.
   A taken port discovered late means the stand already exists: what was started on top of it is
-  stopped by process id, not by command name — both instances share the same one.
-- **The browser is driven by one driver on the pinned profile.** The other doors — a second driver,
+  stopped by process id, not by command name — both instances share the same one. The answering
+  instance is used only when it is built from the branch of this edit; otherwise the stand is
+  raised on a free port.
+- **The browser is driven by one driver on the pinned profile.** The other ways in — a second driver,
   `open`, `osascript`, launching the binary — do not ask the pinned profile at all.
-- **A browser raised by a library from inside a script is the same door as launching the binary.**
+- **A browser raised by a library from inside a script is the same as launching the binary.**
   The command line does not show it at all. There stand the interpreter name and a file path, and
   the driving lies inside the file itself. So what is judged is the content of the file being run,
   and the code passed as an argument instead of a file. A rule that judged one command line promised
-  more than it checked, and the profile was bypassed through this door twice in one session.
+  more than it checked, and the profile was bypassed this way twice in one session.
 - **The browser choice goes stale and needs a repeated call.** A choice made at the start of the
   session does not hold: after a pause the next call opens a tab in another profile silently.
 - **A refused profile choice ends the work with the browser; it does not start a search for a
@@ -86,9 +90,9 @@ flowchart TD
   does not count as permission to work past the profile. An executor who got empty output from the
   helper names that to the owner and does not drive the browser: the tab would open in the profile
   the extension took for active, and which profile that is nobody knows.
-- **A screen behind sign-in is checked on a stand with a substituted sign-in answer, not with a live
-  account.** The application gets the sign-in as a person gives it, through the form, and the stand
-  answers it. The sign that closes the screen arrives with the substituted profile. Asking a person
+- **A screen behind sign-in is checked on a stand, not with a live account.** The application gets
+  the sign-in as a person gives it, through the form, with the stand's seeded account. A
+  substituted sign-in answer is the fallback where no sign-in service runs next to the stand. Asking a person
   to do a step of the check — type a password, open a tab, press a button — means a wrongly chosen
   path, not a lack of rights on the executor's side.
 - **A move of people into a sign-in system is checked by signing in as a moved person.** The stand
@@ -98,7 +102,8 @@ flowchart TD
 - **Changing the number of elements in a container is a layout edit.** It touches no styles, so it
   reads as a markup edit, and the check shrinks to response codes. The pages answer in every locale,
   and the document is already twice the viewport width. It is closed by a measurement — document
-  width against viewport width on a narrow screen — not by a look at a screenshot: a screenshot
+  width against viewport width at every layout threshold of the tree, both sides of each — not by
+  a look at a screenshot: a screenshot
   shows what fit into the frame. A row with no wrapping and no narrow layout, grown from four
   elements to eight, held a horizontal scrollbar on every page of the site for forty-four minutes of
   production.
@@ -132,7 +137,7 @@ flowchart TD
   edited for one page changes the rest under it, and those pages show in no diff. The list of screens
   is read from what the frame shows, not from the page the task named, and the suite that walks them
   runs before the push. The one page checked reads as the whole edit checked.
-- **The work branch keeps the tip of main merged in the whole time, not only before delivery.** A
+- **The work branch keeps the tip of its base merged in the whole time, not only before delivery.** A
   branch that has fallen behind builds into a stand with neither others' edits nor one's own
   neighbouring ones. What is shown on it describes a tree nobody has. The tip is pulled in when its
   movement became known, not when the work ended.
@@ -171,17 +176,17 @@ flowchart TD
   either — it holds what was fixed in that hour; the set is taken from what the work is accepted
   by and is written before the edit.
 
-A conclusion about layout is backed by a number: "looks fine" is never a check result. Nothing
-guards this — how to measure is covered in pattern `browser-verification-measure`.
+A conclusion about layout is backed by a number: "looks fine" is never a check result. How to
+measure is covered in pattern `browser-verification-measure`.
 
 ## What of the law is not here
 
-There is no check for direct access to the browser environment — that is `Q-FA-1` in the
-frontend-application law: such access compiles and fails only when the page is served by the server.
+Nothing guards that a conclusion about layout is backed by a number: a check result written as
+"looks fine" passes every check of the tree.
 
 ## Patterns
 
-- `browser-verification-stand` — an honest stand from the production build, signing in to a closed
+- `browser-verification-stand` — a stand from the production build, signing in to a closed
   application, sorting out a port.
 - `browser-verification-measure` — measurement instead of a look, pitfalls of the `computer` tool.
 
@@ -215,11 +220,11 @@ frontend-application law: such access compiles and fails only when the page is s
   hash (`main.js`). A divergence between `curl` and the page after hydration is a reason to rebuild,
   not to look for a defect in the code. Nor can "there is no such route" be concluded from here:
   check against the route declaration.
-- **A cache explains a divergence but does not confirm it.** `.angular/cache/…/vite/deps` holds only
-  packages from `node_modules`, none of the repository code. The conclusion "no defect, it is the
+- **A cache explains a divergence but does not confirm it.** The build tool's dependency cache holds
+  only installed packages, none of the repository code. The conclusion "no defect, it is the
   cache" closes the investigation, so it is accepted only after a check on a clean build. Three
   rounds went on a stuck event feed panel while the defect lay in the outlet teardown.
-- **A caching build step without declared outputs serves the past silently.** The cache hit happens,
+- **A caching build step without declared outputs gives the old build silently.** The cache hit happens,
   and there is nothing to restore: the builder does not run, and the build directory keeps what lay
   there from last time. The stand raises that build, and the application behaves like code that is
   not in the tree. The pitfall above is about another cache: that one explains a divergence, this
@@ -239,8 +244,8 @@ frontend-application law: such access compiles and fails only when the page is s
   Tests click by `qa-dataid` and stay green even when a gap shifted, a size vanished and a row got a
   different height. They check transitions, not looks. A pair of screenshots is too little here too
   — every screen this package draws is looked at in turn.
-- **There are three launch paths here, and they are checked separately:** the local command, the
-  image `deploy/api.Dockerfile` and the composition `docker-compose.prod.yml`. A variable set in the
+- **A server has three launch paths, and they are checked separately:** the local command, the
+  image and the production composition; the companion names their files. A variable set in the
   check command says nothing about the image: the production composition has it, while a manual run
   of the same image goes without it. The paths are listed before the check, not after one of them
   matched.

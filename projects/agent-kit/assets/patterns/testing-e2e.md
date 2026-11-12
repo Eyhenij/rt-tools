@@ -12,7 +12,7 @@ Pattern of the rule `testing`. What must be true — the law
 
 ## When to use
 
-- A test file in `apps/site-e2e/src` or `apps/admin-e2e/src` is being written or edited.
+- A test file of an end-to-end suite of the tree is being written or edited.
 - A defect visible only on the production configuration needs reproducing.
 - A stand is being prepared for a run against nginx.
 
@@ -65,23 +65,22 @@ such a stand the run goes with `BASE_URL`, and with it the locale redirect check
 
 ```typescript
 const ALLOW_RENAME: boolean = process.env['E2E_ALLOW_SLUG_RENAME'] === '1';
-test.skip(!ALLOW_RENAME, 'меняет живой адрес объекта: включается E2E_ALLOW_SLUG_RENAME=1');
+test.skip(!ALLOW_RENAME, 'changes the live address of a record: switched on by E2E_ALLOW_SLUG_RENAME=1');
 ```
 
 Switches come in two kinds, and only the first counts as coverage. **A switch by stand state**
 skips a case the stand never has by design — the scenario is closed, and it needs no mark. **A
-switch by environment variable** leaves the test unrun: the scenario behind it is listed as
-covered while nothing checks it, and such a scenario carries a partial-coverage mark with a
+switch by environment variable** leaves the test unrun: nothing checks the scenario behind
+it, and such a scenario carries a partial-coverage mark with a
 reason. Of the three below not one belongs to the first kind: all three are driven by a variable.
 
 - A test that irreversibly changes stand data is skipped by default and switched on by its own
   variable.
-- `BEHIND_NGINX` in `home.smoke.spec.ts` is `!!process.env['BASE_URL']`: with it the locale
-  redirect checks wake. A bare page-serving server does not pass them, and two failures look like
-  a regression.
-- `HAS_ADMIN_SESSION` in `sign-in.ts` — the pair `E2E_ADMIN_EMAIL` and `E2E_ADMIN_PASSWORD`.
-- `playwright/no-skipped-test` is switched off in `eslint.config.mjs`: the test switch here is a
-  technique, not a forgotten `test.skip`.
+- A behind-the-proxy switch is `!!process.env['BASE_URL']`: with it the redirect checks wake. A
+  bare page-serving server does not pass them, and the failures look like a regression.
+- A session switch reads the pair of sign-in variables of the stand account.
+- `playwright/no-skipped-test` is switched off in the linter config: the test switch here is a
+  technique, not a forgotten `test.skip`. The companion names the tree's switches.
 
 ## A redirect code is checked by the answer, not by following it
 
@@ -131,7 +130,7 @@ been pressed at all. The popup is closed and its absence awaited by the same pai
 
 A screen is ready when its data is, not when its heading is. A heading, a month title or a toolbar
 comes from the template and is drawn before the request answers. A check or a frame that waits for
-it reads an empty grid. The wait names a node that exists only with data: a row, a booking, a
+it reads an empty grid. The wait names a node that exists only with data: a row, a record, a
 selected record.
 
 After a change of the window width, layout values come from different sources at different
@@ -149,16 +148,13 @@ polling the very value it measures; a wait for one value proves nothing about an
   of them. Adding tests pushes old ones into refusal (429): a run of one spec stays green, and only
   the full set shows it. Each test that opens a new record gets its own client address; the limit
   itself is not raised for the suite.
-- **Take the rendering server port with care:** the developer's stand goes by the same name
-  `ssr:<rendering port>` through `host-gateway`, and while a foreign process hangs on it, the stand
-  serves a foreign build.
+- The rendering port and the proxy config mount have their traps — the pattern
+  `browser-verification-stand` names them.
 - There is one browser — chromium; narrow screen — `--project=mobile-chrome`. The error "Executable
-  doesn't exist" is taken apart in the rule `testing`: the same one comes after a Playwright version
-  change.
+  doesn't exist" is taken apart in the cold part of the rule `testing`: the same one comes after a
+  Playwright version change.
 - Admin tests without a session are skipped silently — the run looks successful, while less than
   half was checked.
-- The nginx config is mounted as a directory, not as a single file: the editor recreates the file,
-  and the container is left with a truncated copy.
 - **Not only what the screen requests is substituted, but also what the header requests.** The
   unread counter is requested on every screen under the header. Without a substitution the real
   server answers that request, refuses the fake sign-in, the interceptor drops the session, and

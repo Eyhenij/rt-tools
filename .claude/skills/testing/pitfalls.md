@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · pitfalls/testing.md · b5d595f8cc4f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · pitfalls/testing.md · 7cc49c694034 · правится надстройкой, не здесь -->
 # Verification — cold part
 
 Pitfalls: traps already stepped on. Loaded not with the rule but on demand — an ordinary
@@ -16,7 +16,7 @@ The rule is `testing`; the articles that hold the law stand there.
   the decision is called — the procedure, the service, the handler — and checked against it, not
   invented next to the test.
 - **A green `nx test <project>` does not mean a single file was executed.** A lib without its own
-  `vitest.config.mts` runs nothing — that is how the tests of the booking domain never ran once.
+  `vitest.config.mts` runs nothing — that is how the tests of one domain never ran once.
   A lib with a config but without a single `*.spec.ts` passes green because of
   `passWithNoTests: true`, which usually stands in every config of the tree, and by eye the two
   cases are indistinguishable: in both the run succeeds. The share of libs without a single test
@@ -38,28 +38,26 @@ The rule is `testing`; the articles that hold the law stand there.
   browser is installed for a specific version, and after a bump a repeated
   `npx playwright install chromium` is needed. Nine tests failed this way, and it looked like a
   regression of the upgrade.
-- **The first run right after installing the browser cannot be trusted.** Two failures of the
+- **A failure in the first run after installing the browser is not written off to the install.** Two failures of the
   end-to-end set repeated neither in a separate run of the same tests nor in a second full one.
-  Such a run is repeated, and conclusions are drawn from the second.
+  The output of the first run is read before anything else: a failure that does not repeat in a
+  separate run is still a flaky test, not a green one — the next pitfall.
 - **A rerun through the push gate repeats the whole set, not the failed test.** The gate runs
   what the tree's profile listed, whole and from scratch: for the end-to-end set that is minutes,
-  and every push attempt costs them anew. The neighbouring pitfall holds exactly up to this
-  point: repeating is cheap — through the gate it no longer is, and "repeat" turns into "push
+  and every push attempt costs them anew. A separate rerun of one test is cheap — through the gate
+  it no longer is, and "repeat" turns into "push
   until it passes". So the full set is run by hand before the push call, and the gate only
   confirms what is already known. A test that failed in the full set and passed in a separate
   run does not count as green: it is a flaky test, and it is filed as a task in the same turn.
   Running until green carries the sign away together with the failure, and the next session
   meets the same thing as news — with nothing to tell someone else's flakiness from its own
   regression: both cases look the same.
-- An end-to-end test that needs a login is skipped silently without credentials in the
-  environment — in the summary it is listed as `skipped`, and the run looks successful. The
-  variable names are with the tree.
 - **The flows reference creates no second scenarios.** `docs/E2E_<DOMAIN>_FLOWS.md` holds what is
   not and must not be in the domain spec: the elements' `qa-dataid`, markup states, stand
   pitfalls. Promised behaviour stays a scenario in `scenarios.md`: copied into a second place,
   the copies diverge silently — `npm run check:specs` will not see it.
-- `npx nx serve` does not count as a check: it is a step from the `browser-verification` rule,
-  not a test.
+- A dev server does not count as a check: the rule `browser-verification` checks on the
+  production build behind the tree's proxy.
 - **A frame that depends on machine load checks the machine, not the layout.** Waiting by a timer
   ends exactly there: on a free machine the set is green whole, on a busy one it fails, and which
   frame did not make it is a matter of chance. It is cured by waiting for an event, not by

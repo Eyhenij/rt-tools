@@ -40,7 +40,8 @@
         "signals": ".claude/rt-kit/signals.json"
     },
     "e2eRoots": [
-        "apps/message-bus-admin-e2e"
+        "apps/message-bus-admin-e2e",
+        "apps/auth-example-e2e"
     ],
     "backendRoots": [
         "libs/message-bus-api/",
