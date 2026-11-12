@@ -22,10 +22,8 @@ Pattern of the rule `browser-verification`. What must be true — the law
 `getComputedStyle`, `getBoundingClientRect`, contrast, matching centres, landing in the viewport.
 "Looks fine" is never a check result.
 
-A measurement answers only the question asked. A match on the listed properties says nothing about a
-rule that is not in the measured list. The rows of the profile popup matched the reference by
-padding, font size and rounding, while the reference paints no hover background there at all — a
-full-width highlight held on for two rounds with correct numbers. If the reference sources are
+A measurement answers only the question asked: a match on the listed properties says nothing about
+a rule that is not in the measured list — the case is in the rule. If the reference sources are
 available, the divergence is found by reading, and the measurement stays a check of the result.
 
 The look of an element that today is visible on no screen is not confirmed by a measurement, and a
@@ -86,7 +84,10 @@ is not one value but the number of nodes with an unexpected one.
 
 A measurement at one width per call gives numbers from different minutes: between calls the page
 is redrawn, and they cannot be compared. So the widths are run as a batch in one pass — each lives
-in its own frame, and the measurement is taken from all of them at once:
+in its own frame, and the measurement is taken from all of them at once. The widths are the tree's
+layout thresholds, both sides of each; the numbers below are a sample, not the set. A sweep that
+will be repeated goes into an end-to-end test — the rule says why; the driver looks at a screen
+once:
 
 ```javascript
 await (async (address, widths, row) => {
@@ -136,9 +137,6 @@ side of itself in the frame.
 iframe of the needed width — inside it `matchMedia` counts from the frame; at `width: 375px` and
 `border: 2px` the inner `innerWidth` equals 371.
 
-Changing the number of elements in a container is a layout edit: it is checked at 375, not only by
-response codes.
-
 ## An input event is not replaced by a faked value
 
 **Scrolling set by assignment gives no event.** The scroll value changes, but the subscriber does
@@ -177,9 +175,10 @@ The order is this: the call puts the walk into a page variable and ends at once,
 calls ask that same variable whether it is done.
 
 ```javascript
+const THRESHOLDS = [/* the tree's layout thresholds, both sides of each */];
 globalThis.__probe = { done: false, rows: [] };
 (async () => {
-    for (const w of [375, 480, 481, 768, 769, 1080, 1081, 1380]) {
+    for (const w of THRESHOLDS) {
         globalThis.__probe.rows.push(await measureWidth(w));
     }
     globalThis.__probe.done = true;
@@ -193,18 +192,9 @@ summary looks not cut off but absent — output gathered in one pass and printed
 shorter than it is. So what was gathered stays in the variable whole, and is printed in slices by
 index.
 
-## Router behaviour is reproduced by clicks
-
-Substituting the address, `history.pushState` with `popstate` and entering by a direct link raise
-the application anew, and it has no accumulated state — no open outlet, no guard of the previous
-panel. A clean pass over the addresses reads as "the defect is not confirmed": the event feed panel
-got stuck on the very first click from the menu and passed the check by addresses three times.
-
 ## Common misses
 
 - A comment in a config is a hypothesis like any other. A claim about eviction of a cache record
   held on through three rounds of adversarial code review and was refuted by one `curl`.
-- The conclusion "no defect, it is the cache" closes the investigation, so it is accepted only
-  after a check on a clean build.
-- A defect in a client chunk from a compilation before the edit looks like a defect in the code:
-  the sign of a dev build is bundle names without a hash.
+- Router behaviour checked by addresses, a cache taken for the cause, a stale client chunk — the
+  rule's pitfalls name all three.

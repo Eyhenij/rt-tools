@@ -39,7 +39,8 @@ The rule is `testing`; the articles that hold the law stand there.
   regression of the upgrade.
 - **The first run right after installing the browser cannot be trusted.** Two failures of the
   end-to-end set repeated neither in a separate run of the same tests nor in a second full one.
-  Such a run is repeated, and conclusions are drawn from the second.
+  The output of the first run is read before anything else: a failure that does not repeat in a
+  separate run is still a flaky test, not a green one — the next pitfall.
 - **A rerun through the push gate repeats the whole set, not the failed test.** The gate runs
   what the tree's profile listed, whole and from scratch: for the end-to-end set that is minutes,
   and every push attempt costs them anew. The neighbouring pitfall holds exactly up to this
@@ -50,15 +51,12 @@ The rule is `testing`; the articles that hold the law stand there.
   Running until green carries the sign away together with the failure, and the next session
   meets the same thing as news — with nothing to tell someone else's flakiness from its own
   regression: both cases look the same.
-- An end-to-end test that needs a login is skipped silently without credentials in the
-  environment — in the summary it is listed as `skipped`, and the run looks successful. The
-  variable names are with the tree.
 - **The flows reference creates no second scenarios.** `docs/E2E_<DOMAIN>_FLOWS.md` holds what is
   not and must not be in the domain spec: the elements' `qa-dataid`, markup states, stand
   pitfalls. Promised behaviour stays a scenario in `scenarios.md`: copied into a second place,
   the copies diverge silently — `npm run check:specs` will not see it.
-- `npx nx serve` does not count as a check: it is a step from the `browser-verification` rule,
-  not a test.
+- A dev server does not count as a check: the rule `browser-verification` checks on the
+  production build behind the tree's proxy.
 - **A frame that depends on machine load checks the machine, not the layout.** Waiting by a timer
   ends exactly there: on a free machine the set is green whole, on a busy one it fails, and which
   frame did not make it is a matter of chance. It is cured by waiting for an event, not by

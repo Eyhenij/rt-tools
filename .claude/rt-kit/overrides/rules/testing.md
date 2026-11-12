@@ -23,7 +23,9 @@ stand, data and the request path applies to them alone.
   choice between a spec, a story snapshot, a screen frame and a measurement.
 
 The completeness of a test is checked by nothing, and the tree agreed on no way of substituting
-modules: a double is written by hand.
+modules: a double is written by hand. The author alone holds a test written before the code, a
+test returning the shared state, an empty input tested as three states and a list of checks read
+from output, not from memory.
 
 ## End-to-end coverage of a change
 

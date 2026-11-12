@@ -37,17 +37,14 @@ Before the first request, not after a puzzling answer:
 lsof -nP -iTCP:$API_PORT -sTCP:LISTEN
 ```
 
-A built artifact from a past session regularly hangs on the intake port
-(`node -r dotenv/config dist/apps/api/main.js`): it answers 200 with old code, and the procedure
-created in the branch it does not have at all. There may be several such processes, and all of
-them must be killed — by PID from `lsof`, each one: `pkill` by the pattern `nx serve api` hits none
-of them.
+A built artifact from a past session on the intake port answers 200 with old code — the rule's
+pitfall names it; it is killed by PID from `lsof`, each process, not by a command-name pattern.
 
 ## Production build of the site
 
 ```bash
-npx nx build site
-PORT=$SITE_STAND_PORT node dist/apps/site/server/server.mjs
+npx nx build <site project>
+PORT=$SITE_STAND_PORT node <built site server entry>
 ```
 
 This is not a dev server: the guard catches `nx|ng serve`, package runners and static servers, and
@@ -84,9 +81,7 @@ production account, and there is never one on a local stand. Where there is no i
 stand itself substitutes the sign-in answer: the application's path stays the same as a person's.
 
 The token is not signed by hand and not put into browser storage by hand: put there so, it checks
-the screen while bypassing the live sign-in path — that is, it answers the wrong question. Asking
-a person to type a password, open a tab or press a button means a wrongly chosen path, not a lack
-of rights on the executor's side.
+the screen while bypassing the live sign-in path — that is, it answers the wrong question.
 
 **Ask for the work mode, not for the input.** Input into the password field is refused by the
 classifier of automatic mode: it judges the action itself and does not tell addresses apart — a
@@ -113,8 +108,8 @@ The built artifact is raised on a free port, not on the intake port: there the o
 answers, and its environment is not the one under check.
 
 ```bash
-npx nx build api
-env -u JWT_SECRET NODE_ENV=production API_PORT=$API_STAND_PORT DATABASE_URL=… node dist/apps/api/main.js
+npx nx build <api project>
+env -u JWT_SECRET NODE_ENV=production API_PORT=$API_STAND_PORT DATABASE_URL=… node <built api entry>
 ```
 
 Environment variables are set in the command itself, one per case under check. A refusal at start-up
@@ -134,16 +129,17 @@ signing in — a hand-written one hides a divergence in the set of claims.
 
 ## A stand behind real nginx
 
-Cache, redirects and headers live in `deploy/nginx.conf`, not in the application. Any conclusion
-about `301`, `Cache-Control` and `X-Cache-Status` is drawn only here:
+Cache, redirects and headers live in the tree's proxy config, not in the application; the
+companion names its files. Any conclusion about `301`, `Cache-Control` and `X-Cache-Status` is
+drawn only here:
 
 ```bash
 docker run -d --name <prefix>-stand-nginx \
   --add-host api:host-gateway --add-host ssr:host-gateway \
   -p $PROXY_SITE_PORT:80 -p $PROXY_ADMIN_PORT:8081 \
-  -v "$PWD/deploy/nginx/main.conf:/etc/nginx/nginx.conf:ro" \
-  -v "$PWD/deploy:/etc/nginx/conf.d:ro" \
-  -v "$PWD/dist/apps/admin/browser:/usr/share/nginx/html/admin:ro" \
+  -v "$PWD/<main proxy config>:/etc/nginx/nginx.conf:ro" \
+  -v "$PWD/<proxy config directory>:/etc/nginx/conf.d:ro" \
+  -v "$PWD/<built admin directory>:/usr/share/nginx/html/admin:ro" \
   nginx:1.27-alpine
 ```
 
@@ -151,8 +147,8 @@ docker run -d --name <prefix>-stand-nginx \
   the container is left with a truncated copy, and `nginx -t` inside falls on "unexpected end of
   file" while the file outside is whole. Cured by recreating the container, not by editing the
   config.
-- The main config is substituted by a separate line: it lies in `deploy/nginx/`, not next to
-  `nginx.conf` — a file with the `.conf` extension in the mounted directory would get into
+- The main config is substituted by a separate line and lies outside the mounted directory — a
+  file with the `.conf` extension in the mounted directory would get into
   `include` and bring nginx down on the `user` directive. Without it the stand comes up on the
   image's config, and the connection limit per worker there is its own.
 - A foreign `Host` is refused by the **dev server**, not by the built application: the production
@@ -188,17 +184,16 @@ git worktree add ../<prefix>-base <commit>   # the task branch is not touched
 pnpm install --frozen-lockfile         # from ../<prefix>-base: its node_modules are its own
 ```
 
-- For comparison take not the main branch but the last commit on which the tree builds: main is
-  sometimes broken, and then "before" and "after" differ not because of the edit. Whether a commit
-  builds is checked by building, not by its being in the main branch.
+- For comparison take not the tip of the base branch but the last commit of it on which the tree
+  builds: the base is sometimes broken, and then "before" and "after" differ not because of the
+  edit. Whether a commit builds is checked by building, not by its being in the base.
 - The stand of the second tree is raised on its own ports: the site, admin and intake ports are
   taken by the owner, and the rendering port must not be taken — the developer's stand goes by the
   name `ssr:<rendering port>`.
 - Both stands are kept up at the same time — exactly until the comparison ends: comparing from
   memory between two launches, you notice only what you managed to remember. With the comparison
   done, the stand of the second tree is torn down by the same move, not left until the end of the
-  session. Stands left behind pile up across sessions and hold connections to the storage, and the
-  rule says so in a pitfall. Teardown refused — the stand is named to the owner at the end of the
+  session — why, the rule says in a pitfall. Teardown refused — the stand is named to the owner at the end of the
   session by name, with the port.
 
 ## The state of the ports is taken before the first build of the session
@@ -225,10 +220,6 @@ past session, and it answers 200 with old code.
   nothing at all, and that is visible by its duration.
 - Do not raise your own dev server: the site, the admin and the intake are already up by the
   owner, and a second instance is refused by the guard.
-- **A refused static server is read as a ban on the check, while it is a pointer to the right
-  move.** It may not serve what was built not out of caution: the application calls its own
-  origin, and a deep link answers `404`. From here one goes not to bypass the guard but to the
-  tree's proxy with its real config.
 - **The owner's dev server is a place to look, not a place to check.** The conclusion that the
   screen is right is drawn on the production build behind the real proxy: server-side markup,
   locales, cache, redirects and headers on the dev server are either different or absent
@@ -242,6 +233,3 @@ past session, and it answers 200 with old code.
   The push gate is such a build too: its set runs the build of everything affected. So the
   measurement is taken before the push or on a stand from the production build. The answer of the
   server, not its port, tells whether it survived.
-- Take the rendering port with care: the developer's stand goes by the same name
-  `ssr:<rendering port>` through `host-gateway`, and while a foreign process hangs on it, the
-  stand serves a foreign build.
