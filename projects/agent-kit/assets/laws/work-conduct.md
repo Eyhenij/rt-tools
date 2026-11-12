@@ -15,7 +15,8 @@ one session and keeps its whole context and state when it passes to the next.
   line. The part the work repeats is read in full — another tree's structure is not judged by one
   file.
 - **A sample named in the progress must be reachable by every session while the work goes on.** The
-  link is written directly in the progress.
+  progress carries a reference to it; a full path that names another tree lies next to the session
+  handover, outside the history.
 - **A question with an obvious answer does not stop the work.** The executor names the assumption,
   moves on and writes it where the work goes on. Only a gap where any guess makes the work dangerous
   or useless stops it.
@@ -254,10 +255,10 @@ one session and keeps its whole context and state when it passes to the next.
   number, fresh tasks on top; it does not hold the epic's order and cannot — tasks of all epics lie
   there at once. The epic plan is opened before a task is taken and answers in one call: which task
   is next, and whether it moved to a neighbouring epic.
-- **An ended epic is named to the owner in the same turn in which work outside it is taken.** While
-  the epic goes on, the next piece of work is taken silently; once it has ended, the next step is no
-  longer obvious to both. Taking work outside an ended epic in silence leaves the owner sure the
-  epic continues.
+- **An ended epic is a stop: the owner is shown what was done and is asked for the next work.** While
+  the epic goes on, the next work is taken silently; once it has ended, the next step is not
+  obvious to both. Work taken outside an ended epic without the owner's word leaves them sure
+  the epic continues.
 - **An epic is not closed while even one sign of its end is confirmed only by reading.** A sign
   checked by eye closes the work only after a command or a measurement checks it, with their output.
   The note "confirmed by a live measurement" is a promise to check, not a check. Closed on two signs

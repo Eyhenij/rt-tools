@@ -1,14 +1,13 @@
 # Report of the rules graph
 
-Built by `npm run graph:rules` from `7a131d20c`: 351 nodes, 1279 links.
+Built by `npm run graph:rules` from `858d5cc31`: 351 nodes, 1291 links.
 The graph is `projects/agent-kit/rules-graph/graph.json`; graphify reads it with `--graph`. Every list below is
 debt for the revision of a law family to sort out, not a refusal.
 
-## Resources nothing links to — 1
+## Resources nothing links to — 0
 
 No other text names them in its header, a `Requires` line, an import, a binding or in backticks.
 
-- **pipeline:** feature.js
 
 ## Rules nothing executes — 0
 
@@ -18,13 +17,13 @@ No `Requires` line and no binding of the companion to code: a hook, a check, a l
 
 Not laid out in this tree, so their executors are unknown here: api-layer, shared-code.
 
-## Articles nothing carries out — 184
+## Articles nothing carries out — 181
 
 Articles the companion of the rule marks «Not checked» or «Not carried out», of all its articles.
 
 - git-workflow — 27 of 81
-- turn-conduct — 27 of 69
-- task-flow — 23 of 57
+- turn-conduct — 25 of 69
+- task-flow — 24 of 59
 - observability — 14 of 29
 - testing — 14 of 42
 - deploy-flow — 13 of 28
@@ -32,8 +31,8 @@ Articles the companion of the rule marks «Not checked» or «Not carried out»,
 - reuse-first — 9 of 18
 - autonomous-work — 8 of 11
 - doc-style — 7 of 21
-- status-report — 7 of 10
 - spec-driven — 6 of 31
+- status-report — 5 of 10
 - epic-flow — 4 of 11
 - typescript-conventions — 3 of 10
 - angular-patterns — 2 of 5
@@ -50,7 +49,7 @@ Of 46 words of the package glossary, these are said by no text of the package or
 
 - none
 
-## Texts that state the same thing — 25
+## Texts that state the same thing — 23
 
 Pairs of texts whose bold statements share at least 60% of their words, with the
 number of such statements and the first of them.
@@ -68,13 +67,11 @@ number of such statements and the first of them.
 - `projects/agent-kit/assets/laws/project-documentation.md` and `projects/agent-kit/assets/rules/doc-style.md` — 1: «An image is edited by the same change as the text it depicts.» / «A diagram is edited by the same change as the text it depicts.»
 - `projects/agent-kit/assets/laws/verifiability.md` and `projects/agent-kit/assets/rules/testing.md` — 1: «A test switched off by an environment flag does not count as coverage.» / «An end-to-end test switched off by an environment variable does not count as coverage.»
 - `projects/agent-kit/assets/patterns/autonomous-work-run.md` and `projects/agent-kit/assets/rules/autonomous-work.md` — 1: «The branch was created from main by habit.» / «A branch created from main by habit breaks the chain.»
-- `projects/agent-kit/assets/patterns/task-flow-handoff.md` and `projects/agent-kit/assets/patterns/task-flow-resume.md` — 1: «A session that ended in nothing writes a handover too.» / «A session that ended in nothing is recorded too.»
 - `projects/agent-kit/assets/patterns/task-flow-start.md` and `projects/agent-kit/assets/pitfalls/git-workflow.azure.md` — 1: «The task is created by a command, not by four calls in a row.» / «A work item is created by the command, not by calls in a row.»
 - `projects/agent-kit/assets/patterns/task-flow-start.md` and `projects/agent-kit/assets/pitfalls/git-workflow.github.md` — 1: «The task is created by a command, not by four calls in a row.» / «A task is created by the command, not by four calls in a row.»
 - `projects/agent-kit/assets/patterns/task-flow-start.md` and `projects/agent-kit/assets/pitfalls/git-workflow.gitlab.md` — 1: «The task is created by a command, not by four calls in a row.» / «A task is created by the command, not by calls in a row.»
 - `projects/agent-kit/assets/pitfalls/git-workflow.github.md` and `projects/agent-kit/assets/rules/git-workflow.azure.md` — 1: «The gate set is never narrower than the pipeline set.» / «The push gate set is never narrower than the pipeline set.»
 - `projects/agent-kit/assets/pitfalls/git-workflow.github.md` and `projects/agent-kit/assets/rules/git-workflow.gitlab.md` — 1: «The gate set is never narrower than the pipeline set.» / «The push gate set is never narrower than the pipeline set.»
-- `projects/agent-kit/assets/pitfalls/task-flow.md` and `projects/agent-kit/assets/rules/task-flow.md` — 1: «Waiting on one part of a stage is never a stop of the stage.» / «Waiting for one part of a stage is never a stop of the stage.»
 - `projects/agent-kit/assets/rules/doc-style.md` and `projects/agent-kit/assets/rules/git-workflow.azure.md` — 1: «A document goes in the same commit as the change it describes.» / «A document goes in the same commit as the edit.»
 - `projects/agent-kit/assets/rules/doc-style.md` and `projects/agent-kit/assets/rules/git-workflow.github.md` — 1: «A document goes in the same commit as the change it describes.» / «A document goes in the same commit as the edit.»
 - `projects/agent-kit/assets/rules/doc-style.md` and `projects/agent-kit/assets/rules/git-workflow.gitlab.md` — 1: «A document goes in the same commit as the change it describes.» / «A document goes in the same commit as the edit.»

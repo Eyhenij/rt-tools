@@ -8,14 +8,15 @@ description: Pattern of rule task-flow. Load when the texts are up to date and t
 # Taking the task folder apart and the rules review of the work
 
 Pattern of the rule `task-flow`. What must be true meanwhile — the law
-`docs/constitution/work-conduct.md`. What comes before it — lifting the draft, merging the agreement
-and bringing the texts up to date — pattern `task-flow-close`.
+`docs/constitution/work-conduct.md`. What comes before it — merging the agreement and bringing the
+texts up to date — and what comes after it — opening the PR and lifting the draft — pattern
+`task-flow-close`.
 
 ## When to use
 
 - The agreement is merged, the domain texts are up to date, and the task folder is taken apart by
   the last commit of the branch — before the PR opens, not after approval.
-- The work is merged by a person, and it is reviewed by the rules.
+- The PR is open, and the work is reviewed by the rules.
 - The review returned findings, and they need a place.
 
 ## State `разбор-кончился`: the task folder is taken apart
@@ -114,9 +115,10 @@ npm run check:docs    # the paths named in the texts exist
 ```
 
 **Next move:** discrepancies named by the audits are fixed in the same turn; nothing to fix — the
-same turn opens the PR as a draft and names the number to the owner, pattern `task-flow-close`.
+same turn opens the PR — a draft where a run is waited for, ready where the pipeline does not wake —
+and names the number to the owner, pattern `task-flow-close`.
 
-## State `влито`: the work is reviewed by the rules — in the background, right after the PR
+## State `работа-отдана`: the work is reviewed by the rules — in the background, right after the PR
 
 A step about the rules layer, not about the product: what was loaded for this work, what helped,
 what was missing and where the text of a rule diverged from the tree. Only the session that led the

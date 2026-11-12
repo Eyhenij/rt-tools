@@ -128,7 +128,8 @@ its own, without retelling.
 
 ## 7. Hand over the result
 
-The last line — the path to the handover: the owner pastes it into a new session with one paste.
+The last line — the path to the handover. The owner pastes nothing: the entry hook serves it to the
+next session on the same branch.
 Before it: what became of the main branch, which branches were removed, which stayed unmerged.
 Do not retell the handover content — the owner will read it anyway.
 

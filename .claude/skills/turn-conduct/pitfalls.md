@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · pitfalls/turn-conduct.md · 4461e87e7825 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · pitfalls/turn-conduct.md · 8cd2cdb77693 · правится надстройкой, не здесь -->
 # Session turn — cold part
 
 Pitfalls: cases and numbers that used to stand next to the rule's articles. Loaded not with the
@@ -78,7 +78,8 @@ The rule is `turn-conduct`; the articles that hold the law stand there.
 - **The exit guard judges a change to the tree, not the remaining action.** It asks whether
   anything at all was done in the turn — and a turn in which half of a stage is closed and the
   other half dropped on a refused command is indistinguishable to it from full work: there are
-  commits, the tree changed. It catches only a turn that ended in nothing. Whether the state
+  commits, the tree changed. It counts the plan steps not done, not what the stage still holds
+  outside them. Whether the state
   still holds an action not depending on what the turn waits for is checked by the attention of
   whoever leads the turn.
 - **A refused permission is never someone else's step, and it does not stop the work.** The
