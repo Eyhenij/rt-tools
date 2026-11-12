@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when the base of a branch is merged into it and a conflict is resolved — the merge order, handling by file kind, checking what was appended against the work queue, re-reading the body of the open request. Branch and commit — pattern git-workflow-commit.
 ---
-<!-- rt-kit v0.37.0 · patterns/git-workflow-merge.md · bcc30136f9fa · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/git-workflow-merge.md · 70b4f1f04028 · правится надстройкой, не здесь -->
 
 # Merging the base of a branch into it
 
@@ -19,7 +19,7 @@ out in that tree.
 ## When to use
 
 - The PR is marked conflicting, and it must be brought back to a mergeable state.
-- The base of the branch moved ahead, and the branch must be caught up before the checks: for a
+- The base of the branch moved ahead, and the branch must be caught up before its PR opens: for a
   task branch the base is the branch of its epic, for an epic branch the main one.
 - The main branch moved ahead, and the whole epic must be caught up: the main branch is merged
   into the epic branch, and the epic branch into the branches of its unfinished tasks.

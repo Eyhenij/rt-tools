@@ -245,9 +245,9 @@ know.
 12. **The work queue matches** — `npm run check:board`.
 13. **The MR state is read, not derived from return codes.**
 14. **The set is taken from the pipeline file, not assembled from memory.** The push gate is
-    never narrower than the pipeline, and a check judges that. What the pipeline runs beyond the
-    gate is written in its file — that list is repeated locally.
-15. **The set is revised after merging the main branch in.** It is chosen by what the branch now
+    never narrower than the pipeline, and a check judges that. The declared exclusions of
+    the set are read in its settings and run by hand.
+15. **The set is revised after merging the base in.** It is chosen by what the branch now
     carries, not by what the author edited. A branch that touched no line of the showcase runs
     the showcase snapshots: since the merge the pipeline runs them on its code, and the red
     comes to its MR.

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · pitfalls/git-workflow.github.md · 2a12a04d4114 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · pitfalls/git-workflow.github.md · ac0816e36087 · правится надстройкой, не здесь -->
 # Delivery — cold part
 
 Pitfalls: traps already stepped on in a tree on GitHub. Loaded not with the rule but on demand —
@@ -105,9 +105,9 @@ The rule is `git-workflow`; the articles that hold the law stand there.
   one was not checked by a single line: it has zero steps because it never started. Restarting
   such a run is refused by the guard until the step's output has been read in the same turn —
   which is why the audit line names reading the run first.
-- **The same merge of the main branch done a third time in one session stops the work.**
+- **The same merge of the base done a third time in one session stops the work.**
   Branches that append a line to the same list drop each other into a conflict at every merge,
-  and merging main round after round is a fix of the symptom. On the third round the cause is
+  and merging the base round after round is a fix of the symptom. On the third round the cause is
   named and the owner is asked, instead of a fourth round.
 - **An empty file sent as the PR body wipes the description of the work whole.** That is how an
   edit of the body assembled by a chain went: a change into the temporary files directory took
@@ -226,8 +226,8 @@ a guard.
   not by memory.
 - **Union of the sides on the shared index file.** Before the declaration the same line was
   resolved six times in six branches in one session. One cannot promise "no more conflicts" by
-  the declaration: there will be no manual work, but merging main into open branches after every
-  merge will still be needed.
+  the declaration: there will be no manual work, but the host still marks such a branch conflicting. Whether
+  the dispute is real is checked by a merge without the driver — pattern `git-workflow-stack`.
 - **What was created is visible only to its creator.** Sixteen tasks were created twice this way,
   and a PR was named to the owner by a number that did not exist for him: the restricted account
   saw its own, and the hosting answered "not found" to everyone else.

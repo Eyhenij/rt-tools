@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when pieces of work follow one another or more than two branches already stand on one base — chained branching from the previous one, the PR base, merging bottom-up, re-merging the base on an actual conflict. One conflict — pattern git-workflow-merge.
 ---
-<!-- rt-kit v0.37.0 · patterns/git-workflow-stack.md · 60a982522ca0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/git-workflow-stack.md · 834378d40479 · правится надстройкой, не здесь -->
 
 # A stack of PRs from one base
 
@@ -145,7 +145,9 @@ itself: edits of different places in one file are reconciled without a person. O
 where both sides touched the same lines conflicts. The base of a task branch is the epic branch
 or the branch under it; main is the base of the epic branch alone.
 
-So after someone else's merge, the base is merged not into all open branches but into those the
+The boundary is the opening of the PR. Before it a branch takes its base in — the delivery guard
+demands that — and the epic branch takes main in while the work runs, as the law says. After it,
+and after someone else's merge, the base is merged not into all open branches but into those the
 host said conflict. This is asked with one call for the whole stack:
 
 ```bash
@@ -245,8 +247,8 @@ plan lives: a trial merge answers "what will collide", it does not replace the h
   is time to hand it over: as much is handed over as the owner has time to merge.
 - The base merged into all open branches after every foreign merge. Half of these merges changed
   nothing: the branches did not conflict, and their mergeability was not asked.
-- The state of the stack derived from one's own tree, not asked from the host. Locally merged
-  main says nothing about mergeability: between the merge and the owner's look main moves ahead.
+- The state of the stack derived from one's own tree, not asked from the host. A locally merged
+  base says nothing about mergeability: between the merge and the owner's look the base moves ahead.
 - The stack handed over without an order. The owner merges in list order, that is, by number —
   and two branches of one file land on each other exactly when a third stood between them.
 - Time spent on PR bodies instead of bringing the first to the merge. The body is needed by

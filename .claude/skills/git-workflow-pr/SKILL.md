@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load for opening a PR and everything around it — title format, draft and leaving it, reading the PR state, the checklist. The link to the task, reviewer, labels and the body sample — pattern git-workflow-pr-body; creating the task and committing — git-workflow-commit.
 ---
-<!-- rt-kit v0.37.0 · patterns/git-workflow-pr.github.md · cf162fd7959a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/git-workflow-pr.github.md · edd7141ba1ba · правится надстройкой, не здесь -->
 
 # The PR
 
@@ -217,7 +217,7 @@ Where the pipeline wakes for the base, it checks the PR before the merge; where 
 push gate is the only check. Linters, unit tests, the build and hook scenarios are taken by the
 push gate either way — below is what it does not know.
 
-1. **The base is merged into this branch** — for a task branch that is the epic branch, for an epic branch the main one: `git fetch origin && git merge origin/<база>`.
+1. **The base is merged into this branch before the PR opens** — for a task branch that is the epic branch, for an epic branch the main one: `git fetch origin && git merge origin/<база>`.
    Base freshness is not inherited between branches of one session: the second and the third
    are taken after their own `fetch`, not from the ref under the first. While work goes on, main
    moves ahead — most often by the same executor's own PR. Everything checked below is checked
@@ -254,8 +254,8 @@ push gate either way — below is what it does not know.
     owner, labels the same as on the task, the commit count equal to `ahead_by` of the branch
     comparison. The owner is told what was read.
 14. **The set is taken from the pipeline file, not assembled from memory.** The push gate is
-    never narrower than the pipeline, and a check judges that. What the pipeline runs beyond the
-    gate is written in its file — that list is repeated locally.
+    never narrower than the pipeline, and a check judges that. The declared exclusions of
+    the set are read in its settings and run by hand.
 15. **The set is revised after merging the base in.** It is chosen by what the branch now
     carries, not by what the author edited. A branch that touched no line of the showcase runs
     the showcase snapshots: since the merge the pipeline runs them on its code, and the red

@@ -18,7 +18,7 @@ out in that tree.
 ## When to use
 
 - The PR is marked conflicting, and it must be brought back to a mergeable state.
-- The base of the branch moved ahead, and the branch must be caught up before the checks: for a
+- The base of the branch moved ahead, and the branch must be caught up before its PR opens: for a
   task branch the base is the branch of its epic, for an epic branch the main one.
 - The main branch moved ahead, and the whole epic must be caught up: the main branch is merged
   into the epic branch, and the epic branch into the branches of its unfinished tasks.
