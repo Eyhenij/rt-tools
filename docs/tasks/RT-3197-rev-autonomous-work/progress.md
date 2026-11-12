@@ -3,10 +3,10 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 3 — Edits
-- **Done:** findings of the role and of the binding comparison written; package texts and the companion edited and laid out
-- **Next step:** decide on the findings that need code: the delivery guard and the chain without an epic
-- **Uncommitted:** yes — the edits of stage 2
+- **Stage:** 3 of 3 — Closing
+- **Done:** findings written and fixed, committed; no finding needs a task — both code findings stay named facts
+- **Next step:** rebuild the graphs, run the push gate, take the folder apart
+- **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
@@ -19,8 +19,8 @@
 - [x] 1.3 Write the findings list into the progress with a decision for each
 - [x] 2.1 Edit the package texts by the findings
 - [x] 2.2 Build the package and lay out the tree
-- [>] 2.3 File tasks for findings that need code or another law
-- [ ] 3.1 Rebuild the rules graph and its report
+- [x] 2.3 File tasks for findings that need code or another law
+- [>] 3.1 Rebuild the rules graph and its report
 - [ ] 3.2 Run the push gate
 - [ ] 3.3 Take the task folder apart into the archive
 
