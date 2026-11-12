@@ -15,7 +15,7 @@ of branches from one base — `git-workflow-stack`.
 
 Three places, and in each the reading is mandatory:
 
-- before a push — main's tip may have moved while the work went on;
+- before a push — the base's tip may have moved while the work went on;
 - when taking a new task — the earlier PRs stayed open and will not remind of themselves;
 - after every merge that became known — it made all the others lag at once.
 
@@ -48,14 +48,14 @@ git fetch origin
 git merge-tree "$(git merge-base origin/<база> <ветка>)" origin/<база> <ветка> | grep -c '^<<<<<<<'
 ```
 
-Zero — the branch merely lags, and merging its base in cures it. Above zero — a dispute in files,
+Zero — the branch merely lags, and the host merges it itself. Above zero — a dispute in files,
 and each is resolved by file kind: pattern `git-workflow-merge`.
 
 ## What is done with what was found
 
 | Found                                  | What is done                                                       |
 | -------------------------------------- | ------------------------------------------------------------------ |
-| lagging, no dispute                    | the base is merged into the branch and pushed in the same turn     |
+| lagging, no dispute                    | nothing: the host merges it itself — pattern `git-workflow-stack`  |
 | a dispute in files                     | resolution by file kind, then a push                               |
 | no run on the tip, the base wakes it   | the tip is rerun or waited for — neither one has a colour          |
 | no run, the base does not wake it      | nothing to wait for: the green push gate on the tip stands for it  |

@@ -225,9 +225,8 @@ scenarios are taken by the push gate — below is what it does not know.
 12. **The work queue matches** — `npm run check:board`.
 13. **The PR state is read, not derived from return codes.**
 14. **The set is taken from the pipeline file, not assembled from memory.** The push gate is
-    narrower by design: it stands between the command and the push, and everything longer than
-    seconds is taken out of it. What the pipeline runs is written in its file — that list is
-    repeated locally; a green gate is not completeness of the set.
+    never narrower than the pipeline, and a check judges that. What the pipeline runs beyond the
+    gate is written in its file — that list is repeated locally.
 15. **The set is revised after merging the main branch in.** It is chosen by what the branch now
     carries, not by what the author edited. A branch that touched no line of the showcase runs
     the showcase snapshots: since the merge the pipeline runs them on its code, and the red

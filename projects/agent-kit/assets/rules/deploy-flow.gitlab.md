@@ -43,7 +43,7 @@ flowchart TD
     G --> H[Old images are removed, the last three sha stay as rollback depth]
     H --> I{Production answers with what was rolled out}
     I -->|No| J[Rollout analysis: the restart goes by sha, not by the latest tag]
-    I -->|Yes| K[The work queue audit reads the last run of the main branch]
+    I -->|Yes| K[The work queue audit counts the lag of the main branch from the last successful rollout]
     C --> K
     J --> K
 ```
@@ -133,8 +133,8 @@ flowchart TD
 
 ## What of the law is not here
 
-The state of production is not visible to the machine: the work queue audit asks for the last
-run of the main branch and judges by it, and nobody asks whether production answers with the
+The state of production is not visible to the machine: the work queue audit counts how far the
+main branch has gone from the last successful rollout, and nobody asks whether production answers with the
 build it rolled out. That is held by whoever rolled out.
 
 Nothing counts the completeness of the registry cleanup: the script keeps the last three sha,

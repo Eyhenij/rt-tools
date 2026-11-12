@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load for opening a PR and everything around it — title format, draft and leaving it, reading the PR state, the checklist. The link to the task, reviewer, labels and the body sample — pattern git-workflow-pr-body; creating the task and committing — git-workflow-commit.
 ---
-<!-- rt-kit v0.37.0 · patterns/git-workflow-pr.github.md · d47e0c7ecb7e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/git-workflow-pr.github.md · cf162fd7959a · правится надстройкой, не здесь -->
 
 # The PR
 
@@ -254,17 +254,15 @@ push gate either way — below is what it does not know.
     owner, labels the same as on the task, the commit count equal to `ahead_by` of the branch
     comparison. The owner is told what was read.
 14. **The set is taken from the pipeline file, not assembled from memory.** The push gate is
-    narrower by design: it stands between the command and the push, and everything longer than
-    seconds is taken out of it. What the pipeline runs is written in its file — that list is
-    repeated locally; a green gate is not completeness of the set.
+    never narrower than the pipeline, and a check judges that. What the pipeline runs beyond the
+    gate is written in its file — that list is repeated locally.
 15. **The set is revised after merging the base in.** It is chosen by what the branch now
     carries, not by what the author edited. A branch that touched no line of the showcase runs
     the showcase snapshots: since the merge the pipeline runs them on its code, and the red
     comes to its PR.
 
 Where the pipeline wakes for this base, the list is about lifting the draft: the PR opens as a
-draft earlier, while work goes on, and the person is shown what exists together with what is
-still missing. Items 1–15 are then passed before `gh pr ready`, and an unmet item means the draft
+draft after the task folder is taken apart and waits for the run. Items 1–15 are then passed before `gh pr ready`, and an unmet item means the draft
 is not lifted — not that the PR does not open.
 
 Where it does not wake, the same list is about opening: there is no second state to hold the work
