@@ -126,11 +126,24 @@
                                             <p rtElem="message-text" qa-dataid="chat-message-text">{{ m.text }}</p>
                                         }
                                         @if (m.canShowTranslation) {
+                                            <!-- Ошибка перевода: без текста узел пуст, и стили его прячут -->
+                                            <span
+                                                rtElem="message-translate-error"
+                                                qa-dataid="chat-message-translation-error"
+                                                role="alert"
+                                                [textContent]="m.translationError || ''"></span>
                                             <button
                                                 rtElem="message-translate"
                                                 qa-dataid="chat-message-show-translation"
                                                 type="button"
+                                                [rtMod]="{ loading: !!m.translationLoading }"
+                                                [disabled]="!!m.translationLoading"
+                                                [attr.aria-busy]="m.translationLoading || null"
                                                 (click)="showTranslation.emit(m)">
+                                                <rt-spinner
+                                                    rtElem="message-translate-spinner"
+                                                    diameter="16"
+                                                    [color]="m.own && messenger() ? 'on-primary' : 'primary'" />
                                                 {{ t().chatShowTranslation }}
                                             </button>
                                         }
