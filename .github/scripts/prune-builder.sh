@@ -11,12 +11,13 @@
 # Убирается только кэш сборки. Образы, тома и контейнеры сценарий не трогает: машину делят
 # другие проекты, и общая чистка унесла бы чужое.
 #
-# Отказ уборки запуск не роняет: место — не то, ради чего роняют зелёную сборку.
+# Отказ уборки запуск не останавливает: сборка, которая прошла, остаётся зелёной. Вывод уборки
+# печатается как есть: по нему видно, сколько места освобождено и почему уборка не удалась.
 set -uo pipefail
 
 BUILDER="${1:-}"
 
-# Свежий кэш нужен следующей сборке, вчерашний уже ничей.
+# Свежий кэш нужен следующей сборке. Кэш старше суток следующая сборка не берёт.
 MAX_AGE="${PRUNE_BUILDER_MAX_AGE:-24h}"
 
 # Возраст один места не гарантирует: за день свежего кэша набирается больше, чем помещается.
@@ -24,9 +25,10 @@ MAX_SPACE="${PRUNE_BUILDER_MAX_SPACE:-10GB}"
 
 target=()
 if [ -n "${BUILDER}" ]; then
-    # Сборщика с таким именем может не быть: сборка упала до его объявления.
-    if ! docker buildx inspect "${BUILDER}" >/dev/null 2>&1; then
-        echo "prune-builder: сборщика ${BUILDER} нет, убирать нечего"
+    # Сборщика с таким именем может не быть: сборка упала до его объявления. Тот же ответ даёт
+    # демон, который не отвечает, поэтому причина печатается словами клиента.
+    if ! docker buildx inspect "${BUILDER}" >/dev/null; then
+        echo "prune-builder: сборщик ${BUILDER} не ответил, уборки не было"
         exit 0
     fi
     target=(--builder "${BUILDER}")
@@ -34,10 +36,10 @@ fi
 
 echo "prune-builder: кэш ${BUILDER:-сборщика по умолчанию}, старше ${MAX_AGE} и сверх ${MAX_SPACE}"
 
-docker buildx prune ${target[@]+"${target[@]}"} --force --filter "until=${MAX_AGE}" >/dev/null 2>&1 ||
+docker buildx prune ${target[@]+"${target[@]}"} --force --filter "until=${MAX_AGE}" ||
     echo 'prune-builder: уборка по возрасту не удалась'
 
-docker buildx prune ${target[@]+"${target[@]}"} --force --max-used-space "${MAX_SPACE}" >/dev/null 2>&1 ||
+docker buildx prune ${target[@]+"${target[@]}"} --force --max-used-space "${MAX_SPACE}" ||
     echo 'prune-builder: уборка по размеру не удалась'
 
 exit 0

@@ -2761,7 +2761,7 @@
       "installed": true,
       "articles": 5,
       "unheld": 1,
-      "bound_code": 3
+      "bound_code": 4
     },
     {
       "label": "deploy-flow",
@@ -17078,5 +17078,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "51fef1737f46fcdefaa7a13dcbb67458f3b25613"
+  "built_at_commit": "5ca2e60cce1f7ae258a7e0aa008dfee8179b0cc2"
 }

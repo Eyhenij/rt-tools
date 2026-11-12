@@ -279,7 +279,7 @@
   },
   "lint-staged": {
     "**/src/**/*.{js,ts}": "eslint --fix",
-    "**/*.{js,mjs,cjs,ts,html,scss,css}": "prettier --write"
+    "{apps,libs,projects,tools/eslint-rules}/**/*.{js,mjs,cjs,ts,html,scss}": "prettier --write"
   },
   "engines": {
     "node": ">=22.22.3",

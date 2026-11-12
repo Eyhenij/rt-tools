@@ -39,3 +39,15 @@
   Affected stage of the plan: 2.
 - **The image selection by sha stays on the node alone.** The rollout build pushes its images straight
   to the registry, so the build machine holds none to select from. Affected stage of the plan: 1.
+- **The cleanup script lies in `.github/scripts/`, not in `deploy/`.** The rollout copies `deploy/`
+  to the node whole, and the node has no builder. The plan names the former address in its
+  footprint and in the sign of stage 1. Affected stage of the plan: 1.
+- **The rollout calls the cleanup once, by a task of its own after both image builds.** A step inside
+  each build would remove the cache of the second image between the two. Affected stage of the
+  plan: 1.
+- **The formatter of staged files is bound by directory too.** The first review showed that no lint
+  run reads `tools/` outside the linter's own rules, so the decision above about the whole tree is
+  withdrawn. Affected stage of the plan: 2.
+- **What the review found outside the task is filed as RT-3264 and RT-3265.** The push set leaves
+  its images on the machine; the manual formatter command takes texts. Affected stage of the
+  plan: 3.
