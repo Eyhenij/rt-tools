@@ -4,7 +4,7 @@ kind: pattern
 rule: testing
 description: Pattern of rule testing. Load when editing and running end-to-end tests in any end-to-end suite of the tree (apps/*-e2e) — what an end-to-end test closes, ready-made run commands, a stand from the production build behind real nginx, test switches. Not for unit tests — that is pattern testing-unit.
 ---
-<!-- rt-kit v0.37.0 · patterns/testing-e2e.md · 9a55bf0b54af · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/testing-e2e.md · 0d272ab8c94d · правится надстройкой, не здесь -->
 
 # End-to-end tests
 
@@ -192,8 +192,9 @@ polling the very value it measures; a wait for one value proves nothing about an
 
 ## The run in this tree
 
-A section of this tree: there is one end-to-end suite — the intake admin panel, the runner target
-`message-bus-admin-e2e`.
+A section of this tree: there are two end-to-end suites — the intake admin panel, the runner
+target `message-bus-admin-e2e`, and the entry example, `auth-example-e2e`, on the auth stand. The
+commands below are the first one's.
 
 ```bash
 pnpm run serve:stand                       # production builds on 3310 and 4310, its own seeded database
