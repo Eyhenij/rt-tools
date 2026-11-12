@@ -45,13 +45,20 @@ a draft's completion itself:
 
 ```bash
 AZURE_DEVOPS_EXT_PAT="$TOKEN" az repos pr create --draft true --title '[86] …' \
+    --target-branch <ветка эпика> --work-items 86 --reviewers <владелец> \
     --description "$(cat тело.md)"
 ```
 
 The check pipeline does not start on a draft by default: a run's silence is not taken for a
 green run, and the set is run on one's own machine or by a manual start.
 
-Everything waiting for a pipeline run, a rework or an answer to a question goes as a draft. The
+A PR the pipeline does not wake for opens ready, without `--draft true`: the branch policies name
+the target branches that carry a build validation, and where no run comes a draft waits for nothing and costs a locked button and a second turn. The reviewer is set in
+the same turn, and the push gate is then the only check behind the work. Without
+`--target-branch` the host takes the default branch, and the work goes into `main` past its epic.
+
+A rework or an unanswered question goes as a draft; a PR that waits only for the run opens
+ready, because the run does not start on a draft. The
 question is asked in the PR itself, not kept in the executor's head: a person reads the PR, not
 the session's conversation.
 
@@ -62,9 +69,9 @@ solution is ready:
 AZURE_DEVOPS_EXT_PAT="$TOKEN" az repos pr update --id 86 --draft false
 ```
 
-Before the lifting the executor's silence means "not ready yet", after — "may be merged".
-Lifting the draft and asking to merge go in one turn: a lifted draft nobody told the person
-about waits for review just like one not lifted.
+Lifting the draft starts the run where a build validation stands on the target, and the merge is
+asked in the turn the run is read green. Where none stands, lifting and asking go in one turn: a
+lifted draft nobody told the person about waits for review just like one not lifted.
 
 ## The PR is bound to the work item at creation
 
@@ -80,6 +87,11 @@ AZURE_DEVOPS_EXT_PAT="$TOKEN" az repos pr create \
 ```
 
 Before the target branch is named, its presence on the host is checked: `git ls-remote --heads origin <ветка>`. An empty answer means the base was merged and removed; the request then takes the next branch up the chain as its base.
+
+The target branch is the epic branch, and in a chain the previous branch; into `main` goes only the
+PR of the epic itself. Completing a PR closes the bound work item on any target
+branch when the person leaves the option "Complete associated work items after merging" checked in
+the Complete dialog.
 
 The reviewer is always the owner: without a review request the PR does not show in their queue.
 One PR closes the work item whole — half a task is not rolled out by one PR: a task has one
@@ -98,9 +110,14 @@ the branch after publishing: the PR states things about the tree, and the tree h
 
 ## PR body sample
 
-Four sections, and one order between them: the link line, what was done, what confirms it, the
-remaining step. A section with nothing to say says so in words — an empty heading and a removed
-heading read alike and mean different things.
+Six sections, and one order between them: the link line, what was done, the points, the goal, what
+confirms it, the remaining step. A section with nothing to say says so in words — an empty heading
+and a removed heading read alike and mean different things.
+
+The table of points comes from the reply of the role `product-strategist`: a sign not run is
+written as not run, and its point as not reached. The table of the goal comes from the reply of the
+role `goal-critic`. Both go in word for word, and the critic reads the finished body against the
+replies.
 
 ```markdown
 Закрывает рабочий элемент 86.
@@ -109,6 +126,18 @@ heading read alike and mean different things.
 
 - <правка, названная тем, что она меняет для читателя, а не тем, какие файлы задела>
 
+## Точки
+
+| Точка | Признак | Результат |
+| --- | --- | --- |
+| <изменение, которое увидит человек> | <команда, страница или число> | <вывод признака: достигнута или промах> |
+
+## Цель
+
+| Слова владельца | Что показывает результат | Итог |
+| --- | --- | --- |
+| <дословная цитата> | <что видно в результате> | <выполнено или нет> |
+
 ## Чем подтверждено
 
 - <проверка>: <её вывод одной строкой>
@@ -116,18 +145,26 @@ heading read alike and mean different things.
 
 ## Оставшийся шаг
 
-Папка задачи разобрана коммитом `<sha>` — за работой убрано. Осталось дождаться прогона и снять
-черновик; до этого кнопка слияния заблокирована хостингом.
+Папка задачи разобрана коммитом `<sha>` — за работой убрано. Осталось дождаться прогона
+проверки; сливать после зелёного. В окне Complete оставить отметку «Complete associated work items
+after merging»: рабочий элемент 86 закрывается этим запросом.
 ```
 
+The link line says the work item closes with this PR, and the "Remaining step" section names the
+option for the one who presses Complete: the dialog remembers the last choice of that person.
+
 The "Remaining step" section stands last and is rewritten by the same call as the rest of the
-body — in the turn that lifts the draft:
+body — in the turn the run is read green:
 
 ```markdown
 ## Оставшийся шаг
 
-Не осталось: прогон зелёный, черновик снят. Можно вливать.
+Не осталось: прогон зелёный. Можно вливать, отметка «Complete associated work items after
+merging» в окне Complete остаётся.
 ```
+
+Where no build validation stands on the target, the section says from the opening that nothing is
+left and names the push gate as the only check, not a green run.
 
 It stands there because the merge decision is made on that page, not in the conversation: what
 was said to the owner aloud lives until the next reply, and the body lies right by the button.
@@ -195,7 +232,8 @@ threads read at the start: a remark left without one is a remark the person chec
 The pipeline sees only what was sent, and it is sent by a push. Linters, unit tests and hook
 scenarios are taken by the push gate — below is what it does not know.
 
-1. **The base is merged into this branch** — `git fetch origin && git merge origin/<база>`.
+1. **The base is merged into this branch** — `git fetch origin && git merge origin/<база>`: for a
+   work item branch that is the epic branch, for an epic branch the main one.
    Everything checked below is checked from this base: a PR from a diverged branch shows the
    reviewer the edit mixed with someone else's. Order and conflict resolution — pattern
    `git-workflow-merge`.
@@ -216,10 +254,10 @@ scenarios are taken by the push gate — below is what it does not know.
    screen — pattern `browser-verification-measure`.
 9. **A markup edit of the public site is checked on the production build in all translation
    locales** — the search visibility rule of the tree that has one.
-10. **The PR is bound to the work item**, reviewer and assignee are set, and the body is
-    assembled by the sample — the sections "What was done", "What confirms it" and "Remaining
-    step". By this moment the remaining step section says no steps are left: the folder is
-    taken apart before the PR opens.
+10. **The PR is bound to the work item**, the reviewer is set, and the body is
+    assembled by the sample — the sections "What was done", "Points", "Goal", "What confirms it" and "Remaining
+    step". By this moment the remaining step section names what is left: the run, where a build
+    validation stands on the target, or nothing. The folder is taken apart before the PR opens.
 11. **The PR title carries the work item number and names the work done:** `[<номер>] <Что
 сделано>`, with the same number as the work item and the branch name.
 12. **The work queue matches** — `npm run check:board`.
@@ -242,6 +280,35 @@ body: the unchecked named as checked, the reviewer takes as checked.
 from the full set, and by it the reviewer decides what need not be rechecked. The price of a
 mistake here is not a red pipeline but trust in the section: once read as complete, from then on
 it is rechecked whole.
+
+The list is about opening: a PR that waits only for the run opens ready, so the items are passed
+before the opening, and an unmet item means the PR does not open yet. The run is then waited for on
+the open PR. A draft stands only for a rework or a question, and the same items are passed before
+`az repos pr update --id <номер> --draft false`. Where no build validation stands on the target, no
+item asks for a run: its place is taken by the push gate, green before the sending.
+
+## A chain of branches: the calls of this host
+
+The order is the pattern `git-workflow-stack`, with one difference: here the upper PR is retargeted
+before the lower one completes, not after. The calls:
+
+```bash
+# the upper PR, before the lower one completes; the file holds {"targetRefName": "refs/heads/<ветка эпика>"}
+az devops invoke --area git --resource pullRequests --http-method PATCH \
+    --route-parameters project=<проект> repositoryId=<репозиторий> pullRequestId=87 \
+    --in-file цель.json --api-version 7.1
+az repos pr show --id 87 --query targetRefName -o tsv              # reread: the call finds its resource by name
+az repos pr show --id 87 --query mergeStatus -o tsv                # whether the PR can be completed
+az boards work-item update --id 86 --state <закрытое состояние>    # an item the host did not move itself
+```
+
+`az repos pr update` has no flag for the target branch, so the retargeting goes through the REST
+call. It goes first because completing with `--delete-source-branch true` removes the branch the
+upper PR targets.
+
+The host takes no PR description longer than 4000 characters, so the length is counted before the
+call. When the two tables do not fit, their rows stay and the cells are shortened to the verdict;
+the word-for-word replies of the roles go into the first comment.
 
 ## Common misses
 

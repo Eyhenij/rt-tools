@@ -187,6 +187,10 @@ flowchart TD
   non-zero code and says that the check itself broke, not the subject. A shared zero for both makes
   a broken check indistinguishable from a passed one: the schema-to-migrations audit stood like that
   in the gate set, checking nothing, and hid three causes at once behind its zero.
+- **The merge button and the manual rollout run get their requirement at the host.** Both are
+  pressed at the host, where the guards of the session do not stand. The requirement is set at the
+  host — a required status check, a protected branch or a protected environment — or is named to the
+  one who presses, in the section of the PR description about the remaining step, before the press.
 
 ## What of the law is not here
 
