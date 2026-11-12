@@ -3042,8 +3042,8 @@
       "name": "task-flow",
       "installed": true,
       "articles": 59,
-      "unheld": 24,
-      "bound_code": 59
+      "unheld": 23,
+      "bound_code": 60
     },
     {
       "label": "testing",
@@ -7617,6 +7617,16 @@
       "confidence_score": 1
     },
     {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/patterns/task-flow-archive.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "pattern_task_flow_archive",
+      "target": "pattern_task_flow_resume",
+      "confidence_score": 1
+    },
+    {
       "relation": "pattern_of",
       "confidence": "EXTRACTED",
       "source_file": "projects/agent-kit/assets/patterns/task-flow-archive.md",
@@ -10354,6 +10364,16 @@
       "weight": 1,
       "source": "rule_task_flow",
       "target": "check_task_new_mjs",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/task-flow/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_task_flow",
+      "target": "check_tree_assignment_mjs",
       "confidence_score": 1
     },
     {
@@ -16898,5 +16918,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "fad2278c1339c9ff007d147c9a8d37f1190700cb"
+  "built_at_commit": "53cd336d081501167eb347ded1fa076052633e78"
 }

@@ -1,6 +1,6 @@
 # Report of the rules graph
 
-Built by `npm run graph:rules` from `fad2278c1`: 351 nodes, 1292 links.
+Built by `npm run graph:rules` from `53cd336d0`: 351 nodes, 1294 links.
 The graph is `projects/agent-kit/rules-graph/graph.json`; graphify reads it with `--graph`. Every list below is
 debt for the revision of a law family to sort out, not a refusal.
 
@@ -17,13 +17,13 @@ No `Requires` line and no binding of the companion to code: a hook, a check, a l
 
 Not laid out in this tree, so their executors are unknown here: api-layer, shared-code.
 
-## Articles nothing carries out — 181
+## Articles nothing carries out — 180
 
 Articles the companion of the rule marks «Not checked» or «Not carried out», of all its articles.
 
 - git-workflow — 27 of 81
 - turn-conduct — 25 of 69
-- task-flow — 24 of 59
+- task-flow — 23 of 59
 - observability — 14 of 29
 - testing — 14 of 42
 - deploy-flow — 13 of 28
