@@ -50,7 +50,6 @@ silent about.
 - **A document is no longer than the length limit.** — `tools/check-file-size.mjs:limitOf` — prose has a limit of its own, `tools/check-file-size.mjs:PROSE_LIMIT` lines and `tools/check-file-size.mjs:PROSE_CHARS` characters, counted on the laid-out copy; the description of the past and the task folders are taken out of the count.
 - **A record in the description of the past has an expiry, and after it the record is removed.** — `tools/archive-age.mjs:RETENTION_DAYS` — the number of days arrives by the key `archiveRetentionDays` of the checks settings; here a week is assigned. Records are removed by `tools/archive-prune.mjs`, the selection is one for both — `tools/archive-age.mjs:staleRecords`, and the check calls it with a day of slack — `tools/archive-age.mjs:CHECK_GRACE_DAYS`. The check stands in the push gate suite and as a pipeline step.
 - **The removal by expiry travels as a commit of its own.** — **Not checked by anything.** The cleanup command `tools/archive-prune.mjs` is called by hand. Nothing tells its commit from the work commit next to it: a separate subject and a line in the PR body are held by this article.
-- **Upcoming work is listed only in the work queue.** — **Not checked by anything.** No check tells a list of upcoming work from any other list. `UI-KIT-V2-ISSUES.md` diverges from this article: it lists what the second kit does not cover yet. Until its items become tasks, the work goes by the rule.
 - **A link to a record of the past in a live text lives exactly until the record's expiry.** — **Not checked by anything.** The path check does not read the archive, so a dead link turns red not there but in the text that referred to it. That is how the very first pruning broke two links, and both were found by the address audit.
 - **A file leaving for the description of the past names its former address in its header.** — **Not checked by anything.** The path check does not read the archive at all, and a miss there never turns red. It is held by the order of the move.
 - **The glossary is edited where it is assembled, not where it is read.** — `.claude/hooks/glossary-load.sh:where` — the preamble names the address of the edit itself: the override `.claude/rt-kit/overrides/docs/GLOSSARY.md`, where this tree's own word goes; the shared part arrives by the package, and an in-place edit is refused by `.claude/hooks/rule-source-guard.sh`
@@ -73,7 +72,8 @@ not in the wrong language.
   override in `.claude/rt-kit/overrides/<resource>`: an in-place edit is lost on the next layout,
   and the layout refuses over it.
 - Remaining work is not written into a document but opened as a task on the board.
-  `UI-KIT-V2-ISSUES.md` is the divergence named in the bindings above.
+  `UI-KIT-V2-ISSUES.md` diverges from the law's article about the work queue: it lists what the
+  second kit does not cover yet. Until its items become tasks, the work goes by the law.
 - The released sections of the changelog are assembled from commit subjects and are not
   rewritten; only the unreleased one is edited.
 - Numbers in texts (how many specs, how many components) go stale within one branch — next to

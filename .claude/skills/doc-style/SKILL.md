@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing any .md including specs, and also code comments, commit bodies and PR descriptions. Names the path check, the pairs of an edit and its document, and what nothing checks in this tree. Ready-made wording is in pattern doc-style-write.
 ---
-<!-- rt-kit v0.37.0 · rules/doc-style.md · cdc9accbec2a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/doc-style.md · aa9ddd92886a · правится надстройкой, не здесь -->
 
 # Project texts — how it works here
 
@@ -192,10 +192,6 @@ flowchart TD
   drops the expired records; they go as a commit of their own, and the PR body names it unrelated.
   <!-- rt-when: *.md -->
 
-- **Upcoming work is listed only in the work queue.** A "do later" list in a document is a second
-  queue, and the reader does by it what the queue already closed; a task plan leaves with the work.
-  <!-- rt-when: *.md -->
-
 - **A link to a record of the past in a live text lives exactly until the record's expiry.** The
   address check does not read the archive at all, so the dead link turns red not there but in the
   text that referenced it. A live text names the decision in words, not by the record's address.
@@ -274,6 +270,9 @@ The rule extends to code comments but the gate does not demand it: it calls the 
 held by the author's memory — and the cost of that shows: words from the glossary's left column
 live in hook comments and `tools/*.mjs` by the dozen, including the refusal text the guard prints
 to the agent.
+
+No check tells a "do later" list in a document from any other list: the law's article about the
+work queue is held by the author, and a task plan leaves with the work.
 
 A dropped word is purged from files by a search; in PR titles, commit subjects and task cards
 nothing finds it, and whoever drops the word holds it. Completeness of texts from the side of the

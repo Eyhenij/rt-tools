@@ -6,8 +6,9 @@
 - **Stage:** 2 of 3 — Fixes
 - **Done:** package texts and both companions edited by the findings, the tree laid out, the
   spec audit, the size, path and glossary checks are green
-- **Next step:** file two tasks — docs-guard demands a companion for a laid-out rule; the anchor
-  check matches a word anywhere in the file
+- **Next step:** run the push gate in the background, then take the folder apart into the archive
+- **Metric:** held by memory 13 → 14 (doc-style 8 of 21, spec-driven 6 of 31): the edit-tool
+  article lost a false binding; pairs of repeats 17 → 16
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -21,9 +22,9 @@
 - [x] 1.3 Write the findings list into the progress with a decision for each
 - [x] 2.1 Edit the package texts by the findings
 - [x] 2.2 Build the package and lay out the tree
-- [>] 2.3 File tasks for findings that need code or another law
-- [ ] 3.1 Rebuild the rules graph and its report
-- [ ] 3.2 Run the push gate
+- [x] 2.3 File tasks for findings that need code or another law
+- [x] 3.1 Rebuild the rules graph and its report
+- [>] 3.2 Run the push gate
 - [ ] 3.3 Take the task folder apart into the archive
 
 ## Findings
@@ -77,8 +78,13 @@ Binding comparison, 12.11.2026:
 - **P6** the `Docs-skip` line stays in both rules: each is bound to its own guard.
 - **P7** the doc-style texts say only "diagram"; nothing to edit.
 - **G2, G4, G5, G6** closed in the spec-driven half; **G1, G3, G7** in doc-style.
-- `UI-KIT-V2-ISSUES.md` diverges from the new article "Upcoming work is listed only in the work
-  queue": named in the companion, to be named to the owner in the PR.
+- G1 is not a rule article: nothing holds it here, and as an article it repeated the law and grew
+  the memory count. It stands in "What of the law is not here". `UI-KIT-V2-ISSUES.md` diverges
+  from the law's article: named in the companion, to be named to the owner in the PR.
+- Step 2.3 files no task. The companion pair for a laid-out rule is right: its articles are keyed
+  by text, so a package edit of them needs the companion too; the false claim was the companion's
+  and is fixed. The anchor matched as a word anywhere in the file is what the rule article "An
+  anchor is checked against the raw text of the file" states.
 - The spec-driven line about a reused number is kept: no refusal of a repeated number was found
   in the audit code.
 
