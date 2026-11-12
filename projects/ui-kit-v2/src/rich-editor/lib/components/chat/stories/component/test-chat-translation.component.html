@@ -1,0 +1,20 @@
+<app-story-themes caption="Перевод реплики: подпись у времени и кнопка «Показать перевод»">
+    <ng-template>
+        <div style="display: flex; flex-direction: column; gap: 1rem">
+            <div style="box-sizing: border-box; inline-size: 409px; block-size: 60rem; background-color: var(--rt-color-bg-surface)">
+                <rt-chat
+                    fill
+                    messenger
+                    hasThread
+                    title="№12 Анна Смирнова"
+                    [messages]="messenger"
+                    (showTranslation)="shown.set($event.id)" />
+            </div>
+            <!-- Высота ящика задана, а чат её заполняет: лента без прокрутки показывает все состояния разом -->
+            <div style="box-sizing: border-box; inline-size: 350px; block-size: 42rem; background-color: var(--rt-color-bg-surface)">
+                <rt-chat fill hasThread title="Переписка с гостем" [messages]="plain" (showTranslation)="shown.set($event.id)" />
+            </div>
+        </div>
+    </ng-template>
+</app-story-themes>
+<p qa-dataid="chat-translation-shown">Показать перевод нажато у реплики: {{ shown() ?? '—' }}</p>

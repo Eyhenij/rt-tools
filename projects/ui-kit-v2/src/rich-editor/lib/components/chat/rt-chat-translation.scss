@@ -1,0 +1,92 @@
+// Перевод реплики: кнопка «Показать перевод» под текстом, её загрузка и строка ошибки. Подпись
+// перевода стоит в строке времени и своих правил не имеет. Лежит отдельно от стилей чата, чтобы
+// файлы уместились в предел длины.
+@layer rt-kit.components {
+    .rt-chat {
+        --rt-chat-translate-outline-width: var(--rt-border-width-medium);
+        --rt-chat-translate-radius: var(--rt-radius-xs);
+        --rt-chat-translate-gap: var(--rt-space-2);
+
+        // Кнопка и строка ошибки прижаты к тексту и друг к другу: зазор пузыря между ними снят, как
+        // у строк одного абзаца
+        &__message-translate,
+        &__message-translate-error {
+            align-self: flex-start;
+            font-size: var(--rt-text-xs);
+            line-height: round(1em * var(--rt-leading-snug), 1px);
+            margin-block-start: calc(-1 * var(--rt-chat-translate-gap));
+            text-align: start;
+        }
+
+        &__message-translate-error {
+            color: var(--rt-color-state-error-text);
+
+            // Ошибки нет: пустой узел не держит строку и зазор пузыря
+            &:empty {
+                display: none;
+            }
+        }
+
+        &__message-translate {
+            display: inline-flex;
+            align-items: center;
+            padding: 0;
+            border: 0;
+            border-radius: var(--rt-chat-translate-radius);
+            background: transparent;
+            color: var(--rt-color-action-primary);
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: var(--rt-font-weight-medium);
+            gap: var(--rt-space-1);
+
+            &:hover {
+                text-decoration: underline;
+            }
+
+            &:focus-visible {
+                outline: var(--rt-chat-translate-outline-width) solid var(--rt-color-border-focus);
+            }
+
+            // Перевод загружается: кнопка приглушена и не нажимается
+            &--loading,
+            &--loading:hover {
+                color: var(--rt-chat-bubble-date);
+                cursor: default;
+                text-decoration: none;
+            }
+        }
+
+        // Спиннер виден только при загрузке. Селектор из двух классов: правило самого спиннера
+        // ставит ему показ тем же весом
+        &__message-translate &__message-translate-spinner {
+            display: none;
+        }
+
+        &__message-translate--loading &__message-translate-spinner {
+            display: inline-flex;
+        }
+
+        &--messenger {
+            --rt-chat-translate-gap: var(--rt-space-0-5);
+
+            // На заливке цвета действия синяя кнопка и красная ошибка не читаются: они белые
+            .rt-chat__message--own .rt-chat__message-translate-error {
+                color: var(--rt-color-action-on-primary);
+            }
+
+            .rt-chat__message--own .rt-chat__message-translate {
+                color: var(--rt-color-action-on-primary);
+                text-decoration: underline;
+
+                &:focus-visible {
+                    outline-color: var(--rt-color-action-on-primary);
+                }
+            }
+
+            .rt-chat__message--own .rt-chat__message-translate--loading {
+                text-decoration: none;
+            }
+        }
+    }
+}
