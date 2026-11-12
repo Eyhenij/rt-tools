@@ -1,6 +1,6 @@
 # Report of the rules graph
 
-Built by `npm run graph:rules` from `e0e3794f6`: 351 nodes, 1297 links.
+Built by `npm run graph:rules` from `230dcb5ed`: 351 nodes, 1297 links.
 The graph is `projects/agent-kit/rules-graph/graph.json`; graphify reads it with `--graph`. Every list below is
 debt for the revision of a law family to sort out, not a refusal.
 
@@ -17,7 +17,7 @@ No `Requires` line and no binding of the companion to code: a hook, a check, a l
 
 Not laid out in this tree, so their executors are unknown here: api-layer, shared-code.
 
-## Articles nothing carries out — 180
+## Articles nothing carries out — 179
 
 Articles the companion of the rule marks «Not checked» or «Not carried out», of all its articles.
 
@@ -34,9 +34,9 @@ Articles the companion of the rule marks «Not checked» or «Not carried out»,
 - spec-driven — 6 of 31
 - status-report — 5 of 10
 - epic-flow — 4 of 11
-- dependencies — 3 of 5
 - typescript-conventions — 3 of 10
 - angular-patterns — 2 of 5
+- dependencies — 2 of 5
 - queue-audit — 2 of 10
 - styling-bem — 2 of 12
 - component-structure — 1 of 4
