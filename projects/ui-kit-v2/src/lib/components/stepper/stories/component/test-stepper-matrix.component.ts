@@ -189,15 +189,17 @@ const STEPS_INSTRUCTION: readonly IRtStepper.Step[] = [
             }
 
             @case ('colors') {
-                <app-story-presets caption="Цвета, переопределённые приложением, в обоих наборах">
+                <app-story-presets caption="Все семнадцать цветов, переопределённые приложением, в обоих наборах">
                     <ng-template>
-                        <div
-                            style="--rt-stepper-current-color: var(--rt-color-action-success); --rt-stepper-progress-color: var(--rt-color-action-danger); --rt-stepper-label-color: var(--rt-color-action-success); --rt-stepper-line-color: var(--rt-color-action-danger)">
+                        <div [style]="colorOverrides">
                             <div style="width: 30rem">
                                 <rt-stepper [steps]="colorSteps" [currentIndex]="1" />
                             </div>
                             <div style="width: 20rem; margin-block-start: 24px">
                                 <rt-stepper orientation="vertical" [steps]="stepsThree" [currentIndex]="1" />
+                            </div>
+                            <div style="width: 20rem; margin-block-start: 24px">
+                                <rt-stepper orientation="vertical" [steps]="stepsThree" [currentIndex]="-1" />
                             </div>
                         </div>
                     </ng-template>
@@ -336,7 +338,8 @@ export class TestRtStepperMatrixComponent {
     /**
      * Кадр ширин — тот же набор случаев, что кадр «Ширины и состояния» в макете: третий из
      * четырёх, пять и семь шагов, узкая панель 327, наименьшая ширина 280, широкая 720 и длинные
-     * подписи первого и последнего шага.
+     * подписи первого и последнего шага. Мастер на шестнадцать шагов снят на 560, 327 и 280; шаги
+     * 5 и 12 — те, у которых отрезок подписи самый узкий.
      */
     public readonly widths: readonly IStepperWidthCase[] = [
         widthCase('По умолчанию: 4 шага, текущий второй', 480, 4, 1),
@@ -355,11 +358,42 @@ export class TestRtStepperMatrixComponent {
         wizardCase('последний', 560, 15),
         wizardCase('первый', 327, 0),
         wizardCase('второй', 327, 1),
+        wizardCase('пятый', 327, 4),
+        wizardCase('двенадцатый', 327, 11),
         wizardCase('пятнадцатый', 327, 14),
         wizardCase('последний', 327, 15),
+        wizardCase('первый', 280, 0),
+        wizardCase('пятый', 280, 4),
+        wizardCase('двенадцатый', 280, 11),
+        wizardCase('последний', 280, 15),
     ];
 
     public readonly colorSteps: readonly IRtStepper.Step[] = bookingSteps(4, 1);
+
+    /**
+     * Все семнадцать цветовых свойств степпера, каждое своим цветом: в кадре видно, что каждое
+     * доходит до своего места. Полоса — шесть свойств, список — одиннадцать; нейтральные метки
+     * рисует список без текущего шага.
+     */
+    public readonly colorOverrides: string = [
+        '--rt-stepper-track-color: var(--rt-color-action-warning)',
+        '--rt-stepper-progress-color: var(--rt-color-action-danger)',
+        '--rt-stepper-current-color: var(--rt-color-action-success)',
+        '--rt-stepper-label-color: var(--rt-color-action-info)',
+        '--rt-stepper-description-color: var(--rt-color-action-primary)',
+        '--rt-stepper-point-shadow: 0 0 0 4px var(--rt-color-action-warning-hover)',
+        '--rt-stepper-line-color: var(--rt-color-action-info)',
+        '--rt-stepper-step-label-color: var(--rt-color-action-danger)',
+        '--rt-stepper-step-description-color: var(--rt-color-action-success)',
+        '--rt-stepper-mark-complete-bg: var(--rt-color-action-primary)',
+        '--rt-stepper-mark-complete-color: var(--rt-color-action-on-primary)',
+        '--rt-stepper-mark-current-bg: var(--rt-color-action-warning)',
+        '--rt-stepper-mark-current-color: var(--rt-color-action-on-warning)',
+        '--rt-stepper-mark-upcoming-bg: var(--rt-color-action-info)',
+        '--rt-stepper-mark-upcoming-color: var(--rt-color-action-on-info)',
+        '--rt-stepper-mark-neutral-bg: var(--rt-color-action-danger)',
+        '--rt-stepper-mark-neutral-color: var(--rt-color-action-on-danger)',
+    ].join('; ');
 
     public readonly stepsInstruction: readonly IRtStepper.Step[] = STEPS_INSTRUCTION;
 
