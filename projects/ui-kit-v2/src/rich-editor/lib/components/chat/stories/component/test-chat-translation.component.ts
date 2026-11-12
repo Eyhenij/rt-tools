@@ -54,7 +54,7 @@ const OWN_ORIGINAL: IRtChat.Message = {
             <ng-template>
                 <div style="display: flex; flex-direction: column; gap: 1rem">
                     <div
-                        style="box-sizing: border-box; inline-size: 420px; block-size: 54rem; background-color: var(--rt-color-bg-surface)">
+                        style="box-sizing: border-box; inline-size: 409px; block-size: 60rem; background-color: var(--rt-color-bg-surface)">
                         <rt-chat
                             fill
                             messenger
