@@ -2,7 +2,7 @@
 name: git-workflow
 kind: rule
 law: delivery
-description: Rule under the delivery law for a tree in Azure DevOps. Load for creating a work item and a branch, commit, push, opening a PR and merging. Names the one-to-one match of item and branch, the names, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge.
+description: Rule under the delivery law for a tree in Azure DevOps. Load for creating a work item and a branch, commit, push, opening a PR and merging. Names the one-to-one match of item and branch, the names, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack.
 ---
 
 # Delivery — how it works here
@@ -23,7 +23,7 @@ with the rule.
 | epic                         | a work item of kind `Epic`, title `[<номер>] <Возможность>`, its tasks are its children; a plan next to it: the order of tasks and how the branches stand                                                                |
 | epic branch                  | `<номер эпика>-<короткий-slug>`, taken from `main`. Branches of its work items are taken from it, and their PRs go into it                                                                                               |
 | PR of an epic                | PR into `main` from the epic branch; opens after all its work items are merged and their folders taken apart                                                                                                             |
-| separate branch              | `<номер рабочего элемента>-<короткий-slug>`; the form — in `implementation.md`. A name without a number (`feat/…`, `fix/…`) is legitimate locally: no PR opens from it                                                   |
+| separate branch              | `<номер рабочего элемента>-<короткий-slug>`, taken from the epic branch; the form — in `implementation.md`. A name without a number (`feat/…`, `fix/…`) is legitimate locally: no PR opens from it                                                   |
 | task                         | a work item of kind `Task` or `Bug`, title `[<номер>] <Что не так>`, assignee the machine account; the PR attaches at creation by the `--work-items` flag, a commit by the line `AB#<номер>`                             |
 | work queue                   | the project's Azure Boards. A work item lands on the board by being created: the board shows the items of its area and iteration                                                                                         |
 | task state in the work queue | the work item's `State` field: `New` when created, `Active` in progress, `Resolved` in review. The state set depends on the project process and is named in `implementation.md`; a closed task leaves the queue by merge |
@@ -55,7 +55,7 @@ flowchart TD
     D -->|Yes| E[The base is merged in, the last commit takes the task folder apart, the gate set is run whole]
     E --> F{The branch carries a work item number}
     F -->|No| G[The delivery guard refuses the opening: nothing in the queue stands behind the edit]
-    F -->|Yes| H[The PR opens: a draft where a run is waited for, ready where the pipeline does not wake]
+    F -->|Yes| H[The PR opens: a draft for a rework or a question, ready where only the run is waited for]
     H --> I[The state moves to review, the executor takes the next work item]
     I --> J{The run and the review are over}
     J -->|Run red| K[Fixed in the same branch]
@@ -104,7 +104,7 @@ flowchart TD
   The base is retargeted by the same motion that merges the lower one — the pattern
   `git-workflow-stack`.
 - **A chain is merged bottom-up, and the order stands in every PR description.** Branch kinship is
-  invisible in the list, and the line "stands on #<number>" is the only place it is read.
+  invisible in the list, and the line "stands on !<number>" is the only place it is read.
 - **The lower branch of a chain does not rewrite history — neither `rebase` nor a force push.** The
   upper PR loses its diff with it. A lagging branch is fixed by merging its base in.
 - **A divergence inside a chain is resolved by the one who branches.** Both edits are theirs; the
@@ -126,11 +126,9 @@ flowchart TD
 - **A code edit is handed to a person by an open PR, not by a pushed branch.** A branch reaches no
   inbox; the PR opens in the turn the work is said handed over, and the reply names its number.
 - **What is not ready to merge opens as a draft — `az repos pr create --draft true`.** The host
-  itself locks a draft's complete button, so the state "put up for viewing" and the state "may be
-  merged" stop looking alike. Everything waiting for a pipeline run, a rework or an answer goes as a
-  draft; the question is asked in the PR itself. The check pipeline does not run on a draft by
-  default — until the draft is lifted it stays silent, and that silence is not taken for a green
-  run.
+  itself locks a draft's complete button. A rework or an unanswered question goes as a draft, and
+  the question is asked in the PR itself. The check pipeline does not start on a draft by default: a
+  PR that waits only for the run opens ready, and a draft's silence is not taken for a green run.
 - **A PR the pipeline does not wake for opens ready, without the draft flag.** Which target branches
   carry a build validation policy is read from the branch policies: where no run comes, a draft
   waits for nothing and costs a locked button and a second turn. The reviewer is set in the same
@@ -153,7 +151,8 @@ flowchart TD
   again. The word holds for that PR, not for the next.
 - **The draft is lifted by a separate call — `az repos pr update --id <номер> --draft false`.** With
   it the executor answers for readiness: checks passed, no rework left, the work matches the work
-  item. Lifting the draft and asking to merge are one turn, not two days.
+  item. Lifting the draft and asking to merge are one turn, and a PR opened ready needs no such
+  call.
 - **The PR merge is pressed by a person, not by the work's executor.** The Complete button, `az
   repos pr update --status completed` and auto-complete set by the executor are equal. The executor
   merges their own PR only when a person said so about this PR; said about one, it does not carry to
@@ -170,7 +169,8 @@ flowchart TD
 - **The epic card moves by the same command, on the epic number, at two moments.** First work item
   taken — the epic is in progress; the PR of the epic into `main` opens — the epic awaits review.
   `npm run task:move -- <номер эпика> in-progress`. Left in the initial state while its work items
-  merge, the epic reads as never started.
+  merge, the epic reads as never started. The states of an `Epic` are its own and are named in
+  `implementation.md` apart from the task's.
 - **A work item left in the initial state opens no PR.** By the work queue it reads as not taken,
   though the work is done and published. The tree names the initial state itself; unnamed — not
   judged.
@@ -181,12 +181,12 @@ flowchart TD
   stays in it after the merge forever. The queue audit finds such cards, a line each.
 - **A lagging state is found by the queue audit, not by eye.** The audit judges the state by the PR
   both ways: an open PR with the item not in review, and review with no open PR — both
-  discrepancies. The moment a task is taken into work it cannot see: the branch is not on the board.
-- **A branch with an open PR lags behind main silently.** The guard judges the base once — at
-  opening; what merged into main during the run a green run never sees, and a PR merged from there
-  brings main a combination nobody checked. The lag is found by the work queue audit: it asks the
-  repository how many commits each open PR's branch is behind main, and names the number.
-- **Tasks fixed by one edit are merged before the branch merge.** The second is closed as a
+  discrepancies. The moment a work item is taken into work it cannot see: the branch is not on the
+  board.
+- **A branch with an open PR lags behind its base silently.** The guard judges the base once — at
+  opening; what merged into the base later a green run never sees. The lag is found by the work
+  queue audit, which names it as a commit count.
+- **Work items fixed by one edit are merged before the branch merge.** The second is closed as a
   duplicate, and the missing from it is added to the first. The law orders the second erased, and
   this is the second declared deviation: a work item here has a native "duplicate" link, deletion
   takes the edit history and attachments with it, and the number is not reused after it — a link to
@@ -219,10 +219,10 @@ flowchart TD
   what the set judges by the whole tree: a word, a file limit. A check that stands only on an edit,
   such as the wording one, is run over the changed texts apart. The output goes into the review,
   and a later push into that branch is run again.
-- **Where neither the session's push guard nor the git hook fires, the set is run whole, as read
-  at the minute of the run.** It is read from the state review or from the tree profile together with the package
-  default it calls. A list from memory, from a copy made earlier or from the profile alone drops
-  checks: the profile names the set, the task names only the work.
+- **Where neither the session's push guard nor the git hook fires, the set is run whole, as read at
+  the minute of the run.** It is read from the state review or from the tree profile together with
+  the package default it calls. A list from memory, from a copy made earlier or from the profile
+  alone drops checks: the profile names the set, the task names only the work.
 - **An exclusion reason naming a work item is judged on whether that work item is alive.** A dead
   number silently makes the exclusion perpetual.
 - **The layout audit stands in the push gate set on a par with lint and the build.** An edit past
@@ -239,7 +239,7 @@ flowchart TD
   looks ready for review.
 - **The state set is taken from the project process, not assigned by the rule.** Agile, Scrum and
   Basic name the same three steps differently, and a move to a state the process lacks answers with
-  a refusal on every task in a row.
+  a refusal on every work item in a row.
 - **Guard scenarios set the git settings themselves, not take them from the machine.** Author, email
   and signature go as `-c` flags.
 
@@ -261,14 +261,15 @@ The guard does not move a work item to in progress: it does not edit the board �
 command review would fall with the connection and refuse the work instead of the miss. The move is
 held by memory and by the hint the creation command prints. An item left in the initial state the
 guard names at PR opening — that is, after it should have been moved; other state discrepancies the
-queue audit finds.
+queue audit finds. The epic card is held by memory alone: no guard reads its state at branch
+creation, and the queue audit does not judge it.
 
 The guard does not ask for a reviewer here: lifting the draft is an edit of the PR itself — the same
 call as its other fields — and to a machine it cannot be told from other edits. This is held by the
 vocabulary above, where the PR review is led by the reviewer, and by the memory of whoever lifts the
 draft.
 
-The freshness of main's tip itself the guard asks by the second tier — the same technique as the
+The freshness of the tip of the base the guard asks by the second tier — the same technique as the
 task state: something to ask with — it asks; no network or access — it skips silently. The first
 tier stays and works offline: the local ref answers the question "has the base lagged what already
 lies in the tree", the remote one — "has the ref itself gone stale". Without the second tier the
@@ -279,6 +280,6 @@ guard's silence meant only the first and was read as the second.
 - `git-workflow-commit` — work item, branch, commit and push as the machine account.
 - `git-workflow-pr` — opening a PR, the draft and lifting it, the body, reviewer, binding to the
   item.
-- `git-workflow-merge` — main merged into the task branch, the conflict resolved.
+- `git-workflow-merge` — the base merged into the branch standing on it, the conflict resolved.
 - `git-workflow-stack` — a chain of branches: branching from the previous, the base, the hand-over
   order.

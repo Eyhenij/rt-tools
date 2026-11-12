@@ -46,28 +46,26 @@ open MR reads as an invitation to merge, so unfinished work opens it as a draft 
 a draft's merge button itself:
 
 ```bash
-GITLAB_TOKEN="$TOKEN" glab mr create --draft --title '[<КЛЮЧ>-86] …' --description "$(cat тело.md)"
+GITLAB_TOKEN="$TOKEN" glab mr create --draft --title '[<КЛЮЧ>-86] …' \
+    --target-branch <ветка эпика> --description "$(cat тело.md)"
 ```
 
 The draft sign here is the `Draft:` prefix in the MR title, and it is edited together with it:
 rewriting the title by hand lifts the draft without anyone noticing.
 
-An MR the pipeline does not wake for opens ready, without `--draft`: the pipeline file names the target branches it wakes for, and where no run
-comes a draft waits for nothing and costs a locked button and a second turn. The reviewer is set in
-the same turn, and the push gate is then the only check behind the work.
+An MR the pipeline does not wake for opens ready, without `--draft`: the pipeline file names the
+target branches it wakes for, and where no run comes a draft waits for nothing and costs a locked button and a second turn. The reviewer is set in
+the same turn, and the push gate is then the only check behind the work. Without
+`--target-branch` the host takes the default branch, and the work goes into `main` past its epic.
 
-Everything waiting for a pipeline run, a rework or an answer to a question goes as a draft. The
-question is asked in the MR itself, not kept in the executor's head: a person reads the MR, not
-the session's conversation.
-
-The draft is lifted by a separate call, and that is the very turn in which the executor says the
-solution is ready:
+Everything waiting for a pipeline run, a rework or an answer to a question goes as a draft, and
+the question is asked in the MR itself: a person reads the MR, not the session's conversation.
+The draft is lifted by a separate call, in the turn in which the executor says the work is ready:
 
 ```bash
 GITLAB_TOKEN="$TOKEN" glab mr update 86 --ready
 ```
 
-Before the lifting the executor's silence means "not ready yet", after — "may be merged".
 Lifting the draft and asking to merge go in one turn: a lifted draft nobody told the person
 about waits for review just like one not lifted.
 
@@ -158,6 +156,17 @@ Closes #86
 черновик; до этого кнопка слияния заблокирована хостингом.
 ```
 
+With a target other than the default branch the link line carries the way the task closes —
+one of the two, by the tree's decision:
+
+```markdown
+Closes #86 — задача закрывается конвейером дерева при слиянии в ветку эпика.
+```
+
+```markdown
+Задача #86 — закрывается рукой после слияния череды, с комментарием со ссылкой на этот MR.
+```
+
 The "Remaining step" section stands last and is rewritten by the same call as the rest of the
 description — in the turn that lifts the draft:
 
@@ -167,14 +176,8 @@ description — in the turn that lifts the draft:
 Не осталось: прогон зелёный, черновик снят. Можно вливать.
 ```
 
-It stands there because the merge decision is made on that page, not in the conversation: what
-was said to the owner aloud lives until the next reply, and the description lies right by the
-button. One does not cancel the other — the order of both messages to the owner is described by
-the pattern for closing work.
-
-There is nothing to check the description by machine: no audit reads it, and the host asks only
-about the title. The sample is held by whoever writes the description — like the words said
-aloud.
+It stands there because the merge decision is made on that page, not in the conversation. No
+audit reads the description: the sample is held by whoever writes it.
 
 ## The MR state is read, not guessed
 
@@ -241,7 +244,8 @@ There are no checks on the MR itself until the pipeline is started, and a push s
 Linters, unit tests and hook scenarios are taken by the push gate — below is what it does not
 know.
 
-1. **The base is merged into this branch** — `git fetch origin && git merge origin/<база>`.
+1. **The base is merged into this branch** — `git fetch origin && git merge origin/<база>`: for a
+   task branch that is the epic branch, for an epic branch the main one.
    Everything checked below is checked from this base: an MR from a diverged branch shows the
    reviewer the edit mixed with someone else's. Order and conflict resolution — pattern
    `git-workflow-merge`.
@@ -288,6 +292,23 @@ description: the unchecked named as checked, the reviewer takes as checked.
 from the full set, and by it the reviewer decides what need not be rechecked. The price of a
 mistake here is not a red pipeline but trust in the section: once read as complete, from then on
 it is rechecked whole.
+
+Where the pipeline wakes for this target, the list is about lifting the draft: the MR opens as a
+draft after the task folder is taken apart and waits for the run. The items are then passed before
+`glab mr update <номер> --ready`, and an unmet item means the draft is not lifted.
+
+Where it does not wake, the same list is about opening: an unmet item means the MR does not open
+yet. No item asks for a run there: its place is taken by the push gate, green before the sending.
+
+## A chain of branches: the calls of this host
+
+The order is the pattern `git-workflow-stack`; its calls here:
+
+```bash
+glab mr update 87 --target-branch <ветка эпика>                 # the upper MR after the lower one is merged
+glab mr view 87 --output json | jq -r '.detailed_merge_status'  # whether the button can be pressed
+glab issue close 86                                             # a task the host did not close itself
+```
 
 ## Common misses
 

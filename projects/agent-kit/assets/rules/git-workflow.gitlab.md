@@ -2,7 +2,7 @@
 name: git-workflow
 kind: rule
 law: delivery
-description: Rule under the delivery law for a tree on GitLab. Load for creating a task and a branch, commit, push, opening an MR and merging. Names the one-to-one match of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge. Rollout — rule deploy-flow.
+description: Rule under the delivery law for a tree on GitLab. Load for creating a task and a branch, commit, push, opening an MR and merging. Names the one-to-one match of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — rule deploy-flow.
 ---
 
 # Delivery — how it works here
@@ -23,7 +23,7 @@ with the rule.
 | epic                         | a project issue with the epic label, `[<КЛЮЧ>-<номер>] <Возможность>`, and a plan next to it: the order of tasks and how the branches stand              |
 | epic branch                  | `<КЛЮЧ>-<номер эпика>-<короткий-slug>`, taken from `main`. Task branches are taken from it, and their MRs go into it                                     |
 | PR of an epic                | MR into `main` from the epic branch; opens after all its tasks are merged and their folders taken apart                                                  |
-| separate branch              | `<КЛЮЧ>-<номер задачи>-<короткий-slug>`. A name without a number (`feat/…`, `fix/…`) is legitimate locally: no MR opens from it                          |
+| separate branch              | `<КЛЮЧ>-<номер задачи>-<короткий-slug>`, taken from the epic branch. A name without a number (`feat/…`, `fix/…`) is legitimate locally: no MR opens from it                          |
 | task key                     | the tree's word for its tasks: `board.taskKey` in `.claude/rt-kit/checks.json`, named in `implementation.md` for the reader                              |
 | task                         | a project issue `[<КЛЮЧ>-<номер>] <Что не так>`, assignee the machine account; attached MR: `Closes #<номер>` in its description                         |
 | work queue                   | the project's Issue Board. A task lands on it by a list label, not by being created: the board shows what carries a label it knows                       |
@@ -138,19 +138,19 @@ flowchart TD
 - **`--hard` is not taken to drop a commit — that is `--soft`.** `reset --hard`, `checkout --
   <path>`, `restore <path>` and `clean -f` erase what is not committed. On a dirty tree the guard
   refuses and names the files; the bypass is `# discard: <reason>` in the command.
-- **The working tree is emptied before the PR opens, not after.** `git status --porcelain` is asked
-  in the same turn as the opening: what is uncommitted goes to the host by a commit before it, or
-  is named. A push after the opening moves the tip past the green run the body names, and for that
-  stretch the PR invites merging a tip nothing has checked.
-- **A push into a branch that has an open PR is followed by rereading its body.** The statement
-  about a green run names the tip by its sha, and moving the tip makes it false in silence: no check
-  reads a PR body.
-- **On remarks to a PR the person is asked whether to answer under them, and after a yes each one
+- **The working tree is emptied before the MR opens, not after.** `git status --porcelain` is asked
+  in the same turn as the opening: what is uncommitted goes to the host by a commit before it, or is
+  named. A push after the opening moves the tip past the green run the description names, and for
+  that stretch the MR invites merging a tip nothing has checked.
+- **A push into a branch that has an open MR is followed by rereading its description.** The
+  statement about a green run names the tip by its sha, and moving the tip makes it false in
+  silence: no check reads an MR description.
+- **On remarks to an MR the person is asked whether to answer under them, and after a yes each one
   gets an answer.** Edits alone leave the discussion silent, and the person reads the whole diff
-  again. The word holds for that PR, not for the next.
+  again. The word holds for that MR, not for the next.
 - **The draft is lifted by a separate call — `glab mr update <номер> --ready`.** With it the
   executor answers for readiness: checks passed, no rework left, the work matches the task. Lifting
-  the draft and asking to merge are one turn, not two days.
+  the draft and asking to merge are one turn, and an MR opened ready needs no such call.
 - **The MR merge is pressed by a person, not by the work's executor.** The button, `glab mr merge`
   and "Merge when pipeline succeeds" set by the executor are equal. The executor merges their own MR
   only when a person said so about this MR; said about one, it does not carry to the next.
@@ -180,13 +180,12 @@ flowchart TD
   and stays in it after the merge forever. Here it is created more easily than anywhere: the board
   is assembled by labels, and a list label put on an MR makes it a card at once. The queue audit
   finds such cards, a line each.
-- **A lagging list is found by the queue audit, not by eye.** The audit judges the list by the PR
+- **A lagging list is found by the queue audit, not by eye.** The audit judges the list by the MR
   both ways: an open MR with the task not in review, and review with no open MR — both
   discrepancies. The moment a task is taken into work it cannot see: the branch is not on the board.
-- **A branch with an open PR lags behind main silently.** The guard judges the base once — at
-  opening; what merged into main during the run a green run never sees, and a PR merged from there
-  brings main a combination nobody checked. The lag is found by the work queue audit: it asks the
-  repository how many commits each open PR's branch is behind main, and names the number.
+- **A branch with an open MR lags behind its base silently.** The guard judges the base once — at
+  opening; what merged into the base later a green run never sees. The lag is found by the work
+  queue audit, which names it as a commit count.
 - **Tasks fixed by one edit are merged before the branch merge.** The second is closed as a
   duplicate with a link to the one that absorbed it, and the missing from it is added to the first.
   The law orders the second erased — here that is a declared deviation: the host does not let a task
@@ -220,10 +219,10 @@ flowchart TD
   what the set judges by the whole tree: a word, a file limit. A check that stands only on an edit,
   such as the wording one, is run over the changed texts apart. The output goes into the review,
   and a later push into that branch is run again.
-- **Where neither the session's push guard nor the git hook fires, the set is run whole, as read
-  at the minute of the run.** It is read from the state review or from the tree profile together with the package
-  default it calls. A list from memory, from a copy made earlier or from the profile alone drops
-  checks: the profile names the set, the task names only the work.
+- **Where neither the session's push guard nor the git hook fires, the set is run whole, as read at
+  the minute of the run.** It is read from the state review or from the tree profile together with
+  the package default it calls. A list from memory, from a copy made earlier or from the profile
+  alone drops checks: the profile names the set, the task names only the work.
 - **An exclusion reason naming a task is judged on whether that task is alive.** A dead number
   silently makes the exclusion perpetual.
 - **The layout audit stands in the push gate set on a par with lint and the build.** An edit past
@@ -247,16 +246,17 @@ flowchart TD
 
 The delivery guard stands on the agent's commands, so it does not see a branch created by hand in
 the editor: its name is held by memory. The requirement is no weaker for that — only no separate
-check is made for it: work is recognised by the task title and the PR, and that is audited for
+check is made for it: work is recognised by the task title and the MR, and that is audited for
 everyone. The queue audit never judges the branch name: an open MR's branch cannot be renamed.
 
 The guard does not move a task to in progress: it does not edit the board — a board edit during
 command review would fall with the connection and refuse the work instead of the miss. The move is
 held by memory and by the hint the task creation command prints. A task left in the first list the
 guard names at MR opening — that is, after it should have been moved; other list discrepancies the
-queue audit finds.
+queue audit finds. The epic card is held by memory alone: no guard reads its list at branch
+creation, and the queue audit does not judge it.
 
-The freshness of main's tip itself the guard asks by the second tier — the same technique as the
+The freshness of the tip of the base the guard asks by the second tier — the same technique as the
 task state: something to ask with — it asks; no network or access — it skips silently. The first
 tier stays and works offline: the local ref answers the question "has the base lagged what already
 lies in the tree", the remote one — "has the ref itself gone stale". Without the second tier the
@@ -267,6 +267,6 @@ guard's silence meant only the first and was read as the second.
 - `git-workflow-commit` — task, branch, commit and push as the machine account.
 - `git-workflow-pr` — opening an MR, the draft and lifting it, the description, reviewer, labels,
   state.
-- `git-workflow-merge` — main merged into the task branch, the conflict resolved.
+- `git-workflow-merge` — the base merged into the branch standing on it, the conflict resolved.
 - `git-workflow-stack` — a chain of branches: branching from the previous, the base, the hand-over
   order.

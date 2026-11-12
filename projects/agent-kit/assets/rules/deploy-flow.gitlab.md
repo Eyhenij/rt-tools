@@ -9,7 +9,7 @@ description: Rule under the delivery law for a tree on GitLab — the part about
 
 Rule under the law `docs/constitution/delivery.md` — the part of it about production. The law
 says what must be true; here — by which technique it is held in a tree that lives on GitLab.
-Working with the queue, the branch, the commit and the PR — the rule `git-workflow` under the
+Working with the queue, the branch, the commit and the MR — the rule `git-workflow` under the
 same law.
 
 ## What it is called here
@@ -100,15 +100,16 @@ flowchart TD
   does not cover it: that checks the commands, not the pipeline file — the correctness of the file
   itself is read only from the list of pipelines after the push, and the syntax is judged
   separately by the `.gitlab-ci.yml` check in the project.
-- **A PR is checked before the merge by the same pipeline as the main branch.** Checks and image
+- **An MR is checked before the merge by the same pipeline as the main branch.** Checks and image
   builds go on the MR pipeline, the rollout does not: it is held by the main-branch
-  rule on its step, and a PR image does not leave for the registry.
+  rule on its step, and an MR image does not leave for the registry.
 - **Which MRs the pipeline wakes for is named by the tree, and it sets the order of handing in.** A
   filter by the target branch is not a detail of the settings: an MR the pipeline does not wake for
   has nothing to wait for, and a draft on it costs a locked button and an extra turn. A tree with a
   single runner pays a whole run for every MR into an epic branch, and pays it for checks the push
   gate has already run on the same machine; a tree with runners to spare buys the earlier refusal.
-  The answer is written in the pipeline file next to the trigger, together with what is lost by it.
+  The answer is written in the pipeline file next to the rule that filters by the target branch,
+  together with what is lost by it.
 - **A package the tree's own applications install is released from a tip their end-to-end suites
   went green on.** Where the release pipeline runs none of these suites, an MR merged past the
   pipeline reaches them first after the release. When an MR without a green pipeline of its own
@@ -124,7 +125,7 @@ flowchart TD
 - **The migration chain is run from an empty storage before the merge.** The apply order is
   lexicographic by directory name, and the timestamp is set at creation: a migration from a branch
   started earlier lands before the one it depends on.
-- **A migration without a reverse is merged only after a copy of the production storage, and the PR
+- **A migration without a reverse is merged only after a copy of the production storage, and the MR
   body names the copy.** Rolling back the image does not bring a dropped column or table back. When
   the executor cannot reach the server, the owner is told which step is blocked and what opens it:
   the owner's word replaces a check only when the owner was told the check did not run.
@@ -142,18 +143,18 @@ flowchart TD
   go the same way. The lag is counted from the last successful rollout and does not tell "not
   started" from "failed".
 
-- **A check standing in the gate set refuses when it could not do its work.** "Nowhere to check"
-  and "the check is broken" are different things: the first the tree names itself — no subject, no
-  address set, the service not answering — and each such exit returns the skip code with its own line. The
-  second — a missing package, an empty name in the settings, an unexpected exception — returns a
-  non-zero code and says that the check itself broke, not the subject. A shared zero for both makes
-  a broken check indistinguishable from a passed one: the schema-to-migrations audit stood like that
-  in the gate set, checking nothing, and hid three causes at once behind its zero.
-- **A requirement before an irreversible step is set where the step is taken.** The merge button and
+- **A check standing in the gate set refuses when it could not do its work.** "Nowhere to check" and
+  "the check is broken" are different things: the first the tree names itself — no subject, no
+  address set, the service not answering — and each such exit returns the skip code with its own
+  line. The second — a missing package, an empty name in the settings, an unexpected exception —
+  returns a non-zero code and says that the check itself broke, not the subject. A shared zero for
+  both makes a broken check indistinguishable from a passed one: the schema-to-migrations audit
+  stood like that in the gate set, checking nothing, and hid three causes at once behind its zero.
+- **The merge button and the manual rollout run get their requirement at the host.** The merge button and
   the manual run of the rollout are pressed at the host, and the guards of the session do not stand
-  there. The requirement is set at the host — a protected branch, a required pipeline or a protected
-  environment — or is named to the one who presses, in the section of the MR description about the
-  remaining step, before the press.
+  there. The requirement is set at the host — a protected branch, the setting "Pipelines must
+  succeed" or a protected environment — or is named to the one who presses, in the section of the MR
+  description about the remaining step, before the press.
 
 ## What of the law is not here
 
