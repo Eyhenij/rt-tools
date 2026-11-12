@@ -1,0 +1,13 @@
+<rt-aside modal trapFocus [width]="width" [style.--rt-aside-narrow-width]="width" [ariaLabel]="t().uiDetails">
+    <ng-container [ngTemplateOutlet]="data.template" [ngTemplateOutletContext]="data.context" [ngTemplateOutletInjector]="injector" />
+    <rt-aside-footer>
+        <button
+            rtButton
+            asideDismiss
+            qa-dataid="workspace-aside-overlay-close"
+            type="button"
+            [label]="t().uiClose"
+            [attr.aria-label]="t().uiClose"
+            (click)="close()"></button>
+    </rt-aside-footer>
+</rt-aside>
