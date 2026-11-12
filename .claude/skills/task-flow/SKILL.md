@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of one task from the request to the merge. Load at the start of any work, when editing task folders and product agreements, and on return to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. Epics — epic-flow, turns — turn-conduct.
 ---
-<!-- rt-kit v0.37.0 · rules/task-flow.md · d586cf52b76a · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/task-flow.md · b6f4cbf99772 · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -28,7 +28,7 @@ with a guard does.
 | understanding written where the work goes | `docs/tasks/<ветка>/grill.md` — the request verbatim, the owner's answers in their words, decisions with reasons |
 | the plan | `docs/tasks/<ветка>/plan.md` — the task footprint and stages with readiness signs; not edited after it is written |
 | the progress | `docs/tasks/<ветка>/progress.md` — "Where we stand", decisions along the way, session entries; the only place where done work is marked |
-| the product agreement written before the code | `docs/specs/<домен>/proposed/<фича>/` — the feature spec; survives the merge and merges into the domain spec |
+| the product agreement written before the code | `docs/specs/<домен>/proposed/<фича>/` — the feature spec; merges into the domain spec before the PR opens |
 | the task folder before the task is created | `docs/tasks/_draft-<slug>/` — outside history while there is no number |
 | exploration | an `Explore` or `general-purpose` session before the first question to the owner |
 | the plan review by roles | `.claude/workflows/plan.js` — need, points, agreement, critique, plan, goal |
@@ -72,7 +72,7 @@ question: "no tasks" is a statement about the tree, backed by output, not by the
 with a handover, and the work stays where it stood. **An open card says nothing about whether the
 work is taken.** A card is closed by the merge, and in a session that opens no PRs the list of open
 ones does not shrink. A task is untaken when the tree holds no trace of it: open numbers are checked
-against the archive — closed work has a record there with its number.
+against the archive and its history — a record past its expiry stays in `git log -- docs/archive/`.
 
 What a turn ends with — rule `turn-conduct` under the same law.
 

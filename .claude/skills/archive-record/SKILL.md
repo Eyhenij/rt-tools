@@ -37,7 +37,7 @@ grep -rl "<what was done>" docs/archive/   # by content
 
 ## What goes into a record
 
-On the third line — the task number, the request number and the day of the merge. Then what
+On the third line — the task number, the request number and the day the record is written. Then what
 explains the decision that took place:
 
 - the grill of the request: the owner's answers in their own words, there is nowhere else to
@@ -52,7 +52,7 @@ One work — one file, not a folder of three: the description of the past is rea
 
 - **The plan.** After the rollout the question "what was intended" is answered by the code, "how
   it works" by the domain spec.
-- **The progress of the work without the decisions.** "Where we stand" dies together with the task
+- **The progress of the work without the decisions.** "Where we stand" leaves together with the task
   folder.
 - **Edits after the fact.** A record is edited only together with an admission that it described
   things wrongly — not because the tree has changed since.

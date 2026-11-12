@@ -1,6 +1,6 @@
 # Report of the rules graph
 
-Built by `npm run graph:rules` from `da5ef1785`: 351 nodes, 1298 links.
+Built by `npm run graph:rules` from `54fcfa531`: 351 nodes, 1302 links.
 The graph is `projects/agent-kit/rules-graph/graph.json`; graphify reads it with `--graph`. Every list below is
 debt for the revision of a law family to sort out, not a refusal.
 
@@ -17,7 +17,7 @@ No `Requires` line and no binding of the companion to code: a hook, a check, a l
 
 Not laid out in this tree, so their executors are unknown here: api-layer, shared-code.
 
-## Articles nothing carries out — 179
+## Articles nothing carries out — 180
 
 Articles the companion of the rule marks «Not checked» or «Not carried out», of all its articles.
 
@@ -30,7 +30,7 @@ Articles the companion of the rule marks «Not checked» or «Not carried out»,
 - deploy-flow — 12 of 28
 - reuse-first — 9 of 18
 - autonomous-work — 8 of 11
-- doc-style — 7 of 21
+- doc-style — 8 of 21
 - spec-driven — 6 of 31
 - status-report — 5 of 10
 - epic-flow — 4 of 11
@@ -49,7 +49,7 @@ Of 46 words of the package glossary, these are said by no text of the package or
 
 - none
 
-## Texts that state the same thing — 17
+## Texts that state the same thing — 16
 
 Pairs of texts whose bold statements share at least 60% of their words, with the
 number of such statements and the first of them.
@@ -61,7 +61,6 @@ number of such statements and the first of them.
 - `projects/agent-kit/assets/laws/code-structure.md` and `projects/agent-kit/assets/rules/typescript-conventions.md` — 1: «A type is taken from the package where it is declared.» / «A type is taken from the package where it is declared.»
 - `projects/agent-kit/assets/laws/delivery.md` and `projects/agent-kit/assets/rules/git-workflow.azure.md` — 1: «The work queue holds tasks, not PRs about them.» / «The board holds work items, not PRs about them.»
 - `projects/agent-kit/assets/laws/delivery.md` and `projects/agent-kit/assets/rules/git-workflow.github.md` — 1: «The work queue holds tasks, not PRs about them.» / «The board holds tasks, not PRs about them.»
-- `projects/agent-kit/assets/laws/delivery.md` and `projects/agent-kit/assets/patterns/spec-driven-rule.md` — 1: «The image rolled out is the image of the commit being rolled out.» / «The image of the commit being rolled out is what gets rolled out.»
 - `projects/agent-kit/assets/laws/entity-editing.md` and `projects/agent-kit/assets/laws/lists.md` — 1: «While the record is loading, the place of the fields shows that loading is in progress.» / «While the list is loading, the place of the rows shows that loading is in progress.»
 - `projects/agent-kit/assets/laws/frontend-application.md` and `projects/agent-kit/assets/rules/styling-bem.md` — 1: «Every class in the markup has a style rule of its own.» / «Every element class has its own style rule.»
 - `projects/agent-kit/assets/laws/project-documentation.md` and `projects/agent-kit/assets/rules/doc-style.md` — 1: «An image is edited by the same change as the text it depicts.» / «A diagram is edited by the same change as the text it depicts.»

@@ -29,9 +29,7 @@ docs/specs/<domain>/
 
 The template is `docs/specs/_template/spec.md`, the index with prefixes is `docs/specs/README.md`.
 
-A subdomain is asked the same as a domain: the same mandatory sections, the same companion next
-to it, the same link between scenarios and tests. A domain with half its subdomains described and
-half created as empty directories is never green.
+A subdomain is asked the same as a domain — the rule `spec-driven` says so in its article.
 
 Work that touched a domain and its subdomain writes two product agreements, not one. A subdomain
 has a scenario prefix of its own, and the audit gives no spec a second prefix: the scenarios of
@@ -46,16 +44,17 @@ place and a new prefix, together with the test titles that carry its numbers.
 
 ## Mandatory sections
 
-`## Зачем` · `## Терминология` with the subsection `### Как это называется в интерфейсе` ·
-`## Правила` · `## Что не входит` · `## Контракт` with the subsection `### Коды отказов` ·
-`## Данные` · `## Экраны и состояния` · `## Сквозные требования` with four subsections
-`### Локали`, `### SEO`, `### Мобильная раскладка`, `### Мультиобъектность` · `## Решения` ·
-`## Открытые вопросы` · `## История изменений`.
+`## Why` · `## Terminology` with the subsection `### What it is called in the interface` ·
+`## Rules` · `## What is out of scope` · `## Contract` with the subsection `### Refusal codes` ·
+`## Data` · `## Screens and states` · `## Cross-cutting requirements` with four subsections
+`### Locales`, `### SEO`, `### Mobile layout`, `### Several objects` · `## Decisions` ·
+`## Open questions` · `## History of changes`.
 
-The heading text is checked verbatim. "Not applicable" is a legitimate answer, a missing section
-is not.
+The heading text is checked verbatim. A spec written earlier in the owner's language keeps its
+headings — `## Зачем`, `## Правила` and the rest: the audit accepts both names, and a new spec is
+written by the English one. "Not applicable" is a legitimate answer, a missing section is not.
 
-`## Решения` is a temporary place. A decision lives in it until the layer it belongs to is found;
+`## Decisions` is a temporary place. A decision lives in it until the layer it belongs to is found;
 the found layer takes it as an item, and nothing stays in the spec. A section that has grown reads
 as a sign of a rule not yet created, not as a trait of a complex domain: splitting such a spec by
 lines is useless, because what splits in it is not the description of the domain but the unwritten
@@ -68,20 +67,21 @@ starts with the decision itself.
 
 **A statement standing in another section of the same spec is not created as a second rule
 item.** The structure of a record lives in the data section, the order of calls in the contract
-section, the reason the domain exists in the `## Зачем` section: all three say what the rule would
+section, the reason the domain exists in the `## Why` section: all three say what the rule would
 say. The second copy diverges from the first silently, and there is nothing to notice it by — the
 audit knows a rule item against an anchor, and nobody compares two statements about one thing.
 The decision at that point leaves the decisions section whole: the place where the requirement
 lives is found.
 
 The header carries the status, the revision date, the scenario prefix, the dependencies on other
-domains, the `**Законы:**` line — the laws the domain applies — and the `**Процедуры:**` line —
-the lib roots whose procedures the domain serves.
+domains, the `**Laws:**` line — the laws the domain applies — and the `**Procedures:**` line —
+the lib roots whose procedures the domain serves. The legacy `**Законы:**` and `**Процедуры:**`
+are accepted the same.
 
 ```markdown
-**Зависимости:** `catalog` (booking request contents), `availability` (date occupancy)
-**Законы:** `access`, `locales`, `lists`
-**Процедуры:** `libs/api/<domain>`
+**Depends on:** `catalog` (booking request contents), `availability` (date occupancy)
+**Laws:** `access`, `locales`, `lists`
+**Procedures:** `libs/api/<domain>`
 ```
 
 A law named anywhere in the spec text must stand in this line: the link is checked both ways.
@@ -103,8 +103,9 @@ itself:
 | One maximum discount is applied. | `libs/api/<domain>/util/src/lib/quote.calculator.ts:calculateQuote` |
 ```
 
-A rule that found no place in code is an intention: its place is "Open questions" as
-`Q-<law letter>-<number>`, not a formal anchor.
+A spec rule that found no place in code is an intention: its place is the spec's "Open questions"
+as `Q-<number>`, not a formal anchor. A rule article of the package goes the other way — a verdict
+line, the pattern `spec-driven-rule`.
 
 ## Scenario
 
@@ -122,8 +123,8 @@ described by two scenarios with different "Given" — then a change of behaviour
 one that stopped being true, instead of passing silently.
 
 The identifier is put at the start of the test title, followed by a dash. A scenario without a
-test is marked `Не покрыто: <reason>`, a scenario with an incomplete test — `Покрытие: частичное
-— <what is missing>`.
+test is marked `Not covered: <reason>`, a scenario with an incomplete test — `Coverage: partial
+— <what is missing>`; the legacy `Не покрыто:` and `Покрытие: частичное —` are read the same.
 
 A scenario that cannot be checked by anything at all is not created. The "not covered" mark says
 "there is no test yet" and promises one will appear; where no check exists, there is no promise,
@@ -158,14 +159,21 @@ command's name is given by the rule's companion.
 1. A task is created by scenarios: what will become true when the work is finished.
 2. The domain spec (or `proposed/<feature>/`) is edited **before** the code.
 3. The code is written to the scenarios, and the tests are named by their identifiers.
-4. `npm run check:specs` — before the push.
-5. Acceptance goes by the scenarios, not by a retelling of the edit.
+4. The product agreement merges into the domain spec by one of the last commits of the branch,
+   before the PR opens: `proposed/` never reaches the base.
+5. `npm run check:specs` — before the push.
+6. Acceptance goes by the scenarios, not by a retelling of the edit.
 
-Between steps 2 and 3 `npm run check:specs` is red by design, not by mistake. A scenario without a
-test it only lists, but a rule without a binding and a contract row without a procedure it refuses,
-and their bindings name code that is not written yet. So a stage that edits the spec names as its
-readiness sign the refusal list itself — only the new rules unbound, only the new scenarios under
-"no test" — and not exit 0. Exit 0 is the sign of the stage that writes the bound code.
+A divergence between a spec and the code is fixed the moment it is noticed, and on the side that
+is wrong: the spec is edited to the code only when the code does what the owner wants. A spec
+edited to a broken application hides the defect instead of naming it; when it is not clear which
+side is wrong, the owner is asked.
+
+Between steps 2 and 3 `npm run check:specs` is red by design, not by mistake. A scenario marked
+`Not covered:` it only lists; a scenario with neither a test nor the mark, a rule without a binding
+and a contract row without a procedure it refuses, and their bindings name code that is not written yet. So a stage that edits the spec names as its
+readiness sign the refusal list itself — only the new rules unbound, only the new scenarios unmarked or
+under "no test" — and not exit 0. Exit 0 is the sign of the stage that writes the bound code.
 
 A rule promising a result a person sees is confirmed on the running application, not by
 inference from the call graph. Reading confirms headings, the link to bindings and the shape of
@@ -174,35 +182,29 @@ statement.
 
 ## Common misses
 
-- A second table under the contract section: the audit reads every table there as the list of
-  procedures, and a set of refusal codes standing next to them comes back as that many
-  discrepancies at once — thirty-six on a spec that was right. Under the contract stands the table
-  of procedures alone; a set of codes goes into the data section.
-- A grown domain is split into new domains instead of subdomains: a new domain has to be entered
-  in the index, audited against the code separately and explained as to why it is not a subdomain
-  of its neighbour — while a subdomain stays in its domain and inherits its contract. A
-  neighbouring domain is created only when the subject lives as an entity of its own. The
-  boundary is drawn by the owner: a split rewrites the numbers in all the domain's test titles,
-  and it cannot be put back by the same move.
+- A second table under the contract section: the audit reads every row there with a backticked first
+  cell as a procedure, except a row whose second cell is a three-digit code. A table of arguments
+  or of named codes comes back as that many discrepancies at once — thirty-six on a spec that was
+  right. Under the contract stand the procedure table and the refusal codes; anything else is a
+  list or goes into the data section.
 - A count of rules or scenarios in the domain index: it is recomputed at every edit of any spec,
   and a year later most such numbers silently describe the spec of the day before yesterday. The
   index holds the domain, the prefix and one line of "what it is about".
-- `tasks.md` in a spec: steps are a session artefact; their place is the branch or the PR
-  description.
-- A field table copied from the contract: the source is `libs/common/proto/proto/<area>/v1/`,
+- A field table copied from the contract: the source is the contract description itself,
   and only one of the two compiles.
-- Columns and indexes in a spec: they are in `prisma/schema.prisma`, and the spec keeps the rule
+- Columns and indexes in a spec: they are in the storage schema, and the spec keeps the rule
   the constraint expresses.
 - The place where a rule is carried out inside the rule text: it changes at the first
   refactoring, and `implementation.md` exists for it.
-- A `Не покрыто` mark with an existing test is a refusal: the debt was closed, and the mark was
+- A `Not covered` mark with an existing test is a refusal: the debt was closed, and the mark was
   not removed.
-- The `Не покрыто` mark is read verbatim and from the start of the line. Any word between it and
-  the colon — `Не покрыто, и прогоном не покрывается вовсе: …` — and the scenario counts as not
+- The `Not covered` mark is read verbatim and from the start of the line. Any word between it and
+  the colon — `Not covered, and no run covers it at all: …` — and the scenario counts as not
   marked at all, and the reason the mark was written for never reaches the PR.
-- A law named in the text but forgotten in the `**Законы:**` line: then the law gives no way to
+- A law named in the text but forgotten in the `**Laws:**` line: then the law gives no way to
   learn which domains stand on it.
-- A `.proto` edit without the specs of the touched domains: `docs-guard` refuses such a commit.
+- A `.proto` edit without the specs of the touched domains: where the tree profile names this
+  pair, `docs-guard` refuses such a commit.
 - **A rule inferred from the call graph errs silently.** It reads as confidently as a measured
   one, and the binding audit lets it through — the symbol is in place, it just describes the wrong
   thing. Two rules of one spec turned out inverted: the link went not between the stores but

@@ -20,17 +20,18 @@ Pattern of the rule `doc-style`. What must be true — the law
 ## A pass from the side of the text does not find what was not written
 
 It reads what is written and judges every statement; a statement that does not exist is not in
-the pass either. From the side of the work there are ten times more findings: in the first part
-seven findings out of eight landed where there was no text at all, not where it was stale.
+the pass either. In one measured pass from the side of the work seven findings out of eight
+landed where there was no text at all, not where it was stale.
 
 ## The selection sign — the branch added code and touched no text
 
 Selected by the machine, no reading required. What the branch really added is answered by
 history, not by the task folder: the folder is taken apart at closing, and the task footprint
-table never reaches the main branch at all.
+table never reaches the main branch at all. The merges are read on the branch the tasks merged
+into: the epic branch for the tasks of an epic, the main branch for the epic itself.
 
 ```bash
-git log --merges --format='%H %s' <main branch> | grep -E 'from [^/]+/<task key>-[0-9]+-'
+git log --merges --format='%H %s' <base branch> | grep -E 'from [^/]+/<task key>-[0-9]+-'
 git diff --name-only <merge>^1 <merge>
 ```
 

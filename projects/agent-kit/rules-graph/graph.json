@@ -2790,8 +2790,8 @@
       "name": "doc-style",
       "installed": true,
       "articles": 21,
-      "unheld": 7,
-      "bound_code": 27
+      "unheld": 8,
+      "bound_code": 29
     },
     {
       "label": "entity-conventions",
@@ -2998,7 +2998,7 @@
       "installed": true,
       "articles": 31,
       "unheld": 6,
-      "bound_code": 32
+      "bound_code": 35
     },
     {
       "label": "status-report",
@@ -7463,6 +7463,16 @@
       "source_location": "L1",
       "weight": 1,
       "source": "pattern_spec_driven_domain",
+      "target": "pattern_spec_driven_rule",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/patterns/spec-driven-domain.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "pattern_spec_driven_domain",
       "target": "rule_lists",
       "confidence_score": 1
     },
@@ -8903,16 +8913,6 @@
       "source_location": "L1",
       "weight": 1,
       "source": "rule_doc_style",
-      "target": "check_check_archive_age_mjs",
-      "confidence_score": 1
-    },
-    {
-      "relation": "executed_by",
-      "confidence": "EXTRACTED",
-      "source_file": ".claude/skills/doc-style/implementation.md",
-      "source_location": "L1",
-      "weight": 1,
-      "source": "rule_doc_style",
       "target": "check_check_doc_paths_mjs",
       "confidence_score": 1
     },
@@ -9054,6 +9054,16 @@
       "weight": 1,
       "source": "rule_doc_style",
       "target": "rule_status_report",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/rules/doc-style.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_doc_style",
+      "target": "rule_task_flow",
       "confidence_score": 1
     },
     {
@@ -10083,6 +10093,26 @@
       "source_location": "L1",
       "weight": 1,
       "source": "rule_spec_driven",
+      "target": "check_spec_contract_mjs",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/spec-driven/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_spec_driven",
+      "target": "check_spec_scenarios_mjs",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/spec-driven/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_spec_driven",
       "target": "check_specs_for_mjs",
       "confidence_score": 1
     },
@@ -10144,6 +10174,16 @@
       "weight": 1,
       "source": "rule_spec_driven",
       "target": "pattern_spec_driven_sweep",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/rules/spec-driven.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_spec_driven",
+      "target": "pattern_task_flow_archive",
       "confidence_score": 1
     },
     {
@@ -16958,5 +16998,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "da5ef1785932e9d79ade99de921d6e15582c56aa"
+  "built_at_commit": "54fcfa5312612cfb0670dc771b67a5a7ee88ac84"
 }

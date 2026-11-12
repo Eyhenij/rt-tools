@@ -4,7 +4,7 @@ kind: rule
 law: project-documentation
 description: Rule under the project-documentation law. Load when editing any .md including specs, and also code comments, commit bodies and PR descriptions. Names the path check, the pairs of an edit and its document, and what nothing checks in this tree. Ready-made wording is in pattern doc-style-write.
 ---
-<!-- rt-kit v0.37.0 · rules/doc-style.md · c859a8eeb9ab · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/doc-style.md · c3aa08c9a9ef · правится надстройкой, не здесь -->
 
 # Project texts — how it works here
 
@@ -19,9 +19,9 @@ together with the rule.
 
 | In the law                      | Here                                                                                                                                  |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| document                        | any `.md` outside `docs/archive/`, plus code comments, commit bodies and PR descriptions                                              |
+| document                        | any `.md` outside `docs/archive/` and the task folders, plus code comments, commit bodies and PR descriptions                        |
 | a path named in a document      | a string in backticks with a slash or a file extension — that is what the check looks for. A name with a slash that is no address, such as a story title, goes without backticks |
-| the change a document describes | a pair from `docs-guard`: a rule and its mirror, a `.proto` and a spec, a hook and its scenarios, a moved file and both libs' READMEs |
+| the change a document describes | a pair `docs-guard` demands: a rule and its companion, a lib and its README; the rest is named by the tree profile, such as a `.proto` and a spec |
 | description of the past         | `docs/archive/` — excluded from the path check entirely                                                                               |
 
 ## Where it lives
@@ -120,9 +120,9 @@ flowchart TD
   <!-- rt-when: *.md -->
 
 - **A file of the tree is edited by the edit tool, not by a shell command.** A guard judges a
-  shell command by its whole body as new text: the pattern being replaced, the old markup, a loop
-  and the headers next to a heredoc. A one-liner is then one sentence of fifty words, and the
-  guard refuses the edit for lines it does not add. A post-edit hook does not see such a write at
+  shell command by its body as new text: the heredoc bodies, and with no heredoc the whole command
+  — the pattern being replaced, the old markup, a loop. A one-liner is then one sentence of fifty
+  words, and the guard refuses the edit for lines it does not add. A post-edit hook does not see such a write at
   all, and a replacement whose pattern matched nothing exits zero with the file untouched. A
   command that must write a document gets it as a file written by the edit tool beforehand.
 
@@ -137,7 +137,7 @@ flowchart TD
   stand in the checks settings, not in the text; a rule at the ceiling takes a new article only
   by folding an argument next to it, or by a split. The description of the past is excluded
   from the count: by design the archive lists what the tree no longer has, and the task folder
-  dies with the merge.
+  is taken apart before the PR opens.
   <!-- rt-when: *.md -->
 
 - **A file leaving for the description of the past names its former address in its header.**
@@ -186,12 +186,10 @@ flowchart TD
   the run turned red for something other than the branch's change.
   <!-- rt-when: *.md -->
 
-- **The removal by expiry travels as a commit of its own.** The check stands in the gate of every
-  branch and counts age by the calendar, so it refuses whatever branch reaches it first — commits
-  too, not only pushes. A task of its own per record is no cure: one record expires every day. The
-  prune command makes the cleanup a separate commit with its own subject in the branch it blocked,
-  and the PR body names it as unrelated to the work. The lasting cure is moving the check out of the
-  commit and push gate into the pipeline of the main branch.
+- **The removal by expiry travels as a commit of its own.** The check stands in the push gate of
+  every branch and counts age by the calendar, so it refuses whatever branch reaches it first. A
+  task per record is no cure: one expires every day. The prune command
+  drops the expired records; they go as a commit of their own, and the PR body names it unrelated.
   <!-- rt-when: *.md -->
 
 - **A link to a record of the past in a live text lives exactly until the record's expiry.** The
@@ -199,11 +197,9 @@ flowchart TD
   text that referenced it. A live text names the decision in words, not by the record's address.
   <!-- rt-when: *.md -->
 
-- **A diagram is edited by the same change as the text it depicts.** Once they diverge, the
-  diagram and the prose both remain readable, and the first to notice is whoever followed the
-  diagram: it is shorter, it is read instead of the text, and the divergence derails the work
-  entirely. No check sees this — the diagram is set in words and can be told from the text next
-  to it only by reading.
+- **A diagram is edited by the same change as the text it depicts.** A diverged diagram is read
+  instead of the text, being shorter, and the work goes by the wrong one. No check sees this: the diagram is set
+  in words and is told from the text only by reading.
   <!-- rt-when: *.md -->
 
 ## Texts for a person
@@ -275,6 +271,14 @@ held by the author's memory — and the cost of that shows: words from the gloss
 live in hook comments and `tools/*.mjs` by the dozen, including the refusal text the guard prints
 to the agent.
 
+No check tells a "do later" list in a document from any other list: the law's article about the
+work queue is held by the author, and a task plan leaves with the work.
+
+A dropped word is purged from files by a search; in PR titles, commit subjects and task cards
+nothing finds it, and whoever drops the word holds it. Completeness of texts from the side of the
+work is asked by the pattern `doc-style-trace` and, where the rule `task-flow` is laid out, by its
+closing step; no check counts it.
+
 ## Patterns
 
 - `doc-style-write` — how to word: "do" and "don't" examples, rules for comments.
@@ -293,7 +297,7 @@ to the agent.
 
 The directory of the description of the past in this tree gains a record per closed piece of
 work, and it has no index: `indexedDirs` in the checks config is empty, so the rule's article
-about reconciling an index from both sides applies here to one specs directory. Why there is no
+about reconciling an index from both sides judges no directory here. Why there is no
 index at all the rule itself says; here — what came of that in the tree.
 
 - **A list every branch appends to the end of is not started here at all.** Two appends into one
