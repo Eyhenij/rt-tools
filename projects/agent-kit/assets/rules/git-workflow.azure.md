@@ -2,7 +2,7 @@
 name: git-workflow
 kind: rule
 law: delivery
-description: Rule under the delivery law for a tree in Azure DevOps. Load for creating a work item and a branch, commit, push, opening a PR and merging. Names the one-to-one match of item and branch, the names, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge.
+description: Rule under the delivery law for a tree in Azure DevOps. Load for creating a work item and a branch, commit, push, opening a PR and merging. Names the one-to-one match of item and branch, the names, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack.
 ---
 
 # Delivery — how it works here
@@ -20,7 +20,10 @@ with the rule.
 | In the law                   | Here                                                                                                                                                                                                                     |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | main branch                  | `main`                                                                                                                                                                                                                   |
-| separate branch              | `<номер рабочего элемента>-<короткий-slug>`; the form — in `implementation.md`. A name without a number (`feat/…`, `fix/…`) is legitimate locally: no PR opens from it                                                   |
+| epic                         | a work item of kind `Epic`, title `[<номер>] <Возможность>`, its work items are linked to it as children; a plan next to it: the order of tasks and how the branches stand                                                                |
+| epic branch                  | `<номер эпика>-<короткий-slug>`, taken from `main`. Branches of its work items are taken from it, and their PRs go into it                                                                                               |
+| PR of an epic                | PR into `main` from the epic branch; opens after all its work items are merged and their folders taken apart                                                                                                             |
+| separate branch              | `<номер рабочего элемента>-<короткий-slug>`, taken from the epic branch; the form — in `implementation.md`. A name without a number (`feat/…`, `fix/…`) is legitimate locally: no PR opens from it                                                   |
 | task                         | a work item of kind `Task` or `Bug`, title `[<номер>] <Что не так>`, assignee the machine account; the PR attaches at creation by the `--work-items` flag, a commit by the line `AB#<номер>`                             |
 | work queue                   | the project's Azure Boards. A work item lands on the board by being created: the board shows the items of its area and iteration                                                                                         |
 | task state in the work queue | the work item's `State` field: `New` when created, `Active` in progress, `Resolved` in review. The state set depends on the project process and is named in `implementation.md`; a closed task leaves the queue by merge |
@@ -42,20 +45,26 @@ work ends.
 
 ```mermaid
 flowchart TD
-    A[Work begins] --> B[A command creates the task and it enters the work queue]
-    B --> C[The branch is named by the task number; the column moves in the same motion]
+    A[Work begins] --> Z{The epic of this work is named}
+    Z -->|No| Y[The epic is created together with its work items, and its branch is taken from main]
+    Z -->|Yes| B[A command creates the work item and it enters the work queue]
+    Y --> B
+    B --> C[The branch is named by the work item number and taken from the epic branch; the state moves in the same motion — the epic card too, on its first work item]
     C --> D{The edit is ready}
     D -->|No| C
     D -->|Yes| E[The base is merged in, the last commit takes the task folder apart, the gate set is run whole]
-    E --> F{The branch carries a task number}
+    E --> F{The branch carries a work item number}
     F -->|No| G[The delivery guard refuses the opening: nothing in the queue stands behind the edit]
-    F -->|Yes| H[The PR opens; what is not ready to merge goes as a draft]
-    H --> I[The task column moves to review, the executor takes the next task]
-    I --> J{The run and the review are over}
+    F -->|Yes| H[The PR opens ready where only the run is waited for; a draft for a rework is lifted before the run]
+    H --> I[The state moves to review, the executor takes the next work item]
+    I --> J{The run, where one comes, and the review are over}
     J -->|Run red| K[Fixed in the same branch]
     K --> J
-    J -->|Green| L[The draft is lifted]
-    L --> M[A person presses the merge: the executor asks and names the number]
+    J -->|Green| L[The description says no step is left]
+    L --> M[A person presses the merge into the epic branch: the executor asks and names the number]
+    M --> N{Work items of the epic are left}
+    N -->|Yes| B
+    N -->|No| O[The PR of the epic into main opens: all the folders are taken apart, and the main branch takes the epic whole]
     G --> B
 ```
 
@@ -68,41 +77,64 @@ flowchart TD
   create` from such a branch: locally it is legitimate, but an edit from it is a rollout with
   nothing behind it in the work queue. A work item is created, and the work moves to a branch with
   its number.
-- **The main branch is merged into the work item branch before the PR opens.** The delivery guard
-  refuses the opening until main's tip is an ancestor of the current branch, and names the
-  divergence as a commit count. A PR from a diverged branch shows the reviewer the edit mixed with
-  someone else's, and everything the author checked before publishing was checked from a base that
-  main no longer has.
-- **Unmet delivery conditions are named in one refusal, not one by one.** The guard collects them
-  all and prints them at once. An executor refused on the first miss fixes the base, repeats the
-  call, hits the title, fixes the title, hits the work item — and every round costs one more call,
-  though everything unmet was known on the first.
+- **Work begins with the epic, and the branch of a work item is taken from the epic branch.** `git
+  checkout -b <номер элемента>-<slug> <ветка эпика>`; from `main` only the epic branch itself is
+  taken — a branch taken from `main` carries into it what the epic has not finished.
+- **The PR of a work item has the epic branch as its base — `az repos pr create --target-branch
+  <ветка эпика>`.** Opened into `main`, it leaves the epic branch a copy nobody merges. In a chain
+  the base is the previous branch, lawful while it carries the epic branch.
+- **The PR of an epic into the main branch opens after all its work items are merged and their
+  folders are taken apart.** The merge button there means the whole epic, and there is nothing to
+  press it for while one of them is still written.
+- **The epic branch carries the plan of the epic and the merges of its work items, and no edits of
+  its own.** An edit made in it goes into `main` unreviewed: nobody opens a PR from that branch to
+  it.
+- **The main branch is merged into the epic branch, and the epic branch into the branches of its
+  work items — while the work runs, not before the hand-over.** The delivery guard refuses the
+  opening until the tip of the base is an ancestor of the branch, and names the divergence as a
+  commit count: otherwise the reviewer sees the edit mixed with someone else's, checked from a base
+  that is gone.
+- **A wave of branches off one epic branch is checked by a trial merge, not one by one:** each is
+  green on its own, and they collide on what one branch cannot show.
+- **The next work's branch is taken from the previous one while the chain is unbroken.** `git
+  checkout -b <номер>-<slug> <предыдущая ветка>`; from the epic branch — only the chain's first
+  work.
+- **A PR in a chain has the previous branch as its base, not main.** `az repos pr create
+  --target-branch <предыдущая ветка>` — otherwise the review shows the edit mixed with all under it.
+  The base is retargeted before the lower one is completed — the calls are in the pattern `git-workflow-pr`.
+- **A chain is merged bottom-up, and the order stands in every PR description.** Branch kinship is
+  invisible in the list, and the line "stands on !<number>" is the only place it is read.
+- **The lower branch of a chain does not rewrite history — neither `rebase` nor a force push.** The
+  upper PR loses its diff with it. A lagging branch is fixed by merging its base in.
+- **A divergence inside a chain is resolved by the one who branches.** Both edits are theirs; the
+  owner resolving the same at merge time owns neither.
+- **Unmet delivery conditions are named in one refusal.** The guard collects and prints them at
+  once: everything unmet is known on the first call.
 - **A condition known at the start of work is asked at the start.** Creating a branch refuses a base
-  without main's tip, and a working copy that signs commits with an email other than the one the
-  tree declared. At push and at PR opening the same checks stay as a second line, but there they
-  cost more: the base is fixed by a merge with conflict resolution, the signature by rewriting the
-  whole branch.
+  without the tip of the branch it stands on and a foreign signature email: at push time the fix
+  costs more.
 - **The base judged is the one named by the command, not the tip of the working copy.** A branch is
-  also created straight from main's tip — that very command takes the base fresh — and a guard
-  reading only the current tip would refuse it like a branch off yesterday's tree. A base the tree
-  knows nothing of is not judged at all.
+  also created straight from `origin/main`, and that command takes the base fresh; a base the tree
+  knows nothing of is not judged.
 - **A branch without a work item number gets no delivery conditions.** A local trial branch is
-  legitimate, and demanding a fresh base of it would refuse work that will not go to main: no PR
-  opens from such a branch.
+  legitimate, and it will not go to main.
 - **A commit lands with its final content, and a later commit of the same branch does not correct
   it.** It is made after the check against the mockup, the sample and the measurement; what is not
   checked stays in the working tree. A third commit fixing the first shows the reviewer the miss
   instead of the work, and rewriting history hides the trace, not the cause.
-- **A code edit is handed to a person by an open PR, not by a pushed branch.** A branch is not shown
-  to them in the branch list, reaches no to-do list of theirs and has no discussion: before the PR
-  opens there is no edit for a person. It opens in the turn in which the executor says the work is
-  handed over, and the reply names it by number.
+- **A code edit is handed to a person by an open PR, not by a pushed branch.** A branch reaches no
+  inbox; the PR opens in the turn the work is said handed over, and the reply names its number.
 - **What is not ready to merge opens as a draft — `az repos pr create --draft true`.** The host
-  itself locks a draft's complete button, so the state "put up for viewing" and the state "may be
-  merged" stop looking alike. Everything waiting for a pipeline run, a rework or an answer goes as a
-  draft; the question is asked in the PR itself. The check pipeline does not run on a draft by
-  default — until the draft is lifted it stays silent, and that silence is not taken for a green
-  run.
+  itself locks a draft's complete button. A rework or an unanswered question goes as a draft, and
+  the question is asked in the PR itself. The check pipeline does not start on a draft by default: a
+  PR that waits only for the run opens ready, and a draft's silence is not taken for a green run.
+- **A PR the pipeline does not wake for opens ready, without the draft flag.** Which target branches
+  carry a build validation policy is read from the branch policies: where no run comes, a draft
+  waits for nothing and costs a locked button and a second turn. The reviewer is set in the same
+  turn.
+- **What checks a PR whose base is not the main branch is asked before the first PR of an epic
+  opens.** The pipeline either wakes for it as for one into main, or does not, and then the push
+  gate is the only check behind the work — pattern `git-workflow-stack`.
 - **`--hard` is not taken to drop a commit — that is `--soft`.** `reset --hard`, `checkout --
   <path>`, `restore <path>` and `clean -f` erase what is not committed. On a dirty tree the guard
   refuses and names the files; the bypass is `# discard: <reason>` in the command.
@@ -117,38 +149,41 @@ flowchart TD
   gets an answer.** Edits alone leave the discussion silent, and the person reads the whole diff
   again. The word holds for that PR, not for the next.
 - **The draft is lifted by a separate call — `az repos pr update --id <номер> --draft false`.** With
-  it the executor answers for readiness: checks passed, no rework left, the work matches the work
-  item. Lifting the draft and asking to merge are one turn, not two days.
+  it the executor answers for readiness: the push gate passed, no rework left, the work matches the
+  work item. Where a build validation stands on the target, the merge is asked after the green run,
+  not in the lifting turn; where none stands, lifting and asking are one turn. A PR opened ready
+  needs no such call.
+- **The PR merge is pressed by a person, not by the work's executor.** The Complete button, `az
+  repos pr update --status completed` and auto-complete set by the executor are equal. The executor
+  merges their own PR only when a person said so about this PR; said about one, it does not carry to
+  the next.
 - **A created work item is confirmed by the work queue's answer, not by the creation command's
-  output.** The command answers for its calls: it can create an item and not bring it to the board,
-  and its own error handling names that case. A printed number means "the call went through", not
-  "the work is visible to whoever comes by it". The queue is asked — by number, in one call — and
-  the answer is read from the item's presence on the board, its state and its assignee.
-- **The branch number and the PR title number are checked on the spot, the state — by the board.**
-  The format is read from the command text and works offline; the work item's existence, its state,
-  assignee and that it is still open — only with something to ask with. No network or no token — the
-  second tier is skipped silently: a check that fails on a plane stops meaning anything.
-- **The work item's state moves in the same motion as the work.** Branch created — the item is moved
-  to `Active`, PR opened — to `Resolved`; the move command does it, not a set of calls from memory.
-  The move follows the step that caused it at once: the work queue is read between steps, not after.
-- **A work item left in the initial state opens no PR.** The delivery guard names that state and the
-  move command: by the work queue such an item reads as not taken, though the work on it is done and
-  published. At branch creation the state is not asked — nothing has moved it yet, and the
-  requirement would refuse the first command of the work together with the one that lifts it. The
-  tree names the initial state itself; unnamed — the state is not judged at all.
-- **The board holds work items, not PRs about them.** The board shows what is done and what is left;
-  a PR answers another question — how exactly it was done — and opens from the item, where the link
-  to it stands by itself. Here that link is set at PR creation, so a separate card is not needed at
-  all, and one created lives its own life: there is no state for it, it never leaves the queue and
-  stays in it after the merge forever. The queue audit finds such cards, a line each.
+  output.** A work item can be created and never reach the board: the queue is asked by number, and
+  the answer is read from its presence on the board, its state and its assignee.
+- **The branch number and the PR title number are checked on the spot, the work item state — by the
+  board.** The format is read from the command text and works offline; the second tier needs
+  something to ask with, and without network or token it is skipped silently.
+- **The state of a work item moves in the same motion as the work.** Branch created — the work item
+  is in progress, PR opened — awaiting review; the move command does it, not a set of calls from
+  memory.
+- **The epic card moves by the same command, on the epic number, at two moments.** First work item
+  taken — the epic is in progress; the PR of the epic into `main` opens — the epic awaits review.
+  `npm run task:move -- <номер эпика> in-progress`. Left in the initial state while its work items
+  merge, the epic reads as never started. The states of an `Epic` are its own and are named in
+  `implementation.md` apart from the work item's.
+- **A work item left in the initial state opens no PR.** By the work queue it reads as not taken,
+  though the work is done and published. The tree names the initial state itself; unnamed — not
+  judged.
+- **The board holds work items, not PRs about them.** The link to the item is set at PR creation; a
+  PR card has no state and never leaves the queue. The queue audit finds such cards, a line each.
 - **A lagging state is found by the queue audit, not by eye.** The audit judges the state by the PR
   both ways: an open PR with the item not in review, and review with no open PR — both
-  discrepancies. The moment a task is taken into work it cannot see: the branch is not on the board.
-- **A branch with an open PR lags behind main silently.** The guard judges the base once — at
-  opening; what merged into main during the run a green run never sees, and a PR merged from there
-  brings main a combination nobody checked. The lag is found by the work queue audit: it asks the
-  repository how many commits each open PR's branch is behind main, and names the number.
-- **Tasks fixed by one edit are merged before the branch merge.** The second is closed as a
+  discrepancies. The moment a work item is taken into work it cannot see: the branch is not on the
+  board.
+- **A branch with an open PR lags behind its base silently.** The guard judges the base once — at
+  opening; what merged into the base later a green run never sees. The lag is found by the work
+  queue audit, which names it as a commit count.
+- **Work items fixed by one edit are merged before the branch merge.** The second is closed as a
   duplicate, and the missing from it is added to the first. The law orders the second erased, and
   this is the second declared deviation: a work item here has a native "duplicate" link, deletion
   takes the edit history and attachments with it, and the number is not reused after it — a link to
@@ -166,24 +201,14 @@ flowchart TD
 - **Before a push all linters are run, not one.** The code linter usually does not read style files
   at all; without a second run nothing checks the styling rules.
 - **The build is in the set on a par with lint and unit tests.** The linter does not read types, and
-  unit tests read only what a test imports: a type error in uncovered code lives until the image
-  build — that is, the merge. Four merges in a row went into main that way, breaking the rollout.
-- **On a machine with several runners, any path from the home directory is shared.** A ready-made
-  step's default is dangerous precisely because it is shared: a neighbouring run rewrites it to its
-  own version while ours stands between steps. Install directory, container name and builder name
-  are therefore per project and fixed, and a temporary directory is never the answer — the package
-  store lives there.
-- **The push gate set is never narrower than the pipeline set.** The gate is a promise that the push
-  will not arrive red; a set with the build and the snapshots thrown out promises what it does not
-  check. A pipeline step with neither a line in the gate set nor a declared exclusion with a reason
-  refuses the push instead of printing next to it: a printed warning the executor reads as
-  permission. Twice in a row an edit that passed the gate whole was refused by the pipeline — and
-  both times the green gate was read as "all green locally".
-- **The final set before a push is read from the state review, not assembled in the head.** It is
-  assembled from the package default and the tree's override, and there was nothing to read the
-  assembly with: the "set before push" section prints it whole, one command per line, and names
-  beside it what the default printed and the set did not take. A tree writing its override blind
-  added a repeat to it.
+  a type error in uncovered code lives until the merge.
+- **On a machine with several runners, any path from the home directory is shared.** Install
+  directory, container name, builder name and published port are per project. A temporary directory
+  is not the answer: the package store lives there.
+- **The push gate set is never narrower than the pipeline set.** A pipeline step with neither a line
+  in the set nor a declared exclusion refuses the push: a warning reads as permission.
+- **The final set before a push is read from the state review, not assembled in the head.** The "set
+  before push" section prints it whole, naming what the default gave and the set did not take.
 - **A push is sent only by the path the push guard stands on.** A terminal, a process or a script
   started outside the session carries the same command past the gate, unless the tree wired the
   git hook `pre-push`: then git runs the set there too. A send cut off by the session's end is
@@ -192,35 +217,19 @@ flowchart TD
   what the set judges by the whole tree: a word, a file limit. A check that stands only on an edit,
   such as the wording one, is run over the changed texts apart. The output goes into the review,
   and a later push into that branch is run again.
-- **Where neither the session's push guard nor the git hook fires, the set is run whole, as read
-  at the minute of the run.** It is read from the state review or from the tree profile together with the package
-  default it calls. A list from memory, from a copy made earlier or from the profile alone drops
-  checks: the profile names the set, the task names only the work.
-- **An exclusion reason naming a task is judged on whether that task is alive.** A deferral with a
-  term and one without look the same until someone asks the number; a dead number in the reason
-  makes the exclusion perpetual without saying a line about it. Asked by the same tier as the task
-  state at the delivery guard: something to ask with — it asks, no network or access — it skips
-  silently.
-- **The layout audit stands in the push gate set on a par with lint and the build.** An edit put
-  into the laid-out copy past the source breaks nothing on the day it is made: the tree works, the
-  checks are green, and the discrepancy is visible only to whoever calls the audit themselves. It
-  piles up silently and surfaces on someone else's work — the layout refuses the edited file whole
-  and lays out no other, so the price is paid by whoever edited a neighbouring resource. The article
-  above does not cover this line: the audit is not in the pipeline, so there is no step it would
-  close — it is put into the set directly, not derived from the set's completeness.
-- **After merging main in, the check set is revised by what the branch now carries.** The merge
-  changes the makeup of the edit: checking by what the author edited means checking half, and the
-  branch answers whole. A branch that touched no line of the showcase runs showcase snapshots from
-  the moment the merge brought someone else's styling edit.
-- **A statement about the main branch is made by the remote ref, not the local one.** The local one
-  goes stale the minute it was last pulled, and says nothing about it: it is not empty and not
-  broken, it describes yesterday. A branch comparison is written from `origin/main` whole — mixing
-  the remote ref for one side and the local one for the other in one command, the miss looks right
-  from inside.
-- **The remote ref is taken not only by words but by actions.** A new branch's base, the count of
-  the merged and pulling main are judged by it too: the local one is a snapshot of the last pull,
-  and work started from it starts from a base main no longer has. A merged branch counts as unmerged
-  by it, and cleanup ends with a list of unmerged that is not there.
+- **Where neither the session's push guard nor the git hook fires, the set is run whole, as read at
+  the minute of the run.** It is read from the state review or from the tree profile together with
+  the package default it calls. A list from memory, from a copy made earlier or from the profile
+  alone drops checks: the profile names the set, the task names only the work.
+- **An exclusion reason naming a work item is judged on whether that work item is alive.** A dead
+  number silently makes the exclusion perpetual.
+- **The layout audit stands in the push gate set on a par with lint and the build.** An edit past
+  the source piles up silently, and the audit is not in the pipeline.
+- **After merging the base in, the check set is revised by what the branch now carries.** Checking
+  by what the author edited means checking half: the branch answers whole.
+- **The main branch is taken by the remote ref — in words and in actions.** The local one is
+  yesterday's snapshot and silent about it: by it a merged branch counts as unmerged. Both sides of
+  a comparison are taken from `origin/`.
 - **A work item is bound to the PR at creation, not after.** `az repos pr create` takes
   `--work-items`; binding by a second command is bypassed silently when the token has no right to
   edit someone else's item, and the PR stays bound to nothing.
@@ -229,11 +238,9 @@ flowchart TD
   looks ready for review.
 - **The state set is taken from the project process, not assigned by the rule.** Agile, Scrum and
   Basic name the same three steps differently, and a move to a state the process lacks answers with
-  a refusal on every task in a row.
-- **Guard scenarios set the git settings themselves, not take them from the machine.** A commit in
-  the scenario's temporary repository inherits the shared config: with signing on, git goes to the
-  key agent, and a locked agent brings the whole set down — from outside it looks like a broken
-  guard. Author, email and signature are passed as `-c` flags straight into the command.
+  a refusal on every work item in a row.
+- **Guard scenarios set the git settings themselves, not take them from the machine.** Author, email
+  and signature go as `-c` flags.
 
 ## What of the law is not here
 
@@ -253,22 +260,33 @@ The guard does not move a work item to in progress: it does not edit the board �
 command review would fall with the connection and refuse the work instead of the miss. The move is
 held by memory and by the hint the creation command prints. An item left in the initial state the
 guard names at PR opening — that is, after it should have been moved; other state discrepancies the
-queue audit finds.
+queue audit finds. The epic card is held by memory alone: no guard reads its state at branch
+creation, and the queue audit does not judge it.
 
 The guard does not ask for a reviewer here: lifting the draft is an edit of the PR itself — the same
 call as its other fields — and to a machine it cannot be told from other edits. This is held by the
 vocabulary above, where the PR review is led by the reviewer, and by the memory of whoever lifts the
 draft.
 
-The freshness of main's tip itself the guard asks by the second tier — the same technique as the
+The freshness of the tip of the base the guard asks by the second tier — the same technique as the
 task state: something to ask with — it asks; no network or access — it skips silently. The first
 tier stays and works offline: the local ref answers the question "has the base lagged what already
 lies in the tree", the remote one — "has the ref itself gone stale". Without the second tier the
 guard's silence meant only the first and was read as the second.
+
+The delivery guard reads the base of a PR from `--base` alone; here the flag is `--target-branch`.
+Without a queue helper it judges the branch by `main`, with one it refuses a lawful PR into the epic
+branch. Until the package reads the flag, the base and the draft-or-ready choice are the executor's.
+
+A PR that waits only for the run opens ready, and the law keeps such work under a draft: a declared
+deviation, the run does not start on a draft. Complete is then held only by a required build
+validation.
 
 ## Patterns
 
 - `git-workflow-commit` — work item, branch, commit and push as the machine account.
 - `git-workflow-pr` — opening a PR, the draft and lifting it, the body, reviewer, binding to the
   item.
-- `git-workflow-merge` — main merged into the task branch, the conflict resolved.
+- `git-workflow-merge` — the base merged into the branch standing on it, the conflict resolved.
+- `git-workflow-stack` — a chain of branches: branching from the previous, the base, the hand-over
+  order.

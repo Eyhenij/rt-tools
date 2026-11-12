@@ -2774,9 +2774,9 @@
       "kind": "rule",
       "name": "deploy-flow",
       "installed": true,
-      "articles": 28,
-      "unheld": 12,
-      "bound_code": 10
+      "articles": 29,
+      "unheld": 13,
+      "bound_code": 11
     },
     {
       "label": "doc-style",
@@ -7017,6 +7017,36 @@
       "confidence_score": 1
     },
     {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/patterns/git-workflow-pr.azure.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "pattern_git_workflow_pr",
+      "target": "pattern_git_workflow_stack",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/patterns/git-workflow-pr.azure.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "pattern_git_workflow_pr",
+      "target": "role_goal_critic",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/patterns/git-workflow-pr.azure.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "pattern_git_workflow_pr",
+      "target": "role_product_strategist",
+      "confidence_score": 1
+    },
+    {
       "relation": "pattern_of",
       "confidence": "EXTRACTED",
       "source_file": "projects/agent-kit/assets/patterns/git-workflow-pr.azure.md",
@@ -9619,7 +9649,7 @@
     {
       "relation": "mentions",
       "confidence": "EXTRACTED",
-      "source_file": "projects/agent-kit/assets/rules/git-workflow.github.md",
+      "source_file": "projects/agent-kit/assets/rules/git-workflow.azure.md",
       "source_location": "L1",
       "weight": 1,
       "source": "rule_git_workflow",
@@ -17048,5 +17078,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "66011081919f57bfc2b66d94d0deb17fc7751634"
+  "built_at_commit": "72e431fb7929ceabe1ff893b0686dc37d1024491"
 }

@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub — the part about the rollout. Load when an edit goes to production — merge into the main branch, the pipeline, images and tags, storage migrations. Patterns git-workflow-migration, -restart, -docker, -secrets. Task and branch — rule git-workflow.
 ---
-<!-- rt-kit v0.37.0 · rules/deploy-flow.github.md · f9aca9d96e12 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/deploy-flow.github.md · 75ae8a7129f0 · правится надстройкой, не здесь -->
 
 # Rollout — how it works here
 
@@ -188,6 +188,10 @@ flowchart TD
   non-zero code and says that the check itself broke, not the subject. A shared zero for both makes
   a broken check indistinguishable from a passed one: the schema-to-migrations audit stood like that
   in the gate set, checking nothing, and hid three causes at once behind its zero.
+- **The merge button and the manual rollout run get their requirement at the host.** Both are
+  pressed at the host, where the guards of the session do not stand. The requirement is set at the
+  host — a required status check, a protected branch or a protected environment — or is named to the
+  one who presses, in the section of the PR description about the remaining step, before the press.
 
 ## What of the law is not here
 
