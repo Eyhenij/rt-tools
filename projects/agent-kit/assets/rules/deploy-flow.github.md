@@ -187,6 +187,11 @@ flowchart TD
   non-zero code and says that the check itself broke, not the subject. A shared zero for both makes
   a broken check indistinguishable from a passed one: the schema-to-migrations audit stood like that
   in the gate set, checking nothing, and hid three causes at once behind its zero.
+- **A requirement before an irreversible step is set where the step is taken.** The merge button and
+  the manual run of the rollout are pressed at the host, and the guards of the session do not stand
+  there. The requirement is set at the host — a required status check, a protected branch or a
+  protected environment — or is named to the one who presses, in the section of the PR description
+  about the remaining step, before the press.
 
 ## What of the law is not here
 
