@@ -8,7 +8,7 @@
 # been checked at all. Here lives the single one.
 #
 #   rt_push_set_profile <hooks dir> <tree root> — the package default and the tree override
-#   rt_push_set_base                            — the nearest remote branch in the head, or empty
+#   rt_push_set_base                            — the nearest remote branch, or empty
 #   rt_push_set_run <base>                      — every line of `rt_push_checks <base>`
 #   rt_push_mark_path / rt_push_mark_covers <commit> / rt_push_mark_write — the mark of green
 #

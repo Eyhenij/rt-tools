@@ -19,8 +19,8 @@ run but inside the guard.
 
 - **The base** — the remote branch the contribution is counted against; the set picks its steps by
   what the branch touched against it.
-- **The parent** — the branch the current one was created from, as git wrote it into the branch
-  reflog.
+- **A merge of the host** — a merge commit the host made when a request was merged; it is told by
+  the committer the host signs with.
 - **A green mark** — a file in the shared git directory saying: this check line passed on this
   tree of the head against this base.
 - **A heavy step** — a check the tree profile names heavy: snapshots, end-to-end suites, builds,
@@ -34,10 +34,12 @@ There is no interface: the guard answers with a refusal text, the run ahead with
 
 ## Rules
 
-- **The push set is counted against the nearest remote branch that lies in the history of the
-  head.** A stacked branch is so counted against the branch under it, a task branch against
-  the branch of its epic. The branch's own remote copy is not a candidate. No remote branch in the
-  history gives the main branch: the gate may be stricter, never weaker.
+- **The push set is counted against the remote branch the head has the fewest commits over.** A
+  stacked branch is so counted against the branch under it, a task branch against the branch of
+  its epic. The main branch is a candidate always and wins a tie. A branch outside the history of
+  the head is a candidate only when a merge of the host moved it past the head. Three kinds of
+  branches are no base: the branch's own remote copy, a branch that stands on that copy, and a
+  branch a merge of the host brought into this one. A head that is no branch gets the main branch.
 - **A check green on the same tree against the same base is not run again.** The key is the check
   line, the tree of the head and the base commit.
 - **A mark is trusted and written only on a clean working copy.** The checks run over the working
@@ -103,9 +105,27 @@ Several working copies share the marks: a key holds the tree and the base, not t
   snapshot sets, the end-to-end suites and two image builds — forty to sixty minutes. A request
   is a call to the host on every push, and the first push of a branch has no request yet.
 - **The refs of branches removed from the remote are not pruned by the guard.** A lower branch
-  merged and removed stays the nearest one for the branch above it: its content has passed the
-  set and the review. Pruned, such a branch would be counted against the main one until it takes
-  its new base in, and the delivery rule takes the base in only on a conflict.
+  merged and removed stays the nearest one for the branch above it until the branch it was merged
+  into comes nearer. The fetch names that outright: a copy whose settings prune on every fetch
+  would lose the ref in silence.
+- **The main branch is a candidate even when its tip is outside the history of the head.** Left
+  out once it moved ahead, it gave its place to the stale ref of a branch merged long ago, and a
+  branch of texts taken from the main one was charged for the snapshots of that branch.
+- **A branch a merge of the host brought into this one is no base.** It is the content of this
+  branch. Counted against its last merged task, the branch of an epic reached the main branch
+  with nothing checked against it before the push.
+- **A branch outside the history of the head needs a merge of the host to be a candidate.** Git
+  alone cannot tell which of two branches was taken from the other: the branch of an epic moved
+  by a merged neighbour and a task that stands on an old tip of this branch look the same. The
+  merge of the host is the one sign that tells them apart without a call to the host.
+- **The host's merge is told by its committer, not by its subject.** The subject of a merge here
+  is the title of the request. A tree whose host signs otherwise names the signature itself.
+- **What the base trusts.** A branch on the remote got there through this set, so the commits it
+  holds are not checked again. A branch that reached the remote past the set — pushed from a
+  terminal with no hook, edited on the host — lifts its content from the set of every branch
+  that takes it in. The pipeline of a request into the main branch still runs over the whole.
+- **The answer depends on the remote refs the copy holds.** Working copies of one repository
+  share them; a fresh clone holds no ref of a branch removed earlier and takes the next nearest.
 - **The key holds the tree, not the commit.** An amended commit with the same content does not pay
   again.
 - **Light checks without a mark still run inside the guard.** They take seconds, and the refusal
@@ -119,6 +139,6 @@ None.
 
 - 2026-11-03 — the subdomain was created: the push of a kit branch did not fit the hook limit, and
   the scenario file of the delivery gate is at its length limit. Task RT-3092.
-- 2026-11-12 — the base is the nearest remote branch in the history of the head; the reflog line
-  is no longer read. A branch above a merged and removed one was counted against the main branch
-  and ran every heavy step. Task RT-3231.
+- 2026-11-12 — the base is the remote branch the head has the fewest commits over; the reflog
+  line is no longer read. A branch above a merged and removed one was counted against the main
+  branch and ran every heavy step. Task RT-3231.
