@@ -169,3 +169,21 @@ merge is aborted
 Then the guard refuses as before
 
 Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`.
+
+### SC-AK-1336 — an edit after the tidy-up passes in a second working copy
+
+Given the session started in the main tree of a repository, standing on a branch with no task folder,
+and a second working copy of the same repository on a task branch whose folder is taken apart by a
+commit
+When application code of the second copy is edited, by a tool with the full path or by a command
+with a path relative to the copy
+Then the guard stays silent: the history of the second copy says the work is handed in
+
+### SC-AK-1337 — a second working copy is judged by its own state
+
+Given the same session and a second working copy on a task branch whose folder was never committed,
+or a standing merge in that copy with a conflict in application code
+When application code of the copy is edited outside the conflict, or the file in conflict is resolved
+Then the first edit is refused by the plan requirement of that copy, and the resolution passes
+
+Covered: `projects/agent-kit/tests/task-flow-guard.test.sh`.

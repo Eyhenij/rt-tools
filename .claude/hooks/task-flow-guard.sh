@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/task-flow-guard.sh · 3f0d42b91af2 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/task-flow-guard.sh · 37c719e3f4e4 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/task-flow-context.sh, hooks/profile-check.sh, hooks/deny-tail.sh
 # PreToolUse guard for Edit|Write|MultiEdit: code is not written before the plan.
@@ -66,9 +66,10 @@ merge_conflict_only() {
     seen=0
     while IFS= read -r candidate; do
         [ -z "$candidate" ] && continue
+        # A relative path belongs to the directory of the call, as in the context above.
         case "$candidate" in
             /*) ;;
-            *) candidate="${CLAUDE_PROJECT_DIR:-.}/$candidate" ;;
+            *) candidate="${rt_tf_askdir:-${CLAUDE_PROJECT_DIR:-.}}/$candidate" ;;
         esac
         rt_is_app_code "$candidate" || rt_tf_laid_out "$candidate" || continue
         [ -n "$(git -C "$root" ls-files -u -- "$candidate" 2>/dev/null | head -1)" ] || return 1
