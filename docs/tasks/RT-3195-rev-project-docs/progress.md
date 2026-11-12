@@ -2,12 +2,13 @@
 
 ## Where we stand
 
-- **State:** `замысел-записан`
+- **State:** `этап-идёт`
 - **Stage:** 1 of 3 — Findings
-- **Done:** folder, plan; baseline 13 articles of the family held by memory, 17 pairs of repeats
-- **Next step:** the role rules-reviewer over the family and the binding comparison
+- **Done:** folder, plan; baseline 13 articles of the family held by memory, 17 pairs of repeats;
+  the role rules-reviewer and the binding comparison run in the background
+- **Next step:** read both reports and write the findings with a decision each
 - **Uncommitted:** no
-- **Waiting for the owner:** the push of RT-3193 waits for the answer about the main copy
+- **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
