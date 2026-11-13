@@ -3,6 +3,9 @@ import { Meta, StoryObj } from '@storybook/angular';
 import { drawStoryCropperSample } from '../../image-cropper/stories/component/story-cropper-sample';
 import { TestRtImageUploadComponent } from './component/test-image-upload.component';
 
+/** Вид контрола витрины: переключатель в одну строку */
+const INLINE_RADIO: string = 'inline-radio';
+
 export default {
     title: 'Molecules/Forms/ImageUpload',
     component: TestRtImageUploadComponent,
@@ -12,9 +15,13 @@ export default {
         fileName: { control: { type: 'text' } },
         tooltip: { control: { type: 'text' } },
         downloadable: { control: { type: 'boolean' } },
-        downloadShape: { control: { type: 'inline-radio' }, options: ['circle', 'square'] },
+        downloadShape: { control: { type: INLINE_RADIO }, options: ['circle', 'square'] },
         downloadIconSize: { control: { type: 'select' }, options: [null, 'xs', 'sm', 'md', 'lg', 'xl', '2xl'] },
-        chooseAppearance: { control: { type: 'inline-radio' }, options: ['filled', 'outlined', 'text'] },
+        removable: { control: { type: 'boolean' } },
+        buttonsCorner: { control: { type: 'select' }, options: ['top-right', 'top-left', 'bottom-right', 'bottom-left'] },
+        buttonsPlacement: { control: { type: INLINE_RADIO }, options: ['overhang', 'inside'] },
+        buttonsVisibility: { control: { type: INLINE_RADIO }, options: ['auto', 'hover', 'always'] },
+        chooseAppearance: { control: { type: INLINE_RADIO }, options: ['filled', 'outlined', 'text'] },
         chooseIcon: { control: { type: 'text' } },
         autoApply: { control: { type: 'boolean' } },
         loading: { control: { type: 'boolean' } },
@@ -39,6 +46,10 @@ export const Playground: TStory = {
         downloadable: true,
         downloadShape: 'circle',
         downloadIconSize: null,
+        removable: false,
+        buttonsCorner: 'top-right',
+        buttonsPlacement: 'overhang',
+        buttonsVisibility: 'auto',
         chooseAppearance: 'outlined',
         chooseIcon: 'ico-upload',
         autoApply: false,
