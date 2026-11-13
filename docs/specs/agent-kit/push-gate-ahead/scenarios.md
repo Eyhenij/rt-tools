@@ -118,6 +118,30 @@ Then it does not run anything and exits with 3
 
 Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
+### SC-AK-1345 — a head that adds nothing to its base is pushed with no check run
+
+Given a branch whose every commit already lies in its base on the remote, and a set of one red check
+When the push call comes
+Then the guard lets it through and runs no check
+
+Given the same branch
+When the run ahead starts
+Then it names that there is nothing to run and exits with 0
+
+Covered: `projects/agent-kit/tests/git-guard-push-nothing-new.test.sh`.
+
+### SC-AK-1346 — a head with a commit over its base is judged by the set
+
+Given the same branch with one commit over its base
+When the push call comes
+Then the guard runs the set and refuses on the red check
+
+Given a repository with no remote
+When the push call comes
+Then the guard runs the set: there is no base to compare the head with
+
+Covered: `projects/agent-kit/tests/git-guard-push-nothing-new.test.sh`.
+
 ### SC-AK-1166 — the push gate names every red light check by one refusal
 
 Given the gate set holds two red light checks, a green one between them and a heavy one after them

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-push-marks.sh · 5284f3fab919 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-push-marks.sh · f4e5d70b018e · правится надстройкой, не здесь
 # The base of the push set and the marks of a green run, shared by the push guard and by the
 # command that runs the set ahead (`git-guard-push-ahead.sh`).
 #
@@ -103,6 +103,18 @@ EOF
 # call, and a tree that does not ignore it would never get a single mark.
 rt_push_mark_clean() {
     [ -z "$(git status --porcelain -- . ':(exclude).claude/rt-kit/observations' 2>/dev/null)" ]
+}
+
+# Whether the head adds nothing to its base: every commit of it already lies in that branch on the
+# remote. Such a push sends content the set already judged there, and running the set over it costs
+# its whole length and can find nothing — a branch of an epic just taken from the main branch paid
+# forty minutes for a tree equal to the main one. A base that is no remote ref answers «it adds».
+rt_push_adds_nothing() {
+    local base="$1" count
+    [ -n "$base" ] || return 1
+    git rev-parse --verify --quiet "refs/remotes/$base" >/dev/null 2>&1 || return 1
+    count="$(git rev-list --count "refs/remotes/$base..HEAD" 2>/dev/null)"
+    [ "$count" = 0 ]
 }
 
 # The key of a mark: the check line, the tree of the head and the commit of the base. The tree and

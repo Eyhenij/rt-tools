@@ -1,6 +1,6 @@
 # The push set against its base, from its marks and ahead
 
-**Status:** in force · **Revision:** 2026-11-12 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-13 · **Scenario prefix:** `SC-AK`
 **Depends on:** the subdomain of the delivery guards and the push gate
 **Laws:** `delivery`, `verifiability`
 **Procedures:** none
@@ -42,6 +42,9 @@ There is no interface: the guard answers with a refusal text, the run ahead with
   the head is a candidate only when a merge of the host moved it past the head. Three kinds of
   branches are no base: the branch's own remote copy, a branch that stands on that copy, and a
   branch a merge of the host brought into this one. A head that is no branch gets the main branch.
+- **A head that adds no commit to its base is pushed with no check run.** Every commit of it
+  already lies in that branch on the remote. The guard, the run ahead and the git hook all answer
+  so; a head with no base on a remote is judged as before.
 - **A check green on the same tree against the same base is not run again.** The key is the check
   line, the tree of the head and the base commit.
 - **A mark is trusted and written only on a clean working copy.** The checks run over the working
@@ -159,3 +162,6 @@ None.
 - 2026-11-12 — the base is the remote branch the head has the fewest commits over; the reflog
   line is no longer read. A branch above a merged and removed one was counted against the main
   branch and ran every heavy step. Task RT-3231.
+- 2026-11-13 — a head that adds no commit to its base is pushed with no check run. The branch of
+  an epic just taken from the main branch could not reach the remote without the whole set. Task
+  RT-3282.

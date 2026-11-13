@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-push-tests.sh · 4336f13ae155 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-push-tests.sh · 2d309476069f · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__terminal__run_in_terminal
 # rt-hook-timeout: 1800
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/push-sign.sh, hooks/push-set.sh, hooks/git-guard-push-marks.sh
@@ -206,6 +206,13 @@ if ! rt_needs rt_push_checks git-guard-push-tests; then
 fi
 
 base="$(rt_push_set_base)"
+
+# A head that adds nothing to its base is not judged: the set has nothing new to look at.
+if command -v rt_push_adds_nothing >/dev/null 2>&1 && rt_push_adds_nothing "$base"; then
+    rt_push_gate_note nothing-new
+    printf 'the push gate: the head adds no commit to %s — the set is not run\n' "$base" >&2
+    exit 0
+fi
 
 # Every red among the light checks is named by one refusal. The gate used to leave on the first red
 # one, and each fix opened the next reason by a push of its own: three pushes in a row went so on one

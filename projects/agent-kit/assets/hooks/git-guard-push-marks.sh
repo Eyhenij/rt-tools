@@ -104,6 +104,18 @@ rt_push_mark_clean() {
     [ -z "$(git status --porcelain -- . ':(exclude).claude/rt-kit/observations' 2>/dev/null)" ]
 }
 
+# Whether the head adds nothing to its base: every commit of it already lies in that branch on the
+# remote. Such a push sends content the set already judged there, and running the set over it costs
+# its whole length and can find nothing — a branch of an epic just taken from the main branch paid
+# forty minutes for a tree equal to the main one. A base that is no remote ref answers «it adds».
+rt_push_adds_nothing() {
+    local base="$1" count
+    [ -n "$base" ] || return 1
+    git rev-parse --verify --quiet "refs/remotes/$base" >/dev/null 2>&1 || return 1
+    count="$(git rev-list --count "refs/remotes/$base..HEAD" 2>/dev/null)"
+    [ "$count" = 0 ]
+}
+
 # The key of a mark: the check line, the tree of the head and the commit of the base. The tree and
 # not the commit — an amended commit with the same content does not pay again; the base too — a
 # step chosen by what the branch touched answers for that base alone.

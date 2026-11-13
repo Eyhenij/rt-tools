@@ -4,6 +4,7 @@ A statement of the spec and the place where it is carried out. The link goes by 
 statement: a removed statement is removed together with its line.
 
 - **The push set is counted against the remote branch the head has the fewest commits over.** — `projects/agent-kit/assets/hooks/git-guard-push-marks.sh:rt_push_base`
+- **A head that adds no commit to its base is pushed with no check run.** — `projects/agent-kit/assets/hooks/git-guard-push-marks.sh:rt_push_adds_nothing`
 - **A check green on the same tree against the same base is not run again.** — `projects/agent-kit/assets/hooks/git-guard-push-marks.sh:rt_push_mark_has`
 - **A mark is trusted and written only on a clean working copy.** — `projects/agent-kit/assets/hooks/git-guard-push-marks.sh:rt_push_mark_clean`
 - **A mark is not written when the tree changed while the check ran.** — `projects/agent-kit/assets/hooks/git-guard-push-marks.sh:rt_push_mark_put`

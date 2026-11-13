@@ -214,13 +214,13 @@ EOF
     rt_push_checks_default "$1" \
         | grep -vE 'agent-kit sync --check|nx (run-many|affected) -t lint test build|stylelint "\*\*/\*\.scss"|tools/check-(specs|dupes|push-gate)\.mjs|guard scenarios:'
 
-    cat <<'EOF'
+    { [ -n "$1" ] && . "$(dirname "${BASH_SOURCE[0]}")/project-texts.sh" 2>/dev/null && rt_push_texts_only "$1"; } || cat <<'EOF' # texts alone run no builder step
 pnpm exec nx affected -t lint typecheck test build --parallel
 pnpm exec nx affected -t test-hooks
 pnpm run lint:styles
 pnpm exec nx affected -t verify --parallel
-node tools/check-push-gate.mjs
 EOF
+    printf '%s\n' 'node tools/check-push-gate.mjs'
 
     # The heavy steps go by their own subject rather than by the sign "the branch touched code".
     #

@@ -206,6 +206,13 @@ fi
 
 base="$(rt_push_set_base)"
 
+# A head that adds nothing to its base is not judged: the set has nothing new to look at.
+if command -v rt_push_adds_nothing >/dev/null 2>&1 && rt_push_adds_nothing "$base"; then
+    rt_push_gate_note nothing-new
+    printf 'the push gate: the head adds no commit to %s — the set is not run\n' "$base" >&2
+    exit 0
+fi
+
 # Every red among the light checks is named by one refusal. The gate used to leave on the first red
 # one, and each fix opened the next reason by a push of its own: three pushes in a row went so on one
 # branch — a repeated function, a name shared by two kits, a paint probe. A check with nothing to look

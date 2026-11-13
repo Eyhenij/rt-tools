@@ -155,5 +155,28 @@ style_probe() {
 style_probe 'SC-AK-673 — только тексты: проверки оформления всё равно зовутся' 'docs/x.md'
 style_probe 'SC-AK-673 — снимок зависимостей поднимает их наравне с остальным' 'pnpm-lock.yaml'
 
+# SC-AK-569 — a branch of texts alone runs no lint, types, tests, build or guard scenarios.
+#
+# The builder counts a plan and the table of assignments as an input of every project, so a commit
+# of two text files ran seven minutes of lint and build and a quarter of an hour of guard scenarios.
+# The pair of the assertion: the same lines are in the set as soon as one file of code is touched.
+builder_probe() {
+    dir="$(probe_repo "$2")"
+    got="$(checks_for "$dir" | grep -c 'nx affected')"
+    rm -rf "$dir"
+    if [ "$got" = "$3" ]; then
+        ok=$((ok + 1))
+    else
+        bad=$((bad + 1))
+        printf '  РАЗОШЛОСЬ %s\n    ждали строк сборщика: %s\n    вышло: %s\n' "$1" "$3" "$got"
+    fi
+}
+
+builder_probe 'SC-AK-569 — a plan and the table of assignments call no builder step' 'docs/plans/x.md .claude/rt-kit/assignments.md' 0
+builder_probe 'SC-AK-569 — a markdown file at the root calls no builder step' 'README.md' 0
+builder_probe 'SC-AK-569 — a rule inside a package calls the builder steps' 'projects/agent-kit/assets/rules/x.md' 3
+builder_probe 'SC-AK-569 — a guard next to a text calls the builder steps' 'docs/x.md .claude/hooks/probe.sh' 3
+builder_probe 'SC-AK-569 — a check of the tree calls the builder steps' 'tools/probe.mjs' 3
+
 printf 'набор гейта по предмету правки: %s ok, %s расхождений\n' "$ok" "$bad"
 [ "$bad" -eq 0 ]
