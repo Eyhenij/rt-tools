@@ -65,6 +65,14 @@ test.describe('the correspondence of the records screen', () => {
         await expect(page.getByTestId('records-chat')).not.toContainText(text);
     });
 
+    test('SC-AUTH-107 — the send button of the correspondence is named by the kit dictionary', async ({ page }) => {
+        await signIn(page, 'reader');
+        const send: Locator = page.getByTestId('records-chat').getByRole('button', { name: 'Send message' });
+
+        await expect(page.getByTestId('records-chat').getByTestId('ai-prompt-input-send')).toBeVisible();
+        await expect(send).toBeVisible();
+    });
+
     test('SC-AUTH-106 — a scheduled reply shows its label, and the bar repeats the draft above the field', async ({ page }) => {
         await signIn(page, 'reader');
         const field: Locator = page.getByTestId('chat-composer-prompt').locator('textarea');

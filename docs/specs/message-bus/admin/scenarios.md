@@ -263,6 +263,13 @@ Given the panel is open
 When an end-to-end spec looks for the panel itself, its header and a row of a property
 Then it finds each of the three by a sign of its own, not only the value inside the row
 
+### SC-MB-427 — the back arrow of the header closes the panel, and the next record opens with its own file
+
+Given the owner opened an incident analysis in the details panel
+When they close it by the back arrow of the header and open another analysis, twice in a row
+Then the header leaves the screen after each arrow, and each opened header shows the title and, above
+it, the file of its own record
+
 ### SC-MB-141 — three panels are put together by one language
 
 Given there are three panels of details

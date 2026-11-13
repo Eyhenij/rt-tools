@@ -86,4 +86,30 @@ test.describe('панель подробностей', () => {
             await expect(detailValue(page, panel.row)).not.toHaveText('');
         });
     }
+
+    test('SC-MB-427 — стрелка назад в шапке закрывает панель, и следующая запись открывается со своим файлом', async ({
+        page,
+    }: {
+        page: Page;
+    }) => {
+        await openSection(page, 'postmortems');
+        const header: Locator = qa(page, 'postmortem-details-header');
+
+        // Две записи подряд без перезагрузки: вторая открывается после того, как первую закрыла
+        // стрелка, и шапка не должна унести с собой файл предыдущей записи.
+        for (const index of [0, 1]) {
+            const row: Locator = rowsOf(page, 'postmortems').nth(index);
+            const file: string = (await row.locator('[qa-dataid="postmortems-cell-file"]').innerText()).trim();
+            expect(file).not.toBe('');
+
+            await row.click();
+
+            await expect(header.locator('[qa-dataid="aside-title"]')).not.toHaveText('');
+            await expect(header.locator('[qa-dataid="aside-overline"]')).toHaveText(file);
+
+            await header.locator('[qa-dataid="aside-back"]').click();
+
+            await expect(header).toHaveCount(0);
+        }
+    });
 });
