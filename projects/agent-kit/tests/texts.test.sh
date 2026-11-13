@@ -31,9 +31,9 @@ domains_in() {
 
 found_domains="$(domains_in $TEXTS)"
 if [ -z "$found_domains" ]; then
-    report "в текстах нет доменов конкретного дерева" PASS PASS
+    report "SC-AK-04 — в текстах нет доменов конкретного дерева" PASS PASS
 else
-    report "в текстах нет доменов конкретного дерева" "$(printf '%s' "$found_domains" | tr '\n' ' ')" PASS
+    report "SC-AK-04 — в текстах нет доменов конкретного дерева" "$(printf '%s' "$found_domains" | tr '\n' ' ')" PASS
 fi
 
 # --- порты ----------------------------------------------------------------------------------
@@ -51,9 +51,9 @@ for port in $published; do
 done
 found_ports="$(printf '%s' "$found_ports" | grep -E '[0-9]' | sort -u)"
 if [ -z "$found_ports" ]; then
-    report "в текстах нет записанных числом портов" PASS PASS
+    report "SC-AK-04 — в текстах нет записанных числом портов" PASS PASS
 else
-    report "в текстах нет записанных числом портов" "$(printf '%s' "$found_ports" | tr '\n' ' ')" PASS
+    report "SC-AK-04 — в текстах нет записанных числом портов" "$(printf '%s' "$found_ports" | tr '\n' ' ')" PASS
 fi
 
 # --- раздел «Где это лежит» ------------------------------------------------------------------

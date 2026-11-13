@@ -9,7 +9,7 @@ and is satisfied by any word, so the name of a field from a foreign line passes 
 needed sentence does — and the statement stays green when the text of the role itself is rewritten
 whole.
 
-- **The package checks what it carries, not only what it carries with.** — `projects/agent-kit/src/lib/assets.spec.ts:expectGreen`
+- **The package checks what it carries, not only what it carries with.** — `projects/agent-kit/tests/run.sh:suites`, the target `test-hooks` of the package; the push set and the pipeline both call it
 - **A resource left without its kind is a refusal of the layout, not silence.** — `projects/agent-kit/src/lib/catalog.ts:variantGaps`
 - **A layout from a stale build does not pass itself off as a fresh one.** — `projects/agent-kit/src/lib/freshness.ts:staleBuild`
 - **What is laid out is checked by content, not by the number of the edition.** — `projects/agent-kit/src/lib/plan.ts:planFile`
