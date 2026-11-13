@@ -268,37 +268,6 @@ export function fetchOpenPulls(options) {
 }
 
 /**
- * Who was asked to review a PR and who left a review, each with the kind of the account.
- *
- * Read by REST, a call per list. The same lists asked through the list of PRs need the scope
- * `read:org`, and a token of a machine account that lacks it gets the whole query refused: the
- * audit then printed one line of an error and no line of its own.
- *
- * FAIL-OPEN: no answer — `null`, and the PR is not judged. Without network the refusal is thrown,
- * as everywhere.
- */
-export function fetchReviewers(number, options) {
-    if (!OWNER || !REPO) {
-        return null;
-    }
-    const path = `repos/${OWNER}/${REPO}/pulls/${number}`;
-    try {
-        return {
-            asked: ghJson(
-                ['api', `${path}/requested_reviewers`, '--jq', '[.users[] | {login, type}] + [.teams[] | {login: .slug, type: "Team"}]'],
-                options
-            ),
-            left: ghJson(['api', `${path}/reviews`, '--jq', '[.[] | {login: .user.login, type: .user.type}]'], options),
-        };
-    } catch (error) {
-        if (error instanceof OfflineError) {
-            throw error;
-        }
-        return null;
-    }
-}
-
-/**
  * Own open PRs marked as conflicting. Asked at the minute new work is taken: while what was
  * handed over conflicts, a person cannot merge it, and every next PR adds one more to the queue.
  *

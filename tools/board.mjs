@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/board.github.mjs · b276bd8278bc · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/board.github.mjs · 7b0b635c4363 · правится надстройкой, не здесь
 /**
  * Shared work with the work queue: the project board, the tasks and their state.
  *
@@ -266,37 +266,6 @@ export function fetchOpenPulls(options) {
         ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,isDraft,body,mergeable,baseRefName,author'],
         options
     );
-}
-
-/**
- * Who was asked to review a PR and who left a review, each with the kind of the account.
- *
- * Read by REST, a call per list. The same lists asked through the list of PRs need the scope
- * `read:org`, and a token of a machine account that lacks it gets the whole query refused: the
- * audit then printed one line of an error and no line of its own.
- *
- * FAIL-OPEN: no answer — `null`, and the PR is not judged. Without network the refusal is thrown,
- * as everywhere.
- */
-export function fetchReviewers(number, options) {
-    if (!OWNER || !REPO) {
-        return null;
-    }
-    const path = `repos/${OWNER}/${REPO}/pulls/${number}`;
-    try {
-        return {
-            asked: ghJson(
-                ['api', `${path}/requested_reviewers`, '--jq', '[.users[] | {login, type}] + [.teams[] | {login: .slug, type: "Team"}]'],
-                options
-            ),
-            left: ghJson(['api', `${path}/reviews`, '--jq', '[.[] | {login: .user.login, type: .user.type}]'], options),
-        };
-    } catch (error) {
-        if (error instanceof OfflineError) {
-            throw error;
-        }
-        return null;
-    }
 }
 
 /**

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/check-board.github.mjs · 00565a38d5bf · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/check-board.github.mjs · 677c72cd019b · правится надстройкой, не здесь
 /**
  * Audit of the work queue against what the delivery law requires of a task and its PR.
  *
@@ -42,7 +42,6 @@ import {
     fetchBoard,
     fetchIssues,
     fetchOpenPulls,
-    fetchReviewers,
     behindMain,
     gh,
     ghJson,
@@ -51,7 +50,7 @@ import {
     taskDirs,
 } from './board.mjs';
 import { checkBranchFolders, checkUntrackedFolders } from './board-folders.mjs';
-import { checkConflicting, checkHeadRun, checkReviewer } from './board-pull-state.mjs';
+import { checkConflicting, checkHeadRun, checkReviewer, fetchReviewers } from './board-pull-state.mjs';
 import { checkLongWork } from './board-long-work.mjs';
 import { HAS_PIPELINE, deployLag, lastDeploy, lastMainRun, pipelineText, pipelineWakesOnPush } from './board-runs.mjs';
 import { checkEpicLinks, checkEpicPullBase, checkEpicState, checkEpicSubIssues } from './board-epics.mjs';

@@ -41,7 +41,6 @@ import {
     fetchBoard,
     fetchIssues,
     fetchOpenPulls,
-    fetchReviewers,
     behindMain,
     gh,
     ghJson,
@@ -50,7 +49,7 @@ import {
     taskDirs,
 } from './board.mjs';
 import { checkBranchFolders, checkUntrackedFolders } from './board-folders.mjs';
-import { checkConflicting, checkHeadRun, checkReviewer } from './board-pull-state.mjs';
+import { checkConflicting, checkHeadRun, checkReviewer, fetchReviewers } from './board-pull-state.mjs';
 import { checkLongWork } from './board-long-work.mjs';
 import { HAS_PIPELINE, deployLag, lastDeploy, lastMainRun, pipelineText, pipelineWakesOnPush } from './board-runs.mjs';
 import { checkEpicLinks, checkEpicPullBase, checkEpicState, checkEpicSubIssues } from './board-epics.mjs';
