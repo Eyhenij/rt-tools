@@ -131,8 +131,13 @@ rt_push_mark_key() {
     command -v rt_push_check_unread >/dev/null 2>&1 && unread="$(rt_push_check_unread "$1" 2>/dev/null)"
     if [ -n "$unread" ]; then
         # shellcheck disable=SC2086
-        tree="$(IFS='
-'; git ls-files -s -- . $unread 2>/dev/null | git hash-object --stdin 2>/dev/null)"
+        # A listing that failed gives no key: its empty output would hash to one constant, and a
+        # mark under it would outlive every edit. The listing goes from the root of the copy.
+        local listed
+        listed="$(IFS='
+'; git -c core.quotePath=false ls-files -s -- ':(top)' $unread 2>/dev/null)" || return 1
+        [ -n "$listed" ] || return 1
+        tree="$(printf '%s\n' "$listed" | git hash-object --stdin 2>/dev/null)"
         [ -n "$tree" ] || return 1
     else
         tree="$(git rev-parse --verify --quiet 'HEAD^{tree}' 2>/dev/null)" || return 1

@@ -57,5 +57,16 @@ report "SC-AK-1348 — a markdown file inside the code drops the key" "$(same "$
 commit_file src/b.ts 'more code'
 report "SC-AK-1348 — a commit of code drops the key" "$(same "$builder_text_in_code" "$(key_of builder)")" differs
 
+# A listing that fails gives no key at all: its empty output would hash to one constant, and a mark
+# under it would outlive every edit.
+broken_key="$(
+    cd "$REPO" || exit 1
+    # shellcheck disable=SC1091
+    . "$HOOKS/git-guard-push-marks.sh"
+    rt_push_check_unread() { printf '%s\n' ':(exclude)../outside'; }
+    rt_push_mark_key builder '' || printf none
+)"
+report "SC-AK-1348 — a listing that fails gives no key" "$broken_key" none
+
 rm -rf "$REPO"
 suite_result "the marks of the push set: a check keyed by what it reads"

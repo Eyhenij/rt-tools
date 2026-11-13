@@ -13,11 +13,12 @@
 # the table of assignments and a markdown file at the root.
 #
 # Deliberately narrow. The specs under `docs/specs` do not count: the guard scenarios read them —
-# one asks for a spec file by its path, another walks the bindings of every spec. A rule or a spec
+# one asks for a spec file by its path, another walks the bindings of every spec. The sample of a
+# task folder does not count for the same reason: a scenario reads it from this very tree. A rule or a spec
 # inside a package does not count either: that package's build and tests read it.
 rt_push_text_path() {
     case "$1" in
-        docs/plans/* | docs/archive/* | docs/tasks/* | .claude/rt-kit/assignments.md) return 0 ;;
+        docs/plans/* | docs/archive/* | docs/tasks/RT-* | docs/tasks/_draft-* | .claude/rt-kit/assignments.md) return 0 ;;
         */*) return 1 ;;
         *.md) return 0 ;;
     esac
@@ -29,7 +30,7 @@ rt_push_text_path() {
 # judge the branch by. A move is read as a removal and an addition — otherwise a file moved out of
 # a package into the archive shows its new path alone and passes for a text.
 rt_push_texts_only() {
-    _texts="$(git diff --no-renames --name-only "$1"...HEAD 2>/dev/null)"
+    _texts="$(git -c core.quotePath=false diff --no-renames --name-only "$1"...HEAD 2>/dev/null)"
     [ -z "$_texts" ] && return 1
 
     while IFS= read -r _t; do
@@ -48,7 +49,7 @@ EOF
 # An empty list of what was touched does not count as a textual edit: there is nothing to compare
 # against, and silence here would read as "there is nothing to change".
 rt_push_docs_only() {
-    changed="$(git diff --name-only "$1"...HEAD 2>/dev/null)"
+    changed="$(git diff --no-renames --name-only "$1"...HEAD 2>/dev/null)"
     [ -z "$changed" ] && return 1
     printf '%s\n' "$changed" | grep -qvE '(^docs/|\.md$)' && return 1
 
@@ -65,8 +66,9 @@ rt_push_docs_only() {
 rt_push_check_unread() {
     case "$1" in
         *'nx affected'* | *'lint:styles'* | *visual-gate* | *':e2e'* | *'serve:auth'* | *'docker build'*)
-            printf '%s\n' ':(exclude)docs/plans' ':(exclude)docs/archive' ':(exclude)docs/tasks' \
-                ':(exclude,glob)*.md' ':(exclude).claude/rt-kit/assignments.md'
+            printf '%s\n' ':(top,exclude)docs/plans' ':(top,exclude)docs/archive' \
+                ':(top,exclude,glob)docs/tasks/RT-*/**' ':(top,exclude,glob)docs/tasks/_draft-*/**' \
+                ':(top,exclude,glob)*.md' ':(top,exclude).claude/rt-kit/assignments.md'
             ;;
     esac
 }
