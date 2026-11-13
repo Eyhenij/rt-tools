@@ -39,6 +39,7 @@ rt_push_set_profile() {
     command -v rt_push_heavy_ahead >/dev/null 2>&1 || rt_push_heavy_ahead() { return 1; }
     command -v rt_push_over_budget >/dev/null 2>&1 || rt_push_over_budget() { return 0; }
     command -v rt_push_set_over_budget >/dev/null 2>&1 || rt_push_set_over_budget() { return 0; }
+    command -v rt_push_mark_drop >/dev/null 2>&1 || rt_push_mark_drop() { return 0; }
     # The line of a run for the metrics. No file — the set runs and records nothing.
     # shellcheck disable=SC1091
     [ -f "$hooks_dir/metric-marks.sh" ] && . "$hooks_dir/metric-marks.sh" 2>/dev/null
@@ -71,7 +72,7 @@ rt_push_set_base() {
 # named in `rt_push_set_ahead` instead of being started. The git hook has no such limit, leaves the
 # variable empty and runs the step itself.
 rt_push_set_run() {
-    local base="$1" check out status key_before skip_code="${RT_SKIP_CODE:-7}" sign started set_started set_took set_over over
+    local base="$1" check out status key_before skip_code="${RT_SKIP_CODE:-7}" sign started set_started set_took set_over over marked=""
     case "$skip_code" in '' | 0 | 1 | *[!0-9]*) skip_code=7 ;; esac
     command -v rt_push_check_heavy >/dev/null 2>&1 || rt_push_check_heavy() { return 1; }
     sign="$(rt_tree_sign .)"
@@ -115,6 +116,8 @@ rt_push_set_run() {
         if [ "$status" -eq 0 ]; then
             rt_push_set_passed=$((rt_push_set_passed + 1))
             rt_push_mark_put "$check" "$base" "$key_before"
+            marked="${marked}${marked:+
+}${check}"
             rt_run_note "$sign" "$started" green "$check"
             continue
         fi
@@ -137,6 +140,9 @@ EOF
     set_took=$(($(date +%s 2>/dev/null) - set_started))
     set_over="$(rt_push_set_over_budget "$set_took")"
     if [ -n "$set_over" ]; then
+        printf '%s\n' "$marked" | while IFS= read -r check; do
+            [ -n "$check" ] && rt_push_mark_drop "$check" "$base"
+        done
         rt_push_set_failed="${rt_push_set_failed}${rt_push_set_failed:+
 }the whole set: ${set_took}s"
         rt_push_set_output="${rt_push_set_output}${rt_push_set_output:+

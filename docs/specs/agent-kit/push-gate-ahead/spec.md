@@ -66,7 +66,11 @@ There is no interface: the guard answers with a refusal text, the run ahead with
   tree gives it. One second over the limit is the clock: it is read in whole seconds at both ends.
 - **A push whose whole set ran over its time limit is red.** Each step can stay within its own limit
   while the set holds steps the change did not need. The limit is the tree's measurement of a whole
-  set, and the refusal asks the executor to find out why before the next push.
+  set, and the refusal asks the executor to find out why before the next push. Such a run leaves
+  no marks, so the same code does not pass on a second push by marks.
+- **A change of hooks, defaults and scenario files runs only the scenario files that reach it.** A
+  file reaches a hook by naming it or a hook that sources it, and the defaults by naming them or a
+  hook that loads them. A change of the harness, the runner or any other package path runs all.
 
 ## What is out of scope
 

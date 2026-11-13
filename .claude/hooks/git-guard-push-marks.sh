@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-push-marks.sh · e20b8be2dc35 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-push-marks.sh · 45685d9cb938 · правится надстройкой, не здесь
 # The base of the push set and the marks of a green run, shared by the push guard and by the
 # command that runs the set ahead (`git-guard-push-ahead.sh`).
 #
@@ -176,6 +176,16 @@ rt_push_mark_put() {
     return 0
 }
 
+# Removes the mark of a check on this base, if there is one. Used when the whole set went over its
+# time limit: the next run of the same code then runs every step again instead of passing by marks.
+rt_push_mark_drop() {
+    local key dir
+    key="$(rt_push_mark_key "$1" "$2")" || return 0
+    dir="$(rt_push_mark_dir)" || return 0
+    [ -n "$key" ] && rm -f "$dir/$key" 2>/dev/null
+    return 0
+}
+
 # The tree runs its heavy steps ahead and the guard only reads their marks. Declared by the
 # profile: in a tree whose heavy steps fit the hook limit a refusal for a missing mark is a new step
 # for nothing, and the package does not know how long another tree's steps take.
@@ -202,8 +212,9 @@ rt_push_over_budget() {
 
 # The refusal of a whole set that took longer than the profile allows a push, or nothing. Every
 # step can stay within its own limit while the set holds steps the change did not need: only the
-# sum shows it. The steps green in this run keep their marks — the time is spent, and a second run
-# of the same code buys nothing. The executor finds out why the set ran so long before the next push.
+# sum shows it. The runners drop the marks this run put, so a second push of the same code runs
+# the whole set again and does not pass by marks: the executor finds out why the set ran so long and
+# makes it fit, not repeats the push.
 rt_push_set_over_budget() {
     local took="$1" limit words
     command -v rt_push_set_budget >/dev/null 2>&1 || return 0

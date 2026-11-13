@@ -62,6 +62,24 @@ whole_silent="$(
 )"
 report "SC-AK-1351 — the package default sets no whole limit" "[$whole_silent]" '[]'
 
+# A set over the limit leaves no marks: the second push of the same code runs it again instead of
+# passing by marks, so the refusal is not lifted by repeating the push.
+dropped="$(
+    markdir="$(mktemp -d)"
+    # shellcheck disable=SC1091
+    . "$HOOKS/git-guard-push-marks.sh"
+    rt_push_mark_key() { printf 'k-%s' "$(printf '%s' "$1" | cksum | cut -d' ' -f1)"; }
+    rt_push_mark_dir() { printf '%s' "$markdir"; }
+    touch "$markdir/$(rt_push_mark_key 'node tools/check-a.mjs' main)" "$markdir/$(rt_push_mark_key 'node tools/check-b.mjs' main)"
+    rt_push_mark_drop 'node tools/check-a.mjs' main
+    ls "$markdir" | wc -l | tr -d ' '
+    rm -rf "$markdir"
+)"
+report "SC-AK-1351 — a dropped mark is gone and the other stays" "$dropped" 1
+calls_drop() { grep -c 'rt_push_mark_drop "\$check" "\$base"' "$HOOKS/$1" 2>/dev/null; }
+report "SC-AK-1351 — the run ahead drops this run's marks when over" "$(calls_drop git-guard-push-ahead.sh)" 1
+report "SC-AK-1351 — the session and git hook runner drops this run's marks when over" "$(calls_drop push-set.sh)" 1
+
 # Both runners call the whole limit: one left without it lets the long push through by its path.
 calls() { grep -c 'rt_push_set_over_budget "\$set_took"' "$HOOKS/$1" 2>/dev/null; }
 report "SC-AK-1351 — the run ahead judges the whole set" "$(calls git-guard-push-ahead.sh)" 1

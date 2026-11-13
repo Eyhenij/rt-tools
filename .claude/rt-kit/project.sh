@@ -329,6 +329,10 @@ rt_push_touched() {
             # every frame, so it shoots; a story or the showcase moves frames only, no application.
             projects/ui-kit-v2/*.spec.ts) ;;
             projects/ui-kit-v2/.storybook/*|projects/ui-kit-v2/src/showcase/*|projects/ui-kit-v2/*.stories.ts|projects/ui-kit-v2/*.mdx) _add show2 ;;
+            # The scripts the snapshot step runs shoot both showcases; the second kit's own script
+            # shoots the second one only.
+            tools/visual-snapshots-v2.mjs) _add show2 ;;
+            tools/visual-gate.mjs|tools/shot-browser.mjs|tools/shot-browser-name.mjs|tools/showcase-probe.mjs|tools/serve-static.mjs) _add show2; _add kit1 ;;
             # A code graph is data the session reads; above the subjects, as it lies inside a project.
             docs/*|*.md|.claude/*|projects/agent-kit/*|tools/*|graphify-out/*|*/graphify-out/*) ;;
             # The kits — each with a showcase of its own.

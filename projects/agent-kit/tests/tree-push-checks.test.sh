@@ -103,7 +103,13 @@ probe 'оба кита' 'projects/ui-kit/src/a.ts projects/ui-kit-v2/src/b.ts' '
 probe 'кит и обвязка агента' 'projects/ui-kit-v2/src/a.ts .claude/hooks/probe.sh' 'кит2 сквозной'
 # Обвязку снимков и тесты кита не грузит ни одно приложение: правка обвязки RT-3280 подняла два
 # сквозных набора зря. Обвязка задаёт окно, обрезку и сравнение кадра — снимки она поднимает.
-probe 'обвязка снимков второго кита' 'projects/ui-kit-v2/.storybook/test-runner.ts tools/visual-gate.mjs' 'кит2'
+probe 'обвязка снимков второго кита' 'projects/ui-kit-v2/.storybook/test-runner.ts' 'кит2'
+# Скрипты шага снимков снимают обе витрины, скрипт второго кита — только свою. Каждый судится
+# отдельно: вместе с обвязкой витрины пробник зеленел бы от неё, а не от скрипта.
+probe 'скрипт шага снимков' 'tools/visual-gate.mjs' 'кит1 кит2'
+probe 'браузер снимков' 'tools/shot-browser.mjs' 'кит1 кит2'
+probe 'скрипт снимков второго кита' 'tools/visual-snapshots-v2.mjs' 'кит2'
+probe 'другая проверка дерева рядом' 'tools/check-dupes.mjs' ''
 probe 'тест компонента второго кита' 'projects/ui-kit-v2/src/lib/components/a/a.component.spec.ts' ''
 # История и витрина меняют только кадры витрины: приложения их не грузят.
 probe 'история второго кита' 'projects/ui-kit-v2/src/lib/components/a/stories/a.stories.ts' 'кит2'

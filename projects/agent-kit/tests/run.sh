@@ -16,14 +16,14 @@ command -v jq >/dev/null 2>&1 || {
 # судить фикстуру, а не ввод той сессии.
 unset RT_HOOK_INPUT RT_HOOK_TOOL RT_HOOK_CMD RT_HOOK_FILE RT_HOOK_CWD RT_HOOK_PARSED
 
-# Where the push names its base and the package change against it is scenario files alone, only
-# those files run: nothing they judge changed. Any other path of the package runs every suite.
+# Where the push names its base, only the scenario files the package change reaches run: the
+# selection and its reasons are in `select-suites.sh`. An empty answer runs every file.
 suites="$(ls *.test.sh)"
 if [ -n "${RT_SUITES_BASE:-}" ]; then
-    changed="$(git diff --name-only --no-renames "$RT_SUITES_BASE...HEAD" -- .. 2>/dev/null)"
-    if [ -n "$changed" ] && ! printf '%s\n' "$changed" | grep -qv '^projects/agent-kit/tests/[^/]*\.test\.sh$'; then
-        suites="$(printf '%s\n' "$changed" | sed 's#^projects/agent-kit/tests/##' | while read -r f; do [ -f "$f" ] && printf '%s\n' "$f"; done)"
-        echo "only the changed scenario files against $RT_SUITES_BASE: $(printf '%s ' $suites)"
+    picked="$(git diff --name-only --no-renames "$RT_SUITES_BASE...HEAD" -- .. 2>/dev/null | bash ./select-suites.sh)"
+    if [ -n "$picked" ]; then
+        suites="$picked"
+        echo "only the scenario files that reach the change against $RT_SUITES_BASE: $(printf '%s\n' $suites | grep -c .) of $(ls *.test.sh | grep -c .)"
     fi
 fi
 

@@ -182,9 +182,19 @@ Given the profile gives a whole set a limit of 440 seconds and words for the ref
 When the set of one push runs for 442 seconds
 Then the push is red, and the refusal names 442, 440 and the words and asks why before the next
 push. At 441 seconds the set is green, the package default sets no limit, and both runners judge
-the sum
+the sum. The run over the limit drops the marks it put, and a run within the limit keeps them
 
 Covered: `projects/agent-kit/tests/push-over-budget.test.sh`.
+
+### SC-AK-1352 — a hook change runs only the scenario files that reach it
+
+Given the package scenario files and hooks as they lie in the tree
+When a change touches one hook, the defaults or one scenario file
+Then the files that name the hook, or a hook that sources it, run, and a file that reaches neither
+does not. A change of the defaults runs their scenarios and the files of hooks that load them. A
+change of the harness, the runner, the selection or a check runs every file
+
+Covered: `projects/agent-kit/tests/select-suites.test.sh`.
 
 ### SC-AK-1166 — the push gate names every red light check by one refusal
 
