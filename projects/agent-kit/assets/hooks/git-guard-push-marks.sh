@@ -119,9 +119,29 @@ rt_push_adds_nothing() {
 # The key of a mark: the check line, the tree of the head and the commit of the base. The tree and
 # not the commit — an amended commit with the same content does not pay again; the base too — a
 # step chosen by what the branch touched answers for that base alone.
+#
+# A check that reads a part of the tree only is keyed by that part. The profile names the paths the
+# check does not read — `rt_push_check_unread <check>` prints path specs, one per line — and a
+# commit of those paths alone leaves the mark in force. Without it the task folder taken apart by
+# the last commit of a branch, or one line in a plan, ran the whole set again over code the set had
+# just judged. A check the profile says nothing about is keyed by the whole tree, as before. The
+# index is read rather than the head: a mark is trusted on a clean copy alone, where the two match.
 rt_push_mark_key() {
-    local tree base_sha=''
-    tree="$(git rev-parse --verify --quiet 'HEAD^{tree}' 2>/dev/null)" || return 1
+    local tree base_sha='' unread=''
+    command -v rt_push_check_unread >/dev/null 2>&1 && unread="$(rt_push_check_unread "$1" 2>/dev/null)"
+    if [ -n "$unread" ]; then
+        # shellcheck disable=SC2086
+        # A listing that failed gives no key: its empty output would hash to one constant, and a
+        # mark under it would outlive every edit. The listing goes from the root of the copy.
+        local listed
+        listed="$(IFS='
+'; git -c core.quotePath=false ls-files -s -- ':(top)' $unread 2>/dev/null)" || return 1
+        [ -n "$listed" ] || return 1
+        tree="$(printf '%s\n' "$listed" | git hash-object --stdin 2>/dev/null)"
+        [ -n "$tree" ] || return 1
+    else
+        tree="$(git rev-parse --verify --quiet 'HEAD^{tree}' 2>/dev/null)" || return 1
+    fi
     [ -n "$2" ] && base_sha="$(git rev-parse --verify --quiet "$2" 2>/dev/null)"
     printf '%s\n%s\n%s\n' "$1" "$tree" "$base_sha" | git hash-object --stdin 2>/dev/null
 }

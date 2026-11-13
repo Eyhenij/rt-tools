@@ -177,6 +177,12 @@ builder_probe 'SC-AK-569 — a markdown file at the root calls no builder step' 
 builder_probe 'SC-AK-569 — a rule inside a package calls the builder steps' 'projects/agent-kit/assets/rules/x.md' 3
 builder_probe 'SC-AK-569 — a guard next to a text calls the builder steps' 'docs/x.md .claude/hooks/probe.sh' 3
 builder_probe 'SC-AK-569 — a check of the tree calls the builder steps' 'tools/probe.mjs' 3
+# The guard scenarios read the specs: one asks for a spec file by its path, another walks the
+# bindings of every spec. A spec is therefore no text the builder may skip.
+builder_probe 'SC-AK-569 — a spec calls the builder steps' 'docs/specs/agent-kit/x/spec.md' 3
+builder_probe 'SC-AK-569 — an archive record and a task folder call no builder step' 'docs/archive/x.md docs/tasks/RT-1-x/plan.md' 0
+# The sample of a task folder is read by a guard scenario from this very tree.
+builder_probe 'SC-AK-569 — the sample of a task folder calls the builder steps' 'docs/tasks/_template/grill.md' 3
 
 printf 'набор гейта по предмету правки: %s ok, %s расхождений\n' "$ok" "$bad"
 [ "$bad" -eq 0 ]

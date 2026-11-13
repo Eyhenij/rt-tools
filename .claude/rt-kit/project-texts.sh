@@ -9,24 +9,66 @@
 # seven minutes of lint and build and a quarter of an hour of guard scenarios over two text files.
 # The checks of texts and of the tree stay in the set: they are what reads such a commit.
 
-# Whether the branch changes texts alone: files under `docs/`, a markdown file at the root and the
-# table of assignments. Deliberately narrow — a rule or a spec inside a package is read by that
-# package's build and tests, so a markdown file under a project does not count. No change at all
-# answers «no»: there is nothing to judge the branch by.
+# Whether a path is a text no step of the builder reads: a plan, an archive record, a task folder,
+# the table of assignments and a markdown file at the root.
+#
+# Deliberately narrow. The specs under `docs/specs` do not count: the guard scenarios read them —
+# one asks for a spec file by its path, another walks the bindings of every spec. The sample of a
+# task folder does not count for the same reason: a scenario reads it from this very tree. A rule or a spec
+# inside a package does not count either: that package's build and tests read it.
+rt_push_text_path() {
+    case "$1" in
+        docs/plans/* | docs/archive/* | docs/tasks/RT-* | docs/tasks/_draft-* | .claude/rt-kit/assignments.md) return 0 ;;
+        */*) return 1 ;;
+        *.md) return 0 ;;
+    esac
+
+    return 1
+}
+
+# Whether the branch changes such texts alone. No change at all answers «no»: there is nothing to
+# judge the branch by. A move is read as a removal and an addition — otherwise a file moved out of
+# a package into the archive shows its new path alone and passes for a text.
 rt_push_texts_only() {
-    _texts="$(git diff --name-only "$1"...HEAD 2>/dev/null)"
+    _texts="$(git -c core.quotePath=false diff --no-renames --name-only "$1"...HEAD 2>/dev/null)"
     [ -z "$_texts" ] && return 1
 
-    for _t in $_texts; do
-        case "$_t" in
-            docs/* | .claude/rt-kit/assignments.md) ;;
-            */*) return 1 ;;
-            *.md) ;;
-            *) return 1 ;;
-        esac
-    done
+    while IFS= read -r _t; do
+        rt_push_text_path "$_t" || return 1
+    done <<EOF
+$_texts
+EOF
 
     printf 'the push set: the branch changes texts alone — lint, types, tests, build and the guard scenarios are not run\n' >&2
 
     return 0
+}
+
+# Whether the branch touched only texts. A zero code — only texts, otherwise — code.
+#
+# An empty list of what was touched does not count as a textual edit: there is nothing to compare
+# against, and silence here would read as "there is nothing to change".
+rt_push_docs_only() {
+    changed="$(git diff --no-renames --name-only "$1"...HEAD 2>/dev/null)"
+    [ -z "$changed" ] && return 1
+    printf '%s\n' "$changed" | grep -qvE '(^docs/|\.md$)' && return 1
+
+    return 0
+}
+
+# The paths a check of the set does not read, as path specs — one per line. The mark of such a check
+# stays in force over a commit of these paths alone: the task folder taken apart by the last commit
+# of a branch and a line in the plan of an epic no longer run a step over code it just judged.
+#
+# Named for the steps of the builder, the styles linter and the heavy steps — frames, end-to-end
+# suites, stands and image builds — and by the same narrow sign as a branch of texts. The checks of
+# texts and of the tree are not named: they are what reads such a commit.
+rt_push_check_unread() {
+    case "$1" in
+        *'nx affected'* | *'lint:styles'* | *visual-gate* | *':e2e'* | *'serve:auth'* | *'docker build'*)
+            printf '%s\n' ':(top,exclude)docs/plans' ':(top,exclude)docs/archive' \
+                ':(top,exclude,glob)docs/tasks/RT-*/**' ':(top,exclude,glob)docs/tasks/_draft-*/**' \
+                ':(top,exclude,glob)*.md' ':(top,exclude).claude/rt-kit/assignments.md'
+            ;;
+    esac
 }

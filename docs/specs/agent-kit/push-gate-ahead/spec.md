@@ -44,9 +44,13 @@ There is no interface: the guard answers with a refusal text, the run ahead with
   branch a merge of the host brought into this one. A head that is no branch gets the main branch.
 - **A head that adds no commit to its base is pushed with no check run.** Every commit of it
   already lies in that branch on the remote. The guard, the run ahead and the git hook all answer
-  so; a head with no base on a remote is judged as before.
+  so; a head with no base on a remote is judged as before. The guard answers so only for a push of
+  the checked-out branch under its own name: the head says nothing about another branch.
 - **A check green on the same tree against the same base is not run again.** The key is the check
   line, the tree of the head and the base commit.
+- **A check the profile names unread paths for is keyed by the rest of the tree.** A commit of
+  those paths alone leaves its mark in force; a check the profile says nothing about is keyed by
+  the whole tree.
 - **A mark is trusted and written only on a clean working copy.** The checks run over the working
   copy, the push sends commits; the observations record the guard writes itself does not count.
 - **A mark is not written when the tree changed while the check ran.**
@@ -165,3 +169,5 @@ None.
 - 2026-11-13 — a head that adds no commit to its base is pushed with no check run. The branch of
   an epic just taken from the main branch could not reach the remote without the whole set. Task
   RT-3282.
+- 2026-11-13 — a check is keyed by what it reads when the profile names its unread paths. A
+  commit of texts over a tree the set had judged green ran the whole set again. Task RT-3284.
