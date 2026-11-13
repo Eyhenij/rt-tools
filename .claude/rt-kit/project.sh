@@ -206,8 +206,9 @@ node tools/check-dependencies.mjs
 node tools/check-publish-lockfile.mjs
 node tools/check-package-imports.mjs
 node tools/check-kit-approval.mjs
-bash tools/tests/run.sh
 EOF
+    # The tree's check scenarios run only the files the change reaches; the selection is there.
+    printf '%s\n' "${1:+RT_SUITES_BASE=$1 }bash tools/tests/run.sh"
 
     # The guard scenarios run here by `nx affected -t test-hooks` below, not by a run file, so the
     # package line naming a missing run file would be false in this tree.

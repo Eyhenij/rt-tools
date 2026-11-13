@@ -19,7 +19,7 @@ rt_push_check_budget() {
         *'-t verify'*) echo 1 ;;
         *'lint:styles'*) echo 5 ;;
         'pnpm run agent-kit:check') echo 5 ;;
-        'bash tools/tests/run.sh') echo 30 ;;
+        *'bash tools/tests/run.sh') echo 30 ;;
         'node tools/check-'*) echo 12 ;;
     esac
 }
