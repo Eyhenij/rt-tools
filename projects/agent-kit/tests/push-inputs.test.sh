@@ -57,6 +57,16 @@ import { execFileSync } from 'node:child_process';
 export const PUSH_EVERY_CHANGE = 'counts the days';
 execFileSync('git', ['log', '-1', '--format=%cI', '--', 'docs']);
 EOF
+# A step that writes and reads a mark file under a new name each run, in a directory git ignores.
+cat >"$tree/tools/check-marks.mjs" <<'EOF'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+mkdirSync('marks', { recursive: true });
+const mark = `marks/pending-${process.pid}`;
+writeFileSync(mark, 'x');
+readFileSync(mark, 'utf8');
+readFileSync('docs/a.md', 'utf8');
+EOF
+printf 'marks/\n' >"$tree/.gitignore"
 printf 'a\n' >"$tree/docs/a.md"
 printf 'b\n' >"$tree/docs/b.ts"
 printf 'k\n' >"$tree/src/kept.txt"
@@ -69,15 +79,17 @@ shell='node tools/check-shell.mjs'
 redirect='node tools/check-redirect.mjs'
 change='node tools/check-change.mjs'
 days='node tools/check-days.mjs'
+marks='node tools/check-marks.mjs'
 steps="$(printf '%s\n' "$texts" "$history" 'node tools/check-new.mjs' 'node tools/push-inputs.mjs verify' "$rootls" "$shell" "$redirect" "$change" "$days")"
 
-(cd "$tree" && printf '%s\n' "$texts" "$history" "$rootls" "$shell" "$redirect" "$change" "$days" | node tools/push-inputs.mjs record 2>/dev/null)
+(cd "$tree" && printf '%s\n' "$texts" "$history" "$rootls" "$shell" "$redirect" "$change" "$days" "$marks" | node tools/push-inputs.mjs record 2>/dev/null)
 entry() { (cd "$tree" && node -e 'const t=require("./.claude/rt-kit/push-inputs.json");console.log(JSON.stringify(t.steps[process.argv[1]][process.argv[2]]))' "$1" "$2"); }
 report "SC-AK-1353 — the record names the directory a step walks and what it reads there" "$(entry "$texts" walks)" '[{"dir":"docs","deep":true,"exts":[".md"]}]'
 report "SC-AK-1356 — a listing of the root alone is recorded as one directory" "$(entry "$rootls" walks)" '[{"dir":".","deep":false,"exts":[]}]'
 report "SC-AK-1357 — a shell, a copy and a git call with a path leave no unseen start" "$(entry "$shell" untraced)" '[]'
 report "SC-AK-1357 — the history of a named path is recorded as that path" "$(entry "$shell" logs)" '["docs"]'
 report "SC-AK-1357 — a shell reading through a redirection stays unseen" "$(entry "$redirect" untraced)" '["bash <"]'
+report "SC-AK-1359 — the record names the tracked text and not the ignored mark file" "$(entry "$marks" files)" '["docs/a.md","tools/check-marks.mjs"]'
 
 pick() {
     printf '%s\n' "$1" >"$tree/changes"
@@ -126,6 +138,8 @@ mv "$tree/table.json" "$tree/.claude/rt-kit/push-inputs.json"
 
 (cd "$tree" && node tools/push-inputs.mjs verify >/dev/null 2>&1)
 report "SC-AK-1355 — the table check is green while the steps read what was recorded" "$?" 0
+report "SC-AK-1359 — a mark file written anew under another name leaves the table check green" \
+    "$(cd "$tree" && node tools/push-inputs.mjs verify 2>&1 | grep -c 'check-marks')" 0
 printf 'c\n' >"$tree/src/c.txt"
 printf "import { readFileSync as readMore } from 'node:fs';\nreadMore('src/c.txt', 'utf8');\n" >>"$tree/tools/check-texts.mjs"
 said="$(cd "$tree" && node tools/push-inputs.mjs verify 2>&1)"

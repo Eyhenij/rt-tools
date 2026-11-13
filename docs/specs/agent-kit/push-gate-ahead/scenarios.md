@@ -269,6 +269,18 @@ Then the step runs and the set names the declared reason
 
 Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
 
+### SC-AK-1359 — a path version control ignores is no read of the step
+
+Given a step that reads a tracked text and a mark file in an ignored directory
+When the table is recorded
+Then the entry names the text and not the mark file
+
+Given the mark file is written anew under another name
+When the table check runs
+Then it stays green
+
+Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
+
 ### SC-AK-1166 — the push gate names every red light check by one refusal
 
 Given the gate set holds two red light checks, a green one between them and a heavy one after them

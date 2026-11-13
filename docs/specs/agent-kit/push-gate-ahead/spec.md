@@ -94,6 +94,9 @@ There is no interface: the guard answers with a refusal text, the run ahead with
 - **A step may declare what it is about in its own script.** `pushReadsChange` is the function the
   step filters the list of the change by, and the selection calls the same function.
   `PUSH_EVERY_CHANGE` names why the step runs on any change — it depends on the calendar.
+- **A path version control ignores is no read of the step.** It never lands in a change, so it can
+  neither start the step nor hide an input from it. Marks and caches beside the tree differ from
+  run to run, and the table check turned red on them.
 - **The table of reads is checked against what the steps read now.** A read the table does not
   cover is a refusal naming the step and the path. The check runs when a step or the table is
   touched.

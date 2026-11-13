@@ -74,6 +74,13 @@ function dirsOfTree() {
     return treeDirs;
 }
 
+/** The paths among these that version control ignores; a tracked file is never among them. */
+function ignoredOf(paths) {
+    if (!paths.length) return [];
+    const run = spawnSync('git', ['check-ignore', '--stdin', '-z'], { cwd: ROOT, input: paths.join('\0'), encoding: 'utf8' });
+    return (run.stdout ?? '').split('\0').filter(Boolean);
+}
+
 function readStdin() {
     try {
         return readFileSync(0, 'utf8');
@@ -229,6 +236,9 @@ function trace(step) {
         record.spawns.forEach((s, i) => [followed.has(`${record.pid}:${i}`) ? 'traced' : startKind(record, s)].flat().forEach((k) => kinds.add(k)));
     }
     rmSync(out, { recursive: true, force: true });
+    // A path version control ignores never lands in a change: such a read can neither start the step
+    // nor hide an input from it. Marks and caches written beside the tree differed from run to run.
+    for (const p of ignoredOf([...reads, ...probes, ...walks])) [reads, probes, walks].forEach((set) => set.delete(p));
     // A listing of version control names every file of the tree: it walks every directory at once.
     if (kinds.has('listing')) for (const dir of dirsOfTree()) walks.add(dir);
     return { seconds, exit: run.status ?? 1, reads, probes, walks, kinds, self: selfOf(step), declared: declaredOf(step) };
