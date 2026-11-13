@@ -65,5 +65,9 @@
   `project-manager`.
 - The first review round is answered: the guard suite is 59 green, the audit suites 91, 20 and 22,
   the layout matches the package. The audit no longer counts a bot as a reviewer.
+- The fixed guard was run on the real record of the conversation, 25 real menu answers at three
+  places each. Both real «yes» of 13.11 pass, the former guard refused them. Ten of the other 23
+  answers pass too, the former guard passed three: reading consent by words lets a foreign answer
+  through. The task does not fix it; the fix is a mark of the action carried by the menu.
 - The merge `847348e40` of the epic branch into the branch of the request #3225 lies in the local
   branch `RT-3197-rev-autonomous-work`, its push set is green, and the push waits for the owner.
