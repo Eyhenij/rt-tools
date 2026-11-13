@@ -94,6 +94,7 @@ probe 'только тексты' 'docs/x.md README.md' ''
 probe 'только обвязка агента' '.claude/hooks/probe.sh projects/agent-kit/assets/hooks/probe.sh' ''
 probe 'тексты и обвязка вместе' 'docs/x.md .claude/rt-kit/project.sh' ''
 probe 'проверки дерева' 'tools/probe.mjs' ''
+probe 'список, который читает только форматтер' '.prettierignore' ''
 probe 'проверка рядом с китом' 'tools/probe.mjs projects/ui-kit/src/a.ts' 'кит1'
 probe 'первый кит' 'projects/ui-kit/src/lib/probe.ts' 'кит1'
 # Второй кит рисует не только свою витрину: админка подключает его набор стилей, и её экраны
@@ -101,6 +102,20 @@ probe 'первый кит' 'projects/ui-kit/src/lib/probe.ts' 'кит1'
 probe 'второй кит' 'projects/ui-kit-v2/src/lib/probe.ts' 'кит2 сквозной'
 probe 'оба кита' 'projects/ui-kit/src/a.ts projects/ui-kit-v2/src/b.ts' 'кит1 кит2 сквозной'
 probe 'кит и обвязка агента' 'projects/ui-kit-v2/src/a.ts .claude/hooks/probe.sh' 'кит2 сквозной'
+# Обвязку снимков и тесты кита не грузит ни одно приложение: правка обвязки RT-3280 подняла два
+# сквозных набора зря. Обвязка задаёт окно, обрезку и сравнение кадра — снимки она поднимает.
+probe 'обвязка снимков второго кита' 'projects/ui-kit-v2/.storybook/test-runner.ts' 'кит2'
+# Скрипты шага снимков снимают обе витрины, скрипт второго кита — только свою. Каждый судится
+# отдельно: вместе с обвязкой витрины пробник зеленел бы от неё, а не от скрипта.
+probe 'скрипт шага снимков' 'tools/visual-gate.mjs' 'кит1 кит2'
+probe 'браузер снимков' 'tools/shot-browser.mjs' 'кит1 кит2'
+probe 'скрипт снимков второго кита' 'tools/visual-snapshots-v2.mjs' 'кит2'
+probe 'другая проверка дерева рядом' 'tools/check-dupes.mjs' ''
+probe 'тест компонента второго кита' 'projects/ui-kit-v2/src/lib/components/a/a.component.spec.ts' ''
+# История и витрина меняют только кадры витрины: приложения их не грузят.
+probe 'история второго кита' 'projects/ui-kit-v2/src/lib/components/a/stories/a.stories.ts' 'кит2'
+probe 'витрина второго кита' 'projects/ui-kit-v2/src/showcase/grid.component.ts projects/ui-kit-v2/.storybook/preview.ts' 'кит2'
+probe 'история и код кита' 'projects/ui-kit-v2/src/a.stories.ts projects/ui-kit-v2/src/lib/a.ts' 'кит2 сквозной'
 probe 'приёмник' 'apps/message-bus/src/probe.ts' 'образ-админки образ-приёмника сквозной'
 probe 'админка' 'apps/message-bus-admin/src/probe.ts' 'образ-админки образ-приёмника сквозной'
 probe 'выкатка' 'deploy/probe.yml' 'образ-админки образ-приёмника сквозной'
@@ -154,6 +169,73 @@ style_probe() {
 
 style_probe 'SC-AK-673 — только тексты: проверки оформления всё равно зовутся' 'docs/x.md'
 style_probe 'SC-AK-673 — снимок зависимостей поднимает их наравне с остальным' 'pnpm-lock.yaml'
+
+# SC-AK-569 — a branch of texts alone runs no lint, types, tests, build or guard scenarios.
+#
+# The builder counts a plan and the table of assignments as an input of every project, so a commit
+# of two text files ran seven minutes of lint and build and a quarter of an hour of guard scenarios.
+# The pair of the assertion: the same lines are in the set as soon as one file of code is touched.
+builder_probe() {
+    dir="$(probe_repo "$2")"
+    got="$(checks_for "$dir" | grep -c 'nx affected')"
+    rm -rf "$dir"
+    if [ "$got" = "$3" ]; then
+        ok=$((ok + 1))
+    else
+        bad=$((bad + 1))
+        printf '  РАЗОШЛОСЬ %s\n    ждали строк сборщика: %s\n    вышло: %s\n' "$1" "$3" "$got"
+    fi
+}
+
+builder_probe 'SC-AK-569 — a plan and the table of assignments call no builder step' 'docs/plans/x.md .claude/rt-kit/assignments.md' 0
+builder_probe 'SC-AK-569 — a markdown file at the root calls no builder step' 'README.md' 0
+builder_probe 'SC-AK-569 — a rule inside a package calls the builder steps' 'projects/agent-kit/assets/rules/x.md' 2
+builder_probe 'SC-AK-569 — a guard next to a text calls the builder steps' 'docs/x.md .claude/hooks/probe.sh' 2
+builder_probe 'SC-AK-569 — a check of the tree calls the builder steps' 'tools/probe.mjs' 2
+# The guard scenarios read the specs: one asks for a spec file by its path, another walks the
+# bindings of every spec. A spec is therefore no text the builder may skip.
+builder_probe 'SC-AK-569 — a spec calls the builder steps' 'docs/specs/agent-kit/x/spec.md' 2
+builder_probe 'SC-AK-569 — an archive record and a task folder call no builder step' 'docs/archive/x.md docs/tasks/RT-1-x/plan.md' 0
+# The sample of a task folder is read by a guard scenario from this very tree.
+builder_probe 'SC-AK-569 — the sample of a task folder calls the builder steps' 'docs/tasks/_template/grill.md' 2
+
+# The styles linter reads style files, its config and the dependencies only. A branch of the agent's
+# harness ran it for 9 s against a limit of 5 with not one style file in the change.
+styles_probe() {
+    dir="$(probe_repo "$2")"
+    got="$(checks_for "$dir" | grep -c 'lint:styles')"
+    rm -rf "$dir"
+    if [ "$got" = "$3" ]; then
+        ok=$((ok + 1))
+    else
+        bad=$((bad + 1))
+        printf '  РАЗОШЛОСЬ %s\n    ждали строк линтера стилей: %s\n    вышло: %s\n' "$1" "$3" "$got"
+    fi
+}
+
+styles_probe 'a hook without a style file skips the styles linter' '.claude/hooks/probe.sh projects/agent-kit/assets/hooks/probe.sh' 0
+styles_probe 'a style file runs the styles linter' 'projects/ui-kit-v2/src/a.scss' 1
+styles_probe 'the styles linter config runs it' 'stylelint.config.js' 1
+styles_probe 'a dependency change runs it' 'package.json' 1
+
+# `verify` lives in the second kit and utils alone. On a branch of the rules package the step ran no
+# task and still failed the push: the start of the builder took 2 s against a limit of 1.
+verify_probe() {
+    dir="$(probe_repo "$2")"
+    got="$(checks_for "$dir" | grep -c -- '-t verify')"
+    rm -rf "$dir"
+    if [ "$got" = "$3" ]; then
+        ok=$((ok + 1))
+    else
+        bad=$((bad + 1))
+        printf '  РАЗОШЛОСЬ %s\n    ждали строк verify: %s\n    вышло: %s\n' "$1" "$3" "$got"
+    fi
+}
+
+verify_probe 'the rules package, hooks, tools and texts skip verify' 'projects/agent-kit/src/a.ts .claude/hooks/a.sh tools/a.mjs docs/a.md .prettierignore' 0
+verify_probe 'a file of the second kit runs verify' 'projects/ui-kit-v2/src/a.ts' 1
+verify_probe 'a file of utils runs verify' 'projects/utils/src/a.ts' 1
+verify_probe 'a dependency change runs verify' 'pnpm-lock.yaml' 1
 
 printf 'набор гейта по предмету правки: %s ok, %s расхождений\n' "$ok" "$bad"
 [ "$bad" -eq 0 ]

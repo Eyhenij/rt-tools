@@ -4,9 +4,17 @@ A statement of the spec and the place where it is carried out. The link goes by 
 statement: a removed statement is removed together with its line.
 
 - **The push set is counted against the remote branch the head has the fewest commits over.** — `projects/agent-kit/assets/hooks/git-guard-push-marks.sh:rt_push_base`
+- **A head that adds no commit to its base is pushed with no check run.** — `projects/agent-kit/assets/hooks/git-guard-push-marks.sh:rt_push_adds_nothing`
 - **A check green on the same tree against the same base is not run again.** — `projects/agent-kit/assets/hooks/git-guard-push-marks.sh:rt_push_mark_has`
+- **A check the profile names unread paths for is keyed by the rest of the tree.** — `projects/agent-kit/assets/hooks/git-guard-push-marks.sh:rt_push_mark_key`
 - **A mark is trusted and written only on a clean working copy.** — `projects/agent-kit/assets/hooks/git-guard-push-marks.sh:rt_push_mark_clean`
 - **A mark is not written when the tree changed while the check ran.** — `projects/agent-kit/assets/hooks/git-guard-push-marks.sh:rt_push_mark_put`
 - **A tree that runs its heavy steps ahead gets a refusal at once for a heavy step with no mark.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:ahead_cmd`
 - **The run ahead runs the whole set, writes a mark for every green check and starts only on a clean copy.** — `projects/agent-kit/assets/hooks/git-guard-push-ahead.sh:key_before`
 - **Running ahead is declared by the tree, not by the package.** — `projects/agent-kit/assets/hooks/git-guard-push-marks.sh:rt_push_heavy_ahead`
+- **A check that passed over its time limit is red.** — `projects/agent-kit/assets/hooks/git-guard-push-marks.sh:rt_push_over_budget`; the limits are the profile's `rt_push_check_budget`, silent by default in `projects/agent-kit/assets/defaults/push.sh:rt_push_check_budget_default`; scenario `SC-AK-1350`
+- **A push whose whole set ran over its time limit is red.** — `projects/agent-kit/assets/hooks/git-guard-push-marks.sh:rt_push_set_over_budget`, called by `projects/agent-kit/assets/hooks/git-guard-push-ahead.sh` and `projects/agent-kit/assets/hooks/push-set.sh:rt_push_set_run`; the limit is the profile's `rt_push_set_budget`, silent by default in `projects/agent-kit/assets/defaults/push.sh:rt_push_set_budget_default`; the marks of such a run are removed by `projects/agent-kit/assets/hooks/git-guard-push-marks.sh:rt_push_mark_drop`; scenario `SC-AK-1351`
+- **A change of hooks, defaults and scenario files runs only the scenario files that reach it.** — `projects/agent-kit/tests/select-suites.sh:rt_select_suites`, called by `projects/agent-kit/tests/run.sh` when the push names its base; scenario `SC-AK-1352`
+- **A step runs only when the change reaches what the step reads.** — `projects/agent-kit/assets/checks/push-inputs.mjs:reasonOf`, the record by `projects/agent-kit/assets/checks/push-trace.mjs:OUT` and `projects/agent-kit/assets/checks/push-inputs.mjs:entryOf`; the runners call it through `projects/agent-kit/assets/hooks/git-guard-push-marks.sh:rt_push_select`; scenario `SC-AK-1353`
+- **A step whose reads the record cannot see runs on every change.** — `projects/agent-kit/assets/checks/push-inputs.mjs:spawnKind` and `projects/agent-kit/assets/checks/push-inputs.mjs:select`; scenario `SC-AK-1354`
+- **The table of reads is checked against what the steps read now.** — `projects/agent-kit/assets/checks/push-inputs.mjs:verify`, put into the set by `projects/agent-kit/assets/defaults/push.sh:rt_push_checks_default`; scenario `SC-AK-1355`

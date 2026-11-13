@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · defaults/push.sh · 1a07a9c6c0c3 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · defaults/push.sh · d85b9d586807 · правится надстройкой, не здесь
 # The push set: what runs before a push, which of it is heavy, and whether the branch touched only
 # texts.
 #
@@ -85,6 +85,11 @@ rt_push_checks_default() {
         [ -f "$root/$RT_CHECKS_DIR/$check.mjs" ] && printf '%s\n' "node $RT_CHECKS_DIR/$check.mjs"
     done
 
+    # The table of what each step reads against what the steps read now. The selection starts it
+    # only when a step or the table itself is touched: a step's reads change with its code.
+    [ -f "$root/$RT_CHECKS_DIR/push-inputs.mjs" ] && [ -f "$root/.claude/rt-kit/push-inputs.json" ] &&
+        printf '%s\n' "node $RT_CHECKS_DIR/push-inputs.mjs verify"
+
     return 0
 }
 
@@ -98,4 +103,22 @@ rt_push_check_heavy_default() {
     esac
 
     return 1
+}
+
+# How many seconds a check of the set may take, by the tree's own measurements. Silence — no limit.
+# A check that went over its limit is red even when it passed: a set that grew silently costs every
+# push, and nobody notices the minutes until the owner does. The package measures nothing itself.
+rt_push_check_budget_default() {
+    return 0
+}
+
+# How many seconds the whole set of one push may take, by the tree's own measurement. Silence — no
+# limit. Each step may stay within its own limit while the set holds steps the change did not need.
+rt_push_set_budget_default() {
+    return 0
+}
+
+# What the refusal of an over-limit check says after the numbers. Silence — the numbers alone.
+rt_push_over_budget_words_default() {
+    return 0
 }

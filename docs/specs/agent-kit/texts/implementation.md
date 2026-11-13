@@ -31,7 +31,7 @@ whole.
 - **The bans of the texts act inside a code block too.** — `projects/agent-kit/tests/texts.test.sh:domains_in`
 - **What counts as the address of a specific tree is what is listed, not everything that looks like a path.** — `projects/agent-kit/tests/texts.test.sh:COMMON_SEGMENTS`
 - **The machine half turns red only on the countable.** — `projects/agent-kit/tests/rules-review.test.sh:suite_result`
-- **The check of the package texts stands in the suite run before a push.** — `projects/agent-kit/src/lib/assets.spec.ts:expectGreen`
+- **The check of the package texts stands in the suite run before a push.** — `projects/agent-kit/tests/run.sh:suites`, which runs `texts.test.sh` and `rules-review.test.sh` as the target `test-hooks` of the push set
 - **The review reads the family whole, not a file at a time.** — `projects/agent-kit/assets/agents/rules-reviewer.md:family`
 - **The role gives back findings and edits nothing.** — `projects/agent-kit/assets/agents/rules-reviewer.md:tools`
 - **A finding names two places verbatim and what they diverge by.** — `projects/agent-kit/assets/agents/rules-reviewer.md:verbatim`

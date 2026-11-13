@@ -140,7 +140,7 @@ When the executor pushes the branch
 Then the check of the texts of the package goes without a separate command: it is named in the suite
 of the gate
 
-Covered: `projects/agent-kit/src/lib/assets.spec.ts`.
+Covered: `projects/agent-kit/tests/defaults.test.sh`.
 
 ### SC-AK-220 — the review reads the family whole
 
