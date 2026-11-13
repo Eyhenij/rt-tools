@@ -3,22 +3,24 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 2 — The pipeline wakes for a PR into the epic branch
-- **Done:** the task folder is written, the epic plan puts the change of method first
-- **Next step:** the epic branch form in the pull request trigger of the pipeline
-- **Uncommitted:** the time limit of a set step from 13.11 — not this task's, kept aside for the owner's word
+- **Stage:** 1 of 2 — Only the steps a change needs
+- **Done:** the plan is rewritten by the owner's word
+- **Next step:** bring the three step selection fixes from the branch of RT-3280
+- **Uncommitted:** the time limit of a set step — step 1.2 of this plan
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Add the epic branch form to the pull request trigger of the pipeline
-- [ ] 1.2 Bring the delivery rule texts about a PR off the main branch up to date
-- [ ] 2.1 Make the git hook skip every heavy step of the set
-- [ ] 2.2 Make the session push guard run no set
-- [ ] 2.3 Bring the push set spec and its scenarios up to date
+- [>] 1.1 Bring the base of the builder steps, the step selection by subject and the narrowed scenario run onto this branch
+- [ ] 1.2 Commit the time limit of a set step with its scenarios
+- [ ] 2.1 Run the set on this branch and read every step and its seconds
 
 ## Decisions along the way
+
+- **The heavy steps stay inside the session.** The owner's word: «Исключи пункт выноса в раннер
+  проверок … должен укладываться в лимиты». The plan is rewritten before any of its steps was done.
+  Affected stage of the plan: all.
 
 ## Sessions
 

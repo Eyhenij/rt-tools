@@ -1,54 +1,59 @@
 # Plan
 
 **Task:** RT-3273 · **Branch:** RT-3273-push-checks-leave-session
-**Behaviour:** unchanged — «исправляй флоу проверок чтобы не гонять лишнее»: the work moves checks of the rules package and the pipeline, no application code is touched
+**Behaviour:** unchanged — «исправляй флоу проверок чтобы не гонять лишнее»: the work moves checks of the rules package, no application code is touched
+
+Rewritten on 13.11.2026 by the owner's word: «Исключи пункт выноса в раннер проверок. Ты … должен
+проверять это все в течение сессии … должен укладываться в лимиты». The first version moved the heavy
+steps to the pipeline; the owner rejected it before any of its steps was done.
 
 ## Points
 
-- **A:** the push set runs 25–40 minutes inside the session, twice per push, and dies with the session.
-- **This task reaches:** a push of a branch takes under two minutes; the heavy steps run in the
-  pipeline, and the PR into the epic branch shows their result.
-- **Sign:** the time of `git push` of a branch with a code change, and a pipeline run on a PR into
-  the epic branch; the owner sees both on the PR page.
+- **A:** the push set runs 25–40 minutes inside the session and runs steps the change does not need.
+- **This task reaches:** the set runs only the steps a changed file needs, each within its measured
+  time, and refuses when a step goes over.
+- **Sign:** the set on a branch with a real change: every step it ran has a file reason, and no step
+  went over its limit. The owner reads the step list and the seconds in its output.
 - **Milestone G of the epic:** an epic of several tasks reaches `main` with no repeated questions to
   the owner and no false refusals.
-- **Metric:** minutes of a push inside the session — down, baseline 34 minutes on RT-3280.
+- **Metric:** minutes of the push set — down, baseline 34 minutes on RT-3280.
 
 ## Task footprint
 
-| What  | Where                                                                  |
-| ----- | ---------------------------------------------------------------------- |
-| Specs | `docs/specs/agent-kit/push-gate-ahead/`                                |
-| Laws  | `docs/constitution/delivery.md`, `docs/constitution/verifiability.md`  |
-| Rules | `.claude/skills/git-workflow/`, `.claude/skills/testing/`              |
-| Code  | `projects/agent-kit/assets/hooks/`, `.github/workflows/ci.yml`         |
+| What  | Where                                                               |
+| ----- | ------------------------------------------------------------------- |
+| Specs | `docs/specs/agent-kit/push-gate-ahead/`                             |
+| Laws  | `docs/constitution/delivery.md`, `docs/constitution/verifiability.md` |
+| Rules | `.claude/skills/git-workflow/`, `.claude/skills/testing/`           |
+| Code  | `projects/agent-kit/assets/hooks/`, `.claude/rt-kit/`               |
 
 ## What counts as done
 
-- A `git push` of a branch runs the light checks alone and takes under two minutes.
-- The session guard runs no check set on a push.
-- The pipeline runs on a PR into the epic branch.
+- The builder steps count what changed from the base of the branch, not from `main`.
+- A change of the snapshot harness or of kit specs runs no snapshots and no application suite.
+- A change of scenario files alone runs those files alone.
+- A step that passed over its measured limit refuses the push.
+- One set on this branch ran only steps with a file reason, each within its limit.
 
 ## Stages
 
-### 1. The pipeline wakes for a PR into the epic branch
+### 1. Only the steps a change needs
 
 - **Steps:**
-    1. Add the epic branch form to the pull request trigger of the pipeline
-    2. Bring the delivery rule texts about a PR off the main branch up to date
-- **Readiness sign:** the trigger names the task key form next to `main`
-- **Verified by:** `grep -n -A4 'pull_request:' .github/workflows/ci.yml` — the branch list holds `RT-*`
+    1. Bring the base of the builder steps, the step selection by subject and the narrowed scenario run onto this branch
+    2. Commit the time limit of a set step with its scenarios
+- **Readiness sign:** the scenarios of the step selection and of the time limit are green
+- **Verified by:** `bash projects/agent-kit/tests/tree-push-checks.test.sh` — the last line reads «0 расхождений»
 
-### 2. The push runs the light checks alone
+### 2. One set within its limit
 
 - **Steps:**
-    1. Make the git hook skip every heavy step of the set
-    2. Make the session push guard run no set
-    3. Bring the push set spec and its scenarios up to date
-- **Readiness sign:** the scenarios of the hook and of the guard are green
-- **Verified by:** `bash projects/agent-kit/tests/run.sh` — the last line reads «ВСЕ НАБОРЫ ЗЕЛЁНЫЕ»
+    1. Run the set on this branch and read every step and its seconds
+- **Readiness sign:** the set is green, and its output names no step over its limit
+- **Verified by:** `bash .claude/hooks/git-guard-push-ahead.sh` — the last line reads «the set is green»
 
 ## What this work does not do
 
-- The delivery rules on the host — task RT-3272.
-- Removing the run ahead and the marks: they stay until the pipeline answers for every PR.
+- Moving the heavy steps to the pipeline: rejected by the owner.
+- Snapshots of touched stories only, scenarios of a changed hook only, scenarios in parallel: next
+  tasks of the epic, each measured on its own.
