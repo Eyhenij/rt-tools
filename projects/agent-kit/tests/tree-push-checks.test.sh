@@ -94,6 +94,7 @@ probe 'только тексты' 'docs/x.md README.md' ''
 probe 'только обвязка агента' '.claude/hooks/probe.sh projects/agent-kit/assets/hooks/probe.sh' ''
 probe 'тексты и обвязка вместе' 'docs/x.md .claude/rt-kit/project.sh' ''
 probe 'проверки дерева' 'tools/probe.mjs' ''
+probe 'список, который читает только форматтер' '.prettierignore' ''
 probe 'проверка рядом с китом' 'tools/probe.mjs projects/ui-kit/src/a.ts' 'кит1'
 probe 'первый кит' 'projects/ui-kit/src/lib/probe.ts' 'кит1'
 # Второй кит рисует не только свою витрину: админка подключает его набор стилей, и её экраны

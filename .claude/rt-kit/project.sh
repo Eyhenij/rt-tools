@@ -330,7 +330,8 @@ rt_push_touched() {
             tools/visual-snapshots-v2.mjs) _add show2 ;;
             tools/visual-gate.mjs|tools/shot-browser.mjs|tools/shot-browser-name.mjs|tools/showcase-probe.mjs|tools/serve-static.mjs) _add show2; _add kit1 ;;
             # A code graph is data the session reads; above the subjects, as it lies inside a project.
-            docs/*|*.md|.claude/*|projects/agent-kit/*|tools/*|graphify-out/*|*/graphify-out/*) ;;
+            # The formatter's ignore list is read by the formatter alone, and no heavy step runs it.
+            docs/*|*.md|.claude/*|projects/agent-kit/*|tools/*|graphify-out/*|*/graphify-out/*|.prettierignore) ;;
             # The kits — each with a showcase of its own.
             projects/ui-kit/*) _add kit1 ;;
             projects/ui-kit-v2/*) _add kit2 ;;
