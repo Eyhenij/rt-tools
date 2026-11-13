@@ -13,7 +13,8 @@ rt_push_check_budget() {
         *'message-bus-admin-e2e:e2e'*) echo 252 ;;
         *'auth-example-e2e:e2e'*) echo 34 ;;
         *'serve:auth'*) echo 12 ;;
-        *'-t test-hooks'*) echo 1018 ;;
+        # 1018 one after another; 264 side by side, measured the same day (RT-3273).
+        *'-t test-hooks'*) echo 264 ;;
         *'-t lint typecheck test build'*) echo 182 ;;
         *'-t verify'*) echo 1 ;;
         *'lint:styles'*) echo 5 ;;

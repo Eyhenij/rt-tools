@@ -27,12 +27,21 @@ if [ -n "${RT_SUITES_BASE:-}" ]; then
     fi
 fi
 
+# The suites are independent and run side by side: one after another they took 1018 seconds on
+# 13.11.2026, the longest step of the push set. Each writes into a file of its own, and the verdict
+# is read in the former order.
+jobs="${RT_SUITES_JOBS:-8}"
+outdir="$(mktemp -d)"
+trap 'rm -rf "$outdir"' EXIT
+printf '%s\n' $suites | xargs -P "$jobs" -I{} bash -c 'bash "$1" > "$2/$1.out" 2>&1; echo $? > "$2/$1.code"' _ {} "$outdir"
+
 failed=0
 red=""
 lines=""
 for suite in $suites; do
     # Вывод набора идёт и на экран, и в память: строки провалов печатаются ещё раз в конце.
-    out="$(bash "$suite" 2>&1)" || {
+    out="$(cat "$outdir/$suite.out" 2>/dev/null)"
+    [ "$(cat "$outdir/$suite.code" 2>/dev/null)" = 0 ] || {
         failed=$((failed + 1))
         red="$red $suite"
         lines="$lines
