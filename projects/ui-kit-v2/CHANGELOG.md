@@ -1,3 +1,9 @@
+# [0.44.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.43.0...rt-ui-kit-v2%400.44.0) (2026-11-13)
+
+### Features
+
+- **rt:ui-kit-v2:** у панели сведений rt-workspace поверх окна шапка обычного асайда ([827540d](https://github.com/Eyhenij/rt-tools/commit/827540d76b3e567cd2b276f144af9936ec90d7b3))
+
 # [0.43.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.42.0...rt-ui-kit-v2%400.43.0) (2026-11-12)
 
 ### Bug Fixes
