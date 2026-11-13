@@ -29,13 +29,19 @@ export const Presets: TStory = { args: { part: 'presets' } };
  */
 export const Options: TStory = { args: { part: 'options' } };
 
-/**
- * Кнопка удаления и место кнопок: крестик под наведением и в фокусе, обе кнопки, вид «внутри
- * картинки» и четыре угла. Наведение ставится на превью, а в двух ячейках — и на сам крестик.
- */
+/** Наведение ставится на превью, а в двух ячейках — и на сам крестик */
+const BUTTONS_PSEUDO: string = ':is(.rt-image-upload__preview, .rt-image-upload__remove button)';
+
+/** Кнопка удаления: в покое её нет, под наведением и в фокусе она есть; обе кнопки рядом. */
 export const Buttons: TStory = {
     args: { part: 'buttons' },
-    parameters: { pseudo: storyPseudoParameters(':is(.rt-image-upload__preview, .rt-image-upload__remove button)') },
+    parameters: { pseudo: storyPseudoParameters(BUTTONS_PSEUDO) },
+};
+
+/** Место кнопок: четыре угла с выступом за угол и четыре угла внутри картинки. */
+export const ButtonsPlace: TStory = {
+    args: { part: 'place' },
+    parameters: { pseudo: storyPseudoParameters(BUTTONS_PSEUDO) },
 };
 
 export const Themes: TStory = { args: { part: 'themes' } };

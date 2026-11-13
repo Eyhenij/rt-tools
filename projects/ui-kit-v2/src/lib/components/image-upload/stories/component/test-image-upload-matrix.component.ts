@@ -16,7 +16,7 @@ import { RtImageUploadComponent } from '../../rt-image-upload.component';
 import { IRtImageUpload } from '../../rt-image-upload.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TImageUploadMatrixPart = 'states' | 'presets' | 'themes' | 'options' | 'buttons';
+export type TImageUploadMatrixPart = 'states' | 'presets' | 'themes' | 'options' | 'buttons' | 'place';
 
 /** Состояние места: какая картинка дана и что загрузчику велено */
 interface IImageUploadStateCase {
@@ -195,15 +195,26 @@ export class TestRtImageUploadMatrixComponent {
                 { ...BUTTONS_CASE, name: 'внутри, круглые', downloadable: true, shape: 'circle', placement: 'inside' },
             ],
         },
+    ];
+
+    /** Место кнопок: четыре угла в каждом из двух видов, обе кнопки включены */
+    public readonly placeRows: readonly IImageUploadButtonsRow[] = [
         {
-            caption: 'Углы',
+            caption: 'С выступом за угол (по умолчанию)',
             cases: [
+                { ...BUTTONS_CASE, name: 'правый верхний (по умолчанию)', downloadable: true },
                 { ...BUTTONS_CASE, name: 'левый верхний', downloadable: true, corner: 'top-left' },
-                { ...BUTTONS_CASE, name: 'левый нижний', downloadable: true, corner: 'bottom-left' },
                 { ...BUTTONS_CASE, name: 'правый нижний', downloadable: true, corner: 'bottom-right' },
-                { ...BUTTONS_CASE, name: 'левый верхний, внутри', downloadable: true, corner: 'top-left', placement: 'inside' },
-                { ...BUTTONS_CASE, name: 'левый нижний, внутри', downloadable: true, corner: 'bottom-left', placement: 'inside' },
-                { ...BUTTONS_CASE, name: 'правый нижний, внутри', downloadable: true, corner: 'bottom-right', placement: 'inside' },
+                { ...BUTTONS_CASE, name: 'левый нижний', downloadable: true, corner: 'bottom-left' },
+            ],
+        },
+        {
+            caption: 'Внутри картинки',
+            cases: [
+                { ...BUTTONS_CASE, name: 'правый верхний', downloadable: true, placement: 'inside' },
+                { ...BUTTONS_CASE, name: 'левый верхний', downloadable: true, corner: 'top-left', placement: 'inside' },
+                { ...BUTTONS_CASE, name: 'правый нижний', downloadable: true, corner: 'bottom-right', placement: 'inside' },
+                { ...BUTTONS_CASE, name: 'левый нижний', downloadable: true, corner: 'bottom-left', placement: 'inside' },
             ],
         },
     ];
