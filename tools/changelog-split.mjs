@@ -56,9 +56,11 @@ function split(lines) {
 }
 
 /**
- * The text as the commit hook will leave it. The release commit runs the formatter over the staged
- * files, and it puts a blank line between two adjacent release headings: the split of 0.23.1 counted
- * 500 lines, the commit held 501, and no branch of the tree could be pushed after it.
+ * The text as the formatter leaves it. The split writes both files formatted and counts the
+ * formatted text: the formatter puts a blank line between two adjacent release headings. The split
+ * of 0.23.1 counted 500 unformatted lines, the commit held 501, and no branch of the tree could be
+ * pushed after it. The commit hook of this tree does not format texts, so the split is the only
+ * place the journal gets its form.
  */
 async function formatted(path, text) {
     const options = (await resolveConfig(path)) ?? {};

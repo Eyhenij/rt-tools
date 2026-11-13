@@ -272,8 +272,8 @@ Given the release journal outgrew the length limit of a document
 When a new edition is released
 Then the old releases leave into a separate file by the same commit that raised the edition:
 measured at the push, the journal stopped the push of the whole tree — and not for whoever grew it.
-The journal is counted formatted, as the commit hook will leave it: the split of 0.23.1 counted 500
-lines, and the hook made them 501
+The journal is counted formatted, and the split writes it formatted: the split of 0.23.1 counted
+500 unformatted lines, and the formatter made them 501
 
 Covered: `tools/tests/changelog-split.test.sh`.
 
