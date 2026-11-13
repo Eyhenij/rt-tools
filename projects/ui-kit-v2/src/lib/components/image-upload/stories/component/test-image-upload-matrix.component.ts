@@ -16,7 +16,7 @@ import { RtImageUploadComponent } from '../../rt-image-upload.component';
 import { IRtImageUpload } from '../../rt-image-upload.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TImageUploadMatrixPart = 'states' | 'presets' | 'themes' | 'options';
+export type TImageUploadMatrixPart = 'states' | 'presets' | 'themes' | 'options' | 'buttons';
 
 /** Состояние места: какая картинка дана и что загрузчику велено */
 interface IImageUploadStateCase {
@@ -27,6 +27,39 @@ interface IImageUploadStateCase {
     readonly loading: boolean;
     readonly disabled: boolean;
 }
+
+/**
+ * Кнопки над картинкой: что включено, у какого угла и в каком виде. `state` — состояние превью,
+ * `innerState` — состояние самой кнопки удаления: наведённая кнопка стоит под наведённым превью.
+ */
+interface IImageUploadButtonsCase {
+    readonly name: string;
+    readonly state: string | null;
+    readonly innerState: string | null;
+    readonly downloadable: boolean;
+    readonly shape: IRtImageUpload.DownloadShape;
+    readonly corner: IRtImageUpload.ButtonsCorner;
+    readonly placement: IRtImageUpload.ButtonsPlacement;
+    readonly disabled: boolean;
+}
+
+/** Ряд случаев с кнопками и его подпись */
+interface IImageUploadButtonsRow {
+    readonly caption: string;
+    readonly cases: readonly IImageUploadButtonsCase[];
+}
+
+/** Случай по умолчанию: крестик под наведённым превью, квадратный, в правом верхнем углу с выступом */
+const BUTTONS_CASE: IImageUploadButtonsCase = {
+    name: '',
+    state: 'hover',
+    innerState: null,
+    downloadable: false,
+    shape: 'square',
+    corner: 'top-right',
+    placement: 'overhang',
+    disabled: false,
+};
 
 /** Значок кнопки выбора по умолчанию — тот же, что у загрузчика */
 const UPLOAD_ICON: string = 'ico-upload';
@@ -140,6 +173,43 @@ export class TestRtImageUploadMatrixComponent {
             { name: 'картинка', imageUrl: this.#url() },
         ]
     );
+
+    public readonly buttonRows: readonly IImageUploadButtonsRow[] = [
+        {
+            caption: 'Кнопка удаления',
+            cases: [
+                { ...BUTTONS_CASE, name: 'покой: крестика нет', state: null },
+                { ...BUTTONS_CASE, name: 'наведение на превью' },
+                { ...BUTTONS_CASE, name: 'наведение на крестик', innerState: 'hover' },
+                { ...BUTTONS_CASE, name: 'фокус на крестике', state: 'focus-within', innerState: 'focus-visible' },
+                { ...BUTTONS_CASE, name: 'круглая', shape: 'circle' },
+                { ...BUTTONS_CASE, name: 'недоступен: крестика нет', downloadable: true, disabled: true },
+            ],
+        },
+        {
+            caption: 'Обе кнопки',
+            cases: [
+                { ...BUTTONS_CASE, name: 'с выступом', downloadable: true },
+                { ...BUTTONS_CASE, name: 'с выступом, круглые', downloadable: true, shape: 'circle' },
+                { ...BUTTONS_CASE, name: 'внутри', downloadable: true, placement: 'inside' },
+                { ...BUTTONS_CASE, name: 'внутри, круглые', downloadable: true, shape: 'circle', placement: 'inside' },
+            ],
+        },
+        {
+            caption: 'Углы',
+            cases: [
+                { ...BUTTONS_CASE, name: 'левый верхний', downloadable: true, corner: 'top-left' },
+                { ...BUTTONS_CASE, name: 'левый нижний', downloadable: true, corner: 'bottom-left' },
+                { ...BUTTONS_CASE, name: 'правый нижний', downloadable: true, corner: 'bottom-right' },
+                { ...BUTTONS_CASE, name: 'левый верхний, внутри', downloadable: true, corner: 'top-left', placement: 'inside' },
+                { ...BUTTONS_CASE, name: 'левый нижний, внутри', downloadable: true, corner: 'bottom-left', placement: 'inside' },
+                { ...BUTTONS_CASE, name: 'правый нижний, внутри', downloadable: true, corner: 'bottom-right', placement: 'inside' },
+            ],
+        },
+    ];
+
+    /** Адрес картинки для рядов с кнопками: он один на все ячейки */
+    public readonly sampleUrl: Signal<string | null> = computed((): string | null => this.#url());
 
     constructor() {
         inject(DestroyRef).onDestroy((): void => {

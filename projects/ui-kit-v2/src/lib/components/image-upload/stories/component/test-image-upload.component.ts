@@ -41,6 +41,9 @@ export class TestRtImageUploadComponent {
     public downloadable: boolean = true;
     public downloadShape: IRtImageUpload.DownloadShape = 'circle';
     public downloadIconSize: IRtIcon.Size | null = null;
+    public removable: boolean = false;
+    public buttonsCorner: IRtImageUpload.ButtonsCorner = 'top-right';
+    public buttonsPlacement: IRtImageUpload.ButtonsPlacement = 'overhang';
     public chooseAppearance: IButton.Appearance = 'outlined';
     public chooseIcon: string | null = 'ico-upload';
     public autoApply: boolean = false;
@@ -54,5 +57,10 @@ export class TestRtImageUploadComponent {
     public imageChanged(file: File): void {
         // eslint-disable-next-line no-console
         console.log('image changed:', file);
+    }
+
+    public removed(): void {
+        // eslint-disable-next-line no-console
+        console.log('image removed');
     }
 }

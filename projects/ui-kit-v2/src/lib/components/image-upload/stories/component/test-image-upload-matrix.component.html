@@ -46,6 +46,31 @@
         </app-story-presets>
     }
 
+    @case ('buttons') {
+        <app-story-presets caption="Кнопка удаления и место кнопок в обоих наборах">
+            <ng-template>
+                @for (row of buttonRows; track row.caption) {
+                    <app-story-row [items]="row.cases" [itemLabel]="caseLabel" [slotWidth]="cellWidth">
+                        <ng-template let-buttonsCase>
+                            <div [attr.data-story-state]="buttonsCase.state">
+                                <div [attr.data-story-state]="buttonsCase.innerState">
+                                    <rt-image-upload
+                                        removable
+                                        [imageUrl]="sampleUrl()"
+                                        [downloadable]="buttonsCase.downloadable"
+                                        [downloadShape]="buttonsCase.shape"
+                                        [buttonsCorner]="buttonsCase.corner"
+                                        [buttonsPlacement]="buttonsCase.placement"
+                                        [disabled]="buttonsCase.disabled" />
+                                </div>
+                            </div>
+                        </ng-template>
+                    </app-story-row>
+                }
+            </ng-template>
+        </app-story-presets>
+    }
+
     @case ('themes') {
         <app-story-presets caption="Загрузчик в обеих темах в обоих наборах">
             <ng-template>

@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/angular';
 
+import { storyPseudoParameters } from '../../../../showcase/story-states';
 import { TestRtImageUploadMatrixComponent } from './component/test-image-upload-matrix.component';
 
 /**
@@ -27,5 +28,14 @@ export const Presets: TStory = { args: { part: 'presets' } };
  * размера со своим значком и размытием. Свойства блока заданы на самом загрузчике.
  */
 export const Options: TStory = { args: { part: 'options' } };
+
+/**
+ * Кнопка удаления и место кнопок: крестик под наведением и в фокусе, обе кнопки, вид «внутри
+ * картинки» и четыре угла. Наведение ставится на превью, а в двух ячейках — и на сам крестик.
+ */
+export const Buttons: TStory = {
+    args: { part: 'buttons' },
+    parameters: { pseudo: storyPseudoParameters(':is(.rt-image-upload__preview, .rt-image-upload__remove button)') },
+};
 
 export const Themes: TStory = { args: { part: 'themes' } };

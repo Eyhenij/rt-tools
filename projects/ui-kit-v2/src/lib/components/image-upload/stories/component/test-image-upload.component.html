@@ -5,6 +5,9 @@
     [downloadable]="downloadable"
     [downloadShape]="downloadShape"
     [downloadIconSize]="downloadIconSize"
+    [removable]="removable"
+    [buttonsCorner]="buttonsCorner"
+    [buttonsPlacement]="buttonsPlacement"
     [chooseAppearance]="chooseAppearance"
     [chooseIcon]="chooseIcon"
     [autoApply]="autoApply"
@@ -14,4 +17,5 @@
     [round]="round"
     [format]="format"
     [quality]="quality"
-    (imageChanged)="imageChanged($event)" />
+    (imageChanged)="imageChanged($event)"
+    (removed)="removed()" />
