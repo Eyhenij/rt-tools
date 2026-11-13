@@ -223,9 +223,11 @@ EOF
         [ -n "$1" ] && against=" --base=$1"
         printf '%s\n' \
             "pnpm exec nx affected -t lint typecheck test build --parallel$against" \
-            "${1:+RT_SUITES_BASE=$1 }pnpm exec nx affected -t test-hooks$against" \
-            'pnpm run lint:styles' \
-            "pnpm exec nx affected -t verify --parallel$against"
+            "${1:+RT_SUITES_BASE=$1 }pnpm exec nx affected -t test-hooks$against"
+        # The styles linter reads style files and its config only; a branch touching neither skips it.
+        { [ -n "$1" ] && ! git diff --name-only "$1...HEAD" 2>/dev/null | grep -qE '\.(scss|css)$|stylelint|^package\.json$|^pnpm-lock\.yaml$'; } ||
+            printf '%s\n' 'pnpm run lint:styles'
+        printf '%s\n' "pnpm exec nx affected -t verify --parallel$against"
     }
     printf '%s\n' 'node tools/check-push-gate.mjs'
 

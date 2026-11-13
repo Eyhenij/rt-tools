@@ -198,5 +198,24 @@ builder_probe 'SC-AK-569 — an archive record and a task folder call no builder
 # The sample of a task folder is read by a guard scenario from this very tree.
 builder_probe 'SC-AK-569 — the sample of a task folder calls the builder steps' 'docs/tasks/_template/grill.md' 3
 
+# The styles linter reads style files, its config and the dependencies only. A branch of the agent's
+# harness ran it for 9 s against a limit of 5 with not one style file in the change.
+styles_probe() {
+    dir="$(probe_repo "$2")"
+    got="$(checks_for "$dir" | grep -c 'lint:styles')"
+    rm -rf "$dir"
+    if [ "$got" = "$3" ]; then
+        ok=$((ok + 1))
+    else
+        bad=$((bad + 1))
+        printf '  РАЗОШЛОСЬ %s\n    ждали строк линтера стилей: %s\n    вышло: %s\n' "$1" "$3" "$got"
+    fi
+}
+
+styles_probe 'a hook without a style file skips the styles linter' '.claude/hooks/probe.sh projects/agent-kit/assets/hooks/probe.sh' 0
+styles_probe 'a style file runs the styles linter' 'projects/ui-kit-v2/src/a.scss' 1
+styles_probe 'the styles linter config runs it' 'stylelint.config.js' 1
+styles_probe 'a dependency change runs it' 'package.json' 1
+
 printf 'набор гейта по предмету правки: %s ok, %s расхождений\n' "$ok" "$bad"
 [ "$bad" -eq 0 ]
