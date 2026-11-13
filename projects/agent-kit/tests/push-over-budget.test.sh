@@ -22,8 +22,8 @@ report "SC-AK-1350 — the refusal names the time it took" "$(said "$(over 'node
 report "SC-AK-1350 — the refusal names the limit" "$(said "$(over 'node tools/check-a.mjs' 14)" 'against 12s')" yes
 report "SC-AK-1350 — the refusal carries the tree's words" "$(said "$(over 'node tools/check-a.mjs' 14)" 'the owner word')" yes
 report "SC-AK-1350 — a check at its limit is green" "[$(over 'node tools/check-a.mjs' 12)]" '[]'
-# The clock is read in whole seconds: a step of 12.2 s can read as 13.
-report "SC-AK-1350 — one second over the limit is the clock, green" "[$(over 'node tools/check-a.mjs' 13)]" '[]'
+# No margin: the owner's word is that a limit is only ever lowered, and a margin raises it.
+report "SC-AK-1350 — one second over the limit is refused" "$(said "$(over 'node tools/check-a.mjs' 13)" 'over the time limit')" yes
 report "SC-AK-1350 — a check with no limit is green however long" "[$(over 'docker build .' 9999)]" '[]'
 
 # The package default is silent: a tree that measured nothing gets no limit at all.
@@ -47,11 +47,11 @@ whole() {
     )
 }
 
-report "SC-AK-1351 — a whole set over its limit is refused" "$(said "$(whole 442)" 'the push went over its time limit')" yes
-report "SC-AK-1351 — the refusal names both numbers" "$(said "$(whole 442)" '442s against 440s')" yes
-report "SC-AK-1351 — the refusal asks why before the next push" "$(said "$(whole 442)" 'before the next push')" yes
-report "SC-AK-1351 — the refusal carries the tree's words" "$(said "$(whole 442)" 'the owner word')" yes
-report "SC-AK-1351 — a whole set within its limit is green" "[$(whole 441)]" '[]'
+report "SC-AK-1351 — a whole set over its limit is refused" "$(said "$(whole 441)" 'the push went over its time limit')" yes
+report "SC-AK-1351 — the refusal names both numbers" "$(said "$(whole 441)" '441s against 440s')" yes
+report "SC-AK-1351 — the refusal asks why before the next push" "$(said "$(whole 441)" 'before the next push')" yes
+report "SC-AK-1351 — the refusal carries the tree's words" "$(said "$(whole 441)" 'the owner word')" yes
+report "SC-AK-1351 — a whole set at its limit is green" "[$(whole 440)]" '[]'
 whole_silent="$(
     # shellcheck disable=SC1091
     . "$ASSETS/defaults/push.sh" 2>/dev/null

@@ -63,7 +63,9 @@ There is no interface: the guard answers with a refusal text, the run ahead with
   another tree's heavy steps take.
 - **A check that passed over its time limit is red.** The limit is the tree's own measurement of the
   step; a step with no measurement has no limit. The refusal names both numbers and the words the
-  tree gives it. One second over the limit is the clock: it is read in whole seconds at both ends.
+  tree gives it. There is no margin over the limit, and a limit is only ever lowered: the owner's
+  word is «делать меньше по времени — ты можешь, делать больше по времени и тем самым ослаблять
+  лимит — ты не имеешь права».
 - **A push whose whole set ran over its time limit is red.** Each step can stay within its own limit
   while the set holds steps the change did not need. The limit is the tree's measurement of a whole
   set, and the refusal asks the executor to find out why before the next push. Such a run leaves

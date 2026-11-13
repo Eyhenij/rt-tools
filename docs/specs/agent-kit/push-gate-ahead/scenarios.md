@@ -170,18 +170,18 @@ Covered: `projects/agent-kit/tests/git-guard-push-marks-unread.test.sh`.
 
 Given the profile gives a check a limit of 12 seconds and words for the refusal
 When the check passes in 14 seconds
-Then the set calls it red, and the refusal names 14, 12 and the words. At 12 and 13 seconds the
-check is green, since one second over is the clock. A check the profile gives no limit is green
-however long it took
+Then the set calls it red, and the refusal names 14, 12 and the words. At 13 seconds it is red
+too, as there is no margin; at 12 seconds the check is green. A check the profile gives no limit
+is green however long it took
 
 Covered: `projects/agent-kit/tests/push-over-budget.test.sh`.
 
 ### SC-AK-1351 — a push whose whole set ran over its time limit is red
 
 Given the profile gives a whole set a limit of 440 seconds and words for the refusal
-When the set of one push runs for 442 seconds
-Then the push is red, and the refusal names 442, 440 and the words and asks why before the next
-push. At 441 seconds the set is green, the package default sets no limit, and both runners judge
+When the set of one push runs for 441 seconds
+Then the push is red, and the refusal names 441, 440 and the words and asks why before the next
+push. At 440 seconds the set is green, the package default sets no limit, and both runners judge
 the sum. The run over the limit drops the marks it put, and a run within the limit keeps them
 
 Covered: `projects/agent-kit/tests/push-over-budget.test.sh`.
