@@ -59,8 +59,9 @@ There is no interface: the guard answers with a refusal in the executor's own tu
   owner who forbade writing the line left the executor one way out — stopping the work they had just
   set. The number is read from the call; the words of the executor do not count.
 - **A task being created is released by the latest answer of the owner to a menu.** It has no number
-  yet, so no answer can name it. The answer has to agree to a task: a word of a task or of creating
-  it, or a plain «yes», and a new epic needs the word of an epic. A refusal, an answer to an
+  yet, so no answer can name it. The answer has to agree to a task: it names the creating of a
+  task, or it is a plain «yes» or a word of a task to a question about the creating. A new epic
+  needs the word of an epic. A refusal, an answer to an
   unrelated question or a refusing message of the owner after the answer leaves the call refused.
   The number of an epic named by the call is not the number of the work, and a notice no person
   wrote cancels nothing: an owner who agreed is not asked to repeat it.

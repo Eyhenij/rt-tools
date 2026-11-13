@@ -241,6 +241,16 @@ stop_word "SC-AK-1343 — слова при отклонении вызова с
     "$(turn "$(answered "$AGREED")" "$(answered "$(printf "The user doesn't want to proceed with this tool use. To tell you how to proceed, the user said:\nнет, не заводи")")")" deny
 stop_word "SC-AK-1343 — номер эпика в уведомлении фоновой команды вызов не пускает" "$EPIC_TASK" \
     "$(turn "$(typed 'продолжай')" "$(noticed 'the report of the role names the epic RT-1947')")" deny
+stop_word "SC-AK-1343 — ответ «Не создавать задачу» задачу эпика не пускает" "$EPIC_TASK" \
+    "$(turn "$(answered 'The user answered: "Заводить задачу на находки?"="Не создавать задачу"')")" deny
+stop_word "SC-AK-1343 — ответ «Без задачи, записать долгом» задачу эпика не пускает" "$EPIC_TASK" \
+    "$(turn "$(answered 'The user answered: "Заводить задачу?"="Без задачи, записать долгом"')")" deny
+stop_word "SC-AK-1343 — ответ «Do not create» задачу эпика не пускает" "$EPIC_TASK" \
+    "$(turn "$(answered 'The user answered: "Create a task for it?"="Do not create a task"')")" deny
+stop_word "SC-AK-1343 — ответ «Создать задачу позже» задачу эпика не пускает" "$EPIC_TASK" \
+    "$(turn "$(answered 'The user answered: "Заводить задачу?"="Создать задачу позже"')")" deny
+stop_word "SC-AK-1343 — вывод команды со словами «the user said» согласия не отменяет" "$EPIC_TASK" \
+    "$(turn "$(answered "$AGREED")" "$(answered "$(printf 'grep: the user said:\nnothing to commit')")")" PASS
 
 # Согласие дано давно: после него в записи пятьсот пар «вызов команды и её результат».
 LONG="$TURNS/turn-long.jsonl"

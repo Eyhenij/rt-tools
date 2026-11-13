@@ -158,9 +158,13 @@ if [ -n "$transcript" ] && [ -f "$transcript" ] \
     fi
     yes='^\s*(да|yes|ок|ok)([^[:alpha:]]|$)'
     refusal='^\s*(нет([^[:alpha:]]|$)|не (надо|нужно|заводи|создавай|делай)|нельзя|no([^[:alpha:]]|$)|стоп|stop|отмен|cancel|подожд|wait|позже|later|пока ничего|ничего не (надо|нужно|заводи|делай)|nothing)'
-    put_off='отлож|потом|не сейчас|пока не|not now|later'
+    put_off='отлож|на потом|позже|завтра|не сейчас|пока не|not now|later'
+    # A denial inside the answer: «не создавать задачу», «без задачи», «do not create». The list
+    # above reads only the opening of a line, and an answer that opened with it by another form —
+    # an infinitive, «без» — read as consent by its word of a task.
+    denial='(^|[^[:alpha:]])(не|без|ничего не|do not|don.?t|skip)[[:space:]]+([^[:space:]]+[[:space:]]+)?(созда|завод|заве|задач|карточ|create|task|issue)'
     latest="$(owner_side "$transcript" | jq -s -r --arg topic "$topic" --arg deed "$deed" --arg yes "$yes" \
-        --arg refusal "$refusal" --arg put_off "$put_off" '
+        --arg refusal "$refusal" --arg put_off "$put_off" --arg denial "$denial" '
         def refuses: split("\n") | map(test($refusal; "i")) | any;
         [.[] | select(.type == "user")
             | select(((.isMeta // false) or (.isCompactSummary // false)) | not)
@@ -174,7 +178,7 @@ if [ -n "$transcript" ] && [ -f "$transcript" ] \
                         then (map(if type == "object" then (.text // "") else "" end) | join(" ")) else "" end)
                       | if test("^(The user answered|Your questions have been answered):")
                         then {menu: [match("\"([^\"]*)\"=\"([^\"]*)\""; "g") | {asked: .captures[0].string, chose: .captures[1].string}]}
-                        elif test("the user said:")
+                        elif test("^The user doesn.t want to proceed") and test("the user said:")
                         then {said: (split("the user said:") | .[1:] | join("\n") | ltrimstr("\n"))}
                         else empty end)
                   else empty end) | .[])
@@ -183,7 +187,7 @@ if [ -n "$transcript" ] && [ -f "$transcript" ] \
         | (map(has("menu")) | rindex(true)) as $at
         | if $at == null then "no"
           else (.[$at].menu | map(
-                    ((.chose | refuses) or (.chose | test($put_off; "i")) | not)
+                    ((.chose | refuses) or (.chose | test($put_off; "i")) or (.chose | test($denial; "i")) | not)
                     and ((.chose | test($deed; "i"))
                          or ((.chose | test($yes + "|" + $topic; "i")) and (.asked | test($deed; "i"))))
                 ) | any) as $agreed
