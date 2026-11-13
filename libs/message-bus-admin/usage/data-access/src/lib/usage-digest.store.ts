@@ -66,13 +66,8 @@ export class UsageDigestStore extends BaseAsyncStoreService<IUsageDigestState, T
             .subscribe();
     }
 
-    /** Прочитать сводку за дерево и период из адреса. Без дерева читать нечего: сводка снимается. */
+    /** Прочитать сводку за дерево и период из адреса. Без дерева сводка читается по всем деревьям, как и таблица. */
     public read(asked: IUsageSessionsAsked): void {
-        if (asked.tree === '') {
-            this.patchState((state: IUsageDigestState) => ({ ...state, digest: null, fault: null }));
-
-            return;
-        }
         this.#readSource.next(asked);
     }
 

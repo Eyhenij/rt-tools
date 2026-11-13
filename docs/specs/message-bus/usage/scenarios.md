@@ -212,3 +212,30 @@ Then the address holds the last seven days ending today, the day pickers show th
 and the digest re-read
 
 Covered: `apps/message-bus-admin-e2e/src/usage-section.spec.ts`, `libs/message-bus-admin/usage/util/src/lib/usage-digest.logic.spec.ts`.
+
+### SC-MB-428 — a reading without a tree counts all trees
+
+Given the rows of two trees over the period
+When the table, the digest and the sessions of a skill are read without a tree
+Then the storage is asked with no condition on the tree, and a named tree still narrows the query
+to its own rows
+
+Covered: `libs/message-bus-api/observations/feature/src/lib/usage-read.controller.spec.ts`.
+Покрытие: частичное — the text of the grouped query is read over seeded rows by SC-MB-430.
+
+### SC-MB-429 — an unknown named tree is refused
+
+Given a tree sign the receiver does not know
+When the table, the digest or the sessions of a skill are read with that sign
+Then the answer is `404` with the code `treeUnknown`
+
+Covered: `libs/message-bus-api/observations/feature/src/lib/usage-read.controller.spec.ts`.
+
+### SC-MB-430 — the section with «Все проекты» shows the table and the digest
+
+Given the stand with rows of two trees in August 2026
+When the section is opened for August with no tree in the address
+Then the table shows six rows — five skills of the first tree and one of the second — the digest
+counts seven loads, and no read refusal is shown
+
+Covered: `apps/message-bus-admin-e2e/src/usage-section.spec.ts`.
