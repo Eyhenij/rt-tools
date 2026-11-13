@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/push-inputs.mjs · f5146097e9ae · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/push-inputs.mjs · ae779ffdaad9 · правится надстройкой, не здесь
 /**
  * Which steps of the push set a change can reach. A step runs when the change touches what it
  * reads; a step the change cannot reach is not started.
@@ -31,7 +31,8 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { basename, dirname, extname, join, relative, resolve, sep } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { BASH_RECORDER, redirectsInput, shellLine } from './push-shell.mjs';
 
 const ROOT = process.cwd();
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -42,6 +43,7 @@ const TRACEABLE = /^(node\s+\S+\.m?js|pnpm run [\w:.-]+)(\s|$)/;
 const HEAVY = /(^|\s)nx\s|docker |playwright|e2e|visual-gate|serve:/;
 const LISTING = new Set(['ls-files', 'ls-tree', 'check-ignore', 'check-attr', 'status', 'config', 'hash-object', 'var']);
 const VERIFY = /push-inputs\.mjs verify/;
+const HISTORY_OF_PATHS = new Set(['log', 'diff', 'show', 'rev-list', 'blame']);
 
 const args = process.argv.slice(2);
 const option = (name) => {
@@ -57,6 +59,21 @@ const inside = (path) => {
 };
 const extOf = (path) => extname(path) || basename(path);
 const covers = (dir, path) => dir === '.' || path === dir || path.startsWith(`${dir}/`);
+const parentOf = (path) => (path.includes('/') ? path.slice(0, path.lastIndexOf('/')) : '.');
+// A walk without `deep` comes from a table written before the walks were told apart: read as deep.
+const reaches = (walk, path) => (walk.deep === false ? parentOf(path) === walk.dir : covers(walk.dir, path));
+
+/** The directories of the tree as version control knows them, the root included. */
+let treeDirs = null;
+function dirsOfTree() {
+    if (treeDirs) return treeDirs;
+    const listed = spawnSync('git', ['ls-files'], { cwd: ROOT, encoding: 'utf8', maxBuffer: 1 << 28 }).stdout ?? '';
+    treeDirs = new Set(['.']);
+    for (const file of listed.split('\n').filter(Boolean)) {
+        for (let dir = parentOf(file); dir !== '.'; dir = parentOf(dir)) treeDirs.add(dir);
+    }
+    return treeDirs;
+}
 
 function readStdin() {
     try {
@@ -99,6 +116,25 @@ function selfOf(step) {
     return [...own].sort();
 }
 
+const scriptOf = (step) => step.match(/^node\s+(\S+\.m?js)/)?.[1];
+
+/**
+ * What the step's own script declares about its reads. `PUSH_EVERY_CHANGE` names why the step runs on
+ * any change — it depends on the calendar, not on files. `pushReadsChange` is the very function the
+ * step filters the list of the change by: the selection calls it instead of a list written apart.
+ */
+function declaredOf(step) {
+    const script = scriptOf(step);
+    const text = script && existsSync(join(ROOT, script)) ? readFileSync(join(ROOT, script), 'utf8') : '';
+    return {
+        always: text.match(/export const PUSH_EVERY_CHANGE\s*=\s*['"`]([^'"`]+)['"`]/)?.[1] ?? '',
+        change: /export function pushReadsChange\b/.test(text),
+    };
+}
+
+/** The git calls by which a step reads the list of the change itself. */
+const CHANGE_LIST = new Set(['git diff', 'git merge-base', 'git rev-parse']);
+
 /** What a started process means for the step: nothing, a read of the history, or an unseen read. */
 function spawnKind(spawned) {
     const command = Array.isArray(spawned) ? spawned : spawned.command;
@@ -110,6 +146,8 @@ function spawnKind(spawned) {
     }
     const tool = basename(String(name ?? ''));
     if (tool === 'node' || name === process.execPath) return 'traced';
+    // The process table is no file of the tree: the package manager asks it on start.
+    if (tool === 'ps') return 'traced';
     if (tool !== 'git') return `untraced:${/^[\w.-]+$/.test(tool) && tool !== '.' ? tool : shell}`;
     const words = [...rest];
     let where = cwd;
@@ -122,15 +160,31 @@ function spawnKind(spawned) {
     if (relative(ROOT, where).startsWith('..')) return 'traced';
     const sub = words[0] ?? '';
     if (LISTING.has(sub)) return 'listing';
+    // The history of named paths changes only by a commit that touches them, that is, by a change of them.
+    const fence = words.indexOf('--');
+    const named = fence < 0 ? [] : words.slice(fence + 1).map((p) => rel(resolve(where, p))).filter((p) => p && !p.startsWith('..'));
+    if (HISTORY_OF_PATHS.has(sub) && named.length) return named.map((p) => `log:${p}`);
     if (sub === 'rev-parse' && words.slice(1).every((w) => /^--(show-toplevel|show-prefix|git-dir|git-common-dir|is-inside-work-tree|show-cdup)$/.test(w))) {
         return 'traced';
     }
     return `history:git ${sub}`;
 }
 
+/**
+ * A start no record follows. A binary of an installed package, started by a followed child — the
+ * schema engine under `prisma` — reads what that child hands it: the child's reads are recorded.
+ * Started by the step itself, the same binary stays unseen: nothing recorded its inputs.
+ */
+function startKind(record, spawned) {
+    const program = String(spawned.command?.[0] ?? '');
+    if (record.via && program.startsWith(`${join(ROOT, 'node_modules')}/`)) return 'traced';
+    return spawnKind(spawned);
+}
+
 /** One run of a step under the recorder: the raw reads, walks and process kinds. */
 function trace(step) {
     const out = mkdtempSync(join(tmpdir(), 'rt-push-trace-'));
+    writeFileSync(join(out, 'bash-env.sh'), BASH_RECORDER);
     const started = Date.now();
     const run = spawnSync('bash', ['-c', step], {
         cwd: ROOT,
@@ -139,7 +193,11 @@ function trace(step) {
             ...process.env,
             NODE_OPTIONS: `${process.env.NODE_OPTIONS ?? ''} --import ${TRACER}`.trim(),
             RT_PUSH_TRACE_OUT: out,
+            BASH_ENV: join(out, 'bash-env.sh'),
             NX_DAEMON: 'false',
+            // The builder loads its plugins only when it builds the project graph anew: from a cached
+            // graph the same step reads fewer files, and the table check turned red on a cache miss.
+            NX_CACHE_PROJECT_GRAPH: 'false',
         },
     });
     const seconds = Math.round((Date.now() - started) / 1000);
@@ -147,34 +205,79 @@ function trace(step) {
     const probes = new Set();
     const walks = new Set();
     const kinds = new Set();
-    for (const name of readdirSync(out)) {
-        const record = JSON.parse(readFileSync(join(out, name), 'utf8'));
+    const names = readdirSync(out);
+    const records = names.filter((n) => n.endsWith('.json')).map((name) => JSON.parse(readFileSync(join(out, name), 'utf8')));
+    // A start some record names as its `via` is followed: its reads are already among the records.
+    const followed = new Set(records.map((r) => r.via).filter(Boolean));
+    const sink = { reads, probes, walks, kinds };
+    const sources = new Set();
+    for (const name of names.filter((n) => n.endsWith('.trace'))) {
+        for (const line of readFileSync(join(out, name), 'utf8').split('\n').filter(Boolean)) {
+            const [tag, source] = line.split('\t');
+            if (tag) followed.add(tag);
+            if (source) sources.add(resolve(ROOT, source));
+            shellLine(line, sink, { root: ROOT, inside, rel, gitKind: spawnKind });
+        }
+    }
+    for (const file of sources) if (existsSync(file) && redirectsInput(readFileSync(file, 'utf8'))) kinds.add('untraced:bash <');
+    for (const record of records) {
         for (const p of record.reads) if (inside(p)) reads.add(rel(p));
         for (const p of record.probes ?? []) if (inside(p)) probes.add(rel(p));
         for (const p of record.walks) {
             if (resolve(p) === ROOT) walks.add('.');
             else if (inside(p)) walks.add(rel(p));
         }
-        for (const s of record.spawns) kinds.add(spawnKind(s));
+        record.spawns.forEach((s, i) => [followed.has(`${record.pid}:${i}`) ? 'traced' : startKind(record, s)].flat().forEach((k) => kinds.add(k)));
     }
     rmSync(out, { recursive: true, force: true });
-    if (kinds.has('listing')) walks.add('.');
-    return { seconds, exit: run.status ?? 1, reads, probes, walks, kinds, self: selfOf(step) };
+    // A listing of version control names every file of the tree: it walks every directory at once.
+    if (kinds.has('listing')) for (const dir of dirsOfTree()) walks.add(dir);
+    return { seconds, exit: run.status ?? 1, reads, probes, walks, kinds, self: selfOf(step), declared: declaredOf(step) };
 }
 
-/** The table entry: only the topmost walked directories, each with the extensions read under it. */
+/**
+ * The walks of a step as the table keeps them. A walk lists one directory, not the tree under it: a
+ * directory is written deep only when every directory of the tree under it was walked too, otherwise
+ * it is written as its own listing. Read as deep, a listing of the root the package manager takes on
+ * start made a step reachable by any file of the tree.
+ */
+function walksOf(walked) {
+    // A directory of the tree left unwalked leaves every directory above it short of deep.
+    const short = new Set();
+    for (const dir of dirsOfTree()) {
+        if (walked.has(dir)) continue;
+        for (let up = dir; up !== '.'; ) {
+            up = parentOf(up);
+            short.add(up);
+        }
+    }
+    const full = (dir) => walked.has(dir) && !short.has(dir);
+    const out = [];
+    for (const dir of [...walked].sort()) {
+        if (out.some((w) => w.deep && covers(w.dir, dir))) continue;
+        out.push({ dir, deep: full(dir) });
+    }
+    return out;
+}
+
+/** The table entry: the walks, each with the extensions read where it reaches. */
 function entryOf(raw) {
-    const dirs = [...raw.walks].sort();
-    const top = dirs.filter((d) => !dirs.some((o) => o !== d && covers(o, d)));
     const all = [...raw.reads, ...raw.self];
-    const walks = top.map((dir) => ({ dir, exts: [...new Set(all.filter((p) => covers(dir, p)).map(extOf))].sort() }));
-    const files = [...raw.reads].filter((p) => !walks.some((w) => covers(w.dir, p) && w.exts.includes(extOf(p)))).sort();
-    const probes = [...raw.probes].filter((p) => !raw.reads.has(p) && !raw.self.includes(p) && !walks.some((w) => covers(w.dir, p))).sort();
+    const walks = walksOf(raw.walks).map((w) => ({ ...w, exts: [...new Set(all.filter((p) => reaches(w, p)).map(extOf))].sort() }));
+    const files = [...raw.reads].filter((p) => !walks.some((w) => reaches(w, p) && w.exts.includes(extOf(p)))).sort();
+    const probes = [...raw.probes].filter((p) => !raw.reads.has(p) && !raw.self.includes(p) && !walks.some((w) => reaches(w, p))).sort();
     const kinds = [...raw.kinds];
     return {
         seconds: raw.seconds,
-        history: kinds.filter((k) => k.startsWith('history:')).map((k) => k.slice(8)).sort(),
+        ...(raw.declared?.always ? { always: raw.declared.always } : {}),
+        ...(raw.declared?.change ? { change: true } : {}),
+        history: kinds
+            .filter((k) => k.startsWith('history:'))
+            .map((k) => k.slice(8))
+            .filter((h) => !(raw.declared?.change && CHANGE_LIST.has(h)))
+            .sort(),
         untraced: kinds.filter((k) => k.startsWith('untraced:')).map((k) => k.slice(9)).sort(),
+        logs: kinds.filter((k) => k.startsWith('log:')).map((k) => k.slice(4)).sort(),
         self: raw.self,
         walks,
         files,
@@ -191,15 +294,39 @@ function loadTable() {
 }
 
 /** Why a change reaches a step; an empty answer — it does not. */
-function reasonOf(entry, changes) {
+/**
+ * Whether an added or removed path changes the listing of a directory walked alone: it does when the
+ * entry it stands under there is new or gone — a new migration directory under a listed one. Asked
+ * against the base for an addition and against the tree for a removal; a base git cannot read
+ * counts every entry as new.
+ */
+function listingOf(base) {
+    const known = new Map();
+    return (dir, path, kind) => {
+        const rest = dir === '.' ? path : path.slice(dir.length + 1);
+        const entry = dir === '.' ? rest.split('/')[0] : `${dir}/${rest.split('/')[0]}`;
+        const key = `${kind}:${entry}`;
+        if (!known.has(key)) {
+            const was = kind === 'A' ? spawnSync('git', ['cat-file', '-e', `${base}:${entry}`], { cwd: ROOT }).status === 0 : !existsSync(join(ROOT, entry));
+            known.set(key, !was);
+        }
+        return known.get(key);
+    };
+}
+
+function reasonOf(entry, changes, inChange = '', listed = () => true) {
+    if (entry.always) return entry.always;
     if (entry.history.length) return `reads the history (${entry.history.join(', ')})`;
     if (entry.untraced.length) return `starts ${entry.untraced.join(', ')}, whose reads are not seen`;
+    if (inChange) return `${inChange} is in the change it reads`;
     for (const { kind, path } of changes) {
         if (entry.self.includes(path)) return `${path} is the step itself`;
         if (entry.files.includes(path)) return `${path} is read by it`;
+        const logged = (entry.logs ?? []).find((p) => covers(p, path));
+        if (logged) return `${path} is in the history of ${logged} it reads`;
         const ext = extOf(path);
-        if (kind === 'M' && entry.walks.some((w) => covers(w.dir, path) && w.exts.includes(ext))) return `${path} lies where it reads ${ext}`;
-        if (kind !== 'M' && entry.walks.some((w) => covers(w.dir, path))) return `${path} is ${kind === 'A' ? 'added to' : 'removed from'} a directory it walks`;
+        if (kind === 'M' && entry.walks.some((w) => reaches(w, path) && w.exts.includes(ext))) return `${path} lies where it reads ${ext}`;
+        if (kind !== 'M' && entry.walks.some((w) => reaches(w, path) || (w.deep === false && covers(w.dir, path) && listed(w.dir, path, kind)))) return `${path} is ${kind === 'A' ? 'added to' : 'removed from'} a directory it walks`;
         if (kind !== 'M' && (entry.probes ?? []).some((f) => covers(f, path))) return `${path} is ${kind === 'A' ? 'added at' : 'removed from'} a path it probes`;
     }
     return '';
@@ -224,7 +351,20 @@ function changesOf(base) {
     return changes;
 }
 
-function select(base) {
+/**
+ * The first changed path the step's own filter takes, or an empty answer. A filter that fails to
+ * load or throws names the first change: the step runs, as a step without a record would.
+ */
+async function inChangeOf(step, changes) {
+    try {
+        const { pushReadsChange } = await import(pathToFileURL(join(ROOT, scriptOf(step))).href);
+        return changes.find((c) => pushReadsChange(c.path))?.path ?? '';
+    } catch {
+        return changes[0]?.path ?? '';
+    }
+}
+
+async function select(base) {
     const steps = stepsOf(readStdin());
     const table = loadTable();
     const changes = base ? changesOf(base) : null;
@@ -232,7 +372,8 @@ function select(base) {
         process.stdout.write(steps.map((s) => `${s}\n`).join(''));
         return 0;
     }
-    const verifyInputs = new Set([rel(tablePath), rel(TRACER), rel(fileURLToPath(import.meta.url))]);
+    const listed = listingOf(base);
+    const verifyInputs = new Set([rel(tablePath), rel(TRACER), rel(join(HERE, 'push-shell.mjs')), rel(fileURLToPath(import.meta.url))]);
     for (const entry of Object.values(table.steps)) for (const p of entry.self) verifyInputs.add(p);
     for (const step of steps) {
         let reason;
@@ -242,7 +383,8 @@ function select(base) {
         } else if (!table.steps[step]) {
             reason = traceable(step) ? 'it is not in the table' : 'its reads are not recorded';
         } else {
-            reason = reasonOf(table.steps[step], changes);
+            const entry = table.steps[step];
+            reason = reasonOf(entry, changes, entry.change ? await inChangeOf(step, changes) : '', listed);
         }
         if (reason) {
             process.stdout.write(`${step}\n`);
@@ -289,8 +431,9 @@ function verify() {
             if (!reasonOf(entry, [{ kind: 'A', path: p }])) misses.push(`${step}: probes ${p}`);
         }
         for (const d of raw.walks) {
-            if (!entry.walks.some((w) => covers(w.dir, d))) misses.push(`${step}: walks ${d}`);
+            if (!entry.walks.some((w) => w.dir === d || (w.deep !== false && covers(w.dir, d)))) misses.push(`${step}: walks ${d}`);
         }
+        for (const p of now.logs) if (!(entry.logs ?? []).includes(p)) misses.push(`${step}: now reads the history of ${p}`);
     }
     if (!misses.length) {
         process.stdout.write(`push inputs: the table covers what all ${Object.keys(table.steps).length} steps read\n`);
@@ -305,6 +448,6 @@ function verify() {
 }
 
 const command = args[0];
-const code = command === 'record' ? record() : command === 'verify' ? verify() : command === 'select' ? select(args[1]) : 2;
+const code = command === 'record' ? record() : command === 'verify' ? verify() : command === 'select' ? await select(args[1]) : 2;
 if (code === 2) process.stderr.write('usage: push-inputs.mjs record | select <base> | verify\n');
 process.exit(code);

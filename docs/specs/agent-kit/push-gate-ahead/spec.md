@@ -80,8 +80,20 @@ There is no interface: the guard answers with a refusal text, the run ahead with
   path it probed; an edit of the step's own files reaches it always. The record is taken on a tree
   where the set is green: a red check stops early and leaves part of its reads unrecorded.
 - **A step whose reads the record cannot see runs on every change.** That is a step that reads the
-  history of the tree, a step that starts a process other than `node` and `git`, and a step the
-  table does not hold. With no table or no base every step runs.
+  history of the tree, a step that starts a process the record does not follow, a shell that reads
+  by an input redirection, and a step the table does not hold. With no table or no base every step
+  runs.
+- **A walk is the listing of one directory, not of the tree under it.** A directory counts as walked
+  deep only when every directory of the tree under it was walked too. An edit under a directory
+  listed alone does not reach the step; a file added to or removed from it does, and so does a file
+  whose directory is new to that listing or gone from it.
+- **A start the record follows is read through its own record.** A child `node` started through
+  `npm`, `npx` or a shell, a shell itself, and a binary of an installed package started by a followed
+  child are seen whole: their reads, copies and loaded modules join the step's. A git call with a
+  path after `--` reads the history of that path, and a change of that path reaches the step.
+- **A step may declare what it is about in its own script.** `pushReadsChange` is the function the
+  step filters the list of the change by, and the selection calls the same function.
+  `PUSH_EVERY_CHANGE` names why the step runs on any change — it depends on the calendar.
 - **The table of reads is checked against what the steps read now.** A read the table does not
   cover is a refusal naming the step and the path. The check runs when a step or the table is
   touched.
