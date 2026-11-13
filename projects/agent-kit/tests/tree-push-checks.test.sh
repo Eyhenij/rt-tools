@@ -101,6 +101,14 @@ probe 'первый кит' 'projects/ui-kit/src/lib/probe.ts' 'кит1'
 probe 'второй кит' 'projects/ui-kit-v2/src/lib/probe.ts' 'кит2 сквозной'
 probe 'оба кита' 'projects/ui-kit/src/a.ts projects/ui-kit-v2/src/b.ts' 'кит1 кит2 сквозной'
 probe 'кит и обвязка агента' 'projects/ui-kit-v2/src/a.ts .claude/hooks/probe.sh' 'кит2 сквозной'
+# Обвязку снимков и тесты кита не грузит ни одно приложение, и кадр от них не меняется: правка
+# обвязки RT-3280 подняла снимки всей витрины и два сквозных набора, 12 лишних минут.
+probe 'обвязка снимков второго кита' 'projects/ui-kit-v2/.storybook/test-runner.ts tools/visual-gate.mjs' ''
+probe 'тест компонента второго кита' 'projects/ui-kit-v2/src/lib/components/a/a.component.spec.ts' ''
+# История и витрина меняют только кадры витрины: приложения их не грузят.
+probe 'история второго кита' 'projects/ui-kit-v2/src/lib/components/a/stories/a.stories.ts' 'кит2'
+probe 'витрина второго кита' 'projects/ui-kit-v2/src/showcase/grid.component.ts projects/ui-kit-v2/.storybook/preview.ts' 'кит2'
+probe 'история и код кита' 'projects/ui-kit-v2/src/a.stories.ts projects/ui-kit-v2/src/lib/a.ts' 'кит2 сквозной'
 probe 'приёмник' 'apps/message-bus/src/probe.ts' 'образ-админки образ-приёмника сквозной'
 probe 'админка' 'apps/message-bus-admin/src/probe.ts' 'образ-админки образ-приёмника сквозной'
 probe 'выкатка' 'deploy/probe.yml' 'образ-админки образ-приёмника сквозной'

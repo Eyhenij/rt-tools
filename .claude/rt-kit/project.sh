@@ -277,13 +277,9 @@ EOF
     {
         case " $_touched " in *' receiver '*) printf '%s\n%s\n%s\n' "$e2e" "$img_api" "$img_web" ;; esac
         case " $_touched " in *' kit1 '*) printf '%s\n' "$shot_v1" ;; esac
-    # Второй кит рисует не только свою витрину. Админка подключает его набор стилей одной строкой
-    # в своём корневом файле оформления, поэтому правка кита меняет каждый её экран — и кадры этих
-    # экранов обязаны сличиться здесь, а не через день у соседней ветки. Цена молчания замерена:
-    # работа RT-1993 привезла гарнитуру, пересняла 600 кадров витрины и ушла зелёной по своему
-    # признаку, а экраны админки не сличались ни разу — 23 кадра разошлись и держали отправку у
-    # всех веток эпика (задача RT-2257). Образы сюда не идут: правка кита их не ломает, а сквозной
-    # набор собирает прод-сборку сам.
+        case " $_touched " in *' show2 '*) printf '%s\n' "$shot_v2" ;; esac
+    # A kit edit changes every admin screen: its styles are one line of the admin root sheet, and
+    # unmatched admin frames once held every branch of an epic (RT-2257). No images: the suite builds.
         case " $_touched " in *' kit2 '*) printf '%s\n%s\n' "$shot_v2" "$e2e" ;; esac
     # The entry module: the stand, its check and the suite of the example. The second kit draws the
     # entry screens of the theme and the example admin, so its edit raises them too.
@@ -329,6 +325,10 @@ rt_push_touched() {
             # The check of the auth stand is the script of a heavy step and goes before the rest of
             # the checks.
             tools/auth-stand-check.mjs) _add auth ;;
+            # No frame changes from the snapshot harness or a spec: their scenarios run with the light
+            # checks, the pipeline of the epic PR shoots. A story or the showcase moves frames only.
+            projects/ui-kit-v2/.storybook/test-runner*|projects/ui-kit-v2/*.spec.ts) ;;
+            projects/ui-kit-v2/.storybook/*|projects/ui-kit-v2/src/showcase/*|projects/ui-kit-v2/*.stories.ts|projects/ui-kit-v2/*.mdx) _add show2 ;;
             # A code graph is data the session reads; above the subjects, as it lies inside a project.
             docs/*|*.md|.claude/*|projects/agent-kit/*|tools/*|graphify-out/*|*/graphify-out/*) ;;
             # The kits — each with a showcase of its own.
