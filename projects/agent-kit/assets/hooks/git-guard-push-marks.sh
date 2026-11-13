@@ -191,8 +191,26 @@ rt_push_over_budget() {
     limit="$(rt_push_check_budget "$check" 2>/dev/null)"
     case "$limit" in '' | *[!0-9]*) return 0 ;; esac
     case "$took" in '' | *[!0-9]*) return 0 ;; esac
-    [ "$took" -gt "$limit" ] || return 0
+    # The clock is read in whole seconds at both ends, so a step of 1.2 s reads as 2: one second
+    # over the limit is the clock, not the step.
+    [ "$took" -gt $((limit + 1)) ] || return 0
     words="$(command -v rt_push_over_budget_words >/dev/null 2>&1 && rt_push_over_budget_words "$check" 2>/dev/null)"
     printf 'over the time limit: %ss against %ss measured for this step. Find what the step runs that the change does not need.%s\n' \
+        "$took" "$limit" "${words:+ $words}"
+}
+
+# The refusal of a whole set that took longer than the profile allows a push, or nothing. Every
+# step can stay within its own limit while the set holds steps the change did not need: only the
+# sum shows it. The steps green in this run keep their marks — the time is spent, and a second run
+# of the same code buys nothing. The executor finds out why the set ran so long before the next push.
+rt_push_set_over_budget() {
+    local took="$1" limit words
+    command -v rt_push_set_budget >/dev/null 2>&1 || return 0
+    limit="$(rt_push_set_budget 2>/dev/null)"
+    case "$limit" in '' | *[!0-9]*) return 0 ;; esac
+    case "$took" in '' | *[!0-9]*) return 0 ;; esac
+    [ "$took" -gt $((limit + 1)) ] || return 0
+    words="$(command -v rt_push_over_budget_words >/dev/null 2>&1 && rt_push_over_budget_words 'the whole set' 2>/dev/null)"
+    printf 'the push went over its time limit: %ss against %ss measured for a whole set. Find out why before the next push: name every step that ran, the file of the change that called it and its minutes.%s\n' \
         "$took" "$limit" "${words:+ $words}"
 }

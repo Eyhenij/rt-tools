@@ -325,9 +325,9 @@ rt_push_touched() {
             # The check of the auth stand is the script of a heavy step and goes before the rest of
             # the checks.
             tools/auth-stand-check.mjs) _add auth ;;
-            # No frame changes from the snapshot harness or a spec: their scenarios run with the light
-            # checks, the pipeline of the epic PR shoots. A story or the showcase moves frames only.
-            projects/ui-kit-v2/.storybook/test-runner*|projects/ui-kit-v2/*.spec.ts) ;;
+            # A spec changes no frame. The snapshot harness sets the window, the crop and the match of
+            # every frame, so it shoots; a story or the showcase moves frames only, no application.
+            projects/ui-kit-v2/*.spec.ts) ;;
             projects/ui-kit-v2/.storybook/*|projects/ui-kit-v2/src/showcase/*|projects/ui-kit-v2/*.stories.ts|projects/ui-kit-v2/*.mdx) _add show2 ;;
             # A code graph is data the session reads; above the subjects, as it lies inside a project.
             docs/*|*.md|.claude/*|projects/agent-kit/*|tools/*|graphify-out/*|*/graphify-out/*) ;;

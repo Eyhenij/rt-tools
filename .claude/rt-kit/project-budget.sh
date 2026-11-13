@@ -24,6 +24,14 @@ rt_push_check_budget() {
     esac
 }
 
+# The whole set of one push: the green set of task RT-3273 on 13.11.2026, the only whole set measured
+# after the steps the change did not need were taken out. A push over it is investigated before the
+# next one. The owner's order of 13.11.2026: «запиши лимит на отправку ветки, если отправка занимает
+# дольше — ты обязан разбираться почему это там».
+rt_push_set_budget() {
+    echo 440
+}
+
 rt_push_over_budget_words() {
     printf '%s\n' 'Слово владельца: исполнитель — тупое чмо, набор снова гоняет лишнее.'
 }

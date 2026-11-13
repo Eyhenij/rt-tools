@@ -39,6 +39,7 @@ command -v rt_push_checks >/dev/null 2>&1 || {
 }
 command -v rt_push_check_heavy >/dev/null 2>&1 || rt_push_check_heavy() { return 1; }
 command -v rt_push_over_budget >/dev/null 2>&1 || rt_push_over_budget() { return 0; }
+command -v rt_push_set_over_budget >/dev/null 2>&1 || rt_push_set_over_budget() { return 0; }
 # The line of a run for the metrics. No file — the checks run and record nothing.
 # shellcheck disable=SC1091
 [ -f "$rt_hooks_dir/metric-marks.sh" ] && . "$rt_hooks_dir/metric-marks.sh" 2>/dev/null
@@ -64,6 +65,7 @@ printf 'push ahead: base %s, tree %s\n' "${base:-none}" "$(git rev-parse --short
 sign="$(rt_tree_sign .)"
 
 red=""
+set_started="$(date +%s)"
 while IFS= read -r check; do
     [ -z "$check" ] && continue
     if rt_push_mark_has "$check" "$base"; then
@@ -101,6 +103,14 @@ while IFS= read -r check; do
 done <<EOF
 $(rt_push_checks "$base")
 EOF
+
+set_took=$(($(date +%s) - set_started))
+set_over="$(rt_push_set_over_budget "$set_took")"
+if [ -n "$set_over" ]; then
+    printf '✗ the whole set in %ss: %s\n' "$set_took" "$set_over"
+    red="${red}${red:+
+}the whole set: ${set_took}s"
+fi
 
 if [ -n "$red" ]; then
     printf '\npush ahead: red —\n%s\n' "$red"

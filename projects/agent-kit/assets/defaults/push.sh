@@ -106,6 +106,12 @@ rt_push_check_budget_default() {
     return 0
 }
 
+# How many seconds the whole set of one push may take, by the tree's own measurement. Silence — no
+# limit. Each step may stay within its own limit while the set holds steps the change did not need.
+rt_push_set_budget_default() {
+    return 0
+}
+
 # What the refusal of an over-limit check says after the numbers. Silence — the numbers alone.
 rt_push_over_budget_words_default() {
     return 0
