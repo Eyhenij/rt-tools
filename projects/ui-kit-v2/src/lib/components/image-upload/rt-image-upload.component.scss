@@ -43,10 +43,59 @@
             vertical-align: top;
         }
 
-        &__download {
+        /* Ряд кнопок над картинкой. Крестик стоит в шаблоне первым, поэтому у правых углов ряд
+           идёт справа налево: крестик встаёт в самый угол, скачивание — рядом с ним. */
+        &__buttons {
             position: absolute;
-            top: 0;
-            right: 0;
+            display: flex;
+            gap: var(--rt-space-xs);
+
+            &--top-right {
+                top: 0;
+                right: 0;
+                flex-direction: row-reverse;
+            }
+
+            &--top-left {
+                top: 0;
+                left: 0;
+            }
+
+            &--bottom-right {
+                right: 0;
+                bottom: 0;
+                flex-direction: row-reverse;
+            }
+
+            &--bottom-left {
+                bottom: 0;
+                left: 0;
+            }
+
+            /* Внутри картинки: отступ превью плюс расстояние от края картинки. */
+            &--inside {
+                margin: calc(var(--rt-image-upload-download-overhang) + var(--rt-space-sm));
+            }
+        }
+
+        /* Крестик скрыт, пока указатель не над превью и фокус не внутри него; на касании
+           наведения нет, и он виден всегда. */
+        &__remove {
+            opacity: 0;
+
+            @media (hover: none) {
+                opacity: 1;
+            }
+        }
+
+        &__preview:hover &__remove,
+        &__preview:focus-within &__remove {
+            opacity: 1;
+        }
+
+        /* Крестик делит с кнопкой скачивания размер, форму, подложку и размытие. */
+        &__remove,
+        &__download {
             border-radius: var(--rt-image-upload-download-radius);
             /* stylelint-disable-next-line property-no-vendor-prefix -- Safari < 18 */
             -webkit-backdrop-filter: blur(var(--rt-image-upload-download-blur));

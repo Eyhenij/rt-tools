@@ -56,6 +56,9 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 Зона загрузки — `rt-empty-state` с пунктирной рамкой внутри `rt-file-drop`. Кнопка скачивания
 лежит на правом верхнем углу картинки и заходит за её край, как в первом ките, на размытой
 подложке. Она круглая, а по входу `downloadShape` — квадратная; размер её значка задаёт `downloadIconSize`.
+По входу `removable` рядом встаёт крестик: он отдаёт `removed`, а картинку убирает приложение. Крестик
+виден при наведении и при фокусе, на касании — всегда. Угол обеих кнопок задаёт `buttonsCorner`, а
+`buttonsPlacement="inside"` ставит их внутрь картинки.
 Кнопка выбора файла в пустом загрузчике берёт вид из `chooseAppearance` и значок из `chooseIcon`. Высота картинки
 ограничена свойством `--rt-image-upload-image-max-height`. Остальные свойства блока —
 `--rt-image-upload-image-radius`, `--rt-image-upload-hover-opacity`, `--rt-image-upload-focus-shadow`,
@@ -65,30 +68,34 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход               | тип                                                     | умолчание                    |
-| ------------------ | ------------------------------------------------------- | ---------------------------- |
-| `imageUrl`         | `string \| null`                                        | `null`                       |
-| `fileName`         | `string`                                                | `'image'`                    |
-| `tooltip`          | `string`                                                | `''` → `uiImageUploadChange` |
-| `downloadable`     | `boolean`                                               | `false`                      |
-| `downloadShape`    | `'circle' \| 'square'`                                  | `'circle'`                   |
-| `downloadIconSize` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl' \| null` | `null` → по размеру кнопки   |
-| `chooseAppearance` | `'filled' \| 'outlined' \| 'text'`                      | `'outlined'`                 |
-| `chooseIcon`       | `string \| null`                                        | `'ico-upload'`               |
-| `autoApply`        | `boolean`                                               | `false`                      |
-| `loading`          | `boolean`                                               | `false`                      |
-| `disabled`         | `boolean`                                               | `false`                      |
-| `ratio`            | `number \| null`                                        | `null`                       |
-| `round`            | `boolean`                                               | `false`                      |
-| `format`           | `'png' \| 'jpeg' \| 'webp' \| null`                     | `null`                       |
-| `quality`          | `number`                                                | `92`                         |
+| вход               | тип                                                            | умолчание                    |
+| ------------------ | -------------------------------------------------------------- | ---------------------------- |
+| `imageUrl`         | `string \| null`                                               | `null`                       |
+| `fileName`         | `string`                                                       | `'image'`                    |
+| `tooltip`          | `string`                                                       | `''` → `uiImageUploadChange` |
+| `downloadable`     | `boolean`                                                      | `false`                      |
+| `downloadShape`    | `'circle' \| 'square'`                                         | `'circle'`                   |
+| `downloadIconSize` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl' \| null`        | `null` → по размеру кнопки   |
+| `removable`        | `boolean`                                                      | `false`                      |
+| `buttonsCorner`    | `'top-right' \| 'top-left' \| 'bottom-right' \| 'bottom-left'` | `'top-right'`                |
+| `buttonsPlacement` | `'overhang' \| 'inside'`                                       | `'overhang'`                 |
+| `chooseAppearance` | `'filled' \| 'outlined' \| 'text'`                             | `'outlined'`                 |
+| `chooseIcon`       | `string \| null`                                               | `'ico-upload'`               |
+| `autoApply`        | `boolean`                                                      | `false`                      |
+| `loading`          | `boolean`                                                      | `false`                      |
+| `disabled`         | `boolean`                                                      | `false`                      |
+| `ratio`            | `number \| null`                                               | `null`                       |
+| `round`            | `boolean`                                                      | `false`                      |
+| `format`           | `'png' \| 'jpeg' \| 'webp' \| null`                            | `null`                       |
+| `quality`          | `number`                                                       | `92`                         |
 
 ## Выходы
 
-| выход          | тип    | когда                                             |
-| -------------- | ------ | ------------------------------------------------- |
-| `imageChanged` | `File` | «Применить», а при `autoApply` — каждый результат |
-| `downloaded`   | `void` | нажата кнопка скачивания                          |
+| выход          | тип    | когда                                               |
+| -------------- | ------ | --------------------------------------------------- |
+| `imageChanged` | `File` | «Применить», а при `autoApply` — каждый результат   |
+| `downloaded`   | `void` | нажата кнопка скачивания                            |
+| `removed`      | `void` | нажата кнопка удаления; картинку убирает приложение |
 
 ## Рядом
 
