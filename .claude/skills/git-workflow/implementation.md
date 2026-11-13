@@ -59,8 +59,12 @@ consequence of a merge.
   stands on someone else's branch, and a folder created there stays in its index as litter.
 - **An approved tree carries the whole work of the session and nothing else.** No old branch, no
   foreign branch, no leftovers of a previous task: only the branch of the current one.
+- **A temporary tree is removed once its work is over and every task of it has reached
+  production.** The main copy is permanent and is never removed. Other sessions work in it or in
+  trees of their own, so a finished temporary tree is needed by nobody: it is removed as litter,
+  together with its branches and the containers of its stands.
 
-The four statements are checked by nothing; they are held by this section. The owner's words of
+The five statements are checked by nothing; they are held by this section. The owner's words of
 13.11.2026: «заведение нового дерева нужно спрашивать у человека», «если человек одобрил и ты создал
 дерево - ты работаешь там в полный рост, никаких старых веток или прочего мусора».
 
