@@ -4,10 +4,13 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 2 of 3 — The queue audit says what the rules say
-- **Done:** the guard reads the owner's consent, 51 scenarios green; the task RT-3268 is created;
-  the audit counts a lag in a summary line and names a PR without a reviewer, its scenarios green
-- **Next step:** take the branch `RT-3268-epic-stop-consent-queue-audit` from this commit once the
-  request #3225 stops conflicting on the host; then the review rounds and the closing
+- **Done:** the guard reads the owner's consent, 59 scenarios green; the task RT-3268 is created;
+  the audit counts a lag in a summary line and names a PR without a reviewer, its scenarios green;
+  the first review round is answered by the commit `e588adbea`
+- **Next step:** the second review round on `e588adbea` — the code review and the roles
+  `project-manager`, `product-strategist`, `goal-critic`; the branch
+  `RT-3268-epic-stop-consent-queue-audit` is taken once the request #3225 stops conflicting on
+  the host
 - **Uncommitted:** nothing
 - **Waiting for the owner:** the push of the merge `847348e40` into the branch of the request
   #3225 — the permission classifier of the application stopped it
