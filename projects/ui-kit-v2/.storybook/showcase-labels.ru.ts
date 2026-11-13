@@ -151,6 +151,7 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     themeToggleLabel: 'Переключить тему',
     uiActions: 'Действия',
     uiApply: 'Применить',
+    uiAsideDetails: 'Сведения',
     uiAuditEmptyHint: 'Здесь появятся события по сделке — переходы этапов и другие действия.',
     uiBack: 'Назад',
     uiBackToList: 'Назад к списку',

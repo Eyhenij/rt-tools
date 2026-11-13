@@ -4,7 +4,8 @@ import { TestRtWorkspaceBreakpointComponent } from './component/test-workspace-b
 
 /**
  * Порог одной колонки из входа. На планшете список и середина стоят рядом, а панель сведений
- * открывается поверх окна с затемнением и кнопкой «Закрыть». На телефоне вид прежний: одна колонка.
+ * открывается поверх окна обычным асайдом: шапка со стрелкой, надписью «Сведения» и заголовком,
+ * вкладки, затемнение и кнопка «Закрыть». На телефоне вид прежний: одна колонка.
  *
  * Порог считается от ширины окна, поэтому каждое состояние — своя история со своим окном.
  */
@@ -45,6 +46,13 @@ export const TabletDetailsDark: TStory = {
     globals: { ...TABLET, theme: 'dark' },
     parameters: { snapshot: { ...TABLET_FRAME, overlay: PANEL } },
     args: { open: true },
+};
+
+/** Планшет: панель поверх окна без заголовка — в шапке стрелка и надпись «Сведения». */
+export const TabletDetailsNoTitle: TStory = {
+    globals: TABLET,
+    parameters: { snapshot: { ...TABLET_FRAME, overlay: PANEL } },
+    args: { open: true, title: null },
 };
 
 /** Телефон: одна колонка, вид прежний. */

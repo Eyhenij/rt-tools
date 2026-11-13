@@ -6,6 +6,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import * as sass from 'sass';
 
+import { TRtAsideContentLayout } from '../aside';
 import { classesOf, createRtFixture, el, qa } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
 import { RtWorkspaceComponent } from './rt-workspace.component';
@@ -17,7 +18,12 @@ const STYLES_ROOT: string = join(__dirname, '../../../styles');
 @Component({
     selector: 'rt-workspace-breakpoint-host',
     template: `
-        <rt-workspace hasActive [singleColumnBreakpoint]="breakpoint" [asideOverlayWidth]="overlayWidth">
+        <rt-workspace
+            hasActive
+            [singleColumnBreakpoint]="breakpoint"
+            [asideOverlayWidth]="overlayWidth"
+            [asideTitle]="title()"
+            [asideContentLayout]="layout">
             <ng-template rtWorkspaceList><span qa-dataid="slot-list">Список</span></ng-template>
             <ng-template rtWorkspaceCenter><span qa-dataid="slot-center">Карточка</span></ng-template>
             <ng-template rtWorkspaceAside><span qa-dataid="slot-aside">Подробности</span></ng-template>
@@ -29,6 +35,8 @@ const STYLES_ROOT: string = join(__dirname, '../../../styles');
 class WorkspaceBreakpointHostComponent {
     public breakpoint: number | null = 600;
     public overlayWidth: number = 540;
+    public readonly title: WritableSignal<string | null> = signal<string | null>(null);
+    public layout: TRtAsideContentLayout = 'default';
 }
 
 /** Ширина места страницы задаётся тестом: jsdom страницу не раскладывает. */
@@ -166,5 +174,52 @@ describe('порог одной колонки рабочего стола', ():
         expect(css).toMatch(/\.rt-workspace--single\.rt-workspace--has-active \.rt-workspace__list \{\s+display: none;/);
         // Панель поверх окна держит свою ширину и на узком окне: иначе затемнение негде нажать
         expect(css).toMatch(/\.rt-aside-overlay\.rt-workspace-aside-pane \{\s+width: auto;/);
+    });
+
+    it('SC-UKV-1251 — у панели поверх окна шапка обычного асайда: надпись «Сведения» и заголовок из входа', (): void => {
+        const fixture: ComponentFixture<WorkspaceBreakpointHostComponent> = setup(768, { layout: 'tabs' });
+        fixture.componentInstance.title.set('№12 Анна Смирнова');
+        fixture.detectChanges();
+        openAside(fixture);
+
+        const panel: HTMLElement = overlayPanel() as HTMLElement;
+        const header: HTMLElement = panel.querySelector('[qa-dataid="workspace-aside-overlay-header"]') as HTMLElement;
+
+        expect(header.querySelector('[qa-dataid="aside-overline"]')?.textContent?.trim()).toBe('Details');
+        expect(header.querySelector('[qa-dataid="aside-title"]')?.textContent?.trim()).toBe('№12 Анна Смирнова');
+        expect(classesOf(panel.querySelector('[qa-dataid="aside"]'))).toContain('rt-aside--content--tabs');
+
+        fixture.componentInstance.title.set('№11 Kim Minjun');
+        fixture.detectChanges();
+        TestBed.inject(ApplicationRef).tick();
+
+        expect(header.querySelector('[qa-dataid="aside-title"]')?.textContent?.trim()).toBe('№11 Kim Minjun');
+    });
+
+    it('SC-UKV-1252 — без заголовка шапка панели поверх окна остаётся со стрелкой и надписью', (): void => {
+        const fixture: ComponentFixture<WorkspaceBreakpointHostComponent> = setup(768);
+        openAside(fixture);
+
+        const header: HTMLElement = overlayPanel()?.querySelector('[qa-dataid="workspace-aside-overlay-header"]') as HTMLElement;
+
+        expect(header.querySelector('[qa-dataid="aside-back"]')).not.toBeNull();
+        expect(header.querySelector('[qa-dataid="aside-overline"]')?.textContent?.trim()).toBe('Details');
+        // Строки заголовка нет: надзаголовок стоит на линии стрелки
+        expect(header.querySelector('[qa-dataid="aside-title"]')).toBeNull();
+        expect(classesOf(overlayPanel()?.querySelector('[qa-dataid="aside"]') ?? null)).not.toContain('rt-aside--content--tabs');
+    });
+
+    it('SC-UKV-1253 — стрелка назад в шапке закрывает панель поверх окна', (): void => {
+        const fixture: ComponentFixture<WorkspaceBreakpointHostComponent> = setup(768);
+        fixture.componentInstance.title.set('№12 Анна Смирнова');
+        fixture.detectChanges();
+        openAside(fixture);
+
+        const back: HTMLButtonElement = overlayPanel()?.querySelector(
+            '[qa-dataid="workspace-aside-overlay-header"] [qa-dataid="aside-back"] button'
+        ) as HTMLButtonElement;
+        back.click();
+
+        expect(workspace(fixture).asideOpen()).toBe(false);
     });
 });

@@ -58,3 +58,35 @@ When the workspace carries the class of the threshold input
 Then the rules of the threshold 768 do not match it, and the panel over the window keeps its width on a narrow window
 
 Covered: `projects/ui-kit-v2/src/lib/components/workspace/rt-workspace-breakpoint.spec.ts`.
+
+### SC-UKV-1251 — the panel over the window has the header of a side panel
+
+Given the workspace has the title «№12 Анна Смирнова» and the content layout of tabs
+When the details are opened over the window
+Then the header shows the label «Details» and the title, the panel is laid out as tabs, and a new title redraws the header
+
+Covered: `projects/ui-kit-v2/src/lib/components/workspace/rt-workspace-breakpoint.spec.ts`.
+
+### SC-UKV-1252 — without a title the header stays with the arrow and the label
+
+Given the workspace has no title of the panel
+When the details are opened over the window
+Then the header has the arrow back and the label, and no line of the title
+
+Covered: `projects/ui-kit-v2/src/lib/components/workspace/rt-workspace-breakpoint.spec.ts`.
+
+### SC-UKV-1253 — the arrow back closes the panel over the window
+
+Given the details are open over the window
+When a person presses the arrow back in the header
+Then the workspace reports the panel as closed
+
+Covered: `projects/ui-kit-v2/src/lib/components/workspace/rt-workspace-breakpoint.spec.ts`.
+
+### SC-UKV-1254 — in the tabs layout the strip of tabs stands right under the header
+
+Given the styles of the side panel are read
+When the panel is laid out as tabs
+Then its content zone has no inset above and below, and the strip of tabs keeps the inset at the sides
+
+Covered: `projects/ui-kit-v2/src/lib/components/aside/rt-aside-tabs.styles.spec.ts`.
