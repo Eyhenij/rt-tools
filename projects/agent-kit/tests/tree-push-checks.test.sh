@@ -189,15 +189,15 @@ builder_probe() {
 
 builder_probe 'SC-AK-569 — a plan and the table of assignments call no builder step' 'docs/plans/x.md .claude/rt-kit/assignments.md' 0
 builder_probe 'SC-AK-569 — a markdown file at the root calls no builder step' 'README.md' 0
-builder_probe 'SC-AK-569 — a rule inside a package calls the builder steps' 'projects/agent-kit/assets/rules/x.md' 3
-builder_probe 'SC-AK-569 — a guard next to a text calls the builder steps' 'docs/x.md .claude/hooks/probe.sh' 3
-builder_probe 'SC-AK-569 — a check of the tree calls the builder steps' 'tools/probe.mjs' 3
+builder_probe 'SC-AK-569 — a rule inside a package calls the builder steps' 'projects/agent-kit/assets/rules/x.md' 2
+builder_probe 'SC-AK-569 — a guard next to a text calls the builder steps' 'docs/x.md .claude/hooks/probe.sh' 2
+builder_probe 'SC-AK-569 — a check of the tree calls the builder steps' 'tools/probe.mjs' 2
 # The guard scenarios read the specs: one asks for a spec file by its path, another walks the
 # bindings of every spec. A spec is therefore no text the builder may skip.
-builder_probe 'SC-AK-569 — a spec calls the builder steps' 'docs/specs/agent-kit/x/spec.md' 3
+builder_probe 'SC-AK-569 — a spec calls the builder steps' 'docs/specs/agent-kit/x/spec.md' 2
 builder_probe 'SC-AK-569 — an archive record and a task folder call no builder step' 'docs/archive/x.md docs/tasks/RT-1-x/plan.md' 0
 # The sample of a task folder is read by a guard scenario from this very tree.
-builder_probe 'SC-AK-569 — the sample of a task folder calls the builder steps' 'docs/tasks/_template/grill.md' 3
+builder_probe 'SC-AK-569 — the sample of a task folder calls the builder steps' 'docs/tasks/_template/grill.md' 2
 
 # The styles linter reads style files, its config and the dependencies only. A branch of the agent's
 # harness ran it for 9 s against a limit of 5 with not one style file in the change.
@@ -217,6 +217,25 @@ styles_probe 'a hook without a style file skips the styles linter' '.claude/hook
 styles_probe 'a style file runs the styles linter' 'projects/ui-kit-v2/src/a.scss' 1
 styles_probe 'the styles linter config runs it' 'stylelint.config.js' 1
 styles_probe 'a dependency change runs it' 'package.json' 1
+
+# `verify` lives in the second kit and utils alone. On a branch of the rules package the step ran no
+# task and still failed the push: the start of the builder took 2 s against a limit of 1.
+verify_probe() {
+    dir="$(probe_repo "$2")"
+    got="$(checks_for "$dir" | grep -c -- '-t verify')"
+    rm -rf "$dir"
+    if [ "$got" = "$3" ]; then
+        ok=$((ok + 1))
+    else
+        bad=$((bad + 1))
+        printf '  РАЗОШЛОСЬ %s\n    ждали строк verify: %s\n    вышло: %s\n' "$1" "$3" "$got"
+    fi
+}
+
+verify_probe 'the rules package, hooks, tools and texts skip verify' 'projects/agent-kit/src/a.ts .claude/hooks/a.sh tools/a.mjs docs/a.md .prettierignore' 0
+verify_probe 'a file of the second kit runs verify' 'projects/ui-kit-v2/src/a.ts' 1
+verify_probe 'a file of utils runs verify' 'projects/utils/src/a.ts' 1
+verify_probe 'a dependency change runs verify' 'pnpm-lock.yaml' 1
 
 printf 'набор гейта по предмету правки: %s ok, %s расхождений\n' "$ok" "$bad"
 [ "$bad" -eq 0 ]

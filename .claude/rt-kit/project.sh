@@ -225,9 +225,9 @@ EOF
             "pnpm exec nx affected -t lint typecheck test build --parallel$against" \
             "${1:+RT_SUITES_BASE=$1 }pnpm exec nx affected -t test-hooks$against"
         # The styles linter reads style files and its config only; a branch touching neither skips it.
-        { [ -n "$1" ] && ! git diff --name-only "$1...HEAD" 2>/dev/null | grep -qE '\.(scss|css)$|stylelint|^package\.json$|^pnpm-lock\.yaml$'; } ||
-            printf '%s\n' 'pnpm run lint:styles'
-        printf '%s\n' "pnpm exec nx affected -t verify --parallel$against"
+        { [ -n "$1" ] && ! git diff --name-only "$1...HEAD" 2>/dev/null | grep -qE '\.(scss|css)$|stylelint|^package\.json$|^pnpm-lock\.yaml$'; } || printf '%s\n' 'pnpm run lint:styles'
+        # `verify` lives in the second kit and utils alone; texts, hooks, the rules package and tools reach neither.
+        { [ -n "$1" ] && ! git diff --name-only "$1...HEAD" 2>/dev/null | grep -qvE '^(docs|\.claude|projects/agent-kit|tools)/|\.md$|^\.prettierignore$'; } || printf '%s\n' "pnpm exec nx affected -t verify --parallel$against"
     }
     printf '%s\n' 'node tools/check-push-gate.mjs'
 
