@@ -114,10 +114,12 @@ export class RtImageUploadComponent {
     /** Есть ли над картинкой хоть одна кнопка: без них ряд кнопок не рисуется */
     protected readonly hasButtons: Signal<boolean> = computed((): boolean => this.downloadable() || this.showRemove());
 
-    /** Модификаторы ряда кнопок: угол и вид «внутри картинки» */
+    /** Модификаторы ряда кнопок: угол, вид «внутри картинки» и видимость, отличная от обычной */
     protected readonly buttonsMod: Signal<Record<string, boolean>> = computed((): Record<string, boolean> => ({
         [this.buttonsCorner()]: true,
         inside: this.buttonsPlacement() === 'inside',
+        hover: this.buttonsVisibility() === 'hover',
+        always: this.buttonsVisibility() === 'always',
     }));
 
     /**
@@ -156,6 +158,9 @@ export class RtImageUploadComponent {
 
     /** Вид кнопок: выступают за угол картинки или стоят внутри неё */
     public readonly buttonsPlacement: InputSignal<IRtImageUpload.ButtonsPlacement> = input<IRtImageUpload.ButtonsPlacement>('overhang');
+
+    /** Когда кнопки видны: как обычно, только при наведении и фокусе или всегда */
+    public readonly buttonsVisibility: InputSignal<IRtImageUpload.ButtonsVisibility> = input<IRtImageUpload.ButtonsVisibility>('auto');
 
     /** Вид кнопки выбора файла в пустом загрузчике */
     public readonly chooseAppearance: InputSignal<IButton.Appearance> = input<IButton.Appearance>('outlined');

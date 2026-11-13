@@ -23,14 +23,15 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Оси
 
-| ось                     | значения                 | умолчание      |
-| ----------------------- | ------------------------ | -------------- |
-| скачивание              | без кнопки, с кнопкой    | без            |
-| форма кнопки скачивания | круглая, квадратная      | круглая        |
-| удаление                | без кнопки, с кнопкой    | без            |
-| угол кнопок             | четыре угла картинки     | правый верхний |
-| вид кнопок              | с выступом, внутри       | с выступом     |
-| применение              | кнопками, автоприменение | кнопками       |
+| ось                     | значения                          | умолчание      |
+| ----------------------- | --------------------------------- | -------------- |
+| скачивание              | без кнопки, с кнопкой             | без            |
+| форма кнопки скачивания | круглая, квадратная               | круглая        |
+| удаление                | без кнопки, с кнопкой             | без            |
+| угол кнопок             | четыре угла картинки              | правый верхний |
+| вид кнопок              | с выступом, внутри                | с выступом     |
+| видимость кнопок        | как обычно, при наведении, всегда | как обычно     |
+| применение              | кнопками, автоприменение          | кнопками       |
 
 **Оси, которых не видно.** `ratio`, `round`, `format` и `quality` уходят в обрезку и показаны в её
 матрице.
@@ -62,6 +63,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 По входу `removable` рядом встаёт крестик: он отдаёт `removed`, а картинку убирает приложение. Крестик
 виден при наведении и при фокусе, на касании — всегда. Угол обеих кнопок задаёт `buttonsCorner`, а
 `buttonsPlacement="inside"` ставит их внутрь картинки.
+Вход `buttonsVisibility` решает, когда кнопки видны: `hover` — обе только при наведении и фокусе,
+`always` — обе всегда; без него крестик виден при наведении, скачивание — всегда.
 Кнопка выбора файла в пустом загрузчике берёт вид из `chooseAppearance` и значок из `chooseIcon`. Высота картинки
 ограничена свойством `--rt-image-upload-image-max-height`. Остальные свойства блока —
 `--rt-image-upload-image-radius`, `--rt-image-upload-hover-opacity`, `--rt-image-upload-focus-shadow`,
@@ -71,26 +74,27 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход               | тип                                                            | умолчание                    |
-| ------------------ | -------------------------------------------------------------- | ---------------------------- |
-| `imageUrl`         | `string \| null`                                               | `null`                       |
-| `fileName`         | `string`                                                       | `'image'`                    |
-| `tooltip`          | `string`                                                       | `''` → `uiImageUploadChange` |
-| `downloadable`     | `boolean`                                                      | `false`                      |
-| `downloadShape`    | `'circle' \| 'square'`                                         | `'circle'`                   |
-| `downloadIconSize` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl' \| null`        | `null` → по размеру кнопки   |
-| `removable`        | `boolean`                                                      | `false`                      |
-| `buttonsCorner`    | `'top-right' \| 'top-left' \| 'bottom-right' \| 'bottom-left'` | `'top-right'`                |
-| `buttonsPlacement` | `'overhang' \| 'inside'`                                       | `'overhang'`                 |
-| `chooseAppearance` | `'filled' \| 'outlined' \| 'text'`                             | `'outlined'`                 |
-| `chooseIcon`       | `string \| null`                                               | `'ico-upload'`               |
-| `autoApply`        | `boolean`                                                      | `false`                      |
-| `loading`          | `boolean`                                                      | `false`                      |
-| `disabled`         | `boolean`                                                      | `false`                      |
-| `ratio`            | `number \| null`                                               | `null`                       |
-| `round`            | `boolean`                                                      | `false`                      |
-| `format`           | `'png' \| 'jpeg' \| 'webp' \| null`                            | `null`                       |
-| `quality`          | `number`                                                       | `92`                         |
+| вход                | тип                                                            | умолчание                    |
+| ------------------- | -------------------------------------------------------------- | ---------------------------- |
+| `imageUrl`          | `string \| null`                                               | `null`                       |
+| `fileName`          | `string`                                                       | `'image'`                    |
+| `tooltip`           | `string`                                                       | `''` → `uiImageUploadChange` |
+| `downloadable`      | `boolean`                                                      | `false`                      |
+| `downloadShape`     | `'circle' \| 'square'`                                         | `'circle'`                   |
+| `downloadIconSize`  | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl' \| null`        | `null` → по размеру кнопки   |
+| `removable`         | `boolean`                                                      | `false`                      |
+| `buttonsCorner`     | `'top-right' \| 'top-left' \| 'bottom-right' \| 'bottom-left'` | `'top-right'`                |
+| `buttonsPlacement`  | `'overhang' \| 'inside'`                                       | `'overhang'`                 |
+| `buttonsVisibility` | `'auto' \| 'hover' \| 'always'`                                | `'auto'`                     |
+| `chooseAppearance`  | `'filled' \| 'outlined' \| 'text'`                             | `'outlined'`                 |
+| `chooseIcon`        | `string \| null`                                               | `'ico-upload'`               |
+| `autoApply`         | `boolean`                                                      | `false`                      |
+| `loading`           | `boolean`                                                      | `false`                      |
+| `disabled`          | `boolean`                                                      | `false`                      |
+| `ratio`             | `number \| null`                                               | `null`                       |
+| `round`             | `boolean`                                                      | `false`                      |
+| `format`            | `'png' \| 'jpeg' \| 'webp' \| null`                            | `null`                       |
+| `quality`           | `number`                                                       | `92`                         |
 
 ## Выходы
 

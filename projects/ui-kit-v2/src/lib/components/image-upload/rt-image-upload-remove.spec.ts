@@ -150,4 +150,32 @@ describe('RtImageUploadComponent — remove button and the place of the buttons'
         expect(classesOf(fixture, 'image-upload-remove')).not.toContain('rt-image-upload__remove--round');
         expect(qa(fixture, 'image-upload-remove')?.injector.get(RtRadiusDirective).step()).toBeNull();
     });
+
+    it('SC-UKV-1265 — the visibility input marks the row of buttons, and leaves it unmarked by default', (): void => {
+        const fixture: ComponentFixture<RtImageUploadComponent> = setup(BOTH);
+
+        expect(buttonsRow(fixture).classList).not.toContain('rt-image-upload__buttons--hover');
+        expect(buttonsRow(fixture).classList).not.toContain('rt-image-upload__buttons--always');
+
+        setInputs(fixture, { buttonsVisibility: 'hover' });
+        fixture.detectChanges();
+
+        expect(buttonsRow(fixture).classList).toContain('rt-image-upload__buttons--hover');
+        expect(buttonsRow(fixture).classList).not.toContain('rt-image-upload__buttons--always');
+
+        setInputs(fixture, { buttonsVisibility: 'always' });
+        fixture.detectChanges();
+
+        expect(buttonsRow(fixture).classList).toContain('rt-image-upload__buttons--always');
+        expect(buttonsRow(fixture).classList).not.toContain('rt-image-upload__buttons--hover');
+    });
+
+    it('SC-UKV-1266 — the always look shows the cross at rest, the hover look hides the download button', (): void => {
+        const shown: string = rule('&__preview:hover &__download,');
+
+        expect(rule('&__buttons--always &__remove {')).toContain('opacity: 1;');
+        expect(STYLES).toMatch(/&__buttons--hover &__download \{\s+opacity: 0;\s+@media \(hover: none\) \{\s+opacity: 1;/);
+        expect(shown).toContain('&__preview:focus-within &__download {');
+        expect(shown).toContain('opacity: 1;');
+    });
 });

@@ -10,4 +10,10 @@ export namespace IRtImageUpload {
 
     /** Вид кнопок: выступают за угол картинки или стоят внутри неё */
     export type ButtonsPlacement = 'overhang' | 'inside';
+
+    /**
+     * Когда кнопки видны: `auto` — крестик при наведении и фокусе, скачивание всегда; `hover` — обе
+     * только при наведении и фокусе; `always` — обе всегда. На касании кнопки видны при любом значении.
+     */
+    export type ButtonsVisibility = 'auto' | 'hover' | 'always';
 }

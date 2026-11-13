@@ -40,6 +40,7 @@ interface IImageUploadButtonsCase {
     readonly shape: IRtImageUpload.DownloadShape;
     readonly corner: IRtImageUpload.ButtonsCorner;
     readonly placement: IRtImageUpload.ButtonsPlacement;
+    readonly visibility: IRtImageUpload.ButtonsVisibility;
     readonly disabled: boolean;
 }
 
@@ -58,6 +59,7 @@ const BUTTONS_CASE: IImageUploadButtonsCase = {
     shape: 'square',
     corner: 'top-right',
     placement: 'overhang',
+    visibility: 'auto',
     disabled: false,
 };
 
@@ -193,6 +195,16 @@ export class TestRtImageUploadMatrixComponent {
                 { ...BUTTONS_CASE, name: 'с выступом, круглые', downloadable: true, shape: 'circle' },
                 { ...BUTTONS_CASE, name: 'внутри', downloadable: true, placement: 'inside' },
                 { ...BUTTONS_CASE, name: 'внутри, круглые', downloadable: true, shape: 'circle', placement: 'inside' },
+            ],
+        },
+        {
+            caption: 'Когда кнопки видны',
+            cases: [
+                { ...BUTTONS_CASE, name: 'как обычно, покой: только скачивание', state: null, downloadable: true },
+                { ...BUTTONS_CASE, name: 'как обычно, наведение: обе', downloadable: true },
+                { ...BUTTONS_CASE, name: 'при наведении, покой: кнопок нет', state: null, downloadable: true, visibility: 'hover' },
+                { ...BUTTONS_CASE, name: 'при наведении, наведение: обе', downloadable: true, visibility: 'hover' },
+                { ...BUTTONS_CASE, name: 'всегда, покой: обе', state: null, downloadable: true, visibility: 'always' },
             ],
         },
     ];

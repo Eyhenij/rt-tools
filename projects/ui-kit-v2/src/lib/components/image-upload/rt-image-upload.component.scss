@@ -114,6 +114,25 @@
             }
         }
 
+        /* Видимость по входу: «всегда» показывает крестик без наведения, «при наведении» прячет
+           до наведения и кнопку скачивания. На касании видны обе. */
+        &__buttons--always &__remove {
+            opacity: 1;
+        }
+
+        &__buttons--hover &__download {
+            opacity: 0;
+
+            @media (hover: none) {
+                opacity: 1;
+            }
+        }
+
+        &__preview:hover &__download,
+        &__preview:focus-within &__download {
+            opacity: 1;
+        }
+
         &__image {
             display: block;
             max-width: 100%;

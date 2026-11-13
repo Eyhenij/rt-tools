@@ -44,6 +44,7 @@ export class TestRtImageUploadComponent {
     public removable: boolean = false;
     public buttonsCorner: IRtImageUpload.ButtonsCorner = 'top-right';
     public buttonsPlacement: IRtImageUpload.ButtonsPlacement = 'overhang';
+    public buttonsVisibility: IRtImageUpload.ButtonsVisibility = 'auto';
     public chooseAppearance: IButton.Appearance = 'outlined';
     public chooseIcon: string | null = 'ico-upload';
     public autoApply: boolean = false;

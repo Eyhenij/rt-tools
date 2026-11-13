@@ -71,3 +71,20 @@ Given an uploader with both buttons on and the round download shape
 When it is drawn
 Then the remove button carries the same round modifier and the same radius step as the download
 button
+
+### SC-UKV-1265 — the visibility input marks the row of buttons, and leaves it unmarked by default
+
+Given an uploader with a picture and both buttons on
+When the visibility input is left alone, then set to hover, then to always
+Then the row of buttons carries neither modifier first, the hover one next and the always one last
+
+### SC-UKV-1266 — the always look shows the cross at rest, the hover look hides the download button
+
+Given the styles of the uploader
+When they are read
+Then the always modifier gives the remove button full opacity, the hover modifier gives the
+download button none outside a touch screen, and the pointer or the focus inside the preview
+brings the download button back
+
+Coverage: partial — the spec reads the styles source, because the spec transform strips the
+styles; the drawn opacity is measured in the showcase story of the visibility.
