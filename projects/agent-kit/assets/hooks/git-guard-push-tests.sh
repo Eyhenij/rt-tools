@@ -206,8 +206,20 @@ fi
 
 base="$(rt_push_set_base)"
 
+# Whether the command sends the checked-out branch under its own name: it names that branch as a
+# word and carries no `source:target` pair. Only such a push is told by the head — a push of another
+# branch, or of the head into a branch of another name, sends what the head says nothing about.
+push_sends_head() {
+    local branch
+    branch="$(git symbolic-ref --quiet --short HEAD 2>/dev/null)" || return 1
+    printf '%s' "$cmd" | grep -qE '[[:space:]][A-Za-z0-9_./@^~+-]+:[A-Za-z0-9_./-]+([[:space:];&|]|$)' && return 1
+    case " $cmd " in *" $branch "* | *" $branch;"* | *" $branch&"* | *" $branch|"*) return 0 ;; esac
+
+    return 1
+}
+
 # A head that adds nothing to its base is not judged: the set has nothing new to look at.
-if command -v rt_push_adds_nothing >/dev/null 2>&1 && rt_push_adds_nothing "$base"; then
+if command -v rt_push_adds_nothing >/dev/null 2>&1 && push_sends_head && rt_push_adds_nothing "$base"; then
     rt_push_gate_note nothing-new
     printf 'the push gate: the head adds no commit to %s — the set is not run\n' "$base" >&2
     exit 0

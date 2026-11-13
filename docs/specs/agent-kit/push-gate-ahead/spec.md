@@ -44,7 +44,8 @@ There is no interface: the guard answers with a refusal text, the run ahead with
   branch a merge of the host brought into this one. A head that is no branch gets the main branch.
 - **A head that adds no commit to its base is pushed with no check run.** Every commit of it
   already lies in that branch on the remote. The guard, the run ahead and the git hook all answer
-  so; a head with no base on a remote is judged as before.
+  so; a head with no base on a remote is judged as before. The guard answers so only for a push of
+  the checked-out branch under its own name: the head says nothing about another branch.
 - **A check green on the same tree against the same base is not run again.** The key is the check
   line, the tree of the head and the base commit.
 - **A check the profile names unread paths for is keyed by the rest of the tree.** A commit of

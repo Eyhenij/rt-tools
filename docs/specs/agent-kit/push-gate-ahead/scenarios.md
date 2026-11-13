@@ -142,6 +142,14 @@ Then the guard runs the set: there is no base to compare the head with
 
 Covered: `projects/agent-kit/tests/git-guard-push-nothing-new.test.sh`.
 
+### SC-AK-1349 — the head tells nothing about a push of another branch
+
+Given a head that adds nothing to its base, and a set of one red check
+When the push names another branch, sends the head into a branch of another name or names no branch
+Then the guard runs the set and refuses on the red check
+
+Covered: `projects/agent-kit/tests/git-guard-push-nothing-new.test.sh`.
+
 ### SC-AK-1347 — a commit of unread paths keeps the mark of a check
 
 Given a profile that names the paths a check does not read, and the key of that check

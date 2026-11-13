@@ -306,7 +306,7 @@ rt_push_check_heavy() {
 # The second argument is the head to compare, the checked-out branch by default: the end-to-end
 # coverage guard judges a PR whose head the command names.
 rt_push_touched() {
-    _changed="$(git diff --name-only "$1"..."${2:-HEAD}" 2>/dev/null)"
+    _changed="$(git diff --no-renames --name-only "$1"..."${2:-HEAD}" 2>/dev/null)"
     [ -z "$_changed" ] && return 1
 
     _subjects=''

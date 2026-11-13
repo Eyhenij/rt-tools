@@ -47,6 +47,12 @@ EQUAL="$(remote_fixture RT-3282-equal)"
 gate "SC-AK-1345 — a head equal to its base is pushed with no check run" "$EQUAL" 'git push origin RT-3282-equal' PASS
 report "SC-AK-1345 — the run ahead names that there is nothing to run" "$(ahead_says "$EQUAL")" 1
 
+# The head tells nothing about a push of another branch or of the head under another name.
+gate "SC-AK-1349 — a push of another branch is judged by the set" "$EQUAL" 'git push origin RT-1-other' deny
+gate "SC-AK-1349 — a push of the head into a branch of another name is judged by the set" "$EQUAL" \
+    'git push origin RT-3282-equal:main' deny
+gate "SC-AK-1349 — a push that names no branch is judged by the set" "$EQUAL" 'git push' deny
+
 # The pair of the assertion above: the same tree with one commit over the base runs its red check.
 printf 'one\n' > "$EQUAL/note.txt"
 git -C "$EQUAL" add -A 2>/dev/null
