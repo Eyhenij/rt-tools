@@ -172,7 +172,7 @@ function checkRuleImplementation(specFile, text, mapFile, heading = ['## Rules',
             report(
                 mapFile,
                 `a statement without a binding: «${head.slice(0, 60)}…» — add a line with \`file:symbol\`, ` +
-                    'a verdict «Not carried out» with a reason, or move the statement into «Open questions» of the law as Q-<law letters>-<number>'
+                    'a verdict «Not carried out» with a reason, or move the statement into «Open questions»: Q-<law letters>-<number> in a law, Q-<number> in a spec'
             );
             continue;
         }
@@ -348,9 +348,9 @@ function checkTracedAnchors() {
                 mapFile,
                 others.length > elsewhere
                     ? `the binding leads into code called by a test alone: \`${symbol}\` is declared in \`${path}\` and outside tests is met nowhere — ` +
-                          'a test is not a call from the application; either the statement is carried out elsewhere, or its place is in «Open questions» of the law as Q-<law letters>-<number>'
+                          'a test is not a call from the application; either the statement is carried out elsewhere, or its place is in «Open questions»: Q-<law letters>-<number> in a law, Q-<number> in a spec'
                     : `the binding leads into dead code: \`${symbol}\` is declared in \`${path}\` and met nowhere else — ` +
-                          'either the statement is carried out elsewhere, or its place is in «Open questions» of the law as Q-<law letters>-<number>'
+                          'either the statement is carried out elsewhere, or its place is in «Open questions»: Q-<law letters>-<number> in a law, Q-<number> in a spec'
             );
         }
     }
@@ -364,7 +364,7 @@ function checkTracedAnchors() {
  * dependencies line and in the middle of the text, and from a law there was no way to learn
  * which domains stand on it — only by grep.
  *
- * Hence the `**Законы:**` line in the header and an audit of both sides: a law named in the
+ * Hence the `**Laws:**` line in the header and an audit of both sides: a law named in the
  * text but not declared, and a declared law that does not exist.
  */
 const SPEC_LAWS = /^\*\*(?:Laws|Законы):\*\*\s*(.+)$/;

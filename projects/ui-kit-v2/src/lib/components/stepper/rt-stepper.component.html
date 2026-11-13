@@ -40,22 +40,30 @@
         [attr.aria-valuetext]="current?.label ?? null">
         <div rtElem="rail">
             @if (current) {
-                <p rtElem="label" qa-dataid="stepper-label" [rtMod]="{ anchor: labelAnchor() }" [style.left.%]="progressPercent()">
+                @let segment = labelSegment();
+                <p
+                    rtElem="label"
+                    qa-dataid="stepper-label"
+                    [rtMod]="{ anchor: segment.anchor }"
+                    [style.margin-inline-start.%]="segment.start"
+                    [style.inline-size.%]="segment.size">
                     {{ current.label }}
                 </p>
             }
             <div rtElem="track-band">
-                <span rtElem="track" aria-hidden="true"></span>
-                <span rtElem="progress" qa-dataid="stepper-progress" aria-hidden="true" [style.width.%]="progressPercent()"></span>
+                <span rtElem="line" aria-hidden="true">
+                    <span rtElem="track"></span>
+                    <span rtElem="progress" qa-dataid="stepper-progress" [style.width.%]="progressPercent()"></span>
+                </span>
                 <ul rtElem="points">
-                    @for (step of steps(); track $index; let i = $index) {
+                    @for (state of points(); track $index) {
                         <li
                             rtElem="point"
                             qa-dataid="stepper-point"
                             aria-hidden="true"
                             [rtMod]="{
-                                current: i === currentIndex(),
-                                complete: i < currentIndex(),
+                                current: state === 'current',
+                                complete: state === 'complete',
                             }"></li>
                     }
                 </ul>

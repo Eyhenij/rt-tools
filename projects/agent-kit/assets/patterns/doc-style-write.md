@@ -55,7 +55,7 @@ The error is silent: a claim about the future has nothing to be checked against,
 check. That is how "there is no online payment and none is planned" got into the first live spec,
 while payment was in the plans.
 
-Hence also: what is not in `docs/PRD.md`, the product document does not claim. A guess made while
+Hence also: what is not in the product document, the product document does not claim. A guess made while
 retelling sounds more convincing than the source — it is shorter and more categorical.
 
 ## In plain words
@@ -166,10 +166,10 @@ in the same turn the text is written.
 
 ## Do not retell what has a source
 
-- contract types and fields — `libs/common/proto/proto/<area>/v1/`, by link;
-- columns and indexes — `prisma/schema.prisma`;
+- contract types and fields — the contract description, by link;
+- columns and indexes — the storage schema;
 - numbers the owner edits (base price, min-nights, capacity) — only how they are applied;
-- layers and class names — the rule `lib-layers` and the code itself.
+- layers and class names — the code itself and, where it is laid out, the rule `lib-layers`.
 
 ## Code comments
 

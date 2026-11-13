@@ -1,4 +1,5 @@
 import { BooleanInput } from '@angular/cdk/coercion';
+import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
@@ -10,6 +11,7 @@ import {
     effect,
     ElementRef,
     inject,
+    Injector,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -19,22 +21,37 @@ import {
     Renderer2,
     signal,
     Signal,
+    TemplateRef,
     untracked,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+
+import { map, mergeMap, Observable, of, Subject, switchMap } from 'rxjs';
 
 import { StorageService } from '@rt-tools/core';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtAsideRef, RtAsideService } from '@rt-tools/ui-kit-v2/aside';
+import { BreakpointsService, RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtWorkspaceAsideOverlayComponent } from './rt-workspace-aside-overlay.component';
 import { RtWorkspaceAsideDirective, RtWorkspaceCenterDirective, RtWorkspaceListDirective } from './rt-workspace.directives';
 import { IRtWorkspace } from './rt-workspace.model';
 
 const BEM_BLOCK: string = 'rt-workspace';
 const STORAGE_PREFIX: string = 'rt-workspace:';
 const KEYBOARD_STEP: number = 16;
+const ASIDE_OVERLAY_PANE: string = 'rt-workspace-aside-pane';
+
+/** Что принимает вход порога: число, строка атрибута или `null` */
+type TBreakpointInput = number | string | null;
+
+/** Порог одной колонки из входа: пустое значение оставляет порог стилей. */
+function breakpointAttribute(value: TBreakpointInput): number | null {
+    return value === null || value === '' ? null : numberAttribute(value);
+}
 
 interface IDragState {
     kind: IRtWorkspace.PanelKind;
@@ -62,6 +79,8 @@ interface IDragState {
         class: BEM_BLOCK,
         '[class.rt-workspace--has-active]': 'hasActive()',
         '[class.rt-workspace--cards]': 'cards()',
+        '[class.rt-workspace--breakpoint]': 'singleColumnBreakpoint() !== null',
+        '[class.rt-workspace--single]': 'singleColumn()',
         '[class.rt-workspace--aside-collapsed]': 'asideCollapsed()',
         '[class.rt-workspace--resizing]': 'resizing()',
         '[style.--rt-workspace-list-size]': "listWidth() + 'px'",
@@ -76,6 +95,34 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
     readonly #hostRef: ElementRef<HTMLElement> = inject(ElementRef);
 
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
+
+    readonly #breakpoints: BreakpointsService = inject(BreakpointsService);
+
+    readonly #observer: BreakpointObserver = inject(BreakpointObserver);
+
+    readonly #asides: RtAsideService = inject(RtAsideService);
+
+    readonly #injector: Injector = inject(Injector);
+
+    /** Открытая поверх окна панель сведений: её закрытие догоняет состояние в конструкторе */
+    readonly #overlayOpenedSource: Subject<RtAsideRef<void>> = new Subject<RtAsideRef<void>>();
+
+    /**
+     * Окно не шире порога из входа: отвечает, когда место страницы не объявлено. Вход читается
+     * через `computed`: поле стоит выше входа, и напрямую его ещё нет.
+     */
+    readonly #viewportSingle: Signal<boolean> = toSignal(
+        toObservable(computed((): number | null => this.singleColumnBreakpoint())).pipe(
+            switchMap((breakpoint: number | null): Observable<boolean> =>
+                breakpoint === null
+                    ? of(false)
+                    : this.#observer.observe(`(max-width: ${breakpoint}px)`).pipe(map((state: BreakpointState): boolean => state.matches))
+            )
+        ),
+        { initialValue: false }
+    );
+
+    #overlayRef: RtAsideRef<void> | null = null;
 
     readonly #listWidthOverride: WritableSignal<number | null> = signal<number | null>(null);
 
@@ -104,6 +151,17 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
     protected readonly resizing: Signal<boolean> = this.#resizing.asReadonly();
 
     protected readonly slotContext: IRtWorkspace.SlotContext = { $implicit: this };
+
+    /** Одна колонка по порогу из входа; без входа вид держат стили, и здесь всегда `false` */
+    protected readonly singleColumn: Signal<boolean> = computed((): boolean => {
+        const breakpoint: number | null = this.singleColumnBreakpoint();
+        if (breakpoint === null) {
+            return false;
+        }
+        const placeWidth: number | null = this.#breakpoints.placeWidth();
+
+        return placeWidth === null ? this.#viewportSingle() : placeWidth <= breakpoint;
+    });
 
     public readonly storageKey: InputSignal<string | null> = input<string | null>(null);
 
@@ -144,7 +202,26 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
         transform: numberAttribute,
     });
 
+    /**
+     * Порог одной колонки, пиксели места страницы. Без входа порог держат стили: 768. С входом
+     * выше порога список и середина стоят рядом, а панель сведений, которой не хватает места
+     * третьей колонкой, открывается поверх окна. Порог выше 1080 смысла не имеет.
+     */
+    public readonly singleColumnBreakpoint: InputSignalWithTransform<number | null, TBreakpointInput> = input<
+        number | null,
+        TBreakpointInput
+    >(null, { transform: breakpointAttribute });
+
+    /** Ширина панели сведений, открытой поверх окна */
+    public readonly asideOverlayWidth: InputSignalWithTransform<number, number | string> = input<number, number | string>(540, {
+        transform: numberAttribute,
+    });
+
     public readonly backClicked: OutputEmitterRef<void> = output<void>();
+
+    public readonly asideOverlay: Signal<boolean> = computed(
+        (): boolean => this.singleColumnBreakpoint() !== null && this.#breakpoints.narrow() && !this.singleColumn()
+    );
 
     public readonly listWidth: Signal<number> = computed((): number => this.#listWidthOverride() ?? this.listDefaultWidth());
 
@@ -163,6 +240,26 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
             this.#restoredKey = key;
             untracked((): void => this.#restoreFromStorage(key));
         });
+
+        // Панель поверх окна живёт, пока она открыта и вид её требует: смена ширины её закрывает
+        effect((): void => {
+            const template: TemplateRef<IRtWorkspace.SlotContext> | undefined = this.asideSlot()?.templateRef;
+            const shown: boolean = this.#asideOpen() && this.asideOverlay();
+            untracked((): void => (shown && template ? this.#openOverlay(template) : this.#closeOverlay()));
+        });
+
+        // Затемнение, Esc и кнопка «Закрыть» закрывают панель сами: состояние догоняет их
+        this.#overlayOpenedSource
+            .pipe(
+                mergeMap((ref: RtAsideRef<void>): Observable<RtAsideRef<void>> => ref.afterClosed().pipe(map((): RtAsideRef<void> => ref))),
+                takeUntilDestroyed()
+            )
+            .subscribe((ref: RtAsideRef<void>): void => {
+                if (this.#overlayRef === ref) {
+                    this.#overlayRef = null;
+                }
+                this.#asideOpen.set(false);
+            });
 
         this.#destroyRef.onDestroy((): void => this.#stopDragging());
     }
@@ -233,6 +330,29 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
         const override: WritableSignal<number | null> = kind === 'list' ? this.#listWidthOverride : this.#asideWidthOverride;
         override.set(null);
         this.#persist();
+    }
+
+    #openOverlay(template: TemplateRef<IRtWorkspace.SlotContext>): void {
+        if (this.#overlayRef !== null) {
+            return;
+        }
+        const data: IRtWorkspace.AsideOverlayData = {
+            template,
+            context: this.slotContext,
+            width: this.asideOverlayWidth(),
+        };
+        const ref: RtAsideRef<void> = this.#asides.open<RtWorkspaceAsideOverlayComponent, IRtWorkspace.AsideOverlayData, void>(
+            RtWorkspaceAsideOverlayComponent,
+            { data, injector: this.#injector, panelClass: ASIDE_OVERLAY_PANE }
+        );
+        this.#overlayRef = ref;
+        this.#overlayOpenedSource.next(ref);
+    }
+
+    #closeOverlay(): void {
+        const ref: RtAsideRef<void> | null = this.#overlayRef;
+        this.#overlayRef = null;
+        ref?.close();
     }
 
     #onDragMove(event: PointerEvent): void {

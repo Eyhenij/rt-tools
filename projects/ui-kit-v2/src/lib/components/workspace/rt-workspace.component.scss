@@ -123,10 +123,17 @@
             }
         }
 
+        // Порог одной колонки по умолчанию. С порогом из входа вид считает компонент: класс
+        // `--breakpoint` снимает эти правила, а класс `--single` ниже ставит те же по своему числу
         @include bp.place-max(768px) {
-            &__list {
+            &:not(.rt-workspace--breakpoint) .rt-workspace__list {
                 flex-basis: 100%;
             }
+        }
+
+        // Панель сведений открыта поверх окна боковой панелью: своей колонки и места она не держит
+        &__aside--overlay {
+            display: none;
         }
 
         @include bp.place-min(1080px) {
@@ -140,7 +147,25 @@
             }
         }
 
-        &--has-active {
+        &--single {
+            .rt-workspace__list {
+                flex-basis: 100%;
+            }
+
+            &.rt-workspace--has-active .rt-workspace__list {
+                display: none;
+            }
+
+            &.rt-workspace--has-active .rt-workspace__center {
+                flex-basis: 100%;
+            }
+
+            &.rt-workspace--cards {
+                gap: 0;
+            }
+        }
+
+        &--has-active:not(.rt-workspace--breakpoint) {
             @include bp.place-max(768px) {
                 .rt-workspace__list {
                     display: none;
@@ -204,7 +229,9 @@
             }
 
             @include bp.place-max(768px) {
-                gap: 0;
+                &:not(.rt-workspace--breakpoint) {
+                    gap: 0;
+                }
             }
         }
 
@@ -222,6 +249,27 @@
             &__aside {
                 transition: none;
             }
+        }
+    }
+
+    // Обёртка панели поверх окна боксом не становится: рамка `rt-aside` остаётся ребёнком панели
+    // оверлея. Поля содержимого сняты: шаблон панели сведений писан под колонку без полей
+    .rt-workspace-aside-overlay {
+        display: contents;
+
+        .rt-aside__content {
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+    }
+
+    // Панель сведений поверх окна держит свою ширину и на узком окне. Общая панель там занимает
+    // окно целиком, и затемнение под ней было бы негде нажать
+    @media (width <= 768px) {
+        .rt-aside-overlay.rt-workspace-aside-pane {
+            width: auto;
+            max-width: 100dvw;
         }
     }
 }

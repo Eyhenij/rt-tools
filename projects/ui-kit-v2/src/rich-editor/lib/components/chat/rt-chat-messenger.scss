@@ -130,10 +130,16 @@
                 line-height: round(1em * var(--rt-leading-snug), 1px);
             }
 
-            .rt-chat__message--own .rt-chat__message-text,
-            .rt-chat__message--own .rt-chat__message-date,
-            .rt-chat__message--own .rt-chat__message-status {
+            // Снятая реплика стоит без заливки: белый цвет заливки ей не даётся, тени под пустым
+            // пузырём тоже нет
+            .rt-chat__message--own:not(.rt-chat__message--deleted) .rt-chat__message-text,
+            .rt-chat__message--own:not(.rt-chat__message--deleted) .rt-chat__message-date,
+            .rt-chat__message--own:not(.rt-chat__message--deleted) .rt-chat__message-status {
                 color: var(--rt-color-action-on-primary);
+            }
+
+            .rt-chat__message--deleted {
+                box-shadow: none;
             }
 
             .rt-chat__message-footer {

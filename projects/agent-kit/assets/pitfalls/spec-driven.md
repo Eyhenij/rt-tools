@@ -9,7 +9,7 @@ The rule is `spec-driven`; the articles that hold the law stand there.
 
 - **Do not create `tasks.md` in a spec.** Steps are a session artefact; their place is the plan in
   the task folder. As soon as "steps" appear in the directory, the spec becomes a plan
-  again and dies after the merge.
+  again and is out of date after the merge.
 - **A spec describes what is settled, not what is coming.** The only place where it speaks of the
   future is `proposed/<feature>/`. Its text merges into the domain spec by one of the last
   commits of the branch, before the PR opens; the directory is removed, the scenario identifiers
@@ -22,8 +22,9 @@ The rule is `spec-driven`; the articles that hold the law stand there.
   mention anywhere is enough for the symbol — in someone else's field with the same name, in a
   markup attribute. The place where the rule is actually carried out is confirmed only by
   reading the code.
-- **An anchor in `tools/*.mjs` is checked by almost nothing:** liveness is counted only for
-  `.ts`, and the sources are walked over `apps`, `libs` and `prisma`. So a rule bound to a check
+- **An anchor in `tools/*.mjs` is checked by almost nothing:** liveness is judged only for
+  a symbol declared in `.ts`; callers are looked for in `.ts` and `.html` under the roots the tree
+  names. So a rule bound to a check
   is read together with the check's body.
 - **A green check does not mean the structure is right.** Sidecars with bindings first lay next
   to the laws, and the check was green precisely because the structure matched what the check

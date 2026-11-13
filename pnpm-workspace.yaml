@@ -61,6 +61,10 @@ overrides:
   '@storybook/test-runner>jest-runner': '30.4.2'
   '@storybook/test-runner>jest-circus': '30.4.2'
   '@storybook/test-runner>jest-environment-node': '30.4.1'
+# The waiting term for a fresh version, in minutes: a day. The number equals the default of pnpm 11
+# and is written here so that it is read from the tree and does not move with the package manager.
+# A version needed before the term is named in the list below.
+minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
   - '@rt-tools/core@0.0.5 || 0.1.0 || 0.2.0 || 0.3.0 || 0.3.1 || 0.4.0 || 0.5.0 || 0.5.1'
   - '@rt-tools/store@0.0.6 || 0.0.8 || 0.1.0 || 0.2.0 || 0.3.0 || 0.3.1 || 0.3.2 || 0.3.3 || 0.3.4'

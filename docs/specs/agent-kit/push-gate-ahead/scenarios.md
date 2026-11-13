@@ -3,19 +3,90 @@
 The spec is `spec.md` next to it. The scenarios check what base the set is counted against, when a
 check is not run again and how the heavy steps leave the guard.
 
-### SC-AK-1240 — a stacked branch is counted against the branch it was created from
+### SC-AK-1240 — a stacked branch is counted against the branch under it
 
-Given a branch created from another branch whose remote copy lies in the history of the head
+Given a branch that stands on another branch whose remote copy lies in the history of the head
 When the push guard picks the base
 Then the base is the remote copy of that branch
 
-Given a branch created from the main branch
+Given a branch that stands on the main branch
 When the push guard picks the base
 Then the base is the remote main branch
 
-Given the parent branch was removed from the remote
+Given the lower branch was removed from the remote, the working copy holds no ref of it, and no
+other remote branch carries it
 When the push guard picks the base
-Then the base is the remote main branch: the gate may be stricter, never weaker
+Then the base is the remote main branch
+
+Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
+
+### SC-AK-1340 — the base is the remote branch the head has the fewest commits over
+
+Given two remote branches lie in the history of the head, one nearer to it than the other
+When the push guard picks the base
+Then the base is the nearer one
+
+Given the branch has a remote copy of its own behind the head
+When the push guard picks the base
+Then that copy is not the base
+
+Given the lower branch was removed from the remote, and the working copy still holds its ref
+When the push guard picks the base
+Then the base is that ref
+
+Given the lower branch was merged into the branch of the epic by the host and removed from the
+remote, and the working copy holds no ref of it
+When the push guard picks the base
+Then the base is the branch of the epic, whether or not the branch took it in
+
+Given a branch made from the checked-out head, and the call comes from a subdirectory
+When the push guard picks the base
+Then the base is the same as from the root of the tree
+
+Given the main branch moved ahead on the remote, and the ref of a branch merged into it earlier
+lies in the history of the head
+When the push guard picks the base
+Then the base is the remote main branch
+
+Given the host merged a task into the branch of an epic
+When the push guard picks the base for the branch of the epic
+Then the merged task is not the base, and neither is a task that stands on the branch of the epic
+
+Given the host merged a neighbouring task into the branch of an epic after a task was taken from it
+When the push guard picks the base for that task
+Then the base is the branch of the epic
+
+Given a remote branch that stands on this one
+When the push guard picks the base
+Then that branch is not the base
+
+Given a head that is no branch
+When the push guard picks the base
+Then the base is the remote main branch
+
+Given a neighbouring task taken from the new tip of the branch of the epic, as near as that branch
+When the push guard picks the base
+Then the base is the branch of the epic, not the neighbour
+
+Given a branch taken straight from the remote branch of the epic, so that it tracks it
+When the push guard picks the base
+Then the base is the branch of the epic
+
+Given a remote branch at the same commit as the main branch
+When the push guard picks the base
+Then the base is the remote main branch
+
+Given a task that took the main branch in by itself
+When the push guard picks the base
+Then the base is the branch of the epic: what the main branch brought is not counted
+
+Given a branch pushed before its first commit
+When the push guard picks the base
+Then the base is the branch it lies on, not the main one
+
+Given a branch moved past the head by a plain push, not by a merge of the host
+When the push guard picks the base
+Then that branch is not the base
 
 Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 

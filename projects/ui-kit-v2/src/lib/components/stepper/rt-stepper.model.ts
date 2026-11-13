@@ -11,6 +11,13 @@ export namespace IRtStepper {
     /** Состояние шага в вертикальном списке; `neutral` — у всех шагов, когда текущего нет. */
     export type StepState = 'complete' | 'current' | 'upcoming' | 'neutral';
 
+    /** Отрезок полосы под подписью текущего шага: начало и ширина в процентах, выравнивание в нём. */
+    export interface LabelSegment {
+        readonly start: number;
+        readonly size: number;
+        readonly anchor: 'start' | 'center' | 'end';
+    }
+
     /** Обстановка шаблона подписи: шаг и его номер с нуля. */
     export interface LabelContext {
         readonly $implicit: Step;

@@ -4,7 +4,7 @@ kind: pattern
 rule: testing
 description: Pattern of rule testing. Load when creating or editing *.spec.ts under Vitest — the ready-made layout of describe and it, the fixture builder, the scenario id in the title, a Connect procedure test with a hand-written database double. Not for end-to-end tests — that is pattern testing-e2e.
 ---
-<!-- rt-kit v0.37.0 · patterns/testing-unit.md · 61d91f546ed1 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/testing-unit.md · d37596891533 · правится надстройкой, не здесь -->
 
 # A test on a pure function and on a procedure
 
@@ -33,7 +33,7 @@ language, present tense, about behaviour, not about the internals:
 
 ```typescript
 describe('applyDayClick', () => {
-    it('SC-BK-19 — клик по занятому дню ничего не меняет', () => {
+    it('SC-BK-19 — a click on a taken day changes nothing', () => {
         expect(applyDayClick(day('2026-08-12'), selection)).toEqual(selection);
     });
 });

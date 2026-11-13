@@ -12,7 +12,7 @@ token names are listed at all.
 
 - **In the rule** — Here
 - **a document** — a package README, a component `CONTEXT.md`, `TOKENS.md`, a decision in `docs/adr/`, a plan in `docs/plans/`, the changelog
-- **the pair "an edit and its document"** — by the guard itself: a rule and its companion; by the tree profile: a second-kit component and the `CONTEXT.md` next to it, the styling tokens and `TOKENS.md`, the production make-up (`docker-compose.prod.yml`, `deploy/Caddyfile`, `.github/workflows/deploy.yml`) and `docs/PROD.md`. The tree has no libs, so the README pairs never fire here
+- **the pair "an edit and its document"** — by the guard itself: a rule and its companion; by the tree profile: a second-kit component and the `CONTEXT.md` next to it, the styling tokens and `TOKENS.md`, the production make-up (`docker-compose.prod.yml`, `deploy/Caddyfile`, `.github/workflows/deploy.yml`) and `docs/PROD.md`. A lib for the guard is any directory with `project.json` — every package under `projects/`, `apps/` and `libs/`: creating or removing one, and moving a file between two, demands their READMEs
 - **the bypass mark** — the line `Docs-skip: <reason>` in the commit body; an empty reason is not accepted
 - **the project glossary** — `docs/GLOSSARY.md` — the shared part is brought by the package, the subject part is appended by the override
 
@@ -82,7 +82,6 @@ not in the wrong language.
 ## What this is checked by
 
 - `.claude/hooks/docs-guard.sh` on a commit — only those pairs where the link is mechanical.
-- `npm run check:docs` — the addresses named in the texts and the completeness of the archive
-  index.
+- `npm run check:docs` — the addresses named in the texts; no directory index is audited here.
 - `pnpm run agent-kit:check` — what is laid out matches the package and the override.
 - By reading: everything else in this rule the machine does not check.

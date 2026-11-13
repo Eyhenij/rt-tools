@@ -352,6 +352,69 @@ report "SC-AK-1181 — без идущего слияния тот же файл
     "$(edit_path_at "$MERGING" "$COMP")" deny
 rm -rf "$MERGING"
 
+# --- SC-AK-1336…1337 — вторая рабочая копия судится по себе ---------------------------------
+#
+# Сессия запущена в главном дереве, и путь проекта указывает туда, а правка идёт во второй рабочей
+# копии того же репозитория. Ветка, замысел и история разобранной папки читаются в копии правки:
+# иначе после разбора папки любую правку там отбивает история чужой ветки.
+in_copy() {
+    local out
+    out="$(printf '%s' "$1" | CLAUDE_PROJECT_DIR="$SESSION_TREE" "$HOOKS/task-flow-guard.sh" 2>/dev/null)"
+    [ -z "$out" ] && { printf 'PASS'; return 0; }
+    printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision // "PASS"' 2>/dev/null
+}
+edit_copy_json() {
+    jq -n --arg f "$1/$2" --arg d "$1" '{session_id:"tests",tool_name:"Edit",tool_input:{file_path:$f},cwd:$d}'
+}
+# Каталог вызова остался в дереве сессии, а инструмент пишет во вторую копию по полному пути.
+edit_from_session_json() {
+    jq -n --arg f "$1/$2" --arg d "$SESSION_TREE" '{session_id:"tests",tool_name:"Edit",tool_input:{file_path:$f},cwd:$d}'
+}
+bash_copy_json() {
+    jq -n --arg c "$2" --arg d "$1" '{session_id:"tests",tool_name:"Bash",tool_input:{command:$c},cwd:$d}'
+}
+copy_of() {
+    local dir
+    dir="$(mktemp -d)" && rmdir "$dir"
+    git -C "$SESSION_TREE" worktree add -q -b "$1" "$dir" main >/dev/null 2>&1
+    printf '%s' "$dir"
+}
+
+SESSION_TREE="$(fixture_repo_branched main RT-60-other)"
+
+HANDED="$(copy_of RT-61-probe)"
+fixture_commit "$HANDED" docs/tasks/RT-61-probe/plan.md 'замысел' 'docs: замысел'
+fixture_commit "$HANDED" "$COMP" 'export class A {}' 'feat: правка'
+fixture_remove "$HANDED" docs/tasks/RT-61-probe 'docs: папка разобрана'
+report "SC-AK-1336 — правка инструментом во второй копии после разбора проходит" \
+    "$(in_copy "$(edit_copy_json "$HANDED" "$COMP")")" PASS
+report "SC-AK-1336 — правка командой с путём от копии проходит" \
+    "$(in_copy "$(bash_copy_json "$HANDED" "printf x > $COMP")")" PASS
+report "SC-AK-1336 — каталог вызова в дереве сессии, правка во второй копии по полному пути проходит" \
+    "$(in_copy "$(edit_from_session_json "$HANDED" "$COMP")")" PASS
+
+fixture_commit "$SESSION_TREE" "$COMP" 'export class A { other = 1; }' 'feat: соседняя ветка'
+NO_PLAN="$(copy_of RT-62-probe)"
+fixture_commit "$NO_PLAN" "$COMP" 'export class A { copy = 1; }' 'feat: правка без папки'
+report "SC-AK-1337 — правка во второй копии без замысла отбивается" \
+    "$(in_copy "$(edit_copy_json "$NO_PLAN" "$OTHER")")" deny
+CLAUDE_PROJECT_DIR="$SESSION_TREE" expect_reason "SC-AK-1337 — из дерева сессии отказ называет замысел ветки копии" \
+    task-flow-guard.sh "$(edit_from_session_json "$NO_PLAN" "$OTHER")" 'RT-62-probe'
+git -C "$NO_PLAN" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false \
+    merge -q RT-60-other --no-edit >/dev/null 2>&1
+report "SC-AK-1337 — конфликт слияния во второй копии разрешается" \
+    "$(in_copy "$(bash_copy_json "$NO_PLAN" "git checkout --theirs $COMP")")" PASS
+report "SC-AK-1337 — код вне конфликта во второй копии отбивается" \
+    "$(in_copy "$(edit_copy_json "$NO_PLAN" "$OTHER")")" deny
+
+# Та же отданная работа, в копию вливается соседняя ветка с конфликтом: исключение для конфликта
+# не подходит, и решает история копии. Именно здесь старый признак подменял корень деревом сессии.
+git -C "$HANDED" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false \
+    merge -q RT-60-other --no-edit >/dev/null 2>&1
+report "SC-AK-1336 — при идущем слиянии правка командой вне конфликта проходит" \
+    "$(in_copy "$(bash_copy_json "$HANDED" "printf x > $OTHER")")" PASS
+rm -rf "$HANDED" "$NO_PLAN" "$SESSION_TREE"
+
 # --- отказ в пользу работы ----------------------------------------------------------------
 # Сломанный гард не должен мешать работать: любой неразобранный вход пропускается.
 exit_code_of() {

@@ -274,8 +274,8 @@ rm -rf "$ALL_RED"
 
 # --- SC-AK-1240. Ветка из стопки считается от ветки, из которой взята ----------------------------
 # От главной ветка из стопки платила за всю стопку под собой: ветка второго кита на третьем этаже
-# не влезала в предел хука вовсе. Родитель читается из журнала ветки, и берётся, только когда его
-# копия на сервере есть и лежит в истории головы.
+# не влезала в предел хука вовсе. Нижняя ветка берётся базой, пока ссылка на неё есть в копии и
+# лежит в истории головы.
 push_base() {
     (cd "$1" && . "$HOOKS/git-guard-push-marks.sh" && rt_push_base main)
 }
@@ -297,6 +297,156 @@ git -C "$STACK" checkout -q RT-81-top 2>/dev/null
 git -C "$STACK" push -q origin --delete RT-80-low 2>/dev/null
 git -C "$STACK" branch -q -D -r origin/RT-80-low 2>/dev/null
 report "SC-AK-1240 — родитель, снятый с сервера, возвращает главную" "$(push_base "$STACK")" origin/main
+
+# --- SC-AK-1340. База — ветка сервера, над которой у головы меньше всего коммитов ------------------
+# Нижнюю ветку цепочки сервер снимает при слиянии, и ветка над ней считалась от главной: ветка
+# текстов запускала снимки, сквозные наборы и сборку образов всего эпика. База читается по ссылкам
+# копии: без вызова хоста, одинаково из любого каталога и без записи о родителе в журнале ветки.
+stack_git() {
+    git -C "$STACK" -c user.name=probe -c user.email=probe@example.invalid -c commit.gpgsign=false "$@"
+}
+# Слияние, каким его пишет хост: подписано им самим. По этой подписи база отличает ветку, в которую
+# влили заявку, от ветки, что приняла чужую сама.
+host_merge() {
+    GIT_COMMITTER_NAME=GitHub GIT_COMMITTER_EMAIL=noreply@github.com stack_git merge -q --no-ff -m "$@" 2>/dev/null
+}
+
+stack_git checkout -q -b RT-90-epic main 2>/dev/null
+fixture_commit "$STACK" epic.txt эпик 'feat: ветка эпика'
+stack_git push -q origin RT-90-epic 2>/dev/null
+stack_git checkout -q -b RT-91-low RT-90-epic 2>/dev/null
+fixture_commit "$STACK" low2.txt низ 'feat: нижняя ветка цепочки'
+stack_git push -q origin RT-91-low 2>/dev/null
+stack_git checkout -q -b RT-92-top RT-91-low 2>/dev/null
+fixture_commit "$STACK" top2.txt верх 'feat: верхняя ветка цепочки'
+report "SC-AK-1340 — из веток сервера берётся ближайшая" "$(push_base "$STACK")" origin/RT-91-low
+
+stack_git push -q origin RT-92-top 2>/dev/null
+fixture_commit "$STACK" top3.txt ещё 'feat: вторая правка верхней ветки'
+report "SC-AK-1340 — своя копия ветки на сервере базой не считается" "$(push_base "$STACK")" origin/RT-91-low
+
+# Сервер снял нижнюю ветку, а ссылка на неё в копии осталась: её содержимое набор уже прошло.
+git -C "$STACK_REMOTE" update-ref -d refs/heads/RT-91-low 2>/dev/null
+report "SC-AK-1340 — ссылка снятой с сервера ветки остаётся базой" "$(push_base "$STACK")" origin/RT-91-low
+
+# Копия, где ссылки на нижнюю ветку нет: нижняя влита в ветку эпика коммитом слияния. Ветка эпика
+# несёт нижнюю в себе, и над ней у головы остаются только свои правки — принимать её не нужно.
+stack_git checkout -q RT-90-epic 2>/dev/null
+host_merge 'feat: заявка 91 влита' RT-91-low 2>/dev/null
+stack_git push -q origin RT-90-epic 2>/dev/null
+stack_git checkout -q RT-92-top 2>/dev/null
+stack_git branch -q -D -r origin/RT-91-low 2>/dev/null
+report "SC-AK-1340 — нижняя влита в ветку эпика, ссылки на неё нет: база — ветка эпика" "$(push_base "$STACK")" origin/RT-90-epic
+stack_git merge -q -m 'feat: ветка эпика принята' origin/RT-90-epic 2>/dev/null
+report "SC-AK-1340 — ветка приняла ветку эпика: база — ветка эпика" "$(push_base "$STACK")" origin/RT-90-epic
+
+# Ветка без записи о родителе в журнале и вызов из подкаталога дают тот же ответ.
+stack_git checkout -q -b RT-93-here 2>/dev/null
+mkdir -p "$STACK/sub"
+fixture_commit "$STACK" here.txt тут 'feat: правка ветки без записи о родителе'
+report "SC-AK-1340 — ветка без записи о родителе считается от ветки эпика" "$(push_base "$STACK")" origin/RT-90-epic
+report "SC-AK-1340 — из подкаталога ответ тот же, что из корня" "$(push_base "$STACK/sub")" origin/RT-90-epic
+
+# Главная ветка ушла вперёд, а в истории головы лежит ссылка давно влитой ветки: база — главная.
+# Без этого ветка текстов от главной платила за снимки чужой влитой ветки.
+stack_git checkout -q -b RT-94-old main 2>/dev/null
+fixture_commit "$STACK" old1.txt старое 'feat: давняя ветка, первая правка'
+stack_git push -q origin RT-94-old 2>/dev/null
+fixture_commit "$STACK" old2.txt старое 'feat: давняя ветка, вторая правка'
+stack_git checkout -q main 2>/dev/null
+host_merge 'feat: заявка 94 влита' RT-94-old 2>/dev/null
+stack_git push -q origin main 2>/dev/null
+stack_git checkout -q -b RT-95-solo main 2>/dev/null
+fixture_commit "$STACK" solo.txt своё 'docs: ветка от главной'
+stack_git checkout -q main 2>/dev/null
+fixture_commit "$STACK" ahead.txt вперёд 'feat: главная ушла вперёд'
+stack_git push -q origin main 2>/dev/null
+stack_git checkout -q RT-95-solo 2>/dev/null
+report "SC-AK-1340 — главная ушла вперёд, в истории ссылка влитой ветки: база главная" "$(push_base "$STACK")" origin/main
+
+# Ветка эпика: задачу в неё влил хост. Влитая задача — содержимое ветки, а не её база.
+stack_git checkout -q -b RT-96-epic main 2>/dev/null
+fixture_commit "$STACK" epic96.txt эпик 'docs: план эпика'
+stack_git push -q origin RT-96-epic 2>/dev/null
+stack_git checkout -q -b RT-97-task RT-96-epic 2>/dev/null
+fixture_commit "$STACK" task97.txt задача 'feat: задача эпика'
+stack_git push -q origin RT-97-task 2>/dev/null
+stack_git checkout -q RT-96-epic 2>/dev/null
+host_merge 'feat: заявка 97 влита' RT-97-task 2>/dev/null
+report "SC-AK-1340 — ветка, влитая заявкой, базой не считается" "$(push_base "$STACK")" origin/main
+stack_git checkout -q -b RT-98-next RT-96-epic 2>/dev/null
+stack_git push -q origin RT-96-epic 2>/dev/null
+fixture_commit "$STACK" task98.txt задача 'feat: следующая задача эпика'
+report "SC-AK-1340 — следующая задача считается от ветки эпика" "$(push_base "$STACK")" origin/RT-96-epic
+
+# Ветка эпика на сервере ушла вперёд — в неё влили соседнюю задачу. Задача считается от неё же.
+stack_git push -q origin RT-98-next 2>/dev/null
+stack_git checkout -q -b RT-99-side RT-96-epic 2>/dev/null
+fixture_commit "$STACK" side99.txt сосед 'feat: соседняя задача эпика'
+stack_git checkout -q RT-96-epic 2>/dev/null
+host_merge 'feat: заявка 99 влита' RT-99-side 2>/dev/null
+stack_git push -q origin RT-96-epic 2>/dev/null
+stack_git checkout -q RT-98-next 2>/dev/null
+fixture_commit "$STACK" task98b.txt задача 'feat: вторая правка следующей задачи'
+report "SC-AK-1340 — ветка эпика ушла вперёд: задача считается от неё" "$(push_base "$STACK")" origin/RT-96-epic
+
+# Ветка, что стоит на этой и уже отправлена, несёт её в себе: базой она не бывает.
+stack_git checkout -q -b RT-100-above RT-98-next 2>/dev/null
+fixture_commit "$STACK" above.txt выше 'feat: ветка над задачей'
+stack_git push -q origin RT-100-above 2>/dev/null
+stack_git checkout -q RT-98-next 2>/dev/null
+fixture_commit "$STACK" task98c.txt задача 'feat: третья правка следующей задачи'
+report "SC-AK-1340 — ветка, стоящая на этой, базой не считается" "$(push_base "$STACK")" origin/RT-96-epic
+
+# Ветка эпика после слияния соседней задачи: ни влитая, ни стоящая на ней задача ей не база.
+stack_git checkout -q RT-96-epic 2>/dev/null
+report "SC-AK-1340 — ветка эпика считается от главной" "$(push_base "$STACK")" origin/main
+
+# Голова без ветки: своей копии на сервере назвать нечем, ответ — главная.
+stack_git checkout -q --detach RT-98-next 2>/dev/null
+report "SC-AK-1340 — голова без ветки считается от главной" "$(push_base "$STACK")" origin/main
+
+# Соседняя задача взята с новой вершины ветки эпика и отправлена: она так же близка, как ветка
+# эпика, и по имени стоит раньше. База — ветка, на которой стоят обе.
+stack_git checkout -q -b RT-10-sibling origin/RT-96-epic 2>/dev/null
+fixture_commit "$STACK" sibling.txt сосед 'feat: сосед с новой вершины эпика'
+stack_git push -q origin RT-10-sibling 2>/dev/null
+stack_git checkout -q RT-98-next 2>/dev/null
+report "SC-AK-1340 — сосед так же близок, как ветка эпика: база — ветка эпика" "$(push_base "$STACK")" origin/RT-96-epic
+
+# Ветка взята прямо от серверной ветки эпика и следит за ней: своей копией та от этого не стала.
+stack_git checkout -q -b RT-101-track --track origin/RT-96-epic 2>/dev/null
+fixture_commit "$STACK" track.txt слежение 'feat: ветка следит за веткой эпика'
+report "SC-AK-1340 — ветка следит за веткой эпика и считается от неё" "$(push_base "$STACK")" origin/RT-96-epic
+
+# Ветка сервера стоит на той же вершине, что главная: при равенстве остаётся главная.
+stack_git push -q origin origin/main:refs/heads/A-0-same 2>/dev/null
+stack_git checkout -q RT-95-solo 2>/dev/null
+stack_git merge -q -m 'feat: главная принята' origin/main 2>/dev/null
+report "SC-AK-1340 — при равенстве с другой веткой остаётся главная" "$(push_base "$STACK")" origin/main
+
+# Задача приняла главную ветку сама: принесённое главной в счёт не идёт, база — ветка эпика.
+stack_git checkout -q RT-101-track 2>/dev/null
+stack_git merge -q -m 'feat: задача приняла главную' origin/main 2>/dev/null
+report "SC-AK-1340 — задача приняла главную: база — ветка эпика" "$(push_base "$STACK")" origin/RT-96-epic
+
+# Ветка отправлена до первой правки: её копия лежит на вершине ветки эпика, и та остаётся базой.
+stack_git checkout -q -b RT-102-fresh origin/RT-96-epic 2>/dev/null
+stack_git push -q origin RT-102-fresh 2>/dev/null
+fixture_commit "$STACK" fresh.txt свежая 'feat: первая правка после отправки'
+report "SC-AK-1340 — ветка отправлена до первой правки: база — ветка эпика" "$(push_base "$STACK")" origin/RT-96-epic
+
+# Ветку эпика продвинул не хост, а чья-то отправка: отличить её от ветки, стоящей на этой, нечем.
+stack_git checkout -q -b RT-103-plain main 2>/dev/null
+fixture_commit "$STACK" plain1.txt основа 'feat: основа ветки'
+stack_git push -q origin RT-103-plain 2>/dev/null
+stack_git checkout -q -b RT-104-under RT-103-plain 2>/dev/null
+fixture_commit "$STACK" under.txt задача 'feat: задача на старой вершине'
+stack_git checkout -q RT-103-plain 2>/dev/null
+fixture_commit "$STACK" plain2.txt основа 'feat: основа ушла вперёд без хоста'
+stack_git push -q origin RT-103-plain 2>/dev/null
+stack_git checkout -q RT-104-under 2>/dev/null
+report "SC-AK-1340 — ветку продвинул не хост: база главная" "$(push_base "$STACK")" origin/main
 rm -rf "$STACK" "$STACK_REMOTE"
 
 # --- SC-AK-1241. Зелёное на том же дереве второй раз не гоняется ---------------------------------

@@ -4,7 +4,7 @@ kind: pattern
 rule: testing
 description: Pattern of rule testing. Load when editing and running end-to-end tests in any end-to-end suite of the tree (apps/*-e2e) — what an end-to-end test closes, ready-made run commands, a stand from the production build behind real nginx, test switches. Not for unit tests — that is pattern testing-unit.
 ---
-<!-- rt-kit v0.37.0 · patterns/testing-e2e.md · 0d272ab8c94d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/testing-e2e.md · 99f3ebdd1249 · правится надстройкой, не здесь -->
 
 # End-to-end tests
 
@@ -66,13 +66,13 @@ such a stand the run goes with `BASE_URL`, and with it the locale redirect check
 
 ```typescript
 const ALLOW_RENAME: boolean = process.env['E2E_ALLOW_SLUG_RENAME'] === '1';
-test.skip(!ALLOW_RENAME, 'меняет живой адрес объекта: включается E2E_ALLOW_SLUG_RENAME=1');
+test.skip(!ALLOW_RENAME, 'changes the live address of a record: switched on by E2E_ALLOW_SLUG_RENAME=1');
 ```
 
 Switches come in two kinds, and only the first counts as coverage. **A switch by stand state**
 skips a case the stand never has by design — the scenario is closed, and it needs no mark. **A
-switch by environment variable** leaves the test unrun: the scenario behind it is listed as
-covered while nothing checks it, and such a scenario carries a partial-coverage mark with a
+switch by environment variable** leaves the test unrun: nothing checks the scenario behind
+it, and such a scenario carries a partial-coverage mark with a
 reason. Of the three below not one belongs to the first kind: all three are driven by a variable.
 
 - A test that irreversibly changes stand data is skipped by default and switched on by its own
@@ -131,7 +131,7 @@ been pressed at all. The popup is closed and its absence awaited by the same pai
 
 A screen is ready when its data is, not when its heading is. A heading, a month title or a toolbar
 comes from the template and is drawn before the request answers. A check or a frame that waits for
-it reads an empty grid. The wait names a node that exists only with data: a row, a booking, a
+it reads an empty grid. The wait names a node that exists only with data: a row, a record, a
 selected record.
 
 After a change of the window width, layout values come from different sources at different
@@ -197,8 +197,8 @@ target `message-bus-admin-e2e`, and the entry example, `auth-example-e2e`, on th
 commands below are the first one's.
 
 ```bash
-pnpm run serve:stand                       # production builds on 3310 and 4310, its own seeded database
-pnpm exec nx e2e message-bus-admin-e2e     # against the raised stand
+pnpm exec nx run message-bus-admin-e2e:e2e # raises its own stand and takes it down
+pnpm run serve:stand                       # the same stand for looking by eye: 3310 and 4310, its own seeded database
 ```
 
 The stand raises the receiver, the admin panel and the database for itself: it takes no working

@@ -80,6 +80,20 @@ describe('RtChatComponent', (): void => {
             expect(qa(fixture, 'chat-message-text')).toBeNull();
         });
 
+        it('SC-UKV-1236 — снятая своя реплика несёт оба признака на пузыре', (): void => {
+            // По паре признаков стили вида мессенджера отличают снятую свою реплику от обычной
+            const fixture: ComponentFixture<RtChatComponent> = setup({
+                messenger: true,
+                messages: [message({ own: true, deleted: true })],
+            });
+            const bubble: HTMLElement = el(fixture, '.rt-chat__message')?.nativeElement as HTMLElement;
+            const placeholder: HTMLElement = qa(fixture, 'chat-message-deleted')?.nativeElement as HTMLElement;
+
+            expect(bubble.classList).toContain('rt-chat__message--own');
+            expect(bubble.classList).toContain('rt-chat__message--deleted');
+            expect(placeholder.classList).toContain('rt-chat__message-text--deleted');
+        });
+
         it('автор и время рисуются рядом с текстом', (): void => {
             const fixture: ComponentFixture<RtChatComponent> = setup({ messages: [message()] });
 

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · defaults/turn-map.md · ed63231b15ee · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · defaults/turn-map.md · d5d1f1d0988d · правится надстройкой, не здесь -->
 # Turn map
 
 This is not the rule but its short digest: the rule explains, the map names. The full text is
@@ -29,7 +29,8 @@ merge go on without the executor and do not get faster from being watched.
 
 ## What a turn ends with
 
-While the epic runs there are four ways, and no others.
+There are four ways, and no others. While the epic runs the fourth does not end a turn: the next
+task goes on in it.
 
 - **a question to the owner that the rules do not answer** — the question is asked, and the rules were read in the same turn
 - **a guard refusal** — the refusal is named to the owner, no workaround was looked for

@@ -4,7 +4,7 @@ kind: pattern
 rule: spec-driven
 description: Pattern of rule spec-driven. Load when creating or editing a law in docs/constitution, a rule or a pattern in .claude/skills — ready-made headers, the section set of each layer, the binding table, the sign that a rule is due for splitting. Not for a domain spec — that is pattern spec-driven-domain.
 ---
-<!-- rt-kit v0.37.0 · patterns/spec-driven-rule.md · b185b7958ea2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/spec-driven-rule.md · dfd89877bd66 · правится надстройкой, не здесь -->
 
 # Law, rule and pattern
 
@@ -27,7 +27,7 @@ The layer is chosen by one question: does the article stay true in an applicatio
 payments, no translation locales and no second owning entity. It stays — the law lives in the
 root; it does not — this is an application law, and it goes to
 `docs/constitution/application/<law>.md`. A law name is one for both layers: neither `law:` in
-the rule header nor `**Законы:**` in the spec header names the layer, and two laws with one name
+the rule header nor `**Laws:**` in the spec header names the layer, and two laws with one name
 would part a rule from its law.
 
 Sections: the intro paragraph without a heading · `## Articles` · `## Open questions`. Only
@@ -59,7 +59,7 @@ is not reused after closing.
 Code behaviour is not a law: "the store answers with a boolean", "the method is called `save`" —
 neither a guest nor the owner sees this. The boundary is simple: a law describes what is visible
 from outside the application. The exception is an article about code structure that the machine
-audits: anchors are read only under `docs/specs/` and `docs/constitution/`.
+audits: anchors are read from the `implementation.md` of a spec and of a rule, never from a law.
 
 ## Rule
 

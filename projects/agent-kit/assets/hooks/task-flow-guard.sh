@@ -65,9 +65,10 @@ merge_conflict_only() {
     seen=0
     while IFS= read -r candidate; do
         [ -z "$candidate" ] && continue
+        # A relative path belongs to the directory of the call, as in the context above.
         case "$candidate" in
             /*) ;;
-            *) candidate="${CLAUDE_PROJECT_DIR:-.}/$candidate" ;;
+            *) candidate="${rt_tf_askdir:-${CLAUDE_PROJECT_DIR:-.}}/$candidate" ;;
         esac
         rt_is_app_code "$candidate" || rt_tf_laid_out "$candidate" || continue
         [ -n "$(git -C "$root" ls-files -u -- "$candidate" 2>/dev/null | head -1)" ] || return 1

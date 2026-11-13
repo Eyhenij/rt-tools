@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-push-marks.sh · f274dd9dece7 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-push-marks.sh · 5284f3fab919 · правится надстройкой, не здесь
 # The base of the push set and the marks of a green run, shared by the push guard and by the
 # command that runs the set ahead (`git-guard-push-ahead.sh`).
 #
@@ -11,38 +11,90 @@
 
 # The base the contribution is counted against. Prints `origin/<branch>` or nothing.
 #
-# A stacked branch is counted against the branch it was created from, not against the main one:
-# against the main one it paid for the whole stack under it, and a branch of the second kit three
-# levels up did not fit the hook limit at all. The parent is read from the branch reflog — git
-# writes `branch: Created from <ref>` itself at `checkout -b` — and is taken only when its remote
-# copy exists and is an ancestor of the head. A parent merged and removed, rewritten or moved past
-# the head gives the main branch back: the gate may turn out stricter than needed, never weaker.
+# The base is the remote branch the head has the fewest commits over: what the head carries past
+# it is what this push adds to what the remote already holds. A stacked branch is so counted
+# against the branch under it and a task branch against the branch of its epic, not against the
+# main one: against the main one a branch of texts ran the snapshot sets, the end-to-end suites
+# and the image builds of the whole epic.
+#
+# A branch that does not lie in the history of the head is a candidate only when the host moved
+# it past the head by merging a request: the branch of an epic that took a neighbouring task in
+# stays the base of every task standing on it, and a lower branch merged and removed is replaced
+# by the branch it was merged into. A branch moved by plain commits is one that stands on this
+# one, and git alone cannot tell which of two branches was taken from the other.
+#
+# The main branch wins a tie: another branch is taken only when it is strictly nearer.
+#
+# Three kinds of branches are no base, because they are this branch's own content:
+#   - its own remote copy — the set answers for the whole contribution, not for the last commit;
+#   - a branch that stands on that copy — it carries this branch inside itself;
+#   - a branch the host merged into this one by a request. Without that the branch of an epic was
+#     counted against its last merged task, and nothing checked the epic against the main branch
+#     before the push. The host's merge is told by the committer of the commit: the host signs
+#     its merges itself, and the subject there is the title of the request, which says nothing.
+#     A tree whose host signs otherwise names the signature in `RT_PUSH_HOST_COMMITTER`.
+#
+# What this trusts: a branch on the remote got there through this set. The answer is read from the
+# remote refs of the working copy after one fetch: no call to the host, and it works on the first
+# push, when no request is open yet. A head that is no branch gets the main branch.
 rt_push_base() {
-    local main="$1" branch from
-    git fetch --quiet origin "$main" 2>/dev/null
-    git rev-parse --verify --quiet "origin/$main" >/dev/null 2>&1 || return 0
+    local main="$1" branch own ref name count best best_count merge merged='' host
+    host="${RT_PUSH_HOST_COMMITTER:-GitHub <noreply@github.com>}"
+    git fetch --quiet --no-prune origin 2>/dev/null
+    git rev-parse --verify --quiet "refs/remotes/origin/$main" >/dev/null 2>&1 || return 0
 
+    best="origin/$main"
+    best_count="$(git rev-list --count "refs/remotes/origin/$main..HEAD" 2>/dev/null)"
+    case "$best_count" in '' | *[!0-9]*) printf '%s' "$best" && return 0 ;; esac
     branch="$(git symbolic-ref --quiet --short HEAD 2>/dev/null)"
-    if [ -n "$branch" ]; then
-        from="$(git reflog show --format=%gs "refs/heads/$branch" 2>/dev/null \
-            | sed -n 's/^branch: Created from //p' | tail -n 1)"
-        from="${from#refs/remotes/}"
-        from="${from#refs/heads/}"
-        from="${from#origin/}"
-        case "$from" in
-            '' | HEAD | "$main" | "$branch") ;;
-            *)
-                if git fetch --quiet origin "$from" 2>/dev/null &&
-                    git rev-parse --verify --quiet "origin/$from" >/dev/null 2>&1 &&
-                    git merge-base --is-ancestor "origin/$from" HEAD 2>/dev/null; then
-                    printf 'origin/%s' "$from"
-                    return 0
-                fi
-                ;;
-        esac
-    fi
+    [ -n "$branch" ] || { printf '%s' "$best" && return 0; }
 
-    printf 'origin/%s' "$main"
+    own="refs/remotes/origin/$branch"
+    # The copy is told by the name alone: a branch taken straight from a remote one tracks that
+    # one, and by the tracking the branch of the epic would pass for this branch's own copy.
+    git rev-parse --verify --quiet "$own" >/dev/null 2>&1 || own=''
+
+    # The refs the host merged into this line: reachable from the merged side of a request merge
+    # on the first-parent line of the head and not from the side it was merged into.
+    for merge in $(git rev-list --first-parent --merges --fixed-strings \
+        --committer="$host" "refs/remotes/origin/$main..HEAD" 2>/dev/null); do
+        merged="$merged
+$(git for-each-ref --merged "$merge^2" --no-merged "$merge^1" --format='%(refname)' refs/remotes/origin 2>/dev/null)"
+    done
+
+    while IFS= read -r ref; do
+        name="${ref#refs/remotes/origin/}"
+        case "$name" in
+            '' | HEAD | "$main" | "$branch" | *[!A-Za-z0-9._/-]*) continue ;;
+        esac
+        printf '%s\n' "$merged" | grep -qxF -- "$ref" && continue
+        # A branch that carries the own copy stands on this one — unless the two are one commit:
+        # a branch pushed before its first commit still lies at the tip it was taken from.
+        [ -n "$own" ] && [ "$(git rev-parse "$own")" != "$(git rev-parse "$ref")" ] &&
+            git merge-base --is-ancestor "$own" "$ref" 2>/dev/null && continue
+        if ! git merge-base --is-ancestor "$ref" HEAD 2>/dev/null; then
+            [ -n "$(git rev-list -n 1 --first-parent --merges --fixed-strings --committer="$host" \
+                "HEAD..$ref" 2>/dev/null)" ] || continue
+        fi
+        # What the main branch already holds is not counted: a task that took the main branch in
+        # would otherwise look farther from the branch of its epic than from the main one.
+        count="$(git rev-list --count HEAD --not "$ref" "refs/remotes/origin/$main" 2>/dev/null)" || continue
+        case "$count" in '' | *[!0-9]*) continue ;; esac
+        # Strictly nearer, or equally near and lying under the one already taken: a neighbouring
+        # task taken from the branch of the epic is as near as that branch, and the base is the
+        # branch both stand on. The main branch is never displaced on a tie; of two unrelated
+        # branches the first by name stays — the refs come sorted.
+        if [ "$count" -lt "$best_count" ] ||
+            { [ "$count" -eq "$best_count" ] && [ "$best" != "origin/$main" ] &&
+                git merge-base --is-ancestor "$ref" "refs/remotes/$best" 2>/dev/null; }; then
+            best="origin/$name"
+            best_count="$count"
+        fi
+    done <<EOF
+$(git for-each-ref --format='%(refname)' refs/remotes/origin 2>/dev/null)
+EOF
+
+    printf '%s' "$best"
 }
 
 # A mark is trusted only on a clean working copy. The checks run over the working copy, while the

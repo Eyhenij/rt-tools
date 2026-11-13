@@ -65,13 +65,13 @@ such a stand the run goes with `BASE_URL`, and with it the locale redirect check
 
 ```typescript
 const ALLOW_RENAME: boolean = process.env['E2E_ALLOW_SLUG_RENAME'] === '1';
-test.skip(!ALLOW_RENAME, 'меняет живой адрес объекта: включается E2E_ALLOW_SLUG_RENAME=1');
+test.skip(!ALLOW_RENAME, 'changes the live address of a record: switched on by E2E_ALLOW_SLUG_RENAME=1');
 ```
 
 Switches come in two kinds, and only the first counts as coverage. **A switch by stand state**
 skips a case the stand never has by design — the scenario is closed, and it needs no mark. **A
-switch by environment variable** leaves the test unrun: the scenario behind it is listed as
-covered while nothing checks it, and such a scenario carries a partial-coverage mark with a
+switch by environment variable** leaves the test unrun: nothing checks the scenario behind
+it, and such a scenario carries a partial-coverage mark with a
 reason. Of the three below not one belongs to the first kind: all three are driven by a variable.
 
 - A test that irreversibly changes stand data is skipped by default and switched on by its own
@@ -130,7 +130,7 @@ been pressed at all. The popup is closed and its absence awaited by the same pai
 
 A screen is ready when its data is, not when its heading is. A heading, a month title or a toolbar
 comes from the template and is drawn before the request answers. A check or a frame that waits for
-it reads an empty grid. The wait names a node that exists only with data: a row, a booking, a
+it reads an empty grid. The wait names a node that exists only with data: a row, a record, a
 selected record.
 
 After a change of the window width, layout values come from different sources at different

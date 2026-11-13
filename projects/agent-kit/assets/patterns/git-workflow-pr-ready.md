@@ -45,7 +45,7 @@ gh run list --commit "$(gh pr view <номер> --json headRefOid --jq .headRefO
 
 ## Finish the handed-over first, then take new work
 
-An open PR is work in flight: its run ages, its branch lags behind main, its body describes the
+An open PR is work in flight: its run ages, its branch lags behind its base, its body describes the
 tree on the day it was written. All of this is cheap to fix today and expensive three tasks later.
 
 So the queue is this:

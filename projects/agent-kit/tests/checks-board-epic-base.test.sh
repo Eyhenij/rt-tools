@@ -42,7 +42,7 @@ report "SC-AK-1206 — таблица без повтора молчит" "$(boa
 plan_rows '| 1 | RT-701 |' '| 2 | RT-702 |' '| 2 | RT-702 |'
 report "SC-AK-1206 — повтор номера назван" "$(board_says '#700: the plan names the task #702 in 2 rows of the makeup')" 1
 
-# --- SC-AK-1337 — отставание заявки задачи считается от её базы ------------------------------
+# --- SC-AK-1342 — отставание заявки задачи считается от её базы ------------------------------
 # База задачи — ветка эпика; отставание эпика от main — его собственное, не задачи.
 plan_rows '| 1 | RT-701 |' '| 2 | RT-702 |'
 task_pull() {
@@ -51,9 +51,9 @@ task_pull() {
 }
 export STUB_PULLS="$(task_pull MERGEABLE)"
 export STUB_PULL_BEHIND=3
-report "SC-AK-1337 — названа база задачи и число" "$(board_says 'lags «RT-700-epic» by 3 commits')" 1
-report "SC-AK-1337 — отставание от main на задачу не легло" "$(board_says 'lags «main»')" 0
-report "SC-AK-1337 — назван ход: влить базу" "$(board_says 'Merge «RT-700-epic» in')" 1
+report "SC-AK-1342 — названа база задачи и число" "$(board_says 'lags «RT-700-epic» by 3 commits')" 1
+report "SC-AK-1342 — отставание от main на задачу не легло" "$(board_says 'lags «main»')" 0
+report "SC-AK-1342 — назван ход: влить базу" "$(board_says 'Merge «RT-700-epic» in')" 1
 export STUB_PULL_BEHIND=0
 
 # --- SC-AK-1338 — конфликтующая заявка в ветку эпика: строки о прогоне нет ------------------

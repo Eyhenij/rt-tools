@@ -1,6 +1,6 @@
 # Report of the rules graph
 
-Built by `npm run graph:rules` from `6efc7add6`: 352 nodes, 1311 links.
+Built by `npm run graph:rules` from `ece3c6d96`: 352 nodes, 1319 links.
 The graph is `projects/agent-kit/rules-graph/graph.json`; graphify reads it with `--graph`. Every list below is
 debt for the revision of a law family to sort out, not a refusal.
 
@@ -9,37 +9,37 @@ debt for the revision of a law family to sort out, not a refusal.
 No other text names them in its header, a `Requires` line, an import, a binding or in backticks.
 
 
-## Rules nothing executes — 1
+## Rules nothing executes — 0
 
 No `Requires` line and no binding of the companion to code: a hook, a check, a linter rule or a test.
 
-- dependencies
+- none
 
 Not laid out in this tree, so their executors are unknown here: api-layer, shared-code.
 
-## Articles nothing carries out — 183
+## Articles nothing carries out — 182
 
 Articles the companion of the rule marks «Not checked» or «Not carried out», of all its articles.
 
 - git-workflow — 26 of 79
 - turn-conduct — 25 of 69
-- task-flow — 24 of 59
+- task-flow — 23 of 59
 - observability — 14 of 29
+- deploy-flow — 13 of 29
+- testing — 13 of 42
 - browser-verification — 12 of 23
-- deploy-flow — 12 of 28
-- testing — 12 of 42
 - autonomous-work — 11 of 11
 - reuse-first — 9 of 18
 - doc-style — 8 of 21
 - spec-driven — 6 of 31
 - status-report — 5 of 10
 - epic-flow — 4 of 11
-- dependencies — 3 of 5
 - typescript-conventions — 3 of 10
 - angular-patterns — 2 of 5
 - queue-audit — 2 of 10
 - styling-bem — 2 of 12
 - component-structure — 1 of 4
+- dependencies — 1 of 5
 - lib-layers — 1 of 9
 - platform-access — 1 of 3
 
@@ -49,7 +49,7 @@ Of 46 words of the package glossary, these are said by no text of the package or
 
 - none
 
-## Texts that state the same thing — 15
+## Texts that state the same thing — 16
 
 Pairs of texts whose bold statements share at least 60% of their words, with the
 number of such statements and the first of them.
@@ -69,3 +69,4 @@ number of such statements and the first of them.
 - `projects/agent-kit/assets/rules/doc-style.md` and `projects/agent-kit/assets/rules/git-workflow.github.md` — 1: «A document goes in the same commit as the change it describes.» / «A document goes in the same commit as the edit.»
 - `projects/agent-kit/assets/rules/doc-style.md` and `projects/agent-kit/assets/rules/git-workflow.gitlab.md` — 1: «A document goes in the same commit as the change it describes.» / «A document goes in the same commit as the edit.»
 - `projects/agent-kit/assets/rules/epic-flow.md` and `projects/agent-kit/assets/rules/git-workflow.github.md` — 1: «Work begins with the epic, and a task outside one is not taken.» / «Work begins with the epic, and the branch of a task is taken from the epic branch.»
+- `projects/agent-kit/assets/rules/epic-flow.md` and `projects/agent-kit/assets/rules/git-workflow.gitlab.md` — 1: «Work begins with the epic, and a task outside one is not taken.» / «Work begins with the epic, and the branch of a task is taken from the epic branch.»

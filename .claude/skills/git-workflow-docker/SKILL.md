@@ -4,7 +4,7 @@ kind: pattern
 rule: deploy-flow
 description: Pattern of rule deploy-flow. Load when working with images on your own machine — starting and restarting the daemon, diagnosing a hanging command, building for the production server platform, registry login from a service. Production server commands — pattern git-workflow-restart.
 ---
-<!-- rt-kit v0.37.0 · patterns/git-workflow-docker.md · 7eeae5a95d28 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/git-workflow-docker.md · 8f0d7f5ed80f · правится надстройкой, не здесь -->
 
 # Images on one's own machine
 
@@ -285,12 +285,13 @@ In one session the cache grew by twenty-one gigabytes, and a cleanup by day free
 megabytes — the next run stopped on a lack of space. So the cache has two limiters, not one:
 
 ```bash
-docker builder prune --force --filter until=24h        # yesterday's cache belongs to nobody
-docker builder prune --force --max-used-space 10GB     # a size limit, regardless of age
+docker buildx prune --force --filter until=24h        # the cache nothing used for a day
+docker buildx prune --force --max-used-space 10GB     # a size limit, regardless of age
 ```
 
-The limit stands in one place — the step «Убрать за прогоном» in `.github/workflows/ci.yml` — and
-is revised there if the builds get heavier.
+Both limits stand in one place — the script `.github/scripts/prune-builder.sh` — and are revised
+there if the builds get heavier. Both workflows call it without a builder name, the rollout once
+after both image builds: both build through the current builder of the machine.
 
 Someone else's is not cured by this: thirteen gigabytes were held by a volume of an outside
 project on the same machine, and a run has no right to remove it. The only thing it can do is

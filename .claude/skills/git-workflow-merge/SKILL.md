@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when the base of a branch is merged into it and a conflict is resolved — the merge order, handling by file kind, checking what was appended against the work queue, re-reading the body of the open request. Branch and commit — pattern git-workflow-commit.
 ---
-<!-- rt-kit v0.37.0 · patterns/git-workflow-merge.md · 6e19b3387ec7 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/git-workflow-merge.md · 70b4f1f04028 · правится надстройкой, не здесь -->
 
 # Merging the base of a branch into it
 
@@ -19,7 +19,7 @@ out in that tree.
 ## When to use
 
 - The PR is marked conflicting, and it must be brought back to a mergeable state.
-- The base of the branch moved ahead, and the branch must be caught up before the checks: for a
+- The base of the branch moved ahead, and the branch must be caught up before its PR opens: for a
   task branch the base is the branch of its epic, for an epic branch the main one.
 - The main branch moved ahead, and the whole epic must be caught up: the main branch is merged
   into the epic branch, and the epic branch into the branches of its unfinished tasks.
@@ -160,9 +160,9 @@ is closed by hand with a comment naming the PR — the calls are in the pattern
 gh issue view <номер> --json state --jq .state
 ```
 
-## A green run ages together with the main branch
+## A green run ages together with the base
 
-A run speaks about the base it went on. While it goes and the PR awaits review, the main branch
+A run speaks about the base it went on. While it goes and the PR awaits review, the base
 lives its own life, and the local ref is silent about it: it describes the day it was pulled.
 Before a PR is called ready to merge, the lag is asked from the host:
 
@@ -171,9 +171,9 @@ Before a PR is called ready to merge, the lag is asked from the host:
 ```
 
 The base is the one the PR goes into: the epic branch for a task, the previous branch in a chain,
-main for an epic. Zero — the PR is ready. Above zero — the base is merged in, the check set is revised by what the
-branch now carries, and the run goes anew: green steps of the past run mean nothing after the
-merge.
+main for an epic. Zero — the PR is ready. Above zero — the host is asked whether the branch
+conflicts: a lag without a conflict it merges itself, and a conflicting branch takes the base in,
+the check set is revised by what the branch now carries, and the run goes anew.
 
 ## Other people's task folders arrive with the main branch
 
@@ -184,7 +184,7 @@ them apart from here.
 
 The merge button is pressed by a person, and where they do it there are no hooks: the guard
 watching the folder's taking apart does not reach that path. So the work queue audit is run
-right after merging main, not before the push:
+right after merging the base, not before the push:
 
 ```bash
 npm run check:board

@@ -32,7 +32,7 @@ language, present tense, about behaviour, not about the internals:
 
 ```typescript
 describe('applyDayClick', () => {
-    it('SC-BK-19 — клик по занятому дню ничего не меняет', () => {
+    it('SC-BK-19 — a click on a taken day changes nothing', () => {
         expect(applyDayClick(day('2026-08-12'), selection)).toEqual(selection);
     });
 });

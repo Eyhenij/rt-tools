@@ -18,9 +18,12 @@
 | `listMinWidth` / `listMaxWidth` / `listDefaultWidth`    | `number \| string` | 240 / 480 / 320 |
 | `asideMinWidth` / `asideMaxWidth` / `asideDefaultWidth` | `number \| string` | 280 / 560 / 360 |
 | `centerMinWidth`                                        | `number \| string` | 360             |
+| `singleColumnBreakpoint`                                | `number \| null`   | `null`          |
+| `asideOverlayWidth`                                     | `number \| string` | 540             |
 
 Выход: `backClicked`. API панели: `openAside()`, `closeAside()`, `toggleAside()`,
-`toggleAsideCollapsed()`, сигналы `asideOpen()`, `asideCollapsed()`, `listWidth()`, `asideWidth()`.
+`toggleAsideCollapsed()`, сигналы `asideOpen()`, `asideCollapsed()`, `asideOverlay()`, `listWidth()`,
+`asideWidth()`.
 
 ## Главное, что нужно знать
 
@@ -33,6 +36,13 @@
 
 **Стрелки у правой ручки работают зеркально**: `ArrowLeft` расширяет панель подробностей, потому
 что она растёт влево.
+
+**Порог одной колонки задаёт `singleColumnBreakpoint`.** Без входа порог держат стили: 768. С
+входом одна колонка остаётся только на месте не шире него. Выше порога список и середина стоят
+рядом. Пока место не шире 1080, панель подробностей открывается поверх окна: боковая панель шириной
+`asideOverlayWidth` с затемнением и кнопкой «Закрыть». Её закрывают кнопка, затемнение и Esc, после
+этого `asideOpen()` возвращает `false`. Сигнал `asideOverlay()` говорит, что панель сейчас
+открывается так. Порог выше 1080 не задают: третья колонка появляется на 1080.
 
 ## Края
 

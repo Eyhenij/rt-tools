@@ -754,6 +754,24 @@ export type TRtConsumerHandleName =
     | '--rt-page-header-bg'
     | '--rt-pagination-field-font-size'
     | '--rt-side-menu-sub-item-letter-spacing'
+    | '--rt-stepper-current-color'
+    | '--rt-stepper-description-color'
+    | '--rt-stepper-inset'
+    | '--rt-stepper-label-color'
+    | '--rt-stepper-line-color'
+    | '--rt-stepper-mark-complete-bg'
+    | '--rt-stepper-mark-complete-color'
+    | '--rt-stepper-mark-current-bg'
+    | '--rt-stepper-mark-current-color'
+    | '--rt-stepper-mark-neutral-bg'
+    | '--rt-stepper-mark-neutral-color'
+    | '--rt-stepper-mark-upcoming-bg'
+    | '--rt-stepper-mark-upcoming-color'
+    | '--rt-stepper-point-shadow'
+    | '--rt-stepper-progress-color'
+    | '--rt-stepper-step-description-color'
+    | '--rt-stepper-step-label-color'
+    | '--rt-stepper-track-color'
     | '--rt-sys-error'
     | '--rt-sys-error-container'
     | '--rt-sys-inverse-on-surface'
@@ -1560,6 +1578,24 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-page-header-bg',
     '--rt-pagination-field-font-size',
     '--rt-side-menu-sub-item-letter-spacing',
+    '--rt-stepper-current-color',
+    '--rt-stepper-description-color',
+    '--rt-stepper-inset',
+    '--rt-stepper-label-color',
+    '--rt-stepper-line-color',
+    '--rt-stepper-mark-complete-bg',
+    '--rt-stepper-mark-complete-color',
+    '--rt-stepper-mark-current-bg',
+    '--rt-stepper-mark-current-color',
+    '--rt-stepper-mark-neutral-bg',
+    '--rt-stepper-mark-neutral-color',
+    '--rt-stepper-mark-upcoming-bg',
+    '--rt-stepper-mark-upcoming-color',
+    '--rt-stepper-point-shadow',
+    '--rt-stepper-progress-color',
+    '--rt-stepper-step-description-color',
+    '--rt-stepper-step-label-color',
+    '--rt-stepper-track-color',
     '--rt-sys-error',
     '--rt-sys-error-container',
     '--rt-sys-inverse-on-surface',

@@ -2742,7 +2742,7 @@
       "installed": true,
       "articles": 23,
       "unheld": 12,
-      "bound_code": 23
+      "bound_code": 24
     },
     {
       "label": "component-structure",
@@ -2771,8 +2771,8 @@
       "name": "dependencies",
       "installed": true,
       "articles": 5,
-      "unheld": 3,
-      "bound_code": 0
+      "unheld": 1,
+      "bound_code": 4
     },
     {
       "label": "deploy-flow",
@@ -2785,9 +2785,9 @@
       "kind": "rule",
       "name": "deploy-flow",
       "installed": true,
-      "articles": 28,
-      "unheld": 12,
-      "bound_code": 10
+      "articles": 29,
+      "unheld": 13,
+      "bound_code": 13
     },
     {
       "label": "doc-style",
@@ -3009,7 +3009,7 @@
       "installed": true,
       "articles": 31,
       "unheld": 6,
-      "bound_code": 34
+      "bound_code": 35
     },
     {
       "label": "status-report",
@@ -3024,7 +3024,7 @@
       "installed": true,
       "articles": 10,
       "unheld": 5,
-      "bound_code": 9
+      "bound_code": 10
     },
     {
       "label": "styling-bem",
@@ -3053,8 +3053,8 @@
       "name": "task-flow",
       "installed": true,
       "articles": 59,
-      "unheld": 24,
-      "bound_code": 59
+      "unheld": 23,
+      "bound_code": 60
     },
     {
       "label": "testing",
@@ -3068,8 +3068,8 @@
       "name": "testing",
       "installed": true,
       "articles": 42,
-      "unheld": 12,
-      "bound_code": 46
+      "unheld": 13,
+      "bound_code": 48
     },
     {
       "label": "turn-conduct",
@@ -7028,6 +7028,36 @@
       "confidence_score": 1
     },
     {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/patterns/git-workflow-pr.azure.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "pattern_git_workflow_pr",
+      "target": "pattern_git_workflow_stack",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/patterns/git-workflow-pr.azure.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "pattern_git_workflow_pr",
+      "target": "role_goal_critic",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/patterns/git-workflow-pr.azure.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "pattern_git_workflow_pr",
+      "target": "role_product_strategist",
+      "confidence_score": 1
+    },
+    {
       "relation": "pattern_of",
       "confidence": "EXTRACTED",
       "source_file": "projects/agent-kit/assets/patterns/git-workflow-pr.azure.md",
@@ -7648,6 +7678,16 @@
       "confidence_score": 1
     },
     {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/patterns/task-flow-archive.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "pattern_task_flow_archive",
+      "target": "pattern_task_flow_resume",
+      "confidence_score": 1
+    },
+    {
       "relation": "pattern_of",
       "confidence": "EXTRACTED",
       "source_file": "projects/agent-kit/assets/patterns/task-flow-archive.md",
@@ -8125,6 +8165,16 @@
       "weight": 1,
       "source": "pitfalls_git_workflow",
       "target": "pattern_git_workflow_docker",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/pitfalls/git-workflow.github.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "pitfalls_git_workflow",
+      "target": "pattern_git_workflow_stack",
       "confidence_score": 1
     },
     {
@@ -8665,6 +8715,16 @@
       "weight": 1,
       "source": "rule_browser_verification",
       "target": "hook_dev_server_guard_sh",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/browser-verification/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_browser_verification",
+      "target": "hook_git_guard_delivery_epic_sh",
       "confidence_score": 1
     },
     {
@@ -9660,7 +9720,7 @@
     {
       "relation": "mentions",
       "confidence": "EXTRACTED",
-      "source_file": "projects/agent-kit/assets/rules/git-workflow.github.md",
+      "source_file": "projects/agent-kit/assets/rules/git-workflow.azure.md",
       "source_location": "L1",
       "weight": 1,
       "source": "rule_git_workflow",
@@ -10284,6 +10344,16 @@
       "source_location": "L1",
       "weight": 1,
       "source": "rule_status_report",
+      "target": "check_board_runs_mjs",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/status-report/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_status_report",
       "target": "check_epic_table_mjs",
       "confidence_score": 1
     },
@@ -10495,6 +10565,16 @@
       "weight": 1,
       "source": "rule_task_flow",
       "target": "check_task_new_mjs",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/task-flow/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_task_flow",
+      "target": "check_tree_assignment_mjs",
       "confidence_score": 1
     },
     {
@@ -17099,5 +17179,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6efc7add649d740bae46cec8a8ebb16b502b09c4"
+  "built_at_commit": "ece3c6d967f1e48968523e9c2ba2dfdfd12e6c69"
 }

@@ -30,7 +30,7 @@ and what was filtered out.
 | ---------------------------------------------------- | ------------------------------------------------------------- |
 | a PR is open and its task is not in review           | `npm run task:move -- <номер> in-review`                      |
 | a task is in review and has no open PR               | open the PR, or move the task back to work                    |
-| the branch lags behind its base by N commits         | merge the base into the branch and push                       |
+| the branch lags behind its base by N commits         | ask the host whether it conflicts; merge the base in only then — the line itself still says to merge |
 | the PR conflicts with its base                       | merge the base in, resolve, push                              |
 | no run on the tip                                    | a new commit, or close and reopen the PR as the line says     |
 | a run pushed out of the queue                        | read that run's output, then rerun it — both commands are in the line |

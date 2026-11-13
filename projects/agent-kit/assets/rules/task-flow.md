@@ -27,7 +27,7 @@ with a guard does.
 | understanding written where the work goes | `docs/tasks/<ветка>/grill.md` — the request verbatim, the owner's answers in their words, decisions with reasons |
 | the plan | `docs/tasks/<ветка>/plan.md` — the task footprint and stages with readiness signs; not edited after it is written |
 | the progress | `docs/tasks/<ветка>/progress.md` — "Where we stand", decisions along the way, session entries; the only place where done work is marked |
-| the product agreement written before the code | `docs/specs/<домен>/proposed/<фича>/` — the feature spec; survives the merge and merges into the domain spec |
+| the product agreement written before the code | `docs/specs/<домен>/proposed/<фича>/` — the feature spec; merges into the domain spec before the PR opens |
 | the task folder before the task is created | `docs/tasks/_draft-<slug>/` — outside history while there is no number |
 | exploration | an `Explore` or `general-purpose` session before the first question to the owner |
 | the plan review by roles | `.claude/workflows/plan.js` — need, points, agreement, critique, plan, goal |
@@ -66,8 +66,8 @@ The state is declared in the "Where we stand" section of the progress by the mac
 No state has a mandatory action that sounds like "wait": waiting for someone else's step is not a
 work state, so in `работа-отдана` the mandatory action is the next task, not the open PR. A blocked
 task does not count as next: the same waiting under the name of work. The next is taken from the
-work queue, and the queue is asked by a command: "no tasks" is a statement about the tree, backed by
-output, not by the executor's memory. A filled session window is no state either: the session ends
+epic plan; outside an epic the owner names it, and the queue, asked by a command, goes into the
+question: "no tasks" is a statement about the tree, backed by output, not by the executor's memory. A filled session window is no state either: the session ends
 with a handover, and the work stays where it stood. **An open card says nothing about whether the
 work is taken.** A card is closed by the merge, and in a session that opens no PRs the list of open
 ones does not shrink. A task is untaken when the tree holds no trace of it: open numbers are checked
@@ -97,7 +97,8 @@ flowchart TD
     F --> Z
     Z -->|No| Y[The epic is declared: a card, all its tasks and a plan — then its branch from the main branch]
     Z -->|Yes| G[Task, branch from the epic branch, task folder by branch name; the epic card moves with its first task]
-    Z -->|The owner's word about work outside an epic| G
+    Z -->|The owner's word about work outside an epic| X[Task, branch from the main branch, task folder by branch name]
+    X --> H
     Y --> G
     G --> H[A plan with stages; not edited after it is written]
     H --> I{Stage done}
@@ -243,10 +244,11 @@ flowchart TD
   graph is checked against the head before the first exploration, and a turn that does not use it
   names the reason. Relations are taken from the graph; numbers, behaviour and texts — from the code
   and the documents.
-- **What acts on the tree, not on the edit, lies outside the index.** The path to the sample and the
-  permission to work outside the epic do not belong to the branch and live next to the handover; the
-  progress names the sample by a reference to that place, without the other tree's name. A number in
-  the permitted list repeats the owner's word, not replaces it.
+- **The path to a sample lies outside the history, the permission to work outside the epic — in
+  the main branch.** The path names another tree and lives among the records that belong to no
+  branch; the progress names the sample by a reference to that place. The permission is a row of
+  the table of assignments, read from the main branch by every branch; it repeats the owner's word,
+  not replaces it.
 - **Closed work is reviewed by the rules in the background, right after the PR, and its findings
   wait for the owner.** Only the session that led the work sees what was loaded and what was
   missing, and it takes the next task meanwhile. A proposal sent unreviewed becomes the work of

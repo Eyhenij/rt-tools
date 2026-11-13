@@ -4,7 +4,7 @@ kind: pattern
 rule: spec-driven
 description: Pattern of rule spec-driven. Load when creating or editing a domain spec in docs/specs — the mandatory sections, the scenario form, binding a rule to code, the order of work from spec to code. Not for creating a law, a rule or a pattern — that is pattern spec-driven-rule.
 ---
-<!-- rt-kit v0.37.0 · patterns/spec-driven-domain.md · e176ebe68199 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/spec-driven-domain.md · ecc395f764da · правится надстройкой, не здесь -->
 
 # Domain spec
 
@@ -68,7 +68,7 @@ starts with the decision itself.
 
 **A statement standing in another section of the same spec is not created as a second rule
 item.** The structure of a record lives in the data section, the order of calls in the contract
-section, the reason the domain exists in the `## Зачем` section: all three say what the rule would
+section, the reason the domain exists in the `## Why` section: all three say what the rule would
 say. The second copy diverges from the first silently, and there is nothing to notice it by — the
 audit knows a rule item against an anchor, and nobody compares two statements about one thing.
 The decision at that point leaves the decisions section whole: the place where the requirement
@@ -80,7 +80,7 @@ the lib roots whose procedures the domain serves. The legacy `**Законы:**`
 are accepted the same.
 
 ```markdown
-**Dependencies:** `catalog` (booking request contents), `availability` (date occupancy)
+**Depends on:** `catalog` (booking request contents), `availability` (date occupancy)
 **Laws:** `access`, `locales`, `lists`
 **Procedures:** `libs/api/<domain>`
 ```
@@ -170,11 +170,11 @@ is wrong: the spec is edited to the code only when the code does what the owner 
 edited to a broken application hides the defect instead of naming it; when it is not clear which
 side is wrong, the owner is asked.
 
-Between steps 2 and 3 `npm run check:specs` is red by design, not by mistake. A scenario without a
-test it only lists, but a rule without a binding and a contract row without a procedure it refuses,
-and their bindings name code that is not written yet. So a stage that edits the spec names as its
-readiness sign the refusal list itself — only the new rules unbound, only the new scenarios under
-"no test" — and not exit 0. Exit 0 is the sign of the stage that writes the bound code.
+Between steps 2 and 3 `npm run check:specs` is red by design, not by mistake. A scenario marked
+`Not covered:` it only lists; a scenario with neither a test nor the mark, a rule without a binding
+and a contract row without a procedure it refuses, and their bindings name code that is not written yet. So a stage that edits the spec names as its
+readiness sign the refusal list itself — only the new rules unbound, only the new scenarios unmarked or
+under "no test" — and not exit 0. Exit 0 is the sign of the stage that writes the bound code.
 
 A rule promising a result a person sees is confirmed on the running application, not by
 inference from the call graph. Reading confirms headings, the link to bindings and the shape of
@@ -183,17 +183,17 @@ statement.
 
 ## Common misses
 
-- A second table under the contract section: the audit reads every table there as the list of
-  procedures, and a set of refusal codes standing next to them comes back as that many
-  discrepancies at once — thirty-six on a spec that was right. Under the contract stands the table
-  of procedures alone; a set of codes goes into the data section.
+- A second table under the contract section: the audit reads every row there with a backticked first
+  cell as a procedure, except a row whose second cell is a three-digit code. A table of arguments
+  or of named codes comes back as that many discrepancies at once — thirty-six on a spec that was
+  right. Under the contract stand the procedure table and the refusal codes; anything else is a
+  list or goes into the data section.
 - A count of rules or scenarios in the domain index: it is recomputed at every edit of any spec,
   and a year later most such numbers silently describe the spec of the day before yesterday. The
   index holds the domain, the prefix and one line of "what it is about".
-- `tasks.md` in a spec: steps are a session artefact; their place is the plan in the task folder.
-- A field table copied from the contract: the source is `libs/common/proto/proto/<area>/v1/`,
+- A field table copied from the contract: the source is the contract description itself,
   and only one of the two compiles.
-- Columns and indexes in a spec: they are in `prisma/schema.prisma`, and the spec keeps the rule
+- Columns and indexes in a spec: they are in the storage schema, and the spec keeps the rule
   the constraint expresses.
 - The place where a rule is carried out inside the rule text: it changes at the first
   refactoring, and `implementation.md` exists for it.

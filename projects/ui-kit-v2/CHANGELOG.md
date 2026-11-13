@@ -1,3 +1,32 @@
+# [0.43.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.42.0...rt-ui-kit-v2%400.43.0) (2026-11-12)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** базовые вкладки снова с квадратной стрелкой ([31776b9](https://github.com/Eyhenij/rt-tools/commit/31776b9c56c131385a75c46f21a1a1c5545369a0))
+- **rt:ui-kit-v2:** в истории перевода пузырь чата снова шириной 280 ([31ea3cb](https://github.com/Eyhenij/rt-tools/commit/31ea3cb21bc09d2f387d8cd687bb1013a1d2520b))
+- **rt:ui-kit-v2:** история перевода реплики показывает все состояния без прокрутки ленты ([ec2674a](https://github.com/Eyhenij/rt-tools/commit/ec2674a5c41bc366c6e77eaa5820c335eeaa5d3f)), closes [#3179](https://github.com/Eyhenij/rt-tools/issues/3179)
+- **rt:ui-kit-v2:** линия степпера — от центра первой точки до центра последней ([fd4a4f2](https://github.com/Eyhenij/rt-tools/commit/fd4a4f2f9e2c2407c0589efae26f2a8d1d25503b))
+- **rt:ui-kit-v2:** ореол точки степпера — через собственное свойство блока ([7ac13aa](https://github.com/Eyhenij/rt-tools/commit/7ac13aac68c4a5fb148e8ab53a31c540acf1b483))
+- **rt:ui-kit-v2:** подпись снятого своего сообщения в виде мессенджера не белая ([9453fb5](https://github.com/Eyhenij/rt-tools/commit/9453fb5cfa15029e1bc64a9a4cf1de17fd771c2d))
+- **rt:ui-kit-v2:** правки по второму ревью вертикальной шапки и вкладок ([5404c8a](https://github.com/Eyhenij/rt-tools/commit/5404c8ae0635166de8e3f57c2c229876462639f4))
+- **rt:ui-kit-v2:** правки по ревью вкладок и вертикальной шапки ([d973fcd](https://github.com/Eyhenij/rt-tools/commit/d973fcdfe114e9856f90c8d0bce20b3fce09d7c4))
+- **rt:ui-kit-v2:** скругление логотипа витрины взято шагом шкалы ([dbf8b80](https://github.com/Eyhenij/rt-tools/commit/dbf8b800d232d4b4d96b5e454b27f1d360cd32c7))
+- **rt:ui-kit-v2:** стили вкладок укладываются в бюджет сборки приложений ([a02d346](https://github.com/Eyhenij/rt-tools/commit/a02d3466baccf1a8a4494a56a3b8ec23b8523baa))
+- **rt:ui-kit-v2:** цвета rt-stepper — ручки потребителя, переопределяются и с родителя ([795719f](https://github.com/Eyhenij/rt-tools/commit/795719fbc21940731f9d14159614b220956c9ede))
+- **rt:ui-kit-v2:** части шапки и вкладок названы в учёте витрины ([ed7e09e](https://github.com/Eyhenij/rt-tools/commit/ed7e09e012e0335cbf1097d541d034c55cf81a86))
+
+### Features
+
+- **rt:ui-kit-v2:** rt-stepper — любой шаг, подпись в полосе, свои цвета ([b253977](https://github.com/Eyhenij/rt-tools/commit/b253977dbdf80ce10bd7269d6efbe5a6bbdfe90d))
+- **rt:ui-kit-v2:** вертикальное меню и компактная шапка страницы ([118d48d](https://github.com/Eyhenij/rt-tools/commit/118d48d36e577d90f97facc19b4dddd3b7d0e413))
+- **rt:ui-kit-v2:** лимит вкладок в ряду, компактные стрелки, подложка «Ещё отборов» ([4c48a5c](https://github.com/Eyhenij/rt-tools/commit/4c48a5c2c855996b0c68ee35af511db7f1a1a505))
+- **rt:ui-kit-v2:** порог одной колонки рабочего стола задаётся входом, сведения открываются панелью поверх окна ([c10e8df](https://github.com/Eyhenij/rt-tools/commit/c10e8dfaeaa15719b56741d22650ce142710cb10)), closes [#3180](https://github.com/Eyhenij/rt-tools/issues/3180)
+- **rt:ui-kit-v2:** режим вкладок «Ещё» и меню вкладки по правой кнопке ([de5327e](https://github.com/Eyhenij/rt-tools/commit/de5327e00f34bb6dec5f85a7f83a80f73589a644))
+- **rt:ui-kit-v2:** степпер на шестнадцать шагов, отступ точек и подпись у края ([21f7cc0](https://github.com/Eyhenij/rt-tools/commit/21f7cc0db7b84d98e2b7568bd812233e96a6c87f))
+- **rt:ui-kit-v2:** у перевода реплики чата есть загрузка и ошибка ([b5ba4c4](https://github.com/Eyhenij/rt-tools/commit/b5ba4c45e22a7a58119d8986d9ffe299b35b0725)), closes [#3179](https://github.com/Eyhenij/rt-tools/issues/3179)
+- **rt:ui-kit-v2:** у реплики чата есть подпись перевода и кнопка «Показать перевод» ([a821d78](https://github.com/Eyhenij/rt-tools/commit/a821d7852ede2418915334e7d3b61ffda4f7e29d)), closes [#3179](https://github.com/Eyhenij/rt-tools/issues/3179)
+- **rt:ui-kit-v2:** шапка и вкладки сведены с макетами, новое меню телефона ([6bd0255](https://github.com/Eyhenij/rt-tools/commit/6bd02556dcc5662e7089db382d5d41df3d31d5e4))
+
 # [0.42.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.41.0...rt-ui-kit-v2%400.42.0) (2026-11-08)
 
 ### Bug Fixes

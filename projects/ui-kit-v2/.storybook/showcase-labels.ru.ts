@@ -63,6 +63,7 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     chatRetryTooltip: 'Повторить',
     chatSendAria: 'Отправить сообщение',
     chatSendLabel: 'Отправить',
+    chatShowTranslation: 'Показать перевод',
     chatStatusFailed: 'Не отправлено',
     chatStatusRead: 'Прочитано',
     chatStatusSending: 'Отправляется',

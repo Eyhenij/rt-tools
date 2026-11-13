@@ -4,7 +4,7 @@ kind: pattern
 rule: git-workflow
 description: Pattern of rule git-workflow. Load when PRs are already open — leaving draft, handling a red run, bringing a chain to readiness, the order "finish what was handed over first, then take new work". Opening one PR — pattern git-workflow-pr; the chain order — git-workflow-stack.
 ---
-<!-- rt-kit v0.37.0 · patterns/git-workflow-pr-ready.md · 592f8f067d56 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/git-workflow-pr-ready.md · 80b52f07ee53 · правится надстройкой, не здесь -->
 
 # Bringing a PR to readiness
 
@@ -46,7 +46,7 @@ gh run list --commit "$(gh pr view <номер> --json headRefOid --jq .headRefO
 
 ## Finish the handed-over first, then take new work
 
-An open PR is work in flight: its run ages, its branch lags behind main, its body describes the
+An open PR is work in flight: its run ages, its branch lags behind its base, its body describes the
 tree on the day it was written. All of this is cheap to fix today and expensive three tasks later.
 
 So the queue is this:

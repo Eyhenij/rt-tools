@@ -43,6 +43,12 @@ export class BreakpointsService {
 
     #resizeObserver: ResizeObserver | null = null;
 
+    /**
+     * Ширина места страницы; `null`, пока место не объявлено. Её читает компонент, у которого
+     * порог задан входом: число из входа в стили не подставить.
+     */
+    public readonly placeWidth: Signal<number | null> = this.#placeWidth.asReadonly();
+
     public readonly mobile: Signal<boolean> = toSignal(this.#match([Breakpoints.HandsetPortrait, Breakpoints.HandsetLandscape]), {
         initialValue: false,
     });

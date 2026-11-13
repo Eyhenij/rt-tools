@@ -43,7 +43,7 @@ flowchart TD
     G --> H[Old images are removed, the last three sha stay as rollback depth]
     H --> I{Production answers with what was rolled out}
     I -->|No| J[Rollout analysis: the restart goes by sha, not by the latest tag]
-    I -->|Yes| K[The work queue audit reads the last run of the main branch]
+    I -->|Yes| K[The work queue audit counts the lag of the main branch from the last successful rollout]
     C --> K
     J --> K
 ```
@@ -69,6 +69,10 @@ flowchart TD
   the stack acts only on a container raised by that stack; a manual run of the same image goes
   with an empty value, and empty here means localhost — with all the debugging defaults it allows.
   The image default is set in the image itself.
+- **The image carries every file its own startup steps read.** The storage schema, the client
+  settings, the environment template — everything lying next to it in the repository does not get
+  inside the image by itself, and the build answers only whether it built. The failure comes on the
+  first startup, that is, already on the rolled-out one.
 - **Images are rolled out by commit sha, not by the tag "latest".** The tag in the registry lags
   behind the main branch, and production silently falls back to the previous version while still
   answering.
@@ -76,6 +80,15 @@ flowchart TD
   with a sha is never dangling, and a dangling cleanup does not touch it: in half a year they eat
   the server disk whole. Three sha is the rollback depth, and fewer cannot be taken: a breakage
   noticed two rollouts later has nowhere left to roll back to.
+- **A production breakage that has happened is analysed in a record, not by a fix alone.** The fix
+  leaves as a branch, the work item closes — and the reason the application stopped stays the knowledge
+  of one executor. The record names what broke, how it became visible and why the fix fixes the
+  cause and not the sign; it lies among the records of what has happened, and the directory is named
+  by the companion of the wording rule.
+- **An edit to the rollout itself is run before the merge, and "I will check after the merge" is
+  never the executor's decision.** There is no other way to run it: it executes only where it rolls
+  out. When there is no way to run it by hand either, that is said to the owner in words, together
+  with what the check would cost, and the decision to postpone is theirs.
 - **The description of production is edited together with the production stack.** The layout,
   the request path, the gates and the backups are described in texts outside the rules layers, and
   neither linter nor build reads them: the divergence piles up silently, and these texts are read
@@ -88,6 +101,13 @@ flowchart TD
 - **A PR is checked before the merge by the same pipeline as the main branch.** Checks and image
   builds go on the PR check pipeline, the rollout does not: it is held by the main-branch
   condition on its step, and a PR image does not leave for the registry.
+- **Which PRs the pipeline wakes for is named by the tree, and it sets the order of handing in.** A
+  filter by the target branch is not a detail of the settings: a PR the pipeline does not wake for
+  has nothing to wait for, and a draft on it costs a locked button and an extra turn. A tree with a
+  single runner pays a whole run for every PR into an epic branch, and pays it for checks the push
+  gate has already run on the same machine; a tree with runners to spare buys the earlier refusal.
+  The answer lives in the branch policies — a build validation on the target branch — and what is
+  lost by it is written in the companion next to this rule.
 - **A package the tree's own applications install is released from a tip their end-to-end suites
   went green on.** Where the release pipeline runs none of these suites, a PR merged past the
   pipeline reaches them first after the release. When a PR without a green run of its own entered
@@ -109,7 +129,7 @@ flowchart TD
   the owner's word replaces a check only when the owner was told the check did not run.
 - **The divergence of migrations from the schema is measured on a shadow storage, not on the one
   the pusher works with.** That one lawfully carries the trace of any unfinished branch, and a
-  check against it would hold up someone else's edit. The gate and the rollout call one and the
+  check against it would hold up someone else's edit. The gate and the pipeline call one and the
   same check — otherwise "matched" would mean different things in two places.
 - **Skipping the schema audit is lawful while the branch has not touched the storage.** A stopped
   database is a state of the machine, not a reason to refuse a documentation push; but a branch
@@ -120,19 +140,22 @@ flowchart TD
   is not yet a rollout: a failed one leaves the main branch ahead of the server, and merges on top
   go the same way. The lag is counted from the last successful rollout and does not tell "not
   started" from "failed".
-
-- **A check standing in the gate set refuses when it could not do its work.** "Nowhere to check"
-  and "the check is broken" are different things: the first the tree names itself — no subject, no
-  address set, the service not answering — and each such exit returns zero with its own line. The
-  second — a missing package, an empty name in the settings, an unexpected exception — returns a
-  non-zero code and says that the check itself broke, not the subject. A shared zero for both makes
-  a broken check indistinguishable from a passed one: the schema-to-migrations audit stood like that
-  in the gate set, checking nothing, and hid three causes at once behind its zero.
+- **A check standing in the gate set refuses when it could not do its work.** "Nowhere to check" and
+  "the check is broken" are different things: the first the tree names itself — no subject, no
+  address set, the service not answering — and each such exit returns the skip code with its own
+  line. The second — a missing package, an empty name in the settings, an unexpected exception —
+  returns a non-zero code and says that the check itself broke, not the subject. A shared zero for
+  both makes a broken check indistinguishable from a passed one: the schema-to-migrations audit
+  stood like that in the gate set, checking nothing, and hid three causes at once behind its zero.
+- **The merge button and the manual rollout run get their requirement at the host.** Both are
+  pressed at the host, where the guards of the session do not stand. The requirement is set at the
+  host — a branch policy or an approval on the environment — or is named to the one who presses, in
+  the section of the PR description about the remaining step, before the press.
 
 ## What of the law is not here
 
-The state of production is not visible to the machine: the work queue audit asks for the last
-run of the main branch and judges by it, and nobody asks whether production answers with the
+The state of production is not visible to the machine: the work queue audit counts how far the
+main branch has gone from the last successful rollout, and nobody asks whether production answers with the
 build it rolled out. That is held by whoever rolled out.
 
 Nothing counts the completeness of the registry cleanup: the script keeps the last three sha,

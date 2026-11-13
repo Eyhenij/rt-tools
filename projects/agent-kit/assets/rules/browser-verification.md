@@ -38,8 +38,10 @@ flowchart TD
     B -->|No| D{Who raises the stand}
     C --> E{The very application answers}
     E -->|Yes, built from this branch| F[A second instance is not raised]
-    E -->|No| T[What took the port is stopped by process id; a refused stop — the stand goes on a free port]
+    E -->|Yes, built from another branch| Y[It is left alone, and the stand is raised on a free port]
+    E -->|No, a leftover of an earlier run| T[What took the port is stopped by process id; a refused stop — the stand goes on a free port]
     T --> D
+    Y --> D
     D -->|Owner| U[They are told at once, and the check waits for their stand: the guard refuses the agent]
     D -->|Agent| V[The stand is raised]
     U --> G[The driver drives the browser on the pinned profile]
@@ -67,13 +69,13 @@ flowchart TD
   stopped by process id, not by command name — both instances share the same one. The answering
   instance is used only when it is built from the branch of this edit; otherwise the stand is
   raised on a free port.
-- **The browser is driven by one driver on the pinned profile.** The other doors — a second driver,
+- **The browser is driven by one driver on the pinned profile.** The other ways in — a second driver,
   `open`, `osascript`, launching the binary — do not ask the pinned profile at all.
-- **A browser raised by a library from inside a script is the same door as launching the binary.**
+- **A browser raised by a library from inside a script is the same as launching the binary.**
   The command line does not show it at all. There stand the interpreter name and a file path, and
   the driving lies inside the file itself. So what is judged is the content of the file being run,
   and the code passed as an argument instead of a file. A rule that judged one command line promised
-  more than it checked, and the profile was bypassed through this door twice in one session.
+  more than it checked, and the profile was bypassed this way twice in one session.
 - **The browser choice goes stale and needs a repeated call.** A choice made at the start of the
   session does not hold: after a pause the next call opens a tab in another profile silently.
 - **A refused profile choice ends the work with the browser; it does not start a search for a
@@ -184,7 +186,7 @@ Nothing guards that a conclusion about layout is backed by a number: a check res
 
 ## Patterns
 
-- `browser-verification-stand` — an honest stand from the production build, signing in to a closed
+- `browser-verification-stand` — a stand from the production build, signing in to a closed
   application, sorting out a port.
 - `browser-verification-measure` — measurement instead of a look, pitfalls of the `computer` tool.
 
@@ -222,7 +224,7 @@ Nothing guards that a conclusion about layout is backed by a number: a check res
   only installed packages, none of the repository code. The conclusion "no defect, it is the
   cache" closes the investigation, so it is accepted only after a check on a clean build. Three
   rounds went on a stuck event feed panel while the defect lay in the outlet teardown.
-- **A caching build step without declared outputs serves the past silently.** The cache hit happens,
+- **A caching build step without declared outputs gives the old build silently.** The cache hit happens,
   and there is nothing to restore: the builder does not run, and the build directory keeps what lay
   there from last time. The stand raises that build, and the application behaves like code that is
   not in the tree. The pitfall above is about another cache: that one explains a divergence, this

@@ -202,6 +202,7 @@ node tools/check-boolean-inputs.mjs
 node tools/check-tokens-styles.mjs
 node tools/check-cascade-layer.mjs
 node tools/check-format-ignore.mjs
+node tools/check-dependencies.mjs
 node tools/check-publish-lockfile.mjs
 node tools/check-package-imports.mjs
 node tools/check-kit-approval.mjs
