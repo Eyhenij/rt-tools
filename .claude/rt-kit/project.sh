@@ -206,8 +206,9 @@ node tools/check-dependencies.mjs
 node tools/check-publish-lockfile.mjs
 node tools/check-package-imports.mjs
 node tools/check-kit-approval.mjs
-bash tools/tests/run.sh
 EOF
+    # The tree's check scenarios run only the files the change reaches; the selection is there.
+    printf '%s\n' "${1:+RT_SUITES_BASE=$1 }bash tools/tests/run.sh"
 
     # The guard scenarios run here by `nx affected -t test-hooks` below, not by a run file, so the
     # package line naming a missing run file would be false in this tree.
@@ -215,12 +216,19 @@ EOF
         | grep -vE 'agent-kit sync --check|nx (run-many|affected) -t lint test build|stylelint "\*\*/\*\.scss"|tools/check-(specs|dupes|push-gate)\.mjs|guard scenarios:'
 
     # A branch of texts alone runs no step of the builder — the why is in `project-texts.sh`.
-    { [ -n "$1" ] && command -v rt_push_texts_only >/dev/null 2>&1 && rt_push_texts_only "$1"; } || cat <<'EOF'
-pnpm exec nx affected -t lint typecheck test build --parallel
-pnpm exec nx affected -t test-hooks
-pnpm run lint:styles
-pnpm exec nx affected -t verify --parallel
-EOF
+    # The builder counts what is touched from the push base, as the package lines do: without it nx
+    # takes `main`, and every branch of an epic reran all the guard scenarios the epic touched.
+    { [ -n "$1" ] && command -v rt_push_texts_only >/dev/null 2>&1 && rt_push_texts_only "$1"; } || {
+        local against=''
+        [ -n "$1" ] && against=" --base=$1"
+        printf '%s\n' \
+            "pnpm exec nx affected -t lint typecheck test build --parallel$against" \
+            "${1:+RT_SUITES_BASE=$1 }pnpm exec nx affected -t test-hooks$against"
+        # The styles linter reads style files and its config only; a branch touching neither skips it.
+        { [ -n "$1" ] && ! git diff --name-only "$1...HEAD" 2>/dev/null | grep -qE '\.(scss|css)$|stylelint|^package\.json$|^pnpm-lock\.yaml$'; } ||
+            printf '%s\n' 'pnpm run lint:styles'
+        printf '%s\n' "pnpm exec nx affected -t verify --parallel$against"
+    }
     printf '%s\n' 'node tools/check-push-gate.mjs'
 
     # The heavy steps go by their own subject rather than by the sign "the branch touched code".
@@ -272,13 +280,9 @@ EOF
     {
         case " $_touched " in *' receiver '*) printf '%s\n%s\n%s\n' "$e2e" "$img_api" "$img_web" ;; esac
         case " $_touched " in *' kit1 '*) printf '%s\n' "$shot_v1" ;; esac
-    # Второй кит рисует не только свою витрину. Админка подключает его набор стилей одной строкой
-    # в своём корневом файле оформления, поэтому правка кита меняет каждый её экран — и кадры этих
-    # экранов обязаны сличиться здесь, а не через день у соседней ветки. Цена молчания замерена:
-    # работа RT-1993 привезла гарнитуру, пересняла 600 кадров витрины и ушла зелёной по своему
-    # признаку, а экраны админки не сличались ни разу — 23 кадра разошлись и держали отправку у
-    # всех веток эпика (задача RT-2257). Образы сюда не идут: правка кита их не ломает, а сквозной
-    # набор собирает прод-сборку сам.
+        case " $_touched " in *' show2 '*) printf '%s\n' "$shot_v2" ;; esac
+    # A kit edit changes every admin screen: its styles are one line of the admin root sheet, and
+    # unmatched admin frames once held every branch of an epic (RT-2257). No images: the suite builds.
         case " $_touched " in *' kit2 '*) printf '%s\n%s\n' "$shot_v2" "$e2e" ;; esac
     # The entry module: the stand, its check and the suite of the example. The second kit draws the
     # entry screens of the theme and the example admin, so its edit raises them too.
@@ -314,18 +318,20 @@ rt_push_touched() {
 
     for _f in $_changed; do
         case "$_f" in
-            # The texts, the agent's harness and the tree's checks: they have no heavy step of
-            # their own.
-            #
-            # The checks read the tree and build nothing in it: neither the showcase nor the
-            # receiver changes from an edit of them. While they fell into the general case, an edit
-            # of one check raised the end-to-end suite, two snapshot sets and two image builds — six
-            # minutes for a line none of those subjects is touched by.
-            # The check of the auth stand is the script of a heavy step and goes before the rest of
-            # the checks.
+            # The texts, the agent's harness and the tree's checks have no heavy step of their own:
+            # the checks read the tree and build nothing. In the general case an edit of one check
+            # raised the end-to-end suite, two snapshot sets and two image builds — six minutes.
+            # The script of a heavy step goes before the rest of the checks.
             tools/auth-stand-check.mjs) _add auth ;;
+            # A spec changes no frame; the snapshot harness sets the window, the crop and the match.
+            projects/ui-kit-v2/*.spec.ts) ;;
+            projects/ui-kit-v2/.storybook/*|projects/ui-kit-v2/src/showcase/*|projects/ui-kit-v2/*.stories.ts|projects/ui-kit-v2/*.mdx) _add show2 ;;
+            # The snapshot step's scripts shoot both showcases, the second kit's own one only it.
+            tools/visual-snapshots-v2.mjs) _add show2 ;;
+            tools/visual-gate.mjs|tools/shot-browser.mjs|tools/shot-browser-name.mjs|tools/showcase-probe.mjs|tools/serve-static.mjs) _add show2; _add kit1 ;;
             # A code graph is data the session reads; above the subjects, as it lies inside a project.
-            docs/*|*.md|.claude/*|projects/agent-kit/*|tools/*|graphify-out/*|*/graphify-out/*) ;;
+            # The formatter's ignore list is read by the formatter alone, and no heavy step runs it.
+            docs/*|*.md|.claude/*|projects/agent-kit/*|tools/*|graphify-out/*|*/graphify-out/*|.prettierignore) ;;
             # The kits — each with a showcase of its own.
             projects/ui-kit/*) _add kit1 ;;
             projects/ui-kit-v2/*) _add kit2 ;;

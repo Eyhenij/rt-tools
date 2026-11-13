@@ -466,6 +466,9 @@ rt_qa_decorative_default() {
 # same name from here with the `_default` suffix for everything it did not name itself.
 rt_push_checks() { rt_push_checks_default "$@"; }
 rt_push_check_heavy() { rt_push_check_heavy_default "$@"; }
+rt_push_check_budget() { rt_push_check_budget_default "$@"; }
+rt_push_set_budget() { rt_push_set_budget_default "$@"; }
+rt_push_over_budget_words() { rt_push_over_budget_words_default "$@"; }
 rt_push_docs_only() { rt_push_docs_only_default "$@"; }
 
 rt_docs_pair_for() { rt_docs_pair_for_default "$@"; }

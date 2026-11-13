@@ -73,7 +73,7 @@ TN_CREATED="$TN_TREE/created"
 tn_run() {
     rm -rf "$TN_TREE/docs" "$TN_CREATED"
     ( cd "$TN_TREE" && TN_CREATED="$TN_CREATED" TN_EPIC_LABELS="${TN_EPIC_LABELS-{\"name\":\"epic\"}}" \
-        GH_BIN="$TN_TREE/gh" RT_GH_RETRY_MS=1 \
+        GH_BIN="$TN_TREE/gh" RT_GH_RETRY_MS=1 RT_TASK_NEW_PAUSES_MS=1 \
         node tools/task-new.mjs "$@" < /dev/null 2>&1 )
 }
 
@@ -155,7 +155,7 @@ tn_epic_plan() {
 tn_run_under_epic() {
     rm -rf "$TN_TREE/docs" "$TN_CREATED"
     tn_epic_plan
-    ( cd "$TN_TREE" && TN_CREATED="$TN_CREATED" TN_EPIC_LABELS="$1" GH_BIN="$TN_TREE/gh" RT_GH_RETRY_MS=1 \
+    ( cd "$TN_TREE" && TN_CREATED="$TN_CREATED" TN_EPIC_LABELS="$1" GH_BIN="$TN_TREE/gh" RT_GH_RETRY_MS=1 RT_TASK_NEW_PAUSES_MS=1 \
         node tools/task-new.mjs --epic-of 1921 --title 'Команда заводит эпик' --slug command-creates-epic \
         < /dev/null 2>&1 )
 }
@@ -235,7 +235,7 @@ tn_two_paths() {
     printf '# Закон о поставке\n\nСтатьи закона.\n' > "$TN_TREE/docs/constitution/delivery.md"
     printf '# Поставка идёт эпиками\n\n**Эпик:** RT-1921 · **Ветка эпика:** `RT-1921-work-by-epics`\n\n| № | Задача | Состояние |\n| --- | --- | --- |\n| 1 | RT-1 — первая | впереди |\n' \
         > "$TN_TREE/docs/plans/work-by-epics.md"
-    ( cd "$TN_TREE" && TN_CREATED="$TN_CREATED" TN_EPIC_LABELS='{"name":"epic"}' GH_BIN="$TN_TREE/gh" RT_GH_RETRY_MS=1 \
+    ( cd "$TN_TREE" && TN_CREATED="$TN_CREATED" TN_EPIC_LABELS='{"name":"epic"}' GH_BIN="$TN_TREE/gh" RT_GH_RETRY_MS=1 RT_TASK_NEW_PAUSES_MS=1 \
         TN_EPIC_BODY='Закон — docs/constitution/delivery.md, порядок работ — docs/plans/work-by-epics.md' \
         node tools/task-new.mjs --epic-of 1921 --title 'Команда заводит эпик' --slug command-creates-epic \
         < /dev/null 2>&1 )

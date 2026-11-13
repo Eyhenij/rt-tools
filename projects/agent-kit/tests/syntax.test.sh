@@ -17,9 +17,9 @@ for file in "$HOOKS"/*.sh "$DEFAULTS"/*.sh; do
     [ -f "$file" ] || continue
     shell_count=$((shell_count + 1))
     if bash -n "$file" 2>/dev/null; then
-        report "разбирается: ${file##*/}" PASS PASS
+        report "SC-AK-02 — разбирается: ${file##*/}" PASS PASS
     else
-        report "разбирается: ${file##*/}" FAIL PASS
+        report "SC-AK-02 — разбирается: ${file##*/}" FAIL PASS
     fi
 done
 
@@ -28,9 +28,9 @@ for file in "$CHECKS"/*.mjs; do
     [ -f "$file" ] || continue
     node_count=$((node_count + 1))
     if node --check "$file" 2>/dev/null; then
-        report "разбирается: ${file##*/}" PASS PASS
+        report "SC-AK-02 — разбирается: ${file##*/}" PASS PASS
     else
-        report "разбирается: ${file##*/}" FAIL PASS
+        report "SC-AK-02 — разбирается: ${file##*/}" FAIL PASS
     fi
 done
 

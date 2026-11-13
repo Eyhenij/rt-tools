@@ -1,0 +1,109 @@
+#!/usr/bin/env node
+// rt-kit v0.37.0 · checks/push-trace.mjs · 687bb44acb50 · правится надстройкой, не здесь
+/**
+ * The read recorder of a push set step. It is loaded into a step by `--import` and writes down what
+ * the step really reads: every file whose content it opens, every path whose existence it probes,
+ * every directory it walks and every process it starts. The step itself is not changed.
+ *
+ * The record is the input of `push-inputs.mjs`: from it the set learns which steps a change can
+ * reach. A list of inputs written by hand checks itself and goes stale silently; a record taken
+ * from the step's own calls does not depend on whoever writes the list.
+ *
+ * A child `node` inherits `NODE_OPTIONS` and is recorded into a file of its own. A process of
+ * another kind is only named: its reads are not seen, and the step that starts it runs always.
+ *
+ * FAIL-OPEN: without `RT_PUSH_TRACE_OUT` the module does nothing; an error of its own is swallowed,
+ * so the step runs as it would without it.
+ */
+import fs from 'node:fs';
+import cp from 'node:child_process';
+import { syncBuiltinESMExports } from 'node:module';
+import { join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const OUT = process.env.RT_PUSH_TRACE_OUT ?? '';
+
+if (OUT) {
+    const reads = new Set();
+    const probes = new Set();
+    const walks = new Set();
+    const spawns = [];
+    const writeFile = fs.writeFileSync;
+    const mkdir = fs.mkdirSync;
+
+    const pathOf = (value) => {
+        try {
+            if (typeof value === 'string') return resolve(value);
+            if (value instanceof URL) return fileURLToPath(value);
+            if (Buffer.isBuffer(value)) return resolve(value.toString());
+        } catch {
+            // An argument that is no path is not recorded.
+        }
+        return '';
+    };
+    const writing = (flags) => typeof flags === 'string' && /[wa+]/.test(flags);
+
+    const wrap = (target, name, note) => {
+        const original = target[name];
+        if (typeof original !== 'function') return;
+        target[name] = function traced(...args) {
+            try {
+                note(args);
+            } catch {
+                // The recorder never breaks the step.
+            }
+            return original.apply(this, args);
+        };
+    };
+    const read = (args) => {
+        const path = pathOf(args[0]);
+        if (path) reads.add(path);
+    };
+    const probe = (args) => {
+        const path = pathOf(args[0]);
+        if (path) probes.add(path);
+    };
+    const open = (args) => {
+        if (!writing(typeof args[1] === 'object' ? args[1]?.flags : args[1])) read(args);
+    };
+    const walk = (args) => {
+        const path = pathOf(args[0]);
+        if (path) walks.add(path);
+    };
+    // The directory a process starts in is kept: `git` in a scratch repository of the step does not
+    // read this tree's history.
+    const spawn = (args) => {
+        const [command, rest, options] = args;
+        if (typeof command !== 'string') return;
+        const list = Array.isArray(rest) ? rest.map(String) : [];
+        const where = (Array.isArray(rest) ? options : rest)?.cwd;
+        spawns.push({ cwd: pathOf(where ?? process.cwd()), command: [command, ...list] });
+    };
+
+    for (const name of ['readFileSync', 'readFile', 'createReadStream']) wrap(fs, name, read);
+    for (const name of ['existsSync', 'statSync', 'lstatSync', 'accessSync', 'stat', 'lstat', 'access']) wrap(fs, name, probe);
+    wrap(fs, 'openSync', open);
+    wrap(fs, 'open', open);
+    for (const name of ['readdirSync', 'readdir', 'opendirSync', 'opendir']) wrap(fs, name, walk);
+    wrap(fs.promises, 'readFile', read);
+    for (const name of ['stat', 'lstat', 'access']) wrap(fs.promises, name, probe);
+    wrap(fs.promises, 'open', open);
+    for (const name of ['readdir', 'opendir']) wrap(fs.promises, name, walk);
+    for (const name of ['execFileSync', 'execFile', 'spawnSync', 'spawn']) wrap(cp, name, spawn);
+    for (const name of ['execSync', 'exec']) {
+        wrap(cp, name, (args) => typeof args[0] === 'string' && spawns.push({ cwd: pathOf(args[1]?.cwd ?? process.cwd()), command: ['sh', '-c', args[0]] }));
+    }
+    syncBuiltinESMExports();
+
+    process.on('exit', () => {
+        try {
+            mkdir(OUT, { recursive: true });
+            writeFile(
+                join(OUT, `${process.pid}.json`),
+                JSON.stringify({ cwd: process.cwd(), argv: process.argv.slice(1), reads: [...reads], probes: [...probes], walks: [...walks], spawns }),
+            );
+        } catch {
+            // A record that could not be written leaves the step without inputs: it runs always.
+        }
+    });
+}

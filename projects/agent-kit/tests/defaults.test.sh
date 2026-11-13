@@ -262,7 +262,7 @@ printf '' > "$TREE/tools/check-specs.mjs"
 printf '#!/bin/sh\nexit 0\n' > "$TREE/.claude/hooks/tests/run.sh"
 chmod +x "$TREE/.claude/hooks/tests/run.sh"
 report "SC-AK-112 — разложенная проверка зовётся гейтом пуша" "$(rt_push_checks '' | grep -c 'node tools/check-specs.mjs')" 1
-report "SC-AK-112 — сценарии гардов зовутся гейтом пуша" "$(rt_push_checks '' | grep -c 'bash .claude/hooks/tests/run.sh')" 1
+report "SC-AK-112, SC-AK-219 — сценарии гардов зовутся гейтом пуша" "$(rt_push_checks '' | grep -c 'bash .claude/hooks/tests/run.sh')" 1
 # SC-AK-93. Заведение рабочего дерева — работа с поставкой: свежее дерево получает только
 # индекс, а ключи, разрешения и зависимости переносятся руками по списку из компаньона.
 report "SC-AK-93 — заведение рабочего дерева" "$(skill_for bash 'git worktree add --detach ../wt origin/main' '')" git-workflow
