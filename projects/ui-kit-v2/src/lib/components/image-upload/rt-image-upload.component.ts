@@ -108,6 +108,20 @@ export class RtImageUploadComponent {
     /** Шаг скругления кнопки скачивания: круг — полный шаг, квадрат — скругление кнопки по умолчанию */
     protected readonly downloadRadius: Signal<TRtRadius | null> = computed((): TRtRadius | null => (this.downloadRound() ? 'full' : null));
 
+    /** Рисуется ли кнопка удаления: вход включён, загрузчик доступен */
+    protected readonly showRemove: Signal<boolean> = computed((): boolean => this.removable() && !this.disabled());
+
+    /** Есть ли над картинкой хоть одна кнопка: без них ряд кнопок не рисуется */
+    protected readonly hasButtons: Signal<boolean> = computed((): boolean => this.downloadable() || this.showRemove());
+
+    /** Модификаторы ряда кнопок: угол, вид «внутри картинки» и видимость, отличная от обычной */
+    protected readonly buttonsMod: Signal<Record<string, boolean>> = computed((): Record<string, boolean> => ({
+        [this.buttonsCorner()]: true,
+        inside: this.buttonsPlacement() === 'inside',
+        hover: this.buttonsVisibility() === 'hover',
+        always: this.buttonsVisibility() === 'always',
+    }));
+
     /**
      * Адрес текущей картинки: данный приложением или сделанный под применённый файл. Новый адрес от
      * приложения снова берёт верх над применённым.
@@ -133,6 +147,20 @@ export class RtImageUploadComponent {
 
     /** Размер значка кнопки скачивания; пусто — от размера кнопки */
     public readonly downloadIconSize: InputSignal<IRtIcon.Size | null> = input<IRtIcon.Size | null>(null);
+
+    /** Кнопка удаления над картинкой: по нажатию приложение получает `removed`, картинка остаётся */
+    public readonly removable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Угол картинки, у которого стоят кнопки удаления и скачивания */
+    public readonly buttonsCorner: InputSignal<IRtImageUpload.ButtonsCorner> = input<IRtImageUpload.ButtonsCorner>('top-right');
+
+    /** Вид кнопок: выступают за угол картинки или стоят внутри неё */
+    public readonly buttonsPlacement: InputSignal<IRtImageUpload.ButtonsPlacement> = input<IRtImageUpload.ButtonsPlacement>('overhang');
+
+    /** Когда кнопки видны: как обычно, только при наведении и фокусе или всегда */
+    public readonly buttonsVisibility: InputSignal<IRtImageUpload.ButtonsVisibility> = input<IRtImageUpload.ButtonsVisibility>('auto');
 
     /** Вид кнопки выбора файла в пустом загрузчике */
     public readonly chooseAppearance: InputSignal<IButton.Appearance> = input<IButton.Appearance>('outlined');
@@ -178,6 +206,9 @@ export class RtImageUploadComponent {
 
     /** Картинку скачали */
     public readonly downloaded: OutputEmitterRef<void> = output<void>();
+
+    /** Нажата кнопка удаления: картинку убирает приложение */
+    public readonly removed: OutputEmitterRef<void> = output<void>();
 
     constructor() {
         inject(DestroyRef).onDestroy((): void => this.#release());

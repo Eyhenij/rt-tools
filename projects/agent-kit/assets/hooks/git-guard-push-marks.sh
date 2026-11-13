@@ -104,12 +104,44 @@ rt_push_mark_clean() {
     [ -z "$(git status --porcelain -- . ':(exclude).claude/rt-kit/observations' 2>/dev/null)" ]
 }
 
+# Whether the head adds nothing to its base: every commit of it already lies in that branch on the
+# remote. Such a push sends content the set already judged there, and running the set over it costs
+# its whole length and can find nothing — a branch of an epic just taken from the main branch paid
+# forty minutes for a tree equal to the main one. A base that is no remote ref answers «it adds».
+rt_push_adds_nothing() {
+    local base="$1" count
+    [ -n "$base" ] || return 1
+    git rev-parse --verify --quiet "refs/remotes/$base" >/dev/null 2>&1 || return 1
+    count="$(git rev-list --count "refs/remotes/$base..HEAD" 2>/dev/null)"
+    [ "$count" = 0 ]
+}
+
 # The key of a mark: the check line, the tree of the head and the commit of the base. The tree and
 # not the commit — an amended commit with the same content does not pay again; the base too — a
 # step chosen by what the branch touched answers for that base alone.
+#
+# A check that reads a part of the tree only is keyed by that part. The profile names the paths the
+# check does not read — `rt_push_check_unread <check>` prints path specs, one per line — and a
+# commit of those paths alone leaves the mark in force. Without it the task folder taken apart by
+# the last commit of a branch, or one line in a plan, ran the whole set again over code the set had
+# just judged. A check the profile says nothing about is keyed by the whole tree, as before. The
+# index is read rather than the head: a mark is trusted on a clean copy alone, where the two match.
 rt_push_mark_key() {
-    local tree base_sha=''
-    tree="$(git rev-parse --verify --quiet 'HEAD^{tree}' 2>/dev/null)" || return 1
+    local tree base_sha='' unread=''
+    command -v rt_push_check_unread >/dev/null 2>&1 && unread="$(rt_push_check_unread "$1" 2>/dev/null)"
+    if [ -n "$unread" ]; then
+        # shellcheck disable=SC2086
+        # A listing that failed gives no key: its empty output would hash to one constant, and a
+        # mark under it would outlive every edit. The listing goes from the root of the copy.
+        local listed
+        listed="$(IFS='
+'; git -c core.quotePath=false ls-files -s -- ':(top)' $unread 2>/dev/null)" || return 1
+        [ -n "$listed" ] || return 1
+        tree="$(printf '%s\n' "$listed" | git hash-object --stdin 2>/dev/null)"
+        [ -n "$tree" ] || return 1
+    else
+        tree="$(git rev-parse --verify --quiet 'HEAD^{tree}' 2>/dev/null)" || return 1
+    fi
     [ -n "$2" ] && base_sha="$(git rev-parse --verify --quiet "$2" 2>/dev/null)"
     printf '%s\n%s\n%s\n' "$1" "$tree" "$base_sha" | git hash-object --stdin 2>/dev/null
 }
@@ -143,9 +175,69 @@ rt_push_mark_put() {
     return 0
 }
 
+# Removes the mark of a check on this base, if there is one. Used when the whole set went over its
+# time limit: the next run of the same code then runs every step again instead of passing by marks.
+rt_push_mark_drop() {
+    local key dir
+    key="$(rt_push_mark_key "$1" "$2")" || return 0
+    dir="$(rt_push_mark_dir)" || return 0
+    [ -n "$key" ] && rm -f "$dir/$key" 2>/dev/null
+    return 0
+}
+
+# The steps of the set on stdin, the ones the change reaches on stdout, a line per step with its
+# reason to stderr. What a step reads is taken from the table `push-inputs.mjs record` wrote from
+# the step's own calls; a step absent from the table runs. No program, no table or a failure of the
+# program — every step goes through, as before.
+rt_push_select() {
+    local steps root program chosen
+    steps="$(cat)"
+    root="${CLAUDE_PROJECT_DIR:-.}"
+    program="$root/${RT_CHECKS_DIR:-tools}/push-inputs.mjs"
+    if [ -n "$1" ] && [ -f "$program" ] && [ -f "$root/.claude/rt-kit/push-inputs.json" ] &&
+        chosen="$(printf '%s\n' "$steps" | (cd "$root" && node "$program" select "$1"))"; then
+        printf '%s\n' "$chosen"
+        return 0
+    fi
+    printf '%s\n' "$steps"
+}
+
 # The tree runs its heavy steps ahead and the guard only reads their marks. Declared by the
 # profile: in a tree whose heavy steps fit the hook limit a refusal for a missing mark is a new step
 # for nothing, and the package does not know how long another tree's steps take.
 rt_push_heavy_ahead() {
     [ "${RT_PUSH_HEAVY_AHEAD:-}" = 1 ]
+}
+
+# The refusal of a check that passed but took longer than the profile allows it, or nothing. The
+# limit is the tree's measurement of that step: over it, the set grew, and the push is refused so
+# that the minutes are seen at the push that added them, not weeks later by the owner.
+rt_push_over_budget() {
+    local check="$1" took="$2" limit words
+    command -v rt_push_check_budget >/dev/null 2>&1 || return 0
+    limit="$(rt_push_check_budget "$check" 2>/dev/null)"
+    case "$limit" in '' | *[!0-9]*) return 0 ;; esac
+    case "$took" in '' | *[!0-9]*) return 0 ;; esac
+    # No margin over the limit: a limit is only ever lowered, and a margin would raise every one.
+    [ "$took" -gt "$limit" ] || return 0
+    words="$(command -v rt_push_over_budget_words >/dev/null 2>&1 && rt_push_over_budget_words "$check" 2>/dev/null)"
+    printf 'over the time limit: %ss against %ss measured for this step. Find what the step runs that the change does not need.%s\n' \
+        "$took" "$limit" "${words:+ $words}"
+}
+
+# The refusal of a whole set that took longer than the profile allows a push, or nothing. Every
+# step can stay within its own limit while the set holds steps the change did not need: only the
+# sum shows it. The runners drop the marks this run put, so a second push of the same code runs
+# the whole set again and does not pass by marks: the executor finds out why the set ran so long and
+# makes it fit, not repeats the push.
+rt_push_set_over_budget() {
+    local took="$1" limit words
+    command -v rt_push_set_budget >/dev/null 2>&1 || return 0
+    limit="$(rt_push_set_budget 2>/dev/null)"
+    case "$limit" in '' | *[!0-9]*) return 0 ;; esac
+    case "$took" in '' | *[!0-9]*) return 0 ;; esac
+    [ "$took" -gt "$limit" ] || return 0
+    words="$(command -v rt_push_over_budget_words >/dev/null 2>&1 && rt_push_over_budget_words 'the whole set' 2>/dev/null)"
+    printf 'the push went over its time limit: %ss against %ss measured for a whole set. Find out why before the next push: name every step that ran, the file of the change that called it and its minutes.%s\n' \
+        "$took" "$limit" "${words:+ $words}"
 }

@@ -1,6 +1,6 @@
 # The push set against its base, from its marks and ahead
 
-**Status:** in force · **Revision:** 2026-11-12 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-13 · **Scenario prefix:** `SC-AK`
 **Depends on:** the subdomain of the delivery guards and the push gate
 **Laws:** `delivery`, `verifiability`
 **Procedures:** none
@@ -42,8 +42,15 @@ There is no interface: the guard answers with a refusal text, the run ahead with
   the head is a candidate only when a merge of the host moved it past the head. Three kinds of
   branches are no base: the branch's own remote copy, a branch that stands on that copy, and a
   branch a merge of the host brought into this one. A head that is no branch gets the main branch.
+- **A head that adds no commit to its base is pushed with no check run.** Every commit of it
+  already lies in that branch on the remote. The guard, the run ahead and the git hook all answer
+  so; a head with no base on a remote is judged as before. The guard answers so only for a push of
+  the checked-out branch under its own name: the head says nothing about another branch.
 - **A check green on the same tree against the same base is not run again.** The key is the check
   line, the tree of the head and the base commit.
+- **A check the profile names unread paths for is keyed by the rest of the tree.** A commit of
+  those paths alone leaves its mark in force; a check the profile says nothing about is keyed by
+  the whole tree.
 - **A mark is trusted and written only on a clean working copy.** The checks run over the working
   copy, the push sends commits; the observations record the guard writes itself does not count.
 - **A mark is not written when the tree changed while the check ran.**
@@ -54,6 +61,30 @@ There is no interface: the guard answers with a refusal text, the run ahead with
   clean copy.**
 - **Running ahead is declared by the tree, not by the package.** The package does not know how long
   another tree's heavy steps take.
+- **A check that passed over its time limit is red.** The limit is the tree's own measurement of the
+  step; a step with no measurement has no limit. The refusal names both numbers and the words the
+  tree gives it. There is no margin over the limit, and a limit is only ever lowered: the owner's
+  word is «делать меньше по времени — ты можешь, делать больше по времени и тем самым ослаблять
+  лимит — ты не имеешь права».
+- **A push whose whole set ran over its time limit is red.** Each step can stay within its own limit
+  while the set holds steps the change did not need. The limit is the tree's measurement of a whole
+  set, and the refusal asks the executor to find out why before the next push. Such a run leaves
+  no marks, so the same code does not pass on a second push by marks.
+- **A change of hooks, defaults and scenario files runs only the scenario files that reach it.** A
+  file reaches a hook by naming it or a hook that sources it, and the defaults by naming them or a
+  hook that loads them. A change of the harness, the runner or any other package path runs all.
+- **A step runs only when the change reaches what the step reads.** What a step reads is a record
+  of its own calls: the files whose content it opens, the paths whose existence it probes, the
+  directories it walks. An edit reaches a step through a file it read or a file of a kind it read
+  in a directory it walked; an added, removed or renamed file — through a directory it walked or a
+  path it probed; an edit of the step's own files reaches it always. The record is taken on a tree
+  where the set is green: a red check stops early and leaves part of its reads unrecorded.
+- **A step whose reads the record cannot see runs on every change.** That is a step that reads the
+  history of the tree, a step that starts a process other than `node` and `git`, and a step the
+  table does not hold. With no table or no base every step runs.
+- **The table of reads is checked against what the steps read now.** A read the table does not
+  cover is a refusal naming the step and the path. The check runs when a step or the table is
+  touched.
 
 ## What is out of scope
 
@@ -159,3 +190,14 @@ None.
 - 2026-11-12 — the base is the remote branch the head has the fewest commits over; the reflog
   line is no longer read. A branch above a merged and removed one was counted against the main
   branch and ran every heavy step. Task RT-3231.
+- 2026-11-13 — a head that adds no commit to its base is pushed with no check run. The branch of
+  an epic just taken from the main branch could not reach the remote without the whole set. Task
+  RT-3282.
+- 2026-11-13 — a check is keyed by what it reads when the profile names its unread paths. A
+  commit of texts over a tree the set had judged green ran the whole set again. Task RT-3284.
+- 2026-11-13 — a check that passed over its time limit is red. Steps the change did not need ran
+  for 25 minutes of 34, and nothing said so. Task RT-3280.
+- 2026-11-13 — a push whose whole set ran over its time limit is red. Task RT-3273.
+- 2026-11-13 — a step runs only when the change reaches what the step reads, by a record of its
+  own calls. The light checks ran on every change, the kit ones on a branch without a kit file.
+  Task RT-3273.

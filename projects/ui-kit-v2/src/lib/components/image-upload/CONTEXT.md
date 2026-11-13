@@ -12,25 +12,29 @@
     (imageChanged)="upload($event)" />
 ```
 
-| вход               | тип                                                     | умолчание                    |
-| ------------------ | ------------------------------------------------------- | ---------------------------- |
-| `imageUrl`         | `string \| null`                                        | `null`                       |
-| `fileName`         | `string`                                                | `'image'`                    |
-| `tooltip`          | `string`                                                | `''` → `uiImageUploadChange` |
-| `downloadable`     | `boolean`                                               | `false`                      |
-| `downloadShape`    | `'circle' \| 'square'`                                  | `'circle'`                   |
-| `downloadIconSize` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl' \| null` | `null` → по размеру кнопки   |
-| `chooseAppearance` | `'filled' \| 'outlined' \| 'text'`                      | `'outlined'`                 |
-| `chooseIcon`       | `string \| null`                                        | `'ico-upload'`               |
-| `autoApply`        | `boolean`                                               | `false`                      |
-| `loading`          | `boolean`                                               | `false`                      |
-| `disabled`         | `boolean`                                               | `false`                      |
-| `ratio`            | `number \| null`                                        | `null`                       |
-| `round`            | `boolean`                                               | `false`                      |
-| `format`           | `'png' \| 'jpeg' \| 'webp' \| null`                     | `null`                       |
-| `quality`          | `number`                                                | `92`                         |
+| вход                | тип                                                            | умолчание                    |
+| ------------------- | -------------------------------------------------------------- | ---------------------------- |
+| `imageUrl`          | `string \| null`                                               | `null`                       |
+| `fileName`          | `string`                                                       | `'image'`                    |
+| `tooltip`           | `string`                                                       | `''` → `uiImageUploadChange` |
+| `downloadable`      | `boolean`                                                      | `false`                      |
+| `downloadShape`     | `'circle' \| 'square'`                                         | `'circle'`                   |
+| `downloadIconSize`  | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl' \| null`        | `null` → по размеру кнопки   |
+| `removable`         | `boolean`                                                      | `false`                      |
+| `buttonsCorner`     | `'top-right' \| 'top-left' \| 'bottom-right' \| 'bottom-left'` | `'top-right'`                |
+| `buttonsPlacement`  | `'overhang' \| 'inside'`                                       | `'overhang'`                 |
+| `buttonsVisibility` | `'auto' \| 'hover' \| 'always'`                                | `'auto'`                     |
+| `chooseAppearance`  | `'filled' \| 'outlined' \| 'text'`                             | `'outlined'`                 |
+| `chooseIcon`        | `string \| null`                                               | `'ico-upload'`               |
+| `autoApply`         | `boolean`                                                      | `false`                      |
+| `loading`           | `boolean`                                                      | `false`                      |
+| `disabled`          | `boolean`                                                      | `false`                      |
+| `ratio`             | `number \| null`                                               | `null`                       |
+| `round`             | `boolean`                                                      | `false`                      |
+| `format`            | `'png' \| 'jpeg' \| 'webp' \| null`                            | `null`                       |
+| `quality`           | `number`                                                       | `92`                         |
 
-Выходы: `imageChanged` (`File`), `downloaded`.
+Выходы: `imageChanged` (`File`), `downloaded`, `removed`.
 
 ## Главное, что нужно знать
 
@@ -45,6 +49,19 @@
 
 **`autoApply` убирает кнопки:** каждый результат обрезки сразу становится картинкой и уходит
 приложению, а обрезка остаётся открытой.
+
+**`removable` рисует крестик, а картинку убирает приложение.** Нажатие отдаёт `removed` и ничего не
+меняет в загрузчике: приложение удаляет файл у себя и убирает `imageUrl`. Крестик виден при наведении
+на превью и при фокусе внутри него, на касании виден всегда; недоступный загрузчик его не показывает.
+Подпись для экранного диктора — `uiRemove`.
+
+**Кнопки стоят одним рядом у одного угла.** Угол задаёт `buttonsCorner`, вид — `buttonsPlacement`:
+`overhang` выступает за угол картинки, `inside` ставит кнопки внутрь картинки, в 8 от её краёв.
+Крестик стоит в самом углу, скачивание — рядом с ним.
+
+**Когда кнопки видны, задаёт `buttonsVisibility`.** Без него всё как было: крестик виден при
+наведении и фокусе, скачивание — всегда. `hover` прячет до наведения обе кнопки, `always` показывает
+обе всегда. На касании кнопки видны при любом значении.
 
 ## Оформление снаружи
 

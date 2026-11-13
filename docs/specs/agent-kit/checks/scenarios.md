@@ -302,7 +302,8 @@ them
 When the push gate set is assembled
 Then only the heavy steps of the touched subjects are called; a path that fell into no subject, and
 the common base of the tree, raise the whole set, and an empty comparison base raises the whole set
-too
+too; a branch of texts alone calls no step of the builder, and a branch of texts, hooks, the rules
+package and tools does not call the builder's `verify`, which only the second kit and utils carry
 
 Covered: `projects/agent-kit/tests/tree-push-checks.test.sh`.
 

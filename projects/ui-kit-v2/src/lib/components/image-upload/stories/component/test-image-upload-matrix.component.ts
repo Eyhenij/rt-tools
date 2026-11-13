@@ -16,7 +16,7 @@ import { RtImageUploadComponent } from '../../rt-image-upload.component';
 import { IRtImageUpload } from '../../rt-image-upload.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TImageUploadMatrixPart = 'states' | 'presets' | 'themes' | 'options';
+export type TImageUploadMatrixPart = 'states' | 'presets' | 'themes' | 'options' | 'buttons' | 'place';
 
 /** Состояние места: какая картинка дана и что загрузчику велено */
 interface IImageUploadStateCase {
@@ -27,6 +27,41 @@ interface IImageUploadStateCase {
     readonly loading: boolean;
     readonly disabled: boolean;
 }
+
+/**
+ * Кнопки над картинкой: что включено, у какого угла и в каком виде. `state` — состояние превью,
+ * `innerState` — состояние самой кнопки удаления: наведённая кнопка стоит под наведённым превью.
+ */
+interface IImageUploadButtonsCase {
+    readonly name: string;
+    readonly state: string | null;
+    readonly innerState: string | null;
+    readonly downloadable: boolean;
+    readonly shape: IRtImageUpload.DownloadShape;
+    readonly corner: IRtImageUpload.ButtonsCorner;
+    readonly placement: IRtImageUpload.ButtonsPlacement;
+    readonly visibility: IRtImageUpload.ButtonsVisibility;
+    readonly disabled: boolean;
+}
+
+/** Ряд случаев с кнопками и его подпись */
+interface IImageUploadButtonsRow {
+    readonly caption: string;
+    readonly cases: readonly IImageUploadButtonsCase[];
+}
+
+/** Случай по умолчанию: крестик под наведённым превью, квадратный, в правом верхнем углу с выступом */
+const BUTTONS_CASE: IImageUploadButtonsCase = {
+    name: '',
+    state: 'hover',
+    innerState: null,
+    downloadable: false,
+    shape: 'square',
+    corner: 'top-right',
+    placement: 'overhang',
+    visibility: 'auto',
+    disabled: false,
+};
 
 /** Значок кнопки выбора по умолчанию — тот же, что у загрузчика */
 const UPLOAD_ICON: string = 'ico-upload';
@@ -140,6 +175,95 @@ export class TestRtImageUploadMatrixComponent {
             { name: 'картинка', imageUrl: this.#url() },
         ]
     );
+
+    public readonly buttonRows: readonly IImageUploadButtonsRow[] = [
+        {
+            caption: 'Кнопка удаления',
+            cases: [
+                { ...BUTTONS_CASE, name: 'покой: крестика нет', state: null },
+                { ...BUTTONS_CASE, name: 'наведение на превью' },
+                { ...BUTTONS_CASE, name: 'наведение на крестик', innerState: 'hover' },
+                { ...BUTTONS_CASE, name: 'фокус на крестике', state: 'focus-within', innerState: 'focus-visible' },
+                { ...BUTTONS_CASE, name: 'круглая', shape: 'circle' },
+                { ...BUTTONS_CASE, name: 'недоступен: крестика нет', downloadable: true, disabled: true },
+            ],
+        },
+        {
+            caption: 'Обе кнопки',
+            cases: [
+                { ...BUTTONS_CASE, name: 'с выступом', downloadable: true, visibility: 'always' },
+                { ...BUTTONS_CASE, name: 'с выступом, круглые', downloadable: true, visibility: 'always', shape: 'circle' },
+                { ...BUTTONS_CASE, name: 'внутри', downloadable: true, visibility: 'always', placement: 'inside' },
+                {
+                    ...BUTTONS_CASE,
+                    name: 'внутри, круглые',
+                    downloadable: true,
+                    visibility: 'always',
+                    shape: 'circle',
+                    placement: 'inside',
+                },
+            ],
+        },
+        {
+            caption: 'Когда кнопки видны',
+            cases: [
+                { ...BUTTONS_CASE, name: 'как обычно, покой: только скачивание', state: null, downloadable: true },
+                { ...BUTTONS_CASE, name: 'как обычно, наведение: обе', downloadable: true },
+                { ...BUTTONS_CASE, name: 'при наведении, покой: кнопок нет', state: null, downloadable: true, visibility: 'hover' },
+                { ...BUTTONS_CASE, name: 'при наведении, наведение: обе', downloadable: true, visibility: 'hover' },
+                { ...BUTTONS_CASE, name: 'всегда, покой: обе', state: null, downloadable: true, visibility: 'always' },
+            ],
+        },
+    ];
+
+    /**
+     * Место кнопок: четыре угла в каждом из двух видов. Обе кнопки включены и видны всегда: снимок
+     * наведения не ставит, а место крестика должно быть в кадре.
+     */
+    public readonly placeRows: readonly IImageUploadButtonsRow[] = [
+        {
+            caption: 'С выступом за угол (по умолчанию)',
+            cases: [
+                { ...BUTTONS_CASE, name: 'правый верхний (по умолчанию)', downloadable: true, visibility: 'always' },
+                { ...BUTTONS_CASE, name: 'левый верхний', downloadable: true, visibility: 'always', corner: 'top-left' },
+                { ...BUTTONS_CASE, name: 'правый нижний', downloadable: true, visibility: 'always', corner: 'bottom-right' },
+                { ...BUTTONS_CASE, name: 'левый нижний', downloadable: true, visibility: 'always', corner: 'bottom-left' },
+            ],
+        },
+        {
+            caption: 'Внутри картинки',
+            cases: [
+                { ...BUTTONS_CASE, name: 'правый верхний', downloadable: true, visibility: 'always', placement: 'inside' },
+                {
+                    ...BUTTONS_CASE,
+                    name: 'левый верхний',
+                    downloadable: true,
+                    visibility: 'always',
+                    corner: 'top-left',
+                    placement: 'inside',
+                },
+                {
+                    ...BUTTONS_CASE,
+                    name: 'правый нижний',
+                    downloadable: true,
+                    visibility: 'always',
+                    corner: 'bottom-right',
+                    placement: 'inside',
+                },
+                {
+                    ...BUTTONS_CASE,
+                    name: 'левый нижний',
+                    downloadable: true,
+                    visibility: 'always',
+                    corner: 'bottom-left',
+                    placement: 'inside',
+                },
+            ],
+        },
+    ];
+
+    /** Адрес картинки для рядов с кнопками: он один на все ячейки */
+    public readonly sampleUrl: Signal<string | null> = computed((): string | null => this.#url());
 
     constructor() {
         inject(DestroyRef).onDestroy((): void => {

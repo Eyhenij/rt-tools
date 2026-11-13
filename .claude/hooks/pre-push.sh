@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/pre-push.sh · 6e1288d00fef · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/pre-push.sh · f95fdd23d052 · правится надстройкой, не здесь
 # The checks before a push, as a hook of git itself, not of the agent.
 #
 # Requires: hooks/push-set.sh, hooks/git-guard-push-marks.sh
@@ -86,6 +86,12 @@ rt_push_set_profile "$hooks_dir" "$repo_root"
 command -v rt_push_checks >/dev/null 2>&1 || exit 0
 
 base="$(rt_push_set_base)"
+
+if command -v rt_push_adds_nothing >/dev/null 2>&1 && rt_push_adds_nothing "$base"; then
+    printf 'pre-push: the head adds no commit to %s — the set is not run\n' "$base" >&2
+    exit 0
+fi
+
 total="$(rt_push_checks "$base" | grep -c .)"
 [ "${total:-0}" -eq 0 ] && exit 0
 

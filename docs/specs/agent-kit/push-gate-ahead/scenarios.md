@@ -118,6 +118,119 @@ Then it does not run anything and exits with 3
 
 Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 
+### SC-AK-1345 — a head that adds nothing to its base is pushed with no check run
+
+Given a branch whose every commit already lies in its base on the remote, and a set of one red check
+When the push call comes
+Then the guard lets it through and runs no check
+
+Given the same branch
+When the run ahead starts
+Then it names that there is nothing to run and exits with 0
+
+Covered: `projects/agent-kit/tests/git-guard-push-nothing-new.test.sh`.
+
+### SC-AK-1346 — a head with a commit over its base is judged by the set
+
+Given the same branch with one commit over its base
+When the push call comes
+Then the guard runs the set and refuses on the red check
+
+Given a repository with no remote
+When the push call comes
+Then the guard runs the set: there is no base to compare the head with
+
+Covered: `projects/agent-kit/tests/git-guard-push-nothing-new.test.sh`.
+
+### SC-AK-1349 — the head tells nothing about a push of another branch
+
+Given a head that adds nothing to its base, and a set of one red check
+When the push names another branch, sends the head into a branch of another name or names no branch
+Then the guard runs the set and refuses on the red check
+
+Covered: `projects/agent-kit/tests/git-guard-push-nothing-new.test.sh`.
+
+### SC-AK-1347 — a commit of unread paths keeps the mark of a check
+
+Given a profile that names the paths a check does not read, and the key of that check
+When a commit changes those paths alone — a file under the unread directory, a text at the root
+Then the key of the check is the same, and the key of a check the profile does not name changes
+
+Covered: `projects/agent-kit/tests/git-guard-push-marks-unread.test.sh`.
+
+### SC-AK-1348 — a commit of what the check reads drops its mark
+
+Given the same profile and the key of the check
+When a commit changes a file of code, or a text that lies inside the code
+Then the key of the check changes
+
+Covered: `projects/agent-kit/tests/git-guard-push-marks-unread.test.sh`.
+
+### SC-AK-1350 — a check that passed over its time limit is red
+
+Given the profile gives a check a limit of 12 seconds and words for the refusal
+When the check passes in 14 seconds
+Then the set calls it red, and the refusal names 14, 12 and the words. At 13 seconds it is red
+too, as there is no margin; at 12 seconds the check is green. A check the profile gives no limit
+is green however long it took
+
+Covered: `projects/agent-kit/tests/push-over-budget.test.sh`.
+
+### SC-AK-1351 — a push whose whole set ran over its time limit is red
+
+Given the profile gives a whole set a limit of 440 seconds and words for the refusal
+When the set of one push runs for 441 seconds
+Then the push is red, and the refusal names 441, 440 and the words and asks why before the next
+push. At 440 seconds the set is green, the package default sets no limit, and both runners judge
+the sum. The run over the limit drops the marks it put, and a run within the limit keeps them
+
+Covered: `projects/agent-kit/tests/push-over-budget.test.sh`.
+
+### SC-AK-1352 — a hook change runs only the scenario files that reach it
+
+Given the package scenario files and hooks as they lie in the tree
+When a change touches one hook, the defaults or one scenario file
+Then the files that name the hook, or a hook that sources it, run, and a file that reaches neither
+does not. A change of the defaults runs their scenarios and the files of hooks that load them. A
+change of the harness, the runner, the selection or a check runs every file
+
+Covered: `projects/agent-kit/tests/select-suites.test.sh`.
+
+### SC-AK-1353 — a step runs only when the change reaches what it reads
+
+Given a step whose record says it walks `docs/` and reads the `.md` files there
+When a change edits a `.md` file there, adds or renames a file there, or edits the step itself
+Then the step runs
+
+Given the same step
+When a change edits a `.ts` file in `docs/` or a file outside it
+Then the step does not run, and the set says why for every step
+
+Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
+
+### SC-AK-1354 — a step whose reads are not seen runs on every change
+
+Given a step that reads the history of the tree, or a step the table does not hold
+When any change is pushed
+Then the step runs
+
+Given there is no table, or the push names no base
+When the set is chosen
+Then every step runs
+
+Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
+
+### SC-AK-1355 — the table of reads is checked against what the steps read now
+
+Given a table recorded from the steps
+When no step and not the table is touched
+Then the table check does not run
+
+When a step now reads a path the table does not cover
+Then the table check is red and names the step and the path
+
+Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
+
 ### SC-AK-1166 — the push gate names every red light check by one refusal
 
 Given the gate set holds two red light checks, a green one between them and a heavy one after them

@@ -63,17 +63,34 @@
                         (keydown.enter)="pick()"
                         (keydown.space)="onSpace($event)" />
 
-                    @if (downloadable()) {
-                        <rt-icon-button
-                            rtElem="download"
-                            icon="ico-download"
-                            qa-dataid="image-upload-download"
-                            [radius]="downloadRadius()"
-                            [iconSize]="downloadIconSize()"
-                            [rtMod]="{ round: downloadRound() }"
-                            [ariaLabel]="t().uiDownload"
-                            [tooltip]="t().uiDownload"
-                            (click)="download()" />
+                    @if (hasButtons()) {
+                        <div rtElem="buttons" [rtMod]="buttonsMod()">
+                            @if (showRemove()) {
+                                <rt-icon-button
+                                    rtElem="remove"
+                                    icon="ico-close"
+                                    qa-dataid="image-upload-remove"
+                                    [radius]="downloadRadius()"
+                                    [iconSize]="downloadIconSize()"
+                                    [rtMod]="{ round: downloadRound() }"
+                                    [ariaLabel]="t().uiRemove"
+                                    [tooltip]="t().uiRemove"
+                                    (click)="removed.emit()" />
+                            }
+
+                            @if (downloadable()) {
+                                <rt-icon-button
+                                    rtElem="download"
+                                    icon="ico-download"
+                                    qa-dataid="image-upload-download"
+                                    [radius]="downloadRadius()"
+                                    [iconSize]="downloadIconSize()"
+                                    [rtMod]="{ round: downloadRound() }"
+                                    [ariaLabel]="t().uiDownload"
+                                    [tooltip]="t().uiDownload"
+                                    (click)="download()" />
+                            }
+                        </div>
                     }
                 </div>
             </rt-file-drop>

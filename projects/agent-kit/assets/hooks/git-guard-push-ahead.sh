@@ -38,6 +38,10 @@ command -v rt_push_checks >/dev/null 2>&1 || {
     exit "$not_started"
 }
 command -v rt_push_check_heavy >/dev/null 2>&1 || rt_push_check_heavy() { return 1; }
+command -v rt_push_over_budget >/dev/null 2>&1 || rt_push_over_budget() { return 0; }
+command -v rt_push_set_over_budget >/dev/null 2>&1 || rt_push_set_over_budget() { return 0; }
+command -v rt_push_mark_drop >/dev/null 2>&1 || rt_push_mark_drop() { return 0; }
+command -v rt_push_select >/dev/null 2>&1 || rt_push_select() { cat; }
 # The line of a run for the metrics. No file — the checks run and record nothing.
 # shellcheck disable=SC1091
 [ -f "$rt_hooks_dir/metric-marks.sh" ] && . "$rt_hooks_dir/metric-marks.sh" 2>/dev/null
@@ -53,10 +57,18 @@ rt_push_mark_clean || {
 
 base="$(rt_push_base "${RT_MAIN_BRANCH:-main}")"
 skip_code="${RT_SKIP_CODE:-7}"
+
+if command -v rt_push_adds_nothing >/dev/null 2>&1 && rt_push_adds_nothing "$base"; then
+    printf 'push ahead: the head adds no commit to %s — there is nothing to run, the push passes\n' "$base"
+    exit 0
+fi
+
 printf 'push ahead: base %s, tree %s\n' "${base:-none}" "$(git rev-parse --short 'HEAD^{tree}')"
 sign="$(rt_tree_sign .)"
 
 red=""
+marked=""
+set_started="$(date +%s)"
 while IFS= read -r check; do
     [ -z "$check" ] && continue
     if rt_push_mark_has "$check" "$base"; then
@@ -73,9 +85,16 @@ while IFS= read -r check; do
     out="$(eval "$check" 2>&1)"
     status=$?
     took=$(($(date +%s) - started))
+    over="$(rt_push_over_budget "$check" "$took")"
+    if [ "$status" -eq 0 ] && [ -n "$over" ]; then
+        status=1
+        out="$over"
+    fi
     if [ "$status" -eq 0 ]; then
         rt_run_note "$sign" "$started" green "$check"
         rt_push_mark_put "$check" "$base" "$key_before"
+        marked="${marked}${marked:+
+}${check}"
         printf '+ green in %ss: %s\n' "$took" "$check"
     elif [ "$status" -eq "$skip_code" ]; then
         rt_run_note "$sign" "$started" skipped "$check"
@@ -87,8 +106,19 @@ while IFS= read -r check; do
         printf '✗ red in %ss: %s\n%s\n' "$took" "$check" "$(printf '%s' "$out" | tail -n 25)"
     fi
 done <<EOF
-$(rt_push_checks "$base")
+$(rt_push_checks "$base" | rt_push_select "$base")
 EOF
+
+set_took=$(($(date +%s) - set_started))
+set_over="$(rt_push_set_over_budget "$set_took")"
+if [ -n "$set_over" ]; then
+    printf '✗ the whole set in %ss: %s\n' "$set_took" "$set_over"
+    printf '%s\n' "$marked" | while IFS= read -r check; do
+        [ -n "$check" ] && rt_push_mark_drop "$check" "$base"
+    done
+    red="${red}${red:+
+}the whole set: ${set_took}s"
+fi
 
 if [ -n "$red" ]; then
     printf '\npush ahead: red —\n%s\n' "$red"
