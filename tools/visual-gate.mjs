@@ -37,6 +37,8 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
+import { unopenedVerdict } from './showcase-probe.mjs';
+
 /**
  * The kits are kept apart on purpose: each has its own showcase, its own snapshot runner and its
  * own references directory. Here they stand next to each other only as two lines of the set —
@@ -317,11 +319,11 @@ async function main() {
         }
     }
 
-    if (orphans.length > 0) {
-        console.error(
-            `\n  References of ${kit} that have no story (${orphans.length}):\n    ${orphans.join('\n    ')}\n\n` +
-                '  They are eternally green — the run does not open them. Remove them or bring back the story they belonged to.\n'
-        );
+    // On a red run the same list names the stories that failed before their frame, not orphans.
+    const verdict = unopenedVerdict(orphans, (run.status ?? 1) !== 0);
+
+    if (verdict !== undefined) {
+        console.error(`\n  The showcase ${kit}. ${verdict}\n`);
     }
 
     /**

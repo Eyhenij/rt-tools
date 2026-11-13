@@ -226,6 +226,40 @@ export function storiesLostFromIndex(references, storyIds) {
     return [...named].filter((id) => !held.has(id)).sort();
 }
 
+/**
+ * What to say about the references no opened story named, by the colour of the shooting run.
+ *
+ * On a green run such a reference is orphaned: nothing opens it, and it stays green for ever. On a
+ * red run the same list means something else — a story that failed before its frame names no
+ * reference either, and calling its reference orphaned hides the failure behind an advice to delete
+ * the file. Two working copies shooting at once made twelve tree stories fail to open, and the step
+ * said «references that have no story» over a run where every taken frame matched.
+ *
+ * Returns nothing when there is nothing to say.
+ */
+export function unopenedVerdict(unopened, runRed) {
+    if (unopened.length === 0) {
+        return undefined;
+    }
+
+    const list = unopened.join('\n    ');
+
+    if (runRed) {
+        const stories = [...new Set(unopened.map(storyOfReference))].sort();
+
+        return (
+            `The shooting run is red, and it did not reach the frame of ${stories.length} stories:\n    ${stories.join('\n    ')}\n\n` +
+            `  Their references are not called orphaned: a story that failed before its frame names none.\n` +
+            `  Read the failure of each story in the output of the run above, then repeat the run.`
+        );
+    }
+
+    return (
+        `References that have no story (${unopened.length}):\n    ${list}\n\n` +
+        `  They are eternally green — the run does not open them. Remove them or bring back the story they belonged to.`
+    );
+}
+
 /** The refusal when the driver is not found: printed, and the process ends. */
 function driverMissing(message) {
     console.error(`\n  ${message}\n`);

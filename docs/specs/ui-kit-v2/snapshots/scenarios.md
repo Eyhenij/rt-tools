@@ -3,8 +3,7 @@
 The prefix `SC-UKV` is shared across the domain together with the subdomains. The numbers were not
 changed at the move into the subdomain: the titles of the tests refer to them.
 
-What a scenario is covered by is said under it. Where the run does not cover a scenario, that is said
-openly.
+What a scenario is covered by is said under it. Where the run does not cover a scenario, that is said openly.
 
 ### SC-UKV-01 — an edit of the design that changed a matrix fells the run
 
@@ -28,8 +27,7 @@ Coverage: partial — the spec checks the form of the mark, not that a marked st
 
 Given three thresholds of the width are declared in the styles of one component, and none at another
 When the run of the snapshots goes
-Then four frames are checked at the first — the base one and one at every threshold — and one at the
-second
+Then four frames are checked at the first — the base one and one at every threshold — and one at the second
 
 Coverage: partial — the spec checks the side of a threshold and the list, not the shooting of a frame in a window of that width. The second is checked by the run of the snapshots: 29 frames of the thresholds at five folders.
 
@@ -65,8 +63,7 @@ with the font. The determinacy itself is checked by two passes of the run in a r
 
 Given the references of both showcases lie in the tree
 When the run of the snapshots of the second showcase goes
-Then only the references of the second are checked and reshot, and the catalogue of the first stays
-untouched
+Then only the references of the second are checked and reshot, and the catalogue of the first stays untouched
 
 Not covered: it cannot be closed by a test with an identifier — it is held by the layout: the second showcase has a setting of the run, a catalogue of the references, a port and commands of its own. Checked on the spot: the catalogue of the first showcase was not changed by a single file over the whole work.
 
@@ -151,8 +148,7 @@ Not covered: it cannot be closed by a test with an identifier — the reshooting
 
 Given a language different from the language of the frame is chosen in the environment of the run
 When the run of the snapshots goes
-Then the labels in the frames are the same as in the references, and not a single story is named as
-diverged
+Then the labels in the frames are the same as in the references, and not a single story is named as diverged
 
 Not covered: it cannot be closed by a test with an identifier — the language of the labels is nailed in the setting of the showcase and is not taken from the environment.
 
@@ -323,3 +319,11 @@ is closed by the two frames of the radius grid: the controls and the surfaces, t
 Given a story opens its panel by pressing a button near the bottom edge
 When the gesture puts focus on the button
 Then the page does not scroll, and no item slides under the resting pointer with its hint
+
+### SC-UKV-1255 — a story that failed before its frame is named as a failed story
+
+Given a red run in which some stories failed before their frame
+When the wrapper matches the catalogue against the registry
+Then it names the stories the run did not reach, each once and without a width tail, and calls no reference orphaned
+
+Covered by `tools/tests/showcase-probe.test.sh` — the verdict text for a red and a green run.

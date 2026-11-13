@@ -2,7 +2,7 @@
 # The scenarios of opening a story in the showcase probes: what a probe says when the showcase it
 # was pointed at serves no stories, and what it does not swallow.
 #
-# Covers SC-UKV-132, SC-UKV-142, SC-UKV-144 and SC-UKV-856 of the spec `docs/specs/ui-kit-v2/snapshots`.
+# Covers SC-UKV-132, SC-UKV-142, SC-UKV-144, SC-UKV-856 and SC-UKV-1255 of the spec `docs/specs/ui-kit-v2/snapshots`.
 #
 # There is no browser here on purpose. The module is judged by what it says and by the code it
 # leaves with, and a real browser would add half a minute of waiting to every scenario.
@@ -192,7 +192,7 @@ says_index "such a refusal says the indexer named none" "it named none" unnamed
 # SC-UKV-856. The pure part: which story ids the references name and the index does not hold. A
 # reference of a story with named widths carries a `--w<width>` tail that is not part of the id.
 cat > "$WORK/tools/drive-references.mjs" <<'JS'
-import { storiesLostFromIndex, storyOfReference } from './showcase-probe.mjs';
+import { storiesLostFromIndex, storyOfReference, unopenedVerdict } from './showcase-probe.mjs';
 
 const [what, ...args] = process.argv.slice(2);
 
@@ -200,6 +200,8 @@ if (what === 'story') {
     console.log(storyOfReference(args[0]));
 } else if (what === 'lost') {
     console.log(JSON.stringify(storiesLostFromIndex(JSON.parse(args[0]), JSON.parse(args[1]))));
+} else if (what === 'verdict') {
+    console.log(unopenedVerdict(JSON.parse(args[0]), args[1] === 'red') ?? 'nothing');
 }
 JS
 
@@ -217,5 +219,20 @@ report "two references of one missing story name it once" \
     "$(matched lost '["a--two.png","a--two--w374.png","a--two--w640.png"]' '[]')" '["a--two"]'
 report "what is not a reference is not judged" \
     "$(matched lost '["__diff_output__","a--one.png"]' '["a--one"]')" '[]'
+
+# SC-UKV-1255. A story that failed before its frame names no reference, so on a red run the list of
+# unopened references is no list of orphans. The pair: on a green run the same list is one.
+says_verdict() {
+    report "$1" "$(matched verdict "$3" "$4" | grep -c -- "$2")" "$5"
+}
+
+TREE='["organisms-forms-tree--empty.png","organisms-forms-tree--empty--w374.png","organisms-forms-tree--mode.png"]'
+says_verdict "SC-UKV-1255 — a red run names the stories it did not reach" 'did not reach the frame of 2 stories' "$TREE" red 1
+says_verdict "SC-UKV-1255 — a red run names a story once, without its width tail" '^    organisms-forms-tree--empty$' "$TREE" red 1
+says_verdict "SC-UKV-1255 — a red run does not call the references orphaned" 'have no story' "$TREE" red 0
+says_verdict "SC-UKV-1255 — a green run calls the same references orphaned" 'References that have no story (3)' "$TREE" green 1
+says_verdict "SC-UKV-1255 — a green run does not speak of a failed story" 'did not reach' "$TREE" green 0
+report "SC-UKV-1255 — no unopened reference gives no verdict on a red run" "$(matched verdict '[]' red)" 'nothing'
+report "SC-UKV-1255 — no unopened reference gives no verdict on a green run" "$(matched verdict '[]' green)" 'nothing'
 
 suite_result "opening a story in the showcase probes"

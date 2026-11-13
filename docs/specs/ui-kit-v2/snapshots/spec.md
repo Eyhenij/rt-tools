@@ -1,6 +1,6 @@
 # The snapshots of the showcase
 
-**Status:** in force · **Revision:** 2026-08-17 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-13 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the helpers of the showcase of the second kit (`src/showcase/`); the rule of the check
 of a component of the kit; the plan of the coverage of the states, whose open question about the
 checking of the frames this agreement closes
@@ -65,6 +65,10 @@ as an attachment.
 - **A reference that has no story fells the run.** A story is renamed or deleted, and its frame stayed —
   such a reference is eternally green, because nobody opens it. The catalogue stops answering the question
   of what is checked.
+
+- **A story that failed before its frame is named as a failed story, not as an orphaned reference.** A
+  story is written into the registry before it is drawn, with every width frame it names. On a red run the
+  references no story named are reported as stories the run did not reach.
 
 - **The frame is taken by the root of the show, not by the whole page.** The threshold is counted from the
   area of the frame: in a page where a grid takes a small share, a cell that went wrong passes silently.
@@ -375,6 +379,9 @@ single file for a commit in the tree; after the rolling back of the edit the run
 
 ## History of changes
 
+- 2026-11-13 — a story that failed before its frame is named as a failed story. Two working copies
+  shooting at once made twelve stories fail to open, and the run called their references orphaned. Task
+  RT-3280.
 - 2026-09-30 — the grid helper no longer scrolls its matrix inside itself: a frame of a grid wider than
   the window holds every column.
 - 2026-08-17 — the subdomain was split out of the spec of the domain, which had outgrown the length limit. The

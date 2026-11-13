@@ -27,7 +27,7 @@ import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSy
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { ensureIndex, storiesLostFromIndex } from './showcase-probe.mjs';
+import { ensureIndex, storiesLostFromIndex, unopenedVerdict } from './showcase-probe.mjs';
 
 /** The address of an already raised showcase: the run raises none of its own. */
 const URL = process.env.STORYBOOK_URL ?? 'http://localhost:6007';
@@ -141,7 +141,7 @@ async function requireOwnShowcase(matchReferences) {
  * The registry is written by the harness on every taken frame; everything lying in the directory and
  * not named in the registry was matched by nothing.
  */
-function requireNoOrphans(registryPath) {
+function requireNoOrphans(registryPath, runRed) {
     if (!existsSync(SNAPSHOT_DIR)) {
         return 0;
     }
@@ -158,11 +158,11 @@ function requireNoOrphans(registryPath) {
     const stored = readdirSync(SNAPSHOT_DIR).filter((name) => name.endsWith('.png'));
     const orphans = stored.filter((name) => !taken.has(name.replace(/\.png$/, '')));
 
-    if (orphans.length > 0) {
-        fail(
-            `References that have no story (${orphans.length}):\n    ${orphans.join('\n    ')}\n\n` +
-                `  They are eternally green — the run does not open them. Remove them or bring back the story they belonged to.`
-        );
+    // On a red run the same list names the stories that failed before their frame, not orphans.
+    const verdict = unopenedVerdict(orphans, runRed);
+
+    if (verdict !== undefined) {
+        fail(verdict);
     }
 
     return stored.length;
@@ -238,7 +238,7 @@ try {
     // A pointed re-take opens not the whole directory, and everything it did not touch would look
     // orphaned. The directory is matched only on a full session.
     if (updateOne === undefined) {
-        stored = requireNoOrphans(registryPath);
+        stored = requireNoOrphans(registryPath, run.status !== 0);
     }
 } finally {
     rmSync(registryDir, { recursive: true, force: true });
