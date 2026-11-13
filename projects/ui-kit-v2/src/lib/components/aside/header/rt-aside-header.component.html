@@ -16,11 +16,14 @@
             @if (overline(); as overlineText) {
                 <p rtElem="overline" qa-dataid="aside-overline">{{ overlineText }}</p>
             }
-            <h2 rtElem="title" qa-dataid="aside-title">
-                <rt-skeleton-wrapper width="180px" height="20px" [isLoading]="loading()">
-                    {{ title() }}
-                </rt-skeleton-wrapper>
-            </h2>
+            <!-- Без заголовка строки нет: пустая строка сдвинула бы надзаголовок с линии стрелки -->
+            @if (title() || loading()) {
+                <h2 rtElem="title" qa-dataid="aside-title">
+                    <rt-skeleton-wrapper width="180px" height="20px" [isLoading]="loading()">
+                        {{ title() }}
+                    </rt-skeleton-wrapper>
+                </h2>
+            }
 
             @if (subtitle(); as subtitleText) {
                 <p rtElem="subtitle" qa-dataid="aside-subtitle">{{ subtitleText }}</p>

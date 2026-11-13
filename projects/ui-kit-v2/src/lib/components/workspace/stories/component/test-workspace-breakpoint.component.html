@@ -1,5 +1,11 @@
 <div style="block-size: 100dvh; overflow: hidden; background: var(--rt-color-bg-surface)">
-    <rt-workspace hasActive style="block-size: 100%" [singleColumnBreakpoint]="breakpoint" [asideOverlayWidth]="overlayWidth">
+    <rt-workspace
+        hasActive
+        style="block-size: 100%"
+        [singleColumnBreakpoint]="breakpoint"
+        [asideOverlayWidth]="overlayWidth"
+        [asideTitle]="title"
+        [asideContentLayout]="layout">
         <ng-template rtWorkspaceList>
             <div style="padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem">
                 <strong>Переписки</strong>
@@ -15,12 +21,23 @@
             </div>
         </ng-template>
         <ng-template rtWorkspaceAside>
-            <div qa-dataid="breakpoint-details" style="padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem">
-                <strong>Сведения о брони</strong>
-                <span>Гость: Анна Смирнова</span>
-                <span>Телефон: +7 900 123-45-67</span>
-                <span>Проживание, 3 ночи — 45 000 ₽</span>
-            </div>
+            <rt-tabs qa-dataid="breakpoint-details">
+                @for (tab of tabs; track tab; let first = $first) {
+                    <ng-template [rtTab]="tab" [label]="tab">
+                        @if (first) {
+                            <rt-detail-list>
+                                <rt-detail-row label="Гость">Анна Смирнова</rt-detail-row>
+                                <rt-detail-row label="Телефон">+7 900 123-45-67</rt-detail-row>
+                                <rt-detail-row label="Статус"><rt-tag value="Подтверждено" severity="success" /></rt-detail-row>
+                            </rt-detail-list>
+                            <rt-aside-section heading="Контакты">
+                                <rt-field label="Телефон"><rt-input [formControl]="phone" /></rt-field>
+                                <rt-field label="Почта"><rt-input [formControl]="mail" /></rt-field>
+                            </rt-aside-section>
+                        }
+                    </ng-template>
+                }
+            </rt-tabs>
         </ng-template>
     </rt-workspace>
 </div>

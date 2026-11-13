@@ -158,6 +158,7 @@ export const RT_KIT_LABELS_EN = {
     themeToggleLabel: 'Switch theme',
     uiActions: 'Actions',
     uiApply: 'Apply',
+    uiAsideDetails: 'Details',
     uiAuditEmptyHint: 'Deal events will appear here — stage changes and other actions.',
     uiBack: 'Back',
     uiBackToList: 'Back to list',
