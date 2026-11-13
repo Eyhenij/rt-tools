@@ -1,6 +1,6 @@
 # Report of the rules graph
 
-Built by `npm run graph:rules` from `5868f49c0`: 351 nodes, 1310 links.
+Built by `npm run graph:rules` from `ece3c6d96`: 352 nodes, 1319 links.
 The graph is `projects/agent-kit/rules-graph/graph.json`; graphify reads it with `--graph`. Every list below is
 debt for the revision of a law family to sort out, not a refusal.
 
@@ -17,7 +17,7 @@ No `Requires` line and no binding of the companion to code: a hook, a check, a l
 
 Not laid out in this tree, so their executors are unknown here: api-layer, shared-code.
 
-## Articles nothing carries out — 179
+## Articles nothing carries out — 182
 
 Articles the companion of the rule marks «Not checked» or «Not carried out», of all its articles.
 
@@ -28,8 +28,8 @@ Articles the companion of the rule marks «Not checked» or «Not carried out»,
 - deploy-flow — 13 of 29
 - testing — 13 of 42
 - browser-verification — 12 of 23
+- autonomous-work — 11 of 11
 - reuse-first — 9 of 18
-- autonomous-work — 8 of 11
 - doc-style — 8 of 21
 - spec-driven — 6 of 31
 - status-report — 5 of 10
@@ -49,7 +49,7 @@ Of 46 words of the package glossary, these are said by no text of the package or
 
 - none
 
-## Texts that state the same thing — 17
+## Texts that state the same thing — 16
 
 Pairs of texts whose bold statements share at least 60% of their words, with the
 number of such statements and the first of them.
@@ -65,7 +65,6 @@ number of such statements and the first of them.
 - `projects/agent-kit/assets/laws/frontend-application.md` and `projects/agent-kit/assets/rules/styling-bem.md` — 1: «Every class in the markup has a style rule of its own.» / «Every element class has its own style rule.»
 - `projects/agent-kit/assets/laws/project-documentation.md` and `projects/agent-kit/assets/rules/doc-style.md` — 1: «An image is edited by the same change as the text it depicts.» / «A diagram is edited by the same change as the text it depicts.»
 - `projects/agent-kit/assets/laws/verifiability.md` and `projects/agent-kit/assets/rules/testing.md` — 1: «A test switched off by an environment flag does not count as coverage.» / «An end-to-end test switched off by an environment variable does not count as coverage.»
-- `projects/agent-kit/assets/patterns/autonomous-work-run.md` and `projects/agent-kit/assets/rules/autonomous-work.md` — 1: «The branch was created from main by habit.» / «A branch created from main by habit breaks the chain.»
 - `projects/agent-kit/assets/rules/doc-style.md` and `projects/agent-kit/assets/rules/git-workflow.azure.md` — 1: «A document goes in the same commit as the change it describes.» / «A document goes in the same commit as the edit.»
 - `projects/agent-kit/assets/rules/doc-style.md` and `projects/agent-kit/assets/rules/git-workflow.github.md` — 1: «A document goes in the same commit as the change it describes.» / «A document goes in the same commit as the edit.»
 - `projects/agent-kit/assets/rules/doc-style.md` and `projects/agent-kit/assets/rules/git-workflow.gitlab.md` — 1: «A document goes in the same commit as the change it describes.» / «A document goes in the same commit as the edit.»

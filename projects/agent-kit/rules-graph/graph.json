@@ -2457,6 +2457,17 @@
       "name": "agent-kit"
     },
     {
+      "label": "autonomous-work pitfalls",
+      "file_type": "document",
+      "source_file": "projects/agent-kit/assets/pitfalls/autonomous-work.md",
+      "source_location": "L1",
+      "id": "pitfalls_autonomous_work",
+      "community": 3,
+      "norm_label": "autonomous-work pitfalls",
+      "kind": "pitfalls",
+      "name": "autonomous-work"
+    },
+    {
       "label": "doc-style pitfalls",
       "file_type": "document",
       "source_file": "projects/agent-kit/assets/pitfalls/doc-style.md",
@@ -2715,8 +2726,8 @@
       "name": "autonomous-work",
       "installed": true,
       "articles": 11,
-      "unheld": 8,
-      "bound_code": 2
+      "unheld": 11,
+      "bound_code": 8
     },
     {
       "label": "browser-verification",
@@ -8109,6 +8120,26 @@
     {
       "relation": "mentions",
       "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/pitfalls/autonomous-work.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "pitfalls_autonomous_work",
+      "target": "law_autonomous_work",
+      "confidence_score": 1
+    },
+    {
+      "relation": "pitfalls_of",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/pitfalls/autonomous-work.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "pitfalls_autonomous_work",
+      "target": "rule_autonomous_work",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
       "source_file": "projects/agent-kit/assets/pitfalls/doc-style.md",
       "source_location": "L1",
       "weight": 1,
@@ -8523,7 +8554,37 @@
       "source_location": "L1",
       "weight": 1,
       "source": "rule_autonomous_work",
+      "target": "hook_git_guard_delivery_epic_sh",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/autonomous-work/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_autonomous_work",
+      "target": "hook_git_guard_delivery_sh",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/autonomous-work/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_autonomous_work",
       "target": "hook_turn_exit_guard_sh",
+      "confidence_score": 1
+    },
+    {
+      "relation": "executed_by",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/skills/autonomous-work/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_autonomous_work",
+      "target": "hook_turn_exit_verdict_sh",
       "confidence_score": 1
     },
     {
@@ -8544,6 +8605,16 @@
       "weight": 1,
       "source": "rule_autonomous_work",
       "target": "pattern_autonomous_work_run",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/rules/autonomous-work.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "rule_autonomous_work",
+      "target": "pitfalls_autonomous_work",
       "confidence_score": 1
     },
     {
@@ -14219,6 +14290,16 @@
     {
       "relation": "mentions",
       "confidence": "EXTRACTED",
+      "source_file": "docs/specs/agent-kit/patterns/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "spec_patterns",
+      "target": "law_autonomous_work",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
       "source_file": "docs/specs/agent-kit/patterns/spec.md",
       "source_location": "L1",
       "weight": 1,
@@ -14753,6 +14834,16 @@
       "source_location": "L1",
       "weight": 1,
       "source": "spec_patterns",
+      "target": "pitfalls_autonomous_work",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/specs/agent-kit/patterns/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "spec_patterns",
       "target": "pitfalls_doc_style",
       "confidence_score": 1
     },
@@ -14804,6 +14895,16 @@
       "weight": 1,
       "source": "spec_patterns",
       "target": "pitfalls_turn_conduct",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/specs/agent-kit/patterns/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "spec_patterns",
+      "target": "rule_autonomous_work",
       "confidence_score": 1
     },
     {
@@ -17078,5 +17179,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "5868f49c0b4e61b2a4eec66d5b070c53f3b20500"
+  "built_at_commit": "ece3c6d967f1e48968523e9c2ba2dfdfd12e6c69"
 }
