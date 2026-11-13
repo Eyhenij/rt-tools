@@ -6711,6 +6711,32 @@
       "id": "tests_epic_stop_guard_test_stop_word"
     },
     {
+      "label": "noticed()",
+      "file_type": "code",
+      "source_file": "tests/epic-stop-guard.test.sh",
+      "source_location": "L208",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "community": 73,
+      "norm_label": "noticed()",
+      "id": "tests_epic_stop_guard_test_noticed"
+    },
+    {
+      "label": "typed()",
+      "file_type": "code",
+      "source_file": "tests/epic-stop-guard.test.sh",
+      "source_location": "L209",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "community": 73,
+      "norm_label": "typed()",
+      "id": "tests_epic_stop_guard_test_typed"
+    },
+    {
       "label": "dispatch.test.sh",
       "file_type": "code",
       "source_file": "tests/dispatch.test.sh",
@@ -12353,6 +12379,32 @@
       "id": "tests_git_guard_push_tests_test_push_base"
     },
     {
+      "label": "stack_git()",
+      "file_type": "code",
+      "source_file": "tests/git-guard-push-tests.test.sh",
+      "source_location": "L305",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "community": 219,
+      "norm_label": "stack_git()",
+      "id": "tests_git_guard_push_tests_test_stack_git"
+    },
+    {
+      "label": "host_merge()",
+      "file_type": "code",
+      "source_file": "tests/git-guard-push-tests.test.sh",
+      "source_location": "L310",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "community": 219,
+      "norm_label": "host_merge()",
+      "id": "tests_git_guard_push_tests_test_host_merge"
+    },
+    {
       "label": "browser-guard-device-id.test.sh",
       "file_type": "code",
       "source_file": "tests/browser-guard-device-id.test.sh",
@@ -13419,6 +13471,19 @@
       "id": "tests_checks_board_epic_base_test_stub_pull_behind"
     },
     {
+      "label": "reviewed_pull()",
+      "file_type": "code",
+      "source_file": "tests/checks-board-epic-base.test.sh",
+      "source_location": "L65",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "community": 108,
+      "norm_label": "reviewed_pull()",
+      "id": "tests_checks_board_epic_base_test_reviewed_pull"
+    },
+    {
       "label": "checks-schema-drift.test.sh",
       "file_type": "code",
       "source_file": "tests/checks-schema-drift.test.sh",
@@ -13989,6 +14054,71 @@
       "community": 65,
       "norm_label": "edit_path_at()",
       "id": "tests_task_flow_guard_test_edit_path_at"
+    },
+    {
+      "label": "in_copy()",
+      "file_type": "code",
+      "source_file": "tests/task-flow-guard.test.sh",
+      "source_location": "L360",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "community": 65,
+      "norm_label": "in_copy()",
+      "id": "tests_task_flow_guard_test_in_copy"
+    },
+    {
+      "label": "edit_copy_json()",
+      "file_type": "code",
+      "source_file": "tests/task-flow-guard.test.sh",
+      "source_location": "L366",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "community": 65,
+      "norm_label": "edit_copy_json()",
+      "id": "tests_task_flow_guard_test_edit_copy_json"
+    },
+    {
+      "label": "edit_from_session_json()",
+      "file_type": "code",
+      "source_file": "tests/task-flow-guard.test.sh",
+      "source_location": "L370",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "community": 65,
+      "norm_label": "edit_from_session_json()",
+      "id": "tests_task_flow_guard_test_edit_from_session_json"
+    },
+    {
+      "label": "bash_copy_json()",
+      "file_type": "code",
+      "source_file": "tests/task-flow-guard.test.sh",
+      "source_location": "L373",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "community": 65,
+      "norm_label": "bash_copy_json()",
+      "id": "tests_task_flow_guard_test_bash_copy_json"
+    },
+    {
+      "label": "copy_of()",
+      "file_type": "code",
+      "source_file": "tests/task-flow-guard.test.sh",
+      "source_location": "L376",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "community": 65,
+      "norm_label": "copy_of()",
+      "id": "tests_task_flow_guard_test_copy_of"
     },
     {
       "label": "exit_code_of()",
@@ -18113,6 +18243,15 @@
       "id": "checks_board_pull_state_github_checkreadydraft"
     },
     {
+      "label": "checkReviewer()",
+      "file_type": "code",
+      "source_file": "assets/checks/board-pull-state.github.mjs",
+      "source_location": "L166",
+      "community": 32,
+      "norm_label": "checkreviewer()",
+      "id": "checks_board_pull_state_github_checkreviewer"
+    },
+    {
       "label": "checkConflicting()",
       "file_type": "code",
       "source_file": "assets/checks/board-pull-state.github.mjs",
@@ -19029,15 +19168,6 @@
       "community": 18,
       "norm_label": "titlenumber",
       "id": "checks_check_board_github_titlenumber"
-    },
-    {
-      "label": "behind",
-      "file_type": "code",
-      "source_file": "assets/checks/check-board.github.mjs",
-      "source_location": "L250",
-      "community": 18,
-      "norm_label": "behind",
-      "id": "checks_check_board_github_behind"
     },
     {
       "label": "folder",
@@ -20285,6 +20415,19 @@
       "community": 11,
       "norm_label": "rt_is_app_code_default()",
       "id": "defaults_project_rt_is_app_code_default"
+    },
+    {
+      "label": "rt_copy_relative()",
+      "file_type": "code",
+      "source_file": "assets/defaults/project.sh",
+      "source_location": "L192",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "community": 11,
+      "norm_label": "rt_copy_relative()",
+      "id": "defaults_project_rt_copy_relative"
     },
     {
       "label": "rt_task_branch_ok_default()",
@@ -23197,6 +23340,19 @@
       "community": 416,
       "norm_label": "epic-stop-guard.sh script",
       "id": "assets_hooks_epic_stop_guard_sh__entry"
+    },
+    {
+      "label": "owner_side()",
+      "file_type": "code",
+      "source_file": "assets/hooks/epic-stop-guard.sh",
+      "source_location": "L100",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "community": 362,
+      "norm_label": "owner_side()",
+      "id": "hooks_epic_stop_guard_owner_side"
     },
     {
       "label": "rt_deny_tail()",
@@ -36815,22 +36971,22 @@
       "id": "rules_graph_report_resources_nothing_links_to_0"
     },
     {
-      "label": "Rules nothing executes \u2014 1",
+      "label": "Rules nothing executes \u2014 0",
       "file_type": "document",
       "source_file": "rules-graph/REPORT.md",
       "source_location": "L12",
-      "community": 264,
-      "norm_label": "rules nothing executes \u2014 1",
-      "id": "rules_graph_report_rules_nothing_executes_1"
+      "community": 262,
+      "norm_label": "rules nothing executes \u2014 0",
+      "id": "rules_graph_report_rules_nothing_executes_0"
     },
     {
-      "label": "Articles nothing carries out \u2014 183",
+      "label": "Articles nothing carries out \u2014 178",
       "file_type": "document",
       "source_file": "rules-graph/REPORT.md",
       "source_location": "L20",
-      "community": 260,
-      "norm_label": "articles nothing carries out \u2014 183",
-      "id": "rules_graph_report_articles_nothing_carries_out_183"
+      "community": 262,
+      "norm_label": "articles nothing carries out \u2014 178",
+      "id": "rules_graph_report_articles_nothing_carries_out_178"
     },
     {
       "label": "Glossary words used nowhere \u2014 0",
@@ -36842,13 +36998,13 @@
       "id": "rules_graph_report_glossary_words_used_nowhere_0"
     },
     {
-      "label": "Texts that state the same thing \u2014 15",
+      "label": "Texts that state the same thing \u2014 17",
       "file_type": "document",
       "source_file": "rules-graph/REPORT.md",
       "source_location": "L52",
-      "community": 260,
-      "norm_label": "texts that state the same thing \u2014 15",
-      "id": "rules_graph_report_texts_that_state_the_same_thing_15"
+      "community": 264,
+      "norm_label": "texts that state the same thing \u2014 17",
+      "id": "rules_graph_report_texts_that_state_the_same_thing_17"
     },
     {
       "label": "git-workflow-merge.md",
@@ -37022,13 +37178,13 @@
       "id": "patterns_git_workflow_merge_codeblock_9"
     },
     {
-      "label": "A green run ages together with the main branch",
+      "label": "A green run ages together with the base",
       "file_type": "document",
       "source_file": "assets/patterns/git-workflow-merge.md",
       "source_location": "L162",
-      "community": 42,
-      "norm_label": "a green run ages together with the main branch",
-      "id": "patterns_git_workflow_merge_a_green_run_ages_together_with_the_main_branch"
+      "community": 44,
+      "norm_label": "a green run ages together with the base",
+      "id": "patterns_git_workflow_merge_a_green_run_ages_together_with_the_base"
     },
     {
       "label": "code:bash (/opt/homebrew/bin/gh api repos/<\u0432\u043b\u0430\u0434\u0435\u043b\u0435\u0446>/<\u0440\u0435\u043f\u043e\u0437\u0438\u0442\u043e\u0440\u0438\u0439>/comp)",
@@ -37544,15 +37700,6 @@
       "id": "patterns_autonomous_work_run_codeblock_2"
     },
     {
-      "label": "code:bash (npm run task:move -- <\u043d\u043e\u043c\u0435\u0440> in-progress                 # t)",
-      "file_type": "document",
-      "source_file": "assets/patterns/autonomous-work-run.md",
-      "source_location": "L40",
-      "community": 86,
-      "norm_label": "code:bash (npm run task:move -- <\u043d\u043e\u043c\u0435\u0440> in-progress                 # t)",
-      "id": "patterns_autonomous_work_run_codeblock_3"
-    },
-    {
       "label": "The cycle of one piece of work",
       "file_type": "document",
       "source_file": "assets/patterns/autonomous-work-run.md",
@@ -37562,13 +37709,13 @@
       "id": "patterns_autonomous_work_run_the_cycle_of_one_piece_of_work"
     },
     {
-      "label": "code:markdown (- **<\u0447\u0442\u043e \u043f\u0440\u0438\u043d\u044f\u0442\u043e>** \u2014 <\u0434\u043e\u0432\u043e\u0434>. \u0421\u043f\u0440\u043e\u0441\u0438\u0442\u044c \u0431\u044b\u043b\u043e \u043d\u0435\u043a\u043e\u0433\u043e: \u0437\u0430\u0445\u043e\u0434 \u0430)",
+      "label": "code:bash (npm run task:move -- <\u043d\u043e\u043c\u0435\u0440> in-progress                 # t)",
       "file_type": "document",
       "source_file": "assets/patterns/autonomous-work-run.md",
-      "source_location": "L58",
+      "source_location": "L40",
       "community": 86,
-      "norm_label": "code:markdown (- **<\u0447\u0442\u043e \u043f\u0440\u0438\u043d\u044f\u0442\u043e>** \u2014 <\u0434\u043e\u0432\u043e\u0434>. \u0441\u043f\u0440\u043e\u0441\u0438\u0442\u044c \u0431\u044b\u043b\u043e \u043d\u0435\u043a\u043e\u0433\u043e: \u0437\u0430\u0445\u043e\u0434 \u0430)",
-      "id": "patterns_autonomous_work_run_codeblock_4"
+      "norm_label": "code:bash (npm run task:move -- <\u043d\u043e\u043c\u0435\u0440> in-progress                 # t)",
+      "id": "patterns_autonomous_work_run_codeblock_3"
     },
     {
       "label": "A default instead of a question",
@@ -37580,13 +37727,13 @@
       "id": "patterns_autonomous_work_run_a_default_instead_of_a_question"
     },
     {
-      "label": "code:markdown (- **RT-<\u043d\u043e\u043c\u0435\u0440> \u2014 <\u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043e\u043a>.** \u041e\u0442\u043b\u043e\u0436\u0435\u043d\u0430: <\u043a\u0430\u043a\u043e\u0439 \u0432\u043e\u043f\u0440\u043e\u0441 \u0438 \u043f\u043e)",
+      "label": "code:markdown (- **<\u0447\u0442\u043e \u043f\u0440\u0438\u043d\u044f\u0442\u043e>** \u2014 <\u0434\u043e\u0432\u043e\u0434>. \u0421\u043f\u0440\u043e\u0441\u0438\u0442\u044c \u0431\u044b\u043b\u043e \u043d\u0435\u043a\u043e\u0433\u043e: \u0437\u0430\u0445\u043e\u0434 \u0430)",
       "file_type": "document",
       "source_file": "assets/patterns/autonomous-work-run.md",
-      "source_location": "L71",
+      "source_location": "L58",
       "community": 86,
-      "norm_label": "code:markdown (- **rt-<\u043d\u043e\u043c\u0435\u0440> \u2014 <\u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043e\u043a>.** \u043e\u0442\u043b\u043e\u0436\u0435\u043d\u0430: <\u043a\u0430\u043a\u043e\u0438 \u0432\u043e\u043f\u0440\u043e\u0441 \u0438 \u043f\u043e)",
-      "id": "patterns_autonomous_work_run_codeblock_5"
+      "norm_label": "code:markdown (- **<\u0447\u0442\u043e \u043f\u0440\u0438\u043d\u044f\u0442\u043e>** \u2014 <\u0434\u043e\u0432\u043e\u0434>. \u0441\u043f\u0440\u043e\u0441\u0438\u0442\u044c \u0431\u044b\u043b\u043e \u043d\u0435\u043a\u043e\u0433\u043e: \u0437\u0430\u0445\u043e\u0434 \u0430)",
+      "id": "patterns_autonomous_work_run_codeblock_4"
     },
     {
       "label": "A postponed task",
@@ -37598,31 +37745,13 @@
       "id": "patterns_autonomous_work_run_a_postponed_task"
     },
     {
-      "label": "code:markdown (| \u0420\u0430\u0431\u043e\u0442\u0430 | \u0412\u0435\u0442\u043a\u0430 | \u0427\u0435\u043c \u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043d\u0430 | \u0427\u0435\u0433\u043e \u0436\u0434\u0451\u0442 |)",
+      "label": "code:markdown (- **RT-<\u043d\u043e\u043c\u0435\u0440> \u2014 <\u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043e\u043a>.** \u041e\u0442\u043b\u043e\u0436\u0435\u043d\u0430: <\u043a\u0430\u043a\u043e\u0439 \u0432\u043e\u043f\u0440\u043e\u0441 \u0438 \u043f\u043e)",
       "file_type": "document",
       "source_file": "assets/patterns/autonomous-work-run.md",
-      "source_location": "L79",
+      "source_location": "L71",
       "community": 86,
-      "norm_label": "code:markdown (| \u0440\u0430\u0431\u043e\u0442\u0430 | \u0432\u0435\u0442\u043a\u0430 | \u0447\u0435\u043c \u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043d\u0430 | \u0447\u0435\u0433\u043e \u0436\u0434\u0435\u0442 |)",
-      "id": "patterns_autonomous_work_run_codeblock_6"
-    },
-    {
-      "label": "code:bash (npm run task:move -- <\u043d\u043e\u043c\u0435\u0440> <\u043f\u0440\u0435\u0436\u043d\u044f\u044f \u043a\u043e\u043b\u043e\u043d\u043a\u0430>)",
-      "file_type": "document",
-      "source_file": "assets/patterns/autonomous-work-run.md",
-      "source_location": "L91",
-      "community": 70,
-      "norm_label": "code:bash (npm run task:move -- <\u043d\u043e\u043c\u0435\u0440> <\u043f\u0440\u0435\u0436\u043d\u044f\u044f \u043a\u043e\u043b\u043e\u043d\u043a\u0430>)",
-      "id": "patterns_autonomous_work_run_codeblock_7"
-    },
-    {
-      "label": "code:markdown (- **<\u041a\u041b\u042e\u0427>-<\u043d\u043e\u043c\u0435\u0440> \u2014 <\u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043e\u043a>.** \u041e\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0430: <\u0447\u0442\u043e \u043a\u0440\u0430\u0441\u043d\u043e)",
-      "file_type": "document",
-      "source_file": "assets/patterns/autonomous-work-run.md",
-      "source_location": "L95",
-      "community": 70,
-      "norm_label": "code:markdown (- **<\u043a\u043b\u044e\u0447>-<\u043d\u043e\u043c\u0435\u0440> \u2014 <\u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043e\u043a>.** \u043e\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0430: <\u0447\u0442\u043e \u043a\u0440\u0430\u0441\u043d\u043e)",
-      "id": "patterns_autonomous_work_run_codeblock_8"
+      "norm_label": "code:markdown (- **rt-<\u043d\u043e\u043c\u0435\u0440> \u2014 <\u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043e\u043a>.** \u043e\u0442\u043b\u043e\u0436\u0435\u043d\u0430: <\u043a\u0430\u043a\u043e\u0438 \u0432\u043e\u043f\u0440\u043e\u0441 \u0438 \u043f\u043e)",
+      "id": "patterns_autonomous_work_run_codeblock_5"
     },
     {
       "label": "The morning list",
@@ -37637,10 +37766,10 @@
       "label": "code:markdown (| \u0420\u0430\u0431\u043e\u0442\u0430 | \u0412\u0435\u0442\u043a\u0430 | \u0427\u0435\u043c \u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043d\u0430 | \u0427\u0435\u0433\u043e \u0436\u0434\u0451\u0442 |)",
       "file_type": "document",
       "source_file": "assets/patterns/autonomous-work-run.md",
-      "source_location": "L104",
-      "community": 70,
+      "source_location": "L79",
+      "community": 86,
       "norm_label": "code:markdown (| \u0440\u0430\u0431\u043e\u0442\u0430 | \u0432\u0435\u0442\u043a\u0430 | \u0447\u0435\u043c \u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043d\u0430 | \u0447\u0435\u0433\u043e \u0436\u0434\u0435\u0442 |)",
-      "id": "patterns_autonomous_work_run_codeblock_9"
+      "id": "patterns_autonomous_work_run_codeblock_6"
     },
     {
       "label": "A guard's refusal",
@@ -38345,13 +38474,13 @@
       "id": "assets_patterns_browser_verification_stand_md"
     },
     {
-      "label": "An honest stand",
+      "label": "A stand from the production build",
       "file_type": "document",
       "source_file": "assets/patterns/browser-verification-stand.md",
       "source_location": "L8",
-      "community": 50,
-      "norm_label": "an honest stand",
-      "id": "patterns_browser_verification_stand_an_honest_stand"
+      "community": 52,
+      "norm_label": "a stand from the production build",
+      "id": "patterns_browser_verification_stand_a_stand_from_the_production_build"
     },
     {
       "label": "When to use",
@@ -38471,13 +38600,13 @@
       "id": "patterns_browser_verification_stand_codeblock_6"
     },
     {
-      "label": "A stand lives exactly as long as the check",
+      "label": "A stand is stopped when the check ends",
       "file_type": "document",
       "source_file": "assets/patterns/browser-verification-stand.md",
       "source_location": "L161",
-      "community": 50,
-      "norm_label": "a stand lives exactly as long as the check",
-      "id": "patterns_browser_verification_stand_a_stand_lives_exactly_as_long_as_the_check"
+      "community": 52,
+      "norm_label": "a stand is stopped when the check ends",
+      "id": "patterns_browser_verification_stand_a_stand_is_stopped_when_the_check_ends"
     },
     {
       "label": "code:bash (docker rm -f <stand name>)",
@@ -40046,6 +40175,24 @@
       "id": "patterns_git_workflow_pr_azure_what_is_checked_before_the_pr_is_published"
     },
     {
+      "label": "A chain of branches: the calls of this host",
+      "file_type": "document",
+      "source_file": "assets/patterns/git-workflow-pr.azure.md",
+      "source_location": "L290",
+      "community": 45,
+      "norm_label": "a chain of branches: the calls of this host",
+      "id": "patterns_git_workflow_pr_azure_a_chain_of_branches_the_calls_of_this_host"
+    },
+    {
+      "label": "code:bash (# the upper PR, before the lower one completes; the file hol)",
+      "file_type": "document",
+      "source_file": "assets/patterns/git-workflow-pr.azure.md",
+      "source_location": "L295",
+      "community": 45,
+      "norm_label": "code:bash (# the upper pr, before the lower one completes; the file hol)",
+      "id": "patterns_git_workflow_pr_azure_codeblock_12"
+    },
+    {
       "label": "Common misses",
       "file_type": "document",
       "source_file": "assets/patterns/git-workflow-pr.azure.md",
@@ -40467,6 +40614,15 @@
       "community": 55,
       "norm_label": "state `\u0432\u043b\u0438\u0442\u043e`: the epic plan learns of the merge",
       "id": "patterns_task_flow_resume_state_\u0432\u043b\u0438\u0442\u043e_the_epic_plan_learns_of_the_merge"
+    },
+    {
+      "label": "code:bash (npm run cargo:mark -- --state fixed \\)",
+      "file_type": "document",
+      "source_file": "assets/patterns/task-flow-resume.md",
+      "source_location": "L222",
+      "community": 55,
+      "norm_label": "code:bash (npm run cargo:mark -- --state fixed \\)",
+      "id": "patterns_task_flow_resume_codeblock_10"
     },
     {
       "label": "Common misses",
@@ -41729,13 +41885,13 @@
       "id": "patterns_git_workflow_stack_the_price_of_a_stack_grows_quadratically"
     },
     {
-      "label": "Main is merged in on an actual conflict, not on a schedule",
+      "label": "The base is merged in on an actual conflict, not on a schedule",
       "file_type": "document",
       "source_file": "assets/patterns/git-workflow-stack.md",
       "source_location": "L140",
-      "community": 44,
-      "norm_label": "main is merged in on an actual conflict, not on a schedule",
-      "id": "patterns_git_workflow_stack_main_is_merged_in_on_an_actual_conflict_not_on_a_schedule"
+      "community": 46,
+      "norm_label": "the base is merged in on an actual conflict, not on a schedule",
+      "id": "patterns_git_workflow_stack_the_base_is_merged_in_on_an_actual_conflict_not_on_a_schedule"
     },
     {
       "label": "code:bash (gh pr list --state open --json number,headRefName,mergeable )",
@@ -41916,24 +42072,6 @@
       "community": 138,
       "norm_label": "state `\u0440\u0430\u0431\u043e\u0442\u0430-\u043e\u0442\u0434\u0430\u043d\u0430`: the work is reviewed by the rules \u2014 in the background, right after the pr",
       "id": "patterns_task_flow_archive_state_\u0440\u0430\u0431\u043e\u0442\u0430_\u043e\u0442\u0434\u0430\u043d\u0430_the_work_is_reviewed_by_the_rules_in_the_background_right_after_the_pr"
-    },
-    {
-      "label": "Cargo records are moved to \"done\" in the same turn",
-      "file_type": "document",
-      "source_file": "assets/patterns/task-flow-archive.md",
-      "source_location": "L146",
-      "community": 103,
-      "norm_label": "cargo records are moved to \"done\" in the same turn",
-      "id": "patterns_task_flow_archive_cargo_records_are_moved_to_done_in_the_same_turn"
-    },
-    {
-      "label": "code:bash (npm run cargo:mark -- --state fixed \\)",
-      "file_type": "document",
-      "source_file": "assets/patterns/task-flow-archive.md",
-      "source_location": "L155",
-      "community": 103,
-      "norm_label": "code:bash (npm run cargo:mark -- --state fixed \\)",
-      "id": "patterns_task_flow_archive_codeblock_4"
     },
     {
       "label": "Review findings land next to the epic plan and wait for the owner",
@@ -43070,15 +43208,6 @@
       "id": "patterns_git_workflow_pr_gitlab_codeblock_8"
     },
     {
-      "label": "The MR state is read, not guessed",
-      "file_type": "document",
-      "source_file": "assets/patterns/git-workflow-pr.gitlab.md",
-      "source_location": "L182",
-      "community": 29,
-      "norm_label": "the mr state is read, not guessed",
-      "id": "patterns_git_workflow_pr_gitlab_the_mr_state_is_read_not_guessed"
-    },
-    {
       "label": "code:markdown (Closes #86 \u2014 \u0437\u0430\u043a\u0440\u044b\u0432\u0430\u0435\u0442\u0441\u044f \u0440\u0443\u043a\u043e\u0439 \u043f\u043e\u0441\u043b\u0435 \u0441\u043b\u0438\u044f\u043d\u0438\u044f \u0447\u0435\u0440\u0435\u0434\u044b: \u0445\u043e\u0441\u0442\u0438\u043d\u0433)",
       "file_type": "document",
       "source_file": "assets/patterns/git-workflow-pr.gitlab.md",
@@ -43097,13 +43226,13 @@
       "id": "patterns_git_workflow_pr_gitlab_codeblock_10"
     },
     {
-      "label": "Answering under remarks",
+      "label": "The MR state is read, not guessed",
       "file_type": "document",
       "source_file": "assets/patterns/git-workflow-pr.gitlab.md",
-      "source_location": "L208",
+      "source_location": "L182",
       "community": 29,
-      "norm_label": "answering under remarks",
-      "id": "patterns_git_workflow_pr_gitlab_answering_under_remarks"
+      "norm_label": "the mr state is read, not guessed",
+      "id": "patterns_git_workflow_pr_gitlab_the_mr_state_is_read_not_guessed"
     },
     {
       "label": "code:bash (glab mr view 205 --output json \\)",
@@ -43124,6 +43253,15 @@
       "id": "patterns_git_workflow_pr_gitlab_codeblock_12"
     },
     {
+      "label": "Answering under remarks",
+      "file_type": "document",
+      "source_file": "assets/patterns/git-workflow-pr.gitlab.md",
+      "source_location": "L208",
+      "community": 29,
+      "norm_label": "answering under remarks",
+      "id": "patterns_git_workflow_pr_gitlab_answering_under_remarks"
+    },
+    {
       "label": "code:bash (glab api projects/:id/merge_requests/<\u043d\u043e\u043c\u0435\u0440>/discussions --p)",
       "file_type": "document",
       "source_file": "assets/patterns/git-workflow-pr.gitlab.md",
@@ -43133,6 +43271,24 @@
       "id": "patterns_git_workflow_pr_gitlab_codeblock_13"
     },
     {
+      "label": "code:bash (glab api -X POST projects/:id/merge_requests/<\u043d\u043e\u043c\u0435\u0440>/discuss)",
+      "file_type": "document",
+      "source_file": "assets/patterns/git-workflow-pr.gitlab.md",
+      "source_location": "L225",
+      "community": 29,
+      "norm_label": "code:bash (glab api -x post projects/:id/merge_requests/<\u043d\u043e\u043c\u0435\u0440>/discuss)",
+      "id": "patterns_git_workflow_pr_gitlab_codeblock_14"
+    },
+    {
+      "label": "code:bash (glab mr note <\u043d\u043e\u043c\u0435\u0440> --message \"$(cat \u043e\u0442\u0432\u0435\u0442.md)\")",
+      "file_type": "document",
+      "source_file": "assets/patterns/git-workflow-pr.gitlab.md",
+      "source_location": "L232",
+      "community": 29,
+      "norm_label": "code:bash (glab mr note <\u043d\u043e\u043c\u0435\u0440> --message \"$(cat \u043e\u0442\u0432\u0435\u0442.md)\")",
+      "id": "patterns_git_workflow_pr_gitlab_codeblock_15"
+    },
+    {
       "label": "What is checked before the MR is published",
       "file_type": "document",
       "source_file": "assets/patterns/git-workflow-pr.gitlab.md",
@@ -43140,6 +43296,24 @@
       "community": 29,
       "norm_label": "what is checked before the mr is published",
       "id": "patterns_git_workflow_pr_gitlab_what_is_checked_before_the_mr_is_published"
+    },
+    {
+      "label": "A chain of branches: the calls of this host",
+      "file_type": "document",
+      "source_file": "assets/patterns/git-workflow-pr.gitlab.md",
+      "source_location": "L303",
+      "community": 29,
+      "norm_label": "a chain of branches: the calls of this host",
+      "id": "patterns_git_workflow_pr_gitlab_a_chain_of_branches_the_calls_of_this_host"
+    },
+    {
+      "label": "code:bash (glab mr update 87 --target-branch <\u0432\u0435\u0442\u043a\u0430 \u044d\u043f\u0438\u043a\u0430>             )",
+      "file_type": "document",
+      "source_file": "assets/patterns/git-workflow-pr.gitlab.md",
+      "source_location": "L307",
+      "community": 29,
+      "norm_label": "code:bash (glab mr update 87 --target-branch <\u0432\u0435\u0442\u043a\u0430 \u044d\u043f\u0438\u043a\u0430>             )",
+      "id": "patterns_git_workflow_pr_gitlab_codeblock_16"
     },
     {
       "label": "Common misses",
@@ -45779,33 +45953,6 @@
       "id": "pitfalls_doc_style_codeblock_1"
     },
     {
-      "label": "autonomous-work.md",
-      "file_type": "document",
-      "source_file": "assets/pitfalls/autonomous-work.md",
-      "source_location": "L1",
-      "community": 406,
-      "norm_label": "autonomous-work.md",
-      "id": "assets_pitfalls_autonomous_work_md"
-    },
-    {
-      "label": "Autonomous work \u2014 cold part",
-      "file_type": "document",
-      "source_file": "assets/pitfalls/autonomous-work.md",
-      "source_location": "L1",
-      "community": 406,
-      "norm_label": "autonomous work \u2014 cold part",
-      "id": "pitfalls_autonomous_work_autonomous_work_cold_part"
-    },
-    {
-      "label": "Pitfalls",
-      "file_type": "document",
-      "source_file": "assets/pitfalls/autonomous-work.md",
-      "source_location": "L8",
-      "community": 406,
-      "norm_label": "pitfalls",
-      "id": "pitfalls_autonomous_work_pitfalls"
-    },
-    {
       "label": "agent-kit.md",
       "file_type": "document",
       "source_file": "assets/pitfalls/agent-kit.md",
@@ -47136,6 +47283,15 @@
       "community": 176,
       "norm_label": "patterns",
       "id": "rules_autonomous_work_patterns"
+    },
+    {
+      "label": "Pitfalls",
+      "file_type": "document",
+      "source_file": "assets/rules/autonomous-work.md",
+      "source_location": "L98",
+      "community": 176,
+      "norm_label": "pitfalls",
+      "id": "rules_autonomous_work_pitfalls"
     },
     {
       "label": "turn-entry.md",
@@ -49883,15 +50039,6 @@
       "id": "commands_night_1_the_boundary_of_time"
     },
     {
-      "label": "2. Raise the rule and the pattern",
-      "file_type": "document",
-      "source_file": "assets/commands/night.md",
-      "source_location": "L30",
-      "community": 99,
-      "norm_label": "2. raise the rule and the pattern",
-      "id": "commands_night_2_raise_the_rule_and_the_pattern"
-    },
-    {
       "label": "code:bash (printf '\u0433\u0440\u0430\u043d\u0438\u0446\u0430 \u043d\u043e\u0447\u0438: %s\\n' \"$ARGUMENTS\")",
       "file_type": "document",
       "source_file": "assets/commands/night.md",
@@ -49901,13 +50048,13 @@
       "id": "commands_night_codeblock_1"
     },
     {
-      "label": "3. Read the tree profile",
+      "label": "2. Raise the rule and the pattern",
       "file_type": "document",
       "source_file": "assets/commands/night.md",
-      "source_location": "L40",
+      "source_location": "L30",
       "community": 99,
-      "norm_label": "3. read the tree profile",
-      "id": "commands_night_3_read_the_tree_profile"
+      "norm_label": "2. raise the rule and the pattern",
+      "id": "commands_night_2_raise_the_rule_and_the_pattern"
     },
     {
       "label": "code:block2 (Skill: autonomous-work)",
@@ -49919,13 +50066,13 @@
       "id": "commands_night_codeblock_2"
     },
     {
-      "label": "4. Checks before the first work",
+      "label": "3. Read the tree profile",
       "file_type": "document",
       "source_file": "assets/commands/night.md",
-      "source_location": "L53",
+      "source_location": "L40",
       "community": 99,
-      "norm_label": "4. checks before the first work",
-      "id": "commands_night_4_checks_before_the_first_work"
+      "norm_label": "3. read the tree profile",
+      "id": "commands_night_3_read_the_tree_profile"
     },
     {
       "label": "code:bash (for profile in .claude/rt-kit/defaults/project.sh .claude/rt)",
@@ -49935,6 +50082,24 @@
       "community": 99,
       "norm_label": "code:bash (for profile in .claude/rt-kit/defaults/project.sh .claude/rt)",
       "id": "commands_night_codeblock_3"
+    },
+    {
+      "label": "4. Checks before the first work",
+      "file_type": "document",
+      "source_file": "assets/commands/night.md",
+      "source_location": "L53",
+      "community": 99,
+      "norm_label": "4. checks before the first work",
+      "id": "commands_night_4_checks_before_the_first_work"
+    },
+    {
+      "label": "code:bash (git status --short                  # uncommitted work)",
+      "file_type": "document",
+      "source_file": "assets/commands/night.md",
+      "source_location": "L58",
+      "community": 99,
+      "norm_label": "code:bash (git status --short                  # uncommitted work)",
+      "id": "commands_night_codeblock_4"
     },
     {
       "label": "5. Name what will not be done",
@@ -49955,13 +50120,13 @@
       "id": "commands_night_6_the_morning_list_is_a_file"
     },
     {
-      "label": "code:bash (git status --short                  # uncommitted work)",
+      "label": "code:bash (printf '# \u0421\u043f\u0438\u0441\u043e\u043a \u043a \u0443\u0442\u0440\u0443 \u00b7 \u043d\u043e\u0447\u044c \u0441 %s\\n\\n' \"$(date +%d.%m.%Y)\")",
       "file_type": "document",
       "source_file": "assets/commands/night.md",
-      "source_location": "L58",
+      "source_location": "L92",
       "community": 99,
-      "norm_label": "code:bash (git status --short                  # uncommitted work)",
-      "id": "commands_night_codeblock_4"
+      "norm_label": "code:bash (printf '# \u0441\u043f\u0438\u0441\u043e\u043a \u043a \u0443\u0442\u0440\u0443 \u00b7 \u043d\u043e\u0447\u044c \u0441 %s\\n\\n' \"$(date +%d.%m.%y)\")",
+      "id": "commands_night_codeblock_5"
     },
     {
       "label": "7. The cycle",
@@ -51953,108 +52118,148 @@
       "id": "lib_picker_key_escape"
     },
     {
-      "label": "stack_git()",
+      "label": "behind",
       "file_type": "code",
-      "source_file": "tests/git-guard-push-tests.test.sh",
-      "source_location": "L305",
-      "metadata": {
-        "language": "bash",
-        "kind": "bash_function"
-      },
-      "community": 219,
-      "norm_label": "stack_git()",
-      "id": "tests_git_guard_push_tests_test_stack_git"
+      "source_file": "assets/checks/check-board.github.mjs",
+      "source_location": "L250",
+      "community": 18,
+      "norm_label": "behind",
+      "id": "checks_check_board_github_behind"
     },
     {
-      "label": "host_merge()",
-      "file_type": "code",
-      "source_file": "tests/git-guard-push-tests.test.sh",
-      "source_location": "L310",
-      "metadata": {
-        "language": "bash",
-        "kind": "bash_function"
-      },
-      "community": 219,
-      "norm_label": "host_merge()",
-      "id": "tests_git_guard_push_tests_test_host_merge"
+      "label": "Rules nothing executes \u2014 1",
+      "file_type": "document",
+      "source_file": "rules-graph/REPORT.md",
+      "source_location": "L12",
+      "community": 264,
+      "norm_label": "rules nothing executes \u2014 1",
+      "id": "rules_graph_report_rules_nothing_executes_1"
     },
     {
-      "label": "in_copy()",
-      "file_type": "code",
-      "source_file": "tests/task-flow-guard.test.sh",
-      "source_location": "L360",
-      "metadata": {
-        "language": "bash",
-        "kind": "bash_function"
-      },
-      "community": 65,
-      "norm_label": "in_copy()",
-      "id": "tests_task_flow_guard_test_in_copy"
+      "label": "Articles nothing carries out \u2014 183",
+      "file_type": "document",
+      "source_file": "rules-graph/REPORT.md",
+      "source_location": "L20",
+      "community": 260,
+      "norm_label": "articles nothing carries out \u2014 183",
+      "id": "rules_graph_report_articles_nothing_carries_out_183"
     },
     {
-      "label": "edit_copy_json()",
-      "file_type": "code",
-      "source_file": "tests/task-flow-guard.test.sh",
-      "source_location": "L366",
-      "metadata": {
-        "language": "bash",
-        "kind": "bash_function"
-      },
-      "community": 65,
-      "norm_label": "edit_copy_json()",
-      "id": "tests_task_flow_guard_test_edit_copy_json"
+      "label": "Texts that state the same thing \u2014 15",
+      "file_type": "document",
+      "source_file": "rules-graph/REPORT.md",
+      "source_location": "L52",
+      "community": 260,
+      "norm_label": "texts that state the same thing \u2014 15",
+      "id": "rules_graph_report_texts_that_state_the_same_thing_15"
     },
     {
-      "label": "edit_from_session_json()",
-      "file_type": "code",
-      "source_file": "tests/task-flow-guard.test.sh",
-      "source_location": "L370",
-      "metadata": {
-        "language": "bash",
-        "kind": "bash_function"
-      },
-      "community": 65,
-      "norm_label": "edit_from_session_json()",
-      "id": "tests_task_flow_guard_test_edit_from_session_json"
+      "label": "A green run ages together with the main branch",
+      "file_type": "document",
+      "source_file": "assets/patterns/git-workflow-merge.md",
+      "source_location": "L162",
+      "community": 42,
+      "norm_label": "a green run ages together with the main branch",
+      "id": "patterns_git_workflow_merge_a_green_run_ages_together_with_the_main_branch"
     },
     {
-      "label": "bash_copy_json()",
-      "file_type": "code",
-      "source_file": "tests/task-flow-guard.test.sh",
-      "source_location": "L373",
-      "metadata": {
-        "language": "bash",
-        "kind": "bash_function"
-      },
-      "community": 65,
-      "norm_label": "bash_copy_json()",
-      "id": "tests_task_flow_guard_test_bash_copy_json"
+      "label": "code:bash (npm run task:move -- <\u043d\u043e\u043c\u0435\u0440> <\u043f\u0440\u0435\u0436\u043d\u044f\u044f \u043a\u043e\u043b\u043e\u043d\u043a\u0430>)",
+      "file_type": "document",
+      "source_file": "assets/patterns/autonomous-work-run.md",
+      "source_location": "L91",
+      "community": 70,
+      "norm_label": "code:bash (npm run task:move -- <\u043d\u043e\u043c\u0435\u0440> <\u043f\u0440\u0435\u0436\u043d\u044f\u044f \u043a\u043e\u043b\u043e\u043d\u043a\u0430>)",
+      "id": "patterns_autonomous_work_run_codeblock_7"
     },
     {
-      "label": "copy_of()",
-      "file_type": "code",
-      "source_file": "tests/task-flow-guard.test.sh",
-      "source_location": "L376",
-      "metadata": {
-        "language": "bash",
-        "kind": "bash_function"
-      },
-      "community": 65,
-      "norm_label": "copy_of()",
-      "id": "tests_task_flow_guard_test_copy_of"
+      "label": "code:markdown (- **<\u041a\u041b\u042e\u0427>-<\u043d\u043e\u043c\u0435\u0440> \u2014 <\u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043e\u043a>.** \u041e\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0430: <\u0447\u0442\u043e \u043a\u0440\u0430\u0441\u043d\u043e)",
+      "file_type": "document",
+      "source_file": "assets/patterns/autonomous-work-run.md",
+      "source_location": "L95",
+      "community": 70,
+      "norm_label": "code:markdown (- **<\u043a\u043b\u044e\u0447>-<\u043d\u043e\u043c\u0435\u0440> \u2014 <\u0437\u0430\u0433\u043e\u043b\u043e\u0432\u043e\u043a>.** \u043e\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u0430: <\u0447\u0442\u043e \u043a\u0440\u0430\u0441\u043d\u043e)",
+      "id": "patterns_autonomous_work_run_codeblock_8"
     },
     {
-      "label": "rt_copy_relative()",
-      "file_type": "code",
-      "source_file": "assets/defaults/project.sh",
-      "source_location": "L192",
-      "metadata": {
-        "language": "bash",
-        "kind": "bash_function"
-      },
-      "community": 11,
-      "norm_label": "rt_copy_relative()",
-      "id": "defaults_project_rt_copy_relative"
+      "label": "code:markdown (| \u0420\u0430\u0431\u043e\u0442\u0430 | \u0412\u0435\u0442\u043a\u0430 | \u0427\u0435\u043c \u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043d\u0430 | \u0427\u0435\u0433\u043e \u0436\u0434\u0451\u0442 |)",
+      "file_type": "document",
+      "source_file": "assets/patterns/autonomous-work-run.md",
+      "source_location": "L104",
+      "community": 70,
+      "norm_label": "code:markdown (| \u0440\u0430\u0431\u043e\u0442\u0430 | \u0432\u0435\u0442\u043a\u0430 | \u0447\u0435\u043c \u043f\u043e\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043d\u0430 | \u0447\u0435\u0433\u043e \u0436\u0434\u0435\u0442 |)",
+      "id": "patterns_autonomous_work_run_codeblock_9"
+    },
+    {
+      "label": "An honest stand",
+      "file_type": "document",
+      "source_file": "assets/patterns/browser-verification-stand.md",
+      "source_location": "L8",
+      "community": 50,
+      "norm_label": "an honest stand",
+      "id": "patterns_browser_verification_stand_an_honest_stand"
+    },
+    {
+      "label": "A stand lives exactly as long as the check",
+      "file_type": "document",
+      "source_file": "assets/patterns/browser-verification-stand.md",
+      "source_location": "L161",
+      "community": 50,
+      "norm_label": "a stand lives exactly as long as the check",
+      "id": "patterns_browser_verification_stand_a_stand_lives_exactly_as_long_as_the_check"
+    },
+    {
+      "label": "Main is merged in on an actual conflict, not on a schedule",
+      "file_type": "document",
+      "source_file": "assets/patterns/git-workflow-stack.md",
+      "source_location": "L140",
+      "community": 44,
+      "norm_label": "main is merged in on an actual conflict, not on a schedule",
+      "id": "patterns_git_workflow_stack_main_is_merged_in_on_an_actual_conflict_not_on_a_schedule"
+    },
+    {
+      "label": "Cargo records are moved to \"done\" in the same turn",
+      "file_type": "document",
+      "source_file": "assets/patterns/task-flow-archive.md",
+      "source_location": "L146",
+      "community": 103,
+      "norm_label": "cargo records are moved to \"done\" in the same turn",
+      "id": "patterns_task_flow_archive_cargo_records_are_moved_to_done_in_the_same_turn"
+    },
+    {
+      "label": "code:bash (npm run cargo:mark -- --state fixed \\)",
+      "file_type": "document",
+      "source_file": "assets/patterns/task-flow-archive.md",
+      "source_location": "L155",
+      "community": 103,
+      "norm_label": "code:bash (npm run cargo:mark -- --state fixed \\)",
+      "id": "patterns_task_flow_archive_codeblock_4"
+    },
+    {
+      "label": "autonomous-work.md",
+      "file_type": "document",
+      "source_file": "assets/pitfalls/autonomous-work.md",
+      "source_location": "L1",
+      "community": 406,
+      "norm_label": "autonomous-work.md",
+      "id": "assets_pitfalls_autonomous_work_md"
+    },
+    {
+      "label": "Autonomous work \u2014 cold part",
+      "file_type": "document",
+      "source_file": "assets/pitfalls/autonomous-work.md",
+      "source_location": "L1",
+      "community": 406,
+      "norm_label": "autonomous work \u2014 cold part",
+      "id": "pitfalls_autonomous_work_autonomous_work_cold_part"
+    },
+    {
+      "label": "Pitfalls",
+      "file_type": "document",
+      "source_file": "assets/pitfalls/autonomous-work.md",
+      "source_location": "L8",
+      "community": 406,
+      "norm_label": "pitfalls",
+      "id": "pitfalls_autonomous_work_pitfalls"
     },
     {
       "label": "Articles nothing carries out \u2014 180",
@@ -52064,132 +52269,6 @@
       "community": 264,
       "norm_label": "articles nothing carries out \u2014 180",
       "id": "rules_graph_report_articles_nothing_carries_out_180"
-    },
-    {
-      "label": "Texts that state the same thing \u2014 17",
-      "file_type": "document",
-      "source_file": "rules-graph/REPORT.md",
-      "source_location": "L52",
-      "community": 264,
-      "norm_label": "texts that state the same thing \u2014 17",
-      "id": "rules_graph_report_texts_that_state_the_same_thing_17"
-    },
-    {
-      "label": "A green run ages together with the base",
-      "file_type": "document",
-      "source_file": "assets/patterns/git-workflow-merge.md",
-      "source_location": "L162",
-      "community": 44,
-      "norm_label": "a green run ages together with the base",
-      "id": "patterns_git_workflow_merge_a_green_run_ages_together_with_the_base"
-    },
-    {
-      "label": "A stand from the production build",
-      "file_type": "document",
-      "source_file": "assets/patterns/browser-verification-stand.md",
-      "source_location": "L8",
-      "community": 52,
-      "norm_label": "a stand from the production build",
-      "id": "patterns_browser_verification_stand_a_stand_from_the_production_build"
-    },
-    {
-      "label": "A stand is stopped when the check ends",
-      "file_type": "document",
-      "source_file": "assets/patterns/browser-verification-stand.md",
-      "source_location": "L161",
-      "community": 52,
-      "norm_label": "a stand is stopped when the check ends",
-      "id": "patterns_browser_verification_stand_a_stand_is_stopped_when_the_check_ends"
-    },
-    {
-      "label": "A chain of branches: the calls of this host",
-      "file_type": "document",
-      "source_file": "assets/patterns/git-workflow-pr.azure.md",
-      "source_location": "L290",
-      "community": 45,
-      "norm_label": "a chain of branches: the calls of this host",
-      "id": "patterns_git_workflow_pr_azure_a_chain_of_branches_the_calls_of_this_host"
-    },
-    {
-      "label": "code:bash (# the upper PR, before the lower one completes; the file hol)",
-      "file_type": "document",
-      "source_file": "assets/patterns/git-workflow-pr.azure.md",
-      "source_location": "L295",
-      "community": 45,
-      "norm_label": "code:bash (# the upper pr, before the lower one completes; the file hol)",
-      "id": "patterns_git_workflow_pr_azure_codeblock_12"
-    },
-    {
-      "label": "code:bash (npm run cargo:mark -- --state fixed \\)",
-      "file_type": "document",
-      "source_file": "assets/patterns/task-flow-resume.md",
-      "source_location": "L222",
-      "community": 55,
-      "norm_label": "code:bash (npm run cargo:mark -- --state fixed \\)",
-      "id": "patterns_task_flow_resume_codeblock_10"
-    },
-    {
-      "label": "The base is merged in on an actual conflict, not on a schedule",
-      "file_type": "document",
-      "source_file": "assets/patterns/git-workflow-stack.md",
-      "source_location": "L140",
-      "community": 46,
-      "norm_label": "the base is merged in on an actual conflict, not on a schedule",
-      "id": "patterns_git_workflow_stack_the_base_is_merged_in_on_an_actual_conflict_not_on_a_schedule"
-    },
-    {
-      "label": "code:bash (glab api -X POST projects/:id/merge_requests/<\u043d\u043e\u043c\u0435\u0440>/discuss)",
-      "file_type": "document",
-      "source_file": "assets/patterns/git-workflow-pr.gitlab.md",
-      "source_location": "L225",
-      "community": 29,
-      "norm_label": "code:bash (glab api -x post projects/:id/merge_requests/<\u043d\u043e\u043c\u0435\u0440>/discuss)",
-      "id": "patterns_git_workflow_pr_gitlab_codeblock_14"
-    },
-    {
-      "label": "code:bash (glab mr note <\u043d\u043e\u043c\u0435\u0440> --message \"$(cat \u043e\u0442\u0432\u0435\u0442.md)\")",
-      "file_type": "document",
-      "source_file": "assets/patterns/git-workflow-pr.gitlab.md",
-      "source_location": "L232",
-      "community": 29,
-      "norm_label": "code:bash (glab mr note <\u043d\u043e\u043c\u0435\u0440> --message \"$(cat \u043e\u0442\u0432\u0435\u0442.md)\")",
-      "id": "patterns_git_workflow_pr_gitlab_codeblock_15"
-    },
-    {
-      "label": "A chain of branches: the calls of this host",
-      "file_type": "document",
-      "source_file": "assets/patterns/git-workflow-pr.gitlab.md",
-      "source_location": "L303",
-      "community": 29,
-      "norm_label": "a chain of branches: the calls of this host",
-      "id": "patterns_git_workflow_pr_gitlab_a_chain_of_branches_the_calls_of_this_host"
-    },
-    {
-      "label": "code:bash (glab mr update 87 --target-branch <\u0432\u0435\u0442\u043a\u0430 \u044d\u043f\u0438\u043a\u0430>             )",
-      "file_type": "document",
-      "source_file": "assets/patterns/git-workflow-pr.gitlab.md",
-      "source_location": "L307",
-      "community": 29,
-      "norm_label": "code:bash (glab mr update 87 --target-branch <\u0432\u0435\u0442\u043a\u0430 \u044d\u043f\u0438\u043a\u0430>             )",
-      "id": "patterns_git_workflow_pr_gitlab_codeblock_16"
-    },
-    {
-      "label": "Pitfalls",
-      "file_type": "document",
-      "source_file": "assets/rules/autonomous-work.md",
-      "source_location": "L98",
-      "community": 176,
-      "norm_label": "pitfalls",
-      "id": "rules_autonomous_work_pitfalls"
-    },
-    {
-      "label": "code:bash (printf '# \u0421\u043f\u0438\u0441\u043e\u043a \u043a \u0443\u0442\u0440\u0443 \u00b7 \u043d\u043e\u0447\u044c \u0441 %s\\n\\n' \"$(date +%d.%m.%Y)\")",
-      "file_type": "document",
-      "source_file": "assets/commands/night.md",
-      "source_location": "L92",
-      "community": 99,
-      "norm_label": "code:bash (printf '# \u0441\u043f\u0438\u0441\u043e\u043a \u043a \u0443\u0442\u0440\u0443 \u00b7 \u043d\u043e\u0447\u044c \u0441 %s\\n\\n' \"$(date +%d.%m.%y)\")",
-      "id": "commands_night_codeblock_5"
     }
   ],
   "links": [
@@ -58261,6 +58340,26 @@
       "target": "tests_epic_stop_guard_test_stop_word"
     },
     {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/epic-stop-guard.test.sh",
+      "source_location": "L208",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tests_epic_stop_guard_test_sh",
+      "target": "tests_epic_stop_guard_test_noticed"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/epic-stop-guard.test.sh",
+      "source_location": "L209",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tests_epic_stop_guard_test_sh",
+      "target": "tests_epic_stop_guard_test_typed"
+    },
+    {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "tests/epic-stop-guard.test.sh",
@@ -58303,6 +58402,28 @@
       "confidence_score": 1.0,
       "source": "tests_epic_stop_guard_test_sh__entry",
       "target": "tests_epic_stop_guard_test_stop_word"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/epic-stop-guard.test.sh",
+      "source_location": "L231",
+      "weight": 1.0,
+      "context": "call",
+      "confidence_score": 1.0,
+      "source": "tests_epic_stop_guard_test_sh__entry",
+      "target": "tests_epic_stop_guard_test_answered"
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/epic-stop-guard.test.sh",
+      "source_location": "L233",
+      "weight": 1.0,
+      "context": "call",
+      "confidence_score": 1.0,
+      "source": "tests_epic_stop_guard_test_sh__entry",
+      "target": "tests_epic_stop_guard_test_called"
     },
     {
       "relation": "calls",
@@ -63226,6 +63347,17 @@
       "target": "tests_git_guard_push_tests_test_host_merge"
     },
     {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/git-guard-push-tests.test.sh",
+      "source_location": "L311",
+      "weight": 1.0,
+      "context": "call",
+      "confidence_score": 1.0,
+      "source": "tests_git_guard_push_tests_test_stack_git",
+      "target": "tests_git_guard_push_tests_test_host_merge"
+    },
+    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/browser-guard-device-id.test.sh",
@@ -64243,6 +64375,16 @@
       "target": "tests_checks_board_epic_base_test_stub_pull_behind"
     },
     {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/checks-board-epic-base.test.sh",
+      "source_location": "L65",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tests_checks_board_epic_base_test_sh",
+      "target": "tests_checks_board_epic_base_test_reviewed_pull"
+    },
+    {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "tests/checks-board-epic-base.test.sh",
@@ -64703,16 +64845,6 @@
       "relation": "defines",
       "confidence": "EXTRACTED",
       "source_file": "tests/task-flow-guard.test.sh",
-      "source_location": "L420",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "tests_task_flow_guard_test_sh",
-      "target": "tests_task_flow_guard_test_exit_code_of"
-    },
-    {
-      "relation": "defines",
-      "confidence": "EXTRACTED",
-      "source_file": "tests/task-flow-guard.test.sh",
       "source_location": "L360",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -64758,6 +64890,16 @@
       "confidence_score": 1.0,
       "source": "tests_task_flow_guard_test_sh",
       "target": "tests_task_flow_guard_test_copy_of"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/task-flow-guard.test.sh",
+      "source_location": "L420",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "tests_task_flow_guard_test_sh",
+      "target": "tests_task_flow_guard_test_exit_code_of"
     },
     {
       "relation": "calls",
@@ -73726,6 +73868,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "assets/checks/board-pull-state.github.mjs",
+      "source_location": "L166",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "assets_checks_board_pull_state_github_mjs",
+      "target": "checks_board_pull_state_github_checkreviewer"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "assets/checks/board-pull-state.github.mjs",
       "source_location": "L155",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -74993,16 +75145,6 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "assets/checks/check-board.github.mjs",
-      "source_location": "L250",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "assets_checks_check_board_github_mjs",
-      "target": "checks_check_board_github_behind"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "assets/checks/check-board.github.mjs",
       "source_location": "L259",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -75058,6 +75200,16 @@
       "confidence_score": 1.0,
       "source": "assets_checks_check_board_github_mjs",
       "target": "checks_check_board_github_run"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "assets/checks/check-board.github.mjs",
+      "source_location": "L250",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "assets_checks_check_board_github_mjs",
+      "target": "checks_check_board_github_behind"
     },
     {
       "relation": "calls",
@@ -76710,6 +76862,16 @@
       "relation": "defines",
       "confidence": "EXTRACTED",
       "source_file": "assets/defaults/project.sh",
+      "source_location": "L192",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "assets_defaults_project_sh",
+      "target": "defaults_project_rt_copy_relative"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "assets/defaults/project.sh",
       "source_location": "L223",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -76995,16 +77157,6 @@
       "confidence_score": 1.0,
       "source": "assets_defaults_project_sh",
       "target": "defaults_project_rt_handoff_allowed_cmd"
-    },
-    {
-      "relation": "defines",
-      "confidence": "EXTRACTED",
-      "source_file": "assets/defaults/project.sh",
-      "source_location": "L192",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "assets_defaults_project_sh",
-      "target": "defaults_project_rt_copy_relative"
     },
     {
       "relation": "calls",
@@ -79100,6 +79252,16 @@
       "confidence_score": 1.0,
       "source": "assets_hooks_epic_stop_guard_sh",
       "target": "assets_hooks_epic_stop_guard_sh__entry"
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "assets/hooks/epic-stop-guard.sh",
+      "source_location": "L100",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "assets_hooks_epic_stop_guard_sh",
+      "target": "hooks_epic_stop_guard_owner_side"
     },
     {
       "relation": "defines",
@@ -108789,6 +108951,46 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "rules_graph_report_report_of_the_rules_graph",
+      "target": "rules_graph_report_rules_nothing_executes_0"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "rules-graph/REPORT.md",
+      "source_location": "L20",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "rules_graph_report_report_of_the_rules_graph",
+      "target": "rules_graph_report_articles_nothing_carries_out_178"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "rules-graph/REPORT.md",
+      "source_location": "L46",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "rules_graph_report_report_of_the_rules_graph",
+      "target": "rules_graph_report_glossary_words_used_nowhere_0"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "rules-graph/REPORT.md",
+      "source_location": "L52",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "rules_graph_report_report_of_the_rules_graph",
+      "target": "rules_graph_report_texts_that_state_the_same_thing_17"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "rules-graph/REPORT.md",
+      "source_location": "L12",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "rules_graph_report_report_of_the_rules_graph",
       "target": "rules_graph_report_rules_nothing_executes_1"
     },
     {
@@ -108800,16 +109002,6 @@
       "confidence_score": 1.0,
       "source": "rules_graph_report_report_of_the_rules_graph",
       "target": "rules_graph_report_articles_nothing_carries_out_183"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "rules-graph/REPORT.md",
-      "source_location": "L46",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "rules_graph_report_report_of_the_rules_graph",
-      "target": "rules_graph_report_glossary_words_used_nowhere_0"
     },
     {
       "relation": "contains",
@@ -108830,16 +109022,6 @@
       "confidence_score": 1.0,
       "source": "rules_graph_report_report_of_the_rules_graph",
       "target": "rules_graph_report_articles_nothing_carries_out_180"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "rules-graph/REPORT.md",
-      "source_location": "L52",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "rules_graph_report_report_of_the_rules_graph",
-      "target": "rules_graph_report_texts_that_state_the_same_thing_17"
     },
     {
       "relation": "contains",
@@ -108939,7 +109121,7 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "patterns_git_workflow_merge_merging_the_base_of_a_branch_into_it",
-      "target": "patterns_git_workflow_merge_a_green_run_ages_together_with_the_main_branch"
+      "target": "patterns_git_workflow_merge_a_green_run_ages_together_with_the_base"
     },
     {
       "relation": "contains",
@@ -108969,7 +109151,7 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "patterns_git_workflow_merge_merging_the_base_of_a_branch_into_it",
-      "target": "patterns_git_workflow_merge_a_green_run_ages_together_with_the_base"
+      "target": "patterns_git_workflow_merge_a_green_run_ages_together_with_the_main_branch"
     },
     {
       "relation": "contains",
@@ -109068,7 +109250,7 @@
       "source_location": "L168",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_git_workflow_merge_a_green_run_ages_together_with_the_main_branch",
+      "source": "patterns_git_workflow_merge_a_green_run_ages_together_with_the_base",
       "target": "patterns_git_workflow_merge_codeblock_10"
     },
     {
@@ -109079,7 +109261,7 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "patterns_git_workflow_merge_codeblock_10",
-      "target": "patterns_git_workflow_merge_a_green_run_ages_together_with_the_base"
+      "target": "patterns_git_workflow_merge_a_green_run_ages_together_with_the_main_branch"
     },
     {
       "relation": "contains",
@@ -109648,8 +109830,8 @@
       "source_location": "L40",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_autonomous_work_run_codeblock_3",
-      "target": "patterns_autonomous_work_run_the_cycle_of_one_piece_of_work"
+      "source": "patterns_autonomous_work_run_the_cycle_of_one_piece_of_work",
+      "target": "patterns_autonomous_work_run_codeblock_3"
     },
     {
       "relation": "contains",
@@ -109668,8 +109850,8 @@
       "source_location": "L58",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_autonomous_work_run_codeblock_4",
-      "target": "patterns_autonomous_work_run_a_default_instead_of_a_question"
+      "source": "patterns_autonomous_work_run_a_default_instead_of_a_question",
+      "target": "patterns_autonomous_work_run_codeblock_4"
     },
     {
       "relation": "contains",
@@ -109688,8 +109870,8 @@
       "source_location": "L71",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_autonomous_work_run_codeblock_5",
-      "target": "patterns_autonomous_work_run_a_postponed_task"
+      "source": "patterns_autonomous_work_run_a_postponed_task",
+      "target": "patterns_autonomous_work_run_codeblock_5"
     },
     {
       "relation": "contains",
@@ -109728,8 +109910,8 @@
       "source_location": "L79",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_autonomous_work_run_codeblock_6",
-      "target": "patterns_autonomous_work_run_the_morning_list"
+      "source": "patterns_autonomous_work_run_the_morning_list",
+      "target": "patterns_autonomous_work_run_codeblock_6"
     },
     {
       "relation": "contains",
@@ -110439,7 +110621,7 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "assets_patterns_browser_verification_stand_md",
-      "target": "patterns_browser_verification_stand_an_honest_stand"
+      "target": "patterns_browser_verification_stand_a_stand_from_the_production_build"
     },
     {
       "relation": "contains",
@@ -110449,7 +110631,7 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "assets_patterns_browser_verification_stand_md",
-      "target": "patterns_browser_verification_stand_a_stand_from_the_production_build"
+      "target": "patterns_browser_verification_stand_an_honest_stand"
     },
     {
       "relation": "contains",
@@ -110458,7 +110640,7 @@
       "source_location": "L13",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_browser_verification_stand_an_honest_stand",
+      "source": "patterns_browser_verification_stand_a_stand_from_the_production_build",
       "target": "patterns_browser_verification_stand_when_to_use"
     },
     {
@@ -110468,7 +110650,7 @@
       "source_location": "L20",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_browser_verification_stand_an_honest_stand",
+      "source": "patterns_browser_verification_stand_a_stand_from_the_production_build",
       "target": "patterns_browser_verification_stand_port_numbers_are_declared_by_the_tree_not_by_the_pattern"
     },
     {
@@ -110478,7 +110660,7 @@
       "source_location": "L32",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_browser_verification_stand_an_honest_stand",
+      "source": "patterns_browser_verification_stand_a_stand_from_the_production_build",
       "target": "patterns_browser_verification_stand_first_what_answers_on_the_port"
     },
     {
@@ -110488,7 +110670,7 @@
       "source_location": "L43",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_browser_verification_stand_an_honest_stand",
+      "source": "patterns_browser_verification_stand_a_stand_from_the_production_build",
       "target": "patterns_browser_verification_stand_production_build_of_the_site"
     },
     {
@@ -110498,7 +110680,7 @@
       "source_location": "L58",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_browser_verification_stand_an_honest_stand",
+      "source": "patterns_browser_verification_stand_a_stand_from_the_production_build",
       "target": "patterns_browser_verification_stand_admin_stand"
     },
     {
@@ -110508,7 +110690,7 @@
       "source_location": "L105",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_browser_verification_stand_an_honest_stand",
+      "source": "patterns_browser_verification_stand_a_stand_from_the_production_build",
       "target": "patterns_browser_verification_stand_api_stand"
     },
     {
@@ -110518,7 +110700,7 @@
       "source_location": "L130",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_browser_verification_stand_an_honest_stand",
+      "source": "patterns_browser_verification_stand_a_stand_from_the_production_build",
       "target": "patterns_browser_verification_stand_a_stand_behind_real_nginx"
     },
     {
@@ -110528,8 +110710,8 @@
       "source_location": "L161",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_browser_verification_stand_an_honest_stand",
-      "target": "patterns_browser_verification_stand_a_stand_lives_exactly_as_long_as_the_check"
+      "source": "patterns_browser_verification_stand_a_stand_from_the_production_build",
+      "target": "patterns_browser_verification_stand_a_stand_is_stopped_when_the_check_ends"
     },
     {
       "relation": "contains",
@@ -110538,7 +110720,7 @@
       "source_location": "L177",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_browser_verification_stand_an_honest_stand",
+      "source": "patterns_browser_verification_stand_a_stand_from_the_production_build",
       "target": "patterns_browser_verification_stand_a_tree_for_comparison"
     },
     {
@@ -110548,7 +110730,7 @@
       "source_location": "L199",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_browser_verification_stand_an_honest_stand",
+      "source": "patterns_browser_verification_stand_a_stand_from_the_production_build",
       "target": "patterns_browser_verification_stand_the_state_of_the_ports_is_taken_before_the_first_build_of_the_session"
     },
     {
@@ -110558,7 +110740,7 @@
       "source_location": "L214",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_browser_verification_stand_an_honest_stand",
+      "source": "patterns_browser_verification_stand_a_stand_from_the_production_build",
       "target": "patterns_browser_verification_stand_common_misses"
     },
     {
@@ -110569,7 +110751,7 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "patterns_browser_verification_stand_when_to_use",
-      "target": "patterns_browser_verification_stand_a_stand_from_the_production_build"
+      "target": "patterns_browser_verification_stand_an_honest_stand"
     },
     {
       "relation": "contains",
@@ -110579,7 +110761,7 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "patterns_browser_verification_stand_port_numbers_are_declared_by_the_tree_not_by_the_pattern",
-      "target": "patterns_browser_verification_stand_a_stand_from_the_production_build"
+      "target": "patterns_browser_verification_stand_an_honest_stand"
     },
     {
       "relation": "contains",
@@ -110599,7 +110781,7 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "patterns_browser_verification_stand_first_what_answers_on_the_port",
-      "target": "patterns_browser_verification_stand_a_stand_from_the_production_build"
+      "target": "patterns_browser_verification_stand_an_honest_stand"
     },
     {
       "relation": "contains",
@@ -110619,7 +110801,7 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "patterns_browser_verification_stand_production_build_of_the_site",
-      "target": "patterns_browser_verification_stand_a_stand_from_the_production_build"
+      "target": "patterns_browser_verification_stand_an_honest_stand"
     },
     {
       "relation": "contains",
@@ -110639,7 +110821,7 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "patterns_browser_verification_stand_admin_stand",
-      "target": "patterns_browser_verification_stand_a_stand_from_the_production_build"
+      "target": "patterns_browser_verification_stand_an_honest_stand"
     },
     {
       "relation": "contains",
@@ -110669,7 +110851,7 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "patterns_browser_verification_stand_api_stand",
-      "target": "patterns_browser_verification_stand_a_stand_from_the_production_build"
+      "target": "patterns_browser_verification_stand_an_honest_stand"
     },
     {
       "relation": "contains",
@@ -110689,7 +110871,7 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "patterns_browser_verification_stand_a_stand_behind_real_nginx",
-      "target": "patterns_browser_verification_stand_a_stand_from_the_production_build"
+      "target": "patterns_browser_verification_stand_an_honest_stand"
     },
     {
       "relation": "contains",
@@ -110698,7 +110880,7 @@
       "source_location": "L170",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_browser_verification_stand_a_stand_lives_exactly_as_long_as_the_check",
+      "source": "patterns_browser_verification_stand_a_stand_is_stopped_when_the_check_ends",
       "target": "patterns_browser_verification_stand_codeblock_7"
     },
     {
@@ -110709,7 +110891,7 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "patterns_browser_verification_stand_codeblock_7",
-      "target": "patterns_browser_verification_stand_a_stand_is_stopped_when_the_check_ends"
+      "target": "patterns_browser_verification_stand_a_stand_lives_exactly_as_long_as_the_check"
     },
     {
       "relation": "contains",
@@ -110729,7 +110911,7 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "patterns_browser_verification_stand_a_tree_for_comparison",
-      "target": "patterns_browser_verification_stand_a_stand_from_the_production_build"
+      "target": "patterns_browser_verification_stand_an_honest_stand"
     },
     {
       "relation": "contains",
@@ -110749,7 +110931,7 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "patterns_browser_verification_stand_the_state_of_the_ports_is_taken_before_the_first_build_of_the_session",
-      "target": "patterns_browser_verification_stand_a_stand_from_the_production_build"
+      "target": "patterns_browser_verification_stand_an_honest_stand"
     },
     {
       "relation": "contains",
@@ -110759,7 +110941,7 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "patterns_browser_verification_stand_common_misses",
-      "target": "patterns_browser_verification_stand_a_stand_from_the_production_build"
+      "target": "patterns_browser_verification_stand_an_honest_stand"
     },
     {
       "relation": "contains",
@@ -112235,21 +112417,21 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "assets/patterns/git-workflow-pr.azure.md",
-      "source_location": "L313",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "patterns_git_workflow_pr_azure_the_pr",
-      "target": "patterns_git_workflow_pr_azure_common_misses"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "assets/patterns/git-workflow-pr.azure.md",
       "source_location": "L290",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "patterns_git_workflow_pr_azure_the_pr",
       "target": "patterns_git_workflow_pr_azure_a_chain_of_branches_the_calls_of_this_host"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "assets/patterns/git-workflow-pr.azure.md",
+      "source_location": "L313",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "patterns_git_workflow_pr_azure_the_pr",
+      "target": "patterns_git_workflow_pr_azure_common_misses"
     },
     {
       "relation": "contains",
@@ -112360,6 +112542,16 @@
       "confidence_score": 1.0,
       "source": "patterns_git_workflow_pr_azure_answering_under_remarks",
       "target": "patterns_git_workflow_pr_azure_codeblock_11"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "assets/patterns/git-workflow-pr.azure.md",
+      "source_location": "L295",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "patterns_git_workflow_pr_azure_a_chain_of_branches_the_calls_of_this_host",
+      "target": "patterns_git_workflow_pr_azure_codeblock_12"
     },
     {
       "relation": "contains",
@@ -114059,7 +114251,7 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "patterns_git_workflow_stack_a_stack_of_prs_from_one_base",
-      "target": "patterns_git_workflow_stack_main_is_merged_in_on_an_actual_conflict_not_on_a_schedule"
+      "target": "patterns_git_workflow_stack_the_base_is_merged_in_on_an_actual_conflict_not_on_a_schedule"
     },
     {
       "relation": "contains",
@@ -114119,7 +114311,7 @@
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "patterns_git_workflow_stack_a_stack_of_prs_from_one_base",
-      "target": "patterns_git_workflow_stack_the_base_is_merged_in_on_an_actual_conflict_not_on_a_schedule"
+      "target": "patterns_git_workflow_stack_main_is_merged_in_on_an_actual_conflict_not_on_a_schedule"
     },
     {
       "relation": "contains",
@@ -114175,21 +114367,21 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "assets/patterns/git-workflow-stack.md",
-      "source_location": "L149",
+      "source_location": "L152",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_git_workflow_stack_main_is_merged_in_on_an_actual_conflict_not_on_a_schedule",
+      "source": "patterns_git_workflow_stack_the_base_is_merged_in_on_an_actual_conflict_not_on_a_schedule",
       "target": "patterns_git_workflow_stack_codeblock_6"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "assets/patterns/git-workflow-stack.md",
-      "source_location": "L152",
+      "source_location": "L149",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "patterns_git_workflow_stack_codeblock_6",
-      "target": "patterns_git_workflow_stack_the_base_is_merged_in_on_an_actual_conflict_not_on_a_schedule"
+      "target": "patterns_git_workflow_stack_main_is_merged_in_on_an_actual_conflict_not_on_a_schedule"
     },
     {
       "relation": "contains",
@@ -114350,16 +114542,6 @@
       "confidence_score": 1.0,
       "source": "patterns_task_flow_archive_state_\u0440\u0430\u0431\u043e\u0442\u0430_\u043e\u0442\u0434\u0430\u043d\u0430_the_work_is_reviewed_by_the_rules_in_the_background_right_after_the_pr",
       "target": "patterns_task_flow_archive_cargo_records_are_moved_to_done_in_the_same_turn"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "assets/patterns/task-flow-archive.md",
-      "source_location": "L155",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "patterns_task_flow_archive_cargo_records_are_moved_to_done_in_the_same_turn",
-      "target": "patterns_task_flow_archive_codeblock_4"
     },
     {
       "relation": "contains",
@@ -115475,21 +115657,21 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "assets/patterns/git-workflow-pr.gitlab.md",
-      "source_location": "L313",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "patterns_git_workflow_pr_gitlab_the_mr",
-      "target": "patterns_git_workflow_pr_gitlab_common_misses"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "assets/patterns/git-workflow-pr.gitlab.md",
       "source_location": "L303",
       "weight": 1.0,
       "confidence_score": 1.0,
       "source": "patterns_git_workflow_pr_gitlab_the_mr",
       "target": "patterns_git_workflow_pr_gitlab_a_chain_of_branches_the_calls_of_this_host"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "assets/patterns/git-workflow-pr.gitlab.md",
+      "source_location": "L313",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "patterns_git_workflow_pr_gitlab_the_mr",
+      "target": "patterns_git_workflow_pr_gitlab_common_misses"
     },
     {
       "relation": "contains",
@@ -115598,8 +115780,8 @@
       "source_location": "L158",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_git_workflow_pr_gitlab_the_mr_state_is_read_not_guessed",
-      "target": "patterns_git_workflow_pr_gitlab_codeblock_9"
+      "source": "patterns_git_workflow_pr_gitlab_codeblock_9",
+      "target": "patterns_git_workflow_pr_gitlab_the_mr_state_is_read_not_guessed"
     },
     {
       "relation": "contains",
@@ -115608,8 +115790,8 @@
       "source_location": "L175",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_git_workflow_pr_gitlab_the_mr_state_is_read_not_guessed",
-      "target": "patterns_git_workflow_pr_gitlab_codeblock_10"
+      "source": "patterns_git_workflow_pr_gitlab_codeblock_10",
+      "target": "patterns_git_workflow_pr_gitlab_the_mr_state_is_read_not_guessed"
     },
     {
       "relation": "contains",
@@ -115638,8 +115820,8 @@
       "source_location": "L184",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_git_workflow_pr_gitlab_answering_under_remarks",
-      "target": "patterns_git_workflow_pr_gitlab_codeblock_11"
+      "source": "patterns_git_workflow_pr_gitlab_codeblock_11",
+      "target": "patterns_git_workflow_pr_gitlab_answering_under_remarks"
     },
     {
       "relation": "contains",
@@ -115648,8 +115830,8 @@
       "source_location": "L196",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_git_workflow_pr_gitlab_answering_under_remarks",
-      "target": "patterns_git_workflow_pr_gitlab_codeblock_12"
+      "source": "patterns_git_workflow_pr_gitlab_codeblock_12",
+      "target": "patterns_git_workflow_pr_gitlab_answering_under_remarks"
     },
     {
       "relation": "contains",
@@ -115680,6 +115862,16 @@
       "confidence_score": 1.0,
       "source": "patterns_git_workflow_pr_gitlab_answering_under_remarks",
       "target": "patterns_git_workflow_pr_gitlab_codeblock_15"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "assets/patterns/git-workflow-pr.gitlab.md",
+      "source_location": "L307",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "patterns_git_workflow_pr_gitlab_a_chain_of_branches_the_calls_of_this_host",
+      "target": "patterns_git_workflow_pr_gitlab_codeblock_16"
     },
     {
       "relation": "contains",
@@ -118150,26 +118342,6 @@
       "confidence_score": 1.0,
       "source": "pitfalls_doc_style_pitfalls",
       "target": "pitfalls_doc_style_codeblock_1"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "assets/pitfalls/autonomous-work.md",
-      "source_location": "L1",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "assets_pitfalls_autonomous_work_md",
-      "target": "pitfalls_autonomous_work_autonomous_work_cold_part"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "assets/pitfalls/autonomous-work.md",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "pitfalls_autonomous_work_autonomous_work_cold_part",
-      "target": "pitfalls_autonomous_work_pitfalls"
     },
     {
       "relation": "contains",
@@ -122258,8 +122430,8 @@
       "source_location": "L28",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "commands_night_2_raise_the_rule_and_the_pattern",
-      "target": "commands_night_codeblock_1"
+      "source": "commands_night_codeblock_1",
+      "target": "commands_night_2_raise_the_rule_and_the_pattern"
     },
     {
       "relation": "contains",
@@ -122278,8 +122450,8 @@
       "source_location": "L41",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "commands_night_3_read_the_tree_profile",
-      "target": "commands_night_codeblock_2"
+      "source": "commands_night_codeblock_2",
+      "target": "commands_night_3_read_the_tree_profile"
     },
     {
       "relation": "contains",
@@ -122298,8 +122470,8 @@
       "source_location": "L54",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "commands_night_4_checks_before_the_first_work",
-      "target": "commands_night_codeblock_3"
+      "source": "commands_night_codeblock_3",
+      "target": "commands_night_4_checks_before_the_first_work"
     },
     {
       "relation": "contains",
@@ -122318,8 +122490,8 @@
       "source_location": "L94",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "commands_night_6_the_morning_list_is_a_file",
-      "target": "commands_night_codeblock_4"
+      "source": "commands_night_codeblock_4",
+      "target": "commands_night_6_the_morning_list_is_a_file"
     },
     {
       "relation": "contains",
@@ -124382,45 +124554,44 @@
       "target": "skills_interface_review_motion_needs_app_codeblock_7"
     },
     {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "tests/git-guard-push-tests.test.sh",
-      "source_location": "L311",
-      "weight": 1.0,
-      "context": "call",
-      "confidence_score": 1.0,
-      "source": "tests_git_guard_push_tests_test_stack_git",
-      "target": "tests_git_guard_push_tests_test_host_merge"
-    },
-    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "assets/patterns/browser-verification-stand.md",
       "source_location": "L161",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_browser_verification_stand_a_stand_from_the_production_build",
-      "target": "patterns_browser_verification_stand_a_stand_is_stopped_when_the_check_ends"
+      "source": "patterns_browser_verification_stand_an_honest_stand",
+      "target": "patterns_browser_verification_stand_a_stand_lives_exactly_as_long_as_the_check"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "assets/patterns/git-workflow-pr.azure.md",
-      "source_location": "L295",
+      "source_file": "assets/patterns/task-flow-archive.md",
+      "source_location": "L155",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_git_workflow_pr_azure_a_chain_of_branches_the_calls_of_this_host",
-      "target": "patterns_git_workflow_pr_azure_codeblock_12"
+      "source": "patterns_task_flow_archive_cargo_records_are_moved_to_done_in_the_same_turn",
+      "target": "patterns_task_flow_archive_codeblock_4"
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "assets/patterns/git-workflow-pr.gitlab.md",
-      "source_location": "L307",
+      "source_file": "assets/pitfalls/autonomous-work.md",
+      "source_location": "L1",
       "weight": 1.0,
       "confidence_score": 1.0,
-      "source": "patterns_git_workflow_pr_gitlab_a_chain_of_branches_the_calls_of_this_host",
-      "target": "patterns_git_workflow_pr_gitlab_codeblock_16"
+      "source": "assets_pitfalls_autonomous_work_md",
+      "target": "pitfalls_autonomous_work_autonomous_work_cold_part"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "assets/pitfalls/autonomous-work.md",
+      "source_location": "L8",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "pitfalls_autonomous_work_autonomous_work_cold_part",
+      "target": "pitfalls_autonomous_work_pitfalls"
     }
   ]
 }

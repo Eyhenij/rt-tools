@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/epic-stop-guard.sh · c6f371c3f89e · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/epic-stop-guard.sh · a2c9c1381d3e · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, checks/epic-table.github.mjs
 # Guard of the stop at the end of an epic. PreToolUse on a call that takes new work.
@@ -93,15 +93,26 @@ rt_epic_over || exit 0
 # The number is read from the call; the words of the executor do not count.
 taken="$(printf '%s' "$cmd" | sed -nE 's/.*(checkout|switch)[[:space:]]+(-[A-Za-z]+[[:space:]]+)*-(b|c)[[:space:]]+[A-Za-z]+-([0-9]+)-.*/\4/p; s/.*(task:move|board\.mjs[[:space:]]+move)[^0-9|;&]*([0-9]+).*/\2/p; s/.*--epic-of[[:space:]=]+([0-9]+).*/\1/p' | head -1)"
 transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/null)"
+
+# The words of the owner are looked for among what the owner side wrote, not among the last lines
+# of the record. A window of lines is spent by the work itself: every command adds two, and a
+# «yes» given an hour of work ago fell out of it while the executor was fixing what refused it.
+# Results of commands are dropped before the count, the answers to menus stay.
+owner_side() {
+    LC_ALL=C grep -F '"type":"user"' "$1" 2>/dev/null \
+        | awk '!/"tool_result"/ || /The user answered:|Your questions have been answered:|the user said:/' \
+        | tail -n 400
+}
 if [ -n "$taken" ] && [ -n "$transcript" ] && [ -f "$transcript" ]; then
     # A menu answer comes in two forms, «The user answered:» and «Your questions have been answered:»,
     # followed by "question"="answer" pairs. Only the answers count: the question is written by the
     # executor, and a number in «take RT-N?» answered «no» is not the owner's word.
-    named="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg n "$taken" '
+    named="$(owner_side "$transcript" | jq -s -r --arg n "$taken" '
         def menu_answers: if test("^(The user answered|Your questions have been answered):")
             then ([match("\"=\"([^\"]*)\""; "g") | .captures[0].string] | join("\n")) else "" end;
         [.[] | select(.type == "user")
             | select(((.isMeta // false) or (.isCompactSummary // false)) | not)
+            | select((.origin.kind // "human") == "human")
             | (.message.content // "")
             | if type == "string" then .
               elif type == "array" then (map(
@@ -119,18 +130,46 @@ fi
 
 # A created task has no number yet, so no menu answer can name it, and the owner's answer to «create
 # a task for these findings?» left the call refused. The word of the owner here is their latest
-# answer to a menu: no message of theirs stands after it, the answer agrees to a task — a word of a
-# task, of creating it, or a plain «yes» — and it is not a refusal. Any answer was too wide: «not
-# now» and an answer about a button colour passed alike. A new epic needs the word of an epic.
-if [ -z "$taken" ] && [ -n "$transcript" ] && [ -f "$transcript" ] \
+# answer to a menu: the answer agrees to a task — a word of a task, of creating it, or a plain
+# «yes» — and it is not a refusal. Any answer was too wide: «not now» and an answer about a button
+# colour passed alike. A new epic needs the word of an epic.
+#
+# The number after `--epic-of` names the epic, not the work taken: said by the owner, it releases
+# the call above, and its absence from their answer refuses nothing here. Read as the number of the
+# work, it left two answers «yes» in a row refused, and the owner was asked a third time.
+#
+# The answer agrees when it names the creating of a task, not a task alone: on the real record of
+# a session ten answers of twenty-three named a task while agreeing to something else. A plain
+# «yes» agrees only to the question it answers: it counts when that question names the creating.
+# Every pair of the latest menu is read, not the first one, and an answer that puts the task off
+# is no consent.
+#
+# What stands after the answer is judged by who wrote it. A notice of a background command and the
+# mark of an interrupted turn are written by no person and cancel nothing. A message of the owner
+# cancels their answer only when one of its lines begins with a refusal — «stop», «wait», «no»,
+# «do not create»: their other words after a «yes» are not a second decision. The words the owner
+# typed while declining a call are read the same way.
+if [ -n "$transcript" ] && [ -f "$transcript" ] \
     && printf '%s' "$cmd" | grep -qE 'task:new|task-new\.mjs' 2>/dev/null; then
-    consent='задач|карточ|task|issue|заве|завод|созда|create|^\s*(да|yes|ок|ok)([^[:alpha:]]|$)'
+    topic='задач|карточ|task|issue'
+    deed='заве|завод|созда|нов(ая|ую|ой) (задач|карточ)|create|new (task|issue)'
     if printf '%s' "$cmd" | grep -qE -- '--epic([[:space:]=]|$)' 2>/dev/null; then
-        consent='эпик|epic'
+        topic='эпик|epic'
+        deed='эпик|epic'
     fi
-    latest="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg consent "$consent" '
+    yes='^\s*(да|yes|ок|ok)([^[:alpha:]]|$)'
+    refusal='^\s*(нет([^[:alpha:]]|$)|не (надо|нужно|заводи|создавай|делай)|нельзя|no([^[:alpha:]]|$)|стоп|stop|отмен|cancel|подожд|wait|позже|later|пока ничего|ничего не (надо|нужно|заводи|делай)|nothing)'
+    put_off='отлож|на потом|позже|завтра|не сейчас|пока не|not now|later'
+    # A denial inside the answer: «не создавать задачу», «без задачи», «do not create». The list
+    # above reads only the opening of a line, and an answer that opened with it by another form —
+    # an infinitive, «без» — read as consent by its word of a task.
+    denial='(^|[^[:alpha:]])(не|без|ничего не|do not|don.?t|skip)[[:space:]]+([^[:space:]]+[[:space:]]+)?(созда|завод|заве|задач|карточ|create|task|issue)'
+    latest="$(owner_side "$transcript" | jq -s -r --arg topic "$topic" --arg deed "$deed" --arg yes "$yes" \
+        --arg refusal "$refusal" --arg put_off "$put_off" --arg denial "$denial" '
+        def refuses: split("\n") | map(test($refusal; "i")) | any;
         [.[] | select(.type == "user")
             | select(((.isMeta // false) or (.isCompactSummary // false)) | not)
+            | select((.origin.kind // "human") == "human")
             | (.message.content // "")
             | if type == "string" then {said: .}
               elif type == "array" then (map(
@@ -139,15 +178,23 @@ if [ -z "$taken" ] && [ -n "$transcript" ] && [ -f "$transcript" ] \
                       | if type == "string" then . elif type == "array"
                         then (map(if type == "object" then (.text // "") else "" end) | join(" ")) else "" end)
                       | if test("^(The user answered|Your questions have been answered):")
-                        then {menu: ([match("\"=\"([^\"]*)\""; "g") | .captures[0].string] | first // "")}
+                        then {menu: [match("\"([^\"]*)\"=\"([^\"]*)\""; "g") | {asked: .captures[0].string, chose: .captures[1].string}]}
+                        elif test("^The user doesn.t want to proceed") and test("the user said:")
+                        then {said: (split("the user said:") | .[1:] | join("\n") | ltrimstr("\n"))}
                         else empty end)
                   else empty end) | .[])
-              else empty end]
-        | (last // {})
-        | if (.menu // "") != ""
-              and (.menu | test($consent; "i"))
-              and ((.menu | test("^\\s*(нет|не\\s|нельзя|no\\b|стоп|stop|отмен|cancel|подожд|wait|позже|later|пока ничего|ничего|nothing)"; "i")) | not)
-          then "yes" else "no" end
+              else empty end
+            | select(((.said // "") | test("^\\s*\\[Request interrupted")) | not)]
+        | (map(has("menu")) | rindex(true)) as $at
+        | if $at == null then "no"
+          else (.[$at].menu | map(
+                    ((.chose | refuses) or (.chose | test($put_off; "i")) or (.chose | test($denial; "i")) | not)
+                    and ((.chose | test($deed; "i"))
+                         or ((.chose | test($yes + "|" + $topic; "i")) and (.asked | test($deed; "i"))))
+                ) | any) as $agreed
+              | (.[$at + 1:] | map((.said // "") | refuses) | any) as $taken_back
+              | if $agreed and ($taken_back | not) then "yes" else "no" end
+          end
     ' 2>/dev/null)"
     [ "$latest" = "yes" ] && exit 0
 fi

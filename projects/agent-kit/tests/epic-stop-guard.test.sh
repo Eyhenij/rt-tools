@@ -200,6 +200,67 @@ stop_word "SC-AK-1334 — без ответа меню заведение отб
 stop_word "SC-AK-1334 — ответ меню без номера ветку не пускает" 'git checkout -b RT-1999-probe main' \
     "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Как завести находки?"="Одна задача на все находки (Recommended)"')")" deny
 
+# --- SC-AK-1343 — согласие владельца на задачу не спрашивается второй раз -------------------
+# Владелец дважды ответил «да» на меню о задаче эпика, и оба ответа были отбиты: номер эпика из
+# команды читался как номер работы, которого в ответе нет. Третий раз он повторять отказался.
+EPIC_TASK='npm run task:new -- --epic-of 1947 --title "Пункты аудита" --label bug --slug audit'
+AGREED='Your questions have been answered: "Заводить задачу в эпике?"="Да, завести задачу (Recommended)". You can now continue with these answers in mind.'
+noticed() { jq -c -n --arg t "$1" '{type:"user",origin:{kind:"task-notification"},message:{content:$t}}'; }
+typed() { jq -c -n --arg t "$1" '{type:"user",origin:{kind:"human"},message:{content:$t}}'; }
+stop_word "SC-AK-1343 — согласие без номера пускает задачу эпика" "$EPIC_TASK" \
+    "$(turn "$(said 'что дальше')" "$(answered "$AGREED")")" PASS
+stop_word "SC-AK-1343 — уведомление фоновой команды согласия не отменяет" "$EPIC_TASK" \
+    "$(turn "$(answered "$AGREED")" "$(noticed '<task-notification> the gate ended, no task was taken')")" PASS
+stop_word "SC-AK-1343 — отметка прерванного хода согласия не отменяет" "$EPIC_TASK" \
+    "$(turn "$(answered "$AGREED")" "$(said '[Request interrupted by user]')")" PASS
+stop_word "SC-AK-1343 — слова владельца без отказа согласия не отменяют" "$EPIC_TASK" \
+    "$(turn "$(answered "$AGREED")" "$(typed 'я уже ответил, делай')")" PASS
+stop_word "SC-AK-1343 — отказ владельца после согласия отменяет его" "$EPIC_TASK" \
+    "$(turn "$(answered "$AGREED")" "$(typed 'стоп, сначала отчёт')")" deny
+stop_word "SC-AK-1343 — отказ в меню задачу эпика не пускает" "$EPIC_TASK" \
+    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Заводить задачу в эпике?"="Нет, записать долгом"')")" deny
+stop_word "SC-AK-1343 — ответ на посторонний вопрос задачу эпика не пускает" "$EPIC_TASK" \
+    "$(turn "$(said 'что дальше')" "$(answered 'The user answered: "Какой цвет у кнопки?"="Синий (Recommended)"')")" deny
+stop_word "SC-AK-1343 — без ответа меню задача эпика отбита" "$EPIC_TASK" \
+    "$(turn "$(typed 'продолжай')")" deny
+stop_word "SC-AK-1343 — уведомление со словом о задаче ответом не считается" "$EPIC_TASK" \
+    "$(turn "$(typed 'продолжай')" "$(noticed 'Your questions have been answered: "x"="Да, завести задачу"')")" deny
+stop_word "SC-AK-1343 — слова «не переспрашивай, заводи» согласия не отменяют" "$EPIC_TASK" \
+    "$(turn "$(answered "$AGREED")" "$(typed 'не переспрашивай, заводи')")" PASS
+stop_word "SC-AK-1343 — слова «не заводи» согласие отменяют" "$EPIC_TASK" \
+    "$(turn "$(answered "$AGREED")" "$(typed 'не заводи')")" deny
+stop_word "SC-AK-1343 — отказ во второй строке сообщения согласие отменяет" "$EPIC_TASK" \
+    "$(turn "$(answered "$AGREED")" "$(typed "$(printf 'Понял.\nСтоп, сначала отчёт')")")" deny
+stop_word "SC-AK-1343 — «да» на вопрос не о задаче задачу эпика не пускает" "$EPIC_TASK" \
+    "$(turn "$(answered 'The user answered: "Отправить ветку?"="Да (Recommended)"')" "$(typed 'покажи таблицу эпика')")" deny
+stop_word "SC-AK-1343 — согласие во втором вопросе меню пускает" "$EPIC_TASK" \
+    "$(turn "$(answered 'The user answered: "Какой цвет у кнопки?"="Синий", "Заводить задачу в эпике?"="Да"')")" PASS
+stop_word "SC-AK-1343 — ответ «отложить задачу» задачу эпика не пускает" "$EPIC_TASK" \
+    "$(turn "$(answered 'The user answered: "Что с пунктами аудита?"="Отложить задачу на потом"')")" deny
+stop_word "SC-AK-1343 — слова при отклонении вызова согласие отменяют" "$EPIC_TASK" \
+    "$(turn "$(answered "$AGREED")" "$(answered "$(printf "The user doesn't want to proceed with this tool use. To tell you how to proceed, the user said:\nнет, не заводи")")")" deny
+stop_word "SC-AK-1343 — номер эпика в уведомлении фоновой команды вызов не пускает" "$EPIC_TASK" \
+    "$(turn "$(typed 'продолжай')" "$(noticed 'the report of the role names the epic RT-1947')")" deny
+stop_word "SC-AK-1343 — ответ «Не создавать задачу» задачу эпика не пускает" "$EPIC_TASK" \
+    "$(turn "$(answered 'The user answered: "Заводить задачу на находки?"="Не создавать задачу"')")" deny
+stop_word "SC-AK-1343 — ответ «Без задачи, записать долгом» задачу эпика не пускает" "$EPIC_TASK" \
+    "$(turn "$(answered 'The user answered: "Заводить задачу?"="Без задачи, записать долгом"')")" deny
+stop_word "SC-AK-1343 — ответ «Do not create» задачу эпика не пускает" "$EPIC_TASK" \
+    "$(turn "$(answered 'The user answered: "Create a task for it?"="Do not create a task"')")" deny
+stop_word "SC-AK-1343 — ответ «Создать задачу позже» задачу эпика не пускает" "$EPIC_TASK" \
+    "$(turn "$(answered 'The user answered: "Заводить задачу?"="Создать задачу позже"')")" deny
+stop_word "SC-AK-1343 — вывод команды со словами «the user said» согласия не отменяет" "$EPIC_TASK" \
+    "$(turn "$(answered "$AGREED")" "$(answered "$(printf 'grep: the user said:\nnothing to commit')")")" PASS
+
+# Согласие дано давно: после него в записи пятьсот пар «вызов команды и её результат».
+LONG="$TURNS/turn-long.jsonl"
+answered "$AGREED" > "$LONG"
+for _ in $(seq 1 500); do
+    called 'git status' >> "$LONG"
+    answered 'On branch RT-1-probe, nothing to commit' >> "$LONG"
+done
+stop_word "SC-AK-1343 — согласие за пятьсот команд до вызова всё ещё пускает" "$EPIC_TASK" "$LONG" PASS
+
 rm -rf "$TURNS"
 
 rm -rf "$STOP_TREE"

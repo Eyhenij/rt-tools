@@ -49,8 +49,9 @@ Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
 Given the branch of an open request has fallen several commits behind the main branch
 When the work queue audit reads the open requests
-Then it names the number of the lag and says the run went from a base that is no longer in the main
-branch; on a branch without a lag and where there is nothing to compare with, it stays silent
+Then it names the number of the lag in a summary line that says there is nothing to do, counts no
+discrepancy and does not call to merge the base in; on a branch without a lag and where there is
+nothing to compare with, it stays silent
 
 Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
@@ -58,8 +59,21 @@ Covered: `projects/agent-kit/tests/checks-board.test.sh`.
 
 Given an open request has the epic branch as its base, and its branch has fallen behind that base
 When the work queue audit reads the open requests
-Then the line names the epic branch and the number of the lag, and calls to merge that branch in;
-the lag of the epic branch behind main is not laid on the task
+Then the line names the epic branch and the number of the lag, and does not call to merge that
+branch in; the lag of the epic branch behind main is not laid on the task, and a request that
+conflicts with its base is named by the line about the conflict alone
+
+Covered: `projects/agent-kit/tests/checks-board-epic-base.test.sh`.
+
+### SC-AK-1344 — an open request without a reviewer is named by the audit
+
+Given an open request that nobody but its author was asked to review, and nobody but its author
+reviewed
+When the work queue audit reads the open requests
+Then it names the request and the call that asks for a reviewer; a requested reviewer or a review
+left by another person removes the line, a request to the author or to a bot does not. The lists
+are read by a call of their own, and a host that refuses it leaves the request unjudged and the
+audit running
 
 Covered: `projects/agent-kit/tests/checks-board-epic-base.test.sh`.
 

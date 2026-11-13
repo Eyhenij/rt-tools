@@ -30,12 +30,14 @@ and what was filtered out.
 | ---------------------------------------------------- | ------------------------------------------------------------- |
 | a PR is open and its task is not in review           | `npm run task:move -- <номер> in-review`                      |
 | a task is in review and has no open PR               | open the PR, or move the task back to work                    |
-| the branch lags behind its base by N commits         | ask the host whether it conflicts; merge the base in only then — the line itself still says to merge |
+| a PR lags its base by N commits — a summary line     | nothing: the host merges such a branch itself; ask it again before the merge |
 | the PR conflicts with its base                       | merge the base in, resolve, push                              |
 | no run on the tip                                    | a new commit, or close and reopen the PR as the line says     |
 | a run pushed out of the queue                        | read that run's output, then rerun it — both commands are in the line |
 | a draft with a green run                             | `gh pr ready <номер>`                                         |
-| the PR has no reviewer                               | request the reviewer by a REST call                           |
+| the PR has no reviewer                               | request the reviewer by a REST call — the call is in the line |
+| the branch carries the task folder                   | take the folder apart by a commit of the same branch, or put the bypass line into the PR body |
+| the rollout failed                                   | read the output of that rollout by the link in the line, fix the main branch, roll out again |
 | the last run of the main branch is red               | fix the main branch before new work                           |
 | a task and its epic name each other one way only     | link the task as a sub-issue, or name it in the epic plan     |
 | a task folder with no open task                      | take it apart into the archive by a commit, rule `task-flow`  |
