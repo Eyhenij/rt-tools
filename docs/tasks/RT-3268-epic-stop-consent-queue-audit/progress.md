@@ -39,6 +39,15 @@
   task number, and the task could not be created before the fix. Affected stage of the plan: 1.
 - **The branch waits for the request #3225.** — The delivery guard refuses a new branch while a
   request led by this copy conflicts with its base. Affected stage of the plan: 1.
+- **The lag of a request is counted from its own base, not from the main branch.** — The suite
+  `checks-board-epic-base.test.sh` holds it under SC-AK-1342. Affected stage of the plan: 2.
+- **A plain «yes» counts only for a question about a task, and a refusal is read in every line.**
+  — The first review round showed that an old «yes» to another question released the call and that
+  «не переспрашивай» read as a refusal. Affected stage of the plan: 1.
+- **Left out of this task, named by the first review round:** a menu answer is told from a forged
+  command output only by its opening words; a menu closed by Esc without words cancels nothing;
+  the lag line says the host merges the branch itself, which is false where the branch protection
+  demands an up-to-date branch. Affected stage of the plan: none.
 
 ## Sessions
 
@@ -51,5 +60,7 @@
   `agent-kit:check`, the checks of specs, paths, sizes, the glossary and the descriptions.
 - The first review round is started on `ad86cea45`: the code review and the role
   `project-manager`.
+- The first review round is answered: the guard suite is 59 green, the audit suites 91, 20 and 22,
+  the layout matches the package. The audit no longer counts a bot as a reviewer.
 - The merge `847348e40` of the epic branch into the branch of the request #3225 lies in the local
   branch `RT-3197-rev-autonomous-work`, its push set is green, and the push waits for the owner.

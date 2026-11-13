@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/epic-stop-guard.sh · eaea22d4bcf4 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/epic-stop-guard.sh · 829a438ba68c · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, checks/epic-table.github.mjs
 # Guard of the stop at the end of an epic. PreToolUse on a call that takes new work.
@@ -99,7 +99,8 @@ transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/nu
 # «yes» given an hour of work ago fell out of it while the executor was fixing what refused it.
 # Results of commands are dropped before the count, the answers to menus stay.
 owner_side() {
-    awk '/"type":"user"/ && (!/"tool_result"/ || /The user answered:|Your questions have been answered:/)' "$1" 2>/dev/null \
+    LC_ALL=C grep -F '"type":"user"' "$1" 2>/dev/null \
+        | awk '!/"tool_result"/ || /The user answered:|Your questions have been answered:|the user said:/' \
         | tail -n 400
 }
 if [ -n "$taken" ] && [ -n "$transcript" ] && [ -f "$transcript" ]; then
@@ -111,6 +112,7 @@ if [ -n "$taken" ] && [ -n "$transcript" ] && [ -f "$transcript" ]; then
             then ([match("\"=\"([^\"]*)\""; "g") | .captures[0].string] | join("\n")) else "" end;
         [.[] | select(.type == "user")
             | select(((.isMeta // false) or (.isCompactSummary // false)) | not)
+            | select((.origin.kind // "human") == "human")
             | (.message.content // "")
             | if type == "string" then .
               elif type == "array" then (map(
@@ -136,18 +138,29 @@ fi
 # the call above, and its absence from their answer refuses nothing here. Read as the number of the
 # work, it left two answers «yes» in a row refused, and the owner was asked a third time.
 #
+# A plain «yes» agrees only to the question it answers: it counts when that question names a task or creating one.
+# Every pair of the latest menu is read, not the first one, and an answer that puts the task off
+# is no consent.
+#
 # What stands after the answer is judged by who wrote it. A notice of a background command and the
 # mark of an interrupted turn are written by no person and cancel nothing. A message of the owner
-# cancels their answer only when it refuses — «stop», «wait», «no»: their other words after a «yes»
-# are not a second decision.
+# cancels their answer only when one of its lines begins with a refusal — «stop», «wait», «no»,
+# «do not create»: their other words after a «yes» are not a second decision. The words the owner
+# typed while declining a call are read the same way.
 if [ -n "$transcript" ] && [ -f "$transcript" ] \
     && printf '%s' "$cmd" | grep -qE 'task:new|task-new\.mjs' 2>/dev/null; then
-    consent='задач|карточ|task|issue|заве|завод|созда|create|^\s*(да|yes|ок|ok)([^[:alpha:]]|$)'
+    topic='задач|карточ|task|issue'
+    deed='заве|завод|созда|create'
     if printf '%s' "$cmd" | grep -qE -- '--epic([[:space:]=]|$)' 2>/dev/null; then
-        consent='эпик|epic'
+        topic='эпик|epic'
+        deed='эпик|epic'
     fi
-    refusal='^\s*(нет|не\s|нельзя|no\b|стоп|stop|отмен|cancel|подожд|wait|позже|later|пока ничего|ничего|nothing)'
-    latest="$(owner_side "$transcript" | jq -s -r --arg consent "$consent" --arg refusal "$refusal" '
+    yes='^\s*(да|yes|ок|ok)([^[:alpha:]]|$)'
+    refusal='^\s*(нет([^[:alpha:]]|$)|не (надо|нужно|заводи|создавай|делай)|нельзя|no([^[:alpha:]]|$)|стоп|stop|отмен|cancel|подожд|wait|позже|later|пока ничего|ничего не (надо|нужно|заводи|делай)|nothing)'
+    put_off='отлож|потом|не сейчас|пока не|not now|later'
+    latest="$(owner_side "$transcript" | jq -s -r --arg topic "$topic" --arg deed "$deed" --arg yes "$yes" \
+        --arg refusal "$refusal" --arg put_off "$put_off" '
+        def refuses: split("\n") | map(test($refusal; "i")) | any;
         [.[] | select(.type == "user")
             | select(((.isMeta // false) or (.isCompactSummary // false)) | not)
             | select((.origin.kind // "human") == "human")
@@ -159,17 +172,22 @@ if [ -n "$transcript" ] && [ -f "$transcript" ] \
                       | if type == "string" then . elif type == "array"
                         then (map(if type == "object" then (.text // "") else "" end) | join(" ")) else "" end)
                       | if test("^(The user answered|Your questions have been answered):")
-                        then {menu: ([match("\"=\"([^\"]*)\""; "g") | .captures[0].string] | first // "")}
+                        then {menu: [match("\"([^\"]*)\"=\"([^\"]*)\""; "g") | {asked: .captures[0].string, chose: .captures[1].string}]}
+                        elif test("the user said:")
+                        then {said: (split("the user said:") | .[1:] | join("\n") | ltrimstr("\n"))}
                         else empty end)
                   else empty end) | .[])
               else empty end
             | select(((.said // "") | test("^\\s*\\[Request interrupted")) | not)]
         | (map(has("menu")) | rindex(true)) as $at
         | if $at == null then "no"
-          else (.[$at].menu) as $menu
-              | (.[$at + 1:] | map((.said // "") | test($refusal; "i")) | any) as $taken_back
-              | if ($menu | test($consent; "i")) and (($menu | test($refusal; "i")) | not) and ($taken_back | not)
-                then "yes" else "no" end
+          else (.[$at].menu | map(
+                    ((.chose | refuses) or (.chose | test($put_off; "i")) | not)
+                    and ((.chose | test($topic + "|" + $deed; "i"))
+                         or ((.chose | test($yes; "i")) and (.asked | test($topic + "|" + $deed; "i"))))
+                ) | any) as $agreed
+              | (.[$at + 1:] | map((.said // "") | refuses) | any) as $taken_back
+              | if $agreed and ($taken_back | not) then "yes" else "no" end
           end
     ' 2>/dev/null)"
     [ "$latest" = "yes" ] && exit 0

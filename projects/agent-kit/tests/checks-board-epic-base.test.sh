@@ -52,6 +52,8 @@ task_pull() {
 export STUB_PULLS="$(task_pull MERGEABLE)"
 export STUB_PULL_BEHIND=3
 report "SC-AK-1342 — названа база задачи и число" "$(board_says 'lags «RT-700-epic» by 3 commits')" 1
+report "SC-AK-1342 — отставание стоит в итоговой строке" "$(board_says '^check-board: open PRs behind.*PR #703 lags')" 1
+report "SC-AK-1342 — строкой расхождения отставание не названо" "$(board_run | grep 'lags' | grep -vc '^check-board:')" 0
 report "SC-AK-1342 — отставание от main на задачу не легло" "$(board_says 'lags «main»')" 0
 report "SC-AK-1342 — влить базу строка не велит" "$(board_says 'Merge «RT-700-epic» in')" 0
 # Конфликтующую заявку называет строка о конфликте, в счёт отставших она не идёт.
@@ -68,6 +70,9 @@ reviewed_pull() {
 }
 export STUB_PULLS="$(reviewed_pull '[]' '[]')"
 report "SC-AK-1344 — заявка без ревьюера названа" "$(board_says 'PR #703: the PR has no reviewer')" 1
+report "SC-AK-1344 — заявка без ревьюера — расхождение" "$(board_code)" 1
+export STUB_PULLS="$(reviewed_pull '[{"__typename":"Bot","login":"review-helper"}]' '[{"author":{"login":"checks[bot]"}}]')"
+report "SC-AK-1344 — бот ревьюером не считается" "$(board_says 'PR #703: the PR has no reviewer')" 1
 export STUB_PULLS="$(reviewed_pull '[{"login":"owner"}]' '[]')"
 report "SC-AK-1344 — запрошенный ревьюер строку снимает" "$(board_says 'has no reviewer')" 0
 export STUB_PULLS="$(reviewed_pull '[]' '[{"author":{"login":"owner"}}]')"

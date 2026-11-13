@@ -1,7 +1,7 @@
 /**
  * The state of an open request read by its tip: a run pushed out of the queue, a missing run, a
- * finished piece of work left as a draft, a conflict. Lives in a file of its own — the audit of
- * the work queue stands at the length limit even without it, and these four checks are read
+ * finished piece of work left as a draft, a missing reviewer, a conflict. Lives in a file of its
+ * own — the audit of the work queue stands at the length limit even without it, and these five checks are read
  * together and apart from the rest.
  *
  * The line printer and the name of the main branch come as arguments: the module knows the
@@ -140,19 +140,6 @@ function checkReadyDraft(pull, report, options) {
 }
 
 /**
- * A PR that conflicts with the main branch.
- *
- * A conflict arrives in a handed-over PR through someone else's merge, without a single action by
- * its author: the base checked at opening goes stale the minute the owner merges a neighbouring
- * piece of work. The draft-lifting guard does not reach here — it judges one turn, and a PR stands
- * in the queue for days.
- *
- * Only a direct "conflicting" is judged: `UNKNOWN` means the hosting is still computing
- * mergeability, and a line about it would go red on every fresh head. Two PRs went to review with
- * a conflict this way — the analysis is the record
- * "2026-08-20-drafts-cleared-without-re-reading-pr-state" in the intake.
- */
-/**
  * A PR nobody was asked to review.
  *
  * Such a PR reaches no inbox: the queue stands while it looks as if it works. A request to review
@@ -169,18 +156,40 @@ export function checkReviewer(pull, report) {
     }
 
     const author = pull.author?.login ?? null;
-    const asked = (pull.reviewRequests ?? []).map((entry) => entry.login ?? entry.name ?? entry.slug ?? '');
-    const left = (pull.latestReviews ?? []).map((entry) => entry.author?.login ?? '');
+    // A bot asked for a review or one that left it is not a person: the PR still reaches no inbox.
+    const person = (entry, login) => entry.__typename !== 'Bot' && !login.endsWith('[bot]');
+    const asked = (pull.reviewRequests ?? [])
+        .map((entry) => [entry, entry.login ?? entry.name ?? entry.slug ?? ''])
+        .filter(([entry, login]) => person(entry, login))
+        .map(([, login]) => login);
+    const left = (pull.latestReviews ?? [])
+        .map((entry) => [entry.author ?? {}, entry.author?.login ?? ''])
+        .filter(([entry, login]) => person(entry, login))
+        .map(([, login]) => login);
     if ([...asked, ...left].some((login) => login !== '' && login !== author)) {
         return;
     }
 
     report(
         `PR #${pull.number}: the PR has no reviewer — nobody but its author was asked or left a review, and it reaches no inbox; ` +
-            `request one by a REST call: gh api -X POST repos/<owner>/<repo>/pulls/${pull.number}/requested_reviewers -f 'reviewers[]=<login>'`
+            `request one by a REST call: gh api -X POST repos/<owner>/<repo>/pulls/${pull.number}/requested_reviewers -f 'reviewers[]=<login>'; ` +
+            `a PR opened by the reviewer's own account cannot ask them — close it and open it again as the machine account`
     );
 }
 
+/**
+ * A PR that conflicts with the main branch.
+ *
+ * A conflict arrives in a handed-over PR through someone else's merge, without a single action by
+ * its author: the base checked at opening goes stale the minute the owner merges a neighbouring
+ * piece of work. The draft-lifting guard does not reach here — it judges one turn, and a PR stands
+ * in the queue for days.
+ *
+ * Only a direct "conflicting" is judged: `UNKNOWN` means the hosting is still computing
+ * mergeability, and a line about it would go red on every fresh head. Two PRs went to review with
+ * a conflict this way — the analysis is the record
+ * "2026-08-20-drafts-cleared-without-re-reading-pr-state" in the intake.
+ */
 export function checkConflicting(pull, report) {
     if (pull.mergeable !== 'CONFLICTING') {
         return;

@@ -225,6 +225,22 @@ stop_word "SC-AK-1343 — без ответа меню задача эпика �
     "$(turn "$(typed 'продолжай')")" deny
 stop_word "SC-AK-1343 — уведомление со словом о задаче ответом не считается" "$EPIC_TASK" \
     "$(turn "$(typed 'продолжай')" "$(noticed 'Your questions have been answered: "x"="Да, завести задачу"')")" deny
+stop_word "SC-AK-1343 — слова «не переспрашивай, заводи» согласия не отменяют" "$EPIC_TASK" \
+    "$(turn "$(answered "$AGREED")" "$(typed 'не переспрашивай, заводи')")" PASS
+stop_word "SC-AK-1343 — слова «не заводи» согласие отменяют" "$EPIC_TASK" \
+    "$(turn "$(answered "$AGREED")" "$(typed 'не заводи')")" deny
+stop_word "SC-AK-1343 — отказ во второй строке сообщения согласие отменяет" "$EPIC_TASK" \
+    "$(turn "$(answered "$AGREED")" "$(typed "$(printf 'Понял.\nСтоп, сначала отчёт')")")" deny
+stop_word "SC-AK-1343 — «да» на вопрос не о задаче задачу эпика не пускает" "$EPIC_TASK" \
+    "$(turn "$(answered 'The user answered: "Отправить ветку?"="Да (Recommended)"')" "$(typed 'покажи таблицу эпика')")" deny
+stop_word "SC-AK-1343 — согласие во втором вопросе меню пускает" "$EPIC_TASK" \
+    "$(turn "$(answered 'The user answered: "Какой цвет у кнопки?"="Синий", "Заводить задачу в эпике?"="Да"')")" PASS
+stop_word "SC-AK-1343 — ответ «отложить задачу» задачу эпика не пускает" "$EPIC_TASK" \
+    "$(turn "$(answered 'The user answered: "Что с пунктами аудита?"="Отложить задачу на потом"')")" deny
+stop_word "SC-AK-1343 — слова при отклонении вызова согласие отменяют" "$EPIC_TASK" \
+    "$(turn "$(answered "$AGREED")" "$(answered "$(printf "The user doesn't want to proceed with this tool use. To tell you how to proceed, the user said:\nнет, не заводи")")")" deny
+stop_word "SC-AK-1343 — номер эпика в уведомлении фоновой команды вызов не пускает" "$EPIC_TASK" \
+    "$(turn "$(typed 'продолжай')" "$(noticed 'the report of the role names the epic RT-1947')")" deny
 
 # Согласие дано давно: после него в записи пятьсот пар «вызов команды и её результат».
 LONG="$TURNS/turn-long.jsonl"

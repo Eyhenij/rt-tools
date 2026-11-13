@@ -137,4 +137,9 @@ results
 Then the call passes: the number of the epic is not the number of the work taken, what no person
 wrote cancels nothing, and only a refusal of the owner takes their answer back
 
+A refusal is a line of the owner's message that begins with it, in any line of the message, or the
+words typed while declining a call. A plain «yes» counts only when its question names a task or
+creating one. Every pair of the menu is read, and an answer that puts the task off is no consent.
+A number named by a notice or by a report of a role releases nothing.
+
 Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.

@@ -71,8 +71,8 @@ Given an open request that nobody but its author was asked to review, and nobody
 reviewed
 When the work queue audit reads the open requests
 Then it names the request and the call that asks for a reviewer; a requested reviewer or a review
-left by another removes the line, a request to the author does not, and an answer of the host
-that carries neither list is not judged
+left by another person removes the line, a request to the author or to a bot does not, and an
+answer of the host that carries neither list is not judged
 
 Covered: `projects/agent-kit/tests/checks-board-epic-base.test.sh`.
 
