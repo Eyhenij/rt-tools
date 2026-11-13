@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/check-board.github.mjs · f6252232917a · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/check-board.github.mjs · 00565a38d5bf · правится надстройкой, не здесь
 /**
  * Audit of the work queue against what the delivery law requires of a task and its PR.
  *
@@ -42,6 +42,7 @@ import {
     fetchBoard,
     fetchIssues,
     fetchOpenPulls,
+    fetchReviewers,
     behindMain,
     gh,
     ghJson,
@@ -242,7 +243,7 @@ try {
         }
 
         checkConflicting(pull, report);
-        checkReviewer(pull, report);
+        checkReviewer(pull, report, fetchReviewers(pull.number, options));
 
         // The PR falling behind its base is counted, not refused: a lag without a conflict the host
         // merges itself, and a line that told to merge the base in sent the executor to do what the

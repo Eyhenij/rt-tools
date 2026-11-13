@@ -64,23 +64,22 @@ export STUB_PULL_BEHIND=0
 
 # --- SC-AK-1344 — открытая заявка без ревьюера называется аудитом ----------------------------
 # Правило обещало эту строку, а аудит её не печатал: заявка без ревьюера ни к кому не приходит.
-reviewed_pull() {
-    printf '[{"number":703,"title":"[RT-702] Задача","headRefName":"RT-702-probe","headRefOid":"%s","isDraft":false,"body":"Closes #702","baseRefName":"RT-700-epic","mergeable":"MERGEABLE","author":{"login":"rt-bot"},"reviewRequests":%s,"latestReviews":%s}]' \
-        "$HEAD_SHA" "$1" "$2"
-}
-export STUB_PULLS="$(reviewed_pull '[]' '[]')"
+export STUB_PULLS="$(task_pull MERGEABLE | sed 's/"mergeable"/"author":{"login":"rt-bot"},"mergeable"/')"
+export STUB_ASKED='[]' STUB_LEFT='[]'
 report "SC-AK-1344 — заявка без ревьюера названа" "$(board_says 'PR #703: the PR has no reviewer')" 1
 report "SC-AK-1344 — заявка без ревьюера — расхождение" "$(board_code)" 1
-export STUB_PULLS="$(reviewed_pull '[{"__typename":"Bot","login":"review-helper"}]' '[{"author":{"login":"checks[bot]"}}]')"
+export STUB_ASKED='[{"login":"review-helper","type":"Bot"}]' STUB_LEFT='[{"login":"checks[bot]","type":"User"},{"login":"copilot-pull-request-reviewer","type":"Bot"}]'
 report "SC-AK-1344 — бот ревьюером не считается" "$(board_says 'PR #703: the PR has no reviewer')" 1
-export STUB_PULLS="$(reviewed_pull '[{"login":"owner"}]' '[]')"
+export STUB_ASKED='[{"login":"owner","type":"User"}]' STUB_LEFT='[]'
 report "SC-AK-1344 — запрошенный ревьюер строку снимает" "$(board_says 'has no reviewer')" 0
-export STUB_PULLS="$(reviewed_pull '[]' '[{"author":{"login":"owner"}}]')"
+export STUB_ASKED='[]' STUB_LEFT='[{"login":"owner","type":"User"}]'
 report "SC-AK-1344 — оставленное ревью строку снимает" "$(board_says 'has no reviewer')" 0
-export STUB_PULLS="$(reviewed_pull '[{"login":"rt-bot"}]' '[{"author":{"login":"rt-bot"}}]')"
+export STUB_ASKED='[{"login":"rt-bot","type":"User"}]' STUB_LEFT='[{"login":"rt-bot","type":"User"}]'
 report "SC-AK-1344 — запрос ревью у самого автора ревьюером не считается" "$(board_says 'PR #703: the PR has no reviewer')" 1
-export STUB_PULLS="$(task_pull MERGEABLE)"
-report "SC-AK-1344 — ответ без списков ревьюеров не судится" "$(board_says 'has no reviewer')" 0
+# Токен без нужных прав: хостинг отказывает в списке ревьюеров. Аудит обязан идти дальше.
+unset STUB_ASKED STUB_LEFT
+report "SC-AK-1344 — отказ хостинга в ревьюерах не судится" "$(board_says 'has no reviewer')" 0
+report "SC-AK-1344 — после отказа хостинга аудит печатает свои строки" "$(board_says '^check-board:')" 1
 export STUB_PULL_BEHIND=0
 
 # --- SC-AK-1338 — конфликтующая заявка в ветку эпика: строки о прогоне нет ------------------

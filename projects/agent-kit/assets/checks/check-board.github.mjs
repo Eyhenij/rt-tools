@@ -41,6 +41,7 @@ import {
     fetchBoard,
     fetchIssues,
     fetchOpenPulls,
+    fetchReviewers,
     behindMain,
     gh,
     ghJson,
@@ -241,7 +242,7 @@ try {
         }
 
         checkConflicting(pull, report);
-        checkReviewer(pull, report);
+        checkReviewer(pull, report, fetchReviewers(pull.number, options));
 
         // The PR falling behind its base is counted, not refused: a lag without a conflict the host
         // merges itself, and a line that told to merge the base in sent the executor to do what the

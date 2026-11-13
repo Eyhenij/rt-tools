@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/board-pull-state.github.mjs · 64e1ab1b0b7a · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/board-pull-state.github.mjs · 2049287ef325 · правится надстройкой, не здесь
 /**
  * The state of an open request read by its tip: a run pushed out of the queue, a missing run, a
  * finished piece of work left as a draft, a missing reviewer, a conflict. Lives in a file of its
@@ -148,26 +148,22 @@ function checkReadyDraft(pull, report, options) {
  * both lists. A PR opened by a person shows here too: an author cannot be asked, and nobody else
  * was.
  *
- * FAIL-OPEN: an answer that carries neither list is not judged. Silence about the reviewers is not
- * the same as their absence, and a line on it would go red on every PR of a host that hides them.
+ * The lists come apart from the PR, by REST: `reviewers` is `{asked, left}`, each entry a login
+ * with the kind of its account.
+ *
+ * FAIL-OPEN: no lists — the PR is not judged. Silence about the reviewers is not the same as their
+ * absence, and a line on it would go red on every PR of a host that hides them.
  */
-export function checkReviewer(pull, report) {
-    if (pull.reviewRequests === undefined && pull.latestReviews === undefined) {
+export function checkReviewer(pull, report, reviewers) {
+    if (!reviewers) {
         return;
     }
 
     const author = pull.author?.login ?? null;
     // A bot asked for a review or one that left it is not a person: the PR still reaches no inbox.
-    const person = (entry, login) => entry.__typename !== 'Bot' && !login.endsWith('[bot]');
-    const asked = (pull.reviewRequests ?? [])
-        .map((entry) => [entry, entry.login ?? entry.name ?? entry.slug ?? ''])
-        .filter(([entry, login]) => person(entry, login))
-        .map(([, login]) => login);
-    const left = (pull.latestReviews ?? [])
-        .map((entry) => [entry.author ?? {}, entry.author?.login ?? ''])
-        .filter(([entry, login]) => person(entry, login))
-        .map(([, login]) => login);
-    if ([...asked, ...left].some((login) => login !== '' && login !== author)) {
+    const person = (entry) =>
+        Boolean(entry?.login) && entry.type !== 'Bot' && !entry.login.endsWith('[bot]') && entry.login !== author;
+    if ([...(reviewers.asked ?? []), ...(reviewers.left ?? [])].some(person)) {
         return;
     }
 
