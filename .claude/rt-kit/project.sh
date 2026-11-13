@@ -274,6 +274,9 @@ EOF
             ;;
     esac
 
+    # The receiver pays for the specs of the sections it touched; a kit-two edit, for the whole suite.
+    case " $_touched " in *' kit2 '*) ;; *) e2e="$(rt_admin_e2e_step "$1" 2>/dev/null || printf '%s' "$e2e")" ;; esac
+
     # Шаги собираются в строку и печатаются без повторов: сквозной набор админки зовут два
     # предмета сразу — приёмник и второй кит, — а тронуты они бывают вместе. Напечатанный дважды,
     # он и прогонялся бы дважды: четыре лишние минуты на каждой такой отправке.
@@ -288,15 +291,6 @@ EOF
     # entry screens of the theme and the example admin, so its edit raises them too.
         case " $_touched " in *' auth '* | *' kit2 '*) printf '%s\n%s\n' "$auth_stand" "$auth_e2e" ;; esac
     } | awk '!seen[$0]++'
-}
-
-# The heavy steps of this tree past the package default: the showcase snapshots raise a showcase
-# and shoot it, minutes each, and the package does not know their name. The auth stand raises
-# three containers and waits for Keycloak.
-rt_push_check_heavy() {
-    case "$1" in *visual-gate* | *serve:auth*) return 0 ;; esac
-
-    rt_push_check_heavy_default "$1"
 }
 
 # Which subjects the branch touched. It prints the subject words separated by spaces; `everything`
@@ -419,6 +413,8 @@ rt_kit2_reaches() {
 # this one: this file is at the length limit.
 # shellcheck disable=SC1091
 . "$(dirname "${BASH_SOURCE[0]}")/project-texts.sh" 2>/dev/null || true
+# shellcheck disable=SC1091
+. "$(dirname "${BASH_SOURCE[0]}")/project-heavy.sh" 2>/dev/null || true
 
 # Which document must travel by the same commit as this file. It prints a path sample or stays
 # silent.
