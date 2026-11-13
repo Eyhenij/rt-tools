@@ -315,22 +315,15 @@ rt_push_touched() {
 
     for _f in $_changed; do
         case "$_f" in
-            # The texts, the agent's harness and the tree's checks: they have no heavy step of
-            # their own.
-            #
-            # The checks read the tree and build nothing in it: neither the showcase nor the
-            # receiver changes from an edit of them. While they fell into the general case, an edit
-            # of one check raised the end-to-end suite, two snapshot sets and two image builds — six
-            # minutes for a line none of those subjects is touched by.
-            # The check of the auth stand is the script of a heavy step and goes before the rest of
-            # the checks.
+            # The texts, the agent's harness and the tree's checks have no heavy step of their own:
+            # the checks read the tree and build nothing. In the general case an edit of one check
+            # raised the end-to-end suite, two snapshot sets and two image builds — six minutes.
+            # The script of a heavy step goes before the rest of the checks.
             tools/auth-stand-check.mjs) _add auth ;;
-            # A spec changes no frame. The snapshot harness sets the window, the crop and the match of
-            # every frame, so it shoots; a story or the showcase moves frames only, no application.
+            # A spec changes no frame; the snapshot harness sets the window, the crop and the match.
             projects/ui-kit-v2/*.spec.ts) ;;
             projects/ui-kit-v2/.storybook/*|projects/ui-kit-v2/src/showcase/*|projects/ui-kit-v2/*.stories.ts|projects/ui-kit-v2/*.mdx) _add show2 ;;
-            # The scripts the snapshot step runs shoot both showcases; the second kit's own script
-            # shoots the second one only.
+            # The snapshot step's scripts shoot both showcases, the second kit's own one only it.
             tools/visual-snapshots-v2.mjs) _add show2 ;;
             tools/visual-gate.mjs|tools/shot-browser.mjs|tools/shot-browser-name.mjs|tools/showcase-probe.mjs|tools/serve-static.mjs) _add show2; _add kit1 ;;
             # A code graph is data the session reads; above the subjects, as it lies inside a project.
