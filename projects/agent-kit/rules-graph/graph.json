@@ -1588,6 +1588,17 @@
       "name": "turn-exit-patterns.sh"
     },
     {
+      "label": "turn-exit-role.sh",
+      "file_type": "code",
+      "source_file": "projects/agent-kit/assets/hooks/turn-exit-role.sh",
+      "source_location": "L1",
+      "id": "hook_turn_exit_role_sh",
+      "community": 8,
+      "norm_label": "turn-exit-role.sh",
+      "kind": "hook",
+      "name": "turn-exit-role.sh"
+    },
+    {
       "label": "turn-exit-verdict.sh",
       "file_type": "code",
       "source_file": "projects/agent-kit/assets/hooks/turn-exit-verdict.sh",
@@ -4214,6 +4225,16 @@
       "source_location": "L1",
       "weight": 1,
       "source": "check_board_pull_state_mjs",
+      "target": "check_board_mjs",
+      "confidence_score": 1
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/checks/board-pull-state.github.mjs",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "check_board_pull_state_mjs",
       "target": "check_board_paths_mjs",
       "confidence_score": 1
     },
@@ -6325,6 +6346,16 @@
       "weight": 1,
       "source": "hook_turn_exit_guard_sh",
       "target": "hook_turn_exit_patterns_sh",
+      "confidence_score": 1
+    },
+    {
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "source_file": "projects/agent-kit/assets/hooks/turn-exit-guard.sh",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "hook_turn_exit_guard_sh",
+      "target": "hook_turn_exit_role_sh",
       "confidence_score": 1
     },
     {
@@ -16804,6 +16835,16 @@
       "source_location": "L1",
       "weight": 1,
       "source": "spec_turn_guards_exit_epic",
+      "target": "hook_turn_exit_role_sh",
+      "confidence_score": 1
+    },
+    {
+      "relation": "mentions",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/specs/agent-kit/turn-guards/exit-epic/implementation.md",
+      "source_location": "L1",
+      "weight": 1,
+      "source": "spec_turn_guards_exit_epic",
       "target": "hook_turn_exit_verdict_sh",
       "confidence_score": 1
     },
@@ -17179,5 +17220,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "d72cb21e0aeb6409c769ce2396489f14cfeb2709"
+  "built_at_commit": "8d38167310cfb7a63e6885b212cad14e9e90215b"
 }

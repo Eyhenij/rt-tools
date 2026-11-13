@@ -89,6 +89,45 @@ expect_stop "SC-AK-1120 — строка ожидания без кавычек 
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" BLOCK
 state_is 'этап-идёт'
 
+# --- SC-AK-1272 — роль без инструментов правки заканчивает ход отчётом --------------------------
+# Роль, запущенная как основная через `--agent`, правит нечем: работы в ходе нет и быть не может.
+# При открытом эпике проверка возвращала её снова и снова, запуск кончался на пределе ходов, а отчёт
+# пропадал. Роль с инструментом правки и роль неизвестного набора судятся как исполнитель.
+mkdir -p "$REPO/.claude/agents"
+role_is() {
+    printf -- '---\nname: %s\ndescription: проба\n%s\n---\n\n%s\n' "$1" "$2" "${3:-Текст роли.}" \
+        > "$REPO/.claude/agents/$1.md"
+}
+role_is reader 'tools: Read, Grep, Glob, Bash'
+role_is writer 'tools: Read, Grep, Bash, Edit'
+role_is notebook 'tools: Read, NotebookEdit'
+role_is listed 'tools: [Read, "Write"]'
+role_is wide 'tools: *'
+role_is bare 'model: haiku' 'Запись в тексте роли: tools: Read.'
+report_turn() { transcript "$(say 'разбери работу')" "$(reply)" "$(said 'Отчёт: таблица точек.')"; }
+
+expect_stop "SC-AK-1272 — роль без инструментов правки заканчивает ход при открытом эпике" \
+    "$(input_role reader "$(report_turn)")" PASS
+expect_stop "SC-AK-1272 — роль без инструментов правки заканчивает ход на втором проходе" \
+    "$(input_role reader "$(report_turn)" true)" PASS
+expect_stop "SC-AK-1272 — роль с Edit судится как исполнитель" \
+    "$(input_role writer "$(report_turn)")" BLOCK
+expect_stop "SC-AK-1272 — роль с NotebookEdit судится как исполнитель" \
+    "$(input_role notebook "$(report_turn)")" BLOCK
+expect_stop "SC-AK-1272 — Write в списке со скобками читается" \
+    "$(input_role listed "$(report_turn)")" BLOCK
+expect_stop "SC-AK-1272 — роль со всеми инструментами судится как исполнитель" \
+    "$(input_role wide "$(report_turn)")" BLOCK
+expect_stop "SC-AK-1272 — без строки tools в заголовке роль судится как исполнитель" \
+    "$(input_role bare "$(report_turn)")" BLOCK
+expect_stop "SC-AK-1272 — роль без файла судится как исполнитель" \
+    "$(input_role nobody "$(report_turn)")" BLOCK
+expect_stop "SC-AK-1272 — имя роли не выводит из каталога ролей" \
+    "$(input_role ../agents/reader "$(report_turn)")" BLOCK
+expect_stop "SC-AK-1272 — сессия без роли судится как исполнитель" \
+    "$(input_stop "$(report_turn)")" BLOCK
+rm -rf "$REPO/.claude/agents"
+
 # --- SC-AK-1129 — закрытый эпик отпускает ход целиком ------------------------------------------
 # Конец эпика — законная остановка: ждать слова владельца там и есть работа. Таблица прочитана и
 # пуста — отказ любого яруса отпускает ход: пустой ход, второй проход, передача рукой, слова об
