@@ -48,9 +48,26 @@ consequence of a merge.
 - **the tree profile for the guards** — `.claude/rt-kit/project.sh`
 - **the commit subject check** — `commitlint.config.cjs`, called by a git hook from `.husky/commit-msg`
 
+## A new working tree
+
+- **A new working tree is created only by the owner's word, asked before it.** It is not created
+  for every task: the next task goes in the same tree, on a new branch from a fresh `main`.
+- **The tree is born on its own branch from a fresh `main`, not detached and not on a foreign
+  branch.** `git fetch origin`, then `git worktree add -b <ветка задачи> <path> origin/main`; the
+  next task in it — `git checkout -b <ветка задачи> origin/main` after a fetch.
+- **The task and its folder are created inside the tree, not in the main copy.** The main copy
+  stands on someone else's branch, and a folder created there stays in its index as litter.
+- **An approved tree carries the whole work of the session and nothing else.** No old branch, no
+  foreign branch, no leftovers of a previous task: only the branch of the current one.
+
+The four statements are checked by nothing; they are held by this section. The owner's words of
+13.11.2026: «заведение нового дерева нужно спрашивать у человека», «если человек одобрил и ты создал
+дерево - ты работаешь там в полный рост, никаких старых веток или прочего мусора».
+
 ## What is carried over into a new working tree
 
-`git worktree add --detach <path> origin/main` unfolds the index and nothing more. Copied by hand:
+`git worktree add -b <ветка задачи> <path> origin/main` unfolds the index and nothing more. Copied
+by hand:
 
 - **`.env`** — the keys the tree's scripts live by
 - **`.claude/settings.local.json`** — the local permissions; without them the session asks for confirmation on every command
