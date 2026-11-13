@@ -1,6 +1,6 @@
 # The guard of the exits of a turn under an open epic
 
-**Status:** in force · **Revision:** 2026-11-04 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-06 · **Scenario prefix:** `SC-AK`
 **Depends on:** `docs/specs/agent-kit/turn-guards/exit/`
 **Laws:** `work-conduct`
 **Procedures:** none
@@ -20,6 +20,9 @@ until the epic is closed holds the exits the guard leaves open outside an epic.
   prints them. An epic that cannot be read is not open.
 - **The epic branch** — a branch named by the header line of an epic plan in the plans directory.
   It has the shape of a task branch and carries no task folder by the rule.
+- **A role without an edit tool** — a role whose file in the tree has a `tools:` line in the header,
+  and that line names neither `Write`, nor `Edit`, nor `MultiEdit`, nor `NotebookEdit`. A role with
+  no such line or with `tools: *` gets every tool of the session and is not one.
 
 The rest of the words — a turn, work, a tier, a service message — are in the neighbouring subdomain
 of the same guard.
@@ -52,6 +55,11 @@ not by a person.
   the merge — releases nothing, and the turn is judged as before.
 - **The epic is read once per turn and only on the way to a refusal.** The reading goes to the
   hosting by the same command that prints the table of the epic to the owner.
+- **A role without an edit tool, run as the main agent, ends its turn with its report.** The report
+  is the whole work of such a role, and it has no edit to finish with and nobody to ask. The guard
+  lets it go before all the tiers, on any pass and under an open epic. The role is named by the
+  field `agent_type` of the event, which the client sets; a role with an edit tool, a role with no
+  file in the tree and a session with no such field are judged as before.
 
 ## What is out of scope
 
@@ -69,8 +77,8 @@ Not applicable: the refusal comes as text naming the unfinished tasks of the epi
 
 ## Data
 
-The subdomain holds no data of its own. It reads the table of the epic, the plans directory and the
-waiting line of the progress.
+The subdomain holds no data of its own. It reads the table of the epic, the plans directory, the
+waiting line of the progress and the `tools:` line of a role file.
 
 ## Screens and states
 
@@ -100,6 +108,9 @@ Not applicable: the guard judges one turn of one session.
   and a second pass over the turn released the executor three times in one day under the owner's
   standing word not to stop until the epic is closed. The tiers lie in a file of their own next to
   the guard: the guard reached the length limit.
+- **A role is recognised by the client's field, not by a mark in the turn.** A mark has to be
+  remembered at every start, and a role started without it is stuck again. The field is set by the
+  client, and an executor started without a role does not have it.
 
 ## Open questions
 
@@ -109,3 +120,4 @@ None.
 
 - 2026-11-04 — the subdomain was split off from the exit guard: its scenario file outgrew the file
   length limit with the scenario of a turn woken by an own notification.
+- 2026-11-06 — a role without an edit tool, run as the main agent, ends its turn with its report.

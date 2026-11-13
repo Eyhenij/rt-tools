@@ -51,6 +51,12 @@ input_stop() {
         '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:$a}'
 }
 
+# Вход сессии, запущенной ролью: имя роли клиент ставит сам, в поле `agent_type`.
+input_role() {
+    jq -n --arg r "$1" --arg p "$2" --arg d "$REPO" --argjson a "${3:-false}" \
+        '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:$a,agent_type:$r}'
+}
+
 expect_stop() {
     local label="$1" json="$2" want="$3" out got
     out="$(printf '%s' "$json" | "$HOOKS/turn-exit-guard.sh" 2>/dev/null)"
