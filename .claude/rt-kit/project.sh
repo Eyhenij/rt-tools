@@ -222,7 +222,7 @@ EOF
         [ -n "$1" ] && against=" --base=$1"
         printf '%s\n' \
             "pnpm exec nx affected -t lint typecheck test build --parallel$against" \
-            "pnpm exec nx affected -t test-hooks$against" \
+            "${1:+RT_SUITES_BASE=$1 }pnpm exec nx affected -t test-hooks$against" \
             'pnpm run lint:styles' \
             "pnpm exec nx affected -t verify --parallel$against"
     }
