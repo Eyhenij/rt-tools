@@ -1,6 +1,6 @@
 # The remove button and the place of the buttons of the image uploader
 
-**Status:** proposed · **Revision:** 13 November 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 13 November 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the image uploader, the icon button and the labels of the second kit
 **Laws:** `frontend-application`, `verifiability`, `mockups`
 **Procedures:** none
@@ -108,3 +108,4 @@ None.
 ## History of changes
 
 - 13 November 2026 — the agreement was written from the accepted mockup by task RT-3286.
+- 13 November 2026 — the code is written, and the rules are bound to it in `implementation.md`.
