@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/board.github.mjs · 15f763fd6638 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/board.github.mjs · 7ff1ac72a90e · правится надстройкой, не здесь
 /**
  * Shared work with the work queue: the project board, the tasks and their state.
  *
@@ -263,7 +263,7 @@ export function behindMain(branch, mainBranch, options) {
  * and asking for it later would mean a second call per PR. */
 export function fetchOpenPulls(options) {
     return ghJson(
-        ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,isDraft,body,mergeable,baseRefName'],
+        ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,isDraft,body,mergeable,baseRefName,author,reviewRequests,latestReviews'],
         options
     );
 }

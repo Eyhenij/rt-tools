@@ -47,7 +47,8 @@ flowchart TD
 - **A lagging column is found by the queue audit, not by eye.** It judges the column by the PR both
   ways: an open PR with the task not in review, and review with no open PR.
 - **A branch with an open PR lags behind its base silently.** The guard judges the base once, at
-  opening, and the run does not see what merged after. The work queue audit counts the lag.
+  opening, and the run does not see what merged after. The work queue audit counts the lag in a
+  summary line and refuses nothing by it: a lag without a conflict the host merges itself.
 - **The link between a task and an epic is read by the audit both ways.** A one-sided binding looks
   as whole as a two-sided one.
 - **Work that one session cannot close is marked in two places, and they are audited.** The board
@@ -64,8 +65,9 @@ flowchart TD
   host locks the button.
 - **A conflicting open PR is a work queue audit discrepancy.** The conflict arrives with someone
   else's merge, and the host shows the mark only inside the PR.
-- **The author of an open PR and whether it has a reviewer are audited by the work queue.** Before the
-  merge neither miss shows: a PR opened by a person never gets a reviewer.
+- **An open PR without a reviewer is a work queue audit discrepancy.** It reaches no inbox, and
+  before the merge the miss does not show. A request to the author does not count, so a PR opened
+  by a person shows here too; the author apart is not judged.
 
 ## What of the law is not here
 

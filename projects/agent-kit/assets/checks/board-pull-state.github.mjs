@@ -152,6 +152,35 @@ function checkReadyDraft(pull, report, options) {
  * a conflict this way — the analysis is the record
  * "2026-08-20-drafts-cleared-without-re-reading-pr-state" in the intake.
  */
+/**
+ * A PR nobody was asked to review.
+ *
+ * Such a PR reaches no inbox: the queue stands while it looks as if it works. A request to review
+ * oneself does not count — the host accepts it and creates nothing — so the author is taken out of
+ * both lists. A PR opened by a person shows here too: an author cannot be asked, and nobody else
+ * was.
+ *
+ * FAIL-OPEN: an answer that carries neither list is not judged. Silence about the reviewers is not
+ * the same as their absence, and a line on it would go red on every PR of a host that hides them.
+ */
+export function checkReviewer(pull, report) {
+    if (pull.reviewRequests === undefined && pull.latestReviews === undefined) {
+        return;
+    }
+
+    const author = pull.author?.login ?? null;
+    const asked = (pull.reviewRequests ?? []).map((entry) => entry.login ?? entry.name ?? entry.slug ?? '');
+    const left = (pull.latestReviews ?? []).map((entry) => entry.author?.login ?? '');
+    if ([...asked, ...left].some((login) => login !== '' && login !== author)) {
+        return;
+    }
+
+    report(
+        `PR #${pull.number}: the PR has no reviewer — nobody but its author was asked or left a review, and it reaches no inbox; ` +
+            `request one by a REST call: gh api -X POST repos/<owner>/<repo>/pulls/${pull.number}/requested_reviewers -f 'reviewers[]=<login>'`
+    );
+}
+
 export function checkConflicting(pull, report) {
     if (pull.mergeable !== 'CONFLICTING') {
         return;

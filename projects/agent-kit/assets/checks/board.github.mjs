@@ -262,7 +262,7 @@ export function behindMain(branch, mainBranch, options) {
  * and asking for it later would mean a second call per PR. */
 export function fetchOpenPulls(options) {
     return ghJson(
-        ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,isDraft,body,mergeable,baseRefName'],
+        ['pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,title,headRefName,headRefOid,isDraft,body,mergeable,baseRefName,author,reviewRequests,latestReviews'],
         options
     );
 }

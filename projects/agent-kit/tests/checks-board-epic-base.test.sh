@@ -53,7 +53,29 @@ export STUB_PULLS="$(task_pull MERGEABLE)"
 export STUB_PULL_BEHIND=3
 report "SC-AK-1342 — названа база задачи и число" "$(board_says 'lags «RT-700-epic» by 3 commits')" 1
 report "SC-AK-1342 — отставание от main на задачу не легло" "$(board_says 'lags «main»')" 0
-report "SC-AK-1342 — назван ход: влить базу" "$(board_says 'Merge «RT-700-epic» in')" 1
+report "SC-AK-1342 — влить базу строка не велит" "$(board_says 'Merge «RT-700-epic» in')" 0
+# Конфликтующую заявку называет строка о конфликте, в счёт отставших она не идёт.
+export STUB_PULLS="$(task_pull CONFLICTING)"
+report "SC-AK-1342 — конфликтующая заявка в отставшие не попадает" "$(board_says 'lags «RT-700-epic»')" 0
+report "SC-AK-1342 — у неё своя строка о конфликте" "$(board_says 'PR #703: it conflicts with its base «RT-700-epic»')" 1
+export STUB_PULL_BEHIND=0
+
+# --- SC-AK-1344 — открытая заявка без ревьюера называется аудитом ----------------------------
+# Правило обещало эту строку, а аудит её не печатал: заявка без ревьюера ни к кому не приходит.
+reviewed_pull() {
+    printf '[{"number":703,"title":"[RT-702] Задача","headRefName":"RT-702-probe","headRefOid":"%s","isDraft":false,"body":"Closes #702","baseRefName":"RT-700-epic","mergeable":"MERGEABLE","author":{"login":"rt-bot"},"reviewRequests":%s,"latestReviews":%s}]' \
+        "$HEAD_SHA" "$1" "$2"
+}
+export STUB_PULLS="$(reviewed_pull '[]' '[]')"
+report "SC-AK-1344 — заявка без ревьюера названа" "$(board_says 'PR #703: the PR has no reviewer')" 1
+export STUB_PULLS="$(reviewed_pull '[{"login":"owner"}]' '[]')"
+report "SC-AK-1344 — запрошенный ревьюер строку снимает" "$(board_says 'has no reviewer')" 0
+export STUB_PULLS="$(reviewed_pull '[]' '[{"author":{"login":"owner"}}]')"
+report "SC-AK-1344 — оставленное ревью строку снимает" "$(board_says 'has no reviewer')" 0
+export STUB_PULLS="$(reviewed_pull '[{"login":"rt-bot"}]' '[{"author":{"login":"rt-bot"}}]')"
+report "SC-AK-1344 — запрос ревью у самого автора ревьюером не считается" "$(board_says 'PR #703: the PR has no reviewer')" 1
+export STUB_PULLS="$(task_pull MERGEABLE)"
+report "SC-AK-1344 — ответ без списков ревьюеров не судится" "$(board_says 'has no reviewer')" 0
 export STUB_PULL_BEHIND=0
 
 # --- SC-AK-1338 — конфликтующая заявка в ветку эпика: строки о прогоне нет ------------------

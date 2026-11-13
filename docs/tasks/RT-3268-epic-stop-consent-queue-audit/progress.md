@@ -3,12 +3,14 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 3 — The end-of-epic guard reads the owner's consent
-- **Done:** the guard reads the owner's consent, 51 scenarios green; the task RT-3268 is created
-- **Next step:** catch the conflicting request #3225 up with its base, then take the branch
-  `RT-3268-epic-stop-consent-queue-audit` from this commit
+- **Stage:** 2 of 3 — The queue audit says what the rules say
+- **Done:** the guard reads the owner's consent, 51 scenarios green; the task RT-3268 is created;
+  the audit counts a lag in a summary line and names a PR without a reviewer, its scenarios green
+- **Next step:** take the branch `RT-3268-epic-stop-consent-queue-audit` from this commit once the
+  request #3225 stops conflicting on the host; then the review rounds and the closing
 - **Uncommitted:** nothing
-- **Waiting for the owner:** no
+- **Waiting for the owner:** the push of the merge `847348e40` into the branch of the request
+  #3225 — the permission classifier of the application stopped it
 - **PR:** not open yet
 
 ## Steps
@@ -17,12 +19,12 @@
 - [x] 1.2 Add the scenarios and their texts in the spec
 - [x] 1.3 Build the package and lay it out
 - [>] 1.4 Create the task and take the branch by its number
-- [ ] 2.1 Print the lag as a summary line
-- [ ] 2.2 Print the line about a PR without a reviewer
-- [ ] 2.3 Bring the table of moves, the rule and the companion to the audit
-- [ ] 2.4 Edit the scenarios of the audit and their texts in the spec
-- [ ] 2.5 Build the package and lay it out
-- [ ] 3.1 Bring the epic plan to what was done
+- [x] 2.1 Print the lag as a summary line
+- [x] 2.2 Print the line about a PR without a reviewer
+- [x] 2.3 Bring the table of moves, the rule and the companion to the audit
+- [x] 2.4 Edit the scenarios of the audit and their texts in the spec
+- [x] 2.5 Build the package and lay it out
+- [x] 3.1 Bring the epic plan to what was done
 - [ ] 3.2 Run the checks of the tree
 - [ ] 3.3 Take the folder apart into the archive
 
