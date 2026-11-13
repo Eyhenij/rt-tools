@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-push-marks.sh · 07f28b515cba · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-push-marks.sh · 1b72b89f6103 · правится надстройкой, не здесь
 # The base of the push set and the marks of a green run, shared by the push guard and by the
 # command that runs the set ahead (`git-guard-push-ahead.sh`).
 #
@@ -181,4 +181,19 @@ rt_push_mark_put() {
 # for nothing, and the package does not know how long another tree's steps take.
 rt_push_heavy_ahead() {
     [ "${RT_PUSH_HEAVY_AHEAD:-}" = 1 ]
+}
+
+# The refusal of a check that passed but took longer than the profile allows it, or nothing. The
+# limit is the tree's measurement of that step: over it, the set grew, and the push is refused so
+# that the minutes are seen at the push that added them, not weeks later by the owner.
+rt_push_over_budget() {
+    local check="$1" took="$2" limit words
+    command -v rt_push_check_budget >/dev/null 2>&1 || return 0
+    limit="$(rt_push_check_budget "$check" 2>/dev/null)"
+    case "$limit" in '' | *[!0-9]*) return 0 ;; esac
+    case "$took" in '' | *[!0-9]*) return 0 ;; esac
+    [ "$took" -gt "$limit" ] || return 0
+    words="$(command -v rt_push_over_budget_words >/dev/null 2>&1 && rt_push_over_budget_words "$check" 2>/dev/null)"
+    printf 'over the time limit: %ss against %ss measured for this step. Find what the step runs that the change does not need.%s\n' \
+        "$took" "$limit" "${words:+ $words}"
 }

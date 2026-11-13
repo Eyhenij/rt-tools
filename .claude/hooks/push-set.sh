@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/push-set.sh · abb9104e498c · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/push-set.sh · c6759d6baa8d · правится надстройкой, не здесь
 # The gate set before a push, one way for both who run it. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The session guard of the push and the git hook
 # `pre-push` source it and call its functions.
@@ -38,6 +38,7 @@ rt_push_set_profile() {
     command -v rt_push_mark_clean >/dev/null 2>&1 || rt_push_mark_clean() { return 1; }
     command -v rt_push_mark_key >/dev/null 2>&1 || rt_push_mark_key() { return 1; }
     command -v rt_push_heavy_ahead >/dev/null 2>&1 || rt_push_heavy_ahead() { return 1; }
+    command -v rt_push_over_budget >/dev/null 2>&1 || rt_push_over_budget() { return 0; }
     # The line of a run for the metrics. No file — the set runs and records nothing.
     # shellcheck disable=SC1091
     [ -f "$hooks_dir/metric-marks.sh" ] && . "$hooks_dir/metric-marks.sh" 2>/dev/null
@@ -105,6 +106,11 @@ rt_push_set_run() {
         started="$(date +%s 2>/dev/null)"
         out="$(eval "$check" 2>&1 </dev/null)"
         status=$?
+        over="$(rt_push_over_budget "$check" "$(($(date +%s 2>/dev/null) - started))")"
+        if [ "$status" -eq 0 ] && [ -n "$over" ]; then
+            status=1
+            out="$over"
+        fi
         if [ "$status" -eq 0 ]; then
             rt_push_set_passed=$((rt_push_set_passed + 1))
             rt_push_mark_put "$check" "$base" "$key_before"

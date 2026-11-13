@@ -38,6 +38,7 @@ command -v rt_push_checks >/dev/null 2>&1 || {
     exit "$not_started"
 }
 command -v rt_push_check_heavy >/dev/null 2>&1 || rt_push_check_heavy() { return 1; }
+command -v rt_push_over_budget >/dev/null 2>&1 || rt_push_over_budget() { return 0; }
 # The line of a run for the metrics. No file — the checks run and record nothing.
 # shellcheck disable=SC1091
 [ -f "$rt_hooks_dir/metric-marks.sh" ] && . "$rt_hooks_dir/metric-marks.sh" 2>/dev/null
@@ -79,6 +80,11 @@ while IFS= read -r check; do
     out="$(eval "$check" 2>&1)"
     status=$?
     took=$(($(date +%s) - started))
+    over="$(rt_push_over_budget "$check" "$took")"
+    if [ "$status" -eq 0 ] && [ -n "$over" ]; then
+        status=1
+        out="$over"
+    fi
     if [ "$status" -eq 0 ]; then
         rt_run_note "$sign" "$started" green "$check"
         rt_push_mark_put "$check" "$base" "$key_before"

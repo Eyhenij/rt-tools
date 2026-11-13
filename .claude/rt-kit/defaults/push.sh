@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · defaults/push.sh · 1a07a9c6c0c3 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · defaults/push.sh · 6c9aa8a871f4 · правится надстройкой, не здесь
 # The push set: what runs before a push, which of it is heavy, and whether the branch touched only
 # texts.
 #
@@ -98,4 +98,16 @@ rt_push_check_heavy_default() {
     esac
 
     return 1
+}
+
+# How many seconds a check of the set may take, by the tree's own measurements. Silence — no limit.
+# A check that went over its limit is red even when it passed: a set that grew silently costs every
+# push, and nobody notices the minutes until the owner does. The package measures nothing itself.
+rt_push_check_budget_default() {
+    return 0
+}
+
+# What the refusal of an over-limit check says after the numbers. Silence — the numbers alone.
+rt_push_over_budget_words_default() {
+    return 0
 }

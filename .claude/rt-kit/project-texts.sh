@@ -72,3 +72,7 @@ rt_push_check_unread() {
             ;;
     esac
 }
+
+# The time limit of each step lies next to this file: the profile is at its length limit.
+# shellcheck disable=SC1091
+. "$(dirname "${BASH_SOURCE[0]}")/project-budget.sh" 2>/dev/null || true

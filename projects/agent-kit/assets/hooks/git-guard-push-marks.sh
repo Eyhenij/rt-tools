@@ -181,3 +181,18 @@ rt_push_mark_put() {
 rt_push_heavy_ahead() {
     [ "${RT_PUSH_HEAVY_AHEAD:-}" = 1 ]
 }
+
+# The refusal of a check that passed but took longer than the profile allows it, or nothing. The
+# limit is the tree's measurement of that step: over it, the set grew, and the push is refused so
+# that the minutes are seen at the push that added them, not weeks later by the owner.
+rt_push_over_budget() {
+    local check="$1" took="$2" limit words
+    command -v rt_push_check_budget >/dev/null 2>&1 || return 0
+    limit="$(rt_push_check_budget "$check" 2>/dev/null)"
+    case "$limit" in '' | *[!0-9]*) return 0 ;; esac
+    case "$took" in '' | *[!0-9]*) return 0 ;; esac
+    [ "$took" -gt "$limit" ] || return 0
+    words="$(command -v rt_push_over_budget_words >/dev/null 2>&1 && rt_push_over_budget_words "$check" 2>/dev/null)"
+    printf 'over the time limit: %ss against %ss measured for this step. Find what the step runs that the change does not need.%s\n' \
+        "$took" "$limit" "${words:+ $words}"
+}

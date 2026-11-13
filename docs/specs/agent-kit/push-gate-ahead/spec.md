@@ -61,6 +61,9 @@ There is no interface: the guard answers with a refusal text, the run ahead with
   clean copy.**
 - **Running ahead is declared by the tree, not by the package.** The package does not know how long
   another tree's heavy steps take.
+- **A check that passed over its time limit is red.** The limit is the tree's own measurement of the
+  step; a step with no measurement has no limit. The refusal names both numbers and the words the
+  tree gives it.
 
 ## What is out of scope
 
@@ -171,3 +174,5 @@ None.
   RT-3282.
 - 2026-11-13 — a check is keyed by what it reads when the profile names its unread paths. A
   commit of texts over a tree the set had judged green ran the whole set again. Task RT-3284.
+- 2026-11-13 — a check that passed over its time limit is red. Steps the change did not need ran
+  for 25 minutes of 34, and nothing said so. Task RT-3280.

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-push-ahead.sh · 42178eb0763c · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-push-ahead.sh · 34812d302872 · правится надстройкой, не здесь
 # The push set run ahead of the push: every check of `rt_push_checks <base>`, a green mark for each
 # that passed. The push guard then reads the marks instead of running the steps again.
 #
@@ -39,6 +39,7 @@ command -v rt_push_checks >/dev/null 2>&1 || {
     exit "$not_started"
 }
 command -v rt_push_check_heavy >/dev/null 2>&1 || rt_push_check_heavy() { return 1; }
+command -v rt_push_over_budget >/dev/null 2>&1 || rt_push_over_budget() { return 0; }
 # The line of a run for the metrics. No file — the checks run and record nothing.
 # shellcheck disable=SC1091
 [ -f "$rt_hooks_dir/metric-marks.sh" ] && . "$rt_hooks_dir/metric-marks.sh" 2>/dev/null
@@ -80,6 +81,11 @@ while IFS= read -r check; do
     out="$(eval "$check" 2>&1)"
     status=$?
     took=$(($(date +%s) - started))
+    over="$(rt_push_over_budget "$check" "$took")"
+    if [ "$status" -eq 0 ] && [ -n "$over" ]; then
+        status=1
+        out="$over"
+    fi
     if [ "$status" -eq 0 ]; then
         rt_run_note "$sign" "$started" green "$check"
         rt_push_mark_put "$check" "$base" "$key_before"

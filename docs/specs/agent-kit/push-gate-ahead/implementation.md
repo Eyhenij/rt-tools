@@ -12,3 +12,4 @@ statement: a removed statement is removed together with its line.
 - **A tree that runs its heavy steps ahead gets a refusal at once for a heavy step with no mark.** — `projects/agent-kit/assets/hooks/git-guard-push-tests.sh:ahead_cmd`
 - **The run ahead runs the whole set, writes a mark for every green check and starts only on a clean copy.** — `projects/agent-kit/assets/hooks/git-guard-push-ahead.sh:key_before`
 - **Running ahead is declared by the tree, not by the package.** — `projects/agent-kit/assets/hooks/git-guard-push-marks.sh:rt_push_heavy_ahead`
+- **A check that passed over its time limit is red.** — `projects/agent-kit/assets/hooks/git-guard-push-marks.sh:rt_push_over_budget`; the limits are the profile's `rt_push_check_budget`, silent by default in `projects/agent-kit/assets/defaults/push.sh:rt_push_check_budget_default`; scenario `SC-AK-1350`

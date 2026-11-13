@@ -166,6 +166,15 @@ Then the key of the check changes
 
 Covered: `projects/agent-kit/tests/git-guard-push-marks-unread.test.sh`.
 
+### SC-AK-1350 — a check that passed over its time limit is red
+
+Given the profile gives a check a limit of 12 seconds and words for the refusal
+When the check passes in 13 seconds
+Then the set calls it red, and the refusal names 13, 12 and the words. At 12 seconds the check is
+green, and a check the profile gives no limit is green however long it took
+
+Covered: `projects/agent-kit/tests/push-over-budget.test.sh`.
+
 ### SC-AK-1166 — the push gate names every red light check by one refusal
 
 Given the gate set holds two red light checks, a green one between them and a heavy one after them

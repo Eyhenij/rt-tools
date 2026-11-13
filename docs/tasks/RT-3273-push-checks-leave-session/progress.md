@@ -3,18 +3,18 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 2 — Only the steps a change needs
-- **Done:** the plan is rewritten by the owner's word
-- **Next step:** bring the three step selection fixes from the branch of RT-3280
-- **Uncommitted:** the time limit of a set step — step 1.2 of this plan
+- **Stage:** 2 of 2 — One set within its limit
+- **Done:** the builder base, the step selection and the narrowed scenario run are on this branch; the time limit is committed
+- **Next step:** run the set on this branch and read every step and its seconds
+- **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Bring the base of the builder steps, the step selection by subject and the narrowed scenario run onto this branch
-- [ ] 1.2 Commit the time limit of a set step with its scenarios
-- [ ] 2.1 Run the set on this branch and read every step and its seconds
+- [x] 1.1 Bring the base of the builder steps, the step selection by subject and the narrowed scenario run onto this branch
+- [x] 1.2 Commit the time limit of a set step with its scenarios
+- [>] 2.1 Run the set on this branch and read every step and its seconds
 
 ## Decisions along the way
 

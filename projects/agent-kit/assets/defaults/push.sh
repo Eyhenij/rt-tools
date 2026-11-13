@@ -98,3 +98,15 @@ rt_push_check_heavy_default() {
 
     return 1
 }
+
+# How many seconds a check of the set may take, by the tree's own measurements. Silence — no limit.
+# A check that went over its limit is red even when it passed: a set that grew silently costs every
+# push, and nobody notices the minutes until the owner does. The package measures nothing itself.
+rt_push_check_budget_default() {
+    return 0
+}
+
+# What the refusal of an over-limit check says after the numbers. Silence — the numbers alone.
+rt_push_over_budget_words_default() {
+    return 0
+}
