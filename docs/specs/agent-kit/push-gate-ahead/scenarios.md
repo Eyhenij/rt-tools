@@ -196,6 +196,41 @@ change of the harness, the runner, the selection or a check runs every file
 
 Covered: `projects/agent-kit/tests/select-suites.test.sh`.
 
+### SC-AK-1353 — a step runs only when the change reaches what it reads
+
+Given a step whose record says it walks `docs/` and reads the `.md` files there
+When a change edits a `.md` file there, adds or renames a file there, or edits the step itself
+Then the step runs
+
+Given the same step
+When a change edits a `.ts` file in `docs/` or a file outside it
+Then the step does not run, and the set says why for every step
+
+Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
+
+### SC-AK-1354 — a step whose reads are not seen runs on every change
+
+Given a step that reads the history of the tree, or a step the table does not hold
+When any change is pushed
+Then the step runs
+
+Given there is no table, or the push names no base
+When the set is chosen
+Then every step runs
+
+Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
+
+### SC-AK-1355 — the table of reads is checked against what the steps read now
+
+Given a table recorded from the steps
+When no step and not the table is touched
+Then the table check does not run
+
+When a step now reads a path the table does not cover
+Then the table check is red and names the step and the path
+
+Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
+
 ### SC-AK-1166 — the push gate names every red light check by one refusal
 
 Given the gate set holds two red light checks, a green one between them and a heavy one after them

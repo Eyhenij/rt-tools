@@ -40,6 +40,7 @@ rt_push_set_profile() {
     command -v rt_push_over_budget >/dev/null 2>&1 || rt_push_over_budget() { return 0; }
     command -v rt_push_set_over_budget >/dev/null 2>&1 || rt_push_set_over_budget() { return 0; }
     command -v rt_push_mark_drop >/dev/null 2>&1 || rt_push_mark_drop() { return 0; }
+    command -v rt_push_select >/dev/null 2>&1 || rt_push_select() { cat; }
     # The line of a run for the metrics. No file — the set runs and records nothing.
     # shellcheck disable=SC1091
     [ -f "$hooks_dir/metric-marks.sh" ] && . "$hooks_dir/metric-marks.sh" 2>/dev/null
@@ -135,7 +136,7 @@ rt_push_set_run() {
 }── ${check}
 $(printf '%s' "$out" | tail -n 25)"
     done <<EOF
-$(rt_push_checks "$base")
+$(rt_push_checks "$base" | rt_push_select "$base")
 EOF
     set_took=$(($(date +%s 2>/dev/null) - set_started))
     set_over="$(rt_push_set_over_budget "$set_took")"

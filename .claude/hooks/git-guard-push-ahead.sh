@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-push-ahead.sh · c830cf9111b6 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-push-ahead.sh · fe59ae3d8abe · правится надстройкой, не здесь
 # The push set run ahead of the push: every check of `rt_push_checks <base>`, a green mark for each
 # that passed. The push guard then reads the marks instead of running the steps again.
 #
@@ -42,6 +42,7 @@ command -v rt_push_check_heavy >/dev/null 2>&1 || rt_push_check_heavy() { return
 command -v rt_push_over_budget >/dev/null 2>&1 || rt_push_over_budget() { return 0; }
 command -v rt_push_set_over_budget >/dev/null 2>&1 || rt_push_set_over_budget() { return 0; }
 command -v rt_push_mark_drop >/dev/null 2>&1 || rt_push_mark_drop() { return 0; }
+command -v rt_push_select >/dev/null 2>&1 || rt_push_select() { cat; }
 # The line of a run for the metrics. No file — the checks run and record nothing.
 # shellcheck disable=SC1091
 [ -f "$rt_hooks_dir/metric-marks.sh" ] && . "$rt_hooks_dir/metric-marks.sh" 2>/dev/null
@@ -106,7 +107,7 @@ while IFS= read -r check; do
         printf '✗ red in %ss: %s\n%s\n' "$took" "$check" "$(printf '%s' "$out" | tail -n 25)"
     fi
 done <<EOF
-$(rt_push_checks "$base")
+$(rt_push_checks "$base" | rt_push_select "$base")
 EOF
 
 set_took=$(($(date +%s) - set_started))

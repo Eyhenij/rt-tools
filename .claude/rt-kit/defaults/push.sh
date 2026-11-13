@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · defaults/push.sh · 495f8ed4ab8c · правится надстройкой, не здесь
+# rt-kit v0.37.0 · defaults/push.sh · d85b9d586807 · правится надстройкой, не здесь
 # The push set: what runs before a push, which of it is heavy, and whether the branch touched only
 # texts.
 #
@@ -84,6 +84,11 @@ rt_push_checks_default() {
         check-hook-scope check-push-gate; do
         [ -f "$root/$RT_CHECKS_DIR/$check.mjs" ] && printf '%s\n' "node $RT_CHECKS_DIR/$check.mjs"
     done
+
+    # The table of what each step reads against what the steps read now. The selection starts it
+    # only when a step or the table itself is touched: a step's reads change with its code.
+    [ -f "$root/$RT_CHECKS_DIR/push-inputs.mjs" ] && [ -f "$root/.claude/rt-kit/push-inputs.json" ] &&
+        printf '%s\n' "node $RT_CHECKS_DIR/push-inputs.mjs verify"
 
     return 0
 }

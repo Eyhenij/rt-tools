@@ -73,6 +73,18 @@ There is no interface: the guard answers with a refusal text, the run ahead with
 - **A change of hooks, defaults and scenario files runs only the scenario files that reach it.** A
   file reaches a hook by naming it or a hook that sources it, and the defaults by naming them or a
   hook that loads them. A change of the harness, the runner or any other package path runs all.
+- **A step runs only when the change reaches what the step reads.** What a step reads is a record
+  of its own calls: the files whose content it opens, the paths whose existence it probes, the
+  directories it walks. An edit reaches a step through a file it read or a file of a kind it read
+  in a directory it walked; an added, removed or renamed file — through a directory it walked or a
+  path it probed; an edit of the step's own files reaches it always. The record is taken on a tree
+  where the set is green: a red check stops early and leaves part of its reads unrecorded.
+- **A step whose reads the record cannot see runs on every change.** That is a step that reads the
+  history of the tree, a step that starts a process other than `node` and `git`, and a step the
+  table does not hold. With no table or no base every step runs.
+- **The table of reads is checked against what the steps read now.** A read the table does not
+  cover is a refusal naming the step and the path. The check runs when a step or the table is
+  touched.
 
 ## What is out of scope
 
@@ -186,3 +198,6 @@ None.
 - 2026-11-13 — a check that passed over its time limit is red. Steps the change did not need ran
   for 25 minutes of 34, and nothing said so. Task RT-3280.
 - 2026-11-13 — a push whose whole set ran over its time limit is red. Task RT-3273.
+- 2026-11-13 — a step runs only when the change reaches what the step reads, by a record of its
+  own calls. The light checks ran on every change, the kit ones on a branch without a kit file.
+  Task RT-3273.

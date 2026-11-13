@@ -41,6 +41,7 @@ command -v rt_push_check_heavy >/dev/null 2>&1 || rt_push_check_heavy() { return
 command -v rt_push_over_budget >/dev/null 2>&1 || rt_push_over_budget() { return 0; }
 command -v rt_push_set_over_budget >/dev/null 2>&1 || rt_push_set_over_budget() { return 0; }
 command -v rt_push_mark_drop >/dev/null 2>&1 || rt_push_mark_drop() { return 0; }
+command -v rt_push_select >/dev/null 2>&1 || rt_push_select() { cat; }
 # The line of a run for the metrics. No file — the checks run and record nothing.
 # shellcheck disable=SC1091
 [ -f "$rt_hooks_dir/metric-marks.sh" ] && . "$rt_hooks_dir/metric-marks.sh" 2>/dev/null
@@ -105,7 +106,7 @@ while IFS= read -r check; do
         printf '✗ red in %ss: %s\n%s\n' "$took" "$check" "$(printf '%s' "$out" | tail -n 25)"
     fi
 done <<EOF
-$(rt_push_checks "$base")
+$(rt_push_checks "$base" | rt_push_select "$base")
 EOF
 
 set_took=$(($(date +%s) - set_started))

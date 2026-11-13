@@ -185,6 +185,23 @@ rt_push_mark_drop() {
     return 0
 }
 
+# The steps of the set on stdin, the ones the change reaches on stdout, a line per step with its
+# reason to stderr. What a step reads is taken from the table `push-inputs.mjs record` wrote from
+# the step's own calls; a step absent from the table runs. No program, no table or a failure of the
+# program — every step goes through, as before.
+rt_push_select() {
+    local steps root program chosen
+    steps="$(cat)"
+    root="${CLAUDE_PROJECT_DIR:-.}"
+    program="$root/${RT_CHECKS_DIR:-tools}/push-inputs.mjs"
+    if [ -n "$1" ] && [ -f "$program" ] && [ -f "$root/.claude/rt-kit/push-inputs.json" ] &&
+        chosen="$(printf '%s\n' "$steps" | (cd "$root" && node "$program" select "$1"))"; then
+        printf '%s\n' "$chosen"
+        return 0
+    fi
+    printf '%s\n' "$steps"
+}
+
 # The tree runs its heavy steps ahead and the guard only reads their marks. Declared by the
 # profile: in a tree whose heavy steps fit the hook limit a refusal for a missing mark is a new step
 # for nothing, and the package does not know how long another tree's steps take.

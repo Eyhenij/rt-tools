@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/push-set.sh · 3480f58e869b · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/push-set.sh · 7c074df7d68b · правится надстройкой, не здесь
 # The gate set before a push, one way for both who run it. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The session guard of the push and the git hook
 # `pre-push` source it and call its functions.
@@ -41,6 +41,7 @@ rt_push_set_profile() {
     command -v rt_push_over_budget >/dev/null 2>&1 || rt_push_over_budget() { return 0; }
     command -v rt_push_set_over_budget >/dev/null 2>&1 || rt_push_set_over_budget() { return 0; }
     command -v rt_push_mark_drop >/dev/null 2>&1 || rt_push_mark_drop() { return 0; }
+    command -v rt_push_select >/dev/null 2>&1 || rt_push_select() { cat; }
     # The line of a run for the metrics. No file — the set runs and records nothing.
     # shellcheck disable=SC1091
     [ -f "$hooks_dir/metric-marks.sh" ] && . "$hooks_dir/metric-marks.sh" 2>/dev/null
@@ -136,7 +137,7 @@ rt_push_set_run() {
 }── ${check}
 $(printf '%s' "$out" | tail -n 25)"
     done <<EOF
-$(rt_push_checks "$base")
+$(rt_push_checks "$base" | rt_push_select "$base")
 EOF
     set_took=$(($(date +%s 2>/dev/null) - set_started))
     set_over="$(rt_push_set_over_budget "$set_took")"
