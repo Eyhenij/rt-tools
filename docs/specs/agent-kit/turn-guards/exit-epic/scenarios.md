@@ -56,3 +56,13 @@ Then the turn is released whatever tier it reached: an empty turn, a second pass
 hand and words about waiting for the word of the owner all pass
 
 Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
+
+### SC-AK-1272 — a role without an edit tool ends its turn with its report
+
+Given a session runs as a role without an edit tool, the table of the epic names unfinished tasks,
+and the turn holds only reading and a report
+When the guard of the exits judges the end of the turn, on the first pass or on the second
+Then the turn is released; a role with an edit tool, a role with `tools: *` or no `tools:` line in
+the header, a role with no file in the tree and a session with no role are refused as before
+
+Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
