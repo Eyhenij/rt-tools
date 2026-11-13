@@ -4,7 +4,7 @@ kind: rule
 law: <law>
 description: Rule under the law "<Law title>". Load when <when> — <by which technique it is done>. Ready-made code — in patterns <names>.
 ---
-<!-- rt-kit v0.37.0 · templates/rule.md · 8a59601860bf · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · templates/rule.md · 751b879c9664 · правится надстройкой, не здесь -->
 
 # <What the law is about> — by which technique
 
@@ -45,8 +45,8 @@ current, and the first to notice is whoever followed the graph.
 ## How the law applies here
 
 Every item starts with a bold article, and every article has a line in `implementation.md` next
-to it. A statement that found no place in the code is not put here: it goes as prose into the
-"Pitfalls" or as an article into the law.
+to it. A statement that found no place in the code keeps its article and gets a verdict line
+naming who holds it; a statement nobody holds goes as a question to the law.
 
 - **<The article in one sentence.>** <What breaks otherwise — at most two sentences.>
 

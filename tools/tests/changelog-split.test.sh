@@ -53,7 +53,7 @@ report "SC-AK-680 — журнал, переросший предел после
 report "SC-AK-680 — свежая часть укладывается в предел" \
     "$([ "$(lines_of "$WORK/$JOURNAL")" -le 500 ] && echo yes || echo no)" yes
 
-# The commit hook formats the staged files: what the split wrote must not change under it.
+# The split writes its files formatted: a formatter run over them must change nothing.
 checked=0
 changed=0
 for file in "$WORK"/projects/probe/CHANGELOG*.md; do

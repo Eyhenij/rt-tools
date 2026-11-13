@@ -71,9 +71,9 @@ flowchart TD
 
 ## What of the law is not here
 
-Nobody checks that the declared versions match the snapshot: `--frozen-lockfile` stands only in the
-rollout, and it goes from a push to the main branch, that is, after the merge. Ranges are not
-checked either: one `^` in `package.json` passes every check of the tree.
+Nobody checks before the push that the declared versions match the snapshot: `--frozen-lockfile`
+stands in the pipeline or in the rollout, and both come after the push. Ranges are not checked
+either: one `^` in `package.json` passes every check of the tree.
 
 ## Patterns
 

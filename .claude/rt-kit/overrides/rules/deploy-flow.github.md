@@ -24,9 +24,9 @@ GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh run list \
 git rev-list --count <sha of the rollout>..origin/main
 ```
 
-From here comes the boundary of the work queue audit too. It asks the last run of the main
-branch, and a run of the main branch says nothing about production: a merge does not move it. The
-divergence of 476 commits was exactly what the audit stayed silent about.
+The work queue audit counts the same lag: it reads the last successful rollout and prints a line
+when production lags the main branch. A run of the main branch says nothing about production, and
+an audit that read it once stayed silent over a divergence of 476 commits.
 
 The state of production is invisible to a machine in the rest as well: whether production answers
 with the build it rolled out nobody asks. This is held by whoever rolled it out.

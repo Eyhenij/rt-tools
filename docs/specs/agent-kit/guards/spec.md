@@ -78,7 +78,7 @@ the work.
 - **The state report lists the profile functions the laid-out hooks expect, and those of them that are
   not defined.** Otherwise what is missing is visible only to whoever is editing a file at that minute.
 - **A session begun from a handover edits no files while the rule of conducting work is not loaded.**
-  The handover lies outside the tree and is read by no check; it is read as an assignment and the work
+  The handover is read by no check; it is read as an assignment and the work
   is taken up past the rule.
 - **The handover is recognised both by the path to it and by a word about it.** It is given as text no
   less often than as a path.

@@ -4,12 +4,14 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the epic as the unit of delivery. Load when an epic is declared, its branch is taken, its next task is chosen and its request into the main branch opens. Pattern epic-flow-declare. One task — task-flow.
 ---
-<!-- rt-kit v0.37.0 · rules/epic-flow.md · 090605032264 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/epic-flow.md · a419c9189ce4 · правится надстройкой, не здесь -->
 
 # Epics — how it works here
 
-Rule under the law `docs/constitution/work-conduct.md`. The law says that the main branch takes the
-whole or does not take it; here — how a series of tasks is held together as one epic. The course of
+Rule under the law `docs/constitution/work-conduct.md`. The law says that a series of tasks is
+declared an epic before the first of them and keeps the order assigned at planning; the law
+`docs/constitution/delivery.md` adds that the main branch takes the epic whole. Here — how a series
+of tasks is held together as one epic. The course of
 one task is rule `task-flow`, the end of a turn is `turn-conduct`, both under the same law.
 
 **Requires:** `hooks/tree-assignment-guard.sh`, `checks/tree-assignment.mjs`
@@ -18,7 +20,7 @@ one task is rule `task-flow`, the end of a turn is `turn-conduct`, both under th
 
 | In the law | Here |
 | --- | --- |
-| an epic — the unit of delivery | a card in the work queue with the epic label, a branch of its own from the main branch and a plan next to it. The plan holds the opportunity, the tasks and their order |
+| an epic — the unit of delivery | a card in the work queue with the epic label, a branch of its own from the main branch and a plan next to it. The plan holds the capability, the tasks and their order |
 | the epic branch | `<КЛЮЧ>-<номер эпика>-<короткий-slug>`; the branches of its tasks are taken from it, and their PRs go into it |
 | the epic plan | a record outside the task folder: the folder dies with the merge, the epic outlives it; the directory — in the rule's companion |
 | who leads which epic | the table of assignments: a row for each working copy, written by the owner |

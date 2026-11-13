@@ -158,6 +158,11 @@ report "SC-AK-1139 — назван эпик ветки" "$(et_says 'Эпик «
 report "SC-AK-1139 — отказа об объявлении нет" "$(et_says 'не объявляет эпика')" 0
 git -C "$ET_TREE" checkout -q RT-902-probe 2>/dev/null
 
+# --- SC-AK-1341 — план, открытый разделом черновика, даёт абзац -----------------------------
+sed -i.bak 's/^## Зачем$/## Что даёт/' "$ET_TREE/docs/plans/probe.md" && rm -f "$ET_TREE/docs/plans/probe.md.bak"
+report "SC-AK-1341 — раздел черновика на месте" "$(grep -c '^## Что даёт$' "$ET_TREE/docs/plans/probe.md")" 1
+report "SC-AK-1341 — первая фраза в абзаце" "$(et_says 'Первая фраза замысла\.')" 1
+
 rm -rf "$ET_TREE"
 
 suite_result "проверки: таблица задач эпика"

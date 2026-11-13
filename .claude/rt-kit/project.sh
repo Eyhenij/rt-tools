@@ -202,6 +202,7 @@ node tools/check-boolean-inputs.mjs
 node tools/check-tokens-styles.mjs
 node tools/check-cascade-layer.mjs
 node tools/check-format-ignore.mjs
+node tools/check-dependencies.mjs
 node tools/check-publish-lockfile.mjs
 node tools/check-package-imports.mjs
 node tools/check-kit-approval.mjs
@@ -322,7 +323,8 @@ rt_push_touched() {
             # The check of the auth stand is the script of a heavy step and goes before the rest of
             # the checks.
             tools/auth-stand-check.mjs) _add auth ;;
-            docs/*|*.md|.claude/*|projects/agent-kit/*|tools/*) ;;
+            # A code graph is data the session reads; above the subjects, as it lies inside a project.
+            docs/*|*.md|.claude/*|projects/agent-kit/*|tools/*|graphify-out/*|*/graphify-out/*) ;;
             # The kits — each with a showcase of its own.
             projects/ui-kit/*) _add kit1 ;;
             projects/ui-kit-v2/*) _add kit2 ;;

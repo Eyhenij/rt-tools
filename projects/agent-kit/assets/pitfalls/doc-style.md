@@ -12,8 +12,8 @@ The rule is `doc-style`; the articles that hold the law stand there.
   matches, and the executor names the difference — one line: "did it not the way you said, here
   is how and why". Silence holds exactly until the request has to be repeated, and the price is
   trust in the whole report.
-- **Remaining work is not written into a document; it is filed as a task.** `docs/BACKLOG.md`
-  keeps only what never becomes a task: agreements and decisions that were decided not to change.
+- **Remaining work is not written into a document; it is filed as a task.** A backlog file, where
+  the tree keeps one, holds only what never becomes a task: agreements and decisions that were decided not to change.
   The test — the statement stays if nobody intends to change it. "Do later" in a plan, a README or
   a spec is a second work list: it drifts from the board silently, and sorting it out later costs
   more than filing a task right away. Of a 1411-line document, 71 lines turned out to be current,
@@ -34,7 +34,7 @@ The rule is `doc-style`; the articles that hold the law stand there.
   written here" table is purged by grep over the whole tree, not by proofreading. The form is set precisely: "spec" — the
   document — also inflects into the other forms, and legitimate matches by the stem outnumber the
   violations; the search is for phrases ("no spec for …", "the spec checks"), not the stem.
-- **A dropped name is purged by one grep over the whole tree:** rules, their mirrors in skills,
+- **A dropped name is purged by one grep over the whole tree:** rules, their companions,
   documents and comments. A description of what the code no longer has reads as a current
   instruction.
 - **A dropped word's second meaning is restored after the blanket replacement, not worked around

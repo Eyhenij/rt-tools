@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · docs/GLOSSARY.md · dad30a8da01f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · docs/GLOSSARY.md · ce8b15b28cd1 · правится надстройкой, не здесь -->
 # Project glossary
 
 Words that mean something definite in this tree. Read before writing a spec, a rule, a comment,
@@ -50,7 +50,7 @@ sections through the override; they merge here by heading, and a package edit do
 - **Task footprint** — a section of the plan: which specs, laws, rules and parts of the code the work touches
 - **Session** — one sitting of work on a task. Work lives longer than a session, and between sessions its state is held by the progress
 - **Window fill** — the share of the session's room already taken: the input, the cache write, the cache read and the last reply's output, divided by the window size. Not "spend" and not "budget": it is about room, not cost
-- **Handover** — the text that closes a session: working tree, branch, task, where the progress lies, what is done, the next step, what was special about the session. Placed outside the tree and not committed
+- **Handover** — the text that closes a session: working tree, branch, task, where the progress lies, what is done, the next step, what was special about the session. Written as a section of the progress and travels with the branch; without a task folder, and from the session-closing command, it is a file outside the tree
 - **Epic** — a series of tasks on one theme in an assigned order, wider than one branch. Lives in two places: a card with the epic label and a plan next to it. Not called a work line
 - **Archive** — records of what has happened: what explains a closed decision. Not edited after the rollout
 - **Mission** — what a product exists for and what changes for whom. A session only proposes a wording; the owner's approval sets it. It names no features. A milestone that serves no mission is a finding

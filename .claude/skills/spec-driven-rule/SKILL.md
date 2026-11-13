@@ -4,7 +4,7 @@ kind: pattern
 rule: spec-driven
 description: Pattern of rule spec-driven. Load when creating or editing a law in docs/constitution, a rule or a pattern in .claude/skills — ready-made headers, the section set of each layer, the binding table, the sign that a rule is due for splitting. Not for a domain spec — that is pattern spec-driven-domain.
 ---
-<!-- rt-kit v0.37.0 · patterns/spec-driven-rule.md · 6e1e66791401 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/spec-driven-rule.md · dfd89877bd66 · правится надстройкой, не здесь -->
 
 # Law, rule and pattern
 
@@ -27,42 +27,39 @@ The layer is chosen by one question: does the article stay true in an applicatio
 payments, no translation locales and no second owning entity. It stays — the law lives in the
 root; it does not — this is an application law, and it goes to
 `docs/constitution/application/<law>.md`. A law name is one for both layers: neither `law:` in
-the rule header nor `**Законы:**` in the spec header names the layer, and two laws with one name
+the rule header nor `**Laws:**` in the spec header names the layer, and two laws with one name
 would part a rule from its law.
 
-Sections: `## Зачем` (without a heading, as the intro paragraph) · `## Articles` ·
-`## Open questions`. Only "Articles" is mandatory — that is what the check audits. "Open
-questions" is created when there is a question and erased with the last one closed: a closed
-question is removed from the law, not turned into an empty section.
+Sections: the intro paragraph without a heading · `## Articles` · `## Open questions`. Only
+"Articles" is mandatory — that is what the check audits.
 
 There is no date in a law either: one law out of seventeen had one, the rest never did, and read
 as an expiry it ages a correct text nobody touched, because there was nothing to touch. A law
 holds neither a history of edits nor arguments for why something was once chosen so. History is
 held by version control, and an argument with a rejected alternative is a trait of the work, not
-of the product: its place is the "Pitfalls" of the rule under this law, where file paths are
-allowed too. A statement that cannot be written as "always true" does not become an article at
+of the product: its place is the cold part `pitfalls.md` of the rule under this law, where file
+paths are allowed too. A statement that cannot be written as "always true" does not become an article at
 all.
 
 ```markdown
-# The delivery law
+# The law on an example
 
-How an edit reaches the running application. …
+What this law is about, in one paragraph. …
 
 ## Articles
 
-- **The image of the commit being rolled out is what gets rolled out.** The default "latest"
-  falls behind the main branch, and the application silently returns to the previous version
-  while it keeps answering.
+- **A statement that is always true.** What goes wrong without it, in one or two sentences.
 ```
 
 The `## Open questions` section is created when there is a question and erased with the last
-one closed. A question is named `Q-<law letter>-<number>`, says what the decision would change
-and carries its creation date; the number is not reused after closing.
+one closed: a closed question is removed from the law, not turned into an empty section. A
+question is named `Q-<law letters>-<number>` and says what the decision would change; the number
+is not reused after closing.
 
 Code behaviour is not a law: "the store answers with a boolean", "the method is called `save`" —
 neither a guest nor the owner sees this. The boundary is simple: a law describes what is visible
 from outside the application. The exception is an article about code structure that the machine
-audits: anchors are read only under `docs/specs/` and `docs/constitution/`.
+audits: anchors are read from the `implementation.md` of a spec and of a rule, never from a law.
 
 ## Rule
 
@@ -95,7 +92,8 @@ and prints both as unanswered — in its output such lines cannot be told from a
 requirement is declared by a resource identifier or not declared at all.
 
 Sections: `## What it is called here` · `## Where it lives` · `## Flow` ·
-`## How the law applies here` · `## What of the law is not here` · `## Patterns` · `## Pitfalls`.
+`## How the law applies here` · `## What of the law is not here` · `## Patterns`; pitfalls go to
+the cold part `pitfalls.md` next to the rule, named in its header.
 
 Only `## How the law applies here` is audited: each of its items starts with a bold phrase,
 and each bold phrase has a line in `implementation.md` next to it.
@@ -106,8 +104,8 @@ and each bold phrase has a line in `implementation.md` next to it.
 | Images are rolled out by commit sha, not by the "latest" tag. | `docker-compose.prod.yml:IMAGE_TAG` |
 ```
 
-A statement that found no place in code is not put into this section: it goes as prose to
-"Pitfalls" or as a question `Q-<law letter>-<number>` to the law.
+A statement that found no place in code keeps its article and gets a verdict line naming who
+holds it; a statement nobody holds goes as a question `Q-<law letters>-<number>` to the law.
 
 ## Pattern
 
@@ -240,7 +238,8 @@ reference — it changes how a story is written.
 - The statement was reworded and the binding line was not touched: the link goes by text, and
   the check stops finding it.
 - An empty binding is refused by the spec audit, and its verdict must be verbatim: accepted are
-  `Не исполняется`, `Не применимо`, `Не проверяется`. A phrase in one's own words — "held by
+  `Not carried out`, `Not applicable`, `Not checked`; the Russian forms of the same three are
+  accepted as a legacy. A phrase in one's own words — "held by
   text", "checked by eye" — does not count as a verdict, and this is learned from the audit's
   refusal.
 - A binding line was appended to the end of the companion instead of inserted into the table.

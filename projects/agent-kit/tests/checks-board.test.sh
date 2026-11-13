@@ -283,7 +283,9 @@ conflicting_json() {
 }
 export STUB_PULLS="$(conflicting_json CONFLICTING)"
 report "SC-AK-425 — конфликтующая заявка названа расхождением" "$(board_code)" 1
-report "SC-AK-425 — сказано, с чем конфликт" "$(board_says 'it conflicts with the main branch')" 1
+report "SC-AK-425 — сказано, с чем конфликт" "$(board_says 'it conflicts with its base')" 1
+export STUB_PULLS="$(printf '[{"number":701,"title":"[RT-700] Правка","headRefName":"RT-700-probe","headRefOid":"%s","baseRefName":"RT-690-epic","isDraft":false,"body":"Closes #700","mergeable":"CONFLICTING"}]' "$HEAD_SHA")"
+report "SC-AK-425 — база названа по имени: у задачи это ветка эпика" "$(board_says 'conflicts with its base «RT-690-epic»')" 1
 
 # SC-AK-426 — «ещё не посчитано» конфликтом не считается: хостинг считает сливаемость заново
 # после каждой правки главной ветки, и строка краснела бы на каждой свежей вершине.
@@ -306,7 +308,6 @@ report "SC-AK-671 — совета перезакрыть заявку при к
 export STUB_PULLS="$(conflicting_json MERGEABLE)"
 report "SC-AK-672 — у сливаемой заявки строка о событии прежняя" \
     "$(board_says 'the pipeline received no event')" 1
-
 # SC-AK-845 — у заявки с базой не из главной ветки прогона нет вовсе: рабочий поток слушает
 # заявки в главную ветку и событий с другой базой не видит. Это порядок сдачи, а не расхождение —
 # так сдаётся каждая задача эпика, — и аудит о такой заявке молчит.
@@ -444,7 +445,9 @@ export STUB_VERDICT=success
 export STUB_HEAD_DATE="$(minutes_ago 60)"
 export STUB_PULL_BEHIND=4
 report "SC-AK-752 — отставание названо числом" "$(board_says 'lags «main» by 4 commits')" 1
-report "SC-AK-752 — расхождением это считается" "$(board_code)" 1
+report "SC-AK-752 — расхождением это не считается" "$(board_code)" 0
+report "SC-AK-752 — вливать базу строка не велит" "$(board_says 'Merge «main» in')" 0
+report "SC-AK-752 — сказано, что делать нечего" "$(board_says 'nothing to do, the host merges such a branch itself')" 1
 export STUB_PULL_BEHIND=0
 report "SC-AK-752 — ветка вровень с главной молчит" "$(board_says 'lags «main»')" 0
 # Сравнить нечем — молчание: сверка без доступа отбивала бы работу вместо промаха.

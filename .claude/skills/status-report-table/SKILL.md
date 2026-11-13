@@ -4,7 +4,7 @@ kind: pattern
 rule: status-report
 description: Pattern of rule status-report. Load when answering the owner where the work stands. Ready-made calls for every cell: the branch and its commits, the PR state, the pipeline run checked against the head, the task on the board, the task order from the epic plan. A filled-in sample table is attached.
 ---
-<!-- rt-kit v0.37.0 · patterns/status-report-table.github.md · 7d2c7290a4e0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/status-report-table.github.md · 8ff2c3c1a98e · правится надстройкой, не здесь -->
 
 # What the state is asked with and how it lands in the table
 
@@ -43,7 +43,7 @@ The order of the epic's tasks is taken from its plan, not from the board: it is 
 and the task numbers on the board do not run in sequence.
 
 ```bash
-sed -n '/## Порядок задач/,/^## /p' <epic plan>
+<the command of the tree> <epic number>   # every row of the plan's task table, in its order
 ```
 
 The state of the PR — whether it is a draft, whether it merges with main, how many files:

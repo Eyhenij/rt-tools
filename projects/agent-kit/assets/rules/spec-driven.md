@@ -48,11 +48,11 @@ such a skill is created — skill `write-a-skill`.
 | In the law                        | Here                                                                                                 |
 | --------------------------------- | ---------------------------------------------------------------------------------------------------- |
 | set of sections                   | `REQUIRED_HEADINGS` for a spec, "Articles" for a law                                                 |
-| a statement of a document         | an item of `## Правила` in a spec, `## Статьи` in a law, `## Как закон применяется здесь` in a rule |
+| a statement of a document         | an item of `## Rules` in a spec, `## Articles` in a law, `## How the law applies here` in a rule |
 | the place where it is carried out | a line in `implementation.md` next to it: `` `file:symbol` ``                                       |
 | promised behaviour                | scenario `SC-<PREFIX>-<NUMBER>` in `docs/specs/<domain>/scenarios.md`                                |
-| open question                     | `Q-<law letter>-<number>` in the law's "Open questions" section; tasks and commits refer to it, and the number is not reused after closing |
-| laws a domain applies             | the `**Законы:**` line in the spec header, names in quotes                                           |
+| open question                     | `Q-<law letters>-<number>` in a law's "Open questions", `Q-<number>` in a spec's; tasks and commits refer to it, and the number is not reused after closing |
+| laws a domain applies             | the `**Laws:**` line in the spec header, names in backticks; `**Законы:**` is the former form        |
 
 ## Where it lives
 
@@ -62,8 +62,8 @@ tree that keeps its code differently.
 
 ## Flow
 
-The flow of creating a text: which layer is written, how a statement is bound to code and what
-happens to a scenario after the rollout.
+The flow of creating a text: which layer is written, how a statement is bound to code and how a
+scenario keeps its number.
 
 ```mermaid
 flowchart TD
@@ -75,7 +75,7 @@ flowchart TD
     D --> G{The statement has a place in code}
     F --> G
     G -->|Yes| H[A binding line is placed; the link is checked both ways]
-    G -->|No| I[It is an intention: goes to open questions, not to rules]
+    G -->|No| I[A rule article: a verdict line, held by nobody — a law question; a spec rule: the spec's open questions]
     H --> J{A scenario is created}
     J -->|Yes| K[The number is issued new and never reused; the test title is edited by the same change]
     J -->|No| L[Done]
@@ -100,10 +100,10 @@ flowchart TD
   itself, and by that call a live symbol cannot be told from a forgotten one. The exception is a
   symbol declared in the suite harness itself or published outward by a package — there the caller
   is the test or the consumer by the very purpose of the file.
-- **A verdict is put by substance, not by the form of the address.** To the check these two look
-  alike, and to the reader of the companion
-  they do not: the first says "nothing here holds the requirement", the second "it holds, but there
-  is nothing to write it with". The second verdict names the form itself as the reason and lives
+- **A verdict is put by substance, not by the form of the address.** To the check two reasons for
+  a verdict look alike, and to the reader of the companion they do not: the first says "nothing
+  here holds the requirement", the second "it holds, but there is nothing to write it with". The
+  second verdict names the form itself as the reason and lives
   until the form is fixed; the article under it stays carried out and is not removed.
 - **A "not carried out" binding moves together with its article.** Otherwise the companion line
   keeps in the hot part an article with nothing behind it: removed alone, it leaves the binding
@@ -133,7 +133,7 @@ flowchart TD
 - **A law has a mandatory "Articles" section, and beyond it holds only open questions.** A law
   carries no history of edits and no arguments for an option chosen once: version control holds the
   history, and an argument with a rejected alternative is a trait of the work, and its place is the
-  rule's "Pitfalls". A closed question leaves the law, and an empty section kept for its heading
+  rule's cold part, `pitfalls.md`. A closed question leaves the law, and an empty section kept for its heading
   passed the check anyway.
 - **A proposed law requires no rule.** An agreement written down before the code has nothing to bind
   to, and demanding a rule would force creating one with anchors into places that do not exist. The
@@ -151,7 +151,7 @@ flowchart TD
 - **A rule declares the law it is written under.** A rule without a law is a set of techniques that
   does not show what exactly must be true.
 - **There are two layers of laws, and a law name is one for both.** The shared one lies in the
-  constitution root, an application law in `application/`; neither `law:` nor `**Законы:**` names
+  constitution root, an application law in `application/`; neither `law:` nor `**Laws:**` names
   the layer, so law names are unique across the whole constitution tree.
 - **A divergence between a rule and its companion is resolved in favour of the rule.** The companion
   names the tree's names and the bindings of the articles; it does not cancel them: read above the
@@ -208,8 +208,8 @@ flowchart TD
 - **A decision from a spec goes to the layer, not to the archive.** What a spec is checked against
   the machine knows; where an accepted decision goes it does not know and will not: only whoever
   asks "will this still be true tomorrow" can tell a current requirement from an account of what
-  happened. This is held by the closed-work review step and the selection sign written there in
-  advance.
+  happened. Where the pattern `task-flow-archive` is laid out, its step holds this, with the
+  selection sign written there in advance.
 - **A name in an anchor is written as declared in code.** A private class field stands with a hash,
   and the name written without it names the wrong symbol: the check stays green, and the reader
   cannot tell from the binding line whether this is the private method or the ordinary one next to
@@ -239,7 +239,7 @@ flowchart TD
 ## The shape of a compressed article
 
 A rule loads whole into a session and pays for it every session, whatever the session works on. A
-measurement names where the weight is: 289 440 characters in twenty-nine loaded rules, the articles
+one-off measurement named where the weight was: 289 440 characters in twenty-nine rules, the articles
 section is 45% of them, and inside the section statements take 19%, their arguments 81%. So the
 argument is cut, not the statement: a removed statement changes the rule, a removed argument only
 its price. Room is measured before an article is added, not after the commit is refused: the size
@@ -297,8 +297,8 @@ refuses on a file edit more often than the others is the first to be marked.
 
 Section completeness of the law, the rule and the pattern themselves is checked by nothing here. The
 articles saying that a text is judged no more leniently than its copy, that an unchosen edition is
-judged the same as the chosen one and that the set of sections is declared apart from the sample are
-carried out where these texts are written — in the suite of the package that ships them. A consumer
+judged the same as the chosen one, that the set of sections is declared apart from the sample and
+that a requirement nobody formulated stays silent are carried out where these texts are written — in the suite of the package that ships them. A consumer
 tree holds laid-out copies, and its check must not turn red on someone else's miss. Agreement of two
 texts is looked for by reading.
 
@@ -318,11 +318,3 @@ up".
 - `spec-driven-domain` — creating and editing a domain spec, scenarios, binding.
 - `spec-driven-rule` — creating a law, a rule and a pattern.
 - `spec-driven-sweep` — a full review of a domain's binding, passes and their review.
-
-## Pitfalls
-
-- **The line requiring a neighbouring resource is checked by nothing, and a miss in it shows only by
-  counting.** A rule without it looks whole: sections in place, bindings match, the completeness
-  suite green. It is counted by one command over the rules directory, and the divergence reads at
-  once — how many rules declared requirements and how many refer to a neighbouring resource in
-  prose.

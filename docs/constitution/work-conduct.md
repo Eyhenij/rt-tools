@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · laws/work-conduct.md · c25e0f1857d9 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · laws/work-conduct.md · 7cb7e041a4fe · правится надстройкой, не здесь -->
 # Law on work conduct
 
 The law sets how work is conducted from the moment a task is set until it is closed. Work outlasts
@@ -16,7 +16,8 @@ one session and keeps its whole context and state when it passes to the next.
   line. The part the work repeats is read in full — another tree's structure is not judged by one
   file.
 - **A sample named in the progress must be reachable by every session while the work goes on.** The
-  link is written directly in the progress.
+  progress carries a reference to it; a full path that names another tree lies outside the history,
+  among the records that belong to no branch.
 - **A question with an obvious answer does not stop the work.** The executor names the assumption,
   moves on and writes it where the work goes on. Only a gap where any guess makes the work dangerous
   or useless stops it.
@@ -173,9 +174,9 @@ one session and keeps its whole context and state when it passes to the next.
   The owner follows the epic by one card, not by its tasks; a card that stays where the epic was
   declared reads as an epic nobody started, however many of its tasks are already done. The card
   moves by the same motion as the first task's, not by a separate step remembered later.
-- **An executor's session does not end together with the task.** The end of a task is not a sign to
-  stop: only the window fill limit allows stopping. A session closed on a finished task leaves the
-  owner a blank and costs a whole session to return to what was at hand.
+- **An executor's session does not end together with the task.** The end of a task is no sign to
+  stop; the epic's end is, until the owner's word. A session closed on a finished task costs a whole
+  session to return to the work.
 - **The window fill limit stops a session only where the tool does not compact the context itself.**
   Where compaction is declared and comes before the limit, the window is not the end of the session
   but its continuation: the context is compacted, the written state returns into it, and the work
@@ -255,10 +256,10 @@ one session and keeps its whole context and state when it passes to the next.
   number, fresh tasks on top; it does not hold the epic's order and cannot — tasks of all epics lie
   there at once. The epic plan is opened before a task is taken and answers in one call: which task
   is next, and whether it moved to a neighbouring epic.
-- **An ended epic is named to the owner in the same turn in which work outside it is taken.** While
-  the epic goes on, the next piece of work is taken silently; once it has ended, the next step is no
-  longer obvious to both. Taking work outside an ended epic in silence leaves the owner sure the
-  epic continues.
+- **An ended epic is a stop: the owner is shown what was done and is asked for the next work.** While
+  the epic goes on, the next work is taken silently; once it has ended, the next step is not
+  obvious to both. Work taken outside an ended epic without the owner's word leaves them sure
+  the epic continues.
 - **An epic is not closed while even one sign of its end is confirmed only by reading.** A sign
   checked by eye closes the work only after a command or a measurement checks it, with their output.
   The note "confirmed by a live measurement" is a promise to check, not a check. Closed on two signs

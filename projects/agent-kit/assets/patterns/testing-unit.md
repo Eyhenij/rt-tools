@@ -27,12 +27,12 @@ import { describe, expect, it } from 'vitest';
 
 ## One `describe` per function
 
-The block name matches the function name word for word; the `it` titles are sentences in Russian,
-present tense, about behaviour, not about the internals:
+The block name matches the function name word for word; the `it` titles are sentences in the tree's
+language, present tense, about behaviour, not about the internals:
 
 ```typescript
 describe('applyDayClick', () => {
-    it('SC-BK-19 — клик по занятому дню ничего не меняет', () => {
+    it('SC-BK-19 — a click on a taken day changes nothing', () => {
         expect(applyDayClick(day('2026-08-12'), selection)).toEqual(selection);
     });
 });
@@ -63,16 +63,14 @@ Shared constants (`PRICING`, `BUSY`) lie at the top of the file, at module scope
 
 ## A decision is moved into a pure function
 
-The dominant form in this tree: the logic moves into `*.logic.ts`, `*.util.ts` or
-`*.calculator.ts` and is checked by a call — without `TestBed`, without substituting dependencies.
-Samples — `libs/site/common/booking/util/src/lib/availability-calendar.logic.ts` and
-`libs/api/<quote domain>/util/src/lib/quote.calculator.ts`.
+The dominant form: the logic moves into `*.logic.ts`, `*.util.ts` or `*.calculator.ts` and is
+checked by a call — without `TestBed`, without substituting dependencies. The tree's samples are
+named by the companion.
 
 ## A procedure is called directly
 
 The handler is the `handle` method of the procedure class in the `feature` layer of its domain. The
-database double is written by hand; the sample is `FakePrismaClient` in
-`libs/api/<booking domain>/feature/src/lib/link-booking.procedure.spec.ts`:
+database double is written by hand; the tree's sample is named by the companion:
 
 ```typescript
 const prisma: FakePrismaClient = new FakePrismaClient();
@@ -127,8 +125,8 @@ nothing.
 
 ## Common misses
 
-- A lib without its own `vitest.config.mts`: `nx test <project>` passes green without running a
-  single file. Before writing the first test in a lib, check that the config is next to it.
+- Before writing the first test in a lib, check that its run config is next to it — why, the cold
+  part of the rule `testing` says.
 - **The compiler import goes into the harness file, not into the spec.** A lib that renders nothing
   still pulls the framework when its test imports a barrel with a framework service, and the first
   import fails on JIT. The import goes into the file named in `setupFiles` of the lib's run config:
@@ -137,5 +135,3 @@ nothing.
   the database and in what order. The double is written by hand.
 - Do not create your own helpers for assertions: `expect(...).toBe(...)` and `.toEqual(...)`
   directly.
-- A title with a scenario id that does not exist takes `npm run check:specs` down, while the tests
-  themselves stay green.

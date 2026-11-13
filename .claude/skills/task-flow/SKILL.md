@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of one task from the request to the merge. Load at the start of any work, when editing task folders and product agreements, and on return to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. Epics — epic-flow, turns — turn-conduct.
 ---
-<!-- rt-kit v0.37.0 · rules/task-flow.md · e8ace087b437 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/task-flow.md · b6f4cbf99772 · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -28,10 +28,11 @@ with a guard does.
 | understanding written where the work goes | `docs/tasks/<ветка>/grill.md` — the request verbatim, the owner's answers in their words, decisions with reasons |
 | the plan | `docs/tasks/<ветка>/plan.md` — the task footprint and stages with readiness signs; not edited after it is written |
 | the progress | `docs/tasks/<ветка>/progress.md` — "Where we stand", decisions along the way, session entries; the only place where done work is marked |
-| the product agreement written before the code | `docs/specs/<домен>/proposed/<фича>/` — the feature spec; survives the merge and merges into the domain spec |
+| the product agreement written before the code | `docs/specs/<домен>/proposed/<фича>/` — the feature spec; merges into the domain spec before the PR opens |
 | the task folder before the task is created | `docs/tasks/_draft-<slug>/` — outside history while there is no number |
 | exploration | an `Explore` or `general-purpose` session before the first question to the owner |
 | the plan review by roles | `.claude/workflows/plan.js` — need, points, agreement, critique, plan, goal |
+| a large edit carried by roles | `.claude/workflows/feature.js` — plan, implementation, check, acceptance, points, goal |
 
 ## Where it lives
 
@@ -58,20 +59,20 @@ The state is declared in the "Where we stand" section of the progress by the mac
 | `этап-идёт` | a stage is begun | finish the stage and mark it in the progress | `task-flow-resume` |
 | `этапы-кончились` | all stages are marked | merge the agreement, bring texts up to date, run the suite | `task-flow-close` |
 | `разбор-кончился` | the suite is green, texts are up to date | take the folder apart by the last commit | `task-flow-archive` |
-| `папка-разобрана` | no folder in the branch, a record in the archive | open the PR: a draft where a run is waited for, ready where the pipeline does not wake | `task-flow-close` |
-| `работа-отдана` | the PR is open into the epic branch, with a reviewer | take the next task of the epic | `task-flow-resume` |
-| `влито` | the PR merged by a person | rules review of the work and the work queue audit | `task-flow-archive` |
+| `папка-разобрана` | no folder in the branch, a record in the archive | the work queue audit, then open the PR: a draft where a run is waited for, ready where the pipeline does not wake | `task-flow-close` |
+| `работа-отдана` | the PR is open into the epic branch, with a reviewer | the rules review of the work goes to the background, then take the next task of the epic | `task-flow-archive` |
+| `влито` | the PR merged by a person | the epic plan marks the task merged by the next task's branch | `task-flow-resume` |
 | `задачи-эпика-кончились` | every task of the epic is merged and its folder taken apart | open the PR of the epic into the main branch | `task-flow-close` |
 
 No state has a mandatory action that sounds like "wait": waiting for someone else's step is not a
 work state, so in `работа-отдана` the mandatory action is the next task, not the open PR. A blocked
 task does not count as next: the same waiting under the name of work. The next is taken from the
-work queue, and the queue is asked by a command: "no tasks" is a statement about the tree, backed by
-output, not by the executor's memory. A filled session window is no state either: the session ends
+epic plan; outside an epic the owner names it, and the queue, asked by a command, goes into the
+question: "no tasks" is a statement about the tree, backed by output, not by the executor's memory. A filled session window is no state either: the session ends
 with a handover, and the work stays where it stood. **An open card says nothing about whether the
 work is taken.** A card is closed by the merge, and in a session that opens no PRs the list of open
 ones does not shrink. A task is untaken when the tree holds no trace of it: open numbers are checked
-against the archive — closed work has a record there with its number.
+against the archive and its history — a record past its expiry stays in `git log -- docs/archive/`.
 
 What a turn ends with — rule `turn-conduct` under the same law.
 
@@ -97,6 +98,8 @@ flowchart TD
     F --> Z
     Z -->|No| Y[The epic is declared: a card, all its tasks and a plan — then its branch from the main branch]
     Z -->|Yes| G[Task, branch from the epic branch, task folder by branch name; the epic card moves with its first task]
+    Z -->|The owner's word about work outside an epic| X[Task, branch from the main branch, task folder by branch name]
+    X --> H
     Y --> G
     G --> H[A plan with stages; not edited after it is written]
     H --> I{Stage done}
@@ -123,8 +126,8 @@ flowchart TD
   declared state. The agreement has a guard of its own on the same events.
 - **The guard judges the declared transition, not the presence of files.** The refusal is lifted
   by the declared state — `этап-идёт`,
-  `этапы-кончились`, `разбор-кончился`. The fourth road is the branch history: a folder taken apart
-  means handed-in work.
+  `этапы-кончились`, `разбор-кончился`, `работа-отдана`. The fifth road is the branch history: a
+  folder taken apart means handed-in work.
 - **A state line moved forward is the same declaration of intent, only machine-readable.** It is
   declared by the turn in which its mandatory action is begun by deed.
 - **A refusal by state names the mandatory action of that state.** Hearing only "wrong state", the
@@ -164,6 +167,10 @@ flowchart TD
 - **The owner's word about the design is a task setting, not a decision.** What they named is
   usually in the tree under that word — a name on a screen, a spec section, a model field — and is
   checked against it before the edit. Diverged — the owner is asked.
+- **A tool the owner named is used, and a substitute is named in the same reply.** A command, a
+  role or a browser named in the request is part of it; the reply says what was used instead and why.
+- **A rule of the tree outweighs a standing instruction of the host.** The host describes its own
+  default; where the two differ, the tree's text is carried out.
 - **A task folder is created for any work, no exceptions.** An exception with even one lawful form
   is executed as permission. It goes in before the first edit.
 - **The task folder goes into the branch by a commit, not lives in one working tree.** Uncommitted,
@@ -238,9 +245,11 @@ flowchart TD
   graph is checked against the head before the first exploration, and a turn that does not use it
   names the reason. Relations are taken from the graph; numbers, behaviour and texts — from the code
   and the documents.
-- **What acts on the tree, not on the edit, lies outside the index.** The path to the sample and the
-  permission to work outside the epic do not belong to the branch and live next to the handover. A
-  number in the permitted list repeats the owner's word, not replaces it.
+- **The path to a sample lies outside the history, the permission to work outside the epic — in
+  the main branch.** The path names another tree and lives among the records that belong to no
+  branch; the progress names the sample by a reference to that place. The permission is a row of
+  the table of assignments, read from the main branch by every branch; it repeats the owner's word,
+  not replaces it.
 - **Closed work is reviewed by the rules in the background, right after the PR, and its findings
   wait for the owner.** Only the session that led the work sees what was loaded and what was
   missing, and it takes the next task meanwhile. A proposal sent unreviewed becomes the work of
@@ -271,8 +280,9 @@ trace. The owner judges both.
 The guard judges by the edit paths, not by whether the work changes behaviour. A refactoring gets no
 sign of its own: the appraisal "behaviour does not change" would be assigned by whoever it hinders.
 
-Nothing of the grill itself is checked: the guard sees a file edit and knows nothing of the
-exploration, the six questions or the answers.
+Of the grill itself only the menus are checked: the conversation guard refuses a third menu after
+the owner took the recommended option twice in a row. The exploration, the six questions and the
+answers are checked by nothing.
 
 The conversation guard judges shared words between the question's topic and the owner's last
 message, not meaning; its refusal names the lawful move.
@@ -297,7 +307,8 @@ nothing counts; it is held by reading both texts in a row on every such edit.
 
 - `task-flow-start` — exploration, grill, agreement, plan, task and branch.
 - `task-flow-resume` — returning to unfinished work in a new session.
-- `task-flow-close` — lifting the draft, merging the agreement, bringing the texts up to date.
+- `task-flow-close` — merging the agreement, bringing the texts up to date, opening the PR and
+  lifting the draft.
 - `task-flow-archive` — taking the task folder apart, the move to the archive, review by the rules.
 - `task-flow-cycle` — an edit chosen by the report and judged by the next one.
 - `task-flow-graph` — where the tree names the trait `graph`: the freshness check, the domain inventory and

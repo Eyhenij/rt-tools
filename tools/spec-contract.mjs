@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/spec-contract.mjs · bb6a80a0caa2 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/spec-contract.mjs · 23df49dee1d1 · правится надстройкой, не здесь
 /**
  * The spec contract against what the code declares: the procedure table against the decorators,
  * the refusal codes against the throw points.
@@ -103,12 +103,12 @@ function contractRows(text) {
 
 function checkContract(file, text, roots) {
     if (roots === null) {
-        report(file, 'the header carries no line `**Процедуры:**` — there is nothing to check the table of «Контракт» against the decorators with');
+        report(file, 'the header carries no line `**Procedures:**` — there is nothing to check the table of «Contract» against the decorators with');
 
         return;
     }
     if (roots === UNPARSED) {
-        report(file, 'the line `**Процедуры:**` names no root in backticks: the roots are written as paths, and the absence of procedures is said by the word «нет». As it stands, the table of «Контракт» is checked against nothing');
+        report(file, 'the line `**Procedures:**` names no root in backticks: the roots are written as paths, and the absence of procedures is said by the word «none». As it stands, the table of «Contract» is checked against nothing');
 
         return;
     }
@@ -119,7 +119,7 @@ function checkContract(file, text, roots) {
     for (const row of rows) {
         const found = declared.get(row.short.toLowerCase());
         if (!found) {
-            report(file, `«Контракт» carries \`${row.name}\`, and there is no procedure with such a method in ${roots.join(', ')}`);
+            report(file, `«Contract» carries \`${row.name}\`, and there is no procedure with such a method in ${roots.join(', ')}`);
             continue;
         }
         described.add(row.short.toLowerCase());
@@ -135,7 +135,7 @@ function checkContract(file, text, roots) {
         if (!described.has(key)) {
             report(
                 file,
-                `the procedure \`${found.service}.${found.method}\` (${found.file}) belongs to the domain, ` + 'and the table of «Контракт» does not carry it'
+                `the procedure \`${found.service}.${found.method}\` (${found.file}) belongs to the domain, ` + 'and the table of «Contract» does not carry it'
             );
         }
     }
@@ -176,7 +176,7 @@ function checkRefusalCodes(file, text, roots) {
     for (const bullet of bullets) {
         const code = (bullet.text.match(/`([A-Za-z]\w*)`/) || [])[1];
         if (!code) {
-            report(file, `«Коды отказов» carries a line without a code in quotes: «${bullet.text.slice(0, 60)}…»`);
+            report(file, `«Refusal codes» carries a line without a code in backticks: «${bullet.text.slice(0, 60)}…»`);
             continue;
         }
         if (!thrown.has(code)) {

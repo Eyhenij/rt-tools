@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub — the part about the rollout. Load when an edit goes to production — merge into the main branch, the pipeline, images and tags, storage migrations. Patterns git-workflow-migration, -restart, -docker, -secrets. Task and branch — rule git-workflow.
 ---
-<!-- rt-kit v0.37.0 · rules/deploy-flow.github.md · 59a61f785d78 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/deploy-flow.github.md · 75ae8a7129f0 · правится надстройкой, не здесь -->
 
 # Rollout — how it works here
 
@@ -44,7 +44,7 @@ flowchart TD
     G --> H[Old images are removed, the last three sha stay as rollback depth]
     H --> I{Production answers with what was rolled out}
     I -->|No| J[Rollout analysis: the restart goes by sha, not by the latest tag]
-    I -->|Yes| K[The work queue audit reads the last run of the main branch]
+    I -->|Yes| K[The work queue audit counts the lag of the main branch from the last successful rollout]
     C --> K
     J --> K
 ```
@@ -169,7 +169,7 @@ flowchart TD
   the owner's word replaces a check only when the owner was told the check did not run.
 - **The divergence of migrations from the schema is measured on a shadow storage, not on the one
   the pusher works with.** That one lawfully carries the trace of any unfinished branch, and a
-  check against it would hold up someone else's edit. The gate and the rollout call one and the
+  check against it would hold up someone else's edit. The gate and the pipeline call one and the
   same check — otherwise "matched" would mean different things in two places.
 - **Skipping the schema audit is lawful while the branch has not touched the storage.** A stopped
   database is a state of the machine, not a reason to refuse a documentation push; but a branch
@@ -183,11 +183,15 @@ flowchart TD
 
 - **A check standing in the gate set refuses when it could not do its work.** "Nowhere to check"
   and "the check is broken" are different things: the first the tree names itself — no subject, no
-  address set, the service not answering — and each such exit returns zero with its own line. The
+  address set, the service not answering — and each such exit returns the skip code with its own line. The
   second — a missing package, an empty name in the settings, an unexpected exception — returns a
   non-zero code and says that the check itself broke, not the subject. A shared zero for both makes
   a broken check indistinguishable from a passed one: the schema-to-migrations audit stood like that
   in the gate set, checking nothing, and hid three causes at once behind its zero.
+- **The merge button and the manual rollout run get their requirement at the host.** Both are
+  pressed at the host, where the guards of the session do not stand. The requirement is set at the
+  host — a required status check, a protected branch or a protected environment — or is named to the
+  one who presses, in the section of the PR description about the remaining step, before the press.
 
 ## What of the law is not here
 
@@ -215,9 +219,9 @@ GH_TOKEN=$(cat ~/.config/rt-tools-bot-token) command gh run list \
 git rev-list --count <sha of the rollout>..origin/main
 ```
 
-From here comes the boundary of the work queue audit too. It asks the last run of the main
-branch, and a run of the main branch says nothing about production: a merge does not move it. The
-divergence of 476 commits was exactly what the audit stayed silent about.
+The work queue audit counts the same lag: it reads the last successful rollout and prints a line
+when production lags the main branch. A run of the main branch says nothing about production, and
+an audit that read it once stayed silent over a divergence of 476 commits.
 
 The state of production is invisible to a machine in the rest as well: whether production answers
 with the build it rolled out nobody asks. This is held by whoever rolled it out.

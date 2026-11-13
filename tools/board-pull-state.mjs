@@ -1,13 +1,14 @@
-// rt-kit v0.37.0 · checks/board-pull-state.github.mjs · 98b972d989a6 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/board-pull-state.github.mjs · df34467dbcb6 · правится надстройкой, не здесь
 /**
  * The state of an open request read by its tip: a run pushed out of the queue, a missing run, a
- * finished piece of work left as a draft, a conflict. Lives in a file of its own — the audit of
- * the work queue stands at the length limit even without it, and these four checks are read
+ * finished piece of work left as a draft, a missing reviewer, a conflict. Lives in a file of its
+ * own — the audit of the work queue stands at the length limit even without it, and these five checks are read
  * together and apart from the rest.
  *
  * The line printer and the name of the main branch come as arguments: the module knows the
  * hosting, not the settings of the tree that called it.
  */
+import { OfflineError, OWNER, REPO, ghJson } from './board.mjs';
 import { onlyIgnoredPaths } from './board-paths.mjs';
 import { evictedOnHead, headCommittedAt, runsOnHead, verdictOnHead } from './board-runs.mjs';
 
@@ -55,6 +56,17 @@ export function checkHeadRun(pull, report, mainBranch, options) {
         return;
     }
 
+    // A PR whose base is not the main branch gets no run at all: the workflow listens for PRs
+    // into the main branch and does not see events with another base. That is the order of
+    // handing in, not a discrepancy — every task of an epic is handed in exactly so — and the
+    // audit says nothing about it. The former line was wrong three times over: the event was not
+    // lost, reopening will not bring it back, and the base of a task request stays the epic
+    // branch to the merge. It is asked before the conflict: a conflicting task PR is named by the
+    // conflict line, and «no run while it conflicts» would promise a run that never comes.
+    if (pull.baseRefName && pull.baseRefName !== mainBranch) {
+        return;
+    }
+
     if (pull.mergeable === 'CONFLICTING') {
         report(
             `PR #${pull.number}: there is no run on the tip ${pull.headRefOid.slice(0, 8)} and there will be none while it conflicts — ` +
@@ -62,16 +74,6 @@ export function checkHeadRun(pull, report, mainBranch, options) {
                 `reopening the PR does not help here`
         );
 
-        return;
-    }
-
-    // A PR whose base is not the main branch gets no run at all: the workflow listens for PRs
-    // into the main branch and does not see events with another base. That is the order of
-    // handing in, not a discrepancy — every task of an epic is handed in exactly so — and the
-    // audit says nothing about it. The former line was wrong three times over: the event was not
-    // lost, reopening will not bring it back, and the base of a task request stays the epic
-    // branch to the merge.
-    if (pull.baseRefName && pull.baseRefName !== mainBranch) {
         return;
     }
 
@@ -140,6 +142,71 @@ function checkReadyDraft(pull, report, options) {
 }
 
 /**
+ * Who was asked to review a PR and who left a review, each with the kind of the account.
+ *
+ * Read by REST, a call per list. The same lists asked through the list of PRs need the scope
+ * `read:org`, and a token of a machine account that lacks it gets the whole query refused: the
+ * audit then printed one line of an error and no line of its own.
+ *
+ * FAIL-OPEN: no answer — `null`, and the PR is not judged. Without network the refusal is thrown,
+ * as everywhere.
+ */
+export function fetchReviewers(number, options) {
+    if (!OWNER || !REPO) {
+        return null;
+    }
+    const path = `repos/${OWNER}/${REPO}/pulls/${number}`;
+    try {
+        return {
+            asked: ghJson(
+                ['api', `${path}/requested_reviewers`, '--jq', '[.users[] | {login, type}] + [.teams[] | {login: .slug, type: "Team"}]'],
+                options
+            ),
+            left: ghJson(['api', `${path}/reviews`, '--jq', '[.[] | {login: .user.login, type: .user.type}]'], options),
+        };
+    } catch (error) {
+        if (error instanceof OfflineError) {
+            throw error;
+        }
+        return null;
+    }
+}
+
+/**
+ * A PR nobody was asked to review.
+ *
+ * Such a PR reaches no inbox: the queue stands while it looks as if it works. A request to review
+ * oneself does not count — the host accepts it and creates nothing — so the author is taken out of
+ * both lists. A PR opened by a person shows here too: an author cannot be asked, and nobody else
+ * was.
+ *
+ * The lists come apart from the PR, by REST: `reviewers` is `{asked, left}`, each entry a login
+ * with the kind of its account.
+ *
+ * FAIL-OPEN: no lists — the PR is not judged. Silence about the reviewers is not the same as their
+ * absence, and a line on it would go red on every PR of a host that hides them.
+ */
+export function checkReviewer(pull, report, reviewers) {
+    if (!reviewers) {
+        return;
+    }
+
+    const author = pull.author?.login ?? null;
+    // A bot asked for a review or one that left it is not a person: the PR still reaches no inbox.
+    const person = (entry) =>
+        Boolean(entry?.login) && entry.type !== 'Bot' && !entry.login.endsWith('[bot]') && entry.login !== author;
+    if ([...(reviewers.asked ?? []), ...(reviewers.left ?? [])].some(person)) {
+        return;
+    }
+
+    report(
+        `PR #${pull.number}: the PR has no reviewer — nobody but its author was asked or left a review, and it reaches no inbox; ` +
+            `request one by a REST call: gh api -X POST repos/<owner>/<repo>/pulls/${pull.number}/requested_reviewers -f 'reviewers[]=<login>'; ` +
+            `a PR opened by the reviewer's own account cannot ask them — close it and open it again as the machine account`
+    );
+}
+
+/**
  * A PR that conflicts with the main branch.
  *
  * A conflict arrives in a handed-over PR through someone else's merge, without a single action by
@@ -157,8 +224,10 @@ export function checkConflicting(pull, report) {
         return;
     }
 
+    // The host counts mergeability against the base of the PR: for a task that is the epic branch.
+    const base = pull.baseRefName ? `«${pull.baseRefName}»` : 'branch';
     report(
-        `PR #${pull.number}: it conflicts with the main branch — merge it into the task branch, resolve the conflict and push; ` +
+        `PR #${pull.number}: it conflicts with its base ${base} — merge the base into the PR branch, resolve the conflict and push; ` +
             `the owner cannot merge this request, and on the page that shows only inside it`
     );
 }

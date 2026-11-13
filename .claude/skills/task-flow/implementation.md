@@ -57,7 +57,8 @@ Both steps are reversible, and only the merge is not, and it stayed in the list.
 removed, a request is closed, and the merge button of a draft is locked by the hosting itself:
 while the draft is not lifted, an open request does not read as an invitation to merge. Lifting the
 draft also stays with the executor — by it they say the solution is ready — and it is guarded by a
-guard of its own: it looks at the review, the mergeability and the run on the tip of the request.
+guard of its own: it looks at the reviewer, the conflicts and the account; the run on the tip is
+read by the stop guard `.claude/hooks/git-guard-draft-ready.sh`.
 
 The line about changing the working tree by an edit that is not one own was started by an analysis,
 the record «2026-08-20-diagnostic-command-overwrote-the-tree» in the intake: the list named removal
@@ -126,6 +127,8 @@ articles of the rule have no bindings — that is the debt that lay here before 
 - **The owner's instruction holds until they cancel it, and a new fact against it is a line in the reply about the cost, not a new question.** — `.claude/hooks/grill-gate.sh:seen` — the second sign of the guard. What is judged is the overlap of the meaningful words of the question subject and of the last owner remark, and only when a menu call has already happened
 - **An answer in the owner's message counts the same as an answer in a document.** — `.claude/hooks/grill-gate.sh:seen` — the owner remark is taken from the turn record by the same parsing as the first sign
 - **The owner's word about the design is a task setting, not a decision.** — **Not checked:** the reading of the word is invisible to a machine. It is held by the grill — the six mandatory questions of the pattern `task-flow-start` ask exactly about what the owner word named, and reconciling the word with the tree costs one search over the specs and the models.
+- **A tool the owner named is used, and a substitute is named in the same reply.** — **Not checked:** whether two tools are equivalent is the owner's call, and no guard reads the request against the tools a turn used.
+- **A rule of the tree outweighs a standing instruction of the host.** — **Not checked:** the host's instruction lives in the session context and not in the tree; the difference is found only by reading both.
 - **A task folder is created for any work, no exceptions.** — `.claude/hooks/task-flow-guard.sh:tasks_dir` — the task directory here is `docs/tasks`, and the folder is looked for by the branch name one to one
 - **The task folder is created as a draft and gets its number by a command.** — `tools/task-new.mjs:adoptDraft` — the draft by slug is renamed into the folder by branch name and gets the plan header
 - **An abandoned grill is visible.** — `tools/check-board.mjs:checkDrafts` — a draft older than a week is listed by the work queue audit
@@ -137,17 +140,17 @@ articles of the rule have no bindings — that is the debt that lay here before 
 - **A branch that removed the folder adds a record to the archive.** — `.claude/hooks/git-guard-delivery-folder.sh:rt_folder_was_in_branch` — the archive directory here is `docs/archive/`
 - **The bypass is the line `Task-folder-skip: <reason>` in the PR or in the command itself.** — `.claude/hooks/git-guard-delivery.sh:folder_skip_re`, the PR body — `.claude/rt-kit/defaults/project.sh:rt_report_body_default`
 - **A merged agreement does not lock the branch.** — `.claude/hooks/task-flow-draft-guard.sh:draft_path` — the branch history tells the merged from the never-created
-- **A PR that waits for a run opens as a draft, and one that waits for nothing opens ready.** — Not checked: the guards see the call that opens a PR and do not read the pipeline file, so which bases wake a run is unknown to them. The trigger of this tree lies in `.github/workflows/ci.yml`, and the technique is the pattern `git-workflow-pr`
+- **A PR that waits for a run opens as a draft, and one that waits for nothing opens ready.** — `.claude/hooks/git-guard-delivery-pipeline.sh:rt_delivery_pull_draft` — reads the bases of the `pull_request` trigger from `.github/workflows/ci.yml`, the file the push gate names, and judges a draft opened on a base the pipeline does not wake for; the technique is the pattern `git-workflow-pr`
 - **A word for a new notion is looked up in the tree's glossary.** — `.claude/hooks/glossary-load.sh:GLOSSARY` — the glossary `docs/GLOSSARY.md`, its own sections in `.claude/rt-kit/overrides/docs/GLOSSARY.md`
 - **Closed work is reviewed by the rules in the background, right after the PR, and its findings wait for the owner.** — `projects/agent-kit/src/lib/proposals.ts:readProposals` — what lies in `.claude/rt-kit/proposals/` leaves only by the call `agent-kit propose`. Starting the review role is a move of the executor and leaves no trace in the tree; the technique is the command `/skill-curator`
 - **Building by a sample begins with reading the sample itself, whole, by walking the directories.** — **Not checked.** What the session opened leaves no trace in the tree: the guards judge an edit, not a read. It is held by this article and by the analysis, the record «2026-08-16-sample-judged-by-one-file» in the intake
-- **Exploration of a tree that holds a code graph begins with the graph.** — **Not applicable.** The step goes by the trait and its technique by the pattern, and `has` in `.claude/rt-kit.json` does not name `graph`: this tree holds no code graph, and the pattern `task-flow-graph` is not laid out here
-- **What acts on the tree, not on the edit, lies outside the index.** — **Not checked.** The record lies in `.claude/handoff/` next to the session handover — the directory is in `.gitignore`, and the audits do not read it. It is printed by the `SessionStart` hook in `.claude/settings.local.json`, which is also outside history. This tree has no permission to work outside an epic at all: it started no epic guard
+- **Exploration of a tree that holds a code graph begins with the graph.** — **Not checked.** `has` in `.claude/rt-kit.json` names `graph`, and the pattern `.claude/skills/task-flow-graph/SKILL.md` is laid out with this tree's section from `.claude/rt-kit/overrides/patterns/task-flow-graph.needs-graph.md`. The graphs are built by `tools/graphs-build.mjs`; which exploration a turn began with leaves no trace in the tree, and it is held by the pattern
+- **The path to a sample lies outside the history, the permission to work outside the epic — in the main branch.** — `tools/tree-assignment.mjs:assignmentFault` — the permission is a row of `.claude/rt-kit/assignments.md`, read by `.claude/hooks/tree-assignment-guard.sh` and `.claude/hooks/epic-stop-guard.sh`; work outside an epic is created by the owner's word through `tools/task-new.mjs` with `--outside-epic`. The sample path is not checked: it lies in `.claude/handoff/`, which is in `.gitignore`, and is printed by the `SessionStart` hook in `.claude/settings.local.json`
 
 ## What of the law is not here
 
-- **Abandoned drafts and folders of closed tasks are found by a check.** — **Carried out by half.** `npm run check:board` is in the tree, but the machine account does not see the owner board and the check refuses aloud. The folders are for now taken apart by eye at closing.
-- **The readiness of an agreement to merge is checked by a command.** — **There is nothing to check.** `npm run check:specs` works, but there is not a single package spec yet.
+- **Abandoned drafts and folders of closed tasks are found by a check.** — `tools/check-board.mjs:checkDrafts` — `npm run check:board` reads the board and lists abandoned drafts and folders of closed tasks among its divergences.
+- **The readiness of an agreement to merge is checked by a command.** — `tools/check-specs.mjs` — `npm run check:specs` lists the drafts in `proposed/` of every domain under `docs/specs/` and how long each has stood without an edit.
 
 Two other articles of the law — the state of unfinished work in the context and the ban on writing
 code before the plan — have been carried out since edition 0.4.0 of the package: it ships
@@ -165,8 +168,8 @@ code before the plan — have been carried out since edition 0.4.0 of the packag
 
 ## What this is checked by
 
-- `.claude/hooks/task-flow-guard.sh` — refuses a code edit without `plan.md`, once per branch per
-  session.
+- `.claude/hooks/task-flow-guard.sh` — refuses every code edit without `plan.md` and a declared
+  state that lets code be edited.
 - `.claude/hooks/task-context-load.sh` — the state of unfinished work travels into the context at
   session start.
 - `.claude/hooks/git-guard-draft-ready.sh` — the turn does not end while ready work stands as a
@@ -180,8 +183,8 @@ code before the plan — have been carried out since edition 0.4.0 of the packag
   helper is substituted, and each scenario raises a temporary repository of its own. It stands in
   the push gate set and as a pipeline step. It is set upon a deliberately broken copy of the guard
   through `RT_GUARD_PATH`: a suite that does not turn red on a breakage checks nothing.
-- `npm run check:board` — abandoned drafts and folders of closed tasks; right now it refuses aloud,
-  because the board is not visible to the machine account.
+- `npm run check:board` — abandoned drafts and folders of closed tasks, among the other board
+  divergences.
 - By eye at the closing of the work: the task folder is taken apart, `progress.md` is written up,
   the agreement is merged into the package spec.
 - `pnpm run agent-kit:check` — the rule is laid out and its companion is filled in.

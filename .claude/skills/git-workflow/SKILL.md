@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub. Load for a task and a branch, commit, push, opening a PR and merging. Names the pair of task and branch, the machine account and the delivery guards. Patterns git-workflow-commit, -pr, -merge, -stack. Rollout — deploy-flow, audit — queue-audit.
 ---
-<!-- rt-kit v0.37.0 · rules/git-workflow.github.md · 1536bf412c17 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/git-workflow.github.md · 3a36aae9b164 · правится надстройкой, не здесь -->
 
 # Delivery — how it works here
 
@@ -54,7 +54,7 @@ flowchart TD
     B --> C[The branch is named by the task number and taken from the epic branch; the column moves in the same motion — the epic card too, on its first task]
     C --> D{The edit is ready}
     D -->|No| C
-    D -->|Yes| E[Main is merged in, the gate set is run whole]
+    D -->|Yes| E[The base is merged in, the last commit takes the task folder apart, the gate set is run whole]
     E --> F{The branch carries a task number}
     F -->|No| G[The delivery guard refuses the opening: nothing in the queue stands behind the edit]
     F -->|Yes| H[The PR opens: a draft where a run is waited for, ready where the pipeline does not wake]
@@ -62,7 +62,7 @@ flowchart TD
     I --> J{The run and the review are over}
     J -->|Run red| K[Fixed in the same branch]
     K --> J
-    J -->|Green| L[The last commit takes the task folder apart, and the draft, if there was one, is lifted]
+    J -->|Green| L[The draft, if there was one, is lifted]
     L --> M[A person presses the merge into the epic branch: the executor asks and names the number]
     M --> N{Tasks of the epic are left}
     N -->|Yes| B
@@ -106,8 +106,8 @@ flowchart TD
   <path>`, `restore <path>` and `clean -f` erase what is not committed. On a dirty tree the guard
   refuses and names the files; the bypass is `# discard: <reason>` in the command.
 - **The lower branch of a chain does not rewrite history — neither `rebase` nor a force push.** The
-  host closes the upper PR as merged once its diff goes empty. A lagging branch is fixed by merging
-  main in.
+  host closes the upper PR as merged once its diff goes empty. Before its PR opens a branch
+  takes its base in; with the PR open — only on a conflict.
 - **A divergence inside a chain is resolved by the one who branches.** Both edits are theirs; the
   owner resolving the same at merge time owns neither.
 - **Unmet delivery conditions are named in one refusal.** The guard collects and prints them at
@@ -166,9 +166,8 @@ flowchart TD
   opens.** The trigger either wakes for it as for one into main, or does not, and then the push
   gate is the only check behind the work — pattern `git-workflow-stack`.
 - **One's own drafts are judged all at once, not only the checked-out branch's.** Two signs — a
-  green run on the tip and a folder taken apart; a folder still there means ongoing work.
-- **Opening a PR is refused while the branch carries its task folder.** Opening is the last point
-  where the executor still sees the refusal.
+  green run on the tip and a folder taken apart. A folder stands in a draft only one opened past
+  the folder refusal, and there it means ongoing work.
 - **One's own open PRs are reread in three places: before a push, on taking a task and after every
   known merge.** A neighbouring merge stales the rest that second. Technique —
   `git-workflow-freshness`.
@@ -222,7 +221,7 @@ flowchart TD
   host's `mergeable` field; a local merge does not derive it.
 - **An index that branches only append lines to is declared a union of both sides.** A conflict there
   is no dispute: both additions are needed whole. The declaration does **not** clear the mergeability
-  mark — it clears when the branch has absorbed main and that reached the host.
+  mark — it clears when the branch has absorbed its base and that reached the host.
 - **An edit brought to a commit is brought to the host in the same turn.** The owner sees the old
   state and reads it as "nothing done". What stays in the tree is named with a reason — in the
   owner's words, not a list of leftovers.

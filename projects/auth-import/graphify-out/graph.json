@@ -1,0 +1,3737 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "project.json",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L1",
+      "id": "project_json",
+      "community": 0,
+      "norm_label": "project.json"
+    },
+    {
+      "label": "name",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L2",
+      "id": "auth_import_project_name",
+      "community": 0,
+      "norm_label": "name"
+    },
+    {
+      "label": "$schema",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L3",
+      "id": "auth_import_project_schema",
+      "community": 0,
+      "norm_label": "$schema"
+    },
+    {
+      "label": "sourceRoot",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L4",
+      "id": "auth_import_project_sourceroot",
+      "community": 0,
+      "norm_label": "sourceroot"
+    },
+    {
+      "label": "projectType",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L5",
+      "id": "auth_import_project_projecttype",
+      "community": 0,
+      "norm_label": "projecttype"
+    },
+    {
+      "label": "tags",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L6",
+      "id": "auth_import_project_tags",
+      "community": 0,
+      "norm_label": "tags"
+    },
+    {
+      "label": "targets",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L7",
+      "id": "auth_import_project_targets",
+      "community": 0,
+      "norm_label": "targets"
+    },
+    {
+      "label": "build",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L8",
+      "id": "auth_import_project_targets_build",
+      "community": 0,
+      "norm_label": "build"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L9",
+      "id": "auth_import_project_build_executor",
+      "community": 0,
+      "norm_label": "executor"
+    },
+    {
+      "label": "outputs",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L10",
+      "id": "auth_import_project_build_outputs",
+      "community": 0,
+      "norm_label": "outputs"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L11",
+      "id": "auth_import_project_build_options",
+      "community": 0,
+      "norm_label": "options"
+    },
+    {
+      "label": "main",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L12",
+      "id": "auth_import_project_options_main",
+      "community": 0,
+      "norm_label": "main"
+    },
+    {
+      "label": "tsConfig",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L13",
+      "id": "auth_import_project_options_tsconfig",
+      "community": 0,
+      "norm_label": "tsconfig"
+    },
+    {
+      "label": "outputPath",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L14",
+      "id": "auth_import_project_options_outputpath",
+      "community": 0,
+      "norm_label": "outputpath"
+    },
+    {
+      "label": "rootDir",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L15",
+      "id": "auth_import_project_options_rootdir",
+      "community": 0,
+      "norm_label": "rootdir"
+    },
+    {
+      "label": "generatePackageJson",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L16",
+      "id": "auth_import_project_options_generatepackagejson",
+      "community": 0,
+      "norm_label": "generatepackagejson"
+    },
+    {
+      "label": "assets",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L17",
+      "id": "auth_import_project_options_assets",
+      "community": 0,
+      "norm_label": "assets"
+    },
+    {
+      "label": "test",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L20",
+      "id": "auth_import_project_targets_test",
+      "community": 0,
+      "norm_label": "test"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L21",
+      "id": "auth_import_project_test_executor",
+      "community": 0,
+      "norm_label": "executor"
+    },
+    {
+      "label": "outputs",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L22",
+      "id": "auth_import_project_test_outputs",
+      "community": 0,
+      "norm_label": "outputs"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L23",
+      "id": "auth_import_project_test_options",
+      "community": 0,
+      "norm_label": "options"
+    },
+    {
+      "label": "jestConfig",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L24",
+      "id": "auth_import_project_options_jestconfig",
+      "community": 0,
+      "norm_label": "jestconfig"
+    },
+    {
+      "label": "typecheck",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L28",
+      "id": "auth_import_project_targets_typecheck",
+      "community": 0,
+      "norm_label": "typecheck"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L29",
+      "id": "auth_import_project_typecheck_executor",
+      "community": 0,
+      "norm_label": "executor"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L30",
+      "id": "auth_import_project_typecheck_options",
+      "community": 0,
+      "norm_label": "options"
+    },
+    {
+      "label": "command",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L31",
+      "id": "auth_import_project_options_command",
+      "community": 0,
+      "norm_label": "command"
+    },
+    {
+      "label": "lint",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L34",
+      "id": "auth_import_project_targets_lint",
+      "community": 0,
+      "norm_label": "lint"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L35",
+      "id": "auth_import_project_lint_executor",
+      "community": 0,
+      "norm_label": "executor"
+    },
+    {
+      "label": "package.json",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L1",
+      "id": "package_json",
+      "community": 2,
+      "norm_label": "package.json"
+    },
+    {
+      "label": "name",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L2",
+      "id": "auth_import_package_name",
+      "community": 2,
+      "norm_label": "name"
+    },
+    {
+      "label": "version",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L3",
+      "id": "auth_import_package_version",
+      "community": 2,
+      "norm_label": "version"
+    },
+    {
+      "label": "description",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L4",
+      "id": "auth_import_package_description",
+      "community": 2,
+      "norm_label": "description"
+    },
+    {
+      "label": "author",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L5",
+      "id": "auth_import_package_author",
+      "community": 2,
+      "norm_label": "author"
+    },
+    {
+      "label": "license",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L6",
+      "id": "auth_import_package_license",
+      "community": 2,
+      "norm_label": "license"
+    },
+    {
+      "label": "repository",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L7",
+      "id": "auth_import_package_repository",
+      "community": 2,
+      "norm_label": "repository"
+    },
+    {
+      "label": "type",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L8",
+      "id": "auth_import_package_repository_type",
+      "community": 2,
+      "norm_label": "type"
+    },
+    {
+      "label": "url",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L9",
+      "id": "auth_import_package_repository_url",
+      "community": 2,
+      "norm_label": "url"
+    },
+    {
+      "label": "directory",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L10",
+      "id": "auth_import_package_repository_directory",
+      "community": 2,
+      "norm_label": "directory"
+    },
+    {
+      "label": "homepage",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L12",
+      "id": "auth_import_package_homepage",
+      "community": 2,
+      "norm_label": "homepage"
+    },
+    {
+      "label": "bugs",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L13",
+      "id": "auth_import_package_bugs",
+      "community": 2,
+      "norm_label": "bugs"
+    },
+    {
+      "label": "url",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L14",
+      "id": "auth_import_package_bugs_url",
+      "community": 2,
+      "norm_label": "url"
+    },
+    {
+      "label": "type",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L16",
+      "id": "auth_import_package_type",
+      "community": 2,
+      "norm_label": "type"
+    },
+    {
+      "label": "main",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L17",
+      "id": "auth_import_package_main",
+      "community": 2,
+      "norm_label": "main"
+    },
+    {
+      "label": "types",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L18",
+      "id": "auth_import_package_types",
+      "community": 2,
+      "norm_label": "types"
+    },
+    {
+      "label": "bin",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L19",
+      "id": "auth_import_package_bin",
+      "community": 2,
+      "norm_label": "bin"
+    },
+    {
+      "label": "rt-auth-import",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L20",
+      "id": "auth_import_package_bin_rt_auth_import",
+      "community": 2,
+      "norm_label": "rt-auth-import"
+    },
+    {
+      "label": "engines",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L22",
+      "id": "auth_import_package_engines",
+      "community": 2,
+      "norm_label": "engines"
+    },
+    {
+      "label": "node",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L23",
+      "id": "auth_import_package_engines_node",
+      "community": 2,
+      "norm_label": "node"
+    },
+    {
+      "label": "keywords",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L25",
+      "id": "auth_import_package_keywords",
+      "community": 2,
+      "norm_label": "keywords"
+    },
+    {
+      "label": "dependencies",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L31",
+      "id": "auth_import_package_dependencies",
+      "community": 2,
+      "norm_label": "dependencies"
+    },
+    {
+      "label": "tslib",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L32",
+      "id": "auth_import_package_dependencies_tslib",
+      "community": 2,
+      "norm_label": "tslib"
+    },
+    {
+      "label": "sideEffects",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L34",
+      "id": "auth_import_package_sideeffects",
+      "community": 2,
+      "norm_label": "sideeffects"
+    },
+    {
+      "label": "tsconfig.json",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L1",
+      "id": "tsconfig_json",
+      "community": 8,
+      "norm_label": "tsconfig.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "id": "auth_import_tsconfig_extends",
+      "community": 8,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "id": "auth_import_tsconfig_compileroptions",
+      "community": 8,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "module",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "id": "auth_import_tsconfig_compileroptions_module",
+      "community": 8,
+      "norm_label": "module"
+    },
+    {
+      "label": "ignoreDeprecations",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "id": "auth_import_tsconfig_compileroptions_ignoredeprecations",
+      "community": 8,
+      "norm_label": "ignoredeprecations"
+    },
+    {
+      "label": "files",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L7",
+      "id": "auth_import_tsconfig_files",
+      "community": 8,
+      "norm_label": "files"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L8",
+      "id": "auth_import_tsconfig_include",
+      "community": 8,
+      "norm_label": "include"
+    },
+    {
+      "label": "references",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L9",
+      "id": "auth_import_tsconfig_references",
+      "community": 8,
+      "norm_label": "references"
+    },
+    {
+      "label": "tsconfig.lib.json",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L1",
+      "id": "tsconfig_lib_json",
+      "community": 4,
+      "norm_label": "tsconfig.lib.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L2",
+      "id": "auth_import_tsconfig_lib_extends",
+      "community": 4,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L3",
+      "id": "auth_import_tsconfig_lib_compileroptions",
+      "community": 4,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "module",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L4",
+      "id": "auth_import_tsconfig_lib_compileroptions_module",
+      "community": 4,
+      "norm_label": "module"
+    },
+    {
+      "label": "moduleResolution",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L5",
+      "id": "auth_import_tsconfig_lib_compileroptions_moduleresolution",
+      "community": 4,
+      "norm_label": "moduleresolution"
+    },
+    {
+      "label": "target",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L6",
+      "id": "auth_import_tsconfig_lib_compileroptions_target",
+      "community": 4,
+      "norm_label": "target"
+    },
+    {
+      "label": "outDir",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L7",
+      "id": "auth_import_tsconfig_lib_compileroptions_outdir",
+      "community": 4,
+      "norm_label": "outdir"
+    },
+    {
+      "label": "declaration",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L8",
+      "id": "auth_import_tsconfig_lib_compileroptions_declaration",
+      "community": 4,
+      "norm_label": "declaration"
+    },
+    {
+      "label": "declarationMap",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L9",
+      "id": "auth_import_tsconfig_lib_compileroptions_declarationmap",
+      "community": 4,
+      "norm_label": "declarationmap"
+    },
+    {
+      "label": "types",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L10",
+      "id": "auth_import_tsconfig_lib_compileroptions_types",
+      "community": 4,
+      "norm_label": "types"
+    },
+    {
+      "label": "rootDir",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L11",
+      "id": "auth_import_tsconfig_lib_compileroptions_rootdir",
+      "community": 4,
+      "norm_label": "rootdir"
+    },
+    {
+      "label": "exclude",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L13",
+      "id": "auth_import_tsconfig_lib_exclude",
+      "community": 4,
+      "norm_label": "exclude"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L14",
+      "id": "auth_import_tsconfig_lib_include",
+      "community": 4,
+      "norm_label": "include"
+    },
+    {
+      "label": "tsconfig.spec.json",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L1",
+      "id": "tsconfig_spec_json",
+      "community": 7,
+      "norm_label": "tsconfig.spec.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L2",
+      "id": "auth_import_tsconfig_spec_extends",
+      "community": 7,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L3",
+      "id": "auth_import_tsconfig_spec_compileroptions",
+      "community": 7,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "outDir",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L4",
+      "id": "auth_import_tsconfig_spec_compileroptions_outdir",
+      "community": 7,
+      "norm_label": "outdir"
+    },
+    {
+      "label": "module",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L5",
+      "id": "auth_import_tsconfig_spec_compileroptions_module",
+      "community": 7,
+      "norm_label": "module"
+    },
+    {
+      "label": "target",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L6",
+      "id": "auth_import_tsconfig_spec_compileroptions_target",
+      "community": 7,
+      "norm_label": "target"
+    },
+    {
+      "label": "types",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L7",
+      "id": "auth_import_tsconfig_spec_compileroptions_types",
+      "community": 7,
+      "norm_label": "types"
+    },
+    {
+      "label": "moduleResolution",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L8",
+      "id": "auth_import_tsconfig_spec_compileroptions_moduleresolution",
+      "community": 7,
+      "norm_label": "moduleresolution"
+    },
+    {
+      "label": "isolatedModules",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L9",
+      "id": "auth_import_tsconfig_spec_compileroptions_isolatedmodules",
+      "community": 7,
+      "norm_label": "isolatedmodules"
+    },
+    {
+      "label": "rootDir",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L10",
+      "id": "auth_import_tsconfig_spec_compileroptions_rootdir",
+      "community": 7,
+      "norm_label": "rootdir"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L12",
+      "id": "auth_import_tsconfig_spec_include",
+      "community": 7,
+      "norm_label": "include"
+    },
+    {
+      "label": "jest.config.ts",
+      "file_type": "code",
+      "source_file": "jest.config.ts",
+      "source_location": "L1",
+      "id": "jest_config_ts",
+      "community": 10,
+      "norm_label": "jest.config.ts"
+    },
+    {
+      "label": "cli.ts",
+      "file_type": "code",
+      "source_file": "src/cli.ts",
+      "source_location": "L1",
+      "id": "src_cli_ts",
+      "community": 1,
+      "norm_label": "cli.ts"
+    },
+    {
+      "label": "ICliIo",
+      "file_type": "code",
+      "source_file": "src/cli.ts",
+      "source_location": "L11",
+      "id": "src_cli_icliio",
+      "community": 3,
+      "norm_label": "icliio"
+    },
+    {
+      "label": "printReport()",
+      "file_type": "code",
+      "source_file": "src/cli.ts",
+      "source_location": "L21",
+      "id": "src_cli_printreport",
+      "community": 1,
+      "norm_label": "printreport()"
+    },
+    {
+      "label": "run()",
+      "file_type": "code",
+      "source_file": "src/cli.ts",
+      "source_location": "L30",
+      "id": "src_cli_run",
+      "community": 1,
+      "norm_label": "run()"
+    },
+    {
+      "label": "bin.ts",
+      "file_type": "code",
+      "source_file": "src/bin.ts",
+      "source_location": "L1",
+      "id": "src_bin_ts",
+      "community": 1,
+      "norm_label": "bin.ts"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "src/index.ts",
+      "source_location": "L1",
+      "id": "src_index_ts",
+      "community": 1,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "cli.spec.ts",
+      "file_type": "code",
+      "source_file": "src/cli.spec.ts",
+      "source_location": "L1",
+      "id": "src_cli_spec_ts",
+      "community": 3,
+      "norm_label": "cli.spec.ts"
+    },
+    {
+      "label": "ARGS",
+      "file_type": "code",
+      "source_file": "src/cli.spec.ts",
+      "source_location": "L4",
+      "id": "src_cli_spec_args",
+      "community": 3,
+      "norm_label": "args"
+    },
+    {
+      "label": "TTestIo",
+      "file_type": "code",
+      "source_file": "src/cli.spec.ts",
+      "source_location": "L6",
+      "id": "src_cli_spec_ttestio",
+      "community": 3,
+      "norm_label": "ttestio"
+    },
+    {
+      "label": "ioOver()",
+      "file_type": "code",
+      "source_file": "src/cli.spec.ts",
+      "source_location": "L8",
+      "id": "src_cli_spec_ioover",
+      "community": 3,
+      "norm_label": "ioover()"
+    },
+    {
+      "label": "double",
+      "file_type": "code",
+      "source_file": "src/cli.spec.ts",
+      "source_location": "L23",
+      "id": "src_cli_spec_double",
+      "community": 3,
+      "norm_label": "double"
+    },
+    {
+      "label": "io",
+      "file_type": "code",
+      "source_file": "src/cli.spec.ts",
+      "source_location": "L24",
+      "id": "src_cli_spec_io",
+      "community": 3,
+      "norm_label": "io"
+    },
+    {
+      "label": "keycloak-fetch-double.ts",
+      "file_type": "code",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L1",
+      "id": "src_testing_keycloak_fetch_double_ts",
+      "community": 3,
+      "norm_label": "keycloak-fetch-double.ts"
+    },
+    {
+      "label": "IRecordedRequest",
+      "file_type": "code",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L3",
+      "id": "testing_keycloak_fetch_double_irecordedrequest",
+      "community": 3,
+      "norm_label": "irecordedrequest"
+    },
+    {
+      "label": "TStoredUser",
+      "file_type": "code",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L9",
+      "id": "testing_keycloak_fetch_double_tstoreduser",
+      "community": 3,
+      "norm_label": "tstoreduser"
+    },
+    {
+      "label": "TRoute",
+      "file_type": "code",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L10",
+      "id": "testing_keycloak_fetch_double_troute",
+      "community": 3,
+      "norm_label": "troute"
+    },
+    {
+      "label": "KeycloakFetchDouble",
+      "file_type": "code",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L21",
+      "id": "testing_keycloak_fetch_double_keycloakfetchdouble",
+      "community": 3,
+      "norm_label": "keycloakfetchdouble"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L44",
+      "id": "testing_keycloak_fetch_double_keycloakfetchdouble_constructor",
+      "community": 3,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".users()",
+      "file_type": "code",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L51",
+      "id": "testing_keycloak_fetch_double_keycloakfetchdouble_users",
+      "community": 3,
+      "norm_label": ".users()"
+    },
+    {
+      "label": ".writes()",
+      "file_type": "code",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L56",
+      "id": "testing_keycloak_fetch_double_keycloakfetchdouble_writes",
+      "community": 3,
+      "norm_label": ".writes()"
+    },
+    {
+      "label": "url",
+      "file_type": "code",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L61",
+      "id": "testing_keycloak_fetch_double_url",
+      "community": 3,
+      "norm_label": "url"
+    },
+    {
+      "label": "path",
+      "file_type": "code",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L68",
+      "id": "testing_keycloak_fetch_double_path",
+      "community": 3,
+      "norm_label": "path"
+    },
+    {
+      "label": ".#client()",
+      "file_type": "code",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L78",
+      "id": "testing_keycloak_fetch_double_keycloakfetchdouble_client",
+      "community": 3,
+      "norm_label": ".#client()"
+    },
+    {
+      "label": ".#roles()",
+      "file_type": "code",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L82",
+      "id": "testing_keycloak_fetch_double_keycloakfetchdouble_roles",
+      "community": 3,
+      "norm_label": ".#roles()"
+    },
+    {
+      "label": ".#create()",
+      "file_type": "code",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L88",
+      "id": "testing_keycloak_fetch_double_keycloakfetchdouble_create",
+      "community": 3,
+      "norm_label": ".#create()"
+    },
+    {
+      "label": ".#grant()",
+      "file_type": "code",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L98",
+      "id": "testing_keycloak_fetch_double_keycloakfetchdouble_grant",
+      "community": 3,
+      "norm_label": ".#grant()"
+    },
+    {
+      "label": ".#letter()",
+      "file_type": "code",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L108",
+      "id": "testing_keycloak_fetch_double_keycloakfetchdouble_letter",
+      "community": 3,
+      "norm_label": ".#letter()"
+    },
+    {
+      "label": "import-users.ts",
+      "file_type": "code",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L1",
+      "id": "src_lib_import_users_ts",
+      "community": 1,
+      "norm_label": "import-users.ts"
+    },
+    {
+      "label": "IImportOptions",
+      "file_type": "code",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L5",
+      "id": "lib_import_users_iimportoptions",
+      "community": 1,
+      "norm_label": "iimportoptions"
+    },
+    {
+      "label": "IImportReport",
+      "file_type": "code",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L11",
+      "id": "lib_import_users_iimportreport",
+      "community": 1,
+      "norm_label": "iimportreport"
+    },
+    {
+      "label": "TRealmClients",
+      "file_type": "code",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L21",
+      "id": "lib_import_users_trealmclients",
+      "community": 1,
+      "norm_label": "trealmclients"
+    },
+    {
+      "label": "realmClients()",
+      "file_type": "code",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L24",
+      "id": "lib_import_users_realmclients",
+      "community": 1,
+      "norm_label": "realmclients()"
+    },
+    {
+      "label": "unknownRoles()",
+      "file_type": "code",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L36",
+      "id": "lib_import_users_unknownroles",
+      "community": 1,
+      "norm_label": "unknownroles()"
+    },
+    {
+      "label": "grantRoles()",
+      "file_type": "code",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L53",
+      "id": "lib_import_users_grantroles",
+      "community": 1,
+      "norm_label": "grantroles()"
+    },
+    {
+      "label": "importUsers()",
+      "file_type": "code",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L71",
+      "id": "lib_import_users_importusers",
+      "community": 1,
+      "norm_label": "importusers()"
+    },
+    {
+      "label": "import-user.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/import-user.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_import_user_spec_ts",
+      "community": 5,
+      "norm_label": "import-user.spec.ts"
+    },
+    {
+      "label": "people",
+      "file_type": "code",
+      "source_file": "src/lib/import-user.spec.ts",
+      "source_location": "L9",
+      "id": "lib_import_user_spec_people",
+      "community": 5,
+      "norm_label": "people"
+    },
+    {
+      "label": "person",
+      "file_type": "code",
+      "source_file": "src/lib/import-user.spec.ts",
+      "source_location": "L22",
+      "id": "lib_import_user_spec_person",
+      "community": 5,
+      "norm_label": "person"
+    },
+    {
+      "label": "read",
+      "file_type": "code",
+      "source_file": "src/lib/import-user.spec.ts",
+      "source_location": "L33",
+      "id": "lib_import_user_spec_read",
+      "community": 5,
+      "norm_label": "read"
+    },
+    {
+      "label": "import-users.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_import_users_spec_ts",
+      "community": 1,
+      "norm_label": "import-users.spec.ts"
+    },
+    {
+      "label": "adminOver()",
+      "file_type": "code",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L6",
+      "id": "lib_import_users_spec_adminover",
+      "community": 1,
+      "norm_label": "adminover()"
+    },
+    {
+      "label": "runImport()",
+      "file_type": "code",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L16",
+      "id": "lib_import_users_spec_runimport",
+      "community": 1,
+      "norm_label": "runimport()"
+    },
+    {
+      "label": "double",
+      "file_type": "code",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L23",
+      "id": "lib_import_users_spec_double",
+      "community": 1,
+      "norm_label": "double"
+    },
+    {
+      "label": "file",
+      "file_type": "code",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L37",
+      "id": "lib_import_users_spec_file",
+      "community": 1,
+      "norm_label": "file"
+    },
+    {
+      "label": "keycloak-admin.ts",
+      "file_type": "code",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L1",
+      "id": "src_lib_keycloak_admin_ts",
+      "community": 1,
+      "norm_label": "keycloak-admin.ts"
+    },
+    {
+      "label": "IKeycloakAdminOptions",
+      "file_type": "code",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L4",
+      "id": "lib_keycloak_admin_ikeycloakadminoptions",
+      "community": 1,
+      "norm_label": "ikeycloakadminoptions"
+    },
+    {
+      "label": "IClientRole",
+      "file_type": "code",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L14",
+      "id": "lib_keycloak_admin_iclientrole",
+      "community": 1,
+      "norm_label": "iclientrole"
+    },
+    {
+      "label": "IRealmClient",
+      "file_type": "code",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L20",
+      "id": "lib_keycloak_admin_irealmclient",
+      "community": 1,
+      "norm_label": "irealmclient"
+    },
+    {
+      "label": "IToken",
+      "file_type": "code",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L25",
+      "id": "lib_keycloak_admin_itoken",
+      "community": 1,
+      "norm_label": "itoken"
+    },
+    {
+      "label": "KeycloakAdmin",
+      "file_type": "code",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L40",
+      "id": "lib_keycloak_admin_keycloakadmin",
+      "community": 9,
+      "norm_label": "keycloakadmin"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L45",
+      "id": "lib_keycloak_admin_keycloakadmin_constructor",
+      "community": 9,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".client()",
+      "file_type": "code",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L51",
+      "id": "lib_keycloak_admin_keycloakadmin_client",
+      "community": 9,
+      "norm_label": ".client()"
+    },
+    {
+      "label": ".createUser()",
+      "file_type": "code",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L70",
+      "id": "lib_keycloak_admin_keycloakadmin_createuser",
+      "community": 9,
+      "norm_label": ".createuser()"
+    },
+    {
+      "label": ".addClientRoles()",
+      "file_type": "code",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L79",
+      "id": "lib_keycloak_admin_keycloakadmin_addclientroles",
+      "community": 9,
+      "norm_label": ".addclientroles()"
+    },
+    {
+      "label": ".executeActionsEmail()",
+      "file_type": "code",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L84",
+      "id": "lib_keycloak_admin_keycloakadmin_executeactionsemail",
+      "community": 9,
+      "norm_label": ".executeactionsemail()"
+    },
+    {
+      "label": ".#request()",
+      "file_type": "code",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L88",
+      "id": "lib_keycloak_admin_keycloakadmin_request",
+      "community": 9,
+      "norm_label": ".#request()"
+    },
+    {
+      "label": ".#accessToken()",
+      "file_type": "code",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L99",
+      "id": "lib_keycloak_admin_keycloakadmin_accesstoken",
+      "community": 9,
+      "norm_label": ".#accesstoken()"
+    },
+    {
+      "label": "import-user.ts",
+      "file_type": "code",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L1",
+      "id": "src_lib_import_user_ts",
+      "community": 5,
+      "norm_label": "import-user.ts"
+    },
+    {
+      "label": "IImportUser",
+      "file_type": "code",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L4",
+      "id": "lib_import_user_iimportuser",
+      "community": 1,
+      "norm_label": "iimportuser"
+    },
+    {
+      "label": "IKeycloakUser",
+      "file_type": "code",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L18",
+      "id": "lib_import_user_ikeycloakuser",
+      "community": 5,
+      "norm_label": "ikeycloakuser"
+    },
+    {
+      "label": "IReadUsers",
+      "file_type": "code",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L30",
+      "id": "lib_import_user_ireadusers",
+      "community": 5,
+      "norm_label": "ireadusers"
+    },
+    {
+      "label": "keycloakUserOf()",
+      "file_type": "code",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L44",
+      "id": "lib_import_user_keycloakuserof",
+      "community": 1,
+      "norm_label": "keycloakuserof()"
+    },
+    {
+      "label": "isRecord()",
+      "file_type": "code",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L59",
+      "id": "lib_import_user_isrecord",
+      "community": 5,
+      "norm_label": "isrecord()"
+    },
+    {
+      "label": "isStringList()",
+      "file_type": "code",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L63",
+      "id": "lib_import_user_isstringlist",
+      "community": 5,
+      "norm_label": "isstringlist()"
+    },
+    {
+      "label": "rolesProblem()",
+      "file_type": "code",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L67",
+      "id": "lib_import_user_rolesproblem",
+      "community": 5,
+      "norm_label": "rolesproblem()"
+    },
+    {
+      "label": "entryProblems()",
+      "file_type": "code",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L77",
+      "id": "lib_import_user_entryproblems",
+      "community": 5,
+      "norm_label": "entryproblems()"
+    },
+    {
+      "label": "importUserOf()",
+      "file_type": "code",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L101",
+      "id": "lib_import_user_importuserof",
+      "community": 5,
+      "norm_label": "importuserof()"
+    },
+    {
+      "label": "readUsers()",
+      "file_type": "code",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L117",
+      "id": "lib_import_user_readusers",
+      "community": 1,
+      "norm_label": "readusers()"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "id": "readme_md",
+      "community": 6,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "@rt-tools/auth-import",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "id": "auth_import_readme_rt_tools_auth_import",
+      "community": 6,
+      "norm_label": "@rt-tools/auth-import"
+    },
+    {
+      "label": "Which hashes move",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L9",
+      "id": "auth_import_readme_which_hashes_move",
+      "community": 6,
+      "norm_label": "which hashes move"
+    },
+    {
+      "label": "The file of users",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L22",
+      "id": "auth_import_readme_the_file_of_users",
+      "community": 6,
+      "norm_label": "the file of users"
+    },
+    {
+      "label": "code:json ([)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L26",
+      "id": "auth_import_readme_codeblock_1",
+      "community": 6,
+      "norm_label": "code:json ([)"
+    },
+    {
+      "label": "Running",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L59",
+      "id": "auth_import_readme_running",
+      "community": 6,
+      "norm_label": "running"
+    },
+    {
+      "label": "code:bash (export RT_AUTH_IMPORT_CLIENT_SECRET=\u2026)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L65",
+      "id": "auth_import_readme_codeblock_2",
+      "community": 6,
+      "norm_label": "code:bash (export rt_auth_import_client_secret=...)"
+    },
+    {
+      "label": "code:block3 (added 120, skipped as already in the realm 3)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L70",
+      "id": "auth_import_readme_codeblock_3",
+      "community": 6,
+      "norm_label": "code:block3 (added 120, skipped as already in the realm 3)"
+    },
+    {
+      "label": "From code",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L79",
+      "id": "auth_import_readme_from_code",
+      "community": 6,
+      "norm_label": "from code"
+    },
+    {
+      "label": "code:ts (import { importUsers, KeycloakAdmin, readUsers, realmClients)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L81",
+      "id": "auth_import_readme_codeblock_4",
+      "community": 6,
+      "norm_label": "code:ts (import { importusers, keycloakadmin, readusers, realmclients)"
+    },
+    {
+      "label": "Connecting it to an application",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L87",
+      "id": "auth_import_readme_connecting_it_to_an_application",
+      "community": 6,
+      "norm_label": "connecting it to an application"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_import_project_name",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_import_project_schema",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_import_project_sourceroot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_import_project_projecttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_import_project_tags",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_import_project_targets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "auth_import_project_targets",
+      "target": "auth_import_project_targets_build",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "auth_import_project_targets",
+      "target": "auth_import_project_targets_test",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "auth_import_project_targets",
+      "target": "auth_import_project_targets_typecheck",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "auth_import_project_targets",
+      "target": "auth_import_project_targets_lint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "auth_import_project_targets_build",
+      "target": "auth_import_project_build_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "auth_import_project_targets_build",
+      "target": "auth_import_project_build_outputs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "auth_import_project_targets_build",
+      "target": "auth_import_project_build_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "auth_import_project_build_options",
+      "target": "auth_import_project_options_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "auth_import_project_build_options",
+      "target": "auth_import_project_options_tsconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "auth_import_project_build_options",
+      "target": "auth_import_project_options_outputpath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "auth_import_project_build_options",
+      "target": "auth_import_project_options_rootdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "auth_import_project_build_options",
+      "target": "auth_import_project_options_generatepackagejson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "auth_import_project_build_options",
+      "target": "auth_import_project_options_assets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "auth_import_project_test_options",
+      "target": "auth_import_project_options_tsconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "auth_import_project_targets_test",
+      "target": "auth_import_project_test_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "auth_import_project_targets_test",
+      "target": "auth_import_project_test_outputs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "auth_import_project_targets_test",
+      "target": "auth_import_project_test_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "auth_import_project_test_options",
+      "target": "auth_import_project_options_jestconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "auth_import_project_targets_typecheck",
+      "target": "auth_import_project_typecheck_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "auth_import_project_targets_typecheck",
+      "target": "auth_import_project_typecheck_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "auth_import_project_typecheck_options",
+      "target": "auth_import_project_options_command",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L35",
+      "weight": 1.0,
+      "source": "auth_import_project_targets_lint",
+      "target": "auth_import_project_lint_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_import_package_name",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_import_package_version",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_import_package_description",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_import_package_author",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_import_package_license",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_import_package_repository",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_import_package_homepage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_import_package_bugs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_import_package_type",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_import_package_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_import_package_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_import_package_bin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_import_package_engines",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_import_package_keywords",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_import_package_dependencies",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_import_package_sideeffects",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "auth_import_package_repository",
+      "target": "auth_import_package_repository_type",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "auth_import_package_repository",
+      "target": "auth_import_package_repository_url",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "auth_import_package_repository",
+      "target": "auth_import_package_repository_directory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "auth_import_package_bugs",
+      "target": "auth_import_package_bugs_url",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "auth_import_package_bin",
+      "target": "auth_import_package_bin_rt_auth_import",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "auth_import_package_engines",
+      "target": "auth_import_package_engines_node",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "auth_import_package_dependencies",
+      "target": "auth_import_package_dependencies_tslib",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "auth_import_tsconfig_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "auth_import_tsconfig_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "auth_import_tsconfig_files",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "auth_import_tsconfig_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "auth_import_tsconfig_references",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "auth_import_tsconfig_compileroptions",
+      "target": "auth_import_tsconfig_compileroptions_module",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "auth_import_tsconfig_compileroptions",
+      "target": "auth_import_tsconfig_compileroptions_ignoredeprecations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_lib_json",
+      "target": "auth_import_tsconfig_lib_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_lib_json",
+      "target": "auth_import_tsconfig_lib_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "tsconfig_lib_json",
+      "target": "auth_import_tsconfig_lib_exclude",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "tsconfig_lib_json",
+      "target": "auth_import_tsconfig_lib_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "auth_import_tsconfig_lib_compileroptions",
+      "target": "auth_import_tsconfig_lib_compileroptions_module",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "auth_import_tsconfig_lib_compileroptions",
+      "target": "auth_import_tsconfig_lib_compileroptions_moduleresolution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "auth_import_tsconfig_lib_compileroptions",
+      "target": "auth_import_tsconfig_lib_compileroptions_target",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "auth_import_tsconfig_lib_compileroptions",
+      "target": "auth_import_tsconfig_lib_compileroptions_outdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "auth_import_tsconfig_lib_compileroptions",
+      "target": "auth_import_tsconfig_lib_compileroptions_declaration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "auth_import_tsconfig_lib_compileroptions",
+      "target": "auth_import_tsconfig_lib_compileroptions_declarationmap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "auth_import_tsconfig_lib_compileroptions",
+      "target": "auth_import_tsconfig_lib_compileroptions_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "auth_import_tsconfig_lib_compileroptions",
+      "target": "auth_import_tsconfig_lib_compileroptions_rootdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "auth_import_tsconfig_spec_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "auth_import_tsconfig_spec_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "auth_import_tsconfig_spec_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "auth_import_tsconfig_spec_compileroptions",
+      "target": "auth_import_tsconfig_spec_compileroptions_outdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "auth_import_tsconfig_spec_compileroptions",
+      "target": "auth_import_tsconfig_spec_compileroptions_module",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "auth_import_tsconfig_spec_compileroptions",
+      "target": "auth_import_tsconfig_spec_compileroptions_target",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "auth_import_tsconfig_spec_compileroptions",
+      "target": "auth_import_tsconfig_spec_compileroptions_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "auth_import_tsconfig_spec_compileroptions",
+      "target": "auth_import_tsconfig_spec_compileroptions_moduleresolution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "auth_import_tsconfig_spec_compileroptions",
+      "target": "auth_import_tsconfig_spec_compileroptions_isolatedmodules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "auth_import_tsconfig_spec_compileroptions",
+      "target": "auth_import_tsconfig_spec_compileroptions_rootdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_cli_ts",
+      "target": "src_lib_import_user_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_cli_ts",
+      "target": "lib_import_user_ireadusers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_cli_ts",
+      "target": "lib_import_user_readusers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_cli_ts",
+      "target": "src_lib_import_users_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_cli_ts",
+      "target": "lib_import_users_iimportreport",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_cli_ts",
+      "target": "lib_import_users_importusers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_cli_ts",
+      "target": "lib_import_users_realmclients",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_cli_ts",
+      "target": "lib_import_users_trealmclients",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_cli_ts",
+      "target": "lib_import_users_unknownroles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_cli_ts",
+      "target": "src_lib_keycloak_admin_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_cli_ts",
+      "target": "lib_keycloak_admin_keycloakadmin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_cli_ts",
+      "target": "src_cli_icliio",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "src_cli_ts",
+      "target": "src_cli_printreport",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.ts",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "src_cli_ts",
+      "target": "src_cli_run",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/bin.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_bin_ts",
+      "target": "src_cli_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_cli_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_cli_spec_ts",
+      "target": "src_cli_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_cli_spec_ts",
+      "target": "src_cli_icliio",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.ts",
+      "source_location": "L68",
+      "weight": 1.0,
+      "source": "src_cli_run",
+      "target": "src_cli_printreport",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/bin.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_bin_ts",
+      "target": "src_cli_run",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_cli_spec_ts",
+      "target": "src_cli_run",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/cli.ts",
+      "source_location": "L53",
+      "weight": 1.0,
+      "source": "src_cli_run",
+      "target": "lib_import_user_readusers"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/cli.ts",
+      "source_location": "L61",
+      "weight": 1.0,
+      "source": "src_cli_run",
+      "target": "lib_import_users_realmclients"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/cli.ts",
+      "source_location": "L62",
+      "weight": 1.0,
+      "source": "src_cli_run",
+      "target": "lib_import_users_unknownroles"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/cli.ts",
+      "source_location": "L68",
+      "weight": 1.0,
+      "source": "src_cli_run",
+      "target": "lib_import_users_importusers"
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_import_user_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_import_users_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_keycloak_admin_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_cli_spec_ts",
+      "target": "src_testing_keycloak_fetch_double_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_cli_spec_ts",
+      "target": "testing_keycloak_fetch_double_keycloakfetchdouble",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_cli_spec_ts",
+      "target": "src_cli_spec_args",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.spec.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_cli_spec_ts",
+      "target": "src_cli_spec_ttestio",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.spec.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_cli_spec_ts",
+      "target": "src_cli_spec_ioover",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.spec.ts",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "src_cli_spec_ts",
+      "target": "src_cli_spec_double",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/cli.spec.ts",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "src_cli_spec_ts",
+      "target": "src_cli_spec_io",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_testing_keycloak_fetch_double_ts",
+      "target": "src_lib_import_user_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_testing_keycloak_fetch_double_ts",
+      "target": "lib_import_user_ikeycloakuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_testing_keycloak_fetch_double_ts",
+      "target": "testing_keycloak_fetch_double_irecordedrequest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_testing_keycloak_fetch_double_ts",
+      "target": "testing_keycloak_fetch_double_tstoreduser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_testing_keycloak_fetch_double_ts",
+      "target": "testing_keycloak_fetch_double_troute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "src_testing_keycloak_fetch_double_ts",
+      "target": "testing_keycloak_fetch_double_keycloakfetchdouble",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L61",
+      "weight": 1.0,
+      "source": "src_testing_keycloak_fetch_double_ts",
+      "target": "testing_keycloak_fetch_double_url",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L68",
+      "weight": 1.0,
+      "source": "src_testing_keycloak_fetch_double_ts",
+      "target": "testing_keycloak_fetch_double_path",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_import_users_spec_ts",
+      "target": "src_testing_keycloak_fetch_double_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "testing_keycloak_fetch_double_keycloakfetchdouble",
+      "target": "testing_keycloak_fetch_double_keycloakfetchdouble_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "testing_keycloak_fetch_double_keycloakfetchdouble",
+      "target": "testing_keycloak_fetch_double_keycloakfetchdouble_users",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L56",
+      "weight": 1.0,
+      "source": "testing_keycloak_fetch_double_keycloakfetchdouble",
+      "target": "testing_keycloak_fetch_double_keycloakfetchdouble_writes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L78",
+      "weight": 1.0,
+      "source": "testing_keycloak_fetch_double_keycloakfetchdouble",
+      "target": "testing_keycloak_fetch_double_keycloakfetchdouble_client",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L82",
+      "weight": 1.0,
+      "source": "testing_keycloak_fetch_double_keycloakfetchdouble",
+      "target": "testing_keycloak_fetch_double_keycloakfetchdouble_roles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L88",
+      "weight": 1.0,
+      "source": "testing_keycloak_fetch_double_keycloakfetchdouble",
+      "target": "testing_keycloak_fetch_double_keycloakfetchdouble_create",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L98",
+      "weight": 1.0,
+      "source": "testing_keycloak_fetch_double_keycloakfetchdouble",
+      "target": "testing_keycloak_fetch_double_keycloakfetchdouble_grant",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/testing/keycloak-fetch-double.ts",
+      "source_location": "L108",
+      "weight": 1.0,
+      "source": "testing_keycloak_fetch_double_keycloakfetchdouble",
+      "target": "testing_keycloak_fetch_double_keycloakfetchdouble_letter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_import_users_spec_ts",
+      "target": "testing_keycloak_fetch_double_keycloakfetchdouble",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_import_users_ts",
+      "target": "src_lib_import_user_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_import_users_ts",
+      "target": "lib_import_user_iimportuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_import_users_ts",
+      "target": "lib_import_user_ikeycloakuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_import_users_ts",
+      "target": "lib_import_user_keycloakuserof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_import_users_ts",
+      "target": "src_lib_keycloak_admin_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_import_users_ts",
+      "target": "lib_keycloak_admin_iclientrole",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_import_users_ts",
+      "target": "lib_keycloak_admin_irealmclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_import_users_ts",
+      "target": "lib_keycloak_admin_keycloakadmin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_import_users_ts",
+      "target": "lib_import_users_iimportoptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_lib_import_users_ts",
+      "target": "lib_import_users_iimportreport",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "src_lib_import_users_ts",
+      "target": "lib_import_users_trealmclients",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "src_lib_import_users_ts",
+      "target": "lib_import_users_realmclients",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "src_lib_import_users_ts",
+      "target": "lib_import_users_unknownroles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L53",
+      "weight": 1.0,
+      "source": "src_lib_import_users_ts",
+      "target": "lib_import_users_grantroles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L71",
+      "weight": 1.0,
+      "source": "src_lib_import_users_ts",
+      "target": "lib_import_users_importusers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_import_users_spec_ts",
+      "target": "src_lib_import_users_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_import_users_spec_ts",
+      "target": "lib_import_users_iimportreport",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_import_users_spec_ts",
+      "target": "lib_import_users_trealmclients",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_import_users_spec_ts",
+      "target": "lib_import_users_realmclients",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "lib_import_users_spec_runimport",
+      "target": "lib_import_users_realmclients",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_import_users_spec_ts",
+      "target": "lib_import_users_unknownroles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L91",
+      "weight": 1.0,
+      "source": "lib_import_users_importusers",
+      "target": "lib_import_users_grantroles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_import_users_spec_ts",
+      "target": "lib_import_users_importusers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "lib_import_users_spec_runimport",
+      "target": "lib_import_users_importusers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/lib/import-users.ts",
+      "source_location": "L84",
+      "weight": 1.0,
+      "source": "lib_import_users_importusers",
+      "target": "lib_import_user_keycloakuserof"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_import_user_spec_ts",
+      "target": "src_lib_import_user_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_import_user_spec_ts",
+      "target": "lib_import_user_ikeycloakuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_import_user_spec_ts",
+      "target": "lib_import_user_ireadusers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_import_user_spec_ts",
+      "target": "lib_import_user_keycloakuserof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_import_user_spec_ts",
+      "target": "lib_import_user_readusers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.spec.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_lib_import_user_spec_ts",
+      "target": "lib_import_user_spec_people",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.spec.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_lib_import_user_spec_ts",
+      "target": "lib_import_user_spec_person",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.spec.ts",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "src_lib_import_user_spec_ts",
+      "target": "lib_import_user_spec_read",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_import_users_spec_ts",
+      "target": "src_lib_import_user_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_import_users_spec_ts",
+      "target": "lib_import_user_iimportuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_import_users_spec_ts",
+      "target": "src_lib_keycloak_admin_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_import_users_spec_ts",
+      "target": "lib_keycloak_admin_keycloakadmin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_import_users_spec_ts",
+      "target": "lib_import_users_spec_adminover",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_lib_import_users_spec_ts",
+      "target": "lib_import_users_spec_runimport",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L59",
+      "weight": 1.0,
+      "source": "src_lib_import_users_spec_ts",
+      "target": "lib_import_users_spec_double",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L60",
+      "weight": 1.0,
+      "source": "src_lib_import_users_spec_ts",
+      "target": "lib_import_users_spec_file",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-users.spec.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "lib_import_users_spec_runimport",
+      "target": "lib_import_users_spec_adminover",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_keycloak_admin_ts",
+      "target": "src_lib_import_user_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_keycloak_admin_ts",
+      "target": "lib_import_user_ikeycloakuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_keycloak_admin_ts",
+      "target": "lib_keycloak_admin_ikeycloakadminoptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_lib_keycloak_admin_ts",
+      "target": "lib_keycloak_admin_iclientrole",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_lib_keycloak_admin_ts",
+      "target": "lib_keycloak_admin_irealmclient",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "src_lib_keycloak_admin_ts",
+      "target": "lib_keycloak_admin_itoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "src_lib_keycloak_admin_ts",
+      "target": "lib_keycloak_admin_keycloakadmin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "lib_keycloak_admin_keycloakadmin",
+      "target": "lib_keycloak_admin_keycloakadmin_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "lib_keycloak_admin_keycloakadmin",
+      "target": "lib_keycloak_admin_keycloakadmin_client",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L70",
+      "weight": 1.0,
+      "source": "lib_keycloak_admin_keycloakadmin",
+      "target": "lib_keycloak_admin_keycloakadmin_createuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L79",
+      "weight": 1.0,
+      "source": "lib_keycloak_admin_keycloakadmin",
+      "target": "lib_keycloak_admin_keycloakadmin_addclientroles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L84",
+      "weight": 1.0,
+      "source": "lib_keycloak_admin_keycloakadmin",
+      "target": "lib_keycloak_admin_keycloakadmin_executeactionsemail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L88",
+      "weight": 1.0,
+      "source": "lib_keycloak_admin_keycloakadmin",
+      "target": "lib_keycloak_admin_keycloakadmin_request",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L99",
+      "weight": 1.0,
+      "source": "lib_keycloak_admin_keycloakadmin",
+      "target": "lib_keycloak_admin_keycloakadmin_accesstoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "lib_keycloak_admin_keycloakadmin_client",
+      "target": "lib_keycloak_admin_keycloakadmin_request",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L71",
+      "weight": 1.0,
+      "source": "lib_keycloak_admin_keycloakadmin_createuser",
+      "target": "lib_keycloak_admin_keycloakadmin_request",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L80",
+      "weight": 1.0,
+      "source": "lib_keycloak_admin_keycloakadmin_addclientroles",
+      "target": "lib_keycloak_admin_keycloakadmin_request",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L85",
+      "weight": 1.0,
+      "source": "lib_keycloak_admin_keycloakadmin_executeactionsemail",
+      "target": "lib_keycloak_admin_keycloakadmin_request",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/keycloak-admin.ts",
+      "source_location": "L91",
+      "weight": 1.0,
+      "source": "lib_keycloak_admin_keycloakadmin_request",
+      "target": "lib_keycloak_admin_keycloakadmin_accesstoken",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_import_user_ts",
+      "target": "lib_import_user_iimportuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "src_lib_import_user_ts",
+      "target": "lib_import_user_ikeycloakuser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "src_lib_import_user_ts",
+      "target": "lib_import_user_ireadusers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "src_lib_import_user_ts",
+      "target": "lib_import_user_keycloakuserof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L59",
+      "weight": 1.0,
+      "source": "src_lib_import_user_ts",
+      "target": "lib_import_user_isrecord",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L63",
+      "weight": 1.0,
+      "source": "src_lib_import_user_ts",
+      "target": "lib_import_user_isstringlist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L67",
+      "weight": 1.0,
+      "source": "src_lib_import_user_ts",
+      "target": "lib_import_user_rolesproblem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L77",
+      "weight": 1.0,
+      "source": "src_lib_import_user_ts",
+      "target": "lib_import_user_entryproblems",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L101",
+      "weight": 1.0,
+      "source": "src_lib_import_user_ts",
+      "target": "lib_import_user_importuserof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L117",
+      "weight": 1.0,
+      "source": "src_lib_import_user_ts",
+      "target": "lib_import_user_readusers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L71",
+      "weight": 1.0,
+      "source": "lib_import_user_rolesproblem",
+      "target": "lib_import_user_isrecord",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L78",
+      "weight": 1.0,
+      "source": "lib_import_user_entryproblems",
+      "target": "lib_import_user_isrecord",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L109",
+      "weight": 1.0,
+      "source": "lib_import_user_importuserof",
+      "target": "lib_import_user_isrecord",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/import-user.ts",
+      "source_location": "L93",
+      "weight": 1.0,
+      "source": "lib_import_user_entryproblems",
+      "target": "lib_import_user_rolesproblem",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "readme_md",
+      "target": "auth_import_readme_rt_tools_auth_import",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "auth_import_readme_rt_tools_auth_import",
+      "target": "auth_import_readme_which_hashes_move",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "auth_import_readme_rt_tools_auth_import",
+      "target": "auth_import_readme_the_file_of_users",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L59",
+      "weight": 1.0,
+      "source": "auth_import_readme_rt_tools_auth_import",
+      "target": "auth_import_readme_running",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L79",
+      "weight": 1.0,
+      "source": "auth_import_readme_rt_tools_auth_import",
+      "target": "auth_import_readme_from_code",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L87",
+      "weight": 1.0,
+      "source": "auth_import_readme_rt_tools_auth_import",
+      "target": "auth_import_readme_connecting_it_to_an_application",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "auth_import_readme_the_file_of_users",
+      "target": "auth_import_readme_codeblock_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L65",
+      "weight": 1.0,
+      "source": "auth_import_readme_running",
+      "target": "auth_import_readme_codeblock_2",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L70",
+      "weight": 1.0,
+      "source": "auth_import_readme_running",
+      "target": "auth_import_readme_codeblock_3",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L81",
+      "weight": 1.0,
+      "source": "auth_import_readme_from_code",
+      "target": "auth_import_readme_codeblock_4",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "built_at_commit": "76235026c0071bbfba479885de800c463a0de4ec"
+}

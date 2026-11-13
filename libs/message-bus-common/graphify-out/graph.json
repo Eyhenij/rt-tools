@@ -1,0 +1,5455 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "project.json",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L1",
+      "id": "project_json",
+      "community": 9,
+      "norm_label": "project.json"
+    },
+    {
+      "label": "name",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L2",
+      "id": "message_bus_common_project_name",
+      "community": 9,
+      "norm_label": "name"
+    },
+    {
+      "label": "$schema",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L3",
+      "id": "message_bus_common_project_schema",
+      "community": 9,
+      "norm_label": "$schema"
+    },
+    {
+      "label": "sourceRoot",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L4",
+      "id": "message_bus_common_project_sourceroot",
+      "community": 9,
+      "norm_label": "sourceroot"
+    },
+    {
+      "label": "projectType",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L5",
+      "id": "message_bus_common_project_projecttype",
+      "community": 9,
+      "norm_label": "projecttype"
+    },
+    {
+      "label": "tags",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L6",
+      "id": "message_bus_common_project_tags",
+      "community": 9,
+      "norm_label": "tags"
+    },
+    {
+      "label": "// targets",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L7",
+      "id": "message_bus_common_project_targets",
+      "community": 9,
+      "norm_label": "// targets"
+    },
+    {
+      "label": "tsconfig.json",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L1",
+      "id": "tsconfig_json",
+      "community": 7,
+      "norm_label": "tsconfig.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "id": "message_bus_common_tsconfig_extends",
+      "community": 7,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "id": "message_bus_common_tsconfig_compileroptions",
+      "community": 7,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "module",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "id": "message_bus_common_tsconfig_compileroptions_module",
+      "community": 7,
+      "norm_label": "module"
+    },
+    {
+      "label": "forceConsistentCasingInFileNames",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "id": "message_bus_common_tsconfig_compileroptions_forceconsistentcasinginfilenames",
+      "community": 7,
+      "norm_label": "forceconsistentcasinginfilenames"
+    },
+    {
+      "label": "strict",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L6",
+      "id": "message_bus_common_tsconfig_compileroptions_strict",
+      "community": 7,
+      "norm_label": "strict"
+    },
+    {
+      "label": "importHelpers",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L7",
+      "id": "message_bus_common_tsconfig_compileroptions_importhelpers",
+      "community": 7,
+      "norm_label": "importhelpers"
+    },
+    {
+      "label": "noImplicitOverride",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L8",
+      "id": "message_bus_common_tsconfig_compileroptions_noimplicitoverride",
+      "community": 7,
+      "norm_label": "noimplicitoverride"
+    },
+    {
+      "label": "noImplicitReturns",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L9",
+      "id": "message_bus_common_tsconfig_compileroptions_noimplicitreturns",
+      "community": 7,
+      "norm_label": "noimplicitreturns"
+    },
+    {
+      "label": "noFallthroughCasesInSwitch",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L10",
+      "id": "message_bus_common_tsconfig_compileroptions_nofallthroughcasesinswitch",
+      "community": 7,
+      "norm_label": "nofallthroughcasesinswitch"
+    },
+    {
+      "label": "noPropertyAccessFromIndexSignature",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L11",
+      "id": "message_bus_common_tsconfig_compileroptions_nopropertyaccessfromindexsignature",
+      "community": 7,
+      "norm_label": "nopropertyaccessfromindexsignature"
+    },
+    {
+      "label": "files",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L13",
+      "id": "message_bus_common_tsconfig_files",
+      "community": 7,
+      "norm_label": "files"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L14",
+      "id": "message_bus_common_tsconfig_include",
+      "community": 7,
+      "norm_label": "include"
+    },
+    {
+      "label": "references",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L15",
+      "id": "message_bus_common_tsconfig_references",
+      "community": 7,
+      "norm_label": "references"
+    },
+    {
+      "label": "tsconfig.lib.json",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L1",
+      "id": "tsconfig_lib_json",
+      "community": 8,
+      "norm_label": "tsconfig.lib.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L2",
+      "id": "message_bus_common_tsconfig_lib_extends",
+      "community": 8,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L3",
+      "id": "message_bus_common_tsconfig_lib_compileroptions",
+      "community": 8,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "outDir",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L4",
+      "id": "message_bus_common_tsconfig_lib_compileroptions_outdir",
+      "community": 8,
+      "norm_label": "outdir"
+    },
+    {
+      "label": "declaration",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L5",
+      "id": "message_bus_common_tsconfig_lib_compileroptions_declaration",
+      "community": 8,
+      "norm_label": "declaration"
+    },
+    {
+      "label": "types",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L6",
+      "id": "message_bus_common_tsconfig_lib_compileroptions_types",
+      "community": 8,
+      "norm_label": "types"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L8",
+      "id": "message_bus_common_tsconfig_lib_include",
+      "community": 8,
+      "norm_label": "include"
+    },
+    {
+      "label": "exclude",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L9",
+      "id": "message_bus_common_tsconfig_lib_exclude",
+      "community": 8,
+      "norm_label": "exclude"
+    },
+    {
+      "label": "eslint.config.mjs",
+      "file_type": "code",
+      "source_file": "eslint.config.mjs",
+      "source_location": "L1",
+      "id": "eslint_config_mjs",
+      "community": 13,
+      "norm_label": "eslint.config.mjs"
+    },
+    {
+      "label": "tsconfig.spec.json",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L1",
+      "id": "tsconfig_spec_json",
+      "community": 11,
+      "norm_label": "tsconfig.spec.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L2",
+      "id": "message_bus_common_tsconfig_spec_extends",
+      "community": 11,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L3",
+      "id": "message_bus_common_tsconfig_spec_compileroptions",
+      "community": 11,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "module",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L4",
+      "id": "message_bus_common_tsconfig_spec_compileroptions_module",
+      "community": 11,
+      "norm_label": "module"
+    },
+    {
+      "label": "outDir",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L5",
+      "id": "message_bus_common_tsconfig_spec_compileroptions_outdir",
+      "community": 11,
+      "norm_label": "outdir"
+    },
+    {
+      "label": "types",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L6",
+      "id": "message_bus_common_tsconfig_spec_compileroptions_types",
+      "community": 11,
+      "norm_label": "types"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L14",
+      "id": "message_bus_common_tsconfig_spec_include",
+      "community": 11,
+      "norm_label": "include"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "src/index.ts",
+      "source_location": "L1",
+      "id": "src_index_ts",
+      "community": 3,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "cargo-close-move.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-close-move.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_cargo_close_move_spec_ts",
+      "community": 1,
+      "norm_label": "cargo-close-move.spec.ts"
+    },
+    {
+      "label": "ask",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-close-move.spec.ts",
+      "source_location": "L35",
+      "id": "lib_cargo_close_move_spec_ask",
+      "community": 1,
+      "norm_label": "ask"
+    },
+    {
+      "label": "month.ts",
+      "file_type": "code",
+      "source_file": "src/lib/month.ts",
+      "source_location": "L1",
+      "id": "src_lib_month_ts",
+      "community": 3,
+      "norm_label": "month.ts"
+    },
+    {
+      "label": "monthOf()",
+      "file_type": "code",
+      "source_file": "src/lib/month.ts",
+      "source_location": "L13",
+      "id": "lib_month_monthof",
+      "community": 3,
+      "norm_label": "monthof()"
+    },
+    {
+      "label": "cargo-shape.ts",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-shape.ts",
+      "source_location": "L1",
+      "id": "src_lib_cargo_shape_ts",
+      "community": 4,
+      "norm_label": "cargo-shape.ts"
+    },
+    {
+      "label": "TCargoBody",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-shape.ts",
+      "source_location": "L14",
+      "id": "lib_cargo_shape_tcargobody",
+      "community": 4,
+      "norm_label": "tcargobody"
+    },
+    {
+      "label": "isCargoBody()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-shape.ts",
+      "source_location": "L17",
+      "id": "lib_cargo_shape_iscargobody",
+      "community": 4,
+      "norm_label": "iscargobody()"
+    },
+    {
+      "label": "cargoSchemaOf()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-shape.ts",
+      "source_location": "L25",
+      "id": "lib_cargo_shape_cargoschemaof",
+      "community": 4,
+      "norm_label": "cargoschemaof()"
+    },
+    {
+      "label": "cargoTreeOf()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-shape.ts",
+      "source_location": "L32",
+      "id": "lib_cargo_shape_cargotreeof",
+      "community": 4,
+      "norm_label": "cargotreeof()"
+    },
+    {
+      "label": "missingCargoFields()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-shape.ts",
+      "source_location": "L45",
+      "id": "lib_cargo_shape_missingcargofields",
+      "community": 4,
+      "norm_label": "missingcargofields()"
+    },
+    {
+      "label": "cargoItemsOf()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-shape.ts",
+      "source_location": "L50",
+      "id": "lib_cargo_shape_cargoitemsof",
+      "community": 4,
+      "norm_label": "cargoitemsof()"
+    },
+    {
+      "label": "CARGO_ITEMS_FIELDS",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-shape.ts",
+      "source_location": "L68",
+      "id": "lib_cargo_shape_cargo_items_fields",
+      "community": 4,
+      "norm_label": "cargo_items_fields"
+    },
+    {
+      "label": "usage.ts",
+      "file_type": "code",
+      "source_file": "src/lib/usage.ts",
+      "source_location": "L1",
+      "id": "src_lib_usage_ts",
+      "community": 5,
+      "norm_label": "usage.ts"
+    },
+    {
+      "label": "IUsageRow",
+      "file_type": "code",
+      "source_file": "src/lib/usage.ts",
+      "source_location": "L14",
+      "id": "lib_usage_iusagerow",
+      "community": 5,
+      "norm_label": "iusagerow"
+    },
+    {
+      "label": "IUsageSessionRow",
+      "file_type": "code",
+      "source_file": "src/lib/usage.ts",
+      "source_location": "L24",
+      "id": "lib_usage_iusagesessionrow",
+      "community": 5,
+      "norm_label": "iusagesessionrow"
+    },
+    {
+      "label": "IUsagePage",
+      "file_type": "code",
+      "source_file": "src/lib/usage.ts",
+      "source_location": "L36",
+      "id": "lib_usage_iusagepage",
+      "community": 5,
+      "norm_label": "iusagepage"
+    },
+    {
+      "label": "IUsageDayRow",
+      "file_type": "code",
+      "source_file": "src/lib/usage.ts",
+      "source_location": "L42",
+      "id": "lib_usage_iusagedayrow",
+      "community": 5,
+      "norm_label": "iusagedayrow"
+    },
+    {
+      "label": "IUsageKindRow",
+      "file_type": "code",
+      "source_file": "src/lib/usage.ts",
+      "source_location": "L50",
+      "id": "lib_usage_iusagekindrow",
+      "community": 5,
+      "norm_label": "iusagekindrow"
+    },
+    {
+      "label": "IUsageDigest",
+      "file_type": "code",
+      "source_file": "src/lib/usage.ts",
+      "source_location": "L62",
+      "id": "lib_usage_iusagedigest",
+      "community": 5,
+      "norm_label": "iusagedigest"
+    },
+    {
+      "label": "cargo-release-version.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-release-version.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_cargo_release_version_spec_ts",
+      "community": 0,
+      "norm_label": "cargo-release-version.spec.ts"
+    },
+    {
+      "label": "cargo-quarantine-note.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-quarantine-note.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_cargo_quarantine_note_spec_ts",
+      "community": 0,
+      "norm_label": "cargo-quarantine-note.spec.ts"
+    },
+    {
+      "label": "tree-choice.ts",
+      "file_type": "code",
+      "source_file": "src/lib/tree-choice.ts",
+      "source_location": "L1",
+      "id": "src_lib_tree_choice_ts",
+      "community": 5,
+      "norm_label": "tree-choice.ts"
+    },
+    {
+      "label": "ITreeChoice",
+      "file_type": "code",
+      "source_file": "src/lib/tree-choice.ts",
+      "source_location": "L14",
+      "id": "lib_tree_choice_itreechoice",
+      "community": 5,
+      "norm_label": "itreechoice"
+    },
+    {
+      "label": "quality.ts",
+      "file_type": "code",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L1",
+      "id": "src_lib_quality_ts",
+      "community": 5,
+      "norm_label": "quality.ts"
+    },
+    {
+      "label": "QUALITY_SORTABLE",
+      "file_type": "code",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L10",
+      "id": "lib_quality_quality_sortable",
+      "community": 5,
+      "norm_label": "quality_sortable"
+    },
+    {
+      "label": "EQualitySendFault",
+      "file_type": "code",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L19",
+      "id": "lib_quality_equalitysendfault",
+      "community": 5,
+      "norm_label": "equalitysendfault"
+    },
+    {
+      "label": "IQualityFirstPass",
+      "file_type": "code",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L28",
+      "id": "lib_quality_iqualityfirstpass",
+      "community": 5,
+      "norm_label": "iqualityfirstpass"
+    },
+    {
+      "label": "IQualityCorrections",
+      "file_type": "code",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L39",
+      "id": "lib_quality_iqualitycorrections",
+      "community": 5,
+      "norm_label": "iqualitycorrections"
+    },
+    {
+      "label": "IQualityRepeats",
+      "file_type": "code",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L47",
+      "id": "lib_quality_iqualityrepeats",
+      "community": 5,
+      "norm_label": "iqualityrepeats"
+    },
+    {
+      "label": "IQualityTreeFault",
+      "file_type": "code",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L58",
+      "id": "lib_quality_iqualitytreefault",
+      "community": 5,
+      "norm_label": "iqualitytreefault"
+    },
+    {
+      "label": "IQualityCompleteness",
+      "file_type": "code",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L64",
+      "id": "lib_quality_iqualitycompleteness",
+      "community": 5,
+      "norm_label": "iqualitycompleteness"
+    },
+    {
+      "label": "IQualityDriverRow",
+      "file_type": "code",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L74",
+      "id": "lib_quality_iqualitydriverrow",
+      "community": 5,
+      "norm_label": "iqualitydriverrow"
+    },
+    {
+      "label": "IQualityReport",
+      "file_type": "code",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L87",
+      "id": "lib_quality_iqualityreport",
+      "community": 5,
+      "norm_label": "iqualityreport"
+    },
+    {
+      "label": "cargo-kind.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-kind.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_cargo_kind_spec_ts",
+      "community": 1,
+      "norm_label": "cargo-kind.spec.ts"
+    },
+    {
+      "label": "cargo-state.ts",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state.ts",
+      "source_location": "L1",
+      "id": "src_lib_cargo_state_ts",
+      "community": 0,
+      "norm_label": "cargo-state.ts"
+    },
+    {
+      "label": "ECargoState",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state.ts",
+      "source_location": "L17",
+      "id": "lib_cargo_state_ecargostate",
+      "community": 0,
+      "norm_label": "ecargostate"
+    },
+    {
+      "label": "CARGO_STATES",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state.ts",
+      "source_location": "L36",
+      "id": "lib_cargo_state_cargo_states",
+      "community": 0,
+      "norm_label": "cargo_states"
+    },
+    {
+      "label": "cargoStateOf()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state.ts",
+      "source_location": "L46",
+      "id": "lib_cargo_state_cargostateof",
+      "community": 0,
+      "norm_label": "cargostateof()"
+    },
+    {
+      "label": "cargo-fault.ts",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L1",
+      "id": "src_lib_cargo_fault_ts",
+      "community": 4,
+      "norm_label": "cargo-fault.ts"
+    },
+    {
+      "label": "ECargoFault",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L14",
+      "id": "lib_cargo_fault_ecargofault",
+      "community": 4,
+      "norm_label": "ecargofault"
+    },
+    {
+      "label": "ICargoFault",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L25",
+      "id": "lib_cargo_fault_icargofault",
+      "community": 4,
+      "norm_label": "icargofault"
+    },
+    {
+      "label": "cargoFault()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L38",
+      "id": "lib_cargo_fault_cargofault",
+      "community": 4,
+      "norm_label": "cargofault()"
+    },
+    {
+      "label": "cargoFaultMessage()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L55",
+      "id": "lib_cargo_fault_cargofaultmessage",
+      "community": 4,
+      "norm_label": "cargofaultmessage()"
+    },
+    {
+      "label": "cargoItemsFaultMessage()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L69",
+      "id": "lib_cargo_fault_cargoitemsfaultmessage",
+      "community": 4,
+      "norm_label": "cargoitemsfaultmessage()"
+    },
+    {
+      "label": "cargoItemFaultMessage()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L74",
+      "id": "lib_cargo_fault_cargoitemfaultmessage",
+      "community": 4,
+      "norm_label": "cargoitemfaultmessage()"
+    },
+    {
+      "label": "faultyCargoItems()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L79",
+      "id": "lib_cargo_fault_faultycargoitems",
+      "community": 4,
+      "norm_label": "faultycargoitems()"
+    },
+    {
+      "label": "rights.ts",
+      "file_type": "code",
+      "source_file": "src/lib/rights.ts",
+      "source_location": "L1",
+      "id": "src_lib_rights_ts",
+      "community": 10,
+      "norm_label": "rights.ts"
+    },
+    {
+      "label": "TRight",
+      "file_type": "code",
+      "source_file": "src/lib/rights.ts",
+      "source_location": "L16",
+      "id": "lib_rights_tright",
+      "community": 10,
+      "norm_label": "tright"
+    },
+    {
+      "label": "RIGHTS",
+      "file_type": "code",
+      "source_file": "src/lib/rights.ts",
+      "source_location": "L35",
+      "id": "lib_rights_rights",
+      "community": 10,
+      "norm_label": "rights"
+    },
+    {
+      "label": "isRight()",
+      "file_type": "code",
+      "source_file": "src/lib/rights.ts",
+      "source_location": "L49",
+      "id": "lib_rights_isright",
+      "community": 10,
+      "norm_label": "isright()"
+    },
+    {
+      "label": "hasRight()",
+      "file_type": "code",
+      "source_file": "src/lib/rights.ts",
+      "source_location": "L59",
+      "id": "lib_rights_hasright",
+      "community": 10,
+      "norm_label": "hasright()"
+    },
+    {
+      "label": "release-version-order.ts",
+      "file_type": "code",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L1",
+      "id": "src_lib_release_version_order_ts",
+      "community": 2,
+      "norm_label": "release-version-order.ts"
+    },
+    {
+      "label": "IVersionKey",
+      "file_type": "code",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L18",
+      "id": "lib_release_version_order_iversionkey",
+      "community": 2,
+      "norm_label": "iversionkey"
+    },
+    {
+      "label": "releaseVersionKey()",
+      "file_type": "code",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L34",
+      "id": "lib_release_version_order_releaseversionkey",
+      "community": 2,
+      "norm_label": "releaseversionkey()"
+    },
+    {
+      "label": "compareReleaseVersions()",
+      "file_type": "code",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L62",
+      "id": "lib_release_version_order_comparereleaseversions",
+      "community": 2,
+      "norm_label": "comparereleaseversions()"
+    },
+    {
+      "label": "orderedReleaseVersions()",
+      "file_type": "code",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L91",
+      "id": "lib_release_version_order_orderedreleaseversions",
+      "community": 2,
+      "norm_label": "orderedreleaseversions()"
+    },
+    {
+      "label": "IReleaseVersionKeyed",
+      "file_type": "code",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L101",
+      "id": "lib_release_version_order_ireleaseversionkeyed",
+      "community": 2,
+      "norm_label": "ireleaseversionkeyed"
+    },
+    {
+      "label": "compareKeyed()",
+      "file_type": "code",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L114",
+      "id": "lib_release_version_order_comparekeyed",
+      "community": 2,
+      "norm_label": "comparekeyed()"
+    },
+    {
+      "label": "releaseVersionPageIds()",
+      "file_type": "code",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L138",
+      "id": "lib_release_version_order_releaseversionpageids",
+      "community": 2,
+      "norm_label": "releaseversionpageids()"
+    },
+    {
+      "label": "cargo-page.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-page.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_cargo_page_spec_ts",
+      "community": 0,
+      "norm_label": "cargo-page.spec.ts"
+    },
+    {
+      "label": "SORTABLE",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-page.spec.ts",
+      "source_location": "L7",
+      "id": "lib_cargo_page_spec_sortable",
+      "community": 0,
+      "norm_label": "sortable"
+    },
+    {
+      "label": "fault",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-page.spec.ts",
+      "source_location": "L22",
+      "id": "lib_cargo_page_spec_fault",
+      "community": 0,
+      "norm_label": "fault"
+    },
+    {
+      "label": "asked",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-page.spec.ts",
+      "source_location": "L54",
+      "id": "lib_cargo_page_spec_asked",
+      "community": 0,
+      "norm_label": "asked"
+    },
+    {
+      "label": "chat.ts",
+      "file_type": "code",
+      "source_file": "src/lib/chat.ts",
+      "source_location": "L1",
+      "id": "src_lib_chat_ts",
+      "community": 3,
+      "norm_label": "chat.ts"
+    },
+    {
+      "label": "EChatTalkState",
+      "file_type": "code",
+      "source_file": "src/lib/chat.ts",
+      "source_location": "L25",
+      "id": "lib_chat_echattalkstate",
+      "community": 3,
+      "norm_label": "echattalkstate"
+    },
+    {
+      "label": "IChatEntryOpened",
+      "file_type": "code",
+      "source_file": "src/lib/chat.ts",
+      "source_location": "L51",
+      "id": "lib_chat_ichatentryopened",
+      "community": 3,
+      "norm_label": "ichatentryopened"
+    },
+    {
+      "label": "IChatPageSignature",
+      "file_type": "code",
+      "source_file": "src/lib/chat.ts",
+      "source_location": "L82",
+      "id": "lib_chat_ichatpagesignature",
+      "community": 3,
+      "norm_label": "ichatpagesignature"
+    },
+    {
+      "label": "IChatSiteLookRow",
+      "file_type": "code",
+      "source_file": "src/lib/chat.ts",
+      "source_location": "L97",
+      "id": "lib_chat_ichatsitelookrow",
+      "community": 3,
+      "norm_label": "ichatsitelookrow"
+    },
+    {
+      "label": "IChatTalkRow",
+      "file_type": "code",
+      "source_file": "src/lib/chat.ts",
+      "source_location": "L108",
+      "id": "lib_chat_ichattalkrow",
+      "community": 3,
+      "norm_label": "ichattalkrow"
+    },
+    {
+      "label": "IChatMessageRow",
+      "file_type": "code",
+      "source_file": "src/lib/chat.ts",
+      "source_location": "L121",
+      "id": "lib_chat_ichatmessagerow",
+      "community": 3,
+      "norm_label": "ichatmessagerow"
+    },
+    {
+      "label": "IChatMessageEventRow",
+      "file_type": "code",
+      "source_file": "src/lib/chat.ts",
+      "source_location": "L134",
+      "id": "lib_chat_ichatmessageeventrow",
+      "community": 3,
+      "norm_label": "ichatmessageeventrow"
+    },
+    {
+      "label": "IChatVisitorTalkListRow",
+      "file_type": "code",
+      "source_file": "src/lib/chat.ts",
+      "source_location": "L145",
+      "id": "lib_chat_ichatvisitortalklistrow",
+      "community": 3,
+      "norm_label": "ichatvisitortalklistrow"
+    },
+    {
+      "label": "month.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/month.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_month_spec_ts",
+      "community": 3,
+      "norm_label": "month.spec.ts"
+    },
+    {
+      "label": "cargo-fix-note.ts",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-fix-note.ts",
+      "source_location": "L1",
+      "id": "src_lib_cargo_fix_note_ts",
+      "community": 0,
+      "norm_label": "cargo-fix-note.ts"
+    },
+    {
+      "label": "ECargoFixNoteFault",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-fix-note.ts",
+      "source_location": "L13",
+      "id": "lib_cargo_fix_note_ecargofixnotefault",
+      "community": 0,
+      "norm_label": "ecargofixnotefault"
+    },
+    {
+      "label": "cargoFixNoteFault()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-fix-note.ts",
+      "source_location": "L31",
+      "id": "lib_cargo_fix_note_cargofixnotefault",
+      "community": 0,
+      "norm_label": "cargofixnotefault()"
+    },
+    {
+      "label": "cargo-release-version.ts",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-release-version.ts",
+      "source_location": "L1",
+      "id": "src_lib_cargo_release_version_ts",
+      "community": 0,
+      "norm_label": "cargo-release-version.ts"
+    },
+    {
+      "label": "ECargoReleaseVersionFault",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-release-version.ts",
+      "source_location": "L32",
+      "id": "lib_cargo_release_version_ecargoreleaseversionfault",
+      "community": 0,
+      "norm_label": "ecargoreleaseversionfault"
+    },
+    {
+      "label": "cargoReleaseVersionFault()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-release-version.ts",
+      "source_location": "L50",
+      "id": "lib_cargo_release_version_cargoreleaseversionfault",
+      "community": 0,
+      "norm_label": "cargoreleaseversionfault()"
+    },
+    {
+      "label": "page.ts",
+      "file_type": "code",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L1",
+      "id": "src_lib_page_ts",
+      "community": 2,
+      "norm_label": "page.ts"
+    },
+    {
+      "label": "TPageDirection",
+      "file_type": "code",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L24",
+      "id": "lib_page_tpagedirection",
+      "community": 2,
+      "norm_label": "tpagedirection"
+    },
+    {
+      "label": "IPageAsked",
+      "file_type": "code",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L27",
+      "id": "lib_page_ipageasked",
+      "community": 2,
+      "norm_label": "ipageasked"
+    },
+    {
+      "label": "IPage",
+      "file_type": "code",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L43",
+      "id": "lib_page_ipage",
+      "community": 5,
+      "norm_label": "ipage"
+    },
+    {
+      "label": "pageSkip()",
+      "file_type": "code",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L51",
+      "id": "lib_page_pageskip",
+      "community": 2,
+      "norm_label": "pageskip()"
+    },
+    {
+      "label": "wholeOf()",
+      "file_type": "code",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L56",
+      "id": "lib_page_wholeof",
+      "community": 2,
+      "norm_label": "wholeof()"
+    },
+    {
+      "label": "countFault()",
+      "file_type": "code",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L73",
+      "id": "lib_page_countfault",
+      "community": 2,
+      "norm_label": "countfault()"
+    },
+    {
+      "label": "orderFault()",
+      "file_type": "code",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L86",
+      "id": "lib_page_orderfault",
+      "community": 2,
+      "norm_label": "orderfault()"
+    },
+    {
+      "label": "treeFault()",
+      "file_type": "code",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L103",
+      "id": "lib_page_treefault",
+      "community": 2,
+      "norm_label": "treefault()"
+    },
+    {
+      "label": "pageFault()",
+      "file_type": "code",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L111",
+      "id": "lib_page_pagefault",
+      "community": 2,
+      "norm_label": "pagefault()"
+    },
+    {
+      "label": "pageAsked()",
+      "file_type": "code",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L121",
+      "id": "lib_page_pageasked",
+      "community": 2,
+      "norm_label": "pageasked()"
+    },
+    {
+      "label": "cargo-fault.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-fault.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_cargo_fault_spec_ts",
+      "community": 4,
+      "norm_label": "cargo-fault.spec.ts"
+    },
+    {
+      "label": "REQUIRED",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-fault.spec.ts",
+      "source_location": "L10",
+      "id": "lib_cargo_fault_spec_required",
+      "community": 4,
+      "norm_label": "required"
+    },
+    {
+      "label": "cargo()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-fault.spec.ts",
+      "source_location": "L12",
+      "id": "lib_cargo_fault_spec_cargo",
+      "community": 4,
+      "norm_label": "cargo()"
+    },
+    {
+      "label": "fault",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-fault.spec.ts",
+      "source_location": "L18",
+      "id": "lib_cargo_fault_spec_fault",
+      "community": 4,
+      "norm_label": "fault"
+    },
+    {
+      "label": "items",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-fault.spec.ts",
+      "source_location": "L60",
+      "id": "lib_cargo_fault_spec_items",
+      "community": 4,
+      "norm_label": "items"
+    },
+    {
+      "label": "cargo-state-move.ts",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L1",
+      "id": "src_lib_cargo_state_move_ts",
+      "community": 1,
+      "norm_label": "cargo-state-move.ts"
+    },
+    {
+      "label": "CARGO_STATE_ORDER",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L17",
+      "id": "lib_cargo_state_move_cargo_state_order",
+      "community": 1,
+      "norm_label": "cargo_state_order"
+    },
+    {
+      "label": "ECargoStateMove",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L20",
+      "id": "lib_cargo_state_move_ecargostatemove",
+      "community": 1,
+      "norm_label": "ecargostatemove"
+    },
+    {
+      "label": "cargoStateMove()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L41",
+      "id": "lib_cargo_state_move_cargostatemove",
+      "community": 1,
+      "norm_label": "cargostatemove()"
+    },
+    {
+      "label": "CARGO_CLOSE_STATES",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L68",
+      "id": "lib_cargo_state_move_cargo_close_states",
+      "community": 1,
+      "norm_label": "cargo_close_states"
+    },
+    {
+      "label": "cargoCloseMove()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L82",
+      "id": "lib_cargo_state_move_cargoclosemove",
+      "community": 1,
+      "norm_label": "cargoclosemove()"
+    },
+    {
+      "label": "ICargoStateAsk",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L102",
+      "id": "lib_cargo_state_move_icargostateask",
+      "community": 1,
+      "norm_label": "icargostateask"
+    },
+    {
+      "label": "cargoStateWrites()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L136",
+      "id": "lib_cargo_state_move_cargostatewrites",
+      "community": 1,
+      "norm_label": "cargostatewrites()"
+    },
+    {
+      "label": "ICargoTransition",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L148",
+      "id": "lib_cargo_state_move_icargotransition",
+      "community": 1,
+      "norm_label": "icargotransition"
+    },
+    {
+      "label": "ICargoJudgedMove",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L155",
+      "id": "lib_cargo_state_move_icargojudgedmove",
+      "community": 1,
+      "norm_label": "icargojudgedmove"
+    },
+    {
+      "label": "cargoTransitions()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L164",
+      "id": "lib_cargo_state_move_cargotransitions",
+      "community": 1,
+      "norm_label": "cargotransitions()"
+    },
+    {
+      "label": "ICargoStateData",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L177",
+      "id": "lib_cargo_state_move_icargostatedata",
+      "community": 1,
+      "norm_label": "icargostatedata"
+    },
+    {
+      "label": "cargoStateData()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L194",
+      "id": "lib_cargo_state_move_cargostatedata",
+      "community": 1,
+      "norm_label": "cargostatedata()"
+    },
+    {
+      "label": "ICargoCloseData",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L204",
+      "id": "lib_cargo_state_move_icargoclosedata",
+      "community": 1,
+      "norm_label": "icargoclosedata"
+    },
+    {
+      "label": "cargoCloseData()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L216",
+      "id": "lib_cargo_state_move_cargoclosedata",
+      "community": 1,
+      "norm_label": "cargoclosedata()"
+    },
+    {
+      "label": "ICargoStateOutcome",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L228",
+      "id": "lib_cargo_state_move_icargostateoutcome",
+      "community": 1,
+      "norm_label": "icargostateoutcome"
+    },
+    {
+      "label": "ICargoCloseOutcome",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L236",
+      "id": "lib_cargo_state_move_icargocloseoutcome",
+      "community": 1,
+      "norm_label": "icargocloseoutcome"
+    },
+    {
+      "label": "release-version-order.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/release-version-order.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_release_version_order_spec_ts",
+      "community": 2,
+      "norm_label": "release-version-order.spec.ts"
+    },
+    {
+      "label": "asked()",
+      "file_type": "code",
+      "source_file": "src/lib/release-version-order.spec.ts",
+      "source_location": "L11",
+      "id": "lib_release_version_order_spec_asked",
+      "community": 2,
+      "norm_label": "asked()"
+    },
+    {
+      "label": "KEYED",
+      "file_type": "code",
+      "source_file": "src/lib/release-version-order.spec.ts",
+      "source_location": "L16",
+      "id": "lib_release_version_order_spec_keyed",
+      "community": 2,
+      "norm_label": "keyed"
+    },
+    {
+      "label": "given",
+      "file_type": "code",
+      "source_file": "src/lib/release-version-order.spec.ts",
+      "source_location": "L59",
+      "id": "lib_release_version_order_spec_given",
+      "community": 2,
+      "norm_label": "given"
+    },
+    {
+      "label": "sameVersion",
+      "file_type": "code",
+      "source_file": "src/lib/release-version-order.spec.ts",
+      "source_location": "L83",
+      "id": "lib_release_version_order_spec_sameversion",
+      "community": 2,
+      "norm_label": "sameversion"
+    },
+    {
+      "label": "cargo-page.ts",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L1",
+      "id": "src_lib_cargo_page_ts",
+      "community": 0,
+      "norm_label": "cargo-page.ts"
+    },
+    {
+      "label": "CARGO_STATES",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L33",
+      "id": "lib_cargo_page_cargo_states",
+      "community": 0,
+      "norm_label": "cargo_states"
+    },
+    {
+      "label": "ICargoPageAsked",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L36",
+      "id": "lib_cargo_page_icargopageasked",
+      "community": 0,
+      "norm_label": "icargopageasked"
+    },
+    {
+      "label": "stateOf()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L51",
+      "id": "lib_cargo_page_stateof",
+      "community": 0,
+      "norm_label": "stateof()"
+    },
+    {
+      "label": "cargoStateFault()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L67",
+      "id": "lib_cargo_page_cargostatefault",
+      "community": 0,
+      "norm_label": "cargostatefault()"
+    },
+    {
+      "label": "cargoVersionFault()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L87",
+      "id": "lib_cargo_page_cargoversionfault",
+      "community": 0,
+      "norm_label": "cargoversionfault()"
+    },
+    {
+      "label": "cargoPageFault()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L102",
+      "id": "lib_cargo_page_cargopagefault",
+      "community": 0,
+      "norm_label": "cargopagefault()"
+    },
+    {
+      "label": "versionOf()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L112",
+      "id": "lib_cargo_page_versionof",
+      "community": 0,
+      "norm_label": "versionof()"
+    },
+    {
+      "label": "cargoPageAsked()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L128",
+      "id": "lib_cargo_page_cargopageasked",
+      "community": 0,
+      "norm_label": "cargopageasked()"
+    },
+    {
+      "label": "sortable.ts",
+      "file_type": "code",
+      "source_file": "src/lib/sortable.ts",
+      "source_location": "L1",
+      "id": "src_lib_sortable_ts",
+      "community": 3,
+      "norm_label": "sortable.ts"
+    },
+    {
+      "label": "POSTMORTEM_SORTABLE",
+      "file_type": "code",
+      "source_file": "src/lib/sortable.ts",
+      "source_location": "L14",
+      "id": "lib_sortable_postmortem_sortable",
+      "community": 3,
+      "norm_label": "postmortem_sortable"
+    },
+    {
+      "label": "PROPOSAL_SORTABLE",
+      "file_type": "code",
+      "source_file": "src/lib/sortable.ts",
+      "source_location": "L17",
+      "id": "lib_sortable_proposal_sortable",
+      "community": 3,
+      "norm_label": "proposal_sortable"
+    },
+    {
+      "label": "MONTH_RECORD_SORTABLE",
+      "file_type": "code",
+      "source_file": "src/lib/sortable.ts",
+      "source_location": "L20",
+      "id": "lib_sortable_month_record_sortable",
+      "community": 3,
+      "norm_label": "month_record_sortable"
+    },
+    {
+      "label": "USAGE_SORTABLE",
+      "file_type": "code",
+      "source_file": "src/lib/sortable.ts",
+      "source_location": "L23",
+      "id": "lib_sortable_usage_sortable",
+      "community": 3,
+      "norm_label": "usage_sortable"
+    },
+    {
+      "label": "cargo.ts",
+      "file_type": "code",
+      "source_file": "src/lib/cargo.ts",
+      "source_location": "L1",
+      "id": "src_lib_cargo_ts",
+      "community": 3,
+      "norm_label": "cargo.ts"
+    },
+    {
+      "label": "IIntakeResponse",
+      "file_type": "code",
+      "source_file": "src/lib/cargo.ts",
+      "source_location": "L22",
+      "id": "lib_cargo_iintakeresponse",
+      "community": 3,
+      "norm_label": "iintakeresponse"
+    },
+    {
+      "label": "cargo-quarantine-note.ts",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-quarantine-note.ts",
+      "source_location": "L1",
+      "id": "src_lib_cargo_quarantine_note_ts",
+      "community": 0,
+      "norm_label": "cargo-quarantine-note.ts"
+    },
+    {
+      "label": "ECargoQuarantineNoteFault",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-quarantine-note.ts",
+      "source_location": "L16",
+      "id": "lib_cargo_quarantine_note_ecargoquarantinenotefault",
+      "community": 0,
+      "norm_label": "ecargoquarantinenotefault"
+    },
+    {
+      "label": "cargoQuarantineNoteFault()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-quarantine-note.ts",
+      "source_location": "L34",
+      "id": "lib_cargo_quarantine_note_cargoquarantinenotefault",
+      "community": 0,
+      "norm_label": "cargoquarantinenotefault()"
+    },
+    {
+      "label": "refusal.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/refusal.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_refusal_spec_ts",
+      "community": 6,
+      "norm_label": "refusal.spec.ts"
+    },
+    {
+      "label": "said",
+      "file_type": "code",
+      "source_file": "src/lib/refusal.spec.ts",
+      "source_location": "L7",
+      "id": "lib_refusal_spec_said",
+      "community": 6,
+      "norm_label": "said"
+    },
+    {
+      "label": "codes",
+      "file_type": "code",
+      "source_file": "src/lib/refusal.spec.ts",
+      "source_location": "L18",
+      "id": "lib_refusal_spec_codes",
+      "community": 6,
+      "norm_label": "codes"
+    },
+    {
+      "label": "body",
+      "file_type": "code",
+      "source_file": "src/lib/refusal.spec.ts",
+      "source_location": "L27",
+      "id": "lib_refusal_spec_body",
+      "community": 6,
+      "norm_label": "body"
+    },
+    {
+      "label": "refusal",
+      "file_type": "code",
+      "source_file": "src/lib/refusal.spec.ts",
+      "source_location": "L44",
+      "id": "lib_refusal_spec_refusal",
+      "community": 6,
+      "norm_label": "refusal"
+    },
+    {
+      "label": "page.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/page.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_page_spec_ts",
+      "community": 2,
+      "norm_label": "page.spec.ts"
+    },
+    {
+      "label": "SORTABLE",
+      "file_type": "code",
+      "source_file": "src/lib/page.spec.ts",
+      "source_location": "L6",
+      "id": "lib_page_spec_sortable",
+      "community": 2,
+      "norm_label": "sortable"
+    },
+    {
+      "label": "asked",
+      "file_type": "code",
+      "source_file": "src/lib/page.spec.ts",
+      "source_location": "L22",
+      "id": "lib_page_spec_asked",
+      "community": 2,
+      "norm_label": "asked"
+    },
+    {
+      "label": "cargo-fix-note.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-fix-note.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_cargo_fix_note_spec_ts",
+      "community": 0,
+      "norm_label": "cargo-fix-note.spec.ts"
+    },
+    {
+      "label": "tree-invite-view.ts",
+      "file_type": "code",
+      "source_file": "src/lib/tree-invite-view.ts",
+      "source_location": "L1",
+      "id": "src_lib_tree_invite_view_ts",
+      "community": 3,
+      "norm_label": "tree-invite-view.ts"
+    },
+    {
+      "label": "TREE_INVITE_SORTABLE",
+      "file_type": "code",
+      "source_file": "src/lib/tree-invite-view.ts",
+      "source_location": "L22",
+      "id": "lib_tree_invite_view_tree_invite_sortable",
+      "community": 3,
+      "norm_label": "tree_invite_sortable"
+    },
+    {
+      "label": "ETreeInviteView",
+      "file_type": "code",
+      "source_file": "src/lib/tree-invite-view.ts",
+      "source_location": "L25",
+      "id": "lib_tree_invite_view_etreeinviteview",
+      "community": 3,
+      "norm_label": "etreeinviteview"
+    },
+    {
+      "label": "ITreeInviteView",
+      "file_type": "code",
+      "source_file": "src/lib/tree-invite-view.ts",
+      "source_location": "L37",
+      "id": "lib_tree_invite_view_itreeinviteview",
+      "community": 3,
+      "norm_label": "itreeinviteview"
+    },
+    {
+      "label": "ITreeInviteIssued",
+      "file_type": "code",
+      "source_file": "src/lib/tree-invite-view.ts",
+      "source_location": "L53",
+      "id": "lib_tree_invite_view_itreeinviteissued",
+      "community": 3,
+      "norm_label": "itreeinviteissued"
+    },
+    {
+      "label": "rights.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/rights.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_rights_spec_ts",
+      "community": 10,
+      "norm_label": "rights.spec.ts"
+    },
+    {
+      "label": "rights",
+      "file_type": "code",
+      "source_file": "src/lib/rights.spec.ts",
+      "source_location": "L17",
+      "id": "lib_rights_spec_rights",
+      "community": 10,
+      "norm_label": "rights"
+    },
+    {
+      "label": "cargo-kind.ts",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-kind.ts",
+      "source_location": "L1",
+      "id": "src_lib_cargo_kind_ts",
+      "community": 1,
+      "norm_label": "cargo-kind.ts"
+    },
+    {
+      "label": "ECargoKind",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-kind.ts",
+      "source_location": "L13",
+      "id": "lib_cargo_kind_ecargokind",
+      "community": 1,
+      "norm_label": "ecargokind"
+    },
+    {
+      "label": "CARGO_KINDS",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-kind.ts",
+      "source_location": "L24",
+      "id": "lib_cargo_kind_cargo_kinds",
+      "community": 1,
+      "norm_label": "cargo_kinds"
+    },
+    {
+      "label": "cargoKindOf()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-kind.ts",
+      "source_location": "L32",
+      "id": "lib_cargo_kind_cargokindof",
+      "community": 1,
+      "norm_label": "cargokindof()"
+    },
+    {
+      "label": "cargoKindFault()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-kind.ts",
+      "source_location": "L46",
+      "id": "lib_cargo_kind_cargokindfault",
+      "community": 1,
+      "norm_label": "cargokindfault()"
+    },
+    {
+      "label": "cargo-state.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_cargo_state_spec_ts",
+      "community": 0,
+      "norm_label": "cargo-state.spec.ts"
+    },
+    {
+      "label": "schemaEnum()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state.spec.ts",
+      "source_location": "L14",
+      "id": "lib_cargo_state_spec_schemaenum",
+      "community": 0,
+      "norm_label": "schemaenum()"
+    },
+    {
+      "label": "cargo-state-move.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_cargo_state_move_spec_ts",
+      "community": 1,
+      "norm_label": "cargo-state-move.spec.ts"
+    },
+    {
+      "label": "ask()",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L72",
+      "id": "lib_cargo_state_move_spec_ask",
+      "community": 1,
+      "norm_label": "ask()"
+    },
+    {
+      "label": "moved",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L115",
+      "id": "lib_cargo_state_move_spec_moved",
+      "community": 1,
+      "norm_label": "moved"
+    },
+    {
+      "label": "same",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L116",
+      "id": "lib_cargo_state_move_spec_same",
+      "community": 1,
+      "norm_label": "same"
+    },
+    {
+      "label": "denied",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L117",
+      "id": "lib_cargo_state_move_spec_denied",
+      "community": 1,
+      "norm_label": "denied"
+    },
+    {
+      "label": "missing",
+      "file_type": "code",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L118",
+      "id": "lib_cargo_state_move_spec_missing",
+      "community": 1,
+      "norm_label": "missing"
+    },
+    {
+      "label": "refusal.ts",
+      "file_type": "code",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L1",
+      "id": "src_lib_refusal_ts",
+      "community": 6,
+      "norm_label": "refusal.ts"
+    },
+    {
+      "label": "ERefusal",
+      "file_type": "code",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L22",
+      "id": "lib_refusal_erefusal",
+      "community": 6,
+      "norm_label": "erefusal"
+    },
+    {
+      "label": "TRefusalParams",
+      "file_type": "code",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L86",
+      "id": "lib_refusal_trefusalparams",
+      "community": 6,
+      "norm_label": "trefusalparams"
+    },
+    {
+      "label": "IRefusalBody",
+      "file_type": "code",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L89",
+      "id": "lib_refusal_irefusalbody",
+      "community": 6,
+      "norm_label": "irefusalbody"
+    },
+    {
+      "label": "IRefusal",
+      "file_type": "code",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L97",
+      "id": "lib_refusal_irefusal",
+      "community": 6,
+      "norm_label": "irefusal"
+    },
+    {
+      "label": "SAID",
+      "file_type": "code",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L111",
+      "id": "lib_refusal_said",
+      "community": 6,
+      "norm_label": "said"
+    },
+    {
+      "label": "refusalSaid()",
+      "file_type": "code",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L150",
+      "id": "lib_refusal_refusalsaid",
+      "community": 6,
+      "norm_label": "refusalsaid()"
+    },
+    {
+      "label": "refusalBody()",
+      "file_type": "code",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L161",
+      "id": "lib_refusal_refusalbody",
+      "community": 6,
+      "norm_label": "refusalbody()"
+    },
+    {
+      "label": "paramsOf()",
+      "file_type": "code",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L166",
+      "id": "lib_refusal_paramsof",
+      "community": 6,
+      "norm_label": "paramsof()"
+    },
+    {
+      "label": "refusalOf()",
+      "file_type": "code",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L190",
+      "id": "lib_refusal_refusalof",
+      "community": 6,
+      "norm_label": "refusalof()"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "id": "readme_md",
+      "community": 12,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "message-bus-common",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "id": "message_bus_common_readme_message_bus_common",
+      "community": 12,
+      "norm_label": "message-bus-common"
+    },
+    {
+      "label": "\u041f\u0440\u043e\u0432\u0435\u0440\u043a\u0438",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L14",
+      "id": "message_bus_common_readme_\u043f\u0440\u043e\u0432\u0435\u0440\u043a\u0438",
+      "community": 12,
+      "norm_label": "\u043f\u0440\u043e\u0432\u0435\u0440\u043a\u0438"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "message_bus_common_project_name",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "message_bus_common_project_schema",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "message_bus_common_project_sourceroot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "message_bus_common_project_projecttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "message_bus_common_project_tags",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "message_bus_common_project_targets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "message_bus_common_tsconfig_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "message_bus_common_tsconfig_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "message_bus_common_tsconfig_files",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "message_bus_common_tsconfig_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "message_bus_common_tsconfig_references",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "message_bus_common_tsconfig_compileroptions",
+      "target": "message_bus_common_tsconfig_compileroptions_module",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "message_bus_common_tsconfig_compileroptions",
+      "target": "message_bus_common_tsconfig_compileroptions_forceconsistentcasinginfilenames",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "message_bus_common_tsconfig_compileroptions",
+      "target": "message_bus_common_tsconfig_compileroptions_strict",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "message_bus_common_tsconfig_compileroptions",
+      "target": "message_bus_common_tsconfig_compileroptions_importhelpers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "message_bus_common_tsconfig_compileroptions",
+      "target": "message_bus_common_tsconfig_compileroptions_noimplicitoverride",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "message_bus_common_tsconfig_compileroptions",
+      "target": "message_bus_common_tsconfig_compileroptions_noimplicitreturns",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "message_bus_common_tsconfig_compileroptions",
+      "target": "message_bus_common_tsconfig_compileroptions_nofallthroughcasesinswitch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "message_bus_common_tsconfig_compileroptions",
+      "target": "message_bus_common_tsconfig_compileroptions_nopropertyaccessfromindexsignature",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_lib_json",
+      "target": "message_bus_common_tsconfig_lib_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_lib_json",
+      "target": "message_bus_common_tsconfig_lib_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "tsconfig_lib_json",
+      "target": "message_bus_common_tsconfig_lib_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "tsconfig_lib_json",
+      "target": "message_bus_common_tsconfig_lib_exclude",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "message_bus_common_tsconfig_lib_compileroptions",
+      "target": "message_bus_common_tsconfig_lib_compileroptions_outdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "message_bus_common_tsconfig_lib_compileroptions",
+      "target": "message_bus_common_tsconfig_lib_compileroptions_declaration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "message_bus_common_tsconfig_lib_compileroptions",
+      "target": "message_bus_common_tsconfig_lib_compileroptions_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "message_bus_common_tsconfig_spec_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "message_bus_common_tsconfig_spec_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "message_bus_common_tsconfig_spec_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "message_bus_common_tsconfig_spec_compileroptions",
+      "target": "message_bus_common_tsconfig_spec_compileroptions_module",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "message_bus_common_tsconfig_spec_compileroptions",
+      "target": "message_bus_common_tsconfig_spec_compileroptions_outdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "message_bus_common_tsconfig_spec_compileroptions",
+      "target": "message_bus_common_tsconfig_spec_compileroptions_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_cargo_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_cargo_fault_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_cargo_fix_note_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_cargo_quarantine_note_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_cargo_kind_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_cargo_page_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_cargo_release_version_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_chat_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_release_version_order_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_cargo_shape_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_cargo_state_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_cargo_state_move_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_month_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_page_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_refusal_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_rights_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_sortable_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_tree_choice_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_tree_invite_view_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_quality_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_usage_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-close-move.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_close_move_spec_ts",
+      "target": "src_lib_cargo_state_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-close-move.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_close_move_spec_ts",
+      "target": "lib_cargo_state_ecargostate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-close-move.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_cargo_close_move_spec_ts",
+      "target": "src_lib_cargo_state_move_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-close-move.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_cargo_close_move_spec_ts",
+      "target": "lib_cargo_state_move_cargoclosedata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-close-move.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_cargo_close_move_spec_ts",
+      "target": "lib_cargo_state_move_cargoclosemove",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-close-move.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_cargo_close_move_spec_ts",
+      "target": "lib_cargo_state_move_ecargostatemove",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-close-move.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_cargo_close_move_spec_ts",
+      "target": "lib_cargo_state_move_icargostateask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-close-move.spec.ts",
+      "source_location": "L35",
+      "weight": 1.0,
+      "source": "src_lib_cargo_close_move_spec_ts",
+      "target": "lib_cargo_close_move_spec_ask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/month.ts",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_lib_month_ts",
+      "target": "lib_month_monthof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/month.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_month_spec_ts",
+      "target": "src_lib_month_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/month.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_month_spec_ts",
+      "target": "lib_month_monthof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-shape.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_lib_cargo_shape_ts",
+      "target": "lib_cargo_shape_tcargobody",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-shape.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_lib_cargo_shape_ts",
+      "target": "lib_cargo_shape_iscargobody",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-shape.ts",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "src_lib_cargo_shape_ts",
+      "target": "lib_cargo_shape_cargoschemaof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-shape.ts",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "src_lib_cargo_shape_ts",
+      "target": "lib_cargo_shape_cargotreeof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-shape.ts",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "src_lib_cargo_shape_ts",
+      "target": "lib_cargo_shape_missingcargofields",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-shape.ts",
+      "source_location": "L50",
+      "weight": 1.0,
+      "source": "src_lib_cargo_shape_ts",
+      "target": "lib_cargo_shape_cargoitemsof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-shape.ts",
+      "source_location": "L68",
+      "weight": 1.0,
+      "source": "src_lib_cargo_shape_ts",
+      "target": "lib_cargo_shape_cargo_items_fields",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_ts",
+      "target": "src_lib_cargo_shape_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_spec_ts",
+      "target": "src_lib_cargo_shape_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_ts",
+      "target": "lib_cargo_shape_tcargobody",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_spec_ts",
+      "target": "lib_cargo_shape_tcargobody",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_ts",
+      "target": "lib_cargo_shape_iscargobody",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L39",
+      "weight": 1.0,
+      "source": "lib_cargo_fault_cargofault",
+      "target": "lib_cargo_shape_iscargobody"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_ts",
+      "target": "lib_cargo_shape_cargoschemaof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "lib_cargo_fault_cargofault",
+      "target": "lib_cargo_shape_cargoschemaof"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_ts",
+      "target": "lib_cargo_shape_cargotreeof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "lib_cargo_fault_cargofault",
+      "target": "lib_cargo_shape_cargotreeof"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_ts",
+      "target": "lib_cargo_shape_missingcargofields",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L49",
+      "weight": 1.0,
+      "source": "lib_cargo_fault_cargofault",
+      "target": "lib_cargo_shape_missingcargofields"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/usage.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_lib_usage_ts",
+      "target": "src_lib_page_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/usage.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_lib_usage_ts",
+      "target": "lib_page_ipage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/usage.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_lib_usage_ts",
+      "target": "lib_usage_iusagerow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/usage.ts",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "src_lib_usage_ts",
+      "target": "lib_usage_iusagesessionrow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/usage.ts",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "src_lib_usage_ts",
+      "target": "lib_usage_iusagepage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/usage.ts",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "src_lib_usage_ts",
+      "target": "lib_usage_iusagedayrow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/usage.ts",
+      "source_location": "L50",
+      "weight": 1.0,
+      "source": "src_lib_usage_ts",
+      "target": "lib_usage_iusagekindrow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/usage.ts",
+      "source_location": "L62",
+      "weight": 1.0,
+      "source": "src_lib_usage_ts",
+      "target": "lib_usage_iusagedigest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-release-version.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_release_version_spec_ts",
+      "target": "src_lib_cargo_release_version_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-release-version.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_release_version_spec_ts",
+      "target": "lib_cargo_release_version_cargoreleaseversionfault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-release-version.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_release_version_spec_ts",
+      "target": "lib_cargo_release_version_ecargoreleaseversionfault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-release-version.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_cargo_release_version_spec_ts",
+      "target": "src_lib_cargo_state_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-release-version.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_cargo_release_version_spec_ts",
+      "target": "lib_cargo_state_ecargostate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-quarantine-note.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_quarantine_note_spec_ts",
+      "target": "src_lib_cargo_quarantine_note_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-quarantine-note.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_quarantine_note_spec_ts",
+      "target": "lib_cargo_quarantine_note_cargoquarantinenotefault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-quarantine-note.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_quarantine_note_spec_ts",
+      "target": "lib_cargo_quarantine_note_ecargoquarantinenotefault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-quarantine-note.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_cargo_quarantine_note_spec_ts",
+      "target": "src_lib_cargo_state_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-quarantine-note.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_cargo_quarantine_note_spec_ts",
+      "target": "lib_cargo_state_ecargostate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/tree-choice.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_lib_tree_choice_ts",
+      "target": "lib_tree_choice_itreechoice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_lib_quality_ts",
+      "target": "src_lib_tree_choice_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_lib_quality_ts",
+      "target": "lib_tree_choice_itreechoice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_quality_ts",
+      "target": "src_lib_page_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_quality_ts",
+      "target": "lib_page_ipage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_lib_quality_ts",
+      "target": "lib_quality_quality_sortable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_lib_quality_ts",
+      "target": "lib_quality_equalitysendfault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "src_lib_quality_ts",
+      "target": "lib_quality_iqualityfirstpass",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L39",
+      "weight": 1.0,
+      "source": "src_lib_quality_ts",
+      "target": "lib_quality_iqualitycorrections",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L47",
+      "weight": 1.0,
+      "source": "src_lib_quality_ts",
+      "target": "lib_quality_iqualityrepeats",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "src_lib_quality_ts",
+      "target": "lib_quality_iqualitytreefault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L64",
+      "weight": 1.0,
+      "source": "src_lib_quality_ts",
+      "target": "lib_quality_iqualitycompleteness",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L74",
+      "weight": 1.0,
+      "source": "src_lib_quality_ts",
+      "target": "lib_quality_iqualitydriverrow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/quality.ts",
+      "source_location": "L87",
+      "weight": 1.0,
+      "source": "src_lib_quality_ts",
+      "target": "lib_quality_iqualityreport",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-kind.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_cargo_kind_spec_ts",
+      "target": "src_lib_cargo_kind_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-kind.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_cargo_kind_spec_ts",
+      "target": "lib_cargo_kind_cargokindfault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-kind.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_cargo_kind_spec_ts",
+      "target": "lib_cargo_kind_cargokindof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-kind.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_cargo_kind_spec_ts",
+      "target": "lib_cargo_kind_ecargokind",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_ts",
+      "target": "lib_cargo_state_ecargostate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state.ts",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_ts",
+      "target": "lib_cargo_state_cargo_states",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state.ts",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_ts",
+      "target": "lib_cargo_state_cargostateof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_spec_ts",
+      "target": "src_lib_cargo_state_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fix-note.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fix_note_ts",
+      "target": "src_lib_cargo_state_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-release-version.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_cargo_release_version_ts",
+      "target": "src_lib_cargo_state_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "src_lib_cargo_state_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_ts",
+      "target": "src_lib_cargo_state_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-quarantine-note.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_cargo_quarantine_note_ts",
+      "target": "src_lib_cargo_state_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fix-note.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fix_note_spec_ts",
+      "target": "src_lib_cargo_state_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state.spec.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_spec_ts",
+      "target": "src_lib_cargo_state_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_spec_ts",
+      "target": "src_lib_cargo_state_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_spec_ts",
+      "target": "lib_cargo_state_ecargostate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fix-note.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fix_note_ts",
+      "target": "lib_cargo_state_ecargostate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-release-version.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_cargo_release_version_ts",
+      "target": "lib_cargo_state_ecargostate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "lib_cargo_state_ecargostate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_ts",
+      "target": "lib_cargo_state_ecargostate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-quarantine-note.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_cargo_quarantine_note_ts",
+      "target": "lib_cargo_state_ecargostate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fix-note.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fix_note_spec_ts",
+      "target": "lib_cargo_state_ecargostate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state.spec.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_spec_ts",
+      "target": "lib_cargo_state_ecargostate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_spec_ts",
+      "target": "lib_cargo_state_ecargostate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_ts",
+      "target": "lib_cargo_state_cargostateof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state.spec.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_spec_ts",
+      "target": "lib_cargo_state_cargostateof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "lib_cargo_page_stateof",
+      "target": "lib_cargo_state_cargostateof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_ts",
+      "target": "lib_cargo_fault_ecargofault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_ts",
+      "target": "lib_cargo_fault_icargofault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_ts",
+      "target": "lib_cargo_fault_cargofault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L55",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_ts",
+      "target": "lib_cargo_fault_cargofaultmessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L69",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_ts",
+      "target": "lib_cargo_fault_cargoitemsfaultmessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L74",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_ts",
+      "target": "lib_cargo_fault_cargoitemfaultmessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.ts",
+      "source_location": "L79",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_ts",
+      "target": "lib_cargo_fault_faultycargoitems",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_spec_ts",
+      "target": "src_lib_cargo_fault_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_spec_ts",
+      "target": "lib_cargo_fault_ecargofault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_spec_ts",
+      "target": "lib_cargo_fault_icargofault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_spec_ts",
+      "target": "lib_cargo_fault_cargofault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_spec_ts",
+      "target": "lib_cargo_fault_cargofaultmessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_spec_ts",
+      "target": "lib_cargo_fault_faultycargoitems",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/rights.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_lib_rights_ts",
+      "target": "lib_rights_tright",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/rights.ts",
+      "source_location": "L35",
+      "weight": 1.0,
+      "source": "src_lib_rights_ts",
+      "target": "lib_rights_rights",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/rights.ts",
+      "source_location": "L49",
+      "weight": 1.0,
+      "source": "src_lib_rights_ts",
+      "target": "lib_rights_isright",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/rights.ts",
+      "source_location": "L59",
+      "weight": 1.0,
+      "source": "src_lib_rights_ts",
+      "target": "lib_rights_hasright",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/rights.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_rights_spec_ts",
+      "target": "src_lib_rights_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/rights.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_rights_spec_ts",
+      "target": "lib_rights_tright",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/rights.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_rights_spec_ts",
+      "target": "lib_rights_isright",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/rights.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_rights_spec_ts",
+      "target": "lib_rights_hasright",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_ts",
+      "target": "src_lib_page_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_ts",
+      "target": "lib_page_ipageasked",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_ts",
+      "target": "lib_page_pageskip",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_ts",
+      "target": "lib_release_version_order_iversionkey",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_ts",
+      "target": "lib_release_version_order_releaseversionkey",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L62",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_ts",
+      "target": "lib_release_version_order_comparereleaseversions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L91",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_ts",
+      "target": "lib_release_version_order_orderedreleaseversions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L101",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_ts",
+      "target": "lib_release_version_order_ireleaseversionkeyed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L114",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_ts",
+      "target": "lib_release_version_order_comparekeyed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L138",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_ts",
+      "target": "lib_release_version_order_releaseversionpageids",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_spec_ts",
+      "target": "src_lib_release_version_order_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L63",
+      "weight": 1.0,
+      "source": "lib_release_version_order_comparereleaseversions",
+      "target": "lib_release_version_order_releaseversionkey",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_spec_ts",
+      "target": "lib_release_version_order_releaseversionkey",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L123",
+      "weight": 1.0,
+      "source": "lib_release_version_order_comparekeyed",
+      "target": "lib_release_version_order_comparereleaseversions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_spec_ts",
+      "target": "lib_release_version_order_comparereleaseversions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_spec_ts",
+      "target": "lib_release_version_order_orderedreleaseversions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_spec_ts",
+      "target": "lib_release_version_order_ireleaseversionkeyed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.spec.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_spec_ts",
+      "target": "lib_release_version_order_releaseversionpageids",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/lib/release-version-order.ts",
+      "source_location": "L145",
+      "weight": 1.0,
+      "source": "lib_release_version_order_releaseversionpageids",
+      "target": "lib_page_pageskip"
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_spec_ts",
+      "target": "src_lib_cargo_page_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_spec_ts",
+      "target": "lib_cargo_page_cargopageasked",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_spec_ts",
+      "target": "lib_cargo_page_cargopagefault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_spec_ts",
+      "target": "lib_cargo_page_cargostatefault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_spec_ts",
+      "target": "lib_cargo_page_cargoversionfault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_spec_ts",
+      "target": "lib_cargo_page_icargopageasked",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.spec.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_spec_ts",
+      "target": "lib_cargo_page_spec_sortable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.spec.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_spec_ts",
+      "target": "lib_cargo_page_spec_fault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.spec.ts",
+      "source_location": "L103",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_spec_ts",
+      "target": "lib_cargo_page_spec_asked",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/chat.ts",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "src_lib_chat_ts",
+      "target": "lib_chat_echattalkstate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/chat.ts",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "src_lib_chat_ts",
+      "target": "lib_chat_ichatentryopened",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/chat.ts",
+      "source_location": "L82",
+      "weight": 1.0,
+      "source": "src_lib_chat_ts",
+      "target": "lib_chat_ichatpagesignature",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/chat.ts",
+      "source_location": "L97",
+      "weight": 1.0,
+      "source": "src_lib_chat_ts",
+      "target": "lib_chat_ichatsitelookrow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/chat.ts",
+      "source_location": "L108",
+      "weight": 1.0,
+      "source": "src_lib_chat_ts",
+      "target": "lib_chat_ichattalkrow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/chat.ts",
+      "source_location": "L121",
+      "weight": 1.0,
+      "source": "src_lib_chat_ts",
+      "target": "lib_chat_ichatmessagerow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/chat.ts",
+      "source_location": "L134",
+      "weight": 1.0,
+      "source": "src_lib_chat_ts",
+      "target": "lib_chat_ichatmessageeventrow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/chat.ts",
+      "source_location": "L145",
+      "weight": 1.0,
+      "source": "src_lib_chat_ts",
+      "target": "lib_chat_ichatvisitortalklistrow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fix-note.ts",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fix_note_ts",
+      "target": "lib_cargo_fix_note_ecargofixnotefault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fix-note.ts",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fix_note_ts",
+      "target": "lib_cargo_fix_note_cargofixnotefault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fix-note.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fix_note_spec_ts",
+      "target": "src_lib_cargo_fix_note_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fix-note.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fix_note_spec_ts",
+      "target": "lib_cargo_fix_note_ecargofixnotefault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fix-note.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fix_note_spec_ts",
+      "target": "lib_cargo_fix_note_cargofixnotefault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-release-version.ts",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "src_lib_cargo_release_version_ts",
+      "target": "lib_cargo_release_version_ecargoreleaseversionfault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-release-version.ts",
+      "source_location": "L50",
+      "weight": 1.0,
+      "source": "src_lib_cargo_release_version_ts",
+      "target": "lib_cargo_release_version_cargoreleaseversionfault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "src_lib_page_ts",
+      "target": "lib_page_tpagedirection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "src_lib_page_ts",
+      "target": "lib_page_ipageasked",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "src_lib_page_ts",
+      "target": "lib_page_ipage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "src_lib_page_ts",
+      "target": "lib_page_pageskip",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L56",
+      "weight": 1.0,
+      "source": "src_lib_page_ts",
+      "target": "lib_page_wholeof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L73",
+      "weight": 1.0,
+      "source": "src_lib_page_ts",
+      "target": "lib_page_countfault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L86",
+      "weight": 1.0,
+      "source": "src_lib_page_ts",
+      "target": "lib_page_orderfault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L103",
+      "weight": 1.0,
+      "source": "src_lib_page_ts",
+      "target": "lib_page_treefault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L111",
+      "weight": 1.0,
+      "source": "src_lib_page_ts",
+      "target": "lib_page_pagefault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L121",
+      "weight": 1.0,
+      "source": "src_lib_page_ts",
+      "target": "lib_page_pageasked",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_spec_ts",
+      "target": "src_lib_page_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_ts",
+      "target": "src_lib_page_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_page_spec_ts",
+      "target": "src_lib_page_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_spec_ts",
+      "target": "lib_page_tpagedirection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_spec_ts",
+      "target": "lib_page_ipageasked",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_ts",
+      "target": "lib_page_ipageasked",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_page_spec_ts",
+      "target": "lib_page_ipageasked",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_page_spec_ts",
+      "target": "lib_page_pageskip",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L74",
+      "weight": 1.0,
+      "source": "lib_page_countfault",
+      "target": "lib_page_wholeof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L126",
+      "weight": 1.0,
+      "source": "lib_page_pageasked",
+      "target": "lib_page_wholeof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L112",
+      "weight": 1.0,
+      "source": "lib_page_pagefault",
+      "target": "lib_page_countfault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L112",
+      "weight": 1.0,
+      "source": "lib_page_pagefault",
+      "target": "lib_page_orderfault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.ts",
+      "source_location": "L112",
+      "weight": 1.0,
+      "source": "lib_page_pagefault",
+      "target": "lib_page_treefault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_ts",
+      "target": "lib_page_pagefault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_page_spec_ts",
+      "target": "lib_page_pagefault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L103",
+      "weight": 1.0,
+      "source": "lib_cargo_page_cargopagefault",
+      "target": "lib_page_pagefault"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_ts",
+      "target": "lib_page_pageasked",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_page_spec_ts",
+      "target": "lib_page_pageasked",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L132",
+      "weight": 1.0,
+      "source": "lib_cargo_page_cargopageasked",
+      "target": "lib_page_pageasked"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.spec.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_spec_ts",
+      "target": "lib_cargo_fault_spec_required",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.spec.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_spec_ts",
+      "target": "lib_cargo_fault_spec_cargo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.spec.ts",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_spec_ts",
+      "target": "lib_cargo_fault_spec_fault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-fault.spec.ts",
+      "source_location": "L71",
+      "weight": 1.0,
+      "source": "src_lib_cargo_fault_spec_ts",
+      "target": "lib_cargo_fault_spec_items",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "src_lib_cargo_kind_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "lib_cargo_kind_ecargokind",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "lib_cargo_state_move_cargo_state_order",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "lib_cargo_state_move_ecargostatemove",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "lib_cargo_state_move_cargostatemove",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L68",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "lib_cargo_state_move_cargo_close_states",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L82",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "lib_cargo_state_move_cargoclosemove",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L102",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "lib_cargo_state_move_icargostateask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L136",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "lib_cargo_state_move_cargostatewrites",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L148",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "lib_cargo_state_move_icargotransition",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L155",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "lib_cargo_state_move_icargojudgedmove",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L164",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "lib_cargo_state_move_cargotransitions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L177",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "lib_cargo_state_move_icargostatedata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L194",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "lib_cargo_state_move_cargostatedata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L204",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "lib_cargo_state_move_icargoclosedata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L216",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "lib_cargo_state_move_cargoclosedata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L228",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "lib_cargo_state_move_icargostateoutcome",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L236",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_ts",
+      "target": "lib_cargo_state_move_icargocloseoutcome",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_spec_ts",
+      "target": "src_lib_cargo_state_move_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_spec_ts",
+      "target": "lib_cargo_state_move_ecargostatemove",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_spec_ts",
+      "target": "lib_cargo_state_move_cargostatemove",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_spec_ts",
+      "target": "lib_cargo_state_move_icargostateask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_spec_ts",
+      "target": "lib_cargo_state_move_cargostatewrites",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_spec_ts",
+      "target": "lib_cargo_state_move_icargojudgedmove",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_spec_ts",
+      "target": "lib_cargo_state_move_cargotransitions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.ts",
+      "source_location": "L217",
+      "weight": 1.0,
+      "source": "lib_cargo_state_move_cargoclosedata",
+      "target": "lib_cargo_state_move_cargostatedata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_spec_ts",
+      "target": "lib_cargo_state_move_cargostatedata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.spec.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_spec_ts",
+      "target": "lib_release_version_order_spec_asked",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.spec.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_spec_ts",
+      "target": "lib_release_version_order_spec_keyed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.spec.ts",
+      "source_location": "L65",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_spec_ts",
+      "target": "lib_release_version_order_spec_given",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/release-version-order.spec.ts",
+      "source_location": "L83",
+      "weight": 1.0,
+      "source": "src_lib_release_version_order_spec_ts",
+      "target": "lib_release_version_order_spec_sameversion",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_ts",
+      "target": "lib_cargo_page_cargo_states",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_ts",
+      "target": "lib_cargo_page_icargopageasked",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_ts",
+      "target": "lib_cargo_page_stateof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L67",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_ts",
+      "target": "lib_cargo_page_cargostatefault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L87",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_ts",
+      "target": "lib_cargo_page_cargoversionfault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L102",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_ts",
+      "target": "lib_cargo_page_cargopagefault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L112",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_ts",
+      "target": "lib_cargo_page_versionof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L128",
+      "weight": 1.0,
+      "source": "src_lib_cargo_page_ts",
+      "target": "lib_cargo_page_cargopageasked",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L133",
+      "weight": 1.0,
+      "source": "lib_cargo_page_cargopageasked",
+      "target": "lib_cargo_page_stateof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L103",
+      "weight": 1.0,
+      "source": "lib_cargo_page_cargopagefault",
+      "target": "lib_cargo_page_cargostatefault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L103",
+      "weight": 1.0,
+      "source": "lib_cargo_page_cargopagefault",
+      "target": "lib_cargo_page_cargoversionfault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-page.ts",
+      "source_location": "L134",
+      "weight": 1.0,
+      "source": "lib_cargo_page_cargopageasked",
+      "target": "lib_cargo_page_versionof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/sortable.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_lib_sortable_ts",
+      "target": "lib_sortable_postmortem_sortable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/sortable.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_lib_sortable_ts",
+      "target": "lib_sortable_proposal_sortable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/sortable.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_lib_sortable_ts",
+      "target": "lib_sortable_month_record_sortable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/sortable.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "src_lib_sortable_ts",
+      "target": "lib_sortable_usage_sortable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_lib_cargo_ts",
+      "target": "lib_cargo_iintakeresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-quarantine-note.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_lib_cargo_quarantine_note_ts",
+      "target": "lib_cargo_quarantine_note_ecargoquarantinenotefault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-quarantine-note.ts",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "src_lib_cargo_quarantine_note_ts",
+      "target": "lib_cargo_quarantine_note_cargoquarantinenotefault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_refusal_spec_ts",
+      "target": "src_lib_refusal_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_refusal_spec_ts",
+      "target": "lib_refusal_erefusal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_refusal_spec_ts",
+      "target": "lib_refusal_irefusal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_refusal_spec_ts",
+      "target": "lib_refusal_irefusalbody",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_refusal_spec_ts",
+      "target": "lib_refusal_refusalbody",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_refusal_spec_ts",
+      "target": "lib_refusal_refusalof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_refusal_spec_ts",
+      "target": "lib_refusal_refusalsaid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.spec.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_lib_refusal_spec_ts",
+      "target": "lib_refusal_spec_said",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.spec.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "src_lib_refusal_spec_ts",
+      "target": "lib_refusal_spec_codes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.spec.ts",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "src_lib_refusal_spec_ts",
+      "target": "lib_refusal_spec_body",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.spec.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "src_lib_refusal_spec_ts",
+      "target": "lib_refusal_spec_refusal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.spec.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_page_spec_ts",
+      "target": "lib_page_spec_sortable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/page.spec.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_lib_page_spec_ts",
+      "target": "lib_page_spec_asked",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/tree-invite-view.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_lib_tree_invite_view_ts",
+      "target": "lib_tree_invite_view_tree_invite_sortable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/tree-invite-view.ts",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "src_lib_tree_invite_view_ts",
+      "target": "lib_tree_invite_view_etreeinviteview",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/tree-invite-view.ts",
+      "source_location": "L37",
+      "weight": 1.0,
+      "source": "src_lib_tree_invite_view_ts",
+      "target": "lib_tree_invite_view_itreeinviteview",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/tree-invite-view.ts",
+      "source_location": "L53",
+      "weight": 1.0,
+      "source": "src_lib_tree_invite_view_ts",
+      "target": "lib_tree_invite_view_itreeinviteissued",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/rights.spec.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_lib_rights_spec_ts",
+      "target": "lib_rights_spec_rights",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-kind.ts",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_lib_cargo_kind_ts",
+      "target": "lib_cargo_kind_ecargokind",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-kind.ts",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "src_lib_cargo_kind_ts",
+      "target": "lib_cargo_kind_cargo_kinds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-kind.ts",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "src_lib_cargo_kind_ts",
+      "target": "lib_cargo_kind_cargokindof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-kind.ts",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "src_lib_cargo_kind_ts",
+      "target": "lib_cargo_kind_cargokindfault",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_spec_ts",
+      "target": "src_lib_cargo_kind_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_spec_ts",
+      "target": "lib_cargo_kind_ecargokind",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-kind.ts",
+      "source_location": "L47",
+      "weight": 1.0,
+      "source": "lib_cargo_kind_cargokindfault",
+      "target": "lib_cargo_kind_cargokindof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state.spec.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_spec_ts",
+      "target": "lib_cargo_state_spec_schemaenum",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L72",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_spec_ts",
+      "target": "lib_cargo_state_move_spec_ask",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L115",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_spec_ts",
+      "target": "lib_cargo_state_move_spec_moved",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L116",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_spec_ts",
+      "target": "lib_cargo_state_move_spec_same",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L117",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_spec_ts",
+      "target": "lib_cargo_state_move_spec_denied",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/cargo-state-move.spec.ts",
+      "source_location": "L118",
+      "weight": 1.0,
+      "source": "src_lib_cargo_state_move_spec_ts",
+      "target": "lib_cargo_state_move_spec_missing",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_lib_refusal_ts",
+      "target": "lib_refusal_erefusal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L86",
+      "weight": 1.0,
+      "source": "src_lib_refusal_ts",
+      "target": "lib_refusal_trefusalparams",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L89",
+      "weight": 1.0,
+      "source": "src_lib_refusal_ts",
+      "target": "lib_refusal_irefusalbody",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L97",
+      "weight": 1.0,
+      "source": "src_lib_refusal_ts",
+      "target": "lib_refusal_irefusal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L111",
+      "weight": 1.0,
+      "source": "src_lib_refusal_ts",
+      "target": "lib_refusal_said",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L150",
+      "weight": 1.0,
+      "source": "src_lib_refusal_ts",
+      "target": "lib_refusal_refusalsaid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L161",
+      "weight": 1.0,
+      "source": "src_lib_refusal_ts",
+      "target": "lib_refusal_refusalbody",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L166",
+      "weight": 1.0,
+      "source": "src_lib_refusal_ts",
+      "target": "lib_refusal_paramsof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L190",
+      "weight": 1.0,
+      "source": "src_lib_refusal_ts",
+      "target": "lib_refusal_refusalof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L162",
+      "weight": 1.0,
+      "source": "lib_refusal_refusalbody",
+      "target": "lib_refusal_refusalsaid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/refusal.ts",
+      "source_location": "L201",
+      "weight": 1.0,
+      "source": "lib_refusal_refusalof",
+      "target": "lib_refusal_paramsof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "readme_md",
+      "target": "message_bus_common_readme_message_bus_common",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "message_bus_common_readme_message_bus_common",
+      "target": "message_bus_common_readme_\u043f\u0440\u043e\u0432\u0435\u0440\u043a\u0438",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "built_at_commit": "76235026c0071bbfba479885de800c463a0de4ec"
+}

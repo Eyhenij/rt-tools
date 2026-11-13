@@ -4,7 +4,7 @@ kind: pattern
 rule: turn-conduct
 description: Pattern of rule turn-conduct. Load when the session runs into window fill — choosing the stopping point, writing the progress, the shape of the handover and what the owner does with it. Not for returning to work in a new session — that is pattern task-flow-resume.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-handoff.md · f754b3f8ed1e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-handoff.md · 60bd38f9346e · правится надстройкой, не здесь -->
 
 # Closing a session on window fill
 
@@ -173,9 +173,9 @@ session that did not launch one, the section would stand empty.
 
 ### The path to the owner
 
-The last action of the session is to name to the owner the path to the handover, so they can put the
-text into a new session with one paste. Retelling the content of the handover in the reply is not
-needed: the owner will read it anyway, and the room for it is already spent.
+The last line to the owner names where the handover lies. They paste nothing: the entry hook serves
+it to the next session on the same branch by itself. Retelling the content of the handover in the
+reply is not needed: the owner will read it anyway, and the room for it is already spent.
 
 ## Common misses
 
@@ -191,7 +191,7 @@ needed: the owner will read it anyway, and the room for it is already spent.
   so there is no parent either" is an inference, not a measurement. Nothing to ask with — then it is
   written as a question: "the parent is not checked, check before the PR".
 - **The work state does not move into the handover.** Done work is marked in the progress — by one
-  entry; the handover retells it but does not replace it and is not committed into the tree.
+  entry; the handover retells it but does not replace it.
 - **The handover records a state that lives for hours.** Lag behind main, the course of the run and
   "checks green" the new session reads as true today. What goes into the handover is what does not
   change without the executor: the tree, the branch, the PR number, what is not committed.

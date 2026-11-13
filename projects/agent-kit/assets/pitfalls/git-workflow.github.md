@@ -104,9 +104,9 @@ The rule is `git-workflow`; the articles that hold the law stand there.
   one was not checked by a single line: it has zero steps because it never started. Restarting
   such a run is refused by the guard until the step's output has been read in the same turn —
   which is why the audit line names reading the run first.
-- **The same merge of the main branch done a third time in one session stops the work.**
+- **The same merge of the base done a third time in one session stops the work.**
   Branches that append a line to the same list drop each other into a conflict at every merge,
-  and merging main round after round is a fix of the symptom. On the third round the cause is
+  and merging the base round after round is a fix of the symptom. On the third round the cause is
   named and the owner is asked, instead of a fourth round.
 - **An empty file sent as the PR body wipes the description of the work whole.** That is how an
   edit of the body assembled by a chain went: a change into the temporary files directory took
@@ -215,7 +215,7 @@ a guard.
 - **A set rewritten as lines looks complete.** In one tree six checks lay next to the ones being
   run and were run by neither the gate nor the pipeline: eight lines out of fourteen read as the
   whole set, and the difference showed only by comparison with the package default.
-- **The gate set is never narrower than the pipeline set.** Twice in a row an edit that passed the
+- **A green gate read as "everything is green locally".** Twice in a row an edit that passed the
   gate whole was refused by the pipeline — and both times a green gate was read as "everything is
   green locally". Hence the requirement to refuse the push on a step missing from the set, rather
   than print a warning next to it.
@@ -225,8 +225,8 @@ a guard.
   not by memory.
 - **Union of the sides on the shared index file.** Before the declaration the same line was
   resolved six times in six branches in one session. One cannot promise "no more conflicts" by
-  the declaration: there will be no manual work, but merging main into open branches after every
-  merge will still be needed.
+  the declaration: there will be no manual work, but the host still marks such a branch conflicting. Whether
+  the dispute is real is checked by a merge without the driver — pattern `git-workflow-stack`.
 - **What was created is visible only to its creator.** Sixteen tasks were created twice this way,
   and a PR was named to the owner by a number that did not exist for him: the restricted account
   saw its own, and the hosting answered "not found" to everyone else.
@@ -261,10 +261,6 @@ a guard.
   package default loses exactly the checks the package will add in its next edition. One's own
   line instead of the default is lawful where it covers the same thing more strictly or calls the
   named script.
-- **A draft whose branch carries the task folder means work in progress, not abandoned work.**
-  Both signs are needed together: a green run on the tip without the folder taken apart says the
-  work is not handed over yet. A tree that named no machine account does not get this audit at
-  all.
 - **The mergeability mark is not cleared even by a declared union of both sides.** The hosting
   counts the union as its own device and reads no merge settings: until the branch has absorbed
   main and that has reached the hosting, the PR stands conflicting with the divergence resolved

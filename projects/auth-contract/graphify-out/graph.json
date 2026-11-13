@@ -1,0 +1,2760 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "project.json",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L1",
+      "id": "project_json",
+      "community": 5,
+      "norm_label": "project.json"
+    },
+    {
+      "label": "name",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L2",
+      "id": "auth_contract_project_name",
+      "community": 5,
+      "norm_label": "name"
+    },
+    {
+      "label": "$schema",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L3",
+      "id": "auth_contract_project_schema",
+      "community": 5,
+      "norm_label": "$schema"
+    },
+    {
+      "label": "sourceRoot",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L4",
+      "id": "auth_contract_project_sourceroot",
+      "community": 5,
+      "norm_label": "sourceroot"
+    },
+    {
+      "label": "prefix",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L5",
+      "id": "auth_contract_project_prefix",
+      "community": 5,
+      "norm_label": "prefix"
+    },
+    {
+      "label": "projectType",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L6",
+      "id": "auth_contract_project_projecttype",
+      "community": 5,
+      "norm_label": "projecttype"
+    },
+    {
+      "label": "release",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L7",
+      "id": "auth_contract_project_release",
+      "community": 5,
+      "norm_label": "release"
+    },
+    {
+      "label": "version",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L8",
+      "id": "auth_contract_project_release_version",
+      "community": 5,
+      "norm_label": "version"
+    },
+    {
+      "label": "manifestRootsToUpdate",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L9",
+      "id": "auth_contract_project_version_manifestrootstoupdate",
+      "community": 5,
+      "norm_label": "manifestrootstoupdate"
+    },
+    {
+      "label": "currentVersionResolver",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L10",
+      "id": "auth_contract_project_version_currentversionresolver",
+      "community": 5,
+      "norm_label": "currentversionresolver"
+    },
+    {
+      "label": "fallbackCurrentVersionResolver",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L11",
+      "id": "auth_contract_project_version_fallbackcurrentversionresolver",
+      "community": 5,
+      "norm_label": "fallbackcurrentversionresolver"
+    },
+    {
+      "label": "tags",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L14",
+      "id": "auth_contract_project_tags",
+      "community": 5,
+      "norm_label": "tags"
+    },
+    {
+      "label": "targets",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L15",
+      "id": "auth_contract_project_targets",
+      "community": 2,
+      "norm_label": "targets"
+    },
+    {
+      "label": "build",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L16",
+      "id": "auth_contract_project_targets_build",
+      "community": 10,
+      "norm_label": "build"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L17",
+      "id": "auth_contract_project_build_executor",
+      "community": 10,
+      "norm_label": "executor"
+    },
+    {
+      "label": "outputs",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L18",
+      "id": "auth_contract_project_build_outputs",
+      "community": 10,
+      "norm_label": "outputs"
+    },
+    {
+      "label": "dependsOn",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L19",
+      "id": "auth_contract_project_build_dependson",
+      "community": 10,
+      "norm_label": "dependson"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L20",
+      "id": "auth_contract_project_build_options",
+      "community": 10,
+      "norm_label": "options"
+    },
+    {
+      "label": "command",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L21",
+      "id": "auth_contract_project_options_command",
+      "community": 10,
+      "norm_label": "command"
+    },
+    {
+      "label": "build:esm",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L24",
+      "id": "auth_contract_project_targets_build_esm",
+      "community": 2,
+      "norm_label": "build:esm"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L25",
+      "id": "auth_contract_project_build_esm_executor",
+      "community": 2,
+      "norm_label": "executor"
+    },
+    {
+      "label": "outputs",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L26",
+      "id": "auth_contract_project_build_esm_outputs",
+      "community": 2,
+      "norm_label": "outputs"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L27",
+      "id": "auth_contract_project_build_esm_options",
+      "community": 7,
+      "norm_label": "options"
+    },
+    {
+      "label": "main",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L28",
+      "id": "auth_contract_project_options_main",
+      "community": 7,
+      "norm_label": "main"
+    },
+    {
+      "label": "tsConfig",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L29",
+      "id": "auth_contract_project_options_tsconfig",
+      "community": 7,
+      "norm_label": "tsconfig"
+    },
+    {
+      "label": "outputPath",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L30",
+      "id": "auth_contract_project_options_outputpath",
+      "community": 7,
+      "norm_label": "outputpath"
+    },
+    {
+      "label": "generatePackageJson",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L31",
+      "id": "auth_contract_project_options_generatepackagejson",
+      "community": 7,
+      "norm_label": "generatepackagejson"
+    },
+    {
+      "label": "assets",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L32",
+      "id": "auth_contract_project_options_assets",
+      "community": 7,
+      "norm_label": "assets"
+    },
+    {
+      "label": "rootDir",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L33",
+      "id": "auth_contract_project_options_rootdir",
+      "community": 7,
+      "norm_label": "rootdir"
+    },
+    {
+      "label": "build:cjs",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L36",
+      "id": "auth_contract_project_targets_build_cjs",
+      "community": 2,
+      "norm_label": "build:cjs"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L37",
+      "id": "auth_contract_project_build_cjs_executor",
+      "community": 2,
+      "norm_label": "executor"
+    },
+    {
+      "label": "outputs",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L38",
+      "id": "auth_contract_project_build_cjs_outputs",
+      "community": 2,
+      "norm_label": "outputs"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L39",
+      "id": "auth_contract_project_build_cjs_options",
+      "community": 7,
+      "norm_label": "options"
+    },
+    {
+      "label": "nx-release-publish",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L48",
+      "id": "auth_contract_project_targets_nx_release_publish",
+      "community": 2,
+      "norm_label": "nx-release-publish"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L49",
+      "id": "auth_contract_project_nx_release_publish_options",
+      "community": 2,
+      "norm_label": "options"
+    },
+    {
+      "label": "packageRoot",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L50",
+      "id": "auth_contract_project_options_packageroot",
+      "community": 2,
+      "norm_label": "packageroot"
+    },
+    {
+      "label": "test",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L53",
+      "id": "auth_contract_project_targets_test",
+      "community": 2,
+      "norm_label": "test"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L54",
+      "id": "auth_contract_project_test_executor",
+      "community": 2,
+      "norm_label": "executor"
+    },
+    {
+      "label": "outputs",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L55",
+      "id": "auth_contract_project_test_outputs",
+      "community": 2,
+      "norm_label": "outputs"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L56",
+      "id": "auth_contract_project_test_options",
+      "community": 7,
+      "norm_label": "options"
+    },
+    {
+      "label": "jestConfig",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L57",
+      "id": "auth_contract_project_options_jestconfig",
+      "community": 7,
+      "norm_label": "jestconfig"
+    },
+    {
+      "label": "lint",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L61",
+      "id": "auth_contract_project_targets_lint",
+      "community": 2,
+      "norm_label": "lint"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L62",
+      "id": "auth_contract_project_lint_executor",
+      "community": 2,
+      "norm_label": "executor"
+    },
+    {
+      "label": "tsconfig.lib.cjs.json",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L1",
+      "id": "tsconfig_lib_cjs_json",
+      "community": 4,
+      "norm_label": "tsconfig.lib.cjs.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L2",
+      "id": "auth_contract_tsconfig_lib_cjs_extends",
+      "community": 4,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L3",
+      "id": "auth_contract_tsconfig_lib_cjs_compileroptions",
+      "community": 4,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "module",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L4",
+      "id": "auth_contract_tsconfig_lib_cjs_compileroptions_module",
+      "community": 4,
+      "norm_label": "module"
+    },
+    {
+      "label": "moduleResolution",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L5",
+      "id": "auth_contract_tsconfig_lib_cjs_compileroptions_moduleresolution",
+      "community": 4,
+      "norm_label": "moduleresolution"
+    },
+    {
+      "label": "verbatimModuleSyntax",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L6",
+      "id": "auth_contract_tsconfig_lib_cjs_compileroptions_verbatimmodulesyntax",
+      "community": 4,
+      "norm_label": "verbatimmodulesyntax"
+    },
+    {
+      "label": "outDir",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L7",
+      "id": "auth_contract_tsconfig_lib_cjs_compileroptions_outdir",
+      "community": 4,
+      "norm_label": "outdir"
+    },
+    {
+      "label": "declaration",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L8",
+      "id": "auth_contract_tsconfig_lib_cjs_compileroptions_declaration",
+      "community": 4,
+      "norm_label": "declaration"
+    },
+    {
+      "label": "declarationMap",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L9",
+      "id": "auth_contract_tsconfig_lib_cjs_compileroptions_declarationmap",
+      "community": 4,
+      "norm_label": "declarationmap"
+    },
+    {
+      "label": "types",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L10",
+      "id": "auth_contract_tsconfig_lib_cjs_compileroptions_types",
+      "community": 4,
+      "norm_label": "types"
+    },
+    {
+      "label": "rootDir",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L11",
+      "id": "auth_contract_tsconfig_lib_cjs_compileroptions_rootdir",
+      "community": 4,
+      "norm_label": "rootdir"
+    },
+    {
+      "label": "exclude",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L13",
+      "id": "auth_contract_tsconfig_lib_cjs_exclude",
+      "community": 4,
+      "norm_label": "exclude"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L14",
+      "id": "auth_contract_tsconfig_lib_cjs_include",
+      "community": 4,
+      "norm_label": "include"
+    },
+    {
+      "label": "tsconfig.lib.esm.json",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L1",
+      "id": "tsconfig_lib_esm_json",
+      "community": 3,
+      "norm_label": "tsconfig.lib.esm.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L2",
+      "id": "auth_contract_tsconfig_lib_esm_extends",
+      "community": 3,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L3",
+      "id": "auth_contract_tsconfig_lib_esm_compileroptions",
+      "community": 3,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "module",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L4",
+      "id": "auth_contract_tsconfig_lib_esm_compileroptions_module",
+      "community": 3,
+      "norm_label": "module"
+    },
+    {
+      "label": "moduleResolution",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L5",
+      "id": "auth_contract_tsconfig_lib_esm_compileroptions_moduleresolution",
+      "community": 3,
+      "norm_label": "moduleresolution"
+    },
+    {
+      "label": "outDir",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L6",
+      "id": "auth_contract_tsconfig_lib_esm_compileroptions_outdir",
+      "community": 3,
+      "norm_label": "outdir"
+    },
+    {
+      "label": "declaration",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L7",
+      "id": "auth_contract_tsconfig_lib_esm_compileroptions_declaration",
+      "community": 3,
+      "norm_label": "declaration"
+    },
+    {
+      "label": "declarationMap",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L8",
+      "id": "auth_contract_tsconfig_lib_esm_compileroptions_declarationmap",
+      "community": 3,
+      "norm_label": "declarationmap"
+    },
+    {
+      "label": "inlineSources",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L9",
+      "id": "auth_contract_tsconfig_lib_esm_compileroptions_inlinesources",
+      "community": 3,
+      "norm_label": "inlinesources"
+    },
+    {
+      "label": "types",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L10",
+      "id": "auth_contract_tsconfig_lib_esm_compileroptions_types",
+      "community": 3,
+      "norm_label": "types"
+    },
+    {
+      "label": "rootDir",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L11",
+      "id": "auth_contract_tsconfig_lib_esm_compileroptions_rootdir",
+      "community": 3,
+      "norm_label": "rootdir"
+    },
+    {
+      "label": "exclude",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L13",
+      "id": "auth_contract_tsconfig_lib_esm_exclude",
+      "community": 3,
+      "norm_label": "exclude"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L14",
+      "id": "auth_contract_tsconfig_lib_esm_include",
+      "community": 3,
+      "norm_label": "include"
+    },
+    {
+      "label": "package.json",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L1",
+      "id": "package_json",
+      "community": 1,
+      "norm_label": "package.json"
+    },
+    {
+      "label": "name",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L2",
+      "id": "auth_contract_package_name",
+      "community": 1,
+      "norm_label": "name"
+    },
+    {
+      "label": "version",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L3",
+      "id": "auth_contract_package_version",
+      "community": 1,
+      "norm_label": "version"
+    },
+    {
+      "label": "description",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L4",
+      "id": "auth_contract_package_description",
+      "community": 1,
+      "norm_label": "description"
+    },
+    {
+      "label": "author",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L5",
+      "id": "auth_contract_package_author",
+      "community": 1,
+      "norm_label": "author"
+    },
+    {
+      "label": "license",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L6",
+      "id": "auth_contract_package_license",
+      "community": 1,
+      "norm_label": "license"
+    },
+    {
+      "label": "repository",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L7",
+      "id": "auth_contract_package_repository",
+      "community": 1,
+      "norm_label": "repository"
+    },
+    {
+      "label": "type",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L8",
+      "id": "auth_contract_package_repository_type",
+      "community": 1,
+      "norm_label": "type"
+    },
+    {
+      "label": "url",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L9",
+      "id": "auth_contract_package_repository_url",
+      "community": 1,
+      "norm_label": "url"
+    },
+    {
+      "label": "directory",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L10",
+      "id": "auth_contract_package_repository_directory",
+      "community": 1,
+      "norm_label": "directory"
+    },
+    {
+      "label": "homepage",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L12",
+      "id": "auth_contract_package_homepage",
+      "community": 1,
+      "norm_label": "homepage"
+    },
+    {
+      "label": "bugs",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L13",
+      "id": "auth_contract_package_bugs",
+      "community": 1,
+      "norm_label": "bugs"
+    },
+    {
+      "label": "url",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L14",
+      "id": "auth_contract_package_bugs_url",
+      "community": 1,
+      "norm_label": "url"
+    },
+    {
+      "label": "keywords",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L16",
+      "id": "auth_contract_package_keywords",
+      "community": 1,
+      "norm_label": "keywords"
+    },
+    {
+      "label": "dependencies",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L23",
+      "id": "auth_contract_package_dependencies",
+      "community": 1,
+      "norm_label": "dependencies"
+    },
+    {
+      "label": "tslib",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L24",
+      "id": "auth_contract_package_dependencies_tslib",
+      "community": 1,
+      "norm_label": "tslib"
+    },
+    {
+      "label": "sideEffects",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L26",
+      "id": "auth_contract_package_sideeffects",
+      "community": 1,
+      "norm_label": "sideeffects"
+    },
+    {
+      "label": "main",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L27",
+      "id": "auth_contract_package_main",
+      "community": 1,
+      "norm_label": "main"
+    },
+    {
+      "label": "types",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L28",
+      "id": "auth_contract_package_types",
+      "community": 1,
+      "norm_label": "types"
+    },
+    {
+      "label": "tsconfig.json",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L1",
+      "id": "tsconfig_json",
+      "community": 8,
+      "norm_label": "tsconfig.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "id": "auth_contract_tsconfig_extends",
+      "community": 8,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "id": "auth_contract_tsconfig_compileroptions",
+      "community": 8,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "module",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "id": "auth_contract_tsconfig_compileroptions_module",
+      "community": 8,
+      "norm_label": "module"
+    },
+    {
+      "label": "ignoreDeprecations",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "id": "auth_contract_tsconfig_compileroptions_ignoredeprecations",
+      "community": 8,
+      "norm_label": "ignoredeprecations"
+    },
+    {
+      "label": "files",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L7",
+      "id": "auth_contract_tsconfig_files",
+      "community": 8,
+      "norm_label": "files"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L8",
+      "id": "auth_contract_tsconfig_include",
+      "community": 8,
+      "norm_label": "include"
+    },
+    {
+      "label": "references",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L9",
+      "id": "auth_contract_tsconfig_references",
+      "community": 8,
+      "norm_label": "references"
+    },
+    {
+      "label": "tsconfig.spec.json",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L1",
+      "id": "tsconfig_spec_json",
+      "community": 6,
+      "norm_label": "tsconfig.spec.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L2",
+      "id": "auth_contract_tsconfig_spec_extends",
+      "community": 6,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L3",
+      "id": "auth_contract_tsconfig_spec_compileroptions",
+      "community": 6,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "outDir",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L4",
+      "id": "auth_contract_tsconfig_spec_compileroptions_outdir",
+      "community": 6,
+      "norm_label": "outdir"
+    },
+    {
+      "label": "module",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L5",
+      "id": "auth_contract_tsconfig_spec_compileroptions_module",
+      "community": 6,
+      "norm_label": "module"
+    },
+    {
+      "label": "target",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L6",
+      "id": "auth_contract_tsconfig_spec_compileroptions_target",
+      "community": 6,
+      "norm_label": "target"
+    },
+    {
+      "label": "types",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L7",
+      "id": "auth_contract_tsconfig_spec_compileroptions_types",
+      "community": 6,
+      "norm_label": "types"
+    },
+    {
+      "label": "moduleResolution",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L8",
+      "id": "auth_contract_tsconfig_spec_compileroptions_moduleresolution",
+      "community": 6,
+      "norm_label": "moduleresolution"
+    },
+    {
+      "label": "baseUrl",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L9",
+      "id": "auth_contract_tsconfig_spec_compileroptions_baseurl",
+      "community": 6,
+      "norm_label": "baseurl"
+    },
+    {
+      "label": "isolatedModules",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L10",
+      "id": "auth_contract_tsconfig_spec_compileroptions_isolatedmodules",
+      "community": 6,
+      "norm_label": "isolatedmodules"
+    },
+    {
+      "label": "rootDir",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L11",
+      "id": "auth_contract_tsconfig_spec_compileroptions_rootdir",
+      "community": 6,
+      "norm_label": "rootdir"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L13",
+      "id": "auth_contract_tsconfig_spec_include",
+      "community": 6,
+      "norm_label": "include"
+    },
+    {
+      "label": "jest.config.ts",
+      "file_type": "code",
+      "source_file": "jest.config.ts",
+      "source_location": "L1",
+      "id": "jest_config_ts",
+      "community": 11,
+      "norm_label": "jest.config.ts"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "src/index.ts",
+      "source_location": "L1",
+      "id": "src_index_ts",
+      "community": 0,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "caller.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/caller.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_caller_spec_ts",
+      "community": 0,
+      "norm_label": "caller.spec.ts"
+    },
+    {
+      "label": "CLAIMS",
+      "file_type": "code",
+      "source_file": "src/lib/caller.spec.ts",
+      "source_location": "L3",
+      "id": "lib_caller_spec_claims",
+      "community": 0,
+      "norm_label": "claims"
+    },
+    {
+      "label": "caller",
+      "file_type": "code",
+      "source_file": "src/lib/caller.spec.ts",
+      "source_location": "L17",
+      "id": "lib_caller_spec_caller",
+      "community": 0,
+      "norm_label": "caller"
+    },
+    {
+      "label": "permission.ts",
+      "file_type": "code",
+      "source_file": "src/lib/permission.ts",
+      "source_location": "L1",
+      "id": "src_lib_permission_ts",
+      "community": 0,
+      "norm_label": "permission.ts"
+    },
+    {
+      "label": "TPermission",
+      "file_type": "code",
+      "source_file": "src/lib/permission.ts",
+      "source_location": "L2",
+      "id": "lib_permission_tpermission",
+      "community": 0,
+      "norm_label": "tpermission"
+    },
+    {
+      "label": "IParsedPermission",
+      "file_type": "code",
+      "source_file": "src/lib/permission.ts",
+      "source_location": "L5",
+      "id": "lib_permission_iparsedpermission",
+      "community": 0,
+      "norm_label": "iparsedpermission"
+    },
+    {
+      "label": "TPermissionCatalogSource",
+      "file_type": "code",
+      "source_file": "src/lib/permission.ts",
+      "source_location": "L11",
+      "id": "lib_permission_tpermissioncatalogsource",
+      "community": 0,
+      "norm_label": "tpermissioncatalogsource"
+    },
+    {
+      "label": "TCatalogPermission",
+      "file_type": "code",
+      "source_file": "src/lib/permission.ts",
+      "source_location": "L14",
+      "id": "lib_permission_tcatalogpermission",
+      "community": 0,
+      "norm_label": "tcatalogpermission"
+    },
+    {
+      "label": "PERMISSION",
+      "file_type": "code",
+      "source_file": "src/lib/permission.ts",
+      "source_location": "L19",
+      "id": "lib_permission_permission",
+      "community": 0,
+      "norm_label": "permission"
+    },
+    {
+      "label": "isPermission()",
+      "file_type": "code",
+      "source_file": "src/lib/permission.ts",
+      "source_location": "L25",
+      "id": "lib_permission_ispermission",
+      "community": 0,
+      "norm_label": "ispermission()"
+    },
+    {
+      "label": "parsePermission()",
+      "file_type": "code",
+      "source_file": "src/lib/permission.ts",
+      "source_location": "L30",
+      "id": "lib_permission_parsepermission",
+      "community": 0,
+      "norm_label": "parsepermission()"
+    },
+    {
+      "label": "definePermissions()",
+      "file_type": "code",
+      "source_file": "src/lib/permission.ts",
+      "source_location": "L46",
+      "id": "lib_permission_definepermissions",
+      "community": 0,
+      "norm_label": "definepermissions()"
+    },
+    {
+      "label": "permission.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/permission.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_permission_spec_ts",
+      "community": 0,
+      "norm_label": "permission.spec.ts"
+    },
+    {
+      "label": "catalog",
+      "file_type": "code",
+      "source_file": "src/lib/permission.spec.ts",
+      "source_location": "L24",
+      "id": "lib_permission_spec_catalog",
+      "community": 0,
+      "norm_label": "catalog"
+    },
+    {
+      "label": "caller.ts",
+      "file_type": "code",
+      "source_file": "src/lib/caller.ts",
+      "source_location": "L1",
+      "id": "src_lib_caller_ts",
+      "community": 0,
+      "norm_label": "caller.ts"
+    },
+    {
+      "label": "IKeycloakClaims",
+      "file_type": "code",
+      "source_file": "src/lib/caller.ts",
+      "source_location": "L4",
+      "id": "lib_caller_ikeycloakclaims",
+      "community": 0,
+      "norm_label": "ikeycloakclaims"
+    },
+    {
+      "label": "ICaller",
+      "file_type": "code",
+      "source_file": "src/lib/caller.ts",
+      "source_location": "L14",
+      "id": "lib_caller_icaller",
+      "community": 0,
+      "norm_label": "icaller"
+    },
+    {
+      "label": "callerFromClaims()",
+      "file_type": "code",
+      "source_file": "src/lib/caller.ts",
+      "source_location": "L28",
+      "id": "lib_caller_callerfromclaims",
+      "community": 0,
+      "norm_label": "callerfromclaims()"
+    },
+    {
+      "label": "hasPermission()",
+      "file_type": "code",
+      "source_file": "src/lib/caller.ts",
+      "source_location": "L40",
+      "id": "lib_caller_haspermission",
+      "community": 0,
+      "norm_label": "haspermission()"
+    },
+    {
+      "label": "hasEveryPermission()",
+      "file_type": "code",
+      "source_file": "src/lib/caller.ts",
+      "source_location": "L45",
+      "id": "lib_caller_haseverypermission",
+      "community": 0,
+      "norm_label": "haseverypermission()"
+    },
+    {
+      "label": "hasSomePermission()",
+      "file_type": "code",
+      "source_file": "src/lib/caller.ts",
+      "source_location": "L50",
+      "id": "lib_caller_hassomepermission",
+      "community": 0,
+      "norm_label": "hassomepermission()"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "id": "readme_md",
+      "community": 9,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "@rt-tools/auth-contract",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "id": "auth_contract_readme_rt_tools_auth_contract",
+      "community": 9,
+      "norm_label": "@rt-tools/auth-contract"
+    },
+    {
+      "label": "A right",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L9",
+      "id": "auth_contract_readme_a_right",
+      "community": 9,
+      "norm_label": "a right"
+    },
+    {
+      "label": "code:ts (import { definePermissions } from '@rt-tools/auth-contract';)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L14",
+      "id": "auth_contract_readme_codeblock_1",
+      "community": 9,
+      "norm_label": "code:ts (import { definepermissions } from '@rt-tools/auth-contract';)"
+    },
+    {
+      "label": "The caller",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L28",
+      "id": "auth_contract_readme_the_caller",
+      "community": 9,
+      "norm_label": "the caller"
+    },
+    {
+      "label": "code:ts (import { callerFromClaims, hasPermission } from '@rt-tools/a)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L30",
+      "id": "auth_contract_readme_codeblock_2",
+      "community": 9,
+      "norm_label": "code:ts (import { callerfromclaims, haspermission } from '@rt-tools/a)"
+    },
+    {
+      "label": "Connecting it to an application",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L52",
+      "id": "auth_contract_readme_connecting_it_to_an_application",
+      "community": 9,
+      "norm_label": "connecting it to an application"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_contract_project_name",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_contract_project_schema",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_contract_project_sourceroot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_contract_project_prefix",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_contract_project_projecttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_contract_project_release",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_contract_project_tags",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_contract_project_targets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "auth_contract_project_release",
+      "target": "auth_contract_project_release_version",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "auth_contract_project_release_version",
+      "target": "auth_contract_project_version_manifestrootstoupdate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "auth_contract_project_release_version",
+      "target": "auth_contract_project_version_currentversionresolver",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "auth_contract_project_release_version",
+      "target": "auth_contract_project_version_fallbackcurrentversionresolver",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets",
+      "target": "auth_contract_project_targets_build",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets",
+      "target": "auth_contract_project_targets_build_esm",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets",
+      "target": "auth_contract_project_targets_build_cjs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L48",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets",
+      "target": "auth_contract_project_targets_nx_release_publish",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L53",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets",
+      "target": "auth_contract_project_targets_test",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L61",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets",
+      "target": "auth_contract_project_targets_lint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets_build",
+      "target": "auth_contract_project_build_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets_build",
+      "target": "auth_contract_project_build_outputs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets_build",
+      "target": "auth_contract_project_build_dependson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets_build",
+      "target": "auth_contract_project_build_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "auth_contract_project_build_options",
+      "target": "auth_contract_project_options_command",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets_build_esm",
+      "target": "auth_contract_project_build_esm_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets_build_esm",
+      "target": "auth_contract_project_build_esm_outputs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets_build_esm",
+      "target": "auth_contract_project_build_esm_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "auth_contract_project_build_esm_options",
+      "target": "auth_contract_project_options_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "auth_contract_project_build_esm_options",
+      "target": "auth_contract_project_options_tsconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "auth_contract_project_build_esm_options",
+      "target": "auth_contract_project_options_outputpath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "auth_contract_project_build_esm_options",
+      "target": "auth_contract_project_options_generatepackagejson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "auth_contract_project_build_esm_options",
+      "target": "auth_contract_project_options_assets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "auth_contract_project_build_esm_options",
+      "target": "auth_contract_project_options_rootdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "auth_contract_project_build_cjs_options",
+      "target": "auth_contract_project_options_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "auth_contract_project_build_cjs_options",
+      "target": "auth_contract_project_options_tsconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "auth_contract_project_test_options",
+      "target": "auth_contract_project_options_tsconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "auth_contract_project_build_cjs_options",
+      "target": "auth_contract_project_options_outputpath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "auth_contract_project_build_cjs_options",
+      "target": "auth_contract_project_options_generatepackagejson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "auth_contract_project_build_cjs_options",
+      "target": "auth_contract_project_options_assets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "auth_contract_project_build_cjs_options",
+      "target": "auth_contract_project_options_rootdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L37",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets_build_cjs",
+      "target": "auth_contract_project_build_cjs_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets_build_cjs",
+      "target": "auth_contract_project_build_cjs_outputs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L39",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets_build_cjs",
+      "target": "auth_contract_project_build_cjs_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L49",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets_nx_release_publish",
+      "target": "auth_contract_project_nx_release_publish_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L50",
+      "weight": 1.0,
+      "source": "auth_contract_project_nx_release_publish_options",
+      "target": "auth_contract_project_options_packageroot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L54",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets_test",
+      "target": "auth_contract_project_test_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L55",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets_test",
+      "target": "auth_contract_project_test_outputs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L56",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets_test",
+      "target": "auth_contract_project_test_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L57",
+      "weight": 1.0,
+      "source": "auth_contract_project_test_options",
+      "target": "auth_contract_project_options_jestconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L62",
+      "weight": 1.0,
+      "source": "auth_contract_project_targets_lint",
+      "target": "auth_contract_project_lint_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_lib_cjs_json",
+      "target": "auth_contract_tsconfig_lib_cjs_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_lib_cjs_json",
+      "target": "auth_contract_tsconfig_lib_cjs_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "tsconfig_lib_cjs_json",
+      "target": "auth_contract_tsconfig_lib_cjs_exclude",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "tsconfig_lib_cjs_json",
+      "target": "auth_contract_tsconfig_lib_cjs_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_lib_cjs_compileroptions",
+      "target": "auth_contract_tsconfig_lib_cjs_compileroptions_module",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_lib_cjs_compileroptions",
+      "target": "auth_contract_tsconfig_lib_cjs_compileroptions_moduleresolution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_lib_cjs_compileroptions",
+      "target": "auth_contract_tsconfig_lib_cjs_compileroptions_verbatimmodulesyntax",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_lib_cjs_compileroptions",
+      "target": "auth_contract_tsconfig_lib_cjs_compileroptions_outdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_lib_cjs_compileroptions",
+      "target": "auth_contract_tsconfig_lib_cjs_compileroptions_declaration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_lib_cjs_compileroptions",
+      "target": "auth_contract_tsconfig_lib_cjs_compileroptions_declarationmap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_lib_cjs_compileroptions",
+      "target": "auth_contract_tsconfig_lib_cjs_compileroptions_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.cjs.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_lib_cjs_compileroptions",
+      "target": "auth_contract_tsconfig_lib_cjs_compileroptions_rootdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_lib_esm_json",
+      "target": "auth_contract_tsconfig_lib_esm_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_lib_esm_json",
+      "target": "auth_contract_tsconfig_lib_esm_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "tsconfig_lib_esm_json",
+      "target": "auth_contract_tsconfig_lib_esm_exclude",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "tsconfig_lib_esm_json",
+      "target": "auth_contract_tsconfig_lib_esm_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_lib_esm_compileroptions",
+      "target": "auth_contract_tsconfig_lib_esm_compileroptions_module",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_lib_esm_compileroptions",
+      "target": "auth_contract_tsconfig_lib_esm_compileroptions_moduleresolution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_lib_esm_compileroptions",
+      "target": "auth_contract_tsconfig_lib_esm_compileroptions_outdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_lib_esm_compileroptions",
+      "target": "auth_contract_tsconfig_lib_esm_compileroptions_declaration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_lib_esm_compileroptions",
+      "target": "auth_contract_tsconfig_lib_esm_compileroptions_declarationmap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_lib_esm_compileroptions",
+      "target": "auth_contract_tsconfig_lib_esm_compileroptions_inlinesources",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_lib_esm_compileroptions",
+      "target": "auth_contract_tsconfig_lib_esm_compileroptions_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.esm.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_lib_esm_compileroptions",
+      "target": "auth_contract_tsconfig_lib_esm_compileroptions_rootdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_contract_package_name",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_contract_package_version",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_contract_package_description",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_contract_package_author",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_contract_package_license",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_contract_package_repository",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_contract_package_homepage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_contract_package_bugs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_contract_package_keywords",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_contract_package_dependencies",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_contract_package_sideeffects",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_contract_package_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "auth_contract_package_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "auth_contract_package_repository",
+      "target": "auth_contract_package_repository_type",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "auth_contract_package_repository",
+      "target": "auth_contract_package_repository_url",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "auth_contract_package_repository",
+      "target": "auth_contract_package_repository_directory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "auth_contract_package_bugs",
+      "target": "auth_contract_package_bugs_url",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "auth_contract_package_dependencies",
+      "target": "auth_contract_package_dependencies_tslib",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "auth_contract_tsconfig_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "auth_contract_tsconfig_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "auth_contract_tsconfig_files",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "auth_contract_tsconfig_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "auth_contract_tsconfig_references",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_compileroptions",
+      "target": "auth_contract_tsconfig_compileroptions_module",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_compileroptions",
+      "target": "auth_contract_tsconfig_compileroptions_ignoredeprecations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "auth_contract_tsconfig_spec_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "auth_contract_tsconfig_spec_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "auth_contract_tsconfig_spec_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_spec_compileroptions",
+      "target": "auth_contract_tsconfig_spec_compileroptions_outdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_spec_compileroptions",
+      "target": "auth_contract_tsconfig_spec_compileroptions_module",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_spec_compileroptions",
+      "target": "auth_contract_tsconfig_spec_compileroptions_target",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_spec_compileroptions",
+      "target": "auth_contract_tsconfig_spec_compileroptions_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_spec_compileroptions",
+      "target": "auth_contract_tsconfig_spec_compileroptions_moduleresolution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_spec_compileroptions",
+      "target": "auth_contract_tsconfig_spec_compileroptions_baseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_spec_compileroptions",
+      "target": "auth_contract_tsconfig_spec_compileroptions_isolatedmodules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "auth_contract_tsconfig_spec_compileroptions",
+      "target": "auth_contract_tsconfig_spec_compileroptions_rootdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_caller_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_permission_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/caller.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_caller_spec_ts",
+      "target": "src_lib_caller_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/caller.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_caller_spec_ts",
+      "target": "lib_caller_callerfromclaims",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/caller.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_caller_spec_ts",
+      "target": "lib_caller_haseverypermission",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/caller.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_caller_spec_ts",
+      "target": "lib_caller_haspermission",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/caller.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_caller_spec_ts",
+      "target": "lib_caller_hassomepermission",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/caller.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_caller_spec_ts",
+      "target": "lib_caller_icaller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/caller.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_caller_spec_ts",
+      "target": "lib_caller_ikeycloakclaims",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/caller.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_caller_spec_ts",
+      "target": "lib_caller_spec_claims",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/caller.spec.ts",
+      "source_location": "L53",
+      "weight": 1.0,
+      "source": "src_lib_caller_spec_ts",
+      "target": "lib_caller_spec_caller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/permission.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_permission_ts",
+      "target": "lib_permission_tpermission",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/permission.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_permission_ts",
+      "target": "lib_permission_iparsedpermission",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/permission.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_lib_permission_ts",
+      "target": "lib_permission_tpermissioncatalogsource",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/permission.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_lib_permission_ts",
+      "target": "lib_permission_tcatalogpermission",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/permission.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_lib_permission_ts",
+      "target": "lib_permission_permission",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/permission.ts",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "src_lib_permission_ts",
+      "target": "lib_permission_ispermission",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/permission.ts",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "src_lib_permission_ts",
+      "target": "lib_permission_parsepermission",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/permission.ts",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "src_lib_permission_ts",
+      "target": "lib_permission_definepermissions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/permission.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_permission_spec_ts",
+      "target": "src_lib_permission_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/caller.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_caller_ts",
+      "target": "src_lib_permission_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/caller.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_caller_ts",
+      "target": "lib_permission_tpermission",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/permission.ts",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "lib_permission_definepermissions",
+      "target": "lib_permission_ispermission",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/permission.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_permission_spec_ts",
+      "target": "lib_permission_ispermission",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/caller.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_caller_ts",
+      "target": "lib_permission_ispermission",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/permission.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_permission_spec_ts",
+      "target": "lib_permission_parsepermission",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/permission.spec.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_permission_spec_ts",
+      "target": "lib_permission_definepermissions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/permission.spec.ts",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "src_lib_permission_spec_ts",
+      "target": "lib_permission_spec_catalog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/caller.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_caller_ts",
+      "target": "lib_caller_ikeycloakclaims",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/caller.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_lib_caller_ts",
+      "target": "lib_caller_icaller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/caller.ts",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "src_lib_caller_ts",
+      "target": "lib_caller_callerfromclaims",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/caller.ts",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "src_lib_caller_ts",
+      "target": "lib_caller_haspermission",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/caller.ts",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "src_lib_caller_ts",
+      "target": "lib_caller_haseverypermission",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/caller.ts",
+      "source_location": "L50",
+      "weight": 1.0,
+      "source": "src_lib_caller_ts",
+      "target": "lib_caller_hassomepermission",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "readme_md",
+      "target": "auth_contract_readme_rt_tools_auth_contract",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "auth_contract_readme_rt_tools_auth_contract",
+      "target": "auth_contract_readme_a_right",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "auth_contract_readme_rt_tools_auth_contract",
+      "target": "auth_contract_readme_the_caller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "auth_contract_readme_rt_tools_auth_contract",
+      "target": "auth_contract_readme_connecting_it_to_an_application",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "auth_contract_readme_a_right",
+      "target": "auth_contract_readme_codeblock_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "auth_contract_readme_the_caller",
+      "target": "auth_contract_readme_codeblock_2",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "built_at_commit": "76235026c0071bbfba479885de800c463a0de4ec"
+}

@@ -86,3 +86,11 @@ Then it assembles the table of that epic, and the refusal about a task declaring
 come
 
 Covered: `projects/agent-kit/tests/epic-table.test.sh`.
+
+### SC-AK-1341 — a plan opened by the section the draft writes gives the paragraph
+
+Given the plan of the epic opens with the section «Что даёт», as the draft of the plan writes it
+When the table is printed
+Then the paragraph above the table carries the first phrase of that section
+
+Covered: `projects/agent-kit/tests/epic-table.test.sh`.

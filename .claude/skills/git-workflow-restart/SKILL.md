@@ -4,7 +4,7 @@ kind: pattern
 rule: deploy-flow
 description: Pattern of rule deploy-flow. Load for a manual production restart — after editing .env.prod, when investigating a rollout, when starting a container on the server. Ready-made commands with the image tag by sha and what to check the result against. Migrations — pattern git-workflow-migration.
 ---
-<!-- rt-kit v0.37.0 · patterns/git-workflow-restart.md · 5d54f9ea612d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/git-workflow-restart.md · 157b54e1b829 · правится надстройкой, не здесь -->
 
 # A manual production restart
 
@@ -19,7 +19,7 @@ Pattern of the rule `deploy-flow`. What must be true meanwhile — the law
 
 ## The command must carry the sha
 
-`.github/workflows/deploy.yml` rolls out images by the commit sha. Without the variable
+The rollout pipeline of the tree rolls out images by the commit sha. Without the variable
 `docker compose` substitutes the default `latest`, and `latest` in the registry lags behind the
 main branch — production silently rolls back to the old image and keeps answering:
 
@@ -55,7 +55,8 @@ IMAGE_TAG='<прежний sha>' docker compose -f docker-compose.prod.yml --env
 
 A rollback returns the previous image, but not the previous storage schema: a migration that
 left with the new version stays applied, and the previous image works with the changed schema.
-That is why a schema edit is split into compatible and incompatible — the migration pattern.
+That is why a schema edit the previous image cannot live with — a removed or renamed column — goes
+in two releases: first the code stops reading the old shape, and only the next release drops it.
 
 A rolled-back production does not converge with the main branch at once: main carries an edit
 that production no longer has. By a work queue line this is not visible at all, and it is named

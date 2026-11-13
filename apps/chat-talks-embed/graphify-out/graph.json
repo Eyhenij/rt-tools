@@ -1,0 +1,1350 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "project.json",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L1",
+      "id": "project_json",
+      "community": 4,
+      "norm_label": "project.json"
+    },
+    {
+      "label": "name",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L2",
+      "id": "chat_talks_embed_project_name",
+      "community": 4,
+      "norm_label": "name"
+    },
+    {
+      "label": "$schema",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L3",
+      "id": "chat_talks_embed_project_schema",
+      "community": 4,
+      "norm_label": "$schema"
+    },
+    {
+      "label": "projectType",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L4",
+      "id": "chat_talks_embed_project_projecttype",
+      "community": 4,
+      "norm_label": "projecttype"
+    },
+    {
+      "label": "sourceRoot",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L5",
+      "id": "chat_talks_embed_project_sourceroot",
+      "community": 4,
+      "norm_label": "sourceroot"
+    },
+    {
+      "label": "tags",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L6",
+      "id": "chat_talks_embed_project_tags",
+      "community": 4,
+      "norm_label": "tags"
+    },
+    {
+      "label": "targets",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L7",
+      "id": "chat_talks_embed_project_targets",
+      "community": 1,
+      "norm_label": "targets"
+    },
+    {
+      "label": "build",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L8",
+      "id": "chat_talks_embed_project_targets_build",
+      "community": 1,
+      "norm_label": "build"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L9",
+      "id": "chat_talks_embed_project_build_executor",
+      "community": 1,
+      "norm_label": "executor"
+    },
+    {
+      "label": "outputs",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L10",
+      "id": "chat_talks_embed_project_build_outputs",
+      "community": 1,
+      "norm_label": "outputs"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L11",
+      "id": "chat_talks_embed_project_build_options",
+      "community": 1,
+      "norm_label": "options"
+    },
+    {
+      "label": "command",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L12",
+      "id": "chat_talks_embed_project_options_command",
+      "community": 1,
+      "norm_label": "command"
+    },
+    {
+      "label": "cwd",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L13",
+      "id": "chat_talks_embed_project_options_cwd",
+      "community": 1,
+      "norm_label": "cwd"
+    },
+    {
+      "label": "typecheck",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L16",
+      "id": "chat_talks_embed_project_targets_typecheck",
+      "community": 1,
+      "norm_label": "typecheck"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L17",
+      "id": "chat_talks_embed_project_typecheck_executor",
+      "community": 1,
+      "norm_label": "executor"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L18",
+      "id": "chat_talks_embed_project_typecheck_options",
+      "community": 1,
+      "norm_label": "options"
+    },
+    {
+      "label": "lint",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L22",
+      "id": "chat_talks_embed_project_targets_lint",
+      "community": 1,
+      "norm_label": "lint"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L23",
+      "id": "chat_talks_embed_project_lint_executor",
+      "community": 1,
+      "norm_label": "executor"
+    },
+    {
+      "label": "tsconfig.json",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L1",
+      "id": "tsconfig_json",
+      "community": 3,
+      "norm_label": "tsconfig.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "id": "chat_talks_embed_tsconfig_extends",
+      "community": 3,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "id": "chat_talks_embed_tsconfig_compileroptions",
+      "community": 3,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "module",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "id": "chat_talks_embed_tsconfig_compileroptions_module",
+      "community": 3,
+      "norm_label": "module"
+    },
+    {
+      "label": "moduleResolution",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "id": "chat_talks_embed_tsconfig_compileroptions_moduleresolution",
+      "community": 3,
+      "norm_label": "moduleresolution"
+    },
+    {
+      "label": "lib",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L6",
+      "id": "chat_talks_embed_tsconfig_compileroptions_lib",
+      "community": 3,
+      "norm_label": "lib"
+    },
+    {
+      "label": "types",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L7",
+      "id": "chat_talks_embed_tsconfig_compileroptions_types",
+      "community": 3,
+      "norm_label": "types"
+    },
+    {
+      "label": "rootDir",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L8",
+      "id": "chat_talks_embed_tsconfig_compileroptions_rootdir",
+      "community": 3,
+      "norm_label": "rootdir"
+    },
+    {
+      "label": "outDir",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L9",
+      "id": "chat_talks_embed_tsconfig_compileroptions_outdir",
+      "community": 3,
+      "norm_label": "outdir"
+    },
+    {
+      "label": "noEmit",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L10",
+      "id": "chat_talks_embed_tsconfig_compileroptions_noemit",
+      "community": 3,
+      "norm_label": "noemit"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L12",
+      "id": "chat_talks_embed_tsconfig_include",
+      "community": 3,
+      "norm_label": "include"
+    },
+    {
+      "label": "main.ts",
+      "file_type": "code",
+      "source_file": "src/main.ts",
+      "source_location": "L1",
+      "id": "src_main_ts",
+      "community": 0,
+      "norm_label": "main.ts"
+    },
+    {
+      "label": "talks-embed.element.ts",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L1",
+      "id": "src_lib_talks_embed_element_ts",
+      "community": 0,
+      "norm_label": "talks-embed.element.ts"
+    },
+    {
+      "label": "scriptSource()",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L46",
+      "id": "lib_talks_embed_element_scriptsource",
+      "community": 0,
+      "norm_label": "scriptsource()"
+    },
+    {
+      "label": "SCRIPT_SOURCE",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L63",
+      "id": "lib_talks_embed_element_script_source",
+      "community": 0,
+      "norm_label": "script_source"
+    },
+    {
+      "label": "TalksEmbedElement",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L65",
+      "id": "lib_talks_embed_element_talksembedelement",
+      "community": 0,
+      "norm_label": "talksembedelement"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L70",
+      "id": "lib_talks_embed_element_talksembedelement_constructor",
+      "community": 0,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".connectedCallback()",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L78",
+      "id": "lib_talks_embed_element_talksembedelement_connectedcallback",
+      "community": 2,
+      "norm_label": ".connectedcallback()"
+    },
+    {
+      "label": ".disconnectedCallback()",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L111",
+      "id": "lib_talks_embed_element_talksembedelement_disconnectedcallback",
+      "community": 0,
+      "norm_label": ".disconnectedcallback()"
+    },
+    {
+      "label": ".#answer()",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L122",
+      "id": "lib_talks_embed_element_talksembedelement_answer",
+      "community": 0,
+      "norm_label": ".#answer()"
+    },
+    {
+      "label": ".#signature()",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L138",
+      "id": "lib_talks_embed_element_talksembedelement_signature",
+      "community": 0,
+      "norm_label": ".#signature()"
+    },
+    {
+      "label": "talks-embed.logic.ts",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L1",
+      "id": "src_lib_talks_embed_logic_ts",
+      "community": 2,
+      "norm_label": "talks-embed.logic.ts"
+    },
+    {
+      "label": "ITalksEmbed",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L14",
+      "id": "lib_talks_embed_logic_italksembed",
+      "community": 0,
+      "norm_label": "italksembed"
+    },
+    {
+      "label": "ITalksEmbedAttrs",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L24",
+      "id": "lib_talks_embed_logic_italksembedattrs",
+      "community": 2,
+      "norm_label": "italksembedattrs"
+    },
+    {
+      "label": "named()",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L32",
+      "id": "lib_talks_embed_logic_named",
+      "community": 2,
+      "norm_label": "named()"
+    },
+    {
+      "label": "talksEmbedService()",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L43",
+      "id": "lib_talks_embed_logic_talksembedservice",
+      "community": 2,
+      "norm_label": "talksembedservice()"
+    },
+    {
+      "label": "talksEmbedOf()",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L64",
+      "id": "lib_talks_embed_logic_talksembedof",
+      "community": 2,
+      "norm_label": "talksembedof()"
+    },
+    {
+      "label": "talksEmbedFrameSrc()",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L83",
+      "id": "lib_talks_embed_logic_talksembedframesrc",
+      "community": 2,
+      "norm_label": "talksembedframesrc()"
+    },
+    {
+      "label": "talksEmbedAsksSignature()",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L90",
+      "id": "lib_talks_embed_logic_talksembedaskssignature",
+      "community": 0,
+      "norm_label": "talksembedaskssignature()"
+    },
+    {
+      "label": "talksEmbedSignatureOf()",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L106",
+      "id": "lib_talks_embed_logic_talksembedsignatureof",
+      "community": 0,
+      "norm_label": "talksembedsignatureof()"
+    },
+    {
+      "label": "talksEmbedSignatureMessage()",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L123",
+      "id": "lib_talks_embed_logic_talksembedsignaturemessage",
+      "community": 0,
+      "norm_label": "talksembedsignaturemessage()"
+    },
+    {
+      "label": "talks-embed.logic.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.logic.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_talks_embed_logic_spec_ts",
+      "community": 2,
+      "norm_label": "talks-embed.logic.spec.ts"
+    },
+    {
+      "label": "attrs()",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.logic.spec.ts",
+      "source_location": "L30",
+      "id": "lib_talks_embed_logic_spec_attrs",
+      "community": 2,
+      "norm_label": "attrs()"
+    },
+    {
+      "label": "embed",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.logic.spec.ts",
+      "source_location": "L54",
+      "id": "lib_talks_embed_logic_spec_embed",
+      "community": 2,
+      "norm_label": "embed"
+    },
+    {
+      "label": "src",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.logic.spec.ts",
+      "source_location": "L55",
+      "id": "lib_talks_embed_logic_spec_src",
+      "community": 2,
+      "norm_label": "src"
+    },
+    {
+      "label": "signature",
+      "file_type": "code",
+      "source_file": "src/lib/talks-embed.logic.spec.ts",
+      "source_location": "L88",
+      "id": "lib_talks_embed_logic_spec_signature",
+      "community": 2,
+      "norm_label": "signature"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "id": "readme_md",
+      "community": 5,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "\u0423\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0430 \u0440\u0430\u0437\u0434\u0435\u043b\u0430 \u043f\u0435\u0440\u0435\u043f\u0438\u0441\u043e\u043a",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "id": "chat_talks_embed_readme_\u0443\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0430_\u0440\u0430\u0437\u0434\u0435\u043b\u0430_\u043f\u0435\u0440\u0435\u043f\u0438\u0441\u043e\u043a",
+      "community": 5,
+      "norm_label": "\u0443\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0430 \u0440\u0430\u0437\u0434\u0435\u043b\u0430 \u043f\u0435\u0440\u0435\u043f\u0438\u0441\u043e\u043a"
+    },
+    {
+      "label": "code:html (<script src=\"https://bus.example/talks.js\"></script>)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L6",
+      "id": "chat_talks_embed_readme_codeblock_1",
+      "community": 5,
+      "norm_label": "code:html (<script src=\"https://bus.example/talks.js\"></script>)"
+    },
+    {
+      "label": "code:json ({ \"at\": 1780000000000, \"signature\": \"64 \u0437\u043d\u0430\u043a\u0430\" })",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L21",
+      "id": "chat_talks_embed_readme_codeblock_2",
+      "community": 5,
+      "norm_label": "code:json ({ \"at\": 1780000000000, \"signature\": \"64 \u0437\u043d\u0430\u043a\u0430\" })"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "chat_talks_embed_project_name",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "chat_talks_embed_project_schema",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "chat_talks_embed_project_projecttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "chat_talks_embed_project_sourceroot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "chat_talks_embed_project_tags",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "chat_talks_embed_project_targets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "chat_talks_embed_project_targets",
+      "target": "chat_talks_embed_project_targets_build",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "chat_talks_embed_project_targets",
+      "target": "chat_talks_embed_project_targets_typecheck",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "chat_talks_embed_project_targets",
+      "target": "chat_talks_embed_project_targets_lint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "chat_talks_embed_project_targets_build",
+      "target": "chat_talks_embed_project_build_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "chat_talks_embed_project_targets_build",
+      "target": "chat_talks_embed_project_build_outputs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "chat_talks_embed_project_targets_build",
+      "target": "chat_talks_embed_project_build_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "chat_talks_embed_project_build_options",
+      "target": "chat_talks_embed_project_options_command",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "chat_talks_embed_project_build_options",
+      "target": "chat_talks_embed_project_options_cwd",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "chat_talks_embed_project_typecheck_options",
+      "target": "chat_talks_embed_project_options_command",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "chat_talks_embed_project_targets_typecheck",
+      "target": "chat_talks_embed_project_typecheck_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "chat_talks_embed_project_targets_typecheck",
+      "target": "chat_talks_embed_project_typecheck_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "chat_talks_embed_project_targets_lint",
+      "target": "chat_talks_embed_project_lint_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "chat_talks_embed_tsconfig_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "chat_talks_embed_tsconfig_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "chat_talks_embed_tsconfig_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "chat_talks_embed_tsconfig_compileroptions",
+      "target": "chat_talks_embed_tsconfig_compileroptions_module",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "chat_talks_embed_tsconfig_compileroptions",
+      "target": "chat_talks_embed_tsconfig_compileroptions_moduleresolution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "chat_talks_embed_tsconfig_compileroptions",
+      "target": "chat_talks_embed_tsconfig_compileroptions_lib",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "chat_talks_embed_tsconfig_compileroptions",
+      "target": "chat_talks_embed_tsconfig_compileroptions_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "chat_talks_embed_tsconfig_compileroptions",
+      "target": "chat_talks_embed_tsconfig_compileroptions_rootdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "chat_talks_embed_tsconfig_compileroptions",
+      "target": "chat_talks_embed_tsconfig_compileroptions_outdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "chat_talks_embed_tsconfig_compileroptions",
+      "target": "chat_talks_embed_tsconfig_compileroptions_noemit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "src_lib_talks_embed_element_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "lib_talks_embed_element_talksembedelement",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_element_ts",
+      "target": "src_lib_talks_embed_logic_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_element_ts",
+      "target": "lib_talks_embed_logic_italksembed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_element_ts",
+      "target": "lib_talks_embed_logic_talksembedaskssignature",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_element_ts",
+      "target": "lib_talks_embed_logic_talksembedframesrc",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_element_ts",
+      "target": "lib_talks_embed_logic_talksembedof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_element_ts",
+      "target": "lib_talks_embed_logic_talksembedsignaturemessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_element_ts",
+      "target": "lib_talks_embed_logic_talksembedsignatureof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_element_ts",
+      "target": "lib_talks_embed_element_scriptsource",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L63",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_element_ts",
+      "target": "lib_talks_embed_element_script_source",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L65",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_element_ts",
+      "target": "lib_talks_embed_element_talksembedelement",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L70",
+      "weight": 1.0,
+      "source": "lib_talks_embed_element_talksembedelement",
+      "target": "lib_talks_embed_element_talksembedelement_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L78",
+      "weight": 1.0,
+      "source": "lib_talks_embed_element_talksembedelement",
+      "target": "lib_talks_embed_element_talksembedelement_connectedcallback",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L111",
+      "weight": 1.0,
+      "source": "lib_talks_embed_element_talksembedelement",
+      "target": "lib_talks_embed_element_talksembedelement_disconnectedcallback",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L122",
+      "weight": 1.0,
+      "source": "lib_talks_embed_element_talksembedelement",
+      "target": "lib_talks_embed_element_talksembedelement_answer",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L138",
+      "weight": 1.0,
+      "source": "lib_talks_embed_element_talksembedelement",
+      "target": "lib_talks_embed_element_talksembedelement_signature",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L82",
+      "weight": 1.0,
+      "source": "lib_talks_embed_element_talksembedelement_connectedcallback",
+      "target": "lib_talks_embed_logic_talksembedof"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L105",
+      "weight": 1.0,
+      "source": "lib_talks_embed_element_talksembedelement_connectedcallback",
+      "target": "lib_talks_embed_logic_talksembedframesrc"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L130",
+      "weight": 1.0,
+      "source": "lib_talks_embed_element_talksembedelement_answer",
+      "target": "lib_talks_embed_element_talksembedelement_signature",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L126",
+      "weight": 1.0,
+      "source": "lib_talks_embed_element_talksembedelement_answer",
+      "target": "lib_talks_embed_logic_talksembedaskssignature"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L133",
+      "weight": 1.0,
+      "source": "lib_talks_embed_element_talksembedelement_answer",
+      "target": "lib_talks_embed_logic_talksembedsignaturemessage"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/lib/talks-embed.element.ts",
+      "source_location": "L146",
+      "weight": 1.0,
+      "source": "lib_talks_embed_element_talksembedelement_signature",
+      "target": "lib_talks_embed_logic_talksembedsignatureof"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_ts",
+      "target": "lib_talks_embed_logic_italksembed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_ts",
+      "target": "lib_talks_embed_logic_italksembedattrs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_ts",
+      "target": "lib_talks_embed_logic_named",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_ts",
+      "target": "lib_talks_embed_logic_talksembedservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L64",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_ts",
+      "target": "lib_talks_embed_logic_talksembedof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L83",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_ts",
+      "target": "lib_talks_embed_logic_talksembedframesrc",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L90",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_ts",
+      "target": "lib_talks_embed_logic_talksembedaskssignature",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L106",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_ts",
+      "target": "lib_talks_embed_logic_talksembedsignatureof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L123",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_ts",
+      "target": "lib_talks_embed_logic_talksembedsignaturemessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_spec_ts",
+      "target": "src_lib_talks_embed_logic_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_spec_ts",
+      "target": "lib_talks_embed_logic_italksembed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_spec_ts",
+      "target": "lib_talks_embed_logic_italksembedattrs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "lib_talks_embed_logic_talksembedservice",
+      "target": "lib_talks_embed_logic_named",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L65",
+      "weight": 1.0,
+      "source": "lib_talks_embed_logic_talksembedof",
+      "target": "lib_talks_embed_logic_named",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.ts",
+      "source_location": "L67",
+      "weight": 1.0,
+      "source": "lib_talks_embed_logic_talksembedof",
+      "target": "lib_talks_embed_logic_talksembedservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_spec_ts",
+      "target": "lib_talks_embed_logic_talksembedservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_spec_ts",
+      "target": "lib_talks_embed_logic_talksembedof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_spec_ts",
+      "target": "lib_talks_embed_logic_talksembedframesrc",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_spec_ts",
+      "target": "lib_talks_embed_logic_talksembedaskssignature",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_spec_ts",
+      "target": "lib_talks_embed_logic_talksembedsignatureof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_spec_ts",
+      "target": "lib_talks_embed_logic_talksembedsignaturemessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.spec.ts",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_spec_ts",
+      "target": "lib_talks_embed_logic_spec_attrs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.spec.ts",
+      "source_location": "L62",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_spec_ts",
+      "target": "lib_talks_embed_logic_spec_embed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.spec.ts",
+      "source_location": "L55",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_spec_ts",
+      "target": "lib_talks_embed_logic_spec_src",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/talks-embed.logic.spec.ts",
+      "source_location": "L88",
+      "weight": 1.0,
+      "source": "src_lib_talks_embed_logic_spec_ts",
+      "target": "lib_talks_embed_logic_spec_signature",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "readme_md",
+      "target": "chat_talks_embed_readme_\u0443\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0430_\u0440\u0430\u0437\u0434\u0435\u043b\u0430_\u043f\u0435\u0440\u0435\u043f\u0438\u0441\u043e\u043a",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "chat_talks_embed_readme_\u0443\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0430_\u0440\u0430\u0437\u0434\u0435\u043b\u0430_\u043f\u0435\u0440\u0435\u043f\u0438\u0441\u043e\u043a",
+      "target": "chat_talks_embed_readme_codeblock_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "chat_talks_embed_readme_\u0443\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0430_\u0440\u0430\u0437\u0434\u0435\u043b\u0430_\u043f\u0435\u0440\u0435\u043f\u0438\u0441\u043e\u043a",
+      "target": "chat_talks_embed_readme_codeblock_2",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "built_at_commit": "76235026c0071bbfba479885de800c463a0de4ec"
+}

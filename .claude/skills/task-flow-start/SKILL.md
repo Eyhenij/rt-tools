@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load at the start of work from the owner — exploration before the first question, the six mandatory questions, the product agreement, creating the task, the branch and the folder. Returning to work — pattern task-flow-resume.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-start.md · dcd20af08312 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-start.md · 376a2b92b1b0 · правится надстройкой, не здесь -->
 
 # Starting the work
 
@@ -168,7 +168,8 @@ first.
 
 ### State `договорённость-записана`: a series of tasks is declared an epic
 
-The grill ended with one task — the step is skipped. Several came out, and the order between them
+The grill ended with one task — no epic is declared for it: it goes into the epic in work, or, by the
+owner's word, outside any epic with `--outside-epic`. Several came out, and the order between them
 matters — the epic is declared and its branch is taken by the pattern `epic-flow-declare`, and the
 work comes back here with its first task.
 
@@ -270,7 +271,7 @@ window fill limit, a guard's refusal, a question to the owner or handed-in work 
 begun; a pattern read to the end is not among them.
 
 **Next move:** the first stage is done in the same turn, and it is declared closed after its command
-from the "Checked by" line has passed.
+from the "Verified by" line has passed.
 
 ## Common misses
 
@@ -282,8 +283,6 @@ from the "Checked by" line has passed.
 - **One grill produced several tasks — the common part leaves for the epic plan.** The task folder
   dies with the merge, and the task order outlives it; the directory is named by the rule's
   companion.
-- **The task is created by a command, not by four calls in a row.** The board is not bound to the
-  repository, and the task gets onto it only by an explicit addition.
 - **The branch slug is taken from the terminology of the agreement, not from the words of the
   request.** The agreement is written before the branch, and that is exactly where it drops the
   owner's word. The task title and the PR title can be fixed; the branch name after the PR opens —

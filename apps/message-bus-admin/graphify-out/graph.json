@@ -1,0 +1,1839 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "tsconfig.app.json",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L1",
+      "id": "tsconfig_app_json",
+      "community": 7,
+      "norm_label": "tsconfig.app.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L2",
+      "id": "message_bus_admin_tsconfig_app_extends",
+      "community": 7,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L3",
+      "id": "message_bus_admin_tsconfig_app_compileroptions",
+      "community": 7,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "outDir",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L4",
+      "id": "message_bus_admin_tsconfig_app_compileroptions_outdir",
+      "community": 7,
+      "norm_label": "outdir"
+    },
+    {
+      "label": "types",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L5",
+      "id": "message_bus_admin_tsconfig_app_compileroptions_types",
+      "community": 7,
+      "norm_label": "types"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L7",
+      "id": "message_bus_admin_tsconfig_app_include",
+      "community": 7,
+      "norm_label": "include"
+    },
+    {
+      "label": "exclude",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L8",
+      "id": "message_bus_admin_tsconfig_app_exclude",
+      "community": 7,
+      "norm_label": "exclude"
+    },
+    {
+      "label": "project.json",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L1",
+      "id": "project_json",
+      "community": 4,
+      "norm_label": "project.json"
+    },
+    {
+      "label": "name",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L2",
+      "id": "message_bus_admin_project_name",
+      "community": 4,
+      "norm_label": "name"
+    },
+    {
+      "label": "$schema",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L3",
+      "id": "message_bus_admin_project_schema",
+      "community": 4,
+      "norm_label": "$schema"
+    },
+    {
+      "label": "projectType",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L4",
+      "id": "message_bus_admin_project_projecttype",
+      "community": 4,
+      "norm_label": "projecttype"
+    },
+    {
+      "label": "prefix",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L5",
+      "id": "message_bus_admin_project_prefix",
+      "community": 4,
+      "norm_label": "prefix"
+    },
+    {
+      "label": "sourceRoot",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L6",
+      "id": "message_bus_admin_project_sourceroot",
+      "community": 4,
+      "norm_label": "sourceroot"
+    },
+    {
+      "label": "tags",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L7",
+      "id": "message_bus_admin_project_tags",
+      "community": 4,
+      "norm_label": "tags"
+    },
+    {
+      "label": "targets",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L8",
+      "id": "message_bus_admin_project_targets",
+      "community": 6,
+      "norm_label": "targets"
+    },
+    {
+      "label": "build",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L9",
+      "id": "message_bus_admin_project_targets_build",
+      "community": 3,
+      "norm_label": "build"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L10",
+      "id": "message_bus_admin_project_build_executor",
+      "community": 3,
+      "norm_label": "executor"
+    },
+    {
+      "label": "outputs",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L11",
+      "id": "message_bus_admin_project_build_outputs",
+      "community": 3,
+      "norm_label": "outputs"
+    },
+    {
+      "label": "defaultConfiguration",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L12",
+      "id": "message_bus_admin_project_build_defaultconfiguration",
+      "community": 3,
+      "norm_label": "defaultconfiguration"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L13",
+      "id": "message_bus_admin_project_build_options",
+      "community": 3,
+      "norm_label": "options"
+    },
+    {
+      "label": "outputPath",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L14",
+      "id": "message_bus_admin_project_options_outputpath",
+      "community": 3,
+      "norm_label": "outputpath"
+    },
+    {
+      "label": "browser",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L15",
+      "id": "message_bus_admin_project_options_browser",
+      "community": 3,
+      "norm_label": "browser"
+    },
+    {
+      "label": "tsConfig",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L16",
+      "id": "message_bus_admin_project_options_tsconfig",
+      "community": 3,
+      "norm_label": "tsconfig"
+    },
+    {
+      "label": "inlineStyleLanguage",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L17",
+      "id": "message_bus_admin_project_options_inlinestylelanguage",
+      "community": 3,
+      "norm_label": "inlinestylelanguage"
+    },
+    {
+      "label": "assets",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L18",
+      "id": "message_bus_admin_project_options_assets",
+      "community": 3,
+      "norm_label": "assets"
+    },
+    {
+      "label": "styles",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L34",
+      "id": "message_bus_admin_project_options_styles",
+      "community": 3,
+      "norm_label": "styles"
+    },
+    {
+      "label": "configurations",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L36",
+      "id": "message_bus_admin_project_build_configurations",
+      "community": 0,
+      "norm_label": "configurations"
+    },
+    {
+      "label": "production",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L37",
+      "id": "message_bus_admin_project_configurations_production",
+      "community": 0,
+      "norm_label": "production"
+    },
+    {
+      "label": "budgets",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L38",
+      "id": "message_bus_admin_project_production_budgets",
+      "community": 0,
+      "norm_label": "budgets"
+    },
+    {
+      "label": "outputHashing",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L50",
+      "id": "message_bus_admin_project_production_outputhashing",
+      "community": 0,
+      "norm_label": "outputhashing"
+    },
+    {
+      "label": "development",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L52",
+      "id": "message_bus_admin_project_configurations_development",
+      "community": 0,
+      "norm_label": "development"
+    },
+    {
+      "label": "optimization",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L53",
+      "id": "message_bus_admin_project_development_optimization",
+      "community": 0,
+      "norm_label": "optimization"
+    },
+    {
+      "label": "extractLicenses",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L54",
+      "id": "message_bus_admin_project_development_extractlicenses",
+      "community": 0,
+      "norm_label": "extractlicenses"
+    },
+    {
+      "label": "sourceMap",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L55",
+      "id": "message_bus_admin_project_development_sourcemap",
+      "community": 0,
+      "norm_label": "sourcemap"
+    },
+    {
+      "label": "serve",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L59",
+      "id": "message_bus_admin_project_targets_serve",
+      "community": 0,
+      "norm_label": "serve"
+    },
+    {
+      "label": "continuous",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L60",
+      "id": "message_bus_admin_project_serve_continuous",
+      "community": 0,
+      "norm_label": "continuous"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L61",
+      "id": "message_bus_admin_project_serve_executor",
+      "community": 0,
+      "norm_label": "executor"
+    },
+    {
+      "label": "defaultConfiguration",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L62",
+      "id": "message_bus_admin_project_serve_defaultconfiguration",
+      "community": 0,
+      "norm_label": "defaultconfiguration"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L63",
+      "id": "message_bus_admin_project_serve_options",
+      "community": 0,
+      "norm_label": "options"
+    },
+    {
+      "label": "proxyConfig",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L64",
+      "id": "message_bus_admin_project_options_proxyconfig",
+      "community": 0,
+      "norm_label": "proxyconfig"
+    },
+    {
+      "label": "configurations",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L66",
+      "id": "message_bus_admin_project_serve_configurations",
+      "community": 0,
+      "norm_label": "configurations"
+    },
+    {
+      "label": "buildTarget",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L68",
+      "id": "message_bus_admin_project_production_buildtarget",
+      "community": 0,
+      "norm_label": "buildtarget"
+    },
+    {
+      "label": "buildTarget",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L71",
+      "id": "message_bus_admin_project_development_buildtarget",
+      "community": 0,
+      "norm_label": "buildtarget"
+    },
+    {
+      "label": "lint",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L75",
+      "id": "message_bus_admin_project_targets_lint",
+      "community": 6,
+      "norm_label": "lint"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L76",
+      "id": "message_bus_admin_project_lint_executor",
+      "community": 6,
+      "norm_label": "executor"
+    },
+    {
+      "label": "test",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L78",
+      "id": "message_bus_admin_project_targets_test",
+      "community": 6,
+      "norm_label": "test"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L79",
+      "id": "message_bus_admin_project_test_executor",
+      "community": 6,
+      "norm_label": "executor"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L80",
+      "id": "message_bus_admin_project_test_options",
+      "community": 6,
+      "norm_label": "options"
+    },
+    {
+      "label": "watch",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L81",
+      "id": "message_bus_admin_project_options_watch",
+      "community": 6,
+      "norm_label": "watch"
+    },
+    {
+      "label": "serve-static",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L84",
+      "id": "message_bus_admin_project_targets_serve_static",
+      "community": 5,
+      "norm_label": "serve-static"
+    },
+    {
+      "label": "continuous",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L85",
+      "id": "message_bus_admin_project_serve_static_continuous",
+      "community": 5,
+      "norm_label": "continuous"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L86",
+      "id": "message_bus_admin_project_serve_static_executor",
+      "community": 5,
+      "norm_label": "executor"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L87",
+      "id": "message_bus_admin_project_serve_static_options",
+      "community": 5,
+      "norm_label": "options"
+    },
+    {
+      "label": "buildTarget",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L88",
+      "id": "message_bus_admin_project_options_buildtarget",
+      "community": 5,
+      "norm_label": "buildtarget"
+    },
+    {
+      "label": "staticFilePath",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L89",
+      "id": "message_bus_admin_project_options_staticfilepath",
+      "community": 5,
+      "norm_label": "staticfilepath"
+    },
+    {
+      "label": "spa",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L90",
+      "id": "message_bus_admin_project_options_spa",
+      "community": 5,
+      "norm_label": "spa"
+    },
+    {
+      "label": "tsconfig.json",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L1",
+      "id": "tsconfig_json",
+      "community": 1,
+      "norm_label": "tsconfig.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "id": "message_bus_admin_tsconfig_extends",
+      "community": 1,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "id": "message_bus_admin_tsconfig_compileroptions",
+      "community": 1,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "isolatedModules",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "id": "message_bus_admin_tsconfig_compileroptions_isolatedmodules",
+      "community": 1,
+      "norm_label": "isolatedmodules"
+    },
+    {
+      "label": "module",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "id": "message_bus_admin_tsconfig_compileroptions_module",
+      "community": 1,
+      "norm_label": "module"
+    },
+    {
+      "label": "angularCompilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L7",
+      "id": "message_bus_admin_tsconfig_angularcompileroptions",
+      "community": 1,
+      "norm_label": "angularcompileroptions"
+    },
+    {
+      "label": "enableI18nLegacyMessageIdFormat",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L8",
+      "id": "message_bus_admin_tsconfig_angularcompileroptions_enablei18nlegacymessageidformat",
+      "community": 1,
+      "norm_label": "enablei18nlegacymessageidformat"
+    },
+    {
+      "label": "strictInjectionParameters",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L9",
+      "id": "message_bus_admin_tsconfig_angularcompileroptions_strictinjectionparameters",
+      "community": 1,
+      "norm_label": "strictinjectionparameters"
+    },
+    {
+      "label": "strictInputAccessModifiers",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L10",
+      "id": "message_bus_admin_tsconfig_angularcompileroptions_strictinputaccessmodifiers",
+      "community": 1,
+      "norm_label": "strictinputaccessmodifiers"
+    },
+    {
+      "label": "strictTemplates",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L11",
+      "id": "message_bus_admin_tsconfig_angularcompileroptions_stricttemplates",
+      "community": 1,
+      "norm_label": "stricttemplates"
+    },
+    {
+      "label": "files",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L13",
+      "id": "message_bus_admin_tsconfig_files",
+      "community": 1,
+      "norm_label": "files"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L14",
+      "id": "message_bus_admin_tsconfig_include",
+      "community": 1,
+      "norm_label": "include"
+    },
+    {
+      "label": "references",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L15",
+      "id": "message_bus_admin_tsconfig_references",
+      "community": 1,
+      "norm_label": "references"
+    },
+    {
+      "label": "eslint.config.mjs",
+      "file_type": "code",
+      "source_file": "eslint.config.mjs",
+      "source_location": "L1",
+      "id": "eslint_config_mjs",
+      "community": 10,
+      "norm_label": "eslint.config.mjs"
+    },
+    {
+      "label": "proxy.conf.json",
+      "file_type": "code",
+      "source_file": "proxy.conf.json",
+      "source_location": "L1",
+      "id": "proxy_conf_json",
+      "community": 9,
+      "norm_label": "proxy.conf.json"
+    },
+    {
+      "label": "/api",
+      "file_type": "code",
+      "source_file": "proxy.conf.json",
+      "source_location": "L2",
+      "id": "message_bus_admin_proxy_conf_api",
+      "community": 9,
+      "norm_label": "/api"
+    },
+    {
+      "label": "target",
+      "file_type": "code",
+      "source_file": "proxy.conf.json",
+      "source_location": "L3",
+      "id": "message_bus_admin_proxy_conf_api_target",
+      "community": 9,
+      "norm_label": "target"
+    },
+    {
+      "label": "secure",
+      "file_type": "code",
+      "source_file": "proxy.conf.json",
+      "source_location": "L4",
+      "id": "message_bus_admin_proxy_conf_api_secure",
+      "community": 9,
+      "norm_label": "secure"
+    },
+    {
+      "label": "changeOrigin",
+      "file_type": "code",
+      "source_file": "proxy.conf.json",
+      "source_location": "L5",
+      "id": "message_bus_admin_proxy_conf_api_changeorigin",
+      "community": 9,
+      "norm_label": "changeorigin"
+    },
+    {
+      "label": "tsconfig.spec.json",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L1",
+      "id": "tsconfig_spec_json",
+      "community": 8,
+      "norm_label": "tsconfig.spec.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L2",
+      "id": "message_bus_admin_tsconfig_spec_extends",
+      "community": 8,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L3",
+      "id": "message_bus_admin_tsconfig_spec_compileroptions",
+      "community": 8,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "outDir",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L4",
+      "id": "message_bus_admin_tsconfig_spec_compileroptions_outdir",
+      "community": 8,
+      "norm_label": "outdir"
+    },
+    {
+      "label": "types",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L5",
+      "id": "message_bus_admin_tsconfig_spec_compileroptions_types",
+      "community": 8,
+      "norm_label": "types"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L7",
+      "id": "message_bus_admin_tsconfig_spec_include",
+      "community": 8,
+      "norm_label": "include"
+    },
+    {
+      "label": "main.ts",
+      "file_type": "code",
+      "source_file": "src/main.ts",
+      "source_location": "L1",
+      "id": "src_main_ts",
+      "community": 2,
+      "norm_label": "main.ts"
+    },
+    {
+      "label": "start()",
+      "file_type": "code",
+      "source_file": "src/main.ts",
+      "source_location": "L15",
+      "id": "src_main_start",
+      "community": 2,
+      "norm_label": "start()"
+    },
+    {
+      "label": "app.spec.ts",
+      "file_type": "code",
+      "source_file": "src/app/app.spec.ts",
+      "source_location": "L1",
+      "id": "src_app_app_spec_ts",
+      "community": 2,
+      "norm_label": "app.spec.ts"
+    },
+    {
+      "label": "fixture",
+      "file_type": "code",
+      "source_file": "src/app/app.spec.ts",
+      "source_location": "L17",
+      "id": "app_app_spec_fixture",
+      "community": 2,
+      "norm_label": "fixture"
+    },
+    {
+      "label": "root",
+      "file_type": "code",
+      "source_file": "src/app/app.spec.ts",
+      "source_location": "L20",
+      "id": "app_app_spec_root",
+      "community": 2,
+      "norm_label": "root"
+    },
+    {
+      "label": "app.routes.ts",
+      "file_type": "code",
+      "source_file": "src/app/app.routes.ts",
+      "source_location": "L1",
+      "id": "src_app_app_routes_ts",
+      "community": 2,
+      "norm_label": "app.routes.ts"
+    },
+    {
+      "label": "columnsRoute()",
+      "file_type": "code",
+      "source_file": "src/app/app.routes.ts",
+      "source_location": "L24",
+      "id": "app_app_routes_columnsroute",
+      "community": 2,
+      "norm_label": "columnsroute()"
+    },
+    {
+      "label": "appRoutes",
+      "file_type": "code",
+      "source_file": "src/app/app.routes.ts",
+      "source_location": "L51",
+      "id": "app_app_routes_approutes",
+      "community": 2,
+      "norm_label": "approutes"
+    },
+    {
+      "label": "app.ts",
+      "file_type": "code",
+      "source_file": "src/app/app.ts",
+      "source_location": "L1",
+      "id": "src_app_app_ts",
+      "community": 2,
+      "norm_label": "app.ts"
+    },
+    {
+      "label": "App",
+      "file_type": "code",
+      "source_file": "src/app/app.ts",
+      "source_location": "L13",
+      "id": "app_app_app",
+      "community": 2,
+      "norm_label": "app"
+    },
+    {
+      "label": "app.config.ts",
+      "file_type": "code",
+      "source_file": "src/app/app.config.ts",
+      "source_location": "L1",
+      "id": "src_app_app_config_ts",
+      "community": 2,
+      "norm_label": "app.config.ts"
+    },
+    {
+      "label": "IEntrySettings",
+      "file_type": "code",
+      "source_file": "src/app/app.config.ts",
+      "source_location": "L18",
+      "id": "app_app_config_ientrysettings",
+      "community": 2,
+      "norm_label": "ientrysettings"
+    },
+    {
+      "label": "appConfig()",
+      "file_type": "code",
+      "source_file": "src/app/app.config.ts",
+      "source_location": "L54",
+      "id": "app_app_config_appconfig",
+      "community": 2,
+      "norm_label": "appconfig()"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_app_json",
+      "target": "message_bus_admin_tsconfig_app_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_app_json",
+      "target": "message_bus_admin_tsconfig_app_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "tsconfig_app_json",
+      "target": "message_bus_admin_tsconfig_app_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "tsconfig_app_json",
+      "target": "message_bus_admin_tsconfig_app_exclude",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "message_bus_admin_tsconfig_app_compileroptions",
+      "target": "message_bus_admin_tsconfig_app_compileroptions_outdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "message_bus_admin_tsconfig_app_compileroptions",
+      "target": "message_bus_admin_tsconfig_app_compileroptions_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "message_bus_admin_project_name",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "message_bus_admin_project_schema",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "message_bus_admin_project_projecttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "message_bus_admin_project_prefix",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "message_bus_admin_project_sourceroot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "message_bus_admin_project_tags",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "message_bus_admin_project_targets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets",
+      "target": "message_bus_admin_project_targets_build",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L59",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets",
+      "target": "message_bus_admin_project_targets_serve",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L75",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets",
+      "target": "message_bus_admin_project_targets_lint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L78",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets",
+      "target": "message_bus_admin_project_targets_test",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L84",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets",
+      "target": "message_bus_admin_project_targets_serve_static",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets_build",
+      "target": "message_bus_admin_project_build_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets_build",
+      "target": "message_bus_admin_project_build_outputs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets_build",
+      "target": "message_bus_admin_project_build_defaultconfiguration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets_build",
+      "target": "message_bus_admin_project_build_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets_build",
+      "target": "message_bus_admin_project_build_configurations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_build_options",
+      "target": "message_bus_admin_project_options_outputpath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_build_options",
+      "target": "message_bus_admin_project_options_browser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_build_options",
+      "target": "message_bus_admin_project_options_tsconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_build_options",
+      "target": "message_bus_admin_project_options_inlinestylelanguage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_build_options",
+      "target": "message_bus_admin_project_options_assets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_build_options",
+      "target": "message_bus_admin_project_options_styles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L37",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_build_configurations",
+      "target": "message_bus_admin_project_configurations_production",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_build_configurations",
+      "target": "message_bus_admin_project_configurations_development",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_configurations_production",
+      "target": "message_bus_admin_project_production_budgets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L50",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_configurations_production",
+      "target": "message_bus_admin_project_production_outputhashing",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L67",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_serve_configurations",
+      "target": "message_bus_admin_project_configurations_production",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L68",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_configurations_production",
+      "target": "message_bus_admin_project_production_buildtarget",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L53",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_configurations_development",
+      "target": "message_bus_admin_project_development_optimization",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L54",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_configurations_development",
+      "target": "message_bus_admin_project_development_extractlicenses",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L55",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_configurations_development",
+      "target": "message_bus_admin_project_development_sourcemap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L70",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_serve_configurations",
+      "target": "message_bus_admin_project_configurations_development",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L71",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_configurations_development",
+      "target": "message_bus_admin_project_development_buildtarget",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L60",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets_serve",
+      "target": "message_bus_admin_project_serve_continuous",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L61",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets_serve",
+      "target": "message_bus_admin_project_serve_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L62",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets_serve",
+      "target": "message_bus_admin_project_serve_defaultconfiguration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L63",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets_serve",
+      "target": "message_bus_admin_project_serve_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L66",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets_serve",
+      "target": "message_bus_admin_project_serve_configurations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L64",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_serve_options",
+      "target": "message_bus_admin_project_options_proxyconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L76",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets_lint",
+      "target": "message_bus_admin_project_lint_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L79",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets_test",
+      "target": "message_bus_admin_project_test_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L80",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets_test",
+      "target": "message_bus_admin_project_test_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L81",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_test_options",
+      "target": "message_bus_admin_project_options_watch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L85",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets_serve_static",
+      "target": "message_bus_admin_project_serve_static_continuous",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L86",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets_serve_static",
+      "target": "message_bus_admin_project_serve_static_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L87",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_targets_serve_static",
+      "target": "message_bus_admin_project_serve_static_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L88",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_serve_static_options",
+      "target": "message_bus_admin_project_options_buildtarget",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L89",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_serve_static_options",
+      "target": "message_bus_admin_project_options_staticfilepath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L90",
+      "weight": 1.0,
+      "source": "message_bus_admin_project_serve_static_options",
+      "target": "message_bus_admin_project_options_spa",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "message_bus_admin_tsconfig_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "message_bus_admin_tsconfig_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "message_bus_admin_tsconfig_angularcompileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "message_bus_admin_tsconfig_files",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "message_bus_admin_tsconfig_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "message_bus_admin_tsconfig_references",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "message_bus_admin_tsconfig_compileroptions",
+      "target": "message_bus_admin_tsconfig_compileroptions_isolatedmodules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "message_bus_admin_tsconfig_compileroptions",
+      "target": "message_bus_admin_tsconfig_compileroptions_module",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "message_bus_admin_tsconfig_angularcompileroptions",
+      "target": "message_bus_admin_tsconfig_angularcompileroptions_enablei18nlegacymessageidformat",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "message_bus_admin_tsconfig_angularcompileroptions",
+      "target": "message_bus_admin_tsconfig_angularcompileroptions_strictinjectionparameters",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "message_bus_admin_tsconfig_angularcompileroptions",
+      "target": "message_bus_admin_tsconfig_angularcompileroptions_strictinputaccessmodifiers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "message_bus_admin_tsconfig_angularcompileroptions",
+      "target": "message_bus_admin_tsconfig_angularcompileroptions_stricttemplates",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "proxy.conf.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "proxy_conf_json",
+      "target": "message_bus_admin_proxy_conf_api",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "proxy.conf.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "message_bus_admin_proxy_conf_api",
+      "target": "message_bus_admin_proxy_conf_api_target",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "proxy.conf.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "message_bus_admin_proxy_conf_api",
+      "target": "message_bus_admin_proxy_conf_api_secure",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "proxy.conf.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "message_bus_admin_proxy_conf_api",
+      "target": "message_bus_admin_proxy_conf_api_changeorigin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "message_bus_admin_tsconfig_spec_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "message_bus_admin_tsconfig_spec_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "message_bus_admin_tsconfig_spec_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "message_bus_admin_tsconfig_spec_compileroptions",
+      "target": "message_bus_admin_tsconfig_spec_compileroptions_outdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "message_bus_admin_tsconfig_spec_compileroptions",
+      "target": "message_bus_admin_tsconfig_spec_compileroptions_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "src_app_app_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "app_app_app",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "src_app_app_config_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "app_app_config_appconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "app_app_config_ientrysettings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "src_main_start",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "src_main_start",
+      "target": "app_app_config_appconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.spec.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_app_spec_ts",
+      "target": "src_app_app_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.spec.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_app_spec_ts",
+      "target": "app_app_app",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.spec.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_app_app_spec_ts",
+      "target": "src_app_app_routes_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.spec.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_app_app_spec_ts",
+      "target": "app_app_routes_approutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.spec.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_app_app_spec_ts",
+      "target": "app_app_spec_fixture",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.spec.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_app_app_spec_ts",
+      "target": "app_app_spec_root",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.routes.ts",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "src_app_app_routes_ts",
+      "target": "app_app_routes_columnsroute",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.routes.ts",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "src_app_app_routes_ts",
+      "target": "app_app_routes_approutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.config.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_app_app_config_ts",
+      "target": "src_app_app_routes_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.config.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_app_app_config_ts",
+      "target": "app_app_routes_approutes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.ts",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_app_app_ts",
+      "target": "app_app_app",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.config.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "src_app_app_config_ts",
+      "target": "app_app_config_ientrysettings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.config.ts",
+      "source_location": "L54",
+      "weight": 1.0,
+      "source": "src_app_app_config_ts",
+      "target": "app_app_config_appconfig",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "built_at_commit": "76235026c0071bbfba479885de800c463a0de4ec"
+}

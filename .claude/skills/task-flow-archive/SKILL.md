@@ -4,19 +4,20 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when the texts are up to date and the task folder is taken apart by the last commit before the PR opens. The move to the archive, the work queue audit, the rules review of the closed work and what to do with the findings.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-archive.md · 071fa754d189 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-archive.md · 95d87f3efd28 · правится надстройкой, не здесь -->
 
 # Taking the task folder apart and the rules review of the work
 
 Pattern of the rule `task-flow`. What must be true meanwhile — the law
-`docs/constitution/work-conduct.md`. What comes before it — lifting the draft, merging the agreement
-and bringing the texts up to date — pattern `task-flow-close`.
+`docs/constitution/work-conduct.md`. What comes before it — merging the agreement and bringing the
+texts up to date — and what comes after it — opening the PR and lifting the draft — pattern
+`task-flow-close`.
 
 ## When to use
 
 - The agreement is merged, the domain texts are up to date, and the task folder is taken apart by
   the last commit of the branch — before the PR opens, not after approval.
-- The work is merged by a person, and it is reviewed by the rules.
+- The PR is open, and the work is reviewed by the rules.
 - The review returned findings, and they need a place.
 
 ## State `разбор-кончился`: the task folder is taken apart
@@ -66,12 +67,6 @@ removed. Neither date is set by the executor, so a move "from the folder to the 
 rest on a coincidence that may never come. A finding noticed not by the review but along the way
 uses the same place.
 
-Findings that came back after the branch left travel by the branch of the next task: a push into a
-removed branch does not update it but creates it anew, and the commit stays outside main. By that
-minute the next task is already taken — its branch carries the cleanup after the previous one, in
-the same order in which someone else's task folder is taken apart. The epic is over and there is no
-next task — the findings leave as a task of their own.
-
 What leaves is filed as one file with a telling name, not a folder of three:
 
 ```bash
@@ -115,9 +110,10 @@ npm run check:docs    # the paths named in the texts exist
 ```
 
 **Next move:** discrepancies named by the audits are fixed in the same turn; nothing to fix — the
-same turn opens the PR as a draft and names the number to the owner, pattern `task-flow-close`.
+same turn opens the PR — a draft where a run is waited for, ready where the pipeline does not wake —
+and names the number to the owner, pattern `task-flow-close`.
 
-## State `влито`: the work is reviewed by the rules — in the background, right after the PR
+## State `работа-отдана`: the work is reviewed by the rules — in the background, right after the PR
 
 A step about the rules layer, not about the product: what was loaded for this work, what helped,
 what was missing and where the text of a rule diverged from the tree. Only the session that led the
@@ -142,27 +138,10 @@ The order is one and cannot be rearranged:
    before. A review put off "until a convenient moment" never happens at all: the session ends
    first.
 
-### Cargo records are moved to "done" in the same turn
-
-Work begun from cargo that arrived ends here, not at the folder's taking-apart: before the merge the
-edit is not in the tree, and the mark would claim what does not yet lie in main. This is the only
-state where the merge has already happened while the turn about the task still goes on.
-
-The keys are taken from the archive — the task folder is no longer on disk by this minute — and
-passed whole, as the intake read prints them:
-
-```bash
-npm run cargo:mark -- --state fixed \
-    --proposal <полный ключ> --proposal <полный ключ> \
-    --fix '<чем исправлено: статья правила, гард, проверка, правка кода>'
-```
-
-One fix per call, so the records go in batches by what closed them, not by the whole task at once.
-The reply is read: "moved 0" means this review moved nothing.
-
-**Next move:** while the role reviews, the same turn is busy with the next task. The cargo records
-are moved to "done" in this same turn, and the returned findings are accepted in one turn — write
-them down and go on with what was before. The owner hears of them when the epic is over.
+**Next move:** while the role reviews, the same turn is busy with the next task. The returned
+findings are accepted in one turn — write them down and go on with what was before. The owner hears
+of them when the epic is over. Cargo records the work began from are moved to "done" after the
+merge, pattern `task-flow-resume`, state `влито`.
 
 ## Review findings land next to the epic plan and wait for the owner
 
@@ -187,8 +166,9 @@ The form of the file — the findings template among the package templates.
 **Findings that came back after the branch left travel by the branch of the next task.** A push into
 a removed branch does not update it but creates it anew: the commit stays outside main and
 disappears with it. By then the next task is already taken — its branch carries the cleanup after
-the previous one. The epic is over and there is no next task — the findings leave as a task of their
-own.
+the previous one, in the same order in which someone else's task folder is taken apart. The epic is
+over and there is no next task — the findings go into the question to the owner together with the
+epic's table, and a task of their own is filed by the owner's word.
 
 **The cumulative findings file is split before the append, not after.** The length is looked at with
 one command before the first written line. A task's section takes tens of lines, and it crosses the

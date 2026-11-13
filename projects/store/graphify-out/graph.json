@@ -1,0 +1,6070 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "ng-package.json",
+      "file_type": "code",
+      "source_file": "ng-package.json",
+      "source_location": "L1",
+      "id": "ng_package_json",
+      "community": 15,
+      "norm_label": "ng-package.json"
+    },
+    {
+      "label": "$schema",
+      "file_type": "code",
+      "source_file": "ng-package.json",
+      "source_location": "L2",
+      "id": "store_ng_package_schema",
+      "community": 15,
+      "norm_label": "$schema"
+    },
+    {
+      "label": "dest",
+      "file_type": "code",
+      "source_file": "ng-package.json",
+      "source_location": "L3",
+      "id": "store_ng_package_dest",
+      "community": 15,
+      "norm_label": "dest"
+    },
+    {
+      "label": "lib",
+      "file_type": "code",
+      "source_file": "ng-package.json",
+      "source_location": "L4",
+      "id": "store_ng_package_lib",
+      "community": 15,
+      "norm_label": "lib"
+    },
+    {
+      "label": "entryFile",
+      "file_type": "code",
+      "source_file": "ng-package.json",
+      "source_location": "L5",
+      "id": "store_ng_package_lib_entryfile",
+      "community": 15,
+      "norm_label": "entryfile"
+    },
+    {
+      "label": "allowedNonPeerDependencies",
+      "file_type": "code",
+      "source_file": "ng-package.json",
+      "source_location": "L7",
+      "id": "store_ng_package_allowednonpeerdependencies",
+      "community": 15,
+      "norm_label": "allowednonpeerdependencies"
+    },
+    {
+      "label": "project.json",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L1",
+      "id": "project_json",
+      "community": 12,
+      "norm_label": "project.json"
+    },
+    {
+      "label": "name",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L2",
+      "id": "store_project_name",
+      "community": 12,
+      "norm_label": "name"
+    },
+    {
+      "label": "$schema",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L3",
+      "id": "store_project_schema",
+      "community": 12,
+      "norm_label": "$schema"
+    },
+    {
+      "label": "sourceRoot",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L4",
+      "id": "store_project_sourceroot",
+      "community": 12,
+      "norm_label": "sourceroot"
+    },
+    {
+      "label": "prefix",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L5",
+      "id": "store_project_prefix",
+      "community": 12,
+      "norm_label": "prefix"
+    },
+    {
+      "label": "projectType",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L6",
+      "id": "store_project_projecttype",
+      "community": 12,
+      "norm_label": "projecttype"
+    },
+    {
+      "label": "release",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L7",
+      "id": "store_project_release",
+      "community": 12,
+      "norm_label": "release"
+    },
+    {
+      "label": "version",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L8",
+      "id": "store_project_release_version",
+      "community": 12,
+      "norm_label": "version"
+    },
+    {
+      "label": "manifestRootsToUpdate",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L9",
+      "id": "store_project_version_manifestrootstoupdate",
+      "community": 12,
+      "norm_label": "manifestrootstoupdate"
+    },
+    {
+      "label": "currentVersionResolver",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L10",
+      "id": "store_project_version_currentversionresolver",
+      "community": 12,
+      "norm_label": "currentversionresolver"
+    },
+    {
+      "label": "fallbackCurrentVersionResolver",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L11",
+      "id": "store_project_version_fallbackcurrentversionresolver",
+      "community": 12,
+      "norm_label": "fallbackcurrentversionresolver"
+    },
+    {
+      "label": "tags",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L14",
+      "id": "store_project_tags",
+      "community": 12,
+      "norm_label": "tags"
+    },
+    {
+      "label": "targets",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L15",
+      "id": "store_project_targets",
+      "community": 4,
+      "norm_label": "targets"
+    },
+    {
+      "label": "build",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L16",
+      "id": "store_project_targets_build",
+      "community": 4,
+      "norm_label": "build"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L17",
+      "id": "store_project_build_executor",
+      "community": 4,
+      "norm_label": "executor"
+    },
+    {
+      "label": "outputs",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L18",
+      "id": "store_project_build_outputs",
+      "community": 4,
+      "norm_label": "outputs"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L19",
+      "id": "store_project_build_options",
+      "community": 4,
+      "norm_label": "options"
+    },
+    {
+      "label": "project",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L20",
+      "id": "store_project_options_project",
+      "community": 4,
+      "norm_label": "project"
+    },
+    {
+      "label": "tsConfig",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L21",
+      "id": "store_project_options_tsconfig",
+      "community": 4,
+      "norm_label": "tsconfig"
+    },
+    {
+      "label": "configurations",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L23",
+      "id": "store_project_build_configurations",
+      "community": 4,
+      "norm_label": "configurations"
+    },
+    {
+      "label": "production",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L24",
+      "id": "store_project_configurations_production",
+      "community": 4,
+      "norm_label": "production"
+    },
+    {
+      "label": "tsConfig",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L25",
+      "id": "store_project_production_tsconfig",
+      "community": 4,
+      "norm_label": "tsconfig"
+    },
+    {
+      "label": "development",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L27",
+      "id": "store_project_configurations_development",
+      "community": 4,
+      "norm_label": "development"
+    },
+    {
+      "label": "defaultConfiguration",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L29",
+      "id": "store_project_build_defaultconfiguration",
+      "community": 4,
+      "norm_label": "defaultconfiguration"
+    },
+    {
+      "label": "nx-release-publish",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L31",
+      "id": "store_project_targets_nx_release_publish",
+      "community": 4,
+      "norm_label": "nx-release-publish"
+    },
+    {
+      "label": "dependsOn",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L32",
+      "id": "store_project_nx_release_publish_dependson",
+      "community": 4,
+      "norm_label": "dependson"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L33",
+      "id": "store_project_nx_release_publish_options",
+      "community": 4,
+      "norm_label": "options"
+    },
+    {
+      "label": "packageRoot",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L34",
+      "id": "store_project_options_packageroot",
+      "community": 4,
+      "norm_label": "packageroot"
+    },
+    {
+      "label": "test",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L37",
+      "id": "store_project_targets_test",
+      "community": 4,
+      "norm_label": "test"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L38",
+      "id": "store_project_test_executor",
+      "community": 4,
+      "norm_label": "executor"
+    },
+    {
+      "label": "outputs",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L39",
+      "id": "store_project_test_outputs",
+      "community": 4,
+      "norm_label": "outputs"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L40",
+      "id": "store_project_test_options",
+      "community": 4,
+      "norm_label": "options"
+    },
+    {
+      "label": "jestConfig",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L41",
+      "id": "store_project_options_jestconfig",
+      "community": 4,
+      "norm_label": "jestconfig"
+    },
+    {
+      "label": "lint",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L45",
+      "id": "store_project_targets_lint",
+      "community": 4,
+      "norm_label": "lint"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L46",
+      "id": "store_project_lint_executor",
+      "community": 4,
+      "norm_label": "executor"
+    },
+    {
+      "label": "package.json",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L1",
+      "id": "package_json",
+      "community": 2,
+      "norm_label": "package.json"
+    },
+    {
+      "label": "name",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L2",
+      "id": "store_package_name",
+      "community": 2,
+      "norm_label": "name"
+    },
+    {
+      "label": "version",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L3",
+      "id": "store_package_version",
+      "community": 2,
+      "norm_label": "version"
+    },
+    {
+      "label": "description",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L4",
+      "id": "store_package_description",
+      "community": 2,
+      "norm_label": "description"
+    },
+    {
+      "label": "license",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L5",
+      "id": "store_package_license",
+      "community": 2,
+      "norm_label": "license"
+    },
+    {
+      "label": "author",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L6",
+      "id": "store_package_author",
+      "community": 2,
+      "norm_label": "author"
+    },
+    {
+      "label": "type",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L7",
+      "id": "store_package_type",
+      "community": 2,
+      "norm_label": "type"
+    },
+    {
+      "label": "repository",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L8",
+      "id": "store_package_repository",
+      "community": 2,
+      "norm_label": "repository"
+    },
+    {
+      "label": "type",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L9",
+      "id": "store_package_repository_type",
+      "community": 2,
+      "norm_label": "type"
+    },
+    {
+      "label": "url",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L10",
+      "id": "store_package_repository_url",
+      "community": 2,
+      "norm_label": "url"
+    },
+    {
+      "label": "directory",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L11",
+      "id": "store_package_repository_directory",
+      "community": 2,
+      "norm_label": "directory"
+    },
+    {
+      "label": "keywords",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L13",
+      "id": "store_package_keywords",
+      "community": 2,
+      "norm_label": "keywords"
+    },
+    {
+      "label": "dependencies",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L20",
+      "id": "store_package_dependencies",
+      "community": 2,
+      "norm_label": "dependencies"
+    },
+    {
+      "label": "@rt-tools/core",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L21",
+      "id": "store_package_dependencies_rt_tools_core",
+      "community": 2,
+      "norm_label": "@rt-tools/core"
+    },
+    {
+      "label": "@rt-tools/utils",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L22",
+      "id": "store_package_dependencies_rt_tools_utils",
+      "community": 2,
+      "norm_label": "@rt-tools/utils"
+    },
+    {
+      "label": "peerDependencies",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L24",
+      "id": "store_package_peerdependencies",
+      "community": 2,
+      "norm_label": "peerdependencies"
+    },
+    {
+      "label": "@rt-tools/core",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L25",
+      "id": "store_package_peerdependencies_rt_tools_core",
+      "community": 2,
+      "norm_label": "@rt-tools/core"
+    },
+    {
+      "label": "@angular/core",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L26",
+      "id": "store_package_peerdependencies_angular_core",
+      "community": 2,
+      "norm_label": "@angular/core"
+    },
+    {
+      "label": "rxjs",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L27",
+      "id": "store_package_peerdependencies_rxjs",
+      "community": 2,
+      "norm_label": "rxjs"
+    },
+    {
+      "label": "@rt-tools/utils",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L28",
+      "id": "store_package_peerdependencies_rt_tools_utils",
+      "community": 2,
+      "norm_label": "@rt-tools/utils"
+    },
+    {
+      "label": "sideEffects",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L30",
+      "id": "store_package_sideeffects",
+      "community": 2,
+      "norm_label": "sideeffects"
+    },
+    {
+      "label": "main",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L31",
+      "id": "store_package_main",
+      "community": 2,
+      "norm_label": "main"
+    },
+    {
+      "label": "types",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L32",
+      "id": "store_package_types",
+      "community": 2,
+      "norm_label": "types"
+    },
+    {
+      "label": "tsconfig.lib.prod.json",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L1",
+      "id": "tsconfig_lib_prod_json",
+      "community": 13,
+      "norm_label": "tsconfig.lib.prod.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L2",
+      "id": "store_tsconfig_lib_prod_extends",
+      "community": 13,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L3",
+      "id": "store_tsconfig_lib_prod_compileroptions",
+      "community": 13,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "declarationMap",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L4",
+      "id": "store_tsconfig_lib_prod_compileroptions_declarationmap",
+      "community": 13,
+      "norm_label": "declarationmap"
+    },
+    {
+      "label": "rootDir",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L5",
+      "id": "store_tsconfig_lib_prod_compileroptions_rootdir",
+      "community": 13,
+      "norm_label": "rootdir"
+    },
+    {
+      "label": "angularCompilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L7",
+      "id": "store_tsconfig_lib_prod_angularcompileroptions",
+      "community": 13,
+      "norm_label": "angularcompileroptions"
+    },
+    {
+      "label": "compilationMode",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L8",
+      "id": "store_tsconfig_lib_prod_angularcompileroptions_compilationmode",
+      "community": 13,
+      "norm_label": "compilationmode"
+    },
+    {
+      "label": "extendedDiagnostics",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L9",
+      "id": "store_tsconfig_lib_prod_angularcompileroptions_extendeddiagnostics",
+      "community": 13,
+      "norm_label": "extendeddiagnostics"
+    },
+    {
+      "label": "checks",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L10",
+      "id": "store_tsconfig_lib_prod_extendeddiagnostics_checks",
+      "community": 13,
+      "norm_label": "checks"
+    },
+    {
+      "label": "nullishCoalescingNotNullable",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L11",
+      "id": "store_tsconfig_lib_prod_checks_nullishcoalescingnotnullable",
+      "community": 13,
+      "norm_label": "nullishcoalescingnotnullable"
+    },
+    {
+      "label": "optionalChainNotNullable",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L12",
+      "id": "store_tsconfig_lib_prod_checks_optionalchainnotnullable",
+      "community": 13,
+      "norm_label": "optionalchainnotnullable"
+    },
+    {
+      "label": "tsconfig.json",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L1",
+      "id": "tsconfig_json",
+      "community": 11,
+      "norm_label": "tsconfig.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "id": "store_tsconfig_extends",
+      "community": 11,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "id": "store_tsconfig_compileroptions",
+      "community": 11,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "module",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "id": "store_tsconfig_compileroptions_module",
+      "community": 11,
+      "norm_label": "module"
+    },
+    {
+      "label": "ignoreDeprecations",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "id": "store_tsconfig_compileroptions_ignoredeprecations",
+      "community": 11,
+      "norm_label": "ignoredeprecations"
+    },
+    {
+      "label": "angularCompilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L7",
+      "id": "store_tsconfig_angularcompileroptions",
+      "community": 11,
+      "norm_label": "angularcompileroptions"
+    },
+    {
+      "label": "enableI18nLegacyMessageIdFormat",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L8",
+      "id": "store_tsconfig_angularcompileroptions_enablei18nlegacymessageidformat",
+      "community": 11,
+      "norm_label": "enablei18nlegacymessageidformat"
+    },
+    {
+      "label": "strictInjectionParameters",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L9",
+      "id": "store_tsconfig_angularcompileroptions_strictinjectionparameters",
+      "community": 11,
+      "norm_label": "strictinjectionparameters"
+    },
+    {
+      "label": "strictInputAccessModifiers",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L10",
+      "id": "store_tsconfig_angularcompileroptions_strictinputaccessmodifiers",
+      "community": 11,
+      "norm_label": "strictinputaccessmodifiers"
+    },
+    {
+      "label": "typeCheckHostBindings",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L11",
+      "id": "store_tsconfig_angularcompileroptions_typecheckhostbindings",
+      "community": 11,
+      "norm_label": "typecheckhostbindings"
+    },
+    {
+      "label": "strictTemplates",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L12",
+      "id": "store_tsconfig_angularcompileroptions_stricttemplates",
+      "community": 11,
+      "norm_label": "stricttemplates"
+    },
+    {
+      "label": "files",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L14",
+      "id": "store_tsconfig_files",
+      "community": 11,
+      "norm_label": "files"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L15",
+      "id": "store_tsconfig_include",
+      "community": 11,
+      "norm_label": "include"
+    },
+    {
+      "label": "references",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L16",
+      "id": "store_tsconfig_references",
+      "community": 11,
+      "norm_label": "references"
+    },
+    {
+      "label": "tsconfig.lib.json",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L1",
+      "id": "tsconfig_lib_json",
+      "community": 10,
+      "norm_label": "tsconfig.lib.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L2",
+      "id": "store_tsconfig_lib_extends",
+      "community": 10,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L3",
+      "id": "store_tsconfig_lib_compileroptions",
+      "community": 10,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "outDir",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L4",
+      "id": "store_tsconfig_lib_compileroptions_outdir",
+      "community": 10,
+      "norm_label": "outdir"
+    },
+    {
+      "label": "declaration",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L5",
+      "id": "store_tsconfig_lib_compileroptions_declaration",
+      "community": 10,
+      "norm_label": "declaration"
+    },
+    {
+      "label": "declarationMap",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L6",
+      "id": "store_tsconfig_lib_compileroptions_declarationmap",
+      "community": 10,
+      "norm_label": "declarationmap"
+    },
+    {
+      "label": "inlineSources",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L7",
+      "id": "store_tsconfig_lib_compileroptions_inlinesources",
+      "community": 10,
+      "norm_label": "inlinesources"
+    },
+    {
+      "label": "types",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L8",
+      "id": "store_tsconfig_lib_compileroptions_types",
+      "community": 10,
+      "norm_label": "types"
+    },
+    {
+      "label": "rootDir",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L9",
+      "id": "store_tsconfig_lib_compileroptions_rootdir",
+      "community": 10,
+      "norm_label": "rootdir"
+    },
+    {
+      "label": "exclude",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L11",
+      "id": "store_tsconfig_lib_exclude",
+      "community": 10,
+      "norm_label": "exclude"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L12",
+      "id": "store_tsconfig_lib_include",
+      "community": 10,
+      "norm_label": "include"
+    },
+    {
+      "label": "angularCompilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L13",
+      "id": "store_tsconfig_lib_angularcompileroptions",
+      "community": 10,
+      "norm_label": "angularcompileroptions"
+    },
+    {
+      "label": "extendedDiagnostics",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L14",
+      "id": "store_tsconfig_lib_angularcompileroptions_extendeddiagnostics",
+      "community": 10,
+      "norm_label": "extendeddiagnostics"
+    },
+    {
+      "label": "checks",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L15",
+      "id": "store_tsconfig_lib_extendeddiagnostics_checks",
+      "community": 10,
+      "norm_label": "checks"
+    },
+    {
+      "label": "nullishCoalescingNotNullable",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L16",
+      "id": "store_tsconfig_lib_checks_nullishcoalescingnotnullable",
+      "community": 10,
+      "norm_label": "nullishcoalescingnotnullable"
+    },
+    {
+      "label": "optionalChainNotNullable",
+      "file_type": "code",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L17",
+      "id": "store_tsconfig_lib_checks_optionalchainnotnullable",
+      "community": 10,
+      "norm_label": "optionalchainnotnullable"
+    },
+    {
+      "label": "tsconfig.spec.json",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L1",
+      "id": "tsconfig_spec_json",
+      "community": 5,
+      "norm_label": "tsconfig.spec.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L2",
+      "id": "store_tsconfig_spec_extends",
+      "community": 5,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L3",
+      "id": "store_tsconfig_spec_compileroptions",
+      "community": 5,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "outDir",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L4",
+      "id": "store_tsconfig_spec_compileroptions_outdir",
+      "community": 5,
+      "norm_label": "outdir"
+    },
+    {
+      "label": "module",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L5",
+      "id": "store_tsconfig_spec_compileroptions_module",
+      "community": 5,
+      "norm_label": "module"
+    },
+    {
+      "label": "target",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L6",
+      "id": "store_tsconfig_spec_compileroptions_target",
+      "community": 5,
+      "norm_label": "target"
+    },
+    {
+      "label": "types",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L7",
+      "id": "store_tsconfig_spec_compileroptions_types",
+      "community": 5,
+      "norm_label": "types"
+    },
+    {
+      "label": "moduleResolution",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L8",
+      "id": "store_tsconfig_spec_compileroptions_moduleresolution",
+      "community": 5,
+      "norm_label": "moduleresolution"
+    },
+    {
+      "label": "baseUrl",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L9",
+      "id": "store_tsconfig_spec_compileroptions_baseurl",
+      "community": 5,
+      "norm_label": "baseurl"
+    },
+    {
+      "label": "paths",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L10",
+      "id": "store_tsconfig_spec_compileroptions_paths",
+      "community": 5,
+      "norm_label": "paths"
+    },
+    {
+      "label": "@rt-tools/core",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L11",
+      "id": "store_tsconfig_spec_paths_rt_tools_core",
+      "community": 5,
+      "norm_label": "@rt-tools/core"
+    },
+    {
+      "label": "@angular/core/testing",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L12",
+      "id": "store_tsconfig_spec_paths_angular_core_testing",
+      "community": 5,
+      "norm_label": "@angular/core/testing"
+    },
+    {
+      "label": "@angular/platform-browser/testing",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L13",
+      "id": "store_tsconfig_spec_paths_angular_platform_browser_testing",
+      "community": 5,
+      "norm_label": "@angular/platform-browser/testing"
+    },
+    {
+      "label": "isolatedModules",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L15",
+      "id": "store_tsconfig_spec_compileroptions_isolatedmodules",
+      "community": 5,
+      "norm_label": "isolatedmodules"
+    },
+    {
+      "label": "rootDir",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L16",
+      "id": "store_tsconfig_spec_compileroptions_rootdir",
+      "community": 5,
+      "norm_label": "rootdir"
+    },
+    {
+      "label": "files",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L18",
+      "id": "store_tsconfig_spec_files",
+      "community": 5,
+      "norm_label": "files"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L19",
+      "id": "store_tsconfig_spec_include",
+      "community": 5,
+      "norm_label": "include"
+    },
+    {
+      "label": "angularCompilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L20",
+      "id": "store_tsconfig_spec_angularcompileroptions",
+      "community": 5,
+      "norm_label": "angularcompileroptions"
+    },
+    {
+      "label": "extendedDiagnostics",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L21",
+      "id": "store_tsconfig_spec_angularcompileroptions_extendeddiagnostics",
+      "community": 5,
+      "norm_label": "extendeddiagnostics"
+    },
+    {
+      "label": "checks",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L22",
+      "id": "store_tsconfig_spec_extendeddiagnostics_checks",
+      "community": 5,
+      "norm_label": "checks"
+    },
+    {
+      "label": "nullishCoalescingNotNullable",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L23",
+      "id": "store_tsconfig_spec_checks_nullishcoalescingnotnullable",
+      "community": 5,
+      "norm_label": "nullishcoalescingnotnullable"
+    },
+    {
+      "label": "optionalChainNotNullable",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L24",
+      "id": "store_tsconfig_spec_checks_optionalchainnotnullable",
+      "community": 5,
+      "norm_label": "optionalchainnotnullable"
+    },
+    {
+      "label": "jest.config.ts",
+      "file_type": "code",
+      "source_file": "jest.config.ts",
+      "source_location": "L1",
+      "id": "jest_config_ts",
+      "community": 17,
+      "norm_label": "jest.config.ts"
+    },
+    {
+      "label": "test-setup.ts",
+      "file_type": "code",
+      "source_file": "src/test-setup.ts",
+      "source_location": "L1",
+      "id": "src_test_setup_ts",
+      "community": 18,
+      "norm_label": "test-setup.ts"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "src/index.ts",
+      "source_location": "L1",
+      "id": "src_index_ts",
+      "community": 0,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "base-store.service.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_base_store_service_spec_ts",
+      "community": 0,
+      "norm_label": "base-store.service.spec.ts"
+    },
+    {
+      "label": "ITestState",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L8",
+      "id": "lib_base_store_service_spec_iteststate",
+      "community": 0,
+      "norm_label": "iteststate"
+    },
+    {
+      "label": "TTestMsg",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L13",
+      "id": "lib_base_store_service_spec_ttestmsg",
+      "community": 0,
+      "norm_label": "ttestmsg"
+    },
+    {
+      "label": "TestStore",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L15",
+      "id": "lib_base_store_service_spec_teststore",
+      "community": 16,
+      "norm_label": "teststore"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L17",
+      "id": "lib_base_store_service_spec_teststore_constructor",
+      "community": 16,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".increment()",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L21",
+      "id": "lib_base_store_service_spec_teststore_increment",
+      "community": 16,
+      "norm_label": ".increment()"
+    },
+    {
+      "label": ".decrement()",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L25",
+      "id": "lib_base_store_service_spec_teststore_decrement",
+      "community": 16,
+      "norm_label": ".decrement()"
+    },
+    {
+      "label": ".setName()",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L29",
+      "id": "lib_base_store_service_spec_teststore_setname",
+      "community": 16,
+      "norm_label": ".setname()"
+    },
+    {
+      "label": "AnotherTestStore",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L34",
+      "id": "lib_base_store_service_spec_anotherteststore",
+      "community": 0,
+      "norm_label": "anotherteststore"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L36",
+      "id": "lib_base_store_service_spec_anotherteststore_constructor",
+      "community": 0,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".updateValue()",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L40",
+      "id": "lib_base_store_service_spec_anotherteststore_updatevalue",
+      "community": 0,
+      "norm_label": ".updatevalue()"
+    },
+    {
+      "label": "devToolsManager1",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L160",
+      "id": "lib_base_store_service_spec_devtoolsmanager1",
+      "community": 0,
+      "norm_label": "devtoolsmanager1"
+    },
+    {
+      "label": "devToolsManager2",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L161",
+      "id": "lib_base_store_service_spec_devtoolsmanager2",
+      "community": 0,
+      "norm_label": "devtoolsmanager2"
+    },
+    {
+      "label": "store1",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L167",
+      "id": "lib_base_store_service_spec_store1",
+      "community": 0,
+      "norm_label": "store1"
+    },
+    {
+      "label": "store2",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L168",
+      "id": "lib_base_store_service_spec_store2",
+      "community": 0,
+      "norm_label": "store2"
+    },
+    {
+      "label": "receivedTypes",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L199",
+      "id": "lib_base_store_service_spec_receivedtypes",
+      "community": 0,
+      "norm_label": "receivedtypes"
+    },
+    {
+      "label": "base-store.service.ts",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L1",
+      "id": "src_lib_base_store_service_ts",
+      "community": 6,
+      "norm_label": "base-store.service.ts"
+    },
+    {
+      "label": "constructor()",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L26",
+      "id": "lib_base_store_service_constructor",
+      "community": 6,
+      "norm_label": "constructor()"
+    },
+    {
+      "label": "dispatch()",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L41",
+      "id": "lib_base_store_service_dispatch",
+      "community": 6,
+      "norm_label": "dispatch()"
+    },
+    {
+      "label": "onDispatch()",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L46",
+      "id": "lib_base_store_service_ondispatch",
+      "community": 6,
+      "norm_label": "ondispatch()"
+    },
+    {
+      "label": "patchState()",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L50",
+      "id": "lib_base_store_service_patchstate",
+      "community": 6,
+      "norm_label": "patchstate()"
+    },
+    {
+      "label": "addSubscription()",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L55",
+      "id": "lib_base_store_service_addsubscription",
+      "community": 6,
+      "norm_label": "addsubscription()"
+    },
+    {
+      "label": "unsubscribe()",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L59",
+      "id": "lib_base_store_service_unsubscribe",
+      "community": 6,
+      "norm_label": "unsubscribe()"
+    },
+    {
+      "label": "#sendToDevTools()",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L64",
+      "id": "lib_base_store_service_sendtodevtools",
+      "community": 6,
+      "norm_label": "#sendtodevtools()"
+    },
+    {
+      "label": "#cleanup()",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L68",
+      "id": "lib_base_store_service_cleanup",
+      "community": 6,
+      "norm_label": "#cleanup()"
+    },
+    {
+      "label": "base-async-store.service.ts",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L1",
+      "id": "src_lib_base_async_store_service_ts",
+      "community": 3,
+      "norm_label": "base-async-store.service.ts"
+    },
+    {
+      "label": "constructor()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L45",
+      "id": "lib_base_async_store_service_constructor",
+      "community": 3,
+      "norm_label": "constructor()"
+    },
+    {
+      "label": "handleError()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L57",
+      "id": "lib_base_async_store_service_handleerror",
+      "community": 3,
+      "norm_label": "handleerror()"
+    },
+    {
+      "label": "resetAsyncState()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L68",
+      "id": "lib_base_async_store_service_resetasyncstate",
+      "community": 3,
+      "norm_label": "resetasyncstate()"
+    },
+    {
+      "label": "startLoading()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L82",
+      "id": "lib_base_async_store_service_startloading",
+      "community": 3,
+      "norm_label": "startloading()"
+    },
+    {
+      "label": "setLoadingSuccess()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L94",
+      "id": "lib_base_async_store_service_setloadingsuccess",
+      "community": 3,
+      "norm_label": "setloadingsuccess()"
+    },
+    {
+      "label": "setLoadingFailure()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L106",
+      "id": "lib_base_async_store_service_setloadingfailure",
+      "community": 3,
+      "norm_label": "setloadingfailure()"
+    },
+    {
+      "label": "setLoadingFailureVoid()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L123",
+      "id": "lib_base_async_store_service_setloadingfailurevoid",
+      "community": 3,
+      "norm_label": "setloadingfailurevoid()"
+    },
+    {
+      "label": "startFetching()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L145",
+      "id": "lib_base_async_store_service_startfetching",
+      "community": 3,
+      "norm_label": "startfetching()"
+    },
+    {
+      "label": "setFetchingSuccess()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L157",
+      "id": "lib_base_async_store_service_setfetchingsuccess",
+      "community": 3,
+      "norm_label": "setfetchingsuccess()"
+    },
+    {
+      "label": "setFetchingFailure()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L169",
+      "id": "lib_base_async_store_service_setfetchingfailure",
+      "community": 3,
+      "norm_label": "setfetchingfailure()"
+    },
+    {
+      "label": "setFetchingFailureVoid()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L186",
+      "id": "lib_base_async_store_service_setfetchingfailurevoid",
+      "community": 3,
+      "norm_label": "setfetchingfailurevoid()"
+    },
+    {
+      "label": "resetUpsertStatus()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L208",
+      "id": "lib_base_async_store_service_resetupsertstatus",
+      "community": 3,
+      "norm_label": "resetupsertstatus()"
+    },
+    {
+      "label": "startUpsert()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L219",
+      "id": "lib_base_async_store_service_startupsert",
+      "community": 3,
+      "norm_label": "startupsert()"
+    },
+    {
+      "label": "setUpsertSuccess()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L230",
+      "id": "lib_base_async_store_service_setupsertsuccess",
+      "community": 3,
+      "norm_label": "setupsertsuccess()"
+    },
+    {
+      "label": "setUpsertFailure()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L241",
+      "id": "lib_base_async_store_service_setupsertfailure",
+      "community": 3,
+      "norm_label": "setupsertfailure()"
+    },
+    {
+      "label": "setUpsertFailureVoid()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L257",
+      "id": "lib_base_async_store_service_setupsertfailurevoid",
+      "community": 3,
+      "norm_label": "setupsertfailurevoid()"
+    },
+    {
+      "label": "resetDeleteStatus()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L278",
+      "id": "lib_base_async_store_service_resetdeletestatus",
+      "community": 3,
+      "norm_label": "resetdeletestatus()"
+    },
+    {
+      "label": "startDelete()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L289",
+      "id": "lib_base_async_store_service_startdelete",
+      "community": 3,
+      "norm_label": "startdelete()"
+    },
+    {
+      "label": "setDeleteSuccess()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L300",
+      "id": "lib_base_async_store_service_setdeletesuccess",
+      "community": 3,
+      "norm_label": "setdeletesuccess()"
+    },
+    {
+      "label": "setDeleteFailure()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L311",
+      "id": "lib_base_async_store_service_setdeletefailure",
+      "community": 3,
+      "norm_label": "setdeletefailure()"
+    },
+    {
+      "label": "setDeleteFailureVoid()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L327",
+      "id": "lib_base_async_store_service_setdeletefailurevoid",
+      "community": 3,
+      "norm_label": "setdeletefailurevoid()"
+    },
+    {
+      "label": "base-async-store.service.spec.ts",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L1",
+      "id": "src_lib_base_async_store_service_spec_ts",
+      "community": 1,
+      "norm_label": "base-async-store.service.spec.ts"
+    },
+    {
+      "label": "ITestState",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L10",
+      "id": "lib_base_async_store_service_spec_iteststate",
+      "community": 1,
+      "norm_label": "iteststate"
+    },
+    {
+      "label": "TTestMsg",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L14",
+      "id": "lib_base_async_store_service_spec_ttestmsg",
+      "community": 1,
+      "norm_label": "ttestmsg"
+    },
+    {
+      "label": "INITIAL_STATE",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L16",
+      "id": "lib_base_async_store_service_spec_initial_state",
+      "community": 1,
+      "norm_label": "initial_state"
+    },
+    {
+      "label": "DefaultErrorStore",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L19",
+      "id": "lib_base_async_store_service_spec_defaulterrorstore",
+      "community": 1,
+      "norm_label": "defaulterrorstore"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L21",
+      "id": "lib_base_async_store_service_spec_defaulterrorstore_constructor",
+      "community": 1,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "ITransportFailure",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L27",
+      "id": "lib_base_async_store_service_spec_itransportfailure",
+      "community": 1,
+      "norm_label": "itransportfailure"
+    },
+    {
+      "label": "TransportErrorStore",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L33",
+      "id": "lib_base_async_store_service_spec_transporterrorstore",
+      "community": 1,
+      "norm_label": "transporterrorstore"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L35",
+      "id": "lib_base_async_store_service_spec_transporterrorstore_constructor",
+      "community": 1,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "BareStateStore",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L44",
+      "id": "lib_base_async_store_service_spec_barestatestore",
+      "community": 1,
+      "norm_label": "barestatestore"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L46",
+      "id": "lib_base_async_store_service_spec_barestatestore_constructor",
+      "community": 1,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "bare",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L69",
+      "id": "lib_base_async_store_service_spec_bare",
+      "community": 1,
+      "norm_label": "bare"
+    },
+    {
+      "label": "callbackFn",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L98",
+      "id": "lib_base_async_store_service_spec_callbackfn",
+      "community": 3,
+      "norm_label": "callbackfn"
+    },
+    {
+      "label": "error",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L108",
+      "id": "lib_base_async_store_service_spec_error",
+      "community": 1,
+      "norm_label": "error"
+    },
+    {
+      "label": "result$",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L129",
+      "id": "lib_base_async_store_service_spec_result",
+      "community": 1,
+      "norm_label": "result$"
+    },
+    {
+      "label": "transportStore",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L172",
+      "id": "lib_base_async_store_service_spec_transportstore",
+      "community": 1,
+      "norm_label": "transportstore"
+    },
+    {
+      "label": "base-initial-state.const.ts",
+      "file_type": "code",
+      "source_file": "src/lib/constants/base-initial-state.const.ts",
+      "source_location": "L1",
+      "id": "src_lib_constants_base_initial_state_const_ts",
+      "community": 1,
+      "norm_label": "base-initial-state.const.ts"
+    },
+    {
+      "label": "ASYNC",
+      "file_type": "code",
+      "source_file": "src/lib/constants/base-initial-state.const.ts",
+      "source_location": "L12",
+      "id": "constants_base_initial_state_const_async",
+      "community": 1,
+      "norm_label": "async"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "src/lib/constants/index.ts",
+      "source_location": "L1",
+      "id": "src_lib_constants_index_ts",
+      "community": 1,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "src/lib/enums/index.ts",
+      "source_location": "L1",
+      "id": "src_lib_enums_index_ts",
+      "community": 1,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "async-state-status.enum.ts",
+      "file_type": "code",
+      "source_file": "src/lib/enums/async-state-status.enum.ts",
+      "source_location": "L1",
+      "id": "src_lib_enums_async_state_status_enum_ts",
+      "community": 1,
+      "norm_label": "async-state-status.enum.ts"
+    },
+    {
+      "label": "EModelStatus",
+      "file_type": "code",
+      "source_file": "src/lib/enums/async-state-status.enum.ts",
+      "source_location": "L8",
+      "id": "enums_async_state_status_enum_emodelstatus",
+      "community": 1,
+      "norm_label": "emodelstatus"
+    },
+    {
+      "label": "devtools.provider.ts",
+      "file_type": "code",
+      "source_file": "src/lib/tokens/devtools.provider.ts",
+      "source_location": "L1",
+      "id": "src_lib_tokens_devtools_provider_ts",
+      "community": 0,
+      "norm_label": "devtools.provider.ts"
+    },
+    {
+      "label": "provideStoreDevTools()",
+      "file_type": "code",
+      "source_file": "src/lib/tokens/devtools.provider.ts",
+      "source_location": "L27",
+      "id": "tokens_devtools_provider_providestoredevtools",
+      "community": 0,
+      "norm_label": "providestoredevtools()"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "src/lib/tokens/index.ts",
+      "source_location": "L1",
+      "id": "src_lib_tokens_index_ts",
+      "community": 0,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "devtools-manager.service.ts",
+      "file_type": "code",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L1",
+      "id": "src_lib_services_devtools_manager_service_ts",
+      "community": 0,
+      "norm_label": "devtools-manager.service.ts"
+    },
+    {
+      "label": "IRegisteredStore",
+      "file_type": "code",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L8",
+      "id": "services_devtools_manager_service_iregisteredstore",
+      "community": 0,
+      "norm_label": "iregisteredstore"
+    },
+    {
+      "label": "DevToolsManagerService",
+      "file_type": "code",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L20",
+      "id": "services_devtools_manager_service_devtoolsmanagerservice",
+      "community": 14,
+      "norm_label": "devtoolsmanagerservice"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L29",
+      "id": "services_devtools_manager_service_devtoolsmanagerservice_constructor",
+      "community": 14,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".isEnabled()",
+      "file_type": "code",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L33",
+      "id": "services_devtools_manager_service_devtoolsmanagerservice_isenabled",
+      "community": 14,
+      "norm_label": ".isenabled()"
+    },
+    {
+      "label": ".register()",
+      "file_type": "code",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L47",
+      "id": "services_devtools_manager_service_devtoolsmanagerservice_register",
+      "community": 14,
+      "norm_label": ".register()"
+    },
+    {
+      "label": ".send()",
+      "file_type": "code",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L76",
+      "id": "services_devtools_manager_service_devtoolsmanagerservice_send",
+      "community": 14,
+      "norm_label": ".send()"
+    },
+    {
+      "label": ".#initDevTools()",
+      "file_type": "code",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L92",
+      "id": "services_devtools_manager_service_devtoolsmanagerservice_initdevtools",
+      "community": 14,
+      "norm_label": ".#initdevtools()"
+    },
+    {
+      "label": ".#getAggregatedState()",
+      "file_type": "code",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L128",
+      "id": "services_devtools_manager_service_devtoolsmanagerservice_getaggregatedstate",
+      "community": 14,
+      "norm_label": ".#getaggregatedstate()"
+    },
+    {
+      "label": ".#applyAggregatedState()",
+      "file_type": "code",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L136",
+      "id": "services_devtools_manager_service_devtoolsmanagerservice_applyaggregatedstate",
+      "community": 14,
+      "norm_label": ".#applyaggregatedstate()"
+    },
+    {
+      "label": ".#sendState()",
+      "file_type": "code",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L145",
+      "id": "services_devtools_manager_service_devtoolsmanagerservice_sendstate",
+      "community": 14,
+      "norm_label": ".#sendstate()"
+    },
+    {
+      "label": ".#cleanup()",
+      "file_type": "code",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L152",
+      "id": "services_devtools_manager_service_devtoolsmanagerservice_cleanup",
+      "community": 14,
+      "norm_label": ".#cleanup()"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "src/lib/services/index.ts",
+      "source_location": "L1",
+      "id": "src_lib_services_index_ts",
+      "community": 0,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "async-store-service.interface.ts",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/async-store-service.interface.ts",
+      "source_location": "L1",
+      "id": "src_lib_interfaces_async_store_service_interface_ts",
+      "community": 6,
+      "norm_label": "async-store-service.interface.ts"
+    },
+    {
+      "label": "ISetPropertiesConfig",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/async-store-service.interface.ts",
+      "source_location": "L7",
+      "id": "interfaces_async_store_service_interface_isetpropertiesconfig",
+      "community": 6,
+      "norm_label": "isetpropertiesconfig"
+    },
+    {
+      "label": "IBaseAsyncStoreService",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/async-store-service.interface.ts",
+      "source_location": "L16",
+      "id": "interfaces_async_store_service_interface_ibaseasyncstoreservice",
+      "community": 6,
+      "norm_label": "ibaseasyncstoreservice"
+    },
+    {
+      "label": "devtools.interface.ts",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/devtools.interface.ts",
+      "source_location": "L1",
+      "id": "src_lib_interfaces_devtools_interface_ts",
+      "community": 0,
+      "norm_label": "devtools.interface.ts"
+    },
+    {
+      "label": "IDevToolsGlobalConfig",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/devtools.interface.ts",
+      "source_location": "L3",
+      "id": "interfaces_devtools_interface_idevtoolsglobalconfig",
+      "community": 0,
+      "norm_label": "idevtoolsglobalconfig"
+    },
+    {
+      "label": "STORE_DEVTOOLS_CONFIG",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/devtools.interface.ts",
+      "source_location": "L8",
+      "id": "interfaces_devtools_interface_store_devtools_config",
+      "community": 0,
+      "norm_label": "store_devtools_config"
+    },
+    {
+      "label": "IDevToolsExtension",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/devtools.interface.ts",
+      "source_location": "L12",
+      "id": "interfaces_devtools_interface_idevtoolsextension",
+      "community": 0,
+      "norm_label": "idevtoolsextension"
+    },
+    {
+      "label": "IDevToolsConfig",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/devtools.interface.ts",
+      "source_location": "L16",
+      "id": "interfaces_devtools_interface_idevtoolsconfig",
+      "community": 0,
+      "norm_label": "idevtoolsconfig"
+    },
+    {
+      "label": "IDevToolsConnection",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/devtools.interface.ts",
+      "source_location": "L33",
+      "id": "interfaces_devtools_interface_idevtoolsconnection",
+      "community": 0,
+      "norm_label": "idevtoolsconnection"
+    },
+    {
+      "label": "IDevToolsMessage",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/devtools.interface.ts",
+      "source_location": "L46",
+      "id": "interfaces_devtools_interface_idevtoolsmessage",
+      "community": 0,
+      "norm_label": "idevtoolsmessage"
+    },
+    {
+      "label": "IStoreConfig",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/devtools.interface.ts",
+      "source_location": "L55",
+      "id": "interfaces_devtools_interface_istoreconfig",
+      "community": 0,
+      "norm_label": "istoreconfig"
+    },
+    {
+      "label": "Window",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/devtools.interface.ts",
+      "source_location": "L63",
+      "id": "interfaces_devtools_interface_window",
+      "community": 0,
+      "norm_label": "window"
+    },
+    {
+      "label": "base-store-service.interface.ts",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/base-store-service.interface.ts",
+      "source_location": "L1",
+      "id": "src_lib_interfaces_base_store_service_interface_ts",
+      "community": 6,
+      "norm_label": "base-store-service.interface.ts"
+    },
+    {
+      "label": "IBaseStoreService",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/base-store-service.interface.ts",
+      "source_location": "L6",
+      "id": "interfaces_base_store_service_interface_ibasestoreservice",
+      "community": 6,
+      "norm_label": "ibasestoreservice"
+    },
+    {
+      "label": "action.interface.ts",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/action.interface.ts",
+      "source_location": "L1",
+      "id": "src_lib_interfaces_action_interface_ts",
+      "community": 6,
+      "norm_label": "action.interface.ts"
+    },
+    {
+      "label": "IAction",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/action.interface.ts",
+      "source_location": "L3",
+      "id": "interfaces_action_interface_iaction",
+      "community": 6,
+      "norm_label": "iaction"
+    },
+    {
+      "label": "state-base.interface.ts",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/state-base.interface.ts",
+      "source_location": "L1",
+      "id": "src_lib_interfaces_state_base_interface_ts",
+      "community": 1,
+      "norm_label": "state-base.interface.ts"
+    },
+    {
+      "label": "Async",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/state-base.interface.ts",
+      "source_location": "L6",
+      "id": "interfaces_state_base_interface_async",
+      "community": 1,
+      "norm_label": "async"
+    },
+    {
+      "label": "List",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/state-base.interface.ts",
+      "source_location": "L23",
+      "id": "interfaces_state_base_interface_list",
+      "community": 1,
+      "norm_label": "list"
+    },
+    {
+      "label": "index.ts",
+      "file_type": "code",
+      "source_file": "src/lib/interfaces/index.ts",
+      "source_location": "L1",
+      "id": "src_lib_interfaces_index_ts",
+      "community": 6,
+      "norm_label": "index.ts"
+    },
+    {
+      "label": "CHANGELOG.md",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L1",
+      "id": "changelog_md",
+      "community": 8,
+      "norm_label": "changelog.md"
+    },
+    {
+      "label": "[0.3.4](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.3.3...rt-store@0.3.4) (2026-10-10)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L1",
+      "id": "store_changelog_0_3_4_https_github_com_eyhenij_rt_tools_compare_rt_store_0_3_3_rt_store_0_3_4_2026_10_10",
+      "community": 8,
+      "norm_label": "[0.3.4](https://github.com/eyhenij/rt-tools/compare/rt-store@0.3.3...rt-store@0.3.4) (2026-10-10)"
+    },
+    {
+      "label": "[0.3.3](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.3.2...rt-store@0.3.3) (2026-10-02)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L3",
+      "id": "store_changelog_0_3_3_https_github_com_eyhenij_rt_tools_compare_rt_store_0_3_2_rt_store_0_3_3_2026_10_02",
+      "community": 8,
+      "norm_label": "[0.3.3](https://github.com/eyhenij/rt-tools/compare/rt-store@0.3.2...rt-store@0.3.3) (2026-10-02)"
+    },
+    {
+      "label": "[0.3.2](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.3.1...rt-store@0.3.2) (2026-09-03)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L5",
+      "id": "store_changelog_0_3_2_https_github_com_eyhenij_rt_tools_compare_rt_store_0_3_1_rt_store_0_3_2_2026_09_03",
+      "community": 8,
+      "norm_label": "[0.3.2](https://github.com/eyhenij/rt-tools/compare/rt-store@0.3.1...rt-store@0.3.2) (2026-09-03)"
+    },
+    {
+      "label": "Bug Fixes",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L7",
+      "id": "store_changelog_bug_fixes",
+      "community": 8,
+      "norm_label": "bug fixes"
+    },
+    {
+      "label": "Features",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L12",
+      "id": "store_changelog_features",
+      "community": 8,
+      "norm_label": "features"
+    },
+    {
+      "label": "BREAKING CHANGES",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L16",
+      "id": "store_changelog_breaking_changes",
+      "community": 8,
+      "norm_label": "breaking changes"
+    },
+    {
+      "label": "[0.3.1](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.3.0...rt-store@0.3.1) (2026-08-02)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L24",
+      "id": "store_changelog_0_3_1_https_github_com_eyhenij_rt_tools_compare_rt_store_0_3_0_rt_store_0_3_1_2026_08_02",
+      "community": 8,
+      "norm_label": "[0.3.1](https://github.com/eyhenij/rt-tools/compare/rt-store@0.3.0...rt-store@0.3.1) (2026-08-02)"
+    },
+    {
+      "label": "[0.3.0](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.2.0...rt-store@0.3.0) (2026-08-02)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L26",
+      "id": "store_changelog_0_3_0_https_github_com_eyhenij_rt_tools_compare_rt_store_0_2_0_rt_store_0_3_0_2026_08_02",
+      "community": 8,
+      "norm_label": "[0.3.0](https://github.com/eyhenij/rt-tools/compare/rt-store@0.2.0...rt-store@0.3.0) (2026-08-02)"
+    },
+    {
+      "label": "Code Refactoring",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L28",
+      "id": "store_changelog_code_refactoring",
+      "community": 8,
+      "norm_label": "code refactoring"
+    },
+    {
+      "label": "BREAKING CHANGES",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L32",
+      "id": "store_changelog_breaking_changes_32",
+      "community": 8,
+      "norm_label": "breaking changes"
+    },
+    {
+      "label": "[0.0.7](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.0.6...rt-store@0.0.7) (2026-07-14)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L42",
+      "id": "store_changelog_0_0_7_https_github_com_eyhenij_rt_tools_compare_rt_store_0_0_6_rt_store_0_0_7_2026_07_14",
+      "community": 8,
+      "norm_label": "[0.0.7](https://github.com/eyhenij/rt-tools/compare/rt-store@0.0.6...rt-store@0.0.7) (2026-07-14)"
+    },
+    {
+      "label": "[0.2.0](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.1.0...rt-store@0.2.0) (2026-08-02)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L44",
+      "id": "store_changelog_0_2_0_https_github_com_eyhenij_rt_tools_compare_rt_store_0_1_0_rt_store_0_2_0_2026_08_02",
+      "community": 8,
+      "norm_label": "[0.2.0](https://github.com/eyhenij/rt-tools/compare/rt-store@0.1.0...rt-store@0.2.0) (2026-08-02)"
+    },
+    {
+      "label": "[0.1.0](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.0.8...rt-store@0.1.0) (2026-08-02)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L46",
+      "id": "store_changelog_0_1_0_https_github_com_eyhenij_rt_tools_compare_rt_store_0_0_8_rt_store_0_1_0_2026_08_02",
+      "community": 9,
+      "norm_label": "[0.1.0](https://github.com/eyhenij/rt-tools/compare/rt-store@0.0.8...rt-store@0.1.0) (2026-08-02)"
+    },
+    {
+      "label": "[0.0.8](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.0.6...rt-store@0.0.8) (2026-08-02)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L48",
+      "id": "store_changelog_0_0_8_https_github_com_eyhenij_rt_tools_compare_rt_store_0_0_6_rt_store_0_0_8_2026_08_02",
+      "community": 9,
+      "norm_label": "[0.0.8](https://github.com/eyhenij/rt-tools/compare/rt-store@0.0.6...rt-store@0.0.8) (2026-08-02)"
+    },
+    {
+      "label": "Features",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L50",
+      "id": "store_changelog_features_50",
+      "community": 9,
+      "norm_label": "features"
+    },
+    {
+      "label": "[0.0.6](https://github.com/Eyhenij/rt-tools/compare/rt-store@0.0.5...rt-store@0.0.6) (2026-07-09)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L55",
+      "id": "store_changelog_0_0_6_https_github_com_eyhenij_rt_tools_compare_rt_store_0_0_5_rt_store_0_0_6_2026_07_09",
+      "community": 9,
+      "norm_label": "[0.0.6](https://github.com/eyhenij/rt-tools/compare/rt-store@0.0.5...rt-store@0.0.6) (2026-07-09)"
+    },
+    {
+      "label": "0.0.5 (2026-06-26)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L57",
+      "id": "store_changelog_0_0_5_2026_06_26",
+      "community": 9,
+      "norm_label": "0.0.5 (2026-06-26)"
+    },
+    {
+      "label": "Bug Fixes",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L59",
+      "id": "store_changelog_bug_fixes_59",
+      "community": 9,
+      "norm_label": "bug fixes"
+    },
+    {
+      "label": "Features",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L66",
+      "id": "store_changelog_features_66",
+      "community": 9,
+      "norm_label": "features"
+    },
+    {
+      "label": "[0.0.4](https://github.com/Eyhenij/rt-tools/compare/0.1.81...0.0.4) (2026-01-02)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L71",
+      "id": "store_changelog_0_0_4_https_github_com_eyhenij_rt_tools_compare_0_1_81_0_0_4_2026_01_02",
+      "community": 9,
+      "norm_label": "[0.0.4](https://github.com/eyhenij/rt-tools/compare/0.1.81...0.0.4) (2026-01-02)"
+    },
+    {
+      "label": "Bug Fixes",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L73",
+      "id": "store_changelog_bug_fixes_73",
+      "community": 9,
+      "norm_label": "bug fixes"
+    },
+    {
+      "label": "Features",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L79",
+      "id": "store_changelog_features_79",
+      "community": 9,
+      "norm_label": "features"
+    },
+    {
+      "label": "[0.0.3](https://github.com/Eyhenij/rt-tools/compare/0.1.81...0.0.3) (2026-01-02)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L84",
+      "id": "store_changelog_0_0_3_https_github_com_eyhenij_rt_tools_compare_0_1_81_0_0_3_2026_01_02",
+      "community": 9,
+      "norm_label": "[0.0.3](https://github.com/eyhenij/rt-tools/compare/0.1.81...0.0.3) (2026-01-02)"
+    },
+    {
+      "label": "Features",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L86",
+      "id": "store_changelog_features_86",
+      "community": 9,
+      "norm_label": "features"
+    },
+    {
+      "label": "[0.0.2](https://github.com/Eyhenij/rt-tools/compare/0.1.81...0.0.2) (2026-01-02)",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L91",
+      "id": "store_changelog_0_0_2_https_github_com_eyhenij_rt_tools_compare_0_1_81_0_0_2_2026_01_02",
+      "community": 9,
+      "norm_label": "[0.0.2](https://github.com/eyhenij/rt-tools/compare/0.1.81...0.0.2) (2026-01-02)"
+    },
+    {
+      "label": "Bug Fixes",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L93",
+      "id": "store_changelog_bug_fixes_93",
+      "community": 9,
+      "norm_label": "bug fixes"
+    },
+    {
+      "label": "Features",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L110",
+      "id": "store_changelog_features_110",
+      "community": 9,
+      "norm_label": "features"
+    },
+    {
+      "label": "Reverts",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L132",
+      "id": "store_changelog_reverts",
+      "community": 9,
+      "norm_label": "reverts"
+    },
+    {
+      "label": "Changelog",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L136",
+      "id": "store_changelog_changelog",
+      "community": 8,
+      "norm_label": "changelog"
+    },
+    {
+      "label": "[0.0.1] - Initial Release",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L140",
+      "id": "store_changelog_0_0_1_initial_release",
+      "community": 8,
+      "norm_label": "[0.0.1] - initial release"
+    },
+    {
+      "label": "Added",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L142",
+      "id": "store_changelog_added",
+      "community": 8,
+      "norm_label": "added"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "id": "readme_md",
+      "community": 7,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "@rt-tools/store",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "id": "store_readme_rt_tools_store",
+      "community": 7,
+      "norm_label": "@rt-tools/store"
+    },
+    {
+      "label": "Installation",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L10",
+      "id": "store_readme_installation",
+      "community": 7,
+      "norm_label": "installation"
+    },
+    {
+      "label": "code:bash (pnpm add @rt-tools/store)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L12",
+      "id": "store_readme_codeblock_1",
+      "community": 7,
+      "norm_label": "code:bash (pnpm add @rt-tools/store)"
+    },
+    {
+      "label": "Features",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L20",
+      "id": "store_readme_features",
+      "community": 7,
+      "norm_label": "features"
+    },
+    {
+      "label": "BaseStoreService",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L22",
+      "id": "store_readme_basestoreservice",
+      "community": 7,
+      "norm_label": "basestoreservice"
+    },
+    {
+      "label": "code:typescript (import { Injectable } from '@angular/core';)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L26",
+      "id": "store_readme_codeblock_2",
+      "community": 7,
+      "norm_label": "code:typescript (import { injectable } from '@angular/core';)"
+    },
+    {
+      "label": "BaseAsyncStoreService",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L52",
+      "id": "store_readme_baseasyncstoreservice",
+      "community": 7,
+      "norm_label": "baseasyncstoreservice"
+    },
+    {
+      "label": "code:typescript (import { Injectable } from '@angular/core';)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L56",
+      "id": "store_readme_codeblock_3",
+      "community": 7,
+      "norm_label": "code:typescript (import { injectable } from '@angular/core';)"
+    },
+    {
+      "label": "Typing the failure",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L88",
+      "id": "store_readme_typing_the_failure",
+      "community": 7,
+      "norm_label": "typing the failure"
+    },
+    {
+      "label": "code:typescript (interface TransportFailure {)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L96",
+      "id": "store_readme_codeblock_4",
+      "community": 7,
+      "norm_label": "code:typescript (interface transportfailure {)"
+    },
+    {
+      "label": "Selectors",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L112",
+      "id": "store_readme_selectors",
+      "community": 7,
+      "norm_label": "selectors"
+    },
+    {
+      "label": "code:typescript (// In component)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L114",
+      "id": "store_readme_codeblock_5",
+      "community": 7,
+      "norm_label": "code:typescript (// in component)"
+    },
+    {
+      "label": "Redux DevTools",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L129",
+      "id": "store_readme_redux_devtools",
+      "community": 7,
+      "norm_label": "redux devtools"
+    },
+    {
+      "label": "code:typescript (super(INITIAL_STATE, {)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L133",
+      "id": "store_readme_codeblock_6",
+      "community": 7,
+      "norm_label": "code:typescript (super(initial_state, {)"
+    },
+    {
+      "label": "Requirements",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L140",
+      "id": "store_readme_requirements",
+      "community": 7,
+      "norm_label": "requirements"
+    },
+    {
+      "label": "License",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L152",
+      "id": "store_readme_license",
+      "community": 7,
+      "norm_label": "license"
+    },
+    {
+      "label": "BaseStoreService",
+      "file_type": "code",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L11",
+      "id": "lib_base_store_service_basestoreservice",
+      "community": 0,
+      "norm_label": "basestoreservice"
+    },
+    {
+      "label": "BaseAsyncStoreService",
+      "file_type": "code",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L18",
+      "id": "lib_base_async_store_service_baseasyncstoreservice",
+      "community": 1,
+      "norm_label": "baseasyncstoreservice"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ng-package.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "ng_package_json",
+      "target": "store_ng_package_schema",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ng-package.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "ng_package_json",
+      "target": "store_ng_package_dest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ng-package.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "ng_package_json",
+      "target": "store_ng_package_lib",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ng-package.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "ng_package_json",
+      "target": "store_ng_package_allowednonpeerdependencies",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "ng-package.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "store_ng_package_lib",
+      "target": "store_ng_package_lib_entryfile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "store_project_name",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "store_project_schema",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "store_project_sourceroot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "store_project_prefix",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "store_project_projecttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "store_project_release",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "store_project_tags",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "store_project_targets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "store_project_release",
+      "target": "store_project_release_version",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "store_project_release_version",
+      "target": "store_project_version_manifestrootstoupdate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "store_project_release_version",
+      "target": "store_project_version_currentversionresolver",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "store_project_release_version",
+      "target": "store_project_version_fallbackcurrentversionresolver",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "store_project_targets",
+      "target": "store_project_targets_build",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "store_project_targets",
+      "target": "store_project_targets_nx_release_publish",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L37",
+      "weight": 1.0,
+      "source": "store_project_targets",
+      "target": "store_project_targets_test",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "store_project_targets",
+      "target": "store_project_targets_lint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "store_project_targets_build",
+      "target": "store_project_build_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "store_project_targets_build",
+      "target": "store_project_build_outputs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "store_project_targets_build",
+      "target": "store_project_build_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "store_project_targets_build",
+      "target": "store_project_build_configurations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "store_project_targets_build",
+      "target": "store_project_build_defaultconfiguration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "store_project_build_options",
+      "target": "store_project_options_project",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "store_project_build_options",
+      "target": "store_project_options_tsconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "store_project_test_options",
+      "target": "store_project_options_tsconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "store_project_build_configurations",
+      "target": "store_project_configurations_production",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "store_project_build_configurations",
+      "target": "store_project_configurations_development",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "store_project_configurations_production",
+      "target": "store_project_production_tsconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "store_project_targets_nx_release_publish",
+      "target": "store_project_nx_release_publish_dependson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "store_project_targets_nx_release_publish",
+      "target": "store_project_nx_release_publish_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "store_project_nx_release_publish_options",
+      "target": "store_project_options_packageroot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "store_project_targets_test",
+      "target": "store_project_test_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L39",
+      "weight": 1.0,
+      "source": "store_project_targets_test",
+      "target": "store_project_test_outputs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "store_project_targets_test",
+      "target": "store_project_test_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "store_project_test_options",
+      "target": "store_project_options_jestconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "store_project_targets_lint",
+      "target": "store_project_lint_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "store_package_name",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "store_package_version",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "store_package_description",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "store_package_license",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "store_package_author",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "store_package_type",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "store_package_repository",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "store_package_keywords",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "store_package_dependencies",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "store_package_peerdependencies",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "store_package_sideeffects",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "store_package_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "package_json",
+      "target": "store_package_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "store_package_repository",
+      "target": "store_package_repository_type",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "store_package_repository",
+      "target": "store_package_repository_url",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "store_package_repository",
+      "target": "store_package_repository_directory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "store_package_dependencies",
+      "target": "store_package_dependencies_rt_tools_core",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "store_package_dependencies",
+      "target": "store_package_dependencies_rt_tools_utils",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "store_package_peerdependencies",
+      "target": "store_package_peerdependencies_rt_tools_core",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "store_package_peerdependencies",
+      "target": "store_package_peerdependencies_angular_core",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "store_package_peerdependencies",
+      "target": "store_package_peerdependencies_rxjs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "store_package_peerdependencies",
+      "target": "store_package_peerdependencies_rt_tools_utils",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_lib_prod_json",
+      "target": "store_tsconfig_lib_prod_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_lib_prod_json",
+      "target": "store_tsconfig_lib_prod_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "tsconfig_lib_prod_json",
+      "target": "store_tsconfig_lib_prod_angularcompileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "store_tsconfig_lib_prod_compileroptions",
+      "target": "store_tsconfig_lib_prod_compileroptions_declarationmap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "store_tsconfig_lib_prod_compileroptions",
+      "target": "store_tsconfig_lib_prod_compileroptions_rootdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "store_tsconfig_lib_prod_angularcompileroptions",
+      "target": "store_tsconfig_lib_prod_angularcompileroptions_compilationmode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "store_tsconfig_lib_prod_angularcompileroptions",
+      "target": "store_tsconfig_lib_prod_angularcompileroptions_extendeddiagnostics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "store_tsconfig_lib_prod_angularcompileroptions_extendeddiagnostics",
+      "target": "store_tsconfig_lib_prod_extendeddiagnostics_checks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "store_tsconfig_lib_prod_extendeddiagnostics_checks",
+      "target": "store_tsconfig_lib_prod_checks_nullishcoalescingnotnullable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.prod.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "store_tsconfig_lib_prod_extendeddiagnostics_checks",
+      "target": "store_tsconfig_lib_prod_checks_optionalchainnotnullable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "store_tsconfig_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "store_tsconfig_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "store_tsconfig_angularcompileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "store_tsconfig_files",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "store_tsconfig_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "store_tsconfig_references",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "store_tsconfig_compileroptions",
+      "target": "store_tsconfig_compileroptions_module",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "store_tsconfig_compileroptions",
+      "target": "store_tsconfig_compileroptions_ignoredeprecations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "store_tsconfig_angularcompileroptions",
+      "target": "store_tsconfig_angularcompileroptions_enablei18nlegacymessageidformat",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "store_tsconfig_angularcompileroptions",
+      "target": "store_tsconfig_angularcompileroptions_strictinjectionparameters",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "store_tsconfig_angularcompileroptions",
+      "target": "store_tsconfig_angularcompileroptions_strictinputaccessmodifiers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "store_tsconfig_angularcompileroptions",
+      "target": "store_tsconfig_angularcompileroptions_typecheckhostbindings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "store_tsconfig_angularcompileroptions",
+      "target": "store_tsconfig_angularcompileroptions_stricttemplates",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_lib_json",
+      "target": "store_tsconfig_lib_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_lib_json",
+      "target": "store_tsconfig_lib_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "tsconfig_lib_json",
+      "target": "store_tsconfig_lib_exclude",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "tsconfig_lib_json",
+      "target": "store_tsconfig_lib_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "tsconfig_lib_json",
+      "target": "store_tsconfig_lib_angularcompileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "store_tsconfig_lib_compileroptions",
+      "target": "store_tsconfig_lib_compileroptions_outdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "store_tsconfig_lib_compileroptions",
+      "target": "store_tsconfig_lib_compileroptions_declaration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "store_tsconfig_lib_compileroptions",
+      "target": "store_tsconfig_lib_compileroptions_declarationmap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "store_tsconfig_lib_compileroptions",
+      "target": "store_tsconfig_lib_compileroptions_inlinesources",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "store_tsconfig_lib_compileroptions",
+      "target": "store_tsconfig_lib_compileroptions_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "store_tsconfig_lib_compileroptions",
+      "target": "store_tsconfig_lib_compileroptions_rootdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "store_tsconfig_lib_angularcompileroptions",
+      "target": "store_tsconfig_lib_angularcompileroptions_extendeddiagnostics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "store_tsconfig_lib_angularcompileroptions_extendeddiagnostics",
+      "target": "store_tsconfig_lib_extendeddiagnostics_checks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "store_tsconfig_lib_extendeddiagnostics_checks",
+      "target": "store_tsconfig_lib_checks_nullishcoalescingnotnullable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.lib.json",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "store_tsconfig_lib_extendeddiagnostics_checks",
+      "target": "store_tsconfig_lib_checks_optionalchainnotnullable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "store_tsconfig_spec_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "store_tsconfig_spec_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "store_tsconfig_spec_files",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "store_tsconfig_spec_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "store_tsconfig_spec_angularcompileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "store_tsconfig_spec_compileroptions",
+      "target": "store_tsconfig_spec_compileroptions_outdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "store_tsconfig_spec_compileroptions",
+      "target": "store_tsconfig_spec_compileroptions_module",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "store_tsconfig_spec_compileroptions",
+      "target": "store_tsconfig_spec_compileroptions_target",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "store_tsconfig_spec_compileroptions",
+      "target": "store_tsconfig_spec_compileroptions_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "store_tsconfig_spec_compileroptions",
+      "target": "store_tsconfig_spec_compileroptions_moduleresolution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "store_tsconfig_spec_compileroptions",
+      "target": "store_tsconfig_spec_compileroptions_baseurl",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "store_tsconfig_spec_compileroptions",
+      "target": "store_tsconfig_spec_compileroptions_paths",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "store_tsconfig_spec_compileroptions",
+      "target": "store_tsconfig_spec_compileroptions_isolatedmodules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "store_tsconfig_spec_compileroptions",
+      "target": "store_tsconfig_spec_compileroptions_rootdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "store_tsconfig_spec_compileroptions_paths",
+      "target": "store_tsconfig_spec_paths_rt_tools_core",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "store_tsconfig_spec_compileroptions_paths",
+      "target": "store_tsconfig_spec_paths_angular_core_testing",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "store_tsconfig_spec_compileroptions_paths",
+      "target": "store_tsconfig_spec_paths_angular_platform_browser_testing",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "store_tsconfig_spec_angularcompileroptions",
+      "target": "store_tsconfig_spec_angularcompileroptions_extendeddiagnostics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "store_tsconfig_spec_angularcompileroptions_extendeddiagnostics",
+      "target": "store_tsconfig_spec_extendeddiagnostics_checks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "store_tsconfig_spec_extendeddiagnostics_checks",
+      "target": "store_tsconfig_spec_checks_nullishcoalescingnotnullable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "store_tsconfig_spec_extendeddiagnostics_checks",
+      "target": "store_tsconfig_spec_checks_optionalchainnotnullable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_base_async_store_service_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_base_store_service_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_constants_index_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_enums_index_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_interfaces_index_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_services_index_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/index.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_index_ts",
+      "target": "src_lib_tokens_index_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_spec_ts",
+      "target": "src_lib_base_store_service_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_spec_ts",
+      "target": "lib_base_store_service_basestoreservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_spec_ts",
+      "target": "src_lib_services_devtools_manager_service_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_spec_ts",
+      "target": "services_devtools_manager_service_devtoolsmanagerservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_spec_ts",
+      "target": "src_lib_tokens_devtools_provider_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_spec_ts",
+      "target": "tokens_devtools_provider_providestoredevtools",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_spec_ts",
+      "target": "lib_base_store_service_spec_iteststate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_spec_ts",
+      "target": "lib_base_store_service_spec_ttestmsg",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_spec_ts",
+      "target": "lib_base_store_service_spec_teststore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_spec_ts",
+      "target": "lib_base_store_service_spec_anotherteststore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L160",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_spec_ts",
+      "target": "lib_base_store_service_spec_devtoolsmanager1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L161",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_spec_ts",
+      "target": "lib_base_store_service_spec_devtoolsmanager2",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L167",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_spec_ts",
+      "target": "lib_base_store_service_spec_store1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L168",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_spec_ts",
+      "target": "lib_base_store_service_spec_store2",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L199",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_spec_ts",
+      "target": "lib_base_store_service_spec_receivedtypes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "lib_base_store_service_spec_teststore",
+      "target": "lib_base_store_service_spec_teststore_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "lib_base_store_service_spec_teststore",
+      "target": "lib_base_store_service_spec_teststore_increment",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L25",
+      "weight": 1.0,
+      "source": "lib_base_store_service_spec_teststore",
+      "target": "lib_base_store_service_spec_teststore_decrement",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "lib_base_store_service_spec_teststore",
+      "target": "lib_base_store_service_spec_teststore_setname",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "lib_base_store_service_spec_anotherteststore",
+      "target": "lib_base_store_service_spec_anotherteststore_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.spec.ts",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "lib_base_store_service_spec_anotherteststore",
+      "target": "lib_base_store_service_spec_anotherteststore_updatevalue",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_ts",
+      "target": "src_lib_interfaces_action_interface_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_ts",
+      "target": "interfaces_action_interface_iaction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_ts",
+      "target": "src_lib_interfaces_base_store_service_interface_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_ts",
+      "target": "interfaces_base_store_service_interface_ibasestoreservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_ts",
+      "target": "src_lib_interfaces_devtools_interface_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_ts",
+      "target": "interfaces_devtools_interface_istoreconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_ts",
+      "target": "src_lib_services_devtools_manager_service_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_ts",
+      "target": "services_devtools_manager_service_devtoolsmanagerservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_ts",
+      "target": "lib_base_store_service_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_ts",
+      "target": "lib_base_store_service_dispatch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_ts",
+      "target": "lib_base_store_service_ondispatch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L50",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_ts",
+      "target": "lib_base_store_service_patchstate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L55",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_ts",
+      "target": "lib_base_store_service_addsubscription",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L59",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_ts",
+      "target": "lib_base_store_service_unsubscribe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L64",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_ts",
+      "target": "lib_base_store_service_sendtodevtools",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L68",
+      "weight": 1.0,
+      "source": "src_lib_base_store_service_ts",
+      "target": "lib_base_store_service_cleanup",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "src_lib_base_store_service_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "lib_base_store_service_dispatch",
+      "target": "lib_base_store_service_sendtodevtools",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "lib_base_store_service_patchstate",
+      "target": "lib_base_store_service_sendtodevtools",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-store.service.ts",
+      "source_location": "L69",
+      "weight": 1.0,
+      "source": "lib_base_store_service_cleanup",
+      "target": "lib_base_store_service_unsubscribe",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_store_service_basestoreservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "src_lib_constants_base_initial_state_const_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "src_lib_enums_async_state_status_enum_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "enums_async_state_status_enum_emodelstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "src_lib_interfaces_async_store_service_interface_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "interfaces_async_store_service_interface_ibaseasyncstoreservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "interfaces_async_store_service_interface_isetpropertiesconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "src_lib_interfaces_devtools_interface_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "interfaces_devtools_interface_istoreconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "src_lib_interfaces_state_base_interface_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L57",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_handleerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L68",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_resetasyncstate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L82",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_startloading",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L94",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_setloadingsuccess",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L106",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_setloadingfailure",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L123",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_setloadingfailurevoid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L145",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_startfetching",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L157",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_setfetchingsuccess",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L169",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_setfetchingfailure",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L186",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_setfetchingfailurevoid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L208",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_resetupsertstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L219",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_startupsert",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L230",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_setupsertsuccess",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L241",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_setupsertfailure",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L257",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_setupsertfailurevoid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L278",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_resetdeletestatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L289",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_startdelete",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L300",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_setdeletesuccess",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L311",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_setdeletefailure",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L327",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_ts",
+      "target": "lib_base_async_store_service_setdeletefailurevoid",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_spec_ts",
+      "target": "src_lib_base_async_store_service_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L118",
+      "weight": 1.0,
+      "source": "lib_base_async_store_service_setloadingfailure",
+      "target": "lib_base_async_store_service_handleerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L135",
+      "weight": 1.0,
+      "source": "lib_base_async_store_service_setloadingfailurevoid",
+      "target": "lib_base_async_store_service_handleerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L181",
+      "weight": 1.0,
+      "source": "lib_base_async_store_service_setfetchingfailure",
+      "target": "lib_base_async_store_service_handleerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L198",
+      "weight": 1.0,
+      "source": "lib_base_async_store_service_setfetchingfailurevoid",
+      "target": "lib_base_async_store_service_handleerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L252",
+      "weight": 1.0,
+      "source": "lib_base_async_store_service_setupsertfailure",
+      "target": "lib_base_async_store_service_handleerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L268",
+      "weight": 1.0,
+      "source": "lib_base_async_store_service_setupsertfailurevoid",
+      "target": "lib_base_async_store_service_handleerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L322",
+      "weight": 1.0,
+      "source": "lib_base_async_store_service_setdeletefailure",
+      "target": "lib_base_async_store_service_handleerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L338",
+      "weight": 1.0,
+      "source": "lib_base_async_store_service_setdeletefailurevoid",
+      "target": "lib_base_async_store_service_handleerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "src/lib/base-async-store.service.ts",
+      "source_location": "L63",
+      "weight": 1.0,
+      "source": "lib_base_async_store_service_handleerror",
+      "target": "lib_base_async_store_service_spec_callbackfn"
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_spec_ts",
+      "target": "lib_base_async_store_service_baseasyncstoreservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_spec_ts",
+      "target": "src_lib_constants_base_initial_state_const_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_spec_ts",
+      "target": "src_lib_enums_async_state_status_enum_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_spec_ts",
+      "target": "enums_async_state_status_enum_emodelstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_spec_ts",
+      "target": "src_lib_interfaces_state_base_interface_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_spec_ts",
+      "target": "lib_base_async_store_service_spec_iteststate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_spec_ts",
+      "target": "lib_base_async_store_service_spec_ttestmsg",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_spec_ts",
+      "target": "lib_base_async_store_service_spec_initial_state",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_spec_ts",
+      "target": "lib_base_async_store_service_spec_defaulterrorstore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_spec_ts",
+      "target": "lib_base_async_store_service_spec_itransportfailure",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_spec_ts",
+      "target": "lib_base_async_store_service_spec_transporterrorstore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_spec_ts",
+      "target": "lib_base_async_store_service_spec_barestatestore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L77",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_spec_ts",
+      "target": "lib_base_async_store_service_spec_bare",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L117",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_spec_ts",
+      "target": "lib_base_async_store_service_spec_callbackfn",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L173",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_spec_ts",
+      "target": "lib_base_async_store_service_spec_error",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L129",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_spec_ts",
+      "target": "lib_base_async_store_service_spec_result",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L182",
+      "weight": 1.0,
+      "source": "src_lib_base_async_store_service_spec_ts",
+      "target": "lib_base_async_store_service_spec_transportstore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "lib_base_async_store_service_spec_defaulterrorstore",
+      "target": "lib_base_async_store_service_spec_defaulterrorstore_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L35",
+      "weight": 1.0,
+      "source": "lib_base_async_store_service_spec_transporterrorstore",
+      "target": "lib_base_async_store_service_spec_transporterrorstore_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/base-async-store.service.spec.ts",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "lib_base_async_store_service_spec_barestatestore",
+      "target": "lib_base_async_store_service_spec_barestatestore_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/constants/base-initial-state.const.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_constants_base_initial_state_const_ts",
+      "target": "src_lib_enums_index_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/constants/base-initial-state.const.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_constants_base_initial_state_const_ts",
+      "target": "src_lib_interfaces_index_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/constants/base-initial-state.const.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_lib_constants_base_initial_state_const_ts",
+      "target": "constants_base_initial_state_const_async",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/constants/index.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_constants_index_ts",
+      "target": "src_lib_constants_base_initial_state_const_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/constants/base-initial-state.const.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_constants_base_initial_state_const_ts",
+      "target": "enums_async_state_status_enum_emodelstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/enums/index.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_enums_index_ts",
+      "target": "src_lib_enums_async_state_status_enum_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/async-store-service.interface.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_async_store_service_interface_ts",
+      "target": "src_lib_enums_index_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/state-base.interface.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_state_base_interface_ts",
+      "target": "src_lib_enums_index_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/enums/async-state-status.enum.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_lib_enums_async_state_status_enum_ts",
+      "target": "enums_async_state_status_enum_emodelstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/async-store-service.interface.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_async_store_service_interface_ts",
+      "target": "enums_async_state_status_enum_emodelstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/state-base.interface.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_state_base_interface_ts",
+      "target": "enums_async_state_status_enum_emodelstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/tokens/devtools.provider.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_tokens_devtools_provider_ts",
+      "target": "src_lib_interfaces_devtools_interface_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/tokens/devtools.provider.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_tokens_devtools_provider_ts",
+      "target": "interfaces_devtools_interface_idevtoolsglobalconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/tokens/devtools.provider.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_tokens_devtools_provider_ts",
+      "target": "interfaces_devtools_interface_store_devtools_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/tokens/devtools.provider.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_tokens_devtools_provider_ts",
+      "target": "src_lib_services_index_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/tokens/devtools.provider.ts",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "src_lib_tokens_devtools_provider_ts",
+      "target": "tokens_devtools_provider_providestoredevtools",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/tokens/index.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_tokens_index_ts",
+      "target": "src_lib_tokens_devtools_provider_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/tokens/devtools.provider.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_tokens_devtools_provider_ts",
+      "target": "services_devtools_manager_service_devtoolsmanagerservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_services_devtools_manager_service_ts",
+      "target": "src_lib_interfaces_devtools_interface_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_services_devtools_manager_service_ts",
+      "target": "interfaces_devtools_interface_idevtoolsconnection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_services_devtools_manager_service_ts",
+      "target": "interfaces_devtools_interface_idevtoolsglobalconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_services_devtools_manager_service_ts",
+      "target": "interfaces_devtools_interface_idevtoolsmessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_services_devtools_manager_service_ts",
+      "target": "interfaces_devtools_interface_store_devtools_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_lib_services_devtools_manager_service_ts",
+      "target": "services_devtools_manager_service_iregisteredstore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_lib_services_devtools_manager_service_ts",
+      "target": "services_devtools_manager_service_devtoolsmanagerservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/index.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_services_index_ts",
+      "target": "src_lib_services_devtools_manager_service_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "services_devtools_manager_service_devtoolsmanagerservice",
+      "target": "services_devtools_manager_service_devtoolsmanagerservice_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "services_devtools_manager_service_devtoolsmanagerservice",
+      "target": "services_devtools_manager_service_devtoolsmanagerservice_isenabled",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L47",
+      "weight": 1.0,
+      "source": "services_devtools_manager_service_devtoolsmanagerservice",
+      "target": "services_devtools_manager_service_devtoolsmanagerservice_register",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L76",
+      "weight": 1.0,
+      "source": "services_devtools_manager_service_devtoolsmanagerservice",
+      "target": "services_devtools_manager_service_devtoolsmanagerservice_send",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L92",
+      "weight": 1.0,
+      "source": "services_devtools_manager_service_devtoolsmanagerservice",
+      "target": "services_devtools_manager_service_devtoolsmanagerservice_initdevtools",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L128",
+      "weight": 1.0,
+      "source": "services_devtools_manager_service_devtoolsmanagerservice",
+      "target": "services_devtools_manager_service_devtoolsmanagerservice_getaggregatedstate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L136",
+      "weight": 1.0,
+      "source": "services_devtools_manager_service_devtoolsmanagerservice",
+      "target": "services_devtools_manager_service_devtoolsmanagerservice_applyaggregatedstate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L145",
+      "weight": 1.0,
+      "source": "services_devtools_manager_service_devtoolsmanagerservice",
+      "target": "services_devtools_manager_service_devtoolsmanagerservice_sendstate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L152",
+      "weight": 1.0,
+      "source": "services_devtools_manager_service_devtoolsmanagerservice",
+      "target": "services_devtools_manager_service_devtoolsmanagerservice_cleanup",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L59",
+      "weight": 1.0,
+      "source": "services_devtools_manager_service_devtoolsmanagerservice_register",
+      "target": "services_devtools_manager_service_devtoolsmanagerservice_initdevtools",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L61",
+      "weight": 1.0,
+      "source": "services_devtools_manager_service_devtoolsmanagerservice_register",
+      "target": "services_devtools_manager_service_devtoolsmanagerservice_sendstate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L149",
+      "weight": 1.0,
+      "source": "services_devtools_manager_service_devtoolsmanagerservice_sendstate",
+      "target": "services_devtools_manager_service_devtoolsmanagerservice_send",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L104",
+      "weight": 1.0,
+      "source": "services_devtools_manager_service_devtoolsmanagerservice_initdevtools",
+      "target": "services_devtools_manager_service_devtoolsmanagerservice_getaggregatedstate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/services/devtools-manager.service.ts",
+      "source_location": "L149",
+      "weight": 1.0,
+      "source": "services_devtools_manager_service_devtoolsmanagerservice_sendstate",
+      "target": "services_devtools_manager_service_devtoolsmanagerservice_getaggregatedstate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/async-store-service.interface.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_async_store_service_interface_ts",
+      "target": "src_lib_interfaces_base_store_service_interface_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/async-store-service.interface.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_async_store_service_interface_ts",
+      "target": "interfaces_base_store_service_interface_ibasestoreservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/async-store-service.interface.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_async_store_service_interface_ts",
+      "target": "interfaces_async_store_service_interface_isetpropertiesconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/async-store-service.interface.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_async_store_service_interface_ts",
+      "target": "interfaces_async_store_service_interface_ibaseasyncstoreservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/index.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_index_ts",
+      "target": "src_lib_interfaces_async_store_service_interface_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/devtools.interface.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_devtools_interface_ts",
+      "target": "interfaces_devtools_interface_idevtoolsglobalconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/devtools.interface.ts",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_devtools_interface_ts",
+      "target": "interfaces_devtools_interface_store_devtools_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/devtools.interface.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_devtools_interface_ts",
+      "target": "interfaces_devtools_interface_idevtoolsextension",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/devtools.interface.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_devtools_interface_ts",
+      "target": "interfaces_devtools_interface_idevtoolsconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/devtools.interface.ts",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_devtools_interface_ts",
+      "target": "interfaces_devtools_interface_idevtoolsconnection",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/devtools.interface.ts",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_devtools_interface_ts",
+      "target": "interfaces_devtools_interface_idevtoolsmessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/devtools.interface.ts",
+      "source_location": "L55",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_devtools_interface_ts",
+      "target": "interfaces_devtools_interface_istoreconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/devtools.interface.ts",
+      "source_location": "L63",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_devtools_interface_ts",
+      "target": "interfaces_devtools_interface_window",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/index.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_index_ts",
+      "target": "src_lib_interfaces_devtools_interface_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/base-store-service.interface.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_base_store_service_interface_ts",
+      "target": "src_lib_interfaces_action_interface_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/base-store-service.interface.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_base_store_service_interface_ts",
+      "target": "interfaces_action_interface_iaction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/base-store-service.interface.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_base_store_service_interface_ts",
+      "target": "interfaces_base_store_service_interface_ibasestoreservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/index.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_index_ts",
+      "target": "src_lib_interfaces_base_store_service_interface_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/action.interface.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_action_interface_ts",
+      "target": "interfaces_action_interface_iaction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/index.ts",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_index_ts",
+      "target": "src_lib_interfaces_action_interface_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/state-base.interface.ts",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_state_base_interface_ts",
+      "target": "interfaces_state_base_interface_async",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/state-base.interface.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_state_base_interface_ts",
+      "target": "interfaces_state_base_interface_list",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "re_exports",
+      "context": "export",
+      "confidence": "EXTRACTED",
+      "source_file": "src/lib/interfaces/index.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_lib_interfaces_index_ts",
+      "target": "src_lib_interfaces_state_base_interface_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "changelog_md",
+      "target": "store_changelog_0_3_4_https_github_com_eyhenij_rt_tools_compare_rt_store_0_3_3_rt_store_0_3_4_2026_10_10",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "changelog_md",
+      "target": "store_changelog_0_3_3_https_github_com_eyhenij_rt_tools_compare_rt_store_0_3_2_rt_store_0_3_3_2026_10_02",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "changelog_md",
+      "target": "store_changelog_0_3_2_https_github_com_eyhenij_rt_tools_compare_rt_store_0_3_1_rt_store_0_3_2_2026_09_03",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "changelog_md",
+      "target": "store_changelog_0_3_1_https_github_com_eyhenij_rt_tools_compare_rt_store_0_3_0_rt_store_0_3_1_2026_08_02",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "changelog_md",
+      "target": "store_changelog_0_3_0_https_github_com_eyhenij_rt_tools_compare_rt_store_0_2_0_rt_store_0_3_0_2026_08_02",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "changelog_md",
+      "target": "store_changelog_0_2_0_https_github_com_eyhenij_rt_tools_compare_rt_store_0_1_0_rt_store_0_2_0_2026_08_02",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "changelog_md",
+      "target": "store_changelog_0_1_0_https_github_com_eyhenij_rt_tools_compare_rt_store_0_0_8_rt_store_0_1_0_2026_08_02",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L136",
+      "weight": 1.0,
+      "source": "changelog_md",
+      "target": "store_changelog_changelog",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "store_changelog_0_3_2_https_github_com_eyhenij_rt_tools_compare_rt_store_0_3_1_rt_store_0_3_2_2026_09_03",
+      "target": "store_changelog_bug_fixes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "store_changelog_0_3_2_https_github_com_eyhenij_rt_tools_compare_rt_store_0_3_1_rt_store_0_3_2_2026_09_03",
+      "target": "store_changelog_features",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "store_changelog_0_3_2_https_github_com_eyhenij_rt_tools_compare_rt_store_0_3_1_rt_store_0_3_2_2026_09_03",
+      "target": "store_changelog_breaking_changes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "store_changelog_0_3_0_https_github_com_eyhenij_rt_tools_compare_rt_store_0_2_0_rt_store_0_3_0_2026_08_02",
+      "target": "store_changelog_code_refactoring",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "store_changelog_0_3_0_https_github_com_eyhenij_rt_tools_compare_rt_store_0_2_0_rt_store_0_3_0_2026_08_02",
+      "target": "store_changelog_breaking_changes_32",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "store_changelog_0_3_0_https_github_com_eyhenij_rt_tools_compare_rt_store_0_2_0_rt_store_0_3_0_2026_08_02",
+      "target": "store_changelog_0_0_7_https_github_com_eyhenij_rt_tools_compare_rt_store_0_0_6_rt_store_0_0_7_2026_07_14",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L48",
+      "weight": 1.0,
+      "source": "store_changelog_0_1_0_https_github_com_eyhenij_rt_tools_compare_rt_store_0_0_8_rt_store_0_1_0_2026_08_02",
+      "target": "store_changelog_0_0_8_https_github_com_eyhenij_rt_tools_compare_rt_store_0_0_6_rt_store_0_0_8_2026_08_02",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L55",
+      "weight": 1.0,
+      "source": "store_changelog_0_1_0_https_github_com_eyhenij_rt_tools_compare_rt_store_0_0_8_rt_store_0_1_0_2026_08_02",
+      "target": "store_changelog_0_0_6_https_github_com_eyhenij_rt_tools_compare_rt_store_0_0_5_rt_store_0_0_6_2026_07_09",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L57",
+      "weight": 1.0,
+      "source": "store_changelog_0_1_0_https_github_com_eyhenij_rt_tools_compare_rt_store_0_0_8_rt_store_0_1_0_2026_08_02",
+      "target": "store_changelog_0_0_5_2026_06_26",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L71",
+      "weight": 1.0,
+      "source": "store_changelog_0_1_0_https_github_com_eyhenij_rt_tools_compare_rt_store_0_0_8_rt_store_0_1_0_2026_08_02",
+      "target": "store_changelog_0_0_4_https_github_com_eyhenij_rt_tools_compare_0_1_81_0_0_4_2026_01_02",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L84",
+      "weight": 1.0,
+      "source": "store_changelog_0_1_0_https_github_com_eyhenij_rt_tools_compare_rt_store_0_0_8_rt_store_0_1_0_2026_08_02",
+      "target": "store_changelog_0_0_3_https_github_com_eyhenij_rt_tools_compare_0_1_81_0_0_3_2026_01_02",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L91",
+      "weight": 1.0,
+      "source": "store_changelog_0_1_0_https_github_com_eyhenij_rt_tools_compare_rt_store_0_0_8_rt_store_0_1_0_2026_08_02",
+      "target": "store_changelog_0_0_2_https_github_com_eyhenij_rt_tools_compare_0_1_81_0_0_2_2026_01_02",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L50",
+      "weight": 1.0,
+      "source": "store_changelog_0_0_8_https_github_com_eyhenij_rt_tools_compare_rt_store_0_0_6_rt_store_0_0_8_2026_08_02",
+      "target": "store_changelog_features_50",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L59",
+      "weight": 1.0,
+      "source": "store_changelog_0_0_5_2026_06_26",
+      "target": "store_changelog_bug_fixes_59",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L66",
+      "weight": 1.0,
+      "source": "store_changelog_0_0_5_2026_06_26",
+      "target": "store_changelog_features_66",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L73",
+      "weight": 1.0,
+      "source": "store_changelog_0_0_4_https_github_com_eyhenij_rt_tools_compare_0_1_81_0_0_4_2026_01_02",
+      "target": "store_changelog_bug_fixes_73",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L79",
+      "weight": 1.0,
+      "source": "store_changelog_0_0_4_https_github_com_eyhenij_rt_tools_compare_0_1_81_0_0_4_2026_01_02",
+      "target": "store_changelog_features_79",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L86",
+      "weight": 1.0,
+      "source": "store_changelog_0_0_3_https_github_com_eyhenij_rt_tools_compare_0_1_81_0_0_3_2026_01_02",
+      "target": "store_changelog_features_86",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L93",
+      "weight": 1.0,
+      "source": "store_changelog_0_0_2_https_github_com_eyhenij_rt_tools_compare_0_1_81_0_0_2_2026_01_02",
+      "target": "store_changelog_bug_fixes_93",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L110",
+      "weight": 1.0,
+      "source": "store_changelog_0_0_2_https_github_com_eyhenij_rt_tools_compare_0_1_81_0_0_2_2026_01_02",
+      "target": "store_changelog_features_110",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L132",
+      "weight": 1.0,
+      "source": "store_changelog_0_0_2_https_github_com_eyhenij_rt_tools_compare_0_1_81_0_0_2_2026_01_02",
+      "target": "store_changelog_reverts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L140",
+      "weight": 1.0,
+      "source": "store_changelog_changelog",
+      "target": "store_changelog_0_0_1_initial_release",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L142",
+      "weight": 1.0,
+      "source": "store_changelog_0_0_1_initial_release",
+      "target": "store_changelog_added",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "readme_md",
+      "target": "store_readme_rt_tools_store",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "store_readme_rt_tools_store",
+      "target": "store_readme_installation",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "store_readme_rt_tools_store",
+      "target": "store_readme_features",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L140",
+      "weight": 1.0,
+      "source": "store_readme_rt_tools_store",
+      "target": "store_readme_requirements",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L152",
+      "weight": 1.0,
+      "source": "store_readme_rt_tools_store",
+      "target": "store_readme_license",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "store_readme_installation",
+      "target": "store_readme_codeblock_1",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "store_readme_features",
+      "target": "store_readme_basestoreservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "store_readme_features",
+      "target": "store_readme_baseasyncstoreservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L112",
+      "weight": 1.0,
+      "source": "store_readme_features",
+      "target": "store_readme_selectors",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L129",
+      "weight": 1.0,
+      "source": "store_readme_features",
+      "target": "store_readme_redux_devtools",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "store_readme_basestoreservice",
+      "target": "store_readme_codeblock_2",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L56",
+      "weight": 1.0,
+      "source": "store_readme_baseasyncstoreservice",
+      "target": "store_readme_codeblock_3",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L88",
+      "weight": 1.0,
+      "source": "store_readme_baseasyncstoreservice",
+      "target": "store_readme_typing_the_failure",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L96",
+      "weight": 1.0,
+      "source": "store_readme_typing_the_failure",
+      "target": "store_readme_codeblock_4",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L114",
+      "weight": 1.0,
+      "source": "store_readme_selectors",
+      "target": "store_readme_codeblock_5",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L133",
+      "weight": 1.0,
+      "source": "store_readme_redux_devtools",
+      "target": "store_readme_codeblock_6",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "built_at_commit": "76235026c0071bbfba479885de800c463a0de4ec"
+}

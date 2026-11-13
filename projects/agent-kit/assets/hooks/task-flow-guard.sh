@@ -131,8 +131,8 @@ state_action() {
         договорённость-записана) printf '%s' 'create the task, the branch and the task folder' ;;
         задача-взята) printf '%s' 'write the plan' ;;
         замысел-записан) printf '%s' 'do the first stage' ;;
-        папка-разобрана) printf '%s' 'lift the draft and ask the owner to merge' ;;
-        влито) printf '%s' 'a rules review of the work and an audit of the work queue' ;;
+        папка-разобрана) printf '%s' 'the work queue audit, then open the PR' ;;
+        влито) printf '%s' 'mark the task merged in the epic plan by the next task branch' ;;
         *) printf '%s' '' ;;
     esac
 }

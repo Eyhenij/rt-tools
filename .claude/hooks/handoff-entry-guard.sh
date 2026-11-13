@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/handoff-entry-guard.sh · 050648886c17 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/handoff-entry-guard.sh · 65e22d41ec81 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: rules/task-flow.md, hooks/deny-tail.sh, hooks/write-targets.sh
 # Handover entry guard: a session started from a handover edits no file until the work-conduct rule
 # is loaded.
 #
-# The handover was written by the previous session, lies outside the tree and is read by no check.
+# The handover was written by the previous session and is read by no check.
 # It gets read as an assignment, and work begins past the rule: the state is not checked against the
 # tree, the numbers are taken on trust, the entry order is followed from memory. An order written
 # only in words is followed as long as someone remembers it.
@@ -74,7 +74,7 @@ verdict="$(jq -s -r --arg rule "$rule" '
 
 reason="BLOCKED by handoff-entry-guard: the session began from a handover, and the rule of work conduct is not loaded for it.
 
-The handover was written by the previous session, lies outside the tree and is read by no check: everything standing in it is verified against the tree. The order of entry is four steps:
+The handover was written by the previous session and is read by no check: everything standing in it is verified against the tree. The order of entry is four steps:
 
     1. the rule of work conduct and the pattern of returning — by the first move;
     2. the branch and the state of the work are read in the tree, not in the handover;

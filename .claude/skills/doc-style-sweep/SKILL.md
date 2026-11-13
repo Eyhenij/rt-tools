@@ -4,7 +4,7 @@ kind: pattern
 rule: doc-style
 description: Pattern of rule doc-style. Load when a document has accumulated a list of work and must be sorted into what still holds and what is closed. The selection sign, a pass over the statements, a check against the work queue, the fate of the file itself. New text — pattern doc-style-write.
 ---
-<!-- rt-kit v0.37.0 · patterns/doc-style-sweep.md · cf4050498eb4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/doc-style-sweep.md · eb878203c868 · правится надстройкой, не здесь -->
 
 # Sorting a document that has accumulated a work list
 
@@ -42,16 +42,16 @@ without a single bullet, and a pass over `- ` would not have seen it.
 
 ```bash
 # how much of what is in the file: items, paragraphs, sections
-grep -c '^- ' docs/BACKLOG.md
-grep -c '^## ' docs/BACKLOG.md
+grep -c '^- ' <backlog file>
+grep -c '^## ' <backlog file>
 ```
 
 A paragraph is judged by the same sign as an item.
 
 ## A task number stands in three places
 
-Before counting "items without a task", all the forms of writing it must be known. In this tree
-there are three:
+Before counting "items without a task", all the forms of writing it must be known. A tree
+usually has three:
 
 ```markdown
 ## Section — #149 ← in the heading
@@ -70,7 +70,7 @@ An item has a task — that does not yet mean the task carries its content. Befo
 coverage is measured: how many of the item's significant words occur in the body of its task.
 
 ```bash
-/opt/homebrew/bin/gh issue list --state all --limit 400 --json number,title,body,state > /tmp/issues.json
+<host client> issue list --state all --limit 400 --json number,title,body,state > /tmp/issues.json
 ```
 
 An item covered by the body half or less is read by eye and sorted into three outcomes:
@@ -92,7 +92,7 @@ skills gate was done and covered by scenarios.
 
 ```bash
 # check what you are about to call "not done"
-grep -rn '<symbol>' libs apps .claude/hooks
+grep -rn '<symbol>' <source roots>
 grep -n '<name>' node_modules/<package>/types/*.d.ts
 ```
 
@@ -126,7 +126,7 @@ The document is not the only place promising that the work lives in it. A remove
 by one grep, including agent descriptions, skills, READMEs and code comments:
 
 ```bash
-grep -rn 'BACKLOG' --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=archive .
+grep -rn '<removed name>' --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=archive .
 ```
 
 ## Common misses

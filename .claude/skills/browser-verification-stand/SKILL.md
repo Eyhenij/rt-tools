@@ -2,11 +2,11 @@
 name: browser-verification-stand
 kind: pattern
 rule: browser-verification
-description: Pattern of rule browser-verification. Load when an honest stand is needed — the production build of the site, the admin stand, a stand behind real nginx, signing in to the admin, finding out what sits on a port. Not for layout measurements — that is pattern browser-verification-measure.
+description: Pattern of rule browser-verification. Load when a stand from the production build is needed — the build of the site, the admin stand, a stand behind real nginx, signing in to the admin, finding out what sits on a port. Not for layout measurements — that is pattern browser-verification-measure.
 ---
-<!-- rt-kit v0.37.0 · patterns/browser-verification-stand.md · 917850e19048 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/browser-verification-stand.md · e0d1b817ff74 · правится надстройкой, не здесь -->
 
-# An honest stand
+# A stand from the production build
 
 Pattern of the rule `browser-verification`. What must be true — the law
 `docs/constitution/verifiability.md`.
@@ -38,17 +38,14 @@ Before the first request, not after a puzzling answer:
 lsof -nP -iTCP:$API_PORT -sTCP:LISTEN
 ```
 
-A built artifact from a past session regularly hangs on the intake port
-(`node -r dotenv/config dist/apps/api/main.js`): it answers 200 with old code, and the procedure
-created in the branch it does not have at all. There may be several such processes, and all of
-them must be killed — by PID from `lsof`, each one: `pkill` by the pattern `nx serve api` hits none
-of them.
+A built artifact from a past session on the intake port answers 200 with old code — the rule's
+pitfall names it; it is killed by PID from `lsof`, each process, not by a command-name pattern.
 
 ## Production build of the site
 
 ```bash
-npx nx build site
-PORT=$SITE_STAND_PORT node dist/apps/site/server/server.mjs
+npx nx build <site project>
+PORT=$SITE_STAND_PORT node <built site server entry>
 ```
 
 This is not a dev server: the guard catches `nx|ng serve`, package runners and static servers, and
@@ -62,7 +59,7 @@ apart from the one under check.
 ## Admin stand
 
 ```bash
-npx nx build admin --base-href=/
+npx nx build <admin application> --base-href=/
 ```
 
 Without `--base-href` the stand serves an empty page with no errors in the console. A stand that
@@ -85,9 +82,7 @@ production account, and there is never one on a local stand. Where there is no i
 stand itself substitutes the sign-in answer: the application's path stays the same as a person's.
 
 The token is not signed by hand and not put into browser storage by hand: put there so, it checks
-the screen while bypassing the live sign-in path — that is, it answers the wrong question. Asking
-a person to type a password, open a tab or press a button means a wrongly chosen path, not a lack
-of rights on the executor's side.
+the screen while bypassing the live sign-in path — that is, it answers the wrong question.
 
 **Ask for the work mode, not for the input.** Input into the password field is refused by the
 classifier of automatic mode: it judges the action itself and does not tell addresses apart — a
@@ -105,7 +100,7 @@ it fills the same field without the classifier, but the bypassed ban is lifted n
 but from all of them at once. Normal mode left on removes confirmation from every later action of
 the session too, so the return is part of the sign-in, not a separate clean-up.
 
-The owner's stand is never a fallback path: it builds the main branch and says nothing about the
+The owner's stand is never a fallback path: it builds its own branch and says nothing about the
 edit in the working tree.
 
 ## API stand
@@ -114,8 +109,8 @@ The built artifact is raised on a free port, not on the intake port: there the o
 answers, and its environment is not the one under check.
 
 ```bash
-npx nx build api
-env -u JWT_SECRET NODE_ENV=production API_PORT=$API_STAND_PORT DATABASE_URL=… node dist/apps/api/main.js
+npx nx build <api project>
+env -u JWT_SECRET NODE_ENV=production API_PORT=$API_STAND_PORT DATABASE_URL=… node <built api entry>
 ```
 
 Environment variables are set in the command itself, one per case under check. A refusal at start-up
@@ -135,16 +130,17 @@ signing in — a hand-written one hides a divergence in the set of claims.
 
 ## A stand behind real nginx
 
-Cache, redirects and headers live in `deploy/nginx.conf`, not in the application. Any conclusion
-about `301`, `Cache-Control` and `X-Cache-Status` is drawn only here:
+Cache, redirects and headers live in the tree's proxy config, not in the application; the
+companion names its files. Any conclusion about `301`, `Cache-Control` and `X-Cache-Status` is
+drawn only here:
 
 ```bash
 docker run -d --name <prefix>-stand-nginx \
   --add-host api:host-gateway --add-host ssr:host-gateway \
   -p $PROXY_SITE_PORT:80 -p $PROXY_ADMIN_PORT:8081 \
-  -v "$PWD/deploy/nginx/main.conf:/etc/nginx/nginx.conf:ro" \
-  -v "$PWD/deploy:/etc/nginx/conf.d:ro" \
-  -v "$PWD/dist/apps/admin/browser:/usr/share/nginx/html/admin:ro" \
+  -v "$PWD/<main proxy config>:/etc/nginx/nginx.conf:ro" \
+  -v "$PWD/<proxy config directory>:/etc/nginx/conf.d:ro" \
+  -v "$PWD/<built admin directory>:/usr/share/nginx/html/admin:ro" \
   nginx:1.27-alpine
 ```
 
@@ -152,8 +148,8 @@ docker run -d --name <prefix>-stand-nginx \
   the container is left with a truncated copy, and `nginx -t` inside falls on "unexpected end of
   file" while the file outside is whole. Cured by recreating the container, not by editing the
   config.
-- The main config is substituted by a separate line: it lies in `deploy/nginx/`, not next to
-  `nginx.conf` — a file with the `.conf` extension in the mounted directory would get into
+- The main config is substituted by a separate line and lies outside the mounted directory — a
+  file with the `.conf` extension in the mounted directory would get into
   `include` and bring nginx down on the `user` directive. Without it the stand comes up on the
   image's config, and the connection limit per worker there is its own.
 - A foreign `Host` is refused by the **dev server**, not by the built application: the production
@@ -163,7 +159,7 @@ docker run -d --name <prefix>-stand-nginx \
   pointed at the site port resets the cache past the process that keeps the redirect table in
   memory — and a working mechanism looks broken.
 
-## A stand lives exactly as long as the check
+## A stand is stopped when the check ends
 
 A stand is raised for one conclusion and is not needed after it. Abandoned, it hinders nothing and
 gives no signal. It has its own name, a free port, it takes almost no room — it can be seen only by
@@ -189,17 +185,16 @@ git worktree add ../<prefix>-base <commit>   # the task branch is not touched
 pnpm install --frozen-lockfile         # from ../<prefix>-base: its node_modules are its own
 ```
 
-- For comparison take not the main branch but the last commit on which the tree builds: main is
-  sometimes broken, and then "before" and "after" differ not because of the edit. Whether a commit
-  builds is checked by building, not by its being in the main branch.
+- For comparison take not the tip of the base branch but the last commit of it on which the tree
+  builds: the base is sometimes broken, and then "before" and "after" differ not because of the
+  edit. Whether a commit builds is checked by building, not by its being in the base.
 - The stand of the second tree is raised on its own ports: the site, admin and intake ports are
   taken by the owner, and the rendering port must not be taken — the developer's stand goes by the
   name `ssr:<rendering port>`.
 - Both stands are kept up at the same time — exactly until the comparison ends: comparing from
   memory between two launches, you notice only what you managed to remember. With the comparison
   done, the stand of the second tree is torn down by the same move, not left until the end of the
-  session. Stands left behind pile up across sessions and hold connections to the storage, and the
-  rule says so in a pitfall. Teardown refused — the stand is named to the owner at the end of the
+  session — why, the rule says in a pitfall. Teardown refused — the stand is named to the owner at the end of the
   session by name, with the port.
 
 ## The state of the ports is taken before the first build of the session
@@ -224,44 +219,41 @@ past session, and it answers 200 with old code.
   than the check — a whole set of layout checks was left unrun exactly because the build was
   deemed dangerous without measuring. A build from the cache is not a measurement: it builds
   nothing at all, and that is visible by its duration.
-- Do not raise your own dev server: the site, the admin and the intake are already up by the
-  owner, and a second instance is refused by the guard.
-- **A refused static server is read as a ban on the check, while it is a pointer to the right
-  move.** It may not serve what was built not out of caution: the application calls its own
-  origin, and a deep link answers `404`. From here one goes not to bypass the guard but to the
-  tree's proxy with its real config.
+- Do not raise your own dev server where the tree says the owner raises them: the applications are
+  already up, and a second instance is refused by the guard.
 - **The owner's dev server is a place to look, not a place to check.** The conclusion that the
   screen is right is drawn on the production build behind the real proxy: server-side markup,
   locales, cache, redirects and headers on the dev server are either different or absent
   altogether. A look at the raised dev server is fit to understand what is going on on an
   unfamiliar screen and unfit as confirmation: the confirmation is a measurement on a stand from
   the production build.
-- **A build of everything silences all three dev servers of the owner, not only the API.** After
-  `nx run-many -t build` both the site and the admin go down. Build what you check
-  (`npx nx build site`), not the whole tree. If the servers went down, the agent cannot bring them
-  back up — the guard is in the way, so the owner is told at once, not at the end of the session.
+- **A build of everything stops every dev server of the owner, not only the API.** After
+  `nx run-many -t build` the client applications go down too. Build what you check
+  (`npx nx build <application>`), not the whole tree. If the servers went down, the agent cannot bring them
+  back up — the guard refuses it, so the owner is told at once, not at the end of the session.
   The push gate is such a build too: its set runs the build of everything affected. So the
   measurement is taken before the push or on a stand from the production build. The answer of the
   server, not its port, tells whether it survived.
-- Take the rendering port with care: the developer's stand goes by the same name
-  `ssr:<rendering port>` through `host-gateway`, and while a foreign process hangs on it, the
-  stand serves a foreign build.
 
 ## The ports and stands of this tree
 
-A section of this tree: there is no site and no rendering server here, and there are two stands —
-the showcase of the component set and the stand of the end-to-end suite with its own seeded
-database.
+A section of this tree: there is no site and no rendering server here. There are three kinds of
+stands: the showcases of the two kits, the stand of the admin panel's end-to-end suite with its own
+seeded database, and the stand of the entry example. Both end-to-end stands sign in through one
+identity server.
 
 | Role                  | Port  | Raised by                              |
 | --------------------- | ----- | -------------------------------------- |
-| the showcase          | 6006  | `pnpm run storybook:ui-kit-v1`         |
-| the built showcase    | 6007  | `pnpm run build-storybook:ui-kit-v1` and serving |
+| the first kit's showcase  | 6006  | `pnpm run storybook:ui-kit-v1`     |
+| the second kit's showcase | 6007  | `pnpm run storybook:ui-kit-v2`     |
 | the stand receiver    | 3310  | `pnpm run serve:stand`                 |
 | the stand admin panel | 4310  | by the same call                       |
 | the dev receiver      | 3000  | `pnpm run serve:api`                   |
 | the dev admin panel   | 4200  | `pnpm run serve:admin`                 |
 | the dev database      | 55432 | `pnpm run serve:db`                    |
+| the entry example's receiver    | 3410  | the entry suite's stand, `apps/auth-example-e2e/stand/up.mjs` |
+| the entry example's admin panel | 4410  | by the same call                   |
+| the identity server, shared by both stands and the dev receiver | 58080 | `pnpm run serve:auth`; both stand scripts call it |
 
 The ports of the end-to-end stand are overridden by the variables `E2E_API_PORT` and
 `E2E_ADMIN_PORT` — they are declared in `apps/message-bus-admin-e2e/stand/stand.mjs`. The stand
@@ -273,7 +265,7 @@ answers with the wrong thing.
 
 ## Why there is no nginx stand here
 
-A section of this tree: none of the applications here has a proxy. The admin panel goes to the
-receiver directly, proxying `/api` to its port by its own dev config, and the showcase is static
-without a server. No conclusions about caching, redirects and headers are drawn on these stands:
-there is nothing to draw them from.
+A section of this tree: the production proxy is Caddy (`deploy/Caddyfile`), and no stand runs it.
+On a stand the admin panel goes to the receiver directly, forwarding `/api` to its port, and the
+showcases are served by their own dev server and have no proxy. No conclusions about caching, redirects and headers are drawn
+on these stands: there is nothing to draw them from.

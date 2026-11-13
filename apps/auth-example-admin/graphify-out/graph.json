@@ -1,0 +1,2088 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "tsconfig.app.json",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L1",
+      "id": "tsconfig_app_json",
+      "community": 7,
+      "norm_label": "tsconfig.app.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L2",
+      "id": "auth_example_admin_tsconfig_app_extends",
+      "community": 7,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L3",
+      "id": "auth_example_admin_tsconfig_app_compileroptions",
+      "community": 7,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "outDir",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L4",
+      "id": "auth_example_admin_tsconfig_app_compileroptions_outdir",
+      "community": 7,
+      "norm_label": "outdir"
+    },
+    {
+      "label": "types",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L5",
+      "id": "auth_example_admin_tsconfig_app_compileroptions_types",
+      "community": 7,
+      "norm_label": "types"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L7",
+      "id": "auth_example_admin_tsconfig_app_include",
+      "community": 7,
+      "norm_label": "include"
+    },
+    {
+      "label": "exclude",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L8",
+      "id": "auth_example_admin_tsconfig_app_exclude",
+      "community": 7,
+      "norm_label": "exclude"
+    },
+    {
+      "label": "project.json",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L1",
+      "id": "project_json",
+      "community": 1,
+      "norm_label": "project.json"
+    },
+    {
+      "label": "name",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L2",
+      "id": "auth_example_admin_project_name",
+      "community": 1,
+      "norm_label": "name"
+    },
+    {
+      "label": "$schema",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L3",
+      "id": "auth_example_admin_project_schema",
+      "community": 1,
+      "norm_label": "$schema"
+    },
+    {
+      "label": "projectType",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L4",
+      "id": "auth_example_admin_project_projecttype",
+      "community": 1,
+      "norm_label": "projecttype"
+    },
+    {
+      "label": "prefix",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L5",
+      "id": "auth_example_admin_project_prefix",
+      "community": 1,
+      "norm_label": "prefix"
+    },
+    {
+      "label": "sourceRoot",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L6",
+      "id": "auth_example_admin_project_sourceroot",
+      "community": 1,
+      "norm_label": "sourceroot"
+    },
+    {
+      "label": "tags",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L7",
+      "id": "auth_example_admin_project_tags",
+      "community": 1,
+      "norm_label": "tags"
+    },
+    {
+      "label": "targets",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L8",
+      "id": "auth_example_admin_project_targets",
+      "community": 1,
+      "norm_label": "targets"
+    },
+    {
+      "label": "build",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L9",
+      "id": "auth_example_admin_project_targets_build",
+      "community": 0,
+      "norm_label": "build"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L10",
+      "id": "auth_example_admin_project_build_executor",
+      "community": 0,
+      "norm_label": "executor"
+    },
+    {
+      "label": "outputs",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L11",
+      "id": "auth_example_admin_project_build_outputs",
+      "community": 0,
+      "norm_label": "outputs"
+    },
+    {
+      "label": "defaultConfiguration",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L12",
+      "id": "auth_example_admin_project_build_defaultconfiguration",
+      "community": 0,
+      "norm_label": "defaultconfiguration"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L13",
+      "id": "auth_example_admin_project_build_options",
+      "community": 5,
+      "norm_label": "options"
+    },
+    {
+      "label": "outputPath",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L14",
+      "id": "auth_example_admin_project_options_outputpath",
+      "community": 5,
+      "norm_label": "outputpath"
+    },
+    {
+      "label": "browser",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L15",
+      "id": "auth_example_admin_project_options_browser",
+      "community": 5,
+      "norm_label": "browser"
+    },
+    {
+      "label": "tsConfig",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L16",
+      "id": "auth_example_admin_project_options_tsconfig",
+      "community": 5,
+      "norm_label": "tsconfig"
+    },
+    {
+      "label": "inlineStyleLanguage",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L17",
+      "id": "auth_example_admin_project_options_inlinestylelanguage",
+      "community": 5,
+      "norm_label": "inlinestylelanguage"
+    },
+    {
+      "label": "assets",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L18",
+      "id": "auth_example_admin_project_options_assets",
+      "community": 5,
+      "norm_label": "assets"
+    },
+    {
+      "label": "styles",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L30",
+      "id": "auth_example_admin_project_options_styles",
+      "community": 5,
+      "norm_label": "styles"
+    },
+    {
+      "label": "configurations",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L32",
+      "id": "auth_example_admin_project_build_configurations",
+      "community": 0,
+      "norm_label": "configurations"
+    },
+    {
+      "label": "production",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L33",
+      "id": "auth_example_admin_project_configurations_production",
+      "community": 0,
+      "norm_label": "production"
+    },
+    {
+      "label": "budgets",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L34",
+      "id": "auth_example_admin_project_production_budgets",
+      "community": 0,
+      "norm_label": "budgets"
+    },
+    {
+      "label": "outputHashing",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L46",
+      "id": "auth_example_admin_project_production_outputhashing",
+      "community": 0,
+      "norm_label": "outputhashing"
+    },
+    {
+      "label": "development",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L48",
+      "id": "auth_example_admin_project_configurations_development",
+      "community": 0,
+      "norm_label": "development"
+    },
+    {
+      "label": "optimization",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L49",
+      "id": "auth_example_admin_project_development_optimization",
+      "community": 0,
+      "norm_label": "optimization"
+    },
+    {
+      "label": "extractLicenses",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L50",
+      "id": "auth_example_admin_project_development_extractlicenses",
+      "community": 0,
+      "norm_label": "extractlicenses"
+    },
+    {
+      "label": "sourceMap",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L51",
+      "id": "auth_example_admin_project_development_sourcemap",
+      "community": 0,
+      "norm_label": "sourcemap"
+    },
+    {
+      "label": "serve",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L55",
+      "id": "auth_example_admin_project_targets_serve",
+      "community": 6,
+      "norm_label": "serve"
+    },
+    {
+      "label": "continuous",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L56",
+      "id": "auth_example_admin_project_serve_continuous",
+      "community": 6,
+      "norm_label": "continuous"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L57",
+      "id": "auth_example_admin_project_serve_executor",
+      "community": 6,
+      "norm_label": "executor"
+    },
+    {
+      "label": "defaultConfiguration",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L58",
+      "id": "auth_example_admin_project_serve_defaultconfiguration",
+      "community": 6,
+      "norm_label": "defaultconfiguration"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L59",
+      "id": "auth_example_admin_project_serve_options",
+      "community": 6,
+      "norm_label": "options"
+    },
+    {
+      "label": "proxyConfig",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L60",
+      "id": "auth_example_admin_project_options_proxyconfig",
+      "community": 6,
+      "norm_label": "proxyconfig"
+    },
+    {
+      "label": "port",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L61",
+      "id": "auth_example_admin_project_options_port",
+      "community": 6,
+      "norm_label": "port"
+    },
+    {
+      "label": "configurations",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L63",
+      "id": "auth_example_admin_project_serve_configurations",
+      "community": 0,
+      "norm_label": "configurations"
+    },
+    {
+      "label": "buildTarget",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L65",
+      "id": "auth_example_admin_project_production_buildtarget",
+      "community": 0,
+      "norm_label": "buildtarget"
+    },
+    {
+      "label": "buildTarget",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L68",
+      "id": "auth_example_admin_project_development_buildtarget",
+      "community": 0,
+      "norm_label": "buildtarget"
+    },
+    {
+      "label": "lint",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L72",
+      "id": "auth_example_admin_project_targets_lint",
+      "community": 1,
+      "norm_label": "lint"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L73",
+      "id": "auth_example_admin_project_lint_executor",
+      "community": 1,
+      "norm_label": "executor"
+    },
+    {
+      "label": "test",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L75",
+      "id": "auth_example_admin_project_targets_test",
+      "community": 1,
+      "norm_label": "test"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L76",
+      "id": "auth_example_admin_project_test_executor",
+      "community": 1,
+      "norm_label": "executor"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L77",
+      "id": "auth_example_admin_project_test_options",
+      "community": 1,
+      "norm_label": "options"
+    },
+    {
+      "label": "watch",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L78",
+      "id": "auth_example_admin_project_options_watch",
+      "community": 1,
+      "norm_label": "watch"
+    },
+    {
+      "label": "tsconfig.json",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L1",
+      "id": "tsconfig_json",
+      "community": 2,
+      "norm_label": "tsconfig.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "id": "auth_example_admin_tsconfig_extends",
+      "community": 2,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "id": "auth_example_admin_tsconfig_compileroptions",
+      "community": 2,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "isolatedModules",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "id": "auth_example_admin_tsconfig_compileroptions_isolatedmodules",
+      "community": 2,
+      "norm_label": "isolatedmodules"
+    },
+    {
+      "label": "module",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "id": "auth_example_admin_tsconfig_compileroptions_module",
+      "community": 2,
+      "norm_label": "module"
+    },
+    {
+      "label": "angularCompilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L7",
+      "id": "auth_example_admin_tsconfig_angularcompileroptions",
+      "community": 2,
+      "norm_label": "angularcompileroptions"
+    },
+    {
+      "label": "enableI18nLegacyMessageIdFormat",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L8",
+      "id": "auth_example_admin_tsconfig_angularcompileroptions_enablei18nlegacymessageidformat",
+      "community": 2,
+      "norm_label": "enablei18nlegacymessageidformat"
+    },
+    {
+      "label": "strictInjectionParameters",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L9",
+      "id": "auth_example_admin_tsconfig_angularcompileroptions_strictinjectionparameters",
+      "community": 2,
+      "norm_label": "strictinjectionparameters"
+    },
+    {
+      "label": "strictInputAccessModifiers",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L10",
+      "id": "auth_example_admin_tsconfig_angularcompileroptions_strictinputaccessmodifiers",
+      "community": 2,
+      "norm_label": "strictinputaccessmodifiers"
+    },
+    {
+      "label": "strictTemplates",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L11",
+      "id": "auth_example_admin_tsconfig_angularcompileroptions_stricttemplates",
+      "community": 2,
+      "norm_label": "stricttemplates"
+    },
+    {
+      "label": "files",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L13",
+      "id": "auth_example_admin_tsconfig_files",
+      "community": 2,
+      "norm_label": "files"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L14",
+      "id": "auth_example_admin_tsconfig_include",
+      "community": 2,
+      "norm_label": "include"
+    },
+    {
+      "label": "references",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L15",
+      "id": "auth_example_admin_tsconfig_references",
+      "community": 2,
+      "norm_label": "references"
+    },
+    {
+      "label": "eslint.config.mjs",
+      "file_type": "code",
+      "source_file": "eslint.config.mjs",
+      "source_location": "L1",
+      "id": "eslint_config_mjs",
+      "community": 12,
+      "norm_label": "eslint.config.mjs"
+    },
+    {
+      "label": "proxy.conf.json",
+      "file_type": "code",
+      "source_file": "proxy.conf.json",
+      "source_location": "L1",
+      "id": "proxy_conf_json",
+      "community": 10,
+      "norm_label": "proxy.conf.json"
+    },
+    {
+      "label": "/api",
+      "file_type": "code",
+      "source_file": "proxy.conf.json",
+      "source_location": "L2",
+      "id": "auth_example_admin_proxy_conf_api",
+      "community": 10,
+      "norm_label": "/api"
+    },
+    {
+      "label": "target",
+      "file_type": "code",
+      "source_file": "proxy.conf.json",
+      "source_location": "L3",
+      "id": "auth_example_admin_proxy_conf_api_target",
+      "community": 10,
+      "norm_label": "target"
+    },
+    {
+      "label": "secure",
+      "file_type": "code",
+      "source_file": "proxy.conf.json",
+      "source_location": "L4",
+      "id": "auth_example_admin_proxy_conf_api_secure",
+      "community": 10,
+      "norm_label": "secure"
+    },
+    {
+      "label": "changeOrigin",
+      "file_type": "code",
+      "source_file": "proxy.conf.json",
+      "source_location": "L5",
+      "id": "auth_example_admin_proxy_conf_api_changeorigin",
+      "community": 10,
+      "norm_label": "changeorigin"
+    },
+    {
+      "label": "tsconfig.spec.json",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L1",
+      "id": "tsconfig_spec_json",
+      "community": 9,
+      "norm_label": "tsconfig.spec.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L2",
+      "id": "auth_example_admin_tsconfig_spec_extends",
+      "community": 9,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L3",
+      "id": "auth_example_admin_tsconfig_spec_compileroptions",
+      "community": 9,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "outDir",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L4",
+      "id": "auth_example_admin_tsconfig_spec_compileroptions_outdir",
+      "community": 9,
+      "norm_label": "outdir"
+    },
+    {
+      "label": "types",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L5",
+      "id": "auth_example_admin_tsconfig_spec_compileroptions_types",
+      "community": 9,
+      "norm_label": "types"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L7",
+      "id": "auth_example_admin_tsconfig_spec_include",
+      "community": 9,
+      "norm_label": "include"
+    },
+    {
+      "label": "main.ts",
+      "file_type": "code",
+      "source_file": "src/main.ts",
+      "source_location": "L1",
+      "id": "src_main_ts",
+      "community": 8,
+      "norm_label": "main.ts"
+    },
+    {
+      "label": "example-app.ts",
+      "file_type": "code",
+      "source_file": "src/app/example-app.ts",
+      "source_location": "L1",
+      "id": "src_app_example_app_ts",
+      "community": 8,
+      "norm_label": "example-app.ts"
+    },
+    {
+      "label": "ExampleApp",
+      "file_type": "code",
+      "source_file": "src/app/example-app.ts",
+      "source_location": "L17",
+      "id": "app_example_app_exampleapp",
+      "community": 8,
+      "norm_label": "exampleapp"
+    },
+    {
+      "label": "example.routes.ts",
+      "file_type": "code",
+      "source_file": "src/app/example.routes.ts",
+      "source_location": "L1",
+      "id": "src_app_example_routes_ts",
+      "community": 8,
+      "norm_label": "example.routes.ts"
+    },
+    {
+      "label": "EXAMPLE_ROUTES",
+      "file_type": "code",
+      "source_file": "src/app/example.routes.ts",
+      "source_location": "L7",
+      "id": "app_example_routes_example_routes",
+      "community": 8,
+      "norm_label": "example_routes"
+    },
+    {
+      "label": "example.config.ts",
+      "file_type": "code",
+      "source_file": "src/app/example.config.ts",
+      "source_location": "L1",
+      "id": "src_app_example_config_ts",
+      "community": 8,
+      "norm_label": "example.config.ts"
+    },
+    {
+      "label": "EXAMPLE_CONFIG",
+      "file_type": "code",
+      "source_file": "src/app/example.config.ts",
+      "source_location": "L23",
+      "id": "app_example_config_example_config",
+      "community": 8,
+      "norm_label": "example_config"
+    },
+    {
+      "label": "records-api.service.ts",
+      "file_type": "code",
+      "source_file": "src/app/records/records-api.service.ts",
+      "source_location": "L1",
+      "id": "src_app_records_records_api_service_ts",
+      "community": 3,
+      "norm_label": "records-api.service.ts"
+    },
+    {
+      "label": "RecordsApiService",
+      "file_type": "code",
+      "source_file": "src/app/records/records-api.service.ts",
+      "source_location": "L12",
+      "id": "records_records_api_service_recordsapiservice",
+      "community": 3,
+      "norm_label": "recordsapiservice"
+    },
+    {
+      "label": ".list()",
+      "file_type": "code",
+      "source_file": "src/app/records/records-api.service.ts",
+      "source_location": "L15",
+      "id": "records_records_api_service_recordsapiservice_list",
+      "community": 3,
+      "norm_label": ".list()"
+    },
+    {
+      "label": ".create()",
+      "file_type": "code",
+      "source_file": "src/app/records/records-api.service.ts",
+      "source_location": "L19",
+      "id": "records_records_api_service_recordsapiservice_create",
+      "community": 3,
+      "norm_label": ".create()"
+    },
+    {
+      "label": "records.logic.spec.ts",
+      "file_type": "code",
+      "source_file": "src/app/records/records.logic.spec.ts",
+      "source_location": "L1",
+      "id": "src_app_records_records_logic_spec_ts",
+      "community": 3,
+      "norm_label": "records.logic.spec.ts"
+    },
+    {
+      "label": "records.page.ts",
+      "file_type": "code",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L1",
+      "id": "src_app_records_records_page_ts",
+      "community": 3,
+      "norm_label": "records.page.ts"
+    },
+    {
+      "label": "RecordsPage",
+      "file_type": "code",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L58",
+      "id": "records_records_page_recordspage",
+      "community": 4,
+      "norm_label": "recordspage"
+    },
+    {
+      "label": "caller",
+      "file_type": "code",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L86",
+      "id": "records_records_page_caller",
+      "community": 3,
+      "norm_label": "caller"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L94",
+      "id": "records_records_page_recordspage_constructor",
+      "community": 4,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".reload()",
+      "file_type": "code",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L117",
+      "id": "records_records_page_recordspage_reload",
+      "community": 4,
+      "norm_label": ".reload()"
+    },
+    {
+      "label": ".create()",
+      "file_type": "code",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L122",
+      "id": "records_records_page_recordspage_create",
+      "community": 4,
+      "norm_label": ".create()"
+    },
+    {
+      "label": ".insertReply()",
+      "file_type": "code",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L128",
+      "id": "records_records_page_recordspage_insertreply",
+      "community": 4,
+      "norm_label": ".insertreply()"
+    },
+    {
+      "label": ".showDraft()",
+      "file_type": "code",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L133",
+      "id": "records_records_page_recordspage_showdraft",
+      "community": 4,
+      "norm_label": ".showdraft()"
+    },
+    {
+      "label": ".signOut()",
+      "file_type": "code",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L137",
+      "id": "records_records_page_recordspage_signout",
+      "community": 4,
+      "norm_label": ".signout()"
+    },
+    {
+      "label": ".#refused()",
+      "file_type": "code",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L141",
+      "id": "records_records_page_recordspage_refused",
+      "community": 4,
+      "norm_label": ".#refused()"
+    },
+    {
+      "label": "records.logic.ts",
+      "file_type": "code",
+      "source_file": "src/app/records/records.logic.ts",
+      "source_location": "L1",
+      "id": "src_app_records_records_logic_ts",
+      "community": 3,
+      "norm_label": "records.logic.ts"
+    },
+    {
+      "label": "IRecordLine",
+      "file_type": "code",
+      "source_file": "src/app/records/records.logic.ts",
+      "source_location": "L2",
+      "id": "records_records_logic_irecordline",
+      "community": 3,
+      "norm_label": "irecordline"
+    },
+    {
+      "label": "REFUSAL_WORDS",
+      "file_type": "code",
+      "source_file": "src/app/records/records.logic.ts",
+      "source_location": "L9",
+      "id": "records_records_logic_refusal_words",
+      "community": 3,
+      "norm_label": "refusal_words"
+    },
+    {
+      "label": "accountLines()",
+      "file_type": "code",
+      "source_file": "src/app/records/records.logic.ts",
+      "source_location": "L20",
+      "id": "records_records_logic_accountlines",
+      "community": 3,
+      "norm_label": "accountlines()"
+    },
+    {
+      "label": "refusalText()",
+      "file_type": "code",
+      "source_file": "src/app/records/records.logic.ts",
+      "source_location": "L30",
+      "id": "records_records_logic_refusaltext",
+      "community": 3,
+      "norm_label": "refusaltext()"
+    },
+    {
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "id": "readme_md",
+      "community": 11,
+      "norm_label": "readme.md"
+    },
+    {
+      "label": "The example admin of the entry module",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "id": "auth_example_admin_readme_the_example_admin_of_the_entry_module",
+      "community": 11,
+      "norm_label": "the example admin of the entry module"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_app_json",
+      "target": "auth_example_admin_tsconfig_app_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_app_json",
+      "target": "auth_example_admin_tsconfig_app_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "tsconfig_app_json",
+      "target": "auth_example_admin_tsconfig_app_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "tsconfig_app_json",
+      "target": "auth_example_admin_tsconfig_app_exclude",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "auth_example_admin_tsconfig_app_compileroptions",
+      "target": "auth_example_admin_tsconfig_app_compileroptions_outdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "auth_example_admin_tsconfig_app_compileroptions",
+      "target": "auth_example_admin_tsconfig_app_compileroptions_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_example_admin_project_name",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_example_admin_project_schema",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_example_admin_project_projecttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_example_admin_project_prefix",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_example_admin_project_sourceroot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_example_admin_project_tags",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "auth_example_admin_project_targets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_targets",
+      "target": "auth_example_admin_project_targets_build",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L55",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_targets",
+      "target": "auth_example_admin_project_targets_serve",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L72",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_targets",
+      "target": "auth_example_admin_project_targets_lint",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L75",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_targets",
+      "target": "auth_example_admin_project_targets_test",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_targets_build",
+      "target": "auth_example_admin_project_build_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_targets_build",
+      "target": "auth_example_admin_project_build_outputs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_targets_build",
+      "target": "auth_example_admin_project_build_defaultconfiguration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_targets_build",
+      "target": "auth_example_admin_project_build_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_targets_build",
+      "target": "auth_example_admin_project_build_configurations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_build_options",
+      "target": "auth_example_admin_project_options_outputpath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_build_options",
+      "target": "auth_example_admin_project_options_browser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_build_options",
+      "target": "auth_example_admin_project_options_tsconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_build_options",
+      "target": "auth_example_admin_project_options_inlinestylelanguage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_build_options",
+      "target": "auth_example_admin_project_options_assets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_build_options",
+      "target": "auth_example_admin_project_options_styles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L33",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_build_configurations",
+      "target": "auth_example_admin_project_configurations_production",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L48",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_build_configurations",
+      "target": "auth_example_admin_project_configurations_development",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L34",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_configurations_production",
+      "target": "auth_example_admin_project_production_budgets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_configurations_production",
+      "target": "auth_example_admin_project_production_outputhashing",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L64",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_serve_configurations",
+      "target": "auth_example_admin_project_configurations_production",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L65",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_configurations_production",
+      "target": "auth_example_admin_project_production_buildtarget",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L49",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_configurations_development",
+      "target": "auth_example_admin_project_development_optimization",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L50",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_configurations_development",
+      "target": "auth_example_admin_project_development_extractlicenses",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_configurations_development",
+      "target": "auth_example_admin_project_development_sourcemap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L67",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_serve_configurations",
+      "target": "auth_example_admin_project_configurations_development",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L68",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_configurations_development",
+      "target": "auth_example_admin_project_development_buildtarget",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L56",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_targets_serve",
+      "target": "auth_example_admin_project_serve_continuous",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L57",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_targets_serve",
+      "target": "auth_example_admin_project_serve_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_targets_serve",
+      "target": "auth_example_admin_project_serve_defaultconfiguration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L59",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_targets_serve",
+      "target": "auth_example_admin_project_serve_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L63",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_targets_serve",
+      "target": "auth_example_admin_project_serve_configurations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L60",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_serve_options",
+      "target": "auth_example_admin_project_options_proxyconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L61",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_serve_options",
+      "target": "auth_example_admin_project_options_port",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L73",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_targets_lint",
+      "target": "auth_example_admin_project_lint_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L76",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_targets_test",
+      "target": "auth_example_admin_project_test_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L77",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_targets_test",
+      "target": "auth_example_admin_project_test_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L78",
+      "weight": 1.0,
+      "source": "auth_example_admin_project_test_options",
+      "target": "auth_example_admin_project_options_watch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "auth_example_admin_tsconfig_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "auth_example_admin_tsconfig_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "auth_example_admin_tsconfig_angularcompileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "auth_example_admin_tsconfig_files",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "auth_example_admin_tsconfig_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "auth_example_admin_tsconfig_references",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "auth_example_admin_tsconfig_compileroptions",
+      "target": "auth_example_admin_tsconfig_compileroptions_isolatedmodules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "auth_example_admin_tsconfig_compileroptions",
+      "target": "auth_example_admin_tsconfig_compileroptions_module",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "auth_example_admin_tsconfig_angularcompileroptions",
+      "target": "auth_example_admin_tsconfig_angularcompileroptions_enablei18nlegacymessageidformat",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "auth_example_admin_tsconfig_angularcompileroptions",
+      "target": "auth_example_admin_tsconfig_angularcompileroptions_strictinjectionparameters",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "auth_example_admin_tsconfig_angularcompileroptions",
+      "target": "auth_example_admin_tsconfig_angularcompileroptions_strictinputaccessmodifiers",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "auth_example_admin_tsconfig_angularcompileroptions",
+      "target": "auth_example_admin_tsconfig_angularcompileroptions_stricttemplates",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "proxy.conf.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "proxy_conf_json",
+      "target": "auth_example_admin_proxy_conf_api",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "proxy.conf.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "auth_example_admin_proxy_conf_api",
+      "target": "auth_example_admin_proxy_conf_api_target",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "proxy.conf.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "auth_example_admin_proxy_conf_api",
+      "target": "auth_example_admin_proxy_conf_api_secure",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "proxy.conf.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "auth_example_admin_proxy_conf_api",
+      "target": "auth_example_admin_proxy_conf_api_changeorigin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "auth_example_admin_tsconfig_spec_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "auth_example_admin_tsconfig_spec_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "auth_example_admin_tsconfig_spec_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "auth_example_admin_tsconfig_spec_compileroptions",
+      "target": "auth_example_admin_tsconfig_spec_compileroptions_outdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "auth_example_admin_tsconfig_spec_compileroptions",
+      "target": "auth_example_admin_tsconfig_spec_compileroptions_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "src_app_example_app_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "app_example_app_exampleapp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "src_app_example_config_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "app_example_config_example_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/example-app.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_app_example_app_ts",
+      "target": "app_example_app_exampleapp",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/example.routes.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_app_example_routes_ts",
+      "target": "src_app_records_records_page_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/example.routes.ts",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "src_app_example_routes_ts",
+      "target": "records_records_page_recordspage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/example.routes.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_app_example_routes_ts",
+      "target": "app_example_routes_example_routes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/example.config.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_app_example_config_ts",
+      "target": "src_app_example_routes_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/example.config.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_app_example_config_ts",
+      "target": "app_example_routes_example_routes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/example.config.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "src_app_example_config_ts",
+      "target": "app_example_config_example_config",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records-api.service.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_records_records_api_service_ts",
+      "target": "src_app_records_records_logic_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records-api.service.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_records_records_api_service_ts",
+      "target": "records_records_logic_irecordline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records-api.service.ts",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "src_app_records_records_api_service_ts",
+      "target": "records_records_api_service_recordsapiservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_app_records_records_page_ts",
+      "target": "src_app_records_records_api_service_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records-api.service.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "records_records_api_service_recordsapiservice",
+      "target": "records_records_api_service_recordsapiservice_list",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records-api.service.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "records_records_api_service_recordsapiservice",
+      "target": "records_records_api_service_recordsapiservice_create",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_app_records_records_page_ts",
+      "target": "records_records_api_service_recordsapiservice",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.logic.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_app_records_records_logic_spec_ts",
+      "target": "src_app_records_records_logic_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.logic.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_app_records_records_logic_spec_ts",
+      "target": "records_records_logic_accountlines",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.logic.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_app_records_records_logic_spec_ts",
+      "target": "records_records_logic_refusal_words",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.logic.spec.ts",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "src_app_records_records_logic_spec_ts",
+      "target": "records_records_logic_refusaltext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_app_records_records_page_ts",
+      "target": "src_app_records_records_logic_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_app_records_records_page_ts",
+      "target": "records_records_logic_accountlines",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_app_records_records_page_ts",
+      "target": "records_records_logic_irecordline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_app_records_records_page_ts",
+      "target": "records_records_logic_refusaltext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "src_app_records_records_page_ts",
+      "target": "records_records_page_recordspage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L90",
+      "weight": 1.0,
+      "source": "src_app_records_records_page_ts",
+      "target": "records_records_page_caller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L94",
+      "weight": 1.0,
+      "source": "records_records_page_recordspage",
+      "target": "records_records_page_recordspage_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L117",
+      "weight": 1.0,
+      "source": "records_records_page_recordspage",
+      "target": "records_records_page_recordspage_reload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L122",
+      "weight": 1.0,
+      "source": "records_records_page_recordspage",
+      "target": "records_records_page_recordspage_create",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L128",
+      "weight": 1.0,
+      "source": "records_records_page_recordspage",
+      "target": "records_records_page_recordspage_insertreply",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L133",
+      "weight": 1.0,
+      "source": "records_records_page_recordspage",
+      "target": "records_records_page_recordspage_showdraft",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L137",
+      "weight": 1.0,
+      "source": "records_records_page_recordspage",
+      "target": "records_records_page_recordspage_signout",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L141",
+      "weight": 1.0,
+      "source": "records_records_page_recordspage",
+      "target": "records_records_page_recordspage_refused",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/records/records.page.ts",
+      "source_location": "L142",
+      "weight": 1.0,
+      "source": "records_records_page_recordspage_refused",
+      "target": "records_records_logic_refusaltext"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.logic.ts",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "src_app_records_records_logic_ts",
+      "target": "records_records_logic_irecordline",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.logic.ts",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_app_records_records_logic_ts",
+      "target": "records_records_logic_refusal_words",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.logic.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_app_records_records_logic_ts",
+      "target": "records_records_logic_accountlines",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/records/records.logic.ts",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "src_app_records_records_logic_ts",
+      "target": "records_records_logic_refusaltext",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "source": "readme_md",
+      "target": "auth_example_admin_readme_the_example_admin_of_the_entry_module",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "built_at_commit": "76235026c0071bbfba479885de800c463a0de4ec"
+}

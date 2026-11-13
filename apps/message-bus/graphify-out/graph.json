@@ -1,0 +1,2981 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "tsconfig.app.json",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L1",
+      "id": "tsconfig_app_json",
+      "community": 3,
+      "norm_label": "tsconfig.app.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L2",
+      "id": "message_bus_tsconfig_app_extends",
+      "community": 3,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L3",
+      "id": "message_bus_tsconfig_app_compileroptions",
+      "community": 3,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "outDir",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L4",
+      "id": "message_bus_tsconfig_app_compileroptions_outdir",
+      "community": 3,
+      "norm_label": "outdir"
+    },
+    {
+      "label": "module",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L5",
+      "id": "message_bus_tsconfig_app_compileroptions_module",
+      "community": 3,
+      "norm_label": "module"
+    },
+    {
+      "label": "types",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L6",
+      "id": "message_bus_tsconfig_app_compileroptions_types",
+      "community": 3,
+      "norm_label": "types"
+    },
+    {
+      "label": "experimentalDecorators",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L9",
+      "id": "message_bus_tsconfig_app_compileroptions_experimentaldecorators",
+      "community": 3,
+      "norm_label": "experimentaldecorators"
+    },
+    {
+      "label": "emitDecoratorMetadata",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L10",
+      "id": "message_bus_tsconfig_app_compileroptions_emitdecoratormetadata",
+      "community": 3,
+      "norm_label": "emitdecoratormetadata"
+    },
+    {
+      "label": "target",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L11",
+      "id": "message_bus_tsconfig_app_compileroptions_target",
+      "community": 3,
+      "norm_label": "target"
+    },
+    {
+      "label": "moduleResolution",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L12",
+      "id": "message_bus_tsconfig_app_compileroptions_moduleresolution",
+      "community": 3,
+      "norm_label": "moduleresolution"
+    },
+    {
+      "label": "strictNullChecks",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L13",
+      "id": "message_bus_tsconfig_app_compileroptions_strictnullchecks",
+      "community": 3,
+      "norm_label": "strictnullchecks"
+    },
+    {
+      "label": "noImplicitAny",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L14",
+      "id": "message_bus_tsconfig_app_compileroptions_noimplicitany",
+      "community": 3,
+      "norm_label": "noimplicitany"
+    },
+    {
+      "label": "strictBindCallApply",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L15",
+      "id": "message_bus_tsconfig_app_compileroptions_strictbindcallapply",
+      "community": 3,
+      "norm_label": "strictbindcallapply"
+    },
+    {
+      "label": "forceConsistentCasingInFileNames",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L16",
+      "id": "message_bus_tsconfig_app_compileroptions_forceconsistentcasinginfilenames",
+      "community": 3,
+      "norm_label": "forceconsistentcasinginfilenames"
+    },
+    {
+      "label": "noFallthroughCasesInSwitch",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L17",
+      "id": "message_bus_tsconfig_app_compileroptions_nofallthroughcasesinswitch",
+      "community": 3,
+      "norm_label": "nofallthroughcasesinswitch"
+    },
+    {
+      "label": "rootDir",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L18",
+      "id": "message_bus_tsconfig_app_compileroptions_rootdir",
+      "community": 3,
+      "norm_label": "rootdir"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L20",
+      "id": "message_bus_tsconfig_app_include",
+      "community": 3,
+      "norm_label": "include"
+    },
+    {
+      "label": "project.json",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L1",
+      "id": "project_json",
+      "community": 10,
+      "norm_label": "project.json"
+    },
+    {
+      "label": "name",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L2",
+      "id": "message_bus_project_name",
+      "community": 10,
+      "norm_label": "name"
+    },
+    {
+      "label": "$schema",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L3",
+      "id": "message_bus_project_schema",
+      "community": 10,
+      "norm_label": "$schema"
+    },
+    {
+      "label": "sourceRoot",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L4",
+      "id": "message_bus_project_sourceroot",
+      "community": 10,
+      "norm_label": "sourceroot"
+    },
+    {
+      "label": "projectType",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L5",
+      "id": "message_bus_project_projecttype",
+      "community": 10,
+      "norm_label": "projecttype"
+    },
+    {
+      "label": "tags",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L6",
+      "id": "message_bus_project_tags",
+      "community": 10,
+      "norm_label": "tags"
+    },
+    {
+      "label": "targets",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L7",
+      "id": "message_bus_project_targets",
+      "community": 2,
+      "norm_label": "targets"
+    },
+    {
+      "label": "build",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L8",
+      "id": "message_bus_project_targets_build",
+      "community": 5,
+      "norm_label": "build"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L9",
+      "id": "message_bus_project_build_executor",
+      "community": 5,
+      "norm_label": "executor"
+    },
+    {
+      "label": "outputs",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L10",
+      "id": "message_bus_project_build_outputs",
+      "community": 5,
+      "norm_label": "outputs"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L11",
+      "id": "message_bus_project_build_options",
+      "community": 5,
+      "norm_label": "options"
+    },
+    {
+      "label": "command",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L12",
+      "id": "message_bus_project_options_command",
+      "community": 5,
+      "norm_label": "command"
+    },
+    {
+      "label": "env",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L13",
+      "id": "message_bus_project_options_env",
+      "community": 5,
+      "norm_label": "env"
+    },
+    {
+      "label": "NODE_ENV",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L14",
+      "id": "message_bus_project_env_node_env",
+      "community": 5,
+      "norm_label": "node_env"
+    },
+    {
+      "label": "cwd",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L16",
+      "id": "message_bus_project_options_cwd",
+      "community": 5,
+      "norm_label": "cwd"
+    },
+    {
+      "label": "configurations",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L18",
+      "id": "message_bus_project_build_configurations",
+      "community": 5,
+      "norm_label": "configurations"
+    },
+    {
+      "label": "development",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L19",
+      "id": "message_bus_project_configurations_development",
+      "community": 5,
+      "norm_label": "development"
+    },
+    {
+      "label": "env",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L20",
+      "id": "message_bus_project_development_env",
+      "community": 5,
+      "norm_label": "env"
+    },
+    {
+      "label": "prune-lockfile",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L26",
+      "id": "message_bus_project_targets_prune_lockfile",
+      "community": 2,
+      "norm_label": "prune-lockfile"
+    },
+    {
+      "label": "dependsOn",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L27",
+      "id": "message_bus_project_prune_lockfile_dependson",
+      "community": 2,
+      "norm_label": "dependson"
+    },
+    {
+      "label": "cache",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L28",
+      "id": "message_bus_project_prune_lockfile_cache",
+      "community": 2,
+      "norm_label": "cache"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L29",
+      "id": "message_bus_project_prune_lockfile_executor",
+      "community": 2,
+      "norm_label": "executor"
+    },
+    {
+      "label": "outputs",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L30",
+      "id": "message_bus_project_prune_lockfile_outputs",
+      "community": 2,
+      "norm_label": "outputs"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L31",
+      "id": "message_bus_project_prune_lockfile_options",
+      "community": 2,
+      "norm_label": "options"
+    },
+    {
+      "label": "buildTarget",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L32",
+      "id": "message_bus_project_options_buildtarget",
+      "community": 2,
+      "norm_label": "buildtarget"
+    },
+    {
+      "label": "copy-workspace-modules",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L35",
+      "id": "message_bus_project_targets_copy_workspace_modules",
+      "community": 2,
+      "norm_label": "copy-workspace-modules"
+    },
+    {
+      "label": "dependsOn",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L36",
+      "id": "message_bus_project_copy_workspace_modules_dependson",
+      "community": 2,
+      "norm_label": "dependson"
+    },
+    {
+      "label": "cache",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L37",
+      "id": "message_bus_project_copy_workspace_modules_cache",
+      "community": 2,
+      "norm_label": "cache"
+    },
+    {
+      "label": "outputs",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L38",
+      "id": "message_bus_project_copy_workspace_modules_outputs",
+      "community": 2,
+      "norm_label": "outputs"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L39",
+      "id": "message_bus_project_copy_workspace_modules_executor",
+      "community": 2,
+      "norm_label": "executor"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L40",
+      "id": "message_bus_project_copy_workspace_modules_options",
+      "community": 2,
+      "norm_label": "options"
+    },
+    {
+      "label": "prune",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L44",
+      "id": "message_bus_project_targets_prune",
+      "community": 2,
+      "norm_label": "prune"
+    },
+    {
+      "label": "dependsOn",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L45",
+      "id": "message_bus_project_prune_dependson",
+      "community": 2,
+      "norm_label": "dependson"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L46",
+      "id": "message_bus_project_prune_executor",
+      "community": 2,
+      "norm_label": "executor"
+    },
+    {
+      "label": "serve",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L48",
+      "id": "message_bus_project_targets_serve",
+      "community": 6,
+      "norm_label": "serve"
+    },
+    {
+      "label": "continuous",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L49",
+      "id": "message_bus_project_serve_continuous",
+      "community": 6,
+      "norm_label": "continuous"
+    },
+    {
+      "label": "executor",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L50",
+      "id": "message_bus_project_serve_executor",
+      "community": 6,
+      "norm_label": "executor"
+    },
+    {
+      "label": "defaultConfiguration",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L51",
+      "id": "message_bus_project_serve_defaultconfiguration",
+      "community": 6,
+      "norm_label": "defaultconfiguration"
+    },
+    {
+      "label": "dependsOn",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L52",
+      "id": "message_bus_project_serve_dependson",
+      "community": 6,
+      "norm_label": "dependson"
+    },
+    {
+      "label": "options",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L53",
+      "id": "message_bus_project_serve_options",
+      "community": 6,
+      "norm_label": "options"
+    },
+    {
+      "label": "runBuildTargetDependencies",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L55",
+      "id": "message_bus_project_options_runbuildtargetdependencies",
+      "community": 6,
+      "norm_label": "runbuildtargetdependencies"
+    },
+    {
+      "label": "configurations",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L57",
+      "id": "message_bus_project_serve_configurations",
+      "community": 6,
+      "norm_label": "configurations"
+    },
+    {
+      "label": "buildTarget",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L59",
+      "id": "message_bus_project_development_buildtarget",
+      "community": 5,
+      "norm_label": "buildtarget"
+    },
+    {
+      "label": "production",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L61",
+      "id": "message_bus_project_configurations_production",
+      "community": 6,
+      "norm_label": "production"
+    },
+    {
+      "label": "buildTarget",
+      "file_type": "code",
+      "source_file": "project.json",
+      "source_location": "L62",
+      "id": "message_bus_project_production_buildtarget",
+      "community": 6,
+      "norm_label": "buildtarget"
+    },
+    {
+      "label": "webpack.config.mjs",
+      "file_type": "code",
+      "source_file": "webpack.config.mjs",
+      "source_location": "L1",
+      "id": "webpack_config_mjs",
+      "community": 11,
+      "norm_label": "webpack.config.mjs"
+    },
+    {
+      "label": "ROOT",
+      "file_type": "code",
+      "source_file": "webpack.config.mjs",
+      "source_location": "L8",
+      "id": "message_bus_webpack_config_root",
+      "community": 11,
+      "norm_label": "root"
+    },
+    {
+      "label": "failure",
+      "file_type": "code",
+      "source_file": "webpack.config.mjs",
+      "source_location": "L14",
+      "id": "message_bus_webpack_config_failure",
+      "community": 11,
+      "norm_label": "failure"
+    },
+    {
+      "label": "tsconfig.json",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L1",
+      "id": "tsconfig_json",
+      "community": 9,
+      "norm_label": "tsconfig.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "id": "message_bus_tsconfig_extends",
+      "community": 9,
+      "norm_label": "extends"
+    },
+    {
+      "label": "files",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "id": "message_bus_tsconfig_files",
+      "community": 9,
+      "norm_label": "files"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "id": "message_bus_tsconfig_include",
+      "community": 9,
+      "norm_label": "include"
+    },
+    {
+      "label": "references",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "id": "message_bus_tsconfig_references",
+      "community": 9,
+      "norm_label": "references"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L13",
+      "id": "message_bus_tsconfig_compileroptions",
+      "community": 9,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "esModuleInterop",
+      "file_type": "code",
+      "source_file": "tsconfig.json",
+      "source_location": "L14",
+      "id": "message_bus_tsconfig_compileroptions_esmoduleinterop",
+      "community": 9,
+      "norm_label": "esmoduleinterop"
+    },
+    {
+      "label": "eslint.config.mjs",
+      "file_type": "code",
+      "source_file": "eslint.config.mjs",
+      "source_location": "L1",
+      "id": "eslint_config_mjs",
+      "community": 12,
+      "norm_label": "eslint.config.mjs"
+    },
+    {
+      "label": "tsconfig.spec.json",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L1",
+      "id": "tsconfig_spec_json",
+      "community": 8,
+      "norm_label": "tsconfig.spec.json"
+    },
+    {
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L2",
+      "id": "message_bus_tsconfig_spec_extends",
+      "community": 8,
+      "norm_label": "extends"
+    },
+    {
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L3",
+      "id": "message_bus_tsconfig_spec_compileroptions",
+      "community": 8,
+      "norm_label": "compileroptions"
+    },
+    {
+      "label": "outDir",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L4",
+      "id": "message_bus_tsconfig_spec_compileroptions_outdir",
+      "community": 8,
+      "norm_label": "outdir"
+    },
+    {
+      "label": "experimentalDecorators",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L5",
+      "id": "message_bus_tsconfig_spec_compileroptions_experimentaldecorators",
+      "community": 8,
+      "norm_label": "experimentaldecorators"
+    },
+    {
+      "label": "emitDecoratorMetadata",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L6",
+      "id": "message_bus_tsconfig_spec_compileroptions_emitdecoratormetadata",
+      "community": 8,
+      "norm_label": "emitdecoratormetadata"
+    },
+    {
+      "label": "types",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L7",
+      "id": "message_bus_tsconfig_spec_compileroptions_types",
+      "community": 8,
+      "norm_label": "types"
+    },
+    {
+      "label": "include",
+      "file_type": "code",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L9",
+      "id": "message_bus_tsconfig_spec_include",
+      "community": 8,
+      "norm_label": "include"
+    },
+    {
+      "label": "main.ts",
+      "file_type": "code",
+      "source_file": "src/main.ts",
+      "source_location": "L1",
+      "id": "src_main_ts",
+      "community": 7,
+      "norm_label": "main.ts"
+    },
+    {
+      "label": "serve()",
+      "file_type": "code",
+      "source_file": "src/main.ts",
+      "source_location": "L28",
+      "id": "src_main_serve",
+      "community": 7,
+      "norm_label": "serve()"
+    },
+    {
+      "label": "runCommand()",
+      "file_type": "code",
+      "source_file": "src/main.ts",
+      "source_location": "L58",
+      "id": "src_main_runcommand",
+      "community": 7,
+      "norm_label": "runcommand()"
+    },
+    {
+      "label": "bootstrap()",
+      "file_type": "code",
+      "source_file": "src/main.ts",
+      "source_location": "L73",
+      "id": "src_main_bootstrap",
+      "community": 7,
+      "norm_label": "bootstrap()"
+    },
+    {
+      "label": "failure.filter.spec.ts",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L1",
+      "id": "src_app_failure_filter_spec_ts",
+      "community": 0,
+      "norm_label": "failure.filter.spec.ts"
+    },
+    {
+      "label": "ResponseDouble",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L18",
+      "id": "app_failure_filter_spec_responsedouble",
+      "community": 0,
+      "norm_label": "responsedouble"
+    },
+    {
+      "label": ".status()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L22",
+      "id": "app_failure_filter_spec_responsedouble_status",
+      "community": 0,
+      "norm_label": ".status()"
+    },
+    {
+      "label": ".json()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L28",
+      "id": "app_failure_filter_spec_responsedouble_json",
+      "community": 0,
+      "norm_label": ".json()"
+    },
+    {
+      "label": "PrismaClientKnownRequestError",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L36",
+      "id": "app_failure_filter_spec_prismaclientknownrequesterror",
+      "community": 0,
+      "norm_label": "prismaclientknownrequesterror"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L37",
+      "id": "app_failure_filter_spec_prismaclientknownrequesterror_constructor",
+      "community": 0,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "PrismaClientColumnMissingError",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L44",
+      "id": "app_failure_filter_spec_prismaclientcolumnmissingerror",
+      "community": 0,
+      "norm_label": "prismaclientcolumnmissingerror"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L51",
+      "id": "app_failure_filter_spec_prismaclientcolumnmissingerror_constructor",
+      "community": 0,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": "IJournalRecord",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L58",
+      "id": "app_failure_filter_spec_ijournalrecord",
+      "community": 0,
+      "norm_label": "ijournalrecord"
+    },
+    {
+      "label": "hostWith()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L63",
+      "id": "app_failure_filter_spec_hostwith",
+      "community": 0,
+      "norm_label": "hostwith()"
+    },
+    {
+      "label": "journal()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L79",
+      "id": "app_failure_filter_spec_journal",
+      "community": 0,
+      "norm_label": "journal()"
+    },
+    {
+      "label": "causeOf()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L90",
+      "id": "app_failure_filter_spec_causeof",
+      "community": 0,
+      "norm_label": "causeof()"
+    },
+    {
+      "label": "messageOf()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L95",
+      "id": "app_failure_filter_spec_messageof",
+      "community": 0,
+      "norm_label": "messageof()"
+    },
+    {
+      "label": "incidentOf()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L100",
+      "id": "app_failure_filter_spec_incidentof",
+      "community": 0,
+      "norm_label": "incidentof()"
+    },
+    {
+      "label": "response",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L110",
+      "id": "app_failure_filter_spec_response",
+      "community": 0,
+      "norm_label": "response"
+    },
+    {
+      "label": "written",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L182",
+      "id": "app_failure_filter_spec_written",
+      "community": 0,
+      "norm_label": "written"
+    },
+    {
+      "label": "incident",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L229",
+      "id": "app_failure_filter_spec_incident",
+      "community": 0,
+      "norm_label": "incident"
+    },
+    {
+      "label": "first",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L291",
+      "id": "app_failure_filter_spec_first",
+      "community": 0,
+      "norm_label": "first"
+    },
+    {
+      "label": "second",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L292",
+      "id": "app_failure_filter_spec_second",
+      "community": 0,
+      "norm_label": "second"
+    },
+    {
+      "label": "app.module.ts",
+      "file_type": "code",
+      "source_file": "src/app/app.module.ts",
+      "source_location": "L1",
+      "id": "src_app_app_module_ts",
+      "community": 4,
+      "norm_label": "app.module.ts"
+    },
+    {
+      "label": "AppModule",
+      "file_type": "code",
+      "source_file": "src/app/app.module.ts",
+      "source_location": "L48",
+      "id": "app_app_module_appmodule",
+      "community": 4,
+      "norm_label": "appmodule"
+    },
+    {
+      "label": "failure.filter.ts",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L1",
+      "id": "src_app_failure_filter_ts",
+      "community": 1,
+      "norm_label": "failure.filter.ts"
+    },
+    {
+      "label": "CARGO_KINDS",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L32",
+      "id": "app_failure_filter_cargo_kinds",
+      "community": 1,
+      "norm_label": "cargo_kinds"
+    },
+    {
+      "label": "TFailingRequest",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L44",
+      "id": "app_failure_filter_tfailingrequest",
+      "community": 1,
+      "norm_label": "tfailingrequest"
+    },
+    {
+      "label": "IFailingResponse",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L46",
+      "id": "app_failure_filter_ifailingresponse",
+      "community": 1,
+      "norm_label": "ifailingresponse"
+    },
+    {
+      "label": "isIntake()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L55",
+      "id": "app_failure_filter_isintake",
+      "community": 1,
+      "norm_label": "isintake()"
+    },
+    {
+      "label": "cargoKindOf()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L60",
+      "id": "app_failure_filter_cargokindof",
+      "community": 1,
+      "norm_label": "cargokindof()"
+    },
+    {
+      "label": "treeSlugOf()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L65",
+      "id": "app_failure_filter_treeslugof",
+      "community": 1,
+      "norm_label": "treeslugof()"
+    },
+    {
+      "label": "FailureFilter",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L70",
+      "id": "app_failure_filter_failurefilter",
+      "community": 1,
+      "norm_label": "failurefilter"
+    },
+    {
+      "label": ".catch()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L73",
+      "id": "app_failure_filter_failurefilter_catch",
+      "community": 1,
+      "norm_label": ".catch()"
+    },
+    {
+      "label": ".#bodyOf()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L96",
+      "id": "app_failure_filter_failurefilter_bodyof",
+      "community": 1,
+      "norm_label": ".#bodyof()"
+    },
+    {
+      "label": ".#statusOf()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L103",
+      "id": "app_failure_filter_failurefilter_statusof",
+      "community": 1,
+      "norm_label": ".#statusof()"
+    },
+    {
+      "label": ".#incidentOf()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L118",
+      "id": "app_failure_filter_failurefilter_incidentof",
+      "community": 1,
+      "norm_label": ".#incidentof()"
+    },
+    {
+      "label": ".#journalName()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L126",
+      "id": "app_failure_filter_failurefilter_journalname",
+      "community": 1,
+      "norm_label": ".#journalname()"
+    },
+    {
+      "label": ".#journalFields()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L141",
+      "id": "app_failure_filter_failurefilter_journalfields",
+      "community": 1,
+      "norm_label": ".#journalfields()"
+    },
+    {
+      "label": ".#messageOf()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L161",
+      "id": "app_failure_filter_failurefilter_messageof",
+      "community": 1,
+      "norm_label": ".#messageof()"
+    },
+    {
+      "label": ".#blindMessage()",
+      "file_type": "code",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L182",
+      "id": "app_failure_filter_failurefilter_blindmessage",
+      "community": 1,
+      "norm_label": ".#blindmessage()"
+    },
+    {
+      "label": "incident.ts",
+      "file_type": "code",
+      "source_file": "src/app/incident.ts",
+      "source_location": "L1",
+      "id": "src_app_incident_ts",
+      "community": 1,
+      "norm_label": "incident.ts"
+    },
+    {
+      "label": "incidentNumber()",
+      "file_type": "code",
+      "source_file": "src/app/incident.ts",
+      "source_location": "L23",
+      "id": "app_incident_incidentnumber",
+      "community": 1,
+      "norm_label": "incidentnumber()"
+    },
+    {
+      "label": "cargo-limit.ts",
+      "file_type": "code",
+      "source_file": "src/app/cargo-limit.ts",
+      "source_location": "L1",
+      "id": "src_app_cargo_limit_ts",
+      "community": 7,
+      "norm_label": "cargo-limit.ts"
+    },
+    {
+      "label": "cargoLimit()",
+      "file_type": "code",
+      "source_file": "src/app/cargo-limit.ts",
+      "source_location": "L16",
+      "id": "app_cargo_limit_cargolimit",
+      "community": 7,
+      "norm_label": "cargolimit()"
+    },
+    {
+      "label": "commands.module.ts",
+      "file_type": "code",
+      "source_file": "src/app/commands.module.ts",
+      "source_location": "L1",
+      "id": "src_app_commands_module_ts",
+      "community": 7,
+      "norm_label": "commands.module.ts"
+    },
+    {
+      "label": "CommandsModule",
+      "file_type": "code",
+      "source_file": "src/app/commands.module.ts",
+      "source_location": "L16",
+      "id": "app_commands_module_commandsmodule",
+      "community": 7,
+      "norm_label": "commandsmodule"
+    },
+    {
+      "label": "entry-settings.controller.ts",
+      "file_type": "code",
+      "source_file": "src/app/entry/entry-settings.controller.ts",
+      "source_location": "L1",
+      "id": "src_app_entry_entry_settings_controller_ts",
+      "community": 4,
+      "norm_label": "entry-settings.controller.ts"
+    },
+    {
+      "label": "EntrySettingsController",
+      "file_type": "code",
+      "source_file": "src/app/entry/entry-settings.controller.ts",
+      "source_location": "L14",
+      "id": "entry_entry_settings_controller_entrysettingscontroller",
+      "community": 4,
+      "norm_label": "entrysettingscontroller"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/app/entry/entry-settings.controller.ts",
+      "source_location": "L17",
+      "id": "entry_entry_settings_controller_entrysettingscontroller_constructor",
+      "community": 4,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".settings()",
+      "file_type": "code",
+      "source_file": "src/app/entry/entry-settings.controller.ts",
+      "source_location": "L23",
+      "id": "entry_entry_settings_controller_entrysettingscontroller_settings",
+      "community": 4,
+      "norm_label": ".settings()"
+    },
+    {
+      "label": "entry-settings.controller.spec.ts",
+      "file_type": "code",
+      "source_file": "src/app/entry/entry-settings.controller.spec.ts",
+      "source_location": "L1",
+      "id": "src_app_entry_entry_settings_controller_spec_ts",
+      "community": 4,
+      "norm_label": "entry-settings.controller.spec.ts"
+    },
+    {
+      "label": "controller",
+      "file_type": "code",
+      "source_file": "src/app/entry/entry-settings.controller.spec.ts",
+      "source_location": "L9",
+      "id": "entry_entry_settings_controller_spec_controller",
+      "community": 4,
+      "norm_label": "controller"
+    },
+    {
+      "label": "health.controller.spec.ts",
+      "file_type": "code",
+      "source_file": "src/app/health/health.controller.spec.ts",
+      "source_location": "L1",
+      "id": "src_app_health_health_controller_spec_ts",
+      "community": 4,
+      "norm_label": "health.controller.spec.ts"
+    },
+    {
+      "label": "moduleWith()",
+      "file_type": "code",
+      "source_file": "src/app/health/health.controller.spec.ts",
+      "source_location": "L10",
+      "id": "health_health_controller_spec_modulewith",
+      "community": 4,
+      "norm_label": "modulewith()"
+    },
+    {
+      "label": "health.controller.ts",
+      "file_type": "code",
+      "source_file": "src/app/health/health.controller.ts",
+      "source_location": "L1",
+      "id": "src_app_health_health_controller_ts",
+      "community": 4,
+      "norm_label": "health.controller.ts"
+    },
+    {
+      "label": "HealthController",
+      "file_type": "code",
+      "source_file": "src/app/health/health.controller.ts",
+      "source_location": "L15",
+      "id": "health_health_controller_healthcontroller",
+      "community": 4,
+      "norm_label": "healthcontroller"
+    },
+    {
+      "label": ".constructor()",
+      "file_type": "code",
+      "source_file": "src/app/health/health.controller.ts",
+      "source_location": "L18",
+      "id": "health_health_controller_healthcontroller_constructor",
+      "community": 4,
+      "norm_label": ".constructor()"
+    },
+    {
+      "label": ".check()",
+      "file_type": "code",
+      "source_file": "src/app/health/health.controller.ts",
+      "source_location": "L24",
+      "id": "health_health_controller_healthcontroller_check",
+      "community": 4,
+      "norm_label": ".check()"
+    }
+  ],
+  "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_app_json",
+      "target": "message_bus_tsconfig_app_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_app_json",
+      "target": "message_bus_tsconfig_app_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "tsconfig_app_json",
+      "target": "message_bus_tsconfig_app_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "message_bus_tsconfig_app_compileroptions",
+      "target": "message_bus_tsconfig_app_compileroptions_outdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "message_bus_tsconfig_app_compileroptions",
+      "target": "message_bus_tsconfig_app_compileroptions_module",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "message_bus_tsconfig_app_compileroptions",
+      "target": "message_bus_tsconfig_app_compileroptions_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "message_bus_tsconfig_app_compileroptions",
+      "target": "message_bus_tsconfig_app_compileroptions_experimentaldecorators",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "message_bus_tsconfig_app_compileroptions",
+      "target": "message_bus_tsconfig_app_compileroptions_emitdecoratormetadata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "message_bus_tsconfig_app_compileroptions",
+      "target": "message_bus_tsconfig_app_compileroptions_target",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "message_bus_tsconfig_app_compileroptions",
+      "target": "message_bus_tsconfig_app_compileroptions_moduleresolution",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "message_bus_tsconfig_app_compileroptions",
+      "target": "message_bus_tsconfig_app_compileroptions_strictnullchecks",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "message_bus_tsconfig_app_compileroptions",
+      "target": "message_bus_tsconfig_app_compileroptions_noimplicitany",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "message_bus_tsconfig_app_compileroptions",
+      "target": "message_bus_tsconfig_app_compileroptions_strictbindcallapply",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "message_bus_tsconfig_app_compileroptions",
+      "target": "message_bus_tsconfig_app_compileroptions_forceconsistentcasinginfilenames",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "message_bus_tsconfig_app_compileroptions",
+      "target": "message_bus_tsconfig_app_compileroptions_nofallthroughcasesinswitch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.app.json",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "message_bus_tsconfig_app_compileroptions",
+      "target": "message_bus_tsconfig_app_compileroptions_rootdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "message_bus_project_name",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "message_bus_project_schema",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "message_bus_project_sourceroot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "message_bus_project_projecttype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "message_bus_project_tags",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "project_json",
+      "target": "message_bus_project_targets",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "message_bus_project_targets",
+      "target": "message_bus_project_targets_build",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L26",
+      "weight": 1.0,
+      "source": "message_bus_project_targets",
+      "target": "message_bus_project_targets_prune_lockfile",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L35",
+      "weight": 1.0,
+      "source": "message_bus_project_targets",
+      "target": "message_bus_project_targets_copy_workspace_modules",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "message_bus_project_targets",
+      "target": "message_bus_project_targets_prune",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L48",
+      "weight": 1.0,
+      "source": "message_bus_project_targets",
+      "target": "message_bus_project_targets_serve",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_build",
+      "target": "message_bus_project_build_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_build",
+      "target": "message_bus_project_build_outputs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_build",
+      "target": "message_bus_project_build_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_build",
+      "target": "message_bus_project_build_configurations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "message_bus_project_build_options",
+      "target": "message_bus_project_options_command",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "message_bus_project_build_options",
+      "target": "message_bus_project_options_env",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "message_bus_project_build_options",
+      "target": "message_bus_project_options_cwd",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "message_bus_project_options_env",
+      "target": "message_bus_project_env_node_env",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L21",
+      "weight": 1.0,
+      "source": "message_bus_project_development_env",
+      "target": "message_bus_project_env_node_env",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "message_bus_project_build_configurations",
+      "target": "message_bus_project_configurations_development",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "message_bus_project_configurations_development",
+      "target": "message_bus_project_development_env",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "message_bus_project_serve_configurations",
+      "target": "message_bus_project_configurations_development",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L59",
+      "weight": 1.0,
+      "source": "message_bus_project_configurations_development",
+      "target": "message_bus_project_development_buildtarget",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L27",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_prune_lockfile",
+      "target": "message_bus_project_prune_lockfile_dependson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_prune_lockfile",
+      "target": "message_bus_project_prune_lockfile_cache",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_prune_lockfile",
+      "target": "message_bus_project_prune_lockfile_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_prune_lockfile",
+      "target": "message_bus_project_prune_lockfile_outputs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_prune_lockfile",
+      "target": "message_bus_project_prune_lockfile_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "message_bus_project_prune_lockfile_options",
+      "target": "message_bus_project_options_buildtarget",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "message_bus_project_copy_workspace_modules_options",
+      "target": "message_bus_project_options_buildtarget",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L54",
+      "weight": 1.0,
+      "source": "message_bus_project_serve_options",
+      "target": "message_bus_project_options_buildtarget",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_copy_workspace_modules",
+      "target": "message_bus_project_copy_workspace_modules_dependson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L37",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_copy_workspace_modules",
+      "target": "message_bus_project_copy_workspace_modules_cache",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_copy_workspace_modules",
+      "target": "message_bus_project_copy_workspace_modules_outputs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L39",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_copy_workspace_modules",
+      "target": "message_bus_project_copy_workspace_modules_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L40",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_copy_workspace_modules",
+      "target": "message_bus_project_copy_workspace_modules_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L45",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_prune",
+      "target": "message_bus_project_prune_dependson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_prune",
+      "target": "message_bus_project_prune_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L49",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_serve",
+      "target": "message_bus_project_serve_continuous",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L50",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_serve",
+      "target": "message_bus_project_serve_executor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_serve",
+      "target": "message_bus_project_serve_defaultconfiguration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L52",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_serve",
+      "target": "message_bus_project_serve_dependson",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L53",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_serve",
+      "target": "message_bus_project_serve_options",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L57",
+      "weight": 1.0,
+      "source": "message_bus_project_targets_serve",
+      "target": "message_bus_project_serve_configurations",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L55",
+      "weight": 1.0,
+      "source": "message_bus_project_serve_options",
+      "target": "message_bus_project_options_runbuildtargetdependencies",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L61",
+      "weight": 1.0,
+      "source": "message_bus_project_serve_configurations",
+      "target": "message_bus_project_configurations_production",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "project.json",
+      "source_location": "L62",
+      "weight": 1.0,
+      "source": "message_bus_project_configurations_production",
+      "target": "message_bus_project_production_buildtarget",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "webpack.config.mjs",
+      "source_location": "L8",
+      "weight": 1.0,
+      "source": "webpack_config_mjs",
+      "target": "message_bus_webpack_config_root",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "webpack.config.mjs",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "webpack_config_mjs",
+      "target": "message_bus_webpack_config_failure",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "message_bus_tsconfig_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "message_bus_tsconfig_files",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "message_bus_tsconfig_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "message_bus_tsconfig_references",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L13",
+      "weight": 1.0,
+      "source": "tsconfig_json",
+      "target": "message_bus_tsconfig_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "message_bus_tsconfig_compileroptions",
+      "target": "message_bus_tsconfig_compileroptions_esmoduleinterop",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "message_bus_tsconfig_spec_extends",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "message_bus_tsconfig_spec_compileroptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "tsconfig_spec_json",
+      "target": "message_bus_tsconfig_spec_include",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "source": "message_bus_tsconfig_spec_compileroptions",
+      "target": "message_bus_tsconfig_spec_compileroptions_outdir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "message_bus_tsconfig_spec_compileroptions",
+      "target": "message_bus_tsconfig_spec_compileroptions_experimentaldecorators",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "source": "message_bus_tsconfig_spec_compileroptions",
+      "target": "message_bus_tsconfig_spec_compileroptions_emitdecoratormetadata",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tsconfig.spec.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "message_bus_tsconfig_spec_compileroptions",
+      "target": "message_bus_tsconfig_spec_compileroptions_types",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "src_app_app_module_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "app_app_module_appmodule",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "src_app_cargo_limit_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "app_cargo_limit_cargolimit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "src_app_commands_module_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L20",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "app_commands_module_commandsmodule",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "src_main_serve",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "src_main_runcommand",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L73",
+      "weight": 1.0,
+      "source": "src_main_ts",
+      "target": "src_main_bootstrap",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L76",
+      "weight": 1.0,
+      "source": "src_main_bootstrap",
+      "target": "src_main_serve",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "src_main_serve",
+      "target": "app_cargo_limit_cargolimit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/main.ts",
+      "source_location": "L76",
+      "weight": 1.0,
+      "source": "src_main_bootstrap",
+      "target": "src_main_runcommand",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_spec_ts",
+      "target": "src_app_failure_filter_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_spec_ts",
+      "target": "app_failure_filter_failurefilter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_spec_ts",
+      "target": "app_failure_filter_spec_responsedouble",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L36",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_spec_ts",
+      "target": "app_failure_filter_spec_prismaclientknownrequesterror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_spec_ts",
+      "target": "app_failure_filter_spec_prismaclientcolumnmissingerror",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L58",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_spec_ts",
+      "target": "app_failure_filter_spec_ijournalrecord",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L63",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_spec_ts",
+      "target": "app_failure_filter_spec_hostwith",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L79",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_spec_ts",
+      "target": "app_failure_filter_spec_journal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L90",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_spec_ts",
+      "target": "app_failure_filter_spec_causeof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L95",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_spec_ts",
+      "target": "app_failure_filter_spec_messageof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L100",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_spec_ts",
+      "target": "app_failure_filter_spec_incidentof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L313",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_spec_ts",
+      "target": "app_failure_filter_spec_response",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L314",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_spec_ts",
+      "target": "app_failure_filter_spec_written",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L318",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_spec_ts",
+      "target": "app_failure_filter_spec_incident",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L291",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_spec_ts",
+      "target": "app_failure_filter_spec_first",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L292",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_spec_ts",
+      "target": "app_failure_filter_spec_second",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L22",
+      "weight": 1.0,
+      "source": "app_failure_filter_spec_responsedouble",
+      "target": "app_failure_filter_spec_responsedouble_status",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "app_failure_filter_spec_responsedouble",
+      "target": "app_failure_filter_spec_responsedouble_json",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L37",
+      "weight": 1.0,
+      "source": "app_failure_filter_spec_prismaclientknownrequesterror",
+      "target": "app_failure_filter_spec_prismaclientknownrequesterror_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.spec.ts",
+      "source_location": "L51",
+      "weight": 1.0,
+      "source": "app_failure_filter_spec_prismaclientcolumnmissingerror",
+      "target": "app_failure_filter_spec_prismaclientcolumnmissingerror_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.module.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_app_app_module_ts",
+      "target": "src_app_entry_entry_settings_controller_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.module.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_app_app_module_ts",
+      "target": "entry_entry_settings_controller_entrysettingscontroller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.module.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_app_app_module_ts",
+      "target": "src_app_health_health_controller_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.module.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "src_app_app_module_ts",
+      "target": "health_health_controller_healthcontroller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.module.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "src_app_app_module_ts",
+      "target": "src_app_failure_filter_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.module.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "src_app_app_module_ts",
+      "target": "app_failure_filter_failurefilter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/app.module.ts",
+      "source_location": "L48",
+      "weight": 1.0,
+      "source": "src_app_app_module_ts",
+      "target": "app_app_module_appmodule",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_ts",
+      "target": "src_app_cargo_limit_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_ts",
+      "target": "app_cargo_limit_cargolimit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_ts",
+      "target": "src_app_incident_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L29",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_ts",
+      "target": "app_incident_incidentnumber",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L32",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_ts",
+      "target": "app_failure_filter_cargo_kinds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_ts",
+      "target": "app_failure_filter_tfailingrequest",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L46",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_ts",
+      "target": "app_failure_filter_ifailingresponse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L55",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_ts",
+      "target": "app_failure_filter_isintake",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L60",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_ts",
+      "target": "app_failure_filter_cargokindof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L65",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_ts",
+      "target": "app_failure_filter_treeslugof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L70",
+      "weight": 1.0,
+      "source": "src_app_failure_filter_ts",
+      "target": "app_failure_filter_failurefilter",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L127",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter_journalname",
+      "target": "app_failure_filter_isintake",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L142",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter_journalfields",
+      "target": "app_failure_filter_isintake",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L162",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter_messageof",
+      "target": "app_failure_filter_isintake",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L185",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter_blindmessage",
+      "target": "app_failure_filter_isintake",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L143",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter_journalfields",
+      "target": "app_failure_filter_cargokindof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L143",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter_journalfields",
+      "target": "app_failure_filter_treeslugof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L73",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter",
+      "target": "app_failure_filter_failurefilter_catch",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L96",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter",
+      "target": "app_failure_filter_failurefilter_bodyof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L103",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter",
+      "target": "app_failure_filter_failurefilter_statusof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L118",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter",
+      "target": "app_failure_filter_failurefilter_incidentof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L126",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter",
+      "target": "app_failure_filter_failurefilter_journalname",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L141",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter",
+      "target": "app_failure_filter_failurefilter_journalfields",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L161",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter",
+      "target": "app_failure_filter_failurefilter_messageof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L182",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter",
+      "target": "app_failure_filter_failurefilter_blindmessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L76",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter_catch",
+      "target": "app_failure_filter_failurefilter_statusof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L79",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter_catch",
+      "target": "app_failure_filter_failurefilter_incidentof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L81",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter_catch",
+      "target": "app_failure_filter_failurefilter_journalname",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L81",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter_catch",
+      "target": "app_failure_filter_failurefilter_journalfields",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L83",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter_catch",
+      "target": "app_failure_filter_failurefilter_bodyof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L97",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter_bodyof",
+      "target": "app_failure_filter_failurefilter_messageof",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L119",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter_incidentof",
+      "target": "app_incident_incidentnumber"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L169",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter_messageof",
+      "target": "app_failure_filter_failurefilter_blindmessage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/app/failure.filter.ts",
+      "source_location": "L166",
+      "weight": 1.0,
+      "source": "app_failure_filter_failurefilter_messageof",
+      "target": "app_cargo_limit_cargolimit"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/incident.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "src_app_incident_ts",
+      "target": "app_incident_incidentnumber",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/cargo-limit.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_app_cargo_limit_ts",
+      "target": "app_cargo_limit_cargolimit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/commands.module.ts",
+      "source_location": "L16",
+      "weight": 1.0,
+      "source": "src_app_commands_module_ts",
+      "target": "app_commands_module_commandsmodule",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/entry/entry-settings.controller.ts",
+      "source_location": "L14",
+      "weight": 1.0,
+      "source": "src_app_entry_entry_settings_controller_ts",
+      "target": "entry_entry_settings_controller_entrysettingscontroller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/entry/entry-settings.controller.spec.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_entry_entry_settings_controller_spec_ts",
+      "target": "src_app_entry_entry_settings_controller_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/entry/entry-settings.controller.ts",
+      "source_location": "L17",
+      "weight": 1.0,
+      "source": "entry_entry_settings_controller_entrysettingscontroller",
+      "target": "entry_entry_settings_controller_entrysettingscontroller_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/entry/entry-settings.controller.ts",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "entry_entry_settings_controller_entrysettingscontroller",
+      "target": "entry_entry_settings_controller_entrysettingscontroller_settings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/entry/entry-settings.controller.spec.ts",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_app_entry_entry_settings_controller_spec_ts",
+      "target": "entry_entry_settings_controller_entrysettingscontroller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/entry/entry-settings.controller.spec.ts",
+      "source_location": "L19",
+      "weight": 1.0,
+      "source": "src_app_entry_entry_settings_controller_spec_ts",
+      "target": "entry_entry_settings_controller_spec_controller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/health/health.controller.spec.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_app_health_health_controller_spec_ts",
+      "target": "src_app_health_health_controller_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/health/health.controller.spec.ts",
+      "source_location": "L7",
+      "weight": 1.0,
+      "source": "src_app_health_health_controller_spec_ts",
+      "target": "health_health_controller_healthcontroller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/health/health.controller.spec.ts",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_app_health_health_controller_spec_ts",
+      "target": "health_health_controller_spec_modulewith",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/health/health.controller.ts",
+      "source_location": "L15",
+      "weight": 1.0,
+      "source": "src_app_health_health_controller_ts",
+      "target": "health_health_controller_healthcontroller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/health/health.controller.ts",
+      "source_location": "L18",
+      "weight": 1.0,
+      "source": "health_health_controller_healthcontroller",
+      "target": "health_health_controller_healthcontroller_constructor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "src/app/health/health.controller.ts",
+      "source_location": "L24",
+      "weight": 1.0,
+      "source": "health_health_controller_healthcontroller",
+      "target": "health_health_controller_healthcontroller_check",
+      "confidence_score": 1.0
+    }
+  ],
+  "hyperedges": [],
+  "built_at_commit": "76235026c0071bbfba479885de800c463a0de4ec"
+}

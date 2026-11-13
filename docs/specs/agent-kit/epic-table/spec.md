@@ -153,10 +153,12 @@ of the tree, not written into the command.
 ## Open questions
 
 - `Q-WC-9` — the paragraph above the table names why the epic exists, and the command takes it from
-  the plan by the heading. A plan whose first section is worded otherwise loses the paragraph, and
-  nothing says so.
+  the plan by the heading: «Что даёт», which the draft of the plan writes, or «Зачем» of older
+  plans. A plan whose first section is worded otherwise loses the paragraph, and nothing says so.
 
 ## History of changes
 
 - 2026-09-09 — the subdomain was created: the table of the epic's tasks is assembled by a command,
   not by the memory of the session.
+- 2026-11-11 — the paragraph above the table is also taken from the section «Что даёт», which the
+  draft of the plan writes; scenario SC-AK-1341.

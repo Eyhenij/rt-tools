@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when returning to unfinished work in a new session. What is already in the context, what not to ask the owner, how to edit "Where we stand", how to record a decision along the way and a stage revision. Not for starting work — that is pattern task-flow-start.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-resume.md · 74da4459cfe6 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-resume.md · ed3f10ba5afe · правится надстройкой, не здесь -->
 
 # Returning to unfinished work
 
@@ -58,7 +58,7 @@ gathered by reading. A list is good for knowing where to look; a stage is closed
 
 ## Entry from a session handover
 
-The handover was written by a past session and lies outside the tree. It is read as an assignment —
+The handover was written by a past session, and no check reads it. It is read as an assignment —
 and the work is taken up past the rule: the state is not checked, the rule is not loaded, the
 numbers are taken on trust. The entry from a handover differs from an ordinary session in one thing:
 everything written in it is checked against the tree, because it was written yesterday.
@@ -73,7 +73,7 @@ The order is short, four steps:
 3. **The numbers from the handover are recounted** on the current commit. The estimate "twice as
    much work" was never confirmed by a recount.
 4. **The next step is taken from the progress**, not from the handover's section about it: the
-   progress is committed, the handover is not, and they manage to diverge within one session.
+   handover retells the progress as it stood at its minute, and the two diverge within one session.
 
 What is not in the handover and never will be: the owner's words — they are in the grill; decisions
 with reasons — they are in the progress; the plan — it is on disk. The handover retells, it does not
@@ -95,6 +95,20 @@ the code edit.
 
 ## State `этап-идёт`: the stage is done and marked in the progress
 
+A large edit that crosses several layers — the contract, the storage, the applications — may be led
+by the role pipeline:
+
+```
+Workflow(name: "feature", args: { task: "<the plan stage>", grill: "docs/tasks/<ветка>/grill.md" })
+```
+
+The pipeline makes a plan of its own, up to six steps: its points role reads the task and epic plans,
+but its own steps do not come from `plan.md`. So it is given one stage of the plan, not the task,
+and its steps are not new stages: the progress marks the steps of the plan as before, and the
+pipeline's acceptance is the readiness sign of that stage. Its goal phase compares the result with
+the whole request of the grill, so for one stage its verdict "goal not met" is expected and is not
+the readiness sign.
+
 The "Where we stand" section is **rewritten**, not appended — it is the first thing the next session
 reads, and the only thing that survives trimming by size:
 
@@ -110,13 +124,13 @@ reads, and the only thing that survives trimming by size:
 - **PR:** not opened yet
 ```
 
-The PR line is mandatory from the minute the stages are over: between opening the PR and the merge a
-day or more passes, and that is where a session breaks off most often. Without it the next session
-reads "the last stage, all green" and learns of the open PR only from the branch history or from the
-owner — exactly the retelling all of this was set up to cancel:
+The PR line is mandatory from the minute the stages are over and lives while the folder does. The
+folder leaves by the commit before the PR opens, so the line names what the closing still has to do;
+after the opening the PR state is read from the host by its number, and the number is asked of the
+host by the branch. A PR reopened for remarks after the folder left keeps its state in the PR itself:
 
 ```markdown
-- **PR:** #1396, ждёт разбора · отвечено 3 замечания из 5 · не сделано: снятие черновика
+- **PR:** не открыт · осталось: разбор папки, сверка очереди
 ```
 
 The waiting line carries the owner's standing word about a stop, quoted in « », when they gave
@@ -173,36 +187,58 @@ taken at once, by the same move with which the previous one went to review.
 Taken, not chosen: the order was assigned at planning and lies in the epic plan. A choice offered to
 the owner under an assigned order is a request to assign it anew.
 
-Work outside an epic has no plan with an order, and the next is taken from the work queue — by the
-same move and with the same ban on choosing aloud. The queue is asked by a command, not by memory of
-what the executor created themselves. An empty queue is a statement about the tree, and it is backed
-by command output.
+Work outside an epic has no plan with an order, and the next work after it is named by the owner:
+the turn asks them, it does not take a card. The queue is asked by a command, not by memory of what
+the executor created themselves, and what it holds goes into the question. An empty queue is a
+statement about the tree, and it is backed by command output.
 
 ```bash
 # what is assigned next — read in the epic plan, not asked
 # the state of the tasks — in the work queue: the plan does not know what is closed
 ```
 
-Only the window fill limit stops the session — then comes the handover, pattern `task-flow-handoff`.
-A finished epic is never a reason to stop. Work is taken outside it — from the work queue — and the
-owner is told in the same turn that it is the epic that ended, not one of its tasks. It is named
-together with the taken work, not instead of it.
+Two things stop the session. The window fill limit — then comes the handover, pattern
+`task-flow-handoff`. And the end of the epic: the turn shows the table of its tasks and waits for
+the owner's word, rule `turn-conduct`. A card of the work queue outside the epic is not an order.
+While the epic is assigned and open, no check refuses taking such a card — this article holds it;
+after the epic's end the epic-end guard refuses it until the owner names the work.
 
 **Next move:** an action is done on the next task — a task, a branch or a folder is created. The
 turn ends after it, not after words about it.
 
+## State `влито`: the epic plan learns of the merge
+
+A person merged the PR, and the epic plan still names the task as in work. The row moves to merged
+in the branch of the next task, by its first commit: the epic branch carries no edits of its own. A
+lesson the task left for the following ones goes into the section of the plan about what was learned
+along the way, in the same commit. The last task of the epic has no next branch, and the epic branch
+takes no edit of its own: its row stays "handed over", and the body of the epic PR into the main
+branch names its merge.
+
+Work begun from cargo that arrived moves its records to "done" in the turn that learns of the merge,
+not at the folder's taking-apart: before the merge the edit is not in the tree, and the mark would
+claim what does not yet lie in main. The keys are taken from the archive and passed whole, as the
+intake read prints them:
+
+```bash
+npm run cargo:mark -- --state fixed \
+    --proposal <полный ключ> --proposal <полный ключ> \
+    --fix '<чем исправлено: статья правила, гард, проверка, правка кода>'
+```
+
+One fix per call, so the records go in batches by what closed them. The reply is read: "moved 0"
+means nothing moved.
+
+**Next move:** the work of the next task goes on — the merge needs no turn of its own.
+
 ## Common misses
 
-- **A session that ended in nothing is recorded too.** Otherwise the next one walks the same road:
-  "we tried this — it did not work, because" costs one line and saves a whole session.
-- **The uncommitted is named outright.** Work lives in the tree for weeks; the line "what lies
-  unsaved and why" is the only thing that makes it visible while there is no PR.
 - **Confirmation is command output or a measurement, not a retelling.** "Checked, it works" a
   session later cannot be told from "it seemed to work".
 - **A number from the handover and from "Where we stand" is recounted before it gets into any new
   text.** Not only before splitting the work. Carried into the grill or the progress, it is read by
   the next sessions as a measurement and checked by nobody else. The handover describes the day it
-  was written, lies outside the tree, and no check reads it. A count taken unrecounted diverged from
+  was written, and no check reads it. A count taken unrecounted diverged from
   the tree by eight and was found by a counting script, not by reading. The estimate "twice as much
   work as the previous" costs the same — on the current commit the volumes were almost equal. A
   recount costs one command, and the text gets its own number.

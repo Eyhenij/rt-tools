@@ -59,4 +59,27 @@ report "the receiver pays for the images" \
 report "the admin screens are asked once when both subjects are touched" \
     "$(steps_for 'receiver kit2' | grep -cF 'message-bus-admin-e2e:e2e')" '1'
 
+# The subjects of a commit that touched the named paths, read from a real diff in a scratch repository.
+touched_by() {
+    (
+        scratch="$(mktemp -d)"
+        trap 'rm -rf "$scratch"' EXIT
+        cd "$scratch" || exit 1
+        git init -q && git -c user.name=t -c user.email=t@t commit -q --allow-empty -m base
+        for path in "$@"; do mkdir -p "$(dirname "$path")" && printf '{}\n' > "$path"; done
+        git add -A && git -c user.name=t -c user.email=t@t commit -q -m touched
+        # shellcheck disable=SC1091
+        . "$ROOT/.claude/rt-kit/project.sh"
+        rt_push_touched HEAD~1 HEAD
+    )
+}
+
+# A code graph is data the session reads. Before it had a case of its own, a rebuilt root graph fell
+# into the general case and raised the whole heavy set, and a project graph raised its project's.
+report "a rebuilt code graph raises no heavy step" \
+    "$(touched_by graphify-out/graph.json projects/utils/graphify-out/graph.json \
+        projects/ui-kit-v2/graphify-out/graph.json apps/message-bus/graphify-out/graph.json)" ''
+report "the code next to a graph still raises its subject" \
+    "$(touched_by projects/ui-kit-v2/graphify-out/graph.json projects/ui-kit-v2/src/x.ts)" 'kit2'
+
 suite_result "the heavy steps a branch pays for"

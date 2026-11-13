@@ -127,3 +127,9 @@ tools/specs-for.mjs
 tools/task-new-queue.mjs
 tools/task-new.mjs
 tools/tree-assignment.mjs
+
+# Граф кода пишет graphify; форматирование переписало бы 40 МБ на каждом коммите.
+**/graphify-out/
+# Граф правил и его отчёт пишет `npm run graph:rules`: отформатированный файл расходился бы с тем,
+# что команда пишет при следующей сборке.
+projects/agent-kit/rules-graph/

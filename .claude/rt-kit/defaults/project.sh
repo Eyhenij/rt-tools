@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · defaults/project.sh · 315fbbe0f8e1 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · defaults/project.sh · 890242073130 · правится надстройкой, не здесь
 # Tree profile: what checks an edit here and what counts as reinvention.
 #
 # The package default. Everything the trees of this workshop have in common lives here: the Nx
@@ -111,9 +111,9 @@ RT_WINDOW_WARN_PCT="${RT_WINDOW_WARN_PCT:-40}"
 RT_WINDOW_STOP_PCT="${RT_WINDOW_STOP_PCT:-50}"
 RT_WINDOW_MARGIN_PCT="${RT_WINDOW_MARGIN_PCT:-5}"
 
-# Where the session handover is put. Outside the tree: the work state lives in the progress and is
-# committed, while the handover retells it for pasting into a new session and does not travel into
-# history.
+# Where the session-closing command puts the handover file. Outside the tree: the work state and the
+# handover section live in the progress and are committed, while the file retells them and does not
+# travel into history.
 RT_HANDOFF_DIR="${RT_HANDOFF_DIR:-.claude/handoff}"
 
 # The commands that pass after the stop threshold: the session closes with them. Refusing them would

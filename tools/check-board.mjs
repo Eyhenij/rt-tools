@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/check-board.github.mjs · 7967dfb20ab3 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/check-board.github.mjs · 677c72cd019b · правится надстройкой, не здесь
 /**
  * Audit of the work queue against what the delivery law requires of a task and its PR.
  *
@@ -50,7 +50,7 @@ import {
     taskDirs,
 } from './board.mjs';
 import { checkBranchFolders, checkUntrackedFolders } from './board-folders.mjs';
-import { checkConflicting, checkHeadRun } from './board-pull-state.mjs';
+import { checkConflicting, checkHeadRun, checkReviewer, fetchReviewers } from './board-pull-state.mjs';
 import { checkLongWork } from './board-long-work.mjs';
 import { HAS_PIPELINE, deployLag, lastDeploy, lastMainRun, pipelineText, pipelineWakesOnPush } from './board-runs.mjs';
 import { checkEpicLinks, checkEpicPullBase, checkEpicState, checkEpicSubIssues } from './board-epics.mjs';
@@ -163,7 +163,7 @@ function folderInBranch(branch, options) {
     }
 }
 
-let checked = { issues: 0, pulls: 0, cargo: 0, offBase: 0 };
+let checked = { issues: 0, pulls: 0, cargo: 0, offBase: 0, lagging: [] };
 
 // Drafts are judged by the disk and so are checked always: no connection is needed for that.
 checkDrafts();
@@ -182,7 +182,7 @@ try {
     // such a record, whatever labels it wears.
     const open = CARGO_LABELS.size === 0 ? allOpen : allOpen.filter((issue) => !isCargo(issue));
     const pulls = fetchOpenPulls(options);
-    checked = { issues: issues.length, pulls: pulls.length, cargo: allOpen.length - open.length, offBase: 0 };
+    checked = { issues: issues.length, pulls: pulls.length, cargo: allOpen.length - open.length, offBase: 0, lagging: [] };
 
     for (const item of board.foreign) {
         report(`the board: ${item} — the board holds tasks, not PRs about them`);
@@ -242,16 +242,16 @@ try {
         }
 
         checkConflicting(pull, report);
+        checkReviewer(pull, report, fetchReviewers(pull.number, options));
 
-        // The PR falling behind the main branch: the guard judges the base once, at the minute of
-        // opening, and a PR stands for days. Merged while behind, it carries into main a
-        // combination nobody checked — and the PR page does not show this: the run on it is green.
-        const behind = behindMain(pull.headRefName, MAIN_BRANCH, options);
+        // The PR falling behind its base is counted, not refused: a lag without a conflict the host
+        // merges itself, and a line that told to merge the base in sent the executor to do what the
+        // rules forbid. A conflicting PR is named by its own line above. The base of a task is the
+        // epic branch, and its lag behind main is the epic's, not the task's.
+        const base = pull.baseRefName || MAIN_BRANCH;
+        const behind = pull.mergeable === 'CONFLICTING' ? 0 : behindMain(pull.headRefName, base, options);
         if (behind > 0) {
-            report(
-                `PR #${pull.number}: the branch lags «${MAIN_BRANCH}» by ${behind} commits — the run went from a base ` +
-                    `the main branch no longer carries. Merge the main branch in, revise the check set by what the branch carries now, and run again`
-            );
+            checked.lagging.push(`PR #${pull.number} lags «${base}» by ${behind} commits`);
         }
 
         if (!FOLDER_SKIP.test(String(pull.body ?? '')) && pull.headRefName) {
@@ -392,6 +392,14 @@ if (!offline && checked.offBase > 0) {
     console.log(
         `check-board: open PRs with a base other than «${MAIN_BRANCH}» — ${checked.offBase}: the pipeline gives them no run, ` +
             `and the host closes no task on their merge — the tree closes those by a pipeline of its own or by the hand after the merge`
+    );
+}
+
+// A lag is a count, not a discrepancy: the line changes no exit code and asks for no merge.
+if (!offline && checked.lagging.length > 0) {
+    console.log(
+        `check-board: open PRs behind their base without a conflict — ${checked.lagging.join('; ')}: ` +
+            `nothing to do, the host merges such a branch itself; ask the host again before the merge`
     );
 }
 

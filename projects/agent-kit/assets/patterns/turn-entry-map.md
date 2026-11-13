@@ -39,9 +39,19 @@ done in such a place in general. Read first, the map answers a question the sess
 yet.
 
 ```bash
-# the handover — by the name of the current branch, not by picking from the directory
-handoff="$ROOT/${RT_HANDOFF_DIR:-.claude/handoff}/$(git branch --show-current).md"
-[ -r "$handoff" ] && { printf 'HANDOVER OF THE PAST SESSION\n\n'; cat "$handoff"; }
+# the handover — by the name of the current branch, not by picking from the directory:
+# first the section of the progress, the file outside the tree only where there is no section
+branch="$(git branch --show-current)"
+progress="$ROOT/${RT_TASKS_DIR:-docs/tasks}/$branch/progress.md"
+handoff="$ROOT/${RT_HANDOFF_DIR:-.claude/handoff}/$branch.md"
+section="$([ -r "$progress" ] && LC_ALL=C awk '$0 == "## Handover of the session" ||
+    $0 == "## Передача захода" { on = 1; next }
+    on && /^## / { on = 0 } on' "$progress")"
+if [ -n "$section" ]; then
+    printf 'HANDOVER OF THE PAST SESSION\n\n%s\n' "$section"
+elif [ -r "$handoff" ]; then
+    printf 'HANDOVER OF THE PAST SESSION\n\n'; cat "$handoff"
+fi
 
 # the map — as its own file, not parsed out of the rule
 [ -r "$map" ] && { printf 'TURN MAP\n\n'; cat "$map"; }

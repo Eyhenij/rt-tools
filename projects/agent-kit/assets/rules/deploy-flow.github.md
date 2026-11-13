@@ -43,7 +43,7 @@ flowchart TD
     G --> H[Old images are removed, the last three sha stay as rollback depth]
     H --> I{Production answers with what was rolled out}
     I -->|No| J[Rollout analysis: the restart goes by sha, not by the latest tag]
-    I -->|Yes| K[The work queue audit reads the last run of the main branch]
+    I -->|Yes| K[The work queue audit counts the lag of the main branch from the last successful rollout]
     C --> K
     J --> K
 ```
@@ -168,7 +168,7 @@ flowchart TD
   the owner's word replaces a check only when the owner was told the check did not run.
 - **The divergence of migrations from the schema is measured on a shadow storage, not on the one
   the pusher works with.** That one lawfully carries the trace of any unfinished branch, and a
-  check against it would hold up someone else's edit. The gate and the rollout call one and the
+  check against it would hold up someone else's edit. The gate and the pipeline call one and the
   same check — otherwise "matched" would mean different things in two places.
 - **Skipping the schema audit is lawful while the branch has not touched the storage.** A stopped
   database is a state of the machine, not a reason to refuse a documentation push; but a branch
@@ -182,17 +182,21 @@ flowchart TD
 
 - **A check standing in the gate set refuses when it could not do its work.** "Nowhere to check"
   and "the check is broken" are different things: the first the tree names itself — no subject, no
-  address set, the service not answering — and each such exit returns zero with its own line. The
+  address set, the service not answering — and each such exit returns the skip code with its own line. The
   second — a missing package, an empty name in the settings, an unexpected exception — returns a
   non-zero code and says that the check itself broke, not the subject. A shared zero for both makes
   a broken check indistinguishable from a passed one: the schema-to-migrations audit stood like that
   in the gate set, checking nothing, and hid three causes at once behind its zero.
+- **The merge button and the manual rollout run get their requirement at the host.** Both are
+  pressed at the host, where the guards of the session do not stand. The requirement is set at the
+  host — a required status check, a protected branch or a protected environment — or is named to the
+  one who presses, in the section of the PR description about the remaining step, before the press.
 
 ## What of the law is not here
 
-The state of production is not visible to the machine: the work queue audit asks for the last
-run of the main branch and judges by it, and nobody asks whether production answers with the
-build it rolled out. That is held by whoever rolled out.
+The state of production is not visible to the machine: the work queue audit counts how far the
+main branch has gone from the last successful rollout, and nobody asks whether production answers
+with the build it rolled out. That is held by whoever rolled out.
 
 Nothing counts the completeness of the registry cleanup: the script keeps the last three sha,
 and a miss in its selection shows only when the server disk has run out.
