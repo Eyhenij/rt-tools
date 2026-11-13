@@ -191,10 +191,17 @@ export class TestRtImageUploadMatrixComponent {
         {
             caption: 'Обе кнопки',
             cases: [
-                { ...BUTTONS_CASE, name: 'с выступом', downloadable: true },
-                { ...BUTTONS_CASE, name: 'с выступом, круглые', downloadable: true, shape: 'circle' },
-                { ...BUTTONS_CASE, name: 'внутри', downloadable: true, placement: 'inside' },
-                { ...BUTTONS_CASE, name: 'внутри, круглые', downloadable: true, shape: 'circle', placement: 'inside' },
+                { ...BUTTONS_CASE, name: 'с выступом', downloadable: true, visibility: 'always' },
+                { ...BUTTONS_CASE, name: 'с выступом, круглые', downloadable: true, visibility: 'always', shape: 'circle' },
+                { ...BUTTONS_CASE, name: 'внутри', downloadable: true, visibility: 'always', placement: 'inside' },
+                {
+                    ...BUTTONS_CASE,
+                    name: 'внутри, круглые',
+                    downloadable: true,
+                    visibility: 'always',
+                    shape: 'circle',
+                    placement: 'inside',
+                },
             ],
         },
         {
@@ -209,24 +216,48 @@ export class TestRtImageUploadMatrixComponent {
         },
     ];
 
-    /** Место кнопок: четыре угла в каждом из двух видов, обе кнопки включены */
+    /**
+     * Место кнопок: четыре угла в каждом из двух видов. Обе кнопки включены и видны всегда: снимок
+     * наведения не ставит, а место крестика должно быть в кадре.
+     */
     public readonly placeRows: readonly IImageUploadButtonsRow[] = [
         {
             caption: 'С выступом за угол (по умолчанию)',
             cases: [
-                { ...BUTTONS_CASE, name: 'правый верхний (по умолчанию)', downloadable: true },
-                { ...BUTTONS_CASE, name: 'левый верхний', downloadable: true, corner: 'top-left' },
-                { ...BUTTONS_CASE, name: 'правый нижний', downloadable: true, corner: 'bottom-right' },
-                { ...BUTTONS_CASE, name: 'левый нижний', downloadable: true, corner: 'bottom-left' },
+                { ...BUTTONS_CASE, name: 'правый верхний (по умолчанию)', downloadable: true, visibility: 'always' },
+                { ...BUTTONS_CASE, name: 'левый верхний', downloadable: true, visibility: 'always', corner: 'top-left' },
+                { ...BUTTONS_CASE, name: 'правый нижний', downloadable: true, visibility: 'always', corner: 'bottom-right' },
+                { ...BUTTONS_CASE, name: 'левый нижний', downloadable: true, visibility: 'always', corner: 'bottom-left' },
             ],
         },
         {
             caption: 'Внутри картинки',
             cases: [
-                { ...BUTTONS_CASE, name: 'правый верхний', downloadable: true, placement: 'inside' },
-                { ...BUTTONS_CASE, name: 'левый верхний', downloadable: true, corner: 'top-left', placement: 'inside' },
-                { ...BUTTONS_CASE, name: 'правый нижний', downloadable: true, corner: 'bottom-right', placement: 'inside' },
-                { ...BUTTONS_CASE, name: 'левый нижний', downloadable: true, corner: 'bottom-left', placement: 'inside' },
+                { ...BUTTONS_CASE, name: 'правый верхний', downloadable: true, visibility: 'always', placement: 'inside' },
+                {
+                    ...BUTTONS_CASE,
+                    name: 'левый верхний',
+                    downloadable: true,
+                    visibility: 'always',
+                    corner: 'top-left',
+                    placement: 'inside',
+                },
+                {
+                    ...BUTTONS_CASE,
+                    name: 'правый нижний',
+                    downloadable: true,
+                    visibility: 'always',
+                    corner: 'bottom-right',
+                    placement: 'inside',
+                },
+                {
+                    ...BUTTONS_CASE,
+                    name: 'левый нижний',
+                    downloadable: true,
+                    visibility: 'always',
+                    corner: 'bottom-left',
+                    placement: 'inside',
+                },
             ],
         },
     ];
