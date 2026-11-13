@@ -142,6 +142,22 @@ Then the guard runs the set: there is no base to compare the head with
 
 Covered: `projects/agent-kit/tests/git-guard-push-nothing-new.test.sh`.
 
+### SC-AK-1347 — a commit of unread paths keeps the mark of a check
+
+Given a profile that names the paths a check does not read, and the key of that check
+When a commit changes those paths alone — a file under the unread directory, a text at the root
+Then the key of the check is the same, and the key of a check the profile does not name changes
+
+Covered: `projects/agent-kit/tests/git-guard-push-marks-unread.test.sh`.
+
+### SC-AK-1348 — a commit of what the check reads drops its mark
+
+Given the same profile and the key of the check
+When a commit changes a file of code, or a text that lies inside the code
+Then the key of the check changes
+
+Covered: `projects/agent-kit/tests/git-guard-push-marks-unread.test.sh`.
+
 ### SC-AK-1166 — the push gate names every red light check by one refusal
 
 Given the gate set holds two red light checks, a green one between them and a heavy one after them

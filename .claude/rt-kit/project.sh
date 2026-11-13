@@ -214,7 +214,8 @@ EOF
     rt_push_checks_default "$1" \
         | grep -vE 'agent-kit sync --check|nx (run-many|affected) -t lint test build|stylelint "\*\*/\*\.scss"|tools/check-(specs|dupes|push-gate)\.mjs|guard scenarios:'
 
-    { [ -n "$1" ] && . "$(dirname "${BASH_SOURCE[0]}")/project-texts.sh" 2>/dev/null && rt_push_texts_only "$1"; } || cat <<'EOF' # texts alone run no builder step
+    # A branch of texts alone runs no step of the builder — the why is in `project-texts.sh`.
+    { [ -n "$1" ] && command -v rt_push_texts_only >/dev/null 2>&1 && rt_push_texts_only "$1"; } || cat <<'EOF'
 pnpm exec nx affected -t lint typecheck test build --parallel
 pnpm exec nx affected -t test-hooks
 pnpm run lint:styles
@@ -408,17 +409,10 @@ rt_kit2_reaches() {
     return 1
 }
 
-# Whether the branch touched only texts. A zero code — only texts, otherwise — code.
-#
-# An empty list of what was touched does not count as a textual edit: there is nothing to compare
-# against, and silence here would read as "there is nothing to change".
-rt_push_docs_only() {
-    changed="$(git diff --name-only "$1"...HEAD 2>/dev/null)"
-    [ -z "$changed" ] && return 1
-    printf '%s\n' "$changed" | grep -qvE '(^docs/|\.md$)' && return 1
-
-    return 0
-}
+# What tells a branch of texts and what the builder steps do not read stands in the file next to
+# this one: this file is at the length limit.
+# shellcheck disable=SC1091
+. "$(dirname "${BASH_SOURCE[0]}")/project-texts.sh" 2>/dev/null || true
 
 # Which document must travel by the same commit as this file. It prints a path sample or stays
 # silent.

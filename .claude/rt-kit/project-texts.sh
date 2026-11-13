@@ -30,3 +30,30 @@ rt_push_texts_only() {
 
     return 0
 }
+
+# Whether the branch touched only texts. A zero code — only texts, otherwise — code.
+#
+# An empty list of what was touched does not count as a textual edit: there is nothing to compare
+# against, and silence here would read as "there is nothing to change".
+rt_push_docs_only() {
+    changed="$(git diff --name-only "$1"...HEAD 2>/dev/null)"
+    [ -z "$changed" ] && return 1
+    printf '%s\n' "$changed" | grep -qvE '(^docs/|\.md$)' && return 1
+
+    return 0
+}
+
+# The paths a check of the set does not read, as path specs — one per line. The mark of such a check
+# stays in force over a commit of these paths alone: the task folder taken apart by the last commit
+# of a branch and a line in the plan of an epic no longer run the builder over code it just judged.
+#
+# Named for the steps of the builder and the styles linter only, and by the same narrow sign as a
+# branch of texts: files under `docs/`, a markdown file at the root and the table of assignments.
+# The checks of texts and of the tree are not named — they are what reads such a commit.
+rt_push_check_unread() {
+    case "$1" in
+        *'nx affected'* | *'lint:styles'*)
+            printf '%s\n' ':(exclude)docs' ':(exclude,glob)*.md' ':(exclude).claude/rt-kit/assignments.md'
+            ;;
+    esac
+}
