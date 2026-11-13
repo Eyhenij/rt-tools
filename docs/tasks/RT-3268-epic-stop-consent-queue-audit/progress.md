@@ -46,3 +46,10 @@
 
 - The folder is assembled in a local branch without a number: the end-of-epic guard refused the
   task creation until its own fix is laid out.
+- Three commits lie in the local branch `RT-3220-deploy-cache-cleanup`: `0387b20c2`, `0dcad0bda`,
+  `ad86cea45`. Green: the guard suite 51, the audit suites, the whole package suite,
+  `agent-kit:check`, the checks of specs, paths, sizes, the glossary and the descriptions.
+- The first review round is started on `ad86cea45`: the code review and the role
+  `project-manager`.
+- The merge `847348e40` of the epic branch into the branch of the request #3225 lies in the local
+  branch `RT-3197-rev-autonomous-work`, its push set is green, and the push waits for the owner.
