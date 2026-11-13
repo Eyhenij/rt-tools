@@ -1,7 +1,7 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, Injector, Signal, ViewEncapsulation } from '@angular/core';
 
-import { RT_ASIDE_DATA, RtAsideComponent, RtAsideFooterComponent, RtAsideRef } from '@rt-tools/ui-kit-v2/aside';
+import { RT_ASIDE_DATA, RtAsideComponent, RtAsideFooterComponent, RtAsideHeaderComponent, RtAsideRef } from '@rt-tools/ui-kit-v2/aside';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 import { IRtWorkspace } from './rt-workspace.model';
@@ -9,8 +9,9 @@ import { IRtWorkspace } from './rt-workspace.model';
 const BEM_BLOCK: string = 'rt-workspace-aside-overlay';
 
 /**
- * Панель сведений рабочего стола, открытая поверх окна: шаблон панели приложения в рамке `rt-aside`
- * с кнопкой «Закрыть» в подвале. Открывает её сам рабочий стол; наружу компонент не отдаётся.
+ * Панель сведений рабочего стола, открытая поверх окна: обычный `rt-aside` — шапка со стрелкой назад,
+ * надписью «Сведения» и заголовком из входа рабочего стола, шаблон панели приложения и кнопка
+ * «Закрыть» в подвале. Открывает её сам рабочий стол; наружу компонент не отдаётся.
  */
 @Component({
     selector: 'rt-workspace-aside-overlay',
@@ -24,6 +25,7 @@ const BEM_BLOCK: string = 'rt-workspace-aside-overlay';
         // standalone components / directives
         RtAsideComponent,
         RtAsideFooterComponent,
+        RtAsideHeaderComponent,
         RtButtonDirective,
     ],
     host: {

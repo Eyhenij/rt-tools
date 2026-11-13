@@ -26,6 +26,12 @@ Given a reader on the records screen with a reply that goes out later
 When they type a text and press the button that reads the draft, twice with different texts
 Then the reply shows its label and icon, and the bar above the field holds the last text
 
+### SC-AUTH-107 — the send button of the correspondence is named by the kit dictionary
+
+Given a reader on the records screen
+When they look at the send button of the correspondence
+Then its accessible name is «Send message», the words of the kit dictionary
+
 ### SC-AUTH-48 — a wrong password keeps the person on the entry screen
 
 Given the stand and a reader

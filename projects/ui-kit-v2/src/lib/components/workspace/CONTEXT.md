@@ -11,15 +11,17 @@
 </rt-workspace>
 ```
 
-| вход                                                    | тип                | умолчание       |
-| ------------------------------------------------------- | ------------------ | --------------- |
-| `storageKey`                                            | `string \| null`   | `null`          |
-| `hasActive`                                             | `boolean`          | `false`         |
-| `listMinWidth` / `listMaxWidth` / `listDefaultWidth`    | `number \| string` | 240 / 480 / 320 |
-| `asideMinWidth` / `asideMaxWidth` / `asideDefaultWidth` | `number \| string` | 280 / 560 / 360 |
-| `centerMinWidth`                                        | `number \| string` | 360             |
-| `singleColumnBreakpoint`                                | `number \| null`   | `null`          |
-| `asideOverlayWidth`                                     | `number \| string` | 540             |
+| вход                                                    | тип                   | умолчание       |
+| ------------------------------------------------------- | --------------------- | --------------- |
+| `storageKey`                                            | `string \| null`      | `null`          |
+| `hasActive`                                             | `boolean`             | `false`         |
+| `listMinWidth` / `listMaxWidth` / `listDefaultWidth`    | `number \| string`    | 240 / 480 / 320 |
+| `asideMinWidth` / `asideMaxWidth` / `asideDefaultWidth` | `number \| string`    | 280 / 560 / 360 |
+| `centerMinWidth`                                        | `number \| string`    | 360             |
+| `singleColumnBreakpoint`                                | `number \| null`      | `null`          |
+| `asideOverlayWidth`                                     | `number \| string`    | 540             |
+| `asideTitle`                                            | `string \| null`      | `null`          |
+| `asideContentLayout`                                    | `'default' \| 'tabs'` | `'default'`     |
 
 Выход: `backClicked`. API панели: `openAside()`, `closeAside()`, `toggleAside()`,
 `toggleAsideCollapsed()`, сигналы `asideOpen()`, `asideCollapsed()`, `asideOverlay()`, `listWidth()`,
@@ -39,9 +41,13 @@
 
 **Порог одной колонки задаёт `singleColumnBreakpoint`.** Без входа порог держат стили: 768. С
 входом одна колонка остаётся только на месте не шире него. Выше порога список и середина стоят
-рядом. Пока место не шире 1080, панель подробностей открывается поверх окна: боковая панель шириной
-`asideOverlayWidth` с затемнением и кнопкой «Закрыть». Её закрывают кнопка, затемнение и Esc, после
-этого `asideOpen()` возвращает `false`. Сигнал `asideOverlay()` говорит, что панель сейчас
+рядом. Пока место не шире 1080, панель подробностей открывается поверх окна: обычный `rt-aside`
+шириной `asideOverlayWidth` с затемнением. У него шапка `rt-aside-header`
+(`qa-dataid="workspace-aside-overlay-header"`): стрелка назад (`aside-back`), над заголовком надпись
+«Сведения» из подписи `uiAsideDetails`, заголовок из `asideTitle`. Без заголовка шапка остаётся со
+стрелкой и надписью. Внизу кнопка «Закрыть» (`workspace-aside-overlay-close`). Шаблон из вкладок
+передаётся с `asideContentLayout="tabs"`: полоса вкладок встаёт сразу под шапку. Панель закрывают
+стрелка, кнопка, затемнение и Esc, после этого `asideOpen()` возвращает `false`. Сигнал `asideOverlay()` говорит, что панель сейчас
 открывается так. Порог выше 1080 не задают: третья колонка появляется на 1080.
 
 ## Края

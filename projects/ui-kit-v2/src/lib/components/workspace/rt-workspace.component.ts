@@ -33,7 +33,7 @@ import { map, mergeMap, Observable, of, Subject, switchMap } from 'rxjs';
 import { StorageService } from '@rt-tools/core';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RtAsideRef, RtAsideService } from '@rt-tools/ui-kit-v2/aside';
+import { RtAsideRef, RtAsideService, TRtAsideContentLayout } from '@rt-tools/ui-kit-v2/aside';
 import { BreakpointsService, RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtWorkspaceAsideOverlayComponent } from './rt-workspace-aside-overlay.component';
@@ -217,6 +217,18 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
         transform: numberAttribute,
     });
 
+    /**
+     * Заголовок шапки панели сведений, открытой поверх окна: имя записи, чьи сведения открыты.
+     * Без него в шапке остаются стрелка назад и надпись «Сведения». В колонке не показывается.
+     */
+    public readonly asideTitle: InputSignal<string | null> = input<string | null>(null);
+
+    /**
+     * Раскладка содержимого панели поверх окна, как у `rt-aside`: `tabs` для шаблона сведений из
+     * вкладок — полоса вкладок стоит на месте, прокручивается содержимое вкладки.
+     */
+    public readonly asideContentLayout: InputSignal<TRtAsideContentLayout> = input<TRtAsideContentLayout>('default');
+
     public readonly backClicked: OutputEmitterRef<void> = output<void>();
 
     public readonly asideOverlay: Signal<boolean> = computed(
@@ -340,6 +352,8 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
             template,
             context: this.slotContext,
             width: this.asideOverlayWidth(),
+            title: this.asideTitle,
+            contentLayout: this.asideContentLayout,
         };
         const ref: RtAsideRef<void> = this.#asides.open<RtWorkspaceAsideOverlayComponent, IRtWorkspace.AsideOverlayData, void>(
             RtWorkspaceAsideOverlayComponent,

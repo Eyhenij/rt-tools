@@ -1,4 +1,11 @@
-<rt-aside modal trapFocus [width]="width" [style.--rt-aside-narrow-width]="width" [ariaLabel]="t().uiDetails">
+<rt-aside
+    modal
+    trapFocus
+    [width]="width"
+    [style.--rt-aside-narrow-width]="width"
+    [contentLayout]="data.contentLayout()"
+    [ariaLabel]="t().uiDetails">
+    <rt-aside-header qa-dataid="workspace-aside-overlay-header" [overline]="t().uiAsideDetails" [title]="data.title()" />
     <ng-container [ngTemplateOutlet]="data.template" [ngTemplateOutletContext]="data.context" [ngTemplateOutletInjector]="injector" />
     <rt-aside-footer>
         <button
