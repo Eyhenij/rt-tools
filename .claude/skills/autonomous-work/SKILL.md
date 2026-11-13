@@ -4,7 +4,7 @@ kind: rule
 law: autonomous-work
 description: Rule under the autonomous-work law. Load when the owner has left and asked for unattended work — a chain of branches, a default instead of a question, local work with nothing pushed outside, a list of what was done by morning. Pattern autonomous-work-run. One piece of work — rule task-flow.
 ---
-<!-- rt-kit v0.37.0 · rules/autonomous-work.md · 7814092ba154 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/autonomous-work.md · 98eaf517d281 · правится надстройкой, не здесь -->
 
 # Autonomous work — how it works here
 
@@ -13,15 +13,18 @@ owner is not around; here — what it is called in the tree and what changes in 
 work. The course of work itself — rule `task-flow`, the end of a turn — `turn-conduct`, delivery —
 `git-workflow`: an autonomous session does not cancel them, it narrows them.
 
+**Cold part:** `pitfalls.md` next to it — traps already stepped on. Loaded on demand, not together
+with the rule.
+
 ## What it is called here
 
 | In the law | Here |
 | --- | --- |
 | an autonomous session | the owner's request to work without them, stated in words and with a time boundary; started by the command `/night` |
 | a default instead of a question | a "Decisions" line in the grill: what was taken, the reason and the cost of a mistake |
-| work visible from outside | pushing a branch, opening a PR, merging, publishing the package, sending cargo |
+| work visible from outside | pushing a branch, opening a PR, merging, publishing the package, sending cargo; moving a card on the work queue is not among them: the session moves it back itself, and nobody acts on it before morning |
 | a chain | the branch of each next piece of work is created from the branch of the previous one |
-| the morning list | the last message of the session: the work, the branch, what backs it, what it waits for |
+| the morning list | a file the command `/night` creates and every closed work appends to: the work, the branch, what backs it, what it waits for; the last message gives it whole |
 | postponed work | a task that needs the owner's word: its state on the board does not move |
 
 ## Where it lives
@@ -34,16 +37,18 @@ rule travels between repositories, and each tree has its own layout.
 
 ```mermaid
 flowchart TD
-    A[The owner declared an autonomous session] --> B[A task is taken from the work queue]
+    A[The owner declared an autonomous session] --> B[A task is taken from the epic plan, or from the work queue]
     B --> C{The owner's word is needed}
-    C -->|Yes| D[The task is postponed whole, the reason goes into the morning list]
-    C -->|No| E[The branch is created from the previous work, not from main]
+    C -->|Yes| D[The task is not taken, the reason goes into the morning list]
+    C -->|No| H{The readiness sign can be named as a command}
+    H -->|No| D
+    H -->|Yes| E[The branch is created from the previous work, not from the base]
     E --> F[Task folder, grill with defaults, plan]
     F --> G[Work by stages; each stage ends with a commit]
-    G --> H{The readiness sign is checked by a command}
-    H -->|No command| D
-    H -->|There is one| I[Run; red is fixed in the same branch]
-    I --> J[The task folder is taken apart into the archive]
+    G --> I{Run green}
+    I -->|Red is fixed in the same branch| J[The task folder is taken apart; the work stops before the PR]
+    I -->|Red cannot be fixed, or the owner's word is needed| X[The work stops: the card goes back, the list says the branch is not merged]
+    X --> K
     J --> K{The night is not over}
     K -->|Yes| B
     K -->|No| L[Morning list: what was done, where it lies, what backs it, what it waits for]
@@ -65,42 +70,45 @@ flowchart TD
   rewritten into the command, the order would become a second source and diverge from the first
   silently.
 - **The branch of the next work is created from the previous one, not from main.** The first — from
-  main, each next — from the tip of the previous: `git checkout -b <ключ>-<номер>-<slug> <прошлая
-  ветка>`. The owner merges them in turn from the bottom up, and each PR stands on the previous one.
+  the epic branch, or from main where the work has no epic; each next — from the tip of the
+  previous: `git checkout -b <КЛЮЧ>-<номер>-<slug> <прошлая-ветка>`. The owner merges them in turn
+  from the bottom up, and each PR stands on the previous one. A night work stops in the state
+  `папка-разобрана`: the PR is opened in the morning. A base that moved during the night — main or
+  the epic branch — is merged into the previous branch locally before the next branch is created:
+  a delivery check refuses a base without it, and the fix it names needs a push.
 - **Nothing goes outside during the night.** No push, no PR, no merge, no publishing, no sending
   cargo to the intake: all of it is visible to others, and a person cancels it. Cargo marks that
   need a merge wait too — they assert what is not yet in main.
 - **A task that needs the owner's word is not taken at all.** Its state on the board does not move:
-  a task taken and postponed looks begun, and the next session skips it.
+  a task taken and postponed halfway looks done, and the next session does not come back to it. A
+  task that runs into the owner's word halfway stops the way unfixable red does.
 - **A default is written where the owner's answer would have been written.** As a line in the grill:
   what was taken, why and what a mistake will cost. A silent default cannot be told from knowledge.
 - **The readiness sign is named as a command before the stage begins.** The executor's look confirms
   nothing in an autonomous session: there is nobody to check it until morning.
 - **A red run is fixed in the same branch, not postponed.** Postponed, it reaches the owner together
-  with a branch that cannot be merged.
+  with a branch that cannot be merged. Red that cannot be made green stops this work: its card goes
+  back to its former column, its line in the list says the branch is not merged, and the next work
+  branches from the last green branch of the chain — the stopped one leaves the merge order.
 - **A guard's refusal is a work step, not the end of the session.** It names what was skipped; the
-  skipped is done, and the work goes on. Bypassing a guard stays forbidden in an autonomous session
-  too.
+  skipped is done, and the work goes on. A refusal that demands an action visible from outside is
+  not carried out at night: the work stops before that step, and the list names what it waits for.
+  Bypassing a guard stays forbidden in an autonomous session too.
 - **The morning list is written along the way, not recalled at the end.** Each closed piece of work
-  appends its line: the night is longer than the window, and there is nothing to recall it whole by
-  in the morning.
+  appends its line: the night is longer than the window. A broken night is resumed from the list
+  file, which the command does not write over.
 
 ## What of the law is not here
 
-Nothing checks the session's time boundary: the command asks for it and writes it down, and after
-that the session ends when the work is over or the owner said a word. Keeping the ban on what is visible from outside is held the same way — by the rule, not by a
-guard: the push command is no different from the one made by day.
+Nothing checks the session's time boundary: the command writes it into the head of the list, and
+the session ends at it or by the owner's word; a queue emptied earlier ends it with the list. A
+turn-exit guard that holds a working turn under an open epic does not know the boundary either:
+the command names the lawful last turn. The
+ban on what is visible from outside, the chain's base, a written default and a readiness command
+named before the stage are held the same way — by the rule, not by a guard: the push command is no
+different from the one made by day.
 
 ## Patterns
 
 - `autonomous-work-run` — the ready-made night cycle: the chain of branches, writing a default, the
   morning list, handling a guard's refusal.
-
-## Pitfalls
-
-- **A branch created from main by habit breaks the chain.** This shows only to the owner and only at
-  the second merge; it is fixed by re-creating the branch while the work has not gone far.
-- **A task postponed without a line in the list is lost.** In the morning it is seen neither on the
-  board nor in the branches: it looks simply not taken.
-- **A default written in the commit body does not reach the owner.** They read the list and the task
-  folder, not the branch history.

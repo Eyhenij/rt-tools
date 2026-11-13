@@ -2,7 +2,7 @@
 description: The start of an autonomous session — the time boundary, the checks before the first work, the cycle until morning and the list the owner reads
 argument-hint: '[until when: «до 8 утра» | «часов шесть» | empty — the boundary is asked]'
 ---
-<!-- rt-kit v0.37.0 · commands/night.md · 37dfd93b1198 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · commands/night.md · 5c920df82a99 · правится надстройкой, не здесь -->
 
 Start an autonomous session: the owner is leaving, and the work goes on without them until the
 boundary they named. The boundary from the owner: `$ARGUMENTS`
@@ -21,12 +21,8 @@ The boundary stands in the arguments — take it as it is written. There is none
 they are still here at the minute of the call, and by morning there will be nobody to ask. The
 question is one, and the work does not start before the answer.
 
-Write the boundary down at once: the session will be long, and the first message goes out of the
-window before the night ends.
-
-```bash
-printf 'граница ночи: %s\n' "$ARGUMENTS"
-```
+The boundary is written into the head of the morning list (section 6): the session will be long,
+and the first message goes out of the window before the night ends.
 
 ## 2. Raise the rule and the pattern
 
@@ -53,13 +49,13 @@ printf 'главная: %s · задачи: %s · передача: %s\n' \
 
 ## 4. Checks before the first work
 
-All four are made before the first task is taken. Each of them by morning costs a whole night: a
+All of them are made before the first task is taken. Each of them by morning costs a whole night: a
 session that runs into them at three o'clock has nobody to ask.
 
 ```bash
 git status --short                  # uncommitted work
 git fetch origin                    # the tip of the main branch
-git log --oneline -1 origin/main
+git log --oneline -1 "origin/${RT_MAIN_BRANCH:-main}"
 ```
 
 - **The tree holds uncommitted changes.** Name them to the owner and ask what to do with them:
@@ -69,6 +65,10 @@ git log --oneline -1 origin/main
   copy switch branches under each other.
 - **The tip of the main branch has moved.** The first branch of the night is created from a fresh
   base, not from the local ref: the local one is yesterday's snapshot and is silent about it.
+- **The epic branch does not carry the tip of the main branch.** Asked by
+  `git merge-base --is-ancestor "origin/${RT_MAIN_BRANCH:-main}" origin/<ветка эпика>`. The owner
+  is asked to have main merged into it now: at night that merge cannot be sent, and the first
+  branch of the night is refused on it.
 - **The source of the work is named.** An epic plan if there is one, the work queue otherwise. A
   night that takes tasks by their look at the list takes somebody else's first.
 
@@ -87,12 +87,22 @@ The law demands a trace on disk at every step: a session breaks off without warn
 window, on a refusal, on the network — and what was not written vanishes with it. The last reply
 does not survive such a break.
 
-The list lies next to the handover of the session, is created by this command and is appended to
-after each closed piece of work — not assembled at the end:
+The list lies next to the handover of the session, is created by this command with the boundary in
+its head, and is appended to after each closed piece of work. A list of the last day already on
+disk means a broken night resumed — after midnight too: it is read and continued, not written over.
+The block reads the profile itself: the shell keeps nothing between calls.
 
 ```bash
-printf '# Список к утру · ночь с %s\n\n' "$(date +%d.%m.%Y)" \
-    > "${RT_HANDOFF_DIR:-.claude/handoff}/$(date +%Y-%m-%d)-ночь.md"
+for profile in .claude/rt-kit/defaults/project.sh .claude/rt-kit/project.sh; do
+    [ -f "$profile" ] && . "$profile"
+done
+dir="${RT_HANDOFF_DIR:-.claude/handoff}"
+list="$(find "$dir" -maxdepth 1 -name '*-ночь.md' -mtime -1 2>/dev/null | sort | tail -1)"
+[ -n "$list" ] || {
+    list="$dir/$(date +%Y-%m-%d)-ночь.md"
+    printf '# Список к утру · ночь с %s\n\nГраница: %s\n\n' "$(date +%d.%m.%Y)" "$ARGUMENTS" > "$list"
+}
+echo "$list"
 ```
 
 A row per closed piece of work, and the row order is the merge order. The shape of the row and
@@ -100,13 +110,13 @@ the line of a postponed task are in the pattern `autonomous-work-run`.
 
 ## 7. The cycle
 
-Then the work goes by the rule and the pattern: a task from the source of the work, the branch
-from the previous one, the task folder, the plan, the stages, the folder taken apart into the
-description of the past. A default is written where the owner's answer would have been written. A
-guard's refusal is a step of the work, not the end of the night.
+Then the work goes by the rule and the pattern. The night ends at the named boundary, and the last
+reply gives the list — the same one that lies in the file.
 
-The night ends at the named boundary, and the last reply gives the list — the same one that lies
-in the file.
+Where a turn-exit guard holds a working turn under an open epic, silence does not end the night:
+the guard does not know the boundary. The last turn appends the list and ends with a question
+through the question tool — the night is over, the list is in the file. The owner answers it in the
+morning.
 
 ## What this command does not do
 

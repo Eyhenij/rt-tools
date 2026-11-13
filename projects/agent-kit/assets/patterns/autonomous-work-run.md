@@ -18,21 +18,33 @@ Pattern of the rule `autonomous-work`. What must be true — the law
 
 ## The chain of branches
 
-The first work branches from main, each next one — from the previous:
+The first work branches from the epic branch — or from main where the work has no epic — each
+next one from the previous:
 
 ```bash
-git checkout -b <КЛЮЧ>-<номер-1>-<slug> main           # the first of the night
+git checkout -b <КЛЮЧ>-<номер-1>-<slug> <база>         # the first of the night
 git checkout -b <КЛЮЧ>-<номер-2>-<slug> <КЛЮЧ>-<номер-1>-<slug>
 git checkout -b <КЛЮЧ>-<номер-3>-<slug> <КЛЮЧ>-<номер-2>-<slug>
 ```
 
 The merge order is from the bottom up, and it is named in the morning list by numbers. A branch
-created from main in the middle of the chain will collide with its neighbour in shared files —
+created from the base in the middle of the chain will collide with its neighbour in shared files —
 indexes, counters, journals — and the owner will be the one to sort it out.
 
 ```bash
-git log --oneline --graph --decorate main..HEAD | head -20   # what the chain stands on now
+git log --oneline --graph --decorate <база>..HEAD | head -20   # what the chain stands on now
 git branch --list '<КЛЮЧ>-*' --format='%(refname:short) %(upstream:short)'
+```
+
+The base moved during the night — it is merged into the previous branch locally, and only then the
+next one is created. Taking the base fresh instead breaks the chain:
+
+```bash
+git fetch origin
+git merge-base --is-ancestor origin/<база> <прошлая ветка> || {
+    git checkout <прошлая ветка> && git merge origin/<база>
+}
+git checkout -b <КЛЮЧ>-<номер>-<slug> <прошлая ветка>
 ```
 
 ## The cycle of one piece of work
@@ -40,9 +52,10 @@ git branch --list '<КЛЮЧ>-*' --format='%(refname:short) %(upstream:short)'
 ```bash
 npm run task:move -- <номер> in-progress                 # taken
 git checkout -b <КЛЮЧ>-<номер>-<slug> <прошлая ветка>    # a chain, not a fan
-cp -r docs/tasks/_template docs/tasks/<КЛЮЧ>-<номер>-<slug>
+dir="${RT_TASKS_DIR:-docs/tasks}/<КЛЮЧ>-<номер>-<slug>"
+mkdir -p "$dir" && cp "${RT_TASKS_DIR:-docs/tasks}"/_template/*.md "$dir"/
 # the grill with defaults, the plan, the state «этап-идёт»
-git add docs/tasks/<КЛЮЧ>-<номер>-<slug> && git commit    # the folder goes into history at once
+git add "$dir" && git commit                              # the folder goes into history at once
 # work by stages: each ends with a commit and a run of the readiness sign
 # the folder is taken apart into the archive by the last commit
 ```
@@ -69,7 +82,19 @@ A task that needs the owner's word is not taken: its state on the board stays as
 line goes into the morning list.
 
 ```markdown
-- **RT-<номер> — <заголовок>.** Отложена: <какой вопрос и почему умолчания у него нет>.
+- **<КЛЮЧ>-<номер> — <заголовок>.** Отложена: <какой вопрос и почему умолчания у него нет>.
+```
+
+A task stopped halfway — by red that cannot be fixed or by a question — goes back to its former
+column, and its line says the branch is not merged:
+
+```bash
+npm run task:move -- <номер> <прежняя колонка>
+```
+
+```markdown
+- **<КЛЮЧ>-<номер> — <заголовок>.** Остановлена: <что красное или какой вопрос>. Ветка
+  `<ветка>` не вливается; следующая работа идёт от `<последняя зелёная>`.
 ```
 
 ## The morning list
@@ -79,7 +104,7 @@ Appended along the way, after each closed piece of work, not assembled at the en
 ```markdown
 | Работа | Ветка | Чем подтверждена | Чего ждёт |
 | ------ | ----- | ---------------- | --------- |
-| RT-… — <что сделано> | `<ветка>` (на `<предыдущей>`) | `<команда>` — <вывод> | заявки и слияния |
+| <КЛЮЧ>-… — <что сделано> | `<ветка>` (на `<предыдущей>`) | `<команда>` — <вывод> | заявки и слияния |
 ```
 
 The order of rows is the merge order. Below the list — the postponed tasks with their questions.
@@ -96,8 +121,8 @@ night ends with work, not with an argument with the guard.
 
 ## Common misses
 
-- **The branch was created from main by habit.** The chain breaks silently, and the cost surfaces
-  for the owner at the second merge.
+- **The branch was created from the base by habit.** The chain breaks silently, and the cost
+  surfaces for the owner at the second merge.
 - **A default was taken and not written down.** In the morning it cannot be told from knowledge,
   and the owner learns of it only when the work was done wrong.
 - **A task was taken and postponed halfway.** On the board it is in progress, in the branch — half
