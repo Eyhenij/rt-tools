@@ -137,7 +137,9 @@ fi
 # the call above, and its absence from their answer refuses nothing here. Read as the number of the
 # work, it left two answers «yes» in a row refused, and the owner was asked a third time.
 #
-# A plain «yes» agrees only to the question it answers: it counts when that question names a task or creating one.
+# The answer agrees when it names the creating of a task, not a task alone: on the real record of
+# a session ten answers of twenty-three named a task while agreeing to something else. A plain
+# «yes» agrees only to the question it answers: it counts when that question names the creating.
 # Every pair of the latest menu is read, not the first one, and an answer that puts the task off
 # is no consent.
 #
@@ -149,7 +151,7 @@ fi
 if [ -n "$transcript" ] && [ -f "$transcript" ] \
     && printf '%s' "$cmd" | grep -qE 'task:new|task-new\.mjs' 2>/dev/null; then
     topic='задач|карточ|task|issue'
-    deed='заве|завод|созда|create'
+    deed='заве|завод|созда|нов(ая|ую|ой) (задач|карточ)|create|new (task|issue)'
     if printf '%s' "$cmd" | grep -qE -- '--epic([[:space:]=]|$)' 2>/dev/null; then
         topic='эпик|epic'
         deed='эпик|epic'
@@ -182,8 +184,8 @@ if [ -n "$transcript" ] && [ -f "$transcript" ] \
         | if $at == null then "no"
           else (.[$at].menu | map(
                     ((.chose | refuses) or (.chose | test($put_off; "i")) | not)
-                    and ((.chose | test($topic + "|" + $deed; "i"))
-                         or ((.chose | test($yes; "i")) and (.asked | test($topic + "|" + $deed; "i"))))
+                    and ((.chose | test($deed; "i"))
+                         or ((.chose | test($yes + "|" + $topic; "i")) and (.asked | test($deed; "i"))))
                 ) | any) as $agreed
               | (.[$at + 1:] | map((.said // "") | refuses) | any) as $taken_back
               | if $agreed and ($taken_back | not) then "yes" else "no" end
