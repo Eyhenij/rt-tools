@@ -215,12 +215,17 @@ EOF
         | grep -vE 'agent-kit sync --check|nx (run-many|affected) -t lint test build|stylelint "\*\*/\*\.scss"|tools/check-(specs|dupes|push-gate)\.mjs|guard scenarios:'
 
     # A branch of texts alone runs no step of the builder — the why is in `project-texts.sh`.
-    { [ -n "$1" ] && command -v rt_push_texts_only >/dev/null 2>&1 && rt_push_texts_only "$1"; } || cat <<'EOF'
-pnpm exec nx affected -t lint typecheck test build --parallel
-pnpm exec nx affected -t test-hooks
-pnpm run lint:styles
-pnpm exec nx affected -t verify --parallel
-EOF
+    # The builder counts what is touched from the push base, as the package lines do: without it nx
+    # takes `main`, and every branch of an epic reran all the guard scenarios the epic touched.
+    { [ -n "$1" ] && command -v rt_push_texts_only >/dev/null 2>&1 && rt_push_texts_only "$1"; } || {
+        local against=''
+        [ -n "$1" ] && against=" --base=$1"
+        printf '%s\n' \
+            "pnpm exec nx affected -t lint typecheck test build --parallel$against" \
+            "pnpm exec nx affected -t test-hooks$against" \
+            'pnpm run lint:styles' \
+            "pnpm exec nx affected -t verify --parallel$against"
+    }
     printf '%s\n' 'node tools/check-push-gate.mjs'
 
     # The heavy steps go by their own subject rather than by the sign "the branch touched code".
