@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/epic-stop-guard.sh · c6f371c3f89e · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/epic-stop-guard.sh · eaea22d4bcf4 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, checks/epic-table.github.mjs
 # Guard of the stop at the end of an epic. PreToolUse on a call that takes new work.
@@ -93,11 +93,20 @@ rt_epic_over || exit 0
 # The number is read from the call; the words of the executor do not count.
 taken="$(printf '%s' "$cmd" | sed -nE 's/.*(checkout|switch)[[:space:]]+(-[A-Za-z]+[[:space:]]+)*-(b|c)[[:space:]]+[A-Za-z]+-([0-9]+)-.*/\4/p; s/.*(task:move|board\.mjs[[:space:]]+move)[^0-9|;&]*([0-9]+).*/\2/p; s/.*--epic-of[[:space:]=]+([0-9]+).*/\1/p' | head -1)"
 transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/null)"
+
+# The words of the owner are looked for among what the owner side wrote, not among the last lines
+# of the record. A window of lines is spent by the work itself: every command adds two, and a
+# «yes» given an hour of work ago fell out of it while the executor was fixing what refused it.
+# Results of commands are dropped before the count, the answers to menus stay.
+owner_side() {
+    awk '/"type":"user"/ && (!/"tool_result"/ || /The user answered:|Your questions have been answered:/)' "$1" 2>/dev/null \
+        | tail -n 400
+}
 if [ -n "$taken" ] && [ -n "$transcript" ] && [ -f "$transcript" ]; then
     # A menu answer comes in two forms, «The user answered:» and «Your questions have been answered:»,
     # followed by "question"="answer" pairs. Only the answers count: the question is written by the
     # executor, and a number in «take RT-N?» answered «no» is not the owner's word.
-    named="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg n "$taken" '
+    named="$(owner_side "$transcript" | jq -s -r --arg n "$taken" '
         def menu_answers: if test("^(The user answered|Your questions have been answered):")
             then ([match("\"=\"([^\"]*)\""; "g") | .captures[0].string] | join("\n")) else "" end;
         [.[] | select(.type == "user")
@@ -119,18 +128,29 @@ fi
 
 # A created task has no number yet, so no menu answer can name it, and the owner's answer to «create
 # a task for these findings?» left the call refused. The word of the owner here is their latest
-# answer to a menu: no message of theirs stands after it, the answer agrees to a task — a word of a
-# task, of creating it, or a plain «yes» — and it is not a refusal. Any answer was too wide: «not
-# now» and an answer about a button colour passed alike. A new epic needs the word of an epic.
-if [ -z "$taken" ] && [ -n "$transcript" ] && [ -f "$transcript" ] \
+# answer to a menu: the answer agrees to a task — a word of a task, of creating it, or a plain
+# «yes» — and it is not a refusal. Any answer was too wide: «not now» and an answer about a button
+# colour passed alike. A new epic needs the word of an epic.
+#
+# The number after `--epic-of` names the epic, not the work taken: said by the owner, it releases
+# the call above, and its absence from their answer refuses nothing here. Read as the number of the
+# work, it left two answers «yes» in a row refused, and the owner was asked a third time.
+#
+# What stands after the answer is judged by who wrote it. A notice of a background command and the
+# mark of an interrupted turn are written by no person and cancel nothing. A message of the owner
+# cancels their answer only when it refuses — «stop», «wait», «no»: their other words after a «yes»
+# are not a second decision.
+if [ -n "$transcript" ] && [ -f "$transcript" ] \
     && printf '%s' "$cmd" | grep -qE 'task:new|task-new\.mjs' 2>/dev/null; then
     consent='задач|карточ|task|issue|заве|завод|созда|create|^\s*(да|yes|ок|ok)([^[:alpha:]]|$)'
     if printf '%s' "$cmd" | grep -qE -- '--epic([[:space:]=]|$)' 2>/dev/null; then
         consent='эпик|epic'
     fi
-    latest="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r --arg consent "$consent" '
+    refusal='^\s*(нет|не\s|нельзя|no\b|стоп|stop|отмен|cancel|подожд|wait|позже|later|пока ничего|ничего|nothing)'
+    latest="$(owner_side "$transcript" | jq -s -r --arg consent "$consent" --arg refusal "$refusal" '
         [.[] | select(.type == "user")
             | select(((.isMeta // false) or (.isCompactSummary // false)) | not)
+            | select((.origin.kind // "human") == "human")
             | (.message.content // "")
             | if type == "string" then {said: .}
               elif type == "array" then (map(
@@ -142,12 +162,15 @@ if [ -z "$taken" ] && [ -n "$transcript" ] && [ -f "$transcript" ] \
                         then {menu: ([match("\"=\"([^\"]*)\""; "g") | .captures[0].string] | first // "")}
                         else empty end)
                   else empty end) | .[])
-              else empty end]
-        | (last // {})
-        | if (.menu // "") != ""
-              and (.menu | test($consent; "i"))
-              and ((.menu | test("^\\s*(нет|не\\s|нельзя|no\\b|стоп|stop|отмен|cancel|подожд|wait|позже|later|пока ничего|ничего|nothing)"; "i")) | not)
-          then "yes" else "no" end
+              else empty end
+            | select(((.said // "") | test("^\\s*\\[Request interrupted")) | not)]
+        | (map(has("menu")) | rindex(true)) as $at
+        | if $at == null then "no"
+          else (.[$at].menu) as $menu
+              | (.[$at + 1:] | map((.said // "") | test($refusal; "i")) | any) as $taken_back
+              | if ($menu | test($consent; "i")) and (($menu | test($refusal; "i")) | not) and ($taken_back | not)
+                then "yes" else "no" end
+          end
     ' 2>/dev/null)"
     [ "$latest" = "yes" ] && exit 0
 fi

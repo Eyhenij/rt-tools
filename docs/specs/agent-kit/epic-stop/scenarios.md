@@ -121,8 +121,20 @@ Given the epic is over, and the call creates a task that has no number yet
 When the guard looks for the word of the owner
 Then the latest answer of the owner to a menu releases the call when it agrees to a task — a word
 of a task, of creating it, or a plain «yes» — and is not a refusal such as «not now» or «later»; an
-answer to an unrelated question, or a message of the owner after the answer, leaves the call refused.
-A new epic needs the word of an epic in the answer, and a branch or a column move still needs its
-number
+answer to an unrelated question, or a message of the owner after the answer that refuses, leaves the
+call refused. A new epic needs the word of an epic in the answer, and a branch or a column move
+still needs its number
+
+Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
+
+### SC-AK-1343 — the owner's «yes» to a task is not asked a second time
+
+Given the epic is over, the owner agreed to a task in a menu, and the call creates a task of an
+epic by naming the number of that epic
+When the answer names no number, and after it stand a notice of a background command, the mark of
+an interrupted turn, words of the owner that do not refuse, or hundreds of commands with their
+results
+Then the call passes: the number of the epic is not the number of the work taken, what no person
+wrote cancels nothing, and only a refusal of the owner takes their answer back
 
 Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
