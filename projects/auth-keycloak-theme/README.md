@@ -30,6 +30,31 @@ happens when the environment of `deploy/auth/compose.yml` gives `RT_GOOGLE_ENABL
 `RT_GOOGLE_CLIENT_ID` and `RT_GOOGLE_CLIENT_SECRET`. The keys stay outside the history, in the shell
 or in the .env file next to the compose file.
 
+## Counters
+
+Every page of the theme loads GA4 and Yandex Metrika when the environment of the Keycloak
+container gives the numbers of its realm. One Keycloak serves every product, so the numbers are
+given per realm in one variable, read as a theme property:
+
+| Variable            | What it holds                                                      |
+| ------------------- | ------------------------------------------------------------------ |
+| `COUNTERS_BY_REALM` | `realm=ga:metrika` per product, separated by commas: `rt=G-ABC123:12345678,shop=G-XYZ789:` |
+
+A realm without an entry, an empty or a malformed number loads no tag of that counter. The page view carries the page id
+(`login`, `register`, `login-reset-password`…), and a form that leaves the page sends the event
+`auth_form_submit` with the same id. No value typed into a field goes into an event. Every field
+carries `ym-disable-keys`, so Webvisor records none of its keys, and a link address in the markup
+loses the action token and the login hint.
+
+Three settings live outside the theme:
+
+- the numbers go into the environment file of the login node, and the rollout restarts Keycloak:
+  without them Keycloak starts with empty numbers, and the pages load no counter;
+- Metrika shows the submit in its reports only for a goal of the kind «JavaScript event» with the
+  id `auth_form_submit`;
+- GA4 tells the pages apart only by `page_id` registered as a custom dimension of the event scope:
+  the entry addresses are the same for the sign-in, the registration and the reset.
+
 ## What the theme draws
 
 | Page                        | What a person does there                      |

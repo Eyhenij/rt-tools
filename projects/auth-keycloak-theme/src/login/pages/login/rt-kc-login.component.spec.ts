@@ -24,6 +24,16 @@ describe('RtKcLoginComponent', () => {
         expect(submitted.fields).toEqual({ username: 'ann@rt.localhost', password: 'secret', credentialId: 'cred-1' });
     });
 
+    it('SC-AUTH-115 — the typed address and password stay out of the page markup', async () => {
+        const fixture: ComponentFixture<RtKcLoginComponent> = await renderKcPage(RtKcLoginComponent, kcContextOf('login.ftl'));
+        await typeInto(fixture, 'kc-username', 'ann@rt.localhost');
+        await typeInto(fixture, 'kc-password', 'secret-pass');
+        const markup: string = (fixture.nativeElement as HTMLElement).outerHTML;
+
+        expect(markup).not.toContain('ann@rt.localhost');
+        expect(markup).not.toContain('secret-pass');
+    });
+
     it('SC-AUTH-20 — an empty required field stops the form', async () => {
         const fixture: ComponentFixture<RtKcLoginComponent> = await renderKcPage(RtKcLoginComponent, kcContextOf('login.ftl'));
         await typeInto(fixture, 'kc-username', 'ann@rt.localhost');

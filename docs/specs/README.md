@@ -77,7 +77,8 @@ the addresses of the site.
 and its rights are client roles. The domain holds the stand: Keycloak, its database and a mail
 catcher are raised by one command, the realm is applied from a file, a command asks the stand. The
 subdomain of the contract reads rights from a token. The subdomain `theme` draws the entry screens of
-Keycloak with the components of the second kit. The subdomain of the client signs a person in from
+Keycloak with the components of the second kit, and the subdomain `counters` loads GA4 and
+Metrika on them. The subdomain of the client signs a person in from
 an Angular admin and sends the token with its requests. The subdomain of the server checks the
 token and the rights of every call. The subdomain of the import moves the people of an existing
 application into Keycloak with their password hashes. The subdomain `example` is an admin and a
