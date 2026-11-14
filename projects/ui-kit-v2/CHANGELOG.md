@@ -1,3 +1,18 @@
+## [0.44.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.44.0...rt-ui-kit-v2%400.44.1) (2026-11-14)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** скругление рамки формы названо ручкой потребителя ([30c1cf3](https://github.com/Eyhenij/rt-tools/commit/30c1cf311a92be4382dad20f8bdd7142ef3e7db9))
+
+### Features
+
+- **rt:ui-kit-v2:** вход видимости кнопок у загрузчика изображения ([326c64f](https://github.com/Eyhenij/rt-tools/commit/326c64f47e0a2d83f34734543b94c4c68c729895))
+- **rt:ui-kit-v2:** истории кнопки удаления и места кнопок загрузчика изображения ([603c9b0](https://github.com/Eyhenij/rt-tools/commit/603c9b0b54d49ff7fa50ecaa6ebe7bdf1995dbb1))
+- **rt:ui-kit-v2:** кнопка удаления и место кнопок у загрузчика изображения ([f484422](https://github.com/Eyhenij/rt-tools/commit/f484422ab2c955334e68c58a1bb4de09cef41c47))
+- **rt:ui-kit-v2:** место кнопок загрузчика изображения — отдельная история витрины ([ab03bce](https://github.com/Eyhenij/rt-tools/commit/ab03bcedf6aeddcece2492923abedb90497c8d7e))
+- **rt:ui-kit-v2:** плитка настройки в форме кита нажимается целиком ([4b38fbb](https://github.com/Eyhenij/rt-tools/commit/4b38fbb8715dd2f53cdd08216e268d1764eaac30))
+- **rt:ui-kit-v2:** плитка настройки во всех состояниях макета ([433491a](https://github.com/Eyhenij/rt-tools/commit/433491a27afaa205ccaefb570a857831a173b35f))
+
 # [0.44.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.43.0...rt-ui-kit-v2%400.44.0) (2026-11-13)
 
 ### Features
