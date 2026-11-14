@@ -65,6 +65,11 @@ mv "$tree/table.json" "$tree/.claude/rt-kit/push-inputs.json"
 
 (cd "$tree" && node tools/push-inputs.mjs verify >/dev/null 2>&1)
 report "SC-AK-1355 — the table check is green while the steps read what was recorded" "$?" 0
+mkdir -p "$tree/.claude/rt-kit/observations/.marks"
+printf 'x\n' >"$tree/.claude/rt-kit/observations/.marks/refusal-1"
+printf "import { readFileSync as readMark } from 'node:fs';\nreadMark('.claude/rt-kit/observations/.marks/refusal-1', 'utf8');\n" >>"$tree/tools/check-texts.mjs"
+(cd "$tree" && node tools/push-inputs.mjs verify >/dev/null 2>&1)
+report "SC-AK-1355 — a read of the agent's observations is no read of the step" "$?" 0
 printf 'c\n' >"$tree/src/c.txt"
 printf "import { readFileSync as readMore } from 'node:fs';\nreadMore('src/c.txt', 'utf8');\n" >>"$tree/tools/check-texts.mjs"
 said="$(cd "$tree" && node tools/push-inputs.mjs verify 2>&1)"

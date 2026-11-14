@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/push-inputs.mjs · f5146097e9ae · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/push-inputs.mjs · 92ab3a250244 · правится надстройкой, не здесь
 /**
  * Which steps of the push set a change can reach. A step runs when the change touches what it
  * reads; a step the change cannot reach is not started.
@@ -37,7 +37,9 @@ const ROOT = process.cwd();
 const HERE = dirname(fileURLToPath(import.meta.url));
 const TRACER = join(HERE, 'push-trace.mjs');
 const TABLE_DEFAULT = '.claude/rt-kit/push-inputs.json';
-const IGNORED = /^(node_modules|\.git|dist|\.nx|\.angular|tmp|coverage)(\/|$)|\/node_modules\//;
+// The agent's observations and their marks are written by the guards on every call, a refusal
+// included: a step that walks the tree reads a new file each time, and the table never matches.
+const IGNORED = /^(node_modules|\.git|dist|\.nx|\.angular|tmp|coverage|\.claude\/rt-kit\/observations)(\/|$)|\/node_modules\//;
 const TRACEABLE = /^(node\s+\S+\.m?js|pnpm run [\w:.-]+)(\s|$)/;
 const HEAVY = /(^|\s)nx\s|docker |playwright|e2e|visual-gate|serve:/;
 const LISTING = new Set(['ls-files', 'ls-tree', 'check-ignore', 'check-attr', 'status', 'config', 'hash-object', 'var']);
