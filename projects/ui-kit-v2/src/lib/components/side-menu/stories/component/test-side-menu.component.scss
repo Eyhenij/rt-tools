@@ -35,5 +35,22 @@
             color: var(--rt-color-text-primary);
             gap: var(--rt-space-sm);
         }
+
+        /* Рамка своего шаблона: пунктир показывает, где кончается разметка приложения. */
+        &__own-empty {
+            display: grid;
+            padding: var(--rt-space-4);
+            border: 1px dashed var(--rt-color-border-strong);
+            border-radius: var(--rt-radius-md);
+            margin: var(--rt-space-2);
+            color: var(--rt-color-text-primary);
+            gap: var(--rt-space-1);
+            text-align: center;
+        }
+
+        &__own-empty-hint {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+        }
     }
 }

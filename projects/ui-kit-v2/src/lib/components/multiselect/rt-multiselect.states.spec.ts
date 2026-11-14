@@ -43,7 +43,8 @@ describe('RtMultiselectComponent — свой вид пустого', (): void =
         openWith(true);
 
         expect(document.querySelector('[qa-dataid="own-empty"]')).not.toBeNull();
-        expect(document.querySelector('[qa-dataid="multiselect-empty"]')?.textContent).not.toContain('No options');
+        expect(document.querySelector('[qa-dataid="multiselect-own-empty"]')).not.toBeNull();
+        expect(document.querySelector('[qa-dataid="multiselect-empty"]')).toBeNull();
     });
 
     it('SC-UKV-1296 — без шаблона строка «Нет вариантов» стоит как раньше', (): void => {

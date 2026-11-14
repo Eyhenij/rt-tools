@@ -24,6 +24,15 @@
             </a>
         </ng-template>
 
+        @if (ownEmpty()) {
+            <ng-template rtSideMenuEmpty let-term>
+                <div rtElem="own-empty" qa-dataid="side-menu-story-own-empty">
+                    <strong>Свой вид пустого</strong>
+                    <span rtElem="own-empty-hint">Строка поиска: «{{ term }}»</span>
+                </div>
+            </ng-template>
+        }
+
         <ng-template rtSideMenuFooter>
             <div rtElem="footer">
                 <rt-icon name="user" size="lg" />

@@ -155,13 +155,13 @@
                         }
                     </li>
                 } @empty {
-                    <li rtElem="empty" qa-dataid="select-empty">
-                        @if (emptyTpl(); as own) {
+                    @if (emptyTpl(); as own) {
+                        <li rtElem="own-empty" qa-dataid="select-own-empty" role="presentation">
                             <ng-container [ngTemplateOutlet]="own.templateRef" [ngTemplateOutletContext]="{ $implicit: '' }" />
-                        } @else {
-                            {{ t().uiNoOptions }}
-                        }
-                    </li>
+                        </li>
+                    } @else {
+                        <li rtElem="empty" qa-dataid="select-empty">{{ t().uiNoOptions }}</li>
+                    }
                 }
             </ul>
         </div>

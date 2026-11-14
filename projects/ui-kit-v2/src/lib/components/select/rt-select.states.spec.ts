@@ -43,7 +43,8 @@ describe('RtSelectComponent — свой вид пустого', (): void => {
         openWith(true);
 
         expect(document.querySelector('[qa-dataid="own-empty"]')).not.toBeNull();
-        expect(document.querySelector('[qa-dataid="select-empty"]')?.textContent).not.toContain('No options');
+        expect(document.querySelector('[qa-dataid="select-own-empty"]')).not.toBeNull();
+        expect(document.querySelector('[qa-dataid="select-empty"]')).toBeNull();
     });
 
     it('SC-UKV-1296 — без шаблона строка «Нет вариантов» стоит как раньше', (): void => {
