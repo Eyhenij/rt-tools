@@ -1,5 +1,28 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignoreDependencies": ["@prisma/client", "@connectrpc/connect", "pdfjs-dist", "quill", "conventional-changelog-angular", "ts-node"],
+  "ignoreBinaries": ["graphify"],
+  "ignoreFiles": [
+    "apps/message-bus/src/build/storage-client.check.d.mts",
+    "libs/message-bus-admin/common/container/api/src/index.ts",
+    "libs/message-bus-admin/invites/ui/src/index.ts",
+    "libs/message-bus-api/access/api/src/index.ts",
+    "libs/message-bus-api/access/data-access/src/index.ts",
+    "libs/message-bus-api/cargo-state/data-access/src/index.ts",
+    "libs/message-bus-api/observability/api/src/index.ts",
+    "libs/message-bus-api/observability/data-access/src/index.ts",
+    "libs/message-bus-api/observations/api/src/index.ts",
+    "libs/message-bus-api/persistence/api/src/index.ts",
+    "libs/message-bus-api/postmortems/api/src/index.ts",
+    "libs/message-bus-api/proposals/api/src/index.ts",
+    "libs/message-bus-api/trees/api/src/index.ts"
+  ],
+  "ignoreIssues": {
+    "projects/cms-angular/src/lib/editor/editor-blocks.ts": ["duplicates"],
+    "projects/ui-kit-v2/src/lib/components/pdf-viewer/rt-pdf-viewer.output.ts": ["exports"],
+    "projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.keys.ts": ["exports"],
+    "projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.motion.ts": ["exports", "types"]
+  },
   "workspaces": {
     ".": {
       "entry": [
@@ -42,7 +65,13 @@
       "project": ["src/**/*.ts"]
     },
     "projects/ui-kit-v2": {
-      "entry": ["src/**/*.spec.ts", "src/**/*.stories.ts", ".storybook/*.{ts,js}", "*.config.{ts,mjs,cjs}"],
+      "entry": [
+        "src/lib/components/*/index.ts",
+        "src/**/*.spec.ts",
+        "src/**/*.stories.ts",
+        ".storybook/*.{ts,js}",
+        "*.config.{ts,mjs,cjs}"
+      ],
       "project": ["src/**/*.ts"]
     }
   }

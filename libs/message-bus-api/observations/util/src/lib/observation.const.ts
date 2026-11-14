@@ -19,7 +19,7 @@ export const OBSERVATION_TEXT_FIELDS: readonly string[] = ['ev', 'res', 'kind', 
 export const OBSERVATION_FIELD_BYTES: number = 200;
 
 /** Предел строк в одном грузе, когда настройка его не назвала. */
-export const DEFAULT_OBSERVATION_LINES_CAP: number = 5000;
+const DEFAULT_OBSERVATION_LINES_CAP: number = 5000;
 
 /** Имя настройки предела строк. */
 export const OBSERVATION_LINES_CAP_KEY: string = 'OBSERVATION_LINES_CAP';

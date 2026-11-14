@@ -44,7 +44,7 @@ export function chatTalkClosed(talk: IChat.Talk.State | null): boolean {
 }
 
 /** Слово состояния разговора: им подписан и тег строки, и свойство подробностей. */
-export function chatTalkStateWord(talk: IChat.Talk.State | null, words: IChatTalkWords): string {
+function chatTalkStateWord(talk: IChat.Talk.State | null, words: IChatTalkWords): string {
     return chatTalkClosed(talk) ? words.stateClosed : words.stateLive;
 }
 
