@@ -46,6 +46,12 @@
 - Серверный поиск: `[localSearch]="false"`, запрос приходит выходом `searchChange` через 500 мс
   после последней клавиши; найденное вызывающий кладёт в `entities`.
 - Догрузка: `lazyLoad`, выход `loadMore`; пока идёт загрузка страницы, `fetching` держит запрос.
+- Ошибка загрузки: `error` не null — окно выбора открывается на заглушке ошибки с «Повторить»,
+  «Apply» и «Select all» скрыты, ошибка важнее `loading` и `fetching`. Пояснение — `errorDescription`
+  или подпись кита. `retry` ловит приложение и повторяет запрос само. Свои виды —
+  `<ng-template rtDynamicSelectorEmpty let-query>` и
+  `<ng-template rtDynamicSelectorError let-message let-retry="retry">`; окно само по себе берёт те
+  же входы, выход и шаблоны.
 - Свои кнопки у строки — `<ng-template rtDynamicSelectorRowControls let-item>`, своё название —
   `<ng-template rtDynamicSelectorRowTitle let-item>`. Корзина и ручка перетаскивания остаются китовыми.
 - Приглашение (`invitation`) встаёт вместо полосы кнопок; его кнопка открывает тот же выбор.

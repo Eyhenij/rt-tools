@@ -1,6 +1,6 @@
 # Load error and own placeholders of the selectors, the local lists and the PDF viewer
 
-**Status:** proposed · **Revision:** 2026-11-14 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-14 · **Scenario prefix:** `SC-UKV`
 **Depends on:** `rt-empty-state`, the kit dictionary, the load error helper of `error-states`
 **Laws:** `frontend-application`, `mockups`, `verifiability`
 **Procedures:** none
@@ -133,3 +133,6 @@ None.
 ## History of changes
 
 - 2026-11-14 — written for RT-3295 from the approved frames.
+- 2026-11-14 — merged into the kit spec with the bindings to code; the compact autocomplete error
+  added after the match with the approved frame, and the autocomplete keyboard stopped choosing
+  hidden options under the error.

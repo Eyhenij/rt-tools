@@ -111,7 +111,9 @@
             }
         </div>
     } @else if (loadState.emptyTemplate(); as own) {
-        <ng-container [ngTemplateOutlet]="own" [ngTemplateOutletContext]="{ $implicit: query() }" />
+        <div rtElem="state" qa-dataid="dynamic-selector-own-empty">
+            <ng-container [ngTemplateOutlet]="own" [ngTemplateOutletContext]="{ $implicit: query() }" />
+        </div>
     } @else {
         <rt-empty-state rtElem="empty" qa-dataid="dynamic-selector-no-results" icon="search" [title]="emptyText()" />
     }

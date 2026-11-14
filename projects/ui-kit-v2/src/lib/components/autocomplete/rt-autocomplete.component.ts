@@ -119,7 +119,8 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     protected readonly optionList: RtOptionList = new RtOptionList({
         panelId: (): string => this.panelId,
         isOpen: (): boolean => this.isOpen(),
-        count: (): number => this.suggestions().length,
+        // Пока стоит ошибка, вариантов на экране нет: стрелки и Enter не выбирают скрытое.
+        count: (): number => (this.loadError.shown() ? 0 : this.suggestions().length),
         chooseKeys: new Set<string>(['Enter']),
         sideKeys: false,
         edgeKeys: false,
@@ -318,7 +319,8 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     #selectActive(): void {
         const items: ReadonlyArray<TItem> = this.suggestions();
         const index: number = this.activeIndex();
-        if (index >= 0 && index < items.length) {
+        // Подсветка могла остаться от вариантов до ошибки — выбирать её нельзя.
+        if (!this.loadError.shown() && index >= 0 && index < items.length) {
             this.onSelect(items[index]);
         }
     }

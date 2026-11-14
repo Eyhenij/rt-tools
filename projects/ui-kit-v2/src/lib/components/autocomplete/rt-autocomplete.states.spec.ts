@@ -83,6 +83,26 @@ describe('RtAutocompleteComponent — ошибка загрузки и свои 
         (inPanel('autocomplete-retry') as HTMLButtonElement).click();
 
         expect(fixture.componentInstance.retryCount).toBe(1);
+        expect(inPanel('autocomplete-error')).not.toBeNull();
+    });
+
+    it('SC-UKV-1287 — на ошибке стрелки и Enter ничего не выбирают', async (): Promise<void> => {
+        const fixture: ComponentFixture<StatesHostComponent> = await open((host: StatesHostComponent): void => {
+            host.items.set(['Москва', 'Мосальск']);
+            host.error.set('Нет сети');
+        });
+        const chosen: Array<string> = [];
+        fixture.componentInstance.autocomplete().itemSelect.subscribe((item: string): void => {
+            chosen.push(item);
+        });
+        const input: HTMLInputElement = qa(fixture, 'autocomplete-input')?.nativeElement as HTMLInputElement;
+
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+        fixture.detectChanges();
+
+        expect(chosen).toEqual([]);
+        expect(inPanel('autocomplete-error')).not.toBeNull();
     });
 
     it('SC-UKV-1289 — свой вид пустого и свой вид ошибки встают в панель', async (): Promise<void> => {

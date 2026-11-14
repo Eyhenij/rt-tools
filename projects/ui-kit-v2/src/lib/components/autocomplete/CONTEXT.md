@@ -14,24 +14,30 @@
 
 Свои входы поверх общих из [`RtFormControlBase`](../form-control/CONTEXT.md):
 
-| вход            | тип                                          | умолчание                 |
-| --------------- | -------------------------------------------- | ------------------------- |
-| `suggestions`   | `ReadonlyArray<TItem>`                       | `[]`                      |
-| `displayWith`   | `(item: TItem \| null) => string`            | `String(item ?? '')`      |
-| `placeholder`   | `string`                                     | `''`                      |
-| `minLength`     | `number`                                     | `1`                       |
-| `openOnFocus`   | `boolean`                                    | `false`                   |
-| `iconLeft`      | `IRtIcon.Name \| null`                       | `null`                    |
-| `itemTemplate`  | `TemplateRef<{ $implicit: TItem }> \| null`  | `null`                    |
-| `loading`       | `boolean`                                    | `false`                   |
-| `emptyText`     | `string \| null`                             | `null` → `uiNothingFound` |
-| `emptyTemplate` | `TemplateRef<{ $implicit: string }> \| null` | `null`                    |
+| вход               | тип                                          | умолчание                 |
+| ------------------ | -------------------------------------------- | ------------------------- |
+| `suggestions`      | `ReadonlyArray<TItem>`                       | `[]`                      |
+| `displayWith`      | `(item: TItem \| null) => string`            | `String(item ?? '')`      |
+| `placeholder`      | `string`                                     | `''`                      |
+| `minLength`        | `number`                                     | `1`                       |
+| `openOnFocus`      | `boolean`                                    | `false`                   |
+| `iconLeft`         | `IRtIcon.Name \| null`                       | `null`                    |
+| `itemTemplate`     | `TemplateRef<{ $implicit: TItem }> \| null`  | `null`                    |
+| `loading`          | `boolean`                                    | `false`                   |
+| `emptyText`        | `string \| null`                             | `null` → `uiNothingFound` |
+| `emptyTemplate`    | `TemplateRef<{ $implicit: string }> \| null` | `null`                    |
+| `error`            | `string \| null`                             | `null`                    |
+| `errorDescription` | `string`                                     | `''`                      |
 
 | выход           | тип                        |
 | --------------- | -------------------------- |
 | `complete`      | `{ query, originalEvent }` |
 | `itemSelect`    | `TItem`                    |
 | `scrolledToEnd` | `void`                     |
+| `retry`         | `void`                     |
+
+Свои виды — `<ng-template rtAutocompleteEmpty let-query>` и
+`<ng-template rtAutocompleteError let-message let-retry="retry">`.
 
 Значение — `TItem | null` (объект, а не строка).
 
@@ -56,7 +62,12 @@
 - `loading` рисует строку со спиннером: вместо пустого результата при первой загрузке и под
   списком при подгрузке следующей страницы.
 - Пустой результат пишет `emptyText` или рисует `emptyTemplate` с набранной строкой; шаблон
-  сильнее текста.
+  сильнее текста, а директива `rtAutocompleteEmpty` сильнее обоих и встаёт своей строкой списка,
+  без оформления строки кита.
+- `error` не null — в панели компактная заглушка ошибки: круг со значком, заголовок и «Повторить».
+  Ошибка важнее загрузки и подсказок, стрелки и Enter ничего не выбирают, после «Повторить» панель
+  остаётся открытой. Пояснение под заголовком стоит, только когда задан `errorDescription`. Сам
+  компонент ничего не загружает: `retry` ловит приложение.
 - `scrolledToEnd` просит следующую страницу, когда панель долистали до конца. Пока идёт загрузка,
   он не приходит, и приходит один раз на каждую длину списка. Новый запрос и очистка поля снова
   разрешают его.
