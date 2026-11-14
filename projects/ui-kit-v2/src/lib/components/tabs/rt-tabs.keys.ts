@@ -1,7 +1,7 @@
 import { IRtTabs } from './rt-tabs.model';
 
 /** Куда ведёт клавиша с вкладки `index` из `count`; `undefined` — клавиша не навигационная. */
-export function rtTabsKeyTarget(key: string, direction: IRtTabs.Direction, index: number, count: number): number | undefined {
+function rtTabsKeyTarget(key: string, direction: IRtTabs.Direction, index: number, count: number): number | undefined {
     const isVertical: boolean = direction === 'vertical';
 
     return new Map<string, number>([

@@ -5,10 +5,10 @@ import { IRtPdfViewer } from './rt-pdf-viewer.model';
  */
 
 /** Блок печатного листа. Лист лежит в конце `<body>`, вне просмотрщика, и класс у него свой. */
-export const RT_PDF_PRINT_BLOCK: string = 'rt-pdf-viewer-print';
+const RT_PDF_PRINT_BLOCK: string = 'rt-pdf-viewer-print';
 
 /** Признак на корне страницы, пока идёт печать: под ним прячется всё, кроме листа. */
-export const RT_PDF_PRINTING_FLAG: string = 'rt-pdf-viewer-printing';
+const RT_PDF_PRINTING_FLAG: string = 'rt-pdf-viewer-printing';
 
 /** Плотность печати: 150 точек на дюйм — текст чёткий, а лист в сотню страниц не выедает память. */
 const PRINT_DPI: number = 150;
