@@ -470,15 +470,14 @@ Covered: `projects/agent-kit/tests/git-guard-push-tests.test.sh`.
 ### SC-AK-872 — creating a branch is recognised with a flag between the verb and -b too
 
 Given the branch is created by the line `git checkout -q -b` or `git switch -q -c`
-When it is taken apart by the delivery, request conflict, push set and waiting guards and the
-watchman of the turn exits
+When it is taken apart by the delivery, request conflict and push set guards and the watchman of the
+turn exits
 Then each judges it as the shape without the flag: the name and the base are checked, a conflict with
 an open request is refused, the push of a new branch passes, the work taken is noticed
 
 Covered: `projects/agent-kit/tests/git-guards.test.sh`,
 `projects/agent-kit/tests/git-guard-conflict.test.sh`,
 `projects/agent-kit/tests/git-guard-push-tests.test.sh`,
-`projects/agent-kit/tests/waiting-turn-guard.test.sh`,
 `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
 ### SC-AK-884 — a branch name with the tail -b in the base argument does not count as a request body

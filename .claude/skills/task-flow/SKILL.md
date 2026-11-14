@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of one task from the request to the merge. Load at the start of any work, when editing task folders and product agreements, and on return to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. Epics — epic-flow, turns — turn-conduct.
 ---
-<!-- rt-kit v0.37.0 · rules/task-flow.md · b6f4cbf99772 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/task-flow.md · edc3ddada269 · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -17,8 +17,8 @@ demand, not with the rule: an ordinary decision does not need it — whoever ana
 with a guard does.
 
 **Requires:** `hooks/task-flow-guard.sh`, `hooks/task-flow-draft-guard.sh`,
-`hooks/task-context-load.sh`, `hooks/grill-gate.sh`, `hooks/window-fill-guard.sh`,
-`hooks/turn-exit-guard.sh`, `hooks/work-start-guard.sh`, `hooks/main-run-context.sh`
+`hooks/task-context-load.sh`, `hooks/window-fill-guard.sh`, `hooks/turn-exit-guard.sh`,
+`hooks/turn-judge.md`, `hooks/ask-judge.md`, `hooks/main-run-context.sh`
 
 ## What it is called here
 
@@ -280,12 +280,12 @@ trace. The owner judges both.
 The guard judges by the edit paths, not by whether the work changes behaviour. A refactoring gets no
 sign of its own: the appraisal "behaviour does not change" would be assigned by whoever it hinders.
 
-Of the grill itself only the menus are checked: the conversation guard refuses a third menu after
-the owner took the recommended option twice in a row. The exploration, the six questions and the
-answers are checked by nothing.
+Of the grill itself only the questions are judged: the agent hook of the question tool holds a
+question the owner already answered or a rule answers plainly, and names where the answer is. The
+exploration, the six questions, the count of menus and the answers are checked by nothing.
 
-The conversation guard judges shared words between the question's topic and the owner's last
-message, not meaning; its refusal names the lawful move.
+The agent hooks judge by meaning, not by shared words, and a model can let a case pass: a doubtful
+question leaves, a doubtful turn ends.
 
 Nothing watches the plan's immutability: an edit along the way is told from the original record only
 by history.

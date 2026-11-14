@@ -4,31 +4,6 @@ The identifier stands at the start of the test title, followed by a dash. While 
 covered, it carries the mark "Not covered" with a reason. The prefix is shared by the domain, and the
 numbers were not recounted on the move into the subdomain: the number ties a scenario to a test title.
 
-### SC-AK-22 — a question to the owner without reading the rules does not end a turn
-
-Given the rules and the laws were not read during the turn When the turn ends with a reply holding a
-question Then the guard gives the turn back to the executor and names what is read before a question
-
-### SC-AK-23 — a rule that was read allows a question
-
-Given a rule was loaded during the same turn When the turn ends with a reply holding a question Then
-the guard lets it through
-
-### SC-AK-24 — a search over the rules counts as reading on a par with loading
-
-Given a search over the constitution directory went during the turn, and no rule was loaded When the
-turn ends with a reply holding a question Then the guard lets it through
-
-### SC-AK-25 — a repeated pass over the same turn is not judged
-
-Given the guard already gave this turn back once When the turn ends again Then the guard lets it
-through
-
-### SC-AK-26 — a broken conversation guard does not stop the work
-
-Given there is no record of the turn in place When the turn ends with a reply holding a question Then
-the guard lets it through
-
 ### SC-AK-35 — the window guard stays silent up to the reminder threshold
 
 Given the fill of the window is below the reminder threshold When the session makes a tool call Then
@@ -207,16 +182,6 @@ place
 
 Covered: `projects/agent-kit/tests/defaults.test.sh`.
 
-### SC-AK-750 — a declared action of one's own does not count as work
-
-Given the turn made not a single edit and called not a single command, and named the next action in
-words — "next I take", "as the next step", "then I will do" When the waiting guard judges the end of
-the turn Then the turn does not close, and the refusal names the declaration itself: the emptiness
-behind a promise is visible to nobody. A turn where a call stands behind the same words passes — there
-the declaration is said in the course of the work, not instead of it
-
-Covered: `projects/agent-kit/tests/waiting-turn-guard.test.sh`.
-
 ### SC-AK-689 — a suite that accumulates a count of checks gives it back by the exit code
 
 Given a scenario suite calls the shared counter of checks and does not call the line of the total When
@@ -224,29 +189,6 @@ the resource review walks the suites Then it names that suite by name: its failu
 of the run in no way
 
 Covered: `projects/agent-kit/tests/syntax.test.sh`.
-
-### SC-AK-703 — an epic plan is read on a par with the laws
-
-Given during the turn a plan outliving one task was read, and no rule was loaded When the turn ends
-with a reply holding a question Then the guard lets it through: the decision tying the tasks of an epic
-lies there, not in the rules
-
-Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
-
-### SC-AK-704 — the archive is read on a par with the laws
-
-Given a search over the archive directory went during the turn, and no rule was loaded When the turn
-ends with a reply holding a question Then the guard lets it through
-
-Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
-
-### SC-AK-705 — the hint of the refusal names every directory whose reading it counts
-
-Given the turn ends with a question, and nothing was read during the turn When the guard gives the turn
-back Then its hint names both the directory of the plans and the directory of the archive: a refusal
-lifted by a search over an incomplete list of directories cost a second refusal in a row
-
-Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
 
 ### SC-AK-710 — the laid-out rules layer is judged on a par with application code
 
@@ -284,15 +226,6 @@ When the session starts Then the state from that section arrives in the context,
 record is trimmed: on a large folder the state itself would otherwise leave the session
 
 Covered: `projects/agent-kit/tests/task-context-load.test.sh`.
-
-### SC-AK-756 — the rule of the area of the work counts as reading the rules
-
-Given during the turn a file was edited for which the rules gate names its own rule, and another one
-was read When the turn ends with a question to the owner Then the guard refuses: what was read does not
-answer the question asked. The rule of the area — read as a file or loaded — lifts the refusal, and a
-turn without edits is judged by the former sign: any reading of the rules layer
-
-Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
 
 ### SC-AK-754 — a task folder taken apart reads as work that is closing
 
@@ -352,15 +285,6 @@ session did not see at all
 
 Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-735 — half of the conversation guard is declared by a resource of its own
-
-Given the question to the owner is asked by a tool, and the laws and the rules were not read during the
-turn When the call goes through the resource declaring this event Then it is refused by the same body
-and the same refusal as the closing of a turn; the body is lost — the call is let through, and a tree
-whose question tool is taken by a guard of its own cancels one half and keeps the other
-
-Covered: `projects/agent-kit/tests/grill-gate.test.sh`.
-
 ### SC-AK-736 — the agreement is named by a domain spec too
 
 Given the tree writes the agreement straight into a domain spec, and it has no "proposed" directory
@@ -402,16 +326,6 @@ same directory names, and the exit branch stands first
 
 Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-747 — not one of two actions is done about handed-in work
-
-Given a turn in which a request is opened, and the state of the handed-in work is not asked and the next
-task is not taken
-When the waiting guard judges the end of the turn
-Then the refusal names both actions at once: the next one taken carries the sign of an open request away
-with it, and the second demand after it will never sound again
-
-Covered: `projects/agent-kit/tests/waiting-turn-guard.test.sh`.
-
 ### SC-AK-748 — work left in the working tree does not end a turn
 
 Given the branch went ahead of its remote reference, there was work during the turn, and no request was
@@ -421,15 +335,6 @@ Then it refuses the turn and names the number of unhanded commits; a branch leve
 and a turn with an open request pass
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-773 — a request for a proposal is caught in Latin too, and a tree without the directory is not judged
-
-Given the owner asks for a proposal in English — a verb next to the word about a proposal and a
-neighbour about the rules layer When the proposal guard judges the end of the turn Then it demands the
-send the same way as in the owner's language; a send in the same turn lifts the demand, a word without a
-neighbour is not judged, and a tree that has no proposals directory on the disk gets no watchman at all
-
-Covered: `projects/agent-kit/tests/proposal-guard.test.sh`.
 
 ### SC-AK-804 — the section of the course of the work survives the compaction under a locale with national settings
 

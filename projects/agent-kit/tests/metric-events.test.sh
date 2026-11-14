@@ -366,7 +366,7 @@ for hook in "$HOOKS"/*.sh; do
     [ -z "$rule" ] || ls "$ASSETS/rules/$rule".* >/dev/null 2>&1 || unknown=$((unknown + 1))
 done
 report "правило: объявлено только существующее" "$unknown" "0"
-report "правило: объявление есть у проверок" "$(grep -l '^RT_GUARD_RULE=' "$HOOKS"/*.sh | wc -l | tr -d ' ')" "27"
+report "правило: объявление есть у проверок" "$(grep -l '^RT_GUARD_RULE=' "$HOOKS"/*.sh | wc -l | tr -d ' ')" "23"
 
 tree="$(fixture_tree)"
 gate_in() {

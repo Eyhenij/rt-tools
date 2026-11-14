@@ -42,6 +42,10 @@ not by a person.
   released as before.
 - **Under an open epic a second pass over the turn is judged again.** The first refusal named the
   next step, and a turn ending again without a lawful exit is the same stop.
+- **Under an open epic an empty turn inside a task does not end.** Inside a task the owner's stop has
+  a form the guard reads — the quote in the waiting line of the progress. Without a progress file
+  that form does not exist, and the guard leaves such a turn to the agent hook of the same event:
+  refused, the owner's «стоп» would have no exit at all.
 - **A handover written by hand releases a turn only outside an open epic.** On compaction the
   handover is written by the hook, not by a command of the turn; the refusal of the window guard
   releases as any refusal.

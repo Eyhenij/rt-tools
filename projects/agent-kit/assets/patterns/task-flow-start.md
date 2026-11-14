@@ -95,8 +95,8 @@ edit, a question about the obvious costs a session.
 **Two answers «recommended» in a row close the remaining questions by assumption.** An owner who took
 the recommended option twice running has shown that the decisions are not theirs. From the second
 such answer the remaining questions go into the grill as decisions — what is taken and where from —
-and the owner gets the list in one line, not a menu. The guard of the conversation refuses the third
-menu itself; a menu goes out again only for a question no assumption closes, and says so first.
+and the owner gets the list in one line, not a menu. No check counts the menus; a menu goes out
+again only for a question no assumption closes, and says so first.
 
 **The streak is counted over the session record, not per task.** After two «recommended» answers at
 the end of one task, the next task's questions go into its grill as decisions from the start.

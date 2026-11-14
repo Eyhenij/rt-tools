@@ -53,8 +53,23 @@ expect_stop "SC-AK-1117 — вопрос после работы отпуска�
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(asked)")")" PASS
 expect_stop "SC-AK-1117 — отказ проверки последним действием отпускает и при открытом эпике" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran 'echo x > a.ts')" "$(answered 'BLOCKED by task-flow: нет замысла')")")" PASS
-expect_stop "SC-AK-1117 — слово владельца об остановке отпускает и при открытом эпике" \
-    "$(input_stop "$(transcript "$(say 'останови, дальше сам')" "$(edited)")")" PASS
+
+# --- SC-AK-1356, SC-AK-1357 — пустой ход при открытом эпике --------------------------------------
+# Внутри задачи у слова владельца об остановке есть законная форма — цитата в строке ожидания хода
+# работы, и пустой ход без неё не отпускается. Без хода работы этой формы нет: такой ход судит хук
+# модели на том же событии, а проверка выхода его не трогает.
+state_is 'этап-идёт'
+expect_stop "SC-AK-1356 — пустой ход внутри задачи открытого эпика не отпускается" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")")" BLOCK
+expect_reason "SC-AK-1356 — отказ называет пустой ход" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")")" "nothing was done in the turn"
+printf '%s\n' '- **Waiting for the owner:** «стой, дальше скажу сам»' >> "$TASK/progress.md"
+expect_stop "SC-AK-1356 — цитата слова владельца в строке ожидания пустой ход отпускает" \
+    "$(input_stop "$(transcript "$(say 'стой, дальше скажу сам')" "$(reply)")")" PASS
+rm -f "$TASK/progress.md"
+expect_stop "SC-AK-1357 — пустой ход открытого эпика без хода работы проверка выхода не судит" \
+    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")")" PASS
+state_is 'этап-идёт'
 
 # --- SC-AK-1118 — передача рукой при открытом эпике --------------------------------------------
 # Передача при уплотнении пишется хуком, не командой в ходу; написанная рукой до порога — остановка,
@@ -152,15 +167,10 @@ expect_stop "SC-AK-1119 — нечитаемая таблица: ход с ра�
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
 expect_stop "SC-AK-1119 — нечитаемая таблица: второй проход отпускается" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(said 'Готово.')")" true)" PASS
-expect_stop "SC-AK-1119 — нечитаемая таблица: пустой ход не отпускается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")")" BLOCK
 rm -f "$REPO/tools/epic-table.mjs"
 unset STUB_LEFT STUB_CODE
 expect_stop "SC-AK-1119 — без таблицы вовсе: ход с работой отпускается" \
     "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
-expect_stop "SC-AK-1119 — без таблицы вовсе: пустой ход не отпускается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")")" BLOCK
-
 
 # --- SC-AK-1128 — ветка эпика не читается как задача без папки -----------------------------------
 # Ветка эпика имеет вид ветки задачи и папки при себе не несёт. Без признака ярус «взята, не
@@ -177,9 +187,6 @@ expect_stop "SC-AK-1128 — план с другой веткой ход на в
 printf '**Эпик:** RT-9 · **Ветка эпика:** `RT-9-epic-line`\n' > "$EPIC_BR/docs/plans/epic.md"
 expect_stop "SC-AK-1128 — ветка, названная планом эпика, ярусом взятой задачи не судится" \
     "$(input_epic_branch "$(transcript "$(say 'продолжай')" "$(ran 'git commit -m x')")")" PASS
-expect_stop "SC-AK-1128 — пустой ход на ветке эпика не отпускается" \
-    "$(input_epic_branch "$(transcript "$(say 'ну что там?')" "$(reply)")")" BLOCK
 rm -rf "$EPIC_BR"
-
 
 suite_result "проверка выхода из хода: открытый эпик"

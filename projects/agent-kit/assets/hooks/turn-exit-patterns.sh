@@ -52,18 +52,6 @@ part_re='&&|\|\||;|\n'
 # the tree did not change by a single sign; such a turn stands exactly as long as an empty one.
 wait_re='gh[[:space:]]+(run[[:space:]]+watch|pr[[:space:]]+checks[^|]*--watch)|until[[:space:]].*sleep|while[[:space:]].*sleep|^[[:space:]]*sleep[[:space:]]|(nx[[:space:]]+(affected|run-many|test|build|lint|e2e)|npm[[:space:]]+run[[:space:]]+(lint|test|check:|e2e)|pnpm[[:space:]]+run|playwright[[:space:]]+test|vitest|jest|bash[[:space:]].*tests?/)[^&]*&[[:space:]]*$|(cat|tail|head|less|grep)[^|]*\.(log|output)([[:space:]]|$)|tasks/[A-Za-z0-9]+\.output'
 
-# A promise to do the work in the next turn. The same announcement of intent as a command named and
-# not run, only it sounds politer and is therefore recognised as a stop less often. An offer to the
-# owner to object to the announced intent is part of the promise, not a question: a turn ends with a
-# question when the work does not go without the answer, and here it did go.
-promise_re='следующим ходом|в следующий раз|дальше возьму|дальше допишу|допишу остальн|доделаю остальн|доделаю в следующ|продолжу в следующ|беру[^.]{0,40}следующим|возьму[^.]{0,40}следующим'
-
-# The owner's standing word to work without stops. It holds until they cancel it, and a turn that
-# ended with waiting for their word invents that cancellation. Without this the word about a stop
-# was read out of it by the piece «останов» in «без остановок» — the instruction to work was taken
-# for its opposite.
-standing_work_re='работай[^.]{0,40}(без остановок|без пауз|сам)|не останавливайся|продолжай[^.]{0,40}(без остановок|без пауз)|работай дальше'
-
 # Handing work over and starting the next. The rule calls handed-over work a lawful end of a turn —
 # but on a condition: the next one is started, and an ACTION has been done on it, not spoken.
 # The GitLab client opens a merge request — the same handing over.

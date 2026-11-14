@@ -21,6 +21,7 @@ demand, not with the rule.
 | turn | one pass of the agent: from the owner's message to the reply |
 | a turn exit | one of the ways to end a turn listed below; what confirms each — the turn map |
 | the guard of turn exits | a guard at the turn's end: reads the declared work state and what the turn did in the tree |
+| the agent hook of the turn's end | a model at the turn's end: reads the owner's last message, the reply and the calls of the turn |
 | a statement about the state of the tree | a word in the reply to the owner backed by a command of the same turn and its output |
 | the session handover | a section of the progress retelling it for a new session; a file outside the tree where there is no task folder |
 | the compaction threshold and the stop threshold | two window-fill numbers the tree sets itself; the first stands below the second |
@@ -139,14 +140,10 @@ flowchart TD
   — the owner reads a report as an account of the done. Three things are named: what stands, what it
   waits for and what the owner can decide.
 - **Turn exits are watched by a guard, not by the executor's memory.** It reads the declared work state and what
-  the turn did on it: a file edit or a tree-changing command. A turn with neither returns to the
-  executor with the next step from the progress.
-- **A removed task folder lifts the state requirement and does not end the turn.** The progress
-  leaves with the folder, taken apart before the PR opens; a removed folder means the middle of
-  handing in, not its end. From there the turn is judged by the second sign.
-- **Work without a branch and without a task folder is judged by the same guard by the second
-  sign.** It has no state, and the first sign has nowhere to come from — but a turn with no edit of
-  the tree does not end here either.
+  the turn did on it: a file edit or a tree-changing command. What the reply says — an answer, a
+  promise, a report instead of the next step — the agent hook on the same event judges by meaning.
+- **A removed task folder lifts the state requirement.** The progress leaves with the folder, taken
+  apart before the PR opens; a removed folder means the middle of handing in, not its end.
 - **A taken task is not yet begun work, and the turn does not end on it.** Creating the branch,
   moving the column and naming the number are preparation: the mandatory action of `задача-взята` is
   not done by a single line. An epic branch, named by the header of its plan, carries no folder by
@@ -157,9 +154,9 @@ flowchart TD
 - **A reply to the owner is not an action and does not stand last in a turn.** The order inside a
   turn is one: work, the first step of the next, then text; what was done is said after the next
   action, not instead of it.
-- **The last action of a turn is only ever work.** One sign for every kind of stop: a file edit or a
-  changing command — last among what the turn did. The guard's tiers — exploration, waiting, handing
-  in without starting the next — only derive a readable refusal from it.
+- **The last action of a turn is only ever work.** A file edit or a changing command stands last
+  among what the turn did. The guard refuses the kinds it reads from the calls — waiting, a launch in
+  the background, a taken task; a report standing last the agent hook judges.
 - **Waiting for someone else's step is never the last action of a turn.** While they are waited for,
   the work stays where it stood. The last action is judged: waiting mid-turn is lawful, and so is a
   launch in the background mid-turn. Standing last, it is an announcement of intent: what does not depend on it is done while it runs.
@@ -184,42 +181,34 @@ flowchart TD
 - **The word about a stop the guard reads from the owner, not from the executor.** Otherwise the
   stop is declared by whoever finds it convenient, and the ban holds until the first inconvenience.
 - **Until the epic is closed a turn ends only by a question, a refusal, the window or the owner's
-  word.** A turn that ended with
-  work is a stop all the same, and so is a second pass over the same turn: the exit guard returns
-  both with the next step named.
+  word.** A turn that ended with work is a stop all the same, and so are an empty turn inside a task
+  and a second pass over the same turn: the exit guard returns them with the next step named.
 - **The owner's standing word about a stop is quoted in the progress, in « », in the line «Waiting
   for the owner».** The guard reads their word, not a retelling: a line without a quote releases
-  nothing, and a quote holds until the owner cancels it. A word said in this turn releases by itself.
+  nothing, and a quote holds until the owner cancels it. A word said in the turn itself the agent
+  hook reads; the exit guard reads only the quote in the line.
 - **The session is ended by the owner and by nobody else.** The tool that closes the conversation is
   refused by a guard always, with no lawful form of bypass: an assignment stands until the owner
   cancels it, and a session that must close is closed by them.
 - **A refusal of a guard ends the turn only as its last action, and only a refusal of work.** A
   refusal answered by the next call is the middle of the turn. A refused stop — the closing tool —
   is no exit: the refused call was itself the stop, and the exit guard leaves it out.
-- **The phrase "waiting for your word" is a stop declared by the executor, and the guard refuses it
-  by name.** Without the owner's word about a stop in the turn and without a question put to them by
-  the tool, waiting for their word is a report, not work; the instruction holds until they cancel
-  it.
-- **A statement about the tree's state is watched by the statement guard, not by the executor's
+- **The phrase "waiting for your word" is a stop declared by the executor.** Without the owner's word
+  about a stop and without a question put to them by the tool, waiting for their word is a report,
+  not work; the instruction holds until they cancel it. The agent hook judges it by meaning.
+- **A statement about the tree's state is watched by the agent hook, not by the executor's
   memory.** Everything the reply says about the tree carries a command and its output; said without
-  one, it is no statement — not "checked", not "cleared", not "done". The guard reads the turn's
-  text to the owner and looks for a command of the same turn; each word has its own kind of
-  command.
-- **The statement guard waits for the reply text rather than judging the record as it found it.**
-  The text lands in the turn record no earlier than the host calls the hook. Not having waited, the
-  guard returns the turn: an empty record means not "nothing to say" but "nothing to read".
-- **The guard catches a statement word, not a wrong conclusion.** About a sample judged by one file
-  there is nothing to judge by: no word and no command to compare with. This is the guard's known boundary; the articles below hold it, not the guard.
-- **A turn about someone else's step is watched by the waiting guard, not by the executor's
-  memory.** It refuses a turn's end where someone else's step was spoken of and nothing was done on
-  the next task — no task created, no branch, no folder, no column moved. Someone else's step it
-  knows by two signs: a PR opened or a red run read in the turn.
+  one, it is no statement — not "checked", not "cleared", not "done". The hook reads the reply and
+  the results of the turn's calls.
+- **A wrong conclusion from a right command is not judged.** About a sample judged by one file there
+  is nothing to compare with. This is the hook's known boundary; the articles below hold it.
+- **A turn that handed work in does not end before the next task is begun.** Someone else's step —
+  the run, the review, the merge — goes without the executor. The exit guard knows a handover by a PR
+  opened in the turn and refuses a turn that took no next task: no task created, no branch, no
+  column moved.
 - **A turn that handed work in carries it to a lifted draft.** A draft's merge button is locked by
   the host, and in the PR list ready cannot be told from unfinished. The next task is taken on top
-  of that, not instead. The waiting guard demands a command of the same turn about the state of the
-  handed-in work.
-- **The waiting guard's refusal is lifted by both actions at once.** The taken next task carries the
-  open-PR sign away, and the demand to ask the handed-in work's state never sounds after it.
+  of that, not instead.
 - **Work left in the working tree does not end the turn.** A branch ahead of the remote ref with no
   open PR is done work nobody sees; the guard reads this without the network.
 - **"Waiting for the run" is a statement about someone else's step, not a work state.** A run may be
@@ -231,8 +220,7 @@ flowchart TD
   repeated idly or not at all — the work does not move.
 - **A run nobody started by hand is watched the same as a rerun, and the opened PR starts it.** The
   pipeline wakes by itself: the turn holds no starting command, and one read of the state closes
-  nothing. Read as going, the run goes under a wait in the same turn — the waiting guard watches
-  the pair "the request opened here, its run read as going".
+  nothing. Read as going, the run goes under a wait in the same turn.
 - **A green run is carried to a lifted draft by the one who handed the work over, a red one is
   fixed in the same branch.** The owner sees a locked button and reads it as work still going. The
   wait runs in the background, next to the next work.
@@ -249,10 +237,9 @@ flowchart TD
   For a call with a reading twin, the kind is chosen by the action, not the command's name.
 - **A turn in which a question was put to the owner does not end until laws and rules were read in
   that same turn.** Reading is any of three roads: loading a rule, reading a file of laws or rules,
-  a search over them. With edits in the turn, only the rule the gate demands counts, and the
-  refusal names it. The guard refuses on the question tool before the menu leaves, and at
-  the turn's end for a question in prose. What was found lands in the grill section "What the
-  rules already say".
+  a search over them. What was found lands in the grill section "What the rules already say". The
+  agent hook of the question tool holds a question a rule or a spec answers plainly; whether the
+  reading was done in the same turn no check counts.
 - **The owner's answer is sought in their own messages before the rules.** The law says a question
   with a written answer is not put to the owner, and the most reachable record lies in the
   conversation: the owner's first message and their answers to past rounds.
@@ -273,9 +260,8 @@ flowchart TD
 - **The sign of irreversibility is taken from the list, not derived by argument.** The list was
   drawn up by someone who already weighed reversibility, and an argument cancels it silently. Actions outside the list the executor does not gate.
 - **A turn in which the executor admitted a miss does not end until the incident record exists.**
-  The incident guard refuses at the turn's end. The records directory is named by the rule's companion, the file name is the date and
-  the miss, the form — the layout template. The admission is caught by a set of samples: a miss
-  admitted in words outside the set the guard lets through.
+  The agent hook refuses at the turn's end. The records directory is named by the rule's companion,
+  the file name is the date and the miss, the form — the layout template.
 - **A session begun from a handover enters the work by the same rule as any other.** The handover
   was written by a past session, no check reads it, and it describes yesterday: everything in it is
   checked against the tree. The entry order is four steps in the resume pattern; a guard watches it,
@@ -306,12 +292,14 @@ flowchart TD
 
 ## What of the law is not here
 
-Nothing checks the completeness of what is said to the owner: the statement guard catches a
-statement word and looks for a command of the same turn; a wrong conclusion from a right command it
-cannot judge — there is nothing to compare with.
+Nothing checks the completeness of what is said to the owner: the agent hook judges whether a result
+of the turn shows a statement; a wrong conclusion from a right command it cannot judge — there is
+nothing to compare with.
 
-An admission of a miss is caught by samples, not by understanding: words outside the set the
-incident guard lets through. That is its known boundary, not a promise.
+What a turn said is judged by a model, and a model can let a case pass. The hook is told to let a
+doubtful turn end: a false refusal costs the owner a repeated answer, a missed one is visible in the
+reply. A broken or timed-out hook lets every turn end, and that shows only as the absence of its
+mark in the transcripts.
 
 ## Patterns
 

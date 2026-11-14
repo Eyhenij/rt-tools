@@ -43,10 +43,6 @@ not by a person.
 
 ## Rules
 
-- **The last action of a turn is only ever work.** The sign is one for all the kinds of stopping;
-  the particular tiers derive an understandable refusal from it.
-- **An answer to the owner does not work as an action.** The order inside a turn: the work, the
-  first step of the next one, then the text.
 - **Exploration does not count as work.** A reading subcommand of the version control system and a
   reading call of the hosting client stay a preparation for work.
 - **A redirection of the output does not count as work.** What makes a turn work is where the arrow

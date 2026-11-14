@@ -275,7 +275,7 @@ printf '# Ход работы\n\n## Где стоим\n\n- **Состояние:
 REAL_TURN="$(mktemp)"
 {
     jq -c -n '{type:"user",message:{content:[{type:"text",text:"продолжай"}]}}'
-    jq -c -n '{type:"assistant",message:{content:[{type:"tool_use",name:"Read",input:{file_path:"a.md"}}]}}'
+    jq -c -n '{type:"assistant",message:{content:[{type:"tool_use",name:"Bash",input:{command:"gh run watch 1"}}]}}'
 } > "$REAL_TURN"
 
 WORK_TURN="$(mktemp)"

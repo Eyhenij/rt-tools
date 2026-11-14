@@ -29,6 +29,16 @@
             "timeout": 1800
           }
         ]
+      },
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "agent",
+            "prompt": "Read the file .claude/hooks/ask-judge.md under the project root named by the field cwd of the hook input, and follow it exactly. The hook input: $ARGUMENTS",
+            "timeout": 60
+          }
+        ]
       }
     ],
     "SessionStart": [
@@ -47,6 +57,15 @@
           {
             "type": "command",
             "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/dispatch.sh Stop"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "agent",
+            "prompt": "Read the file .claude/hooks/turn-judge.md under the project root named by the field cwd of the hook input, and follow it exactly. The hook input: $ARGUMENTS",
+            "timeout": 60
           }
         ]
       }

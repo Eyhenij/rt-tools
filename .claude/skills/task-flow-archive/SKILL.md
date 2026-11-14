@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when the texts are up to date and the task folder is taken apart by the last commit before the PR opens. The move to the archive, the work queue audit, the rules review of the closed work and what to do with the findings.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-archive.md · 95d87f3efd28 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-archive.md · 325cd27fd6ba · правится надстройкой, не здесь -->
 
 # Taking the task folder apart and the rules review of the work
 
@@ -248,9 +248,8 @@ indistinguishable from a sent one.
   merge the PR in that minute, and the grill is gone.
 - **The closing steps are not agreed with the owner — they are listed here.** The rules review of
   the work is part of closing, as are merging the agreement and taking the folder apart. The owner
-  decides not whether to launch it but what to do with the findings. A turn that ended with such a
-  question is refused by the conversation guard: no rules were read in the turn, and the answer
-  stands in them. Only what the rules lack is asked.
+  decides not whether to launch it but what to do with the findings. Such a question is held by the
+  agent hook of the question tool: the answer stands in the rules. Only what the rules lack is asked.
 - **A ready-made code block in a pattern goes stale from someone else's edit.** It is bound to
   nothing: the spec audit reads the rule's statements and does not read the sample under them at
   all. Two fields made mandatory in someone else's work made the sample in a neighbouring pattern

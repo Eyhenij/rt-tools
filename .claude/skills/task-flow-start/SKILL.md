@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load at the start of work from the owner — exploration before the first question, the six mandatory questions, the product agreement, creating the task, the branch and the folder. Returning to work — pattern task-flow-resume.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-start.md · 376a2b92b1b0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-start.md · 260d5f159eb8 · правится надстройкой, не здесь -->
 
 # Starting the work
 
@@ -96,8 +96,8 @@ edit, a question about the obvious costs a session.
 **Two answers «recommended» in a row close the remaining questions by assumption.** An owner who took
 the recommended option twice running has shown that the decisions are not theirs. From the second
 such answer the remaining questions go into the grill as decisions — what is taken and where from —
-and the owner gets the list in one line, not a menu. The guard of the conversation refuses the third
-menu itself; a menu goes out again only for a question no assumption closes, and says so first.
+and the owner gets the list in one line, not a menu. No check counts the menus; a menu goes out
+again only for a question no assumption closes, and says so first.
 
 **The streak is counted over the session record, not per task.** After two «recommended» answers at
 the end of one task, the next task's questions go into its grill as decisions from the start.

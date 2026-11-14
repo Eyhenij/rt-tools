@@ -88,7 +88,7 @@ stop_decision "SC-AK-986 — отправка ветки не судится" 'g
 stop_decision "SC-AK-986 — чтение истории не судится" 'git log --oneline -5' PASS
 stop_decision "SC-AK-986 — переход на готовую ветку не судится" 'git checkout RT-1999-probe' PASS
 
-# --- SC-AK-987 — гард ожидания не требует следующей задачи при кончившемся эпике --------------
+# --- SC-AK-987 — проверка выхода не требует следующей задачи при кончившемся эпике --------------
 #
 # Отданная работа при живом эпике требует взять следующую задачу; при кончившемся её брать нельзя —
 # и оба гарда обязаны сходиться, иначе у хода не остаётся законного конца.
@@ -126,9 +126,9 @@ stop_turn() {
 HANDED="$(turn "$(said 'работай')" "$(called 'gh pr create --draft --title x')" "$(called 'gh run list --branch RT-1-probe')" "$(called 'gh pr ready 1')")"
 
 export STUB_LEFT='1947'
-stop_turn "SC-AK-987 — живой эпик требует следующей задачи" waiting-turn-guard.sh "$(stop_input "$HANDED")" BLOCK
+stop_turn "SC-AK-987 — живой эпик требует следующей задачи" turn-exit-guard.sh "$(stop_input "$HANDED")" BLOCK
 export STUB_LEFT=''
-stop_turn "SC-AK-987 — кончившийся эпик требования снимает" waiting-turn-guard.sh "$(stop_input "$HANDED")" PASS
+stop_turn "SC-AK-987 — кончившийся эпик требования снимает" turn-exit-guard.sh "$(stop_input "$HANDED")" PASS
 
 # --- SC-AK-988 — ход, ждущий приказа, при кончившемся эпике не отбивается ---------------------
 mkdir -p "$STOP_TREE/docs/tasks"

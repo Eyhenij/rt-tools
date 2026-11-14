@@ -15,7 +15,8 @@ when the epic is over.
   because the rules hold the answer, once because no tree-changing command followed the last
   refusal. The only remaining move is to take the next task against the owner's word. The session
   looped six times on the same refusal after PR #3083 opened. **Address:** rules layer —
-  `hooks/turn-exit-guard.sh` and `hooks/grill-gate.sh`, the same edit as task RT-3067.
+  `hooks/turn-exit-guard.sh` and the conversation check `grill-gate`, the same edit as task RT-3067.
+  The conversation check was removed by RT-3276; its questions are judged by the agent hook.
 - **A turn longer than the guard's window has no work in it at all.** `rt_te_verdict` reads
   `tail -n 400` of the transcript. The owner's last message lay further back, so the window held no
   input, the turn came out empty, and edits and commands made in it counted as nothing. The refusal

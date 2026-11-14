@@ -1,40 +1,30 @@
 #!/usr/bin/env bash
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh, hooks/turn-exit-epic.sh, hooks/turn-exit-role.sh
-# Turn exit guard: a turn in which nothing was done on the work does not end until the work is
-# handed over. Stop.
+# Turn exit guard: a turn does not end while the tree and the calls of the turn show work left
+# undone — a written plan with no stage begun, a state that waits for a request, commits not
+# handed over, steps of the plan, an open epic. Stop.
 #
-# Why exactly this way. The rule lists four lawful exits of a turn — a question the rules do not
-# answer, a guard refusal, a filled window, work handed over with the next one started — and all
-# of it is held by the executor's memory. Held badly: a turn that ended with a report of what was
-# done looks more like work than any other — it is full, it names numbers and states, and the
-# emptiness behind it is invisible both to the owner and to the session itself. The owner said it
-# outright: stopping in the middle of work is not allowed, and the ban must be held by the machine.
+# What it does not judge: the words. Whether the reply answers the owner, keeps a promise or waits
+# for a word nobody asked for is judged by the agent hook on the same event, whose text the package
+# lays out next to this guard. This guard reads the work state, the branch history and the calls of
+# the turn, and a sign that needs the meaning of a sentence does not belong here.
 #
-# What counts as work: an edit of a file and a command that changes the tree or its state. Reading,
-# searching and talking do not count as work — a turn that has stalled is filled with exactly
-# these. A reading subcommand of `git` and of the hosting client does not count as work either, and
-# this is judged by the parts of a compound command: reading joined to an edit through `&&` stays
+# What counts as work: an edit of a file and a command that changes the tree or its state. Reading
+# and searching do not count — and a reading subcommand of `git` and of the hosting client does not
+# either, judged by the parts of a compound command: reading joined to an edit through `&&` stays
 # work.
 #
 # What releases a turn:
 #   1. The work is handed over or merged — the work state says so itself.
-#   2. There was work in the turn: an edit of a file or a command that changes the tree.
-#   3. A question to the owner through the question tool.
-#   4. A guard refusal — it ends the turn by the rule.
-#   5. The session handover is written — the window has run out.
-#   6. The owner said to stop.
-#   7. The session runs as a role with no edit tool: its report is its work, `turn-exit-role.sh`.
+#   2. A question to the owner through the question tool.
+#   3. A guard refusal — it ends the turn by the rule.
+#   4. The session handover is written — the window has run out.
+#   5. The owner's word about a stop quoted in the waiting line of the progress.
+#   6. The session runs as a role with no edit tool: its report is its work, `turn-exit-role.sh`.
 #
-# Under an open epic the second and the fifth do not release, and a second pass is judged again:
-# until the epic is closed the executor does not stop on its own. The tiers lie in `turn-exit-epic.sh`.
-#
-# Work without a branch and without a task folder is judged by the second sign. It has no state,
-# and there is nowhere to take the first sign from — but a turn without a single edit of the tree
-# does not end here either: the owner's request "lay it out", "update it", "take a look" lives
-# without a task and without a branch, and it was protected least of all. Such a turn is released
-# by the same four things: a question, a guard refusal, a written handover and the owner's word
-# about stopping.
+# Under an open epic the fourth does not release, and a second pass is judged again: until the epic
+# is closed the executor does not stop on its own. The tiers lie in `turn-exit-epic.sh`.
 #
 # FAIL-OPEN: on any error, a missing `jq`, a missing turn record, task folder or state line the
 # turn is ALLOWED (exit 0). A broken guard has no right to jam the conversation.
@@ -54,7 +44,7 @@ rt_hook_read
 rt_te_deny() {
     # The end of an epic releases the turn whatever tier came here: the epic is read only on this road.
     command -v rt_te_epic_over >/dev/null 2>&1 && rt_te_epic_over && exit 0
-    rt_te_reason="$(printf '%s\n\n%s' "$1" 'The owner said to stop — quote their word in the progress: `- **Waiting for the owner:** «<their words>»`. Where the task folder is gone, quote it in « » in the reply: the guard checks the quote against their message.')"
+    rt_te_reason="$(printf '%s\n\n%s' "$1" 'The owner said to stop — quote their word in the progress: `- **Waiting for the owner:** «<their words>»`.')"
     rt_te_short="$2"
     # shellcheck disable=SC1090
     [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
@@ -165,41 +155,6 @@ rt_te_verdict
 eval "$(printf '%s' "$verdict" | jq -r 'del(.ran) | to_entries[] | "\(.key)=\(.value | tostring | @sh)"' 2>/dev/null)"
 commands="$(printf '%s' "$verdict" | jq -r '.ran // ""' 2>/dev/null)"
 
-# A question refused by the conversation guard and asked as prose in the same turn. A guard refusal
-# releases the turn — it is the lawful end itself — but there is nothing to release here: the same
-# question came back a line later, and the work stalled on what the tree had already answered. The
-# tier stands before the lawful exits on purpose: a guard refusal covers exactly this case.
-if [ "${asked_in_prose:-false}" = "true" ]; then
-    rt_te_deny "BLOCKED by turn-exit-guard: in this turn the conversation guard refused a question to the owner, and the reply ends with a question in prose — the same question, asked in another form.
-
-The refusal of the guard named the reason: the answer lies in the tree or the owner has already given it. Read the place it named and work on; what is asked is what the tree does not hold.
-
-The guard judges one turn: the next session is not refused." "the question returned in prose after the refusal of the conversation guard."
-fi
-
-# The turn ended with waiting for the owner's word. The guard reads the word about stopping from
-# the owner, and here the executor announced it: in this turn the owner said nothing about stopping
-# and was asked no question through the tool. The shared tiers refuse such a turn without a name,
-# and after one step it ended with the same phrase again — three turns in a row in a consuming
-# tree. The tier stands before the lawful exits: a neighbouring guard's refusal releases a turn that
-# named a refusal to the owner, not a turn that said "waiting".
-# Incident analysis — the record
-# "2026-09-04-hod-konchalsya-ozhidaniem-pri-deystvuyushchem-ukazanii" in the intake.
-# A promise to do the work in the next turn. The same announcement of intent as a command named and
-# not run: the tier stands before the lawful exits, because the promise most often stands next to a
-# report about what was done, and by the fullness of the turn it is indistinguishable from a finish.
-if [ "$promised" = "true" ] && [ "$released" != "true" ]; then
-    rt_te_deny "BLOCKED by turn-exit-guard: the reply ends with a promise to do the work in the next turn.
-
-A promise is the same announcement of intent as a command named and not run, and it only sounds politer. An offer to the owner to object to the announced intent is part of the promise, not a question: a turn ends with a question when the work does not go without the answer.
-
-Do the promised in this same turn, and the account of it can come after.
-
-The next step is written in the progress: ${next_step}
-
-The guard judges one turn: the next session is not refused." "the turn ended with a promise to do the work in the next turn."
-fi
-
 # Taking a task as the last action of the turn. Creating the task, the branch and the move of the
 # column is preparation, and the work of the taken task did not begin. Taking it after handed-over
 # work is a lawful end: there the taking answers for the handed-over one.
@@ -211,29 +166,6 @@ Creating the task, the branch and moving the column is preparation for work, not
 Write the plan and begin its first stage in this same turn.
 
 The guard judges one turn: the next session is not refused." "the turn ended with taking a task."
-fi
-
-# The owner said to work without stops and did not cancel it. Their word holds until they cancel
-# it, and a turn ending with waiting for that same word invents the cancellation. Judged whether or
-# not there was work in the turn: the work stood three turns in a row, and each of them was full.
-if [ "$standing_work" = "true" ] && [ "$awaits_word" = "true" ]; then
-    rt_te_deny "BLOCKED by turn-exit-guard: the turn ended with waiting for the word of the owner, and the owner said in this session to work without stops and did not cancel it.
-
-Their word holds until they cancel it themselves, and a new fact against it is a line about the price in the reply, not waiting. A decision the tree does not hold is needed — then ask the question by the tool.
-
-The next step is written in the progress: ${next_step}
-
-The guard judges one turn: the next session is not refused." "the turn ended with waiting under the standing word of the owner to work."
-fi
-
-if [ "$awaits_word" = "true" ]; then
-    rt_te_deny "BLOCKED by turn-exit-guard: the turn ended with words about waiting for the word of the owner, and the word about stopping the guard reads from the owner: in this turn they announced no stop, and no question was put to them by the tool.
-
-The phrase «жду твоего слова» is a stop announced by the executor. The instruction of the owner to work holds until they cancel it, and a new fact against it is a line about the price in the reply, not waiting. A decision the tree does not hold is needed — then ask the question by the tool; otherwise do the next step in this same turn.
-
-The next step is written in the progress: ${next_step}
-
-The guard judges one turn: the next session is not refused." "the turn ended with waiting for the word of the owner."
 fi
 
 # A question without a single piece of work in a running stage: the parts that do not depend on
@@ -257,8 +189,8 @@ fi
 # is full of edits and commands, and it releases it whole; between taking the folder apart and
 # opening the PR nobody sees the work, and the owner reads the previous state as "nothing was done".
 #
-# The tier stands after the lawful exits: a question to the owner, a guard refusal, a session
-# handover and the owner's word about stopping end the turn by the rule, and locking them behind a
+# The tier stands after the lawful exits: a question to the owner, a guard refusal and a session
+# handover end the turn by the rule, and locking them behind a
 # state is not allowed.
 case "$state" in
     этапы-кончились | разбор-кончился)
@@ -401,22 +333,6 @@ The guard judges one turn: the next session is not refused."
     rt_te_deny "$reason" "the turn ended with waiting for a step by someone else."
 fi
 command -v rt_te_launch_last_deny >/dev/null 2>&1 && rt_te_launch_last_deny
-# The shared line. There was work in the turn — but the last action was not it, it was a text to the
-# owner. The particular tiers above name the kind of stop more precisely; what reaches here is what
-# they do not know by name.
-if [ "$worked" = "true" ] && [ "$ended_working" != "true" ]; then
-    reason="BLOCKED by turn-exit-guard: there was work in the turn, but the last action of the turn was not it.
-
-A turn ends with work, not with an account of it. A report, a summary and an announcement of intent are not an exit: the more was done, the more convincingly they look like completion — and the next action takes exactly that place.
-
-The next step is written in the progress: ${next_step}
-
-Do it in this same turn, and telling about what was done can come after. The owner said to stop — then write so: the guard reads their word, not a retelling.
-
-The guard judges one turn: the next session is not refused."
-
-    rt_te_deny "$reason" "the last action of the turn was not work."
-fi
 
 # Work left in the working tree. The branch has gone ahead of its remote reference, and no PR was
 # opened on it in this turn: what was done lies where nobody sees it except the one who did it. The
@@ -441,38 +357,14 @@ rt_te_steps_deny "$progress"  # the steps of the plan are not done; the tier lie
 # There was work in the turn, and the epic is open: the turn is released outside an epic and under a
 # closed one alone. Under an open epic the work stands where it stood, and the next step is named.
 [ "$worked" = "true" ] && rt_te_epic_open && rt_te_epic_deny worked
-[ "$worked" = "true" ] && exit 0
 
-if [ "$archived" = "true" ]; then
-    reason="BLOCKED by turn-exit-guard: the task folder was removed by a commit of the branch, and nothing was done in this turn — neither an edit nor a command changing the tree.
+# An empty turn inside a task of an open epic. Here the owner's stop has a lawful form the guard can
+# read — the waiting line of the progress, checked above — so an empty turn without it is a stop the
+# executor announced. Without a progress file that form does not exist, and the turn is left to the
+# agent hook: refusing it would leave the owner's «стоп» no exit at all.
+[ -n "$progress" ] && rt_te_epic_open && rt_te_epic_deny empty
 
-A removed folder means the middle of handing over, not its end: it is taken away BEFORE the request is opened, and between these two motions nobody but the one who did the work sees it. From this minute there is nothing to declare the state of the work by, so the turn is judged by the second sign — whether there was work in it.
-
-One step is left: open the request as a draft. The request is already open — then take the next task: waiting for a run by someone else is not work and does not end a turn.
-
-The guard judges one turn: the next session is not refused."
-elif [ -z "$state" ]; then
-    reason="BLOCKED by turn-exit-guard: nothing was done in this turn — neither an edit nor a command changing the tree. This work has no task folder, and there is nowhere to take the state from, but that does not end the turn.
-
-A turn ends in four ways: a question to the owner the rules do not answer; a refusal of a guard; a filled session window; work handed over with the next one begun — outside an open epic. The end of the epic is the fifth. A command named and not run is not an exit: the line «сейчас запущу» is an announcement of intent, and that is named outright as a false end of a turn.
-
-Work by the word of the owner — «разложи», «обнови», «посмотри» — goes without a task and without a branch, and there is nothing to stop it by except this sign.
-
-Run what is named in this same turn. The owner said to stop — then write so: the guard reads their word, not a retelling.
-
-The guard judges one turn: the next session is not refused."
-else
-    reason="BLOCKED by turn-exit-guard: the work is in the state '${state}', and nothing was done about it in this turn — neither an edit nor a command changing the tree.
-
-A turn ends in four ways: a question to the owner the rules do not answer; a refusal of a guard; a filled session window; work handed over with the next one begun — outside an open epic. The end of the epic is the fifth. A report about what was done is not an exit — it looks more like work than any other, and the emptiness behind it is invisible.
-
-The next step is written in the progress: ${next_step}
-
-Do it in this same turn. The owner said to stop — then write so: the guard reads their word, not a retelling.
-
-The guard judges one turn: the next session is not refused."
-fi
-
-rt_te_deny "$reason" "the work is not finished — the next step stands in the progress."
-
+# Any other turn with no work in it is not refused here: whether it answered the owner, stopped by
+# their word or only announced an intent is a matter of words, and the agent hook on the same event
+# judges it.
 exit 0
