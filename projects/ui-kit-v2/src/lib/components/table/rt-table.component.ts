@@ -204,7 +204,7 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
     /** Скрытые края для модификаторов хоста `--hidden-start` и `--hidden-end`. */
     protected readonly hiddenEdges: Signal<IRtTablePinnedEdges> = this.#hiddenEdges.asReadonly();
 
-    /** `true` когда initial-load в полёте и entities ещё нет — рендерим skeleton rows. */
+    /** `true` когда initial-load в полёте и entities ещё нет — skeleton rows; при `error` их нет. */
     protected readonly isInitialLoading: Signal<boolean> = computed(
         (): boolean => this.error() === null && this.loading() && this.#hasData() === false
     );
