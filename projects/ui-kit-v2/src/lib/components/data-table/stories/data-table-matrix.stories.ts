@@ -16,7 +16,7 @@ import { ITestDataTableRow, TEST_DATA_TABLE_ICON_COLUMNS } from './component/tes
  */
 export default {
     title: 'Organisms/Material Dynamic List/DataTable',
-    // Тема первого кита на всю страницу: таблица первого кита рисуется как на его витрине.
+    // Фиолетовый пресет на всю страницу: таблица рисуется в виде Material.
     globals: { preset: 'violet-theme' },
     component: TestRtDataTableMatrixComponent,
     parameters: {

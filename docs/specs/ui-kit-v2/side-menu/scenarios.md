@@ -90,7 +90,7 @@ Then the block and the stars stand only in the section with the flag
 
 Covered: `projects/ui-kit-v2/src/lib/components/side-menu/rt-side-menu-favorites.logic.spec.ts`.
 
-### SC-UKV-531 — a Material name of the first kit is drawn by its pair
+### SC-UKV-531 — a Material name is drawn by its pair
 
 Given items carry a kit name, a Material name with a pair and a name the kit does not draw
 When the menu draws their icons
