@@ -27,10 +27,13 @@
 - [x] 4.1 Show the owner the Figma frames of the PDF viewer and the tabs and write the approval into `approvals.md`
 - [x] 4.2 Drop `export` from the five exports and one type of `rt-pdf-viewer.output.ts`, `rt-tabs.keys.ts` and `rt-tabs.motion.ts`
 - [>] 4.3 Measure the showcase of both components against the frames and write the owner's approval of the showcase into `approvals.md`
-- [ ] 5.1 Add `check:unused` as the last step of `check:all` and rewrite its line in `CLAUDE.md` and `README.md`
+- [x] 5.1 Add `check:unused` as the last step of `check:all` and rewrite its line in `CLAUDE.md` and `README.md`
 
 ## Decisions along the way
 
+- **Step 5.1: the first `check:all` with knip was red on the lint of the admin suite.** The new
+  test SC-MB-432 held a condition and a branch inside the test; rewritten without them, the test
+  green again (3 of 3), `check:all` green — 358 tasks, the knip step in its output.
 - **Step 3.1: `byKey` of `projects/agent-kit/src/lib/order.ts` is deleted too.** Its only caller
   was `hooksSectionByMatcher`; left alone, it would be the next unused export.
 - **Step 3.3: the tests check that the kit draws its icons where the changed code runs.** The

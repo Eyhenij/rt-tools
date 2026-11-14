@@ -1,6 +1,6 @@
 import { expect, Locator, Page, test } from '@playwright/test';
 
-import { openSection, pageQa, qa, rowsOf, SECTION } from './support/admin';
+import { openSection, pageQa, qa, rowsOf, SECTION, TSectionName } from './support/admin';
 
 /**
  * Вид страницы списка: достижимость записей и переключателя страниц.
@@ -69,21 +69,26 @@ test.describe('вид страницы списка', () => {
                 return box.width * box.height;
             });
 
-        await openSection(page, 'postmortems');
-        await pageQa(page, 'postmortems', 'refresh').click();
-        await expect(rowsOf(page, 'postmortems')).toHaveCount(PAGE_SIZE);
-
-        // Разделы меняются нажатием на верхний ряд, без перезагрузки: страница списка та же, а
-        // данные и состояние накапливаются от раздела к разделу.
-        for (const section of ['postmortems', 'usage', 'quality'] as const) {
-            if (section !== 'postmortems') {
-                await page.locator(`[qa-dataid="header-nav-item"][data-id="${SECTION[section].path}"] a`).click();
-                await expect(qa(page, SECTION[section].table)).toBeVisible();
-            }
-
+        // Оба значка панели раздела: обновление и настройка столбцов.
+        const expectGlyphs: (section: TSectionName) => Promise<void> = async (section: TSectionName): Promise<void> => {
             for (const mark of ['refresh', 'columns'] as const) {
                 await expect.poll(async (): Promise<number> => glyphArea(pageQa(page, section, mark))).toBeGreaterThan(0);
             }
+        };
+
+        await openSection(page, 'postmortems');
+        const refresh: Locator = pageQa(page, 'postmortems', 'refresh');
+        await refresh.click();
+        await expect(rowsOf(page, 'postmortems')).toHaveCount(PAGE_SIZE);
+        await expectGlyphs('postmortems');
+
+        // Разделы меняются нажатием на верхний ряд, без перезагрузки: страница списка та же, а
+        // данные и состояние накапливаются от раздела к разделу.
+        for (const section of ['usage', 'quality'] as const) {
+            const navItem: Locator = page.locator(`[qa-dataid="header-nav-item"][data-id="${SECTION[section].path}"] a`);
+            await navItem.click();
+            await expect(qa(page, SECTION[section].table)).toBeVisible();
+            await expectGlyphs(section);
         }
     });
 });
