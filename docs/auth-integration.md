@@ -252,6 +252,26 @@ The screens take the texts of Keycloak in the page language and add no words of 
 realm languages (`internationalizationEnabled`, `supportedLocales`) set the language list. The
 Google button appears when the realm holds the Google provider switched on.
 
+The entry pages load GA4 and Yandex Metrika when the variable `COUNTERS_BY_REALM` of the Keycloak
+container holds a pair for the realm: `realm=G-…:<Metrika number>`, pairs separated by commas.
+Metrika opens a frame of `https://mc.yandex.ru` on the page, so a realm with counters adds it to
+`frame-src` of its security policy and keeps the other security headers, since the map replaces
+the default one whole:
+
+```json
+"browserSecurityHeaders": {
+    "contentSecurityPolicy": "frame-src 'self' https://mc.yandex.ru; frame-ancestors 'self'; object-src 'none';",
+    "contentSecurityPolicyReportOnly": "",
+    "xContentTypeOptions": "nosniff",
+    "referrerPolicy": "no-referrer",
+    "xRobotsTag": "none",
+    "xFrameOptions": "SAMEORIGIN",
+    "strictTransportSecurity": "max-age=31536000; includeSubDomains"
+}
+```
+
+A realm whose policy already lists other frame hosts adds `https://mc.yandex.ru` next to them.
+
 ## 5. Moving existing people: `@rt-tools/auth-import`
 
 Run once per application, from a terminal, never from the application code.
