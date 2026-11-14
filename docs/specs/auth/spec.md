@@ -54,7 +54,7 @@ Not applicable: the stand has no screens of its own. The entry screens belong to
 
 - The entry through Apple — postponed by the owner: Keycloak has no built-in Apple provider, and
   the generic OIDC broker refuses the form POST that carries the Apple address.
-- The entry screens — the subdomain `theme`.
+- The entry screens — the subdomain `theme`; their counters — the subdomain `counters`.
 - Keycloak in the production environment of the applications.
 - The users of the existing applications — the import task of the epic.
 

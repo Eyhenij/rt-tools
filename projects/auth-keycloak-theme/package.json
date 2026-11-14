@@ -1,6 +1,6 @@
 {
   "name": "@rt-tools/auth-keycloak-theme",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "The Keycloak login theme of the entry module, drawn with the components of @rt-tools/ui-kit-v2",
   "author": "RT Team",
   "license": "Apache-2.0",
@@ -20,6 +20,9 @@
   "keycloakify": {
     "themeName": "rt",
     "accountThemeImplementation": "none",
+    "environmentVariables": [
+      { "name": "COUNTERS_BY_REALM", "default": "" }
+    ],
     "projectBuildDirPath": "../../dist/auth-keycloak-theme/app",
     "keycloakifyBuildDirPath": "../../dist/auth-keycloak-theme",
     "keycloakVersionTargets": {

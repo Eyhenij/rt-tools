@@ -56,6 +56,9 @@ services:
             KC_HEALTH_ENABLED: 'true'
             KC_BOOTSTRAP_ADMIN_USERNAME: admin
             KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+            # Номера счётчиков страниц входа приходят из среды команды подъёма; без них счётчики
+            # на стенде не грузятся.
+            COUNTERS_BY_REALM: ${COUNTERS_BY_REALM:-}
         ports:
             - '58080:8080'
         # Тема экранов входа: JAR собирает `build:auth-keycloak-theme`, команда подъёма зовёт его
@@ -75,6 +78,10 @@ services:
             interval: 5s
             timeout: 5s
             retries: 60
+            # Пока Keycloak стартует, готовность спрашивается раз в секунду: подъём ждёт её, и опрос
+            # раз в 5 с терял до 4 с после готовности.
+            start_period: 120s
+            start_interval: 1s
         restart: unless-stopped
 
     # Область, клиенты и роли накладываются из файла при каждом подъёме. Поверх работающей
