@@ -50,9 +50,9 @@
             </ul>
         }
 
-        <input type="hidden" name="email" [value]="value().email" />
-        <input type="hidden" name="password" [value]="value().password" />
-        <input type="hidden" name="password-confirm" [value]="value().passwordConfirm" />
+        <input type="text" hidden autocomplete="off" name="email" [value]="value().email" />
+        <input type="password" hidden autocomplete="off" name="password" [value]="value().password" />
+        <input type="password" hidden autocomplete="off" name="password-confirm" [value]="value().passwordConfirm" />
 
         @if (recaptchaSiteKey) {
             <!-- Место флажка держит узел captcha-slot с первой отрисовки; скрипт Google рисует флажок

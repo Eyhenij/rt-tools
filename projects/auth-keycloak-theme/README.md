@@ -45,6 +45,15 @@ An empty or malformed number loads no tag of that counter. The page view carries
 `auth_form_submit` with the same id. No value typed into a field goes into an event, and Webvisor
 records with the input masked.
 
+Three settings live outside the theme:
+
+- the numbers go into the environment file of the login node, and the rollout restarts Keycloak:
+  without them Keycloak starts with empty numbers, and the pages load no counter;
+- Metrika shows the submit in its reports only for a goal of the kind «JavaScript event» with the
+  id `auth_form_submit`;
+- GA4 tells the pages apart only by `page_id` registered as a custom dimension of the event scope:
+  the entry addresses are the same for the sign-in, the registration and the reset.
+
 ## What the theme draws
 
 | Page                        | What a person does there                      |

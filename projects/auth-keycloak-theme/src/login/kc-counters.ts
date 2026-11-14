@@ -23,6 +23,18 @@ type TQueueCall = (...args: unknown[]) => void;
 const GA_ID: RegExp = /^G-[A-Z0-9]+$/;
 const METRIKA_ID: RegExp = /^[1-9]\d*$/;
 
+/** The query parameters of an entry address that carry a person's data. */
+const PRIVATE_PARAMS: readonly string[] = ['key', 'login_hint'];
+
+/**
+ * The nodes that show a person's data as page text: the address on the confirmation page, a
+ * Keycloak message, which may name the address, and the name the standard pages show above a form.
+ */
+const PRIVATE_NODES: string = '[qa-dataid="kc-verify-sent"], [qa-dataid="kc-message"], #kc-attempted-username';
+
+/** The class by which Webvisor records a node with its text hidden. */
+const WEBVISOR_HIDDEN: string = 'ym-hide-content';
+
 const GA_SCRIPT: string = 'https://www.googletagmanager.com/gtag/js?id=';
 const METRIKA_SCRIPT: string = 'https://mc.yandex.ru/metrika/tag.js';
 
@@ -95,6 +107,25 @@ function startMetrika(view: Window, id: number, pageId: string): TQueueCall {
 }
 
 /**
+ * Takes out of the page address the query parameters that carry a person's data: the action token
+ * of a mail link holds the address, and an application may pass the address as a login hint. The
+ * counters report the page address, so the address is replaced in the history before they start.
+ */
+export function dropPrivateParams(view: Window): void {
+    const address: URL = new URL(view.location.href);
+    const before: string = address.search;
+    PRIVATE_PARAMS.forEach((name: string): void => address.searchParams.delete(name));
+    if (address.search !== before) {
+        view.history.replaceState(view.history.state, '', address.toString());
+    }
+}
+
+/** Marks every node that shows a person's address, name or a message about them as hidden from Webvisor. */
+export function hidePrivateText(document: Document): void {
+    document.querySelectorAll(PRIVATE_NODES).forEach((node: Element): void => node.classList.add(WEBVISOR_HIDDEN));
+}
+
+/**
  * Loads the counters whose numbers are set, sends the page view and reports every form that leaves
  * the page. A form the page held as invalid is not reported: its submit is prevented before the
  * event reaches the document. No field value goes into an event.
@@ -102,11 +133,14 @@ function startMetrika(view: Window, id: number, pageId: string): TQueueCall {
 export function startCounters(view: Window, properties: TThemeProperties | undefined, templateId: string): void {
     const counters: ICounters = countersOf(properties);
     const pageId: string = pageNameOf(templateId);
-    const gtag: TQueueCall | null = counters.ga === null ? null : startGa(view, counters.ga, pageId);
-    const ym: TQueueCall | null = counters.metrika === null ? null : startMetrika(view, counters.metrika, pageId);
-    if (gtag === null && ym === null) {
+    if (counters.ga === null && counters.metrika === null) {
         return;
     }
+    // Both run before a tag is loaded: the tags read the address and record the page from their start.
+    dropPrivateParams(view);
+    hidePrivateText(view.document);
+    const gtag: TQueueCall | null = counters.ga === null ? null : startGa(view, counters.ga, pageId);
+    const ym: TQueueCall | null = counters.metrika === null ? null : startMetrika(view, counters.metrika, pageId);
     view.document.addEventListener('submit', (event: Event): void => {
         if (event.defaultPrevented) {
             return;

@@ -87,6 +87,32 @@ describe('startCounters', () => {
         expect(JSON.stringify([ga, ym])).not.toContain('person@example.com');
     });
 
+    it('SC-AUTH-113 — the address loses the action token and the login hint before a tag starts', () => {
+        window.history.replaceState(
+            null,
+            '',
+            '/realms/rt/login-actions/action-token?key=eyJ.token&client_id=app&login_hint=ann%40rt.localhost'
+        );
+        startCounters(window, { METRIKA_COUNTER_ID: METRIKA }, 'info.ftl');
+        const calls: unknown[][] = callsOf(Reflect.get(Reflect.get(window, 'ym') as object, 'a'));
+
+        expect(window.location.search).toBe('?client_id=app');
+        expect(String(calls[1][2])).not.toContain('key=');
+        expect(String(calls[1][2])).not.toContain('login_hint');
+        window.history.replaceState(null, '', '/');
+    });
+
+    it('SC-AUTH-114 — the nodes that show a person are hidden from Webvisor before a tag starts', () => {
+        document.body.innerHTML = '<p qa-dataid="kc-verify-sent">ann@rt.localhost</p><div id="kc-attempted-username">ann</div><p>other</p>';
+        startCounters(window, { METRIKA_COUNTER_ID: METRIKA }, 'login-verify-email.ftl');
+
+        expect(Array.from(document.querySelectorAll('.ym-hide-content'), (node: Element): string => node.textContent ?? '')).toEqual([
+            'ann@rt.localhost',
+            'ann',
+        ]);
+        document.body.innerHTML = '';
+    });
+
     it('SC-AUTH-112 — a form the page holds as invalid sends no event', () => {
         startCounters(window, { GA_MEASUREMENT_ID: GA }, 'login');
         const before: number = callsOf(Reflect.get(window, 'dataLayer')).length;

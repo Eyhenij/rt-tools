@@ -46,7 +46,3 @@ without a line and a line without a rule is a divergence.
 - **The dark theme follows the system until the person switches it on the page.** — `projects/auth-keycloak-theme/src/login/kc-app.config.ts:themeAppConfig`
 - **The stand realm uses the theme, and the raising command builds it first.** — `deploy/auth/realm/rt.json:loginTheme`
 - **Every built file of the theme carries a hash of its content in its name.** — `projects/auth-keycloak-theme/project.json:outputHashing`
-- **Every page of the theme loads GA4 and Metrika after it is drawn, when their numbers are set.** — `projects/auth-keycloak-theme/src/login/kc-counters.ts:countersOf`, called at `projects/auth-keycloak-theme/src/main.ts:startCounters`. The properties are declared at `projects/auth-keycloak-theme/package.json:environmentVariables`
-- **The page view goes to both counters with the page id.** — `projects/auth-keycloak-theme/src/login/kc-counters.ts:startGa`. The hit is sent at `projects/auth-keycloak-theme/src/login/kc-counters.ts:startMetrika`
-- **A form that leaves the page sends the event `auth_form_submit` with the page id.** — `projects/auth-keycloak-theme/src/login/kc-counters.ts:startCounters`
-- **No value typed into a field reaches a counter.** — `projects/auth-keycloak-theme/src/login/kc-counters.ts:FORM_SUBMIT_EVENT`
