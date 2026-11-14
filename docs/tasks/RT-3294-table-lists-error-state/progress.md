@@ -4,11 +4,12 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `разбор-закрыт`
+- **State:** `договорённость-записана`
 - **Stage:** 0 of — — the plan is not written yet
-- **Done:** the branch from the RT-3292 branch and the grill of the task.
-- **Next step:** read the approved RT-3294 frames in the kit Figma file and write the agreement
-  `docs/specs/ui-kit-v2/proposed/error-states-lists/`, then the plan.
+- **Done:** the branch from the RT-3292 branch, the grill, and the agreement
+  `docs/specs/ui-kit-v2/proposed/error-states-lists/` with scenarios SC-UKV-1279…1286 read from the
+  four approved frames.
+- **Next step:** write the plan: the stages by component, the showcase, the approvals.
 - **Uncommitted:** no.
 - **Waiting for the owner:** no; the consumer session is asked about the push set limit that holds
   the RT-3292 push.
