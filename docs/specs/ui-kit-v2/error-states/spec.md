@@ -1,6 +1,6 @@
 # Load error and placeholder states of the conversation components
 
-**Status:** proposed · **Revision:** 2026-11-14 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-14 · **Scenario prefix:** `SC-UKV`
 **Depends on:** `rt-empty-state`, the kit dictionary
 **Laws:** `frontend-application`, `mockups`, `verifiability`
 **Procedures:** none
@@ -112,3 +112,4 @@ None.
 ## History of changes
 
 - 2026-11-14 — written for RT-3292.
+- 2026-11-14 — merged into the kit spec with the bindings to code.
