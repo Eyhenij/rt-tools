@@ -56,6 +56,26 @@ when the epic is over.
   commit `96ee0dd95`. **Address:** rules layer — a sign is written in the words of its point, not
   of one spelling.
 
+## RT-3310 — the knip findings: files, packages and exports nobody uses
+
+- **The e2e coverage guard demands both suites for deleting a kit file nobody imports.**
+  `rt_kit2_reaches` counts any kit file outside a component directory as reaching every
+  application, and the stale aggregator `src/lib/components/index.ts` is such a file. **Address:**
+  names of this tree — `.claude/rt-kit/project.sh:rt_kit2_reaches`.
+- **The showcase harness files are typechecked by nothing.** The showcase `tsconfig.json` includes
+  `preview.ts` and `main.ts` only, so `test-runner.ts` and the two snapshot files typed `Page` as
+  `any` unnoticed. **Address:** names of this tree — `projects/ui-kit-v2/.storybook/tsconfig.json`.
+- **Dropping an `export` in a kit file asks for a mockup.** The approval check counts every kit
+  source file as visible, so a change no pixel shows went through two approvals. **Address:** names
+  of this tree — `tools/check-kit-approval.mjs:isVisibleKitFile`.
+- **A count in the plan was taken by subtraction, not from the tool output.** The grill subtracted
+  six used packages from twenty dev ones, while one of the six stands in `dependencies`: 14 instead
+  of 15. **Address:** the executor's decision — a number in a plan is copied from the command that
+  prints it.
+- **knip stands only in `check:all`.** The rule `testing` puts a created check into the push gate or
+  the pipeline; the owner chose `check:all` to keep the push short. **Address:** the owner's
+  decision — the plan of push time.
+
 ## Left unresolved
 
 - **The npm deprecation of `@rt-tools/ui-kit`** — the owner's step: `npm view` shows the field
