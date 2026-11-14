@@ -3,6 +3,9 @@ import { expect, test } from '@playwright/test';
 import { lateCookieProbe, PEOPLE, STAND_PASSWORD } from '../stand/stand.mjs';
 import { enterOnRealmScreen, expectEntryScreen, signIn } from './support/example';
 
+/** The address typed into the entry form by the counters scenario; no person of the stand has it. */
+const TYPED_ADDRESS: string = 'nobody-typed@rt.localhost';
+
 test.describe('the entry', () => {
     test('SC-AUTH-47 — a person enters through Keycloak and sees the records', async ({ page }) => {
         await signIn(page, 'reader');
@@ -33,12 +36,14 @@ test.describe('the entry', () => {
         });
         await page.goto('/');
         await expectEntryScreen(page);
-        await page.getByTestId('kc-username').locator('input').fill(PEOPLE.reader.email);
+        // An address the realm does not hold: a wrong password for a person of the stand would count
+        // towards the brute force lock of the realm and lock their next entries.
+        await page.getByTestId('kc-username').locator('input').fill(TYPED_ADDRESS);
         await page.getByTestId('kc-password').locator('input').fill('typed-secret-1!');
         const markup: string = await page.getByTestId('kc-login-form').evaluate((form: Element): string => form.outerHTML);
 
         expect(markup).toContain('name="username"');
-        expect(markup).not.toContain(PEOPLE.reader.email);
+        expect(markup).not.toContain(TYPED_ADDRESS);
         expect(markup).not.toContain('typed-secret-1!');
         await page.getByTestId('kc-login-submit').click();
         await expectEntryScreen(page);
