@@ -166,6 +166,21 @@ describe('стили словаря формы панели', (): void => {
         expect(ruleBody(css, '.rt-form__framed-item:is(label) .rt-form__label')).toContain('min-width: 0');
     });
 
+    it('SC-UKV-1301 — скругление рамки берёт шаг из data-rt-radius, по умолчанию md', (): void => {
+        expect(ruleBody(css, '.rt-form__framed-list')).toContain('border-radius: var(--rt-form-framed-radius, var(--rt-radius-md))');
+        expect(ruleBody(css, '.rt-form__framed-list[data-rt-radius=full]')).toContain('--rt-form-framed-radius: var(--rt-radius-full)');
+        expect(ruleBody(css, '.rt-form__framed-list[data-rt-radius=none]')).toContain('--rt-form-framed-radius: var(--rt-radius-none)');
+    });
+
+    it('SC-UKV-1302 — отключённая запись-label гасит название и пояснение прозрачностью отключения', (): void => {
+        const disabled: string = '.rt-form__framed-item:is(label):has(:disabled)';
+
+        // Правило одно на три селектора: тело читается по последнему, остальные — по списку.
+        expect(css).toContain(`${disabled} .rt-form__label,`);
+        expect(css).toContain(`${disabled} .rt-form__control-sub-item--label,`);
+        expect(ruleBody(css, `${disabled} .rt-collapsible-text`)).toContain('opacity: var(--rt-opacity-disabled)');
+    });
+
     it('SC-UKV-1045 — строка контрола переносит элементы', (): void => {
         expect(ruleBody(css, '.rt-form__control-item')).toContain('flex-wrap: wrap');
     });

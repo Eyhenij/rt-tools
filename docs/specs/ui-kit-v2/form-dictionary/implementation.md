@@ -30,3 +30,5 @@
 - **Нажимаемый вид получает только запись, написанная тегом `label`.** — `projects/ui-kit-v2/src/styles/_form.scss:cursor`; сценарий `SC-UKV-1298`
 - **Запись-`label` подсвечивается при наведении и при фокусе клавиатуры на выключателе.** — `projects/ui-kit-v2/src/styles/_form.scss:focus-visible`; сценарий `SC-UKV-1299`
 - **В записи-`label` выключатель стоит справа при любой длине названия.** — `projects/ui-kit-v2/src/styles/_form.scss:nowrap`; сценарий `SC-UKV-1300`
+- **Скругление общей рамки задаётся шагом.** — `projects/ui-kit-v2/src/styles/_form.scss:radius-steps`; сценарий `SC-UKV-1301`
+- **Отключённая запись-`label` гасит название и пояснение.** — `projects/ui-kit-v2/src/styles/_form.scss:opacity-disabled`; сценарий `SC-UKV-1302`
