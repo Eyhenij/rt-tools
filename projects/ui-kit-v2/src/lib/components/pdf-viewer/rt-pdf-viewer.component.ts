@@ -1,5 +1,5 @@
 import { CdkTrapFocus } from '@angular/cdk/a11y';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import {
     afterNextRender,
     computed,
@@ -13,6 +13,7 @@ import {
     ElementRef,
     Injector,
     Signal,
+    TemplateRef,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
@@ -74,6 +75,7 @@ interface IRenderedPage {
     imports: [
         // angular
         CdkTrapFocus,
+        NgTemplateOutlet,
 
         // rt-tools
         BlockDirective,
@@ -133,6 +135,14 @@ export class RtPdfViewerComponent {
     protected readonly canvases: Signal<readonly ElementRef<HTMLCanvasElement>[]> = viewChildren<ElementRef<HTMLCanvasElement>>('canvas');
 
     protected readonly fileName: string = this.#data.fileName;
+
+    protected readonly errorTemplate: TemplateRef<IRtPdfViewer.ErrorContext> | null = this.#data.errorTemplate ?? null;
+
+    /** Контекст своего вида ошибки; скачивание то же, что у кнопки заглушки. */
+    protected readonly errorContext: Signal<IRtPdfViewer.ErrorContext> = computed((): IRtPdfViewer.ErrorContext => ({
+        $implicit: this.t().pdfViewerErrorText,
+        download: (): void => void this.download(),
+    }));
 
     protected readonly status: WritableSignal<IRtPdfViewer.Status> = signal<IRtPdfViewer.Status>('loading');
 

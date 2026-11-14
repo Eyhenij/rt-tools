@@ -114,13 +114,17 @@ Not applicable.
 - **The local lists get no error input** — their items are in memory, and every frame of them says
   so.
 - **The PDF viewer keeps download instead of retry** — the approved frame draws it so.
+- **The PDF viewer gets its template through the opening data.** The dialog service opens it, and
+  it has no host markup to project into. The consumer declares `<ng-template rtPdfViewerError>`,
+  reads the directive by `viewChild` and passes its `templateRef` as `errorTemplate` of
+  `IRtPdfViewer.Data`. The error text in the context is the kit label: the viewer swallows the
+  cause, and the cause of a broken file means nothing to the reader.
+- **`rt-hybrid-tree` and `rt-hybrid-tree-selector` stay out of this task.** None of the nine
+  approved frames draws them; their empty slot needs frames of its own.
 
 ## Open questions
 
-- How the PDF viewer receives `rtPdfViewerError`: it is opened by the dialog service and has no
-  host markup, and its error swallows the cause. Asked of the consumer session on 14.11.2026.
-- Whether `rt-hybrid-tree` and `rt-hybrid-tree-selector`, built on the tree templates, take the
-  empty slot in this task. Asked with the question above.
+None.
 
 ## History of changes
 
