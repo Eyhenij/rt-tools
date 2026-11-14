@@ -195,9 +195,18 @@ What the mission asks and the tools of 14 November 2026 do not carry.
 - **Q-3 — the agent hook reads the owner's last message, not the state of the work.** The progress,
   the plan and the epic tell what is left; the hook does not read them.
 - **Q-4 — a failure or a timeout of the agent hook lets the turn through and leaves no trace.** The
-  first live measure, 14 November 2026: about 57 s on a record of 15 MB, against a timeout of 60 s.
+  live measures of 14 November 2026 on a record of 15 MB: about 57 s for a refusal and 30 s for a
+  pass, against a timeout of 60 s.
 - **Q-5 — no command of the tree counts missed stops, false refusals and deadlocks.** The base of
-  14 November was counted by a one-off script.
+  14 November was counted by a one-off script, and it counts refusals only: a broken guard that
+  lets every turn through scores best on it.
+- **Q-6 — handed-in work under an open epic ends the turn without the next task.** The state of
+  handed-in work leaves the command hook before any tier, and the agent hook lets a turn end on
+  work done and waiting for a review.
+- **Q-7 — a waiting line with any quote releases every tier of the command hook.** The quote is not
+  checked against the owner's messages, and it holds until someone rewrites the line.
+- **Q-8 — the package does not connect the agent hooks in the settings of a tree that installs it.**
+  A release removes the old checks there and leaves the requirement only as the text of a rule.
 
 ## History of changes
 
