@@ -69,6 +69,10 @@ when the epic is over.
 - **Dropping an `export` in a kit file asks for a mockup.** The approval check counts every kit
   source file as visible, so a change no pixel shows went through two approvals. **Address:** names
   of this tree — `tools/check-kit-approval.mjs:isVisibleKitFile`.
+- **The Figma copy of the tabs and the PDF viewer diverges from the showcase: 28 of 35 numbers.**
+  Approval needs 100%, so no edit of these two components can pass it until the copy is fixed. The
+  export drop in their three files moved there, and `knip.json` holds an exception for them meanwhile.
+  **Address:** the owner's decision — epic RT-3313.
 - **A count in the plan was taken by subtraction, not from the tool output.** The grill subtracted
   six used packages from twenty dev ones, while one of the six stands in `dependencies`: 14 instead
   of 15. **Address:** the executor's decision — a number in a plan is copied from the command that

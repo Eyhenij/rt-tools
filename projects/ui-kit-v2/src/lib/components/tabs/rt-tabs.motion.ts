@@ -29,7 +29,7 @@ export interface IRtTabsLeavingPanel {
 }
 
 /** Смена выбора: с какой вкладки, на какую и длительность из входа (`null` — из токена). */
-interface IRtTabsMove {
+export interface IRtTabsMove {
     readonly previous: IRtTabs.Id | null;
     readonly next: IRtTabs.Id | null;
     readonly duration: string | null;
@@ -111,7 +111,7 @@ function sameInkBox(a: IInkBox | null, b: IInkBox | null): boolean {
  * уходя, она встаёт поверх области содержимого в ту же точку. Без движения — нулевая длительность
  * или `prefers-reduced-motion` — уходящей панели нет.
  */
-function rtTabsLeavingPanel(
+export function rtTabsLeavingPanel(
     host: HTMLElement,
     win: Window | null,
     ids: readonly IRtTabs.Id[],
@@ -151,7 +151,7 @@ function rtTabsLeavingPanel(
  * Панели при сохранении посещённых: тело вкладки появляется при первом открытии и дальше живёт
  * скрытым. Порядок — порядок вкладок, чтобы вид панели не переставлялся в разметке при смене.
  */
-function rtTabsPreservedPanels(
+export function rtTabsPreservedPanels(
     all: readonly RtTabDirective[],
     visited: ReadonlySet<IRtTabs.Id>,
     active: RtTabDirective,

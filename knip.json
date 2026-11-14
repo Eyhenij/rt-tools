@@ -18,7 +18,10 @@
     "libs/message-bus-api/trees/api/src/index.ts"
   ],
   "ignoreIssues": {
-    "projects/cms-angular/src/lib/editor/editor-blocks.ts": ["duplicates"]
+    "projects/cms-angular/src/lib/editor/editor-blocks.ts": ["duplicates"],
+    "projects/ui-kit-v2/src/lib/components/pdf-viewer/rt-pdf-viewer.output.ts": ["exports"],
+    "projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.keys.ts": ["exports"],
+    "projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.motion.ts": ["exports", "types"]
   },
   "workspaces": {
     ".": {
