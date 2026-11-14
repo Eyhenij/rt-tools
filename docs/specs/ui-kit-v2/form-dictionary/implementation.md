@@ -32,3 +32,4 @@
 - **В записи-`label` выключатель стоит справа при любой длине названия.** — `projects/ui-kit-v2/src/styles/_form.scss:nowrap`; сценарий `SC-UKV-1300`
 - **Скругление общей рамки задаётся шагом.** — `projects/ui-kit-v2/src/styles/_form.scss:radius-steps`; сценарий `SC-UKV-1301`
 - **Отключённая запись-`label` гасит название и пояснение.** — `projects/ui-kit-v2/src/styles/_form.scss:opacity-disabled`; сценарий `SC-UKV-1302`
+- **Длинное пояснение записи-`label` сворачивает `rt-collapsible-text`.** — `projects/ui-kit-v2/src/styles/rt-form.setting-tile.spec.ts:SettingTileHostComponent` — разметка потребителя без связки `for`; сценарий `SC-UKV-1303`
