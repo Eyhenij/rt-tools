@@ -27,3 +27,17 @@ epic.
 - **The approval record now takes several mockup lines.** Four frames were approved by one word,
   and the check accepted four lines. The RT-3292 finding about one frame is closed by this form.
   Address: the names of this tree — the approval record sample.
+
+## RT-3295 — the selectors, the local lists and the PDF viewer
+
+- **The frames draw the `rt-empty-state` action 8 px higher than the kit puts it.** The block adds
+  its own action margin on top of the gap; the dynamic selector frame was brought to the kit by the
+  owner's word. The RT-3292 and RT-3294 frames with the retry button likely carry the same drift:
+  their match did not measure the button top. Address: work on the Figma copy.
+- **The epic plan names a package release only for RT-3292.** RT-3294 and RT-3295 add public
+  inputs, outputs and directives, and the plan has no step that publishes them. Address: the epic
+  plan.
+- **An `rt-empty-state` custom property is overridden only by a two-class selector.** The block
+  declares its variables on its own element, so a rule on the consumer element alone loses; the
+  autocomplete error needed `&__error-state.rt-empty-state`. Address: the names of this tree — the
+  `rt-empty-state` page of the kit.
