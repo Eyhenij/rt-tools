@@ -1,0 +1,332 @@
+import { loadPageScripts } from './kc-page-scripts';
+
+/**
+ * The theme property that carries the counter numbers of every product; the login node sets it in
+ * its environment. One entry per realm, `realm=ga:metrika`, entries separated by commas:
+ * `rt=G-ABC123:12345678,shop=G-XYZ789:`. Either number may be empty.
+ */
+export const COUNTERS_PROPERTY: string = 'COUNTERS_BY_REALM';
+
+/** The event a form that leaves the page sends; it carries the page id and no field value. */
+export const FORM_SUBMIT_EVENT: string = 'auth_form_submit';
+
+/** The counters a page loads; a number that is absent or malformed loads nothing. */
+export interface ICounters {
+    readonly ga: string | null;
+    readonly metrika: number | null;
+}
+
+/** The theme properties Keycloak puts on the page. */
+export type TThemeProperties = Readonly<Record<string, string | undefined>>;
+
+/** What the counters read of the page: the theme properties, the realm, the template and its kind. */
+export interface ICountedPage {
+    readonly properties: TThemeProperties | undefined;
+    readonly realm: string;
+    readonly templateId: string;
+    /** A page the theme does not draw itself. */
+    readonly standard?: boolean;
+}
+
+type TQueueCall = (...args: unknown[]) => void;
+
+const GA_ID: RegExp = /^G-[A-Z0-9]+$/;
+const METRIKA_ID: RegExp = /^[1-9]\d*$/;
+
+/** The query parameters of an entry address that carry a person's data. */
+const PRIVATE_PARAMS: readonly string[] = ['key', 'login_hint'];
+
+/**
+ * The nodes that show a person's data as page text. A Keycloak message may name the address — on a
+ * message page it stands in the title or the summary, on a standard page in its alert — so every
+ * message node is hidden, together with the address on the confirmation page and the name the
+ * standard pages show above a form.
+ */
+const PRIVATE_NODES: string = [
+    '[qa-dataid="kc-verify-sent"]',
+    '[qa-dataid="kc-message"]',
+    '[qa-dataid="kc-title"]',
+    '[qa-dataid="kc-info-summary"]',
+    '#kc-attempted-username',
+    '.pf-c-alert',
+].join(', ');
+
+/** The class by which Webvisor records a node with its text hidden. */
+const WEBVISOR_HIDDEN: string = 'ym-hide-content';
+
+/** The class by which Webvisor records no key pressed in a field. */
+const WEBVISOR_NO_KEYS: string = 'ym-disable-keys';
+
+/** The fields a person types into. */
+const TYPED_FIELDS: string = 'input, textarea';
+
+/** The typed fields whose value stands in the markup as an attribute. */
+const PREFILLED_FIELDS: string = 'input[value]:not([type="hidden"], [type="submit"], [type="button"], [type="checkbox"], [type="radio"])';
+
+/** The root of a standard page: its whole text is hidden from Webvisor. */
+const STANDARD_PAGE: string = 'body';
+
+const GA_SCRIPT: string = 'https://www.googletagmanager.com/gtag/js?id=';
+const METRIKA_SCRIPT: string = 'https://mc.yandex.ru/metrika/tag.js';
+
+/** The page name the counters report: the template id without its `.ftl`, such as `login` or `register`. */
+export function pageNameOf(pageId: string): string {
+    return pageId.replace(/\.ftl$/, '');
+}
+
+/**
+ * The counter numbers of the realm the page belongs to, read from the theme properties. A realm
+ * without an entry loads no counter: the login node serves every product, and a product without
+ * its own numbers reports to nobody else's counter.
+ */
+export function countersOf(properties: TThemeProperties | undefined, realm: string): ICounters {
+    const entry: string =
+        (properties?.[COUNTERS_PROPERTY] ?? '')
+            .split(',')
+            .map((part: string): string => part.trim())
+            .find((part: string): boolean => part.slice(0, part.indexOf('=')).trim() === realm && part.includes('=')) ?? '';
+    const numbers: string = entry.slice(entry.indexOf('=') + 1);
+    const ga: string = numbers.split(':')[0]?.trim() ?? '';
+    const metrika: string = numbers.split(':')[1]?.trim() ?? '';
+
+    return {
+        ga: GA_ID.test(ga) ? ga : null,
+        metrika: METRIKA_ID.test(metrika) ? Number(metrika) : null,
+    };
+}
+
+function queueOf(view: Window, name: string): unknown[] {
+    const current: unknown = Reflect.get(view, name);
+    if (Array.isArray(current)) {
+        return current;
+    }
+    const created: unknown[] = [];
+    Reflect.set(view, name, created);
+
+    return created;
+}
+
+/**
+ * The global `gtag` of the page. gtag.js reads only `arguments` objects from its queue and skips an
+ * array without a word, so the call pushes `arguments` itself and not a copy of it.
+ */
+function startGa(view: Window, id: string, pageId: string): TQueueCall {
+    const queue: unknown[] = queueOf(view, 'dataLayer');
+    const gtag: TQueueCall = function (): void {
+        // The tag tells a command by its `arguments` object: a rest array would be skipped.
+        // eslint-disable-next-line sonarjs/arguments-usage
+        queue.push(arguments);
+    };
+    Reflect.set(view, 'gtag', gtag);
+    gtag('js', new Date());
+    // The tag sends the page view of the load itself; the page id goes with every event of the page.
+    gtag('config', id, { page_id: pageId });
+    loadPageScripts(view.document, [`${GA_SCRIPT}${id}`]);
+
+    return gtag;
+}
+
+/**
+ * The global `ym` of the page: the queue the Metrika tag reads on load. What is typed into the fields
+ * Webvisor does not record: every field carries the class that forbids recording its keys.
+ */
+function startMetrika(view: Window, id: number, pageId: string): TQueueCall {
+    const ym: TQueueCall & { a?: unknown[]; l?: number } = function (): void {
+        ym.a = ym.a ?? [];
+        // The tag reads its queue as the `arguments` objects of the calls, the way its snippet keeps them.
+        // eslint-disable-next-line sonarjs/arguments-usage
+        ym.a.push(arguments);
+    };
+    ym.l = Date.now();
+    Reflect.set(view, 'ym', ym);
+    ym(id, 'init', { defer: true, webvisor: true, clickmap: true, trackLinks: true, accurateTrackBounce: true });
+    ym(id, 'hit', view.location.href, { title: view.document.title, params: { page_id: pageId } });
+    loadPageScripts(view.document, [METRIKA_SCRIPT]);
+
+    return ym;
+}
+
+/**
+ * Takes out of the page address the query parameters that carry a person's data: the action token
+ * of a mail link holds the address, and an application may pass the address as a login hint. The
+ * counters report the page address, so the address is replaced in the history before they start.
+ */
+export function dropPrivateParams(view: Window): void {
+    const address: URL = new URL(view.location.href);
+    const before: string = address.search;
+    PRIVATE_PARAMS.forEach((name: string): void => address.searchParams.delete(name));
+    if (address.search !== before) {
+        view.history.replaceState(view.history.state, '', address.toString());
+    }
+}
+
+/** Leads to a full address: in this tab, or in a new one when the person asked for a new tab. */
+export type TGoTo = (href: string, newTab: boolean) => void;
+
+/** The elements of a subtree that match a selector, the root itself included. */
+function matching(root: ParentNode, selector: string): Element[] {
+    const own: Element[] = root instanceof Element && root.matches(selector) ? [root] : [];
+
+    return [...own, ...Array.from(root.querySelectorAll(selector))];
+}
+
+/**
+ * Marks every node that shows a person's address, name or a message about them as hidden from
+ * Webvisor, and every field as one whose keys it does not record.
+ */
+export function hidePrivateText(root: ParentNode): void {
+    matching(root, PRIVATE_NODES).forEach((node: Element): void => node.classList.add(WEBVISOR_HIDDEN));
+    matching(root, TYPED_FIELDS).forEach((node: Element): void => node.classList.add(WEBVISOR_NO_KEYS));
+    // A standard page may fill a field from the context — the login hint among others — and its
+    // default value is written into the `value` attribute, which Webvisor records. The value moves
+    // into the field property, where the form still sends it.
+    matching(root, PREFILLED_FIELDS).forEach((node: Element): void => {
+        if (node instanceof HTMLInputElement) {
+            const value: string = node.value;
+            node.removeAttribute('value');
+            node.value = value;
+        }
+    });
+}
+
+/** The address without the query parameters that carry a person's data; null when it has none or is malformed. */
+function withoutPrivateParams(href: string, base: string): string | null {
+    let address: URL;
+    try {
+        address = new URL(href, base);
+    } catch {
+        return null;
+    }
+    if (!PRIVATE_PARAMS.some((name: string): boolean => address.searchParams.has(name))) {
+        return null;
+    }
+    PRIVATE_PARAMS.forEach((name: string): void => address.searchParams.delete(name));
+
+    return address.toString();
+}
+
+/** A link whose markup shows its address without the private parameters: the full one and the shown one. */
+interface IHiddenLink {
+    readonly full: string;
+    readonly shown: string;
+}
+
+const FULL_LINKS: WeakMap<Element, IHiddenLink> = new WeakMap<Element, IHiddenLink>();
+
+function asksNewTab(event: MouseEvent): boolean {
+    return event.button === 1 || event.ctrlKey || event.metaKey || event.shiftKey;
+}
+
+function followFull(link: Element, go: TGoTo): void {
+    const lead: (event: Event) => void = (event: Event): void => {
+        const hidden: IHiddenLink | undefined = FULL_LINKS.get(link);
+        if (hidden === undefined || !(event instanceof MouseEvent) || (event.type === 'auxclick' && event.button !== 1)) {
+            return;
+        }
+        event.preventDefault();
+        go(hidden.full, asksNewTab(event));
+    };
+    link.addEventListener('click', lead);
+    link.addEventListener('auxclick', lead);
+}
+
+/**
+ * Takes the private query parameters out of the link addresses in the markup, which Webvisor records
+ * with its attributes: the «proceed» link of a mail page leads to the action token, and the token
+ * holds the address. A click, a middle click and a click with a modifier still lead to the full
+ * address, passed to `go`; only «open in a new tab» from the context menu gets the shown one.
+ */
+export function hidePrivateLinks(root: ParentNode, go: TGoTo): void {
+    matching(root, 'a[href]').forEach((link: Element): void => {
+        const href: string = link.getAttribute('href') ?? '';
+        const shown: string | null = withoutPrivateParams(href, link.ownerDocument.baseURI);
+        if (shown === null) {
+            // The page rebound the link to an address without the private parameters: a click
+            // follows it as it is.
+            if (FULL_LINKS.get(link)?.shown !== href) {
+                FULL_LINKS.delete(link);
+            }
+            return;
+        }
+        if (!FULL_LINKS.has(link)) {
+            followFull(link, go);
+        }
+        FULL_LINKS.set(link, { full: href, shown });
+        link.setAttribute('href', shown);
+    });
+}
+
+/**
+ * Removes the inline script Keycloak puts the page context in. It has already run, the theme has
+ * read the context from it, and its text holds the action address with the token and the person's
+ * name and address — markup Webvisor records.
+ */
+export function dropContextScript(document: Document): void {
+    document.querySelectorAll('script:not([src])').forEach((script: Element): void => {
+        if ((script.textContent ?? '').includes('kcContext')) {
+            script.remove();
+        }
+    });
+}
+
+/**
+ * Keeps the marks on what the page draws later: a standard page of the template is drawn after its
+ * styles load, that is after the counters start, and a message appears after an action. The watch
+ * is set before a tag starts, so it sees every node before the recording does.
+ */
+function watchPage(document: Document, go: TGoTo): void {
+    const mark: (root: ParentNode) => void = (root: ParentNode): void => {
+        hidePrivateText(root);
+        hidePrivateLinks(root, go);
+    };
+    mark(document);
+    new MutationObserver((records: MutationRecord[]): void => {
+        records.forEach((record: MutationRecord): void => {
+            if (record.type === 'attributes' && record.target instanceof Element) {
+                mark(record.target);
+            }
+            record.addedNodes.forEach((node: Node): void => {
+                if (node instanceof Element) {
+                    mark(node);
+                }
+            });
+        });
+    }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['href', 'value'] });
+}
+
+/**
+ * Loads the counters whose numbers are set, sends the page view and reports every form that leaves
+ * the page. A form the page held as invalid is not reported: its submit is prevented before the
+ * event reaches the document. No field value goes into an event. A standard page — one the theme
+ * does not draw itself — is recorded with its whole text hidden: it may name the person in any node.
+ */
+export function startCounters(view: Window, page: ICountedPage): void {
+    const counters: ICounters = countersOf(page.properties, page.realm);
+    const pageId: string = pageNameOf(page.templateId);
+    const standard: boolean = page.standard ?? false;
+    if (counters.ga === null && counters.metrika === null) {
+        return;
+    }
+    if (standard) {
+        view.document.querySelector(STANDARD_PAGE)?.classList.add(WEBVISOR_HIDDEN);
+    }
+    // Both run before a tag is loaded: the tags read the address and record the page from their start.
+    dropPrivateParams(view);
+    dropContextScript(view.document);
+    watchPage(view.document, (href: string, newTab: boolean): void => {
+        if (newTab) {
+            view.open(href, '_blank', 'noopener');
+        } else {
+            view.location.assign(href);
+        }
+    });
+    const gtag: TQueueCall | null = counters.ga === null ? null : startGa(view, counters.ga, pageId);
+    const ym: TQueueCall | null = counters.metrika === null ? null : startMetrika(view, counters.metrika, pageId);
+    view.document.addEventListener('submit', (event: Event): void => {
+        if (event.defaultPrevented) {
+            return;
+        }
+        gtag?.('event', FORM_SUBMIT_EVENT, { page_id: pageId, transport_type: 'beacon' });
+        ym?.(counters.metrika, 'reachGoal', FORM_SUBMIT_EVENT, { page_id: pageId });
+    });
+}

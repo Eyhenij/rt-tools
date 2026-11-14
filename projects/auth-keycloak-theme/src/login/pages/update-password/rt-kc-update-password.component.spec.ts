@@ -33,6 +33,27 @@ describe('the password forms', () => {
         expect(resetSent).toEqual({ sent: true, action: 'http://kc/reset', fields: { username: 'ann@rt.localhost' } });
     });
 
+    it('SC-AUTH-115 — the typed login stays out of the markup of the reset form', async () => {
+        const reset: ComponentFixture<RtKcResetPasswordComponent> = await renderKcPage(
+            RtKcResetPasswordComponent,
+            kcContextOf('login-reset-password.ftl')
+        );
+        await typeInto(reset, 'kc-username', 'ann@rt.localhost');
+
+        expect((reset.nativeElement as HTMLElement).outerHTML).not.toContain('ann@rt.localhost');
+    });
+
+    it('SC-AUTH-115 — the typed new password stays out of the markup of the new password form', async () => {
+        const update: ComponentFixture<RtKcUpdatePasswordComponent> = await renderKcPage(
+            RtKcUpdatePasswordComponent,
+            kcContextOf('login-update-password.ftl')
+        );
+        await typeInto(update, 'kc-password-new', 'n3w-Pass!');
+        await typeInto(update, 'kc-password-confirm', 'n3w-Pass!');
+
+        expect((update.nativeElement as HTMLElement).outerHTML).not.toContain('n3w-Pass!');
+    });
+
     it('SC-AUTH-21 — the new password posts both fields and the sign-out of other sessions', async () => {
         const update: ComponentFixture<RtKcUpdatePasswordComponent> = await renderKcPage(
             RtKcUpdatePasswordComponent,
