@@ -5,6 +5,7 @@ import {
     ChangeDetectionStrategy,
     Component,
     computed,
+    contentChild,
     effect,
     inject,
     input,
@@ -30,7 +31,7 @@ import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtConfirmDirective } from '@rt-tools/ui-kit-v2/confirm-popover';
 import { RtDetailListComponent } from '@rt-tools/ui-kit-v2/detail-list';
 import { RtDetailRowComponent } from '@rt-tools/ui-kit-v2/detail-list';
-import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
+import { IRtLoadError, RtEmptyStateComponent, rtLoadErrorView } from '@rt-tools/ui-kit-v2/empty-state';
 import { RtFieldComponent } from '@rt-tools/ui-kit-v2/field';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtMoneyListComponent } from '@rt-tools/ui-kit-v2/money-list';
@@ -44,6 +45,7 @@ import { RtTabsComponent } from '@rt-tools/ui-kit-v2/tabs';
 import { RtTextareaComponent } from '@rt-tools/ui-kit-v2/textarea';
 import { RtTimelineComponent } from '@rt-tools/ui-kit-v2/timeline';
 import { RtToggleSwitchComponent } from '@rt-tools/ui-kit-v2/toggle-switch';
+import { RtWorkspaceDetailsErrorDirective } from './rt-workspace-details-error.directive';
 import { IRtWorkspaceDetails } from './rt-workspace-details.model';
 
 const BEM_BLOCK: string = 'rt-workspace-details';
@@ -108,9 +110,17 @@ export class RtWorkspaceDetailsComponent {
 
     #lastAuditError: string | null = null;
 
-    #lastPanelError: string | null = null;
-
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
+
+    /** Ошибка загрузки сведений: стоит во вкладке сведений вместо данных, а не тостом поверх. */
+    protected readonly loadError: IRtLoadError.View = rtLoadErrorView(
+        (): string | null => this.error(),
+        (): string => this.errorDescription(),
+        (): void => this.retry.emit()
+    );
+
+    /** Свой вид ошибки `<ng-template rtWorkspaceDetailsError>` — встаёт вместо вида по умолчанию. */
+    protected readonly errorTemplate: Signal<RtWorkspaceDetailsErrorDirective | undefined> = contentChild(RtWorkspaceDetailsErrorDirective);
 
     protected readonly editingAgent: WritableSignal<boolean> = signal<boolean>(false);
 
@@ -167,7 +177,14 @@ export class RtWorkspaceDetailsComponent {
 
     public readonly actions: InputSignal<readonly IRtWorkspaceDetails.Action[]> = input<readonly IRtWorkspaceDetails.Action[]>([]);
 
+    /** Ошибка загрузки сведений: не null — вместо данных стоит ошибка с «Повторить». */
     public readonly error: InputSignal<string | null> = input<string | null>(null);
+
+    /** Подсказка под заголовком ошибки; пустая — подпись кита. */
+    public readonly errorDescription: InputSignal<string> = input<string>('');
+
+    /** Нажата «Повторить» на ошибке загрузки — потребитель загружает сведения заново. */
+    public readonly retry: OutputEmitterRef<void> = output<void>();
 
     public readonly toggleChange: OutputEmitterRef<IRtWorkspaceDetails.ToggleChange> = output<IRtWorkspaceDetails.ToggleChange>();
 
@@ -243,14 +260,6 @@ export class RtWorkspaceDetailsComponent {
                 this.#notificationBus.error(auditError);
             }
             this.#lastAuditError = auditError;
-        });
-
-        effect((): void => {
-            const panelError: string | null = this.error();
-            if (panelError !== null && panelError !== this.#lastPanelError) {
-                this.#notificationBus.error(panelError);
-            }
-            this.#lastPanelError = panelError;
         });
     }
 

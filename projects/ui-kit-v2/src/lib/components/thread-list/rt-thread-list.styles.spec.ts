@@ -11,6 +11,7 @@ import * as sass from 'sass';
  */
 
 const SOURCE: string = join(__dirname, 'rt-thread-list.component.scss');
+const MESSENGER: string = join(__dirname, 'rt-thread-list-messenger.scss');
 
 /** Тело правила с таким селектором, без вложенных в него правил. */
 function ruleBody(css: string, selector: string): string {
@@ -64,5 +65,18 @@ describe('стили действий строки списка бесед', ():
         expect(hover).toContain('.rt-thread-list__row-wrap:hover .rt-thread-list__row-actions');
         expect(hover).toContain('.rt-thread-list__row-wrap:focus-within .rt-thread-list__row-actions');
         expect(hover).toContain('.rt-thread-list__row-wrap:has(.rt-menu--open) .rt-thread-list__row-actions');
+    });
+});
+
+describe('шапка и вкладки списка в виде мессенджера', (): void => {
+    const css: string = sass.compile(MESSENGER).css;
+
+    it('SC-UKV-1274 — у шапки нет боковых полей: поиск стоит на крае строк', (): void => {
+        expect(ruleBody(css, '.rt-thread-list--messenger .rt-thread-list__head')).toContain('padding-inline: 0');
+    });
+
+    it('SC-UKV-1275 — вкладки стоят в 8 от линии шапки и от строк: свои 6 и зазор колонки 2', (): void => {
+        expect(ruleBody(css, '.rt-thread-list--messenger .rt-thread-list__tabs')).toContain('padding: calc(var(--rt-space-1) * 1.5) 0');
+        expect(ruleBody(css, '.rt-thread-list--messenger')).toContain('gap: var(--rt-space-0-5)');
     });
 });

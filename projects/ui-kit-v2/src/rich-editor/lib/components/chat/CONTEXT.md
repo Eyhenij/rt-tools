@@ -17,7 +17,8 @@
 
 Основные входы: `messages`, `hasThread`, `canReply`, `replyBlockReason`, `loading`, `fetching`,
 `sending`, `attachments`, `accept`, `formatting`, `title`, `sign`, `showRefresh`, `showExpand`,
-`fill`, `typingText`. Выходы: `send`, `refresh`, `typing` и события по сообщениям (повтор, удаление).
+`fill`, `typingText`, `emptyTitle`, `emptyHint`, `emptyIcon`, `error`, `errorDescription`. Выходы:
+`send`, `refresh`, `retry`, `typing` и события по сообщениям (повтор, удаление).
 
 ## Главное, что нужно знать
 
@@ -26,8 +27,15 @@ rtChatMessageActions let-message>` рисуется в меню «…» у ре�
 `messageHasActions`; не задан — точка показывается у каждой. Точечные действия — удаление, повтор
 отправки, скачивание — остаются своими входами и выходами: они общи для любой переписки.
 
-**Без `hasThread` чат рисует только подсказку выбора.** Ни ленты, ни поля ответа не будет —
-это состояние «переписка не выбрана», а не «переписка пустая».
+**Без `hasThread` чат рисует только заглушку выбора.** Ни ленты, ни поля ответа не будет —
+это состояние «переписка не выбрана», а не «переписка пустая». Заглушка — `rt-empty-state` с
+`emptyTitle`, `emptyHint` (пустой — подпись кита) и `emptyIcon`; свой вид — `<ng-template
+rtChatEmpty>`. Ширину 400 задаёт переменная `--rt-empty-state-max-width`, ею же потребитель
+растягивает заглушку на свою колонку.
+
+**Ошибка загрузки (`error` не null) стоит вместо ленты и поля ответа.** Кнопка «Повторить» только
+поднимает `retry`: переписку загружает потребитель. Свой вид — `<ng-template rtChatError let-error
+let-retry="retry">`.
 
 **Шапка появляется только вместе с кнопками**: `showHeader = showRefresh || showExpand`.
 Один `title` шапку не создаёт.

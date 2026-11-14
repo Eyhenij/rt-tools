@@ -16,7 +16,10 @@ rt_push_check_budget() {
         # 1018 one after another; 264 side by side, measured the same day (RT-3273).
         *'-t test-hooks'*) echo 264 ;;
         *'-t lint typecheck test build'*) echo 182 ;;
-        *'-t verify'*) echo 1 ;;
+        # 1 was measured on changes that reached no verify target, an idle nx answer. A change of
+        # the second kit runs its docs verify: 1.3–1.9 s on 14.11.2026, six runs (RT-3292); nx alone
+        # takes 1.3 s even on a cache hit.
+        *'-t verify'*) echo 2 ;;
         *'lint:styles'*) echo 5 ;;
         'pnpm run agent-kit:check') echo 5 ;;
         *'bash tools/tests/run.sh') echo 30 ;;
@@ -68,8 +71,18 @@ rt_auth_stand_changed() {
 # after the steps the change did not need were taken out. A push over it is investigated before the
 # next one. The owner's order of 13.11.2026: «запиши лимит на отправку ветки, если отправка занимает
 # дольше — ты обязан разбираться почему это там».
+#
+# 440 held only for a set without the second kit's showcase. A change of the second kit runs its
+# visual gate, 466–584 s alone, and three whole sets of such changes took 496, 509 and 598 s on
+# 14.11.2026 (task RT-3294). The limit is the longest of them with a margin of 22 s. The owner's
+# answer of 14.11.2026: «Поднять лимит по замеру».
+#
+#
+# A change that reaches both the kit showcase and the admin suite runs both heavy steps in one set:
+# the snapshot match 455 s, the admin suite 215 s, the two images 64 s, measured on 14.11.2026
+# (task RT-3292). The owner's answer of that day: «Поднять предел (Рекомендую)» — 900 s.
 rt_push_set_budget() {
-    echo 440
+    echo 900
 }
 
 rt_push_over_budget_words() {

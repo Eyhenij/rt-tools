@@ -56,6 +56,8 @@ test.describe('встраиваемая страница переписок', ()
         await expect(rows(page)).toHaveCount(CHAT.embed.talks.length);
         // кнопка самой админки осталась на месте: раздел приехал рамкой и её разметки не тронул
         await expect(page.getByRole('button', { name: 'Кнопка админки' })).toBeVisible();
+        // до выбора переписки лента показывает заглушку чата из кита, а не пустое место
+        await expect(qaInside(page, 'chat-empty-hint')).toBeVisible();
 
         await expectScreen(page, 'embedded-talks');
     });

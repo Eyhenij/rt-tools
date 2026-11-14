@@ -269,6 +269,29 @@
             padding: var(--rt-space-6) var(--rt-space-4);
         }
 
+        // Ошибка загрузки стоит на месте заглушки и с теми же полями
+        &__error {
+            padding: var(--rt-space-6) var(--rt-space-4);
+        }
+
+        // Ошибка догрузки — короткая строка под строками: текст слева, «Повторить» справа; строки не
+        // прячутся
+        &__load-error {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: calc(var(--rt-space-2) + var(--rt-space-0-5)) calc(var(--rt-space-2) + var(--rt-space-1));
+            gap: calc(var(--rt-space-2) + var(--rt-space-1));
+        }
+
+        // Длинный текст ошибки переносится: обрезанный без подсказки читался бы как весь
+        &__load-error-text {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+            min-inline-size: 0;
+            overflow-wrap: anywhere;
+        }
+
         // Иллюстрация пустого состояния: стопка декоративных строк-превью тредов
         // (аватар + две «полоски» текста), средняя со сдвигом — намёк на список чатов.
         &__empty-preview {

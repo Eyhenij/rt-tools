@@ -185,24 +185,23 @@ describe('RtWorkspaceDetailsComponent', (): void => {
     });
 
     describe('ошибка', (): void => {
-        it('уходит в общую шину уведомлений, а не рисуется внутри панели', (): void => {
-            // Панель узкая, и сообщение в ней сдвигало бы данные. Тост показывает
-            // ошибку поверх, не трогая раскладку.
-            const emitted: string[] = [];
-            const fixture: ComponentFixture<RtWorkspaceDetailsComponent> = setup();
-            TestBed.inject(NotificationBus)
-                .onEmit()
-                .subscribe((event: INotification.Event): void => {
-                    emitted.push(event.payload.message);
-                });
+        it('SC-UKV-1278 — ошибка стоит во вкладке сведений вместо данных, «Повторить» поднимает retry', (): void => {
+            const fixture: ComponentFixture<RtWorkspaceDetailsComponent> = setup({ rows: [{ label: 'Гость', value: 'Иванов' }] });
+            const retries: jest.Mock = jest.fn();
+            fixture.componentInstance.retry.subscribe(retries);
 
             fixture.componentRef.setInput('error', 'Не удалось загрузить');
             fixture.detectChanges();
 
-            expect(emitted).toEqual(['Не удалось загрузить']);
+            expect(textOf(qa(fixture, 'workspace-details-error'))).toContain('Не удалось загрузить');
+            expect(qa(fixture, 'workspace-details-row')).toBeNull();
+
+            (qa(fixture, 'workspace-details-retry')?.nativeElement as HTMLButtonElement).click();
+
+            expect(retries).toHaveBeenCalledTimes(1);
         });
 
-        it('одна и та же ошибка не повторяется на каждой перерисовке', (): void => {
+        it('SC-UKV-1278 — ошибка не уходит тостом: она уже стоит в панели', (): void => {
             const emitted: string[] = [];
             const fixture: ComponentFixture<RtWorkspaceDetailsComponent> = setup();
             TestBed.inject(NotificationBus)
@@ -213,9 +212,8 @@ describe('RtWorkspaceDetailsComponent', (): void => {
 
             fixture.componentRef.setInput('error', 'Сбой');
             fixture.detectChanges();
-            fixture.detectChanges();
 
-            expect(emitted).toEqual(['Сбой']);
+            expect(emitted).toEqual([]);
         });
     });
 });

@@ -97,6 +97,31 @@
     }
 
     <ng-template #detailsTpl>
+        @if (loadError.shown()) {
+            @if (errorTemplate(); as tpl) {
+                <ng-container [ngTemplateOutlet]="tpl.templateRef" [ngTemplateOutletContext]="loadError.context()" />
+            } @else {
+                <rt-empty-state
+                    qa-dataid="workspace-details-error"
+                    icon="ico-alert"
+                    [title]="loadError.title()"
+                    [description]="loadError.hint()">
+                    <button
+                        rtButton
+                        appearance="outlined"
+                        type="button"
+                        qa-dataid="workspace-details-retry"
+                        [label]="t().uiRetry"
+                        [attr.aria-label]="t().uiRetry"
+                        (click)="retry.emit()"></button>
+                </rt-empty-state>
+            }
+        } @else {
+            <ng-container [ngTemplateOutlet]="detailsContentTpl" />
+        }
+    </ng-template>
+
+    <ng-template #detailsContentTpl>
         @if (profile(); as person) {
             <div rtElem="profile" qa-dataid="workspace-details-profile">
                 @if (person.sign; as sign) {
