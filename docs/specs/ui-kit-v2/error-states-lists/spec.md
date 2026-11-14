@@ -1,6 +1,6 @@
 # Load error and placeholder states of the table and the lists
 
-**Status:** proposed · **Revision:** 2026-11-14 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-14 · **Scenario prefix:** `SC-UKV`
 **Depends on:** `rt-empty-state`, the kit dictionary, the load error helper of `error-states`
 **Laws:** `frontend-application`, `mockups`, `verifiability`
 **Procedures:** none
@@ -44,6 +44,8 @@ error input or template.
 - **The table keeps its `#rtTableEmpty` reference.** A template declared by that reference still
   replaces the empty view; the directive `rtTableEmptyState` stands next to it and wins when both
   are declared.
+- **The table error placeholder is 400 wide in the middle of the row; the data list error takes
+  the width of the list.** The dynamic list and the bar list placeholders take their width too.
 
 ## What is out of scope
 
@@ -99,3 +101,5 @@ None.
 ## History of changes
 
 - 2026-11-14 — written for RT-3294.
+- 2026-11-14 — merged into the kit spec with the bindings to code; the placeholder widths added
+  after the match with the approved frames.
