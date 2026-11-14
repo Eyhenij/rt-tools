@@ -52,7 +52,7 @@
     "ng-template[rtWorkspaceDetailsError]": "projects/ui-kit-v2/src/lib/components/workspace-details/stories/workspace-details-states.stories.ts",
     "ng-template[rtChatEmpty]": "projects/ui-kit-v2/src/rich-editor/lib/components/chat/stories/chat-states.stories.ts",
     "ng-template[rtChatError]": "projects/ui-kit-v2/src/rich-editor/lib/components/chat/stories/chat-states.stories.ts",
-    "ng-template[rtTableEmptyState]": "projects/ui-kit-v2/src/lib/components/table/stories/table-states.stories.ts",
+    "ng-template[rtTableEmpty], ng-template[rtTableEmptyState]": "projects/ui-kit-v2/src/lib/components/table/stories/table-states.stories.ts",
     "ng-template[rtTableError]": "projects/ui-kit-v2/src/lib/components/table/stories/table-states.stories.ts",
     "ng-template[rtDataListEmpty]": "projects/ui-kit-v2/src/lib/components/data-list/stories/data-list-states.stories.ts",
     "ng-template[rtDataListError]": "projects/ui-kit-v2/src/lib/components/data-list/stories/data-list-states.stories.ts",

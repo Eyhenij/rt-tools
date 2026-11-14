@@ -37,13 +37,13 @@ error input or template.
 - **The default error view is `rt-empty-state` with the alert icon, a title, a hint and an outlined
   «Повторить» button.** The title is the `error` text when it is not empty, otherwise the label
   `uiLoadError`; the hint is the `errorDescription` input or the label `uiLoadErrorHint`.
-- **An own view replaces the default one whole.** `rtTableEmptyState`, `rtTableError`,
+- **An own view replaces the default one whole.** `rtTableEmpty`, `rtTableError`,
   `rtDataListEmpty`, `rtDataListError`, `rtDynamicListEmpty`, `rtDynamicListError`,
   `rtBarListEmpty` and `rtBarListError`; the error template gets the error text and a retry
   function.
 - **The table keeps its `#rtTableEmpty` reference.** A template declared by that reference still
-  replaces the empty view; the directive `rtTableEmptyState` stands next to it and wins when both
-  are declared.
+  replaces the empty view; the directive `rtTableEmpty` stands next to it and wins when both are
+  declared.
 - **The table error placeholder is 400 wide in the middle of the row; the data list error takes
   the width of the list.** The dynamic list and the bar list placeholders take their width too.
 
@@ -90,9 +90,10 @@ Not applicable.
 
 ## Decisions
 
-- **The table directive is `rtTableEmptyState`, not `rtTableEmpty`** — the reference name
-  `#rtTableEmpty` is already read by `contentChild('rtTableEmpty')`, and a directive selector of the
-  same word would make both match the same template ambiguously. The approved frame names it so.
+- **The table directive answers to `rtTableEmpty`, and `rtTableEmptyState` is its second name** —
+  the owner named the slot `rtTableEmpty`, the approved frame names it `rtTableEmptyState`. The
+  reference `#rtTableEmpty` and the attribute do not collide: the string query of the table finds
+  only a reference, the directive selector only an attribute, and a test declares both.
 
 ## Open questions
 

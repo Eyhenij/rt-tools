@@ -3,11 +3,13 @@ import { Directive, inject, TemplateRef } from '@angular/core';
 import { IRtLoadError } from '@rt-tools/ui-kit-v2/empty-state';
 
 /**
- * Свой вид пустой таблицы: `<ng-template rtTableEmptyState>` встаёт вместо заглушки по умолчанию
- * целиком. Прежняя ссылка `#rtTableEmpty` работает и дальше; объявлены обе — побеждает директива.
+ * Свой вид пустой таблицы: `<ng-template rtTableEmpty>` встаёт вместо заглушки по умолчанию
+ * целиком; `rtTableEmptyState` — второе имя того же. Атрибут и прежняя ссылка `#rtTableEmpty`
+ * не мешают друг другу: строковый запрос таблицы находит только ссылку, селектор — только атрибут.
+ * Объявлены оба — побеждает директива.
  */
 @Directive({
-    selector: 'ng-template[rtTableEmptyState]',
+    selector: 'ng-template[rtTableEmpty], ng-template[rtTableEmptyState]',
 })
 export class RtTableEmptyStateDirective {
     public readonly templateRef: TemplateRef<void> = inject<TemplateRef<void>>(TemplateRef);

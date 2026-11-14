@@ -17,7 +17,7 @@ import { ComponentFixture } from '@angular/core/testing';
 
 import { classesOf, createRtFixture, el, qa, textOf } from '../../../testing/rt-kit-testing';
 import { RtTableComponent } from './rt-table.component';
-import { RtTableErrorDirective } from './rt-table-states.directive';
+import { RtTableEmptyStateDirective, RtTableErrorDirective } from './rt-table-states.directive';
 
 interface ITourRow {
     readonly id: number;
@@ -97,6 +97,45 @@ class ErrorHostComponent {
 })
 class EmptyRefHostComponent {
     public readonly columns: ReadonlyArray<string> = COLUMNS;
+}
+
+/**
+ * Пустая таблица со своим видом директивой — по имени из сигнала. Вторым шаблоном стоит прежняя
+ * ссылка `#rtTableEmpty`: директива должна победить её.
+ */
+@Component({
+    selector: 'rt-table-empty-directive-host',
+    template: `
+        <table rt-table ariaLabel="Туры" [dataSource]="[]" [columns]="columns" [cards]="false">
+            <ng-container cdkColumnDef="title">
+                <th *cdkHeaderCellDef cdk-header-cell>Название</th>
+                <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
+            </ng-container>
+            <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
+            <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
+            @if (byStateName()) {
+                <ng-template rtTableEmptyState>
+                    <span qa-dataid="own-directive-empty">директива</span>
+                </ng-template>
+            } @else {
+                <ng-template rtTableEmpty>
+                    <span qa-dataid="own-directive-empty">директива</span>
+                </ng-template>
+            }
+            @if (withReference()) {
+                <ng-template #rtTableEmpty>
+                    <span qa-dataid="own-reference-empty">ссылка</span>
+                </ng-template>
+            }
+        </table>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtTableComponent, RtTableEmptyStateDirective, CDK],
+})
+class EmptyDirectiveHostComponent {
+    public readonly columns: ReadonlyArray<string> = COLUMNS;
+    public readonly byStateName: WritableSignal<boolean> = signal<boolean>(false);
+    public readonly withReference: WritableSignal<boolean> = signal<boolean>(false);
 }
 
 /** Таблица со своим видом ошибки директивой. */
@@ -194,6 +233,33 @@ describe('RtTableComponent — ошибка загрузки и свои вид�
 
         expect(textOf(qa(fixture, 'own-empty'))).toBe('туров нет');
         expect(qa(fixture, 'table-empty')).toBeNull();
+    });
+
+    it('SC-UKV-1281 — шаблон директивой rtTableEmpty встаёт вместо вида по умолчанию', (): void => {
+        const fixture: ComponentFixture<EmptyDirectiveHostComponent> = draw(EmptyDirectiveHostComponent);
+
+        expect(textOf(qa(fixture, 'own-directive-empty'))).toBe('директива');
+        expect(qa(fixture, 'table-empty')).toBeNull();
+    });
+
+    it('SC-UKV-1281 — второе имя rtTableEmptyState работает так же', (): void => {
+        const fixture: ComponentFixture<EmptyDirectiveHostComponent> = draw(
+            EmptyDirectiveHostComponent,
+            (host: EmptyDirectiveHostComponent): void => host.byStateName.set(true)
+        );
+
+        expect(textOf(qa(fixture, 'own-directive-empty'))).toBe('директива');
+        expect(qa(fixture, 'table-empty')).toBeNull();
+    });
+
+    it('SC-UKV-1281 — объявлены директива и ссылка #rtTableEmpty: побеждает директива', (): void => {
+        const fixture: ComponentFixture<EmptyDirectiveHostComponent> = draw(
+            EmptyDirectiveHostComponent,
+            (host: EmptyDirectiveHostComponent): void => host.withReference.set(true)
+        );
+
+        expect(textOf(qa(fixture, 'own-directive-empty'))).toBe('директива');
+        expect(qa(fixture, 'own-reference-empty')).toBeNull();
     });
 
     it('SC-UKV-1285 — свой вид ошибки таблицы получает текст и функцию повтора', (): void => {

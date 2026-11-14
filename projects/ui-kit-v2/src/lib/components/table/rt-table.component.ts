@@ -224,7 +224,7 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
     /** Подпись кнопки повтора загрузки. */
     protected readonly retryLabel: Signal<string> = rtKitLabel('uiRetry');
 
-    /** Свой вид пустой таблицы директивой (`<ng-template rtTableEmptyState>`). */
+    /** Свой вид пустой таблицы директивой (`<ng-template rtTableEmpty>` или `rtTableEmptyState`). */
     protected readonly emptyStateTemplate: Signal<RtTableEmptyStateDirective | undefined> = contentChild(RtTableEmptyStateDirective);
 
     /** Свой вид ошибки загрузки (`<ng-template rtTableError>`). */
