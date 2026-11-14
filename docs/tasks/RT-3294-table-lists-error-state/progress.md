@@ -4,7 +4,7 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 3 of 3 — The showcase
 - **Done:** stages 1 and 2 — all four components take `error`, `errorDescription` and `retry` and
   their own empty and error templates; SC-UKV-1279…1286 are covered by the four `*.states.spec.ts`.
@@ -12,11 +12,10 @@ Rewritten by every session, not appended to.
   placeholder instead of the first kit empty look.
   The stories match the four frames 32 of 32 by `tools/kit-match.mjs`; the table error is 400 wide
   in the middle, the data list error takes the whole width.
-- **Next step:** step 3.2 — the owner's word on the showcase goes into `approvals.md`, then the
-  references, the agreement merge and the folder.
+  The owner approved the showcase on 14.11.2026: «Одобряю».
+- **Next step:** the references, the agreement merge and the folder.
 - **Uncommitted:** nothing.
-- **Waiting for the owner:** the showcase approval of the four `ErrorAndPlaceholders` stories; the consumer
-  session is asked about the push set limit that holds the RT-3292 push.
+- **Waiting for the owner:** no; the consumer session is asked about the push set limit that holds the RT-3292 push.
 - **PR:** not open yet.
 
 ## Steps
@@ -28,7 +27,7 @@ Rewritten by every session, not appended to.
 - [x] 2.2 Add `error`, `errorDescription`, `retry`, `rtBarListEmpty` and `rtBarListError` to `rt-bar-list`
 - [x] 2.3 Cover SC-UKV-1283, SC-UKV-1284 and SC-UKV-1286 by the specs
 - [x] 3.1 Add a story of the error and both own views for each of the four components
-- [>] 3.2 Compare the stories with the frames by measurement and show them to the owner
+- [x] 3.2 Compare the stories with the frames by measurement and show them to the owner
 
 ## Decisions along the way
 
