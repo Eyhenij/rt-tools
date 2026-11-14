@@ -6,7 +6,7 @@ Given a thread list with `loading` true, no rows and `error` «Нет сети»
 When it is drawn
 Then the error placeholder with the title «Нет сети» and the «Повторить» button is shown and the skeleton is not
 
-Not covered: the code is written in stage 2.
+Covered by the thread list states spec.
 
 ### SC-UKV-1268 — a load more error keeps the rows
 
@@ -14,7 +14,7 @@ Given a thread list with three rows and `error` not null
 When it is drawn
 Then the three rows stay and an error row with the «Повторить» button stands below them
 
-Not covered: the code is written in stage 2.
+Covered by the thread list states spec.
 
 ### SC-UKV-1269 — the retry button emits retry
 
@@ -22,7 +22,7 @@ Given a thread list showing the error placeholder
 When the reader presses «Повторить»
 Then `retry` is emitted once
 
-Not covered: the code is written in stage 2.
+Covered by the thread list states spec.
 
 ### SC-UKV-1270 — the error title falls back to the kit label
 
@@ -30,7 +30,7 @@ Given a thread list with `error` set to an empty string
 When it is drawn
 Then the title is the label `uiLoadError` and the hint is the label `uiLoadErrorHint`
 
-Not covered: the code is written in stage 2.
+Covered by the thread list states spec.
 
 ### SC-UKV-1271 — nothing found uses its own texts when filters are active
 
@@ -38,7 +38,7 @@ Given a thread list with no rows, `filtersActive` true and `nothingFoundTitle` �
 When it is drawn
 Then the placeholder title is «Ничего не нашлось» with the search icon
 
-Not covered: the code is written in stage 2.
+Covered by the thread list states spec.
 
 ### SC-UKV-1272 — an own empty view gets the filtered flag
 
@@ -46,7 +46,7 @@ Given a thread list with no rows, an active search and a declared `rtThreadListE
 When it is drawn
 Then the template is rendered with `filtered` true and the default placeholder is not
 
-Not covered: the code is written in stage 2.
+Covered by the thread list states spec.
 
 ### SC-UKV-1273 — an own error view gets the text and the retry function
 
@@ -54,7 +54,7 @@ Given a thread list with `error` «Нет сети» and a declared `rtThreadLis
 When the template calls its retry function
 Then `retry` is emitted and the template shows «Нет сети»
 
-Not covered: the code is written in stage 2.
+Covered by the thread list states spec.
 
 ### SC-UKV-1274 — the thread list header stands on the list edge
 

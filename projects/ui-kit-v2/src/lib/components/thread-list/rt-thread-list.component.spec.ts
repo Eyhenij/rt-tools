@@ -273,7 +273,7 @@ describe('RtThreadListComponent', (): void => {
             render(fixture);
 
             expect(qa(fixture, 'thread-list-empty')).not.toBeNull();
-            expect(textOf(qa(fixture, 'empty-state-title'))).toBe('Nothing found');
+            expect(textOf(qa(fixture, 'empty-state-title'))).toBe('Nothing here yet');
         });
     });
 

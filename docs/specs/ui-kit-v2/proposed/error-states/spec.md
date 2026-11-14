@@ -41,8 +41,8 @@ The person sees «Не удалось загрузить», a hint and a «По�
   «Повторить» button.** The title is the `error` text when it is not empty, otherwise the label
   `uiLoadError`; the hint is the `errorDescription` input or the label `uiLoadErrorHint`; the button
   label is `uiRetry`.
-- **The empty and nothing-found texts of `rt-thread-list` are inputs.** `emptyTitle`,
-  `emptyDescription`, `nothingFoundTitle`, `nothingFoundDescription`; without them the kit labels
+- **The empty and nothing-found texts of `rt-thread-list` are inputs.** `emptyText` (the title,
+  kept by its former name), `emptyDescription`, `nothingFoundTitle`, `nothingFoundDescription`; without them the kit labels
   stand. Nothing found is shown when search or filters are active, empty otherwise.
 - **An own view replaces the default one whole.** `rtThreadListEmpty`, `rtThreadListError`,
   `rtChatEmpty`, `rtChatError` and `rtWorkspaceDetailsError` take the place of the default
