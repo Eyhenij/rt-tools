@@ -41,3 +41,10 @@ epic.
   declares its variables on its own element, so a rule on the consumer element alone loses; the
   autocomplete error needed `&__error-state.rt-empty-state`. Address: the names of this tree — the
   `rt-empty-state` page of the kit.
+
+## PR эпика
+
+- **The kit approval check reads an epic branch by its own name.** The epic branch carries no kit
+  edit of its own, yet the check asked for an archive record named after the epic branch; the
+  record was made by copying the three task records' lines word for word. Address: the names of
+  this tree — the approval check could gather the records of the merged tasks itself.
