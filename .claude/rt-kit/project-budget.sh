@@ -11,7 +11,7 @@ rt_push_check_budget() {
     case "$1" in
         *'visual-gate.mjs ui-kit-v2'*) echo 471 ;;
         *'message-bus-admin-e2e:e2e'*) echo 252 ;;
-        *'auth-example-e2e:e2e'*) echo 34 ;;
+        *'auth-example-e2e:e2e'*) rt_auth_e2e_budget_for "$(rt_auth_stand_changed)" ;;
         *'serve:auth'*) rt_auth_stand_budget_for "$(rt_auth_stand_changed)" ;;
         # 1018 one after another; 264 side by side, measured the same day (RT-3273).
         *'-t test-hooks'*) echo 264 ;;
@@ -31,11 +31,29 @@ rt_push_check_budget() {
 # RT-3301. The owner's choice of that day: «Два предела, 12 и 30 с (Рекомендую)». The packages the
 # theme and the kit are built from and the lockfile rebuild the JAR the same way, so they count too.
 rt_auth_stand_budget_for() {
-    if printf '%s\n' "$1" | grep -qE '^(projects/(auth-keycloak-theme|ui-kit-v2|core|utils)/|deploy/auth/compose\.yml$|package\.json$|pnpm-lock\.yaml$)'; then
+    if rt_auth_rebuilds_theme "$1"; then
         echo 30
     else
         echo 12
     fi
+}
+
+# The limit of the auth end-to-end step by what the branch changed. 34 s is the suite on a current
+# stand (RT-3280). A branch that rebuilds the theme JAR leaves Keycloak with the theme of its last
+# start, so the suite raises the stand a second time: 44 s, measured on 14.11.2026 in task RT-3301.
+# The owner's order of that day: «подними предел». The second raising is removed by task RT-3306.
+rt_auth_e2e_budget_for() {
+    if rt_auth_rebuilds_theme "$1"; then
+        echo 44
+    else
+        echo 34
+    fi
+}
+
+# Whether the changed paths rebuild the theme JAR: the theme, the kit and the packages it is drawn
+# with, the stand composition and the lockfile.
+rt_auth_rebuilds_theme() {
+    printf '%s\n' "$1" | grep -qE '^(projects/(auth-keycloak-theme|ui-kit-v2|core|utils)/|deploy/auth/compose\.yml$|package\.json$|pnpm-lock\.yaml$)'
 }
 
 # The paths the branch changed against the base of the push set; the main branch when the base is

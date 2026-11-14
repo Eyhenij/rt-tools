@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # The scenarios of the auth stand step limit: a branch that rebuilds the theme JAR and recreates
-# Keycloak gets 30 s, every other branch keeps 12 s. The limit is chosen by the paths the branch
-# changed, so the mapping is asked with the paths given here instead of a diff.
+# Keycloak gets 30 s, every other branch keeps 12 s; its end-to-end step gets 44 s against 34 s. The
+# limit is chosen by the paths the branch changed, so the mapping is asked with the paths given here
+# instead of a diff.
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 echo "the time limit of the auth stand step"
@@ -29,6 +30,19 @@ report "the shared package the theme is built from gets 30 s" "$(limit_for 'proj
 report "the lockfile gets 30 s" "$(limit_for 'pnpm-lock.yaml')" 30
 report "a package outside the theme keeps 12 s" "$(limit_for 'projects/store/src/index.ts')" 12
 report "a mixed branch with the theme gets 30 s" "$(limit_for "$(printf 'docs/a.md\nprojects/auth-keycloak-theme/package.json')")" 30
-report "another step keeps its own limit" "$(cd "$ROOT" && . .claude/rt-kit/project-budget.sh && rt_push_check_budget 'pnpm exec nx run auth-example-e2e:e2e')" 34
+e2e_limit_for() {
+    (
+        cd "$ROOT" || exit 1
+        # shellcheck disable=SC1091
+        . .claude/rt-kit/project-budget.sh
+        changed="$1"
+        rt_auth_stand_changed() { printf '%s\n' "$changed"; }
+        rt_push_check_budget 'pnpm exec nx run auth-example-e2e:e2e'
+    )
+}
+
+report "the end-to-end step of a theme branch gets 44 s" "$(e2e_limit_for 'projects/auth-keycloak-theme/src/main.ts')" 44
+report "the end-to-end step of a branch of texts keeps 34 s" "$(e2e_limit_for 'docs/specs/auth/spec.md')" 34
+report "another step keeps its own limit" "$(cd "$ROOT" && . .claude/rt-kit/project-budget.sh && rt_push_check_budget 'pnpm exec nx run message-bus-admin-e2e:e2e')" 252
 
 suite_result "push-stand-budget"
