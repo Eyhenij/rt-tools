@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/turn-exit-epic.sh · df6838fa2750 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/turn-exit-epic.sh · 313f11bbd1d0 · правится надстройкой, не здесь
 # The tiers of the open epic for the turn-exit guard. NOT a guard: it has no `rt-hook:` declaration
 # and hooks into no agent event. The guard sources it right after the root of the tree is known.
 #
@@ -80,10 +80,6 @@ rt_te_epic_deny() {
         handed-by-hand)
             ended="the turn ended with a handover written by the hand of the executor, and no window guard refused in it"
             short="a handover by hand under an open epic."
-            ;;
-        empty)
-            ended="nothing was done in the turn — neither an edit nor a command changing the tree"
-            short="an empty turn under an open epic."
             ;;
         *)
             ended="the turn ended with work, and the work stands where it stood"

@@ -80,10 +80,6 @@ rt_te_epic_deny() {
             ended="the turn ended with a handover written by the hand of the executor, and no window guard refused in it"
             short="a handover by hand under an open epic."
             ;;
-        empty)
-            ended="nothing was done in the turn — neither an edit nor a command changing the tree"
-            short="an empty turn under an open epic."
-            ;;
         *)
             ended="the turn ended with work, and the work stands where it stood"
             short="the turn ended with work under an open epic."

@@ -66,22 +66,3 @@ Then the turn is released; a role with an edit tool, a role with `tools: *` or n
 the header, a role with no file in the tree and a session with no role are refused as before
 
 Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
-
-### SC-AK-1356 — under an open epic an empty turn inside a task is refused
-
-Given the table of the epic names unfinished tasks, the progress of the task declares a state, and
-the turn holds neither an edit nor a command changing the tree
-When the guard of the exits judges the end of the turn
-Then the turn is refused, and the refusal says that nothing was done in the turn; with the owner's
-word quoted in the line «Waiting for the owner» the same turn is released
-
-Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
-
-### SC-AK-1357 — under an open epic an empty turn without a progress file is left to the agent hook
-
-Given the table of the epic names unfinished tasks, and the branch has no progress file
-When the guard of the exits judges an empty end of the turn
-Then the guard releases it: there is no waiting line to quote the owner's stop in, and the agent
-hook of the same event judges the turn by what was said
-
-Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.

@@ -181,8 +181,9 @@ flowchart TD
 - **The word about a stop the guard reads from the owner, not from the executor.** Otherwise the
   stop is declared by whoever finds it convenient, and the ban holds until the first inconvenience.
 - **Until the epic is closed a turn ends only by a question, a refusal, the window or the owner's
-  word.** A turn that ended with work is a stop all the same, and so are an empty turn inside a task
-  and a second pass over the same turn: the exit guard returns them with the next step named.
+  word.** A turn that ended with work is a stop all the same, and so is a second pass over the same
+  turn: the exit guard returns both with the next step named. A turn without work it leaves to the
+  agent hook, which tells an answer from a stop.
 - **The owner's standing word about a stop is quoted in the progress, in « », in the line «Waiting
   for the owner».** The guard reads their word, not a retelling: a line without a quote releases
   nothing, and a quote holds until the owner cancels it. A word said in the turn itself the agent

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/turn-exit-guard.sh · 4ab0eb8b36a0 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/turn-exit-guard.sh · 0e9f6fc57c4e · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh, hooks/turn-exit-epic.sh, hooks/turn-exit-role.sh
 # Turn exit guard: a turn does not end while the tree and the calls of the turn show work left
@@ -359,13 +359,8 @@ rt_te_steps_deny "$progress"  # the steps of the plan are not done; the tier lie
 # closed one alone. Under an open epic the work stands where it stood, and the next step is named.
 [ "$worked" = "true" ] && rt_te_epic_open && rt_te_epic_deny worked
 
-# An empty turn inside a task of an open epic. Here the owner's stop has a lawful form the guard can
-# read — the waiting line of the progress, checked above — so an empty turn without it is a stop the
-# executor announced. Without a progress file that form does not exist, and the turn is left to the
-# agent hook: refusing it would leave the owner's «стоп» no exit at all.
-[ -n "$progress" ] && rt_te_epic_open && rt_te_epic_deny empty
-
-# Any other turn with no work in it is not refused here: whether it answered the owner, stopped by
-# their word or only announced an intent is a matter of words, and the agent hook on the same event
-# judges it.
+# A turn with no work in it is not refused here, under an open epic too: whether it answered the
+# owner, stopped by their word or only announced an intent is a matter of words, and the agent hook
+# on the same event judges it. A refusal by the calls alone would return an answer to a question as
+# a stop.
 exit 0
