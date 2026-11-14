@@ -11,7 +11,7 @@ import { TestRtDataListMatrixComponent } from './component/test-data-list-matrix
 export default {
     title: 'Organisms/Material Dynamic List/DataList',
     // Тема первого кита на всю страницу: таблица первого кита рисуется как на его витрине.
-    globals: { preset: 'first-kit-theme' },
+    globals: { preset: 'violet-theme' },
     component: TestRtDataListMatrixComponent,
     parameters: {
         controls: { disable: true },

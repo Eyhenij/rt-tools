@@ -86,7 +86,7 @@ export const Switches: TStory = { args: { part: 'switches' } };
  * приложения по номеру пункта `data-item-id`. Подсказка полосы видна только под указателем, её
  * проверяет тест SC-UKV-817.
  */
-export const FirstKitLook: TStory = { args: { part: 'look' } };
+export const ClassicLook: TStory = { args: { part: 'look' } };
 
 export const Presets: TStory = { args: { part: 'presets' } };
 
