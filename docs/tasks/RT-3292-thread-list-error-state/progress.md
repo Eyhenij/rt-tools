@@ -2,14 +2,15 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 4 of 4 — The showcase
 - **Done:** the agreement `docs/specs/ui-kit-v2/proposed/error-states/` with scenarios
   SC-UKV-1267…1278; `npm run check:specs` lists only them as without a test.
-- **Next step:** the owner's word on the showcase; then the references, the merge of the agreement
-  and the close-out.
+- **Next step:** the reference snapshots of the new and changed stories; then the merge of the
+  agreement and the close-out.
 - **Uncommitted:** no.
-- **Waiting for the owner:** no.
+- **Waiting for the owner:** nothing; the showcase is approved on 14.11.2026, the record is in
+  `approvals.md`.
 - **PR:** not open yet.
 
 ## Steps
@@ -24,7 +25,7 @@
 - [x] 3.2 Add `error`, `retry` and the error slot to `rt-workspace-details`
 - [x] 3.3 Cover the new states by the specs
 - [x] 4.1 Add a story for every new state of the three components
-- [>] 4.2 Compare the stories with the frames by measurement and show them to the owner
+- [x] 4.2 Compare the stories with the frames by measurement and show them to the owner
 
 ## Decisions along the way
 
@@ -51,46 +52,7 @@
   rule and the placeholder shrank to its content. Affected stage: 4.
 - **What still differs from the frames is the Figma copy of the kit, not this change:** the
   placeholder title line 24 against 20 in code and no side padding; the skeleton row 49 against 54;
-  the details tab label «Переход» against «Переход этапа» and the first tab at 17 against 25. The
-  question about the empty list icon (inbox in the frame, preview rows in code) went to the parent
-  session. Affected stage: 4.
-
-## Handover of the session
-
-Put together by a hook before the compaction of the context (auto).
-
-**Working tree:** /Users/eyhenij/WebstormProjects/rt-kit-states
-**Branch:** RT-3292-thread-list-error-state
-
-### Where we stand at the minute of the compaction
-
-- **State:** `этап-идёт`
-- **Stage:** 3 of 4 — The chat and the details panel
-- **Next step:** `error`, `retry`, `emptyTitle`, `emptyIcon` and both slots of `rt-chat`.
-- **PR:** not open yet.
-
-The progress in full — `docs/tasks/RT-3292-thread-list-error-state/progress.md`; the plan lies next to it.
-
-### Uncommitted
-
-```
-none
-```
-
-### Commits over the main branch
-
-```
-afbc900cd fix(rt:ui-kit-v2): отступы шапки и вкладок списка переписки по одобренным макетам
-097cde950 feat(rt:ui-kit-v2): ошибка загрузки и свои шаблоны у списка переписки
-69da99e87 feat(rt:ui-kit-v2): подписи ошибки загрузки и переменная ширины заглушки
-4a46e258a docs(rt:ui-kit-v2): договорённость RT-3292 — ошибка загрузки и свои шаблоны у списка переписки, чата и сведений
-ad18c68aa docs(rt:ui-kit-v2): папка задачи RT-3292 — разбор, план и ход работы
-b79f2299e Merge remote-tracking branch 'origin/main' into RT-3288-kit-error-states
-0cb6e15af docs(rt:agent-kit): план эпика RT-3288 — макеты RT-3294 и RT-3295 одобрены
-022d37569 docs(rt:agent-kit): план эпика RT-3288 — кадры RT-3294 и RT-3295 собраны
-0a63c2c7e docs(rt:ui-kit-v2): план эпика RT-3288 — макет RT-3292 одобрен
-3ad6cbf28 docs(rt:ui-kit-v2): план эпика RT-3288 — единые состояния ошибки и заглушки
-```
-
-Written by a hook before the compaction of the context. Everything standing here is checked
-against the tree: a handover retells what was written and describes the minute it was put together.
+  the details tab label «Переход» against «Переход этапа» and the first tab at 17 against 25.
+  Affected stage: 4.
+- **The empty list keeps its preview rows, not the inbox icon of the frame** — the owner's answer on
+  14.11.2026: «Строки-превью»; the frame in Figma is brought to the code. Affected stage: 4.
