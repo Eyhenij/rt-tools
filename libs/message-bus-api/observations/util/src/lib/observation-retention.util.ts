@@ -6,11 +6,11 @@
  */
 
 /** Сколько дней лежит строка. Срок один на все роды событий. */
-export const OBSERVATION_KEEP_DAYS: number = 365;
+const OBSERVATION_KEEP_DAYS: number = 365;
 
 /** Час и минута ночного снятия по всемирному времени: час без нагрузки, время читается в журнале. */
-export const OBSERVATION_SWEEP_HOUR: number = 3;
-export const OBSERVATION_SWEEP_MINUTE: number = 10;
+const OBSERVATION_SWEEP_HOUR: number = 3;
+const OBSERVATION_SWEEP_MINUTE: number = 10;
 
 const MS_PER_DAY: number = 24 * 60 * 60 * 1000;
 

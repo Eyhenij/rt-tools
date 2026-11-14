@@ -31,6 +31,25 @@ test.describe('оболочка админки', () => {
         await expectScreen(page, 'shell');
     });
 
+    test('SC-MB-431 — каждый раздел верхнего ряда рисует свой значок, а не пустую рамку', async ({ page }: { page: Page }) => {
+        await openSection(page, 'postmortems');
+        await expect(qa(page, 'header-nav-item')).toHaveCount(Object.keys(SECTIONS).length);
+
+        // Имя, которого кит не нашёл, даёт пустую рамку: `<use>` ссылается на символ, которого нет в
+        // спрайте, и рамка значка нулевая. Спрайт приходит по сети, поэтому ждётся опросом.
+        const glyphSizes: () => Promise<number[]> = async (): Promise<number[]> =>
+            page.locator('[qa-dataid="header-nav-item"] rt-icon svg').evaluateAll((nodes: Element[]): number[] =>
+                nodes.map((node: Element): number => {
+                    const box: DOMRect = (node as SVGGraphicsElement).getBBox();
+
+                    return box.width * box.height;
+                })
+            );
+
+        await expect.poll(async (): Promise<number> => (await glyphSizes()).length).toBeGreaterThanOrEqual(Object.keys(SECTIONS).length);
+        await expect.poll(async (): Promise<number> => (await glyphSizes()).filter((size: number): boolean => size === 0).length).toBe(0);
+    });
+
     test('SC-MB-143 — подсвечен тот пункт, чей раздел открыт, и после перехода, и по прямой ссылке', async ({ page }: { page: Page }) => {
         await openSection(page, 'postmortems');
 

@@ -26,7 +26,7 @@ consequence of a merge.
 - **the task title** — `[RT-<task number>] <What is wrong>`: `[RT-88] Add select button component`
 - **the branch name** — `RT-<task number>-<short name>`: `RT-88-add-select-button`
 - **the kind of edit** — `feat`, `fix`, `refactor`, `docs`, `chore`, `style`, `perf`, `test`, `build`, `ci`
-- **the edit area (scope)** — the list `scope-enum` in `commitlint.config.cjs`: `rt:core`, `rt:store`, `rt:utils`, `rt:ui-kit`, `rt:ui-kit-v2`, `rt:agent-kit`, `rt:message-bus`, `rt:auth`, `rt:cms`
+- **the edit area (scope)** — the list `scope-enum` in `commitlint.config.cjs`: `rt:core`, `rt:store`, `rt:utils`, `rt:ui-kit-v2`, `rt:agent-kit`, `rt:message-bus`, `rt:auth`, `rt:cms`
 - **the line linking to the task** — `Closes #<number>` in the PR body
 - **the machine work account** — `rt-tools-dev` — a commit is signed by it, a task is created and a PR is opened by it; it is never a reviewer
 - **the token substitution into a call** — `.claude/rt-kit/project.sh:RT_PULL_TOKEN_VAR` — `GH_TOKEN`; the ready-made line for the guard's refusal is there too, `RT_PULL_TOKEN_HINT`

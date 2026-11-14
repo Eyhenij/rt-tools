@@ -67,7 +67,7 @@ rm -rf "$tree"
 # --- SC-AK-71. Наблюдение не называет дерева -------------------------------------------
 
 tree="$(fixture_observed_tree '')"
-note_in "$tree" gate-deny res=projects/ui-kit/src/lib/card/card.scss kind=scss sid=one
+note_in "$tree" gate-deny res=projects/ui-kit-v2/src/lib/card/card.scss kind=scss sid=one
 expect_note "SC-AK-71 — событие записано" "$tree" '"ev":"gate-deny"'
 report "SC-AK-71 — путь в запись не попал" "$(notes_of "$tree" | grep -c 'ui-kit')" "0"
 report "SC-AK-71 — поля с путём нет вовсе" "$(notes_of "$tree" | grep -c '"res"')" "0"

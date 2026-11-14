@@ -19,7 +19,7 @@ A pattern of the rule `rt-tools-styling`. What must be true at that is the law
 ## A token is declared, named a handle, or dead
 
 The check is `pnpm run check:tokens-graph`. It reads the declarations and the references over all
-of the second kit's styles and sorts a name into three states; the list of handles is
+of the kit's styles and sorts a name into three states; the list of handles is
 `tools/tokens-handles.json`, the accepted list is `tools/tokens-graph-allowlist.json`.
 
 - **A name has no third state.** Not declared and not named a handle is a dead reference: the rule
@@ -31,23 +31,16 @@ of the second kit's styles and sorts a name into three states; the list of handl
 - **A shared name on the page root from a component's styles is a refusal.** The name of one's own
   block (`--rt-<block>-*`) passes: that is the third layer, it belongs to the component and must be
   there.
-- **A name used by both kits is refused.** The styles file included later wins, and an application
-  with two kits gets what neither of them counted on.
 - **A preset value that must hold a fixed number takes a preset step of its own, not a shared scale
-  name.** The first kit declares `--rt-radius-*` and `--rt-shadow-*` on the page root with its own
-  numbers, and the coexistence file restores the second kit's values only on the preset node. A
-  preset value built from those names draws the first kit's numbers outside that node — on an
-  overlay pane always. Such a value takes a `--rt-mat-radius-*` or `--rt-mat-shadow-*` step.
-- **The first kit's scale names are read by expanding the loop, not by a literal search.** The first
-  kit declares radii, shadows and the other scales by `@each $token, $value in $<map>` with
-  `--rt-<scale>-#{$token}` inside. The check expands one interpolation at the end of a name over the
-  map's top-level keys; a name with two interpolations (`--rt-color-#{$hue}-#{$step}`) it does not
-  read. A collision the check does not name is therefore not proof of its absence. A name the first
-  kit declares that way is looked up by the map in `_tokens.scss`, not by a search over the styles.
+  name.** An application that still holds the first kit's published package gets its
+  `--rt-radius-*` and `--rt-shadow-*` on the page root, and the coexistence file restores the kit's
+  values only on the preset node. A preset value built from those names draws foreign numbers
+  outside that node — on an overlay pane always. Such a value takes a `--rt-mat-radius-*` or
+  `--rt-mat-shadow-*` step.
 
 ## The dark theme answers, and a machine counts the contrast
 
-The check is `pnpm run check:tokens-theme`. It reads three files of the second kit's styling layer,
+The check is `pnpm run check:tokens-theme`. It reads three files of the kit's styling layer,
 parses the value graph once and answers with two sections: the completeness of the dark theme and
 the contrast of the pairs. The list of pairs is `tools/tokens-contrast-pairs.json`, the accepted
 list is `tools/tokens-theme-allowlist.json`.

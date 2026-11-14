@@ -126,7 +126,7 @@ another declares its own sizes anew.
 ## Decisions
 
 - **The family is named `rt-expansion-panel`.** The name of the Material component it replaces, so a
-  first-kit reader finds it. Rejected: `rt-disclosure` — correct, but found by nobody coming from the
+  reader coming from the first kit finds it. Rejected: `rt-disclosure` — correct, but found by nobody coming from the
   first kit.
 - **The kit gets a primitive of its own.** The owner chose it over two copies inside the side menu:
   «Завести rt-expansion-panel (Recommended)».

@@ -58,13 +58,9 @@ set a bound and declare nothing, and each was found by a red run rather than by 
   Playwright brings a newer Chromium, and native controls — the textarea grip, the scrollbar —
   are drawn a pixel differently; the run turns red on stories nobody edited. The bound is the
   exact Playwright version in the manifest, and it moves only with a re-take of the references.
-- **The seeded data.** The faker version fixes the sample values. A newer one gives other names
-  and other numbers, and every frame with data diverges by text alone. The bound is the exact
-  faker version in the manifest.
 
-How to tell them from a defect of the edit — a divergence only in native controls after a
-browser raise, only in text after a generator raise — is in the traps of the pattern
-`ui-component-tests-visual`.
+How to tell it from a defect of the edit — a divergence only in native controls after a browser
+raise — is in the traps of the pattern `ui-component-tests-visual`.
 
 ## What this is checked by
 

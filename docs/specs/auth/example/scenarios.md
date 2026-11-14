@@ -61,3 +61,9 @@ Then only the editor sees the form «New record»
 Given a reader in the admin
 When a record is created with their token
 Then the example server answers 403
+
+### SC-AUTH-118 — every icon button of the records screen draws its glyph
+
+Given a person entered the admin and is on the records screen
+When they look at the icon buttons of the screen
+Then each of them shows the glyph of its icon, not an empty frame: the kit found every icon name

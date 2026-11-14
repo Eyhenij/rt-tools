@@ -14,7 +14,7 @@ the branch, the commit and the request are the rule `git-workflow`, and its own 
 ## Where it lives
 
 - **the rollout workflows** — `.github/workflows/deploy.yml` and `.github/workflows/deploy-auth.yml`
-- **the publication workflows** — `.github/workflows/` — `publish.yml` and one workflow per package
+- **the publication workflows** — `.github/workflows/` — one workflow per package
 
 ## Where the articles are carried out
 

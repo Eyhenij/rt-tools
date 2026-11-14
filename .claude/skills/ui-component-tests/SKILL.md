@@ -237,7 +237,7 @@ Four checks do not replace one another, and the choice between them is not a mat
 ## Commands
 
 ```bash
-pnpm exec nx test @rt-tools/ui-kit --testFile=<path>   # one spec file
+pnpm exec nx test @rt-tools/ui-kit-v2 --testFile=<path>   # one spec file
 pnpm test                                              # the specs of all packages
 pnpm exec nx run @rt-tools/ui-kit-v2:typecheck         # the types of the component and its specs: Jest checks neither
 pnpm run check:affected                                # the same as the guard asks before a push
@@ -246,24 +246,21 @@ pnpm run check:affected                                # the same as the guard a
 The snapshots go against an **already raised** showcase: their own is not raised, and the address is
 overridden by `STORYBOOK_URL`.
 
-## Two showcases — two snapshot harnesses
+## The showcase's snapshot harness
 
-There is not one shared file between the kits: they are kept apart deliberately, and an edit for the
-second one's sake would fail the first one's references.
+|                     | `@rt-tools/ui-kit-v2`                            |
+| ------------------- | ------------------------------------------------ |
+| Showcase            | `pnpm run storybook:ui-kit-v2` — port 6007       |
+| Snapshot harness    | `projects/ui-kit-v2/.storybook/test-runner.ts`   |
+| References          | `projects/ui-kit-v2/.storybook/__snapshots__`    |
+| The audit           | `pnpm run test:visual:v2`                        |
+| Pointed re-take     | `pnpm run test:visual:v2:update '<path sample>'` |
+| Re-take of all      | `pnpm run test:visual:v2:update-all`             |
+| What gets shot      | everything but what is marked `storySnapshotSkip` |
+| The frame's area    | the showing root `[data-story-root]`             |
+| Sweep over stories  | `pnpm run test:stories:v2`                       |
 
-|                     | `@rt-tools/ui-kit`                             | `@rt-tools/ui-kit-v2`                            |
-| ------------------- | ---------------------------------------------- | ------------------------------------------------ |
-| Showcase            | `pnpm run storybook:ui-kit-v1` — port 6006     | `pnpm run storybook:ui-kit-v2` — port 6007       |
-| Snapshot harness    | `projects/ui-kit/.storybook/test-runner.ts`    | `projects/ui-kit-v2/.storybook/test-runner.ts`   |
-| References          | `projects/ui-kit/.storybook/__snapshots__`     | `projects/ui-kit-v2/.storybook/__snapshots__`    |
-| The audit           | `pnpm run test:visual`                         | `pnpm run test:visual:v2`                        |
-| Pointed re-take     | `pnpm run test:visual:update <path sample>`    | `pnpm run test:visual:v2:update '<path sample>'` |
-| Re-take of all      | `pnpm run test:visual:update`                  | `pnpm run test:visual:v2:update-all`             |
-| What gets shot      | every story                                    | everything but what is marked `storySnapshotSkip` |
-| The frame's area    | the whole page                                 | the showing root `[data-story-root]`             |
-| Sweep over stories  | —                                              | `pnpm run test:stories:v2`                       |
-
-The second showcase's agreement is `docs/specs/ui-kit-v2/`; the story parameters are
+The showcase's agreement is `docs/specs/ui-kit-v2/`; the story parameters are
 `src/showcase/story-snapshot.ts`, and how to set them is said in the rule `rt-tools-storybook`.
 
 ## Pitfalls
@@ -297,7 +294,7 @@ The second showcase's agreement is `docs/specs/ui-kit-v2/`; the story parameters
 
 ## Patterns
 
-- `ui-component-tests-spec` — a ready-made component spec: the fixture, the second kit's harness,
+- `ui-component-tests-spec` — a ready-made component spec: the kit's harness,
   the doubles.
 - `ui-component-tests-visual` — a story for the sake of a snapshot, a sweep over the stories,
   sorting out a failed run.

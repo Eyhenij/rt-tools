@@ -24,7 +24,7 @@ export function kcContextOf<PAGE extends TKcPageId>(pageId: PAGE, overrides?: TK
 }
 
 /** The messages of the context locale, loaded the same way the page loads them. */
-export async function kcMessagesOf(context: TKcContext): Promise<TKcMessages> {
+async function kcMessagesOf(context: TKcContext): Promise<TKcMessages> {
     const loaded: ReturnType<typeof getI18n> = getI18n({ kcContext: context });
 
     return (await loaded.prI18n_currentLanguage) ?? loaded.i18n;

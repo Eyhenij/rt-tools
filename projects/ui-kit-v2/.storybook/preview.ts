@@ -105,7 +105,7 @@ const applyPreset: (preset: string) => void = (preset: string): void => {
         delete root.dataset['preset'];
     }
 
-    if (preset === 'material-violet' || preset === 'first-kit-theme') {
+    if (preset === 'material-violet' || preset === 'violet-theme') {
         root.dataset['showcaseMaterialTheme'] = 'violet';
     } else {
         delete root.dataset['showcaseMaterialTheme'];
@@ -195,10 +195,10 @@ const preview: Preview = {
                 items: [
                     { value: 'own', title: 'Свой набор' },
                     { value: 'material', title: 'Material' },
-                    { value: 'material-violet', title: 'Material, фиолетовая тема первого кита' },
-                    // Только тема, без набора на странице: таблица первого кита ставит свой вид на
-                    // себя сама, и набор на странице перекрасил бы её свой вид, показанный рядом.
-                    { value: 'first-kit-theme', title: 'Фиолетовая тема первого кита, без набора' },
+                    { value: 'material-violet', title: 'Material, фиолетовая тема' },
+                    // Только тема, без набора на странице: список и таблица ставят свой вид на себя
+                    // сами, и набор на странице перекрасил бы их свой вид, показанный рядом.
+                    { value: 'violet-theme', title: 'Фиолетовая тема, без набора' },
                 ],
                 dynamicTitle: true,
             },

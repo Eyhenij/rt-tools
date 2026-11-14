@@ -2,7 +2,7 @@
 name: rt-tools-storybook
 kind: rule
 law: verifiability
-description: This tree's rule about the showcase: the Test*Component wrapper, story typing, environment decorators, controls, the state-coverage contract in the second showcase. Take it when creating or editing any story or showcase page. The pattern is rt-tools-storybook-story.
+description: This tree's rule about the showcase: the TestRt*Component wrapper, story typing, environment decorators, controls, the state-coverage contract. Take it when creating or editing any story or showcase page. The pattern is rt-tools-storybook-story.
 ---
 
 # Storybook
@@ -11,9 +11,6 @@ A rule under the "Law on verifiability", the section about showing a visible sta
 
 ## How the law applies here
 
-- **Each kit has a showcase of its own, and they share nothing.** No config, no port, no naming
-  conventions: the kits are kept apart deliberately, and a technique taken from one turns out
-  wrong on the other silently.
 - **A story targets the wrapper, not the kit's component.** The component's input is a signal, and
   there is nothing to bind the showcase's changeable value to it with; the wrapper holds the
   demonstration state and does not travel into the package.
@@ -123,27 +120,20 @@ A rule under the "Law on verifiability", the section about showing a visible sta
   leaves all the others failing. Here it is the other way round: such a declaration has a default,
   the screen comes up without it, and a story differs from its neighbour by exactly that.
 
-**Two kits, two independent showcases.** They share no config, no port and no conventions beyond
-`@storybook/angular` itself. Check which package you are in before copying anything across.
+**The kit's showcase.** Storybook 10 with `@storybook/angular`.
 
-|                  | `@rt-tools/ui-kit`            | `@rt-tools/ui-kit-v2`                                    |
-| ---------------- | ----------------------------- | -------------------------------------------------------- |
-| Config           | `projects/ui-kit/.storybook/` | `projects/ui-kit-v2/.storybook/`                         |
-| Port             | 6006                          | 6007                                                     |
-| Command          | `pnpm run storybook:ui-kit-v1` | `pnpm run storybook:ui-kit-v2`                           |
-| Wrapper prefix   | `Test*Component`              | `TestRt*Component`                                       |
-| Global providers | per-story `applicationConfig` | `preview.ts` (zoneless, storage, icons, labels, theme toolbar) |
-| Story set        | `Default` + ad-hoc variants   | fixed set — see the coverage contract below              |
-
-Everything from here to the ui-kit-v2 section describes **`@rt-tools/ui-kit`**.
-
-Storybook 10 with `@storybook/angular`. Config lives in
-`projects/ui-kit/.storybook/`; stories are discovered from
-`../src/**/*.stories.@(js|jsx|mjs|ts|tsx)` and docs from `../docs/**/*.mdx`.
+|                  | `@rt-tools/ui-kit-v2`                                    |
+| ---------------- | -------------------------------------------------------- |
+| Config           | `projects/ui-kit-v2/.storybook/`                         |
+| Port             | 6007                                                     |
+| Command          | `pnpm run storybook:ui-kit-v2`                           |
+| Wrapper prefix   | `TestRt*Component`                                       |
+| Global providers | `preview.ts` (zoneless, storage, icons, labels, theme toolbar) |
+| Story set        | fixed set — see the coverage contract below              |
 
 ```bash
-pnpm run storybook:ui-kit-v1        # nx run @rt-tools/ui-kit:storybook — port 6006
-pnpm run build-storybook:ui-kit-v1  # dist/storybook/@rt-tools/ui-kit
+pnpm run storybook:ui-kit-v2        # nx run @rt-tools/ui-kit-v2:storybook — port 6007
+pnpm run build-storybook:ui-kit-v2  # dist/storybook/@rt-tools/ui-kit-v2
 ```
 
 ## What `preview.ts` already gives
@@ -257,29 +247,10 @@ Rules that decide what goes in a matrix:
   states once, when the story renders. The narrow frame resizes the window after that, and a node
   the breakpoints service draws only then gets no state class. A state of such a node is shown by a
   wrapper that answers "narrow" from the first render.
-- **An icon font of the first showcase is declared in `.storybook/preview-head.html`, not in a
-  showcase stylesheet.** The font file lies in the tree and is served by the showcase itself. A
-  `@font-face` in `storybook.scss` arrives later than the page head, and the paint probe catches the
-  frame before the font. The class rule next to the family repeats the whole set the other families
-  carry there: `font-size: 24px`, `line-height: 1`, `letter-spacing`, `text-transform`, `display`,
-  `white-space`, the ligatures and smoothing. A class with the family alone takes the host's font
-  size and line height, and the icons shift inside their buttons.
-- **The first showcase's Material Symbols file is a subset by icon names, and a glyph outside it
-  draws a stray shape, not the word.** A story naming a new glyph gets it only after the subset is
-  fetched again with the whole old list of names plus the new one. The ligatures of the old and the
-  new file are compared before the replacement: a name lost from the list breaks a neighbour's frame
-  silently.
-- `projects/ui-kit/src/lib/ui-kit/dynamic-selectors/` uses a misspelled
-  `strories/` folder. It is matched by the `../src/**` glob and works; leave it
-  unless you are deliberately renaming it (both the stylelint ignore and any
-  tooling reference the typo).
-- Token/theming documentation is MDX in `projects/ui-kit/docs/` (`DesignTokens.mdx`,
-  `Theming.mdx`, `TokenColors.mdx`, …), not stories. Adding a token → update the
-  matching MDX page and `projects/ui-kit/src/styles/TOKENS.md`.
 - `console.log` in a wrapper needs an explicit `// eslint-disable-next-line no-console`
   (`no-console` is `error` repo-wide).
 
 ## Patterns
 
 - `rt-tools-storybook-story` — a ready-made story: the wrapper, the typing, the controls, the
-  state matrix, the snapshot parameters of the second showcase.
+  state matrix, the snapshot parameters.

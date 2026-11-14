@@ -18,14 +18,14 @@ import { PROPOSALS_DIR } from './proposals.js';
 import { IShipment, IShipped, TShip } from './ship.js';
 import { propose } from './shipment.js';
 
-export const VERSION: string = '0.1.0';
+const VERSION: string = '0.1.0';
 export const TODAY: string = '2026-08-14';
 /** Ресурсы берутся из дерева пакета: снимок надстроек снимается с настоящего текста. */
 export const ASSETS: string = join(__dirname, '..', '..', 'assets');
 export const INTAKE: string = 'https://intake.test';
 export const REMOTE: string = 'git@github.test:owner/tree.git';
-export const TOKEN_FILE: string = '.secret-token';
-export const TOKEN: string = 'токен-этого-дерева';
+const TOKEN_FILE: string = '.secret-token';
+const TOKEN: string = 'токен-этого-дерева';
 /** Ответ приёма о непринятом токене: им отвечает отозванный. */
 export const TOKEN_REFUSED: number = 401;
 /** Файл предложений одноразового дерева: имя одно на все спеки — по нему же читают отметки. */

@@ -5,8 +5,8 @@ import { TestRtDataTableComponent } from './component/test-data-table.component'
 
 export default {
     title: 'Organisms/Material Dynamic List/DataTable',
-    // Тема первого кита на всю страницу: таблица первого кита рисуется как на его витрине.
-    globals: { preset: 'first-kit-theme' },
+    // Фиолетовый пресет на всю страницу: таблица рисуется в виде Material.
+    globals: { preset: 'violet-theme' },
     component: TestRtDataTableComponent,
     argTypes: {
         filtersShown: { control: { type: 'boolean' } },

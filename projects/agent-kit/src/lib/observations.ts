@@ -24,7 +24,7 @@ export const KEEP_DAYS: number = 30;
 export const DEFAULT_DAYS: number = 3;
 
 /** Роды событий, которые пишут гарды. */
-export type TEvent = 'skill-load' | 'gate-deny' | 'guard-deny' | 'push-gate';
+type TEvent = 'skill-load' | 'gate-deny' | 'guard-deny' | 'push-gate';
 
 export interface IObservation {
     readonly event: string;

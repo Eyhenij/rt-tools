@@ -159,7 +159,7 @@ export function pathOf(url: string): string {
     return url.split(/[?#]/)[0] ?? '';
 }
 
-export function isEntryActive(entry: IRtPageHeaderView.Entry, path: string): boolean {
+function isEntryActive(entry: IRtPageHeaderView.Entry, path: string): boolean {
     if (entry.kind !== ERtPageHeaderEntry.Link) {
         return false;
     }
@@ -256,7 +256,7 @@ export function fitRow(input: IRtPageHeaderFit.Input): IRtPageHeaderFit.Result {
 }
 
 /** Активен ли раздел: своим адресом или адресом пункта своей панели. */
-export function isSectionActive(section: IRtPageHeaderView.Section, path: string): boolean {
+function isSectionActive(section: IRtPageHeaderView.Section, path: string): boolean {
     return isEntryActive(section, path) || section.panelItems.some((entry: IRtPageHeaderView.Entry): boolean => isEntryActive(entry, path));
 }
 

@@ -61,15 +61,6 @@ after the page fonts arrived, since CDK places a panel once and does not follow 
 with the font. The determinacy itself is checked by two passes of the run in a row — 86.1 s and
 91.0 s, both green, 255 frames agreed.
 
-### SC-UKV-07 — the run of the second showcase does not touch the references of the first
-
-Given the references of both showcases lie in the tree
-When the run of the snapshots of the second showcase goes
-Then only the references of the second are checked and reshot, and the catalogue of the first stays
-untouched
-
-Not covered: it cannot be closed by a test with an identifier — it is held by the layout: the second showcase has a setting of the run, a catalogue of the references, a port and commands of its own. Checked on the spot: the catalogue of the first showcase was not changed by a single file over the whole work.
-
 ### SC-UKV-08 — a frame that diverged gives out a picture of the differences and leaves no files for a commit
 
 Given at least one frame diverged
@@ -158,7 +149,7 @@ Not covered: it cannot be closed by a test with an identifier — the language o
 
 ### SC-UKV-18 — the run refuses when the wrong showcase is at the address
 
-Given the showcase of the first kit answers at the named address
+Given another showcase answers at the named address
 When the run of the snapshots of the second goes
 Then the run refuses and names the address and the sign the showcase was recognised as a foreign one by,
 and the frames are not checked against a single reference

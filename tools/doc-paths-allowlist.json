@@ -16,10 +16,6 @@
       "reason": "the changelog is gathered by the release command: the addresses in it describe the day of the record, they are not edited, and there is nothing to match them against",
       "task": "RT-362"
     },
-    "projects/ui-kit/CHANGELOG.md": {
-      "reason": "the changelog is gathered by the release command: the addresses in it describe the day of the record, they are not edited, and there is nothing to match them against",
-      "task": "RT-362"
-    },
     "projects/utils/CHANGELOG.md": {
       "reason": "the changelog is gathered by the release command: the addresses in it describe the day of the record, they are not edited, and there is nothing to match them against",
       "task": "RT-362"
@@ -213,6 +209,26 @@
     "assets/pdfjs/pdf.worker.min.mjs": {
       "reason": "a path in the application that installs the kit: the application copies the PDF worker from pdfjs-dist into its own assets at build time, and this tree never holds the file",
       "task": "RT-2896"
+    },
+    "projects/ui-kit": {
+      "reason": "the first kit is removed from the tree; the epic plan and an older plan name it only to say it is gone",
+      "task": "RT-3304"
+    },
+    "docs/specs/ui-kit": {
+      "reason": "the first kit is removed from the tree; the epic plan and an older plan name it only to say it is gone",
+      "task": "RT-3304"
+    },
+    ".github/workflows/publish.yml": {
+      "reason": "the first kit is removed from the tree; the epic plan and an older plan name it only to say it is gone",
+      "task": "RT-3304"
+    },
+    "update-version.cjs": {
+      "reason": "the first kit is removed from the tree; the epic plan and an older plan name it only to say it is gone",
+      "task": "RT-3304"
+    },
+    "menu/sub-menu-resize.ts": {
+      "reason": "the first kit is removed from the tree; the epic plan and an older plan name it only to say it is gone",
+      "task": "RT-3304"
     }
   }
 }

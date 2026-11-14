@@ -53,7 +53,7 @@ export interface IAdminListQuery {
 }
 
 /** Имена параметров адреса. Названы здесь, чтобы разбор и сборка не расходились строками. */
-export const LIST_QUERY_PARAMS: Readonly<Record<'page' | 'size' | 'sort' | 'dir' | 'tree' | 'state' | 'version' | 'from' | 'to', string>> =
+const LIST_QUERY_PARAMS: Readonly<Record<'page' | 'size' | 'sort' | 'dir' | 'tree' | 'state' | 'version' | 'from' | 'to', string>> =
     Object.freeze({
         page: 'page',
         size: 'size',

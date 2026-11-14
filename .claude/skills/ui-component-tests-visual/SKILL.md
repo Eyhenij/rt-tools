@@ -7,9 +7,9 @@ description: A pattern of the rule ui-component-tests. Take it when a story is c
 
 # The visual snapshot — ready-made code
 
-The snapshot of every story of the first kit is matched against the reference next to it, in
-`projects/ui-kit/.storybook/__snapshots__/`. The harness is
-`projects/ui-kit/.storybook/test-runner.ts`. The shape of the story itself — the rule
+The snapshot of every story is matched against the reference in
+`projects/ui-kit-v2/.storybook/__snapshots__/`. The harness is
+`projects/ui-kit-v2/.storybook/test-runner.ts`. The shape of the story itself — the rule
 `rt-tools-storybook`.
 
 ## When to use
@@ -18,11 +18,10 @@ The snapshot of every story of the first kit is matched against the reference ne
 - The snapshot run fell, and it has to be understood whether the divergence is one's own.
 - The references are taken for the first time, or re-taken.
 
-The comparison threshold is held at zero, so that a small edit does not pass silently. What that
-costs depends on the kit, and the two are no longer alike.
+The comparison threshold is held at zero, so that a small edit does not pass silently.
 
-Both kits' frames are taken by a browser raised in an image, and each showcase is built and served
-as files: `node tools/visual-gate.mjs ui-kit` and `node tools/visual-gate.mjs ui-kit-v2`, a re-take
+The frames are taken by a browser raised in an image, and the showcase is built and served as
+files: `node tools/visual-gate.mjs ui-kit-v2`, a re-take
 by the same command with `--update`. A pointed re-take passes a piece of the story file path after
 the flag, not the frame name: a frame name matches no file, and the run reports no tests. The image
 is one on any machine, so the references are matched
@@ -40,7 +39,7 @@ off from a foreign network counts the showcase address as its own — otherwise 
 chunk of the very showcase it is shooting, and the run comes back with a `ChunkLoadError` at every
 story.
 
-Two traits of the machine are taken out of that dependence at both kits — the timezone and the
+Two traits of the machine are taken out of that dependence — the timezone and the
 browser's language. The timezone is set by the run's settings file next to the showcase, the
 language by the arguments of the browser in the image; the list of what is undetermined says how.
 
@@ -53,49 +52,36 @@ under the pointer, content in an overlay, the branch after a file is chosen.
 live to the frame: a whole-page snapshot lays the page out anew.
 
 ```typescript
-export const CopyButtonOnHover: Story = {
-    args: { ...ManyItems.args },
-    parameters: { snapshotHover: 'rtui-table-base-cell:has(.base-cell__copy-button)' },
+export const CopyOnHover: TStory = {
+    parameters: { snapshot: { hover: '.rt-copy-cell__button' } },
 };
 ```
 
-**An overlay** — opened by a press in `play`, and the frame for it is set by a parameter. Content
-outside the page flow a whole-page snapshot does not build up, and a popup above the frame is simply
-cut off.
+**An overlay** — opened by a press in `play`, and its node is named by the `overlay` parameter: the
+harness waits for it and refuses when it is not there by the moment of the frame.
 
 ```typescript
-export const SelectorPopup: Story = {
-    parameters: { snapshotViewport: { height: 1100 } },
+export const Menu: TStory = {
+    parameters: { snapshot: { fullPage: true, overlay: '.rt-action-bar__menu' } },
+    args: { part: 'menu' },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
-        const trigger: HTMLElement | null = canvasElement.querySelector('[cdkoverlayorigin]');
-
-        if (!trigger) {
-            throw new Error('The button that opens the popup is not drawn in the story');
-        }
-
-        await userEvent.click(trigger);
-        await waitFor(() => expect(document.querySelector('rtui-multi-selector-popup')).toBeTruthy());
+        await openStoryOverlay(canvasElement, { within: '.rt-action-bar__action' });
     },
 };
 ```
 
-**A narrow screen** — set by the same parameter, not by the showcase's viewport global. The first
-kit's harness reads only `snapshotViewport` and shoots at 1280×720 otherwise: a story that sets
-`globals.viewport` alone looks narrow in the showcase and lands in the reference wide.
+**A narrow screen** — set by the `viewport` parameter, not by the showcase's viewport global. The
+harness shoots at 1280×720 otherwise: a story that sets `globals.viewport` alone looks narrow in the
+showcase and lands in the reference wide.
 
 ```typescript
-export const Mobile: TStory = {
-    globals: { viewport: { value: 'narrow' } },
-    parameters: { snapshotViewport: { width: 360, height: 780 } },
+export const Phone: TStory = {
+    parameters: { snapshot: { viewport: STORY_PHONE_VIEWPORT } },
 };
 ```
 
-**An animation is shot at its last frame, and the harness has to say so itself.** Storybook's test
-mode inserts `animation-direction: reverse` and `animation-play-state: paused` with `!important`, so
-"finishing" an animation lands on its first frame. The first kit's harness returns the direction and
-the play state in its own stop style. Before that, a part fading in from transparency came out empty
-or half-transparent: the narrow side menu without a single item, an open sub-menu without its
-entries, table rows at half opacity — and ten references pinned exactly that.
+**An animation is shot at its last frame.** The harness finishes every running animation before the
+shot; a part fading in from transparency otherwise comes out empty or half-transparent.
 
 **The markup does not arrive in the same frame as the story.** A search for a node in `play` is
 wrapped in a wait:
@@ -118,10 +104,9 @@ chosen file, an opened panel are reached by a press in `play`.
 - the icon font lies next to the showcase and is served by it rather than travelling from a foreign
   network; an icon keeps itself invisible until it is loaded, so the harness itself calls the
   loading of the families and refuses if they did not come up;
-- the timezone and the browser's language — by the run's own settings file at the second kit's
-  showcase, `projects/ui-kit-v2/.storybook/test-runner-jest.config.js`. The run picks a file of
-  that name up from the showcase config directory and hands it to the test builder instead of its
-  own default; a file in the tree root would be read by the first kit's run as well.
+- the timezone and the browser's language — by the run's own settings file next to the showcase,
+  `projects/ui-kit-v2/.storybook/test-runner-jest.config.js`. The run picks a file of that name up
+  from the showcase config directory and hands it to the test builder instead of its own default.
 
 **Two settings are needed there, not one, and this is measured rather than reasoned.** The
 context's `locale` moves `navigator.language` and the request header but does not touch the format
@@ -196,14 +181,13 @@ something else.
   are drawn in the browser, and raising it with this variable is not allowed — hover, focus and
   active would leave the frame, and the reference would pin the wrong state.
 - **The flag `-t` breaks the run's environment exactly the same way.** A selection by story name does
-  not work — neither at the second showcase nor at the first. A pointed re-take selects **story files
-  by path** (Jest's positional sample), not stories by name.
-- **The path sample is a Jest regex, and the second kit's harness quotes it for the shell itself.**
+  not work. A pointed re-take selects **story files by path** (Jest's positional sample), not
+  stories by name.
+- **The path sample is a Jest regex, and the harness quotes it for the shell itself.**
   `test-storybook` builds the Jest command as a string, so an unquoted sample with brackets or a bar
   dropped the launch (`syntax error near unexpected token`). The sample is passed bare —
-  `'components/(tag|badge)/stories/'` — and not wrapped in a second pair of quotes. The first kit's
-  command has no such quoting: there the sample stays a plain piece of a path.
-- **A missing reference is not taken up silently.** The second showcase's harness refuses: the
+  `'components/(tag|badge)/stories/'` — and not wrapped in a second pair of quotes.
+- **A missing reference is not taken up silently.** The harness refuses: the
   comparison library would by default append the file and pass green, that is, the run would be green
   exactly because there was nothing to compare with.
 - **A reference without a story drops the run.** A renamed story leaves its reference orphaned and
@@ -225,8 +209,3 @@ something else.
   show only such controls, and the computed values of the nodes around them match to the
   hundredth. The cure is the browser version held where the references were taken, or a
   deliberate re-take of every touched reference — not a fix of the layout.
-- **A divergence only in text after a data generator raise is the data, not the layout.** A newer
-  faker gives other names and other numbers, and every frame with seeded values diverges by text
-  alone while the boxes stay where they were. The sign: the difference frames show letters and
-  digits, not edges. The cure is the generator version held in the manifest, or a re-take of the
-  references together with the raise.

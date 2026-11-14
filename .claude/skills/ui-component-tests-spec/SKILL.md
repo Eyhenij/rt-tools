@@ -2,7 +2,7 @@
 name: ui-component-tests-spec
 kind: pattern
 rule: ui-component-tests
-description: A pattern of the rule ui-component-tests. Take it when a spec next to a kit component is created or edited: the first kit's fixture builder, the second kit's harness, a host wrapper for an application input, hand-written service doubles. The story — ui-component-tests-visual.
+description: A pattern of the rule ui-component-tests. Take it when a spec next to a kit component is created or edited: the kit's spec harness, a host wrapper for an application input, hand-written service doubles. The story — ui-component-tests-visual.
 ---
 
 # A component's spec — ready-made code
@@ -17,45 +17,7 @@ which runner is used — next to the rule `testing`, the file `implementation.md
   to be known.
 - An input from the application is checked by a host, and a service by a double.
 
-## The first kit: a `setup()` of its own
-
-The first kit has no harness, and the fixture builder is written in the spec file. The ready-made
-shape:
-
-```typescript
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-describe('RtuiThingComponent', () => {
-    function setup(): ComponentFixture<RtuiThingComponent> {
-        TestBed.configureTestingModule({ imports: [RtuiThingComponent] });
-
-        const fixture: ComponentFixture<RtuiThingComponent> = TestBed.createComponent(RtuiThingComponent);
-
-        // The inputs are reactive: an assignment to an instance field does not change them.
-        fixture.componentRef.setInput('size', 'md');
-        fixture.detectChanges();
-
-        return fixture;
-    }
-
-    /** The block modifiers hang on the host — the class is declared by the decorator, not by markup. */
-    function blockClasses(fixture: ComponentFixture<RtuiThingComponent>): DOMTokenList {
-        return (fixture.nativeElement as HTMLElement).classList;
-    }
-
-    it('puts the size modifier on the host', () => {
-        expect(blockClasses(setup()).contains('rtui-thing--size-md')).toBe(true);
-    });
-});
-```
-
-The bridge to Material is proved by a real instance of the directive, not by a search for a class:
-
-```typescript
-fixture.debugElement.query(By.directive(MatButton))?.componentInstance;
-```
-
-## The second kit: the shared harness
+## The shared harness
 
 ```typescript
 import { createRtFixture, hostClasses, qa, setInputs, textOf } from '../../../testing/rt-kit-testing';
@@ -86,9 +48,9 @@ refresh the binding.
 
 ```typescript
 @Component({
-    template: '<rtui-thing [isMobile]="mobileInput()" />',
+    template: '<rt-thing [isMobile]="mobileInput()" />',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RtuiThingComponent],
+    imports: [RtThingComponent],
 })
 class HostComponent {
     public readonly mobileInput: WritableSignal<boolean | null> = signal<boolean | null>(null);
@@ -101,7 +63,7 @@ A service declared without a root scope is substituted at the component itself �
 double does not reach it:
 
 ```typescript
-TestBed.overrideComponent(RtuiThingComponent, {
+TestBed.overrideComponent(RtThingComponent, {
     set: { providers: [{ provide: BreakpointService, useValue: breakpoints }] },
 });
 ```

@@ -29,8 +29,8 @@ steps_for() {
     )
 }
 
-# Whether a step stands in the set of that subject. The line is matched whole: the first kit's
-# frame command is a prefix of the second kit's, and a substring match answers 'yes' about both.
+# Whether a step stands in the set of that subject. The line is matched whole: a substring match
+# answers 'yes' about any step whose command starts the same way.
 has_step() {
     if steps_for "$1" | grep -qxF "$2"; then printf 'yes'; else printf 'no'; fi
 }
@@ -39,15 +39,10 @@ report "the second kit pays for its showcase frames" \
     "$(has_step kit2 'node tools/visual-gate.mjs ui-kit-v2')" 'yes'
 report "the second kit pays for the admin screens: the admin draws with it" \
     "$(has_step kit2 'pnpm exec nx run message-bus-admin-e2e:e2e')" 'yes'
-report "the second kit does not pay for the first one's frames" \
-    "$(has_step kit2 'node tools/visual-gate.mjs ui-kit')" 'no'
 report "the second kit does not build the images: the suite builds its own stand" \
     "$(steps_for kit2 | grep -c 'docker build')" '0'
-
-report "the first kit pays for its frames" \
-    "$(has_step kit1 'node tools/visual-gate.mjs ui-kit')" 'yes'
-report "the first kit does not pay for the admin screens: the admin does not use it" \
-    "$(has_step kit1 'pnpm exec nx run message-bus-admin-e2e:e2e')" 'no'
+report "no subject runs a removed kit's frames" \
+    "$(steps_for everything | grep -cxF 'node tools/visual-gate.mjs ui-kit')" '0'
 
 report "the receiver pays for the admin screens" \
     "$(has_step receiver 'pnpm exec nx run message-bus-admin-e2e:e2e')" 'yes'

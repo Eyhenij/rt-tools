@@ -28,7 +28,7 @@ no() {
 # --- код приложения ли это ------------------------------------------------------------------
 ok "код приложения: apps" rt_is_app_code "$TREE/apps/site/src/main.ts"
 ok "код приложения: libs" rt_is_app_code "$TREE/libs/site/x/ui/a.ts"
-ok "код приложения: projects" rt_is_app_code "$TREE/projects/ui-kit/src/a.ts"
+ok "код приложения: projects" rt_is_app_code "$TREE/projects/ui-kit-v2/src/a.ts"
 no "не код: тексты" rt_is_app_code "$TREE/docs/adr/0001.md"
 no "не код: обвязка" rt_is_app_code "$TREE/tools/check-x.mjs"
 no "не код: правила агента" rt_is_app_code "$TREE/.claude/skills/x/SKILL.md"

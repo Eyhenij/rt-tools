@@ -11,7 +11,7 @@ import { IRtImageUpload } from '../../rt-image-upload.model';
  * изображение, и кадр витрины плыл бы при неизменном компоненте. Тот же рисунок, что в истории
  * загрузчика первого кита, — их удобно сравнивать рядом.
  */
-export const STORY_UPLOAD_IMAGE: string =
+const STORY_UPLOAD_IMAGE: string =
     'data:image/svg+xml;base64,' +
     btoa(
         '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">' +

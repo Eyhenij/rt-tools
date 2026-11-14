@@ -53,7 +53,7 @@ export const TALKS_WORDS: Readonly<Record<TTalksWord, string>> = {
  * английским умолчанием: пустой кнопки на экране не бывает, а перевод всего словаря набора — работа
  * не этой страницы.
  */
-export const TALKS_KIT_WORDS: Readonly<Partial<Record<TRtKitLabelKey, string>>> = {
+const TALKS_KIT_WORDS: Readonly<Partial<Record<TRtKitLabelKey, string>>> = {
     chatPlaceholder: 'Ответить посетителю',
     chatSendLabel: 'Отправить',
     chatSendAria: 'Отправить реплику',

@@ -46,7 +46,7 @@ export interface ISideMenuCase {
     readonly searchSize?: IRtInput.Size;
     readonly subItemIconFill?: boolean;
     readonly panelScrollHintShown?: boolean;
-    readonly firstKitProps?: boolean;
+    readonly classicProps?: boolean;
 }
 
 /**
@@ -160,7 +160,7 @@ export class TestRtSideMenuMatrixComponent {
             railIconFill: true,
             searchSize: 'md',
             panelScrollHintShown: true,
-            firstKitProps: true,
+            classicProps: true,
         },
         {
             name: 'папки, значки строк и подсказка прокрутки',
@@ -171,7 +171,7 @@ export class TestRtSideMenuMatrixComponent {
             searchSize: 'md',
             subItemIconFill: true,
             panelScrollHintShown: true,
-            firstKitProps: true,
+            classicProps: true,
         },
     ];
 

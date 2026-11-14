@@ -11,7 +11,7 @@ import { IRtPageHeader } from '../../lib/components/page-header/rt-page-header.m
  * а остальные показывают, в каких видах бывает сам ряд. Панель второго уровня объявляется
  * колонками: колонка → группа → пункт, и ширину панели кит считает по числу колонок.
  */
-export namespace IAppNav {
+namespace IAppNav {
     /** Пункт ряда или пункт панели второго уровня. */
     export interface Item {
         readonly id: string;

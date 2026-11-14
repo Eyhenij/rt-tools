@@ -72,13 +72,6 @@ it — the chat inside the receiver, the file of the widget in the image of the 
 own on the same node, and the permission for the browser of a foreign page answered by the list of
 the addresses of the site.
 
-`ui-kit` — five subjects of the surface of the first kit, put together from the agreements written
-before the code: the button of the copying at an empty cell of a table, the delay of the showing of a
-spinner, what a curtain is closed by, the column of the sorting and the outcome of fast repeated
-calls. Next to it are two subdomains: the second level of the side menu — the mode of the submenu, a
-pinned panel and the search over a submenu; the look of a field of input in the setting of the kit —
-where the components take the look of a field from and in which order the values are overridden. The
-surfaces of the other components and services the spec does not describe yet.
 
 `auth` is the entry module. One Keycloak serves every admin application. Each admin is a client,
 and its rights are client roles. The domain holds the stand: Keycloak, its database and a mail
@@ -110,7 +103,6 @@ surfaces of the other components and services the spec does not describe yet.
 | `ui-kit-v2` | `SC-UKV` |
 | `message-bus` | `SC-MB` |
 | `store` | `SC-ST` |
-| `ui-kit` | `SC-UK` |
 | `auth` | `SC-AUTH` |
 | `cms` | `SC-CMS` |
 

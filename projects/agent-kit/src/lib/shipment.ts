@@ -81,7 +81,7 @@ function knownCounts(counts: readonly ICargoCount[], known: ReadonlySet<string>)
 }
 
 /** Сводка наблюдений вместе со снимком надстроек — то, что уезжает первым запросом. */
-export function summaryCargo(
+function summaryCargo(
     summary: ISummary,
     tree: string,
     overrides: readonly ICargoOverride[],
@@ -170,7 +170,7 @@ function sentAnalyses(analyses: readonly IPostmortemItem[], refused: readonly IR
  * идут за ней: приём не заводит ими запись месяца и считает их сам, а пустой груз не уезжает —
  * замещать день нечем.
  */
-export function shipmentsOf(
+function shipmentsOf(
     summary: ISummaryCargo,
     proposals: IProposalsCargo,
     postmortems: IPostmortemsCargo,

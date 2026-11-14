@@ -17,6 +17,9 @@ import { findOrphans, KITS as kits, shellQuote, snapshotCommand } from '$TOOLS/v
 
 const [what, ...args] = process.argv.slice(2);
 
+// A kit without a wrapper of its own: the gate quotes its sample and matches its references.
+kits.bare = { ...kits['ui-kit-v2'], quotesSample: true, references: 'kit/.storybook/__snapshots__' };
+
 if (what === 'quote') {
     console.log(shellQuote(args[0]));
 } else if (what === 'command') {
@@ -42,16 +45,16 @@ report "a regex sample survives the shell whole" "$(through_shell 'button|toggle
 report "a quote inside the sample survives the shell whole" "$(through_shell "it's [a-z]*")" "it's [a-z]*"
 report "a bare sample is quoted in single quotes" "$(drive quote 'button')" "'button'"
 
-report "the first kit's pointed re-take quotes the sample" \
-    "$(drive command ui-kit yes 'button|toggle')" '["pnpm","run","test:visual:update","'"'"'button|toggle'"'"'"]'
-report "the second kit's pointed re-take leaves the sample to its wrapper" \
+report "a kit without a wrapper gets its pointed re-take sample quoted" \
+    "$(drive command bare yes 'button|toggle')" '["pnpm","run","test:visual:v2:update","'"'"'button|toggle'"'"'"]'
+report "the kit's pointed re-take leaves the sample to its wrapper" \
     "$(drive command ui-kit-v2 yes 'button|toggle')" '["pnpm","run","test:visual:v2:update","button|toggle"]'
-report "a full re-take of the first kit carries no sample" \
-    "$(drive command ui-kit yes)" '["pnpm","run","test:visual:update"]'
+report "a full re-take carries no sample" \
+    "$(drive command ui-kit-v2 yes)" '["pnpm","run","test:visual:v2:update-all"]'
 report "a flag after --update is not taken for a sample" \
-    "$(drive command ui-kit yes --verbose)" '["pnpm","run","test:visual:update"]'
+    "$(drive command ui-kit-v2 yes --verbose)" '["pnpm","run","test:visual:v2:update-all"]'
 report "a matching run takes the matching script" \
-    "$(drive command ui-kit no)" '["pnpm","run","test:visual"]'
+    "$(drive command ui-kit-v2 no)" '["pnpm","run","test:visual:v2"]'
 
 report "a reference no opened story named is an orphan" \
     "$(drive orphans '["a--one.png","b--two.png"]' '["a--one",""]')" '["b--two.png"]'
@@ -60,9 +63,9 @@ report "every reference named by an opened story is no orphan" \
 report "what is not a reference is not judged" \
     "$(drive orphans '["__diff_output__","a--one.png"]' '["a--one"]')" '[]'
 
-report "the gate matches the first kit's references directory itself" \
-    "$(drive references ui-kit)" 'projects/ui-kit/.storybook/__snapshots__'
-report "the second kit's orphans are left to its own wrapper" "$(drive references ui-kit-v2)" 'none'
+report "the gate matches the references directory of a kit without a wrapper itself" \
+    "$(drive references bare)" 'kit/.storybook/__snapshots__'
+report "the kit's orphans are left to its own wrapper" "$(drive references ui-kit-v2)" 'none'
 
 # Importing the gate must launch nothing: otherwise the scenarios above would raise a showcase.
 report "importing the gate raises no showcase" \

@@ -3,7 +3,7 @@ import { getStoryContext } from '@storybook/test-runner';
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
 import { appendFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import type { Page } from 'playwright';
+import type { Page } from '@playwright/test';
 
 import { conditionsOfPage, keepEvidence } from './snapshot-evidence.ts';
 import { quiet, ROOT_SELECTOR, settled } from './snapshot-wait.ts';

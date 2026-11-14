@@ -78,7 +78,9 @@ There is no interface: the guard answers with a refusal text, the run ahead with
   directories it walks. An edit reaches a step through a file it read or a file of a kind it read
   in a directory it walked; an added, removed or renamed file — through a directory it walked or a
   path it probed; an edit of the step's own files reaches it always. The record is taken on a tree
-  where the set is green: a red check stops early and leaves part of its reads unrecorded.
+  where the set is green: a red check stops early and leaves part of its reads unrecorded. The
+  agent's observations and their marks are no read at any depth: the guards write a new file on every
+  call, and a scenario run from a nested directory writes them there.
 - **A step whose reads the record cannot see runs on every change.** That is a step that reads the
   history of the tree, a step that starts a process other than `node` and `git`, and a step the
   table does not hold. With no table or no base every step runs.

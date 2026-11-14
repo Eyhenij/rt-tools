@@ -152,7 +152,7 @@ import { TNullable, TOptional, TPartialOmit, TIntersectionType, TValuesType } fr
 import { BaseMapper, TypeCastHelper } from '@rt-tools/utils';
 ```
 
-`IListState` and friends describe a paged, sorted, filtered list — the shape `@rt-tools/ui-kit`'s
+`IListState` and friends describe a paged, sorted, filtered list — the shape a paged
 table speaks and a server can reuse. `BaseMapper` is the DTO↔model mapping base; `TypeCastHelper`
 coerces loosely typed values.
 

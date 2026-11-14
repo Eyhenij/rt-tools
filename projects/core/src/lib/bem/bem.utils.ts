@@ -3,7 +3,7 @@ import { ElementRef, Renderer2 } from '@angular/core';
 import { BEM_MODULE_CONFIG } from './bem.const';
 import { TMods, TModsObject } from './bem.types';
 
-export function modNameHandler(str: string): string {
+function modNameHandler(str: string): string {
     switch (BEM_MODULE_CONFIG.modCase) {
         case 'kebab':
             return str

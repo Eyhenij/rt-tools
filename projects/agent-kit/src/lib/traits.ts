@@ -24,10 +24,10 @@ export interface ITrait {
     readonly title: string;
 }
 
-export const TRAITS_FILE: string = 'traits.json';
+const TRAITS_FILE: string = 'traits.json';
 
 /** Приставка требования в имени файла. Ею требование и отличается от вида. */
-export const REQUIREMENT_PREFIX: string = 'needs-';
+const REQUIREMENT_PREFIX: string = 'needs-';
 
 /** Свойства, объявленные пакетом. Нет файла — свойств нет, и требовать нечего. */
 export function readTraits(assetsDir: string): readonly ITrait[] {

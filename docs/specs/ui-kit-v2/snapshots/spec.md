@@ -15,8 +15,8 @@ page, while the neighbouring one may go wrong, because the colour, the padding a
 common tokens. While a frame is not checked against a saved one, "all the states are shown" means "the
 states are shown to whoever opens them".
 
-The first kit has such a checking, the second had nothing: neither a harness, nor references, nor a
-step in the run. The subdomain names what exactly is shot, what a frame is held equal between the runs
+Before this subdomain the kit had nothing of the kind: neither a harness, nor references, nor a step
+in the run. The subdomain names what exactly is shot, what a frame is held equal between the runs
 by, and in which place the run is obliged to refuse instead of going green.
 
 ## Terminology
@@ -49,9 +49,9 @@ as an attachment.
 
 ## Rules
 
-- **Every kit has a harness of the snapshots of its own and a catalogue of the references of its own.** A
-  file common to two kits would bind them where they are set apart on purpose: an edit for the sake of the
-  second would fell the references of the first.
+- **The kit has a harness of the snapshots of its own and a catalogue of the references of its own.** A
+  file shared with another run of the tree would bind them: an edit for the sake of one would fell the
+  references of the other.
 
 - **Everything is shot except what is marked by an exception.** The set is given by subtraction, not by
   an enumeration: a story they forgot to mark is shot and checked, it does not fall out silently. The
@@ -194,8 +194,8 @@ as an attachment.
   green: a closed panel cannot be told from a story that must have no panel at all. The named node closes both
   halves — the run refuses by it, not having found what was promised.
 
-- **The run refuses if the wrong showcase is at the named address.** The showcases of the two kits are told
-  apart only by the content; a run pointed at a foreign one or at one left from the last time gives either a
+- **The run refuses if the wrong showcase is at the named address.** Showcases are told apart only by the
+  content; a run pointed at a foreign one or at one left from the last time gives either a
   mountain of stories that were not found or a checking of foreign frames, and the reason is looked for in the
   harness.
 
@@ -231,7 +231,6 @@ machine, and a heading inside a list breaks its reading off.
 
 ## What is out of scope
 
-- **The showcase of the first kit:** its harness, its references and its step of the run are not touched.
 - **A check of accessibility:** a work of its own with a run of its own. The owner marked it needed; it stands
   apart because there is not a trace of it in the tree, the number of the violations is unknown, and a red run
   of accessibility must not hold green snapshots.
@@ -311,9 +310,8 @@ width themselves, at every threshold of theirs and on the side of the threshold 
 
 ### Several objects
 
-The tree holds two kits at once, and they share neither selectors, nor tokens, nor showcases. The harness of the
-snapshots is set apart the same way: its own setting, its own catalogue of the references, its own port, its own
-commands. There is no shared file between the kits.
+The harness of the snapshots stands apart from the other runs of the tree: its own setting, its own catalogue of
+the references, its own port, its own commands. It shares no file with them.
 
 ## Decisions
 
@@ -375,6 +373,8 @@ single file for a commit in the tree; after the rolling back of the edit the run
 
 ## History of changes
 
+- 2026-11-14 — the first kit left the tree, and with it the scenario `SC-UKV-07` about its references; the
+  harness rule and the scenario about a foreign showcase speak of one kit. Task RT-3308.
 - 2026-09-30 — the grid helper no longer scrolls its matrix inside itself: a frame of a grid wider than
   the window holds every column.
 - 2026-08-17 — the subdomain was split out of the spec of the domain, which had outgrown the length limit. The

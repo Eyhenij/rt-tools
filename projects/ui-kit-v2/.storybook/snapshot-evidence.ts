@@ -1,5 +1,5 @@
 import { copyFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import type { Page } from 'playwright';
+import type { Page } from '@playwright/test';
 
 /**
  * Улика о разошедшемся кадре второго кита: условия съёмки и сам кадр расхождения.

@@ -254,7 +254,7 @@ describe('RtDataTableCellComponent', () => {
         jest.useRealTimers();
     });
 
-    it('SC-UKV-318 — имя значка первого кита рисует набор кита по паре из перечня', () => {
+    it('SC-UKV-318 — имя значка Material рисует набор кита по паре из перечня', () => {
         const fixture: ComponentFixture<CellHostComponent> = setup({ icon: { glyph: 'content_copy', placement: 'left' } });
 
         expect(kitIconNames(fixture)).toEqual(['copy']);

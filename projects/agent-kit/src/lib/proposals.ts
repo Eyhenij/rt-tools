@@ -18,7 +18,7 @@ export const PROPOSALS_DIR: string = '.claude/rt-kit/proposals';
 
 /** Адрес предложения: куда правка идёт. Наружу уезжает только первый. */
 export const TO_PACKAGE: string = 'пакет';
-export const TO_COMPANION: string = 'компаньон';
+const TO_COMPANION: string = 'компаньон';
 export const TO_TREE: string = 'дерево';
 
 const ADDRESSES: readonly string[] = [TO_PACKAGE, TO_COMPANION, TO_TREE];

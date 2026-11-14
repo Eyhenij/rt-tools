@@ -1,9 +1,0 @@
-<ng-container rtBlock="file-upload">
-    <mat-icon rtElem="icon" [rtIconOutlined]="isIconOutlined()">backup</mat-icon>
-
-    <div rtElem="title">Drag and drop your file here or</div>
-
-    <input #uploadInput hidden type="file" (change)="onFileSelect($event)" />
-
-    <button mat-button color="accent" (click)="uploadInput.click()">Choose file</button>
-</ng-container>

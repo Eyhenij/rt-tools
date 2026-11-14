@@ -55,7 +55,7 @@ export interface IQualityTile {
 }
 
 /** Дерево с неудавшейся отправкой, названное словами. */
-export interface IQualityFaultLine {
+interface IQualityFaultLine {
     readonly tree: string;
     readonly text: string;
 }

@@ -21,13 +21,6 @@ nothing.
   looks and works like a considered product, even when one developer built it without a designer.
 - **It is not:** a kit tied to the look of one application, or a home for screens with subject logic.
 
-## The first kit
-
-`@rt-tools/ui-kit`.
-
-- **Mission:** people who use an application on this kit keep a working interface until that
-  application moves to the second kit.
-- **It is not:** a kit for new applications, or a place for new components.
 
 ## The rules package
 

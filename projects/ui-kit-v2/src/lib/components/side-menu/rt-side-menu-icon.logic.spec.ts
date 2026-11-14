@@ -7,7 +7,7 @@ describe('rt-side-menu — значок пункта', (): void => {
         expect(sideMenuIconName('cog')).toBe('cog');
     });
 
-    it('SC-UKV-531 — имя Material первого кита рисуется своей парой из перечня кита', (): void => {
+    it('SC-UKV-531 — имя Material рисуется своей парой из перечня кита', (): void => {
         expect(sideMenuIconName('settings')).toBe('cog');
         expect(sideMenuIconName('arrow_forward')).toBe('arrow-right');
         expect(sideMenuIconName('add')).toBe('ico-plus');

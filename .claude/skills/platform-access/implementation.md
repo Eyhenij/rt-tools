@@ -25,7 +25,7 @@ there is nobody to fix what broke.
 - **the environment sign** — `projects/core/src/lib/services/platform.service.ts`
 - **the device parsing** — `projects/core/src/lib/services/device-detector.service.ts`
 - **the storage services** — `projects/core/src/lib/storage/`, `projects/core/src/lib/idb-storage/`
-- **a sample of work under the environment check** — `projects/ui-kit/src/lib/ui-kit/theme/rtui-theme.service.ts`
+- **a sample of work under the environment check** — `projects/ui-kit-v2/src/lib/platform/theme.service.ts`
 
 ## Where the articles are carried out
 

@@ -16,7 +16,6 @@ to the public entry that calls it.
 - **The family carries no Material of any kind.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.ts:imports`; scenario —
 - **Every colour of the family comes from an appointment of the kit, except the style line a column gives its icon.** — `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.ts:iconStyle`; scenario `SC-UKV-265`
 - **An application moves a screen from the first kit's table without editing its column declarations, its bindings or its saved settings.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.model.ts:Column`; scenario `SC-UKV-317`
-- **The family has frames paired with the first kit's: the table, the list, the settings panel and the themes.** — `tools/kit-shot-pairs.json:table`; scenario `SC-UKV-353`
 
 ### Columns and cells
 
@@ -41,7 +40,7 @@ to the public entry that calls it.
 
 ### Icons of the column declarations
 
-- **An icon a column declaration names, in its header or its cells, is drawn by the kit's own icon set through the kit's map of first-kit names; nothing is drawn by a font.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-cell.logic.ts:dataTableIconName`; scenario `SC-UKV-318`
+- **An icon a column declaration names, in its header or its cells, is drawn by the kit's own icon set through the kit's map of Material names; nothing is drawn by a font.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-cell.logic.ts:dataTableIconName`; scenario `SC-UKV-318`
 - **The application can hand the family an icon template by the directive `rtDataTableIcon`, placed inside `rt-data-table` or inside `rt-data-list`, which hands it to its table.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-icon.directive.ts:RtDataTableIconDirective`; scenarios `SC-UKV-320`, `SC-UKV-321`
 - **When an icon template is given, it draws every header and cell icon a column declaration names, and the kit's map is not asked.** — `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.ts:iconTemplate`; scenario `SC-UKV-322`
 - **Without an icon template, a name with no pair in the map is drawn as a Material Symbols glyph.** — `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.ts:glyph`; scenario `SC-UKV-319`
@@ -58,7 +57,7 @@ to the public entry that calls it.
 
 ### The actions strip
 
-- **A table with a row menu or inline actions draws the actions strip over the end of every row and an "Actions" header cell as wide as the strip.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.ts:ngAfterViewChecked`; scenarios `SC-UKV-259`, `SC-UKV-260`
+- **A table with a row menu or inline actions draws the actions strip over the end of every row and an "Actions" header cell as wide as the strip.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.ts:#syncSpacerWidth`; scenarios `SC-UKV-259`, `SC-UKV-260`
 - **Inline actions stand before the row menu button.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.html:data-table-actions`; scenarios `SC-UKV-259`, `SC-UKV-260`
 - **The strip is revealed while the pointer is over its row and while the row's menu is open.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.scss:.rt-data-table-actions`; scenario `SC-UKV-259`
 - **The strip is as high as its row.** — `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table.component.scss:rt-data-table-actions` — no scenario: the height is held by a measurement of a row with a picture

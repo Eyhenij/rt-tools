@@ -368,8 +368,6 @@ export default [
             ],
         },
     },
-    // Первый кит не правится (docs/adr/0003-one-ui-kit.md): находку правила eslint 10 в нём чинить нечем.
-    { files: ['projects/ui-kit/**/*.ts'], rules: { 'no-useless-assignment': 'off' } },
     {
         files: ['**/bem/*.directive.ts'],
         rules: {

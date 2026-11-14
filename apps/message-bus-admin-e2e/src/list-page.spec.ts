@@ -1,6 +1,6 @@
 import { expect, Locator, Page, test } from '@playwright/test';
 
-import { openSection, qa, rowsOf, SECTION } from './support/admin';
+import { openSection, pageQa, qa, rowsOf, SECTION, TSectionName } from './support/admin';
 
 /**
  * Вид страницы списка: достижимость записей и переключателя страниц.
@@ -58,5 +58,37 @@ test.describe('вид страницы списка', () => {
 
         await expect(pagination).toBeVisible();
         expect(await inViewport(pagination)).toBe(true);
+    });
+
+    test('SC-MB-432 — обновление и настройка столбцов рисуют свои значки в каждом списке', async ({ page }: { page: Page }) => {
+        // Площадь глифа внутри кнопки: пустая рамка без глифа даёт ноль.
+        const glyphArea: (button: Locator) => Promise<number> = async (button: Locator): Promise<number> =>
+            button.locator('rt-icon svg').evaluate((node: Element): number => {
+                const box: DOMRect = (node as SVGGraphicsElement).getBBox();
+
+                return box.width * box.height;
+            });
+
+        // Оба значка панели раздела: обновление и настройка столбцов.
+        const expectGlyphs: (section: TSectionName) => Promise<void> = async (section: TSectionName): Promise<void> => {
+            for (const mark of ['refresh', 'columns'] as const) {
+                await expect.poll(async (): Promise<number> => glyphArea(pageQa(page, section, mark))).toBeGreaterThan(0);
+            }
+        };
+
+        await openSection(page, 'postmortems');
+        const refresh: Locator = pageQa(page, 'postmortems', 'refresh');
+        await refresh.click();
+        await expect(rowsOf(page, 'postmortems')).toHaveCount(PAGE_SIZE);
+        await expectGlyphs('postmortems');
+
+        // Разделы меняются нажатием на верхний ряд, без перезагрузки: страница списка та же, а
+        // данные и состояние накапливаются от раздела к разделу.
+        for (const section of ['usage', 'quality'] as const) {
+            const navItem: Locator = page.locator(`[qa-dataid="header-nav-item"][data-id="${SECTION[section].path}"] a`);
+            await navItem.click();
+            await expect(qa(page, SECTION[section].table)).toBeVisible();
+            await expectGlyphs(section);
+        }
     });
 });

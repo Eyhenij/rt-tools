@@ -14,7 +14,7 @@ import { EInviteRefusal, inviteCodeHash, inviteExpiry, inviteState, IRequestTree
 import { ETreeInviteView } from '@rt/message-bus-common';
 
 /** Выданное приглашение: код виден вызывающему один раз, срок нужен ему для сообщения. */
-export interface IIssuedInvite {
+interface IIssuedInvite {
     readonly name: string;
     readonly code: string;
     readonly issuedAt: Date;

@@ -20,7 +20,7 @@ export interface IAdminListState<TRow> extends IStateBase.Async {
 export type TAdminListMessage = 'page-read';
 
 /** Начальное состояние. Общее всем разделам: расходиться в нём нечему. */
-export function initialListState<TRow>(): IAdminListState<TRow> {
+function initialListState<TRow>(): IAdminListState<TRow> {
     return { ...BASE_INITIAL_STATE.ASYNC, rows: [], total: 0, query: null, fault: null };
 }
 

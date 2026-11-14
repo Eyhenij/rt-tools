@@ -16,7 +16,6 @@
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { byKey } from './order.js';
 
 /** Настройка агента, в которой живёт карта. Путь от корня дерева. */
 export const SETTINGS_PATH: string = '.claude/settings.json';
@@ -112,33 +111,6 @@ export function hooksSection(bindings: readonly IHookBinding[]): Record<string, 
     return section;
 }
 
-/** Прежний вид куска настройки: по записи на образец вызова. Остаётся ради разбора чужих настроек. */
-export function hooksSectionByMatcher(bindings: readonly IHookBinding[]): Record<string, unknown> {
-    const events: Map<string, Map<string, string[]>> = new Map();
-
-    for (const binding of bindings) {
-        const byMatcher: Map<string, string[]> = events.get(binding.event) ?? new Map();
-        byMatcher.set(binding.matcher, [...(byMatcher.get(binding.matcher) ?? []), binding.path]);
-        events.set(binding.event, byMatcher);
-    }
-
-    const section: Record<string, unknown> = {};
-    for (const [event, byMatcher] of [...events].sort(byKey)) {
-        section[event] = [...byMatcher].sort(byKey).map(([matcher, paths]: [string, readonly string[]]): unknown => {
-            const hooks: unknown[] = paths.map((path: string): unknown => ({
-                type: 'command',
-                command: `$CLAUDE_PROJECT_DIR/${path}`,
-            }));
-
-            // Запись без образца — не запись с пустым образцом: агент читает пустую строку как
-            // образец, которому не соответствует ни один вызов, и гард молча не зовётся.
-            return matcher ? { matcher, hooks } : { hooks };
-        });
-    }
-
-    return section;
-}
-
 /** Одна команда гарда в настройке агента: событие, путь и образец, под которым она стоит. */
 interface ISettingsHook {
     readonly event: string;
@@ -187,7 +159,7 @@ function keyOf(hook: ISettingsHook): string {
 }
 
 /** Пути гардов, названные в настройке агента этого дерева. Нет файла — ни одного. */
-export function boundInSettings(root: string): readonly string[] {
+function boundInSettings(root: string): readonly string[] {
     const path: string = join(root, SETTINGS_PATH);
     if (!existsSync(path)) {
         return [];
@@ -239,7 +211,7 @@ export function unboundHooks(bindings: readonly IHookBinding[], root: string): r
  * из текста поиском значило бы гадать. Тогда карта пуста, и расхождений не находится ни одного —
  * это честнее, чем назвать расхождением то, чего не прочитали.
  */
-export function matchersInSettings(root: string): ReadonlyMap<string, string> {
+function matchersInSettings(root: string): ReadonlyMap<string, string> {
     const path: string = join(root, SETTINGS_PATH);
     if (!existsSync(path)) {
         return new Map();

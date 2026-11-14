@@ -15,13 +15,13 @@ import { dayBefore, IObservation, KEEP_DAYS, OBSERVATIONS_DIR, openMarksDir } fr
 import { byText } from './order.js';
 
 /** Срок, в который откат или новая заявка той же задачи снимают первую приёмку. */
-export const LOST_WITHIN_DAYS: number = 14;
+const LOST_WITHIN_DAYS: number = 14;
 
 /** С этого числа задач отчёт показывает долю: доля из трёх вводит в заблуждение. */
-export const SHARE_FROM_TASKS: number = 10;
+const SHARE_FROM_TASKS: number = 10;
 
 /** Сколько дней после слияния правка владельца ещё снимает первую приёмку. Итог решается после них. */
-export const SETTLE_DAYS: number = 3;
+const SETTLE_DAYS: number = 3;
 
 /** Сколько ждать хостинга: отчёт не должен висеть на нём. */
 const HOSTING_TIMEOUT_MS: number = 120_000;
@@ -51,7 +51,7 @@ export enum EOutcomesRead {
     Failed = 'failed',
 }
 
-export interface ICommitFact {
+interface ICommitFact {
     readonly sha: string;
     readonly tree: string;
     readonly parents: number;

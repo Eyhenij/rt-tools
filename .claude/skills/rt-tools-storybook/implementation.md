@@ -1,14 +1,13 @@
 # rt-tools-storybook — how it is arranged here
 
 The names of this tree, next to the rule `SKILL.md`. The rule is this tree's own, the package
-carries no such thing: the showcase is this repository's subject, and there is no other tree with
-two kits at once.
+carries no such thing: the showcase is this repository's subject.
 
 ## What it is called here
 
 - **In the rule** — Here
-- **the showcase** — two independent ones: the first kit on `6006`, the second on `6007`
-- **a story wrapper** — `Test*Component` in the first kit, `TestRt*Component` in the second
+- **the showcase** — the kit's showcase on port `6007`
+- **a story wrapper** — `TestRt*Component`
 - **the showing harness** — `projects/ui-kit-v2/src/showcase/` — the grid, the row, the theme comparison, the states, the overlays
 - **the showing root** — the attribute `data-story-root` on the hosts of the grid, the row and the theme comparison
 - **a story's snapshot parameters** — the `snapshot` branch in `parameters`, declared in `src/showcase/story-snapshot.ts`
@@ -16,8 +15,7 @@ two kits at once.
 
 ## Where it lives
 
-- **The first showcase's config** — `projects/ui-kit/.storybook/`
-- **The second showcase's config** — `projects/ui-kit-v2/.storybook/`
+- **The showcase's config** — `projects/ui-kit-v2/.storybook/`
 - **The stories** — `projects/<package>/src/**/stories/*.stories.ts`
 - **The component overview pages** — `projects/ui-kit-v2/src/**/Overview.mdx`
 - **The styling pages** — `projects/ui-kit-v2/docs/*.mdx`
@@ -30,7 +28,6 @@ two kits at once.
 The first column is the article verbatim, as it is written in the rule's section "How the law
 applies here". An article without a line and a line without an article are a divergence.
 
-- **Each kit has a showcase of its own, and they share nothing.** — `projects/ui-kit-v2/.storybook/main.ts:stories` — each showcase has its own set of paths. The second config lies with the first kit, and the ports and commands are kept apart in `package.json`.
 - **A link between the showcase's pages dies with a rename of a section.** — `tools/check-showcase-links.mjs:LINK` — every link of an overview is collected and matched against the page addresses, and those come from `storybook/internal/csf:toId` over the titles. The step stands in the pipeline and in the push gate set.
 - **A link to a family that has not migrated is not written at all.** — **Not checked by anything.** Such a family looks to the check like a renamed section: an address with no page. Held by the article: the family is named in words, and the task number stands next to it.
 - **A story targets the wrapper, not the kit's component.** — **Not checked by anything.** A story targeting the kit's component directly builds and draws; it is caught by reading. The wrappers lie in `stories/component/` at every component.
@@ -53,7 +50,7 @@ applies here". An article without a line and a line without an article are a div
 - **A component pinned to the window needs a box that is its containing block, and a relative box is not one.** — `projects/ui-kit-v2/src/lib/components/bottom-sheet/stories/component/test-bottom-sheet-matrix.component.ts:TestRtBottomSheetMatrixComponent` — the five demonstration boxes of the sheet carry `contain: paint`. Four showings of the family drew a dashed line instead of the sheet, and the sheet itself lay across the page under them all. A measurement over 546 stories found no other such node in the tree.
 - **A component whose height comes from the window is shown inside a box that clips.** — `projects/ui-kit-v2/src/lib/components/workspace/stories/component/test-workspace-matrix.component.ts:TestRtWorkspaceMatrixComponent` — the five demonstration boxes of the workspace carry a clip, and what is drawn stops at the box. The workspace takes `calc(100dvh - …)`, so under a window grown for the shot it measured 720, 2500 and 7046 points in turn.
 - **The grid is drawn by the shared showing harness, not by the markup of every story.** — `projects/ui-kit-v2/src/showcase/story-snapshot.ts:STORY_SNAPSHOT_ROOT_ATTRIBUTE` — the frame is taken by the showing root. That root is drawn by the shared harness: the grid, the row and the theme comparison.
-- **A provider without which the component does not come up stands in `preview.ts`, not as one story's decorator.** — `projects/ui-kit-v2/.storybook/preview.ts:provideRtIDBStorage` — the only shared injector of the second showcase. Neither the linter nor the typecheck tells a story decorator with a provider apart.
+- **A provider without which the component does not come up stands in `preview.ts`, not as one story's decorator.** — `projects/ui-kit-v2/.storybook/preview.ts:provideRtIDBStorage` — the only shared injector of the showcase. Neither the linter nor the typecheck tells a story decorator with a provider apart.
 - **A template-level story shows a whole screen, and the coverage contract does not apply to it either.** — `projects/ui-kit-v2/src/showcase/templates/stories/component/test-bookings-template.component.ts:TestRtBookingsTemplateComponent` — the wrapper of a whole screen. Three stories of one file target it instead of `Playground`, `States` and `Themes`. The order of the showcase's sections is set by `projects/ui-kit-v2/.storybook/preview.ts`.
 - **The demonstration state one screen's stories differ by is declared by a story decorator, not in `preview.ts`.** — `projects/ui-kit-v2/src/showcase/templates/bookings/bookings.store.ts:BOOKINGS_FIXTURE` — the demonstration server's answer with a default. The stories `Empty` and `Failed` substitute their own by a decorator.
 
@@ -64,7 +61,7 @@ as an axis with one value. The guard matches the input table against the code, b
 input is shown by a grid — that is written down as an open question in the coverage plan.
 
 The language of the labels is not held by the rule: the kit's labels are given by a translator
-function, and the second showcase's Russian set lies in
+function, and the showcase's Russian set lies in
 `projects/ui-kit-v2/.storybook/showcase-labels.ru.ts`. A key forgotten in the set draws an empty
 string and refuses by nothing.
 

@@ -8,11 +8,11 @@
  * task writes as the step's lines.
  *
  * A free port is taken rather than a constant one: the gate shares the machine with a showcase the
- * developer raised by hand, and one pinned to 6006 would answer the run instead of its own. That is
+ * developer raised by hand, and one pinned to 6007 would answer the run instead of its own. That is
  * exactly what the pipeline's task has its own ports for; a constant port at the gate would collide
  * the gate with the run.
  *
- * **Both showcases shoot with the browser of an image, and their frames are matched everywhere.**
+ * **The showcase shoots with the browser of an image, and its frames are matched everywhere.**
  * The raster of glyphs is computed by the machine that draws, and two machines at the same code
  * give a different frame: a text-heavy page diverges by 0.01 of its pixels across every letter at
  * once, while a small component matches. The pipeline's runner is not the developer's machine, so a
@@ -23,10 +23,7 @@
  * The showcase is stopped together with its process tree: the task runner starts it, and killing one
  * parent would leave a working server holding the port until the end of the session.
  *
- *   node tools/visual-gate.mjs ui-kit              # the first showcase's snapshots
- *   node tools/visual-gate.mjs ui-kit --update     # a re-take of them, by the same road
- *   node tools/visual-gate.mjs ui-kit --update '<path sample>'     # a re-take of the named files only
- *   node tools/visual-gate.mjs ui-kit-v2           # the second showcase's snapshots
+ *   node tools/visual-gate.mjs ui-kit-v2           # the showcase's snapshots
  *   node tools/visual-gate.mjs ui-kit-v2 --update  # a re-take of them, by the same road
  *   node tools/visual-gate.mjs ui-kit-v2 --update '<path sample>'  # a re-take of the named files only
  */
@@ -38,26 +35,11 @@ import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 /**
- * The kits are kept apart on purpose: each has its own showcase, its own snapshot runner and its
- * own references directory. Here they stand next to each other only as two lines of the set —
- * they share no shooting code, and an edit for one does not move the other's frames.
+ * The kit's showcase, its snapshot runner and its references directory. A kit without a wrapper of
+ * its own that quotes the re-take sample and looks for orphaned references declares
+ * `quotesSample: true` and `references`: the gate does both for it.
  */
 export const KITS = {
-    'ui-kit': {
-        target: '@rt-tools/ui-kit:build-storybook',
-        built: 'dist/storybook/@rt-tools/ui-kit',
-        snapshots: 'test:visual',
-        update: 'test:visual:update',
-        updateOne: 'test:visual:update',
-        // Its re-take script hands the sample straight to `test-storybook`, which glues it into a
-        // command string for the shell: the gate quotes it, as the second kit's wrapper does.
-        quotesSample: true,
-        // Its references are matched against the stories the run opened here: the kit has no
-        // wrapper of its own that would do it.
-        references: 'projects/ui-kit/.storybook/__snapshots__',
-        probes: ['check:paint'],
-        image: true,
-    },
     'ui-kit-v2': {
         target: '@rt-tools/ui-kit-v2:build-storybook',
         built: 'dist/storybook/@rt-tools/ui-kit-v2',

@@ -387,7 +387,7 @@
       "source_file": "chat/ui/src/index.ts",
       "source_location": "L1",
       "id": "chat_ui_src_index_ts",
-      "community": 7,
+      "community": 8,
       "norm_label": "index.ts"
     },
     {
@@ -396,7 +396,7 @@
       "source_file": "chat/ui/src/lib/state-filter/admin-chat-state-filter.component.ts",
       "source_location": "L1",
       "id": "chat_ui_src_lib_state_filter_admin_chat_state_filter_component_ts",
-      "community": 7,
+      "community": 8,
       "norm_label": "admin-chat-state-filter.component.ts"
     },
     {
@@ -423,7 +423,7 @@
       "source_file": "chat/ui/src/lib/site-filter/admin-chat-site-filter.component.ts",
       "source_location": "L1",
       "id": "chat_ui_src_lib_site_filter_admin_chat_site_filter_component_ts",
-      "community": 7,
+      "community": 8,
       "norm_label": "admin-chat-site-filter.component.ts"
     },
     {
@@ -954,7 +954,7 @@
       "source_file": "chat/util/src/lib/chat.mapper.ts",
       "source_location": "L1",
       "id": "chat_util_src_lib_chat_mapper_ts",
-      "community": 24,
+      "community": 23,
       "norm_label": "chat.mapper.ts"
     },
     {
@@ -963,7 +963,7 @@
       "source_file": "chat/util/src/lib/chat.mapper.ts",
       "source_location": "L16",
       "id": "lib_chat_mapper_states",
-      "community": 24,
+      "community": 23,
       "norm_label": "states"
     },
     {
@@ -972,7 +972,7 @@
       "source_file": "chat/util/src/lib/chat.mapper.ts",
       "source_location": "L19",
       "id": "lib_chat_mapper_sides",
-      "community": 24,
+      "community": 23,
       "norm_label": "sides"
     },
     {
@@ -981,7 +981,7 @@
       "source_file": "chat/util/src/lib/chat.mapper.ts",
       "source_location": "L25",
       "id": "lib_chat_mapper_chattalkstateof",
-      "community": 24,
+      "community": 23,
       "norm_label": "chattalkstateof()"
     },
     {
@@ -990,7 +990,7 @@
       "source_file": "chat/util/src/lib/chat.mapper.ts",
       "source_location": "L33",
       "id": "lib_chat_mapper_chatsideof",
-      "community": 24,
+      "community": 23,
       "norm_label": "chatsideof()"
     },
     {
@@ -999,7 +999,7 @@
       "source_file": "chat/util/src/lib/chat.mapper.ts",
       "source_location": "L38",
       "id": "lib_chat_mapper_chattalkmapper",
-      "community": 24,
+      "community": 23,
       "norm_label": "chattalkmapper"
     },
     {
@@ -1008,7 +1008,7 @@
       "source_file": "chat/util/src/lib/chat.mapper.ts",
       "source_location": "L39",
       "id": "lib_chat_mapper_chattalkmapper_mapfrom",
-      "community": 24,
+      "community": 23,
       "norm_label": ".mapfrom()"
     },
     {
@@ -1017,7 +1017,7 @@
       "source_file": "chat/util/src/lib/chat.mapper.ts",
       "source_location": "L52",
       "id": "lib_chat_mapper_chatmessagemapper",
-      "community": 24,
+      "community": 23,
       "norm_label": "chatmessagemapper"
     },
     {
@@ -1026,7 +1026,7 @@
       "source_file": "chat/util/src/lib/chat.mapper.ts",
       "source_location": "L53",
       "id": "lib_chat_mapper_chatmessagemapper_mapfrom",
-      "community": 24,
+      "community": 23,
       "norm_label": ".mapfrom()"
     },
     {
@@ -1269,7 +1269,7 @@
       "source_file": "chat/util/src/lib/chat.mapper.spec.ts",
       "source_location": "L1",
       "id": "chat_util_src_lib_chat_mapper_spec_ts",
-      "community": 24,
+      "community": 23,
       "norm_label": "chat.mapper.spec.ts"
     },
     {
@@ -1278,7 +1278,7 @@
       "source_file": "chat/util/src/lib/chat.mapper.spec.ts",
       "source_location": "L10",
       "id": "lib_chat_mapper_spec_row",
-      "community": 24,
+      "community": 23,
       "norm_label": "row"
     },
     {
@@ -1287,7 +1287,7 @@
       "source_file": "chat/util/src/lib/chat.mapper.spec.ts",
       "source_location": "L30",
       "id": "lib_chat_mapper_spec_message",
-      "community": 24,
+      "community": 23,
       "norm_label": "message"
     },
     {
@@ -1413,7 +1413,7 @@
       "source_file": "chat/util/src/lib/chat.model.ts",
       "source_location": "L1",
       "id": "chat_util_src_lib_chat_model_ts",
-      "community": 24,
+      "community": 23,
       "norm_label": "chat.model.ts"
     },
     {
@@ -1431,7 +1431,7 @@
       "source_file": "chat/util/src/lib/chat.model.ts",
       "source_location": "L20",
       "id": "lib_chat_model_echatsendstate",
-      "community": 24,
+      "community": 23,
       "norm_label": "echatsendstate"
     },
     {
@@ -1440,7 +1440,7 @@
       "source_file": "chat/util/src/lib/chat.model.ts",
       "source_location": "L30",
       "id": "lib_chat_model_api",
-      "community": 24,
+      "community": 23,
       "norm_label": "api"
     },
     {
@@ -1449,7 +1449,7 @@
       "source_file": "chat/util/src/lib/chat.model.ts",
       "source_location": "L33",
       "id": "lib_chat_model_state",
-      "community": 24,
+      "community": 23,
       "norm_label": "state"
     },
     {
@@ -4878,7 +4878,7 @@
       "source_file": "usage/util/src/lib/usage-digest.logic.spec.ts",
       "source_location": "L14",
       "id": "lib_usage_digest_logic_spec_text",
-      "community": 22,
+      "community": 26,
       "norm_label": "text()"
     },
     {
@@ -6363,7 +6363,7 @@
       "source_file": "usage/feature/quality/src/lib/admin-usage-quality.component.spec.ts",
       "source_location": "L1",
       "id": "usage_feature_quality_src_lib_admin_usage_quality_component_spec_ts",
-      "community": 25,
+      "community": 24,
       "norm_label": "admin-usage-quality.component.spec.ts"
     },
     {
@@ -6372,7 +6372,7 @@
       "source_file": "usage/feature/quality/src/lib/admin-usage-quality.component.spec.ts",
       "source_location": "L18",
       "id": "lib_admin_usage_quality_component_spec_columnsettingsstub",
-      "community": 25,
+      "community": 24,
       "norm_label": "columnsettingsstub"
     },
     {
@@ -6381,7 +6381,7 @@
       "source_file": "usage/feature/quality/src/lib/admin-usage-quality.component.spec.ts",
       "source_location": "L21",
       "id": "lib_admin_usage_quality_component_spec_columnsettingsstub_get",
-      "community": 25,
+      "community": 24,
       "norm_label": ".get()"
     },
     {
@@ -6390,7 +6390,7 @@
       "source_file": "usage/feature/quality/src/lib/admin-usage-quality.component.spec.ts",
       "source_location": "L25",
       "id": "lib_admin_usage_quality_component_spec_columnsettingsstub_set",
-      "community": 25,
+      "community": 24,
       "norm_label": ".set()"
     },
     {
@@ -6399,7 +6399,7 @@
       "source_file": "usage/feature/quality/src/lib/admin-usage-quality.component.spec.ts",
       "source_location": "L31",
       "id": "lib_admin_usage_quality_component_spec_columnsettingsstub_remove",
-      "community": 25,
+      "community": 24,
       "norm_label": ".remove()"
     },
     {
@@ -6408,7 +6408,7 @@
       "source_file": "usage/feature/quality/src/lib/admin-usage-quality.component.spec.ts",
       "source_location": "L38",
       "id": "lib_admin_usage_quality_component_spec_report",
-      "community": 25,
+      "community": 24,
       "norm_label": "report()"
     },
     {
@@ -6417,7 +6417,7 @@
       "source_file": "usage/feature/quality/src/lib/admin-usage-quality.component.spec.ts",
       "source_location": "L61",
       "id": "lib_admin_usage_quality_component_spec_asked",
-      "community": 25,
+      "community": 24,
       "norm_label": "asked()"
     },
     {
@@ -6426,7 +6426,7 @@
       "source_file": "usage/feature/quality/src/lib/admin-usage-quality.component.spec.ts",
       "source_location": "L65",
       "id": "lib_admin_usage_quality_component_spec_has",
-      "community": 25,
+      "community": 24,
       "norm_label": "has()"
     },
     {
@@ -6435,7 +6435,7 @@
       "source_file": "usage/feature/quality/src/lib/admin-usage-quality.component.spec.ts",
       "source_location": "L69",
       "id": "lib_admin_usage_quality_component_spec_textof",
-      "community": 25,
+      "community": 24,
       "norm_label": "textof()"
     },
     {
@@ -6444,7 +6444,7 @@
       "source_file": "usage/feature/quality/src/lib/admin-usage-quality.component.spec.ts",
       "source_location": "L73",
       "id": "lib_admin_usage_quality_component_spec_settle",
-      "community": 25,
+      "community": 24,
       "norm_label": "settle()"
     },
     {
@@ -6453,7 +6453,7 @@
       "source_file": "usage/feature/quality/src/lib/admin-usage-quality.component.spec.ts",
       "source_location": "L78",
       "id": "lib_admin_usage_quality_component_spec_open",
-      "community": 25,
+      "community": 24,
       "norm_label": "open()"
     },
     {
@@ -6462,7 +6462,7 @@
       "source_file": "usage/feature/quality/src/lib/admin-usage-quality.component.spec.ts",
       "source_location": "L169",
       "id": "lib_admin_usage_quality_component_spec_request",
-      "community": 25,
+      "community": 24,
       "norm_label": "request"
     },
     {
@@ -6480,7 +6480,7 @@
       "source_file": "usage/feature/quality/src/lib/admin-usage-quality.component.ts",
       "source_location": "L80",
       "id": "lib_admin_usage_quality_component_adminusagequalitycomponent",
-      "community": 25,
+      "community": 24,
       "norm_label": "adminusagequalitycomponent"
     },
     {
@@ -6498,7 +6498,7 @@
       "source_file": "usage/feature/quality/src/lib/admin-usage-quality.component.ts",
       "source_location": "L137",
       "id": "lib_admin_usage_quality_component_adminusagequalitycomponent_constructor",
-      "community": 25,
+      "community": 24,
       "norm_label": ".constructor()"
     },
     {
@@ -6507,7 +6507,7 @@
       "source_file": "usage/feature/quality/src/lib/admin-usage-quality.component.ts",
       "source_location": "L142",
       "id": "lib_admin_usage_quality_component_adminusagequalitycomponent_pickperiod",
-      "community": 25,
+      "community": 24,
       "norm_label": ".pickperiod()"
     },
     {
@@ -6516,7 +6516,7 @@
       "source_file": "usage/feature/quality/src/lib/admin-usage-quality.component.ts",
       "source_location": "L147",
       "id": "lib_admin_usage_quality_component_adminusagequalitycomponent_pickquick",
-      "community": 25,
+      "community": 24,
       "norm_label": ".pickquick()"
     },
     {
@@ -8251,7 +8251,7 @@
       "label": ".#refuse()",
       "file_type": "code",
       "source_file": "usage/data-access/src/lib/usage-digest.store.ts",
-      "source_location": "L80",
+      "source_location": "L75",
       "id": "lib_usage_digest_store_usagedigeststore_refuse",
       "community": 9,
       "norm_label": ".#refuse()"
@@ -8640,7 +8640,7 @@
       "source_file": "postmortems/ui/src/index.ts",
       "source_location": "L1",
       "id": "postmortems_ui_src_index_ts",
-      "community": 6,
+      "community": 7,
       "norm_label": "index.ts"
     },
     {
@@ -8649,7 +8649,7 @@
       "source_file": "postmortems/ui/src/lib/postmortem-view/admin-postmortem-view.component.ts",
       "source_location": "L1",
       "id": "postmortems_ui_src_lib_postmortem_view_admin_postmortem_view_component_ts",
-      "community": 6,
+      "community": 7,
       "norm_label": "admin-postmortem-view.component.ts"
     },
     {
@@ -8658,7 +8658,7 @@
       "source_file": "postmortems/ui/src/lib/postmortem-view/admin-postmortem-view.component.ts",
       "source_location": "L43",
       "id": "postmortem_view_admin_postmortem_view_component_adminpostmortemviewcomponent",
-      "community": 6,
+      "community": 7,
       "norm_label": "adminpostmortemviewcomponent"
     },
     {
@@ -8667,7 +8667,7 @@
       "source_file": "postmortems/ui/src/lib/postmortem-view/admin-postmortem-view.component.spec.ts",
       "source_location": "L1",
       "id": "postmortems_ui_src_lib_postmortem_view_admin_postmortem_view_component_spec_ts",
-      "community": 6,
+      "community": 7,
       "norm_label": "admin-postmortem-view.component.spec.ts"
     },
     {
@@ -8676,7 +8676,7 @@
       "source_file": "postmortems/ui/src/lib/postmortem-view/admin-postmortem-view.component.spec.ts",
       "source_location": "L10",
       "id": "postmortem_view_admin_postmortem_view_component_spec_entityof",
-      "community": 6,
+      "community": 7,
       "norm_label": "entityof()"
     },
     {
@@ -8685,7 +8685,7 @@
       "source_file": "postmortems/ui/src/lib/postmortem-view/admin-postmortem-view.component.spec.ts",
       "source_location": "L34",
       "id": "postmortem_view_admin_postmortem_view_component_spec_textof",
-      "community": 6,
+      "community": 7,
       "norm_label": "textof()"
     },
     {
@@ -8694,7 +8694,7 @@
       "source_file": "postmortems/ui/src/lib/postmortem-view/admin-postmortem-view.component.spec.ts",
       "source_location": "L41",
       "id": "postmortem_view_admin_postmortem_view_component_spec_show",
-      "community": 6,
+      "community": 7,
       "norm_label": "show()"
     },
     {
@@ -8703,7 +8703,7 @@
       "source_file": "postmortems/ui/src/lib/postmortem-view/admin-postmortem-view.component.spec.ts",
       "source_location": "L132",
       "id": "postmortem_view_admin_postmortem_view_component_spec_note",
-      "community": 6,
+      "community": 7,
       "norm_label": "note"
     },
     {
@@ -8712,7 +8712,7 @@
       "source_file": "postmortems/ui/src/lib/postmortem-view/admin-postmortem-view.component.spec.ts",
       "source_location": "L150",
       "id": "postmortem_view_admin_postmortem_view_component_spec_row",
-      "community": 6,
+      "community": 7,
       "norm_label": "row"
     },
     {
@@ -9099,7 +9099,7 @@
       "source_file": "postmortems/util/src/index.ts",
       "source_location": "L1",
       "id": "postmortems_util_src_index_ts",
-      "community": 6,
+      "community": 7,
       "norm_label": "index.ts"
     },
     {
@@ -9135,7 +9135,7 @@
       "source_file": "postmortems/util/src/lib/postmortem.columns.ts",
       "source_location": "L1",
       "id": "postmortems_util_src_lib_postmortem_columns_ts",
-      "community": 7,
+      "community": 8,
       "norm_label": "postmortem.columns.ts"
     },
     {
@@ -9144,7 +9144,7 @@
       "source_file": "postmortems/util/src/lib/postmortem.columns.ts",
       "source_location": "L21",
       "id": "lib_postmortem_columns_postmortems_columns",
-      "community": 7,
+      "community": 8,
       "norm_label": "postmortems_columns"
     },
     {
@@ -10449,7 +10449,7 @@
       "source_file": "postmortems/feature/details-aside/src/index.ts",
       "source_location": "L1",
       "id": "postmortems_feature_details_aside_src_index_ts",
-      "community": 6,
+      "community": 7,
       "norm_label": "index.ts"
     },
     {
@@ -10458,7 +10458,7 @@
       "source_file": "postmortems/feature/details-aside/src/lib/admin-postmortem-details-aside.component.ts",
       "source_location": "L1",
       "id": "postmortems_feature_details_aside_src_lib_admin_postmortem_details_aside_component_ts",
-      "community": 6,
+      "community": 7,
       "norm_label": "admin-postmortem-details-aside.component.ts"
     },
     {
@@ -10476,7 +10476,7 @@
       "source_file": "postmortems/feature/details-aside/src/lib/admin-postmortem-details-aside.component.ts",
       "source_location": "L62",
       "id": "lib_admin_postmortem_details_aside_component_fault",
-      "community": 6,
+      "community": 7,
       "norm_label": "fault"
     },
     {
@@ -10944,7 +10944,7 @@
       "source_file": "postmortems/feature/list/src/index.ts",
       "source_location": "L1",
       "id": "postmortems_feature_list_src_index_ts",
-      "community": 7,
+      "community": 8,
       "norm_label": "index.ts"
     },
     {
@@ -11088,7 +11088,7 @@
       "source_file": "postmortems/feature/list/src/lib/admin-postmortems-list.component.ts",
       "source_location": "L1",
       "id": "postmortems_feature_list_src_lib_admin_postmortems_list_component_ts",
-      "community": 7,
+      "community": 8,
       "norm_label": "admin-postmortems-list.component.ts"
     },
     {
@@ -11493,7 +11493,7 @@
       "source_file": "postmortems/data-access/src/index.ts",
       "source_location": "L1",
       "id": "postmortems_data_access_src_index_ts",
-      "community": 6,
+      "community": 7,
       "norm_label": "index.ts"
     },
     {
@@ -11502,7 +11502,7 @@
       "source_file": "postmortems/data-access/src/lib/postmortems.store.ts",
       "source_location": "L1",
       "id": "postmortems_data_access_src_lib_postmortems_store_ts",
-      "community": 6,
+      "community": 7,
       "norm_label": "postmortems.store.ts"
     },
     {
@@ -11511,7 +11511,7 @@
       "source_file": "postmortems/data-access/src/lib/postmortems.store.ts",
       "source_location": "L15",
       "id": "lib_postmortems_store_postmortemsstore",
-      "community": 6,
+      "community": 7,
       "norm_label": "postmortemsstore"
     },
     {
@@ -11520,7 +11520,7 @@
       "source_file": "postmortems/data-access/src/lib/postmortems.store.ts",
       "source_location": "L20",
       "id": "lib_postmortems_store_postmortemsstore_constructor",
-      "community": 6,
+      "community": 7,
       "norm_label": ".constructor()"
     },
     {
@@ -11529,7 +11529,7 @@
       "source_file": "postmortems/data-access/src/lib/postmortems.store.ts",
       "source_location": "L24",
       "id": "lib_postmortems_store_postmortemsstore_rowof",
-      "community": 6,
+      "community": 7,
       "norm_label": ".rowof()"
     },
     {
@@ -11538,7 +11538,7 @@
       "source_file": "postmortems/data-access/src/lib/postmortem.store.spec.ts",
       "source_location": "L1",
       "id": "postmortems_data_access_src_lib_postmortem_store_spec_ts",
-      "community": 6,
+      "community": 7,
       "norm_label": "postmortem.store.spec.ts"
     },
     {
@@ -11547,7 +11547,7 @@
       "source_file": "postmortems/data-access/src/lib/postmortem.store.spec.ts",
       "source_location": "L12",
       "id": "lib_postmortem_store_spec_apione",
-      "community": 6,
+      "community": 7,
       "norm_label": "apione()"
     },
     {
@@ -11556,7 +11556,7 @@
       "source_file": "postmortems/data-access/src/lib/postmortem.store.spec.ts",
       "source_location": "L33",
       "id": "lib_postmortem_store_spec_query",
-      "community": 6,
+      "community": 7,
       "norm_label": "query"
     },
     {
@@ -11565,7 +11565,7 @@
       "source_file": "postmortems/data-access/src/lib/postmortem.store.spec.ts",
       "source_location": "L50",
       "id": "lib_postmortem_store_spec_request",
-      "community": 6,
+      "community": 7,
       "norm_label": "request"
     },
     {
@@ -11574,7 +11574,7 @@
       "source_file": "postmortems/data-access/src/lib/postmortem.store.spec.ts",
       "source_location": "L86",
       "id": "lib_postmortem_store_spec_askedone",
-      "community": 6,
+      "community": 7,
       "norm_label": "askedone()"
     },
     {
@@ -11583,7 +11583,7 @@
       "source_file": "postmortems/data-access/src/lib/postmortem.store.spec.ts",
       "source_location": "L144",
       "id": "lib_postmortem_store_spec_first",
-      "community": 6,
+      "community": 7,
       "norm_label": "first"
     },
     {
@@ -11628,7 +11628,7 @@
       "source_file": "postmortems/data-access/src/lib/postmortem.store.ts",
       "source_location": "L27",
       "id": "lib_postmortem_store_postmortemstore",
-      "community": 6,
+      "community": 7,
       "norm_label": "postmortemstore"
     },
     {
@@ -11637,7 +11637,7 @@
       "source_file": "postmortems/data-access/src/lib/postmortem.store.ts",
       "source_location": "L34",
       "id": "lib_postmortem_store_postmortemstore_constructor",
-      "community": 6,
+      "community": 7,
       "norm_label": ".constructor()"
     },
     {
@@ -11646,7 +11646,7 @@
       "source_file": "postmortems/data-access/src/lib/postmortem.store.ts",
       "source_location": "L63",
       "id": "lib_postmortem_store_postmortemstore_read",
-      "community": 6,
+      "community": 7,
       "norm_label": ".read()"
     },
     {
@@ -11655,7 +11655,7 @@
       "source_file": "postmortems/data-access/src/lib/postmortem.store.ts",
       "source_location": "L73",
       "id": "lib_postmortem_store_postmortemstore_refuse",
-      "community": 6,
+      "community": 7,
       "norm_label": ".#refuse()"
     },
     {
@@ -12321,7 +12321,7 @@
       "source_file": "common/core/ui/src/lib/state-filter/admin-state-filter.component.spec.ts",
       "source_location": "L1",
       "id": "common_core_ui_src_lib_state_filter_admin_state_filter_component_spec_ts",
-      "community": 7,
+      "community": 8,
       "norm_label": "admin-state-filter.component.spec.ts"
     },
     {
@@ -12330,7 +12330,7 @@
       "source_file": "common/core/ui/src/lib/state-filter/admin-state-filter.component.spec.ts",
       "source_location": "L13",
       "id": "state_filter_admin_state_filter_component_spec_optionsof",
-      "community": 7,
+      "community": 8,
       "norm_label": "optionsof()"
     },
     {
@@ -12339,7 +12339,7 @@
       "source_file": "common/core/ui/src/lib/state-filter/admin-state-filter.component.spec.ts",
       "source_location": "L46",
       "id": "state_filter_admin_state_filter_component_spec_shown",
-      "community": 7,
+      "community": 8,
       "norm_label": "shown"
     },
     {
@@ -12348,7 +12348,7 @@
       "source_file": "common/core/ui/src/lib/state-filter/admin-state-filter.component.spec.ts",
       "source_location": "L54",
       "id": "state_filter_admin_state_filter_component_spec_picked",
-      "community": 7,
+      "community": 8,
       "norm_label": "picked"
     },
     {
@@ -12357,7 +12357,7 @@
       "source_file": "common/core/ui/src/lib/state-filter/admin-state-filter.component.ts",
       "source_location": "L1",
       "id": "common_core_ui_src_lib_state_filter_admin_state_filter_component_ts",
-      "community": 7,
+      "community": 8,
       "norm_label": "admin-state-filter.component.ts"
     },
     {
@@ -12366,7 +12366,7 @@
       "source_file": "common/core/ui/src/lib/state-filter/admin-state-filter.component.ts",
       "source_location": "L36",
       "id": "state_filter_admin_state_filter_component_adminstatefiltercomponent",
-      "community": 7,
+      "community": 8,
       "norm_label": "adminstatefiltercomponent"
     },
     {
@@ -12375,7 +12375,7 @@
       "source_file": "common/core/ui/src/lib/state-filter/admin-state-filter.component.ts",
       "source_location": "L63",
       "id": "state_filter_admin_state_filter_component_adminstatefiltercomponent_pick",
-      "community": 7,
+      "community": 8,
       "norm_label": ".pick()"
     },
     {
@@ -12537,7 +12537,7 @@
       "source_file": "common/core/ui/src/lib/locale-switch/admin-locale-switch.component.ts",
       "source_location": "L1",
       "id": "common_core_ui_src_lib_locale_switch_admin_locale_switch_component_ts",
-      "community": 8,
+      "community": 6,
       "norm_label": "admin-locale-switch.component.ts"
     },
     {
@@ -12546,7 +12546,7 @@
       "source_file": "common/core/ui/src/lib/locale-switch/admin-locale-switch.component.ts",
       "source_location": "L11",
       "id": "locale_switch_admin_locale_switch_component_options",
-      "community": 8,
+      "community": 6,
       "norm_label": "options"
     },
     {
@@ -12555,7 +12555,7 @@
       "source_file": "common/core/ui/src/lib/locale-switch/admin-locale-switch.component.ts",
       "source_location": "L35",
       "id": "locale_switch_admin_locale_switch_component_adminlocaleswitchcomponent",
-      "community": 8,
+      "community": 6,
       "norm_label": "adminlocaleswitchcomponent"
     },
     {
@@ -12564,7 +12564,7 @@
       "source_file": "common/core/ui/src/lib/locale-switch/admin-locale-switch.component.ts",
       "source_location": "L47",
       "id": "locale_switch_admin_locale_switch_component_adminlocaleswitchcomponent_choose",
-      "community": 8,
+      "community": 6,
       "norm_label": ".choose()"
     },
     {
@@ -12573,7 +12573,7 @@
       "source_file": "common/core/ui/src/lib/locale-switch/admin-locale-switch.component.spec.ts",
       "source_location": "L1",
       "id": "common_core_ui_src_lib_locale_switch_admin_locale_switch_component_spec_ts",
-      "community": 8,
+      "community": 6,
       "norm_label": "admin-locale-switch.component.spec.ts"
     },
     {
@@ -12582,7 +12582,7 @@
       "source_file": "common/core/ui/src/lib/locale-switch/admin-locale-switch.component.spec.ts",
       "source_location": "L9",
       "id": "locale_switch_admin_locale_switch_component_spec_optionbutton",
-      "community": 8,
+      "community": 6,
       "norm_label": "optionbutton()"
     },
     {
@@ -12969,7 +12969,7 @@
       "source_file": "common/core/util/src/index.ts",
       "source_location": "L1",
       "id": "common_core_util_src_index_ts",
-      "community": 7,
+      "community": 8,
       "norm_label": "index.ts"
     },
     {
@@ -12978,7 +12978,7 @@
       "source_file": "common/core/util/src/lib/admin-labels.ts",
       "source_location": "L1",
       "id": "common_core_util_src_lib_admin_labels_ts",
-      "community": 22,
+      "community": 26,
       "norm_label": "admin-labels.ts"
     },
     {
@@ -12987,7 +12987,7 @@
       "source_file": "common/core/util/src/lib/admin-labels.ts",
       "source_location": "L23",
       "id": "lib_admin_labels_admin_labels",
-      "community": 22,
+      "community": 26,
       "norm_label": "admin_labels"
     },
     {
@@ -12996,7 +12996,7 @@
       "source_file": "common/core/util/src/lib/admin-labels.ts",
       "source_location": "L250",
       "id": "lib_admin_labels_tadminlabelkey",
-      "community": 22,
+      "community": 26,
       "norm_label": "tadminlabelkey"
     },
     {
@@ -13005,7 +13005,7 @@
       "source_file": "common/core/util/src/lib/admin-labels.ts",
       "source_location": "L259",
       "id": "lib_admin_labels_rt_kit_labels_ru",
-      "community": 22,
+      "community": 26,
       "norm_label": "rt_kit_labels_ru"
     },
     {
@@ -13014,7 +13014,7 @@
       "source_file": "common/core/util/src/lib/admin-labels.ts",
       "source_location": "L344",
       "id": "lib_admin_labels_fill",
-      "community": 22,
+      "community": 26,
       "norm_label": "fill()"
     },
     {
@@ -13023,7 +13023,7 @@
       "source_file": "common/core/util/src/lib/admin-labels.ts",
       "source_location": "L358",
       "id": "lib_admin_labels_rtkitlabelsru",
-      "community": 22,
+      "community": 6,
       "norm_label": "rtkitlabelsru()"
     },
     {
@@ -13059,7 +13059,7 @@
       "source_file": "common/core/util/src/lib/admin-text.service.spec.ts",
       "source_location": "L1",
       "id": "common_core_util_src_lib_admin_text_service_spec_ts",
-      "community": 8,
+      "community": 6,
       "norm_label": "admin-text.service.spec.ts"
     },
     {
@@ -13068,7 +13068,7 @@
       "source_file": "common/core/util/src/lib/admin-text.service.spec.ts",
       "source_location": "L10",
       "id": "lib_admin_text_service_spec_services",
-      "community": 8,
+      "community": 6,
       "norm_label": "services()"
     },
     {
@@ -13077,7 +13077,7 @@
       "source_file": "common/core/util/src/lib/admin-text.service.spec.ts",
       "source_location": "L23",
       "id": "lib_admin_text_service_spec_locale_text",
-      "community": 8,
+      "community": 6,
       "norm_label": "{ locale, text }"
     },
     {
@@ -13086,7 +13086,7 @@
       "source_file": "common/core/util/src/lib/admin-text.service.spec.ts",
       "source_location": "L48",
       "id": "lib_admin_text_service_spec_keys",
-      "community": 8,
+      "community": 6,
       "norm_label": "keys"
     },
     {
@@ -13095,7 +13095,7 @@
       "source_file": "common/core/util/src/lib/admin-text.service.spec.ts",
       "source_location": "L59",
       "id": "lib_admin_text_service_spec_missing",
-      "community": 8,
+      "community": 6,
       "norm_label": "missing"
     },
     {
@@ -13104,7 +13104,7 @@
       "source_file": "common/core/util/src/lib/admin-text.service.spec.ts",
       "source_location": "L87",
       "id": "lib_admin_text_service_spec_codes",
-      "community": 8,
+      "community": 6,
       "norm_label": "codes"
     },
     {
@@ -13113,7 +13113,7 @@
       "source_file": "common/core/util/src/lib/admin-text.service.spec.ts",
       "source_location": "L101",
       "id": "lib_admin_text_service_spec_text",
-      "community": 8,
+      "community": 6,
       "norm_label": "{ text }"
     },
     {
@@ -13122,7 +13122,7 @@
       "source_file": "common/core/util/src/lib/admin-cargo-rows.spec.ts",
       "source_location": "L1",
       "id": "common_core_util_src_lib_admin_cargo_rows_spec_ts",
-      "community": 7,
+      "community": 8,
       "norm_label": "admin-cargo-rows.spec.ts"
     },
     {
@@ -13131,7 +13131,7 @@
       "source_file": "common/core/util/src/lib/admin-cargo-rows.spec.ts",
       "source_location": "L12",
       "id": "lib_admin_cargo_rows_spec_wordsof",
-      "community": 7,
+      "community": 8,
       "norm_label": "wordsof()"
     },
     {
@@ -13140,7 +13140,7 @@
       "source_file": "common/core/util/src/lib/admin-cargo-rows.spec.ts",
       "source_location": "L29",
       "id": "lib_admin_cargo_rows_spec_words",
-      "community": 7,
+      "community": 8,
       "norm_label": "words"
     },
     {
@@ -13176,7 +13176,7 @@
       "source_file": "common/core/util/src/lib/spoken-fault.spec.ts",
       "source_location": "L1",
       "id": "common_core_util_src_lib_spoken_fault_spec_ts",
-      "community": 22,
+      "community": 26,
       "norm_label": "spoken-fault.spec.ts"
     },
     {
@@ -13185,7 +13185,7 @@
       "source_file": "common/core/util/src/lib/spoken-fault.spec.ts",
       "source_location": "L10",
       "id": "lib_spoken_fault_spec_text",
-      "community": 22,
+      "community": 26,
       "norm_label": "text()"
     },
     {
@@ -13194,7 +13194,7 @@
       "source_file": "common/core/util/src/lib/spoken-fault.spec.ts",
       "source_location": "L33",
       "id": "lib_spoken_fault_spec_fault",
-      "community": 22,
+      "community": 26,
       "norm_label": "fault"
     },
     {
@@ -13230,7 +13230,7 @@
       "source_file": "common/core/util/src/lib/admin-text.service.ts",
       "source_location": "L1",
       "id": "common_core_util_src_lib_admin_text_service_ts",
-      "community": 22,
+      "community": 26,
       "norm_label": "admin-text.service.ts"
     },
     {
@@ -13239,7 +13239,7 @@
       "source_file": "common/core/util/src/lib/admin-text.service.ts",
       "source_location": "L26",
       "id": "lib_admin_text_service_tadmintext",
-      "community": 22,
+      "community": 26,
       "norm_label": "tadmintext"
     },
     {
@@ -13248,7 +13248,7 @@
       "source_file": "common/core/util/src/lib/admin-text.service.ts",
       "source_location": "L29",
       "id": "lib_admin_text_service_missing",
-      "community": 22,
+      "community": 26,
       "norm_label": "missing()"
     },
     {
@@ -13257,7 +13257,7 @@
       "source_file": "common/core/util/src/lib/admin-text.service.ts",
       "source_location": "L35",
       "id": "lib_admin_text_service_admintextservice",
-      "community": 7,
+      "community": 8,
       "norm_label": "admintextservice"
     },
     {
@@ -13266,7 +13266,7 @@
       "source_file": "common/core/util/src/lib/admin-text.service.ts",
       "source_location": "L47",
       "id": "lib_admin_text_service_admintextservice_text",
-      "community": 22,
+      "community": 26,
       "norm_label": ".text()"
     },
     {
@@ -13293,7 +13293,7 @@
       "source_file": "common/core/util/src/lib/cargo-state.logic.spec.ts",
       "source_location": "L1",
       "id": "common_core_util_src_lib_cargo_state_logic_spec_ts",
-      "community": 7,
+      "community": 8,
       "norm_label": "cargo-state.logic.spec.ts"
     },
     {
@@ -13374,7 +13374,7 @@
       "source_file": "common/core/util/src/lib/admin-cargo-rows.ts",
       "source_location": "L1",
       "id": "common_core_util_src_lib_admin_cargo_rows_ts",
-      "community": 7,
+      "community": 8,
       "norm_label": "admin-cargo-rows.ts"
     },
     {
@@ -13383,7 +13383,7 @@
       "source_file": "common/core/util/src/lib/admin-cargo-rows.ts",
       "source_location": "L18",
       "id": "lib_admin_cargo_rows_iadminstatedrow",
-      "community": 7,
+      "community": 8,
       "norm_label": "iadminstatedrow"
     },
     {
@@ -13392,7 +13392,7 @@
       "source_file": "common/core/util/src/lib/admin-cargo-rows.ts",
       "source_location": "L23",
       "id": "lib_admin_cargo_rows_iadminstateword",
-      "community": 7,
+      "community": 8,
       "norm_label": "iadminstateword"
     },
     {
@@ -13401,7 +13401,7 @@
       "source_file": "common/core/util/src/lib/admin-cargo-rows.ts",
       "source_location": "L33",
       "id": "lib_admin_cargo_rows_adminstatedrows",
-      "community": 7,
+      "community": 8,
       "norm_label": "adminstatedrows()"
     },
     {
@@ -13446,7 +13446,7 @@
       "source_file": "common/core/util/src/lib/admin-locale.spec.ts",
       "source_location": "L1",
       "id": "common_core_util_src_lib_admin_locale_spec_ts",
-      "community": 8,
+      "community": 6,
       "norm_label": "admin-locale.spec.ts"
     },
     {
@@ -13455,7 +13455,7 @@
       "source_file": "common/core/util/src/lib/admin-locale.spec.ts",
       "source_location": "L8",
       "id": "lib_admin_locale_spec_localeservice",
-      "community": 8,
+      "community": 6,
       "norm_label": "localeservice()"
     },
     {
@@ -13464,7 +13464,7 @@
       "source_file": "common/core/util/src/lib/admin-locale.spec.ts",
       "source_location": "L18",
       "id": "lib_admin_locale_spec_storelocale",
-      "community": 8,
+      "community": 6,
       "norm_label": "storelocale()"
     },
     {
@@ -13473,7 +13473,7 @@
       "source_file": "common/core/util/src/lib/admin-locale.spec.ts",
       "source_location": "L29",
       "id": "lib_admin_locale_spec_service",
-      "community": 8,
+      "community": 6,
       "norm_label": "service"
     },
     {
@@ -13482,7 +13482,7 @@
       "source_file": "common/core/util/src/lib/admin-locale.spec.ts",
       "source_location": "L74",
       "id": "lib_admin_locale_spec_ru",
-      "community": 8,
+      "community": 6,
       "norm_label": "ru"
     },
     {
@@ -13491,7 +13491,7 @@
       "source_file": "common/core/util/src/lib/admin-locale.spec.ts",
       "source_location": "L80",
       "id": "lib_admin_locale_spec_en",
-      "community": 8,
+      "community": 6,
       "norm_label": "en"
     },
     {
@@ -13626,7 +13626,7 @@
       "source_file": "common/core/util/src/lib/list-query.ts",
       "source_location": "L195",
       "id": "lib_list_query_listqueryparams",
-      "community": 26,
+      "community": 25,
       "norm_label": "listqueryparams()"
     },
     {
@@ -13644,7 +13644,7 @@
       "source_file": "common/core/util/src/lib/admin-locale.ts",
       "source_location": "L1",
       "id": "common_core_util_src_lib_admin_locale_ts",
-      "community": 8,
+      "community": 6,
       "norm_label": "admin-locale.ts"
     },
     {
@@ -13653,7 +13653,7 @@
       "source_file": "common/core/util/src/lib/admin-locale.ts",
       "source_location": "L32",
       "id": "lib_admin_locale_eadminlocale",
-      "community": 8,
+      "community": 6,
       "norm_label": "eadminlocale"
     },
     {
@@ -13662,7 +13662,7 @@
       "source_file": "common/core/util/src/lib/admin-locale.ts",
       "source_location": "L41",
       "id": "lib_admin_locale_eadminstoragekeys",
-      "community": 8,
+      "community": 6,
       "norm_label": "eadminstoragekeys"
     },
     {
@@ -13671,7 +13671,7 @@
       "source_file": "common/core/util/src/lib/admin-locale.ts",
       "source_location": "L54",
       "id": "lib_admin_locale_nolabels",
-      "community": 8,
+      "community": 6,
       "norm_label": "nolabels()"
     },
     {
@@ -13680,7 +13680,7 @@
       "source_file": "common/core/util/src/lib/admin-locale.ts",
       "source_location": "L63",
       "id": "lib_admin_locale_adminlocaleservice",
-      "community": 8,
+      "community": 6,
       "norm_label": "adminlocaleservice"
     },
     {
@@ -13689,7 +13689,7 @@
       "source_file": "common/core/util/src/lib/admin-locale.ts",
       "source_location": "L79",
       "id": "lib_admin_locale_adminlocaleservice_constructor",
-      "community": 8,
+      "community": 6,
       "norm_label": ".constructor()"
     },
     {
@@ -13698,7 +13698,7 @@
       "source_file": "common/core/util/src/lib/admin-locale.ts",
       "source_location": "L87",
       "id": "lib_admin_locale_adminlocaleservice_setlocale",
-      "community": 8,
+      "community": 6,
       "norm_label": ".setlocale()"
     },
     {
@@ -13707,7 +13707,7 @@
       "source_file": "common/core/util/src/lib/admin-locale.ts",
       "source_location": "L92",
       "id": "lib_admin_locale_adminlocaleservice_readordefault",
-      "community": 8,
+      "community": 6,
       "norm_label": ".#readordefault()"
     },
     {
@@ -13716,7 +13716,7 @@
       "source_file": "common/core/util/src/lib/admin-locale.ts",
       "source_location": "L106",
       "id": "lib_admin_locale_provideadminkitlabels",
-      "community": 8,
+      "community": 6,
       "norm_label": "provideadminkitlabels()"
     },
     {
@@ -13797,7 +13797,7 @@
       "source_file": "common/core/util/src/lib/list-view.ts",
       "source_location": "L48",
       "id": "lib_list_view_sortaskedof",
-      "community": 26,
+      "community": 25,
       "norm_label": "sortaskedof()"
     },
     {
@@ -13806,7 +13806,7 @@
       "source_file": "common/core/util/src/lib/admin-tab-title.ts",
       "source_location": "L1",
       "id": "common_core_util_src_lib_admin_tab_title_ts",
-      "community": 22,
+      "community": 26,
       "norm_label": "admin-tab-title.ts"
     },
     {
@@ -13878,7 +13878,7 @@
       "source_file": "common/core/util/src/lib/cargo-state.logic.ts",
       "source_location": "L1",
       "id": "common_core_util_src_lib_cargo_state_logic_ts",
-      "community": 7,
+      "community": 8,
       "norm_label": "cargo-state.logic.ts"
     },
     {
@@ -13887,7 +13887,7 @@
       "source_file": "common/core/util/src/lib/cargo-state.logic.ts",
       "source_location": "L21",
       "id": "lib_cargo_state_logic_cargostatekey",
-      "community": 7,
+      "community": 8,
       "norm_label": "cargostatekey()"
     },
     {
@@ -13932,7 +13932,7 @@
       "source_file": "common/core/util/src/lib/admin-labels-en.ts",
       "source_location": "L1",
       "id": "common_core_util_src_lib_admin_labels_en_ts",
-      "community": 22,
+      "community": 26,
       "norm_label": "admin-labels-en.ts"
     },
     {
@@ -13941,7 +13941,7 @@
       "source_file": "common/core/util/src/lib/admin-labels-en.ts",
       "source_location": "L17",
       "id": "lib_admin_labels_en_admin_labels_en",
-      "community": 22,
+      "community": 26,
       "norm_label": "admin_labels_en"
     },
     {
@@ -13950,7 +13950,7 @@
       "source_file": "common/core/util/src/lib/admin-columns.ts",
       "source_location": "L1",
       "id": "common_core_util_src_lib_admin_columns_ts",
-      "community": 7,
+      "community": 8,
       "norm_label": "admin-columns.ts"
     },
     {
@@ -13959,7 +13959,7 @@
       "source_file": "common/core/util/src/lib/admin-columns.ts",
       "source_location": "L16",
       "id": "lib_admin_columns_iadmincolumn",
-      "community": 7,
+      "community": 8,
       "norm_label": "iadmincolumn"
     },
     {
@@ -15048,7 +15048,7 @@
       "source_file": "common/core/feature/src/lib/admin-list-screen.base.ts",
       "source_location": "L1",
       "id": "common_core_feature_src_lib_admin_list_screen_base_ts",
-      "community": 26,
+      "community": 25,
       "norm_label": "admin-list-screen.base.ts"
     },
     {
@@ -15057,7 +15057,7 @@
       "source_file": "common/core/feature/src/lib/admin-list-screen.base.ts",
       "source_location": "L152",
       "id": "lib_admin_list_screen_base_constructor",
-      "community": 26,
+      "community": 25,
       "norm_label": "constructor()"
     },
     {
@@ -15066,7 +15066,7 @@
       "source_file": "common/core/feature/src/lib/admin-list-screen.base.ts",
       "source_location": "L174",
       "id": "lib_admin_list_screen_base_gotopage",
-      "community": 26,
+      "community": 25,
       "norm_label": "gotopage()"
     },
     {
@@ -15075,7 +15075,7 @@
       "source_file": "common/core/feature/src/lib/admin-list-screen.base.ts",
       "source_location": "L179",
       "id": "lib_admin_list_screen_base_changesize",
-      "community": 26,
+      "community": 25,
       "norm_label": "changesize()"
     },
     {
@@ -15084,7 +15084,7 @@
       "source_file": "common/core/feature/src/lib/admin-list-screen.base.ts",
       "source_location": "L184",
       "id": "lib_admin_list_screen_base_retry",
-      "community": 26,
+      "community": 25,
       "norm_label": "retry()"
     },
     {
@@ -15093,7 +15093,7 @@
       "source_file": "common/core/feature/src/lib/admin-list-screen.base.ts",
       "source_location": "L202",
       "id": "lib_admin_list_screen_base_opencolumns",
-      "community": 26,
+      "community": 25,
       "norm_label": "opencolumns()"
     },
     {
@@ -15102,7 +15102,7 @@
       "source_file": "common/core/feature/src/lib/admin-list-screen.base.ts",
       "source_location": "L212",
       "id": "lib_admin_list_screen_base_changesort",
-      "community": 26,
+      "community": 25,
       "norm_label": "changesort()"
     },
     {
@@ -15111,7 +15111,7 @@
       "source_file": "common/core/feature/src/lib/admin-list-screen.base.ts",
       "source_location": "L217",
       "id": "lib_admin_list_screen_base_changetree",
-      "community": 26,
+      "community": 25,
       "norm_label": "changetree()"
     },
     {
@@ -15120,7 +15120,7 @@
       "source_file": "common/core/feature/src/lib/admin-list-screen.base.ts",
       "source_location": "L227",
       "id": "lib_admin_list_screen_base_changestate",
-      "community": 26,
+      "community": 25,
       "norm_label": "changestate()"
     },
     {
@@ -15129,7 +15129,7 @@
       "source_file": "common/core/feature/src/lib/admin-list-screen.base.ts",
       "source_location": "L237",
       "id": "lib_admin_list_screen_base_changeversion",
-      "community": 26,
+      "community": 25,
       "norm_label": "changeversion()"
     },
     {
@@ -15138,7 +15138,7 @@
       "source_file": "common/core/feature/src/lib/admin-list-screen.base.ts",
       "source_location": "L248",
       "id": "lib_admin_list_screen_base_changeperiod",
-      "community": 26,
+      "community": 25,
       "norm_label": "changeperiod()"
     },
     {
@@ -15147,7 +15147,7 @@
       "source_file": "common/core/feature/src/lib/admin-list-screen.base.ts",
       "source_location": "L267",
       "id": "lib_admin_list_screen_base_opendetails",
-      "community": 26,
+      "community": 25,
       "norm_label": "opendetails()"
     },
     {
@@ -15156,7 +15156,7 @@
       "source_file": "common/core/feature/src/lib/admin-list-screen.base.ts",
       "source_location": "L280",
       "id": "lib_admin_list_screen_base_section",
-      "community": 26,
+      "community": 25,
       "norm_label": "#section()"
     },
     {
@@ -15165,7 +15165,7 @@
       "source_file": "common/core/feature/src/lib/admin-list-screen.base.ts",
       "source_location": "L290",
       "id": "lib_admin_list_screen_base_apply",
-      "community": 26,
+      "community": 25,
       "norm_label": "#apply()"
     },
     {
@@ -19242,7 +19242,7 @@
       "source_file": "summaries/util/src/lib/month-record.columns.ts",
       "source_location": "L1",
       "id": "summaries_util_src_lib_month_record_columns_ts",
-      "community": 7,
+      "community": 8,
       "norm_label": "month-record.columns.ts"
     },
     {
@@ -27765,7 +27765,7 @@
       "source_file": "proposals/feature/list/src/lib/admin-proposals-list.component.ts",
       "source_location": "L88",
       "id": "lib_admin_proposals_list_component_adminproposalslistcomponent",
-      "community": 23,
+      "community": 22,
       "norm_label": "adminproposalslistcomponent"
     },
     {
@@ -27774,7 +27774,7 @@
       "source_file": "proposals/feature/list/src/lib/admin-proposals-list.component.ts",
       "source_location": "L108",
       "id": "lib_admin_proposals_list_component_adminproposalslistcomponent_constructor",
-      "community": 23,
+      "community": 22,
       "norm_label": ".constructor()"
     },
     {
@@ -27783,7 +27783,7 @@
       "source_file": "proposals/feature/list/src/lib/admin-proposals-list.component.spec.ts",
       "source_location": "L1",
       "id": "proposals_feature_list_src_lib_admin_proposals_list_component_spec_ts",
-      "community": 23,
+      "community": 22,
       "norm_label": "admin-proposals-list.component.spec.ts"
     },
     {
@@ -27792,7 +27792,7 @@
       "source_file": "proposals/feature/list/src/lib/admin-proposals-list.component.spec.ts",
       "source_location": "L24",
       "id": "lib_admin_proposals_list_component_spec_columnsettingsstub",
-      "community": 23,
+      "community": 22,
       "norm_label": "columnsettingsstub"
     },
     {
@@ -27801,7 +27801,7 @@
       "source_file": "proposals/feature/list/src/lib/admin-proposals-list.component.spec.ts",
       "source_location": "L27",
       "id": "lib_admin_proposals_list_component_spec_columnsettingsstub_get",
-      "community": 23,
+      "community": 22,
       "norm_label": ".get()"
     },
     {
@@ -27810,7 +27810,7 @@
       "source_file": "proposals/feature/list/src/lib/admin-proposals-list.component.spec.ts",
       "source_location": "L31",
       "id": "lib_admin_proposals_list_component_spec_columnsettingsstub_set",
-      "community": 23,
+      "community": 22,
       "norm_label": ".set()"
     },
     {
@@ -27819,7 +27819,7 @@
       "source_file": "proposals/feature/list/src/lib/admin-proposals-list.component.spec.ts",
       "source_location": "L37",
       "id": "lib_admin_proposals_list_component_spec_columnsettingsstub_remove",
-      "community": 23,
+      "community": 22,
       "norm_label": ".remove()"
     },
     {
@@ -27828,7 +27828,7 @@
       "source_file": "proposals/feature/list/src/lib/admin-proposals-list.component.spec.ts",
       "source_location": "L45",
       "id": "lib_admin_proposals_list_component_spec_detailsstubcomponent",
-      "community": 23,
+      "community": 22,
       "norm_label": "detailsstubcomponent"
     },
     {
@@ -27837,7 +27837,7 @@
       "source_file": "proposals/feature/list/src/lib/admin-proposals-list.component.spec.ts",
       "source_location": "L52",
       "id": "lib_admin_proposals_list_component_spec_rowof",
-      "community": 23,
+      "community": 22,
       "norm_label": "rowof()"
     },
     {
@@ -27846,7 +27846,7 @@
       "source_file": "proposals/feature/list/src/lib/admin-proposals-list.component.spec.ts",
       "source_location": "L67",
       "id": "lib_admin_proposals_list_component_spec_pageof",
-      "community": 23,
+      "community": 22,
       "norm_label": "pageof()"
     },
     {
@@ -27855,7 +27855,7 @@
       "source_file": "proposals/feature/list/src/lib/admin-proposals-list.component.spec.ts",
       "source_location": "L77",
       "id": "lib_admin_proposals_list_component_spec_answerlist",
-      "community": 23,
+      "community": 22,
       "norm_label": "answerlist()"
     },
     {
@@ -27864,7 +27864,7 @@
       "source_file": "proposals/feature/list/src/lib/admin-proposals-list.component.spec.ts",
       "source_location": "L86",
       "id": "lib_admin_proposals_list_component_spec_answertrees",
-      "community": 23,
+      "community": 22,
       "norm_label": "answertrees()"
     },
     {
@@ -27873,7 +27873,7 @@
       "source_file": "proposals/feature/list/src/lib/admin-proposals-list.component.spec.ts",
       "source_location": "L91",
       "id": "lib_admin_proposals_list_component_spec_answerversions",
-      "community": 23,
+      "community": 22,
       "norm_label": "answerversions()"
     },
     {
@@ -27882,7 +27882,7 @@
       "source_file": "proposals/feature/list/src/lib/admin-proposals-list.component.spec.ts",
       "source_location": "L99",
       "id": "lib_admin_proposals_list_component_spec_opensection",
-      "community": 23,
+      "community": 22,
       "norm_label": "opensection()"
     },
     {
@@ -27891,7 +27891,7 @@
       "source_file": "proposals/feature/list/src/lib/admin-proposals-list.component.spec.ts",
       "source_location": "L108",
       "id": "lib_admin_proposals_list_component_spec_cells",
-      "community": 23,
+      "community": 22,
       "norm_label": "cells()"
     },
     {
@@ -27900,7 +27900,7 @@
       "source_file": "proposals/feature/list/src/lib/admin-proposals-list.component.spec.ts",
       "source_location": "L140",
       "id": "lib_admin_proposals_list_component_spec_list",
-      "community": 23,
+      "community": 22,
       "norm_label": "list"
     },
     {
@@ -27909,7 +27909,7 @@
       "source_file": "proposals/feature/list/src/lib/admin-proposals-list.component.spec.ts",
       "source_location": "L151",
       "id": "lib_admin_proposals_list_component_spec_filters",
-      "community": 23,
+      "community": 22,
       "norm_label": "filters"
     },
     {
@@ -29457,7 +29457,7 @@
       "source_file": "common/core/data-access/src/lib/admin-list-store.base.ts",
       "source_location": "L39",
       "id": "lib_admin_list_store_base_adminliststorebase",
-      "community": 6,
+      "community": 7,
       "norm_label": "adminliststorebase"
     }
   ],
@@ -41189,7 +41189,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "usage/data-access/src/lib/usage-digest.store.ts",
-      "source_location": "L80",
+      "source_location": "L75",
       "weight": 1.0,
       "source": "lib_usage_digest_store_usagedigeststore",
       "target": "lib_usage_digest_store_usagedigeststore_refuse",
@@ -67626,5 +67626,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "76235026c0071bbfba479885de800c463a0de4ec"
+  "built_at_commit": "75a2b88d5ccea8f412dc77132386460ab96ba72a"
 }

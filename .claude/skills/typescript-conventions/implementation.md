@@ -14,7 +14,7 @@ has `testing`.
 - **the kind of a declaration in the name** — `I` on an interface, `T` on a type alias, `E` on an enum
 - **a private field** — a field with a hash (`#config`), not an access keyword
 - **a watched source** — a field with the suffix `Source`
-- **a group of public types of a feature** — `export namespace IRtuiButton { … }` next to the class
+- **a group of public types of a feature** — `export namespace IRtToggleSwitch { … }` next to the class
 - **a cross-package import** — the alias `@rt-tools/core`, `@rt-tools/store`, `@rt-tools/utils`
 
 ## Where it lives
@@ -39,7 +39,7 @@ silent about.
 - **A value declared by one side of an exchange is not recomputed by the other side but taken from the first.** — `tools/cargo-mark.mjs:treeSlug` — the tree sign is taken from the package by the same call the send computes it with; an own copy of the computation had already diverged from the package one silently.
 - **A value from a closed set arrives as an enum `E<Name>`, not as a string or a number at the place of use.** — **Not checked.** The linter judges the name of an enum but not that the set is declared as an enum rather than as strings in place
 - **A set that must be complete is declared as a full record over the key type, not a partial one.** — `libs/message-bus-admin/common/core/util/src/lib/admin-labels-en.ts:ADMIN_LABELS_EN` — a full record by the key of the Russian set. What the type cannot say is walked by `admin-text.service.spec.ts` for the scenario `SC-MB-414`.
-- **A deprecation mark is set together with a walk over the consumers.** — **Not checked.** The mark is a comment, and the walk over the consumers is invisible to a machine. The sample is the removed set `.c-button`: the migration map to `.rtui-btn` stayed in `projects/ui-kit/src/styles/TOKENS.md`.
+- **A deprecation mark is set together with a walk over the consumers.** — **Not checked.** The mark is a comment, and the walk over the consumers is invisible to a machine.
 - **The two-step cast `as unknown as` is forbidden by a linter rule.** — `eslint.config.mjs:no-restricted-syntax` — a selection by the parse node; the specs are taken out from under the ban by the same block.
 
 ## What else is worth knowing when reading the code

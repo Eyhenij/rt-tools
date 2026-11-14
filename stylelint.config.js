@@ -56,19 +56,6 @@ export default {
     },
     overrides: [
         {
-            // Component styles must consume tokens, not raw hex (palette lives in styles/base only)
-            files: ['projects/ui-kit/src/lib/**/*.scss'],
-            // Story/test wrapper styles are demo scaffolding, not shipped library CSS —
-            // they are exempt from the design-token discipline.
-            ignoreFiles: ['**/stories/**/*.scss', '**/strories/**/*.scss'],
-            rules: {
-                'color-no-hex': true,
-                // Custom rule: no hardcoded colors / magic numbers in
-                // token-aware properties; allows var(--rt-*), --mat-*, --mdc-*, calc/min/max/clamp.
-                'rt-tools/no-hardcoded-design-tokens': true,
-            },
-        },
-        {
             // У всех компонентов этого кита ViewEncapsulation.None, поэтому `:host`
             // не совпадает ни с чем: правило, написанное через него, будет мёртвым,
             // и молча. Хост адресуется классом блока либо именем элемента.
