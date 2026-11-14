@@ -30,6 +30,7 @@
     "check:all": "pnpm exec nx run-many -t lint typecheck test build verify --all --parallel && pnpm run lint:styles",
     "check:affected": "pnpm exec nx affected -t lint typecheck test build verify --parallel && pnpm run lint:styles",
     "check:specs": "node tools/check-specs.mjs",
+    "check:unused": "knip --no-progress",
     "spec:next-id": "node tools/spec-next-id.mjs",
     "specs:for": "node tools/specs-for.mjs",
     "check:docs": "node tools/check-doc-paths.mjs",
@@ -131,7 +132,6 @@
     "projects/agent-kit"
   ],
   "dependencies": {
-    "@floating-ui/dom": "1.8.0",
     "@nestjs/common": "12.1.2",
     "@nestjs/core": "12.1.2",
     "@nestjs/platform-express": "12.1.2",
@@ -228,6 +228,7 @@
     "jest-util": "30.5.1",
     "jsdom": "30.1.2",
     "jsonc-eslint-parser": "3.3.0",
+    "knip": "6.45.1",
     "lint-staged": "17.6.0",
     "ng-packagr": "22.2.4",
     "nx": "23.3.0",
