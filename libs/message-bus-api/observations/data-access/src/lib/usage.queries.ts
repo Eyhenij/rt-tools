@@ -5,7 +5,7 @@
  * хранилищем они отвечают одним запросом. Клиент хранилища отдельных сессий не считает, поэтому
  * запрос идёт своим текстом; имена столбцов — как в схеме хранилища.
  *
- * Дерево названо признаком, как в списке сводок; период — двумя днями включительно, оба уже
+ * Дерево названо признаком, как в списке сводок, или не названо — тогда читаются все деревья; период — двумя днями включительно, оба уже
  * проверены до вызова. Страницу и порядок таблица скилов получает как всякий список админки:
  * раздел стоит на общей основе списка, и та читает страницу.
  */
@@ -22,9 +22,9 @@ import {
     USAGE_SORTABLE,
 } from '@rt/message-bus-common';
 
-/** Период, оба края включительно, дни `ГГГГ-ММ-ДД`. */
+/** Дерево и период, оба края включительно, дни `ГГГГ-ММ-ДД`. Дерево `null` — все деревья. */
 export interface IUsageAsked {
-    readonly treeId: string;
+    readonly treeId: string | null;
     readonly from: string;
     readonly to: string;
 }
@@ -60,6 +60,14 @@ function orderColumn(sort: string): Prisma.Sql {
     return Prisma.raw(`"${USAGE_SORTABLE.includes(sort) ? sort : USAGE_SORTABLE[0]}"`);
 }
 
+/**
+ * Условие на дерево: названное дерево сужает строки до своих, без дерева читаются строки всех
+ * деревьев. Сессия одна на дерево, поэтому счёт отдельных сессий по всем деревьям не двоится.
+ */
+function treeFilter(asked: IUsageAsked): Prisma.Sql {
+    return asked.treeId === null ? Prisma.sql`TRUE` : Prisma.sql`"treeId" = ${asked.treeId}`;
+}
+
 /** Дерево по признаку: признак дерева называет запрос, хранилище ищет по нему. */
 export async function findTreeIdBySlug(prisma: PrismaService, slug: string): Promise<string | null> {
     const found: { id: string } | null = await prisma.tree.findUnique({ where: { slug }, select: { id: true } });
@@ -89,7 +97,7 @@ export async function readUsage(prisma: PrismaService, asked: IUsagePageAsked): 
                COUNT(*) FILTER (WHERE "ev" = 'gate-deny')::int AS "denials",
                COUNT(*) OVER ()::int AS "total"
         FROM "observation"
-        WHERE "treeId" = ${asked.treeId}
+        WHERE ${treeFilter(asked)}
           AND "day" >= ${asked.from}
           AND "day" <= ${asked.to}
           AND "ev" IN ('skill-load', 'gate-deny')
@@ -113,7 +121,7 @@ export async function readUsageSessions(prisma: PrismaService, asked: IUsageAske
     return prisma.$queryRaw<IUsageSessionRow[]>(Prisma.sql`
         SELECT "day", "sid", COUNT(*)::int AS "count"
         FROM "observation"
-        WHERE "treeId" = ${asked.treeId}
+        WHERE ${treeFilter(asked)}
           AND "res" = ${skill}
           AND "ev" = 'skill-load'
           AND "day" >= ${asked.from}
@@ -134,7 +142,7 @@ export async function readUsageDays(prisma: PrismaService, asked: IUsageAsked): 
                COUNT(DISTINCT "sid") FILTER (WHERE "ev" = 'skill-load')::int AS "sessions",
                COUNT(*) FILTER (WHERE "ev" = 'gate-deny')::int AS "denials"
         FROM "observation"
-        WHERE "treeId" = ${asked.treeId}
+        WHERE ${treeFilter(asked)}
           AND "day" >= ${asked.from}
           AND "day" <= ${asked.to}
           AND "ev" IN ('skill-load', 'gate-deny')
@@ -148,7 +156,7 @@ export async function readUsageKinds(prisma: PrismaService, asked: IUsageAsked):
     return prisma.$queryRaw<IUsageKindRow[]>(Prisma.sql`
         SELECT "skill" AS "kind", COUNT(*)::int AS "loads"
         FROM "observation"
-        WHERE "treeId" = ${asked.treeId}
+        WHERE ${treeFilter(asked)}
           AND "day" >= ${asked.from}
           AND "day" <= ${asked.to}
           AND "ev" = 'skill-load'

@@ -178,11 +178,38 @@ describe('UsageReadController', () => {
         }
     });
 
-    it('SC-MB-343 — дерево не названо или не известно — отказ 404', async () => {
+    it('SC-MB-428 — без дерева таблица, сводка и сессии читаются по всем деревьям: условия на дерево в запросе нет', async () => {
+        const double: PrismaDouble = new PrismaDouble([{ skill: 'testing', kind: 'rule', loads: 5, sessions: 3, denials: 0, total: 1 }]);
+        const controller: UsageReadController = controllerOf(double);
+
+        const page: IUsagePage = await controller.usage({ ...PERIOD });
+        await controller.digest({ ...PERIOD });
+        await controller.sessions('testing', { tree: '', ...PERIOD });
+
+        expect(page.rows.map((row: IUsageRow): string => `${row.skill}:${row.loads}`)).toEqual(['testing:5']);
+        expect(double.asked[0].values).toEqual([PERIOD.from, PERIOD.to, 20, 0]);
+        expect(double.asked.length).toBeGreaterThan(2);
+        for (const query of double.asked) {
+            expect(query.sql).toContain('"day" >=');
+            expect(query.sql).not.toContain('"treeId"');
+        }
+    });
+
+    it('SC-MB-428 — названное дерево по-прежнему сужает запрос до своих строк', async () => {
+        const double: PrismaDouble = new PrismaDouble();
+
+        await controllerOf(double).usage({ tree: OWN.slug, ...PERIOD });
+
+        expect(double.asked[0].sql).toContain('"treeId" =');
+        expect(double.asked[0].values[0]).toBe(OWN.id);
+    });
+
+    it('SC-MB-429 — названное дерево, которого приёмник не знает, — отказ 404 «дерево не известно»', async () => {
         const controller: UsageReadController = controllerOf(new PrismaDouble());
 
-        await expect(controller.usage({ ...PERIOD })).rejects.toBeInstanceOf(NotFoundException);
-        await expect(controller.usage({ tree: 'other-tree', ...PERIOD })).rejects.toThrow('не известно приёмнику');
+        await expect(controller.usage({ tree: 'other-tree', ...PERIOD })).rejects.toBeInstanceOf(NotFoundException);
+        await expect(controller.digest({ tree: 'other-tree', ...PERIOD })).rejects.toThrow('не известно приёмнику');
+        await expect(controller.sessions('testing', { tree: 'other-tree', ...PERIOD })).rejects.toThrow('не известно приёмнику');
     });
 });
 
