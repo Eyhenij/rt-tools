@@ -1,0 +1,28 @@
+<app-story-presets caption="Свой вид пустого в обоих наборах">
+    <ng-template>
+        <app-story-row slotWidth="21.25rem" [items]="cases" [itemLabel]="caseLabel">
+            <ng-template let-item>
+                <rt-tree-selector
+                    style="display: block; width: 100%"
+                    label="Гостиницы"
+                    ariaLabel="Гостиницы"
+                    confirm
+                    expandControls
+                    clearable
+                    revertable
+                    multiToggle
+                    [nodes]="item.nodes"
+                    [searchTerm]="item.searchTerm">
+                    @if (item.ownEmpty) {
+                        <ng-template rtTreeSelectorEmpty let-term>
+                            <div class="app-tree-selector-states__own">
+                                <strong>Свой вид пустого</strong>
+                                <span class="app-tree-selector-states__own-hint">Строка поиска: «{{ term }}»</span>
+                            </div>
+                        </ng-template>
+                    }
+                </rt-tree-selector>
+            </ng-template>
+        </app-story-row>
+    </ng-template>
+</app-story-presets>

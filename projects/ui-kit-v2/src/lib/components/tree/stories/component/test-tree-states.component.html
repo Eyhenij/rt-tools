@@ -1,0 +1,18 @@
+<app-story-presets caption="Свой вид пустого в обоих наборах">
+    <ng-template>
+        <app-story-row slotWidth="20rem" [items]="cases" [itemLabel]="caseLabel">
+            <ng-template let-item>
+                <rt-tree style="display: block; width: 100%" ariaLabel="Города" [nodes]="item.nodes" [searchTerm]="item.searchTerm">
+                    @if (item.ownEmpty) {
+                        <ng-template rtTreeEmpty let-term>
+                            <div class="app-tree-states__own">
+                                <strong>Свой вид пустого</strong>
+                                <span class="app-tree-states__own-hint">Строка поиска: «{{ term }}»</span>
+                            </div>
+                        </ng-template>
+                    }
+                </rt-tree>
+            </ng-template>
+        </app-story-row>
+    </ng-template>
+</app-story-presets>

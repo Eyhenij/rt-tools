@@ -36,39 +36,8 @@ const CASES: readonly IDynamicSelectorStateCase[] = [
  */
 @Component({
     selector: 'app-dynamic-selector-states',
-    template: `
-        <app-story-presets caption="Ошибка и свои шаблоны окна выбора в обоих наборах">
-            <ng-template>
-                <app-story-row slotWidth="20rem" [items]="cases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-dynamic-selector-popup
-                            keyExp="id"
-                            displayExp="name"
-                            mode="multiple"
-                            [entities]="item.entities"
-                            [error]="item.error">
-                            @if (item.ownEmpty) {
-                                <ng-template rtDynamicSelectorEmpty let-term>
-                                    <div [style]="slotStyle">
-                                        <strong>Свой вид пустого</strong>
-                                        <span [style]="slotHintStyle">Разметка приложения вместо rt-empty-state</span>
-                                    </div>
-                                </ng-template>
-                            }
-                            @if (item.ownError) {
-                                <ng-template rtDynamicSelectorError>
-                                    <div [style]="slotStyle">
-                                        <strong>Свой вид ошибки</strong>
-                                        <span [style]="slotHintStyle">В контексте шаблона: текст ошибки ($implicit) и retry()</span>
-                                    </div>
-                                </ng-template>
-                            }
-                        </rt-dynamic-selector-popup>
-                    </ng-template>
-                </app-story-row>
-            </ng-template>
-        </app-story-presets>
-    `,
+    templateUrl: './test-dynamic-selector-states.component.html',
+    styleUrl: './test-dynamic-selector-states.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
@@ -85,12 +54,6 @@ const CASES: readonly IDynamicSelectorStateCase[] = [
 })
 export class TestRtDynamicSelectorStatesComponent {
     public readonly cases: readonly IDynamicSelectorStateCase[] = CASES;
-
-    /** Рамка своего шаблона: пунктир показывает, где кончается разметка приложения. */
-    public readonly slotStyle: string =
-        'display: grid; gap: var(--rt-space-2); margin-block: var(--rt-space-6); padding: var(--rt-space-4); border: 1px dashed var(--rt-color-border-strong); border-radius: var(--rt-radius-md); text-align: center';
-
-    public readonly slotHintStyle: string = 'color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)';
 
     public readonly caseLabel: (value: IDynamicSelectorStateCase) => string = (value: IDynamicSelectorStateCase): string => value.name;
 }

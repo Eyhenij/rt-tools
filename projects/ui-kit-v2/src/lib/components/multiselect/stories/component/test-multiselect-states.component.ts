@@ -14,31 +14,8 @@ import { RtMultiselectComponent } from '../../rt-multiselect.component';
  */
 @Component({
     selector: 'app-multiselect-states',
-    template: `
-        <div class="app-multiselect-states__panel-slot">
-            <rt-multiselect
-                ariaLabel="Список со своим видом пустого"
-                placeholder="Выберите города"
-                [attr.data-story-trigger]="triggerAttribute"
-                [options]="noOptions"
-                [formControl]="control">
-                <ng-template rtMultiselectEmpty>
-                    <div [style]="slotStyle">
-                        <strong>Свой вид пустого</strong>
-                        <span [style]="slotHintStyle">Разметка приложения</span>
-                    </div>
-                </ng-template>
-            </rt-multiselect>
-        </div>
-    `,
-    styles: `
-        /* Панель уезжает в контейнер оверлеев и ложится поверх страницы: без запаса снизу
-           она вышла бы за нижний край окна. */
-        .app-multiselect-states__panel-slot {
-            width: 20rem;
-            padding-bottom: 12rem;
-        }
-    `,
+    templateUrl: './test-multiselect-states.component.html',
+    styleUrl: './test-multiselect-states.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // angular
@@ -57,10 +34,4 @@ export class TestRtMultiselectStatesComponent {
     public readonly noOptions: ReadonlyArray<IRtSelect.Option<string>> = [];
 
     public readonly control: FormControl<readonly string[] | null> = new FormControl<readonly string[] | null>(null);
-
-    /** Рамка своего шаблона: пунктир показывает, где кончается разметка приложения. */
-    public readonly slotStyle: string =
-        'display: grid; gap: var(--rt-space-1); margin: calc(var(--rt-space-2) + var(--rt-space-1)); padding: calc(var(--rt-space-2) + var(--rt-space-1)); border: 1px dashed var(--rt-color-border-strong); border-radius: var(--rt-radius-md); text-align: center';
-
-    public readonly slotHintStyle: string = 'color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)';
 }

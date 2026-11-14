@@ -29,26 +29,8 @@ const CASES: readonly ITreeStateCase[] = [
  */
 @Component({
     selector: 'app-tree-states',
-    template: `
-        <app-story-presets caption="Свой вид пустого в обоих наборах">
-            <ng-template>
-                <app-story-row slotWidth="20rem" [items]="cases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-tree style="display: block; width: 100%" ariaLabel="Города" [nodes]="item.nodes" [searchTerm]="item.searchTerm">
-                            @if (item.ownEmpty) {
-                                <ng-template rtTreeEmpty let-term>
-                                    <div [style]="slotStyle">
-                                        <strong>Свой вид пустого</strong>
-                                        <span [style]="slotHintStyle">Строка поиска: «{{ term }}»</span>
-                                    </div>
-                                </ng-template>
-                            }
-                        </rt-tree>
-                    </ng-template>
-                </app-story-row>
-            </ng-template>
-        </app-story-presets>
-    `,
+    templateUrl: './test-tree-states.component.html',
+    styleUrl: './test-tree-states.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
@@ -64,12 +46,6 @@ const CASES: readonly ITreeStateCase[] = [
 })
 export class TestRtTreeStatesComponent {
     public readonly cases: readonly ITreeStateCase[] = CASES;
-
-    /** Рамка своего шаблона: пунктир показывает, где кончается разметка приложения. */
-    public readonly slotStyle: string =
-        'display: grid; gap: var(--rt-space-1); margin: calc(var(--rt-space-2) + var(--rt-space-1)); padding: calc(var(--rt-space-2) + var(--rt-space-1)); border: 1px dashed var(--rt-color-border-strong); border-radius: var(--rt-radius-md); text-align: center';
-
-    public readonly slotHintStyle: string = 'color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)';
 
     public readonly caseLabel: (value: ITreeStateCase) => string = (value: ITreeStateCase): string => value.name;
 }

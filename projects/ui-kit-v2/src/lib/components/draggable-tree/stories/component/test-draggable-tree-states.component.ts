@@ -24,26 +24,8 @@ const CASES: readonly IDraggableTreeStateCase[] = [
  */
 @Component({
     selector: 'app-draggable-tree-states',
-    template: `
-        <app-story-presets caption="Свой вид пустого в обоих наборах">
-            <ng-template>
-                <app-story-row slotWidth="20rem" [items]="cases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <rt-draggable-tree style="display: block; width: 100%" ariaLabel="Разделы" [nodes]="[]">
-                            @if (item.ownEmpty) {
-                                <ng-template rtDraggableTreeEmpty>
-                                    <div [style]="slotStyle">
-                                        <strong>Свой вид пустого</strong>
-                                        <span [style]="slotHintStyle">Разметка приложения вместо «Нет вариантов»</span>
-                                    </div>
-                                </ng-template>
-                            }
-                        </rt-draggable-tree>
-                    </ng-template>
-                </app-story-row>
-            </ng-template>
-        </app-story-presets>
-    `,
+    templateUrl: './test-draggable-tree-states.component.html',
+    styleUrl: './test-draggable-tree-states.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
@@ -59,12 +41,6 @@ const CASES: readonly IDraggableTreeStateCase[] = [
 })
 export class TestRtDraggableTreeStatesComponent {
     public readonly cases: readonly IDraggableTreeStateCase[] = CASES;
-
-    /** Рамка своего шаблона: пунктир показывает, где кончается разметка приложения. */
-    public readonly slotStyle: string =
-        'display: grid; gap: var(--rt-space-1); margin: calc(var(--rt-space-2) + var(--rt-space-1)); padding: calc(var(--rt-space-2) + var(--rt-space-1)); border: 1px dashed var(--rt-color-border-strong); border-radius: var(--rt-radius-md); text-align: center';
-
-    public readonly slotHintStyle: string = 'color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)';
 
     public readonly caseLabel: (value: IDraggableTreeStateCase) => string = (value: IDraggableTreeStateCase): string => value.name;
 }

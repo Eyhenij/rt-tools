@@ -1,0 +1,22 @@
+@layer rt-kit.components {
+    .app-dynamic-selector-states {
+        /* Рамка своего шаблона: пунктир показывает, где кончается разметка приложения. Блока
+           в разметке нет, поэтому радиус объявлен на самой рамке. */
+        &__own {
+            --rt-dynamic-selector-states-story-own-radius: var(--rt-radius-md);
+
+            display: grid;
+            padding: var(--rt-space-4);
+            border: 1px dashed var(--rt-color-border-strong);
+            border-radius: var(--rt-dynamic-selector-states-story-own-radius);
+            gap: var(--rt-space-2);
+            margin-block: var(--rt-space-6);
+            text-align: center;
+        }
+
+        &__own-hint {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+        }
+    }
+}

@@ -23,18 +23,8 @@ function failsToLoad(): Promise<IRtPdfViewer.PdfJs> {
  */
 @Component({
     selector: 'app-pdf-viewer-states',
-    template: `
-        <ng-template rtPdfViewerError>
-            <div [style]="slotStyle">
-                <strong>Свой вид ошибки</strong>
-                <span [style]="slotHintStyle">В контексте шаблона: текст ошибки ($implicit) и download()</span>
-            </div>
-        </ng-template>
-
-        @if (viewerInjector(); as injector) {
-            <ng-container *ngComponentOutlet="viewer; injector: injector" />
-        }
-    `,
+    templateUrl: './test-pdf-viewer-states.component.html',
+    styleUrl: './test-pdf-viewer-states.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // angular
@@ -62,10 +52,4 @@ export class TestRtPdfViewerStatesComponent {
     );
 
     protected readonly viewer: Type<RtPdfViewerComponent> = RtPdfViewerComponent;
-
-    /** Рамка своего шаблона: пунктир показывает, где кончается разметка приложения. */
-    protected readonly slotStyle: string =
-        'display: grid; justify-items: center; gap: var(--rt-space-2); padding: var(--rt-space-6); border: 1px dashed var(--rt-color-border-strong); border-radius: var(--rt-radius-md); color: var(--rt-color-text-inverse); text-align: center';
-
-    protected readonly slotHintStyle: string = 'font-size: var(--rt-text-sm)';
 }
