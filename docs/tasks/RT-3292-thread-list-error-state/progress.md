@@ -1,0 +1,32 @@
+# Progress
+
+## Where we stand
+
+- **State:** `этап-идёт`
+- **Stage:** 1 of 4 — The agreement
+- **Done:** the epic branch is on the remote; the task card and the epic card are in progress; the
+  mockups are approved («Одобряю», 13.11.2026).
+- **Next step:** write the feature spec in `docs/specs/ui-kit-v2/proposed/error-states/`.
+- **Uncommitted:** no.
+- **Waiting for the owner:** no.
+- **PR:** not open yet.
+
+## Steps
+
+- [>] 1.1 Write the feature spec of the shared contract and of the three components
+- [ ] 1.2 Write its scenarios
+- [ ] 2.1 Add the labels `uiLoadError`, `uiLoadErrorHint`, `uiRetry` and the max-width variable of `rt-empty-state`
+- [ ] 2.2 Add `error`, `retry`, the text inputs and both slots to `rt-thread-list`, with the load more error row
+- [ ] 2.3 Fix the header and the tab switch spacing of `rt-thread-list`
+- [ ] 2.4 Cover the new states by the spec
+- [ ] 3.1 Add `error`, `retry`, `emptyTitle`, `emptyIcon` and both slots to `rt-chat`; fix the `emptyHint` render
+- [ ] 3.2 Add `error`, `retry` and the error slot to `rt-workspace-details`
+- [ ] 3.3 Cover the new states by the specs
+- [ ] 4.1 Add a story for every new state of the three components
+- [ ] 4.2 Compare the stories with the frames by measurement and show them to the owner
+
+## Decisions along the way
+
+- **The epic branch went to the remote on 14.11.2026 after main was merged in** — the push inputs
+  check is still red on main, but the push set no longer runs it for this change. Affected stage of
+  the plan: none.
