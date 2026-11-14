@@ -717,6 +717,7 @@ export type TRtConsumerHandleName =
     | '--rt-fab-small-container-color'
     | '--rt-field-filled-container-color'
     | '--rt-field-label-letter-spacing'
+    | '--rt-form-framed-radius'
     | '--rt-header-content-max-width'
     | '--rt-header-height'
     | '--rt-icon-button-bg'
@@ -1541,6 +1542,7 @@ export const RT_CONSUMER_HANDLE_NAMES: readonly TRtConsumerHandleName[] = [
     '--rt-fab-small-container-color',
     '--rt-field-filled-container-color',
     '--rt-field-label-letter-spacing',
+    '--rt-form-framed-radius',
     '--rt-header-content-max-width',
     '--rt-header-height',
     '--rt-icon-button-bg',
