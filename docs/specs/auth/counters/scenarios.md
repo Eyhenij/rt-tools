@@ -65,3 +65,10 @@ Given a node whose property holds pairs for several realms
 When a page of one realm is drawn
 Then it loads the counters of its own pair only, and a page of a realm without an entry or with
 a malformed entry loads no counter
+
+### SC-AUTH-117 — the entry page lets the Metrika frame in
+
+Given the entry page of the realm `rt`
+When Keycloak answers with it
+Then the security policy lets a frame of `https://mc.yandex.ru` in next to its own, and the other
+security headers keep their values

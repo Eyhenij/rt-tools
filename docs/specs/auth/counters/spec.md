@@ -36,6 +36,9 @@ Not applicable: the counters show nothing on the screen.
 - **Each realm reports to its own pair of numbers.** One Keycloak serves every product, and the
   property holds a pair per realm; a realm without an entry loads no counter, so no product
   reports to another's.
+- **The security policy of the realm lets the Metrika frame in.** Metrika opens a frame of
+  `https://mc.yandex.ru` on the page; the realm `rt` adds it to `frame-src` and declares its other
+  security headers with their former values. A realm of a product does the same in its own file.
 - **The page view goes to both counters with the page id.** The id is the template name without
   `.ftl` — `login`, `register`. GA4 sends the view from the tag config, and Metrika from the hit
   with the page address and title.
@@ -113,10 +116,12 @@ an entry loads nothing. The owner's choice of 14.11.2026: «Пара на каж
   page holds an invalid form by preventing its submit. Rejected: a call in each page component —
   the standard pages would get none.
 - **A malformed number counts as absent.** A typo in the environment loads no foreign tag.
-- **`mc.yandex.ru` is not added to `frame-src` until a frame is asked for.** Under the Keycloak
-  default policy `frame-src 'self'` the stand showed no refusal, but it ran with a made-up Metrika
-  number: the tag takes its settings, Webvisor among them, by the number, so the absence of a
-  refusal proves nothing yet. Rejected: adding the permission in advance — nothing has asked for it.
+- **`https://mc.yandex.ru` is the only host added to `frame-src`.** The login node with a real
+  Metrika number showed the refusal of that frame on 14.11.2026; the stand with a made-up number
+  never asks for it, because the tag takes its settings by the number. Rejected: the other Metrika
+  hosts — nothing has asked for them.
+- **The realm declares all its security headers, not the policy alone.** A map given by the realm
+  file replaces the Keycloak default whole, and a header missing from it stops being sent.
 - **The page address is cleaned in the history, not only in the hit.** Webvisor records the address
   of the page itself, and a hit address alone would leave it there. The price: when the numbers are
   set, a reload of an action token page opens the address without its token, and Keycloak answers
@@ -131,9 +136,7 @@ an entry loads nothing. The owner's choice of 14.11.2026: «Пара на каж
 
 ## Open questions
 
-- Q-2 — whether Webvisor asks for a frame of `mc.yandex.ru` on the entry pages and whether its
-  recording plays under the Keycloak `frame-ancestors 'self'`: checked only with a real Metrika
-  counter with Webvisor on.
+None.
 
 ## History of changes
 
