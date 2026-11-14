@@ -171,8 +171,11 @@
         /* Строки одной службы в общей рамке: ключей у службы бывает два, и рамка на каждом
            читалась бы как две разные карточки. */
         &__framed-list {
+            /* Рамка входит в ширину: при ширине во всю строку рамка иначе выходит за края
+               родителя на свою толщину с каждой стороны. */
             display: flex;
             width: 100%;
+            box-sizing: border-box;
             flex-direction: column;
             border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
             border-radius: var(--rt-radius-md);
@@ -214,6 +217,72 @@
             flex-direction: column;
             padding: var(--rt-space-sm) var(--rt-space-md);
             gap: var(--rt-space-xs);
+
+            /* Название записи крупнее пояснения: по макету плитки настройки название 16, а
+               пояснение под ним 12. Подпись и текст строки берут один размер, поэтому название,
+               написанное `span` внутри `<label>`, и название в простой строке выглядят одинаково. */
+            > .rt-form__control-item,
+            .rt-form__label {
+                font-size: var(--rt-text-md);
+                font-weight: var(--rt-font-weight-medium);
+                line-height: var(--rt-leading-normal);
+            }
+
+            .rt-form__control-sub-item--label {
+                color: var(--rt-color-text-muted);
+                font-size: var(--rt-text-xs);
+                line-height: var(--rt-leading-normal);
+            }
+
+            /* Плитка настройки: запись-`<label>` с выключателем внутри. Нажатие в любом месте
+               записи переключает выключатель — это делает сам `<label>`, и только он. Поэтому
+               нажимаемый вид дан тегу, а не модификатору: модификатор можно повесить на `div`,
+               и запись показывала бы указатель, ничего не переключая. Фокус клавиатуры на
+               выключателе подсвечивает запись так же, как наведение: кольцо фокуса рисует сам
+               выключатель, а второе кольцо вокруг записи дублировало бы его. */
+            &:is(label) {
+                cursor: pointer;
+
+                &:hover,
+                &:has(:focus-visible) {
+                    background: var(--rt-color-bg-hover);
+                }
+
+                /* Подсветка не выходит за скругление общей рамки: углы первой и последней записи
+                   скруглены по внутреннему краю рамки. */
+                &:first-child {
+                    border-start-end-radius: calc(var(--rt-radius-md) - var(--rt-border-width-thin));
+                    border-start-start-radius: calc(var(--rt-radius-md) - var(--rt-border-width-thin));
+                }
+
+                &:last-child {
+                    border-end-end-radius: calc(var(--rt-radius-md) - var(--rt-border-width-thin));
+                    border-end-start-radius: calc(var(--rt-radius-md) - var(--rt-border-width-thin));
+                }
+
+                /* Выключатель стоит справа при любой длине названия: строка не переносится, а
+                   название сжимается и переносится по словам. */
+                > .rt-form__control-item {
+                    flex-wrap: nowrap;
+                    gap: var(--rt-space-sm);
+                }
+
+                .rt-form__label {
+                    min-width: 0;
+                    flex: 1 1 auto;
+                    overflow-wrap: anywhere;
+                }
+            }
+
+            /* Отключённый выключатель не переключается и нажатием на запись: она и не выглядит
+               нажимаемой. */
+            &:is(label):has(:disabled) {
+                cursor: default;
+
+                &:hover {
+                    background: none;
+                }
+            }
         }
 
         /* Маячок догрузки в конце списка: он невидим и только отмечает низ, до которого

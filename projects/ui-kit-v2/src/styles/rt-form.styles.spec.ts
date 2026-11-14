@@ -137,6 +137,35 @@ describe('стили словаря формы панели', (): void => {
         expect(ruleBody(css, '.rt-form__framed-item')).toContain('padding');
     });
 
+    it('SC-UKV-1297 — название записи в рамке 16, а пояснение под ним 12 и приглушено', (): void => {
+        const title: string = ruleBody(css, '.rt-form__framed-item .rt-form__label');
+        const note: string = ruleBody(css, '.rt-form__framed-item .rt-form__control-sub-item--label');
+
+        expect(title).toContain('font-size: var(--rt-text-md)');
+        expect(title).toContain('font-weight: var(--rt-font-weight-medium)');
+        expect(note).toContain('font-size: var(--rt-text-xs)');
+        expect(note).toContain('color: var(--rt-color-text-muted)');
+    });
+
+    it('SC-UKV-1298 — нажимаемый вид получает только запись-label', (): void => {
+        // Модификатор можно повесить на div, и запись показывала бы указатель, ничего не
+        // переключая: нажимается целиком только сам label.
+        expect(ruleBody(css, '.rt-form__framed-item:is(label)')).toContain('cursor: pointer');
+        expect(ruleBody(css, '.rt-form__framed-item')).not.toContain('cursor');
+        expect(css).not.toContain('.rt-form__framed-item--');
+    });
+
+    it('SC-UKV-1299 — запись-label подсвечивается при наведении и при фокусе клавиатуры', (): void => {
+        const body: string = ruleBody(css, '.rt-form__framed-item:is(label):hover, .rt-form__framed-item:is(label):has(:focus-visible)');
+
+        expect(body).toContain('background: var(--rt-color-bg-hover)');
+    });
+
+    it('SC-UKV-1300 — в записи-label выключатель стоит справа, а название сжимается', (): void => {
+        expect(ruleBody(css, '.rt-form__framed-item:is(label) > .rt-form__control-item')).toContain('flex-wrap: nowrap');
+        expect(ruleBody(css, '.rt-form__framed-item:is(label) .rt-form__label')).toContain('min-width: 0');
+    });
+
     it('SC-UKV-1045 — строка контрола переносит элементы', (): void => {
         expect(ruleBody(css, '.rt-form__control-item')).toContain('flex-wrap: wrap');
     });

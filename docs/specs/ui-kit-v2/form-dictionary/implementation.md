@@ -26,3 +26,7 @@
 - **Поле, стоящее в строке контрола одно, занимает её целиком.** — `projects/ui-kit-v2/src/styles/_form.scss:rt-field`; сценарий `SC-UKV-110`
 - **Поле внутри элемента ряда занимает элемент целиком.** — `projects/ui-kit-v2/src/styles/_form.scss:__control-sub-item`; сценарий `SC-UKV-112`
 - **Запись внутри общей рамки несёт свой внутренний отступ.** — `projects/ui-kit-v2/src/styles/_form.scss:__framed-item`; сценарий `SC-UKV-111`
+- **Название записи в рамке крупнее пояснения под ним.** — `projects/ui-kit-v2/src/styles/_form.scss:__control-sub-item--label`; сценарий `SC-UKV-1297`
+- **Нажимаемый вид получает только запись, написанная тегом `label`.** — `projects/ui-kit-v2/src/styles/_form.scss:cursor`; сценарий `SC-UKV-1298`
+- **Запись-`label` подсвечивается при наведении и при фокусе клавиатуры на выключателе.** — `projects/ui-kit-v2/src/styles/_form.scss:focus-visible`; сценарий `SC-UKV-1299`
+- **В записи-`label` выключатель стоит справа при любой длине названия.** — `projects/ui-kit-v2/src/styles/_form.scss:nowrap`; сценарий `SC-UKV-1300`

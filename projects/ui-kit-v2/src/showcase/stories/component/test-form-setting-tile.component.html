@@ -1,0 +1,19 @@
+<div rtBlock="rt-form" class="app-form-setting-tile" qa-dataid="form-setting-tile" [class.app-form-setting-tile--narrow]="narrow()">
+    @for (cell of cells; track cell.qa) {
+        <div rtElem="framed-list">
+            <label rtElem="framed-item" [attr.qa-dataid]="cell.qa" [attr.data-story-state]="cell.state" [for]="cell.qa + '-switch'">
+                <span rtElem="control-item" [rtMod]="{ split: true }">
+                    <span rtElem="label">
+                        @if (narrow()) {
+                            Записывать действия посетителей на страницах сайта
+                        } @else {
+                            Название настройки
+                        }
+                    </span>
+                    <rt-toggle-switch size="md" [inputId]="cell.qa + '-switch'" [ngModel]="cell.on" />
+                </span>
+                <span rtElem="control-sub-item" [rtMod]="{ label: true }">Что делает настройка, словами продукта</span>
+            </label>
+        </div>
+    }
+</div>
