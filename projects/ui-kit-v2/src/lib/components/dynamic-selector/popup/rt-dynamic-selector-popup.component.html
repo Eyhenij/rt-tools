@@ -43,7 +43,11 @@
         }
     </div>
 
-    @if (settings.loading()) {
+    @if (loadError.shown()) {
+        <div rtElem="state" qa-dataid="dynamic-selector-error-placeholder">
+            <ng-container [ngTemplateOutlet]="loadState.errorTemplate() ?? defaultError" [ngTemplateOutletContext]="loadError.context()" />
+        </div>
+    } @else if (settings.loading()) {
         <div rtElem="state" qa-dataid="dynamic-selector-loading">
             <rt-spinner [diameter]="24" />
         </div>
@@ -106,6 +110,8 @@
                 </div>
             }
         </div>
+    } @else if (loadState.emptyTemplate(); as own) {
+        <ng-container [ngTemplateOutlet]="own" [ngTemplateOutletContext]="{ $implicit: query() }" />
     } @else {
         <rt-empty-state rtElem="empty" qa-dataid="dynamic-selector-no-results" icon="search" [title]="emptyText()" />
     }
@@ -126,16 +132,31 @@
                 [label]="cancelLabel()"
                 [attr.aria-label]="cancelLabel()"
                 (click)="onCancel()"></button>
-            <button
-                rtButton
-                type="button"
-                qa-dataid="dynamic-selector-apply"
-                [label]="applyText()"
-                [attr.aria-label]="applyText()"
-                [disabled]="isApplyDisabled()"
-                (click)="onApply()"></button>
+            @if (!loadError.shown()) {
+                <button
+                    rtButton
+                    type="button"
+                    qa-dataid="dynamic-selector-apply"
+                    [label]="applyText()"
+                    [attr.aria-label]="applyText()"
+                    [disabled]="isApplyDisabled()"
+                    (click)="onApply()"></button>
+            }
         </div>
     </div>
+
+    <ng-template #defaultError>
+        <rt-empty-state qa-dataid="dynamic-selector-error" icon="ico-alert" [title]="loadError.title()" [description]="loadError.hint()">
+            <button
+                rtButton
+                appearance="outlined"
+                type="button"
+                qa-dataid="dynamic-selector-retry"
+                [label]="retryLabel()"
+                [attr.aria-label]="retryLabel()"
+                (click)="loadState.retry.emit()"></button>
+        </rt-empty-state>
+    </ng-template>
 
     <!-- Куски подписи стоят без пробелов между собой: пробел в разметке разорвал бы слово на подсвеченной границе. -->
     <!-- prettier-ignore -->
