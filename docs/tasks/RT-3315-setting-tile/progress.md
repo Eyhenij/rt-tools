@@ -6,9 +6,9 @@
 - **Stage:** 3 из 4 — Сверка с макетом и показ
 - **Done:** стили плитки и спека стилей (23 из 23); правила и сценарии `SC-UKV-1297`–`1300` в
   описании словаря; истории `SettingTile` и `SettingTileNarrow`; сверка чисел 132 из 132.
-- **Next step:** выяснить у владельца, где нарушена дизайн-система в варианте плитки с длинным пояснением; до ответа макет и код не трогать.
+- **Next step:** по одобрению макета — код: длинное пояснение в `rt-collapsible-text`, шаги скругления плитки, история витрины во всех состояниях.
 - **Uncommitted:** нет.
-- **Waiting for the owner:** ответ, где нарушена дизайн-система (на показе макета: «ты понимаешь что такое дизайн система?»); затем одобрение витрины; push, PR и выпуск — только после него, по
+- **Waiting for the owner:** одобрение макета `Setting Tile` со всем набором состояний; затем одобрение витрины; push, PR и выпуск — только после него, по
   поручению: «пуш, PR и выпуск только после «одобряю» владельца по показу».
 - **PR:** not open yet
 
@@ -49,6 +49,15 @@
   `<label>` выключатель не переключает: нажатие по кнопке не передаётся элементу подписи. В макет
   добавлены варианты `Text=Long` и `Text=Long expanded`, прежние названы `Text=Short`. Affected
   stage of the plan: 1, 2, 3.
+- **Макет плитки нарисован во всём наборе состояний.** Слово владельца: «какого хуя ты не рисуешь
+  все такие состояния для тех компонентов над которыми работаешь?», затем «заканчивай задачу от
+  родительской сессии». В наборе 24 варианта: вкл/выкл × покой, наведение, фокус, отключена ×
+  короткое, длинное, раскрытое пояснение. Рядом три рамки: тёмная тема со всеми 24, шаги скругления
+  от none до full, узкая ширина 343 в окне 375. Скругление плитки взято из новой переменной
+  `shape/setting-tile`, Default — md. `Collapsible Text` стоит в плитке как есть: переопределены
+  только текст и число строк (вход `clampLines`), цвет и стиль не тронуты. Замер: рамки листа не
+  пересекаются, в каждой строке набора одна высота и один верх выключателя. Affected stage of the
+  plan: 1, 2, 3.
 - **Номера сценариев `SC-UKV-1297`–`1300` взяты командой `spec:next-id`.** Affected stage of the
   plan: 1.
 
@@ -64,3 +73,45 @@
 - Кадры витрины: пересняты 17 в 9 файлах (бегунок выключателя, рамка `framed-list`); второй
   прогон через образ — 1092 из 1092. Наложение плитки на кадры: выключатель 0,01%, пустые места
   0%, текст 6,25% (растр шрифта образа).
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/eyhenij/WebstormProjects/rt-auth-counters
+**Branch:** RT-3315-setting-tile
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 3 из 4 — Сверка с макетом и показ
+- **Next step:** выяснить у владельца, где нарушена дизайн-система в варианте плитки с длинным пояснением; до ответа макет и код не трогать.
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-3315-setting-tile/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M .claude/rt-kit/assignments.md
+ M docs/tasks/RT-3315-setting-tile/progress.md
+?? docs/plans/mockup-all-states.md
+?? docs/tasks/RT-3318-mockups-law-states/
+?? docs/tasks/RT-3319-mockups-rule-states/
+?? docs/tasks/RT-3320-kit-approval-states-check/
+?? docs/tasks/RT-3321-showcase-consumer-states/
+?? docs/tasks/RT-3322-figma-components-states/
+```
+
+### Commits over the main branch
+
+```
+eb7bbf4ab docs(rt:ui-kit-v2): работа RT-3315 остановлена до ответа владельца о макете
+503c79bf6 docs(rt:ui-kit-v2): слово владельца о длинном пояснении плитки RT-3315
+e3e1e3953 docs(rt:ui-kit-v2): прогресс RT-3315 — кадры пересняты, сверка 132 из 132
+4b38fbb87 feat(rt:ui-kit-v2): плитка настройки в форме кита нажимается целиком
+a79df3bf2 docs(rt:ui-kit-v2): разбор и план задачи RT-3315
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.
