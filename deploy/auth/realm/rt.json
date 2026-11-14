@@ -3,6 +3,15 @@
   "enabled": true,
   "displayName": "RT",
   "loginTheme": "rt",
+  "browserSecurityHeaders": {
+    "contentSecurityPolicy": "frame-src 'self' https://mc.yandex.ru; frame-ancestors 'self'; object-src 'none';",
+    "contentSecurityPolicyReportOnly": "",
+    "xContentTypeOptions": "nosniff",
+    "referrerPolicy": "no-referrer",
+    "xRobotsTag": "none",
+    "xFrameOptions": "SAMEORIGIN",
+    "strictTransportSecurity": "max-age=31536000; includeSubDomains"
+  },
   "loginWithEmailAllowed": true,
   "duplicateEmailsAllowed": false,
   "registrationAllowed": false,

@@ -46,14 +46,17 @@ A realm without an entry, an empty or a malformed number loads no tag of that co
 carries `ym-disable-keys`, so Webvisor records none of its keys, and a link address in the markup
 loses the action token and the login hint.
 
-Three settings live outside the theme:
+Four settings live outside the theme:
 
 - the numbers go into the environment file of the login node, and the rollout restarts Keycloak:
   without them Keycloak starts with empty numbers, and the pages load no counter;
 - Metrika shows the submit in its reports only for a goal of the kind «JavaScript event» with the
   id `auth_form_submit`;
 - GA4 tells the pages apart only by `page_id` registered as a custom dimension of the event scope:
-  the entry addresses are the same for the sign-in, the registration and the reset.
+  the entry addresses are the same for the sign-in, the registration and the reset;
+- Metrika opens a frame of `https://mc.yandex.ru`, so the security policy of the realm lists it in
+  `frame-src`; the realm `rt` of this tree does, and the connection guide shows the block for a
+  product realm.
 
 ## What the theme draws
 

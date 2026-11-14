@@ -5,6 +5,7 @@ without a line and a line without a rule is a divergence.
 
 - **Every page of the theme loads GA4 and Metrika after it is drawn, when their numbers are set.** — `projects/auth-keycloak-theme/src/login/kc-counters.ts:countersOf`, called at `projects/auth-keycloak-theme/src/main.ts:startCounters`. The properties are declared at `projects/auth-keycloak-theme/package.json:environmentVariables`
 - **Each realm reports to its own pair of numbers.** — `projects/auth-keycloak-theme/src/login/kc-counters.ts:COUNTERS_PROPERTY`, the realm passed at `projects/auth-keycloak-theme/src/main.ts:startCounters`
+- **The security policy of the realm lets the Metrika frame in.** — `deploy/auth/realm/rt.json:browserSecurityHeaders`
 - **The page view goes to both counters with the page id.** — `projects/auth-keycloak-theme/src/login/kc-counters.ts:startGa`. The hit is sent at `projects/auth-keycloak-theme/src/login/kc-counters.ts:startMetrika`
 - **A form that leaves the page sends the event `auth_form_submit` with the page id.** — `projects/auth-keycloak-theme/src/login/kc-counters.ts:startCounters`
 - **No value typed into a field reaches a counter.** — `projects/auth-keycloak-theme/src/login/kc-counters.ts:FORM_SUBMIT_EVENT`. The fields are marked at `projects/auth-keycloak-theme/src/login/kc-counters.ts:WEBVISOR_NO_KEYS`
