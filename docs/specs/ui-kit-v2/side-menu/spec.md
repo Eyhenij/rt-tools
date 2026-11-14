@@ -66,7 +66,7 @@ side menu stands next to it as a component of its own.
 - **A star stands on items with an address; a row of the block carries «remove» and a drag handle.** The handle moves a row by dragging and by the arrows on it. A row dropped outside the block changes nothing.
 - **The favourites and the collapsed blocks are kept in the menu settings under its id.** A broken record reads without foreign values. A collapse made during a search is not kept.
 - **A folder of the submenu and the favourites block are expansion panels of the kit.** They open with motion and name their state to the assistive means the same way. The row look stays the menu's own.
-- **An item icon is drawn by a kit name or by the pair of a first-kit Material name.** The same
+- **An item icon is drawn by a kit name or by the pair of a Material name.** The same
   pairs serve `rt-menu`. The button of a row resolves its name the same way.
 - **A name the kit does not draw takes the menu's own icon template.** The template is one per menu
   and gets the item. It never replaces an icon the kit draws.

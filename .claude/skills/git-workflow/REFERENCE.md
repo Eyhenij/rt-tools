@@ -67,7 +67,7 @@
 - **<область>:** <что снято или переименовано> + переход
 ```
 
-- `<область>` совпадает с областью коммита, например `rt:ui-kit`.
+- `<область>` совпадает с областью коммита, например `rt:ui-kit-v2`.
 - Один пункт на видимую потребителю правку, а не на коммит. Правки оформления, обслуживания и
   текстов строки в журнале не зарабатывают.
 - Раздел уже есть — дописываются его подразделы, второй такой же не заводится.
@@ -96,7 +96,7 @@
 
 ## Test plan
 
-- [ ] `pnpm run build:ui-kit`
+- [ ] `pnpm run build:ui-kit-v2`
 - [ ] `pnpm test`
 - [ ] `pnpm run lint`
 - [ ] <проверка на витрине, если правка видимая>
@@ -111,8 +111,8 @@ scripts/gather-context.sh main
 
 command git push -u origin "$(command git rev-parse --abbrev-ref HEAD)"
 
-command git add projects/ui-kit/CHANGELOG.md
-command git commit -m "docs(rt:ui-kit): add unreleased notes for ..."
+command git add projects/ui-kit-v2/CHANGELOG.md
+command git commit -m "docs(rt:ui-kit-v2): add unreleased notes for ..."
 command git push
 
 command gh pr create --base main --head "<ветка>" \

@@ -39,7 +39,7 @@ function dayOf(moment: Date): string {
 }
 
 /** Подпись дня под столбиком: число и месяц. */
-export function chartDayLabel(day: string): string {
+function chartDayLabel(day: string): string {
     return `${day.slice(8, 10)}.${day.slice(5, 7)}`;
 }
 

@@ -50,7 +50,7 @@ The sections below are this tree's articles: the law's technique is named by the
       fire for a container threshold, and that looks like the absence of a rule rather than like a
       miss of the check.
 
-- **Styling is taken as a token.** The second kit's check is `pnpm run check:tokens-styles`. It
+- **Styling is taken as a token.** The kit's check is `pnpm run check:tokens-styles`. It
   calls stylelint with its own config (`tools/stylelint-tokens.config.mjs`) over the set
   `projects/ui-kit-v2/src/lib/**/*.scss` and matches the findings against the accepted list
   `tools/tokens-styles-allowlist.json`.
@@ -169,7 +169,7 @@ The sections below are this tree's articles: the law's technique is named by the
       where the component is drawn — so the set of showings is the check.
 
 - **A kit rule lives in a cascade layer.** The check is `pnpm run check:cascade-layer`. It reads the
-  second kit's component styles and the styling layer, judges the wrapper and the order of the
+  kit's component styles and the styling layer, judges the wrapper and the order of the
   sublayers; the accepted list is `tools/cascade-layer-allowlist.json`.
     - **A component's styles file is declared in the sublayer `rt-kit.components` whole.** There is
       one wrapper per file: a second one leaves part of the rules outside while the file looks

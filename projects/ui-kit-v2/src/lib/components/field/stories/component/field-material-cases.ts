@@ -14,7 +14,7 @@ import { RtTextareaComponent } from '../../../textarea/rt-textarea.component';
  */
 
 /** Контролы, которые показ кладёт в поле: ключи — имена случаев. */
-export interface IFieldKinds {
+interface IFieldKinds {
     readonly input: RtInputComponent;
     readonly select: RtSelectComponent<string>;
     readonly number: RtInputNumberComponent;

@@ -11,8 +11,8 @@ token names are listed at all.
 ## What it is called here
 
 - **In the rule** — Here
-- **a document** — a package README, a component `CONTEXT.md`, `TOKENS.md`, a decision in `docs/adr/`, a plan in `docs/plans/`, the changelog
-- **the pair "an edit and its document"** — by the guard itself: a rule and its companion; by the tree profile: a second-kit component and the `CONTEXT.md` next to it, the styling tokens and `TOKENS.md`, the production make-up (`docker-compose.prod.yml`, `deploy/Caddyfile`, `.github/workflows/deploy.yml`) and `docs/PROD.md`. A lib for the guard is any directory with `project.json` — every package under `projects/`, `apps/` and `libs/`: creating or removing one, and moving a file between two, demands their READMEs
+- **a document** — a package README, a component `CONTEXT.md`, a decision in `docs/adr/`, a plan in `docs/plans/`, the changelog
+- **the pair "an edit and its document"** — by the guard itself: a rule and its companion; by the tree profile: a kit component and the `CONTEXT.md` next to it, the production make-up (`docker-compose.prod.yml`, `deploy/Caddyfile`, `.github/workflows/deploy.yml`) and `docs/PROD.md`. A lib for the guard is any directory with `project.json` — every package under `projects/`, `apps/` and `libs/`: creating or removing one, and moving a file between two, demands their READMEs
 - **the bypass mark** — the line `Docs-skip: <reason>` in the commit body; an empty reason is not accepted
 - **the project glossary** — `docs/GLOSSARY.md` — the shared part is brought by the package, the subject part is appended by the override
 
@@ -22,8 +22,8 @@ token names are listed at all.
 - **the rules and patterns** — `.claude/skills/<name>/SKILL.md`, the names of this tree next to them — `implementation.md` alongside
 - **the accepted decisions** — `docs/adr/`
 - **the work plans** — `docs/plans/`
-- **the description of the token set** — `projects/ui-kit/src/styles/TOKENS.md`
-- **the description of a component** — `CONTEXT.md` next to a second-kit component
+- **the description of the token set** — the styling pages `projects/ui-kit-v2/docs/*.mdx`
+- **the description of a component** — `CONTEXT.md` next to a kit component
 - **the list of what is not covered** — `UI-KIT-V2-ISSUES.md`
 - **the pair guard** — `.claude/hooks/docs-guard.sh`, the pairs — in `.claude/rt-kit/project.sh`
 - **the project glossary** — `docs/GLOSSARY.md` — laid out by the package, the subject sections — by an override
@@ -54,7 +54,7 @@ silent about.
 - **A file leaving for the description of the past names its former address in its header.** — **Not checked by anything.** The path check does not read the archive at all, and a miss there never turns red. It is held by the order of the move.
 - **The glossary is edited where it is assembled, not where it is read.** — `.claude/hooks/glossary-load.sh:where` — the preamble names the address of the edit itself: the override `.claude/rt-kit/overrides/docs/GLOSSARY.md`, where this tree's own word goes; the shared part arrives by the package, and an in-place edit is refused by `.claude/hooks/rule-source-guard.sh`
 - **An override section replaces the package section of the same name entirely; it does not append to it.** — **Not checked by anything.** The merge by section lies in `projects/agent-kit/src/lib/sections.ts:mergeDocuments`, and neither the layout audit nor the glossary check sees that a section replaced the package one. Both read the assembled view
-- **The working glossary and the screen language are two different vocabularies.** — **Not checked by anything.** The labels of the second kit lie in its translation files, and no check searches them for the words of the glossary's left column.
+- **The working glossary and the screen language are two different vocabularies.** — **Not checked by anything.** The labels of the kit lie in its translation files, and no check searches them for the words of the glossary's left column.
 - **A text naming the state of a machine goes stale without a single edit in the tree.** — **Not checked by anything.** The audits read the tree, while it is the machine that aged: a statement about it is written together with the way to ask it.
 - **A diagram is edited by the same change as the text it depicts.** — **Not checked by anything.** The diagram is typed in words inside that same file, and its divergence from the prose can be told only by reading both.
 
@@ -73,7 +73,7 @@ not in the wrong language.
   and the layout refuses over it.
 - Remaining work is not written into a document but opened as a task on the board.
   `UI-KIT-V2-ISSUES.md` diverges from the law's article about the work queue: it lists what the
-  second kit does not cover yet. Until its items become tasks, the work goes by the law.
+  kit does not cover yet. Until its items become tasks, the work goes by the law.
 - The released sections of the changelog are assembled from commit subjects and are not
   rewritten; only the unreleased one is edited.
 - Numbers in texts (how many specs, how many components) go stale within one branch — next to

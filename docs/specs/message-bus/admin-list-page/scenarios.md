@@ -24,6 +24,13 @@ When the owner looks at the strip above the list
 Then the button of the section stands to the left of the refreshing and of the setting of the columns,
 and those stand at the edge
 
+### SC-MB-432 — the refreshing and the setting of the columns draw their icons in every list
+
+Given the owner opened one list section, refreshed it and went to another one
+When they look at the right part of the toolbar
+Then the refreshing and the setting of the columns each show the glyph of their icon, not an empty
+frame
+
 ### SC-MB-113 — an unoccupied place above the table takes no height
 
 Given the section put nothing above the table

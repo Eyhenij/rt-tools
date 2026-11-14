@@ -71,7 +71,7 @@ export const CHAT_CORS_METHODS: string = 'GET, POST, OPTIONS';
 export const CHAT_CORS_HEADERS: string = 'content-type';
 
 /** Сколько секунд браузер вправе помнить позволение и не спрашивать заново. */
-export const CHAT_CORS_MAX_AGE: string = '600';
+const CHAT_CORS_MAX_AGE: string = '600';
 
 /**
  * Заголовки позволения для страницы чужого адреса.

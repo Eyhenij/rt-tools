@@ -225,8 +225,9 @@ for (const node of light) {
 // The steps the first kit declares on the page root under the same names with its own values. The
 // application moving from one kit to the other holds both, the first kit's file comes later, and inside
 // the second kit's components its steps win. The coexistence file declares the second kit's values on
-// the preset node — whatever stands on the root, the preset is drawn by its own scale. The list goes
-// together with the first kit: when it leaves the tree, the file and this list leave with it.
+// the preset node — whatever stands on the root, the preset is drawn by its own scale. The first kit
+// has left this tree but is still published, and applications still move from it: the file and this
+// list leave when the published first kit ends.
 const COEXIST_NAMES = [
     '--rt-radius-xs',
     '--rt-radius-sm',
