@@ -135,7 +135,7 @@ pnpm run build:all             # build every package
 
 pnpm test                      # run all unit tests (Jest)
 pnpm run lint                  # lint all projects
-pnpm run check:all             # lint + test + build everything
+pnpm run check:all             # lint + test + build everything, then knip
 pnpm run check:unused          # files, dependencies and exports nobody uses (knip)
 
 pnpm run storybook:ui-kit-v2   # run the kit's Storybook locally, port 6007

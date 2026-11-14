@@ -33,13 +33,13 @@ pnpm run lint
 # Format code
 pnpm run prettier
 
-# Lint, types, tests, build and verify over every project, then the styles linter. It is not the
-# push gate: the tree checks, the hook scenarios and the showcase snapshots run only before a push,
-# and that set is printed by `rt_push_checks` in `.claude/rt-kit/project.sh`
+# Lint, types, tests, build and verify over every project, then the styles linter and knip. It is
+# not the push gate: the tree checks, the hook scenarios and the showcase snapshots run only before
+# a push, and that set is printed by `rt_push_checks` in `.claude/rt-kit/project.sh`
 pnpm run check:all
 
 # Files, dependencies and exports nobody uses, by knip over every project; settings in `knip.json`.
-# It is not in the push set and exits non-zero while findings remain
+# The last step of `check:all`; it is not in the push set, and any finding turns it red
 pnpm run check:unused
 
 # Raise the applications on one's own machine. The database is needed only by the receiver;
