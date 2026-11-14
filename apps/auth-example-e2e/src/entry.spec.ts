@@ -22,6 +22,29 @@ test.describe('the entry', () => {
         expect(probe.calls()).toBe(0);
     });
 
+    test('SC-AUTH-108, SC-AUTH-115 — a stand without numbers loads no counter, and the typed values stay out of the markup', async ({
+        page,
+    }) => {
+        const counters: string[] = [];
+        page.on('request', (request: { url(): string }): void => {
+            if (/googletagmanager\.com|google-analytics\.com|mc\.yandex\.ru/.test(request.url())) {
+                counters.push(request.url());
+            }
+        });
+        await page.goto('/');
+        await expectEntryScreen(page);
+        await page.getByTestId('kc-username').locator('input').fill(PEOPLE.reader.email);
+        await page.getByTestId('kc-password').locator('input').fill('typed-secret-1!');
+        const markup: string = await page.getByTestId('kc-login-form').evaluate((form: Element): string => form.outerHTML);
+
+        expect(markup).toContain('name="username"');
+        expect(markup).not.toContain(PEOPLE.reader.email);
+        expect(markup).not.toContain('typed-secret-1!');
+        await page.getByTestId('kc-login-submit').click();
+        await expectEntryScreen(page);
+        expect(counters).toEqual([]);
+    });
+
     test('SC-AUTH-48 — a wrong password keeps the person on the entry screen', async ({ page }) => {
         await page.goto('/');
         await enterOnRealmScreen(page, PEOPLE.reader.email, 'not-the-password');
