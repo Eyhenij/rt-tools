@@ -3,12 +3,13 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 5 — stage 1 done: knip names one file, `express` with 15 packages, 51 exports
-  and 14 types
+- **Stage:** 3 of 5 — stage 2 done: no dependency section in knip, `pnpm install
+  --frozen-lockfile` and `pnpm exec nx list` answer, `check:all` green (358 tasks), no faker in
+  `.claude` and `docs/specs`
 - **Done:** task returned to the epic by the owner's word «Верни в эпик», branch from the epic
   branch, board column; the knip findings sorted; the plan read by both roles and approved, with
   the owner's answers «Снимать export руками», «В конце check:all», «Написать тесты e2e»
-- **Next step:** step 2.1 — `express` and the 15 packages out of `package.json` and the lockfile
+- **Next step:** step 3.1 — the dead file and the two dead symbols
 - **Waiting for the owner:** nothing until stage 4, where the Figma frames go to them
 - **PR:** not open yet
 
@@ -17,9 +18,9 @@
 - [x] 1.1 Name the secondary entries of the kit in `knip.json` by `src/lib/components/*/index.ts`
 - [x] 1.2 Name the 13 lib barrels by exact paths in `ignore`, the storage client types, the six used packages, `graphify` and the editor duplicate in `knip.json`
 - [x] 1.3 Move the `.storybook` type imports from `playwright` to `@playwright/test`
-- [>] 2.1 Remove `express` and the 15 dev packages from `package.json` and the lockfile
-- [ ] 2.2 Rewrite the three rule texts that name faker
-- [ ] 3.1 Delete `projects/ui-kit-v2/src/lib/components/index.ts`, `hooksSectionByMatcher` and `TTreeCommandKind`
+- [x] 2.1 Remove `express` and the 15 dev packages from `package.json` and the lockfile
+- [x] 2.2 Rewrite the three rule texts that name faker
+- [>] 3.1 Delete `projects/ui-kit-v2/src/lib/components/index.ts`, `hooksSectionByMatcher` and `TTreeCommandKind`
 - [ ] 3.2 Drop `export` from the in-file exports and types outside the three kit files under approval
 - [ ] 3.3 Write a test in each end-to-end suite the PR check demands for the changed code
 - [ ] 4.1 Show the owner the Figma frames of the PDF viewer and the tabs and write the approval into `approvals.md`

@@ -109,10 +109,9 @@ silent about.
 - **A snapshot and a measurement answer different questions.** A measurement of computed values
   says only what it was asked about; a snapshot catches everything visible, but fires on a shift
   of one pixel too. One does not replace the other.
-- **What is not deterministic does not get into a story.** Random data is pinned by the
-  generator's seed (`faker.seed` in `preview.ts`), pictures are embedded into the address instead
-  of being loaded from the network, the icon font waits for readiness — until then `rt-icon`
-  keeps itself invisible.
+- **What is not deterministic does not get into a story.** A story takes fixed values written in
+  it, not generated ones; pictures are embedded into the address instead of being loaded from the
+  network, the icon font waits for readiness — until then `rt-icon` keeps itself invisible.
 - **The framework's animations do not go through CSS.** Declaring a zero duration does not stop
   them: before a snapshot they are driven to the end through the animations interface, otherwise
   the action bar gets into the frame halfway along.

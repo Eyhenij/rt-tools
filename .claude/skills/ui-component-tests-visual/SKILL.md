@@ -209,8 +209,3 @@ something else.
   show only such controls, and the computed values of the nodes around them match to the
   hundredth. The cure is the browser version held where the references were taken, or a
   deliberate re-take of every touched reference — not a fix of the layout.
-- **A divergence only in text after a data generator raise is the data, not the layout.** A newer
-  faker gives other names and other numbers, and every frame with seeded values diverges by text
-  alone while the boxes stay where they were. The sign: the difference frames show letters and
-  digits, not edges. The cure is the generator version held in the manifest, or a re-take of the
-  references together with the raise.
