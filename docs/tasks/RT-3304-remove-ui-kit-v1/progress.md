@@ -5,8 +5,8 @@
 - **State:** `этап-идёт`
 - **Stage:** 4 of 4 — the tree checks pass
 - **Done:** stages 1–3: the package, its build, tools, checks, rules and texts are free of the first kit
-- **Next step:** commit, rebuild the code graphs by the new head, run `pnpm run check:all`
-- **Uncommitted:** yes — the whole removal lies in the working tree
+- **Next step:** run the push set, push, open the PR into the epic branch
+- **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
@@ -23,8 +23,8 @@
 - [x] 2.3 Bring the scenarios of the tools and of the rules package up to date
 - [x] 3.1 Bring the rules of this tree and the overrides up to date
 - [x] 3.2 Bring `README.md`, `CLAUDE.md` and the documents up to date
-- [>] 4.1 Run `pnpm run check:all`
-- [ ] 4.2 Run the push set
+- [x] 4.1 Run `pnpm run check:all`
+- [>] 4.2 Run the push set
 
 ## Decisions along the way
 
@@ -58,3 +58,6 @@
   allowlists, the rules, the overrides, `README.md` and `CLAUDE.md` brought up to one kit.
   `check-specs` and `check-doc-paths` are green, the push-set input table is recorded again
   (42 steps).
+- `pnpm run check:all`: 358 tasks, 8 typechecks and builds of the receiver red on a stale storage
+  client — it lies outside history; after `pnpm run prisma:generate` all 8 green, the styles linter
+  green.
