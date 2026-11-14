@@ -33,23 +33,32 @@ server selector. They never see the words error input or template.
 
 ## Rules
 
-- **A server selector draws the load error in its panel instead of the options.** With `error` not
-  null the panel shows the error whatever `loading` and the options say; the search window of
-  `rt-dynamic-selector` shows the same view.
+- **A server selector draws the load error instead of the options.** With `error` not null the
+  error stands whatever `loading`, `fetching` and the options say, without a spinner; an error on a
+  later page replaces the shown options too: the selectors have no load-more error row.
+- **In `rt-dynamic-selector` the view stands in its selection window.** With `error` not null the
+  field never draws «Выбирать не из чего»: the window opens on the error. «Применить» and «Выбрать
+  все» are hidden while the error stands. The standalone `rt-dynamic-selector-popup` takes the same
+  `error`, `errorDescription`, `retry` and both templates.
+- **In `rt-autocomplete` the panel stays open after «Повторить».** Arrows and Enter choose nothing
+  while the error stands, and the error view stands outside the options list role.
 - **The retry button emits `retry` and nothing else.** The selector does not repeat the request by
   itself.
 - **The default error view of a server selector is `rt-empty-state` with the alert icon, the title,
   the hint and an outlined «Повторить» button.** The title is the `error` text when it is not
-  empty, otherwise the label of the kit; the hint is the `errorDescription` input or the label of
-  the kit.
+  empty, otherwise the label `uiLoadError`; the hint is the `errorDescription` input or the label
+  `uiLoadErrorHint`; the button is `uiRetry`.
 - **A server selector takes both own views.** `rtDynamicSelectorEmpty`, `rtDynamicSelectorError`,
-  `rtAutocompleteEmpty` and `rtAutocompleteError`; the error template gets the error text as
-  `$implicit` and a `retry` function.
-- **The `emptyTemplate` input of `rt-autocomplete` keeps working.** The directive
-  `rtAutocompleteEmpty` wins when both are given.
+  `rtAutocompleteEmpty` and `rtAutocompleteError`; the empty template gets the typed text as
+  `$implicit`, the error template gets the error text as `$implicit` and a `retry` function.
+- **A directive template wins over the present empty inputs.** It wins over `emptyTemplate`,
+  `emptyText`, `emptyResultsText` and `emptyIcon`; without a template those inputs work as before.
 - **A local list takes an own empty view and has no error.** `rtSelectEmpty`, `rtMultiselectEmpty`,
-  `rtTreeEmpty`, `rtDraggableTreeEmpty`, `rtTreeSelectorEmpty` and `rtSideMenuEmpty` replace the
-  «ничего не найдено» line; without a template the line stays as it was.
+  `rtTreeEmpty`, `rtDraggableTreeEmpty`, `rtTreeSelectorEmpty` and `rtSideMenuEmpty` stand wherever
+  the component draws its empty line today — «Нет вариантов» and «Ничего не найдено» alike; the
+  template gets the search text as `$implicit`. `rt-tree-selector` passes its template to the
+  inner tree, so it covers zero nodes too. `rt-side-menu` draws it only on a search with no
+  results. Without a template the present line stays.
 - **The PDF viewer takes an own error view and keeps its error internal.** `rtPdfViewerError`
   replaces the default error; the template gets the error text as `$implicit` and a `download`
   function. The viewer gets neither an `error` input nor a `retry` output, and its default error
@@ -84,8 +93,8 @@ Select 7917:5371, Multiselect 7917:5407, Tree 7917:5443, Draggable Tree 7917:545
 
 ### Locales
 
-The labels of the error view live in the kit dictionary; the selector title «Не удалось загрузить
-варианты» is added in eight languages if the dictionary lacks it.
+The labels `uiLoadError`, `uiLoadErrorHint` and `uiRetry` already live in the kit dictionary. The
+text «Не удалось загрузить варианты» on the frames is the sample `error` the consumer passes.
 
 ### SEO
 
@@ -108,7 +117,10 @@ Not applicable.
 
 ## Open questions
 
-None.
+- How the PDF viewer receives `rtPdfViewerError`: it is opened by the dialog service and has no
+  host markup, and its error swallows the cause. Asked of the consumer session on 14.11.2026.
+- Whether `rt-hybrid-tree` and `rt-hybrid-tree-selector`, built on the tree templates, take the
+  empty slot in this task. Asked with the question above.
 
 ## History of changes
 

@@ -4,11 +4,13 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `договорённость-записана`
-- **Stage:** 0 of — — the plan is not written yet
+- **State:** `этап-идёт`
+- **Stage:** 1 of 3 — the server selectors; the roles read the plan, the spec critique is folded in
 - **Done:** the branch from the RT-3294 branch, the grill of the task and the agreement
   `docs/specs/ui-kit-v2/proposed/error-states-selectors/` read from the nine approved frames.
-- **Next step:** the spec critique of the agreement, then the plan and its review by the roles.
+- **Next step:** step 1.1 — `rt-autocomplete`: the states directive, the inputs, the error branch
+  in the panel and the specs. The PDF viewer channel and the hybrid trees wait for the consumer
+  session's answer; stage 1 does not depend on them.
 - **Uncommitted:** no.
 - **Waiting for the owner:** no; the consumer session is asked about the push set limit and about
   sending the epic branch with `main` merged in.
@@ -16,11 +18,22 @@ Rewritten by every session, not appended to.
 
 ## Steps
 
-No plan yet: the steps appear with it.
+- [>] 1.1 Add `error`, `errorDescription`, `retry`, `rtAutocompleteEmpty` and `rtAutocompleteError` to `rt-autocomplete`
+- [ ] 1.2 Add `error`, `errorDescription`, `retry`, `rtDynamicSelectorEmpty` and `rtDynamicSelectorError` to `rt-dynamic-selector`
+- [ ] 1.3 Cover SC-UKV-1287…1290 by the specs
+- [ ] 2.1 Add the empty template directive to `rt-select`, `rt-multiselect`, `rt-tree`, `rt-draggable-tree`, `rt-tree-selector` and `rt-side-menu`
+- [ ] 2.2 Add `rtPdfViewerError` to `rt-pdf-viewer`
+- [ ] 2.3 Cover SC-UKV-1291 and SC-UKV-1292 by the specs
+- [ ] 3.1 Add a story of the error and the own views for each of the nine components
+- [ ] 3.2 Compare the stories with the frames by measurement and show them to the owner
 
 ## Decisions along the way
 
-None yet.
+- **The spec critique is folded in before the first stage** — priority over `fetching`, the
+  selection window of the dynamic selector, the label keys, the fate of the present empty inputs,
+  the local list empty lines and four scenarios more. The milestone G wording of the epic (the
+  local lists and the PDF viewer get part of the contract) goes to the consumer session with the
+  PDF question.
 
 ## Sessions
 

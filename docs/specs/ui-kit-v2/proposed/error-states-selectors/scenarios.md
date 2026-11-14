@@ -30,6 +30,30 @@ Given one of `rt-select`, `rt-multiselect`, `rt-tree`, `rt-draggable-tree`, `rt-
 When it is drawn
 Then the template stands instead of the «ничего не найдено» line; without a template the line stays
 
+### SC-UKV-1293 — the error of a server selector wins over loading
+
+Given a server selector with `loading` true and `error` «Нет сети»
+When it is drawn
+Then the error view stands and no spinner is drawn
+
+### SC-UKV-1294 — an empty error takes the kit title and the description takes the hint
+
+Given a server selector with `error` empty and `errorDescription` «Проверьте сеть»
+When it is drawn
+Then the title is the label `uiLoadError` and the hint is «Проверьте сеть»
+
+### SC-UKV-1295 — the dynamic selector opens on the error when there is nothing to choose
+
+Given an `rt-dynamic-selector` with `localSearch`, no entities and `error` not null
+When it is drawn
+Then the field does not say «Выбирать не из чего», and its window opens on the error view
+
+### SC-UKV-1296 — a local list without a template keeps its line
+
+Given a local list with nothing to show and no empty template
+When it is drawn
+Then its present «Нет вариантов» or «Ничего не найдено» line stands as before
+
 ### SC-UKV-1292 — the PDF viewer takes its own error view
 
 Given an `rt-pdf-viewer` whose document failed to open and an `rtPdfViewerError` template
