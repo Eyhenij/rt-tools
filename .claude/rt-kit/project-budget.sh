@@ -31,8 +31,13 @@ rt_push_check_budget() {
 # after the steps the change did not need were taken out. A push over it is investigated before the
 # next one. The owner's order of 13.11.2026: «запиши лимит на отправку ветки, если отправка занимает
 # дольше — ты обязан разбираться почему это там».
+#
+# 440 held only for a set without the second kit's showcase. A change of the second kit runs its
+# visual gate, 466–584 s alone, and three whole sets of such changes took 496, 509 and 598 s on
+# 14.11.2026 (task RT-3294). The limit is the longest of them with a margin of 22 s. The owner's
+# answer of 14.11.2026: «Поднять лимит по замеру».
 rt_push_set_budget() {
-    echo 440
+    echo 620
 }
 
 rt_push_over_budget_words() {
