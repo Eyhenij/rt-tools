@@ -35,7 +35,7 @@ import { RtMultiselectComponent } from '../../rt-multiselect.component';
         /* Панель уезжает в контейнер оверлеев и ложится поверх страницы: без запаса снизу
            она вышла бы за нижний край окна. */
         .app-multiselect-states__panel-slot {
-            width: 17.5rem;
+            width: 20rem;
             padding-bottom: 12rem;
         }
     `,

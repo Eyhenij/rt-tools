@@ -9,11 +9,11 @@ Rewritten by every session, not appended to.
 - **Done:** the error and both own views of the autocomplete and the dynamic selector, the own
   empty view of the six local lists, the own error view of the PDF viewer; the states specs cover
   SC-UKV-1287…1296.
-- **Next step:** step 3.2 — the owner's word on the showcase; then the references, the overview
-  pages and the agreement merged into the spec.
+- **Next step:** the showcase references of the new stories, the overview pages of the nine
+  components and the agreement merged into the spec; the showcase is approved, the match is 39 of 39.
 - **Uncommitted:** no.
-- **Waiting for the owner:** the approval of the showcase of the nine components; the consumer
-  session is asked about the push set limit and about sending the epic branch with `main` merged in.
+- **Waiting for the owner:** no; the consumer session is asked about the push set limit and about
+  sending the epic branch with `main` merged in.
 - **PR:** not open yet.
 
 ## Steps
@@ -25,7 +25,7 @@ Rewritten by every session, not appended to.
 - [x] 2.2 Add `rtPdfViewerError` to `rt-pdf-viewer`
 - [x] 2.3 Cover SC-UKV-1291 and SC-UKV-1292 by the specs
 - [x] 3.1 Add a story of the error and the own views for each of the nine components
-- [>] 3.2 Compare the stories with the frames by measurement and show them to the owner
+- [x] 3.2 Compare the stories with the frames by measurement and show them to the owner
 
 ## Decisions along the way
 
@@ -45,9 +45,10 @@ Rewritten by every session, not appended to.
 - **The autocomplete panel error is compact, as the frame draws it** — the measurement found the
   full empty state in the panel; the code now follows the frame, and the hint stands only when
   `errorDescription` is set.
-- **Two divergences of the frames from the kit are left for the owner** — `rt-empty-state` puts
-  its action 8 px lower than the frame of the dynamic selector (its own action margin on top of
-  the gap), and the side menu panel body pads 16 px where the frame draws 8.
+- **Two frames are brought to the kit, by the owner's word «Оставить, кадры поправить»** —
+  `rt-empty-state` puts its action 8 px lower than the dynamic selector frame drew (its own action
+  margin on top of the gap), and the side menu panel body pads 16 px where the frame drew 8. The
+  frames now draw both; the match is 39 of 39.
 
 ## Sessions
 
