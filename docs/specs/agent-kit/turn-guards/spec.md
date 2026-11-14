@@ -180,6 +180,18 @@ The guard of the conversation — the questions to the owner — is a subdomain 
   before the translation of the layer are Russian. The guard judges both the same: the state, the
   stage and the next step it takes by either of the two names.
 
+- **Whether a turn may end by what was said in it is judged by a model, not by word samples.** The
+  package lays out the text of an agent hook for the Stop event; the hook reads the owner's last
+  message and the final reply and lets the turn end on an answer, a stop of the owner, a decision
+  only the owner can make, done work or a named obstacle.
+
+- **The refusal of the model names itself by a fixed mark.** It starts with `BLOCKED by
+  turn-judge:`, and refusals are counted by that mark in the transcripts.
+
+- **Whether a question to the owner may leave is judged by a model.** The package lays out the text
+  of an agent hook for the question tool; a refusal of another check is never a reason to hold the
+  question, and a held one starts with `BLOCKED by ask-judge:`.
+
 ## What is out of scope
 
 - The guards of an edit of a file and the rules gate — a neighbouring subdomain.
