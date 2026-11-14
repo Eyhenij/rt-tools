@@ -78,13 +78,19 @@
                     </li>
                 } @empty {
                     @if (!loading()) {
-                        <li rtElem="empty" qa-dataid="autocomplete-empty">
-                            @if (emptyView(); as tpl) {
-                                <ng-container *ngTemplateOutlet="tpl; context: { $implicit: inputText() }" />
-                            } @else {
-                                {{ emptyText() ?? t().uiNothingFound }}
-                            }
-                        </li>
+                        @if (emptySlot(); as own) {
+                            <li rtElem="own-empty" qa-dataid="autocomplete-own-empty" role="presentation">
+                                <ng-container *ngTemplateOutlet="own.templateRef; context: { $implicit: inputText() }" />
+                            </li>
+                        } @else {
+                            <li rtElem="empty" qa-dataid="autocomplete-empty">
+                                @if (emptyTemplate(); as tpl) {
+                                    <ng-container *ngTemplateOutlet="tpl; context: { $implicit: inputText() }" />
+                                } @else {
+                                    {{ emptyText() ?? t().uiNothingFound }}
+                                }
+                            </li>
+                        }
                     }
                 }
                 @if (loading()) {
