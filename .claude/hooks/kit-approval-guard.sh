@@ -8,8 +8,7 @@
 # both are judged here:
 #
 #   gh pr create                          — the branch against origin/main;
-#   gh workflow run publish-ui-kit-v2.yml — every merge into main since the last version bump;
-#   gh workflow run publish.yml           — the same for the first kit.
+#   gh workflow run publish-ui-kit-v2.yml — every merge into main since the last version bump.
 #
 # The decision is the check's own, `tools/check-kit-approval.mjs`: the guard only recognises the
 # call and passes the refusal on.
@@ -29,14 +28,12 @@ root="${CLAUDE_PROJECT_DIR:-.}"
 check="$root/tools/check-kit-approval.mjs"
 [ -f "$check" ] || exit 0
 
-# The sign errs towards firing: `gh` by any path or wrapper, `pr create` and the two release files.
+# The sign errs towards firing: `gh` by any path or wrapper, `pr create` and the release file.
 mode=""
 if printf '%s' "$cmd" | grep -qE '(^|[^a-z])gh([[:space:]].*)?[[:space:]]pr[[:space:]]+create'; then
     mode="branch"
 elif printf '%s' "$cmd" | grep -qE '(^|[^a-z])gh([[:space:]].*)?[[:space:]]workflow[[:space:]]+run[[:space:]].*publish-ui-kit-v2'; then
     mode="ui-kit-v2"
-elif printf '%s' "$cmd" | grep -qE '(^|[^a-z])gh([[:space:]].*)?[[:space:]]workflow[[:space:]]+run[[:space:]].*publish\.yml'; then
-    mode="ui-kit"
 fi
 [ -z "$mode" ] && exit 0
 

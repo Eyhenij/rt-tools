@@ -17,7 +17,7 @@
 # the companion of the browser rule names it as the declared list of stands, and a person reads it
 # from there. A list that is stale and unread is read as an honest one — that is exactly how it
 # came to name showcases alone while three applications stood on disk.
-RT_STANDS='the receiver http://localhost:3000, the admin panel http://localhost:4200, the end-to-end stand http://localhost:3310 and http://localhost:4310, the ui-kit showcase http://localhost:6006, the ui-kit-v2 showcase http://localhost:6007'
+RT_STANDS='the receiver http://localhost:3000, the admin panel http://localhost:4200, the end-to-end stand http://localhost:3310 and http://localhost:4310, the ui-kit-v2 showcase http://localhost:6007'
 
 # The shape of the number in a PR title and the task state by number are taken from the package as
 # they are.
@@ -196,7 +196,6 @@ node tools/check-gradient-stops.mjs
 node tools/check-icon-map.mjs
 node tools/check-preset-stories.mjs
 node tools/check-showcase-links.mjs
-node tools/check-kit-shot-pairs.mjs
 node tools/check-kit-coverage.mjs
 node tools/check-boolean-inputs.mjs
 node tools/check-tokens-styles.mjs
@@ -251,7 +250,6 @@ EOF
     # against: everything is run, and the completeness matching calls the function with that same
     # empty base — it sees the list whole.
     e2e='pnpm exec nx run message-bus-admin-e2e:e2e'
-    shot_v1='node tools/visual-gate.mjs ui-kit'
     shot_v2='node tools/visual-gate.mjs ui-kit-v2'
     img_api='docker build -f deploy/message-bus.Dockerfile -t message-bus:gate .'
     img_web='docker build -f deploy/message-bus-web.Dockerfile -t message-bus-web:gate .'
@@ -259,7 +257,7 @@ EOF
     auth_e2e='pnpm exec nx run auth-example-e2e:e2e'
 
     if [ -z "$1" ] || ! rt_push_touched "$1" >/dev/null 2>&1; then
-        printf '%s\n%s\n%s\n%s\n%s\n%s\n%s\n' "$e2e" "$auth_stand" "$auth_e2e" "$shot_v1" "$shot_v2" "$img_api" "$img_web"
+        printf '%s\n%s\n%s\n%s\n%s\n%s\n' "$e2e" "$auth_stand" "$auth_e2e" "$shot_v2" "$img_api" "$img_web"
 
         return 0
     fi
@@ -268,7 +266,7 @@ EOF
 
     case " $_touched " in
         *' everything '*)
-            printf '%s\n%s\n%s\n%s\n%s\n%s\n%s\n' "$e2e" "$auth_stand" "$auth_e2e" "$shot_v1" "$shot_v2" "$img_api" "$img_web"
+            printf '%s\n%s\n%s\n%s\n%s\n%s\n' "$e2e" "$auth_stand" "$auth_e2e" "$shot_v2" "$img_api" "$img_web"
 
             return 0
             ;;
@@ -282,7 +280,6 @@ EOF
     # он и прогонялся бы дважды: четыре лишние минуты на каждой такой отправке.
     {
         case " $_touched " in *' receiver '*) printf '%s\n%s\n%s\n' "$e2e" "$img_api" "$img_web" ;; esac
-        case " $_touched " in *' kit1 '*) printf '%s\n' "$shot_v1" ;; esac
         case " $_touched " in *' show2 '*) printf '%s\n' "$shot_v2" ;; esac
     # A kit edit changes every admin screen: its styles are one line of the admin root sheet, and
     # unmatched admin frames once held every branch of an epic (RT-2257). No images: the suite builds.
@@ -320,14 +317,12 @@ rt_push_touched() {
             # A spec changes no frame; the snapshot harness sets the window, the crop and the match.
             projects/ui-kit-v2/*.spec.ts) ;;
             projects/ui-kit-v2/.storybook/*|projects/ui-kit-v2/src/showcase/*|projects/ui-kit-v2/*.stories.ts|projects/ui-kit-v2/*.mdx) _add show2 ;;
-            # The snapshot step's scripts shoot both showcases, the second kit's own one only it.
-            tools/visual-snapshots-v2.mjs) _add show2 ;;
-            tools/visual-gate.mjs|tools/shot-browser.mjs|tools/shot-browser-name.mjs|tools/showcase-probe.mjs|tools/serve-static.mjs) _add show2; _add kit1 ;;
+            # The snapshot step's scripts shoot the showcase.
+            tools/visual-snapshots-v2.mjs|tools/visual-gate.mjs|tools/shot-browser.mjs|tools/shot-browser-name.mjs|tools/showcase-probe.mjs|tools/serve-static.mjs) _add show2 ;;
             # A code graph is data the session reads; above the subjects, as it lies inside a project.
             # The formatter's ignore list is read by the formatter alone, and no heavy step runs it.
             docs/*|*.md|.claude/*|projects/agent-kit/*|tools/*|graphify-out/*|*/graphify-out/*|.prettierignore) ;;
-            # The kits — each with a showcase of its own.
-            projects/ui-kit/*) _add kit1 ;;
+            # The kit with its showcase.
             projects/ui-kit-v2/*) _add kit2 ;;
             # The entry module: its packages, the example, its suite and the stand. The receiver and
             # the admin panel take the packages as sources, so a package edit is the receiver's
@@ -437,10 +432,6 @@ rt_docs_pair_for() {
         # motion.
         projects/ui-kit-v2/src/lib/*/*/*.component.ts)
             printf '%s' "${1%/*}/CONTEXT\.md" ;;
-        # The styling token set is described in one document, and a new token without a line in it
-        # cannot be found by anything: the token names are enumerated nowhere else.
-        projects/ui-kit/src/styles/base/_tokens.scss | projects/ui-kit/src/styles/base/_color-scheme.scss)
-            printf '%s' 'projects/ui-kit/src/styles/TOKENS\.md' ;;
         # The structure of production, the path of a request and the sorting out of silence are
         # described by a text neither the linter nor the build reads: a divergence of the make-up
         # from the description piles up silently.

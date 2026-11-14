@@ -27,8 +27,8 @@ $1" 2>&1
 
 report "a component template needs approvals" \
     "$(run "console.log(m.isVisibleKitFile('projects/ui-kit-v2/src/lib/components/x/x.component.html'))")" true
-report "a style of the first kit needs approvals" \
-    "$(run "console.log(m.isVisibleKitFile('projects/ui-kit/src/lib/ui-kit/x/x.scss'))")" true
+report "a kit style needs approvals" \
+    "$(run "console.log(m.isVisibleKitFile('projects/ui-kit-v2/src/lib/components/x/x.scss'))")" true
 report "a spec goes without them" \
     "$(run "console.log(m.isVisibleKitFile('projects/ui-kit-v2/src/lib/components/x/x.spec.ts'))")" false
 report "a snapshot reference goes without them" \

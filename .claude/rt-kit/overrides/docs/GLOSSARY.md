@@ -1,7 +1,7 @@
 ## Kits and showcase
 
-- **Kit** — a package of components that ships to a consumer. There are two, `@rt-tools/ui-kit` and `@rt-tools/ui-kit-v2`; they are kept apart on purpose and share no code at all
-- **Showcase** — the stand where the components of a kit are shown live. Each kit has its own, with its own port and its own harness; a technique taken from one is silently wrong on the other
+- **Kit** — the package of components that ships to a consumer, `@rt-tools/ui-kit-v2`
+- **Showcase** — the stand where the components of the kit are shown live, with its own port and its own snapshot harness
 - **Story** — one showing of a component on the showcase: the set of inputs under which it is drawn. Not a "case"
 - **Wrapper** — a demonstration component next to a story. Holds the mutable state that a signal input of the kit cannot be given, and does not ship in the package
 - **Axis** — one input of a component with all its values. A component is covered when every axis is shown in full, not when a value can be reached with a control

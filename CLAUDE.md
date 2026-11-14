@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-rt-tools is an Angular library providing utility types, functions, and UI components. It's published as `rt-tools` on npm (v0.3.14) and requires Angular 21+ with Angular Signals support.
+rt-tools is a set of packages under the `@rt-tools` scope: utility types and functions, signal-based stores, an Angular component kit, and the receiver applications built on them. The Angular packages require Angular 21+ with Angular Signals support.
 
 ## Commands
 
@@ -18,14 +18,14 @@ pnpm install
 # stopped with a line about its absence: it names this command itself
 pnpm run prisma:generate
 
-# Build the library
-pnpm run build:ui-kit
+# Build the component kit
+pnpm run build:ui-kit-v2
 
 # Run all tests
 pnpm test
 
 # Run a single test file
-pnpm exec nx test @rt-tools/ui-kit --testFile=<path-to-spec>
+pnpm exec nx test @rt-tools/ui-kit-v2 --testFile=<path-to-spec>
 
 # Lint all projects
 pnpm run lint
@@ -50,8 +50,7 @@ pnpm run serve:admin   # the admin panel, port 4200
 pnpm run serve:stand
 
 # Run Storybook
-pnpm run storybook:ui-kit-v1   # the first kit, port 6006
-pnpm run storybook:ui-kit-v2   # the second kit, port 6007
+pnpm run storybook:ui-kit-v2   # the kit's showcase, port 6007
 
 # View dependency graph
 pnpm run graph
@@ -112,32 +111,21 @@ section. What this repo opts out of is listed in `skip` in `.claude/rt-kit.json`
 
 ### Monorepo Structure
 
-This is an Nx-managed monorepo using pnpm workspaces. The main library is in `projects/ui-kit/`.
+This is an Nx-managed monorepo using pnpm workspaces. The published packages live under
+`projects/`, the applications under `apps/`, their libraries under `libs/`.
 
-`projects/ui-kit-v2/` is a second, independent component package (`@rt-tools/ui-kit-v2`). It does
-not replace `ui-kit` and shares no code with it: different selectors (`rt-*` against `rtui-*`),
-its own design-token set, its own component list, so one application can hold both. It ships its
-own runtime services (theme, breakpoints, notification bus), an icon set under `src/assets/icons`,
-and eight-language labels in the `rtKit` namespace. See `projects/ui-kit-v2/README.md`.
+### Packages
 
-### Library Entry Points
-
-The library exports from `projects/ui-kit/src/public-api.ts` with three main categories:
-
-1. **Core Tools** (`src/lib/`)
-    - `bem/` - BEM CSS methodology utilities (block, elem, mod directives)
-    - `storage/` - Browser storage services (localStorage, sessionStorage, in-memory)
-    - `store/` - Signal-based state management (`BaseStoreService`, `BaseAsyncStoreService`)
-    - `idb-storage/` - IndexedDB storage service
-
-2. **UI Kit** (`src/lib/ui-kit/`)
-    - Components: modal, aside, buttons, table, spinner, toggle, checkbox, toolbar, header, popover, snack-bar, action-bar, dynamic-selectors, file-uploader, image-uploader, info-badge
-    - All components use `rtui-` prefix (e.g., `rtui-button`, `rtui-spinner`)
-
-3. **Utilities** (`src/lib/util/`)
-    - Functions: sorting, comparison, type checking, array/object helpers
-    - Pipes: equal, ternary, sanitize, break-string, is-email
-    - Validators, directives, services, tokens
+- `projects/utils/` (`@rt-tools/utils`) — framework-free types and functions: sorting, comparison,
+  type checking, array and object helpers.
+- `projects/core/` (`@rt-tools/core`) — the Angular half: BEM directives (`rtBlock`, `rtElem`,
+  `rtMod`), browser and IndexedDB storage services, pipes, validators, directives, tokens.
+- `projects/store/` (`@rt-tools/store`) — signal-based stores (`BaseStoreService`,
+  `BaseAsyncStoreService`).
+- `projects/ui-kit-v2/` (`@rt-tools/ui-kit-v2`) — the component kit: selectors `rt-*`, its own
+  design-token set, runtime services (theme, breakpoints, notification bus), an icon set under
+  `src/assets/icons`, and eight-language labels in the `rtKit` namespace. See
+  `projects/ui-kit-v2/README.md`.
 
 ### State Management Pattern
 
@@ -157,10 +145,8 @@ abstract class BaseStoreService<STATE, MSG> {
 
 ### Build Configuration
 
-- Built with ng-packagr (`projects/ui-kit/ng-package.json`)
-- Output to `dist/ui-kit/`
-- SCSS styles inlined
-- Assets include `src/styles` and all `.scss` files
+- The Angular packages are built with ng-packagr (`projects/<package>/ng-package.json`)
+- Output to `dist/<package>/`; the kit adds the ready-made token set by `pnpm run build:tokens-v2`
 
 ## Code Style Requirements
 
@@ -176,9 +162,9 @@ abstract class BaseStoreService<STATE, MSG> {
 
 - Jest with jest-preset-angular
 - Test files: `*.spec.ts` alongside source files
-- Run single test: `pnpm exec nx test @rt-tools/ui-kit --testFile=<relative-path>`
+- Run single test: `pnpm exec nx test @rt-tools/ui-kit-v2 --testFile=<relative-path>`
 
-## Using RtIconOutlinedDirective
+## Using RtIconOutlinedDirective (`@rt-tools/core`)
 
 1. Add Google Fonts link to index.html for Material Symbols
 2. Configure MatIconRegistry in app.component to use 'material-symbols-outlined'

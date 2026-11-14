@@ -2,7 +2,7 @@
 
 Names and bindings of this tree under the rule `SKILL.md` next to it.
 
-The tree draws mockups only for its two kits. The order of approvals around a kit edit is the
+The tree draws mockups only for its kit. The order of approvals around a kit edit is the
 tree's own rule `kit-approval`, standing under the same law.
 
 ## What it is called here
@@ -11,7 +11,7 @@ tree's own rule `kit-approval`, standing under the same law.
 | --------------- | ------------------------------------------------------------ |
 | the design tool | Figma, reached by the session's Figma connection             |
 | the kit copy    | the kit components on the Figma sheet of the kit             |
-| the domain spec | `docs/specs/ui-kit-v2/` and `docs/specs/ui-kit/`             |
+| the domain spec | `docs/specs/ui-kit-v2/`                                      |
 | approved        | the owner's answer quoted in the approval record of the task |
 
 ## Where it lives

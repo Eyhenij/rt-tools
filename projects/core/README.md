@@ -8,7 +8,7 @@ Everything in the [rt-tools](https://github.com/Eyhenij/rt-tools) workspace that
 is not a UI component: directives, pipes, validators, platform and breakpoint services, storage, a
 message bus and the BEM helpers the kit's templates are built on.
 
-`@rt-tools/store` and `@rt-tools/ui-kit` build on it. The framework-free half — pure functions, list
+`@rt-tools/store` and `@rt-tools/ui-kit-v2` build on it. The framework-free half — pure functions, list
 models, type helpers — lives in [`@rt-tools/utils`](https://www.npmjs.com/package/@rt-tools/utils),
 which this package depends on. Neither re-exports the other: `isNil` and `TNullable` are imported
 from `@rt-tools/utils`, always.

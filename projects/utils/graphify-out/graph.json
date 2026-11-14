@@ -306,7 +306,7 @@
       "source_file": "project.json",
       "source_location": "L48",
       "id": "utils_project_targets_verify",
-      "community": 70,
+      "community": 35,
       "norm_label": "verify"
     },
     {
@@ -315,7 +315,7 @@
       "source_file": "project.json",
       "source_location": "L49",
       "id": "utils_project_verify_executor",
-      "community": 70,
+      "community": 35,
       "norm_label": "executor"
     },
     {
@@ -324,7 +324,7 @@
       "source_file": "project.json",
       "source_location": "L50",
       "id": "utils_project_verify_dependson",
-      "community": 70,
+      "community": 35,
       "norm_label": "dependson"
     },
     {
@@ -333,7 +333,7 @@
       "source_file": "project.json",
       "source_location": "L51",
       "id": "utils_project_verify_options",
-      "community": 70,
+      "community": 35,
       "norm_label": "options"
     },
     {
@@ -432,7 +432,7 @@
       "source_file": "project.json",
       "source_location": "L71",
       "id": "utils_project_targets_typecheck",
-      "community": 35,
+      "community": 70,
       "norm_label": "typecheck"
     },
     {
@@ -441,7 +441,7 @@
       "source_file": "project.json",
       "source_location": "L72",
       "id": "utils_project_typecheck_executor",
-      "community": 35,
+      "community": 70,
       "norm_label": "executor"
     },
     {
@@ -450,7 +450,7 @@
       "source_file": "project.json",
       "source_location": "L73",
       "id": "utils_project_typecheck_cache",
-      "community": 35,
+      "community": 70,
       "norm_label": "cache"
     },
     {
@@ -459,7 +459,7 @@
       "source_file": "project.json",
       "source_location": "L74",
       "id": "utils_project_typecheck_inputs",
-      "community": 35,
+      "community": 70,
       "norm_label": "inputs"
     },
     {
@@ -15232,5 +15232,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "76235026c0071bbfba479885de800c463a0de4ec"
+  "built_at_commit": "75a2b88d5ccea8f412dc77132386460ab96ba72a"
 }

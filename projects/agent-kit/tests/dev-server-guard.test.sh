@@ -38,7 +38,7 @@ say "SC-AK-1051 — статический сервер поверх сборк�
 
 # --- SC-AK-1052. Работа проходит ----------------------------------------------------------
 
-say "SC-AK-1052 — сборка проходит" PASS 'pnpm exec nx build @rt-tools/ui-kit'
+say "SC-AK-1052 — сборка проходит" PASS 'pnpm exec nx build @rt-tools/ui-kit-v2'
 say "SC-AK-1052 — набор проб проходит" PASS 'pnpm test'
 say "SC-AK-1052 — запрос к поднятому порту проходит" PASS 'curl -s http://localhost:6006/'
 say "SC-AK-1052 — взгляд на слушателей проходит" PASS 'lsof -i :6006'

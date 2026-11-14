@@ -1,14 +1,13 @@
 ## The ports and stands of this tree
 
 A section of this tree: there is no site and no rendering server here. There are three kinds of
-stands: the showcases of the two kits, the stand of the admin panel's end-to-end suite with its own
+stands: the kit's showcase, the stand of the admin panel's end-to-end suite with its own
 seeded database, and the stand of the entry example. Both end-to-end stands sign in through one
 identity server.
 
 | Role                  | Port  | Raised by                              |
 | --------------------- | ----- | -------------------------------------- |
-| the first kit's showcase  | 6006  | `pnpm run storybook:ui-kit-v1`     |
-| the second kit's showcase | 6007  | `pnpm run storybook:ui-kit-v2`     |
+| the kit's showcase    | 6007  | `pnpm run storybook:ui-kit-v2`         |
 | the stand receiver    | 3310  | `pnpm run serve:stand`                 |
 | the stand admin panel | 4310  | by the same call                       |
 | the dev receiver      | 3000  | `pnpm run serve:api`                   |
