@@ -130,7 +130,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 3 из 4 — замена в этом дереве; план одобрен владельцем: «Одобряю (Recommended)»
-- **Next step:** шаг 3.1 — оба agent-хука в `.claude/settings.json` рядом с диспетчером
+- **Next step:** шаг 3.4 — в новой сессии прогнать живые ходы и записать время хука; без него этап 3 не закрыт
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3276-conversation-checks/progress.md`; the plan lies next to it.
@@ -138,19 +138,16 @@ The progress in full — `docs/tasks/RT-3276-conversation-checks/progress.md`; t
 ### Uncommitted
 
 ```
-A  .claude/hooks/ask-judge.md
-A  .claude/hooks/turn-judge.md
- M docs/specs/agent-kit/turn-guards/implementation.md
- M docs/specs/agent-kit/turn-guards/spec.md
- M docs/tasks/RT-3276-conversation-checks/progress.md
-A  projects/agent-kit/assets/hooks/ask-judge.md
-A  projects/agent-kit/assets/hooks/turn-judge.md
-?? docs/tasks/RT-3326-rules-gate-loads/
+none
 ```
 
 ### Commits over the main branch
 
 ```
+85a4d3248 fix(rt:agent-kit): пустой ход при открытом эпике судит только хук модели
+c828101f2 docs(rt:agent-kit): ход работы RT-3276 — рабочая копия чистая
+139ae2a05 feat(rt:agent-kit): проверки разговора заменены agent-хуками модели
+3f2c0150d feat(rt:agent-kit): тексты agent-хуков на конец хода и на вопрос владельцу
 b242bbec0 docs(rt:agent-kit): разбор и план RT-3276 — проверки разговора заменяет agent-хук
 94f75e41c docs(rt:agent-kit): четыре записи архива старше недели удалены
 9f34bed1e docs(rt:agent-kit): план эпика RT-3302 — третья часть переделки проверок
