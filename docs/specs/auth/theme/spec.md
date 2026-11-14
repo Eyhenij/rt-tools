@@ -132,8 +132,9 @@ the entry is not sure the page belongs to the admin.
 - **Every page of the theme loads GA4 and Metrika after it is drawn, when their numbers are set.**
   The numbers come as theme properties from the environment of the Keycloak node; an empty or
   malformed number loads no tag of that counter. The pages the theme does not draw load them too.
-- **The page view goes to both counters with the page id.** GA4 sends it from the tag config, and
-  Metrika from the hit with the page address and title.
+- **The page view goes to both counters with the page id.** The id is the template name without
+  `.ftl` — `login`, `register`. GA4 sends the view from the tag config, and Metrika from the hit
+  with the page address and title.
 - **A form that leaves the page sends the event `auth_form_submit` with the page id.** A form the
   page holds as invalid sends nothing.
 - **No value typed into a field reaches a counter.** The events carry the page id only, and

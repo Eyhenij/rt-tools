@@ -1,4 +1,4 @@
-import { countersOf, FORM_SUBMIT_EVENT, startCounters } from './kc-counters';
+import { countersOf, FORM_SUBMIT_EVENT, pageNameOf, startCounters } from './kc-counters';
 
 const GA: string = 'G-TEST123';
 const METRIKA: string = '12345678';
@@ -36,6 +36,13 @@ describe('countersOf', () => {
     });
 });
 
+describe('pageNameOf', () => {
+    it('SC-AUTH-109 — the page name is the template id without its extension', () => {
+        expect(pageNameOf('login-reset-password.ftl')).toBe('login-reset-password');
+        expect(pageNameOf('login')).toBe('login');
+    });
+});
+
 describe('startCounters', () => {
     afterEach(() => {
         ['dataLayer', 'gtag', 'ym'].forEach((name: string): boolean => Reflect.deleteProperty(window, name));
@@ -51,7 +58,7 @@ describe('startCounters', () => {
     });
 
     it('SC-AUTH-109 — the GA queue holds `arguments` objects with the config of the page id', () => {
-        startCounters(window, { GA_MEASUREMENT_ID: GA }, 'register');
+        startCounters(window, { GA_MEASUREMENT_ID: GA }, 'register.ftl');
         const queue: unknown = Reflect.get(window, 'dataLayer');
 
         expect(Array.isArray(queue) && Object.prototype.toString.call(queue[0])).toBe('[object Arguments]');

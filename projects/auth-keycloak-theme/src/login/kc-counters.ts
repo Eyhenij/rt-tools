@@ -26,6 +26,11 @@ const METRIKA_ID: RegExp = /^[1-9]\d*$/;
 const GA_SCRIPT: string = 'https://www.googletagmanager.com/gtag/js?id=';
 const METRIKA_SCRIPT: string = 'https://mc.yandex.ru/metrika/tag.js';
 
+/** The page name the counters report: the template id without its `.ftl`, such as `login` or `register`. */
+export function pageNameOf(pageId: string): string {
+    return pageId.replace(/\.ftl$/, '');
+}
+
 /** The counter numbers of the page, read from the theme properties. */
 export function countersOf(properties: TThemeProperties | undefined): ICounters {
     const ga: string = (properties?.[ECounterProperty.Ga] ?? '').trim();
@@ -94,8 +99,9 @@ function startMetrika(view: Window, id: number, pageId: string): TQueueCall {
  * the page. A form the page held as invalid is not reported: its submit is prevented before the
  * event reaches the document. No field value goes into an event.
  */
-export function startCounters(view: Window, properties: TThemeProperties | undefined, pageId: string): void {
+export function startCounters(view: Window, properties: TThemeProperties | undefined, templateId: string): void {
     const counters: ICounters = countersOf(properties);
+    const pageId: string = pageNameOf(templateId);
     const gtag: TQueueCall | null = counters.ga === null ? null : startGa(view, counters.ga, pageId);
     const ym: TQueueCall | null = counters.metrika === null ? null : startMetrika(view, counters.metrika, pageId);
     if (gtag === null && ym === null) {

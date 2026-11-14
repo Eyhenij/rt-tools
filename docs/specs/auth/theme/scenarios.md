@@ -298,8 +298,8 @@ Then no tag script and no counter queue is added to it
 
 Given a page with the GA4 number set
 When the page is drawn
-Then the queue holds `arguments` objects, the config carries the page id, and the tag script is
-added once
+Then the queue holds `arguments` objects, the config carries the page id — the template name
+without `.ftl` — and the tag script is added once
 
 ### SC-AUTH-110 — Metrika starts with Webvisor and sends the hit of the page
 
