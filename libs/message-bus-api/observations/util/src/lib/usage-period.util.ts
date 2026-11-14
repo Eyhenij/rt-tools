@@ -14,10 +14,10 @@ import { dayOf } from './observation-retention.util';
 import { OBSERVATION_DAY } from './observation.const';
 
 /** Самый длинный период чтения в днях. */
-export const USAGE_PERIOD_MAX_DAYS: number = 400;
+const USAGE_PERIOD_MAX_DAYS: number = 400;
 
 /** Сколько дней в периоде, когда запрос его не назвал: сегодняшний день включительно. */
-export const USAGE_PERIOD_DEFAULT_DAYS: number = 30;
+const USAGE_PERIOD_DEFAULT_DAYS: number = 30;
 
 export interface IUsagePeriod {
     readonly from: string;

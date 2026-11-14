@@ -108,7 +108,6 @@
             "Icon map": "node tools/check-icon-map.mjs",
             "Preset stories": "node tools/check-preset-stories.mjs",
             "Showcase links": "node tools/check-showcase-links.mjs",
-            "Kit shot pairs": "node tools/check-kit-shot-pairs.mjs",
             "Kit two coverage": "node tools/check-kit-coverage.mjs",
             "Boolean inputs of kit two": "node tools/check-boolean-inputs.mjs",
             "Test, Lint, Typecheck, Build": "pnpm exec nx affected -t lint typecheck test build --parallel",
@@ -117,10 +116,6 @@
             "E2E admin": "pnpm exec nx run message-bus-admin-e2e:e2e",
             "Auth stand": "pnpm run serve:auth && pnpm run check:auth-stand",
             "E2E auth": "pnpm exec nx run auth-example-e2e:e2e",
-            "Visual tests": "node tools/visual-gate.mjs ui-kit",
-            "Upload visual diffs": {
-                "skip": "выгрузка следов прогона; смотреть их локально не на чем"
-            },
             "Visual tests (ui-kit-v2)": "node tools/visual-gate.mjs ui-kit-v2",
             "Upload visual diffs (ui-kit-v2)": {
                 "skip": "выгрузка следов прогона"

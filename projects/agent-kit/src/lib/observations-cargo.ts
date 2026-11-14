@@ -40,7 +40,7 @@ export function packaged(name: string, assets: readonly IAsset[]): boolean {
 }
 
 /** Строка файла дня в строку груза. Битая или чужого рода — `null`: наблюдение не роняет груз. */
-export function parseObservationLine(line: string): Omit<IObservationLine, 'skill'> | null {
+function parseObservationLine(line: string): Omit<IObservationLine, 'skill'> | null {
     if (!line.trim()) {
         return null;
     }
@@ -65,7 +65,7 @@ export function parseObservationLine(line: string): Omit<IObservationLine, 'skil
 }
 
 /** Род загруженного скила по раскладке. */
-export function skillKindOf(name: string, assets: readonly IAsset[]): TSkillKind {
+function skillKindOf(name: string, assets: readonly IAsset[]): TSkillKind {
     const laid: IAsset | undefined = assets.find((asset: IAsset): boolean => asset.name === name && asset.kind in KIND_BY_ASSET);
 
     return laid ? KIND_BY_ASSET[laid.kind] : 'own';

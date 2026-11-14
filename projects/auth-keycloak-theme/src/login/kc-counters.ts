@@ -5,7 +5,7 @@ import { loadPageScripts } from './kc-page-scripts';
  * its environment. One entry per realm, `realm=ga:metrika`, entries separated by commas:
  * `rt=G-ABC123:12345678,shop=G-XYZ789:`. Either number may be empty.
  */
-export const COUNTERS_PROPERTY: string = 'COUNTERS_BY_REALM';
+const COUNTERS_PROPERTY: string = 'COUNTERS_BY_REALM';
 
 /** The event a form that leaves the page sends; it carries the page id and no field value. */
 export const FORM_SUBMIT_EVENT: string = 'auth_form_submit';
@@ -151,7 +151,7 @@ function startMetrika(view: Window, id: number, pageId: string): TQueueCall {
  * of a mail link holds the address, and an application may pass the address as a login hint. The
  * counters report the page address, so the address is replaced in the history before they start.
  */
-export function dropPrivateParams(view: Window): void {
+function dropPrivateParams(view: Window): void {
     const address: URL = new URL(view.location.href);
     const before: string = address.search;
     PRIVATE_PARAMS.forEach((name: string): void => address.searchParams.delete(name));
@@ -261,7 +261,7 @@ export function hidePrivateLinks(root: ParentNode, go: TGoTo): void {
  * read the context from it, and its text holds the action address with the token and the person's
  * name and address — markup Webvisor records.
  */
-export function dropContextScript(document: Document): void {
+function dropContextScript(document: Document): void {
     document.querySelectorAll('script:not([src])').forEach((script: Element): void => {
         if ((script.textContent ?? '').includes('kcContext')) {
             script.remove();

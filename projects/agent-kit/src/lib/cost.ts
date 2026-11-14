@@ -18,7 +18,7 @@ import { Dirent, existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 /** Чем считано. Стоит рядом с числами: снятое иначе с этим несравнимо. */
-export const COUNTED_BY: string = 'символы и байты, счёт на месте';
+const COUNTED_BY: string = 'символы и байты, счёт на месте';
 
 /** Хуки старта захода, чей вывод заход получает целиком. */
 const ENTRY_HOOKS: readonly string[] = ['glossary-load', 'turn-entry-load', 'constitution-index'];
@@ -137,7 +137,7 @@ export function entryTexts(root: string): readonly string[] {
 }
 
 /** Правило вместе со спутником — столько стоит одна его загрузка. */
-export function ruleTexts(root: string, rule: string): readonly string[] {
+function ruleTexts(root: string, rule: string): readonly string[] {
     const dir: string = join(skillsDir(root), rule);
     if (!existsSync(join(dir, 'SKILL.md'))) {
         throw new CostUnavailableError(`правила «${rule}» в дереве нет`);
@@ -149,12 +149,12 @@ export function ruleTexts(root: string, rule: string): readonly string[] {
 }
 
 /** Весь слой разом: законы, правила и паттерны. Ни один заход столько не грузит. */
-export function layerTexts(root: string): readonly string[] {
+function layerTexts(root: string): readonly string[] {
     return [...markdownUnder(lawsDir(root)), ...markdownUnder(skillsDir(root))].map((file: string): string => readFileSync(file, 'utf8'));
 }
 
 /** Правило с самым тяжёлым файлом — то, что берётся, когда имя не названо. */
-export function heaviestRule(root: string): string {
+function heaviestRule(root: string): string {
     let heaviest: string = '';
     let weight: number = -1;
     for (const name of ruleNames(root)) {

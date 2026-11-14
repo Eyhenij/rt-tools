@@ -1,7 +1,7 @@
 import { TKcContext } from './kc-context';
 
 /** A provider the theme draws its own mark for; the value is the provider id of Keycloak. */
-export type TKcProviderMark = 'google' | 'apple';
+type TKcProviderMark = 'google' | 'apple';
 
 const MARKS: ReadonlySet<string> = new Set<TKcProviderMark>(['google', 'apple']);
 

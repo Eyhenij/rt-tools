@@ -30,7 +30,7 @@ export interface IReadFault {
 const INCIDENT: RegExp = /обращение\s+([0-9a-f]+)/i;
 
 /** Номер обращения из тела ответа; пусто — его там нет. */
-export function incidentOf(body: unknown): string {
+function incidentOf(body: unknown): string {
     const message: unknown = typeof body === 'object' && body !== null ? Reflect.get(body, 'message') : body;
     if (typeof message !== 'string') {
         return '';

@@ -15,20 +15,17 @@ the components, and "a raw value in place" leaves for the consumer forever.
 - **the element class directive** — `rtElem`
 - **the modifier directive** — `[rtMod]` — accepts a record "modifier name → sign"
 - **the shared layout layer** — `projects/<kit>/src/styles/` — the theme switch and the breakpoints are there too
-- **the component tier of tokens** — a map `element → (property: value)` in the component's styles file, unfolded by `generateCssVar`
+- **the component tier of tokens** — custom properties `--rt-<block>-*` declared on the component's host in its styles file
 
 ## Where it lives
 
-- **the primitive and semantic tiers of the first kit** — `projects/ui-kit/src/styles/base/_tokens.scss`
-- **the description of the token set** — `projects/ui-kit/src/styles/TOKENS.md`
-- **the token set of the second kit** — `projects/ui-kit-v2/src/styles/`
+- **the kit's token set** — `projects/ui-kit-v2/src/styles/`
 - **the rule about raw values** — `tools/stylelint-rules/no-hardcoded-design-tokens.cjs`
-- **the rule about the host in the second kit** — `tools/stylelint-rules/no-host-selector.cjs`
-- **the cascade layer of the second kit** — `projects/ui-kit-v2/src/styles/_layers.scss`
+- **the rule about the host** — `tools/stylelint-rules/no-host-selector.cjs`
+- **the kit's cascade layer** — `projects/ui-kit-v2/src/styles/_layers.scss`
 - **the cascade layer check** — `tools/check-cascade-layer.mjs`
-- **a sample of component styles** — `projects/ui-kit/src/lib/ui-kit/toggle/rtui-toggle.component.scss`
-- **the bridge to Material** — `projects/ui-kit/src/styles/components/_material-bridge.scss`
-- **the aggregator of the second kit's styling layer** — `projects/ui-kit-v2/src/styles/_index.scss`
+- **a sample of component styles** — `projects/ui-kit-v2/src/lib/components/toggle-switch/rt-toggle-switch.component.scss`
+- **the aggregator of the kit's styling layer** — `projects/ui-kit-v2/src/styles/_index.scss`
 - **the admin panel's shared layout layer** — `apps/message-bus-admin/src/styles/`
 
 ## Where the articles are carried out
@@ -53,21 +50,14 @@ silent about.
 
 ## What else is worth knowing when reading the code
 
-- Component values are written in `rem`; `mixins.rem(16)` converts from pixels. The exception is
-  the breakpoint variables `$device-*`, they are in pixels.
-- The component tier is declared as a map and unfolded by `generateCssVar('toggle', 'label',
-'color')` → `--rt-toggle-label-color`. The place of declaration decides who can override it: on
-  `:root` it is overridden by any ancestor, on the host — only pointedly by the element.
-- The second kit is entirely on `ViewEncapsulation.None`, and `:host` there matches nothing — a
+- The place where a component property is declared decides who can override it: on `:root` it is
+  overridden by any ancestor, on the host — only pointedly by the element.
+- The kit is entirely on `ViewEncapsulation.None`, and `:host` there matches nothing — a
   rule written through it silently does not apply. Hence `rt/no-host-selector`: instead of the
   host the block class `.rt-<block>` is written, and where the class hangs both on the host and
   on the template root — a selector by the element name.
 - The property order is held by `stylelint-config-idiomatic-order`, the formatting by
   `stylelint-prettier`. Comments switching off the styles linter are not set here.
-- The `.c-button` bundle is out of use together with its file; the live one is `.rtui-btn`, and
-  its rules lie in parts in `projects/ui-kit/src/styles/components/button/`, while
-  `projects/ui-kit/src/styles/components/_rtui_button.scss` stayed as the entry and sets their
-  cascade order. The transition map is in `projects/ui-kit/src/styles/TOKENS.md`.
 
 ## What this is checked by
 
@@ -75,9 +65,9 @@ silent about.
   judges `projects/**/*.scss`: the linter does not read the applications' styles at all, and a
   rule written in the admin panel's shared layer is judged by no check.
 - `pnpm run check:styles` — an element class without a rule, over all roots of the tree.
-- `pnpm run check:cascade-layer` — a second-kit styles file without a layer, a rule before the
-  wrapper, the order of the sublayers and a root declaration that rode into the layer.
-- `pnpm run build:tokens` and `pnpm run build:tokens-v2` — rebuilding the ready-made token set
-  for consumers that do not build SCSS.
-- An edit of `_tokens.scss` or `_color-scheme.scss` — `pnpm exec nx test @rt-tools/ui-kit`, the
-  spec `projects/ui-kit/src/styles/color-scheme.spec.ts`.
+- `pnpm run check:cascade-layer` — a kit styles file without a layer, a rule before the wrapper,
+  the order of the sublayers and a root declaration that rode into the layer.
+- `pnpm run build:tokens-v2` — rebuilding the ready-made token set for consumers that do not
+  build SCSS.
+- An edit of `_color-scheme.scss` — `pnpm exec nx test @rt-tools/ui-kit-v2`, the spec
+  `projects/ui-kit-v2/src/styles/color-scheme.theme.spec.ts`.

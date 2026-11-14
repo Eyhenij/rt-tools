@@ -36,7 +36,7 @@
             "probes": []
         },
         "node tools/check-specs.mjs": {
-            "seconds": 5,
+            "seconds": 4,
             "history": [
                 "git log"
             ],
@@ -204,7 +204,7 @@
             "probes": []
         },
         "node tools/check-dupes.mjs": {
-            "seconds": 1,
+            "seconds": 0,
             "history": [],
             "untraced": [],
             "self": [
@@ -256,7 +256,7 @@
             "probes": []
         },
         "node tools/check-cycles.mjs": {
-            "seconds": 0,
+            "seconds": 1,
             "history": [],
             "untraced": [],
             "self": [
@@ -493,12 +493,6 @@
                     "exts": [
                         ".scss"
                     ]
-                },
-                {
-                    "dir": "projects/ui-kit/src",
-                    "exts": [
-                        ".scss"
-                    ]
                 }
             ],
             "files": [
@@ -720,29 +714,6 @@
             ],
             "probes": []
         },
-        "node tools/check-kit-shot-pairs.mjs": {
-            "seconds": 0,
-            "history": [],
-            "untraced": [],
-            "self": [
-                "tools/check-kit-shot-pairs.mjs"
-            ],
-            "walks": [
-                {
-                    "dir": "projects/ui-kit-v2/.storybook/__snapshots__",
-                    "exts": []
-                },
-                {
-                    "dir": "projects/ui-kit/.storybook/__snapshots__",
-                    "exts": []
-                }
-            ],
-            "files": [
-                "tools/check-kit-shot-pairs.mjs",
-                "tools/kit-shot-pairs.json"
-            ],
-            "probes": []
-        },
         "node tools/check-kit-coverage.mjs": {
             "seconds": 0,
             "history": [],
@@ -809,7 +780,7 @@
             "probes": []
         },
         "node tools/check-tokens-styles.mjs": {
-            "seconds": 3,
+            "seconds": 2,
             "history": [],
             "untraced": [],
             "self": [
@@ -991,7 +962,7 @@
             "probes": []
         },
         "node tools/check-format-ignore.mjs": {
-            "seconds": 2,
+            "seconds": 5,
             "history": [],
             "untraced": [],
             "self": [
@@ -1006,26 +977,26 @@
                         ".cjs",
                         ".conf",
                         ".crontab",
-                        ".dat",
                         ".env",
                         ".example",
                         ".excluded",
                         ".gitattributes",
                         ".gitignore",
                         ".gitkeep",
+                        ".graphify_root",
                         ".html",
                         ".ico",
+                        ".iml",
+                        ".jpg",
                         ".js",
                         ".json",
-                        ".jsonl",
-                        ".lock",
                         ".md",
                         ".mdx",
                         ".mjs",
                         ".mts",
-                        ".network",
                         ".nvmrc",
                         ".nxignore",
+                        ".patch",
                         ".plist",
                         ".png",
                         ".prettierignore",
@@ -1036,20 +1007,17 @@
                         ".sql",
                         ".svg",
                         ".toml",
-                        ".trace",
-                        ".try",
                         ".ts",
                         ".woff2",
+                        ".xml",
                         ".yaml",
                         ".yml",
-                        ".zip",
                         "Caddyfile",
                         "LICENSE",
                         "allowlist",
                         "applypatch-msg",
                         "browser-device-id",
                         "commit-msg",
-                        "copy",
                         "h",
                         "post-applypatch",
                         "post-checkout",
@@ -1063,26 +1031,6 @@
                         "pre-push",
                         "pre-rebase",
                         "prepare-commit-msg",
-                        "refusal-1051812023",
-                        "refusal-1292403063",
-                        "refusal-1437008960",
-                        "refusal-1578805745",
-                        "refusal-1604846066",
-                        "refusal-1820291744",
-                        "refusal-1906766499",
-                        "refusal-2050840549",
-                        "refusal-212067855",
-                        "refusal-2272714823",
-                        "refusal-308730780",
-                        "refusal-3091922403",
-                        "refusal-3272691411",
-                        "refusal-3517816979",
-                        "refusal-3641424044",
-                        "refusal-4040840004",
-                        "refusal-4090762395",
-                        "refusal-4140859332",
-                        "refusal-4173885721",
-                        "send-keys",
                         "tree-name"
                     ]
                 }
@@ -1138,7 +1086,7 @@
             "probes": []
         },
         "node tools/check-package-imports.mjs": {
-            "seconds": 7,
+            "seconds": 3,
             "history": [],
             "untraced": [
                 "npm"
@@ -1180,7 +1128,7 @@
             "probes": []
         },
         "node tools/check-doc-paths.mjs": {
-            "seconds": 0,
+            "seconds": 1,
             "history": [],
             "untraced": [],
             "self": [
@@ -1388,7 +1336,7 @@
             "probes": []
         },
         "node tools/check-schema-drift.mjs": {
-            "seconds": 3,
+            "seconds": 2,
             "history": [],
             "untraced": [
                 "npx",
@@ -1544,7 +1492,7 @@
             "probes": []
         },
         "node tools/check-archive-age.mjs": {
-            "seconds": 1,
+            "seconds": 0,
             "history": [
                 "git log"
             ],
@@ -1613,7 +1561,7 @@
             "probes": []
         },
         "pnpm run lint:styles": {
-            "seconds": 4,
+            "seconds": 3,
             "history": [],
             "untraced": [
                 "stylelint"

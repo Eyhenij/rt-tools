@@ -14,7 +14,7 @@
 | пара «текст и фон» держит порог в каждом наборе                | `tools/check-tokens-theme.mjs`, `tools/tokens-contrast-pairs.json`     |
 | набор собирается из источника                                  | `tools/build-tokens-v2.mjs`                                            |
 | ссылка набора на необъявленное имя                             | `tools/check-tokens-graph.mjs`                                         |
-| значения снимаются с первого кита                              | `projects/ui-kit/src/styles/base/_tokens.scss` — читается, не правится |
+| значения сняты с первого кита и хранятся у себя                | `projects/ui-kit-v2/src/styles/tokens.scale-material.mjs`              |
 | тема Material со страницы читается с запасным кодом            | `projects/ui-kit-v2/src/styles/tokens.material.mjs`                    |
 | значок приходит своим рисунком                                 | набор значков `projects/ui-kit-v2/src/assets/icons`                    |
 | материальный рисунок значка                                    | набор `projects/ui-kit-v2/src/assets/icons-material`                   |

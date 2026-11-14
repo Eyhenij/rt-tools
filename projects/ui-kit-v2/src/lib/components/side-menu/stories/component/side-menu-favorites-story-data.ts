@@ -83,7 +83,7 @@ export const FAVORITES_STORY_ITEMS_LONG: readonly IRtSideMenu.Item[] = mapConten
 );
 
 /** Избранное витрины при первом подъёме: разделы обоих пунктов, в том числе лежащие в папках. */
-export const FAVORITES_STORY_SEEDED_IDS: readonly IRtSideMenu.FavoriteId[] = [2, 7, 9, 27, 31, 5, 103, 104];
+const FAVORITES_STORY_SEEDED_IDS: readonly IRtSideMenu.FavoriteId[] = [2, 7, 9, 27, 31, 5, 103, 104];
 
 /** Открыто на «Sidebar» во вложенной папке «Content»: папки раскрыты, блок и звёзды видны. */
 export const FAVORITES_STORY_ACTIVE: ReadonlyArray<IRtSideMenu.Item['id']> = [1, 100, 101, 9];

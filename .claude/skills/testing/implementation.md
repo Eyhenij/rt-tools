@@ -21,20 +21,20 @@ the server side does not know it at all.
 - **In the rule** — Here
 - **a spec runner** — Jest with `jest-preset-angular` on the packages; Vitest on the receiver and its libs; Playwright on the suite
 - **a spec file** — `*.spec.ts` next to the source
-- **a fixture builder** — a local `setup()` in the first kit; `createRtFixture(...)` in the second
-- **the list of a component's behaviours** — `CONTEXT.md` next to a second-kit component — the sections "Главное, что нужно знать" and "Края"
+- **a fixture builder** — `createRtFixture(...)` from the kit's spec harness
+- **the list of a component's behaviours** — `CONTEXT.md` next to a kit component — the sections "Главное, что нужно знать" and "Края"
 - **the mark of what is not covered** — a line `Not covered: <reason>` in a `scenarios.md`, the older `Не покрыто:` still read; partial coverage is the line `Coverage: partial — <what is missing>`
 - **the type check of the specs** — the target `typecheck`: `tsc --noEmit` over `tsconfig.spec.json`; at the receiver's libs it is inferred by `tools/nx-plugins/spec-typecheck.cjs` for every project with a Vitest config and a spec settings file
 
 ## Where it lives
 
-- **the zoneless stand startup** — `projects/ui-kit/src/test-setup.ts`
-- **the second kit's spec harness** — `projects/ui-kit-v2/src/testing/rt-kit-testing.ts`
+- **the zoneless stand startup** — `projects/ui-kit-v2/src/test-setup.ts`
+- **the kit's spec harness** — `projects/ui-kit-v2/src/testing/rt-kit-testing.ts`
 - **the text editor double** — `projects/ui-kit-v2/src/testing/quill-mock.ts`
-- **a sample component spec** — `projects/ui-kit/src/lib/ui-kit/buttons/unified-button/rtui-button.component.spec.ts`
+- **a sample component spec** — `projects/ui-kit-v2/src/lib/components/spinner/rt-spinner.component.spec.ts`
 - **a sample service spec** — `projects/store/src/lib/base-store.service.spec.ts`
 - **a sample pure-function spec** — `projects/utils/src/lib/functions/transform-string-input/transform-string-input.spec.ts`
-- **the mapping of package paths for Jest** — `projects/ui-kit/jest.config.ts`
+- **the mapping of package paths for Jest** — `projects/ui-kit-v2/jest.config.ts`
 - **the admin panel's end-to-end suite** — `apps/message-bus-admin-e2e/` — the stand in `stand/`, the specs in `src/`, the README next to them
 - **the entry example's end-to-end suite** — `apps/auth-example-e2e/` — the specs in `src/`
 - **the subjects of paths and the suites they raise** — `.claude/rt-kit/project.sh` — `rt_push_touched` and `rt_push_checks`
@@ -98,9 +98,8 @@ silent about.
 - Inputs are set by `componentRef.setInput(...)` — assigning to a field does not work, the inputs
   are reactive.
 - Assertions go by the drawn block classes and by real directive instances
-  (`By.directive(...)`): that is how it is proved that the modifier and the bridge to Material
-  really applied.
-- The substitutions in the second kit that nobody would think of: the text editor does not come
+  (`By.directive(...)`): that is how it is proved that the modifier really applied.
+- The substitutions in the kit's specs that nobody would think of: the text editor does not come
   up in an environment without a browser and is replaced by a double; the translation loader must
   return an empty dictionary; there is nothing to measure the window width with in that
   environment, and the breakpoints service is substituted; content in an overlay appears only

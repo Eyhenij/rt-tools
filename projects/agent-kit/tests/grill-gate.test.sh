@@ -83,7 +83,7 @@ input_ask_text() {
 }
 
 READ_RULES='{"pattern":"панель","path":".claude/skills"}'
-READ_ELSE='{"pattern":"панель","path":"projects/ui-kit/src"}'
+READ_ELSE='{"pattern":"панель","path":"projects/ui-kit-v2/src"}'
 READ_PLANS='{"pattern":"панель","path":"docs/plans/эпик.md"}'
 READ_ARCHIVE='{"pattern":"панель","path":"docs/archive"}'
 
