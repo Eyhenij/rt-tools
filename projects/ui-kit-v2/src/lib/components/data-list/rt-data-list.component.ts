@@ -25,7 +25,7 @@ import { IRtKitConfig } from '@rt-tools/ui-kit-v2/core';
 import { rtKitDefault } from '@rt-tools/ui-kit-v2/core';
 import { IRtInput } from '@rt-tools/ui-kit-v2/core';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { IPageModel, ISortModel, TNullable, transformArrayInput } from '@rt-tools/utils';
 
 import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
@@ -39,7 +39,8 @@ import {
     RtDataTableRowActionsDirective,
 } from '@rt-tools/ui-kit-v2/data-table';
 import { IRtDataTable, RT_DATA_TABLE_PRESET_FROM_HOST, RT_PRESET_MATERIAL_CLASS, TRtDataTableFilters } from '@rt-tools/ui-kit-v2/core';
-import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { IRtLoadError, RtEmptyStateComponent, rtLoadErrorView } from '@rt-tools/ui-kit-v2/empty-state';
 import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
 import { RtPaginationComponent } from '@rt-tools/ui-kit-v2/pagination';
 import { dataListPageAfterSizeChange, dataListPageSizes } from './rt-data-list-pagination.logic';
@@ -51,6 +52,7 @@ import {
     RtDataListRowActionsDirective,
 } from './rt-data-list.directive';
 import { dataListScrollbarStandard, IRtDataListScrollbarStandard } from './rt-data-list-scrollbar.logic';
+import { RtDataListEmptyDirective, RtDataListErrorDirective } from './rt-data-list-states.directive';
 import { RtDataListToolbarActionsDirective, RtDataListToolbarSelectorsDirective } from './rt-data-list-toolbar.directive';
 
 const BEM_BLOCK: string = 'rt-data-list';
@@ -88,6 +90,7 @@ const SCROLLBAR_HOLDERS: WeakMap<HTMLElement, number> = new WeakMap<HTMLElement,
     encapsulation: ViewEncapsulation.None,
     imports: [
         // components
+        RtButtonDirective,
         RtPaginationComponent,
         RtDataListToolbarComponent,
         RtDataTableComponent,
@@ -97,6 +100,7 @@ const SCROLLBAR_HOLDERS: WeakMap<HTMLElement, number> = new WeakMap<HTMLElement,
         // directives
         BlockDirective,
         ElemDirective,
+        ModDirective,
         NgTemplateOutlet,
         RtDataListToolbarActionsDirective,
         RtDataListToolbarSelectorsDirective,
@@ -146,6 +150,22 @@ export class RtDataListComponent<
 
     /** Заглушку показывают, когда нет ни строк, ни условий отбора. */
     protected readonly isPlaceholderShown: Signal<boolean> = computed(() => !this.entities().length && !this.filterModel().length);
+
+    /** Вид ошибки загрузки: заголовок, подсказка и контекст своего шаблона; ошибка важнее загрузки и пустоты. */
+    protected readonly loadError: IRtLoadError.View = rtLoadErrorView(
+        () => this.error(),
+        () => this.errorDescription(),
+        () => this.retry.emit()
+    );
+
+    /** Подпись кнопки повтора загрузки. */
+    protected readonly retryLabel: Signal<string> = rtKitLabel('uiRetry');
+
+    /** Свой вид пустого списка (`<ng-template rtDataListEmpty>`). */
+    protected readonly emptyTemplate: Signal<RtDataListEmptyDirective | undefined> = contentChild(RtDataListEmptyDirective);
+
+    /** Свой вид ошибки загрузки (`<ng-template rtDataListError>`). */
+    protected readonly errorTemplate: Signal<RtDataListErrorDirective | undefined> = contentChild(RtDataListErrorDirective);
 
     protected readonly isFiltersEmpty: Signal<boolean> = computed(() => !this.filterModel().length);
 
@@ -197,6 +217,12 @@ export class RtDataListComponent<
     /** Дозагрузка: строки остаются, а поверх них крутилка с подложкой. */
     public readonly fetching: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
 
+    /** Ошибка загрузки: не `null` — заглушка ошибки вместо строк. Пустая строка — подпись кита. */
+    public readonly error: InputSignal<string | null> = input<string | null>(null);
+
+    /** Подсказка под ошибкой; пустая — подпись кита. */
+    public readonly errorDescription: InputSignal<string> = input<string>('');
+
     public readonly isTableRowsClickable: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
     });
@@ -226,6 +252,8 @@ export class RtDataListComponent<
     public readonly pageModelChange: OutputEmitterRef<Partial<IPageModel>> = output<Partial<IPageModel>>();
     public readonly searchChange: OutputEmitterRef<string> = output<string>();
     public readonly refresh: OutputEmitterRef<void> = output<void>();
+    /** Нажата «Повторить» на ошибке загрузки. Саму загрузку делает потребитель. */
+    public readonly retry: OutputEmitterRef<void> = output<void>();
     public readonly clearFiltersAction: OutputEmitterRef<void> = output<void>();
     public readonly rowClick: OutputEmitterRef<{ row: ENTITY_TYPE; event: MouseEvent }> = output<{ row: ENTITY_TYPE; event: MouseEvent }>();
     public readonly rowDoubleClick: OutputEmitterRef<ENTITY_TYPE> = output<ENTITY_TYPE>();

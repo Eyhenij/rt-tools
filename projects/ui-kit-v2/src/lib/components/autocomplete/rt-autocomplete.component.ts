@@ -3,6 +3,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     computed,
+    contentChild,
     forwardRef,
     inject,
     input,
@@ -24,6 +25,8 @@ import {
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { IRtLoadError, RtEmptyStateComponent, rtLoadErrorView } from '@rt-tools/ui-kit-v2/empty-state';
 import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
@@ -32,6 +35,7 @@ import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtOptionList, TRtOptionListAction } from '@rt-tools/ui-kit-v2/core';
+import { RtAutocompleteEmptyDirective, RtAutocompleteErrorDirective } from './rt-autocomplete-states.directive';
 import { IRtAutocomplete } from './rt-autocomplete.model';
 
 /** Сколько точек до дна панели уже считается концом списка. */
@@ -69,6 +73,8 @@ function nextPanelId(): number {
         NgTemplateOutlet,
 
         // standalone components / directives
+        RtButtonDirective,
+        RtEmptyStateComponent,
         RtIconButtonComponent,
         RtIconComponent,
         RtPopoverDirective,
@@ -113,7 +119,8 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     protected readonly optionList: RtOptionList = new RtOptionList({
         panelId: (): string => this.panelId,
         isOpen: (): boolean => this.isOpen(),
-        count: (): number => this.suggestions().length,
+        // Пока стоит ошибка, вариантов на экране нет: стрелки и Enter не выбирают скрытое.
+        count: (): number => (this.loadError.shown() ? 0 : this.suggestions().length),
         chooseKeys: new Set<string>(['Enter']),
         sideKeys: false,
         edgeKeys: false,
@@ -125,6 +132,19 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     protected readonly activeOptionId: Signal<string | null> = this.optionList.activeOptionId;
 
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.inputText() !== '');
+
+    /** Свой вид пустого результата директивой; сильнее входа `emptyTemplate`. */
+    protected readonly emptySlot: Signal<RtAutocompleteEmptyDirective | undefined> = contentChild(RtAutocompleteEmptyDirective);
+
+    /** Свой вид ошибки загрузки директивой. */
+    protected readonly errorTemplate: Signal<RtAutocompleteErrorDirective | undefined> = contentChild(RtAutocompleteErrorDirective);
+
+    /** Ошибка загрузки подсказок: заголовок, подсказка и контекст; после «Повторить» панель открыта. */
+    protected readonly loadError: IRtLoadError.View = rtLoadErrorView(
+        (): string | null => this.error(),
+        (): string => this.errorDescription(),
+        (): void => this.retry.emit()
+    );
 
     public readonly displayText: Signal<string> = computed((): string => this.displayWith()(this.value()));
 
@@ -163,6 +183,18 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     public readonly emptyTemplate: InputSignal<TemplateRef<{ $implicit: string }> | null> = input<TemplateRef<{
         $implicit: string;
     }> | null>(null);
+
+    /**
+     * Ошибка загрузки подсказок: не `null` — в панели вместо вариантов вид ошибки с кнопкой «Повторить».
+     * Пустая строка — ошибка без своего текста, заголовок берётся из подписи кита.
+     */
+    public readonly error: InputSignal<string | null> = input<string | null>(null);
+
+    /** Подсказка под заголовком ошибки; пусто — подпись кита `uiLoadErrorHint`. */
+    public readonly errorDescription: InputSignal<string> = input<string>('');
+
+    /** Нажата «Повторить»: повторить запрос подсказок — дело потребителя. */
+    public readonly retry: OutputEmitterRef<void> = output<void>();
 
     /**
      * Панель долистали до конца — пора просить следующую страницу. Не приходит, пока идёт загрузка, и
@@ -287,7 +319,8 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     #selectActive(): void {
         const items: ReadonlyArray<TItem> = this.suggestions();
         const index: number = this.activeIndex();
-        if (index >= 0 && index < items.length) {
+        // Подсветка могла остаться от вариантов до ошибки — выбирать её нельзя.
+        if (!this.loadError.shown() && index >= 0 && index < items.length) {
             this.onSelect(items[index]);
         }
     }

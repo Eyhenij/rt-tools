@@ -1,10 +1,10 @@
-@if (loading()) {
+@if (loading() && !loadError.shown()) {
     <div rtBlock="rt-data-list" rtElem="loading" qa-dataid="data-list-loading">
         <rt-spinner />
     </div>
 } @else {
     <ng-container rtBlock="rt-data-list">
-        @if (fetching()) {
+        @if (fetching() && !loadError.shown()) {
             <div rtElem="fetching" qa-dataid="data-list-fetching">
                 <rt-spinner />
             </div>
@@ -36,9 +36,15 @@
             }
         </rt-data-list-toolbar>
 
-        @if (isPlaceholderShown()) {
+        @if (loadError.shown()) {
+            <div rtElem="placeholder" qa-dataid="data-list-error-placeholder" [rtMod]="{ error: true }">
+                <ng-container
+                    [ngTemplateOutlet]="errorTemplate()?.templateRef ?? defaultError"
+                    [ngTemplateOutletContext]="loadError.context()" />
+            </div>
+        } @else if (isPlaceholderShown()) {
             <div rtElem="placeholder" qa-dataid="data-list-placeholder">
-                <rt-empty-state icon="search" [title]="placeholderLabel()" />
+                <ng-container [ngTemplateOutlet]="emptyTemplate()?.templateRef ?? defaultEmpty" />
             </div>
         } @else {
             <div rtElem="content">
@@ -80,17 +86,34 @@
                     }
                 </rt-data-table>
             </div>
-
-            @if (isPaginationShown()) {
-                <rt-pagination
-                    [pageModel]="pageModel()"
-                    [perPageOptions]="pageSizes()"
-                    [numbering]="look() === 'material' ? 'seven' : 'neighbours'"
-                    [prevIcon]="look() === 'material' ? 'arrow-left' : 'chevron-left'"
-                    [nextIcon]="look() === 'material' ? 'arrow-right' : 'chevron-right'"
-                    (pageChange)="onPageNumber($event)"
-                    (perPageChange)="onPageSize($event)" />
-            }
         }
+
+        @if (isPaginationShown() && (loadError.shown() || !isPlaceholderShown())) {
+            <rt-pagination
+                [pageModel]="pageModel()"
+                [perPageOptions]="pageSizes()"
+                [numbering]="look() === 'material' ? 'seven' : 'neighbours'"
+                [prevIcon]="look() === 'material' ? 'arrow-left' : 'chevron-left'"
+                [nextIcon]="look() === 'material' ? 'arrow-right' : 'chevron-right'"
+                (pageChange)="onPageNumber($event)"
+                (perPageChange)="onPageSize($event)" />
+        }
+
+        <ng-template #defaultEmpty>
+            <rt-empty-state icon="search" [title]="placeholderLabel()" />
+        </ng-template>
+
+        <ng-template #defaultError>
+            <rt-empty-state qa-dataid="data-list-error" icon="ico-alert" [title]="loadError.title()" [description]="loadError.hint()">
+                <button
+                    rtButton
+                    appearance="outlined"
+                    type="button"
+                    qa-dataid="data-list-retry"
+                    [label]="retryLabel()"
+                    [attr.aria-label]="retryLabel()"
+                    (click)="retry.emit()"></button>
+            </rt-empty-state>
+        </ng-template>
     </ng-container>
 }

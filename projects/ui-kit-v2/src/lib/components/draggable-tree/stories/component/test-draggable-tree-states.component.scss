@@ -1,0 +1,22 @@
+@layer rt-kit.components {
+    .app-draggable-tree-states {
+        /* Рамка своего шаблона: пунктир показывает, где кончается разметка приложения. Блока
+           в разметке нет, поэтому радиус объявлен на самой рамке. */
+        &__own {
+            --rt-draggable-tree-states-story-own-radius: var(--rt-radius-md);
+
+            display: grid;
+            padding: calc(var(--rt-space-2) + var(--rt-space-1));
+            border: 1px dashed var(--rt-color-border-strong);
+            border-radius: var(--rt-draggable-tree-states-story-own-radius);
+            margin: calc(var(--rt-space-2) + var(--rt-space-1));
+            gap: var(--rt-space-1);
+            text-align: center;
+        }
+
+        &__own-hint {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+        }
+    }
+}

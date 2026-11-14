@@ -1,10 +1,10 @@
 <ng-container rtBlock="rt-dynamic-list">
-    @if (loading()) {
+    @if (loading() && !loadError.shown()) {
         <div rtElem="loader" qa-dataid="dynamic-list-loader">
             <rt-spinner />
         </div>
     } @else {
-        @if (fetching()) {
+        @if (fetching() && !loadError.shown()) {
             <div rtElem="veil" qa-dataid="dynamic-list-veil">
                 <rt-spinner />
             </div>
@@ -88,26 +88,34 @@
             </div>
         }
 
-        @if (empty()) {
-            <rt-empty-state
-                rtElem="empty"
-                qa-dataid="dynamic-list-empty"
-                [icon]="emptyIcon()"
-                [title]="emptyTitleText()"
-                [description]="emptyDescription()">
-                @if (emptyReason() === 'filter') {
-                    <button
-                        rtButton
-                        qa-dataid="dynamic-list-empty-clear"
-                        type="button"
-                        icon="filter-slash"
-                        appearance="outlined"
-                        size="sm"
-                        [label]="t().uiClearFilters"
-                        [attr.aria-label]="t().uiClearFilters"
-                        (click)="onClearFilters()"></button>
-                }
-            </rt-empty-state>
+        @if (loadError.shown()) {
+            <ng-container
+                [ngTemplateOutlet]="errorTemplate()?.templateRef ?? defaultError"
+                [ngTemplateOutletContext]="loadError.context()" />
+        } @else if (empty()) {
+            @if (emptyTemplate(); as tpl) {
+                <ng-container [ngTemplateOutlet]="tpl.templateRef" />
+            } @else {
+                <rt-empty-state
+                    rtElem="empty"
+                    qa-dataid="dynamic-list-empty"
+                    [icon]="emptyIcon()"
+                    [title]="emptyTitleText()"
+                    [description]="emptyDescription()">
+                    @if (emptyReason() === 'filter') {
+                        <button
+                            rtButton
+                            qa-dataid="dynamic-list-empty-clear"
+                            type="button"
+                            icon="filter-slash"
+                            appearance="outlined"
+                            size="sm"
+                            [label]="t().uiClearFilters"
+                            [attr.aria-label]="t().uiClearFilters"
+                            (click)="onClearFilters()"></button>
+                    }
+                </rt-empty-state>
+            }
         } @else {
             <div rtElem="content" qa-dataid="dynamic-list-content">
                 <ng-content />
@@ -125,4 +133,22 @@
             }
         }
     }
+
+    <ng-template #defaultError>
+        <rt-empty-state
+            rtElem="empty"
+            qa-dataid="dynamic-list-error"
+            icon="ico-alert"
+            [title]="loadError.title()"
+            [description]="loadError.hint()">
+            <button
+                rtButton
+                appearance="outlined"
+                type="button"
+                qa-dataid="dynamic-list-retry"
+                [label]="t().uiRetry"
+                [attr.aria-label]="t().uiRetry"
+                (click)="retry.emit()"></button>
+        </rt-empty-state>
+    </ng-template>
 </ng-container>

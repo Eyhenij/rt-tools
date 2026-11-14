@@ -1,0 +1,33 @@
+<app-story-presets caption="Ошибка и свои шаблоны в обоих наборах">
+    <ng-template>
+        <app-story-row slotWidth="740px" [items]="cases" [itemLabel]="caseLabel">
+            <ng-template let-item>
+                <rt-dynamic-list
+                    showClearFilters
+                    showRefresh
+                    showColumnSettings
+                    selectable
+                    [pageModel]="page"
+                    [empty]="item.empty"
+                    [error]="item.error">
+                    @if (item.ownEmpty) {
+                        <ng-template rtDynamicListEmpty>
+                            <div [style]="slotStyle">
+                                <strong>Свой вид пустого списка</strong>
+                                <span [style]="slotHintStyle">Разметка приложения вместо rt-empty-state</span>
+                            </div>
+                        </ng-template>
+                    }
+                    @if (item.ownError) {
+                        <ng-template rtDynamicListError>
+                            <div [style]="slotStyle">
+                                <strong>Свой вид ошибки</strong>
+                                <span [style]="slotHintStyle">В контексте шаблона: текст ошибки ($implicit) и retry()</span>
+                            </div>
+                        </ng-template>
+                    }
+                </rt-dynamic-list>
+            </ng-template>
+        </app-story-row>
+    </ng-template>
+</app-story-presets>

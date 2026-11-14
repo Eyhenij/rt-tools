@@ -1,3 +1,5 @@
+import { TemplateRef } from '@angular/core';
+
 /**
  * Контракты полноэкранного просмотрщика документа PDF. Один корневой неймспейс с префиксом `I`.
  */
@@ -17,6 +19,14 @@ export namespace IRtPdfViewer {
     export interface Data {
         readonly source: Source;
         readonly fileName: string;
+        /** Свой вид ошибки — шаблон директивы `rtPdfViewerError`. Без него стоит заглушка кита. */
+        readonly errorTemplate?: TemplateRef<ErrorContext>;
+    }
+
+    /** Контекст своего вида ошибки: текст ошибки подписью кита и скачивание файла. */
+    export interface ErrorContext {
+        readonly $implicit: string;
+        readonly download: () => void;
     }
 
     /** Что сейчас на месте страниц: индикатор, сами страницы или отказ. */

@@ -54,37 +54,70 @@
             [id]="panelId"
             [attr.aria-busy]="loading() || null"
             (scroll)="onPanelScroll($event)">
-            @for (item of suggestions(); track $index; let i = $index) {
-                <li
-                    rtElem="option"
-                    qa-dataid="autocomplete-option"
-                    role="option"
-                    [id]="panelId + '-opt-' + i"
-                    [rtMod]="{ active: i === activeIndex() }"
-                    [attr.aria-selected]="item === value()"
-                    (click)="onSelect(item)">
-                    @if (itemTemplate(); as tpl) {
-                        <ng-container *ngTemplateOutlet="tpl; context: { $implicit: item }" />
-                    } @else {
-                        {{ displayWith()(item) }}
-                    }
+            @if (loadError.shown()) {
+                <li rtElem="error" qa-dataid="autocomplete-error-placeholder" role="presentation">
+                    <ng-container
+                        [ngTemplateOutlet]="errorTemplate()?.templateRef ?? defaultError"
+                        [ngTemplateOutletContext]="loadError.context()" />
                 </li>
-            } @empty {
-                @if (!loading()) {
-                    <li rtElem="empty" qa-dataid="autocomplete-empty">
-                        @if (emptyTemplate(); as tpl) {
-                            <ng-container *ngTemplateOutlet="tpl; context: { $implicit: inputText() }" />
+            } @else {
+                @for (item of suggestions(); track $index; let i = $index) {
+                    <li
+                        rtElem="option"
+                        qa-dataid="autocomplete-option"
+                        role="option"
+                        [id]="panelId + '-opt-' + i"
+                        [rtMod]="{ active: i === activeIndex() }"
+                        [attr.aria-selected]="item === value()"
+                        (click)="onSelect(item)">
+                        @if (itemTemplate(); as tpl) {
+                            <ng-container *ngTemplateOutlet="tpl; context: { $implicit: item }" />
                         } @else {
-                            {{ emptyText() ?? t().uiNothingFound }}
+                            {{ displayWith()(item) }}
                         }
+                    </li>
+                } @empty {
+                    @if (!loading()) {
+                        @if (emptySlot(); as own) {
+                            <li rtElem="own-empty" qa-dataid="autocomplete-own-empty" role="presentation">
+                                <ng-container *ngTemplateOutlet="own.templateRef; context: { $implicit: inputText() }" />
+                            </li>
+                        } @else {
+                            <li rtElem="empty" qa-dataid="autocomplete-empty">
+                                @if (emptyTemplate(); as tpl) {
+                                    <ng-container *ngTemplateOutlet="tpl; context: { $implicit: inputText() }" />
+                                } @else {
+                                    {{ emptyText() ?? t().uiNothingFound }}
+                                }
+                            </li>
+                        }
+                    }
+                }
+                @if (loading()) {
+                    <li rtElem="loading" qa-dataid="autocomplete-loading" aria-hidden="true">
+                        <rt-spinner [diameter]="20" />
                     </li>
                 }
             }
-            @if (loading()) {
-                <li rtElem="loading" qa-dataid="autocomplete-loading" aria-hidden="true">
-                    <rt-spinner [diameter]="20" />
-                </li>
-            }
         </ul>
+    </ng-template>
+
+    <ng-template #defaultError>
+        <rt-empty-state
+            rtElem="error-state"
+            qa-dataid="autocomplete-error"
+            icon="ico-alert"
+            [title]="loadError.title()"
+            [description]="errorDescription() || null">
+            <button
+                rtButton
+                appearance="outlined"
+                size="sm"
+                type="button"
+                qa-dataid="autocomplete-retry"
+                [label]="t().uiRetry"
+                [attr.aria-label]="t().uiRetry"
+                (click)="retry.emit()"></button>
+        </rt-empty-state>
     </ng-template>
 </ng-container>

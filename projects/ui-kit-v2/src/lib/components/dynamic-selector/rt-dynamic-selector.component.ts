@@ -34,6 +34,7 @@ import { TRtRadius } from '@rt-tools/ui-kit-v2/core';
 import { RtDynamicSelectorListComponent } from './list/rt-dynamic-selector-list.component';
 import { RtDynamicSelectorPopupComponent } from './popup/rt-dynamic-selector-popup.component';
 import { RtDynamicSelectorRowControlsDirective, RtDynamicSelectorRowTitleDirective } from './rt-dynamic-selector.directives';
+import { RtDynamicSelectorLoadStateDirective } from './rt-dynamic-selector-load-state.directive';
 import {
     clearDynamicKeys,
     dynamicSelectorLabel,
@@ -78,12 +79,14 @@ const BEM_BLOCK: string = 'rt-dynamic-selector';
         { provide: RtFormControlBase, useExisting: forwardRef(() => RtDynamicSelectorComponent) },
         RtDynamicSelectorPartsService,
     ],
+    hostDirectives: [{ directive: RtDynamicSelectorLoadStateDirective, inputs: ['error', 'errorDescription'], outputs: ['retry'] }],
     host: { class: BEM_BLOCK },
 })
 export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormControlBase<unknown[]> {
     /** Последнее значение, записанное формой: к нему возвращает сброс. */
     readonly #initial: WritableSignal<unknown[]> = signal<unknown[]>([]);
     readonly #parts: RtDynamicSelectorPartsService<TEntity> = inject<RtDynamicSelectorPartsService<TEntity>>(RtDynamicSelectorPartsService);
+    readonly #loadState: RtDynamicSelectorLoadStateDirective = inject(RtDynamicSelectorLoadStateDirective, { self: true });
     /* Умолчания входов считаются из настроек кита при объявлении: вход в разметке перебивает их. */
     readonly #invitationButtonIconDefault: IRtIcon.Name | null = rtKitDefault(
         'dynamicSelector',
@@ -181,7 +184,9 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
             this.sortFn()
         )
     );
-    protected readonly hasOffer: Signal<boolean> = computed((): boolean => this.offered().length > 0 || !this.localSearch());
+    protected readonly hasOffer: Signal<boolean> = computed(
+        (): boolean => this.offered().length > 0 || !this.localSearch() || this.#loadState.error() !== null
+    );
     protected readonly isNothingToChoose: Signal<boolean> = computed((): boolean => this.value().length === 0 && !this.hasOffer());
     protected readonly isAddShown: Signal<boolean> = computed((): boolean => this.addShown() && this.hasOffer());
     protected readonly isKeysReset: Signal<boolean> = computed((): boolean => sameDynamicKeys(this.value(), this.#initial()));
@@ -408,6 +413,7 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
             search: (query: string): void => this.searchChange.emit(query),
             loadMore: (): void => this.loadMore.emit(),
             temporaryChoice: (entities: TEntity[]): void => this.temporaryChoiceChange.emit(entities),
+            loadState: this.#loadState,
         });
         this.#parts.bindList({
             rows: this.rows,
@@ -476,7 +482,6 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     /** Запись ищется среди предложенных, а затем среди пришедших входом `chosenEntities`. */
     #entitiesOf(keys: ReadonlyArray<unknown>): TEntity[] {
         const known: ReadonlyArray<TEntity> = [...this.entities(), ...this.chosenEntities()];
-
         return keys
             .map((key: unknown): TEntity | undefined => known.find((item: TEntity): boolean => this.#keyOf(item) === key))
             .filter((item: TEntity | undefined): item is TEntity => item !== undefined);
@@ -490,7 +495,6 @@ export class RtDynamicSelectorComponent<TEntity extends object> extends RtFormCo
     /** Подпись записи — по имени поля, которое назвал вызывающий. */
     #labelOf(item: TEntity): unknown {
         const displayWith: ((entity: TEntity) => string) | null = this.displayWith();
-
         return displayWith === null ? item[this.displayExp()] : displayWith(item);
     }
 }

@@ -36,10 +36,13 @@
 | `emptyTitle`         | `string`             | `''`      |
 | `emptyDescription`   | `string \| null`     | `null`    |
 | `searchTerm`         | `string \| null`     | `''`      |
+| `error`              | `string \| null`     | `null`    |
+| `errorDescription`   | `string`             | `''`      |
 
-Выходы: `searchChange`, `refreshed`, `filtersCleared`, `columnSettingsOpened`, `pageChange`,
-`perPageChange`, `allSelectedChange`. Стороны панели объявляются двумя директивами:
-`rtDynamicListSelectors` и `rtDynamicListActions`.
+Выходы: `searchChange`, `refreshed`, `retry`, `filtersCleared`, `columnSettingsOpened`,
+`pageChange`, `perPageChange`, `allSelectedChange`. Стороны панели объявляются двумя директивами:
+`rtDynamicListSelectors` и `rtDynamicListActions`; свои виды пустоты и ошибки —
+`<ng-template rtDynamicListEmpty>` и `<ng-template rtDynamicListError>`.
 
 ## Главное, что нужно знать
 
@@ -52,6 +55,9 @@
 
 **Пустых мест два.** Раздел без записей и отбор, ничего не нашедший, говорят человеку разное: из
 второго ему дают дорогу назад — сброс того, что он поставил.
+
+**Ошибка загрузки важнее загрузки и пустоты.** `error` не null — вместо записей заглушка ошибки с
+«Повторить», панель остаётся, полосы страниц нет. Шаблон ошибки получает текст и функцию повтора.
 
 **Поиск не ходит наружу на каждое нажатие.** Значение сперва устаивается — готовым оператором
 ожидания кита, тем же, что стоит в списке переписок.

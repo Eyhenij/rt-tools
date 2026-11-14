@@ -64,12 +64,16 @@
                 </span>
             </div>
         } @empty {
-            <div rtElem="empty" qa-dataid="draggable-tree-empty" [rtMod]="{ 'with-icon': !!emptyIcon() }">
-                @if (emptyIcon(); as icon) {
-                    <rt-icon rtElem="empty-icon" qa-dataid="draggable-tree-empty-icon" size="lg" [name]="icon" />
-                }
-                {{ t().uiNoOptions }}
-            </div>
+            @if (emptyTpl(); as own) {
+                <ng-container [ngTemplateOutlet]="own.templateRef" [ngTemplateOutletContext]="{ $implicit: '' }" />
+            } @else {
+                <div rtElem="empty" qa-dataid="draggable-tree-empty" [rtMod]="{ 'with-icon': !!emptyIcon() }">
+                    @if (emptyIcon(); as icon) {
+                        <rt-icon rtElem="empty-icon" qa-dataid="draggable-tree-empty-icon" size="lg" [name]="icon" />
+                    }
+                    {{ t().uiNoOptions }}
+                </div>
+            }
         }
     </div>
 </ng-container>

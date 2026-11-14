@@ -1,0 +1,15 @@
+<div class="app-select-states__panel-slot">
+    <rt-select
+        ariaLabel="Список со своим видом пустого"
+        placeholder="Выберите город"
+        [attr.data-story-trigger]="triggerAttribute"
+        [options]="noOptions"
+        [formControl]="control">
+        <ng-template rtSelectEmpty>
+            <div class="app-select-states__own">
+                <strong>Свой вид пустого</strong>
+                <span class="app-select-states__own-hint">Разметка приложения</span>
+            </div>
+        </ng-template>
+    </rt-select>
+</div>
