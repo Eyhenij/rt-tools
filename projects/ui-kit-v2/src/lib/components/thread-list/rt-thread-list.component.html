@@ -147,7 +147,20 @@
             }
             @if (hasError()) {
                 <div rtElem="load-error" qa-dataid="thread-list-load-error">
-                    <ng-container [ngTemplateOutlet]="errorView" />
+                    @if (errorTemplate(); as tpl) {
+                        <ng-container [ngTemplateOutlet]="tpl.templateRef" [ngTemplateOutletContext]="errorContext()" />
+                    } @else {
+                        <span rtElem="load-error-text">{{ errorTitle() }}</span>
+                        <button
+                            rtButton
+                            appearance="outlined"
+                            size="sm"
+                            type="button"
+                            qa-dataid="thread-list-retry"
+                            [label]="t().uiRetry"
+                            [attr.aria-label]="t().uiRetry"
+                            (click)="onRetry()"></button>
+                    }
                 </div>
             } @else if (hasMore()) {
                 <div

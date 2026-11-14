@@ -6,7 +6,8 @@
 - **Stage:** 4 of 4 — The showcase
 - **Done:** the agreement `docs/specs/ui-kit-v2/proposed/error-states/` with scenarios
   SC-UKV-1267…1278; `npm run check:specs` lists only them as without a test.
-- **Next step:** a story for every new state of the thread list, the chat and the details panel.
+- **Next step:** the owner's word on the showcase; then the references, the merge of the agreement
+  and the close-out.
 - **Uncommitted:** no.
 - **Waiting for the owner:** no.
 - **PR:** not open yet.
@@ -22,8 +23,8 @@
 - [x] 3.1 Add `error`, `retry`, `emptyTitle`, `emptyIcon` and both slots to `rt-chat`; fix the `emptyHint` render
 - [x] 3.2 Add `error`, `retry` and the error slot to `rt-workspace-details`
 - [x] 3.3 Cover the new states by the specs
-- [>] 4.1 Add a story for every new state of the three components
-- [ ] 4.2 Compare the stories with the frames by measurement and show them to the owner
+- [x] 4.1 Add a story for every new state of the three components
+- [>] 4.2 Compare the stories with the frames by measurement and show them to the owner
 
 ## Decisions along the way
 
@@ -44,6 +45,15 @@
   SC-UKV-1278. Affected stage: 3.
 - **The import list of `rt-chat` moved to `rt-chat.imports.ts`** — the component file stood at
   499 lines of the 500 limit. Affected stage: 3.
+- **The measurement against the frames found three code misses, fixed in stage 4:** the load more
+  error row was a whole placeholder instead of a short row with the text and the button; its rule
+  named the undeclared token `--rt-space-3`; the chat width variable lost to the placeholder's own
+  rule and the placeholder shrank to its content. Affected stage: 4.
+- **What still differs from the frames is the Figma copy of the kit, not this change:** the
+  placeholder title line 24 against 20 in code and no side padding; the skeleton row 49 against 54;
+  the details tab label «Переход» against «Переход этапа» and the first tab at 17 against 25. The
+  question about the empty list icon (inbox in the frame, preview rows in code) went to the parent
+  session. Affected stage: 4.
 
 ## Handover of the session
 

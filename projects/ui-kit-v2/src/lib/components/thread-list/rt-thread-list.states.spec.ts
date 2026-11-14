@@ -90,8 +90,13 @@ describe('RtThreadListComponent — ошибка и заглушки', (): void 
         fixture.detectChanges();
 
         expect(qaAll(fixture, 'row-title').length).toBe(3);
-        expect(qa(fixture, 'thread-list-load-error')).not.toBeNull();
+        expect(textOf(qa(fixture, 'thread-list-load-error'))).toContain('Нет сети');
+        expect(qa(fixture, 'thread-list-error')).toBeNull();
         expect(qa(fixture, 'thread-list-load-more')).toBeNull();
+
+        (qa(fixture, 'thread-list-retry')?.nativeElement as HTMLButtonElement).click();
+
+        expect(fixture.componentInstance.retryCount).toBe(1);
     });
 
     it('SC-UKV-1269 — кнопка «Повторить» шлёт retry', (): void => {
