@@ -14,7 +14,7 @@ happen in the working database.
 ## What it is called here
 
 - **In the rule** — Here
-- **a stand** — the showcase: the first kit at `http://localhost:6006`, the second at `:6007`; the applications: the receiver at `:3000`, the admin panel at `:4200`; the end-to-end suite — its own `:3310` and `:4310`
+- **a stand** — the showcase at `http://localhost:6007`; the applications: the receiver at `:3000`, the admin panel at `:4200`; the end-to-end suite — its own `:3310` and `:4310`
 - **the browser driver** — the claude-in-chrome extension; there is no other way in
 - **the pinned profile** — the identifier from `.claude/rt-kit/browser-device-id` — a file of the machine, it does not travel into the repository
 - **a measurement** — the computed values of a node, taken from the page rather than by eye from a screenshot
@@ -27,12 +27,12 @@ happen in the working database.
 - **the workaround guard** — `.claude/hooks/browser-guard-no-other-drivers.sh`
 - **the listing and switching guard** — `.claude/hooks/browser-guard-no-listing.sh`
 - **the guard against asking about the profile** — `.claude/hooks/browser-guard-no-asking.sh` — a file of this tree, the package does not carry it
-- **the stories and the overview pages** — `projects/<kit>/src/**/stories/`, `projects/ui-kit/docs/*.mdx`
+- **the stories and the overview pages** — `projects/ui-kit-v2/src/**/stories/`, `projects/ui-kit-v2/docs/*.mdx`
 
 ## The stands of this tree
 
 The list the hooks print in a refusal is declared by the profile override —
-`.claude/rt-kit/project.sh:RT_STANDS`: the receiver on 3000, the admin panel on 4200, the end-to-end suite's stand on 3310 and 4310, the `ui-kit` showcase on 6006, the `ui-kit-v2` showcase on 6007. The list omits the entry example's stand (3410, 4410) and its Keycloak (58080). The hook that reads the variable is not laid out here — it stands in the `skip` list of `.claude/rt-kit.json` — so the list is read by a person, and the refusal text of the browser guards stays general.
+`.claude/rt-kit/project.sh:RT_STANDS`: the receiver on 3000, the admin panel on 4200, the end-to-end suite's stand on 3310 and 4310, the `ui-kit-v2` showcase on 6007. The list omits the entry example's stand (3410, 4410) and its Keycloak (58080). The hook that reads the variable is not laid out here — it stands in the `skip` list of `.claude/rt-kit.json` — so the list is read by a person, and the refusal text of the browser guards stays general.
 
 ## Where the articles are carried out
 
@@ -41,7 +41,7 @@ here" (the bold part of the item). An article without a line and a line without 
 divergence: the rule promises what the tree does not have, or the tree holds what the rule is
 silent about.
 
-- **A second instance of an application that is already up is not raised.** — **Not carried out.** The package guard `dev-server-guard.sh` has a mode for this, and the tree drops it by `skip` in `.claude/rt-kit.json`; it is held by the order: `lsof -nP -iTCP:<port> -sTCP:LISTEN` before the startup — `6006` and `6007` on the showcases, `3000` and `4200` on the applications, `3310` and `4310` on the end-to-end suite's stand. A taken port means something is already up: an instance built from this branch is used, and one built from another branch is left alone while the stand goes on a free port (`E2E_API_PORT`, `E2E_ADMIN_PORT`); a separate showcase instance for the snapshot run comes up on its own port and is passed through `STORYBOOK_URL`. Everything is raised by the agent itself: `pnpm run storybook:ui-kit-v1`, `storybook:ui-kit-v2`, `serve:db`, `serve:api`, `serve:admin`, `serve:stand`.
+- **A second instance of an application that is already up is not raised.** — **Not carried out.** The package guard `dev-server-guard.sh` has a mode for this, and the tree drops it by `skip` in `.claude/rt-kit.json`; it is held by the order: `lsof -nP -iTCP:<port> -sTCP:LISTEN` before the startup — `6007` on the showcase, `3000` and `4200` on the applications, `3310` and `4310` on the end-to-end suite's stand. A taken port means something is already up: an instance built from this branch is used, and one built from another branch is left alone while the stand goes on a free port (`E2E_API_PORT`, `E2E_ADMIN_PORT`); a separate showcase instance for the snapshot run comes up on its own port and is passed through `STORYBOOK_URL`. Everything is raised by the agent itself: `pnpm run storybook:ui-kit-v2`, `serve:db`, `serve:api`, `serve:admin`, `serve:stand`.
 - **The browser is driven by one driver on the pinned profile.** — `.claude/hooks/browser-guard-no-other-drivers.sh:deny` — it refuses the second and third drivers, opening a link by system means, launching the binary and driving by an automation script.
 - **A browser raised by a library from inside a script is the same as launching the binary.** — `.claude/hooks/browser-guard-no-other-drivers.sh:launch` — it judges the content of the file being run and the code passed as an argument instead of a file, against the entry points of browser libraries; a file that does not exist it does not judge at all.
 - **The browser choice goes stale and needs a repeated call.** — `.claude/hooks/browser-guard-require-select.sh:ttl` — the choice mark lives five minutes and is refreshed by every call that passes.
@@ -83,7 +83,7 @@ silent about.
 - A spec and a showing in the showcase do not replace one another: a spec proves that a state
   came about, and the showcase that it looks as promised. That is written down by the law of
   verifiability and by the override to it in `.claude/rt-kit/overrides/laws/verifiability.md`.
-- The second kit's showcase must show every declared state of a component; what cannot be shown
+- The kit's showcase must show every declared state of a component; what cannot be shown
   is marked with a reason — the rule `rt-tools-storybook`.
 - The showcase for the eyes may not be raised with `RT_SNAPSHOT_RUN=1`: the variable removes the
   pseudo-state addon, and hover, focus and active disappear from the showing. It is set only by
@@ -91,20 +91,18 @@ silent about.
 
 ## What this is checked by
 
-- `pnpm run storybook:ui-kit-v1` and `pnpm run storybook:ui-kit-v2` — the showcases of the first and the
-  second kit.
-- `pnpm run build-storybook:ui-kit-v1` — the built showcase, if a divergence looks like a trace of
+- `pnpm run storybook:ui-kit-v2` — the kit's showcase.
+- `pnpm run build-storybook:ui-kit-v2` — the built showcase, if a divergence looks like a trace of
   development mode.
-- `pnpm run test:visual` — a snapshot of every story of the first kit against a reference; the
-  references themselves lie in `projects/ui-kit/.storybook/__snapshots__/`, the references are tracked in the
-  repository, the divergences go to `__diff_output__` next to them. They are updated
-  deliberately: `pnpm run test:visual:update`. The run goes against an already raised showcase;
-  the address is overridden by `STORYBOOK_URL`.
+- `pnpm run test:visual:v2` — a snapshot of every story against a reference; the references lie in
+  `projects/ui-kit-v2/.storybook/__snapshots__/` and are tracked in the repository. They are
+  updated deliberately: `pnpm run test:visual:v2:update`. The run goes against an already raised
+  showcase; the address is overridden by `STORYBOOK_URL`.
 
 ## About the showcase snapshots
 
-- **A showcase reference is taken in the browser image, and it matches on any machine.** Both kits
-  shoot in the image, so a reference taken here matches the pipeline's runner, which stands on
+- **A showcase reference is taken in the browser image, and it matches on any machine.** The kit
+  shoots in the image, so a reference taken here matches the pipeline's runner, which stands on
   another machine: the first step of the run log names it (`Runner name`). A frame shot by the
   machine's own browser diverges there on dense text by a few hundredths of a percent while the
   layout is the same, so such a frame is never committed as a reference.
@@ -113,7 +111,7 @@ silent about.
   of one pixel too. One does not replace the other.
 - **What is not deterministic does not get into a story.** Random data is pinned by the
   generator's seed (`faker.seed` in `preview.ts`), pictures are embedded into the address instead
-  of being loaded from the network, the icon font waits for readiness — until then `rtui-icon`
+  of being loaded from the network, the icon font waits for readiness — until then `rt-icon`
   keeps itself invisible.
 - **The framework's animations do not go through CSS.** Declaring a zero duration does not stop
   them: before a snapshot they are driven to the end through the animations interface, otherwise
@@ -132,7 +130,7 @@ with a set viewport or into the snapshot runner; the calls themselves look like 
 
 ```javascript
 const page = await browser.newPage({ viewport: { width: 599, height: 900 } });
-await page.goto('http://localhost:6006/iframe.html?id=<story>&viewMode=story', { waitUntil: 'networkidle' });
+await page.goto('http://localhost:6007/iframe.html?id=<story>&viewMode=story', { waitUntil: 'networkidle' });
 await page.evaluate(() => getComputedStyle(document.querySelector('<selector>')).visibility);
 ```
 
@@ -153,7 +151,7 @@ raised by an agent session is that session's to restart, by process id; a stand 
 is theirs. The answer is the parent chain of the process on the port:
 
 ```bash
-p=$(lsof -nP -iTCP:6006 -sTCP:LISTEN -t | head -1)
+p=$(lsof -nP -iTCP:6007 -sTCP:LISTEN -t | head -1)
 while [ -n "$p" ] && [ "$p" != 1 ]; do ps -o pid=,ppid=,command= -p "$p" | cut -c1-120; p=$(ps -o ppid= -p "$p" | tr -d ' '); done
 ```
 

@@ -2,7 +2,7 @@
 name: rt-tools-storybook-story
 kind: pattern
 rule: rt-tools-storybook
-description: A pattern of the rule rt-tools-storybook. Take it when creating or editing a story: the Test*Component wrapper, the typing, the environment decorators, the controls, the state matrix and the second showcase's snapshot parameters. A failed snapshot — the pattern ui-component-tests-visual.
+description: A pattern of the rule rt-tools-storybook. Take it when creating or editing a story: the TestRt*Component wrapper, the typing, the environment decorators, the controls, the state matrix and the snapshot parameters. A failed snapshot — the pattern ui-component-tests-visual.
 ---
 
 # A showcase story — the ready-made code
@@ -12,110 +12,91 @@ A pattern of the rule `rt-tools-storybook`. What must be true at that is the law
 
 ## When to use
 
-- A `*.stories.ts` in either of the two kits is created or edited.
+- A `*.stories.ts` of the kit is created or edited.
 - A component needs a state matrix or a demonstration wrapper.
 - A story needs a snapshot frame of its own: hover, an overlay, skipping the shot.
 
 ## Golden rule
 
-**A story never targets the `rtui-*` component directly — it targets a
-`Test*Component` wrapper** that lives next to the story in `stories/component/`.
-Every story in the kit follows this (checkbox, toggle, modal, header, side-menu,
-snack-bar, info-badge, file-uploader, image-uploader, dynamic-selectors). The
-wrapper owns the plain mutable demo state that Storybook `args` can bind to,
+**A story never targets the `rt-*` component directly — it targets a
+`TestRt*Component` wrapper** that lives next to the story in `stories/component/`.
+The wrapper owns the plain mutable demo state that Storybook `args` can bind to,
 because the real component's API is `InputSignal`-based.
 
 ```
-toggle/
-  rtui-toggle.component.ts
+toggle-switch/
+  rt-toggle-switch.component.ts
   stories/
-    toggle.stories.ts
+    toggle-switch.stories.ts
+    toggle-switch-matrix.stories.ts
     component/
-      test-toggle.component.{ts,html,scss}
+      test-toggle-switch.component.ts
+      test-toggle-switch-matrix.component.ts
 ```
 
 ## Story file shape
 
 ```typescript
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { applicationConfig, Meta, StoryObj } from '@storybook/angular';
+import { Meta, StoryObj } from '@storybook/angular';
 
-import { EToggleSizeType } from '../toggle-size.type.enum';
-import { TestToggleComponent } from './component/test-toggle.component';
+import { storySnapshotSkip } from '../../../../showcase';
+import { TestRtToggleSwitchComponent } from './component/test-toggle-switch.component';
 
 export default {
-    title: 'Components/Toggle',
-    component: TestToggleComponent,
-    decorators: [
-        applicationConfig({
-            providers: [provideAnimations()],
-        }),
-    ],
+    title: 'Atoms/Forms/ToggleSwitch',
+    component: TestRtToggleSwitchComponent,
     argTypes: {
+        label: { control: { type: 'text' } },
         size: {
-            type: 'string',
-            options: [EToggleSizeType.MD, EToggleSizeType.SM, 'fat'],
+            options: ['sm', 'md', 'lg'],
             control: { type: 'select' },
         },
+        disabled: { control: { type: 'boolean' } },
     },
-} as Meta<TestToggleComponent>;
+} as Meta<TestRtToggleSwitchComponent>;
 
-type Story = StoryObj<TestToggleComponent>;
+type TStory = StoryObj<TestRtToggleSwitchComponent>;
 
-export const Toggle: Story = {
-    args: {
-        value: true,
-        disabled: false,
-        size: EToggleSizeType.MD,
-        label: 'Label Example',
-    },
+export const Playground: TStory = {
+    parameters: storySnapshotSkip('значения по умолчанию уже стоят ячейкой в матрице этого компонента'),
+    args: { label: null, size: 'sm', disabled: false },
 };
 ```
 
-- `title` is `Components/<PascalName>`.
-- Default export is `as Meta<TestX>`; alias `type Story = StoryObj<TestX>` and type
+- Default export is `as Meta<TestRtX>`; alias `type TStory = StoryObj<TestRtX>` and type
   every named export with it.
-- Providers go through `applicationConfig` in `decorators` — `provideAnimations()`
-  is the standard one. There is no global `preview.ts` provider for it.
-- One named export per variant (`Default`, `Mobile`, `InfoBadgeColors`, …),
-  differing only in `args`. Enumerate options with the component's own
-  `*_ENUM` const rather than string literals.
+- Global providers — zoneless, storage, icons, labels, theme toolbar — come from `preview.ts`;
+  a story does not repeat them.
+- One named export per variant, differing only in `args`.
 
 ## The wrapper component
 
 ```typescript
 @Component({
-    selector: 'app-toggle',
-    templateUrl: './test-toggle.component.html',
+    selector: 'app-toggle-switch',
+    template: `<rt-toggle-switch [label]="label" [size]="size" [disabled]="disabled" />`,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        // directives
-        BlockDirective,
-        ElemDirective,
-
         // components
-        RtuiToggleComponent,
-        FormsModule,
+        RtToggleSwitchComponent,
     ],
 })
-export class TestToggleComponent {
-    public value: boolean = true;
-    public size: TToggleSizeType = EToggleSizeType.MD;
+export class TestRtToggleSwitchComponent {
+    public label: string | null = null;
+    public size: IRtToggleSwitch.Size = 'sm';
+    public disabled: boolean = false;
 }
 ```
 
-- `app-` selector (demo scaffolding, not a shipped `rtui-` component).
+- `app-` selector (demo scaffolding, not a shipped `rt-` component).
 - Plain public fields — these are the Storybook control surface.
 - Wrapper styles are exempt from the design-token stylelint rule (the
   `**/stories/**` ignore), so demo layout CSS is fine there.
 - The wrapper is **not** exported from any `public-api.ts` — it must never ship.
 
----
+## Story titles
 
-# `@rt-tools/ui-kit-v2`
-
-Second kit, own showcase. Selectors are `rt-*`, wrappers are named
-`TestRt*Component`, and story titles are `<Level>/<Group>/<PascalName>` — level is
+Story titles are `<Level>/<Group>/<PascalName>` — level is
 `Atoms`, `Molecules` or `Organisms`, and the group is optional:
 
 ```typescript
@@ -164,7 +145,7 @@ alongside `src/testing/**`, and it is linted like any other source — unlike
   The values at which the component closes itself are substituted in the matrix — that is a
   property of the component, and it is named in its `CONTEXT.md` rather than here.
 
-## Snapshot parameters — ui-kit-v2
+## Snapshot parameters
 
 Stories are compared against baselines, and what gets a frame is decided **by
 subtraction**: everything is shot except what carries a skip with a reason. Get it

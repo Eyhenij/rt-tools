@@ -4,8 +4,8 @@ The names of this tree, next to the rule `SKILL.md`. A separate file because the
 technique and travels between repositories whole, while everything below is true only here and
 goes stale at every renaming.
 
-The tree stands on both sides of this rule at once. It writes the look — two kits under
-`projects/` — and it consumes it. The admin panel of the receiver is assembled from the second kit,
+The tree stands on both sides of this rule at once. It writes the look — the kit under
+`projects/` — and it consumes it. The admin panel of the receiver is assembled from the kit,
 and its screens are an ordinary consumer. Inside a kit "take the ready-made" means leaning on a
 neighbouring component, on a field base or on a CDK primitive. On a screen it means taking the kit
 component and not drawing it again.
@@ -13,18 +13,17 @@ component and not drawing it again.
 ## What it is called here
 
 - **In the rule** — Here
-- **the source of look** — the kit itself: `@rt-tools/ui-kit` with the prefix `rtui-` or `@rt-tools/ui-kit-v2` with the prefix `rt-`
-- **a base class** — the form-field base and the route side-panel base in the second kit
+- **the source of look** — the kit itself: `@rt-tools/ui-kit-v2` with the prefix `rt-`
+- **a base class** — the form-field base and the route side-panel base in the kit
 - **a store base** — `BaseStoreService`, `BaseAsyncStoreService` from `@rt-tools/store`
-- **the shared message bus** — the notification bus of the second kit in `projects/ui-kit-v2/src/lib/platform/`
+- **the shared message bus** — the kit's notification bus in `projects/ui-kit-v2/src/lib/platform/`
 - **the shared layout layer** — `projects/<kit>/src/styles/`
 - **a one-off departure** — the marker `native-ok` on the same line — it is lifted by the reinvention guard
 
 ## Where it lives
 
-- **the first kit's components** — `projects/ui-kit/src/lib/ui-kit/` — buttons, table, dialog, panel, notification, file uploaders and the rest
-- **the second kit's components** — `projects/ui-kit-v2/src/lib/components/`
-- **the screens that consume the second kit** — `libs/message-bus-admin/*/feature/*` and `apps/message-bus-admin/`
+- **the kit's components** — `projects/ui-kit-v2/src/lib/components/` — buttons, table, dialog, panel, notification, file uploaders and the rest
+- **the screens that consume the kit** — `libs/message-bus-admin/*/feature/*` and `apps/message-bus-admin/`
 - **the shared layout layer of the admin panel** — `apps/message-bus-admin/src/styles/`
 - **the form-field base** — `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.base.ts`
 - **the route side-panel base** — `projects/ui-kit-v2/src/lib/components/container/rt-route-aside.base.ts`
@@ -41,9 +40,9 @@ here" (the bold part of the item). An article without a line and a line without 
 divergence: the rule promises what the tree does not have, or the tree holds what the rule is
 silent about.
 
-- **The source of look is chosen by application, not by habit.** — `.claude/rt-kit/checks.json:reuse` — the bundle of the second kit is declared with the area it holds over. That area is the admin panel of the receiver. There the source of look is `@rt-tools/ui-kit-v2`. The first kit has the prefix `rtui-`, the second `rt-`; they share no code, and no screen takes both.
+- **The source of look is chosen by application, not by habit.** — `.claude/rt-kit/checks.json:reuse` — the kit's bundle is declared with the area it holds over. That area is the admin panel of the receiver. There the source of look is `@rt-tools/ui-kit-v2` with the prefix `rt-`.
 - **A value of an integration is taken the same way as the neighbouring value of the same integration.** — **Not checked by anything.** A value hardcoded into the code is syntactically sound: the lint, the build and the duplicate audit stay silent. The tree's closest integration is the browser profile keys in `.claude/rt-kit/browser-device-id`, and there are no hardcoded values next to them.
-- **Work starts with reading the ready-made, not with a blank file.** — **Not checked by anything.** Reading leaves no trace in the tree. The neighbouring kit folder is read whole — `projects/ui-kit/src/lib/ui-kit/` and `projects/ui-kit-v2/src/lib/components/`.
+- **Work starts with reading the ready-made, not with a blank file.** — **Not checked by anything.** Reading leaves no trace in the tree. The kit folder is read whole — `projects/ui-kit-v2/src/lib/components/`.
 - **A sample is taken whole, and every departure from it is a decision written before the code.** — **Not checked by anything.** A departure from the sample is told from a choice only by a line in the progress, and no check reads the progress against the code. Held by the measurement of one's own screen against the sample's.
 - **A restriction invented on the spot is checked by a search over the tree before it becomes an argument.** — **Not checked by anything.** A restriction lives in reasoning, not in a file: a search that never happened leaves no trace. It is held by the argument "it may not be done this way", said to the owner, naming the command it was checked by.
 - **One's own primitive and one's own base are created only with the owner's explicit approval.** — **Not checked by anything.** The owner's word is invisible to a machine. Both bases of the second kit were started by a decision written down in `docs/adr/`.
@@ -66,7 +65,7 @@ silent about.
   sweeping check takes — and the tree profile function `rt_reinvented_in` in
   `.claude/rt-kit/project.sh`. In the profile only what cannot be expressed as data stays: a sign
   that depends on the file's place in the tree. Today there is one sample there — the host in the
-  second kit's styles.
+  kit's styles.
 - The tree's own signs lie in `.claude/rt-kit/signals.json`: a foreign spec runner, a relative
   path through `projects/*` instead of an alias, the input and output decorators instead of the
   reactive ones.
@@ -74,9 +73,9 @@ silent about.
   over the area `apps/chat-talks-page`, `apps/message-bus-admin` and `libs/message-bus-admin`. The
   embedded page stands in the area because it draws the same screen as the panel by the same
   ready-made pieces; outside it the check kept silent about the page. The area is not a detail
-  here. The tree writes the second kit as well, and a bundle declared without an area would advise
+  here. The tree writes the kit as well, and a bundle declared without an area would advise
   calling the kit on the kit's own files: the sign is right and pointed the wrong way. The bundles
-  of the first kit, of the core, of the storage and of the utilities are not declared for the same
+  of the core, of the storage and of the utilities are not declared for the same
   reason — outside their own packages they have no consumer yet.
 - The signs of a bundle name a native control, an overlay and a layout of one's own. A whole piece
   drawn by hand in place of a ready-made component is named by none of them. What was drawn instead

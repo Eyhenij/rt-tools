@@ -111,8 +111,8 @@ scripts/gather-context.sh main
 
 command git push -u origin "$(command git rev-parse --abbrev-ref HEAD)"
 
-command git add projects/ui-kit/CHANGELOG.md
-command git commit -m "docs(rt:ui-kit): add unreleased notes for ..."
+command git add projects/ui-kit-v2/CHANGELOG.md
+command git commit -m "docs(rt:ui-kit-v2): add unreleased notes for ..."
 command git push
 
 command gh pr create --base main --head "<ветка>" \

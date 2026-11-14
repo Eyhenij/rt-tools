@@ -298,13 +298,6 @@ When the panel is drawn
 Then the title has a caption under it, each switch stands left of its label, and each column is a plaque with a handle, its name and an eye button, the hidden one marked
 Covered: `projects/ui-kit-v2/src/lib/components/data-list/settings/rt-data-list-settings-aside.component.spec.ts`.
 
-### SC-UKV-353 — the family has paired frames with the first kit
-
-Given the list of the two kits' paired frames
-When the pairs check reads the table family
-Then frames of both kits are named for it and no reason "not moved yet" is written
-Not covered: the promise is about a list of frames, not about a call. It is held by `tools/check-kit-shot-pairs.mjs`.
-
 ### SC-UKV-365 — the switch of the pagination bar hides it
 
 Given a list with more records than fit on one page

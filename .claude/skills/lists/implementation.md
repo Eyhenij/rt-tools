@@ -16,7 +16,7 @@ of it. The page has not one event.
 ## What it is called here
 
 - **In the rule** — Here
-- **`<prefix>-`** — `rt-` — the prefix of the second kit; the first kit with the prefix `rtui-` does not assemble the admin panel
+- **`<prefix>-`** — `rt-` — the kit's prefix
 - **`rt-table`, the input `[dataSource]`** — the same: `rt-table` accepts `dataSource` by a setter over `CdkTable`
 - **`<prefix>ToolbarLeft`, `<prefix>ToolbarRight`** — `rtToolbarLeft`, `rtToolbarCenter`, `rtToolbarRight`
 - **`<prefix>TableRow`** — `rtTableRow`
@@ -112,7 +112,7 @@ silent about.
 
 - `pnpm exec nx test @rt-tools/ui-kit-v2` — the specs of the table, its row, the row menu and the
   sorting hold what the rule calls ready-made.
-- The second kit's showcase: the table stories show the loading, the empty state and the cards —
+- The kit's showcase: the table stories show the loading, the empty state and the cards —
   that is, exactly the branches a screen is tempted to rewrite with markup of its own.
 - `pnpm exec nx run message-bus-admin-e2e:e2e` — the end-to-end suite: the pages, the order, the
   filter, the panel, the emptiness, the refusal and the cards on a narrow screen are checked by

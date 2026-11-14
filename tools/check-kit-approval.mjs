@@ -21,7 +21,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
-const KITS = { 'ui-kit': 'projects/ui-kit/', 'ui-kit-v2': 'projects/ui-kit-v2/' };
+const KITS = { 'ui-kit-v2': 'projects/ui-kit-v2/' };
 const RULE = 'kit-approval';
 
 /** Files that only keep settings in the browser: the key registry and the storage services. */

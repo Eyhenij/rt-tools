@@ -91,8 +91,6 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 - **An application moves a screen from the first kit's table without editing its column
   declarations, its bindings or its saved settings.** Only the names of the components and
   directives change.
-- **The family has frames paired with the first kit's: the table, the list, the settings panel and
-  the themes.**
 
 ### Columns and cells
 

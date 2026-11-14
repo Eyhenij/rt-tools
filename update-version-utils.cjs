@@ -90,7 +90,6 @@ function updateDependency(filePath, depName, newVer) {
 // protocol, so publishing utils is what turns it into a real range for every dependent.
 updateDependency('./projects/core/package.json', '@rt-tools/utils', newVersion);
 updateDependency('./projects/store/package.json', '@rt-tools/utils', newVersion);
-updateDependency('./projects/ui-kit/package.json', '@rt-tools/utils', newVersion);
-// ui-kit-v2 читает те же типы списка из utils, что и ui-kit; без этой строки его зависимость
-// отстаёт от реестра, и опубликованный кит ссылается на символы, которых у потребителя нет.
+// ui-kit-v2 читает типы списка из utils; без этой строки его зависимость отстаёт от реестра, и
+// опубликованный кит ссылается на символы, которых у потребителя нет.
 updateDependency('./projects/ui-kit-v2/package.json', '@rt-tools/utils', newVersion);
