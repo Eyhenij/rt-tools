@@ -3,10 +3,10 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 4 — The shared error view and the thread list
+- **Stage:** 3 of 4 — The chat and the details panel
 - **Done:** the agreement `docs/specs/ui-kit-v2/proposed/error-states/` with scenarios
   SC-UKV-1267…1278; `npm run check:specs` lists only them as without a test.
-- **Next step:** the header and the tab switch spacing of `rt-thread-list`.
+- **Next step:** `error`, `retry`, `emptyTitle`, `emptyIcon` and both slots of `rt-chat`.
 - **Uncommitted:** no.
 - **Waiting for the owner:** no.
 - **PR:** not open yet.
@@ -17,9 +17,9 @@
 - [x] 1.2 Write its scenarios
 - [x] 2.1 Add the labels `uiLoadError`, `uiLoadErrorHint`, `uiRetry` and the max-width variable of `rt-empty-state`
 - [x] 2.2 Add `error`, `retry`, the text inputs and both slots to `rt-thread-list`, with the load more error row
-- [>] 2.3 Fix the header and the tab switch spacing of `rt-thread-list`
-- [ ] 2.4 Cover the new states by the spec
-- [ ] 3.1 Add `error`, `retry`, `emptyTitle`, `emptyIcon` and both slots to `rt-chat`; fix the `emptyHint` render
+- [x] 2.3 Fix the header and the tab switch spacing of `rt-thread-list`
+- [x] 2.4 Cover the new states by the spec
+- [>] 3.1 Add `error`, `retry`, `emptyTitle`, `emptyIcon` and both slots to `rt-chat`; fix the `emptyHint` render
 - [ ] 3.2 Add `error`, `retry` and the error slot to `rt-workspace-details`
 - [ ] 3.3 Cover the new states by the specs
 - [ ] 4.1 Add a story for every new state of the three components

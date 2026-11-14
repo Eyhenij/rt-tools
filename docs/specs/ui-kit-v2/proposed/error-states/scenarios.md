@@ -62,7 +62,7 @@ Given a thread list with search, filters, the tab switch and rows
 When it is drawn
 Then the left edges of the search field, the tab switch and the first row are equal
 
-Not covered: the code is written in stage 2.
+Coverage: partial — the styles spec reads the compiled rule; the measured edges are taken in the showcase.
 
 ### SC-UKV-1275 — the tab switch stands 8 px from the header line and from the content
 
@@ -70,7 +70,7 @@ Given a thread list with the tab switch
 When it is drawn
 Then the gap from the header bottom line to the switch and from the switch to the first row is 8 px each
 
-Not covered: the code is written in stage 2.
+Coverage: partial — the styles spec reads the compiled rule; the measured edges are taken in the showcase.
 
 ### SC-UKV-1276 — the chat without a conversation shows its title, hint and icon
 
