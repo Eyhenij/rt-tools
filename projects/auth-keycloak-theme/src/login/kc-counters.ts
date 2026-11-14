@@ -50,6 +50,12 @@ const WEBVISOR_NO_KEYS: string = 'ym-disable-keys';
 /** The fields a person types into. */
 const TYPED_FIELDS: string = 'input, textarea';
 
+/** The typed fields whose value stands in the markup as an attribute. */
+const PREFILLED_FIELDS: string = 'input[value]:not([type="hidden"], [type="submit"], [type="button"], [type="checkbox"], [type="radio"])';
+
+/** The root of a standard page: its whole text is hidden from Webvisor. */
+const STANDARD_PAGE: string = 'body';
+
 const GA_SCRIPT: string = 'https://www.googletagmanager.com/gtag/js?id=';
 const METRIKA_SCRIPT: string = 'https://mc.yandex.ru/metrika/tag.js';
 
@@ -151,11 +157,26 @@ function matching(root: ParentNode, selector: string): Element[] {
 export function hidePrivateText(root: ParentNode): void {
     matching(root, PRIVATE_NODES).forEach((node: Element): void => node.classList.add(WEBVISOR_HIDDEN));
     matching(root, TYPED_FIELDS).forEach((node: Element): void => node.classList.add(WEBVISOR_NO_KEYS));
+    // A standard page may fill a field from the context — the login hint among others — and its
+    // default value is written into the `value` attribute, which Webvisor records. The value moves
+    // into the field property, where the form still sends it.
+    matching(root, PREFILLED_FIELDS).forEach((node: Element): void => {
+        if (node instanceof HTMLInputElement) {
+            const value: string = node.value;
+            node.removeAttribute('value');
+            node.value = value;
+        }
+    });
 }
 
-/** The address without the query parameters that carry a person's data; null when it has none of them. */
+/** The address without the query parameters that carry a person's data; null when it has none or is malformed. */
 function withoutPrivateParams(href: string, base: string): string | null {
-    const address: URL = new URL(href, base);
+    let address: URL;
+    try {
+        address = new URL(href, base);
+    } catch {
+        return null;
+    }
     if (!PRIVATE_PARAMS.some((name: string): boolean => address.searchParams.has(name))) {
         return null;
     }
@@ -164,8 +185,13 @@ function withoutPrivateParams(href: string, base: string): string | null {
     return address.toString();
 }
 
-/** The full address of every link whose markup shows it without the private parameters. */
-const FULL_LINKS: WeakMap<Element, string> = new WeakMap<Element, string>();
+/** A link whose markup shows its address without the private parameters: the full one and the shown one. */
+interface IHiddenLink {
+    readonly full: string;
+    readonly shown: string;
+}
+
+const FULL_LINKS: WeakMap<Element, IHiddenLink> = new WeakMap<Element, IHiddenLink>();
 
 function asksNewTab(event: MouseEvent): boolean {
     return event.button === 1 || event.ctrlKey || event.metaKey || event.shiftKey;
@@ -173,11 +199,12 @@ function asksNewTab(event: MouseEvent): boolean {
 
 function followFull(link: Element, go: TGoTo): void {
     const lead: (event: Event) => void = (event: Event): void => {
-        if (!(event instanceof MouseEvent) || (event.type === 'auxclick' && event.button !== 1)) {
+        const hidden: IHiddenLink | undefined = FULL_LINKS.get(link);
+        if (hidden === undefined || !(event instanceof MouseEvent) || (event.type === 'auxclick' && event.button !== 1)) {
             return;
         }
         event.preventDefault();
-        go(FULL_LINKS.get(link) ?? '', asksNewTab(event));
+        go(hidden.full, asksNewTab(event));
     };
     link.addEventListener('click', lead);
     link.addEventListener('auxclick', lead);
@@ -194,13 +221,31 @@ export function hidePrivateLinks(root: ParentNode, go: TGoTo): void {
         const href: string = link.getAttribute('href') ?? '';
         const shown: string | null = withoutPrivateParams(href, link.ownerDocument.baseURI);
         if (shown === null) {
+            // The page rebound the link to an address without the private parameters: a click
+            // follows it as it is.
+            if (FULL_LINKS.get(link)?.shown !== href) {
+                FULL_LINKS.delete(link);
+            }
             return;
         }
         if (!FULL_LINKS.has(link)) {
             followFull(link, go);
         }
-        FULL_LINKS.set(link, href);
+        FULL_LINKS.set(link, { full: href, shown });
         link.setAttribute('href', shown);
+    });
+}
+
+/**
+ * Removes the inline script Keycloak puts the page context in. It has already run, the theme has
+ * read the context from it, and its text holds the action address with the token and the person's
+ * name and address — markup Webvisor records.
+ */
+export function dropContextScript(document: Document): void {
+    document.querySelectorAll('script:not([src])').forEach((script: Element): void => {
+        if ((script.textContent ?? '').includes('kcContext')) {
+            script.remove();
+        }
     });
 }
 
@@ -226,22 +271,27 @@ function watchPage(document: Document, go: TGoTo): void {
                 }
             });
         });
-    }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['href'] });
+    }).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['href', 'value'] });
 }
 
 /**
  * Loads the counters whose numbers are set, sends the page view and reports every form that leaves
  * the page. A form the page held as invalid is not reported: its submit is prevented before the
- * event reaches the document. No field value goes into an event.
+ * event reaches the document. No field value goes into an event. A standard page — one the theme
+ * does not draw itself — is recorded with its whole text hidden: it may name the person in any node.
  */
-export function startCounters(view: Window, properties: TThemeProperties | undefined, templateId: string): void {
+export function startCounters(view: Window, properties: TThemeProperties | undefined, templateId: string, standard: boolean = false): void {
     const counters: ICounters = countersOf(properties);
     const pageId: string = pageNameOf(templateId);
     if (counters.ga === null && counters.metrika === null) {
         return;
     }
+    if (standard) {
+        view.document.querySelector(STANDARD_PAGE)?.classList.add(WEBVISOR_HIDDEN);
+    }
     // Both run before a tag is loaded: the tags read the address and record the page from their start.
     dropPrivateParams(view);
+    dropContextScript(view.document);
     watchPage(view.document, (href: string, newTab: boolean): void => {
         if (newTab) {
             view.open(href, '_blank', 'noopener');

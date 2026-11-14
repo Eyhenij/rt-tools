@@ -42,5 +42,5 @@ if (context !== undefined) {
     const page: Type<unknown> | null = themePageOf(context.pageId);
     const started: Promise<void> = page === null ? startStandard(context) : startTheme(context, page);
     // The counters load after the page is drawn, on the theme pages and the standard ones alike.
-    void started.then((): void => startCounters(window, context.properties, context.pageId));
+    void started.then((): void => startCounters(window, context.properties, context.pageId, page === null));
 }

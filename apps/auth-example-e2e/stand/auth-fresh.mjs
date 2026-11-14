@@ -127,9 +127,9 @@ export function readFacts(root, env = process.env) {
         root,
         archiveWrittenAt: writtenAt(join(root, THEME_ARCHIVE)),
         standFilesWrittenAt: Math.max(...STAND_FILES.map((file) => writtenAt(join(root, file)) ?? Infinity)),
-        // Compose takes the command environment first, then its variables file, then the default;
-        // an empty value counts as absent, the way `${NAME:-default}` reads it.
-        env: Object.fromEntries(STAND_ENV.map(({ name, fallback }) => [name, env[name] || dotenv[name] || fallback])),
+        // Compose takes a variable set in the command environment, even an empty one, over its
+        // variables file, and `${NAME:-default}` puts the default in place of an empty value.
+        env: Object.fromEntries(STAND_ENV.map(({ name, fallback }) => [name, (name in env ? env[name] : dotenv[name]) || fallback])),
         running: Object.fromEntries(STAND_ENV.map(({ name, container, inside }) => [name, containers[container]?.env[inside] ?? ''])),
         keycloak:
             keycloak === null

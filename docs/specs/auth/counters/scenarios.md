@@ -41,17 +41,20 @@ Given a page opened by an address with `key` and `login_hint` in its query, or a
 leads to such an address — the «proceed» link of a mail page
 When a counter starts
 Then the address in the history, in the hit and in the link markup has neither, the other
-parameters stay, and a click on the link still goes to the full address
+parameters stay, a click on the link still goes to the full address, and the inline script with the
+page context is gone from the markup
 
 ### SC-AUTH-114 — the nodes that show a person are hidden from Webvisor
 
 Given a page that shows a person's address or name as text — the confirmation page, a message
-page, a standard page with an alert
+page, a standard page with an alert — or a node with such text the page draws after the counters
+start
 When a counter starts
-Then every node with that text stands inside a node with `ym-hide-content`, and the others do not
+Then every node with that text stands inside a node with `ym-hide-content`, and on a theme page
+the others do not; a standard page has its whole body hidden
 
 ### SC-AUTH-115 — the typed address and password stay out of the page markup
 
-Given the login page
-When the person types the address and the password
-Then neither stands in the markup of the page
+Given the login page, or a standard page that fills a field from the context
+When the person types the address and the password, or the page fills the field
+Then neither stands in the markup of the page, and the form still sends the value

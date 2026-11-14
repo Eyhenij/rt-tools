@@ -146,6 +146,59 @@ describe('startCounters', () => {
         document.body.innerHTML = '';
     });
 
+    it('SC-AUTH-113 — a malformed link stops no mark, and a link rebound to a plain address is followed as it is', () => {
+        document.body.innerHTML = '<a id="bad" href="http://[::1?key=1">Bad</a><a id="next" href="/action-token?key=eyJ.token">Next</a>';
+        const go: jest.Mock = jest.fn();
+        hidePrivateLinks(document, go);
+        const next: HTMLAnchorElement = document.querySelector('#next') as HTMLAnchorElement;
+
+        expect(next.getAttribute('href')).toBe('http://localhost/action-token');
+        next.setAttribute('href', '/realms/rt/account');
+        hidePrivateLinks(document, go);
+        const followed: boolean = next.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+        expect(followed).toBe(true);
+        expect(go).not.toHaveBeenCalled();
+        document.body.innerHTML = '';
+    });
+
+    it('SC-AUTH-115 — a field a standard page fills from the context keeps its value out of the markup', () => {
+        document.body.innerHTML =
+            '<form><input id="username" name="username" value="ann@rt.localhost" /><input type="hidden" name="tab" value="t1" /></form>';
+        startCounters(window, { METRIKA_COUNTER_ID: METRIKA }, 'login-username.ftl', true);
+        const field: HTMLInputElement = document.querySelector('#username') as HTMLInputElement;
+
+        expect(field.value).toBe('ann@rt.localhost');
+        expect(document.body.innerHTML).toContain('name="username"');
+        expect(document.body.innerHTML).not.toContain('ann@rt.localhost');
+        expect(document.body.innerHTML).toContain('value="t1"');
+        document.body.innerHTML = '';
+    });
+
+    it('SC-AUTH-114 — a standard page is recorded with its whole text hidden, a theme page is not', () => {
+        document.body.classList.remove('ym-hide-content');
+        startCounters(window, { METRIKA_COUNTER_ID: METRIKA }, 'login.ftl');
+        expect(document.body.classList).not.toContain('ym-hide-content');
+        startCounters(window, { METRIKA_COUNTER_ID: METRIKA }, 'login-idp-link-email.ftl', true);
+        expect(document.body.classList).toContain('ym-hide-content');
+        document.body.classList.remove('ym-hide-content');
+    });
+
+    it('SC-AUTH-113 — the inline script with the page context leaves the markup before a tag starts', () => {
+        document.head.insertAdjacentHTML(
+            'beforeend',
+            '<script>window.kcContext = { actionUri: "/action-token?key=eyJ.token" };</script><script>window.other = 1;</script>'
+        );
+        startCounters(window, { METRIKA_COUNTER_ID: METRIKA }, 'info.ftl');
+        const inline: string[] = Array.from(
+            document.querySelectorAll('script:not([src])'),
+            (script: Element): string => script.textContent ?? ''
+        );
+
+        expect(inline).toContain('window.other = 1;');
+        expect(inline.join('')).not.toContain('key=');
+        document.head.querySelectorAll('script:not([src])').forEach((script: Element): void => script.remove());
+    });
+
     it('SC-AUTH-114 — a node the page draws after the counters start is hidden before the recording sees it', async () => {
         document.body.innerHTML = '';
         startCounters(window, { METRIKA_COUNTER_ID: METRIKA }, 'login-otp.ftl');

@@ -2,7 +2,8 @@
 # The scenarios of the auth stand freshness: the end-to-end suite raises the auth stand a second time
 # unless the stand is current. Keycloak reads its theme only at start, so a stand that started before
 # the theme archive was written is raised again; so is a stand of another tree, one with an edited
-# composition or realm file, and one with other counter numbers or another admin port.
+# composition or realm file, and one with other counter numbers, another admin port or other Google
+# keys of the realm.
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 echo "the freshness of the auth stand for the end-to-end suite"

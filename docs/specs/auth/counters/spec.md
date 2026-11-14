@@ -48,6 +48,13 @@ Not applicable: the counters show nothing on the screen.
 - **A link address in the markup carries neither the action token nor the login hint.** Webvisor
   records the markup with its attributes, and the «proceed» link of a mail page leads to the token.
   The link shows the address without them, and a click still goes to the full one.
+- **A standard page is recorded with its whole text hidden.** A page the theme does not draw itself
+  may name the person in any node, so its body carries `ym-hide-content`.
+- **A field filled from the context keeps its value in the field property.** A standard page writes
+  a default value, the login hint among others, into the `value` attribute; the attribute is taken
+  off and the value stays in the property the form sends.
+- **The inline script with the page context leaves the markup before a counter starts.** Its text
+  holds the action address with the token and the person's name and address; it has already run.
 - **The text that shows a person is hidden from Webvisor.** A Keycloak message may name the
   address, so the message, the title and the summary of a message page and the alert of a standard
   page carry `ym-hide-content`, together with the address on the confirmation page and the name the
@@ -100,9 +107,10 @@ One pair of numbers for the whole node: every realm that uses the theme reports 
   page holds an invalid form by preventing its submit. Rejected: a call in each page component —
   the standard pages would get none.
 - **A malformed number counts as absent.** A typo in the environment loads no foreign tag.
-- **Webvisor needs no frame on the entry pages.** Under the Keycloak default policy `frame-src
-  'self'` the stand showed no refusal, and Metrika asked for no frame. Rejected: `mc.yandex.ru` in
-  `frame-src` — a permission nothing asks for.
+- **`mc.yandex.ru` is not added to `frame-src` until a frame is asked for.** Under the Keycloak
+  default policy `frame-src 'self'` the stand showed no refusal, but it ran with a made-up Metrika
+  number: the tag takes its settings, Webvisor among them, by the number, so the absence of a
+  refusal proves nothing yet. Rejected: adding the permission in advance — nothing has asked for it.
 - **The page address is cleaned in the history, not only in the hit.** Webvisor records the address
   of the page itself, and a hit address alone would leave it there. The price: when the numbers are
   set, a reload of an action token page opens the address without its token, and Keycloak answers
@@ -117,7 +125,11 @@ One pair of numbers for the whole node: every realm that uses the theme reports 
 
 ## Open questions
 
-None.
+- Q-1 — the login node serves every product, and it carries one pair of numbers: one pair for the
+  whole node, or a pair per realm.
+- Q-2 — whether Webvisor asks for a frame of `mc.yandex.ru` on the entry pages and whether its
+  recording plays under the Keycloak `frame-ancestors 'self'`: checked only with a real Metrika
+  counter with Webvisor on.
 
 ## History of changes
 
