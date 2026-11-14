@@ -117,6 +117,14 @@
             }
         }
 
+        // Заглушка без переписки и ошибка загрузки стоят по центру свободного места чата; ширина
+        // 400 из одобренного кадра, потребитель растягивает её той же переменной
+        &__placeholder {
+            --rt-empty-state-max-width: 400px;
+
+            margin: auto;
+        }
+
         &__thread-viewport {
             position: relative;
             display: flex;

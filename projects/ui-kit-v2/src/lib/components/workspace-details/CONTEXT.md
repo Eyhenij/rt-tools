@@ -20,18 +20,20 @@
 ```
 
 Входы: `title`, `entityId`, `loading`, `busy`, `rows`, `agentEdit`, `money`, `toggles`,
-`toggleHint`, `transition`, `audit`, `actions`, `error`.
+`toggleHint`, `transition`, `audit`, `actions`, `error`, `errorDescription`.
 Выходы: `toggleChange`, `agentReassign`, `transitionSubmit`, `transitionSuccessClose`,
-`transitionErrorClose`, `auditLoadMore`, `actionClicked`.
+`transitionErrorClose`, `auditLoadMore`, `actionClicked`, `retry`.
 
 ## Главное, что нужно знать
 
 **Вкладки появляются только вместе с переходом или историей.** Пока есть одни поля, они рисуются
 сразу: одна вкладка вместо содержимого была бы лишним щелчком.
 
-**Ошибка не рисуется внутри панели — она уходит в [`NotificationBus`](../toast/CONTEXT.md).**
-Панель узкая, и сообщение в ней сдвигало бы данные; тост показывает ошибку поверх. Одна и та же
-строка не повторяется на каждой перерисовке.
+**Ошибка загрузки стоит во вкладке сведений вместо данных, а не тостом.** Вид по умолчанию —
+[`rt-empty-state`](../empty-state/CONTEXT.md) с иконкой предупреждения, текстом ошибки и кнопкой
+«Повторить». Кнопка только поднимает `retry`: сведения загружает потребитель. Свой вид —
+`<ng-template rtWorkspaceDetailsError let-error let-retry="retry">`. Ошибки перехода и истории
+по-прежнему уходят в [`NotificationBus`](../toast/CONTEXT.md).
 
 ## Края
 

@@ -78,7 +78,7 @@ Given a chat with no conversation, `emptyTitle` «Переписка не выб
 When it is drawn
 Then the placeholder shows that title, that hint and the `emptyIcon` icon
 
-Not covered: the code is written in stage 3.
+Covered by the chat states spec.
 
 ### SC-UKV-1277 — the chat error has a retry button
 
@@ -86,7 +86,7 @@ Given a chat with a conversation and `error` not null
 When the reader presses «Повторить»
 Then `retry` is emitted and the messages are not drawn
 
-Not covered: the code is written in stage 3.
+Covered by the chat states spec.
 
 ### SC-UKV-1278 — the details panel error has a retry button
 
@@ -94,4 +94,4 @@ Given a details panel with `error` not null
 When the reader presses «Повторить»
 Then `retry` is emitted
 
-Not covered: the code is written in stage 3.
+Covered by the details panel specs.
