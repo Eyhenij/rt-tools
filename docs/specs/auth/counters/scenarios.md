@@ -43,9 +43,10 @@ Then the address in the history and in the hit has neither, and the other parame
 
 ### SC-AUTH-114 — the nodes that show a person are hidden from Webvisor
 
-Given a page that shows a person's address or name as text
+Given a page that shows a person's address or name as text — the confirmation page, a message
+page, a standard page with an alert
 When a counter starts
-Then those nodes carry `ym-hide-content`, and the others do not
+Then every node with that text stands inside a node with `ym-hide-content`, and the others do not
 
 ### SC-AUTH-115 — the typed address and password stay out of the page markup
 

@@ -44,8 +44,10 @@ Not applicable: the counters show nothing on the screen.
   field writes its value into the markup Webvisor records.
 - **The page address loses the action token and the login hint before a counter starts.** The
   token of a mail link holds the address, and the counters report the page address.
-- **The text that shows a person is hidden from Webvisor.** The address on the confirmation page, a
-  Keycloak message and the name the standard pages show above a form carry `ym-hide-content`.
+- **The text that shows a person is hidden from Webvisor.** A Keycloak message may name the
+  address, so the message, the title and the summary of a message page and the alert of a standard
+  page carry `ym-hide-content`, together with the address on the confirmation page and the name the
+  standard pages show above a form.
 
 ## What is out of scope
 

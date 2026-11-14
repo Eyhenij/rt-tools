@@ -27,10 +27,19 @@ const METRIKA_ID: RegExp = /^[1-9]\d*$/;
 const PRIVATE_PARAMS: readonly string[] = ['key', 'login_hint'];
 
 /**
- * The nodes that show a person's data as page text: the address on the confirmation page, a
- * Keycloak message, which may name the address, and the name the standard pages show above a form.
+ * The nodes that show a person's data as page text. A Keycloak message may name the address — on a
+ * message page it stands in the title or the summary, on a standard page in its alert — so every
+ * message node is hidden, together with the address on the confirmation page and the name the
+ * standard pages show above a form.
  */
-const PRIVATE_NODES: string = '[qa-dataid="kc-verify-sent"], [qa-dataid="kc-message"], #kc-attempted-username';
+const PRIVATE_NODES: string = [
+    '[qa-dataid="kc-verify-sent"]',
+    '[qa-dataid="kc-message"]',
+    '[qa-dataid="kc-title"]',
+    '[qa-dataid="kc-info-summary"]',
+    '#kc-attempted-username',
+    '.pf-c-alert',
+].join(', ');
 
 /** The class by which Webvisor records a node with its text hidden. */
 const WEBVISOR_HIDDEN: string = 'ym-hide-content';

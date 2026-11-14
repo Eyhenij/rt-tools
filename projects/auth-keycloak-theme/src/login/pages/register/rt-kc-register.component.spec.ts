@@ -74,6 +74,17 @@ describe('RtKcRegisterComponent', () => {
         });
     });
 
+    it('SC-AUTH-115 — the typed address and passwords stay out of the registration markup', async () => {
+        const fixture: ComponentFixture<RtKcRegisterComponent> = await renderKcPage(RtKcRegisterComponent, registerPage());
+        await typeInto(fixture, 'kc-email', 'ann@rt.localhost');
+        await typeInto(fixture, 'kc-password', 'n3w-Pass!');
+        await typeInto(fixture, 'kc-password-confirm', 'n3w-Pass!');
+        const markup: string = (fixture.nativeElement as HTMLElement).outerHTML;
+
+        expect(markup).not.toContain('ann@rt.localhost');
+        expect(markup).not.toContain('n3w-Pass!');
+    });
+
     it('SC-AUTH-78 — a wrong address and two different passwords hold the form', async () => {
         const fixture: ComponentFixture<RtKcRegisterComponent> = await renderKcPage(RtKcRegisterComponent, registerPage());
         await typeInto(fixture, 'kc-email', 'ann');
