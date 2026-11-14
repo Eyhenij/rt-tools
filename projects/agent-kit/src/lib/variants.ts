@@ -40,7 +40,7 @@ export interface IVariant {
     readonly value: string;
 }
 
-export const VARIANTS_FILE: string = 'variants.json';
+const VARIANTS_FILE: string = 'variants.json';
 
 /** Оси, объявленные пакетом. Нет файла — осей нет, и все ресурсы считаются общими. */
 export function readAxes(assetsDir: string): readonly IAxis[] {

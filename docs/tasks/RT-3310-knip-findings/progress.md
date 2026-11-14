@@ -20,9 +20,9 @@
 - [x] 1.3 Move the `.storybook` type imports from `playwright` to `@playwright/test`
 - [x] 2.1 Remove `express` and the 15 dev packages from `package.json` and the lockfile
 - [x] 2.2 Rewrite the three rule texts that name faker
-- [>] 3.1 Delete `projects/ui-kit-v2/src/lib/components/index.ts`, `hooksSectionByMatcher` and `TTreeCommandKind`
-- [ ] 3.2 Drop `export` from the in-file exports and types outside the three kit files under approval
-- [ ] 3.3 Write a test in each end-to-end suite the PR check demands for the changed code
+- [x] 3.1 Delete `projects/ui-kit-v2/src/lib/components/index.ts`, `hooksSectionByMatcher` and `TTreeCommandKind`
+- [x] 3.2 Drop `export` from the in-file exports and types outside the three kit files under approval
+- [>] 3.3 Write a test in each end-to-end suite the PR check demands for the changed code
 - [ ] 4.1 Show the owner the Figma frames of the PDF viewer and the tabs and write the approval into `approvals.md`
 - [ ] 4.2 Drop `export` from the five exports and one type of `rt-pdf-viewer.output.ts`, `rt-tabs.keys.ts` and `rt-tabs.motion.ts`
 - [ ] 4.3 Measure the showcase of both components against the frames and write the owner's approval of the showcase into `approvals.md`
@@ -30,6 +30,12 @@
 
 ## Decisions along the way
 
+- **Step 3.1: `byKey` of `projects/agent-kit/src/lib/order.ts` is deleted too.** Its only caller
+  was `hooksSectionByMatcher`; left alone, it would be the next unused export.
+- **Step 3.3: the tests check that the kit draws its icons where the changed code runs.** The
+  admin test walks three list sections by clicks — the list page, the list store and the address
+  reading lose `export` here; the entry test walks the records screen. Scenarios `SC-MB-432` and
+  `SC-AUTH-118`.
 - **Step 1.2: the barrels and the storage client types go into `ignoreFiles`, not `ignore`.**
   `ignoreFiles` lifts only the «unused file» finding; `ignore` would hide every finding inside
   those files, an unused export of a barrel included.

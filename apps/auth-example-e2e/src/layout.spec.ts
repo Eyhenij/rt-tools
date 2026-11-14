@@ -65,6 +65,34 @@ test.describe('the correspondence of the records screen', () => {
         await expect(page.getByTestId('records-chat')).not.toContainText(text);
     });
 
+    test('SC-AUTH-118 — every icon button of the records screen draws its glyph', async ({ page }) => {
+        await signIn(page, 'reader');
+        await expect(page.getByTestId('records-chat')).toContainText('Can I check out at two?');
+        const buttons: string[] = ['records-quick-reply', 'records-read-draft'];
+        // The area of the glyph inside a button: an empty frame without a glyph gives zero.
+        const glyphArea: (id: string) => Promise<number> = async (id: string): Promise<number> =>
+            page
+                .getByTestId(id)
+                .locator('rt-icon svg')
+                .evaluate((node: Element): number => {
+                    const box: DOMRect = (node as SVGGraphicsElement).getBBox();
+
+                    return box.width * box.height;
+                });
+
+        for (const id of buttons) {
+            await expect.poll(async (): Promise<number> => glyphArea(id)).toBeGreaterThan(0);
+        }
+
+        // The glyphs stay after the screen changed: a ready reply went into the field.
+        await page.getByTestId('records-quick-reply').click();
+        await expect(page.getByTestId('chat-composer-prompt').locator('textarea')).not.toHaveValue('');
+
+        for (const id of buttons) {
+            await expect.poll(async (): Promise<number> => glyphArea(id)).toBeGreaterThan(0);
+        }
+    });
+
     test('SC-AUTH-107 — the send button of the correspondence is named by the kit dictionary', async ({ page }) => {
         await signIn(page, 'reader');
         const send: Locator = page.getByTestId('records-chat').getByRole('button', { name: 'Send message' });

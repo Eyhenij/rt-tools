@@ -1,6 +1,6 @@
 import { expect, Locator, Page, test } from '@playwright/test';
 
-import { openSection, qa, rowsOf, SECTION } from './support/admin';
+import { openSection, pageQa, qa, rowsOf, SECTION } from './support/admin';
 
 /**
  * Вид страницы списка: достижимость записей и переключателя страниц.
@@ -58,5 +58,32 @@ test.describe('вид страницы списка', () => {
 
         await expect(pagination).toBeVisible();
         expect(await inViewport(pagination)).toBe(true);
+    });
+
+    test('SC-MB-432 — обновление и настройка столбцов рисуют свои значки в каждом списке', async ({ page }: { page: Page }) => {
+        // Площадь глифа внутри кнопки: пустая рамка без глифа даёт ноль.
+        const glyphArea: (button: Locator) => Promise<number> = async (button: Locator): Promise<number> =>
+            button.locator('rt-icon svg').evaluate((node: Element): number => {
+                const box: DOMRect = (node as SVGGraphicsElement).getBBox();
+
+                return box.width * box.height;
+            });
+
+        await openSection(page, 'postmortems');
+        await pageQa(page, 'postmortems', 'refresh').click();
+        await expect(rowsOf(page, 'postmortems')).toHaveCount(PAGE_SIZE);
+
+        // Разделы меняются нажатием на верхний ряд, без перезагрузки: страница списка та же, а
+        // данные и состояние накапливаются от раздела к разделу.
+        for (const section of ['postmortems', 'usage', 'quality'] as const) {
+            if (section !== 'postmortems') {
+                await page.locator(`[qa-dataid="header-nav-item"][data-id="${SECTION[section].path}"] a`).click();
+                await expect(qa(page, SECTION[section].table)).toBeVisible();
+            }
+
+            for (const mark of ['refresh', 'columns'] as const) {
+                await expect.poll(async (): Promise<number> => glyphArea(pageQa(page, section, mark))).toBeGreaterThan(0);
+            }
+        }
     });
 });

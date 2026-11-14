@@ -30,7 +30,7 @@ const PROSE_CHECK: string = 'check-prose-style.mjs';
 const JSON_FLAG: string = '--json';
 
 /** Одна находка проверки: строка текста, что найдено и чем это заменить. */
-export interface IProseFinding {
+interface IProseFinding {
     readonly line: number;
     readonly what: string;
     readonly fix: string;

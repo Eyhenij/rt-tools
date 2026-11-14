@@ -7,8 +7,3 @@
 export function byText(one: string, other: string): number {
     return one.localeCompare(other, 'en');
 }
-
-/** Порядок пар «ключ и значение» по ключу: карта своего порядка не держит. */
-export function byKey(one: readonly [string, unknown], other: readonly [string, unknown]): number {
-    return byText(one[0], other[0]);
-}

@@ -9,9 +9,6 @@
  * отказа для него такой же вывод, как напечатанный токен.
  */
 
-/** Что команда делает. Набор закрыт: доводом, которого здесь нет, приёмник не управляется. */
-export type TTreeCommandKind = 'add' | 'token' | 'revoke' | 'list' | 'invite' | 'uninvite' | 'invites';
-
 /** Заведение дерева: читаемое имя и признак, которым дерево называет себя в грузе. */
 export interface ITreeAddCommand {
     readonly kind: 'add';
@@ -24,20 +21,20 @@ export interface ITreeAddCommand {
  * приглашения и его отзыв. Имя будущего дерева называет владелец здесь, а не обращение: принятое
  * из обращения, оно позволило бы назваться чужим именем тому, кто добыл код.
  */
-export type TTreeNamedKind = 'token' | 'revoke' | 'invite' | 'uninvite';
+type TTreeNamedKind = 'token' | 'revoke' | 'invite' | 'uninvite';
 
-export interface ITreeNamedCommand {
+interface ITreeNamedCommand {
     readonly kind: TTreeNamedKind;
     readonly name: string;
 }
 
 /** Перечисление без доводов: список деревьев и список приглашений. */
-export interface ITreeListCommand {
+interface ITreeListCommand {
     readonly kind: 'list' | 'invites';
 }
 
 /** Разобранная команда деревьев. */
-export type TTreeCommand = ITreeAddCommand | ITreeNamedCommand | ITreeListCommand;
+type TTreeCommand = ITreeAddCommand | ITreeNamedCommand | ITreeListCommand;
 
 /** Что вышло из разбора доводов. Одно из двух полей пусто всегда. */
 export interface ITreeCommandParse {

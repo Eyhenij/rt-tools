@@ -27,7 +27,7 @@ export const ASSISTANT_MESSAGES: readonly IRtAiChat.Message[] = [
 ];
 
 /** Отметка в ячейке таблицы: текст и цвет тега. */
-export interface ITestPageMark {
+interface ITestPageMark {
     readonly value: string;
     readonly severity: IRtTag.Severity;
 }
