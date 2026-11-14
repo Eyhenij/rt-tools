@@ -36,8 +36,8 @@
                 </div>
             }
 
-            <input type="hidden" name="username" [value]="value().username" />
-            <input type="hidden" name="password" [value]="value().password" />
+            <input type="text" hidden autocomplete="off" name="username" [value]="value().username" />
+            <input type="password" hidden autocomplete="off" name="password" [value]="value().password" />
             @if (value().rememberMe) {
                 <input type="hidden" name="rememberMe" value="on" />
             }

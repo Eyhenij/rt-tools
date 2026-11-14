@@ -2,6 +2,7 @@ import { ComponentFixture } from '@angular/core/testing';
 
 import { kcContextOf, renderKcPage } from '../../../testing/kc-page-fixture';
 import { TKcPageContext } from '../../kc-context';
+import { hidePrivateText } from '../../kc-counters';
 import { RtKcInfoComponent } from './rt-kc-info.component';
 
 function nextLinkOf(fixture: ComponentFixture<RtKcInfoComponent>): HTMLAnchorElement | null {
@@ -36,6 +37,21 @@ describe('RtKcInfoComponent', () => {
 
         expect((fixture.nativeElement as HTMLElement).querySelector('[qa-dataid="kc-title"]')).not.toBeNull();
         expect(nextLinkOf(fixture)).toBeNull();
+    });
+
+    it('SC-AUTH-114 — every text of a message page that may name the address is hidden from Webvisor', async () => {
+        const context: TKcPageContext<'info.ftl'> = kcContextOf('info.ftl', {
+            messageHeader: undefined,
+            message: { type: 'warning', summary: 'Confirm validity of e-mail address ann@rt.localhost.' },
+        });
+        const page: HTMLElement = (await renderKcPage(RtKcInfoComponent, context)).nativeElement as HTMLElement;
+        hidePrivateText(page.ownerDocument);
+        const shown: string[] = Array.from(page.querySelectorAll('*'))
+            .filter((node: Element): boolean => node.children.length === 0 && (node.textContent ?? '').includes('ann@rt.localhost'))
+            .map((node: Element): string => (node.closest('.ym-hide-content') === null ? 'open' : 'hidden'));
+
+        expect(shown.length).toBeGreaterThan(0);
+        expect(shown).not.toContain('open');
     });
 
     it('SC-AUTH-99 — a page with a next step keeps it', async () => {
