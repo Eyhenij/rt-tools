@@ -14,7 +14,6 @@
   },
   "has": ["packages", "app", "admin", "mockups", "graph"],
   "skip": [
-    "checks/signals/ui-kit.json",
     "hooks/commit-msg.sh",
     "hooks/dev-server-guard.sh",
     "hooks/qa-dataid-guard.sh",

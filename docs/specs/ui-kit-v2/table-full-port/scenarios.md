@@ -141,7 +141,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-row-cli
 
 Given the showcase pages of the data table and the data list
 When the preset stories check runs
-Then every story of both families carries the half of the kit's base preset and the half of its first-kit preset
+Then every story of both families carries the half of the kit's base preset and the half of its violet preset
 Not covered: no test names the number, and none can — the promise is about the set of stories, not about a call. It is held by the check `tools/check-preset-stories.mjs`, which refuses a family the preset touches whose showing carries no pair; both families stand among the 70 it counts.
 
 ### SC-UKV-300 — a row press is reported on the button going down, before a double click
@@ -249,16 +249,16 @@ When a data list with the storage key "orders" and the same columns is opened
 Then the column is drawn hidden and the saved order and scrollbar flags are applied
 Covered: `projects/ui-kit-v2/src/lib/components/data-table/rt-data-table-config.service.spec.ts`.
 
-### SC-UKV-318 — a first-kit icon name in a column declaration is drawn by the kit's own set
+### SC-UKV-318 — a Material icon name in a column declaration is drawn by the kit's own set
 
-Given a header icon and a cell icon declared by first-kit names that have pairs in the kit's map
+Given a header icon and a cell icon declared by Material names that have pairs in the kit's map
 When the data table is drawn
 Then both are the kit's icons of the paired names, and no icon font is asked for
 Covered: `projects/ui-kit-v2/src/lib/components/data-table/cell/rt-data-table-cell.component.spec.ts`.
 
 ### SC-UKV-319 — an icon name without a pair in the map is drawn as a Material Symbols glyph
 
-Given a cell or header icon declared by a first-kit name that has no pair in the kit's map, and no icon template
+Given a cell or header icon declared by a Material name that has no pair in the kit's map, and no icon template
 When the data table is drawn
 Then the cell shows its value with the name beside it as a Material Symbols glyph, the header shows the glyph too, and no kit icon
 Covered: the data table cell and header cell component specs.

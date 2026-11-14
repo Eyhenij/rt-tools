@@ -30,6 +30,32 @@ when the epic is over.
   eight red typechecks of the receiver until `pnpm run prisma:generate`. **Address:** names of this
   tree — nothing in the set says the client is stale.
 
+## RT-3308 — the first kit's leftovers removed, knip in the tree
+
+- **The turn-exit guard refuses every turn that waits for a background push set.** After the task
+  folder is taken apart, the guard demands an open request, and the delivery guard demands green
+  push marks first; a turn that only waits for the set was refused four times running.
+  **Address:** rules layer — `hooks/turn-exit-guard.sh`: a running push set ahead is work under way.
+- **Taking a task out of its epic by the card alone leaves the board audit red.** `task:new
+--epic-of` writes the epic line into the body; RT-3310 was taken off the epic card, and
+  `check:board` named that line. The owner returned it to the epic. **Address:** the executor's
+  decision — a task filed with `--epic-of` belongs to the epic; leaving it is the owner's call.
+- **knip sees one root workspace for the apps and libs.** They carry no `package.json`, so their
+  entries are named by globs in `knip.json`; a new app or lib with another entry name is invisible
+  to knip until the globs are widened. **Address:** names of this tree — `knip.json`.
+- **The e2e coverage guard does not read the flags of `gh` called by its full path.** Its flag
+  reader looks for the word `gh`, and the tree calls `/opt/homebrew/bin/gh`: `--base` and `--head`
+  were lost, the branch was judged against main, and both suites were demanded for a branch that
+  reaches neither application. **Address:** names of this tree —
+  `.claude/hooks/e2e-coverage-guard.sh:flag_of`; the rule `testing` already names this miss.
+- **Merging main into the epic branch removed the auth stand limits of RT-3301 and their test.**
+  The limits were off by the owner's word, and the conflict was resolved toward that word.
+  **Address:** names of this tree — the plan of push time takes the stand measurements from history.
+- **The role reviews of RT-3308 found a narrow sign again.** The sign searched the hyphenated
+  `first-kit` and missed the scenario title SC-UKV-531 «a Material name of the first kit»; fixed by
+  commit `96ee0dd95`. **Address:** rules layer — a sign is written in the words of its point, not
+  of one spelling.
+
 ## Left unresolved
 
 - **The npm deprecation of `@rt-tools/ui-kit`** — the owner's step: `npm view` shows the field

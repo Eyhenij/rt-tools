@@ -1,7 +1,7 @@
 <div
     class="app-side-menu-cell"
-    [class.app-side-menu-cell--first-kit]="firstKitProps()"
-    [style.--rt-side-menu-sub-item-letter-spacing]="firstKitProps() ? '0.5px' : null">
+    [class.app-side-menu-cell--classic]="classicProps()"
+    [style.--rt-side-menu-sub-item-letter-spacing]="classicProps() ? '0.5px' : null">
     <rt-side-menu
         [menuItems]="items()"
         [menuId]="menuId()"

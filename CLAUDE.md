@@ -38,6 +38,10 @@ pnpm run prettier
 # and that set is printed by `rt_push_checks` in `.claude/rt-kit/project.sh`
 pnpm run check:all
 
+# Files, dependencies and exports nobody uses, by knip over every project; settings in `knip.json`.
+# It is not in the push set and exits non-zero while findings remain
+pnpm run check:unused
+
 # Raise the applications on one's own machine. The database is needed only by the receiver;
 # the admin panel proxies /api to port 3000, and without the receiver it shows empty lists and a
 # read refusal — that is its honest state rather than a breakage.

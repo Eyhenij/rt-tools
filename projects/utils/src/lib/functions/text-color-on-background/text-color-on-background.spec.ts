@@ -6,7 +6,7 @@ import { textColorOnBackground } from './text-color-on-background.js';
  * 30%. Taken by running the first kit's own code when the functions moved here; the first kit is not
  * imported, because this package must not depend on it.
  */
-const FIRST_KIT_ANSWERS: readonly (readonly [string, string, string])[] = [
+const PORTED_ANSWERS: readonly (readonly [string, string, string])[] = [
     ['#000000', '#fff', '#000000'],
     ['#ffffff', '#7f7f7f', '#b2b2b2'],
     ['#1f2937', '#fff', '#151c26'],
@@ -43,7 +43,7 @@ describe('textColorOnBackground and darkenHex', () => {
         expect(darkenHex(value, 50)).toBe(value);
     });
 
-    it.each(FIRST_KIT_ANSWERS)('SC-UT-5 — %s answers as in the first kit', (color: string, text: string, darkened: string) => {
+    it.each(PORTED_ANSWERS)('SC-UT-5 — %s answers as in the first kit', (color: string, text: string, darkened: string) => {
         expect(textColorOnBackground(color)).toBe(text);
         expect(darkenHex(color, 30)).toBe(darkened);
     });

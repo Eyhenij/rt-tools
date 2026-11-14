@@ -10,6 +10,13 @@ When they look at the page
 Then the sections stand as a strip above the content, and there is no column with them on the left of
 the page
 
+### SC-MB-431 — every section of the top row draws its icon
+
+Given the owner entered and opened any section
+When they look at the top row of sections
+Then each section shows the glyph of its icon, not an empty frame: the kit found every icon name of
+the menu
+
 ### SC-MB-143 — the current section is highlighted both after a transition and by a direct link
 
 Given the owner opened a section by a direct link, and then went to a neighbouring one by an item of

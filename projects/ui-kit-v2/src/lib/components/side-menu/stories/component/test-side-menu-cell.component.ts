@@ -77,7 +77,7 @@ export class TestRtSideMenuCellComponent {
         transform: booleanAttribute,
     });
     /** Свойства меню со значениями первого кита и черта под строкой страницы раздела — так их задаёт приложение. */
-    public readonly firstKitProps: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
+    public readonly classicProps: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
     });
     /** Свой значок меню для имён, которых кит не рисует. */

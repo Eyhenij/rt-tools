@@ -30,8 +30,7 @@
  * - A two-way input — `model()`. The framework gives it no transform at all, so a refusal there
  *   would have no lawful fix. The kit holds none today; the day one appears, the trap returns and
  *   the answer to it is written anew rather than guessed here.
- * - The showings and the first kit. The stories lie outside `src/lib`, and the first kit is read as
- *   a sample and is not edited.
+ * - The showings. The stories lie outside `src/lib`.
  * - An input that is not boolean. A number taken from an attribute carries the same trap and its own
  *   answer.
  */

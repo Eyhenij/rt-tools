@@ -1,0 +1,49 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": [
+        "apps/*/src/main.ts",
+        "apps/*/src/**/*.spec.ts",
+        "apps/*/vite.config.mts",
+        "apps/*/vitest.config.mts",
+        "apps/*/webpack.config.mjs",
+        "apps/*/eslint.config.mjs",
+        "apps/*-e2e/playwright.config.ts",
+        "apps/*-e2e/src/**/*.ts",
+        "apps/*-e2e/stand/*.mjs",
+        "libs/**/*.spec.ts",
+        "libs/**/src/test-setup.ts",
+        "libs/**/vitest.config.mts",
+        "libs/**/eslint.config.mjs",
+        "tools/*.{mjs,cjs}",
+        "tools/stylelint-rules/*.{js,cjs,mjs}",
+        "tools/nx-plugins/*.{js,cjs,mjs}",
+        ".claude/workflows/*.js",
+        "eslint/**/*.mjs"
+      ],
+      "project": ["apps/**/*.{ts,mts,mjs}", "libs/**/*.{ts,mts}", "tools/**/*.{js,mjs,cjs}", "eslint/**/*.mjs"]
+    },
+    "projects/*": {
+      "entry": ["src/index.ts", "src/public-api.ts", "src/**/*.spec.ts", "*.config.{ts,mjs,cjs}"],
+      "project": ["src/**/*.ts"]
+    },
+    "projects/agent-kit": {
+      "entry": ["src/index.ts", "src/bin/*.ts", "src/**/*.spec.ts", "assets/**/*.{js,mjs,cjs}"],
+      "project": ["src/**/*.ts", "assets/**/*.{js,mjs,cjs}"],
+      "ignoreUnresolved": ["^\\./board[\\w-]*\\.mjs$", "^\\./task-new-queue\\.mjs$"]
+    },
+    "projects/auth-import": {
+      "entry": ["src/index.ts", "src/bin.ts", "src/**/*.spec.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "projects/auth-keycloak-theme": {
+      "entry": ["src/main.ts", "src/**/*.spec.ts", "*.config.{ts,mts,mjs}"],
+      "project": ["src/**/*.ts"]
+    },
+    "projects/ui-kit-v2": {
+      "entry": ["src/**/*.spec.ts", "src/**/*.stories.ts", ".storybook/*.{ts,js}", "*.config.{ts,mjs,cjs}"],
+      "project": ["src/**/*.ts"]
+    }
+  }
+}

@@ -3,7 +3,7 @@
 **Status:** in force · **Revision:** 22 September 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the kit's checkbox, radio button, icon, icon button, menu, tooltip, input, select,
 date picker, toggle switch, side panel, spinner, scroll area and toolbar — the family draws with
-them instead of Material; the kit's first-kit preset — the second kit's own styling preset that
+them instead of Material; the kit's violet preset — the second kit's own styling preset that
 brings the first kit's colours
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`, `lists`
 **Procedures:** none
@@ -51,7 +51,7 @@ parts it drew with — by the kit's own components.
 | a ready cell          | a cell the family draws by the column declaration, without a template of the application                              |
 | an opt-out node       | a part of a row the application marks so that a press on it does not reach the row                                    |
 | the column settings   | the order of columns, their visibility and the two scrollbar switches, saved per table                                |
-| the first-kit preset  | the second kit's own styling preset that draws the kit in the first kit's colours; it is not the Material library     |
+| the violet preset     | the second kit's own styling preset that draws the kit in the first kit's colours; it is not the Material library     |
 
 ### What it is called in the interface
 
@@ -86,7 +86,7 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
   is the kit's own component: the checkbox, the radio button, the icon, the icon button, the menu,
   the tooltip, the input, the select, the date picker, the toggle switch and the side panel.
 - **Every colour of the family comes from an appointment of the kit, except the style line a
-  column gives its icon.** So the first-kit preset draws the family in the first kit's colours and
+  column gives its icon.** So the violet preset draws the family in the first kit's colours and
   the dark theme repaints it without a rule of its own; the column's style line is drawn as given.
 - **An application moves a screen from the first kit's table without editing its column
   declarations, its bindings or its saved settings.** Only the names of the components and
@@ -138,7 +138,7 @@ The words are the first kit's; the kit's dictionary gives them in all eight lang
 ### Icons of the column declarations
 
 - **An icon a column declaration names, in its header or its cells, is drawn by the kit's own icon
-  set through the kit's map of first-kit names; nothing is drawn by a font.** The declaration keeps
+  set through the kit's map of Material names; nothing is drawn by a font.** The declaration keeps
   the first kit's name; the map gives it the kit's drawing. Without the icon's "outlined" flag the
   icon is filled, as the first kit draws it; the flag gives the outlined drawing. Only the material
   set has both drawings — the own set draws a name one way.
@@ -321,7 +321,7 @@ value, icons on both sides by the kit's map and by an icon template, copy), `Sor
 click, an opt-out node, with an event line), `RowActions` (menu, inline actions, both) and
 `Settings` (the panel and both scrollbar switches); the list adds `SelectAcrossPages`, `Toolbar`,
 `Pagination` and `Placeholder`; then `States`, `Narrow`, `Themes` and `Presets`. Every story
-carries both halves of the styling preset pair — the kit's base preset and its first-kit preset. The first
+carries both halves of the styling preset pair — the kit's base preset and its violet preset. The first
 kit's stories `ManyItems`, `FewItems`, `NoItems` and `CopyButtonOnHover` are covered by `Overview`,
 `Placeholder` and `Columns`.
 
@@ -368,7 +368,7 @@ table that applied it last decides it for all.
   the first kit saved are read under the same key. Since RT-2867 that key is read once, when the kit
   key is empty, and its record is copied under the kit key.
 - **The kit key copies the old record, it does not move it.** The owner's condition is that no one
-  loses settings; a first-kit table in the same application may still read the old record. The
+  loses settings; a table of the first kit in the same application may still read the old record. The
   prefix is not `rt.table.columns.`: the record of `rt-data-table` has another shape.
 - **The first kit's behaviour is copied as it is, oddities included.** The owner's word "copy as
   is, we discuss it in detail later" closes `Q-TP-4`, `Q-TP-6`, `Q-TP-7`, `Q-TP-10`, `Q-TP-11`,
@@ -378,7 +378,7 @@ table that applied it last decides it for all.
   reverses `Q-TP-12` for the library; the field-look inputs came back by the later word and are
   drawn by the kit's own fields.
 - **Icons of the column declarations are drawn by the kit's own set.** The owner's word "by the
-  kit's set" closes `Q-TP-13`. The price is named in the rules: a first-kit name without a pair in
+  kit's set" closes `Q-TP-13`. The price is named in the rules: a Material name without a pair in
   the kit's map draws nothing until the application renames it or the map is extended.
 - **The application can draw the icons itself.** The owner's word "for the icons, provide handing
   an icon over by a directive, or as an option a custom cell". The directive is `rtDataTableIcon`,
@@ -390,10 +390,10 @@ table that applied it last decides it for all.
   — the counter is shown only when select all is hidden, so it never meets the across-pages mode;
   `Q-TP-9` — the radio button is the kit's family `rt-radio-button`.
 
-### First-kit oddities ported as is, to be discussed with the owner later
+### Oddities of the first kit ported as is, to be discussed with the owner later
 
 - `Q-TP-4` — the icon of a ready cell takes a free style line from the column, which neither the
-  first-kit preset nor the dark theme repaints.
+  violet preset nor the dark theme repaints.
 - `Q-TP-6` — rows take no focus and no key; a page number turns the page on any key, Tab
   included.
 - `Q-TP-7` — preset marks of records not among the first rows are dropped silently.
