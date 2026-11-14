@@ -50,8 +50,10 @@ The person sees «Не удалось загрузить», a hint and a «По�
   template gets `filtered`.
 - **The chat placeholder without a conversation has a title, a hint and an icon.** `emptyTitle`,
   `emptyHint` and `emptyIcon` set them; the hint shows the kit label when the input is empty.
-- **The placeholder is 400 wide by default and the consumer can widen it.** The variable
-  `--rt-empty-state-max-width` sets the width without an own view.
+- **The width of the placeholder is set by a variable, not by an own view.** The variable
+  `--rt-empty-state-max-width` limits the placeholder; the kit leaves it unlimited, and the chat
+  sets 400 as in its approved frame. A consumer stretches the chat placeholder to its column by the
+  same variable.
 - **The thread list header has no side padding of its own.** Search, filters, the tab switch and
   the rows stand on one edge — the padding of the list.
 - **The tab switch stands 8 px from the header line and 8 px from the content.**
