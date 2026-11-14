@@ -111,11 +111,15 @@
             }
         </div>
     } @empty {
-        <div rtElem="empty" qa-dataid="tree-empty" [rtMod]="{ 'with-icon': !!emptyIcon() }">
-            @if (emptyIcon(); as icon) {
-                <rt-icon rtElem="empty-icon" qa-dataid="tree-empty-icon" size="lg" [name]="icon" />
-            }
-            {{ emptyText() }}
-        </div>
+        @if (emptyView(); as own) {
+            <ng-container [ngTemplateOutlet]="own" [ngTemplateOutletContext]="{ $implicit: searchTerm() }" />
+        } @else {
+            <div rtElem="empty" qa-dataid="tree-empty" [rtMod]="{ 'with-icon': !!emptyIcon() }">
+                @if (emptyIcon(); as icon) {
+                    <rt-icon rtElem="empty-icon" qa-dataid="tree-empty-icon" size="lg" [name]="icon" />
+                }
+                {{ emptyText() }}
+            </div>
+        }
     }
 </ng-container>

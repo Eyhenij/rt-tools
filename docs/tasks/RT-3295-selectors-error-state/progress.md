@@ -8,8 +8,9 @@ Rewritten by every session, not appended to.
 - **Stage:** 2 of 3 — the local lists and the PDF viewer; stage 1 is done
 - **Done:** the branch from the RT-3294 branch, the grill of the task and the agreement
   `docs/specs/ui-kit-v2/proposed/error-states-selectors/` read from the nine approved frames.
-- **Next step:** step 2.1 — the empty slot of the six local lists. Stage 1 is done: both server
-  selectors and the standalone popup, 132 tests of the two components green, the types clean. The PDF viewer channel and the hybrid trees wait for the consumer
+- **Next step:** step 2.2 — `rtPdfViewerError`; it waits for the consumer session's answer on the
+  channel (the viewer is opened by the dialog service and has no host markup). Step 2.1 is done:
+  six local lists, their states specs (SC-UKV-1291, 1296) and 338 tests of the six families green. The PDF viewer channel and the hybrid trees wait for the consumer
   session's answer; stage 1 does not depend on them.
 - **Uncommitted:** no.
 - **Waiting for the owner:** no; the consumer session is asked about the push set limit and about
@@ -21,8 +22,8 @@ Rewritten by every session, not appended to.
 - [x] 1.1 Add `error`, `errorDescription`, `retry`, `rtAutocompleteEmpty` and `rtAutocompleteError` to `rt-autocomplete`
 - [x] 1.2 Add `error`, `errorDescription`, `retry`, `rtDynamicSelectorEmpty` and `rtDynamicSelectorError` to `rt-dynamic-selector`
 - [x] 1.3 Cover SC-UKV-1287…1290 by the specs
-- [>] 2.1 Add the empty template directive to `rt-select`, `rt-multiselect`, `rt-tree`, `rt-draggable-tree`, `rt-tree-selector` and `rt-side-menu`
-- [ ] 2.2 Add `rtPdfViewerError` to `rt-pdf-viewer`
+- [x] 2.1 Add the empty template directive to `rt-select`, `rt-multiselect`, `rt-tree`, `rt-draggable-tree`, `rt-tree-selector` and `rt-side-menu`
+- [>] 2.2 Add `rtPdfViewerError` to `rt-pdf-viewer`
 - [ ] 2.3 Cover SC-UKV-1291 and SC-UKV-1292 by the specs
 - [ ] 3.1 Add a story of the error and the own views for each of the nine components
 - [ ] 3.2 Compare the stories with the frames by measurement and show them to the owner

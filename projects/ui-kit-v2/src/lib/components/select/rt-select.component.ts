@@ -35,6 +35,7 @@ import { IRtPopover } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtOptionList, TRtOptionListAction } from '@rt-tools/ui-kit-v2/core';
 import { rtTreeFind, rtTreeIsTree, rtTreeOpenFor, rtTreeRows, rtTreeSideKey, rtTreeToggle } from '@rt-tools/ui-kit-v2/core';
+import { RtSelectEmptyDirective } from './rt-select-empty.directive';
 import { RtSelectOptionDirective } from './rt-select-option.directive';
 import { RtSelectTriggerDirective } from './rt-select-trigger.directive';
 import { IRtSelect } from './rt-select.model';
@@ -154,6 +155,9 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
 
     /** Своя разметка строки списка; не объявлена — строка рисует подпись опции. */
     protected readonly optionTpl: Signal<RtSelectOptionDirective<TValue> | undefined> = contentChild(RtSelectOptionDirective);
+
+    /** Свой вид пустого списка вариантов вместо строки «Нет вариантов». */
+    protected readonly emptyTpl: Signal<RtSelectEmptyDirective | undefined> = contentChild(RtSelectEmptyDirective);
 
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.value() !== null);
 

@@ -146,7 +146,13 @@
                         <span rtElem="option-label" qa-dataid="multiselect-option-label">{{ row.option.label }}</span>
                     </li>
                 } @empty {
-                    <li rtElem="empty" qa-dataid="multiselect-empty">{{ t().uiNoOptions }}</li>
+                    <li rtElem="empty" qa-dataid="multiselect-empty">
+                        @if (emptyTpl(); as own) {
+                            <ng-container [ngTemplateOutlet]="own.templateRef" [ngTemplateOutletContext]="{ $implicit: '' }" />
+                        } @else {
+                            {{ t().uiNoOptions }}
+                        }
+                    </li>
                 }
             </ul>
         </div>

@@ -50,3 +50,17 @@ export class RtSideMenuIconDirective {
         return true;
     }
 }
+
+/**
+ * Свой вид пустого поиска по меню: `<ng-template rtSideMenuEmpty let-term>` встаёт вместо строки
+ * «Ничего не найдено». Пункты меню местные, поэтому ошибки загрузки нет. В контексте — строка поиска.
+ */
+@Directive({ selector: 'ng-template[rtSideMenuEmpty]' })
+export class RtSideMenuEmptyDirective {
+    public readonly templateRef: TemplateRef<{ $implicit: string }> = inject<TemplateRef<{ $implicit: string }>>(TemplateRef);
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- второй довод стража контекста шаблона стоит только в типе-предикате; убрать его нечем, подпись задаёт каркас
+    public static ngTemplateContextGuard(_directive: RtSideMenuEmptyDirective, context: unknown): context is { $implicit: string } {
+        return true;
+    }
+}

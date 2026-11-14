@@ -155,7 +155,13 @@
                         }
                     </li>
                 } @empty {
-                    <li rtElem="empty">{{ t().uiNoOptions }}</li>
+                    <li rtElem="empty" qa-dataid="select-empty">
+                        @if (emptyTpl(); as own) {
+                            <ng-container [ngTemplateOutlet]="own.templateRef" [ngTemplateOutletContext]="{ $implicit: '' }" />
+                        } @else {
+                            {{ t().uiNoOptions }}
+                        }
+                    </li>
                 }
             </ul>
         </div>

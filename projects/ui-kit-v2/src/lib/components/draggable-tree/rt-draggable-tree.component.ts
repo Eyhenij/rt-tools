@@ -27,7 +27,7 @@ import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { IRtOptionTree, rtTreeRows, rtTreeSideKey, rtTreeToggle } from '@rt-tools/ui-kit-v2/core';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { IRtTree } from '@rt-tools/ui-kit-v2/tree';
-import { RtDraggableTreeNodeDirective } from './rt-draggable-tree.directives';
+import { RtDraggableTreeEmptyDirective, RtDraggableTreeNodeDirective } from './rt-draggable-tree.directives';
 import { rtDragAllowed, rtDragKeyPlace, rtDragMove, rtDragPlace } from './rt-draggable-tree.logic';
 import { IRtDraggableTree } from './rt-draggable-tree.model';
 
@@ -74,6 +74,8 @@ export class RtDraggableTreeComponent<TValue> {
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly nodeTemplate: Signal<RtDraggableTreeNodeDirective<TValue> | undefined> = contentChild(RtDraggableTreeNodeDirective);
+    /** Свой вид пустого дерева вместо строки «Нет вариантов». */
+    protected readonly emptyTpl: Signal<RtDraggableTreeEmptyDirective | undefined> = contentChild(RtDraggableTreeEmptyDirective);
 
     protected readonly rowElements: Signal<ReadonlyArray<ElementRef<HTMLElement>>> = viewChildren<ElementRef<HTMLElement>>('row');
 

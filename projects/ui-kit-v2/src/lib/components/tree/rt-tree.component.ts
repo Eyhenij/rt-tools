@@ -31,7 +31,7 @@ import { RtRadioButtonComponent } from '@rt-tools/ui-kit-v2/radio-button';
 import { RtTagComponent } from '@rt-tools/ui-kit-v2/tag';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { IRtOptionTree, rtTreeOpenFor, rtTreeRows, rtTreeSideKey, rtTreeToggle } from '@rt-tools/ui-kit-v2/core';
-import { RtTreeNodeEndDirective, RtTreeNodeMetaDirective } from './rt-tree.directives';
+import { RtTreeEmptyDirective, RtTreeNodeEndDirective, RtTreeNodeMetaDirective } from './rt-tree.directives';
 import { rtTreeChoose, rtTreeChooseAlone, rtTreeLabelParts, rtTreeMark, rtTreeSelectAll, rtTreeSelectAllMark } from './rt-tree.logic';
 import { IRtTree } from './rt-tree.model';
 
@@ -101,6 +101,13 @@ export class RtTreeComponent<TValue> {
 
     protected readonly nodeMeta: Signal<RtTreeNodeMetaDirective<TValue> | undefined> = contentChild(RtTreeNodeMetaDirective);
 
+    protected readonly emptySlot: Signal<RtTreeEmptyDirective | undefined> = contentChild(RtTreeEmptyDirective);
+
+    /** Свой вид пустого дерева: директива раньше входа — обёртка вроде селектора отдаёт его входом. */
+    protected readonly emptyView: Signal<TemplateRef<{ $implicit: string }> | null> = computed(
+        (): TemplateRef<{ $implicit: string }> | null => this.emptySlot()?.templateRef ?? this.emptyTemplate()
+    );
+
     /** Разметка в конце строки: вход раньше директивы — обёртка вроде селектора отдаёт её входом. */
     protected readonly endTemplate: Signal<TemplateRef<IRtTree.NodeContext<TValue>> | null> = computed(
         (): TemplateRef<IRtTree.NodeContext<TValue>> | null => this.nodeEndTemplate() ?? this.nodeEnd()?.templateRef ?? null
@@ -165,6 +172,10 @@ export class RtTreeComponent<TValue> {
     public readonly mode: InputSignal<IRtTree.Mode> = input<IRtTree.Mode>('multiple');
     public readonly cascade: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(true, { transform: booleanAttribute });
     public readonly searchTerm: InputSignal<string> = input<string>('');
+    /** Свой вид пустого дерева входом — для обёртки; объявленная директива `rtTreeEmpty` сильнее. */
+    public readonly emptyTemplate: InputSignal<TemplateRef<{ $implicit: string }> | null> = input<TemplateRef<{
+        $implicit: string;
+    }> | null>(null);
     public readonly showSelectAll: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, {
         transform: booleanAttribute,
     });
