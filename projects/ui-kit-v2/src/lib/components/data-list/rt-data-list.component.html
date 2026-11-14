@@ -4,7 +4,7 @@
     </div>
 } @else {
     <ng-container rtBlock="rt-data-list">
-        @if (fetching()) {
+        @if (fetching() && !loadError.shown()) {
             <div rtElem="fetching" qa-dataid="data-list-fetching">
                 <rt-spinner />
             </div>

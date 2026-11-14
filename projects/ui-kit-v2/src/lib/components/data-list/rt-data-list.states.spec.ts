@@ -50,6 +50,7 @@ const PAGE: IPageModel = { pageNumber: 2, pageSize: 10, totalCount: 30, hasPrev:
             [pageModel]="page"
             [currentSortModel]="null"
             [loading]="loading()"
+            [fetching]="fetching()"
             [error]="error()"
             (retry)="retryCount = retryCount + 1" />
     `,
@@ -59,6 +60,7 @@ const PAGE: IPageModel = { pageNumber: 2, pageSize: 10, totalCount: 30, hasPrev:
 class ErrorHostComponent {
     public readonly rows: WritableSignal<IEntity[]> = signal<IEntity[]>(ROWS);
     public readonly loading: WritableSignal<boolean> = signal<boolean>(false);
+    public readonly fetching: WritableSignal<boolean> = signal<boolean>(false);
     public readonly error: WritableSignal<string | null> = signal<string | null>(null);
     public readonly page: IPageModel = PAGE;
     public retryCount: number = 0;
@@ -130,6 +132,16 @@ describe('RtDataListComponent — ошибка загрузки и свои ви
 
         expect(qa(fixture, 'data-list-loading')).toBeNull();
         expect(textOf(qa(fixture, 'data-list-error')).length).toBeGreaterThan(0);
+    });
+
+    it('SC-UKV-1282 — ошибка важнее дозагрузки: слоя со спиннером поверх заглушки нет', async (): Promise<void> => {
+        const fixture: ComponentFixture<ErrorHostComponent> = await draw(ErrorHostComponent, (host: ErrorHostComponent): void => {
+            host.fetching.set(true);
+            host.error.set('Нет сети');
+        });
+
+        expect(qa(fixture, 'data-list-fetching')).toBeNull();
+        expect(textOf(qa(fixture, 'data-list-error'))).toContain('Нет сети');
     });
 
     it('SC-UKV-1282 — без ошибки строки на месте и заглушки ошибки нет', async (): Promise<void> => {

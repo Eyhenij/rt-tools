@@ -29,7 +29,7 @@
                     <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
                     <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
                     @if (item.ownEmpty) {
-                        <ng-template rtTableEmptyState>
+                        <ng-template rtTableEmpty>
                             <div [style]="slotStyle">
                                 <strong>Свой вид пустой таблицы</strong>
                                 <span [style]="slotHintStyle">Разметка приложения вместо rt-empty-state</span>
