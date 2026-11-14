@@ -36,7 +36,7 @@
             "probes": []
         },
         "node tools/check-specs.mjs": {
-            "seconds": 5,
+            "seconds": 4,
             "history": [
                 "git log"
             ],
@@ -204,7 +204,7 @@
             "probes": []
         },
         "node tools/check-dupes.mjs": {
-            "seconds": 1,
+            "seconds": 0,
             "history": [],
             "untraced": [],
             "self": [
@@ -241,7 +241,7 @@
             "probes": []
         },
         "node tools/check-hooks.mjs": {
-            "seconds": 12,
+            "seconds": 11,
             "history": [],
             "untraced": [
                 "bash"
@@ -1001,13 +1001,12 @@
                 {
                     "dir": ".",
                     "exts": [
+                        ".DS_Store",
                         ".Dockerfile",
                         ".browserslistrc",
                         ".cjs",
                         ".conf",
                         ".crontab",
-                        ".dat",
-                        ".env",
                         ".example",
                         ".excluded",
                         ".gitattributes",
@@ -1017,13 +1016,10 @@
                         ".ico",
                         ".js",
                         ".json",
-                        ".jsonl",
-                        ".lock",
                         ".md",
                         ".mdx",
                         ".mjs",
                         ".mts",
-                        ".network",
                         ".nvmrc",
                         ".nxignore",
                         ".plist",
@@ -1036,20 +1032,16 @@
                         ".sql",
                         ".svg",
                         ".toml",
-                        ".trace",
-                        ".try",
                         ".ts",
                         ".woff2",
                         ".yaml",
                         ".yml",
-                        ".zip",
                         "Caddyfile",
                         "LICENSE",
                         "allowlist",
                         "applypatch-msg",
                         "browser-device-id",
                         "commit-msg",
-                        "copy",
                         "h",
                         "post-applypatch",
                         "post-checkout",
@@ -1063,26 +1055,6 @@
                         "pre-push",
                         "pre-rebase",
                         "prepare-commit-msg",
-                        "refusal-1051812023",
-                        "refusal-1292403063",
-                        "refusal-1437008960",
-                        "refusal-1578805745",
-                        "refusal-1604846066",
-                        "refusal-1820291744",
-                        "refusal-1906766499",
-                        "refusal-2050840549",
-                        "refusal-212067855",
-                        "refusal-2272714823",
-                        "refusal-308730780",
-                        "refusal-3091922403",
-                        "refusal-3272691411",
-                        "refusal-3517816979",
-                        "refusal-3641424044",
-                        "refusal-4040840004",
-                        "refusal-4090762395",
-                        "refusal-4140859332",
-                        "refusal-4173885721",
-                        "send-keys",
                         "tree-name"
                     ]
                 }
@@ -1138,7 +1110,7 @@
             "probes": []
         },
         "node tools/check-package-imports.mjs": {
-            "seconds": 7,
+            "seconds": 3,
             "history": [],
             "untraced": [
                 "npm"
@@ -1163,21 +1135,26 @@
             "probes": []
         },
         "node tools/check-kit-approval.mjs": {
-            "seconds": 0,
+            "seconds": 2,
             "history": [
                 "git diff",
                 "git merge-base",
                 "git rev-parse"
             ],
-            "untraced": [],
+            "untraced": [
+                "rg"
+            ],
             "self": [
                 "tools/check-kit-approval.mjs"
             ],
             "walks": [],
             "files": [
+                "docs/archive/RT-3292-thread-list-error-state.md",
                 "tools/check-kit-approval.mjs"
             ],
-            "probes": []
+            "probes": [
+                "docs/tasks/RT-3292-thread-list-error-state/approvals.md"
+            ]
         },
         "node tools/check-doc-paths.mjs": {
             "seconds": 0,
@@ -1388,52 +1365,27 @@
             "probes": []
         },
         "node tools/check-schema-drift.mjs": {
-            "seconds": 3,
-            "history": [],
-            "untraced": [
-                "npx",
-                "prisma",
-                "schema-engine-darwin-arm64"
+            "seconds": 0,
+            "history": [
+                "git diff",
+                "git rev-parse"
             ],
+            "untraced": [],
             "self": [
                 "tools/check-schema-drift.mjs",
                 "tools/rt-kit-checks.config.mjs"
             ],
             "walks": [
                 {
-                    "dir": "prisma/migrations",
+                    "dir": ".",
                     "exts": [
-                        ".sql",
-                        ".toml"
+                        ".json",
+                        ".mjs"
                     ]
                 }
             ],
-            "files": [
-                ".claude/rt-kit/checks.json",
-                ".env",
-                ".npmrc",
-                "package.json",
-                "prisma.config.ts",
-                "prisma/schema.prisma",
-                "tools/check-schema-drift.mjs",
-                "tools/rt-kit-checks.config.mjs"
-            ],
-            "probes": [
-                ".config/prisma7.cjs",
-                ".config/prisma7.cts",
-                ".config/prisma7.js",
-                ".config/prisma7.mjs",
-                ".config/prisma7.mts",
-                ".config/prisma7.ts",
-                "prisma.config",
-                "prisma.config.js",
-                "prisma7.config.cjs",
-                "prisma7.config.cts",
-                "prisma7.config.js",
-                "prisma7.config.mjs",
-                "prisma7.config.mts",
-                "prisma7.config.ts"
-            ]
+            "files": [],
+            "probes": []
         },
         "node tools/check-states.mjs": {
             "seconds": 0,
@@ -1544,7 +1496,7 @@
             "probes": []
         },
         "node tools/check-archive-age.mjs": {
-            "seconds": 1,
+            "seconds": 0,
             "history": [
                 "git log"
             ],
