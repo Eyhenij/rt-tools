@@ -207,6 +207,9 @@ What the mission asks and the tools of 14 November 2026 do not carry.
   checked against the owner's messages, and it holds until someone rewrites the line.
 - **Q-8 — the package does not connect the agent hooks in the settings of a tree that installs it.**
   A release removes the old checks there and leaves the requirement only as the text of a rule.
+- **Q-9 — the refusals of the command hook name an exit that is gone.** They promise that the
+  owner's word quoted in the reply releases the turn; since 14 November only the waiting line of
+  the progress does.
 
 ## History of changes
 
