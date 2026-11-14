@@ -7,6 +7,7 @@ export { RtDynamicSelectorListComponent } from './list/rt-dynamic-selector-list.
 /** Окно выбора: внутри `rt-dynamic-selector` читает корень, само по себе — свои входы и события. */
 export { RtDynamicSelectorPopupComponent } from './popup/rt-dynamic-selector-popup.component';
 export { RT_DYNAMIC_SELECTOR_SEARCH_DEBOUNCE } from './popup/rt-dynamic-selector-popup.component';
+export * from './rt-dynamic-selector-load-state.directive';
 export * from './rt-dynamic-selector.component';
 export * from './rt-dynamic-selector.directives';
 export * from './rt-dynamic-selector.model';
