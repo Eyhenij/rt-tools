@@ -5,6 +5,7 @@ export * from './rt-table-row-actions.directive';
 export * from './rt-table-row-actions.logic';
 export * from './rt-table-row-actions.pipe';
 export * from './rt-table-row.directive';
+export * from './rt-table-states.directive';
 export * from './rt-table-sort.logic';
 export * from './rt-table-columns.logic';
 export * from './rt-table.component';

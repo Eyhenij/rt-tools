@@ -55,26 +55,56 @@
     <ng-container noDataRowOutlet />
     <ng-container footerRowOutlet />
 
-    @if (isEmpty()) {
+    @if (loadError.shown()) {
+        <tr rtElem="empty-row" qa-dataid="table-error-row">
+            <td rtElem="empty" [attr.colspan]="displayedColumns().length || null">
+                <ng-container
+                    [ngTemplateOutlet]="errorTemplate()?.templateRef ?? defaultError"
+                    [ngTemplateOutletContext]="loadError.context()" />
+            </td>
+        </tr>
+    } @else if (isEmpty()) {
         <tr rtElem="empty-row" qa-dataid="table-empty-row">
             <td rtElem="empty" [attr.colspan]="displayedColumns().length || null">
-                @if (emptyTemplate(); as tpl) {
-                    <ng-container [ngTemplateOutlet]="tpl" />
-                } @else {
-                    <rt-empty-state
-                        rtElem="empty-message"
-                        qa-dataid="table-empty"
-                        [icon]="emptyIcon()"
-                        [title]="emptyText()"
-                        [description]="emptyDescription()" />
-                }
+                <ng-container [ngTemplateOutlet]="emptyView() ?? defaultEmpty" />
             </td>
         </tr>
     }
 
+    <ng-template #defaultEmpty>
+        <rt-empty-state
+            rtElem="empty-message"
+            qa-dataid="table-empty"
+            [icon]="emptyIcon()"
+            [title]="emptyText()"
+            [description]="emptyDescription()" />
+    </ng-template>
+
+    <ng-template #defaultError>
+        <rt-empty-state
+            rtElem="empty-message"
+            qa-dataid="table-error"
+            icon="ico-alert"
+            [title]="loadError.title()"
+            [description]="loadError.hint()">
+            <button
+                rtButton
+                appearance="outlined"
+                type="button"
+                qa-dataid="table-retry"
+                [label]="retryLabel()"
+                [attr.aria-label]="retryLabel()"
+                (click)="retry.emit()"></button>
+        </rt-empty-state>
+    </ng-template>
+
     @if (showCards()) {
         <div rtElem="cards" qa-dataid="table-cards" role="list">
-            @if (isInitialLoading()) {
+            @if (loadError.shown()) {
+                <ng-container
+                    [ngTemplateOutlet]="errorTemplate()?.templateRef ?? defaultError"
+                    [ngTemplateOutletContext]="loadError.context()" />
+            } @else if (isInitialLoading()) {
                 @for (i of skeletonRowIndexes(); track i) {
                     <article rtElem="card" qa-dataid="table-skeleton-card" [rtMod]="{ skeleton: true }">
                         <rt-skeleton rtElem="card-skeleton-bar" />
@@ -82,16 +112,7 @@
                     </article>
                 }
             } @else if (isEmpty()) {
-                @if (emptyTemplate(); as tpl) {
-                    <ng-container [ngTemplateOutlet]="tpl" />
-                } @else {
-                    <rt-empty-state
-                        rtElem="empty-message"
-                        qa-dataid="table-empty"
-                        [icon]="emptyIcon()"
-                        [title]="emptyText()"
-                        [description]="emptyDescription()" />
-                }
+                <ng-container [ngTemplateOutlet]="emptyView() ?? defaultEmpty" />
             } @else {
                 @for (row of cardRows(); track row; let index = $index) {
                     <article

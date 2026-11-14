@@ -6,15 +6,11 @@ Given a table with `loading` true and `error` «Нет сети»
 When it is drawn
 Then the error placeholder with the title «Нет сети» and the «Повторить» button stands in place of the rows
 
-Not covered: the code is not written yet.
-
 ### SC-UKV-1280 — the table keeps its head and pagination on an error
 
 Given a table with rows, a page change and `error` not null
 When it is drawn
 Then the head and the pagination stay and the error placeholder stands in place of the rows
-
-Not covered: the code is not written yet.
 
 ### SC-UKV-1281 — the table empty reference still works
 
@@ -22,15 +18,11 @@ Given a table with no rows and a template declared by `#rtTableEmpty`
 When it is drawn
 Then that template is rendered instead of the default empty view
 
-Not covered: the code is not written yet.
-
 ### SC-UKV-1282 — the data list error has a retry button
 
 Given a data list with `error` not null
 When the reader presses «Повторить»
 Then `retry` is emitted and no rows are drawn
-
-Not covered: the code is not written yet.
 
 ### SC-UKV-1283 — the dynamic list error has a retry button
 
@@ -53,8 +45,6 @@ Not covered: the code is not written yet.
 Given a data list with `error` «Нет сети» and a declared `rtDataListError` template
 When the template calls its retry function
 Then `retry` is emitted and the template shows «Нет сети»
-
-Not covered: the code is not written yet.
 
 ### SC-UKV-1286 — an own empty view replaces the default one
 
