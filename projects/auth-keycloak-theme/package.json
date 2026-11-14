@@ -21,8 +21,7 @@
     "themeName": "rt",
     "accountThemeImplementation": "none",
     "environmentVariables": [
-      { "name": "GA_MEASUREMENT_ID", "default": "" },
-      { "name": "METRIKA_COUNTER_ID", "default": "" }
+      { "name": "COUNTERS_BY_REALM", "default": "" }
     ],
     "projectBuildDirPath": "../../dist/auth-keycloak-theme/app",
     "keycloakifyBuildDirPath": "../../dist/auth-keycloak-theme",

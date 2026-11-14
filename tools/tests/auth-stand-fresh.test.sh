@@ -19,8 +19,8 @@ reason_with() {
             root: '/tree',
             archiveWrittenAt: 1000,
             standFilesWrittenAt: 900,
-            env: { GA_MEASUREMENT_ID: '', METRIKA_COUNTER_ID: '', E2E_ADMIN_PORT: '4310', RT_GOOGLE_ENABLED: 'false', RT_GOOGLE_CLIENT_ID: 'not-set', RT_GOOGLE_CLIENT_SECRET: 'not-set' },
-            running: { GA_MEASUREMENT_ID: '', METRIKA_COUNTER_ID: '', E2E_ADMIN_PORT: '4310', RT_GOOGLE_ENABLED: 'false', RT_GOOGLE_CLIENT_ID: 'not-set', RT_GOOGLE_CLIENT_SECRET: 'not-set' },
+            env: { COUNTERS_BY_REALM: '', E2E_ADMIN_PORT: '4310', RT_GOOGLE_ENABLED: 'false', RT_GOOGLE_CLIENT_ID: 'not-set', RT_GOOGLE_CLIENT_SECRET: 'not-set' },
+            running: { COUNTERS_BY_REALM: '', E2E_ADMIN_PORT: '4310', RT_GOOGLE_ENABLED: 'false', RT_GOOGLE_CLIENT_ID: 'not-set', RT_GOOGLE_CLIENT_SECRET: 'not-set' },
             keycloak: { health: 'healthy', startedAt: 20000, themeSource: '/tree/dist/auth-keycloak-theme/rt-auth-keycloak-theme.jar' },
             config: { exitCode: 0, finishedAt: 21000 },
         };
@@ -45,7 +45,7 @@ report "a missing archive is raised" "$(reason_with archiveWrittenAt null)" "the
 report "a composition edited after the start is raised" "$(reason_with standFilesWrittenAt 20500)" "the stand composition was edited after Keycloak started"
 report "a failed realm import is raised" "$(reason_with config.exitCode 1)" "the realm file was not applied after its last edit"
 report "a realm file edited after the import is raised" "$(reason_with config.finishedAt 800)" "the realm file was not applied after its last edit"
-report "other counter numbers are raised" "$(reason_with env.GA_MEASUREMENT_ID '"G-OTHER1"')" "GA_MEASUREMENT_ID differs from the running stand"
+report "other counter numbers are raised" "$(reason_with env.COUNTERS_BY_REALM '"rt=G-OTHER1:"')" "COUNTERS_BY_REALM differs from the running stand"
 report "another admin port is raised" "$(reason_with env.E2E_ADMIN_PORT '"4377"')" "E2E_ADMIN_PORT differs from the running stand"
 report "other Google keys of the realm are raised" "$(reason_with env.RT_GOOGLE_CLIENT_ID '"client-2"')" "RT_GOOGLE_CLIENT_ID differs from the running stand"
 

@@ -6,8 +6,9 @@
 **Procedures:** none
 
 A subdomain of the entry module: the GA4 and Yandex Metrika counters on the pages of the Keycloak
-theme `rt`. The theme loads them when the node gives their numbers, so the path of a person from
-the application page through the entry to the admin is seen in one pair of counters.
+theme `rt`. The theme loads them when the node gives the numbers of the realm, so the path of a
+person from the application page through the entry to the admin is seen in the counters of their
+product.
 
 ## Why
 
@@ -30,8 +31,11 @@ Not applicable: the counters show nothing on the screen.
 ## Rules
 
 - **Every page of the theme loads GA4 and Metrika after it is drawn, when their numbers are set.**
-  The numbers come as theme properties from the environment of the Keycloak node; an empty or
+  The numbers come as a theme property from the environment of the Keycloak node; an empty or
   malformed number loads no tag of that counter. The pages the theme does not draw load them too.
+- **Each realm reports to its own pair of numbers.** One Keycloak serves every product, and the
+  property holds a pair per realm; a realm without an entry loads no counter, so no product
+  reports to another's.
 - **The page view goes to both counters with the page id.** The id is the template name without
   `.ftl` — `login`, `register`. GA4 sends the view from the tag config, and Metrika from the hit
   with the page address and title.
@@ -76,8 +80,9 @@ Not applicable.
 
 ## Data
 
-Not applicable: the theme keeps nothing. The numbers are the theme properties `GA_MEASUREMENT_ID`
-and `METRIKA_COUNTER_ID` from the environment of the Keycloak container.
+Not applicable: the theme keeps nothing. The numbers are the theme property `COUNTERS_BY_REALM`
+from the environment of the Keycloak container: `realm=ga:metrika` per product, separated by
+commas.
 
 ## Screens and states
 
@@ -99,7 +104,8 @@ Not applicable: the counters draw nothing.
 
 ### Several objects
 
-One pair of numbers for the whole node: every realm that uses the theme reports to it.
+A pair of numbers per realm, that is per product, in one property of the node; a realm without
+an entry loads nothing. The owner's choice of 14.11.2026: «Пара на каждый продукт (Рекомендую)».
 
 ## Decisions
 
@@ -125,8 +131,6 @@ One pair of numbers for the whole node: every realm that uses the theme reports 
 
 ## Open questions
 
-- Q-1 — the login node serves every product, and it carries one pair of numbers: one pair for the
-  whole node, or a pair per realm.
 - Q-2 — whether Webvisor asks for a frame of `mc.yandex.ru` on the entry pages and whether its
   recording plays under the Keycloak `frame-ancestors 'self'`: checked only with a real Metrika
   counter with Webvisor on.

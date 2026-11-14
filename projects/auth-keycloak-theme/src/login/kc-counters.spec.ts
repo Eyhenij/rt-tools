@@ -1,4 +1,4 @@
-import { countersOf, FORM_SUBMIT_EVENT, hidePrivateLinks, pageNameOf, startCounters } from './kc-counters';
+import { countersOf, FORM_SUBMIT_EVENT, hidePrivateLinks, ICountedPage, pageNameOf, startCounters, TThemeProperties } from './kc-counters';
 
 const GA: string = 'G-TEST123';
 const METRIKA: string = '12345678';
@@ -27,12 +27,27 @@ function submitForm(held: boolean): void {
     form.remove();
 }
 
+/** A page of the realm `rt` with the given numbers in the property of the login node. */
+function pageOf(templateId: string, numbers: { ga?: string; metrika?: string }, standard: boolean = false): ICountedPage {
+    return { properties: { COUNTERS_BY_REALM: `rt=${numbers.ga ?? ''}:${numbers.metrika ?? ''}` }, realm: 'rt', templateId, standard };
+}
+
 describe('countersOf', () => {
     it('SC-AUTH-108 — an empty or malformed number loads no counter', () => {
-        expect(countersOf(undefined)).toEqual({ ga: null, metrika: null });
-        expect(countersOf({ GA_MEASUREMENT_ID: '', METRIKA_COUNTER_ID: ' ' })).toEqual({ ga: null, metrika: null });
-        expect(countersOf({ GA_MEASUREMENT_ID: 'UA-1-1', METRIKA_COUNTER_ID: '12ab' })).toEqual({ ga: null, metrika: null });
-        expect(countersOf({ GA_MEASUREMENT_ID: ` ${GA} `, METRIKA_COUNTER_ID: METRIKA })).toEqual({ ga: GA, metrika: 12345678 });
+        expect(countersOf(undefined, 'rt')).toEqual({ ga: null, metrika: null });
+        expect(countersOf({ COUNTERS_BY_REALM: 'rt=: ' }, 'rt')).toEqual({ ga: null, metrika: null });
+        expect(countersOf({ COUNTERS_BY_REALM: 'rt=UA-1-1:12ab' }, 'rt')).toEqual({ ga: null, metrika: null });
+        expect(countersOf({ COUNTERS_BY_REALM: `rt= ${GA} :${METRIKA}` }, 'rt')).toEqual({ ga: GA, metrika: 12345678 });
+    });
+
+    it('SC-AUTH-116 — each realm takes its own pair, and a realm without an entry loads no counter', () => {
+        const properties: TThemeProperties = { COUNTERS_BY_REALM: ` rt=${GA}:${METRIKA} , shop=G-SHOP42: ,broken ` };
+
+        expect(countersOf(properties, 'rt')).toEqual({ ga: GA, metrika: 12345678 });
+        expect(countersOf(properties, 'shop')).toEqual({ ga: 'G-SHOP42', metrika: null });
+        expect(countersOf(properties, 'other')).toEqual({ ga: null, metrika: null });
+        expect(countersOf(properties, 'broken')).toEqual({ ga: null, metrika: null });
+        expect(countersOf(properties, 'r')).toEqual({ ga: null, metrika: null });
     });
 });
 
@@ -50,7 +65,8 @@ describe('startCounters', () => {
     });
 
     it('SC-AUTH-108 — a page without numbers adds no script and no queue', () => {
-        startCounters(window, {}, 'login');
+        startCounters(window, { properties: {}, realm: 'rt', templateId: 'login' });
+        startCounters(window, { properties: { COUNTERS_BY_REALM: `shop=${GA}:${METRIKA}` }, realm: 'rt', templateId: 'login' });
 
         expect(scriptSources()).toEqual([]);
         expect(Reflect.get(window, 'dataLayer')).toBeUndefined();
@@ -58,7 +74,7 @@ describe('startCounters', () => {
     });
 
     it('SC-AUTH-109 — the GA queue holds `arguments` objects with the config of the page id', () => {
-        startCounters(window, { GA_MEASUREMENT_ID: GA }, 'register.ftl');
+        startCounters(window, pageOf('register.ftl', { ga: GA }));
         const queue: unknown = Reflect.get(window, 'dataLayer');
 
         expect(Array.isArray(queue) && Object.prototype.toString.call(queue[0])).toBe('[object Arguments]');
@@ -68,7 +84,7 @@ describe('startCounters', () => {
 
     it('SC-AUTH-110 — Metrika starts with Webvisor and sends the hit of the page', () => {
         document.title = 'rt';
-        startCounters(window, { METRIKA_COUNTER_ID: METRIKA }, 'login');
+        startCounters(window, pageOf('login', { metrika: METRIKA }));
         const calls: unknown[][] = callsOf(Reflect.get(Reflect.get(window, 'ym') as object, 'a'));
 
         expect(calls[0]).toEqual([12345678, 'init', expect.objectContaining({ webvisor: true, defer: true })]);
@@ -77,7 +93,7 @@ describe('startCounters', () => {
     });
 
     it('SC-AUTH-111 — a form that leaves the page sends the event with the page id and no field value', () => {
-        startCounters(window, { GA_MEASUREMENT_ID: GA, METRIKA_COUNTER_ID: METRIKA }, 'login');
+        startCounters(window, pageOf('login', { ga: GA, metrika: METRIKA }));
         submitForm(false);
         const ga: unknown[][] = callsOf(Reflect.get(window, 'dataLayer'));
         const ym: unknown[][] = callsOf(Reflect.get(Reflect.get(window, 'ym') as object, 'a'));
@@ -93,7 +109,7 @@ describe('startCounters', () => {
             '',
             '/realms/rt/login-actions/action-token?key=eyJ.token&client_id=app&login_hint=ann%40rt.localhost'
         );
-        startCounters(window, { METRIKA_COUNTER_ID: METRIKA }, 'info.ftl');
+        startCounters(window, pageOf('info.ftl', { metrika: METRIKA }));
         const calls: unknown[][] = callsOf(Reflect.get(Reflect.get(window, 'ym') as object, 'a'));
 
         expect(window.location.search).toBe('?client_id=app');
@@ -106,7 +122,7 @@ describe('startCounters', () => {
         document.body.innerHTML =
             '<p qa-dataid="kc-verify-sent">ann@rt.localhost</p><div id="kc-attempted-username">ann</div>' +
             '<div class="pf-c-alert">No account for bob@rt.localhost</div><p>other</p>';
-        startCounters(window, { METRIKA_COUNTER_ID: METRIKA }, 'login-verify-email.ftl');
+        startCounters(window, pageOf('login-verify-email.ftl', { metrika: METRIKA }));
 
         expect(Array.from(document.querySelectorAll('.ym-hide-content'), (node: Element): string => node.textContent ?? '')).toEqual([
             'ann@rt.localhost',
@@ -118,7 +134,7 @@ describe('startCounters', () => {
 
     it('SC-AUTH-110 — every field carries the class by which Webvisor records none of its keys', () => {
         document.body.innerHTML = '<form><input name="username" /><input type="password" name="password" /><textarea></textarea></form>';
-        startCounters(window, { METRIKA_COUNTER_ID: METRIKA }, 'login.ftl');
+        startCounters(window, pageOf('login.ftl', { metrika: METRIKA }));
 
         expect(document.querySelectorAll('input, textarea')).toHaveLength(3);
         expect(document.querySelectorAll('input:not(.ym-disable-keys), textarea:not(.ym-disable-keys)')).toHaveLength(0);
@@ -164,7 +180,7 @@ describe('startCounters', () => {
     it('SC-AUTH-115 — a field a standard page fills from the context keeps its value out of the markup', () => {
         document.body.innerHTML =
             '<form><input id="username" name="username" value="ann@rt.localhost" /><input type="hidden" name="tab" value="t1" /></form>';
-        startCounters(window, { METRIKA_COUNTER_ID: METRIKA }, 'login-username.ftl', true);
+        startCounters(window, pageOf('login-username.ftl', { metrika: METRIKA }, true));
         const field: HTMLInputElement = document.querySelector('#username') as HTMLInputElement;
 
         expect(field.value).toBe('ann@rt.localhost');
@@ -176,9 +192,9 @@ describe('startCounters', () => {
 
     it('SC-AUTH-114 — a standard page is recorded with its whole text hidden, a theme page is not', () => {
         document.body.classList.remove('ym-hide-content');
-        startCounters(window, { METRIKA_COUNTER_ID: METRIKA }, 'login.ftl');
+        startCounters(window, pageOf('login.ftl', { metrika: METRIKA }));
         expect(document.body.classList).not.toContain('ym-hide-content');
-        startCounters(window, { METRIKA_COUNTER_ID: METRIKA }, 'login-idp-link-email.ftl', true);
+        startCounters(window, pageOf('login-idp-link-email.ftl', { metrika: METRIKA }, true));
         expect(document.body.classList).toContain('ym-hide-content');
         document.body.classList.remove('ym-hide-content');
     });
@@ -188,7 +204,7 @@ describe('startCounters', () => {
             'beforeend',
             '<script>window.kcContext = { actionUri: "/action-token?key=eyJ.token" };</script><script>window.other = 1;</script>'
         );
-        startCounters(window, { METRIKA_COUNTER_ID: METRIKA }, 'info.ftl');
+        startCounters(window, pageOf('info.ftl', { metrika: METRIKA }));
         const inline: string[] = Array.from(
             document.querySelectorAll('script:not([src])'),
             (script: Element): string => script.textContent ?? ''
@@ -201,7 +217,7 @@ describe('startCounters', () => {
 
     it('SC-AUTH-114 — a node the page draws after the counters start is hidden before the recording sees it', async () => {
         document.body.innerHTML = '';
-        startCounters(window, { METRIKA_COUNTER_ID: METRIKA }, 'login-otp.ftl');
+        startCounters(window, pageOf('login-otp.ftl', { metrika: METRIKA }));
         document.body.insertAdjacentHTML(
             'beforeend',
             '<header><span id="kc-attempted-username">ann@rt.localhost</span></header><form><input name="otp" /></form>' +
@@ -216,7 +232,7 @@ describe('startCounters', () => {
     });
 
     it('SC-AUTH-112 — a form the page holds as invalid sends no event', () => {
-        startCounters(window, { GA_MEASUREMENT_ID: GA }, 'login');
+        startCounters(window, pageOf('login', { ga: GA }));
         const before: number = callsOf(Reflect.get(window, 'dataLayer')).length;
         submitForm(true);
 

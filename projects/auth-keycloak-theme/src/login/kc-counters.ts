@@ -1,10 +1,11 @@
 import { loadPageScripts } from './kc-page-scripts';
 
-/** The theme properties that carry the counter numbers; the login node sets them in its environment. */
-export enum ECounterProperty {
-    Ga = 'GA_MEASUREMENT_ID',
-    Metrika = 'METRIKA_COUNTER_ID',
-}
+/**
+ * The theme property that carries the counter numbers of every product; the login node sets it in
+ * its environment. One entry per realm, `realm=ga:metrika`, entries separated by commas:
+ * `rt=G-ABC123:12345678,shop=G-XYZ789:`. Either number may be empty.
+ */
+export const COUNTERS_PROPERTY: string = 'COUNTERS_BY_REALM';
 
 /** The event a form that leaves the page sends; it carries the page id and no field value. */
 export const FORM_SUBMIT_EVENT: string = 'auth_form_submit';
@@ -17,6 +18,15 @@ export interface ICounters {
 
 /** The theme properties Keycloak puts on the page. */
 export type TThemeProperties = Readonly<Record<string, string | undefined>>;
+
+/** What the counters read of the page: the theme properties, the realm, the template and its kind. */
+export interface ICountedPage {
+    readonly properties: TThemeProperties | undefined;
+    readonly realm: string;
+    readonly templateId: string;
+    /** A page the theme does not draw itself. */
+    readonly standard?: boolean;
+}
 
 type TQueueCall = (...args: unknown[]) => void;
 
@@ -64,10 +74,20 @@ export function pageNameOf(pageId: string): string {
     return pageId.replace(/\.ftl$/, '');
 }
 
-/** The counter numbers of the page, read from the theme properties. */
-export function countersOf(properties: TThemeProperties | undefined): ICounters {
-    const ga: string = (properties?.[ECounterProperty.Ga] ?? '').trim();
-    const metrika: string = (properties?.[ECounterProperty.Metrika] ?? '').trim();
+/**
+ * The counter numbers of the realm the page belongs to, read from the theme properties. A realm
+ * without an entry loads no counter: the login node serves every product, and a product without
+ * its own numbers reports to nobody else's counter.
+ */
+export function countersOf(properties: TThemeProperties | undefined, realm: string): ICounters {
+    const entry: string =
+        (properties?.[COUNTERS_PROPERTY] ?? '')
+            .split(',')
+            .map((part: string): string => part.trim())
+            .find((part: string): boolean => part.slice(0, part.indexOf('=')).trim() === realm && part.includes('=')) ?? '';
+    const numbers: string = entry.slice(entry.indexOf('=') + 1);
+    const ga: string = numbers.split(':')[0]?.trim() ?? '';
+    const metrika: string = numbers.split(':')[1]?.trim() ?? '';
 
     return {
         ga: GA_ID.test(ga) ? ga : null,
@@ -280,9 +300,10 @@ function watchPage(document: Document, go: TGoTo): void {
  * event reaches the document. No field value goes into an event. A standard page — one the theme
  * does not draw itself — is recorded with its whole text hidden: it may name the person in any node.
  */
-export function startCounters(view: Window, properties: TThemeProperties | undefined, templateId: string, standard: boolean = false): void {
-    const counters: ICounters = countersOf(properties);
-    const pageId: string = pageNameOf(templateId);
+export function startCounters(view: Window, page: ICountedPage): void {
+    const counters: ICounters = countersOf(page.properties, page.realm);
+    const pageId: string = pageNameOf(page.templateId);
+    const standard: boolean = page.standard ?? false;
     if (counters.ga === null && counters.metrika === null) {
         return;
     }

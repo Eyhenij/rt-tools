@@ -33,14 +33,14 @@ or in the .env file next to the compose file.
 ## Counters
 
 Every page of the theme loads GA4 and Yandex Metrika when the environment of the Keycloak
-container gives their numbers. The theme reads them as theme properties:
+container gives the numbers of its realm. One Keycloak serves every product, so the numbers are
+given per realm in one variable, read as a theme property:
 
-| Variable             | What it holds                   |
-| -------------------- | ------------------------------- |
-| `GA_MEASUREMENT_ID`  | the GA4 measurement id, `G-…`   |
-| `METRIKA_COUNTER_ID` | the Metrika counter number      |
+| Variable            | What it holds                                                      |
+| ------------------- | ------------------------------------------------------------------ |
+| `COUNTERS_BY_REALM` | `realm=ga:metrika` per product, separated by commas: `rt=G-ABC123:12345678,shop=G-XYZ789:` |
 
-An empty or malformed number loads no tag of that counter. The page view carries the page id
+A realm without an entry, an empty or a malformed number loads no tag of that counter. The page view carries the page id
 (`login`, `register`, `login-reset-password`…), and a form that leaves the page sends the event
 `auth_form_submit` with the same id. No value typed into a field goes into an event. Every field
 carries `ym-disable-keys`, so Webvisor records none of its keys, and a link address in the markup

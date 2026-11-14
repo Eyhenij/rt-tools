@@ -58,8 +58,7 @@ services:
             KC_BOOTSTRAP_ADMIN_PASSWORD: admin
             # Номера счётчиков страниц входа приходят из среды команды подъёма; без них счётчики
             # на стенде не грузятся.
-            GA_MEASUREMENT_ID: ${GA_MEASUREMENT_ID:-}
-            METRIKA_COUNTER_ID: ${METRIKA_COUNTER_ID:-}
+            COUNTERS_BY_REALM: ${COUNTERS_BY_REALM:-}
         ports:
             - '58080:8080'
         # Тема экранов входа: JAR собирает `build:auth-keycloak-theme`, команда подъёма зовёт его

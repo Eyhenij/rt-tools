@@ -58,3 +58,10 @@ the others do not; a standard page has its whole body hidden
 Given the login page, or a standard page that fills a field from the context
 When the person types the address and the password, or the page fills the field
 Then neither stands in the markup of the page, and the form still sends the value
+
+### SC-AUTH-116 — each realm takes its own pair of numbers
+
+Given a node whose property holds pairs for several realms
+When a page of one realm is drawn
+Then it loads the counters of its own pair only, and a page of a realm without an entry or with
+a malformed entry loads no counter

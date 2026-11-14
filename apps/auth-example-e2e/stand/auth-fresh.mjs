@@ -26,8 +26,7 @@ export const STAND_FILES = ['deploy/auth/compose.yml', 'deploy/auth/realm/rt.jso
  * container and the name it gets inside, and the default of the compose file.
  */
 export const STAND_ENV = [
-    { name: 'GA_MEASUREMENT_ID', container: 'keycloak', inside: 'GA_MEASUREMENT_ID', fallback: '' },
-    { name: 'METRIKA_COUNTER_ID', container: 'keycloak', inside: 'METRIKA_COUNTER_ID', fallback: '' },
+    { name: 'COUNTERS_BY_REALM', container: 'keycloak', inside: 'COUNTERS_BY_REALM', fallback: '' },
     { name: 'E2E_ADMIN_PORT', container: 'config', inside: 'RT_E2E_ADMIN_PORT', fallback: '4310' },
     { name: 'RT_GOOGLE_ENABLED', container: 'config', inside: 'RT_GOOGLE_ENABLED', fallback: 'false' },
     { name: 'RT_GOOGLE_CLIENT_ID', container: 'config', inside: 'RT_GOOGLE_CLIENT_ID', fallback: 'not-set' },
