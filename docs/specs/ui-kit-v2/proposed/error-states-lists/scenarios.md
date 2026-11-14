@@ -30,15 +30,11 @@ Given a dynamic list with `error` not null
 When the reader presses «Повторить»
 Then `retry` is emitted
 
-Not covered: the code is not written yet.
-
 ### SC-UKV-1284 — the bar list error has a retry button
 
 Given a bar list with `error` not null
 When the reader presses «Повторить»
 Then `retry` is emitted and no bars are drawn
-
-Not covered: the code is not written yet.
 
 ### SC-UKV-1285 — an own error view of a list gets the text and the retry function
 
@@ -51,5 +47,3 @@ Then `retry` is emitted and the template shows «Нет сети»
 Given a bar list with no items and a declared `rtBarListEmpty` template
 When it is drawn
 Then the template is rendered and the default placeholder is not
-
-Not covered: the code is not written yet.

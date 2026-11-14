@@ -33,11 +33,12 @@ import { searchDebounce } from '@rt-tools/ui-kit-v2/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
-import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
+import { IRtLoadError, RtEmptyStateComponent, rtLoadErrorView } from '@rt-tools/ui-kit-v2/empty-state';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtPaginationComponent } from '@rt-tools/ui-kit-v2/pagination';
 import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
+import { RtDynamicListEmptyDirective, RtDynamicListErrorDirective } from './rt-dynamic-list-states.directive';
 import { RtDynamicListToolbarActionsDirective, RtDynamicListToolbarSelectorsDirective } from './rt-dynamic-list.directives';
 import { IRtDynamicList } from './rt-dynamic-list.model';
 
@@ -110,6 +111,19 @@ export class RtDynamicListComponent implements OnInit {
         RtDynamicListToolbarActionsDirective
     );
 
+    /** Свой вид пустого списка (`<ng-template rtDynamicListEmpty>`). */
+    protected readonly emptyTemplate: Signal<TNullable<RtDynamicListEmptyDirective>> = contentChild(RtDynamicListEmptyDirective);
+
+    /** Свой вид ошибки загрузки (`<ng-template rtDynamicListError>`). */
+    protected readonly errorTemplate: Signal<TNullable<RtDynamicListErrorDirective>> = contentChild(RtDynamicListErrorDirective);
+
+    /** Вид ошибки загрузки: заголовок, подсказка и контекст своего шаблона; ошибка важнее загрузки и пустоты. */
+    protected readonly loadError: IRtLoadError.View = rtLoadErrorView(
+        (): string | null => this.error(),
+        (): string => this.errorDescription(),
+        (): void => this.retry.emit()
+    );
+
     /** «Выбрано: N» — подпись с подстановкой, потому её берут не из карты, а вызовом. */
     protected readonly selectedLabel: Signal<string> = rtKitLabel(
         'uiSelectedCount',
@@ -143,7 +157,7 @@ export class RtDynamicListComponent implements OnInit {
     protected readonly isPaginationShown: Signal<boolean> = computed((): boolean => {
         const page: TNullable<IPageModel> = this.pageModel();
 
-        if (!page || this.empty()) {
+        if (!page || this.empty() || this.loadError.shown()) {
             return false;
         }
 
@@ -227,6 +241,12 @@ export class RtDynamicListComponent implements OnInit {
         transform: numberAttribute,
     });
 
+    /** Ошибка загрузки: не null — вместо записей заглушка ошибки, панель на месте; пустая строка — подпись кита. */
+    public readonly error: InputSignal<string | null> = input<string | null>(null);
+
+    /** Подсказка под ошибкой; пустая — подпись кита. */
+    public readonly errorDescription: InputSignal<string> = input<string>('');
+
     public readonly emptyTitle: InputSignal<string> = input<string>('');
 
     public readonly emptyDescription: InputSignal<string | null> = input<string | null>(null);
@@ -237,6 +257,9 @@ export class RtDynamicListComponent implements OnInit {
     public readonly searchChange: OutputEmitterRef<string> = output<string>();
 
     public readonly refreshed: OutputEmitterRef<void> = output<void>();
+
+    /** Нажата «Повторить» на ошибке загрузки. Список сам ничего не загружает. */
+    public readonly retry: OutputEmitterRef<void> = output<void>();
 
     public readonly filtersCleared: OutputEmitterRef<void> = output<void>();
 
