@@ -76,8 +76,13 @@ rt_auth_stand_changed() {
 # visual gate, 466–584 s alone, and three whole sets of such changes took 496, 509 and 598 s on
 # 14.11.2026 (task RT-3294). The limit is the longest of them with a margin of 22 s. The owner's
 # answer of 14.11.2026: «Поднять лимит по замеру».
+#
+#
+# A change that reaches both the kit showcase and the admin suite runs both heavy steps in one set:
+# the snapshot match 455 s, the admin suite 215 s, the two images 64 s, measured on 14.11.2026
+# (task RT-3292). The owner's answer of that day: «Поднять предел (Рекомендую)» — 900 s.
 rt_push_set_budget() {
-    echo 620
+    echo 900
 }
 
 rt_push_over_budget_words() {

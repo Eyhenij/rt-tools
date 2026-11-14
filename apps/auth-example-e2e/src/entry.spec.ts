@@ -56,6 +56,32 @@ test.describe('the entry', () => {
         expect(counters).toEqual([]);
     });
 
+    test('SC-AUTH-117 — the entry page lets the Metrika frame in and keeps the other security headers', async ({ page }) => {
+        const entryPage: Promise<{ headers(): Record<string, string> }> = page.waitForResponse(
+            // The first answer of the entry address is a redirect without the security headers; the
+            // page itself comes with status 200.
+            (response: { url(): string; status(): number; request(): { resourceType(): string } }): boolean =>
+                response.request().resourceType() === 'document' &&
+                response.status() === 200 &&
+                response.url().includes('/realms/rt/protocol/openid-connect/auth')
+        );
+        await page.goto('/');
+        await expectEntryScreen(page);
+        const headers: Record<string, string> = (await entryPage).headers();
+        const frameSources: string[] =
+            (headers['content-security-policy'] ?? '')
+                .split(';')
+                .map((directive: string): string => directive.trim())
+                .find((directive: string): boolean => directive.startsWith('frame-src '))
+                ?.split(/\s+/)
+                .slice(1) ?? [];
+
+        expect(frameSources).toEqual(["'self'", 'https://mc.yandex.ru']);
+        expect(headers['content-security-policy']).toContain("frame-ancestors 'self'");
+        expect(headers['x-frame-options']).toBe('SAMEORIGIN');
+        expect(headers['x-content-type-options']).toBe('nosniff');
+    });
+
     test('SC-AUTH-48 — a wrong password keeps the person on the entry screen', async ({ page }) => {
         await page.goto('/');
         await enterOnRealmScreen(page, PEOPLE.reader.email, 'not-the-password');
