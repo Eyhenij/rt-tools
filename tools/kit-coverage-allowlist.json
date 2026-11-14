@@ -47,6 +47,11 @@
     "ng-template[rtExpansionPanelContent]": "маркер ленивого тела панели: своей разметки у него нет вовсе. В кадре виден не маркер, а тело, которое панель создала при раскрытии, — это показывают истории семейства `expansion-panel`"
   },
   "shownWithin": {
+    "ng-template[rtThreadListEmpty]": "projects/ui-kit-v2/src/lib/components/thread-list/stories/thread-list-states.stories.ts",
+    "ng-template[rtThreadListError]": "projects/ui-kit-v2/src/lib/components/thread-list/stories/thread-list-states.stories.ts",
+    "ng-template[rtWorkspaceDetailsError]": "projects/ui-kit-v2/src/lib/components/workspace-details/stories/workspace-details-states.stories.ts",
+    "ng-template[rtChatEmpty]": "projects/ui-kit-v2/src/rich-editor/lib/components/chat/stories/chat-states.stories.ts",
+    "ng-template[rtChatError]": "projects/ui-kit-v2/src/rich-editor/lib/components/chat/stories/chat-states.stories.ts",
     "rt-workspace-aside-overlay": "projects/ui-kit-v2/src/lib/components/workspace/stories/workspace-breakpoint.stories.ts",
     "[rtExpansionPanelActions]": "projects/ui-kit-v2/src/lib/components/expansion-panel/stories/expansion-panel-matrix.stories.ts",
     "[rtExpansionPanelGroup]": "projects/ui-kit-v2/src/lib/components/expansion-panel/stories/expansion-panel-matrix.stories.ts",

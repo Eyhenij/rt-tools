@@ -33,52 +33,7 @@ const CASES: readonly IChatStateCase[] = [
  */
 @Component({
     selector: 'app-chat-states',
-    template: `
-        <app-story-presets caption="Заглушка и ошибка в обоих наборах">
-            <ng-template>
-                <app-story-row slotWidth="560px" [items]="cases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <div
-                            style="box-sizing: border-box; display: flex; flex-direction: column; inline-size: 100%; block-size: 520px; border: 1px solid var(--rt-color-border-default); border-radius: var(--rt-radius-lg); background-color: var(--rt-color-bg-surface)">
-                            <rt-chat
-                                style="height: 100%"
-                                messenger
-                                canReply
-                                fill
-                                title="№12 Анна Смирнова"
-                                subtitle="WhatsApp · +66 81 234 5678"
-                                emptyTitle="Переписка не выбрана"
-                                emptyHint="Выберите переписку слева."
-                                placeholder="Написать сообщение"
-                                [sign]="sign"
-                                [hasThread]="item.hasThread"
-                                [error]="item.error"
-                                [messages]="messages">
-                                <rt-icon-button rtChatHeaderActions icon="calendar" variant="ghost" size="sm" ariaLabel="Бронирование" />
-                                <rt-icon-button rtChatHeaderActions icon="ellipsis-v" variant="ghost" size="sm" ariaLabel="Ещё" />
-                                @if (item.ownEmpty) {
-                                    <ng-template rtChatEmpty>
-                                        <div [style]="slotStyle">
-                                            <strong>Свой вид пустой переписки</strong>
-                                            <span [style]="slotHintStyle">Разметка приложения вместо подсказки по умолчанию</span>
-                                        </div>
-                                    </ng-template>
-                                }
-                                @if (item.ownError) {
-                                    <ng-template rtChatError>
-                                        <div [style]="slotStyle">
-                                            <strong>Свой вид ошибки</strong>
-                                            <span [style]="slotHintStyle">В контексте шаблона: текст ошибки ($implicit) и retry()</span>
-                                        </div>
-                                    </ng-template>
-                                }
-                            </rt-chat>
-                        </div>
-                    </ng-template>
-                </app-story-row>
-            </ng-template>
-        </app-story-presets>
-    `,
+    templateUrl: './test-chat-states.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

@@ -80,60 +80,7 @@ const CASES: readonly IStateCase[] = [
  */
 @Component({
     selector: 'app-thread-list-states',
-    template: `
-        <app-story-presets caption="Ошибка и заглушки в обоих наборах">
-            <ng-template>
-                <app-story-row slotWidth="339px" [items]="cases" [itemLabel]="caseLabel">
-                    <ng-template let-item>
-                        <div
-                            style="box-sizing: border-box; display: flex; flex-direction: column; inline-size: 100%; height: 480px; border: 1px solid var(--rt-color-border-default); border-radius: var(--rt-radius-lg); background: var(--rt-color-bg-surface)"
-                            [attr.data-story-search]="item.search || null">
-                            <rt-thread-list
-                                messenger
-                                searchPlaceholder="Поиск"
-                                [rows]="item.rows"
-                                [loading]="item.loading"
-                                [error]="item.error">
-                                <ng-template rtThreadListFilters>
-                                    <span>Канал</span>
-                                </ng-template>
-                                <ng-template rtThreadListTabs>
-                                    <rt-toggle-button-group
-                                        fullWidth
-                                        size="md"
-                                        ariaLabel="Вкладки списка"
-                                        value="all"
-                                        [options]="tabOptions" />
-                                </ng-template>
-                                <ng-template rtThreadListRow let-row>
-                                    <div style="display: grid; gap: 0.125rem; min-inline-size: 0">
-                                        <strong>{{ row.title }}</strong>
-                                        <span style="color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)">{{ row.meta }}</span>
-                                    </div>
-                                </ng-template>
-                                @if (item.ownEmpty) {
-                                    <ng-template rtThreadListEmpty>
-                                        <div [style]="slotStyle">
-                                            <strong>Свой вид пустого списка</strong>
-                                            <span [style]="slotHintStyle">Разметка приложения вместо rt-empty-state</span>
-                                        </div>
-                                    </ng-template>
-                                }
-                                @if (item.ownError) {
-                                    <ng-template rtThreadListError>
-                                        <div [style]="slotStyle">
-                                            <strong>Свой вид ошибки</strong>
-                                            <span [style]="slotHintStyle">В контексте шаблона: текст ошибки ($implicit) и retry()</span>
-                                        </div>
-                                    </ng-template>
-                                }
-                            </rt-thread-list>
-                        </div>
-                    </ng-template>
-                </app-story-row>
-            </ng-template>
-        </app-story-presets>
-    `,
+    templateUrl: './test-thread-list-states.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
