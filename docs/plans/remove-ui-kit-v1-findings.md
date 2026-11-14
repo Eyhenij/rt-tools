@@ -60,7 +60,8 @@ when the epic is over.
 
 - **The e2e coverage guard demands both suites for deleting a kit file nobody imports.**
   `rt_kit2_reaches` counts any kit file outside a component directory as reaching every
-  application, and the stale aggregator `src/lib/components/index.ts` is such a file. **Address:**
+  application, and the stale aggregator of the kit components, removed by this task, was such a
+  file. **Address:**
   names of this tree — `.claude/rt-kit/project.sh:rt_kit2_reaches`.
 - **The showcase harness files are typechecked by nothing.** The showcase `tsconfig.json` includes
   `preview.ts` and `main.ts` only, so `test-runner.ts` and the two snapshot files typed `Page` as
