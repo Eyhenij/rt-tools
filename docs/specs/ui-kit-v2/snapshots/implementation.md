@@ -7,7 +7,7 @@ covered by is said in `scenarios.md`.
 A rule without a line and a line without a rule is a divergence: the spec promises what is not in the
 tree, or the tree holds what the spec is silent about.
 
-- **Every kit has a harness of the snapshots of its own and a catalogue of the references of its own.** — `projects/ui-kit-v2/.storybook/test-runner.ts:SNAPSHOT_DIR` — a harness of its own and a catalogue of its own; there is no file shared with the first kit; scenario `SC-UKV-07`
+- **The kit has a harness of the snapshots of its own and a catalogue of the references of its own.** — `projects/ui-kit-v2/.storybook/test-runner.ts:SNAPSHOT_DIR` — a harness of its own and a catalogue of its own; there is no file shared with another run
 - **Everything is shot except what is marked by an exception.** — `projects/ui-kit-v2/src/showcase/story-snapshot.ts:storySnapshotSkip`, the early exit in the `postVisit` hook of `projects/ui-kit-v2/.storybook/test-runner.ts:config`; scenario `SC-UKV-02`
 - **An exception without a reason fells the run.** — the `preVisit` hook of `projects/ui-kit-v2/.storybook/test-runner.ts:config`; scenario `SC-UKV-11`
 - **A reference that has no story fells the run.** — `projects/ui-kit-v2/.storybook/test-runner.ts:remember`, `tools/visual-snapshots-v2.mjs:requireNoOrphans`; scenario `SC-UKV-12`

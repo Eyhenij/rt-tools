@@ -119,7 +119,7 @@ new FormGroup({ password, confirm }, { validators: checkIsMatchingValues('passwo
 
 ### BEM
 
-The directives every `rtui-*` template uses to build class names, and what the kit's own lint rule
+The directives every `rt-*` template of the kit uses to build class names, and what the kit's own lint rule
 expects instead of hand-written `class` strings:
 
 ```typescript

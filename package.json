@@ -138,7 +138,6 @@
     "@prisma/adapter-pg": "7.10.0",
     "@prisma/client": "7.10.0",
     "express": "5.3.0",
-    "ngx-image-cropper": "9.1.7",
     "reflect-metadata": "0.2.2"
   },
   "devDependencies": {
@@ -161,7 +160,6 @@
     "@angular/compiler-cli": "22.2.2",
     "@angular/core": "22.2.2",
     "@angular/forms": "22.2.2",
-    "@angular/material": "22.2.2",
     "@angular/platform-browser": "22.2.2",
     "@angular/platform-browser-dynamic": "22.2.2",
     "@angular/router": "22.2.2",
