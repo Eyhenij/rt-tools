@@ -48,6 +48,10 @@ server selector. They never see the words error input or template.
   the hint and an outlined «Повторить» button.** The title is the `error` text when it is not
   empty, otherwise the label `uiLoadError`; the hint is the `errorDescription` input or the label
   `uiLoadErrorHint`; the button is `uiRetry`.
+- **The error view in the `rt-autocomplete` panel is compact.** The approved frame draws a circle
+  of 40 with an icon of 20, the title in italics in the placeholder colour and a small «Повторить»
+  button of 104 by 32. The hint stands only when `errorDescription` is set: the frame draws the
+  case without it, and the panel of 280 has no room for the label `uiLoadErrorHint`.
 - **A server selector takes both own views.** `rtDynamicSelectorEmpty`, `rtDynamicSelectorError`,
   `rtAutocompleteEmpty` and `rtAutocompleteError`; the empty template gets the typed text as
   `$implicit`, the error template gets the error text as `$implicit` and a `retry` function.

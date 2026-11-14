@@ -103,10 +103,16 @@
     </ng-template>
 
     <ng-template #defaultError>
-        <rt-empty-state qa-dataid="autocomplete-error" icon="ico-alert" [title]="loadError.title()" [description]="loadError.hint()">
+        <rt-empty-state
+            rtElem="error-state"
+            qa-dataid="autocomplete-error"
+            icon="ico-alert"
+            [title]="loadError.title()"
+            [description]="errorDescription() || null">
             <button
                 rtButton
                 appearance="outlined"
+                size="sm"
                 type="button"
                 qa-dataid="autocomplete-retry"
                 [label]="t().uiRetry"

@@ -25,7 +25,7 @@ import { RtMultiselectComponent } from '../../rt-multiselect.component';
                 <ng-template rtMultiselectEmpty>
                     <div [style]="slotStyle">
                         <strong>Свой вид пустого</strong>
-                        <span [style]="slotHintStyle">Разметка приложения вместо «Нет вариантов»</span>
+                        <span [style]="slotHintStyle">Разметка приложения</span>
                     </div>
                 </ng-template>
             </rt-multiselect>
@@ -35,7 +35,7 @@ import { RtMultiselectComponent } from '../../rt-multiselect.component';
         /* Панель уезжает в контейнер оверлеев и ложится поверх страницы: без запаса снизу
            она вышла бы за нижний край окна. */
         .app-multiselect-states__panel-slot {
-            width: 15rem;
+            width: 17.5rem;
             padding-bottom: 12rem;
         }
     `,
@@ -60,7 +60,7 @@ export class TestRtMultiselectStatesComponent {
 
     /** Рамка своего шаблона: пунктир показывает, где кончается разметка приложения. */
     public readonly slotStyle: string =
-        'display: grid; gap: var(--rt-space-1); margin: var(--rt-space-2); padding: var(--rt-space-4); border: 1px dashed var(--rt-color-border-strong); border-radius: var(--rt-radius-md); text-align: center';
+        'display: grid; gap: var(--rt-space-1); margin: calc(var(--rt-space-2) + var(--rt-space-1)); padding: calc(var(--rt-space-2) + var(--rt-space-1)); border: 1px dashed var(--rt-color-border-strong); border-radius: var(--rt-radius-md); text-align: center';
 
     public readonly slotHintStyle: string = 'color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)';
 }

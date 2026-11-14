@@ -68,7 +68,7 @@ export class TestRtAutocompleteStatesComponent {
 
     /** Рамка своего шаблона: пунктир показывает, где кончается разметка приложения. */
     public readonly slotStyle: string =
-        'display: grid; gap: var(--rt-space-1); margin: var(--rt-space-2); padding: var(--rt-space-4); border: 1px dashed var(--rt-color-border-strong); border-radius: var(--rt-radius-md); text-align: center';
+        'display: grid; gap: var(--rt-space-1); margin: calc(var(--rt-space-2) + var(--rt-space-1)); padding: calc(var(--rt-space-2) + var(--rt-space-1)); border: 1px dashed var(--rt-color-border-strong); border-radius: var(--rt-radius-md); text-align: center';
 
     public readonly slotHintStyle: string = 'color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)';
 

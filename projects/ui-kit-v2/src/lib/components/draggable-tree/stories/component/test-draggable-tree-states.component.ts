@@ -27,9 +27,9 @@ const CASES: readonly IDraggableTreeStateCase[] = [
     template: `
         <app-story-presets caption="Свой вид пустого в обоих наборах">
             <ng-template>
-                <app-story-row slotWidth="18rem" [items]="cases" [itemLabel]="caseLabel">
+                <app-story-row slotWidth="20rem" [items]="cases" [itemLabel]="caseLabel">
                     <ng-template let-item>
-                        <rt-draggable-tree ariaLabel="Разделы" [nodes]="[]">
+                        <rt-draggable-tree style="display: block; width: 100%" ariaLabel="Разделы" [nodes]="[]">
                             @if (item.ownEmpty) {
                                 <ng-template rtDraggableTreeEmpty>
                                     <div [style]="slotStyle">
@@ -62,7 +62,7 @@ export class TestRtDraggableTreeStatesComponent {
 
     /** Рамка своего шаблона: пунктир показывает, где кончается разметка приложения. */
     public readonly slotStyle: string =
-        'display: grid; gap: var(--rt-space-1); padding: var(--rt-space-4); border: 1px dashed var(--rt-color-border-strong); border-radius: var(--rt-radius-md); text-align: center';
+        'display: grid; gap: var(--rt-space-1); margin: calc(var(--rt-space-2) + var(--rt-space-1)); padding: calc(var(--rt-space-2) + var(--rt-space-1)); border: 1px dashed var(--rt-color-border-strong); border-radius: var(--rt-radius-md); text-align: center';
 
     public readonly slotHintStyle: string = 'color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)';
 

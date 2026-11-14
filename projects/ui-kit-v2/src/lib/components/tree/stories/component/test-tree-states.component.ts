@@ -32,9 +32,9 @@ const CASES: readonly ITreeStateCase[] = [
     template: `
         <app-story-presets caption="Свой вид пустого в обоих наборах">
             <ng-template>
-                <app-story-row slotWidth="18rem" [items]="cases" [itemLabel]="caseLabel">
+                <app-story-row slotWidth="20rem" [items]="cases" [itemLabel]="caseLabel">
                     <ng-template let-item>
-                        <rt-tree ariaLabel="Города" [nodes]="item.nodes" [searchTerm]="item.searchTerm">
+                        <rt-tree style="display: block; width: 100%" ariaLabel="Города" [nodes]="item.nodes" [searchTerm]="item.searchTerm">
                             @if (item.ownEmpty) {
                                 <ng-template rtTreeEmpty let-term>
                                     <div [style]="slotStyle">
@@ -67,7 +67,7 @@ export class TestRtTreeStatesComponent {
 
     /** Рамка своего шаблона: пунктир показывает, где кончается разметка приложения. */
     public readonly slotStyle: string =
-        'display: grid; gap: var(--rt-space-1); padding: var(--rt-space-4); border: 1px dashed var(--rt-color-border-strong); border-radius: var(--rt-radius-md); text-align: center';
+        'display: grid; gap: var(--rt-space-1); margin: calc(var(--rt-space-2) + var(--rt-space-1)); padding: calc(var(--rt-space-2) + var(--rt-space-1)); border: 1px dashed var(--rt-color-border-strong); border-radius: var(--rt-radius-md); text-align: center';
 
     public readonly slotHintStyle: string = 'color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)';
 

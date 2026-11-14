@@ -169,6 +169,28 @@
             gap: var(--rt-space-sm);
         }
 
+        /* Ошибка загрузки в панели компактная, как строка пустого результата: круг 40 со значком
+           20, заголовок курсивом цветом подсказки, без пояснения, кнопка размера sm. Полная
+           заглушка в панели шириной 280 заняла бы больше места, чем список подсказок. Свойства
+           заглушки переставляются правилом из двух классов: объявление самой заглушки стоит на
+           том же элементе, и одним классом его не перебить. */
+        &__error-state.rt-empty-state {
+            --rt-empty-state-padding: var(--rt-space-md);
+            --rt-empty-state-icon-wrap-size: var(--rt-size-10);
+            --rt-empty-state-icon-size: var(--rt-size-5);
+            --rt-empty-state-icon-offset: 0;
+            --rt-empty-state-title-size: var(--rt-text-sm);
+            --rt-empty-state-title-weight: var(--rt-font-weight-regular);
+            --rt-empty-state-title-color: var(--rt-input-color-text-placeholder);
+
+            font-style: italic;
+        }
+
+        // Кадр ставит кнопку на зазор заглушки от заголовка; свой отступ слота действия его удвоил бы.
+        &__error-state .rt-empty-state__action {
+            margin-top: 0;
+        }
+
         /* Шаблон директивы `rtAutocompleteEmpty` — разметка приложения: строка держит только
            место в списке, без отступов, цвета и курсива строки кита. */
         &__own-empty {

@@ -1,7 +1,6 @@
 import { NgComponentOutlet } from '@angular/common';
 import { computed, inject, viewChild, ChangeDetectionStrategy, Component, Injector, Signal, Type } from '@angular/core';
 
-import { RtButtonDirective } from '../../../button/rt-button.directive';
 import { RtDialogRef } from '../../../dialog/rt-dialog-ref';
 import { RT_DIALOG_DATA } from '../../../dialog/rt-dialog.tokens';
 import { RtPdfViewerErrorDirective } from '../../rt-pdf-viewer-error.directive';
@@ -25,11 +24,10 @@ function failsToLoad(): Promise<IRtPdfViewer.PdfJs> {
 @Component({
     selector: 'app-pdf-viewer-states',
     template: `
-        <ng-template rtPdfViewerError let-text let-download="download">
+        <ng-template rtPdfViewerError>
             <div [style]="slotStyle">
                 <strong>Свой вид ошибки</strong>
-                <span [style]="slotHintStyle">Текст: «{{ text }}»</span>
-                <button rtButton type="button" qa-dataid="pdf-viewer-story-own-download" label="download()" (click)="download()"></button>
+                <span [style]="slotHintStyle">В контексте шаблона: текст ошибки ($implicit) и download()</span>
             </div>
         </ng-template>
 
@@ -43,7 +41,6 @@ function failsToLoad(): Promise<IRtPdfViewer.PdfJs> {
         NgComponentOutlet,
 
         // directives
-        RtButtonDirective,
         RtPdfViewerErrorDirective,
     ],
 })

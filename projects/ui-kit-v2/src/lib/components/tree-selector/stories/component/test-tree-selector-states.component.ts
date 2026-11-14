@@ -32,9 +32,19 @@ const CASES: readonly ITreeSelectorStateCase[] = [
     template: `
         <app-story-presets caption="Свой вид пустого в обоих наборах">
             <ng-template>
-                <app-story-row slotWidth="20rem" [items]="cases" [itemLabel]="caseLabel">
+                <app-story-row slotWidth="21.25rem" [items]="cases" [itemLabel]="caseLabel">
                     <ng-template let-item>
-                        <rt-tree-selector ariaLabel="Гостиницы" [nodes]="item.nodes" [searchTerm]="item.searchTerm">
+                        <rt-tree-selector
+                            style="display: block; width: 100%"
+                            label="Гостиницы"
+                            ariaLabel="Гостиницы"
+                            confirm
+                            expandControls
+                            clearable
+                            revertable
+                            multiToggle
+                            [nodes]="item.nodes"
+                            [searchTerm]="item.searchTerm">
                             @if (item.ownEmpty) {
                                 <ng-template rtTreeSelectorEmpty let-term>
                                     <div [style]="slotStyle">
@@ -67,7 +77,7 @@ export class TestRtTreeSelectorStatesComponent {
 
     /** Рамка своего шаблона: пунктир показывает, где кончается разметка приложения. */
     public readonly slotStyle: string =
-        'display: grid; gap: var(--rt-space-1); padding: var(--rt-space-4); border: 1px dashed var(--rt-color-border-strong); border-radius: var(--rt-radius-md); text-align: center';
+        'display: grid; gap: var(--rt-space-1); margin: calc(var(--rt-space-2) + var(--rt-space-1)); padding: calc(var(--rt-space-2) + var(--rt-space-1)); border: 1px dashed var(--rt-color-border-strong); border-radius: var(--rt-radius-md); text-align: center';
 
     public readonly slotHintStyle: string = 'color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)';
 
