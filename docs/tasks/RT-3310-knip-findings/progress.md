@@ -3,20 +3,21 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 5 — the plan approved by the owner's word «Одобряю план» of 14.11.2026
+- **Stage:** 2 of 5 — stage 1 done: knip names one file, `express` with 15 packages, 51 exports
+  and 14 types
 - **Done:** task returned to the epic by the owner's word «Верни в эпик», branch from the epic
   branch, board column; the knip findings sorted; the plan read by both roles and approved, with
   the owner's answers «Снимать export руками», «В конце check:all», «Написать тесты e2e»
-- **Next step:** step 1.1 — the kit entries in `knip.json`
+- **Next step:** step 2.1 — `express` and the 15 packages out of `package.json` and the lockfile
 - **Waiting for the owner:** nothing until stage 4, where the Figma frames go to them
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 Name the secondary entries of the kit in `knip.json` by `src/lib/components/*/index.ts`
-- [ ] 1.2 Name the 13 lib barrels by exact paths in `ignore`, the storage client types, the six used packages, `graphify` and the editor duplicate in `knip.json`
-- [ ] 1.3 Move the `.storybook` type imports from `playwright` to `@playwright/test`
-- [ ] 2.1 Remove `express` and the 15 dev packages from `package.json` and the lockfile
+- [x] 1.1 Name the secondary entries of the kit in `knip.json` by `src/lib/components/*/index.ts`
+- [x] 1.2 Name the 13 lib barrels by exact paths in `ignore`, the storage client types, the six used packages, `graphify` and the editor duplicate in `knip.json`
+- [x] 1.3 Move the `.storybook` type imports from `playwright` to `@playwright/test`
+- [>] 2.1 Remove `express` and the 15 dev packages from `package.json` and the lockfile
 - [ ] 2.2 Rewrite the three rule texts that name faker
 - [ ] 3.1 Delete `projects/ui-kit-v2/src/lib/components/index.ts`, `hooksSectionByMatcher` and `TTreeCommandKind`
 - [ ] 3.2 Drop `export` from the in-file exports and types outside the three kit files under approval
@@ -27,6 +28,14 @@
 - [ ] 5.1 Add `check:unused` as the last step of `check:all` and rewrite its line in `CLAUDE.md` and `README.md`
 
 ## Decisions along the way
+
+- **Step 1.2: the barrels and the storage client types go into `ignoreFiles`, not `ignore`.**
+  `ignoreFiles` lifts only the «unused file» finding; `ignore` would hide every finding inside
+  those files, an unused export of a barrel included.
+- **Stage 1 sign: the three `.storybook` files are typechecked by a direct call.** The showcase
+  `tsconfig.json` includes only `preview.ts` and `main.ts` of that directory, so the plan's
+  `tsc -p` does not read them. Checked by `tsc --ignoreConfig --strict --allowImportingTsExtensions
+  --module nodenext` over the three files: clean, `Page` now has its type.
 
 ## Sessions
 

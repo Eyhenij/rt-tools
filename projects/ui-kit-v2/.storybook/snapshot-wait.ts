@@ -1,4 +1,4 @@
-import type { Page } from 'playwright';
+import type { Page } from '@playwright/test';
 
 import { RT_ICON_SPRITE_ID, RT_ICON_SYMBOL_ID_PREFIX } from '../src/lib/components/icon/rt-icon.const.ts';
 
