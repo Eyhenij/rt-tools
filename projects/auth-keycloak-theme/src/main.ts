@@ -6,6 +6,7 @@ import { provideKeycloakifyAngular } from '@keycloakify/angular/login/providers/
 import { TemplateComponent } from '@keycloakify/angular/login/template';
 
 import { themeAppConfig } from './login/kc-app.config';
+import { startCounters } from './login/kc-counters';
 import { TKcContext } from './login/kc-context';
 import { getI18n, TKcMessages } from './login/kc-i18n';
 import { themePageOf } from './login/kc-pages';
@@ -39,5 +40,7 @@ async function startTheme(context: TKcContext, page: Type<unknown>): Promise<voi
 const context: TKcContext | undefined = window.kcContext;
 if (context !== undefined) {
     const page: Type<unknown> | null = themePageOf(context.pageId);
-    void (page === null ? startStandard(context) : startTheme(context, page));
+    const started: Promise<void> = page === null ? startStandard(context) : startTheme(context, page);
+    // The counters load after the page is drawn, on the theme pages and the standard ones alike.
+    void started.then((): void => startCounters(window, context.properties, context.pageId));
 }

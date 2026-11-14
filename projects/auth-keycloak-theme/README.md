@@ -30,6 +30,21 @@ happens when the environment of `deploy/auth/compose.yml` gives `RT_GOOGLE_ENABL
 `RT_GOOGLE_CLIENT_ID` and `RT_GOOGLE_CLIENT_SECRET`. The keys stay outside the history, in the shell
 or in the .env file next to the compose file.
 
+## Counters
+
+Every page of the theme loads GA4 and Yandex Metrika when the environment of the Keycloak
+container gives their numbers. The theme reads them as theme properties:
+
+| Variable             | What it holds                   |
+| -------------------- | ------------------------------- |
+| `GA_MEASUREMENT_ID`  | the GA4 measurement id, `G-…`   |
+| `METRIKA_COUNTER_ID` | the Metrika counter number      |
+
+An empty or malformed number loads no tag of that counter. The page view carries the page id
+(`login`, `register`, `login-reset-password`…), and a form that leaves the page sends the event
+`auth_form_submit` with the same id. No value typed into a field goes into an event, and Webvisor
+records with the input masked.
+
 ## What the theme draws
 
 | Page                        | What a person does there                      |

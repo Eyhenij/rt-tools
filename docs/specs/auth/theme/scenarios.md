@@ -287,3 +287,35 @@ Then the widget is not drawn anew, and its answer stays in the form
 Given a registration page waiting for the Google script
 When the script loads and the page still has no `grecaptcha`
 Then the page stops waiting, sets no new wait on the same script and never calls back
+
+### SC-AUTH-108 — an empty or malformed number loads no counter
+
+Given a page whose theme properties hold no number, an empty one or a malformed one
+When the page is drawn
+Then no tag script and no counter queue is added to it
+
+### SC-AUTH-109 — the GA4 queue holds the calls the tag reads
+
+Given a page with the GA4 number set
+When the page is drawn
+Then the queue holds `arguments` objects, the config carries the page id, and the tag script is
+added once
+
+### SC-AUTH-110 — Metrika starts with Webvisor and sends the hit of the page
+
+Given a page with the Metrika number set
+When the page is drawn
+Then Metrika is started with Webvisor, the hit carries the page address, title and id, and the tag
+script is added once
+
+### SC-AUTH-111 — a form that leaves the page sends the event without a field value
+
+Given a page with both numbers set and a filled form
+When the form is submitted
+Then both counters get `auth_form_submit` with the page id, and no field value is in any call
+
+### SC-AUTH-112 — a form held as invalid sends no event
+
+Given a page with a counter number set and a form the page holds as invalid
+When the form is submitted
+Then the counter gets no event

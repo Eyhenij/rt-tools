@@ -129,6 +129,15 @@ the entry is not sure the page belongs to the admin.
 - **The dark theme follows the system until the person switches it on the page.**
 - **The stand realm uses the theme, and the raising command builds it first.** Without the JAR the
   realm falls back to the standard look.
+- **Every page of the theme loads GA4 and Metrika after it is drawn, when their numbers are set.**
+  The numbers come as theme properties from the environment of the Keycloak node; an empty or
+  malformed number loads no tag of that counter. The pages the theme does not draw load them too.
+- **The page view goes to both counters with the page id.** GA4 sends it from the tag config, and
+  Metrika from the hit with the page address and title.
+- **A form that leaves the page sends the event `auth_form_submit` with the page id.** A form the
+  page holds as invalid sends nothing.
+- **No value typed into a field reaches a counter.** The events carry the page id only, and
+  Webvisor records with the field input masked. The entry pages show no consent banner.
 - **Every built file of the theme carries a hash of its content in its name.** Keycloak serves the
   theme files under one path across rollouts, and the browser keeps them for 30 days. Under an
   unchanged name a returning person got the former entry file, it asked for a piece the server no
@@ -222,3 +231,4 @@ None.
 - 2026-11-06 — the switches in the corner of a wide window, the language names and the language on
   the links, the way on from a message page, the page text on the axis, the widget without its
   frame, task RT-3125.
+- 2026-11-14 — the GA4 and Metrika counters on every page, task RT-3301.
