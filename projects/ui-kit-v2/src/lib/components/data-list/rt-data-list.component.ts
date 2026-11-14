@@ -25,7 +25,7 @@ import { IRtKitConfig } from '@rt-tools/ui-kit-v2/core';
 import { rtKitDefault } from '@rt-tools/ui-kit-v2/core';
 import { IRtInput } from '@rt-tools/ui-kit-v2/core';
 
-import { BlockDirective, ElemDirective } from '@rt-tools/core';
+import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { IPageModel, ISortModel, TNullable, transformArrayInput } from '@rt-tools/utils';
 
 import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
@@ -100,6 +100,7 @@ const SCROLLBAR_HOLDERS: WeakMap<HTMLElement, number> = new WeakMap<HTMLElement,
         // directives
         BlockDirective,
         ElemDirective,
+        ModDirective,
         NgTemplateOutlet,
         RtDataListToolbarActionsDirective,
         RtDataListToolbarSelectorsDirective,

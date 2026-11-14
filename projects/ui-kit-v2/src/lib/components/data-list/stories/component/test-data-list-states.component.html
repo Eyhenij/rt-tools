@@ -1,0 +1,14 @@
+<app-story-presets caption="Ошибка и свои шаблоны в обоих наборах">
+    <ng-template>
+        <app-story-row slotWidth="740px" [items]="cases" [itemLabel]="caseLabel">
+            <ng-template let-item>
+                <app-data-list-states-cell
+                    [storageKey]="'story-list-states-' + item.key"
+                    [empty]="item.empty"
+                    [error]="item.error"
+                    [ownEmpty]="item.ownEmpty"
+                    [ownError]="item.ownError" />
+            </ng-template>
+        </app-story-row>
+    </ng-template>
+</app-story-presets>

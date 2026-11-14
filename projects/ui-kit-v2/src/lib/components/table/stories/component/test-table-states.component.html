@@ -1,0 +1,51 @@
+<app-story-presets caption="Ошибка и свои шаблоны в обоих наборах">
+    <ng-template>
+        <app-story-row slotWidth="740px" [items]="cases" [itemLabel]="caseLabel">
+            <ng-template let-item>
+                <table
+                    rt-table
+                    ariaLabel="Договоры"
+                    [cards]="false"
+                    [dataSource]="item.rows"
+                    [columns]="columns"
+                    [columnsConfig]="columnsConfig"
+                    [error]="item.error">
+                    <ng-container cdkColumnDef="title">
+                        <th *cdkHeaderCellDef cdk-header-cell>Договор</th>
+                        <td *cdkCellDef="let row" cdk-cell>{{ row.title }}</td>
+                    </ng-container>
+                    <ng-container cdkColumnDef="city">
+                        <th *cdkHeaderCellDef cdk-header-cell>Город</th>
+                        <td *cdkCellDef="let row" cdk-cell>{{ row.city }}</td>
+                    </ng-container>
+                    <ng-container cdkColumnDef="status">
+                        <th *cdkHeaderCellDef cdk-header-cell>Статус</th>
+                        <td *cdkCellDef="let row" cdk-cell>{{ row.status }}</td>
+                    </ng-container>
+                    <ng-container cdkColumnDef="date">
+                        <th *cdkHeaderCellDef cdk-header-cell>Дата</th>
+                        <td *cdkCellDef="let row" cdk-cell>{{ row.date }}</td>
+                    </ng-container>
+                    <tr *cdkHeaderRowDef="columns" cdk-header-row></tr>
+                    <tr *cdkRowDef="let row; columns: columns" cdk-row></tr>
+                    @if (item.ownEmpty) {
+                        <ng-template rtTableEmptyState>
+                            <div [style]="slotStyle">
+                                <strong>Свой вид пустой таблицы</strong>
+                                <span [style]="slotHintStyle">Разметка приложения вместо rt-empty-state</span>
+                            </div>
+                        </ng-template>
+                    }
+                    @if (item.ownError) {
+                        <ng-template rtTableError>
+                            <div [style]="slotStyle">
+                                <strong>Свой вид ошибки</strong>
+                                <span [style]="slotHintStyle">В контексте шаблона: текст ошибки ($implicit) и retry()</span>
+                            </div>
+                        </ng-template>
+                    }
+                </table>
+            </ng-template>
+        </app-story-row>
+    </ng-template>
+</app-story-presets>

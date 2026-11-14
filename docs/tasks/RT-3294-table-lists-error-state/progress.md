@@ -8,7 +8,10 @@ Rewritten by every session, not appended to.
 - **Stage:** 3 of 3 — The showcase
 - **Done:** stages 1 and 2 — all four components take `error`, `errorDescription` and `retry` and
   their own empty and error templates; SC-UKV-1279…1286 are covered by the four `*.states.spec.ts`.
-- **Next step:** step 3.1 — a story of the error and both own views for each of the four components.
+  The four `ErrorAndPlaceholders` stories stand in the showcase; the data list error keeps the kit
+  placeholder instead of the first kit empty look.
+- **Next step:** step 3.2 — read the four frames into numbers, match the stories by
+  `tools/kit-match.mjs` and ask the owner.
 - **Uncommitted:** nothing.
 - **Waiting for the owner:** no; the consumer session is asked about the push set limit that holds
   the RT-3292 push.
@@ -22,8 +25,8 @@ Rewritten by every session, not appended to.
 - [x] 2.1 Add `error`, `errorDescription`, `retry`, `rtDynamicListEmpty` and `rtDynamicListError` to `rt-dynamic-list`
 - [x] 2.2 Add `error`, `errorDescription`, `retry`, `rtBarListEmpty` and `rtBarListError` to `rt-bar-list`
 - [x] 2.3 Cover SC-UKV-1283, SC-UKV-1284 and SC-UKV-1286 by the specs
-- [>] 3.1 Add a story of the error and both own views for each of the four components
-- [ ] 3.2 Compare the stories with the frames by measurement and show them to the owner
+- [x] 3.1 Add a story of the error and both own views for each of the four components
+- [>] 3.2 Compare the stories with the frames by measurement and show them to the owner
 
 ## Decisions along the way
 

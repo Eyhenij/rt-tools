@@ -37,7 +37,7 @@
         </rt-data-list-toolbar>
 
         @if (loadError.shown()) {
-            <div rtElem="placeholder" qa-dataid="data-list-error-placeholder">
+            <div rtElem="placeholder" qa-dataid="data-list-error-placeholder" [rtMod]="{ error: true }">
                 <ng-container
                     [ngTemplateOutlet]="errorTemplate()?.templateRef ?? defaultError"
                     [ngTemplateOutletContext]="loadError.context()" />
