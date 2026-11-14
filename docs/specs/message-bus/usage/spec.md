@@ -1,6 +1,6 @@
 # Usage of the rules in the sessions of the trees — the intake, the reading and the section
 
-**Status:** in force · **Revision:** 2026-11-08 · **Scenario prefix:** `SC-MB`
+**Status:** in force · **Revision:** 2026-11-13 · **Scenario prefix:** `SC-MB`
 **Depends on:** `agent-kit` (the observation lines are read from the tree and sent by it)
 **Laws:** `verifiability`, `entity-models`, `lists`, `reuse-first`, `frontend-application`, `lib-imports`, `observability`
 **Procedures:** none — the operations are declared by the controllers of the intake
@@ -131,6 +131,10 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
   of the table is one skill, and its sessions are a list of their own.
 - **The reading is closed by the right `usage:read`.** A right of its own, not the right of the
   digests: the section is its own, and the closed set of rights names every section by name.
+- **A reading without a tree counts the rows of all trees.** It concerns the table, the digest and
+  the sessions of a skill alike. A skill loaded by two trees is one row with the sum of both.
+- **A named tree that the receiver does not know is still refused as «tree unknown».** A mistake in
+  the sign must not read as all trees.
 - **An empty period answers with an empty page, not a refusal.** A tree that sent nothing over the
   period has no usage, and that is an answer.
 - **The digest of a period is read by an operation of its own, and it carries every day of the
@@ -149,6 +153,8 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
   itself by one declaration, as the neighbouring sections do.
 - **The filters are the tree and the period, and a change of either re-reads the table.** The tree
   is chosen from the list of the created trees; the period is two days, the last thirty by default.
+- **The digest is read for all trees as for a named one.** The section opens on «Все проекты», and
+  the cards above the table show the same rows the table counts.
 - **The quick period is a toggle of 7, 30 and 90 days next to the day pickers.** A press counts the
   pair from the screen's today by a pure function and puts it into the address as any pick of the
   period does; the toggle lights when the address holds exactly that pair.
@@ -211,6 +217,8 @@ The vocabulary of the domain whole is in the spec next to it. Here only what the
 | GET /api/usage/:skill/sessions | the sessions of one skill of a tree over the period: `tree`, `from`, `to`; newest day first      |
 | GET /api/usage/digest          | the digest of the period of a tree: `tree`, `from`, `to`; the days, the kinds, the two tops      |
 
+`tree` is optional in all three readings: without it they count the rows of all trees.
+
 The body of the intake operation is the observation cargo as the sending side declares it: `{ schema,
 tree, origin, days: [{ day, lines: [{ t, ev, res, kind?, sid, v, skill? }] }] }`. The form is declared
 once, in the cargo module of the package, and the intake reads it from the same declaration.
@@ -245,7 +253,7 @@ refuse:
 | a day line with an older stamp                       | `409` | `metrics-stale`                              |
 | the period is longer than four hundred days          | `400` | the limit                                    |
 | the period is not two days, or `to` is before `from` | `400` | what is missing or reversed                  |
-| the tree is not named or not found                   | `404` | that the tree is not known                   |
+| the tree is named and not found                      | `404` | that the tree is not known                   |
 | no right `usage:read`                                | `403` | that the right is missing                    |
 | no right `quality:read`                              | `403` | that the right is missing                    |
 
@@ -339,6 +347,8 @@ the intake and summed together at the reading: the owner asks about the tree, no
 
 ## History of changes
 
+- 2026-11-13 — the readings without a tree count all trees, task RT-3287. The section opened on
+  «Все проекты» and showed a read refusal instead of the table.
 - 2026-11-08 — the agreement on the metrics merged: its scenarios stand in
   `docs/specs/agent-kit/metrics/`. The digest over several trees and the refusals of the guards
   left "out of scope" at the request of the owner, and the section «Качество» shows them.

@@ -8,7 +8,7 @@
     <ng-template adminListAboveTable>
         @if (digestFailed()) {
             <rt-empty-state qa-dataid="usage-digest-failed" icon="ico-warning" [title]="digestFailedText()" />
-        } @else if (query().tree !== '') {
+        } @else {
             <admin-usage-digest [digest]="digest()" [reading]="digestReading()" />
         }
     </ng-template>

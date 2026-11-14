@@ -183,6 +183,29 @@ test.describe('раздел использования', () => {
         expect(await barListTexts(page, 'usage-digest-denied', 'value')).toEqual(['1', '1']);
     });
 
+    test('SC-MB-430 — раздел без дерева в адресе («Все проекты») показывает таблицу и сводку по всем деревьям, а не отказ чтения', async ({
+        page,
+    }: {
+        page: Page;
+    }) => {
+        await openSection(page, 'usage', '?from=2026-08-01&to=2026-08-31');
+
+        expect(queryOf(page).get('tree')).toBeNull();
+        await expect(pageQa(page, 'usage', 'fault')).toHaveCount(0);
+        // пять скилов первого дерева и один — второго
+        await expect(rowsOf(page, 'usage')).toHaveCount(6);
+        expect(await columnTexts(page, 'usage-cell-skill')).toContain('doc-style');
+
+        await expect(qa(page, 'usage-digest-chart-title')).toContainText('Загрузок: 7');
+        expect(await barListTexts(page, 'usage-digest-top', 'title')).toEqual([
+            'testing',
+            'cargo-triage',
+            'doc-style',
+            'git-workflow-commit',
+            'rt-tools-storybook',
+        ]);
+    });
+
     test('SC-MB-358 — «7 дней» ставит в адрес последние семь дней по сегодняшний, и таблица со сводкой перечитываются', async ({
         page,
     }: {
