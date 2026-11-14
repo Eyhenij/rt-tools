@@ -9,7 +9,7 @@
  * before.
  */
 import { execFileSync } from 'node:child_process';
-import { statSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 /** Where Keycloak reads the theme archive inside its container. */
@@ -21,8 +21,24 @@ export const THEME_ARCHIVE = 'dist/auth-keycloak-theme/rt-auth-keycloak-theme.ja
 /** The files whose edit changes the stand, relative to the root of the tree. */
 export const STAND_FILES = ['deploy/auth/compose.yml', 'deploy/auth/realm/rt.json'];
 
-/** The variables the stand takes from the environment of the raising command, with their defaults. */
-export const STAND_ENV = { GA_MEASUREMENT_ID: '', METRIKA_COUNTER_ID: '', E2E_ADMIN_PORT: '4310' };
+/**
+ * The variables the stand takes from the environment of the raising command: the name there, the
+ * container and the name it gets inside, and the default of the compose file.
+ */
+export const STAND_ENV = [
+    { name: 'GA_MEASUREMENT_ID', container: 'keycloak', inside: 'GA_MEASUREMENT_ID', fallback: '' },
+    { name: 'METRIKA_COUNTER_ID', container: 'keycloak', inside: 'METRIKA_COUNTER_ID', fallback: '' },
+    { name: 'E2E_ADMIN_PORT', container: 'config', inside: 'RT_E2E_ADMIN_PORT', fallback: '4310' },
+    { name: 'RT_GOOGLE_ENABLED', container: 'config', inside: 'RT_GOOGLE_ENABLED', fallback: 'false' },
+    { name: 'RT_GOOGLE_CLIENT_ID', container: 'config', inside: 'RT_GOOGLE_CLIENT_ID', fallback: 'not-set' },
+    { name: 'RT_GOOGLE_CLIENT_SECRET', container: 'config', inside: 'RT_GOOGLE_CLIENT_SECRET', fallback: 'not-set' },
+];
+
+/** How far the clock of the Docker machine may run ahead of the host, milliseconds. */
+export const CLOCK_MARGIN = 5_000;
+
+/** The file compose reads the variables from next to its own file; it lies outside the history. */
+export const STAND_DOTENV = 'deploy/auth/.env';
 
 /**
  * The decision itself, over facts already read. Returns the reason the stand is raised again, or
@@ -38,17 +54,20 @@ export function staleReason(facts) {
     if (facts.keycloak.themeSource !== join(facts.root, THEME_ARCHIVE)) {
         return 'Keycloak mounts the theme of another tree';
     }
-    if (facts.archiveWrittenAt === null || facts.archiveWrittenAt >= facts.keycloak.startedAt) {
+    // The container times come from the clock of the Docker machine and the file times from the
+    // host: a file written within the margin before the start counts as written after it.
+    const startedAt = facts.keycloak.startedAt - CLOCK_MARGIN;
+    if (facts.archiveWrittenAt === null || facts.archiveWrittenAt >= startedAt) {
         return 'the theme archive was written after Keycloak started';
     }
-    if (facts.standFilesWrittenAt >= facts.keycloak.startedAt) {
+    if (facts.standFilesWrittenAt >= startedAt) {
         return 'the stand composition was edited after Keycloak started';
     }
-    if (facts.config.exitCode !== 0 || facts.config.finishedAt <= facts.standFilesWrittenAt) {
+    if (facts.config.exitCode !== 0 || facts.config.finishedAt - CLOCK_MARGIN <= facts.standFilesWrittenAt) {
         return 'the realm file was not applied after its last edit';
     }
-    const differing = Object.keys(STAND_ENV).find((name) => facts.env[name] !== facts.running[name]);
-    return differing === undefined ? null : `${differing} differs from the running stand`;
+    const differing = STAND_ENV.find(({ name }) => facts.env[name] !== facts.running[name]);
+    return differing === undefined ? null : `${differing.name} differs from the running stand`;
 }
 
 function inspect(container) {
@@ -77,20 +96,41 @@ function writtenAt(path) {
     }
 }
 
+/** The `NAME=value` lines of the compose variables file; an absent file gives nothing. */
+function dotenvOf(path) {
+    try {
+        return Object.fromEntries(
+            readFileSync(path, 'utf8')
+                .split('\n')
+                .map((line) => line.trim())
+                .filter((line) => line !== '' && !line.startsWith('#') && line.includes('='))
+                .map((line) => [
+                    line.slice(0, line.indexOf('=')).trim(),
+                    line
+                        .slice(line.indexOf('=') + 1)
+                        .trim()
+                        .replace(/^(["'])(.*)\1$/, '$2'),
+                ])
+        );
+    } catch {
+        return {};
+    }
+}
+
 /** Reads the facts the decision needs: the two containers of the stand and the files of the tree. */
 export function readFacts(root, env = process.env) {
     const keycloak = inspect('rt-auth-keycloak-1');
     const config = inspect('rt-auth-keycloak-config-1');
+    const containers = { keycloak, config };
+    const dotenv = dotenvOf(join(root, STAND_DOTENV));
     return {
         root,
         archiveWrittenAt: writtenAt(join(root, THEME_ARCHIVE)),
         standFilesWrittenAt: Math.max(...STAND_FILES.map((file) => writtenAt(join(root, file)) ?? Infinity)),
-        env: Object.fromEntries(Object.entries(STAND_ENV).map(([name, fallback]) => [name, env[name] || fallback])),
-        running: {
-            GA_MEASUREMENT_ID: keycloak?.env.GA_MEASUREMENT_ID ?? '',
-            METRIKA_COUNTER_ID: keycloak?.env.METRIKA_COUNTER_ID ?? '',
-            E2E_ADMIN_PORT: config?.env.RT_E2E_ADMIN_PORT ?? '',
-        },
+        // Compose takes the command environment first, then its variables file, then the default;
+        // an empty value counts as absent, the way `${NAME:-default}` reads it.
+        env: Object.fromEntries(STAND_ENV.map(({ name, fallback }) => [name, env[name] || dotenv[name] || fallback])),
+        running: Object.fromEntries(STAND_ENV.map(({ name, container, inside }) => [name, containers[container]?.env[inside] ?? ''])),
         keycloak:
             keycloak === null
                 ? null

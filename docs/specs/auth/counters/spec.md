@@ -38,12 +38,16 @@ Not applicable: the counters show nothing on the screen.
 - **A form that leaves the page sends the event `auth_form_submit` with the page id.** A form the
   page holds as invalid sends nothing.
 - **No value typed into a field reaches a counter.** The events carry the page id only, and
-  Webvisor records with the field input masked. The entry pages show no consent banner.
+  Webvisor records no key pressed in a field: every field carries `ym-disable-keys`. The entry pages
+  show no consent banner.
 - **A typed value lives in a field property and never in the page markup.** The named fields that
   carry the values to Keycloak are hidden text and password fields, not `type="hidden"`: a hidden
   field writes its value into the markup Webvisor records.
 - **The page address loses the action token and the login hint before a counter starts.** The
   token of a mail link holds the address, and the counters report the page address.
+- **A link address in the markup carries neither the action token nor the login hint.** Webvisor
+  records the markup with its attributes, and the «proceed» link of a mail page leads to the token.
+  The link shows the address without them, and a click still goes to the full one.
 - **The text that shows a person is hidden from Webvisor.** A Keycloak message may name the
   address, so the message, the title and the summary of a message page and the alert of a standard
   page carry `ym-hide-content`, together with the address on the confirmation page and the name the
@@ -99,6 +103,17 @@ One pair of numbers for the whole node: every realm that uses the theme reports 
 - **Webvisor needs no frame on the entry pages.** Under the Keycloak default policy `frame-src
   'self'` the stand showed no refusal, and Metrika asked for no frame. Rejected: `mc.yandex.ru` in
   `frame-src` — a permission nothing asks for.
+- **The page address is cleaned in the history, not only in the hit.** Webvisor records the address
+  of the page itself, and a hit address alone would leave it there. The price: when the numbers are
+  set, a reload of an action token page opens the address without its token, and Keycloak answers
+  with an error.
+- **The marks follow what the page draws later.** A standard page is drawn after its styles load,
+  that is after the counters start, so a watch on the document marks every node it adds. Rejected:
+  starting the counters after the first draw — a message drawn by a later action would still slip.
+- **A link keeps the full address in a click handler.** A click, a middle click and a click with a
+  modifier lead to it. «Open in a new tab» from the context menu takes the shown address without
+  the token and opens an error page; rejected: hiding the whole link from Webvisor, which records
+  its attributes anyway.
 
 ## Open questions
 

@@ -25,7 +25,10 @@ report "the stand composition gets 30 s" "$(limit_for 'deploy/auth/compose.yml')
 report "the realm file keeps 12 s" "$(limit_for 'deploy/auth/realm/rt.json')" 12
 report "the stand check script keeps 12 s" "$(limit_for 'tools/auth-stand-check.mjs')" 12
 report "a branch of texts keeps 12 s" "$(limit_for 'docs/specs/auth/spec.md')" 12
+report "the shared package the theme is built from gets 30 s" "$(limit_for 'projects/core/src/lib/bem/block.directive.ts')" 30
+report "the lockfile gets 30 s" "$(limit_for 'pnpm-lock.yaml')" 30
+report "a package outside the theme keeps 12 s" "$(limit_for 'projects/store/src/index.ts')" 12
 report "a mixed branch with the theme gets 30 s" "$(limit_for "$(printf 'docs/a.md\nprojects/auth-keycloak-theme/package.json')")" 30
 report "another step keeps its own limit" "$(cd "$ROOT" && . .claude/rt-kit/project-budget.sh && rt_push_check_budget 'pnpm exec nx run auth-example-e2e:e2e')" 34
 
-suite_result
+suite_result "push-stand-budget"

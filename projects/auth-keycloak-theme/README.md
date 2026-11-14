@@ -42,8 +42,9 @@ container gives their numbers. The theme reads them as theme properties:
 
 An empty or malformed number loads no tag of that counter. The page view carries the page id
 (`login`, `register`, `login-reset-password`…), and a form that leaves the page sends the event
-`auth_form_submit` with the same id. No value typed into a field goes into an event, and Webvisor
-records with the input masked.
+`auth_form_submit` with the same id. No value typed into a field goes into an event. Every field
+carries `ym-disable-keys`, so Webvisor records none of its keys, and a link address in the markup
+loses the action token and the login hint.
 
 Three settings live outside the theme:
 

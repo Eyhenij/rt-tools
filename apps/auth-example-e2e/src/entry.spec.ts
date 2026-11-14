@@ -36,6 +36,10 @@ test.describe('the entry', () => {
         });
         await page.goto('/');
         await expectEntryScreen(page);
+        // The positive half: the theme declares both properties and Keycloak hands them to the page
+        // empty — the stand sets no number, so the absence below is not a lost wiring.
+        const properties: unknown = await page.evaluate((): unknown => Reflect.get(Reflect.get(window, 'kcContext') ?? {}, 'properties'));
+        expect(properties).toMatchObject({ GA_MEASUREMENT_ID: '', METRIKA_COUNTER_ID: '' });
         // An address the realm does not hold: a wrong password for a person of the stand would count
         // towards the brute force lock of the realm and lock their next entries.
         await page.getByTestId('kc-username').locator('input').fill(TYPED_ADDRESS);
@@ -46,7 +50,9 @@ test.describe('the entry', () => {
         expect(markup).not.toContain(TYPED_ADDRESS);
         expect(markup).not.toContain('typed-secret-1!');
         await page.getByTestId('kc-login-submit').click();
-        await expectEntryScreen(page);
+        // The refusal message is drawn by the page Keycloak answers the form with, so the second page
+        // has loaded before the requests are counted.
+        await expect(page.getByTestId('kc-message')).toBeVisible();
         expect(counters).toEqual([]);
     });
 

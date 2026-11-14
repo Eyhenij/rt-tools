@@ -1,4 +1,4 @@
-import { countersOf, FORM_SUBMIT_EVENT, pageNameOf, startCounters } from './kc-counters';
+import { countersOf, FORM_SUBMIT_EVENT, hidePrivateLinks, pageNameOf, startCounters } from './kc-counters';
 
 const GA: string = 'G-TEST123';
 const METRIKA: string = '12345678';
@@ -103,13 +103,62 @@ describe('startCounters', () => {
     });
 
     it('SC-AUTH-114 — the nodes that show a person are hidden from Webvisor before a tag starts', () => {
-        document.body.innerHTML = '<p qa-dataid="kc-verify-sent">ann@rt.localhost</p><div id="kc-attempted-username">ann</div><p>other</p>';
+        document.body.innerHTML =
+            '<p qa-dataid="kc-verify-sent">ann@rt.localhost</p><div id="kc-attempted-username">ann</div>' +
+            '<div class="pf-c-alert">No account for bob@rt.localhost</div><p>other</p>';
         startCounters(window, { METRIKA_COUNTER_ID: METRIKA }, 'login-verify-email.ftl');
 
         expect(Array.from(document.querySelectorAll('.ym-hide-content'), (node: Element): string => node.textContent ?? '')).toEqual([
             'ann@rt.localhost',
             'ann',
+            'No account for bob@rt.localhost',
         ]);
+        document.body.innerHTML = '';
+    });
+
+    it('SC-AUTH-110 — every field carries the class by which Webvisor records none of its keys', () => {
+        document.body.innerHTML = '<form><input name="username" /><input type="password" name="password" /><textarea></textarea></form>';
+        startCounters(window, { METRIKA_COUNTER_ID: METRIKA }, 'login.ftl');
+
+        expect(document.querySelectorAll('input, textarea')).toHaveLength(3);
+        expect(document.querySelectorAll('input:not(.ym-disable-keys), textarea:not(.ym-disable-keys)')).toHaveLength(0);
+        document.body.innerHTML = '';
+    });
+
+    it('SC-AUTH-113 — a link to the action token shows no token in the markup and still leads to it', () => {
+        const target: string = 'http://localhost/realms/rt/login-actions/action-token?key=eyJ.token&client_id=app';
+        document.body.innerHTML = `<a qa-dataid="kc-info-next" href="${target}">Next</a><a href="/realms/rt/account">Account</a>`;
+        const go: jest.Mock = jest.fn();
+        hidePrivateLinks(document, go);
+        const next: HTMLAnchorElement = document.querySelector('[qa-dataid="kc-info-next"]') as HTMLAnchorElement;
+
+        expect(next.getAttribute('href')).toBe('http://localhost/realms/rt/login-actions/action-token?client_id=app');
+        expect(document.body.innerHTML).not.toContain('key=');
+        next.click();
+        next.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, metaKey: true }));
+        next.dispatchEvent(new MouseEvent('auxclick', { bubbles: true, cancelable: true, button: 1 }));
+        expect(go.mock.calls).toEqual([
+            [target, false],
+            [target, true],
+            [target, true],
+        ]);
+        expect(document.querySelector('a:not([qa-dataid])')?.getAttribute('href')).toBe('/realms/rt/account');
+        document.body.innerHTML = '';
+    });
+
+    it('SC-AUTH-114 — a node the page draws after the counters start is hidden before the recording sees it', async () => {
+        document.body.innerHTML = '';
+        startCounters(window, { METRIKA_COUNTER_ID: METRIKA }, 'login-otp.ftl');
+        document.body.insertAdjacentHTML(
+            'beforeend',
+            '<header><span id="kc-attempted-username">ann@rt.localhost</span></header><form><input name="otp" /></form>' +
+                '<a href="/realms/rt/login-actions/action-token?key=eyJ.token">Next</a>'
+        );
+        await Promise.resolve();
+
+        expect(document.querySelector('#kc-attempted-username')?.classList).toContain('ym-hide-content');
+        expect(document.querySelector('input')?.classList).toContain('ym-disable-keys');
+        expect(document.querySelector('a')?.getAttribute('href')).toBe('http://localhost/realms/rt/login-actions/action-token');
         document.body.innerHTML = '';
     });
 

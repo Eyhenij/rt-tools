@@ -28,9 +28,10 @@ rt_push_check_budget() {
 # JAR in the cache and a Keycloak left running (RT-3280). A branch that edits the theme, the second
 # kit it is drawn with or the stand composition rebuilds the JAR and recreates Keycloak: the build
 # takes 11 s, the recreation 12 s, the realm 2 s and the poll 5 s, measured on 14.11.2026 in task
-# RT-3301. The owner's choice of that day: «Два предела, 12 и 30 с (Рекомендую)».
+# RT-3301. The owner's choice of that day: «Два предела, 12 и 30 с (Рекомендую)». The packages the
+# theme and the kit are built from and the lockfile rebuild the JAR the same way, so they count too.
 rt_auth_stand_budget_for() {
-    if printf '%s\n' "$1" | grep -qE '^(projects/auth-keycloak-theme/|projects/ui-kit-v2/|deploy/auth/compose\.yml$)'; then
+    if printf '%s\n' "$1" | grep -qE '^(projects/(auth-keycloak-theme|ui-kit-v2|core|utils)/|deploy/auth/compose\.yml$|package\.json$|pnpm-lock\.yaml$)'; then
         echo 30
     else
         echo 12
@@ -41,7 +42,7 @@ rt_auth_stand_budget_for() {
 # unknown.
 rt_auth_stand_changed() {
     local base=''
-    command -v rt_push_base >/dev/null 2>&1 && base="$(rt_push_base 2>/dev/null)"
+    command -v rt_push_base >/dev/null 2>&1 && base="$(rt_push_base "${RT_MAIN_BRANCH:-main}" 2>/dev/null)"
     git diff --no-renames --name-only "${base:-origin/main}"...HEAD 2>/dev/null
 }
 

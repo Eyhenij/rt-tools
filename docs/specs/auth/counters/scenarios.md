@@ -20,8 +20,8 @@ without `.ftl` — and the tag script is added once
 
 Given a page with the Metrika number set
 When the page is drawn
-Then Metrika is started with Webvisor, the hit carries the page address, title and id, and the tag
-script is added once
+Then Metrika is started with Webvisor, the hit carries the page address, title and id, the tag
+script is added once, and every field of the page carries `ym-disable-keys`
 
 ### SC-AUTH-111 — a form that leaves the page sends the event without a field value
 
@@ -37,9 +37,11 @@ Then the counter gets no event
 
 ### SC-AUTH-113 — the address loses the action token and the login hint
 
-Given a page opened by an address with `key` and `login_hint` in its query
+Given a page opened by an address with `key` and `login_hint` in its query, or a page whose link
+leads to such an address — the «proceed» link of a mail page
 When a counter starts
-Then the address in the history and in the hit has neither, and the other parameters stay
+Then the address in the history, in the hit and in the link markup has neither, the other
+parameters stay, and a click on the link still goes to the full address
 
 ### SC-AUTH-114 — the nodes that show a person are hidden from Webvisor
 
