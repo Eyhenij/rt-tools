@@ -139,7 +139,7 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     /** Свой вид ошибки загрузки директивой. */
     protected readonly errorTemplate: Signal<RtAutocompleteErrorDirective | undefined> = contentChild(RtAutocompleteErrorDirective);
 
-    /** Ошибка загрузки подсказок: заголовок, подсказка и контекст своего шаблона. */
+    /** Ошибка загрузки подсказок: заголовок, подсказка и контекст; после «Повторить» панель открыта. */
     protected readonly loadError: IRtLoadError.View = rtLoadErrorView(
         (): string | null => this.error(),
         (): string => this.errorDescription(),
