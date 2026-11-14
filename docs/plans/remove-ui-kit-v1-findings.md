@@ -36,16 +36,18 @@ when the epic is over.
   folder is taken apart, the guard demands an open request, and the delivery guard demands green
   push marks first; a turn that only waits for the set was refused four times running.
   **Address:** rules layer — `hooks/turn-exit-guard.sh`: a running push set ahead is work under way.
-- **`task:new --epic-of` writes the epic line into the task body, and taking the task out of the
-  epic leaves the board audit red.** RT-3310 was taken off the epic card, and `check:board` names
-  its body line; editing a created body needs the owner's word. **Address:** names of this tree —
-  `tools/task-new.mjs`: a way to file a task next to an epic without joining it.
+- **Taking a task out of its epic by the card alone leaves the board audit red.** `task:new
+--epic-of` writes the epic line into the body; RT-3310 was taken off the epic card, and
+  `check:board` named that line. The owner returned it to the epic. **Address:** the executor's
+  decision — a task filed with `--epic-of` belongs to the epic; leaving it is the owner's call.
 - **knip sees one root workspace for the apps and libs.** They carry no `package.json`, so their
   entries are named by globs in `knip.json`; a new app or lib with another entry name is invisible
   to knip until the globs are widened. **Address:** names of this tree — `knip.json`.
-- **The e2e coverage guard judges a branch by its paths, not by whether a screen changed.** A
-  branch of renames, comments and removed unused dependencies is refused at the PR opening like a
-  branch that changes a screen. **Address:** names of this tree — `.claude/hooks/e2e-coverage-guard.sh`.
+- **The e2e coverage guard does not read the flags of `gh` called by its full path.** Its flag
+  reader looks for the word `gh`, and the tree calls `/opt/homebrew/bin/gh`: `--base` and `--head`
+  were lost, the branch was judged against main, and both suites were demanded for a branch that
+  reaches neither application. **Address:** names of this tree —
+  `.claude/hooks/e2e-coverage-guard.sh:flag_of`; the rule `testing` already names this miss.
 - **Merging main into the epic branch removed the auth stand limits of RT-3301 and their test.**
   The limits were off by the owner's word, and the conflict was resolved toward that word.
   **Address:** names of this tree — the plan of push time takes the stand measurements from history.
