@@ -50,14 +50,27 @@ Read on the epic branch `origin/RT-3232-remove-ui-kit-v1` (`4421b9389`), the kni
 **Находки knip без связи с первым китом — вынести из эпика или вернуть?**
 Верни в эпик.
 
+**Как убрать 51 экспорт и 14 типов, которые используются только в своём файле?**
+Снимать export руками.
+
+**Где knip будет запускаться после задачи?**
+В конце check:all.
+
+**Удаление двух мёртвых символов — проверка PR потребует тест в наборах e2e админки и входа. Как быть?**
+Написать тесты e2e.
+
 ## Decisions
 
 - **What knip cannot see is declared in `knip.json` with the place that uses it** — the barrels,
   the generated client, the optional peers, the preset, the loader, the external program. Rejected:
   deleting them — the tree would break.
-- **The three kit files guarded by the approval check keep their exports, and `knip.json` names
-  them** — dropping `export` changes nothing visible, and a mockup for it would cost more than the
-  finding. Rejected: editing them past the approval.
+- **An export used only in its own file loses `export` by hand, the three kit files under the
+  approval check included** — the owner's answer «Снимать export руками». Those three go through
+  the mockup and the showcase approval. Rejected: `ignoreExportsUsedInFile` in `knip.json` — knip
+  would stop naming such an export at all.
+- **knip runs as the last step of `check:all`** — the owner's answer «В конце check:all»; the push
+  set does not run `check:all`, so the push does not grow.
+- **The suites the PR check demands get a test each** — the owner's answer «Написать тесты e2e».
 - **The `.storybook` type imports move to `@playwright/test`** — the listed package; the untyped
   `Page` gets its type back. Rejected: telling knip to ignore `playwright`.
 
