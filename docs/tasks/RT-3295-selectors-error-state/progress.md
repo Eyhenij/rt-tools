@@ -8,8 +8,9 @@ Rewritten by every session, not appended to.
 - **Stage:** 1 of 3 — the server selectors; the roles read the plan, the spec critique is folded in
 - **Done:** the branch from the RT-3294 branch, the grill of the task and the agreement
   `docs/specs/ui-kit-v2/proposed/error-states-selectors/` read from the nine approved frames.
-- **Next step:** step 1.1 — `rt-autocomplete`: the states directive, the inputs, the error branch
-  in the panel and the specs. The PDF viewer channel and the hybrid trees wait for the consumer
+- **Next step:** step 1.2 — `rt-dynamic-selector` and its standalone popup: the inputs, the error
+  in the selection window, no «Выбирать не из чего» on an error. `rt-autocomplete` is done with its
+  states spec (SC-UKV-1287…1290, 1293, 1294 — 36 tests of the component green). The PDF viewer channel and the hybrid trees wait for the consumer
   session's answer; stage 1 does not depend on them.
 - **Uncommitted:** no.
 - **Waiting for the owner:** no; the consumer session is asked about the push set limit and about
@@ -18,8 +19,8 @@ Rewritten by every session, not appended to.
 
 ## Steps
 
-- [>] 1.1 Add `error`, `errorDescription`, `retry`, `rtAutocompleteEmpty` and `rtAutocompleteError` to `rt-autocomplete`
-- [ ] 1.2 Add `error`, `errorDescription`, `retry`, `rtDynamicSelectorEmpty` and `rtDynamicSelectorError` to `rt-dynamic-selector`
+- [x] 1.1 Add `error`, `errorDescription`, `retry`, `rtAutocompleteEmpty` and `rtAutocompleteError` to `rt-autocomplete`
+- [>] 1.2 Add `error`, `errorDescription`, `retry`, `rtDynamicSelectorEmpty` and `rtDynamicSelectorError` to `rt-dynamic-selector`
 - [ ] 1.3 Cover SC-UKV-1287…1290 by the specs
 - [ ] 2.1 Add the empty template directive to `rt-select`, `rt-multiselect`, `rt-tree`, `rt-draggable-tree`, `rt-tree-selector` and `rt-side-menu`
 - [ ] 2.2 Add `rtPdfViewerError` to `rt-pdf-viewer`
