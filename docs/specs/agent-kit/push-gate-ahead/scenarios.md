@@ -226,7 +226,7 @@ Given a table recorded from the steps
 When no step and not the table is touched
 Then the table check does not run
 
-When a step now reads a mark among the agent's observations
+When a step now reads a mark among the agent's observations, at the root or in a nested directory
 Then the table check stays green
 
 When a step now reads a path the table does not cover
