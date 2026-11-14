@@ -3,13 +3,14 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 5 — stage 2 done: no dependency section in knip, `pnpm install
-  --frozen-lockfile` and `pnpm exec nx list` answer, `check:all` green (358 tasks), no faker in
-  `.claude` and `docs/specs`
+- **Stage:** 4 of 5 — stages 1–3 done and step 5.1 committed: knip exits with code 0; the new
+  tests green — the admin `list-page.spec.ts` 3 of 3, the entry `layout.spec.ts` 9 of 9; the
+  mockup approved by the owner's word «Одобряю»
 - **Done:** task returned to the epic by the owner's word «Верни в эпик», branch from the epic
   branch, board column; the knip findings sorted; the plan read by both roles and approved, with
   the owner's answers «Снимать export руками», «В конце check:all», «Написать тесты e2e»
-- **Next step:** step 3.1 — the dead file and the two dead symbols
+- **Next step:** step 4.3 — the showcase of the tabs and the PDF viewer against their references,
+  then the owner's approval of the showcase; `check:all` with knip runs meanwhile
 - **Waiting for the owner:** nothing until stage 4, where the Figma frames go to them
 - **PR:** not open yet
 
@@ -22,10 +23,10 @@
 - [x] 2.2 Rewrite the three rule texts that name faker
 - [x] 3.1 Delete `projects/ui-kit-v2/src/lib/components/index.ts`, `hooksSectionByMatcher` and `TTreeCommandKind`
 - [x] 3.2 Drop `export` from the in-file exports and types outside the three kit files under approval
-- [>] 3.3 Write a test in each end-to-end suite the PR check demands for the changed code
-- [ ] 4.1 Show the owner the Figma frames of the PDF viewer and the tabs and write the approval into `approvals.md`
-- [ ] 4.2 Drop `export` from the five exports and one type of `rt-pdf-viewer.output.ts`, `rt-tabs.keys.ts` and `rt-tabs.motion.ts`
-- [ ] 4.3 Measure the showcase of both components against the frames and write the owner's approval of the showcase into `approvals.md`
+- [x] 3.3 Write a test in each end-to-end suite the PR check demands for the changed code
+- [x] 4.1 Show the owner the Figma frames of the PDF viewer and the tabs and write the approval into `approvals.md`
+- [x] 4.2 Drop `export` from the five exports and one type of `rt-pdf-viewer.output.ts`, `rt-tabs.keys.ts` and `rt-tabs.motion.ts`
+- [>] 4.3 Measure the showcase of both components against the frames and write the owner's approval of the showcase into `approvals.md`
 - [ ] 5.1 Add `check:unused` as the last step of `check:all` and rewrite its line in `CLAUDE.md` and `README.md`
 
 ## Decisions along the way
