@@ -16,7 +16,10 @@ rt_push_check_budget() {
         # 1018 one after another; 264 side by side, measured the same day (RT-3273).
         *'-t test-hooks'*) echo 264 ;;
         *'-t lint typecheck test build'*) echo 182 ;;
-        *'-t verify'*) echo 1 ;;
+        # 1 was measured on changes that reached no verify target, an idle nx answer. A change of
+        # the second kit runs its docs verify: 1.3–1.9 s on 14.11.2026, six runs (RT-3292); nx alone
+        # takes 1.3 s even on a cache hit.
+        *'-t verify'*) echo 2 ;;
         *'lint:styles'*) echo 5 ;;
         'pnpm run agent-kit:check') echo 5 ;;
         *'bash tools/tests/run.sh') echo 30 ;;
