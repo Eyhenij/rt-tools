@@ -62,7 +62,7 @@ packageJson.version = newVersion;
 fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2), 'utf8');
 console.log(`@rt-tools/utils version updated successfully: ${currentVersion} → ${newVersion}`);
 
-// Update @rt-tools/utils dependency in ui-kit
+// Update the @rt-tools/utils dependency in the packages that depend on it
 function updateDependency(filePath, depName, newVer) {
     const fullPath = path.resolve(__dirname, filePath);
     if (!fs.existsSync(fullPath)) return;

@@ -14,7 +14,7 @@ has `testing`.
 - **the kind of a declaration in the name** — `I` on an interface, `T` on a type alias, `E` on an enum
 - **a private field** — a field with a hash (`#config`), not an access keyword
 - **a watched source** — a field with the suffix `Source`
-- **a group of public types of a feature** — `export namespace IRtuiButton { … }` next to the class
+- **a group of public types of a feature** — `export namespace IRtToggleSwitch { … }` next to the class
 - **a cross-package import** — the alias `@rt-tools/core`, `@rt-tools/store`, `@rt-tools/utils`
 
 ## Where it lives

@@ -301,18 +301,6 @@ skill_for() {
                     return 0
                     ;;
 
-                # The markup of the ready-made component set. Inside the kit nothing catches the
-                # bypassing of the ready-made: the sign set is aimed at a consumer, and the
-                # uniformity rule's gate did not demand it here. One's own markup instead of the
-                # neighbouring ready-made component travelled into a branch that way — the owner
-                # found it at a showing. The default is called next: the component markup rule is
-                # not lifted from here.
-                */projects/*/src/lib/ui-kit/*.html)
-                    printf '%s\n' 'reuse-first'
-                    command -v skill_for_default >/dev/null 2>&1 && skill_for_default "$kind" "$target" "$written"
-                    return 0
-                    ;;
-
                 # The showcase: it has a rule of this tree, and the package carries none. The
                 # branch stands after the snapshot harness and before the general one: a story
                 # file is not a component file.

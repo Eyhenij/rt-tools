@@ -96,7 +96,7 @@
 
 ## Test plan
 
-- [ ] `pnpm run build:ui-kit`
+- [ ] `pnpm run build:ui-kit-v2`
 - [ ] `pnpm test`
 - [ ] `pnpm run lint`
 - [ ] <проверка на витрине, если правка видимая>
