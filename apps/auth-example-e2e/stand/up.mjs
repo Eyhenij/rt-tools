@@ -10,6 +10,7 @@
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
+import { readFacts, staleReason } from './auth-fresh.mjs';
 import { seed } from './seed.mjs';
 import { ADMIN_ORIGIN, API_ORIGIN, API_PORT, CLIENT, KEYCLOAK_ORIGIN, REALM } from './stand.mjs';
 
@@ -64,8 +65,16 @@ for (const signal of ['SIGTERM', 'SIGINT']) {
 }
 
 // The realm file is applied by the raising of Keycloak: a stand raised before the last edit of the
-// file would answer with yesterday's clients
-await run('pnpm', ['run', 'serve:auth']);
+// file would answer with yesterday's clients. The archive is built first, so the stand is compared
+// with the theme of the current code, and a stand that is current is not raised a second time
+await run('pnpm', ['run', 'build:auth-keycloak-theme']);
+const stale = staleReason(readFacts(ROOT.replace(/\/$/, '')));
+if (stale === null) {
+    process.stdout.write('the auth stand is current: Keycloak started after the theme archive and the stand files were written\n');
+} else {
+    process.stdout.write(`the auth stand is raised again: ${stale}\n`);
+    await run('pnpm', ['run', 'serve:auth']);
+}
 await seed();
 
 await run('npx', ['nx', 'run-many', '-t', 'build', '-p', 'auth-example-api', 'auth-example-admin', '--configuration', 'production']);
