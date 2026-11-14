@@ -50,14 +50,6 @@ export function isVisibleKitFile(path) {
     );
 }
 
-/**
- * The files of the change this check looks at, for the selection of the push set: a change without a
- * visible kit file is approved without reading a record, so the step has nothing to say about it.
- */
-export function pushReadsChange(path) {
-    return isVisibleKitFile(path);
-}
-
 function spawnOk(command, args) {
     try {
         execFileSync(command, args, { stdio: 'ignore' });

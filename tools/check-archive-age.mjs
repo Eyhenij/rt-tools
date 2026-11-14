@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/check-archive-age.mjs · b2a6ad5ee9b2 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/check-archive-age.mjs · 63cf83236d24 · правится надстройкой, не здесь
 /**
  * The audit of the retention term of the archive.
  *
@@ -23,9 +23,6 @@
  */
 import { ARCHIVE_DIR, CHECK_GRACE_DAYS, RETENTION_DAYS, archiveRecords, staleRecords } from './archive-age.mjs';
 import { ROOT } from './rt-kit-checks.config.mjs';
-
-/** For the selection of the push set: a record expires by the calendar, without a single edit of the tree. */
-export const PUSH_EVERY_CHANGE = 'counts the days of the archive records, which expire without an edit';
 
 if (RETENTION_DAYS === null) {
     console.log('check-archive-age: the tree set no retention term for the record of the past — there is nothing to check');

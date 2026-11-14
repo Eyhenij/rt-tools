@@ -231,56 +231,6 @@ Then the table check is red and names the step and the path
 
 Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
 
-### SC-AK-1356 — a walk is the listing of one directory
-
-Given a step that lists the root of the tree and nothing under it
-When a change edits a file deep under the root
-Then the step does not run
-
-When a change adds a file at the root, or a file in a directory the root did not list before
-Then the step runs
-
-Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
-
-### SC-AK-1357 — a start the record follows is read through its own record
-
-Given a step that reads a file through a shell, copies a file and reads the git history of `docs`
-When it is recorded
-Then its entry names no unseen start, and names `docs` as a path whose history it reads
-
-When a change edits the file the shell reads, the file it copies or a file under `docs`
-Then the step runs; a change elsewhere does not start it
-
-Given a step whose shell reads a file by an input redirection
-When any change is pushed
-Then the step runs
-
-Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
-
-### SC-AK-1358 — a step declares what it is about in its own script
-
-Given a step that exports `pushReadsChange`, taking the files under kit
-When a change edits a file under kit
-Then the step runs; a change elsewhere does not start it
-
-Given a step that exports `PUSH_EVERY_CHANGE`
-When any change is pushed
-Then the step runs and the set names the declared reason
-
-Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
-
-### SC-AK-1359 — a path version control ignores is no read of the step
-
-Given a step that reads a tracked text and a mark file in an ignored directory
-When the table is recorded
-Then the entry names the text and not the mark file
-
-Given the mark file is written anew under another name
-When the table check runs
-Then it stays green
-
-Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
-
 ### SC-AK-1166 — the push gate names every red light check by one refusal
 
 Given the gate set holds two red light checks, a green one between them and a heavy one after them
