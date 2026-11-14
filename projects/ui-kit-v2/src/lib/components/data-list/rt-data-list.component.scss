@@ -33,6 +33,11 @@
             --rt-empty-state-title-weight: var(--rt-list-empty-title-weight);
         }
 
+        /* Заглушка ошибки занимает всю ширину списка, как на одобренном кадре. */
+        &__placeholder--error .rt-empty-state {
+            inline-size: 100%;
+        }
+
         /* Крутилка дозагрузки: строки под ней остаются видны сквозь подложку. */
         &__fetching {
             position: absolute;

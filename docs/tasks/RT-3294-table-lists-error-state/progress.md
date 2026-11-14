@@ -10,11 +10,13 @@ Rewritten by every session, not appended to.
   their own empty and error templates; SC-UKV-1279…1286 are covered by the four `*.states.spec.ts`.
   The four `ErrorAndPlaceholders` stories stand in the showcase; the data list error keeps the kit
   placeholder instead of the first kit empty look.
-- **Next step:** step 3.2 — read the four frames into numbers, match the stories by
-  `tools/kit-match.mjs` and ask the owner.
+  The stories match the four frames 32 of 32 by `tools/kit-match.mjs`; the table error is 400 wide
+  in the middle, the data list error takes the whole width.
+- **Next step:** step 3.2 — the owner's word on the showcase goes into `approvals.md`, then the
+  references, the agreement merge and the folder.
 - **Uncommitted:** nothing.
-- **Waiting for the owner:** no; the consumer session is asked about the push set limit that holds
-  the RT-3292 push.
+- **Waiting for the owner:** the showcase approval of the four `ErrorAndPlaceholders` stories; the consumer
+  session is asked about the push set limit that holds the RT-3292 push.
 - **PR:** not open yet.
 
 ## Steps

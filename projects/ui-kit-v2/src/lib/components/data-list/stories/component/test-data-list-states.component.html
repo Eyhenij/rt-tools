@@ -3,6 +3,7 @@
         <app-story-row slotWidth="740px" [items]="cases" [itemLabel]="caseLabel">
             <ng-template let-item>
                 <app-data-list-states-cell
+                    style="display: block; inline-size: 100%"
                     [storageKey]="'story-list-states-' + item.key"
                     [empty]="item.empty"
                     [error]="item.error"

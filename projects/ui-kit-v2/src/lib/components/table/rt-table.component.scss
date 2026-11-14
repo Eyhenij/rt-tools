@@ -291,6 +291,16 @@
             display: none;
         }
 
+        /* Заглушка ошибки шириной 400 по центру строки — так на одобренном кадре; приложение
+           меняет ширину той же переменной. Второй класс нужен: корень заглушки сам объявляет
+           переменную, и его правило той же силы стоит в каскаде позже. */
+        &--error &__empty-message.rt-empty-state {
+            --rt-empty-state-max-width: 400px;
+
+            box-sizing: border-box;
+            margin-inline: auto;
+        }
+
         &__overlay {
             position: absolute;
             z-index: 1;

@@ -16,6 +16,7 @@ import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { RtTableEmptyStateDirective, RtTableErrorDirective } from '../../rt-table-states.directive';
 import { RtTableComponent } from '../../rt-table.component';
 import { IRtTable } from '../../rt-table.model';
+import { RtTableSortHeaderComponent } from '../../sort-header/rt-table-sort-header.component';
 
 /** Строка витрины: то, что показывают ячейки. */
 interface ITableStateRow {
@@ -68,6 +69,7 @@ const COLUMNS_CONFIG: readonly IRtTable.ColumnConfig[] = [
     imports: [
         // components
         RtTableComponent,
+        RtTableSortHeaderComponent,
 
         // directives
         RtTableEmptyStateDirective,
@@ -92,9 +94,9 @@ export class TestRtTableStatesComponent {
     public readonly columns: readonly string[] = COLUMNS;
     public readonly columnsConfig: readonly IRtTable.ColumnConfig[] = COLUMNS_CONFIG;
 
-    /** Рамка своего шаблона: пунктир показывает, где кончается разметка приложения. */
+    /** Рамка своего шаблона: пунктир показывает, где кончается разметка приложения. Отступ сверху даёт ячейка таблицы. */
     public readonly slotStyle: string =
-        'display: grid; gap: var(--rt-space-2); inline-size: fit-content; margin: var(--rt-space-6) auto; padding: var(--rt-space-4); border: 1px dashed var(--rt-color-border-strong); border-radius: var(--rt-radius-md); text-align: center';
+        'display: grid; gap: var(--rt-space-2); inline-size: fit-content; margin-inline: auto; padding: var(--rt-space-4); border: 1px dashed var(--rt-color-border-strong); border-radius: var(--rt-radius-md); text-align: center';
 
     public readonly slotHintStyle: string = 'color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)';
 
