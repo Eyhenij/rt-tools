@@ -28,6 +28,10 @@
             }
         }
 
+        &--muted &__paragraph {
+            color: var(--rt-color-text-muted);
+        }
+
         &__toggle {
             align-self: flex-start;
             padding: 0;

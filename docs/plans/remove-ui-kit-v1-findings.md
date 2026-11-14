@@ -24,7 +24,7 @@ when the epic is over.
   `937715e68`: the observations directory is left out of the record, scenario `SC-AK-1355`.
   **Address:** rules layer — `checks/push-inputs.mjs`.
 - **A tree scenario run from inside the tests directory leaves marks there.** Sixty mark files lay
-  in an ignored `projects/agent-kit/tests/.claude/` since 30.08; they reached the table record.
+  in an ignored marks directory inside the package tests since 30.08; they reached the table record.
   **Address:** rules layer — the scenario harness `tests/lib.sh`.
 - **The generated storage client lies outside history and goes stale silently.** `check:all` gave
   eight red typechecks of the receiver until `pnpm run prisma:generate`. **Address:** names of this

@@ -1,0 +1,50 @@
+/* Раскладка показа, а не вид плитки: весь вид плитки приходит словарём формы из слоя оформления
+   кита. Ширина плитки и промежутки сетки — числа набора `Setting Tile` макета: плитка 492,
+   между столбцами 40, между строками 32, поля 24. Так сетку можно наложить на кадр целиком. */
+.app-form-setting-tile__root {
+    display: block;
+}
+
+.app-form-setting-tile {
+    padding: 24px;
+
+    &__grid {
+        display: grid;
+        align-items: start;
+        padding: 24px;
+        gap: 32px 40px;
+        grid-template-columns: repeat(4, 492px);
+    }
+
+    &__cell {
+        display: flex;
+    }
+
+    /* Сетка внутри темы уже с полями, второй слой полей не нужен. */
+    > .app-form-setting-tile__grid {
+        padding: 0;
+    }
+
+    &--radius {
+        display: grid;
+        align-items: start;
+        gap: 8px 40px;
+        grid-template-columns: repeat(2, 492px);
+    }
+
+    &__step {
+        color: var(--rt-color-text-muted);
+        font-size: var(--rt-text-md);
+        font-weight: var(--rt-font-weight-medium);
+        grid-column: 1 / -1;
+    }
+
+    /* Окно телефона 375 с полями 16: плитка шириной 343, одна под другой. Поля 16 даёт сама
+       страница витрины, своих полей у узкого показа нет. */
+    &--narrow {
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        gap: 24px;
+    }
+}

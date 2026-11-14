@@ -1,4 +1,5 @@
 @use './breakpoints' as bp;
+@use './mixins' as kv;
 
 /* Словарь формы панели: раздел, колонка контролов, строка контрола, элемент в ряду. Объявлен
    классами, а не компонентом, поэтому доехать до потребителя может только через агрегатор
@@ -171,11 +172,19 @@
         /* Строки одной службы в общей рамке: ключей у службы бывает два, и рамка на каждом
            читалась бы как две разные карточки. */
         &__framed-list {
+            /* Рамка входит в ширину: при ширине во всю строку рамка иначе выходит за края
+               родителя на свою толщину с каждой стороны. */
             display: flex;
             width: 100%;
+            box-sizing: border-box;
             flex-direction: column;
             border: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
-            border-radius: var(--rt-radius-md);
+            border-radius: var(--rt-form-framed-radius, var(--rt-radius-md));
+
+            /* Шаг скругления рамки задаётся атрибутом `data-rt-radius` на самой рамке, как вход
+               `radius` у компонентов: словарь формы — классы, а не компонент, и хоста у рамки нет.
+               По макету плитки настройки шаг по умолчанию — md. */
+            @include kv.radius-steps('--rt-form-framed-radius');
 
             > * + * {
                 border-top: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
@@ -214,6 +223,85 @@
             flex-direction: column;
             padding: var(--rt-space-sm) var(--rt-space-md);
             gap: var(--rt-space-xs);
+
+            /* Название записи крупнее пояснения: по макету плитки настройки название 16, а
+               пояснение под ним 12. Подпись и текст строки берут один размер, поэтому название,
+               написанное `span` внутри `<label>`, и название в простой строке выглядят одинаково. */
+            > .rt-form__control-item,
+            .rt-form__label {
+                font-size: var(--rt-text-md);
+                font-weight: var(--rt-font-weight-medium);
+                line-height: var(--rt-leading-normal);
+            }
+
+            .rt-form__control-sub-item--label {
+                color: var(--rt-color-text-muted);
+                font-size: var(--rt-text-xs);
+                line-height: var(--rt-leading-normal);
+            }
+
+            /* Плитка настройки: запись-`<label>` с выключателем внутри. Нажатие в любом месте
+               записи переключает выключатель — это делает сам `<label>`, и только он. Поэтому
+               нажимаемый вид дан тегу, а не модификатору: модификатор можно повесить на `div`,
+               и запись показывала бы указатель, ничего не переключая. Фокус клавиатуры на
+               выключателе подсвечивает запись так же, как наведение: кольцо фокуса рисует сам
+               выключатель, а второе кольцо вокруг записи дублировало бы его. */
+            &:is(label) {
+                cursor: pointer;
+
+                &:hover,
+                &:has(:focus-visible) {
+                    background: var(--rt-color-bg-hover);
+                }
+
+                /* Подсветка не выходит за скругление общей рамки: углы первой и последней записи
+                   скруглены по внутреннему краю рамки. */
+                --rt-form-framed-inner-radius: max(
+                    0px,
+                    calc(var(--rt-form-framed-radius, var(--rt-radius-md)) - var(--rt-border-width-thin))
+                );
+
+                &:first-child {
+                    border-start-end-radius: var(--rt-form-framed-inner-radius);
+                    border-start-start-radius: var(--rt-form-framed-inner-radius);
+                }
+
+                &:last-child {
+                    border-end-end-radius: var(--rt-form-framed-inner-radius);
+                    border-end-start-radius: var(--rt-form-framed-inner-radius);
+                }
+
+                /* Выключатель стоит справа при любой длине названия: строка не переносится, а
+                   название сжимается и переносится по словам. */
+                > .rt-form__control-item {
+                    flex-wrap: nowrap;
+                    gap: var(--rt-space-sm);
+                }
+
+                .rt-form__label {
+                    min-width: 0;
+                    flex: 1 1 auto;
+                    overflow-wrap: anywhere;
+                }
+            }
+
+            /* Отключённый выключатель не переключается и нажатием на запись: она и не выглядит
+               нажимаемой. */
+            &:is(label):has(:disabled) {
+                cursor: default;
+
+                &:hover {
+                    background: none;
+                }
+
+                /* По макету отключённая плитка гасит название и пояснение той же прозрачностью
+                   отключения, что поля кита; выключатель гасит себя сам. */
+                .rt-form__label,
+                .rt-form__control-sub-item--label,
+                .rt-collapsible-text {
+                    opacity: var(--rt-opacity-disabled);
+                }
+            }
         }
 
         /* Маячок догрузки в конце списка: он невидим и только отмечает низ, до которого

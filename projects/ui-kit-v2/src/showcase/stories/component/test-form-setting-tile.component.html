@@ -1,0 +1,77 @@
+<div rtBlock="rt-form" class="app-form-setting-tile__root">
+    <ng-template #tile let-cell let-step="step">
+        <div rtElem="framed-list" [attr.data-rt-radius]="step">
+            <label
+                rtElem="framed-item"
+                [attr.qa-dataid]="cell.qa"
+                [attr.data-story-state]="cell.state === 'hover' ? 'hover' : cell.state === 'focus' ? 'focus-visible' : null"
+                [for]="cell.qa + (step ?? '') + '-switch'">
+                <span rtElem="control-item" [rtMod]="{ split: true }">
+                    <span rtElem="label">Название настройки</span>
+                    <rt-toggle-switch
+                        size="md"
+                        [inputId]="cell.qa + (step ?? '') + '-switch'"
+                        [disabled]="cell.state === 'disabled'"
+                        [ngModel]="cell.on" />
+                </span>
+                @if (cell.text === 'short') {
+                    <span rtElem="control-sub-item" [rtMod]="{ label: true }">Что делает настройка, словами продукта</span>
+                } @else {
+                    <rt-collapsible-text
+                        tone="muted"
+                        [attr.qa-dataid]="cell.text === 'expanded' ? 'setting-tile-expand' : 'setting-tile-collapsed'"
+                        [clampLines]="2"
+                        [paragraphs]="longText" />
+                }
+            </label>
+        </div>
+    </ng-template>
+
+    <ng-template #states>
+        <div class="app-form-setting-tile__grid">
+            @for (cell of grid; track cell.qa) {
+                <div class="app-form-setting-tile__cell">
+                    <ng-container [ngTemplateOutlet]="tile" [ngTemplateOutletContext]="{ $implicit: cell, step: null }" />
+                </div>
+            }
+        </div>
+    </ng-template>
+
+    @switch (part()) {
+        @case ('states') {
+            <div class="app-form-setting-tile" qa-dataid="form-setting-tile">
+                <ng-container [ngTemplateOutlet]="states" />
+            </div>
+        }
+        @case ('themes') {
+            <app-story-themes caption="Плитка настройки в обеих темах" qa-dataid="form-setting-tile">
+                <ng-template>
+                    <ng-container [ngTemplateOutlet]="states" />
+                </ng-template>
+            </app-story-themes>
+        }
+        @case ('radius') {
+            <div class="app-form-setting-tile app-form-setting-tile--radius" qa-dataid="form-setting-tile">
+                @for (radius of radiusSteps; track radius.label) {
+                    <span class="app-form-setting-tile__step">{{ radius.label }}</span>
+                    @for (cell of radiusCells; track cell.qa) {
+                        <div class="app-form-setting-tile__cell">
+                            <ng-container [ngTemplateOutlet]="tile" [ngTemplateOutletContext]="{ $implicit: cell, step: radius.step }" />
+                        </div>
+                    }
+                }
+            </div>
+        }
+        @case ('narrow') {
+            <div class="app-form-setting-tile app-form-setting-tile--narrow" qa-dataid="form-setting-tile">
+                @for (column of narrowColumns; track $index) {
+                    @for (cell of column; track cell.qa) {
+                        <div class="app-form-setting-tile__cell">
+                            <ng-container [ngTemplateOutlet]="tile" [ngTemplateOutletContext]="{ $implicit: cell, step: null }" />
+                        </div>
+                    }
+                }
+            </div>
+        }
+    }
+</div>
