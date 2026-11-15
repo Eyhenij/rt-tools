@@ -36,7 +36,7 @@
             "probes": []
         },
         "node tools/check-specs.mjs": {
-            "seconds": 7,
+            "seconds": 3,
             "history": [
                 "git log"
             ],
@@ -248,7 +248,7 @@
             "probes": []
         },
         "node tools/check-cycles.mjs": {
-            "seconds": 1,
+            "seconds": 0,
             "history": [],
             "untraced": [],
             "self": [
@@ -1141,7 +1141,7 @@
             "probes": []
         },
         "node tools/check-file-size.mjs": {
-            "seconds": 0,
+            "seconds": 1,
             "history": [],
             "untraced": [],
             "self": [
@@ -1205,7 +1205,7 @@
             "probes": []
         },
         "node tools/check-glossary.mjs": {
-            "seconds": 1,
+            "seconds": 3,
             "history": [],
             "untraced": [],
             "self": [
@@ -1328,7 +1328,7 @@
             "probes": []
         },
         "node tools/check-schema-drift.mjs": {
-            "seconds": 2,
+            "seconds": 3,
             "history": [],
             "untraced": [
                 "npx",
@@ -1555,7 +1555,7 @@
             "probes": []
         },
         "pnpm run lint:styles": {
-            "seconds": 3,
+            "seconds": 4,
             "history": [],
             "untraced": [
                 "stylelint"

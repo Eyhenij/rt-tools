@@ -92,6 +92,7 @@ tools/archive-prune.mjs
 tools/work-steps-lib.mjs
 tools/flow-*.mjs
 tools/task-flow-script.mjs
+tools/owner-nudges.mjs
 tools/board-epics.mjs
 tools/board-epic-link.mjs
 tools/board-epic-plan.mjs
