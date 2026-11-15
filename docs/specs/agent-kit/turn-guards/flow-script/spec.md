@@ -39,6 +39,14 @@ There is no interface: the description is read by the engine and by the executor
 - **A reference starts with one of the six sections.**
 - **A repeated key of an object is refused.**
 - **A comment is skipped, and a comment or a dot inside a string is the string's own text.**
+- **The description has exactly six sections.**
+- **A name of an entry, a capability or a port matches `[A-Za-z][A-Za-z0-9]*`.**
+- **An entry of `source` or `measure` is a file next to the description, and a capability is its named export.**
+- **The ports of a capability equal the signature of its factory exactly.**
+- **A missing capability is an error, never a substitute.**
+- **The references between components form no cycle.**
+- **The states keep the order of the description, and a title is unique.**
+- **A file of `measure/` imports only its neighbours and reaches no data past the ports.**
 
 ## What is out of scope
 
@@ -47,8 +55,10 @@ that the steps of the plan and of the progress match is the subdomain `docs/spec
 
 ## Contract
 
-The parser is called with the path of a description and answers with the model as JSON, or with
-`flow syntax: <what> at <line>:<column>` and code 1.
+The parser is called with the path of a description and answers with the parsed data as JSON, or
+with `flow syntax: <what> at <line>:<column>` and code 1. The model is called the same way and
+answers with the model, or with `flow model: <what>` naming the component, and code 1. Neither runs
+a file of the description: the files are read as text.
 
 ### Refusal codes
 
@@ -85,6 +95,10 @@ Not applicable: one description is read at a time.
 - **A data language, not code.** A description that could run code would run it in every tree that
   installs the package, at the minute the engine reads it; a reviewer would have to read it as code.
 - **Nothing after the closing semicolon.** A tail is where code would be hidden.
+- **Ports equal to the signature, without defaults.** A port the factory does not take is a wire to
+  nowhere, and a default hides a missing wire.
+- **The ban covers the whole `measure/` directory.** A neighbour file of a measurer would otherwise
+  reach the disk for it.
 
 ## Open questions
 
@@ -92,4 +106,5 @@ None.
 
 ## History of changes
 
-- 2026-11-15 — the subdomain was started with the language of the description and its parser.
+- 2026-11-15 — the subdomain was started with the language of the description, its parser and its
+  model.

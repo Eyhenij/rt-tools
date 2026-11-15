@@ -67,6 +67,126 @@ Then it refuses and names the section list or the word
 
 Covered: `projects/agent-kit/tests/flow-language.test.sh`.
 
+### SC-AK-1479 — the description has exactly six sections, an extra one is refused
+
+Given a description with the six sections, one with a seventh, and one without `expect`
+When the model is built
+Then the first is accepted, the extra section is named, the missing one is named
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1480 — a name outside [A-Za-z][A-Za-z0-9]* is refused
+
+Given an entry named by a string with a dash
+When the model is built
+Then it refuses and names the entry
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1481 — `measure.x` is the file `measure/x.mjs`, a capability is its export
+
+Given a measurer entry `plan` with the capability `approved`
+When the model is built
+Then the component points at `measure/plan.mjs` and holds the capability `approved`
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1482 — ports that are not the signature are refused, naming the component
+
+Given a capability whose ports lack a name its factory takes
+When the model is built
+Then it refuses and names `measure.<entry>.<capability>`, the ports and the signature
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1483 — a signature with a default or a renaming is refused
+
+Given a factory declared as `({ git = 1, marks })` or as `({ git: repo, marks })`
+When the model is built
+Then it refuses: a port carries a default, a renaming or a pattern
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1484 — a missing capability is an explicit error, without a substitute
+
+Given a description naming a capability its file does not export
+When the model is built
+Then it refuses and names the capability
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1485 — a cycle of references is refused
+
+Given two measurers whose ports point at each other
+When the model is built
+Then it refuses and names the cycle
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1486 — the order of the states is the order of the description
+
+Given two states written one after the other
+When the model is built
+Then the states come in the written order
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1487 — a repeated state title is refused
+
+Given two states with one title
+When the model is built
+Then it refuses and names the title
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1488 — a measurer importing a path not starting with `./` is refused
+
+Given a measurer that imports `node:fs` or a file of a neighbouring directory
+When the model is built
+Then it refuses: the import leaves the directory
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1507 — `import()` in a measurer is refused
+
+Given a measurer with a dynamic `import()`
+When the model is built
+Then it refuses and names `import()`
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1508 — `process` in a measurer is refused
+
+Given a measurer that reads `process.env`
+When the model is built
+Then it refuses and names `process`
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1509 — `createRequire` and `require` in a measurer are refused
+
+Given a measurer that calls `createRequire` or `require`
+When the model is built
+Then it refuses and names the word
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1533 — a neighbour file of a measurer importing `node:fs` is refused
+
+Given a file of `measure/` that the measurer imports, and that imports `node:fs`
+When the model is built
+Then it refuses and names the neighbour file
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1534 — `globalThis` in any file of `measure/` is refused
+
+Given a neighbour file of a measurer that reaches `globalThis`
+When the model is built
+Then it refuses and names `globalThis`
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
 ### SC-AK-1529 — the layout header as a line comment before the description is skipped
 
 Given a laid-out description whose first line is the layout header as a `//` comment
