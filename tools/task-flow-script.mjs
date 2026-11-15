@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/task-flow-script.mjs · 6f054592451c · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/task-flow-script.mjs · d429b2aea2e6 · правится надстройкой, не здесь
 /**
  * The engine of the task flow: reads the description `flow.js` through the model and answers about
  * the scenario. The description lies next to the engine as `task-flow/flow.js` where the engine is
@@ -14,16 +14,23 @@
  *                                      `ожидалось … · получено … · совпало|не совпало` and writes the
  *                                      mark of a matched step; exits 0 on a match, 1 otherwise
  *   node task-flow-script.mjs step --done  the same for every step the progress marks done
+ *   node task-flow-script.mjs plan-check <plan.md>  names every check of the plan in no known
+ *                                      form or that is a command of the work; exits 1 on any
+ *   node task-flow-script.mjs plan-red  runs every check of the plan of the branch and writes the
+ *                                      approval mark when all are red and the owner approved after
+ *                                      both roles; the record of the conversation is named by
+ *                                      `RT_FLOW_TRANSCRIPT`
  *
  * A description that does not build is named with its reason, and the engine exits 1: a scenario
  * read from a broken description would measure what nobody wrote.
  */
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { evaluateCondition } from './flow-condition.mjs';
 import { FlowModelError, buildModel } from './flow-model.mjs';
+import { planProblems, readRecord, runPlanRed } from './flow-plan.mjs';
 import { runStepCommand } from './flow-step.mjs';
 import { FlowSyntaxError } from './flow-syntax.mjs';
 
@@ -141,7 +148,8 @@ export function measureJson(model, result) {
     return { ...result, action: state?.action ?? null, pattern: state?.pattern ?? null };
 }
 
-const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|--done  [--flow <flow.js>]';
+const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|--done | plan-check <plan.md> | plan-red  [--flow <flow.js>]';
+const COMMANDS = ['states', 'measure', 'step', 'plan-check', 'plan-red'];
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
     const args = process.argv.slice(2);
@@ -149,7 +157,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     const given = at >= 0 ? args.splice(at, 2)[1] : undefined;
     const json = args.includes('--json');
     const [command, target] = args.filter((a) => a !== '--json');
-    if (!['states', 'measure', 'step'].includes(command) || (command === 'step' && !target)) {
+    if (!COMMANDS.includes(command) || ((command === 'step' || command === 'plan-check') && !target)) {
         console.error(USAGE);
         process.exit(2);
     }
@@ -161,6 +169,15 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
             const source = await openSources(model, dirname(path));
             const sources = { git: source('git'), steps: source('steps'), marks: source('marks'), owner: source('owner') };
             process.exit(runStepCommand(sources, model, target));
+        } else if (command === 'plan-check') {
+            const source = await openSources(model, dirname(path));
+            const problems = planProblems(readFileSync(target, 'utf8'), source('steps'), model);
+            for (const problem of problems) console.log(`plan-check: ${problem}`);
+            process.exit(problems.length > 0 ? 1 : 0);
+        } else if (command === 'plan-red') {
+            const source = await openSources(model, dirname(path));
+            const sources = { git: source('git'), steps: source('steps'), marks: source('marks') };
+            process.exit(runPlanRed(sources, model, readRecord(process.env.RT_FLOW_TRANSCRIPT)));
         } else {
             const result = measureStates(model, await openReaders(model, dirname(path)));
             console.log(json ? JSON.stringify(measureJson(model, result)) : measureLines(model, result).join('\n'));

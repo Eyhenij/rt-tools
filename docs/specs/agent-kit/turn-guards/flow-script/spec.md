@@ -54,6 +54,9 @@ There is no interface: the description is read by the engine and by the executor
 - **A step is refused when its check is a command of the work, its expected result is in no form, or a file of the task folder differs from the commit of the plan.**
 - **A check runs with a limit of 540 seconds, and past it the step does not match.**
 - **The command for the done steps measures again every step the progress marks done.**
+- **A plan may be written only when every step carries a check of a known form that is no command of the work, and a form added to the description is known at once.**
+- **The approval mark is written when every check is red before the work, both roles were called and the owner then chose an option that begins with «Одобряю» and names the plan or the task.**
+- **A check is replaced only by a decision in the progress whose quote stands in a message the owner typed.**
 - **The epic of the work is the one the task card names, and its plan lies in the plans directory.**
 - **Exit 2 is met by the epic branch on the server or merged into the main branch, with the epic card out of the first column or closed.**
 - **Exit 4 is met by the task card out of the first column or closed, and by the commit that added the task folder.**
@@ -79,7 +82,9 @@ and the exits read up to it; `measure --json` prints the same as one object with
 `state`, `index`, `reason`, `exits`, `action` and `pattern`. `step <N.M>` runs the check of that
 step and prints `ожидалось … · получено … · совпало` with code 0, or `… · не совпало` with code 1;
 a refused step prints `step: <reason>` with code 1. `step --done` prints the same for every done
-step, each line led by its number. A description that does not build is named with its reason and code 1. A measurer gets
+step, each line led by its number. `plan-check <plan.md>` names every unfit check with code 1, and
+`plan-red` writes the approval mark with code 0 or names what is missing with code 1; it reads the
+record of the conversation the hook names in `RT_FLOW_TRANSCRIPT`. A description that does not build is named with its reason and code 1. A measurer gets
 its data through its ports and the data of the description; a source reads git, the working copy,
 the hosting, the marks and the messages of the owner.
 
@@ -133,3 +138,4 @@ None.
   and its measurers.
 - 2026-11-15 — the engine measures the checked-out branch by the command `measure`.
 - 2026-11-15 — the engine measures a step of the plan by its check and writes its mark.
+- 2026-11-15 — the engine checks the forms of a plan and writes the approval mark.

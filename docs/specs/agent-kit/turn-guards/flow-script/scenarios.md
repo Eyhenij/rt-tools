@@ -321,7 +321,7 @@ Given a plan whose step checks a file of the task folder that holds the expected
 When the engine measures that step
 Then it prints that the step matched, exits 0 and writes the mark of the step with the fingerprint of the plan
 
-Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
 ### SC-AK-1404 — an unmatched step leaves no mark
 
@@ -329,7 +329,7 @@ Given a step whose check prints another line than the expected one
 When the engine measures it
 Then it prints that the step did not match, exits 1 and no mark of the step lies
 
-Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
 ### SC-AK-1405 — a check past its limit does not match
 
@@ -337,7 +337,7 @@ Given a step whose check runs longer than the limit
 When the engine measures it
 Then the step does not match, and the line names the limit that ran out
 
-Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
 ### SC-AK-1406 — a command of the work is never a check
 
@@ -345,7 +345,7 @@ Given a step whose check is a push, and a step whose expected result is in no fo
 When the engine measures them
 Then both are refused before anything runs, and the refusal names the command or the expected text
 
-Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
 ### SC-AK-1407 — a file of the task folder edited after the plan refuses the step
 
@@ -353,7 +353,7 @@ Given a file of the task folder changed after the commit of the plan, and then o
 When the engine measures a step
 Then the first is refused naming the file, and the progress does not refuse it
 
-Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
 ### SC-AK-1408 — the done steps are measured again
 
@@ -361,7 +361,7 @@ Given a progress that marks two steps done, one matching and one not, with the m
 When the engine measures the done steps
 Then it prints a line per step led by its number, exits 1 and writes the mark of the first again
 
-Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
 ### SC-AK-1409 — the line of a step ends with its verdict
 
@@ -369,4 +369,44 @@ Given a matched step and an unmatched one
 When the engine measures them
 Then each line ends with «· совпало» or «· не совпало»
 
-Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
+### SC-AK-1410 — a plan with an expected result in no form is not written
+
+Given a plan whose step expects «примерно ноль», and a plan of known forms
+When the plan is checked before it is written
+Then the first is refused naming the step and the text, and the second passes
+
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
+### SC-AK-1411 — the approval mark carries the red output
+
+Given a plan whose checks are red and a record with both roles called and then the menu answer «Одобряю план RT-2»
+When the approval is asked, then again with the answer «Переделай этап 1», then with no role called
+Then the first writes the mark with the answer and the red output of every step, and the other two write none
+
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
+### SC-AK-1412 — a check green before the work refuses the approval
+
+Given a plan whose first check already matches
+When the approval is asked
+Then the step is named green before the work, and no mark is written
+
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
+### SC-AK-1413 — a check is replaced only with the owner's quote
+
+Given a progress that replaces the check of a step and quotes the owner
+When the step is measured with the quote in the owner's messages, and without it
+Then the replacement is measured in the first case and refused in the second
+
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
+### SC-AK-1506 — a form of the expected result added to the description is accepted
+
+Given a step expecting «~мир», a form the package description does not know, and a copy of the description with that form added
+When the step is measured by the package description and by the copy
+Then the first refuses the form, and the second measures the step as matched with no edit of the engine
+
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.

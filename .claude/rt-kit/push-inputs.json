@@ -957,7 +957,7 @@
             "probes": []
         },
         "node tools/check-format-ignore.mjs": {
-            "seconds": 4,
+            "seconds": 3,
             "history": [],
             "untraced": [],
             "self": [
@@ -1081,7 +1081,7 @@
             "probes": []
         },
         "node tools/check-package-imports.mjs": {
-            "seconds": 7,
+            "seconds": 2,
             "history": [],
             "untraced": [
                 "npm"
