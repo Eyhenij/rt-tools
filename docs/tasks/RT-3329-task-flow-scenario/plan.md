@@ -777,7 +777,7 @@ RT-N», «сделаю сам», «стоп». Ответ владельца, и
     4. Переписать правила описания миссии по слову владельца «Только твоё «стоп»» и снять четыре противоречащие фразы
        Проверка: `S=docs/specs/agent-kit/turn-guards/mission/spec.md; grep -q 'Только твоё «стоп»' $S && { grep -cE 'quoted in the progress, ends the turn|A question to the owner leaves unless|does not refuse the same turn twice|doubt is decided by a refusal, once' $S; true; }` → = 0
     5. Записать подобласть `flow-script/` со сценариями этапов 1–5 и привязкой; у каждого сценария есть тест
-       Проверка: `D=docs/specs/agent-kit/turn-guards/flow-script; test -f $D/spec.md && ids=$(grep -ohE 'SC-AK-1(3[6-9][0-9]|4[0-9][0-9]|5[0-2][0-9]|53[0-6])' $D/*.md | sort -u | grep -vE '^SC-AK-1(489|49[0-9]|50[0-4]|527|528|535)$') && [ "$(echo "$ids" | wc -w)" -ge 153 ] && for id in $ids; do grep -rqF "$id" projects/agent-kit/tests || echo "$id"; done | wc -l | tr -d ' '` → = 0
+       Проверка: `D=docs/specs/agent-kit/turn-guards/flow-script; test -f $D/spec.md && ids=$(grep -rohE 'SC-AK-1(3[6-9][0-9]|4[0-9][0-9]|5[0-2][0-9]|53[0-6])' $D | sort -u | grep -vE '^SC-AK-1(489|49[0-9]|50[0-4]|527|528|535)$') && [ "$(echo "$ids" | wc -w)" -ge 153 ] && for id in $ids; do grep -rqF "$id" projects/agent-kit/tests || echo "$id"; done | wc -l | tr -d ' '` → = 0
     6. Внести в словарь пакета «Flow script» и «Exit check»
        Проверка: `grep -cE '^- \*\*(Flow script|Exit check)\*\*' projects/agent-kit/assets/docs/GLOSSARY.md` → = 2
 - **Readiness sign:** ни один текст следа не называет старые выходы; у каждого из 153 сценариев этапов 1–5 в `flow-script/` есть тест.
