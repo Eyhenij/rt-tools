@@ -1,3 +1,31 @@
+# [0.45.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.44.1...rt-ui-kit-v2%400.45.0) (2026-11-15)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** директива состояния загрузки динамического селектора в экспорте ([45243b3](https://github.com/Eyhenij/rt-tools/commit/45243b38e6efe1e177d29cd4733f70d345e75ac4))
+- **rt:ui-kit-v2:** заглушка ошибки таблицы и списка данных по ширине кадров ([b09ac68](https://github.com/Eyhenij/rt-tools/commit/b09ac68c9f46719bffa84a0a58a65877bc3c9054))
+- **rt:ui-kit-v2:** компактная ошибка в панели поиска и витрина по замеру кадров ([55d7166](https://github.com/Eyhenij/rt-tools/commit/55d7166066576da0e172d7c46904999be8cde797))
+- **rt:ui-kit-v2:** одиннадцать директив RT-3295 в списке покрытия, радиус истории меню свойством ([f46836f](https://github.com/Eyhenij/rt-tools/commit/f46836f1756dd0b9a89ceb529830a0f62ce1b38e))
+- **rt:ui-kit-v2:** отступы шапки и вкладок списка переписки по одобренным макетам ([afbc900](https://github.com/Eyhenij/rt-tools/commit/afbc900cdcc825dd89d05a6810d92885ff90fcdf))
+- **rt:ui-kit-v2:** ошибка списка данных важнее дозагрузки ([b39a8d7](https://github.com/Eyhenij/rt-tools/commit/b39a8d704cf46298aa804598f70f6e4b3fe276d8))
+- **rt:ui-kit-v2:** свой вид пустой таблицы отзывается на rtTableEmpty ([3c1b75b](https://github.com/Eyhenij/rt-tools/commit/3c1b75be462eac26e800e4fe96c0310511a942de)), closes [#rtTableEmpty](https://github.com/Eyhenij/rt-tools/issues/rtTableEmpty)
+
+### Features
+
+- **rt:ui-kit-v2:** витрина ошибки и заглушек списка переписки, чата и сведений ([63136ec](https://github.com/Eyhenij/rt-tools/commit/63136ecfa37b3fb2608de6fd6258588483791b78))
+- **rt:ui-kit-v2:** витрина ошибки и своих шаблонов у поиска, селектора и PDF ([a2a3703](https://github.com/Eyhenij/rt-tools/commit/a2a3703303fdd9fc618e0cb759bdefdff2671e24))
+- **rt:ui-kit-v2:** витрина ошибки и своих шаблонов у таблицы и трёх списков ([154bec3](https://github.com/Eyhenij/rt-tools/commit/154bec3379a988d7363572346ceba55bfcaf3949))
+- **rt:ui-kit-v2:** витрина своего вида пустого у шести местных списков ([b4117f6](https://github.com/Eyhenij/rt-tools/commit/b4117f651160d8903ea5cf84def5f2a9f6f1a825))
+- **rt:ui-kit-v2:** ошибка загрузки и свои шаблоны у динамического селектора ([1751131](https://github.com/Eyhenij/rt-tools/commit/17511316bbaaee11c71d844fccc8022b9c1371fc))
+- **rt:ui-kit-v2:** ошибка загрузки и свои шаблоны у динамического списка и списка долей ([4a97dcc](https://github.com/Eyhenij/rt-tools/commit/4a97dcc5ea50675adba3f2d5cc7203f72c06571b))
+- **rt:ui-kit-v2:** ошибка загрузки и свои шаблоны у поиска с подсказками ([1f07f2d](https://github.com/Eyhenij/rt-tools/commit/1f07f2d4a94df335f29395d3822fe15e51c6c310))
+- **rt:ui-kit-v2:** ошибка загрузки и свои шаблоны у списка переписки ([097cde9](https://github.com/Eyhenij/rt-tools/commit/097cde950fd003fbf02886f52c11ec37db4d817c))
+- **rt:ui-kit-v2:** ошибка загрузки и свои шаблоны у таблицы и списка данных ([0a2d5e3](https://github.com/Eyhenij/rt-tools/commit/0a2d5e34396c5bc01ecd558e6542e4fcd9a18189)), closes [#rtTableEmpty](https://github.com/Eyhenij/rt-tools/issues/rtTableEmpty)
+- **rt:ui-kit-v2:** ошибка загрузки и свои шаблоны у чата и панели сведений ([9642366](https://github.com/Eyhenij/rt-tools/commit/96423669badec829e2a20d8c561662d969713771))
+- **rt:ui-kit-v2:** подписи ошибки загрузки и переменная ширины заглушки ([69da99e](https://github.com/Eyhenij/rt-tools/commit/69da99e87e0544e7d04cc44f9be84c45b8a7a7a0))
+- **rt:ui-kit-v2:** свой вид ошибки у просмотрщика PDF ([c215d11](https://github.com/Eyhenij/rt-tools/commit/c215d119e08fed192cdd4ee5d0e807100fd0272f))
+- **rt:ui-kit-v2:** свой вид пустого у шести местных списков ([d325429](https://github.com/Eyhenij/rt-tools/commit/d325429a33ae2276b8b155c9ff25ee70aaa9e43a))
+
 ## [0.44.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.44.0...rt-ui-kit-v2%400.44.1) (2026-11-14)
 
 ### Bug Fixes
