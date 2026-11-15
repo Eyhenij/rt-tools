@@ -271,11 +271,11 @@ hold 1461-rt3276-promise stage "replay: SC-AK-1461 — RT-3276: обещание
 
 # --- законные концы хода ----------------------------------------------------------------------------
 release 1462-epic-end epicEnd "replay: SC-AK-1462 — конец эпика по истории последнего закрытого эпика" 'the end of the scenario'
-release 1547-stop-hold stage "replay: SC-AK-1547 — записанное слово «Стой»" 'a stop word of the owner'
-release 1547-wait-for-suite stage "replay: SC-AK-1547 — записанное слово «жди конца набора»" 'a stop word of the owner'
-release 1547-wait-for-neighbour handed "replay: SC-AK-1547 — записанное слово «жди соседа»" 'a stop word of the owner'
-release 1547-stop-at-point stage "replay: SC-AK-1547 — записанное слово «Остановись на логической точке»" 'a stop word of the owner'
-release 1547-not-now taken "replay: SC-AK-1547 — записанное слово «Не сейчас»" 'a stop word of the owner'
+release 1548-stop-hold stage "replay: SC-AK-1548 — записанное слово «Стой»" 'a stop word of the owner'
+release 1548-wait-for-suite stage "replay: SC-AK-1548 — записанное слово «жди конца набора»" 'a stop word of the owner'
+release 1548-wait-for-neighbour handed "replay: SC-AK-1548 — записанное слово «жди соседа»" 'a stop word of the owner'
+release 1548-stop-at-point stage "replay: SC-AK-1548 — записанное слово «Остановись на логической точке»" 'a stop word of the owner'
+release 1548-not-now taken "replay: SC-AK-1548 — записанное слово «Не сейчас»" 'a stop word of the owner'
 
 # --- хуки модели: их текст ----------------------------------------------------------------------------
 TURN_JUDGE="$ASSETS/hooks/turn-judge.md"

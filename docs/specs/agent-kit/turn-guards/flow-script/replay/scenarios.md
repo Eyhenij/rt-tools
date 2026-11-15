@@ -147,7 +147,7 @@ Then the turn is held, and the menu hook holds such an option in any menu, the m
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
-### SC-AK-1547 — the recorded stop words of the owner release the turn
+### SC-AK-1548 — the recorded stop words of the owner release the turn
 
 Given the five stop messages of the measurement of 15 November — «Стой», «жди конца набора», «жди соседа», «Остановись на логической точке» and «Не сейчас» as a free answer to a menu
 When the hook on Stop reads each turn
