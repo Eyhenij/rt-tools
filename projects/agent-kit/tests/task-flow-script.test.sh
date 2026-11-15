@@ -391,5 +391,98 @@ console.log(String(open().approval('RT-1-x')));
 " 2>&1)"
 report "local: SC-AK-1371 — метка не JSON читается отсутствующей" "$got" 'null'
 
+# --- Шаг плана: команда из коммита плана, метка, предел, команда работы, папка -------------------
+TF_G=(git -c user.name=t -c user.email=t@example.test -c commit.gpgsign=false)
+(
+    cd "$TF_DIR" || exit 1
+    git -c init.defaultBranch=main init -q step-repo
+    cd step-repo || exit 1
+    "${TF_G[@]}" commit -q --allow-empty -m start
+    git update-ref refs/remotes/origin/main HEAD
+    git checkout -q -b RT-1-x
+    mkdir -p docs/tasks/RT-1-x
+    cat > docs/tasks/RT-1-x/plan.md <<'PLAN'
+# Plan
+
+## Stages
+
+### 1. Первый
+
+- **Steps:**
+    1. Совпасть
+       Check: `cat docs/tasks/RT-1-x/probe.txt` → `один`
+    2. Не совпасть
+       Check: `echo два` → `три`
+    3. Ждать дольше предела
+       Check: `sleep 5` → exit 0
+    4. Сделать работу проверкой
+       Check: `git push` → exit 0
+    5. Ждать формы, которой нет
+       Check: `true` → примерно ноль
+- **Readiness sign:** шаги измерены
+PLAN
+    printf 'один\n' > docs/tasks/RT-1-x/probe.txt
+    printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [x] 1.2 Не совпасть\n- [>] 1.3 Ждать дольше предела\n- [ ] 1.4 Сделать работу проверкой\n- [ ] 1.5 Ждать формы, которой нет\n' > docs/tasks/RT-1-x/progress.md
+    git add -A
+    "${TF_G[@]}" commit -q -m plan
+)
+TF_STEP="$TF_DIR/step-repo"
+TF_MARK="$TF_STEP/.git/rt-kit/steps/RT-1-x"
+tf_step() {
+    local out code
+    out="$(cd "$TF_STEP" && node "$TESTS/../assets/checks/task-flow-script.mjs" step "$@" 2>&1)"
+    code=$?
+    printf '%s code=%s' "$out" "$code"
+}
+
+# SC-AK-1403, SC-AK-1409 — совпало: метка записана, код 0, строка кончается вердиктом
+got="$(tf_step 1.1)"
+report "step: SC-AK-1403 — совпало, код 0" "$got" 'ожидалось `один` · получено один · совпало code=0'
+report "step: SC-AK-1403 — метка шага записана" \
+    "$(node -e "const m=require('$TF_MARK/1.1.json');console.log(m.matched, m.step, m.branch, m.line, m.plan.length)" 2>&1)" 'true 1.1 RT-1-x один 16'
+report "step: SC-AK-1409 — строка кончается «· совпало»" "$(printf '%s' "$got" | grep -cE '· совпало code=0$')" 1
+
+# SC-AK-1404, SC-AK-1409 — не совпало: метки нет, код 1
+got="$(tf_step 1.2)"
+report "step: SC-AK-1404 — не совпало, код 1" "$got" 'ожидалось `три` · получено два · не совпало code=1'
+report "step: SC-AK-1404 — метки нет" "$(test -e "$TF_MARK/1.2.json" && echo есть || echo нет)" 'нет'
+report "step: SC-AK-1409 — строка кончается «· не совпало»" "$(printf '%s' "$got" | grep -cE '· не совпало code=1$')" 1
+
+# SC-AK-1405 — предел вышел: не совпало
+got="$(cd "$TF_STEP" && node --input-type=module -e "
+import { buildModel } from '$TESTS/../assets/checks/flow-model.mjs';
+import { flowPath, openSources } from '$TESTS/../assets/checks/task-flow-script.mjs';
+import { measureStep, stepLine } from '$TESTS/../assets/checks/flow-step.mjs';
+import { dirname } from 'node:path';
+const path = flowPath();
+const model = buildModel(path);
+const source = await openSources(model, dirname(path));
+console.log(stepLine(measureStep({ git: source('git'), steps: source('steps'), marks: source('marks') }, model, '1.3', 300)));
+" 2>&1)"
+report "step: SC-AK-1405 — предел вышел — не совпало" "$got" 'ожидалось exit 0 · получено the limit of 0.3 s ran out · не совпало'
+
+# SC-AK-1406 — команда работы проверкой быть не может
+got="$(tf_step 1.4)"
+report "step: SC-AK-1406 — команда работы как проверка отказана" "$(printf '%s' "$got" | grep -c 'is a command of the work: git push.* code=1')" 1
+got="$(tf_step 1.5)"
+report "step: SC-AK-1406 — форма ожидаемого не распознана — отказ до запуска" "$(printf '%s' "$got" | grep -c 'is in no form: примерно ноль.* code=1')" 1
+
+# SC-AK-1407 — файл папки отличается от коммита плана
+printf 'два\n' > "$TF_STEP/docs/tasks/RT-1-x/probe.txt"
+got="$(tf_step 1.1)"
+report "step: SC-AK-1407 — файл папки правлен после плана — отказ" \
+    "$(printf '%s' "$got" | grep -c 'differs from the commit of the plan: docs/tasks/RT-1-x/probe.txt code=1')" 1
+printf 'один\n' > "$TF_STEP/docs/tasks/RT-1-x/probe.txt"
+printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [x] 1.2 Не совпасть\n- [x] 1.3 Ждать дольше предела\n' > "$TF_STEP/docs/tasks/RT-1-x/progress.md"
+report "step: SC-AK-1407 — ход работы правится и после плана" "$(tf_step 1.1 | grep -c '· совпало code=0')" 1
+
+# SC-AK-1408 — step --done перемеряет все [x]
+rm -f "$TF_MARK/1.1.json"
+printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [x] 1.2 Не совпасть\n- [>] 1.3 Ждать дольше предела\n' > "$TF_STEP/docs/tasks/RT-1-x/progress.md"
+got="$(tf_step --done)"
+report "step: SC-AK-1408 — step --done меряет оба [x] и выходит с кодом 1" \
+    "$(printf '%s' "$got" | tr '\n' '#')" '1.1 ожидалось `один` · получено один · совпало#1.2 ожидалось `три` · получено два · не совпало code=1'
+report "step: SC-AK-1408 — метка шага 1.1 записана заново" "$(test -e "$TF_MARK/1.1.json" && echo есть || echo нет)" 'есть'
+
 rm -rf "$TF_DIR"
 suite_result "сценарий task flow"

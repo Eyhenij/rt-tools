@@ -65,6 +65,8 @@ export function gitDouble({ branch = '', commits = [], main = [], local = [] }) 
         everExisted: (path) => snapshots.some((s) => Object.keys(s).some((k) => inside(path, k))) || main.some((k) => inside(path, k)),
         existsAtHead: (path) => Object.keys(snapshots.at(-1) ?? {}).some((k) => inside(path, k)),
         branches: (prefix) => local.filter((b) => b.name.startsWith(prefix)),
+        head: () => commits.at(-1)?.sha ?? '',
+        filesAt: (dir, sha) => Object.keys(at(sha) ?? {}).filter((k) => inside(dir, k)),
     };
 }
 

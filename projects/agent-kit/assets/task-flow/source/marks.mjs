@@ -3,14 +3,18 @@
  * common directory of git, `rt-kit/` under `git rev-parse --git-common-dir`. Every working copy of
  * the tree sees the same marks: an approval given in one copy holds in another.
  *
- *   approval(branch)      the approval mark of the plan of the branch: { answer, plan }, or null
- *   step(branch, number)  the mark of a step of the plan: { matched, … }, or null
+ *   approval(branch)              the approval mark of the plan of the branch: { answer, plan }, or null
+ *   step(branch, number)          the mark of a step of the plan: { matched, … }, or null
+ *   writeApproval(branch, mark)   writes the approval mark
+ *   writeStep(branch, number, mark)  writes the mark of a step
+ *   dropStep(branch, number)      removes the mark of a step, if one lies
  *
- * A mark that does not parse as JSON reads as absent: a broken mark never reads as a met exit.
+ * A mark that does not parse as JSON reads as absent: a broken mark never reads as a met exit. Only
+ * the engine writes the marks.
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
-import { isAbsolute, join } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { dirname, isAbsolute, join } from 'node:path';
 
 /** The directory of the marks, or null outside a repository. */
 export function marksDir() {
@@ -29,10 +33,24 @@ const readMark = (file) => {
     }
 };
 
+const writeMark = (file, mark) => {
+    if (!file) throw new Error('source.marks: no repository, no place for a mark');
+    mkdirSync(dirname(file), { recursive: true });
+    writeFileSync(file, `${JSON.stringify(mark, null, 2)}\n`);
+};
+
 export function open() {
     const dir = marksDir();
+    const approvalFile = (branch) => dir && join(dir, 'approval', `${branch}.json`);
+    const stepFile = (branch, number) => dir && join(dir, 'steps', branch, `${number}.json`);
     return {
-        approval: (branch) => readMark(dir && join(dir, 'approval', `${branch}.json`)),
-        step: (branch, number) => readMark(dir && join(dir, 'steps', branch, `${number}.json`)),
+        approval: (branch) => readMark(approvalFile(branch)),
+        step: (branch, number) => readMark(stepFile(branch, number)),
+        writeApproval: (branch, mark) => writeMark(approvalFile(branch), mark),
+        writeStep: (branch, number, mark) => writeMark(stepFile(branch, number), mark),
+        dropStep: (branch, number) => {
+            const file = stepFile(branch, number);
+            if (file) rmSync(file, { force: true });
+        },
     };
 }

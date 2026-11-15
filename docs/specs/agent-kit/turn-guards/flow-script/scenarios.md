@@ -314,3 +314,59 @@ When the engine measures the branch
 Then with the memory the measured state stays «папка-разобрана», and without it the branch would be measured at «эпик-заведён»
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1403 — a matched step writes its mark
+
+Given a plan whose step checks a file of the task folder that holds the expected line
+When the engine measures that step
+Then it prints that the step matched, exits 0 and writes the mark of the step with the fingerprint of the plan
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1404 — an unmatched step leaves no mark
+
+Given a step whose check prints another line than the expected one
+When the engine measures it
+Then it prints that the step did not match, exits 1 and no mark of the step lies
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1405 — a check past its limit does not match
+
+Given a step whose check runs longer than the limit
+When the engine measures it
+Then the step does not match, and the line names the limit that ran out
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1406 — a command of the work is never a check
+
+Given a step whose check is a push, and a step whose expected result is in no form
+When the engine measures them
+Then both are refused before anything runs, and the refusal names the command or the expected text
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1407 — a file of the task folder edited after the plan refuses the step
+
+Given a file of the task folder changed after the commit of the plan, and then only the progress changed
+When the engine measures a step
+Then the first is refused naming the file, and the progress does not refuse it
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1408 — the done steps are measured again
+
+Given a progress that marks two steps done, one matching and one not, with the mark of the first removed
+When the engine measures the done steps
+Then it prints a line per step led by its number, exits 1 and writes the mark of the first again
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1409 — the line of a step ends with its verdict
+
+Given a matched step and an unmatched one
+When the engine measures them
+Then each line ends with «· совпало» or «· не совпало»
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.

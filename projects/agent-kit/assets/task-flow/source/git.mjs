@@ -14,6 +14,8 @@
  *                       main branch on the server
  *   existsAtHead(path)  the path stands in the head commit
  *   branches(prefix)    [{ name, sha }] — the local branches whose name begins so
+ *   head()              the sha of the head commit
+ *   filesAt(dir, sha)   [path] — the files under the directory at that commit
  */
 import { spawnSync } from 'node:child_process';
 
@@ -77,5 +79,8 @@ export function open() {
                     return { name, sha };
                 });
         },
+        head: () => (run(['rev-parse', 'HEAD']) ?? '').trim(),
+        filesAt: (dir, sha) =>
+            (run(['ls-tree', '-r', '--name-only', sha, '--', dir.replace(/\/$/, '')]) ?? '').split('\n').filter(Boolean),
     };
 }

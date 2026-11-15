@@ -50,6 +50,10 @@ There is no interface: the description is read by the engine and by the executor
 - **The measured state is the first exit known to be unmet; an exit the hosting could not answer is passed over, and with no unmet exit it releases the turn with its reason.**
 - **The engine measures the checked-out branch by the measurers of the description over its sources and prints the state, its action and the exits read, as lines or as one JSON object.**
 - **A branch past a state is not measured below it: a taken-apart folder, an epic merged into the main branch and an epic branch removed on the server keep the measured state.**
+- **A step is measured by the check the commit of the plan wrote; a matched step writes its mark, and an unmatched one drops it.**
+- **A step is refused when its check is a command of the work, its expected result is in no form, or a file of the task folder differs from the commit of the plan.**
+- **A check runs with a limit of 540 seconds, and past it the step does not match.**
+- **The command for the done steps measures again every step the progress marks done.**
 - **The epic of the work is the one the task card names, and its plan lies in the plans directory.**
 - **Exit 2 is met by the epic branch on the server or merged into the main branch, with the epic card out of the first column or closed.**
 - **Exit 4 is met by the task card out of the first column or closed, and by the commit that added the task folder.**
@@ -72,7 +76,10 @@ that the steps of the plan and of the progress match is the subdomain `docs/spec
 The engine is called with a command: `states` prints the states of the scenario in their order, a
 line each; `measure` prints the measured state of the checked-out branch, its action and pattern,
 and the exits read up to it; `measure --json` prints the same as one object with the fields
-`state`, `index`, `reason`, `exits`, `action` and `pattern`. A description that does not build is named with its reason and code 1. A measurer gets
+`state`, `index`, `reason`, `exits`, `action` and `pattern`. `step <N.M>` runs the check of that
+step and prints `ожидалось … · получено … · совпало` with code 0, or `… · не совпало` with code 1;
+a refused step prints `step: <reason>` with code 1. `step --done` prints the same for every done
+step, each line led by its number. A description that does not build is named with its reason and code 1. A measurer gets
 its data through its ports and the data of the description; a source reads git, the working copy,
 the hosting, the marks and the messages of the owner.
 
@@ -125,3 +132,4 @@ None.
 - 2026-11-15 — the language moved to the subdomain `language/`; here stay the engine, its sources
   and its measurers.
 - 2026-11-15 — the engine measures the checked-out branch by the command `measure`.
+- 2026-11-15 — the engine measures a step of the plan by its check and writes its mark.
