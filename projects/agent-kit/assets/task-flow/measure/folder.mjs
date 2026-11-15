@@ -1,9 +1,16 @@
 /**
- * The measurer «measure.folder» of the task flow description. A factory named by a
- * capability takes its ports and returns the reader; until the step that writes it, the factory
- * throws, so an unmeasured exit is never read as met.
+ * The measurer «measure.folder» — exit 9: one commit of the branch removed the task folder and added
+ * a record to the description of the past.
  */
+import { taskFolder, under } from './text.mjs';
 
 export function archived({ git }) {
-    throw new Error('Not implemented: measure.folder.archived (git)');
+    return () => {
+        const branch = git.branch();
+        if (!branch) return false;
+        const folder = taskFolder(branch);
+        return git
+            .commits()
+            .some((c) => c.deleted.some((p) => under(p, folder)) && c.added.some((p) => under(p, 'docs/archive')));
+    };
 }

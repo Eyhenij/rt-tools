@@ -282,3 +282,115 @@ When the model is built
 Then the cases come by their order, the repeat names both cases, and the fraction is refused
 
 Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1365 — exit 1 is met by the grill of the branch
+
+Given the grill of the branch in the working copy, the same grill only in the history, and a grill left as the sample wrote it
+When exit 1 is measured
+Then it is met by the first two and unmet by the sample
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1366 — exit 1 is met by a draft grill
+
+Given a draft folder in the working copy with an answered grill, and one without a grill
+When exit 1 is measured on a branch without a task number
+Then it is met by the first and unmet by the second
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1367 — exit 3 is met by the agreement directory from the history
+
+Given a plan naming a directory under proposed/ that only the main branch holds in its history, and one naming a directory that never existed
+When exit 3 is measured
+Then it is met by the first and unmet by the second
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1368 — exit 3 is met by the reason there is no agreement
+
+Given a plan with `**Behaviour:** unchanged — <reason>`, a grill with `**Описание фичи:** не нужно — <reason>`, and a reason left as the sample wrote it
+When exit 3 is measured
+Then it is met by the first two and unmet by the sample
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1369 — exit 5 is met when the approval mark lies
+
+Given a plan the branch added with checks of known forms and an approval mark beginning with «Одобряю», and the same plan with a check of an unknown form
+When exit 5 is measured
+Then it is met by the first and unmet by the second
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1370 — exit 5 is unmet without the mark, and the work stays in «задача-взята»
+
+Given a plan the branch added and no approval mark
+When exit 5 is measured
+Then it is unmet
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1371 — an approval given in another working copy holds
+
+Given an approval mark written in the common directory from one working copy, and then a mark that does not parse
+When the marks are read from the second working copy
+Then the first is seen, the second reads as absent
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1372 — the answer «переделай» to the approval menu gives no mark
+
+Given an approval mark whose answer asks for rework
+When exit 5 is measured
+Then it is unmet
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1373 — exit 6 is met by exactly one step going on
+
+Given versions of the progress with one step going on, with two, and with a renamed step
+When exit 6 is measured
+Then only the first meets it
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1374 — a done step without its mark does not count
+
+Given a progress with every step done, a green mark for one step, then for both
+When exit 7 is measured
+Then it is unmet with one mark and met with both
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1375 — a plan without check lines is judged by the done marks
+
+Given a plan without a single check line and a progress with every step done
+When exit 7 is measured without step marks
+Then it is met
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1376 — exit 8 measures only the rows marked edited
+
+Given a footprint with a marked row and an unmarked one, and a change under one of them
+When exit 8 is measured
+Then it is met when the marked row changed and unmet when only the unmarked one did
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1377 — a plan without marked rows is judged by proposed/ alone
+
+Given a plan whose rows carry no mark and whose rules were not changed, and a plan whose agreement directory under proposed/ still stands in the head
+When exit 8 is measured
+Then it is met by the first and unmet by the second
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1378 — exit 9 is met by a record in the archive
+
+Given a commit that removed the task folder and added a record to the archive, and one that only removed the folder
+When exit 9 is measured
+Then it is met by the first and unmet by the second
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.

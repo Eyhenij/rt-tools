@@ -10,6 +10,7 @@
     marks: { open: {} },
     owner: { open: {} },
     session: { open: {} },
+    steps: { open: {} },
   },
 
   measure: {
@@ -22,10 +23,10 @@
     },
     agreement: { named: { git: source.git, tree: source.tree } },
     task: { taken: { git: source.git, host: source.host } },
-    plan: { approved: { git: source.git, marks: source.marks } },
+    plan: { approved: { git: source.git, marks: source.marks, steps: source.steps } },
     progress: {
-      mirrors: { git: source.git, tree: source.tree },
-      done: { tree: source.tree, marks: source.marks },
+      mirrors: { git: source.git, steps: source.steps },
+      done: { git: source.git, tree: source.tree, marks: source.marks, steps: source.steps },
     },
     footprint: { touched: { git: source.git } },
     folder: { archived: { git: source.git } },

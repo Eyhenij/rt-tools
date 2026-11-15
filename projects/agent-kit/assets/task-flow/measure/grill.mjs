@@ -1,9 +1,21 @@
 /**
- * The measurer «measure.grill» of the task flow description. A factory named by a
- * capability takes its ports and returns the reader; until the step that writes it, the factory
- * throws, so an unmeasured exit is never read as met.
+ * The measurer «measure.grill» — exit 1: the grill of the branch, or of a draft in the working copy,
+ * holds the owner's request as a quote and an answer. The grill of the branch is read from the
+ * working copy, and from the history once the folder is taken apart.
  */
+import { grillAnswered, taskFolder } from './text.mjs';
 
 export function written({ git, tree }) {
-    throw new Error('Not implemented: measure.grill.written (git, tree)');
+    return () => {
+        const texts = [];
+        const branch = git.branch();
+        if (branch) {
+            const path = `${taskFolder(branch)}/grill.md`;
+            texts.push(tree.read(path) ?? git.lastVersion(path));
+        }
+        for (const name of tree.list('docs/tasks')) {
+            if (name.startsWith('_draft-')) texts.push(tree.read(`docs/tasks/${name}/grill.md`));
+        }
+        return texts.some((text) => typeof text === 'string' && grillAnswered(text));
+    };
 }

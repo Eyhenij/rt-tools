@@ -1,9 +1,24 @@
 /**
- * The measurer «measure.agreement» of the task flow description. A factory named by a
- * capability takes its ports and returns the reader; until the step that writes it, the factory
- * throws, so an unmeasured exit is never read as met.
+ * The measurer «measure.agreement» — exit 3: the grill or the plan of the branch names the directory
+ * of the product agreement, found on disk or in the history, or the reason there is none. The forms
+ * of the line are those the task folder sample writes: `**Описание фичи:**`, `**Draft:**` and
+ * `**Spec:**` with a path, `**Описание фичи:** не нужно — <reason>` and
+ * `**Behaviour:** unchanged — <reason>`.
  */
+import { agreementLines, taskFolder } from './text.mjs';
 
 export function named({ git, tree }) {
-    throw new Error('Not implemented: measure.agreement.named (git, tree)');
+    return () => {
+        const branch = git.branch();
+        if (!branch) return false;
+        for (const file of ['grill.md', 'plan.md']) {
+            const path = `${taskFolder(branch)}/${file}`;
+            const text = tree.read(path) ?? git.lastVersion(path);
+            if (typeof text !== 'string') continue;
+            const { paths, reasons } = agreementLines(text);
+            if (reasons.length > 0) return true;
+            if (paths.some((p) => tree.exists(p) || git.everExisted(p))) return true;
+        }
+        return false;
+    };
 }
