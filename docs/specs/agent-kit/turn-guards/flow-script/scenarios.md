@@ -290,3 +290,27 @@ When the copy is measured
 Then the first is outside the scenario, the task branch is not
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1400 — a branch whose folder is taken apart is not measured below state 10
+
+Given a task branch whose history holds the grill, the plan, the done progress and the commit that took the folder apart, with no folder in the working copy
+When the engine measures the branch
+Then exits 1–9 are met from the history, and the measured state is «папка-разобрана»
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1401 — the scenario is over after the epic merges into the main branch
+
+Given the same branch, its PR merged into the epic branch, the epic merged into the main branch and both cards closed
+When the engine measures the branch
+Then every exit is met, and the reason is the end of the scenario
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1402 — an epic branch removed on the server keeps exit 2 by memory
+
+Given the same branch with the epic branch removed on the server, once with exit 2 kept before and once without
+When the engine measures the branch
+Then with the memory the measured state stays «папка-разобрана», and without it the branch would be measured at «эпик-заведён»
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.

@@ -238,8 +238,8 @@ Covered: `projects/agent-kit/tests/flow-language.test.sh`.
 ### SC-AK-1515 — a state exit built from a condition without code is measured
 
 Given a state whose exit is `any` over two measurers, one under `not`
-When the exit is measured by the results, once with a result absent
-Then it is met by the results, and an absent result counts as unmet
+When the engine measures the state with the measurers answering, once with a result absent
+Then the exit is met by the answers, and an absent result counts as unmet
 
 Covered: `projects/agent-kit/tests/flow-language.test.sh`.
 

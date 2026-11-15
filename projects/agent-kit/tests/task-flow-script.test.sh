@@ -283,6 +283,74 @@ out('copy: SC-AK-1399 — ветка без номера и без эпика �
 out('copy: SC-AK-1399 — ветка задачи в сценарии', String(copy.outOfScenario(sources({ branch: 'RT-11-task', host: { issues: { 11: { open: true, status: 'in-progress', epic: '10' } } } }))()), 'false');
 JS
 
+# --- Монотонность: дерево после состояния N не меряется ниже N ------------------------------------
+tf_run <<'JS'
+import { gitDouble, treeDouble, hostDouble, ownerDouble, marksDouble } from './flow-doubles.mjs';
+import { buildModel } from '../assets/checks/flow-model.mjs';
+import { measureStates, openReaders } from '../assets/checks/task-flow-script.mjs';
+import { open as openSteps } from '../assets/task-flow/source/steps.mjs';
+import { dirname } from 'node:path';
+
+const path = new URL('../assets/task-flow/flow.js', import.meta.url).pathname;
+const model = buildModel(path);
+const out = (label, got, want) => console.log(`${label}|${got}|${want}`);
+const B = 'RT-12-flow';
+const E = 'RT-10-epic';
+const F = `docs/tasks/${B}`;
+const EPIC = (state) => `# Эпик\n\n**Эпик:** RT-10 · **Ветка эпика:** \`${E}\`\n\n| # | Задача | Состояние |\n| --- | --- | --- |\n| 1 | RT-12 — задача | ${state} |\n`;
+const GRILL = '# Разбор\n\n## Просьба владельца\n\n> сделай\n\n## Вопросы и ответы\n\n**Как?**\nТак.\n';
+const PLAN = [
+    '# План', '', `**Task:** RT-12 · **Branch:** ${B}`, '**Behaviour:** unchanged — правка правил', '',
+    '## След задачи', '', '| Что | Где |', '| --- | --- |', '| Rules (правится) | `docs/rules/a.md` |', '',
+    '## Этапы', '', '### 1. Первый', '', '- **Шаги:**', '    1. Сделать раз', '       Проверка: `true` → exit 0', '',
+].join('\n');
+const progress = (mark) => `# Ход работы\n\n## Шаги\n\n- [${mark}] 1.1 Сделать раз\n`;
+
+/** A task whose folder is taken apart: every local exit through 9 lies in its history, none in the copy. */
+const history = [
+    { sha: 'g', files: { [`${F}/grill.md`]: GRILL } },
+    { sha: 'p', files: { [`${F}/plan.md`]: PLAN, [`${F}/progress.md`]: progress('>') } },
+    { sha: 'w', files: { 'docs/rules/a.md': 'правка', [`${F}/progress.md`]: progress('x') } },
+    { sha: 'z', files: { [`${F}/grill.md`]: null, [`${F}/plan.md`]: null, [`${F}/progress.md`]: null, 'docs/archive/rt-12.md': 'запись' } },
+];
+const epicCard = { open: true, status: 'in-progress', epic: null };
+const taskCard = { open: true, status: 'in-review', epic: '10' };
+const measure = async ({ host, row = 'идёт' }) => {
+    const given = {
+        git: gitDouble({ branch: B, commits: history, local: [{ name: B, sha: 'z' }] }),
+        tree: treeDouble({ 'docs/plans/epic.md': EPIC(row) }),
+        host: hostDouble(host),
+        owner: ownerDouble([]),
+        steps: openSteps(),
+        marks: marksDouble({ branch: B, approval: { answer: 'Одобряю план RT-12', plan: 'p' }, steps: { '1.1': { matched: true } } }),
+    };
+    return measureStates(model, await openReaders(model, dirname(path), given));
+};
+
+// SC-AK-1400 — после разбора папки выходы 1–9 читаются из истории
+const taken = await measure({ host: { issues: { 10: epicCard, 12: taskCard }, remote: [{ name: E, sha: 'e1' }] } });
+out('monotone: SC-AK-1400 — после разбора папки состояние не ниже 10', `${taken.index} ${taken.state}`, '10 папка-разобрана');
+out('monotone: SC-AK-1400 — выходы 1–9 выполнены по истории', String(Object.values(taken.exits).slice(0, 9).every((v) => v === true)), 'true');
+
+// SC-AK-1401 — эпик влит в main: сценарий кончен
+const mergedEpic = {
+    issues: { 10: { open: false, status: 'done', epic: null }, 12: { open: false, status: 'done', epic: '10' } },
+    contains: ['z'],
+    pulls: { [B]: [{ number: 7, state: 'MERGED', base: E, reviewers: ['owner'] }], [E]: [{ number: 9, state: 'MERGED', base: 'main', reviewers: ['owner'] }] },
+    merged: [{ number: 7, head: B, headRefOid: 'z', base: E }],
+    landed: { main: ['z'] },
+};
+const over = await measure({ host: mergedEpic, row: 'влито' });
+out('monotone: SC-AK-1401 — после слияния эпика в main — конец сценария', `${over.index} ${over.reason}`, '14 the end of the scenario');
+
+// SC-AK-1402 — ветка эпика удалена на сервере: выход 2 держится памятью
+const removed = { issues: { 10: epicCard, 12: taskCard } };
+const kept = await measure({ host: { ...removed, met: ['exit2:10'] } });
+out('monotone: SC-AK-1402 — ветка эпика удалена, выход 2 из памяти — состояние не ниже 10', `${kept.index} ${kept.exits.epic}`, '10 true');
+const forgotten = await measure({ host: removed });
+out('monotone: SC-AK-1402 — без памяти та же ветка мерилась бы на выходе 2', `${forgotten.index} ${forgotten.state}`, '2 эпик-заведён');
+JS
+
 # --- SC-AK-1381 — память выполненного выхода на настоящем источнике переживает коммит ------------
 (
     cd "$TF_DIR" || exit 1

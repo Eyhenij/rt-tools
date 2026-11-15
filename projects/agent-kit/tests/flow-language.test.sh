@@ -334,11 +334,20 @@ report "cond: SC-AK-1514 — источник вместо измерителя"
     "$(fl_model_refused_with "$d" '«source.git» is not a measurer capability')" 'да'
 
 # --- SC-AK-1515 — выход состояния, собранный из условия без JS, меряется движком -----------------
+# Состояние, которое мерит команда `measure` движка, когда измерители отвечают значениями:
+# $1 — дерево, $2 — ответ `measure.plan.approved`, $3 — ответ `measure.owner.a`.
+fl_measure() {
+    printf 'export function approved({ git, marks }) {\n    return () => [git, marks] && %s;\n}\n' "$2" > "$1/measure/plan.mjs"
+    printf 'export const a = () => () => %s;\nexport const b = () => () => true;\nexport const c = () => () => true;\n' "$3" > "$1/measure/owner.mjs"
+    node "$CHECKS/task-flow-script.mjs" measure --json --flow "$1/flow.js" 2>&1 |
+        node -e "let s='';process.stdin.on('data',(c)=>(s+=c)).on('end',()=>{const r=JSON.parse(s);console.log(r.index+' '+r.state)})"
+}
+
 d="$(fl_cond '{ any: [measure.plan.approved, { not: measure.owner.a }] }')"
-report "cond: SC-AK-1515 — выход из условия меряется по результатам" \
-    "$(fl_exit "$d" '{"measure.plan.approved":false,"measure.owner.a":false}')" 'true'
+report "cond: SC-AK-1515 — выход из условия меряется движком по ответам измерителей" \
+    "$(fl_measure "$d" false false)" '2 null'
 report "cond: SC-AK-1515 — отсутствующий результат не считается выполненным" \
-    "$(fl_exit "$d" '{"measure.owner.a":true}')" 'false'
+    "$(fl_measure "$d" undefined true)" '1 задача-взята'
 
 # --- Данные описания: слова, формы ожидаемого, порядок случаев отпуска ---------------------------
 

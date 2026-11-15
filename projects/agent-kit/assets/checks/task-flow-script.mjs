@@ -6,6 +6,9 @@
  *
  *   node task-flow-script.mjs states   the states of the scenario in their order, a line each:
  *                                      `<n>. <title> — <action> (<pattern>)`
+ *   node task-flow-script.mjs measure  the measured state of the checked-out branch, its action and
+ *                                      the exits read up to it; `--json` prints one object with
+ *                                      `state`, `index`, `reason`, `exits`, `action`, `pattern`
  *
  * A description that does not build is named with its reason, and the engine exits 1: a scenario
  * read from a broken description would measure what nobody wrote.
@@ -72,18 +75,78 @@ export function measureStates(model, read) {
     return { state: null, index: model.states.length + 1, reason: 'the end of the scenario', exits };
 }
 
+/**
+ * The reader of measurer results over the sources of a description. Every module is loaded first,
+ * so the measurement itself stays synchronous. A source is opened when a measurer first asks for it:
+ * a source not written yet throws only where an exit needs it. `given` maps a source name to an
+ * opened source and replaces its module.
+ */
+export async function openReaders(model, base, given = {}) {
+    const modules = {};
+    for (const m of [...model.sources, ...model.measures]) {
+        if (m.section === 'source' && m.entry in given) continue;
+        modules[`${m.section}.${m.entry}`] = await import(pathToFileURL(join(base, m.file)).href);
+    }
+    const opened = { ...given };
+    const source = (name) => {
+        if (!(name in opened)) opened[name] = modules[`source.${name}`].open();
+        return opened[name];
+    };
+    const data = { words: model.words, expect: model.expect };
+    const caps = new Map(model.measures.map((m) => [m.entry, m.caps]));
+    return (name) => {
+        const [, entry, cap] = name.split('.');
+        const ports = Object.fromEntries(Object.entries(caps.get(entry)[cap]).map(([port, ref]) => [port, source(ref.path[1])]));
+        return modules[`measure.${entry}`][cap](ports)(data);
+    };
+}
+
+const MARK = { true: 'met', false: 'unmet', unknown: 'unknown' };
+
+/** The lines of `measure`: the measured state, what it waits for and the exits read. */
+export function measureLines(model, result) {
+    const total = model.states.length;
+    const lines = [];
+    if (result.state === null) lines.push(`state: the end of the scenario (${total} of ${total} met)`);
+    else {
+        const state = model.states[result.index - 1];
+        lines.push(`state: ${result.state} (${result.index} of ${total})`);
+        lines.push(`next: ${state.action ?? ''} (${state.pattern ?? ''})`);
+        if (result.reason) lines.push(`reason: ${result.reason}`);
+    }
+    for (const [i, s] of model.states.entries()) {
+        if (!(s.key in result.exits)) break;
+        lines.push(`  ${i + 1}. ${s.title}: ${MARK[String(result.exits[s.key])]}`);
+    }
+    return lines;
+}
+
+/** The JSON of `measure --json`: the measured state with its action and pattern. */
+export function measureJson(model, result) {
+    const state = result.state === null ? null : model.states[result.index - 1];
+    return { ...result, action: state?.action ?? null, pattern: state?.pattern ?? null };
+}
+
+const USAGE = 'usage: node task-flow-script.mjs states|measure [--json] [--flow <flow.js>]';
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
     const args = process.argv.slice(2);
     const at = args.indexOf('--flow');
     const given = at >= 0 ? args.splice(at, 2)[1] : undefined;
-    const [command] = args;
-    if (command !== 'states') {
-        console.error('usage: node task-flow-script.mjs states [--flow <flow.js>]');
+    const json = args.includes('--json');
+    const [command] = args.filter((a) => a !== '--json');
+    if (command !== 'states' && command !== 'measure') {
+        console.error(USAGE);
         process.exit(2);
     }
     try {
-        const model = buildModel(flowPath(given));
-        console.log(stateLines(model).join('\n'));
+        const path = flowPath(given);
+        const model = buildModel(path);
+        if (command === 'states') console.log(stateLines(model).join('\n'));
+        else {
+            const result = measureStates(model, await openReaders(model, dirname(path)));
+            console.log(json ? JSON.stringify(measureJson(model, result)) : measureLines(model, result).join('\n'));
+        }
     } catch (error) {
         if (error instanceof FlowSyntaxError) {
             console.log(`flow syntax: ${error.message}`);
