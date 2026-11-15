@@ -5,8 +5,8 @@
 - **State:** `задача-взята`
 - **Stage:** план ещё не записан
 - **Done:** разбор закрыт двумя ответами владельца. Задача RT-3329 заведена в эпике RT-3302 и стоит в колонке «In progress». Ветка `RT-3329-task-flow-scenario` взята от `RT-3276-conversation-checks` каскадом. `main` слит в ветку эпика, ветка эпика — в RT-3276
-- **Next step:** записать план — след задачи, этапы, у каждого шага команда и ожидаемый результат; затем роли `product-strategist` и `goal-critic`, и план владельцу на одобрение
-- **Uncommitted:** папка задачи
+- **Next step:** собрать выводы ролей `product-strategist`, `goal-critic`, `project-manager` по черновику плана, поправить его, показать владельцу и спросить одобрение меню; после одобрения записать `plan.md`, закоммитить и начать этап 1
+- **Uncommitted:** строка «Описание фичи» в `grill.md`. Черновик плана и черновик движка лежат в папке сессии, вне дерева: `scratchpad/plan-draft.md`, `scratchpad/proto/task-flow-script.mjs` и `.json`, `scratchpad/proto/turn-judge.md`. Черновик движка меряет все 13 состояний этой ветки за 0,4 с из кэша и 3,8 с с сетью
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
