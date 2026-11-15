@@ -1,7 +1,8 @@
-// rt-kit v0.37.0 · task-flow/measure/session.mjs · af8b9990bbde · правится надстройкой, не здесь
+// rt-kit v0.37.0 · task-flow/measure/session.mjs · 4466df13f044 · правится надстройкой, не здесь
 /**
  * The measurer «measure.session» — what this session did: a write to the tree, a role it runs as, a
- * menu of a refusal that did not reach the owner, and a step another check forbids.
+ * menu of a refusal that did not reach the owner, a step another check forbids, and a stop after a
+ * refusal of a stop with no call in between.
  */
 /** The tools that edit a file. */
 const EDIT_TOOLS = new Set(['Edit', 'Write', 'MultiEdit', 'NotebookEdit']);
@@ -52,6 +53,15 @@ export function menuLost({ session }) {
  * same reason, and no call wrote to the tree after the first of them. Answers the name of the guard,
  * or false — the exit check then names the owner's menu about that guard.
  */
+/** The last of the refusals of a stop, the calls and the menus is a refusal of a stop: the move it named was not taken. */
+export function idle({ session }) {
+    return () => {
+        let last = null;
+        for (const event of session.events()) if (event.kind === 'refusal' || event.kind === 'call' || event.kind === 'menu') last = event;
+        return last?.kind === 'refusal';
+    };
+}
+
 export function forbidden({ session }) {
     return ({ words, rules }) => {
         const writes = (event) =>

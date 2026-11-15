@@ -426,3 +426,11 @@ When the forecast replays them
 Then the first stop is held and the second released, the quiet session is released, the shell write is refused by the guard, and the count is per thousand calls
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1550 — the owner's menu ends a series of stops in the forecast
+
+Given a held stop whose refusal names the owner's menu, then stops with no call, then a call and a stop
+When the forecast replays the session
+Then the stops before the call are not counted, and the stop after the call is counted again
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.

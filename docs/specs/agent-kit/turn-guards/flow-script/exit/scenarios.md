@@ -210,3 +210,11 @@ When the row of the task is marked «шаг владельца «сделаю с
 Then the edit passes, and the row names the owner's step with that quote
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1551 — a stop with no call after a refusal names the owner's menu
+
+Given a refusal of a stop that named a move, and a second stop with no call after it
+When the hook on Stop measures the session
+Then the session is idle, and the refusal names the owner's menu; a call after the refusal or a first stop is no idle
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.

@@ -38,7 +38,7 @@ not by a person.
 - **A role session with no edit tool ends with its report.**
 - **The silent hosting releases the turn only when the measurement itself stopped on the silence.**
 - **A menu of a refusal that did not reach the owner a second time in a row releases the turn.**
-- **When the next step is the owner's, or another check refused it twice for the same reason, the one move is the owner's menu.**
+- **When the next step is the owner's, another check refused it twice for the same reason, or the executor stopped again with no call after a refusal, the one move is the owner's menu.**
 - **The menu of a refusal carries exactly the options of the description: «отложить RT-N» with the task number, «сделаю сам» and «стоп».**
 - **The owner's choice is carried out: a deferral marks the task «отложено», «сделаю сам» marks the owner's step, and the next unblocked task is taken; «стоп» releases the turn.**
 - **An engine that fails, runs past its limit or cannot be called releases the turn and writes «движок упал» to the journal.**
@@ -128,3 +128,5 @@ None.
 - 2026-11-15 — the subdomain moved under the task flow as an executable scenario: its verdict is
   the engine's. The scenario of the line about a failure at the start of the next turn came here
   from the dispatcher with its number.
+- 2026-11-15 — a stop with no call after a refusal names the owner's menu: an idle series ends
+  instead of holding the turn without a move.

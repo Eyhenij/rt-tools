@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/flow-forecast.mjs · 34b563cef233 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/flow-forecast.mjs · 30e22686a13d · правится надстройкой, не здесь
 /**
  * The forecast of refusals — the engine command `forecast`, run before the hooks are laid out.
  *
@@ -16,14 +16,17 @@
  *   - the end of an epic and the silent hosting release nothing;
  *   - the guard sees the text an edit replaces, not the whole file, and does not judge the state
  *     line: the measured state of that minute is gone;
- *   - a step counts as measured once the session saw the engine match it.
+ *   - a step counts as measured once the session saw the engine match it;
+ *   - a held stop whose refusal names the owner's menu ends the series of stops: until the next call
+ *     the executor asks the menu instead of stopping, so a stop the record holds there is not
+ *     reached.
  */
 import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 import { judgeCall } from './flow-guard.mjs';
-import { releaseCase } from './flow-verdict.mjs';
+import { menuCause, releaseCase } from './flow-verdict.mjs';
 import { callsOf, readCopies, windowOf } from './owner-nudges.mjs';
 
 /** The measurers a record answers. */
@@ -33,6 +36,8 @@ const FROM_RECORD = new Set([
     'measure.session.wrote',
     'measure.session.role',
     'measure.session.menuLost',
+    'measure.session.forbidden',
+    'measure.session.idle',
 ]);
 
 /** The calls the guard of the course of work judges. */
@@ -143,6 +148,7 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
             let branch = null;
             let cwd = null;
             let inStop = false;
+            let menuNamed = false;
             for (const entry of session.entries) {
                 if (entry?.isSidechain) continue;
                 live.entries.push(entry);
@@ -160,6 +166,7 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
                         if (part?.type !== 'tool_use') continue;
                         const use = { name: part.name, input: part.input ?? {} };
                         live.uses.push(use);
+                        menuNamed = false;
                         const step = use.name === 'Bash' ? (use.input.command ?? '').match(STEP_RUN) : null;
                         if (step) pending.set(part.id, step[1]);
                         if (!counted || !GUARDED.has(use.name)) continue;
@@ -204,7 +211,7 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
 
                 if (!isStopEntry(entry) || inStop) continue;
                 inStop = true;
-                if (!counted) continue;
+                if (!counted || menuNamed) continue;
                 counts.stops += 1;
                 const answer = (name) => {
                     if (FROM_RECORD.has(name)) return read(name);
@@ -213,7 +220,9 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
                     if (name === 'measure.pr.handed') return handed(branch, at);
                     return false;
                 };
-                if (!releaseCase(model, answer, { state: 'replayed', reason: null })) counts.held += 1;
+                if (releaseCase(model, answer, { state: 'replayed', reason: null })) continue;
+                counts.held += 1;
+                menuNamed = menuCause(answer) !== null;
             }
         }
     }

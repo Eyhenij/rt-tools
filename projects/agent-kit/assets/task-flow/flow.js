@@ -42,6 +42,7 @@
       role: { session: source.session },
       menuLost: { session: source.session },
       forbidden: { session: source.session },
+      idle: { session: source.session },
     },
     host: { silent: { host: source.host } },
   },

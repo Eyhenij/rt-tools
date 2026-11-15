@@ -431,6 +431,12 @@ out('forecast: SC-AK-1549 — сессия без записи отпущена'
 const shell = await run([owner(B, 'делай RT-7'), use(B, 'Bash', { command: 'echo x > docs/tasks/RT-7-x/progress.md' }), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' })]);
 out('forecast: SC-AK-1549 — запись оболочкой в ход работы — отказ стража', `${shell.judged} ${shell.refused}`, '2 1');
 out('forecast: SC-AK-1549 — отказы стража входят с --guard', perMille({ ...shell, held: 0 }, true), '500.0');
+
+const feedback = (branch) => ({ ...meta(branch), type: 'user', message: { content: 'Stop hook feedback:\nBLOCKED by turn-exit-guard: the scenario is not over' } });
+const loop = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B), feedback(B), say(B), stop(B), feedback(B), say(B), stop(B), feedback(B)]);
+out('forecast: SC-AK-1550 — меню простоя обрывает петлю остановок', `${loop.stops} ${loop.held}`, '2 2');
+const resumed = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B), feedback(B), say(B), stop(B), feedback(B), use(B, 'Read', { file_path: '/t/a.md' }), say(B), stop(B)]);
+out('forecast: SC-AK-1550 — вызов после меню снова считает остановки', `${resumed.stops} ${resumed.held}`, '3 3');
 JS
 
 rm -rf "$TF_DIR"
