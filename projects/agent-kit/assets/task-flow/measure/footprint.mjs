@@ -4,7 +4,7 @@
  * product agreement the grill or the plan names under `proposed/` is gone from the head. A plan
  * without marked rows is judged by `proposed/` alone.
  */
-import { agreementLines, footprintRows, taskFolder, under } from './text.mjs';
+import { agreementLines, footprintRows, taskFolder, touches } from './text.mjs';
 
 export function touched({ git }) {
     return () => {
@@ -20,7 +20,7 @@ export function touched({ git }) {
             .flatMap((c) => [...c.added, ...c.deleted, ...c.modified]);
         const rowsMet = footprintRows(plan)
             .filter((row) => row.edited)
-            .every((row) => row.paths.every((path) => changed.some((file) => under(file, path))));
+            .every((row) => row.paths.every((path) => changed.some((file) => touches(file, path))));
         const texts = [git.lastVersion(`${folder}/grill.md`), plan].filter((t) => typeof t === 'string');
         const proposed = texts.flatMap((t) => agreementLines(t).paths).filter((p) => p.includes('/proposed/'));
         return rowsMet && !proposed.some((p) => git.existsAtHead(p));

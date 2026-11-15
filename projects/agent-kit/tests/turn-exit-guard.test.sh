@@ -221,6 +221,10 @@ lines_before="$(wc -l < "$JOURNAL" 2>/dev/null | tr -d ' ')"
 expect_stop "end: SC-AK-1554 — копия, чья ветка не несёт движка, не судится" \
     "$(input_stop_in "$COPIES/bare" "$(transcript "$(say 'делай')" "$(edited)")")" PASS
 report "end: SC-AK-1554 — такая копия журнал не пишет" "$(wc -l < "$JOURNAL" 2>/dev/null | tr -d ' ')" "$lines_before"
+mkdir -p "$COPIES/side/.claude/agents"
+printf -- '---\nname: side-reader\ntools: Read\n---\nроль\n' > "$COPIES/side/.claude/agents/side-reader.md"
+expect_stop "end: SC-AK-1554 — роль читается в копии сессии" \
+    "$(jq -n --arg p "$(transcript "$(say 'разбери')" "$(edited)")" --arg d "$COPIES/side" '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:false,agent_type:"side-reader"}')" PASS
 expect_stop "end: SC-AK-1554 — главная копия держит ход по-прежнему" \
     "$(input_stop "$(transcript "$(say 'делай')" "$(edited)")")" BLOCK
 git -C "$REPO" worktree remove --force "$COPIES/side" >/dev/null 2>&1

@@ -61,6 +61,16 @@ export function under(file, path) {
     return file === bare || file.startsWith(`${bare}/`);
 }
 
+/**
+ * A changed file touches a footprint path: it lies under the path, or the path names its file or
+ * its directories anywhere in it (`flow.js`, `source/`, `fixtures/turn-replay/`), as a row writes it
+ * after the directory it belongs to.
+ */
+export function touches(file, path) {
+    const bare = path.replace(/\/$/, '');
+    return under(file, path) || `/${file}/`.includes(`/${bare}/`);
+}
+
 /** Two lists of steps name the same steps in the same order. */
 export function sameSteps(planned, got) {
     return planned.length === got.length && planned.every((p, i) => p.number === got[i].number && p.name === got[i].name);

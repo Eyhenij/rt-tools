@@ -98,6 +98,10 @@ out('local: SC-AK-1375 — план без строк проверки суди�
 const after = (rows, changed) => ({ commits: [{ sha: 'p', files: { [`${F}/plan.md`]: PLAN(HEAD, rows) } }, { sha: 'c', files: changed }] });
 out('local: SC-AK-1376 — меряются только строки «(правится)»', run(footprint.touched, after(ROWS, { 'docs/rules/a.md': 'новое' })), 'true');
 out('local: SC-AK-1376 — строка «(правится)» без правки не выход', run(footprint.touched, after(ROWS, { 'docs/laws/b.md': 'новое' })), 'false');
+const BARE = ['| Code (правится) | `projects/kit/` — новый: `flow.js`, `measure/` |'];
+out('local: SC-AK-1557 — голое имя в строке следа находится в любом месте пути', run(footprint.touched, after(BARE, { 'projects/kit/flow.js': 'a', 'tools/kit/measure/a.mjs': 'b' })), 'true');
+out('local: SC-AK-1557 — путь без корня находится отрезком', run(footprint.touched, after(['| Tests (правится) | `fixtures/turn-replay/` |'], { 'projects/kit/tests/fixtures/turn-replay/a.json': 'a' })), 'true');
+out('local: SC-AK-1557 — голое имя без правки — не выход', run(footprint.touched, after(BARE, { 'projects/kit/flow.js': 'a' })), 'false');
 out('local: SC-AK-1377 — план без пометок, Rules без правок — выход', run(footprint.touched, after(['| Rules | `docs/rules/a.md` |'], { 'x.md': 'y' })), 'true');
 out('local: SC-AK-1377 — каталог proposed/ в вершине держит выход', run(footprint.touched, { commits: [{ sha: 'p', files: { [`${F}/plan.md`]: PLAN(DRAFT, ['| Rules | `docs/rules/a.md` |']), 'docs/specs/a/proposed/f/spec.md': 's' } }] }), 'false');
 

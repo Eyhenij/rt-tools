@@ -225,6 +225,7 @@ Given the main checkout on a task branch with open work, and a session that wrot
 When the hook on Stop gets the directory of that worktree in the field `cwd`
 Then a worktree on a branch outside the scenario releases the turn, though the main checkout holds
 And a worktree whose branch does not carry the engine is not judged and writes nothing to the journal
+And a role is read from the agents of the worktree
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 

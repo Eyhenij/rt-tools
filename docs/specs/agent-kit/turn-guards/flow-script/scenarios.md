@@ -107,6 +107,14 @@ Then it is met by the first and unmet by the second
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 
+### SC-AK-1557 — a bare name of a footprint row is found anywhere in the path
+
+Given a marked row that names a directory and then the bare names `flow.js` and `measure/`
+When exit 8 is measured after changes of `projects/kit/flow.js` and `tools/kit/measure/a.mjs`
+Then it is met, and without the change under `measure/` it is not
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
 ### SC-AK-1378 — exit 9 is met by a record in the archive
 
 Given a commit that removed the task folder and added a record to the archive, and one that only removed the folder

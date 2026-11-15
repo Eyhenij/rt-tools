@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · task-flow/measure/text.mjs · 1781e1032063 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · task-flow/measure/text.mjs · 8e505781ac9b · правится надстройкой, не здесь
 /**
  * The reading of the task folder texts shared by the measurers: the sections of the grill, the line
  * of the agreement and the rows of the task footprint. Pure functions of text: the data reaches the
@@ -60,6 +60,16 @@ export function footprintRows(text) {
 export function under(file, path) {
     const bare = path.replace(/\/$/, '');
     return file === bare || file.startsWith(`${bare}/`);
+}
+
+/**
+ * A changed file touches a footprint path: it lies under the path, or the path names its file or
+ * its directories anywhere in it (`flow.js`, `source/`, `fixtures/turn-replay/`), as a row writes it
+ * after the directory it belongs to.
+ */
+export function touches(file, path) {
+    const bare = path.replace(/\/$/, '');
+    return under(file, path) || `/${file}/`.includes(`/${bare}/`);
 }
 
 /** Two lists of steps name the same steps in the same order. */
