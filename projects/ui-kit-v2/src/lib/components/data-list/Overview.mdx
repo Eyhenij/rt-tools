@@ -74,6 +74,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | первая загрузка | `loading`           | вместо списка крутилка                           |
 | дозагрузка      | `fetching`          | строки на месте, поверх них крутилка с подложкой |
 | пустой список   | нет строк и условий | заглушка «Записей нет» вместо таблицы            |
+| ошибка загрузки | `error` не null     | заглушка ошибки с «Повторить» вместо таблицы     |
 | записи отмечены | директивой выбора   | счётчик в полосе действий, флажки в строках      |
 
 ## Доступность
@@ -121,6 +122,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `keyExp`                        | `keyof ENTITY`        | `'id'`         | чем различаются записи                                                                            |
 | `loading`                       | `boolean`             | `false`        | первая загрузка: вместо списка крутилка                                                           |
 | `fetching`                      | `boolean`             | `false`        | дозагрузка: крутилка поверх строк                                                                 |
+| `error`                         | `string \| null`      | `null`         | ошибка загрузки: не null — заглушка ошибки вместо строк, панель и страницы на месте               |
+| `errorDescription`              | `string`              | `''`           | подсказка под ошибкой; пустая — подпись кита                                                      |
 | `isTableRowsClickable`          | `boolean`             | `false`        | отзывается ли строка на нажатие                                                                   |
 | `isFiltersShown`                | `boolean`             | `false`        | показывать ли строку отбора                                                                       |
 | `isRefreshButtonShown`          | `boolean`             | `true`         | показывать ли кнопку обновления                                                                   |
@@ -141,6 +144,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `sortChange`         | новый порядок                                  |
 | `filterChange`       | новый набор условий отбора                     |
 | `refresh`            | нажата кнопка обновления                       |
+| `retry`              | нажата «Повторить» на ошибке загрузки          |
 | `clearFiltersAction` | нажато «снять отбор»                           |
 | `rowClick`           | нажатие на строку: запись и само событие       |
 | `rowDoubleClick`     | двойное нажатие на строку с её записью         |

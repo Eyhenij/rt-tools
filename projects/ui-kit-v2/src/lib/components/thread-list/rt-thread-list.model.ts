@@ -30,6 +30,18 @@ export namespace IRtThreadList {
         $implicit: TRow;
     }
 
+    /** Контекст своего шаблона пустого списка: `filtered` — включён поиск или фильтры. */
+    export interface EmptyContext {
+        $implicit: boolean;
+        filtered: boolean;
+    }
+
+    /** Контекст своего шаблона ошибки: текст ошибки и повтор загрузки. */
+    export interface ErrorContext {
+        $implicit: string;
+        retry: () => void;
+    }
+
     /** Декоративная строка-превью пустого состояния. */
     export interface PreviewRow {
         id: number;

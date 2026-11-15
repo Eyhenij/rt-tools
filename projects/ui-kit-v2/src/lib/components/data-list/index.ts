@@ -6,4 +6,5 @@ export * from './settings/rt-data-list-settings-aside.component';
 export * from './rt-data-list-selection.logic';
 export * from './rt-data-list-selectors.directive';
 export * from './rt-data-list.directive';
+export * from './rt-data-list-states.directive';
 export * from './rt-data-list.component';

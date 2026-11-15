@@ -1,0 +1,28 @@
+<app-story-presets caption="Ошибка и свои шаблоны окна выбора в обоих наборах">
+    <ng-template>
+        <app-story-row slotWidth="20rem" [items]="cases" [itemLabel]="caseLabel">
+            <ng-template let-item>
+                <rt-dynamic-selector-popup keyExp="id" displayExp="name" mode="multiple" [entities]="item.entities" [error]="item.error">
+                    @if (item.ownEmpty) {
+                        <ng-template rtDynamicSelectorEmpty let-term>
+                            <div class="app-dynamic-selector-states__own">
+                                <strong>Свой вид пустого</strong>
+                                <span class="app-dynamic-selector-states__own-hint">Разметка приложения вместо rt-empty-state</span>
+                            </div>
+                        </ng-template>
+                    }
+                    @if (item.ownError) {
+                        <ng-template rtDynamicSelectorError>
+                            <div class="app-dynamic-selector-states__own">
+                                <strong>Свой вид ошибки</strong>
+                                <span class="app-dynamic-selector-states__own-hint">
+                                    В контексте шаблона: текст ошибки ($implicit) и retry()
+                                </span>
+                            </div>
+                        </ng-template>
+                    }
+                </rt-dynamic-selector-popup>
+            </ng-template>
+        </app-story-row>
+    </ng-template>
+</app-story-presets>

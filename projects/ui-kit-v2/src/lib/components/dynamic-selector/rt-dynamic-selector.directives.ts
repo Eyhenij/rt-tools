@@ -1,5 +1,6 @@
 import { Directive, inject, TemplateRef } from '@angular/core';
 
+import { IRtLoadError } from '@rt-tools/ui-kit-v2/empty-state';
 import { IRtDynamicSelector } from './rt-dynamic-selector.model';
 
 /**
@@ -37,4 +38,44 @@ export class RtDynamicSelectorRowControlsDirective<T = unknown> {
 export class RtDynamicSelectorRowTitleDirective<T = unknown> {
     public readonly templateRef: TemplateRef<IRtDynamicSelector.RowContext<T>> =
         inject<TemplateRef<IRtDynamicSelector.RowContext<T>>>(TemplateRef);
+}
+
+/**
+ * Свой вид пустого результата в окне выбора: `<ng-template rtDynamicSelectorEmpty let-query>` встаёт
+ * вместо заглушки «ничего не найдено». Сильнее входа `emptyResultsText`; в контексте — строка поиска.
+ */
+@Directive({
+    selector: 'ng-template[rtDynamicSelectorEmpty]',
+})
+export class RtDynamicSelectorEmptyDirective {
+    public readonly templateRef: TemplateRef<{ $implicit: string }> = inject<TemplateRef<{ $implicit: string }>>(TemplateRef);
+
+    /** Type-guard: сужает контекст шаблона до строки поиска. */
+    public static ngTemplateContextGuard(
+        _directive: RtDynamicSelectorEmptyDirective,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars -- второй довод стража контекста шаблона стоит только в типе-предикате; убрать его нечем, подпись задаёт каркас
+        context: unknown
+    ): context is { $implicit: string } {
+        return true;
+    }
+}
+
+/**
+ * Свой вид ошибки загрузки в окне выбора: `<ng-template rtDynamicSelectorError let-error let-retry="retry">`
+ * встаёт вместо записей; в контексте текст ошибки и повтор загрузки.
+ */
+@Directive({
+    selector: 'ng-template[rtDynamicSelectorError]',
+})
+export class RtDynamicSelectorErrorDirective {
+    public readonly templateRef: TemplateRef<IRtLoadError.Context> = inject<TemplateRef<IRtLoadError.Context>>(TemplateRef);
+
+    /** Type-guard: сужает контекст шаблона до текста ошибки и повтора. */
+    public static ngTemplateContextGuard(
+        _directive: RtDynamicSelectorErrorDirective,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars -- второй довод стража контекста шаблона стоит только в типе-предикате; убрать его нечем, подпись задаёт каркас
+        context: unknown
+    ): context is IRtLoadError.Context {
+        return true;
+    }
 }

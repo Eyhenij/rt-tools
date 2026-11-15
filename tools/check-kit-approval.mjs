@@ -115,6 +115,18 @@ function ownerText(line) {
     return content.map((block) => (block.type === 'text' ? block.text : '')).join('\n');
 }
 
+/**
+ * The search over the transcripts: ripgrep where the machine has it, the system grep otherwise. The
+ * transcripts of one machine grow to gigabytes, and the system grep of macOS walks them for half a
+ * minute on a short common quote while ripgrep takes under a second — the push set's time limit for
+ * this step does not hold with the first.
+ */
+function transcriptSearch(word, root) {
+    return spawnOk('rg', ['--version'])
+        ? ['rg', ['-F', '--no-filename', '--no-messages', '-g', '*.jsonl', '--', word, root]]
+        : ['grep', ['-rhF', '--include=*.jsonl', '--', word, root]];
+}
+
 /** Whether the owner wrote the quote in any session of this machine. */
 export function ownerSaid(quote, root = join(homedir(), '.claude', 'projects')) {
     const wanted = squash(quote);
@@ -130,10 +142,7 @@ export function ownerSaid(quote, root = join(homedir(), '.claude', 'projects')) 
         // words is the owner's and may differ from the quote's. The JSON decides.
         const longest = wanted.split(' ').reduce((best, word) => (word.length > best.length ? word : best), '');
 
-        lines = execFileSync('grep', ['-rhF', '--include=*.jsonl', '--', longest, root], {
-            encoding: 'utf8',
-            maxBuffer: 256 * 1024 * 1024,
-        });
+        lines = execFileSync(...transcriptSearch(longest, root), { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
     } catch {
         return false;
     }

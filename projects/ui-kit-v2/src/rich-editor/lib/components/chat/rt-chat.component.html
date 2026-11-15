@@ -42,7 +42,11 @@
         }
 
         @if (!hasThread()) {
-            <rt-note qa-dataid="chat-empty-hint">{{ emptyHint() }}</rt-note>
+            <ng-container [ngTemplateOutlet]="emptyTemplate()?.templateRef ?? defaultEmpty" />
+        } @else if (loadError.shown()) {
+            <ng-container
+                [ngTemplateOutlet]="errorTemplate()?.templateRef ?? defaultError"
+                [ngTemplateOutletContext]="loadError.context()" />
         } @else {
             <div rtElem="thread-viewport" qa-dataid="chat-thread-viewport">
                 @if (loading()) {
@@ -375,5 +379,32 @@
                 <ng-content select="[rtChatFooter]" />
             </div>
         }
+
+        <ng-template #defaultEmpty>
+            <rt-empty-state
+                rtElem="placeholder"
+                qa-dataid="chat-empty-hint"
+                [icon]="emptyIcon()"
+                [title]="emptyTitle()"
+                [description]="emptyHintText()" />
+        </ng-template>
+
+        <ng-template #defaultError>
+            <rt-empty-state
+                rtElem="placeholder"
+                qa-dataid="chat-error"
+                icon="ico-alert"
+                [title]="loadError.title()"
+                [description]="loadError.hint()">
+                <button
+                    rtButton
+                    appearance="outlined"
+                    type="button"
+                    qa-dataid="chat-retry"
+                    [label]="t().uiRetry"
+                    [attr.aria-label]="t().uiRetry"
+                    (click)="retry.emit()"></button>
+            </rt-empty-state>
+        </ng-template>
     </rt-file-drop>
 </ng-container>

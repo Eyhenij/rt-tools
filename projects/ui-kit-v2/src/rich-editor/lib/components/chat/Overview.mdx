@@ -62,7 +62,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 | край                 | что происходит                                      |
 | -------------------- | --------------------------------------------------- |
-| переписка не выбрана | только подсказка `emptyHint`                        |
+| переписка не выбрана | заглушка: `emptyTitle`, `emptyHint`, `emptyIcon`    |
+| ошибка загрузки      | `error` не null: ошибка с «Повторить» вместо ленты  |
 | выбрана и пуста      | лента пуста, поле ответа на месте                   |
 | ответ запрещён       | вместо поля — текст `replyBlockReason`              |
 | сообщение не ушло    | статус `failed` и кнопка повтора у сообщения        |
@@ -113,31 +114,35 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход                | тип                                       | умолчание | что делает                                         |
-| ------------------- | ----------------------------------------- | --------- | -------------------------------------------------- |
-| `messages`          | `readonly IRtChat.Message[]`              | `[]`      | лента сообщений                                    |
-| `loading`           | `boolean`                                 | `false`   | первая загрузка: вместо ленты заглушки             |
-| `fetching`          | `boolean`                                 | `false`   | догрузка: лента остаётся на месте                  |
-| `canReply`          | `boolean`                                 | `false`   | показывать ли поле ответа                          |
-| `replyBlockReason`  | `string \| null`                          | `null`    | почему отвечать нельзя — вместо поля               |
-| `sending`           | `boolean`                                 | `false`   | отправка в пути: поле заблокировано                |
-| `placeholder`       | `string`                                  | `''`      | подсказка в поле ответа                            |
-| `title`             | `string`                                  | `''`      | заголовок шапки; сам по себе шапку не создаёт      |
-| `subtitle`          | `string`                                  | `''`      | строка под заголовком шапки; пустая не рисуется    |
-| `sign`              | `IRtServiceLogo.Item \| null`             | `null`    | знак канала перед заголовком; шапку не создаёт     |
-| `emptyHint`         | `string`                                  | `''`      | подсказка, когда переписка не выбрана              |
-| `hasThread`         | `boolean`                                 | `false`   | выбрана ли переписка                               |
-| `attachments`       | `boolean`                                 | `false`   | скрепка в поле ответа                              |
-| `accept`            | `string`                                  | `''`      | какие файлы принимает скрепка                      |
-| `richComposer`      | `boolean`                                 | `false`   | поле ответа с оформлением                          |
-| `formatting`        | `boolean`                                 | `false`   | панель оформления в поле ответа                    |
-| `formattingToolbar` | `TRtRichEditorToolbar`                    | —         | какие кнопки в панели оформления                   |
-| `fill`              | `boolean`                                 | `false`   | занимать всю высоту родителя                       |
-| `showRefresh`       | `boolean`                                 | `false`   | кнопка обновления в шапке — она же создаёт шапку   |
-| `showExpand`        | `boolean`                                 | `false`   | кнопка разворота в шапке                           |
-| `messageHasActions` | `IRtChat.MessageActionsPredicate \| null` | `null`    | есть ли у реплики свои действия — гейт кнопки «…»  |
-| `typingText`        | `string`                                  | `''`      | строка «печатает» поверх низа ленты; пустая прячет |
-| `messenger`         | `boolean`                                 | `false`   | вид мессенджера: метки дней, поле в одну строку    |
+| вход                | тип                                       | умолчание  | что делает                                         |
+| ------------------- | ----------------------------------------- | ---------- | -------------------------------------------------- |
+| `messages`          | `readonly IRtChat.Message[]`              | `[]`       | лента сообщений                                    |
+| `loading`           | `boolean`                                 | `false`    | первая загрузка: вместо ленты заглушки             |
+| `fetching`          | `boolean`                                 | `false`    | догрузка: лента остаётся на месте                  |
+| `canReply`          | `boolean`                                 | `false`    | показывать ли поле ответа                          |
+| `replyBlockReason`  | `string \| null`                          | `null`     | почему отвечать нельзя — вместо поля               |
+| `sending`           | `boolean`                                 | `false`    | отправка в пути: поле заблокировано                |
+| `placeholder`       | `string`                                  | `''`       | подсказка в поле ответа                            |
+| `title`             | `string`                                  | `''`       | заголовок шапки; сам по себе шапку не создаёт      |
+| `subtitle`          | `string`                                  | `''`       | строка под заголовком шапки; пустая не рисуется    |
+| `sign`              | `IRtServiceLogo.Item \| null`             | `null`     | знак канала перед заголовком; шапку не создаёт     |
+| `emptyHint`         | `string`                                  | `''`       | подсказка заглушки; пустая — подпись кита          |
+| `emptyTitle`        | `string`                                  | `''`       | заголовок заглушки без переписки                   |
+| `emptyIcon`         | `IRtIcon.Name`                            | `comments` | иконка заглушки без переписки                      |
+| `error`             | `string \| null`                          | `null`     | ошибка загрузки: не null — вместо ленты и поля     |
+| `errorDescription`  | `string`                                  | `''`       | подсказка под ошибкой; пустая — подпись кита       |
+| `hasThread`         | `boolean`                                 | `false`    | выбрана ли переписка                               |
+| `attachments`       | `boolean`                                 | `false`    | скрепка в поле ответа                              |
+| `accept`            | `string`                                  | `''`       | какие файлы принимает скрепка                      |
+| `richComposer`      | `boolean`                                 | `false`    | поле ответа с оформлением                          |
+| `formatting`        | `boolean`                                 | `false`    | панель оформления в поле ответа                    |
+| `formattingToolbar` | `TRtRichEditorToolbar`                    | —          | какие кнопки в панели оформления                   |
+| `fill`              | `boolean`                                 | `false`    | занимать всю высоту родителя                       |
+| `showRefresh`       | `boolean`                                 | `false`    | кнопка обновления в шапке — она же создаёт шапку   |
+| `showExpand`        | `boolean`                                 | `false`    | кнопка разворота в шапке                           |
+| `messageHasActions` | `IRtChat.MessageActionsPredicate \| null` | `null`     | есть ли у реплики свои действия — гейт кнопки «…»  |
+| `typingText`        | `string`                                  | `''`       | строка «печатает» поверх низа ленты; пустая прячет |
+| `messenger`         | `boolean`                                 | `false`    | вид мессенджера: метки дней, поле в одну строку    |
 
 ## Проекция содержимого
 
@@ -147,6 +152,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `[rtChatComposerBar]`   | своя полоса над рамкой поля ответа; пустой слот места не занимает            |
 | `[rtChatFooter]`        | своё содержимое под диалогом                                                 |
 | `rtChatMessageActions`  | `<ng-template rtChatMessageActions let-message>` — пункты меню «…» у реплики |
+| `rtChatEmpty`           | `<ng-template rtChatEmpty>` — свой вид заглушки без переписки                |
+| `rtChatError`           | `<ng-template rtChatError let-error let-retry="retry">` — свой вид ошибки    |
+
+Заглушка и ошибка с обоими своими шаблонами стоят в истории `ErrorAndPlaceholder`.
 
 Шаблон действий у реплики нужен тем действиям, которых кит не знает и знать не должен: удаление,
 повтор отправки и скачивание общи для любой переписки и остаются своими входами и выходами.
@@ -168,6 +177,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | -------------------- | -------------------------------------------------------------------------------------------------- |
 | `send`               | отправлено сообщение: текст и файлы                                                                |
 | `refresh`            | нажато обновление                                                                                  |
+| `retry`              | нажата «Повторить» на ошибке загрузки                                                              |
 | `downloadFile`       | запрошен файл сообщения                                                                            |
 | `downloadAttachment` | запрошено вложение                                                                                 |
 | `expandedChange`     | нажат разворот                                                                                     |

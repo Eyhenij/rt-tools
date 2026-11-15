@@ -1,6 +1,7 @@
 import { Signal, TemplateRef } from '@angular/core';
 
 import { IRtIcon, IRtInput, TRtRadius } from '@rt-tools/ui-kit-v2/core';
+import { IRtLoadError } from '@rt-tools/ui-kit-v2/empty-state';
 import { IRtDynamicSelector } from './rt-dynamic-selector.model';
 
 /**
@@ -47,6 +48,18 @@ export namespace IRtDynamicSelectorParts {
         readonly loadMore: () => void;
         /** Отмеченные записи, ещё не применённые. */
         readonly temporaryChoice: (entities: T[]) => void;
+        /** Ошибка загрузки и свои виды окна: входы, событие повтора и шаблоны хоста. */
+        readonly loadState: IRtDynamicSelectorParts.LoadState;
+    }
+
+    /** Ошибка загрузки и свои виды окна — то, что держит директива хоста корня или окна. */
+    export interface LoadState {
+        /** Не `null` — окно рисует ошибку вместо записей. */
+        readonly error: Signal<string | null>;
+        readonly errorDescription: Signal<string>;
+        readonly emptyTemplate: Signal<TemplateRef<{ $implicit: string }> | null>;
+        readonly errorTemplate: Signal<TemplateRef<IRtLoadError.Context> | null>;
+        readonly retry: { emit(): void };
     }
 
     /** Что список выбранного берёт у корня: строки, настройки и куда сообщать о действиях человека. */

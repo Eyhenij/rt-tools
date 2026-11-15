@@ -1,0 +1,25 @@
+<rt-data-list
+    rtDataListSelectors
+    keyExp="id"
+    [tableConfigStorageKey]="storageKey()"
+    [entities]="empty() ? [] : rows"
+    [pageModel]="page"
+    [currentSortModel]="null"
+    [error]="error()">
+    @if (ownEmpty()) {
+        <ng-template rtDataListEmpty>
+            <div [style]="slotStyle">
+                <strong>Свой вид пустого списка</strong>
+                <span [style]="slotHintStyle">Разметка приложения вместо rt-empty-state</span>
+            </div>
+        </ng-template>
+    }
+    @if (ownError()) {
+        <ng-template rtDataListError>
+            <div [style]="slotStyle">
+                <strong>Свой вид ошибки</strong>
+                <span [style]="slotHintStyle">В контексте шаблона: текст ошибки ($implicit) и retry()</span>
+            </div>
+        </ng-template>
+    }
+</rt-data-list>

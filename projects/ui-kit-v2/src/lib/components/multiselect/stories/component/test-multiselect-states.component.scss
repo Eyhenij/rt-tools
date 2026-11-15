@@ -1,0 +1,29 @@
+@layer rt-kit.components {
+    .app-multiselect-states {
+        /* Панель уезжает в контейнер оверлеев и ложится поверх страницы: без запаса снизу
+           она вышла бы за нижний край окна. */
+        &__panel-slot {
+            width: 20rem;
+            padding-bottom: calc(var(--rt-size-24) * 2);
+        }
+
+        /* Рамка своего шаблона: пунктир показывает, где кончается разметка приложения. Шаблон
+           рисуется в контейнере оверлеев, вне блока, поэтому радиус объявлен на самой рамке. */
+        &__own {
+            --rt-multiselect-states-story-own-radius: var(--rt-radius-md);
+
+            display: grid;
+            padding: calc(var(--rt-space-2) + var(--rt-space-1));
+            border: 1px dashed var(--rt-color-border-strong);
+            border-radius: var(--rt-multiselect-states-story-own-radius);
+            margin: calc(var(--rt-space-2) + var(--rt-space-1));
+            gap: var(--rt-space-1);
+            text-align: center;
+        }
+
+        &__own-hint {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-sm);
+        }
+    }
+}

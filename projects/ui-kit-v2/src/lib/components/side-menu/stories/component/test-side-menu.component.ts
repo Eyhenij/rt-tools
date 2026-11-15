@@ -14,7 +14,7 @@ import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
 import { RtButtonDirective } from '../../../button';
 import { RtIconComponent } from '../../../icon';
-import { RtSideMenuFooterDirective, RtSideMenuHeaderDirective } from '../../rt-side-menu.directives';
+import { RtSideMenuEmptyDirective, RtSideMenuFooterDirective, RtSideMenuHeaderDirective } from '../../rt-side-menu.directives';
 import { RtSideMenuComponent } from '../../rt-side-menu.component';
 import { IRtSideMenu } from '../../rt-side-menu.model';
 import { SIDE_MENU_STORY_ITEMS } from './side-menu-story-data';
@@ -40,6 +40,7 @@ const BEM_BLOCK: string = 'app-side-menu';
         BlockDirective,
         ElemDirective,
         RtButtonDirective,
+        RtSideMenuEmptyDirective,
         RtSideMenuFooterDirective,
         RtSideMenuHeaderDirective,
 
@@ -70,6 +71,9 @@ export class TestRtSideMenuComponent {
 
     /** Низкий экран: в полный рост списки влезают целиком, и признаку прокрутки взяться неоткуда. */
     public readonly short: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
+
+    /** Свой вид пустого поиска: шаблон `rtSideMenuEmpty` вместо строки «Ничего не найдено». */
+    public readonly ownEmpty: InputSignalWithTransform<boolean, unknown> = input<boolean, unknown>(false, { transform: booleanAttribute });
 
     public logout(): void {
         // eslint-disable-next-line no-console

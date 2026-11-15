@@ -8,15 +8,16 @@
 </rt-tree>
 ```
 
-| вход            | тип                                   | умолчание      |
-| --------------- | ------------------------------------- | -------------- |
-| `nodes`         | `ReadonlyArray<IRtTree.Node<TValue>>` | **обязателен** |
-| `value` (model) | `ReadonlyArray<TValue>`               | `[]`           |
-| `mode`          | `'multiple' \| 'single' \| 'none'`    | `'multiple'`   |
-| `cascade`       | `boolean`                             | `true`         |
-| `searchTerm`    | `string`                              | `''`           |
-| `showSelectAll` | `boolean`                             | `false`        |
-| `ariaLabel`     | `string \| null`                      | `null`         |
+| вход            | тип                                          | умолчание      |
+| --------------- | -------------------------------------------- | -------------- |
+| `nodes`         | `ReadonlyArray<IRtTree.Node<TValue>>`        | **обязателен** |
+| `value` (model) | `ReadonlyArray<TValue>`                      | `[]`           |
+| `mode`          | `'multiple' \| 'single' \| 'none'`           | `'multiple'`   |
+| `cascade`       | `boolean`                                    | `true`         |
+| `searchTerm`    | `string`                                     | `''`           |
+| `emptyTemplate` | `TemplateRef<{ $implicit: string }> \| null` | `null`         |
+| `showSelectAll` | `boolean`                                    | `false`        |
+| `ariaLabel`     | `string \| null`                             | `null`         |
 
 | выход         | тип                     |
 | ------------- | ----------------------- |
@@ -36,6 +37,8 @@
 
 ## Края
 
+- Свой вид пустого — `<ng-template rtTreeEmpty let-term>` или вход `emptyTemplate`; директива
+  сильнее входа. Встаёт вместо «Нет вариантов» и «Ничего не найдено» и получает строку поиска.
 - Без каскада клик меняет только сам узел, и в выборе может лежать значение ветки.
 - В одиночном режиме повторный клик по выбранному узлу его не снимает.
 - В режиме без отметок клик по листу отдаёт `picked`, клик по ветке её раскрывает.

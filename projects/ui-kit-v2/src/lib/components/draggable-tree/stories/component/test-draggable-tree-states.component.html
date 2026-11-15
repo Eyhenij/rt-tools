@@ -1,0 +1,18 @@
+<app-story-presets caption="Свой вид пустого в обоих наборах">
+    <ng-template>
+        <app-story-row slotWidth="20rem" [items]="cases" [itemLabel]="caseLabel">
+            <ng-template let-item>
+                <rt-draggable-tree style="display: block; width: 100%" ariaLabel="Разделы" [nodes]="[]">
+                    @if (item.ownEmpty) {
+                        <ng-template rtDraggableTreeEmpty>
+                            <div class="app-draggable-tree-states__own">
+                                <strong>Свой вид пустого</strong>
+                                <span class="app-draggable-tree-states__own-hint">Разметка приложения вместо «Нет вариантов»</span>
+                            </div>
+                        </ng-template>
+                    }
+                </rt-draggable-tree>
+            </ng-template>
+        </app-story-row>
+    </ng-template>
+</app-story-presets>

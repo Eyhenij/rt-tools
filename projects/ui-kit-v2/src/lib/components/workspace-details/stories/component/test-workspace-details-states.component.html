@@ -1,0 +1,30 @@
+<app-story-presets caption="Ошибка загрузки в обоих наборах">
+    <ng-template>
+        <app-story-row slotWidth="360px" [items]="cases" [itemLabel]="caseLabel">
+            <ng-template let-own>
+                <div
+                    style="
+                        box-sizing: border-box;
+                        display: flex;
+                        flex-direction: column;
+                        inline-size: 100%;
+                        block-size: 720px;
+                        border: 1px solid var(--rt-color-border-default);
+                        border-radius: var(--rt-radius-lg);
+                        background-color: var(--rt-color-bg-surface);
+                    ">
+                    <rt-workspace-details error="" [entityId]="118" [transition]="transition" [audit]="audit">
+                        @if (own) {
+                            <ng-template rtWorkspaceDetailsError>
+                                <div [style]="slotStyle">
+                                    <strong>Свой вид ошибки</strong>
+                                    <span [style]="slotHintStyle">В контексте шаблона: текст ошибки ($implicit) и retry()</span>
+                                </div>
+                            </ng-template>
+                        }
+                    </rt-workspace-details>
+                </div>
+            </ng-template>
+        </app-story-row>
+    </ng-template>
+</app-story-presets>

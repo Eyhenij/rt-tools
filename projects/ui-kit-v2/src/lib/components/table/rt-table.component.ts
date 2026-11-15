@@ -49,7 +49,8 @@ import { IFilterModel, ISortModel } from '@rt-tools/utils';
 import { TRtKitLabelKey, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 
-import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
+import { IRtLoadError, RtEmptyStateComponent, rtLoadErrorView } from '@rt-tools/ui-kit-v2/empty-state';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtMenuComponent } from '@rt-tools/ui-kit-v2/menu';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
@@ -60,6 +61,7 @@ import { RtTableCardDirective } from './rt-table-card.directive';
 import { cardColumnsOf, cardRowsOf, hasRowsIn, IRtTableCardColumn } from './rt-table-cards.logic';
 import { RtTableCardActivationDirective } from './rt-table-card-activation.directive';
 import { RtTableRowActionsDirective } from './rt-table-row-actions.directive';
+import { RtTableEmptyStateDirective, RtTableErrorDirective } from './rt-table-states.directive';
 import { RtRowHasActionsPipe } from './rt-table-row-actions.pipe';
 import { RtTableColumnSettings } from './rt-table-column-settings';
 import { displayedColumnKeys } from './rt-table-columns.logic';
@@ -107,6 +109,7 @@ const DEFAULT_EMPTY_KEY: TRtKitLabelKey = 'uiNoRows';
         NgTemplateOutlet,
 
         // standalone components / directives
+        RtButtonDirective,
         RtEmptyStateComponent,
         RtMenuComponent,
         RtSkeletonComponent,
@@ -134,6 +137,7 @@ const DEFAULT_EMPTY_KEY: TRtKitLabelKey = 'uiNoRows';
         '[class.rt-table--loading]': 'isInitialLoading()',
         '[class.rt-table--fetching]': 'fetching()',
         '[class.rt-table--empty]': 'isEmpty()',
+        '[class.rt-table--error]': 'loadError.shown()',
         '[class.rt-table--cards]': 'showCards()',
         '[class.rt-table--hidden-start]': 'hiddenEdges().start',
         '[class.rt-table--hidden-end]': 'hiddenEdges().end',
@@ -200,11 +204,36 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
     /** Скрытые края для модификаторов хоста `--hidden-start` и `--hidden-end`. */
     protected readonly hiddenEdges: Signal<IRtTablePinnedEdges> = this.#hiddenEdges.asReadonly();
 
-    /** `true` когда initial-load в полёте и entities ещё нет — рендерим skeleton rows. */
-    protected readonly isInitialLoading: Signal<boolean> = computed((): boolean => this.loading() && this.#hasData() === false);
+    /** `true` когда initial-load в полёте и entities ещё нет — skeleton rows; при `error` их нет. */
+    protected readonly isInitialLoading: Signal<boolean> = computed(
+        (): boolean => this.error() === null && this.loading() && this.#hasData() === false
+    );
 
     /** `true` когда загрузка завершена и entities пустые — рендерим empty placeholder. */
-    protected readonly isEmpty: Signal<boolean> = computed((): boolean => !this.loading() && !this.fetching() && this.#hasData() === false);
+    protected readonly isEmpty: Signal<boolean> = computed(
+        (): boolean => this.error() === null && !this.loading() && !this.fetching() && this.#hasData() === false
+    );
+
+    /** Вид ошибки загрузки: заголовок, подсказка и контекст своего шаблона; ошибка важнее загрузки и пустоты. */
+    protected readonly loadError: IRtLoadError.View = rtLoadErrorView(
+        () => this.error(),
+        () => this.errorDescription(),
+        () => this.retry.emit()
+    );
+
+    /** Подпись кнопки повтора загрузки. */
+    protected readonly retryLabel: Signal<string> = rtKitLabel('uiRetry');
+
+    /** Свой вид пустой таблицы директивой (`<ng-template rtTableEmpty>` или `rtTableEmptyState`). */
+    protected readonly emptyStateTemplate: Signal<RtTableEmptyStateDirective | undefined> = contentChild(RtTableEmptyStateDirective);
+
+    /** Свой вид ошибки загрузки (`<ng-template rtTableError>`). */
+    protected readonly errorTemplate: Signal<RtTableErrorDirective | undefined> = contentChild(RtTableErrorDirective);
+
+    /** Шаблон пустой таблицы: директива важнее прежней ссылки `#rtTableEmpty`. */
+    protected readonly emptyView: Signal<TemplateRef<unknown> | undefined> = computed(
+        (): TemplateRef<unknown> | undefined => this.emptyStateTemplate()?.templateRef ?? this.emptyTemplate()
+    );
 
     /** Массив для `@for` — числа от 0 до skeletonRows-1, рендерим placeholder-rows. */
     protected readonly skeletonRowIndexes: Signal<ReadonlyArray<number>> = computed((): ReadonlyArray<number> =>
@@ -338,6 +367,9 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
     /** Пользователь переключил порядок заголовком. Саму выборку делает потребитель. */
     public readonly sortChange: OutputEmitterRef<ISortModel<string> | null> = output<ISortModel<string> | null>();
 
+    /** Нажата «Повторить» на ошибке загрузки. Саму загрузку делает потребитель. */
+    public readonly retry: OutputEmitterRef<void> = output<void>();
+
     /** Текущая сортировка — её читают заголовки колонок (`rtSortHeader`). */
     public readonly currentSort: Signal<ISortModel<string> | null> = this.#sort.asReadonly();
 
@@ -391,6 +423,12 @@ export class RtTableComponent<TRow> extends CdkTable<TRow> {
 
     /** Описание под заголовком дефолтного empty-placeholder'а. Опционально. */
     public readonly emptyDescription: InputSignal<string | null> = input<string | null>(null);
+
+    /** Ошибка загрузки: не `null` — заглушка ошибки вместо строк. Пустая строка — подпись кита. */
+    public readonly error: InputSignal<string | null> = input<string | null>(null);
+
+    /** Подсказка под ошибкой; пустая — подпись кита. */
+    public readonly errorDescription: InputSignal<string> = input<string>('');
 
     public override ngOnInit(): void {
         super.ngOnInit();

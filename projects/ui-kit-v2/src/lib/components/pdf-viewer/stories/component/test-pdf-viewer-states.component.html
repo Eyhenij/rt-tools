@@ -1,0 +1,10 @@
+<ng-template rtPdfViewerError>
+    <div class="app-pdf-viewer-states__own">
+        <strong>Свой вид ошибки</strong>
+        <span class="app-pdf-viewer-states__own-hint">В контексте шаблона: текст ошибки ($implicit) и download()</span>
+    </div>
+</ng-template>
+
+@if (viewerInjector(); as injector) {
+    <ng-container *ngComponentOutlet="viewer; injector: injector" />
+}

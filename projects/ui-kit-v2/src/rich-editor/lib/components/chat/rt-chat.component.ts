@@ -1,6 +1,4 @@
 import { BooleanInput } from '@angular/cdk/coercion';
-import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { DatePipe } from '@angular/common';
 import {
     afterRenderEffect,
     booleanAttribute,
@@ -23,36 +21,13 @@ import {
     WritableSignal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 
-import { NgTemplateOutlet } from '@angular/common';
-
-import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
-
-import {
-    RtAiPromptInputComponent,
-    RtButtonDirective,
-    RtConfirmDirective,
-    RtDeltaViewComponent,
-    RtFileCardComponent,
-    RtFileDropComponent,
-    RtIconButtonComponent,
-    RtIconComponent,
-    RtMenuComponent,
-    RtNoteComponent,
-    RtServiceLogoComponent,
-    RtSkeletonWrapperComponent,
-    RtSpinnerComponent,
-    RtToolbarComponent,
-    RtToolbarLeftDirective,
-    RtToolbarRightDirective,
-    RtTooltipDirective,
-} from '@rt-tools/ui-kit-v2';
-import { IRtServiceLogo } from '@rt-tools/ui-kit-v2';
+import { RtAiPromptInputComponent, rtLoadErrorView, IRtIcon, IRtLoadError, IRtServiceLogo } from '@rt-tools/ui-kit-v2';
 import { RT_KIT_LABELS, RT_KIT_LOCALE, rtKitLabel, TRtKitLabelKey, TRtKitLabelMap } from '@rt-tools/ui-kit-v2';
 import { RtChatMessageActionsDirective, RtChatMessageButtonsDirective } from './rt-chat-message-actions.directive';
-import { RtChatMessageHasActionsPipe } from './rt-chat-message-actions.pipe';
-import { RtChatStatusLabelPipe } from '../../pipes/rt-chat-status-label.pipe';
+import { RtChatEmptyDirective, RtChatErrorDirective } from './rt-chat-states.directive';
+import { RT_CHAT_IMPORTS } from './rt-chat.imports';
 import { RtMessageComposerComponent } from '../message-composer/rt-message-composer.component';
 import { IRtMessageComposer } from '../message-composer/rt-message-composer.model';
 import { TRtRichEditorToolbar } from '../rich-editor/rt-rich-editor.component';
@@ -81,38 +56,7 @@ const ATTACHMENT_FALLBACK_KEY: TRtKitLabelKey = 'chatAttachmentFallback';
     styleUrls: ['./rt-chat.component.scss', './rt-chat-messenger.scss', './rt-chat-translation.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
-    imports: [
-        // Angular
-        CdkTextareaAutosize,
-        DatePipe,
-        NgTemplateOutlet,
-        ReactiveFormsModule,
-
-        // standalone components / directives
-        RtAiPromptInputComponent,
-        RtButtonDirective,
-        RtChatStatusLabelPipe,
-        RtConfirmDirective,
-        RtDeltaViewComponent,
-        RtFileCardComponent,
-        RtFileDropComponent,
-        RtIconButtonComponent,
-        RtIconComponent,
-        RtChatMessageHasActionsPipe,
-        RtMenuComponent,
-        RtMessageComposerComponent,
-        RtNoteComponent,
-        RtServiceLogoComponent,
-        RtSkeletonWrapperComponent,
-        RtSpinnerComponent,
-        RtToolbarComponent,
-        RtToolbarLeftDirective,
-        RtToolbarRightDirective,
-        RtTooltipDirective,
-        BlockDirective,
-        ElemDirective,
-        ModDirective,
-    ],
+    imports: [...RT_CHAT_IMPORTS],
     host: {
         class: BEM_BLOCK,
         '[class.rt-chat--expanded]': 'expanded()',
@@ -177,6 +121,13 @@ export class RtChatComponent {
     readonly #defaultPlaceholder: Signal<string> = rtKitLabel('chatPlaceholder');
     readonly #defaultEmptyHint: Signal<string> = rtKitLabel('chatEmptyHint');
 
+    /** Ошибка загрузки переписки: заголовок, подсказка и контекст своего шаблона. */
+    protected readonly loadError: IRtLoadError.View = rtLoadErrorView(
+        (): string | null => this.error(),
+        (): string => this.errorDescription(),
+        (): void => this.retry.emit()
+    );
+
     protected readonly MessageStatus: typeof ERtChatMessageStatus = ERtChatMessageStatus;
 
     /** Плейсхолдеры скелетонов треда при первичной загрузке. */
@@ -231,6 +182,10 @@ export class RtChatComponent {
     /** Кнопки у реплики перед меню `<ng-template rtChatMessageButtons>`; не объявлены — кнопок нет */
     protected readonly messageButtons: Signal<RtChatMessageButtonsDirective | undefined> = contentChild(RtChatMessageButtonsDirective);
 
+    /** Свои виды заглушек: `<ng-template rtChatEmpty>` и `<ng-template rtChatError>`. */
+    protected readonly emptyTemplate: Signal<RtChatEmptyDirective | undefined> = contentChild(RtChatEmptyDirective);
+    protected readonly errorTemplate: Signal<RtChatErrorDirective | undefined> = contentChild(RtChatErrorDirective);
+
     /** История сообщений (consumer уже смаппил из доменной модели). */
     public readonly messages: InputSignal<readonly IRtChat.Message[]> = input<readonly IRtChat.Message[]>([]);
 
@@ -275,10 +230,22 @@ export class RtChatComponent {
     /** Строка под заголовком шапки: канал и контакт собеседника; пустая не показывается. */
     public readonly subtitle: InputSignal<string> = input<string>('');
 
-    /** Текст, когда треда ещё нет (заявка не создана). */
+    /** Подсказка заглушки без переписки; пустая — подпись кита. */
     public readonly emptyHint: InputSignal<string> = input<string>('');
 
-    /** Есть ли тред (иначе показываем `emptyHint`). */
+    /** Заголовок заглушки без переписки; пустой не показывается. */
+    public readonly emptyTitle: InputSignal<string> = input<string>('');
+
+    /** Иконка заглушки без переписки. */
+    public readonly emptyIcon: InputSignal<IRtIcon.Name> = input<IRtIcon.Name>('comments');
+
+    /** Ошибка загрузки переписки: не null — вместо ленты и поля ответа стоит ошибка. */
+    public readonly error: InputSignal<string | null> = input<string | null>(null);
+
+    /** Подсказка под заголовком ошибки; пустая — подпись кита. */
+    public readonly errorDescription: InputSignal<string> = input<string>('');
+
+    /** Есть ли тред (иначе стоит заглушка без переписки). */
     public readonly hasThread: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
@@ -342,6 +309,9 @@ export class RtChatComponent {
 
     /** Клик refresh — consumer перетягивает тред. */
     public readonly refresh: OutputEmitterRef<void> = output<void>();
+
+    /** Нажата «Повторить» на ошибке загрузки — потребитель загружает переписку заново. */
+    public readonly retry: OutputEmitterRef<void> = output<void>();
 
     /** Клик по вложению — consumer качает blob своим api; шаблон зовёт выход прямо, без релея. */
     public readonly downloadFile: OutputEmitterRef<IRtChat.Message> = output<IRtChat.Message>();

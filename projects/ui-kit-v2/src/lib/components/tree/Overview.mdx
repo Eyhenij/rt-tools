@@ -108,6 +108,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 Метод `handleKeydown` открыт: поле поиска над деревом передаёт ему стрелки и Enter, не забирая
 фокус у себя. Он возвращает, взята ли клавиша, — по этому поле решает, отменять ли её действие.
 
+| состояние       | чем задаётся                      | что меняется                                                                        |
+| --------------- | --------------------------------- | ----------------------------------------------------------------------------------- |
+| свой пустой вид | `rtTreeEmpty` или `emptyTemplate` | шаблон приложения вместо «Нет вариантов» и «Ничего не найдено»; в контексте — поиск |
+
 ## Доступность
 
 - `role="tree"` на хосте, `role="treeitem"` на строках с `aria-level`, `aria-expanded` у веток и
@@ -190,12 +194,14 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `filter`           | `boolean`                                     | `true`       |
 | `disabled`         | `boolean`                                     | `false`      |
 | `emptyIcon`        | `IRtIcon.Name \| null`                        | `null`       |
+| `emptyTemplate`    | `TemplateRef<{ $implicit: string }> \| null`  | `null`       |
 | `nodeEndTemplate`  | `TemplateRef<IRtTree.NodeContext<T>> \| null` | `null`       |
 | `nodeMetaTemplate` | `TemplateRef<IRtTree.NodeContext<T>> \| null` | `null`       |
 
 `emptyIcon` ставит значок кита над подписью пустого дерева. `nodeEndTemplate` и `nodeMetaTemplate`
 отдают разметку строки входом — так её передаёт обёртка, которая не может положить в дерево
-директиву; вход сильнее директивы `rtTreeNodeEnd` или `rtTreeNodeMeta`.
+директиву; вход сильнее директивы `rtTreeNodeEnd` или `rtTreeNodeMeta`. `emptyTemplate` так же
+отдаёт свой вид пустого, но здесь сильнее директива `rtTreeEmpty`.
 
 ## Выходы
 
