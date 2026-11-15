@@ -1,6 +1,6 @@
 # The mission of the guards of the end of a turn
 
-**Status:** in force · **Revision:** 2026-11-14 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-15 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `work-conduct`, `verifiability`
 **Procedures:** none
@@ -95,6 +95,9 @@ The guards have no interface: only the agent sees them, as the text of a refusal
 
 - **A report, a summary or an announced intent does not end ordered work.** The words about the
   next step stand where the step should stand, and the owner sees the agent standing.
+- **An answer to the owner in the middle of ordered work is followed by the next step.** The owner
+  asks or swears because the work stands; swearing at an agent that stands asks why it stands and
+  is never a word to stop.
 - **A milestone of the flow is not a stop.** A taken task, a written plan and handed-in work each go
   on to the next step in the same turn.
 - **Waiting for someone else's step is never the end of a turn.** A run, a review or a merge goes on
@@ -105,10 +108,17 @@ The guards have no interface: only the agent sees them, as the text of a refusal
   delivery, and its next task is the next step.
 - **The owner's word to stop, quoted in the progress, ends the turn.** The quote is the owner's
   words in « », not a retelling: a retelling is written by the one the stop suits.
+- **A quote of the owner older than their latest order releases nothing.** The later order cancels
+  the earlier word to wait: the line is rewritten and the work goes on.
+- **A command that closes a session or writes a handover is not a word to stop.** It cleans up and
+  hands over; the work it does not mention stays ordered.
 - **A question to the owner leaves unless the owner already answered it or a rule answers it
   plainly.** A refusal of another check is never a reason to hold a question.
 - **A guard does not refuse the same turn twice for the same reason.** The second refusal for one
   reason is a deadlock in the making.
+- **While ordered work is open, doubt is decided by a refusal, once.** A missed stop costs the owner
+  a push by hand; a false refusal costs one pass, and the second pass for the same reason ends the
+  turn.
 - **A refusal names the next move the agent can make in the same turn.** A refusal without a lawful
   move leaves a deadlock.
 
@@ -185,33 +195,30 @@ None.
 
 ## Open questions
 
-What the mission asks and the tools of 14 November 2026 do not carry.
+What the mission asks and the tools of the day do not carry. Q-1, Q-2, Q-3, Q-6 and Q-9 were closed
+on 15 November 2026; their numbers are not given again.
 
-- **Q-1 — an answer to the owner in the middle of the work ends the turn.** The agent hook lets a
-  turn end after answering a question or swearing, whatever work is ordered. A command keeps such a
-  turn going only inside a task with a plan; outside a task folder nothing does.
-- **Q-2 — in doubt the agent hook lets the turn end.** While ordered work remains, the mission asks
-  the opposite.
-- **Q-3 — the agent hook reads the owner's last message, not the state of the work.** The progress,
-  the plan and the epic tell what is left; the hook does not read them.
 - **Q-4 — a failure or a timeout of the agent hook lets the turn through and leaves no trace.** The
   live measures of 14 November 2026 on a record of 15 MB: about 57 s for a refusal and 30 s for a
-  pass, against a timeout of 60 s.
+  pass, against a timeout of 60 s then. On 15 November the timeout became 120 s and the reading two
+  rounds of calls. A replay of two recorded turns through a subagent on the fast model took 36 s
+  for a refusal and 39 s for a pass, with one call more than the hook makes; the live time is not
+  measured.
 - **Q-5 — no command of the tree counts missed stops, false refusals and deadlocks.** The base of
   14 November was counted by a one-off script, and it counts refusals only: a broken guard that
   lets every turn through scores best on it.
-- **Q-6 — handed-in work under an open epic ends the turn without the next task.** The state of
-  handed-in work leaves the command hook before any tier, and the agent hook lets a turn end on
-  work done and waiting for a review.
-- **Q-7 — a waiting line with any quote releases every tier of the command hook.** The quote is not
-  checked against the owner's messages, and it holds until someone rewrites the line.
+- **Q-7 — a waiting line with any quote releases every tier of the command hook.** Since 15 November
+  the agent hook checks the quote against the owner's latest word and refuses a stale line, but a
+  timeout of the agent hook leaves the release of the command hook alone.
 - **Q-8 — the package does not connect the agent hooks in the settings of a tree that installs it.**
   A release removes the old checks there and leaves the requirement only as the text of a rule.
-- **Q-9 — the refusals of the command hook name an exit that is gone.** They promise that the
-  owner's word quoted in the reply releases the turn; since 14 November only the waiting line of
-  the progress does.
 
 ## History of changes
 
 - 2026-11-14 — the subdomain was created: the owner named the mission of the guards and asked for a
   description that outlives the tool of the day.
+- 2026-11-15 — the agent hook of the Stop event reads the state of the work and all the owner's
+  latest words, not the last message alone. An answer in the middle of the work, a doubt, a stale
+  waiting line, a command that closes a session and handed-in work under an open epic no longer end
+  ordered work; the refusals of the command hook name the waiting line as the exit. The stop that
+  brought it in: the executor ended a turn with the fix of these guards left for the next session.

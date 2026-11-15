@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/turn-exit-guard.sh · 0e9f6fc57c4e · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/turn-exit-guard.sh · 8fb030b2fb23 · правится надстройкой, не здесь
 # rt-hook: Stop
 # Requires: hooks/deny-tail.sh, hooks/epic-over.sh, hooks/turn-exit-patterns.sh, hooks/turn-exit-epic.sh, hooks/turn-exit-role.sh
 # Turn exit guard: a turn does not end while the tree and the calls of the turn show work left
@@ -122,7 +122,7 @@ Creating the task, the branch, the column and the folder does not count as that 
 
 The first stage of the plan: ${first_stage}
 
-Begin it in this same turn and rewrite the state to '- **State:** \`этап-идёт\`'. The owner said to stop — then write so: the guard reads their word, not a retelling.
+Begin it in this same turn and rewrite the state to '- **State:** \`этап-идёт\`'. The owner said to stop — then quote their words in the line «Waiting for the owner» of the progress: the guard reads their word, not a retelling.
 
 The guard judges one turn: the next session is not refused."
 
@@ -207,7 +207,7 @@ The mandatory action of this state is ${action}, and after it the work is brough
 
 The next step from the progress: ${next_step}
 
-Bring the work to a request in this same turn and rewrite the state. The owner said to stop — then write so: the guard reads their word, not a retelling.
+Bring the work to a request in this same turn and rewrite the state. The owner said to stop — then quote their words in the line «Waiting for the owner» of the progress: the guard reads their word, not a retelling.
 
 The guard judges one turn: the next session is not refused."
 
@@ -310,7 +310,7 @@ Everything that happened before the request was opened was done on the handed-ov
     npm run task:new -- <title>              # create the next one
     git checkout -b <KEY>-<number>-<slug>    # take it into work
 
-Do the first step of the next work in this same turn. The owner said to stop — then write so: the guard reads their word, not a retelling.
+Do the first step of the next work in this same turn. The owner said to stop — then quote their words in the line «Waiting for the owner» of the progress: the guard reads their word, not a retelling.
 
 The guard judges one turn: the next session is not refused."
 

@@ -139,9 +139,11 @@ exits is split in two:
   stage and the next step it takes by either of the two names.
 
 - **Whether a turn may end by what was said in it is judged by a model, not by word samples.** The
-  package lays out the text of an agent hook for the Stop event; the hook reads the owner's last
-  message and the final reply and lets the turn end on an answer, a stop of the owner, a decision
-  only the owner can make, done work or a named obstacle.
+  package lays out the text of an agent hook for the Stop event; the hook reads the state of the
+  work — the progress of the task and the table of the epic — the owner's latest words and the
+  final reply. While ordered work is open, it lets the turn end only on a word of the owner to stop
+  or to wait, on a decision only the owner can make that holds every part left, or on a named
+  obstacle.
 
 - **The refusal of the model names itself by a fixed mark.** It starts with `BLOCKED by
   turn-judge:`, and refusals are counted by that mark in the transcripts.

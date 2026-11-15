@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/turn-exit-epic.sh · 313f11bbd1d0 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/turn-exit-epic.sh · 01ae62c5df8c · правится надстройкой, не здесь
 # The tiers of the open epic for the turn-exit guard. NOT a guard: it has no `rt-hook:` declaration
 # and hooks into no agent event. The guard sources it right after the root of the tree is known.
 #
@@ -88,11 +88,11 @@ rt_te_epic_deny() {
     esac
     rt_te_deny "BLOCKED by turn-exit-guard: the epic is open — its unfinished tasks: $(rt_te_epic_left) — and ${ended}.
 
-Until the epic is closed the executor does not stop on its own: the owner said so outright. Under an open epic work handed over does not end a turn: the next task is worked on in it. A turn ends in three ways: a question to the owner through the question tool, when the work does not go without the answer; a refusal of a guard as the last action of the turn; the session handover written by the hook on window fill, or the refusal of the window guard. The word of the owner about stopping, quoted in the reply or in the line «Waiting for the owner», releases the guard as well. The end of the epic is a stop of its own: not one task of it is left.
+Until the epic is closed the executor does not stop on its own: the owner said so outright. Under an open epic work handed over does not end a turn: the next task is worked on in it. A turn ends in three ways: a question to the owner through the question tool, when the work does not go without the answer; a refusal of a guard as the last action of the turn; the session handover written by the hook on window fill, or the refusal of the window guard. The word of the owner about stopping, quoted in the line «Waiting for the owner» of the progress, releases the guard as well. The end of the epic is a stop of its own: not one task of it is left.
 
 The next step is written in the progress: ${next_step}
 
-Do it in this same turn. The work of this task is done — take the next task of the epic. The owner said to stop — then write so: the guard reads their word, not a retelling.
+Do it in this same turn. The work of this task is done — take the next task of the epic. The owner said to stop — then quote their words in the line «Waiting for the owner» of the progress: the guard reads their word, not a retelling.
 
 While the epic is open the guard judges every pass over the turn, not the first one alone." "$short"
 }
@@ -125,7 +125,7 @@ The volume done before the line does not replace the step: a closed stage, a ful
 
 The next step is written in the progress: ${next_step}
 
-Begin it in this same turn: an edit outside the task folder or a command changing the tree. The owner said to stop — then write so: the guard reads their word, not a retelling.
+Begin it in this same turn: an edit outside the task folder or a command changing the tree. The owner said to stop — then quote their words in the line «Waiting for the owner» of the progress: the guard reads their word, not a retelling.
 
 The guard judges one turn: the next session is not refused." "the next step named by the progress is not begun."
 }
