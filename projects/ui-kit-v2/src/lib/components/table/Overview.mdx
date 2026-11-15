@@ -186,6 +186,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `emptyMessage`                 | `string`                               | `''`          | текст заглушки; пустой оставляет переведённый                          |
 | `emptyIcon`                    | `IRtIcon.Name \| null`                 | `'inbox'`     | иконка заглушки; `null` убирает её                                     |
 | `emptyDescription`             | `string \| null`                       | `null`        | пояснение под текстом заглушки                                         |
+| `error`                        | `string \| null`                       | `null`        | ошибка загрузки: не null — заглушка ошибки вместо строк                |
+| `errorDescription`             | `string`                               | `''`          | подсказка под ошибкой; пустая — подпись кита                           |
 | `rtTableCardRowType`           | `readonly TRow[]`                      | `[]`          | носитель типа строки для своего шаблона карточки; в работе не читается |
 | `rtTableRowActionsRowType`     | `readonly TRow[]`                      | `[]`          | то же для шаблона действий над строкой                                 |
 | `rtTableCardActivation`        | `number`                               | —             | номер карточки, по нему нажатие уходит строке; ставит таблица сама     |
@@ -201,3 +203,8 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | --------------- | --------------------------------------------------- |
 | `sortChange`    | нажат заголовок колонки; порядок меняет потребитель |
 | `filtersChange` | изменился набор условий; сужает строки потребитель  |
+| `retry`         | нажата «Повторить» на ошибке загрузки               |
+
+Свои виды заглушек — `<ng-template rtTableEmpty>` (второе имя — `rtTableEmptyState`) и
+`<ng-template rtTableError let-error let-retry="retry">`. Прежняя ссылка `#rtTableEmpty` работает и
+дальше; объявлены обе — побеждает директива.

@@ -38,6 +38,8 @@
 | `keyExp`                | `keyof ENTITY`       | `'id'`         |
 | `loading`               | `boolean`            | `false`        |
 | `fetching`              | `boolean`            | `false`        |
+| `error`                 | `string \| null`     | `null`         |
+| `errorDescription`      | `string`             | `''`           |
 | `isFiltersShown`        | `boolean`            | `false`        |
 | `isTableRowsClickable`  | `boolean`            | `false`        |
 | `isRefreshButtonShown`  | `boolean`            | `true`         |
@@ -49,6 +51,7 @@
 | `sortChange`         | `ISortModel`             |
 | `filterChange`       | `IFilterModel[]`         |
 | `refresh`            | `void`                   |
+| `retry`              | `void`                   |
 | `clearFiltersAction` | `void`                   |
 | `rowClick`           | `{ row: ENTITY, event }` |
 | `rowDoubleClick`     | `ENTITY`                 |
@@ -72,6 +75,10 @@
 **Две загрузки выглядят по-разному.** Первая (`loading`) заменяет список крутилкой: показывать
 нечего. Дозагрузка (`fetching`) оставляет строки на месте и кладёт крутилку поверх них с подложкой —
 человек видит, что список тот же, а не новый.
+
+**Ошибка загрузки важнее загрузки и пустоты.** `error` не null — вместо таблицы заглушка ошибки с
+«Повторить», полоса действий и страницы остаются: ошибка после смены страницы выглядит так же, как
+первая. Свои виды — `<ng-template rtDataListEmpty>` и `<ng-template rtDataListError>`.
 
 **Заглушку показывают только без строк и без условий отбора.** Пустой ответ на заданное условие —
 это не пустой список, и тогда видны таблица со строкой отбора и «снять отбор» в полосе действий.

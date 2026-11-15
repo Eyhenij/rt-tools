@@ -32,7 +32,7 @@ import { rtKitLabel, IRtInput, TRtRadius } from '@rt-tools/ui-kit-v2/core';
 import { RtInfiniteScrollDirective, RtOptionList, rtMatchParts, rtSearchMatches, TRtOptionListAction } from '@rt-tools/ui-kit-v2/core';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtCheckboxComponent } from '@rt-tools/ui-kit-v2/checkbox';
-import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
+import { IRtLoadError, RtEmptyStateComponent, rtLoadErrorView } from '@rt-tools/ui-kit-v2/empty-state';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtRadioButtonComponent } from '@rt-tools/ui-kit-v2/radio-button';
@@ -51,6 +51,7 @@ import {
 import { IRtDynamicSelector } from '../rt-dynamic-selector.model';
 import { RtDynamicSelectorPartsService } from '../rt-dynamic-selector-parts.service';
 import { IRtDynamicSelectorParts } from '../rt-dynamic-selector-parts.model';
+import { RtDynamicSelectorLoadStateDirective } from '../rt-dynamic-selector-load-state.directive';
 
 const BEM_BLOCK: string = 'rt-dynamic-selector-popup';
 
@@ -92,9 +93,12 @@ export const RT_DYNAMIC_SELECTOR_SEARCH_DEBOUNCE: number = 500;
         RtToggleSwitchComponent,
         RtTooltipDirective,
     ],
+    hostDirectives: [{ directive: RtDynamicSelectorLoadStateDirective, inputs: ['error', 'errorDescription'], outputs: ['retry'] }],
     host: { class: BEM_BLOCK, '(keydown)': 'onKeydown($event)' },
 })
 export class RtDynamicSelectorPopupComponent<TEntity extends object> implements OnInit {
+    /** Свои ошибка и виды окна самого по себе; внутри корня окно читает корневые. */
+    readonly #ownLoadState: RtDynamicSelectorLoadStateDirective = inject(RtDynamicSelectorLoadStateDirective, { self: true });
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #host: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
     readonly #injector: Injector = inject(Injector);
@@ -130,6 +134,7 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     /** Подпись пустого результата: своя у приложения, иначе словарь кита. */
     protected readonly emptyText: Signal<string> = computed((): string => this.settings.emptyResultsText() || this.noResultsLabel());
     protected readonly cancelLabel: Signal<string> = rtKitLabel('uiCancel');
+    protected readonly retryLabel: Signal<string> = rtKitLabel('uiRetry');
     protected readonly applyKitLabel: Signal<string> = rtKitLabel('dynamicSelectorApply');
     /** Подпись кнопки применения: своя у приложения, иначе словарь кита, — в заданном регистре. */
     protected readonly applyText: Signal<string> = computed((): string =>
@@ -200,15 +205,17 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     );
     protected readonly isSingle: Signal<boolean> = computed((): boolean => this.settings.mode() === 'single');
     protected readonly isSelectAllShown: Signal<boolean> = computed(
-        (): boolean => !this.isSingle() && this.settings.selectAllShown() && this.visibleKeys().length > 1 && !this.settings.loading()
+        (): boolean => !this.isSingle() && this.settings.selectAllShown() && this.visibleKeys().length > 1 && !this.isBusy()
     );
     protected readonly isMultiToggleVisible: Signal<boolean> = computed(
-        (): boolean => !this.isSingle() && this.settings.multiToggleShown() && this.visibleKeys().length > 1 && !this.settings.loading()
+        (): boolean => !this.isSingle() && this.settings.multiToggleShown() && this.visibleKeys().length > 1 && !this.isBusy()
     );
     protected readonly lastPinnedKey: Signal<unknown> = computed((): unknown =>
         lastPinnedDynamicKey(this.rows().found, this.settings.pinnedKeys(), (item: TEntity): unknown => this.#keyOf(item))
     );
     protected readonly isApplyDisabled: Signal<boolean> = computed((): boolean => this.ticked().length === 0 || this.settings.loading());
+    /** Записи грузятся или не загрузились: управление выбором не показывается. */
+    protected readonly isBusy: Signal<boolean> = computed((): boolean => this.settings.loading() || this.loadError.shown());
     protected readonly isNavShown: Signal<boolean> = computed(
         (): boolean => !!this.settings.navigateTitle() && !!this.settings.navigateLink()
     );
@@ -216,6 +223,13 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
     /* Внутри корня записи и настройки — его, а входы окна молчат; само по себе окно берёт свои входы. */
     protected readonly offered: Signal<ReadonlyArray<TEntity>> = this.#source.entities;
     protected readonly settings: IRtDynamicSelectorParts.PopupSettings<TEntity> = this.#source.settings;
+    /** Свои виды пустого и ошибки — корня или окна самого по себе. */
+    protected readonly loadState: IRtDynamicSelectorParts.LoadState = this.#source.loadState;
+    protected readonly loadError: IRtLoadError.View = rtLoadErrorView(
+        (): string | null => this.loadState.error(),
+        (): string => this.loadState.errorDescription(),
+        (): void => this.loadState.retry.emit()
+    );
 
     /** Предлагаемые записи. Внутри корня его записи важнее. */
     public readonly entities: InputSignal<ReadonlyArray<TEntity>> = input<ReadonlyArray<TEntity>>([]);
@@ -428,6 +442,7 @@ export class RtDynamicSelectorPopupComponent<TEntity extends object> implements 
             search: (query: string): void => this.searchChange.emit(query),
             loadMore: (): void => this.loadMore.emit(),
             temporaryChoice: (entities: TEntity[]): void => this.temporaryChoiceChange.emit(entities),
+            loadState: this.#ownLoadState,
         };
     }
 

@@ -63,21 +63,25 @@
 
             @case ('error') {
                 <div rtElem="center">
-                    <rt-empty-state
-                        rtElem="error"
-                        qa-dataid="pdf-viewer-error"
-                        [title]="t().pdfViewerErrorTitle"
-                        [description]="t().pdfViewerErrorText">
-                        <button
-                            rtButton
-                            rtElem="error-download"
-                            qa-dataid="pdf-viewer-error-download"
-                            type="button"
-                            icon="ico-download"
-                            [label]="t().pdfViewerDownload"
-                            [attr.aria-label]="t().pdfViewerDownload"
-                            (click)="download()"></button>
-                    </rt-empty-state>
+                    @if (errorTemplate; as own) {
+                        <ng-container *ngTemplateOutlet="own; context: errorContext()" />
+                    } @else {
+                        <rt-empty-state
+                            rtElem="error"
+                            qa-dataid="pdf-viewer-error"
+                            [title]="t().pdfViewerErrorTitle"
+                            [description]="t().pdfViewerErrorText">
+                            <button
+                                rtButton
+                                rtElem="error-download"
+                                qa-dataid="pdf-viewer-error-download"
+                                type="button"
+                                icon="ico-download"
+                                [label]="t().pdfViewerDownload"
+                                [attr.aria-label]="t().pdfViewerDownload"
+                                (click)="download()"></button>
+                        </rt-empty-state>
+                    }
                 </div>
             }
 

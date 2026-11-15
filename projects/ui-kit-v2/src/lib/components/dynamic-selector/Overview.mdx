@@ -81,6 +81,9 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | окно, одна запись | `mode="single"`                     | поиск, переключатели, «Cancel» и «Apply»                         |
 | окно, загрузка    | `loading`                           | кольцо вместо строк, «Apply» выключено                           |
 | окно, пусто       | поиск без совпадений                | значок поиска и «No results»                                     |
+| окно, ошибка      | `error` не null                     | заглушка ошибки с «Повторить», без «Apply» и «Select all»        |
+| свой пустой вид   | `rtDynamicSelectorEmpty`            | шаблон приложения вместо «No results»                            |
+| свой вид ошибки   | `rtDynamicSelectorError`            | шаблон приложения с текстом ошибки и функцией повтора            |
 
 ## Доступность
 
@@ -222,6 +225,8 @@ provideRtKit({
 | `applyLabelCase`             | селектор | `'none' \| 'title' \| 'upper'` | `'none'` — подпись как есть         |
 | `autofocusSearch`            | селектор | `boolean`                      | `false`                             |
 | `emptyResultsText`           | селектор | `string`                       | `''` → «No results» из словаря кита |
+| `error`                      | селектор | `string \| null`               | `null`                              |
+| `errorDescription`           | селектор | `string`                       | `''` → подпись кита                 |
 
 ### Только у поля строк
 
@@ -306,6 +311,7 @@ provideRtKit({
 | `searchChange`          | селектор | `string`    | 500 мс после последней клавиши серверного поиска |
 | `loadMore`              | селектор | `void`      | конец списка окна показался при `lazyLoad`       |
 | `temporaryChoiceChange` | селектор | `TEntity[]` | окно открылось и после каждого поиска            |
+| `retry`                 | селектор | `void`      | нажата «Повторить» на ошибке загрузки            |
 
 ## Рядом
 

@@ -18,8 +18,17 @@
 </rt-thread-list>
 ```
 
-Входы: `rows`, `activeId`, `searchPlaceholder`, `emptyText`, `loading`, `fetching`, `hasMore`,
-`filtersActive`, `emptyPreviewIcons`. Выходы: `selectRow`, `openInNewTab`, `searchChange`, `loadMore`.
+Входы: `rows`, `activeId`, `searchPlaceholder`, `emptyText`, `emptyDescription`,
+`nothingFoundTitle`, `nothingFoundDescription`, `error`, `errorDescription`, `loading`, `fetching`,
+`hasMore`, `filtersActive`, `emptyPreviewIcons`. Выходы: `selectRow`, `openInNewTab`, `searchChange`,
+`loadMore`, `retry`.
+
+Ошибка загрузки — вход `error`: не null, и список рисует `rt-empty-state` со значком предупреждения,
+заголовком из текста ошибки (пустой текст — подпись кита) и кнопкой «Повторить», которая шлёт
+`retry`. Ошибка главнее загрузки и пустоты. При уже показанных строках ошибка встаёт под ними, строки
+остаются. Пустой список без поиска и фильтров — «Пока пусто», при поиске или фильтрах — «Ничего не
+найдено» со значком поиска; тексты обоих задают входы. Свой вид — `<ng-template rtThreadListEmpty
+let-filtered>` и `<ng-template rtThreadListError let-message let-retry="retry">`.
 
 Строка обязана иметь `id`, `hasUnread` и (необязательно) `overdue` и `sign` — это всё, что список о
 ней знает.

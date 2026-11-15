@@ -36,7 +36,11 @@ import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtHybridTreeComponent } from '@rt-tools/ui-kit-v2/hybrid-tree';
 import { RtTreeComponent, RtTreeNodeEndDirective, RtTreeNodeMetaDirective } from '@rt-tools/ui-kit-v2/tree';
 import { IRtTree } from '@rt-tools/ui-kit-v2/tree';
-import { RtTreeSelectorControlsDirective, RtTreeSelectorUnderSearchDirective } from './rt-tree-selector.directives';
+import {
+    RtTreeSelectorControlsDirective,
+    RtTreeSelectorEmptyDirective,
+    RtTreeSelectorUnderSearchDirective,
+} from './rt-tree-selector.directives';
 import { rtTreeSelectorCanApply, rtTreeSelectorClear, rtTreeSelectorFilter, rtTreeSelectorSame } from './rt-tree-selector.logic';
 import { IRtTreeSelector } from './rt-tree-selector.model';
 
@@ -100,6 +104,8 @@ export class RtTreeSelectorComponent<TValue> {
     );
 
     protected readonly controlsTpl: Signal<RtTreeSelectorControlsDirective | undefined> = contentChild(RtTreeSelectorControlsDirective);
+    /** Свой вид пустого выбора: встаёт вместо «Ничего не найдено» и уходит внутреннему дереву. */
+    protected readonly emptyTpl: Signal<RtTreeSelectorEmptyDirective | undefined> = contentChild(RtTreeSelectorEmptyDirective);
 
     protected readonly underSearchTpl: Signal<RtTreeSelectorUnderSearchDirective | undefined> =
         contentChild(RtTreeSelectorUnderSearchDirective);

@@ -1,0 +1,26 @@
+<div class="app-autocomplete-states__panel-slot">
+    <rt-autocomplete
+        ariaLabel="Город"
+        placeholder="Начните вводить город"
+        [attr.data-story-trigger]="triggerAttribute"
+        [suggestions]="[]"
+        [error]="state() === 'own-empty' ? null : 'Нет сети'"
+        [displayWith]="displayWith">
+        @if (state() === 'own-error') {
+            <ng-template rtAutocompleteError let-text>
+                <div class="app-autocomplete-states__own">
+                    <strong>Свой вид ошибки</strong>
+                    <span class="app-autocomplete-states__own-hint">Текст: «{{ text }}», в контексте retry()</span>
+                </div>
+            </ng-template>
+        }
+        @if (state() === 'own-empty') {
+            <ng-template rtAutocompleteEmpty let-query>
+                <div class="app-autocomplete-states__own">
+                    <strong>Свой вид пустого</strong>
+                    <span class="app-autocomplete-states__own-hint">Строка поиска: «{{ query }}»</span>
+                </div>
+            </ng-template>
+        }
+    </rt-autocomplete>
+</div>

@@ -1,0 +1,22 @@
+@layer rt-kit.components {
+    .app-pdf-viewer-states {
+        /* Рамка своего шаблона: пунктир показывает, где кончается разметка приложения. Шаблон
+           рисуется внутри просмотрщика, вне блока, поэтому радиус объявлен на самой рамке. */
+        &__own {
+            --rt-pdf-viewer-states-story-own-radius: var(--rt-radius-md);
+
+            display: grid;
+            padding: var(--rt-space-6);
+            border: 1px dashed var(--rt-color-border-strong);
+            border-radius: var(--rt-pdf-viewer-states-story-own-radius);
+            color: var(--rt-color-text-inverse);
+            gap: var(--rt-space-2);
+            justify-items: center;
+            text-align: center;
+        }
+
+        &__own-hint {
+            font-size: var(--rt-text-sm);
+        }
+    }
+}

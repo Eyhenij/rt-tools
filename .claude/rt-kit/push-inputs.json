@@ -36,7 +36,7 @@
             "probes": []
         },
         "node tools/check-specs.mjs": {
-            "seconds": 4,
+            "seconds": 3,
             "history": [
                 "git log"
             ],
@@ -241,7 +241,7 @@
             "probes": []
         },
         "node tools/check-hooks.mjs": {
-            "seconds": 12,
+            "seconds": 11,
             "history": [],
             "untraced": [
                 "bash"
@@ -256,7 +256,7 @@
             "probes": []
         },
         "node tools/check-cycles.mjs": {
-            "seconds": 1,
+            "seconds": 0,
             "history": [],
             "untraced": [],
             "self": [
@@ -780,7 +780,7 @@
             "probes": []
         },
         "node tools/check-tokens-styles.mjs": {
-            "seconds": 2,
+            "seconds": 3,
             "history": [],
             "untraced": [],
             "self": [
@@ -962,7 +962,7 @@
             "probes": []
         },
         "node tools/check-format-ignore.mjs": {
-            "seconds": 5,
+            "seconds": 2,
             "history": [],
             "untraced": [],
             "self": [
@@ -977,17 +977,13 @@
                         ".cjs",
                         ".conf",
                         ".crontab",
-                        ".env",
                         ".example",
                         ".excluded",
                         ".gitattributes",
                         ".gitignore",
                         ".gitkeep",
-                        ".graphify_root",
                         ".html",
                         ".ico",
-                        ".iml",
-                        ".jpg",
                         ".js",
                         ".json",
                         ".md",
@@ -996,7 +992,6 @@
                         ".mts",
                         ".nvmrc",
                         ".nxignore",
-                        ".patch",
                         ".plist",
                         ".png",
                         ".prettierignore",
@@ -1009,7 +1004,6 @@
                         ".toml",
                         ".ts",
                         ".woff2",
-                        ".xml",
                         ".yaml",
                         ".yml",
                         "Caddyfile",
@@ -1086,7 +1080,7 @@
             "probes": []
         },
         "node tools/check-package-imports.mjs": {
-            "seconds": 3,
+            "seconds": 4,
             "history": [],
             "untraced": [
                 "npm"
@@ -1111,24 +1105,29 @@
             "probes": []
         },
         "node tools/check-kit-approval.mjs": {
-            "seconds": 0,
+            "seconds": 2,
             "history": [
                 "git diff",
                 "git merge-base",
                 "git rev-parse"
             ],
-            "untraced": [],
+            "untraced": [
+                "rg"
+            ],
             "self": [
                 "tools/check-kit-approval.mjs"
             ],
             "walks": [],
             "files": [
+                "docs/archive/RT-3288-kit-error-states.md",
                 "tools/check-kit-approval.mjs"
             ],
-            "probes": []
+            "probes": [
+                "docs/tasks/RT-3288-kit-error-states/approvals.md"
+            ]
         },
         "node tools/check-doc-paths.mjs": {
-            "seconds": 1,
+            "seconds": 0,
             "history": [],
             "untraced": [],
             "self": [
@@ -1336,52 +1335,27 @@
             "probes": []
         },
         "node tools/check-schema-drift.mjs": {
-            "seconds": 2,
-            "history": [],
-            "untraced": [
-                "npx",
-                "prisma",
-                "schema-engine-darwin-arm64"
+            "seconds": 0,
+            "history": [
+                "git diff",
+                "git rev-parse"
             ],
+            "untraced": [],
             "self": [
                 "tools/check-schema-drift.mjs",
                 "tools/rt-kit-checks.config.mjs"
             ],
             "walks": [
                 {
-                    "dir": "prisma/migrations",
+                    "dir": ".",
                     "exts": [
-                        ".sql",
-                        ".toml"
+                        ".json",
+                        ".mjs"
                     ]
                 }
             ],
-            "files": [
-                ".claude/rt-kit/checks.json",
-                ".env",
-                ".npmrc",
-                "package.json",
-                "prisma.config.ts",
-                "prisma/schema.prisma",
-                "tools/check-schema-drift.mjs",
-                "tools/rt-kit-checks.config.mjs"
-            ],
-            "probes": [
-                ".config/prisma7.cjs",
-                ".config/prisma7.cts",
-                ".config/prisma7.js",
-                ".config/prisma7.mjs",
-                ".config/prisma7.mts",
-                ".config/prisma7.ts",
-                "prisma.config",
-                "prisma.config.js",
-                "prisma7.config.cjs",
-                "prisma7.config.cts",
-                "prisma7.config.js",
-                "prisma7.config.mjs",
-                "prisma7.config.mts",
-                "prisma7.config.ts"
-            ]
+            "files": [],
+            "probes": []
         },
         "node tools/check-states.mjs": {
             "seconds": 0,
@@ -1561,7 +1535,7 @@
             "probes": []
         },
         "pnpm run lint:styles": {
-            "seconds": 3,
+            "seconds": 4,
             "history": [],
             "untraced": [
                 "stylelint"

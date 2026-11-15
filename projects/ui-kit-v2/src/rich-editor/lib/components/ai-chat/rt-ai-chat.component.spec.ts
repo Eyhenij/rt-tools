@@ -1,6 +1,7 @@
 import { Clipboard } from '@angular/cdk/clipboard';
 import { ChangeDetectionStrategy, Component, DebugElement, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
+import { FormControl } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 
 import { IRtIcon } from '../../../../lib/components/icon/rt-icon.model';
@@ -334,7 +335,11 @@ describe('RtAiChatComponent', (): void => {
             By.directive(RtThreadListComponent)
         ).componentInstance;
 
-        list.searchChange.emit('occ');
+        // Поиск идёт через поле списка, как ввод человека: так список знает, что итог пустой из-за поиска
+        jest.useFakeTimers();
+        (Reflect.get(list, 'searchControl') as FormControl<string>).setValue('occ');
+        jest.advanceTimersByTime(1000);
+        jest.useRealTimers();
         fixture.detectChanges();
 
         expect(qaAll(fixture, 'ai-chat-thread-title').map((node: DebugElement): string => textOf(node))).toContain('Occupancy last week');
@@ -345,7 +350,7 @@ describe('RtAiChatComponent', (): void => {
         fixture.componentInstance.threads.set([]);
         fixture.detectChanges();
 
-        expect(textOf(qa(fixture, 'thread-list-empty'))).toContain('Nothing found');
+        expect(textOf(qa(fixture, 'thread-list-nothing-found'))).toContain('Nothing found');
     });
 
     it('SC-UKV-776 — пустой список бесед рисует строки-превью со значками ассистента', (): void => {

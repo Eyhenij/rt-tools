@@ -53,6 +53,7 @@ import { RtSideMenuIconPipe } from './rt-side-menu-icon.pipe';
 import { RtSideMenuLookBase } from './rt-side-menu-look.base';
 import {
     IRtSideMenuIconContext,
+    RtSideMenuEmptyDirective,
     RtSideMenuFooterDirective,
     RtSideMenuHeaderDirective,
     RtSideMenuIconDirective,
@@ -168,6 +169,8 @@ export class RtSideMenuComponent extends RtSideMenuLookBase implements IRtSideMe
     protected readonly panelRef: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('panel');
     protected readonly headerTpl: Signal<TemplateRef<unknown> | undefined> = contentChild(RtSideMenuHeaderDirective, { read: TemplateRef });
     protected readonly footerTpl: Signal<TemplateRef<unknown> | undefined> = contentChild(RtSideMenuFooterDirective, { read: TemplateRef });
+    /** Свой вид пустого поиска по меню вместо строки «Ничего не найдено». */
+    protected readonly emptyTpl: Signal<RtSideMenuEmptyDirective | undefined> = contentChild(RtSideMenuEmptyDirective);
 
     protected readonly searchLabel: Signal<string> = rtKitLabel('sideMenuSearch');
     protected readonly pinLabel: Signal<string> = rtKitLabel('sideMenuPin');

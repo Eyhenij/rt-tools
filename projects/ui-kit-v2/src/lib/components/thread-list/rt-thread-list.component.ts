@@ -13,8 +13,10 @@ import {
     InputSignalWithTransform,
     OnInit,
     OutputEmitterRef,
+    signal,
     Signal,
     ViewEncapsulation,
+    WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -27,6 +29,7 @@ import { RT_KIT_LABELS, TRtKitLabelMap, rtKitLabel } from '@rt-tools/ui-kit-v2/c
 import { searchDebounce } from '@rt-tools/ui-kit-v2/core';
 
 import { RtInfiniteScrollDirective } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
@@ -37,6 +40,8 @@ import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtServiceLogoComponent } from '@rt-tools/ui-kit-v2/service-logo';
 import { RtSkeletonComponent } from '@rt-tools/ui-kit-v2/skeleton';
 import {
+    RtThreadListEmptyDirective,
+    RtThreadListErrorDirective,
     RtThreadListFiltersDirective,
     RtThreadListRowActionsDirective,
     RtThreadListRowDirective,
@@ -75,6 +80,7 @@ const PREVIEW_ICONS: readonly IRtIcon.Name[] = ['user', 'users', 'user'];
         ReactiveFormsModule,
 
         // standalone components / directives
+        RtButtonDirective,
         RtEmptyStateComponent,
         RtIconComponent,
         RtIconButtonComponent,
@@ -98,11 +104,48 @@ export class RtThreadListComponent<TRow extends IRtThreadList.Row> implements On
 
     readonly #t_uiSearch: Signal<string> = rtKitLabel('uiSearch');
     readonly #t_uiNothingFound: Signal<string> = rtKitLabel('uiNothingFound');
+    readonly #t_uiThreadListEmpty: Signal<string> = rtKitLabel('uiThreadListEmpty');
+    readonly #t_uiThreadListEmptyHint: Signal<string> = rtKitLabel('uiThreadListEmptyHint');
+    readonly #t_uiThreadListNothingFoundHint: Signal<string> = rtKitLabel('uiThreadListNothingFoundHint');
+    readonly #t_uiLoadError: Signal<string> = rtKitLabel('uiLoadError');
+    readonly #t_uiLoadErrorHint: Signal<string> = rtKitLabel('uiLoadErrorHint');
+
+    /** Строка поиска после дебаунса: по ней пустой список отличается от «ничего не найдено». */
+    readonly #query: WritableSignal<string> = signal<string>('');
 
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly searchPlaceholderText: Signal<string> = computed((): string => this.searchPlaceholder() || this.#t_uiSearch());
-    protected readonly emptyTitle: Signal<string> = computed((): string => this.emptyText() || this.#t_uiNothingFound());
+
+    /** Включён поиск или фильтры: пустой список значит «ничего не найдено», а не «пока пусто». */
+    protected readonly filtered: Signal<boolean> = computed((): boolean => this.filtersActive() || this.#query() !== '');
+
+    protected readonly placeholderTitle: Signal<string> = computed((): string =>
+        this.filtered() ? this.nothingFoundTitle() || this.#t_uiNothingFound() : this.emptyText() || this.#t_uiThreadListEmpty()
+    );
+
+    protected readonly placeholderDescription: Signal<string> = computed((): string =>
+        this.filtered()
+            ? this.nothingFoundDescription() || this.#t_uiThreadListNothingFoundHint()
+            : this.emptyDescription() || this.#t_uiThreadListEmptyHint()
+    );
+
+    protected readonly emptyContext: Signal<IRtThreadList.EmptyContext> = computed((): IRtThreadList.EmptyContext => ({
+        $implicit: this.filtered(),
+        filtered: this.filtered(),
+    }));
+
+    /** Ошибка есть: `error` не null. Пустая строка — ошибка без своего текста. */
+    protected readonly hasError: Signal<boolean> = computed((): boolean => this.error() !== null);
+
+    protected readonly errorTitle: Signal<string> = computed((): string => this.error() || this.#t_uiLoadError());
+
+    protected readonly errorHint: Signal<string> = computed((): string => this.errorDescription() || this.#t_uiLoadErrorHint());
+
+    protected readonly errorContext: Signal<IRtThreadList.ErrorContext> = computed((): IRtThreadList.ErrorContext => ({
+        $implicit: this.error() ?? '',
+        retry: (): void => this.retry.emit(),
+    }));
 
     protected readonly skeletonRows: number[] = Array.from({ length: SKELETON_ROWS_COUNT }, (_: unknown, i: number): number => i);
 
@@ -131,6 +174,10 @@ export class RtThreadListComponent<TRow extends IRtThreadList.Row> implements On
 
     protected readonly tabsTemplate: Signal<RtThreadListTabsDirective | undefined> = contentChild(RtThreadListTabsDirective);
 
+    protected readonly emptyTemplate: Signal<RtThreadListEmptyDirective | undefined> = contentChild(RtThreadListEmptyDirective);
+
+    protected readonly errorTemplate: Signal<RtThreadListErrorDirective | undefined> = contentChild(RtThreadListErrorDirective);
+
     public readonly rows: InputSignal<readonly TRow[]> = input<readonly TRow[]>([]);
 
     public readonly activeId: InputSignal<IRtThreadList.TRowId | null> = input<IRtThreadList.TRowId | null>(null);
@@ -138,7 +185,23 @@ export class RtThreadListComponent<TRow extends IRtThreadList.Row> implements On
     /** Пусто — берётся переведённая подпись по умолчанию */
     public readonly searchPlaceholder: InputSignal<string> = input<string>('');
 
+    /** Заголовок пустого списка без поиска и фильтров; пусто — подпись кита */
     public readonly emptyText: InputSignal<string> = input<string>('');
+
+    /** Пояснение пустого списка; пусто — подпись кита */
+    public readonly emptyDescription: InputSignal<string> = input<string>('');
+
+    /** Заголовок «ничего не найдено» при поиске или фильтрах; пусто — подпись кита */
+    public readonly nothingFoundTitle: InputSignal<string> = input<string>('');
+
+    /** Пояснение «ничего не найдено»; пусто — подпись кита */
+    public readonly nothingFoundDescription: InputSignal<string> = input<string>('');
+
+    /** Ошибка загрузки: не null — список рисует ошибку; текст становится заголовком, пустой — подпись кита */
+    public readonly error: InputSignal<string | null> = input<string | null>(null);
+
+    /** Пояснение под заголовком ошибки; пусто — подпись кита */
+    public readonly errorDescription: InputSignal<string> = input<string>('');
 
     /** Значки декоративных строк-превью пустого состояния, по строке на значок */
     public readonly emptyPreviewIcons: InputSignal<readonly IRtIcon.Name[]> = input<readonly IRtIcon.Name[]>(PREVIEW_ICONS);
@@ -176,6 +239,9 @@ export class RtThreadListComponent<TRow extends IRtThreadList.Row> implements On
 
     public readonly loadMore: OutputEmitterRef<void> = output<void>();
 
+    /** Кнопка «Повторить» у ошибки: список сам не перезагружает, данные у потребителя */
+    public readonly retry: OutputEmitterRef<void> = output<void>();
+
     public ngOnInit(): void {
         // Дебаунс непустого ввода; очистка крестиком применяется сразу (searchDebounce).
         this.searchControl.valueChanges
@@ -185,7 +251,14 @@ export class RtThreadListComponent<TRow extends IRtThreadList.Row> implements On
                 distinctUntilChanged(),
                 takeUntilDestroyed(this.#destroyRef)
             )
-            .subscribe((value: string): void => this.searchChange.emit(value));
+            .subscribe((value: string): void => {
+                this.#query.set(value);
+                this.searchChange.emit(value);
+            });
+    }
+
+    protected onRetry(): void {
+        this.retry.emit();
     }
 
     protected onSelect(id: IRtThreadList.TRowId, event: MouseEvent): void {

@@ -38,6 +38,7 @@ import {
     rtTreeToggle,
 } from '@rt-tools/ui-kit-v2/core';
 import { RtSelectTriggerDirective } from '@rt-tools/ui-kit-v2/select';
+import { RtMultiselectEmptyDirective } from './rt-multiselect-empty.directive';
 import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
 import { RtTagComponent } from '@rt-tools/ui-kit-v2/tag';
 import { RtMultiselectLabelPipe } from './rt-multiselect-label.pipe';
@@ -157,6 +158,9 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
      */
     protected readonly triggerTpl: Signal<RtSelectTriggerDirective<ReadonlyArray<TValue>> | undefined> =
         contentChild(RtSelectTriggerDirective);
+
+    /** Свой вид пустого списка вариантов вместо строки «Нет вариантов». */
+    protected readonly emptyTpl: Signal<RtMultiselectEmptyDirective | undefined> = contentChild(RtMultiselectEmptyDirective);
 
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.value().length > 0);
 

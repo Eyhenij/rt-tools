@@ -45,11 +45,12 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 **Вкладки появляются только вместе с переходом или историей.** Пока есть одни поля, они
 рисуются сразу: одна вкладка вместо содержимого была бы лишним щелчком.
 
-## Чего матрицы не показывают
+## Ошибка загрузки
 
-**Ошибка не рисуется внутри панели — она уходит уведомлением поверх.** Панель узкая, и
-сообщение в ней сдвигало бы данные; одна и та же строка при этом не повторяется на каждой
-перерисовке. Ячейки под ошибку в матрице поэтому нет — не потому, что её забыли.
+**Ошибка загрузки стоит во вкладке сведений вместо данных.** Вид по умолчанию — заглушка с
+иконкой предупреждения, текстом ошибки и кнопкой «Повторить»; кнопка только поднимает `retry`.
+Свой вид — `<ng-template rtWorkspaceDetailsError let-error let-retry="retry">`. Оба вида стоят в
+истории `ErrorState`. Ошибки перехода и истории по-прежнему уходят уведомлением поверх.
 
 ## Края
 
@@ -86,22 +87,23 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход         | тип                                       | умолчание | что делает                                             |
-| ------------ | ----------------------------------------- | --------- | ------------------------------------------------------ |
-| `title`      | `string \| null`                          | `null`    | заголовок панели                                       |
-| `entityId`   | `number \| null`                          | `null`    | идентификатор показанной записи                        |
-| `loading`    | `boolean`                                 | `false`   | заглушки вместо значений полей и сумм                  |
-| `busy`       | `boolean`                                 | `false`   | панель занята: действия не принимаются                 |
-| `profile`    | `IRtWorkspaceDetails.Profile \| null`     | `null`    | верх сведений о человеке над строками                  |
-| `rows`       | `readonly IRtWorkspaceDetails.Row[]`      | `[]`      | поля «подпись — значение»                              |
-| `agentEdit`  | `IRtWorkspaceDetails.AgentEdit \| null`   | `null`    | смена исполнителя: варианты и признак загрузки         |
-| `money`      | `readonly IRtWorkspaceDetails.MoneyRow[]` | `[]`      | денежные строки с итогом                               |
-| `toggles`    | `readonly IRtWorkspaceDetails.Toggle[]`   | `[]`      | переключатели свойств записи                           |
-| `toggleHint` | `string \| null`                          | `null`    | пояснение под переключателями                          |
-| `transition` | `IRtWorkspaceDetails.Transition \| null`  | `null`    | переход по этапам: варианты, ход и итог отправки       |
-| `audit`      | `IRtWorkspaceDetails.Audit \| null`       | `null`    | история событий с догрузкой                            |
-| `actions`    | `readonly IRtWorkspaceDetails.Action[]`   | `[]`      | кнопки действий, часть — с подтверждением              |
-| `error`      | `string \| null`                          | `null`    | текст ошибки; показывается уведомлением, а не в панели |
+| вход               | тип                                       | умолчание | что делает                                        |
+| ------------------ | ----------------------------------------- | --------- | ------------------------------------------------- |
+| `title`            | `string \| null`                          | `null`    | заголовок панели                                  |
+| `entityId`         | `number \| null`                          | `null`    | идентификатор показанной записи                   |
+| `loading`          | `boolean`                                 | `false`   | заглушки вместо значений полей и сумм             |
+| `busy`             | `boolean`                                 | `false`   | панель занята: действия не принимаются            |
+| `profile`          | `IRtWorkspaceDetails.Profile \| null`     | `null`    | верх сведений о человеке над строками             |
+| `rows`             | `readonly IRtWorkspaceDetails.Row[]`      | `[]`      | поля «подпись — значение»                         |
+| `agentEdit`        | `IRtWorkspaceDetails.AgentEdit \| null`   | `null`    | смена исполнителя: варианты и признак загрузки    |
+| `money`            | `readonly IRtWorkspaceDetails.MoneyRow[]` | `[]`      | денежные строки с итогом                          |
+| `toggles`          | `readonly IRtWorkspaceDetails.Toggle[]`   | `[]`      | переключатели свойств записи                      |
+| `toggleHint`       | `string \| null`                          | `null`    | пояснение под переключателями                     |
+| `transition`       | `IRtWorkspaceDetails.Transition \| null`  | `null`    | переход по этапам: варианты, ход и итог отправки  |
+| `audit`            | `IRtWorkspaceDetails.Audit \| null`       | `null`    | история событий с догрузкой                       |
+| `actions`          | `readonly IRtWorkspaceDetails.Action[]`   | `[]`      | кнопки действий, часть — с подтверждением         |
+| `error`            | `string \| null`                          | `null`    | ошибка загрузки: не null — заглушка вместо данных |
+| `errorDescription` | `string`                                  | `''`      | подсказка под ошибкой; пустая — подпись кита      |
 
 ## Выходы
 
@@ -114,3 +116,4 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `transitionErrorClose`   | закрыто сообщение об ошибке перехода                             |
 | `auditLoadMore`          | запрошена догрузка истории                                       |
 | `actionClicked`          | нажато действие; у действий с подтверждением — только после него |
+| `retry`                  | нажата «Повторить» на ошибке загрузки                            |

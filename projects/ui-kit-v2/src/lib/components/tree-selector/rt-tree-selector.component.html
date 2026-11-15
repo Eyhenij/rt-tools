@@ -106,12 +106,16 @@
     </div>
 
     @if (isNothingFound()) {
-        <div rtElem="empty" qa-dataid="tree-selector-empty" [rtMod]="{ 'with-icon': !!emptyIcon() }">
-            @if (emptyIcon(); as icon) {
-                <rt-icon rtElem="empty-icon" qa-dataid="tree-selector-empty-icon" size="lg" [name]="icon" />
-            }
-            {{ nothingFoundLabel() }}
-        </div>
+        @if (emptyTpl(); as own) {
+            <ng-container [ngTemplateOutlet]="own.templateRef" [ngTemplateOutletContext]="{ $implicit: term() }" />
+        } @else {
+            <div rtElem="empty" qa-dataid="tree-selector-empty" [rtMod]="{ 'with-icon': !!emptyIcon() }">
+                @if (emptyIcon(); as icon) {
+                    <rt-icon rtElem="empty-icon" qa-dataid="tree-selector-empty-icon" size="lg" [name]="icon" />
+                }
+                {{ nothingFoundLabel() }}
+            </div>
+        }
     } @else {
         @if (hybrid) {
             <rt-hybrid-tree
@@ -147,6 +151,7 @@
                 [searchTerm]="markTerm()"
                 [filter]="false"
                 [emptyIcon]="emptyIcon()"
+                [emptyTemplate]="emptyTpl()?.templateRef ?? null"
                 [nodeEndTemplate]="endTemplate()"
                 [nodeMetaTemplate]="metaTemplate()"
                 [ariaLabel]="ariaLabel()"

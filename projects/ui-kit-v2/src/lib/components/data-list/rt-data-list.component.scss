@@ -23,13 +23,19 @@
             justify-content: center;
         }
 
-        /* Заглушка пустого списка берёт размеры и подложку из назначений списка — их переставляет набор. */
-        &__placeholder .rt-empty-state {
+        /* Заглушка пустого списка берёт размеры и подложку из назначений списка — их переставляет набор.
+           Заглушка ошибки остаётся заглушкой кита: так она нарисована на одобренном кадре. */
+        &__placeholder:not(.rt-data-list__placeholder--error) .rt-empty-state {
             --rt-empty-state-icon-wrap-size: var(--rt-list-empty-icon-wrap-size);
             --rt-empty-state-icon-wrap-bg: var(--rt-list-empty-icon-wrap-bg);
             --rt-empty-state-icon-size: var(--rt-list-empty-icon-size);
             --rt-empty-state-title-size: var(--rt-list-empty-title-size);
             --rt-empty-state-title-weight: var(--rt-list-empty-title-weight);
+        }
+
+        /* Заглушка ошибки занимает всю ширину списка, как на одобренном кадре. */
+        &__placeholder--error .rt-empty-state {
+            inline-size: 100%;
         }
 
         /* Крутилка дозагрузки: строки под ней остаются видны сквозь подложку. */

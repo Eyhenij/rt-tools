@@ -1,0 +1,15 @@
+<div class="app-multiselect-states__panel-slot">
+    <rt-multiselect
+        ariaLabel="Список со своим видом пустого"
+        placeholder="Выберите города"
+        [attr.data-story-trigger]="triggerAttribute"
+        [options]="noOptions"
+        [formControl]="control">
+        <ng-template rtMultiselectEmpty>
+            <div class="app-multiselect-states__own">
+                <strong>Свой вид пустого</strong>
+                <span class="app-multiselect-states__own-hint">Разметка приложения</span>
+            </div>
+        </ng-template>
+    </rt-multiselect>
+</div>

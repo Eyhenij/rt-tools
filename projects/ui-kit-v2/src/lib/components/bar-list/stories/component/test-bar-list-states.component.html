@@ -1,0 +1,26 @@
+<app-story-presets caption="Ошибка и свои шаблоны в обоих наборах">
+    <ng-template>
+        <app-story-row slotWidth="360px" [items]="cases" [itemLabel]="caseLabel">
+            <ng-template let-item>
+                <rt-bar-list title="Заявки по городам" [rows]="item.rows" [error]="item.error">
+                    @if (item.ownEmpty) {
+                        <ng-template rtBarListEmpty>
+                            <div [style]="slotStyle">
+                                <strong>Свой вид пустого списка</strong>
+                                <span [style]="slotHintStyle">Разметка приложения вместо rt-empty-state</span>
+                            </div>
+                        </ng-template>
+                    }
+                    @if (item.ownError) {
+                        <ng-template rtBarListError>
+                            <div [style]="slotStyle">
+                                <strong>Свой вид ошибки</strong>
+                                <span [style]="slotHintStyle">В контексте шаблона: текст ошибки ($implicit) и retry()</span>
+                            </div>
+                        </ng-template>
+                    }
+                </rt-bar-list>
+            </ng-template>
+        </app-story-row>
+    </ng-template>
+</app-story-presets>

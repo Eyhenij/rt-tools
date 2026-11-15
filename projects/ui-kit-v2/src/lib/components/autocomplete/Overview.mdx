@@ -71,6 +71,12 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 окружающая коробка. Подсказка внутри панели знает одно состояние — `--active`, подсветку
 клавиатурой; выбранной подсказки в раскрытой панели не бывает, потому что выбор её закрывает.
 
+| состояние       | чем задаётся          | что меняется                                                              |
+| --------------- | --------------------- | ------------------------------------------------------------------------- |
+| ошибка загрузки | `error` не null       | компактная заглушка в панели: круг 40, заголовок курсивом, «Повторить» sm |
+| свой пустой вид | `rtAutocompleteEmpty` | шаблон приложения своей строкой вместо «Ничего не найдено»                |
+| свой вид ошибки | `rtAutocompleteError` | шаблон приложения с текстом ошибки и функцией повтора                     |
+
 ## Доступность
 
 - `<input role="combobox">` с `aria-expanded`, `aria-controls` и `aria-autocomplete="list"`.
@@ -94,19 +100,21 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход            | тип                                          | умолчание                 |
-| --------------- | -------------------------------------------- | ------------------------- |
-| `suggestions`   | `ReadonlyArray<TItem>`                       | `[]`                      |
-| `displayWith`   | `(item: TItem \| null) => string`            | `String(item ?? '')`      |
-| `placeholder`   | `string`                                     | `''`                      |
-| `minLength`     | `number`                                     | `1`                       |
-| `iconLeft`      | `IRtIcon.Name \| null`                       | `null`                    |
-| `openOnFocus`   | `boolean`                                    | `false`                   |
-| `itemTemplate`  | `TemplateRef<{ $implicit: TItem }> \| null`  | `null`                    |
-| `radius`        | `TRtRadius \| null`                          | `null` → скругление полей |
-| `loading`       | `boolean`                                    | `false`                   |
-| `emptyText`     | `string \| null`                             | `null` → подпись кита     |
-| `emptyTemplate` | `TemplateRef<{ $implicit: string }> \| null` | `null`                    |
+| вход               | тип                                          | умолчание                 |
+| ------------------ | -------------------------------------------- | ------------------------- |
+| `suggestions`      | `ReadonlyArray<TItem>`                       | `[]`                      |
+| `displayWith`      | `(item: TItem \| null) => string`            | `String(item ?? '')`      |
+| `placeholder`      | `string`                                     | `''`                      |
+| `minLength`        | `number`                                     | `1`                       |
+| `iconLeft`         | `IRtIcon.Name \| null`                       | `null`                    |
+| `openOnFocus`      | `boolean`                                    | `false`                   |
+| `itemTemplate`     | `TemplateRef<{ $implicit: TItem }> \| null`  | `null`                    |
+| `radius`           | `TRtRadius \| null`                          | `null` → скругление полей |
+| `loading`          | `boolean`                                    | `false`                   |
+| `emptyText`        | `string \| null`                             | `null` → подпись кита     |
+| `emptyTemplate`    | `TemplateRef<{ $implicit: string }> \| null` | `null`                    |
+| `error`            | `string \| null`                             | `null`                    |
+| `errorDescription` | `string`                                     | `''`                      |
 
 ## Входы от основы полей
 
@@ -130,6 +138,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `complete`      | `{ query, originalEvent }` | набрано не меньше `minLength` символов                     |
 | `itemSelect`    | `TItem`                    | выбрана подсказка (значение уходит и в форму)              |
 | `scrolledToEnd` | `void`                     | панель долистали до конца, пора просить следующую страницу |
+| `retry`         | `void`                     | нажата «Повторить» на ошибке загрузки                      |
 
 `scrolledToEnd` не приходит, пока идёт загрузка, и приходит один раз на каждую длину списка. Новый
 запрос или очистка поля снова разрешают его.

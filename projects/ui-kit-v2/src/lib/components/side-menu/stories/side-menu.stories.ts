@@ -21,6 +21,7 @@ export default {
         mode: { control: 'inline-radio', options: ['hover', 'pinned'] },
         width: { control: { type: 'number', min: 120, max: 480, step: 16 } },
         short: { control: 'boolean' },
+        ownEmpty: { control: 'boolean' },
         closeDelay: { control: { type: 'number', min: 0, max: 2000, step: 100 } },
     },
 } as Meta<TestRtSideMenuComponent>;
@@ -79,6 +80,12 @@ export const SubMenuKeyboardHighlight: TStory = {
 /** Совпадений нет: вместо списка стоит строка сообщения. */
 export const SubMenuSearchEmpty: TStory = {
     args: { activeIds: [1], mode: 'pinned' },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => typeQuery(canvasElement, 'no such item'),
+};
+
+/** Совпадений нет, и стоит свой шаблон `rtSideMenuEmpty`: он получает строку поиска. */
+export const SubMenuSearchOwnEmpty: TStory = {
+    args: { activeIds: [1], mode: 'pinned', ownEmpty: true },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => typeQuery(canvasElement, 'no such item'),
 };
 

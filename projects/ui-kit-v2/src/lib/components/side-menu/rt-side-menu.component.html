@@ -140,7 +140,11 @@
         }
 
         @if (isNothingFound()) {
-            <div rtElem="empty" qa-dataid="side-menu-empty">{{ nothingFoundLabel() }}</div>
+            @if (emptyTpl(); as own) {
+                <ng-container [ngTemplateOutlet]="own.templateRef" [ngTemplateOutletContext]="{ $implicit: subMenuQuery() }" />
+            } @else {
+                <div rtElem="empty" qa-dataid="side-menu-empty">{{ nothingFoundLabel() }}</div>
+            }
         }
 
         <div rtElem="sub-list">

@@ -22,8 +22,10 @@
         --rt-empty-state-frame-width: var(--rt-border-width-medium);
         --rt-empty-state-frame-color: var(--rt-color-border-strong);
         --rt-empty-state-frame-radius: var(--rt-radius-lg);
+        --rt-empty-state-max-width: none;
 
         display: flex;
+        max-width: var(--rt-empty-state-max-width);
         flex-direction: column;
         align-items: center;
         justify-content: center;
