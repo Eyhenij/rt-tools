@@ -26,6 +26,16 @@ describe('RtCollapsibleTextComponent', (): void => {
         ]);
     });
 
+    describe('тон текста', (): void => {
+        it('без входа тон основной: модификатора приглушения нет', (): void => {
+            expect(hostClasses(setup())).not.toContain('rt-collapsible-text--muted');
+        });
+
+        it('приглушённый тон ставит модификатор на хост', (): void => {
+            expect(hostClasses(setup({ tone: 'muted' }))).toContain('rt-collapsible-text--muted');
+        });
+    });
+
     describe('свёрнутое состояние', (): void => {
         it('текст обрезан по числу строк', (): void => {
             expect(classesOf(body(setup()))).toContain('rt-collapsible-text__text--clamped');

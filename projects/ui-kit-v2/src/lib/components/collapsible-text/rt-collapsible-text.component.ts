@@ -22,6 +22,9 @@ import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 
 const BEM_BLOCK: string = 'rt-collapsible-text';
 
+/** Тон текста: основной цвет — по умолчанию; приглушённый — для пояснения под названием. */
+export type TRtCollapsibleTextTone = 'default' | 'muted';
+
 @Component({
     selector: 'rt-collapsible-text',
     templateUrl: './rt-collapsible-text.component.html',
@@ -36,6 +39,7 @@ const BEM_BLOCK: string = 'rt-collapsible-text';
     ],
     host: {
         class: BEM_BLOCK,
+        '[class.rt-collapsible-text--muted]': "tone() === 'muted'",
     },
 })
 export class RtCollapsibleTextComponent implements OnDestroy {
@@ -54,6 +58,9 @@ export class RtCollapsibleTextComponent implements OnDestroy {
     public readonly clampLines: InputSignalWithTransform<number, number | string> = input<number, number | string>(6, {
         transform: numberAttribute,
     });
+
+    /** Тон текста абзацев. Кнопка «Ещё»/«Свернуть» остаётся цветом ссылки при любом тоне. */
+    public readonly tone: InputSignal<TRtCollapsibleTextTone> = input<TRtCollapsibleTextTone>('default');
 
     constructor() {
         afterRenderEffect((): void => {

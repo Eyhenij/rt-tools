@@ -80,6 +80,7 @@
     "--rt-action-bar-bg": "the action bar's background",
     "--rt-action-bar-color": "the action bar's text, close icon and hover trace",
     "--rt-action-bar-radius": "the action bar's rounding",
+    "--rt-form-framed-radius": "the rounding of the form's shared frame of entries; set by a data-rt-radius step on the frame, until it is set the step md",
     "--rt-action-bar-shadow": "the action bar's shadow",
     "--rt-action-bar-padding": "the action bar's padding",
     "--rt-action-bar-gap": "the gap between the count and the actions",

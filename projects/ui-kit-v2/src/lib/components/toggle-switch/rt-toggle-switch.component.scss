@@ -26,8 +26,8 @@
            числом, а не calc из ширины: каждое значение сверяется с макетом. */
         --rt-toggle-track-width: 42px;
         --rt-toggle-track-height: 24px;
-        --rt-toggle-thumb-size: 18px;
-        --rt-toggle-thumb-inset: 3px;
+        --rt-toggle-thumb-size: 20px;
+        --rt-toggle-thumb-inset: 2px;
         --rt-toggle-thumb-travel: 18px;
         --rt-toggle-icon-inset: 4px;
 
@@ -44,7 +44,7 @@
         &.rt-toggle-switch--lg {
             --rt-toggle-track-width: 60px;
             --rt-toggle-track-height: 30px;
-            --rt-toggle-thumb-size: 24px;
+            --rt-toggle-thumb-size: 26px;
             --rt-toggle-thumb-travel: 30px;
             --rt-toggle-icon-inset: 6px;
         }
