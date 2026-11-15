@@ -359,7 +359,8 @@ Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
 Given a progress that marks two steps done, one matching and one not, with the mark of the first removed
 When the engine measures the done steps
-Then it prints a line per step led by its number, exits 1 and writes the mark of the first again
+Then it prints a line per step led by its number and the line `steps re-measured 2, matched 1`
+And it exits 1 and writes the mark of the first again
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 

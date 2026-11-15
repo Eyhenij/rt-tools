@@ -17,7 +17,8 @@
  * last line of the output. A step that does not match drops a mark left before, so a mark always
  * says what the last measurement said.
  */
-import { spawnSync } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
+import { availableParallelism } from 'node:os';
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 
@@ -54,6 +55,25 @@ export function runCheck(command, limitMs = STEP_LIMIT_MS) {
     const out = spawnSync('bash', ['-c', command], { encoding: 'utf8', timeout: limitMs, killSignal: 'SIGKILL', maxBuffer: 64 * 1024 * 1024 });
     const timedOut = out.error?.code === 'ETIMEDOUT';
     return { code: timedOut ? null : out.status, output: out.stdout ?? '', timedOut };
+}
+
+/** Runs a check without blocking: the same answer as `runCheck`, so that the checks of `--done` run side by side. */
+export function runCheckAsync(command, limitMs = STEP_LIMIT_MS) {
+    return new Promise((resolve) => {
+        const child = spawn('bash', ['-c', command], { stdio: ['ignore', 'pipe', 'ignore'] });
+        let output = '';
+        let timedOut = false;
+        const timer = setTimeout(() => {
+            timedOut = true;
+            child.kill('SIGKILL');
+        }, limitMs);
+        child.stdout.setEncoding('utf8');
+        child.stdout.on('data', (chunk) => (output += chunk));
+        child.on('close', (code) => {
+            clearTimeout(timer);
+            resolve({ code: timedOut ? null : code, output, timedOut });
+        });
+    });
 }
 
 /**
@@ -103,11 +123,8 @@ const gotOf = (run, form, limitMs) => {
     return run.code === 0 ? lastLine(run.output) : `exit ${run.code}, ${lastLine(run.output)}`;
 };
 
-/**
- * Measures one step of the plan: `{ number, expected, got, matched }`, and writes or drops its mark.
- * `sources` holds `git`, `steps`, `marks` and `owner`; `model` gives the words and the forms of `expect`.
- */
-export function measureStep({ git, steps, marks, owner }, model, number, limitMs = STEP_LIMIT_MS, read = readFile) {
+/** The step ready to run: its plan, its check and the expected result, or a refusal before anything runs. */
+function prepareStep({ git, steps, owner }, model, number, read) {
     const plan = planOfBranch(git, model.words);
     const changed = changedSincePlan(git, plan, read);
     if (changed.length > 0) throw new StepRefused(`the task folder differs from the commit of the plan: ${changed.join(', ')}`);
@@ -118,12 +135,50 @@ export function measureStep({ git, steps, marks, owner }, model, number, limitMs
     if (step.command === null) throw new StepRefused(`step ${number} has no check line`);
     if (isWriteCommand(step.command, model.words)) throw new StepRefused(`the check of step ${number} is a command of the work: ${step.command}`);
     if (compareExpected(model.expect, step.expected, 0, '') === null) throw new StepRefused(`the expected result of step ${number} is in no form: ${step.expected}`);
-    const run = runCheck(step.command, limitMs);
+    return { plan, step };
+}
+
+/** The verdict of a run: the mark is written or dropped, and the result is returned. */
+function settleStep({ git, marks }, model, { plan, step }, run, limitMs) {
     const verdict = run.timedOut ? { form: null, matched: false } : compareExpected(model.expect, step.expected, run.code, run.output);
     if (verdict.matched) {
-        marks.writeStep(plan.branch, number, { branch: plan.branch, step: number, plan: plan.fingerprint, head: git.head(), line: lastLine(run.output), replaced: step.replaced, matched: true });
-    } else marks.dropStep(plan.branch, number);
-    return { number, expected: step.expected, got: gotOf(run, verdict.form, limitMs), matched: verdict.matched };
+        marks.writeStep(plan.branch, step.number, { branch: plan.branch, step: step.number, plan: plan.fingerprint, head: git.head(), line: lastLine(run.output), replaced: step.replaced, matched: true });
+    } else marks.dropStep(plan.branch, step.number);
+    return { number: step.number, expected: step.expected, got: gotOf(run, verdict.form, limitMs), matched: verdict.matched };
+}
+
+/**
+ * Measures one step of the plan: `{ number, expected, got, matched }`, and writes or drops its mark.
+ * `sources` holds `git`, `steps`, `marks` and `owner`; `model` gives the words and the forms of `expect`.
+ */
+export function measureStep(sources, model, number, limitMs = STEP_LIMIT_MS, read = readFile) {
+    const ready = prepareStep(sources, model, number, read);
+    return settleStep(sources, model, ready, runCheck(ready.step.command, limitMs), limitMs);
+}
+
+/**
+ * Measures the given steps side by side, at most `width` checks at once: the results in the order of
+ * `numbers`, a refused step as `{ number, refused }`. The limit holds for each check, as in `measureStep`.
+ */
+export async function measureSteps(sources, model, numbers, limitMs = STEP_LIMIT_MS, width = availableParallelism(), read = readFile) {
+    const results = new Array(numbers.length);
+    let next = 0;
+    const worker = async () => {
+        while (next < numbers.length) {
+            const index = next++;
+            const number = numbers[index];
+            try {
+                const ready = prepareStep(sources, model, number, read);
+                const run = await runCheckAsync(ready.step.command, limitMs);
+                results[index] = settleStep(sources, model, ready, run, limitMs);
+            } catch (error) {
+                if (!(error instanceof StepRefused)) throw error;
+                results[index] = { number, refused: error.message };
+            }
+        }
+    };
+    await Promise.all(Array.from({ length: Math.max(1, Math.min(width, numbers.length)) }, worker));
+    return results;
 }
 
 /** The steps the progress marks done: the working copy, or the last version in the history. */
@@ -139,23 +194,21 @@ export const stepLine = (result) => `ожидалось ${result.expected} · п
 
 /**
  * The command `step <N.M>` or `step --done`: prints a line per step and returns the exit code — 0
- * when every measured step matched, 1 when one did not or was refused. `--done` prefixes each line
- * with the number of its step.
+ * when every measured step matched, 1 when one did not or was refused. `--done` runs the checks side
+ * by side, prefixes each line with the number of its step and ends with the line
+ * `steps re-measured N, matched M`.
  */
-export function runStepCommand(sources, model, target) {
-    const one = (number) => {
+export async function runStepCommand(sources, model, target) {
+    if (target !== '--done') {
         try {
-            const result = measureStep(sources, model, number);
-            return { line: stepLine(result), ok: result.matched };
+            const result = measureStep(sources, model, target);
+            console.log(stepLine(result));
+            return result.matched ? 0 : 1;
         } catch (error) {
             if (!(error instanceof StepRefused)) throw error;
-            return { line: `step: ${error.message}`, ok: false };
+            console.log(`step: ${error.message}`);
+            return 1;
         }
-    };
-    if (target !== '--done') {
-        const { line, ok } = one(target);
-        console.log(line);
-        return ok ? 0 : 1;
     }
     let numbers;
     try {
@@ -165,11 +218,9 @@ export function runStepCommand(sources, model, target) {
         console.log(`step: ${error.message}`);
         return 1;
     }
-    let code = 0;
-    for (const number of numbers) {
-        const { line, ok } = one(number);
-        console.log(`${number} ${line}`);
-        if (!ok) code = 1;
-    }
-    return code;
+    const results = await measureSteps(sources, model, numbers);
+    for (const result of results) console.log(`${result.number} ${result.refused ? `step: ${result.refused}` : stepLine(result)}`);
+    const matched = results.filter((result) => result.matched).length;
+    console.log(`steps re-measured ${results.length}, matched ${matched}`);
+    return matched === results.length ? 0 : 1;
 }

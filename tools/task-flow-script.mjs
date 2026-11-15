@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/task-flow-script.mjs · f7fe1187db43 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/task-flow-script.mjs · 5e8b9d32e04f · правится надстройкой, не здесь
 /**
  * The engine of the task flow: reads the description `flow.js` through the model and answers about
  * the scenario. The description lies next to the engine as `task-flow/flow.js` where the engine is
@@ -169,7 +169,7 @@ const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step
  * What the guard guards: where the task folders and the epic plans lie, the tree override, and the
  * description with its engine — in the package and laid out.
  */
-const GUARD_SETTINGS = {
+export const GUARD_SETTINGS = {
     tasksDir: process.env.RT_FLOW_TASKS_DIR || 'docs/tasks',
     plansDir: process.env.RT_FLOW_PLANS_DIR || 'docs/plans',
     overridePath: '.claude/rt-kit/overrides/task-flow/flow.js',
@@ -255,7 +255,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
         else if (command === 'step') {
             const source = await openSources(model, dirname(path));
             const sources = { git: source('git'), steps: source('steps'), marks: source('marks'), owner: source('owner') };
-            process.exit(runStepCommand(sources, model, target));
+            process.exit(await runStepCommand(sources, model, target));
         } else if (command === 'plan-check') {
             const source = await openSources(model, dirname(path));
             const problems = planProblems(readFileSync(target, 'utf8'), source('steps'), model);
