@@ -68,10 +68,10 @@
 | Specs (правится) | `docs/specs/agent-kit/turn-guards/mission/spec.md`; `docs/specs/agent-kit/turn-guards/exit/` и `docs/specs/agent-kit/turn-guards/exit-epic/` переписываются в новую `docs/specs/agent-kit/turn-guards/flow-script/` |
 | Laws     | `docs/constitution/work-conduct.md` — читается, не правится |
 | Rules (правится) | `projects/agent-kit/assets/rules/task-flow.md`, `projects/agent-kit/assets/rules/turn-conduct.md`, `projects/agent-kit/assets/patterns/task-flow-start.md`, `projects/agent-kit/assets/patterns/task-flow-resume.md`, `projects/agent-kit/assets/patterns/status-report-table.github.md`, `projects/agent-kit/assets/pitfalls/task-flow.md`, `projects/agent-kit/assets/pitfalls/turn-conduct.md`, `projects/agent-kit/assets/defaults/turn-map.md`; спутники дерева `.claude/skills/task-flow/implementation.md`, `.claude/skills/turn-conduct/implementation.md`, `.claude/skills/autonomous-work/implementation.md` |
-| Code (правится) | `projects/agent-kit/assets/task-flow/` — новый: описание `flow.js`, сгенерированный `flow.md`, `source/`, `measure/`. `projects/agent-kit/src/lib/config.ts` и `projects/agent-kit/src/lib/commands.ts` — вид раскладки `task-flow`, каталог `tools/task-flow/`. `projects/agent-kit/assets/checks/`: новые `task-flow-script.mjs`, `flow-syntax.mjs`, `flow-model.mjs`, `flow-scaffold.mjs`, `flow-sync.mjs`, `work-steps-lib.mjs`, `owner-nudges.mjs`; правка `check-work-steps.mjs`, `check-turn-map.mjs`. `projects/agent-kit/assets/hooks/`: новый `flow-step-guard.sh`; правка `turn-exit-guard.sh`, `dispatch.sh`, `turn-judge.md`, `ask-judge.md`, `epic-stop-guard.sh`; удаляются `turn-exit-patterns.sh`, `turn-exit-epic.sh`, `turn-exit-verdict.sh`; `turn-exit-role.sh` остаётся |
+| Code (правится) | `projects/agent-kit/assets/task-flow/` — новый: описание `flow.js`, сгенерированный `flow.md`, `source/`, `measure/`. `projects/agent-kit/src/lib/config.ts` и `projects/agent-kit/src/lib/commands.ts` — вид раскладки `task-flow`, каталог `tools/task-flow/`. `projects/agent-kit/assets/checks/`: новые `task-flow-script.mjs`, `flow-syntax.mjs`, `flow-model.mjs`, `flow-condition.mjs`, `flow-data.mjs`, `flow-scaffold.mjs`, `flow-sync.mjs`, `work-steps-lib.mjs`, `owner-nudges.mjs`; правка `check-work-steps.mjs`, `check-turn-map.mjs`. `projects/agent-kit/assets/hooks/`: новый `flow-step-guard.sh`; правка `turn-exit-guard.sh`, `dispatch.sh`, `turn-judge.md`, `ask-judge.md`, `epic-stop-guard.sh`; удаляются `turn-exit-patterns.sh`, `turn-exit-epic.sh`, `turn-exit-verdict.sh`; `turn-exit-role.sh` остаётся |
 | Samples (правится) | `projects/agent-kit/assets/samples/tasks/_template/plan.md`, `projects/agent-kit/assets/samples/tasks/_template/progress.md` |
 | Tests (правится) | `projects/agent-kit/tests/`: новые `flow-language.test.sh`, `task-flow-script.test.sh`, `flow-step-guard.test.sh`, `turn-replay.test.sh`, каталог `fixtures/turn-replay/`, ожидаемые вердикты хуков модели `turn-replay.expected.json`; правка `turn-exit-guard.test.sh`, `work-steps.test.sh`, `checks-turn-map.test.sh` |
-| Settings | `.claude/rt-kit/push-inputs.json` — пересобирается тем же изменением; надстройка дерева `.claude/rt-kit/overrides/task-flow/flow.js` появляется, только если дерево её пишет, и правится только по слову владельца с её ключом; `.claude/settings.json` — timeout хука на Stop приходит раскладкой из строки `# rt-hook-timeout:` |
+| Settings | `.claude/rt-kit/push-inputs.json` — пересобирается тем же изменением, запись зовётся с пустым вводом: `node tools/push-inputs.mjs record < /dev/null`, иначе она ждёт список шагов на входе; `eslint.config.mjs` — описание `flow.js` исключено из линта, это язык данных; `.prettierignore` — разложенные модули движка спрятаны от форматтера; надстройка дерева `.claude/rt-kit/overrides/task-flow/flow.js` появляется, только если дерево её пишет, и правится только по слову владельца с её ключом; `.claude/settings.json` — timeout хука на Stop приходит раскладкой из строки `# rt-hook-timeout:` |
 | Glossary (правится) | `projects/agent-kit/assets/docs/GLOSSARY.md`: «Flow script», «Exit check» |
 
 В коммит плана идут шесть файлов, которые зовут проверки шагов: `stop-merge-probe.sh`,
@@ -98,13 +98,25 @@
 **Условия** — объект с одним ключом: `{ all: [...] }`, `{ any: [...] }` или `{ not: … }` над
 ссылками на измерители и другими условиями. Условие стоит там же, где ссылка: в `exit` состояния и
 в `when` случая отпуска. Выход из готовых измерителей собирается без JS; новый факт — новый
-измеритель.
+измеритель. Условие проверяет и вычисляет `flow-condition.mjs`: ссылка ведёт только на
+возможность измерителя этого описания, у объекта ровно один ключ. Результата измерителя нет —
+условие не выполнено. Пока у движка нет команды `measure` (шаг 1.10), выход состояния по
+результатам печатает `node flow-model.mjs <flow.js> --exit <состояние> <results.json>`; `measure`
+зовёт ту же функцию. У модуля условий нет своей командной строки: он и модель импортировали бы
+друг друга.
+
+**Данные** — `words`, `expect` и порядок `release` — проверяет `flow-data.mjs`: известные ключи
+`words`, списки непустых строк, образец `nudge` собирается с флагами `iu`; у формы ожидаемого
+образец собирается, `compare` — один из четырёх способов; `order` — целое от 1 без повторов.
+Модель отдаёт `release` списком в порядке `order`. Там же читатели данных: `saysStop`,
+`isWriteCommand`, `compareExpected`. Правила спека о них пишутся шагом, который их зовёт: `step` —
+шаг 2.4, отпуск хода — шаг 3.7; до того привязка вела бы в код, который зовёт только набор.
 
 **Секции** — ровно шесть:
 
 | Секция | Что в ней | Файл |
 | ------ | --------- | ---- |
-| `source` | источники данных: история git, хостинг, метки, сообщения владельца; кэш живёт здесь | `task-flow/source/<имя>.mjs` |
+| `source` | источники данных: `git` — история ветки, `tree` — рабочая копия, `host` — хостинг, `marks` — метки, `owner` — сообщения владельца, `session` — вызовы сессии, `steps` — разбор плана и хода работы через `work-steps-lib.mjs`; порты `{}`, кэш и его срок — константы в файле источника | `task-flow/source/<имя>.mjs` |
 | `measure` | измерители выходов и условий; capability — именованный экспорт, порты — ссылки на `source` | `task-flow/measure/<имя>.mjs` |
 | `state` | 13 состояний по порядку: `title`, `action`, `pattern`, `exit` — ссылка на измеритель или условие, `end` у последнего; `after` — у состояния надстройки | — |
 | `release` | случаи отпуска хода: `when` — ссылка или условие, `order` — порядок проверки, `log` — запись в журнал | — |
@@ -113,15 +125,18 @@
 
 ```js
 ({
-  source: { git: { open: {} }, host: { open: { ttlSeconds: 60 } } },
+  source: { git: { open: {} }, marks: { open: {} }, steps: { open: {} }, owner: { open: {} }, session: { open: {} } },
   measure: {
-    plan: { approved: { git: source.git, marks: source.marks } },
+    plan: { approved: { git: source.git, marks: source.marks, steps: source.steps } },
+    owner: { saidStop: { owner: source.owner }, nudged: { owner: source.owner } },
+    session: { wrote: { session: source.session } },
   },
   state: {
     taken: { title: 'задача-взята', action: 'write the plan', pattern: 'task-flow-start', exit: measure.plan.approved },
   },
   release: {
-    stopWord: { when: { all: [measure.owner.saidStop, { not: measure.owner.saidGoOn }] }, order: 2, log: 'stop word' },
+    stopWord: { when: measure.owner.saidStop, order: 2, log: 'a stop word of the owner' },
+    noWrite: { when: { all: [{ not: measure.session.wrote }, { not: measure.owner.nudged }] }, order: 3, log: 'no write' },
   },
   words: { stop: ['стоп', 'стой', 'хватит'], stopExcept: ['продолжай', 'делай'], menu: ['отложить RT-N', 'сделаю сам', 'стоп'] },
   expect: { exit: { pattern: '^exit (\\d+)$', compare: 'exit' } },
@@ -133,11 +148,22 @@
 Иначе движок не стартует и называет компонент. Любой файл каталога `measure/` — измеритель и его
 соседи — импортирует только файлы того же каталога, путь начинается с `./`; `import()`, `require`,
 `createRequire`, `process` и `globalThis` в нём отказаны. Данные приходят только портами, тест
-подставляет двойника источника.
+подставляет двойника источника. Значение порта — только ссылка на компонент: литерал вроде срока
+кэша в порт не ставится. Фабрика измерителя возвращает читателя; движок зовёт его с данными
+описания `{ words, expect }` — так измеритель получает слова и формы ожидаемого без порта.
+
+Фабрика, которую ещё не написал её шаг, бросает `Not implemented` — та же форма, что даёт
+генератор заготовок. Неизмеренный выход поэтому никогда не читается выполненным. Описание пакета
+называет все 13 выходов с шага 1.6, а каждую фабрику пишет шаг, который меряет её выход.
 
 Разложенный `flow.js` несёт шапку раскладки строкой-комментарием перед `({`; парсер её пропускает.
-Случаи 6 и 7 раздела «Когда ход отпускается» — сбой движка и предел Claude Code — описанием не
-выражаются: их ловит обвязка движка в `dispatch.sh` и хуке на Stop.
+Описание исключено из линта: линтер принимает ссылки описания за необъявленные переменные, а форму
+описания проверяют модель и её набор. Случаи 6 и 7 раздела «Когда ход отпускается» — сбой движка
+и предел Claude Code — описанием не выражаются: их ловит обвязка движка в `dispatch.sh` и хуке на
+Stop. Поэтому в `release` описания пакета шесть случаев с `order` 1–5 и 8.
+
+Движок находит описание рядом с собой: `task-flow/flow.js` у разложенного движка,
+`../task-flow/flow.js` в пакете; `--flow <путь>` называет другое.
 
 **Надстройка дерева** — `.claude/rt-kit/overrides/task-flow/flow.js`, тот же язык. Ключ добавляет или
 заменяет состояние, измеритель, случай, слово с той же сверкой контракта. Состояние надстройки
@@ -196,7 +222,7 @@
 | - | --------- | ----- | ------------ |
 | 1 | `просьба-не-разобрана` | `grill.md` ветки или черновика `_draft-<slug>` с разделами «Просьба владельца» и «Вопросы и ответы», в нём цитата и ответ | история ветки, заголовки |
 | 2 | `эпик-заведён` | ветка эпика на сервере или влита в `main`; карточка эпика вышла из первой колонки или закрыта | `git ls-remote`, `git branch -r --merged origin/main`, `board.mjs task` |
-| 3 | `разбор-закрыт` | строка `**Описание фичи:**` называет каталог `proposed/` с диска или из истории, или «не нужно — причина» | разбор строки, `git log` |
+| 3 | `разбор-закрыт` | строка в `grill.md` или `plan.md` ветки называет каталог договорённости с диска или из истории — `**Описание фичи:**`, `**Draft:**` или `**Spec:**` с путём в обратных кавычках, — или причину, по которой её нет: `**Описание фичи:** не нужно — <причина>` или `**Behaviour:** unchanged — <причина>` | разбор строки, `git log` |
 | 4 | `договорённость-записана` | задача открыта или закрыта слиянием и вышла из первой колонки; ветка несёт её номер; коммит ветки добавил папку задачи | `board.mjs task`, история |
 | 5 | `задача-взята` | коммит ветки добавил `plan.md`; у каждого шага проверка известной формы; в общем каталоге git лежит метка одобрения от `plan-red` | история, разбор плана, метка |
 | 6 | `замысел-записан` | версия `progress.md` в коммите плана или позже повторяет шаги плана, и ровно один шаг `[>]` | история `progress.md` |
@@ -232,7 +258,8 @@
 ## Метки и кто их пишет
 
 Метки шагов, метка одобрения и кэш выходов 2 и 4 лежат в
-`$(git rev-parse --git-common-dir)/rt-kit/`. Пишет их только движок; проба 2.8 ничего не хранит.
+`$(git rev-parse --git-common-dir)/rt-kit/`: метка одобрения — `approval/<ветка>.json`, метка шага —
+`steps/<ветка>/<N.M>.json`. Метка, которая не читается как JSON, считается отсутствующей. Пишет их только движок; проба 2.8 ничего не хранит.
 Страж `flow-step-guard.sh` отказывает Edit, Write и команде оболочки, которая пишет в этот каталог
 и не является вызовом `task-flow-script.mjs`. Тот же страж отказывает записи оболочкой в
 `progress.md`, `plan.md` и план эпика под `docs/plans/`. Страж судит текст команды: скрипт, который
