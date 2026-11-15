@@ -1,0 +1,18 @@
+{
+  "1446-report-after-edit.json": { "judge": "allow" },
+  "1449-milestone-branch.json": { "judge": "allow" },
+  "1450-answer-mid-work.json": { "judge": "block" },
+  "1451-asks-what-rules-answer.json": { "judge": "block" },
+  "1455-deadlock-menus-held.json": { "ask": "allow" },
+  "1456-rt3276-question.json": { "judge": "allow" },
+  "1457-rt3276-not-now.json": { "judge": "allow" },
+  "1458-rt3276-stop.json": { "judge": "allow" },
+  "1459-rt3276-abuse.json": { "judge": "allow" },
+  "1460-rt3276-menu-after-refusal.json": { "judge": "allow", "ask": "allow" },
+  "1470-menu-lifts-check.json": { "ask": "block" },
+  "1548-not-now.json": { "judge": "allow" },
+  "1548-stop-at-point.json": { "judge": "allow" },
+  "1548-stop-hold.json": { "judge": "allow" },
+  "1548-wait-for-neighbour.json": { "judge": "allow" },
+  "1548-wait-for-suite.json": { "judge": "allow" }
+}
