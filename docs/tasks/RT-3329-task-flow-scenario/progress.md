@@ -252,6 +252,28 @@
   контекст приносит файлы, метки, последнее слово владельца и измеренное состояние. Хук не зовёт
   node для команды, где не назван ни один охраняемый файл. Правила и случаи лежат в подобласти
   `flow-script/guard/`. Затронуты шаги 3.1–3.5.
+- **Шаги 3.10 и 3.11 сделал фоновый агент в своей копии, его два коммита влиты в ветку задачи.**
+  Обе проверки шагов печатают ожидаемое. Отметки ставятся после шага 2.8, как и у 3.1–3.5. Агент
+  перевёл якорь «milestone» спека миссии на ступень открытого эпика, которую удаляет шаг 3.6, —
+  шаг 3.6 переводит его на движок. Затронуты шаги 3.6, 3.10 и 3.11.
+- **Вердикт в этапе называет число несделанных шагов.** Правило домена шагов плана требует назвать
+  остаток, текущий шаг и команду. Набор `work-steps-guard.test.sh` зовёт части вердикта, а не хук.
+  Затронут шаг 3.6.
+- **Сценарии 987 и 988 домена остановки в конце эпика судят случай отпуска «конец сценария».**
+  Движок не читает ответ, поэтому отданная работа и «жду вашего слова» при живом эпике держатся
+  одинаково. Затронут шаг 3.6.
+- **Правка хука перед сжатием легла в копию посреди набора, и три шага потеряли отметки.** Набор
+  повторён на чистой копии, правка хука убрана в stash на время отправки и закоммичена после неё.
+
+## Находки
+
+- Команда `/night` в пакете и в дереве говорит, что последний ход ночи кончается вопросом через
+  инструмент. Новая проверка выхода такой ход держит, пока сценарий не кончился. Этого текста нет в
+  списке шага 4.2 — его берёт этап 4.
+- Правило о судье хода модели в `docs/specs/agent-kit/turn-guards/spec.md` всё ещё говорит, что хук
+  читает ход работы и таблицу эпика. Сценарии 1361, 1362 и 1364 там же описывают поведение, которого
+  у хука больше нет. Это работа шагов 4.2 и 4.4.
+- `ask-judge.md` всё ещё читает строку «Waiting for the owner», которую шаг 4.2 убирает из шаблона.
 
 ## Сессии
 
@@ -289,7 +311,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 2 — измеряемый результат шага плана. Этап 1 закрыт: набор языка 71 ok, набор движка 75 ok, движок называет эту ветку `этап-идёт`
-- **Next step:** шаг 2.7 — вид раскладки `task-flow` в пакете, разложить движок, описание и шаблон, измерить шаг этого плана разложенным движком
+- **Next step:** шаг 2.8 — проба на игрушечном дереве: отказ командного хука на Stop держит ход при согласии agent-хука. Нужен вход в CLI: проба упала с «OAuth session expired»
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3329-task-flow-scenario/progress.md`; the plan lies next to it.
@@ -297,29 +319,16 @@ The progress in full — `docs/tasks/RT-3329-task-flow-scenario/progress.md`; th
 ### Uncommitted
 
 ```
- M .prettierignore
- M docs/specs/agent-kit/layout/implementation.md
- M docs/specs/agent-kit/layout/scenarios.md
- M docs/specs/agent-kit/layout/spec.md
- M docs/specs/agent-kit/turn-guards/flow-script/implementation.md
- M docs/specs/agent-kit/turn-guards/flow-script/scenarios.md
- M docs/specs/agent-kit/turn-guards/flow-script/spec.md
- M knip.json
- M projects/agent-kit/assets/checks/flow-plan.mjs
- M projects/agent-kit/assets/checks/flow-step.mjs
- M projects/agent-kit/src/lib/assets.spec.ts
- M projects/agent-kit/src/lib/commands.ts
- M projects/agent-kit/src/lib/config.ts
- M projects/agent-kit/src/lib/integrity.ts
- M projects/agent-kit/tests/task-flow-script-steps.test.sh
- M tools/flow-plan.mjs
- M tools/flow-step.mjs
-?? tools/task-flow/
+none
 ```
 
 ### Commits over the main branch
 
 ```
+290600689 test(rt:agent-kit): стражей с объявленным правилом стало 24
+49893a6cc chore(rt:agent-kit): разложить страж хода работы
+9895c36cd feat(rt:agent-kit): страж хода работы двигает сценарий только измерением
+65eb61521 feat(rt:agent-kit): сценарий task flow раскладывается каталогом
 6c3bb2f20 test(rt:agent-kit): метки в наборе шагов печатаются строкой
 309caa3b7 feat(rt:agent-kit): одобрение плана пишет движок, а не исполнитель
 d4781fcc3 feat(rt:agent-kit): движок меряет шаг плана его проверкой
@@ -336,10 +345,6 @@ aae4d97f5 test(rt:agent-kit): поле модели в наборе языка �
 22654e0f8 feat(rt:agent-kit): условия и данные описания task flow
 7336b75cb feat(rt:agent-kit): модель описания task flow
 623b8f359 chore(rt:agent-kit): набор перед push — новые модули task flow
-5fa21cd46 feat(rt:agent-kit): парсер языка описания task flow
-f68cd9c49 docs(rt:agent-kit): привязки спека шагов — к модулю разбора
-5ac5447c0 refactor(rt:agent-kit): разбор шагов плана и хода работы — отдельным модулем
-31473c2f0 docs(rt:agent-kit): план эпика RT-3302 — задача RT-3332 о подписи метки
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
