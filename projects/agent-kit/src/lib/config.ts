@@ -33,6 +33,12 @@ export type TKind =
      */
     | 'samples'
     /**
+     * Сценарий task flow: описание `flow.js`, его источники и измерители. Ложится каталогом рядом с
+     * движком: движок ищет описание возле себя, а измеритель импортирует только соседей по каталогу.
+     * Путь внутри рода сохраняется — `source/git.mjs` ложится в `source/`.
+     */
+    | 'task-flow'
+    /**
      * `pitfalls` — холодная часть правила: ловушки и поведение по разборам происшествий. Ложится
      * третьим файлом рядом с правилом и грузится не вместе с ним, а по требованию: при обычном
      * решении она не нужна — она нужна тому, кто разбирает промах или спорит с гардом.
@@ -58,7 +64,14 @@ export const KINDS: readonly TKind[] = [
     'templates',
     'docs',
     'samples',
+    'task-flow',
 ];
+
+/**
+ * Роды, у которых путь внутри рода — место в дереве, а не слой: образец папки задачи и сценарий
+ * task flow. Ресурс такого рода зовётся только полным путём, короткого имени у него нет.
+ */
+export const PATH_KINDS: readonly TKind[] = ['samples', 'task-flow'];
 
 /**
  * Роды, которые ложатся не файлом в каталог, а каталогом по имени ресурса: скил читается как
@@ -203,6 +216,8 @@ export const DEFAULT_LAYOUT: Readonly<Record<TKind, string>> = {
     // Внутри рода путь повторяет раскладку дерева — папки задач и спеки, — поэтому одного
     // умолчания хватает всем образцам сразу.
     samples: 'docs',
+    // Движок лежит в каталоге проверок и ищет описание в `task-flow/` рядом с собой.
+    'task-flow': 'tools/task-flow',
 };
 
 export class ConfigError extends Error {}
@@ -274,7 +289,9 @@ export function parseConfig(text: string): IConfig {
     // значило бы держать одно и то же в двух местах: расходятся такие пары молча.
     const derived: Record<string, string> = {};
     for (const kind of KINDS) {
-        derived[`${kind.replace(/s$/, '')}sDir`] = layout[kind];
+        // Имя переменной — слитное: `task-flow` даёт `taskFlowsDir`, а не дефис внутри имени.
+        const word: string = kind.replace(/-(\w)/g, (_: string, letter: string): string => letter.toUpperCase());
+        derived[`${word.replace(/s$/, '')}sDir`] = layout[kind];
     }
 
     return {

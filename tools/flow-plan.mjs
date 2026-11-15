@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/flow-plan.mjs · 16d84639cd8d · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/flow-plan.mjs · c371b62aee30 · правится надстройкой, не здесь
 /**
  * The approval of a plan and the forms of its checks — the engine commands `plan-check` and
  * `plan-red`.
@@ -87,7 +87,7 @@ export function approvingAnswer(entries, task) {
 export function runPlanRed({ git, steps, marks }, model, record, limitMs = STEP_LIMIT_MS) {
     let plan;
     try {
-        plan = planOfBranch(git);
+        plan = planOfBranch(git, model.words);
     } catch (error) {
         if (!(error instanceof StepRefused)) throw error;
         console.log(`plan-red: ${error.message}`);

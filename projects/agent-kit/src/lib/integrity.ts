@@ -9,7 +9,7 @@
  * означает пример, а не объявление.
  */
 import { frontMatterOf, IEntryOfCatalog, IFrontMatter } from './catalog.js';
-import { TKind } from './config.js';
+import { PATH_KINDS, TKind } from './config.js';
 
 /** Расхождение в ресурсах пакета: кто ссылается, на что и чего не нашлось. */
 export interface IBrokenLink {
@@ -75,10 +75,16 @@ interface INamedGroup {
  *
  * Виды одного ресурса двусмысленности не дают: у них совпадает не только последнее звено, но и
  * имя целиком, и ссылка при них указывает на один ресурс — тот, чей вид выбрало дерево.
+ *
+ * Роды, у которых путь внутри рода — место в дереве, не судятся: по короткому имени их никто не
+ * зовёт, и `source/host` с `measure/host` у сценария task flow — два разных файла по замыслу.
  */
 export function ambiguousNames(catalog: readonly IEntryOfCatalog[]): readonly IAmbiguousName[] {
     const found: Map<string, INamedGroup> = new Map<string, INamedGroup>();
     for (const entry of catalog) {
+        if (PATH_KINDS.includes(entry.kind)) {
+            continue;
+        }
         const short: string = entry.name.split('/').pop() ?? entry.name;
         const key: string = `${entry.kind} ${short}`;
         const group: INamedGroup = found.get(key) ?? { kind: entry.kind, name: short, ids: [], names: new Set<string>() };

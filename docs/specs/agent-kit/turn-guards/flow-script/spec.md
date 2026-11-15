@@ -57,6 +57,7 @@ There is no interface: the description is read by the engine and by the executor
 - **A plan may be written only when every step carries a check of a known form that is no command of the work, and a form added to the description is known at once.**
 - **The approval mark is written when every check is red before the work, both roles were called and the owner then chose an option that begins with «Одобряю» and names the plan or the task.**
 - **A check is replaced only by a decision in the progress whose quote stands in a message the owner typed.**
+- **A branch planned before the engine reads its plan from the newest commit that changed it.**
 - **The epic of the work is the one the task card names, and its plan lies in the plans directory.**
 - **Exit 2 is met by the epic branch on the server or merged into the main branch, with the epic card out of the first column or closed.**
 - **Exit 4 is met by the task card out of the first column or closed, and by the commit that added the task folder.**

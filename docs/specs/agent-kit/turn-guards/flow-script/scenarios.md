@@ -410,3 +410,11 @@ When the step is measured by the package description and by the copy
 Then the first refuses the form, and the second measures the step as matched with no edit of the engine
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
+### SC-AK-1539 — a branch planned before the engine reads its plan from its last edit
+
+Given a plan edited by a later commit, once on a branch of the closed list of branches planned before the engine and once on another branch
+When the engine measures a step
+Then the first measures the check of the last edit, and the second is refused naming the plan
+
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.

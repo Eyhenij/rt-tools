@@ -202,6 +202,34 @@ printf '%s\n' '{"type":"user","message":{"content":"продолжай"}}' > "$T
 got="$(cd "$TF_RED" && RT_FLOW_TRANSCRIPT="$TF_REC" node "$TESTS/../assets/checks/task-flow-script.mjs" step 1.1 2>&1 | tr '\n' ' '; printf 'code=%s' "${PIPESTATUS[0]}")"
 report "plan: SC-AK-1413 — замена без слова владельца отказана" "$(printf '%s' "$got" | grep -c 'the owner never typed it code=1')" 1
 
+# SC-AK-1539 — ветка, спланированная до движка, читает план из последней правки
+tf_legacy() {
+    local branch="$1" dir
+    dir="$TF_DIR/legacy-$branch"
+    (
+        git -c init.defaultBranch=main init -q "$dir"
+        cd "$dir" || exit 1
+        "${TF_G[@]}" commit -q --allow-empty -m start
+        git update-ref refs/remotes/origin/main HEAD
+        git checkout -q -b "$branch"
+        mkdir -p "docs/tasks/$branch"
+        printf '# Plan\n\n## Stages\n\n### 1. Первый\n\n- **Steps:**\n    1. Сказать\n       Check: `echo раз` → `раз`\n' > "docs/tasks/$branch/plan.md"
+        git add -A
+        "${TF_G[@]}" commit -q -m plan
+        printf '# Plan\n\n## Stages\n\n### 1. Первый\n\n- **Steps:**\n    1. Сказать\n       Check: `echo два` → `два`\n' > "docs/tasks/$branch/plan.md"
+        git add -A
+        "${TF_G[@]}" commit -q -m edit
+    )
+    local out code
+    out="$(cd "$dir" && node "$TESTS/../assets/checks/task-flow-script.mjs" step 1.1 2>&1)"
+    code=$?
+    printf '%s code=%s' "$out" "$code"
+}
+report "plan: SC-AK-1539 — ветка до движка меряет проверку последней правки плана" \
+    "$(tf_legacy RT-3329-task-flow-scenario)" 'ожидалось `два` · получено два · совпало code=0'
+report "plan: SC-AK-1539 — новая ветка с правленым планом отказана" \
+    "$(tf_legacy RT-5-new | grep -c 'differs from the commit of the plan: docs/tasks/RT-5-new/plan.md code=1')" 1
+
 if [ -n "${TF_ALONE:-}" ]; then
     rm -rf "$TF_DIR"
     suite_result "сценарий task flow: шаг плана и одобрение"

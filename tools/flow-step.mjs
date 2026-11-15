@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/flow-step.mjs · 23b8540575b9 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/flow-step.mjs · 5fa766f998f0 · правится надстройкой, не здесь
 /**
  * A step of the plan measured by its check — the engine command `step`.
  *
@@ -57,12 +57,19 @@ export function runCheck(command, limitMs = STEP_LIMIT_MS) {
     return { code: timedOut ? null : out.status, output: out.stdout ?? '', timedOut };
 }
 
-/** The plan of the checked-out branch as the commit that added it wrote it. */
-export function planOfBranch(git) {
+/**
+ * The plan of the checked-out branch as its commit wrote it: the commit that added the plan. A branch
+ * of `words.legacyBranches` takes the newest commit that changed it — its plan was approved, and
+ * edited by the owner's word, before the engine existed.
+ */
+export function planOfBranch(git, words = {}) {
     const branch = git.branch();
     const folder = `docs/tasks/${branch}`;
     const path = `${folder}/plan.md`;
-    const sha = git.addedBy(path);
+    const legacy = (words.legacyBranches ?? []).includes(branch);
+    const sha = legacy
+        ? ([...git.commits()].reverse().find((c) => c.added.includes(path) || c.modified.includes(path))?.sha ?? null)
+        : git.addedBy(path);
     if (!sha) throw new StepRefused(`no commit of the branch added ${path}`);
     const text = git.versionAt(path, sha);
     return { branch, folder, sha, text, fingerprint: createHash('sha256').update(text).digest('hex').slice(0, 16) };
@@ -102,7 +109,7 @@ const gotOf = (run, form, limitMs) => {
  * `sources` holds `git`, `steps`, `marks` and `owner`; `model` gives the words and the forms of `expect`.
  */
 export function measureStep({ git, steps, marks, owner }, model, number, limitMs = STEP_LIMIT_MS, read = readFile) {
-    const plan = planOfBranch(git);
+    const plan = planOfBranch(git, model.words);
     const changed = changedSincePlan(git, plan, read);
     if (changed.length > 0) throw new StepRefused(`the task folder differs from the commit of the plan: ${changed.join(', ')}`);
     const planned = steps.ofPlan(plan.text).find((s) => s.number === number);
@@ -121,8 +128,8 @@ export function measureStep({ git, steps, marks, owner }, model, number, limitMs
 }
 
 /** The steps the progress marks done: the working copy, or the last version in the history. */
-export function doneSteps({ git, steps }, read = readFile) {
-    const plan = planOfBranch(git);
+export function doneSteps({ git, steps }, model, read = readFile) {
+    const plan = planOfBranch(git, model.words);
     const path = `${plan.folder}/${PROGRESS}`;
     const text = read(path) ?? git.lastVersion(path) ?? '';
     return steps.ofProgress(text).steps.filter((s) => s.mark === 'x').map((s) => s.number);
@@ -153,7 +160,7 @@ export function runStepCommand(sources, model, target) {
     }
     let numbers;
     try {
-        numbers = doneSteps(sources);
+        numbers = doneSteps(sources, model);
     } catch (error) {
         if (!(error instanceof StepRefused)) throw error;
         console.log(`step: ${error.message}`);

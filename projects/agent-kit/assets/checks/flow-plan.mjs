@@ -86,7 +86,7 @@ export function approvingAnswer(entries, task) {
 export function runPlanRed({ git, steps, marks }, model, record, limitMs = STEP_LIMIT_MS) {
     let plan;
     try {
-        plan = planOfBranch(git);
+        plan = planOfBranch(git, model.words);
     } catch (error) {
         if (!(error instanceof StepRefused)) throw error;
         console.log(`plan-red: ${error.message}`);

@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 2 — измеряемый результат шага плана. Этап 1 закрыт: набор языка 71 ok, набор движка 75 ok, движок называет эту ветку `этап-идёт`
 - **Done:** план записан в `plan.md` — десятая редакция, одобренная владельцем в меню: «Одобряю план RT-3329 (Recommended)» после выводов `goal-critic` и `product-strategist`, обе роли сказали «можно показывать». 59 шагов в шести этапах, все проверки красные до работы, 172 обязательных случая. Шесть скриптов проверок лежат в папке задачи. Страница передачи — https://claude.ai/artifact/KAk9FYgi6tPmjVDmn2uHjH
-- **Next step:** шаг 2.7 — вид раскладки `task-flow` в пакете, разложить движок, описание и шаблон, измерить шаг этого плана разложенным движком
+- **Next step:** шаг 2.8 — проба на игрушечном дереве: отказ командного хука на Stop держит ход при согласии agent-хука. Нужен вход в CLI: проба упала с «OAuth session expired»
 - **Uncommitted:** none
 - **Waiting for the owner:** no — вход в CLI (`claude`, затем `/login`) нужен к шагу 2.8, владелец ответил «Войду позже»
 - **PR:** not open yet
@@ -31,8 +31,8 @@
 - [x] 2.4 Написать `step <N.M>` и `step --done`: команда из коммита плана, предел 540 с, код 1 при несовпадении, запрет команд работы, отказ при файле папки, отличном от коммита плана
 - [x] 2.5 Написать `plan-red` с меткой одобрения, проверку формы при записи плана и замену проверки шага только с цитатой владельца
 - [x] 2.6 Пересобрать таблицу входов набора перед push
-- [>] 2.7 Добавить в раскладку вид `task-flow`, прогнать набор пакета на jest, собрать пакет, разложить движок, описание и шаблон, измерить шаг этого плана разложенным движком
-- [ ] 2.8 Проверить на игрушечном дереве, что отказ командного хука на Stop держит ход при согласии agent-хука
+- [x] 2.7 Добавить в раскладку вид `task-flow`, прогнать набор пакета на jest, собрать пакет, разложить движок, описание и шаблон, измерить шаг этого плана разложенным движком
+- [>] 2.8 Проверить на игрушечном дереве, что отказ командного хука на Stop держит ход при согласии agent-хука
 - [ ] 3.1 Написать страж `flow-step-guard.sh`: `[x]` без метки, порядок `[x]` и `[>]`, `State` впереди измеренного, запись оболочкой в ход работы, план, план эпика и каталог меток, правка описания task flow
 - [ ] 3.2 Пройти обязательные случаи стража
 - [ ] 3.3 Пропускать `[x]` у плана без строк проверки и у плана, добавленного раньше движка, — по закрытому списку веток
@@ -237,6 +237,14 @@
   бегун прогоняет эти 25 случаев дважды, несколько секунд. Затронуты шаги 2.4, 2.5 и 4.5.
 - **Одобрение ищет ключ задачи по ветке, а не `RT-`.** Ключ — настройка дерева; `plan-red` берёт
   `<КЛЮЧ>-<номер>` из имени ветки и ищет его в ответе меню. Затронут шаг 2.5.
+- **Ветка, спланированная до движка, берёт план из последней правки `plan.md`.** У такой ветки
+  коммит, добавивший план, старше строк проверки, и мерить шаг по нему нечем. Список таких веток
+  закрытый — `words.legacyBranches` в описании. Затронут шаг 2.7.
+- **Вид раскладки `task-flow` кладёт каталог, и одинаковые имена файлов в нём законны.** В
+  `measure/` и `source/` лежат модули с одним именем: `host`, `owner`, `session`. Проверка
+  неоднозначных имён отказывала раскладке, поэтому виды-каталоги перечислены в `PATH_KINDS`, и
+  проверка их пропускает. Каталог закрыт от форматтера строкой `.prettierignore`, а knip считает его
+  модули входами: движок грузит их по пути из описания. Затронут шаг 2.7.
 
 ## Сессии
 
@@ -273,8 +281,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 1 — язык описания, сценарий и измерение состояний
-- **Next step:** шаг 1.10 — команды `measure` и `measure --json`; дерево после состояния N не меряется ниже N; группа `monotone`, 3 случая. Таблица входов набора перед push уже пересобрана (результат шага 2.6), сам шаг отмечается в свой черёд
+- **Stage:** 2 — измеряемый результат шага плана. Этап 1 закрыт: набор языка 71 ok, набор движка 75 ok, движок называет эту ветку `этап-идёт`
+- **Next step:** шаг 2.7 — вид раскладки `task-flow` в пакете, разложить движок, описание и шаблон, измерить шаг этого плана разложенным движком
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3329-task-flow-scenario/progress.md`; the plan lies next to it.
@@ -282,12 +290,34 @@ The progress in full — `docs/tasks/RT-3329-task-flow-scenario/progress.md`; th
 ### Uncommitted
 
 ```
-none
+ M .prettierignore
+ M docs/specs/agent-kit/layout/implementation.md
+ M docs/specs/agent-kit/layout/scenarios.md
+ M docs/specs/agent-kit/layout/spec.md
+ M docs/specs/agent-kit/turn-guards/flow-script/implementation.md
+ M docs/specs/agent-kit/turn-guards/flow-script/scenarios.md
+ M docs/specs/agent-kit/turn-guards/flow-script/spec.md
+ M knip.json
+ M projects/agent-kit/assets/checks/flow-plan.mjs
+ M projects/agent-kit/assets/checks/flow-step.mjs
+ M projects/agent-kit/src/lib/assets.spec.ts
+ M projects/agent-kit/src/lib/commands.ts
+ M projects/agent-kit/src/lib/config.ts
+ M projects/agent-kit/src/lib/integrity.ts
+ M projects/agent-kit/tests/task-flow-script-steps.test.sh
+ M tools/flow-plan.mjs
+ M tools/flow-step.mjs
+?? tools/task-flow/
 ```
 
 ### Commits over the main branch
 
 ```
+6c3bb2f20 test(rt:agent-kit): метки в наборе шагов печатаются строкой
+309caa3b7 feat(rt:agent-kit): одобрение плана пишет движок, а не исполнитель
+d4781fcc3 feat(rt:agent-kit): движок меряет шаг плана его проверкой
+58cdbae9e feat(rt:agent-kit): шаг плана несёт строку проверки
+6af0564b7 feat(rt:agent-kit): движок task flow меряет ветку командой measure
 faeccda24 docs(rt:agent-kit): проверка шага 4.5 ищет сценарии и в подпапках
 6f012f859 docs(rt:agent-kit): язык описания task flow — своей подобластью
 431f5429a feat(rt:agent-kit): эпик копии и ветка вне сценария task flow
@@ -303,11 +333,6 @@ aae4d97f5 test(rt:agent-kit): поле модели в наборе языка �
 f68cd9c49 docs(rt:agent-kit): привязки спека шагов — к модулю разбора
 5ac5447c0 refactor(rt:agent-kit): разбор шагов плана и хода работы — отдельным модулем
 31473c2f0 docs(rt:agent-kit): план эпика RT-3302 — задача RT-3332 о подписи метки
-bdc6d6141 docs(rt:agent-kit): план RT-3329 — task flow исполняемым сценарием
-45d00e1ac docs(rt:agent-kit): ход работы RT-3329 — десятая редакция плана
-69c740f27 docs(rt:agent-kit): ход работы RT-3329 — девятая редакция плана
-b27d1a54f docs(rt:agent-kit): разбор и ход работы RT-3329 — восьмая редакция плана
-35d87e392 docs(rt:agent-kit): разбор RT-3329 — язык описания task flow
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
