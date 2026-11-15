@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/dispatch.sh · 4625ed70046c · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/dispatch.sh · fef71fd56cf7 · правится надстройкой, не здесь
 # The dispatcher of agent events. NOT a guard: it has no `rt-hook:` declaration — on the contrary,
 # it reads such declarations in the others. In the agent settings it stands alone on an event
 # instead of a list.
@@ -47,13 +47,6 @@ if [ -n "$assignments" ]; then
 fi
 export RT_HOOK_INPUT="$input"
 
-branches="$(grep -l '^# rt-hook:' "$here"/*.sh 2>/dev/null | sort)"
-[ -z "$branches" ] && exit 0
-
-# A file happens to have several declarations: a guard standing both on a tool call and on the end
-# of a turn names both events by lines of its own. Before, only the first was read — and the second
-# branch was never called, silently: from the outside that is indistinguishable from a guard that
-# looked and let through.
 collected=""
 
 # The journal of the turn exit: a Stop branch that failed or ran past its limit writes «движок упал»
@@ -87,6 +80,14 @@ if [ "$event" = UserPromptSubmit ] && [ -s "$journal_file" ]; then
         fi
     fi
 fi
+branches="$(grep -l '^# rt-hook:' "$here"/*.sh 2>/dev/null | sort)"
+[ -z "$branches" ] && [ -z "$collected" ] && exit 0
+
+# A file happens to have several declarations: a guard standing both on a tool call and on the end
+# of a turn names both events by lines of its own. Before, only the first was read — and the second
+# branch was never called, silently: from the outside that is indistinguishable from a guard that
+# looked and let through.
+
 for branch in $branches; do
     matched=0
     while IFS= read -r declaration; do

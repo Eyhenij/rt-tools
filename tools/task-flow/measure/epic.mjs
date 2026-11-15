@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · task-flow/measure/epic.mjs · 4b28f94d38a5 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · task-flow/measure/epic.mjs · 6c1f0d704a17 · правится надстройкой, не здесь
 /**
  * The measurer «measure.epic» — the exits that read the epic of the work: its plan in the plans
  * directory, its branch and its card.
@@ -48,6 +48,19 @@ export function nextTaken({ git, host, tree, owner }) {
         const next = plan.rows.find((row) => !row.merged && row.task !== current && !blocked(row, owner));
         if (!next) return true;
         return git.branches(prefix(next.task)).length > 0 || host.remoteBranches(prefix(next.task)).length > 0;
+    };
+}
+
+/**
+ * The task of the branch waits for the owner: its row in the plan of the epic names the owner's step,
+ * and the owner has not said its quote. The exit check then names the owner's menu.
+ */
+export function ownerStep({ git, host, tree, owner }) {
+    return () => {
+        const plan = epicOfWork({ git, host, tree });
+        const current = taskOfBranch(git.branch());
+        const row = plan?.rows.find((r) => r.task === current);
+        return Boolean(row && row.ownerQuote !== null && !(row.ownerQuote !== '' && owner.said(row.ownerQuote)));
     };
 }
 

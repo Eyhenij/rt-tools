@@ -209,6 +209,10 @@ out('host: SC-AK-1389 — задача с шагом владельца проп
 out('host: SC-AK-1389 — шаг без слова владельца не пропускается', run(epic.nextTaken, { rows: ownerRows, local: [{ name: 'RT-14-more', sha: 'm' }] }), 'false');
 const deferred = [['1', 11, 'влито'], ['2', 12, 'идёт'], ['—', 13, 'отложено'], ['3', 14, 'впереди']];
 out('host: SC-AK-1390 — отложенная задача пропускается', run(epic.nextTaken, { rows: deferred, local: [{ name: 'RT-14-more', sha: 'm' }] }), 'true');
+const ownRow = [['1', 11, 'влито'], ['2', 12, 'шаг владельца «проверю сам»'], ['3', 13, 'впереди']];
+out('host: SC-AK-1441 — строка задачи называет шаг владельца — шаг владельца', run(epic.ownerStep, { rows: ownRow }), 'true');
+out('host: SC-AK-1441 — владелец сказал цитату — шаг уже не его', run(epic.ownerStep, { rows: ownRow, owner: ['проверю сам'] }), 'false');
+out('host: SC-AK-1441 — обычная строка задачи — не шаг владельца', run(epic.ownerStep, {}), 'false');
 
 // SC-AK-1391 — выход 12
 const mergedPull = (task, sha) => ({ number: task, head: `RT-${task}-x`, headRefOid: sha, base: E });

@@ -14,8 +14,11 @@ echo "проверка выхода из хода"
 TESTS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 te_run() {
-    local out label got want
+    local out label got want code
     out="$(cd "$TESTS" && node --input-type=module 2>&1)"
+    code=$?
+    report "блок случаев отработал без ошибки" "$code" 0
+    [ "$code" -eq 0 ] || printf '%s\n' "$out" | grep -v '|' | head -5 >&2
     while IFS='|' read -r label got want; do
         [ -n "$label" ] || continue
         report "$label" "$got" "$want"
@@ -29,7 +32,10 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { buildModel } from '../assets/checks/flow-model.mjs';
 import { isWriteCommand, saysStop } from '../assets/checks/flow-data.mjs';
-import { releaseCase, holdReason } from '../assets/checks/flow-verdict.mjs';
+import { releaseCase, holdReason, menuCause, menuOptions } from '../assets/checks/flow-verdict.mjs';
+import { judgeCall } from '../assets/checks/flow-guard.mjs';
+import { wordOf as sourceWordOf } from '../assets/task-flow/source/owner.mjs';
+import { epicPlan } from '../assets/task-flow/measure/epic-text.mjs';
 import * as owner from '../assets/task-flow/measure/owner.mjs';
 import * as session from '../assets/task-flow/measure/session.mjs';
 import * as host from '../assets/task-flow/measure/host.mjs';
@@ -103,6 +109,42 @@ out('menu: SC-AK-1444 — меню отказа не дошло до владе�
 const stage = { state: 'этап-идёт', index: 7, reason: null };
 out('удержанный ход в этапе называет шаг и команду', String(holdReason(model, stage, { number: '3.6', name: 'Перевести' }).includes('task-flow-script.mjs step 3.6')), 'true');
 out('удержанный ход до этапа называет действие состояния', String(holdReason(model, held, null).includes('explore the tree')), 'true');
+
+// --- меню владельцу: шаг владельца или шаг, который запрещает другая проверка ---------------------
+const HOLD_MENU = { cause: null, task: '7' };
+const ownerMenu = holdReason(model, stage, null, { ...HOLD_MENU, cause: menuCause((name) => name === 'measure.epic.ownerStep') });
+out('menu: SC-AK-1441 — шаг владельца — отказ называет меню', String(ownerMenu.includes("The next step is the owner's") && ownerMenu.includes("owner's menu")), 'true');
+out('menu: SC-AK-1441 — без причины меню нет', String(holdReason(model, stage, null, { ...HOLD_MENU, cause: menuCause(() => false) }).includes("owner's menu")), 'false');
+
+const forbiddenBy = (name) => (name === 'measure.session.forbidden' ? 'git-guard-delivery' : false);
+const checkMenu = holdReason(model, stage, null, { ...HOLD_MENU, cause: menuCause(forbiddenBy) });
+out('menu: SC-AK-1442 — шаг запрещает другая проверка — меню об этой проверке', String(checkMenu.includes('`git-guard-delivery` refused the same step twice') && checkMenu.includes("owner's menu")), 'true');
+const blockedBy = (by, reason) => ({ kind: 'blocked', by, reason });
+const called = (name, input = {}, blocked = false) => ({ kind: 'call', name, input, blocked });
+const forbids = (list) => String(session.forbidden(events(list))(data));
+const PUSH = called('Bash', { command: 'git push' }, true);
+out('menu: SC-AK-1442 — два отказа одной проверки подряд — шаг запрещён', forbids([PUSH, blockedBy('git-guard-delivery', 'no task'), PUSH, blockedBy('git-guard-delivery', 'no task')]), 'git-guard-delivery');
+out('menu: SC-AK-1442 — запись между отказами снимает счёт', forbids([blockedBy('x', 'r'), called('Edit'), blockedBy('x', 'r')]), 'false');
+out('menu: SC-AK-1442 — другая причина — не запрет', forbids([blockedBy('x', 'r1'), blockedBy('x', 'r2')]), 'false');
+
+out('menu: SC-AK-1443 — заблокированная задача — берётся следующая незаблокированная', String(ownerMenu.includes('takes the next unblocked task') && ownerMenu.includes('takes the next;')), 'true');
+
+out('menu: SC-AK-1445 — меню отказа несёт «отложить RT-N», «сделаю сам» и «стоп»', String(['«отложить RT-7»', '«сделаю сам»', '«стоп»'].every((option) => ownerMenu.includes(option))), 'true');
+out('menu: SC-AK-1445 — без номера задачи вариант остаётся «отложить RT-N»', menuOptions(model.words, null).join(', '), 'отложить RT-N, сделаю сам, стоп');
+
+const answered = (option) => sourceWordOf({ type: 'user', toolUseResult: { answers: { 'Что делать?': option } }, message: { content: [] } });
+out('menu: SC-AK-1467 — вариант «стоп» меню отказа — слово владельца', answered('стоп'), 'стоп');
+out('menu: SC-AK-1467 — вариант «стоп» меню отказа — отпущен', stop(answered('стоп')), 'true');
+
+const plan = '# Эпик\n\n| # | Задача | Состояние |\n| --- | --- | --- |\n| 1 | RT-7 — проба | идёт |\n| 2 | RT-8 — дальше | впереди |\n';
+const ctx = { tasksDir: 'docs/tasks', branch: 'RT-7-x', marksDir: '.git/rt-kit', plansDir: 'docs/plans', overridePath: 'o', protectedPaths: [], key: 'RT', read: () => plan };
+const defer = (word) => judgeCall({ tool: 'Edit', path: 'docs/plans/epic.md', edits: [{ oldString: '| RT-7 — проба | идёт |', newString: '| RT-7 — проба | отложено |' }] }, { ...ctx, ownerLast: () => word });
+out('menu: SC-AK-1468 — вариант «отложить RT-N» ставит отметку «отложено»', String(defer(answered('отложить RT-7'))), 'null');
+out('menu: SC-AK-1468 — без варианта отметка отказана', String(defer('ок') !== null), 'true');
+
+const own = judgeCall({ tool: 'Edit', path: 'docs/plans/epic.md', edits: [{ oldString: '| RT-7 — проба | идёт |', newString: '| RT-7 — проба | шаг владельца «сделаю сам» |' }] }, { ...ctx, ownerLast: () => answered('сделаю сам') });
+out('menu: SC-AK-1469 — вариант «сделаю сам» блокирует задачу шагом владельца', String(own), 'null');
+out('menu: SC-AK-1469 — строка шага владельца — задача заблокирована', String(epicPlan(plan.replace('| идёт |', '| шаг владельца «сделаю сам» |')).rows[0].ownerQuote), 'сделаю сам');
 JS
 
 # --- сам хук на дереве фикстуры ---------------------------------------------------------------------
@@ -133,6 +175,15 @@ report "end: SC-AK-1437 — движок вышел за предел — тот
 RT_FLOW_ENGINE="$TURNS/none.mjs" expect_stop "end: SC-AK-1438 — движок не вызван — ход отпущен" \
     "$(input_stop "$(transcript "$(say 'делай')" "$(edited)")")" PASS
 report "end: SC-AK-1438 — движок не вызван — тот же исход" "$(grep -c 'движок упал' "$JOURNAL" 2>/dev/null)" "3"
+
+# Следующий ход начинается строкой о сбое: диспетчер на UserPromptSubmit читает журнал один раз.
+# Диспетчер зовётся из своего каталога, без соседних хуков: его ветки здесь не нужны.
+DISPATCH_ONLY="$(mktemp -d)"
+cp "$HOOKS/dispatch.sh" "$HOOKS/hook-input.sh" "$HOOKS/utf8.sh" "$DISPATCH_ONLY/" 2>/dev/null
+next_prompt() { jq -n --arg d "$REPO" '{session_id:"tests",prompt:"дальше",cwd:$d}' | CLAUDE_PROJECT_DIR="$REPO" bash "$DISPATCH_ONLY/dispatch.sh" UserPromptSubmit 2>/dev/null; }
+report "end: SC-AK-1464 — после сбоя движка следующий ход начинается строкой о сбое" "$(next_prompt | grep -c 'released by a failure of the exit check')" "1"
+report "end: SC-AK-1464 — строка о сбое приходит один раз" "$(next_prompt | grep -c 'released by a failure of the exit check')" "0"
+rm -rf "$DISPATCH_ONLY"
 
 rm -f "$REPO/.git/rt-kit/refusals-in-row"
 for _ in 1 2 3 4 5 6 7 8; do

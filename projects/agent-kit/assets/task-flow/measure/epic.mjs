@@ -50,6 +50,19 @@ export function nextTaken({ git, host, tree, owner }) {
     };
 }
 
+/**
+ * The task of the branch waits for the owner: its row in the plan of the epic names the owner's step,
+ * and the owner has not said its quote. The exit check then names the owner's menu.
+ */
+export function ownerStep({ git, host, tree, owner }) {
+    return () => {
+        const plan = epicOfWork({ git, host, tree });
+        const current = taskOfBranch(git.branch());
+        const row = plan?.rows.find((r) => r.task === current);
+        return Boolean(row && row.ownerQuote !== null && !(row.ownerQuote !== '' && owner.said(row.ownerQuote)));
+    };
+}
+
 export function mergedMarked({ git, host, tree }) {
     return () => {
         const plan = epicOfWork({ git, host, tree });
