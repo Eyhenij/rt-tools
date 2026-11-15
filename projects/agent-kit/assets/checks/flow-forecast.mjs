@@ -228,8 +228,8 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
     return { calls: ids.size, ...counts };
 }
 
-/** The refusals per thousand calls with one decimal: the held stops, and with `guard` the guard too. */
-export const perMille = ({ calls, held, refused }, guard) => (calls > 0 ? ((held + (guard ? refused : 0)) * 1000) / calls : 0).toFixed(1);
+/** The refusals per thousand calls, rounded to a whole number: the held stops, and with `guard` the guard too. */
+export const perMille = ({ calls, held, refused }, guard) => String(Math.round(calls > 0 ? ((held + (guard ? refused : 0)) * 1000) / calls : 0));
 
 export const forecastLine = (result, guard) =>
     `forecast: ${result.calls} calls, ${result.stops} stops, ${result.held} held; ${result.judged} calls judged by the guard, ${result.refused} refused — ${perMille(result, guard)} per mille`;
