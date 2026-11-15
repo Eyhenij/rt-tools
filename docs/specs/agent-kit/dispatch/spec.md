@@ -180,6 +180,10 @@ Not applicable.
 
 ## History of changes
 
+- 2026-11-15 — the scenario of the line about a failure at the start of the next turn left for the
+  subdomain `docs/specs/agent-kit/turn-guards/flow-script/exit/` with its number; the rule stays
+  here.
+
 - 2026-11-05 — the answers of several branches reach the agent as one object.
 
 - 2026-08-23 — the subdomain was created.

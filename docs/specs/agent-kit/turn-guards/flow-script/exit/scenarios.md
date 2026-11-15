@@ -1,6 +1,6 @@
 # Scenarios: the guard of the exits of a turn
 
-A subdomain of the domain "The guards of the end of a turn". Here are the scenarios of the verdict at
+A subdomain of the task flow as an executable scenario. Here are the scenarios of the verdict at
 the end of a turn and of its release cases.
 
 ### SC-AK-1427 — the end of the scenario releases the turn
@@ -138,6 +138,14 @@ When the hook and the dispatcher are called
 Then both release the turn and write «движок упал»
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/dispatch.test.sh`.
+
+### SC-AK-1464 — after a failure of the engine the next turn starts with a line about it
+
+Given a journal holding «движок упал» written by a Stop branch the dispatcher stopped at its limit
+When the owner's next prompt is dispatched, and the one after it
+Then the first carries a line about the failure, and the second does not
+
+Covered: `projects/agent-kit/tests/dispatch.test.sh`, `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
 ### SC-AK-1439 — the eighth refusal in a row is written to the journal
 

@@ -47,10 +47,12 @@ not by a person.
 
 ## What is out of scope
 
-The description, its measurers and the measured state are the subdomain
+The description, its measurers and the measured state are the subdomain one level up,
 `docs/specs/agent-kit/turn-guards/flow-script/`. The guard of the conversation, the guard of the
-window of the session and the guard of waiting are in the domain next to it. A line about a failure
-at the start of the next turn is written by the dispatcher, `docs/specs/agent-kit/dispatch/`.
+window of the session and the guard of waiting are in the domain `docs/specs/agent-kit/turn-guards/`.
+The line about a failure at the start of the next turn is written by the dispatcher, and its rule is
+in `docs/specs/agent-kit/dispatch/`; its scenario stands here, because it is the second half of a
+release by a failed engine.
 
 ## Contract
 
@@ -123,3 +125,6 @@ None.
   scenario file outgrew the length limit.
 - 2026-11-15 — the guard asks the engine of the task flow for a verdict. The tiers and the
   subdomain of the open epic are removed; the release cases of the description replace them.
+- 2026-11-15 — the subdomain moved under the task flow as an executable scenario: its verdict is
+  the engine's. The scenario of the line about a failure at the start of the next turn came here
+  from the dispatcher with its number.

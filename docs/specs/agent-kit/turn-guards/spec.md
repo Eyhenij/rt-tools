@@ -39,7 +39,7 @@ turn.
 
 The questions to the owner are judged by the agent hook of the question tool, and what was said in a
 turn by the agent hook of the Stop event; both are rules at the end of this section. The guard of the
-exits asks the engine of the task flow for a verdict: `docs/specs/agent-kit/turn-guards/exit/`.
+exits asks the engine of the task flow for a verdict: `docs/specs/agent-kit/turn-guards/flow-script/exit/`.
 
 - **A squeeze summary is never a real remark of the owner.** It retells turns that have already
   ended: a request carried out yesterday reads in it as said now, and a turn refused by it pays for

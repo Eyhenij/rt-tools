@@ -115,14 +115,6 @@ Then there is no refusal decision in the output
 
 Covered: `projects/agent-kit/tests/dispatch.test.sh`.
 
-### SC-AK-1464 — after a failure of the engine the next turn starts with a line about it
-
-Given a journal holding «движок упал» written by a Stop branch the dispatcher stopped at its limit
-When the owner's next prompt is dispatched, and the one after it
-Then the first carries a line about the failure, and the second does not
-
-Covered: `projects/agent-kit/tests/dispatch.test.sh`.
-
 ### SC-AK-833 — a branch that left with a non-zero code and silently is named by name
 
 Given a branch of the event leaves with a non-zero code and prints nothing
