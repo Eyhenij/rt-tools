@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/task-flow-script.mjs · d429b2aea2e6 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/task-flow-script.mjs · f2e8bfdceca7 · правится надстройкой, не здесь
 /**
  * The engine of the task flow: reads the description `flow.js` through the model and answers about
  * the scenario. The description lies next to the engine as `task-flow/flow.js` where the engine is
@@ -20,15 +20,21 @@
  *                                      approval mark when all are red and the owner approved after
  *                                      both roles; the record of the conversation is named by
  *                                      `RT_FLOW_TRANSCRIPT`
+ *   node task-flow-script.mjs guard    reads the input of a hook before Edit, Write, MultiEdit or a
+ *                                      shell command from stdin and prints the reason of a refusal,
+ *                                      or nothing — the hook `flow-step-guard.sh` calls it
  *
  * A description that does not build is named with its reason, and the engine exits 1: a scenario
  * read from a broken description would measure what nobody wrote.
  */
+import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { evaluateCondition } from './flow-condition.mjs';
+import { judgeCall } from './flow-guard.mjs';
+import { callOf, guardContext, recordOf } from './flow-guard-run.mjs';
 import { FlowModelError, buildModel } from './flow-model.mjs';
 import { planProblems, readRecord, runPlanRed } from './flow-plan.mjs';
 import { runStepCommand } from './flow-step.mjs';
@@ -148,8 +154,41 @@ export function measureJson(model, result) {
     return { ...result, action: state?.action ?? null, pattern: state?.pattern ?? null };
 }
 
-const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|--done | plan-check <plan.md> | plan-red  [--flow <flow.js>]';
-const COMMANDS = ['states', 'measure', 'step', 'plan-check', 'plan-red'];
+const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|--done | plan-check <plan.md> | plan-red | guard  [--flow <flow.js>]';
+
+/**
+ * What the guard guards: where the task folders and the epic plans lie, the tree override, and the
+ * description with its engine — in the package and laid out.
+ */
+const GUARD_SETTINGS = {
+    tasksDir: process.env.RT_FLOW_TASKS_DIR || 'docs/tasks',
+    plansDir: process.env.RT_FLOW_PLANS_DIR || 'docs/plans',
+    overridePath: '.claude/rt-kit/overrides/task-flow/flow.js',
+    protectedPaths: [
+        '^projects/agent-kit/assets/task-flow/',
+        '^tools/task-flow/',
+        '(?:^|/)task-flow-script\\.mjs$',
+        '^projects/agent-kit/assets/checks/flow-[\\w-]+\\.mjs$',
+        '^tools/flow-[\\w-]+\\.mjs$',
+    ],
+};
+
+/** The verdict of the guard on the hook input from stdin: the reason of a refusal, or null. */
+async function runGuard(model, base) {
+    const input = JSON.parse(readFileSync(0, 'utf8') || '{}');
+    const root = spawnSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' }).stdout?.trim();
+    if (!root) return null;
+    const call = callOf(input, root);
+    if (!call) return null;
+    if (input.transcript_path) process.env.RT_FLOW_TRANSCRIPT = input.transcript_path;
+    const source = await openSources(model, base);
+    const readers = await openReaders(model, base);
+    const measure = () => measureStates(model, readers).index;
+    const ctx = guardContext({ root, model, marks: source('marks'), record: recordOf(input), measure, settings: GUARD_SETTINGS });
+    return judgeCall(call, ctx);
+}
+
+const COMMANDS = ['states', 'measure', 'step', 'plan-check', 'plan-red', 'guard'];
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
     const args = process.argv.slice(2);
@@ -174,6 +213,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
             const problems = planProblems(readFileSync(target, 'utf8'), source('steps'), model);
             for (const problem of problems) console.log(`plan-check: ${problem}`);
             process.exit(problems.length > 0 ? 1 : 0);
+        } else if (command === 'guard') {
+            console.log((await runGuard(model, dirname(path))) ?? '');
         } else if (command === 'plan-red') {
             const source = await openSources(model, dirname(path));
             const sources = { git: source('git'), steps: source('steps'), marks: source('marks') };
