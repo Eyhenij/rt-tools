@@ -293,7 +293,7 @@ export function parseArgs(argv) {
 }
 
 /** The copies of the tree with their session records; a file last written before the window is skipped. */
-function readCopies(root, tree, window) {
+export function readCopies(root, tree, window) {
     if (!existsSync(root)) return [];
     return readdirSync(root)
         .filter((name) => isCopyDir(name, tree))

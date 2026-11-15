@@ -418,3 +418,11 @@ When the engine measures a step
 Then the first measures the check of the last edit, and the second is refused naming the plan
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
+### SC-AK-1549 — the forecast counts held stops and refused calls per thousand calls
+
+Given a recorded session that wrote and stopped twice, the owner's «стоп» before the second stop, a session that wrote nothing, and a shell write into the progress
+When the forecast replays them
+Then the first stop is held and the second released, the quiet session is released, the shell write is refused by the guard, and the count is per thousand calls
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.

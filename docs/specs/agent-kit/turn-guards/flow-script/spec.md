@@ -68,6 +68,7 @@ There is no interface: the description is read by the engine and by the executor
 - **A branch without a task number, the epic branch among them, takes the epic of the working copy from the assignment table.**
 - **The epic of the copy merged into the main branch or with its card closed counts as absent.**
 - **A branch without a task number, without a live epic of the copy and without a draft is outside the scenario, and a draft keeps it in states 1–4.**
+- **The forecast replays the session records of the past days: a stop no release case lets go and a call the guard refuses are refusals, counted per thousand calls.**
 
 ## What is out of scope
 
@@ -152,3 +153,4 @@ None.
 - 2026-11-15 — the recorded turns were started as the subdomain `replay/`.
 - 2026-11-15 — the guard of the exits of a turn moved here as the subdomain `exit/`: its verdict,
   its release cases and the owner's menu are measured by the engine.
+- 2026-11-15 — the forecast of refusals replays the session records before the hooks are laid out.

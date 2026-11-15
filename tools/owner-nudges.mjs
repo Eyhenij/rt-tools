@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/owner-nudges.mjs · 85945c9ac833 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/owner-nudges.mjs · b18573e5111a · правится надстройкой, не здесь
 /**
  * The measures of the guards of the end of a turn, read from the session records of this tree.
  *
@@ -294,7 +294,7 @@ export function parseArgs(argv) {
 }
 
 /** The copies of the tree with their session records; a file last written before the window is skipped. */
-function readCopies(root, tree, window) {
+export function readCopies(root, tree, window) {
     if (!existsSync(root)) return [];
     return readdirSync(root)
         .filter((name) => isCopyDir(name, tree))

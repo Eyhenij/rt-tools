@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/task-flow-script.mjs · 324a59dfde70 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/task-flow-script.mjs · f7fe1187db43 · правится надстройкой, не здесь
 /**
  * The engine of the task flow: reads the description `flow.js` through the model and answers about
  * the scenario. The description lies next to the engine as `task-flow/flow.js` where the engine is
@@ -33,10 +33,12 @@
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
+import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { evaluateCondition } from './flow-condition.mjs';
+import { runForecast } from './flow-forecast.mjs';
 import { judgeCall } from './flow-guard.mjs';
 import { callOf, guardContext } from './flow-guard-run.mjs';
 import { isWriteCommand, saysStop } from './flow-data.mjs';
@@ -161,7 +163,7 @@ export function measureJson(model, result) {
     return { ...result, action: state?.action ?? null, pattern: state?.pattern ?? null };
 }
 
-const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|--done | plan-check <plan.md> | plan-red | guard | verdict  [--flow <flow.js>]';
+const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|--done | plan-check <plan.md> | plan-red | guard | verdict | forecast --days N [--until <date>] [--per-mille] [--guard]  [--flow <flow.js>]';
 
 /**
  * What the guard guards: where the task folders and the epic plans lie, the tree override, and the
@@ -220,7 +222,7 @@ async function runVerdict(model, base) {
     return { block: holdReason(model, result, step, { cause: menuCause(measured), task }) };
 }
 
-const COMMANDS = ['states', 'measure', 'step', 'plan-check', 'plan-red', 'guard', 'verdict'];
+const COMMANDS = ['states', 'measure', 'step', 'plan-check', 'plan-red', 'guard', 'verdict', 'forecast'];
 /** The commands the hooks call: they judge by the package description when the override breaks. */
 const HOOK_COMMANDS = ['guard', 'verdict'];
 
@@ -263,6 +265,11 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
             console.log(JSON.stringify(await runVerdict(model, dirname(path))));
         } else if (command === 'guard') {
             console.log((await runGuard(model, dirname(path))) ?? '');
+        } else if (command === 'forecast') {
+            const tree = dirname(spawnSync('git', ['rev-parse', '--path-format=absolute', '--git-common-dir'], { encoding: 'utf8' }).stdout.trim());
+            const root = process.env.RT_FLOW_RECORDS || join(homedir(), '.claude', 'projects');
+            const argv = process.argv.slice(3).filter((arg, index, all) => arg !== '--flow' && all[index - 1] !== '--flow');
+            console.log(await runForecast({ argv, model, base: dirname(path), openReaders, tree, root, settings: GUARD_SETTINGS }));
         } else if (command === 'plan-red') {
             const source = await openSources(model, dirname(path));
             const sources = { git: source('git'), steps: source('steps'), marks: source('marks') };

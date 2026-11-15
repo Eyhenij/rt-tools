@@ -398,5 +398,40 @@ report "local: SC-AK-1371 — метка не JSON читается отсутс
 # --- Шаг плана и одобрение плана — в подключаемом файле -----------------------------------------
 . "$TESTS/task-flow-script-steps.test.sh"
 
+# --- Прогноз отказов по записям разговоров ---------------------------------------------------------
+tf_run <<'JS'
+import { dirname } from 'node:path';
+import { buildModel } from '../assets/checks/flow-model.mjs';
+import { openReaders } from '../assets/checks/task-flow-script.mjs';
+import { forecastCopies, perMille } from '../assets/checks/flow-forecast.mjs';
+import * as sessionSource from '../assets/task-flow/source/session.mjs';
+import { wordOf } from '../assets/task-flow/source/owner.mjs';
+
+const out = (label, got, want) => console.log(`${label}|${got}|${want}`);
+const flow = new URL('../assets/task-flow/flow.js', import.meta.url).pathname;
+const model = buildModel(flow);
+const settings = { tasksDir: 'docs/tasks', plansDir: 'docs/plans', overridePath: 'o.js', protectedPaths: ['^projects/agent-kit/assets/task-flow/'] };
+const window = { from: Date.parse('2026-11-01T00:00:00Z'), to: Date.parse('2026-11-08T00:00:00Z') };
+let n = 0;
+const at = () => `2026-11-02T10:00:${String(n++).padStart(2, '0')}Z`;
+const meta = (branch) => ({ uuid: `u${n}`, gitBranch: branch, cwd: '/t', timestamp: at() });
+const owner = (branch, text) => ({ ...meta(branch), type: 'user', message: { content: text } });
+const use = (branch, name, input) => ({ ...meta(branch), type: 'assistant', message: { content: [{ type: 'tool_use', id: `t${n}`, name, input }] } });
+const stop = (branch) => ({ ...meta(branch), type: 'system', subtype: 'stop_hook_summary' });
+const say = (branch) => ({ ...meta(branch), type: 'assistant', message: { content: [{ type: 'text', text: 'done' }] } });
+const run = async (entries) =>
+    forecastCopies({ copies: [{ name: 'c', sessions: [{ id: 's', entries }] }], window, model, base: dirname(flow), openReaders, sessionSource, wordOf, tree: '/t', settings });
+
+const B = 'RT-7-x';
+const held = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B), say(B), owner(B, 'стоп'), say(B), stop(B)]);
+out('forecast: SC-AK-1549 — остановка после записи держится, «стоп» отпускает', `${held.stops} ${held.held}`, '2 1');
+out('forecast: SC-AK-1549 — на тысячу вызовов', perMille(held, false), '1000.0');
+const quiet = await run([owner('main-x', 'спасибо'), say('main-x'), stop('main-x')]);
+out('forecast: SC-AK-1549 — сессия без записи отпущена', `${quiet.stops} ${quiet.held}`, '1 0');
+const shell = await run([owner(B, 'делай RT-7'), use(B, 'Bash', { command: 'echo x > docs/tasks/RT-7-x/progress.md' }), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' })]);
+out('forecast: SC-AK-1549 — запись оболочкой в ход работы — отказ стража', `${shell.judged} ${shell.refused}`, '2 1');
+out('forecast: SC-AK-1549 — отказы стража входят с --guard', perMille({ ...shell, held: 0 }, true), '500.0');
+JS
+
 rm -rf "$TF_DIR"
 suite_result "сценарий task flow"
