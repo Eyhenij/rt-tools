@@ -61,7 +61,7 @@ tf_step() {
 got="$(tf_step 1.1)"
 report "step: SC-AK-1403 — совпало, код 0" "$got" 'ожидалось `один` · получено один · совпало code=0'
 report "step: SC-AK-1403 — метка шага записана" \
-    "$(node -e "const m=require('$TF_MARK/1.1.json');console.log(m.matched, m.step, m.branch, m.line, m.plan.length)" 2>&1)" 'true 1.1 RT-1-x один 16'
+    "$(node -e "const m=require('$TF_MARK/1.1.json');console.log([m.matched, m.step, m.branch, m.line, m.plan.length].join(' '))" 2>&1)" 'true 1.1 RT-1-x один 16'
 report "step: SC-AK-1409 — строка кончается «· совпало»" "$(printf '%s' "$got" | grep -cE '· совпало code=0$')" 1
 
 # SC-AK-1404, SC-AK-1409 — не совпало: метки нет, код 1
@@ -177,7 +177,7 @@ tf_record 'Одобряю план RT-2 (Recommended)'
 got="$(tf_red)"
 report "plan: SC-AK-1411 — обе проверки красные, метка записана" "$(printf '%s' "$got" | grep -cE '^1\.[12] red|approval mark is written.* code=0$')" 3
 report "plan: SC-AK-1411 — метка несёт ответ и красный вывод каждого шага" \
-    "$(node -e "const m=require('$TF_APPROVAL');console.log(m.answer, Object.keys(m.red).join(','), m.fingerprint.length)" 2>&1)" 'Одобряю план RT-2 (Recommended) 1.1,1.2 16'
+    "$(node -e "const m=require('$TF_APPROVAL');console.log([m.answer, Object.keys(m.red).join(','), m.fingerprint.length].join(' '))" 2>&1)" 'Одобряю план RT-2 (Recommended) 1.1,1.2 16'
 rm -f "$TF_APPROVAL"
 tf_record 'Переделай этап 1'
 report "plan: SC-AK-1411 — другой ответ меню метки не даёт" "$(tf_red | grep -c 'no menu answer.* code=1')" 1
