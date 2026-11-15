@@ -1,0 +1,14 @@
+{
+  "case": "SC-AK-1449",
+  "kind": "a stop on a milestone",
+  "record": "89d97601 337",
+  "task": 101,
+  "turns": [
+    { "role": "owner", "at": "2026-10-28T08:00:00Z", "owner": "<order:RT-101>" },
+    { "role": "agent", "at": "2026-10-28T08:04:00Z", "call": "Bash", "command": "npm run task:new -- --epic 100", "code": 0 },
+    { "role": "agent", "at": "2026-10-28T08:06:00Z", "call": "Write", "file": "docs/tasks/RT-101-replay-task/grill.md", "code": 0 },
+    { "role": "agent", "at": "2026-10-28T08:07:00Z", "call": "Bash", "command": "git commit -q -F msg.txt", "code": 0 },
+    { "role": "agent", "at": "2026-10-28T08:08:00Z", "say": "The branch is created and the folder is committed." }
+  ],
+  "next": { "owner": "<nudge>" }
+}
