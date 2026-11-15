@@ -51,10 +51,10 @@ article.
 - `.claude/hooks/cargo-mark-guard.sh` refuses a turn that removed the task folder by `git rm` while
   the grill names cargo record keys and no mark was set. At night that mark must not be set. The
   archive pattern removes the folder by `rm -r`, and a night task taken from the cargo follows it.
-- The turn-exit guard refuses a working turn under an open epic until a question through the tool,
-  another guard's refusal, a handover or the owner's word to stop (`.claude/hooks/turn-exit-guard.sh`,
-  `.claude/hooks/turn-exit-verdict.sh`). The boundary from `/night` is not among them, so the
-  command ends the night with a question through the tool.
+- The turn-exit guard holds a working turn until the scenario of the task flow is over or a release
+  case of its description is met (`.claude/hooks/turn-exit-guard.sh`, `tools/flow-verdict.mjs`).
+  The boundary from `/night` is not among them: the night ends with the end of the scenario or with
+  a stop word of the owner.
 
 ## What this is checked by
 

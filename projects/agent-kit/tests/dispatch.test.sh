@@ -262,21 +262,20 @@ rm -f "$DISPATCH_DIR/aaa_denies.sh" "$DISPATCH_DIR/zzz_says.sh"
 # склеивает. Чего он не судит — что настоящий страж объявлен тем событием, что диспетчер его
 # находит и что его отказ доходит как есть. Гард, чей отказ теряется по дороге, защитой не
 # считается, а молчание его читается как согласие.
-# Образцы стража и разбор записи хода лежат в соседних файлах: без них страж молчит.
-cp "$ASSETS/hooks/turn-exit-guard.sh" "$ASSETS/hooks/turn-exit-patterns.sh" \
-    "$ASSETS/hooks/turn-exit-verdict.sh" "$ASSETS/hooks/turn-exit-epic.sh" "$ASSETS/hooks/epic-over.sh" \
-    "$DISPATCH_DIR/" 2>/dev/null
+# Страж зовёт движок task flow, который лежит в пакете, а не рядом с копией диспетчера: путь к
+# нему передаётся явно. Дерево фикстуры получает коммит — движку нужна история ветки.
+cp "$ASSETS/hooks/turn-exit-guard.sh" "$ASSETS/hooks/turn-exit-role.sh" "$DISPATCH_DIR/" 2>/dev/null
+export RT_FLOW_ENGINE="$ASSETS/checks/task-flow-script.mjs"
 
 REAL_REPO="$(fixture_repo RT-9-real)"
-mkdir -p "$REAL_REPO/docs/tasks/RT-9-real"
-printf '# Ход работы\n\n## Где стоим\n\n- **Состояние:** `этап-идёт`\n- **Следующий шаг:** делать первый\n' \
-    > "$REAL_REPO/docs/tasks/RT-9-real/progress.md"
+git -C "$REAL_REPO" -c user.name=t -c user.email=t@t -c commit.gpgsign=false commit -q --allow-empty -m 'основание' >/dev/null 2>&1
 
-REAL_TURN="$(mktemp)"
+# Ход без записи начинается просьбой без подталкивания: «продолжай» по описанию держит ход и без записи.
+READ_TURN="$(mktemp)"
 {
-    jq -c -n '{type:"user",message:{content:[{type:"text",text:"продолжай"}]}}'
+    jq -c -n '{type:"user",message:{content:[{type:"text",text:"покажи, что с прогоном"}]}}'
     jq -c -n '{type:"assistant",message:{content:[{type:"tool_use",name:"Bash",input:{command:"gh run watch 1"}}]}}'
-} > "$REAL_TURN"
+} > "$READ_TURN"
 
 WORK_TURN="$(mktemp)"
 {
@@ -290,20 +289,33 @@ real_input() {
         '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:false}'
 }
 
-REAL_OUT="$(printf '%s' "$(real_input "$REAL_TURN")" | bash "$DISPATCH_DIR/dispatch.sh" Stop 2>/dev/null)"
+REAL_OUT="$(printf '%s' "$(real_input "$WORK_TURN")" | CLAUDE_PROJECT_DIR="$REAL_REPO" bash "$DISPATCH_DIR/dispatch.sh" Stop 2>/dev/null)"
 report "SC-AK-700 — решение стража дошло до вывода" \
     "$(printf '%s' "$REAL_OUT" | jq -r '.decision' 2>/dev/null)" 'block'
 report "SC-AK-700 — довод в выводе от стража, а не общий" \
-    "$(printf '%s' "$REAL_OUT" | jq -r '.reason' 2>/dev/null | grep -c 'делать первый')" 1
+    "$(printf '%s' "$REAL_OUT" | jq -r '.reason' 2>/dev/null | grep -c 'просьба-не-разобрана')" 1
 report "SC-AK-700 — код возврата диспетчера нулевой" \
-    "$(printf '%s' "$(real_input "$REAL_TURN")" | bash "$DISPATCH_DIR/dispatch.sh" Stop >/dev/null 2>&1; printf '%s' "$?")" 0
+    "$(printf '%s' "$(real_input "$WORK_TURN")" | CLAUDE_PROJECT_DIR="$REAL_REPO" bash "$DISPATCH_DIR/dispatch.sh" Stop >/dev/null 2>&1; printf '%s' "$?")" 0
 
-WORK_OUT="$(printf '%s' "$(real_input "$WORK_TURN")" | bash "$DISPATCH_DIR/dispatch.sh" Stop 2>/dev/null)"
-report "SC-AK-701 — ход с работой отбоя не получает" \
-    "$(printf '%s' "$WORK_OUT" | grep -c '"decision":"block"')" 0
+READ_OUT="$(printf '%s' "$(real_input "$READ_TURN")" | CLAUDE_PROJECT_DIR="$REAL_REPO" bash "$DISPATCH_DIR/dispatch.sh" Stop 2>/dev/null)"
+report "SC-AK-701 — ход без записи отбоя не получает" \
+    "$(printf '%s' "$READ_OUT" | grep -cE '"decision": ?"block"')" 0
 
-rm -f "$DISPATCH_DIR/turn-exit-guard.sh" "$DISPATCH_DIR/turn-exit-patterns.sh" \
-    "$DISPATCH_DIR/turn-exit-verdict.sh" "$REAL_TURN" "$WORK_TURN"
+# --- SC-AK-1438, SC-AK-1464 — ветка Stop, вышедшая за предел, пишет исход и отпускает ход ----------
+JOURNAL="$REAL_REPO/.git/rt-kit/turn-exit.log"
+rm -f "$JOURNAL" "$REAL_REPO/.git/rt-kit/turn-exit.read"
+printf '#!/usr/bin/env bash\n# rt-hook: Stop\n# rt-hook-timeout: 1\nsleep 5\n' > "$DISPATCH_DIR/zz_slow_stop.sh"
+SLOW_CODE="$(printf '%s' "$(real_input "$READ_TURN")" | CLAUDE_PROJECT_DIR="$REAL_REPO" bash "$DISPATCH_DIR/dispatch.sh" Stop >/dev/null 2>&1; printf '%s' "$?")"
+report "end: SC-AK-1438 — dispatch.sh не дождался ветки Stop — ход отпущен" "$SLOW_CODE" 0
+report "end: SC-AK-1438 — dispatch.sh не вызвал движок — тот же исход" "$(grep -c 'движок упал: zz_slow_stop.sh' "$JOURNAL" 2>/dev/null)" 1
+rm -f "$DISPATCH_DIR/zz_slow_stop.sh"
+NEXT="$(jq -n --arg d "$REAL_REPO" '{session_id:"tests",prompt:"дальше",cwd:$d}' | CLAUDE_PROJECT_DIR="$REAL_REPO" bash "$DISPATCH_DIR/dispatch.sh" UserPromptSubmit 2>/dev/null)"
+report "end: SC-AK-1464 — после сбоя движка следующий ход начинается строкой о сбое" "$(printf '%s' "$NEXT" | grep -c 'released by a failure of the exit check')" 1
+NEXT2="$(jq -n --arg d "$REAL_REPO" '{session_id:"tests",prompt:"дальше",cwd:$d}' | CLAUDE_PROJECT_DIR="$REAL_REPO" bash "$DISPATCH_DIR/dispatch.sh" UserPromptSubmit 2>/dev/null)"
+report "end: SC-AK-1464 — строка о сбое приходит один раз" "$(printf '%s' "$NEXT2" | grep -c 'released by a failure of the exit check')" 0
+
+unset RT_FLOW_ENGINE
+rm -f "$DISPATCH_DIR/turn-exit-guard.sh" "$DISPATCH_DIR/turn-exit-role.sh" "$READ_TURN" "$WORK_TURN"
 rm -rf "$REAL_REPO"
 
 # --- SC-AK-1268 — ответы нескольких веток доходят одним объектом --------------------------------

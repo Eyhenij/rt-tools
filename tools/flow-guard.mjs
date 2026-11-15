@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/flow-guard.mjs · c0cf7bf61da9 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/flow-guard.mjs · 729b0084fe63 · правится надстройкой, не здесь
 /**
  * The guard of the course of work — the engine command `guard`, called by the hook
  * `flow-step-guard.sh` before Edit, Write, MultiEdit and a shell command.
@@ -121,8 +121,12 @@ export function editedPaths(plan) {
     return paths;
 }
 
-/** The path is named by a footprint path: the same file, or a directory that holds it. */
-export const namedBy = (path, paths) => paths.some((named) => path === named || (named.endsWith('/') && path.startsWith(named)));
+/**
+ * The path is named by a footprint path: the same file, a directory that holds it, or a bare file
+ * name equal to its last part — a footprint row lists the files of one directory by name.
+ */
+export const namedBy = (path, paths) =>
+    paths.some((named) => path === named || (named.endsWith('/') && path.startsWith(named)) || (!named.includes('/') && path.split('/').pop() === named));
 
 /**
  * The verdict on one call: the reason of a refusal, or null.

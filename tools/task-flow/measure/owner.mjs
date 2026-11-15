@@ -1,14 +1,21 @@
-// rt-kit v0.37.0 · task-flow/measure/owner.mjs · 0077748a72d3 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · task-flow/measure/owner.mjs · 4d945c99a7e5 · правится надстройкой, не здесь
 /**
- * The measurer «measure.owner» of the task flow description. A factory named by a
- * capability takes its ports and returns the reader; until the step that writes it, the factory
- * throws, so an unmeasured exit is never read as met.
+ * The measurer «measure.owner» — what the owner's last word says about the turn: a stop, or a push
+ * to go on.
  */
-
+/** The owner's last word begins with a stop word of `words.stop`, and nothing after it holds the turn. */
 export function saidStop({ owner }) {
-    throw new Error('Not implemented: measure.owner.saidStop (owner)');
+    return ({ words, rules }) => {
+        const last = owner.last();
+        return last !== null && rules.saysStop(last, words);
+    };
 }
 
+/** The owner's last word pushes the work on by `words.nudge`, or names a task or an epic. */
 export function nudged({ owner }) {
-    throw new Error('Not implemented: measure.owner.nudged (owner)');
+    return ({ words }) => {
+        const last = owner.last();
+        if (last === null) return false;
+        return new RegExp(words.nudge ?? '(?!)', 'iu').test(last) || /(?<![\p{L}\d])[A-Z]+-\d+(?!\d)/u.test(last);
+    };
 }

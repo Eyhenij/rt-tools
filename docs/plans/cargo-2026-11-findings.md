@@ -7,9 +7,10 @@ when the epic is over.
 
 - **The turn exit guard does not recognise the owner's order to wait for the merge.** The order
   «не переходи к следующей задаче пока я не дам аппрув и пока не будет вмержен этот пр» holds no
-  word from the stop list of `turn-exit-verdict.sh`, and the same message holds «бери». A quote of
+  word from the stop list of the verdict tier, and the same message holds «бери». A quote of
   it in « » therefore releases nothing, and the guard demands the next task three times after the
-  PR opened. **Address:** rules layer — `hooks/turn-exit-verdict.sh`, the same edit as task RT-3067.
+  PR opened. **Address:** rules layer — the verdict tier, the same edit as task RT-3067. RT-3329
+  removed the tier: the stop words are a list of the description of the task flow.
 - **The two guards leave no lawful exit between them.** The turn exit guard names a question to
   the owner through the tool as a lawful exit. The grill gate refuses that question twice: once
   because the rules hold the answer, once because no tree-changing command followed the last
@@ -21,12 +22,13 @@ when the epic is over.
   `tail -n 400` of the transcript. The owner's last message lay further back, so the window held no
   input, the turn came out empty, and edits and commands made in it counted as nothing. The refusal
   «nothing was done in this turn» then repeats on every exit, whatever is done. **Address:** rules
-  layer — `hooks/turn-exit-verdict.sh`, the same edit as task RT-3067.
+  layer — the verdict tier, the same edit as task RT-3067. RT-3329 removed the tier.
 - **Work on the hosting does not count as work of the turn.** The turn after the review of PR #3083
   pushed the fix, rewrote the PR body, answered the review and asked for a review again. The guard
   then refused with «nothing was done in this turn — neither an edit nor a command changing the
   tree» four times in a row: a push and a call to the hosting do not change the working tree.
-  **Address:** rules layer — `hooks/turn-exit-verdict.sh`, the same edit as task RT-3067.
+  **Address:** rules layer — the verdict tier, the same edit as task RT-3067. RT-3329 removed the
+  tier: a push and a call to the hosting are commands of the work in the description.
   The same happened after the push of the third review fix: the commit, the push, the PR body,
   the reply and the review request were done in one turn, and the guard refused three times with
   the same text. The owner's order quoted in « » released nothing, since it lay outside the

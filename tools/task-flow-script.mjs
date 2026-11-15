@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/task-flow-script.mjs · f2e8bfdceca7 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/task-flow-script.mjs · b8d3051abaef · правится надстройкой, не здесь
 /**
  * The engine of the task flow: reads the description `flow.js` through the model and answers about
  * the scenario. The description lies next to the engine as `task-flow/flow.js` where the engine is
@@ -34,11 +34,13 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { evaluateCondition } from './flow-condition.mjs';
 import { judgeCall } from './flow-guard.mjs';
-import { callOf, guardContext, recordOf } from './flow-guard-run.mjs';
+import { callOf, guardContext } from './flow-guard-run.mjs';
+import { isWriteCommand, saysStop } from './flow-data.mjs';
 import { FlowModelError, buildModel } from './flow-model.mjs';
 import { planProblems, readRecord, runPlanRed } from './flow-plan.mjs';
 import { runStepCommand } from './flow-step.mjs';
 import { FlowSyntaxError } from './flow-syntax.mjs';
+import { currentStep, holdReason, releaseCase } from './flow-verdict.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -119,7 +121,7 @@ export async function openReaders(model, base, given = {}) {
     const source = await openSources(model, base, given);
     const modules = {};
     for (const m of model.measures) modules[m.entry] = await import(pathToFileURL(join(base, m.file)).href);
-    const data = { words: model.words, expect: model.expect };
+    const data = { words: model.words, expect: model.expect, rules: { saysStop, isWriteCommand } };
     const caps = new Map(model.measures.map((m) => [m.entry, m.caps]));
     return (name) => {
         const [, entry, cap] = name.split('.');
@@ -154,7 +156,7 @@ export function measureJson(model, result) {
     return { ...result, action: state?.action ?? null, pattern: state?.pattern ?? null };
 }
 
-const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|--done | plan-check <plan.md> | plan-red | guard  [--flow <flow.js>]';
+const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|--done | plan-check <plan.md> | plan-red | guard | verdict  [--flow <flow.js>]';
 
 /**
  * What the guard guards: where the task folders and the epic plans lie, the tree override, and the
@@ -184,11 +186,35 @@ async function runGuard(model, base) {
     const source = await openSources(model, base);
     const readers = await openReaders(model, base);
     const measure = () => measureStates(model, readers).index;
-    const ctx = guardContext({ root, model, marks: source('marks'), record: recordOf(input), measure, settings: GUARD_SETTINGS });
+    const ctx = guardContext({ root, model, marks: source('marks'), owner: source('owner'), measure, settings: GUARD_SETTINGS });
     return judgeCall(call, ctx);
 }
 
-const COMMANDS = ['states', 'measure', 'step', 'plan-check', 'plan-red', 'guard'];
+/**
+ * The verdict at the end of a turn on the Stop input from stdin: `{ release: <log> }` or
+ * `{ block: <reason> }` as one JSON line.
+ */
+async function runVerdict(model, base) {
+    const input = JSON.parse(readFileSync(0, 'utf8') || '{}');
+    if (input.transcript_path) process.env.RT_FLOW_TRANSCRIPT = input.transcript_path;
+    if (input.agent_type) process.env.RT_FLOW_AGENT = input.agent_type;
+    const read = await openReaders(model, base);
+    const cache = new Map();
+    const measured = (name) => {
+        if (!cache.has(name)) cache.set(name, read(name));
+        return cache.get(name);
+    };
+    const result = measureStates(model, measured);
+    const released = releaseCase(model, measured, result);
+    if (released) return { release: released.log ?? released.key };
+    const root = spawnSync('git', ['rev-parse', '--show-toplevel'], { encoding: 'utf8' }).stdout?.trim();
+    const branch = spawnSync('git', ['rev-parse', '--abbrev-ref', 'HEAD'], { encoding: 'utf8' }).stdout?.trim();
+    const progress = join(root ?? '.', GUARD_SETTINGS.tasksDir, branch ?? '', 'progress.md');
+    const step = currentStep(existsSync(progress) ? readFileSync(progress, 'utf8') : null);
+    return { block: holdReason(model, result, step) };
+}
+
+const COMMANDS = ['states', 'measure', 'step', 'plan-check', 'plan-red', 'guard', 'verdict'];
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
     const args = process.argv.slice(2);
@@ -213,6 +239,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
             const problems = planProblems(readFileSync(target, 'utf8'), source('steps'), model);
             for (const problem of problems) console.log(`plan-check: ${problem}`);
             process.exit(problems.length > 0 ? 1 : 0);
+        } else if (command === 'verdict') {
+            console.log(JSON.stringify(await runVerdict(model, dirname(path))));
         } else if (command === 'guard') {
             console.log((await runGuard(model, dirname(path))) ?? '');
         } else if (command === 'plan-red') {

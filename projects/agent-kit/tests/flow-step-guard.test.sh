@@ -162,6 +162,18 @@ approve "$R5" "$B5"
 d "protect: SC-AK-1525 — в задаче, чей одобренный план называет путь в строке «(правится)», правка проходит" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" PASS
 d "protect: SC-AK-1526 — запись оболочкой судится теми же условиями" "$(shell_input "printf '({})' > projects/agent-kit/assets/task-flow/flow.js" "$R5")" PASS
 
+# Строка следа перечисляет файлы одного каталога голыми именами: имя засчитывается по последней части пути.
+B7=RT-10-bare-name
+R7="$(fixture_repo_branched main "$B7")"
+TMPS+=("$R7")
+fixture_commit "$R7" "docs/tasks/$B7/plan.md" "$(plan_text edits flow.js)" "docs: план"
+approve "$R7" "$B7"
+F7="$R7/projects/agent-kit/assets/task-flow/flow.js"
+mkdir -p "$(dirname "$F7")"
+printf '({})\n' > "$F7"
+d "protect: SC-AK-1525 — голое имя файла в строке «(правится)» называет путь" "$(edit_input Edit "$F7" '({})' '({ })' "$R7")" PASS
+d "protect: SC-AK-1525 — голое имя не называет другой файл" "$(edit_input Write "$R7/projects/agent-kit/assets/task-flow/measure/x.mjs" '' 'x' "$R7")" deny
+
 R6="$(fixture_repo_branched main "$B3")"
 TMPS+=("$R6")
 fixture_commit "$R6" "docs/tasks/$B3/plan.md" "$(plan_text edits projects/agent-kit/assets/task-flow/)" "docs: план"

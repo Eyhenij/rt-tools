@@ -1,40 +1,27 @@
 # The guard of the exits of a turn
 
-**Status:** in force · **Revision:** 2026-09-17 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-15 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `work-conduct`
 **Procedures:** none
 
 ## Why
 
-One guard of the domain "The guards of the end of a turn" grew so much that its scenarios stopped
-fitting next to the foreign ones: forty-two of sixty-three were about it. The subdomain is split off
-so that the list of the scenarios of the domain can be read, and this one grows by an order of its
-own.
-
-The subject of the subdomain is the end of a turn. A turn in which the work stands where it stood
-does not end: the rule lists four lawful exits, and not one of them sounds like "to tell what was
-done".
+A turn used to be judged by its last action and by a row of tiers, one per kind of stop seen in an
+incident. Each new kind needed a new tier, and the work still stopped where no tier stood. The guard
+now asks the engine of the task flow: a turn does not end before the scenario does, unless a release
+case of the description says it may.
 
 ## Terminology
 
-- **A turn** — everything written after the last real remark of the owner. The answer of a tool
-  arrives under the same role and does not count as a remark.
-- **The last action of a turn** — the call of a tool standing last in the turn. The text of the
-  answer does not count as an action at all.
-- **Work** — an edit of a file or a command that changes the tree or its state. Reading, searching
-  and switching a branch do not count as work.
-- **Exploration** — a reading subcommand of the version control system and a reading call of the
-  hosting client: a look at the history, the state of the tree, the list of the requests and the
-  runs.
-- **A tier** — a separate check of the guard naming the kind of the stop by name. The tiers are
-  derived from the general sign and are needed so that the refusal is understandable.
+- **The verdict** — the answer of the engine at the end of a turn: released with the case that
+  released it, or held with the one move that comes next.
+- **A release case** — an entry of the section `release` of the description: a condition over the
+  measurers and its order.
+- **The journal** — the file in the common directory of git where a release nobody decided is
+  written: a failed engine and the eighth refusal in a row.
 - **A service message** — a record entry under the role of the owner that the owner did not write:
   the load of a rule, the summary of a compaction, the feedback of a guard of the stop.
-- **An open epic** — an epic with at least one task left unfinished, as the table of the epic
-  prints them. An epic that cannot be read is not open.
-- **The epic branch** — a branch named by the header line of an epic plan in the plans directory.
-  It has the shape of a task branch and carries no task folder by the rule.
 
 ### What it is called in the interface
 
@@ -43,64 +30,39 @@ not by a person.
 
 ## Rules
 
-- **Exploration does not count as work.** A reading subcommand of the version control system and a
-  reading call of the hosting client stay a preparation for work.
-- **A redirection of the output does not count as work.** What makes a turn work is where the arrow
-  leads, not the arrow itself: a write into the temporary directory of the session and a diversion of
-  the error stream do not change the tree.
-- **Waiting for someone else's step is never the end of a turn.** However much work there was before
-  — the run, the review by the owner and the merge go without the executor.
-- **A launch in the background is never the last action of a turn.** A role sent to work by the
-  agent tool or a command sent behind the turn is an announcement of intent: what was sent asks
-  nothing on the way and goes no faster for being waited on. While it runs, what does not depend on
-  it is done, and the launch stands anywhere in the turn but last.
-- **An empty turn woken by a notification about an own background task ends while another own
-  background task still runs.** The notification is written under the role of the owner, and the
-  turn it opens holds nothing to do: what it waits for is still running. The turn after the last own
-  task finished is judged as before — its result is acted on in that turn.
-- **Handed-in work ends a turn only together with the next one begun.** On the next one an action
-  must be done, not said. A request opened by `glab mr create` is handed-in work on a par with one
-  opened by `gh pr create`.
-- **A task taken without a task folder does not end the turn.** Creating a branch and moving the
-  column do not count as the start of the work.
-- **A closed stage is confirmed by the command of the check of the same turn.**
-- **A next step rewritten into the progress is begun by the same turn.** After the last edit of the
-  progress the turn holds work other than the commit and the push of it — an edit outside the task
-  folder or a command changing the tree; otherwise the turn does not end, however much was done
-  before the line. Judged in a running stage alone; handed-in work has a tier of its own.
-- **The lawful exits are judged before all the tiers.** There are four of them: a question to the
-  owner, a refusal of a guard, a written handover and a word of the owner about a stop.
-- **The parts of a compound command are judged one by one.** A reading joined with an edit stays
-  work.
-- **A service message neither starts a turn nor is a word of the owner.** The turn is counted from
-  the last remark the owner wrote; the word «стоп» in the text of a loaded rule releases nothing.
-- **A refusal of a guard is an exit only as the last action of the turn.** A refusal in the middle
-  of the turn was answered by the work that followed it, and the turn is judged by how it ended.
-- **A refusal of the closing tool is not an exit.** The refused call was a stop, not work: the guard
-  leaves that refusal out of the release sign, and the turn is judged by what stood before it.
-- **A question at the head of an empty turn in a running stage is a stop.** The parts of the stage
-  that do not depend on the answer go first, and the question by the tool after them.
+- **A turn ends with the scenario: the engine measures the branch, and a turn whose scenario is not over is held.**
+- **A turn is released by the first release case of the description that is met, in the order of the cases.**
+- **A held turn names one move: the action of the measured state, and in a running stage the current step with the command that measures it.**
+- **The owner's last word releases the turn when it begins with a stop word and nothing after it asks to go on.**
+- **A session that wrote nothing to the tree releases the turn unless the owner's last word pushes the work on, and a branch outside the scenario releases it always.**
+- **A role session with no edit tool ends with its report.**
+- **The silent hosting releases the turn only when the measurement itself stopped on the silence.**
+- **A menu of a refusal that did not reach the owner a second time in a row releases the turn.**
+- **An engine that fails, runs past its limit or cannot be called releases the turn and writes «движок упал» to the journal.**
+- **The eighth refusal in a row is written to the journal.**
+- **A service message is no word of the owner.**
 
 ## What is out of scope
 
-A turn under an open epic is a subdomain of its own, `docs/specs/agent-kit/turn-guards/exit-epic/`.
-The guard of the conversation, the guard of the incident, the guard of the window of the session and
-the guard of waiting — they are in the domain next to it. The statements about the state of the tree
-are judged by the guard of the statements: this guard reads actions, not text.
+The description, its measurers and the measured state are the subdomain
+`docs/specs/agent-kit/turn-guards/flow-script/`. The guard of the conversation, the guard of the
+window of the session and the guard of waiting are in the domain next to it. A line about a failure
+at the start of the next turn is written by the dispatcher, `docs/specs/agent-kit/dispatch/`.
 
 ## Contract
 
-The guard is called by the event of a stop and answers with a decision: let it through or give the
-turn back with a reason.
+The guard is called by the event of a stop, hands its input to `task-flow-script.mjs verdict` and
+answers with the verdict: silence for a released turn, `{"decision":"block","reason":…}` for a held
+one. The engine has 75 seconds; the hook declares its own limit of 90 in its header.
 
 ### Refusal codes
 
-Not applicable: the refusal comes as text naming the kind of the stop and the next step.
+Not applicable: the refusal comes as text naming the measured state and the next move.
 
 ## Data
 
-The guard holds no data of its own. It reads the record of the turn, the progress of the work of the
-task and the history of the branch.
+The guard reads nothing itself but the role header of a role session. It writes the journal and the
+count of the refusals in a row into `rt-kit/` under the common directory of git.
 
 ## Screens and states
 
@@ -126,21 +88,17 @@ Not applicable: the guard judges one turn of one session.
 
 ## Decisions
 
-- **Refusing in favour of the work.** At any error, at a missing JSON parse, at a missing record of
-  the turn or line of the state the turn is allowed: a broken guard has no right to jam the
-  conversation.
-- **A general sign instead of a row of tiers.** Nine incident analyses over a day described nine
-  kinds of stopping; a tier for every kind is a race without end.
-- **An open epic closes the two exits the guard used to leave open.** A turn that ended with work
-  and a second pass over the turn released the executor three times in one day under the owner's
-  standing word not to stop until the epic is closed. The tiers lie in a file of their own next to
-  the guard: the guard reached the length limit.
+- **Refusing in favour of the work, but never in silence.** A broken engine releases the turn, and
+  the release is written; the next turn begins with it.
+- **The measured state instead of a row of tiers.** Nine incident analyses over a day described nine
+  kinds of stopping; a tier for every kind was a race without end. The tiers of the former guard are
+  removed together with their scenarios.
+- **The silent hosting is read from the measurement.** A read that failed for a state the
+  measurement passed over says nothing about a later local exit that is unmet.
 
 ## Open questions
 
-- `Q-TE-1` — the text of the answer the guard does not read at all. A turn where the work stands last
-  but is told about wrongly is caught by the guard of the statements; whether a sign of its own is
-  needed here is decided by the owner.
+None.
 
 ## History of changes
 
@@ -160,3 +118,5 @@ Not applicable: the guard judges one turn of one session.
 - 2026-11-04 — a turn woken by a notification about an own background task ends while another own
   task runs. The rules of a turn under an open epic left for the subdomain `exit-epic`: the
   scenario file outgrew the length limit.
+- 2026-11-15 — the guard asks the engine of the task flow for a verdict. The tiers and the
+  subdomain of the open epic are removed; the release cases of the description replace them.

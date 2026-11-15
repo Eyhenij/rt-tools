@@ -1,53 +1,12 @@
-// rt-kit v0.37.0 · checks/flow-guard-run.mjs · dcaa75df4267 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/flow-guard-run.mjs · 2dba38fd8cb6 · правится надстройкой, не здесь
 /**
- * The reading half of the guard of the course of work: the hook input as a call, the owner's last
- * word from the record of the conversation, and the context the decisions of `flow-guard.mjs` take.
- *
- * The owner's last word is the last entry of the record the owner made: a typed message, or the
- * options chosen in a menu. A message of a hook, a summary of a compaction and a meta entry are no
- * word of the owner.
+ * The reading half of the guard of the course of work: the hook input as a call, and the context the
+ * decisions of `flow-guard.mjs` take. The owner's last word comes from the source «source.owner» of
+ * the description.
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, realpathSync } from 'node:fs';
 import { basename, dirname, isAbsolute, join, relative } from 'node:path';
-
-import { readRecord } from './flow-plan.mjs';
-
-/** The menu answer as the tool result text carries it. */
-const ANSWERED = /^(?:The user answered|Your questions have been answered):/;
-
-const ownerEntry = (entry) =>
-    entry?.type === 'user' && !entry.isMeta && !entry.isCompactSummary && (entry.origin?.kind ?? 'human') === 'human';
-
-const resultText = (content) =>
-    typeof content === 'string' ? content : Array.isArray(content) ? content.map((part) => (typeof part === 'object' ? (part.text ?? '') : '')).join(' ') : '';
-
-/** The word of one entry of the record: typed text or chosen options; null when it carries neither. */
-export function wordOf(entry) {
-    if (!ownerEntry(entry)) return null;
-    if (entry.toolUseResult?.answers) return Object.values(entry.toolUseResult.answers).join('\n');
-    const content = entry.message?.content;
-    if (typeof content === 'string') return content;
-    if (!Array.isArray(content)) return null;
-    const words = [];
-    for (const part of content) {
-        if (part?.type === 'text' && part.text) words.push(part.text);
-        if (part?.type === 'tool_result') {
-            const text = resultText(part.content);
-            if (ANSWERED.test(text)) words.push([...text.matchAll(/"=\s*"([^"]*)"/g)].map((match) => match[1]).join('\n'));
-        }
-    }
-    return words.length > 0 ? words.join('\n') : null;
-}
-
-/** The owner's last word in the record, or null. */
-export function ownerLast(entries) {
-    for (let index = entries.length - 1; index >= 0; index -= 1) {
-        const word = wordOf(entries[index]);
-        if (word !== null) return word;
-    }
-    return null;
-}
 
 /**
  * The path with its symbolic links resolved, the part that does not exist yet kept as written: a
@@ -83,12 +42,11 @@ const git = (root, ...args) => {
  * The context of the decisions for the tree at `root`. `measure` is a thunk the engine gives: the
  * index of the measured state, read only when an edit moves the state line.
  */
-export function guardContext({ root, model, marks, record, measure, settings }) {
+export function guardContext({ root, model, marks, owner, measure, settings }) {
     const branch = git(root, 'rev-parse', '--abbrev-ref', 'HEAD') ?? '';
     const common = git(root, 'rev-parse', '--git-common-dir') ?? '.git';
     const marksAbs = join(isAbsolute(common) ? common : join(root, common), 'rt-kit');
     const states = model.states.map((state) => state.title);
-    let last;
     return {
         branch,
         key: branch.match(/^([A-Z]+)-\d+/)?.[1] ?? settings.key,
@@ -101,10 +59,7 @@ export function guardContext({ root, model, marks, record, measure, settings }) 
         read: (path) => (existsSync(join(root, path)) ? readFileSync(join(root, path), 'utf8') : null),
         stepMark: (number) => marks.step(branch, number),
         approved: () => Boolean(marks.approval(branch)),
-        ownerLast: () => {
-            if (last === undefined) last = ownerLast(record);
-            return last;
-        },
+        ownerLast: () => owner.last(),
         // The place counts from one, as the measured index does; a word outside the list is -1.
         stateIndex: (name) => (states.includes(name) ? states.indexOf(name) + 1 : -1),
         measured: () => {
@@ -116,6 +71,3 @@ export function guardContext({ root, model, marks, record, measure, settings }) 
         },
     };
 }
-
-/** Reads the record the hook names; a missing record is an empty one. */
-export const recordOf = (input) => readRecord(input.transcript_path ?? process.env.RT_FLOW_TRANSCRIPT);

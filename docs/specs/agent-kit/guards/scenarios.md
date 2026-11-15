@@ -326,16 +326,6 @@ same directory names, and the exit branch stands first
 
 Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
 
-### SC-AK-748 — work left in the working tree does not end a turn
-
-Given the branch went ahead of its remote reference, there was work during the turn, and no request was
-opened at it
-When the watchman of the exits judges the end of the turn
-Then it refuses the turn and names the number of unhanded commits; a branch level with the remote one
-and a turn with an open request pass
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
 ### SC-AK-804 — the section of the course of the work survives the compaction under a locale with national settings
 
 Given the course of the work holds the section about the state and the former handover section, and the

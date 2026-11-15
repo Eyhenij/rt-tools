@@ -1,324 +1,148 @@
 # Scenarios: the guard of the exits of a turn
 
-A subdomain of the domain "The guards of the end of a turn". Here are the scenarios of one guard —
-the one that judges the end of a turn: what a turn lawfully ends with, what is never its end and
-which tiers name the kind of the stop by name. The other guards of the end of a turn are in the list
-of the scenarios of the domain next to it; a turn under an open epic is in
-`docs/specs/agent-kit/turn-guards/exit-epic/`.
+A subdomain of the domain "The guards of the end of a turn". Here are the scenarios of the verdict at
+the end of a turn and of its release cases.
 
-### SC-AK-647 — handing in the work without beginning the next one does not end the turn
+### SC-AK-1427 — the end of the scenario releases the turn
 
-Given a request was opened over the turn by `gh pr create` or by `glab mr create`, and nothing was
-done on the next work
-When the guard of the exits judges the end of the turn
-Then the turn is given back: the handing in ends the past work, not the turn
+Given the measurer of the end of the epic met
+When the release cases are read
+Then the turn is released as the end of the scenario
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-648 — a created next task releases the turn
+### SC-AK-1428 — outside an epic, exit 10 releases the turn
 
-Given the command of creating a task was called after the opening of the request
-When the guard of the exits judges the end of the turn
-Then the turn passes: on the next work an action was done, not said
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-649 — a created branch of the next work releases the turn
-
-Given the branch of the next task was created after the opening of the request
-When the guard of the exits judges the end of the turn
-Then the turn passes: creating the branch is the first step on the next work
+Given a copy outside an epic whose branch handed its work over by a request, and the same copy without a request
+When the release cases are read
+Then the first is released as the end of the scenario and the second is held
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-650 — a turn without an opening of a request is not judged by this tier
+### SC-AK-1429 — a stop word of the owner releases the turn
 
-Given no request was opened over the turn
-When the guard of the exits judges the end of the turn
-Then the tier of the handing in stays silent: there is nothing to judge, the former signs work
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-651 — the refusal about the handing in names the command of creating the next one
-
-Given the turn ended with the opening of a request
-When the guard of the exits refuses the end of the turn
-Then the refusal names the command the next work is created by
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-653 — a turn that ended with an edit of a file is released
-
-Given there was a reading over the turn, and the last action became an edit of a file
-When the guard of the exits judges the end of the turn
-Then the turn passes: the work stands last
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-654 — creating a branch does not count as exploration
-
-Given the last action of the turn became the creating of the branch of the next work
-When the guard of the exits judges the end of the turn
-Then the turn passes: creating a branch changes the tree, unlike switching to it
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-297 — an edit of a file releases the turn
-
-Given a file was edited over the turn
+Given the owner's last word «Стоп, на сегодня хватит», and the same through the hook after a write
 When the turn ends
-Then the guard stays silent: the work went on
+Then it is released by the stop word
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-298 — a command changing the tree releases the turn
+### SC-AK-1430 — «хватит останавливаться, продолжай» holds the turn
 
-Given a command changing the tree or its state went over the turn, a merge or a retry by `glab`
-among them
-When the turn ends
-Then the guard stays silent
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-299 — a question to the owner releases the turn
-
-Given a question was put to the owner over the turn by the tool of asking
-When the turn ends
-Then the guard stays silent: a question is a lawful exit of a turn
+Given the owner's last word «хватит останавливаться, продолжай»
+When the stop word is measured
+Then it is not a stop
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-300 — a refusal of a guard ends the turn
+### SC-AK-1431 — «Стой, не туда — делай RT-N» holds the turn
 
-Given an edit was refused by a guard over the turn
-When the turn ends
-Then the guard stays silent: a refused edit is either done after the condition is met or not done at
-all
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-301 — a written handover of a session ends the turn
-
-Given the handover of the session was written over the turn
-When the turn ends
-Then the guard stays silent: the window has ended, and this is a lawful exit
+Given the owner's last word «Стой, не туда — делай RT-12»
+When the stop word is measured
+Then it is not a stop
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-304 — at handed-in work the turn closes
+### SC-AK-1463 — «Стоп, не делай этого» releases the turn
 
-Given the work is declared handed in
-When the turn ends
-Then the guard stays silent: further on it is moved by the owner
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-305 — at merged work the turn closes
-
-Given the work is declared merged
-When the turn ends
-Then the guard stays silent
+Given the owner's last word «Стоп, не делай этого»
+When the stop word is measured
+Then it is a stop: «делай» after «не» does not hold the turn
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-306 — a repeated pass over the same turn is not judged
+### SC-AK-1505 — a stop word added to the description releases the turn without an edit of the engine
 
-Given the guard already refused this turn
-When the turn ends again
-Then the guard stays silent: otherwise the turn would never end
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-309 — a closed stage without the command of the check does not close the turn
-
-Given the number of the stage in the progress of the work grew against what lies in the history of
-the branch
-When the turn ends, and the command this stage is checked by was not run over it
-Then the guard gives the turn back and names the commands that were not run
+Given a copy of the description with the stop word «шабаш» added
+When «Шабаш, на сегодня всё» is measured by the copy and by the package description
+Then the copy reads a stop and the package description does not
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-310 — a run command of the check releases the turn
+### SC-AK-1432 — a session without a write releases the turn
 
-Given the number of the stage grew, and the command of its check was run over the turn
-When the turn ends
-Then the guard stays silent
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-311 — at an unchanged number of the stage the command of the check is not asked about
-
-Given the number of the stage in the progress of the work did not change
-When the turn ends
-Then the guard does not ask about the check: there is nothing to confirm
+Given a session that only read and searched, one that edited a file and one that committed
+When the write is measured and the release cases are read for the first
+Then only the first wrote nothing, and its turn is released
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-625 — a taken work without a task folder does not end the turn
+### SC-AK-1433 — a session without a write after «ну что там?» holds the turn
 
-Given the branch under the number of the task is created, and there is no directory of the task at
-it in the tree
-When the guard of the exits judges the end of the turn
-Then the turn is given back: the work is declared taken and not begun by a single line
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-626 — moving the column does not make the taken work a beginning
-
-Given the command of moving the task into the column of the work was called over the turn, and there
-is no directory of the task at the branch
-When the guard of the exits judges the end of the turn
-Then the turn is given back: the commands of creating the work do not count as its beginning
+Given a session without a write and the owner's last word «ну что там?»
+When the release cases are read
+Then the push is measured and the turn is held
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-628 — a gathered task folder lifts the tier
+### SC-AK-1440 — a branch outside the scenario releases the turn
 
-Given the directory of the task at the branch is gathered
-When the guard of the exits judges the end of the turn
-Then the turn passes: the fullness of the plan is invisible to a machine, and the sign is the
-directory
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-629 — a branch without a number of a task is not judged by this tier
-
-Given the name of the branch does not match the sample `<KEY>-<number>-`
-When the guard of the exits judges the end of the turn
-Then the tier of the taken work stays silent: branches like that are created for a probe too
+Given a branch outside the scenario on which the session wrote
+When the release cases are read
+Then the turn is released
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-632 — a reading mixed together with work releases the turn
+### SC-AK-1465 — a branch outside the scenario releases the turn after a push of the owner
 
-Given a compound command put together a switch of the branch and a launch of a check
-When the guard of the exits judges the end of the turn
-Then the turn passes: the parts of the command are judged one by one, and the part that changes it
-stays work
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-633 — a reading part does not cancel a commit
-
-Given over the turn there were a reading of the state of the tree and a commit
-When the guard of the exits judges the end of the turn
-Then the turn passes: nearness to a reading does not stop work from being work
+Given a branch outside the scenario and the owner's last word pushing the work on
+When the release cases are read
+Then the turn is released: the engine has no next step to name
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-634 — opening a request does not count as a reading
+### SC-AK-1434 — a role session releases the turn
 
-Given a request was opened as a draft over the turn
-When the guard of the exits judges the end of the turn
-Then the turn passes: a writing call of the client of the hosting is not in the sample of
-exploration
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-639 — a turn that ended with waiting for a run does not close
-
-Given over the turn there were an edit and a push, and the last action became a loop until the run
-is ready
-When the guard of the exits judges the end of the turn
-Then the turn is given back: waiting for someone else's step is never the end of a turn
+Given a role whose header names no edit tool, and a role with Edit
+When the role is measured, and the hook is called for the first after a write
+Then the first is a role session and its turn is released; the second is not
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-640 — watching a run is never the end of a turn
+### SC-AK-1435 — the silent hosting releases the turn with its reason
 
-Given the last action of the turn became a call of watching a run
-When the guard of the exits judges the end of the turn
-Then the turn is given back: the work stayed where it stood
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-641 — waiting in the middle of a turn releases the turn
-
-Given the waiting stood in the middle of the turn, and after it there was a commit
-When the guard of the exits judges the end of the turn
-Then the turn passes: what is judged is the last action, and a launch of work in the background
-stays work
+Given a measurement that stopped on the silent hosting, and one that stopped on an unmet local exit after a silent read
+When the release cases are read
+Then the first is released as the silent hosting and the second is held
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-642 — the refusal about the waiting names the next step
+### SC-AK-1444 — a menu of a refusal lost a second time in a row releases the turn
 
-Given the turn ended with a waiting, and the next step is written in the progress of the work
-When the guard of the exits refuses the end of the turn
-Then the refusal names that step: a said "the work is not finished" the executor rereads themselves
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-575 — at a removed folder the opening of a request releases the turn
-
-Given the task folder is removed by a commit of the branch, and over the turn the client of the
-hosting was called about a request
-When the guard of the exits judges the end of the turn
-Then the turn passes: the work is handed in
+Given two refusals naming the menu, each followed by a menu that was not answered; one such refusal; and a second menu answered
+When the lost menu is measured
+Then only the first is lost, and its turn is released
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-576 — at a removed folder an edit of the tree releases the turn
+### SC-AK-1436 — a failed engine releases the turn and writes the journal
 
-Given the task folder is removed by a commit of the branch, and a file was edited over the turn
-When the guard of the exits judges the end of the turn
-Then the turn passes by the second sign
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-695 — a command from the list with a redirection releases the turn as before
-
-Given a command from the list of the work was called over the turn, and its input was given by a
-redirection
-When the guard of the exits judges the end of the turn
-Then the turn passes: it is made work by the command itself, not by the arrow at it
+Given an engine that exits with an error
+When the hook is called after a write
+Then the turn is released and the journal holds «движок упал»
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-1126 — a question at the head of an empty turn in a running stage
+### SC-AK-1437 — an engine past its limit gives the same outcome
 
-Given the state is `этап-идёт`, and the turn asked the owner by the tool without a single edit
-When the guard of the exits judges the end of the turn
-Then the turn is given back and names the parts that do not depend on the answer; after work the
-same question releases the turn
-
-Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
-
-### SC-AK-1122 — a refused closing call does not release the turn
-
-Given the last tool result of the turn is the refusal of the guard of the closing tool, and the
-epic is open.
-When the guard of the exits judges the end of the turn.
-Then the turn is not released; the refusal of another guard releases it as before.
-
-Covered: `projects/agent-kit/tests/turn-exit-epic.test.sh`.
-
-### SC-AK-1132 — a next step rewritten into the progress is begun by the same turn
-
-Given the work stands in a running stage, and the turn rewrote the progress
-When the turn ends, and after that edit it did nothing but commit and push
-Then the guard gives the turn back and names the next step; an edit outside the task folder or a
-command changing the tree after the edit releases it, and a turn that opened the request is judged
-by the tier of handed-in work
+Given an engine that runs longer than the limit
+When the hook is called
+Then the turn is released and a second line «движок упал» is in the journal
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-1135 — a launch in the background is never the last action of a turn
+### SC-AK-1438 — an engine that cannot be called gives the same outcome
 
-Given the turn sent a role to work by the agent tool, or a command to the background, and did
-nothing after it
-When the turn ends
-Then the guard gives the turn back and names the launch in the background; a launch with no work
-before it is refused the same, and work after the launch releases the turn
+Given a path to an engine that does not exist, and a Stop branch the dispatcher stops at its limit
+When the hook and the dispatcher are called
+Then both release the turn and write «движок упал»
 
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`, `projects/agent-kit/tests/dispatch.test.sh`.
 
-### SC-AK-1247 — a turn woken by an own notification ends while another own task runs
+### SC-AK-1439 — the eighth refusal in a row is written to the journal
 
-Given the session sent two commands to the background, and the notification about the first one
-woke the session
-When the turn holds no tool call and ends
-Then the guard releases it while the second command has no notification of its end; after the
-notification about the second one the same empty turn is refused as before
+Given a branch whose scenario is not over
+When the hook holds the turn eight times in a row
+Then the journal holds one line about the eighth refusal
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.

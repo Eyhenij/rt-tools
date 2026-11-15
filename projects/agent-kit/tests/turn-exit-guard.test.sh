@@ -1,343 +1,149 @@
 #!/usr/bin/env bash
-# Сценарии стража выходов хода: чем ход кончается законно и что выходом не является.
+# Сценарии проверки выхода из хода: ход кончается вместе со сценарием task flow или по случаю
+# отпуска из описания.
 #
-# Проверяется механика, а не карта дерева: запись хода и папка задачи собираются здесь же.
-# Страж судит пару — объявленное состояние работы и то, что за ход по ней сделано.
+# Решение принимает движок: `task-flow-script.mjs verdict` меряет ветку и случаи отпуска. Первая
+# часть набора зовёт случаи и измерители движка напрямую, над двойниками источников: так каждый
+# случай отпуска проверяется отдельно от состояния ветки. Вторая часть зовёт сам хук на дереве
+# фикстуры: удержанный ход, роль и сбой движка с записью в журнал. Строка случая начинается с
+# группы плана — `end:` или `menu:`, по ней случаи считает проверка шага.
 . "$(dirname "${BASH_SOURCE[0]}")/turn-exit-lib.sh"
 
 echo "проверка выхода из хода"
 
-# --- ход, кончившийся отчётом ------------------------------------------------------------
-# Он выглядит работой лучше всякой другой: полон, называет номера и состояния, и пустоты за
-# ним не видно. Ровно его страж и ловит.
-state_is 'этап-идёт'
-# --- SC-AK-748 — работа, оставшаяся в рабочем дереве, ход не кончает ---------------------------
-# Удалённая ссылка заводится здесь же: страж читает её локально, сети ему не нужно. Ветка,
-# ушедшая вперёд неё без открытой заявки, означает работу, которой не видит никто.
-git -C "$REPO" add -A >/dev/null 2>&1
-git -C "$REPO" -c user.name=t -c user.email=t@t commit -qm 'основание' >/dev/null 2>&1
-git -C "$REPO" config remote.origin.url . >/dev/null 2>&1
-git -C "$REPO" config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*' >/dev/null 2>&1
-git -C "$REPO" config branch.RT-1-probe.remote origin >/dev/null 2>&1
-git -C "$REPO" config branch.RT-1-probe.merge refs/heads/RT-1-probe >/dev/null 2>&1
-git -C "$REPO" update-ref refs/remotes/origin/RT-1-probe HEAD >/dev/null 2>&1
-state_is 'этап-идёт'
-expect_stop "SC-AK-748 — ветка вровень с удалённой: ярус молчит" \
-    "$(input_stop "$(transcript "$(say 'работай')" "$(edited)")")" PASS
-printf 'ещё строка\n' >> "$TASK/progress.md"
-git -C "$REPO" add -A >/dev/null 2>&1
-git -C "$REPO" -c user.name=t -c user.email=t@t commit -m 'проба' >/dev/null 2>&1
-expect_stop "SC-AK-748 — неотданный коммит ход не кончает" \
-    "$(input_stop "$(transcript "$(say 'работай')" "$(edited)")")" BLOCK
-# SC-AK-1199 — названная причина неотправленных коммитов ход отпускает: отказ сам велит её
-# назвать, а без неё push шёл ради снятия отказа через старую проверку на пятнадцать минут.
-expect_stop "SC-AK-1199 — названная причина неотправленного ход отпускает" \
-    "$(input_stop "$(transcript "$(say 'работай')" "$(edited)" \
-        "$(said 'Не отправлено: в ветке старая проверка перед push, она гоняет всё приложение.')")")" PASS
-expect_stop "SC-AK-1199 — метка без причины ход не отпускает" \
-    "$(input_stop "$(transcript "$(say 'работай')" "$(edited)" "$(said 'Не отправлено:')")")" BLOCK
-expect_stop "SC-AK-748 — открытая заявка ярус снимает" \
-    "$(input_stop "$(transcript "$(say 'работай')" "$(ran 'gh pr create --draft --title x')" "$(ran 'gh run list')" "$(ran 'npm run task:new -- --title y --slug z')")")" PASS
-# Отслеживание снимается тем же блоком: оставленное, оно судило бы каждый следующий сценарий
-# ярусом неотданной работы, к которому те не относятся вовсе.
-git -C "$REPO" config --unset branch.RT-1-probe.remote >/dev/null 2>&1
-git -C "$REPO" config --unset branch.RT-1-probe.merge >/dev/null 2>&1
+TESTS="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# --- четыре законных выхода ---------------------------------------------------------------
-expect_stop "SC-AK-297 — правка файла ход отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
-expect_stop "SC-AK-298 — команда, меняющая дерево, ход отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git commit -m x')")")" PASS
-# Клиент GitLab меняет состояние так же: слияние и перезапуск задания — работа, чтение — нет.
-expect_stop "SC-AK-298 — слияние через glab ход отпускает" "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'glab mr merge 5')")")" PASS
-expect_stop "SC-AK-298 — перезапуск задания через glab ход отпускает" "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'glab ci retry 17123456')")")" PASS
-# Вопрос отпускает ход после работы: вопрос во главе пустого хода в идущем этапе — SC-AK-1126.
-expect_stop "SC-AK-299 — вопрос владельцу после работы ход отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(asked)")")" PASS
-expect_stop "SC-AK-300 — отказ гарда кончает ход" \
-    "$(input_stop "$(transcript "$(say 'правь')" "$(ran 'echo x > a.ts')" "$(answered 'BLOCKED by task-flow: нет замысла')")")" PASS
-expect_stop "SC-AK-301 — написанная передача захода кончает ход" \
-    "$(input_stop "$(transcript "$(say 'закрывай заход')" "$(ran 'cat > .claude/handoff/2026-08-19.md')")")" PASS
-
-# --- состояние работы -------------------------------------------------------------------------
-# Отданная и влитая работа чужого шага уже дождалась: дальше её двигает владелец.
-state_is 'работа-отдана'
-expect_stop "SC-AK-304 — в отданной работе ход закрывается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")")" PASS
-state_is 'влито'
-expect_stop "SC-AK-305 — во влитой работе ход закрывается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")")" PASS
-
-# --- записанный замысел -----------------------------------------------------------------------
-# Обязательное действие этого состояния — делать первый этап, а начавший его переводит состояние
-# той же правкой. Второй признак сюда не годится: заведение задачи, ветки, колонки и папки он
-# считает работой.
-plan_is() {
-    printf '# Замысел\n\n## Этапы\n\n### %s\n\n- **Что делается:** проба\n' "$1" > "$TASK/plan.md"
+te_run() {
+    local out label got want
+    out="$(cd "$TESTS" && node --input-type=module 2>&1)"
+    while IFS='|' read -r label got want; do
+        [ -n "$label" ] || continue
+        report "$label" "$got" "$want"
+    done <<< "$out"
 }
 
-state_is 'замысел-записан'
-plan_is 'Правка стража'
-expect_stop "SC-AK-591 — записанный замысел ход не отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'npm run task:new -- --title проба')")")" BLOCK
-expect_reason "SC-AK-592 — отказ называет первый этап замысла" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")")" 'Правка стража'
-state_is 'этап-идёт'
-expect_stop "SC-AK-593 — начатый этап судится прежним признаком" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
-rm -f "$TASK/plan.md"
+# --- случаи отпуска и измерители, над двойниками --------------------------------------------------
+te_run <<'JS'
+import { mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { buildModel } from '../assets/checks/flow-model.mjs';
+import { isWriteCommand, saysStop } from '../assets/checks/flow-data.mjs';
+import { releaseCase, holdReason } from '../assets/checks/flow-verdict.mjs';
+import * as owner from '../assets/task-flow/measure/owner.mjs';
+import * as session from '../assets/task-flow/measure/session.mjs';
+import * as host from '../assets/task-flow/measure/host.mjs';
 
-# --- работа дошла до отдачи ---------------------------------------------------------------------
-# Состояния «этапы-кончились» и «разбор-кончился» объявляют, что код написан и остаётся довести
-# работу до заявки. Второй признак этого не спрашивает: правок и команд в таком ходе полно, и он
-# отпускает его целиком — а между разбором папки и открытием заявки работу не видит никто.
-state_is 'этапы-кончились'
-expect_stop "SC-AK-880 — работа до отдачи ход не отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git commit -m проба')")")" BLOCK
-expect_reason "SC-AK-880 — отказ называет обязательное действие состояния" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")")" 'run the suite'
-# Заявка открыта и следующая работа начата — прежний ярус отдачи такой ход отпускает, и новый
-# ему не мешает: он спрашивает только про заявку.
-expect_stop "SC-AK-880 — открытая заявка с начатой следующей работой ход отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft --base main')" "$(ran 'git checkout -b RT-2-next')")")" PASS
-expect_stop "SC-AK-880 — заявка, открытая клиентом GitLab, ход отпускает так же" "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'glab mr create --draft --target-branch main')" "$(ran 'git checkout -b RT-2-next')")")" PASS
-state_is 'разбор-кончился'
-expect_stop "SC-AK-880 — разобранный ход без заявки тоже отбивается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git push')")")" BLOCK
+const path = new URL('../assets/task-flow/flow.js', import.meta.url).pathname;
+const model = buildModel(path);
+const data = { words: model.words, expect: model.expect, rules: { saysStop, isWriteCommand } };
+const out = (label, got, want) => console.log(`${label}|${got}|${want}`);
 
-# --- отказ в пользу работы ---------------------------------------------------------------------
-state_is 'этап-идёт'
-expect_stop "SC-AK-306 — повторный заход по тому же ходу не судится" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")" true)" PASS
+// Ответы измерителей по ссылкам; всё неназванное — «нет».
+const reader = (answers) => (name) => answers[name] ?? false;
+const held = { state: 'просьба-не-разобрана', index: 1, reason: null };
+const released = (answers, result = held) => releaseCase(model, reader(answers), result)?.log ?? 'held';
+const WROTE = { 'measure.session.wrote': true };
 
-# --- проверка закрытого этапа ----------------------------------------------------------------
-# Отметка «этап сделан» — утверждение о дереве, и подтверждается оно выводом команды. Прежний
-# номер этапа страж читает из истории ветки, поэтому папка задачи кладётся в коммит.
-printf '# Замысел\n\n### 1. Первый\n\n- **Чем проверяется:** `npm run check:board` — расхождений нет\n\n### 2. Второй\n' \
-    > "$TASK/plan.md"
-printf '# Ход работы\n\n## Где стоим\n\n- **Состояние:** `этап-идёт`\n- **Этап:** 1 из 2\n- **Следующий шаг:** делать первый\n' \
-    > "$TASK/progress.md"
-git -C "$REPO" add -A >/dev/null 2>&1
-git -C "$REPO" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false \
-    commit -q -m 'chore: этап 1' 2>/dev/null
+out('end: SC-AK-1427 — конец сценария — отпущен', released({ 'measure.epic.finished': true }), 'the end of the scenario');
+out('end: SC-AK-1428 — вне эпика выход 10 — отпущен', released({ ...WROTE, 'measure.copy.outsideEpic': true, 'measure.pr.handed': true }), 'the end of the scenario');
+out('end: SC-AK-1428 — вне эпика без PR — держится', released({ ...WROTE, 'measure.copy.outsideEpic': true }), 'held');
 
-printf '# Ход работы\n\n## Где стоим\n\n- **Состояние:** `этап-идёт`\n- **Этап:** 2 из 2\n- **Следующий шаг:** делать второй\n' \
-    > "$TASK/progress.md"
+const last = (word) => ({ owner: { last: () => word } });
+const stop = (word) => String(owner.saidStop(last(word))(data));
+out('end: SC-AK-1429 — слово остановки — отпущен', stop('Стоп, на сегодня хватит'), 'true');
+out('end: SC-AK-1430 — «хватит останавливаться, продолжай» — держится', stop('хватит останавливаться, продолжай'), 'false');
+out('end: SC-AK-1431 — «Стой, не туда — делай RT-N» — держится', stop('Стой, не туда — делай RT-12'), 'false');
+out('end: SC-AK-1463 — «Стоп, не делай этого» — отпущен', stop('Стоп, не делай этого'), 'true');
+out('end: SC-AK-1429 — случай отпуска по слову остановки', released({ ...WROTE, 'measure.owner.saidStop': true }), 'a stop word of the owner');
 
-expect_stop "SC-AK-309 — закрытый этап без команды проверки ход не закрывает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" BLOCK
-expect_stop "SC-AK-310 — запущенная команда проверки ход отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'npm run check:board')" "$(edited)")")" PASS
+const uses = (list) => ({ session: { toolUses: () => list } });
+const wrote = (list) => String(session.wrote(uses(list))(data));
+out('end: SC-AK-1432 — чтение не запись', wrote([{ name: 'Read', input: {} }, { name: 'Bash', input: { command: 'git status' } }]), 'false');
+out('end: SC-AK-1432 — правка файла — запись', wrote([{ name: 'Edit', input: {} }]), 'true');
+out('end: SC-AK-1432 — коммит — запись', wrote([{ name: 'Bash', input: { command: 'git add a && git commit -m x' } }]), 'true');
+out('end: SC-AK-1432 — сессия без записи — отпущена', released({}), 'no write to the tree, or a branch outside the scenario');
+const nudged = (word) => String(owner.nudged(last(word))(data));
+out('end: SC-AK-1433 — «ну что там?» — подталкивание', nudged('ну что там?'), 'true');
+out('end: SC-AK-1433 — сессия без записи после «ну что там?» — держится', released({ 'measure.owner.nudged': true }), 'held');
+out('end: SC-AK-1440 — ветка вне сценария — отпущена', released({ ...WROTE, 'measure.copy.outOfScenario': true }), 'no write to the tree, or a branch outside the scenario');
+out('end: SC-AK-1465 — ветка вне сценария после подталкивания — отпущена', released({ 'measure.owner.nudged': true, 'measure.copy.outOfScenario': true }), 'no write to the tree, or a branch outside the scenario');
 
-# Номер этапа не вырос — контракт не спрашивается: подтверждать нечего.
-printf '# Ход работы\n\n## Где стоим\n\n- **Состояние:** `этап-идёт`\n- **Этап:** 1 из 2\n- **Следующий шаг:** делать первый\n' \
-    > "$TASK/progress.md"
-expect_stop "SC-AK-311 — при прежнем номере этапа команда проверки не спрашивается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
+const role = (tools) => String(session.role({ session: { agent: () => 'reader', roleTools: () => tools } })(data));
+out('end: SC-AK-1434 — роль без инструмента правки — сессия роли', role('Read, Grep, Bash'), 'true');
+out('end: SC-AK-1434 — роль с правкой — не сессия роли', role('Read, Edit'), 'false');
+out('end: SC-AK-1434 — сессия роли — отпущена', released({ ...WROTE, 'measure.session.role': true }), 'a role session');
 
-# --- SC-AK-1132 — следующий шаг, вписанный в ход работы, начат тем же ходом ------------------
-# Четыре остановки одной формы: этап закрыт и закоммичен, отчёт полон, следующий этап назван и не
-# тронут. Проверка читает порядок действий: после последней правки хода работы нужна работа, кроме
-# коммита и отправки его же. Отданная работа судится своим ярусом.
-PROGRESS="$TASK/progress.md"
-expect_stop "SC-AK-1132 — правка хода работы и один коммит после неё ход не отпускают" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(edited_file "$PROGRESS")" "$(ran 'git add -A && git commit -m x')")")" BLOCK
-expect_reason "SC-AK-1132 — отказ называет ненáчатый шаг" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(edited_file "$PROGRESS")" "$(ran 'git add -A && git commit -m x')")")" "is not begun"
-expect_stop "SC-AK-1132 — правка хода работы командой и коммит после неё ход не отпускают" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran "sed -i 's/a/b/' $PROGRESS")" "$(ran 'git commit -m x')")")" BLOCK
-expect_stop "SC-AK-1132 — правка файла после хода работы ход отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited_file "$PROGRESS")" "$(edited)")")" PASS
-expect_stop "SC-AK-1132 — команда, меняющая дерево, после хода работы ход отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited_file "$PROGRESS")" "$(ran 'npm run check:board')")")" PASS
-expect_stop "SC-AK-1132 — отданная работа после хода работы судится своим ярусом" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(edited_file "$PROGRESS")" "$(ran 'git commit -m x')" "$(ran 'gh pr create --draft')")")" PASS
+const silentHost = { host: { silent: () => true } };
+out('end: SC-AK-1435 — хостинг молчит — измеритель', String(host.silent(silentHost)(data)), 'true');
+const onSilence = { state: 'договорённость-записана', index: 4, reason: 'the hosting did not answer twice' };
+out('end: SC-AK-1435 — хостинг дважды на выходе хостинга — отпущен с причиной', released({ ...WROTE, 'measure.host.silent': true }, onSilence), 'the host did not answer twice');
+out('end: SC-AK-1435 — молчание хостинга при невыполненном местном выходе — держится', released({ ...WROTE, 'measure.host.silent': true }), 'held');
 
-# --- SC-AK-1135 — запуск в фоне последним действием ход не кончает ---------------------------
-# Разбор кончился запуском ролей в фоне и отчётом «роли работают»; проверка сочла запуск работой.
-# Запуск — объявление намерения: пока роль идёт, делается то, что от неё не зависит. Судится
-# последнее действие: запуск в середине хода законен.
-launched() { jq -c -n '{type:"assistant",message:{content:[{type:"tool_use",name:"Agent",input:{subagent_type:"skill-curator",prompt:"обзор"}}]}}'; }
-ran_bg() { jq -c -n --arg c "$1" '{type:"assistant",message:{content:[{type:"tool_use",name:"Bash",input:{command:$c,run_in_background:true}}]}}'; }
-state_is 'этап-идёт'
-expect_stop "SC-AK-1135 — роль, запущенная последним действием, ход не отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(launched)")")" BLOCK
-expect_reason "SC-AK-1135 — отказ называет запуск в фоне" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(launched)")")" "launch in the background"
-expect_stop "SC-AK-1135 — команда в фоне последним действием ход не отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran_bg 'npm run storybook')")")" BLOCK
-expect_stop "SC-AK-1135 — запуск роли без работы до него ход не отпускает" \
-    "$(input_stop "$(transcript "$(say 'разбери просьбу')" "$(launched)")")" BLOCK
-expect_stop "SC-AK-1135 — работа после запуска ход отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(launched)" "$(edited)")")" PASS
+// Слово, добавленное в копию описания, отпускает ход без правки движка: копия лежит во временном
+// каталоге рядом со ссылками на измерители и источники пакета.
+const dir = mkdtempSync(join(tmpdir(), 'flow-'));
+const kit = new URL('../assets/task-flow/', import.meta.url).pathname;
+for (const sub of ['measure', 'source']) symlinkSync(join(kit, sub), join(dir, sub));
+writeFileSync(join(dir, 'flow.js'), readFileSync(path, 'utf8').replace("'стоп', ", "'шабаш', 'стоп', "));
+const copied = buildModel(join(dir, 'flow.js'));
+rmSync(dir, { recursive: true, force: true });
+const copiedData = { ...data, words: copied.words };
+out('end: SC-AK-1505 — слово остановки, добавленное в описание, отпускает ход без правки движка', String(owner.saidStop(last('Шабаш, на сегодня всё'))(copiedData)), 'true');
+out('end: SC-AK-1505 — пакетное описание этого слова не знает', stop('Шабаш, на сегодня всё'), 'false');
 
-# --- разведка ---------------------------------------------------------------------------------
-# Читающая подкоманда `git` и клиента хостинга стоит в образце работы наравне с меняющей —
-# образец знает только первое слово. Ход, где переключились на главную ветку, прочитали историю
-# и написали владельцу отчёт, выходил отсюда нулём.
-state_is 'этап-идёт'
-expect_stop "SC-AK-632 — чтение вперемешку с работой ход отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git checkout -q main && npm run check:docs')")")" PASS
-expect_stop "SC-AK-633 — читающая часть коммит не отменяет" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git status --short')" "$(ran 'git commit -q -m fix')")")" PASS
-expect_stop "SC-AK-634 — открытие заявки чтением не считается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft')" "$(ran 'npm run task:new -- следующая')")")" PASS
+const events = (list) => ({ session: { events: () => list } });
+const MENU = 'Ask the owner: «отложить RT-7», «сделаю сам», «стоп».';
+const lost = (list) => String(session.menuLost(events(list))(data));
+out('menu: SC-AK-1444 — меню не дошло второй раз подряд', lost([{ kind: 'refusal', text: MENU }, { kind: 'menu', answered: false }, { kind: 'refusal', text: MENU }, { kind: 'menu', answered: false }]), 'true');
+out('menu: SC-AK-1444 — меню не дошло один раз — не потеряно', lost([{ kind: 'refusal', text: MENU }, { kind: 'menu', answered: false }]), 'false');
+out('menu: SC-AK-1444 — отвеченное меню снимает счёт', lost([{ kind: 'refusal', text: MENU }, { kind: 'menu', answered: false }, { kind: 'refusal', text: MENU }, { kind: 'menu', answered: true }]), 'false');
+out('menu: SC-AK-1444 — меню отказа не дошло до владельца второй раз подряд — отпущен', released({ ...WROTE, 'measure.session.menuLost': true }), 'the menu did not reach the owner');
 
-# --- перенаправление вывода ----------------------------------------------------------------------
-# Стрелка в образце работы не спрашивала, куда ведёт, и засчитывала работой запись мимо дерева:
-# тело будущей заявки во временном каталоге захода и отвод потока ошибок в устройство пустоты.
-# Пять ходов из семи простоявших выходили отсюда нулём ровно по ней.
-state_is 'этап-идёт'
-expect_stop "SC-AK-695 — команда из перечня с перенаправлением ход отпускает по-прежнему" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'tee -a docs/notes.md < заметка')")")" PASS
+const stage = { state: 'этап-идёт', index: 7, reason: null };
+out('удержанный ход в этапе называет шаг и команду', String(holdReason(model, stage, { number: '3.6', name: 'Перевести' }).includes('task-flow-script.mjs step 3.6')), 'true');
+out('удержанный ход до этапа называет действие состояния', String(holdReason(model, held, null).includes('explore the tree')), 'true');
+JS
 
-# --- ход, кончившийся ожиданием ---------------------------------------------------------------
-# Работы в таком ходе было много — тем он и обманчив. Судится последнее действие, а не наличие
-# работы: ожидание чужого шага концом хода не бывает.
-state_is 'этап-идёт'
-expect_stop "SC-AK-639 — ход, кончившийся ожиданием прогона, не закрывается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git push origin HEAD')" "$(ran 'until [ \"$(gh run list --limit 1 --json status -q .[0].status)\" = completed ]; do sleep 30; done')")")" BLOCK
-expect_stop "SC-AK-640 — слежение за прогоном концом хода не бывает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran 'gh run watch 12345')")")" BLOCK
-expect_stop "SC-AK-641 — ожидание в середине хода ход отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'until [ -f готово ]; do sleep 5; done')" "$(ran 'git commit -q -m fix')")")" PASS
-expect_reason "SC-AK-642 — отказ об ожидании называет следующий шаг" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'gh run watch 12345')")")" 'дописать страж'
+# --- сам хук на дереве фикстуры ---------------------------------------------------------------------
+# Движку нужна история ветки: дерево фикстуры получает главную ветку с коммитом и ветку задачи.
+git -C "$REPO" -c user.name=t -c user.email=t@t -c commit.gpgsign=false commit -q --allow-empty -m 'основание' >/dev/null 2>&1
+# Ветка без разбора меряется первым состоянием: сессия, которая писала, держится.
+expect_stop "удержанный ход: сессия писала, сценарий не кончен" \
+    "$(input_stop "$(transcript "$(say 'делай')" "$(edited)")")" BLOCK
+expect_reason "отказ называет измеренное состояние" \
+    "$(input_stop "$(transcript "$(say 'делай')" "$(edited)")")" 'просьба-не-разобрана'
+expect_stop "end: SC-AK-1429 — слово остановки отпускает ход через хук" \
+    "$(input_stop "$(transcript "$(edited)" "$(say 'Стоп, хватит')")")" PASS
+expect_stop "end: SC-AK-1432 — сессия без записи отпускает ход через хук" \
+    "$(input_stop "$(transcript "$(say 'расскажи, что в ветке')" "$(reply)")")" PASS
 
-# --- что считается работой: правка файла и заведение ветки ------------------------------------
-state_is 'этап-идёт'
-expect_stop "SC-AK-653 — ход, кончившийся правкой файла, отпускается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git log --oneline -5')" "$(edited)")")" PASS
-expect_stop "SC-AK-654 — заведение ветки разведкой не считается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git checkout -b RT-3-next origin/main')" "$(edited)")")" PASS
-expect_stop "SC-AK-872 — заведение ветки с флагом перед -b — та же работа" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git checkout -q -b RT-3-next origin/main')" "$(edited)")")" PASS
+JOURNAL="$REPO/.git/rt-kit/turn-exit.log"
+BROKEN="$TURNS/broken-engine.mjs"
+printf 'process.exit(3);\n' > "$BROKEN"
+SLOW="$TURNS/slow-engine.mjs"
+printf 'setTimeout(() => {}, 5000);\n' > "$SLOW"
+rm -f "$JOURNAL"
+RT_FLOW_ENGINE="$BROKEN" expect_stop "end: SC-AK-1436 — движок упал — ход отпущен" \
+    "$(input_stop "$(transcript "$(say 'делай')" "$(edited)")")" PASS
+report "end: SC-AK-1436 — движок упал — исход «движок упал» в журнале" "$(grep -c 'движок упал' "$JOURNAL" 2>/dev/null)" "1"
+RT_FLOW_ENGINE="$SLOW" RT_FLOW_VERDICT_LIMIT=1 expect_stop "end: SC-AK-1437 — движок вышел за предел — ход отпущен" \
+    "$(input_stop "$(transcript "$(say 'делай')" "$(edited)")")" PASS
+report "end: SC-AK-1437 — движок вышел за предел — тот же исход" "$(grep -c 'движок упал' "$JOURNAL" 2>/dev/null)" "2"
+RT_FLOW_ENGINE="$TURNS/none.mjs" expect_stop "end: SC-AK-1438 — движок не вызван — ход отпущен" \
+    "$(input_stop "$(transcript "$(say 'делай')" "$(edited)")")" PASS
+report "end: SC-AK-1438 — движок не вызван — тот же исход" "$(grep -c 'движок упал' "$JOURNAL" 2>/dev/null)" "3"
 
-# --- работа отдана, а следующая только названа ---------------------------------------------------
-# Работы в таком ходе больше, чем в любом другом, и вся она по сданной задаче. Отдача завершает
-# прошлую работу, а не ход: правило требует, чтобы по следующей было сделано действие.
-state_is 'этап-идёт'
-expect_stop "SC-AK-647 — отдача работы без начала следующей ход не кончает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git push origin HEAD')" "$(ran 'gh pr create --draft --title x')")")" BLOCK
-expect_stop "SC-AK-648 — заведённая следующая задача ход отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft --title x')" "$(ran 'npm run task:new -- следующая')")")" PASS
-expect_stop "SC-AK-649 — заведённая ветка следующей работы ход отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft --title x')" "$(ran 'git checkout -b RT-2-next origin/main')")")" PASS
-expect_stop "SC-AK-650 — ход без открытия заявки этим ярусом не судится" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git commit -q -m fix')")")" PASS
-expect_reason "SC-AK-651 — отказ об отдаче называет команду заведения следующей" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft --title x')")")" 'task:new'
-expect_stop "SC-AK-647 — отдача через glab без начала следующей ход не кончает" "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'git push origin HEAD')" "$(ran 'glab mr create --draft --title x')")")" BLOCK
-expect_stop "SC-AK-648 — отдача через glab с заведённой следующей ход отпускает" "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'glab mr create --draft --title x')" "$(ran 'npm run task:new -- следующая')")")" PASS
+rm -f "$REPO/.git/rt-kit/refusals-in-row"
+for _ in 1 2 3 4 5 6 7 8; do
+    printf '%s' "$(input_stop "$(transcript "$(say 'делай')" "$(edited)")")" | "$HOOKS/turn-exit-guard.sh" >/dev/null 2>&1
+done
+report "end: SC-AK-1439 — восьмой отказ подряд пишется в журнал" "$(grep -c 'eighth refusal in a row' "$JOURNAL" 2>/dev/null)" "1"
 
-# --- снятая папка задачи ----------------------------------------------------------------------
-# Папка разбирается ДО открытия заявки, и между этими двумя движениями работа не отдана никому.
-# Прежде страж выходил здесь нулём — и ход, которому до отдачи оставался один шаг, закрывался
-# пустым. Теперь признак снимает только требование состояния.
-ARCHIVED="$(fixture_repo_branched main RT-2-archived)"
-fixture_commit "$ARCHIVED" docs/tasks/RT-2-archived/progress.md '# Ход работы' 'docs: папка задачи'
-fixture_remove "$ARCHIVED" docs/tasks/RT-2-archived 'docs: папка задачи разобрана'
-
-input_archived() {
-    jq -n --arg p "$1" --arg d "$ARCHIVED" \
-        '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:false}'
-}
-
-expect_stop "SC-AK-575 — при снятой папке открытие заявки с начатой следующей ход отпускает" \
-    "$(input_archived "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft')" "$(ran 'npm run task:new -- следующая')")")" PASS
-expect_stop "SC-AK-576 — при снятой папке правка дерева ход отпускает" \
-    "$(input_archived "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
-
-rm -rf "$ARCHIVED"
-
-# --- взятая, но не начатая работа --------------------------------------------------------------
-# Ветка по номеру задачи заведена, папки при ней нет: работа объявлена взятой и не начата ни
-# одной строкой. Второй признак такой ход отпускал целиком — заведение ветки и перевод колонки
-# сами по себе команды, меняющие дерево.
-TAKEN="$(fixture_repo RT-7-taken)"
-input_taken() {
-    jq -n --arg p "$1" --arg d "$TAKEN" \
-        '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:false}'
-}
-
-expect_stop "SC-AK-625 — взятая работа без папки задачи ход не кончает" \
-    "$(input_taken "$(transcript "$(say 'работай дальше')" "$(ran 'git checkout -b RT-7-taken origin/main')")")" BLOCK
-expect_stop "SC-AK-626 — перевод колонки взятую работу началом не делает" \
-    "$(input_taken "$(transcript "$(say 'работай дальше')" "$(ran 'npm run task:move -- 7 in-progress')")")" BLOCK
-
-mkdir -p "$TAKEN/docs/tasks/RT-7-taken"
-printf '# Замысел\n' > "$TAKEN/docs/tasks/RT-7-taken/plan.md"
-expect_stop "SC-AK-628 — собранная папка задачи ярус снимает" \
-    "$(input_taken "$(transcript "$(say 'работай дальше')" "$(ran 'npm run task:move -- 7 in-progress')" "$(edited)")")" PASS
-
-rm -rf "$TAKEN"
-
-# Ветка без номера задачи не судится: под пробу заводят и такие.
-PROBE="$(fixture_repo feat-probe)"
-expect_stop "SC-AK-629 — ветка без номера задачи этим ярусом не судится" \
-    "$(jq -n --arg p "$(transcript "$(say 'разложи')" "$(edited)")" --arg d "$PROBE" \
-        '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:false}')" PASS
-rm -rf "$PROBE"
-
-# SC-AK-911 — ключи хода работы и замысла читаются под английским именем: образцы папки задачи
-# в пакете английские, папки дерева до перевода русские, и страж судит обе одинаково.
-printf '# Progress\n\n## Where we stand\n\n- **State:** `%s`\n- **Next step:** finish the guard\n' \
-    'замысел-записан' > "$TASK/progress.md"
-printf '# Plan\n\n## Stages\n\n### The guard edit\n\n- **What is done:** a probe\n' > "$TASK/plan.md"
-expect_stop "SC-AK-911 — английский ключ состояния ход не отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'npm run task:new -- --title проба')")")" BLOCK
-expect_reason "SC-AK-911 — отказ называет первый этап английского замысла" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(reply)")")" 'The guard edit'
-printf '# Progress\n\n## Where we stand\n\n- **State:** `%s`\n- **Next step:** finish the guard\n' \
-    'этап-идёт' > "$TASK/progress.md"
-expect_stop "SC-AK-911 — начатый этап под английским ключом отпускается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)")")" PASS
-rm -f "$TASK/plan.md"
-
-state_is 'этап-идёт'
-exit_code_of() {
-    printf '%s' "$2" | "$HOOKS/turn-exit-guard.sh" >/dev/null 2>&1
-    report "$1" "код:$?" "код:0"
-}
-exit_code_of "пустой вход пропускается" ''
-exit_code_of "неразбираемый вход пропускается" 'не json'
-exit_code_of "запись хода, которой нет, пропускается" "$(input_stop "$TURNS/нет-такой.jsonl")"
-
-# SC-AK-1066, SC-AK-1067, SC-AK-1069 — роды последнего действия хода: фоновый запуск проверок, чтение
-# лога фоновой задачи, взятие задачи.
-state_is 'этап-идёт'
-
-expect_stop "SC-AK-1066 — фоновый запуск проверок последним действием ход не отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran 'npm run test -- --watch=false &')")")" BLOCK
-
-expect_stop "SC-AK-1066 — тот же запуск в середине хода ход отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'npm run test -- --watch=false &')" "$(edited)")")" PASS
-
-expect_stop "SC-AK-1067 — чтение лога фоновой задачи ход не отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran 'tail -20 /tmp/tasks/b1.output')")")" BLOCK
-
-expect_stop "SC-AK-1069 — взятие задачи последним действием ход не отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(edited)" "$(ran 'npm run task:move -- 2030 in-progress')")")" BLOCK
-
-expect_stop "SC-AK-1069 — взятие задачи после отданной работы ход отпускает" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran 'gh pr create --draft')" "$(ran 'npm run task:move -- 2030 in-progress')")")" PASS
-
-# --- SC-AK-1247 — ход, разбуженный уведомлением о своей фоновой задаче ----------------------
-# Уведомление, будящее сессию, пишется под ролью владельца и открывает ход, в котором делать
-# нечего: ждать осталось вторую задачу. Ход из одного уведомления отпускается, пока своя задача
-# ещё идёт: такой ход проверка не судит вовсе.
-ran_bg_id() {
-    jq -c -n --arg c "$1" --arg i "$2" \
-        '{type:"assistant",message:{content:[{type:"tool_use",id:$i,name:"Bash",input:{command:$c,run_in_background:true}}]}}'
-}
-notified() {
-    jq -c -n --arg i "$1" --arg s "${2:-completed}" '{type:"user",origin:{kind:"task-notification"},
-        message:{content:("<task-notification>\n<task-id>b1</task-id>\n<tool-use-id>" + $i
-            + "</tool-use-id>\n<status>" + $s + "</status>\n</task-notification>")}}'
-}
-state_is 'этап-идёт'
-expect_stop "SC-AK-1247 — пустой ход по уведомлению, пока вторая своя задача идёт, отпускается" \
-    "$(input_stop "$(transcript "$(say 'продолжай')" "$(ran_bg_id 'node a.mjs' t1)" "$(ran_bg_id 'node b.mjs' t2)" \
-        "$(edited)" "$(notified t1)")")" PASS
+# Сессия роли: роль без инструмента правки кончает ход своим отчётом.
+mkdir -p "$REPO/.claude/agents"
+printf -- '---\nname: reader\ntools: Read, Grep\n---\nроль\n' > "$REPO/.claude/agents/reader.md"
+expect_stop "end: SC-AK-1434 — сессия роли отпускает ход через хук" \
+    "$(input_role reader "$(transcript "$(say 'разбери')" "$(edited)")")" PASS
 
 suite_result "проверка выхода из хода"

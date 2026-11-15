@@ -69,14 +69,24 @@ export function releaseOrder(release, fail) {
         .sort((a, b) => a.order - b.order);
 }
 
-const word = (list) => new RegExp(`(?<![\\p{L}])(?:${list.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})(?![\\p{L}])`, 'iu');
+const alternatives = (list) => list.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
 
-/** A message of the owner says stop: a word of `words.stop` stands in it, and no word of `words.stopExcept`. */
+/**
+ * A message of the owner says stop: it begins with a word of `words.stop`, and the rest of it does
+ * not hold the turn — no word of `words.stopExcept` without «не» before it, and no word beginning
+ * with an entry of `words.holdAfter` («хватит останавливаться» asks to go on).
+ */
 export function saysStop(message, words) {
     const stop = words.stop ?? [];
-    if (stop.length === 0 || !word(stop).test(message)) return false;
+    if (stop.length === 0) return false;
+    const text = message.trim().replace(/^[\s\p{P}]+/u, '');
+    const head = text.match(new RegExp(`^(?:${alternatives(stop)})(?![\\p{L}])`, 'iu'));
+    if (!head) return false;
+    const rest = text.slice(head[0].length);
+    const hold = words.holdAfter ?? [];
+    if (hold.length > 0 && new RegExp(`(?<![\\p{L}])(?:${alternatives(hold)})`, 'iu').test(rest)) return false;
     const except = words.stopExcept ?? [];
-    return except.length === 0 || !word(except).test(message);
+    return except.length === 0 || !new RegExp(`(?<![\\p{L}])(?<!не )(?:${alternatives(except)})(?![\\p{L}])`, 'iu').test(rest);
 }
 
 /** A shell command is a write command: one of its parts begins with an entry of `words.write`. */

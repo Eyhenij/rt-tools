@@ -1,10 +1,9 @@
-// rt-kit v0.37.0 · task-flow/measure/host.mjs · d2a916e10f2c · правится надстройкой, не здесь
+// rt-kit v0.37.0 · task-flow/measure/host.mjs · 2baf51034736 · правится надстройкой, не здесь
 /**
- * The measurer «measure.host» of the task flow description. A factory named by a
- * capability takes its ports and returns the reader; until the step that writes it, the factory
- * throws, so an unmeasured exit is never read as met.
+ * The measurer «measure.host» — the hosting did not answer: a read failed twice in this measurement.
+ * The engine reads it after the states, so it says whether the measured state stands on the silence.
  */
 
 export function silent({ host }) {
-    throw new Error('Not implemented: measure.host.silent (host)');
+    return () => host.silent();
 }
