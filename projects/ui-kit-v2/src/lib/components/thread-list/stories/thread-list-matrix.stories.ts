@@ -26,6 +26,15 @@ export const Sign: TStory = { args: { part: 'sign' }, parameters: { snapshot: { 
 /** Полоса вкладок потребителя под шапкой списка, слот `rtThreadListTabs`. */
 export const Tabs: TStory = { args: { part: 'tabs' }, parameters: { snapshot: { fullPage: true } } };
 
+/**
+ * Вид мессенджера со знаками на телефоне: тень знака у́же и помещается в строку, край прокрутки её
+ * не режет. Окно 375 — ширина кадра макета; узкий порог список берёт от окна.
+ */
+export const MessengerPhone: TStory = {
+    args: { part: 'messengerPhone' },
+    parameters: { snapshot: { viewport: { width: 375, height: 812 } } },
+};
+
 export const Loading: TStory = { args: { part: 'loading' } };
 
 export const More: TStory = { args: { part: 'more' } };
