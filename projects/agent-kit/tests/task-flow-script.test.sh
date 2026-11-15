@@ -440,6 +440,7 @@ out('forecast: SC-AK-1550 — вызов после меню снова счит
 
 out('missed: SC-AK-1552 — конец хода с открытой работой пропущен, конец по «стоп» нет', `${held.ended} ${held.missed}`, '2 1');
 out('missed: SC-AK-1552 — остановка с отказом хука ход не кончает', `${loop.ended} ${loop.missed}`, '0 0');
+out('missed: SC-AK-1552 — каждая остановка на ветке с движком входит в знаменатель', loop.laidStops, '3');
 const blocked = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), { ...stop(B), hookErrors: ['BLOCKED by turn-exit-guard: open'] }]);
 out('missed: SC-AK-1552 — отказ в итоге хуков ход не кончает', `${blocked.ended} ${blocked.missed}`, '0 0');
 const unlaid = await forecastCopies({ copies: [{ name: 'c', sessions: [{ id: 's', entries: [owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B)] }] }], window, model, base: dirname(flow), openReaders, sessionSource, wordOf, tree: '/t', settings, laid: () => false });

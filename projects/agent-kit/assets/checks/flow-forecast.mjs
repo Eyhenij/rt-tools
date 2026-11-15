@@ -137,7 +137,7 @@ export function historyOf(tree, tasksDir) {
 }
 
 /**
- * The replay of the copies: `{ calls, stops, held, judged, refused, ended, missed }`. `openReaders` is the reader
+ * The replay of the copies: `{ calls, stops, held, judged, refused, laidStops, ended, missed }`. `openReaders` is the reader
  * factory of the engine; `sessionSource` and `wordOf` read the record as the sources do.
  */
 export async function forecastCopies({ copies, window, model, base, openReaders, sessionSource, wordOf, tree, settings, laid = () => true }) {
@@ -151,7 +151,7 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
     const marks = new Set();
     const ids = new Set();
     const seen = new Set();
-    const counts = { stops: 0, held: 0, judged: 0, refused: 0, ended: 0, missed: 0 };
+    const counts = { stops: 0, held: 0, judged: 0, refused: 0, laidStops: 0, ended: 0, missed: 0 };
 
     const inScenario = (branch, cwd) => TASK_BRANCH.test(branch ?? '') || cwd === tree;
     const handed = (branch, at) => {
@@ -234,6 +234,7 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
                 const first = !inStop;
                 inStop = true;
                 if (!counted) continue;
+                if (first && laid(branch)) counts.laidStops += 1;
                 const ended = isTurnEnd(entry, nextMain(session.entries, index)) && laid(branch);
                 const judged = first && !menuNamed;
                 if (!judged && !ended) continue;
@@ -293,8 +294,8 @@ export async function runForecast({ argv, model, base, openReaders, tree, root, 
     return args.perMille ? perMille(result, args.guard) : forecastLine(result, args.guard);
 }
 
-/** The line of the missed stops: the ended turns with open work among the ended turns of the window. */
-export const missedLine = (result, last) => `missed stops with open work: ${result.missed} of ${result.ended} stops in the last ${last} calls`;
+/** The line of the missed stops: the turns ended with open work among the stops of the window on branches with the engine. */
+export const missedLine = (result, last) => `missed stops with open work: ${result.missed} of ${result.laidStops} stops in the last ${last} calls`;
 
 /**
  * The command `owner-nudges.mjs --missed`: replays the records from `from` and counts the turns
