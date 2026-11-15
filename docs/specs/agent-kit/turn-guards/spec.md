@@ -1,6 +1,6 @@
 # The guards of the end of a turn
 
-**Status:** in force · **Revision:** 2026-09-06 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-15 · **Scenario prefix:** `SC-AK`
 **Depends on:** none
 **Laws:** `verifiability`, `work-conduct`
 **Procedures:** none
@@ -105,11 +105,10 @@ exits asks the engine of the task flow for a verdict: `docs/specs/agent-kit/turn
   disconnected — is removed by the agent. The agent hook on the Stop event refuses such a request.
 
 - **Whether a turn may end by what was said in it is judged by a model, not by word samples.** The
-  package lays out the text of an agent hook for the Stop event; the hook reads the state of the
-  work — the progress of the task and the table of the epic — the owner's latest words and the
-  final reply. While ordered work is open, it lets the turn end only on a word of the owner to stop
-  or to wait, on a decision only the owner can make that holds every part left, or on a named
-  obstacle.
+  package lays out the text of an agent hook for the Stop event; the hook reads the owner's latest
+  words, the final reply and the calls of the turn. Open work is not its to judge: the exit guard
+  measures it. The hook refuses a turn that leaves undone the work the owner's latest word ordered,
+  asks what is already answered, states a fact with no output or admits a miss with no record.
 
 - **The refusal of the model names itself by a fixed mark.** It starts with `BLOCKED by
   turn-judge:`, and refusals are counted by that mark in the transcripts.
@@ -200,4 +199,6 @@ None.
 - 2026-11-15 — the guard of the exits asks the engine of the task flow for a verdict. The rules of its
   tiers are removed with their scenarios: the second pass, the open epic, the written plan, the
   closed stage, the unpushed commits, the handed-in work and the keys under two names. The subdomain
-  of a turn under an open epic is removed: the epic is measured by the description.
+  of a turn under an open epic is removed: the epic is measured by the description. The agent hook
+  of the Stop event no longer reads the progress and the epic table: scenarios `SC-AK-1362` and
+  `SC-AK-1364` are removed with the waiting line and the handed-in work it judged.

@@ -58,10 +58,10 @@ Then the call is refused with a reason naming the owner; other tools pass, and w
 
 Covered: `projects/agent-kit/tests/end-conversation-guard.test.sh`.
 
-### SC-AK-1358 — the agent hook lets a stop of the owner, a named obstacle and a turn outside ordered work end
+### SC-AK-1358 — the agent hook lets a stop of the owner and a turn outside ordered work end
 
-Given the owner's latest word is «стоп» or «не сейчас», or the reply names an obstacle that holds
-every part of the work left, or no ordered work is open and the owner asked a question
+Given the owner's latest word is «стоп» or «не сейчас», or their latest word orders no work and
+asks a question the reply answers
 When the agent hook of the Stop event judges the end of the turn
 Then it answers `{"ok": true}`, and the turn ends
 
@@ -90,34 +90,18 @@ Not covered: by the same technique as the scenario above.
 
 ### SC-AK-1361 — the agent hook keeps a turn going after an answer in the middle of ordered work
 
-Given the progress names a next step, and the owner asked a question or swore
-When the reply answers, and the turn ends without the next step
+Given the owner ordered work, and their latest word swears at an agent that stands or asks about it
+When the reply answers, and the ordered work is not in the calls of the turn
 Then the hook answers `{"ok": false}` with a reason that starts with `BLOCKED by turn-judge:` and
-names the next step of the progress
-
-Not covered: by the same technique as SC-AK-1358.
-
-### SC-AK-1362 — a waiting line older than the owner's latest order does not end the turn
-
-Given the line «Waiting for the owner» quotes an answer the owner gave before a later order to work
-When the turn ends on that line
-Then the agent hook refuses it and names the line to rewrite and the next step
+names the ordered work
 
 Not covered: by the same technique as SC-AK-1358.
 
 ### SC-AK-1363 — a command that closes the session does not end ordered work
 
-Given the progress names a next step, and the owner called the command that writes the handover
-and closes the session
-When the reply leaves the step to the next session
-Then the agent hook refuses the turn with its mark and names the step
-
-Not covered: by the same technique as SC-AK-1358.
-
-### SC-AK-1364 — handed-in work under an open epic goes on to the next task
-
-Given the request of the task is open, and the table of the epic holds tasks ahead of it
-When the turn ends on the handed-in work
-Then the agent hook refuses it and names the next task of the epic
+Given the owner's latest word ordered work, and the owner called the command that writes the
+handover and closes the session
+When the reply leaves the work to the next session
+Then the agent hook refuses the turn with its mark and names the work
 
 Not covered: by the same technique as SC-AK-1358.

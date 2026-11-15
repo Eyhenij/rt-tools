@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.37.0 · rules/turn-conduct.md · 14f521e68ee2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/turn-conduct.md · bdd05d50dd64 · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 
@@ -20,8 +20,8 @@ demand, not with the rule.
 | In the law | Here |
 | --- | --- |
 | turn | one pass of the agent: from the owner's message to the reply |
-| a turn exit | one of the ways to end a turn listed below; what confirms each — the turn map |
-| the guard of turn exits | a guard at the turn's end: reads the declared work state and what the turn did in the tree |
+| a turn exit | the end of the scenario or the owner's stop word; the other release cases of the task flow description |
+| the guard of turn exits | a guard at the turn's end: asks the engine to measure the branch by the task flow description |
 | the agent hook of the turn's end | a model at the turn's end: reads the owner's last message, the reply and the calls of the turn |
 | a statement about the state of the tree | a word in the reply to the owner backed by a command of the same turn and its output |
 | the session handover | a section of the progress retelling it for a new session; a file outside the tree where there is no task folder |
@@ -29,24 +29,29 @@ demand, not with the rule.
 
 ## Turn exits
 
-A turn ends in four ways: a question to the owner the rules do not answer **and no task of the epic plan
-to take without the answer**; a guard's refusal; a
-filled window where there is no compaction; work handed in, with the next begun. What confirms
-each, the turn map lists where the tree laid it out. While an epic has an unfinished task, the
-fourth does not end a turn: the next task is worked on in it. The end of the epic is the fifth.
+A turn ends when the scenario is over or when the owner's last word is a stop word. The owner put it
+so: «Только твоё «стоп»». The exit guard measures the branch by the task flow description and holds
+every other turn with the one move that comes next.
+
+The description names a few more release cases, and none of them is the executor's choice: a session
+that wrote nothing to the tree, a branch outside the scenario, a role session, a host that did not
+answer twice, a menu of a refusal that did not reach the owner twice. Their order is the section
+`release` of the description.
+
+A question to the owner, a guard's refusal, a handover and handed-in work do not end a turn. A
+question waits for its answer inside the turn, a refusal is answered by the next call, and handed-in
+work is followed by the next task. A step that belongs to the owner, or that another guard refuses,
+goes to them as one menu with the options of the description: «отложить RT-N», «сделаю сам», «стоп».
 
 The queue is asked by a command in the same turn: "there are no tasks" is a statement about the
-tree, and the executor's memory does not confirm it. A turn where the owner's answer holds one
-piece of work while an independent one lies next to it ends with the work taken, and the question
-goes in a line beside it.
+tree, and the executor's memory does not confirm it.
 
-Everything else is the turn going on, not its end. A milestone does not end a turn: not a commit,
-not a read agreement, not the boundary "read — now editing", not a green check.
-A transition from state to state — least of all: the next mandatory action is done in the same
-turn, and a state boundary looks like a finished piece better than any milestone.
+Everything else is the turn going on. A milestone does not end a turn: not a commit, not a read
+agreement, not the boundary "read — now editing", not a green check.
+A transition from state to state — least of all: the next mandatory action is done in the same turn.
 
-Four ways to end a turn look like work and are not: a summary of someone else's step, a menu under
-an assigned order, a declaration of intent, and a command named but not run.
+Four stops look like work and are not: a summary of someone else's step, a menu under an assigned
+order, a declaration of intent, and a command named but not run.
 
 A turn ending while an epic runs shows the owner their position by the epic's table: otherwise they cannot see the queue's state.
 
@@ -61,24 +66,19 @@ One turn: what it ends with, what is checked before its end and what the owner i
 
 ```mermaid
 flowchart TD
-    A[The turn is going] --> B{What happened}
-    B -->|A question to the owner, and no queue task free of its answer| C[Laws and rules read in the same turn]
-    B -->|The epic ended| L[Its task table shown, orders awaited]
-    L --> I
-    B -->|A guard refused an edit| D[The refusal named to the owner, no bypass sought]
-    B -->|The window is filled| E{The tree declared compaction}
-    B -->|Work handed in by a PR| F[An action done on the next task, not spoken]
-    B -->|None of these| G[The turn goes on: a milestone never ends it]
-    E -->|Yes| G
-    E -->|No| H[Progress written up, handover written]
-    C --> I{The reply speaks of the tree}
-    D --> I
-    F --> I
-    H --> I
+    A[The turn is going] --> B{The engine measures the branch}
+    B -->|The scenario is over| L[The epic table shown]
+    B -->|The owner's last word is a stop word| I
+    B -->|Another release case of the description| I
+    B -->|None| D{The next move}
+    D -->|The executor's step| G[Done in the same turn: a question, a refusal, a handover never end it]
+    D -->|The owner's step, or another guard refuses it| M[One menu: «отложить RT-N», «сделаю сам», «стоп»]
+    M --> A
+    G --> A
+    L --> I{The reply speaks of the tree}
     I -->|Yes| J[Every word carries a command of the same turn and its output]
     I -->|No| K[The turn is over]
     J --> K
-    G --> A
 ```
 
 ## How the law applies here
@@ -108,8 +108,7 @@ flowchart TD
 - **No order at all is a lawful state, and it is said, not filled.** A queue card is not an order.
   The turn names that there is no order and asks for one.
 - **A standing order is written into the progress in the owner's words.** Read once, «merge every
-  PR» is lost at the first refusal; a decision along the way carries it. Not the waiting line:
-  the exit guard reads any quote there as a word about a stop.
+  PR» is lost at the first refusal; a decision along the way carries it, quoted.
 - **Done work is shown on the running application built from it.** Host pages show delivery, not
   «what did you do».
 - **A declaration of intent.** "Taking the next task" is not taking it: the phrase lives to the end
@@ -140,9 +139,9 @@ flowchart TD
 - **A stop is named in a message of its own.** Not in a line at the end of a report: there it drowns
   — the owner reads a report as an account of the done. Three things are named: what stands, what it
   waits for and what the owner can decide.
-- **Turn exits are watched by a guard, not by the executor's memory.** It reads the declared work state and what
-  the turn did on it: a file edit or a tree-changing command. What the reply says — an answer, a
-  promise, a report instead of the next step — the agent hook on the same event judges by meaning.
+- **Turn exits are watched by a guard, not by the executor's memory.** It asks the engine, and the
+  engine measures the state of the branch: nothing is declared. What the reply says — a promise, a
+  report instead of the next step — the agent hook on the same event judges by meaning.
 - **A removed task folder lifts the state requirement.** The progress leaves with the folder, taken
   apart before the PR opens; a removed folder means the middle of handing in, not its end.
 - **A taken task is not yet begun work, and the turn does not end on it.** Creating the branch,
@@ -156,48 +155,45 @@ flowchart TD
   turn is one: work, the first step of the next, then text; what was done is said after the next
   action, not instead of it.
 - **The last action of a turn is only ever work.** A file edit or a changing command stands last
-  among what the turn did. The guard refuses the kinds it reads from the calls — waiting, a launch in
-  the background, a taken task; a report standing last the agent hook judges.
+  among what the turn did. The exit guard does not read the last call: a turn whose scenario is not
+  over is held whatever stood last.
 - **Waiting for someone else's step is never the last action of a turn.** While they are waited for,
   the work stays where it stood. The last action is judged: waiting mid-turn is lawful, and so is a
   launch in the background mid-turn. Standing last, it is an announcement of intent: what does not depend on it is done while it runs.
 - **The handover is written even where the branch has no name.** All of it lies in the tree and is
   reachable on a detached head; one file needs a name, and a short snapshot of the head gives it.
   Otherwise compaction comes without a handover, and the next session starts from a blank.
-- **A next step written into the progress is begun by the same turn.** The guard reads the order
-  of actions: after the last edit of the progress it wants work other than the commit and the push
-  of it. A full report and a moved stage number do not replace the step.
-- **A plan stage is declared closed only after its check command has passed.** The "Verified by"
-  (`Чем проверяется`) line carries the command in backticks and what in its output means "matches".
-  The guard reads the previous stage number from the branch history and holds a turn where the
-  number grew and the command did not run.
-- **The end of an epic is a stop, and it is the one lawful waiting for a word.** The turn shows
-  the epic's tasks in the table of rule `status-report`, not the handover's, and says that the
-  session waits for orders. On the main branch the epic is not read.
+- **A next step written into the progress is begun by the same turn.** The held turn names the
+  current step and the command that measures it. A full report and a moved stage number do not
+  replace the step.
+- **A plan stage is declared closed only after its check command has passed.** Every step of the
+  plan carries a check line: a command in backticks and the expected output. The engine runs it and
+  writes the mark of the step; a step marked done without its mark is refused.
+- **The end of an epic is the end of the scenario, and the turn ends there.** The turn shows the
+  epic's tasks in the table of rule `status-report`, not the handover's; new work is taken by the
+  owner's word. On the main branch the epic is not read.
   <!-- rt-when: ответ владельцу о состоянии работы -->
 
 - **A step of the plan that is not done forbids a stop, and a report about the done is not an
-  exception.** The tier about the epic judges the whole and says nothing about a turn inside one
-  task. The count is read from the progress; lawful exits stay as they were.
+  exception.** The engine counts the steps by their marks, and a running stage holds the turn
+  whatever the report says.
 - **The word about a stop the guard reads from the owner, not from the executor.** Otherwise the
   stop is declared by whoever finds it convenient, and the ban holds until the first inconvenience.
-- **Until the epic is closed a turn ends only by a question, a refusal, the window or the owner's
-  word.** A turn that ended with work is a stop all the same, and so is a second pass over the same
-  turn: the exit guard returns both with the next step named. A turn without work it leaves to the
-  agent hook, which tells an answer from a stop.
-- **The owner's standing word about a stop is quoted in the progress, in « », in the line «Waiting
-  for the owner».** The guard reads their word, not a retelling: a line without a quote releases
-  nothing, and a quote holds until the owner cancels it. A word said in the turn itself the agent
-  hook reads; the exit guard reads only the quote in the line.
+- **Until the scenario is over a turn ends only by the owner's stop word.** A question, a refusal, a
+  handover and a second pass are the turn going on: the exit guard returns each with the next move
+  named. The other release cases of the description are not the executor's to choose.
+- **The owner's word about a stop is read from the record of the session, not from the progress.**
+  A stop written on disk by the executor is a retelling. The guard reads the owner's last message,
+  typed or the free text of a menu answer, and a stop word holds only while that message is the last.
 - **The session is ended by the owner and by nobody else.** The tool that closes the conversation is
   refused by a guard always, with no lawful form of bypass: an assignment stands until the owner
   cancels it, and a session that must close is closed by them.
-- **A refusal of a guard ends the turn only as its last action, and only a refusal of work.** A
-  refusal answered by the next call is the middle of the turn. A refused stop — the closing tool —
-  is no exit: the refused call was itself the stop, and the exit guard leaves it out.
-- **The phrase "waiting for your word" is a stop declared by the executor.** Without the owner's word
-  about a stop and without a question put to them by the tool, waiting for their word is a report,
-  not work; the instruction holds until they cancel it. The agent hook judges it by meaning.
+- **A refusal of a guard never ends the turn.** It is answered by the next call: the condition met,
+  another step taken, or the menu of the owner's step put to them. A refused stop — the
+  closing tool — is no exit either.
+- **The phrase "waiting for your word" is a stop declared by the executor.** Without the owner's stop
+  word, waiting for their word is a report, not work. A decision that is theirs goes to them as a
+  menu, and the turn waits for the answer inside itself. The agent hook judges it by meaning.
 - **A statement about the tree's state is watched by the agent hook, not by the executor's
   memory.** Everything the reply says about the tree carries a command and its output; said without
   one, it is no statement — not "checked", not "cleared", not "done". The hook reads the reply and
@@ -205,14 +201,13 @@ flowchart TD
 - **A wrong conclusion from a right command is not judged.** About a sample judged by one file there
   is nothing to compare with. This is the hook's known boundary; the articles below hold it.
 - **A turn that handed work in does not end before the next task is begun.** Someone else's step —
-  the run, the review, the merge — goes without the executor. The exit guard knows a handover by a PR
-  opened in the turn and refuses a turn that took no next task: no task created, no branch, no
-  column moved.
+  the run, the review, the merge — goes without the executor. Handed-in work is a measured state, and
+  its exit is the next task of the epic taken.
 - **A turn that handed work in carries it to a lifted draft.** A draft's merge button is locked by
   the host, and in the PR list ready cannot be told from unfinished. The next task is taken on top
   of that, not instead.
 - **Work left in the working tree does not end the turn.** A branch ahead of the remote ref with no
-  open PR is done work nobody sees; the guard reads this without the network.
+  open PR is done work nobody sees, and the scenario goes on until the PR.
 - **"Waiting for the run" is a statement about someone else's step, not a work state.** A run may be
   green in an hour, or may never have started — and the second does not fix itself. The word demands
   a command of the same turn that shows the run; said bare, the owner reads it as "the work is still
@@ -302,6 +297,10 @@ What a turn said is judged by a model, and a model can let a case pass. The hook
 doubtful turn end: a false refusal costs the owner a repeated answer, a missed one is visible in the
 reply. A broken or timed-out hook lets every turn end, and that shows only as the absence of its
 mark in the transcripts.
+
+The exit guard measures, it does not judge meaning. An engine that fails, runs past its limit or
+cannot be called releases the turn and writes the failure to the journal; the next turn begins with
+that line.
 
 ## Patterns
 

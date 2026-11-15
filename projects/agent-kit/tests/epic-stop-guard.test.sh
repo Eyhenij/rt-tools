@@ -58,7 +58,7 @@ export STUB_LEFT=''
 
 # --- SC-AK-981 — отказ называет остановку ----------------------------------------------------
 stop_reason "SC-AK-981 — названа команда таблицы" 'git checkout -b RT-1999-probe main' 'epic:table'
-stop_reason "SC-AK-981 — названо ожидание приказа" 'git checkout -b RT-1999-probe main' 'waits for their orders'
+stop_reason "SC-AK-981 — назван конец хода с концом эпика" 'git checkout -b RT-1999-probe main' 'the turn ends with it'
 stop_reason "SC-AK-981 — названа лазейка со словом владельца" 'git checkout -b RT-1999-probe main' 'Epic-stop-skip'
 
 # --- SC-AK-1227 — отказ называет, до какого вызова нужна строка для нового эпика ----------------

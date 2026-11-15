@@ -1,6 +1,6 @@
 # The end of an epic is a stop, not the next task
 
-**Status:** in force · **Revision:** 2026-09-09 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-15 · **Scenario prefix:** `SC-AK`
 **Depends on:** `docs/specs/agent-kit/epic-table/spec.md`
 **Laws:** `work-conduct`
 **Procedures:** none
@@ -12,13 +12,13 @@ from an ordinary report, mixed in with everything else, and there is no place wh
 an order about its outcome: by the time they read it, the next work is already begun and the branch
 for it created.
 
-The rule of the turn says a turn ends with work handed over and the next one begun, and about the
-end of an epic it says one line. Held by the memory of the session, that line works exactly as the
+The rule of the turn said a turn ends with work handed over and the next one begun, and about the
+end of an epic it said one line. Held by the memory of the session, that line worked exactly as the
 one about the table of tasks worked before the command: sometimes.
 
 The subdomain names the stop and gives it a guard: when the epic has no unfinished task left, taking
-new work is refused, and the refusal names the stop — the table by the command and the line about
-waiting for orders.
+new work is refused, and the refusal names the stop — the table by the command and the line saying
+the turn ends with the epic.
 
 ## Terminology
 
@@ -26,8 +26,8 @@ waiting for orders.
   merged or handed over by a request.
 - **Taking new work** — a call that starts a piece of work: creating a task, creating a branch by a
   task number, moving a task to the work column.
-- **The stop** — a turn that ends with the table of the epic's tasks and the line saying the session
-  waits for orders, and takes no new work.
+- **The stop** — a turn that ends with the table of the epic's tasks and the line saying the epic is
+  over, and takes no new work.
 - **The owner's word** — an order to take work after the stop: their message or their answer to a
   menu that names the number of the work, the latest answer to a menu for a task being created, or
   the named line in the call itself.
@@ -46,8 +46,8 @@ There is no interface: the guard answers with a refusal in the executor's own tu
 - **The epic is over when no task of it is left unfinished.** Merged or handed over by a request —
   the work is done; a task created and not taken does not end the epic.
 - **The refusal names the stop, not only the ban.** The command that prints the table and the line
-  about waiting for orders stand in the refusal text: without them the session invents a stop of its
-  own, and the owner gets a report of another shape every time.
+  saying the turn ends with the epic stand in the refusal text: without them the session invents a
+  stop of its own, and the owner gets a report of another shape every time.
 - **The refusal says up to which call a new epic needs the bypass line.** A new epic the owner has
   declared needs the line in the calls that create its card, its tasks and its branch. After the
   branch of the new epic is taken, the guard reads that epic and stops refusing: without the
@@ -68,10 +68,9 @@ There is no interface: the guard answers with a refusal in the executor's own tu
 - **The state of the epic is asked by the same command that prints the table.** A second reader of
   the same tasks would diverge from the first in silence: one would count a task finished, the other
   would not.
-- **The guards of the stop and of the turn agree on one reading.** The end of an epic is the one
-  case where waiting for the word of the owner is the work itself: the guard of the stop refuses
-  taking the next task there, and the two guards that judge the end of a turn would refuse the stop.
-  Written apart, the three readings diverge, and the turn is left with no lawful end at all.
+- **The guards of the stop and of the turn agree on one reading.** The end of an epic is the end of
+  the scenario: the guard of the stop refuses taking the next task there, and the exit guard releases
+  the turn by the same end. Read apart, the two diverge, and the turn is left with no lawful end.
 - **The reading is asked right before a refusal, not on every turn.** It goes to the hosting, and a
   turn that ends with work must not pay for a question about an epic that is not over.
 - **A branch without a task number and a tree without epics are not judged.** There is no epic
@@ -99,7 +98,7 @@ Not applicable: the guard answers with an exit code and a text, not with named c
 | What happened                              | Code | What it says                                           |
 | ------------------------------------------ | ---- | ------------------------------------------------------ |
 | the epic has an unfinished task            | `0`  | nothing: the call goes through                         |
-| the epic is over                           | `2`  | the stop: the table command and the line about waiting |
+| the epic is over                           | `2`  | the stop: the table command and the end of the turn    |
 | the call carries the order with a reason   | `0`  | nothing: the owner allowed the work                    |
 | there is no epic, no number, no way to ask | `0`  | nothing: there is nothing to judge by                  |
 
@@ -154,3 +153,5 @@ them — the word for tasks, the board, the checks directory — is read from th
   is refused by a guard.
 - 2026-10-09 — the owner's message or menu answer naming the number of the work releases the call:
   the line in the call was forbidden by an owner, and the work stopped on the word they had given.
+- 2026-11-15 — the refusal says the turn ends with the epic instead of naming a wait for orders: the
+  exit guard releases the turn at the end of the scenario.
