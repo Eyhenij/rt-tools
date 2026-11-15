@@ -234,6 +234,23 @@ Then the table check is red and names the step and the path
 
 Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
 
+### SC-AK-1550 — a file the repository ignores is no read of a step
+
+Given a table recorded on a copy without `.env`, which the repository ignores
+When `.env` appears and a step reads it
+Then the table check stays green
+
+Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
+
+### SC-AK-1551 — a record keeps the kinds of processes the table already held
+
+Given a table recorded on a copy where a step starts a process
+When the table is recorded again on a copy where the step does not start it
+Then the entry of the step still names the process
+And the table check on the first copy stays green
+
+Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
+
 ### SC-AK-1166 — the push gate names every red light check by one refusal
 
 Given the gate set holds two red light checks, a green one between them and a heavy one after them

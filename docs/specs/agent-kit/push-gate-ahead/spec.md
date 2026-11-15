@@ -87,6 +87,12 @@ There is no interface: the guard answers with a refusal text, the run ahead with
 - **The table of reads is checked against what the steps read now.** A read the table does not
   cover is a refusal naming the step and the path. The check runs when a step or the table is
   touched.
+- **A file the repository ignores is no read of a step.** A change to it never reaches the change
+  list of a branch, and whether it exists is a state of the machine: a copy with `.env` and a copy
+  without it record one table.
+- **A record keeps the kinds of processes the table already held for a step.** Whether a step
+  starts a process may hang on the machine; a kept kind errs towards an extra run, never a skipped
+  one.
 
 ## What is out of scope
 

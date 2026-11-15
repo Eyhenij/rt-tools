@@ -82,4 +82,32 @@ report "SC-AK-1355 — a step that reads past the table makes the table check re
 report "SC-AK-1355 — the refusal names the step and the path" \
     "$(printf '%s' "$said" | grep -qF "$texts: reads src/c.txt" && echo yes)" yes
 
+# A copy with a file outside the history and a copy without it share one table.
+printf '.env\n' >"$tree/.gitignore"
+(cd "$tree" && git add .gitignore && git -c user.email=t@t -c user.name=t commit -qm ignore)
+cat >"$tree/tools/check-env.mjs" <<'EOF'
+import { existsSync, readFileSync } from 'node:fs';
+if (existsSync('.env')) readFileSync('.env', 'utf8');
+EOF
+cat >"$tree/tools/check-db.mjs" <<'EOF'
+import { spawnSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
+if (existsSync('.env')) spawnSync('true');
+EOF
+env_step='node tools/check-env.mjs'
+db_step='node tools/check-db.mjs'
+(cd "$tree" && printf '%s\n' "$env_step" | node tools/push-inputs.mjs record --table env.json 2>/dev/null)
+printf 'DATABASE_URL=x\n' >"$tree/.env"
+(cd "$tree" && node tools/push-inputs.mjs verify --table env.json >/dev/null 2>&1)
+report "SC-AK-1550 — a read of a file the repository ignores is no read of the step" "$?" 0
+
+(cd "$tree" && printf '%s\n' "$db_step" | node tools/push-inputs.mjs record --table db.json 2>/dev/null)
+rm "$tree/.env"
+(cd "$tree" && printf '%s\n' "$db_step" | node tools/push-inputs.mjs record --table db.json 2>/dev/null)
+kept="$(cd "$tree" && node -e 'const t=require("./db.json");console.log(t.steps[process.argv[1]].untraced.join(","))' "$db_step")"
+report "SC-AK-1551 — a record on a copy that does not start the process keeps the kind seen before" "$kept" true
+printf 'DATABASE_URL=x\n' >"$tree/.env"
+(cd "$tree" && node tools/push-inputs.mjs verify --table db.json >/dev/null 2>&1)
+report "SC-AK-1551 — the copy that starts the process passes the table check" "$?" 0
+
 suite_result "push-inputs"
