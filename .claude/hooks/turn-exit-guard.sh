@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/turn-exit-guard.sh · 6545744366bb · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/turn-exit-guard.sh · bfd5dd3508ee · правится надстройкой, не здесь
 # rt-hook: Stop
 # rt-hook-timeout: 90
 # Requires: checks/task-flow-script.mjs, hooks/deny-tail.sh, hooks/turn-exit-role.sh
@@ -30,6 +30,16 @@ rt_hook_read
 input="$RT_HOOK_INPUT"
 root="${CLAUDE_PROJECT_DIR:-$(pwd)}"
 
+# The engine measures the copy the session works in: the directory the hook input names. A worktree
+# copy whose branch does not carry the engine is not judged by this scenario, and the turn ends.
+dir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
+[ -d "$dir" ] || dir="$root"
+copy_top="$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null)"
+root_top="$(git -C "$root" rev-parse --show-toplevel 2>/dev/null)"
+if [ -n "$copy_top" ] && [ "$copy_top" != "$root_top" ] && [ -z "${RT_FLOW_ENGINE:-}" ] && [ ! -f "$copy_top/tools/task-flow-script.mjs" ]; then
+    exit 0
+fi
+
 # A role with no edit tool: its report is its work.
 . "$rt_hooks_dir/turn-exit-role.sh" 2>/dev/null && rt_te_read_only_role && exit 0
 
@@ -47,7 +57,7 @@ journal() {
 }
 
 engine="${RT_FLOW_ENGINE:-}"
-[ -n "$engine" ] || for candidate in "$rt_hooks_dir/../checks/task-flow-script.mjs" "$root/tools/task-flow-script.mjs"; do
+[ -n "$engine" ] || for candidate in "$rt_hooks_dir/../checks/task-flow-script.mjs" "${copy_top:-$root}/tools/task-flow-script.mjs" "$root/tools/task-flow-script.mjs"; do
     [ -f "$candidate" ] && engine="$candidate" && break
 done
 if [ ! -f "$engine" ] || ! command -v node >/dev/null 2>&1 || ! command -v jq >/dev/null 2>&1; then
@@ -56,7 +66,7 @@ if [ ! -f "$engine" ] || ! command -v node >/dev/null 2>&1 || ! command -v jq >/
 fi
 
 limit="${RT_FLOW_VERDICT_LIMIT:-75}"
-verdict="$(cd "$root" && printf '%s' "$input" | perl -e 'alarm shift; exec @ARGV' "$limit" node "$engine" verdict 2>/dev/null)"
+verdict="$(cd "$dir" && printf '%s' "$input" | perl -e 'alarm shift; exec @ARGV' "$limit" node "$engine" verdict 2>/dev/null)"
 code=$?
 if [ "$code" -ne 0 ] || [ -z "$verdict" ]; then
     journal "движок упал: exit $code"

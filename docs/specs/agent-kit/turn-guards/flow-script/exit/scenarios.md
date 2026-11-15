@@ -218,3 +218,28 @@ When the hook on Stop measures the session
 Then the session is idle, and the refusal names the owner's menu; a call after the refusal or a first stop is no idle
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1554 — the engine measures the copy of the session
+
+Given the main checkout on a task branch with open work, and a session that wrote in a worktree
+When the hook on Stop gets the directory of that worktree in the field `cwd`
+Then a worktree on a branch outside the scenario releases the turn, though the main checkout holds
+And a worktree whose branch does not carry the engine is not judged and writes nothing to the journal
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1555 — a write is recognised past the variables and the options of git
+
+Given commands `NAME=x git commit`, `git -c key=value -C dir commit` and `sed -i`
+When the measurer of a write reads the session
+Then each is a write, and `sed -n` is not
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1556 — a stop word followed by an order of work holds the turn
+
+Given «хватит спрашивать, иди дальше», «не сейчас про это, сначала тесты» and «stop asking me»
+When the owner's last word is judged
+Then none of them releases the turn, and «стоп» alone still does
+
+Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.

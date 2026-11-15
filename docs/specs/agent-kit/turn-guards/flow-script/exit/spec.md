@@ -44,6 +44,7 @@ not by a person.
 - **An engine that fails, runs past its limit or cannot be called releases the turn and writes «движок упал» to the journal.**
 - **The eighth refusal in a row is written to the journal.**
 - **A service message is no word of the owner.**
+- **The engine measures the copy the session works in, and a worktree copy whose branch does not carry the engine is not judged.**
 
 ## What is out of scope
 
@@ -130,3 +131,6 @@ None.
   from the dispatcher with its number.
 - 2026-11-15 — a stop with no call after a refusal names the owner's menu: an idle series ends
   instead of holding the turn without a move.
+- 2026-11-15 — the engine measures the copy of the session, not the main checkout: sessions of other
+  worktrees were held by the steps of a foreign plan. A write is recognised past the variables and
+  the options of git, and a stop word followed by an order of work holds the turn.

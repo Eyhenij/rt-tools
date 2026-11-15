@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/flow-data.mjs · 5c90e803f9f1 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/flow-data.mjs · 41309d23d6ef · правится надстройкой, не здесь
 /**
  * The data of the task flow description: the literals of `words`, the forms of `expect` and the
  * order of the release cases. A new stop word, a new write command, a new menu option or a new form
@@ -90,12 +90,23 @@ export function saysStop(message, words) {
     return except.length === 0 || !new RegExp(`(?<![\\p{L}])(?<!не )(?:${alternatives(except)})(?![\\p{L}])`, 'iu').test(rest);
 }
 
+/**
+ * A part of a shell command as it is judged: the leading assignments of variables (`NAME=value`) and
+ * the options of git placed before its subcommand (`-c key=value`, `-C <dir>`) are dropped.
+ */
+export function commandHead(part) {
+    return part
+        .trim()
+        .replace(/^(?:[A-Za-z_][A-Za-z0-9_]*=(?:"[^"]*"|'[^']*'|\S*)\s+)+/, '')
+        .replace(/^git(?:\s+(?:-c|-C)\s+(?:"[^"]*"|'[^']*'|\S+))+/, 'git');
+}
+
 /** A shell command is a write command: one of its parts begins with an entry of `words.write`. */
 export function isWriteCommand(command, words) {
     const write = words.write ?? [];
     return command
         .split(/&&|\|\||;|\|/)
-        .map((part) => part.trim())
+        .map(commandHead)
         .some((part) => write.some((entry) => part === entry || part.startsWith(`${entry} `)));
 }
 

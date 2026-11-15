@@ -68,6 +68,14 @@ const wrote = (list) => String(session.wrote(uses(list))(data));
 out('end: SC-AK-1432 — чтение не запись', wrote([{ name: 'Read', input: {} }, { name: 'Bash', input: { command: 'git status' } }]), 'false');
 out('end: SC-AK-1432 — правка файла — запись', wrote([{ name: 'Edit', input: {} }]), 'true');
 out('end: SC-AK-1432 — коммит — запись', wrote([{ name: 'Bash', input: { command: 'git add a && git commit -m x' } }]), 'true');
+out('end: SC-AK-1555 — коммит с переменными впереди — запись', wrote([{ name: 'Bash', input: { command: 'GIT_AUTHOR_NAME=x GIT_AUTHOR_EMAIL="a b" git commit -m x' } }]), 'true');
+out('end: SC-AK-1555 — коммит с параметрами git — запись', wrote([{ name: 'Bash', input: { command: 'git -c commit.gpgsign=false -C /t commit -q -F m.txt' } }]), 'true');
+out('end: SC-AK-1555 — правка файла через sed -i — запись', wrote([{ name: 'Bash', input: { command: "sed -i '' 's/a/b/' x.md" } }]), 'true');
+out('end: SC-AK-1555 — sed без -i — не запись', wrote([{ name: 'Bash', input: { command: "sed -n 1,5p x.md" } }]), 'false');
+out('end: SC-AK-1556 — «хватит спрашивать, иди дальше» — держится', stop('хватит спрашивать, иди дальше'), 'false');
+out('end: SC-AK-1556 — «не сейчас про это, сначала тесты» — держится', stop('не сейчас про это, сначала тесты'), 'false');
+out('end: SC-AK-1556 — «stop asking me» — держится', stop('stop asking me'), 'false');
+out('end: SC-AK-1556 — «стоп» — отпущен по-прежнему', stop('стоп'), 'true');
 out('end: SC-AK-1432 — сессия без записи — отпущена', released({}), 'no write to the tree, or a branch outside the scenario');
 const nudged = (word) => String(owner.nudged(last(word))(data));
 out('end: SC-AK-1433 — «ну что там?» — подталкивание', nudged('ну что там?'), 'true');
@@ -198,6 +206,26 @@ for _ in 1 2 3 4 5 6 7 8; do
     printf '%s' "$(input_stop "$(transcript "$(say 'делай')" "$(edited)")")" | "$HOOKS/turn-exit-guard.sh" >/dev/null 2>&1
 done
 report "end: SC-AK-1439 — восьмой отказ подряд пишется в журнал" "$(grep -c 'eighth refusal in a row' "$JOURNAL" 2>/dev/null)" "1"
+
+# Сессия в рабочей копии: движок мерит копию из поля cwd, а не главную копию проекта.
+input_stop_in() {
+    jq -n --arg p "$2" --arg d "$1" '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:false}'
+}
+COPIES="$(mktemp -d)"
+git -C "$REPO" worktree add -q -b feat-side "$COPIES/side" >/dev/null 2>&1
+mkdir -p "$COPIES/side/tools" && : > "$COPIES/side/tools/task-flow-script.mjs"
+expect_stop "end: SC-AK-1554 — копия вне сценария отпускает ход, хотя главная копия держит" \
+    "$(input_stop_in "$COPIES/side" "$(transcript "$(say 'делай')" "$(edited)")")" PASS
+git -C "$REPO" worktree add -q -b RT-2-other "$COPIES/bare" >/dev/null 2>&1
+lines_before="$(wc -l < "$JOURNAL" 2>/dev/null | tr -d ' ')"
+expect_stop "end: SC-AK-1554 — копия, чья ветка не несёт движка, не судится" \
+    "$(input_stop_in "$COPIES/bare" "$(transcript "$(say 'делай')" "$(edited)")")" PASS
+report "end: SC-AK-1554 — такая копия журнал не пишет" "$(wc -l < "$JOURNAL" 2>/dev/null | tr -d ' ')" "$lines_before"
+expect_stop "end: SC-AK-1554 — главная копия держит ход по-прежнему" \
+    "$(input_stop "$(transcript "$(say 'делай')" "$(edited)")")" BLOCK
+git -C "$REPO" worktree remove --force "$COPIES/side" >/dev/null 2>&1
+git -C "$REPO" worktree remove --force "$COPIES/bare" >/dev/null 2>&1
+rm -rf "$COPIES"
 
 # Сессия роли: роль без инструмента правки кончает ход своим отчётом.
 mkdir -p "$REPO/.claude/agents"

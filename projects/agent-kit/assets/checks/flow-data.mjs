@@ -89,12 +89,23 @@ export function saysStop(message, words) {
     return except.length === 0 || !new RegExp(`(?<![\\p{L}])(?<!не )(?:${alternatives(except)})(?![\\p{L}])`, 'iu').test(rest);
 }
 
+/**
+ * A part of a shell command as it is judged: the leading assignments of variables (`NAME=value`) and
+ * the options of git placed before its subcommand (`-c key=value`, `-C <dir>`) are dropped.
+ */
+export function commandHead(part) {
+    return part
+        .trim()
+        .replace(/^(?:[A-Za-z_][A-Za-z0-9_]*=(?:"[^"]*"|'[^']*'|\S*)\s+)+/, '')
+        .replace(/^git(?:\s+(?:-c|-C)\s+(?:"[^"]*"|'[^']*'|\S+))+/, 'git');
+}
+
 /** A shell command is a write command: one of its parts begins with an entry of `words.write`. */
 export function isWriteCommand(command, words) {
     const write = words.write ?? [];
     return command
         .split(/&&|\|\||;|\|/)
-        .map((part) => part.trim())
+        .map(commandHead)
         .some((part) => write.some((entry) => part === entry || part.startsWith(`${entry} `)));
 }
 

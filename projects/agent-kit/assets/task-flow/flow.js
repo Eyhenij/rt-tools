@@ -156,11 +156,14 @@
       'стоп', 'стой', 'хватит', 'остановись', 'прекрати', 'не сейчас', 'подожди', 'погоди', 'жди',
       'пауза', 'отбой', 'на сегодня всё', 'stop', 'wait', 'not now', 'pause',
     ],
-    stopExcept: ['продолжай', 'делай', 'работай', 'доделывай'],
+    stopExcept: [
+      'продолжай', 'делай', 'работай', 'доделывай', 'иди дальше', 'делай дальше', 'сначала', 'спрашивать',
+      'спрашивай', 'asking', 'keep going', 'go on',
+    ],
     holdAfter: ['стоять', 'останавлива', 'ждать'],
     nudge: '(?<![\\p{L}])(?<!не )(продолжай|доделывай|работай|делай дальше|работаешь)(?![\\p{L}])|почему (ты )?(стоишь|встал|остановил)|что дальше|дальше\\?|^(ну )?(и )?что там|^ну и\\s*[?!.]|какого .*останов',
     write: [
-      'git commit', 'git push', 'gh pr', 'npm run task:new', 'pnpm run task:new', 'npm run task:move',
+      'git commit', 'git push', 'git add', 'git merge', 'git rm', 'git mv', 'sed -i', 'perl -pi', 'gh pr', 'npm run task:new', 'pnpm run task:new', 'npm run task:move',
       'pnpm run task:move', 'npm run agent-kit:sync', 'pnpm run agent-kit:sync',
     ],
     menu: ['отложить RT-N', 'сделаю сам', 'стоп'],
