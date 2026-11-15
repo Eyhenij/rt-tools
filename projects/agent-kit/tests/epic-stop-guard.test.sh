@@ -58,7 +58,7 @@ export STUB_LEFT=''
 
 # --- SC-AK-981 — отказ называет остановку ----------------------------------------------------
 stop_reason "SC-AK-981 — названа команда таблицы" 'git checkout -b RT-1999-probe main' 'epic:table'
-stop_reason "SC-AK-981 — названо ожидание приказа" 'git checkout -b RT-1999-probe main' 'waits for their orders'
+stop_reason "SC-AK-981 — назван конец хода с концом эпика" 'git checkout -b RT-1999-probe main' 'the turn ends with it'
 stop_reason "SC-AK-981 — названа лазейка со словом владельца" 'git checkout -b RT-1999-probe main' 'Epic-stop-skip'
 
 # --- SC-AK-1227 — отказ называет, до какого вызова нужна строка для нового эпика ----------------
@@ -88,10 +88,7 @@ stop_decision "SC-AK-986 — отправка ветки не судится" 'g
 stop_decision "SC-AK-986 — чтение истории не судится" 'git log --oneline -5' PASS
 stop_decision "SC-AK-986 — переход на готовую ветку не судится" 'git checkout RT-1999-probe' PASS
 
-# --- SC-AK-987 — гард ожидания не требует следующей задачи при кончившемся эпике --------------
-#
-# Отданная работа при живом эпике требует взять следующую задачу; при кончившемся её брать нельзя —
-# и оба гарда обязаны сходиться, иначе у хода не остаётся законного конца.
+# Записи хода для сценариев ниже.
 TURNS="$(mktemp -d)"
 turn() {
     local path
@@ -107,37 +104,30 @@ spoke() { jq -c -n --arg t "$1" '{type:"assistant",message:{content:[{type:"text
 called() {
     jq -c -n --arg c "$1" '{type:"assistant",message:{content:[{type:"tool_use",name:"Bash",input:{command:$c}}]}}'
 }
-stop_input() {
-    jq -n --arg p "$1" --arg d "$STOP_TREE" '{session_id:"tests",transcript_path:$p,cwd:$d,stop_hook_active:false}'
-}
-stop_turn() {
-    local label="$1" hook="$2" json="$3" want="$4" out got
-    out="$(cd "$STOP_TREE" && printf '%s' "$json" | "$HOOKS/$hook" 2>/dev/null)"
-    if [ -z "$out" ]; then
-        got="PASS"
-    else
-        got="$(printf '%s' "$out" | jq -r 'if (.decision == "block") or (.hookSpecificOutput.permissionDecision == "deny") then "BLOCK" else "PASS" end' 2>/dev/null)"
-    fi
+# --- SC-AK-987, SC-AK-988 — конец эпика отпускает ход, живой эпик держит --------------------------
+# Ход на Stop держит движок task flow: конец эпика — случай отпуска «конец сценария», а при живом
+# эпике ход с работой держится, что бы ни стояло в ответе — отданная работа или «жду вашего слова».
+# Случаи зовут вердикт движка напрямую: состояние эпика задаёт ответ измерителя.
+ES_OUT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && node --input-type=module 2>&1 <<'JS'
+import { buildModel } from '../assets/checks/flow-model.mjs';
+import { releaseCase } from '../assets/checks/flow-verdict.mjs';
+
+const model = buildModel(new URL('../assets/task-flow/flow.js', import.meta.url).pathname);
+const handed = { state: 'работа-отдана', index: 11, reason: null };
+const verdict = (finished) => {
+    const answers = { 'measure.session.wrote': true, 'measure.epic.finished': finished };
+    return releaseCase(model, (name) => answers[name] ?? false, handed) ? 'PASS' : 'BLOCK';
+};
+console.log(`SC-AK-987 — живой эпик требует следующей задачи|${verdict(false)}|BLOCK`);
+console.log(`SC-AK-987 — кончившийся эпик требования снимает|${verdict(true)}|PASS`);
+console.log(`SC-AK-988 — при живом эпике объявленная остановка отбита|${verdict(false)}|BLOCK`);
+console.log(`SC-AK-988 — при кончившемся эпике остановка законна|${verdict(true)}|PASS`);
+JS
+)"
+while IFS='|' read -r label got want; do
+    [ -n "$label" ] || continue
     report "$label" "$got" "$want"
-}
-
-# Состояние отданного в ходе спрошено: то требование эпиком не снимается, и без него отказ пришёл
-# бы по другой причине.
-HANDED="$(turn "$(said 'работай')" "$(called 'gh pr create --draft --title x')" "$(called 'gh run list --branch RT-1-probe')" "$(called 'gh pr ready 1')")"
-
-export STUB_LEFT='1947'
-stop_turn "SC-AK-987 — живой эпик требует следующей задачи" waiting-turn-guard.sh "$(stop_input "$HANDED")" BLOCK
-export STUB_LEFT=''
-stop_turn "SC-AK-987 — кончившийся эпик требования снимает" waiting-turn-guard.sh "$(stop_input "$HANDED")" PASS
-
-# --- SC-AK-988 — ход, ждущий приказа, при кончившемся эпике не отбивается ---------------------
-mkdir -p "$STOP_TREE/docs/tasks"
-WAITED="$(turn "$(said 'работай')" "$(called 'git commit -m проба')" "$(spoke 'Эпик кончился. Жду вашего слова.')")"
-
-export STUB_LEFT='1947'
-stop_turn "SC-AK-988 — при живом эпике объявленная остановка отбита" turn-exit-guard.sh "$(stop_input "$WAITED")" BLOCK
-export STUB_LEFT=''
-stop_turn "SC-AK-988 — при кончившемся эпике остановка законна" turn-exit-guard.sh "$(stop_input "$WAITED")" PASS
+done <<< "$ES_OUT"
 
 # --- SC-AK-1201 — слово владельца с номером новой работы снимает остановку --------------------
 # Строку обхода в команде владелец запретил, и две записи дерева противоречили друг другу: выход

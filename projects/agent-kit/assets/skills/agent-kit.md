@@ -274,8 +274,7 @@ then it is not referred to as a current requirement and the hole is not counted 
 **The owner's word about a proposal — "send it", "file it", "write a proposal" and any other form
 of the same — is carried out by a send in the same turn.** A dry run does not count as a send: it
 shows what would be sent and leaves no trace outside. The marks the send leaves in the tree land
-as a second commit in the same branch. This is checked by the proposal guard at the end of the
-turn.
+as a second commit in the same branch. This is checked by the agent hook at the end of the turn.
 
 ## Installation where everything is already your own
 

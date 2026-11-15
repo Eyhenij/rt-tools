@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/check-turn-map.mjs · b1a4ec3ca7e6 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/check-turn-map.mjs · 1217a58d123c · правится надстройкой, не здесь
 /**
  * The check of the turn map: its size and its completeness.
  *
@@ -13,10 +13,11 @@
  * the map. The session then gets the map, does not find its state in it and goes to read the rule —
  * that is, the map works exactly up to the first new state.
  *
- * Three things are checked:
- *   the size   — the bytes of the laid-out map against the declared limit;
- *   the states — the names from the table of the rule against the names in the map, both ways;
- *   the exits  — all four exits of a turn are named.
+ * Four things are checked:
+ *   the size      — the bytes of the laid-out map against the declared limit;
+ *   the states    — the names from the table of the rule against the names in the map, both ways;
+ *   the exits     — both ends of a turn are named: the end of the scenario and the owner's stop word;
+ *   the old exits — none of the former four exits is named as an item of the map.
  *
  * FAIL-OPEN: there is no map in the tree — nothing to check, a zero code. The tree may leave it
  * unlaid. An empty table of states in the map counts as a refusal: that is not «there is nothing
@@ -88,10 +89,21 @@ function statesOf(text, { listed: readListed = false } = {}) {
 }
 
 /**
- * The exits of a turn named by the law. Each has two names: the English one is brought by the
- * package, the Russian one is held by a tree whose map is still its own. Either of the two is enough.
+ * The ends of a turn: the scenario is over, or the owner's last word is a stop word. Each has two
+ * names: the English one is brought by the package, the Russian one is held by a tree whose map is
+ * still its own. Either of the two is enough.
  */
 const EXITS = [
+    ['the end of the scenario', 'конец сценария'],
+    ['a stop word of the owner', 'слово остановки'],
+];
+
+/**
+ * The former exits of a turn. A question, a guard's refusal, a filled window and handed-over work no
+ * longer end a turn: the exit guard holds it until the scenario is over. A map that still names one of
+ * them as an item tells the session to stop where the guard returns it. An item is a bold name.
+ */
+const OLD_EXITS = [
     ['a question to the owner', 'вопрос владельцу'],
     ['a guard refusal', 'отказ гарда'],
     ['the window filled', 'заполненное окно'],
@@ -146,6 +158,14 @@ function main() {
     for (const names of EXITS) {
         if (!names.some((name) => text.includes(name))) {
             faults.push(`the turn exit «${names[0]}» is not named in the map`);
+        }
+    }
+
+    for (const names of OLD_EXITS) {
+        const named = names.find((name) => text.includes(`**${name}`));
+
+        if (named) {
+            faults.push(`the map names the old exit «${named}»: a turn no longer ends by it`);
         }
     }
 

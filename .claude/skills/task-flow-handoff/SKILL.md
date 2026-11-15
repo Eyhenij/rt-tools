@@ -4,7 +4,7 @@ kind: pattern
 rule: turn-conduct
 description: Pattern of rule turn-conduct. Load when the session runs into window fill — choosing the stopping point, writing the progress, the shape of the handover and what the owner does with it. Not for returning to work in a new session — that is pattern task-flow-resume.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-handoff.md · 60bd38f9346e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-handoff.md · d57ec0d549f9 · правится надстройкой, не здесь -->
 
 # Closing a session on window fill
 
@@ -108,7 +108,7 @@ Inside — ready text for pasting into the new session, without asking the owner
 ```markdown
 Work: <KEY>-<number> "<task name>". Working tree — <full path>, branch
 <KEY>-<number>-<slug> (created, in progress).
-PR: #<number>, open, waiting for the owner's review. The freshness of its base is left out on
+PR: #<number>, open, the review is the owner's. The freshness of its base is left out on
 purpose — it goes stale; the new session asks the hosting about it first thing.
 
 The progress and the plan arrive at session start through the hook — no need to re-read them

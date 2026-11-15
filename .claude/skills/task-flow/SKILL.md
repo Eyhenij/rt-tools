@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of one task from the request to the merge. Load at the start of any work, when editing task folders and product agreements, and on return to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. Epics — epic-flow, turns — turn-conduct.
 ---
-<!-- rt-kit v0.37.0 · rules/task-flow.md · b6f4cbf99772 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/task-flow.md · 926098d1d1b3 · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -17,8 +17,8 @@ demand, not with the rule: an ordinary decision does not need it — whoever ana
 with a guard does.
 
 **Requires:** `hooks/task-flow-guard.sh`, `hooks/task-flow-draft-guard.sh`,
-`hooks/task-context-load.sh`, `hooks/grill-gate.sh`, `hooks/window-fill-guard.sh`,
-`hooks/turn-exit-guard.sh`, `hooks/work-start-guard.sh`, `hooks/main-run-context.sh`
+`hooks/task-context-load.sh`, `hooks/window-fill-guard.sh`, `hooks/turn-exit-guard.sh`,
+`hooks/turn-judge.md`, `hooks/ask-judge.md`, `hooks/main-run-context.sh`
 
 ## What it is called here
 
@@ -45,24 +45,27 @@ tree that keeps its code differently.
 The unit of work is a state, not a step. A state has an entry, a mandatory action and an exit, and
 until the action is done the work stays in the same state.
 
-The state is declared in the "Where we stand" section of the progress by the machine-readable line
-``- **State:** `этап-идёт` `` and is rewritten with it.
+The state is measured by the engine from the branch, the task folder and the host. The line
+``- **State:** `этап-идёт` `` in the "Where we stand" section of the progress mirrors it and never
+stands ahead of it.
 
-| State | Entry | Mandatory action | Pattern |
+<!-- flow:states -->
+| State | Exit | Mandatory action | Pattern |
 | --- | --- | --- | --- |
-| `просьба-не-разобрана` | the owner's message about new work | exploration over the tree, then questions | `task-flow-start` |
-| `эпик-заведён` | the epic card, all its tasks and its plan lie in the queue | take the epic branch from the main branch; with the first task the epic card moves to in progress | `epic-flow-declare` |
-| `разбор-закрыт` | the owner's answers lie on disk | a product agreement, or the reason there is none | `task-flow-start` |
-| `договорённость-записана` | the draft lies, or the reason is named | create the task, the branch from the epic branch, and the folder | `task-flow-start` |
-| `задача-взята` | task in the work column, branch by number, folder | write the plan | `task-flow-start` |
-| `замысел-записан` | the plan lies and is not edited after writing | do the first stage | `task-flow-start` |
-| `этап-идёт` | a stage is begun | finish the stage and mark it in the progress | `task-flow-resume` |
-| `этапы-кончились` | all stages are marked | merge the agreement, bring texts up to date, run the suite | `task-flow-close` |
-| `разбор-кончился` | the suite is green, texts are up to date | take the folder apart by the last commit | `task-flow-archive` |
-| `папка-разобрана` | no folder in the branch, a record in the archive | the work queue audit, then open the PR: a draft where a run is waited for, ready where the pipeline does not wake | `task-flow-close` |
-| `работа-отдана` | the PR is open into the epic branch, with a reviewer | the rules review of the work goes to the background, then take the next task of the epic | `task-flow-archive` |
-| `влито` | the PR merged by a person | the epic plan marks the task merged by the next task's branch | `task-flow-resume` |
-| `задачи-эпика-кончились` | every task of the epic is merged and its folder taken apart | open the PR of the epic into the main branch | `task-flow-close` |
+| `просьба-не-разобрана` | `measure.grill.written` | explore the tree, then ask the questions | `task-flow-start` |
+| `эпик-заведён` | `measure.epic.declared` | take the epic branch from the main branch; the epic card moves with the first task | `epic-flow-declare` |
+| `разбор-закрыт` | `measure.agreement.named` | write the product agreement, or the reason there is none | `task-flow-start` |
+| `договорённость-записана` | `measure.task.taken` | create the task, the branch from the epic branch, and the folder | `task-flow-start` |
+| `задача-взята` | `measure.plan.approved` | write the plan | `task-flow-start` |
+| `замысел-записан` | `measure.progress.mirrors` | do the first stage | `task-flow-start` |
+| `этап-идёт` | `measure.progress.done` | finish the stage and mark it in the progress | `task-flow-resume` |
+| `этапы-кончились` | `measure.footprint.touched` | merge the agreement, bring the texts up to date, run the suite | `task-flow-close` |
+| `разбор-кончился` | `measure.folder.archived` | take the folder apart by the last commit | `task-flow-archive` |
+| `папка-разобрана` | `measure.pr.handed` | the work queue audit, then open the PR | `task-flow-close` |
+| `работа-отдана` | `measure.epic.nextTaken` | send the rules review to the background, then take the next task of the epic | `task-flow-archive` |
+| `влито` | `measure.epic.mergedMarked` | mark the task merged in the epic plan by the branch of the next task | `task-flow-resume` |
+| `задачи-эпика-кончились` | `measure.epic.finished` | open the PR of the epic into the main branch | `task-flow-close` |
+<!-- /flow:states -->
 
 No state has a mandatory action that sounds like "wait": waiting for someone else's step is not a
 work state, so in `работа-отдана` the mandatory action is the next task, not the open PR. A blocked
@@ -78,9 +81,9 @@ What a turn ends with — rule `turn-conduct` under the same law.
 
 The list is shown to the owner at the start of work, and where we stand is marked on it.
 
-The last two states cannot be declared on disk: the progress leaves with the folder, and the folder
-is taken apart before the PR opens. Their sign is in the branch history — the commit that takes the
-folder apart — and a guard reads it, not a line in a file.
+The states after the folder have no line on disk: the progress leaves with the folder, and the
+folder is taken apart before the PR opens. The engine measures them from the branch history and the
+host.
 
 ## Flow
 
@@ -128,8 +131,8 @@ flowchart TD
   by the declared state — `этап-идёт`,
   `этапы-кончились`, `разбор-кончился`, `работа-отдана`. The fifth road is the branch history: a
   folder taken apart means handed-in work.
-- **A state line moved forward is the same declaration of intent, only machine-readable.** It is
-  declared by the turn in which its mandatory action is begun by deed.
+- **A state line never stands ahead of the measured state.** A line moved forward is a declaration
+  of intent: the engine measures the state, and an edit that puts the line ahead of it is refused.
 - **A refusal by state names the mandatory action of that state.** Hearing only "wrong state", the
   executor rewrites the state line instead of the step.
 - **Only a word from the list counts as a state name.** A word of one's own says nothing about the
@@ -145,8 +148,9 @@ flowchart TD
   accepted.
 - **What needs the owner's word is taken from a list, not appraised on the spot.** The appraisal
   "this is safe" is assigned by whoever finds it convenient.
-- **A stop the owner sets on a later step is written down the moment it is said.** It is quoted in
-  the waiting line: it holds that step and releases the exit guard.
+- **A stop the owner sets on a later step is written down the moment it is said.** A task they put
+  off gets the mark «отложено» in the epic plan, set only by their last word naming it; the engine
+  then takes the next task. A stop for the turn itself is read from their last message.
 - **A reply to the owner's order begins with the result, not with intent or its justification.** A
   justification under someone else's accepted decision reads as its appraisal. One exception:
   execution stopped by an obstacle — then the obstacle is named.
@@ -192,7 +196,7 @@ flowchart TD
   including those that change history.** Marking a stage, a commit, a push and opening a PR are
   prescribed by the rule; questions are asked about what the progress lacks.
 - **A taken task does not end a turn.** Creating the task, the branch, the column and the folder is
-  preparation; the turn-exit guard names the first stage in its refusal.
+  preparation; the turn-exit guard names the plan, the action of that state, in its refusal.
 - **The stages of a plan cover its done-sign whole.** Otherwise every stage closes, the run is
   green, and half the order is not done. Either the stages are written up to the sign, or the sign
   is narrowed to what the stages give.
@@ -200,8 +204,9 @@ flowchart TD
   the stage that writes its code and the check that proves it, and is compared with the agreement
   rule by rule before the first stage: a rule with no stage is found at the merge review, when the
   code is written.
-- **A stage's readiness sign is taken from the output of a command run while the plan is written.**
-  Written by a guess, it fails at the stage itself.
+- **Every step of the plan carries a check whose expected output is taken from a run while the plan
+  is written.** Written by a guess, it fails at the step itself. The engine runs the check and writes
+  the mark of the step; a step marked done without its mark is refused.
 - **A plan for work that ports a technique from outside is written by a measurement of one's own
   code.** Reading the sample says how it is built; what is needed here is said by a count over
   one's own files.
@@ -280,12 +285,12 @@ trace. The owner judges both.
 The guard judges by the edit paths, not by whether the work changes behaviour. A refactoring gets no
 sign of its own: the appraisal "behaviour does not change" would be assigned by whoever it hinders.
 
-Of the grill itself only the menus are checked: the conversation guard refuses a third menu after
-the owner took the recommended option twice in a row. The exploration, the six questions and the
-answers are checked by nothing.
+Of the grill itself only the questions are judged: the agent hook of the question tool holds a
+question the owner already answered or a rule answers plainly, and names where the answer is. The
+exploration, the six questions, the count of menus and the answers are checked by nothing.
 
-The conversation guard judges shared words between the question's topic and the owner's last
-message, not meaning; its refusal names the lawful move.
+The agent hooks judge by meaning, not by shared words, and a model can let a case pass: a doubtful
+question leaves, a doubtful turn ends.
 
 Nothing watches the plan's immutability: an edit along the way is told from the original record only
 by history.

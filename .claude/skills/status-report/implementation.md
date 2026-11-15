@@ -23,7 +23,7 @@ the rule is not carried here — it would go stale apart from it.
 
 - **the epic plans** — `docs/plans/`
 - **the task folders** — `docs/tasks/`
-- **the guard of statements about the tree** — `.claude/hooks/claim-guard.sh`
+- **the judge of statements about the tree** — `.claude/hooks/turn-judge.md` — the text of the model hook at the end of a turn
 - **the guard of a request left as a draft** — `.claude/hooks/git-guard-draft-ready.sh`
 
 ## Where the articles are carried out
@@ -37,7 +37,7 @@ silent about.
 - **The work state is shown as a table, not as prose.** — **Not checked.** The reply to the owner does not land in the tree, and there is nothing to read it with; it is held by the memory of whoever answers.
 - **The epic itself is described by text above the table, not by a row in it.** — **Not checked.** The form of the reply to the owner is read by no audit; it is held by the memory of whoever answers.
 - **The epic's tasks are listed all, and in the order the plan assigned them.** — `tools/epic-table.mjs:makeupOf` — the table command emits every row of the plan in its order. A reply written by hand is reconciled with the plan by nobody.
-- **Every cell about the tree's state is backed by a command run by the same turn.** — `.claude/hooks/claim-guard.sh:claims` — the list of statements about the tree; a turn that said such a thing without a command is refused.
+- **Every cell about the tree's state is backed by a command run by the same turn.** — `.claude/hooks/turn-judge.md:merged` — the model hook judges it: a reply that states a fact about the tree, such as merged, pushed or green, with no tool result of the same turn that shows it, is refused.
 - **A run confirms the commit it ran on.** — `tools/epic-table.mjs:rowOf` — calls `verdictOnHead` from `tools/board-runs.mjs`; the table command reads the run by the head of the PR. A run named in a reply by hand is reconciled with the tip by nobody: the statement guard sees only that a command was there.
 - **A red run on an open PR is the first line of any reply about the work, whatever its cause.** — **Not checked.** No check reads the reply to the owner; the epic table reads the run state, and putting it first is held by this article.
 - **A draft PR is called a draft aloud, together with what we wait for.** — `.claude/hooks/git-guard-draft-ready.sh:run_gh` — it asks the state of the request and demands either lifting the draft or naming aloud what is awaited.
@@ -53,7 +53,7 @@ silent about.
 
 ## What this is checked by
 
-- `.claude/hooks/claim-guard.sh` — refuses the end of a turn in which a statement about the tree
-  was made without a command that showed it.
+- `.claude/hooks/turn-judge.md` — the model hook on the end of a turn; it refuses a turn in which a
+  statement about the tree was made without a tool result that showed it.
 - `.claude/hooks/git-guard-draft-ready.sh` — refuses the end of a turn in which the work is ready
   while the request stands as a draft and what is awaited is not named aloud.

@@ -13,7 +13,7 @@ the plan of the epic, `docs/plans/executor-stops.md`.
   and the grep pattern of the tool, a case in a tree test.
 - **The entry into the specs reads only the list form of a binding.** `tools/specs-for.mjs`
   parses `- **statement** — address` and not the table row; a hook bound in
-  `docs/specs/agent-kit/turn-guards/exit/implementation.md` read as one no spec speaks of, and a
+  `docs/specs/agent-kit/turn-guards/flow-script/exit/implementation.md` read as one no spec speaks of, and a
   statement had to be doubled in the parent spec. **Address:** rules layer — the check reads both
   forms by the same parse as the anchors audit.
 - **A new hook needs the executable bit, and nothing says so before the package suite runs.** The

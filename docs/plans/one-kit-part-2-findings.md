@@ -103,8 +103,8 @@ The review was made in the background after both PRs opened (#2426, #2429).
 - **The refusal of the conversation guard names a search it does not accept.** In a turn with
   edits only the rule of the edited area counts as reading, while the refusal offers a grep over
   the whole catalogue; the exit guard then refused the same question in prose. **Address:** the
-  rules layer — hook `grill-gate.sh`, its refusal text, and rule `turn-conduct`, the article about a
-  turn with a question to the owner.
+  rules layer — the conversation check `grill-gate` (removed by RT-3276), its refusal text, and rule
+  `turn-conduct`, the article about a turn with a question to the owner.
 
 ## The owner's word
 

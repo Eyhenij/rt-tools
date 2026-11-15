@@ -52,6 +52,7 @@ whole.
 - **The samples travel by a kind of resource of their own, not together with the override templates.** — `projects/agent-kit/src/lib/config.ts:TKind`
 - **A tree has the right to name the samples a path of its own and to refuse them whole.** — `projects/agent-kit/src/lib/config.ts:DEFAULT_LAYOUT`
 - **A sample carries the layout header on a par with the rest of the laid-out.** — `projects/agent-kit/src/lib/plan.ts:planFile`
+- **The task flow scenario travels by a kind of its own and lands next to the engine, keeping its path inside the kind.** — `projects/agent-kit/src/lib/config.ts:DEFAULT_LAYOUT` — the kind `task-flow` lands in the directory of the engine; `projects/agent-kit/src/lib/config.ts:PATH_KINDS` — a kind whose path is its place; `projects/agent-kit/src/lib/integrity.ts:ambiguousNames` — such a kind is not judged for coinciding names; scenario `SC-AK-1540`
 - **The cold part of a rule is a kind of resource of its own, not a name inside the kind of the rules.** — `projects/agent-kit/src/lib/config.ts:PITFALLS_FILE`
 - **"Pitfalls" is a section of the cold part, not of the rule.** — `projects/agent-kit/tests/rules-review.test.sh:sections_for`
 - **The right to be executed at a file of the hooks directory is decided by the kind, not by the rights of the source.** — `projects/agent-kit/src/lib/sync.ts:HOOKS_KIND` — scenario SC-AK-886

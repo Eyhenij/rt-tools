@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · pitfalls/turn-conduct.md · e58f5d177441 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · pitfalls/turn-conduct.md · 676eb264d010 · правится надстройкой, не здесь -->
 # Session turn — cold part
 
 Pitfalls: cases and numbers that used to stand next to the rule's articles. Loaded not with the
@@ -75,11 +75,10 @@ The rule is `turn-conduct`; the articles that hold the law stand there.
   simple — a lawful question is about what the executor does not know, and this one is about
   what they do not feel like.
 
-- **The exit guard judges a change to the tree and the plan steps, not what the stage holds beyond
-  them.** It asks whether anything at all was done in the turn — and a turn in which half of a stage
-  is closed and the other half dropped on a refused command is indistinguishable to it from full
-  work: there are commits, the tree changed. It counts the plan steps not done, not what the stage
-  still holds outside them. Whether the state still holds an action not depending on what the turn
+- **The exit guard measures the plan steps, not what the stage holds beyond them.** A turn in which
+  half of a stage is closed and the other half dropped on a refused command looks to it like any
+  turn of a running stage. It counts the steps by their marks, not what the stage still holds
+  outside them. Whether the state still holds an action not depending on what the turn
   waits for is checked by the attention of whoever leads the turn.
 - **A refused permission is never someone else's step, and it does not stop the work.** The
   article about someone else's step is written about what runs by itself and ends without the
@@ -89,9 +88,8 @@ The rule is `turn-conduct`; the articles that hold the law stand there.
   what was not done is named in the PR body, in the section about the remaining step: that is
   exactly what it is written for.
 - **An answer to a line from the owner that came in the middle of a turn does not end the turn.**
-  The exit "a question to the owner" is about a question FROM the executor; the reverse case does
-  not fit under it at all, and read so, it turns every line from the owner into the end of the
-  session. In one session this cost three stops in a row: the owner asked, the executor answered
+  The former exit "a question to the owner" was about a question FROM the executor; read the other
+  way, it turned every line from the owner into the end of the session. In one session this cost three stops in a row: the owner asked, the executor answered
   and stalled.
 - **Work is not gated on a confirmation the owner never promised.** "Say the word and I will do
   it" moves the turn to the owner without their consent: they did not ask to be asked, and nobody
@@ -102,11 +100,11 @@ The rule is `turn-conduct`; the articles that hold the law stand there.
   no line from the owner at all; read alone, without the neighbouring "an instruction holds until
   cancelled", it forbids continuing. In a consumer tree three turns in a row ended with this
   phrase: the guard's general refusal returned the turn, the executor made one step and ended
-  the turn with the same phrase. Now the guard names it by name; the lawful exit when a decision
-  is needed is a question through the tool.
+  the turn with the same phrase. Now the guard names it by name; a decision that is the owner's
+  goes to them as a menu, and the turn waits for the answer inside itself.
 - **"Turn exits": the price of a question that holds independent work.** A session stood a night
   and a morning naming the owner one and the same step while three independent tasks lay untaken.
-- **"A guard's refusal ends the turn": why a bypass costs more than a refusal.** A guard refuses one
+- **"A guard's refusal closes every other road": why a bypass costs more than a refusal.** A guard refuses one
   file; a bypassed guard lifts the requirement from the whole tree and says nothing. Not memory
   alone holds this — the guards also judge the shell command that writes the file.
 - **"The owner's answer is sought in their own messages": what the conversation guard does not
@@ -125,17 +123,17 @@ The rule is `turn-conduct`; the articles that hold the law stand there.
 - **A next step named and not begun.** Four stops of one shape: a stage closed and committed, a
   full report, the next stage named in the progress and untouched. The last, on 17 September, came
   after an epic with seven tasks, an agreement and a whole first stage — the more was done, the more
-  the report read as the end. The guard now reads the order of actions after the last edit of the
-  progress, and a turn that opened the PR passes that sign by itself.
+  the report read as the end. The exit guard now names the current step and its command in the
+  refusal.
 - **A launch in the background as the last action.** A grill of five menus ended with the review
   roles sent to the background and the line "the roles are working"; the owner read it as a stop.
   The guard counted the launch as work — there were edits in the turn, and the last action was not
-  a wait. Now the last tool of the turn is judged: the agent tool or a command sent to the
-  background standing last gives the turn back, and work after the launch releases it.
+  a wait. Now the last call is not read at all: a launch in the background releases nothing while
+  the scenario is not over.
 
 - **"A promise to do the work in the next turn": an offer to object is part of it.** An offer to the
-  owner to object to the announced intent is not a question: a turn ends with a question when the
-  work does not go without the answer, and here it went.
+  owner to object to the announced intent is not a question: a menu is put when the work does not go
+  without the answer, and here it went.
 - **"A plan stage is declared closed only after its check command": why from memory is not enough.**
   A session later, a stage marked from memory cannot be told from one checked.
 - **"A statement about the tree's state": why the previous turn does not count.** Yesterday's output

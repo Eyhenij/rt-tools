@@ -32,7 +32,8 @@ is applied: the owner reads the list when the epic is over and names what goes i
    tree: the pattern `rt-tools-storybook-story`.
 8. **The conversation guard's refusal names the rules that count.** With edits in the turn only the
    rule of the edited area counts, while the refusal advises a search over the documents that can
-   never satisfy it. Address — the package: the refusal text of `hooks/grill-gate.sh`.
+   never satisfy it. Address — the package: the refusal text of the conversation check `grill-gate`,
+   removed by RT-3276.
 
 Not a finding: the browser profile helper printed nothing because the tree names no profile — the
 owner names it in `.claude/rt-kit/browser-device-id`.

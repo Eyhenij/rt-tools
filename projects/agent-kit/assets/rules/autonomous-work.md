@@ -101,8 +101,8 @@ flowchart TD
 
 Nothing checks the session's time boundary: the command writes it into the head of the list, and
 the session ends at it or by the owner's word; a queue emptied earlier ends it with the list. A
-turn-exit guard that holds a working turn under an open epic does not know the boundary either:
-the command names the lawful last turn. The
+turn-exit guard does not know the boundary either: it releases a working turn at the end of the
+scenario or on the owner's stop word, and the command says so. The
 ban on what is visible from outside, the chain's base, a written default and a readiness command
 named before the stage are held the same way — by the rule, not by a guard: the push command is no
 different from the one made by day.

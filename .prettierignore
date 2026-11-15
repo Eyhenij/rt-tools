@@ -74,6 +74,9 @@ tools/push-*.mjs
 # Наборы признаков разложены пакетом, и первой строкой у них шапка раскладки: в JSON
 # комментария нет, и форматтер на ней спотыкается. Правятся они в пакете, а не здесь.
 tools/signals/
+# Сценарий task flow разложен пакетом каталогом рядом с движком и закрыт суммой тела в шапке.
+# Правится он в пакете, а не здесь.
+tools/task-flow/
 
 # Клиент хранилища кладёт генератор, а не рука: форматировать нечего, и у разных машин он
 # выходит с разной первой строкой.
@@ -86,6 +89,11 @@ tools/signals/
 # поимённый, а не каталогом.
 tools/archive-age.mjs
 tools/archive-prune.mjs
+tools/work-steps-lib.mjs
+tools/flow-*.mjs
+tools/task-flow-script.mjs
+tools/owner-nudges.mjs
+tools/flow-forecast.mjs
 tools/board-epics.mjs
 tools/board-epic-link.mjs
 tools/board-epic-plan.mjs

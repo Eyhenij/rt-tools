@@ -128,13 +128,9 @@ rt_handoff_allowed_cmd_default() {
     return 1
 }
 
-# Where the texts read before a question to the owner lie: laws, rules and product agreements. By
-# them the conversation guard judges whether anything at all was read during the turn, and it names
-# them in the hint. Empty for laws and rules at once — the tree does not get this requirement: there
-# is nothing to read.
+# Where the laws and the rules lie. The rules gate and the docs guard read them by these names.
 RT_LAWS_DIR="${RT_LAWS_DIR:-docs/constitution}"
 RT_RULES_DIR="${RT_RULES_DIR:-.claude/skills}"
-RT_SPECS_DIR="${RT_SPECS_DIR:-docs/specs}"
 
 # The directory of plans that outlive one task: the order of an epic's tasks lies there, not in the
 # rules.

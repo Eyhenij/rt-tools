@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/hook-input.sh · 24aec8980099 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/hook-input.sh · 314657a2847a · правится надстройкой, не здесь
 # Shared reading of the hook input. NOT a guard: it has no `rt-hook:` declaration and does not
 # subscribe to the agent events. The guards source it themselves — by the same technique they source
 # the shared refusal tail.
@@ -102,44 +102,3 @@ rt_hook_tool() { rt_hook_field RT_HOOK_TOOL '.tool_name'; }
 rt_hook_cmd() { rt_hook_field RT_HOOK_CMD '.tool_input.command'; }
 rt_hook_file() { rt_hook_field RT_HOOK_FILE '.tool_input.file_path'; }
 rt_hook_cwd() { rt_hook_field RT_HOOK_CWD '.cwd'; }
-
-# WAITS FOR THE LAST TEXT OF THE TURN IN THE RECORD. The guards of the ending judge what was said
-# to the owner, while the record of the turn at that moment happens to be incomplete: the text of
-# the reply lands in the file no earlier than the host calls the hook, and the guard reads a turn
-# that has no text at all. It stays silent honestly — and from the outside it is indistinguishable
-# from a guard that looked and let through. Exactly so a turn that put the work into dependence on
-# the word of the owner went past three guards at once, while the same turn, fed to them a second
-# time, was refused.
-#
-# We wait in short attempts: the file is written up in milliseconds, and a turn does not end
-# instantly anyway. Waited it out — zero; still no text — one, and the guard decides from there.
-rt_turn_has_text() {
-    local transcript="$1" tries="${2:-20}" got
-
-    [ -n "$transcript" ] && [ -f "$transcript" ] || return 1
-    command -v jq >/dev/null 2>&1 || return 1
-
-    while [ "$tries" -gt 0 ]; do
-        got="$(tail -n 400 "$transcript" 2>/dev/null | jq -s -r '
-            def is_input:
-                .type == "user"
-                and ((.isCompactSummary // false) | not)
-                and (((.message.content // []) | if type == "array"
-                        then ([.[] | select(.type == "tool_result")] | length)
-                        else 0 end) == 0);
-
-            (map(is_input) | rindex(true)) as $i
-            | (if $i == null then . else .[$i + 1:] end)
-            | [.[] | select(.type == "assistant") | (.message.content // [])[]
-                 | select(.type == "text") | .text]
-            | length
-        ' 2>/dev/null)"
-
-        [ -n "$got" ] && [ "$got" != '0' ] && return 0
-
-        tries=$((tries - 1))
-        [ "$tries" -gt 0 ] && sleep 0.05
-    done
-
-    return 1
-}

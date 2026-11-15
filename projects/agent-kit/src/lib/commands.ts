@@ -113,6 +113,7 @@ const KIND_TITLE: Readonly<Record<TKind, string>> = {
     templates: 'ШАБЛОНЫ',
     docs: 'ДОКУМЕНТЫ',
     samples: 'ОБРАЗЦЫ',
+    'task-flow': 'СЦЕНАРИЙ TASK FLOW',
 };
 
 /** Состояние компаньона словами. У заполненного слова нет: о нём говорить нечего. */

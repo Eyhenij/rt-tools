@@ -195,6 +195,11 @@ The subdomain has no interface beyond the launch line.
 - **A tree has the right to name the samples a path of its own and to refuse them whole.** The layout of
   the kind is set by the tree, as with any other kind, and the removal goes by the refusal list. A tree
   whose task folders lie differently gets the samples where its own guards look for them.
+- **The task flow scenario travels by a kind of its own and lands next to the engine, keeping its path
+  inside the kind.** The engine looks for the description beside itself, and a measurer imports only its
+  neighbours: laid out into another directory or flattened, the scenario would not build. Two of its
+  files share a last name segment by design, so a kind whose path is its place is not judged for names
+  that coincide.
 - **A sample carries the layout header on a par with the rest of the laid-out.** An edit in place is lost
   at the next layout, and a sample here differs from a rule in nothing: its own tree appends by an
   override. A copy taken from a sample carries the header away with it — this is a trace of the origin of
@@ -350,3 +355,4 @@ The open questions of the domain are shared, and they live in the spec next to i
 - 2026-08-17 — the subdomain was split off from the domain spec, which had outgrown the length limit. The
   rules, the scenarios and the bindings of the layout moved here unchanged: the scenario numbers were not
   recounted.
+- 2026-11-15 — the task flow scenario got a kind of its own, laid out next to the engine.

@@ -1,0 +1,18 @@
+{
+  "case": "SC-AK-1448",
+  "kind": "waiting for a step of someone else: a neighbouring session",
+  "record": "2ddfa2ce 3184",
+  "task": 101,
+  "turns": [
+    { "role": "owner", "at": "2026-11-01T10:00:00Z", "owner": "<order:RT-101>" },
+    {
+      "role": "agent",
+      "at": "2026-11-01T10:05:00Z",
+      "call": "Edit",
+      "file": "projects/agent-kit/assets/checks/flow-verdict.mjs",
+      "code": 0
+    },
+    { "role": "agent", "at": "2026-11-01T10:06:00Z", "say": "The neighbouring copy builds the package now. I wait until it is done." }
+  ],
+  "next": { "owner": "<nudge>" }
+}

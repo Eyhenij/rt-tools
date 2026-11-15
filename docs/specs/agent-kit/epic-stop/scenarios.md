@@ -23,8 +23,8 @@ Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
 
 Given the epic is over
 When the guard refuses
-Then the refusal names the command that prints the table and the line saying the session waits for
-orders
+Then the refusal names the command that prints the table and the line saying the turn ends with the
+epic
 
 Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
 

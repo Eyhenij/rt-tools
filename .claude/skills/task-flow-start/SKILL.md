@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load at the start of work from the owner — exploration before the first question, the six mandatory questions, the product agreement, creating the task, the branch and the folder. Returning to work — pattern task-flow-resume.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-start.md · 376a2b92b1b0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-start.md · 88a8a20e048d · правится надстройкой, не здесь -->
 
 # Starting the work
 
@@ -96,8 +96,8 @@ edit, a question about the obvious costs a session.
 **Two answers «recommended» in a row close the remaining questions by assumption.** An owner who took
 the recommended option twice running has shown that the decisions are not theirs. From the second
 such answer the remaining questions go into the grill as decisions — what is taken and where from —
-and the owner gets the list in one line, not a menu. The guard of the conversation refuses the third
-menu itself; a menu goes out again only for a question no assumption closes, and says so first.
+and the owner gets the list in one line, not a menu. No check counts the menus; a menu goes out
+again only for a question no assumption closes, and says so first.
 
 **The streak is counted over the session record, not per task.** After two «recommended» answers at
 the end of one task, the next task's questions go into its grill as decisions from the start.
@@ -266,12 +266,11 @@ state line is rewritten to `этап-идёт`, and from there the work is led b
 
 The turn does not end on this boundary. A written plan looks like a finished piece — the file is
 committed, there is something to report — and the report takes the place of the work: a session
-ended with "next step — such-and-such" at a window fill of about two percent. A turn ends by the
-window fill limit, a guard's refusal, a question to the owner or handed-in work with the next
-begun; a pattern read to the end is not among them.
+ended with "next step — such-and-such" at a window fill of about two percent. A turn ends with the
+scenario or with the owner's stop word; a pattern read to the end is neither.
 
-**Next move:** the first stage is done in the same turn, and it is declared closed after its command
-from the "Verified by" line has passed.
+**Next move:** the first stage is done in the same turn. Each of its steps is marked done after
+`task-flow-script.mjs step` has run its check and written its mark.
 
 ## Common misses
 

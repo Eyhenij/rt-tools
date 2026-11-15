@@ -89,6 +89,12 @@ edit guards and the turn-closing guards.
   kills a hook without a limit field at its own limit, and a killed guard gives no decision: the call
   passes as if the guard were silent. A standing record with a smaller limit is not rewritten — the
   layout names it, and the tree adds the field.
+- **A branch that declares a time limit is stopped at it.** The agent's own limit covers the whole
+  dispatcher, and one slow branch would spend it for all the branches after it.
+- **On the event of a stop a branch that failed or ran past its limit releases the turn and writes
+  «движок упал» to the journal.** A stop nobody decided is written, never taken for a verdict.
+- **The next prompt of the owner starts with the failure the journal holds, once.** A turn released
+  by a failure reads to the executor the same as one released by the scenario, unless it is told.
 - **A guard called directly works as before.** It asks the environment for the fields and parses the
   input itself when there is no environment. Otherwise the scenario suites would check not the guard
   but the dispatcher.
@@ -173,6 +179,10 @@ Not applicable.
   when it matters to two branches which comes first.
 
 ## History of changes
+
+- 2026-11-15 — the scenario of the line about a failure at the start of the next turn left for the
+  subdomain `docs/specs/agent-kit/turn-guards/flow-script/exit/` with its number; the rule stays
+  here.
 
 - 2026-11-05 — the answers of several branches reach the agent as one object.
 

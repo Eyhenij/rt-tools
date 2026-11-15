@@ -2,7 +2,7 @@
 name: agent-kit
 description: The portable rules layer of the agent — laws, rules, hooks and checks shipped by the package and adjusted by the tree through overrides. Load when a file with the rt-kit header is edited, the package is upgraded or the layout audit refuses. The shape of a new skill — write-a-skill.
 ---
-<!-- rt-kit v0.37.0 · skills/agent-kit.md · 25f93b27d3bb · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · skills/agent-kit.md · 37340099d3d6 · правится надстройкой, не здесь -->
 
 # The portable rules layer
 
@@ -275,8 +275,7 @@ then it is not referred to as a current requirement and the hole is not counted 
 **The owner's word about a proposal — "send it", "file it", "write a proposal" and any other form
 of the same — is carried out by a send in the same turn.** A dry run does not count as a send: it
 shows what would be sent and leaves no trace outside. The marks the send leaves in the tree land
-as a second commit in the same branch. This is checked by the proposal guard at the end of the
-turn.
+as a second commit in the same branch. This is checked by the agent hook at the end of the turn.
 
 ## Installation where everything is already your own
 

@@ -100,16 +100,16 @@ Covered: `projects/agent-kit/src/lib/hooks-map.spec.ts`.
 
 ### SC-AK-700 — the refusal of a real watchman reaches the output of the dispatcher
 
-Given a record of a turn on which the watchman of the exits refuses the closing
+Given a record of a turn that edited a file on a branch whose scenario is not over
 When the dispatcher is called on the closing event
 Then the refusal decision arrives parsable, the argument in it is from the watchman, and the exit code
 is zero
 
 Covered: `projects/agent-kit/tests/dispatch.test.sh`.
 
-### SC-AK-701 — a turn with work gets no refusal from the dispatcher
+### SC-AK-701 — a turn without a write gets no refusal from the dispatcher
 
-Given a record of a turn in which a file was edited
+Given a record of a turn that only read, with a prompt that does not push the work on
 When the dispatcher is called on the closing event
 Then there is no refusal decision in the output
 

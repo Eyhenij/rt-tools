@@ -142,10 +142,11 @@ report "SC-AK-1279 — секунды записаны" "$(runs_of "$tree" secs 
 report "SC-AK-1279 — первый запуск не потерян" "$(runs_of "$tree" wasted | sort -u)" "нет"
 set_in "$tree"
 report "SC-AK-1279 — зелёную проверку отметка второй раз не запускает" "$(runs_of "$tree" res | tr '\n' ' ')" "green red red "
-report "SC-AK-1279 — красный повтор несёт секунды прошлого" "$(runs_of "$tree" wasted | sed -n 3p)" "0"
+report "SC-AK-1279 — красный повтор несёт секунды прошлого" "$(runs_of "$tree" wasted | sed -n 3p)" "$(runs_of "$tree" secs | sed -n 2p)"
 rm "$tree/red"
 set_in "$tree"
-report "SC-AK-1279 — зелёный после красного на том же содержимом считает красный" "$(runs_of "$tree" wasted | sed -n 4p)" "0"
+# На загруженной машине красный запуск идёт секунду: ждём его собственные секунды, а не ноль.
+report "SC-AK-1279 — зелёный после красного на том же содержимом считает красный" "$(runs_of "$tree" wasted | sed -n 4p)" "$(runs_of "$tree" secs | sed -n 3p)"
 rm -rf "$tree"
 
 # Правка между запусками: красный был нужен.
@@ -366,7 +367,8 @@ for hook in "$HOOKS"/*.sh; do
     [ -z "$rule" ] || ls "$ASSETS/rules/$rule".* >/dev/null 2>&1 || unknown=$((unknown + 1))
 done
 report "правило: объявлено только существующее" "$unknown" "0"
-report "правило: объявление есть у проверок" "$(grep -l '^RT_GUARD_RULE=' "$HOOKS"/*.sh | wc -l | tr -d ' ')" "27"
+# Двадцать четвёртый — страж хода работы `flow-step-guard.sh`, правило `task-flow`.
+report "правило: объявление есть у проверок" "$(grep -l '^RT_GUARD_RULE=' "$HOOKS"/*.sh | wc -l | tr -d ' ')" "24"
 
 tree="$(fixture_tree)"
 gate_in() {

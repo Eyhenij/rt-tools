@@ -13,7 +13,8 @@ statement: a removed statement is removed together with its line.
 - **There is no handover — the entry stays silent about it.** — `projects/agent-kit/assets/hooks/turn-entry-load.sh:handoff_dir`
 - **The map of the turn arrives in the context at the same launch as the handover.** — `projects/agent-kit/assets/hooks/turn-entry-load.sh:map`
 - **The exits of a turn and the line about the boundary of a state are read under two names: English and Russian.** — `projects/agent-kit/assets/checks/check-turn-map.mjs:EXITS` — the pairs of names, either is enough; the line about the boundary — `projects/agent-kit/assets/checks/check-state-next.mjs:BOUNDARIES`; scenario SC-AK-905
-- **The map names the mandatory action of every state and the four exits of a turn.** — `projects/agent-kit/assets/checks/check-turn-map.mjs:EXITS`
+- **The map names the mandatory action of every state and the two ends of a turn: the end of the scenario and the owner's stop word.** — `projects/agent-kit/assets/checks/check-turn-map.mjs:EXITS`
+- **A map that names a former exit of a turn as an item is refused.** — `projects/agent-kit/assets/checks/check-turn-map.mjs:OLD_EXITS` — a bold item with a former name, English or Russian; scenario `SC-AK-1547`
 - **The map lives as a file of a package resource of its own.** — `projects/agent-kit/assets/checks/check-turn-map.mjs:MAP`
 - **The map is shorter than the rule and differs from it by this.** — `projects/agent-kit/assets/checks/check-turn-map.mjs:LIMIT_BYTES`
 - **The entry is served at all four launches, not only after a squeeze.** — `projects/agent-kit/assets/hooks/turn-entry-load.sh:rt-hook`
