@@ -23,6 +23,12 @@ before a single file it names is run.
 - **A call** — a reference followed by arguments in parentheses.
 - **A condition** — a reference to a measurer, or an object of one key `all`, `any` or `not` over
   other conditions.
+- **The override** — the description a tree adds to the package one, in the same language, kept
+  in the overrides directory of the tree under the path of the package resource.
+- **A stub** — a component file whose factory throws `Not implemented`, written for a component the
+  description names and nobody has written yet.
+- **A view** — a text told from the description between the markers `<!-- flow:<view> -->` and
+  `<!-- /flow:<view> -->`.
 
 ### What it is called in the interface
 
@@ -50,6 +56,14 @@ There is no interface: the description is read by the engine and by the executor
 - **The literals of `words` are lists of non-empty strings under known keys, and `nudge` is a pattern that compiles.**
 - **A form of the expected result is a pattern and a way of comparison of `exit`, `line`, `regex` or `number`.**
 - **The release cases are asked in the order of the field `order`, and two cases never share one.**
+- **The override is merged with the package description key by key: an entry of a section is added or replaced whole.**
+- **A key of the package is removed only by `null` with a `reason` next to it, and `measure` prints every removed key.**
+- **A state of the override stands after the state its `after` names, and at the end without it.**
+- **A component of the override lies next to the override and passes the same contract as a package one.**
+- **A component the description names and nobody wrote gets a stub and a stub case of its test, and a written file is never rewritten.**
+- **The stub generator warns of ports that drifted from the signature, a measurer nothing names and a file the description no longer names.**
+- **Five views of the package description are written between their markers, and `--check` refuses a text that differs from its generation.**
+- **The view of the override is written into the companion of the rule `task-flow`, and a laid-out text is never written by the generator.**
 
 ## What is out of scope
 
@@ -62,7 +76,15 @@ The parser is called with the path of a description and answers with the parsed 
 with `flow syntax: <what> at <line>:<column>` and code 1. The model is called the same way and
 answers with the model, or with `flow model: <what>` naming the component, and code 1; with
 `--exit <state> <results.json>` it prints the exit of that state by the results of the measurers.
-Neither runs a file of the description: the files are read as text.
+Neither runs a file of the description: the files are read as text. With `--override <flow.js>`
+the model is built from the package description merged with the override, and its `changes` name
+what the override added, replaced and removed.
+
+The stub generator `flow-scaffold.mjs` prints `created <path>` for every stub and stub case it
+wrote, `warning CONTRACT_CHANGED`, `warning UNREACHABLE_MEASURE` and `warning MEASURE_REMOVED` lines,
+and `flow scaffold: <n> created, <m> warnings`. The text generator `flow-sync.mjs` writes the views
+and prints `flow sync: <k> of <n> views written`; with `--check` it writes nothing and prints
+`flow sync: <n> views match`, or one line per differing view and code 1.
 
 ### Refusal codes
 
@@ -70,8 +92,9 @@ Not applicable: a refusal comes as text naming what is wrong and where.
 
 ## Data
 
-The parser and the model hold no data of their own. They read one description and the files next
-to it.
+The parser and the model hold no data of their own. They read one description, the override of
+the tree when it lies there, and the files next to both. The stub generator writes only files that
+are absent; the text generator writes only the text between the markers of a view and the generated flow.md next to the description.
 
 ## Screens and states
 
@@ -108,6 +131,12 @@ Not applicable: one description is read at a time.
   written in code would hide the exit of a state from the reader of the description.
 - **A word, a command, a menu option and a form are data.** A new one is a line of the description,
   and no guard is edited for it.
+- **A removal needs a reason.** A key removed in silence leaves the reader of the package text sure
+  that it still works in the tree.
+- **A view is compared as text.** A view told by hand drifts from the scenario the engine measures,
+  and nothing else notices it.
+- **A laid-out text is only compared.** The layout rewrites it, so a write here would be lost on
+  the next layout; the override is told in the companion, which the tree owns.
 
 ## Open questions
 
@@ -117,3 +146,4 @@ None.
 
 - 2026-11-15 — split from the subdomain one level up when its scenarios outgrew the length limit:
   the language, its parser, its model, its conditions and its data.
+- 2026-11-15 — the override of the tree, the stub generator and the text generator.

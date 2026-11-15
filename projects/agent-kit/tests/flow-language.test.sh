@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Сценарии языка описания task flow: парсер, модель, условия, данные описания.
+# Сценарии языка описания task flow: парсер, модель, условия, данные описания, а наборами частей
+# рядом — надстройка дерева, заготовки и генерация текстов.
 #
 # Набор судит механику языка на фикстурах, а не описание пакета: иначе любая правка `flow.js`
 # краснела бы здесь, хотя язык не менялся. Каждая фикстура — свой файл во временном каталоге.
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
+. "$(dirname "${BASH_SOURCE[0]}")/flow-language-lib.sh"
 
 echo "язык описания task flow"
-
-FL_DIR="$(mktemp -d)"
 
 # Пишет фикстуру описания и печатает её путь.
 fl_file() {
@@ -127,57 +127,7 @@ FLOW
 )"
 report "syntax: SC-AK-1529 — шапка раскладки пропускается" "$(fl_parse "$f")" '{"words":{"stop":["стоп"]}}'
 
-# --- модель: фикстура дерева описания ----------------------------------------------------------
-
-# Свежее дерево описания: два источника, измеритель с соседом, два состояния. Печатает каталог.
-fl_base() {
-    local dir
-    dir="$(mktemp -d "$FL_DIR/tree.XXXXXX")"
-    mkdir -p "$dir/source" "$dir/measure"
-    printf 'export function open() {\n    return {};\n}\n' > "$dir/source/git.mjs"
-    printf 'export const open = () => ({});\n' > "$dir/source/marks.mjs"
-    cat > "$dir/measure/plan.mjs" <<'JS'
-import { helper } from './util.mjs';
-
-export function approved({ git, marks }) {
-    return () => helper(git, marks);
-}
-JS
-    printf 'export function helper() {\n    return true;\n}\n' > "$dir/measure/util.mjs"
-    cat > "$dir/flow.js" <<'FLOW'
-({
-  source: { git: { open: {} }, marks: { open: {} } },
-  measure: { plan: { approved: { git: source.git, marks: source.marks } } },
-  state: {
-    taken: { title: 'задача-взята', exit: measure.plan.approved },
-    planned: { title: 'замысел-записан', exit: measure.plan.approved },
-  },
-  release: {},
-  words: {},
-  expect: {},
-});
-FLOW
-    printf '%s' "$dir"
-}
-
-fl_model() {
-    node "$CHECKS/flow-model.mjs" "$1/flow.js" 2>&1
-}
-
-# Отказ модели называет то, что задано словом: печатает «да» или вывод модели.
-fl_model_refused_with() {
-    local out
-    out="$(fl_model "$1")"
-    case "$out" in
-        "flow model: "*"$2"*) printf 'да' ;;
-        *) printf '%s' "$out" ;;
-    esac
-}
-
-# Поле модели по выражению над разобранным JSON.
-fl_model_field() {
-    fl_model "$1" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const m=JSON.parse(s);console.log(String($2))})" 2>&1
-}
+# --- модель: фикстура дерева описания `fl_base` и помощники модели — в `flow-language-lib.sh` ----
 
 # --- SC-AK-1479 — секций ровно шесть, лишняя отказана ------------------------------------------
 d="$(fl_base)"
@@ -435,6 +385,14 @@ d="$(fl_data '' '' "{ a: { when: measure.plan.approved, order: 2 }, b: { when: m
 report "data: SC-AK-1520 — повтор order отказан" "$(fl_model_refused_with "$d" 'release.b: the order 2 repeats — release.a has it')" 'да'
 d="$(fl_data '' '' "{ a: { when: measure.plan.approved, order: 1.5 } }")"
 report "data: SC-AK-1520 — дробный order отказан" "$(fl_model_refused_with "$d" 'release.a: the order is an integer from 1')" 'да'
+
+# Надстройка, заготовки и генерация текстов — наборы частей рядом: вместе с ними набор перерос
+# предел длины. Бегун запускает их и отдельно; здесь они подключаются, чтобы набор языка печатал
+# случаи всех своих групп.
+for fl_part in override scaffold sync; do
+    # shellcheck disable=SC1090
+    . "$(dirname "${BASH_SOURCE[0]}")/flow-language-$fl_part.test.sh"
+done
 
 rm -rf "$FL_DIR"
 suite_result "язык описания task flow"
