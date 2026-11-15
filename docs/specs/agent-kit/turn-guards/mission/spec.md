@@ -207,11 +207,14 @@ on 15 November 2026; their numbers are not given again.
 - **Q-5 — no command of the tree counts missed stops, false refusals and deadlocks.** The base of
   14 November was counted by a one-off script, and it counts refusals only: a broken guard that
   lets every turn through scores best on it.
-- **Q-7 — a waiting line with any quote releases every tier of the command hook.** Since 15 November
-  the agent hook checks the quote against the owner's latest word and refuses a stale line, but a
-  timeout of the agent hook leaves the release of the command hook alone.
+- **Q-7 — a waiting line with any quote releases every tier of the command hook.** Nothing checks
+  the quote against the owner's latest word: the agent hook no longer reads the progress, and a
+  stale line releases the turn. The rule about a quote older than the latest order has no tool.
 - **Q-8 — the package does not connect the agent hooks in the settings of a tree that installs it.**
   A release removes the old checks there and leaves the requirement only as the text of a rule.
+- **Q-10 — doubt about open work is decided by no tool.** The agent hook no longer judges open work
+  and lets a turn end when in doubt; the command hook measures the work and has no doubt to decide.
+  The rule that doubt is decided by a refusal, once, has no tool.
 
 ## History of changes
 
@@ -222,3 +225,7 @@ on 15 November 2026; their numbers are not given again.
   waiting line, a command that closes a session and handed-in work under an open epic no longer end
   ordered work; the refusals of the command hook name the waiting line as the exit. The stop that
   brought it in: the executor ended a turn with the fix of these guards left for the next session.
+- 2026-11-15 — the agent hook of the Stop event no longer reads the progress and the table of the
+  epic: open work is measured by the command hook. The hook keeps the owner's words, the work their
+  latest word ordered, a question already answered, a fact without output, the incident record and
+  the proposal. A stale waiting line and doubt went to Q-7 and Q-10.
