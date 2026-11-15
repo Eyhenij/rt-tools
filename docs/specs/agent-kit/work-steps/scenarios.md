@@ -66,3 +66,19 @@ When a turn that did work ends with a report
 Then nothing in the refusal names steps that are not done
 
 Covered: `projects/agent-kit/tests/work-steps-guard.test.sh`.
+
+### SC-AK-1537 — the check line under a step is read with either word
+
+Given a plan whose steps carry check lines with the English word, the Russian word and none, in two stages
+When the steps of the plan are parsed
+Then each step gets its own command and expected result, and the step without a line gets none
+
+Covered: `projects/agent-kit/tests/work-steps.test.sh`.
+
+### SC-AK-1538 — the check line is not part of the step name
+
+Given the same plan and a progress that names its four steps without the check lines
+When the check is run
+Then the lists match, and a progress that copies a check line into a name diverges
+
+Covered: `projects/agent-kit/tests/work-steps.test.sh`.

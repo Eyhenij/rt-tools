@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/work-steps-lib.mjs · 9ebd5fc1bcf3 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/work-steps-lib.mjs · db27c7cf5ee9 · правится надстройкой, не здесь
 /**
  * The parsing of the steps of a plan and of a progress, shared by every reader of both lists.
  *
@@ -24,6 +24,11 @@ const STAGE_HEADING = /^###\s+(\d+)\.\s+(.+?)\s*$/;
 const STEPS_OPENING = /^-\s+\*\*(?:Steps|Шаги):\*\*\s*$/;
 /** A step of the plan: an indented ordinal and the name. */
 const PLAN_STEP = /^\s+(\d+)\.\s+(.+?)\s*$/;
+/**
+ * The check line under a step: the word in either language, the command in backticks, an arrow and
+ * the expected result. It belongs to the step above it and is never part of its name.
+ */
+const CHECK_LINE = /^\s+(?:Проверка|Check):\s+`(.+)`\s+→\s+(.+?)\s*$/;
 /** Another key of the stage: it closes the step list. */
 const STAGE_KEY = /^-\s+\*\*/;
 /** A step of the progress: the mark, the number of the stage, the number of the step, the name. */
@@ -41,7 +46,10 @@ export const DONE = 'x';
 /** The mark of the step going on right now. */
 export const CURRENT = '>';
 
-/** The steps of the plan: the number «<stage>.<step>» and the name, in the order they are written. */
+/**
+ * The steps of the plan: the number «<stage>.<step>», the name and the check line under the step, in
+ * the order they are written. A step without a check line has `command` and `expected` null.
+ */
 export function stepsOfPlan(text) {
     const steps = [];
     let stage = null;
@@ -79,10 +87,23 @@ export function stepsOfPlan(text) {
             continue;
         }
 
+        const check = line.match(CHECK_LINE);
+
+        if (check) {
+            const last = steps.at(-1);
+
+            if (last && last.number.startsWith(`${stage}.`) && last.command === null) {
+                last.command = check[1];
+                last.expected = check[2];
+            }
+
+            continue;
+        }
+
         const step = line.match(PLAN_STEP);
 
         if (step) {
-            steps.push({ number: `${stage}.${step[1]}`, name: step[2] });
+            steps.push({ number: `${stage}.${step[1]}`, name: step[2], command: null, expected: null });
             continue;
         }
 

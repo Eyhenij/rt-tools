@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · samples/tasks/_template/plan.md · 531a58bf05d5 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · samples/tasks/_template/plan.md · 3b94e557b8be · правится надстройкой, не здесь -->
 # Plan
 
 **Task:** <KEY>-<number> · **Branch:** <branch>
@@ -45,13 +45,29 @@ is named here is read twice — before the work and after it.>
 
 - **Steps:**
     1. <what is done first>
+       Check: `<command>` → <expected>
     2. <what is done after it>
+       Check: `<command>` → <expected>
 - **Readiness sign:** <what must become true>
 - **Verified by:** `<command>` — <what in its output means "it matched">
 
 The steps are the smallest unit of the work, and they are written here in full: the progress
 mirrors this list with its marks, and a check matches the two by number and by name. A step is
 named by what is done, not by what is thought over — a line nobody can call done is not a step.
+
+Under every step stands its check: the command in backticks, an arrow and the expected result in
+one of the forms below. The parsing takes the word «Check:» and its Russian form alike, and the
+check line is not part of the step name. Where the engine of the task flow is laid out, it runs the
+command as the commit of the plan wrote it and marks the step only when the result matches.
+
+| Expected | It matches when |
+| -------- | --------------- |
+| `exit N` | the command exits with code N; the output is not compared |
+| `` `text` `` | the code is 0 and the last non-empty line of the output equals the text |
+| `/expression/` | the code is 0 and the last non-empty line matches the expression |
+| `= N`, `>= N`, `<= N` | the code is 0, the last non-empty line is an integer, and the comparison holds |
+
+A command of the work itself — a commit, a push, a PR, a task or a layout — is never a check.
 
 The command is written in backticks: the turn exit guard reads it and does not let out a turn in
 which the stage is declared closed and the command was not run. An acceptance written in prose
