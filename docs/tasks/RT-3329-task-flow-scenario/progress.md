@@ -74,7 +74,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `задача-взята`
 - **Stage:** план ещё не записан
-- **Next step:** дождаться повторных выводов `goal-critic` и `product-strategist` по третьей редакции, поправить её, показать владельцу и спросить одобрение меню; после одобрения записать `plan.md`, закоммитить и начать этап 1
+- **Next step:** по странице передачи написать четвёртую редакцию плана: закрыть находки обеих ролей по третьей, прогнать проверки шагов на красный, снова отдать `goal-critic` и `product-strategist`, показать владельцу и спросить одобрение меню; после одобрения записать `plan.md`, закоммитить и начать этап 1
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3329-task-flow-scenario/progress.md`; the plan lies next to it.
@@ -88,6 +88,7 @@ none
 ### Commits over the main branch
 
 ```
+8a17f792d docs(rt:agent-kit): ход работы RT-3329 — страница передачи и выводы ролей
 001983ba7 docs(rt:agent-kit): разбор RT-3329 — ранние слова владельца и два решения
 cbf6ebbd1 docs(rt:agent-kit): строка об описании фичи в разборе RT-3329
 a5cd96c5a docs(rt:agent-kit): разбор RT-3329 — task flow исполняемым сценарием
