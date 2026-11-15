@@ -64,14 +64,17 @@ the end of every turn.
   answers the question or the swearing, reports, announces or promises — «следующим ходом»,
   «сейчас запущу», «дальше возьму» — and the ordered work is not in the calls of the turn. An
   announcement is not the action. Swearing at an agent that stands means «why did you stop»: it is
-  never a word to stop. A slash command that writes a handover or closes the session is cleanup:
-  the work it does not mention stays ordered.
+  never a word to stop. Swearing that follows no order and names no work orders nothing. A slash
+  command that writes a handover or closes the session is cleanup: the work it does not mention
+  stays ordered.
 - The reply asks the owner something already answered in the conversation, or asks the owner to do a
   step the agent can do itself: sign in to a stand, type a password, run a command, open a page.
 - The reply states a fact about the repository or a service — merged, pushed, green, exists, closed,
   published — and no tool result of this turn shows it. A command output that shows the state counts,
-  whatever the command was. Before refusing for this, `Grep` the transcript for the command that
-  would show it: a match after the line of the owner's latest word counts.
+  whatever the command was. Each fact the reply names needs its own output: an edit of one file
+  does not show a second thing the reply says the branch holds. Before refusing for this, `Grep`
+  the transcript for the command that would show it: a match after the line of the owner's latest
+  word counts.
 - The reply admits a miss of the agent («я ошибся», «мой промах», «это моя вина») and the turn wrote
   no incident record into the directory named by the key `postmortems` of `.claude/rt-kit.json`:
   `Glob` the directory; a file named with today's date counts.

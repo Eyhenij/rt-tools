@@ -1,0 +1,20 @@
+{
+  "digest": "a4b3a1a8d463",
+  "agentId": "turn-judge-replay-subagent",
+  "verdicts": {
+    "1446-report-after-edit.json": "allow",
+    "1449-milestone-branch.json": "allow",
+    "1450-answer-mid-work.json": "block",
+    "1451-asks-what-rules-answer.json": "block",
+    "1456-rt3276-question.json": "allow",
+    "1457-rt3276-not-now.json": "allow",
+    "1458-rt3276-stop.json": "allow",
+    "1459-rt3276-abuse.json": "allow",
+    "1460-rt3276-menu-after-refusal.json": "allow",
+    "1548-not-now.json": "allow",
+    "1548-stop-at-point.json": "allow",
+    "1548-stop-hold.json": "allow",
+    "1548-wait-for-neighbour.json": "allow",
+    "1548-wait-for-suite.json": "allow"
+  }
+}
