@@ -134,6 +134,15 @@ const day = on.windowOf({ days: 1, until: '2026-11-14' });
     write(`${main}/a/subagents`, 'agent-1.jsonl', [owner('продолжай'), call()]);
     out('SC-AK-1543 — копии дерева: каталог корня и его рабочих копий', `${on.isCopyDir(main, tree)} ${on.isCopyDir(`${main}--claude-worktrees-side`, tree)} ${on.isCopyDir(`${main}-old`, tree)}`, 'true true false');
 }
+
+// SC-AK-1553 — окно последних вызовов
+{
+    const copies = [copy('main', [call('14T10:00:00'), call('14T10:05:00'), call('14T10:09:00')])];
+    const open = { from: Date.parse('2026-11-14T00:00:00Z'), to: Number.POSITIVE_INFINITY };
+    out('SC-AK-1553 — окно начинается с первого из последних вызовов', new Date(on.lastCallsFrom(copies, open, 2)).toISOString(), '2026-11-14T10:05:00.000Z');
+    out('SC-AK-1553 — вызовов меньше окна — с начала окна', on.lastCallsFrom(copies, open, 9) === open.from, 'true');
+    out('SC-AK-1553 — ветка без имени движка не несёт', on.branchLaid('/nowhere')(''), 'false');
+}
 JS
 
 ON="$TESTS/../assets/checks/owner-nudges.mjs"
@@ -153,6 +162,11 @@ node "$ON" --root "$ON_DIR" --tree /work/tree --until 2026-11-15 >/dev/null 2>&1
 report "SC-AK-1546 — окно без --days и --since — код 2" "$?" '2'
 report "SC-AK-1546 — каталог записей отсутствует — счёт нулевой" \
     "$(node "$ON" --root "$ON_DIR/none" --tree /work/tree --typed --days 1 --until 2026-11-14 2>&1)" 'owner typed messages: 0 in 0 copies'
+
+node "$ON" --root "$ON_DIR" --tree /work/tree --missed >/dev/null 2>&1
+report "SC-AK-1553 — --missed без --last — код 2" "$?" '2'
+report "SC-AK-1553 — дерево без раскладки движка — пропусков нет" \
+    "$(on_cli --missed --last 200)" 'missed stops with open work: 0 of 0 stops in the last 200 calls'
 
 rm -rf "$ON_DIR"
 suite_result "счётчик метрики"

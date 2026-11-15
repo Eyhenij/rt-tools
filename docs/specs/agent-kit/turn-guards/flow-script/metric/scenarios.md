@@ -50,3 +50,22 @@ When the window is built
 Then it runs from 9 November to the end of 15 November, from the start of 13 October, and to the moment itself; a window without a length exits 2
 
 Covered: `projects/agent-kit/tests/owner-nudges.test.sh`.
+
+### SC-AK-1552 — a turn ended with open work is a missed stop
+
+Given a session that wrote to a task branch, stopped with no refusal, and later stopped after «стоп»
+When the missed stops are counted
+Then the first end is missed and the second is not
+And a stop refused by a hook, in the summary or in the feedback, ends no turn
+And a branch without the engine is not counted
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1553 — the window of the last calls
+
+Given three calls and a window of the last two
+When the window is built
+Then it starts at the second call, and a window larger than the calls starts where the records do
+And `--missed` without `--last` exits 2, and a tree without the engine prints `0 of 0`
+
+Covered: `projects/agent-kit/tests/owner-nudges.test.sh`.

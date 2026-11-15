@@ -25,6 +25,8 @@ and a week after it are counted by one rule.
   tool call got back.
 - **A deadlock** — a series of 10 and more stop refusals in a row in one session with one guard and
   one first line of the reason.
+- **A missed stop** — a turn that ended on a branch carrying the engine while no release case of the
+  description released it, replayed from the record.
 
 ### What it is called in the interface
 
@@ -38,12 +40,13 @@ There is no interface: the counter prints one line per measure.
 - **Refusals are counted per hundred calls in four groups: all, the exit check, the checks of the base and the new checks.**
 - **A deadlock is a series of 10 and more stop refusals in one session with one guard and one first line of the reason; a stop that passed or another reason ends the series.**
 - **The window is whole days of UTC ending with the day the caller names, and the counter never reads the clock inside a decision.**
+- **A turn ends at a stop summary with no refusal in it and no stop feedback right after it.**
+- **Missed stops are counted in the last calls after the layout, only on branches that carry the engine.**
 
 ## What is out of scope
 
-Writing the base of the metric into the description of the scenario, the count of missed stops in
-the last calls and the journal of the engine are the later steps of the same task. The engine and
-its states are the subdomain one level up.
+Writing the base of the metric into the description of the scenario and the journal of the engine
+are the later steps of the same task. The engine and its states are the subdomain one level up.
 
 ## Contract
 
@@ -55,6 +58,10 @@ window (`--days N` or `--since <date>`, with `--until <date>`), and optional `--
 - `--typed`: `owner typed messages: N in N copies`
 - `--refusals`: `refusals per 100 calls: all N.NN, exit N.NN, base N.NN, new N.NN`
 - `--deadlocks`: `deadlocks: N series of 10+ stop refusals at one state and step, N refusals`
+- `--missed --last N`: `missed stops with open work: N of N stops in the last N calls`
+
+The flag `--missed` takes `--last N` instead of a window, and `--layout <moment>` in place of the
+moment of the first commit that added the engine to the tree.
 
 ### Refusal codes
 
@@ -120,3 +127,5 @@ None.
 
 - 2026-11-15 — the subdomain was started with the counter of nudges, typed messages, refusals and
   deadlocks.
+- 2026-11-15 — the count of missed stops after the layout: a branch without the engine is not
+  judged by it.

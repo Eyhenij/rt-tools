@@ -6,6 +6,7 @@
  *   node owner-nudges.mjs --typed --since 2026-10-13 --until …      typed messages of the owner
  *   node owner-nudges.mjs --refusals --days 1 --until 2026-11-14    refusals per 100 calls
  *   node owner-nudges.mjs --deadlocks --days 7 --until 2026-11-15   series of stop refusals
+ *   node owner-nudges.mjs --missed --last 200                       turns ended with open work
  *
  * The records are the jsonl files of Claude Code under `--root` (by default `~/.claude/projects`),
  * in the directories of every copy of the tree: the main checkout named by `--tree` (by default the
@@ -22,6 +23,11 @@
  * stop hook or in the hook error a tool call got back. A deadlock is a series of 10 and more stop
  * refusals in a row with one guard and one first line of the reason — the line that names the
  * state and the step; a stop that passed or a refusal with another line ends the series.
+ *
+ * The missed stops are read in the last `--last` calls after the layout of the engine: the moment
+ * of the first commit that added it to the tree, or `--layout <moment>`. A turn that ended there,
+ * on a branch that carries the engine, while no release case of the description released it is
+ * missed.
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync, readdirSync, statSync } from 'node:fs';
@@ -268,13 +274,13 @@ export const deadlocksLine = (series) =>
     `deadlocks: ${series.length} series of ${SERIES}+ stop refusals at one state and step, ${series.reduce((sum, s) => sum + s.refusals, 0)} refusals`;
 
 const USAGE =
-    'usage: node owner-nudges.mjs [--typed | --refusals | --deadlocks] (--days N | --since <date>) [--until <date>] [--root <dir>] [--tree <path>] [--flow <flow.js>]';
+    'usage: node owner-nudges.mjs [--typed | --refusals | --deadlocks] (--days N | --since <date>) [--until <date>] [--root <dir>] [--tree <path>] [--flow <flow.js>]\n       node owner-nudges.mjs --missed --last N [--layout <moment>] [--root <dir>] [--tree <path>] [--flow <flow.js>]';
 
 /** The arguments of the command line, or a thrown error naming what is wrong. */
 export function parseArgs(argv) {
     const args = { mode: 'nudges' };
-    const modes = { '--typed': 'typed', '--refusals': 'refusals', '--deadlocks': 'deadlocks' };
-    const values = { '--days': 'days', '--since': 'since', '--until': 'until', '--root': 'root', '--tree': 'tree', '--flow': 'flow' };
+    const modes = { '--typed': 'typed', '--refusals': 'refusals', '--deadlocks': 'deadlocks', '--missed': 'missed' };
+    const values = { '--days': 'days', '--since': 'since', '--until': 'until', '--root': 'root', '--tree': 'tree', '--flow': 'flow', '--last': 'last', '--layout': 'layout' };
     for (let index = 0; index < argv.length; index += 1) {
         const arg = argv[index];
         if (arg in modes) {
@@ -283,13 +289,41 @@ export function parseArgs(argv) {
         } else if (arg in values) {
             const value = argv[index + 1];
             if (value === undefined || value.startsWith('--')) throw new Error(`${arg} needs a value`);
-            args[values[arg]] = values[arg] === 'days' ? Number(value) : value;
+            args[values[arg]] = values[arg] === 'days' || values[arg] === 'last' ? Number(value) : value;
             index += 1;
         } else {
             throw new Error(`unknown argument: ${arg}`);
         }
     }
     return args;
+}
+
+/** The moment of the first of the last `last` calls in the window, or the start of the window when there are fewer. */
+export function lastCallsFrom(copies, window, last) {
+    const moments = [];
+    for (const { entry } of entriesOf(copies, window)) for (const _ of callsOf(entry)) moments.push(Date.parse(entry.timestamp));
+    moments.sort((a, b) => a - b);
+    return moments.length > last ? moments[moments.length - last] : window.from;
+}
+
+/** The moment the engine was laid out: the first commit of any branch that added it, or null. */
+export function layoutMoment(tree) {
+    const run = spawnSync('git', ['-C', tree, 'log', '--all', '--diff-filter=A', '--reverse', '--format=%ct', '--', 'tools/task-flow-script.mjs'], { encoding: 'utf8' });
+    const first = run.status === 0 ? run.stdout.trim().split('\n')[0] : '';
+    return first ? Number(first) * 1000 : null;
+}
+
+/** Whether a branch carries the engine; a branch removed since is taken as one without it. */
+export function branchLaid(tree) {
+    const known = new Map();
+    return (branch) => {
+        if (!branch) return false;
+        if (!known.has(branch)) {
+            const run = spawnSync('git', ['-C', tree, 'cat-file', '-e', `${branch}:tools/task-flow-script.mjs`], { encoding: 'utf8' });
+            known.set(branch, run.status === 0);
+        }
+        return known.get(branch);
+    };
 }
 
 /** The copies of the tree with their session records; a file last written before the window is skipped. */
@@ -322,19 +356,43 @@ function flowPath(named) {
     return existsSync(laid) ? laid : join(here, '..', 'task-flow', 'flow.js');
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+/** The command line; it runs after the module is evaluated, so the engine it imports can import this module. */
+async function main() {
     let args;
     let window;
     try {
         args = parseArgs(process.argv.slice(2));
-        window = windowOf({ ...args, until: args.until ?? new Date().toISOString().slice(0, 10) });
+        if (args.mode === 'missed') {
+            if (!Number.isInteger(args.last) || args.last < 1) throw new Error('--missed needs --last N');
+        } else window = windowOf({ ...args, until: args.until ?? new Date().toISOString().slice(0, 10) });
     } catch (error) {
         console.error(`owner-nudges: ${error.message}\n${USAGE}`);
         process.exit(2);
     }
-    const copies = readCopies(args.root ?? join(homedir(), '.claude', 'projects'), args.tree ?? treeRoot(), window);
+    const root = args.root ?? join(homedir(), '.claude', 'projects');
+    const tree = args.tree ?? treeRoot();
+    if (args.mode === 'missed') {
+        const laid = args.layout ? Date.parse(args.layout) : layoutMoment(tree);
+        if (laid === null || Number.isNaN(laid)) {
+            console.log(`missed stops with open work: 0 of 0 stops in the last ${args.last} calls`);
+            return;
+        }
+        const after = { from: laid, to: Number.POSITIVE_INFINITY };
+        const copies = readCopies(root, tree, after);
+        const path = flowPath(args.flow);
+        const model = buildModel(path);
+        const { GUARD_SETTINGS, openReaders } = await import(pathToFileURL(join(dirname(fileURLToPath(import.meta.url)), 'task-flow-script.mjs')).href);
+        const { missedLine, runMissed } = await import(pathToFileURL(join(dirname(fileURLToPath(import.meta.url)), 'flow-forecast.mjs')).href);
+        const from = lastCallsFrom(copies, after, args.last);
+        const result = await runMissed({ copies, from, model, base: dirname(path), openReaders, tree, settings: GUARD_SETTINGS, laid: branchLaid(tree) });
+        console.log(missedLine(result, args.last));
+        return;
+    }
+    const copies = readCopies(root, tree, window);
     if (args.mode === 'typed') console.log(typedLine(measureTyped(copies, window)));
     else if (args.mode === 'refusals') console.log(refusalsLine(measureRefusals(copies, window)));
     else if (args.mode === 'deadlocks') console.log(deadlocksLine(findDeadlocks(copies, window)));
     else console.log(nudgesLine(measureNudges(copies, window, buildModel(flowPath(args.flow)).words.nudge)));
 }
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main();

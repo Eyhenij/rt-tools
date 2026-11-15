@@ -403,7 +403,7 @@ tf_run <<'JS'
 import { dirname } from 'node:path';
 import { buildModel } from '../assets/checks/flow-model.mjs';
 import { openReaders } from '../assets/checks/task-flow-script.mjs';
-import { forecastCopies, perMille } from '../assets/checks/flow-forecast.mjs';
+import { forecastCopies, missedLine, perMille } from '../assets/checks/flow-forecast.mjs';
 import * as sessionSource from '../assets/task-flow/source/session.mjs';
 import { wordOf } from '../assets/task-flow/source/owner.mjs';
 
@@ -437,6 +437,14 @@ const loop = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path:
 out('forecast: SC-AK-1550 — меню простоя обрывает петлю остановок', `${loop.stops} ${loop.held}`, '2 2');
 const resumed = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B), feedback(B), say(B), stop(B), feedback(B), use(B, 'Read', { file_path: '/t/a.md' }), say(B), stop(B)]);
 out('forecast: SC-AK-1550 — вызов после меню снова считает остановки', `${resumed.stops} ${resumed.held}`, '3 3');
+
+out('missed: SC-AK-1552 — конец хода с открытой работой пропущен, конец по «стоп» нет', `${held.ended} ${held.missed}`, '2 1');
+out('missed: SC-AK-1552 — остановка с отказом хука ход не кончает', `${loop.ended} ${loop.missed}`, '0 0');
+const blocked = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), { ...stop(B), hookErrors: ['BLOCKED by turn-exit-guard: open'] }]);
+out('missed: SC-AK-1552 — отказ в итоге хуков ход не кончает', `${blocked.ended} ${blocked.missed}`, '0 0');
+const unlaid = await forecastCopies({ copies: [{ name: 'c', sessions: [{ id: 's', entries: [owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B)] }] }], window, model, base: dirname(flow), openReaders, sessionSource, wordOf, tree: '/t', settings, laid: () => false });
+out('missed: SC-AK-1552 — ветка без движка не считается', `${unlaid.ended} ${unlaid.missed}`, '0 0');
+out('missed: SC-AK-1552 — строка счёта', missedLine(held, 200), 'missed stops with open work: 1 of 2 stops in the last 200 calls');
 JS
 
 rm -rf "$TF_DIR"

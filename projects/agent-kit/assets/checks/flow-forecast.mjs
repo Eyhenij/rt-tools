@@ -19,6 +19,10 @@
  *   - a held stop whose refusal names the owner's menu ends the series of stops: until the next call
  *     the executor asks the menu instead of stopping, so a stop the record holds there is not
  *     reached.
+ *
+ * The same replay counts the missed stops after the layout: a turn that ended while no release case
+ * of the description released it. An end by the limit of continuations and a failed engine count
+ * as missed too: the record shows the end, and the replay shows the open work.
  */
 import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
@@ -60,6 +64,24 @@ export function isStopEntry(entry) {
     if (entry?.type === 'system' && entry.subtype === 'stop_hook_summary') return true;
     return entry?.type === 'user' && /^Stop hook feedback:/.test(textOf(entry.message?.content).trimStart());
 }
+
+/** A refusal of a stop hook in the summary of the stop hooks. */
+const BLOCK = /BLOCKED by |"decision"\s*:\s*"block"/;
+
+/**
+ * A stop that ended the turn: the summary of the stop hooks with no refusal in it, and no feedback of
+ * a stop hook right after it.
+ */
+export function isTurnEnd(entry, next) {
+    if (entry?.type !== 'system' || entry.subtype !== 'stop_hook_summary') return false;
+    if ((entry.hookErrors ?? []).some((error) => BLOCK.test(String(error)))) return false;
+    return !(next && next.type === 'user' && isStopEntry(next));
+}
+
+const nextMain = (entries, index) => {
+    for (let at = index + 1; at < entries.length; at += 1) if (!entries[at]?.isSidechain) return entries[at];
+    return null;
+};
 
 /** The path of a call relative to the copy it was made in: the main checkout or one of its worktrees. */
 export function copyPath(raw, tree) {
@@ -115,10 +137,10 @@ export function historyOf(tree, tasksDir) {
 }
 
 /**
- * The replay of the copies: `{ calls, stops, held, judged, refused }`. `openReaders` is the reader
+ * The replay of the copies: `{ calls, stops, held, judged, refused, ended, missed }`. `openReaders` is the reader
  * factory of the engine; `sessionSource` and `wordOf` read the record as the sources do.
  */
-export async function forecastCopies({ copies, window, model, base, openReaders, sessionSource, wordOf, tree, settings }) {
+export async function forecastCopies({ copies, window, model, base, openReaders, sessionSource, wordOf, tree, settings, laid = () => true }) {
     const live = { entries: [], uses: [], last: null, messages: [] };
     const given = {
         session: { toolUses: () => live.uses, events: () => sessionSource.eventsOf(live.entries), agent: () => null, roleTools: () => null },
@@ -129,7 +151,7 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
     const marks = new Set();
     const ids = new Set();
     const seen = new Set();
-    const counts = { stops: 0, held: 0, judged: 0, refused: 0 };
+    const counts = { stops: 0, held: 0, judged: 0, refused: 0, ended: 0, missed: 0 };
 
     const inScenario = (branch, cwd) => TASK_BRANCH.test(branch ?? '') || cwd === tree;
     const handed = (branch, at) => {
@@ -148,7 +170,7 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
             let cwd = null;
             let inStop = false;
             let menuNamed = false;
-            for (const entry of session.entries) {
+            for (const [index, entry] of session.entries.entries()) {
                 if (entry?.isSidechain) continue;
                 live.entries.push(entry);
                 branch = entry.gitBranch ?? branch;
@@ -208,10 +230,13 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
                     }
                 }
 
-                if (!isStopEntry(entry) || inStop) continue;
+                if (!isStopEntry(entry)) continue;
+                const first = !inStop;
                 inStop = true;
-                if (!counted || menuNamed) continue;
-                counts.stops += 1;
+                if (!counted) continue;
+                const ended = isTurnEnd(entry, nextMain(session.entries, index)) && laid(branch);
+                const judged = first && !menuNamed;
+                if (!judged && !ended) continue;
                 const answer = (name) => {
                     if (FROM_RECORD.has(name)) return read(name);
                     if (name === 'measure.copy.outOfScenario') return !inScenario(branch, cwd);
@@ -219,7 +244,14 @@ export async function forecastCopies({ copies, window, model, base, openReaders,
                     if (name === 'measure.pr.handed') return handed(branch, at);
                     return false;
                 };
-                if (releaseCase(model, answer, { state: 'replayed', reason: null })) continue;
+                const released = Boolean(releaseCase(model, answer, { state: 'replayed', reason: null }));
+                if (ended) {
+                    counts.ended += 1;
+                    if (!released) counts.missed += 1;
+                }
+                if (!judged) continue;
+                counts.stops += 1;
+                if (released) continue;
                 counts.held += 1;
                 menuNamed = menuCause(answer) !== null;
             }
@@ -259,4 +291,21 @@ export async function runForecast({ argv, model, base, openReaders, tree, root, 
     const copies = readCopies(root, tree, window);
     const result = await forecastCopies({ copies, window, model, base, openReaders, sessionSource, wordOf, tree, settings });
     return args.perMille ? perMille(result, args.guard) : forecastLine(result, args.guard);
+}
+
+/** The line of the missed stops: the ended turns with open work among the ended turns of the window. */
+export const missedLine = (result, last) => `missed stops with open work: ${result.missed} of ${result.ended} stops in the last ${last} calls`;
+
+/**
+ * The command `owner-nudges.mjs --missed`: replays the records from `from` and counts the turns
+ * that ended with open work. `from` is the first of the last calls after the layout; `laid` says
+ * whether a branch carries the engine, and a turn of a branch without it is not counted.
+ */
+export async function runMissed({ copies, from, model, base, openReaders, tree, settings, laid }) {
+    const sessionFile = model.sources.find((source) => source.entry === 'session').file;
+    const ownerFile = model.sources.find((source) => source.entry === 'owner').file;
+    const sessionSource = await import(pathToFileURL(join(base, sessionFile)).href);
+    const { wordOf } = await import(pathToFileURL(join(base, ownerFile)).href);
+    const window = { from, to: Number.POSITIVE_INFINITY };
+    return forecastCopies({ copies, window, model, base, openReaders, sessionSource, wordOf, tree, settings, laid });
 }
