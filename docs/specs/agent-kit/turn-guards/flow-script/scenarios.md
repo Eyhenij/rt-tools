@@ -530,3 +530,43 @@ When exit 13 is measured
 Then the tip comes from the PR and the exit is met
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1395 — a branch without a task number reads the epic of the copy
+
+Given the epic branch and the main branch of a copy the assignment table gives a live epic
+When the copy and exit 2 are measured
+Then the work has an epic, and exit 2 is met by the epic of the copy
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1396 — the main branch assigned to a merged epic is outside the scenario
+
+Given the main branch of a copy assigned an epic whose PR into the main branch is merged
+When the copy is measured
+Then it is outside the scenario
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1397 — an epic with a closed card counts as absent
+
+Given the main branch of a copy assigned an epic whose card is closed
+When the copy is measured
+Then the work has no epic
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1398 — a draft is measured by states 1–4
+
+Given the main branch without an epic and a draft folder with an answered grill
+When the copy and the states are measured
+Then the copy stays in the scenario, and the measured state is «эпик-заведён»
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1399 — a branch without a task number and without an epic is outside the scenario
+
+Given a branch without a task number, a copy without an epic and no draft, and a task branch
+When the copy is measured
+Then the first is outside the scenario, the task branch is not
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.

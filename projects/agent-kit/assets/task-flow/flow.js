@@ -32,8 +32,8 @@
     folder: { archived: { git: source.git } },
     pr: { handed: { git: source.git, host: source.host } },
     copy: {
-      outsideEpic: { git: source.git, tree: source.tree },
-      outOfScenario: { git: source.git, tree: source.tree },
+      outsideEpic: { git: source.git, host: source.host, tree: source.tree },
+      outOfScenario: { git: source.git, host: source.host, tree: source.tree },
     },
     owner: { saidStop: { owner: source.owner }, nudged: { owner: source.owner } },
     session: {

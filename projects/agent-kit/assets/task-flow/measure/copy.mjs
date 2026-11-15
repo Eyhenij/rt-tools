@@ -1,13 +1,22 @@
 /**
- * The measurer «measure.copy» of the task flow description. A factory named by a
- * capability takes its ports and returns the reader; until the step that writes it, the factory
- * throws, so an unmeasured exit is never read as met.
+ * The measurer «measure.copy» — where the working copy stands against the scenario.
+ *
+ * outsideEpic — the work has no epic: the task card names none, or the copy of a branch without a
+ * task number leads no live epic. Outside an epic the scenario ends at exit 10.
+ *
+ * outOfScenario — the branch carries no task number, the copy leads no live epic, and no draft folder
+ * lies in the working copy: the engine has nothing to name as the next step. A draft keeps the copy
+ * in the scenario, measured by states 1–4.
  */
+import { epicOfWork, workTask } from './epic-of.mjs';
 
-export function outsideEpic({ git, tree }) {
-    throw new Error('Not implemented: measure.copy.outsideEpic (git, tree)');
+export function outsideEpic({ git, host, tree }) {
+    return () => epicOfWork({ git, host, tree }) === null;
 }
 
-export function outOfScenario({ git, tree }) {
-    throw new Error('Not implemented: measure.copy.outOfScenario (git, tree)');
+export function outOfScenario({ git, host, tree }) {
+    return () =>
+        workTask({ git, tree }) === null &&
+        epicOfWork({ git, host, tree }) === null &&
+        !tree.list('docs/tasks').some((name) => name.startsWith('_draft-'));
 }

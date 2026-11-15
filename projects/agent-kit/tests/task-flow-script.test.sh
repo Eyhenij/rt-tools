@@ -227,6 +227,62 @@ out('host: SC-AK-1394 — отложенные задачи не считают�
 out('host: SC-AK-1466 — ветка задачи удалена после слияния — вершина из headRefOid PR', run(epic.finished, { rows: two, local: [tips[1]], host: { merged: [mergedPull(11, 's11')], landed: { [E]: ['s11', 's12'] }, pulls: epicPull } }), 'true');
 JS
 
+# --- Ветка без номера задачи, эпик копии, черновик ------------------------------------------------
+tf_run <<'JS'
+import { gitDouble, treeDouble, hostDouble, ownerDouble } from './flow-doubles.mjs';
+import { buildModel } from '../assets/checks/flow-model.mjs';
+import { measureStates } from '../assets/checks/task-flow-script.mjs';
+import { open as openSteps } from '../assets/task-flow/source/steps.mjs';
+import * as copy from '../assets/task-flow/measure/copy.mjs';
+import * as epic from '../assets/task-flow/measure/epic.mjs';
+
+const model = buildModel(new URL('../assets/task-flow/flow.js', import.meta.url).pathname);
+const out = (label, got, want) => console.log(`${label}|${got}|${want}`);
+const E = 'RT-10-epic';
+const PLAN = `# Эпик\n\n**Эпик:** RT-10 · **Ветка эпика:** \`${E}\`\n\n| # | Задача | Состояние |\n| --- | --- | --- |\n| 1 | RT-11 — задача | идёт |\n`;
+const GRILL = '# Разбор\n\n## Просьба владельца\n\n> сделай\n\n## Вопросы и ответы\n\n**Как?**\nТак.\n';
+const sources = ({ branch, files = {}, copyEpic = null, host = {} }) => ({
+    git: gitDouble({ branch }),
+    tree: treeDouble({ 'docs/plans/epic.md': PLAN, ...files }, copyEpic),
+    host: hostDouble(host),
+    owner: ownerDouble([]),
+    steps: openSteps(),
+    marks: { approval: () => null, step: () => null },
+});
+const liveEpic = { issues: { 10: { open: true, status: 'in-progress', epic: null } }, remote: [{ name: E, sha: 'e' }] };
+
+// SC-AK-1395 — ветка без номера читает эпик копии
+out('copy: SC-AK-1395 — ветка эпика читает эпик копии', String(copy.outsideEpic(sources({ branch: E, copyEpic: 10, host: liveEpic }))()), 'false');
+out('copy: SC-AK-1395 — выход 2 по эпику копии на ветке без номера', String(epic.declared(sources({ branch: 'main', copyEpic: 10, host: liveEpic }))()), 'true');
+
+// SC-AK-1396 — main со строкой назначения на влитый эпик — вне сценария
+const mergedEpic = { issues: { 10: { open: true, status: 'done', epic: null } }, pulls: { [E]: [{ number: 3, state: 'MERGED', base: 'main', reviewers: [] }] } };
+out('copy: SC-AK-1396 — назначение на влитый эпик — вне сценария', String(copy.outOfScenario(sources({ branch: 'main', copyEpic: 10, host: mergedEpic }))()), 'true');
+
+// SC-AK-1397 — эпик с закрытой карточкой считается отсутствующим
+const closedEpic = { issues: { 10: { open: false, status: 'done', epic: null } } };
+out('copy: SC-AK-1397 — эпик с закрытой карточкой отсутствует', String(copy.outsideEpic(sources({ branch: 'main', copyEpic: 10, host: closedEpic }))()), 'true');
+
+// SC-AK-1398 — черновик в состояниях 1–4
+const draft = sources({ branch: 'main', files: { 'docs/tasks/_draft-flow/grill.md': GRILL } });
+out('copy: SC-AK-1398 — черновик держит копию в сценарии', String(copy.outOfScenario(draft)()), 'false');
+const caps = {};
+for (const m of model.measures) caps[`measure.${m.entry}`] = m;
+const mods = {};
+for (const m of model.measures) mods[`measure.${m.entry}`] = await import(`../assets/task-flow/${m.file}`);
+const read = (src) => (name) => {
+    const [, entry, cap] = name.split('.');
+    const ports = Object.fromEntries(Object.keys(caps[`measure.${entry}`].caps[cap]).map((p) => [p, src[p]]));
+    return mods[`measure.${entry}`][cap](ports)({ words: model.words, expect: model.expect });
+};
+const measured = measureStates(model, read(draft));
+out('copy: SC-AK-1398 — черновик с разбором меряется состоянием 2', `${measured.index} ${measured.state}`, '2 эпик-заведён');
+
+// SC-AK-1399 — ветка без номера и без эпика — вне сценария
+out('copy: SC-AK-1399 — ветка без номера и без эпика — вне сценария', String(copy.outOfScenario(sources({ branch: 'feat/try' }))()), 'true');
+out('copy: SC-AK-1399 — ветка задачи в сценарии', String(copy.outOfScenario(sources({ branch: 'RT-11-task', host: { issues: { 11: { open: true, status: 'in-progress', epic: '10' } } } }))()), 'false');
+JS
+
 # --- SC-AK-1381 — память выполненного выхода на настоящем источнике переживает коммит ------------
 (
     cd "$TF_DIR" || exit 1

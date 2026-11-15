@@ -15,6 +15,7 @@
  *   local     [{ name, sha }] — the local branches
  *   host      what the hosting answers, see `hostDouble`
  *   owner     [text] — the messages the owner typed
+ *   copyEpic  the epic the assignment table gives the working copy, or null
  *
  * The double of `git` keeps the contract of the real source: the same names, the same answers for
  * the same history. The `steps` source is the real one: it parses text and reads nothing else. The
@@ -113,9 +114,10 @@ export function ownerDouble(messages = []) {
     return { messages: () => messages, said: (quote) => messages.some((text) => text.includes(quote)) };
 }
 
-/** The double of `source.tree` over written files. */
-export function treeDouble(files = {}) {
+/** The double of `source.tree` over written files, with the epic the copy is assigned. */
+export function treeDouble(files = {}, copyEpic = null) {
     return {
+        copyEpic: () => copyEpic,
         read: (path) => files[path] ?? null,
         exists: (path) => Object.keys(files).some((k) => inside(path, k)),
         list(dir) {
@@ -147,7 +149,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     const model = buildModel(join(KIT, 'task-flow', 'flow.js'));
     const sources = {
         git: gitDouble(spec),
-        tree: treeDouble(spec.tree),
+        tree: treeDouble(spec.tree, spec.copyEpic ?? null),
         marks: marksDouble(spec),
         steps: openSteps(),
         host: hostDouble(spec.host),

@@ -75,6 +75,9 @@ There is no interface: the description is read by the engine and by the executor
 - **Exit 11 is met by the branch of the next unblocked task of the epic, and with no such task.**
 - **Exit 12 is met when every task of the epic with a merged PR is marked merged in the plan.**
 - **Exit 13 is met when the tip of every task not deferred lies in the epic branch or the main branch, and the PR of the epic into the main branch exists.**
+- **A branch without a task number, the epic branch among them, takes the epic of the working copy from the assignment table.**
+- **The epic of the copy merged into the main branch or with its card closed counts as absent.**
+- **A branch without a task number, without a live epic of the copy and without a draft is outside the scenario, and a draft keeps it in states 1–4.**
 
 ## What is out of scope
 
