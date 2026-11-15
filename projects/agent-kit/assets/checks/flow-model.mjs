@@ -17,14 +17,22 @@
  * are read as text, not run: a measurer that reached for the disk would be refused before the
  * engine ever loads it.
  *
- * `state` lists the states in the order they are written; a title is unique. References between
+ * `state` lists the states in the order they are written; a title is unique. The exit of a state
+ * and the `when` of a release case are conditions over the measurers of the description — a
+ * reference or `all`, `any`, `not` over them, see `flow-condition.mjs`. `words`, `expect` and the
+ * order of the release cases are checked by `flow-data.mjs`; `release` comes out as a list in its
+ * order. References between
  * components form no cycle. Usage: node flow-model.mjs <flow.js> — prints the model as JSON, or
- * `flow model: <what>` and exits 1.
+ * `flow model: <what>` and exits 1. With `--exit <state> <results.json>` it prints `true` or
+ * `false` for the exit of that state, the results mapping `measure.<entry>.<capability>` to a
+ * boolean; a result that is absent or not `true` counts as unmet.
  */
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
+import { evaluateCondition, validateCondition } from './flow-condition.mjs';
+import { checkExpect, checkWords, releaseOrder } from './flow-data.mjs';
 import { Call, FlowSyntaxError, Ref, SECTIONS, parse } from './flow-syntax.mjs';
 
 /** A name of an entry, a capability or a port. */
@@ -178,34 +186,57 @@ export function buildModel(path) {
     };
     for (const node of edges.keys()) visit(node, []);
 
+    const measures = new Map(
+        [...components.values()].filter((c) => c.section === 'measure').map((c) => [`measure.${c.entry}`, new Set(Object.keys(c.caps))]),
+    );
     const titles = new Set();
     const states = Object.entries(description.state).map(([key, s]) => {
         if (s === null || typeof s !== 'object' || Array.isArray(s)) fail(`state.${key}: a state is an object`);
         if (typeof s.title !== 'string' || s.title === '') fail(`state.${key}: the title is a string`);
         if (titles.has(s.title)) fail(`state.${key}: the title «${s.title}» repeats`);
         titles.add(s.title);
+        if (!('exit' in s)) fail(`state.${key}: the exit is missing — a measurer reference or a condition`);
+        validateCondition(s.exit, measures, `state.${key}.exit`, fail);
         return { key, ...s };
     });
+
+    for (const [key, r] of Object.entries(description.release)) {
+        if (r === null || typeof r !== 'object' || Array.isArray(r) || r instanceof Ref || r instanceof Call) {
+            fail(`release.${key}: a release case is an object`);
+        }
+        if (!('when' in r)) fail(`release.${key}: the when is missing — a measurer reference or a condition`);
+        validateCondition(r.when, measures, `release.${key}.when`, fail);
+    }
+    const release = releaseOrder(description.release, fail);
+    checkWords(description.words, fail);
+    checkExpect(description.expect, fail);
 
     return {
         sources: [...components.values()].filter((c) => c.section === 'source'),
         measures: [...components.values()].filter((c) => c.section === 'measure'),
         states,
-        release: description.release,
+        release,
         words: description.words,
         expect: description.expect,
     };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-    const file = process.argv[2];
-    if (!file) {
-        console.error('usage: node flow-model.mjs <flow.js>');
+    const [file, flag, key, results] = process.argv.slice(2);
+    if (!file || (flag !== undefined && (flag !== '--exit' || !key || !results))) {
+        console.error('usage: node flow-model.mjs <flow.js> [--exit <state> <results.json>]');
         process.exit(2);
     }
     try {
         const model = buildModel(file);
-        console.log(JSON.stringify(model));
+        if (flag === undefined) {
+            console.log(JSON.stringify(model));
+            process.exit(0);
+        }
+        const state = model.states.find((s) => s.key === key);
+        if (!state) fail(`no state «${key}»`);
+        const values = JSON.parse(readFileSync(results, 'utf8'));
+        console.log(String(evaluateCondition(state.exit, (name) => values[name])));
     } catch (error) {
         if (error instanceof FlowSyntaxError) {
             console.log(`flow syntax: ${error.message}`);

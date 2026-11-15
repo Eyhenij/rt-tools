@@ -46,7 +46,13 @@ There is no interface: the description is read by the engine and by the executor
 - **A missing capability is an error, never a substitute.**
 - **The references between components form no cycle.**
 - **The states keep the order of the description, and a title is unique.**
-- **A file of `measure/` imports only its neighbours and reaches no data past the ports.**
+- **A file of the measurer directory imports only its neighbours and reaches no data past the ports.**
+- **The exit of a state and the `when` of a release case are a condition over the measurers of the description.**
+- **A condition object has exactly one key — `all`, `any` or `not` — and a reference in it names a measurer capability of the description.**
+- **A condition is met by the results of the measurers, and an absent result counts as unmet.**
+- **The literals of `words` are lists of non-empty strings under known keys, and `nudge` is a pattern that compiles.**
+- **A form of the expected result is a pattern and a way of comparison of `exit`, `line`, `regex` or `number`.**
+- **The release cases are asked in the order of the field `order`, and two cases never share one.**
 
 ## What is out of scope
 
@@ -97,8 +103,14 @@ Not applicable: one description is read at a time.
 - **Nothing after the closing semicolon.** A tail is where code would be hidden.
 - **Ports equal to the signature, without defaults.** A port the factory does not take is a wire to
   nowhere, and a default hides a missing wire.
-- **The ban covers the whole `measure/` directory.** A neighbour file of a measurer would otherwise
+- **The ban covers the whole measurer directory.** A neighbour file of a measurer would otherwise
   reach the disk for it.
+
+- **A combination of facts is a line of the description, a new fact is a new measurer.** A condition
+  written in code would hide the exit of a state from the reader of the description.
+
+- **A word, a command, a menu option and a form are data.** A new one is a line of the description,
+  and no guard is edited for it.
 
 ## Open questions
 

@@ -269,5 +269,163 @@ d="$(fl_base)"
 printf 'export const p = () => globalThis["pro" + "cess"];\n' >> "$d/measure/util.mjs"
 report "model: SC-AK-1534 — globalThis отказан" "$(fl_model_refused_with "$d" '«globalThis» is not allowed')" 'да'
 
+# --- Условия: `all`, `any`, `not` над измерителями ------------------------------------------------
+
+# Дерево с тремя возможностями измерителя `owner`; выход `taken` и случай отпуска `stop` — из
+# аргументов: $1 — выход, $2 — when.
+fl_cond() {
+    local dir
+    dir="$(fl_base)"
+    printf 'export const a = () => () => true;\nexport const b = () => () => true;\nexport const c = () => () => true;\n' > "$dir/measure/owner.mjs"
+    cat > "$dir/flow.js" <<FLOW
+({
+  source: { git: { open: {} }, marks: { open: {} } },
+  measure: { plan: { approved: { git: source.git, marks: source.marks } }, owner: { a: {}, b: {}, c: {} } },
+  state: { taken: { title: 'задача-взята', exit: $1 } },
+  release: { stop: { when: ${2:-measure.owner.a}, order: 1 } },
+  words: {},
+  expect: {},
+});
+FLOW
+    printf '%s' "$dir"
+}
+
+# Значение выхода `taken` при результатах измерителей: $1 — дерево, $2 — JSON результатов.
+fl_exit() {
+    printf '%s' "$2" > "$1/results.json"
+    node "$CHECKS/flow-model.mjs" "$1/flow.js" --exit taken "$1/results.json" 2>&1
+}
+
+# --- SC-AK-1510 — `all` выполнено, когда выполнены все части ------------------------------------
+d="$(fl_cond '{ all: [measure.owner.a, measure.owner.b] }')"
+report "cond: SC-AK-1510 — all при всех частях" "$(fl_exit "$d" '{"measure.owner.a":true,"measure.owner.b":true}')" 'true'
+report "cond: SC-AK-1510 — all при одной ложной части" "$(fl_exit "$d" '{"measure.owner.a":true,"measure.owner.b":false}')" 'false'
+
+# --- SC-AK-1511 — `any` выполнено, когда выполнена одна часть -----------------------------------
+d="$(fl_cond '{ any: [measure.owner.a, measure.owner.b] }')"
+report "cond: SC-AK-1511 — any при одной части" "$(fl_exit "$d" '{"measure.owner.a":false,"measure.owner.b":true}')" 'true'
+report "cond: SC-AK-1511 — any без частей" "$(fl_exit "$d" '{"measure.owner.a":false,"measure.owner.b":false}')" 'false'
+
+# --- SC-AK-1512 — `not` обращает измеритель -----------------------------------------------------
+d="$(fl_cond '{ not: measure.owner.a }')"
+report "cond: SC-AK-1512 — not над ложным" "$(fl_exit "$d" '{"measure.owner.a":false}')" 'true'
+report "cond: SC-AK-1512 — not над истинным" "$(fl_exit "$d" '{"measure.owner.a":true}')" 'false'
+
+# --- SC-AK-1513 — вложенные условия разбираются и меряются --------------------------------------
+d="$(fl_cond '{ all: [measure.owner.a, { any: [measure.owner.b, { not: measure.owner.c }] }] }')"
+report "cond: SC-AK-1513 — вложенное через not" "$(fl_exit "$d" '{"measure.owner.a":true,"measure.owner.b":false,"measure.owner.c":false}')" 'true'
+report "cond: SC-AK-1513 — вложенное ложно" "$(fl_exit "$d" '{"measure.owner.a":true,"measure.owner.b":false,"measure.owner.c":true}')" 'false'
+report "cond: SC-AK-1513 — в модели вложенность сохранена" \
+    "$(fl_model_field "$d" 'JSON.stringify(m.states[0].exit)')" \
+    '{"all":[{"ref":"measure.owner.a"},{"any":[{"ref":"measure.owner.b"},{"not":{"ref":"measure.owner.c"}}]}]}'
+
+# --- SC-AK-1514 — условие над неизвестным измерителем отказано ----------------------------------
+d="$(fl_cond '{ all: [measure.owner.a, measure.owner.nothing] }')"
+report "cond: SC-AK-1514 — неизвестная возможность в выходе" \
+    "$(fl_model_refused_with "$d" 'state.taken.exit.all[1]: «measure.owner.nothing» names no measurer')" 'да'
+d="$(fl_cond 'measure.owner.a' '{ not: measure.judge.said }')"
+report "cond: SC-AK-1514 — неизвестный измеритель в случае отпуска" \
+    "$(fl_model_refused_with "$d" 'release.stop.when.not: «measure.judge.said» names no measurer')" 'да'
+d="$(fl_cond '{ all: [measure.owner.a], any: [measure.owner.b] }')"
+report "cond: SC-AK-1514 — два ключа в одном условии" \
+    "$(fl_model_refused_with "$d" 'exactly one key of all, any, not')" 'да'
+d="$(fl_cond '{ all: [source.git] }')"
+report "cond: SC-AK-1514 — источник вместо измерителя" \
+    "$(fl_model_refused_with "$d" '«source.git» is not a measurer capability')" 'да'
+
+# --- SC-AK-1515 — выход состояния, собранный из условия без JS, меряется движком -----------------
+d="$(fl_cond '{ any: [measure.plan.approved, { not: measure.owner.a }] }')"
+report "cond: SC-AK-1515 — выход из условия меряется по результатам" \
+    "$(fl_exit "$d" '{"measure.plan.approved":false,"measure.owner.a":false}')" 'true'
+report "cond: SC-AK-1515 — отсутствующий результат не считается выполненным" \
+    "$(fl_exit "$d" '{"measure.owner.a":true}')" 'false'
+
+# --- Данные описания: слова, формы ожидаемого, порядок случаев отпуска ---------------------------
+
+# Дерево с секциями words, expect и release из аргументов: $1 — words, $2 — expect, $3 — release.
+fl_data() {
+    local dir words expect release
+    dir="$(fl_base)"
+    words="${1:-"{}"}"
+    expect="${2:-"{}"}"
+    release="${3:-"{}"}"
+    cat > "$dir/flow.js" <<FLOW
+({
+  source: { git: { open: {} }, marks: { open: {} } },
+  measure: { plan: { approved: { git: source.git, marks: source.marks } } },
+  state: { taken: { title: 'задача-взята', exit: measure.plan.approved } },
+  release: $release,
+  words: $words,
+  expect: $expect,
+});
+FLOW
+    printf '%s' "$dir"
+}
+
+# Вызов читателя данных над моделью дерева: $1 — дерево, $2 — выражение над `m` и модулем `d`.
+fl_data_call() {
+    node --input-type=module -e "
+import { buildModel } from '$CHECKS/flow-model.mjs';
+import * as d from '$CHECKS/flow-data.mjs';
+const m = buildModel('$1/flow.js');
+console.log(JSON.stringify($2));
+" 2>&1
+}
+
+# Формы ожидаемого шага плана — текст описания, обратные косые удвоены для строки описания.
+FORMS="$(cat <<'JS'
+{ exit: { pattern: '^exit (\\d+)$', compare: 'exit' }, line: { pattern: '^`(.*)`$', compare: 'line' }, regex: { pattern: '^/(.*)/$', compare: 'regex' }, number: { pattern: '^(=|>=|<=) ?(-?\\d+)$', compare: 'number' } }
+JS
+)"
+WRITE_WORDS="{ write: ['git commit', 'git push'] }"
+
+# --- SC-AK-1516 — исключения слов остановки берутся из `words` ----------------------------------
+d="$(fl_data "{ stop: ['стоп', 'хватит'], stopExcept: ['не стоп'] }")"
+report "data: SC-AK-1516 — слово остановки из words" "$(fl_data_call "$d" "d.saysStop('Стоп, дальше не надо', m.words)")" 'true'
+report "data: SC-AK-1516 — исключение из words снимает остановку" "$(fl_data_call "$d" "d.saysStop('не стоп, работай', m.words)")" 'false'
+report "data: SC-AK-1516 — слово внутри другого слова не считается" "$(fl_data_call "$d" "d.saysStop('стопка бумаги', m.words)")" 'false'
+d="$(fl_data "{ stop: ['стоп'], stopExcept: ['не стоп'] }")"
+report "data: SC-AK-1516 — другое описание — другие слова" "$(fl_data_call "$d" "d.saysStop('хватит', m.words)")" 'false'
+d="$(fl_data "{ stopExcept: 'не стоп' }")"
+report "data: SC-AK-1516 — исключения не списком отказаны" "$(fl_model_refused_with "$d" 'words.stopExcept: a list of non-empty strings')" 'да'
+d="$(fl_data "{ stopWords: ['стоп'] }")"
+report "data: SC-AK-1516 — чужой ключ words отказан" "$(fl_model_refused_with "$d" 'words.stopWords: not a word list')" 'да'
+
+# --- SC-AK-1517 — команды записи случая 3 берутся из `words` ------------------------------------
+d="$(fl_data "$WRITE_WORDS")"
+report "data: SC-AK-1517 — команда записи из words" "$(fl_data_call "$d" "d.isWriteCommand('git add -A && git commit -q -F msg', m.words)")" 'true'
+report "data: SC-AK-1517 — чтение не команда записи" "$(fl_data_call "$d" "d.isWriteCommand('git log --oneline | head', m.words)")" 'false'
+report "data: SC-AK-1517 — префикс другого слова не считается" "$(fl_data_call "$d" "d.isWriteCommand('git pushd', m.words)")" 'false'
+d="$(fl_data "{ write: ['git status', ''] }")"
+report "data: SC-AK-1517 — пустая команда отказана" "$(fl_model_refused_with "$d" 'words.write: a list of non-empty strings')" 'да'
+
+# --- SC-AK-1518 — варианты меню отказа берутся из `words` ---------------------------------------
+d="$(fl_data "{ menu: ['отложить RT-N', 'сделаю сам', 'стоп'], nudge: '(продолжай|что дальше)' }")"
+report "data: SC-AK-1518 — меню из words" "$(fl_model_field "$d" 'JSON.stringify(m.words.menu)')" '["отложить RT-N","сделаю сам","стоп"]'
+report "data: SC-AK-1518 — образец подталкивания из words" "$(fl_data_call "$d" "new RegExp(m.words.nudge, 'iu').test('Что дальше?')")" 'true'
+d="$(fl_data "{ menu: ['стоп', 3] }")"
+report "data: SC-AK-1518 — вариант меню не строка отказан" "$(fl_model_refused_with "$d" 'words.menu: a list of non-empty strings')" 'да'
+d="$(fl_data "{ nudge: '(продолжай' }")"
+report "data: SC-AK-1518 — образец, который не собирается, отказан" "$(fl_model_refused_with "$d" 'words.nudge: the pattern does not compile')" 'да'
+
+# --- SC-AK-1519 — способ сравнения формы ожидаемого — поле `compare` ----------------------------
+d="$(fl_data '' "$FORMS")"
+report "data: SC-AK-1519 — exit по коду" "$(fl_data_call "$d" "d.compareExpected(m.expect, 'exit 1', 1, 'что угодно')")" '{"form":"exit","matched":true}'
+report "data: SC-AK-1519 — текст по последней строке" "$(fl_data_call "$d" "d.compareExpected(m.expect, '\`cond: missing 0 of 6\`', 0, 'a\ncond: missing 0 of 6\n\n')")" '{"form":"line","matched":true}'
+report "data: SC-AK-1519 — выражение по последней строке" "$(fl_data_call "$d" "d.compareExpected(m.expect, '/^[0-9]+ ok\$/', 0, '47 ok')")" '{"form":"regex","matched":true}'
+report "data: SC-AK-1519 — число со сравнением" "$(fl_data_call "$d" "d.compareExpected(m.expect, '>= 13', 0, '12')")" '{"form":"number","matched":false}'
+report "data: SC-AK-1519 — ненулевой код проваливает текст" "$(fl_data_call "$d" "d.compareExpected(m.expect, '\`ok\`', 2, 'ok')")" '{"form":"line","matched":false}'
+report "data: SC-AK-1519 — нераспознанная форма" "$(fl_data_call "$d" "d.compareExpected(m.expect, 'примерно 13', 0, '13')")" 'null'
+d="$(fl_data '' "{ exit: { pattern: '^exit', compare: 'code' } }")"
+report "data: SC-AK-1519 — неизвестный способ сравнения отказан" "$(fl_model_refused_with "$d" 'expect.exit: the compare «code» is not one of exit, line, regex, number')" 'да'
+
+# --- SC-AK-1520 — порядок случаев отпуска — поле `order`, повтор отказан ------------------------
+d="$(fl_data '' '' "{ late: { when: measure.plan.approved, order: 3 }, early: { when: measure.plan.approved, order: 1 } }")"
+report "data: SC-AK-1520 — случаи идут по order" "$(fl_model_field "$d" "m.release.map((r) => r.key).join(',')")" 'early,late'
+d="$(fl_data '' '' "{ a: { when: measure.plan.approved, order: 2 }, b: { when: measure.plan.approved, order: 2 } }")"
+report "data: SC-AK-1520 — повтор order отказан" "$(fl_model_refused_with "$d" 'release.b: the order 2 repeats — release.a has it')" 'да'
+d="$(fl_data '' '' "{ a: { when: measure.plan.approved, order: 1.5 } }")"
+report "data: SC-AK-1520 — дробный order отказан" "$(fl_model_refused_with "$d" 'release.a: the order is an integer from 1')" 'да'
+
 rm -rf "$FL_DIR"
 suite_result "язык описания task flow"

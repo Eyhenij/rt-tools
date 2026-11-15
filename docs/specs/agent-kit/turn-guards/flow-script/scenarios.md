@@ -83,11 +83,11 @@ Then it refuses and names the entry
 
 Covered: `projects/agent-kit/tests/flow-language.test.sh`.
 
-### SC-AK-1481 — `measure.x` is the file `measure/x.mjs`, a capability is its export
+### SC-AK-1481 — `measure.x` is the file x.mjs of the measurer directory, a capability is its export
 
 Given a measurer entry `plan` with the capability `approved`
 When the model is built
-Then the component points at `measure/plan.mjs` and holds the capability `approved`
+Then the component points at the file plan.mjs of the measurer directory and holds the capability `approved`
 
 Covered: `projects/agent-kit/tests/flow-language.test.sh`.
 
@@ -157,7 +157,7 @@ Covered: `projects/agent-kit/tests/flow-language.test.sh`.
 
 ### SC-AK-1508 — `process` in a measurer is refused
 
-Given a measurer that reads `process.env`
+Given a measurer that reads the environment through `process`
 When the model is built
 Then it refuses and names `process`
 
@@ -173,13 +173,13 @@ Covered: `projects/agent-kit/tests/flow-language.test.sh`.
 
 ### SC-AK-1533 — a neighbour file of a measurer importing `node:fs` is refused
 
-Given a file of `measure/` that the measurer imports, and that imports `node:fs`
+Given a file of the measurer directory that the measurer imports, and that imports `node:fs`
 When the model is built
 Then it refuses and names the neighbour file
 
 Covered: `projects/agent-kit/tests/flow-language.test.sh`.
 
-### SC-AK-1534 — `globalThis` in any file of `measure/` is refused
+### SC-AK-1534 — `globalThis` in any file of the measurer directory is refused
 
 Given a neighbour file of a measurer that reaches `globalThis`
 When the model is built
@@ -192,5 +192,93 @@ Covered: `projects/agent-kit/tests/flow-language.test.sh`.
 Given a laid-out description whose first line is the layout header as a `//` comment
 When the parser reads it
 Then the header is skipped and the model holds only the description
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1510 — `all` is met when every part is met
+
+Given a state whose exit is `all` over two measurers
+When the exit is measured with both results true and with one false
+Then it is met in the first case and unmet in the second
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1511 — `any` is met when one part is met
+
+Given a state whose exit is `any` over two measurers
+When the exit is measured with one result true and with none
+Then it is met in the first case and unmet in the second
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1512 — `not` inverts a measurer
+
+Given a state whose exit is `not` over a measurer
+When the exit is measured with the result false and with it true
+Then it is met in the first case and unmet in the second
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1513 — nested conditions are parsed and measured
+
+Given a state whose exit is `all` over a measurer and an `any` holding a `not`
+When the model is built and the exit is measured
+Then the model keeps the nesting, and the exit follows every level
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1514 — a condition over an unknown measurer is refused
+
+Given an exit naming a capability the measurer lacks, a `when` naming an absent measurer, an object of two keys or a reference to a source
+When the model is built
+Then it refuses and names the place of the condition and the reason
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1515 — a state exit built from a condition without code is measured
+
+Given a state whose exit is `any` over two measurers, one under `not`
+When the exit is measured by the results, once with a result absent
+Then it is met by the results, and an absent result counts as unmet
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1516 — the exceptions of the stop words are taken from `words`
+
+Given a description whose `words` name the stop words and their exceptions
+When a message of the owner is judged, and a second description names other words
+Then a stop word says stop, an exception lifts it, a word inside another word does not count, and a list that is not a list or an unknown key is refused
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1517 — the write commands of case 3 are taken from `words`
+
+Given a description whose `words.write` names two commands
+When a compound command, a read and a longer word are judged
+Then the compound command is a write, the read and the longer word are not, and an empty entry is refused
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1518 — the options of the refusal menu are taken from `words`
+
+Given a description whose `words` name the menu and the nudge pattern
+When the model is built
+Then the model holds the menu in its order and the pattern matches, while an option that is not a string and a pattern that does not compile are refused
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1519 — the way a form of the expected result is compared is the field `compare`
+
+Given a description with the forms `exit`, `line`, `regex` and `number`
+When runs are compared with expected texts of each form
+Then each form compares by its way, a non-zero code fails a text, an unknown text has no form, and an unknown way is refused
+
+Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1520 — the order of the release cases is the field `order`, and a repeat is refused
+
+Given two release cases written in reverse order, two with one order, and one with a fraction
+When the model is built
+Then the cases come by their order, the repeat names both cases, and the fraction is refused
 
 Covered: `projects/agent-kit/tests/flow-language.test.sh`.
