@@ -36,6 +36,7 @@ There is no interface: the guard answers the agent with a refusal or stays silen
 - **The description, its measurers and sources and the engine are edited only in a task whose approved plan names their path in a footprint row marked «(правится)».**
 - **The owner's last word is a message the owner typed or the options the owner chose in a menu.**
 - **The guard lets a call through when the engine is absent, fails or prints nothing.**
+- **A tree override that does not build does not lift the hooks: they judge by the package description.**
 
 ## What is out of scope
 
@@ -97,3 +98,5 @@ None.
 
 - 2026-11-15 — the subdomain was started with the guard of the progress, the epic plan, the marks
   and the description.
+- 2026-11-15 — the engine merges the tree override, and an override that does not build no longer
+  lifts the hooks: they judge by the package description.

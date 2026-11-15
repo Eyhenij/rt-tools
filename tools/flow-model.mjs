@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/flow-model.mjs · 6dba1f2a69d3 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/flow-model.mjs · 746368022037 · правится надстройкой, не здесь
 /**
  * The model of the task flow description: what the parsed description means, checked against the
  * files it names, before any of them is run.
@@ -22,18 +22,25 @@
  * and the `when` of a release case are conditions over the measurers of the description — a
  * reference or `all`, `any`, `not` over them, see `flow-condition.mjs`. `words`, `expect` and the
  * order of the release cases are checked by `flow-data.mjs`; `release` comes out as a list in its
- * order. References between
- * components form no cycle. Usage: node flow-model.mjs <flow.js> — prints the model as JSON, or
+ * order. References between components form no cycle.
+ *
+ * A tree adds its own through an override in the same language, merged key by key before the model
+ * is built — see `flow-override.mjs`. A component the override names lies next to the override,
+ * its file path is relative to the description, and the same contract holds for it. The model
+ * names what the override changed in `changes`.
+ *
+ * Usage: node flow-model.mjs <flow.js> [--override <flow.js>] — prints the model as JSON, or
  * `flow model: <what>` and exits 1. With `--exit <state> <results.json>` it prints `true` or
  * `false` for the exit of that state, the results mapping `measure.<entry>.<capability>` to a
  * boolean; a result that is absent or not `true` counts as unmet.
  */
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, relative } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 import { evaluateCondition, validateCondition } from './flow-condition.mjs';
 import { checkExpect, checkWords, releaseOrder } from './flow-data.mjs';
+import { mergeOverride } from './flow-override.mjs';
 import { Call, FlowSyntaxError, Ref, SECTIONS, parse } from './flow-syntax.mjs';
 
 /** A name of an entry, a capability or a port. */
@@ -66,7 +73,7 @@ function code(text) {
  * gives a and b; anything else — a default, a renaming, a nested pattern, a bare parameter — is
  * refused, naming the component.
  */
-function signatureOf(text, cap, where) {
+export function signatureOf(text, cap, where) {
     const body = code(text);
     const fn = new RegExp(`export\\s+(?:async\\s+)?function\\s+${cap}\\s*\\(([^)]*)\\)`).exec(body);
     const arrow = new RegExp(`export\\s+const\\s+${cap}\\s*=\\s*(?:async\\s*)?\\(([^)]*)\\)\\s*=>`).exec(body);
@@ -111,10 +118,20 @@ function target(ref, components, where) {
     return component;
 }
 
-/** Builds the model of a description file. Throws `FlowModelError` or `FlowSyntaxError`. */
-export function buildModel(path) {
-    const description = parse(readFileSync(path, 'utf8'));
+/**
+ * Builds the model of a description file, merged with the tree override when `override` names one.
+ * Throws `FlowModelError` or `FlowSyntaxError`.
+ */
+export function buildModel(path, { override } = {}) {
     const base = dirname(path);
+    let description = parse(readFileSync(path, 'utf8'));
+    let origins = new Map();
+    let changes = [];
+    if (override) {
+        if (!existsSync(override)) fail(`the override ${override} is absent`);
+        ({ description, origins, changes } = mergeOverride(description, parse(readFileSync(override, 'utf8')), dirname(override), fail));
+        checkMeasureDir(join(dirname(override), 'measure'));
+    }
 
     const keys = Object.keys(description);
     const extra = keys.filter((k) => !SECTIONS.includes(k));
@@ -137,14 +154,15 @@ export function buildModel(path) {
     const components = new Map();
     for (const section of COMPONENT_SECTIONS) {
         for (const [entry, caps] of Object.entries(description[section])) {
-            const where = `${section}.${entry}`;
-            const file = join(base, section, `${entry}.mjs`);
+            const origin = origins.get(`${section}.${entry}`);
+            const where = origin ? `the override's ${section}.${entry}` : `${section}.${entry}`;
+            const file = join(origin ?? base, section, `${entry}.mjs`);
             if (caps === null || typeof caps !== 'object' || Array.isArray(caps) || caps instanceof Ref || caps instanceof Call) {
                 fail(`${where}: an entry is an object of capabilities`);
             }
             if (!existsSync(file)) fail(`${where}: the file ${section}/${entry}.mjs is absent`);
             const text = readFileSync(file, 'utf8');
-            const component = { section, entry, file: `${section}/${entry}.mjs`, caps: {} };
+            const component = { section, entry, file: origin ? relative(base, file) : `${section}/${entry}.mjs`, caps: {} };
             for (const [cap, ports] of Object.entries(caps)) {
                 if (!NAME.test(cap)) fail(`${where}: the name «${cap}» is outside [A-Za-z][A-Za-z0-9]*`);
                 if (ports === null || typeof ports !== 'object' || Array.isArray(ports) || ports instanceof Ref || ports instanceof Call) {
@@ -159,7 +177,7 @@ export function buildModel(path) {
                 }
                 component.caps[cap] = ports;
             }
-            components.set(where, component);
+            components.set(`${section}.${entry}`, component);
         }
     }
 
@@ -219,17 +237,21 @@ export function buildModel(path) {
         release,
         words: description.words,
         expect: description.expect,
+        changes,
     };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-    const [file, flag, key, results] = process.argv.slice(2);
-    if (!file || (flag !== undefined && (flag !== '--exit' || !key || !results))) {
-        console.error('usage: node flow-model.mjs <flow.js> [--exit <state> <results.json>]');
+    const args = process.argv.slice(2);
+    const at = args.indexOf('--override');
+    const override = at >= 0 ? args.splice(at, 2)[1] : undefined;
+    const [file, flag, key, results] = args;
+    if (!file || (at >= 0 && !override) || (flag !== undefined && (flag !== '--exit' || !key || !results))) {
+        console.error('usage: node flow-model.mjs <flow.js> [--override <flow.js>] [--exit <state> <results.json>]');
         process.exit(2);
     }
     try {
-        const model = buildModel(file);
+        const model = buildModel(file, { override });
         if (flag === undefined) {
             console.log(JSON.stringify(model));
             process.exit(0);

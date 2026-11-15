@@ -23,6 +23,10 @@
  *                                      shell command from stdin and prints the reason of a refusal,
  *                                      or nothing — the hook `flow-step-guard.sh` calls it
  *
+ * The tree override `.claude/rt-kit/overrides/task-flow/flow.js` is merged with the description
+ * key by key when it lies in the tree and no `--flow` is named; `--override <path>` names another
+ * one. `measure` prints every key the override removed, with its reason.
+ *
  * A description that does not build is named with its reason, and the engine exits 1: a scenario
  * read from a broken description would measure what nobody wrote.
  */
@@ -36,6 +40,7 @@ import { judgeCall } from './flow-guard.mjs';
 import { callOf, guardContext } from './flow-guard-run.mjs';
 import { isWriteCommand, saysStop } from './flow-data.mjs';
 import { FlowModelError, buildModel } from './flow-model.mjs';
+import { overridePath, removedLines } from './flow-override.mjs';
 import { planProblems, readRecord, runPlanRed } from './flow-plan.mjs';
 import { runStepCommand } from './flow-step.mjs';
 import { FlowSyntaxError } from './flow-syntax.mjs';
@@ -214,11 +219,15 @@ async function runVerdict(model, base) {
 }
 
 const COMMANDS = ['states', 'measure', 'step', 'plan-check', 'plan-red', 'guard', 'verdict'];
+/** The commands the hooks call: they judge by the package description when the override breaks. */
+const HOOK_COMMANDS = ['guard', 'verdict'];
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
     const args = process.argv.slice(2);
     const at = args.indexOf('--flow');
     const given = at >= 0 ? args.splice(at, 2)[1] : undefined;
+    const atOverride = args.indexOf('--override');
+    const overrideGiven = atOverride >= 0 ? args.splice(atOverride, 2)[1] : undefined;
     const json = args.includes('--json');
     const [command, target] = args.filter((a) => a !== '--json');
     if (!COMMANDS.includes(command) || ((command === 'step' || command === 'plan-check') && !target)) {
@@ -227,7 +236,17 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     }
     try {
         const path = flowPath(given);
-        const model = buildModel(path);
+        const override = overridePath(overrideGiven, given);
+        let model;
+        try {
+            model = buildModel(path, { override });
+        } catch (error) {
+            // A broken override does not lift the hooks: the guard protects the override itself, and
+            // the exit check must not release a turn because a tree file does not build.
+            if (!override || !HOOK_COMMANDS.includes(command)) throw error;
+            console.error(`task-flow-script: the override does not build, the hook judges by the package description — ${error.message}`);
+            model = buildModel(path);
+        }
         if (command === 'states') console.log(stateLines(model).join('\n'));
         else if (command === 'step') {
             const source = await openSources(model, dirname(path));
@@ -248,7 +267,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
             process.exit(runPlanRed(sources, model, readRecord(process.env.RT_FLOW_TRANSCRIPT)));
         } else {
             const result = measureStates(model, await openReaders(model, dirname(path)));
-            console.log(json ? JSON.stringify(measureJson(model, result)) : measureLines(model, result).join('\n'));
+            console.log(json ? JSON.stringify(measureJson(model, result)) : [...measureLines(model, result), ...removedLines(model)].join('\n'));
         }
     } catch (error) {
         if (error instanceof FlowSyntaxError) {
