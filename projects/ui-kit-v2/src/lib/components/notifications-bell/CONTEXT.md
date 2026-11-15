@@ -8,7 +8,7 @@
 
 | вход          | тип       | умолчание |
 | ------------- | --------- | --------- |
-| `icon`        | `string`  | `'bell'`  |
+| `icon`        | `IRtIcon.Name` | `'bell'`  |
 | `unread`      | `boolean` | `false`   |
 | `ariaLabel`   | `string`  | `''`      |
 | `unreadLabel` | `string`  | `''`      |

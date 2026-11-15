@@ -12,12 +12,16 @@ import {
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
+import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 
 const BEM_BLOCK: string = 'rt-notifications-bell';
 
-const DEFAULT_ICON: string = 'bell';
+const DEFAULT_ICON: IRtIcon.Name = 'bell';
+
+/** Что принимает вход значка: имя из набора кита или пустая строка атрибута без значения. */
+type TRtBellIconInput = IRtIcon.Name | '';
 
 /**
  * Колокольчик в шапке: открывает ленту событий и показывает точкой, что
@@ -55,10 +59,9 @@ export class RtNotificationsBellComponent {
      * с колокольчиком — например кнопка помощника со значком `sparkle`. Пустое имя (атрибут без
      * значения) возвращает колокольчик: пустой значок рисовал бы пустую рамку.
      */
-    public readonly icon: InputSignalWithTransform<string, string | null | undefined> = input<string, string | null | undefined>(
-        DEFAULT_ICON,
-        { transform: (name: string | null | undefined): string => name || DEFAULT_ICON }
-    );
+    public readonly icon: InputSignalWithTransform<IRtIcon.Name, TRtBellIconInput> = input<IRtIcon.Name, TRtBellIconInput>(DEFAULT_ICON, {
+        transform: (name: TRtBellIconInput): IRtIcon.Name => name || DEFAULT_ICON,
+    });
 
     public readonly ariaLabel: InputSignal<string> = input<string>('');
 
