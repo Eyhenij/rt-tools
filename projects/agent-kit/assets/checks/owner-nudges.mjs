@@ -29,9 +29,16 @@ import { homedir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
-import { wordOf } from './flow-guard-run.mjs';
 import { buildModel } from './flow-model.mjs';
 import { readRecord } from './flow-plan.mjs';
+
+// The owner's word is read by the source of the description; it lies next to this file once laid
+// out, and one directory up in the package.
+const HERE = dirname(fileURLToPath(import.meta.url));
+const OWNER_SOURCE = [join(HERE, 'task-flow', 'source', 'owner.mjs'), join(HERE, '..', 'task-flow', 'source', 'owner.mjs')].find((p) =>
+    existsSync(p),
+);
+const { wordOf } = await import(pathToFileURL(OWNER_SOURCE).href);
 
 const DAY = 24 * 60 * 60 * 1000;
 
