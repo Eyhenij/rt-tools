@@ -1,0 +1,13 @@
+{
+  "case": "SC-AK-1446",
+  "kind": "a report instead of the next step",
+  "record": "31cb79b9 255",
+  "task": 101,
+  "turns": [
+    { "role": "owner", "at": "2026-10-21T14:00:00Z", "owner": "<nudge>" },
+    { "role": "agent", "at": "2026-10-21T14:02:00Z", "call": "Read", "file": "docs/tasks/RT-101-replay-task/progress.md", "code": 0 },
+    { "role": "agent", "at": "2026-10-21T14:05:00Z", "call": "Edit", "file": "projects/agent-kit/assets/rules/task-flow.md", "code": 0 },
+    { "role": "agent", "at": "2026-10-21T14:06:00Z", "say": "Here is what is done so far: the rule text is rewritten." }
+  ],
+  "next": { "owner": "<nudge>" }
+}

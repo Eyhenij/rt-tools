@@ -1,0 +1,18 @@
+{
+  "case": "SC-AK-1461",
+  "kind": "RT-3276 live turn: a promise with no run",
+  "record": "RT-3276 live check",
+  "task": 101,
+  "turns": [
+    { "role": "owner", "at": "2026-11-14T17:40:00Z", "owner": "<order:RT-101>" },
+    {
+      "role": "agent",
+      "at": "2026-11-14T17:43:00Z",
+      "call": "Edit",
+      "file": "projects/agent-kit/tests/turn-exit-guard.test.sh",
+      "code": 0
+    },
+    { "role": "agent", "at": "2026-11-14T17:44:00Z", "say": "Now I will run the suite and commit the step." }
+  ],
+  "next": { "owner": "<nudge>" }
+}

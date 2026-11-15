@@ -1,0 +1,13 @@
+{
+  "case": "SC-AK-1448",
+  "kind": "waiting for a step of someone else: the CI of handed work",
+  "record": "6541bc9f 2504",
+  "task": 101,
+  "turns": [
+    { "role": "owner", "at": "2026-11-08T16:00:00Z", "owner": "<order:RT-101>" },
+    { "role": "agent", "at": "2026-11-08T16:10:00Z", "call": "Bash", "command": "git push -u origin RT-101-replay-task", "code": 0 },
+    { "role": "agent", "at": "2026-11-08T16:12:00Z", "call": "Bash", "command": "gh pr create --draft --fill", "code": 0 },
+    { "role": "agent", "at": "2026-11-08T16:13:00Z", "say": "The PR is open. I wait for the CI run to finish." }
+  ],
+  "next": { "owner": "<nudge>" }
+}
