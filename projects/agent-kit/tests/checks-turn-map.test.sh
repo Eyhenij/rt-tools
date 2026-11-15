@@ -25,6 +25,13 @@ rule() {
     } > "$TREE/.claude/skills/task-flow/SKILL.md"
 }
 
+# Чем ход кончается: конец сценария и слово остановки владельца.
+ends_ru() {
+    printf '\n## Чем ход кончается\n\n'
+    printf -- '- **конец сценария** — движок его измерил\n'
+    printf -- '- **слово остановки владельца** — им начинается его последнее сообщение\n'
+}
+
 # Карта списком: та форма, ради которой из текста ушли пробелы выравнивания.
 map_list() {
     {
@@ -32,11 +39,7 @@ map_list() {
         for state in "$@"; do
             printf -- '- `%s` — действие; ведёт `task-flow-start`\n' "$state"
         done
-        printf '\n## Чем ход кончается\n\n'
-        printf -- '- **вопрос владельцу, ответа на который в правилах нет** — вопрос задан\n'
-        printf -- '- **отказ гарда** — отказ назван владельцу\n'
-        printf -- '- **заполненное окно там, где сжатия нет** — передача написана\n'
-        printf -- '- **работа отдана, и следующая начата** — PR открыт\n'
+        ends_ru
     } > "$TREE/.claude/rt-kit/defaults/turn-map.md"
 }
 
@@ -49,11 +52,7 @@ map_table() {
         for state in "$@"; do
             printf '| `%s` | действие |\n' "$state"
         done
-        printf '\n## Чем ход кончается\n\n'
-        printf -- '- **вопрос владельцу, ответа на который в правилах нет** — вопрос задан\n'
-        printf -- '- **отказ гарда** — отказ назван владельцу\n'
-        printf -- '- **заполненное окно там, где сжатия нет** — передача написана\n'
-        printf -- '- **работа отдана, и следующая начата** — PR открыт\n'
+        ends_ru
     } > "$TREE/.claude/rt-kit/defaults/turn-map.md"
 }
 
@@ -103,10 +102,8 @@ map_list_en() {
             printf -- '- `%s` — action; leads `task-flow-start`\n' "$state"
         done
         printf '\n## What a turn ends with\n\n'
-        printf -- '- **a question to the owner that the rules do not answer** — asked\n'
-        printf -- '- **a guard refusal** — named to the owner\n'
-        printf -- '- **the window filled where there is no compaction** — handover written\n'
-        printf -- '- **work handed over, and the next one started** — PR open\n'
+        printf -- '- **the end of the scenario** — measured by the engine\n'
+        printf -- '- **a stop word of the owner** — their last message begins with it\n'
     } > "$TREE/.claude/rt-kit/defaults/turn-map.md"
 }
 
@@ -116,6 +113,43 @@ out="$(run)"
 case "$out" in
     *'it matches'*) report 'SC-AK-905 — выходы хода под английскими именами читаются' 'сошлось' 'сошлось' ;;
     *) report 'SC-AK-905 — выходы хода под английскими именами читаются' 'расхождения' 'сошлось' ;;
+esac
+
+# SC-AK-1547 — карта, которая называет старые выходы (old exits) пунктом, отказана: вопрос, отказ
+# гарда, окно и отданная работа ход больше не кончают. Названные в прозе, они карту не роняют.
+old_exit() {
+    local label="$1" item="$2" want="$3" got
+    map_list_en этап-идёт влито
+    printf -- '- **%s** — the former exit\n' "$item" >> "$TREE/.claude/rt-kit/defaults/turn-map.md"
+    out="$(run)"
+    case "$out" in
+        *"the map names the old exit «${want}»"*) got='отказана' ;;
+        *) got='пропущена' ;;
+    esac
+    report "$label" "$got" 'отказана'
+}
+
+old_exit 'SC-AK-1547 — старый выход «вопрос владельцу» отказан' 'a question to the owner that the rules do not answer' 'a question to the owner'
+old_exit 'SC-AK-1547 — старый выход «отказ гарда» отказан' 'a guard refusal' 'a guard refusal'
+old_exit 'SC-AK-1547 — старый выход «окно» отказан' 'the window filled where there is no compaction' 'the window filled'
+old_exit 'SC-AK-1547 — старый выход «работа отдана» отказан' 'work handed over, and the next one started' 'work handed over'
+old_exit 'SC-AK-1547 — старый выход русским именем отказан' 'отказ гарда' 'отказ гарда'
+
+map_list_en этап-идёт влито
+printf '\nA question, a guard refusal and handed-over work do not end a turn.\n' >> "$TREE/.claude/rt-kit/defaults/turn-map.md"
+out="$(run)"
+case "$out" in
+    *'it matches'*) report 'SC-AK-1547 — старый выход в прозе карту не роняет' 'сошлось' 'сошлось' ;;
+    *) report 'SC-AK-1547 — старый выход в прозе карту не роняет' 'расхождения' 'сошлось' ;;
+esac
+
+# Карта пакета сама проходит проверку: она называет оба конца хода и ни одного старого выхода.
+cp "$(dirname "${BASH_SOURCE[0]}")/../assets/defaults/turn-map.md" "$TREE/.claude/rt-kit/defaults/turn-map.md"
+rule $(sed -n 's/^- `\([^`]*\)` — .*/\1/p' "$TREE/.claude/rt-kit/defaults/turn-map.md")
+out="$(run)"
+case "$out" in
+    *'it matches'*) report 'SC-AK-1547 — карта пакета называет новые концы хода' 'сошлось' 'сошлось' ;;
+    *) report 'SC-AK-1547 — карта пакета называет новые концы хода' "$out" 'сошлось' ;;
 esac
 
 suite_result "проверки: карта хода"

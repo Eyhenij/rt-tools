@@ -8,7 +8,7 @@ statement: a removed statement is removed together with its line.
 - **The reminder repeats by steps, not at every action.** — `projects/agent-kit/assets/hooks/window-fill-guard.sh:step`
 - **After the threshold of the stop the record of the progress of the work, the handover and the commands of the delivery pass.** — `projects/agent-kit/assets/hooks/window-fill-guard.sh:allowed`
 - **The guard of the window lets the work through at any breakage.** — `projects/agent-kit/assets/hooks/window-fill-guard.sh:transcript`
-- **Whether a turn may end by what was said in it is judged by a model, not by word samples.** — `projects/agent-kit/assets/hooks/turn-judge.md:stop_hook_active` — the text of the agent hook; the entry in the session settings points to its laid-out copy; scenarios SC-AK-1358, SC-AK-1359, SC-AK-1361…1364
+- **Whether a turn may end by what was said in it is judged by a model, not by word samples.** — `projects/agent-kit/assets/hooks/turn-judge.md:stop_hook_active` — the text of the agent hook; the entry in the session settings points to its laid-out copy; scenarios SC-AK-1358, SC-AK-1359, SC-AK-1361, SC-AK-1363
 - **The refusal of the model names itself by a fixed mark.** — `projects/agent-kit/assets/hooks/turn-judge.md:turn-judge` — the mark stands in the shape of the refusal
 - **Whether a question to the owner may leave is judged by a model.** — `projects/agent-kit/assets/hooks/ask-judge.md:ask-judge` — the text of the agent hook for the question tool; scenario SC-AK-1360
 - **A turn in which the executor admitted a miss does not close until there is a record about the incident.** — `projects/agent-kit/assets/hooks/turn-judge.md:postmortems` — the agent hook on the Stop event looks for the record in the directory the tree names

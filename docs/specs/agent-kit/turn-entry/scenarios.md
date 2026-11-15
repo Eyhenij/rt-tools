@@ -89,11 +89,11 @@ Then at every state its mandatory action is named, and not a single row is empty
 
 Covered: `projects/agent-kit/tests/turn-entry-load.test.sh`.
 
-### SC-AK-441 — the map names the four exits of a turn
+### SC-AK-441 — the map names the two ends of a turn
 
 Given the map has arrived in the context
 When the session looks in it for what a turn ends with
-Then it sees all four exits and what each of them is confirmed by
+Then it sees both ends — the end of the scenario and the stop word — and what each is confirmed by
 
 Covered: `projects/agent-kit/tests/turn-entry-load.test.sh`.
 
@@ -209,10 +209,20 @@ run a session by.
 
 ### SC-AK-905 — the exits of a turn are read under both names
 
-Given the map of the turn names the four exits by English names, and the rule declares the same
-states
+Given the map of the turn names the two ends of a turn by English names, and the rule declares the
+same states
 When the check of the map of the turn goes
-Then it comes out even the same as at a map with Russian names of the exits
+Then it comes out even the same as at a map with Russian names of the ends
+
+Covered: `projects/agent-kit/tests/checks-turn-map.test.sh`.
+
+### SC-AK-1547 — a map that lists a former exit of a turn is refused
+
+Given the map of the turn lists a question to the owner, a guard refusal, a filled window or
+handed-over work as a bold item, under an English or a Russian name
+When the check of the map of the turn goes
+Then it refuses and names the former exit; the same words in a sentence of prose pass, and the map
+of the package passes
 
 Covered: `projects/agent-kit/tests/checks-turn-map.test.sh`.
 

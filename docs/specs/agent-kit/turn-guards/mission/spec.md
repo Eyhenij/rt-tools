@@ -102,25 +102,29 @@ The guards have no interface: only the agent sees them, as the text of a refusal
   on to the next step in the same turn.
 - **Waiting for someone else's step is never the end of a turn.** A run, a review or a merge goes on
   without the agent; the next independent step is taken meanwhile.
-- **While steps of the task plan are not done, a turn ends only by a lawful stop.** The progress of
-  the task says what is left, not the agent's memory.
+- **While steps of the task plan are not done, a turn ends only by a lawful stop.** What is left is
+  measured from the branch, not taken from the agent's memory or from a line of the progress.
 - **Under an open epic a turn with work does not end on its own.** The epic is the unit of
   delivery, and its next task is the next step.
-- **The owner's word to stop, quoted in the progress, ends the turn.** The quote is the owner's
-  words in « », not a retelling: a retelling is written by the one the stop suits.
-- **A quote of the owner older than their latest order releases nothing.** The later order cancels
-  the earlier word to wait: the line is rewritten and the work goes on.
+- **Only the owner's stop word ends a turn before the scenario is over.** The owner said so on
+  15 November 2026: «Только твоё «стоп»». A question, a refusal of a guard and a handover are the
+  turn going on. The other release cases of the description are not the agent's to choose.
+- **The owner's stop word is read from their last message in the record, not from the progress.**
+  A line on disk is a retelling, written by the one the stop suits. A stop word older than the
+  owner's latest message releases nothing: the later message cancels it.
 - **A command that closes a session or writes a handover is not a word to stop.** It cleans up and
   hands over; the work it does not mention stays ordered.
-- **A question to the owner leaves unless the owner already answered it or a rule answers it
-  plainly.** A refusal of another check is never a reason to hold a question.
-- **A guard does not refuse the same turn twice for the same reason.** The second refusal for one
-  reason is a deadlock in the making.
-- **While ordered work is open, doubt is decided by a refusal, once.** A missed stop costs the owner
-  a push by hand; a false refusal costs one pass, and the second pass for the same reason ends the
-  turn.
+- **A question to the owner is held only when the owner already answered it or a rule answers it
+  plainly.** A refusal of another check is never a reason to hold a question. A question does not
+  end the turn: the turn waits for the answer inside itself.
+- **A turn held again for the same reason names the same move, and the count of refusals in a row
+  is written.** The eighth refusal in a row goes to the journal, so a deadlock is seen by a count,
+  not by the owner's push.
+- **Open work is measured, not judged.** The engine leaves no doubt about open work to decide; a
+  model judges only the words of the turn, and in doubt it lets the turn end.
 - **A refusal names the next move the agent can make in the same turn.** A refusal without a lawful
-  move leaves a deadlock.
+  move leaves a deadlock. A step that is the owner's, or that another guard refuses, is named as
+  one menu to the owner: «отложить RT-N», «сделаю сам», «стоп».
 
 ## What is out of scope
 
@@ -133,12 +137,13 @@ The guards have no interface: only the agent sees them, as the text of a refusal
 
 What any tool of the day takes and gives. Lists only: the audit reads a table here as procedures.
 
-- **Input.** The event of the end of a turn, the record of the session, and the tree — the progress
-  of the task, its plan and the table of the epic. The owner's words say what was ordered; the tree
-  says what is left.
-- **Output.** Silence lets the turn end. A refusal is a reason that starts with `BLOCKED by <guard>:`,
-  names what is wrong and names one move the agent can make in this turn.
-- **Failure.** A broken tool lets the turn through: a guard has no right to jam the work.
+- **Input.** The event of the end of a turn, the record of the session, the tree and the host — the
+  branch, the task folder, the marks of the steps and the epic. The owner's words say what was
+  ordered and whether to stop; the measured state says what is left.
+- **Output.** Silence lets the turn end. A refusal names what is wrong and one move the agent can
+  make in this turn; the refusal of a model starts with `BLOCKED by <guard>:`.
+- **Failure.** A broken tool lets the turn through and writes the failure: a guard has no right to
+  jam the work, and a failure nobody sees is a missed stop.
 - **Time.** The median time of the guards at the end of a turn is not over 20 s. The timeout of the
   host is the hard limit, and a tool near it lets turns through in long sessions.
 
@@ -195,8 +200,10 @@ None.
 
 ## Open questions
 
-What the mission asks and the tools of the day do not carry. Q-1, Q-2, Q-3, Q-6 and Q-9 were closed
-on 15 November 2026; their numbers are not given again.
+What the mission asks and the tools of the day do not carry. Q-1, Q-2, Q-3, Q-6, Q-7, Q-9 and Q-10
+were closed on 15 November 2026; their numbers are not given again. Q-7 and Q-10 closed by the
+owner's word «Только твоё «стоп»»: the progress carries no line about a stop, and open work is
+measured by the engine, so no doubt about it is left to decide.
 
 - **Q-4 — a failure or a timeout of the agent hook lets the turn through and leaves no trace.** The
   live measures of 14 November 2026 on a record of 15 MB: about 57 s for a refusal and 30 s for a
@@ -207,14 +214,8 @@ on 15 November 2026; their numbers are not given again.
 - **Q-5 — no command of the tree counts missed stops, false refusals and deadlocks.** The base of
   14 November was counted by a one-off script, and it counts refusals only: a broken guard that
   lets every turn through scores best on it.
-- **Q-7 — a waiting line with any quote releases every tier of the command hook.** Nothing checks
-  the quote against the owner's latest word: the agent hook no longer reads the progress, and a
-  stale line releases the turn. The rule about a quote older than the latest order has no tool.
 - **Q-8 — the package does not connect the agent hooks in the settings of a tree that installs it.**
   A release removes the old checks there and leaves the requirement only as the text of a rule.
-- **Q-10 — doubt about open work is decided by no tool.** The agent hook no longer judges open work
-  and lets a turn end when in doubt; the command hook measures the work and has no doubt to decide.
-  The rule that doubt is decided by a refusal, once, has no tool.
 
 ## History of changes
 
@@ -229,3 +230,7 @@ on 15 November 2026; their numbers are not given again.
   epic: open work is measured by the command hook. The hook keeps the owner's words, the work their
   latest word ordered, a question already answered, a fact without output, the incident record and
   the proposal. A stale waiting line and doubt went to Q-7 and Q-10.
+- 2026-11-15 — the rules follow the owner's word «Только твоё «стоп»»: only the owner's stop word,
+  read from their last message, ends a turn before the scenario does. A question no longer leaves as
+  an exit, a repeated refusal is counted instead of dropped, and open work is measured, not judged.
+  Q-7 and Q-10 are closed.

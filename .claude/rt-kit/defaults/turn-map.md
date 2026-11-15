@@ -1,12 +1,12 @@
-<!-- rt-kit v0.37.0 · defaults/turn-map.md · d5d1f1d0988d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · defaults/turn-map.md · 51b760543600 · правится надстройкой, не здесь -->
 # Turn map
 
 This is not the rule but its short digest: the rule explains, the map names. The full text is
 rule `task-flow`; it also names the pattern that leads each state. What a turn ends with is
 rule `turn-conduct` under the same law.
 
-The work state is declared by a line in the "Where we stand" section of the progress. Until the
-mandatory action is done, the work stays in the same state.
+The work state is measured by the engine from the branch; the line in the "Where we stand" section
+of the progress mirrors it. Until the mandatory action is done, the work stays in the same state.
 
 ## States and mandatory actions
 
@@ -29,24 +29,22 @@ merge go on without the executor and do not get faster from being watched.
 
 ## What a turn ends with
 
-There are four ways, and no others. While the epic runs the fourth does not end a turn: the next
-task goes on in it.
+- **the end of the scenario** — the engine measured it; under an epic the table of its tasks is shown
+- **a stop word of the owner** — their last message begins with it, and nothing after it asks to go on
 
-- **a question to the owner that the rules do not answer** — the question is asked, and the rules were read in the same turn
-- **a guard refusal** — the refusal is named to the owner, no workaround was looked for
-- **the window filled where there is no compaction** — the progress is written up, the handover is written
-- **work handed over, and the next one started** — the PR is open, and an action on the next task is done, not announced
+The exit guard holds every other turn and names the one next move. The task flow description adds
+release cases that are not the executor's choice: no write to the tree, a branch outside the
+scenario, a role session, a silent host, a menu that did not reach the owner twice.
 
-The end of the epic is a fifth way, and only it waits: the table of the epic's tasks is shown, and
-the session waits for the owner's word.
+A question, a guard's refusal, a handover and handed-in work do not end a turn. A step that is the
+owner's, or that another guard refuses, goes to them as one menu: «отложить RT-N», «сделаю сам»,
+«стоп». The menu waits for the answer inside the turn.
 
 Where the tree has set the compaction threshold below the stop threshold, a filled window does
 not end the turn: the context is compacted, the handover arrives as the entry, and the work goes
-on in the same session. The stop threshold there is insurance for the case when compaction did
-not come.
+on in the same session.
 
-Everything else is the turn going on. A turn does not end with a commit, a written plan, a
-closed grill, a read agreement, a green check, a summary of someone else's step, an announced
-intention or a command named but not run. A transition from state to state even less so: the
+A turn does not end with a commit, a written plan, a closed grill, a read agreement, a green check,
+a summary of someone else's step, an announced intention or a command named but not run. A transition from state to state even less so: the
 mandatory action is done, and the next one is done in the same turn. Only what is done may be
 named.

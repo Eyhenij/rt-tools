@@ -4,7 +4,7 @@ kind: pattern
 rule: turn-entry
 description: Pattern of rule turn-entry. Load when editing the turn map and the hook that serves it — what goes into the map, how it differs from a rule, how the hook stays silent about what is missing and how that is checked. Not for the shape of the handover itself — that is pattern task-flow-handoff.
 ---
-<!-- rt-kit v0.37.0 · patterns/turn-entry-map.md · 13dca48ce5a3 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/turn-entry-map.md · 0c2233b3c32f · правится надстройкой, не здесь -->
 
 # The turn map and its serving — ready-made code
 
@@ -28,7 +28,7 @@ where the requirement came from — into the rule.
 | --------------------------------------------------- | -------------------------------------------------------- |
 | the state name and its mandatory action             | why this action is mandatory                             |
 | the pattern the state leads to                      | the incident analysis it grew out of                     |
-| the four turn exits and what backs each of them     | what happens when a turn is ended otherwise              |
+| the two ends of a turn and the release cases        | what happens when a turn is ended otherwise              |
 | a line that the rest is a continuation of the turn  | the list of what a turn must not end with, with examples |
 
 An incident analysis never moves into the map: it explains, and an explanation is the rule.
@@ -72,7 +72,7 @@ Three things in this piece are mandatory and easily lost:
 ## What it is checked with
 
 ```bash
-node tools/check-turn-map.mjs   # size, completeness of states both ways, four exits
+node tools/check-turn-map.mjs   # size, states both ways, two ends of a turn, no former exit
 ```
 
 The check compares the state names of the map with the rule's table both ways: a state declared

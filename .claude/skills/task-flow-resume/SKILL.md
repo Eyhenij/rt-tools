@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow
 description: Pattern of rule task-flow. Load when returning to unfinished work in a new session. What is already in the context, what not to ask the owner, how to edit "Where we stand", how to record a decision along the way and a stage revision. Not for starting work — that is pattern task-flow-start.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-resume.md · ed3f10ba5afe · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-resume.md · 9094a9e47fa4 · правится надстройкой, не здесь -->
 
 # Returning to unfinished work
 
@@ -120,7 +120,6 @@ reads, and the only thing that survives trimming by size:
 - **Done:** the law is created, the task folder and the sample are written
 - **Next step:** the scenarios of both hooks, then wiring them into the settings
 - **Uncommitted:** everything, the branch has no commits yet
-- **Waiting for the owner:** nothing
 - **PR:** not opened yet
 ```
 
@@ -133,13 +132,10 @@ host by the branch. A PR reopened for remarks after the folder left keeps its st
 - **PR:** не открыт · осталось: разбор папки, сверка очереди
 ```
 
-The waiting line carries the owner's standing word about a stop, quoted in « », when they gave
-one. The exit guard reads their word from this line, not a retelling; a line without a quote
-releases nothing. The quote holds until the owner cancels it, and the line is rewritten then.
-
-```markdown
-- **Waiting for the owner:** «эпик чата пока откладываем» — сказано вчера, работа стоит до его слова.
-```
+The progress carries no line about a stop. The exit guard reads the owner's stop word from their
+last message in the record of the session, and a stop written on disk would only retell it. A task
+the owner put off gets the mark «отложено» in the epic plan, set by their word naming it, and the
+work goes on with the next task.
 
 With the PR opened the state becomes `работа-отдана`, and its mandatory action is different — the
 next task, not waiting for review. By that minute there is nothing left to declare it with on disk:

@@ -44,8 +44,9 @@ tree that keeps its code differently.
 The unit of work is a state, not a step. A state has an entry, a mandatory action and an exit, and
 until the action is done the work stays in the same state.
 
-The state is declared in the "Where we stand" section of the progress by the machine-readable line
-``- **State:** `этап-идёт` `` and is rewritten with it.
+The state is measured by the engine from the branch, the task folder and the host. The line
+``- **State:** `этап-идёт` `` in the "Where we stand" section of the progress mirrors it and never
+stands ahead of it.
 
 | State | Entry | Mandatory action | Pattern |
 | --- | --- | --- | --- |
@@ -77,9 +78,9 @@ What a turn ends with — rule `turn-conduct` under the same law.
 
 The list is shown to the owner at the start of work, and where we stand is marked on it.
 
-The last two states cannot be declared on disk: the progress leaves with the folder, and the folder
-is taken apart before the PR opens. Their sign is in the branch history — the commit that takes the
-folder apart — and a guard reads it, not a line in a file.
+The states after the folder have no line on disk: the progress leaves with the folder, and the
+folder is taken apart before the PR opens. The engine measures them from the branch history and the
+host.
 
 ## Flow
 
@@ -127,8 +128,8 @@ flowchart TD
   by the declared state — `этап-идёт`,
   `этапы-кончились`, `разбор-кончился`, `работа-отдана`. The fifth road is the branch history: a
   folder taken apart means handed-in work.
-- **A state line moved forward is the same declaration of intent, only machine-readable.** It is
-  declared by the turn in which its mandatory action is begun by deed.
+- **A state line never stands ahead of the measured state.** A line moved forward is a declaration
+  of intent: the engine measures the state, and an edit that puts the line ahead of it is refused.
 - **A refusal by state names the mandatory action of that state.** Hearing only "wrong state", the
   executor rewrites the state line instead of the step.
 - **Only a word from the list counts as a state name.** A word of one's own says nothing about the
@@ -144,8 +145,9 @@ flowchart TD
   accepted.
 - **What needs the owner's word is taken from a list, not appraised on the spot.** The appraisal
   "this is safe" is assigned by whoever finds it convenient.
-- **A stop the owner sets on a later step is written down the moment it is said.** It is quoted in
-  the waiting line: it holds that step and releases the exit guard.
+- **A stop the owner sets on a later step is written down the moment it is said.** A task they put
+  off gets the mark «отложено» in the epic plan, set only by their last word naming it; the engine
+  then takes the next task. A stop for the turn itself is read from their last message.
 - **A reply to the owner's order begins with the result, not with intent or its justification.** A
   justification under someone else's accepted decision reads as its appraisal. One exception:
   execution stopped by an obstacle — then the obstacle is named.
@@ -191,7 +193,7 @@ flowchart TD
   including those that change history.** Marking a stage, a commit, a push and opening a PR are
   prescribed by the rule; questions are asked about what the progress lacks.
 - **A taken task does not end a turn.** Creating the task, the branch, the column and the folder is
-  preparation; the turn-exit guard names the first stage in its refusal.
+  preparation; the turn-exit guard names the plan, the action of that state, in its refusal.
 - **The stages of a plan cover its done-sign whole.** Otherwise every stage closes, the run is
   green, and half the order is not done. Either the stages are written up to the sign, or the sign
   is narrowed to what the stages give.
@@ -199,8 +201,9 @@ flowchart TD
   the stage that writes its code and the check that proves it, and is compared with the agreement
   rule by rule before the first stage: a rule with no stage is found at the merge review, when the
   code is written.
-- **A stage's readiness sign is taken from the output of a command run while the plan is written.**
-  Written by a guess, it fails at the stage itself.
+- **Every step of the plan carries a check whose expected output is taken from a run while the plan
+  is written.** Written by a guess, it fails at the step itself. The engine runs the check and writes
+  the mark of the step; a step marked done without its mark is refused.
 - **A plan for work that ports a technique from outside is written by a measurement of one's own
   code.** Reading the sample says how it is built; what is needed here is said by a count over
   one's own files.
