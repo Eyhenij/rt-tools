@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.37.0 · rules/turn-conduct.md · bdd05d50dd64 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/turn-conduct.md · 499d1ce6c33f · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 
@@ -33,10 +33,16 @@ A turn ends when the scenario is over or when the owner's last word is a stop wo
 so: «Только твоё «стоп»». The exit guard measures the branch by the task flow description and holds
 every other turn with the one move that comes next.
 
-The description names a few more release cases, and none of them is the executor's choice: a session
-that wrote nothing to the tree, a branch outside the scenario, a role session, a host that did not
-answer twice, a menu of a refusal that did not reach the owner twice. Their order is the section
-`release` of the description.
+<!-- flow:turn-end -->
+The engine lets a turn end before the scenario does when a case is met, asked in this order:
+
+- **1** · the end of the scenario — `any(measure.epic.finished, all(measure.copy.outsideEpic, measure.pr.handed))`
+- **2** · a stop word of the owner — `measure.owner.saidStop`
+- **3** · no write to the tree, or a branch outside the scenario — `any(measure.copy.outOfScenario, all(not(measure.session.wrote), not(measure.owner.nudged)))`
+- **4** · a role session — `measure.session.role`
+- **5** · the host did not answer twice — `measure.host.silent`
+- **8** · the menu did not reach the owner — `measure.session.menuLost`
+<!-- /flow:turn-end -->
 
 A question to the owner, a guard's refusal, a handover and handed-in work do not end a turn. A
 question waits for its answer inside the turn, a refusal is answered by the next call, and handed-in

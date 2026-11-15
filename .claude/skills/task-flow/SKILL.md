@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of one task from the request to the merge. Load at the start of any work, when editing task folders and product agreements, and on return to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. Epics — epic-flow, turns — turn-conduct.
 ---
-<!-- rt-kit v0.37.0 · rules/task-flow.md · f5db2950bb63 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/task-flow.md · 926098d1d1b3 · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -49,21 +49,23 @@ The state is measured by the engine from the branch, the task folder and the hos
 ``- **State:** `этап-идёт` `` in the "Where we stand" section of the progress mirrors it and never
 stands ahead of it.
 
-| State | Entry | Mandatory action | Pattern |
+<!-- flow:states -->
+| State | Exit | Mandatory action | Pattern |
 | --- | --- | --- | --- |
-| `просьба-не-разобрана` | the owner's message about new work | exploration over the tree, then questions | `task-flow-start` |
-| `эпик-заведён` | the epic card, all its tasks and its plan lie in the queue | take the epic branch from the main branch; with the first task the epic card moves to in progress | `epic-flow-declare` |
-| `разбор-закрыт` | the owner's answers lie on disk | a product agreement, or the reason there is none | `task-flow-start` |
-| `договорённость-записана` | the draft lies, or the reason is named | create the task, the branch from the epic branch, and the folder | `task-flow-start` |
-| `задача-взята` | task in the work column, branch by number, folder | write the plan | `task-flow-start` |
-| `замысел-записан` | the plan lies and is not edited after writing | do the first stage | `task-flow-start` |
-| `этап-идёт` | a stage is begun | finish the stage and mark it in the progress | `task-flow-resume` |
-| `этапы-кончились` | all stages are marked | merge the agreement, bring texts up to date, run the suite | `task-flow-close` |
-| `разбор-кончился` | the suite is green, texts are up to date | take the folder apart by the last commit | `task-flow-archive` |
-| `папка-разобрана` | no folder in the branch, a record in the archive | the work queue audit, then open the PR: a draft where a run is waited for, ready where the pipeline does not wake | `task-flow-close` |
-| `работа-отдана` | the PR is open into the epic branch, with a reviewer | the rules review of the work goes to the background, then take the next task of the epic | `task-flow-archive` |
-| `влито` | the PR merged by a person | the epic plan marks the task merged by the next task's branch | `task-flow-resume` |
-| `задачи-эпика-кончились` | every task of the epic is merged and its folder taken apart | open the PR of the epic into the main branch | `task-flow-close` |
+| `просьба-не-разобрана` | `measure.grill.written` | explore the tree, then ask the questions | `task-flow-start` |
+| `эпик-заведён` | `measure.epic.declared` | take the epic branch from the main branch; the epic card moves with the first task | `epic-flow-declare` |
+| `разбор-закрыт` | `measure.agreement.named` | write the product agreement, or the reason there is none | `task-flow-start` |
+| `договорённость-записана` | `measure.task.taken` | create the task, the branch from the epic branch, and the folder | `task-flow-start` |
+| `задача-взята` | `measure.plan.approved` | write the plan | `task-flow-start` |
+| `замысел-записан` | `measure.progress.mirrors` | do the first stage | `task-flow-start` |
+| `этап-идёт` | `measure.progress.done` | finish the stage and mark it in the progress | `task-flow-resume` |
+| `этапы-кончились` | `measure.footprint.touched` | merge the agreement, bring the texts up to date, run the suite | `task-flow-close` |
+| `разбор-кончился` | `measure.folder.archived` | take the folder apart by the last commit | `task-flow-archive` |
+| `папка-разобрана` | `measure.pr.handed` | the work queue audit, then open the PR | `task-flow-close` |
+| `работа-отдана` | `measure.epic.nextTaken` | send the rules review to the background, then take the next task of the epic | `task-flow-archive` |
+| `влито` | `measure.epic.mergedMarked` | mark the task merged in the epic plan by the branch of the next task | `task-flow-resume` |
+| `задачи-эпика-кончились` | `measure.epic.finished` | open the PR of the epic into the main branch | `task-flow-close` |
+<!-- /flow:states -->
 
 No state has a mandatory action that sounds like "wait": waiting for someone else's step is not a
 work state, so in `работа-отдана` the mandatory action is the next task, not the open PR. A blocked

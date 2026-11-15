@@ -65,12 +65,14 @@ one of the forms below. The parsing takes the word «Check:» and its Russian fo
 check line is not part of the step name. Where the engine of the task flow is laid out, it runs the
 command as the commit of the plan wrote it and marks the step only when the result matches.
 
-| Expected | It matches when |
-| -------- | --------------- |
-| `exit N` | the command exits with code N; the output is not compared |
-| `` `text` `` | the code is 0 and the last non-empty line of the output equals the text |
-| `/expression/` | the code is 0 and the last non-empty line matches the expression |
-| `= N`, `>= N`, `<= N` | the code is 0, the last non-empty line is an integer, and the comparison holds |
+<!-- flow:expect -->
+| Form | Expected text | It matches when |
+| --- | --- | --- |
+| `exit` | `^exit (\d+)$` | the command exits with the code of the first group; the output is not compared |
+| `line` | `` ^`(.*)`$ `` | the code is 0 and the last non-empty line of the output equals the first group |
+| `regex` | `^/(.*)/$` | the code is 0 and the last non-empty line matches the first group |
+| `number` | `^(=\|>=\|<=) ?(-?\d+)$` | the code is 0, the last non-empty line is an integer, and its comparison by the first group with the second holds |
+<!-- /flow:expect -->
 
 A command of the work itself — a commit, a push, a PR, a task or a layout — is never a check.
 

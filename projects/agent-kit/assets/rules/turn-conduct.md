@@ -32,10 +32,16 @@ A turn ends when the scenario is over or when the owner's last word is a stop wo
 so: «Только твоё «стоп»». The exit guard measures the branch by the task flow description and holds
 every other turn with the one move that comes next.
 
-The description names a few more release cases, and none of them is the executor's choice: a session
-that wrote nothing to the tree, a branch outside the scenario, a role session, a host that did not
-answer twice, a menu of a refusal that did not reach the owner twice. Their order is the section
-`release` of the description.
+<!-- flow:turn-end -->
+The engine lets a turn end before the scenario does when a case is met, asked in this order:
+
+- **1** · the end of the scenario — `any(measure.epic.finished, all(measure.copy.outsideEpic, measure.pr.handed))`
+- **2** · a stop word of the owner — `measure.owner.saidStop`
+- **3** · no write to the tree, or a branch outside the scenario — `any(measure.copy.outOfScenario, all(not(measure.session.wrote), not(measure.owner.nudged)))`
+- **4** · a role session — `measure.session.role`
+- **5** · the host did not answer twice — `measure.host.silent`
+- **8** · the menu did not reach the owner — `measure.session.menuLost`
+<!-- /flow:turn-end -->
 
 A question to the owner, a guard's refusal, a handover and handed-in work do not end a turn. A
 question waits for its answer inside the turn, a refusal is answered by the next call, and handed-in
