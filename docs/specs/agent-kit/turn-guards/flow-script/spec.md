@@ -53,6 +53,8 @@ There is no interface: the description is read by the engine and by the executor
 - **The literals of `words` are lists of non-empty strings under known keys, and `nudge` is a pattern that compiles.**
 - **A form of the expected result is a pattern and a way of comparison of `exit`, `line`, `regex` or `number`.**
 - **The release cases are asked in the order of the field `order`, and two cases never share one.**
+- **The engine reads the description that lies next to it and names the states of the scenario in their order.**
+- **A factory of a source or a measurer that is not written yet throws, so an unmeasured exit is never read as met.**
 
 ## What is out of scope
 
