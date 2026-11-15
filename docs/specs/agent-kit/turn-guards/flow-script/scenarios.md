@@ -110,7 +110,7 @@ Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 ### SC-AK-1557 — a bare name of a footprint row is found anywhere in the path
 
 Given a marked row that names a directory and then the bare names `flow.js` and `measure/`
-When exit 8 is measured after changes of `projects/kit/flow.js` and `tools/kit/measure/a.mjs`
+When exit 8 is measured after changes of projects/kit/flow.js and tools/kit/measure/a.mjs
 Then it is met, and without the change under `measure/` it is not
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
