@@ -216,8 +216,12 @@ export class TestRtPageHeaderMatrixComponent {
         { value: 'archive', label: 'Архив' },
     ];
 
-    /** Ширина ячейки: полоса тянется на всю ширину родителя и по содержимому схлопнулась бы. */
-    public readonly headerWidth: string = '26rem';
+    /**
+     * Ширина ячейки: полоса тянется на всю ширину родителя и по содержимому схлопнулась бы. 28rem
+     * вмещает три пункта и профиль «Иванов Иван» в шрифте страницы — в 26rem не хватало двух точек,
+     * и «Отчёты» уходили в «Ещё», хотя матрица показывает блок пользователя, а не перенос.
+     */
+    public readonly headerWidth: string = '28rem';
 
     public readonly user: IRtPageHeader.User = { name: 'Иванов Иван', avatar: 'И' };
 

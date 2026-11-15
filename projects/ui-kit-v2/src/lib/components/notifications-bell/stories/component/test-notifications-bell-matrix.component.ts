@@ -7,14 +7,14 @@ import { StoryThemesComponent } from '../../../../../showcase/story-themes.compo
 import { RtNotificationsBellComponent } from '../../rt-notifications-bell.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TNotificationsBellMatrixPart = 'unread' | 'states' | 'presets' | 'themes';
+export type TNotificationsBellMatrixPart = 'unread' | 'icon' | 'states' | 'presets' | 'themes';
 
 /**
  * Матрицы состояний `rt-notifications-bell` для витрины.
  *
- * Ось у колокольчика одна и двоичная — есть непрочитанное или нет, — и весь компонент про то,
- * видно ли точку. Поэтому матриц три: сама ось, состояния указателя и пара тем. Больше здесь
- * показывать нечего, и объявлено это прямо, а не оставлено пустым местом.
+ * Осей у колокольчика две: непрочитанное (видно ли точку) и значок — та же кнопка шапки с другим
+ * значком, например кнопка помощника. Значок скрещён с непрочитанным: точка стоит за значком и
+ * зависит от его ширины. Дальше — состояния указателя и пара тем.
  *
  * В пакет не уезжает: `tsconfig.lib.json` исключает папки историй.
  */
@@ -28,6 +28,17 @@ export type TNotificationsBellMatrixPart = 'unread' | 'states' | 'presets' | 'th
                         <rt-notifications-bell ariaLabel="Уведомления" unreadLabel="Есть непрочитанные" [unread]="value" />
                     </ng-template>
                 </app-story-row>
+            }
+
+            @case ('icon') {
+                <app-story-themes caption="Значок: колокольчик и помощник, с точкой и без">
+                    <ng-template>
+                        @for (icon of icons; track icon) {
+                            <rt-notifications-bell ariaLabel="Кнопка шапки" [icon]="icon" />
+                            <rt-notifications-bell unread ariaLabel="Кнопка шапки" unreadLabel="Есть непрочитанные" [icon]="icon" />
+                        }
+                    </ng-template>
+                </app-story-themes>
             }
 
             @case ('states') {
@@ -72,6 +83,9 @@ export class TestRtNotificationsBellMatrixComponent {
     public part: TNotificationsBellMatrixPart = 'unread';
 
     public readonly unreads: readonly boolean[] = [false, true];
+
+    /** Значки оси `icon`: умолчание и кнопка помощника. */
+    public readonly icons: readonly string[] = ['bell', 'sparkle'];
 
     public readonly states: readonly IStoryState[] = STORY_STATES;
     public readonly stateLabel: (value: IStoryState) => string = storyStateLabel;

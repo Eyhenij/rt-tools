@@ -1,0 +1,15 @@
+<div class="app-page-header-end" [attr.data-theme]="theme">
+    <div class="app-page-header-end__case">
+        <span class="app-page-header-end__label">одна кнопка</span>
+        <rt-page-header ariaLabel="Разделы" [items]="items" [user]="user">
+            <rt-notifications-bell rtHeaderBell ariaLabel="Уведомления" unreadLabel="Есть непрочитанные" unread />
+        </rt-page-header>
+    </div>
+    <div class="app-page-header-end__case">
+        <span class="app-page-header-end__label">две кнопки</span>
+        <rt-page-header ariaLabel="Разделы" [items]="items" [user]="user">
+            <rt-notifications-bell rtHeaderBell icon="sparkle" ariaLabel="Помощник" />
+            <rt-notifications-bell rtHeaderBell ariaLabel="Уведомления" unreadLabel="Есть непрочитанные" unread />
+        </rt-page-header>
+    </div>
+</div>

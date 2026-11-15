@@ -1,6 +1,6 @@
 import { expect, Page, test } from '@playwright/test';
 
-import { SECTIONS } from '../stand/stand.mjs';
+import { ACCOUNT, SECTIONS } from '../stand/stand.mjs';
 
 import { openSection, qa, SECTION } from './support/admin';
 import { expectScreen } from './support/shot';
@@ -32,5 +32,26 @@ test.describe('разделы на узком экране', () => {
 
         await expect(page).toHaveURL(new RegExp(`${SECTION.proposals.path}$`));
         await expect(qa(page, SECTION.proposals.table)).toBeVisible();
+    });
+
+    test('SC-MB-433 — на узком экране профиль показан одним значком, а кнопка названа именем', async ({ page }: { page: Page }) => {
+        await openSection(page, 'postmortems');
+
+        const profile: ReturnType<Page['locator']> = qa(page, 'header-user-menu');
+
+        // Кнопка на месте и названа именем вошедшего — иначе отсутствие имени ниже прошло бы и на
+        // пустой шапке
+        await expect(profile).toBeVisible();
+        await expect(profile).toHaveAttribute('aria-label', ACCOUNT.name);
+
+        // Виден значок пользователя, а имя спрятано: кит прячет его до 768 включительно
+        await expect(profile.locator('.rt-page-header__user-icon')).toBeVisible();
+        await expect(qa(page, 'header-user-name')).toBeHidden();
+
+        // Касание, как на телефоне: клик мышью сначала наводит указатель, попап открывается
+        // наведением, и его подложка перекрывает кнопку раньше самого нажатия
+        await profile.tap();
+        await expect(qa(page, 'profile-menu')).toBeVisible();
+        await expect(page).toHaveURL(new RegExp(`${SECTION.postmortems.path}$`));
     });
 });
