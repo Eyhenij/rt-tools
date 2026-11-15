@@ -1,0 +1,188 @@
+# Scenarios: the guard of the course of work
+
+A subdomain of the task flow as an executable scenario. Here are the scenarios of the guard that
+holds the edits moving the scenario past the measurement.
+
+### SC-AK-1414 — a done mark without a green mark is refused
+
+Given a progress whose step 1.1 is current and no mark of that step
+When an edit marks step 1.1 done, and again after the engine wrote its green mark
+Then the first edit is refused naming the command that measures the step, and the second passes
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1415 — done and current marks out of order are refused
+
+Given a progress with no step done
+When an edit marks step 1.2 done, marks step 1.2 current, or marks step 1.1 current
+Then the first two are refused and the third passes
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1416 — a state line ahead of the measured state is refused
+
+Given a branch without a grill, which the engine measures at the first state
+When an edit sets the state line to `этап-идёт`, and another keeps the first state
+Then the first is refused and the second passes
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1417 — a shell write into the progress and the plan is refused
+
+Given the task folder of the branch
+When a shell command appends to the progress, edits the plan in place, or only searches the progress
+Then the first two are refused and the search passes
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1418 — a shell write into the directory of the marks is refused
+
+Given the directory of the marks in the common directory of git
+When a shell command writes a mark there, and the engine is called to measure a step
+Then the write is refused and the call of the engine passes
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1419 — Edit and Write into the directory of the marks are refused
+
+Given the directory of the marks
+When Write puts a step mark there and Edit changes the approval mark
+Then both are refused
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1420 — a shell write into the epic plan is refused
+
+Given the directory of the epic plans
+When a shell command appends to an epic plan
+Then it is refused
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1421 — a done mark of a plan without check lines passes
+
+Given a plan without a single check line and no mark of its steps
+When an edit marks step 1.1 done
+Then it passes
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1422 — a done mark of a plan added before the engine passes
+
+Given a branch of the closed list `words.legacyBranches` and no mark of its steps
+When an edit marks step 1.1 done
+Then it passes
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1536 — a branch outside the closed list is judged as a new one
+
+Given a branch with a plan of check lines that the closed list does not name
+When an edit marks a step done without its mark
+Then it is refused
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1423 — «отложено» without the owner's word is refused
+
+Given an epic plan and the owner's last word «ок»
+When an edit sets «отложено» on the line of task RT-5
+Then it is refused
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1424 — the owner's last word naming the task allows «отложено»
+
+Given the owner's last word «отложи RT-5»
+When an edit sets «отложено» on the line of task RT-5
+Then it passes
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1425 — the owner's word without the number does not allow «отложено»
+
+Given the owner's last word «отложи эту задачу»
+When an edit sets «отложено» on the line of task RT-5
+Then it is refused
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1426 — «отложено» is lifted only by the owner's word
+
+Given task RT-6 marked «отложено» in the epic plan
+When an edit lifts the word with the owner's last word naming RT-6, and with a word that does not
+Then the first passes and the second is refused
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1521 — an edit of the override without the owner naming its key is refused
+
+Given a tree override with the key `nudge` and the owner's last word that does not name it
+When an edit changes `nudge`
+Then it is refused
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1522 — the owner's last word naming the key allows the edit
+
+Given the owner's last word naming `nudge`
+When an edit changes `nudge`
+Then it passes
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1523 — `null` with a reason the owner did not say is refused
+
+Given the owner's last word naming `nudge` without the words of the reason
+When an edit sets `nudge` to `null` with a reason
+Then it is refused naming the reason
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1531 — a menu option naming the key counts as the owner's word
+
+Given the owner chose a menu option that names `nudge`
+When an edit changes `nudge`
+Then it passes
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1524 — an edit of the description outside a task with this footprint is refused
+
+Given a branch whose plan names no path of the description in an edited footprint row
+When an edit changes the package description `flow.js`
+Then it is refused
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1525 — a task whose approved plan names the path may edit it
+
+Given a plan whose edited footprint row names the directory of the package description
+When the description is edited before the approval mark, and after it
+Then the first edit is refused and the second passes
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1526 — a shell write into the description is judged by the same conditions
+
+Given a branch without the footprint and an approved branch with it
+When a shell command writes the package description
+Then it is refused on the first and passes on the second
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1530 — a plan added before the engine with the footprint row may edit
+
+Given a branch of the closed list whose plan names the directory of the description in an edited row and no approval mark
+When the description is edited
+Then it passes
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1532 — the laid-out description is guarded the same way
+
+Given a branch whose plan names no path of the description
+When Write puts the laid-out `tools/task-flow/flow.js`
+Then it is refused
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.

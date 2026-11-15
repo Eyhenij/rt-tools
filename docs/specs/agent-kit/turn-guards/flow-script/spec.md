@@ -72,7 +72,8 @@ There is no interface: the description is read by the engine and by the executor
 ## What is out of scope
 
 The language of the description is the subdomain `docs/specs/agent-kit/turn-guards/flow-script/language/`.
-The guards of the end of a turn that judge the conversation are in the domain next to it. The check
+The guard that holds the edits moving the scenario past the measurement is the subdomain
+`docs/specs/agent-kit/turn-guards/flow-script/guard/`. The guards of the end of a turn that judge the conversation are in the domain next to it. The check
 that the steps of the plan and of the progress match is the subdomain `docs/specs/agent-kit/work-steps/`.
 
 ## Contract
@@ -140,3 +141,4 @@ None.
 - 2026-11-15 — the engine measures the checked-out branch by the command `measure`.
 - 2026-11-15 — the engine measures a step of the plan by its check and writes its mark.
 - 2026-11-15 — the engine checks the forms of a plan and writes the approval mark.
+- 2026-11-15 — the guard of the course of work was started as the subdomain `guard/`.

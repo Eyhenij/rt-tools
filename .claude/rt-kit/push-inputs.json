@@ -6,6 +6,7 @@
             "history": [],
             "untraced": [
                 "npm",
+                "ps",
                 "rimraf"
             ],
             "self": [
@@ -36,7 +37,7 @@
             "probes": []
         },
         "node tools/check-specs.mjs": {
-            "seconds": 4,
+            "seconds": 3,
             "history": [
                 "git log"
             ],
@@ -236,7 +237,7 @@
             "probes": []
         },
         "node tools/check-hooks.mjs": {
-            "seconds": 10,
+            "seconds": 11,
             "history": [],
             "untraced": [
                 "bash"
@@ -775,7 +776,7 @@
             "probes": []
         },
         "node tools/check-tokens-styles.mjs": {
-            "seconds": 2,
+            "seconds": 3,
             "history": [],
             "untraced": [],
             "self": [
@@ -957,7 +958,7 @@
             "probes": []
         },
         "node tools/check-format-ignore.mjs": {
-            "seconds": 5,
+            "seconds": 6,
             "history": [],
             "untraced": [],
             "self": [
@@ -1007,6 +1008,7 @@
                         ".xml",
                         ".yaml",
                         ".yml",
+                        ".zip",
                         "Caddyfile",
                         "LICENSE",
                         "allowlist",
