@@ -176,7 +176,7 @@ fl_model_refused_with() {
 
 # Поле модели по выражению над разобранным JSON.
 fl_model_field() {
-    fl_model "$1" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const m=JSON.parse(s);console.log($2)})" 2>&1
+    fl_model "$1" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const m=JSON.parse(s);console.log(String($2))})" 2>&1
 }
 
 # --- SC-AK-1479 — секций ровно шесть, лишняя отказана ------------------------------------------
