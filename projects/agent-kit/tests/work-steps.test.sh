@@ -10,7 +10,7 @@ echo "проверки: шаги замысла и отметки хода ра�
 
 WS_TREE="$(mktemp -d)"
 mkdir -p "$WS_TREE/tools" "$WS_TREE/.claude/rt-kit"
-cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/check-work-steps.mjs" "$WS_TREE/tools/"
+cp "$CHECKS/rt-kit-checks.config.mjs" "$CHECKS/check-work-steps.mjs" "$CHECKS/work-steps-lib.mjs" "$WS_TREE/tools/"
 printf '{\n    "tasksDir": "docs/tasks"\n}\n' > "$WS_TREE/.claude/rt-kit/checks.json"
 
 # Замысел фикстуры: два этапа, три шага. Он один на все пробы — расходится с ним ход работы.
