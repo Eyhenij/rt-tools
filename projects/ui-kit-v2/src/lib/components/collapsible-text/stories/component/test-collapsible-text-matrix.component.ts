@@ -3,10 +3,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { StoryRowComponent } from '../../../../../showcase/story-row.component';
 import { StoryPresetsComponent } from '../../../../../showcase/story-presets.component';
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
-import { RtCollapsibleTextComponent } from '../../rt-collapsible-text.component';
+import { RtCollapsibleTextComponent, TRtCollapsibleTextTone } from '../../rt-collapsible-text.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TCollapsibleTextMatrixPart = 'clamp' | 'paragraphs' | 'width' | 'edges' | 'presets' | 'themes';
+export type TCollapsibleTextMatrixPart = 'clamp' | 'paragraphs' | 'width' | 'edges' | 'tone' | 'presets' | 'themes';
 
 /** Случай текста: имя для подписи ячейки, абзацы и предел строк. */
 interface ICollapsibleTextCase {
@@ -86,6 +86,22 @@ const SHORT: string = 'Подписан 14 марта.';
                 </app-story-presets>
             }
 
+            @case ('tone') {
+                <app-story-presets caption="Тон текста в обеих темах в обоих наборах">
+                    <ng-template>
+                        <app-story-themes>
+                            <ng-template>
+                                <app-story-row slotWidth="18rem" [items]="tones">
+                                    <ng-template let-tone>
+                                        <rt-collapsible-text [paragraphs]="longParagraph" [clampLines]="3" [tone]="tone" />
+                                    </ng-template>
+                                </app-story-row>
+                            </ng-template>
+                        </app-story-themes>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('presets') {
                 <app-story-presets caption="Текст в обоих наборах">
                     <ng-template>
@@ -148,6 +164,9 @@ export class TestRtCollapsibleTextMatrixComponent {
         { name: 'пустой набор', paragraphs: [], clampLines: 3 },
         { name: 'предел в одну строку', paragraphs: [LONG], clampLines: 1 },
     ];
+
+    /** Тон текста: основной и приглушённый — для пояснения под названием. */
+    public readonly tones: readonly TRtCollapsibleTextTone[] = ['default', 'muted'];
 
     public readonly caseLabel: (value: ICollapsibleTextCase) => string = (value: ICollapsibleTextCase): string => value.name;
 }
