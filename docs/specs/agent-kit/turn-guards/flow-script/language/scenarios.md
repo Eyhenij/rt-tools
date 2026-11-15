@@ -1,7 +1,8 @@
 # Scenarios: the language of the task flow description
 
 A subdomain of the task flow as an executable scenario. Here are the scenarios of the parser, the
-model, the conditions and the data of the description.
+model, the conditions and the data of the description, of the tree override, of the stub generator
+and of the text generator.
 
 ### SC-AK-1471 — literals, references, arrays and objects are parsed into a model
 
@@ -282,3 +283,155 @@ When the model is built
 Then the cases come by their order, the repeat names both cases, and the fraction is refused
 
 Covered: `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1489 — the override adds a state by its key
+
+Given an override that adds a measurer, a state without `after` and a release case with its own order
+When the model is built from the package description merged with it
+Then the state stands last, the case comes by its order, the changes name all three, and a repeated order or a section outside the six is refused
+
+Covered: `projects/agent-kit/tests/flow-language-override.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1527 — `after` puts a state of the override after the named state
+
+Given an override with two states whose `after` names the same state, once as a reference and once as a string
+When the model is built
+Then both stand right after that state in the order of the override, the field leaves the model, and an `after` naming no state is refused
+
+Covered: `projects/agent-kit/tests/flow-language-override.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1490 — the override replaces a measurer, and its contract is checked
+
+Given an override that replaces a measurer with a file next to the override and fewer ports
+When the model is built
+Then the measurer is read from the file of the override with the ports of its signature, and the change is named as a replacement
+
+Covered: `projects/agent-kit/tests/flow-language-override.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1491 — `null` with a reason removes a key, and `measure` prints it
+
+Given an override that removes a state by `null` with a reason next to it
+When the model is built and the engine measures the branch
+Then the state is gone, and `measure` prints the removed key with its reason
+
+Covered: `projects/agent-kit/tests/flow-language-override.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1492 — `null` without a reason is refused
+
+Given an override with `null` and no reason, an empty reason, a reason with nothing removed, and `null` over a key the package lacks
+When the model is built
+Then each is refused, naming the section and the key
+
+Covered: `projects/agent-kit/tests/flow-language-override.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1493 — an override that breaks the contract is refused
+
+Given an override measurer whose ports differ from its signature, one that imports `node:fs`, and an override that removes a measurer a state still names
+When the model is built
+Then each is refused, the first naming the component of the override
+
+Covered: `projects/agent-kit/tests/flow-language-override.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1494 — a new measurer gets a stub and a stub case
+
+Given a description naming a measurer with two capabilities and no file
+When the stub generator runs
+Then it writes a stub whose factories throw `Not implemented` with their ports and a case that stays red until the factories are written, and the model accepts the stub
+
+Covered: `projects/agent-kit/tests/flow-language-scaffold.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1495 — a written implementation is not touched
+
+Given a description whose measurers and stub case are written
+When the stub generator runs again
+Then it creates nothing, and every file keeps its text
+
+Covered: `projects/agent-kit/tests/flow-language-scaffold.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1496 — `CONTRACT_CHANGED` when the ports drift
+
+Given a written measurer whose ports in the description differ from its signature, and then a capability the file does not export
+When the stub generator runs
+Then it warns `CONTRACT_CHANGED` with the ports and the signature, or with the missing capability, and leaves the file as it was
+
+Covered: `projects/agent-kit/tests/flow-language-scaffold.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1497 — `UNREACHABLE_MEASURE` for a measurer nothing names
+
+Given a measurer no state exit, release case or port names
+When the stub generator runs, and again after a release case names it
+Then it warns `UNREACHABLE_MEASURE` the first time and not the second
+
+Covered: `projects/agent-kit/tests/flow-language-scaffold.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1498 — `MEASURE_REMOVED`, and the file stays
+
+Given a file in the measurer directory that the description does not name and no neighbour imports
+When the stub generator runs
+Then it warns `MEASURE_REMOVED`, the file stays, and an imported neighbour is not named
+
+Covered: `projects/agent-kit/tests/flow-language-scaffold.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1499 — flow.md is compared with its generation as text
+
+Given the package views written by the text generator, and then a line added to flow.md by hand
+When `--check` runs
+Then it matches before the edit, and after it refuses the description view with code 1
+
+Covered: `projects/agent-kit/tests/flow-language-sync.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1500 — the table «Work states» of the rule is generated
+
+Given the rule source with the markers of the states view
+When the text generator runs
+Then each state has a row of its title, exit, action and pattern, and the text outside the markers is unchanged
+
+Covered: `projects/agent-kit/tests/flow-language-sync.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1501 — the turn map is generated
+
+Given the turn map source with the markers of the map view
+When the text generator runs
+Then each state has a line of its title, action and leading pattern
+
+Covered: `projects/agent-kit/tests/flow-language-sync.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1502 — the section on the end of a turn in the rule `turn-conduct` is generated
+
+Given the rule source with the markers of the turn-end view
+When the text generator runs
+Then each release case has a line of its order, log and condition
+
+Covered: `projects/agent-kit/tests/flow-language-sync.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1503 — the table of expected forms of the plan template is generated
+
+Given the plan template with the markers of the expect view
+When the text generator runs
+Then each form has a row of its name, pattern and what it matches
+
+Covered: `projects/agent-kit/tests/flow-language-sync.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1504 — a hand edit between the markers is refused by `--check`
+
+Given a row of the states view edited by hand, and then a text without markers
+When `--check` runs and the generator writes
+Then the check refuses the edited view, the write brings back the text of the description, and the text without markers is refused and not written
+
+Covered: `projects/agent-kit/tests/flow-language-sync.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1528 — the view of the override goes into the companion, and the laid-out rule is unchanged
+
+Given a tree where the package is laid out and an override adds a state
+When the text generator runs, and again after the laid-out rule is edited by hand
+Then only the companion is written, with the change and the merged states, its own lines kept, and the laid-out rule is neither changed nor rewritten
+
+Covered: `projects/agent-kit/tests/flow-language-sync.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
+
+### SC-AK-1535 — in a tree with an override `--check` compares its view too
+
+Given a laid-out tree with an override whose view is written
+When `--check` runs, after the override changes, and after it is removed
+Then it prints `flow sync: 6 views match`, then refuses the view of the override, then prints `flow sync: 5 views match`
+
+Covered: `projects/agent-kit/tests/flow-language-sync.test.sh`, also run by `projects/agent-kit/tests/flow-language.test.sh`.
