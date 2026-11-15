@@ -32,7 +32,7 @@ export const Tabs: TStory = { args: { part: 'tabs' }, parameters: { snapshot: { 
  */
 export const MessengerPhone: TStory = {
     args: { part: 'messengerPhone' },
-    parameters: { snapshot: { viewport: { width: 375, height: 812 } } },
+    parameters: { snapshot: { fullPage: true, viewport: { width: 375, height: 812 } } },
 };
 
 export const Loading: TStory = { args: { part: 'loading' } };
