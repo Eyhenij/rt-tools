@@ -77,10 +77,13 @@
             align-items: stretch;
         }
 
+        /* Высота считается с отступами: пункт-ссылка `<a>` иначе брал наименьшую высоту без них и
+           выходил на 8 выше пункта-кнопки, а шапка — 58 вместо 50 макета. */
         &__link {
             position: relative;
             display: inline-flex;
             min-height: var(--rt-nav-item-height);
+            box-sizing: border-box;
             align-items: center;
             padding: var(--rt-nav-item-padding);
             border: 0;
@@ -88,6 +91,9 @@
             background-color: transparent;
             color: var(--rt-nav-item-color);
             cursor: pointer;
+
+            /* Пункт с панелью — кнопка, а кнопка не наследует шрифт страницы и берёт системный. */
+            font-family: inherit;
             font-size: var(--rt-nav-item-font-size);
             font-weight: var(--rt-nav-item-font-weight);
             gap: var(--rt-nav-item-content-gap);
@@ -220,6 +226,12 @@
 
         /* Узкий вьюпорт: инлайн-навигация уступает место гамбургеру. */
         @include bp.place-max(1080px) {
+            /* Узкая шапка держит ту же высоту 50, что широкая: там 1 добавляет рамка пункта ряда, а
+               у бургера 36 рамки нет. Бургер стоит в 12 от края — его собственный отступ 8 уже
+               отодвигает значок, как в кадре макета. */
+            padding-block: calc(var(--rt-space-2) - var(--rt-border-width-thin));
+            padding-inline-start: calc(var(--rt-space-4) - var(--rt-space-1));
+
             &__nav {
                 display: none;
             }
@@ -227,6 +239,17 @@
             &__burger {
                 display: inline-flex;
             }
+        }
+
+        /* Кнопки слота и профиль стоят одной группой у правого края, как рамка `right` макета. Без
+           группы каждый узел слота становился участником ряда с распределением по ширине, и при
+           двух кнопках и одном бургере колокольчик уезжал в середину шапки. */
+        &__end {
+            display: flex;
+            flex-shrink: 0;
+            align-items: center;
+            gap: var(--rt-space-2);
+            margin-inline-start: auto;
         }
 
         &__user {
@@ -239,10 +262,13 @@
             background-color: transparent;
             color: var(--rt-nav-item-color);
             cursor: pointer;
+            font-family: inherit;
             font-size: var(--rt-nav-item-font-size);
             font-weight: var(--rt-nav-item-font-weight);
             gap: var(--rt-nav-item-content-gap);
-            line-height: var(--rt-leading-tight);
+
+            /* Строка имени — та же, что у подписи пункта: с высокой строкой кнопка выходила 33. */
+            line-height: var(--rt-nav-item-line-height);
             transition: background-color var(--rt-nav-header-transition-duration) linear;
 
             &:hover,
@@ -260,10 +286,12 @@
             }
         }
 
+        /* Рамка кружка лежит внутри его 16, как в макете: снаружи она делала кнопку профиля 34. */
         &__user-avatar {
             display: inline-flex;
             width: 16px;
             height: 16px;
+            box-sizing: border-box;
             align-items: center;
             justify-content: center;
             border: var(--rt-nav-user-avatar-border-width) solid var(--rt-nav-item-color-caret);
@@ -287,6 +315,26 @@
 
         &__user--is-open {
             background-color: var(--rt-nav-item-color-bg-active);
+        }
+
+        /* Значок профиля для узкой шапки: шире порога его нет. */
+        &__user-icon {
+            display: none;
+            flex-shrink: 0;
+        }
+
+        /* До 768 включительно профиль — один значок в той же кнопке: кружок с буквой, имя и
+           каретка занимали ширину, которой у телефонной шапки нет. Имя остаётся в подписи кнопки. */
+        @include bp.place-max(bp.$rt-bp-md) {
+            &__user-icon {
+                display: inline-flex;
+            }
+
+            &__user-avatar,
+            &__user-name,
+            &__user-caret {
+                display: none;
+            }
         }
 
         /* Рейка сама держит своё место: хост в раскладке не участвует. */

@@ -49,6 +49,19 @@ describe('RtNotificationsBellComponent', (): void => {
         });
     });
 
+    describe('значок', (): void => {
+        it('SC-UKV-1306 — вход icon меняет значок кнопки, вид остаётся тем же', (): void => {
+            const fixture: ComponentFixture<RtNotificationsBellComponent> = setup({ icon: 'sparkle' });
+
+            expect(qa(fixture, 'header-bell')).not.toBeNull();
+            expect(el(fixture, 'use')?.attributes['href']).toBe('#rt-icon-sparkle');
+        });
+
+        it('SC-UKV-1306 — атрибут без значения оставляет колокольчик, а не пустую рамку', (): void => {
+            expect(el(setup({ icon: '' }), 'use')?.attributes['href']).toBe('#rt-icon-bell');
+        });
+    });
+
     it('подпись кнопки задаётся входом — своих слов у кита здесь нет', (): void => {
         expect(qa(setup({ ariaLabel: 'Уведомления' }), 'header-bell')?.attributes['aria-label']).toBe('Уведомления');
     });
