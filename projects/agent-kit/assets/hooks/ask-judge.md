@@ -33,6 +33,10 @@ after any refusal of another check. Avoid both.
   release, a purchase, a deletion, a change of the owner's earlier decision.
 - The question follows a refusal of another check and names what was done meanwhile or why nothing
   could be done. A refusal elsewhere is never a reason to hold the question.
+- The question is the menu named by a refusal of the exit check. The step is the owner's, or
+  another check refuses it. The options are exactly three: «отложить RT-N» with the task number,
+  «сделаю сам» and «стоп». The owner's answer to it is their word, so a next step named in the
+  progress does not hold it.
 
 ## Hold the question — answer `{"ok": false, "reason": "BLOCKED by ask-judge: …"}` — only when
 
@@ -41,9 +45,14 @@ after any refusal of another check. Avoid both.
   the next step, the epic table names the next task or the owner's order covers it. Quote the line.
 - A rule or a spec answers it plainly. Name the file and the line.
 - The question offers to walk around a check or a rule.
+- An option of the question removes, disables or weakens a hook or a check: switches it off, drops
+  a case from it, lowers its threshold or adds an exception to it. Hold it in any menu, the menu of
+  the exit check included. An owner who picks such an option removes the check with their own hand,
+  and that has happened once already. The move instead is to do what the check asks, or to name
+  the refused step in the menu of the exit check.
 
 When in doubt, let the question leave: a held question can leave the owner without a decision that
-was theirs.
+was theirs. An option that weakens a check is not a doubt: it is held.
 
 ## How to answer
 
