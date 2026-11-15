@@ -21,44 +21,8 @@ export type TPageHeaderEndTheme = 'light' | 'dark';
  */
 @Component({
     selector: 'app-page-header-end',
-    template: `
-        <div class="app-page-header-end" [attr.data-theme]="theme">
-            <div class="app-page-header-end__case">
-                <span class="app-page-header-end__label">одна кнопка</span>
-                <rt-page-header ariaLabel="Разделы" [items]="items" [user]="user">
-                    <rt-notifications-bell rtHeaderBell ariaLabel="Уведомления" unreadLabel="Есть непрочитанные" unread />
-                </rt-page-header>
-            </div>
-            <div class="app-page-header-end__case">
-                <span class="app-page-header-end__label">две кнопки</span>
-                <rt-page-header ariaLabel="Разделы" [items]="items" [user]="user">
-                    <rt-notifications-bell rtHeaderBell icon="sparkle" ariaLabel="Помощник" />
-                    <rt-notifications-bell rtHeaderBell ariaLabel="Уведомления" unreadLabel="Есть непрочитанные" unread />
-                </rt-page-header>
-            </div>
-        </div>
-    `,
-    styles: `
-        .app-page-header-end {
-            display: flex;
-            flex-direction: column;
-            padding-block: var(--rt-space-4);
-            background-color: var(--rt-color-bg-page);
-            gap: var(--rt-space-4);
-        }
-
-        .app-page-header-end__case {
-            display: flex;
-            flex-direction: column;
-            gap: var(--rt-space-2);
-        }
-
-        .app-page-header-end__label {
-            padding-inline: var(--rt-space-4);
-            color: var(--rt-color-text-muted);
-            font-size: var(--rt-text-sm);
-        }
-    `,
+    templateUrl: './test-page-header-end.component.html',
+    styleUrl: './test-page-header-end.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

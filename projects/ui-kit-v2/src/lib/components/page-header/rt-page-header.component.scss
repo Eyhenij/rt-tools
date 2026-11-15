@@ -229,7 +229,7 @@
             /* Узкая шапка держит ту же высоту 50, что широкая: там 1 добавляет рамка пункта ряда, а
                у бургера 36 рамки нет. Бургер стоит в 12 от края — его собственный отступ 8 уже
                отодвигает значок, как в кадре макета. */
-            padding-block: calc(var(--rt-space-2) - var(--rt-border-width-thin));
+            padding-block: calc(var(--rt-space-2) - var(--rt-nav-item-border-width));
             padding-inline-start: calc(var(--rt-space-4) - var(--rt-space-1));
 
             &__nav {

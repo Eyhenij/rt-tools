@@ -7,4 +7,4 @@ in the tree, and the scenario it is checked by.
 - **The bell draws any kit icon given by its `icon` input, `bell` by default.** — `projects/ui-kit-v2/src/lib/components/notifications-bell/rt-notifications-bell.component.ts:icon`; scenario `SC-UKV-1306`
 - **Up to 768 inclusive the profile button shows only the `user` icon.** — `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header.component.scss:__user-icon`, `projects/ui-kit-v2/src/lib/components/page-header/user/rt-page-header-user.component.html:user-icon`; scenario `SC-UKV-1305`
 - **The profile button is named by the user's name.** — `projects/ui-kit-v2/src/lib/components/page-header/user/rt-page-header-user.component.html:aria-label`; scenario `SC-UKV-1305`
-- **A chat with `fill` shrinks under the strip above it in a flex column.** — `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.component.scss:--fill`; scenario `SC-UKV-1307`
+- **A chat with `fill` shrinks under the strip above it in a flex column.** — `projects/ui-kit-v2/src/rich-editor/lib/components/chat/rt-chat.component.scss:min-block-size`; scenario `SC-UKV-1307`

@@ -32,49 +32,8 @@ const LONG_THREAD: readonly IRtChat.Message[] = Array.from({ length: 40 }, (_: u
  */
 @Component({
     selector: 'app-chat-fill',
-    template: `
-        <div class="app-chat-fill">
-            <rt-workspace cards hasActive class="app-chat-fill__workspace">
-                <ng-template rtWorkspaceList>
-                    <div class="app-chat-fill__list">Список разговоров</div>
-                </ng-template>
-                <ng-template rtWorkspaceCenter>
-                    <rt-chat
-                        fill
-                        messenger
-                        hasThread
-                        canReply
-                        placeholder="Напишите сообщение…"
-                        title="№12 Анна Смирнова"
-                        subtitle="WhatsApp · +66 81 234 5678"
-                        [messages]="long ? longThread : shortThread" />
-                </ng-template>
-                <ng-template rtWorkspaceAside>
-                    <div class="app-chat-fill__list">Сведения о госте</div>
-                </ng-template>
-            </rt-workspace>
-        </div>
-    `,
-    styles: `
-        /* Бокс показа — экран: закрытая панель сведений уезжает вправо за край рабочего места, и
-           без обрезки страница выходила шире окна на её ширину — снимщик раздвигал окно до 867. */
-        .app-chat-fill {
-            box-sizing: border-box;
-            block-size: 100vh;
-            overflow: hidden;
-            background: var(--rt-color-bg-surface);
-        }
-
-        .app-chat-fill__workspace {
-            block-size: 100%;
-        }
-
-        .app-chat-fill__list {
-            padding: var(--rt-space-4);
-            color: var(--rt-color-text-muted);
-            font-size: var(--rt-text-sm);
-        }
-    `,
+    templateUrl: './test-chat-fill.component.html',
+    styleUrl: './test-chat-fill.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
