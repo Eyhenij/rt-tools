@@ -107,6 +107,144 @@ out('local: SC-AK-1378 — папка удалена и запись в архи
 out('local: SC-AK-1378 — папка удалена без записи не выход', run(folder.archived, archive({ [`${F}/plan.md`]: null })), 'false');
 JS
 
+# --- Выходы хостинга 2, 4, 10–13 -------------------------------------------------------------------
+tf_run <<'JS'
+import { gitDouble, treeDouble, hostDouble, ownerDouble } from './flow-doubles.mjs';
+import { buildModel } from '../assets/checks/flow-model.mjs';
+import { measureStates } from '../assets/checks/task-flow-script.mjs';
+import { attempt, createStore, timedRead } from '../assets/task-flow/source/host.mjs';
+import * as epic from '../assets/task-flow/measure/epic.mjs';
+import * as task from '../assets/task-flow/measure/task.mjs';
+import * as pr from '../assets/task-flow/measure/pr.mjs';
+import { mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+const model = buildModel(new URL('../assets/task-flow/flow.js', import.meta.url).pathname);
+const out = (label, got, want) => console.log(`${label}|${got}|${want}`);
+const B = 'RT-12-flow';
+const E = 'RT-10-epic';
+const PLAN = (rows) => [
+    '# Эпик', '', `**Эпик:** RT-10 · **Ветка эпика:** \`${E}\``, '', '| # | Задача | Состояние |', '| --- | --- | --- |',
+    ...rows.map(([n, task, state]) => `| ${n} | RT-${task} — задача | ${state} |`), '',
+].join('\n');
+const ROWS = [['1', 11, 'влито'], ['2', 12, 'идёт'], ['3', 13, 'впереди']];
+const tree = (rows = ROWS) => treeDouble({ 'docs/plans/epic.md': PLAN(rows) });
+const card = { 12: { open: true, status: 'in-progress', epic: '10' } };
+const run = (cap, { branch = B, commits = [], local = [], host = {}, rows, owner = [] } = {}) =>
+    String(cap({ git: gitDouble({ branch, commits, local }), host: hostDouble({ ...host, issues: { ...card, ...(host.issues ?? {}) } }), tree: tree(rows), owner: ownerDouble(owner) })());
+
+// SC-AK-1379, SC-AK-1380 — выход 2
+const epicCard = (status, open = true) => ({ issues: { 10: { open, status, epic: null } } });
+out('host: SC-AK-1379 — ветка эпика на сервере, карточка в работе', run(epic.declared, { host: { ...epicCard('in-progress'), remote: [{ name: E, sha: 'e1' }] } }), 'true');
+out('host: SC-AK-1379 — карточка эпика в первой колонке не выход', run(epic.declared, { host: { ...epicCard('backlog'), remote: [{ name: E, sha: 'e1' }] } }), 'false');
+out('host: SC-AK-1380 — эпик влит в main, ветка удалена', run(epic.declared, { host: { ...epicCard('done', false), pulls: { [E]: [{ number: 5, state: 'MERGED', base: 'main', reviewers: [] }] } } }), 'true');
+out('host: SC-AK-1380 — ветки нет и PR эпика не влит — не выход', run(epic.declared, { host: { ...epicCard('in-progress') } }), 'false');
+
+// SC-AK-1381 — кэш выходов 2 и 4 переживает коммит
+const folder = [{ sha: 'a', files: { [`docs/tasks/${B}/grill.md`]: 'g' } }];
+out('host: SC-AK-1381 — выход 4: задача взята, папка в ветке', run(task.taken, { commits: folder }), 'true');
+out('host: SC-AK-1381 — выход 4 держится памятью, когда карточку не прочесть', run(task.taken, { commits: [...folder, { sha: 'b', files: { x: 'y' } }], host: { issues: { 12: null }, met: [`exit4:${B}`] } }), 'true');
+out('host: SC-AK-1381 — выход 2 держится памятью после коммита', run(epic.declared, { commits: [{ sha: 'b', files: { x: 'y' } }], host: { met: ['exit2:10'] } }), 'true');
+out('host: SC-AK-1381 — задача в первой колонке — выход 4 не выполнен', run(task.taken, { commits: folder, host: { issues: { 12: { open: true, status: 'backlog', epic: '10' } } } }), 'false');
+
+// SC-AK-1382, SC-AK-1383 — ответы по часам и их сброс
+const store = createStore(join(mkdtempSync(join(tmpdir(), 'tf-')), 'answers.json'));
+let calls = 0;
+const ask = (now) => timedRead(store, 'pulls:x', () => ++calls, now);
+ask(1000);
+ask(1030);
+out('host: SC-AK-1382 — ответ моложе 60 с не читается заново', String(calls), '1');
+ask(1061);
+out('host: SC-AK-1382 — ответ старше 60 с читается заново', String(calls), '2');
+store.reset();
+ask(1062);
+out('host: SC-AK-1383 — сброс после вызова gh читает ответ заново', String(calls), '3');
+
+// SC-AK-1384 — хостинг не ответил раз, повтор удался
+let tries = 0;
+const flaky = () => {
+    tries += 1;
+    if (tries === 1) throw new Error('timeout');
+    return 'ответ';
+};
+let silent = false;
+out('host: SC-AK-1384 — повтор чтения удался', attempt(flaky, () => (silent = true)), 'ответ');
+out('host: SC-AK-1384 — хостинг не помечен молчащим', String(silent), 'false');
+let twice = '';
+try {
+    attempt(() => {
+        throw new Error('timeout');
+    }, () => (silent = true));
+} catch (error) {
+    twice = error.name;
+}
+out('host: SC-AK-1384 — два отказа подряд — HostSilent', `${twice} ${silent}`, 'HostSilent true');
+
+// SC-AK-1385, SC-AK-1386 — хостинг не ответил дважды
+const silentError = () => {
+    const error = new Error('silent');
+    error.name = 'HostSilent';
+    throw error;
+};
+const HOSTED = new Set(['measure.epic.declared', 'measure.task.taken', 'measure.pr.handed', 'measure.epic.nextTaken', 'measure.epic.mergedMarked', 'measure.epic.finished', 'measure.copy.outsideEpic']);
+const localUnmet = measureStates(model, (name) => (HOSTED.has(name) ? silentError() : name !== 'measure.agreement.named'));
+out('host: SC-AK-1385 — первый невыполненный выход локальный — меряется он', `${localUnmet.state} ${localUnmet.reason}`, 'разбор-закрыт null');
+const hostUnmet = measureStates(model, (name) => (HOSTED.has(name) ? silentError() : true));
+out('host: SC-AK-1386 — выход хостинга без ответа — ход отпущен с причиной', `${hostUnmet.state} · ${hostUnmet.reason}`, 'эпик-заведён · the hosting did not answer twice');
+
+// SC-AK-1387 — выход 10
+const archived = [{ sha: 'a', files: { [`docs/tasks/${B}/plan.md`]: 'p' } }, { sha: 'z', files: { [`docs/tasks/${B}/plan.md`]: null, 'docs/archive/rt-12.md': 'r' } }];
+const handedHost = (reviewers, contains = ['z']) => ({ contains, issues: { 12: { open: true, status: 'in-review', epic: '10' } }, pulls: { [B]: [{ number: 7, state: 'CLOSED', base: E, reviewers }] } });
+out('host: SC-AK-1387 — PR в любом состоянии, с ревьюером', run(pr.handed, { commits: archived, host: handedHost(['owner']) }), 'true');
+out('host: SC-AK-1387 — PR без ревьюера не выход', run(pr.handed, { commits: archived, host: handedHost([]) }), 'false');
+out('host: SC-AK-1387 — коммит разбора папки не на сервере — не выход', run(pr.handed, { commits: archived, host: handedHost(['owner'], []) }), 'false');
+
+// SC-AK-1388…1390 — выход 11
+out('host: SC-AK-1388 — ветка следующей задачи есть на сервере', run(epic.nextTaken, { host: { remote: [{ name: 'RT-13-next', sha: 'n' }] } }), 'true');
+out('host: SC-AK-1388 — ветки следующей задачи нет — не выход', run(epic.nextTaken, {}), 'false');
+out('host: SC-AK-1388 — следующей задачи нет — выход выполнен', run(epic.nextTaken, { rows: [['1', 11, 'влито'], ['2', 12, 'идёт']] }), 'true');
+const ownerRows = [['1', 11, 'влито'], ['2', 12, 'идёт'], ['3', 13, 'шаг владельца «сделаю сам RT-13»'], ['4', 14, 'впереди']];
+out('host: SC-AK-1389 — задача с шагом владельца пропускается', run(epic.nextTaken, { rows: ownerRows, owner: ['сделаю сам RT-13'], local: [{ name: 'RT-14-more', sha: 'm' }] }), 'true');
+out('host: SC-AK-1389 — шаг без слова владельца не пропускается', run(epic.nextTaken, { rows: ownerRows, local: [{ name: 'RT-14-more', sha: 'm' }] }), 'false');
+const deferred = [['1', 11, 'влито'], ['2', 12, 'идёт'], ['—', 13, 'отложено'], ['3', 14, 'впереди']];
+out('host: SC-AK-1390 — отложенная задача пропускается', run(epic.nextTaken, { rows: deferred, local: [{ name: 'RT-14-more', sha: 'm' }] }), 'true');
+
+// SC-AK-1391 — выход 12
+const mergedPull = (task, sha) => ({ number: task, head: `RT-${task}-x`, headRefOid: sha, base: E });
+out('host: SC-AK-1391 — влитые задачи отмечены', run(epic.mergedMarked, { host: { merged: [mergedPull(11, 's11')] } }), 'true');
+out('host: SC-AK-1391 — влитая задача не отмечена — не выход', run(epic.mergedMarked, { host: { merged: [mergedPull(11, 's11'), mergedPull(12, 's12')] } }), 'false');
+
+// SC-AK-1392…1394, SC-AK-1466 — выход 13
+const two = [['1', 11, 'влито'], ['2', 12, 'влито']];
+const epicPull = { [E]: [{ number: 9, state: 'OPEN', base: 'main', reviewers: [] }] };
+const tips = [{ name: 'RT-11-a', sha: 's11' }, { name: 'RT-12-flow', sha: 's12' }];
+out('host: SC-AK-1392 — каскад: PR задачи влит в ветку предыдущей, обе в эпике', run(epic.finished, { rows: two, local: tips, host: { landed: { [E]: ['s11', 's12'] }, pulls: epicPull } }), 'true');
+out('host: SC-AK-1392 — каскад: предыдущая ещё не в эпике — не выход', run(epic.finished, { rows: two, local: tips, host: { landed: { [E]: ['s11'], 'RT-11-a': ['s12'] }, pulls: epicPull } }), 'false');
+out('host: SC-AK-1393 — PR эпика влит — выход выполнен', run(epic.finished, { rows: two, local: tips, host: { landed: { main: ['s11', 's12'] }, pulls: { [E]: [{ number: 9, state: 'MERGED', base: 'main', reviewers: [] }] } } }), 'true');
+out('host: SC-AK-1393 — PR эпика нет — не выход', run(epic.finished, { rows: two, local: tips, host: { landed: { [E]: ['s11', 's12'] } } }), 'false');
+out('host: SC-AK-1394 — отложенные задачи не считаются', run(epic.finished, { rows: [...two, ['—', 13, 'отложено']], local: tips, host: { landed: { [E]: ['s11', 's12'] }, pulls: epicPull } }), 'true');
+out('host: SC-AK-1466 — ветка задачи удалена после слияния — вершина из headRefOid PR', run(epic.finished, { rows: two, local: [tips[1]], host: { merged: [mergedPull(11, 's11')], landed: { [E]: ['s11', 's12'] }, pulls: epicPull } }), 'true');
+JS
+
+# --- SC-AK-1381 — память выполненного выхода на настоящем источнике переживает коммит ------------
+(
+    cd "$TF_DIR" || exit 1
+    git -c init.defaultBranch=main init -q cache-repo
+    cd cache-repo || exit 1
+    git -c user.name=t -c user.email=t@example.test -c commit.gpgsign=false commit -q --allow-empty -m start
+)
+(cd "$TF_DIR/cache-repo" && node --input-type=module -e "
+import { open } from '$TESTS/../assets/task-flow/source/host.mjs';
+open().remember('exit2:10');
+" 2>&1)
+(cd "$TF_DIR/cache-repo" && git -c user.name=t -c user.email=t@example.test -c commit.gpgsign=false commit -q --allow-empty -m next)
+got="$(cd "$TF_DIR/cache-repo" && node --input-type=module -e "
+import { open } from '$TESTS/../assets/task-flow/source/host.mjs';
+console.log(String(open().recalled('exit2:10')) + ' ' + String(open().recalled('exit4:other')));
+" 2>&1)"
+report "host: SC-AK-1381 — память выхода 2 на настоящем источнике переживает коммит" "$got" 'true false'
+
 # --- SC-AK-1371 — выход 5: одобрение дано в другой копии дерева -----------------------------------
 (
     cd "$TF_DIR" || exit 1

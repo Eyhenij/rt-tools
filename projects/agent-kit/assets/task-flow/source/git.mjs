@@ -13,6 +13,7 @@
  *   everExisted(path)   the path, a file or a directory, stood in a commit of the branch or of the
  *                       main branch on the server
  *   existsAtHead(path)  the path stands in the head commit
+ *   branches(prefix)    [{ name, sha }] — the local branches whose name begins so
  */
 import { spawnSync } from 'node:child_process';
 
@@ -66,6 +67,15 @@ export function open() {
         },
         existsAtHead(path) {
             return run(['cat-file', '-e', `HEAD:${path.replace(/\/$/, '')}`]) !== null;
+        },
+        branches(prefix) {
+            return (run(['for-each-ref', '--format=%(refname:short)\t%(objectname)', `refs/heads/${prefix}*`]) ?? '')
+                .split('\n')
+                .filter(Boolean)
+                .map((line) => {
+                    const [name, sha] = line.split('\t');
+                    return { name, sha };
+                });
         },
     };
 }

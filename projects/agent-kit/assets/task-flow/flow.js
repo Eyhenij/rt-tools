@@ -16,10 +16,10 @@
   measure: {
     grill: { written: { git: source.git, tree: source.tree } },
     epic: {
-      declared: { git: source.git, host: source.host },
-      nextTaken: { git: source.git, tree: source.tree },
-      mergedMarked: { host: source.host, tree: source.tree },
-      finished: { git: source.git, host: source.host },
+      declared: { git: source.git, host: source.host, tree: source.tree },
+      nextTaken: { git: source.git, host: source.host, tree: source.tree, owner: source.owner },
+      mergedMarked: { git: source.git, host: source.host, tree: source.tree },
+      finished: { git: source.git, host: source.host, tree: source.tree },
     },
     agreement: { named: { git: source.git, tree: source.tree } },
     task: { taken: { git: source.git, host: source.host } },

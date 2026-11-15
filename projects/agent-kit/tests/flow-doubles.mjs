@@ -12,6 +12,9 @@
  *   main      [path] — the paths the main branch on the server holds in its history
  *   approval  the approval mark of the branch, or null
  *   steps     { "N.M": mark } — the marks of the steps
+ *   local     [{ name, sha }] — the local branches
+ *   host      what the hosting answers, see `hostDouble`
+ *   owner     [text] — the messages the owner typed
  *
  * The double of `git` keeps the contract of the real source: the same names, the same answers for
  * the same history. The `steps` source is the real one: it parses text and reads nothing else. The
@@ -27,7 +30,7 @@ const KIT = join(HERE, '..', 'assets');
 const inside = (path, key) => key === path || key.startsWith(`${path.replace(/\/$/, '')}/`);
 
 /** The double of `source.git` over a written history. */
-export function gitDouble({ branch = '', commits = [], main = [] }) {
+export function gitDouble({ branch = '', commits = [], main = [], local = [] }) {
     const snapshots = [];
     const changes = [];
     let current = {};
@@ -60,7 +63,54 @@ export function gitDouble({ branch = '', commits = [], main = [] }) {
         addedBy: (path) => changes.find((c) => c.added.includes(path))?.sha ?? null,
         everExisted: (path) => snapshots.some((s) => Object.keys(s).some((k) => inside(path, k))) || main.some((k) => inside(path, k)),
         existsAtHead: (path) => Object.keys(snapshots.at(-1) ?? {}).some((k) => inside(path, k)),
+        branches: (prefix) => local.filter((b) => b.name.startsWith(prefix)),
     };
+}
+
+/**
+ * The double of `source.host`. `issues` — { number: { open, status, epic } }; `remote` — the
+ * branches on the server [{ name, sha }]; `contains` — the commits a branch on the server holds;
+ * `pulls` — { head: [{ number, state, base, reviewers, headRefOid }] }; `merged` — the merged PRs;
+ * `landed` — { branch: [sha] }, the commits `origin/<branch>` holds; `met` — exits kept before.
+ * `silent: true` makes every read throw `HostSilent`.
+ */
+export function hostDouble({
+    issues = {},
+    remote = [],
+    contains = [],
+    pulls = {},
+    merged = [],
+    landed = {},
+    met = [],
+    silent = false,
+} = {}) {
+    const kept = new Set(met);
+    const answer = (value) => {
+        if (silent) {
+            const error = new Error('the hosting did not answer twice');
+            error.name = 'HostSilent';
+            throw error;
+        }
+        return value;
+    };
+    return {
+        issue: (number) => answer(issues[number] ?? null),
+        remoteBranch: (name) => answer(remote.some((b) => b.name === name)),
+        remoteBranches: (prefix) => answer(remote.filter((b) => b.name.startsWith(prefix))),
+        remoteContains: (sha) => answer(contains.includes(sha)),
+        pulls: (head) => answer(pulls[head] ?? []),
+        mergedPulls: () => answer(merged),
+        inRemote: (sha, branch) => answer((landed[branch] ?? []).includes(sha)),
+        remember: (key) => kept.add(key),
+        recalled: (key) => kept.has(key),
+        silent: () => silent,
+        reset: () => {},
+    };
+}
+
+/** The double of `source.owner`: the messages the owner typed. */
+export function ownerDouble(messages = []) {
+    return { messages: () => messages, said: (quote) => messages.some((text) => text.includes(quote)) };
 }
 
 /** The double of `source.tree` over written files. */
@@ -95,7 +145,14 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     const { buildModel } = await import(pathToFileURL(join(KIT, 'checks', 'flow-model.mjs')).href);
     const { open: openSteps } = await import(pathToFileURL(join(KIT, 'task-flow', 'source', 'steps.mjs')).href);
     const model = buildModel(join(KIT, 'task-flow', 'flow.js'));
-    const sources = { git: gitDouble(spec), tree: treeDouble(spec.tree), marks: marksDouble(spec), steps: openSteps() };
+    const sources = {
+        git: gitDouble(spec),
+        tree: treeDouble(spec.tree),
+        marks: marksDouble(spec),
+        steps: openSteps(),
+        host: hostDouble(spec.host),
+        owner: ownerDouble(spec.owner),
+    };
     const measurer = await import(pathToFileURL(resolve(file)).href);
     const entry = model.measures.find((m) => resolve(KIT, 'task-flow', m.file) === resolve(file));
     const ports = Object.fromEntries(Object.keys(entry.caps[cap]).map((port) => [port, sources[port]]));

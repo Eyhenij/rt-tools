@@ -65,6 +65,16 @@ There is no interface: the description is read by the engine and by the executor
 - **Exit 7 is met when every step is done and every done step has a green mark, and a plan without check lines is judged by the marks of the progress alone.**
 - **Exit 8 is met when every path of every edited footprint row has a changed file after the plan and no agreement directory under proposed/ stands in the head.**
 - **Exit 9 is met by one commit that removed the task folder and added a record to the archive.**
+- **A read of the hosting is repeated once, and failed twice it is named as the silent hosting.**
+- **A met exit read from the hosting is kept for the life of the branch, and an answer for the later exits lives sixty seconds.**
+- **The measured state is the first exit known to be unmet; an exit the hosting could not answer is passed over, and with no unmet exit it releases the turn with its reason.**
+- **The epic of the work is the one the task card names, and its plan lies in the plans directory.**
+- **Exit 2 is met by the epic branch on the server or merged into the main branch, with the epic card out of the first column or closed.**
+- **Exit 4 is met by the task card out of the first column or closed, and by the commit that added the task folder.**
+- **Exit 10 is met by the folder commit on the server, a PR of the branch with a reviewer, and the task out of the work column.**
+- **Exit 11 is met by the branch of the next unblocked task of the epic, and with no such task.**
+- **Exit 12 is met when every task of the epic with a merged PR is marked merged in the plan.**
+- **Exit 13 is met when the tip of every task not deferred lies in the epic branch or the main branch, and the PR of the epic into the main branch exists.**
 
 ## What is out of scope
 

@@ -394,3 +394,139 @@ When exit 9 is measured
 Then it is met by the first and unmet by the second
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1379 — exit 2 is met by the epic branch on the server
+
+Given the epic branch on the server with the epic card in work, and the same with the card in the first column
+When exit 2 is measured
+Then it is met by the first and unmet by the second
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1380 — exit 2 is met by an epic merged into the main branch after its branch is removed
+
+Given no epic branch on the server and a merged PR of the epic into the main branch, then neither
+When exit 2 is measured
+Then it is met by the first and unmet by the second
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1381 — the memory of exits 2 and 4 survives a commit
+
+Given exit 4 met once, then a commit and a card that cannot be read; exit 2 kept before; a task in the first column; the real source remembering exit 2 before a commit
+When the exits are measured
+Then the kept exits stay met across the commit, the task in the first column is unmet
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1382 — an answer for exits 10–13 older than sixty seconds is read anew
+
+Given an answer read at a moment, then asked thirty and sixty-one seconds later
+When the answer is asked
+Then it is read once for the first two and anew for the third
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1383 — a call of the hosting client drops the answers
+
+Given an answer kept by the clock, then a reset
+When the answer is asked again
+Then it is read anew
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1384 — a read the hosting failed once is repeated
+
+Given a read that fails once and then answers, and a read that fails twice
+When the source reads
+Then the first answers and the hosting is not silent; the second throws `HostSilent` and the hosting is silent
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1385 — with the hosting silent the first unmet local exit is measured
+
+Given every hosting exit unanswered and exit 3 unmet
+When the states are measured
+Then the measured state is «разбор-закрыт» without a reason
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1386 — with the hosting silent on a hosting exit the turn is released with its reason
+
+Given every hosting exit unanswered and every local exit met
+When the states are measured
+Then the measured state is the first hosting exit, with the reason that the hosting did not answer twice
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1387 — exit 10 is met by a PR in any state with a reviewer
+
+Given a closed PR with a reviewer and the folder commit on the server, the same without a reviewer, and without the commit on the server
+When exit 10 is measured
+Then only the first meets it
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1388 — exit 11 is met by the branch of the next unblocked task
+
+Given the next task with a branch on the server, without one, and an epic with no next task
+When exit 11 is measured
+Then the first and the last meet it, the second does not
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1389 — a task waiting for the owner's step is passed over
+
+Given a next task waiting for the owner's step, with and without the owner's message holding its quote, and a branch of the task after it
+When exit 11 is measured
+Then it is met when the owner said the step and unmet when the owner did not
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1390 — a deferred task is passed over
+
+Given a deferred task before a task with a local branch
+When exit 11 is measured
+Then it is met
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1391 — exit 12 is met when the merged tasks are marked
+
+Given a merged task marked merged, and a merged task left unmarked
+When exit 12 is measured
+Then it is met by the first and unmet by the second
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1392 — exit 13 measures the commits of a cascade
+
+Given a task whose PR went into the branch of the previous task, with both tips in the epic branch, and with the previous one not yet there
+When exit 13 is measured
+Then it is met by the first and unmet by the second
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1393 — exit 13 is met when the PR of the epic is merged
+
+Given every tip in the main branch with the PR of the epic merged, and every tip in the epic branch without a PR of the epic
+When exit 13 is measured
+Then it is met by the first and unmet by the second
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1394 — deferred tasks do not count for exit 13
+
+Given a deferred task whose tip lies nowhere next to tasks that landed
+When exit 13 is measured
+Then it is met
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1466 — a task branch removed after its merge gives its tip from the PR
+
+Given a task without a local or server branch whose merged PR names its head
+When exit 13 is measured
+Then the tip comes from the PR and the exit is met
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
