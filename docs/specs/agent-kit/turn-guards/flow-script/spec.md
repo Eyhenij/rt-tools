@@ -133,6 +133,11 @@ Not applicable: one description is read at a time.
   the measured state never goes back when a folder is taken apart or a branch is removed.
 - **An exit the hosting could not answer is unknown, not unmet.** Reading it as unmet would hold the
   work on a silence of the network; reading it as met would skip a state nobody measured.
+- **The metric is judged against the seven days before the layout.** The engine was first committed
+  on 15 November at 06:38 UTC; the base is read by the counter of `metric/` over the seven days
+  before that moment. Deadlocks come from the records before the layout and from the journal of the
+  engine after it.
+- **Metric base:** nudges 0.11, refusals 5.58, deadlocks 1 (records before the layout, engine journal after)
 
 ## Open questions
 
