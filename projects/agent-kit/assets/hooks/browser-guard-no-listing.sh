@@ -17,7 +17,7 @@ RT_GUARD_RULE=browser-verification
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 
-cat >/dev/null 2>&1
+input="$(cat 2>/dev/null)"
 
 device_id="$("${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/browser-device-id.sh" 2>/dev/null)"
 [ -z "$device_id" ] && exit 0
@@ -29,5 +29,10 @@ device_id="$("${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/browser-device-id.sh" 2>/de
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
 command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
 
-echo "Do not list and do not switch browsers. Call the browser selection with the profile ${device_id} — the only one where the sign-in was made. $(rt_deny_tail)" >&2
+# The named move is the selection, and the rules gate refuses it while its rule is not loaded.
+sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+first=""
+command -v rt_gate_pending >/dev/null 2>&1 && [ -n "$(rt_gate_pending browser-verification "$sid")" ] \
+    && first="Load the rule «browser-verification» by the tool Skill first — the rules gate refuses the selection until then. "
+echo "Do not list and do not switch browsers. ${first}Call the browser selection with the profile ${device_id} — the only one where the sign-in was made. $(rt_deny_tail)" >&2
 exit 2

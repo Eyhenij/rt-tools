@@ -41,8 +41,14 @@ tool="$(rt_hook_tool)"
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
 command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
 
+# The named move is the selection, and the rules gate refuses it while its rule is not loaded.
+sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+first=""
+command -v rt_gate_pending >/dev/null 2>&1 && [ -n "$(rt_gate_pending browser-verification "$sid")" ] \
+    && first="Load the rule «browser-verification» by the tool Skill first — the rules gate refuses the selection until then. "
+
 deny() {
-    echo "$1 Drive the browser by the pinned extension: select the profile ${device_id} and work by its tools. $(rt_deny_tail)" >&2
+    echo "$1 Drive the browser by the pinned extension: ${first}select the profile ${device_id} and work by its tools. $(rt_deny_tail)" >&2
     exit 2
 }
 

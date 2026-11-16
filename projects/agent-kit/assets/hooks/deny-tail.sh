@@ -31,6 +31,20 @@
 #
 #   reason="BLOCKED: <reason>. $(rt_deny_tail 'the line `Docs-skip: <reason>` in the commit body')"
 #   reason="BLOCKED: <reason>. $(rt_deny_tail)"
+# The rule the rules gate still waits for in this session, or nothing. A refusal names a move, and
+# the gate refuses that very move while its rule is not loaded: the executor then walks from one
+# refusal to the next. A guard that names a move the gate judges asks here first and names the
+# loading of the rule instead. The gate's own reading is repeated, not called: the gate is a hook
+# with input of its own, and the record and the rule directory are the whole of its answer.
+# Parameters: the rule name, the session id.
+rt_gate_pending() {
+    local rule="$1" sid="${2:-nosession}"
+    local loaded="${TMPDIR:-/tmp}/claude-skill-gate/${sid}.loaded"
+    [ -f "${CLAUDE_PROJECT_DIR:-.}/${RT_RULES_DIR:-.claude/skills}/${rule}/SKILL.md" ] || return 1
+    [ -f "$loaded" ] && grep -qE "^([^:]*:)?${rule}$" "$loaded" 2>/dev/null && return 1
+    printf '%s' "$rule"
+}
+
 rt_deny_tail() {
     # shellcheck disable=SC1090
     [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/guard-note.sh" ] \

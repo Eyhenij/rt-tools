@@ -65,8 +65,13 @@ deny() {
     exit 0
 }
 
+# The named move is the selection, and the rules gate refuses it while its rule is not loaded.
+first=""
+command -v rt_gate_pending >/dev/null 2>&1 && [ -n "$(rt_gate_pending browser-verification "$sid")" ] \
+    && first="Load the rule «browser-verification» by the tool Skill first — the rules gate refuses the selection until then. "
+
 if [ ! -f "$marker" ]; then
-    deny "No browser is selected in this session. Call the browser selection with the profile ${device_id} before any other call."
+    deny "No browser is selected in this session. ${first}Call the browser selection with the profile ${device_id} before any other call."
 fi
 
 now="$(date +%s)"
@@ -75,7 +80,7 @@ age=$(( now - stamped ))
 
 if [ "$age" -gt "$ttl" ]; then
     rm -f "$marker" 2>/dev/null
-    deny "The last browser selection was ${age} s ago (the limit is ${ttl} s) — over such a break the active browser of the extension drifts away, and it may no longer be the pinned profile. Call the selection with the profile ${device_id} anew and repeat."
+    deny "The last browser selection was ${age} s ago (the limit is ${ttl} s) — over such a break the active browser of the extension drifts away, and it may no longer be the pinned profile. ${first}Call the selection with the profile ${device_id} anew and repeat."
 fi
 
 : >"$marker" 2>/dev/null
