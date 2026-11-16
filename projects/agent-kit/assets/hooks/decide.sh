@@ -11,7 +11,8 @@
 #
 #   rt_decide <hook> <action> <facts JSON> [params JSON] [event] [hook input JSON]
 #
-# An empty action with the hook input given lets the decider find the action from the call itself.
+# An empty action with the hook input given lets the decider find the action from the call itself;
+# «?<action>» does the same and names the hook's own action for a call no class fits.
 #
 # It prints the answer for the agent and returns 1 when the table refuses or asks; prints nothing and
 # returns 0 when it allows. The event is `PreToolUse` unless named: a Stop hook gets the block form.
@@ -23,6 +24,11 @@
 # Where the decider lies: next to the hooks in the package source, otherwise in the checks directory
 # the tree named in its settings — the same way the neighbouring helpers find a program of the tree.
 rt_decide_cmd() {
+    # A path named by the caller wins: a suite that copies hooks apart from the package names it.
+    if [ -n "${RT_DECIDE_CMD:-}" ] && [ -f "$RT_DECIDE_CMD" ]; then
+        printf '%s' "$RT_DECIDE_CMD"
+        return 0
+    fi
     _here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     if [ -f "$_here/../checks/decide.mjs" ]; then
         printf '%s/../checks/decide.mjs' "$_here"
@@ -49,6 +55,15 @@ rt_decide() {
     [ "$_input" != null ] || _input="${RT_HOOK_INPUT:-null}"
     printf '%s' "$_input" | jq -e . >/dev/null 2>&1 || _input=null
 
+    # The slots every hook's text may hold, the neighbours' included: the branch and the tasks
+    # directory. The caller's own params win.
+    _dir="$(printf '%s' "$_input" | jq -r '.cwd // empty' 2>/dev/null)"
+    [ -d "$_dir" ] || _dir="${CLAUDE_PROJECT_DIR:-.}"
+    # shellcheck disable=SC1091
+    command -v rt_fact_branch >/dev/null 2>&1 || . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+    _shared="$(jq -cn --arg b "$(rt_fact_branch "$_dir" 2>/dev/null)" --arg t "${RT_TASKS_DIR:-docs/tasks}" '{branch:$b, tasks_dir:$t}')"
+    _params="$(jq -cn --argjson s "$_shared" --argjson p "$_params" '$s + $p' 2>/dev/null || printf '%s' "$_params")"
+
     # A refusal past the window threshold names the numbers of the window, and it stands first in the
     # refusals of the neighbours too: the numbers are filled here for whichever hook asks.
     if [ "$(printf '%s' "$_facts" | jq -r '.window_over_stop // empty' 2>/dev/null)" = yes ]; then
@@ -58,8 +73,12 @@ rt_decide() {
         [ -n "$_wp" ] && _params="$(jq -cn --argjson w "$_wp" --argjson p "$_params" '$w + $p' 2>/dev/null || printf '%s' "$_params")"
     fi
 
-    _query="$(jq -cn --arg h "$_hook" --arg a "$_action" --argjson f "$_facts" --argjson p "$_params" --argjson i "$_input" \
-        '{hook:$h, action:$a, facts:$f, params:$p} + (if $i == null then {} else {input:$i} end)' 2>/dev/null)" || return 0
+    # «?<action>» asks the decider to take the class of the call and names the hook's own action for
+    # a call no class fits.
+    _fallback=''
+    case "$_action" in "?"*) _fallback="${_action#\?}"; _action='' ;; esac
+    _query="$(jq -cn --arg h "$_hook" --arg a "$_action" --arg fb "$_fallback" --argjson f "$_facts" --argjson p "$_params" --argjson i "$_input" \
+        '{hook:$h, action:$a, facts:$f, params:$p} + (if $i == null then {} else {input:$i} end) + (if $fb == "" then {} else {fallback:$fb} end)' 2>/dev/null)" || return 0
     _answer="$(node "$_cmd" "$_query" 2>/dev/null)"
     [ -n "$_answer" ] || return 0
 
@@ -67,11 +86,23 @@ rt_decide() {
     _text="$(printf '%s' "$_answer" | jq -r '.text // empty' 2>/dev/null)"
     [ -n "$_decision" ] || return 0
 
-    # The closing words of a refusal and the record of it come from the shared tail, as before.
+    # The closing words of a refusal and the record of it come from the shared tail, as before. A
+    # row whose text carries its own closing words still gets the record.
+    # shellcheck disable=SC1090
+    command -v rt_deny_tail >/dev/null 2>&1 || . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
     if [ "$(printf '%s' "$_answer" | jq -r '.tail // false' 2>/dev/null)" = true ]; then
-        # shellcheck disable=SC1090
-        command -v rt_deny_tail >/dev/null 2>&1 || . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
         command -v rt_deny_tail >/dev/null 2>&1 && _text="$_text $(rt_deny_tail)"
+    else
+        command -v rt_deny_tail >/dev/null 2>&1 && rt_deny_tail >/dev/null
+    fi
+
+    # A hook that keeps its own observation of a refusal names it in `RT_DECIDE_NOTE`: the event
+    # prefix and its fields. The event is named by the decision the table took.
+    if [ -n "${RT_DECIDE_NOTE:-}" ]; then
+        # shellcheck disable=SC1090
+        command -v rt_note >/dev/null 2>&1 || . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/observe.sh" 2>/dev/null
+        # shellcheck disable=SC2086
+        command -v rt_note >/dev/null 2>&1 && rt_note "${RT_DECIDE_NOTE%% *}-${_decision}" ${RT_DECIDE_NOTE#* }
     fi
 
     if [ "$_event" = Stop ] || [ "$_event" = SubagentStop ]; then

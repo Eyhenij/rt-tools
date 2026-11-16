@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|NotebookEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
+# Requires: checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Guard of the pair "an edit and its document". PreToolUse.
 #
 # A divergence of the code from the text is soundless. Neither the linter, nor the build, nor the
@@ -42,22 +42,27 @@ command -v jq >/dev/null 2>&1 || exit 0
 
 tool="$(rt_hook_tool)"
 
+# The decision, the move and the text come from the decision table. Parameters: the action, the facts
+# of this guard, the params of the text. A refusal names the edit of the first awaited document, and
+# the facts of the neighbours are those they judge that edit by: the decider puts first what they want.
 decide() {
-    reason="$2"
-    if [ "$1" = "deny" ]; then
-        # shellcheck disable=SC1090
-        [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-            && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-        if command -v rt_deny_tail >/dev/null 2>&1; then
-            reason="$2
-
-$(rt_deny_tail "the line \`Docs-skip: <reason>\` in the commit body; an empty reason is not accepted")"
-        fi
-    fi
-
-    jq -n --arg d "$1" --arg r "$reason" \
-        '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:$d,permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"The document goes by the same commit."}}\n'
+    # shellcheck disable=SC1091
+    . "$rt_hooks_dir/facts.sh" 2>/dev/null
+    dg_sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+    dg_record="$(rt_fact_transcript "$input")"
+    dg_doc="${first_doc:-README.md}"
+    case "$dg_doc" in /*) ;; *) dg_doc="$(git rev-parse --show-toplevel 2>/dev/null)/$dg_doc" ;; esac
+    dg_facts="$(jq -cn --argjson own "$2" \
+        --arg exam "$(rt_fact_exam_holds "$dg_record")" \
+        --arg window "$(rt_fact_window_over_stop "$dg_sid" "$dg_record")" \
+        --arg rule "$(rt_fact_move_rule_loaded Edit "$(jq -cn --arg f "$dg_doc" '{file_path:$f,old_string:"",new_string:""}')" "$dg_sid")" \
+        --arg gate "$(rt_fact_move_gate_rule Edit "$(jq -cn --arg f "$dg_doc" '{file_path:$f,old_string:"",new_string:""}')" "$dg_sid")" \
+        --arg flow "$(rt_fact_rule_loaded "${RT_TASK_FLOW_RULE:-task-flow}" "$dg_sid")" \
+        --arg handoff "$(rt_fact_from_handoff "$dg_record")" \
+        '{exam:$exam, window_over_stop:$window, rule_loaded:$rule, gate_rule:$gate, task_flow_loaded:$flow, from_handoff:$handoff} + $own')"
+    # shellcheck disable=SC1091
+    . "$rt_hooks_dir/decide.sh" 2>/dev/null
+    command -v rt_decide >/dev/null 2>&1 && rt_decide docs-guard.sh "$1" "$dg_facts" "${3:-"{}"}" PreToolUse "$input"
     exit 0
 }
 
@@ -97,11 +102,12 @@ case "$tool" in
         case "$target" in
             */"$laws_dir"/*.implementation.md | "$laws_dir"/*.implementation.md) exit 0 ;;
             */"$laws_dir"/*.md | "$laws_dir"/*.md)
-                decide ask "An edit of a law: \`${target##*/}\`. A law describes an agreement about the product, not the layout of the code — name to the owner what you are changing and why, and wait for the answer. If the edit is already agreed, confirm the call."
+                decide edit_laid_out '{}' "$(jq -cn --arg f "${target##*/}" '{file:$f}')"
                 ;;
             */"$overrides_dir"/laws/*.implementation.md | "$overrides_dir"/laws/*.implementation.md) exit 0 ;;
             */"$overrides_dir"/laws/*.md | "$overrides_dir"/laws/*.md)
-                decide ask "An edit of a law by an override: \`${target##*/}\`. A laid-out file is rewritten by the layout, so an edit of the override is an edit of the law itself: name to the owner what you are changing and why, and wait for the answer. If the edit is already agreed, confirm the call."
+                if [ "$tool" = Write ]; then dg_act=write_override; else dg_act=edit_override; fi
+                decide "$dg_act" '{}' "$(jq -cn --arg f "${target##*/}" '{file:$f}')"
                 ;;
         esac
         exit 0
@@ -207,15 +213,6 @@ problems=''
 # The first document the refusal awaits: the edit of it is the move the refusal names, and a
 # neighbouring guard may hold that edit — the exam, the rule of the file, the handover entry.
 first_doc=''
-docs_first() {
-    [ -n "$first_doc" ] || return 0
-    # shellcheck disable=SC1090
-    [ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
-    command -v rt_move_first >/dev/null 2>&1 || return 0
-    case "$first_doc" in /*) ;; *) first_doc="$(git rev-parse --show-toplevel 2>/dev/null)/$first_doc" ;; esac
-    df_first="$(rt_move_first Edit "$(jq -cn --arg f "$first_doc" '{file_path:$f,old_string:"",new_string:""}')")"
-    [ -n "$df_first" ] && printf ' %s' "$df_first"
-}
 add() { problems="${problems}
   • $1"; }
 
@@ -340,10 +337,7 @@ for root in $need_readme; do
 done
 
 if [ -n "$problems" ]; then
-    decide deny "BLOCKED: the commit edits code but not the document that describes it.
-${problems}
-
-Text is edited in the same branch as the code: a document that has drifted from the tree looks like a current reference and leads the next reader astray. If an edit of the document really is not needed here — name the reason by the line \`Docs-skip: <reason>\` in the commit body, it stays in the history.$(docs_first)"
+    decide commit '{"doc_pair":"no"}' "$(jq -cn --arg p "$problems" '{problems:$p}')"
 fi
 
 # ── 4. The laws ───────────────────────────────────────────────────────────────
@@ -364,10 +358,7 @@ if [ -d "$laws_dir" ] && ! printf '%s\n' "$paths" | grep -qE "^${laws_dir}/([^/]
     done
 
     if [ -n "$touched" ]; then
-        decide ask "The edit touches the places where articles of laws are carried out:
-${touched}
-
-The laws lie in \`${laws_dir}/\`, the binding — in the companions next to them. Read the law and tell the owner whether the edit agrees with it: if the edit refines it or contradicts it, the law is edited in this same branch, but only with their knowledge. If the law has not changed — confirm the call."
+        decide commit '{"doc_pair":"yes","law_anchor_touched":"yes"}' "$(jq -cn --arg t "$touched" --arg l "$laws_dir" '{touched:$t, laws_dir:$l}')"
     fi
 fi
 

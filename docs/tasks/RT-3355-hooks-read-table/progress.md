@@ -12,7 +12,9 @@ Rewritten by every session, not appended to.
   and computes the 330 composed states (`rows 1000, ok 1000`); the composed rows left the table for
   `states` (conditions, pattern, probe); walk, conform and chains read `withDecided` — `derived 3584
   decided`; `hooks/decide.sh` gives `rt_decide`, FAIL-OPEN covered.
-- **Next step:** 4.1 — the hooks of the course of work decide by `rt_decide`.
+- **Next step:** 4.2 — the hooks of delivery and of git decide by `rt_decide`. 4.1 is done: nine
+  hooks of the course of work decide by the table, the mutation sweep follows 484 of 999 rows, the
+  snapshot compare gives `changed 0`.
 - **Uncommitted:** nothing after the stage 3 commit.
 - **PR:** not open yet
 
@@ -27,8 +29,8 @@ Rewritten by every session, not appended to.
 - [x] 2.4 `hooks/decide.sh` gives `rt_decide`; a decider that fails or is absent lets the action through
 - [x] 3.1 `hooks/facts.sh` computes the branch, the fresh base, the window, the loaded rules and the conversation record once per call
 - [x] 3.2 No hook computes these facts past `facts.sh`
-- [>] 4.1 The hooks of the course of work decide by `rt_decide`: task-flow, task-flow-draft, flow-step, exam, window-fill, handoff-entry, docs, skill-gate, turn-exit
-- [ ] 4.2 The hooks of delivery and of git decide by `rt_decide`: git-guard-* with every helper, pre-push, commit-msg; the helpers that refused become guards with rows
+- [x] 4.1 The hooks of the course of work decide by `rt_decide`: task-flow, task-flow-draft, flow-step, exam, window-fill, handoff-entry, docs, skill-gate, turn-exit
+- [>] 4.2 The hooks of delivery and of git decide by `rt_decide`: git-guard-* with every helper, pre-push, commit-msg; the helpers that refused become guards with rows
 - [ ] 4.3 The other hooks decide by `rt_decide`; a content analysis (prose-style, qa-dataid, reuse-first, sql) gives a fact
 - [ ] 4.4 No hook re-runs its neighbours: `rt_move_first` is gone
 - [ ] 5.1 Every refusal row flipped to «allow» makes its hook allow
@@ -83,6 +85,30 @@ Rewritten by every session, not appended to.
 - **The decider and the facts got their spec bindings in stage 3, not 6.** The package suites
   count every hook file without a spec, and three new files turned them red. Two rules went into
   the decision-table spec; 6.2 still checks the binding. Affected stage: 6.
+- **The mutation sweep never reached a hook before this stage.** The probe harness drops every
+  `RT_` variable, `RT_DECISION_FLIP` included, so stage 1 measured «followed 0» for a reason other
+  than the one written. The flip now travels as `PROBE_FLIP` and is set again after the harness.
+  Affected stage: 5.
+- **The action of a call is computed, not named, by hooks that judge every edit.** The rows of
+  window-fill, handoff-entry, exam, skill-gate and the task-flow guards differ only by the action;
+  a hook that named one action for all of them would leave the other rows flippable with no effect.
+  `checks/action-of.mjs` lists every class a call fits, and the decider takes the first the hook has
+  a row for; a flip of any class of the call counts, since `task_new` and `new_task` name one call in
+  two areas. Two window-fill probes changed their input to tell classes apart: `work_call` now runs a
+  test command, `edit_laid_out` edits a file with the layout header. Affected stage: 4, 5.
+- **Facts of neighbours are computed by `facts.sh`, not by running the neighbours.** The exam, the
+  window, the loaded rule of a move, the handover entry and the window numbers are functions there.
+  `rule_loaded` means the rule of the move for the gate and the rule of the course of work for the
+  window and the handover entry; the decider reads the second from `task_flow_loaded` when it asks
+  those two as neighbours (`ALIASES`). Affected stage: 4.
+- **Variable parts of texts are slots.** The branch, the tasks directory, the state, the agreement
+  path, the window numbers, the docs problems and the whole skill-gate reason are `{name}` slots;
+  `decide.sh` fills the branch, the tasks directory and the window numbers for any hook, since those
+  texts also stand first in the refusals of neighbours. 25 states whose `says` waited for the docs
+  problems verbatim also accept the slot. Affected stage: 4, 5.
+- **The docs problems are a neighbour text no other hook can fill yet.** When the delivery hooks
+  move to the decider, the docs analysis has to become a fact function they call; until then their
+  states compose with an unfilled `{problems}`. Affected stage: 4.
 - **`plan-red` did not find this session's record by itself.** It wrote the approval only with
   `RT_FLOW_TRANSCRIPT` naming the record; a finding of the epic.
 
@@ -104,8 +130,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 6 — the shared facts
-- **Next step:** 3.1 — `hooks/facts.sh` with `rt_fact_*` for the branch, the fresh base, the
+- **Stage:** 4 of 6 — the hooks switched to the decider
+- **Next step:** 4.2 — the hooks of delivery and of git decide by `rt_decide`. 4.1 is done: nine
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3355-hooks-read-table/progress.md`; the plan lies next to it.
@@ -113,31 +139,34 @@ The progress in full — `docs/tasks/RT-3355-hooks-read-table/progress.md`; the 
 ### Uncommitted
 
 ```
+ M docs/specs/agent-kit/decision-table/implementation.md
+ M docs/specs/agent-kit/decision-table/spec.md
+ M docs/specs/agent-kit/exam/implementation.md
+ M docs/specs/agent-kit/guards/implementation.md
+ M docs/tasks/RT-3355-hooks-read-table/progress.md
+ M projects/agent-kit/assets/checks/action-of.mjs
+ M projects/agent-kit/assets/checks/decide.mjs
  M projects/agent-kit/assets/checks/decision-table.json
- M projects/agent-kit/assets/checks/decision-table.mjs
- M projects/agent-kit/assets/hooks/conscience-guard.sh
+ M projects/agent-kit/assets/hooks/decide.sh
+ M projects/agent-kit/assets/hooks/docs-guard.sh
  M projects/agent-kit/assets/hooks/exam-guard.sh
- M projects/agent-kit/assets/hooks/git-guard-delivery-conflict.sh
- M projects/agent-kit/assets/hooks/git-guard-delivery-folder.sh
- M projects/agent-kit/assets/hooks/git-guard-delivery-signature.sh
- M projects/agent-kit/assets/hooks/git-guard-delivery.sh
- M projects/agent-kit/assets/hooks/git-guard-main.sh
- M projects/agent-kit/assets/hooks/git-guard-no-verify.sh
- M projects/agent-kit/assets/hooks/git-guard-push-marks.sh
- M projects/agent-kit/assets/hooks/git-guard-push-tests.sh
+ M projects/agent-kit/assets/hooks/facts.sh
+ M projects/agent-kit/assets/hooks/flow-step-guard.sh
  M projects/agent-kit/assets/hooks/handoff-entry-guard.sh
- M projects/agent-kit/assets/hooks/handoff-write.sh
- M projects/agent-kit/assets/hooks/rerun-guard.sh
- M projects/agent-kit/assets/hooks/role-calls.sh
- M projects/agent-kit/assets/hooks/task-context-load.sh
+ M projects/agent-kit/assets/hooks/skill-gate.sh
  M projects/agent-kit/assets/hooks/task-flow-context.sh
- M projects/agent-kit/assets/hooks/turn-entry-load.sh
+ M projects/agent-kit/assets/hooks/task-flow-draft-guard.sh
+ M projects/agent-kit/assets/hooks/task-flow-guard.sh
  M projects/agent-kit/assets/hooks/turn-exit-guard.sh
+ M projects/agent-kit/assets/hooks/window-fill-guard.sh
 ```
 
 ### Commits over the main branch
 
 ```
+0a2f9c7a8 feat(rt:agent-kit): действие вызова определяет решатель, окно и вход из передачи по таблице
+3ae100acc feat(rt:agent-kit): turn-exit и flow-step берут решение из таблицы
+7842394cf feat(rt:agent-kit): общие факты хуков считает facts.sh
 5c4372a65 feat(rt:agent-kit): решатель по таблице решений и rt_decide для хуков
 7de6f3917 feat(rt:agent-kit): строки таблицы решений несут полный текст отказа
 6188b4f7d feat(rt:agent-kit): снимок ответов проб и переворот строк таблицы решений
@@ -155,9 +184,6 @@ a7d989a2d fix(rt:agent-kit): все наборы пакета зелёные, ш
 3402681a4 feat(rt:agent-kit): отказы хода работы называют разрешённый ход, цепочки таблицы записаны сценариями
 afe372403 docs(rt:agent-kit): шаг 2.2 задачи RT-3275 измерен
 8c636dc4c docs(rt:agent-kit): задача RT-3275 снова идёт
-79fb55741 docs(rt:agent-kit): задача RT-3275 ждёт шага владельца
-2dfaf2915 docs(rt:agent-kit): где стоит задача RT-3275
-71c986301 docs(rt:agent-kit): сценарии и привязки подобласти таблицы решений
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

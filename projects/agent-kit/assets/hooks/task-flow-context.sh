@@ -14,8 +14,8 @@
 # names the branch, the root, the task folders directory, the folder itself and the plan in it.
 #
 # WHAT IT DOES NOT DO. It judges nothing and refuses nothing: the branch name, the presence of
-# the folder, the work state and the agreement are the business of the guards themselves, and the
-# refusal is printed by the one whose requirement it is.
+# the folder, the work state and the agreement are facts the guards themselves hand to the decision
+# table, and the decision comes from there.
 #
 # FAIL-OPEN: no jq, not a git repository, broken input, a foreign tool, no profile function →
 # the answer is "nothing to judge". Broken parsing must not get in the way of work.
@@ -209,19 +209,4 @@ EOF
     RT_TF_PLAN="$RT_TF_DIR/plan.md"
 
     return 0
-}
-
-# The refusal of a work-conduct guard: the reason as the first parameter, the lawful form of
-# bypass as the second. The tail is appended here, not in every text: missed in one place, it
-# reads as "this refusal has no moves". The tail may not be laid out — then there is none, and
-# the reason stays as it was.
-rt_task_flow_deny() {
-    rt_tf_reason="$1"
-    if command -v rt_deny_tail >/dev/null 2>&1; then
-        rt_tf_tail="$(rt_deny_tail "$2")"
-        [ -n "$rt_tf_tail" ] && rt_tf_reason="$1 ${rt_tf_tail}"
-    fi
-    jq -n --arg r "$rt_tf_reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$rt_tf_reason"
-    exit 0
 }

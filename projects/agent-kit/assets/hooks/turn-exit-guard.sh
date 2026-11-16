@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # rt-hook: Stop
 # rt-hook-timeout: 90
-# Requires: checks/task-flow-script.mjs, hooks/deny-tail.sh, hooks/turn-exit-role.sh
+# Requires: checks/task-flow-script.mjs, checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, hooks/deny-tail.sh, hooks/turn-exit-role.sh
 # Turn exit guard: a turn does not end before the scenario of the task flow does. Stop.
 #
 # The engine measures the branch by the description and answers with a verdict: the turn is released

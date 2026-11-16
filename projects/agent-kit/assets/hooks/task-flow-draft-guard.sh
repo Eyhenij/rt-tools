@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/task-flow-context.sh, hooks/task-flow-guard.sh, hooks/deny-tail.sh
+# Requires: checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, hooks/task-flow-context.sh, hooks/task-flow-guard.sh, hooks/deny-tail.sh
 # PreToolUse guard for Edit|Write|MultiEdit: no code is written before the product agreement.
 #
 # The plan says how the work will be done and is silent about what was agreed with the owner.
@@ -37,12 +37,6 @@ rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 [ -f "$rt_hooks_dir/task-flow-context.sh" ] && . "$rt_hooks_dir/task-flow-context.sh"
 command -v rt_task_flow_context >/dev/null 2>&1 || exit 0
 
-# The shared refusal tail: two lawful moves and the lawful form of bypass, when the refusal has
-# one. The file may not be laid out — then there is no tail, and the reason for the refusal stays
-# as it was.
-# shellcheck disable=SC1090
-[ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh"
-
 rt_task_flow_context || exit 0
 
 branch="$RT_TF_BRANCH"
@@ -50,14 +44,27 @@ root="$RT_TF_ROOT"
 tasks_dir="$RT_TF_TASKS_DIR"
 plan="$RT_TF_PLAN"
 
-deny() { rt_task_flow_deny "$@"; }
-
-# What a neighbouring guard wants before the edit a refusal names: the exam, the rule of the file,
-# the handover entry. Empty when the edit is open. Parameters: the tool and the file.
-first() {
-    command -v rt_move_first >/dev/null 2>&1 || return 0
-    rt_tf_first="$(rt_move_first "$1" "$(jq -cn --arg f "$2" '{file_path:$f,old_string:"",new_string:"",content:""}')")"
-    [ -n "$rt_tf_first" ] && printf ' %s' "$rt_tf_first"
+# The decision, the move and the text come from the decision table. Parameters: the facts of this
+# guard, the tool and the input of the edit its refusal names, the params of the text. The facts of
+# the neighbours are those they judge that edit by: the decider puts first what they want.
+tf_decide() {
+    # shellcheck disable=SC1091
+    . "$rt_hooks_dir/facts.sh" 2>/dev/null
+    tf_sid="$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+    tf_record="$(rt_fact_transcript "$RT_HOOK_INPUT")"
+    tf_facts="$(jq -cn --argjson own "$1" \
+        --arg exam "$(rt_fact_exam_holds "$tf_record")" \
+        --arg window "$(rt_fact_window_over_stop "$tf_sid" "$tf_record")" \
+        --arg rule "$(rt_fact_move_rule_loaded "$2" "$3" "$tf_sid")" \
+        --arg gate "$(rt_fact_move_gate_rule "$2" "$3" "$tf_sid")" \
+        --arg handoff "$(rt_fact_from_handoff "$tf_record")" \
+        --arg flow "$(rt_fact_rule_loaded "${RT_TASK_FLOW_RULE:-task-flow}" "$tf_sid")" \
+        '{exam:$exam, window_over_stop:$window, rule_loaded:$rule, gate_rule:$gate, task_flow_loaded:$flow, from_handoff:$handoff} + $own')"
+    tf_params="$(jq -cn --arg b "$branch" --arg t "$tasks_dir" --argjson p "${4:-"{}"}" '{branch:$b, tasks_dir:$t} + $p')"
+    # shellcheck disable=SC1091
+    . "$rt_hooks_dir/decide.sh" 2>/dev/null
+    command -v rt_decide >/dev/null 2>&1 && rt_decide task-flow-draft-guard.sh "?edit_code" "$tf_facts" "$tf_params" PreToolUse "$RT_HOOK_INPUT"
+    exit 0
 }
 
 # No plan — that is another guard's demand, and the refusal about it is printed by the progress
@@ -82,8 +89,7 @@ draft="$(sed -nE 's/^\*\*(Draft|Драфт):\*\*[[:space:]]*`([^`]*)`.*/\2/p' "$
 [ -z "$draft" ] && draft="$(sed -nE 's/^\*\*(Spec|Спек):\*\*[[:space:]]*`([^`]*)`.*/\2/p' "$plan" 2>/dev/null | head -1)"
 
 if [ -z "$draft" ]; then
-    deny "BLOCKED by task-flow: no product agreement is named in '${tasks_dir}/${branch}/plan.md'. Name it by one of two lines: '**Draft:** \`path\`' — a separate document in docs/specs/<domain>/proposed/<feature>/, or '**Spec:** \`path\`' — the domain spec the agreement is written into directly.$(first Edit "$plan") The rule is task-flow." \
-        "the line '**Behaviour:** unchanged — <the owner reason>' in the plan; an empty reason is not accepted"
+    tf_decide '{"plan":"yes","agreement":"unnamed"}' Edit "$(jq -cn --arg f "$plan" '{file_path:$f,old_string:"",new_string:""}')"
 fi
 
 case "$draft" in
@@ -132,4 +138,5 @@ case "$draft_path" in
     *) agreement_file="$draft_path/spec.md" ;;
 esac
 
-deny "BLOCKED by task-flow: the plan names the agreement '${draft}', and it is neither on disk nor in the history of the branch. Create it from the sample (docs/specs/_template) or fix the path in '${tasks_dir}/${branch}/plan.md'.$(first Write "$agreement_file") The rule is task-flow."
+tf_decide '{"plan":"yes","agreement":"missing"}' Write "$(jq -cn --arg f "$agreement_file" '{file_path:$f,content:""}')" \
+    "$(jq -cn --arg d "$draft" '{draft:$d}')"

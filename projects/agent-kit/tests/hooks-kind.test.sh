@@ -83,7 +83,8 @@ for hook in "$HOOK_DIR"/*.sh; do
         *" $name "*) continue ;;
     esac
     grep -qE 'permissionDecision|decision' "$hook" || continue
-    grep -qE 'permissionDecisionReason|reason' "$hook" || mute_refusals=$((mute_refusals + 1))
+    # Страж, решающий по таблице, получает текст отказа из её строки: `rt_decide` его и печатает.
+    grep -qE 'permissionDecisionReason|reason|rt_decide' "$hook" || mute_refusals=$((mute_refusals + 1))
 done
 report "SC-AK-1040 — отказ называет причину" "$mute_refusals" 0
 

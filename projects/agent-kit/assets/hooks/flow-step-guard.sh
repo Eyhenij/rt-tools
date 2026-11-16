@@ -66,18 +66,24 @@ esac
 . "$rt_hooks_dir/facts.sh" 2>/dev/null
 sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
 transcript="$(rt_fact_transcript "$input")"
-exam="$(rt_fact_exam "$transcript")"
-[ -n "$exam" ] || exam=none
-# A role the tree switched off holds nothing: its exam counts as passed.
-# shellcheck disable=SC1091
-. "$rt_hooks_dir/roles.sh" 2>/dev/null && rt_role_off strict-teacher && exam=passed
+exam="$(rt_fact_exam_holds "$transcript")"
+# The move the refusal names is an edit of the progress or of the plan; the gate is asked about that
+# file, and the window and the handover entry about the rule of the course of work.
+tasks_root="$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null)/${RT_TASKS_DIR:-docs/tasks}/$(rt_fact_branch "$dir")"
+case "$action" in
+    edit_flow_description) move_file="$tasks_root/plan.md" ;;
+    *) move_file="$tasks_root/progress.md" ;;
+esac
+move_input="$(jq -cn --arg f "$move_file" '{file_path:$f,old_string:"",new_string:""}')"
 facts="$(jq -cn \
     --arg exam "$exam" \
     --arg window "$(rt_fact_window_over_stop "$sid" "$transcript")" \
-    --arg rule "$(rt_fact_rule_loaded "${RT_TASK_FLOW_RULE:-task-flow}" "$sid")" \
+    --arg rule "$(rt_fact_move_rule_loaded Edit "$move_input" "$sid")" \
+    --arg gate "$(rt_fact_move_gate_rule Edit "$move_input" "$sid")" \
+    --arg flow "$(rt_fact_rule_loaded "${RT_TASK_FLOW_RULE:-task-flow}" "$sid")" \
     --arg handoff "$(rt_fact_from_handoff "$transcript")" \
-    '{exam:$exam, window_over_stop:$window, rule_loaded:$rule, from_handoff:$handoff,
-      step_green:"no", measured:"earlier", owner_named_task:"no", flow_desc_approved:"no"}')"
+    '{exam:$exam, window_over_stop:$window, rule_loaded:$rule, gate_rule:$gate, from_handoff:$handoff,
+      task_flow_loaded:$flow, step_green:"no", measured:"earlier", owner_named_task:"no", flow_desc_approved:"no"}')"
 params="$(jq -cn --arg v "$verdict" '{verdict:$v}')"
 # shellcheck disable=SC1091
 . "$rt_hooks_dir/decide.sh" 2>/dev/null

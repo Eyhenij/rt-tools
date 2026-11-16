@@ -57,6 +57,9 @@ the permission window of the host.
 - **The decider answers as the table says.** It takes the hook, the action and the facts, and gives
   the decision, the named move and the refusal text of the matching row. A decider that fails or is
   absent lets the action through.
+- **The action of a call is computed in one place.** A hook that judges every edit names no action;
+  the decider takes the first class of the call the hook has a row for, or the hook's own action
+  when no class fits.
 - **A fact has one place that computes it.** The branch, the fresh base, the window, the loaded
   rules and the conversation record are computed by shared functions, not by each hook anew.
 

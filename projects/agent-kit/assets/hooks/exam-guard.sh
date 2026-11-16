@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file|Bash|mcp__webstorm__execute_terminal_command
-# Requires: agents/strict-teacher.md, hooks/roles.sh, hooks/deny-tail.sh, hooks/write-targets.sh
+# Requires: checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, agents/strict-teacher.md, hooks/roles.sh, hooks/deny-tail.sh, hooks/write-targets.sh
 # Exam guard: no edit goes through until the exam on the loaded rules has been passed this session.
 #
 # Why this way. The rules gate demands that a rule be loaded before an edit, and ends there: to
@@ -85,19 +85,12 @@ case "$tool" in
         # A window past its stop threshold: the window guard lets through only the closing — the
         # progress and the handover — and refuses the examiner role itself. Holding the progress
         # for an exam then names a move the window guard denies, and the session cannot close.
-        # The mark is written by the window guard on its first refusal; before it the window guard
-        # is asked itself, about the call of the examiner, on this same input.
+        # The window fact reads the mark of the window guard, and before the mark it counts the fill
+        # the way the window guard counts it.
         case "$target" in
             */docs/tasks/*/progress.md | docs/tasks/*/progress.md)
                 exam_sid="$(printf '%s' "$input" | jq -r '.session_id // "unknown"' 2>/dev/null)"
-                [ -f "$(rt_fact_window_stop_file "$exam_sid")" ] && exit 0
-                exam_wf="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/window-fill-guard.sh"
-                if [ -x "$exam_wf" ] && printf '%s' "$input" \
-                    | jq -c '.hook_event_name = "PreToolUse" | .tool_name = "Agent" | .tool_input = {subagent_type:"strict-teacher",description:"exam",prompt:"exam"}' 2>/dev/null \
-                    | env -u RT_HOOK_INPUT -u RT_HOOK_PARSED -u RT_HOOK_TOOL -u RT_HOOK_CMD -u RT_HOOK_FILE -u RT_HOOK_CWD "$exam_wf" 2>/dev/null \
-                    | grep -q '"permissionDecision": *"deny"'; then
-                    exit 0
-                fi
+                [ "$(rt_fact_window_over_stop "$exam_sid" "$(rt_fact_transcript "$input")")" = yes ] && exit 0
                 ;;
         esac
         ;;
@@ -125,13 +118,6 @@ transcript="$(rt_fact_transcript "$input")"
 [ -z "$transcript" ] && exit 0
 [ -f "$transcript" ] || exit 0
 
-# The shared deny tail: two lawful moves and the lawful form of bypass, if the refusal has one.
-# The file may not be laid out — then there is no tail, and the reason for the refusal stays.
-# shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-
 # The second way out of the refusal — one that does not require lifting protection.
 #
 # The guard used to name the list of disabled roles in the tree settings as the only way out. The
@@ -147,23 +133,24 @@ rt_exam_declared_skip() {
         | grep -qE '^Exam-skip:[[:space:]]*[^[:space:]<]'
 }
 
-deny() {
+# The decision, the move and the text come from the decision table. A declared bypass lets the call
+# through before the table is asked: it is the lawful way out the refusal itself names.
+# Parameters: the action (empty — the decider takes it from the call), the facts.
+decide_exam() {
     if rt_exam_declared_skip; then
         printf 'the exam guard: a bypass is declared in the body of the last commit by the line Exam-skip. The call is let through, the record stays in the history.\n' >&2
         exit 0
     fi
-
-    reason="$1"
-    # The named move is the call of the exam role, and the window fill refuses it past its stop
-    # threshold: the neighbours are asked about it, and their move is named first.
-    if command -v rt_move_first >/dev/null 2>&1; then
-        eg_first="$(RT_HOOK_INPUT="$input" rt_move_first Agent '{"subagent_type":"strict-teacher","description":"exam","prompt":"exam"}')"
-        [ -n "$eg_first" ] && reason="$reason $eg_first"
-    fi
-    tail_text="$(rt_deny_tail "$2")"
-    [ -n "$tail_text" ] && reason="$reason ${tail_text}"
-    jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$reason"
+    # The named move is the call of the exam role; the window guard judges it by the window and by
+    # the rule of the course of work loaded for the closing edits.
+    exam_sid="$(printf '%s' "$input" | jq -r '.session_id // "unknown"' 2>/dev/null)"
+    exam_facts="$(jq -cn --argjson f "$2" \
+        --arg w "$(rt_fact_window_over_stop "$exam_sid" "$transcript")" \
+        --arg r "$(rt_fact_rule_loaded "${RT_TASK_FLOW_RULE:-task-flow}" "$exam_sid")" \
+        '$f + {window_over_stop:$w, rule_loaded:$r}')"
+    # shellcheck disable=SC1091
+    . "$rt_hooks_dir/decide.sh" 2>/dev/null
+    command -v rt_decide >/dev/null 2>&1 && rt_decide exam-guard.sh "$1" "$exam_facts" '{}' PreToolUse "$input"
     exit 0
 }
 
@@ -227,7 +214,7 @@ if [ "$ready" = "1" ]; then
     case "$after" in
         passed | no-pr) exit 0 ;;
         *)
-            deny "BLOCKED by exam-guard: the draft is lifted after the second exam, and there was none in this session. Call the role strict-teacher with the rules of delivery and with what the task demanded: a whole session passed between reading those rules and lifting the draft. The way out through the list of switched-off roles requires removing the protection, and the runtime may forbid such an edit; the second way out does not require it — declare the bypass by the line «Exam-skip: причина» in the body of the last commit of the branch: it stays in the history and is visible to the owner on the page of the request."
+            decide_exam pr_ready '{"exam_after_pr":"none"}'
             ;;
     esac
 fi
@@ -240,9 +227,9 @@ fi
 case "$verdict" in
     passed) exit 0 ;;
     failed)
-        deny "BLOCKED by exam-guard: the exam on the loaded rules is failed. Read the rule whole again — not the piece that was asked about — and call the role strict-teacher anew. The answer shown gives knowledge of one line, not of the rule. The way out through the list of switched-off roles requires removing the protection, and the runtime may forbid such an edit; the second way out does not require it — the bypass is declared by the line «Exam-skip: причина» in the body of the last commit of the branch."
+        decide_exam "?edit_code" '{"exam":"failed"}'
         ;;
     *)
-        deny "BLOCKED by exam-guard: there was no exam on the loaded rules in this session. Call the role strict-teacher, hand it the list of loaded rules, answer its questions from memory and return the answers to it — the verdict it gives by the line «ЭКЗАМЕН: сдано N из 5». It counts from the answer of the role in whatever form the host delivered it, but not from the output of the shell and not from your own text: printing that line as an echo does not release the guard. The role was already called and the verdict received — then it arrived in a form the guard does not see: that is a defect of the guard, and an edit of «.claude/rt-kit.json» is taken out from under it. A loaded rule and a read rule are different things, and the price of that difference is paid by the owner."
+        decide_exam "?edit_code" '{"exam":"none"}'
         ;;
 esac

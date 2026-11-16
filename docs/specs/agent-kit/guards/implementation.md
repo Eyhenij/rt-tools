@@ -19,7 +19,7 @@ whole.
 - **Only a word from the list counts as a state name.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`
 - **The task folder is asked of the history of the branch too, not only of the disk.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:in_tree`
 - **The state is judged before the agreement and its bypass.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:progress`
-- **A session begun from a handover edits no files while the rule of conducting work is not loaded.** — `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:verdict`
+- **A session begun from a handover edits no files while the rule of conducting work is not loaded.** — `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:from_handoff`
 - **The handover is recognised both by the path to it and by a word about it.** — `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:from_handoff`
 - **A guard of an edit judges a write by a shell command on a par with one by the edit tool.** — `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:rt_write_targets` — the shared parse; scenarios `SC-AK-928`–`SC-AK-930`
 - **A refusal of a guard names two lawful moves.** — `projects/agent-kit/assets/hooks/deny-tail.sh:rt_deny_tail`

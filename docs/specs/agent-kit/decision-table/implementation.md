@@ -11,6 +11,7 @@ statement: a removed statement is removed together with its line.
 - **Chains are derived from the table, not written by hand.** — `projects/agent-kit/assets/checks/decision-table.mjs:chainsOf` — scenario `SC-AK-1567`
 - **An edit of any hook selects the test of the table before a push.** — `projects/agent-kit/tests/select-suites.sh:rt_select_suites` — scenario `SC-AK-1568`
 - **The decider answers as the table says.** — `projects/agent-kit/assets/checks/decide.mjs:decide` — the hooks call it through `projects/agent-kit/assets/hooks/decide.sh:rt_decide`; the test is `projects/agent-kit/tests/decide.test.sh`
+- **The action of a call is computed in one place.** — `projects/agent-kit/assets/checks/action-of.mjs:actionsOf` — the decider calls `actionOf` and `knownActionsOf`
 - **A fact has one place that computes it.** — `projects/agent-kit/assets/hooks/facts.sh:rt_fact_branch` — the other `rt_fact_*` functions stand in the same file
 
 The names of this tree: the table is `projects/agent-kit/assets/checks/decision-table.json`, its

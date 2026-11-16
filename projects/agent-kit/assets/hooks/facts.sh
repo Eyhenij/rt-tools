@@ -18,6 +18,12 @@
 #   rt_fact_window_over_stop <sid> <record>  yes when the window is past its stop threshold
 #   rt_fact_window_params <record>   the numbers a window refusal names, as JSON
 #   rt_fact_exam <record>            the exam on the loaded rules: passed, failed or none
+#   rt_fact_exam_holds <record>      the exam as the exam guard holds it: a switched-off role and a
+#                                    declared bypass count as passed
+#   rt_fact_move_rule_loaded <tool> <tool input> <sid>
+#                                    yes when every rule the rules gate wants for that move is loaded
+#   rt_fact_move_gate_rule <tool> <tool input> <sid>
+#                                    the first rule the gate waits for before that move, or nothing
 #   rt_fact_from_handoff <record>    yes when the session began from a handover
 #   rt_fact_rule_loaded <rule> <sid> yes when the rule is loaded or absent from the tree
 #
@@ -189,4 +195,42 @@ rt_fact_window_params() {
             --arg handoff_dir "${RT_HANDOFF_DIR:-.claude/handoff}" \
             '{pct:$pct, fill_k:$fill_k, window_k:$window_k, stop_pct:$stop_pct, tasks_dir:$tasks_dir, handoff_dir:$handoff_dir}'
     )
+}
+
+# The exam as the exam guard holds it: the role switched off by the tree, or the bypass declared in
+# the body of the last commit, hold nothing — the exam counts as passed.
+rt_fact_exam_holds() {
+    # No record of the conversation: the exam guard has nothing to judge by and lets the call through.
+    [ -f "${1:-}" ] || { printf 'passed'; return 0; }
+    _rt_here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    # shellcheck disable=SC1091
+    if [ -f "$_rt_here/roles.sh" ] && . "$_rt_here/roles.sh" 2>/dev/null && rt_role_off strict-teacher; then
+        printf 'passed'
+        return 0
+    fi
+    if git -C "${CLAUDE_PROJECT_DIR:-.}" log -1 --format=%B 2>/dev/null | grep -qE '^Exam-skip:[[:space:]]*[^[:space:]<]'; then
+        printf 'passed'
+        return 0
+    fi
+    _rt_e="$(rt_fact_exam "$1")"
+    printf '%s' "${_rt_e:-none}"
+}
+
+# Whether the rules gate lets a move through: every rule its map wants for the move is loaded.
+# Parameters: the tool of the move, its tool input as JSON, the session id.
+rt_fact_move_rule_loaded() {
+    if [ -n "$(rt_fact_move_gate_rule "$@")" ]; then printf 'no'; else printf 'yes'; fi
+}
+
+# The first rule the rules gate waits for before a move, or nothing when the move passes it.
+# Parameters: the tool of the move, its tool input as JSON, the session id.
+rt_fact_move_gate_rule() {
+    _rt_here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    # shellcheck disable=SC1091
+    command -v rt_move_rules >/dev/null 2>&1 || . "$_rt_here/deny-tail.sh" 2>/dev/null
+    command -v rt_move_rules >/dev/null 2>&1 || return 0
+    _rt_in="$(jq -cn --arg t "$1" --argjson i "$2" '{tool_name:$t, tool_input:$i}' 2>/dev/null)"
+    for _rt_r in $(rt_move_rules "$1" "$_rt_in"); do
+        [ "$(rt_fact_rule_loaded "$_rt_r" "$3")" = yes ] || { printf '%s' "$_rt_r"; return 0; }
+    done
 }

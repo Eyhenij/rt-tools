@@ -58,6 +58,14 @@ function shellClasses(c) {
     if (has(/\bgit\s+(checkout|switch)\s+[^&;|]*&&\s*git\s+push\b/)) out.push('push_switch');
     if (has(/\bcd\s+[^&;|]*&&\s*git\s+push\b/)) out.push('push_second_copy');
     if (has(/\bgit\s+push\b/)) out.push('push');
+    const created = c.match(/\bgit\s+(?:checkout\s+-b|switch\s+-c)\s+(\S+)(?:\s+([^\s;&|]+))?/);
+    if (created) {
+        const [, name, base] = created;
+        const task = /^[A-Z]+-\d+-/.test(name);
+        if (task && /[A-Z]/.test(name.replace(/^[A-Z]+-\d+-/, ''))) out.push('branch_create_bad_name');
+        if (task && !(base ?? '').startsWith('origin/')) out.push('branch_create_stale_base');
+        if (!task) out.push('branch_create_local');
+    }
     if (has(/\bgit\s+(checkout\s+-b|switch\s+-c|branch\s+[^-])/)) out.push('branch_create');
     if (has(/\bgh\s+pr\s+create\b/)) out.push('pr_create');
     if (has(/\bgh\s+pr\s+ready\b/)) out.push('pr_ready');
@@ -68,6 +76,11 @@ function shellClasses(c) {
     if (has(/\bgit\s+merge\b/)) out.push('merge_base');
     if (has(SHELL_WRITES_FLOW) && has(SHELL_WRITE)) out.push('shell_write_progress');
     if (has(/(^|[;&|]\s*)cp\s/)) out.push('copy_template');
+    if (has(/\bprisma\s+migrate\s+reset\b/)) out.push('db_reset');
+    if (has(/\bprisma\s+migrate\s+(deploy|dev)\b/)) out.push('migrate');
+    if (has(/\bcurl\b[^;&|]*\b(localhost|127\.0\.0\.1)\b/)) out.push('check_stand');
+    if (has(/\brun\s+serve:|\bnx\s+serve\b|\bng\s+serve\b/)) out.push('raise_dev_server');
+    if (has(/\bhttp\.server\b|\bnpx\s+(serve|http-server)\b/)) out.push('raise_static');
     return out;
 }
 
@@ -119,10 +132,20 @@ export function actionsOf(hookInput) {
     if ((hookInput?.hook_event_name ?? '') === 'Stop' || (hookInput?.hook_event_name ?? '') === 'SubagentStop') return ['end_turn'];
     if (tool === 'EndConversation') out.push('end_conversation');
     if (tool === 'Agent' && input.subagent_type === 'strict-teacher') out.push('call_teacher');
+    if (tool === 'mcp__claude-in-chrome__select_browser') out.push('select_pinned', 'select_other');
+    if (tool === 'mcp__claude-in-chrome__list_connected_browsers') out.push('list_browsers');
+    if (tool.startsWith('mcp__claude-in-chrome__')) out.push('browser_call');
+    if (/^mcp__(playwright|puppeteer|chrome-devtools|Claude_Browser)__/.test(tool)) out.push('other_driver');
+    if (tool === 'mcp__webstorm__execute_run_configuration') out.push(/package\.json$/.test(input.filePath ?? '') ? 'run_manifest_script' : 'run_config_serve');
     if (SHELL_TOOLS.has(tool)) out.push(...shellClasses(String(input.command ?? '')));
     if (EDIT_TOOLS.has(tool)) out.push(...editClasses(tool, input, hookInput?.cwd ?? ''));
     out.push('work_call');
     return out;
+}
+
+/** Every class of the call the hook has a row for, the most specific first. */
+export function knownActionsOf(hookInput, known) {
+    return actionsOf(hookInput).filter((a) => known.has(a));
 }
 
 /** The first class of the call the hook has a row for, or null. */

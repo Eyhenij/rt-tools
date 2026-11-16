@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/task-flow-context.sh, hooks/profile-check.sh, hooks/deny-tail.sh
+# Requires: checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, hooks/task-flow-context.sh, hooks/profile-check.sh, hooks/deny-tail.sh
 # PreToolUse guard for Edit|Write|MultiEdit: code is not written before the plan.
 #
 # Work runs over many sessions, and between them the executor remembers nothing. The plan lying on
@@ -36,12 +36,6 @@ rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 [ -f "$rt_hooks_dir/task-flow-context.sh" ] && . "$rt_hooks_dir/task-flow-context.sh"
 command -v rt_task_flow_context >/dev/null 2>&1 || exit 0
 
-# The shared refusal tail: two lawful moves and the lawful form of a bypass, if the refusal has one.
-# The file may not be laid out — then there is no tail, and the reason for the refusal stays as it
-# was.
-# shellcheck disable=SC1090
-[ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh"
-
 rt_task_flow_context || exit 0
 
 branch="$RT_TF_BRANCH"
@@ -51,15 +45,27 @@ main_branch="$RT_TF_MAIN_BRANCH"
 dir="$RT_TF_DIR"
 plan="$RT_TF_PLAN"
 
-deny() { rt_task_flow_deny "$@"; }
-
-# What a neighbouring guard wants before the move a refusal names: the exam, the rule of the move,
-# the handover entry. Empty when the move is open — then the refusal names it alone. Parameters: the
-# tool of the move and the shell command or the file it writes.
-first() {
-    command -v rt_move_first >/dev/null 2>&1 || return 0
-    rt_tf_first="$(rt_move_first Bash "$(jq -cn --arg c "$1" '{command:$c}')")"
-    [ -n "$rt_tf_first" ] && printf ' %s' "$rt_tf_first"
+# The decision, the move and the text come from the decision table. Parameters: the facts of this
+# guard, the tool and the input of the move its refusal names, the params of the text. The facts of
+# the neighbours are those they judge that move by: the decider puts first what they want.
+tf_decide() {
+    # shellcheck disable=SC1091
+    . "$rt_hooks_dir/facts.sh" 2>/dev/null
+    tf_sid="$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+    tf_record="$(rt_fact_transcript "$RT_HOOK_INPUT")"
+    tf_facts="$(jq -cn --argjson own "$1" \
+        --arg exam "$(rt_fact_exam_holds "$tf_record")" \
+        --arg window "$(rt_fact_window_over_stop "$tf_sid" "$tf_record")" \
+        --arg rule "$(rt_fact_move_rule_loaded "$2" "$3" "$tf_sid")" \
+        --arg gate "$(rt_fact_move_gate_rule "$2" "$3" "$tf_sid")" \
+        --arg handoff "$(rt_fact_from_handoff "$tf_record")" \
+        --arg flow "$(rt_fact_rule_loaded "${RT_TASK_FLOW_RULE:-task-flow}" "$tf_sid")" \
+        '{exam:$exam, window_over_stop:$window, rule_loaded:$rule, gate_rule:$gate, task_flow_loaded:$flow, from_handoff:$handoff} + $own')"
+    tf_params="$(jq -cn --arg b "$branch" --arg t "$tasks_dir" --argjson p "${4:-"{}"}" '{branch:$b, tasks_dir:$t} + $p')"
+    # shellcheck disable=SC1091
+    . "$rt_hooks_dir/decide.sh" 2>/dev/null
+    command -v rt_decide >/dev/null 2>&1 && rt_decide task-flow-guard.sh "?edit_code" "$tf_facts" "$tf_params" PreToolUse "$RT_HOOK_INPUT"
+    exit 0
 }
 
 # Resolving a merge conflict is the merge itself, not an edit of the product. Main is merged into
@@ -91,7 +97,7 @@ EOF
 merge_conflict_only && exit 0
 
 if rt_needs rt_task_branch_ok task-flow-guard && ! rt_task_branch_ok "$branch"; then
-    deny "BLOCKED by task-flow: an edit of code goes in a branch for a task, and the current branch is '${branch}'. Create a task (npm run task:new -- --title '…' --slug <slug>) and a branch under its number, then repeat.$(first "${RT_TASK_NEW_CMD:-npm run task:new} -- --title probe --slug probe") The rule is task-flow."
+    tf_decide '{"branch":"other"}' Bash "$(jq -cn --arg c "${RT_TASK_NEW_CMD:-npm run task:new} -- --title probe --slug probe" '{command:$c}')"
 fi
 
 # A folder taken apart by a commit of this branch is the sign that the work is handed over. The plan
@@ -112,7 +118,7 @@ folder_archived() {
 folder_archived && exit 0
 
 if [ ! -f "$plan" ]; then
-    deny "BLOCKED by task-flow: there is no plan — '${tasks_dir}/${branch}/plan.md'. Assemble the task folder from the sample (cp -r ${tasks_dir}/_template ${tasks_dir}/${branch}) and fill in the header, the task footprint and the stages, then repeat.$(first "cp -r ${tasks_dir}/_template ${tasks_dir}/${branch}") The rule is task-flow."
+    tf_decide '{"branch":"task","plan":"no"}' Bash "$(jq -cn --arg c "cp -r ${tasks_dir}/_template ${tasks_dir}/${branch}" '{command:$c}')"
 fi
 
 # The work state. An artefact on disk does not say whether the work has reached editing code: an
@@ -126,7 +132,7 @@ fi
 progress="$dir/progress.md"
 
 if [ ! -f "$progress" ]; then
-    deny "BLOCKED by task-flow: there is no progress — '${tasks_dir}/${branch}/progress.md'. The state of the work is declared in it, and without it there is no seeing whether the work reached editing code. Assemble the task folder from the sample (cp -r ${tasks_dir}/_template ${tasks_dir}/${branch}), then repeat.$(first "cp -r ${tasks_dir}/_template ${tasks_dir}/${branch}") The rule is task-flow."
+    tf_decide '{"branch":"task","plan":"yes","progress":"no"}' Bash "$(jq -cn --arg c "cp -r ${tasks_dir}/_template ${tasks_dir}/${branch}" '{command:$c}')"
 fi
 
 state="$(sed -nE 's/^[[:space:]]*[-*][[:space:]]*\*\*(State|Состояние):\*\*[[:space:]]*`([^`]*)`.*/\2/p' "$progress" 2>/dev/null | head -1)"
@@ -147,7 +153,7 @@ state_action() {
 }
 
 if [ -z "$state" ]; then
-    deny "BLOCKED by task-flow: no state of the work is declared in '${tasks_dir}/${branch}/progress.md'. Measure the branch first — \`node tools/task-flow-script.mjs measure\` names the state it is in — and write that name into the section «Where we stand» by the line '- **State:** \`<name>\`', then repeat: a state written ahead of the measured one is refused by the step guard. Code is edited in the states 'этап-идёт', 'этапы-кончились', 'работа-отдана' and 'разбор-кончился'. The rule is task-flow."
+    tf_decide '{"branch":"task","plan":"yes","progress":"yes","state":"none"}' Bash '{"command":"node tools/task-flow-script.mjs measure"}'
 fi
 
 case "$state" in
@@ -155,10 +161,12 @@ case "$state" in
     # a run happens to be red and a review comes with remarks, and the fix goes into the same branch.
     этап-идёт | этапы-кончились | работа-отдана | разбор-кончился) ;;
     просьба-не-разобрана | разбор-закрыт | договорённость-записана | задача-взята | замысел-записан | папка-разобрана | влито)
-        deny "BLOCKED by task-flow: the progress declares the state '${state}', and code is not edited in it. The mandatory action of this state is $(state_action "$state"). Whether the work has reached editing code is measured, not declared: \`node tools/task-flow-script.mjs measure\` names the exit that is not met, and only the measured state goes into the line in '${tasks_dir}/${branch}/progress.md' — a state ahead of it is refused by the step guard. The rule is task-flow."
+        tf_decide '{"branch":"task","plan":"yes","progress":"yes","state":"other"}' Bash '{"command":"node tools/task-flow-script.mjs measure"}' \
+            "$(jq -cn --arg s "$state" --arg a "$(state_action "$state")" '{state:$s, state_action:$a}')"
         ;;
     *)
-        deny "BLOCKED by task-flow: '${tasks_dir}/${branch}/progress.md' declares the state '${state}', and there is no such name in the list. The name is taken from the list of states of the rule — a word of one own says nothing about the entry, the exit or the mandatory action. \`node tools/task-flow-script.mjs measure\` names the state the branch is in; that name goes into the line. The rule is task-flow."
+        tf_decide '{"branch":"task","plan":"yes","progress":"yes","state":"unknown"}' Bash '{"command":"node tools/task-flow-script.mjs measure"}' \
+            "$(jq -cn --arg s "$state" '{state:$s}')"
         ;;
 esac
 
@@ -178,6 +186,7 @@ esac
 if [ -n "$(git -C "$root" rev-parse --verify HEAD 2>/dev/null)" ]; then
     in_tree="$(git -C "$root" ls-tree -d --name-only HEAD -- "$tasks_dir/$branch" 2>/dev/null | head -1)"
     if [ -z "$in_tree" ]; then
-        deny "BLOCKED by task-flow: the task folder '${tasks_dir}/${branch}' lies in the working tree and is not put into the history of the branch. Put it there by a commit of the folder alone (git add ${tasks_dir}/${branch} && git commit -m '…' -- ${tasks_dir}/${branch}), then repeat: the sign of handed-over work the guard takes from the history, and with an uncommitted folder the refusal arrives at the opening of the request — when the folder is already taken apart and there is nothing left to fix. The path after «--» keeps whatever else is staged out of this commit.$(first "git add ${tasks_dir}/${branch} && git commit -m 'docs: task folder' -- ${tasks_dir}/${branch}") The rule is task-flow."
+        tf_decide '{"branch":"task","plan":"yes","progress":"yes","state":"code","folder_committed":"no"}' Bash \
+            "$(jq -cn --arg c "git add ${tasks_dir}/${branch} && git commit -m 'docs: task folder' -- ${tasks_dir}/${branch}" '{command:$c}')"
     fi
 fi

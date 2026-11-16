@@ -193,5 +193,5 @@ facts="$(jq -cn --arg r "$(rt_fact_rule_loaded "${RT_TASK_FLOW_RULE:-task-flow}"
     '{window_over_stop:"yes", rule_loaded:$r}')"
 # shellcheck disable=SC1091
 . "$rt_hooks_dir/decide.sh" 2>/dev/null
-command -v rt_decide >/dev/null 2>&1 && rt_decide window-fill-guard.sh "" "$facts" '{}' PreToolUse "$input"
+command -v rt_decide >/dev/null 2>&1 && rt_decide window-fill-guard.sh "?work_call" "$facts" '{}' PreToolUse "$input"
 exit 0
