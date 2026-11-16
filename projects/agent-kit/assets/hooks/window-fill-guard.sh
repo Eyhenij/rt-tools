@@ -100,14 +100,7 @@ transcript="$(rt_fact_transcript "$input")"
 #
 # A tail of 200 lines: the session record grows all session, and one last line of it is what is
 # needed.
-fill="$(tail -n 200 "$transcript" 2>/dev/null | jq -s -r '
-    [.[] | select(.type == "assistant") | .message.usage | select(. != null)]
-    | last
-    | if . == null then empty
-      else ((.input_tokens // 0) + (.cache_creation_input_tokens // 0)
-            + (.cache_read_input_tokens // 0) + (.output_tokens // 0))
-      end
-' 2>/dev/null)"
+fill="$(rt_fact_window_fill "$transcript")"
 
 case "$fill" in
     '' | *[!0-9]*) exit 0 ;;

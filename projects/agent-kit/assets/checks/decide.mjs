@@ -105,7 +105,10 @@ function context(table) {
     // about a neighbour.
     for (const r of rows) {
         if (MARK_RE.test(r.text ?? '')) continue;
-        ctx.ownMove.set(`${r.hook}\u0000${parse(r.text ?? '', r.hook, ctx).core}`, r.move);
+        const core = parse(r.text ?? '', r.hook, ctx).core;
+        ctx.ownMove.set(`${r.hook}\u0000${core}`, r.move);
+        // A hook whose words are a slot says the same words for every action: the action tells them apart.
+        ctx.ownMove.set(`${r.hook}\u0000${r.action}\u0000${core}`, r.move);
     }
     return ctx;
 }
@@ -141,7 +144,7 @@ function run(ctx, hook, action, facts, depth, opts) {
     const tail = Boolean(row.tail);
     if (row.decision !== 'deny' || !ctx.asks[hook] || depth >= 3) return { decision: row.decision, move: row.move ?? null, text: row.text ?? '', hook, tail };
     const p = parse(row.text ?? '', hook, ctx);
-    const own = ctx.ownMove.get(`${hook}\u0000${p.core}`) ?? row.move;
+    const own = ctx.ownMove.get(`${hook}\u0000${row.action}\u0000${p.core}`) ?? ctx.ownMove.get(`${hook}\u0000${p.core}`) ?? row.move;
     const asked = ctx.asks[hook] === 'own' ? own : ctx.asks[hook];
     const now = firstFor(ctx, hook, asked, p.gate, facts, depth, opts);
     const move = now.move ?? own;

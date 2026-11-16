@@ -169,52 +169,7 @@ deny() {
 
 # The whole session is judged, not the last turn: the exam is passed once at the start and holds
 # to the end.
-verdict="$(jq -s -r '
-    def textof:
-        if type == "string" then .
-        elif type == "array" then (map(if type == "object" then (.text // "") else tostring end) | join("\n"))
-        else tostring end;
-
-    # The call whose answer is discarded is recognised by its identifier, and the identifier is
-    # bound by a name: a dot after a pipe means the list itself, the search over it answers zero
-    # on any non-empty list, and every answer of every tool gets muted at once — that is, the
-    # verdict is looked for in the host records alone.
-    #
-    # Tools that read and write files: their result does not count as a verdict — otherwise
-    # echoing the same line or reading a file with it passes the guard, and the real verdict
-    # does not.
-    ["Bash", "Read", "Grep", "Glob", "Edit", "Write", "MultiEdit", "NotebookEdit"] as $mute
-    | ([.[] | select(.type == "assistant") | (.message.content // [])[]
-         | select(.type == "tool_use") | select(.name as $n | $mute | index($n) != null)
-         | {key: (.id // ""), value: true}] | from_entries) as $muted
-
-    | [ .[]
-        # The assistant text is never a verdict: writing the needed line in a reply costs one
-        # move.
-        | if .type == "assistant" then ""
-          elif .type == "user" then
-              ([ ((.message.content // []) | if type == "array" then .[] else empty end
-                    | select(.type == "tool_result")
-                    | select((.tool_use_id // "") | if . == "" then true else ($muted[.] | not) end)
-                    | .content | textof),
-                 ((.message.content // "") | if type == "string" then . else "" end),
-                 # The call result field: the same record, another form. Discarded only when
-                 # this result belongs to a reading or writing tool.
-                 (. as $rec
-                  | if ($rec.toolUseResult // null) == null then ""
-                    elif ([($rec.message.content // []) | if type == "array" then .[] else empty end
-                            | select(.type == "tool_result") | (.tool_use_id // "")]
-                          | map($muted[.] // false) | any) then ""
-                    else ($rec.toolUseResult | textof) end)
-               ] | join("\n"))
-          # Host records — the role completion notice and the attachment: the host chooses their
-          # form, and they count whole.
-          else tostring end ] | join("\n")
-    | [scan("(ЭКЗАМЕН:[[:space:]]*сдано|EXAM:[[:space:]]*passed)[[:space:]]*([0-9]+)[[:space:]]*(из|of)[[:space:]]*([0-9]+)")]
-    | if length == 0 then "none"
-      else (.[-1] | if .[1] == .[3] then "passed" else "failed" end)
-      end
-' "$transcript" 2>/dev/null)"
+verdict="$(rt_fact_exam "$transcript")"
 
 # The second exam is the one placed after the PR is opened. The first does not replace it: they
 # ask about different things, and the whole work lies between them.
