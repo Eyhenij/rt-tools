@@ -4,15 +4,15 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `этап-идёт`
-- **Stage:** 6 of 6 — the files left with no code, the specs and the layout
-- **Done:** stage 5 — the mutation sweep gives `rows 1003, followed 1003`; the snapshot `rows 999,
-  changed 0`; the reverse probe `moves 1467, refused 0`; the coverage counts 33 git hooks and
-  helpers; the dispatcher takes 1532 ms. Stages 1–4 are committed: every hook of the package
-  decides by `rt_decide`, the facts are computed by `facts.sh`, `facts-docs.sh`, `facts-flow.sh`.
-- **Next step:** 6.1 — the files left with no code are removed and named; the spec line «hook
-  files: 83 before, N after».
-- **Uncommitted:** none after the stage 5 commit.
+- **State:** `этапы-кончились`
+- **Stage:** 6 of 6 done — the closing: roles, the folder, the PR
+- **Done:** all six stages. Stage 6 — no hook file was left without code: 83 before, 87 after (the
+  decider and three fact files added); the spec closes Q-1 and Q-2 and names the decider; the
+  anchors of the task-flow, git-workflow and turn-conduct companions name `facts-flow.sh`, `refuse`
+  and `from_handoff`; the layout matches the package; every package suite is green.
+- **Next step:** the roles product-strategist and goal-critic over the work, then the folder taken
+  apart and the PR into the epic branch.
+- **Uncommitted:** none after the stage 6 commit.
 - **PR:** not open yet
 
 ## Steps
@@ -35,10 +35,10 @@ Rewritten by every session, not appended to.
 - [x] 5.3 The reverse probe: the hook of each refusal's named move is run in the state of that refusal
 - [x] 5.4 The coverage counts the git hooks and the helpers that refused among the guards
 - [x] 5.5 The dispatcher is no slower than 2300 ms on an allowed command
-- [>] 6.1 Files left with no code are removed and named in the progress; the spec names the count before and after, and «after» equals the directory
-- [ ] 6.2 The specs and bindings name the decider; the spec check is green
-- [ ] 6.3 The layout matches the package, the decider laid out with it
-- [ ] 6.4 All package suites are green on a full run, the decider's suite among them
+- [x] 6.1 Files left with no code are removed and named in the progress; the spec names the count before and after, and «after» equals the directory
+- [x] 6.2 The specs and bindings name the decider; the spec check is green
+- [x] 6.3 The layout matches the package, the decider laid out with it
+- [x] 6.4 All package suites are green on a full run, the decider's suite among them
 
 ## Decisions along the way
 
@@ -156,6 +156,9 @@ Rewritten by every session, not appended to.
 - **The reverse probe asks the decider, not the hooks.** The sweep proves row by row that every
   hook follows the table, so the hook's answer is the decider's: 1467 pairs of a refusal and a hook
   that judges its move cost no probe each. Affected stage: 5.
+- **No hook file was removed.** Every hook kept its call sign and its facts; the refusal paths left
+  the files, not the files themselves. The count is 83 before, 87 after: `decide.sh`, `facts.sh`,
+  `facts-docs.sh`, `facts-flow.sh`. Affected stage: 6.
 - **The stop guard measures `эпик-заведён` while the suites load the machine.** Three times in this
   session; a measure right after gives `этап-идёт`. A finding of the epic.
 

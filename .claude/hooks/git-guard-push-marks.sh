@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-push-marks.sh · 9036ec6106cd · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-push-marks.sh · dcb15061d4c2 · правится надстройкой, не здесь
 # The base of the push set and the marks of a green run, shared by the push guard and by the
 # command that runs the set ahead (`git-guard-push-ahead.sh`).
 #
@@ -46,7 +46,9 @@ rt_push_base() {
     best="origin/$main"
     best_count="$(git rev-list --count "refs/remotes/origin/$main..HEAD" 2>/dev/null)"
     case "$best_count" in '' | *[!0-9]*) printf '%s' "$best" && return 0 ;; esac
-    branch="$(git symbolic-ref --quiet --short HEAD 2>/dev/null)"
+    # shellcheck disable=SC1091
+    command -v rt_fact_branch >/dev/null 2>&1 || . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+    branch="$(rt_fact_branch)"
     [ -n "$branch" ] || { printf '%s' "$best" && return 0; }
 
     own="refs/remotes/origin/$branch"

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/browser-guard-no-other-drivers.sh · b6d496e59e05 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/browser-guard-no-other-drivers.sh · 871a8282450c · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__playwright__.*|mcp__chrome-devtools__.*|mcp__plugin_.*_playwright__.*|mcp__plugin_.*_chrome-devtools__.*|Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh
 # Guard of the bypass routes to the browser. PreToolUse.
@@ -38,19 +38,21 @@ device_id="$("${CLAUDE_PROJECT_DIR:-.}/.claude/hooks/browser-device-id.sh" 2>/de
 tool="$(rt_hook_tool)"
 
 # shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-
-# The named move is the selection, and the rules gate refuses it while its rule is not loaded.
+# The decision and the words come from the decision table; the hook names what it caught. The
+# named move is the selection, and the rules gate refuses it while its rule is not loaded: that is
+# a fact of the state.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/decide.sh" 2>/dev/null
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
 sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
-first=""
-command -v rt_gate_pending >/dev/null 2>&1 && [ -n "$(rt_gate_pending browser-verification "$sid")" ] \
-    && first="Load the rule «browser-verification» by the tool Skill first — the rules gate refuses the selection until then. "
 
-deny() {
-    echo "$1 Drive the browser by the pinned extension: ${first}select the profile ${device_id} and work by its tools. $(rt_deny_tail)" >&2
-    exit 2
+refuse() {
+    command -v rt_decide >/dev/null 2>&1 || exit 0
+    rt_decide browser-guard-no-other-drivers.sh other_driver \
+        "$(jq -cn --arg r "$(rt_fact_rule_loaded browser-verification "$sid")" '{pinned:"yes", rule_loaded:$r}')" \
+        "$(jq -cn --arg s "$1" --arg d "$device_id" '{said:$s, device_id:$d}')" stderr "$input"
+    exit $?
 }
 
 # A driver installed as a plugin carries the plugin name in front of the server name —
@@ -58,9 +60,9 @@ deny() {
 # matched by a sample: the plain name alone let the same driver open the browser past the profile.
 case "$tool" in
     mcp__playwright__* | mcp__plugin_*_playwright__*)
-        deny "The second browser driver is not used in this project — no sign-in was made in its profile." ;;
+        refuse "The second browser driver is not used in this project — no sign-in was made in its profile." ;;
     mcp__chrome-devtools__* | mcp__plugin_*_chrome-devtools__*)
-        deny "The third browser driver is not used in this project — it does not ask for the pinned profile." ;;
+        refuse "The third browser driver is not used in this project — it does not ask for the pinned profile." ;;
 esac
 
 # The IDE terminal launches the same drivers with the same command line.
@@ -84,16 +86,16 @@ fi
 # A run of end-to-end specs is the lawful route, and it is never refused.
 case "$cmd" in
     *playwright\ open*|*playwright\ codegen*|*playwright\ screenshot*|*playwright\ cr*)
-        deny "Driving the browser from the driver command line bypasses the pinned profile." ;;
+        refuse "Driving the browser from the driver command line bypasses the pinned profile." ;;
 esac
 
 case "$cmd" in
     *open\ http*|*open\ -a\ *Chrome*|*open\ -a\ *chrome*)
-        deny "Opening an address by the means of the system raises the default browser, not the pinned profile." ;;
+        refuse "Opening an address by the means of the system raises the default browser, not the pinned profile." ;;
     *osascript*Chrome*|*osascript*chrome*)
-        deny "Driving the browser by an automation script bypasses the pinned profile." ;;
+        refuse "Driving the browser by an automation script bypasses the pinned profile." ;;
     *chrome-cli*)
-        deny "This utility bypasses the pinned profile." ;;
+        refuse "This utility bypasses the pinned profile." ;;
 esac
 
 # The browser binary — and only in the command position.
@@ -103,10 +105,10 @@ esac
 # itself on the day it appeared. Hence the anchor at the command boundary and the demand for a
 # word that looks like an executable, not a flag value.
 printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}(/[^[:space:]]*/)?(google-chrome|chromium)([[:space:]]|\$)" \
-    && deny "A direct launch of the browser binary bypasses the pinned profile."
+    && refuse "A direct launch of the browser binary bypasses the pinned profile."
 
 printf '%s' "$cmd" | grep -qF 'Google Chrome.app/Contents/MacOS' \
-    && deny "A direct launch of the browser binary bypasses the pinned profile."
+    && refuse "A direct launch of the browser binary bypasses the pinned profile."
 
 # Entry points of browser libraries — what a browser is raised with from code. Listed are both
 # the launch verb and the verb of attaching to an already raised one: the second bypasses the
@@ -120,7 +122,7 @@ launch='(chromium|firefox|webkit|browserType|puppeteer|chromeLauncher)[[:space:]
 # is merely looked for.
 if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}(node|bun|deno|python3?)([[:space:]]+-[^[:space:]]+)*[[:space:]]+(-e|--eval|-c|-p|--print)[[:space:]]" \
     && printf '%s' "$cmd" | grep -qE "$launch"; then
-    deny "A browser raised by a library from the code of the argument does not ask for the pinned profile."
+    refuse "A browser raised by a library from the code of the argument does not ask for the pinned profile."
 fi
 
 # Files the command runs with an interpreter. Package manager wrappers are stripped: under them
@@ -139,7 +141,7 @@ for file in $launched; do
         path="${base}${file}"
         [ -f "$path" ] || continue
         if head -c 200000 "$path" 2>/dev/null | grep -qE "$launch"; then
-            deny "A browser raised by a library from inside ${file} does not ask for the pinned profile."
+            refuse "A browser raised by a library from inside ${file} does not ask for the pinned profile."
         fi
         break
     done

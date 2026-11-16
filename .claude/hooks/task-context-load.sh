@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/task-context-load.sh · cf1eea1b4dba · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/task-context-load.sh · 152925204bc1 · правится надстройкой, не здесь
 # rt-hook: SessionStart startup|resume|compact|clear
 # Requires: hooks/profile-check.sh
 # SessionStart: the state of unfinished work goes into the context at every start of a session.
@@ -22,7 +22,9 @@ command -v jq >/dev/null 2>&1 || exit 0
 cd "$ROOT" 2>/dev/null || exit 0
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 
-branch="$(git branch --show-current 2>/dev/null)"
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+branch="$(rt_fact_branch)"
 [ -z "$branch" ] && exit 0
 
 # The tree profile: first the package default, and over it the project override, if there is one.

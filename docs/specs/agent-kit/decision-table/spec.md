@@ -221,16 +221,20 @@ Not applicable.
 - **A chain is written as one item per refusal.** Two rows of one hook and action differ by their
   conditions, so the item lists the rows denying the move, and the test names the fact that parts
   each pair of rows.
+- **The hooks take their decision from the table through one decider.** A hook computes its facts
+  and asks the decider; no hook file but the decider and the dispatcher holds a refusal path. The
+  facts are computed by three helper files, one place per fact. The count of hook files: 83 before, 87 after —
+  the decider and the three fact files were added, none was removed: every hook kept its call sign
+  and its facts.
+- **A refusal no row describes is looked for by the reverse probe.** Every hook that judges the
+  named move of a refusal is asked in the facts of that refusal; the mutation sweep proves first
+  that each hook answers as its rows. This closed the former Q-1.
+- **The two hooks of git are guards with rows.** `pre-push.sh` and `commit-msg.sh` refuse by an exit
+  code and name the move in the same text as the other guards. This closed the former Q-2.
 
 ## Open questions
 
-- **Q-1. A refusal no row describes is seen by nothing.** The conform mode runs every row against
-  its hook, not every refusal of a hook against the rows: a hook may refuse in a state the table
-  does not name. A reverse probe — the hook of the named move run in the state of each refusal —
-  belongs to RT-3355, where the hooks take their decision from the table.
-- **Q-2. The two hooks of git refuse, and they stand among the helpers.** `pre-push.sh` and
-  `commit-msg.sh` refuse by an exit code, not by a decision of the agent's host, so their refusals
-  name no move; whether they enter the table is the owner's decision.
+None.
 
 ## History of changes
 
@@ -239,3 +243,5 @@ Not applicable.
 - 2026-11-16 — past the stop threshold the exam and the documents guard named moves the window fill
   refuses; the window fill is now asked first, and its refusals stand in the areas «work» and
   «delivery» too.
+- 2026-11-17 — the hooks decide by the table through one decider; the reverse probe and the rows of
+  the two hooks of git closed both open questions.

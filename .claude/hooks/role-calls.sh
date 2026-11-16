@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/role-calls.sh · 5e0580a1d2de · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/role-calls.sh · 142d3a79b9d9 · правится надстройкой, не здесь
 # rt-hook: PostToolUse Agent|Task
 # rt-hook: UserPromptSubmit
 # rt-hook: SubagentStop
@@ -68,7 +68,9 @@ rt_role_answer() {
         printf '%s' "$answer"
         return 0
     fi
-    path="$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.agent_transcript_path // empty' 2>/dev/null)"
+    # shellcheck disable=SC1091
+    command -v rt_fact_agent_transcript >/dev/null 2>&1 || . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+    path="$(rt_fact_agent_transcript "$RT_HOOK_INPUT")"
     [ -f "$path" ] || return 0
     tail -n 20 "$path" 2>/dev/null \
         | jq -c 'select(.message.content? | type == "array") | .message.content[]

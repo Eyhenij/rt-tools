@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-delivery-signature.sh · 32790ba8d194 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-delivery-signature.sh · 19401656f8f5 · правится надстройкой, не здесь
 # The signature of a machine commit for the delivery guard: whose commit it is, whether it is signed
 # with the right mail and what to do if it is not.
 #
@@ -35,7 +35,7 @@ rt_delivery_branch_signature() {
             [ "$tree_email" = "$one" ] && human_email=1 && break
         done
         [ -n "$tree_email" ] && [ "$tree_email" != "$commit_email" ] && [ -z "$human_email" ] \
-            && fault "the working copy signs commits as «${tree_email}», while the tree declared the email of the machine account «${commit_email}». The very first commit leaves under a foreign signature: git config user.email \"${commit_email}\"."
+            && unmet worktree_email_declared no "the working copy signs commits as «${tree_email}», while the tree declared the email of the machine account «${commit_email}». The very first commit leaves under a foreign signature: git config user.email \"${commit_email}\"."
     fi
     return 0
 }
@@ -92,7 +92,7 @@ EOF
 # guard refuses every commit there, so the first move is a branch. A branch with no task number is
 # judged by no delivery guard and is taken at once.
 rt_signature_where() {
-    [ "$(git branch --show-current 2>/dev/null)" = "${main_branch:-main}" ] || return 0
+    [ "$(rt_fact_branch)" = "${main_branch:-main}" ] || return 0
     printf ' The copy stands on «%s», where every commit is refused: take a local branch first — git checkout -b <name> — and rewrite there.' "${main_branch:-main}"
 }
 
@@ -103,34 +103,6 @@ rt_signature_commit_note() {
     [ -n "$strangers$unknown" ] || return 0
     printf ' The branch carries commits under a foreign signature — %s: before this commit rewrite it, on your task branch — GIT_AUTHOR_EMAIL="%s" GIT_COMMITTER_EMAIL="%s" git commit --amend --no-edit --reset-author.' \
         "${strangers}${strangers:+${unknown:+, }}${unknown}" "$commit_email" "$commit_email"
-}
-
-# A sentence for a refusal that names a commit as its move: what the neighbouring guards want before
-# that commit — the document pair, the exam, the rule of the move. Asked of them by `rt_move_first`,
-# so the refusal names their move first instead of leading into their refusal. Empty when the commit
-# is open. Argument: the commit command the refusal names.
-rt_commit_first() {
-    if ! command -v rt_move_first >/dev/null 2>&1; then
-        # shellcheck disable=SC1090
-        [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-            && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-    fi
-    command -v rt_move_first >/dev/null 2>&1 || return 0
-    command -v jq >/dev/null 2>&1 || return 0
-    _first="$(rt_move_first Bash "$(jq -cn --arg c "${1:-git commit -m wip}" '{command:$c}')")"
-    [ -n "$_first" ] && printf ' %s' "$_first"
-    return 0
-}
-
-# The note for a refusal whose fix is a commit in the current branch: the rewrite of a foreign
-# signature when one stands, otherwise what the neighbouring guards want before the commit.
-rt_commit_move_note() {
-    _note="$(rt_signature_commit_note)"
-    if [ -n "$_note" ]; then
-        printf '%s' "$_note"
-        return 0
-    fi
-    rt_commit_first "${1:-}"
 }
 
 rt_delivery_signature() {
@@ -221,15 +193,21 @@ if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}git([[:space:]]|\$)" \
         rt_signature_divergence
         where="$(rt_signature_where)"
 
-        [ -n "$unknown" ] && [ -z "$repair" ] \
-            && deny "BLOCKED: a commit of the contribution is signed by an account the tree never declared. Known are the machine account ${commit_email} and the emails of people named by the profile; everything else the hosting attributes to whoever owns that address, and from inside the history the miss is invisible. Diverging: ${unknown}.${where} Rewrite the signature before the push, on your task branch — after the push only a force push fixes this:
-    the last commit — GIT_AUTHOR_EMAIL=\"${commit_email}\" GIT_COMMITTER_EMAIL=\"${commit_email}\" git commit --amend --no-edit --reset-author
-    the whole contribution of the branch — git filter-branch -f --env-filter 'GIT_AUTHOR_EMAIL=\"${commit_email}\"; GIT_COMMITTER_EMAIL=\"${commit_email}\"' origin/${main_branch}..HEAD"
-
-        [ -n "$strangers" ] && [ -z "$repair" ] \
-            && deny "BLOCKED: a machine commit is signed by an email other than the one the tree declared. The hosting matches a service address by the number in it, and a commit with a foreign number it attributes to an outside person — from inside the miss is invisible, because the name of the account next to it is right. Diverging: ${strangers}. Declared: ${commit_email} — the email is taken from there, not typed from memory.${where} Rewrite the signature before the push, on your task branch — after the push only a force push fixes this:
-    the last commit — GIT_AUTHOR_NAME=\"${bot_login}\" GIT_AUTHOR_EMAIL=\"${commit_email}\" GIT_COMMITTER_NAME=\"${bot_login}\" GIT_COMMITTER_EMAIL=\"${commit_email}\" git commit --amend --no-edit --reset-author
-    the whole contribution of the branch — git filter-branch -f --env-filter 'GIT_AUTHOR_EMAIL=\"${commit_email}\"; GIT_COMMITTER_EMAIL=\"${commit_email}\"' origin/${main_branch}..HEAD"
+        # The decision and the words come from the decision table; the hook names the diverging
+        # commits, where the copy stands and the ready-made rewrite.
+        if [ -z "$repair" ] && [ -n "$unknown$strangers" ]; then
+            fact commits_signed_declared no
+            [ -n "$where" ] && fact branch_is_main yes
+            if [ -n "$unknown" ]; then
+                _problem="a commit of the contribution is signed by an account the tree never declared. Known are the machine account ${commit_email} and the emails of people named by the profile; everything else the hosting attributes to whoever owns that address, and from inside the history the miss is invisible. Diverging: ${unknown}."
+                _last="GIT_AUTHOR_EMAIL=\"${commit_email}\" GIT_COMMITTER_EMAIL=\"${commit_email}\" git commit --amend --no-edit --reset-author"
+            else
+                _problem="a machine commit is signed by an email other than the one the tree declared. The hosting matches a service address by the number in it, and a commit with a foreign number it attributes to an outside person — from inside the miss is invisible, because the name of the account next to it is right. Diverging: ${strangers}. Declared: ${commit_email} — the email is taken from there, not typed from memory."
+                _last="GIT_AUTHOR_NAME=\"${bot_login}\" GIT_AUTHOR_EMAIL=\"${commit_email}\" GIT_COMMITTER_NAME=\"${bot_login}\" GIT_COMMITTER_EMAIL=\"${commit_email}\" git commit --amend --no-edit --reset-author"
+            fi
+            refuse "?commit" "$(jq -cn --arg p "$_problem" --arg w "$where" --arg l "$_last" --arg e "$commit_email" --arg m "$main_branch" \
+                '{problem:$p, where:$w, last:$l, commit_email:$e, main_branch:$m}')"
+        fi
     fi
 fi
 # This point has no exit of its own: a push happens to be a compound command too, and its second
