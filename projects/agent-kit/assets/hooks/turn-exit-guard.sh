@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # rt-hook: Stop
 # rt-hook-timeout: 90
-# Requires: checks/task-flow-script.mjs, hooks/deny-tail.sh, hooks/turn-exit-role.sh
+# Requires: checks/task-flow-script.mjs, checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, hooks/deny-tail.sh, hooks/turn-exit-role.sh
 # Turn exit guard: a turn does not end before the scenario of the task flow does. Stop.
 #
 # The engine measures the branch by the description and answers with a verdict: the turn is released
@@ -60,7 +60,9 @@ journal() {
 # the closing through — the progress, the handover, a rule, a question. Naming the next step here
 # would name a move that guard denies, so the turn is released, and the reason goes to the journal.
 sid="$(printf '%s' "$input" | jq -r '.session_id // "unknown"' 2>/dev/null)"
-if [ -f "${TMPDIR:-/tmp}/claude-window-stop/${sid}" ]; then
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+if [ -f "$(rt_fact_window_stop_file "$sid")" ]; then
     journal "окно за порогом: ход отпущен к передаче"
     exit 0
 fi
@@ -98,15 +100,14 @@ row=$(( $(cat "$journal_dir/refusals-in-row" 2>/dev/null || echo 0) + 1 ))
 printf '%s\n' "$row" > "$journal_dir/refusals-in-row" 2>/dev/null
 [ "$row" -ge 8 ] && journal "the eighth refusal in a row: $reason"
 
-reason="BLOCKED by turn-exit-guard: ${reason}"
-# shellcheck disable=SC1090
-[ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-tail_text="$(rt_deny_tail "")"
-[ -n "$tail_text" ] && reason="${reason}
-
-${tail_text}"
-
-jq -n --arg r "$reason" '{decision:"block",reason:$r}' 2>/dev/null \
-    || printf '{"decision":"block","reason":"turn-exit-guard: the scenario is not over."}\n'
+# The decision and its text come from the decision table. The engine gives the reason; whether the
+# reason names the owner's menu is read from the engine's own fixed sentence for it.
+menu_due=no
+case "$reason" in *"The one move is the owner's menu:"*) menu_due=yes ;; esac
+facts="$(jq -cn --arg m "$menu_due" \
+    '{flow_scenario_over:"no", menu_due:$m, read_only_role:"no", window_over_stop:"no"}')"
+params="$(jq -cn --arg r "$reason" '{reason:$r}')"
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/decide.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 && rt_decide turn-exit-guard.sh end_turn "$facts" "$params" Stop
 exit 0

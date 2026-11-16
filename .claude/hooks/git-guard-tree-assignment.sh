@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-tree-assignment.sh · d8599bd4414d · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-tree-assignment.sh · 65beaac5ee86 · правится надстройкой, не здесь
 # The assignment of an epic to this working copy. NOT a guard: it has no `rt-hook:` declaration and
 # hooks into no agent event. The delivery guard sources it, the same way it sources the conditions
 # about the epic of a task.
@@ -26,7 +26,7 @@ rt_assignment_cmd() {
 #
 # The tree that declares no assignments answers with silence: it has nothing to divide, and a
 # requirement invented for it would refuse every branch of a tree with one working copy.
-rt_assignment_fault() {
+rt_assignment_unmet() {
     _epic="$1"
     _what="$2"
     _said=''
@@ -35,9 +35,12 @@ rt_assignment_fault() {
     [ -f "$_reader" ] || return 0
     command -v node >/dev/null 2>&1 || return 0
 
-    _said="$(node "$_reader" --fault "$_epic" 2>/dev/null)"
+    # The kind is the fact the decision table reads, the text is the words of the miss.
+    _said="$(node "$_reader" --unmet "$_epic" 2>/dev/null)"
+    _kind="$(printf '%s' "$_said" | jq -r '.kind // empty' 2>/dev/null)"
+    _said="$(printf '%s' "$_said" | jq -r '.text // empty' 2>/dev/null)"
     if [ -n "$_said" ]; then
-        fault "${_what} is not taken: ${_said}."
+        unmet copy_assignment "${_kind:-foreign}" "${_what} is not taken: ${_said}."
         return 0
     fi
 
@@ -72,7 +75,7 @@ rt_assignment_stale() {
     # a missing field and for `false`, that is, exactly for the state this refusal is written for.
     case "$(printf '%s' "$_state" | jq -r 'if .open == false then "false" else "" end' 2>/dev/null)" in
         false)
-            fault "${_what} is not taken: the epic assigned to this copy is closed — the assignment outlived it. Ask the owner for a new one and write it into the table; an epic chosen instead of the closed one is not an order. A message of the owner in this conversation that names this work is that new assignment: write the row with their words and go on; ask only when no message of theirs names it."
+            unmet assigned_epic_open no "${_what} is not taken: the epic assigned to this copy is closed — the assignment outlived it. Ask the owner for a new one and write it into the table; an epic chosen instead of the closed one is not an order. A message of the owner in this conversation that names this work is that new assignment: write the row with their words and go on; ask only when no message of theirs names it."
             ;;
     esac
 }

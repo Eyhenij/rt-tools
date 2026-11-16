@@ -264,7 +264,10 @@ rm -f "$DISPATCH_DIR/aaa_denies.sh" "$DISPATCH_DIR/zzz_says.sh"
 # считается, а молчание его читается как согласие.
 # Страж зовёт движок task flow, который лежит в пакете, а не рядом с копией диспетчера: путь к
 # нему передаётся явно. Дерево фикстуры получает коммит — движку нужна история ветки.
-cp "$ASSETS/hooks/turn-exit-guard.sh" "$ASSETS/hooks/turn-exit-role.sh" "$DISPATCH_DIR/" 2>/dev/null
+cp "$ASSETS/hooks/turn-exit-guard.sh" "$ASSETS/hooks/turn-exit-role.sh" "$ASSETS/hooks/facts.sh" \
+    "$ASSETS/hooks/decide.sh" "$ASSETS/hooks/deny-tail.sh" "$DISPATCH_DIR/" 2>/dev/null
+# Решение стража берётся из таблицы: решатель лежит в пакете, путь к нему передаётся так же явно.
+export RT_DECIDE_CMD="$ASSETS/checks/decide.mjs"
 export RT_FLOW_ENGINE="$ASSETS/checks/task-flow-script.mjs"
 
 REAL_REPO="$(fixture_repo RT-9-real)"

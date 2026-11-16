@@ -28,10 +28,15 @@ hooked_repo() {
 
 # Хук лежит там, куда его кладёт раскладка, рядом с общим кодом набора, и git зовёт его строкой,
 # как зовёт менеджер хуков дерева.
+# Решатель лежит в пакете, а хук — в чужом дереве: путь к решателю называется явно.
+export RT_DECIDE_CMD="$ASSETS/checks/decide.mjs"
+
 wire_hook() {
     local dir="$1"
     mkdir -p "$dir/.claude/hooks"
-    cp "$HOOKS/pre-push.sh" "$HOOKS/push-set.sh" "$HOOKS/utf8.sh" "$dir/.claude/hooks/"
+    # Отказ хука берётся из таблицы решений: рядом лежат вызов решателя и его помощники.
+    cp "$HOOKS/pre-push.sh" "$HOOKS/push-set.sh" "$HOOKS/utf8.sh" "$HOOKS/decide.sh" "$HOOKS/facts.sh" \
+        "$HOOKS/deny-tail.sh" "$HOOKS/guard-note.sh" "$dir/.claude/hooks/"
     printf '#!/bin/sh\nexec bash .claude/hooks/pre-push.sh "$@"\n' > "$dir/.git/hooks/pre-push"
     chmod +x "$dir/.git/hooks/pre-push"
 }

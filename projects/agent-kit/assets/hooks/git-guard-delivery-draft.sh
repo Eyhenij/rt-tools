@@ -78,7 +78,7 @@ rt_delivery_draft_ready() {
                 # The head branch of the PR goes to the folder condition below.
                 pull_head="$(printf '%s' "$pull" | jq -r '.branch // empty' 2>/dev/null)"
                 printf '%s' "$pull" | jq -e '.reviewed' >/dev/null 2>&1 \
-                    || fault "the request${pull_name} has no review: no reviewer was requested and nobody left a review. A lifted draft reads as «ready to merge», and there is nobody to merge — set a reviewer and repeat."
+                    || unmet pr_reviewed no "the request${pull_name} has no review: no reviewer was requested and nobody left a review. A lifted draft reads as «ready to merge», and there is nobody to merge — set a reviewer and repeat."
 
                 # A conflict arrives into a handed-over PR through someone else's merge, without
                 # a single action by its author: the base checked at opening is yesterday's by the
@@ -87,7 +87,7 @@ rt_delivery_draft_ready() {
                 # unknown mergeability stays: the hosting recomputes it after every edit of the
                 # main branch, and "not computed yet" is not "conflicts".
                 printf '%s' "$pull" | jq -e '.conflicting' >/dev/null 2>&1 \
-                    && fault "the request${pull_name} conflicts with the main branch. Merge it into your branch, resolve the conflict and repeat: a lifted draft reads as «ready to merge», and this request cannot be merged."
+                    && unmet pr_conflicting yes "the request${pull_name} conflicts with the main branch. Merge it into your branch, resolve the conflict and repeat: a lifted draft reads as «ready to merge», and this request cannot be merged."
 
                 # The author of the PR. The clash that breaks the review — the author named as the
                 # reviewer — is already caught by the condition above: the hosting silently does not
@@ -108,7 +108,7 @@ rt_delivery_draft_ready() {
         # the network tier above.
         command -v rt_delivery_ready_folder >/dev/null 2>&1 && rt_delivery_ready_folder "$pull_head"
 
-        deny_faults
+        refuse_unmet pr_ready
         # The head comes from the hosting: without its answer the number may name another branch.
         [ -z "$pull_head" ] || rt_delivery_handover "$pull_head"
     fi

@@ -54,7 +54,8 @@ Covered: `projects/agent-kit/tests/window-fill-guard.test.sh`.
 
 Given the executor calls the tool that ends the conversation, under any name that carries it.
 When the guard of the end of the conversation judges the call.
-Then the call is refused with a reason naming the owner; other tools pass, and without jq the refusal stays.
+Then the call is refused with a reason naming the owner; other tools pass. Without jq the name is
+still read, and the call passes like the call of every guard that asks the decider.
 
 Covered: `projects/agent-kit/tests/end-conversation-guard.test.sh`.
 

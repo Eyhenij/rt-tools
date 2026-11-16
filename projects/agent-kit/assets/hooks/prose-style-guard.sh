@@ -130,23 +130,10 @@ found="$(node "$check" "$tmp" 2>&1 | grep -- '—' | sed 's|.*proba*[^:]*:|  lin
 rm -f "$tmp"
 [ -z "$found" ] && exit 0
 
-reason="BLOCKED by prose-style-guard: the new text carries officialese or a word not written in this tree.
-
-${found}
-
-Edit the text instead of bypassing the finding: a replacement is named at each of them. Wording is a rule about texts, and the check sees the listed signs, not style at large: a paragraph clean by it may still be bad, a dirty one is bad for certain."
-
-# The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
-# The file may not be laid out — then there is no tail, and the refusal reason stays as it is.
-# shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-deny_tail_text="$(rt_deny_tail "")"
-[ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"prose-style-guard: officialese in the new text."}}\n'
+# The decision and the words come from the decision table; the check above is the fact, and the
+# hook names what it found.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/decide.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 || exit 0
+rt_decide prose-style-guard.sh write_dirty_md '{}' "$(jq -cn --arg s "$found" '{found:$s}')" PreToolUse "$input"
 exit 0

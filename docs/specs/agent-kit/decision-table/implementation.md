@@ -6,10 +6,13 @@ statement: a removed statement is removed together with its line.
 - **Every hook of the package has a row in the table or a mark.** — `projects/agent-kit/assets/checks/decision-table.mjs:coverage` — the marks stand in `projects/agent-kit/assets/checks/decision-table.json:hooks`; scenarios `SC-AK-1562`, `SC-AK-1569`
 - **A row matches the hook it describes.** — `projects/agent-kit/assets/checks/decision-table.mjs:conform` — the hook runs through `runProbe` on the fixture of the row; scenario `SC-AK-1563`
 - **No state is dead.** — `projects/agent-kit/assets/checks/decision-table.mjs:walk` — scenario `SC-AK-1564`
-- **A refusal names a move the table allows in the same state.** — `projects/agent-kit/assets/checks/decision-table.mjs:walk` — scenario `SC-AK-1565`
+- **A refusal names a move the table allows in the same state.** — `projects/agent-kit/assets/checks/decision-table.mjs:walk` — the same is asked of every hook that judges the named move, in the facts of each refusal, by `projects/agent-kit/assets/checks/decision-table.mjs:reverse`; scenario `SC-AK-1565`
 - **An ask-only state is named apart.** — `projects/agent-kit/assets/checks/decision-table.mjs:walk` — scenario `SC-AK-1566`
 - **Chains are derived from the table, not written by hand.** — `projects/agent-kit/assets/checks/decision-table.mjs:chainsOf` — scenario `SC-AK-1567`
 - **An edit of any hook selects the test of the table before a push.** — `projects/agent-kit/tests/select-suites.sh:rt_select_suites` — scenario `SC-AK-1568`
+- **The decider answers as the table says.** — `projects/agent-kit/assets/checks/decide.mjs:decide` — the hooks call it through `projects/agent-kit/assets/hooks/decide.sh:rt_decide`; the test is `projects/agent-kit/tests/decide.test.sh`
+- **The action of a call is computed in one place.** — `projects/agent-kit/assets/checks/action-of.mjs:actionsOf` — the decider calls `actionOf` and `knownActionsOf`
+- **A fact has one place that computes it.** — `projects/agent-kit/assets/hooks/facts.sh:rt_fact_branch` — the other `rt_fact_*` functions stand in the same file; the document pair of a commit is `projects/agent-kit/assets/hooks/facts-docs.sh:rt_fact_doc_problems`, the course of work for one edit is `projects/agent-kit/assets/hooks/facts-flow.sh:rt_fact_flow`
 
 The names of this tree: the table is `projects/agent-kit/assets/checks/decision-table.json`, its
 test is `projects/agent-kit/tests/decision-table.test.sh`. A refusal asks whether the rules gate

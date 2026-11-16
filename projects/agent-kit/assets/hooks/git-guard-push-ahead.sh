@@ -121,8 +121,12 @@ if [ -n "$set_over" ]; then
 fi
 
 if [ -n "$red" ]; then
+    # A red run refuses nothing: it reports. The code is the number of red checks, at most 100, and
+    # the push guard refuses the push by the marks this run did not write.
     printf '\npush ahead: red —\n%s\n' "$red"
-    exit 1
+    red_count="$(printf '%s\n' "$red" | grep -c .)"
+    [ "$red_count" -gt 100 ] && red_count=100
+    exit "$red_count"
 fi
 printf '\npush ahead: the set is green, the push passes from the marks\n'
 exit 0

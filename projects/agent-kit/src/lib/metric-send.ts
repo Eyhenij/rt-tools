@@ -44,11 +44,11 @@ export interface ISendOptions {
 }
 
 /** Чем удачная отправка чистит следы сбоя. */
-const CLEAN_MARK: Pick<ISendMark, 'fault' | 'reason' | 'refusedToken' | 'faultSince'> = {
-    fault: ESendFault.None,
+const CLEAN_MARK: Pick<ISendMark, 'failure' | 'reason' | 'refusedToken' | 'failureSince'> = {
+    failure: ESendFault.None,
     reason: '',
     refusedToken: '',
-    faultSince: 0,
+    failureSince: 0,
 };
 
 function writeSendMark(root: string, mark: ISendMark): void {
@@ -163,7 +163,7 @@ interface IShipOutcome {
 
 /** Сбой держится в числах своего дня: следующая удачная строка того же дня не должна его снять. */
 function faultOfDay(mark: ISendMark, today: string): ESendFault {
-    return mark.fault || (mark.factsByDay[today]?.sendFault ?? ESendFault.None);
+    return mark.failure || (mark.factsByDay[today]?.sendFault ?? ESendFault.None);
 }
 
 /**
@@ -232,8 +232,8 @@ function failed(mark: ISendMark, shipped: IShipped, token: string, now: Date): I
     return {
         ...mark,
         tried: now.getTime(),
-        faultSince: mark.faultSince || now.getTime(),
-        fault,
+        failureSince: mark.failureSince || now.getTime(),
+        failure: fault,
         reason: (fault === ESendFault.Leak ? shipped.said : `${shipped.status || 'нет ответа'}: ${shipped.said}`).slice(0, 200),
         refusedToken: fault === ESendFault.TokenRefused ? tokenSign(token) : '',
     };
@@ -295,7 +295,7 @@ export async function sendMetrics(env: IEnvironment, options: ISendOptions): Pro
     try {
         const done: ISendMark = await sendLocked({ env, config, tree, token, options }, mark, options.now.toISOString().slice(0, 10));
 
-        return done.fault === ESendFault.None
+        return done.failure === ESendFault.None
             ? said(options, 0, ['строки дня отправлены'])
             : said(options, 1, [`отправка не удалась — ${done.reason}`]);
     } finally {

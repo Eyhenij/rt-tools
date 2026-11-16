@@ -89,16 +89,17 @@ report "SC-AK-1567 — у каждой выведенной цепочки ес�
 # случая — номер сценария, где цепочка записана: SC-AK-1570, SC-AK-1571, SC-AK-1572, SC-AK-1573,
 # SC-AK-1574, SC-AK-1575, SC-AK-1576, SC-AK-1577, SC-AK-1578, SC-AK-1579, SC-AK-1580, SC-AK-1581,
 # SC-AK-1582, SC-AK-1583, SC-AK-1584, SC-AK-1585, SC-AK-1586, SC-AK-1587, SC-AK-1589, SC-AK-1590,
-# SC-AK-1591.
+# SC-AK-1591, SC-AK-1593.
 # Две строки одного хука и действия различаются условиями, поэтому пара id проверяется по всем
 # парам строк за ней: «no» — ни в одной условия не встречаются.
 while IFS=$'\t' read -r sc id met; do
     [ -n "$id" ] || continue
     report "${sc:-SC-AK-1567} — цепочка разведена: $id" "$met" "no"
 done < <(node --input-type=module -e "
-import { chainsOf, chainItems, meet, rowId } from '$TABLE_CMD';
+import { chainsOf, chainItems, meet, rowId, withDecided } from '$TABLE_CMD';
 import { readFileSync } from 'node:fs';
-const table = JSON.parse(readFileSync('$ASSETS/checks/decision-table.json', 'utf8'));
+// The pairs are taken over the rows the hooks meet: the stored ones and those the decider computes.
+const table = withDecided(JSON.parse(readFileSync('$ASSETS/checks/decision-table.json', 'utf8')));
 const text = readFileSync('$SCENARIOS_MD', 'utf8');
 const scOf = (c) => {
     let sc = '';

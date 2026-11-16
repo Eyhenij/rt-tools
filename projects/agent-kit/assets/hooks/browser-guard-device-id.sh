@@ -72,16 +72,14 @@ fi
 # Before the call only the profile sign is checked; no mark is put down here.
 [ "$requested" = "$device_id" ] && exit 0
 
-# The shared deny tail: two lawful moves and the lawful form of bypass, if there is one. The file
-# may not be laid out — then there is no tail, and the reason for the refusal stays.
-# shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-
-# The named move is the selection, and the rules gate refuses it while its rule is not loaded.
-first=""
-command -v rt_gate_pending >/dev/null 2>&1 && [ -n "$(rt_gate_pending browser-verification "$sid")" ] \
-    && first="Load the rule «browser-verification» by the tool Skill first — the rules gate refuses the selection until then. "
-echo "The profile «${requested}» is not the one pinned to the project. ${first}Take ${device_id} — the only profile where the sign-in was made. $(rt_deny_tail)" >&2
-exit 2
+# The decision and the words come from the decision table. The named move is the selection, and the
+# rules gate refuses it while its rule is not loaded: that is a fact of the state.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/decide.sh" 2>/dev/null
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 || exit 0
+rt_decide browser-guard-device-id.sh select_other \
+    "$(jq -cn --arg r "$(rt_fact_rule_loaded browser-verification "$sid")" '{pinned:"yes", rule_loaded:$r}')" \
+    "$(jq -cn --arg q "$requested" --arg d "$device_id" '{requested:$q, device_id:$d}')" stderr "$input"
+exit $?

@@ -102,7 +102,7 @@ sql_pass_scratch() {
 #   psql -l / --version / --help       — a connection check without a query
 sql_check_prod() {
     if [ -n "$is_prod" ] && [ -n "$is_write" ]; then
-        deny "BLOCKED: a write into the PRODUCTION storage (${context}). The address leads to production — data is restored from there by nothing but a copy. The schema in production is changed by a migration through the rollout, the data — through the panel of the owner. If an edit of production data really is needed, the owner makes it by hand, having taken a copy first; the guard cannot be bypassed."
+        sql_refuse "a write into the PRODUCTION storage (${context}). The address leads to production — data is restored from there by nothing but a copy. The schema in production is changed by a migration through the rollout, the data — through the panel of the owner. If an edit of production data really is needed, the owner makes it by hand, having taken a copy first; the guard cannot be bypassed."
     fi
 
     if [ -n "$is_prod" ]; then
@@ -139,7 +139,7 @@ $segments
 EOF
 
         if [ -n "$unproven" ]; then
-            deny "BLOCKED: a call of the database client against the PRODUCTION database (${context}). In production only a proven read is allowed — \`pg_dump\` without \`--clean\`, a single SELECT through \`-c\`, or \`-l\`/\`--version\`. Everything else is refused, even when the guard simply did not parse the command: the content of files (\`-f\`, \`< dump.sql\`), \`\\copy\` and restoring a dump are invisible to it. If an analysis of production data is needed — take a dump and work with a local copy."
+            sql_refuse "a call of the database client against the PRODUCTION database (${context}). In production only a proven read is allowed — \`pg_dump\` without \`--clean\`, a single SELECT through \`-c\`, or \`-l\`/\`--version\`. Everything else is refused, even when the guard simply did not parse the command: the content of files (\`-f\`, \`< dump.sql\`), \`\\copy\` and restoring a dump are invisible to it. If an analysis of production data is needed — take a dump and work with a local copy." prod_session prod
         fi
     fi
 }

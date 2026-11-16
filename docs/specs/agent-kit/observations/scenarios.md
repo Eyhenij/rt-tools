@@ -157,12 +157,12 @@ an empty list means "there is nobody to ask", not "nobody refused"
 
 Covered: `projects/agent-kit/src/lib/observations.spec.ts`.
 
-### SC-AK-811 — a refusal is written by the shared refusal tail, not by the guard itself
+### SC-AK-811 — a refusal is written by the decider call, not by the guard itself
 
-Given a guard declared its name for the observations and refuses
-When the refusal tail is assembled
+Given a guard declared its name for the observations and the decision table refuses its call
+When the decider call answers
 Then the refusal is recorded under that name and with the session sign, and the text of the two
-lawful moves is printed on a par with the record. A guard without a declaration writes nothing
+lawful moves is printed by the refusal tail. A record without the event name writes nothing
 
 Covered: `projects/agent-kit/tests/observe.test.sh`.
 

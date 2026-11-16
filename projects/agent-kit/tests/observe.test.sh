@@ -144,28 +144,27 @@ report "лишних полей в записи нет" \
     "$(notes_of "$tree" | jq -r 'keys | join(",")' 2>/dev/null | sort -u)" "empty,ev,res,rule,sid,t,v"
 rm -rf "$tree" "$repo"
 
-# --- SC-AK-811. Отбой пишет общий хвост отказа, а не сам гард ---------------------------
+# --- SC-AK-811. Отбой пишет вызов решателя, а не сам гард --------------------------------
 
-# Вызов хвоста из одноразового дерева: так его зовут гарды на отказе. Имя гарда приходит
-# переменной — той самой, которой гард заявляет о себе.
-tail_in() {
+# Вызов решателя из одноразового дерева: так его зовут гарды на отказе. Имя гарда приходит
+# переменной — той самой, которой гард заявляет о себе. Строка таблицы — отказ закрытия разговора.
+decide_in() {
     local tree="$1" name="$2"
-    CLAUDE_PROJECT_DIR="$tree" RT_GUARD_NAME="$name" RT_HOOK_INPUT='{"session_id":"tests"}' \
-        bash -c '. "$1/deny-tail.sh" 2>/dev/null; rt_deny_tail "" >/dev/null' _ "$HOOKS"
+    CLAUDE_PROJECT_DIR="$tree" RT_GUARD_NAME="$name" \
+        bash -c '. "$1/decide.sh" 2>/dev/null; rt_decide end-conversation-guard.sh end_conversation "{}" "{}" PreToolUse "{\"session_id\":\"tests\"}" >/dev/null' _ "$HOOKS"
 }
 
 tree="$(fixture_observed_tree '')"
-tail_in "$tree" proba-guard
-expect_note "SC-AK-811 — хвост отказа записал отбой" "$tree" '"ev":"guard-deny".*"res":"proba-guard"'
+decide_in "$tree" proba-guard
+expect_note "SC-AK-811 — вызов решателя записал отбой" "$tree" '"ev":"guard-deny".*"res":"proba-guard"'
 expect_note "SC-AK-811 — признак сессии проставлен" "$tree" '"sid":"[0-9]+"'
 rm -rf "$tree"
 
-# Не заявивший имени не пишет ничего: своё отбитие он считает сам, и второе событие о том же в
-# счёт не идёт.
+# Запись без имени события не пишет ничего: событие называет тот, кто знает решение.
 tree="$(fixture_observed_tree '')"
-CLAUDE_PROJECT_DIR="$tree" RT_HOOK_INPUT='{"session_id":"tests"}' \
-    bash -c '. "$1/deny-tail.sh" 2>/dev/null; rt_deny_tail "" >/dev/null' _ "$HOOKS"
-expect_no_notes "SC-AK-811 — гард без заявки имени молчит" "$tree"
+CLAUDE_PROJECT_DIR="$tree" RT_GUARD_NAME=proba-guard RT_HOOK_INPUT='{"session_id":"tests"}' \
+    bash -c '. "$1/guard-note.sh" 2>/dev/null; rt_guard_note' _ "$HOOKS"
+expect_no_notes "SC-AK-811 — запись без имени события молчит" "$tree"
 rm -rf "$tree"
 
 # Хвост отказа остаётся хвостом: текст двух законных ходов он печатает наравне с записью.

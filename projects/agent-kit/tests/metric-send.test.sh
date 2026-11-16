@@ -114,7 +114,7 @@ if [ $((ended - started)) -lt 2000 ]; then got=вернулась; else got=жд
 report "SC-AK-1281 — проверка не ждёт отправку" "$got" вернулась
 
 tree="$(fixture_send_tree)"
-printf '{"fault":1,"faultSince":1000,"tried":%s000,"reason":"нет ответа"}\n' "$(date +%s)" > "$tree/.claude/rt-kit/observations/.marks/send.json"
+printf '{"failure":1,"failureSince":1000,"tried":%s000,"reason":"нет ответа"}\n' "$(date +%s)" > "$tree/.claude/rt-kit/observations/.marks/send.json"
 got="$(event_in "$tree" SessionStart)"
 case "$got" in *"нет ответа"*) got=названа ;; esac
 report "SC-AK-1286 — начало сессии называет старый сбой" "$got" названа
@@ -122,7 +122,7 @@ report "SC-AK-1286 — начало сессии называет старый �
 tree="$(fixture_send_tree)"
 printf 'tree-token\n' > "$tree/token-file"
 printf '{"intake":"https://intake.invalid","token":"token-file"}\n' > "$tree/.claude/rt-kit.json"
-printf '{"fault":0,"faultSince":0,"tried":1000,"reason":""}\n' > "$tree/.claude/rt-kit/observations/.marks/send.json"
+printf '{"failure":0,"failureSince":0,"tried":1000,"reason":""}\n' > "$tree/.claude/rt-kit/observations/.marks/send.json"
 report "сбоя нет — начало сессии молчит" "$(event_in "$tree" SessionStart)" ""
 
 tree="$(fixture_send_tree)"

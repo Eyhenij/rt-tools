@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/epic-stop-guard.sh · dec409500f03 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/epic-stop-guard.sh · a138197ec7ab · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/observe.sh, hooks/epic-over.sh, checks/epic-table.github.mjs
 # Guard of the stop at the end of an epic. PreToolUse on a call that takes new work.
@@ -115,7 +115,10 @@ fi
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/observe.sh" 2>/dev/null || true
 command -v rt_note >/dev/null 2>&1 && rt_note guard-ask guard="$RT_GUARD_NAME" sid="$(printf '%s' "$input" | jq -r '.session_id // empty' 2>/dev/null)"
 
-reason="The epic is over: every task of it is merged or handed over by a request, and this command takes new work. Allow it if you want this work taken now; forbid it to stop here. The table of the epic: «npm run epic:table» (or «node $checks/epic-table.mjs»)."
-
-jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"ask",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"The epic is over: allow this command to take new work, or forbid it."}}\n'
+# The decision and the words come from the decision table; the class of the call is found by the
+# decider from the call itself, and a run of the task script it does not know is taking a task.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/decide.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 || exit 0
+rt_decide epic-stop-guard.sh "?task_new" '{"epic_over":"yes"}' "$(jq -cn --arg c "$checks" '{checks:$c}')" PreToolUse "$input"
+exit 0

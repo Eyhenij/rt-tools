@@ -40,14 +40,15 @@ printf '%s' "$questions" | grep -qiE 'deviceid|device id|(which|what|pick|choose
 # The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
 # The file may not be laid out — then there is no tail, and the refusal reason stays as it is.
 # shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-
-# The named move is the selection, and the rules gate refuses it while its rule is not loaded.
+# The decision and the words come from the decision table. The named move is the selection, and the
+# rules gate refuses it while its rule is not loaded: that is a fact of the state.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/decide.sh" 2>/dev/null
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 || exit 0
 sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
-first=""
-command -v rt_gate_pending >/dev/null 2>&1 && [ -n "$(rt_gate_pending browser-verification "$sid")" ] \
-    && first="Load the rule «browser-verification» by the tool Skill first — the rules gate refuses the selection until then. "
-echo "Do not ask which browser to use — the profile is pinned. ${first}Call select_browser with deviceId ${device_id} ('Main' profile). $(rt_deny_tail)" >&2
-exit 2
+rt_decide browser-guard-no-asking.sh ask_which_browser \
+    "$(jq -cn --arg r "$(rt_fact_rule_loaded browser-verification "$sid")" '{pinned:"yes", rule_loaded:$r}')" \
+    "$(jq -cn --arg d "$device_id" '{device_id:$d}')" stderr "$input"
+exit $?

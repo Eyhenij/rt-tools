@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-push-ahead.sh · fe59ae3d8abe · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-push-ahead.sh · 7cab5ebc9bd0 · правится надстройкой, не здесь
 # The push set run ahead of the push: every check of `rt_push_checks <base>`, a green mark for each
 # that passed. The push guard then reads the marks instead of running the steps again.
 #
@@ -122,8 +122,12 @@ if [ -n "$set_over" ]; then
 fi
 
 if [ -n "$red" ]; then
+    # A red run refuses nothing: it reports. The code is the number of red checks, at most 100, and
+    # the push guard refuses the push by the marks this run did not write.
     printf '\npush ahead: red —\n%s\n' "$red"
-    exit 1
+    red_count="$(printf '%s\n' "$red" | grep -c .)"
+    [ "$red_count" -gt 100 ] && red_count=100
+    exit "$red_count"
 fi
 printf '\npush ahead: the set is green, the push passes from the marks\n'
 exit 0

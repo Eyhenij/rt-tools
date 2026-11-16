@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*|mcp__figma__use_figma
-# Requires: hooks/deny-tail.sh
+# Requires: checks/decide.mjs, hooks/decide.sh, hooks/deny-tail.sh
 # The rules gate: it does not let a file be edited until the rule it falls under has been loaded.
 #
 # A law and a rule nobody opens do not act. A reminder in the prompt helps right up to the first
@@ -210,9 +210,8 @@ req="$want"
 
 # A refusal is an observation: the rule that has to be demanded more often than the rest, and the
 # edit kind on which that happens, say more about the rules layer than a list of what was loaded.
-# shellcheck disable=SC1090
-[ -f "$rt_hooks_dir/observe.sh" ] && . "$rt_hooks_dir/observe.sh" 2>/dev/null
-command -v rt_note >/dev/null 2>&1 && rt_note gate-deny "res=$req" "kind=$kind" "sid=$sid"
+# The decider writes it when the table refuses, named by the decision: «gate-<decision>».
+RT_DECIDE_NOTE="gate res=$req kind=$kind sid=$sid"
 
 # The fallback move is named in the refusal itself: a rule created in this same branch is unknown
 # to the rules registry — it is assembled at session start, while the gate reads the disk. Without
@@ -268,19 +267,11 @@ companion="$rules_dir/${req}/implementation.md"
 
 The companion of the rule — ${companion} — is read together with it: the rule says what must be true, the companion — by what that is true here and what is named impossible here. It is not loaded by the tool, it is read as a file."
 
-# The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
-# The file may not be laid out — then there is no tail, and the reason for the refusal stays as it
-# was.
-# shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-deny_tail_text="$(rt_deny_tail "")"
-[ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Load the rule %s and repeat."}}\n' "$req"
-
+# The decision and the move come from the decision table; the text is built here — the rule, its
+# law, the articles of the edit and the companion are read from the tree — and the table carries it
+# as the slot `{reason}`. The action is the class of this call.
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/decide.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 \
+    && rt_decide skill-gate.sh "?edit_code" '{"rule_loaded":"no"}' "$(jq -cn --arg r "$reason" '{reason:$r}')" PreToolUse "$input"
 exit 0

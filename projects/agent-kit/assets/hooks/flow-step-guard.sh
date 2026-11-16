@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash
-# Requires: checks/task-flow-script.mjs, hooks/deny-tail.sh
+# Requires: checks/task-flow-script.mjs, checks/decide.mjs, hooks/decide.sh, hooks/facts.sh
 # PreToolUse guard of the course of work: the scenario moves by a measurement, not by a declaration.
 #
 # The progress used to say what was done, and the guards believed the line. Now a step is done when
@@ -49,32 +49,43 @@ dir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
 verdict="$(cd "$dir" && printf '%s' "$input" | timeout 60 node "$engine" guard 2>/dev/null)" || exit 0
 [ -n "$verdict" ] || exit 0
 
-# shellcheck disable=SC1090
-[ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
-
-# Two verdicts name an edit by the edit tool: of the progress instead of a shell write, of the plan
-# whose footprint names the description of the task flow. The exam, the rules gate and the handover
-# entry may hold that very edit; then what they want is said before the verdict. The verdict text
-# itself belongs to the engine, so the word about the move stands in front of it here.
-first=""
-move_file=""
-branch="$(git -C "$dir" branch --show-current 2>/dev/null)"
-tasks_dir="$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null)/${RT_TASKS_DIR:-docs/tasks}"
+# The decision, the move and the text come from the decision table. The engine gives its reason;
+# the kind of the reason is the action the table knows, and the facts are those the neighbours
+# judge the named move by — the decider puts first what they want.
 case "$verdict" in
-    *"the progress and the plan are edited by the edit tool"*) move_file="$tasks_dir/$branch/progress.md" ;;
-    *"belongs to the description of the task flow"*) move_file="$tasks_dir/$branch/plan.md" ;;
+    *"has no green mark"* | *"marked done after"* | *"marked current after"* | *"done steps go first"*) action=mark_step_done ;;
+    *"is ahead of the measured one"*) action=set_state ;;
+    *"are written only by the engine"*) action=write_marks ;;
+    *"is edited by the edit tool, not by a shell command"* | *"are edited by the edit tool, not by a shell command"*) action=shell_write_progress ;;
+    *"override of the description is edited by the edit tool"*) action=shell_write_progress ;;
+    *"belongs to the description of the task flow"*) action=edit_flow_description ;;
+    *) action=defer_task ;;
 esac
-if [ -n "$branch" ] && [ -n "$move_file" ] && command -v rt_move_first >/dev/null 2>&1; then
-    first="$(RT_HOOK_INPUT="$input" rt_move_first Edit "$(jq -cn --arg f "$move_file" '{file_path:$f,old_string:"",new_string:""}')")"
-fi
 
-reason="BLOCKED by flow-step-guard: ${first:+$first Then: }${verdict}"
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-tail_text="$(rt_deny_tail "")"
-[ -n "$tail_text" ] && reason="${reason}
-
-${tail_text}"
-
-jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"flow-step-guard: the scenario moves by a measurement."}}\n'
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/facts.sh" 2>/dev/null
+sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+transcript="$(rt_fact_transcript "$input")"
+exam="$(rt_fact_exam_holds "$transcript")"
+# The move the refusal names is an edit of the progress or of the plan; the gate is asked about that
+# file, and the window and the handover entry about the rule of the course of work.
+tasks_root="$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null)/${RT_TASKS_DIR:-docs/tasks}/$(rt_fact_branch "$dir")"
+case "$action" in
+    edit_flow_description) move_file="$tasks_root/plan.md" ;;
+    *) move_file="$tasks_root/progress.md" ;;
+esac
+move_input="$(jq -cn --arg f "$move_file" '{file_path:$f,old_string:"",new_string:""}')"
+facts="$(jq -cn \
+    --arg exam "$exam" \
+    --arg window "$(rt_fact_window_over_stop "$sid" "$transcript")" \
+    --arg rule "$(rt_fact_move_rule_loaded Edit "$move_input" "$sid")" \
+    --arg gate "$(rt_fact_move_gate_rule Edit "$move_input" "$sid")" \
+    --arg flow "$(rt_fact_rule_loaded "${RT_TASK_FLOW_RULE:-task-flow}" "$sid")" \
+    --arg handoff "$(rt_fact_from_handoff "$transcript")" \
+    '{exam:$exam, window_over_stop:$window, rule_loaded:$rule, gate_rule:$gate, from_handoff:$handoff,
+      task_flow_loaded:$flow, step_green:"no", measured:"earlier", owner_named_task:"no", flow_desc_approved:"no"}')"
+params="$(jq -cn --arg v "$verdict" '{verdict:$v}')"
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/decide.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 && rt_decide flow-step-guard.sh "$action" "$facts" "$params" PreToolUse "$input"
 exit 0

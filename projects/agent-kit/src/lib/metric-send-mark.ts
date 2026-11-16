@@ -40,12 +40,12 @@ export interface ISendMark {
     readonly succeeded: number;
     /** День последней удачной отправки: окно идёт от него. */
     readonly day: string;
-    readonly fault: ESendFault;
+    readonly failure: ESendFault;
     readonly reason: string;
     /** Сумма токена, который приём отказал: новый файл снимает остановку. */
     readonly refusedToken: string;
     /** С какой минуты отправка не удаётся: начало сессии называет сбой старше суток, а не попытку. */
-    readonly faultSince: number;
+    readonly failureSince: number;
     /**
      * Числа дерева по дням окна. Приём замещает день целиком, а считаются они только на сегодня, поэтому
      * повтор дня без них стёр бы лежащие на приёме.
@@ -57,10 +57,10 @@ const EMPTY_MARK: ISendMark = {
     tried: 0,
     succeeded: 0,
     day: '',
-    fault: ESendFault.None,
+    failure: ESendFault.None,
     reason: '',
     refusedToken: '',
-    faultSince: 0,
+    failureSince: 0,
     factsByDay: {},
 };
 
@@ -72,10 +72,28 @@ export function markPath(root: string): string {
     return join(marksDir(root), 'send.json');
 }
 
-/** Метка копии. Битая читается как пустая: отправка не должна остановиться из-за своей записи. */
+/** Поля метки до переименования: метка, записанная прежней версией, читается по ним. */
+interface ISendMarkBefore {
+    readonly fault?: ESendFault;
+    readonly faultSince?: number;
+}
+
+/**
+ * Метка копии. Битая читается как пустая: отправка не должна остановиться из-за своей записи. Метка
+ * прежней версии читается по старым именам полей, следующая запись кладёт новые.
+ */
 export function readSendMark(root: string): ISendMark {
     try {
-        return { ...EMPTY_MARK, ...(JSON.parse(readFileSync(markPath(root), 'utf8')) as Partial<ISendMark>) };
+        const raw: Partial<ISendMark> & ISendMarkBefore = JSON.parse(readFileSync(markPath(root), 'utf8')) as Partial<ISendMark> &
+            ISendMarkBefore;
+        const { fault: before, faultSince: beforeSince, ...rest }: Partial<ISendMark> & ISendMarkBefore = raw;
+
+        return {
+            ...EMPTY_MARK,
+            ...rest,
+            failure: rest.failure ?? before ?? ESendFault.None,
+            failureSince: rest.failureSince ?? beforeSince ?? 0,
+        };
     } catch {
         return EMPTY_MARK;
     }
@@ -102,7 +120,7 @@ export function sendFaultLines(root: string): readonly string[] {
     return [
         // Токен лежит вне дерева, а настройка в истории: вторая машина того же дерева молчит именно так.
         ...(noToken ? ['числа дерева не уходят: адрес приёма есть, файла токена на этой машине нет'] : []),
-        ...(mark.fault === ESendFault.None ? [] : [`последняя отправка чисел не удалась: ${mark.reason}`]),
+        ...(mark.failure === ESendFault.None ? [] : [`последняя отправка чисел не удалась: ${mark.reason}`]),
         ...(mark.refusedToken ? ['попытки остановлены, пока файл токена не сменится'] : []),
     ];
 }

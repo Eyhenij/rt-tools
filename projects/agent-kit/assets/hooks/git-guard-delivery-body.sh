@@ -37,13 +37,13 @@ rt_delivery_pull_body() {
     # The section about the remaining step: without it the owner merges the PR by the button while
     # the run is still going.
     if [ -n "$pull_body_section" ] && ! printf '%s' "$body" | grep -qE "$pull_body_section"; then
-        fault "the body of the request carries no section about the remaining step. The merge button is pressed by a person on the hosting, where there are no guards, and they merge as soon as they see green: all that holds the requirement there is what the owner read on the page. The section stands last and says exactly one thing — whether anything is left before the merge; it is rewritten by the same call that edits the body."
+        unmet_class pr_create_thin_body "the body of the request carries no section about the remaining step. The merge button is pressed by a person on the hosting, where there are no guards, and they merge as soon as they see green: all that holds the requirement there is what the owner read on the page. The section stands last and says exactly one thing — whether anything is left before the merge; it is rewritten by the same call that edits the body."
     fi
 
     # The table of points: without it the owner learns whether the work reached its point only after
     # the merge. The guard sees the heading, not whether the signs were run.
     if [ -n "$pull_points_section" ] && ! printf '%s' "$body" | grep -qE "$pull_points_section"; then
-        fault "the body of the request carries no section with the table of points. The owner decides on the request page whether the work reached its point. Run the role product-strategist and put its table of points into the body; a sign not run is written as not run."
+        unmet_class pr_create_thin_body "the body of the request carries no section with the table of points. The owner decides on the request page whether the work reached its point. Run the role product-strategist and put its table of points into the body; a sign not run is written as not run."
     fi
 
     # The table of the critic: the session's own points prove nothing about what the owner asked for.
@@ -57,7 +57,7 @@ rt_delivery_pull_body() {
             END { print rows + 0 }
         ')"
         [ "$goal_rows" -ge 3 ] \
-            || fault "the body of the request carries no section with the table of the critic. Give the role goal-critic the owner's words verbatim and the result, and put its table into the body word for word."
+            || unmet_class pr_create_thin_body "the body of the request carries no section with the table of the critic. Give the role goal-critic the owner's words verbatim and the result, and put its table into the body word for word."
     fi
 
     # The line that closes the task. Without it the merged task stays open on the board, and the
@@ -67,7 +67,7 @@ rt_delivery_pull_body() {
     if [ -n "$pull_closes_line" ] && [ -n "$number" ]; then
         closes="${pull_closes_line//\{number\}/$number}"
         printf '%s' "$body" | grep -qE "$closes" \
-            || fault "the body of the request carries no line that closes the task #${number}. Without it the task stays open after the merge, and the board shows the merged work as not done. Write the line by the sample of the tree: ${closes}"
+            || unmet_class pr_create_thin_body "the body of the request carries no line that closes the task #${number}. Without it the task stays open after the merge, and the board shows the merged work as not done. Write the line by the sample of the tree: ${closes}"
     fi
     return 0
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-delivery-folder.sh · fb2a68b39048 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-delivery-folder.sh · 2fd33ef9850b · правится надстройкой, не здесь
 # Delivery conditions about the task folder. NOT a guard: it has no `rt-hook:` declaration and it
 # hooks into no agent event. The delivery guard sources it — the same way it sources the refusal
 # tail and the observation record.
@@ -39,7 +39,7 @@ rt_folder_was_in_branch() {
 # checked-out branch carries a folder the named PR does not have. The tree of the head is read from
 # the remote ref. Without a head, or without its ref, the checked-out branch is judged, as before.
 rt_delivery_folder_target() {
-    _branch="$(git branch --show-current 2>/dev/null)"
+    _branch="$(rt_fact_branch)"
     _tree=HEAD
     [ -n "$1" ] && [ "$1" != "$_branch" ] || return 0
     git rev-parse --verify --quiet "refs/remotes/origin/$1" >/dev/null 2>&1 || return 0
@@ -53,12 +53,20 @@ rt_delivery_folder_target() {
 # rewritten, and the neighbouring guards may want their own move first — the document pair, the
 # exam. Each is named before the commit. Argument: the branch the folder lies in.
 rt_folder_commit_where() {
-    _here="$(git branch --show-current 2>/dev/null)"
+    # The words go to `_where`, and the facts of that commit to the table: where the copy stands and
+    # whether the contribution carries a foreign signature. What the neighbouring guards want before
+    # the commit — the document pair, the exam — the decider names from their rows.
+    _where=''
+    _here="$(rt_fact_branch)"
     if [ -n "$1" ] && [ "$1" != "$_here" ]; then
-        printf ' The folder lies in the branch «%s», and the copy stands on «%s»: switch to it first — git checkout %s — and commit there.' "$1" "${_here:-a detached head}" "$1"
+        [ "$_here" = "$main_branch" ] && fact branch_is_main yes
+        _where="$(printf ' The folder lies in the branch «%s», and the copy stands on «%s»: switch to it first — git checkout %s — and commit there.' "$1" "${_here:-a detached head}" "$1")"
         return 0
     fi
-    command -v rt_commit_move_note >/dev/null 2>&1 && rt_commit_move_note 'git commit -m "docs: take the task folder apart"'
+    command -v rt_signature_commit_note >/dev/null 2>&1 && _where="$(rt_signature_commit_note)"
+    [ -n "$_where" ] && fact commits_signed_declared no
+    # No foreign signature: the word of the neighbours the commit meets goes here, the decider puts it.
+    [ -n "$_where" ] || _where='{first}'
     return 0
 }
 
@@ -80,7 +88,7 @@ rt_delivery_open_folder() {
     _folder="$tasks_dir/$branch"
     _lying="$(rt_folder_in_branch "$_folder")"
     if [ -n "$_lying" ]; then
-        fault "the branch carries the task folder «${_lying}» — a request is opened after the tidying, not before it. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest, commit it by the last commit and repeat. If the work is merged in parts, put the comment «# Task-folder-skip: <reason>» into the command.$(rt_folder_commit_where "$branch")"
+        rt_folder_commit_where "$branch" && unmet task_folder_in_branch yes "the branch carries the task folder «${_lying}» — a request is opened after the tidying, not before it. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest, commit it by the last commit and repeat. If the work is merged in parts, put the comment «# Task-folder-skip: <reason>» into the command.${_where}"
         return 0
     fi
 
@@ -97,7 +105,7 @@ rt_delivery_open_folder() {
             [ -n "$_plan" ] || continue
             _draft="$(rt_branch_plan_draft "${_plan%/plan.md}" "$_base")"
             [ -n "$_draft" ] && [ -n "$(git ls-tree -d --name-only HEAD -- "${_draft%/}" 2>/dev/null)" ] \
-                && fault "the branch carries the unmerged agreement «${_draft}» its plan named — merge its rules and scenarios into the domain spec, remove the directory by a commit and repeat. If the work is merged in parts, put the comment «# Task-folder-skip: <reason>» into the command."
+                && unmet draft_spec_merged no "the branch carries the unmerged agreement «${_draft}» its plan named — merge its rules and scenarios into the domain spec, remove the directory by a commit and repeat. If the work is merged in parts, put the comment «# Task-folder-skip: <reason>» into the command."
         done <<EOF
 $(git log --format= --name-only "$_base..HEAD" -- "$tasks_dir/*/plan.md" 2>/dev/null | sort -u)
 EOF
@@ -108,7 +116,7 @@ EOF
 
     _gained="$(git diff --name-only --diff-filter=A "$_base" HEAD -- "$archive_dir" 2>/dev/null | head -1)"
     [ -z "$_gained" ] \
-        && fault "the task folder was deleted, but the branch added nothing to «${archive_dir}». Deleting is cheaper than taking apart — and together with the folder the analysis of the request is gone, the only record of the words of the owner. Move what explains the decisions taken as one file with a telling name, commit it and repeat.$(rt_folder_commit_where "$branch")"
+        && rt_folder_commit_where "$branch" && unmet archive_gained no "the task folder was deleted, but the branch added nothing to «${archive_dir}». Deleting is cheaper than taking apart — and together with the folder the analysis of the request is gone, the only record of the words of the owner. Move what explains the decisions taken as one file with a telling name, commit it and repeat.${_where}"
 }
 
 # The base the opening command names. Absent — the host takes the default branch: an empty answer.
@@ -149,7 +157,7 @@ rt_delivery_ready_folder() {
 
     _lying="$(rt_folder_in_branch "$tasks_dir/$_branch" "$_tree")"
     [ -n "$_lying" ] \
-        && fault "the branch carries the task folder «${_lying}» — a lifted draft reads as «ready to merge», and merging it there is not allowed. The button is pressed by a person on the hosting, and the folder reaches main before their hand does. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest, commit and repeat. If the work is merged in parts, put the comment «# Task-folder-skip: <reason>» into the command.$(rt_folder_commit_where "$_branch")"
+        && rt_folder_commit_where "$_branch" && unmet task_folder_in_branch yes "the branch carries the task folder «${_lying}» — a lifted draft reads as «ready to merge», and merging it there is not allowed. The button is pressed by a person on the hosting, and the folder reaches main before their hand does. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest, commit and repeat. If the work is merged in parts, put the comment «# Task-folder-skip: <reason>» into the command.${_where}"
 }
 
 # Condition for the merge: the same subject as a second line. It catches a merge going by command —
@@ -181,7 +189,8 @@ rt_delivery_merge_folder() {
 
     _lying="$(rt_folder_in_branch "$_folder" "$_tree")"
     [ -n "$_lying" ] \
-        && deny "BLOCKED: the task folder «${_lying}» is left in the branch — it will travel into main. There will be nobody to take it apart later: the work moves on to the next task, and this request closes. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest, commit and repeat. If the work is merged in parts, put the line «Task-folder-skip: <reason>» into the body of the request.$(rt_folder_commit_where "$_branch")"
+        && rt_folder_commit_where "$_branch" && fact task_folder_in_branch yes \
+        && refuse pr_merge "$(jq -cn --arg l "$_lying" --arg a "${archive_dir:-archive}" --arg w "${_where%\{first\}}" '{lying:$l, archive_dir:$a, where:$w}')"
 
     [ -n "$archive_dir" ] || exit 0
     _base="$(git merge-base "$main_branch" "$_tree" 2>/dev/null)"
@@ -190,7 +199,8 @@ rt_delivery_merge_folder() {
 
     _gained="$(git diff --name-only --diff-filter=A "$_base" "$_tree" -- "$archive_dir" 2>/dev/null | head -1)"
     [ -z "$_gained" ] \
-        && deny "BLOCKED: the task folder was deleted, but the branch added nothing to «${archive_dir}». Deleting is cheaper than taking apart — and together with the folder the analysis of the request is gone, the only record of the words of the owner. Move what explains the decisions taken as one file with a telling name, commit it and repeat.$(rt_folder_commit_where "$_branch")"
+        && rt_folder_commit_where "$_branch" && fact archive_gained no \
+        && refuse pr_merge "$(jq -cn --arg a "$archive_dir" --arg w "${_where%\{first\}}" '{archive_dir:$a, where:$w}')"
 
     exit 0
 }
