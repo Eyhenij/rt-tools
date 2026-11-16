@@ -144,8 +144,14 @@ deny() {
     fi
 
     reason="$1"
+    # The named move is the call of the exam role, and the window fill refuses it past its stop
+    # threshold: the neighbours are asked about it, and their move is named first.
+    if command -v rt_move_first >/dev/null 2>&1; then
+        eg_first="$(RT_HOOK_INPUT="$input" rt_move_first Agent '{"subagent_type":"strict-teacher","description":"exam","prompt":"exam"}')"
+        [ -n "$eg_first" ] && reason="$reason $eg_first"
+    fi
     tail_text="$(rt_deny_tail "$2")"
-    [ -n "$tail_text" ] && reason="$1 ${tail_text}"
+    [ -n "$tail_text" ] && reason="$reason ${tail_text}"
     jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
         || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$reason"
     exit 0

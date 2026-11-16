@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/exam-guard.sh · d7b8ec3a827a · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/exam-guard.sh · 05240031a90c · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file|Bash|mcp__webstorm__execute_terminal_command
 # Requires: agents/strict-teacher.md, hooks/roles.sh, hooks/deny-tail.sh, hooks/write-targets.sh
 # Exam guard: no edit goes through until the exam on the loaded rules has been passed this session.
@@ -145,8 +145,14 @@ deny() {
     fi
 
     reason="$1"
+    # The named move is the call of the exam role, and the window fill refuses it past its stop
+    # threshold: the neighbours are asked about it, and their move is named first.
+    if command -v rt_move_first >/dev/null 2>&1; then
+        eg_first="$(RT_HOOK_INPUT="$input" rt_move_first Agent '{"subagent_type":"strict-teacher","description":"exam","prompt":"exam"}')"
+        [ -n "$eg_first" ] && reason="$reason $eg_first"
+    fi
     tail_text="$(rt_deny_tail "$2")"
-    [ -n "$tail_text" ] && reason="$1 ${tail_text}"
+    [ -n "$tail_text" ] && reason="$reason ${tail_text}"
     jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
         || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$reason"
     exit 0

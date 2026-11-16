@@ -23,6 +23,10 @@ last() { dt "$@" | tail -1; }
 
 # --- SC-AK-1562 — каждый хук пакета назван таблицей ---------------------------------------------
 report "SC-AK-1562 — таблица разбирается" "$(last --validate | sed -E 's/^rows [0-9]+, //')" "problems 0"
+# Копия, разложенная в дерево, несёт шапку раскладки первой строкой — таблица читается и с ней.
+{ printf '# rt-kit v0.0.0 · checks/decision-table.json · 000000000000\n'; cat "$ASSETS/checks/decision-table.json"; } >"$TMP/laid.json"
+report "SC-AK-1562 — таблица с шапкой раскладки разбирается" \
+    "$(RT_DECISION_TABLE="$TMP/laid.json" node "$TABLE_CMD" --validate | tail -1 | sed -E 's/^rows [0-9]+, //')" "problems 0"
 got="$(last --coverage)"
 printf '%s' "$got" | grep -qE '^deciding ([0-9]+) of \1, helpers [0-9]+$' && got=ok
 report "SC-AK-1562 — у каждой решающей проверки есть строка, у помощника — пометка" "$got" ok
@@ -82,17 +86,34 @@ report "SC-AK-1567 — у каждой выведенной цепочки ес�
 # Случай на каждую цепочку: условия отказа и строки, запрещающей его ход, не встречаются. Номер
 # случая — номер сценария, где цепочка записана: SC-AK-1570, SC-AK-1571, SC-AK-1572, SC-AK-1573,
 # SC-AK-1574, SC-AK-1575, SC-AK-1576, SC-AK-1577, SC-AK-1578, SC-AK-1579, SC-AK-1580, SC-AK-1581,
-# SC-AK-1582, SC-AK-1583, SC-AK-1584, SC-AK-1585, SC-AK-1586, SC-AK-1587.
-while IFS=$'\t' read -r id met; do
+# SC-AK-1582, SC-AK-1583, SC-AK-1584, SC-AK-1585, SC-AK-1586, SC-AK-1587, SC-AK-1589, SC-AK-1590,
+# SC-AK-1591.
+# Две строки одного хука и действия различаются условиями, поэтому пара id проверяется по всем
+# парам строк за ней: «no» — ни в одной условия не встречаются.
+while IFS=$'\t' read -r sc id met; do
     [ -n "$id" ] || continue
-    sc="$(awk -v id="\`$id\`" '/^### SC-AK-/ { n = $2 } index($0, id) { print n; exit }' "$SCENARIOS_MD" 2>/dev/null)"
     report "${sc:-SC-AK-1567} — цепочка разведена: $id" "$met" "no"
 done < <(node --input-type=module -e "
-import { chainsOf, meet } from '$TABLE_CMD';
+import { chainsOf, chainItems, meet, rowId } from '$TABLE_CMD';
 import { readFileSync } from 'node:fs';
 const table = JSON.parse(readFileSync('$ASSETS/checks/decision-table.json', 'utf8'));
+const text = readFileSync('$SCENARIOS_MD', 'utf8');
+const scOf = (c) => {
+    let sc = '';
+    for (const part of text.split(/^(?=### SC-AK-)/m)) {
+        const head = part.match(/^### (SC-AK-\d+)/);
+        if (head && chainItems(part).some((i) => i.startsWith('- \`' + rowId(c.row) + '\`') && i.includes('\`' + rowId(c.other) + '\`'))) sc = head[1];
+    }
+    return sc;
+};
 const cond = (r) => Object.fromEntries(Object.entries(r.when ?? {}).map(([k, v]) => [k, [v].flat()]));
-for (const c of chainsOf(table)) console.log(c.id + '\t' + (meet(cond(c.row), cond(c.other)) ? 'yes' : 'no'));
+const byId = new Map();
+for (const c of chainsOf(table)) {
+    const seen = byId.get(c.id) ?? { sc: scOf(c), met: false };
+    seen.met ||= meet(cond(c.row), cond(c.other));
+    byId.set(c.id, seen);
+}
+for (const [id, { sc, met }] of byId) console.log(sc + '\t' + id + '\t' + (met ? 'yes' : 'no'));
 ")
 
 # --- SC-AK-1568 — правка любого хука выбирает этот набор ------------------------------------------

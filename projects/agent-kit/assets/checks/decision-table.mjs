@@ -41,7 +41,8 @@ const KINDS = new Set(['guard', 'helper', 'model']);
 
 function load() {
     try {
-        return JSON.parse(readFileSync(TABLE, 'utf8'));
+        // The copy laid out in a tree carries the layout header on its first line.
+        return JSON.parse(readFileSync(TABLE, 'utf8').replace(/^#[^\n]*\n/, ''));
     } catch (error) {
         console.error(`decision-table: the table does not parse — ${error.message}`);
         process.exit(2);
@@ -152,18 +153,32 @@ export function walk(table) {
 
 export const rowId = (row) => `${row.hook}:${row.action}:${row.decision}`;
 
-/** The pairs where the named move of a refusal is an action another row of any area may deny. */
+/**
+ * The pairs where the named move of a refusal is an action another row of any area may deny. Two
+ * rows of one hook and action differ by their conditions, so every pair of rows is its own chain,
+ * even when its id repeats another's.
+ */
 export function chainsOf(table) {
-    const pairs = new Map();
+    const pairs = [];
     for (const row of table.rows.filter((r) => r.decision === 'deny')) {
         for (const other of table.rows) {
             if (other === row || other.decision !== 'deny' || other.action !== row.move) continue;
-            const id = `${rowId(row)} → ${rowId(other)}`;
-            pairs.set(id, { id, row, other });
+            pairs.push({ id: `${rowId(row)} → ${rowId(other)}`, row, other });
         }
     }
-    return [...pairs.values()];
+    return pairs;
 }
+
+/**
+ * The items of a scenarios file: a line starting with «- » and the lines indented under it. A chain
+ * stands in an item that starts with its refusal and names the row denying its move.
+ */
+export function chainItems(text) {
+    return text.split(/\n(?! {2})/).filter((item) => item.startsWith('- `'));
+}
+
+export const chainWritten = (items, chain) =>
+    items.some((item) => item.startsWith(`- \`${rowId(chain.row)}\``) && item.includes(`\`${rowId(chain.other)}\``));
 
 function hookFiles() {
     if (!HOOKS) return null;
@@ -279,7 +294,8 @@ function walkMode(table) {
 function chainsMode(table) {
     const chains = chainsOf(table);
     const text = existsSync(SCENARIOS) ? readFileSync(SCENARIOS, 'utf8') : '';
-    const uncovered = chains.filter((chain) => !text.includes(`\`${chain.id}\``));
+    const items = chainItems(text);
+    const uncovered = chains.filter((chain) => !chainWritten(items, chain));
     uncovered.forEach((chain) => console.log(`no scenario: ${chain.id}`));
     console.log(`derived ${chains.length}, scenarios ${chains.length - uncovered.length}, uncovered ${uncovered.length}`);
     return uncovered.length === 0 ? 0 : 1;

@@ -99,9 +99,16 @@ over and says which of them are right. The file lies next to the plan of the epi
   `tools/board-runs.mjs:deployLag` calls the compare API, the host answers HTTP 422 «this diff is
   taking too long to generate», and `npm run check:board` stops with a stack before the lines about
   task folders. **Address:** names of this tree — the lag is counted fail-open, as other host calls.
-- **A refusal of a composing hook now asks up to seven neighbours, to the depth of three.** The
-  conform mode runs 1 min 47 s in parallel. **Address:** rules layer — RT-3355 reads the decision
-  from the table instead of asking the neighbours.
+- **A refusal of a composing hook now asks up to eight neighbours, to the depth of three.** The
+  conform mode runs about 4 min in parallel over 1007 rows. **Address:** rules layer — RT-3355
+  reads the decision from the table instead of asking the neighbours.
+- **The conform mode checks a row against its hook, not a refusal against the rows.** Past the stop
+  threshold of the window the exam named a call the window refuses, and no row said so: the roles
+  found it by running the hooks. **Address:** rules layer — a reverse probe in RT-3355: the hook of
+  the named move is run in the state of each refusal.
+- **The two hooks of git refuse and are marked as helpers.** `pre-push.sh` and `commit-msg.sh` exit
+  with a refusal the table does not describe. **Address:** the owner's word — whether they enter the
+  table.
 
 ## Left unresolved
 

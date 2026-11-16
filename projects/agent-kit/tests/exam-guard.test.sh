@@ -268,4 +268,24 @@ expect_decision "SC-AK-1588 — окно за порогом: правка ко�
     "$(progress_in "$(transcript "$(say 'x')")" "libs/x/src/lib/x.ts")" deny
 rm -f "$STOP_DIR/window-test"
 
+# --- SC-AK-1592 — окно за порогом: отказ экзамена сначала называет закрытие -----------------------
+# Отказ экзамена велит позвать роль экзаменатора, а окно за порогом этот вызов запрещает. Отказ
+# спрашивает окно и называет его ход — закрытие сессии. Ниже порога отказ прежний.
+filled_in() {
+    local p
+    p="$(transcript "$(say 'x')")"
+    jq -cn --argjson f "$1" '{type:"assistant",message:{usage:{input_tokens:$f,cache_creation_input_tokens:0,cache_read_input_tokens:0,output_tokens:0}}}' >>"$p"
+    jq -n --arg p "$p" --arg f "$2" \
+        '{session_id:"window-first",hook_event_name:"PreToolUse",tool_name:"Edit",tool_input:{file_path:$f,new_string:"x"},transcript_path:$p}'
+}
+export RT_WINDOW_TOKENS=200000 RT_WINDOW_WARN_PCT=40 RT_WINDOW_STOP_PCT=50
+expect_reason "SC-AK-1592 — окно за порогом: отказ экзамена называет сначала закрытие" exam-guard.sh \
+    "$(filled_in 120000 libs/x/src/lib/x.ts)" 'this comes first — BLOCKED by window-fill-guard'
+expect_reason "SC-AK-1592 — ниже порога отказ экзамена зовёт экзаменатора" exam-guard.sh \
+    "$(filled_in 20000 libs/x/src/lib/x.ts)" 'Call the role strict-teacher'
+expect_no_reason "SC-AK-1592 — ниже порога окно не названо" exam-guard.sh \
+    "$(filled_in 20000 libs/x/src/lib/x.ts)" 'BLOCKED by window-fill-guard'
+unset RT_WINDOW_TOKENS RT_WINDOW_WARN_PCT RT_WINDOW_STOP_PCT
+rm -f "$STOP_DIR/window-first"
+
 suite_result "гард экзамена"

@@ -179,3 +179,13 @@ Then the edit passes; an edit of code is still held by the exam, and without the
 held as before
 
 Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
+
+### SC-AK-1592 — past the stop threshold the refusal of the exam names the closing first
+
+Given the window is past its stop threshold, and no exam was passed
+When the executor edits code and the exam refuses
+Then the refusal names the move of the window guard first — the closing of the session — because
+the window guard refuses the call of the examiner; below the threshold the refusal calls the
+examiner, and the window guard is not named
+
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.

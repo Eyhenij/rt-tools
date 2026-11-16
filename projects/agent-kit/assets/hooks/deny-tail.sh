@@ -53,8 +53,10 @@ rt_gate_pending() {
 # that was never open. So the refusing guard asks its neighbours about the move before naming it,
 # and names what they want first.
 #
-# The neighbours are asked in a fixed order — the exam, the rules gate, the handover entry, the two
-# task-flow guards, the step guard, the documents guard — and the first refusal wins. The gate is
+# The neighbours are asked in a fixed order — the window fill, the exam, the rules gate, the
+# handover entry, the two task-flow guards, the step guard, the documents guard — and the first
+# refusal wins. The window fill goes first: past its stop threshold it refuses every move but the
+# closing ones, and a refusal that names the exam or a document edit there names a closed move. The gate is
 # read through `rt_gate_pending`, not called: the gate writes an observation for every refusal, and
 # a question about a move is not a refusal. The others are called with the move as their input, and
 # the text of their refusal comes back without the shared tail. A neighbour that refuses names its
@@ -69,7 +71,7 @@ rt_move_first() {
     mf_input="$(printf '%s' "${RT_HOOK_INPUT:-null}" | jq -c --arg t "$1" --argjson i "$2" '(if type == "object" then . else {} end) | .tool_name = $t | .tool_input = $i' 2>/dev/null)"
     [ -n "$mf_input" ] || return 0
     mf_sid="$(printf '%s' "$mf_input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
-    for mf_hook in exam-guard.sh @gate handoff-entry-guard.sh task-flow-guard.sh task-flow-draft-guard.sh flow-step-guard.sh docs-guard.sh; do
+    for mf_hook in window-fill-guard.sh exam-guard.sh @gate handoff-entry-guard.sh task-flow-guard.sh task-flow-draft-guard.sh flow-step-guard.sh docs-guard.sh; do
         if [ "$mf_hook" = @gate ]; then
             mf_rules="$(rt_move_rules "$1" "$mf_input")"
             for mf_rule in $mf_rules; do

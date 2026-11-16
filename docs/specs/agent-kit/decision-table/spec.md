@@ -206,12 +206,28 @@ Not applicable.
   is met with the denials of every area, by condition compatibility.
 - **The table describes the hooks as they lie on the tip of the epic branch.** The hosting rules of
   a deferred task stay in it until that task removes them.
+- **Past the stop threshold of the window, the window fill is asked first.** It refuses every move
+  but the closing ones, so a refusal that names the exam or a document edit asks it before the
+  others and names the closing move instead. Each such row has a twin for the state over the
+  threshold.
+- **A chain is written as one item per refusal.** Two rows of one hook and action differ by their
+  conditions, so the item lists the rows denying the move, and the test names the fact that parts
+  each pair of rows.
 
 ## Open questions
 
-None.
+- **Q-1. A refusal no row describes is seen by nothing.** The conform mode runs every row against
+  its hook, not every refusal of a hook against the rows: a hook may refuse in a state the table
+  does not name. A reverse probe — the hook of the named move run in the state of each refusal —
+  belongs to RT-3355, where the hooks take their decision from the table.
+- **Q-2. The two hooks of git refuse, and they stand among the helpers.** `pre-push.sh` and
+  `commit-msg.sh` refuse by an exit code, not by a decision of the agent's host, so their refusals
+  name no move; whether they enter the table is the owner's decision.
 
 ## History of changes
 
 - 2026-11-16 — the subdomain was created: the hooks of the package refused one another's named
   moves, and nothing counted such pairs before a session walked into them.
+- 2026-11-16 — past the stop threshold the exam and the documents guard named moves the window fill
+  refuses; the window fill is now asked first, and its refusals stand in the areas «work» and
+  «delivery» too.
