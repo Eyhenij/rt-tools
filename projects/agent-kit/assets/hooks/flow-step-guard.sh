@@ -81,5 +81,5 @@ facts="$(jq -cn \
 params="$(jq -cn --arg v "$verdict" '{verdict:$v}')"
 # shellcheck disable=SC1091
 . "$rt_hooks_dir/decide.sh" 2>/dev/null
-command -v rt_decide >/dev/null 2>&1 && rt_decide flow-step-guard.sh "$action" "$facts" "$params"
+command -v rt_decide >/dev/null 2>&1 && rt_decide flow-step-guard.sh "$action" "$facts" "$params" PreToolUse "$input"
 exit 0

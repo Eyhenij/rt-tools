@@ -9,7 +9,9 @@
 #
 # WHAT IS HERE. One call, `rt_decide`, and the lookup of the decider.
 #
-#   rt_decide <hook> <action> <facts JSON> [params JSON] [event]
+#   rt_decide <hook> <action> <facts JSON> [params JSON] [event] [hook input JSON]
+#
+# An empty action with the hook input given lets the decider find the action from the call itself.
 #
 # It prints the answer for the agent and returns 1 when the table refuses or asks; prints nothing and
 # returns 0 when it allows. The event is `PreToolUse` unless named: a Stop hook gets the block form.
@@ -38,13 +40,26 @@ rt_decide() {
     _facts="${3:-"{}"}"
     _params="${4:-"{}"}"
     _event="${5:-PreToolUse}"
+    _input="${6:-null}"
 
     command -v node >/dev/null 2>&1 || return 0
     _cmd="$(rt_decide_cmd)"
     [ -f "$_cmd" ] || return 0
 
-    _query="$(jq -cn --arg h "$_hook" --arg a "$_action" --argjson f "$_facts" --argjson p "$_params" \
-        '{hook:$h, action:$a, facts:$f, params:$p}' 2>/dev/null)" || return 0
+    [ "$_input" != null ] || _input="${RT_HOOK_INPUT:-null}"
+    printf '%s' "$_input" | jq -e . >/dev/null 2>&1 || _input=null
+
+    # A refusal past the window threshold names the numbers of the window, and it stands first in the
+    # refusals of the neighbours too: the numbers are filled here for whichever hook asks.
+    if [ "$(printf '%s' "$_facts" | jq -r '.window_over_stop // empty' 2>/dev/null)" = yes ]; then
+        # shellcheck disable=SC1091
+        command -v rt_fact_window_params >/dev/null 2>&1 || . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+        _wp="$(rt_fact_window_params "$(printf '%s' "$_input" | jq -r '.transcript_path // empty' 2>/dev/null)")"
+        [ -n "$_wp" ] && _params="$(jq -cn --argjson w "$_wp" --argjson p "$_params" '$w + $p' 2>/dev/null || printf '%s' "$_params")"
+    fi
+
+    _query="$(jq -cn --arg h "$_hook" --arg a "$_action" --argjson f "$_facts" --argjson p "$_params" --argjson i "$_input" \
+        '{hook:$h, action:$a, facts:$f, params:$p} + (if $i == null then {} else {input:$i} end)' 2>/dev/null)" || return 0
     _answer="$(node "$_cmd" "$_query" 2>/dev/null)"
     [ -n "$_answer" ] || return 0
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PostToolUse .*
-# Requires: hooks/profile-check.sh, hooks/deny-tail.sh
+# Requires: checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, hooks/profile-check.sh, hooks/deny-tail.sh
 # rt-hook: PreToolUse .*
 # Window fill: the session is brought to a logical point in advance, not cut off in the middle.
 #
@@ -186,41 +186,12 @@ esac
 
 [ "$allowed" -eq 1 ] && exit 0
 
-# The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
-# The file may not be laid out — then there is no tail, and the reason for the refusal stays as it
-# was.
-# shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-
-# The first named move is the progress edit, and the rules gate refuses it while the rule of the
-# course of work is not loaded: then loading it goes first.
-first=""
-command -v rt_gate_pending >/dev/null 2>&1 && [ -n "$(rt_gate_pending task-flow "$stop_sid")" ] \
-    && first="0. Load the rule «task-flow» by the tool Skill first — the rules gate refuses the progress edit until then.
-"
-
-reason="BLOCKED by window-fill-guard: window fill ${pct}% (${fill_k}k of ${window_k}k), the stop threshold is ${stop_pct}%. The session works no further — it closes.
-
-What is left to do in this session:
-${first}1. Rewrite the section «Where we stand» in the progress and add a session entry — what was done, what confirms it, what did not work out.
-2. Commit what is checked: what is not committed does not survive the break.
-3. Write the handover into ${handoff_dir}/ and give the owner the path to it — what goes into it is said by the pattern task-flow-handoff.
-
-What passes after the threshold:
-- an edit of ${tasks_dir}/** and ${handoff_dir}/**, a read of any file, a question to the owner;
-- a command starting with a word of delivery or verification: git, the client of the hosting, moving a column, npm run check:*.
-
-A command is judged by the start of the line: entering a directory before it removes the match, and the very commit that would have passed without it is refused. Start the command with the word of delivery itself."
-
-deny_tail_text="$(rt_deny_tail "")"
-[ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-jq -n --arg r "$reason" \
-    '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"window-fill-guard: the window is full, the session closes with a handover."}}\n'
-
+# The decision, the move and the text come from the decision table; the action is the class of
+# this call. The first named move is the progress edit, and the rules gate refuses it while the rule
+# of the course of work is not loaded: that is the fact the table tells the two texts apart by.
+facts="$(jq -cn --arg r "$(rt_fact_rule_loaded "${RT_TASK_FLOW_RULE:-task-flow}" "$stop_sid")" \
+    '{window_over_stop:"yes", rule_loaded:$r}')"
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/decide.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 && rt_decide window-fill-guard.sh "" "$facts" '{}' PreToolUse "$input"
 exit 0

@@ -16,6 +16,7 @@
 #   rt_fact_window_stop_file <sid>   the mark the window guard leaves past the stop threshold
 #   rt_fact_window_fill <record>     the fill of the window in tokens
 #   rt_fact_window_over_stop <sid> <record>  yes when the window is past its stop threshold
+#   rt_fact_window_params <record>   the numbers a window refusal names, as JSON
 #   rt_fact_exam <record>            the exam on the loaded rules: passed, failed or none
 #   rt_fact_from_handoff <record>    yes when the session began from a handover
 #   rt_fact_rule_loaded <rule> <sid> yes when the rule is loaded or absent from the tree
@@ -164,5 +165,28 @@ rt_fact_window_over_stop() {
         case "$_rt_w$_rt_f" in '' | *[!0-9]*) printf 'no'; exit 0 ;; esac
         [ -n "$_rt_f" ] && [ "$_rt_w" -gt 0 ] 2>/dev/null || { printf 'no'; exit 0; }
         if [ $((_rt_f * 100 / _rt_w)) -ge "${RT_WINDOW_STOP_PCT:-50}" ]; then printf 'yes'; else printf 'no'; fi
+    )
+}
+
+# The numbers a refusal past the window threshold names: the fill, the window, the threshold and the
+# directories that stay open. JSON for the slots of the decision table.
+rt_fact_window_params() {
+    (
+        _rt_here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+        for _rt_p in "$_rt_here/../rt-kit/defaults/project.sh" "$_rt_here/../defaults/project.sh" \
+            "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/defaults/project.sh" "${CLAUDE_PROJECT_DIR:-.}/.claude/rt-kit/project.sh"; do
+            # shellcheck disable=SC1090
+            [ -f "$_rt_p" ] && . "$_rt_p" 2>/dev/null
+        done
+        _rt_w="${RT_WINDOW_TOKENS:-0}"
+        _rt_f="$(rt_fact_window_fill "${1:-}")"
+        case "$_rt_w" in '' | *[!0-9]*) _rt_w=0 ;; esac
+        case "$_rt_f" in '' | *[!0-9]*) _rt_f=0 ;; esac
+        _rt_pct=0
+        [ "$_rt_w" -gt 0 ] && _rt_pct=$((_rt_f * 100 / _rt_w))
+        jq -cn --arg pct "$_rt_pct" --arg fill_k "$((_rt_f / 1000))" --arg window_k "$((_rt_w / 1000))" \
+            --arg stop_pct "${RT_WINDOW_STOP_PCT:-50}" --arg tasks_dir "${RT_TASKS_DIR:-docs/tasks}" \
+            --arg handoff_dir "${RT_HANDOFF_DIR:-.claude/handoff}" \
+            '{pct:$pct, fill_k:$fill_k, window_k:$window_k, stop_pct:$stop_pct, tasks_dir:$tasks_dir, handoff_dir:$handoff_dir}'
     )
 }

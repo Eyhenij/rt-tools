@@ -24,6 +24,10 @@
  *
  * `{name}` in a text is filled from `params`; a slot with no param stays as written.
  *
+ * A query with no action and with the hook input (`input`) gets its action from `action-of.mjs`: the
+ * first class of the call the hook has a row for. A guard that judges every edit names no action of
+ * its own, and its rows that differ only by the action are told apart by the call.
+ *
  * Mutation: under the test harness (`RT_KIT_TEST`) the row whose key is `RT_DECISION_FLIP` decides
  * «allow». It proves that a hook takes its decision from here: the sweep `--mutate` of
  * decision-table.mjs flips each row in turn.
@@ -35,6 +39,8 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { actionOf } from './action-of.mjs';
 
 const JOIN = 'The named move is refused right now, and this comes first — ';
 const GATE_RE = /The named move is held by the rules gate: load the rule «([^»]+)» by the tool Skill first\./;
@@ -179,9 +185,21 @@ const contexts = new WeakMap();
  * The answer for a query, or null when no row of the hook and action fits the facts. `opts.flip` is
  * the key of a row to decide «allow» — the mutation sweep.
  */
-export function decide(table, { hook, action, facts = {}, params = {} }, opts = {}) {
+export function decide(table, { hook, action, facts = {}, params = {}, input }, opts = {}) {
     if (!contexts.has(table)) contexts.set(table, context(table));
-    const answer = run(contexts.get(table), hook, action, facts, 0, opts);
+    const ctx = contexts.get(table);
+    const named = action || (input ? actionOf(input, new Set(ctx.rows.filter((r) => r.hook === hook).map((r) => r.action))) : null);
+    if (!named) return null;
+    // A flipped row or state decides «allow» wherever its facts hold. The area is left out of the
+    // match: twin rows of two areas are one decision of the hook, and the decider picks one of them.
+    if (opts.flip) {
+        const bare = (key) => key.slice(key.indexOf('|') + 1);
+        const flipped = [...ctx.rows, ...(table.states ?? [])].some(
+            (r) => r.hook === hook && r.action === named && bare(keyOf(r)) === bare(opts.flip) && fits(r, facts),
+        );
+        if (flipped) return { decision: 'allow', move: null, text: '', hook, tail: false };
+    }
+    const answer = run(ctx, hook, named, facts, 0, opts);
     return answer && { ...answer, text: fill(answer.text, params) };
 }
 

@@ -218,6 +218,8 @@ function hookFiles() {
 function runProbe(row, extraEnv = {}) {
     const script = [
         `. "${HARNESS}"`,
+        // The harness drops every RT_ variable of the environment; the flipped row comes under another name.
+        '[ -n "${PROBE_FLIP:-}" ] && export RT_DECISION_FLIP="$PROBE_FLIP"',
         'probe_err="$(mktemp)"',
         row.probe.setup ?? '',
         `json="$(${row.probe.input})"`,
@@ -371,8 +373,11 @@ async function snapshotCompare(table, file) {
  */
 async function mutate(table) {
     const rows = table.rows.filter((row) => row.probe && row.decision !== 'allow');
-    const results = await pool(rows, (row) => runProbe(row, { RT_KIT_TEST: '1', RT_DECISION_FLIP: rowKey(row) }));
+    const results = await pool(rows, (row) => runProbe(row, { PROBE_FLIP: rowKey(row) }));
     const followed = rows.filter((row, index) => results[index].decision === 'allow');
+    // The rows a hook did not follow, named by hook: a long list is cut, the count stays whole.
+    const missed = rows.filter((row, index) => results[index].decision !== 'allow');
+    if (process.argv.includes('--verbose')) missed.forEach((row) => console.log(`not followed: ${rowId(row)} ${JSON.stringify(row.when ?? {})}`));
     console.log(`rows ${rows.length}, followed ${followed.length}`);
     return followed.length === rows.length ? 0 : 1;
 }
