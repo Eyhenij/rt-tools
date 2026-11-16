@@ -208,3 +208,8 @@ Not applicable.
 ## Open questions
 
 None.
+
+## History of changes
+
+- 2026-11-16 — the subdomain was created: the hooks of the package refused one another's named
+  moves, and nothing counted such pairs before a session walked into them.
