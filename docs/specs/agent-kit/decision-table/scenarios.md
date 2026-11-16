@@ -399,11 +399,9 @@ them:
   `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
 - `exam-guard.sh:edit_plan:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
   `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
-- `exam-guard.sh:set_state:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
-  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `exam-guard.sh:set_state:deny` against `window-fill-guard.sh:call_teacher:deny`;
 - `exam-guard.sh:edit_progress:deny` against `window-fill-guard.sh:call_teacher:deny`;
-- `exam-guard.sh:mark_step_done:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
-  `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
+- `exam-guard.sh:mark_step_done:deny` against `window-fill-guard.sh:call_teacher:deny`;
 - `exam-guard.sh:shell_write_progress:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,
   `handoff-entry-guard.sh:edit_progress:deny`, `exam-guard.sh:edit_progress:deny`;
 - `exam-guard.sh:write_marks:deny` against `window-fill-guard.sh:call_teacher:deny`, `skill-gate.sh:edit_progress:deny`,

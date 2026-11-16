@@ -84,12 +84,21 @@ case "$tool" in
         # A window past its stop threshold: the window guard lets through only the closing — the
         # progress and the handover — and refuses the examiner role itself. Holding the progress
         # for an exam then names a move the window guard denies, and the session cannot close.
-        exam_sid="$(printf '%s' "$input" | jq -r '.session_id // "unknown"' 2>/dev/null)"
-        if [ -f "${TMPDIR:-/tmp}/claude-window-stop/${exam_sid}" ]; then
-            case "$target" in
-                */docs/tasks/*/progress.md | docs/tasks/*/progress.md) exit 0 ;;
-            esac
-        fi
+        # The mark is written by the window guard on its first refusal; before it the window guard
+        # is asked itself, about the call of the examiner, on this same input.
+        case "$target" in
+            */docs/tasks/*/progress.md | docs/tasks/*/progress.md)
+                exam_sid="$(printf '%s' "$input" | jq -r '.session_id // "unknown"' 2>/dev/null)"
+                [ -f "${TMPDIR:-/tmp}/claude-window-stop/${exam_sid}" ] && exit 0
+                exam_wf="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/window-fill-guard.sh"
+                if [ -x "$exam_wf" ] && printf '%s' "$input" \
+                    | jq -c '.hook_event_name = "PreToolUse" | .tool_name = "Agent" | .tool_input = {subagent_type:"strict-teacher",description:"exam",prompt:"exam"}' 2>/dev/null \
+                    | env -u RT_HOOK_INPUT -u RT_HOOK_PARSED -u RT_HOOK_TOOL -u RT_HOOK_CMD -u RT_HOOK_FILE -u RT_HOOK_CWD "$exam_wf" 2>/dev/null \
+                    | grep -q '"permissionDecision": *"deny"'; then
+                    exit 0
+                fi
+                ;;
+        esac
         ;;
     Bash | mcp__webstorm__execute_terminal_command)
         cmd="$(rt_hook_cmd)"

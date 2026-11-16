@@ -285,6 +285,13 @@ expect_reason "SC-AK-1592 — ниже порога отказ экзамена 
     "$(filled_in 20000 libs/x/src/lib/x.ts)" 'Call the role strict-teacher'
 expect_no_reason "SC-AK-1592 — ниже порога окно не названо" exam-guard.sh \
     "$(filled_in 20000 libs/x/src/lib/x.ts)" 'BLOCKED by window-fill-guard'
+# Первый вызов за порогом: окно ещё ни разу не отказало, отметки нет — экзамен спрашивает окно сам.
+rm -f "$STOP_DIR/window-first"
+expect_decision "SC-AK-1588 — первый вызов за порогом: правка progress проходит без отметки" exam-guard.sh \
+    "$(filled_in 120000 docs/tasks/RT-1-x/progress.md)" PASS
+rm -f "$STOP_DIR/window-first"
+expect_decision "SC-AK-1588 — ниже порога без отметки правка progress держится экзаменом" exam-guard.sh \
+    "$(filled_in 20000 docs/tasks/RT-1-x/progress.md)" deny
 unset RT_WINDOW_TOKENS RT_WINDOW_WARN_PCT RT_WINDOW_STOP_PCT
 rm -f "$STOP_DIR/window-first"
 
