@@ -23,7 +23,7 @@ const BLOCKS: readonly IRtAiChat.Block[] = [
 ];
 
 describe('RtAiChatBlocksComponent', (): void => {
-    it('SC-UKV-1310 — блоки рисуются по порядку: markdown текстом, notice плашкой своей severity', (): void => {
+    it('SC-UKV-1323 — блоки рисуются по порядку: markdown текстом, notice плашкой своей severity', (): void => {
         const fixture: ComponentFixture<RtAiChatBlocksComponent> = createRtFixture(RtAiChatBlocksComponent, { blocks: BLOCKS.slice(0, 2) });
         const host: HTMLElement = fixture.nativeElement as HTMLElement;
         const markdown: HTMLElement = qa(fixture, 'ai-chat-block-markdown')?.nativeElement as HTMLElement;
@@ -36,7 +36,7 @@ describe('RtAiChatBlocksComponent', (): void => {
         expect(Array.from(host.children)).toEqual([markdown, notice]);
     });
 
-    it('SC-UKV-1311 — блок чужого типа рисует отрисовщик, зарегистрированный приложением', (): void => {
+    it('SC-UKV-1324 — блок чужого типа рисует отрисовщик, зарегистрированный приложением', (): void => {
         const fixture: ComponentFixture<RtAiChatBlocksComponent> = createRtFixture(
             RtAiChatBlocksComponent,
             { blocks: BLOCKS },
@@ -47,7 +47,7 @@ describe('RtAiChatBlocksComponent', (): void => {
         expect(qa(fixture, 'ai-chat-block-unsupported')).toBeNull();
     });
 
-    it('SC-UKV-1312 — блок без отрисовщика показан заглушкой с именем типа, соседние блоки на месте', (): void => {
+    it('SC-UKV-1325 — блок без отрисовщика показан заглушкой с именем типа, соседние блоки на месте', (): void => {
         const fixture: ComponentFixture<RtAiChatBlocksComponent> = createRtFixture(RtAiChatBlocksComponent, { blocks: BLOCKS });
         const stub: HTMLElement = qa(fixture, 'ai-chat-block-unsupported')?.nativeElement as HTMLElement;
 

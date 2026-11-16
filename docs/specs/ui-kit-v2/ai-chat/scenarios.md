@@ -252,7 +252,39 @@ Then the composer shows the model and the ring, has no hint of its own, and the 
 
 Covered by the component spec of the organism.
 
-### SC-UKV-1308 — the copied answer joins the text of its blocks
+### SC-UKV-1308 — without hover a row has no hover tint
+
+Given the conversation list is drawn on a screen without hover
+When a row is touched
+Then its background stays the resting one
+
+Covered by the styles spec of the thread list, and in the admin end-to-end suite by `thread-list-hover.narrow.spec.ts`.
+
+### SC-UKV-1309 — with a mouse a hovered row gets the hover tint
+
+Given the conversation list is drawn on a screen with hover
+When the pointer stands over a row
+Then the row background is the subtle one
+
+Covered by the styles spec of the thread list, and in the admin end-to-end suite by `thread-list-hover.spec.ts`.
+
+### SC-UKV-1310 — the selected row keeps its background under the pointer
+
+Given a row is selected
+When the pointer stands over it or it is touched
+Then its background stays the selected one
+
+Covered by the styles spec of the thread list.
+
+### SC-UKV-1311 — on a narrow place the row shadow of the messenger look blurs by 10
+
+Given the conversation list in the messenger look on a place of 768 or narrower
+When a row with a sign is drawn
+Then the sign shadow blurs by 10 and fits the row inset; wider the shadow is the sign's own
+
+Covered by the styles spec of the thread list and the frame `MessengerPhone`, and in the entry suite by `service-logo-shadow.spec.ts`, which checks that the narrow step reaches an application page.
+
+### SC-UKV-1321 — the copied answer joins the text of its blocks
 
 Given an answer of a markdown block, a notice and a markdown block
 When its text is copied
@@ -260,7 +292,7 @@ Then the clipboard holds the three texts in their order, one empty line between 
 
 Covered by the spec of the blocks logic.
 
-### SC-UKV-1309 — a block the kit does not know stays out of the copy
+### SC-UKV-1322 — a block the kit does not know stays out of the copy
 
 Given an answer with a block of type `chart` between two markdown blocks
 When its text is copied
@@ -268,7 +300,7 @@ Then the clipboard holds the two markdown texts only, and an answer of unknown b
 
 Covered by the spec of the blocks logic.
 
-### SC-UKV-1310 — the blocks stand in order, a notice as a plate of its severity
+### SC-UKV-1323 — the blocks stand in order, a notice as a plate of its severity
 
 Given an answer with a markdown block and a warning notice
 When it is drawn
@@ -276,7 +308,7 @@ Then the markdown text stands first with its bold part and the notice under it a
 
 Covered by the component spec of the blocks and the frame `Blocks`.
 
-### SC-UKV-1311 — a registered renderer draws a block of its type
+### SC-UKV-1324 — a registered renderer draws a block of its type
 
 Given a renderer registered for the type `chart` and an answer with a `chart` block
 When it is drawn
@@ -284,7 +316,7 @@ Then the renderer receives the block and draws it, and no plate is shown
 
 Covered by the component spec of the blocks.
 
-### SC-UKV-1312 — a block without a renderer shows a plate with its type
+### SC-UKV-1325 — a block without a renderer shows a plate with its type
 
 Given an answer with a `chart` block and no renderer for it
 When it is drawn

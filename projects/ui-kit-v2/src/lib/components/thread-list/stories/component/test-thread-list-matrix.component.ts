@@ -17,7 +17,7 @@ import { RtThreadListFiltersDirective, RtThreadListRowDirective, RtThreadListTab
 import { IRtThreadList } from '../../rt-thread-list.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TThreadListMatrixPart = 'rowState' | 'sign' | 'tabs' | 'loading' | 'more' | 'empty' | 'presets' | 'themes';
+export type TThreadListMatrixPart = 'rowState' | 'sign' | 'tabs' | 'messengerPhone' | 'loading' | 'more' | 'empty' | 'presets' | 'themes';
 
 /** Строка списка витрины: к обязательным полям добавлены подпись и приписка. */
 interface IThreadRow extends IRtThreadList.Row {
@@ -218,6 +218,29 @@ const SIGNED_ROWS: readonly IThreadRow[] = [
                         </div>
                     </ng-template>
                 </app-story-presets>
+            }
+
+            @case ('messengerPhone') {
+                <!-- Без пары наборов: показ — экран телефона во всё окно, и вторая половина сжала бы
+                     его вдвое, а узкий порог считается от окна, не от половины. -->
+                <div style="width: 100%; height: 32.5rem; display: flex; background: var(--rt-color-bg-surface)">
+                    <rt-thread-list messenger searchPlaceholder="Поиск" [rows]="signedRows" [activeId]="1">
+                        <ng-template rtThreadListFilters>
+                            <span>Канал</span>
+                        </ng-template>
+                        <ng-template rtThreadListTabs>
+                            <rt-toggle-button-group fullWidth ariaLabel="Вкладки списка" value="all" [options]="tabOptions" />
+                        </ng-template>
+                        <ng-template rtThreadListRow let-row>
+                            <div style="display: grid; gap: 0.125rem; min-inline-size: 0">
+                                <strong>{{ row.title }}</strong>
+                                <span style="color: var(--rt-color-text-muted); font-size: var(--rt-text-sm)">
+                                    {{ row.meta }}
+                                </span>
+                            </div>
+                        </ng-template>
+                    </rt-thread-list>
+                </div>
             }
 
             @case ('themes') {
