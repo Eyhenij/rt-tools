@@ -8,7 +8,8 @@ Rewritten by every session, not appended to.
 - **Stage:** 2 of 6 — the decider
 - **Done:** stage 1: the snapshot of 999 probe answers (`probes-before.json`, a second run matches
   it: changed 0), the mutation sweep (`rows 999, followed 0`), the dispatcher median 1966 ms.
-- **Next step:** 2.1 — the full refusal text in every row, with `{name}` slots.
+- **Next step:** 2.2 — `decide.mjs` from the prototype `proto2.mjs` (scratchpad): model the text
+  shape per hook until every one of the 999 rows is reproduced; then `decide.test.sh`.
 - **Uncommitted:** nothing after the stage 1 commit.
 - **PR:** not open yet
 
@@ -17,8 +18,8 @@ Rewritten by every session, not appended to.
 - [x] 1.1 The answers of all probes today — decision and full text — are saved as the snapshot
 - [x] 1.2 The mutation sweep exists and shows that no hook follows the table yet
 - [x] 1.3 The dispatcher time is measured by a script of the suites
-- [>] 2.1 Every refusal row carries its full text in the field `text`, with `{name}` slots the hook fills
-- [ ] 2.2 `decide.mjs` answers every row of the table as the table says, and composes «this comes first» from the rows of the named move
+- [x] 2.1 Every refusal row carries its full text in the field `text`, with `{name}` slots the hook fills
+- [>] 2.2 `decide.mjs` answers every row of the table as the table says, and composes «this comes first» from the rows of the named move
 - [ ] 2.3 The walk, the conform mode and the chains take their rows from the decider; the stored composition rows leave the table
 - [ ] 2.4 `hooks/decide.sh` gives `rt_decide`; a decider that fails or is absent lets the action through
 - [ ] 3.1 `hooks/facts.sh` computes the branch, the fresh base, the window, the loaded rules and the conversation record once per call
@@ -49,6 +50,18 @@ Rewritten by every session, not appended to.
 - **The snapshot keeps texts steady.** The first compare found 44 rows changed between two runs of
   the same hooks: fixture commit hashes and random ports. `steadyText` replaces paths, hashes and
   ports; two runs then match. Affected stage: 1.
+- **The texts of the rows come from the snapshot; slots come with each hook in stage 4.** Of 118
+  distinct `says` only 67 are found literally in the hook sources: the rest are built from
+  variables. So 2.1 stores the text each probe printed today, the common tail cut (`tail: true`
+  marks where it stood); the fixture values in it (`'scratch'`, «other», the rule name) become
+  `{name}` slots when the hook moves to the decider. Affected stage: 2, 4.
+- **How a hook builds its text decides how the decider composes it** (measured by a prototype in
+  the scratchpad, `proto2.mjs`): the neighbour's refusal goes before the closing «The rule is X.»;
+  the base row of a composed state is the row whose conditions differ only in a fact a neighbour
+  owns (`window_over_stop`, `exam`, `doc_pair`); the delivery guard joins every unmet fault into
+  one text, so its rows are faults and its text is their sum. The prototype reproduces 584 of 669
+  base rows and 67 of 330 composed ones; the rest are per-hook shapes to model in 2.2. Affected
+  stage: 2.
 - **`plan-red` did not find this session's record by itself.** It wrote the approval only with
   `RT_FLOW_TRANSCRIPT` naming the record; a finding of the epic.
 
