@@ -112,12 +112,6 @@ while IFS= read -r candidate; do
         /*) ;;
         *) candidate="$root/$candidate" ;;
     esac
-    # The rules of this tree act on the files of this tree. A file outside it — a scratch copy, a
-    # neighbouring repository — is laid out by nobody here, even when it quotes a header.
-    case "$candidate" in
-        "$root"/* | "$root_abs"/*) ;;
-        *) continue ;;
-    esac
     # The observations are what the numbers of the package are counted from, and a hand in them
     # turns a report into a statement of the one who edited it. Only the guards write here.
     case "$candidate" in
@@ -135,6 +129,13 @@ while IFS= read -r candidate; do
             ;;
     esac
     [ -f "$candidate" ] || continue
+    # A laid-out file is a file of this tree. One outside it — a scratch copy, a neighbouring
+    # repository — is laid out by nobody here, even when it quotes a header. The two checks above
+    # judge by the end of the path and stay before this one.
+    case "$candidate" in
+        "$root"/* | "$root_abs"/*) ;;
+        *) continue ;;
+    esac
 
     # The header stands at the beginning of the file, but not on the first line: in a script `#!`
     # pushes it down, in a rule the title with the name and the kind of the resource does. Ten

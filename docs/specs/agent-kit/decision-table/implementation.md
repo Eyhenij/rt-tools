@@ -3,7 +3,7 @@
 A statement of the spec and the place where it is carried out. The link goes by the text of the
 statement: a removed statement is removed together with its line.
 
-- **Every hook of the package has a row in the table or a mark.** — `projects/agent-kit/assets/checks/decision-table.mjs:coverage` — scenarios `SC-AK-1562`, `SC-AK-1569`
+- **Every hook of the package has a row in the table or a mark.** — `projects/agent-kit/assets/checks/decision-table.mjs:coverage` — the marks stand in `projects/agent-kit/assets/checks/decision-table.json:hooks`; scenarios `SC-AK-1562`, `SC-AK-1569`
 - **A row matches the hook it describes.** — `projects/agent-kit/assets/checks/decision-table.mjs:conform` — the hook runs through `runProbe` on the fixture of the row; scenario `SC-AK-1563`
 - **No state is dead.** — `projects/agent-kit/assets/checks/decision-table.mjs:walk` — scenario `SC-AK-1564`
 - **A refusal names a move the table allows in the same state.** — `projects/agent-kit/assets/checks/decision-table.mjs:walk` — scenario `SC-AK-1565`

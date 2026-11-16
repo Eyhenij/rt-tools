@@ -11,6 +11,10 @@
 echo "таблица решений хуков"
 
 TABLE_CMD="$ASSETS/checks/decision-table.mjs"
+# The scenarios are read by an absolute path: the suite runs from any directory, and the check's
+# default is relative to the directory it is called from.
+SCENARIOS_MD="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)/docs/specs/agent-kit/decision-table/scenarios.md"
+export RT_DECISION_SCENARIOS="$SCENARIOS_MD"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
@@ -67,7 +71,6 @@ report "SC-AK-1567 — у каждой выведенной цепочки ес�
 # случая — номер сценария, где цепочка записана: SC-AK-1570, SC-AK-1571, SC-AK-1572, SC-AK-1573,
 # SC-AK-1574, SC-AK-1575, SC-AK-1576, SC-AK-1577, SC-AK-1578, SC-AK-1579, SC-AK-1580, SC-AK-1581,
 # SC-AK-1582, SC-AK-1583, SC-AK-1584, SC-AK-1585, SC-AK-1586, SC-AK-1587.
-SCENARIOS_MD="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)/docs/specs/agent-kit/decision-table/scenarios.md"
 while IFS=$'\t' read -r id met; do
     [ -n "$id" ] || continue
     sc="$(awk -v id="\`$id\`" '/^### SC-AK-/ { n = $2 } index($0, id) { print n; exit }' "$SCENARIOS_MD" 2>/dev/null)"
