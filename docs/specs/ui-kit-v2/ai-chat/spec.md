@@ -22,7 +22,7 @@ conversations. Every application repeats the same screen, and every copy drifts 
   consumer draws with a renderer of its own.
 - **The renderer** — a component the consumer registers for a block type the kit does not draw.
 - **The run** — the progress of one answer: running, done, stopped, failed, with optional steps.
-- **The attachments** — what the application draws under the answer text: a chart, a table.
+- **The attachments** — what the application draws under the answer blocks: a chart, a table.
 - **The conversation** — a thread of questions and answers the person can return to.
 - **The run error** — the answer broke off: the message, the reference number, whether to ask again.
 
@@ -138,7 +138,7 @@ leave through outputs.
 | empty         | the greeting, the suggestion cards, the composer           |
 | loading       | a spinner until the first message arrives                  |
 | thinking      | the question, the running run line, the composer with Stop |
-| writing       | the answer text growing under the running run line         |
+| writing       | the answer blocks growing under the running run line       |
 | answered      | the blocks, the done run line, «Copy» and the rating       |
 | run error     | the error message, the reference number, «Ask again»       |
 | conversations | the search and the list in place of the feed               |
