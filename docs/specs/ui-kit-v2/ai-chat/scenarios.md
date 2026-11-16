@@ -258,7 +258,7 @@ Given the conversation list is drawn on a screen without hover
 When a row is touched
 Then its background stays the resting one
 
-Covered by the styles spec of the thread list.
+Covered by the styles spec of the thread list, and in the admin end-to-end suite by `thread-list-hover.narrow.spec.ts`.
 
 ### SC-UKV-1309 — with a mouse a hovered row gets the hover tint
 
@@ -266,7 +266,7 @@ Given the conversation list is drawn on a screen with hover
 When the pointer stands over a row
 Then the row background is the subtle one
 
-Covered by the styles spec of the thread list.
+Covered by the styles spec of the thread list, and in the admin end-to-end suite by `thread-list-hover.spec.ts`.
 
 ### SC-UKV-1310 — the selected row keeps its background under the pointer
 
