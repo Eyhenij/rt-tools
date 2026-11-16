@@ -128,6 +128,13 @@ over and says which of them are right. The file lies next to the plan of the epi
 - **The texts of the hooks are built from variables, so the table cannot hold them as written.**
   Of 118 distinct refusal patterns 67 are found literally in the hook sources. **Address:** this
   task — the rows hold slots the hooks fill.
+- **The stop guard measured `эпик-заведён` while the suites loaded the machine.** Three times in one
+  session; a measure right after gave `этап-идёт`. **Address:** rules layer — the engine measures
+  the state with a time limit of its own and names a measure cut by the limit apart.
+- **The rules gate forgets the loaded rules after a compaction of the context.** Every rule was
+  asked again after each compaction, and a refused edit in the same command cost a second call.
+  **Address:** rules layer — the gate reads the loads of the session from the record, not only
+  from the part of the context that survived.
 
 ## Left unresolved
 
