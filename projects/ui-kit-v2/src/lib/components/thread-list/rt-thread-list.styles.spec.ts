@@ -66,6 +66,22 @@ describe('стили действий строки списка бесед', ():
         expect(hover).toContain('.rt-thread-list__row-wrap:focus-within .rt-thread-list__row-actions');
         expect(hover).toContain('.rt-thread-list__row-wrap:has(.rt-menu--open) .rt-thread-list__row-actions');
     });
+
+    it('SC-UKV-1308 — без наведения у строки нет фона наведения: касание оставляет фон покоя', (): void => {
+        expect(hover).toContain('.rt-thread-list__row:not(.rt-thread-list__row--active):hover');
+        expect(outside).not.toMatch(/\.rt-thread-list__row(:not\([^)]*\))?:hover \{/);
+    });
+
+    it('SC-UKV-1309 — с наведением строка под указателем получает приглушённый фон', (): void => {
+        expect(ruleBody(hover, '.rt-thread-list__row:not(.rt-thread-list__row--active):hover')).toContain(
+            'background: var(--rt-color-bg-subtle)'
+        );
+    });
+
+    it('SC-UKV-1310 — выбранная строка держит свой фон и под указателем', (): void => {
+        expect(outside).toContain('.rt-thread-list__row--active:hover');
+        expect(ruleBody(outside, '.rt-thread-list__row--active:hover')).toContain('background: var(--rt-color-state-info-bg)');
+    });
 });
 
 describe('шапка и вкладки списка в виде мессенджера', (): void => {
@@ -78,5 +94,17 @@ describe('шапка и вкладки списка в виде мессендж
     it('SC-UKV-1275 — вкладки стоят в 8 от линии шапки и от строк: свои 6 и зазор колонки 2', (): void => {
         expect(ruleBody(css, '.rt-thread-list--messenger .rt-thread-list__tabs')).toContain('padding: calc(var(--rt-space-1) * 1.5) 0');
         expect(ruleBody(css, '.rt-thread-list--messenger')).toContain('gap: var(--rt-space-0-5)');
+    });
+
+    it('SC-UKV-1311 — на узком месте тень знака строки размывается на 10 и помещается в строку', (): void => {
+        const narrow: string = mediaBody(css, '(width <= 768px)');
+        const place: string = css.slice(css.indexOf('@container rt-place (width <= 768px)'));
+        const wide: string = css.replace(narrow, '').slice(0, css.indexOf('@container rt-place'));
+
+        expect(narrow).toContain('.rt-thread-list--messenger .rt-thread-list__row-sign');
+        expect(narrow).toContain('--rt-service-logo-shadow: var(--rt-shadow-service-logo-row)');
+        expect(place).toContain('--rt-service-logo-shadow: var(--rt-shadow-service-logo-row)');
+        expect(wide).toContain('.rt-thread-list--messenger .rt-thread-list__row--active');
+        expect(wide).not.toContain('--rt-service-logo-shadow');
     });
 });

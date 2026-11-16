@@ -1,5 +1,7 @@
 // Вид мессенджера списка разговоров: колонка с полями, строки карточками со скруглением.
 // Лежит отдельно от стилей списка, чтобы оба файла уместились в предел длины.
+@use '../../../styles/breakpoints' as bp;
+
 @layer rt-kit.components {
     .rt-thread-list--messenger {
         --rt-thread-list-row-radius: var(--rt-radius-lg);
@@ -44,6 +46,14 @@
             &--active,
             &--active:hover {
                 background: var(--rt-color-state-info-bg);
+            }
+        }
+
+        // На узком месте тень знака строки у́же: знак стоит в 10 от верха строки и в 12 от её края,
+        // а прокрутка списка срезает всё, что вышло за её рамку. Строки и поля не меняются
+        @include bp.place-max(bp.$rt-bp-md) {
+            .rt-thread-list__row-sign {
+                --rt-service-logo-shadow: var(--rt-shadow-service-logo-row);
             }
         }
     }
