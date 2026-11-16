@@ -1,3 +1,14 @@
+# [0.46.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.45.0...rt-ui-kit-v2%400.46.0) (2026-11-15)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** вход icon колокольчика принимает только имя значка кита ([0157878](https://github.com/Eyhenij/rt-tools/commit/01578784cfd46b4c194ac8acf3b35c878ef87cb9))
+- **rt:ui-kit-v2:** шапка берёт рамку пункта через своё свойство, обёртки историй в трёх файлах ([df98125](https://github.com/Eyhenij/rt-tools/commit/df98125dcc27ce60200a31a3eb205efea0788409))
+
+### Features
+
+- **rt:ui-kit-v2:** кнопки шапки стоят группой у правого края, профиль на телефоне одним значком ([db8319d](https://github.com/Eyhenij/rt-tools/commit/db8319d81c520e0b62643201e2f2ff2f7a56f02d))
+
 # [0.45.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.44.1...rt-ui-kit-v2%400.45.0) (2026-11-15)
 
 ### Bug Fixes

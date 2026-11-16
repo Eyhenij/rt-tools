@@ -11,6 +11,7 @@
             rtPopoverOffsetY="14"
             [rtPopoverBackdropClass]="backdropClass()"
             [rtMod]="{ isOpen: userPopover.isOpen() }"
+            [attr.aria-label]="name()"
             [attr.aria-haspopup]="true"
             [attr.aria-expanded]="userPopover.isOpen()"
             [rtPopover]="menuTpl"
@@ -18,12 +19,13 @@
             <ng-container [ngTemplateOutlet]="body" />
         </button>
     } @else {
-        <button rtElem="user" type="button" qa-dataid="header-user" (click)="userClick.emit()">
+        <button rtElem="user" type="button" qa-dataid="header-user" [attr.aria-label]="name()" (click)="userClick.emit()">
             <ng-container [ngTemplateOutlet]="body" />
         </button>
     }
 
     <ng-template #body>
+        <span rtElem="user-icon" aria-hidden="true"><rt-icon name="user" size="sm" /></span>
         <span rtElem="user-avatar" aria-hidden="true">{{ avatar() }}</span>
         <span rtElem="user-name" qa-dataid="header-user-name">{{ name() }}</span>
         <span rtElem="user-caret" aria-hidden="true">
