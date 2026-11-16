@@ -227,7 +227,7 @@ const contexts = new WeakMap();
  * The answer for a query, or null when no row of the hook and action fits the facts. `opts.flip` is
  * the key of a row to decide «allow» — the mutation sweep.
  */
-export function decide(table, { hook, action, facts = {}, params = {}, input, fallback }, opts = {}) {
+export function decide(table, { hook, action, facts = {}, params = {}, input, fallback, base }, opts = {}) {
     if (!contexts.has(table)) contexts.set(table, context(table));
     const ctx = contexts.get(table);
     const known = new Set(ctx.rows.filter((r) => r.hook === hook).map((r) => r.action));
@@ -237,7 +237,13 @@ export function decide(table, { hook, action, facts = {}, params = {}, input, fa
     if (!named) return null;
     // One call may fit two classes the table names apart — creating a task is `task_new` in delivery
     // and `new_task` in the course of work. A flip of either is the flip of this call.
-    const classes = action ? [action] : [...knownActionsOf(input, known), named];
+    const namedClasses = action ? [action] : [...knownActionsOf(input, known), named];
+    // A class of the call together with a miss of the state may have no row of its own: the table
+    // writes a class with every fact lawful. Then the plain action the hook names as `base` decides,
+    // and only then: a row of the class that fits — a flipped one too — is the decision.
+    const own = run(ctx, hook, named, facts, 0, opts);
+    const plain = !own && base && base !== named && known.has(base);
+    const classes = plain ? [base] : namedClasses;
     // A flipped row or state decides «allow» wherever its facts hold. The area is left out of the
     // match: twin rows of two areas are one decision of the hook, and the decider picks one of them.
     if (opts.flip) {
@@ -253,7 +259,7 @@ export function decide(table, { hook, action, facts = {}, params = {}, input, fa
         );
         if (flipped) return { decision: 'allow', move: null, text: '', hook, tail: false };
     }
-    const answer = run(ctx, hook, named, facts, 0, opts);
+    const answer = plain ? run(ctx, hook, base, facts, 0, opts) : own;
     if (!answer) return null;
     const { first, ...rest } = answer;
     return { ...rest, text: placeFirst(fill(answer.text, params), first ? fill(first, params) : '') };

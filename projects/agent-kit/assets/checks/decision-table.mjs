@@ -12,6 +12,8 @@
  *                with its scenario: `derived N, scenarios S, uncovered U`
  *   --mutate     each refusal row turned to «allow» for one probe run; a hook that decides by the
  *                table allows: `rows N, followed F`
+ *   --reverse    the named move of each refusal asked of every hook that judges that action, in the
+ *                state of the refusal: none may refuse it — `moves N, refused R`
  *   --snapshot-save <file>, --snapshot-compare <file>
  *                the answers of all probes saved before a change of the hooks and compared after
  *                it: `saved N`, then `rows N, changed C`
@@ -382,6 +384,36 @@ async function mutate(table) {
     return followed.length === rows.length ? 0 : 1;
 }
 
+/**
+ * `--reverse`: a refusal is lawful only when its named move goes through in the same state. Each
+ * refusal row — stored or computed by the decider — names a move; every hook that has rows for that
+ * action is asked in the facts of the refusal. The hooks take their decision from the table, and the
+ * sweep `--mutate` proves it row by row, so the hook's answer is the decider's answer: asking the
+ * decider is asking the hook without a probe for each pair. A move no hook judges is free.
+ */
+function reverse(table) {
+    const stored = load();
+    const judges = new Map();
+    for (const row of stored.rows ?? []) {
+        if (!judges.has(row.action)) judges.set(row.action, new Set());
+        judges.get(row.action).add(row.hook);
+    }
+    let moves = 0;
+    let refused = 0;
+    for (const row of table.rows) {
+        if (row.decision !== 'deny' || !row.move || !judges.has(row.move)) continue;
+        for (const hook of judges.get(row.move)) {
+            moves += 1;
+            const answer = decide(stored, { hook, action: row.move, facts: row.when ?? {} });
+            if (answer?.decision !== 'deny') continue;
+            refused += 1;
+            console.log(`refused: ${rowId(row)} names ${row.move}, and ${hook} denies it in ${JSON.stringify(row.when ?? {})}`);
+        }
+    }
+    console.log(`moves ${moves}, refused ${refused}`);
+    return refused === 0 ? 0 : 1;
+}
+
 function walkMode(table) {
     const result = walk(table);
     for (const { area, state } of result.dead.slice(0, 20)) console.log(`dead: ${area} ${JSON.stringify(state)}`);
@@ -411,6 +443,7 @@ const MODES = {
     '--walk': walkMode,
     '--chains': chainsMode,
     '--mutate': mutate,
+    '--reverse': reverse,
     '--snapshot-save': (table) => snapshotSave(table, process.argv[3]),
     '--snapshot-compare': (table) => snapshotCompare(table, process.argv[3]),
 };
@@ -439,7 +472,7 @@ async function main(mode) {
     }
     const table = withDecided(stored);
     if (!MODES[mode]) {
-        console.error('decision-table: name a mode — --validate, --coverage, --conform, --walk, --chains, --mutate, --snapshot-save <file> or --snapshot-compare <file>');
+        console.error('decision-table: name a mode — --validate, --coverage, --conform, --walk, --chains, --mutate, --reverse, --snapshot-save <file> or --snapshot-compare <file>');
         return 2;
     }
     if (problems.length > 0) {

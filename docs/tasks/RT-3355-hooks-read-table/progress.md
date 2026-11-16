@@ -5,19 +5,14 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 4 of 6 — the hooks switched to the decider
-- **Done:** stage 3 — `hooks/facts.sh` with six `rt_fact_*`; the fact search over the hooks gives
-  0; the snapshot compare gives `changed 0`; the decider and the facts are bound in the spec. stage 1 — snapshot (999 probes, stable), mutation sweep (`followed 0`), dispatcher median
-  1966 ms. Stage 2 — every row carries its text; `checks/decide.mjs` reproduces all 670 stored rows
-  and computes the 330 composed states (`rows 1000, ok 1000`); the composed rows left the table for
-  `states` (conditions, pattern, probe); walk, conform and chains read `withDecided` — `derived 3584
-  decided`; `hooks/decide.sh` gives `rt_decide`, FAIL-OPEN covered.
-- **Next step:** 5.1 — the full mutation sweep. 4.3 and 4.4 are measured: every hook of the
-  package decides by `rt_decide`, `rt_move_first` is gone, the snapshot gives `rows 999, changed
-  0`. The facts of the course of work for one edit are `hooks/facts-flow.sh`, the facts of a named
-  move `rt_fact_move` in `hooks/facts.sh`.
-- **Uncommitted:** the 4.3 and 4.4 work over the commit of 4.2; the spec bindings that still name
-  the moved symbols are fixed before the commit.
+- **Stage:** 6 of 6 — the files left with no code, the specs and the layout
+- **Done:** stage 5 — the mutation sweep gives `rows 1003, followed 1003`; the snapshot `rows 999,
+  changed 0`; the reverse probe `moves 1467, refused 0`; the coverage counts 33 git hooks and
+  helpers; the dispatcher takes 1532 ms. Stages 1–4 are committed: every hook of the package
+  decides by `rt_decide`, the facts are computed by `facts.sh`, `facts-docs.sh`, `facts-flow.sh`.
+- **Next step:** 6.1 — the files left with no code are removed and named; the spec line «hook
+  files: 83 before, N after».
+- **Uncommitted:** none after the stage 5 commit.
 - **PR:** not open yet
 
 ## Steps
@@ -35,12 +30,12 @@ Rewritten by every session, not appended to.
 - [x] 4.2 The hooks of delivery and of git decide by `rt_decide`: git-guard-* with every helper, pre-push, commit-msg; the helpers that refused become guards with rows
 - [x] 4.3 The other hooks decide by `rt_decide`; a content analysis (prose-style, qa-dataid, reuse-first, sql) gives a fact
 - [x] 4.4 No hook re-runs its neighbours: `rt_move_first` is gone
-- [>] 5.1 Every refusal row flipped to «allow» makes its hook allow
-- [ ] 5.2 All probes answer as in the snapshot
-- [ ] 5.3 The reverse probe: the hook of each refusal's named move is run in the state of that refusal
-- [ ] 5.4 The coverage counts the git hooks and the helpers that refused among the guards
-- [ ] 5.5 The dispatcher is no slower than 2300 ms on an allowed command
-- [ ] 6.1 Files left with no code are removed and named in the progress; the spec names the count before and after, and «after» equals the directory
+- [x] 5.1 Every refusal row flipped to «allow» makes its hook allow
+- [x] 5.2 All probes answer as in the snapshot
+- [x] 5.3 The reverse probe: the hook of each refusal's named move is run in the state of that refusal
+- [x] 5.4 The coverage counts the git hooks and the helpers that refused among the guards
+- [x] 5.5 The dispatcher is no slower than 2300 ms on an allowed command
+- [>] 6.1 Files left with no code are removed and named in the progress; the spec names the count before and after, and «after» equals the directory
 - [ ] 6.2 The specs and bindings name the decider; the spec check is green
 - [ ] 6.3 The layout matches the package, the decider laid out with it
 - [ ] 6.4 All package suites are green on a full run, the decider's suite among them
@@ -153,6 +148,14 @@ Rewritten by every session, not appended to.
   `copy_assignment`. `--fault` stays for the hooks of 4.3.
 - **A push command the guard cannot read had no row.** `push_opaque` is added with its probe: the
   table allowed such a push, while the hook refused it.
+- **The plain action of a call is named to the decider, not asked by a second call.** The delivery
+  guard asked the plain action again when the class of the call had no row; a class row flipped to
+  «allow» was then refused by the plain one, and the sweep gave `followed 725`. `rt_decide` takes
+  `<class>><action>`: the plain action decides only when no row of the class fits the facts.
+  Affected stage: 5.
+- **The reverse probe asks the decider, not the hooks.** The sweep proves row by row that every
+  hook follows the table, so the hook's answer is the decider's: 1467 pairs of a refusal and a hook
+  that judges its move cost no probe each. Affected stage: 5.
 - **The stop guard measures `эпик-заведён` while the suites load the machine.** Three times in this
   session; a measure right after gives `этап-идёт`. A finding of the epic.
 
@@ -175,7 +178,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 4 of 6 — the hooks switched to the decider
-- **Next step:** 4.2 — the hooks of delivery and of git decide by `rt_decide`. 4.1 is committed.
+- **Next step:** 5.1 — the full mutation sweep. 4.3 and 4.4 are measured: every hook of the
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3355-hooks-read-table/progress.md`; the plan lies next to it.
@@ -184,30 +187,17 @@ The progress in full — `docs/tasks/RT-3355-hooks-read-table/progress.md`; the 
 
 ```
  M docs/specs/agent-kit/decision-table/implementation.md
- M docs/specs/agent-kit/delivery-gate/implementation.md
- M docs/specs/agent-kit/guards/implementation.md
- M docs/specs/agent-kit/no-verify-guard/implementation.md
- M docs/specs/agent-kit/tree-assignment/implementation.md
- M docs/tasks/RT-3355-hooks-read-table/progress.md
  M projects/agent-kit/assets/checks/decide.mjs
- M projects/agent-kit/assets/checks/decision-table.json
- M projects/agent-kit/assets/checks/tree-assignment.mjs
- M projects/agent-kit/assets/hooks/commit-msg.sh
+ M projects/agent-kit/assets/checks/decision-table.mjs
  M projects/agent-kit/assets/hooks/decide.sh
- M projects/agent-kit/assets/hooks/docs-guard.sh
- M projects/agent-kit/assets/hooks/git-guard-delivery-body.sh
- M projects/agent-kit/assets/hooks/git-guard-delivery-conflict.sh
- M projects/agent-kit/assets/hooks/git-guard-delivery-draft.sh
- M projects/agent-kit/assets/hooks/git-guard-delivery-epic.sh
- M projects/agent-kit/assets/hooks/git-guard-delivery-folder.sh
- M projects/agent-kit/assets/hooks/git-guard-delivery-merge.sh
- M projects/agent-kit/assets/hooks/git-guard-delivery-merged.sh
- M projects/agent-kit/assets/hooks/git-guard-delivery-pipeline.sh
+ M projects/agent-kit/assets/hooks/git-guard-delivery.sh
 ```
 
 ### Commits over the main branch
 
 ```
+6f22f4a87 feat(rt:agent-kit): все хуки решают по таблице, соседей никто не перезапускает
+404eda370 feat(rt:agent-kit): хуки отправки и git решают по таблице
 74d7cc5bd feat(rt:agent-kit): хуки хода работы решают по таблице
 0a2f9c7a8 feat(rt:agent-kit): действие вызова определяет решатель, окно и вход из передачи по таблице
 3ae100acc feat(rt:agent-kit): turn-exit и flow-step берут решение из таблицы
@@ -226,8 +216,6 @@ The progress in full — `docs/tasks/RT-3355-hooks-read-table/progress.md`; the 
 6fe42a388 fix(rt:agent-kit): отказ называет ход, разрешённый и в соседних областях
 611c8675f docs(rt:agent-kit): папка задачи RT-3275 разобрана в запись архива
 a7d989a2d fix(rt:agent-kit): все наборы пакета зелёные, шаги задачи RT-3275 измерены
-3402681a4 feat(rt:agent-kit): отказы хода работы называют разрешённый ход, цепочки таблицы записаны сценариями
-afe372403 docs(rt:agent-kit): шаг 2.2 задачи RT-3275 измерен
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

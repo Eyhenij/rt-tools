@@ -200,11 +200,10 @@ refuse() {
     # shellcheck disable=SC1091
     . "$rt_hooks_dir/decide.sh" 2>/dev/null
     command -v rt_decide >/dev/null 2>&1 || exit 0
-    rt_decide git-guard-delivery.sh "$1" "$_facts" "$_params" || exit 0
     # A class of the call together with a miss of the state may have no row of its own: the table
-    # writes a class with every fact lawful. The same misses are then asked under the plain action.
-    [ -n "${delivery_base:-}" ] && [ "$1" != "$delivery_base" ] \
-        && rt_decide git-guard-delivery.sh "$delivery_base" "$_facts" "$_params"
+    # writes a class with every fact lawful. The decider then asks the same misses under the plain
+    # action — and only then, so a row of the class flipped to «allow» is followed.
+    rt_decide git-guard-delivery.sh "$1${delivery_base:+>$delivery_base}" "$_facts" "$_params"
     exit 0
 }
 

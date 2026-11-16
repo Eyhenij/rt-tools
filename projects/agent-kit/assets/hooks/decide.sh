@@ -13,6 +13,7 @@
 #
 # An empty action with the hook input given lets the decider find the action from the call itself;
 # «?<action>» does the same and names the hook's own action for a call no class fits.
+# «<class>><action>» names the plain action that decides when no row of the class fits the facts.
 #
 # It prints the answer for the agent and returns 1 when the table refuses or asks; prints nothing and
 # returns 0 when it allows. The event is `PreToolUse` unless named: a Stop hook gets the block form,
@@ -82,8 +83,10 @@ rt_decide() {
     # a call no class fits.
     _fallback=''
     case "$_action" in "?"*) _fallback="${_action#\?}"; _action='' ;; esac
-    _query="$(jq -cn --arg h "$_hook" --arg a "$_action" --arg fb "$_fallback" --argjson f "$_facts" --argjson p "$_params" --argjson i "$_input" \
-        '{hook:$h, action:$a, facts:$f, params:$p} + (if $i == null then {} else {input:$i} end) + (if $fb == "" then {} else {fallback:$fb} end)' 2>/dev/null)" || return 0
+    _base=''
+    case "$_action" in *">"*) _base="${_action#*>}"; _action="${_action%%>*}" ;; esac
+    _query="$(jq -cn --arg h "$_hook" --arg a "$_action" --arg fb "$_fallback" --arg bs "$_base" --argjson f "$_facts" --argjson p "$_params" --argjson i "$_input" \
+        '{hook:$h, action:$a, facts:$f, params:$p} + (if $i == null then {} else {input:$i} end) + (if $fb == "" then {} else {fallback:$fb} end) + (if $bs == "" then {} else {base:$bs} end)' 2>/dev/null)" || return 0
     _answer="$(node "$_cmd" "$_query" 2>/dev/null)"
     [ -n "$_answer" ] || return 0
 
