@@ -1,5 +1,8 @@
 @layer rt-kit.components {
     .rt-ai-chat-blocks {
+        --rt-ai-chat-blocks-unsupported-border-width: var(--rt-border-width-thin);
+        --rt-ai-chat-blocks-unsupported-radius: var(--rt-radius-md);
+
         display: flex;
         min-width: 0;
         flex-direction: column;
@@ -16,8 +19,8 @@
         /* Блок без отрисовщика: пунктирная рамка с именем типа, как пустое место под вложение. */
         &__unsupported {
             padding: var(--rt-space-2) var(--rt-space-4);
-            border: var(--rt-border-width-thin) dashed var(--rt-color-border-default);
-            border-radius: var(--rt-radius-md);
+            border: var(--rt-ai-chat-blocks-unsupported-border-width) dashed var(--rt-color-border-default);
+            border-radius: var(--rt-ai-chat-blocks-unsupported-radius);
             background: var(--rt-color-bg-surface-subtle);
             color: var(--rt-color-text-muted);
             font-size: var(--rt-text-xs);
