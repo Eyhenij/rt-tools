@@ -120,11 +120,15 @@ function ownerText(line) {
  * transcripts of one machine grow to gigabytes, and the system grep of macOS walks them for half a
  * minute on a short common quote while ripgrep takes under a second — the push set's time limit for
  * this step does not hold with the first.
+ *
+ * The search names the files, not the lines. A common quote matches hundreds of megabytes of tool
+ * output in the transcripts, and a buffer of the matched lines overflowed: the call threw, and an
+ * approval the owner did write read as absent. The files are read one at a time instead.
  */
 function transcriptSearch(word, root) {
     return spawnOk('rg', ['--version'])
-        ? ['rg', ['-F', '--no-filename', '--no-messages', '-g', '*.jsonl', '--', word, root]]
-        : ['grep', ['-rhF', '--include=*.jsonl', '--', word, root]];
+        ? ['rg', ['-F', '-l', '--no-messages', '-g', '*.jsonl', '--', word, root]]
+        : ['grep', ['-rlF', '--include=*.jsonl', '--', word, root]];
 }
 
 /** Whether the owner wrote the quote in any session of this machine. */
@@ -135,22 +139,37 @@ export function ownerSaid(quote, root = join(homedir(), '.claude', 'projects')) 
         return false;
     }
 
-    let lines = '';
+    // The grep narrows the transcripts to files holding the longest word: the spacing between words
+    // is the owner's and may differ from the quote's. The JSON decides.
+    const longest = wanted.split(' ').reduce((best, word) => (word.length > best.length ? word : best), '');
+    let files = [];
 
     try {
-        // The grep narrows the transcripts to lines holding the longest word: the spacing between
-        // words is the owner's and may differ from the quote's. The JSON decides.
-        const longest = wanted.split(' ').reduce((best, word) => (word.length > best.length ? word : best), '');
-
-        lines = execFileSync(...transcriptSearch(longest, root), { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
+        files = execFileSync(...transcriptSearch(longest, root), { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })
+            .split('\n')
+            .filter(Boolean);
     } catch {
         return false;
     }
 
-    return lines.split('\n').some((line) => {
-        const text = ownerText(line);
+    return files.some((file) => {
+        let text = '';
 
-        return text !== null && squash(text).includes(wanted);
+        try {
+            text = readFileSync(file, 'utf8');
+        } catch {
+            return false;
+        }
+
+        return text.split('\n').some((line) => {
+            if (!line.includes(longest)) {
+                return false;
+            }
+
+            const said = ownerText(line);
+
+            return said !== null && squash(said).includes(wanted);
+        });
     });
 }
 
