@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.37.0 · rules/turn-conduct.md · 499d1ce6c33f · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/turn-conduct.md · 1ca16501c988 · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 
@@ -177,7 +177,8 @@ flowchart TD
   writes the mark of the step; a step marked done without its mark is refused.
 - **The end of an epic is the end of the scenario, and the turn ends there.** The turn shows the
   epic's tasks in the table of rule `status-report`, not the handover's; new work is taken by the
-  owner's word. On the main branch the epic is not read.
+  owner's word, given in the permission window the guard opens on the call that takes it — not
+  guessed from the conversation. On the main branch the epic is not read.
   <!-- rt-when: ответ владельцу о состоянии работы -->
 
 - **A step of the plan that is not done forbids a stop, and a report about the done is not an

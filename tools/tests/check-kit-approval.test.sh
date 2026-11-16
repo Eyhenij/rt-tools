@@ -1,23 +1,13 @@
 #!/usr/bin/env bash
-# The scenarios of the kit approval check: which kit files need approvals, how the record is read
-# and that a quote the owner never wrote is refused. Transcripts are fixtures in a temporary
-# directory; neither git nor the real sessions are asked.
+# The scenarios of the kit approval check: which kit files need approvals, how the record is read,
+# what the window of the owner shows. Neither git nor the real sessions are asked: the check reads
+# no record of a conversation, and the guard asks the owner by a window instead.
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 
 echo "the kit approval check"
 
 CHECK="$TOOLS/check-kit-approval.mjs"
-SESSIONS="$(mktemp -d)"
-trap 'rm -rf "$SESSIONS"' EXIT
-
-# One owner message, one assistant message quoting the same words, one tool result with them and
-# one answer from the question window.
-cat >"$SESSIONS/a.jsonl" <<'EOF'
-{"type":"user","message":{"role":"user","content":"Да, макет  одобряю"}}
-{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"витрину одобряю"}]}}
-{"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"витрину одобряю"}]}}
-{"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"answered"}]},"toolUseResult":{"questions":[],"answers":{"Витрина годится?":"Да, одобряю витрину (Рекомендую)"}}}
-EOF
+GUARD="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/.claude/hooks/kit-approval-guard.sh"
 
 run() {
     node --input-type=module -e "
@@ -60,25 +50,48 @@ report "the record gives both quotes and the link" \
     "$(run "const r = m.parseApprovals(\`$RECORD\`); console.log([r.mockup, r.figma, r.showcase].join('|'))")" \
     'Да, макет одобряю|https://www.figma.com/design/abc/Kit?node-id=1-2|витрину одобряю'
 
-# The owner's words are found with their spacing squashed; the same words said by the executor or
-# carried by a tool result are not the owner's.
-report "the owner's quote is found" \
-    "$(run "console.log(m.ownerSaid('Да, макет одобряю', '$SESSIONS'))")" true
-report "an answer chosen in the question window is the owner's" \
-    "$(run "console.log(m.ownerSaid('Да, одобряю витрину', '$SESSIONS'))")" true
-report "the executor's own words are not the owner's" \
-    "$(run "console.log(m.ownerSaid('витрину одобряю', '$SESSIONS'))")" false
-
-report "a record with both quotes said by the owner passes" \
-    "$(run "console.log(m.faultsOf('b', { path: 'r', text: \`$RECORD\` }, (q) => q !== '').length)")" 0
-report "a showcase quote the owner never wrote is refused" \
-    "$(run "console.log(m.faultsOf('b', { path: 'r', text: \`$RECORD\` }, (q) => q.startsWith('Да')).length)")" 1
+report "a record with both quotes passes the check" \
+    "$(run "console.log(m.faultsOf('b', { path: 'r', text: \`$RECORD\` }).length)")" 0
+report "the check reads no record of a conversation" \
+    "$(run "console.log(typeof m.ownerSaid)")" undefined
+WINDOW_JS='console.log(m.quotesLine({ path: "r", text: process.env.RECORD }))'
+export RECORD
+report "the window line carries both quotes and the link" \
+    "$(run "$WINDOW_JS")" \
+    'Макет: «Да, макет одобряю» — https://www.figma.com/design/abc/Kit?node-id=1-2 · Витрина: «витрину одобряю» (r)'
 report "a mockup line without a Figma link is refused" \
-    "$(run "console.log(m.faultsOf('b', { path: 'r', text: '- **Макет:** «да»\n- **Совпадение:** 3 из 3 чисел\n- **Витрина:** «да»' }, () => true).length)")" 1
+    "$(run "console.log(m.faultsOf('b', { path: 'r', text: '- **Макет:** «да»\n- **Совпадение:** 3 из 3 чисел\n- **Витрина:** «да»' }).length)")" 1
 report "a match below 100% is refused" \
-    "$(run "console.log(m.faultsOf('b', { path: 'r', text: \`$RECORD\`.replace('12 из 12', '11 из 12') }, () => true).length)")" 1
+    "$(run "console.log(m.faultsOf('b', { path: 'r', text: \`$RECORD\`.replace('12 из 12', '11 из 12') }).length)")" 1
 report "a record without the match line is refused" \
-    "$(run "console.log(m.faultsOf('b', { path: 'r', text: \`$RECORD\`.replace(/^- \*\*Совпадение.*$/m, '') }, () => true).length)")" 1
+    "$(run "console.log(m.faultsOf('b', { path: 'r', text: \`$RECORD\`.replace(/^- \*\*Совпадение.*$/m, '') }).length)")" 1
+
+# The guard on `gh pr create`: a check that passes with quotes opens the window, a check that passes
+# with nothing to confirm lets the call through, a failing check refuses. The check is a double that
+# answers by the variables of the case.
+GUARD_TREE="$(mktemp -d)"
+mkdir -p "$GUARD_TREE/tools"
+cat >"$GUARD_TREE/tools/check-kit-approval.mjs" <<'STUB'
+if (process.argv.includes('--quotes')) {
+    if (process.env.STUB_QUOTES) console.log(process.env.STUB_QUOTES);
+    process.exit(0);
+}
+if (process.env.STUB_FAIL) {
+    console.error('no approval record');
+    process.exit(1);
+}
+process.exit(0);
+STUB
+guard_decision() {
+    local out
+    out="$(printf '{"tool_name":"Bash","tool_input":{"command":"gh pr create --title x"}}' \
+        | CLAUDE_PROJECT_DIR="$GUARD_TREE" bash "$GUARD" 2>/dev/null)"
+    if [ -z "$out" ]; then echo PASS; else printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision'; fi
+}
+report "a record in place opens the owner's window" "$(STUB_QUOTES='Макет: «да» · Витрина: «да»' guard_decision)" ask
+report "no visible kit edit lets the PR through" "$(guard_decision)" PASS
+report "a missing record is refused" "$(STUB_FAIL=1 guard_decision)" deny
+rm -rf "$GUARD_TREE"
 
 MATCH="$TOOLS/kit-match.mjs"
 match() {
