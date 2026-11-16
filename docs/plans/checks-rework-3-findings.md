@@ -47,6 +47,31 @@ over and says which of them are right. The file lies next to the plan of the epi
   owner. **Address:** rules layer — two misses of the pattern `task-flow-start`: a check over a spec
   directory uses `grep -r`, and a subagent's report is read from the session record or a file.
 
+## RT-3271
+
+- **The work queue audit falls whole on the comparison with the last rollout.** When production lags
+  the main branch far, the host answers the compare with HTTP 422 «diff is taking too long», and
+  `check-board.mjs` exits with a stack instead of a line; the checks before it already printed.
+  **Address:** rules layer — `deployLag` turns a 422 into a report line about the lag it cannot count.
+- **A step check expecting «= 0» from `grep -c` never matches.** `grep -c` exits 1 on zero matches,
+  and the number form demands code 0; four steps of RT-3271 passed only by replacements. **Address:**
+  rules layer — the plan template names `|| true` for a count that must reach zero, or `plan-check`
+  refuses such a check.
+- **The window of the end-of-epic guard is journaled under `guard=`, and nothing reads it.** The
+  metrics report and the cargo take only `res=`, so the label `guard-ask` reaches neither.
+  **Address:** rules layer — `epic-stop-guard.sh` writes `res=`, or the report learns `guard-ask`.
+- **The window is opened only on the forms the guard parses.** `env A=1 …`, `time …`, a subshell,
+  `if … then`, `bash -c "…"`, `git worktree add -b` and `git branch RT-N-…` pass without it; the
+  first four were caught by the substring search the guard had before. **Address:** rules layer —
+  `epic-stop-guard.sh:heads` strips these wrappers, and scenarios cover each form.
+- **A deny of the tree assignment guard overrides the window.** After the epic is over, a task of a
+  new epic is refused by `tree-assignment-guard.sh` while the row of the copy names the old epic.
+  **Address:** names of this tree — the assignment guard asks instead of refusing on a closed epic.
+- **The kit release and a PR opened in the browser get no window with the approval quotes.**
+  **Address:** names of this tree — `kit-approval-guard.sh` asks on `--publish` too.
+- **Two judges still read the owner's answers from the session record.** `ask-judge.md` and
+  `turn-judge.md` were not touched by RT-3271. **Address:** rules layer — a task of this epic.
+
 ## Left unresolved
 
 - **A session that wrote nothing releases the turn, and so do the silent hosting and a lost menu.**
