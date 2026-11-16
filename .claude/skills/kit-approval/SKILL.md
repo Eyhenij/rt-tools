@@ -30,7 +30,8 @@ The table in `implementation.md` next to it.
   pattern `mockups-measure` and shown to the owner with its link.
 - **The owner is asked whether they approve, and only their answer is written down.** An approval
   goes into the record word for word. A refusal is not written: the frame is fixed and shown again.
-  A quote the owner never wrote is refused by the check.
+  The quotes are confirmed by the owner in the permission window that opening the PR shows; the
+  records of the conversations are not searched for them.
 - **The code is written after the mockup approval, and every state is shown in the showcase.** The
   states are the ones the showcase contract of the kit names; a state not shown is not approved.
 - **The showcase matches the mockup at 100%, and that is measured, not looked at.** The measurement

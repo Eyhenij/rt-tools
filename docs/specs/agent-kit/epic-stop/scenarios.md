@@ -3,11 +3,11 @@
 The identifier stands at the start of the test title, followed by a dash. While a scenario is not
 covered, it carries the mark "Not covered" with a reason. The prefix is shared by the domain.
 
-### SC-AK-979 — taking new work after the end of an epic is refused
+### SC-AK-979 — taking new work after the end of an epic asks the owner
 
 Given every task of the epic is merged or handed over by a request
 When a branch by a task number is created
-Then the guard refuses, and the exit code is two
+Then the guard answers `ask`: the host shows the owner a window to allow or forbid this command
 
 Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
 
@@ -19,37 +19,20 @@ Then the guard lets the call through
 
 Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
 
-### SC-AK-981 — the refusal names the stop
+### SC-AK-981 — the window names the end of the epic and the table
 
 Given the epic is over
-When the guard refuses
-Then the refusal names the command that prints the table and the line saying the turn ends with the
-epic
+When the guard asks the owner
+Then the reason says the epic is over and names the command that prints the table
 
 Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
 
-### SC-AK-982 — creating a task and moving a column are judged on a par with a branch
+### SC-AK-982 — creating a task is judged on a par with a branch, a column move is not
 
 Given the epic is over
-When a task is created, and then a task is moved to the work column
-Then both calls are refused
-
-Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
-
-### SC-AK-1227 — the refusal says up to which call a new epic needs the bypass line
-
-Given the epic is over, and the owner declares a new one
-When the guard refuses a call that creates the card, a task or the branch of the new epic
-Then the refusal names the boundary: the line is needed up to the branch of the new epic, and after
-that branch is taken the guard reads the new epic
-
-Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
-
-### SC-AK-983 — the order named in the call lets the work through
-
-Given the epic is over, and the owner said to take the next piece of work
-When the call carries the line of the order with the reason
-Then the guard lets it through; a line with an empty reason is refused
+When a task is created, a branch is created by `switch`, and a task is moved to the work column
+Then the first two calls get the window, and the column move passes: it follows the branch of the
+same work
 
 Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
 
@@ -95,54 +78,38 @@ Then the guard of the turn exit lets it through; with an unfinished task of the 
 
 Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
 
-### SC-AK-1201 — the owner's word naming the number of the work releases the call
+### SC-AK-1558 — a new epic is taken through the same window
 
-Given the epic is over, and the owner's message or their answer to a menu names the number the call takes
-When the executor creates the branch or moves the card of that work
-Then the guard lets it through; a word about another number, or the number in the executor's own words, does not
-
-Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
-
-### SC-AK-1207 — a menu answer is read in both forms, and the number only from the answer
-
-Given the epic is over, and the menu answer starts with «Your questions have been answered:» and names the number
-When the executor creates the branch of that work
-Then the guard lets it through, the same as for «The user answered:»
-
-Given the number stands only in the question of the menu, or in the output of a command
-When the executor creates the branch of that work
-Then the guard refuses: the question is written by the executor
+Given the epic is over, and the owner declares a new one
+When the calls create the card of the new epic, its tasks and its branch
+Then each of them gets the window; no line in the call lets it past the owner
 
 Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
 
-### SC-AK-1334 — a task being created is released by the latest answer to a menu
+### SC-AK-1559 — the guard reads no record of the conversation
 
-Given the epic is over, and the call creates a task that has no number yet
-When the guard looks for the word of the owner
-Then the latest answer of the owner to a menu releases the call when it agrees to a task — it names
-the creating of a task, or it is a plain «yes» or a word of a task to a question about the creating
-— and is not a refusal such as «not now» or «later»; an
-answer to an unrelated question, or a message of the owner after the answer that refuses, leaves the
-call refused. A new epic needs the word of an epic in the answer, and a branch or a column move
-still needs its number
+Given the epic is over, and the record of the conversation holds the owner's message or a menu
+answer naming the number of the work or agreeing to a task
+When the branch of that work is created or the task is created
+Then the guard answers `ask` all the same: the decision is given in the window, not guessed from the
+words of the record
 
 Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
 
-### SC-AK-1343 — the owner's «yes» to a task is not asked a second time
+### SC-AK-1560 — the name of the command in a text is not judged
 
-Given the epic is over, the owner agreed to a task in a menu, and the call creates a task of an
-epic by naming the number of that epic
-When the answer names no number, and after it stand a notice of a background command, the mark of
-an interrupted turn, words of the owner that do not refuse, or hundreds of commands with their
-results
-Then the call passes: the number of the epic is not the number of the work taken, what no person
-wrote cancels nothing, and only a refusal of the owner takes their answer back
+Given the epic is over
+When the command only reads the file of the creating command, or carries its name in the body of a
+heredoc, or in a commit message
+Then the guard lets it through; the same command run after a variable assignment or `cd … &&` gets
+the window
 
-A refusal is a line of the owner's message that begins with it, in any line of the message, or the
-words typed while declining a call. An answer agrees when it names the creating of a task. A plain
-«yes» or a word of a task counts only when the question names the creating. Every pair of the menu
-is read. An answer that puts the task off or denies it — «не создавать», «без задачи» — is no
-consent.
-A number named by a notice or by a report of a role releases nothing.
+Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.
+
+### SC-AK-1561 — a window is written to the journal apart from the refusals
+
+Given the epic is over
+When the guard asks the owner
+Then the journal of observations gets a record `guard-ask` with the name of the guard
 
 Covered: `projects/agent-kit/tests/epic-stop-guard.test.sh`.

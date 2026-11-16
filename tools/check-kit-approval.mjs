@@ -4,11 +4,14 @@
  * mockup and of the showcase. The rule is `kit-approval`, the law is `mockups`.
  *
  * The approval is the owner's answer, written down by the executor as a quote. A quote proves
- * nothing by itself — the executor writes it — so every quote is looked for among the owner's own
- * messages in the session transcripts of this machine. A quote the owner never wrote is a refusal.
+ * nothing by itself — the executor writes it — and the check does not guess whether the owner said
+ * it by searching the records of the conversations: such a search missed answers given in other
+ * words and on another machine. The record is demanded here; the quotes are confirmed by the owner
+ * in the window the guard opens on `gh pr create`, where `--quotes` gives them.
  *
  *   node tools/check-kit-approval.mjs                       # the branch against origin/main: push, PR
  *   node tools/check-kit-approval.mjs --publish ui-kit-v2   # every merge since the last version bump
+ *   node tools/check-kit-approval.mjs --quotes              # the quotes of the branch for the window
  *
  * Where the record lies: `docs/tasks/<branch>/approvals.md` while the task folder lives, and the
  * same lines in `docs/archive/<branch>.md` after the folder is taken apart. Two lines are read:
@@ -18,7 +21,6 @@
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { homedir } from 'node:os';
 import { join } from 'node:path';
 
 const KITS = { 'ui-kit-v2': 'projects/ui-kit-v2/' };
@@ -78,82 +80,6 @@ export function parseApprovals(text) {
     };
 }
 
-const squash = (text) => text.replace(/\s+/g, ' ').trim();
-
-/** The text of an owner message in one transcript line, or null for any other line. */
-function ownerText(line) {
-    let entry;
-
-    try {
-        entry = JSON.parse(line);
-    } catch {
-        return null;
-    }
-
-    if (entry?.type !== 'user' || entry.message?.role !== 'user' || entry.isMeta) {
-        return null;
-    }
-
-    // An answer in the question window comes as a tool result, and only the harness fills its
-    // `answers`: the executor writes neither the field nor the choice in it.
-    const answers = entry.toolUseResult?.answers;
-
-    if (answers !== null && typeof answers === 'object') {
-        return Object.values(answers).join('\n');
-    }
-
-    const content = entry.message.content;
-
-    if (typeof content === 'string') {
-        return content;
-    }
-
-    if (!Array.isArray(content) || content.some((block) => block.type === 'tool_result')) {
-        return null;
-    }
-
-    return content.map((block) => (block.type === 'text' ? block.text : '')).join('\n');
-}
-
-/**
- * The search over the transcripts: ripgrep where the machine has it, the system grep otherwise. The
- * transcripts of one machine grow to gigabytes, and the system grep of macOS walks them for half a
- * minute on a short common quote while ripgrep takes under a second — the push set's time limit for
- * this step does not hold with the first.
- */
-function transcriptSearch(word, root) {
-    return spawnOk('rg', ['--version'])
-        ? ['rg', ['-F', '--no-filename', '--no-messages', '-g', '*.jsonl', '--', word, root]]
-        : ['grep', ['-rhF', '--include=*.jsonl', '--', word, root]];
-}
-
-/** Whether the owner wrote the quote in any session of this machine. */
-export function ownerSaid(quote, root = join(homedir(), '.claude', 'projects')) {
-    const wanted = squash(quote);
-
-    if (wanted === '' || !existsSync(root)) {
-        return false;
-    }
-
-    let lines = '';
-
-    try {
-        // The grep narrows the transcripts to lines holding the longest word: the spacing between
-        // words is the owner's and may differ from the quote's. The JSON decides.
-        const longest = wanted.split(' ').reduce((best, word) => (word.length > best.length ? word : best), '');
-
-        lines = execFileSync(...transcriptSearch(longest, root), { encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 });
-    } catch {
-        return false;
-    }
-
-    return lines.split('\n').some((line) => {
-        const text = ownerText(line);
-
-        return text !== null && squash(text).includes(wanted);
-    });
-}
-
 /** The record of a branch: the task folder first, the archive after it. */
 function recordOf(branch) {
     const live = join('docs', 'tasks', branch, 'approvals.md');
@@ -168,7 +94,7 @@ function recordOf(branch) {
 }
 
 /** The faults of one record, each a line for the refusal; empty means approved. */
-export function faultsOf(name, record, said = ownerSaid) {
+export function faultsOf(name, record) {
     if (record === null) {
         return [`${name}: no approval record — the mockup and the showcase lines in the task folder's approvals.md`];
     }
@@ -178,8 +104,6 @@ export function faultsOf(name, record, said = ownerSaid) {
 
     if (found.mockup === null) {
         faults.push(`${record.path}: no line «- **Макет:** «…» — <Figma link>»`);
-    } else if (!said(found.mockup)) {
-        faults.push(`${record.path}: the mockup quote «${found.mockup}» is in no message of the owner`);
     }
 
     if (found.match === null) {
@@ -190,19 +114,28 @@ export function faultsOf(name, record, said = ownerSaid) {
 
     if (found.showcase === null) {
         faults.push(`${record.path}: no line «- **Витрина:** «…»»`);
-    } else if (!said(found.showcase)) {
-        faults.push(`${record.path}: the showcase quote «${found.showcase}» is in no message of the owner`);
     }
 
     return faults;
 }
 
+function branchVisible() {
+    const base = git('merge-base', 'origin/main', 'HEAD');
+
+    return git('diff', '--name-only', `${base}..HEAD`).split('\n').filter(isVisibleKitFile);
+}
+
 function branchFaults() {
     const branch = git('rev-parse', '--abbrev-ref', 'HEAD');
-    const base = git('merge-base', 'origin/main', 'HEAD');
-    const visible = git('diff', '--name-only', `${base}..HEAD`).split('\n').filter(isVisibleKitFile);
 
-    return visible.length === 0 ? [] : faultsOf(branch, recordOf(branch));
+    return branchVisible().length === 0 ? [] : faultsOf(branch, recordOf(branch));
+}
+
+/** The line of the window: both quotes of a record, for the owner to confirm. */
+export function quotesLine(record) {
+    const found = parseApprovals(record.text);
+
+    return `Макет: «${found.mockup}» — ${found.figma} · Витрина: «${found.showcase}» (${record.path})`;
 }
 
 function publishFaults(kit) {
@@ -247,6 +180,18 @@ function publishFaults(kit) {
 }
 
 const calledDirectly = process.argv[1] !== undefined && import.meta.url.endsWith(process.argv[1].split('/').pop());
+
+if (calledDirectly && process.argv.includes('--quotes')) {
+    // Nothing printed — the branch has no visible kit edit, and there is nothing to confirm.
+    const branch = git('rev-parse', '--abbrev-ref', 'HEAD');
+    const record = recordOf(branch);
+
+    if (branchVisible().length > 0 && record !== null && faultsOf(branch, record).length === 0) {
+        console.log(quotesLine(record));
+    }
+
+    process.exit(0);
+}
 
 if (calledDirectly) {
     const at = process.argv.indexOf('--publish');

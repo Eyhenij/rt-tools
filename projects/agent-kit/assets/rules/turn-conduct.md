@@ -176,7 +176,8 @@ flowchart TD
   writes the mark of the step; a step marked done without its mark is refused.
 - **The end of an epic is the end of the scenario, and the turn ends there.** The turn shows the
   epic's tasks in the table of rule `status-report`, not the handover's; new work is taken by the
-  owner's word. On the main branch the epic is not read.
+  owner's word, given in the permission window the guard opens on the call that takes it — not
+  guessed from the conversation. On the main branch the epic is not read.
   <!-- rt-when: ответ владельцу о состоянии работы -->
 
 - **A step of the plan that is not done forbids a stop, and a report about the done is not an
