@@ -260,8 +260,10 @@ async function conform(table) {
     // would let the hook name any move at all.
     const mismatch = probed.filter((row, index) => {
         const got = results[index];
-        if (got.decision !== row.decision) return console.log(`${rowId(row)}: the hook decided «${got.decision}»`), true;
-        if (row.says && !new RegExp(row.says).test(got.text)) return console.log(`${rowId(row)}: the refusal does not say /${row.says}/`), true;
+        // The hook's own text goes with a mismatch: the row id alone does not say which fact the hook read otherwise.
+        const said = got.text.trim().slice(0, 300);
+        if (got.decision !== row.decision) return console.log(`${rowId(row)}: the hook decided «${got.decision}»: ${said}`), true;
+        if (row.says && !new RegExp(row.says).test(got.text)) return console.log(`${rowId(row)}: the refusal does not say /${row.says}/: ${said}`), true;
         if (row.decision === 'deny' && !row.says) return console.log(`${rowId(row)}: a refusal row carries no «says»`), true;
         return false;
     });

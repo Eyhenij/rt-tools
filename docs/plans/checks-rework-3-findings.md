@@ -106,6 +106,11 @@ over and says which of them are right. The file lies next to the plan of the epi
   threshold of the window the exam named a call the window refuses, and no row said so: the roles
   found it by running the hooks. **Address:** rules layer — a reverse probe in RT-3355: the hook of
   the named move is run in the state of each refusal.
+- **The assignment check went silent under the task runner.** The runner sets `FORCE_COLOR`, and
+  `tree-assignment.mjs --assigned` printed the epic number with colour codes; the queue was asked
+  about no epic, and a closed assignment passed. Only the push set, run by the runner, showed it.
+  Fixed in RT-3275: the number is printed as a string. **Address:** rules layer — a check that
+  prints a value for a shell caller prints a string, and its suite runs once with `FORCE_COLOR`.
 - **The two hooks of git refuse and are marked as helpers.** `pre-push.sh` and `commit-msg.sh` exit
   with a refusal the table does not describe. **Address:** the owner's word — whether they enter the
   table.

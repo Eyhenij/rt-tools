@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/tree-assignment.mjs · db384b3725cb · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/tree-assignment.mjs · b94d68118e6b · правится надстройкой, не здесь
 /**
  * The epic assigned to this working copy.
  *
@@ -142,7 +142,9 @@ if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).
         // given, the queue says whether it is still alive.
         const row = assignmentOf();
 
-        console.log(row?.epic ?? '');
+        // Printed as a string: `console.log` colours a number when FORCE_COLOR is set — the task
+        // runner sets it — and the caller then reads escape codes in place of the number.
+        console.log(String(row?.epic ?? ''));
         process.exit(0);
     }
 

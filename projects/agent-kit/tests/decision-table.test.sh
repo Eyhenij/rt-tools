@@ -32,8 +32,10 @@ printf '%s' "$got" | grep -qE '^deciding ([0-9]+) of \1, helpers [0-9]+$' && got
 report "SC-AK-1562 — у каждой решающей проверки есть строка, у помощника — пометка" "$got" ok
 
 # --- SC-AK-1563 — строка совпадает с решением самого хука ----------------------------------------
-got="$(last --conform)"
-printf '%s' "$got" | grep -qE '^rows [1-9][0-9]*, mismatch 0$' && got=ok
+conform_out="$(dt --conform)"
+got="$(printf '%s\n' "$conform_out" | tail -1)"
+# A red sweep prints the rows that diverged: the last line alone does not say which hook to read.
+printf '%s' "$got" | grep -qE '^rows [1-9][0-9]*, mismatch 0$' && got=ok || printf '%s\n' "$conform_out" | head -20 >&2
 report "SC-AK-1563 — каждая строка сверена запуском хука" "$got" ok
 
 # --- SC-AK-1564, 1565 — тупиков нет, отказ называет разрешённый ход ------------------------------

@@ -141,7 +141,9 @@ if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).
         // given, the queue says whether it is still alive.
         const row = assignmentOf();
 
-        console.log(row?.epic ?? '');
+        // Printed as a string: `console.log` colours a number when FORCE_COLOR is set — the task
+        // runner sets it — and the caller then reads escape codes in place of the number.
+        console.log(String(row?.epic ?? ''));
         process.exit(0);
     }
 
