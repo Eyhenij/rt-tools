@@ -95,6 +95,10 @@ over and says which of them are right. The file lies next to the plan of the epi
   sources.** The gate reads its marks file, the handover entry reads the record of the conversation,
   and the rule of a move may differ from the one the entry waits for. **Address:** rules layer — the
   table splits the fact in RT-3355.
+- **The work queue audit falls whole when the host cannot compare the last rollout with main.**
+  `tools/board-runs.mjs:deployLag` calls the compare API, the host answers HTTP 422 «this diff is
+  taking too long to generate», and `npm run check:board` stops with a stack before the lines about
+  task folders. **Address:** names of this tree — the lag is counted fail-open, as other host calls.
 - **A refusal of a composing hook now asks up to seven neighbours, to the depth of three.** The
   conform mode runs 1 min 47 s in parallel. **Address:** rules layer — RT-3355 reads the decision
   from the table instead of asking the neighbours.

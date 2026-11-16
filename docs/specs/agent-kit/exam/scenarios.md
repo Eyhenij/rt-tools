@@ -170,3 +170,12 @@ the muted calls are looked up by key, not by walking the list anew on every entr
 does not make it in time is worse than an absent one, because the work goes past it silently
 
 Covered: `projects/agent-kit/tests/exam-guard.test.sh`.
+
+### SC-AK-1588 — a window past its stop threshold lets the progress through
+
+Given the window guard marked the session as past its stop threshold, and no exam was passed
+When the executor edits the progress of the task folder
+Then the edit passes; an edit of code is still held by the exam, and without the mark the progress is
+held as before
+
+Covered: `projects/agent-kit/tests/exam-guard.test.sh`.

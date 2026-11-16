@@ -68,7 +68,10 @@ export function problemsOf(table) {
         if (!area) return problems.push(`${at}: unknown area «${row.area}»`);
         if (!area.actions.includes(row.action)) problems.push(`${at}: the area has no action «${row.action}»`);
         if (!DECISIONS.has(row.decision)) problems.push(`${at}: unknown decision «${row.decision}»`);
-        if (row.decision === 'deny' && !area.actions.includes(row.move)) problems.push(`${at}: a refusal names no action of the area`);
+        // A refusal may name a move of another area: the action names are one across the table.
+        if (row.decision === 'deny' && !Object.values(table.areas).some((a) => a.actions.includes(row.move))) {
+            problems.push(`${at}: a refusal names no action of any area`);
+        }
         for (const [fact, value] of Object.entries(row.when ?? {})) {
             const values = area.facts[fact];
             if (!values) problems.push(`${at}: the area has no fact «${fact}»`);
@@ -125,6 +128,7 @@ function coverOrdered(denyRows, actions, start) {
  */
 export function walk(table) {
     const result = { states: 0n, askOnly: 0, dead: [], unnamed: [] };
+    const allDeny = table.rows.filter((row) => row.decision === 'deny');
     for (const [name, area] of Object.entries(table.areas)) {
         result.states += Object.values(area.facts).reduce((n, values) => n * BigInt(values.length), 1n);
         const deny = table.rows.filter((row) => row.area === name && row.decision === 'deny');
@@ -135,8 +139,11 @@ export function walk(table) {
             const state = cover(deny, others, {});
             if (state && !deny.some((row) => row.action === area.ask && meet(state, condition(row)))) result.askOnly += 1;
         }
+        // The named move is looked for in every area, not only in the refusal's own: an action
+        // name and a fact name mean one thing across the table, and a refusal of one area may name
+        // a move a hook of another area denies.
         for (const row of deny) {
-            const by = deny.filter((other) => other !== row && other.action === row.move && meet(condition(row), condition(other)));
+            const by = allDeny.filter((other) => other !== row && other.action === row.move && meet(condition(row), condition(other)));
             if (by.length > 0) result.unnamed.push({ area: name, state: meet(condition(row), condition(by[0])), row, by });
         }
     }
@@ -145,12 +152,12 @@ export function walk(table) {
 
 export const rowId = (row) => `${row.hook}:${row.action}:${row.decision}`;
 
-/** The pairs where the named move of a refusal is an action another row of the area may deny. */
+/** The pairs where the named move of a refusal is an action another row of any area may deny. */
 export function chainsOf(table) {
     const pairs = new Map();
     for (const row of table.rows.filter((r) => r.decision === 'deny')) {
         for (const other of table.rows) {
-            if (other === row || other.area !== row.area || other.decision !== 'deny' || other.action !== row.move) continue;
+            if (other === row || other.decision !== 'deny' || other.action !== row.move) continue;
             const id = `${rowId(row)} → ${rowId(other)}`;
             pairs.set(id, { id, row, other });
         }

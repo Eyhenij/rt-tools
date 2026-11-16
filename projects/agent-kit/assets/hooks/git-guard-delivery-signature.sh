@@ -104,6 +104,34 @@ rt_signature_commit_note() {
         "${strangers}${strangers:+${unknown:+, }}${unknown}" "$commit_email" "$commit_email"
 }
 
+# A sentence for a refusal that names a commit as its move: what the neighbouring guards want before
+# that commit — the document pair, the exam, the rule of the move. Asked of them by `rt_move_first`,
+# so the refusal names their move first instead of leading into their refusal. Empty when the commit
+# is open. Argument: the commit command the refusal names.
+rt_commit_first() {
+    if ! command -v rt_move_first >/dev/null 2>&1; then
+        # shellcheck disable=SC1090
+        [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+            && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+    fi
+    command -v rt_move_first >/dev/null 2>&1 || return 0
+    command -v jq >/dev/null 2>&1 || return 0
+    _first="$(rt_move_first Bash "$(jq -cn --arg c "${1:-git commit -m wip}" '{command:$c}')")"
+    [ -n "$_first" ] && printf ' %s' "$_first"
+    return 0
+}
+
+# The note for a refusal whose fix is a commit in the current branch: the rewrite of a foreign
+# signature when one stands, otherwise what the neighbouring guards want before the commit.
+rt_commit_move_note() {
+    _note="$(rt_signature_commit_note)"
+    if [ -n "$_note" ]; then
+        printf '%s' "$_note"
+        return 0
+    fi
+    rt_commit_first "${1:-}"
+}
+
 rt_delivery_signature() {
 # --- the signature of a machine commit ----------------------------------------------------
 #

@@ -45,6 +45,18 @@ EOF
 report "SC-AK-1565 — образец с цепочкой краснеет" \
     "$(RT_DECISION_TABLE="$TMP/chain.json" node "$TABLE_CMD" --walk | tail -1)" "dead 0, unnamed 1"
 
+# Образец с цепочкой между областями: отказ области x называет ход, который запрещает хук области y
+# при том же факте. Перебор по одной области его не видел.
+cat >"$TMP/cross.json" <<'EOF'
+{"areas":{"x":{"facts":{"f":["yes","no"]},"actions":["edit","ask"],"ask":"ask"},
+          "y":{"facts":{"f":["yes","no"]},"actions":["fix","ask"],"ask":"ask"}},
+ "hooks":[{"file":"a.sh","kind":"guard"},{"file":"b.sh","kind":"guard"}],
+ "rows":[{"hook":"a.sh","area":"x","when":{"f":"no"},"action":"edit","decision":"deny","move":"fix"},
+         {"hook":"b.sh","area":"y","when":{"f":"no"},"action":"fix","decision":"deny","move":"ask"}]}
+EOF
+report "SC-AK-1565 — образец с цепочкой между областями краснеет" \
+    "$(RT_DECISION_TABLE="$TMP/cross.json" node "$TABLE_CMD" --walk | tail -1)" "dead 0, unnamed 1"
+
 # Образец с тупиком: в состоянии f=no запрещено всё.
 cat >"$TMP/dead.json" <<'EOF'
 {"areas":{"x":{"facts":{"f":["yes","no"]},"actions":["edit","ask"],"ask":"ask"}},

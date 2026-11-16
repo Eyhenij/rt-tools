@@ -200,9 +200,10 @@ Not applicable.
 
 ## Decisions
 
-- **The walk goes over the facts of one area at a time.** The product of the facts of all eighty-two
-  hooks has no end; hooks of different areas judge disjoint facts, so a state of one area is
-  independent of another.
+- **The walk counts states by area, and looks for the named move in every area.** The product of the
+  facts of all the hooks has no end, so states are counted per area. Areas still share facts and
+  action names — the rules gate, the exam and a commit stand in several — so a refusal of one area
+  is met with the denials of every area, by condition compatibility.
 - **The table describes the hooks as they lie on the tip of the epic branch.** The hosting rules of
   a deferred task stay in it until that task removes them.
 

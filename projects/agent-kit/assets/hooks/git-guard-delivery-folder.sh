@@ -49,14 +49,15 @@ rt_delivery_folder_target() {
 # A sentence for a refusal whose fix is a commit in the branch the folder lies in. Two things refuse
 # that commit next: a copy standing on another branch commits elsewhere — on the main one it is
 # refused outright — and a contribution under a foreign signature refuses every commit until it is
-# rewritten. Each is named before the commit. Argument: the branch the folder lies in.
+# rewritten, and the neighbouring guards may want their own move first — the document pair, the
+# exam. Each is named before the commit. Argument: the branch the folder lies in.
 rt_folder_commit_where() {
     _here="$(git branch --show-current 2>/dev/null)"
     if [ -n "$1" ] && [ "$1" != "$_here" ]; then
         printf ' The folder lies in the branch «%s», and the copy stands on «%s»: switch to it first — git checkout %s — and commit there.' "$1" "${_here:-a detached head}" "$1"
         return 0
     fi
-    command -v rt_signature_commit_note >/dev/null 2>&1 && rt_signature_commit_note
+    command -v rt_commit_move_note >/dev/null 2>&1 && rt_commit_move_note 'git commit -m "docs: take the task folder apart"'
     return 0
 }
 

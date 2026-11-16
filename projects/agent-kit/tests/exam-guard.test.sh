@@ -249,4 +249,23 @@ expect_decision "SC-AK-759 — запись в настройку дерева �
 expect_decision "SC-AK-759 — команда без записи файла не судится" exam-guard.sh \
     "$(shell_in "$(transcript "$(say 'x')")" 'git status --short')" PASS
 
+# --- SC-AK-1588 — окно за порогом: правка progress проходит без экзамена --------------------------
+# Окно сверх порога пропускает только закрытие и запрещает саму роль экзаменатора. Экзамен,
+# держащий progress, называл бы ход, который запрещает окно.
+progress_in() {
+    jq -n --arg p "$1" --arg f "$2" \
+        '{session_id:"window-test",tool_name:"Edit",tool_input:{file_path:$f},transcript_path:$p}'
+}
+STOP_DIR="${TMPDIR:-/tmp}/claude-window-stop"
+mkdir -p "$STOP_DIR"
+rm -f "$STOP_DIR/window-test"
+expect_decision "SC-AK-1588 — без отметки окна правка progress держится экзаменом" exam-guard.sh \
+    "$(progress_in "$(transcript "$(say 'x')")" "docs/tasks/RT-1-x/progress.md")" deny
+: >"$STOP_DIR/window-test"
+expect_decision "SC-AK-1588 — окно за порогом: правка progress проходит" exam-guard.sh \
+    "$(progress_in "$(transcript "$(say 'x')")" "docs/tasks/RT-1-x/progress.md")" PASS
+expect_decision "SC-AK-1588 — окно за порогом: правка кода держится экзаменом" exam-guard.sh \
+    "$(progress_in "$(transcript "$(say 'x')")" "libs/x/src/lib/x.ts")" deny
+rm -f "$STOP_DIR/window-test"
+
 suite_result "гард экзамена"

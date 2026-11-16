@@ -208,7 +208,7 @@ rt_epic_own_pull() {
     done
     [ -n "$_left" ] || return 0
 
-    fault "the branch of the epic still carries the folders of its tasks — ${_left}. The request of an epic opens when the last of its folders is taken apart: merged as it is, the epic takes the folders of unfinished work into the main branch, and the reader has no way to tell them from current work. Take them apart and commit that.$(command -v rt_signature_commit_note >/dev/null 2>&1 && rt_signature_commit_note)"
+    fault "the branch of the epic still carries the folders of its tasks — ${_left}. The request of an epic opens when the last of its folders is taken apart: merged as it is, the epic takes the folders of unfinished work into the main branch, and the reader has no way to tell them from current work. Take them apart and commit that.$(command -v rt_commit_move_note >/dev/null 2>&1 && rt_commit_move_note 'git commit -m "docs: take the task folders apart"')"
 
     return 0
 }

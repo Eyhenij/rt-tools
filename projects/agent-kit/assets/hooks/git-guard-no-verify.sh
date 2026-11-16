@@ -149,7 +149,8 @@ if cd "$workdir" 2>/dev/null && git rev-parse --is-inside-work-tree >/dev/null 2
         elif [ -f "$rt_hooks_dir/git-guard-delivery-signature.sh" ]; then
             # shellcheck disable=SC1090
             . "$rt_hooks_dir/git-guard-delivery-signature.sh" 2>/dev/null
-            command -v rt_signature_commit_note >/dev/null 2>&1 && reason="${reason}$(rt_signature_commit_note)"
+            command -v rt_commit_move_note >/dev/null 2>&1 \
+                && reason="${reason}$(rt_commit_move_note "$(printf '%s' "$cmd" | sed -E 's/[[:space:]](--no-verify|--no-verif|--no-veri|-n)([[:space:]]|$)/ /g')")"
         fi
     fi
     printf '%s\n' "$hits" | grep -q '^push' \

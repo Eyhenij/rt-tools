@@ -75,6 +75,9 @@ refusal in their own turn.
 - **A call of the client counts as lifting the draft, not an occurrence of words.** A command that
   writes about the lifting was checked on a par with the lifting itself, and the refusal arrived at an
   attempt to describe this defect.
+- **A window past its stop threshold lets the progress through without the exam.** The window guard
+  then lets only the closing through and refuses the examiner role itself; an exam that held the
+  progress would name a move the window guard denies.
 
 ## What is out of scope
 

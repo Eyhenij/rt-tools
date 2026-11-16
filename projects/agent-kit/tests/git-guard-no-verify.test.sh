@@ -54,6 +54,19 @@ says "$REPO" 'git push --no-verify origin RT-7-probe' | grep -q 'git-guard-push-
     || report "SC-AK-1171 — у отправки назван запуск заранее" нет есть
 rm -rf "$ON_MAIN"
 
+# Коммит без пропуска судит и гард документов: правка кода без её документа отбивается им. Отказ
+# спрашивает соседей о названном коммите и называет их ход раньше, а не ведёт во второй отказ.
+DOCLESS="$(fixture_repo_branched main RT-7-docless)"
+mkdir -p "$DOCLESS/libs/x" "$DOCLESS/docs/specs/x"
+printf '# Domain x\n' > "$DOCLESS/docs/specs/x/spec.md"
+printf 'syntax = 1;\n' > "$DOCLESS/libs/x/a.proto"
+git -C "$DOCLESS" add libs/x/a.proto 2>/dev/null
+CLAUDE_PROJECT_DIR="$DOCLESS" says "$DOCLESS" 'git commit --no-verify -m fix' \
+    | grep -q 'this comes first — BLOCKED: the commit edits code but not the document' \
+    && report "SC-AK-1171 — сначала назван ход гарда документов" есть есть \
+    || report "SC-AK-1171 — сначала назван ход гарда документов" нет есть
+rm -rf "$DOCLESS"
+
 # --- SC-AK-1172. Что проходит -------------------------------------------------------------------
 g "SC-AK-1172 — коммит без пропуска" 'git commit -m fix' Bash PASS
 g "SC-AK-1172 — правка последнего коммита без пропуска" 'git commit --amend -F msg.txt' Bash PASS
