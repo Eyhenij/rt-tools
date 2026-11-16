@@ -4,20 +4,20 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `задача-взята`
-- **Stage:** 0 of 6 — the plan waits for the owner's approval
-- **Done:** grill committed (5b535a231); plan written and rewritten by the findings of
-  product-strategist and goal-critic; `plan-check` silent.
-- **Next step:** on the owner's approval commit the plan and begin stage 1.
-- **Uncommitted:** `plan.md`, `progress.md`, the line `**Behaviour:**` in `grill.md`.
+- **State:** `этап-идёт`
+- **Stage:** 2 of 6 — the decider
+- **Done:** stage 1: the snapshot of 999 probe answers (`probes-before.json`, a second run matches
+  it: changed 0), the mutation sweep (`rows 999, followed 0`), the dispatcher median 1966 ms.
+- **Next step:** 2.1 — the full refusal text in every row, with `{name}` slots.
+- **Uncommitted:** nothing after the stage 1 commit.
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 The answers of all probes today — decision and full text — are saved as the snapshot
-- [ ] 1.2 The mutation sweep exists and shows that no hook follows the table yet
-- [ ] 1.3 The dispatcher time is measured by a script of the suites
-- [ ] 2.1 Every refusal row carries its full text in the field `text`, with `{name}` slots the hook fills
+- [x] 1.1 The answers of all probes today — decision and full text — are saved as the snapshot
+- [x] 1.2 The mutation sweep exists and shows that no hook follows the table yet
+- [x] 1.3 The dispatcher time is measured by a script of the suites
+- [>] 2.1 Every refusal row carries its full text in the field `text`, with `{name}` slots the hook fills
 - [ ] 2.2 `decide.mjs` answers every row of the table as the table says, and composes «this comes first» from the rows of the named move
 - [ ] 2.3 The walk, the conform mode and the chains take their rows from the decider; the stored composition rows leave the table
 - [ ] 2.4 `hooks/decide.sh` gives `rt_decide`; a decider that fails or is absent lets the action through
@@ -46,6 +46,11 @@ Rewritten by every session, not appended to.
 - **Five checks were rewritten after the first approval, before the plan commit stood.**
   `plan-red` found 2.3, 5.4, 6.2, 6.3 and 6.4 green before the work: they measured the tree, not
   the edit. Each now names what the work adds; the plan goes to the owner again.
+- **The snapshot keeps texts steady.** The first compare found 44 rows changed between two runs of
+  the same hooks: fixture commit hashes and random ports. `steadyText` replaces paths, hashes and
+  ports; two runs then match. Affected stage: 1.
+- **`plan-red` did not find this session's record by itself.** It wrote the approval only with
+  `RT_FLOW_TRANSCRIPT` naming the record; a finding of the epic.
 
 ## Sessions
 

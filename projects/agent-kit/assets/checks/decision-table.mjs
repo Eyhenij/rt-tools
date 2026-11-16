@@ -10,6 +10,11 @@
  *                action allowed in the same state: `states N, ask-only A`, then `dead D, unnamed U`
  *   --chains     the pairs where the named move of one row is an action another row may deny, each
  *                with its scenario: `derived N, scenarios S, uncovered U`
+ *   --mutate     each refusal row turned to «allow» for one probe run; a hook that decides by the
+ *                table allows: `rows N, followed F`
+ *   --snapshot-save <file>, --snapshot-compare <file>
+ *                the answers of all probes saved before a change of the hooks and compared after
+ *                it: `saved N`, then `rows N, changed C`
  *
  * A state is one combination of the values of the facts of one area. Areas judge disjoint facts,
  * so the walk goes area by area: the product over all hooks has no end, the product inside an area
@@ -26,7 +31,7 @@
  */
 import { spawn } from 'node:child_process';
 import { availableParallelism } from 'node:os';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -194,7 +199,7 @@ function hookFiles() {
  * Runs the hook of a row on the fixture of its facts. Each probe keeps its stderr in a file of its
  * own: the probes run side by side, and a shared file would hand one probe the text of another.
  */
-function runProbe(row) {
+function runProbe(row, extraEnv = {}) {
     const script = [
         `. "${HARNESS}"`,
         'probe_err="$(mktemp)"',
@@ -205,7 +210,7 @@ function runProbe(row) {
         `printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecisionReason // .reason // empty' 2>/dev/null | tr '\\n' ' '`,
         `tr '\\n' ' ' < "$probe_err"; rm -f "$probe_err"`,
     ].join('\n');
-    const env = { ...process.env, HOOKS_OVERRIDE: HOOKS, TMPDIR: process.env.TMPDIR ?? '/tmp' };
+    const env = { ...process.env, HOOKS_OVERRIDE: HOOKS, TMPDIR: process.env.TMPDIR ?? '/tmp', ...extraEnv };
     return new Promise((resolve) => {
         const child = spawn('bash', ['-c', script], { env, stdio: ['ignore', 'pipe', 'ignore'] });
         let stdout = '';
@@ -282,6 +287,76 @@ async function conform(table) {
     return total === 0 ? 0 : 1;
 }
 
+/**
+ * The key of a row: its area, hook, action and conditions. Unique across the table — two rows with
+ * one key would be one decision written twice.
+ */
+export const rowKey = (row) =>
+    `${row.area}|${row.hook}|${row.action}|${JSON.stringify(Object.fromEntries(Object.entries(row.when ?? {}).sort()))}`;
+
+/**
+ * The text of a hook as the snapshot keeps it: the paths, the commit hashes and the ports of the
+ * fixture differ from run to run, and a refusal that names one would read as changed on every run.
+ */
+export const steadyText = (text) =>
+    text
+        .replace(/\/(?:private\/)?(?:var\/folders|tmp)\/[^\s'"»),;]*/g, '<tmp>')
+        .replace(/\b(?=[0-9a-f]*\d)[0-9a-f]{7,40}\b/g, '<sha>')
+        .replace(/\b(port|:)\s?\d{4,5}\b/g, '$1<port>')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+/** The answer of every probe: the decision and the steady text, by the key of its row. */
+async function probeAnswers(table) {
+    const probed = table.rows.filter((row) => row.probe);
+    const results = await pool(probed, (row) => runProbe(row));
+    return Object.fromEntries(probed.map((row, index) => [rowKey(row), { decision: results[index].decision, text: steadyText(results[index].text) }]));
+}
+
+/**
+ * `--snapshot-save <file>`: the answers of all probes before a change of the hooks, to compare with
+ * after it. The snapshot judges the hooks apart from the table: a hook that prints its text from the
+ * table is compared with what it printed before, not with the table itself.
+ */
+async function snapshotSave(table, file) {
+    const answers = await probeAnswers(table);
+    writeFileSync(file, `${JSON.stringify(answers, null, 1)}\n`);
+    console.log(`saved ${Object.keys(answers).length}`);
+    return 0;
+}
+
+/** `--snapshot-compare <file>`: every probe answers as the snapshot says. */
+async function snapshotCompare(table, file) {
+    const before = JSON.parse(readFileSync(file, 'utf8'));
+    const now = await probeAnswers(table);
+    const changed = Object.keys(before).filter((key) => {
+        const was = before[key];
+        const is = now[key];
+        if (is && is.decision === was.decision && is.text === was.text) return false;
+        // The first place the two texts part, so the reader sees what moved without a diff.
+        const at = [...(was.text ?? '')].findIndex((ch, i) => ch !== (is?.text ?? '')[i]);
+        const near = (text) => (text ?? '').slice(Math.max(0, at - 40), at + 60);
+        console.log(`changed: ${key}: ${was.decision} → ${is?.decision ?? 'no row'}`);
+        if (is && at >= 0) console.log(`  was «${near(was.text)}»\n  now «${near(is.text)}»`);
+        return true;
+    });
+    console.log(`rows ${Object.keys(before).length}, changed ${changed.length}`);
+    return changed.length === 0 ? 0 : 1;
+}
+
+/**
+ * `--mutate`: each refusal row is turned to «allow» for one run of its probe, by the key in
+ * `RT_DECISION_FLIP`; a hook that takes its decision from the table then allows. The decider honours
+ * the key only under the test harness, which marks its runs with `RT_KIT_TEST`.
+ */
+async function mutate(table) {
+    const rows = table.rows.filter((row) => row.probe && row.decision !== 'allow');
+    const results = await pool(rows, (row) => runProbe(row, { RT_KIT_TEST: '1', RT_DECISION_FLIP: rowKey(row) }));
+    const followed = rows.filter((row, index) => results[index].decision === 'allow');
+    console.log(`rows ${rows.length}, followed ${followed.length}`);
+    return followed.length === rows.length ? 0 : 1;
+}
+
 function walkMode(table) {
     const result = walk(table);
     for (const { area, state } of result.dead.slice(0, 20)) console.log(`dead: ${area} ${JSON.stringify(state)}`);
@@ -303,7 +378,15 @@ function chainsMode(table) {
     return uncovered.length === 0 ? 0 : 1;
 }
 
-const MODES = { '--coverage': coverage, '--conform': conform, '--walk': walkMode, '--chains': chainsMode };
+const MODES = {
+    '--coverage': coverage,
+    '--conform': conform,
+    '--walk': walkMode,
+    '--chains': chainsMode,
+    '--mutate': mutate,
+    '--snapshot-save': (table) => snapshotSave(table, process.argv[3]),
+    '--snapshot-compare': (table) => snapshotCompare(table, process.argv[3]),
+};
 
 async function main(mode) {
     const table = load();
@@ -314,7 +397,7 @@ async function main(mode) {
         return problems.length === 0 ? 0 : 1;
     }
     if (!MODES[mode]) {
-        console.error('decision-table: name a mode — --validate, --coverage, --conform, --walk or --chains');
+        console.error('decision-table: name a mode — --validate, --coverage, --conform, --walk, --chains, --mutate, --snapshot-save <file> or --snapshot-compare <file>');
         return 2;
     }
     if (problems.length > 0) {
