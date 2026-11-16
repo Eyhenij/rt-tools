@@ -5,12 +5,15 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 6 — the decider
-- **Done:** stage 1: the snapshot of 999 probe answers (`probes-before.json`, a second run matches
-  it: changed 0), the mutation sweep (`rows 999, followed 0`), the dispatcher median 1966 ms.
-- **Next step:** 2.2 — `decide.mjs` from the prototype `proto2.mjs` (scratchpad): model the text
-  shape per hook until every one of the 999 rows is reproduced; then `decide.test.sh`.
-- **Uncommitted:** nothing after the stage 1 commit.
+- **Stage:** 3 of 6 — the shared facts
+- **Done:** stage 1 — snapshot (999 probes, stable), mutation sweep (`followed 0`), dispatcher median
+  1966 ms. Stage 2 — every row carries its text; `checks/decide.mjs` reproduces all 670 stored rows
+  and computes the 330 composed states (`rows 1000, ok 1000`); the composed rows left the table for
+  `states` (conditions, pattern, probe); walk, conform and chains read `withDecided` — `derived 3584
+  decided`; `hooks/decide.sh` gives `rt_decide`, FAIL-OPEN covered.
+- **Next step:** 3.1 — `hooks/facts.sh` with `rt_fact_*` for the branch, the fresh base, the
+  window, the loaded rules and the conversation record.
+- **Uncommitted:** nothing after the stage 2 commit.
 - **PR:** not open yet
 
 ## Steps
@@ -19,10 +22,10 @@ Rewritten by every session, not appended to.
 - [x] 1.2 The mutation sweep exists and shows that no hook follows the table yet
 - [x] 1.3 The dispatcher time is measured by a script of the suites
 - [x] 2.1 Every refusal row carries its full text in the field `text`, with `{name}` slots the hook fills
-- [>] 2.2 `decide.mjs` answers every row of the table as the table says, and composes «this comes first» from the rows of the named move
-- [ ] 2.3 The walk, the conform mode and the chains take their rows from the decider; the stored composition rows leave the table
-- [ ] 2.4 `hooks/decide.sh` gives `rt_decide`; a decider that fails or is absent lets the action through
-- [ ] 3.1 `hooks/facts.sh` computes the branch, the fresh base, the window, the loaded rules and the conversation record once per call
+- [x] 2.2 `decide.mjs` answers every row of the table as the table says, and composes «this comes first» from the rows of the named move
+- [x] 2.3 The walk, the conform mode and the chains take their rows from the decider; the stored composition rows leave the table
+- [x] 2.4 `hooks/decide.sh` gives `rt_decide`; a decider that fails or is absent lets the action through
+- [>] 3.1 `hooks/facts.sh` computes the branch, the fresh base, the window, the loaded rules and the conversation record once per call
 - [ ] 3.2 No hook computes these facts past `facts.sh`
 - [ ] 4.1 The hooks of the course of work decide by `rt_decide`: task-flow, task-flow-draft, flow-step, exam, window-fill, handoff-entry, docs, skill-gate, turn-exit
 - [ ] 4.2 The hooks of delivery and of git decide by `rt_decide`: git-guard-* with every helper, pre-push, commit-msg; the helpers that refused become guards with rows
@@ -62,6 +65,17 @@ Rewritten by every session, not appended to.
   one text, so its rows are faults and its text is their sum. The prototype reproduces 584 of 669
   base rows and 67 of 330 composed ones; the rest are per-hook shapes to model in 2.2. Affected
   stage: 2.
+- **The composed rows became states, not deleted outright.** product-strategist warned that
+  dropping 330 rows takes their probes with them. A state keeps the conditions, the `says` pattern
+  and the probe; the decider computes its decision, move and text. Before the move the computed
+  rows were compared with the stored ones: 999 of 999 the same. Affected stage: 2, 5.
+- **Two constants of the prototype became table data.** `asks` on nine hook entries names the
+  action a composing hook asks its neighbours; an exam-guard row «edit_progress, window over the
+  stop threshold → allow» replaces the hard-coded pass, with a probe of its own (conform: 0
+  mismatches). Affected stage: 2.
+- **The suites of the decider carry no scenario number yet.** The scenarios of the decider are
+  written with the spec in stage 6; a test naming a scenario that does not exist turns the spec
+  check red. Affected stage: 6.
 - **`plan-red` did not find this session's record by itself.** It wrote the approval only with
   `RT_FLOW_TRANSCRIPT` naming the record; a finding of the epic.
 

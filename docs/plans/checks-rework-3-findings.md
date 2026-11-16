@@ -115,6 +115,20 @@ over and says which of them are right. The file lies next to the plan of the epi
   with a refusal the table does not describe. **Address:** the owner's word — whether they enter the
   table.
 
+## RT-3355 — the package hooks take the decision from the table
+
+- **`plan-red` did not find the record of the session that ran it.** The owner's approval stood in
+  the record, and the command answered «no menu answer «Одобряю …»» until `RT_FLOW_TRANSCRIPT`
+  named the file. **Address:** rules layer — `plan-red` takes the record from the session id the
+  way the hooks do, or its refusal names the variable.
+- **A check of a plan that measures the tree is green before the work.** Five steps of the first
+  approved plan matched at once (`--coverage`, the spec check, the layout, the suites); the engine
+  refused the approval mark, and the plan went to the owner twice. **Address:** rules layer — the
+  plan template says that a check names what the work adds, with an example.
+- **The texts of the hooks are built from variables, so the table cannot hold them as written.**
+  Of 118 distinct refusal patterns 67 are found literally in the hook sources. **Address:** this
+  task — the rows hold slots the hooks fill.
+
 ## Left unresolved
 
 - **A session that wrote nothing releases the turn, and so do the silent hosting and a lost menu.**

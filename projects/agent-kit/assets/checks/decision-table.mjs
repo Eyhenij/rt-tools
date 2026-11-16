@@ -35,6 +35,8 @@ import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { decide } from './decide.mjs';
+
 const HERE = dirname(fileURLToPath(import.meta.url));
 const TABLE = process.env.RT_DECISION_TABLE ?? join(HERE, 'decision-table.json');
 const HOOKS = process.env.RT_DECISION_HOOKS ?? [join(HERE, '../hooks'), join(process.cwd(), '.claude/hooks')].find(existsSync);
@@ -79,6 +81,20 @@ export function problemsOf(table) {
             problems.push(`${at}: a refusal names no action of any area`);
         }
         for (const [fact, value] of Object.entries(row.when ?? {})) {
+            const values = area.facts[fact];
+            if (!values) problems.push(`${at}: the area has no fact «${fact}»`);
+            else if ([value].flat().some((v) => !values.includes(v))) problems.push(`${at}: «${fact}» has no value «${value}»`);
+        }
+    });
+    (table.states ?? []).forEach((state, index) => {
+        const at = `state ${index + 1} (${state.hook ?? '?'})`;
+        const area = areas[state.area];
+        if (!hooks.has(state.hook)) problems.push(`${at}: the hook has no entry`);
+        else if (!hooks.get(state.hook).asks) problems.push(`${at}: the hook asks no neighbour, so it composes nothing`);
+        if (!area) return problems.push(`${at}: unknown area «${state.area}»`);
+        if (!area.actions.includes(state.action)) problems.push(`${at}: the area has no action «${state.action}»`);
+        if (!state.probe) problems.push(`${at}: a state carries no probe`);
+        for (const [fact, value] of Object.entries(state.when ?? {})) {
             const values = area.facts[fact];
             if (!values) problems.push(`${at}: the area has no fact «${fact}»`);
             else if ([value].flat().some((v) => !values.includes(v))) problems.push(`${at}: «${fact}» has no value «${value}»`);
@@ -374,7 +390,9 @@ function chainsMode(table) {
     const items = chainItems(text);
     const uncovered = chains.filter((chain) => !chainWritten(items, chain));
     uncovered.forEach((chain) => console.log(`no scenario: ${chain.id}`));
-    console.log(`derived ${chains.length}, scenarios ${chains.length - uncovered.length}, uncovered ${uncovered.length}`);
+    // `--decided` names in the line that the pairs were counted over the rows the decider computed.
+    const decided = process.argv.includes('--decided') ? ' decided' : '';
+    console.log(`derived ${chains.length}${decided}, scenarios ${chains.length - uncovered.length}, uncovered ${uncovered.length}`);
     return uncovered.length === 0 ? 0 : 1;
 }
 
@@ -388,14 +406,29 @@ const MODES = {
     '--snapshot-compare': (table) => snapshotCompare(table, process.argv[3]),
 };
 
+/**
+ * The table as the hooks meet it: the stored rows, and a row the decider computes for every state of
+ * `states`. A state is a combination of facts where a refusal is composed with the refusal of a
+ * neighbour; it keeps its probe and the pattern its text must carry, and nothing else — the
+ * decision, the move and the text come from the rows of the hook and its neighbours.
+ */
+export function withDecided(table) {
+    const decided = (table.states ?? []).map((state) => {
+        const answer = decide(table, { hook: state.hook, action: state.action, facts: state.when ?? {} });
+        return { ...state, decision: answer?.decision ?? 'allow', move: answer?.move ?? undefined, text: answer?.text ?? '', decided: true };
+    });
+    return { ...table, rows: [...(table.rows ?? []), ...decided] };
+}
+
 async function main(mode) {
-    const table = load();
-    const problems = problemsOf(table);
+    const stored = load();
+    const problems = problemsOf(stored);
     if (mode === '--validate') {
         problems.forEach((p) => console.log(p));
-        console.log(`rows ${(table.rows ?? []).length}, problems ${problems.length}`);
+        console.log(`rows ${(stored.rows ?? []).length}, problems ${problems.length}`);
         return problems.length === 0 ? 0 : 1;
     }
+    const table = withDecided(stored);
     if (!MODES[mode]) {
         console.error('decision-table: name a mode — --validate, --coverage, --conform, --walk, --chains, --mutate, --snapshot-save <file> or --snapshot-compare <file>');
         return 2;

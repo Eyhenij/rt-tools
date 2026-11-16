@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# The call of the decider from a guard. NOT a guard: it has no `rt-hook:` declaration and hooks into
+# no agent event. A guard gathers the facts of the state, sources this file and asks `rt_decide`;
+# the decision, the move a refusal names and its text come from the decision table.
+#
+# Why a file of its own. Every guard emitted its refusal by itself — a JSON of its own, exit 2 with a
+# text on stderr, a `deny()` of its own — and the table only described what they did. One call keeps
+# the decision in one place: a row edited in the table is what the guard does.
+#
+# WHAT IS HERE. One call, `rt_decide`, and the lookup of the decider.
+#
+#   rt_decide <hook> <action> <facts JSON> [params JSON] [event]
+#
+# It prints the answer for the agent and returns 1 when the table refuses or asks; prints nothing and
+# returns 0 when it allows. The event is `PreToolUse` unless named: a Stop hook gets the block form.
+#
+# FAIL-OPEN, IN FAVOUR OF WORK: no node, no decider, no table, a decider that fails — nothing is
+# printed and 0 is returned: the guard lets the action through. A broken decider has no right to jam
+# the work.
+
+# Where the decider lies: next to the hooks in the package source, otherwise in the checks directory
+# the tree named in its settings — the same way the neighbouring helpers find a program of the tree.
+rt_decide_cmd() {
+    _here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    if [ -f "$_here/../checks/decide.mjs" ]; then
+        printf '%s/../checks/decide.mjs' "$_here"
+        return 0
+    fi
+    _root="${CLAUDE_PROJECT_DIR:-$PWD}"
+    _checks="$(jq -r '.layout.checks // "tools"' "$_root/.claude/rt-kit.json" 2>/dev/null)"
+    [ -n "$_checks" ] && [ "$_checks" != null ] || _checks=tools
+    printf '%s/%s/decide.mjs' "$_root" "$_checks"
+}
+
+rt_decide() {
+    _hook="$1"
+    _action="$2"
+    _facts="${3:-"{}"}"
+    _params="${4:-"{}"}"
+    _event="${5:-PreToolUse}"
+
+    command -v node >/dev/null 2>&1 || return 0
+    _cmd="$(rt_decide_cmd)"
+    [ -f "$_cmd" ] || return 0
+
+    _query="$(jq -cn --arg h "$_hook" --arg a "$_action" --argjson f "$_facts" --argjson p "$_params" \
+        '{hook:$h, action:$a, facts:$f, params:$p}' 2>/dev/null)" || return 0
+    _answer="$(node "$_cmd" "$_query" 2>/dev/null)"
+    [ -n "$_answer" ] || return 0
+
+    _decision="$(printf '%s' "$_answer" | jq -r '.decision // empty' 2>/dev/null)"
+    _text="$(printf '%s' "$_answer" | jq -r '.text // empty' 2>/dev/null)"
+    [ -n "$_decision" ] || return 0
+
+    # The closing words of a refusal and the record of it come from the shared tail, as before.
+    if [ "$(printf '%s' "$_answer" | jq -r '.tail // false' 2>/dev/null)" = true ]; then
+        # shellcheck disable=SC1090
+        command -v rt_deny_tail >/dev/null 2>&1 || . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+        command -v rt_deny_tail >/dev/null 2>&1 && _text="$_text $(rt_deny_tail)"
+    fi
+
+    if [ "$_event" = Stop ] || [ "$_event" = SubagentStop ]; then
+        jq -cn --arg r "$_text" '{decision:"block", reason:$r}'
+    else
+        jq -cn --arg d "$_decision" --arg r "$_text" --arg e "$_event" \
+            '{hookSpecificOutput:{hookEventName:$e, permissionDecision:$d, permissionDecisionReason:$r}}'
+    fi
+    return 1
+}

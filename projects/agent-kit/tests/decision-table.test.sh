@@ -96,9 +96,10 @@ while IFS=$'\t' read -r sc id met; do
     [ -n "$id" ] || continue
     report "${sc:-SC-AK-1567} — цепочка разведена: $id" "$met" "no"
 done < <(node --input-type=module -e "
-import { chainsOf, chainItems, meet, rowId } from '$TABLE_CMD';
+import { chainsOf, chainItems, meet, rowId, withDecided } from '$TABLE_CMD';
 import { readFileSync } from 'node:fs';
-const table = JSON.parse(readFileSync('$ASSETS/checks/decision-table.json', 'utf8'));
+// The pairs are taken over the rows the hooks meet: the stored ones and those the decider computes.
+const table = withDecided(JSON.parse(readFileSync('$ASSETS/checks/decision-table.json', 'utf8')));
 const text = readFileSync('$SCENARIOS_MD', 'utf8');
 const scOf = (c) => {
     let sc = '';
