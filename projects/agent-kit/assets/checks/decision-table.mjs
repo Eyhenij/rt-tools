@@ -322,6 +322,8 @@ export const steadyText = (text) =>
     text
         .replace(/\/(?:private\/)?(?:var\/folders|tmp)\/[^\s'"»),;]*/g, '<tmp>')
         .replace(/\b(?=[0-9a-f]*\d)[0-9a-f]{7,40}\b/g, '<sha>')
+        // A hash of letters only is told from a word by its place: after «commit» or a dash, before «<».
+        .replace(/(\bcommit\s+|—\s)[a-f]{7,40}(?=\s<|\s|$)/g, '$1<sha>')
         .replace(/\b(port|:)\s?\d{4,5}\b/g, '$1<port>')
         // A message of the shell names the line of the hook, and every edit of the hook moves it.
         .replace(/\bline \d+:/g, 'line <n>:')

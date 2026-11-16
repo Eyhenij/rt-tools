@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-delivery.sh · f0ed0ed6377c · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-delivery.sh · 5603d9871440 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-task.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-pipeline.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
@@ -158,10 +158,7 @@ fact() {
     delivery_facts="$(printf '%s' "$delivery_facts" | jq -c --arg k "$1" --arg v "$2" '. + {($k): $v}' 2>/dev/null || printf '%s' "$delivery_facts")"
 }
 
-# Conditions that did not come together pile up and are named all at once: a refusal on the first
-# miss makes them fixed one at a time — the base, a repeat, the title, another repeat, the task —
-# although everything that did not come together is known already on the first round. Readiness for
-# delivery is one state, and it is named whole.
+# Misses pile up and are named at once: readiness for delivery is one state, named whole.
 faults=''
 
 #   unmet <fact> <value> <words>   — a miss of the state; `unmet_class <action> <words>` — of the call
@@ -176,12 +173,7 @@ unmet_class() {
 }— $2"
 }
 
-#   refuse <action> [params] [bypass]
-# The decision, the move and the text come from the decision table. The hook gives the facts it found,
-# the facts of the neighbours the named move meets — the rule of delivery, the document pair of a
-# commit, the exam, the window — and the words of the misses. A neighbour's conflict travels inside the
-# refusal: the guard says one thing per call, and a second JSON document next to the first is read as
-# plain text — that is, as no refusal at all.
+#   refuse <action> [params] [bypass] — the decision and its text come from the table.
 refuse() {
     _sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
     _record="$(rt_fact_transcript "$input")"
@@ -201,23 +193,16 @@ refuse() {
     # shellcheck disable=SC1091
     . "$rt_hooks_dir/decide.sh" 2>/dev/null
     command -v rt_decide >/dev/null 2>&1 || exit 0
-    # A class of the call together with a miss of the state may have no row of its own: the table
-    # writes a class with every fact lawful. The decider then asks the same misses under the plain
-    # action — and only then, so a row of the class flipped to «allow» is followed.
+    # A class with no row for these misses is decided by the plain action named after «>».
     rt_decide git-guard-delivery.sh "$1${delivery_base:+>$delivery_base}" "$_facts" "$_params"
     exit 0
 }
 
-# The conditions about the task folder are moved out into a neighbouring file: the folder has a
-# subject of its own, a bypass of its own and a record of its own in the archive, and together with
-# the command parsing and the work queue they outgrew the length limit. It is sourced after `deny`
-# and `fault` — both are called from inside it.
+# The conditions about the task folder live in a neighbouring file, sourced after `refuse`.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/git-guard-delivery-folder.sh" ] && . "$rt_hooks_dir/git-guard-delivery-folder.sh" 2>/dev/null
 
-# The epic of a task: the same technique as with the folder. It is sourced before the branch block —
-# there the base of a new branch is judged, and with an epic it is judged against the branch of the
-# epic. No helper — the epic is not judged, and the base is asked against the main branch as before.
+# The epic of a task: a new branch's base is judged against the epic branch, without it — main.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/git-guard-delivery-epic.sh" ] && . "$rt_hooks_dir/git-guard-delivery-epic.sh" 2>/dev/null
 

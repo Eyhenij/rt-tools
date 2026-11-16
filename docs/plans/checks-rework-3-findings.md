@@ -104,8 +104,9 @@ over and says which of them are right. The file lies next to the plan of the epi
   reads the decision from the table instead of asking the neighbours.
 - **The conform mode checks a row against its hook, not a refusal against the rows.** Past the stop
   threshold of the window the exam named a call the window refuses, and no row said so: the roles
-  found it by running the hooks. **Address:** rules layer — a reverse probe in RT-3355: the hook of
-  the named move is run in the state of each refusal.
+  found it by running the hooks. **Address:** rules layer — a reverse probe in RT-3355: the named move
+  of each refusal is asked of the decider for every hook that judges it; the mutation sweep proves
+  that each hook answers as the decider.
 - **The assignment check went silent under the task runner.** The runner sets `FORCE_COLOR`, and
   `tree-assignment.mjs --assigned` printed the epic number with colour codes; the queue was asked
   about no epic, and a closed assignment passed. Only the push set, run by the runner, showed it.
@@ -131,6 +132,17 @@ over and says which of them are right. The file lies next to the plan of the epi
 - **The stop guard measured `эпик-заведён` while the suites loaded the machine.** Three times in one
   session; a measure right after gave `этап-идёт`. **Address:** rules layer — the engine measures
   the state with a time limit of its own and names a measure cut by the limit apart.
+- **The words of a delivery miss and its move are still written in bash.** The decision comes from
+  the table, and the mutation sweep proves it; but 343 of 673 refusal rows carry a slot the hook
+  fills, and the 37 `unmet` calls of the delivery hooks hold the words of the miss with its move.
+  Neither the sweep nor the reverse probe sees a move in those words that differs from the row.
+  **Address:** a task of this epic — the words of `unmet` move into the `text` field of the rows
+  by the fact key, and the hook hands only the fact and the slot values.
+- **Some hooks hand a fact as a constant on the refusal path.** `commit-msg.sh`, `skill-gate.sh`,
+  `epic-stop-guard.sh` and `git-guard-discard.sh` ask the decider only after their own check found
+  the miss. A row that refuses on the other value of such a fact would not be read. **Address:** a
+  task of this epic — the hook computes every fact its rows name, or the spec names a fact the hook
+  does not compute as lawful.
 - **The rules gate forgets the loaded rules after a compaction of the context.** Every rule was
   asked again after each compaction, and a refused edit in the same command cost a second call.
   **Address:** rules layer — the gate reads the loads of the session from the record, not only
