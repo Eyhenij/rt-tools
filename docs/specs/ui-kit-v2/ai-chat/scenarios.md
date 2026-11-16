@@ -282,4 +282,4 @@ Given the conversation list in the messenger look on a place of 768 or narrower
 When a row with a sign is drawn
 Then the sign shadow blurs by 10 and fits the row inset; wider the shadow is the sign's own
 
-Covered by the styles spec of the thread list and the frame `MessengerPhone`.
+Covered by the styles spec of the thread list and the frame `MessengerPhone`, and in the entry suite by `service-logo-shadow.spec.ts`, which checks that the narrow step reaches an application page.
