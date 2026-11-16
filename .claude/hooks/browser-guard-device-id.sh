@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/browser-guard-device-id.sh · d8a5fb58882f · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/browser-guard-device-id.sh · 1542a10636d0 · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__select_browser
 # rt-hook: PostToolUse mcp__claude-in-chrome__select_browser
 # Requires: hooks/deny-tail.sh
@@ -80,5 +80,9 @@ fi
     && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
 command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
 
-echo "The profile «${requested}» is not the one pinned to the project. Take ${device_id} — the only profile where the sign-in was made. $(rt_deny_tail)" >&2
+# The named move is the selection, and the rules gate refuses it while its rule is not loaded.
+first=""
+command -v rt_gate_pending >/dev/null 2>&1 && [ -n "$(rt_gate_pending browser-verification "$sid")" ] \
+    && first="Load the rule «browser-verification» by the tool Skill first — the rules gate refuses the selection until then. "
+echo "The profile «${requested}» is not the one pinned to the project. ${first}Take ${device_id} — the only profile where the sign-in was made. $(rt_deny_tail)" >&2
 exit 2

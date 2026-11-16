@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/override-write-guard.sh · 5df68f8880cf · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/override-write-guard.sh · 2a02a82a2d14 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Write|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh, hooks/guard-note.sh
 # Guard against wiping out an override: writing over is not the same as editing.
@@ -101,7 +101,7 @@ while IFS= read -r candidate; do
     sections="$(grep -c '^## ' "$candidate" 2>/dev/null || printf '0')"
     resource="${relative#"$overrides_dir"/}"
 
-    deny "BLOCKED by override-write-guard: «${relative}» is an override of this tree, and it already holds ${lines} lines, sections «## » — ${sections}. A whole-file write carries away every section this edit did not touch, and the package text of the resource «${resource}» silently returns in their place: the layout matches after that, the checks are green, and what the tree said about itself is gone. Edit in place — by an edit of a section, not by a write of the file." \
+    deny "BLOCKED by override-write-guard: «${relative}» is an override of this tree, and it already holds ${lines} lines, sections «## » — ${sections}. A whole-file write carries away every section this edit did not touch, and the package text of the resource «${resource}» silently returns in their place: the layout matches after that, the checks are green, and what the tree said about itself is gone. Edit in place — by an edit of a section, not by a write of the file.$(command -v rt_move_first >/dev/null 2>&1 && ow_first="$(rt_move_first Edit "$(jq -cn --arg f "$candidate" '{file_path:$f,old_string:"",new_string:""}')")" && [ -n "$ow_first" ] && printf ' %s' "$ow_first")" \
         "a new section is appended at the end: the override merges with the package resource by the heading «## », and the package text is replaced only by the sections the tree named"
 done <<EOF
 $candidates

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/flow-step-guard.sh · 7f1e913b5f70 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/flow-step-guard.sh · c0e2ab5796be · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash
 # Requires: checks/task-flow-script.mjs, hooks/deny-tail.sh
 # PreToolUse guard of the course of work: the scenario moves by a measurement, not by a declaration.
@@ -50,10 +50,26 @@ dir="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
 verdict="$(cd "$dir" && printf '%s' "$input" | timeout 60 node "$engine" guard 2>/dev/null)" || exit 0
 [ -n "$verdict" ] || exit 0
 
-reason="BLOCKED by flow-step-guard: ${verdict}"
-
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
+
+# Two verdicts name an edit by the edit tool: of the progress instead of a shell write, of the plan
+# whose footprint names the description of the task flow. The exam, the rules gate and the handover
+# entry may hold that very edit; then what they want is said before the verdict. The verdict text
+# itself belongs to the engine, so the word about the move stands in front of it here.
+first=""
+move_file=""
+branch="$(git -C "$dir" branch --show-current 2>/dev/null)"
+tasks_dir="$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null)/${RT_TASKS_DIR:-docs/tasks}"
+case "$verdict" in
+    *"the progress and the plan are edited by the edit tool"*) move_file="$tasks_dir/$branch/progress.md" ;;
+    *"belongs to the description of the task flow"*) move_file="$tasks_dir/$branch/plan.md" ;;
+esac
+if [ -n "$branch" ] && [ -n "$move_file" ] && command -v rt_move_first >/dev/null 2>&1; then
+    first="$(RT_HOOK_INPUT="$input" rt_move_first Edit "$(jq -cn --arg f "$move_file" '{file_path:$f,old_string:"",new_string:""}')")"
+fi
+
+reason="BLOCKED by flow-step-guard: ${first:+$first Then: }${verdict}"
 command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
 tail_text="$(rt_deny_tail "")"
 [ -n "$tail_text" ] && reason="${reason}

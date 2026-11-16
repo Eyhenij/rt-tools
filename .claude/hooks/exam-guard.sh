@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/exam-guard.sh · d457e32512b7 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/exam-guard.sh · d7b8ec3a827a · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|mcp__webstorm__create_new_file|Bash|mcp__webstorm__execute_terminal_command
 # Requires: agents/strict-teacher.md, hooks/roles.sh, hooks/deny-tail.sh, hooks/write-targets.sh
 # Exam guard: no edit goes through until the exam on the loaded rules has been passed this session.
@@ -82,6 +82,15 @@ case "$tool" in
     Edit | Write | MultiEdit | mcp__webstorm__create_new_file)
         target="$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.pathInProject // empty' 2>/dev/null)"
         [ -n "$target" ] && [ "$(printf '%s\n' "$target" | rt_exam_free_paths)" = "yes" ] && exit 0
+        # A window past its stop threshold: the window guard lets through only the closing — the
+        # progress and the handover — and refuses the examiner role itself. Holding the progress
+        # for an exam then names a move the window guard denies, and the session cannot close.
+        exam_sid="$(printf '%s' "$input" | jq -r '.session_id // "unknown"' 2>/dev/null)"
+        if [ -f "${TMPDIR:-/tmp}/claude-window-stop/${exam_sid}" ]; then
+            case "$target" in
+                */docs/tasks/*/progress.md | docs/tasks/*/progress.md) exit 0 ;;
+            esac
+        fi
         ;;
     Bash | mcp__webstorm__execute_terminal_command)
         cmd="$(rt_hook_cmd)"

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/browser-guard-require-select.sh · e534ea6c73b3 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/browser-guard-require-select.sh · 84618a9a3536 · правится надстройкой, не здесь
 # rt-hook: PreToolUse mcp__claude-in-chrome__.*
 # Requires: hooks/deny-tail.sh
 # Guard of the freshness of the browser choice. PreToolUse on all the other extension calls.
@@ -66,8 +66,13 @@ deny() {
     exit 0
 }
 
+# The named move is the selection, and the rules gate refuses it while its rule is not loaded.
+first=""
+command -v rt_gate_pending >/dev/null 2>&1 && [ -n "$(rt_gate_pending browser-verification "$sid")" ] \
+    && first="Load the rule «browser-verification» by the tool Skill first — the rules gate refuses the selection until then. "
+
 if [ ! -f "$marker" ]; then
-    deny "No browser is selected in this session. Call the browser selection with the profile ${device_id} before any other call."
+    deny "No browser is selected in this session. ${first}Call the browser selection with the profile ${device_id} before any other call."
 fi
 
 now="$(date +%s)"
@@ -76,7 +81,7 @@ age=$(( now - stamped ))
 
 if [ "$age" -gt "$ttl" ]; then
     rm -f "$marker" 2>/dev/null
-    deny "The last browser selection was ${age} s ago (the limit is ${ttl} s) — over such a break the active browser of the extension drifts away, and it may no longer be the pinned profile. Call the selection with the profile ${device_id} anew and repeat."
+    deny "The last browser selection was ${age} s ago (the limit is ${ttl} s) — over such a break the active browser of the extension drifts away, and it may no longer be the pinned profile. ${first}Call the selection with the profile ${device_id} anew and repeat."
 fi
 
 : >"$marker" 2>/dev/null

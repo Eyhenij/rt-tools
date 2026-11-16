@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-main.sh · a63130008e62 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-main.sh · a043d198794b · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/deny-tail.sh, hooks/guard-note.sh
 # Guard of the main branch. PreToolUse on a commit call.
@@ -127,7 +127,7 @@ fi
 
 [ "$branch" = "$default" ] || exit 0
 
-reason="Refused: a commit straight into «${default}». Work travels through a branch and a PR — the rule git-workflow. Create a branch by a separate call and commit into it: the staged changes stay in place. If a commit into ${default} really is needed — ask the owner, do not bypass it yourself."
+reason="Refused: a commit straight into «${default}». Work travels through a branch and a PR — the rule git-workflow. Create a branch by a separate call and commit into it: the staged changes stay in place. A local branch with no task number in its name — \`git checkout -b <name>\` — is taken at once: the delivery guards judge only a branch named by a task, and the work moves into the branch of its task when that task is ready. If a commit into ${default} really is needed — ask the owner, do not bypass it yourself."
 
 # The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
 # The file may not be laid out — then there is no tail, and the refusal reason stays as it is.

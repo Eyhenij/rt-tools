@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/task-flow-guard.sh · 37c719e3f4e4 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/task-flow-guard.sh · a4bd191832fa · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/task-flow-context.sh, hooks/profile-check.sh, hooks/deny-tail.sh
 # PreToolUse guard for Edit|Write|MultiEdit: code is not written before the plan.
@@ -54,6 +54,15 @@ plan="$RT_TF_PLAN"
 
 deny() { rt_task_flow_deny "$@"; }
 
+# What a neighbouring guard wants before the move a refusal names: the exam, the rule of the move,
+# the handover entry. Empty when the move is open — then the refusal names it alone. Parameters: the
+# tool of the move and the shell command or the file it writes.
+first() {
+    command -v rt_move_first >/dev/null 2>&1 || return 0
+    rt_tf_first="$(rt_move_first Bash "$(jq -cn --arg c "$1" '{command:$c}')")"
+    [ -n "$rt_tf_first" ] && printf ' %s' "$rt_tf_first"
+}
+
 # Resolving a merge conflict is the merge itself, not an edit of the product. Main is merged into
 # the epic branch while the work runs, and that branch carries no task folder by the rule — it holds
 # merges, not edits of its own. Refused here, the conflict has no lawful way out: a folder made up
@@ -83,7 +92,7 @@ EOF
 merge_conflict_only && exit 0
 
 if rt_needs rt_task_branch_ok task-flow-guard && ! rt_task_branch_ok "$branch"; then
-    deny "BLOCKED by task-flow: an edit of code goes in a branch for a task, and the current branch is '${branch}'. Create a task (npm run task:new -- --title '…' --slug <slug>) and a branch under its number, then repeat. The rule is task-flow."
+    deny "BLOCKED by task-flow: an edit of code goes in a branch for a task, and the current branch is '${branch}'. Create a task (npm run task:new -- --title '…' --slug <slug>) and a branch under its number, then repeat.$(first "${RT_TASK_NEW_CMD:-npm run task:new} -- --title probe --slug probe") The rule is task-flow."
 fi
 
 # A folder taken apart by a commit of this branch is the sign that the work is handed over. The plan
@@ -104,7 +113,7 @@ folder_archived() {
 folder_archived && exit 0
 
 if [ ! -f "$plan" ]; then
-    deny "BLOCKED by task-flow: there is no plan — '${tasks_dir}/${branch}/plan.md'. Assemble the task folder from the sample (cp -r ${tasks_dir}/_template ${tasks_dir}/${branch}) and fill in the header, the task footprint and the stages, then repeat. The rule is task-flow."
+    deny "BLOCKED by task-flow: there is no plan — '${tasks_dir}/${branch}/plan.md'. Assemble the task folder from the sample (cp -r ${tasks_dir}/_template ${tasks_dir}/${branch}) and fill in the header, the task footprint and the stages, then repeat.$(first "cp -r ${tasks_dir}/_template ${tasks_dir}/${branch}") The rule is task-flow."
 fi
 
 # The work state. An artefact on disk does not say whether the work has reached editing code: an
@@ -118,7 +127,7 @@ fi
 progress="$dir/progress.md"
 
 if [ ! -f "$progress" ]; then
-    deny "BLOCKED by task-flow: there is no progress — '${tasks_dir}/${branch}/progress.md'. The state of the work is declared in it, and without it there is no seeing whether the work reached editing code. Assemble the task folder from the sample (cp -r ${tasks_dir}/_template ${tasks_dir}/${branch}), then repeat. The rule is task-flow."
+    deny "BLOCKED by task-flow: there is no progress — '${tasks_dir}/${branch}/progress.md'. The state of the work is declared in it, and without it there is no seeing whether the work reached editing code. Assemble the task folder from the sample (cp -r ${tasks_dir}/_template ${tasks_dir}/${branch}), then repeat.$(first "cp -r ${tasks_dir}/_template ${tasks_dir}/${branch}") The rule is task-flow."
 fi
 
 state="$(sed -nE 's/^[[:space:]]*[-*][[:space:]]*\*\*(State|Состояние):\*\*[[:space:]]*`([^`]*)`.*/\2/p' "$progress" 2>/dev/null | head -1)"
@@ -139,7 +148,7 @@ state_action() {
 }
 
 if [ -z "$state" ]; then
-    deny "BLOCKED by task-flow: no state of the work is declared in '${tasks_dir}/${branch}/progress.md'. Write into the section «Where we stand» the line '- **State:** \`<name>\`' — a name from the list of states of the rule — then repeat. Code is edited in the states 'этап-идёт', 'этапы-кончились', 'работа-отдана' and 'разбор-кончился'. The rule is task-flow."
+    deny "BLOCKED by task-flow: no state of the work is declared in '${tasks_dir}/${branch}/progress.md'. Measure the branch first — \`node tools/task-flow-script.mjs measure\` names the state it is in — and write that name into the section «Where we stand» by the line '- **State:** \`<name>\`', then repeat: a state written ahead of the measured one is refused by the step guard. Code is edited in the states 'этап-идёт', 'этапы-кончились', 'работа-отдана' and 'разбор-кончился'. The rule is task-flow."
 fi
 
 case "$state" in
@@ -147,10 +156,10 @@ case "$state" in
     # a run happens to be red and a review comes with remarks, and the fix goes into the same branch.
     этап-идёт | этапы-кончились | работа-отдана | разбор-кончился) ;;
     просьба-не-разобрана | разбор-закрыт | договорённость-записана | задача-взята | замысел-записан | папка-разобрана | влито)
-        deny "BLOCKED by task-flow: the progress declares the state '${state}', and code is not edited in it. The mandatory action of this state is $(state_action "$state"). The work has reached editing code — rewrite the state line in '${tasks_dir}/${branch}/progress.md' to '- **State:** \`этап-идёт\`'. The rule is task-flow."
+        deny "BLOCKED by task-flow: the progress declares the state '${state}', and code is not edited in it. The mandatory action of this state is $(state_action "$state"). Whether the work has reached editing code is measured, not declared: \`node tools/task-flow-script.mjs measure\` names the exit that is not met, and only the measured state goes into the line in '${tasks_dir}/${branch}/progress.md' — a state ahead of it is refused by the step guard. The rule is task-flow."
         ;;
     *)
-        deny "BLOCKED by task-flow: '${tasks_dir}/${branch}/progress.md' declares the state '${state}', and there is no such name in the list. The name is taken from the list of states of the rule — a word of one own says nothing about the entry, the exit or the mandatory action. The rule is task-flow."
+        deny "BLOCKED by task-flow: '${tasks_dir}/${branch}/progress.md' declares the state '${state}', and there is no such name in the list. The name is taken from the list of states of the rule — a word of one own says nothing about the entry, the exit or the mandatory action. \`node tools/task-flow-script.mjs measure\` names the state the branch is in; that name goes into the line. The rule is task-flow."
         ;;
 esac
 
@@ -170,6 +179,6 @@ esac
 if [ -n "$(git -C "$root" rev-parse --verify HEAD 2>/dev/null)" ]; then
     in_tree="$(git -C "$root" ls-tree -d --name-only HEAD -- "$tasks_dir/$branch" 2>/dev/null | head -1)"
     if [ -z "$in_tree" ]; then
-        deny "BLOCKED by task-flow: the task folder '${tasks_dir}/${branch}' lies in the working tree and is not put into the history of the branch. Put it there by a commit (git add ${tasks_dir}/${branch} && git commit), then repeat: the sign of handed-over work the guard takes from the history, and with an uncommitted folder the refusal arrives at the opening of the request — when the folder is already taken apart and there is nothing left to fix. The rule is task-flow."
+        deny "BLOCKED by task-flow: the task folder '${tasks_dir}/${branch}' lies in the working tree and is not put into the history of the branch. Put it there by a commit of the folder alone (git add ${tasks_dir}/${branch} && git commit -m '…' -- ${tasks_dir}/${branch}), then repeat: the sign of handed-over work the guard takes from the history, and with an uncommitted folder the refusal arrives at the opening of the request — when the folder is already taken apart and there is nothing left to fix. The path after «--» keeps whatever else is staged out of this commit.$(first "git add ${tasks_dir}/${branch} && git commit -m 'docs: task folder' -- ${tasks_dir}/${branch}") The rule is task-flow."
     fi
 fi

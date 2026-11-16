@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · defaults/gate-map.sh · c7989df2f782 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · defaults/gate-map.sh · fb6481e5cac1 · правится надстройкой, не здесь
 # Map "what is edited — which rule". The package default: real paths, not samples.
 #
 # The trees of this workshop are built alike — Nx, `apps/` and `libs/`, the same extensions and the
@@ -181,6 +181,7 @@ skill_for_default() {
                 || rt_gate_invokes "$target" "git[[:space:]]+checkout[[:space:]]+-b" \
                 || rt_gate_invokes "$target" "git[[:space:]]+switch[[:space:]]+-c" \
                 || rt_gate_invokes "$target" "(gh|glab)[[:space:]]+(pr|mr|issue)[[:space:]]+(create|merge|edit)" \
+                || rt_gate_invokes "$target" "gh[[:space:]]+pr[[:space:]]+ready" \
                 || rt_gate_invokes "$target" "az[[:space:]]+(repos|boards)" \
                 || rt_gate_invokes "$target" "[^[:space:]]*task:new" \
                 || rt_gate_invokes "$target" "prisma[[:space:]]+(migrate|db)"; then
