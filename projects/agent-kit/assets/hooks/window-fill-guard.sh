@@ -156,14 +156,20 @@ fi
 [ "$event" = "PreToolUse" ] || exit 0
 [ "$pct" -ge "$stop_pct" ] || exit 0
 
+# A mark for the turn exit guard: past this threshold the next step of work is refused here, so
+# the exit guard must not name it — the session closes by the progress and the handover.
+stop_sid="$(printf '%s' "$input" | jq -r '.session_id // "unknown"' 2>/dev/null)"
+mkdir -p "${TMPDIR:-/tmp}/claude-window-stop" 2>/dev/null && : >"${TMPDIR:-/tmp}/claude-window-stop/${stop_sid}" 2>/dev/null
+
 tool="$(rt_hook_tool)"
 path="$(rt_hook_file)"
 cmd="$(rt_hook_cmd)"
 
 allowed=0
 case "$tool" in
-    # The conversation with the owner and reading what is edited at the closing.
-    AskUserQuestion | TodoWrite | Read | SendUserFile)
+    # The conversation with the owner and reading what is edited at the closing. Loading a rule is
+    # reading too: the closing edits need their rules, and the rules gate refuses them until then.
+    AskUserQuestion | TodoWrite | Read | SendUserFile | Skill)
         allowed=1
         ;;
     Edit | Write | MultiEdit | mcp__webstorm__create_new_file)
@@ -184,10 +190,25 @@ esac
 
 [ "$allowed" -eq 1 ] && exit 0
 
+# The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
+# The file may not be laid out — then there is no tail, and the reason for the refusal stays as it
+# was.
+# shellcheck disable=SC1090
+[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
+    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
+
+# The first named move is the progress edit, and the rules gate refuses it while the rule of the
+# course of work is not loaded: then loading it goes first.
+first=""
+command -v rt_gate_pending >/dev/null 2>&1 && [ -n "$(rt_gate_pending task-flow "$stop_sid")" ] \
+    && first="0. Load the rule «task-flow» by the tool Skill first — the rules gate refuses the progress edit until then.
+"
+
 reason="BLOCKED by window-fill-guard: window fill ${pct}% (${fill_k}k of ${window_k}k), the stop threshold is ${stop_pct}%. The session works no further — it closes.
 
 What is left to do in this session:
-1. Rewrite the section «Where we stand» in the progress and add a session entry — what was done, what confirms it, what did not work out.
+${first}1. Rewrite the section «Where we stand» in the progress and add a session entry — what was done, what confirms it, what did not work out.
 2. Commit what is checked: what is not committed does not survive the break.
 3. Write the handover into ${handoff_dir}/ and give the owner the path to it — what goes into it is said by the pattern task-flow-handoff.
 
@@ -197,13 +218,6 @@ What passes after the threshold:
 
 A command is judged by the start of the line: entering a directory before it removes the match, and the very commit that would have passed without it is refused. Start the command with the word of delivery itself."
 
-# The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
-# The file may not be laid out — then there is no tail, and the reason for the refusal stays as it
-# was.
-# shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
 deny_tail_text="$(rt_deny_tail "")"
 [ -n "$deny_tail_text" ] && reason="${reason}
 

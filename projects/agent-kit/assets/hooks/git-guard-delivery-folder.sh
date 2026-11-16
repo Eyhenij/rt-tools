@@ -46,6 +46,20 @@ rt_delivery_folder_target() {
     _tree="refs/remotes/origin/$1"
 }
 
+# A sentence for a refusal whose fix is a commit in the branch the folder lies in. Two things refuse
+# that commit next: a copy standing on another branch commits elsewhere — on the main one it is
+# refused outright — and a contribution under a foreign signature refuses every commit until it is
+# rewritten. Each is named before the commit. Argument: the branch the folder lies in.
+rt_folder_commit_where() {
+    _here="$(git branch --show-current 2>/dev/null)"
+    if [ -n "$1" ] && [ "$1" != "$_here" ]; then
+        printf ' The folder lies in the branch «%s», and the copy stands on «%s»: switch to it first — git checkout %s — and commit there.' "$1" "${_here:-a detached head}" "$1"
+        return 0
+    fi
+    command -v rt_signature_commit_note >/dev/null 2>&1 && rt_signature_commit_note
+    return 0
+}
+
 # Condition for opening the PR: the folder is taken apart, and a record from the branch has arrived
 # in the archive. The refusal accumulates together with the other delivery conditions and is
 # printed all at once.
@@ -64,7 +78,7 @@ rt_delivery_open_folder() {
     _folder="$tasks_dir/$branch"
     _lying="$(rt_folder_in_branch "$_folder")"
     if [ -n "$_lying" ]; then
-        fault "the branch carries the task folder «${_lying}» — a request is opened after the tidying, not before it. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest, commit it by the last commit and repeat. If the work is merged in parts, put the comment «# Task-folder-skip: <reason>» into the command."
+        fault "the branch carries the task folder «${_lying}» — a request is opened after the tidying, not before it. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest, commit it by the last commit and repeat. If the work is merged in parts, put the comment «# Task-folder-skip: <reason>» into the command.$(rt_folder_commit_where "$branch")"
         return 0
     fi
 
@@ -92,7 +106,7 @@ EOF
 
     _gained="$(git diff --name-only --diff-filter=A "$_base" HEAD -- "$archive_dir" 2>/dev/null | head -1)"
     [ -z "$_gained" ] \
-        && fault "the task folder was deleted, but the branch added nothing to «${archive_dir}». Deleting is cheaper than taking apart — and together with the folder the analysis of the request is gone, the only record of the words of the owner. Move what explains the decisions taken as one file with a telling name and repeat."
+        && fault "the task folder was deleted, but the branch added nothing to «${archive_dir}». Deleting is cheaper than taking apart — and together with the folder the analysis of the request is gone, the only record of the words of the owner. Move what explains the decisions taken as one file with a telling name, commit it and repeat.$(rt_folder_commit_where "$branch")"
 }
 
 # The base the opening command names. Absent — the host takes the default branch: an empty answer.
@@ -133,7 +147,7 @@ rt_delivery_ready_folder() {
 
     _lying="$(rt_folder_in_branch "$tasks_dir/$_branch" "$_tree")"
     [ -n "$_lying" ] \
-        && fault "the branch carries the task folder «${_lying}» — a lifted draft reads as «ready to merge», and merging it there is not allowed. The button is pressed by a person on the hosting, and the folder reaches main before their hand does. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest, commit and repeat. If the work is merged in parts, put the comment «# Task-folder-skip: <reason>» into the command."
+        && fault "the branch carries the task folder «${_lying}» — a lifted draft reads as «ready to merge», and merging it there is not allowed. The button is pressed by a person on the hosting, and the folder reaches main before their hand does. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest, commit and repeat. If the work is merged in parts, put the comment «# Task-folder-skip: <reason>» into the command.$(rt_folder_commit_where "$_branch")"
 }
 
 # Condition for the merge: the same subject as a second line. It catches a merge going by command —
@@ -165,7 +179,7 @@ rt_delivery_merge_folder() {
 
     _lying="$(rt_folder_in_branch "$_folder" "$_tree")"
     [ -n "$_lying" ] \
-        && deny "BLOCKED: the task folder «${_lying}» is left in the branch — it will travel into main. There will be nobody to take it apart later: the work moves on to the next task, and this request closes. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest and repeat. If the work is merged in parts, put the line «Task-folder-skip: <reason>» into the body of the request."
+        && deny "BLOCKED: the task folder «${_lying}» is left in the branch — it will travel into main. There will be nobody to take it apart later: the work moves on to the next task, and this request closes. Move to «${archive_dir:-archive}» what explains the decisions taken, delete the rest, commit and repeat. If the work is merged in parts, put the line «Task-folder-skip: <reason>» into the body of the request.$(rt_folder_commit_where "$_branch")"
 
     [ -n "$archive_dir" ] || exit 0
     _base="$(git merge-base "$main_branch" "$_tree" 2>/dev/null)"
@@ -174,7 +188,7 @@ rt_delivery_merge_folder() {
 
     _gained="$(git diff --name-only --diff-filter=A "$_base" "$_tree" -- "$archive_dir" 2>/dev/null | head -1)"
     [ -z "$_gained" ] \
-        && deny "BLOCKED: the task folder was deleted, but the branch added nothing to «${archive_dir}». Deleting is cheaper than taking apart — and together with the folder the analysis of the request is gone, the only record of the words of the owner. Move what explains the decisions taken as one file with a telling name and repeat."
+        && deny "BLOCKED: the task folder was deleted, but the branch added nothing to «${archive_dir}». Deleting is cheaper than taking apart — and together with the folder the analysis of the request is gone, the only record of the words of the owner. Move what explains the decisions taken as one file with a telling name, commit it and repeat.$(rt_folder_commit_where "$_branch")"
 
     exit 0
 }

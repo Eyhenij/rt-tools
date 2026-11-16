@@ -163,6 +163,18 @@ a hook with a decision, and marks a context hook and a git-side hook as helpers.
 | `window-fill-guard.sh` | PostToolUse .* / PreToolUse .* | guard | window_over_warn, window_over_stop, tool_allowed_after_stop | Post: any tool; Pre: any tool except Ask/TodoWrite/Read/SendUserFile, edits of tasks/handoff/scratchpad, git/gh/task:move/check:* | context (Post) / deny (Pre) |
 | `write-targets.sh` | — | helper | — | — | — |
 
+The facts split into areas, one per family of hooks. The counts are those of the inventory; a
+state is one combination of the facts of one area, so an area of forty-eight facts is walked by its
+rows, not state by state. The browser area counts its table, which merged the inventory facts into
+three.
+
+- **delivery:** facts 48, states 281474976710656
+- **work:** facts 41, states 2199023255552
+- **browser:** facts 3, states 12
+- **turn:** facts 17, states 131072
+- **storage:** facts 9, states 512
+- **stand:** facts 3, states 8
+
 ## Screens and states
 
 Not applicable: no screen.

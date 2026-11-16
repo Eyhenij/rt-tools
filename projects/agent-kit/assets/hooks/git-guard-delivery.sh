@@ -101,6 +101,10 @@ title_re="${RT_TASK_TITLE_RE:-^\[[A-Za-z]+-[0-9]+\][[:space:]]+[^[:space:]]}"
 task_new="${RT_TASK_NEW_CMD:-npm run task:new}"
 board_check="${RT_BOARD_CHECK_CMD:-npm run check:board}"
 task_move="${RT_TASK_MOVE_CMD:-npm run task:move}"
+# A refusal whose fix ends with a push names the run ahead before it: the push guard refuses a push
+# while the heavy steps of the tree have no green mark, and a refusal naming a bare push would lead
+# into that second refusal.
+ahead_cmd="bash ${rt_hooks_dir#"$PWD"/}/git-guard-push-ahead.sh"
 # The first column of the work queue is the one a task leaves when it is taken. It has no default:
 # a tree names its columns in its own words, and an invented name would match nothing and would
 # silently switch the check off.
@@ -261,10 +265,14 @@ if [ -n "$branch_arg" ]; then
     # not a deliberate task-less branch. Caught before the first commit.
     # The number is extracted by the profile: with its own regex the branch `feat/88-slug` gave no
     # number at all.
+    #
+    # The name is one fault among the others, not a refusal of its own: refused alone, a fixed name
+    # met the task checks only on the second call, and the first refusal named a branch the second
+    # one refused again.
     number_arg="$(rt_task_branch_number "$branch_arg")"
     if [ -n "$number_arg" ]; then
         rt_delivery_branch_form_ok "$branch_arg" \
-            || deny "BLOCKED: the branch name «${branch_arg}» is not of the form accepted here. The branch number is the same as the number of the task and of the title of the merge request."
+            || fault "the branch name «${branch_arg}» is not of the form accepted here. The branch number is the same as the number of the task and of the title of the merge request."
         state=''
         check_task "$number_arg" "the branch «${branch_arg}»"
         # The epic of the task: with one, the base is judged against the branch of the epic, and the
@@ -354,8 +362,15 @@ branch="$(rt_delivery_current_branch)"
 
 # A local branch without a number is lawful, and a PR from it is not: an edit that travels to the
 # main branch starts from a task. This is the only place where a task-less branch runs into a wall.
-rt_delivery_branch_form_ok "$branch" \
-    || deny "BLOCKED: a request from the branch «${branch}», with no task standing behind it. An edit begins with a task visible in the work queue: create it — ${task_new} — and move the work into a branch with its number."
+#
+# The move named here takes work, and the assignment of the copy judges every such move: with no
+# assignment the creation of the task is refused in its turn. So the assignment is asked here too,
+# and what it lacks is named before the creation.
+if ! rt_delivery_branch_form_ok "$branch"; then
+    command -v rt_assignment_fault >/dev/null 2>&1 && rt_assignment_fault '' 'a new task'
+    deny "BLOCKED: a request from the branch «${branch}», with no task standing behind it. An edit begins with a task visible in the work queue: create it — ${task_new} — and move the work into a branch with its number.${faults:+ Before the creation:
+${faults}}"
+fi
 
 number="$(rt_task_branch_number "$branch")"
 
@@ -365,6 +380,13 @@ number="$(rt_task_branch_number "$branch")"
 state=''
 check_task "$number" "the request from the branch «${branch}»" yes
 epic_pull="$(printf '%s' "$state" | jq -r '.epic // empty' 2>/dev/null)"
+# A fault that names the creation of a task or the move of its column names a move that takes work,
+# and the assignment of the copy judges every such move. Its lack is named in the same list.
+case "$faults" in
+    *"$task_new"* | *"$task_move"*)
+        command -v rt_assignment_fault >/dev/null 2>&1 && rt_assignment_fault '' 'the work the fixes above take'
+        ;;
+esac
 # The branch of an epic itself: its request goes into the main branch, and it opens only when the
 # folders of all its tasks are taken apart.
 command -v rt_epic_own_pull >/dev/null 2>&1 && rt_epic_own_pull "$state"

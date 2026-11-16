@@ -93,14 +93,23 @@ export function meet(a, b) {
     return merged;
 }
 
-/** A state inside a condition where every listed action is denied, or null. Search with backtracking. */
+/**
+ * A state inside a condition where every listed action is denied, or null. Search with backtracking;
+ * the actions with the fewest deny rows go first, so an action nothing denies ends the search at once
+ * instead of after every combination of the others.
+ */
 function cover(denyRows, actions, start) {
+    const count = (action) => denyRows.filter((r) => r.action === action).length;
+    return coverOrdered(denyRows, [...actions].sort((a, b) => count(a) - count(b)), start);
+}
+
+function coverOrdered(denyRows, actions, start) {
     if (actions.length === 0) return start;
     const [action, ...rest] = actions;
     for (const row of denyRows.filter((r) => r.action === action)) {
         const merged = meet(start, condition(row));
         if (!merged) continue;
-        const found = cover(denyRows, rest, merged);
+        const found = coverOrdered(denyRows, rest, merged);
         if (found) return found;
     }
     return null;
@@ -178,13 +187,19 @@ function coverage(table) {
     if (!files) return console.log('no hooks directory: nothing to count'), 0;
     const known = new Map(table.hooks.map((h) => [h.file, h]));
     const missing = files.filter((f) => !known.has(f));
-    const stale = [...known.keys()].filter((f) => !files.includes(f));
+    // In the package an entry with no file is a dead entry; in a tree that installs the package it
+    // is a hook the tree dropped by its skip list, and that is lawful.
+    const source = HOOKS === join(HERE, '../hooks') && !process.env.RT_DECISION_TREE;
+    const absent = [...known.keys()].filter((f) => !files.includes(f));
+    const stale = source ? absent : [];
     missing.forEach((f) => console.log(`no row or mark: ${f}`));
     stale.forEach((f) => console.log(`an entry with no file: ${f}`));
+    if (!source && absent.length > 0) console.log(`skipped by the tree: ${absent.length}`);
     const guards = files.filter((f) => known.get(f)?.kind === 'guard');
+    const helpers = files.filter((f) => known.has(f) && known.get(f).kind !== 'guard');
     const deciding = guards.filter((f) => table.rows.some((r) => r.hook === f));
     guards.filter((f) => !deciding.includes(f)).forEach((f) => console.log(`a guard with no row: ${f}`));
-    console.log(`deciding ${deciding.length} of ${guards.length}, helpers ${files.length - guards.length}`);
+    console.log(`deciding ${deciding.length} of ${guards.length}, helpers ${helpers.length}`);
     return missing.length + stale.length + guards.length - deciding.length === 0 ? 0 : 1;
 }
 
@@ -202,8 +217,17 @@ function conform(table) {
     });
     const unprobed = table.rows.filter((row) => !row.probe);
     unprobed.forEach((row) => console.log(`no probe: ${rowId(row)}`));
-    console.log(`rows ${probed.length}, mismatch ${mismatch.length + unprobed.length}`);
-    return mismatch.length + unprobed.length === 0 ? 0 : 1;
+    // A helper mark claims the file refuses nothing: one subscribed to an agent event is run on a
+    // plain command in a bare tree. A sourced helper is not run: some of them run whole check sets
+    // when called by hand.
+    const plain = { setup: 'T=$(fixture_tree); export CLAUDE_PROJECT_DIR="$T" TMPDIR="$T"', input: `jq -n '{session_id:"p",hook_event_name:"PreToolUse",tool_name:"Bash",tool_input:{command:"true"},cwd:"/"}'` };
+    const refusing = table.hooks
+        .filter((h) => h.kind === 'helper' && h.event && existsSync(join(HOOKS, h.file)))
+        .filter((h) => runProbe({ hook: h.file, probe: plain }).decision === 'deny');
+    refusing.forEach((h) => console.log(`${h.file}: a helper refused a plain command`));
+    const total = mismatch.length + unprobed.length + refusing.length;
+    console.log(`rows ${probed.length}, mismatch ${total}`);
+    return total === 0 ? 0 : 1;
 }
 
 function walkMode(table) {

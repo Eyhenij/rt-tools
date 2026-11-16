@@ -36,6 +36,8 @@ done
     printf '%s\n' "$changed" | sed -n 's#^projects/agent-kit/tests/##p' | while read -r f; do [ -f "$f" ] && printf '%s\n' "$f"; done
     for n in $names; do grep -l -- "$n" ./*.test.sh | sed 's#^\./##'; done
     [ -n "$defaults" ] && grep -l 'DEFAULTS\|defaults/' ./*.test.sh | sed 's#^\./##'
+    # The decision table describes every hook: an edit of any of them may break its row.
+    [ -n "$names" ] && [ -f decision-table.test.sh ] && printf '%s\n' decision-table.test.sh
 } 2>/dev/null | sort -u
 }
 

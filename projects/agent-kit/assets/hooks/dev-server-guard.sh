@@ -77,10 +77,16 @@ deny() {
         echo "$1 On port ${port} somebody is already listening — a second instance answers with a build of its own and leads the investigation astray. Ask what it is: lsof -nP -iTCP:${port} -sTCP:LISTEN. $(rt_deny_tail)" >&2
         exit 2
     fi
+    # The named move is a check of a raised stand, and the rules gate refuses it while the rule of
+    # the browser check is not loaded.
+    local first="" sid
+    sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+    command -v rt_gate_pending >/dev/null 2>&1 && [ -n "$(rt_gate_pending browser-verification "$sid")" ] \
+        && first="Load the rule «browser-verification» by the tool Skill first — the rules gate refuses a check of a stand until then. "
     if [ -n "$stands" ]; then
-        echo "$1 The applications are already raised by the owner: ${stands} — check those. Do not raise an instance of your own; if a port does not answer, tell the owner instead of launching a second one. $(rt_deny_tail)" >&2
+        echo "$1 ${first}The applications are already raised by the owner: ${stands} — check those. Do not raise an instance of your own; if a port does not answer, tell the owner instead of launching a second one. $(rt_deny_tail)" >&2
     else
-        echo "$1 The applications are already raised by the owner — check those. Do not raise an instance of your own; if a port does not answer, tell the owner instead of launching a second one. $(rt_deny_tail)" >&2
+        echo "$1 ${first}The applications are already raised by the owner — check those. Do not raise an instance of your own; if a port does not answer, tell the owner instead of launching a second one. $(rt_deny_tail)" >&2
     fi
     exit 2
 }
