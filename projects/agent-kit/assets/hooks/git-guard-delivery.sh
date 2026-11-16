@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-pipeline.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
+# Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-task.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-pipeline.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
 #
 # The delivery law demands three things nothing usually checks: an edit starts from a task visible
@@ -212,41 +212,11 @@ is fixed in one session, not one miss per round:
 ${faults}"
 }
 
-check_task() {
-    number="$1"
-    where="$2"
-    # The column is asked about where it should already have been moved. At branch creation it has
-    # not been moved yet — the work pattern moves the column with the next command — and the
-    # requirement here would refuse the very first command of the work together with the one that
-    # lifts it.
-    judge_column="${3:-no}"
-    rt_needs rt_task_state git-guard-delivery || return 0
-    state="$(rt_delivery_task_state "$number" 2>/dev/null)" || return 0
-    [ -z "$state" ] && return 0
-
-    printf '%s' "$state" | jq -e '.exists' >/dev/null 2>&1 \
-        || fault "${where} refers to the task #${number}, which does not exist. Check the number or create the task — ${task_new}."
-    printf '%s' "$state" | jq -e '.open' >/dev/null 2>&1 \
-        || fault "the task #${number} is closed, and a task has one branch. Work behind a closed task is created as a new task — ${task_new}."
-    printf '%s' "$state" | jq -e '.onBoard' >/dev/null 2>&1 \
-        || fault "the task #${number} is not in the work queue — the edit behind it is invisible. The queue is not bound to the repository and does not take a task by itself; add it and check — ${board_check}."
-    printf '%s' "$state" | jq -e '.assigned' >/dev/null 2>&1 \
-        || fault "the task #${number} has no assignee — by the work queue there is no seeing who took it. Set the assignee${task_bot:+: }${task_bot}."
-    printf '%s' "$state" | jq -e '.numbered' >/dev/null 2>&1 \
-        || fault "the title of the task #${number} does not start with its number — one work would have to be recognised by the text of the title. Fix the title and check the queue — ${board_check}."
-
-    # The task column. The work queue answer has been giving it for a long time, and nobody read it:
-    # the column was judged only by the queue audit, that is, already after the PR is opened. A task
-    # left in the first column reads through the queue as not taken — while the work is done and put
-    # out.
-    if [ -n "$backlog_column" ] && [ "$judge_column" = "yes" ]; then
-        column="$(printf '%s' "$state" | jq -r '.status // empty' 2>/dev/null)"
-        [ "$column" = "$backlog_column" ] \
-            && fault "the task #${number} stands in the column «${column}» — by the work queue it is not taken, though the work on it is going. Move it: ${task_move}."
-    fi
-
-    return 0
-}
+# The task checks live in a helper next door — `git-guard-delivery-task.sh`. No helper — the task is
+# not judged, and the work goes on.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/git-guard-delivery-task.sh" ] && . "$rt_hooks_dir/git-guard-delivery-task.sh" 2>/dev/null
+command -v check_task >/dev/null 2>&1 || check_task() { :; }
 
 # The signature of a new branch and of a push live in one helper, so it is sourced before both.
 # shellcheck disable=SC1090

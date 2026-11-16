@@ -312,6 +312,10 @@ report "SC-AK-665 — папка задачи только в рабочем д�
     "$(edit_at "$IN_TREE_ONLY")" deny
 CLAUDE_PROJECT_DIR="$IN_TREE_ONLY" expect_reason "SC-AK-666 — отказ называет команду, которой снимается" \
     task-flow-guard.sh "$(edit_json_at "$IN_TREE_ONLY")" 'git add docs/tasks/RT-48-probe'
+# Коммит называется с путём папки: так он не уносит чужое из индекса, и гард документов судит
+# одну папку.
+CLAUDE_PROJECT_DIR="$IN_TREE_ONLY" expect_reason "коммит папки назван с путём после «--»" \
+    task-flow-guard.sh "$(edit_json_at "$IN_TREE_ONLY")" "git commit -m '…' -- docs/tasks/RT-48-probe"
 
 # Та же папка, заведённая в историю: правка проходит.
 git -C "$IN_TREE_ONLY" add docs/tasks/RT-48-probe >/dev/null 2>&1
@@ -440,5 +444,31 @@ out="$(jq -n --arg f "$BARE/libs/site/x/ui/src/lib/a.component.ts" --arg d "$BAR
     '{session_id:"tests",tool_name:"Edit",tool_input:{file_path:$f},cwd:$d}' | "$HOOKS/task-flow-guard.sh" 2>/dev/null)"
 [ -z "$out" ] && report "вне репозитория пропускается" PASS PASS || report "вне репозитория пропускается" deny PASS
 rm -rf "$BARE"
+
+# --- ход, названный отказом, спрошен у соседних проверок --------------------------------
+# Отказ называет ход, и соседняя проверка может держать именно его. Состояние, объявленное мимо
+# измерения, держит страж шагов, поэтому отказ о состоянии называет замер, а не правку строки.
+state_is 'замысел-записан'
+expect_reason "отказ о состоянии называет замер" task-flow-guard.sh "$(edit_in "$CODE")" 'task-flow-script.mjs measure'
+expect_no_reason "и не велит переписать строку на «этап-идёт»" task-flow-guard.sh "$(edit_in "$CODE")" 'rewrite the state line'
+state_is 'этап-идёт'
+
+# Правило, которого гейт ждёт для названного хода, называется в том же отказе.
+MOVE_REPO="$(fixture_repo scratch-move)"
+mkdir -p "$MOVE_REPO/.claude/skills/git-workflow" "$MOVE_REPO/libs/x/src/lib"
+printf -- '---\nname: git-workflow\nkind: rule\n---\n' > "$MOVE_REPO/.claude/skills/git-workflow/SKILL.md"
+move_edit() {
+    jq -n --arg f "$MOVE_REPO/libs/x/src/lib/a.component.ts" --arg d "$MOVE_REPO" \
+        '{session_id:"tests",tool_name:"Edit",tool_input:{file_path:$f},cwd:$d}'
+}
+gate_session_reset
+CLAUDE_PROJECT_DIR="$MOVE_REPO" expect_reason "ход «завести задачу» держит гейт — отказ называет правило" \
+    task-flow-guard.sh "$(move_edit)" 'load the rule «git-workflow» by the tool Skill first'
+gate_session_load git-workflow
+CLAUDE_PROJECT_DIR="$MOVE_REPO" expect_no_reason "правило загружено — ход назван один" \
+    task-flow-guard.sh "$(move_edit)" 'held by the rules gate'
+gate_session_cleanup
+unset TMPDIR
+rm -rf "$MOVE_REPO"
 
 suite_result "гард замысла"

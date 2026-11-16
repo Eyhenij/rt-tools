@@ -106,6 +106,7 @@ a hook with a decision, and marks a context hook and a git-side hook as helpers.
 | `git-guard-delivery-merged.sh` | — (tier of delivery) | helper | branch_pr_merged | Bash:git-push | deny (via git-guard-delivery) |
 | `git-guard-delivery-pipeline.sh` | — (tier of delivery) | helper | pr_draft_base_wakes_pipeline | Bash:gh-pr-create --draft | deny (via git-guard-delivery) |
 | `git-guard-delivery-signature.sh` | — (tier of delivery) | helper | worktree_email_declared, commits_signed_declared | Bash:git-commit, Bash:git-push, Bash:git-branch-create | deny (via git-guard-delivery) |
+| `git-guard-delivery-task.sh` | — (tier of delivery) | helper | task_exists, task_open, task_on_board, task_assigned, task_numbered, task_column | Bash:git-branch-create, Bash:git-push, Bash:gh-pr-create | deny (via git-guard-delivery) |
 | `git-guard-delivery-tree.sh` | — (tier of delivery) | helper | command_in_foreign_tree | — | — |
 | `git-guard-delivery.sh` | PreToolUse Bash\|webstorm terminal/tool | guard | branch_is_task_branch, task_exists, task_open, task_on_board, task_assigned, task_column_taken, base_has_main_tip, branch_has_main_tip, pr_title_numbered, pr_author_not_reviewer; the tier facts above | Bash: branch, commit, push, PR create/ready/merge, task:new, task:move | deny / context |
 | `git-guard-discard.sh` | PreToolUse Bash\|webstorm | guard | tree_dirty, discard_declared | Bash:git-reset-hard, Bash:git-checkout--, Bash:git-restore, Bash:git-clean-f | deny |

@@ -24,7 +24,8 @@
  *
  * Exit: 0 when the mode found nothing, 1 when it found a defect, 2 when the table does not parse.
  */
-import { spawnSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
+import { availableParallelism } from 'node:os';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -167,19 +168,45 @@ function hookFiles() {
  * the hook gave with it. A refusal comes two ways: exit 2 with the reason on stderr, or JSON with a
  * decision and its reason.
  */
+/**
+ * Runs the hook of a row on the fixture of its facts. Each probe keeps its stderr in a file of its
+ * own: the probes run side by side, and a shared file would hand one probe the text of another.
+ */
 function runProbe(row) {
     const script = [
         `. "${HARNESS}"`,
+        'probe_err="$(mktemp)"',
         row.probe.setup ?? '',
         `json="$(${row.probe.input})"`,
-        `out="$(printf '%s' "$json" | "$HOOKS/${row.hook}" 2>"$TMPDIR/.probe-err")"; code=$?`,
+        `out="$(printf '%s' "$json" | "$HOOKS/${row.hook}" 2>"$probe_err")"; code=$?`,
         `if [ "$code" = 2 ]; then echo deny; elif [ -z "$out" ]; then echo allow; else printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision // .decision // "allow"' | sed 's/^block$/deny/'; fi`,
         `printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecisionReason // .reason // empty' 2>/dev/null | tr '\\n' ' '`,
-        `tr '\\n' ' ' < "$TMPDIR/.probe-err"`,
+        `tr '\\n' ' ' < "$probe_err"; rm -f "$probe_err"`,
     ].join('\n');
     const env = { ...process.env, HOOKS_OVERRIDE: HOOKS, TMPDIR: process.env.TMPDIR ?? '/tmp' };
-    const lines = (spawnSync('bash', ['-c', script], { encoding: 'utf8', env }).stdout ?? '').split('\n');
-    return { decision: lines[0]?.trim() || 'allow', text: lines.slice(1).join(' ') };
+    return new Promise((resolve) => {
+        const child = spawn('bash', ['-c', script], { env, stdio: ['ignore', 'pipe', 'ignore'] });
+        let stdout = '';
+        child.stdout.on('data', (chunk) => (stdout += chunk));
+        child.on('close', () => {
+            const lines = stdout.split('\n');
+            resolve({ decision: lines[0]?.trim() || 'allow', text: lines.slice(1).join(' ') });
+        });
+    });
+}
+
+/** Maps the items through an async function, as many at once as the machine has cores. */
+async function pool(items, fn) {
+    const results = new Array(items.length);
+    let next = 0;
+    const worker = async () => {
+        while (next < items.length) {
+            const index = next++;
+            results[index] = await fn(items[index]);
+        }
+    };
+    await Promise.all(Array.from({ length: Math.max(1, availableParallelism()) }, worker));
+    return results;
 }
 
 function coverage(table) {
@@ -203,13 +230,14 @@ function coverage(table) {
     return missing.length + stale.length + guards.length - deciding.length === 0 ? 0 : 1;
 }
 
-function conform(table) {
+async function conform(table) {
     if (!existsSync(HARNESS)) return console.log('no test harness next to the package: nothing to run with'), 0;
     const probed = table.rows.filter((row) => row.probe);
+    const results = await pool(probed, runProbe);
     // A refusal row names its move by `says` — a pattern its text must carry; a decision alone
     // would let the hook name any move at all.
-    const mismatch = probed.filter((row) => {
-        const got = runProbe(row);
+    const mismatch = probed.filter((row, index) => {
+        const got = results[index];
         if (got.decision !== row.decision) return console.log(`${rowId(row)}: the hook decided «${got.decision}»`), true;
         if (row.says && !new RegExp(row.says).test(got.text)) return console.log(`${rowId(row)}: the refusal does not say /${row.says}/`), true;
         if (row.decision === 'deny' && !row.says) return console.log(`${rowId(row)}: a refusal row carries no «says»`), true;
@@ -221,9 +249,9 @@ function conform(table) {
     // plain command in a bare tree. A sourced helper is not run: some of them run whole check sets
     // when called by hand.
     const plain = { setup: 'T=$(fixture_tree); export CLAUDE_PROJECT_DIR="$T" TMPDIR="$T"', input: `jq -n '{session_id:"p",hook_event_name:"PreToolUse",tool_name:"Bash",tool_input:{command:"true"},cwd:"/"}'` };
-    const refusing = table.hooks
-        .filter((h) => h.kind === 'helper' && h.event && existsSync(join(HOOKS, h.file)))
-        .filter((h) => runProbe({ hook: h.file, probe: plain }).decision === 'deny');
+    const helpers = table.hooks.filter((h) => h.kind === 'helper' && h.event && existsSync(join(HOOKS, h.file)));
+    const helperRuns = await pool(helpers, (h) => runProbe({ hook: h.file, probe: plain }));
+    const refusing = helpers.filter((h, index) => helperRuns[index].decision === 'deny');
     refusing.forEach((h) => console.log(`${h.file}: a helper refused a plain command`));
     const total = mismatch.length + unprobed.length + refusing.length;
     console.log(`rows ${probed.length}, mismatch ${total}`);
@@ -252,7 +280,7 @@ function chainsMode(table) {
 
 const MODES = { '--coverage': coverage, '--conform': conform, '--walk': walkMode, '--chains': chainsMode };
 
-function main(mode) {
+async function main(mode) {
     const table = load();
     const problems = problemsOf(table);
     if (mode === '--validate') {
@@ -271,4 +299,4 @@ function main(mode) {
     return MODES[mode](table);
 }
 
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) process.exit(main(process.argv[2]));
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) process.exit(await main(process.argv[2]));

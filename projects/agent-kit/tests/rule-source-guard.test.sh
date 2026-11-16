@@ -179,4 +179,28 @@ exit_code_of "пустой вход пропускается" ''
 exit_code_of "неразбираемый вход пропускается" 'не json'
 exit_code_of "чтение файла гарду безразлично" "$(jq -n --arg d "$TREE" '{session_id:"tests",tool_name:"Read",tool_input:{file_path:"x"},cwd:$d}')"
 
+# Файл вне дерева правил дерева не несёт, даже если цитирует шапку раскладки.
+OUTSIDE="$(mktemp -d)"
+printf '%s\n' '<!-- rt-kit v0.12.0 · rules/probe.md · abc123def456 · правится надстройкой, не здесь -->' > "$OUTSIDE/copy.md"
+report "файл вне дерева не судится" \
+    "$(decision "$(jq -n --arg f "$OUTSIDE/copy.md" '{session_id:"tests",tool_name:"Edit",tool_input:{file_path:$f}}')")" PASS
+rm -rf "$OUTSIDE"
+# Шапка в строке кода, а не в строке-комментарии, файл разложенным не делает.
+printf '%s\n' "const header = 'rt-kit v0.12.0 · rules/probe.md · abc123def456';" > "$TREE/tools/quote.mjs"
+report "шапка внутри строки кода не считается" "$(decision "$(edit_in tools/quote.mjs)")" PASS
+rm -f "$TREE/tools/quote.mjs"
+
+# Ход, названный отказом, — правка источника, и её держит гейт, пока правило текстов не загружено.
+mkdir -p "$TREE/.claude/skills/doc-style"
+printf -- '---\nname: doc-style\nkind: rule\n---\n' > "$TREE/.claude/skills/doc-style/SKILL.md"
+gate_session_reset
+report "правку источника держит гейт — отказ называет правило" \
+    "$(run "$(edit_in .claude/skills/probe/SKILL.md)" | jq -r '.hookSpecificOutput.permissionDecisionReason' | grep -c 'load the rule «doc-style» by the tool Skill first')" 1
+gate_session_load doc-style
+report "правило загружено — ход назван один" \
+    "$(run "$(edit_in .claude/skills/probe/SKILL.md)" | jq -r '.hookSpecificOutput.permissionDecisionReason' | grep -c 'held by the rules gate')" 0
+gate_session_cleanup
+unset TMPDIR
+rm -rf "$TREE/.claude/skills/doc-style"
+
 suite_result "гард места правки"

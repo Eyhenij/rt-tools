@@ -63,10 +63,15 @@ got="$(last --chains)"
 printf '%s' "$got" | grep -qE '^derived ([0-9]+), scenarios \1, uncovered 0$' && got=ok
 report "SC-AK-1567 — у каждой выведенной цепочки есть сценарий" "$got" ok
 
-# Случай на каждую цепочку: условия отказа и строки, запрещающей его ход, не встречаются.
+# Случай на каждую цепочку: условия отказа и строки, запрещающей его ход, не встречаются. Номер
+# случая — номер сценария, где цепочка записана: SC-AK-1570, SC-AK-1571, SC-AK-1572, SC-AK-1573,
+# SC-AK-1574, SC-AK-1575, SC-AK-1576, SC-AK-1577, SC-AK-1578, SC-AK-1579, SC-AK-1580, SC-AK-1581,
+# SC-AK-1582, SC-AK-1583, SC-AK-1584, SC-AK-1585, SC-AK-1586, SC-AK-1587.
+SCENARIOS_MD="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)/docs/specs/agent-kit/decision-table/scenarios.md"
 while IFS=$'\t' read -r id met; do
     [ -n "$id" ] || continue
-    report "SC-AK-1567 — цепочка разведена: $id" "$met" "no"
+    sc="$(awk -v id="\`$id\`" '/^### SC-AK-/ { n = $2 } index($0, id) { print n; exit }' "$SCENARIOS_MD" 2>/dev/null)"
+    report "${sc:-SC-AK-1567} — цепочка разведена: $id" "$met" "no"
 done < <(node --input-type=module -e "
 import { chainsOf, meet } from '$TABLE_CMD';
 import { readFileSync } from 'node:fs';
