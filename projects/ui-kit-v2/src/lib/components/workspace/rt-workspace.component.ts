@@ -205,7 +205,8 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
     /**
      * Порог одной колонки, пиксели места страницы. Без входа порог держат стили: 768. С входом
      * выше порога список и середина стоят рядом, а панель сведений, которой не хватает места
-     * третьей колонкой, открывается поверх окна. Порог выше 1080 смысла не имеет.
+     * третьей колонкой, открывается поверх окна — и в одной колонке тоже, во всю ширину окна.
+     * Порог выше 1080 смысла не имеет.
      */
     public readonly singleColumnBreakpoint: InputSignalWithTransform<number | null, TBreakpointInput> = input<
         number | null,
@@ -232,7 +233,7 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
     public readonly backClicked: OutputEmitterRef<void> = output<void>();
 
     public readonly asideOverlay: Signal<boolean> = computed(
-        (): boolean => this.singleColumnBreakpoint() !== null && this.#breakpoints.narrow() && !this.singleColumn()
+        (): boolean => this.singleColumnBreakpoint() !== null && (this.#breakpoints.narrow() || this.singleColumn())
     );
 
     public readonly listWidth: Signal<number> = computed((): number => this.#listWidthOverride() ?? this.listDefaultWidth());

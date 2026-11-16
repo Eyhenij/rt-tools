@@ -99,16 +99,44 @@ describe('порог одной колонки рабочего стола', ():
         expect(qa(fixture, 'workspace-aside')?.nativeElement.querySelector('[qa-dataid="slot-aside"]')).not.toBeNull();
     });
 
-    it('SC-UKV-1242 — место не шире порога из входа: одна колонка, панель сведений на месте', (): void => {
+    it('SC-UKV-1242 — место не шире порога из входа: одна колонка, панель сведений открывается поверх окна', (): void => {
         const fixture: ComponentFixture<WorkspaceBreakpointHostComponent> = setup(375);
 
         expect(classesOf(root(fixture))).toEqual(expect.arrayContaining(['rt-workspace--breakpoint', 'rt-workspace--single']));
-        expect(workspace(fixture).asideOverlay()).toBe(false);
+        expect(workspace(fixture).asideOverlay()).toBe(true);
+        // Колонки панели нет и в одной колонке: узкого блока внутри середины не бывает
+        expect(classesOf(qa(fixture, 'workspace-aside'))).toContain('rt-workspace__aside--overlay');
+        expect(qa(fixture, 'slot-aside')).toBeNull();
 
         openAside(fixture);
 
-        expect(overlayPanel()).toBeNull();
-        expect(classesOf(qa(fixture, 'workspace-aside'))).toContain('rt-workspace__aside--open');
+        const panel: HTMLElement = overlayPanel() as HTMLElement;
+        expect(classesOf(panel)).toContain('rt-workspace-aside-pane');
+        expect(panel.querySelector('[qa-dataid="slot-aside"]')?.textContent).toBe('Подробности');
+        expect(panel.querySelector('[qa-dataid="workspace-aside-overlay-header"]')).not.toBeNull();
+        expect(panel.querySelector('[qa-dataid="workspace-aside-overlay-close"]')).not.toBeNull();
+        expect(document.querySelector('.cdk-overlay-backdrop')).not.toBeNull();
+    });
+
+    it('SC-UKV-1320 — в одной колонке стрелка и «Закрыть» закрывают панель, запись остаётся открытой', (): void => {
+        const fixture: ComponentFixture<WorkspaceBreakpointHostComponent> = setup(375);
+
+        openAside(fixture);
+        const back: HTMLButtonElement = overlayPanel()?.querySelector(
+            '[qa-dataid="workspace-aside-overlay-header"] [qa-dataid="aside-back"] button'
+        ) as HTMLButtonElement;
+        back.click();
+        expect(workspace(fixture).asideOpen()).toBe(false);
+
+        openAside(fixture);
+        // Первая панель ещё уходит из разметки: кнопка берётся у последней, открытой сейчас
+        const closes: NodeListOf<HTMLButtonElement> = document.querySelectorAll('[qa-dataid="workspace-aside-overlay-close"]');
+        closes[closes.length - 1].click();
+        expect(workspace(fixture).asideOpen()).toBe(false);
+
+        fixture.detectChanges();
+        expect(classesOf(root(fixture))).toContain('rt-workspace--has-active');
+        expect(qa(fixture, 'slot-center')).not.toBeNull();
     });
 
     it('SC-UKV-1243 — шире порога список и середина рядом, панель сведений открывается поверх окна', (): void => {

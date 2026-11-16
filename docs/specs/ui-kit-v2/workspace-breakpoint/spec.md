@@ -1,6 +1,6 @@
 # The single-column threshold of the workspace
 
-**Status:** in force · **Revision:** 2026-11-13 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-16 · **Scenario prefix:** `SC-UKV`
 **Depends on:** `docs/specs/ui-kit-v2/workspace-slots/spec.md`
 **Laws:** `frontend-application`, `verifiability`
 **Procedures:** none
@@ -38,7 +38,7 @@ application had no way to move it. A tablet has room for the list and the conver
 - **The title of the panel comes from an input of the workspace.** A new value redraws the header of an open panel. Without the input the header stays with the arrow and the label, and the line of the title takes no place.
 - **A details template of tabs is laid out as tabs of a side panel.** The strip of tabs stands right under the header and keeps the inset of the panel; the content of a tab scrolls.
 - **The panel over the window closes by the arrow back, by the button «Close», by a press on the dimmed background and by the key Esc.** After any of them the workspace reports the panel as closed.
-- **At a place not wider than the threshold the details panel opens as before.** The view of a phone does not change.
+- **At a place not wider than the threshold the details panel opens over the window as well.** One column has no room for the details either, so they open as the same side panel, the whole window wide. The arrow back and the button «Close» close it, and the record stays open.
 
 ## What is out of scope
 
@@ -63,7 +63,7 @@ Not applicable: nothing is stored.
 | -------------------------------------- | --------------------------------------------------------- |
 | Wider than 1080                        | three columns, as before                                  |
 | Between the threshold and 1080         | the list and the centre; the details open over the window |
-| Not wider than the threshold           | one column; the details slide over the centre, as before  |
+| Not wider than the threshold           | one column; the details open over the window, full width  |
 | No threshold input, not wider than 768 | one column, as before                                     |
 
 ## Cross-cutting requirements
@@ -101,3 +101,4 @@ Not applicable.
 
 - 2026-11-12 — created by the task RT-3180.
 - 2026-11-13 — the header of the panel over the window, the inputs of the title and of the content layout, by the task RT-3267.
+- 2026-11-16 — one column opens the details over the window too, by the task RT-3350.
