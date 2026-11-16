@@ -180,6 +180,7 @@ skill_for_default() {
                 || rt_gate_invokes "$target" "git[[:space:]]+checkout[[:space:]]+-b" \
                 || rt_gate_invokes "$target" "git[[:space:]]+switch[[:space:]]+-c" \
                 || rt_gate_invokes "$target" "(gh|glab)[[:space:]]+(pr|mr|issue)[[:space:]]+(create|merge|edit)" \
+                || rt_gate_invokes "$target" "gh[[:space:]]+pr[[:space:]]+ready" \
                 || rt_gate_invokes "$target" "az[[:space:]]+(repos|boards)" \
                 || rt_gate_invokes "$target" "[^[:space:]]*task:new" \
                 || rt_gate_invokes "$target" "prisma[[:space:]]+(migrate|db)"; then

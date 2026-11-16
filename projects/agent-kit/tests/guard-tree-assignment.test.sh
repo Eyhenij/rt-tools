@@ -125,6 +125,21 @@ table '| rt-tools | 1870 | docs/plans/one-kit.md | 2026-09-17 |'
 report "SC-AK-1115 — закрытый эпик назначения отбит" \
     "$(stale_of '{"exists":true,"open":false}' | grep -c 'assignment outlived it')" 1
 report "SC-AK-1115 — живой эпик назначения пропущен" "$(stale_of '{"exists":true,"open":true}')" ''
+# Очередь спрашивается о самом номере эпика. Под nx стоит FORCE_COLOR, и число, напечатанное
+# console.log, приходило с кодами цвета: двойник очереди отвечал «эпика нет», отказ пропадал.
+asked_of() {
+    (
+        cd "$TREE" || exit 0
+        FORCE_COLOR=true HELPER="$HOOKS/git-guard-tree-assignment.sh" bash -c '
+            fault() { printf "%s\n" "$1"; }
+            rt_task_state() { [ "$1" = 1870 ] && printf "%s" "{\"exists\":true,\"open\":false}"; }
+            . "$HELPER"
+            rt_assignment_stale "ветка"
+        '
+    )
+}
+report "SC-AK-1115 — очередь спрошена о голом номере и при FORCE_COLOR" \
+    "$(asked_of | grep -c 'assignment outlived it')" 1
 # Очередь работ молчит — отказа нет: вызов идёт в сеть, и дерево без неё продолжает работать.
 report "SC-AK-1115 — молчание очереди пропущено" "$(stale_of '')" ''
 # Прочерк в строке судит не этот отказ: спрашивать очередь не о чем.

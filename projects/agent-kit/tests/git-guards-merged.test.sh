@@ -35,6 +35,12 @@ dlv "SC-AK-1233 — отправка без имени ветки судит т�
 dlv "SC-AK-1233 — отправка с подставленным ключом и хвостом команды отбита" "$MERGED" \
     "git -c credential.helper= -c credential.helper='!f() { echo username=x; }; f' push -u origin HEAD:RT-130-merged 2>&1 | tail -5" deny
 dlv "SC-AK-1233 — пробная отправка не судится" "$MERGED" 'git push --dry-run origin RT-130-merged' PASS
+# Коммиты уходят в новую задачу, и отказ называет её заведение: ветка без задачи заявку не откроет.
+CLAUDE_PROJECT_DIR="$MERGED" input_cmd 'git push origin RT-130-merged' Bash "$MERGED" \
+    | CLAUDE_PROJECT_DIR="$MERGED" "$HOOKS/git-guard-delivery.sh" 2>/dev/null \
+    | jq -r '.hookSpecificOutput.permissionDecisionReason' 2>/dev/null | grep -q 'Create a new task for these commits — npm run task:new' \
+    && report "SC-AK-1233 — отказ называет заведение новой задачи" есть есть \
+    || report "SC-AK-1233 — отказ называет заведение новой задачи" нет есть
 
 OPEN="$(merged_repo '')"
 dlv "SC-AK-1233 — ветка без влитой заявки отправляется" "$OPEN" 'git push origin RT-130-merged' PASS

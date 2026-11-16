@@ -1,0 +1,21 @@
+<div class="app-chat-fill">
+    <rt-workspace cards hasActive class="app-chat-fill__workspace">
+        <ng-template rtWorkspaceList>
+            <div class="app-chat-fill__list">Список разговоров</div>
+        </ng-template>
+        <ng-template rtWorkspaceCenter>
+            <rt-chat
+                fill
+                messenger
+                hasThread
+                canReply
+                placeholder="Напишите сообщение…"
+                title="№12 Анна Смирнова"
+                subtitle="WhatsApp · +66 81 234 5678"
+                [messages]="long ? longThread : shortThread" />
+        </ng-template>
+        <ng-template rtWorkspaceAside>
+            <div class="app-chat-fill__list">Сведения о госте</div>
+        </ng-template>
+    </rt-workspace>
+</div>

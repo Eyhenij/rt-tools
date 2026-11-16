@@ -88,6 +88,16 @@ esac
 [ -z "$candidates" ] && exit 0
 
 root="${CLAUDE_PROJECT_DIR:-.}"
+root_abs="$(cd "$root" 2>/dev/null && pwd -P)"
+[ -n "$root_abs" ] || root_abs="$root"
+
+# What a neighbouring guard wants before the edit this refusal names: the exam, the rule of the
+# file, the handover entry, the task-flow guards when the file is code. Empty when the edit is open.
+first() {
+    command -v rt_move_first >/dev/null 2>&1 || return 0
+    rs_first="$(rt_move_first Edit "$(jq -cn --arg f "$1" '{file_path:$f,old_string:"",new_string:""}')")"
+    [ -n "$rs_first" ] && printf ' %s' "$rs_first"
+}
 
 # The directory of package sources in this tree. Only the tree that carries the package has one; a
 # consumer has no source at all, and has a single address for an edit — the override.
@@ -119,12 +129,21 @@ while IFS= read -r candidate; do
             ;;
     esac
     [ -f "$candidate" ] || continue
+    # A laid-out file is a file of this tree. One outside it — a scratch copy, a neighbouring
+    # repository — is laid out by nobody here, even when it quotes a header. The two checks above
+    # judge by the end of the path and stay before this one.
+    case "$candidate" in
+        "$root"/* | "$root_abs"/*) ;;
+        *) continue ;;
+    esac
 
     # The header stands at the beginning of the file, but not on the first line: in a script `#!`
     # pushes it down, in a rule the title with the name and the kind of the resource does. Ten
     # lines are enough for both, and the whole file must not be read: the guard stands on every
     # edit.
-    resource="$(head -12 "$candidate" 2>/dev/null | sed -nE 's/.*rt-kit v[^ ]+ · ([^ ]+) · [0-9a-f]+.*/\1/p' | head -1)"
+    # Only a comment line of the header form counts: a file that quotes the header inside a string
+    # or a sentence is not laid out.
+    resource="$(head -12 "$candidate" 2>/dev/null | sed -nE 's/^[[:space:]]*(<!--|\/\/|#|\/\*|\*)[[:space:]]*rt-kit v[^ ]+ · ([^ ]+) · [0-9a-f]+.*/\2/p' | head -1)"
     [ -z "$resource" ] && continue
 
     # A file in conflict is skipped on a par with a removed one. Resolving a conflict does not
@@ -150,12 +169,12 @@ while IFS= read -r candidate; do
     esac
 
     if [ -n "$sources" ] && [ -f "$root/$sources/$resource" ]; then
-        deny "BLOCKED by rule-source-guard: «${candidate#"$root"/}» is laid out by the package, and an edit in its place is lost on the next layout — and until then the layout refuses this file whole, and the price is paid by whoever edits a neighbouring resource that day. The resource is «${resource}». Edit the source: ${sources}/${resource} — then build the package and lay it out." \
+        deny "BLOCKED by rule-source-guard: «${candidate#"$root"/}» is laid out by the package, and an edit in its place is lost on the next layout — and until then the layout refuses this file whole, and the price is paid by whoever edits a neighbouring resource that day. The resource is «${resource}». Edit the source: ${sources}/${resource} — then build the package and lay it out.$(first "$root/$sources/$resource")" \
             "$override_way"
     fi
 
     case "$resource" in
-        *.md) where="Edit the override: .claude/rt-kit/overrides/${resource} — it merges by the section «## » and outlives the layout." ;;
+        *.md) where="Edit the override: .claude/rt-kit/overrides/${resource} — it merges by the section «## » and outlives the layout.$(first "$root/.claude/rt-kit/overrides/${resource}")" ;;
         *) where="A resource of this kind has no override by sections — it has no «## » sections at all. The edit goes into the package itself and arrives here by a new edition." ;;
     esac
 

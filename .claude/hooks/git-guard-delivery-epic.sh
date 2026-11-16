@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-delivery-epic.sh · 5b6653bc5c39 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-delivery-epic.sh · 0efe655c434a · правится надстройкой, не здесь
 # Delivery conditions about the epic of a task. NOT a guard: it has no `rt-hook:` declaration and
 # it hooks into no agent event. The delivery guard sources it — the same way it sources the task
 # folder conditions and the signature.
@@ -80,7 +80,7 @@ rt_epic_base() {
             if rt_epic_is_merged "$_epic"; then
                 return 0
             fi
-            fault "the task belongs to the epic #${_epic}, and no branch of that epic is in the remote. The branch of the epic is taken before the first of its tasks and sent at once — a branch that exists only on one machine is a base nobody else has."
+            fault "the task belongs to the epic #${_epic}, and no branch of that epic is in the remote. The branch of the epic is taken before the first of its tasks and sent at once — a branch that exists only on one machine is a base nobody else has. Take it from the fresh main branch, run the heavy steps by \`${ahead_cmd:-bash git-guard-push-ahead.sh}\` (the Bash call with run_in_background) and push it after their end: the push is refused until they have a green mark."
             return 0
             ;;
         *' '*)
@@ -93,7 +93,9 @@ rt_epic_base() {
 
     if ! git merge-base --is-ancestor "origin/${_epic_branch}" "$_base_ref" 2>/dev/null; then
         fault "the branch will grow from a base that does not carry the branch of the epic «${_epic_branch}». A task branched from the main one leaves its epic half merged before the epic itself is handed in. Take the base from the epic: git fetch origin && git checkout -b ${_branch} origin/${_epic_branch}."
-        return 0
+        # The check below goes on against the base just named: stopped here, the refusal named a
+        # base the next call refused for the main branch the epic lacks.
+        _base_ref="origin/${_epic_branch}"
     fi
 
     # The main branch is asked of the epic, not of the base: there it is fixed by one merge, and the
@@ -108,7 +110,7 @@ rt_epic_base() {
         && ! git merge-base --is-ancestor "origin/${main_branch}" "origin/${_epic_branch}" 2>/dev/null \
         && ! git merge-base --is-ancestor "origin/${main_branch}" "$_base_ref" 2>/dev/null; then
         _behind="$(git rev-list --count "origin/${_epic_branch}..origin/${main_branch}" 2>/dev/null)"
-        fault "the branch of the epic «${_epic_branch}» does not carry the tip of «${main_branch}» — it has moved ahead by ${_behind:-several} commits. The main branch is merged into the branch of the epic, not bypassed by taking the base from the main one: git checkout ${_epic_branch}, git merge origin/${main_branch}, and send the branch."
+        fault "the branch of the epic «${_epic_branch}» does not carry the tip of «${main_branch}» — it has moved ahead by ${_behind:-several} commits. The main branch is merged into the branch of the epic, not bypassed by taking the base from the main one: git checkout ${_epic_branch}, git merge origin/${main_branch}, run the heavy steps by \`${ahead_cmd:-bash git-guard-push-ahead.sh}\` (the Bash call with run_in_background), and send the branch after their end: the push is refused until they have a green mark."
     fi
 
     return 0
@@ -159,7 +161,8 @@ rt_epic_pull_base() {
 
     if [ "$_base" != "$_epic_branch" ] && [ -z "$_chain" ]; then
         fault "the request of a task of the epic #${_epic} goes into the branch of the epic «${_epic_branch}», and the base here is ${_base:-the default branch of the repository}. A request into the main branch takes the task past its epic: the epic is handed in without it. Name the base: --base ${_epic_branch}."
-        return 0
+        # The freshness of the branch is judged below all the same: it is what the request into the
+        # named base is refused for next, and stopped here, this refusal led into that one.
     fi
 
     if git rev-parse --verify --quiet "origin/${_epic_branch}" >/dev/null 2>&1 \
@@ -206,7 +209,7 @@ rt_epic_own_pull() {
     done
     [ -n "$_left" ] || return 0
 
-    fault "the branch of the epic still carries the folders of its tasks — ${_left}. The request of an epic opens when the last of its folders is taken apart: merged as it is, the epic takes the folders of unfinished work into the main branch, and the reader has no way to tell them from current work."
+    fault "the branch of the epic still carries the folders of its tasks — ${_left}. The request of an epic opens when the last of its folders is taken apart: merged as it is, the epic takes the folders of unfinished work into the main branch, and the reader has no way to tell them from current work. Take them apart and commit that.$(command -v rt_commit_move_note >/dev/null 2>&1 && rt_commit_move_note 'git commit -m "docs: take the task folders apart"')"
 
     return 0
 }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
-# Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-pipeline.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
+# Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-task.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-pipeline.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
 #
 # The delivery law demands three things nothing usually checks: an edit starts from a task visible
@@ -101,6 +101,10 @@ title_re="${RT_TASK_TITLE_RE:-^\[[A-Za-z]+-[0-9]+\][[:space:]]+[^[:space:]]}"
 task_new="${RT_TASK_NEW_CMD:-npm run task:new}"
 board_check="${RT_BOARD_CHECK_CMD:-npm run check:board}"
 task_move="${RT_TASK_MOVE_CMD:-npm run task:move}"
+# A refusal whose fix ends with a push names the run ahead before it: the push guard refuses a push
+# while the heavy steps of the tree have no green mark, and a refusal naming a bare push would lead
+# into that second refusal.
+ahead_cmd="bash ${rt_hooks_dir#"$PWD"/}/git-guard-push-ahead.sh"
 # The first column of the work queue is the one a task leaves when it is taken. It has no default:
 # a tree names its columns in its own words, and an invented name would match nothing and would
 # silently switch the check off.
@@ -208,41 +212,11 @@ is fixed in one session, not one miss per round:
 ${faults}"
 }
 
-check_task() {
-    number="$1"
-    where="$2"
-    # The column is asked about where it should already have been moved. At branch creation it has
-    # not been moved yet — the work pattern moves the column with the next command — and the
-    # requirement here would refuse the very first command of the work together with the one that
-    # lifts it.
-    judge_column="${3:-no}"
-    rt_needs rt_task_state git-guard-delivery || return 0
-    state="$(rt_delivery_task_state "$number" 2>/dev/null)" || return 0
-    [ -z "$state" ] && return 0
-
-    printf '%s' "$state" | jq -e '.exists' >/dev/null 2>&1 \
-        || fault "${where} refers to the task #${number}, which does not exist. Check the number or create the task — ${task_new}."
-    printf '%s' "$state" | jq -e '.open' >/dev/null 2>&1 \
-        || fault "the task #${number} is closed, and a task has one branch. Work behind a closed task is created as a new task — ${task_new}."
-    printf '%s' "$state" | jq -e '.onBoard' >/dev/null 2>&1 \
-        || fault "the task #${number} is not in the work queue — the edit behind it is invisible. The queue is not bound to the repository and does not take a task by itself; add it and check — ${board_check}."
-    printf '%s' "$state" | jq -e '.assigned' >/dev/null 2>&1 \
-        || fault "the task #${number} has no assignee — by the work queue there is no seeing who took it. Set the assignee${task_bot:+: }${task_bot}."
-    printf '%s' "$state" | jq -e '.numbered' >/dev/null 2>&1 \
-        || fault "the title of the task #${number} does not start with its number — one work would have to be recognised by the text of the title. Fix the title and check the queue — ${board_check}."
-
-    # The task column. The work queue answer has been giving it for a long time, and nobody read it:
-    # the column was judged only by the queue audit, that is, already after the PR is opened. A task
-    # left in the first column reads through the queue as not taken — while the work is done and put
-    # out.
-    if [ -n "$backlog_column" ] && [ "$judge_column" = "yes" ]; then
-        column="$(printf '%s' "$state" | jq -r '.status // empty' 2>/dev/null)"
-        [ "$column" = "$backlog_column" ] \
-            && fault "the task #${number} stands in the column «${column}» — by the work queue it is not taken, though the work on it is going. Move it: ${task_move}."
-    fi
-
-    return 0
-}
+# The task checks live in a helper next door — `git-guard-delivery-task.sh`. No helper — the task is
+# not judged, and the work goes on.
+# shellcheck disable=SC1090
+[ -f "$rt_hooks_dir/git-guard-delivery-task.sh" ] && . "$rt_hooks_dir/git-guard-delivery-task.sh" 2>/dev/null
+command -v check_task >/dev/null 2>&1 || check_task() { :; }
 
 # The signature of a new branch and of a push live in one helper, so it is sourced before both.
 # shellcheck disable=SC1090
@@ -261,10 +235,14 @@ if [ -n "$branch_arg" ]; then
     # not a deliberate task-less branch. Caught before the first commit.
     # The number is extracted by the profile: with its own regex the branch `feat/88-slug` gave no
     # number at all.
+    #
+    # The name is one fault among the others, not a refusal of its own: refused alone, a fixed name
+    # met the task checks only on the second call, and the first refusal named a branch the second
+    # one refused again.
     number_arg="$(rt_task_branch_number "$branch_arg")"
     if [ -n "$number_arg" ]; then
         rt_delivery_branch_form_ok "$branch_arg" \
-            || deny "BLOCKED: the branch name «${branch_arg}» is not of the form accepted here. The branch number is the same as the number of the task and of the title of the merge request."
+            || fault "the branch name «${branch_arg}» is not of the form accepted here. The branch number is the same as the number of the task and of the title of the merge request."
         state=''
         check_task "$number_arg" "the branch «${branch_arg}»"
         # The epic of the task: with one, the base is judged against the branch of the epic, and the
@@ -354,8 +332,15 @@ branch="$(rt_delivery_current_branch)"
 
 # A local branch without a number is lawful, and a PR from it is not: an edit that travels to the
 # main branch starts from a task. This is the only place where a task-less branch runs into a wall.
-rt_delivery_branch_form_ok "$branch" \
-    || deny "BLOCKED: a request from the branch «${branch}», with no task standing behind it. An edit begins with a task visible in the work queue: create it — ${task_new} — and move the work into a branch with its number."
+#
+# The move named here takes work, and the assignment of the copy judges every such move: with no
+# assignment the creation of the task is refused in its turn. So the assignment is asked here too,
+# and what it lacks is named before the creation.
+if ! rt_delivery_branch_form_ok "$branch"; then
+    command -v rt_assignment_fault >/dev/null 2>&1 && rt_assignment_fault '' 'a new task'
+    deny "BLOCKED: a request from the branch «${branch}», with no task standing behind it. An edit begins with a task visible in the work queue: create it — ${task_new} — and move the work into a branch with its number.${faults:+ Before the creation:
+${faults}}"
+fi
 
 number="$(rt_task_branch_number "$branch")"
 
@@ -365,6 +350,13 @@ number="$(rt_task_branch_number "$branch")"
 state=''
 check_task "$number" "the request from the branch «${branch}»" yes
 epic_pull="$(printf '%s' "$state" | jq -r '.epic // empty' 2>/dev/null)"
+# A fault that names the creation of a task or the move of its column names a move that takes work,
+# and the assignment of the copy judges every such move. Its lack is named in the same list.
+case "$faults" in
+    *"$task_new"* | *"$task_move"*)
+        command -v rt_assignment_fault >/dev/null 2>&1 && rt_assignment_fault '' 'the work the fixes above take'
+        ;;
+esac
 # The branch of an epic itself: its request goes into the main branch, and it opens only when the
 # folders of all its tasks are taken apart.
 command -v rt_epic_own_pull >/dev/null 2>&1 && rt_epic_own_pull "$state"

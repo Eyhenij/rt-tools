@@ -47,6 +47,74 @@ over and says which of them are right. The file lies next to the plan of the epi
   owner. **Address:** rules layer — two misses of the pattern `task-flow-start`: a check over a spec
   directory uses `grep -r`, and a subagent's report is read from the session record or a file.
 
+## RT-3271
+
+- **The work queue audit falls whole on the comparison with the last rollout.** When production lags
+  the main branch far, the host answers the compare with HTTP 422 «diff is taking too long», and
+  `check-board.mjs` exits with a stack instead of a line; the checks before it already printed.
+  **Address:** rules layer — `deployLag` turns a 422 into a report line about the lag it cannot count.
+- **A step check expecting «= 0» from `grep -c` never matches.** `grep -c` exits 1 on zero matches,
+  and the number form demands code 0; four steps of RT-3271 passed only by replacements. **Address:**
+  rules layer — the plan template names `|| true` for a count that must reach zero, or `plan-check`
+  refuses such a check.
+- **The window of the end-of-epic guard is journaled under `guard=`, and nothing reads it.** The
+  metrics report and the cargo take only `res=`, so the label `guard-ask` reaches neither.
+  **Address:** rules layer — `epic-stop-guard.sh` writes `res=`, or the report learns `guard-ask`.
+- **The window is opened only on the forms the guard parses.** `env A=1 …`, `time …`, a subshell,
+  `if … then`, `bash -c "…"`, `git worktree add -b` and `git branch RT-N-…` pass without it; the
+  first four were caught by the substring search the guard had before. **Address:** rules layer —
+  `epic-stop-guard.sh:heads` strips these wrappers, and scenarios cover each form.
+- **A deny of the tree assignment guard overrides the window.** After the epic is over, a task of a
+  new epic is refused by `tree-assignment-guard.sh` while the row of the copy names the old epic.
+  **Address:** names of this tree — the assignment guard asks instead of refusing on a closed epic.
+- **The kit release and a PR opened in the browser get no window with the approval quotes.**
+  **Address:** names of this tree — `kit-approval-guard.sh` asks on `--publish` too.
+- **Two judges still read the owner's answers from the session record.** `ask-judge.md` and
+  `turn-judge.md` were not touched by RT-3271. **Address:** rules layer — a task of this epic.
+
+## RT-3275 — the decision table of the package hooks
+
+- **The engine measures a wrong state from a subdirectory of the tree.** Called inside
+  `projects/agent-kit/tests`, `measure` answers `эпик-заведён (2 of 13)`, from the root `этап-идёт`;
+  the turn exit guard hands it the cwd of the hook input and names the epic branch as the next move.
+  **Address:** rules layer — the engine resolves the root by `git rev-parse --show-toplevel`.
+- **The plan check accepts an expected result `` `/…/` `` in backticks.** The engine reads it by the
+  form `line`, and five steps of the plan could never match a right output. **Address:** rules
+  layer — the plan check refuses a `line` form whose text is itself a `/…/` pattern.
+- **The number form does not trim leading spaces.** `wc -l` on macOS prints `       1`, and `= 1`
+  does not match. **Address:** rules layer — the engine trims the last line on both sides.
+- **A replacement of a step check counts only a typed message of the owner.** A menu answer does not
+  count, and neither does a message sent while the turn goes: it lies in the record as an attachment
+  `queued_command`, which the owner source does not read. Each such permission cost the owner two
+  extra moves. **Address:** rules layer — the owner source reads `queued_command` and menu answers.
+- **The turn exit guard holds a turn on a step that waits for the owner's typed word.** The engine
+  has no state «the step waits for the owner», and the refusal names a move impossible in that
+  state. **Address:** rules layer — a row of the area «turn» in the decision table and a release
+  case in the engine.
+- **The model has one fact `rule_loaded`, while the rules gate and the handover entry read different
+  sources.** The gate reads its marks file, the handover entry reads the record of the conversation,
+  and the rule of a move may differ from the one the entry waits for. **Address:** rules layer — the
+  table splits the fact in RT-3355.
+- **The work queue audit falls whole when the host cannot compare the last rollout with main.**
+  `tools/board-runs.mjs:deployLag` calls the compare API, the host answers HTTP 422 «this diff is
+  taking too long to generate», and `npm run check:board` stops with a stack before the lines about
+  task folders. **Address:** names of this tree — the lag is counted fail-open, as other host calls.
+- **A refusal of a composing hook now asks up to eight neighbours, to the depth of three.** The
+  conform mode runs about 4 min in parallel over 999 rows. **Address:** rules layer — RT-3355
+  reads the decision from the table instead of asking the neighbours.
+- **The conform mode checks a row against its hook, not a refusal against the rows.** Past the stop
+  threshold of the window the exam named a call the window refuses, and no row said so: the roles
+  found it by running the hooks. **Address:** rules layer — a reverse probe in RT-3355: the hook of
+  the named move is run in the state of each refusal.
+- **The assignment check went silent under the task runner.** The runner sets `FORCE_COLOR`, and
+  `tree-assignment.mjs --assigned` printed the epic number with colour codes; the queue was asked
+  about no epic, and a closed assignment passed. Only the push set, run by the runner, showed it.
+  Fixed in RT-3275: the number is printed as a string. **Address:** rules layer — a check that
+  prints a value for a shell caller prints a string, and its suite runs once with `FORCE_COLOR`.
+- **The two hooks of git refuse and are marked as helpers.** `pre-push.sh` and `commit-msg.sh` exit
+  with a refusal the table does not describe. **Address:** the owner's word — whether they enter the
+  table.
+
 ## Left unresolved
 
 - **A session that wrote nothing releases the turn, and so do the silent hosting and a lost menu.**

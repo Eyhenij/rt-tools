@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-push-tests.sh · df3811abcb2b · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-push-tests.sh · a48bda4d8425 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__terminal__run_in_terminal
 # rt-hook-timeout: 1800
 # Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/push-sign.sh, hooks/push-set.sh, hooks/git-guard-push-marks.sh
@@ -95,11 +95,16 @@ ${deny_tail_text}"
     exit 0
 }
 
+# The refusals of the shape below name a plain push as the fix, and that push is refused next while
+# the heavy steps of the tree have no green mark. So they name the run ahead before it.
+shape_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+shape_ahead=" Before that push run the heavy steps by \`bash ${shape_dir#"$PWD"/}/git-guard-push-ahead.sh\` (the Bash call with run_in_background) and push after their end: the push is refused until they have a green mark."
+
 # Commands the parse cannot read are refused when the text names a push: a shell reading its
 # commands from the input, `source` of a substitution, function calls that grow without bound. What
 # such a command runs is seen only when it runs, and a silent pass would let a push leave unchecked.
 if [ "$opaque" = true ]; then
-    push_deny "BLOCKED: the command names a push, and the guard cannot read what it runs — a shell reading commands from its input, \`source\` of a substitution, or function calls that grow without bound. Run the push as a separate plain command: \`git push <remote> <branch>\`."
+    push_deny "BLOCKED: the command names a push, and the guard cannot read what it runs — a shell reading commands from its input, \`source\` of a substitution, or function calls that grow without bound. Run the push as a separate plain command: \`git push <remote> <branch>\`.${shape_ahead}"
 fi
 
 # A branch switch in the same command is refused whole.
@@ -119,7 +124,7 @@ fi
 switched=false
 printf '%s\n' "$push_calls" | awk '$0 == "switch" { s = 1 } / real$/ && s { f = 1 } END { exit !f }' && switched=true
 if [ "$switched" = true ]; then
-    push_deny "BLOCKED: switching the branch and pushing by one command. The gate set runs on the tree that lies there at the minute the command is parsed — that is, on the FORMER branch, not the one that leaves for the hosting. A green set then reads as a check of what left, though it checked something else. Split the calls: switch first, then push by a separate command."
+    push_deny "BLOCKED: switching the branch and pushing by one command. The gate set runs on the tree that lies there at the minute the command is parsed — that is, on the FORMER branch, not the one that leaves for the hosting. A green set then reads as a check of what left, though it checked something else. Split the calls: switch first, then push by a separate command.${shape_ahead}"
 fi
 
 # Several pushes in one command, or a push inside a loop, are refused whole. The set runs once
@@ -131,7 +136,7 @@ printf '%s\n' "$push_calls" | grep -q '^loop .* real$' && looped=true
 several_refs=false
 printf '%s\n' "$push_calls" | grep -q ' several real$' && several_refs=true
 if [ "${pushes:-0}" -gt 1 ] || [ "$looped" = true ] || [ "$several_refs" = true ]; then
-    push_deny "BLOCKED: several pushes by one command. The gate set runs once per call, on the tree that lies there — every other branch leaves for the hosting unchecked. Push each branch by a separate call, after switching to it."
+    push_deny "BLOCKED: several pushes by one command. The gate set runs once per call, on the tree that lies there — every other branch leaves for the hosting unchecked. Push each branch by a separate call, after switching to it.${shape_ahead}"
 fi
 
 workdir="$(rt_hook_cwd)"
@@ -161,7 +166,7 @@ if [ -n "$moved" ] && [ -d "$moved" ]; then
     here_repo="$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)"
     [ -n "$moved_repo" ] && [ -n "$here_repo" ] && [ "$moved_repo" != "$here_repo" ] && exit 0
     if [ -n "$moved_root" ] && [ -n "$here_root" ] && [ "$moved_root" != "$here_root" ]; then
-        push_deny "BLOCKED: the call goes from a second working copy — «${moved_root}», while the session stands in «${here_root}». The gate set runs where the session was started, not where the call was made: someone else's uncommitted work refuses it, and the contribution actually leaving passes unchecked. The second copy is for reading; bring the result of the merge back and send from the copy the session stands in."
+        push_deny "BLOCKED: the call goes from a second working copy — «${moved_root}», while the session stands in «${here_root}». The gate set runs where the session was started, not where the call was made: someone else's uncommitted work refuses it, and the contribution actually leaving passes unchecked. The second copy is for reading; bring the result of the merge back and send from the copy the session stands in.${shape_ahead}"
     fi
 fi
 

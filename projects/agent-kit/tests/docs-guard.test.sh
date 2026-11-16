@@ -138,4 +138,26 @@ out="$(input_cmd 'git commit -m x' Bash "$BARE" | "$HOOKS/docs-guard.sh" 2>/dev/
 [ -z "$out" ] && report "вне репозитория пропускается" PASS PASS || report "вне репозитория пропускается" deny PASS
 rm -rf "$BARE"
 
+# --- коммит с путями после «--» ---------------------------------------------------------------
+# Такой коммит несёт названные пути, а не весь индекс: чужое в индексе судит коммит, который его
+# понесёт.
+stage libs/common/proto/proto/x/v1/x.proto docs/tasks/RT-7-probe/plan.md
+g "коммит одной папки не судится по чужому в индексе" 'git add docs/tasks/RT-7-probe && git commit -m "docs: папка" -- docs/tasks/RT-7-probe' PASS
+g "тот же индекс без путей отбивается" 'git commit -m "docs: папка"' deny
+
+# --- ход, названный отказом, спрошен у соседних проверок ---------------------------------------
+# Отказ называет правку документа, и её держит гейт, пока правило файла не загружено.
+mkdir -p "$REPO/.claude/skills/spec-driven"
+printf -- '---\nname: spec-driven\nkind: rule\n---\n' > "$REPO/.claude/skills/spec-driven/SKILL.md"
+mkdir -p "$REPO/docs/specs/x" && printf '# x\n' > "$REPO/docs/specs/x/spec.md"
+stage libs/common/proto/proto/x/v1/x.proto
+gate_session_reset
+expect_reason "правку документа держит гейт — отказ называет правило" docs-guard.sh \
+    "$(input_cmd 'git commit -m "feat(proto): x"' Bash "$REPO")" 'load the rule «spec-driven» by the tool Skill first'
+gate_session_load spec-driven
+expect_no_reason "правило загружено — ход назван один" docs-guard.sh \
+    "$(input_cmd 'git commit -m "feat(proto): x"' Bash "$REPO")" 'held by the rules gate'
+gate_session_cleanup
+unset TMPDIR
+
 suite_result "гард документов"

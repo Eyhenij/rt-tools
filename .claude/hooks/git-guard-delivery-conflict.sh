@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-delivery-conflict.sh · 2f998e969d26 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-delivery-conflict.sh · 62a0b1fb6147 · правится надстройкой, не здесь
 # A conflicting PR of one's own, for the delivery guard: while at least one handed-over piece of
 # work is marked conflicting, a new one is not taken.
 #
@@ -75,8 +75,11 @@ rt_delivery_note_out() {
 rt_delivery_conflict() {
     # The sign of taking work is read from the text of the command and stands first: the query goes
     # to the network, and paying for it on every shell command is not allowed.
-    taking=''
-    case "$cmd" in
+    #
+    # A caller whose own refusal is about to name new work passes what that work is: the push into a
+    # merged branch names a new task, and that move is refused here while a conflict stands.
+    taking="${1:-}"
+    [ -n "$taking" ] || case "$cmd" in
         *"${task_new}"*) taking='creating a task' ;;
     esac
     # Moving the column is judged together with the name of the work column: a move into review and
@@ -139,5 +142,5 @@ ${listed}
 
 The conflict arrives by someone else's merge, without a single action by the author of the request: it stands until it is caught up with. New work does not fix it — it adds one more branch to the queue, growing from the same main and falling behind the same way.
 
-There is one move from here: pull the main branch, merge it into the named branch, resolve the conflict and send it — and only then take new work. What is fixed by what — the pattern git-workflow-freshness."
+There is one move from here: pull the main branch, merge it into the named branch, resolve the conflict and send it — the push there is refused until the heavy steps have a green mark, so run them first by \`${ahead_cmd:-bash git-guard-push-ahead.sh}\` (the Bash call with run_in_background) and push after its end — and only then take new work. What is fixed by what — the pattern git-workflow-freshness."
 }

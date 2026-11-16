@@ -10,8 +10,9 @@
 # one move named, the next step of the scenario. This file hands the engine the input and turns its
 # verdict into the answer of the hook.
 #
-# Two cases the description cannot express live here: a role session with no edit tool ends with its
-# report (`turn-exit-role.sh`), and an engine that fails, runs past its limit of 75 seconds or cannot
+# Three cases the description cannot express live here: a role session with no edit tool ends with
+# its report (`turn-exit-role.sh`), a window past the stop threshold of `window-fill-guard.sh` ends
+# with the handover, and an engine that fails, runs past its limit of 75 seconds or cannot
 # be called releases the turn with the outcome «движок упал» written to the journal; the next turn
 # starts with that line.
 #
@@ -54,6 +55,15 @@ journal() {
     mkdir -p "$journal_dir" 2>/dev/null || return 0
     printf '%s\t%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$1" >> "$journal_dir/turn-exit.log" 2>/dev/null
 }
+
+# A window past its stop threshold: the window guard refuses every next step of work and lets only
+# the closing through — the progress, the handover, a rule, a question. Naming the next step here
+# would name a move that guard denies, so the turn is released, and the reason goes to the journal.
+sid="$(printf '%s' "$input" | jq -r '.session_id // "unknown"' 2>/dev/null)"
+if [ -f "${TMPDIR:-/tmp}/claude-window-stop/${sid}" ]; then
+    journal "окно за порогом: ход отпущен к передаче"
+    exit 0
+fi
 
 engine="${RT_FLOW_ENGINE:-}"
 [ -n "$engine" ] || for candidate in "$rt_hooks_dir/../checks/task-flow-script.mjs" "${copy_top:-$root}/tools/task-flow-script.mjs" "$root/tools/task-flow-script.mjs"; do

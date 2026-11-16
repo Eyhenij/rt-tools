@@ -167,6 +167,22 @@ case "$cmd" in
 esac
 
 changes="$(printf '%s\n' "$changes" | grep -v '^[[:space:]]*$')"
+
+# `git commit -- <paths>` commits those paths alone, whatever else the index holds: the guard counts
+# the set that travels, and a staged file left out of this commit is judged by the commit that takes
+# it. The paths are given from the directory of the call, the list of edits from the root.
+spec_paths="$(printf '%s\n' "$cmd" | sed -nE 's/.*git[[:space:]]+commit[^;&|]*[[:space:]]--[[:space:]]+([^;&|]+).*/\1/p' | head -1)"
+if [ -n "$spec_paths" ]; then
+    spec_prefix="$(git rev-parse --show-prefix 2>/dev/null)"
+    kept=''
+    for spec in $spec_paths; do
+        spec="$(printf '%s' "$spec" | tr -d "\"'")"
+        spec="${spec_prefix}${spec%/}"
+        kept="${kept}$(printf '%s\n' "$changes" | awk -F'\t' -v s="$spec" '{ for (i = 2; i <= NF; i++) if ($i == s || index($i, s "/") == 1) { print; next } }')
+"
+    done
+    changes="$(printf '%s' "$kept" | grep -v '^[[:space:]]*$' | sort -u)"
+fi
 [ -z "$changes" ] && exit 0
 
 # The paths of the commit without the statuses. A rename comes as three fields — we take both sides.
@@ -188,6 +204,18 @@ content_of() {
 }
 
 problems=''
+# The first document the refusal awaits: the edit of it is the move the refusal names, and a
+# neighbouring guard may hold that edit — the exam, the rule of the file, the handover entry.
+first_doc=''
+docs_first() {
+    [ -n "$first_doc" ] || return 0
+    # shellcheck disable=SC1090
+    [ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
+    command -v rt_move_first >/dev/null 2>&1 || return 0
+    case "$first_doc" in /*) ;; *) first_doc="$(git rev-parse --show-toplevel 2>/dev/null)/$first_doc" ;; esac
+    df_first="$(rt_move_first Edit "$(jq -cn --arg f "$first_doc" '{file_path:$f,old_string:"",new_string:""}')")"
+    [ -n "$df_first" ] && printf ' %s' "$df_first"
+}
 add() { problems="${problems}
   • $1"; }
 
@@ -213,6 +241,7 @@ for rule in $(printf '%s\n' "$paths" | grep -E '/SKILL\.md$'); do
 
     if [ "$(statements_of "$rule")" != "$(git show "HEAD:$rule" 2>/dev/null | awk "$STATEMENTS")" ]; then
         add "the statements of \`$rule\` are edited without the companion — add \`$companion\` to the commit"
+        [ -n "$first_doc" ] || first_doc="$companion"
     fi
 done
 
@@ -239,6 +268,7 @@ if rt_needs rt_docs_pair_for docs-guard; then
         # The pair counts as arrived if at least one file of the commit fits the pattern.
         printf '%s\n' "$paths" | grep -qE "$want" && continue
         add "\`$file\` is edited without its document — the same commit awaits \`$want\`"
+        [ -n "$first_doc" ] || first_doc="$(git ls-files -co --exclude-standard 2>/dev/null | grep -E "^${want}\$" | head -1)"
     done <<EOF
 $paths
 EOF
@@ -306,14 +336,14 @@ fi
 
 for root in $need_readme; do
     [ -d "$root" ] || continue   # the lib was deleted whole — there is nothing to edit in it
-    has_path "$root/README.md" || add "the content of the lib \`$root\` changed without an edit of \`$root/README.md\`"
+    has_path "$root/README.md" || { add "the content of the lib \`$root\` changed without an edit of \`$root/README.md\`"; [ -n "$first_doc" ] || first_doc="$root/README.md"; }
 done
 
 if [ -n "$problems" ]; then
     decide deny "BLOCKED: the commit edits code but not the document that describes it.
 ${problems}
 
-Text is edited in the same branch as the code: a document that has drifted from the tree looks like a current reference and leads the next reader astray. If an edit of the document really is not needed here — name the reason by the line \`Docs-skip: <reason>\` in the commit body, it stays in the history."
+Text is edited in the same branch as the code: a document that has drifted from the tree looks like a current reference and leads the next reader astray. If an edit of the document really is not needed here — name the reason by the line \`Docs-skip: <reason>\` in the commit body, it stays in the history.$(docs_first)"
 fi
 
 # ── 4. The laws ───────────────────────────────────────────────────────────────

@@ -185,6 +185,21 @@ mkdir -p "$(dirname "$F6")"
 printf '({})\n' > "$F6"
 d "protect: SC-AK-1530 — план, добавленный раньше движка, со строкой «(правится)» на этот путь — правка проходит" "$(edit_input Edit "$F6" '({})' '({ })' "$R6")" PASS
 
+# --- ход, названный отказом, спрошен у соседних проверок ----------------------------------------
+# Отказ записи оболочкой называет правку хода работы, а её держит гейт, пока правило задач не
+# загружено: слово о правиле стоит перед вердиктом движка.
+mkdir -p "$R/.claude/skills/task-flow"
+printf -- '---\nname: task-flow\nkind: rule\n---\n' > "$R/.claude/skills/task-flow/SKILL.md"
+gate_session_reset
+CLAUDE_PROJECT_DIR="$R" expect_reason "правку хода работы держит гейт — отказ называет правило" "$GUARD" \
+    "$(shell_input "printf 'x' >> docs/tasks/$B/progress.md" "$R")" 'load the rule «task-flow» by the tool Skill first. Then: the progress'
+gate_session_load task-flow
+CLAUDE_PROJECT_DIR="$R" expect_no_reason "правило загружено — назван один вердикт" "$GUARD" \
+    "$(shell_input "printf 'x' >> docs/tasks/$B/progress.md" "$R")" 'held by the rules gate'
+gate_session_cleanup
+unset TMPDIR
+rm -rf "$R/.claude/skills/task-flow"
+
 # --- чужие правки страж не судит ---------------------------------------------------------------
 d "обычный файл правится без стража" "$(edit_input Edit "$R/README.md" 'a' 'b' "$R")" PASS
 d "обычная команда проходит" "$(shell_input "git status --short" "$R")" PASS

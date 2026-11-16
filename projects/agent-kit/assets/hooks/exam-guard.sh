@@ -81,6 +81,24 @@ case "$tool" in
     Edit | Write | MultiEdit | mcp__webstorm__create_new_file)
         target="$(printf '%s' "$input" | jq -r '.tool_input.file_path // .tool_input.pathInProject // empty' 2>/dev/null)"
         [ -n "$target" ] && [ "$(printf '%s\n' "$target" | rt_exam_free_paths)" = "yes" ] && exit 0
+        # A window past its stop threshold: the window guard lets through only the closing — the
+        # progress and the handover — and refuses the examiner role itself. Holding the progress
+        # for an exam then names a move the window guard denies, and the session cannot close.
+        # The mark is written by the window guard on its first refusal; before it the window guard
+        # is asked itself, about the call of the examiner, on this same input.
+        case "$target" in
+            */docs/tasks/*/progress.md | docs/tasks/*/progress.md)
+                exam_sid="$(printf '%s' "$input" | jq -r '.session_id // "unknown"' 2>/dev/null)"
+                [ -f "${TMPDIR:-/tmp}/claude-window-stop/${exam_sid}" ] && exit 0
+                exam_wf="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/window-fill-guard.sh"
+                if [ -x "$exam_wf" ] && printf '%s' "$input" \
+                    | jq -c '.hook_event_name = "PreToolUse" | .tool_name = "Agent" | .tool_input = {subagent_type:"strict-teacher",description:"exam",prompt:"exam"}' 2>/dev/null \
+                    | env -u RT_HOOK_INPUT -u RT_HOOK_PARSED -u RT_HOOK_TOOL -u RT_HOOK_CMD -u RT_HOOK_FILE -u RT_HOOK_CWD "$exam_wf" 2>/dev/null \
+                    | grep -q '"permissionDecision": *"deny"'; then
+                    exit 0
+                fi
+                ;;
+        esac
         ;;
     Bash | mcp__webstorm__execute_terminal_command)
         cmd="$(rt_hook_cmd)"
@@ -135,8 +153,14 @@ deny() {
     fi
 
     reason="$1"
+    # The named move is the call of the exam role, and the window fill refuses it past its stop
+    # threshold: the neighbours are asked about it, and their move is named first.
+    if command -v rt_move_first >/dev/null 2>&1; then
+        eg_first="$(RT_HOOK_INPUT="$input" rt_move_first Agent '{"subagent_type":"strict-teacher","description":"exam","prompt":"exam"}')"
+        [ -n "$eg_first" ] && reason="$reason $eg_first"
+    fi
     tail_text="$(rt_deny_tail "$2")"
-    [ -n "$tail_text" ] && reason="$1 ${tail_text}"
+    [ -n "$tail_text" ] && reason="$reason ${tail_text}"
     jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
         || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"%s"}}\n' "$reason"
     exit 0

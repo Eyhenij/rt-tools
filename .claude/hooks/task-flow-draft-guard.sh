@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/task-flow-draft-guard.sh · 58027516ce83 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/task-flow-draft-guard.sh · 73a31bb2043c · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/task-flow-context.sh, hooks/task-flow-guard.sh, hooks/deny-tail.sh
 # PreToolUse guard for Edit|Write|MultiEdit: no code is written before the product agreement.
@@ -53,6 +53,14 @@ plan="$RT_TF_PLAN"
 
 deny() { rt_task_flow_deny "$@"; }
 
+# What a neighbouring guard wants before the edit a refusal names: the exam, the rule of the file,
+# the handover entry. Empty when the edit is open. Parameters: the tool and the file.
+first() {
+    command -v rt_move_first >/dev/null 2>&1 || return 0
+    rt_tf_first="$(rt_move_first "$1" "$(jq -cn --arg f "$2" '{file_path:$f,old_string:"",new_string:"",content:""}')")"
+    [ -n "$rt_tf_first" ] && printf ' %s' "$rt_tf_first"
+}
+
 # No plan — that is another guard's demand, and the refusal about it is printed by the progress
 # guard. Work with a taken-apart folder leaves here too: by this minute the plan has been removed
 # from disk on purpose.
@@ -75,7 +83,7 @@ draft="$(sed -nE 's/^\*\*(Draft|Драфт):\*\*[[:space:]]*`([^`]*)`.*/\2/p' "$
 [ -z "$draft" ] && draft="$(sed -nE 's/^\*\*(Spec|Спек):\*\*[[:space:]]*`([^`]*)`.*/\2/p' "$plan" 2>/dev/null | head -1)"
 
 if [ -z "$draft" ]; then
-    deny "BLOCKED by task-flow: no product agreement is named in '${tasks_dir}/${branch}/plan.md'. Name it by one of two lines: '**Draft:** \`path\`' — a separate document in docs/specs/<domain>/proposed/<feature>/, or '**Spec:** \`path\`' — the domain spec the agreement is written into directly. The rule is task-flow." \
+    deny "BLOCKED by task-flow: no product agreement is named in '${tasks_dir}/${branch}/plan.md'. Name it by one of two lines: '**Draft:** \`path\`' — a separate document in docs/specs/<domain>/proposed/<feature>/, or '**Spec:** \`path\`' — the domain spec the agreement is written into directly.$(first Edit "$plan") The rule is task-flow." \
         "the line '**Behaviour:** unchanged — <the owner reason>' in the plan; an empty reason is not accepted"
 fi
 
@@ -118,4 +126,11 @@ case "$draft" in
         ;;
 esac
 
-deny "BLOCKED by task-flow: the plan names the agreement '${draft}', and it is neither on disk nor in the history of the branch. Create it from the sample (docs/specs/_template) or fix the path in '${tasks_dir}/${branch}/plan.md'. The rule is task-flow."
+# The file the creation writes: a named directory gets its spec inside.
+case "$draft_path" in
+    */) agreement_file="${draft_path}spec.md" ;;
+    *.md) agreement_file="$draft_path" ;;
+    *) agreement_file="$draft_path/spec.md" ;;
+esac
+
+deny "BLOCKED by task-flow: the plan names the agreement '${draft}', and it is neither on disk nor in the history of the branch. Create it from the sample (docs/specs/_template) or fix the path in '${tasks_dir}/${branch}/plan.md'.$(first Write "$agreement_file") The rule is task-flow."
