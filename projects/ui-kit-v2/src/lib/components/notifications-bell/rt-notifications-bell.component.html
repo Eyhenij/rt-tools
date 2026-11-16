@@ -1,5 +1,5 @@
 <button rtBlock="rt-notifications-bell" type="button" qa-dataid="header-bell" [attr.aria-label]="ariaLabel()" (click)="onClick()">
-    <rt-icon rtElem="icon" name="bell" size="sm" />
+    <rt-icon rtElem="icon" size="sm" [name]="icon()" />
 
     @if (unread()) {
         <span rtElem="marker" role="img" qa-dataid="header-bell-marker" [attr.aria-label]="unreadLabel()"></span>

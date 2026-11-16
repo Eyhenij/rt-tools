@@ -15,4 +15,4 @@ tree, or the tree holds what the spec is silent about.
 - **The title of the panel comes from an input of the workspace.** — `projects/ui-kit-v2/src/lib/components/workspace/rt-workspace.component.ts:asideTitle`; scenarios `SC-UKV-1251`, `SC-UKV-1252`
 - **A details template of tabs is laid out as tabs of a side panel.** — `projects/ui-kit-v2/src/lib/components/workspace/rt-workspace.component.ts:asideContentLayout`; scenarios `SC-UKV-1251`, `SC-UKV-1254`
 - **The panel over the window closes by the arrow back, by the button «Close», by a press on the dimmed background and by the key Esc.** — `projects/ui-kit-v2/src/lib/components/workspace/rt-workspace-aside-overlay.component.ts:close`; scenarios `SC-UKV-1244`, `SC-UKV-1245`, `SC-UKV-1253`
-- **At a place not wider than the threshold the details panel opens as before.** — `projects/ui-kit-v2/src/lib/components/workspace/rt-workspace.component.ts:asideOverlay`; scenario `SC-UKV-1242`
+- **At a place not wider than the threshold the details panel opens over the window as well.** — `projects/ui-kit-v2/src/lib/components/workspace/rt-workspace.component.ts:asideOverlay`; scenarios `SC-UKV-1242`, `SC-UKV-1320`

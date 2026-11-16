@@ -470,15 +470,17 @@
             </div>
         </ng-template>
 
-        <ng-content select="[rtHeaderBell]" />
+        <div rtElem="end" qa-dataid="header-end">
+            <ng-content select="[rtHeaderBell]" />
 
-        @if (user(); as u) {
-            <rt-page-header-user
-                [name]="u.name"
-                [avatar]="userAvatar()"
-                [menu]="userMenu()"
-                [backdropClass]="userMenuBackdropClass()"
-                (userClick)="onUserClick()" />
-        }
+            @if (user(); as u) {
+                <rt-page-header-user
+                    [name]="u.name"
+                    [avatar]="userAvatar()"
+                    [menu]="userMenu()"
+                    [backdropClass]="userMenuBackdropClass()"
+                    (userClick)="onUserClick()" />
+            }
+        </div>
     </ng-container>
 }
