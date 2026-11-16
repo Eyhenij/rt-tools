@@ -30,6 +30,13 @@ Given the width of the window is narrow
 When the owner presses the button of the sections in the top row
 Then a list of the same four sections opens, and a transition by it leads into a section
 
+### SC-MB-433 — on a narrow screen the profile is one icon, and its button keeps the name
+
+Given the width of the window is narrow and the owner entered
+When they look at the right end of the top row
+Then the profile is shown by the user icon alone, without the name, and the button is named by the
+name of whoever entered; a press on it still opens the popup of the profile
+
 ### SC-MB-145 — a press on the profile opens the popup, it does not exit
 
 Given the owner entered
