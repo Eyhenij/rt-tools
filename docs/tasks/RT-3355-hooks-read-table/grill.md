@@ -78,6 +78,9 @@ The four answers took the recommended option; the remaining questions are closed
 
 - **Behaviour of the application: unchanged.** The edit touches only the rules package and its
   layout, no `apps/**` or `libs/**`.
+
+**Behaviour:** unchanged — the edit moves the decisions of the package hooks into one decider; no
+application code is touched, and every check keeps the decisions it makes today.
 - **No law is edited.** The spec of the decision table and the hook specs change; the package rules
   are edited only where they name a hook mechanism that goes away.
 - **What the task does not do:** no check starts to allow or forbid anything it decides
