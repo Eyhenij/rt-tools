@@ -1,3 +1,9 @@
+# [0.47.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.46.0...rt-ui-kit-v2%400.47.0) (2026-11-16)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** сведения rt-workspace в одной колонке открываются окном поверх страницы ([d28d00f](https://github.com/Eyhenij/rt-tools/commit/d28d00fd0126221743685b61442e47ba2c0a51c1))
+
 # [0.46.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.45.0...rt-ui-kit-v2%400.46.0) (2026-11-15)
 
 ### Bug Fixes

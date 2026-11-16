@@ -15,7 +15,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/workspace/rt-workspace-breakpoin
 
 Given the workspace has the threshold 600 and the place is 375 wide
 When the details panel is opened
-Then the workspace is one column, and the details open in place, not over the window
+Then the workspace is one column, and the details open over the window as a side panel with its header, the button «Close» and a dimmed background
 
 Covered: `projects/ui-kit-v2/src/lib/components/workspace/rt-workspace-breakpoint.spec.ts`.
 
@@ -90,3 +90,11 @@ When the panel is laid out as tabs
 Then its content zone has no inset above and below, and the strip of tabs keeps the inset at the sides
 
 Covered: `projects/ui-kit-v2/src/lib/components/aside/rt-aside-tabs.styles.spec.ts`.
+
+### SC-UKV-1320 — in one column the arrow and «Close» return to the record
+
+Given the workspace has the threshold 600, the place is 375 wide and a record is open
+When the details are opened over the window and closed by the arrow back, then opened again and closed by «Close»
+Then the workspace reports the panel as closed each time, and the record stays open in the centre
+
+Covered: `projects/ui-kit-v2/src/lib/components/workspace/rt-workspace-breakpoint.spec.ts`.
