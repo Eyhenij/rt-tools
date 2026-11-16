@@ -373,7 +373,7 @@ export class RtAiChatComponent {
         });
     }
 
-    protected onFeedback(message: IRtAiChat.Message, feedback: Exclude<IRtAiChat.Feedback, null>): void {
+    protected onFeedback(message: IRtAiChat.AssistantMessage, feedback: Exclude<IRtAiChat.Feedback, null>): void {
         this.feedbackChange.emit({ messageId: message.id, feedback: message.feedback === feedback ? null : feedback });
     }
 

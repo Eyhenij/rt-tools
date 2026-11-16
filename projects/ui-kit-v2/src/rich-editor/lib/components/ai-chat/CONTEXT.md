@@ -20,7 +20,7 @@
     (deleteThread)="confirmDelete($event)"
     (feedbackChange)="rate($event)"
     (closed)="close()">
-    <ng-template let-message rtAiChatMessageExtra>…графики ответа…</ng-template>
+    <ng-template let-message rtAiChatMessageExtra>…подвал ответа приложения…</ng-template>
 </rt-ai-chat>
 ```
 
@@ -64,11 +64,17 @@
 - Копирование — внутренний `rt-ai-chat-copy` (папка `copy/`): у вопроса строкой под пузырём, у
   ответа первым в строке оценки. Состояние «скопировано» своё у каждой кнопки, приём —
   `rt-copy-value`: CDK `Clipboard`, `check` и `uiCopied` на 2000 мс. Подписи — `uiCopy`, `uiCopied`
-  кита, своих `ai*` нет. Вопрос копирует `message.text` как есть. Ответ — видимый текст без знаков
-  разметки: `plainText` через `markdownToPlainText` кита, по тому же дереву `parseMarkdown`, что
-  рисует `rt-markdown-text`. Ход работы, вложения `extra` и строка действий в буфер не попадают —
-  их нет в `message.text`. `innerText` отображённого текста не взят: в jsdom спек его нет, и
-  проверялась бы подмена, а не настоящий путь. `copyable` выключает обе.
+  кита, своих `ai*` нет. Вопрос копирует `message.text` как есть. Ответ — видимый текст блоков:
+  `blocksToPlainText` склеивает `markdown` через `markdownToPlainText` кита и текст `notice`, блоки
+  чужих типов пропускает — их текст знает только отрисовщик приложения. Ход работы, вложения
+  `extra` и строка действий в буфер не попадают. `innerText` отображённого текста не взят: в jsdom
+  его нет, и проверялась бы подмена, а не настоящий путь. `copyable` выключает обе.
+- Сообщение — `UserMessage | AssistantMessage`: у вопроса строка `text`, у ответа массив `blocks`.
+  Блоки рисует внутренний `rt-ai-chat-blocks` (папка `blocks/`): `markdown` — `rt-markdown-text`,
+  `notice` — `rt-message`. Остальные типы рисуют отрисовщики из `RT_AI_CHAT_BLOCK_RENDERERS`;
+  приложение регистрирует их `provideRtAiChatBlock(type, component)`, компонент получает вход
+  `block`. Блок без отрисовщика — пунктирная заглушка с подписью `aiBlockUnsupported` и именем типа.
+  Выбор вида — чистая `toBlockViews`: объединение с `type: string` в шаблоне не сужается.
 - `headerIconPreset="material"` ставит на `<header>` признак `data-rt-icon-preset='material'`
   (`RT_ICON_PRESET_ATTRIBUTE`): значки шапки — назад, знак ассистента в заголовке, полный экран,
   беседы, новая беседа, закрыть — рисуются материальным набором, токены набора оформления не

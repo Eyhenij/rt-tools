@@ -20,15 +20,10 @@ import { BooleanInput } from '@angular/cdk/coercion';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import {
-    markdownToPlainText,
-    RT_KIT_LABELS,
-    RtAiRunStatusComponent,
-    RtIconButtonComponent,
-    RtMarkdownTextComponent,
-    TRtKitLabelMap,
-} from '@rt-tools/ui-kit-v2';
+import { RT_KIT_LABELS, RtAiRunStatusComponent, RtIconButtonComponent, TRtKitLabelMap } from '@rt-tools/ui-kit-v2';
 
+import { RtAiChatBlocksComponent } from '../blocks/rt-ai-chat-blocks.component';
+import { blocksToPlainText } from '../blocks/rt-ai-chat-blocks.logic';
 import { RtAiChatCopyComponent } from '../copy/rt-ai-chat-copy.component';
 import { IRtAiChat } from '../rt-ai-chat.model';
 
@@ -51,10 +46,10 @@ const BEM_BLOCK: string = 'rt-ai-chat-answer';
         // standalone components / directives
         BlockDirective,
         ElemDirective,
+        RtAiChatBlocksComponent,
         RtAiChatCopyComponent,
         RtAiRunStatusComponent,
         RtIconButtonComponent,
-        RtMarkdownTextComponent,
     ],
     host: {
         class: BEM_BLOCK,
@@ -65,13 +60,13 @@ const BEM_BLOCK: string = 'rt-ai-chat-answer';
 export class RtAiChatAnswerComponent {
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
-    /** Текст дописан: строка действий с копированием и оценкой. */
-    protected readonly isWritten: Signal<boolean> = computed((): boolean => !!this.message().text && !this.message().streaming);
+    /** Ответ дописан: есть хотя бы один блок, и поток кончился — строка действий с копированием и оценкой. */
+    protected readonly isWritten: Signal<boolean> = computed((): boolean => this.message().blocks.length > 0 && !this.message().streaming);
 
-    /** Что копирует кнопка: видимый текст ответа без знаков разметки — без хода работы и вложений. */
-    protected readonly plainText: Signal<string> = computed((): string => markdownToPlainText(this.message().text));
+    /** Что копирует кнопка: видимый текст блоков без знаков разметки — без хода работы и вложений. */
+    protected readonly plainText: Signal<string> = computed((): string => blocksToPlainText(this.message().blocks));
 
-    public readonly message: InputSignal<IRtAiChat.Message> = input.required<IRtAiChat.Message>();
+    public readonly message: InputSignal<IRtAiChat.AssistantMessage> = input.required<IRtAiChat.AssistantMessage>();
 
     /** Шаблон вложений ответа; `null` — вложений нет. */
     public readonly extra: InputSignal<TemplateRef<IRtAiChat.ExtraContext> | null> = input<TemplateRef<IRtAiChat.ExtraContext> | null>(

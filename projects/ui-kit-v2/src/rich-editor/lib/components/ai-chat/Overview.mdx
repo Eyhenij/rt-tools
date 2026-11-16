@@ -98,4 +98,19 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Шаблоны
 
-- `ng-template[rtAiChatMessageExtra]` — вложения под текстом ответа; получает сообщение.
+- `ng-template[rtAiChatMessageExtra]` — вложения под блоками ответа; получает сообщение ответа.
+
+## Блоки ответа
+
+Ответ — `IRtAiChat.AssistantMessage` с массивом `blocks`, вопрос — `IRtAiChat.UserMessage` со
+строкой `text`. Кит сам рисует два типа блока:
+
+| тип        | поля               | что рисуется                       |
+| ---------- | ------------------ | ---------------------------------- |
+| `markdown` | `text`             | `rt-markdown-text`                 |
+| `notice`   | `severity`, `text` | `rt-message` этой severity         |
+
+Остальные типы рисует отрисовщик приложения: `provideRtAiChatBlock('chart', MyChartBlockComponent)`
+в провайдерах, компонент получает блок во вход `block`. Блок без отрисовщика показан пунктирной
+заглушкой «The “chart” block is not supported» — пропуск спрятал бы забытую регистрацию. Копирование
+ответа берёт текст `markdown` и `notice`, блоки чужих типов в буфер не попадают.

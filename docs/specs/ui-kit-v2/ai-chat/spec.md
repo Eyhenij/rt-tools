@@ -1,6 +1,6 @@
 # The assistant chat
 
-**Status:** in force · **Revision:** 2026-10-09 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-15 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the run status, the value with a copy button, the prompt suggestion, the AI prompt input with the usage ring, the thread list and the markdown text of the kit
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
@@ -17,7 +17,10 @@ conversations. Every application repeats the same screen, and every copy drifts 
 ## Terminology
 
 - **The question** — a message the person sent.
-- **The answer** — a message of the assistant: the run line, the text, the attachments, the rating.
+- **The answer** — a message of the assistant: the run line, the blocks, the attachments, the rating.
+- **The block** — one part of an answer: markdown text, a notice, or a part of another type the
+  consumer draws with a renderer of its own.
+- **The renderer** — a component the consumer registers for a block type the kit does not draw.
 - **The run** — the progress of one answer: running, done, stopped, failed, with optional steps.
 - **The attachments** — what the application draws under the answer text: a chart, a table.
 - **The conversation** — a thread of questions and answers the person can return to.
@@ -28,7 +31,8 @@ conversations. Every application repeats the same screen, and every copy drifts 
 | In the domain         | On the screen                                           |
 | --------------------- | ------------------------------------------------------- |
 | The question          | the bubble on the right with «You»                      |
-| The answer            | the text on the left with the run line above it         |
+| The answer            | the blocks on the left with the run line above them     |
+| A block without a renderer | a dashed plate «The “chart” block is not supported» |
 | The rating            | the buttons «Good answer» and «Bad answer»              |
 | Copying a message     | the button «Copy», «Copied» after the press             |
 | The conversations     | the button and the page «Conversations»                 |
@@ -42,13 +46,19 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **An empty conversation shows the greeting and the suggestion cards, and a pressed card sends its text.**
 
-- **A question stands on the right in a bubble with «You», an answer on the left as markdown text.**
+- **A question stands on the right in a bubble with «You», an answer on the left as its blocks.**
 
-- **The run line stands above the answer text, and its steps open for one answer at a time.**
+- **The blocks of an answer stand in their order: a markdown block as text, a notice as `rt-message` of its severity.**
 
-- **The rating appears once the answer text is written, and pressing the chosen rating again removes it.**
+- **A block of a type the kit does not draw is drawn by the renderer the consumer registered for that type.**
 
-- **A written answer has «Copy» first in its rating row, and the press puts the answer text as the reader sees it, without markdown signs, into the clipboard and shows «Copied» for two seconds.**
+- **A block with no renderer shows a plate with its type name, and the blocks around it stay in place.**
+
+- **The run line stands above the answer blocks, and its steps open for one answer at a time.**
+
+- **The rating appears once the answer has a block and is no longer written, and pressing the chosen rating again removes it.**
+
+- **A written answer has «Copy» first in its rating row, and the press copies the visible text of its blocks without markdown signs or unknown blocks and shows «Copied» for two seconds.**
 
 - **A question has «Copy» in a row under its bubble at the bubble's side, it copies the question text, and the consumer can turn both copy buttons off.**
 
@@ -105,7 +115,8 @@ conversations. Every application repeats the same screen, and every copy drifts 
 - The protocol of the model: the panel gets ready state, it does not read a stream of events.
 - Asking for confirmation before deleting a conversation: the panel reports the request, the
   application decides.
-- Charts: the panel does not know what the attachments are.
+- Drawing a chart, a table and other heavy blocks inside the rich-editor entry: their renderers are
+  registered by the consumer, so a heavy dependency stays out of the entry.
 
 ## Contract
 
@@ -128,7 +139,7 @@ leave through outputs.
 | loading       | a spinner until the first message arrives                  |
 | thinking      | the question, the running run line, the composer with Stop |
 | writing       | the answer text growing under the running run line         |
-| answered      | the text, the done run line, «Copy» and the rating         |
+| answered      | the blocks, the done run line, «Copy» and the rating       |
 | run error     | the error message, the reference number, «Ask again»       |
 | conversations | the search and the list in place of the feed               |
 | full screen   | the conversations as a column, the feed beside them        |
@@ -157,8 +168,14 @@ Not applicable.
 
 - **The organism lives in the rich-editor entry.** It holds the message composer, which pulls the
   rich editor library; the main entry does not import it.
-- **The attachments come as a template.** The kit draws the answer text; charts and other
-  attachments are the application's, and the kit does not know them.
+- **The attachments come as a template.** The kit draws the answer blocks; what stands under them
+  is the application's, and the kit does not know it.
+- **Heavy blocks are drawn by registered renderers, not by a switch inside the kit.** A chart
+  imported by the rich-editor entry would make its library a dependency of every consumer of the
+  editor. The type of a block is an open union: the kit knows `markdown` and `notice`, the rest
+  arrive by the renderer token.
+- **A block without a renderer is shown, not skipped.** A skipped block hides a forgotten
+  registration from the developer; the plate names the type.
 - **The protocol stays in the application.** The kit gets a list of messages with a run state, not
   events of a model.
 - **Deleting is a row action of the thread list.** A nested button inside the row button is not
@@ -185,3 +202,4 @@ None.
 - 2026-10-28 — the task RT-2960 of the epic RT-2958: a swipe at the edge of the feed and of the list of conversations stays in the chat.
 - 2026-10-28 — the task RT-2962 of the epic RT-2958: the row actions of a conversation are visible on a touch screen.
 - 2026-10-28 — the task RT-2964 of the epic RT-2958: the composer of the assistant with the row of actions and the usage ring.
+- 2026-11-15 — the task RT-3334 of the epic RT-3346: the answer is a list of blocks — markdown and notice drawn by the kit, other types by registered renderers, a plate for a type without one.

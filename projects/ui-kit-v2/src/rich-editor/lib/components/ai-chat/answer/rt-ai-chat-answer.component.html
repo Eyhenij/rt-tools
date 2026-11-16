@@ -8,8 +8,8 @@
             [steps]="run.steps ?? []"
             [(expanded)]="expanded" />
     }
-    @if (message().text) {
-        <rt-markdown-text rtElem="text" qa-dataid="ai-chat-answer-text" [text]="message().text" />
+    @if (message().blocks.length) {
+        <rt-ai-chat-blocks rtElem="blocks" qa-dataid="ai-chat-answer-blocks" [blocks]="message().blocks" />
     }
     @if (extra(); as extraTemplate) {
         <ng-container [ngTemplateOutlet]="extraTemplate" [ngTemplateOutletContext]="{ $implicit: message() }" />
