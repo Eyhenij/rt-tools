@@ -20,6 +20,9 @@ type TStory = StoryObj<TestRtNotificationsBellMatrixComponent>;
 
 export const Unread: TStory = { args: { part: 'unread' } };
 
+/** Значок: колокольчик и кнопка помощника, каждый с точкой и без, в обеих темах. */
+export const Icon: TStory = { args: { part: 'icon' } };
+
 /** Наведение и фокус стилизованы у кнопки внутри — аддон псевдосостояний получает спуск до неё. */
 export const States: TStory = {
     args: { part: 'states' },
