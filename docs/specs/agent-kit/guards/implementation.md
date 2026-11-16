@@ -24,7 +24,7 @@ whole.
 - **A guard of an edit judges a write by a shell command on a par with one by the edit tool.** — `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:rt_write_targets` — the shared parse; scenarios `SC-AK-928`–`SC-AK-930`
 - **A refusal of a guard names two lawful moves.** — `projects/agent-kit/assets/hooks/deny-tail.sh:rt_deny_tail`
 - **The lawful shape of a bypass is named by the same tail, and its absence too.** — `projects/agent-kit/assets/hooks/deny-tail.sh:rt_deny_tail`
-- **The tail of a refusal is assembled by a shared function, not by every text on its own.** — `projects/agent-kit/assets/hooks/git-guard-main.sh:deny_tail_text`
+- **The tail of a refusal is assembled by a shared function, not by every text on its own.** — `projects/agent-kit/assets/hooks/decide.sh:rt_decide` — the guards that decide by the table get the tail there
 - **The start of a call counts variable assignments as part of the command, and it is declared in one place.** — `projects/agent-kit/assets/hooks/hook-input.sh:RT_CMD_BOUND` — the sample of the call prefix; the carriers take it from there, they have no copies of their own; scenario `SC-AK-559`
 - **The scenario suite runs its fixtures on its own tree, whatever environment stands around it.** — `projects/agent-kit/tests/lib.sh:unset` — the git variables are removed alongside the parsed input fields, before the first fixture. The suite guarding it is `projects/agent-kit/tests/suite-git-env.test.sh`; scenario `SC-AK-999`
 - **The scenario suite takes a port from the system, it does not assign it by a number.** — `projects/agent-kit/tests/lib.sh:wait_for_port` — the technique is one for both cargo suites: the server listens on port zero, the chosen number travels into a file.

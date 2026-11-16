@@ -116,6 +116,10 @@ function parse(text, hook, ctx) {
     return { form: 'tail', core, suffix, gate };
 }
 
+/** A row's key without the facts its neighbours own: the state a composed row was written for. */
+const bareKey = (r) =>
+    `${r.hook}\u0000${r.action}\u0000${JSON.stringify(Object.fromEntries(Object.entries(r.when ?? {}).filter(([k]) => !OWNED[k] || OWNED[k] === r.hook).sort()))}`;
+
 function context(table) {
     const rows = table.rows ?? [];
     const asks = Object.fromEntries((table.hooks ?? []).filter((h) => h.asks).map((h) => [h.file, h.asks]));
@@ -133,6 +137,8 @@ function context(table) {
         ctx.ownMove.set(`${r.hook}\u0000${core}`, r.move);
         // A hook whose words are a slot says the same words for every action: the action tells them apart.
         ctx.ownMove.set(`${r.hook}\u0000${r.action}\u0000${core}`, r.move);
+        // A text with slots says the same words for many states: the facts tell them apart.
+        ctx.ownMove.set(bareKey(r), r.move);
     }
     return ctx;
 }
@@ -170,7 +176,11 @@ function run(ctx, hook, action, facts, depth, opts) {
     const tail = Boolean(row.tail);
     if (row.decision !== 'deny' || !ctx.asks[hook] || depth >= 3) return { decision: row.decision, move: row.move ?? null, text: row.text ?? '', hook, tail };
     const p = parse(row.text ?? '', hook, ctx);
-    const own = ctx.ownMove.get(`${hook}\u0000${row.action}\u0000${p.core}`) ?? ctx.ownMove.get(`${hook}\u0000${p.core}`) ?? row.move;
+    // A row with no word of a neighbour names its own move; a composed row finds it at the row of the
+    // same state without the neighbours' facts, or at the row with the same words.
+    const own = !MARK_RE.test(row.text ?? '')
+        ? row.move
+        : (ctx.ownMove.get(bareKey(row)) ?? ctx.ownMove.get(`${hook}\u0000${row.action}\u0000${p.core}`) ?? ctx.ownMove.get(`${hook}\u0000${p.core}`) ?? row.move);
     const asked = ctx.asks[hook] === 'own' ? own : ctx.asks[hook];
     const now = firstFor(ctx, hook, asked, p.gate, facts, depth, opts);
     const move = now.move ?? own;
@@ -186,15 +196,27 @@ function run(ctx, hook, action, facts, depth, opts) {
                 p.form === 'flow'
                     ? before + (now.first ? now.first + after : after.replace(/^ Then: /, ''))
                     : (now.first ? before + now.first : before.replace(/ $/, '')) + after;
-            return { decision: row.decision, move, text, hook, tail };
+            return { decision: row.decision, move, text, hook, tail, first: now.first };
         }
     }
     const text =
         p.form === 'flow'
             ? p.head + (now.first ? `${now.first} Then: ` : '') + p.core + p.suffix
             : p.core + (now.first ? ` ${now.first}` : '') + p.suffix;
-    return { decision: row.decision, move, text, hook, tail };
+    return { decision: row.decision, move, text, hook, tail, first: now.first };
 }
+
+/**
+ * A hook whose words name several misses marks with `{first}` the miss the named move belongs to: the
+ * word of the neighbour goes there, not after the last miss. No mark — the word stays where it stood.
+ */
+const placeFirst = (text, first) => {
+    if (!text.includes('{first}')) return text;
+    const said = first ? ` ${first}` : '';
+    const at = said ? text.lastIndexOf(said) : -1;
+    const rest = at >= 0 ? text.slice(0, at) + text.slice(at + said.length) : text;
+    return rest.replace('{first}', said);
+};
 
 /** Fills `{name}` from the params; a slot with no param stays as written. */
 export const fill = (text, params = {}) => text.replace(/\{([a-z_]+)\}/g, (slot, name) => (name in params ? String(params[name]) : slot));
@@ -232,7 +254,9 @@ export function decide(table, { hook, action, facts = {}, params = {}, input, fa
         if (flipped) return { decision: 'allow', move: null, text: '', hook, tail: false };
     }
     const answer = run(ctx, hook, named, facts, 0, opts);
-    return answer && { ...answer, text: fill(answer.text, params) };
+    if (!answer) return null;
+    const { first, ...rest } = answer;
+    return { ...rest, text: placeFirst(fill(answer.text, params), first ? fill(first, params) : '') };
 }
 
 export function loadTable(path = process.env.RT_DECISION_TABLE ?? join(dirname(fileURLToPath(import.meta.url)), 'decision-table.json')) {

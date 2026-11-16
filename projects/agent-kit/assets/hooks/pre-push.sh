@@ -51,7 +51,7 @@ tip="$(git rev-parse --verify --quiet HEAD 2>/dev/null)"
 # any length; a real commit that merely starts with zeros is judged like any other.
 sends=0
 foreign=""
-while read -r local_ref local_sha _remote_ref _remote_sha; do
+while read -r local_ref local_sha _remote_ref _remote_sha || [ -n "$local_ref" ]; do
     [ -z "$local_sha" ] && continue
     [ -z "$(printf '%s' "$local_sha" | tr -d 0)" ] && continue
     sends=$((sends + 1))
@@ -64,10 +64,12 @@ done
 [ "$sends" -eq 0 ] && exit 0
 
 if [ -n "$foreign" ]; then
-    printf '%s\n' "pre-push: refused — the push sends a commit the working copy does not stand on:" >&2
-    printf '%s\n' "$foreign" >&2
-    printf '%s\n' "The checks run on the tree that lies here, so they would judge something else than what leaves. Switch to the branch and push it from there, one branch per push." >&2
-    exit 1
+    # shellcheck disable=SC1091
+    . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/decide.sh" 2>/dev/null
+    # The decision and the words come from the decision table; the exit code is its answer.
+    command -v rt_decide >/dev/null 2>&1 || exit 0
+    rt_decide pre-push.sh push '{"push_sends_tip":"no"}' "$(jq -cn --arg f "$foreign" '{foreign:$f}')" git
+    exit $?
 fi
 
 hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -110,10 +112,12 @@ fi
 
 held_line=""
 [ -n "$rt_push_set_held" ] && held_line="
-
 Not started after the red ones — heavy, and the push is refused anyway:
 ${rt_push_set_held}"
-
-printf '\npre-push: refused — red checks: %s\n%s%s\n\nThe tail of every red output:\n\n%s\n' \
-    "$(printf '%s\n' "$rt_push_set_failed" | grep -c .)" "$rt_push_set_failed" "$held_line" "$rt_push_set_output" >&2
-exit 1
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/decide.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 || exit 0
+rt_decide pre-push.sh push '{"push_sends_tip":"yes","push_checks_green":"no"}' \
+    "$(jq -cn --arg n "$(printf '%s\n' "$rt_push_set_failed" | grep -c .)" --arg f "$rt_push_set_failed" --arg h "$held_line" --arg o "$rt_push_set_output" \
+        '{red_count:$n, failed:$f, held_line:$h, tail_out:$o}')" git
+exit $?

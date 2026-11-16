@@ -460,3 +460,14 @@ them:
   `exam-guard.sh:edit_progress:deny`;
 
 Covered: `projects/agent-kit/tests/decision-table.test.sh`.
+
+### SC-AK-1593 — a refusal of commit-msg.sh names a move allowed where it fires
+
+Given the area «delivery» and a refusal of commit-msg.sh; git-guard-main.sh, git-guard-delivery.sh, skill-gate.sh, docs-guard.sh deny its named moves elsewhere
+When the walk meets the refusal with each denial of its move
+Then the two never hold in one state — the test names, for each pair of rows, the fact that parts
+them:
+- `commit-msg.sh:commit_bad_message:deny` against `git-guard-main.sh:commit:deny`, `git-guard-delivery.sh:commit:deny`, `skill-gate.sh:commit:deny`,
+  `docs-guard.sh:commit:deny`;
+
+Covered: `projects/agent-kit/tests/decision-table.test.sh`.

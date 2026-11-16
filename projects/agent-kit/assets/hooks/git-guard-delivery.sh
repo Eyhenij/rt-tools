@@ -143,26 +143,18 @@ main_branch="${RT_MAIN_BRANCH:-main}"
 # requirement by itself.
 folder_skip_re='(^|#)[[:space:]]*Task-folder-skip:[[:space:]]*[^[:space:]<"'"'"'][^[:space:]"'"'"']{2,}'
 
-deny() {
-    # A guard refusal is an observation: the guard that refuses more often than the rest says which
-    # place of the delivery is done wrong time after time. The refusal text does not go there: it
-    # holds the task numbers and the branch names of the tree.
+# The facts of the state, as the decision table names them. What the hook did not find wrong keeps its
+# lawful value from `delivery_lawful`; a check that finds a miss records the fact with the value of
+# the miss. The facts the table reads apart from the miss — whether the task belongs to an epic,
+# whether the folder lies in the branch — are recorded by the check that learns them.
+delivery_lawful='{"own_pr_conflicting":"no","branch_is_main":"no","branch_is_task_branch":"yes","branch_has_main_tip":"yes","task_exists":"yes","task_open":"yes","task_on_board":"yes","task_assigned":"yes","task_title_numbered":"yes","task_column_taken":"yes","copy_assignment":"ok","assigned_epic_open":"yes","origin_main_fresh":"yes","worktree_email_declared":"yes","commits_signed_declared":"yes","archive_gained":"yes","draft_spec_merged":"yes","epic_folders_left":"no","pr_tip_run":"green","pr_conflicting":"no","pr_reviewed":"yes","task_in_epic":"no","task_folder_in_branch":"no","branch_pr_merged":"no","epic_branch":"one","epic_has_main_tip":"yes","branch_has_epic_tip":"yes"}'
+delivery_facts='{}'
+# The class of the call when a check finds the miss in the call itself — the title, the base, the
+# body: the table keeps such a miss as the action, not as a fact. The first class found stands.
+delivery_class=''
 
-    # The refusal tail: the two lawful moves and the form of the bypass as the second parameter.
-    # shellcheck disable=SC1090
-    [ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
-    reason="$1"
-    command -v rt_deny_tail >/dev/null 2>&1 && reason="$1 $(rt_deny_tail "$2")"
-    # A neighbour's conflict travels inside the refusal: the guard says one thing per call, and a
-    # second JSON document next to the first is read as plain text — that is, as no refusal at all.
-    [ -n "${rt_delivery_neighbour_note:-}" ] && reason="${reason}
-
-${rt_delivery_neighbour_note}"
-    rt_delivery_said=1
-
-    jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"The delivery guard."}}\n'
-    exit 0
+fact() {
+    delivery_facts="$(printf '%s' "$delivery_facts" | jq -c --arg k "$1" --arg v "$2" '. + {($k): $v}' 2>/dev/null || printf '%s' "$delivery_facts")"
 }
 
 # Conditions that did not come together pile up and are named all at once: a refusal on the first
@@ -171,9 +163,49 @@ ${rt_delivery_neighbour_note}"
 # delivery is one state, and it is named whole.
 faults=''
 
-fault() {
+#   unmet <fact> <value> <words>   — a miss of the state; `unmet_class <action> <words>` — of the call
+unmet() {
+    fact "$1" "$2"
     faults="${faults}${faults:+
-}— $1"
+}— $3"
+}
+unmet_class() {
+    [ -n "$delivery_class" ] || delivery_class="$1"
+    faults="${faults}${faults:+
+}— $2"
+}
+
+#   refuse <action> [params] [bypass]
+# The decision, the move and the text come from the decision table. The hook gives the facts it found,
+# the facts of the neighbours the named move meets — the rule of delivery, the document pair of a
+# commit, the exam, the window — and the words of the misses. A neighbour's conflict travels inside the
+# refusal: the guard says one thing per call, and a second JSON document next to the first is read as
+# plain text — that is, as no refusal at all.
+refuse() {
+    _sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+    _record="$(rt_fact_transcript "$input")"
+    problems=''
+    # shellcheck disable=SC1091
+    [ -f "$rt_hooks_dir/facts-docs.sh" ] && . "$rt_hooks_dir/facts-docs.sh" 2>/dev/null
+    _pair=yes
+    command -v rt_fact_doc_problems >/dev/null 2>&1 && rt_fact_doc_problems 'git commit -m wip' && [ -n "$problems" ] && _pair=no
+    _facts="$(jq -cn --argjson lawful "$delivery_lawful" --argjson found "$delivery_facts" \
+        --arg r "$(rt_fact_rule_loaded "${RT_GUARD_RULE:-git-workflow}" "$_sid")" --arg d "$_pair" \
+        --arg e "$(rt_fact_exam_holds "$_record")" --arg w "$(rt_fact_window_over_stop "$_sid" "$_record")" \
+        '$lawful + {rule_loaded:$r, doc_pair:$d, exam:$e, window_over_stop:$w} + $found')"
+    _params="$(jq -cn --argjson own "${2:-"{}"}" --arg f "$faults" --arg p "$problems" --arg b "${3:-}" \
+        --arg a "${rt_delivery_neighbour_note:-}" --arg h "${ahead_cmd:-bash git-guard-push-ahead.sh}" \
+        '{faults:$f, problems:$p, bypass:$b, after:$a, ahead_cmd:$h} + $own')"
+    rt_delivery_said=1
+    # shellcheck disable=SC1091
+    . "$rt_hooks_dir/decide.sh" 2>/dev/null
+    command -v rt_decide >/dev/null 2>&1 || exit 0
+    rt_decide git-guard-delivery.sh "$1" "$_facts" "$_params" || exit 0
+    # A class of the call together with a miss of the state may have no row of its own: the table
+    # writes a class with every fact lawful. The same misses are then asked under the plain action.
+    [ -n "${delivery_base:-}" ] && [ "$1" != "$delivery_base" ] \
+        && rt_decide git-guard-delivery.sh "$delivery_base" "$_facts" "$_params"
+    exit 0
 }
 
 # The conditions about the task folder are moved out into a neighbouring file: the folder has a
@@ -205,13 +237,12 @@ command -v rt_delivery_current_branch >/dev/null 2>&1 || rt_delivery_current_bra
 command -v rt_delivery_note_out >/dev/null 2>&1 && trap rt_delivery_note_out EXIT
 command -v rt_delivery_conflict >/dev/null 2>&1 && rt_delivery_conflict
 
-# The refusal on what has piled up. Empty — the calling side goes on.
-deny_faults() {
+# The refusal on what has piled up, for the action of the call: the class a check found in the call
+# itself stands first. Empty — the calling side goes on.
+refuse_unmet() {
     [ -z "$faults" ] && return 0
-    deny "BLOCKED: the work is not ready for delivery. Everything unmet is named whole — so that it
-is fixed in one session, not one miss per round:
-
-${faults}"
+    delivery_base="$1"
+    refuse "${delivery_class:-$1}"
 }
 
 # The task checks live in a helper next door — `git-guard-delivery-task.sh`. No helper — the task is
@@ -244,12 +275,13 @@ if [ -n "$branch_arg" ]; then
     number_arg="$(rt_task_branch_number "$branch_arg")"
     if [ -n "$number_arg" ]; then
         rt_delivery_branch_form_ok "$branch_arg" \
-            || fault "the branch name «${branch_arg}» is not of the form accepted here. The branch number is the same as the number of the task and of the title of the merge request."
+            || unmet_class branch_create_bad_name "the branch name «${branch_arg}» is not of the form accepted here. The branch number is the same as the number of the task and of the title of the merge request."
         state=''
         check_task "$number_arg" "the branch «${branch_arg}»"
         # The epic of the task: with one, the base is judged against the branch of the epic, and the
         # freshness of the main branch moves there too — see `git-guard-delivery-epic.sh`.
         epic_arg="$(printf '%s' "$state" | jq -r '.epic // empty' 2>/dev/null)"
+        [ -n "$epic_arg" ] && fact task_in_epic yes
 
         # The delivery conditions already known here are checked here. After the work is done, the
         # base is fixed by a merge with conflict resolution, and the commit signature by rewriting
@@ -260,14 +292,14 @@ if [ -n "$branch_arg" ]; then
         # base fresh — `git checkout -b <branch> origin/<main>` — would be forbidden.
         base_arg="$(printf '%s' "$cmd" | sed -nE 's/.*git[[:space:]]+(checkout([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-b|switch([[:space:]]+-[A-Za-z-]+)*[[:space:]]+-c)[[:space:]]+[^[:space:];&|]+[[:space:]]+([^[:space:];&|-][^[:space:];&|]*).*/\4/p' | head -1)"
         base_ref="${base_arg:-HEAD}"
-        command -v rt_assignment_fault >/dev/null 2>&1 && rt_assignment_fault "$epic_arg" "the branch «${branch_arg}»"
+        command -v rt_assignment_unmet >/dev/null 2>&1 && rt_assignment_unmet "$epic_arg" "the branch «${branch_arg}»"
         if [ -n "$epic_arg" ] && command -v rt_epic_base >/dev/null 2>&1; then
             rt_epic_base "$epic_arg" "$base_ref" "$branch_arg"
         elif git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
             && git rev-parse --verify --quiet "$base_ref" >/dev/null 2>&1 \
             && ! git merge-base --is-ancestor "origin/${main_branch}" "$base_ref" 2>/dev/null; then
             behind="$(git rev-list --count "${base_ref}..origin/${main_branch}" 2>/dev/null)"
-            fault "the branch will grow from a base that does not carry the tip of «${main_branch}» — it has moved ahead by ${behind:-several} commits. Take a fresh base: git fetch origin && git checkout -b ${branch_arg} origin/${main_branch}."
+            unmet_class branch_create_stale_base "the branch will grow from a base that does not carry the tip of «${main_branch}» — it has moved ahead by ${behind:-several} commits. Take a fresh base: git fetch origin && git checkout -b ${branch_arg} origin/${main_branch}."
         fi
 
         # The second tier: the local reference to the main branch could itself have gone stale, and
@@ -277,12 +309,12 @@ if [ -n "$branch_arg" ]; then
         remote_head="$(rt_fact_remote_head "$main_branch")"
         local_head="$(git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" 2>/dev/null)"
         if [ -n "$remote_head" ] && [ -n "$local_head" ] && [ "$remote_head" != "$local_head" ]; then
-            fault "your ref origin/${main_branch} lags behind the remote one — ${local_head:0:8} against ${remote_head:0:8}. The branch will grow from yesterday tree, and the owner sees that at the opening of the request. Pull and repeat: git fetch origin."
+            unmet origin_main_fresh no "your ref origin/${main_branch} lags behind the remote one — ${local_head:0:8} against ${remote_head:0:8}. The branch will grow from yesterday tree, and the owner sees that at the opening of the request. Pull and repeat: git fetch origin."
         fi
 
         command -v rt_delivery_branch_signature >/dev/null 2>&1 && rt_delivery_branch_signature
 
-        deny_faults
+        refuse_unmet branch_create
     fi
     # A branch without a number is lawful and lives locally: no PR opens from it.
     exit 0
@@ -317,7 +349,7 @@ if printf '%s' "$cmd" | grep -qE "${RT_CMD_BOUND}(gh[[:space:]]+pr[[:space:]]+me
     # The run on the tip goes first: the folder tier below leaves the guard early on many paths.
     [ -f "$rt_hooks_dir/git-guard-delivery-merge.sh" ] && . "$rt_hooks_dir/git-guard-delivery-merge.sh" 2>/dev/null
     command -v rt_delivery_merge_run >/dev/null 2>&1 && rt_delivery_merge_run
-    deny_faults
+    refuse_unmet pr_merge
     rt_delivery_merge_folder
 fi
 
@@ -338,9 +370,10 @@ branch="$(rt_delivery_current_branch)"
 # assignment the creation of the task is refused in its turn. So the assignment is asked here too,
 # and what it lacks is named before the creation.
 if ! rt_delivery_branch_form_ok "$branch"; then
-    command -v rt_assignment_fault >/dev/null 2>&1 && rt_assignment_fault '' 'a new task'
-    deny "BLOCKED: a request from the branch «${branch}», with no task standing behind it. An edit begins with a task visible in the work queue: create it — ${task_new} — and move the work into a branch with its number.${faults:+ Before the creation:
-${faults}}"
+    command -v rt_assignment_unmet >/dev/null 2>&1 && rt_assignment_unmet '' 'a new task'
+    fact branch_is_task_branch no
+    refuse pr_create "$(jq -cn --arg b "$branch" --arg t "$task_new" --arg f "${faults:+ Before the creation:
+${faults}}" '{branch_name:$b, task_new:$t, before:$f}')"
 fi
 
 number="$(rt_task_branch_number "$branch")"
@@ -351,11 +384,12 @@ number="$(rt_task_branch_number "$branch")"
 state=''
 check_task "$number" "the request from the branch «${branch}»" yes
 epic_pull="$(printf '%s' "$state" | jq -r '.epic // empty' 2>/dev/null)"
+[ -n "$epic_pull" ] && fact task_in_epic yes
 # A fault that names the creation of a task or the move of its column names a move that takes work,
 # and the assignment of the copy judges every such move. Its lack is named in the same list.
 case "$faults" in
     *"$task_new"* | *"$task_move"*)
-        command -v rt_assignment_fault >/dev/null 2>&1 && rt_assignment_fault '' 'the work the fixes above take'
+        command -v rt_assignment_unmet >/dev/null 2>&1 && rt_assignment_unmet '' 'the work the fixes above take'
         ;;
 esac
 # The branch of an epic itself: its request goes into the main branch, and it opens only when the
@@ -377,7 +411,7 @@ fi
 
 if [ -n "$title" ]; then
     printf '%s' "$title" | grep -qE "$title_re" \
-        || fault "the title of the request does not start with the number of the task. In the list of requests the body is invisible, and the line of the link lives exactly there — without the number in the title the PR cannot be matched to the task."
+        || unmet_class pr_create_bad_title "the title of the request does not start with the number of the task. In the list of requests the body is invisible, and the line of the link lives exactly there — without the number in the title the PR cannot be matched to the task."
     # The number is extracted from the part of the title the form itself recognised, not by a second
     # regex next to it. The own regex knows only the package form: a tree that paved the form over
     # with its own got an empty number — and the check of the title number against the branch number
@@ -386,7 +420,7 @@ if [ -n "$title" ]; then
     title_number="$(printf '%s' "$title_matched" | grep -oE '[A-Za-z]+-[0-9]+' | head -1 | sed -E 's/^[A-Za-z]+-//')"
     if [ -n "$number" ] && [ -n "$title_number" ]; then
         [ "$title_number" = "$number" ] \
-            || fault "the title of the request carries the number ${title_number}, the branch — ${number}. The task, the branch and the PR carry one and the same number."
+            || unmet_class pr_create_wrong_number "the title of the request carries the number ${title_number}, the branch — ${number}. The task, the branch and the PR carry one and the same number."
     fi
 fi
 
@@ -405,7 +439,7 @@ if [ -n "$epic_pull" ] && command -v rt_epic_pull_base >/dev/null 2>&1; then
 elif git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" >/dev/null 2>&1 \
     && ! git merge-base --is-ancestor "origin/${main_branch}" HEAD 2>/dev/null; then
     behind="$(git rev-list --count "HEAD..origin/${main_branch}" 2>/dev/null)"
-    fault "«${main_branch}» has moved ahead by ${behind:-several} commits and is not merged into the branch. A PR from a diverged branch shows the reviewer the edit mixed with someone else, and the checks on it run from a stale base. Merge it in and repeat: git fetch origin && git merge origin/${main_branch} — the order and the resolving of the conflict are in the pattern git-workflow-merge."
+    unmet branch_has_main_tip no "«${main_branch}» has moved ahead by ${behind:-several} commits and is not merged into the branch. A PR from a diverged branch shows the reviewer the edit mixed with someone else, and the checks on it run from a stale base. Merge it in and repeat: git fetch origin && git merge origin/${main_branch} — the order and the resolving of the conflict are in the pattern git-workflow-merge."
 fi
 
 # The second tier: the local reference could itself have gone stale. No answer — the tier stays
@@ -422,7 +456,7 @@ if [ -n "$remote_main" ] && [ -n "$local_main" ] && [ "$remote_main" != "$local_
     if [ -n "$fetched_at" ]; then
         age=" The last git fetch was $(( ( $(date +%s) - fetched_at ) / 60 )) min ago."
     fi
-    fault "your ref origin/${main_branch} lags behind the remote one — ${local_main:0:8} against ${remote_main:0:8}.${age} The guard compares the branch with what lies in the tree, so silence of the first tier means «the ref is not older than the branch», not «the main branch is merged in». Merge it in and repeat: git fetch origin && git merge origin/${main_branch}."
+    unmet origin_main_fresh no "your ref origin/${main_branch} lags behind the remote one — ${local_main:0:8} against ${remote_main:0:8}.${age} The guard compares the branch with what lies in the tree, so silence of the first tier means «the ref is not older than the branch», not «the main branch is merged in». Merge it in and repeat: git fetch origin && git merge origin/${main_branch}."
 fi
 
 # The identity of the call. The hosting client holds two accounts — the logged-in one and the one
@@ -446,7 +480,7 @@ command -v rt_pull_token_login >/dev/null 2>&1 && token_login="$(rt_pull_token_l
 
 if [ -n "$token_login" ]; then
     if [ -n "$pull_reviewer" ] && [ "$token_login" = "$pull_reviewer" ]; then
-        fault "the request would be opened by the account «${token_login}», and the same one is named as its reviewer. The hosting accepts such a review request and silently does not create it, and the author of a request cannot be changed — it is fixed only by reopening. Open it by another account${pull_token_hint:+, substituting the token: ${pull_token_hint} …}, or name another reviewer."
+        unmet_class pr_create_self_review "the request would be opened by the account «${token_login}», and the same one is named as its reviewer. The hosting accepts such a review request and silently does not create it, and the author of a request cannot be changed — it is fixed only by reopening. Open it by another account${pull_token_hint:+, substituting the token: ${pull_token_hint} …}, or name another reviewer."
     elif [ -n "$task_bot" ] && [ "$token_login" != "$task_bot" ]; then
         # Not a refusal: the reviewer is somebody else, and the review will be created. But silence
         # about a foreign account is indistinguishable from a check that did not fire at all.
@@ -456,7 +490,7 @@ elif [ -n "$pull_token_var" ] \
     && ! printf '%s' "$cmd" | grep -qE "(^|[;&|(]|&&|\|\||[[:space:]])${pull_token_var}="; then
     # There is nothing to learn the author by — no helper, or an empty answer from it. Then the only
     # lawful call is the one that names the account in its own text.
-    fault "who will open the request cannot be learned: the hosting was not asked, and the command carries no substitution of «${pull_token_var}». Opened by the logged-in account, the request may come out from the very person named as its reviewer, and that is fixed only by reopening.${pull_token_hint:+ Substitute the token: ${pull_token_hint} …}"
+    unmet_class pr_create_self_review "who will open the request cannot be learned: the hosting was not asked, and the command carries no substitution of «${pull_token_var}». Opened by the logged-in account, the request may come out from the very person named as its reviewer, and that is fixed only by reopening.${pull_token_hint:+ Substitute the token: ${pull_token_hint} …}"
 fi
 
 # The body of the request: the section about the remaining step and the line that closes the task.
@@ -473,7 +507,7 @@ rt_delivery_open_folder
 
 # Everything that did not come together is named here, all at once: up to this line the conditions
 # were being collected, each of which used to refuse the call on its own.
-deny_faults
+refuse_unmet pr_create
 command -v rt_delivery_open_handover >/dev/null 2>&1 && rt_delivery_open_handover "$cmd" "$branch"
 
 exit 0

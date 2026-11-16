@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__terminal__run_in_terminal
 # rt-hook-timeout: 1800
-# Requires: hooks/profile-check.sh, hooks/deny-tail.sh, hooks/push-sign.sh, hooks/push-set.sh, hooks/git-guard-push-marks.sh
+# Requires: checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/push-sign.sh, hooks/push-set.sh, hooks/git-guard-push-marks.sh
 # The guard of the checks before a push. PreToolUse on the push call.
 #
 # A push is the entry into the pipeline: a merge into the main branch starts the rollout, and
@@ -78,32 +78,30 @@ printf '%s\n' "$push_calls" | grep -qx 'opaque' && printf '%s' "$cmd" | grep -q 
 
 # The refusal of this gate. The shared deny tail — the two lawful moves and the lawful form of a
 # bypass — may not be laid out; then there is no tail, and the reason stays as it was.
-push_deny() {
-    reason="$1"
-    # shellcheck disable=SC1090
-    [ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-        && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-    command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-    deny_tail_text="$(rt_deny_tail "")"
-    [ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-    jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"The checks before the push did not pass."}}\n'
+#   push_refuse <action> <facts of the set> [params]
+# The decision, the move and the text come from the decision table; the hook names the shape of the
+# call, the state of the set and the words of the outputs.
+shape_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck disable=SC1091
+. "$shape_dir/facts.sh" 2>/dev/null
+push_refuse() {
+    local facts params
+    facts="$(jq -cn --arg r "$(rt_fact_rule_loaded git-workflow "$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)")" \
+        --argjson own "${2:-"{}"}" '{rule_loaded:$r} + $own')"
+    # The refusals of the shape name a plain push as the fix, and that push is refused next while the
+    # heavy steps of the tree have no green mark. So they name the run ahead before it.
+    params="$(jq -cn --arg a "bash ${shape_dir#"$PWD"/}/git-guard-push-ahead.sh" --argjson own "${3:-"{}"}" '{ahead_cmd:$a} + $own')"
+    # shellcheck disable=SC1091
+    . "$shape_dir/decide.sh" 2>/dev/null
+    command -v rt_decide >/dev/null 2>&1 && rt_decide git-guard-push-tests.sh "$1" "$facts" "$params"
     exit 0
 }
-
-# The refusals of the shape below name a plain push as the fix, and that push is refused next while
-# the heavy steps of the tree have no green mark. So they name the run ahead before it.
-shape_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-shape_ahead=" Before that push run the heavy steps by \`bash ${shape_dir#"$PWD"/}/git-guard-push-ahead.sh\` (the Bash call with run_in_background) and push after their end: the push is refused until they have a green mark."
 
 # Commands the parse cannot read are refused when the text names a push: a shell reading its
 # commands from the input, `source` of a substitution, function calls that grow without bound. What
 # such a command runs is seen only when it runs, and a silent pass would let a push leave unchecked.
 if [ "$opaque" = true ]; then
-    push_deny "BLOCKED: the command names a push, and the guard cannot read what it runs — a shell reading commands from its input, \`source\` of a substitution, or function calls that grow without bound. Run the push as a separate plain command: \`git push <remote> <branch>\`.${shape_ahead}"
+    push_refuse push_opaque
 fi
 
 # A branch switch in the same command is refused whole.
@@ -123,7 +121,7 @@ fi
 switched=false
 printf '%s\n' "$push_calls" | awk '$0 == "switch" { s = 1 } / real$/ && s { f = 1 } END { exit !f }' && switched=true
 if [ "$switched" = true ]; then
-    push_deny "BLOCKED: switching the branch and pushing by one command. The gate set runs on the tree that lies there at the minute the command is parsed — that is, on the FORMER branch, not the one that leaves for the hosting. A green set then reads as a check of what left, though it checked something else. Split the calls: switch first, then push by a separate command.${shape_ahead}"
+    push_refuse push_switch
 fi
 
 # Several pushes in one command, or a push inside a loop, are refused whole. The set runs once
@@ -135,7 +133,7 @@ printf '%s\n' "$push_calls" | grep -q '^loop .* real$' && looped=true
 several_refs=false
 printf '%s\n' "$push_calls" | grep -q ' several real$' && several_refs=true
 if [ "${pushes:-0}" -gt 1 ] || [ "$looped" = true ] || [ "$several_refs" = true ]; then
-    push_deny "BLOCKED: several pushes by one command. The gate set runs once per call, on the tree that lies there — every other branch leaves for the hosting unchecked. Push each branch by a separate call, after switching to it.${shape_ahead}"
+    push_refuse push_multi
 fi
 
 workdir="$(rt_hook_cwd)"
@@ -165,7 +163,7 @@ if [ -n "$moved" ] && [ -d "$moved" ]; then
     here_repo="$(git rev-parse --path-format=absolute --git-common-dir 2>/dev/null)"
     [ -n "$moved_repo" ] && [ -n "$here_repo" ] && [ "$moved_repo" != "$here_repo" ] && exit 0
     if [ -n "$moved_root" ] && [ -n "$here_root" ] && [ "$moved_root" != "$here_root" ]; then
-        push_deny "BLOCKED: the call goes from a second working copy — «${moved_root}», while the session stands in «${here_root}». The gate set runs where the session was started, not where the call was made: someone else's uncommitted work refuses it, and the contribution actually leaving passes unchecked. The second copy is for reading; bring the result of the merge back and send from the copy the session stands in.${shape_ahead}"
+        push_refuse push_second_copy '{}' "$(jq -cn --arg m "$moved_root" --arg h "$here_root" '{moved_root:$m, here_root:$h}')"
     fi
 fi
 
@@ -263,11 +261,8 @@ Red among the light checks:
 ${failed}
 
 $(printf '%s' "$output" | tr -d '\000')"
-    push_deny "BLOCKED: the heavy steps of this tree run ahead, not inside the guard — inside it they hit the hook limit, and a guard cut by the limit lets the call through with no verdict. No green mark for this tree and base:
-
-${ahead}
-
-Run them in the background by \`${ahead_cmd}\` (the Bash call with run_in_background), wait for its end and push again: the push then passes from the marks.${dirty_line}${red_line}"
+    push_refuse push '{"push_marks_green":"no"}' "$(jq -cn --arg a "$ahead" --arg c "$ahead_cmd" --arg d "$dirty_line" --arg r "$red_line" \
+        '{ahead:$a, ahead_cmd:$c, dirty_line:$d, red_line:$r}')"
 fi
 
 # What was skipped is named aloud even when the set passed: silence about it is exactly the
@@ -335,30 +330,7 @@ ${held}"
 # When a check of the code fails, "fix it and push again" is right. When the check itself is wrong,
 # the same text orders fixing code nobody touched: a refusal once taken apart lay wholly in
 # documents untouched by any commit of the branch. The verifiability law says a broken check does
-# not stop the work, and until this line there was no such option in the refusal.
-reason="BLOCKED: a push without a green local run. Red checks: ${red_count} — fix them and push again, the guard must not be bypassed. A push is the entry into the pipeline, and red from here is checked already in production.
-
-${failed}${held_line}
-
-Three moves from here: fix what is named and repeat the call; fix the check itself, if it is the one that is wrong — take the refusals apart one by one, show the analysis to the owner and correct the check; or bring the owner the price of a bypass and wait for their word. What is in dispute is not added to the known list: it holds what was accepted, not the results of a broken check.
-
-The tail of every red output:
-
-${tail_out}"
-
-# The shared deny tail: the two lawful moves and the lawful form of bypass, if the refusal has one.
-# The file may not be laid out — then there is no tail, and the reason for the refusal stays as it
-# was.
-# shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-deny_tail_text="$(rt_deny_tail "")"
-[ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"The checks before the push did not pass."}}\n'
-
-exit 0
+# not stop the work, so the text of the table names the third move too.
+push_refuse push '{"push_marks_green":"yes","push_checks_green":"no"}' \
+    "$(jq -cn --arg n "$red_count" --arg f "$failed" --arg h "$held_line" --arg t "$tail_out" \
+        '{red_count:$n, failed:$f, held_line:$h, tail_out:$t}')"

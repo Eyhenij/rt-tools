@@ -15,7 +15,8 @@
 # «?<action>» does the same and names the hook's own action for a call no class fits.
 #
 # It prints the answer for the agent and returns 1 when the table refuses or asks; prints nothing and
-# returns 0 when it allows. The event is `PreToolUse` unless named: a Stop hook gets the block form.
+# returns 0 when it allows. The event is `PreToolUse` unless named: a Stop hook gets the block form,
+# and the event `git` — a hook of git itself — gets the bare text on the error stream.
 #
 # FAIL-OPEN, IN FAVOUR OF WORK: no node, no decider, no table, a decider that fails — nothing is
 # printed and 0 is returned: the guard lets the action through. A broken decider has no right to jam
@@ -47,6 +48,8 @@ rt_decide() {
     _params="${4:-"{}"}"
     _event="${5:-PreToolUse}"
     _input="${6:-null}"
+    # The guard note names the hook that asked, when the hook named nobody itself.
+    RT_GUARD_NAME="${RT_GUARD_NAME:-${_hook%.sh}}"
 
     command -v node >/dev/null 2>&1 || return 0
     _cmd="$(rt_decide_cmd)"
@@ -90,11 +93,20 @@ rt_decide() {
     # row whose text carries its own closing words still gets the record.
     # shellcheck disable=SC1090
     command -v rt_deny_tail >/dev/null 2>&1 || . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
+    # The param `bypass` names the lawful form of a bypass for the tail; `after` is a word the hook
+    # adds below the whole refusal — a neighbour's note that travels inside it.
+    _bypass="$(printf '%s' "$_params" | jq -r '.bypass // empty' 2>/dev/null)"
+    _after="$(printf '%s' "$_params" | jq -r '.after // empty' 2>/dev/null)"
     if [ "$(printf '%s' "$_answer" | jq -r '.tail // false' 2>/dev/null)" = true ]; then
-        command -v rt_deny_tail >/dev/null 2>&1 && _text="$_text $(rt_deny_tail)"
+        command -v rt_deny_tail >/dev/null 2>&1 && _text="$_text
+
+$(rt_deny_tail "$_bypass")"
     else
         command -v rt_deny_tail >/dev/null 2>&1 && rt_deny_tail >/dev/null
     fi
+    [ -n "$_after" ] && _text="$_text
+
+$_after"
 
     # A hook that keeps its own observation of a refusal names it in `RT_DECIDE_NOTE`: the event
     # prefix and its fields. The event is named by the decision the table took.
@@ -105,11 +117,16 @@ rt_decide() {
         command -v rt_note >/dev/null 2>&1 && rt_note "${RT_DECIDE_NOTE%% *}-${_decision}" ${RT_DECIDE_NOTE#* }
     fi
 
-    if [ "$_event" = Stop ] || [ "$_event" = SubagentStop ]; then
+    if [ "$_event" = git ]; then
+        # A hook of git itself: the text goes to the error stream, and the non-zero code stops git.
+        printf '%s\n' "$_text" >&2
+    elif [ "$_event" = Stop ] || [ "$_event" = SubagentStop ]; then
         jq -cn --arg r "$_text" '{decision:"block", reason:$r}'
     else
         jq -cn --arg d "$_decision" --arg r "$_text" --arg e "$_event" \
             '{hookSpecificOutput:{hookEventName:$e, permissionDecision:$d, permissionDecisionReason:$r}}'
     fi
+    # Git reads any code but zero as a refusal; 2 is the code the agent's hooks refuse with too.
+    [ "$_event" = git ] && return 2
     return 1
 }

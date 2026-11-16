@@ -12,10 +12,12 @@ Rewritten by every session, not appended to.
   and computes the 330 composed states (`rows 1000, ok 1000`); the composed rows left the table for
   `states` (conditions, pattern, probe); walk, conform and chains read `withDecided` — `derived 3584
   decided`; `hooks/decide.sh` gives `rt_decide`, FAIL-OPEN covered.
-- **Next step:** 4.2 — the hooks of delivery and of git decide by `rt_decide`. 4.1 is done: nine
-  hooks of the course of work decide by the table, the mutation sweep follows 484 of 999 rows, the
-  snapshot compare gives `changed 0`.
-- **Uncommitted:** nothing after the stage 3 commit.
+- **Next step:** 4.3 — the other hooks decide by `rt_decide`. 4.2 is committed: the delivery and
+  git hooks go through the decider, the table test gives `516 ok`, the full suite run is green.
+  In 4.3 the facts of the course of work for one edit move into `hooks/facts-flow.sh`: the
+  work-conduct guards and the two guards that name an edit of another file (rule-source,
+  override-write) read them from there, which also removes `rt_move_first` for 4.4.
+- **Uncommitted:** nothing over the commit of 4.2.
 - **PR:** not open yet
 
 ## Steps
@@ -30,8 +32,8 @@ Rewritten by every session, not appended to.
 - [x] 3.1 `hooks/facts.sh` computes the branch, the fresh base, the window, the loaded rules and the conversation record once per call
 - [x] 3.2 No hook computes these facts past `facts.sh`
 - [x] 4.1 The hooks of the course of work decide by `rt_decide`: task-flow, task-flow-draft, flow-step, exam, window-fill, handoff-entry, docs, skill-gate, turn-exit
-- [>] 4.2 The hooks of delivery and of git decide by `rt_decide`: git-guard-* with every helper, pre-push, commit-msg; the helpers that refused become guards with rows
-- [ ] 4.3 The other hooks decide by `rt_decide`; a content analysis (prose-style, qa-dataid, reuse-first, sql) gives a fact
+- [x] 4.2 The hooks of delivery and of git decide by `rt_decide`: git-guard-* with every helper, pre-push, commit-msg; the helpers that refused become guards with rows
+- [>] 4.3 The other hooks decide by `rt_decide`; a content analysis (prose-style, qa-dataid, reuse-first, sql) gives a fact
 - [ ] 4.4 No hook re-runs its neighbours: `rt_move_first` is gone
 - [ ] 5.1 Every refusal row flipped to «allow» makes its hook allow
 - [ ] 5.2 All probes answer as in the snapshot
@@ -111,6 +113,32 @@ Rewritten by every session, not appended to.
   states compose with an unfilled `{problems}`. Affected stage: 4.
 - **`plan-red` did not find this session's record by itself.** It wrote the approval only with
   `RT_FLOW_TRANSCRIPT` naming the record; a finding of the epic.
+- **A miss of delivery is a fact or a class of the call.** The rows of delivery name a miss of the
+  state as a fact (`task_on_board=no`) and a miss of the call itself as the action
+  (`pr_create_bad_title`). The hook records the first by `unmet <fact> <value>`, the second by
+  `unmet_class <action>`; a fact it did not find wrong keeps its lawful value from one list in the
+  hook. The words of the misses go in the slot `{faults}`. Affected stage: 4, 5.
+- **The analysis of the document pair is a fact function.** It moved from the document guard to
+  `rt_fact_doc_problems` in `hooks/facts-docs.sh`; the delivery hooks and `no-verify` call it for
+  the commit their refusal names, and the decider composes the document guard's word first. The
+  re-run of neighbours left the signature helper. Affected stage: 4.
+- **The word of a neighbour goes where the hook marks `{first}`.** A refusal of delivery names
+  several misses, and the word of a neighbour belongs after the miss whose move it is. 36 probes
+  with two misses changed until the decider placed it by the mark and the composed rows were
+  recomposed by the decider itself. Affected stage: 4, 5.
+- **A row with slots names its own move.** Many rows of delivery share one text, so the decider
+  takes the move of a row with no word of a neighbour from the row itself, and of a composed row from
+  the row of the same state without the facts of the neighbours. Affected stage: 4.
+- **The hooks of git refuse with code 2.** `rt_decide` with the event `git` prints the words on the
+  error stream and returns 2: git reads any code but zero as a refusal, and the probe reads 2. The
+  push run ahead refuses the same way. pre-push, commit-msg and the run ahead are guards with rows.
+- **The assignment reader names the kind of its answer.** `tree-assignment.mjs --unmet` prints the
+  kind (`ok`, `unnamed`, `no_row`, `dash`, `foreign`) with the text: the kind is the fact
+  `copy_assignment`. `--fault` stays for the hooks of 4.3.
+- **A push command the guard cannot read had no row.** `push_opaque` is added with its probe: the
+  table allowed such a push, while the hook refused it.
+- **The stop guard measures `эпик-заведён` while the suites load the machine.** Three times in this
+  session; a measure right after gives `этап-идёт`. A finding of the epic.
 
 ## Sessions
 
@@ -131,7 +159,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 4 of 6 — the hooks switched to the decider
-- **Next step:** 4.2 — the hooks of delivery and of git decide by `rt_decide`. 4.1 is done: nine
+- **Next step:** 4.2 — the hooks of delivery and of git decide by `rt_decide`. 4.1 is committed.
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3355-hooks-read-table/progress.md`; the plan lies next to it.
@@ -140,30 +168,31 @@ The progress in full — `docs/tasks/RT-3355-hooks-read-table/progress.md`; the 
 
 ```
  M docs/specs/agent-kit/decision-table/implementation.md
- M docs/specs/agent-kit/decision-table/spec.md
- M docs/specs/agent-kit/exam/implementation.md
+ M docs/specs/agent-kit/delivery-gate/implementation.md
  M docs/specs/agent-kit/guards/implementation.md
+ M docs/specs/agent-kit/no-verify-guard/implementation.md
+ M docs/specs/agent-kit/tree-assignment/implementation.md
  M docs/tasks/RT-3355-hooks-read-table/progress.md
- M projects/agent-kit/assets/checks/action-of.mjs
  M projects/agent-kit/assets/checks/decide.mjs
  M projects/agent-kit/assets/checks/decision-table.json
+ M projects/agent-kit/assets/checks/tree-assignment.mjs
+ M projects/agent-kit/assets/hooks/commit-msg.sh
  M projects/agent-kit/assets/hooks/decide.sh
  M projects/agent-kit/assets/hooks/docs-guard.sh
- M projects/agent-kit/assets/hooks/exam-guard.sh
- M projects/agent-kit/assets/hooks/facts.sh
- M projects/agent-kit/assets/hooks/flow-step-guard.sh
- M projects/agent-kit/assets/hooks/handoff-entry-guard.sh
- M projects/agent-kit/assets/hooks/skill-gate.sh
- M projects/agent-kit/assets/hooks/task-flow-context.sh
- M projects/agent-kit/assets/hooks/task-flow-draft-guard.sh
- M projects/agent-kit/assets/hooks/task-flow-guard.sh
- M projects/agent-kit/assets/hooks/turn-exit-guard.sh
- M projects/agent-kit/assets/hooks/window-fill-guard.sh
+ M projects/agent-kit/assets/hooks/git-guard-delivery-body.sh
+ M projects/agent-kit/assets/hooks/git-guard-delivery-conflict.sh
+ M projects/agent-kit/assets/hooks/git-guard-delivery-draft.sh
+ M projects/agent-kit/assets/hooks/git-guard-delivery-epic.sh
+ M projects/agent-kit/assets/hooks/git-guard-delivery-folder.sh
+ M projects/agent-kit/assets/hooks/git-guard-delivery-merge.sh
+ M projects/agent-kit/assets/hooks/git-guard-delivery-merged.sh
+ M projects/agent-kit/assets/hooks/git-guard-delivery-pipeline.sh
 ```
 
 ### Commits over the main branch
 
 ```
+74d7cc5bd feat(rt:agent-kit): хуки хода работы решают по таблице
 0a2f9c7a8 feat(rt:agent-kit): действие вызова определяет решатель, окно и вход из передачи по таблице
 3ae100acc feat(rt:agent-kit): turn-exit и flow-step берут решение из таблицы
 7842394cf feat(rt:agent-kit): общие факты хуков считает facts.sh
@@ -183,7 +212,6 @@ The progress in full — `docs/tasks/RT-3355-hooks-read-table/progress.md`; the 
 a7d989a2d fix(rt:agent-kit): все наборы пакета зелёные, шаги задачи RT-3275 измерены
 3402681a4 feat(rt:agent-kit): отказы хода работы называют разрешённый ход, цепочки таблицы записаны сценариями
 afe372403 docs(rt:agent-kit): шаг 2.2 задачи RT-3275 измерен
-8c636dc4c docs(rt:agent-kit): задача RT-3275 снова идёт
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

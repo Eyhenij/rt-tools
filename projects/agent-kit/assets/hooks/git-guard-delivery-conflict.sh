@@ -135,11 +135,14 @@ The branch is led by another session and holds its own commits: a merge of the m
     fi
     [ -z "$listed" ] && return 0
 
-    deny "BLOCKED: ${taking} while a conflicting request of your own stands. What was handed over conflicts with the main branch, and a person cannot merge it:
-
-${listed}
-
-The conflict arrives by someone else's merge, without a single action by the author of the request: it stands until it is caught up with. New work does not fix it — it adds one more branch to the queue, growing from the same main and falling behind the same way.
-
-There is one move from here: pull the main branch, merge it into the named branch, resolve the conflict and send it — the push there is refused until the heavy steps have a green mark, so run them first by \`${ahead_cmd:-bash git-guard-push-ahead.sh}\` (the Bash call with run_in_background) and push after its end — and only then take new work. What is fixed by what — the pattern git-workflow-freshness."
+    # The action of the table is the move being taken; the words are the table's.
+    case "$taking" in
+        'creating a task') _action=task_new ;;
+        'moving the column into work') _action=task_move ;;
+        'creating a branch for a task') _action=branch_create ;;
+        'opening a request') _action=pr_create ;;
+        *) _action=push ;;
+    esac
+    fact own_pr_conflicting yes
+    refuse "$_action" "$(jq -cn --arg t "$taking" --arg l "$listed" '{taking:$t, listed:$l}')"
 }

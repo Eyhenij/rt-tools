@@ -113,7 +113,7 @@ stale_of() {
     (
         cd "$TREE" || exit 0
         RT_STATE="$1" HELPER="$HOOKS/git-guard-tree-assignment.sh" bash -c '
-            fault() { printf "%s\n" "$1"; }
+            unmet() { printf "%s\n" "$3"; }
             rt_task_state() { printf "%s" "$RT_STATE"; }
             . "$HELPER"
             rt_assignment_stale "ветка"
@@ -131,7 +131,7 @@ asked_of() {
     (
         cd "$TREE" || exit 0
         FORCE_COLOR=true HELPER="$HOOKS/git-guard-tree-assignment.sh" bash -c '
-            fault() { printf "%s\n" "$1"; }
+            unmet() { printf "%s\n" "$3"; }
             rt_task_state() { [ "$1" = 1870 ] && printf "%s" "{\"exists\":true,\"open\":false}"; }
             . "$HELPER"
             rt_assignment_stale "ветка"

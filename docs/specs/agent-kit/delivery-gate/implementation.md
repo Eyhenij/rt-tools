@@ -11,7 +11,7 @@ whole.
 
 - **The main branch is merged into the task branch before the PR is opened.** — `projects/agent-kit/assets/rules/git-workflow.github.md:git-workflow`
 - **Opening a PR is refused while the main branch is not merged.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:behind`
-- **The delivery conditions that did not come together are named by one refusal.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:deny_faults`
+- **The delivery conditions that did not come together are named by one refusal.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:refuse_unmet`
 - **Every condition that did not come together is named together with what it is lifted by.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:fault`
 - **A condition known at the start of the work is asked at the start.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:branch_arg`
 - **The base named by the command is judged, not the tip of the working copy.** — `projects/agent-kit/assets/hooks/git-guard-delivery.sh:base_ref`
