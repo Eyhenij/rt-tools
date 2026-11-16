@@ -14,12 +14,12 @@ fixture_metric_tree() {
     printf '%s' "$dir"
 }
 
-# Отказ проверки так, как его пишет общий хвост отказа. Довод — имя сессии и текст вызова.
+# Отказ проверки так, как его пишет вызов решателя. Довод — имя сессии и текст вызова.
 refuse_in() {
     local tree="$1" session="$2" call="$3"
     CLAUDE_PROJECT_DIR="$tree" RT_GUARD_NAME=probe-guard \
         RT_HOOK_INPUT="{\"session_id\":\"$session\",\"tool_input\":{\"command\":\"$call\"}}" \
-        bash -c '. "$1/guard-note.sh"; rt_guard_note' _ "$HOOKS"
+        bash -c '. "$1/guard-note.sh"; rt_guard_note guard-deny' _ "$HOOKS"
 }
 
 # Сколько наблюдений этого рода записано.
@@ -94,7 +94,7 @@ copy="$(fixture_metric_tree)"
 refuse_from() {
     CLAUDE_PROJECT_DIR="$tree" RT_GUARD_NAME=probe-guard \
         RT_HOOK_INPUT="{\"session_id\":\"session-one\",\"cwd\":\"$copy\",\"tool_input\":{\"command\":\"git push\"}}" \
-        bash -c '. "$1/guard-note.sh"; rt_guard_note' _ "$HOOKS"
+        bash -c '. "$1/guard-note.sh"; rt_guard_note guard-deny' _ "$HOOKS"
 }
 refuse_from
 printf 'edit\n' >> "$copy/package.json"
@@ -178,7 +178,7 @@ tree="$(fixture_metric_tree)"
 report "каталог наблюдений: до первой записи игнора нет" \
     "$(git -C "$tree" check-ignore -q .claude/rt-kit/observations/x.jsonl && echo под || echo нет)" "нет"
 CLAUDE_PROJECT_DIR="$tree" RT_GUARD_NAME=probe-guard RT_HOOK_INPUT='{"session_id":"s"}' \
-    bash -c '. "$1/guard-note.sh"; rt_guard_note' _ "$HOOKS"
+    bash -c '. "$1/guard-note.sh"; rt_guard_note guard-deny' _ "$HOOKS"
 report "каталог наблюдений: git его не берёт" "$(git -C "$tree" add -n -A 2>/dev/null | grep -c 'observations')" "0"
 rm -rf "$tree"
 
@@ -356,7 +356,7 @@ rm -rf "$tree"
 
 tree="$(fixture_metric_tree)"
 CLAUDE_PROJECT_DIR="$tree" RT_GUARD_NAME=probe-guard RT_GUARD_RULE=doc-style RT_HOOK_INPUT='{"session_id":"s"}' \
-    bash -c '. "$1/guard-note.sh"; rt_guard_note' _ "$HOOKS"
+    bash -c '. "$1/guard-note.sh"; rt_guard_note guard-deny' _ "$HOOKS"
 report "правило: отказ несёт объявленное правило" "$(field_of "$tree" guard-deny rule)" "doc-style "
 rm -rf "$tree"
 

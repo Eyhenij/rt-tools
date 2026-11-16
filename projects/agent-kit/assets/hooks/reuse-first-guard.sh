@@ -359,25 +359,11 @@ fi
 
 [ -z "$found" ] && exit 0
 
-reason="BLOCKED: this is already written. File: ${path##*/}
-${found}
-
-The order of moves: 1) open the ready-made — the barrel of the kit or the base class — and use it; 2) find in the tree a screen where this case is already assembled, and repeat that assembly; 3) if the ready-made really is not enough — extend it in place, at the ready-made, instead of cloning it alongside: a clone takes the edits onto itself and drifts from the original from the very first one.
-A primitive of one's own, a base of one's own and inline styles of one's own are created only with the explicit approval of the owner, and it is asked before the first file is written. A one-off exception is marked by a departure marker on the same line, with an explanation of what exactly the ready-made lacks. Renaming the file does not bypass this."
-
-# The shared refusal tail: the two lawful moves and the lawful form of the bypass, if the refusal
-# has one. The file may be not laid out — then there is no tail, and the reason for the refusal
-# stays as it was.
-# shellcheck disable=SC1090
-[ -f "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" ] \
-    && . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { :; }
-deny_tail_text="$(rt_deny_tail "a departure marker on the same line, with an explanation of what exactly the ready-made lacks")"
-[ -n "$deny_tail_text" ] && reason="${reason}
-
-${deny_tail_text}"
-
-jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-    || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Something of its own is written where the ready-made already exists."}}\n'
-
+# The decision and the words come from the decision table; the analysis above is the fact, and the
+# hook names what it found.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/decide.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 || exit 0
+rt_decide reuse-first-guard.sh template_own_primitive '{}' \
+    "$(jq -cn --arg f "${path##*/}" --arg s "$found" '{file:$f, found:$s}')" PreToolUse "$input"
 exit 0

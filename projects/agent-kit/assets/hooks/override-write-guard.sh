@@ -35,14 +35,31 @@ command -v jq >/dev/null 2>&1 || exit 0
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # shellcheck disable=SC1090
-[ -f "$rt_hooks_dir/deny-tail.sh" ] && . "$rt_hooks_dir/deny-tail.sh" 2>/dev/null
-command -v rt_deny_tail >/dev/null 2>&1 || rt_deny_tail() { printf ''; }
+# The decision and the words come from the decision table. A refusal that names an edit of another
+# file hands the decider the facts its neighbours judge that edit by — the exam, the window, the rules
+# gate, the handover and the course of work — and the decider puts first what they want.
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/decide.sh" 2>/dev/null
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/facts.sh" 2>/dev/null
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/facts-flow.sh" 2>/dev/null
 
-deny() {
-
-    reason="$1 $(rt_deny_tail "$2")"
-    jq -n --arg r "$reason" '{hookSpecificOutput:{hookEventName:"PreToolUse",permissionDecision:"deny",permissionDecisionReason:$r}}' 2>/dev/null \
-        || printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"The override overwrite guard."}}\n'
+# refuse <action> <own facts JSON> <params JSON> [file of the named edit]
+refuse() {
+    local move='{}' flow='{"facts":{},"params":{}}' named
+    command -v rt_decide >/dev/null 2>&1 || exit 0
+    if [ -n "${4:-}" ]; then
+        named="$(jq -cn --arg f "$4" '{file_path:$f,old_string:"",new_string:""}')"
+        move="$(rt_fact_move Edit "$named" "$input")"
+        if command -v rt_fact_flow_of >/dev/null 2>&1; then
+            flow="$(rt_fact_flow_of Edit "$named" "$input")"
+            [ -n "$flow" ] || flow='{"facts":{},"params":{}}'
+        fi
+    fi
+    rt_decide "$RT_GUARD_NAME.sh" "$1" \
+        "$(jq -cn --argjson m "$move" --argjson f "$flow" --argjson o "$2" '$m + $f.facts + $o')" \
+        "$(jq -cn --argjson f "$flow" --argjson p "$3" '$f.params + $p')" PreToolUse "$input"
     exit 0
 }
 
@@ -100,8 +117,9 @@ while IFS= read -r candidate; do
     sections="$(grep -c '^## ' "$candidate" 2>/dev/null || printf '0')"
     resource="${relative#"$overrides_dir"/}"
 
-    deny "BLOCKED by override-write-guard: «${relative}» is an override of this tree, and it already holds ${lines} lines, sections «## » — ${sections}. A whole-file write carries away every section this edit did not touch, and the package text of the resource «${resource}» silently returns in their place: the layout matches after that, the checks are green, and what the tree said about itself is gone. Edit in place — by an edit of a section, not by a write of the file.$(command -v rt_move_first >/dev/null 2>&1 && ow_first="$(rt_move_first Edit "$(jq -cn --arg f "$candidate" '{file_path:$f,old_string:"",new_string:""}')")" && [ -n "$ow_first" ] && printf ' %s' "$ow_first")" \
-        "a new section is appended at the end: the override merges with the package resource by the heading «## », and the package text is replaced only by the sections the tree named"
+    refuse write_override '{"override_nonempty":"yes"}' \
+        "$(jq -cn --arg p "$relative" --arg l "$lines" --arg s "$sections" --arg r "$resource" '{path:$p, lines:$l, sections:$s, resource:$r}')" \
+        "$candidate"
 done <<EOF
 $candidates
 EOF

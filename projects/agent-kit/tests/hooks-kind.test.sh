@@ -55,7 +55,7 @@ report "SC-AK-1038 — отказ в пользу работы объявлен 
 
 # --- SC-AK-1039 — отказ называет законные ходы --------------------------------------------------
 # Общий хвост отказа лежит в одном помощнике: страж, который его не зовёт и не пишет свой,
-# оставляет отбитого без хода.
+# оставляет отбитого без хода. Страж, что спрашивает таблицу решений, получает хвост от решателя.
 # Указатель законов ничего не отбивает: он печатает список в начале захода, и слово «decision» в
 # нём — из чужого предложения. Хвоста отказа ему неоткуда взять.
 # Страж, чьё единственное решение — окно владельцу («ask»), не отказывает: решает владелец, и ходов
@@ -70,7 +70,7 @@ for hook in "$HOOK_DIR"/*.sh; do
     esac
     grep -qE 'permissionDecision|decision' "$hook" || continue
     grep -qE 'deny|block' "$hook" || continue
-    grep -qE 'rt_deny_tail|Two moves from here|deny-tail' "$hook" || without_tail=$((without_tail + 1))
+    grep -qE 'rt_deny_tail|Two moves from here|deny-tail|rt_decide' "$hook" || without_tail=$((without_tail + 1))
 done
 report "SC-AK-1039 — отказ называет законные ходы" "$without_tail" 0
 

@@ -16,7 +16,9 @@
 #
 # It prints the answer for the agent and returns 1 when the table refuses or asks; prints nothing and
 # returns 0 when it allows. The event is `PreToolUse` unless named: a Stop hook gets the block form,
-# and the event `git` — a hook of git itself — gets the bare text on the error stream.
+# and the event `git` — a hook of git itself — gets the bare text on the error stream. The event
+# `stderr` is the same form for a guard of the agent that refuses by the code 2: the text goes to the
+# error stream, and the guard exits with what `rt_decide` returned.
 #
 # FAIL-OPEN, IN FAVOUR OF WORK: no node, no decider, no table, a decider that fails — nothing is
 # printed and 0 is returned: the guard lets the action through. A broken decider has no right to jam
@@ -101,9 +103,13 @@ rt_decide() {
         command -v rt_deny_tail >/dev/null 2>&1 && _text="$_text
 
 $(rt_deny_tail "$_bypass")"
-    else
-        command -v rt_deny_tail >/dev/null 2>&1 && rt_deny_tail >/dev/null
     fi
+
+    # The record of the decision: every refusal and every question of a guard passes through here,
+    # and the event is named by the decision the table took — `guard-deny` or `guard-ask`.
+    # shellcheck disable=SC1090
+    command -v rt_guard_note >/dev/null 2>&1 || . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/guard-note.sh" 2>/dev/null
+    command -v rt_guard_note >/dev/null 2>&1 && RT_HOOK_INPUT="${RT_HOOK_INPUT:-$_input}" rt_guard_note "guard-$_decision"
     [ -n "$_after" ] && _text="$_text
 
 $_after"
@@ -117,7 +123,7 @@ $_after"
         command -v rt_note >/dev/null 2>&1 && rt_note "${RT_DECIDE_NOTE%% *}-${_decision}" ${RT_DECIDE_NOTE#* }
     fi
 
-    if [ "$_event" = git ]; then
+    if [ "$_event" = git ] || [ "$_event" = stderr ]; then
         # A hook of git itself: the text goes to the error stream, and the non-zero code stops git.
         printf '%s\n' "$_text" >&2
     elif [ "$_event" = Stop ] || [ "$_event" = SubagentStop ]; then
@@ -127,6 +133,6 @@ $_after"
             '{hookSpecificOutput:{hookEventName:$e, permissionDecision:$d, permissionDecisionReason:$r}}'
     fi
     # Git reads any code but zero as a refusal; 2 is the code the agent's hooks refuse with too.
-    [ "$_event" = git ] && return 2
+    [ "$_event" = git ] || [ "$_event" = stderr ] && return 2
     return 1
 }

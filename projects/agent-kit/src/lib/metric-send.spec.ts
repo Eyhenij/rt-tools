@@ -179,11 +179,20 @@ describe('sendMetrics', () => {
         await send(answering(503, 'нет'));
         await send(answering(503, 'нет'), { force: true, now: new Date(NOW.getTime() + 60 * 60 * 1000) });
 
-        expect(readSendMark(root).faultSince).toBe(NOW.getTime());
+        expect(readSendMark(root).failureSince).toBe(NOW.getTime());
 
         await send(answering(), { force: true, now: new Date(NOW.getTime() + 2 * 60 * 60 * 1000) });
 
-        expect(readSendMark(root).faultSince).toBe(0);
+        expect(readSendMark(root).failureSince).toBe(0);
+    });
+
+    it('SC-AK-1286 — метка прежней версии читается по старым именам полей', () => {
+        const dir: string = join(root, OBSERVATIONS_DIR, '.marks');
+        mkdirSync(dir, { recursive: true });
+        writeFileSync(join(dir, 'send.json'), JSON.stringify({ fault: ESendFault.Leak, faultSince: 1000, reason: 'утечка' }));
+
+        expect(readSendMark(root).failure).toBe(ESendFault.Leak);
+        expect(readSendMark(root).failureSince).toBe(1000);
     });
 
     it('SC-AK-1282 — команда человека без токена отвечает отказом', async () => {
@@ -216,7 +225,7 @@ describe('sendMetrics', () => {
         await send(calls);
 
         expect(calls.bodies.map((one: IMetricsDayCargo): string => one.day)).toEqual(['2026-11-05', '2026-11-07']);
-        expect(readSendMark(root).fault).toBe(ESendFault.LineRefused);
+        expect(readSendMark(root).failure).toBe(ESendFault.LineRefused);
         expect(Object.keys(readSendMark(root).factsByDay)).toEqual(['2026-11-07']);
     });
 
@@ -237,7 +246,7 @@ describe('sendMetrics', () => {
         await send(calls, { force: true, remote: 'sectionsTotal' });
 
         expect(calls.bodies).toHaveLength(0);
-        expect(readSendMark(root).fault).toBe(ESendFault.Leak);
+        expect(readSendMark(root).failure).toBe(ESendFault.Leak);
     });
 
     it('SC-AK-1314 — имя копии, совпавшее со словом ключа, строку не закрывает', async () => {
@@ -346,7 +355,7 @@ describe('sendMetrics', () => {
         const refused: ICalls = answering(401, 'токен не принят');
 
         await send(refused);
-        expect(readSendMark(root).fault).toBe(ESendFault.TokenRefused);
+        expect(readSendMark(root).failure).toBe(ESendFault.TokenRefused);
         expect(sendFaultLines(root).join(' ')).toContain('токен не принят');
 
         await send(refused, { force: true, now: new Date(NOW.getTime() + 2 * SEND_EVERY_MS) });
@@ -379,7 +388,7 @@ describe('sendMetrics', () => {
 
         await send(answering(409));
 
-        expect(readSendMark(root).fault).toBe(ESendFault.None);
+        expect(readSendMark(root).failure).toBe(ESendFault.None);
     });
 
     it('команда человека говорит, чем кончилось, и код сбоя не прячет', async () => {

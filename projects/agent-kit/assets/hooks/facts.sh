@@ -25,7 +25,12 @@
 #   rt_fact_move_gate_rule <tool> <tool input> <sid>
 #                                    the first rule the gate waits for before that move, or nothing
 #   rt_fact_from_handoff <record>    yes when the session began from a handover
+#   rt_move_rules <tool> <input>     the rules the rules gate wants for a move, one per line
 #   rt_fact_rule_loaded <rule> <sid> yes when the rule is loaded or absent from the tree
+#   rt_fact_move <tool> <tool input> <hook input>
+#                                    the facts the neighbours judge a named move by, as JSON: the
+#                                    exam, the window, the rules the gate wants for the move, the
+#                                    rule of the course of work and the entry from a handover
 #
 # FAIL-OPEN: a fact that cannot be read is empty. The guard decides by an empty fact as it did when
 # its own call failed.
@@ -225,12 +230,61 @@ rt_fact_move_rule_loaded() {
 # The first rule the rules gate waits for before a move, or nothing when the move passes it.
 # Parameters: the tool of the move, its tool input as JSON, the session id.
 rt_fact_move_gate_rule() {
-    _rt_here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    # shellcheck disable=SC1091
-    command -v rt_move_rules >/dev/null 2>&1 || . "$_rt_here/deny-tail.sh" 2>/dev/null
-    command -v rt_move_rules >/dev/null 2>&1 || return 0
     _rt_in="$(jq -cn --arg t "$1" --argjson i "$2" '{tool_name:$t, tool_input:$i}' 2>/dev/null)"
     for _rt_r in $(rt_move_rules "$1" "$_rt_in"); do
         [ "$(rt_fact_rule_loaded "$_rt_r" "$3")" = yes ] || { printf '%s' "$_rt_r"; return 0; }
     done
+}
+
+# The facts the neighbours judge a named move by. A guard that names a move hands them to the decider,
+# and the decider puts first what a neighbour wants before that move.
+# Parameters: the tool of the move, its tool input as JSON, the hook input.
+rt_fact_move() {
+    _rt_sid="$(printf '%s' "$3" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+    _rt_rec="$(rt_fact_transcript "$3")"
+    jq -cn --arg exam "$(rt_fact_exam_holds "$_rt_rec")" \
+        --arg window "$(rt_fact_window_over_stop "$_rt_sid" "$_rt_rec")" \
+        --arg rule "$(rt_fact_move_rule_loaded "$1" "$2" "$_rt_sid")" \
+        --arg gate "$(rt_fact_move_gate_rule "$1" "$2" "$_rt_sid")" \
+        --arg handoff "$(rt_fact_from_handoff "$_rt_rec")" \
+        --arg flow "$(rt_fact_rule_loaded "${RT_TASK_FLOW_RULE:-task-flow}" "$_rt_sid")" \
+        '{exam:$exam, window_over_stop:$window, rule_loaded:$rule, gate_rule:$gate, task_flow_loaded:$flow, from_handoff:$handoff}'
+}
+
+# The rules the gate wants for a move: the map read the way the gate reads it, a shell command
+# with the files it writes. Parameters: the tool of the move, the whole input of the move.
+rt_move_rules() {
+    local mr_dir mr_root mr_map mr_profile mr_target mr_path
+    mr_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    mr_root="${CLAUDE_PROJECT_DIR:-.}"
+    (
+        for mr_map in "$mr_dir/../rt-kit/defaults/gate-map.sh" "$mr_dir/../defaults/gate-map.sh" "$mr_root/.claude/rt-kit/defaults/gate-map.sh" "$mr_root/.claude/rt-kit/gate-map.sh"; do
+            # shellcheck disable=SC1090
+            [ -f "$mr_map" ] && . "$mr_map" 2>/dev/null
+        done
+        command -v skill_for >/dev/null 2>&1 || exit 0
+        case "$1" in
+            Edit | Write | MultiEdit)
+                mr_target="$(printf '%s' "$2" | jq -r '.tool_input.file_path // empty' 2>/dev/null)"
+                case "$mr_target" in /*) ;; ?*) mr_target="$mr_root/$mr_target" ;; *) exit 0 ;; esac
+                skill_for edit "$mr_target" "" 2>/dev/null
+                ;;
+            Bash)
+                mr_target="$(printf '%s' "$2" | jq -r '.tool_input.command // empty' 2>/dev/null)"
+                [ -n "$mr_target" ] || exit 0
+                skill_for bash "$mr_target" "" 2>/dev/null
+                for mr_profile in "$mr_dir/../rt-kit/defaults/project.sh" "$mr_dir/../defaults/project.sh" "$mr_root/.claude/rt-kit/defaults/project.sh" "$mr_root/.claude/rt-kit/project.sh"; do
+                    # shellcheck disable=SC1090
+                    [ -f "$mr_profile" ] && . "$mr_profile" 2>/dev/null
+                done
+                command -v rt_shell_writes >/dev/null 2>&1 && command -v rt_shell_paths >/dev/null 2>&1 || exit 0
+                rt_shell_writes "$mr_target" || exit 0
+                rt_shell_paths "$mr_target" | while IFS= read -r mr_path; do
+                    [ -n "$mr_path" ] || continue
+                    case "$mr_path" in /*) ;; *) mr_path="$mr_root/$mr_path" ;; esac
+                    skill_for edit "$mr_path" "" 2>/dev/null
+                done
+                ;;
+        esac
+    ) | tr '\n' ' '
 }

@@ -70,10 +70,10 @@ no guard waits for the network: the neighbouring subdomain "Metrics" names how.
   wrongly: it is silent not because it was not needed. The declaration is voluntary and exact — a
   hook that counts its own refusal itself does not make it, and a second event about the same does
   not count.
-- **A guard's refusal is recorded by the shared refusal tail, not by the guard itself.** Written in
-  the guard, the record stood in five guards out of thirty, and the digest answered for that fifth
-  part. The tail is the only place every refusal passes through: the rule demands naming two lawful
-  moves at a refusal, and a guard refusing past the tail breaks it before it loses the count.
+- **A guard's refusal is recorded by the decider call, not by the guard itself.** Written in the
+  guard, the record stood in five guards out of thirty, and the digest answered for that fifth part.
+  The decider call is the only place every refusal passes through, and it knows the decision the
+  table took: a question is recorded as a question, not as a refusal.
 - **The list of guards the digest asks of the tree, not of the package.** The tree's own guards lie
   in the same directory and write observations on a par with the package ones; a list from the
   package would name not one of them.

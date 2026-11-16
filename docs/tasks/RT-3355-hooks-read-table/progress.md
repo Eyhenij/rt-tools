@@ -12,12 +12,12 @@ Rewritten by every session, not appended to.
   and computes the 330 composed states (`rows 1000, ok 1000`); the composed rows left the table for
   `states` (conditions, pattern, probe); walk, conform and chains read `withDecided` — `derived 3584
   decided`; `hooks/decide.sh` gives `rt_decide`, FAIL-OPEN covered.
-- **Next step:** 4.3 — the other hooks decide by `rt_decide`. 4.2 is committed: the delivery and
-  git hooks go through the decider, the table test gives `516 ok`, the full suite run is green.
-  In 4.3 the facts of the course of work for one edit move into `hooks/facts-flow.sh`: the
-  work-conduct guards and the two guards that name an edit of another file (rule-source,
-  override-write) read them from there, which also removes `rt_move_first` for 4.4.
-- **Uncommitted:** nothing over the commit of 4.2.
+- **Next step:** 5.1 — the full mutation sweep. 4.3 and 4.4 are measured: every hook of the
+  package decides by `rt_decide`, `rt_move_first` is gone, the snapshot gives `rows 999, changed
+  0`. The facts of the course of work for one edit are `hooks/facts-flow.sh`, the facts of a named
+  move `rt_fact_move` in `hooks/facts.sh`.
+- **Uncommitted:** the 4.3 and 4.4 work over the commit of 4.2; the spec bindings that still name
+  the moved symbols are fixed before the commit.
 - **PR:** not open yet
 
 ## Steps
@@ -33,9 +33,9 @@ Rewritten by every session, not appended to.
 - [x] 3.2 No hook computes these facts past `facts.sh`
 - [x] 4.1 The hooks of the course of work decide by `rt_decide`: task-flow, task-flow-draft, flow-step, exam, window-fill, handoff-entry, docs, skill-gate, turn-exit
 - [x] 4.2 The hooks of delivery and of git decide by `rt_decide`: git-guard-* with every helper, pre-push, commit-msg; the helpers that refused become guards with rows
-- [>] 4.3 The other hooks decide by `rt_decide`; a content analysis (prose-style, qa-dataid, reuse-first, sql) gives a fact
-- [ ] 4.4 No hook re-runs its neighbours: `rt_move_first` is gone
-- [ ] 5.1 Every refusal row flipped to «allow» makes its hook allow
+- [x] 4.3 The other hooks decide by `rt_decide`; a content analysis (prose-style, qa-dataid, reuse-first, sql) gives a fact
+- [x] 4.4 No hook re-runs its neighbours: `rt_move_first` is gone
+- [>] 5.1 Every refusal row flipped to «allow» makes its hook allow
 - [ ] 5.2 All probes answer as in the snapshot
 - [ ] 5.3 The reverse probe: the hook of each refusal's named move is run in the state of that refusal
 - [ ] 5.4 The coverage counts the git hooks and the helpers that refused among the guards
@@ -131,7 +131,23 @@ Rewritten by every session, not appended to.
   the row of the same state without the facts of the neighbours. Affected stage: 4.
 - **The hooks of git refuse with code 2.** `rt_decide` with the event `git` prints the words on the
   error stream and returns 2: git reads any code but zero as a refusal, and the probe reads 2. The
-  push run ahead refuses the same way. pre-push, commit-msg and the run ahead are guards with rows.
+  push run ahead refuses the same way. pre-push and commit-msg are guards with rows; the run ahead
+  is a helper: its exit code is the count of red checks.
+- **A guard of the agent that refused by code 2 keeps that form.** `rt_decide` with the event
+  `stderr` prints the words on the error stream and returns 2, the same as for git.
+- **A content analysis is a fact or a slot.** The sql hook names the class of the request and its
+  target; reuse-first, qa-dataid and prose-style hand what they found to a slot of the row.
+- **The facts of the course of work for one edit are computed once.** `hooks/facts-flow.sh` gives
+  them to the two work-conduct guards and to the guards that name an edit of another file; those
+  ask them of the named file in a subshell instead of running the neighbours. `rt_fact_move` in
+  `hooks/facts.sh` gives the exam, the window, the gate and the handover entry for a named move.
+- **The decider call writes the record of the decision.** `guard-deny` for a refusal and
+  `guard-ask` for a question: before, a question passed through the tail and was counted as a
+  refusal. SC-AK-811 is rewritten to the decider call.
+- **The closing of the conversation passes without jq.** The decider cannot be asked without jq
+  and node, and a broken decider lets the action through; SC-AK-1121 is rewritten to that.
+- **The field `fault` of the send mark is renamed `failure`.** It matched the search of step 4.3
+  while it is no refusal; a mark of the former version is read by the old names.
 - **The assignment reader names the kind of its answer.** `tree-assignment.mjs --unmet` prints the
   kind (`ok`, `unnamed`, `no_row`, `dash`, `foreign`) with the text: the kind is the fact
   `copy_assignment`. `--fault` stays for the hooks of 4.3.

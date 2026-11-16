@@ -15,9 +15,9 @@ whole.
 - **The sign of an interpreter is read at the line that opened the body, not at the whole command.** — `projects/agent-kit/assets/defaults/project.sh:rt_shell_paths_default`
 - **The sign of application code is judged relative to the root of the tree.** — `projects/agent-kit/assets/defaults/project.sh:rt_is_app_code_default`
 - **The plan guard judges the declared transition, not the presence of files.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:state`
-- **A refusal by state names the mandatory action of the state that is declared.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`
-- **Only a word from the list counts as a state name.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:state_action`
-- **The task folder is asked of the history of the branch too, not only of the disk.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:in_tree`
+- **A refusal by state names the mandatory action of the state that is declared.** — `projects/agent-kit/assets/hooks/facts-flow.sh:rt_flow_state_action`
+- **Only a word from the list counts as a state name.** — `projects/agent-kit/assets/hooks/facts-flow.sh:rt_flow_state_action`
+- **The task folder is asked of the history of the branch too, not only of the disk.** — `projects/agent-kit/assets/hooks/facts-flow.sh:rt_flow_in_tree`
 - **The state is judged before the agreement and its bypass.** — `projects/agent-kit/assets/hooks/task-flow-guard.sh:progress`
 - **A session begun from a handover edits no files while the rule of conducting work is not loaded.** — `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:from_handoff`
 - **The handover is recognised both by the path to it and by a word about it.** — `projects/agent-kit/assets/hooks/handoff-entry-guard.sh:from_handoff`

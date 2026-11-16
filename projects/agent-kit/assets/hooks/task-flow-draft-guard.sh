@@ -40,103 +40,32 @@ command -v rt_task_flow_context >/dev/null 2>&1 || exit 0
 rt_task_flow_context || exit 0
 
 branch="$RT_TF_BRANCH"
-root="$RT_TF_ROOT"
 tasks_dir="$RT_TF_TASKS_DIR"
 plan="$RT_TF_PLAN"
 
-# The decision, the move and the text come from the decision table. Parameters: the facts of this
-# guard, the tool and the input of the edit its refusal names, the params of the text. The facts of
-# the neighbours are those they judge that edit by: the decider puts first what they want.
-tf_decide() {
-    # shellcheck disable=SC1091
-    . "$rt_hooks_dir/facts.sh" 2>/dev/null
-    tf_sid="$(printf '%s' "$RT_HOOK_INPUT" | jq -r '.session_id // "nosession"' 2>/dev/null)"
-    tf_record="$(rt_fact_transcript "$RT_HOOK_INPUT")"
-    tf_facts="$(jq -cn --argjson own "$1" \
-        --arg exam "$(rt_fact_exam_holds "$tf_record")" \
-        --arg window "$(rt_fact_window_over_stop "$tf_sid" "$tf_record")" \
-        --arg rule "$(rt_fact_move_rule_loaded "$2" "$3" "$tf_sid")" \
-        --arg gate "$(rt_fact_move_gate_rule "$2" "$3" "$tf_sid")" \
-        --arg handoff "$(rt_fact_from_handoff "$tf_record")" \
-        --arg flow "$(rt_fact_rule_loaded "${RT_TASK_FLOW_RULE:-task-flow}" "$tf_sid")" \
-        '{exam:$exam, window_over_stop:$window, rule_loaded:$rule, gate_rule:$gate, task_flow_loaded:$flow, from_handoff:$handoff} + $own')"
-    tf_params="$(jq -cn --arg b "$branch" --arg t "$tasks_dir" --argjson p "${4:-"{}"}" '{branch:$b, tasks_dir:$t} + $p')"
-    # shellcheck disable=SC1091
-    . "$rt_hooks_dir/decide.sh" 2>/dev/null
-    command -v rt_decide >/dev/null 2>&1 && rt_decide task-flow-draft-guard.sh "?edit_code" "$tf_facts" "$tf_params" PreToolUse "$RT_HOOK_INPUT"
-    exit 0
-}
+# Whether the plan names the agreement and whether it exists is computed in one place, shared with
+# the guards that name an edit of another file. Empty — there is no plan, and nothing to judge.
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/facts.sh" 2>/dev/null
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/facts-flow.sh" 2>/dev/null || exit 0
+agreement="$(rt_fact_agreement)"
+[ -n "$agreement" ] || exit 0
+own="$(printf '%s' "$agreement" | jq -c '{plan:"yes"} + .facts')"
+said="$(printf '%s' "$agreement" | jq -c '.params')"
 
-# No plan — that is another guard's demand, and the refusal about it is printed by the progress
-# guard. Work with a taken-apart folder leaves here too: by this minute the plan has been removed
-# from disk on purpose.
-[ -f "$plan" ] || exit 0
-
-# The bypass line: the behaviour does not change, no product agreement is needed. The reason must
-# be there — without it the bypass becomes the default.
-if grep -qE '^\*\*(Behaviour|Поведение):\*\*[[:space:]]*(unchanged|не меняется)[[:space:]]*—[[:space:]]*\S' "$plan" 2>/dev/null; then
-    exit 0
-fi
-
-# The agreement is named in one of two forms. The first is a separate document in the "proposed"
-# directory: it moves into the domain spec when the work closes. The second is the domain spec
-# itself: a tree without a separate directory writes the agreement straight into it, and there is
-# nothing to move — the draft matches the spec from day one. Demanding one form would impose the
-# way agreements are written along with the check that the work follows the plan: a tree with
-# the second way drops the guard entirely and is left without the only machine check under the
-# rule.
-draft="$(sed -nE 's/^\*\*(Draft|Драфт):\*\*[[:space:]]*`([^`]*)`.*/\2/p' "$plan" 2>/dev/null | head -1)"
-[ -z "$draft" ] && draft="$(sed -nE 's/^\*\*(Spec|Спек):\*\*[[:space:]]*`([^`]*)`.*/\2/p' "$plan" 2>/dev/null | head -1)"
-
-if [ -z "$draft" ]; then
-    tf_decide '{"plan":"yes","agreement":"unnamed"}' Edit "$(jq -cn --arg f "$plan" '{file_path:$f,old_string:"",new_string:""}')"
-fi
-
-case "$draft" in
-    /*) draft_path="$draft" ;;
-    *) draft_path="$root/$draft" ;;
+# The move the refusal names: name the agreement in the plan, or write the agreement it names.
+case "$(printf '%s' "$own" | jq -r '.agreement')" in
+    unnamed) tool=Edit; move="$(jq -cn --arg f "$plan" '{file_path:$f,old_string:"",new_string:""}')" ;;
+    missing) tool=Write; move="$(printf '%s' "$said" | jq -c '{file_path:.agreement_file, content:""}')" ;;
+    *) exit 0 ;;
 esac
 
-if [ -e "$draft_path" ]; then
-    exit 0
-fi
-
-# An agreement merged into the domain spec leaves the disk — by design: the main branch must not
-# hold a "proposed" directory. But the plan refers to it until the work ends, and without this
-# branch the last commit of the PR would lock the branch: neither edits after review remarks nor
-# a changelog entry could be made after the merge.
-#
-# The branch history tells a merged agreement from one never created: a path that was never in
-# it was never an agreement. There is nothing to ask about this but git, so no git — the refusal
-# stays.
-if git -C "$root" log --oneline -1 -- "$draft" 2>/dev/null | grep -q .; then
-    exit 0
-fi
-
-# The merge may also be the first commit that created the named path at all: the draft was
-# written without committing, and what went into history was already the domain spec. Then the
-# path has no history, and the work was done exactly as the close pattern says — and the refusal
-# would lock the branch at the last step. The sign: the agreement is named by a path of the form
-# `<domain>/proposed/<feature>`, the domain directory exists in the tree, and the feature name
-# occurs in it. While there is no such spec, the refusal stays as it was.
-case "$draft" in
-    */proposed/*)
-        domain_dir="${draft%%/proposed/*}"
-        feature="${draft##*/proposed/}"
-        feature="${feature%/}"
-        if [ -n "$feature" ] && [ -d "$root/$domain_dir" ] \
-            && grep -rq -- "$feature" "$root/$domain_dir" 2>/dev/null; then
-            exit 0
-        fi
-        ;;
-esac
-
-# The file the creation writes: a named directory gets its spec inside.
-case "$draft_path" in
-    */) agreement_file="${draft_path}spec.md" ;;
-    *.md) agreement_file="$draft_path" ;;
-    *) agreement_file="$draft_path/spec.md" ;;
-esac
-
-tf_decide '{"plan":"yes","agreement":"missing"}' Write "$(jq -cn --arg f "$agreement_file" '{file_path:$f,content:""}')" \
-    "$(jq -cn --arg d "$draft" '{draft:$d}')"
+# The decision, the move and the text come from the decision table; the facts of the neighbours are
+# those they judge that move by, and the decider puts first what they want.
+facts="$(jq -cn --argjson m "$(rt_fact_move "$tool" "$move" "$RT_HOOK_INPUT")" --argjson own "$own" '$m + $own')"
+params="$(jq -cn --arg b "$branch" --arg t "$tasks_dir" --argjson p "$said" '{branch:$b, tasks_dir:$t} + $p')"
+# shellcheck disable=SC1091
+. "$rt_hooks_dir/decide.sh" 2>/dev/null
+command -v rt_decide >/dev/null 2>&1 && rt_decide task-flow-draft-guard.sh "?edit_code" "$facts" "$params" PreToolUse "$RT_HOOK_INPUT"
+exit 0
