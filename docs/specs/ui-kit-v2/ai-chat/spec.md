@@ -86,6 +86,12 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **On a touch screen the row actions of a conversation are always visible; with a mouse they appear on hover, focus and an open menu.**
 
+- **The hover tint of a conversation row exists only where a pointer hovers; on a touch screen a tapped row keeps its resting background.**
+
+- **The selected conversation row keeps its own background under the pointer too.**
+
+- **On a narrow place the shadow of the channel sign in a messenger row blurs by 10 and fits the row inset; wider it is the sign's own.**
+
 - **The composer of the assistant is one box: the text on top, the row of actions inside at the bottom with «+» on the left and the model, the effort, the mode, the usage ring and Send on the right; every item of the row is drawn only when the consumer gives it.**
 
 - **The usage ring shows the spent share of the limit, turns orange from eighty percent and shows the consumer's hint with the share and the reset date on hover and focus.**
@@ -185,3 +191,4 @@ None.
 - 2026-10-28 — the task RT-2960 of the epic RT-2958: a swipe at the edge of the feed and of the list of conversations stays in the chat.
 - 2026-10-28 — the task RT-2962 of the epic RT-2958: the row actions of a conversation are visible on a touch screen.
 - 2026-10-28 — the task RT-2964 of the epic RT-2958: the composer of the assistant with the row of actions and the usage ring.
+- 2026-11-15 — the task RT-3348: on a phone the row sign shadow is narrower and a tap leaves no hover tint.

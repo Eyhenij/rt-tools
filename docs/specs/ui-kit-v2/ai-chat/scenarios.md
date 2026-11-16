@@ -251,3 +251,35 @@ When it is drawn
 Then the composer shows the model and the ring, has no hint of its own, and the line stands right above it
 
 Covered by the component spec of the organism.
+
+### SC-UKV-1308 — without hover a row has no hover tint
+
+Given the conversation list is drawn on a screen without hover
+When a row is touched
+Then its background stays the resting one
+
+Covered by the styles spec of the thread list, and in the admin end-to-end suite by `thread-list-hover.narrow.spec.ts`.
+
+### SC-UKV-1309 — with a mouse a hovered row gets the hover tint
+
+Given the conversation list is drawn on a screen with hover
+When the pointer stands over a row
+Then the row background is the subtle one
+
+Covered by the styles spec of the thread list, and in the admin end-to-end suite by `thread-list-hover.spec.ts`.
+
+### SC-UKV-1310 — the selected row keeps its background under the pointer
+
+Given a row is selected
+When the pointer stands over it or it is touched
+Then its background stays the selected one
+
+Covered by the styles spec of the thread list.
+
+### SC-UKV-1311 — on a narrow place the row shadow of the messenger look blurs by 10
+
+Given the conversation list in the messenger look on a place of 768 or narrower
+When a row with a sign is drawn
+Then the sign shadow blurs by 10 and fits the row inset; wider the shadow is the sign's own
+
+Covered by the styles spec of the thread list and the frame `MessengerPhone`, and in the entry suite by `service-logo-shadow.spec.ts`, which checks that the narrow step reaches an application page.
