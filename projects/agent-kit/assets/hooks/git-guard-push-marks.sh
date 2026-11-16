@@ -45,7 +45,9 @@ rt_push_base() {
     best="origin/$main"
     best_count="$(git rev-list --count "refs/remotes/origin/$main..HEAD" 2>/dev/null)"
     case "$best_count" in '' | *[!0-9]*) printf '%s' "$best" && return 0 ;; esac
-    branch="$(git symbolic-ref --quiet --short HEAD 2>/dev/null)"
+    # shellcheck disable=SC1091
+    command -v rt_fact_branch >/dev/null 2>&1 || . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+    branch="$(rt_fact_branch)"
     [ -n "$branch" ] || { printf '%s' "$best" && return 0; }
 
     own="refs/remotes/origin/$branch"

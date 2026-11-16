@@ -133,6 +133,8 @@ The commit hooks check the message, the formatting and the document pair, and th
 # carries a foreign signature, a push while the heavy steps have no green mark. Without these lines
 # the move named here led straight into a second refusal.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck disable=SC1091
+[ -f "$rt_hooks_dir/facts.sh" ] && . "$rt_hooks_dir/facts.sh"
 workdir="$(rt_hook_cwd)"
 [ -z "$workdir" ] && workdir="${CLAUDE_PROJECT_DIR:-.}"
 if cd "$workdir" 2>/dev/null && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
@@ -144,7 +146,7 @@ if cd "$workdir" 2>/dev/null && git rev-parse --is-inside-work-tree >/dev/null 2
     commit_email="${RT_COMMIT_EMAIL:-}"
     main_branch="${RT_MAIN_BRANCH:-main}"
     if printf '%s\n' "$hits" | grep -q '^commit'; then
-        if [ "$(git branch --show-current 2>/dev/null)" = "$main_branch" ]; then
+        if [ "$(rt_fact_branch)" = "$main_branch" ]; then
             reason="${reason} The copy stands on «${main_branch}», where every commit is refused: take a local branch first — git checkout -b <name> — and commit there."
         elif [ -f "$rt_hooks_dir/git-guard-delivery-signature.sh" ]; then
             # shellcheck disable=SC1090

@@ -21,7 +21,9 @@ command -v jq >/dev/null 2>&1 || exit 0
 cd "$ROOT" 2>/dev/null || exit 0
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 
-branch="$(git branch --show-current 2>/dev/null)"
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+branch="$(rt_fact_branch)"
 [ -z "$branch" ] && exit 0
 
 # The tree profile: first the package default, and over it the project override, if there is one.

@@ -54,6 +54,11 @@ the permission window of the host.
 - **Chains are derived from the table, not written by hand.** Each derived chain is a scenario of
   this subdomain and a case of its test.
 - **An edit of any hook selects the test of the table before a push.**
+- **The decider answers as the table says.** It takes the hook, the action and the facts, and gives
+  the decision, the named move and the refusal text of the matching row. A decider that fails or is
+  absent lets the action through.
+- **A fact has one place that computes it.** The branch, the fresh base, the window, the loaded
+  rules and the conversation record are computed by shared functions, not by each hook anew.
 
 ## What is out of scope
 

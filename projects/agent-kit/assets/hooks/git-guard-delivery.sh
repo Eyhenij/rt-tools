@@ -84,6 +84,8 @@ root="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null)}"
 # the `_default` suffix. Neither one nor the other — the hook lets through: an empty guard is
 # better than a guard that refuses at random.
 rt_hooks_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck disable=SC1091
+[ -f "$rt_hooks_dir/facts.sh" ] && . "$rt_hooks_dir/facts.sh"
 for profile in "$rt_hooks_dir/../rt-kit/defaults/project.sh" "$rt_hooks_dir/../defaults/project.sh" "$root/.claude/rt-kit/defaults/project.sh" "$root/.claude/rt-kit/project.sh"; do
     # shellcheck disable=SC1090
     [ -f "$profile" ] && . "$profile" 2>/dev/null
@@ -192,7 +194,7 @@ fault() {
 [ -f "$rt_hooks_dir/git-guard-delivery-tree.sh" ] && . "$rt_hooks_dir/git-guard-delivery-tree.sh" 2>/dev/null
 command -v rt_delivery_branch_form_ok >/dev/null 2>&1 || rt_delivery_branch_form_ok() { rt_task_branch_ok "$1"; }
 command -v rt_delivery_task_state >/dev/null 2>&1 || rt_delivery_task_state() { (cd "$root" && rt_task_state "$1"); }
-command -v rt_delivery_current_branch >/dev/null 2>&1 || rt_delivery_current_branch() { git branch --show-current 2>/dev/null; }
+command -v rt_delivery_current_branch >/dev/null 2>&1 || rt_delivery_current_branch() { rt_fact_branch; }
 
 # A conflicting PR of one's own: the same technique as with the folder and the signature. The helper
 # is called before all the tiers below and judges not the readiness of this work but the right to
@@ -272,8 +274,7 @@ if [ -n "$branch_arg" ]; then
         # then the silence of the first tier means "the base is not older than my reference", not
         # "the base is fresh". No answer — the tier stays silent, as everywhere the guard goes to
         # the network.
-        remote_head="$(GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=5 GIT_TERMINAL_PROMPT=0 \
-            git ls-remote origin "refs/heads/${main_branch}" 2>/dev/null | cut -f1)"
+        remote_head="$(rt_fact_remote_head "$main_branch")"
         local_head="$(git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" 2>/dev/null)"
         if [ -n "$remote_head" ] && [ -n "$local_head" ] && [ "$remote_head" != "$local_head" ]; then
             fault "your ref origin/${main_branch} lags behind the remote one — ${local_head:0:8} against ${remote_head:0:8}. The branch will grow from yesterday tree, and the owner sees that at the opening of the request. Pull and repeat: git fetch origin."
@@ -409,8 +410,7 @@ fi
 
 # The second tier: the local reference could itself have gone stale. No answer — the tier stays
 # silent.
-remote_main="$(GIT_HTTP_LOW_SPEED_LIMIT=1000 GIT_HTTP_LOW_SPEED_TIME=5 GIT_TERMINAL_PROMPT=0 \
-    git ls-remote origin "refs/heads/${main_branch}" 2>/dev/null | cut -f1)"
+remote_main="$(rt_fact_remote_head "$main_branch")"
 local_main="$(git rev-parse --verify --quiet "refs/remotes/origin/${main_branch}" 2>/dev/null)"
 if [ -n "$remote_main" ] && [ -n "$local_main" ] && [ "$remote_main" != "$local_main" ]; then
     # The age of the reference is what the executor does not see at all, and it is exactly what

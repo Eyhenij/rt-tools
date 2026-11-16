@@ -38,7 +38,7 @@ rt_folder_was_in_branch() {
 # checked-out branch carries a folder the named PR does not have. The tree of the head is read from
 # the remote ref. Without a head, or without its ref, the checked-out branch is judged, as before.
 rt_delivery_folder_target() {
-    _branch="$(git branch --show-current 2>/dev/null)"
+    _branch="$(rt_fact_branch)"
     _tree=HEAD
     [ -n "$1" ] && [ "$1" != "$_branch" ] || return 0
     git rev-parse --verify --quiet "refs/remotes/origin/$1" >/dev/null 2>&1 || return 0
@@ -52,7 +52,7 @@ rt_delivery_folder_target() {
 # rewritten, and the neighbouring guards may want their own move first — the document pair, the
 # exam. Each is named before the commit. Argument: the branch the folder lies in.
 rt_folder_commit_where() {
-    _here="$(git branch --show-current 2>/dev/null)"
+    _here="$(rt_fact_branch)"
     if [ -n "$1" ] && [ "$1" != "$_here" ]; then
         printf ' The folder lies in the branch «%s», and the copy stands on «%s»: switch to it first — git checkout %s — and commit there.' "$1" "${_here:-a detached head}" "$1"
         return 0

@@ -88,7 +88,9 @@ tasks_dir="${RT_TASKS_DIR:-docs/tasks}"
 handoff_dir="${RT_HANDOFF_DIR:-.claude/handoff}"
 
 event="$(printf '%s' "$input" | jq -r '.hook_event_name // empty' 2>/dev/null)"
-transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/null)"
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+transcript="$(rt_fact_transcript "$input")"
 [ -n "$transcript" ] || exit 0
 [ -f "$transcript" ] || exit 0
 
@@ -159,7 +161,8 @@ fi
 # A mark for the turn exit guard: past this threshold the next step of work is refused here, so
 # the exit guard must not name it — the session closes by the progress and the handover.
 stop_sid="$(printf '%s' "$input" | jq -r '.session_id // "unknown"' 2>/dev/null)"
-mkdir -p "${TMPDIR:-/tmp}/claude-window-stop" 2>/dev/null && : >"${TMPDIR:-/tmp}/claude-window-stop/${stop_sid}" 2>/dev/null
+stop_file="$(rt_fact_window_stop_file "$stop_sid")"
+mkdir -p "$(dirname "$stop_file")" 2>/dev/null && : >"$stop_file" 2>/dev/null
 
 tool="$(rt_hook_tool)"
 path="$(rt_hook_file)"

@@ -551,6 +551,11 @@
             "asks": "call_teacher"
         },
         {
+            "file": "facts.sh",
+            "kind": "helper",
+            "reason": "the facts of the state computed in one place: a guard sources it and calls rt_fact_*; it decides nothing"
+        },
+        {
             "file": "flow-step-guard.sh",
             "kind": "guard",
             "asks": "own"

@@ -60,7 +60,9 @@ journal() {
 # the closing through — the progress, the handover, a rule, a question. Naming the next step here
 # would name a move that guard denies, so the turn is released, and the reason goes to the journal.
 sid="$(printf '%s' "$input" | jq -r '.session_id // "unknown"' 2>/dev/null)"
-if [ -f "${TMPDIR:-/tmp}/claude-window-stop/${sid}" ]; then
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+if [ -f "$(rt_fact_window_stop_file "$sid")" ]; then
     journal "окно за порогом: ход отпущен к передаче"
     exit 0
 fi

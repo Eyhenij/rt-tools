@@ -58,7 +58,9 @@ git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 # that goes into the handover lies in the tree and is available in full: the name is needed only by
 # the file. The former exit with zero was complete silence — the compaction came without a handover,
 # and the session after it started from an empty place.
-branch="$(git branch --show-current 2>/dev/null)"
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+branch="$(rt_fact_branch)"
 head_name=""
 if [ -z "$branch" ]; then
     head_name="$(git rev-parse --short HEAD 2>/dev/null)"

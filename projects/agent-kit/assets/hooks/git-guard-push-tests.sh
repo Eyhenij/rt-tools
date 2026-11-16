@@ -216,7 +216,9 @@ base="$(rt_push_set_base)"
 # branch, or of the head into a branch of another name, sends what the head says nothing about.
 push_sends_head() {
     local branch
-    branch="$(git symbolic-ref --quiet --short HEAD 2>/dev/null)" || return 1
+    # shellcheck disable=SC1091
+    command -v rt_fact_branch >/dev/null 2>&1 || . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+    branch="$(rt_fact_branch)" || return 1
     printf '%s' "$cmd" | grep -qE '[[:space:]][A-Za-z0-9_./@^~+-]+:[A-Za-z0-9_./-]+([[:space:];&|]|$)' && return 1
     case " $cmd " in *" $branch "* | *" $branch;"* | *" $branch&"* | *" $branch|"*) return 0 ;; esac
 

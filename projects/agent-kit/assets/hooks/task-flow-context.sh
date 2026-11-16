@@ -194,7 +194,9 @@ EOF
     cd "$rt_tf_workdir" 2>/dev/null || return 1
     git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return 1
 
-    RT_TF_BRANCH="$(git branch --show-current 2>/dev/null)"
+    # shellcheck disable=SC1091
+    command -v rt_fact_branch >/dev/null 2>&1 || . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+    RT_TF_BRANCH="$(rt_fact_branch)"
     [ -z "$RT_TF_BRANCH" ] && return 1   # a detached HEAD is not about this case
 
     RT_TF_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"

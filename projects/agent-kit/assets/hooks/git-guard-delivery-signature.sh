@@ -91,7 +91,7 @@ EOF
 # guard refuses every commit there, so the first move is a branch. A branch with no task number is
 # judged by no delivery guard and is taken at once.
 rt_signature_where() {
-    [ "$(git branch --show-current 2>/dev/null)" = "${main_branch:-main}" ] || return 0
+    [ "$(rt_fact_branch)" = "${main_branch:-main}" ] || return 0
     printf ' The copy stands on «%s», where every commit is refused: take a local branch first — git checkout -b <name> — and rewrite there.' "${main_branch:-main}"
 }
 

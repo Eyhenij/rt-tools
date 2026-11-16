@@ -40,6 +40,7 @@ RT_GUARD_NAME=exam-guard
 
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utf8.sh" 2>/dev/null || true
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/hook-input.sh" 2>/dev/null || true
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null || true
 
 rt_hook_read
 input="$RT_HOOK_INPUT"
@@ -89,7 +90,7 @@ case "$tool" in
         case "$target" in
             */docs/tasks/*/progress.md | docs/tasks/*/progress.md)
                 exam_sid="$(printf '%s' "$input" | jq -r '.session_id // "unknown"' 2>/dev/null)"
-                [ -f "${TMPDIR:-/tmp}/claude-window-stop/${exam_sid}" ] && exit 0
+                [ -f "$(rt_fact_window_stop_file "$exam_sid")" ] && exit 0
                 exam_wf="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/window-fill-guard.sh"
                 if [ -x "$exam_wf" ] && printf '%s' "$input" \
                     | jq -c '.hook_event_name = "PreToolUse" | .tool_name = "Agent" | .tool_input = {subagent_type:"strict-teacher",description:"exam",prompt:"exam"}' 2>/dev/null \
@@ -120,7 +121,7 @@ case "$tool" in
     *) exit 0 ;;
 esac
 
-transcript="$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/null)"
+transcript="$(rt_fact_transcript "$input")"
 [ -z "$transcript" ] && exit 0
 [ -f "$transcript" ] || exit 0
 

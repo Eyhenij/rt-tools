@@ -319,6 +319,8 @@ export const steadyText = (text) =>
         .replace(/\/(?:private\/)?(?:var\/folders|tmp)\/[^\s'"»),;]*/g, '<tmp>')
         .replace(/\b(?=[0-9a-f]*\d)[0-9a-f]{7,40}\b/g, '<sha>')
         .replace(/\b(port|:)\s?\d{4,5}\b/g, '$1<port>')
+        // A message of the shell names the line of the hook, and every edit of the hook moves it.
+        .replace(/\bline \d+:/g, 'line <n>:')
         .replace(/\s+/g, ' ')
         .trim();
 
@@ -346,7 +348,9 @@ async function snapshotCompare(table, file) {
     const before = JSON.parse(readFileSync(file, 'utf8'));
     const now = await probeAnswers(table);
     const changed = Object.keys(before).filter((key) => {
-        const was = before[key];
+        // The snapshot is read through the same steadying as the run: a rule added to it later applies
+        // to a snapshot taken before the rule.
+        const was = { ...before[key], text: steadyText(before[key].text ?? '') };
         const is = now[key];
         if (is && is.decision === was.decision && is.text === was.text) return false;
         // The first place the two texts part, so the reader sees what moved without a diff.

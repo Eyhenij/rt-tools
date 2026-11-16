@@ -53,7 +53,7 @@
 rt_delivery_led_branch() {
     named="$1"
     [ -z "$named" ] && return 0
-    [ "$named" = "$(git -C "$root" rev-parse --abbrev-ref HEAD 2>/dev/null)" ] && return 0
+    [ "$named" = "$(rt_fact_branch "$root")" ] && return 0
     git -C "$root" reflog HEAD -n 400 2>/dev/null \
         | awk -v branch="$named" '
             /checkout: moving from /  { if ($NF == branch) { found = 1 } }

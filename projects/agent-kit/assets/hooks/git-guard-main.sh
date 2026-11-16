@@ -97,7 +97,9 @@ cd "$workdir" 2>/dev/null || exit 0
 
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || exit 0
 
-branch="$(git branch --show-current 2>/dev/null)"
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+branch="$(rt_fact_branch)"
 [ -z "$branch" ] && exit 0   # a detached HEAD is not about this case
 
 # The name is read from the tree's own profile — the one the commit runs in — as the other delivery
@@ -113,7 +115,7 @@ declared="$(
 )"
 
 default="$declared"
-[ -z "$default" ] && default="$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null | sed 's#^origin/##')"
+[ -z "$default" ] && default="$(rt_fact_default_branch)"
 if [ -z "$default" ]; then
     for candidate in main master; do
         if git show-ref --verify --quiet "refs/remotes/origin/$candidate" 2>/dev/null; then
