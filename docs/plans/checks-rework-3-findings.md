@@ -72,6 +72,33 @@ over and says which of them are right. The file lies next to the plan of the epi
 - **Two judges still read the owner's answers from the session record.** `ask-judge.md` and
   `turn-judge.md` were not touched by RT-3271. **Address:** rules layer — a task of this epic.
 
+## RT-3275 — the decision table of the package hooks
+
+- **The engine measures a wrong state from a subdirectory of the tree.** Called inside
+  `projects/agent-kit/tests`, `measure` answers `эпик-заведён (2 of 13)`, from the root `этап-идёт`;
+  the turn exit guard hands it the cwd of the hook input and names the epic branch as the next move.
+  **Address:** rules layer — the engine resolves the root by `git rev-parse --show-toplevel`.
+- **The plan check accepts an expected result `` `/…/` `` in backticks.** The engine reads it by the
+  form `line`, and five steps of the plan could never match a right output. **Address:** rules
+  layer — the plan check refuses a `line` form whose text is itself a `/…/` pattern.
+- **The number form does not trim leading spaces.** `wc -l` on macOS prints `       1`, and `= 1`
+  does not match. **Address:** rules layer — the engine trims the last line on both sides.
+- **A replacement of a step check counts only a typed message of the owner.** A menu answer does not
+  count, and neither does a message sent while the turn goes: it lies in the record as an attachment
+  `queued_command`, which the owner source does not read. Each such permission cost the owner two
+  extra moves. **Address:** rules layer — the owner source reads `queued_command` and menu answers.
+- **The turn exit guard holds a turn on a step that waits for the owner's typed word.** The engine
+  has no state «the step waits for the owner», and the refusal names a move impossible in that
+  state. **Address:** rules layer — a row of the area «turn» in the decision table and a release
+  case in the engine.
+- **The model has one fact `rule_loaded`, while the rules gate and the handover entry read different
+  sources.** The gate reads its marks file, the handover entry reads the record of the conversation,
+  and the rule of a move may differ from the one the entry waits for. **Address:** rules layer — the
+  table splits the fact in RT-3355.
+- **A refusal of a composing hook now asks up to seven neighbours, to the depth of three.** The
+  conform mode runs 1 min 47 s in parallel. **Address:** rules layer — RT-3355 reads the decision
+  from the table instead of asking the neighbours.
+
 ## Left unresolved
 
 - **A session that wrote nothing releases the turn, and so do the silent hosting and a lost menu.**
