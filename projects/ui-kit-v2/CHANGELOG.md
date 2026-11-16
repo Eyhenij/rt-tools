@@ -1,3 +1,9 @@
+## [0.47.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.47.0...rt-ui-kit-v2%400.47.1) (2026-11-16)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** на телефоне тень знака строки списка разговоров у́же, касание не оставляет серого фона ([4372ac8](https://github.com/Eyhenij/rt-tools/commit/4372ac8918e21cae287d12baf586737ef0025a42))
+
 # [0.47.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.46.0...rt-ui-kit-v2%400.47.0) (2026-11-16)
 
 ### Bug Fixes
