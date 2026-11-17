@@ -1,7 +1,8 @@
 /**
- * Метрики пакета по наблюдениям одного дерева.
+ * Команда `agent-kit metrics` на диске дерева: отрезок, чтение по сроку хранения, результат работы.
+ * Подсчёт отчёта по готовым наблюдениям — `metrics-report.spec.ts`.
  *
- * Сценарии `docs/specs/agent-kit/metrics/`.
+ * Сценарии `docs/specs/agent-kit/metrics/` и `docs/specs/agent-kit/proposed/work-result-metrics/`.
  */
 import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -9,221 +10,15 @@ import { join } from 'node:path';
 
 import { IEnvironment, init, IOutcomeOfCommand } from './commands.js';
 import { CONFIG_PATH } from './config.js';
-import { IGuardMetric, IMetricsReport, IRunMetric, guardsOf, metrics, metricsLines, metricsOf, runsOf } from './metrics.js';
-import { IObservation, IReadResult, ISummary, OBSERVATIONS_DIR, summarize } from './observations.js';
+import { IMetricsReport, metrics } from './metrics.js';
+import { OBSERVATIONS_DIR } from './observations.js';
 
 const TODAY: string = '2026-08-12';
-
-function line(event: string, resource: string, session: string): IObservation {
-    return { event, resource, kind: '', session, version: '0.34.0' };
-}
 
 /** Первый день полного отрезка до сегодняшнего включительно. */
 const FIRST_OF_FULL_PERIOD: string = '2026-07-14';
 
-function readOf(observations: readonly IObservation[]): IReadResult {
-    return { observations, swept: [], silent: false, daysRead: [FIRST_OF_FULL_PERIOD, TODAY] };
-}
-
-function reportOf(observations: readonly IObservation[], known: readonly string[]): IMetricsReport {
-    const summary: ISummary = summarize(observations, known, 30);
-
-    return metricsOf(readOf(observations), summary, known.length, 1200, TODAY);
-}
-
-describe('guardsOf', () => {
-    it('SC-AK-1292 — отказ сразу после своего же отказа в той же сессии считается повтором', () => {
-        const guards: readonly IGuardMetric[] = guardsOf([
-            line('guard-deny', 'turn-exit-guard', 's1'),
-            line('guard-deny', 'turn-exit-guard', 's1'),
-            line('guard-deny', 'turn-exit-guard', 's1'),
-        ]);
-
-        expect(guards).toEqual([{ name: 'turn-exit-guard', refusals: 3, repeats: 2, repeatShare: 67, compared: 0, empty: 0 }]);
-    });
-
-    it('SC-AK-1292 — строка соседней сессии повтор не прерывает', () => {
-        const guards: readonly IGuardMetric[] = guardsOf([
-            line('guard-deny', 'grill-gate', 's1'),
-            line('skill-load', 'testing', 's2'),
-            line('guard-deny', 'grill-gate', 's1'),
-        ]);
-
-        expect(guards[0].repeats).toBe(1);
-    });
-
-    it('SC-AK-1292 — другое наблюдение той же сессии повтор прерывает', () => {
-        const guards: readonly IGuardMetric[] = guardsOf([
-            line('guard-deny', 'grill-gate', 's1'),
-            line('skill-load', 'testing', 's1'),
-            line('guard-deny', 'grill-gate', 's1'),
-        ]);
-
-        // положительная пара к нулю: оба отказа посчитаны, а повтора нет
-        expect(guards[0].refusals).toBe(2);
-        expect(guards[0].repeats).toBe(0);
-    });
-
-    it('SC-AK-1292 — отказ другого гарда повтор прерывает, а строка без сессии повтором не считается', () => {
-        const guards: readonly IGuardMetric[] = guardsOf([
-            line('guard-deny', 'grill-gate', 's1'),
-            line('guard-deny', 'claim-guard', 's1'),
-            line('guard-deny', 'grill-gate', 's1'),
-            line('guard-deny', 'prose-style-guard', ''),
-            line('guard-deny', 'prose-style-guard', ''),
-        ]);
-
-        expect(guards.map((guard: IGuardMetric): number => guard.repeats)).toEqual([0, 0, 0]);
-    });
-
-    it('SC-AK-1292 — худший по повторам стоит первым', () => {
-        const guards: readonly IGuardMetric[] = guardsOf([
-            line('guard-deny', 'grill-gate', 's1'),
-            line('guard-deny', 'claim-guard', 's2'),
-            line('guard-deny', 'claim-guard', 's2'),
-        ]);
-
-        expect(guards.map((guard: IGuardMetric): string => guard.name)).toEqual(['claim-guard', 'grill-gate']);
-    });
-});
-
-describe('metricsOf', () => {
-    it('SC-AK-1292 — считает отказы, повторы, отказы шлюза и мёртвые правила', () => {
-        const report: IMetricsReport = reportOf(
-            [
-                line('skill-load', 'testing', 's1'),
-                line('gate-deny', 'doc-style', 's1'),
-                line('guard-deny', 'grill-gate', 's1'),
-                line('guard-deny', 'grill-gate', 's1'),
-            ],
-            ['testing', 'doc-style', 'lists', 'mockups']
-        );
-
-        expect(report.sessions).toBe(1);
-        expect(report.refusals).toBe(2);
-        expect(report.refusalsPerSession).toBe(2);
-        expect(report.repeats).toBe(1);
-        expect(report.repeatShare).toBe(50);
-        expect(report.gateRefusals).toBe(1);
-        expect(report.deadRules).toEqual(['doc-style', 'lists', 'mockups']);
-        expect(report.deadRuleShare).toBe(75);
-        expect(report.entryChars).toBe(1200);
-    });
-
-    it('SC-AK-1292 — пустой отрезок не делит на ноль', () => {
-        const report: IMetricsReport = reportOf([], []);
-
-        expect(report.refusalsPerSession).toBe(0);
-        expect(report.repeatShare).toBe(0);
-        expect(report.deadRuleShare).toBe(0);
-    });
-});
-
-describe('пустые отказы', () => {
-    function refused(guard: string, empty: boolean | null): IObservation {
-        return { ...line('guard-deny', guard, 's1'), empty };
-    }
-
-    it('SC-AK-1277 — пустые отказы считаются по каждой проверке', () => {
-        const report: IMetricsReport = reportOf(
-            [refused('grill-gate', false), refused('grill-gate', true), refused('claim-guard', false)],
-            ['testing']
-        );
-
-        expect(report.guards.find((guard: IGuardMetric): boolean => guard.name === 'grill-gate')).toMatchObject({ compared: 2, empty: 1 });
-        expect(report.emptyRefusals).toBe(1);
-        expect(report.comparedRefusals).toBe(3);
-        expect(metricsLines(report)).toContain('пустые отказы: 1 (33%)');
-        expect(metricsLines(report)).toContain('  grill-gate: 2, повторов 1 (50%), пустых 1 (50%)');
-    });
-
-    it('SC-AK-1277 — метрика уходит из строки без данных с первой записью с признаком', () => {
-        const noData: string | undefined = metricsLines(reportOf([refused('grill-gate', false)], ['testing'])).find(
-            (text: string): boolean => text.startsWith('нет данных:')
-        );
-
-        expect(noData).toContain('Пустые запуски');
-        expect(noData).not.toContain('Пустые отказы');
-    });
-
-    it('SC-AK-1277 — записи старой версии не считаются нулём', () => {
-        const lines: readonly string[] = metricsLines(reportOf([refused('grill-gate', null)], ['testing']));
-
-        expect(lines.find((text: string): boolean => text.startsWith('нет данных:'))).toContain('Пустые отказы');
-        expect(lines).toContain('отказы проверок: 1, на сессию 1');
-        expect(lines.join('\n')).not.toContain('пустые отказы:');
-    });
-});
-
-describe('запуски', () => {
-    function run(kind: string, seconds: number, wasted: number | null): IObservation {
-        return { event: 'run', resource: 'red', kind, session: '', version: '0.34.0', seconds, wasted };
-    }
-
-    it('SC-AK-1279 — минуты красного запуска считаются потерянными для его рода шага', () => {
-        const runs: readonly IRunMetric[] = runsOf([run('e2e', 240, null), run('e2e', 180, 240), run('tests', 60, null)]);
-
-        expect(runs).toEqual([
-            { kind: 'e2e', runs: 2, seconds: 420, wastedRuns: 1, wastedSeconds: 240 },
-            { kind: 'tests', runs: 1, seconds: 60, wastedRuns: 0, wastedSeconds: 0 },
-        ]);
-    });
-
-    it('SC-AK-1279 — ноль секунд потерянного запуска всё равно считается запуском', () => {
-        expect(runsOf([run('check', 0, 0)])[0]).toMatchObject({ wastedRuns: 1, wastedSeconds: 0 });
-    });
-
-    it('SC-AK-1279 — отчёт показывает минуты и снимает метрику со строки без данных', () => {
-        const lines: readonly string[] = metricsLines(reportOf([run('e2e', 240, null), run('e2e', 180, 240)], ['testing']));
-
-        expect(lines).toContain('запуски: 2, минут 7');
-        expect(lines).toContain('пустые запуски: 1, минут 4');
-        expect(lines).toContain('  e2e: 2, минут 7, пустых 1, минут 4');
-        expect(lines.find((text: string): boolean => text.startsWith('нет данных:'))).toContain('Принято с первого раза');
-        expect(lines.find((text: string): boolean => text.startsWith('нет данных:'))).not.toContain('Пустые запуски');
-    });
-
-    it('SC-AK-1279 — без записей о запусках их строк в отчёте нет', () => {
-        const lines: readonly string[] = metricsLines(reportOf([line('guard-deny', 'grill-gate', 's1')], ['testing']));
-
-        expect(lines).toContain('отказы проверок: 1, на сессию 1');
-        expect(lines.join('\n')).not.toContain('запуски:');
-    });
-});
-
-describe('правки владельца', () => {
-    it('SC-AK-1290 — отчёт считает правки и снимает их со строки без данных', () => {
-        const lines: readonly string[] = metricsLines(
-            reportOf([line('owner-correction', '', 's1'), line('owner-correction', '', 's2')], ['testing'])
-        );
-
-        expect(lines).toContain('правки владельца: 2');
-        expect(lines.find((text: string): boolean => text.startsWith('нет данных:'))).toContain('Принято с первого раза');
-        expect(lines.find((text: string): boolean => text.startsWith('нет данных:'))).not.toContain('Правки владельца');
-    });
-});
-
-describe('metricsLines', () => {
-    it('SC-AK-1293 — отчёт называет метрики без данных словами, а не нулём', () => {
-        const lines: readonly string[] = metricsLines(reportOf([line('guard-deny', 'grill-gate', 's1')], ['testing']));
-        const noData: string | undefined = lines.find((text: string): boolean => text.startsWith('нет данных:'));
-
-        // положительная пара: посчитанное в отчёте стоит рядом
-        expect(lines).toContain('отказы проверок: 1, на сессию 1');
-        expect(noData).toContain('Принято с первого раза');
-        expect(noData).toContain('Пустые запуски');
-        expect(noData).toContain('Отказы после загрузки правила');
-        expect(noData).toContain('Доля правок до загрузки правила');
-        expect(lines.join('\n')).not.toContain('Принято с первого раза: 0');
-    });
-
-    it('SC-AK-1293 — вес входа без данных назван словами', () => {
-        const observations: readonly IObservation[] = [line('skill-load', 'testing', 's1')];
-        const report: IMetricsReport = metricsOf(readOf(observations), summarize(observations, ['testing'], 30), 1, null, TODAY);
-
-        expect(metricsLines(report)).toContain('вес входа: нет данных');
-    });
-});
+type TEntry = Record<string, string>;
 
 describe('metrics', () => {
     let root: string;
@@ -374,6 +169,8 @@ describe('metrics', () => {
     it('SC-AK-1644 — отчёт за названный день считает только его', () => {
         observed('2026-08-11');
         observed('2026-08-12');
+        // день после названного лежит на диске и в отчёт не идёт
+        observed('2026-08-13');
 
         const outcome: IOutcomeOfCommand = metrics(env, { days: 30, json: true, today: '2026-08-14', day: '2026-08-12' });
         const parsed: IMetricsReport = JSON.parse(outcome.lines[0]);
@@ -389,5 +186,125 @@ describe('metrics', () => {
 
         expect(report().code).toBe(1);
         expect(said(report())).toContain('init');
+    });
+});
+
+describe('результат работы в отчёте', () => {
+    let root: string;
+    let env: IEnvironment;
+
+    const recorded: (day: string, entries: readonly TEntry[]) => void = (day: string, entries: readonly TEntry[]): void => {
+        const dir: string = join(root, OBSERVATIONS_DIR);
+
+        mkdirSync(dir, { recursive: true });
+        writeFileSync(join(dir, `${day}.jsonl`), entries.map((entry: TEntry): string => JSON.stringify(entry)).join('\n') + '\n', 'utf8');
+    };
+    const at: (day: string, second: number) => string = (day: string, second: number): string =>
+        new Date(Date.parse(`${day}T09:00:00Z`) + second * 1000).toISOString();
+    const calls: (day: string, count: number) => TEntry[] = (day: string, count: number): TEntry[] =>
+        Array.from({ length: count }, (_: unknown, i: number): TEntry => ({
+            t: at(day, i * 10),
+            ev: 'record-call',
+            task: 'RT-1',
+            sid: 's1',
+        }));
+    const refusal: (day: string, second: number, check: string) => TEntry = (day: string, second: number, check: string): TEntry => ({
+        t: at(day, second),
+        ev: 'record-refusal',
+        task: 'RT-1',
+        kind: 'hook',
+        check,
+        sid: 's1',
+    });
+    const verdict: (second: number, fields: TEntry) => TEntry = (second: number, fields: TEntry): TEntry => ({
+        t: at(TODAY, second),
+        ev: 'role-verdict',
+        res: 'goal-critic',
+        sid: 's1',
+        ...fields,
+    });
+    const ofDay: (json: boolean) => IOutcomeOfCommand = (json: boolean): IOutcomeOfCommand =>
+        metrics(env, { days: 30, json, today: TODAY, day: TODAY });
+    const daysOf: (outcome: IOutcomeOfCommand) => readonly Record<string, unknown>[] = (
+        outcome: IOutcomeOfCommand
+    ): readonly Record<string, unknown>[] => JSON.parse(outcome.lines[0]).result.days;
+
+    beforeEach((): void => {
+        root = mkdtempSync(join(tmpdir(), 'agent-kit-work-result-'));
+        env = { root, version: '0.1.0', assetsDir: join(__dirname, '..', '..', 'assets') };
+        init(root, [], { host: 'github' });
+    });
+
+    afterEach((): void => {
+        rmSync(root, { recursive: true, force: true });
+    });
+
+    it('SC-AK-1613 — отказы на сто вызовов считаются по дням и по проверкам', () => {
+        recorded('2026-08-11', [
+            ...calls('2026-08-11', 200),
+            ...[1, 2, 3, 4, 5, 6].map((n: number): TEntry => refusal('2026-08-11', n * 25 + 5, 'grill-gate')),
+            refusal('2026-08-11', 1005, 'task-flow'),
+            refusal('2026-08-11', 1505, 'task-flow'),
+        ]);
+        recorded(TODAY, [...calls(TODAY, 100), refusal(TODAY, 505, '')]);
+
+        const text: readonly string[] = metrics(env, { days: 2, json: false, today: TODAY }).lines;
+        const days: readonly Record<string, unknown>[] = daysOf(metrics(env, { days: 2, json: true, today: TODAY }));
+
+        expect(text).toContain('    2026-08-11: 4.00 (8 из 200)');
+        expect(text).toContain('      grill-gate: 3.00');
+        expect(text).toContain('      task-flow: 1.00');
+        expect(text).toContain('    2026-08-12: 1.00 (1 из 100)');
+        expect(text).toContain('      unnamed: 1.00');
+        expect(days.map((day: Record<string, unknown>): unknown => day['refusalsPer100'])).toEqual([4, 1]);
+    });
+
+    it('SC-AK-1621 — вердикт «не достигнута» и «частично» идут в счёт задачи своей ветки', () => {
+        recorded(TODAY, [
+            ...calls(TODAY, 3),
+            verdict(100, { verdict: 'refused', task: 'RT-1' }),
+            verdict(200, { verdict: 'refused', task: 'RT-2' }),
+            verdict(300, { verdict: 'passed', task: 'RT-3' }),
+        ]);
+
+        const text: readonly string[] = ofDay(false).lines;
+
+        expect(text).toContain('  Цель не достигнута: 2');
+        expect(text).toContain('    RT-1: 1');
+        expect(text).toContain('    RT-2: 1');
+        expect(text).not.toContain('    RT-3: 1');
+        expect(daysOf(ofDay(true))[0]['goalNotMet']).toBe(2);
+    });
+
+    it('SC-AK-1640 — вердикт на ветке эпика идёт эпику, без эпика — под «без задачи»', () => {
+        recorded(TODAY, [
+            ...calls(TODAY, 3),
+            verdict(100, { verdict: 'refused', epic: '7' }),
+            verdict(200, { verdict: 'refused', task: 'none' }),
+        ]);
+
+        const text: readonly string[] = ofDay(false).lines;
+
+        expect(text).toContain('    эпик 7: 1');
+        expect(text).toContain('    без задачи: 1');
+    });
+
+    it('SC-AK-1627 — среди строк результата нет «нет данных», и JSON не несёт null', () => {
+        recorded(TODAY, [...calls(TODAY, 5), refusal(TODAY, 15, 'grill-gate')]);
+
+        const text: readonly string[] = ofDay(false).lines;
+        const noData: string | undefined = text.find((one: string): boolean => one.startsWith('нет данных:'));
+        const days: readonly Record<string, unknown>[] = daysOf(ofDay(true));
+
+        expect(text).toContain('результат работы:');
+        expect(text).toContain('  Принято с первого раза: 0 из 0');
+        expect(text).toContain('  Задачи слиты: 0, с видимым взятием 0, от взятия 0.0 ч');
+        expect(text).toContain('  Переспросили: 0');
+        expect(text).toContain('  Правки владельца: 0');
+        expect(text).toContain('  Повторы ошибок: считается в приёмнике');
+        expect(noData).toContain('Экзамены с первого раза');
+        expect(noData).not.toContain('Принято с первого раза');
+        expect(noData).not.toContain('Правки владельца');
+        expect(Object.values(days[0]).filter((value: unknown): boolean => value === null)).toEqual([]);
     });
 });

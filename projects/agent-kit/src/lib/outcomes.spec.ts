@@ -156,19 +156,17 @@ describe('итоги словами', () => {
     it('SC-AK-1276 — одна принятая и одна закрытая без слияния читаются как один из двух', () => {
         const lines: readonly string[] = outcomeLines(
             { accepted: 1, closed: 1, firstPass: 1, lost: 0, noHandover: 3, passed: 1 },
-            EOutcomesRead.Read,
-            0
+            EOutcomesRead.Read
         );
 
         expect(lines).toContain('принято с первого раза: 1 из 2');
         expect(lines).toContain('заявок без передачи: 3, в главное число они не входят');
     });
 
-    it('SC-AK-1293 — ноль правок не печатается: о них говорит строка без данных', () => {
+    it('SC-AK-1627 — правки владельца итоги не печатают: их строку несёт результат работы', () => {
         const lines: readonly string[] = outcomeLines(
             { accepted: 2, closed: 0, firstPass: 2, lost: 0, noHandover: 0, passed: 2 },
-            EOutcomesRead.Read,
-            0
+            EOutcomesRead.Read
         );
 
         expect(lines).toContain('принято с первого раза: 2 из 2');
@@ -178,23 +176,21 @@ describe('итоги словами', () => {
     it('с десяти задач появляется доля', () => {
         const lines: readonly string[] = outcomeLines(
             { accepted: 10, closed: 0, firstPass: 7, lost: 3, noHandover: 0, passed: 10 },
-            EOutcomesRead.Read,
-            5
+            EOutcomesRead.Read
         );
 
         expect(lines).toContain('принято с первого раза: 7 из 10 (70%)');
-        expect(lines).toContain('правки владельца: 5, на задачу 0.5');
     });
 
     it('дерево, где спросить некого, названо, а не показывает ноль', () => {
-        const lines: readonly string[] = outcomeLines(null, EOutcomesRead.NobodyToAsk, 0);
+        const lines: readonly string[] = outcomeLines(null, EOutcomesRead.NobodyToAsk);
 
         expect(lines.join('\n')).toContain('спросить некого');
         expect(lines.join('\n')).not.toContain('принято с первого раза');
     });
 
     it('оборванное чтение не называется отсутствием функции', () => {
-        const lines: readonly string[] = outcomeLines(null, EOutcomesRead.Failed, 0);
+        const lines: readonly string[] = outcomeLines(null, EOutcomesRead.Failed);
 
         expect(lines.join('\n')).toContain('чтение оборвалось');
         expect(lines.join('\n')).not.toContain('спросить некого');
@@ -203,8 +199,7 @@ describe('итоги словами', () => {
     it('только заявки без подписи: главного числа нет, их счёт виден', () => {
         const lines: readonly string[] = outcomeLines(
             { accepted: 0, closed: 0, firstPass: 0, lost: 0, noHandover: 231, passed: 0 },
-            EOutcomesRead.Read,
-            0
+            EOutcomesRead.Read
         );
 
         expect(lines).toContain('заявок без передачи: 231, в главное число они не входят');
@@ -212,7 +207,7 @@ describe('итоги словами', () => {
     });
 
     it('без записей и с ответом хостинга строк нет: о них говорит строка без данных', () => {
-        expect(outcomeLines(null, EOutcomesRead.Read, 0)).toEqual([]);
+        expect(outcomeLines(null, EOutcomesRead.Read)).toEqual([]);
     });
 });
 

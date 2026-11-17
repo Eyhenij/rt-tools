@@ -312,7 +312,6 @@ function runStats(env: IEnvironment, argv: readonly string[]): IOutcomeOfCommand
         // отрезок не проверить спекой — вчерашняя фикстура завтра станет позавчерашней.
         today: new Date().toISOString().slice(0, 10),
         json: argv.includes('--json'),
-        day: optionOf(argv, '--day', '') || undefined,
     });
 }
 
@@ -324,6 +323,7 @@ function runMetrics(env: IEnvironment, argv: readonly string[]): IOutcomeOfComma
         days: Number.isFinite(spoken) && spoken > 0 ? Math.floor(spoken) : METRICS_DEFAULT_DAYS,
         today: new Date().toISOString().slice(0, 10),
         json: argv.includes('--json'),
+        day: optionOf(argv, '--day', '') || undefined,
     });
 }
 

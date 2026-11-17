@@ -17,6 +17,7 @@ import { IUsageMetric, usageCounted, usageLines, usageOf } from './metric-usage.
 import { byText } from './order.js';
 import { collectOutcomes, EOutcomesRead, hasMainNumber, IOutcomeMetric, outcomeLines, outcomeMetricOf } from './outcomes.js';
 import { laidOutSkills } from './snapshot.js';
+import { FIRST_PASS_NONE, IWorkResult, workResultOf } from './work-result.js';
 
 /** Отрезок отчёта, когда он не назван: столько дней наблюдения лежат на диске. */
 export const METRICS_DEFAULT_DAYS: number = 30;
@@ -89,6 +90,8 @@ export interface IMetricsReport {
     readonly noData: readonly string[];
     /** Числа, которые считает только отчёт по всем приложениям. */
     readonly outside: readonly string[];
+    /** Результат работы по записи хода и слияниям. Нет поля: отчёт собран без команды, для отправки. */
+    readonly result?: IWorkResult;
 }
 
 export interface IMetricsOptions {
@@ -113,8 +116,6 @@ export function periodOf(options: IMetricsOptions): IMetricsPeriod {
 
 /** Метрики, которые появятся с новыми событиями. */
 const NOT_RECORDED_YET: readonly string[] = [
-    'Принято с первого раза',
-    'Правки владельца',
     'Отказы после загрузки правила',
     'Доля правок до загрузки правила',
     'Пустые отказы',
@@ -264,13 +265,7 @@ export function metricsOf(
         gateRefusals: summary.denials.reduce((sum: number, rule: ICount): number => sum + rule.count, 0),
         deadRules: full ? summary.unused : null,
         deadRuleShare: full ? percent(summary.unused.length, rules) : null,
-        noData: noDataOf([
-            hasMainNumber(outcomes) && 'Принято с первого раза',
-            comparedRefusals > 0 && 'Пустые отказы',
-            runs.length > 0 && 'Пустые запуски',
-            corrections > 0 && 'Правки владельца',
-            ...usageCounted(usage),
-        ]),
+        noData: noDataOf([comparedRefusals > 0 && 'Пустые отказы', runs.length > 0 && 'Пустые запуски', ...usageCounted(usage)]),
         outside: OUTSIDE_THE_TREE,
     };
 }
@@ -331,7 +326,8 @@ export function metricsLines(report: IMetricsReport): readonly string[] {
         `прочитано дней: ${report.daysRead.length}, с ${report.daysRead[0]} по ${report.daysRead[report.daysRead.length - 1]}`,
         `нет данных: ${report.noData.join(', ')}`,
         `вне этого отчёта: ${report.outside.join(', ')}`,
-        ...outcomeLines(report.outcomes, report.outcomesRead, report.corrections),
+        ...outcomeLines(report.outcomes, report.outcomesRead),
+        ...(report.result?.lines ?? []),
         '',
         `отказы проверок: ${report.refusals}, на сессию ${report.refusalsPerSession}`,
         `повторы подряд: ${report.repeats} (${report.repeatShare}%)`,
@@ -348,7 +344,6 @@ export function metricsLines(report: IMetricsReport): readonly string[] {
         `отказы шлюза правил: ${report.gateRefusals}`,
         ...topLines(report.gate.map((rule: ICount): string => `  ${rule.name}: ${rule.count}`)),
         ...runLines(report.runs),
-        ...(report.corrections > 0 && !hasMainNumber(report.outcomes) ? ['', `правки владельца: ${report.corrections}`] : []),
         ...usageLines(report.usage, topLines),
         '',
         ...deadRuleLines(report),
@@ -408,7 +403,12 @@ export function metrics(env: IEnvironment, options: IMetricsOptions): IOutcomeOf
     const period: IMetricsPeriod = periodOf(options);
     // Названный день читается без чистки: срок хранения отсчитывается от сегодняшнего дня, не от него.
     const result: IReadResult = readObservations(env.root, period.until, period.days, !options.day);
-    const report: IMetricsReport = reportOf(env, config, period.until, result, period.days, read);
+    const counted: IMetricsReport = reportOf(env, config, period.until, result, period.days, read);
+    const firstPass: string | null = hasMainNumber(counted.outcomes) ? null : FIRST_PASS_NONE;
+    const report: IMetricsReport = {
+        ...counted,
+        result: workResultOf(env.root, env.assetsDir, period.until, period.days, firstPass),
+    };
 
     if (options.json) {
         return { code: 0, lines: [JSON.stringify(report)] };

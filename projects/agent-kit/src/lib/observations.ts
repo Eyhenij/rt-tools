@@ -248,9 +248,9 @@ export function readObservations(root: string, today: string, days: number, swee
                 rmSync(join(dir, name), { force: true });
                 swept.push(name);
             }
-        } else if (isBefore(day, since)) {
-            // День старше запрошенного отрезка, но моложе черты хранения: файл остаётся лежать,
-            // а в этот отчёт не идёт
+        } else if (isBefore(day, since) || isBefore(today, day)) {
+            // День вне запрошенного отрезка, но моложе черты хранения: файл остаётся лежать,
+            // а в этот отчёт не идёт. Позже последнего дня бывает отчёт за названный прошлый день
         } else {
             observations.push(...observationsOfDay(join(dir, name)));
             daysRead.push(day);
