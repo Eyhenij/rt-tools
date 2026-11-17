@@ -63,4 +63,20 @@ report "SC-AK-1602 — role-calls: «цель достигнута частич�
 report "SC-AK-1602 — role-calls: шапка таблицы в 11:00 читается как приговор «пройдено» — находка RT-3277" \
     "$(verdict_of "$ROLES/goal-critic-11-00.jsonl")" "passed"
 
+# --- the count of the turn on the record of 13.11 --------------------------------------------------
+# The hook at the end of a turn writes the events of the record as observations. In the epic window of
+# 00:34:01–03:04:27 they give the numbers of the full record: 187 calls and 35 refusals.
+COUNT_TREE="$WORK/count-tree"
+mkdir -p "$COUNT_TREE"
+jq -cn --arg p "$CUT" '{hook_event_name:"Stop",session_id:"s",transcript_path:$p}' |
+    (cd "$COUNT_TREE" && CLAUDE_PROJECT_DIR="$COUNT_TREE" bash "$HOOKS/record-turn.sh")
+in_window() {
+    cat "$COUNT_TREE"/.claude/rt-kit/observations/*.jsonl |
+        jq -r --arg ev "$1" 'select(.ev == $ev and .t >= "2026-11-13T00:34:01" and .t < "2026-11-13T03:04:27") | .kind // "-"' |
+        sort | uniq -c | awk '{printf "%s%s:%s", (NR > 1 ? " " : ""), $2, $1}'
+}
+report "SC-AK-1611 — record-turn.sh: вызовы окна эпика 13.11 по наблюдениям хука" "$(in_window rec-call)" "-:187"
+report "SC-AK-1611 — record-turn.sh: отказы окна по классам — 30 хуков, 1 разрешение, 4 конца хода" \
+    "$(in_window rec-refusal)" "hook:30 permission:1 stop:4"
+
 suite_result "хуки на настоящей записи"
