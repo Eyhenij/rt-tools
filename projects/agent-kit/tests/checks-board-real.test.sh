@@ -30,8 +30,10 @@ REAL_HOME="$HOME"
 trap 'rm -rf "$BOARD_TREE"' EXIT
 
 replay() { GH_TOKEN="$1" REPLAY_TOKEN_FILE="$FAKE_TOKEN" "$REPLAY" "${@:2}"; }
+# A runner that forces colours — nx does — makes node paint a stack trace; the outputs were recorded
+# without colours, and the readers run without them too.
 reader() {
-    (cd "$ROOT" && HOME="$SUITE_HOME" GH_BIN="$REPLAY" REPLAY_TOKEN_FILE="$FAKE_TOKEN" node "$@" 2>&1 \
+    (cd "$ROOT" && env -u FORCE_COLOR NO_COLOR=1 HOME="$SUITE_HOME" GH_BIN="$REPLAY" REPLAY_TOKEN_FILE="$FAKE_TOKEN" node "$@" 2>&1 \
         | sed -e "s#$REAL_HOME#~#g" -e "s#$SUITE_HOME#~#g")
 }
 # A stack trace names the tree by its absolute path, which differs from machine to machine; both sides
