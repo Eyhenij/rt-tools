@@ -21,6 +21,9 @@ export const Empty: TStory = { args: { part: 'empty' } };
 /** Ответ от «думает» до «не удался»: копирование и оценка появляются, когда текст дописан; без копирования. */
 export const Answer: TStory = { args: { part: 'answer' } };
 
+/** Блоки ответа: markdown, notice и заглушка блока без отрисовщика; плашки всех severity. */
+export const Blocks: TStory = { args: { part: 'blocks' } };
+
 /** Ошибка с номером обращения и повтором и без них. */
 export const RunError: TStory = { args: { part: 'error' } };
 

@@ -115,6 +115,7 @@
     "ng-template[rtThreadListRowActions]": "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-matrix.stories.ts",
     "rt-ai-chat-answer": "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-matrix.stories.ts",
     "rt-ai-chat-copy": "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-matrix.stories.ts",
+    "rt-ai-chat-blocks": "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-matrix.stories.ts",
     "ng-template[rtAiChatMessageExtra]": "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-matrix.stories.ts",
     "[rtPageBarFilter]": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header-vertical.stories.ts",
     "[rtPageBarSearch]": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header-vertical.stories.ts",
