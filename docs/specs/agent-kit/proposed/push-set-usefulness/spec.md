@@ -22,8 +22,10 @@ refusals of the conversation checks and has no line about the push set.
 - **A real refusal** — a red run after which the same command on the same content sign never went
   green.
 - **A false refusal** — a red run after which the same command on the same content sign went green.
+- **A check** — a command of the push set with its base replaced by a mark: `--base=<ветка>` and
+  `RT_SUITES_BASE=<ветка>` name the base, not the check.
 - **The subject of a check** — what it reads: the recorded reads of the push inputs table, or the
-  project roots of an `nx affected` step.
+  paths the tree profile declares for a step the table does not record.
 - **An idle run** — a run on a change that touched nothing of the subject of the check.
 - **The price of a defect** — the seconds of all runs of a check over the period divided by its
   real refusals.
@@ -52,7 +54,12 @@ The report prints in the owner's language: «Проверки набора», «
 - **A real refusal is a red run with no later green run of the same command on the same sign.**
 - **An idle run is a run whose change touched nothing of the subject of the check.** The subject of
   a step of the push inputs table is its recorded reads, judged by the rule `select` uses; the
-  subject of an `nx affected` step is the roots of the projects it names.
+  subject of another step is the paths the tree profile declares for it.
+- **The subject of the package hook scenarios is the hooks, the checks and the scenarios, not the
+  package root.** A branch that edits only the library code, a README or a spec of the package
+  runs them idle: that is the owner's example of 13 November.
+- **A step `select` did not start is recorded as not run, and the report counts it apart from the
+  idle runs.** Such a step cannot run idle, and a zero in its column would read as «never wasted».
 - **A check whose subject is not recorded is printed «предмет не записан», not zero.** A zero would
   read as «the check never ran idle».
 - **The price of a defect is the seconds of all runs divided by the real refusals.** A check with
@@ -62,17 +69,25 @@ The report prints in the owner's language: «Проверки набора», «
 
 - **`agent-kit metrics` prints a table of the push set checks with five numbers each.** Runs and
   seconds, refusals, false refusals, idle runs, the price of a defect.
+- **One check on several bases is one line.** The run line holds the checksum of the command with
+  the base replaced by a mark; an old line, written with the base inside, is matched by the current
+  set over the bases of the tree's history.
 - **The check is named by its command from the current push set, found by its checksum.** A
-  command no longer in the set is printed by its checksum.
+  command no longer in the set is printed by its checksum, and the report counts such lines apart.
 - **The report names apart the checks that never refused for real over the period.**
 - **The report names apart the checks with more false refusals than real ones.**
+- **Both lists are ordered by the seconds the check took.** A check of a tenth of a second and a
+  check of a quarter of an hour are not equal candidates.
 - **`--day` narrows the table to one day, like the rest of the report.**
 
 ## What is out of scope
 
 - Sending the table to the receiver and showing it on a screen: the request names only the report.
 - Removing or moving a check out of the set: the report names candidates, the owner decides.
-- Recording the reads of the `nx affected` steps in the push inputs table.
+- Recording the reads of the `nx affected` steps in the push inputs table: the profile declares
+  their subject by paths.
+- Making the package hook scenarios run only the suites the change reaches: the report shows what
+  they cost idle, a task of its own moves the number.
 
 ## Contract
 
@@ -86,7 +101,8 @@ Not applicable: nothing here refuses.
 
 The marks of the day `runs-<day>` under the observations of the tree: one line per run — content
 sign, command checksum, outcome, seconds, and after this work the moment, the base checksum and the
-subject mark (`touched`, `idle` or `unknown`). They live a month, like the other marks.
+subject mark (`touched`, `idle`, `unknown`, or `not-run` for a step `select` did not start). The
+command checksum is taken over the command with its base replaced by a mark. They live a month, like the other marks.
 
 ## Screens and states
 

@@ -32,18 +32,19 @@ Given a red run of a command and a later green run of it on another content sign
 When the report counts the check
 Then the false refusals are 0 and the real refusals 1
 
-### SC-AK-1661 — a run on a change that does not touch the subject is idle
+### SC-AK-1661 — a step `select` did not start is recorded as not run
 
 Given a step of the push inputs table that reads `tools/check-specs.mjs` and the specs directory,
 and a change that edits only a style file
-When the set records the run
-Then the run is marked `idle`, and the report counts one idle run for the check
+When the set selects its steps
+Then the step gets a run line marked `not-run` with zero seconds, and the report counts it apart
+from the idle runs
 
-### SC-AK-1662 — an `nx affected` step is judged by the roots of its projects
+### SC-AK-1662 — the hook scenarios on a branch that edits only the library code run idle
 
-Given an `nx affected` step over the package project and a change that edits only a file of the
-admin application
-When the set records the run
+Given the profile subject of the package hook scenarios — the hooks, the checks and the scenarios
+of the package — and a change that edits only `projects/agent-kit/src/lib/metrics.ts`
+When the set records the run of `nx affected -t test-hooks`
 Then the run is marked `idle`
 
 ### SC-AK-1663 — the price of a defect is the seconds on one real refusal
@@ -69,8 +70,22 @@ When the report runs
 Then the first is listed under «ни разу не отказали по делу» and the second under «ложных больше
 настоящих»
 
-### SC-AK-1666 — the week of this machine names at least one candidate
+### SC-AK-1666 — the week of this machine names the costly falsely refusing checks
 
 Given the run marks of this tree from 11 to 17 November 2026
 When `agent-kit metrics --days 7` runs
-Then at least one check is listed as a candidate to remove from the set or to move to the pipeline
+Then the list «ложных больше настоящих» names the snapshot step of the second kit and the admin
+end-to-end suite — 45 false refusals of 58 and 19 of 30
+
+### SC-AK-1667 — one check on two bases is one line
+
+Given runs of `pnpm exec nx affected -t test-hooks` with `--base=origin/main` and with
+`--base=origin/RT-1-x`
+When the report counts them
+Then the table holds one line for the check with the runs of both bases
+
+### SC-AK-1668 — the candidates are ordered by seconds
+
+Given two checks without a real refusal, one of 300 seconds and one of 3
+When the report lists the checks never useful
+Then the check of 300 seconds stands first
