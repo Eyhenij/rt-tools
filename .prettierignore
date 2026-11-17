@@ -98,6 +98,12 @@ tools/owner-nudges.mjs
 tools/flow-forecast.mjs
 tools/decision-table.mjs
 tools/decision-table.json
+tools/epic-window.mjs
+tools/merge-read.mjs
+tools/record-count.mjs
+tools/record-recount.mjs
+tools/record-turn.mjs
+tools/work-result.mjs
 tools/board-epics.mjs
 tools/board-epic-link.mjs
 tools/board-epic-plan.mjs
