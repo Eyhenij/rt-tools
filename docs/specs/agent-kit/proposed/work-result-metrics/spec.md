@@ -196,7 +196,8 @@ and no dead end over a working day — is read from the same numbers.
 ### The epic window
 
 - **An epic window opens at the merge of a task request into the epic branch.** The moment is the
-  merge moment the hosting gives. A task merged into the branch of a previous task opens no window.
+  merge moment the hosting gives. A task merged into the branch of a previous task opens no window,
+  and neither does a task merged into the branch of an epic already merged into the main branch.
 - **An epic window closes at the first of three events.** The next merge of a task request into the
   same epic branch; the merge of the epic request into the main branch; the owner message that opens
   a turn in which an incident analysis is written. A window none of them closed by the end of the day

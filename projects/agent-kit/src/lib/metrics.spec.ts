@@ -336,6 +336,38 @@ describe('результат работы в отчёте', () => {
         expect(Object.keys(day)).toContain('tasksMerged');
     });
 
+    it('SC-AK-1623 — эпик, слитый без редакции после слияния, не выпущен', () => {
+        recorded('2026-11-11', [{ t: '2026-11-11T10:00:00Z', ev: 'edition', pkg: 'agent-kit', ver: '0.37.0' }]);
+        recorded('2026-11-13', [
+            { t: '2026-11-13T00:34:01Z', ev: 'task-merged', task: 'RT-3266', opens: '1', epic: 'RT-3227' },
+            { t: '2026-11-13T05:48:08Z', ev: 'epic-merged', task: 'RT-3227', pkg: 'agent-kit' },
+        ]);
+
+        const text: readonly string[] = metrics(env, { days: 30, json: false, today: '2026-11-14', day: '2026-11-13' }).lines;
+
+        expect(text).toContain('  RT-3227 не выпущен, слит 05:48');
+        expect(text).toContain('    окно 00:34–05:48: отказов 0 из 0, переспросили 0');
+    });
+
+    it('SC-AK-1639 — эпики периода несут часы от взятия, открытый тоже', () => {
+        recorded('2026-11-10', [
+            { t: '2026-11-10T08:00:00Z', ev: 'task-taken', task: 'RT-10', sid: 's1' },
+            { t: '2026-11-10T12:00:00Z', ev: 'task-merged', task: 'RT-11', opens: '1', epic: 'RT-10' },
+        ]);
+        recorded('2026-11-11', [
+            { t: '2026-11-11T09:00:00Z', ev: 'task-taken', task: 'RT-20', sid: 's2' },
+            { t: '2026-11-11T10:00:00Z', ev: 'task-merged', task: 'RT-21', opens: '1', epic: 'RT-20' },
+            { t: '2026-11-11T17:00:00Z', ev: 'epic-merged', task: 'RT-10', pkg: 'agent-kit' },
+            { t: '2026-11-11T18:00:00Z', ev: 'edition', pkg: 'agent-kit', ver: '0.38.0' },
+        ]);
+
+        const text: readonly string[] = metrics(env, { days: 30, json: false, today: '2026-11-14', day: '2026-11-11' }).lines;
+
+        expect(text).toContain('  RT-10 выпущен 18:00, от взятия 34.0 ч');
+        expect(text).toContain('  RT-20 открыт');
+        expect(text).toContain('    окно 10:00–открыто: отказов 0 из 0, переспросили 0');
+    });
+
     it('SC-AK-1642 — отчёт дня называет пропущенные строки записи', () => {
         recorded(TODAY, [...calls(TODAY, 2), { t: at(TODAY, 30), ev: 'record-skip', n: '1', sid: 's1' }]);
 

@@ -61,4 +61,15 @@ mkdir -p "$OBS"
 report "SC-AK-1633 — разбор на ветке эпика окна не закрывает, разбор после ухода с неё закрывает сообщением владельца" \
     "$(windows "$OBS" 2026-11-13)" "RT-7 00:34:01-03:04:27 analysis 0/0"
 
+# --- a merge into the branch of a merged epic opens no window -----------------------------------------------
+OBS="$WORK/after"
+mkdir -p "$OBS"
+{
+    printf '{"t":"2026-11-05T16:27:09Z","ev":"task-merged","task":"RT-1","opens":"1","epic":"RT-7"}\n'
+    printf '{"t":"2026-11-06T03:43:52Z","ev":"epic-merged","task":"RT-7","pkg":""}\n'
+    printf '{"t":"2026-11-08T10:15:37Z","ev":"task-merged","task":"RT-2","opens":"1","epic":"RT-7"}\n'
+} > "$OBS/2026-11-08.jsonl"
+report "SC-AK-1655 — слияние в ветку уже слитого эпика окна не открывает" \
+    "$(windows "$OBS" 2026-11-08)" "RT-7 16:27:09-03:43:52 epic-merged 0/0"
+
 suite_result "окна эпика"

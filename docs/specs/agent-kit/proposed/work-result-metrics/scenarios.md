@@ -238,6 +238,13 @@ that closes at 03:04:27
 When the window is built
 Then it counts the 10 calls before its end, and the 6 stay out of it
 
+### SC-AK-1655 — a merge into the branch of a merged epic opens no window
+
+Given the epic RT-7 merged into the main branch at 03:43 on 6 November, and a task merged into the
+RT-7 branch at 10:15 on 8 November
+When the windows of 8 November are built
+Then RT-7 has no window opened on 8 November
+
 ### SC-AK-1634 — a window counts only the sessions of the epic and its tasks
 
 Given a window of epic 7 and, in the same hours, a session on the branch of a task of epic 7, a

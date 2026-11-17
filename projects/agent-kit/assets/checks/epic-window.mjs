@@ -45,7 +45,11 @@ export function analysisStartsOf(observations, epic, tasks) {
 export function epicWindows(observations, day) {
     const end = endOf(day);
     const seen = observations.filter((o) => String(o.t) <= end);
-    const openings = seen.filter((o) => o.ev === 'task-merged' && o.opens && o.epic).sort((a, b) => String(a.t).localeCompare(String(b.t)));
+    // A merge into the branch of an epic already merged into the main branch opens nothing: the epic is over.
+    const epicMergedAt = new Map(seen.filter((o) => o.ev === 'epic-merged').map((o) => [o.task, o.t]));
+    const openings = seen
+        .filter((o) => o.ev === 'task-merged' && o.opens && o.epic && !(epicMergedAt.get(o.epic) < o.t))
+        .sort((a, b) => String(a.t).localeCompare(String(b.t)));
     const out = [];
     for (const opening of openings) {
         const epic = opening.epic;

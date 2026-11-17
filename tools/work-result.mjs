@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/work-result.mjs · 3a3b11397660 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/work-result.mjs · 7697f2115ef6 · правится надстройкой, не здесь
 /**
  * The lines of the work result for the report, counted from the observations of the tree by the same
  * functions the hook at the end of a turn and the reading of merges use: the events of the records,
@@ -11,8 +11,8 @@
  * lines of the result; `lines` holds the text the report prints.
  */
 import { pairsOf, idleOf, reasksOf, deadEndsOf } from './record-count.mjs';
-import { dayMerges } from './merge-read.mjs';
-import { readObservations } from './epic-window.mjs';
+import { dayMerges, dayEpics } from './merge-read.mjs';
+import { epicWindows, readObservations } from './epic-window.mjs';
 
 const DAY = 24 * 60 * 60 * 1000;
 /** The role whose refusal is the verdict «цель не достигнута». */
@@ -111,14 +111,66 @@ export function dayResult(observations, events, day, firstCounted = firstCounted
     };
 }
 
-/** The result of a period: a result per day and the sums the lines print. */
-export function resultOf(observations, days) {
+const endOf = (day) => `${day}T23:59:59.999Z`;
+
+/**
+ * The epics of a period: every epic with a window or a merge or a release in it, open ones included.
+ * The status is judged by the end of the last day of the period, not by today.
+ */
+export function periodEpics(observations, days, { publishes = true } = {}) {
+    const last = days.at(-1);
+    const start = `${days[0]}T00:00:00`;
+    const inPeriod = (t) => t !== null && String(t) >= start && String(t) <= endOf(last);
+    const windows = epicWindows(observations, last).filter((w) => String(w.from) <= endOf(last) && (w.to === null || String(w.to) >= start));
+    const statuses = dayEpics(observations, last, { publishes });
+    const named = new Set([
+        ...windows.map((w) => w.epic),
+        ...statuses.filter((e) => inPeriod(e.mergedAt) || inPeriod(e.releasedAt)).map((e) => e.epic),
+    ]);
+    return [...named].sort().map((epic) => ({
+        ...(statuses.find((e) => e.epic === epic) ?? { epic, status: 'open', mergedAt: null, releasedAt: null, minutes: null }),
+        windows: windows.filter((w) => w.epic === epic).map(({ from, to, closedBy, calls, refusals, reasks }) => ({ from, to, closedBy, calls, refusals, reasks })),
+    }));
+}
+
+/** The result of a period: a result per day, the epics of the period and the sums the lines print. */
+export function resultOf(observations, days, { publishes = true } = {}) {
     const events = eventsOf(observations);
     const firstCounted = firstCountedDay(observations);
-    return { days: days.map((day) => dayResult(observations, events, day, firstCounted)) };
+    return {
+        days: days.map((day) => dayResult(observations, events, day, firstCounted)),
+        epics: periodEpics(observations, days, { publishes }),
+    };
 }
 
 const hours = (minutes) => (minutes / 60).toFixed(1);
+
+/** A moment of a line: the time alone inside a one-day report, the date with it otherwise. */
+const momentOf = (t, days) => {
+    const time = String(t).slice(11, 16);
+    return days.length === 1 && String(t).startsWith(days[0]) ? time : `${String(t).slice(0, 10)} ${time}`;
+};
+
+const EPIC_STATUS = {
+    released: (e, days) => `выпущен ${momentOf(e.releasedAt, days)}`,
+    'not-released': (e, days) => `не выпущен, слит ${momentOf(e.mergedAt, days)}`,
+    merged: (e, days) => `слит ${momentOf(e.mergedAt, days)}`,
+    open: () => 'открыт',
+};
+
+/** The line of each epic of the period and a line per window under it. */
+function epicLines(epics, days) {
+    const lines = [];
+    for (const e of epics) {
+        const taken = e.minutes === null ? '' : `, от взятия ${hours(e.minutes)} ч`;
+        lines.push(`  ${e.epic} ${EPIC_STATUS[e.status](e, days)}${taken}`);
+        for (const w of e.windows) {
+            const to = w.to === null ? 'открыто' : momentOf(w.to, days);
+            lines.push(`    окно ${momentOf(w.from, days)}–${to}: отказов ${w.refusals} из ${w.calls}, переспросили ${w.reasks}`);
+        }
+    }
+    return lines;
+}
 
 /**
  * The lines of the result, as the report prints them. «Принято с первого раза» is not among them: it
@@ -129,6 +181,7 @@ export function linesOf(result) {
     const recorded = result.days.filter((d) => d.recorded);
     const lines = ['', 'результат работы:'];
     lines.push(`  Задачи слиты: ${sum('tasksMerged')}, с видимым взятием ${sum('tasksTimed')}, от взятия ${hours(sum('takenMinutes'))} ч`);
+    lines.push(...epicLines(result.epics ?? [], result.days.map((d) => d.day)));
     for (const d of result.days.filter((one) => !one.recorded)) {
         lines.push(`  ${d.day}: ${d.beforeCounter ? 'запись дня до счётчика' : 'записи сессий за этот день нет'}`);
     }
@@ -164,7 +217,8 @@ function main(argv) {
     const dir = option(argv, '--observations');
     const until = option(argv, '--until');
     if (!dir || !until) return 1;
-    const result = resultOf(readObservations(dir), daysOf(until, Number(option(argv, '--days') ?? '1')));
+    const days = daysOf(until, Number(option(argv, '--days') ?? '1'));
+    const result = resultOf(readObservations(dir), days, { publishes: !argv.includes('--no-package') });
     console.log(JSON.stringify({ result, lines: linesOf(result) }));
     return 0;
 }
