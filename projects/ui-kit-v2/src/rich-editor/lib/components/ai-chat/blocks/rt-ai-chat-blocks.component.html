@@ -5,7 +5,9 @@
                 <rt-markdown-text rtElem="markdown" qa-dataid="ai-chat-block-markdown" [text]="view.text" />
             }
             @case ('notice') {
-                <rt-message rtElem="notice" qa-dataid="ai-chat-block-notice" [severity]="view.severity">{{ view.text }}</rt-message>
+                <rt-message rtElem="notice" qa-dataid="ai-chat-block-notice" live="status" [severity]="view.severity">
+                    {{ view.text }}
+                </rt-message>
             }
             @case ('custom') {
                 <ng-container *ngComponentOutlet="view.component; inputs: { block: view.block }" />

@@ -56,6 +56,8 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **A markdown block without text and a notice without a severity `rt-message` knows are shown as the plate too, and a renderer registered for `markdown` or `notice` is not taken.**
 
+- **A screen reader announces a notice in an answer politely, as a status, not as an alert.**
+
 - **The run line stands above the answer blocks, and its steps open for one answer at a time.**
 
 - **The rating appears once the answer has a block and is no longer written, and pressing the chosen rating again removes it.**
@@ -221,3 +223,4 @@ None.
 - 2026-11-15 — the task RT-3348: on a phone the row sign shadow is narrower and a tap leaves no hover tint.
 - 2026-11-15 — the task RT-3334 of the epic RT-3346: the answer is a list of blocks — markdown and notice drawn by the kit, other types by registered renderers, a plate for a type without one.
 - 2026-11-17 — the task RT-3334 after review: a renderer gives the copy text of its block, an answer without text shows no «Copy», a notice of an unknown severity is a plate.
+- 2026-11-17 — the task RT-3361 of the epic RT-3346: a notice in an answer is announced as a status, not as an alert.
