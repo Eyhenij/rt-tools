@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import type { EChartsCoreOption } from 'echarts/core';
 
 import { RtChartComponent } from '../../rt-chart.component';
+import { IRtChart } from '../../rt-chart.model';
 import { CHART_CASES } from './chart.fixture';
 
 /**
- * Обёртка `rt-chart` для `Playground`: опция и высота — простые поля, к ним привязаны контролы.
+ * Обёртка `rt-chart` для `Playground`: данные и высота — простые поля, к ним привязаны контролы.
  *
  * В пакет не уезжает: `tsconfig.lib.json` исключает папки историй.
  */
@@ -13,7 +13,7 @@ import { CHART_CASES } from './chart.fixture';
     selector: 'app-chart',
     template: `
         <div style="width: 28rem">
-            <rt-chart [option]="option" [height]="height" />
+            <rt-chart [data]="data" [height]="height" />
         </div>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -23,6 +23,6 @@ import { CHART_CASES } from './chart.fixture';
     ],
 })
 export class TestRtChartComponent {
-    public option: EChartsCoreOption = CHART_CASES[0].option ?? {};
-    public height: string = '320px';
+    public data: IRtChart.TData = CHART_CASES[0].data;
+    public height: string = '188px';
 }

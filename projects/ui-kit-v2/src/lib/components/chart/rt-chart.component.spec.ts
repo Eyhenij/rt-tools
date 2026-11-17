@@ -1,25 +1,26 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import type { EChartsCoreOption } from 'echarts/core';
+import { ComponentFixture } from '@angular/core/testing';
 
 import { ThemeService } from '../../platform';
 import { createRtFixture, qa, textOf } from '../../../testing/rt-kit-testing';
 import { RtChartComponent } from './rt-chart.component';
-import { RT_CHART_ECHARTS } from './rt-chart.registry';
+import { IRtChart } from './rt-chart.model';
 
-const LIGHT_FIRST: string = '#155dfc';
-const DARK_FIRST: string = '#4e84f2';
+const SLOT_1: string = 'var(--rt-color-chart-series-1)';
 
-/** Цвета кита на узле графика: светлая тема и тёмная. В jsdom нет собранного набора токенов. */
-const TOKENS_CSS: string = `
-    .rt-chart { --rt-color-chart-series-1: ${LIGHT_FIRST}; --rt-color-chart-series-2: #eb6834; --rt-color-bg-surface: #ffffff; }
-    [data-theme='dark'] .rt-chart { --rt-color-chart-series-1: ${DARK_FIRST}; --rt-color-chart-series-2: #d95926; --rt-color-bg-surface: #222629; }
-`;
+const LINE: IRtChart.Cartesian = {
+    kind: 'cartesian',
+    categories: ['Пн', 'Вт', 'Ср'],
+    series: [{ name: 'Выручка', type: 'line', values: [3, 5, 4] }],
+};
 
-const LINE: EChartsCoreOption = {
-    animation: false,
-    xAxis: { type: 'category', data: ['Пн', 'Вт', 'Ср'] },
-    yAxis: {},
-    series: [{ type: 'line', data: [3, 5, 4] }],
+const THREE: IRtChart.Cartesian = {
+    kind: 'cartesian',
+    categories: ['Пн', 'Вт'],
+    series: [
+        { name: 'План', type: 'bar', values: [3, 5] },
+        { name: 'Факт', type: 'bar', values: [2, 4] },
+        { name: 'Прогноз', type: 'line', values: [4, 6], mark: 'line' },
+    ],
 };
 
 /** Наблюдатель размеров: срабатывает по вызову теста, а не по раскладке, которой в jsdom нет. */
@@ -46,18 +47,13 @@ class ResizeDouble implements ResizeObserver {
 let width: number = 600;
 
 function stubLayout(): () => void {
-    const style: HTMLStyleElement = document.createElement('style');
-    style.textContent = TOKENS_CSS;
-    document.head.appendChild(style);
-
     const widthOf: PropertyDescriptor | undefined = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'clientWidth');
     const heightOf: PropertyDescriptor | undefined = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'clientHeight');
     Object.defineProperty(HTMLElement.prototype, 'clientWidth', { configurable: true, get: (): number => width });
-    Object.defineProperty(HTMLElement.prototype, 'clientHeight', { configurable: true, get: (): number => (width ? 320 : 0) });
+    Object.defineProperty(HTMLElement.prototype, 'clientHeight', { configurable: true, get: (): number => (width ? 188 : 0) });
     Object.defineProperty(window, 'ResizeObserver', { value: ResizeDouble, configurable: true, writable: true });
 
     return (): void => {
-        style.remove();
         Object.defineProperty(HTMLElement.prototype, 'clientWidth', widthOf ?? { configurable: true, value: 0 });
         Object.defineProperty(HTMLElement.prototype, 'clientHeight', heightOf ?? { configurable: true, value: 0 });
         ResizeDouble.all = [];
@@ -65,26 +61,28 @@ function stubLayout(): () => void {
     };
 }
 
-/** Директива создаёт график в отложенном вызове: ждём его и перерисовку. */
 async function settle(fixture: ComponentFixture<RtChartComponent>): Promise<void> {
-    for (let round: number = 0; round < 3; round++) {
+    for (let round: number = 0; round < 2; round++) {
         fixture.detectChanges();
-        await new Promise((resolve: (value: unknown) => void): unknown => setTimeout(resolve, 0));
         await fixture.whenStable();
     }
 }
 
-/** SVG самого графика; у заглушки своя иконка в SVG, она сюда не попадает. */
 function svgOf(fixture: ComponentFixture<RtChartComponent>): SVGSVGElement | null {
     return (fixture.nativeElement as HTMLElement).querySelector('[qa-dataid="chart-plot"] svg');
 }
 
+function pathsOf(fixture: ComponentFixture<RtChartComponent>): SVGPathElement[] {
+    return Array.from(svgOf(fixture)?.querySelectorAll<SVGPathElement>('path') ?? []);
+}
+
+/** Линии серий: путь без заливки с обводкой. */
+function strokesOf(fixture: ComponentFixture<RtChartComponent>): SVGPathElement[] {
+    return pathsOf(fixture).filter((path: SVGPathElement): boolean => path.style.fill === 'none' && path.style.stroke !== 'none');
+}
+
 describe('RtChartComponent', (): void => {
     let restore: () => void;
-
-    beforeAll((): void => {
-        RT_CHART_ECHARTS.setPlatformAPI({ measureText: (text: string): { width: number } => ({ width: text.length * 7 }) });
-    });
 
     beforeEach((): void => {
         width = 600;
@@ -93,47 +91,57 @@ describe('RtChartComponent', (): void => {
 
     afterEach((): void => restore());
 
-    it('SC-UKV-1331 — рисует серию путём SVG в первом цвете палитры', async (): Promise<void> => {
-        const fixture: ComponentFixture<RtChartComponent> = createRtFixture(RtChartComponent, { option: LINE });
+    it('SC-UKV-1331 — линия стоит путём SVG в цвете первого слота', async (): Promise<void> => {
+        const fixture: ComponentFixture<RtChartComponent> = createRtFixture(RtChartComponent, { data: LINE });
         await settle(fixture);
 
-        expect(qa(fixture, 'chart-plot')).not.toBeNull();
-        expect(svgOf(fixture)?.innerHTML).toContain(`stroke="${LIGHT_FIRST}"`);
+        const lines: SVGPathElement[] = strokesOf(fixture);
+
+        expect(lines).toHaveLength(1);
+        expect(lines[0].style.stroke).toBe(SLOT_1);
+        expect(lines[0].getAttribute('d')).toMatch(/^M/);
     });
 
-    it('SC-UKV-1332 — новая опция сливается с нарисованным графиком без пересоздания', async (): Promise<void> => {
-        const fixture: ComponentFixture<RtChartComponent> = createRtFixture(RtChartComponent, { option: LINE });
+    it('SC-UKV-1332 — новые данные меняют путь, а узел SVG остаётся тем же', async (): Promise<void> => {
+        const fixture: ComponentFixture<RtChartComponent> = createRtFixture(RtChartComponent, { data: LINE });
         await settle(fixture);
-        const before: SVGSVGElement | null = svgOf(fixture);
+        const svg: SVGSVGElement | null = svgOf(fixture);
+        const before: string | null = strokesOf(fixture)[0].getAttribute('d');
 
-        fixture.componentRef.setInput('option', { series: [{ type: 'line', data: [9, 1, 7] }] });
+        fixture.componentRef.setInput('data', { ...LINE, series: [{ ...LINE.series[0], values: [1, 9, 2] }] });
         await settle(fixture);
 
-        expect(before).not.toBeNull();
-        expect(svgOf(fixture)).toBe(before);
-        expect(svgOf(fixture)?.innerHTML).toContain(`stroke="${LIGHT_FIRST}"`);
+        expect(svg).not.toBeNull();
+        expect(svgOf(fixture)).toBe(svg);
+        expect(strokesOf(fixture)[0].getAttribute('d')).not.toBe(before);
     });
 
-    it('SC-UKV-1333 — опция без точек показывает заглушку вместо осей', async (): Promise<void> => {
-        const fixture: ComponentFixture<RtChartComponent> = createRtFixture(RtChartComponent, {
-            option: { xAxis: { type: 'category' }, yAxis: {}, series: [{ type: 'bar', data: [] }] },
-        });
+    it('SC-UKV-1333 — данные без значений показывают заглушку вместо поля', async (): Promise<void> => {
+        const empty: IRtChart.Cartesian = { ...LINE, series: [{ ...LINE.series[0], values: [null, null, null] }] };
+        const fixture: ComponentFixture<RtChartComponent> = createRtFixture(RtChartComponent, { data: empty });
         await settle(fixture);
 
+        expect(qa(fixture, 'chart-empty')).not.toBeNull();
         expect(qa(fixture, 'chart-plot')).toBeNull();
-        expect(svgOf(fixture)).toBeNull();
-        expect(textOf(qa(fixture, 'empty-state-title'))).toBe('No data for the chart');
-        expect(textOf(qa(fixture, 'empty-state-description'))).toBe('Data appears once the period has records');
     });
 
     it('SC-UKV-1334 — PNG: null до отрисовки, адрес данных PNG после', async (): Promise<void> => {
         width = 0;
-        const fixture: ComponentFixture<RtChartComponent> = createRtFixture(RtChartComponent, { option: LINE });
+        const fixture: ComponentFixture<RtChartComponent> = createRtFixture(RtChartComponent, { data: LINE });
         await settle(fixture);
 
         await expect(fixture.componentInstance.toPng()).resolves.toBeNull();
 
-        const context: Partial<CanvasRenderingContext2D> = { fillRect: jest.fn(), drawImage: jest.fn(), fillStyle: '' };
+        const context: Partial<CanvasRenderingContext2D> = {
+            fillRect: jest.fn(),
+            drawImage: jest.fn(),
+            scale: jest.fn(),
+            beginPath: jest.fn(),
+            roundRect: jest.fn(),
+            fill: jest.fn(),
+            fillText: jest.fn(),
+            fillStyle: '',
+        };
         const getContext: jest.SpyInstance = jest
             .spyOn(HTMLCanvasElement.prototype, 'getContext')
             .mockReturnValue(context as CanvasRenderingContext2D);
@@ -154,57 +162,79 @@ describe('RtChartComponent', (): void => {
             await settle(fixture);
 
             await expect(fixture.componentInstance.toPng()).resolves.toBe('data:image/png;base64,AAAA');
-            expect(context.fillStyle).toBe('#ffffff');
+            expect(context.drawImage).toHaveBeenCalled();
+            expect(context.fillText).toHaveBeenCalledWith('Выручка', expect.any(Number), expect.any(Number));
         } finally {
             getContext.mockRestore();
             toDataURL.mockRestore();
-            Object.defineProperty(HTMLImageElement.prototype, 'src', src ?? { configurable: true, value: '' });
+            Object.defineProperty(HTMLImageElement.prototype, 'src', src ?? { configurable: true, writable: true, value: '' });
         }
     });
 
-    it('SC-UKV-1335 — в контейнере нулевой ширины график ждёт ширину и рисуется', async (): Promise<void> => {
+    it('SC-UKV-1335 — в контейнере нулевой ширины поле пусто, с шириной — рисуется', async (): Promise<void> => {
         width = 0;
-        const fixture: ComponentFixture<RtChartComponent> = createRtFixture(RtChartComponent, { option: LINE });
+        const fixture: ComponentFixture<RtChartComponent> = createRtFixture(RtChartComponent, { data: LINE });
         await settle(fixture);
 
-        expect(qa(fixture, 'chart-plot')).toBeNull();
+        expect(svgOf(fixture)).not.toBeNull();
+        expect(pathsOf(fixture)).toHaveLength(0);
 
         width = 600;
         ResizeDouble.resize();
         await settle(fixture);
 
-        expect(svgOf(fixture)?.innerHTML).toContain(`stroke="${LIGHT_FIRST}"`);
+        expect(strokesOf(fixture)).toHaveLength(1);
     });
 
-    it('SC-UKV-1336 — тёмное поддерево даёт тёмную палитру', async (): Promise<void> => {
-        const fixture: ComponentFixture<RtChartComponent> = createRtFixture(
-            RtChartComponent,
-            { option: LINE },
-            { skipInitialDetect: true }
-        );
+    it('SC-UKV-1336 — цвета серий — токены палитры, смена темы узел SVG не пересоздаёт', async (): Promise<void> => {
+        const fixture: ComponentFixture<RtChartComponent> = createRtFixture(RtChartComponent, { data: LINE });
         const island: HTMLElement = document.createElement('div');
         island.setAttribute('data-theme', 'dark');
-        island.appendChild(fixture.nativeElement as HTMLElement);
         document.body.appendChild(island);
+        island.appendChild(fixture.nativeElement as HTMLElement);
+        await settle(fixture);
+        const svg: SVGSVGElement | null = svgOf(fixture);
 
-        try {
-            await settle(fixture);
+        expect(strokesOf(fixture)[0].style.stroke).toBe(SLOT_1);
 
-            expect(svgOf(fixture)?.innerHTML).toContain(`stroke="${DARK_FIRST}"`);
-        } finally {
-            island.remove();
-        }
+        fixture.debugElement.injector.get(ThemeService).toggle();
+        await settle(fixture);
+
+        expect(svg).not.toBeNull();
+        expect(svgOf(fixture)).toBe(svg);
+        expect(strokesOf(fixture)[0].style.stroke).toBe(SLOT_1);
+        island.remove();
     });
 
-    it('SC-UKV-1336 — смена темы перерисовывает график в цветах новой темы', async (): Promise<void> => {
-        const fixture: ComponentFixture<RtChartComponent> = createRtFixture(RtChartComponent, { option: LINE });
+    it('SC-UKV-1338 — указатель над категорией показывает её значения во всех сериях', async (): Promise<void> => {
+        const fixture: ComponentFixture<RtChartComponent> = createRtFixture(RtChartComponent, { data: THREE });
         await settle(fixture);
-        expect(svgOf(fixture)?.innerHTML).toContain(`stroke="${LIGHT_FIRST}"`);
+        const hits: SVGPathElement[] = pathsOf(fixture).filter((path: SVGPathElement): boolean => path.style.fill === 'transparent');
 
-        TestBed.inject(ThemeService).toggle();
+        expect(hits).toHaveLength(2);
+        expect(qa(fixture, 'chart-tip')).toBeNull();
+
+        hits[1].dispatchEvent(new MouseEvent('pointermove', { clientX: 10, clientY: 10 }));
         await settle(fixture);
 
-        expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
-        expect(svgOf(fixture)?.innerHTML).toContain(`stroke="${DARK_FIRST}"`);
+        expect(textOf(qa(fixture, 'chart-tip'))).toBe('Вт\nПлан: 5\nФакт: 4\nПрогноз: 6');
+    });
+
+    it('SC-UKV-1339 — легенда: пункт на серию с именем и значком её цвета', async (): Promise<void> => {
+        const fixture: ComponentFixture<RtChartComponent> = createRtFixture(RtChartComponent, { data: THREE });
+        await settle(fixture);
+        const items: HTMLElement[] = Array.from(
+            (qa(fixture, 'chart-legend')?.nativeElement as HTMLElement | undefined)?.querySelectorAll<HTMLElement>('li') ?? []
+        );
+        const marks: HTMLElement[] = items.map((item: HTMLElement): HTMLElement => item.firstElementChild as HTMLElement);
+
+        expect(items.map((item: HTMLElement): string => textOf(item))).toEqual(['План', 'Факт', 'Прогноз']);
+        expect(marks.map((mark: HTMLElement): string => mark.style.backgroundColor)).toEqual([
+            SLOT_1,
+            'var(--rt-color-chart-series-2)',
+            'var(--rt-color-chart-series-3)',
+        ]);
+        expect(marks[2].classList).toContain('rt-chart__mark--line');
+        expect(marks[0].classList).not.toContain('rt-chart__mark--line');
     });
 });

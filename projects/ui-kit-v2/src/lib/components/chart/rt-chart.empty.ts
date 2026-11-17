@@ -1,41 +1,29 @@
-import type { EChartsCoreOption } from 'echarts/core';
+import { IRtChart } from './rt-chart.model';
 
-function asList(value: unknown): unknown[] {
-    if (Array.isArray(value)) {
-        return value;
-    }
-
-    return value ? [value] : [];
+function hasValue(values: ReadonlyArray<number | null | undefined>): boolean {
+    return values.some((value: number | null | undefined): boolean => value !== null && value !== undefined);
 }
 
-function hasPoints(holder: unknown, key: string): boolean {
-    if (!holder || typeof holder !== 'object') {
-        return false;
-    }
-
-    const points: unknown = Reflect.get(holder, key);
-
-    return Array.isArray(points) && points.length > 0;
+function treeHasValue(nodes: readonly IRtChart.Node[]): boolean {
+    return nodes.some((node: IRtChart.Node): boolean => (node.children?.length ? treeHasValue(node.children) : node.value !== undefined));
 }
 
-/**
- * Пуста ли опция: ни в одной серии и ни в одном наборе данных нет ни одной точки.
- *
- * Серия без `data` берёт точки из `dataset`, поэтому пустой считается опция, где пусты и серии, и
- * наборы. Опция без серий тоже пуста: рисовать нечего.
- */
-export function rtChartIsEmpty(option: EChartsCoreOption | null | undefined): boolean {
-    if (!option) {
+/** Пусты ли данные графика: ни одного значения ни в одной серии, секторе, ячейке или листе. */
+export function rtChartIsEmpty(data: IRtChart.TData | null | undefined): boolean {
+    if (!data) {
         return true;
     }
 
-    const series: unknown[] = asList(Reflect.get(option, 'series'));
-
-    if (series.length === 0) {
-        return true;
+    switch (data.kind) {
+        case 'cartesian':
+            return !data.series.some((item: IRtChart.Series): boolean => hasValue(item.values));
+        case 'scatter':
+            return !data.series.some((item: IRtChart.ScatterSeries): boolean => item.points.length > 0);
+        case 'pie':
+            return data.items.length === 0;
+        case 'heatmap':
+            return !data.values.some((row: ReadonlyArray<number | null>): boolean => hasValue(row));
+        default:
+            return !treeHasValue(data.nodes);
     }
-
-    const datasetFilled: boolean = asList(Reflect.get(option, 'dataset')).some((set: unknown): boolean => hasPoints(set, 'source'));
-
-    return !datasetFilled && !series.some((item: unknown): boolean => hasPoints(item, 'data'));
 }

@@ -8,7 +8,7 @@ export default {
     title: 'Molecules/Data/Chart',
     component: TestRtChartComponent,
     argTypes: {
-        option: { control: { type: 'object' } },
+        data: { control: { type: 'object' } },
         height: { control: { type: 'text' } },
     },
 } as Meta<TestRtChartComponent>;
@@ -18,7 +18,7 @@ type TStory = StoryObj<TestRtChartComponent>;
 export const Playground: TStory = {
     parameters: storySnapshotSkip('та же линия стоит первой карточкой в истории Kinds'),
     args: {
-        option: CHART_CASES[0].option ?? {},
-        height: '320px',
+        data: CHART_CASES[0].data,
+        height: '188px',
     },
 };

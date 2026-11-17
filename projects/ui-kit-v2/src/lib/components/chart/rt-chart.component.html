@@ -1,16 +1,63 @@
 <ng-container rtBlock="rt-chart">
     @if (empty()) {
         <rt-empty-state rtElem="empty" qa-dataid="chart-empty" icon="search" [title]="emptyTitle()" [description]="emptyHint()" />
-    } @else if (ready()) {
-        <div
-            rtElem="plot"
-            echarts
-            qa-dataid="chart-plot"
-            [options]="baseOption"
-            [merge]="option()"
-            [theme]="chartTheme()"
-            [initOpts]="initOpts"
-            (chartInit)="onChartInit($event)"
-            (chartFinished)="onChartFinished()"></div>
+    } @else {
+        <div #plot rtElem="plot" qa-dataid="chart-plot" (pointerleave)="hideTip()">
+            <svg
+                #svg
+                rtElem="svg"
+                role="img"
+                [attr.aria-label]="label()"
+                [attr.width]="width()"
+                [attr.height]="plotHeight()"
+                [attr.viewBox]="viewBox()">
+                @for (path of scene().paths; track path.key) {
+                    <path
+                        qa-dataid="chart-shape"
+                        [attr.d]="path.d"
+                        [attr.transform]="path.transform"
+                        [style.fill]="path.fill"
+                        [style.stroke]="path.stroke"
+                        [style.stroke-width]="path.width"
+                        [style.stroke-dasharray]="path.dash"
+                        [style.opacity]="path.opacity"
+                        (pointermove)="showTip(path, $event)" />
+                }
+                @for (text of scene().texts; track text.key) {
+                    <text
+                        dominant-baseline="central"
+                        [attr.x]="text.x"
+                        [attr.y]="text.y"
+                        [attr.text-anchor]="text.anchor"
+                        [style.fill]="text.fill"
+                        [style.font-size.px]="text.size"
+                        [style.font-weight]="text.weight">
+                        {{ text.text }}
+                    </text>
+                }
+            </svg>
+            @if (tip(); as tip) {
+                <div rtElem="tip" qa-dataid="chart-tip" [style.left.px]="tip.x" [style.top.px]="tip.y">{{ tip.text }}</div>
+            }
+        </div>
+        <ul rtElem="legend" qa-dataid="chart-legend">
+            @for (item of scene().legend; track $index) {
+                <li rtElem="legend-item">
+                    <span rtElem="mark" [rtMod]="item.mark === 'line' ? LINE_MARK : DOT_MARK" [style.background-color]="item.color"></span>
+                    <span rtElem="legend-label">{{ item.name }}</span>
+                </li>
+            }
+        </ul>
+        @if (scene().scale; as scale) {
+            <div rtElem="scale" qa-dataid="chart-scale">
+                <span rtElem="legend-label">{{ scale.low }}</span>
+                <span rtElem="steps">
+                    @for (step of scale.steps; track $index) {
+                        <span rtElem="step" [style.background-color]="scale.color" [style.opacity]="step"></span>
+                    }
+                </span>
+                <span rtElem="legend-label">{{ scale.high }}</span>
+            </div>
+        }
     }
 </ng-container>
