@@ -66,7 +66,8 @@ and no dead end over a working day — is read from the same numbers.
   squeeze.
 - **An interrupt** — an entry of the session that opens with `[Request interrupted`.
 - **A tree change** — a successful edit or write of a file, or a successful commit.
-- **Idle time** — the time from a refusal to the next tree change in the same session.
+- **Idle time** — the time from a refusal to the next tree change in any session of the tree on
+  this machine.
 - **A menu question** — a call of the question tool, asked whether a check let it through or not.
 - **A re-ask** — a menu question, in the task of an earlier menu question the owner answered, whose
   beginning matches the fixed visible set of patterns that name the owner's earlier answer.
@@ -81,9 +82,10 @@ and no dead end over a working day — is read from the same numbers.
   the epic has an edition published after that merge. An epic with no package of its own is
   released by its merge.
 - **An epic window** — a stretch of work on an epic between two of its events, defined in the rules.
-- **A dead end** — a series of ten or more stop refusals in one session, with one check and one
-  first line of the reason, that the executor could not leave by itself: after the series came an
-  owner message, or the session ended with no tree change.
+- **A dead end** — a series of three or more refusals of one check, of any class, in one session,
+  that the executor could not leave by itself: after the series came an owner message, or the
+  session ended with no tree change. On 13 November the epic-end check refused the owner's consent
+  until he answered three times — a dead end.
 - **A day** — a calendar day in UTC. The day lines, the milestone and the windows go by it.
 
 ### What it is called in the interface
@@ -134,6 +136,9 @@ and no dead end over a working day — is read from the same numbers.
 - **A past day is counted by a one-off recount of the saved session records, by the same counter.**
   The hook counts only new turns. The recount replaces what an earlier recount of the day wrote, so
   a second run does not add to the first; a day the hook already counted is not recounted.
+- **A saved session record belongs to the tree when its working directory is the tree or a copy of
+  it.** A copy already removed from disk is recognised by its branches: they stand in the history of
+  the tree. The record of 13 November lies under a copy removed since.
 - **The sending sends the recounted days, older than its last success too, within the keeping term.**
   Otherwise a recount of last week stays in the tree.
 - **Merges and releases are read by the outcome read of the sending, from the hosting and the
@@ -165,8 +170,8 @@ and no dead end over a working day — is read from the same numbers.
   metrics spec.
 - **Idle time is counted in whole minutes per stretch, and a stretch belongs to the day it started.**
   Refusals inside an open stretch do not add to it. A stretch open at the end of a turn stays open in
-  the mark and closes at the next tree change of the session; one the session never closes ends at
-  its last entry. A question to the owner does not stop it. The report prints hours with one decimal.
+  the mark and closes at the next tree change of any session of the tree on this machine; one no
+  change closes ends at the last entry of the day. A question to the owner does not stop it. The report prints hours with one decimal.
 - **A re-ask is told by the beginning of the question.** The patterns: «ваш прошлый ответ», «вы уже
   ответили», «не зачла ваш ответ». A question refused by a check counts as asked.
 - **An interrupt is counted per entry.** The report prints interrupts beside the owner's words, so a
@@ -195,8 +200,11 @@ and no dead end over a working day — is read from the same numbers.
   same epic branch; the merge of the epic request into the main branch; the owner message that opens
   a turn in which an incident analysis is written. A window none of them closed by the end of the day
   of the report is printed as open, up to that end.
-- **A window counts only the sessions on the epic branch or the branch of a task of the epic.** A
-  session of another branch in the same hours is not the work on that epic.
+- **A window counts only the sessions that stood on the epic branch or the branch of a task of the
+  epic within the window.** Such a session counts whole inside the window, a side branch it took on
+  the way included: on 13 November a fix of the epic-end check went on a branch of its own in the
+  same session. A session that never stood on such a branch in the window is not the work on that
+  epic.
 - **A window counts the sessions of every copy of the tree on the machine of the copy that sends
   it.** A session of another machine is not in it; that machine sends its own window of the epic.
 - **The window is sent by the copy that read the merge that opened it, under its copy sign.** The
@@ -210,9 +218,9 @@ and no dead end over a working day — is read from the same numbers.
 
 ### The milestone and the dead ends
 
-- **A dead end is a series the executor could not leave.** The series is counted as `owner-nudges
-  --deadlocks` counts it; a series after which a tree change came with no owner message in between is
-  not a dead end.
+- **A dead end is a series the executor could not leave.** A series after which a tree change came
+  with no owner message in between is not a dead end. The count of 13 November is recorded by the
+  suite on the cut.
 - **Milestone G is reached on a day with fewer than five refusals per hundred calls and no dead
   end.** Exactly five is not reached. A day with no call is not judged and prints «вызовов нет». The
   report prints one milestone line per day of the period.
@@ -225,14 +233,16 @@ and no dead end over a working day — is read from the same numbers.
   достигнута», the milestone line and «Повторы ошибок». This changes the line of the metrics spec
   "Otherwise the text says there is no data" for the lines of the result.
 - **«Принято с первого раза» with no task prints «0 из 0», in the report and on the screen alike.**
+- **«Экзамены с первого раза» is no line of the result.** It judges how the executor learned the
+  rules, not what the work gave the owner, and stays as the metrics spec has it.
 - **A day with no session record says so once, as a sentence, and prints the merges of that day.**
   Merges come from the hosting, not from the record, and stay true.
 - **A day older than the counting and not recounted is named apart.** It prints «запись дня до
   счётчика», and its day line carries none of the new keys of the record.
 - **«Повторы ошибок» says «считается в приёмнике».** A repeated mistake is matched against the fix
   of a record over all trees, and one tree has no fixes.
-- **«Пустые запуски» stays with task RT-3283.** It is not a line of the result here, and the sign
-  "no «нет данных» line" is about the other lines.
+- **«Пустые запуски» is counted as the metrics spec counts it, from the run events.** On 13 November
+  those events exist, so the line prints a number; its usefulness metric is task RT-3283.
 - **The report takes a day of its own.** `--day YYYY-MM-DD` prints that day; the report for 13
   November is read by it.
 - **Every new number of the day line has a key of the closed list, entered in the same change.** The
@@ -266,8 +276,9 @@ and no dead end over a working day — is read from the same numbers.
   characters. A check the package does not ship leaves under the word `own`, as for the guards now.
 - **The epic window leaves as its own record, not inside a day line.** A window crosses days, and a
   day line replaced by its day would split it. The record carries the epic number, the two moments,
-  calls, refusals, re-asks, merged and released as zero or one, the minutes of the epic from taking,
-  and the stamp of its building.
+  calls, refusals, re-asks, merged and released as zero or one, the moments of the merge and of the
+  release, the minutes of the epic from taking, and the stamp of its building. The moments let the
+  screen judge «выпущен» by the end of the shown day, as the report does.
 
 ## What is out of scope
 
@@ -346,7 +357,7 @@ their windows.
   (Recommended)».** The owner's answer in the grill. On 13 November the epic stood from the merge of
   PR 3266 at 00:34:01 to the owner message at 03:04:27; the next merge into the epic branch came only
   at 04:49:28. «35 из 189» of the request matched no event.
-- **The epic number leaves the tree as a number.** The owner's decision in the grill: it is a number,
+- **The epic number leaves the tree as a number.** A grill decision of the executor: it is a number,
   and the rule "Only numbers and package names leave a tree" lets it through. The screen shows «эпик
   3227».
 - **Observations, not reading at the sending.** The sender of the day line runs with no session open

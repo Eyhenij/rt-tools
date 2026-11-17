@@ -6,7 +6,8 @@
 **Procedures:** none — the operations are declared by the controllers of the intake
 
 An agreement about the product written before the code, task RT-3270 of the epic RT-3302. It merges
-into `docs/specs/message-bus/usage/` by the last commit of the work. What the numbers mean and how a
+into `docs/specs/message-bus/usage/` by the last commit of the work; if the merged spec outgrows the
+length limit, it becomes a subdomain of its own next to `usage`, by the rule of the length limit. What the numbers mean and how a
 tree counts them is the package agreement `docs/specs/agent-kit/proposed/work-result-metrics/`.
 
 ## Why
@@ -60,6 +61,10 @@ metrics; the numbers of the result and the epic windows have no place there yet.
   refusals, re-asks and minutes are whole numbers from zero; merged and released are zero or one;
   refusals are not more than calls. A field outside its form refuses the record with
   `epic-window-field-refused` and its name.
+- **A window carries the moments of the merge and of the release of its epic, and the screen judges
+  «выпущен» by the end of the shown period.** A window of 13 November shows «не выпущен» after a
+  later edition too, as the report of that day does. A moment of a merge or a release is judged as
+  the other moments of the window.
 - **An epic window is kept a year from its opening, as a day line, and the night cleaning removes
   older ones.**
 
@@ -158,7 +163,8 @@ The day line table keeps its form: the new numbers are new keys of its map.
 
 ### Locales
 
-Russian, as the rest of the admin application.
+Russian and English, as the rest of the admin application: every new label goes into both label
+sets.
 
 ### SEO
 

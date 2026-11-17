@@ -265,10 +265,18 @@ taking, and no day line carries it
 
 ### SC-AK-1625 — a series the executor could not leave is a dead end
 
-Given a series of twelve stop refusals with one check and one reason line followed by an owner
-message, and another such series followed by a tree change with no owner message
+Given a series of three hook refusals of one check followed by an owner message, and a series of
+twelve stop refusals of one check followed by a tree change with no owner message
 When the day is counted
 Then one dead end is counted
+
+### SC-AK-1654 — the dead end of 13 November is counted on the cut
+
+Given the cut of 13 November, where the epic-end check refused the owner's consent until he answered
+three times
+When the day is counted
+Then at least one dead end is counted, and the number the suite records equals the count on the
+full record
 
 ### SC-AK-1626 — the milestone line of a day
 

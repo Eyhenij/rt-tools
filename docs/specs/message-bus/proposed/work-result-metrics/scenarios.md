@@ -118,3 +118,10 @@ Given windows of two trees and day lines of two versions
 When a person chooses one tree, then one version
 Then the tree leaves only its windows, and the version narrows the numbers and leaves the windows
 whole
+
+### SC-MB-452 — a window of a past day stays «не выпущен» after a later release
+
+Given the window of the epic 3227 of 13 November with its merge at 05:48:08 and a release moment of
+a later day
+When a person opens «Качество» for 13 November
+Then the window shows «эпик 3227 не выпущен · отказов 35 из 187 · переспросили 3»
