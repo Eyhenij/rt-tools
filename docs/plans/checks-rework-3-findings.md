@@ -181,6 +181,30 @@ over and says which of them are right. The file lies next to the plan of the epi
 - **The step guard measured the state wrongly from a subdirectory.** An edit of the progress was
   refused as «ahead» while the shell stood under `projects/`. **Address:** rules layer — the engine
   takes the tree root from the record, not from the working directory.
+- **The two findings on the owner source are taken by RT-3270.** Its first stage reads
+  `queued_command` as a typed message and drops the harness wrappers, by the owner's answer
+  «Починить в RT-3270 (Recommended)».
+
+### The rules review of RT-3277
+
+The review role brought six wordings; they wait for the owner at the end of the epic.
+
+- **The plan sample names neither the bare pattern nor the zero count.** Address: package, the plan
+  sample of the task template after the expected-output forms. A pattern stands bare between
+  slashes, a count of what must be absent goes through `wc -l`, the trial run prints the exit code.
+- **The replacement line of a step check is named by no rule.** Its form lives only in the engine
+  and in SC-AK-1413. Address: package, the pattern `task-flow-resume` after «A stage revision».
+- **Three pitfalls of the package suites.** Saved real data are searched for people before the
+  first commit. A suite pins its environment: colour, home directory, no machine token. A coverage
+  check matches a name whole. Address: this tree, the rule `agent-kit-source`.
+- **The edit tool drops a space at the end of the replacement.** Address: package, the cold part
+  of `doc-style`.
+- **Untracking a directory from the index takes the neighbours' files too.** Address: package, the
+  pattern `git-workflow-commit`. The same section names the path of one machine to the hosting
+  client three times; that is a separate task.
+- **Guards read a reading command as an edit.** A redirect after a hook path, a laid-out script name
+  or a plan path among git arguments is refused. The review itself got two such refusals on reading
+  commands. Address: package, the cold part of `agent-kit`, and a task of this epic for the guard.
 
 ## Left unresolved
 
