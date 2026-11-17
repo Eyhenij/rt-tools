@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/push-inputs.mjs · ac3af574710c · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/push-inputs.mjs · 0679c8d7a390 · правится надстройкой, не здесь
 /**
  * Which steps of the push set a change can reach. A step runs when the change touches what it
  * reads; a step the change cannot reach is not started.
@@ -173,13 +173,28 @@ function trace(step) {
  * branch, so it starts no step, and whether it exists is a state of the machine: a copy with `.env`
  * and a copy without it would record two different tables of one and the same tree.
  *
- * FAIL-OPEN: no git or a fallen call — nothing counts as ignored, the table stays as strict as before.
+ * Only the repository's own ignore rules count: a global ignore file differs from machine to
+ * machine, and a path it hides would split the table again. Paths go NUL-separated, so a name with
+ * a non-ASCII letter or a space is not quoted and is matched as written.
+ *
+ * FAIL-OPEN: no git — nothing counts as ignored, the table stays as strict as before. One path git
+ * refuses (beyond a symbolic link, outside the tree) fails the whole batch, so the paths are then
+ * asked one by one, and only the refused one stays in the table.
  */
 function outsideHistory(paths) {
     if (!paths.length) return [];
-    const run = spawnSync('git', ['check-ignore', '--stdin'], { cwd: ROOT, input: paths.join('\n'), encoding: 'utf8' });
-    if (run.status !== 0) return [];
-    return (run.stdout ?? '').split('\n').filter(Boolean);
+    const ask = (list) =>
+        spawnSync('git', ['-c', 'core.excludesFile=/dev/null', 'check-ignore', '-z', '--stdin'], {
+            cwd: ROOT,
+            input: `${list.join('\0')}\0`,
+            encoding: 'utf8',
+            maxBuffer: 64 * 1024 * 1024,
+        });
+    const ignored = (run) => (run.status === 0 ? (run.stdout ?? '').split('\0').filter(Boolean) : []);
+    const run = ask(paths);
+    if (run.status === 0 || run.status === 1) return ignored(run);
+    if (run.error || paths.length === 1) return [];
+    return paths.flatMap((p) => ignored(ask([p])));
 }
 
 /** The table entry: only the topmost walked directories, each with the extensions read under it. */
@@ -310,11 +325,14 @@ function verify() {
     if (!table) return 0;
     const misses = [];
     for (const [step, entry] of Object.entries(table.steps)) {
+        // A step with a recorded kind runs on every change already: a new kind changes no selection,
+        // and a refusal over it would only name the machine — a platform suffix, a tool on the path.
+        if (entry.history.length || entry.untraced.length) continue;
         const raw = trace(step);
         const now = entryOf(raw);
-        for (const h of now.history) if (!entry.history.includes(h)) misses.push(`${step}: now reads the history (${h})`);
-        for (const u of now.untraced) if (!entry.untraced.includes(u)) misses.push(`${step}: now starts ${u}`);
-        if (entry.history.length || entry.untraced.length) continue;
+        for (const h of now.history) misses.push(`${step}: now reads the history (${h})`);
+        for (const u of now.untraced) misses.push(`${step}: now starts ${u}`);
+        if (now.history.length || now.untraced.length) continue;
         for (const p of [...raw.reads, ...raw.self]) {
             if (!reasonOf(entry, [{ kind: 'M', path: p }])) misses.push(`${step}: reads ${p}`);
         }

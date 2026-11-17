@@ -110,4 +110,46 @@ printf 'DATABASE_URL=x\n' >"$tree/.env"
 (cd "$tree" && node tools/push-inputs.mjs verify --table db.json >/dev/null 2>&1)
 report "SC-AK-1551 — the copy that starts the process passes the table check" "$?" 0
 
+# A step that already starts a process starts a new kind on another machine.
+cat >"$tree/tools/check-tool.mjs" <<'EOF'
+import { spawnSync } from 'node:child_process';
+import { existsSync } from 'node:fs';
+spawnSync('true');
+if (existsSync('.tool')) spawnSync('false');
+EOF
+tool_step='node tools/check-tool.mjs'
+(cd "$tree" && printf '%s\n' "$tool_step" | node tools/push-inputs.mjs record --table tool.json 2>/dev/null)
+printf 'x\n' >"$tree/.tool"
+(cd "$tree" && node tools/push-inputs.mjs verify --table tool.json >/dev/null 2>&1)
+report "SC-AK-1594 — a new process kind of a step that already runs always is no refusal" "$?" 0
+rm "$tree/.tool"
+
+# The filter of ignored files: a non-ASCII name, a path beyond a symbolic link, a global ignore file.
+printf '.env\n*.local\n' >"$tree/.gitignore"
+printf 'x\n' >"$tree/данные.local"
+printf 'x\n' >"$tree/global.only"
+ln -s src "$tree/link"
+printf 'global.only\n' >"$tree/global-ignore"
+printf '[core]\n\texcludesFile = %s\n' "$tree/global-ignore" >"$tree/global-config"
+cat >"$tree/tools/check-local.mjs" <<'EOF'
+import { readFileSync } from 'node:fs';
+for (const p of ['данные.local', '.env', 'link/c.txt']) readFileSync(p, 'utf8');
+EOF
+cat >"$tree/tools/check-global.mjs" <<'EOF'
+import { readFileSync } from 'node:fs';
+for (const p of ['.env', 'global.only']) readFileSync(p, 'utf8');
+EOF
+local_step='node tools/check-local.mjs'
+global_step='node tools/check-global.mjs'
+(cd "$tree" && printf '%s\n%s\n' "$local_step" "$global_step" | GIT_CONFIG_GLOBAL="$tree/global-config" \
+    node tools/push-inputs.mjs record --table local.json 2>/dev/null)
+read_by() {
+    (cd "$tree" && node -e 'const t=require("./local.json");const e=t.steps[process.argv[1]];
+        console.log([...e.files,...e.walks.map((w)=>w.dir)].includes(process.argv[2])?"kept":"dropped")' "$1" "$2")
+}
+report "SC-AK-1595 — an ignored file with a non-ASCII name is no read of the step" "$(read_by "$local_step" 'данные.local')" dropped
+report "SC-AK-1595 — a path beyond a symbolic link does not stop the filter for the rest" "$(read_by "$local_step" '.env')" dropped
+report "SC-AK-1596 — a file only the machine's own ignore file hides stays a read of the step" "$(read_by "$global_step" 'global.only')" kept
+report "SC-AK-1596 — a file the repository ignores is dropped next to it" "$(read_by "$global_step" '.env')" dropped
+
 suite_result "push-inputs"

@@ -251,6 +251,30 @@ And the table check on the first copy stays green
 
 Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
 
+### SC-AK-1594 — a new process kind of a step that runs always is no refusal
+
+Given a table where a step is recorded with the process it starts
+When on another copy the step also starts a process of another kind
+Then the table check stays green
+
+Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
+
+### SC-AK-1595 — the filter of ignored files survives an unusual path
+
+Given a step that reads an ignored file with a non-ASCII name, `.env` and a path beyond a symbolic link
+When the table is recorded
+Then neither the non-ASCII file nor `.env` is a read of the step
+
+Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
+
+### SC-AK-1596 — a global ignore file of the machine does not hide a read
+
+Given a machine whose global ignore file hides a file a step reads, and `.env` ignored by the repository
+When the table is recorded
+Then the hidden file stays a read of the step and `.env` does not
+
+Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
+
 ### SC-AK-1166 — the push gate names every red light check by one refusal
 
 Given the gate set holds two red light checks, a green one between them and a heavy one after them
