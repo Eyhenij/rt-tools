@@ -373,9 +373,7 @@ their windows.
 
 ## Open questions
 
-- **Q-13. The owner's words of 13 November are known only as «about 197».** 123 typed messages and 74
-  queued ones, 3 of them repeated by a typed one; the exact number is read on the full record when
-  the cut is rebuilt and written into SC-AK-1611.
+None: the owner's words of 13 November are 196 on the full record, and SC-AK-1611 names them.
 
 ## History of changes
 

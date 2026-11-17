@@ -131,7 +131,8 @@ Covered: `projects/agent-kit/tests/real-record.test.sh`.
 Given the cut of the record of 13.11.2026
 When the owner's typed messages and the plan approvals are read
 Then no hook message counts as typed by the owner, and neither a menu answer about the cause nor an
-approval without the plan name approves a plan
+approval without the plan name approves a plan; the reminder measure counts 198 typed messages,
+a pasted and a queued message included and a wrapper of the harness left out
 
 Covered: `projects/agent-kit/tests/real-record.test.sh`.
 
@@ -148,7 +149,8 @@ Covered: `projects/agent-kit/tests/real-record.test.sh`.
 Given the cut of the record of 13.11.2026
 When the reminder measure reads the owner's nudges, the typed messages, the refusals and the dead
 ends
-Then it counts what it counts on the full record of the same day
+Then it counts 5 nudges of 1998 calls, 198 typed messages by the shared rule of the owner's words,
+203 refusals with 129 at the exit, and 2 dead ends — the numbers of the full record of the same day
 
 Covered: `projects/agent-kit/tests/real-record.test.sh`.
 

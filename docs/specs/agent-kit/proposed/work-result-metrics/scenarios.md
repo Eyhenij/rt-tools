@@ -25,7 +25,7 @@ Then the owner's words of the turn are one
 Given the cut of 13 November 2026 rebuilt from the full record
 When the recount counts the window from 00:34:01 to 03:04:27 UTC
 Then the calls are 187 and the refusals 35: 30 hook refusals, 1 permission refusal and 4 stop
-refusals
+refusals, and the owner's words of the day are 196, as on the full record
 
 ### SC-AK-1612 — only three classes of an error result are refusals
 
