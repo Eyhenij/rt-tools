@@ -13,14 +13,15 @@ COUNTER="$CHECKS/record-count.mjs"
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 
-# Ответ счётчика на заготовку: имя функции и выражение над её результатом.
+# Ответ счётчика на заготовку: имя функции и выражение над её результатом. Ответ печатается строкой,
+# не через `console.log`: под раннером, который включает цвета, число выходит с кодами цвета.
 count() {
     node --input-type=module -e '
 import { readFileSync } from "node:fs";
 const counter = await import(process.argv[1]);
 const entries = readFileSync(process.argv[2], "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l));
 const result = counter[process.argv[3]](entries, process.argv[5]);
-console.log(new Function("r", `return (${process.argv[4]});`)(result));' "$COUNTER" "$1" "$2" "$3" "${4:-}"
+process.stdout.write(`${new Function("r", `return (${process.argv[4]});`)(result)}\n`);' "$COUNTER" "$1" "$2" "$3" "${4:-}"
 }
 
 # --- the owner's words ------------------------------------------------------------------------------
