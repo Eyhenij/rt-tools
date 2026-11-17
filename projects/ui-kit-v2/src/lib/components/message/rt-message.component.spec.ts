@@ -31,6 +31,15 @@ describe('RtMessageComponent', (): void => {
         expect(alert.tagName).toBe('ASIDE');
     });
 
+    it('live="status" объявляет его спокойно, а пустое или чужое значение оставляет тревогу', (): void => {
+        const role: (live: string) => string | null = (live: string): string | null =>
+            (qa(setup({ live }), 'message-alert')?.nativeElement as HTMLElement).getAttribute('role');
+
+        expect(role('status')).toBe('status');
+        expect(role('')).toBe('alert');
+        expect(role('polite')).toBe('alert');
+    });
+
     it('текст приходит проекцией', (): void => {
         expect(textOf(qa(createRtFixture(MessageHostComponent), 'message-body'))).toBe('Не удалось сохранить');
     });
