@@ -342,8 +342,8 @@ Covered by the component spec of the answer.
 
 ### SC-UKV-1328 — a notice of a severity `rt-message` does not know is a plate
 
-Given a notice block without a severity, one with the severity `critical` and a renderer registered for `notice`
+Given a notice block without a severity, one with the severity `critical`, a markdown block without text, and renderers registered for `notice` and `markdown`
 When it is drawn
-Then each stands as the plate with the type `notice`, the renderer is not taken, and a notice of a known severity stays a plate of `rt-message`
+Then each stands as the plate with its type, the renderers are not taken, and a notice of a known severity stays a plate of `rt-message`
 
 Covered by the spec of the blocks logic.

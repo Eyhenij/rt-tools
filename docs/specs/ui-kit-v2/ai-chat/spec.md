@@ -55,6 +55,7 @@ conversations. Every application repeats the same screen, and every copy drifts 
 - **A block with no renderer shows a plate with its type name, and the blocks around it stay in place.**
 
 - **A markdown block without text and a notice without a severity `rt-message` knows are shown as the plate too, and a renderer registered for `markdown` or `notice` is not taken.**
+
 - **The run line stands above the answer blocks, and its steps open for one answer at a time.**
 
 - **The rating appears once the answer has a block and is no longer written, and pressing the chosen rating again removes it.**

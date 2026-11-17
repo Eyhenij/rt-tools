@@ -61,6 +61,24 @@ describe('rt-ai-chat-blocks logic', (): void => {
         expect(blocksToPlainText(blocks)).toBe('До графика.');
     });
 
+    it('SC-UKV-1326 — регистрация без toText заменяет прежнюю вместе с её текстом, сломанная функция даёт пусто', (): void => {
+        const blocks: readonly IRtAiChat.Block[] = [{ type: 'markdown', text: 'Текст.' }, { type: 'chart' }, { type: 'table' }];
+        const renderers: readonly IRtAiChat.BlockRenderer[] = [
+            { type: 'chart', component: Object, toText: (): string => 'текст прежнего отрисовщика' },
+            { type: 'chart', component: Function },
+            {
+                type: 'table',
+                component: Object,
+                toText: (): string => {
+                    throw new Error('поле не заполнено');
+                },
+            },
+        ];
+
+        expect(blocksToPlainText(blocks, renderers)).toBe('Текст.');
+        expect(toBlockViews(blocks, renderers)[1]).toEqual({ kind: 'custom', component: Function, block: blocks[1] });
+    });
+
     it('SC-UKV-1328 — плашка с оттенком, которого нет у rt-message, своей не считается и идёт в заглушку', (): void => {
         const noSeverity: IRtAiChat.Block = { type: 'notice', text: 'x' };
         const foreign: IRtAiChat.Block = { type: 'notice', severity: 'critical', text: 'x' };
@@ -71,9 +89,19 @@ describe('rt-ai-chat-blocks logic', (): void => {
         expect(isNoticeBlock(noSeverity)).toBe(false);
         expect(isNoticeBlock(foreign)).toBe(false);
         expect(isNoticeBlock(inherited)).toBe(false);
-        expect(toBlockViews([known, foreign], [{ type: 'notice', component: Object }])).toEqual([
+        expect(
+            toBlockViews(
+                [known, noSeverity, foreign, { type: 'markdown' }],
+                [
+                    { type: 'notice', component: Object },
+                    { type: 'markdown', component: Object },
+                ]
+            )
+        ).toEqual([
             { kind: 'notice', severity: 'danger', text: 'x' },
             { kind: 'unsupported', type: 'notice' },
+            { kind: 'unsupported', type: 'notice' },
+            { kind: 'unsupported', type: 'markdown' },
         ]);
     });
 });
