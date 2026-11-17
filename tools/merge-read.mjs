@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/merge-read.mjs · 6fdde58fd400 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/merge-read.mjs · 92dc5bb568b8 · правится надстройкой, не здесь
 /**
  * The merges of requests and the editions of packages, read from the hosting and the registry and
  * written as observations: what the day line and the epic windows are counted by.
  *
- *   node merge-read.mjs --pulls <file> --observations <dir> --mark <file>
- *                       [--main <branch>] [--packages <dir>,<dir>] [--editions <pkg>=<file>]...
+ *   node merge-read.mjs --pulls <file> --observations <dir>
+ *                       [--main <branch>] [--packages <dir>,<dir>] [--ignore <pattern>] [--editions <pkg>=<file>]...
  *
  * `--pulls` holds the requests the hosting gave, one JSON object per line: `{number, state,
  * headRefName, baseRefName, mergedAt, title, files}`, open requests included — they tell a task
@@ -17,11 +17,12 @@
  *   epic-merged    an epic request merged into the main branch; `pkg` the packages it changed
  *   edition        a published version of a package of the tree
  *
- * A request and an edition are written once: the mark keeps what was read. An answer that does not
- * parse whole writes nothing and keeps the mark: a broken read is taken again by the next one.
+ * A request and an edition are written once: a second read of the same fact replaces the line of the
+ * first, so a read that judged a fact anew corrects it. An answer that does not parse whole writes
+ * nothing: a broken read is taken again by the next one.
  */
-import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 import { taskOf } from './record-count.mjs';
 
@@ -51,19 +52,25 @@ export function epicBranchesOf(pulls, main = 'main') {
     return new Set(pulls.map((p) => p.baseRefName).filter((base) => base && base !== main && !tasks.has(base)));
 }
 
-/** The packages a request changed: the directories of `packages` that hold one of its files. */
-export const packagesOf = (pull, packages) =>
-    packages.filter((dir) => (pull.files ?? []).some((file) => file === dir || file.startsWith(`${dir}/`))).map((dir) => dir.split('/').pop());
+/**
+ * The packages a request changed: the directories of `packages` that hold one of its files. A file
+ * the `ignore` pattern matches is no part of a package: a code graph lies in every package directory
+ * and is never published.
+ */
+export const packagesOf = (pull, packages, ignore = null) =>
+    packages
+        .filter((dir) => (pull.files ?? []).some((file) => (file === dir || file.startsWith(`${dir}/`)) && !(ignore && ignore.test(file))))
+        .map((dir) => dir.split('/').pop());
 
 /** The observations of the merged requests: one per request, by its merge moment. */
-export function mergesOf(pulls, { main = 'main', packages = [] } = {}) {
+export function mergesOf(pulls, { main = 'main', packages = [], ignore = null } = {}) {
     const epics = epicBranchesOf(pulls, main);
     const out = [];
     for (const pull of pulls) {
         if (!pull.mergedAt) continue;
         const task = clean(taskOf(pull.headRefName));
         if (pull.baseRefName === main && epics.has(pull.headRefName)) {
-            out.push({ number: pull.number, line: { t: pull.mergedAt, ev: 'epic-merged', task, pkg: packagesOf(pull, packages).map(clean).join(',') } });
+            out.push({ number: pull.number, line: { t: pull.mergedAt, ev: 'epic-merged', task, pkg: packagesOf(pull, packages, ignore).map(clean).join(',') } });
             continue;
         }
         const line = { t: pull.mergedAt, ev: 'task-merged', task };
@@ -177,17 +184,42 @@ function linesOf(file) {
     return out;
 }
 
+/** The key of a merge or an edition line: a second read of the same fact replaces the first. */
+export const factKey = (line) => [line.ev, line.task ?? '', line.pkg && line.ev === 'edition' ? `${line.pkg}@${line.ver}` : '', line.t].join('|');
+
+const FACTS = new Set(['task-merged', 'epic-merged', 'edition']);
+
+/** Writes the facts into the day files: a line with the key of a new one is replaced, the rest is kept. */
+export function writeFacts(dir, lines) {
+    const byDay = new Map();
+    for (const line of lines) {
+        const day = String(line.t).slice(0, 10);
+        if (!byDay.has(day)) byDay.set(day, []);
+        byDay.get(day).push(line);
+    }
+    mkdirSync(dir, { recursive: true });
+    for (const [day, fresh] of byDay) {
+        const file = join(dir, `${day}.jsonl`);
+        const keys = new Set(fresh.map(factKey));
+        const kept = existsSync(file)
+            ? readFileSync(file, 'utf8').split('\n').filter((text) => {
+                  if (!text.trim()) return false;
+                  try {
+                      const old = JSON.parse(text);
+                      return !(FACTS.has(old.ev) && keys.has(factKey(old)));
+                  } catch {
+                      return true;
+                  }
+              })
+            : [];
+        writeFileSync(file, [...kept, ...fresh.map((line) => JSON.stringify(line))].join('\n') + '\n');
+    }
+}
+
 function main(argv) {
     const dir = option(argv, '--observations');
-    const markFile = option(argv, '--mark');
     const pullsFile = option(argv, '--pulls');
-    if (!dir || !markFile || !pullsFile || !existsSync(pullsFile)) return 0;
-    let mark = { pulls: [], editions: [] };
-    try {
-        if (existsSync(markFile)) mark = { ...mark, ...JSON.parse(readFileSync(markFile, 'utf8')) };
-    } catch {
-        // A broken mark reads as none: a request read twice is held by the mark of the next run.
-    }
+    if (!dir || !pullsFile || !existsSync(pullsFile)) return 0;
     const pulls = linesOf(pullsFile);
     const editions = [];
     for (const pair of options(argv, '--editions')) {
@@ -199,21 +231,9 @@ function main(argv) {
         }
     }
     if (pulls === null) return 0;
-    const seenPulls = new Set(mark.pulls);
-    const seenEditions = new Set(mark.editions);
     const packages = (option(argv, '--packages') ?? '').split(',').filter(Boolean);
-    const fresh = [
-        ...mergesOf(pulls, { main: option(argv, '--main') ?? 'main', packages }).filter((m) => !seenPulls.has(m.number)),
-        ...editions.filter((e) => !seenEditions.has(e.key)),
-    ];
-    mkdirSync(dir, { recursive: true });
-    for (const item of fresh) {
-        appendFileSync(join(dir, `${item.line.t.slice(0, 10)}.jsonl`), `${JSON.stringify(item.line)}\n`);
-        if (item.number !== undefined) seenPulls.add(item.number);
-        if (item.key !== undefined) seenEditions.add(item.key);
-    }
-    mkdirSync(dirname(markFile), { recursive: true });
-    writeFileSync(markFile, JSON.stringify({ pulls: [...seenPulls], editions: [...seenEditions] }));
+    const ignore = option(argv, '--ignore') ? new RegExp(option(argv, '--ignore')) : null;
+    writeFacts(dir, [...mergesOf(pulls, { main: option(argv, '--main') ?? 'main', packages, ignore }), ...editions].map((item) => item.line));
     return 0;
 }
 

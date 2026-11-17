@@ -15,7 +15,7 @@ WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 
 pull() { jq -cn --argjson n "$1" --arg h "$2" --arg b "$3" --arg m "$4" '{number:$n,state:(if $m == "" then "OPEN" else "MERGED" end),headRefName:$h,baseRefName:$b,mergedAt:(if $m == "" then null else $m end),title:"t"}'; }
-read_merges() { node "$CHECKS/merge-read.mjs" --pulls "$1" --observations "$2" --mark "$2/.marks/merges.json" "${@:3}"; }
+read_merges() { node "$CHECKS/merge-read.mjs" --pulls "$1" --observations "$2" "${@:3}"; }
 day_merges() {
     node -e '
 const fs = require("fs");
@@ -59,23 +59,28 @@ OBS="$WORK/broken"
 mkdir -p "$OBS"
 { pull 1 RT-1-a RT-9-epic 2026-11-10T15:30:00Z; printf '{"number":2,"headRef'; } > "$WORK/broken.jsonl"
 read_merges "$WORK/broken.jsonl" "$OBS"
-report "SC-AK-1622 — оборванный ответ хостинга не пишет ничего и не трогает метку" \
-    "$(ls "$OBS" | wc -l | tr -d ' ') $([ -f "$OBS/.marks/merges.json" ] && echo mark || echo no-mark)" "0 no-mark"
+report "SC-AK-1622 — оборванный ответ хостинга не пишет ничего" "$(ls "$OBS" | wc -l | tr -d ' ')" "0"
 
 # --- the answers of 13 November ------------------------------------------------------------------------------
 OBS="$WORK/real"
 mkdir -p "$OBS"
 jq -c . "$REAL/pull-3266.json" "$REAL/pull-3279.json" > "$WORK/real.jsonl"
-read_merges "$WORK/real.jsonl" "$OBS" --packages projects/agent-kit,projects/ui-kit-v2 --editions "agent-kit=$REAL/registry-agent-kit.json"
+read_merges "$WORK/real.jsonl" "$OBS" --packages projects/agent-kit,projects/ui-kit-v2 --ignore '(^|/)graphify-out/' --editions "agent-kit=$REAL/registry-agent-kit.json"
 report "SC-AK-1622 — 13.11: PR 3266 в ветку эпика открывает окно RT-3227 в 00:34:01" \
     "$(events "$OBS" task-merged '.t + " " + .epic + " " + (.opens // "-")')" "2026-11-13T00:34:01Z RT-3227 1 "
-# The epic changed the code graph under the second kit as well: a file under a package directory is
-# a file of the package.
-report "SC-AK-1622 — 13.11: эпик RT-3227 влит в главную ветку в 05:48:08 и меняет оба пакета" \
-    "$(events "$OBS" epic-merged '.t + " " + .task + " " + .pkg')" "2026-11-13T05:48:08Z RT-3227 agent-kit,ui-kit-v2 "
+# The epic rebuilt the code graph under the second kit too, and a graph is never published.
+report "SC-AK-1622 — 13.11: эпик RT-3227 влит в главную ветку в 05:48:08 и меняет только пакет правил" \
+    "$(events "$OBS" epic-merged '.t + " " + .task + " " + .pkg')" "2026-11-13T05:48:08Z RT-3227 agent-kit "
 report "SC-AK-1622 — последняя редакция пакета правил до слияния эпика — 0.37.0 от 11.11" \
     "$(cat "$OBS"/*.jsonl | jq -r 'select(.ev == "edition" and .t < "2026-11-13T05:48:08Z") | .t + " " + .ver' | sort | tail -1)" \
     "2026-11-11T08:37:28.990Z 0.37.0"
+
+OBS="$WORK/reread"
+mkdir -p "$OBS"
+read_merges "$WORK/real.jsonl" "$OBS" --packages projects/agent-kit,projects/ui-kit-v2
+read_merges "$WORK/real.jsonl" "$OBS" --packages projects/agent-kit,projects/ui-kit-v2 --ignore '(^|/)graphify-out/'
+report "SC-AK-1622 — второе чтение заменяет факт первого: у эпика одна строка, пакет правил" \
+    "$(events "$OBS" epic-merged '.pkg')" "agent-kit "
 
 # --- the release of an epic, judged by the end of the report day --------------------------------------------
 day_epics() {
