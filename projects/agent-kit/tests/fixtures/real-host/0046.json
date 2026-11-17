@@ -1,0 +1,15 @@
+{
+ "args": [
+  "api",
+  "user",
+  "--jq",
+  "{login: .login}"
+ ],
+ "token": "machine",
+ "code": 0,
+ "stdout": "{\"login\":\"rt-tools-dev\"}",
+ "stderr": "",
+ "json": {
+  "login": "rt-tools-dev"
+ }
+}

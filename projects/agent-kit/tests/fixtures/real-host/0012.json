@@ -1,0 +1,12 @@
+{
+ "args": [
+  "api",
+  "repos/Eyhenij/rt-tools/commits/674c92386cde1d0faea700582ed69f46d49e8d49",
+  "--jq",
+  ".commit.committer.date"
+ ],
+ "token": "machine",
+ "code": 0,
+ "stdout": "2026-11-16T15:15:09Z",
+ "stderr": ""
+}

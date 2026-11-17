@@ -151,4 +151,34 @@ if [ -f "$ROOT_TREE/tools/specs-for.mjs" ]; then
 fi
 report "SC-AK-1046 — стражей и проверок без спеки не осталось" "$uncovered" 0
 
+# --- SC-AK-1605 — a reader of real data runs on saved data ----------------------------------------
+# A reader of the conversation record or of the hosting is run by a suite on a file under
+# `fixtures/real-`: on invented data the reader of 13.11.2026 was green and fell on the real record.
+# `real-data/readers.mjs` finds the readers and the runs; its lines are printed whole, the refusal
+# names each reader without a run. Two fixture readers — one of the record, one of the hosting —
+# that no suite runs show the refusal; then the package itself is judged.
+FAKE_ASSETS="$(mktemp -d)"
+mkdir -p "$FAKE_ASSETS/hooks" "$FAKE_ASSETS/checks"
+printf '%s\n' '#!/usr/bin/env bash' 'transcript="$1"' 'jq -s length "$transcript"' > "$FAKE_ASSETS/hooks/fixture-record.sh"
+printf '%s\n' "import { ghJson } from './board-gh.mjs';" "console.log(ghJson(['pr', 'list']));" > "$FAKE_ASSETS/checks/fixture-host.mjs"
+# The other forms of a read: a query without slurping, a read of a promise API, the client called by
+# a process, the hosting asked over the network; and a name that is a piece of a run reader's name.
+printf '%s\n' '#!/usr/bin/env bash' 'p="$transcript"' 'jq -r .type "$p"' > "$FAKE_ASSETS/hooks/fixture-jq.sh"
+printf '%s\n' "import { readFile } from 'node:fs/promises';" 'await readFile(process.env.RT_FLOW_TRANSCRIPT);' > "$FAKE_ASSETS/checks/fixture-readfile.mjs"
+printf '%s\n' "import { execFileSync } from 'node:child_process';" "execFileSync('gh', ['pr', 'list']);" > "$FAKE_ASSETS/checks/board.mjs"
+printf '%s\n' "await fetch('https://api.github.com/repos/o/r/pulls');" > "$FAKE_ASSETS/checks/fixture-fetch.mjs"
+fixture_out="$(node "$TESTS_DIR/real-data/readers.mjs" "$FAKE_ASSETS" "$TESTS_DIR" 2>&1)"
+fixture_code=$?
+printf '%s\n' "$fixture_out" | grep 'no run on saved data'
+report "SC-AK-1605 — читатель-фикстура без прогона на сохранённых данных отбит" "$fixture_code" 1
+report "SC-AK-1605 — отказ называет читателя записи и читателя хостинга" \
+    "$(printf '%s\n' "$fixture_out" | grep -cE 'no run on saved data: fixture-(record\.sh \(record\)|host\.mjs \(hosting\))')" 2
+report "SC-AK-1605 — отказ называет все формы чтения и имя-кусок чужого имени" \
+    "$(printf '%s\n' "$fixture_out" | grep -cE 'no run on saved data: (fixture-jq\.sh|fixture-readfile\.mjs|board\.mjs|fixture-fetch\.mjs)')" 4
+rm -rf "$FAKE_ASSETS"
+real_out="$(node "$TESTS_DIR/real-data/readers.mjs" "$ASSETS" "$TESTS_DIR" 2>&1)"
+real_code=$?
+printf '%s\n' "$real_out"
+report "SC-AK-1605 — каждый читатель пакета прогнан на сохранённых данных" "$real_code" 0
+
 suite_result "проверки: род стражей и проверок"

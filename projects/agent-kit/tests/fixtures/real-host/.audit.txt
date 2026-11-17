@@ -1,0 +1,20 @@
+check-board: #3346, #3340 — the titles overlap heavily, look whether this is one work: «[RT-3346] Ответ AI-чата кита рисует графики, таблицы, KPI, ссылки и источники»
+check-board: #3321, #3317 — the titles overlap heavily, look whether this is one work: «[RT-3321] Правила работы с макетами не говорят, как компонент дизайн-системы ставится в чужой макет»
+check-board: #3302, #3293 — the titles overlap heavily, look whether this is one work: «[RT-3302] Проверки пакета правил останавливают работу — переделка, третья часть»
+check-board: #3209, #3190 — the titles overlap heavily, look whether this is one work: «[RT-3209] Тексты пакета правил вне семей законов не сверены»
+check-board: #2820, #2819 — the titles overlap heavily, look whether this is one work: «[RT-2820] Морские ступени в шкале цвета второго кита: тёмные плашки лендинга и подложки над видео»
+file://~/WebstormProjects/rt-tools/tools/board-gh.mjs:118
+            const failure = new Error(stderr.trim() || `gh ${args[0]} finished with an error`);
+                            ^
+
+Error: gh: Server Error: Sorry, this diff is taking too long to generate. (HTTP 422)
+    at gh (file://~/WebstormProjects/rt-tools/tools/board-gh.mjs:118:29)
+    at deployLag (file://~/WebstormProjects/rt-tools/tools/board-runs.mjs:67:20)
+    at file://~/WebstormProjects/rt-tools/tools/check-board.mjs:323:21
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5) {
+  stderr: 'gh: Server Error: Sorry, this diff is taking too long to generate. (HTTP 422)\n'
+}
+
+Node.js v22.22.3

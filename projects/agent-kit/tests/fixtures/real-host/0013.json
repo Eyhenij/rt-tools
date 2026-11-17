@@ -1,0 +1,18 @@
+{
+ "args": [
+  "api",
+  "repos/Eyhenij/rt-tools/pulls/3359/requested_reviewers",
+  "--jq",
+  "[.users[] | {login, type}] + [.teams[] | {login: .slug, type: \"Team\"}]"
+ ],
+ "token": "machine",
+ "code": 0,
+ "stdout": "[{\"login\":\"Eyhenij\",\"type\":\"User\"}]",
+ "stderr": "",
+ "json": [
+  {
+   "login": "Eyhenij",
+   "type": "User"
+  }
+ ]
+}
