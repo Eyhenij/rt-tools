@@ -6,6 +6,9 @@
  *   node tools/push-inputs.mjs record          the steps on stdin, or the profile set when stdin is
  *                                               empty: each runs once under `push-trace.mjs`, and the
  *                                               table of what it read is written
+ *   node tools/push-inputs.mjs subject <base>  the steps on stdin; a line per step on stdout —
+ *                                               `touched|idle|unknown|not-run<TAB>step`; the paths
+ *                                               the tree declares go by `--declared <file>`
  *   node tools/push-inputs.mjs select <base>   the steps on stdin; the ones to run go to stdout, a
  *                                               line per step with its reason to stderr
  *   node tools/push-inputs.mjs verify          the table steps are recorded again; a read the table
@@ -228,6 +231,54 @@ function changesOf(base) {
     return changes;
 }
 
+/** Why a change reaches a step, by the table; an empty answer — it does not. */
+function reasonsOf(table, changes) {
+    const verifyInputs = new Set([rel(tablePath), rel(TRACER), rel(fileURLToPath(import.meta.url))]);
+    for (const entry of Object.values(table.steps)) for (const p of entry.self) verifyInputs.add(p);
+    return (step) => {
+        if (VERIFY.test(step)) {
+            const hit = changes.find((c) => verifyInputs.has(c.path));
+            return hit ? `${hit.path} is a step or the table` : '';
+        }
+        if (!table.steps[step]) return traceable(step) ? 'it is not in the table' : 'its reads are not recorded';
+        return reasonOf(table.steps[step], changes);
+    };
+}
+
+/**
+ * Whether a change touched the subject of each step: `touched`, `idle`, `unknown` or `not-run`.
+ * A step of the table is judged by the rule `select` uses, and one it drops is `not-run`: the set
+ * never starts it. A step the table does not record is judged by the paths the tree declares for
+ * it — `--declared <file>`, lines `<path>\t<step>`; with no paths declared it is `unknown`. A step
+ * that reads the history or starts what the recorder does not see is `unknown` too: its subject is
+ * not a list of paths.
+ */
+function subject(base) {
+    const steps = stepsOf(readStdin());
+    const table = loadTable() ?? { steps: {} };
+    const changes = base ? changesOf(base) : null;
+    const declared = new Map();
+    const file = option('--declared');
+    for (const line of (file && existsSync(file) ? readFileSync(file, 'utf8') : '').split('\n').filter(Boolean)) {
+        const [path, ...rest] = line.split('\t');
+        const step = rest.join('\t');
+        declared.set(step, [...(declared.get(step) ?? []), path.replace(/\/+$/, '')]);
+    }
+    const reason = changes ? reasonsOf(table, changes) : () => 'no base';
+    for (const step of steps) {
+        let mark = 'unknown';
+        const entry = table.steps[step];
+        if (changes && declared.has(step)) {
+            mark = changes.some((c) => declared.get(step).some((p) => covers(p, c.path))) ? 'touched' : 'idle';
+        } else if (changes && (entry || VERIFY.test(step))) {
+            const why = reason(step);
+            mark = !why ? 'not-run' : entry && (entry.history.length || entry.untraced.length) ? 'unknown' : 'touched';
+        }
+        process.stdout.write(`${mark}\t${step}\n`);
+    }
+    return 0;
+}
+
 function select(base) {
     const steps = stepsOf(readStdin());
     const table = loadTable();
@@ -236,18 +287,9 @@ function select(base) {
         process.stdout.write(steps.map((s) => `${s}\n`).join(''));
         return 0;
     }
-    const verifyInputs = new Set([rel(tablePath), rel(TRACER), rel(fileURLToPath(import.meta.url))]);
-    for (const entry of Object.values(table.steps)) for (const p of entry.self) verifyInputs.add(p);
+    const reasonFor = reasonsOf(table, changes);
     for (const step of steps) {
-        let reason;
-        if (VERIFY.test(step)) {
-            const hit = changes.find((c) => verifyInputs.has(c.path));
-            reason = hit ? `${hit.path} is a step or the table` : '';
-        } else if (!table.steps[step]) {
-            reason = traceable(step) ? 'it is not in the table' : 'its reads are not recorded';
-        } else {
-            reason = reasonOf(table.steps[step], changes);
-        }
+        const reason = reasonFor(step);
         if (reason) {
             process.stdout.write(`${step}\n`);
             process.stderr.write(`→ ${step}: ${reason}\n`);
@@ -309,6 +351,7 @@ function verify() {
 }
 
 const command = args[0];
-const code = command === 'record' ? record() : command === 'verify' ? verify() : command === 'select' ? select(args[1]) : 2;
-if (code === 2) process.stderr.write('usage: push-inputs.mjs record | select <base> | verify\n');
+const code =
+    command === 'record' ? record() : command === 'verify' ? verify() : command === 'select' ? select(args[1]) : command === 'subject' ? subject(args[1]) : 2;
+if (code === 2) process.stderr.write('usage: push-inputs.mjs record | select <base> | subject <base> | verify\n');
 process.exit(code);
