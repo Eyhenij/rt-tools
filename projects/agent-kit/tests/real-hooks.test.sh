@@ -75,8 +75,8 @@ in_window() {
         jq -r --arg ev "$1" 'select(.ev == $ev and .t >= "2026-11-13T00:34:01" and .t < "2026-11-13T03:04:27") | .kind // "-"' |
         sort | uniq -c | awk '{printf "%s%s:%s", (NR > 1 ? " " : ""), $2, $1}'
 }
-report "SC-AK-1611 — record-turn.sh: вызовы окна эпика 13.11 по наблюдениям хука" "$(in_window rec-call)" "-:187"
+report "SC-AK-1611 — record-turn.sh: вызовы окна эпика 13.11 по наблюдениям хука" "$(in_window record-call)" "-:187"
 report "SC-AK-1611 — record-turn.sh: отказы окна по классам — 30 хуков, 1 разрешение, 4 конца хода" \
-    "$(in_window rec-refusal)" "hook:30 permission:1 stop:4"
+    "$(in_window record-refusal)" "hook:30 permission:1 stop:4"
 
 suite_result "хуки на настоящей записи"

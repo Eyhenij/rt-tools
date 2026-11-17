@@ -8,12 +8,12 @@
  *
  * It reads the record from the offset its mark keeps, turns the new entries into the events of
  * `record-count.mjs` and appends each as an observation line to the file of the day of its moment:
- * `{"t":<moment>,"ev":"rec-<event>",...,"sid":<sign>}`. The words of the owner leave no text: a word
+ * `{"t":<moment>,"ev":"record-<event>",...,"sid":<sign>}`. The words of the owner leave no text: a word
  * carries only its kind and whether the set of correction patterns matched it.
  *
  * An unfinished last line — the harness writes the record while the hook runs — is left for the next
  * count: the mark stays before it. A line in the middle that does not parse is skipped and counted
- * (`rec-skip`). A record that cannot be read writes `rec-broken` and changes no mark. The count
+ * (`record-skip`). A record that cannot be read writes `record-broken` and changes no mark. The count
  * never fails the turn: every path exits with zero.
  *
  * Taking a task is the first moment a session stands on the branch of the task: the first entry of
@@ -94,7 +94,7 @@ export function observationsOf(entries, { sid, patterns, version, seen = new Set
     );
     const byDay = new Map();
     for (const e of eventsOf(entries)) {
-        const line = { t: e.at, ev: `rec-${e.ev}` };
+        const line = { t: e.at, ev: `record-${e.ev}` };
         const task = clean(taskOf(e.branch));
         if (task) line.task = task;
         for (const key of ['kind', 'check', 'tool']) if (e[key] !== undefined && e[key] !== null) line[key] = clean(e[key]);
@@ -132,7 +132,7 @@ function main(argv) {
         }
     };
     if (!record || !existsSync(record)) {
-        note('rec-broken');
+        note('record-broken');
         return 0;
     }
     try {
@@ -142,11 +142,11 @@ function main(argv) {
         const byDay = observationsOf(read.entries, { sid, patterns: option(argv, '--patterns'), version, seen });
         mkdirSync(dir, { recursive: true });
         for (const [day, lines] of byDay) appendFileSync(join(dir, `${day}.jsonl`), `${lines.join('\n')}\n`);
-        if (read.skipped > 0) note('rec-skip', { n: String(read.skipped) });
+        if (read.skipped > 0) note('record-skip', { n: String(read.skipped) });
         mkdirSync(dirname(markFile), { recursive: true });
         writeFileSync(markFile, JSON.stringify({ offset: read.offset, taken: [...seen] }));
     } catch {
-        note('rec-broken');
+        note('record-broken');
     }
     return 0;
 }

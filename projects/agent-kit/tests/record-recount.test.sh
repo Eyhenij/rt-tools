@@ -37,17 +37,17 @@ events() { jq -r "select(.ev == \"$1\") | .ev" "$OBS/$2.jsonl" 2>/dev/null | wc 
 recount --day 2026-11-12 > /dev/null
 recount --day 2026-11-12 > /dev/null
 report "SC-AK-1632 — день пересчитан дважды, в нём счёт одного пересчёта" \
-    "$(events rec-call 2026-11-12):$(events rec-refusal 2026-11-12)" "2:1"
+    "$(events record-call 2026-11-12):$(events record-refusal 2026-11-12)" "2:1"
 report "SC-AK-1632 — запись чужого дерева не читается, чужой день не берётся" \
-    "$(jq -r 'select(.ev == "rec-call") | .t' "$OBS/2026-11-12.jsonl" | sort | tr '\n' ' ')" \
+    "$(jq -r 'select(.ev == "record-call") | .t' "$OBS/2026-11-12.jsonl" | sort | tr '\n' ' ')" \
     "2026-11-12T10:00:00Z 2026-11-12T11:00:00Z "
 
 # --- a session the hook counted is not recounted, another session of the day is ------------------------
 # The hook counts a session whole on its first turn, days before its layout included: the day then
 # holds that session only, and the recount adds the rest.
 entry c9 "$TREE" 2026-11-13T12:00:00Z | sed 's/"s1"/"s2"/' > "$PROJECTS/own/s2.jsonl"
-printf '{"t":"2026-11-13T09:00:00Z","ev":"rec-call","sid":"%s"}\n' "$(printf '%s' s1 | cksum | awk '{print $1}')" > "$OBS/2026-11-13.jsonl"
+printf '{"t":"2026-11-13T09:00:00Z","ev":"record-call","sid":"%s"}\n' "$(printf '%s' s1 | cksum | awk '{print $1}')" > "$OBS/2026-11-13.jsonl"
 report "SC-AK-1632 — сессия, сосчитанная хуком, не пересчитывается, другая сессия дня пересчитана" \
-    "$(recount --day 2026-11-13) $(events rec-call 2026-11-13)" "2026-11-13: recounted 2, hook 1 2"
+    "$(recount --day 2026-11-13) $(events record-call 2026-11-13)" "2026-11-13: recounted 2, hook 1 2"
 
 suite_result "пересчёт прошлых дней"

@@ -144,7 +144,7 @@ export async function recount({ root, observations, days, projects, patterns }) 
                 return null;
             }
         });
-        const counted = new Set(parsed.filter((o) => o && typeof o.ev === 'string' && o.ev.startsWith('rec-') && o.src !== 'recount').map((o) => o.sid));
+        const counted = new Set(parsed.filter((o) => o && typeof o.ev === 'string' && o.ev.startsWith('record-') && o.src !== 'recount').map((o) => o.sid));
         const kept = lines.filter((_, i) => parsed[i]?.src !== 'recount');
         const added = [];
         let left = 0;

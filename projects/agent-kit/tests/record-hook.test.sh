@@ -29,22 +29,22 @@ stop='{"type":"user","uuid":"s9","sessionId":"s1","gitBranch":"RT-1-x","timestam
 # --- an unfinished last line ---------------------------------------------------------------------------
 printf '%s\n%s' "$call" "${refusal:0:60}" > "$RECORD"
 run_hook Stop "$RECORD" > /dev/null
-first="$(events rec-call):$(events rec-refusal)"
+first="$(events record-call):$(events record-refusal)"
 printf '%s\n' "${refusal:60}" >> "$RECORD"
 run_hook Stop "$RECORD" > /dev/null
-report "SC-AK-1641 — недописанная последняя строка ждёт следующего хода" "$first $(events rec-call):$(events rec-refusal)" "1:0 1:1"
+report "SC-AK-1641 — недописанная последняя строка ждёт следующего хода" "$first $(events record-call):$(events record-refusal)" "1:0 1:1"
 
 # --- a broken line in the middle -----------------------------------------------------------------------
 rm -rf "$TREE/.claude"
 printf '%s\n{broken\n%s\n' "$call" "$refusal" > "$RECORD"
 code="$(run_hook Stop "$RECORD")"
 report "SC-AK-1642 — битая строка посередине пропущена и сосчитана, обе целые — сосчитаны" \
-    "$code $(events rec-call):$(events rec-refusal):$(events rec-skip)" "0 1:1:1"
+    "$code $(events record-call):$(events record-refusal):$(events record-skip)" "0 1:1:1"
 
 # --- a record that cannot be read ----------------------------------------------------------------------
 rm -rf "$TREE/.claude"
 code="$(run_hook Stop "$WORK/missing.jsonl")"
-report "SC-AK-1629 — счёт не роняет ход: нечитаемая запись — наблюдение о сбое" "$code $(events rec-broken)" "0 1"
+report "SC-AK-1629 — счёт не роняет ход: нечитаемая запись — наблюдение о сбое" "$code $(events record-broken)" "0 1"
 
 # --- the stop refusal of the last turn at the session end -----------------------------------------------
 rm -rf "$TREE/.claude"
@@ -54,7 +54,7 @@ printf '%s\n' "$stop" >> "$RECORD"
 run_hook SessionEnd "$RECORD" > /dev/null
 run_hook SessionEnd "$RECORD" > /dev/null
 report "SC-AK-1643 — отказ конца хода последнего хода сосчитан концом сессии один раз" \
-    "$(cat "$TREE"/.claude/rt-kit/observations/*.jsonl | jq -r 'select(.ev == "rec-refusal") | .kind' | sort | tr '\n' ' ')" "hook stop "
+    "$(cat "$TREE"/.claude/rt-kit/observations/*.jsonl | jq -r 'select(.ev == "record-refusal") | .kind' | sort | tr '\n' ' ')" "hook stop "
 
 # --- taking a task ----------------------------------------------------------------------------------------
 # The first entry of the session on the branch of a task is its taking; a later turn on the same

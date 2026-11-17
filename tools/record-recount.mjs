@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/record-recount.mjs · 6ccaa02f97ca · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/record-recount.mjs · 5875ba519bd3 · правится надстройкой, не здесь
 /**
  * The recount of past days from the saved session records of this tree, by the counter the hook at
  * the end of a turn uses. The hook counts only the turns after it was laid out; a day before that is
@@ -145,7 +145,7 @@ export async function recount({ root, observations, days, projects, patterns }) 
                 return null;
             }
         });
-        const counted = new Set(parsed.filter((o) => o && typeof o.ev === 'string' && o.ev.startsWith('rec-') && o.src !== 'recount').map((o) => o.sid));
+        const counted = new Set(parsed.filter((o) => o && typeof o.ev === 'string' && o.ev.startsWith('record-') && o.src !== 'recount').map((o) => o.sid));
         const kept = lines.filter((_, i) => parsed[i]?.src !== 'recount');
         const added = [];
         let left = 0;
