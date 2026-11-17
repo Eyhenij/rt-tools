@@ -18,4 +18,5 @@ export * from './lib/sortable';
 export * from './lib/tree-choice';
 export * from './lib/tree-invite-view';
 export * from './lib/quality';
+export * from './lib/quality-result';
 export * from './lib/usage';

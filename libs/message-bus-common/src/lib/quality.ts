@@ -4,6 +4,7 @@
  * Числа считает пакет на дереве, приёмник их только складывает по дням и деревьям.
  */
 import { IPage } from './page';
+import { IQualityEpicWindow, IQualityMilestoneDay, IQualityPair, IQualityResult } from './quality-result';
 import { ITreeChoice } from './tree-choice';
 
 /** Поля порядка таблицы причин: она сортируется только по потерям. */
@@ -81,6 +82,10 @@ export interface IQualityDriverRow {
     readonly wastedSeconds: number;
     /** Сумма пустых событий: пустые отказы, отказы проверки правил, отказы после загрузки, пустые запуски. */
     readonly loss: number;
+    /** Отказы проверки по записи хода: наблюдения проверки видят не все, поэтому в потери они не идут. */
+    readonly recordRefusals: number;
+    /** Отказы по записи на сто вызовов периода, сотые. Пусто: вызовов в строках нет. */
+    readonly per100: number | null;
 }
 
 /** Страница таблицы причин со всем, что стоит над ней. */
@@ -97,4 +102,11 @@ export interface IQualityReport extends IPage<IQualityDriverRow> {
     readonly completeness: IQualityCompleteness;
     /** Из каких версий выбирать в отборе. */
     readonly versions: readonly string[];
+    readonly result: IQualityResult;
+    /** Веха G по дням периода, несущим числа результата. */
+    readonly milestones: readonly IQualityMilestoneDay[];
+    /** Пары подряд, частые первыми. */
+    readonly pairs: readonly IQualityPair[];
+    /** Окна эпиков периода, поздние первыми. Версия их не сужает: окно версии не несёт. */
+    readonly epicWindows: readonly IQualityEpicWindow[];
 }

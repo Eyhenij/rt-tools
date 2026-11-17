@@ -1,5 +1,13 @@
 import { TAdminLabelKey, TAdminText } from '@rt/message-bus-admin/common/core/util';
-import { EQualitySendFault, IPage, IQualityDriverRow, IQualityReport } from '@rt/message-bus-common';
+import {
+    EQualityResultTile,
+    EQualitySendFault,
+    IPage,
+    IQualityDriverRow,
+    IQualityReport,
+    IQualityResult,
+    IQualityResultTile,
+} from '@rt/message-bus-common';
 import { describe, expect, it } from 'vitest';
 
 import { EQualityTile, IQualitySummaryView, IQualityTile, isQualityReport, qualityDriverView, qualitySummaryView } from './quality.logic';
@@ -17,6 +25,20 @@ const ROW: IQualityDriverRow = {
     wastedRuns: 1,
     wastedSeconds: 90,
     loss: 3,
+    recordRefusals: 0,
+    per100: null,
+};
+
+/** Числа результата периода, где строки их не несут. */
+const NO_RESULT: IQualityResult = {
+    tiles: Object.fromEntries(
+        Object.values(EQualityResultTile).map((tile: EQualityResultTile): [EQualityResultTile, IQualityResultTile] => [
+            tile,
+            { value: null, missing: 0 },
+        ])
+    ) as Record<EQualityResultTile, IQualityResultTile>,
+    takenHours: null,
+    ownerWords: null,
 };
 
 function report(over: Partial<IQualityReport> = {}): IQualityReport {
@@ -34,6 +56,10 @@ function report(over: Partial<IQualityReport> = {}): IQualityReport {
         repeats: { repeats: 0, fixes: 2, share: null, unnamed: 0 },
         completeness: { enrolled: 3, sent: 2, withOutcomes: 1, faults: [] },
         versions: [],
+        result: NO_RESULT,
+        milestones: [],
+        pairs: [],
+        epicWindows: [],
         ...over,
     };
 }

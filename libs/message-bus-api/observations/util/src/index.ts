@@ -7,3 +7,4 @@ export * from './lib/usage-period.util';
 export * from './lib/usage-digest.util';
 export * from './lib/quality.util';
 export * from './lib/epic-window.util';
+export * from './lib/quality-result.util';

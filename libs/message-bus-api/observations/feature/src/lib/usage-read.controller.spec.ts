@@ -223,8 +223,9 @@ describe('UsageReadController — раздел «Качество»', () => {
     };
 
     /** Двойник хранилища: те таблицы, которые читает раздел. */
-    function storage(lines: readonly unknown[]): PrismaService {
+    function storage(lines: readonly unknown[], windows: readonly unknown[] = []): PrismaService {
         return {
+            epicWindow: { findMany: async (): Promise<readonly unknown[]> => windows },
             tree: { findMany: async (): Promise<unknown[]> => [{ id: 'tree-1', slug: 'own-tree', name: 'Своё' }] },
             metricsDay: {
                 findMany: async (): Promise<readonly unknown[]> => lines,

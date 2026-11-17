@@ -234,4 +234,5 @@ export const ADMIN_LABELS_EN: Record<TAdminLabelKey, string> = Object.freeze({
     [ERefusal.ChatEntryExpired]: 'The entry is stale, refresh the page',
     [ERefusal.MetricsFieldRefused]: 'The field «{{field}}» of the day line is not accepted',
     [ERefusal.MetricsStale]: 'A newer day line is stored for {{day}}',
+    [ERefusal.EpicWindowFieldRefused]: 'The field «{{field}}» of the epic window is not accepted',
 });

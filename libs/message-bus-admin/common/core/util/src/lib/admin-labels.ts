@@ -244,6 +244,7 @@ export const ADMIN_LABELS = {
     [ERefusal.ChatEntryExpired]: 'Вход устарел, обновите страницу',
     [ERefusal.MetricsFieldRefused]: 'Поле «{{field}}» строки дня не принято',
     [ERefusal.MetricsStale]: 'За {{day}} лежит более новая строка дня',
+    [ERefusal.EpicWindowFieldRefused]: 'Поле «{{field}}» окна эпика не принято',
 } as const;
 
 /** Ключ подписи админки. Опечатка в шаблоне не доживает до собранного экрана. */
