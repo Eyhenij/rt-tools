@@ -284,4 +284,18 @@ export const lightParts = [
         presetShared: `значок стоит на подложке атома, а не на поверхности палитры: материальный цвет
        текста считается от другой подложки`,
     },
+    {
+        lead: `    /* Chart (rt-chart) — цвета серий по порядку. Восьмой серии хватает: девятая уходит в «Другое». */`,
+        space: true,
+        name: `--rt-color-chart-series-1`,
+        value: `var(--rt-brand-500)`,
+        dark: `var(--rt-brand-400)`,
+    },
+    { name: `--rt-color-chart-series-2`, value: `var(--rt-chart-orange-light)`, dark: `var(--rt-chart-orange-dark)` },
+    { name: `--rt-color-chart-series-3`, value: `var(--rt-chart-aqua-light)`, dark: `var(--rt-chart-aqua-dark)` },
+    { name: `--rt-color-chart-series-4`, value: `var(--rt-chart-yellow-light)`, dark: `var(--rt-chart-yellow-dark)` },
+    { name: `--rt-color-chart-series-5`, value: `var(--rt-chart-magenta-light)`, dark: `var(--rt-chart-magenta-dark)` },
+    { name: `--rt-color-chart-series-6`, value: `var(--rt-chart-green-light)`, dark: `var(--rt-chart-green-dark)` },
+    { name: `--rt-color-chart-series-7`, value: `var(--rt-chart-violet-light)`, dark: `var(--rt-chart-violet-dark)` },
+    { name: `--rt-color-chart-series-8`, value: `var(--rt-chart-red-light)`, dark: `var(--rt-chart-red-dark)` },
 ];

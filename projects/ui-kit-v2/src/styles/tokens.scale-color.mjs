@@ -290,4 +290,25 @@ export const scaleColor = [
         name: `--rt-info-700`,
         value: `#004c85`,
     },
+    {
+        lead: `    /* Chart — цвета серий графика, по паре ступеней на тон: светлая тема и тёмная.
+       Первый тон — сама марка, его ступени здесь не повторяются. Порядок и ступени проверены
+       на различимость соседних серий при нарушениях цветового зрения в обеих темах. */`,
+        space: true,
+        name: `--rt-chart-orange-light`,
+        value: `#eb6834`,
+    },
+    { name: `--rt-chart-orange-dark`, value: `#d95926` },
+    { name: `--rt-chart-aqua-light`, value: `#1baf7a` },
+    { name: `--rt-chart-aqua-dark`, value: `#199e70` },
+    { name: `--rt-chart-yellow-light`, value: `#eda100` },
+    { name: `--rt-chart-yellow-dark`, value: `#c98500` },
+    { name: `--rt-chart-magenta-light`, value: `#e87ba4` },
+    { name: `--rt-chart-magenta-dark`, value: `#d55181` },
+    { name: `--rt-chart-green-light`, value: `#008300` },
+    { name: `--rt-chart-green-dark`, value: `#0ca30c` },
+    { name: `--rt-chart-violet-light`, value: `#6250d6` },
+    { name: `--rt-chart-violet-dark`, value: `#9085e9` },
+    { name: `--rt-chart-red-light`, value: `#e34948` },
+    { name: `--rt-chart-red-dark`, value: `#e66767` },
 ];
