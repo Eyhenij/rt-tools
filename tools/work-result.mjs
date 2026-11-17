@@ -1,14 +1,18 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/work-result.mjs · cd118831507d · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/work-result.mjs · 45c9d73f53c1 · правится надстройкой, не здесь
 /**
  * The lines of the work result for the report, counted from the observations of the tree by the same
  * functions the hook at the end of a turn and the reading of merges use: the events of the records,
  * the merges, the editions, the verdicts.
  *
  *   node work-result.mjs --observations <dir> --until YYYY-MM-DD [--days N] [--no-package]
+ *   node work-result.mjs --epics --own <dir> [--observations <dir>]... --until YYYY-MM-DD [--days N]
  *
  * Prints one JSON object: `{ result, lines }`. `result` holds the numbers, never a null among the
  * lines of the result; `lines` holds the text the report prints.
+ *
+ * With `--epics` it prints `{ epics }` for the sending: the observations of every copy of the machine
+ * are read together, and a window is `own` when its opening merge lies in the observations of `--own`.
  */
 import { pairsOf, idleOf, reasksOf, deadEndsOf } from './record-count.mjs';
 import { dayMerges, dayEpics } from './merge-read.mjs';
@@ -226,7 +230,28 @@ function recordLines(days, sum) {
     return lines;
 }
 
+/** Every value of a repeated option. */
+const options = (argv, name) => argv.flatMap((value, at) => (argv[at - 1] === name ? [value] : []));
+
+/** The epics of the period for the sending, each window marked by whether this copy read its opening. */
+export function sendingEpics(own, others, days, { publishes = true } = {}) {
+    const opens = new Set(own.filter((o) => o.ev === 'task-merged' && o.opens && o.epic).map((o) => `${o.epic}|${o.t}`));
+    return periodEpics([...own, ...others], days, { publishes }).map((e) => ({
+        ...e,
+        windows: e.windows.map((w) => ({ ...w, own: opens.has(`${e.epic}|${w.from}`) })),
+    }));
+}
+
 function main(argv) {
+    if (argv.includes('--epics')) {
+        const own = option(argv, '--own');
+        const until = option(argv, '--until');
+        if (!own || !until) return 1;
+        const days = daysOf(until, Number(option(argv, '--days') ?? '1'));
+        const others = options(argv, '--observations').filter((dir) => dir !== own).flatMap((dir) => readObservations(dir));
+        console.log(JSON.stringify({ epics: sendingEpics(readObservations(own), others, days, { publishes: !argv.includes('--no-package') }) }));
+        return 0;
+    }
     const dir = option(argv, '--observations');
     const until = option(argv, '--until');
     if (!dir || !until) return 1;

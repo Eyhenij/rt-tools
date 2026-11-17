@@ -11,6 +11,7 @@ import { join } from 'node:path';
 
 import { collectAssets, IAsset } from './assets.js';
 import { CARGO_SCHEMA_VERSION, ICargoOverride, IMetricsDayCargo, isMetricVersion } from './cargo.js';
+import { readMerges, shipWindows } from './epic-window-send.js';
 import { IEnvironment, IOutcomeOfCommand } from './commands.js';
 import { CONFIG_PATH, IConfig, readConfig } from './config.js';
 import { dropFileLock, takeFileLock } from './file-lock.js';
@@ -259,12 +260,29 @@ function failed(mark: ISendMark, shipped: IShipped, token: string, now: Date): I
     };
 }
 
+/** Окна эпика уходят после строк дня: слияния читаются перед подсчётом окон. */
+async function shipEpicWindows(work: ISendWork, today: string): Promise<IShipped | null> {
+    readMerges(work.env.root);
+
+    return shipWindows({
+        today,
+        root: work.env.root,
+        assetsDir: work.env.assetsDir,
+        intake: work.config.intake,
+        token: work.token,
+        head: { tree: work.tree, origin: copySign(work.env.root), stamp: work.options.now.getTime() },
+        ship: work.options.ship,
+    });
+}
+
 async function sendLocked(work: ISendWork, mark: ISendMark, today: string): Promise<ISendMark> {
     const { env, token, options } = work;
 
     writeSendMark(env.root, { ...mark, tried: options.now.getTime() });
 
-    const { stopped, facts }: IShipOutcome = await shipLines(work, mark, today);
+    const lines: IShipOutcome = await shipLines(work, mark, today);
+    const { facts }: IShipOutcome = lines;
+    const stopped: IShipped | null = lines.stopped ?? (await shipEpicWindows(work, today));
     const counted: Readonly<Record<string, ITreeFacts>> = facts ? { [today]: facts } : {};
     const next: ISendMark = stopped
         ? failed({ ...mark, factsByDay: { ...mark.factsByDay, ...counted } }, stopped, token, options.now)
