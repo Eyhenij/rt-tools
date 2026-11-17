@@ -216,12 +216,99 @@ export function faultsOf(name, record, said = ownerSaid) {
     return faults;
 }
 
+/** The subject git writes when main is merged in: `Merge (remote-tracking )branch '(origin/)main'`. */
+const MAIN_MERGE = /^Merge (?:remote-tracking )?branch '(?:origin\/)?main'/;
+
+/** The archive record of a closed task, found by its number: `docs/archive/<task>-<slug>.md`. */
+function taskRecordOf(task) {
+    const archived = readdirSync(join('docs', 'archive')).find((file) => file.startsWith(`${task}-`));
+
+    return archived ? { path: join('docs', 'archive', archived), text: readFileSync(join('docs', 'archive', archived), 'utf8') } : null;
+}
+
+/**
+ * Who answers for the visible kit files of a branch that has no record of its own — an epic branch,
+ * whose kit edits arrived by merging its tasks. A commit of the branch itself leaves its files to the
+ * branch. A merge whose subject names a task gives its files to that task's record. Main brought in
+ * answers for nothing: its edits are main's and were judged there. Any other merge leaves its files
+ * to the branch, the same as its own commit.
+ *
+ * `commits` are the first parents from the base, each `{ sha, subject, merge, files }`.
+ */
+export function answerersOf(commits, visible) {
+    const left = new Set(visible);
+    const own = [];
+
+    for (const commit of commits.filter((entry) => !entry.merge)) {
+        for (const file of commit.files.filter((path) => left.has(path))) {
+            left.delete(file);
+            own.push(file);
+        }
+    }
+
+    const tasks = [];
+
+    for (const commit of commits.filter((entry) => entry.merge)) {
+        const task = /\[(RT-\d+)\]/.exec(commit.subject)?.[1];
+        const files = commit.files.filter((path) => left.has(path));
+
+        if (task === undefined || files.length === 0) {
+            continue;
+        }
+
+        files.forEach((file) => left.delete(file));
+        tasks.push({ task, sha: commit.sha, subject: commit.subject });
+    }
+
+    for (const commit of commits.filter((entry) => entry.merge && !MAIN_MERGE.test(entry.subject))) {
+        for (const file of commit.files.filter((path) => left.has(path))) {
+            left.delete(file);
+            own.push(file);
+        }
+    }
+
+    return { own, tasks };
+}
+
+function firstParents(base) {
+    return git('log', '--first-parent', '--format=%H %P', `${base}..HEAD`)
+        .split('\n')
+        .filter(Boolean)
+        .map((line) => {
+            const [sha, ...parents] = line.split(' ');
+
+            return {
+                sha,
+                subject: git('log', '-1', '--format=%s', sha),
+                merge: parents.length > 1,
+                files: git('diff', '--name-only', `${sha}^1`, sha).split('\n').filter(Boolean),
+            };
+        });
+}
+
 function branchFaults() {
     const branch = git('rev-parse', '--abbrev-ref', 'HEAD');
     const base = git('merge-base', 'origin/main', 'HEAD');
     const visible = git('diff', '--name-only', `${base}..HEAD`).split('\n').filter(isVisibleKitFile);
 
-    return visible.length === 0 ? [] : faultsOf(branch, recordOf(branch));
+    if (visible.length === 0) {
+        return [];
+    }
+
+    const own = recordOf(branch);
+
+    if (own !== null) {
+        return faultsOf(branch, own);
+    }
+
+    const { own: direct, tasks } = answerersOf(firstParents(base), visible);
+    const faults = direct.length === 0 ? [] : faultsOf(branch, null);
+
+    for (const { task, sha, subject } of tasks) {
+        faults.push(...faultsOf(`${sha.slice(0, 9)} ${subject}`, taskRecordOf(task)));
+    }
+
+    return faults;
 }
 
 function publishFaults(kit) {
@@ -256,10 +343,8 @@ function publishFaults(kit) {
         }
 
         const task = /\[(RT-\d+)\]/.exec(subject)?.[1];
-        const archived = task ? readdirSync(join('docs', 'archive')).find((file) => file.startsWith(`${task}-`)) : undefined;
-        const record = archived ? { path: join('docs', 'archive', archived), text: readFileSync(join('docs', 'archive', archived), 'utf8') } : null;
 
-        faults.push(...faultsOf(`${sha.slice(0, 9)} ${subject}`, record));
+        faults.push(...faultsOf(`${sha.slice(0, 9)} ${subject}`, task ? taskRecordOf(task) : null));
     }
 
     return faults;
