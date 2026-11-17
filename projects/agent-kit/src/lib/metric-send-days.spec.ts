@@ -1,6 +1,6 @@
 /**
  * Дни окна отправки строк дня: сценарии `docs/specs/agent-kit/metrics/` и
- * `docs/specs/agent-kit/proposed/work-result-metrics/`.
+ * `docs/specs/agent-kit/work-result/`.
  */
 import { windowDays } from './metric-send.js';
 

@@ -1,7 +1,6 @@
 # Scenarios — the metrics of the work result
 
-The numbers continue the numbering of the package and do not change after the merge; a changed
-promise keeps its number.
+The numbers continue the numbering of the package; a changed promise keeps its number.
 
 ## The owner's words and the refusals
 

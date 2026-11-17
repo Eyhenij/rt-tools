@@ -2,7 +2,7 @@
  * Команда `agent-kit metrics` на диске дерева: отрезок, чтение по сроку хранения, результат работы.
  * Подсчёт отчёта по готовым наблюдениям — `metrics-report.spec.ts`.
  *
- * Сценарии `docs/specs/agent-kit/metrics/` и `docs/specs/agent-kit/proposed/work-result-metrics/`.
+ * Сценарии `docs/specs/agent-kit/metrics/` и `docs/specs/agent-kit/work-result/`.
  */
 import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';

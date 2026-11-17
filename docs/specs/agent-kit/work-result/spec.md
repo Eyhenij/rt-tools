@@ -1,15 +1,13 @@
 # The metrics of the work result
 
-**Status:** proposed · **Revision:** 17 November 2026 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 17 November 2026 · **Scenario prefix:** `SC-AK`
 **Depends on:** `metrics`, `observations`, `epic-stop`, `epic-table`, `hooks`, `message-bus/usage`
 **Laws:** `observability`, `verifiability`, `work-conduct`, `delivery`
 **Procedures:** none
 
-An agreement about the product written before the code, task RT-3270 of the epic RT-3302. The
-metrics subdomain has 306 lines, and with the terms and rules below it would cross the length limit
-of the tree: the agreement merges as the new subdomain «work-result» of the package domain, with the prefix
-of the domain, by the last commit of the work. The receiver half — storage, the epic window record
-and the screen — is the agreement `docs/specs/message-bus/proposed/work-result-metrics/`.
+The numbers of the work result the package counts by itself, next to the product metrics of the
+subdomain `metrics`. The receiver half — storage, the epic window record and the screen «Качество»
+— is described in `docs/specs/message-bus/usage/`.
 
 ## Why
 
@@ -17,7 +15,7 @@ On 13 November 2026 the epic RT-3227 did not reach a release, and the work stood
 report showed that as «отказов 47», and printed «нет данных» on the lines of the result. The owner
 learned of the failure himself, not from the numbers.
 
-The metrics subdomain counts refusals of checks, not the result of the work. This agreement adds
+The metrics subdomain counts refusals of checks, not the result of the work. This subdomain adds
 the numbers that answer "did the work reach the owner, and what did it cost him": a merge and a
 release, the hours the work stood, refusals per hundred calls, re-asks, interrupts, corrections and
 role verdicts. The milestone G of the epic plan — fewer than five refusals per hundred commands
@@ -91,7 +89,7 @@ and no dead end over a working day — is read from the same numbers.
 
 ### What it is called in the interface
 
-| In the agreement                 | In the report and on the screen      |
+| In the spec                      | In the report and on the screen      |
 | -------------------------------- | ------------------------------------ |
 | merged tasks                     | «Задачи слиты»                       |
 | a released epic                  | «<эпик> выпущен»                     |
@@ -275,7 +273,7 @@ and no dead end over a working day — is read from the same numbers.
 
 - **`recordRefusals` is not `guardRefusals`.** `guardRefusals` stays what the observations of a
   guard count; `recordRefusals` counts the session record. Which of the two the table of drivers
-  shows is the receiver agreement.
+  shows is said in `message-bus/usage`.
 - **A pair key carries two names, each judged by the resource name form.** A separator inside one
   name would leave the alphabet of the name, and two long names would not fit one name of 48
   characters. A check the package does not ship leaves under the word `own`, as for the guards now.
@@ -303,13 +301,13 @@ of the epics and the milestone lines; the JSON carries each as a number, never a
 `agent-kit recount (--day YYYY-MM-DD | --days N)` recounts the saved session records of the named
 days on this machine and marks the days for the sending.
 
-The sending adds `POST /api/intake/epic-windows`, described in the receiver agreement. The day line
+The sending adds `POST /api/intake/epic-windows`, described in `message-bus/usage`. The day line
 keeps its operation and gains the keys of the closed list.
 
 ### Refusal codes
 
 Not applicable: the package throws no code of a procedure. The words of the receiver refusals stand
-in the receiver agreement.
+in `message-bus/usage`.
 
 ## Data
 
@@ -321,8 +319,8 @@ ignored observations directory.
 
 ## Screens and states
 
-The report of one tree is text and JSON. The screen «Качество» is described in the receiver
-agreement.
+The report of one tree is text and JSON. The screen «Качество» is described in
+`message-bus/usage`.
 
 | State                                    | What the report prints                                |
 | ---------------------------------------- | ----------------------------------------------------- |
@@ -348,7 +346,7 @@ Not applicable: no public page.
 
 ### Mobile layout
 
-Not applicable to the report; the screen is in the receiver agreement.
+Not applicable to the report; the screen is in `message-bus/usage`.
 
 ### Several objects
 
@@ -383,3 +381,4 @@ None: the owner's words of 13 November are 196 on the full record, and SC-AK-161
 
 - 17 November 2026 — proposed for task RT-3270; revised by the grill decisions after the roles:
   questions Q-1 to Q-10 closed into rules.
+- 17 November 2026 — in force: merged as the subdomain `work-result` by task RT-3270.

@@ -1,8 +1,7 @@
 # Binding — the metrics of the work result
 
 A statement of the spec and the place where it is carried out. The link goes by the text of the
-statement: a removed statement is removed together with its line. Statements with no line yet are
-carried out by later stages of the work.
+statement: a removed statement is removed together with its line.
 
 - **Calls, refusals, the owner's words, interrupts and re-asks are counted from the session record, not from the observations.** — `projects/agent-kit/assets/checks/record-count.mjs:eventsOf` — the events of the entries of a record; scenario `SC-AK-1612`
 - **The hook at the end of a turn counts, and it writes observations.** — `projects/agent-kit/assets/hooks/record-turn.sh:counter` — on Stop and SessionEnd; `projects/agent-kit/assets/checks/record-turn.mjs:observationsOf` — one line per event, by the day of its moment; scenario `SC-AK-1611`

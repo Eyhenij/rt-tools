@@ -219,8 +219,8 @@ numbers, unique by tree, copy and day. The keeping term is a year, as for observ
 
 ## Screens and states
 
-The section «Качество» stands in the admin application after «Использование», under the right
-`quality:read`. The read operation is `GET /api/usage/quality`.
+The section «Качество» stands in the admin application right after «Разборы происшествий», under
+the right `quality:read`. The read operation is `GET /api/usage/quality`.
 
 At the top stand the three result metrics over a period with the completeness line. Below stands a
 table of drivers by resource, sorted by the loss. A tree and a version narrow the result metrics and
