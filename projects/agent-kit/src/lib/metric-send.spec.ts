@@ -1,15 +1,15 @@
 /**
  * Отправка строк дня: сценарии `docs/specs/agent-kit/metrics/`.
  */
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, utimesSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 
 import { IMetricsDayCargo } from './cargo.js';
 import { IEnvironment, IOutcomeOfCommand } from './commands.js';
 import { IConfig, readConfig } from './config.js';
 import { SEND_EVERY_MS, sendMetrics, windowDays } from './metric-send.js';
-import { ESendFault, readSendMark, sendEnrolledLines, sendFaultLines } from './metric-send-mark.js';
+import { ESendFault, markPath, readSendMark, sendEnrolledLines, sendFaultLines } from './metric-send-mark.js';
 import { OBSERVATIONS_DIR } from './observations.js';
 import { IShipment, IShipped, TShip } from './ship.js';
 import { treeSlugOf } from './tree-mark.js';
@@ -411,5 +411,58 @@ describe('windowDays', () => {
 
     it('не уходит дальше срока хранения', () => {
         expect(windowDays(['2026-01-01.jsonl'], '', '2026-11-07')).toEqual(['2026-11-07']);
+    });
+
+    it('SC-AK-1632 — пересчитанный день старше последней удачи уходит, за сроком хранения — нет', () => {
+        expect(windowDays(['2026-11-02.jsonl', '2026-11-06.jsonl'], '2026-11-06', '2026-11-07', ['2026-11-02', '2026-01-01'])).toEqual([
+            '2026-11-02',
+            '2026-11-06',
+            '2026-11-07',
+        ]);
+    });
+});
+
+describe('пересчитанные дни в отправке', () => {
+    let root: string;
+
+    beforeEach((): void => {
+        root = mkdtempSync(join(tmpdir(), 'rt-send-recount-'));
+        mkdirSync(join(root, OBSERVATIONS_DIR), { recursive: true });
+        writeFileSync(join(root, 'token-file'), 'tree-token\n');
+        writeFileSync(
+            join(root, '.claude', 'rt-kit.json'),
+            JSON.stringify({ intake: 'https://intake.example.org', token: 'token-file', tree: 'one-two' })
+        );
+    });
+
+    afterEach((): void => {
+        rmSync(root, { recursive: true, force: true });
+    });
+
+    it('SC-AK-1632 — день, пересчитанный после последней удачи, уходит строкой дня', async () => {
+        const succeeded: Date = new Date('2026-11-06T12:00:00Z');
+        const line: (day: string) => string = (day: string): string =>
+            `${JSON.stringify({ t: `${day}T09:00:00Z`, ev: 'record-call', task: 'RT-1', sid: 's1', src: 'recount' })}\n`;
+
+        writeFileSync(join(root, OBSERVATIONS_DIR, '2026-11-02.jsonl'), line('2026-11-02'));
+        writeFileSync(join(root, OBSERVATIONS_DIR, '2026-11-01.jsonl'), line('2026-11-01'));
+        // пересчёт 2.11 лёг после удачи, 1.11 — до неё
+        utimesSync(join(root, OBSERVATIONS_DIR, '2026-11-02.jsonl'), NOW, NOW);
+        utimesSync(join(root, OBSERVATIONS_DIR, '2026-11-01.jsonl'), new Date('2026-11-05T00:00:00Z'), new Date('2026-11-05T00:00:00Z'));
+        mkdirSync(dirname(markPath(root)), { recursive: true });
+        writeFileSync(markPath(root), JSON.stringify({ day: '2026-11-06', succeeded: succeeded.getTime(), tried: succeeded.getTime() }));
+
+        const calls: ICalls = answering();
+
+        await sendMetrics(
+            { root, version: '0.35.0', assetsDir: join(__dirname, '..', '..', 'assets') },
+            { quiet: true, force: true, now: NOW, remote: REMOTE, ship: calls.ship }
+        );
+
+        const days: readonly string[] = calls.bodies.map((body: IMetricsDayCargo): string => body.day);
+
+        expect(days).toContain('2026-11-02');
+        expect(days).not.toContain('2026-11-01');
+        expect(calls.bodies.find((body: IMetricsDayCargo): boolean => body.day === '2026-11-02')?.metrics).toMatchObject({ calls: 1 });
     });
 });

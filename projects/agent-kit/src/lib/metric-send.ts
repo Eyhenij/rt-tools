@@ -6,7 +6,7 @@
  * то, что уже не получилось: сбой пишется в метку, а не на экран.
  */
 import { createHash, randomBytes } from 'node:crypto';
-import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { collectAssets, IAsset } from './assets.js';
@@ -74,15 +74,32 @@ function tokenSign(token: string): string {
     return createHash('sha256').update(token).digest('hex').slice(0, 16);
 }
 
-/** Дни окна: от последней удачи, не дальше срока хранения. Сегодняшний идёт всегда: он несёт числа дерева. */
-export function windowDays(names: readonly string[], lastDay: string, today: string): readonly string[] {
+/**
+ * Дни окна: от последней удачи, не дальше срока хранения. Сегодняшний идёт всегда: он несёт числа дерева.
+ * `changed` — дни старше последней удачи, чей файл менялся после неё: пересчёт прошлой недели иначе
+ * остался бы в дереве.
+ */
+export function windowDays(names: readonly string[], lastDay: string, today: string, changed: readonly string[] = []): readonly string[] {
     const edge: string = dayBefore(today, KEEP_DAYS);
     const since: string = byText(lastDay, edge) > 0 ? lastDay : edge;
     const days: readonly string[] = names
         .map((name: string): string | null => DAY_FILE.exec(name)?.[1] ?? null)
         .filter((day: string | null): day is string => day !== null && byText(day, since) >= 0 && byText(day, today) < 0);
+    const older: readonly string[] = changed.filter((day: string): boolean => byText(day, edge) >= 0 && byText(day, today) < 0);
 
-    return [...new Set([...days, today])].sort(byText);
+    return [...new Set([...days, ...older, today])].sort(byText);
+}
+
+/** Дни, чей файл менялся после последней удачи. Удачи не было: окно и так идёт от срока хранения. */
+function changedDays(root: string, names: readonly string[], succeeded: number): readonly string[] {
+    if (!succeeded) {
+        return [];
+    }
+
+    return names
+        .map((name: string): string | null => DAY_FILE.exec(name)?.[1] ?? null)
+        .filter((day: string | null): day is string => day !== null)
+        .filter((day: string): boolean => statSync(join(root, OBSERVATIONS_DIR, `${day}.jsonl`)).mtimeMs > succeeded);
 }
 
 function dayOf(root: string, day: string): readonly IObservation[] {
@@ -201,7 +218,7 @@ async function shipLines(work: ISendWork, mark: ISendMark, today: string): Promi
     let refused: IShipped | null = null;
     let sent: ITreeFacts | null = null;
 
-    for (const day of windowDays(names, mark.day, today)) {
+    for (const day of windowDays(names, mark.day, today, changedDays(env.root, names, mark.succeeded))) {
         const observations: readonly IObservation[] = dayOf(env.root, day);
         // Числа записи хода и слияний считает тот же подсчёт, что и отчёт: второй счёт разошёлся бы молча.
         const result: IWorkResultDay | null = workResultOf(env.root, env.assetsDir, day, 1, null).days?.[0] ?? null;
