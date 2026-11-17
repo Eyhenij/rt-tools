@@ -471,7 +471,16 @@ describe('пересчитанные дни и окна эпика в отпра
         const sent: IEpicWindowCargo[] = await windowsAt(NOW);
 
         expect(sent).toHaveLength(1);
-        expect(sent[0]).toMatchObject({ epic: 7, from: OPENED.t, to: MERGED.t, calls: 0, refusals: 0, reasks: 0, merged: 1, released: 1 });
+        expect(sent[0]).toMatchObject({
+            epic: 7,
+            from: OPENED['t'],
+            to: MERGED['t'],
+            calls: 0,
+            refusals: 0,
+            reasks: 0,
+            merged: 1,
+            released: 1,
+        });
         expect(sent[0].origin).toMatch(/^[a-z0-9-]{6,}$/);
     });
 

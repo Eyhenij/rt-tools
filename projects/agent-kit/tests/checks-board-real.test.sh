@@ -54,8 +54,12 @@ report "SC-AK-1599 — token: под машинным токеном тот же
     "$(replay machine-token-of-the-suite api user --jq '{login: .login}' > /dev/null 2>&1; printf '%s' "$?")" "0"
 
 # --- the readers of the tree on the recorded answers ----------------------------------------------
+# The state column of the epic table — «идёт», «влито», «впереди» — is read from the local history and
+# the current branch, not from the hosting: the recorded answers do not hold it, and it moves with every
+# merge into the epic branch. Both sides are compared with it marked; the hosting column stays judged.
+state_marked() { sed -E 's/^(\| [0-9]+ \|[^|]*\|[^|]*\|)[^|]*\|/\1 <state> |/'; }
 report "SC-AK-1600 — таблица эпика на настоящих ответах — как на хостинге" \
-    "$(same_as "$(reader tools/epic-table.mjs 3302)" "$REAL/.epic-table.txt")" "same"
+    "$(same_as "$(reader tools/epic-table.mjs 3302 | state_marked)" <(state_marked < "$REAL/.epic-table.txt"))" "same"
 report "SC-AK-1600 — последний прогон главной на настоящих ответах — как на хостинге" \
     "$(same_as "$(reader tools/main-run.mjs)" "$REAL/.main-run.txt")" "same"
 report "SC-AK-1600 — аудит очереди на настоящих ответах — как на хостинге" \
