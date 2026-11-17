@@ -163,8 +163,39 @@ function trace(step) {
     }
     rmSync(out, { recursive: true, force: true });
     if (kinds.has('listing')) walks.add('.');
-    for (const set of [reads, probes, walks]) for (const p of outsideHistory([...set])) set.delete(p);
+    for (const set of [reads, probes, walks]) {
+        for (const p of outsideHistory([...set])) set.delete(p);
+        for (const p of [...set]) if (untracked(p)) set.delete(p);
+    }
     return { seconds, exit: run.status ?? 1, reads, probes, walks, kinds, self: selfOf(step) };
+}
+
+let untrackedList;
+
+/**
+ * A file that lies in the copy and not in the history, and is not ignored either: a draft, a patch
+ * leftover. Like an ignored file it never reaches the change list of a branch, and whether it lies
+ * there is a state of the copy. Added to the history, it is an addition in a walked directory and
+ * starts the step anyway. Listed once per run: `--directory` names a whole untracked directory
+ * once, with a trailing slash.
+ *
+ * FAIL-OPEN: no git or a fallen call — nothing counts as untracked.
+ */
+function untracked(path) {
+    if (!untrackedList) {
+        const run = spawnSync('git', ['ls-files', '--others', '--exclude-standard', '--directory', '-z'], {
+            cwd: ROOT,
+            encoding: 'utf8',
+            maxBuffer: 64 * 1024 * 1024,
+        });
+        untrackedList = run.status === 0 ? (run.stdout ?? '').split('\0').filter(Boolean) : [];
+    }
+    return untrackedList.some((u) => (u.endsWith('/') ? `${path}/`.startsWith(u) : path === u));
+}
+
+/** A step with a recorded process kind runs on every change: its reads choose nothing. */
+function runsAlways(entry) {
+    return entry.history.length > 0 || entry.untraced.length > 0;
 }
 
 /**
@@ -267,7 +298,10 @@ function select(base) {
         return 0;
     }
     const verifyInputs = new Set([rel(tablePath), rel(TRACER), rel(fileURLToPath(import.meta.url))]);
-    for (const entry of Object.values(table.steps)) for (const p of entry.self) verifyInputs.add(p);
+    // A step with a recorded kind is not traced by the check, so an edit of its script starts no check.
+    for (const entry of Object.values(table.steps)) {
+        if (!runsAlways(entry)) for (const p of entry.self) verifyInputs.add(p);
+    }
     for (const step of steps) {
         let reason;
         if (VERIFY.test(step)) {
@@ -323,10 +357,14 @@ function verify() {
     const table = loadTable();
     if (!table) return 0;
     const misses = [];
+    let always = 0;
     for (const [step, entry] of Object.entries(table.steps)) {
         // A step with a recorded kind runs on every change already: a new kind changes no selection,
         // and a refusal over it would only name the machine — a platform suffix, a tool on the path.
-        if (entry.history.length || entry.untraced.length) continue;
+        if (runsAlways(entry)) {
+            always += 1;
+            continue;
+        }
         const raw = trace(step);
         const now = entryOf(raw);
         for (const h of now.history) misses.push(`${step}: now reads the history (${h})`);
@@ -343,7 +381,10 @@ function verify() {
         }
     }
     if (!misses.length) {
-        process.stdout.write(`push inputs: the table covers what all ${Object.keys(table.steps).length} steps read\n`);
+        const total = Object.keys(table.steps).length;
+        process.stdout.write(
+            `push inputs: the table covers what ${total - always} traced steps read; ${always} run on every change and are not traced\n`,
+        );
         return 0;
     }
     process.stdout.write(

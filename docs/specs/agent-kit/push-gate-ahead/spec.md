@@ -89,16 +89,21 @@ There is no interface: the guard answers with a refusal text, the run ahead with
   touched.
 - **A file the repository ignores is no read of a step.** A change to it never reaches the change
   list of a branch, and whether it exists is a state of the machine: a copy with `.env` and a copy
-  without it record one table.
-- **Only the repository's own ignore rules count, and one path git refuses does not stop the
-  filter for the rest.** A global ignore file is the machine's: a path it hides stays a read. A name
-  with a non-ASCII letter is matched as written.
+  without it record one table of reads.
+- **A file that lies in the copy outside the history and is not ignored is no read either.** A
+  draft or a patch leftover is a state of the copy; taken into the history, it is an addition in a
+  walked directory and starts the step anyway.
+- **The machine's global ignore file does not count, and one path git refuses does not stop the
+  filter for the rest.** A path the global file alone hides stays a read. A name with a non-ASCII
+  letter is matched as written.
 - **A record keeps the kinds of processes the table already held for a step.** Whether a step
   starts a process may hang on the machine; a kept kind errs towards an extra run, never a skipped
-  one.
+  one. A table first recorded where the process does not start is refused once on a copy where it
+  does, and one record there settles it for every copy.
 - **A step with a recorded process kind is not traced by the table check.** It runs on every
   change already, so a new kind changes no choice: a refusal over it would name the machine — a
-  platform suffix of a tool, a tool on the path.
+  platform suffix of a tool, a tool on the path. An edit of such a step's script does not start the
+  check, and the check names how many steps it traced and how many it left out.
 
 ## What is out of scope
 
@@ -215,6 +220,6 @@ None.
 - 2026-11-13 — a step runs only when the change reaches what the step reads, by a record of its
   own calls. The light checks ran on every change, the kit ones on a branch without a kit file.
   Task RT-3273.
-- 2026-11-17 — one table for a copy with `.env` and a copy without it: ignored files are no reads,
-  recorded process kinds are kept, and a step that runs always is not traced by the check. Task
-  RT-3347.
+- 2026-11-17 — one table for a copy with `.env` and a copy without it: ignored and untracked files
+  are no reads, recorded process kinds are kept, and a step that runs always is not traced by the
+  check. Task RT-3347.

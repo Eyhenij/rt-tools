@@ -248,6 +248,7 @@ Given a table recorded on a copy where a step starts a process
 When the table is recorded again on a copy where the step does not start it
 Then the entry of the step still names the process
 And the table check on the first copy stays green
+And a table first recorded on the copy without the process is refused once on the first copy, and after one record there the check is green on both copies
 
 Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
 
@@ -272,6 +273,15 @@ Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
 Given a machine whose global ignore file hides a file a step reads, and `.env` ignored by the repository
 When the table is recorded
 Then the hidden file stays a read of the step and `.env` does not
+
+Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
+
+### SC-AK-1597 — a draft outside the history is no read of a step
+
+Given a table of a step that reads every file of a directory
+When a draft file and an untracked directory appear in that directory without being ignored
+Then the table check stays green
+And once the draft is taken into the history, the check refuses until the table is recorded again
 
 Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
 
