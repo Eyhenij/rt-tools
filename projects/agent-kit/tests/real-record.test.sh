@@ -99,6 +99,20 @@ report "SC-AK-1611 — переспросы: три вопроса после о
 report "SC-AK-1654 — тупики дня: столько же, сколько на полной записи" "$(counted 'dead ends')" "20"
 report "SC-AK-1654 — тупик проверки конца эпика: четыре отказа с 01:43:47" "$(counted 'dead end epic-over')" "01:43:47:4"
 
+# --- the recount of 13.11 from the saved record --------------------------------------------------------
+# The record is found by its branches: the tree knows the epic branch, the directory of the record does
+# not name the tree.
+RECOUNT_TREE="$WORK/recount-tree"
+git -C "$WORK" init -q recount-tree 2>/dev/null
+git -C "$RECOUNT_TREE" -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q --allow-empty -m start 2>/dev/null
+git -C "$RECOUNT_TREE" branch RT-3227-agent-kit-revision-day1 2>/dev/null
+mkdir -p "$WORK/projects/elsewhere"
+cp "$CUT" "$WORK/projects/elsewhere/session.jsonl"
+node "$HERE/../assets/checks/record-recount.mjs" --tree "$RECOUNT_TREE" --observations "$WORK/recounted" --projects "$WORK/projects" --day 2026-11-13 > /dev/null
+report "SC-AK-1632 — пересчёт 13.11 по сохранённой записи: окно эпика даёт 187 вызовов и 35 отказов" \
+    "$(jq -r 'select(.t >= "2026-11-13T00:34:01" and .t < "2026-11-13T03:04:27") | .ev' "$WORK/recounted/2026-11-13.jsonl" | grep -cE '^record-call$'):$(jq -r 'select(.t >= "2026-11-13T00:34:01" and .t < "2026-11-13T03:04:27") | .ev' "$WORK/recounted/2026-11-13.jsonl" | grep -cE '^record-refusal$')" \
+    "187:35"
+
 # --- the epic windows of 13.11 ------------------------------------------------------------------------
 # The observations the hook writes from the cut, with the merges the hosting gave that day.
 OUTCOMES="$HERE/fixtures/real-outcomes"
