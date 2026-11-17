@@ -1,0 +1,19 @@
+{
+ "args": [
+  "api",
+  "repos/Eyhenij/rt-tools/actions/runs?head_sha=9c5ef4c64fa80361ffcd345f0695e2d299e2d5d0&per_page=20",
+  "--jq",
+  "[.workflow_runs[] | {id, status, conclusion}] | tojson"
+ ],
+ "token": "machine",
+ "code": 0,
+ "stdout": "[{\"conclusion\":\"success\",\"id\":43893467640,\"status\":\"completed\"}]",
+ "stderr": "",
+ "json": [
+  {
+   "conclusion": "success",
+   "id": 43893467640,
+   "status": "completed"
+  }
+ ]
+}

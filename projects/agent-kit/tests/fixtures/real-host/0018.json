@@ -1,0 +1,13 @@
+{
+ "args": [
+  "api",
+  "repos/Eyhenij/rt-tools/actions/runs?head_sha=9c5ef4c64fa80361ffcd345f0695e2d299e2d5d0&per_page=1",
+  "--jq",
+  ".total_count"
+ ],
+ "token": "machine",
+ "code": 0,
+ "stdout": "1",
+ "stderr": "",
+ "json": 1
+}

@@ -1,0 +1,13 @@
+{
+ "args": [
+  "api",
+  "repos/Eyhenij/rt-tools/compare/main...RT-3347-push-inputs-env",
+  "--jq",
+  ".behind_by"
+ ],
+ "token": "machine",
+ "code": 0,
+ "stdout": "0",
+ "stderr": "",
+ "json": 0
+}

@@ -1,0 +1,13 @@
+{
+ "args": [
+  "api",
+  "repos/Eyhenij/rt-tools/actions/runs?head_sha=674c92386cde1d0faea700582ed69f46d49e8d49&per_page=20",
+  "--jq",
+  "[.workflow_runs[] | {id, status, conclusion}] | tojson"
+ ],
+ "token": "machine",
+ "code": 0,
+ "stdout": "[]",
+ "stderr": "",
+ "json": []
+}

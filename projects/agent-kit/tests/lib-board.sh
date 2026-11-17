@@ -88,3 +88,15 @@ board_says() {
     board_run | grep -cE "$1"
 }
 
+# The helper of the hosting that answers from the recorded answers of the real host, not from the
+# scenario: `real-data/replay-gh.mjs` over `fixtures/real-host`. It answers by the arguments and by
+# the kind of the token, the way the host does. Prints the path to put into `GH_BIN`.
+board_replay_bin() {
+    local dir="${1:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/fixtures/real-host}"
+    local here
+    here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    printf '#!/usr/bin/env bash\nREPLAY_DIR=%q exec node %q "$@"\n' "$dir" "$here/real-data/replay-gh.mjs" > "$BOARD_TREE/gh-replay"
+    chmod +x "$BOARD_TREE/gh-replay"
+    printf '%s' "$BOARD_TREE/gh-replay"
+}
+

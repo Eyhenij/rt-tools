@@ -148,6 +148,40 @@ over and says which of them are right. The file lies next to the plan of the epi
   **Address:** rules layer — the gate reads the loads of the session from the record, not only
   from the part of the context that survived.
 
+## RT-3277 — the readers run on saved real data
+
+- **The work queue audit falls on the real host.** The comparison of the deployed head with the
+  main branch gets HTTP 422 «diff is taking too long to generate» in `deployLag`, and nothing
+  catches it: the audit ends with a stack trace and code 1. The suite on the recorded answers names
+  it. **Address:** a task of this epic — the audit names an unanswered comparison and goes on.
+- **The role metrics read a table header as a verdict.** A goal-critic report of 13.11 opens with a
+  table; «Достигнуто» in its header matches the pass words, and the hook counts «passed».
+  **Address:** a task of this epic — the verdict is read from a line that is not a table row.
+- **A message the owner sends during a turn is no word of the owner to the engine.** The record
+  keeps it as an entry `attachment` of kind `queued_command` with `origin.kind: human`; `owner.mjs`
+  reads only entries `user`, and the cut keeps no `attachment` entries. The owner had to send the
+  permission twice. **Address:** a task of this epic — the owner source reads such an entry as a
+  typed message, and the cut keeps it.
+- **The owner source reads harness wrappers as the owner's words.** On the cut of 13.11 `owner.mjs`
+  counts 213 typed messages, the reminder measure 123: 86 interrupt marks, command wrappers and a
+  command output among them. A phrase in a command output would count as the owner's consent.
+  **Address:** a task of this epic — the owner source recognises these wrappers; the case SC-AK-1607
+  then expects 123.
+- **A check of a plan written as a pattern in backquotes never matches.** The engine tries the
+  line form first and compares a backquoted pattern as a line. Two steps of this plan stood red on
+  a right output. **Address:** rules layer — the plan check refuses a backquoted pattern when the
+  plan is written, or the engine reads `/…/` inside backquotes as a pattern.
+- **`grep -c` as a step check is red exactly on the clean answer.** It exits 1 on zero matches, and
+  the engine reads the exit before the line. **Address:** rules layer — the pattern of writing a
+  plan names `wc -l` for a count that should be zero.
+- **A menu answer is no word of the owner for a replacement line.** Only a typed message counts,
+  and a quote with «(Recommended)» never matches. A question that only asks the owner to type a
+  phrase is refused by the question judge as a bypass. **Address:** rules layer — the replacement
+  line accepts the menu answer of a question that named the step and the new check.
+- **The step guard measured the state wrongly from a subdirectory.** An edit of the progress was
+  refused as «ahead» while the shell stood under `projects/`. **Address:** rules layer — the engine
+  takes the tree root from the record, not from the working directory.
+
 ## Left unresolved
 
 - **A session that wrote nothing releases the turn, and so do the silent hosting and a lost menu.**

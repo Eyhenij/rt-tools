@@ -1,0 +1,20 @@
+{
+ "args": [
+  "api",
+  "--paginate",
+  "repos/Eyhenij/rt-tools/issues/2863/sub_issues",
+  "--jq",
+  "[.[].number]"
+ ],
+ "token": "machine",
+ "code": 0,
+ "stdout": "[2880,2881,2882,2883,3084]",
+ "stderr": "",
+ "json": [
+  2880,
+  2881,
+  2882,
+  2883,
+  3084
+ ]
+}

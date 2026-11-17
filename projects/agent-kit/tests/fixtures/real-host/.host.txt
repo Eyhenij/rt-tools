@@ -1,0 +1,3 @@
+pulls of RT-3355-hooks-read-table: [{"number":3360,"state":"MERGED","base":"RT-3302-checks-rework-3","headRefOid":"e8cb6b32608f9f684721c8b953c323ef352df085","reviewers":["Eyhenij"]}]
+merged pulls: 300
+silent: false

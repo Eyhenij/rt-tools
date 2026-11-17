@@ -39,6 +39,7 @@ the server side does not know it at all.
 - **the entry example's end-to-end suite** — `apps/auth-example-e2e/` — the specs in `src/`
 - **the subjects of paths and the suites they raise** — `.claude/rt-kit/project.sh` — `rt_push_touched` and `rt_push_checks`
 - **the specs of the admin panel's suite a push runs** — `.claude/rt-kit/project-heavy.sh:rt_admin_e2e_step`. A branch whose receiver code reaches only named sections runs their specs. Any other receiver path, the stand, the step's browser script and a second-kit edit run the whole suite. Scenarios: `tools/tests/push-heavy-subjects.test.sh`
+- **the saved real data of the package suites** — `projects/agent-kit/tests/fixtures/real-record/` and `projects/agent-kit/tests/fixtures/real-host/`. The first is a cut of a conversation record made by `projects/agent-kit/tests/real-data/cut-record.mjs`. The second holds hosting answers recorded by `real-data/record-host.sh` and replayed by `real-data/replay-gh.mjs`. A reader without a run on a directory whose name begins with fixtures/real- is refused by `projects/agent-kit/tests/hooks-kind.test.sh`
 - **the end-to-end coverage guard at opening a PR** — `.claude/hooks/e2e-coverage-guard.sh`, its scenarios in `tools/tests/e2e-coverage-guard.test.sh`
 
 ## Where the articles are carried out

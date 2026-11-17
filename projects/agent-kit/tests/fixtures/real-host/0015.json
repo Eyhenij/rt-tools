@@ -1,0 +1,13 @@
+{
+ "args": [
+  "api",
+  "repos/Eyhenij/rt-tools/compare/RT-3346-ai-chat-blocks...RT-3334-ai-chat-blocks",
+  "--jq",
+  ".behind_by"
+ ],
+ "token": "machine",
+ "code": 0,
+ "stdout": "0",
+ "stderr": "",
+ "json": 0
+}

@@ -14,6 +14,7 @@ total="$(ls "$(dirname "${BASH_SOURCE[0]}")"/*.test.sh | grep -c .)"
 one_hook="$(pick projects/agent-kit/assets/hooks/push-set.sh)"
 report "SC-AK-1352 — a hook change runs its own scenario file" "$(has "$one_hook" pre-push.test.sh)" yes
 report "SC-AK-1352 — a hook change runs the file of a hook that sources it" "$(has "$one_hook" git-guard-push-tests.test.sh)" yes
+report "SC-AK-1605 — a hook change runs the kind of the hooks, the run on saved data among it" "$(has "$one_hook" hooks-kind.test.sh)" yes
 report "SC-AK-1352 — a hook change skips a file that never reaches it" "$(has "$one_hook" sql-guard.test.sh)" no
 report "SC-AK-1352 — a hook change runs fewer files than all" "$([ "$(count "$one_hook")" -lt "$total" ] && echo yes)" yes
 
