@@ -60,7 +60,7 @@
 | Specs        | `docs/specs/agent-kit/metrics/`, `docs/specs/agent-kit/hooks/` (SC-AK-1607, SC-AK-1609), `docs/specs/agent-kit/observations/`, новый поддомен `docs/specs/agent-kit/work-result/`; `docs/specs/message-bus/usage/`, `docs/specs/message-bus/spec.md` (таблица языков) |
 | Laws         | `observability`, `verifiability`, `work-conduct`, `delivery`, `lists`, `navigation`, `access`, `entity-models`, `mockups` — читаются, не правятся |
 | Rules        | `testing`, `mockups`, `lists`, `navigation`, `entity-models`, `permissions` — читаются, не правятся |
-| Code пакета  | `projects/agent-kit/assets/checks/` (новый `record-count.mjs`, `owner-nudges.mjs`), `projects/agent-kit/assets/hooks/` (новый `record-turn.sh`, `turn-exit-role.sh`, `pull-outcomes.sh`), `projects/agent-kit/src/lib/` (`metrics.ts`, `cargo.ts`, `metric-lines.ts`, `metric-send.ts`, `outcomes.ts`, `observations.ts`), `projects/agent-kit/src/bin/agent-kit.ts` |
+| Code пакета  | `projects/agent-kit/assets/checks/` (новый `record-count.mjs`, `owner-nudges.mjs`), `projects/agent-kit/assets/task-flow/source/owner.mjs`, `projects/agent-kit/assets/hooks/` (новый `record-turn.sh`, `turn-exit-role.sh`, `pull-outcomes.sh`), `projects/agent-kit/src/lib/` (`metrics.ts`, `cargo.ts`, `metric-lines.ts`, `metric-send.ts`, `outcomes.ts`, `observations.ts`), `projects/agent-kit/src/bin/agent-kit.ts` |
 | Tests пакета | `projects/agent-kit/tests/` (новые `record-count`, `record-hook`, `record-recount`, `metric-merges`, `epic-window`; `real-record`, `metric-events`), `real-data/cut-record.mjs`, `real-data/read-record.mjs`, `fixtures/real-record/2026-11-13.jsonl`, новый `fixtures/real-outcomes/` |
 | Code приёмника | `prisma/schema.prisma` и миграция, `libs/message-bus-api/observations/{util,data-access,feature}/`, `libs/message-bus-common/src/lib/refusal.ts` |
 | Code админки | `libs/message-bus-admin/usage/{feature/quality,ui,util,data-access}/`, `libs/message-bus-admin/common/container/util/src/lib/menu.declaration.ts`, `libs/message-bus-admin/common/core/util/src/lib/admin-labels.ts` и `admin-labels-en.ts` |
@@ -87,8 +87,8 @@
 - **Steps:**
     1. Записать в счётчике записи `assets/checks/record-count.mjs` правило слов владельца: обёртки среды не считаются, `queued_command` с `origin.kind = human` считается, очередь, повторённая набранным сообщением, считается один раз
        Check: `bash projects/agent-kit/tests/record-count.test.sh >/dev/null && grep -oE 'SC-AK-(1610|1650)' projects/agent-kit/tests/record-count.test.sh | sort -u | wc -l | tr -d ' '` → = 2
-    2. Перевести `owner-nudges.mjs` на это правило; перевод счёта слов в движке — отдельная задача эпика
-       Check: `grep -l 'record-count' projects/agent-kit/assets/checks/owner-nudges.mjs | wc -l | tr -d ' '` → = 1
+    2. Перевести `owner.mjs` движка и `owner-nudges.mjs` на это правило через порт, как `steps.mjs` берёт `work-steps-lib.mjs`
+       Check: `grep -l 'record-count' projects/agent-kit/assets/task-flow/source/owner.mjs projects/agent-kit/assets/checks/owner-nudges.mjs | wc -l | tr -d ' '` → = 2
     3. Записать в счётчике три класса отказа, таблицу проверки отказа и один счёт отказа конца хода
        Check: `bash projects/agent-kit/tests/record-count.test.sh >/dev/null && grep -oE 'SC-AK-(1612|1645|1646)' projects/agent-kit/tests/record-count.test.sh | sort -u | wc -l | tr -d ' '` → = 3
     4. Пересобрать резчик: срез хранит класс и проверку отказа, ветку записи, записи `attachment` с типом и `origin.kind`, признак переспроса у вопроса меню вместо его текста
