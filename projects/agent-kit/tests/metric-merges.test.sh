@@ -77,4 +77,40 @@ report "SC-AK-1622 — последняя редакция пакета прав
     "$(cat "$OBS"/*.jsonl | jq -r 'select(.ev == "edition" and .t < "2026-11-13T05:48:08Z") | .t + " " + .ver' | sort | tail -1)" \
     "2026-11-11T08:37:28.990Z 0.37.0"
 
+# --- the release of an epic, judged by the end of the report day --------------------------------------------
+day_epics() {
+    node -e '
+const fs = require("fs");
+import(process.argv[4]).then(({ dayEpics }) => {
+    const lines = fs.readdirSync(process.argv[1]).filter((f) => f.endsWith(".jsonl"))
+        .flatMap((f) => fs.readFileSync(`${process.argv[1]}/${f}`, "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l)));
+    const out = dayEpics(lines, process.argv[2], { publishes: process.argv[3] === "yes" });
+    console.log(out.map((e) => `${e.epic} ${e.status}${e.minutes === null ? "" : ` ${e.minutes}`}`).join("; "));
+});' "$1" "$2" "${3:-yes}" "$CHECKS/merge-read.mjs"
+}
+obs() { mkdir -p "$1"; printf '%s\n' "${@:2}" >> "$1/all.jsonl"; }
+
+report "SC-AK-1623 — 13.11: RT-3227 слит в 05:48:08, редакции пакета после слияния нет — не выпущен" \
+    "$(day_epics "$WORK/real" 2026-11-13)" "RT-3227 not-released"
+
+OBS="$WORK/next-day"
+obs "$OBS" '{"t":"2026-11-10T12:00:00Z","ev":"epic-merged","task":"RT-5","pkg":"agent-kit"}' \
+    '{"t":"2026-11-11T09:00:00Z","ev":"edition","pkg":"agent-kit","ver":"0.38.0"}'
+report "SC-AK-1624 — выпуск судится по концу дня отчёта: в день слияния не выпущен, на следующий — выпущен" \
+    "$(day_epics "$OBS" 2026-11-10) | $(day_epics "$OBS" 2026-11-11)" "RT-5 not-released | RT-5 released"
+
+OBS="$WORK/no-package"
+obs "$OBS" '{"t":"2026-11-10T12:00:00Z","ev":"epic-merged","task":"RT-6","pkg":""}'
+report "SC-AK-1651 — эпик, не менявший пакета, выпущен своим слиянием" "$(day_epics "$OBS" 2026-11-10)" "RT-6 released"
+report "SC-AK-1652 — дерево без пакета печатает эпик слитым, без строки выпуска" "$(day_epics "$OBS" 2026-11-10 no)" "RT-6 merged"
+
+OBS="$WORK/period"
+obs "$OBS" '{"t":"2026-11-10T08:00:00Z","ev":"task-taken","task":"RT-7"}' \
+    '{"t":"2026-11-11T17:00:00Z","ev":"epic-merged","task":"RT-7","pkg":"agent-kit"}' \
+    '{"t":"2026-11-11T18:00:00Z","ev":"edition","pkg":"agent-kit","ver":"0.39.0"}' \
+    '{"t":"2026-11-11T09:00:00Z","ev":"task-taken","task":"RT-81"}' \
+    '{"t":"2026-11-11T11:00:00Z","ev":"task-merged","task":"RT-81","opens":"1","epic":"RT-8"}'
+report "SC-AK-1639 — эпики периода: первый — 34 часа от взятия до выпуска, второй открыт" \
+    "$(day_epics "$OBS" 2026-11-11)" "RT-7 released 2040; RT-8 open"
+
 suite_result "слияния и редакции"

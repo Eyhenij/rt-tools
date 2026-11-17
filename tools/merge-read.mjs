@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/merge-read.mjs · a95f552d30f3 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/merge-read.mjs · 6fdde58fd400 · правится надстройкой, не здесь
 /**
  * The merges of requests and the editions of packages, read from the hosting and the registry and
  * written as observations: what the day line and the epic windows are counted by.
@@ -104,6 +104,63 @@ export function dayMerges(observations, day) {
         takenMinutes += Math.floor((Date.parse(o.t) - Date.parse(from)) / MINUTE);
     }
     return { tasksMerged, tasksTimed, takenMinutes };
+}
+
+/** The end of a day of UTC: what was true at it is what the report of the day says. */
+const endOf = (day) => `${day}T23:59:59.999Z`;
+
+/**
+ * The epics of a report day, judged by the end of that day: each epic merged into the main branch
+ * by then, and each epic whose window opened by then with no merge yet.
+ *
+ *   status    `released` — every package the epic changed has an edition after the merge, or it
+ *             changed none; `not-released` — a package has no such edition; `merged` — the tree
+ *             publishes no package; `open` — no merge into the main branch yet
+ *   minutes   whole minutes from the taking to the release, to the merge while not released, and
+ *             null for an open epic or one with no taking seen; the taking of an epic is the earliest
+ *             taking of the epic branch or of a task merged into it
+ */
+export function dayEpics(observations, day, { publishes = true } = {}) {
+    const end = endOf(day);
+    const until = observations.filter((o) => String(o.t) <= end);
+    const tasksOf = new Map();
+    const opened = new Set();
+    for (const o of until) {
+        if (o.ev !== 'task-merged' || !o.epic) continue;
+        if (!tasksOf.has(o.epic)) tasksOf.set(o.epic, new Set());
+        tasksOf.get(o.epic).add(o.task);
+        if (o.opens) opened.add(o.epic);
+    }
+    const takenAt = (epic) =>
+        until
+            .filter((o) => o.ev === 'task-taken' && (o.task === epic || tasksOf.get(epic)?.has(o.task)))
+            .map((o) => o.t)
+            .sort()[0] ?? null;
+    const minutesBetween = (from, to) => (from && to ? Math.floor((Date.parse(to) - Date.parse(from)) / MINUTE) : null);
+    const merged = new Map(until.filter((o) => o.ev === 'epic-merged').map((o) => [o.task, o]));
+    const out = [];
+    for (const [epic, merge] of merged) {
+        const packages = String(merge.pkg ?? '').split(',').filter(Boolean);
+        const editions = packages.map((pkg) =>
+            until.filter((o) => o.ev === 'edition' && o.pkg === pkg && o.t > merge.t).map((o) => o.t).sort()[0] ?? null,
+        );
+        let status = 'released';
+        let releasedAt = merge.t;
+        if (!publishes) {
+            status = 'merged';
+            releasedAt = null;
+        } else if (editions.some((at) => at === null)) {
+            status = 'not-released';
+            releasedAt = null;
+        } else if (editions.length > 0) {
+            releasedAt = editions.sort().at(-1);
+        }
+        out.push({ epic, status, mergedAt: merge.t, releasedAt, minutes: minutesBetween(takenAt(epic), releasedAt ?? merge.t) });
+    }
+    for (const epic of opened) {
+        if (!merged.has(epic)) out.push({ epic, status: 'open', mergedAt: null, releasedAt: null, minutes: null });
+    }
+    return out;
 }
 
 /** The lines of a file of JSON lines, or null when one of them does not parse. */
