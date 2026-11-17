@@ -52,7 +52,102 @@ const QUALITY_LINES = Object.freeze([
             'rulesAfterLoad:testing': 1,
         },
     }),
+    /** День теста приёма окон: строка нужна, чтобы сводка рисовалась, и ни один кадр сюда не смотрит. */
+    Object.freeze({
+        tree: TREES[0],
+        origin: 'stand-quality-one',
+        day: '2026-10-05',
+        version: '0.37.0',
+        metrics: { sessions: 1 },
+    }),
+    Object.freeze({
+        tree: TREES[0],
+        origin: 'stand-quality-one',
+        day: '2026-11-12',
+        version: '0.37.0',
+        metrics: {
+            calls: 100,
+            refusalsHook: 3,
+            refusalsPermission: 1,
+            deadEnds: 0,
+            tasksMerged: 1,
+            tasksTimed: 1,
+            takenMinutes: 390,
+            'refusalPairs:skill-gate:flow-step-guard': 4,
+        },
+    }),
+    Object.freeze({
+        tree: TREES[0],
+        origin: 'stand-quality-one',
+        day: '2026-11-13',
+        version: '0.37.0',
+        metrics: {
+            calls: 187,
+            refusalsHook: 30,
+            refusalsPermission: 3,
+            refusalsStop: 2,
+            reasks: 3,
+            interrupts: 5,
+            ownerWords: 196,
+            idleMinutes: 144,
+            goalNotMet: 1,
+            deadEnds: 20,
+            tasksMerged: 2,
+            tasksTimed: 1,
+            takenMinutes: 210,
+            'recordRefusals:grill-gate': 6,
+            'guardRefusals:grill-gate': 4,
+            'refusalPairs:grill-gate:skill-gate': 6,
+        },
+    }),
+    Object.freeze({
+        tree: TREES[1],
+        origin: 'stand-quality-two',
+        day: '2026-11-14',
+        version: '0.36.0',
+        metrics: { tasksMerged: 1 },
+    }),
 ]);
+
+/**
+ * Окна эпиков ноября. Окно 13 ноября слито в тот день и выпущено 15-го: за 13-е оно читается
+ * «не выпущен», за период до 15-го — «выпущен». Окно второго дерева открыто.
+ */
+const EPIC_WINDOWS = Object.freeze([
+    Object.freeze({
+        tree: TREES[0],
+        origin: 'stand-quality-one',
+        epic: 3227,
+        from: '2026-11-13T00:34:01Z',
+        to: '2026-11-13T03:04:27Z',
+        calls: 187,
+        refusals: 35,
+        reasks: 3,
+        merged: 1,
+        released: 1,
+        mergedAt: '2026-11-13T05:48:08Z',
+        releasedAt: '2026-11-15T10:00:00Z',
+        minutes: 2347,
+    }),
+    Object.freeze({
+        tree: TREES[1],
+        origin: 'stand-quality-two',
+        epic: 3190,
+        from: '2026-11-11T14:38:55Z',
+        to: null,
+        calls: 6394,
+        refusals: 683,
+        reasks: 3,
+        merged: 0,
+        released: 0,
+        mergedAt: null,
+        releasedAt: null,
+        minutes: null,
+    }),
+]);
+
+/** Отметка сборки окон: после последнего их момента, как её ставит отправитель. */
+const WINDOW_STAMP = Date.parse('2026-11-16T00:00:00Z');
 
 /** Фикс и его повтор. Зовётся после шагов записей: фикс должен быть уже выпущен. */
 export async function seedQualityRepeat(sql) {
@@ -77,5 +172,8 @@ export async function seedQuality(intake, tokens) {
             stamp: 100,
             metrics: line.metrics,
         });
+    }
+    for (const { tree, ...window } of EPIC_WINDOWS) {
+        await intake('epic-windows', tokens.get(tree.slug), { schema: '2', tree: tree.slug, ...window, stamp: WINDOW_STAMP });
     }
 }

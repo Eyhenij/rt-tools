@@ -1,4 +1,4 @@
-<admin-list-page [hint]="hint()" [qaPrefix]="qaPrefix" [title]="title()">
+<admin-list-page [fit]="true" [hint]="hint()" [qaPrefix]="qaPrefix" [title]="title()">
     <ng-template adminListToolbarLeft>
         <admin-tree-filter [choices]="choices()" [tree]="query().tree" (treeChange)="changeTree($event)" />
         <admin-version-filter
