@@ -247,6 +247,9 @@ and no dead end over a working day — is read from the same numbers.
   those events exist, so the line prints a number; its usefulness metric is task RT-3283.
 - **The report takes a day of its own.** `--day YYYY-MM-DD` prints that day; the report for 13
   November is read by it.
+- **A report for a named day does not judge the dead rules, and says so.** A dead rule is judged over
+  30 days of records, and one day is no such period. The line names it in words, not as «нет
+  данных», and the JSON carries null as the metrics spec has it.
 - **Every new number of the day line has a key of the closed list, entered in the same change.** The
   receiver refuses a whole line with a key it does not know, so the list and the receiver move
   together. The keys, their units and how a day sums them:

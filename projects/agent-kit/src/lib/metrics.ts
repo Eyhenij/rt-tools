@@ -92,6 +92,8 @@ export interface IMetricsReport {
     readonly outside: readonly string[];
     /** Результат работы по записи хода и слияниям. Нет поля: отчёт собран без команды, для отправки. */
     readonly result?: IWorkResult;
+    /** Названный день отчёта: мёртвые правила за день не судятся, и строка говорит это словами. */
+    readonly day?: string;
 }
 
 export interface IMetricsOptions {
@@ -279,6 +281,9 @@ function topLines(lines: readonly string[]): readonly string[] {
 
 /** Мёртвые правила словами: без полного отрезка вместо числа стоит причина. */
 function deadRuleLines(report: IMetricsReport): readonly string[] {
+    if (report.deadRules === null && report.day) {
+        return [`мёртвые правила: за один день не судятся, они считаются за ${METRICS_DEFAULT_DAYS} дн. записей`];
+    }
     if (report.deadRules === null) {
         return [`мёртвые правила: нет данных, они считаются за ${METRICS_DEFAULT_DAYS} дн. записей`];
     }
@@ -408,6 +413,7 @@ export function metrics(env: IEnvironment, options: IMetricsOptions): IOutcomeOf
     const report: IMetricsReport = {
         ...counted,
         result: workResultOf(env.root, env.assetsDir, period.until, period.days, firstPass),
+        ...(options.day ? { day: options.day } : {}),
     };
 
     if (options.json) {

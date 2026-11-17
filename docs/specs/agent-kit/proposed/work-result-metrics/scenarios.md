@@ -112,6 +112,13 @@ Given observations of 12 and 13 November 2026
 When `agent-kit metrics --day 2026-11-13` is printed
 Then the report counts 13 November only
 
+### SC-AK-1656 — a report for a named day does not judge the dead rules
+
+Given observations of 12 November 2026
+When `agent-kit metrics --day 2026-11-12` is printed as text and as JSON
+Then the text reads «мёртвые правила: за один день не судятся, они считаются за 30 дн. записей», the
+list of metrics with no signal does not name the dead rules, and the JSON carries null for them
+
 ## The numbers
 
 ### SC-AK-1616 — idle time runs from a refusal to the next tree change

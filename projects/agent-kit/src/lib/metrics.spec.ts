@@ -181,6 +181,20 @@ describe('metrics', () => {
         expect(readdirSync(join(root, OBSERVATIONS_DIR))).toContain('2026-08-11.jsonl');
     });
 
+    it('SC-AK-1656 — отчёт за названный день мёртвые правила не судит и говорит это словами', () => {
+        observed('2026-08-12');
+
+        const text: readonly string[] = metrics(env, { days: 30, json: false, today: '2026-08-14', day: '2026-08-12' }).lines;
+        const parsed: IMetricsReport = JSON.parse(metrics(env, { days: 30, json: true, today: '2026-08-14', day: '2026-08-12' }).lines[0]);
+
+        expect(text).toContain('мёртвые правила: за один день не судятся, они считаются за 30 дн. записей');
+        // положительная пара: строка мёртвых правил одна, и «нет данных» она не пишет
+        expect(text.filter((one: string): boolean => one.startsWith('мёртвые правила:'))).toHaveLength(1);
+        expect(text.filter((one: string): boolean => one.startsWith('мёртвые правила:') && one.includes('нет данных'))).toEqual([]);
+        expect(text.find((one: string): boolean => one.startsWith('нет данных:'))).not.toContain('Мёртвые правила');
+        expect(parsed.deadRules).toBeNull();
+    });
+
     it('SC-AK-1295 — без конфига отчёт отказывает', () => {
         rmSync(join(root, CONFIG_PATH));
 
