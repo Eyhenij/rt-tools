@@ -3,7 +3,16 @@ import { describe, expect, it } from 'vitest';
 
 import { OPERATION_ACCESS, OPERATION_RIGHT } from '@rt/message-bus-api/access/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
-import { IQualityReport, IUsageDigest, IUsagePage, IUsageRow, IUsageSessionRow } from '@rt/message-bus-common';
+import {
+    EQualityEpicState,
+    EQualityMilestone,
+    EQualityResultTile,
+    IQualityReport,
+    IUsageDigest,
+    IUsagePage,
+    IUsageRow,
+    IUsageSessionRow,
+} from '@rt/message-bus-common';
 
 import { UsageReadController } from './usage-read.controller';
 
@@ -250,6 +259,39 @@ describe('UsageReadController — раздел «Качество»', () => {
         expect(report.rows[0]).toMatchObject({ resource: 'one-guard', empty: 3, loss: 3 });
         expect(report).toMatchObject({ total: 1, page: 1, size: 20 });
         expect(report.completeness).toMatchObject({ enrolled: 1, sent: 1 });
+    });
+
+    it('SC-MB-442 — ответ несёт плитки результата, веху дня, пары и окно эпика периода', async () => {
+        const line: unknown = {
+            day: '2026-11-05',
+            version: '0.37.0',
+            metrics: { calls: 187, refusalsHook: 35, reasks: 3, 'refusalPairs:grill-gate:skill-gate': 2 },
+            tree: { slug: 'own-tree', name: 'Своё' },
+        };
+        const window: unknown = {
+            origin: 'copy-1',
+            epic: 3227,
+            openedAt: new Date('2026-11-05T00:34:01Z'),
+            closedAt: new Date('2026-11-05T03:04:27Z'),
+            calls: 187,
+            refusals: 35,
+            reasks: 3,
+            mergedAt: new Date('2026-11-05T05:48:08Z'),
+            releasedAt: null,
+            minutes: 2347,
+            tree: { slug: 'own-tree', name: 'Своё' },
+        };
+        const report: IQualityReport = await new UsageReadController(storage([line], [window])).quality(
+            { from: '2026-11-01', to: '2026-11-07' },
+            NOW
+        );
+
+        expect(report.result.tiles[EQualityResultTile.Reasks]).toEqual({ value: 3, missing: 0 });
+        expect(report.milestones).toEqual([{ day: '2026-11-05', milestone: EQualityMilestone.Missed }]);
+        expect(report.pairs).toEqual([{ first: 'grill-gate', second: 'skill-gate', count: 2 }]);
+        expect(report.epicWindows).toEqual([
+            expect.objectContaining({ epic: 3227, calls: 187, refusals: 35, reasks: 3, state: EQualityEpicState.NotReleased }),
+        ]);
     });
 
     it('SC-AK-1325 — ни одной строки: экран узнаёт об этом полем', async () => {
