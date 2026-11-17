@@ -202,6 +202,20 @@ export const METRIC_KEYS: readonly string[] = [
     'outcomesUnread',
     'sendFault',
     'settingsChanged',
+    'calls',
+    'refusalsHook',
+    'refusalsPermission',
+    'refusalsStop',
+    'idleMinutes',
+    'reasks',
+    'interrupts',
+    'ownerWords',
+    'goalNotMet',
+    'deadEnds',
+    'tasksMerged',
+    'tasksTimed',
+    'takenMinutes',
+    'recordLinesSkipped',
 ];
 
 /** Числа строки дня по ресурсу пакета или роду шага: ключ пишется `<основа>:<имя>`. */
@@ -220,7 +234,15 @@ export const METRIC_RESOURCE_KEYS: readonly string[] = [
     'runSeconds',
     'wastedRuns',
     'wastedSeconds',
+    'recordRefusals',
 ];
+
+/**
+ * Числа строки дня по паре ресурсов: ключ пишется `<основа>:<первое>:<второе>`. Каждая половина судится
+ * формой имени ресурса: разделитель внутри одного имени вышел бы из его алфавита, а два длинных имени не
+ * влезли бы в одно имя.
+ */
+export const METRIC_PAIR_KEYS: readonly string[] = ['refusalPairs'];
 
 /** Предел ключей одной строки дня: ресурсов пакета сотни, а не тысячи. */
 export const METRIC_KEYS_CAP: number = 2000;
@@ -246,7 +268,14 @@ export function isMetricKey(key: string): boolean {
         return METRIC_KEYS.includes(key);
     }
 
-    return METRIC_RESOURCE_KEYS.includes(key.slice(0, at)) && METRIC_RESOURCE_NAME.test(key.slice(at + 1));
+    const base: string = key.slice(0, at);
+    const names: readonly string[] = key.slice(at + 1).split(':');
+
+    if (METRIC_PAIR_KEYS.includes(base)) {
+        return names.length === 2 && names.every((name: string): boolean => METRIC_RESOURCE_NAME.test(name));
+    }
+
+    return METRIC_RESOURCE_KEYS.includes(base) && names.length === 1 && METRIC_RESOURCE_NAME.test(names[0]);
 }
 
 /** Признак копии в строке дня. */

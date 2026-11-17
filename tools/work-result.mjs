@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/work-result.mjs · 19f6a2a01856 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/work-result.mjs · cd118831507d · правится надстройкой, не здесь
 /**
  * The lines of the work result for the report, counted from the observations of the tree by the same
  * functions the hook at the end of a turn and the reading of merges use: the events of the records,
@@ -100,6 +100,7 @@ export function dayResult(observations, events, day, firstCounted = firstCounted
         calls,
         refusals: refusals.length,
         refusalsPer100: share(refusals.length, calls),
+        byKind: count(refusals, (e) => e.kind || 'hook'),
         byCheck: Object.fromEntries(byCountThenName(Object.entries(byCheck)).map(([name, n]) => [name, { refusals: n, per100: share(n, calls) }])),
         pairs: Object.fromEntries(byCountThenName(Object.entries(count(pairsOf(events).filter(onDay(day)), (p) => `${p.first} → ${p.second}`)))),
         idleMinutes: idleOf(events).filter((s) => s.day === day).reduce((sum, s) => sum + s.minutes, 0),

@@ -13,6 +13,7 @@ import { guardsOf, IGuardMetric, IRunMetric, runsOf } from './metrics.js';
 import { IObservation } from './observations.js';
 import { OWN_RESOURCE, packaged } from './observations-cargo.js';
 import { IOutcomeMetric, outcomeMetricOf } from './outcomes.js';
+import { IWorkResultCheck, IWorkResultDay } from './work-result.js';
 
 type TMetrics = Record<string, number>;
 
@@ -111,6 +112,58 @@ function loadNumbers(metrics: TMetrics, observations: readonly IObservation[], u
     }
 }
 
+/** Разделитель пары в числах дня: `первая → вторая`. */
+const PAIR_SEPARATOR: string = ' → ';
+
+/** Ключ строки дня и поле дня результата, из которого он берётся. */
+const RECORD_KEYS: Readonly<Record<string, keyof IWorkResultDay>> = {
+    calls: 'calls',
+    idleMinutes: 'idleMinutes',
+    reasks: 'reasks',
+    interrupts: 'interrupts',
+    ownerWords: 'ownerWords',
+    deadEnds: 'deadEnds',
+};
+
+/** Ключ строки дня и класс отказа записи. */
+const REFUSAL_CLASS_KEYS: Readonly<Record<string, string>> = {
+    refusalsHook: 'hook',
+    refusalsPermission: 'permission',
+    refusalsStop: 'stop',
+};
+
+/** Числа записи хода: только у дня с записью, день до счётчика их не несёт. */
+function recordNumbers(metrics: TMetrics, day: IWorkResultDay, assets: readonly IAsset[]): void {
+    for (const [key, field] of Object.entries(RECORD_KEYS)) {
+        add(metrics, key, Number(day[field] ?? 0));
+    }
+    for (const [key, kind] of Object.entries(REFUSAL_CLASS_KEYS)) {
+        add(metrics, key, day.byKind?.[kind] ?? 0);
+    }
+    const checks: [string, IWorkResultCheck][] = Object.entries(day.byCheck ?? {});
+
+    for (const [check, counted] of checks) {
+        add(metrics, `recordRefusals:${nameOf(check, assets)}`, counted.refusals);
+    }
+    for (const [pair, count] of Object.entries(day.pairs ?? {})) {
+        const [first, second]: string[] = pair.split(PAIR_SEPARATOR);
+
+        add(metrics, `refusalPairs:${nameOf(first, assets)}:${nameOf(second, assets)}`, count);
+    }
+}
+
+/** Результат работы дня: слияния и вердикты есть у любого дня, числа записи — у дня с записью. */
+function resultNumbers(metrics: TMetrics, day: IWorkResultDay, assets: readonly IAsset[]): void {
+    add(metrics, 'tasksMerged', day.tasksMerged);
+    add(metrics, 'tasksTimed', day.tasksTimed);
+    add(metrics, 'takenMinutes', day.takenMinutes);
+    add(metrics, 'goalNotMet', day.goalNotMet);
+    add(metrics, 'recordLinesSkipped', day.skipped);
+    if (day.recorded) {
+        recordNumbers(metrics, day, assets);
+    }
+}
+
 function factNumbers(metrics: TMetrics, facts: ITreeFacts): void {
     add(metrics, 'rulesLaidOut', facts.rulesLaidOut);
     add(metrics, 'rulesDead', facts.rulesDead ?? 0);
@@ -128,7 +181,12 @@ function factNumbers(metrics: TMetrics, facts: ITreeFacts): void {
  * Последний фильтр не сторож, а граница: ключ, не прошедший проверку, отказал бы у приёмника всю
  * строку, и один странный род запуска стоил бы дереву целого дня.
  */
-export function dayMetrics(observations: readonly IObservation[], assets: readonly IAsset[], facts: ITreeFacts | null): Readonly<TMetrics> {
+export function dayMetrics(
+    observations: readonly IObservation[],
+    assets: readonly IAsset[],
+    facts: ITreeFacts | null,
+    result: IWorkResultDay | null = null
+): Readonly<TMetrics> {
     const metrics: TMetrics = {};
     const usage: IUsageMetric = usageOf(observations);
 
@@ -143,6 +201,9 @@ export function dayMetrics(observations: readonly IObservation[], assets: readon
     loadNumbers(metrics, observations, usage, assets);
     if (facts) {
         factNumbers(metrics, facts);
+    }
+    if (result) {
+        resultNumbers(metrics, result, assets);
     }
 
     return Object.fromEntries(

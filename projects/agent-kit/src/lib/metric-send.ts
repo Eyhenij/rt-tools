@@ -24,6 +24,7 @@ import { ILeak, leaksIn } from './proposals.js';
 import { IShipped, readToken, TShip } from './ship.js';
 import { packageSections, treeSnapshot } from './snapshot.js';
 import { treeSlugOf } from './tree-mark.js';
+import { IWorkResultDay, workResultOf } from './work-result.js';
 
 /** Копия пробует не чаще: проверки срабатывают сотнями за сессию. */
 export const SEND_EVERY_MS: number = 15 * 60 * 1000;
@@ -202,6 +203,8 @@ async function shipLines(work: ISendWork, mark: ISendMark, today: string): Promi
 
     for (const day of windowDays(names, mark.day, today)) {
         const observations: readonly IObservation[] = dayOf(env.root, day);
+        // Числа записи хода и слияний считает тот же подсчёт, что и отчёт: второй счёт разошёлся бы молча.
+        const result: IWorkResultDay | null = workResultOf(env.root, env.assetsDir, day, 1, null).days?.[0] ?? null;
         const cargo: IMetricsDayCargo = {
             tree,
             origin,
@@ -209,7 +212,7 @@ async function shipLines(work: ISendWork, mark: ISendMark, today: string): Promi
             schema: CARGO_SCHEMA_VERSION,
             version: versionOfDay(observations, env.version),
             stamp: options.now.getTime(),
-            metrics: dayMetrics(observations, assets, day === today ? fresh : (mark.factsByDay[day] ?? null)),
+            metrics: dayMetrics(observations, assets, day === today ? fresh : (mark.factsByDay[day] ?? null), result),
         };
         const shipped: IShipped = await shipLine(work, cargo);
 

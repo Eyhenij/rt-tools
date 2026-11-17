@@ -99,6 +99,7 @@ export function dayResult(observations, events, day, firstCounted = firstCounted
         calls,
         refusals: refusals.length,
         refusalsPer100: share(refusals.length, calls),
+        byKind: count(refusals, (e) => e.kind || 'hook'),
         byCheck: Object.fromEntries(byCountThenName(Object.entries(byCheck)).map(([name, n]) => [name, { refusals: n, per100: share(n, calls) }])),
         pairs: Object.fromEntries(byCountThenName(Object.entries(count(pairsOf(events).filter(onDay(day)), (p) => `${p.first} → ${p.second}`)))),
         idleMinutes: idleOf(events).filter((s) => s.day === day).reduce((sum, s) => sum + s.minutes, 0),

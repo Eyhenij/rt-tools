@@ -8,12 +8,41 @@ import { join } from 'node:path';
 
 import { OBSERVATIONS_DIR } from './observations.js';
 
-/** Числа одного дня: их несёт JSON отчёта. */
-export type TWorkResultDay = Readonly<Record<string, unknown>>;
+/** Отказы одной проверки за день. */
+export interface IWorkResultCheck {
+    readonly refusals: number;
+    readonly per100: number;
+}
+
+/**
+ * Числа одного дня: их несёт JSON отчёта и строка дня. Числа записи хода есть только у дня с записью:
+ * ноль там читался бы как спокойный день.
+ */
+export interface IWorkResultDay {
+    readonly day: string;
+    readonly recorded: boolean;
+    readonly beforeCounter: boolean;
+    readonly skipped: number;
+    readonly goalNotMet: number;
+    readonly tasksMerged: number;
+    readonly tasksTimed: number;
+    readonly takenMinutes: number;
+    readonly calls?: number;
+    readonly refusals?: number;
+    readonly byKind?: Readonly<Record<string, number>>;
+    readonly byCheck?: Readonly<Record<string, IWorkResultCheck>>;
+    /** Пары отказов под ключом `первая → вторая`. */
+    readonly pairs?: Readonly<Record<string, number>>;
+    readonly idleMinutes?: number;
+    readonly reasks?: number;
+    readonly interrupts?: number;
+    readonly ownerWords?: number;
+    readonly deadEnds?: number;
+}
 
 export interface IWorkResult {
     /** Числа по дням. `null`: подсчёт оборвался, и строки говорят об этом. */
-    readonly days: readonly TWorkResultDay[] | null;
+    readonly days: readonly IWorkResultDay[] | null;
     readonly lines: readonly string[];
 }
 
@@ -27,7 +56,7 @@ const HEAD_LINES: number = 2;
 const MAX_BUFFER: number = 256 * 1024 * 1024;
 
 interface IScriptAnswer {
-    readonly result: { readonly days: readonly TWorkResultDay[] };
+    readonly result: { readonly days: readonly IWorkResultDay[] };
     readonly lines: readonly string[];
 }
 
