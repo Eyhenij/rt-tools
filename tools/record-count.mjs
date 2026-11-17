@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/record-count.mjs · 9955c729b114 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/record-count.mjs · 331cba2125d5 · правится надстройкой, не здесь
 /**
  * The counter of a session record: what the owner said and what the agent was refused, read from the
  * conversation record Claude Code keeps per session.
@@ -214,7 +214,8 @@ export const taskOf = (branch) => (branch ? (branch.match(/^([A-Z]+-\d+)(?:-|$)/
  *   call       a call of the agent (`tool`)
  *   ok         a call whose result came back without an error
  *   refusal    a refusal (`kind`, `check`)
- *   change     a change of the tree: a successful edit or write of a file, or a successful commit
+ *   change     a change of the tree: a successful edit or write of a file, or a successful commit;
+ *              `analysis` when the file is an incident analysis
  *   word       a word of the owner (`kind`: typed or queued)
  *   menu       an answer of the owner chosen in a menu
  *   interrupt  an entry where the owner interrupted a turn or a call
@@ -223,6 +224,9 @@ export const taskOf = (branch) => (branch ? (branch.match(/^([A-Z]+-\d+)(?:-|$)/
  * Each event carries `at`, `session` and `branch`; `answered` on a menu answer is the task of the
  * question it answers.
  */
+/** The path of an incident analysis: a file under a directory named so, or the word the cut keeps for it. */
+const ANALYSIS_PATH = /(^|\/)postmortems(\/|$)/;
+
 export function eventsOf(entries) {
     const list = unique(entries).filter(mainThread);
     const results = new Map();
@@ -244,7 +248,10 @@ export function eventsOf(entries) {
                 const failed = results.get(part.id) === true;
                 const edit = EDIT_TOOLS.has(part.name);
                 const commit = part.name === 'Bash' && COMMIT_COMMAND.test(String(part.input?.command ?? ''));
-                if (!failed && (edit || commit)) out.push({ ...where, ev: 'change' });
+                if (!failed && (edit || commit)) {
+                    const analysis = edit && ANALYSIS_PATH.test(String(part.input?.file_path ?? ''));
+                    out.push({ ...where, ev: 'change', ...(analysis ? { analysis: true } : {}) });
+                }
                 if (part.name === 'AskUserQuestion') {
                     askTask.set(part.id, taskOf(where.branch));
                     const questions = Array.isArray(part.input?.questions) ? part.input.questions : [];

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/record-turn.mjs · da1f51eb54d4 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/record-turn.mjs · 4f819d304ccd · правится надстройкой, не здесь
 /**
  * The count of one turn of a session record, written as observations. The hook at the end of a turn
  * and at the end of a session calls it; so does the recount of a past day.
@@ -100,6 +100,7 @@ export function observationsOf(entries, { sid, patterns, version, seen = new Set
         if (task) line.task = task;
         for (const key of ['kind', 'check', 'tool']) if (e[key] !== undefined && e[key] !== null) line[key] = clean(e[key]);
         if (e.ev === 'ask' && e.reask) line.reask = '1';
+        if (e.ev === 'change' && e.analysis) line.analysis = '1';
         if (e.ev === 'menu' && e.answered) line.answered = clean(e.answered);
         if (e.ev === 'word' && corrected.has(`${e.session}|${e.at}|${e.kind}`)) line.corr = '1';
         line.sid = sid;
