@@ -96,6 +96,19 @@ export interface IMetricsOptions {
     /** Сегодняшний день, `ГГГГ-ММ-ДД`. Приходит с края: команду со своими часами не проверить. */
     readonly today: string;
     readonly json: boolean;
+    /** Один день отчёта, `ГГГГ-ММ-ДД`: отчёт считает только его. */
+    readonly day?: string;
+}
+
+/** Отрезок отчёта: последний день и число дней. Названный день — отрезок из одного дня. */
+export interface IMetricsPeriod {
+    readonly until: string;
+    readonly days: number;
+}
+
+/** Отрезок, который читает отчёт: названный день или дни до сегодняшнего. */
+export function periodOf(options: IMetricsOptions): IMetricsPeriod {
+    return options.day ? { until: options.day, days: 1 } : { until: options.today, days: options.days };
 }
 
 /** Метрики, которые появятся с новыми событиями. */
@@ -392,12 +405,14 @@ export function metrics(env: IEnvironment, options: IMetricsOptions): IOutcomeOf
     }
 
     const read: EOutcomesRead = collectOutcomes(env.root, options.today, env.version);
-    const result: IReadResult = readObservations(env.root, options.today, options.days);
-    const report: IMetricsReport = reportOf(env, config, options.today, result, options.days, read);
+    const period: IMetricsPeriod = periodOf(options);
+    // Названный день читается без чистки: срок хранения отсчитывается от сегодняшнего дня, не от него.
+    const result: IReadResult = readObservations(env.root, period.until, period.days, !options.day);
+    const report: IMetricsReport = reportOf(env, config, period.until, result, period.days, read);
 
     if (options.json) {
         return { code: 0, lines: [JSON.stringify(report)] };
     }
 
-    return { code: 0, lines: noObservationLines(result, options.days) ?? metricsLines(report) };
+    return { code: 0, lines: noObservationLines(result, period.days) ?? metricsLines(report) };
 }

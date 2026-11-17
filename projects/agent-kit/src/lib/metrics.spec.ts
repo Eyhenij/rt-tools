@@ -371,6 +371,19 @@ describe('metrics', () => {
         expect(said(report())).toContain(`  и ещё ${dead - 8}`);
     });
 
+    it('SC-AK-1644 — отчёт за названный день считает только его', () => {
+        observed('2026-08-11');
+        observed('2026-08-12');
+
+        const outcome: IOutcomeOfCommand = metrics(env, { days: 30, json: true, today: '2026-08-14', day: '2026-08-12' });
+        const parsed: IMetricsReport = JSON.parse(outcome.lines[0]);
+
+        expect(parsed.days).toBe(1);
+        expect(parsed.daysRead).toEqual(['2026-08-12']);
+        expect(parsed.refusals).toBe(1);
+        expect(readdirSync(join(root, OBSERVATIONS_DIR))).toContain('2026-08-11.jsonl');
+    });
+
     it('SC-AK-1295 — без конфига отчёт отказывает', () => {
         rmSync(join(root, CONFIG_PATH));
 

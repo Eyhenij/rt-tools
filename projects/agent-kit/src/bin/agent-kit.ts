@@ -47,6 +47,7 @@ const USAGE: readonly string[] = [
     '  metrics         метрики дерева: отказы, повторы, мёртвые правила, вес входа',
     '  metrics --days N  за сколько дней; без довода — за тридцать',
     '  metrics --json  то же машиночитаемо',
+    '  metrics --day YYYY-MM-DD  только этот день',
     '  recount --day YYYY-MM-DD   пересчитать прошлый день по сохранённым записям разговоров дерева',
     '  recount --days N  то же за N дней по вчерашний; повторный пересчёт заменяет прошлый',
     '  send            отправить строки дня: только числа, без разборов и предложений',
@@ -311,6 +312,7 @@ function runStats(env: IEnvironment, argv: readonly string[]): IOutcomeOfCommand
         // отрезок не проверить спекой — вчерашняя фикстура завтра станет позавчерашней.
         today: new Date().toISOString().slice(0, 10),
         json: argv.includes('--json'),
+        day: optionOf(argv, '--day', '') || undefined,
     });
 }
 
