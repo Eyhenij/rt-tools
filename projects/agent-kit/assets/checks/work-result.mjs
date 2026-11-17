@@ -144,6 +144,17 @@ export function resultOf(observations, days, { publishes = true } = {}) {
 
 const hours = (minutes) => (minutes / 60).toFixed(1);
 
+/** Milestone G: fewer than this many refusals per hundred calls; exactly this many is not reached. */
+const MILESTONE_G_LIMIT = 5;
+
+/** The milestone G words of a day. A day with no call is not judged. */
+export function milestoneOf(d) {
+    if (!d.calls) return 'веха G: вызовов нет';
+    const reached = d.refusalsPer100 < MILESTONE_G_LIMIT && d.deadEnds === 0;
+    const verdict = reached ? 'достигнута' : 'не достигнута';
+    return `веха G: отказов ${d.refusalsPer100.toFixed(2)} на сто (порог ${MILESTONE_G_LIMIT}), тупиков ${d.deadEnds} — ${verdict}`;
+}
+
 /** A moment of a line: the time alone inside a one-day report, the date with it otherwise. */
 const momentOf = (t, days) => {
     const time = String(t).slice(11, 16);
@@ -190,6 +201,7 @@ export function linesOf(result) {
     for (const d of result.days) for (const [task, n] of Object.entries(d.goalNotMetByTask)) verdicts[task] = (verdicts[task] ?? 0) + n;
     lines.push(`  Цель не достигнута: ${sum('goalNotMet')}`);
     for (const [task, n] of byCountThenName(Object.entries(verdicts))) lines.push(`    ${task}: ${n}`);
+    for (const d of result.days) lines.push(result.days.length === 1 ? `  ${milestoneOf(d)}` : `  ${d.day} ${milestoneOf(d)}`);
     lines.push('  Повторы ошибок: считается в приёмнике');
     return lines;
 }

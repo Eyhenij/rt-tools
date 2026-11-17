@@ -368,6 +368,38 @@ describe('результат работы в отчёте', () => {
         expect(text).toContain('    окно 10:00–открыто: отказов 0 из 0, переспросили 0');
     });
 
+    it('SC-AK-1626 — строка вехи G на каждый день периода', () => {
+        const spread: (day: string, n: number) => TEntry[] = (day: string, n: number): TEntry[] =>
+            Array.from({ length: n }, (_: unknown, i: number): TEntry => refusal(day, 1000 * (i + 1) + 5, `check-${i}`));
+
+        recorded('2026-08-11', [...calls('2026-08-11', 100), ...spread('2026-08-11', 4)]);
+        recorded(TODAY, [...calls(TODAY, 100), ...spread(TODAY, 6)]);
+
+        const text: readonly string[] = metrics(env, { days: 2, json: false, today: TODAY }).lines;
+
+        expect(text).toContain('  2026-08-11 веха G: отказов 4.00 на сто (порог 5), тупиков 0 — достигнута');
+        expect(text).toContain('  2026-08-12 веха G: отказов 6.00 на сто (порог 5), тупиков 0 — не достигнута');
+    });
+
+    it('SC-AK-1637 — ровно пять отказов на сто вызовов вехой не считается', () => {
+        recorded(TODAY, [
+            ...calls(TODAY, 200),
+            ...Array.from({ length: 10 }, (_: unknown, i: number): TEntry => refusal(TODAY, 150 * (i + 1) + 5, `check-${i}`)),
+        ]);
+
+        expect(ofDay(false).lines).toContain('  веха G: отказов 5.00 на сто (порог 5), тупиков 0 — не достигнута');
+    });
+
+    it('SC-AK-1638 — день без вызовов вехой не судится', () => {
+        recorded('2026-08-11', calls('2026-08-11', 2));
+        recorded(TODAY, [{ t: at(TODAY, 100), ev: 'task-merged', task: 'RT-5', opens: '1', epic: 'RT-4' }]);
+
+        const text: readonly string[] = ofDay(false).lines;
+
+        expect(text).toContain('  Задачи слиты: 1, с видимым взятием 0, от взятия 0.0 ч');
+        expect(text).toContain('  веха G: вызовов нет');
+    });
+
     it('SC-AK-1642 — отчёт дня называет пропущенные строки записи', () => {
         recorded(TODAY, [...calls(TODAY, 2), { t: at(TODAY, 30), ev: 'record-skip', n: '1', sid: 's1' }]);
 
