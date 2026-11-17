@@ -68,3 +68,19 @@ rt_admin_e2e_step() {
 
     printf '%s -- %s\n' "$full" "$specs"
 }
+
+# The paths a step of the set reads, for the steps the table of reads does not record: a line per
+# path. The metrics report counts a run idle when the change touched none of them.
+#
+# The package hook scenarios read the hooks, the checks and the scenarios of the package, not the
+# whole package: a branch that edits only the library code, a README or a spec runs them for
+# nothing, eleven to nineteen minutes a run. The heavy steps of `rt_push_checks` are printed only for
+# a branch that touched their subject, so their subject is the whole tree. A step named here by
+# nothing has no subject of paths, and the report says so.
+rt_push_subject() {
+    case "$1" in
+        *'nx affected -t test-hooks'*) printf '%s\n' projects/agent-kit/assets projects/agent-kit/tests ;;
+        *e2e* | *visual-gate* | *'docker build'* | *serve:auth*) printf '.\n' ;;
+    esac
+    return 0
+}
