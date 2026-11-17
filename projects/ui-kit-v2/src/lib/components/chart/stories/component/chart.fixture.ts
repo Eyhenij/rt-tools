@@ -19,6 +19,9 @@ const RESTAURANT: string = 'Ресторан';
 /** Листья дерева прямоугольников в порядке палитры. */
 const TREEMAP_LEAVES: readonly string[] = [ROOMS, 'Апартаменты', 'Виллы', RESTAURANT, 'Спа', 'Трансфер'];
 
+/** Номера цветов палитры у листьев дерева по макету: шестой лист берёт седьмой цвет, а не зелёный шестой. */
+const TREEMAP_COLORS: readonly number[] = [0, 1, 2, 3, 4, 6];
+
 /** Группы солнечных лучей в порядке палитры. */
 const SUNBURST_GROUPS: readonly string[] = [ROOMS, RESTAURANT, 'Услуги'];
 
@@ -307,14 +310,14 @@ export const CHART_CASES: readonly IChartStoryCase[] = [
                             children: [
                                 { name: RESTAURANT, value: 15, itemStyle: { color: palette[3] } },
                                 { name: 'Спа', value: 8, itemStyle: { color: palette[4] } },
-                                { name: 'Трансфер', value: 7, itemStyle: { color: palette[5] } },
+                                { name: 'Трансфер', value: 7, itemStyle: { color: palette[TREEMAP_COLORS[5]] } },
                             ],
                         },
                     ],
                 },
                 ...TREEMAP_LEAVES.map((name: string, index: number): EChartsCoreOption => ({
                     ...legendOnly(name),
-                    color: palette[index],
+                    color: palette[TREEMAP_COLORS[index]],
                 })),
             ],
         }),

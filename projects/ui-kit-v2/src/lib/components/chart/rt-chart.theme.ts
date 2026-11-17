@@ -88,6 +88,8 @@ export function rtChartTheme(colors: IRtChartColors): ThemeOption {
         },
         line: { symbol: 'none', lineStyle: { width: LINE_WIDTH } },
         bar: { barMaxWidth: BAR_MAX_WIDTH },
+        // Точки сплошные: у `echarts` по умолчанию прозрачность 0.8, и значок легенды бледнеет вместе с ними.
+        scatter: { itemStyle: { opacity: 1 } },
         // Швы между секторами и прямоугольниками — цвет подложки, а не белый по умолчанию: на
         // тёмной поверхности белый шов читается как ещё одна фигура.
         pie: {
