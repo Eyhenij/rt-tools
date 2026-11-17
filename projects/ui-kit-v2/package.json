@@ -19,12 +19,20 @@
     "@angular/forms": "^22.0.0",
     "@angular/platform-browser": "^22.0.0",
     "@angular/router": "^22.0.0",
+    "echarts": "^6.1.0",
+    "ngx-echarts": "^22.0.0",
     "pdfjs-dist": "^6.4.299",
     "quill": "^2.0.3",
     "rxjs": "^7.8.2",
     "typescript": "^6.0.0"
   },
   "peerDependenciesMeta": {
+    "echarts": {
+      "optional": true
+    },
+    "ngx-echarts": {
+      "optional": true
+    },
     "pdfjs-dist": {
       "optional": true
     },

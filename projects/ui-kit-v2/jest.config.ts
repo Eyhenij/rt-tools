@@ -16,8 +16,9 @@ export default {
     },
     // @jsverse/utils — зависимость transloco — отдаёт ESM в файле с расширением .js,
     // и по умолчанию он ушёл бы в Node нетронутым: `Unexpected token 'export'` на
-    // первом же импорте transloco. Гоним его через тот же трансформ.
-    transformIgnorePatterns: ['node_modules/(?!(?:.*\\.mjs$|.*@jsverse.*))'],
+    // первом же импорте transloco. Гоним его через тот же трансформ. echarts и zrender, на
+    // которых стоит график кита, тоже отдают ESM в файлах .js.
+    transformIgnorePatterns: ['node_modules/(?!(?:.*\\.mjs$|.*@jsverse.*|.*/(?:echarts|zrender)/))'],
     snapshotSerializers: [
         'jest-preset-angular/build/serializers/no-ng-attributes',
         'jest-preset-angular/build/serializers/ng-snapshot',
