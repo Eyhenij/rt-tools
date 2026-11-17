@@ -265,10 +265,10 @@ taking, and no day line carries it
 
 ### SC-AK-1625 — a series the executor could not leave is a dead end
 
-Given a series of three hook refusals of one check followed by an owner message, and a series of
-twelve stop refusals of one check followed by a tree change with no owner message
+Given three refusals of one check with an owner message between the second and the third, and in
+another session three refusals of one check followed by a tree change with no owner message
 When the day is counted
-Then one dead end is counted
+Then one dead end is counted, the first
 
 ### SC-AK-1654 — the dead end of 13 November is counted on the cut
 

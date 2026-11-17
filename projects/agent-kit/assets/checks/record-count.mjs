@@ -6,6 +6,13 @@
  *   calls(entries)         the calls of the agent in the main thread: { id, at, session, branch, tool }
  *   refusals(entries)      the refusals, oldest first: { at, session, branch, kind, check }
  *   checkOf(text)          the check a refusal text names, by the table below
+ *   pairs(entries)         ordered pairs of different checks refusing one after another: { first, second, at, session }
+ *   interrupts(entries)    the entries where the owner interrupted a turn: { at, session }
+ *   corrections(entries, patterns)  the owner's words the set of correction patterns matches
+ *
+ * A pair is two refusals of different checks with no successful call between them in one session;
+ * a repeat of the same check is not a pair. The set of correction patterns is passed in by the caller
+ * from the hook that declares it, so the two never hold copies of their own.
  *
  * A refusal is one of three classes, told by the first line of the result. A hook refused a call
  * before it ran (`hook`), the permission mode turned it down (`permission`), or a hook at the end of a
@@ -188,4 +195,207 @@ export function ownerWords(entries) {
         words.push({ ...word, at: entry.timestamp ?? entry.attachment?.timestamp ?? null, session });
     }
     return words;
+}
+
+/** Whether a user entry carries a successful result of a call. */
+const succeeded = (entry) =>
+    Array.isArray(entry?.message?.content) && entry.message.content.some((part) => part?.type === 'tool_result' && part.is_error !== true);
+
+/** Ordered pairs of different checks refusing one after another, with no successful call between. */
+export function pairs(entries) {
+    const list = unique(entries).filter(mainThread);
+    const out = [];
+    const last = new Map();
+    for (const entry of list) {
+        const session = entry.sessionId ?? null;
+        if (entry.type !== 'user') continue;
+        const here = refusals([entry]);
+        if (here.length === 0) {
+            if (succeeded(entry)) last.delete(session);
+            continue;
+        }
+        for (const refusal of here) {
+            const before = last.get(session);
+            if (before && before !== refusal.check) out.push({ first: before, second: refusal.check, at: refusal.at, session });
+            last.set(session, refusal.check);
+        }
+    }
+    return out;
+}
+
+const INTERRUPT = /^\[Request interrupted/;
+
+/** The entries where the owner interrupted a turn or a call. */
+export function interrupts(entries) {
+    const out = [];
+    for (const entry of unique(entries)) {
+        if (entry?.type !== 'user' || !mainThread(entry)) continue;
+        const content = entry.message?.content;
+        const texts =
+            typeof content === 'string'
+                ? [content]
+                : Array.isArray(content)
+                  ? content.map((part) => (part?.type === 'tool_result' ? resultText(part.content) : (part?.text ?? '')))
+                  : [];
+        if (texts.some((text) => INTERRUPT.test(text.trimStart()))) out.push({ at: entry.timestamp ?? null, session: entry.sessionId ?? null });
+    }
+    return out;
+}
+
+/** The owner's words the set of correction patterns matches, a message queued during a turn included. */
+export function corrections(entries, patterns) {
+    const pattern = new RegExp(patterns, 'iu');
+    return ownerWords(entries).filter((word) => pattern.test(word.text));
+}
+
+/** The tools whose successful call changes a file of the tree. */
+const EDIT_TOOLS = new Set(['Edit', 'Write', 'MultiEdit', 'NotebookEdit']);
+const COMMIT_COMMAND = /\bgit\b(?:\s+-c\s+\S+)*\s+commit\b/;
+
+/** The ids of the calls whose result came back as an error. */
+const failedIds = (entries) => {
+    const failed = new Set();
+    for (const entry of entries) {
+        if (!Array.isArray(entry?.message?.content)) continue;
+        for (const part of entry.message.content) if (part?.type === 'tool_result' && part.is_error === true) failed.add(part.tool_use_id);
+    }
+    return failed;
+};
+
+/** The changes of the tree: a successful edit or write of a file, or a successful commit. */
+export function treeChanges(entries) {
+    const list = unique(entries);
+    const failed = failedIds(list);
+    const out = [];
+    for (const entry of list) {
+        if (entry?.type !== 'assistant' || !mainThread(entry) || !Array.isArray(entry.message?.content)) continue;
+        for (const part of entry.message.content) {
+            if (part?.type !== 'tool_use' || failed.has(part.id)) continue;
+            const edit = EDIT_TOOLS.has(part.name);
+            const commit = part.name === 'Bash' && COMMIT_COMMAND.test(String(part.input?.command ?? ''));
+            if (edit || commit) out.push({ at: entry.timestamp ?? null, session: entry.sessionId ?? null });
+        }
+    }
+    return out;
+}
+
+const minutesBetween = (from, to) => Math.max(0, Math.round((Date.parse(to) - Date.parse(from)) / 60000));
+
+/**
+ * The idle stretches: from a refusal to the next change of the tree in any session the entries hold.
+ * A refusal inside an open stretch adds nothing; a stretch no change closes ends at the last entry of
+ * its day. A stretch belongs to the day it started, in UTC.
+ */
+export function idle(entries) {
+    const events = [
+        ...refusals(entries).map((r) => ({ at: r.at, kind: 'refusal' })),
+        ...treeChanges(entries).map((c) => ({ at: c.at, kind: 'change' })),
+    ]
+        .filter((e) => e.at)
+        .sort((a, b) => a.at.localeCompare(b.at));
+    const lastOfDay = new Map();
+    for (const entry of entries) {
+        const at = entry?.timestamp;
+        if (!at) continue;
+        const day = at.slice(0, 10);
+        if (!lastOfDay.has(day) || lastOfDay.get(day) < at) lastOfDay.set(day, at);
+    }
+    const out = [];
+    let open = null;
+    for (const event of events) {
+        if (event.kind === 'refusal' && !open) open = event.at;
+        else if (event.kind === 'change' && open) {
+            out.push({ from: open, to: event.at, minutes: minutesBetween(open, event.at), day: open.slice(0, 10) });
+            open = null;
+        }
+    }
+    if (open) {
+        const to = lastOfDay.get(open.slice(0, 10)) ?? open;
+        out.push({ from: open, to, minutes: minutesBetween(open, to), day: open.slice(0, 10), open: true });
+    }
+    return out;
+}
+
+/** The task of a branch: its key, or the branch itself when it names no task. */
+export const taskOf = (branch) => (branch ? (branch.match(/^([A-Z]+-\d+)(?:-|$)/)?.[1] ?? branch) : null);
+
+const ANSWERED = /^(?:The user answered|Your questions have been answered)/;
+
+/**
+ * The re-asks: a menu question whose beginning names the owner's earlier answer, asked in a task
+ * where a menu question was already answered. A question a check refused counts: it was asked.
+ */
+export function reasks(entries) {
+    const list = unique(entries).filter(mainThread);
+    const answeredTasks = new Set();
+    const questionTask = new Map();
+    const out = [];
+    for (const entry of list) {
+        const task = taskOf(entry.gitBranch ?? null);
+        const content = Array.isArray(entry.message?.content) ? entry.message.content : [];
+        if (entry.type === 'assistant') {
+            for (const part of content) {
+                if (part?.type !== 'tool_use' || part.name !== 'AskUserQuestion') continue;
+                questionTask.set(part.id, task);
+                const questions = Array.isArray(part.input?.questions) ? part.input.questions : [];
+                const flagged = questions.some((q) => q?.reask === true || isReask(q?.question));
+                if (flagged && answeredTasks.has(task)) out.push({ at: entry.timestamp ?? null, session: entry.sessionId ?? null, task });
+            }
+        } else if (entry.type === 'user') {
+            const answered =
+                Boolean(entry.toolUseResult?.answers) ||
+                content.some((part) => part?.type === 'tool_result' && part.is_error !== true && ANSWERED.test(resultText(part.content).trimStart()));
+            if (!answered) continue;
+            const id = content.find((part) => part?.type === 'tool_result')?.tool_use_id;
+            answeredTasks.add(questionTask.get(id) ?? task);
+        }
+    }
+    return out;
+}
+
+/** The length from which a series of refusals of one check is a dead end. */
+export const DEAD_END_SERIES = 3;
+
+/** The longest pause between two refusals of one series; a longer one starts a new series. */
+export const DEAD_END_GAP_MS = 15 * 60 * 1000;
+
+/** Whether an entry carries the owner's answer to a menu question. */
+const menuAnswer = (entry) =>
+    Boolean(entry?.toolUseResult?.answers) ||
+    (Array.isArray(entry?.message?.content) &&
+        entry.message.content.some((part) => part?.type === 'tool_result' && part.is_error !== true && ANSWERED.test(resultText(part.content).trimStart())));
+
+/**
+ * The dead ends: DEAD_END_SERIES or more refusals of one check in one session and one task, each
+ * within DEAD_END_GAP_MS of the one before, that the executor did not leave by itself — a word of the owner, typed or chosen in a menu, fell between the
+ * first and the last of them, or no change of the tree came after the last one in that session. The
+ * check kept refusing while the owner answered, or the work never moved again.
+ */
+export function deadEnds(entries) {
+    const list = unique(entries).filter(mainThread);
+    const words = list.filter((entry) => typedOf(entry) || menuAnswer(entry)).map((entry) => ({ at: entry.timestamp ?? '', session: entry.sessionId ?? null }));
+    const changes = treeChanges(list);
+    const series = new Map();
+    const groups = [];
+    for (const refusal of refusals(list)) {
+        const key = `${refusal.session}|${taskOf(refusal.branch)}|${refusal.check}`;
+        const open = series.get(key);
+        if (open && Date.parse(refusal.at) - Date.parse(open[open.length - 1].at) <= DEAD_END_GAP_MS) open.push(refusal);
+        else {
+            const group = [refusal];
+            series.set(key, group);
+            groups.push(group);
+        }
+    }
+    const out = [];
+    for (const group of groups) {
+        if (group.length < DEAD_END_SERIES) continue;
+        const { session, check, branch } = group[0];
+        const from = group[0].at ?? '';
+        const to = group[group.length - 1].at ?? '';
+        const answered = words.some((w) => w.session === session && w.at > from && w.at < to);
+        const moved = changes.some((c) => c.session === session && (c.at ?? '') > to);
+        if (answered || !moved) out.push({ session, task: taskOf(branch), check, count: group.length, from, to });
+    }
+    return out.sort((a, b) => a.from.localeCompare(b.from));
 }

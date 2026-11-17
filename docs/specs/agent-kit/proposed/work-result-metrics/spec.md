@@ -82,10 +82,11 @@ and no dead end over a working day — is read from the same numbers.
   the epic has an edition published after that merge. An epic with no package of its own is
   released by its merge.
 - **An epic window** — a stretch of work on an epic between two of its events, defined in the rules.
-- **A dead end** — a series of three or more refusals of one check, of any class, in one session,
-  that the executor could not leave by itself: after the series came an owner message, or the
-  session ended with no tree change. On 13 November the epic-end check refused the owner's consent
-  until he answered three times — a dead end.
+- **A dead end** — a series of three or more refusals of one check, of any class, in one session and
+  one task, each within fifteen minutes of the one before, that the executor could not leave by
+  itself: a word of the owner, typed or chosen in a menu, fell between its first and its last
+  refusal, or no tree change came after its last refusal in that session. On 13 November the epic-end
+  check kept refusing from 01:43 to 01:51 while the owner answered — a dead end.
 - **A day** — a calendar day in UTC. The day lines, the milestone and the windows go by it.
 
 ### What it is called in the interface
