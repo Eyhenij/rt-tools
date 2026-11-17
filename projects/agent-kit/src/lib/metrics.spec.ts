@@ -307,4 +307,38 @@ describe('результат работы в отчёте', () => {
         expect(noData).not.toContain('Правки владельца');
         expect(Object.values(days[0]).filter((value: unknown): boolean => value === null)).toEqual([]);
     });
+
+    it('SC-AK-1628 — день без записи сессий говорит об этом одной фразой и печатает слияния', () => {
+        recorded('2026-08-11', calls('2026-08-11', 2));
+        recorded(TODAY, [{ t: at(TODAY, 100), ev: 'task-merged', task: 'RT-5', opens: '1', epic: 'RT-4' }]);
+
+        const text: readonly string[] = ofDay(false).lines;
+
+        expect(text).toContain('  Задачи слиты: 1, с видимым взятием 0, от взятия 0.0 ч');
+        expect(text.filter((one: string): boolean => one.includes('записи сессий за этот день нет'))).toEqual([
+            '  2026-08-12: записи сессий за этот день нет',
+        ]);
+        expect(text).toContain('  Повторы ошибок: считается в приёмнике');
+        expect(text.join('\n')).not.toContain('Переспросили');
+        expect(text.join('\n')).not.toContain('Простой');
+    });
+
+    it('SC-AK-1649 — день старше счётчика назван отдельно и не несёт чисел записи', () => {
+        recorded('2026-08-10', [{ t: at('2026-08-10', 0), ev: 'guard-deny', res: 'grill-gate', sid: '1' }]);
+        recorded(TODAY, calls(TODAY, 2));
+
+        const text: readonly string[] = metrics(env, { days: 30, json: false, today: TODAY, day: '2026-08-10' }).lines;
+        const day: Record<string, unknown> = daysOf(metrics(env, { days: 30, json: true, today: TODAY, day: '2026-08-10' }))[0];
+
+        expect(text).toContain('  2026-08-10: запись дня до счётчика');
+        expect(day['beforeCounter']).toBe(true);
+        expect(Object.keys(day)).not.toContain('calls');
+        expect(Object.keys(day)).toContain('tasksMerged');
+    });
+
+    it('SC-AK-1642 — отчёт дня называет пропущенные строки записи', () => {
+        recorded(TODAY, [...calls(TODAY, 2), { t: at(TODAY, 30), ev: 'record-skip', n: '1', sid: 's1' }]);
+
+        expect(ofDay(false).lines).toContain('  Пропущено строк записи: 1 (2026-08-12)');
+    });
 });
