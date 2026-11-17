@@ -95,6 +95,8 @@
 
 ## Decisions
 
+**Draft:** `docs/specs/agent-kit/proposed/work-result-metrics/`
+
 Два ответа «Recommended» подряд в этой сессии (последний ответ по RT-3277 и первый здесь): остальные
 вопросы закрыты допущением.
 
