@@ -1,0 +1,62 @@
+{
+  "description": "A failed run: the service sends an error with a code that has no kind of its own.",
+  "initialMessages": [
+    {
+      "id": "u1",
+      "role": "user",
+      "content": "Compare branches",
+      "toolCalls": [],
+      "toolCallId": null,
+      "feedback": null,
+      "isStored": false
+    }
+  ],
+  "events": [
+    {
+      "type": "RUN_STARTED",
+      "threadId": "t1",
+      "runId": "r4"
+    },
+    {
+      "type": "CUSTOM",
+      "name": "run.reference",
+      "value": {
+        "referenceId": "ref-1"
+      }
+    },
+    {
+      "type": "STEP_STARTED",
+      "stepName": "Comparing branches"
+    },
+    {
+      "type": "RUN_ERROR",
+      "code": "Error_AiChat_Run_AgentFailed",
+      "message": "Could not complete."
+    }
+  ],
+  "expected": {
+    "runId": "r4",
+    "status": "idle",
+    "messages": [
+      {
+        "id": "u1",
+        "role": "user",
+        "content": "Compare branches",
+        "toolCalls": [],
+        "toolCallId": null,
+        "feedback": null,
+        "isStored": false
+      }
+    ],
+    "step": null,
+    "referenceId": "ref-1",
+    "result": null,
+    "pendingToolCallIds": [],
+    "error": {
+      "kind": "run-failed",
+      "message": "Could not complete.",
+      "referenceId": "ref-1"
+    }
+  },
+  "expectedUnsent": ["u1"]
+}

@@ -7,6 +7,7 @@
     "build:core": "rimraf dist/core && nx build @rt-tools/core --verbose",
     "build:store": "rimraf dist/store && nx build @rt-tools/store --verbose",
     "build:auth-contract": "rimraf dist/auth-contract && nx build @rt-tools/auth-contract --verbose",
+    "build:ai-chat-protocol": "rimraf dist/ai-chat-protocol && nx build @rt-tools/ai-chat-protocol --verbose",
     "build:cms-contract": "rimraf dist/cms-contract && nx build @rt-tools/cms-contract --verbose",
     "build:cms-server": "rimraf dist/cms-server && nx build @rt-tools/cms-server --verbose",
     "build:cms-angular": "rimraf dist/cms-angular && nx build @rt-tools/cms-angular --verbose",
@@ -127,6 +128,7 @@
     "projects/utils",
     "projects/auth-contract",
     "projects/cms-contract",
+    "projects/ai-chat-protocol",
     "projects/cms-server",
     "projects/auth-server",
     "projects/agent-kit"
