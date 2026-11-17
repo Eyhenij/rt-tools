@@ -234,6 +234,57 @@ Then the table check is red and names the step and the path
 
 Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
 
+### SC-AK-1550 — a file the repository ignores is no read of a step
+
+Given a table recorded on a copy without `.env`, which the repository ignores
+When `.env` appears and a step reads it
+Then the table check stays green
+
+Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
+
+### SC-AK-1551 — a record keeps the kinds of processes the table already held
+
+Given a table recorded on a copy where a step starts a process
+When the table is recorded again on a copy where the step does not start it
+Then the entry of the step still names the process
+And the table check on the first copy stays green
+And a table first recorded on the copy without the process is refused once on the first copy, and after one record there the check is green on both copies
+
+Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
+
+### SC-AK-1594 — a new process kind of a step that runs always is no refusal
+
+Given a table where a step is recorded with the process it starts
+When on another copy the step also starts a process of another kind
+Then the table check stays green
+
+Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
+
+### SC-AK-1595 — the filter of ignored files survives an unusual path
+
+Given a step that reads an ignored file with a non-ASCII name, `.env` and a path beyond a symbolic link
+When the table is recorded
+Then neither the non-ASCII file nor `.env` is a read of the step
+
+Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
+
+### SC-AK-1596 — a global ignore file of the machine does not hide a read
+
+Given a machine whose global ignore file hides a file a step reads, and `.env` ignored by the repository
+When the table is recorded
+Then the hidden file stays a read of the step and `.env` does not
+
+Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
+
+### SC-AK-1597 — a draft outside the history is no read of a step
+
+Given a table of a step that reads every file of a directory
+When a draft file and an untracked directory appear in that directory without being ignored
+Then the table check stays green
+And once the draft is taken into the history, the check refuses until the table is recorded again
+
+Covered: `projects/agent-kit/tests/push-inputs.test.sh`.
+
 ### SC-AK-1166 — the push gate names every red light check by one refusal
 
 Given the gate set holds two red light checks, a green one between them and a heavy one after them
