@@ -41,3 +41,10 @@ export async function writeEpicWindow(prisma: PrismaService, window: IEpicWindow
 
     return added.count > 0 || replaceIfNewer(prisma, window);
 }
+
+/** Снимает окна, открытые раньше первого хранимого дня. Возвращает их число. */
+export async function sweepEpicWindowsBefore(prisma: PrismaService, day: string): Promise<number> {
+    const gone: Prisma.BatchPayload = await prisma.epicWindow.deleteMany({ where: { openedAt: { lt: new Date(`${day}T00:00:00Z`) } } });
+
+    return gone.count;
+}
