@@ -99,6 +99,26 @@ report "SC-AK-1611 — переспросы: три вопроса после о
 report "SC-AK-1654 — тупики дня: столько же, сколько на полной записи" "$(counted 'dead ends')" "20"
 report "SC-AK-1654 — тупик проверки конца эпика: четыре отказа с 01:43:47" "$(counted 'dead end epic-over')" "01:43:47:4"
 
+# --- the epic windows of 13.11 ------------------------------------------------------------------------
+# The observations the hook writes from the cut, with the merges the hosting gave that day.
+OUTCOMES="$HERE/fixtures/real-outcomes"
+WINDOWS="$(node -e '
+const fs = require("fs");
+const [cut, turn, merge, win, ...pulls] = process.argv.slice(1);
+Promise.all([import(turn), import(merge), import(win)]).then(([t, m, w]) => {
+    const entries = fs.readFileSync(cut, "utf8").split("\n").filter(Boolean).map((l) => JSON.parse(l));
+    const lines = [];
+    for (const [, day] of t.observationsOf(entries, { sid: "s" })) for (const l of day) lines.push(JSON.parse(l));
+    for (const x of m.mergesOf(pulls.map((f) => JSON.parse(fs.readFileSync(f, "utf8"))))) lines.push(x.line);
+    for (const x of w.epicWindows(lines, "2026-11-13"))
+        console.log(`${x.epic} ${x.from.slice(11, 16)}-${x.to ? x.to.slice(11, 16) : "open"} отказов ${x.refusals} из ${x.calls}`);
+});' "$CUT" "$HERE/../assets/checks/record-turn.mjs" "$HERE/../assets/checks/merge-read.mjs" "$HERE/../assets/checks/epic-window.mjs" \
+    "$OUTCOMES/pull-3266.json" "$OUTCOMES/pull-3225.json" "$OUTCOMES/pull-3278.json" "$OUTCOMES/pull-3279.json")"
+report "SC-AK-1615 — окно RT-3227 от слияния PR 3266 до сообщения владельца, с которого начался разбор" \
+    "$(printf '%s\n' "$WINDOWS" | sed -n 1p)" "RT-3227 00:34-03:04 отказов 35 из 187"
+report "SC-AK-1615 — второе окно от слияния 04:49 до слияния эпика в главную ветку" \
+    "$(printf '%s\n' "$WINDOWS" | grep ' 04:49-' | sed 's/ отказов.*//')" "RT-3227 04:49-05:48"
+
 # --- the facts of the hooks at the moments of the consent ------------------------------------------
 AT_1746="$(until_moment 2026-11-13T01:46:30Z)"
 report "SC-AK-1598 — rt_fact_window_fill в 01:46" "$(fact rt_fact_window_fill "$AT_1746")" "239554"
