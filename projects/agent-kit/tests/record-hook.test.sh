@@ -56,4 +56,16 @@ run_hook SessionEnd "$RECORD" > /dev/null
 report "SC-AK-1643 — отказ конца хода последнего хода сосчитан концом сессии один раз" \
     "$(cat "$TREE"/.claude/rt-kit/observations/*.jsonl | jq -r 'select(.ev == "rec-refusal") | .kind' | sort | tr '\n' ' ')" "hook stop "
 
+# --- taking a task ----------------------------------------------------------------------------------------
+# The first entry of the session on the branch of a task is its taking; a later turn on the same
+# branch writes none, a branch of another task writes its own.
+rm -rf "$TREE/.claude"
+printf '%s\n%s\n' "$call" "$refusal" > "$RECORD"
+run_hook Stop "$RECORD" > /dev/null
+printf '%s\n' "${call//RT-1-x/RT-2-y}" | sed 's/10:00:00Z/11:00:00Z/; s/"c1"/"c2"/' >> "$RECORD"
+run_hook Stop "$RECORD" > /dev/null
+report "SC-AK-1622 — взятие задачи: первая запись сессии на ветке, по одной на задачу" \
+    "$(cat "$TREE"/.claude/rt-kit/observations/*.jsonl | jq -r 'select(.ev == "task-taken") | .task + "@" + .t' | tr '\n' ' ')" \
+    "RT-1@2026-11-13T10:00:00Z RT-2@2026-11-13T11:00:00Z "
+
 suite_result "хук конца хода по записи"

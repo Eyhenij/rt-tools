@@ -10,9 +10,10 @@
  * A saved record belongs to the tree when its working directory is the tree or a copy of it. A copy
  * already removed from disk is recognised by its branches: they stand in the history of the tree.
  *
- * A day the hook already counted is not recounted. A day recounted before is replaced: the lines a
- * recount wrote carry `src: "recount"` and are removed before the new ones are written, so a second
- * run does not add to the first. The day is a calendar day of UTC.
+ * A session the hook already counted on a day is not recounted for that day: the hook counts a
+ * session whole on its first turn, days before its layout included. A day recounted before is
+ * replaced: the lines a recount wrote carry `src: "recount"` and are removed before the new ones are
+ * written, so a second run does not add to the first. The day is a calendar day of UTC.
  */
 import { execFileSync } from 'node:child_process';
 import { createReadStream, existsSync, readFileSync, readdirSync, statSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -128,7 +129,7 @@ export async function recordsOf(root, projects, dayList) {
     return out;
 }
 
-/** Recounts the days; returns per day what happened: `hook`, `recounted N`. */
+/** Recounts the days; returns per day what happened: `recounted N`, and `hook M` for the sessions the hook counted. */
 export async function recount({ root, observations, days, projects, patterns }) {
     const records = await recordsOf(root, projects, days);
     const result = {};
@@ -143,20 +144,23 @@ export async function recount({ root, observations, days, projects, patterns }) 
                 return null;
             }
         });
-        if (parsed.some((o) => o && typeof o.ev === 'string' && o.ev.startsWith('rec-') && o.src !== 'recount')) {
-            result[day] = 'hook';
-            continue;
-        }
+        const counted = new Set(parsed.filter((o) => o && typeof o.ev === 'string' && o.ev.startsWith('rec-') && o.src !== 'recount').map((o) => o.sid));
         const kept = lines.filter((_, i) => parsed[i]?.src !== 'recount');
         const added = [];
+        let left = 0;
         for (const { session, entries } of records) {
             const ofDay = entries.filter((e) => atOf(e).startsWith(day));
             if (ofDay.length === 0) continue;
-            const byDay = observationsOf(ofDay, { sid: cksum(session), patterns });
+            const sid = cksum(session);
+            if (counted.has(sid)) {
+                left += 1;
+                continue;
+            }
+            const byDay = observationsOf(ofDay, { sid, patterns });
             for (const line of byDay.get(day) ?? []) added.push(JSON.stringify({ ...JSON.parse(line), src: 'recount' }));
         }
         writeFileSync(file, [...kept, ...added].join('\n') + (kept.length + added.length > 0 ? '\n' : ''));
-        result[day] = `recounted ${added.length}`;
+        result[day] = left > 0 ? `recounted ${added.length}, hook ${left}` : `recounted ${added.length}`;
     }
     return result;
 }

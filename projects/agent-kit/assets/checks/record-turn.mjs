@@ -15,6 +15,10 @@
  * count: the mark stays before it. A line in the middle that does not parse is skipped and counted
  * (`rec-skip`). A record that cannot be read writes `rec-broken` and changes no mark. The count
  * never fails the turn: every path exits with zero.
+ *
+ * Taking a task is the first moment a session stands on the branch of the task: the first entry of
+ * the session with that branch writes `{"ev":"task-taken","task":<key>}`. The mark keeps the tasks
+ * the session already took, so a later turn on the same branch writes no second taking.
  */
 import { appendFileSync, existsSync, mkdirSync, openSync, readFileSync, readSync, closeSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -63,8 +67,27 @@ export function readFrom(file, offset) {
     return { entries, skipped, offset: offset + end + 1 };
 }
 
+/** A task key of a branch: the taking is written only for a branch that names a task. */
+const TASK_KEY = /^[A-Z]+-\d+$/;
+
+/**
+ * The takings of tasks in some entries: the first entry of each task the session stands on, not
+ * counting the tasks of `seen`. The set is filled with what is found.
+ */
+export function takingsOf(entries, seen = new Set()) {
+    const out = [];
+    for (const entry of entries) {
+        const at = entry?.timestamp;
+        const task = taskOf(entry?.gitBranch);
+        if (!at || entry?.isSidechain || !task || !TASK_KEY.test(task) || seen.has(task)) continue;
+        seen.add(task);
+        out.push({ at, task });
+    }
+    return out;
+}
+
 /** The observation lines of the events of some entries, by the day of their moment. */
-export function observationsOf(entries, { sid, patterns, version }) {
+export function observationsOf(entries, { sid, patterns, version, seen = new Set() }) {
     const pattern = patterns ? new RegExp(patterns, 'iu') : null;
     const corrected = new Set(
         pattern ? ownerWords(entries).filter((w) => pattern.test(w.text)).map((w) => `${w.session}|${w.at}|${w.kind}`) : [],
@@ -83,6 +106,11 @@ export function observationsOf(entries, { sid, patterns, version }) {
         const day = e.at.slice(0, 10);
         if (!byDay.has(day)) byDay.set(day, []);
         byDay.get(day).push(JSON.stringify(line));
+    }
+    for (const taking of takingsOf(entries, seen)) {
+        const day = taking.at.slice(0, 10);
+        if (!byDay.has(day)) byDay.set(day, []);
+        byDay.get(day).push(JSON.stringify({ t: taking.at, ev: 'task-taken', task: clean(taking.task), sid, ...(version ? { v: version } : {}) }));
     }
     return byDay;
 }
@@ -110,12 +138,13 @@ function main(argv) {
     try {
         const mark = readMark(markFile);
         const read = readFrom(record, Number(mark.offset) || 0);
-        const byDay = observationsOf(read.entries, { sid, patterns: option(argv, '--patterns'), version });
+        const seen = new Set(Array.isArray(mark.taken) ? mark.taken : []);
+        const byDay = observationsOf(read.entries, { sid, patterns: option(argv, '--patterns'), version, seen });
         mkdirSync(dir, { recursive: true });
         for (const [day, lines] of byDay) appendFileSync(join(dir, `${day}.jsonl`), `${lines.join('\n')}\n`);
         if (read.skipped > 0) note('rec-skip', { n: String(read.skipped) });
         mkdirSync(dirname(markFile), { recursive: true });
-        writeFileSync(markFile, JSON.stringify({ offset: read.offset }));
+        writeFileSync(markFile, JSON.stringify({ offset: read.offset, taken: [...seen] }));
     } catch {
         note('rec-broken');
     }

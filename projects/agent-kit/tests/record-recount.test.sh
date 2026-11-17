@@ -42,9 +42,12 @@ report "SC-AK-1632 — запись чужого дерева не читает�
     "$(jq -r 'select(.ev == "rec-call") | .t' "$OBS/2026-11-12.jsonl" | sort | tr '\n' ' ')" \
     "2026-11-12T10:00:00Z 2026-11-12T11:00:00Z "
 
-# --- a day the hook counted is not recounted -----------------------------------------------------------
-printf '{"t":"2026-11-13T09:00:00Z","ev":"rec-call","sid":"1"}\n' > "$OBS/2026-11-13.jsonl"
-report "SC-AK-1632 — день, сосчитанный хуком, не пересчитывается" \
-    "$(recount --day 2026-11-13) $(events rec-call 2026-11-13)" "2026-11-13: hook 1"
+# --- a session the hook counted is not recounted, another session of the day is ------------------------
+# The hook counts a session whole on its first turn, days before its layout included: the day then
+# holds that session only, and the recount adds the rest.
+entry c9 "$TREE" 2026-11-13T12:00:00Z | sed 's/"s1"/"s2"/' > "$PROJECTS/own/s2.jsonl"
+printf '{"t":"2026-11-13T09:00:00Z","ev":"rec-call","sid":"%s"}\n' "$(printf '%s' s1 | cksum | awk '{print $1}')" > "$OBS/2026-11-13.jsonl"
+report "SC-AK-1632 — сессия, сосчитанная хуком, не пересчитывается, другая сессия дня пересчитана" \
+    "$(recount --day 2026-11-13) $(events rec-call 2026-11-13)" "2026-11-13: recounted 2, hook 1 2"
 
 suite_result "пересчёт прошлых дней"
