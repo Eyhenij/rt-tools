@@ -36,6 +36,16 @@ describe('RtAiChatBlocksComponent', (): void => {
         expect(Array.from(host.children)).toEqual([markdown, notice]);
     });
 
+    it('SC-UKV-1329 — плашка notice в ленте объявляется спокойно, а не тревогой', (): void => {
+        const fixture: ComponentFixture<RtAiChatBlocksComponent> = createRtFixture(RtAiChatBlocksComponent, { blocks: BLOCKS.slice(1, 2) });
+        const aside: HTMLElement | null = (qa(fixture, 'ai-chat-block-notice')?.nativeElement as HTMLElement).querySelector(
+            '[qa-dataid="message-alert"]'
+        );
+
+        expect(aside).not.toBeNull();
+        expect(aside?.getAttribute('role')).toBe('status');
+    });
+
     it('SC-UKV-1324 — блок чужого типа рисует отрисовщик, зарегистрированный приложением', (): void => {
         const fixture: ComponentFixture<RtAiChatBlocksComponent> = createRtFixture(
             RtAiChatBlocksComponent,

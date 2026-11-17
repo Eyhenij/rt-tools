@@ -347,3 +347,11 @@ When it is drawn
 Then each stands as the plate with its type, the renderers are not taken, and a notice of a known severity stays a plate of `rt-message`
 
 Covered by the spec of the blocks logic.
+
+### SC-UKV-1329 — a notice in an answer is announced as a status
+
+Given an answer with a notice block of the severity `warning`
+When it is drawn
+Then its `rt-message` stands with the role `status`, and a screen reader does not interrupt the person with it
+
+Covered by the spec of the blocks component.
