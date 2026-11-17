@@ -44,6 +44,8 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     breadcrumbsBack: 'Назад: {{name}}',
     breadcrumbsHidden: 'Показать скрытые разделы',
     breadcrumbsLabel: 'Путь до страницы',
+    chartEmpty: 'Нет данных для графика',
+    chartEmptyHint: 'Данные появятся, когда в периоде будут записи',
     chatAttachAria: 'Прикрепить файл',
     chatAttachTooltip: 'Прикрепить файл',
     chatAttachmentFallback: 'Вложение',

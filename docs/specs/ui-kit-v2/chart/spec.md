@@ -26,7 +26,7 @@ take it from this entry.
 | the label key       | what it says                         |
 | ------------------- | ------------------------------------ |
 | `chartEmpty`        | there is no data for the chart       |
-| `chartDownloadPng`  | the action that saves the chart as PNG |
+| `chartEmptyHint`    | when the data will appear            |
 
 ## Rules
 
@@ -74,7 +74,7 @@ None of its own. The option comes in through an input.
 | state          | what is drawn                                   |
 | -------------- | ----------------------------------------------- |
 | drawn          | the series, the axes, the legend by the option |
-| empty          | the empty state with `chartEmpty`               |
+| empty          | the empty state with `chartEmpty` and `chartEmptyHint` |
 | zero width     | nothing until the container gets a size         |
 | dark theme     | the same chart in the dark palette              |
 
@@ -82,8 +82,9 @@ None of its own. The option comes in through an input.
 
 ### Locales
 
-The two labels are kit labels in the eight languages of `rtKit`. The series names and the axis
-names come from the consumer.
+The two labels are keys of the kit's labels in the `rtKit` namespace. The kit carries the English
+default, and the showcase carries the Russian set. The series names and the axis names come from
+the consumer.
 
 ### SEO
 
