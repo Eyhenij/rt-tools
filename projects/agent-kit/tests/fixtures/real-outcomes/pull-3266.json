@@ -1,0 +1,1 @@
+{"baseRefName":"RT-3227-agent-kit-revision-day1","closedAt":"2026-11-13T00:34:01Z","createdAt":"2026-11-12T18:37:16Z","headRefName":"RT-3220-deploy-cache-cleanup","mergedAt":"2026-11-13T00:34:01Z","number":3266,"state":"MERGED","title":"[RT-3220] Выкатка убирает кэш сборки, у правила о зависимостях появилась проверка"}
