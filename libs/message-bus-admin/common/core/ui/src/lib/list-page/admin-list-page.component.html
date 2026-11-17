@@ -64,7 +64,7 @@
             </div>
         </rt-message>
     } @else {
-        <div rtElem="scroll">
+        <div rtElem="scroll" [rtMod]="scrollMods()">
             <ng-content />
         </div>
     }

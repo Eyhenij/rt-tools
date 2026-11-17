@@ -20,10 +20,12 @@ import {
     QUALITY_SHARE_FROM,
 } from '@rt/message-bus-common';
 
+import { IQualityWindowRow, qualityEpicWindowsOf, qualityMilestonesOf, qualityPairsOf, qualityResultOf } from './quality-result.util';
+
 /** Сколько дней после установки фикса ошибка на том же ресурсе считается повтором. */
 const REPEAT_WINDOW_DAYS: number = 30;
 
-type TDriverField = keyof Omit<IQualityDriverRow, 'resource' | 'loss'>;
+type TDriverField = keyof Omit<IQualityDriverRow, 'resource' | 'loss' | 'per100'>;
 
 /** Какой ключ строки дня идёт в какую колонку таблицы причин. */
 const DRIVER_FIELDS: Readonly<Record<string, TDriverField>> = {
@@ -33,6 +35,7 @@ const DRIVER_FIELDS: Readonly<Record<string, TDriverField>> = {
     rulesAfterLoad: 'afterLoad',
     wastedRuns: 'wastedRuns',
     wastedSeconds: 'wastedSeconds',
+    recordRefusals: 'recordRefusals',
 };
 
 /** Строка дня, какой её читает счёт. */
@@ -80,6 +83,8 @@ export interface IQualityInput {
     readonly fresh: readonly IQualityDayRow[];
     readonly records: readonly IQualityRecord[];
     readonly firstSeen: readonly IQualityFirstSeen[];
+    /** Окна эпиков, задевающие период. */
+    readonly windows: readonly IQualityWindowRow[];
 }
 
 function sumOf(rows: readonly IQualityDayRow[], key: string): number {
@@ -188,7 +193,18 @@ function completenessOf(input: IQualityInput): IQualityCompleteness {
 }
 
 function emptyDriver(resource: string): IQualityDriverRow {
-    return { resource, refusals: 0, empty: 0, gateRefusals: 0, afterLoad: 0, wastedRuns: 0, wastedSeconds: 0, loss: 0 };
+    return {
+        resource,
+        refusals: 0,
+        empty: 0,
+        gateRefusals: 0,
+        afterLoad: 0,
+        wastedRuns: 0,
+        wastedSeconds: 0,
+        loss: 0,
+        recordRefusals: 0,
+        per100: null,
+    };
 }
 
 function lossOf(row: IQualityDriverRow): number {
@@ -207,8 +223,14 @@ function addDriver(drivers: Map<string, IQualityDriverRow>, key: string, value: 
     }
 }
 
+/** Отказы проверки по записи на сто вызовов периода, сотые. */
+function per100Of(refusals: number, calls: number): number | null {
+    return calls > 0 ? Math.round((refusals * 10_000) / calls) / 100 : null;
+}
+
 function driversOf(rows: readonly IQualityDayRow[]): readonly IQualityDriverRow[] {
     const drivers: Map<string, IQualityDriverRow> = new Map();
+    const calls: number = sumOf(rows, 'calls');
 
     for (const row of rows) {
         for (const [key, value] of Object.entries(row.metrics)) {
@@ -217,8 +239,8 @@ function driversOf(rows: readonly IQualityDayRow[]): readonly IQualityDriverRow[
     }
 
     return [...drivers.values()]
-        .map((row: IQualityDriverRow): IQualityDriverRow => ({ ...row, loss: lossOf(row) }))
-        .filter((row: IQualityDriverRow): boolean => row.loss > 0 || row.refusals > 0)
+        .map((row: IQualityDriverRow): IQualityDriverRow => ({ ...row, loss: lossOf(row), per100: per100Of(row.recordRefusals, calls) }))
+        .filter((row: IQualityDriverRow): boolean => row.loss > 0 || row.refusals > 0 || row.recordRefusals > 0)
         .sort(
             (left: IQualityDriverRow, right: IQualityDriverRow): number =>
                 right.loss - left.loss || right.refusals - left.refusals || left.resource.localeCompare(right.resource)
@@ -250,6 +272,10 @@ export function qualityOf(input: IQualityInput): IQualityReport {
         page: input.page,
         size: input.size,
         versions: orderedReleaseVersions([...new Set(input.rows.map((row: IQualityDayRow): string => row.version))]),
+        result: qualityResultOf(rows),
+        milestones: qualityMilestonesOf(rows),
+        pairs: qualityPairsOf(rows),
+        epicWindows: qualityEpicWindowsOf(input.windows, input),
     };
 }
 

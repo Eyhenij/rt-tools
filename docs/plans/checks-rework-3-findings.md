@@ -181,6 +181,61 @@ over and says which of them are right. The file lies next to the plan of the epi
 - **The step guard measured the state wrongly from a subdirectory.** An edit of the progress was
   refused as «ahead» while the shell stood under `projects/`. **Address:** rules layer — the engine
   takes the tree root from the record, not from the working directory.
+- **The two findings on the owner source are taken by RT-3270.** Its first stage reads
+  `queued_command` as a typed message and drops the harness wrappers, by the owner's answer
+  «Починить в RT-3270 (Recommended)».
+
+### The rules review of RT-3277
+
+The review role brought six wordings; they wait for the owner at the end of the epic.
+
+- **The plan sample names neither the bare pattern nor the zero count.** Address: package, the plan
+  sample of the task template after the expected-output forms. A pattern stands bare between
+  slashes, a count of what must be absent goes through `wc -l`, the trial run prints the exit code.
+- **The replacement line of a step check is named by no rule.** Its form lives only in the engine
+  and in SC-AK-1413. Address: package, the pattern `task-flow-resume` after «A stage revision».
+- **Three pitfalls of the package suites.** Saved real data are searched for people before the
+  first commit. A suite pins its environment: colour, home directory, no machine token. A coverage
+  check matches a name whole. Address: this tree, the rule `agent-kit-source`.
+- **The edit tool drops a space at the end of the replacement.** Address: package, the cold part
+  of `doc-style`.
+- **Untracking a directory from the index takes the neighbours' files too.** Address: package, the
+  pattern `git-workflow-commit`. The same section names the path of one machine to the hosting
+  client three times; that is a separate task.
+- **Guards read a reading command as an edit.** A redirect after a hook path, a laid-out script name
+  or a plan path among git arguments is refused. The review itself got two such refusals on reading
+  commands. Address: package, the cold part of `agent-kit`, and a task of this epic for the guard.
+
+## RT-3270 — the metrics of the work result
+
+`goal-critic` judged the goal partly met, `product-strategist` judged the point not reached: the
+report prints «RT-3227 не выпущен», «отказов 35 из 187», «переспросили 3», the screen shows them only
+on the stand seed. Their misses, each with an address:
+
+- **The live screen is not compared with the report.** The receiver is rolled out from the main
+  branch only, so the screen of 13.11 is seen after the epic is merged. **Address:** this epic — a
+  closing step after the merge: the owner rolls the receiver out, the executor sends the recounted
+  days from 27.10, the screen of 13.11 is compared with `metrics --day 2026-11-13`.
+- **The screen test checks the seed, not what the package sends.** The stand seed of 13.11 holds
+  187 calls and 2.4 h idle; the report of the package gives 3001 and 6.8 h. Only the window line
+  35/187/3 matches, and it is written by hand too. **Address:** a task of this epic — the stand
+  receives the day line and the windows the package builds from the saved record of 13.11.
+- **The verdicts «цель не достигнута» are not split by task.** The report prints «без задачи: 2»,
+  the receiver keeps one number `goalNotMet`. **Address:** a task of this epic — the verdict carries
+  the task branch, the day line carries the split.
+- **Two counts of refusals for one day.** The result block prints «489 из 3001», the old block
+  «отказы проверок: 98»; 3.20 of 16.29 per hundred are `unnamed`. **Address:** a task of this epic —
+  one count, and every refusal names its check.
+- **Dead ends 27 in the report against 20 in the suite of the real record.** Hypothesis: 27 counts
+  every session of every copy, 20 only the slice. **Address:** a task of this epic, together with
+  the item above.
+- **Interruptions may be overstated.** 100 against 243 words of the owner; the count takes every
+  `[Request interrupted` line, the refused tool call included. **Address:** a task of this epic —
+  checked on the record of 13.11 before an edit.
+- **«Принято с первого раза: 0 из 0» with eight merged tasks, and «Повторы ошибок» outside the
+  report.** The line «нет данных: Экзамены с первого раза» stays in the head of the day report.
+  **Address:** a task of this epic — the denominator is the merged tasks, or the line names why it
+  is zero; «Повторы ошибок» needs the owner's word.
 
 ## Left unresolved
 

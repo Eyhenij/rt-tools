@@ -421,6 +421,11 @@ rt_pull_outcomes_default() {
     done
 }
 
+# Reading the merges and the packages — what the epic windows and the release are judged by — lives
+# in a neighbouring file: together with it the profile outgrew the length limit.
+# shellcheck disable=SC1090
+[ -f "$(dirname "${BASH_SOURCE[0]}")/merges.sh" ] && . "$(dirname "${BASH_SOURCE[0]}")/merges.sh"
+
 # What counts as reinvention in this tree. One line per "pattern<tab>replacement". The patterns are
 # narrow on purpose: the guard checks only NEW text, and a wide pattern would refuse an edit that
 # creates nothing new.

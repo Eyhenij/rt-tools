@@ -14,7 +14,12 @@
  */
 import { Injectable, Logger, OnApplicationBootstrap, OnApplicationShutdown } from '@nestjs/common';
 
-import { IObservationsSwept, sweepMetricsDaysBefore, sweepObservationsBefore } from '@rt/message-bus-api/observations/data-access';
+import {
+    IObservationsSwept,
+    sweepEpicWindowsBefore,
+    sweepMetricsDaysBefore,
+    sweepObservationsBefore,
+} from '@rt/message-bus-api/observations/data-access';
 import { keepSince, nextSweepAt } from '@rt/message-bus-api/observations/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 
@@ -88,16 +93,21 @@ export class ObservationRetentionService implements OnApplicationBootstrap, OnAp
         }
     }
 
-    /** Строки дней живут столько же. Отказ здесь не мешает снятию наблюдений. */
+    /** Строки дней и окна эпиков живут столько же. Отказ здесь не мешает снятию наблюдений. */
     async #sweepMetricsDays(since: string): Promise<void> {
+        await this.#sweepCounted(since, 'строки дней', sweepMetricsDaysBefore);
+        await this.#sweepCounted(since, 'окна эпиков', sweepEpicWindowsBefore);
+    }
+
+    async #sweepCounted(since: string, what: string, sweep: (prisma: PrismaService, day: string) => Promise<number>): Promise<void> {
         try {
-            const count: number = await sweepMetricsDaysBefore(this.#prisma, since);
+            const count: number = await sweep(this.#prisma, since);
 
             if (count > 0) {
-                this.#log.log('строки дней старше срока сняты', { count, since });
+                this.#log.log(`${what} старше срока сняты`, { count, since });
             }
         } catch (error: unknown) {
-            this.#log.error('снятие строк дней не состоялось', error instanceof Error ? error.message : String(error), { since });
+            this.#log.error(`снятие: ${what} не сняты`, error instanceof Error ? error.message : String(error), { since });
         }
     }
 }

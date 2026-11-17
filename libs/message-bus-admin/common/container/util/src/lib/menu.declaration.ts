@@ -29,7 +29,7 @@ export interface IAdminMenuItem {
  * маршрутами молча — пункт остаётся, экран уезжает, и человек попадает в пустоту.
  *
  * Разделов груза три, и приходят они по одному со своими задачами: пункта без экрана здесь не
- * бывает. Три последних пункта груза не показывают вовсе — приглашения заводят сами деревья,
+ * бывает. «Качество» стоит сразу за разборами: владелец читает результат работы рядом с ними. Три последних пункта груза не показывают вовсе — приглашения заводят сами деревья,
  * люди входят в приёмник, роли говорят, кому что открыто, — и стоят они в конце по той же
  * причине: человек ходит в них реже остальных.
  *
@@ -39,10 +39,10 @@ export interface IAdminMenuItem {
  */
 export const ADMIN_MENU: readonly IAdminMenuItem[] = Object.freeze([
     { title: 'sectionPostmortems', path: '/postmortems', icon: 'list', right: 'postmortems:read' } as const,
+    { title: 'sectionQuality', path: '/quality', icon: 'check-circle', right: 'quality:read' } as const,
     { title: 'sectionProposals', path: '/proposals', icon: 'comments', right: 'proposals:read' } as const,
     { title: 'sectionSummaries', path: '/summaries', icon: 'chart-bar', right: 'summaries:read' } as const,
     { title: 'sectionUsage', path: '/usage', icon: 'chart-line', right: 'usage:read' } as const,
-    { title: 'sectionQuality', path: '/quality', icon: 'check-circle', right: 'quality:read' } as const,
     { title: 'sectionChat', path: '/chat', icon: 'comments', right: 'chat:read' } as const,
     { title: 'sectionInvites', path: '/invites', icon: 'ico-invite', right: 'invites:read' } as const,
 ]);

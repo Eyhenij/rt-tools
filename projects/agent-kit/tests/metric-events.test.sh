@@ -343,6 +343,28 @@ jq -n '{session_id:"s",prompt:"обычное сообщение"}' | CLAUDE_PRO
 report "SC-AK-1291 — команда пакета по имени, чужой нет" "$(field_of "$tree" command-call res)" "feedback "
 rm -rf "$tree"
 
+# --- the task of a verdict: the key of the branch, on the main branch the epic of the copy ------------------
+tree="$(fixture_roles)"
+verdict_on() { git -C "$1" checkout -q -B "$2" 2>/dev/null; role_end "$1" goal-critic "$3"; }
+verdict_on "$tree" RT-1-first 'Цель не достигнута.'
+verdict_on "$tree" RT-2-second 'Цель частично достигнута.'
+verdict_on "$tree" RT-3-third 'Цель достигнута.'
+report "SC-AK-1621 — вердикт несёт задачу своей ветки, «частично» — тоже отказ" \
+    "$(cat "$tree/.claude/rt-kit/observations/"*.jsonl | jq -r 'select(.ev == "role-verdict") | .task + ":" + .verdict' | tr '\n' ' ')" \
+    "RT-1:refused RT-2:refused RT-3:passed "
+rm -rf "$tree"
+
+tree="$(fixture_roles)"
+verdict_on "$tree" RT-7-epic 'Цель не достигнута.'
+verdict_on "$tree" main 'Цель не достигнута.'
+mkdir -p "$tree/tools"
+printf 'console.log("7");\n' > "$tree/tools/tree-assignment.mjs"
+verdict_on "$tree" main 'Цель не достигнута.'
+report "SC-AK-1640 — на ветке эпика вердикт против эпика, на главной без назначения — «без задачи», с назначением — эпик копии" \
+    "$(cat "$tree/.claude/rt-kit/observations/"*.jsonl | jq -r 'select(.ev == "role-verdict") | (.task // ("epic " + .epic))' | tr '\n' ' ')" \
+    "RT-7 none epic 7 "
+rm -rf "$tree"
+
 # --- Экзамен, правило проверки, знаменатель правок ------------------------------------------
 
 tree="$(fixture_metric_tree)"

@@ -3,3 +3,4 @@ export * from './lib/observation.queries';
 export * from './lib/metrics-day.queries';
 export * from './lib/usage.queries';
 export * from './lib/quality.queries';
+export * from './lib/epic-window.queries';

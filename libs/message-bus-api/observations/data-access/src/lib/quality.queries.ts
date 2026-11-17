@@ -4,7 +4,14 @@
  * Разборы и переходы читаются целиком, а не за период: повтор считается от фикса, а фикс мог быть
  * раньше любого спрошенного периода.
  */
-import { IQualityDayRow, IQualityFirstSeen, IQualityInput, IQualityRecord, qualityFreshFrom } from '@rt/message-bus-api/observations/util';
+import {
+    IQualityDayRow,
+    IQualityFirstSeen,
+    IQualityInput,
+    IQualityRecord,
+    IQualityWindowRow,
+    qualityFreshFrom,
+} from '@rt/message-bus-api/observations/util';
 import { PrismaService } from '@rt/message-bus-api/persistence/data-access';
 import { ECargoKind, ITreeChoice } from '@rt/message-bus-common';
 
@@ -56,6 +63,29 @@ async function dayRows(prisma: PrismaService, from: string, to: string): Promise
     });
 
     return rows.map(dayRowOf);
+}
+
+/** Окна, задевающие период: открытые до его конца и не закрытые до его начала. Остальное судит счёт. */
+async function windowRows(prisma: PrismaService, from: string, to: string): Promise<readonly IQualityWindowRow[]> {
+    return prisma.epicWindow.findMany({
+        where: {
+            openedAt: { lte: new Date(`${to}T23:59:59.999Z`) },
+            OR: [{ closedAt: null }, { closedAt: { gte: new Date(`${from}T00:00:00.000Z`) } }],
+        },
+        select: {
+            origin: true,
+            epic: true,
+            openedAt: true,
+            closedAt: true,
+            calls: true,
+            refusals: true,
+            reasks: true,
+            mergedAt: true,
+            releasedAt: true,
+            minutes: true,
+            tree: { select: { slug: true, name: true } },
+        },
+    });
 }
 
 /** Первый приход к фиксу: возврат записи назад момент не сдвигает. */
@@ -110,24 +140,27 @@ export async function readQualityInput(prisma: PrismaService, asked: TQualityAsk
         orderBy: { name: 'asc' },
         select: { id: true, slug: true, name: true },
     });
-    const [rows, fresh, stored, seen, lines]: [
+    const [rows, fresh, stored, seen, lines, windows]: [
         readonly IQualityDayRow[],
         readonly IQualityDayRow[],
         readonly IQualityRecord[],
         readonly IQualityFirstSeen[],
         number,
+        readonly IQualityWindowRow[],
     ] = await Promise.all([
         dayRows(prisma, asked.from, asked.to),
         dayRows(prisma, qualityFreshFrom(asked.today), asked.today),
         records(prisma),
         firstSeen(prisma, trees),
         prisma.metricsDay.count(),
+        windowRows(prisma, asked.from, asked.to),
     ]);
 
     return {
         ...asked,
         rows,
         fresh,
+        windows,
         records: stored,
         firstSeen: seen,
         anyLine: lines > 0,

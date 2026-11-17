@@ -1,15 +1,15 @@
 /**
  * Отправка строк дня: сценарии `docs/specs/agent-kit/metrics/`.
  */
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, utimesSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 
-import { IMetricsDayCargo } from './cargo.js';
+import { IEpicWindowCargo, IMetricsDayCargo } from './cargo.js';
 import { IEnvironment, IOutcomeOfCommand } from './commands.js';
 import { IConfig, readConfig } from './config.js';
-import { SEND_EVERY_MS, sendMetrics, windowDays } from './metric-send.js';
-import { ESendFault, readSendMark, sendEnrolledLines, sendFaultLines } from './metric-send-mark.js';
+import { SEND_EVERY_MS, sendMetrics } from './metric-send.js';
+import { ESendFault, markPath, readSendMark, sendEnrolledLines, sendFaultLines } from './metric-send-mark.js';
 import { OBSERVATIONS_DIR } from './observations.js';
 import { IShipment, IShipped, TShip } from './ship.js';
 import { treeSlugOf } from './tree-mark.js';
@@ -401,15 +401,97 @@ describe('sendMetrics', () => {
     });
 });
 
-describe('windowDays', () => {
-    it('идёт от последней удачи и всегда несёт сегодняшний день', () => {
-        expect(windowDays(['2026-11-05.jsonl', '2026-11-06.jsonl', 'copy'], '2026-11-06', '2026-11-07')).toEqual([
-            '2026-11-06',
-            '2026-11-07',
-        ]);
+describe('пересчитанные дни и окна эпика в отправке', () => {
+    let root: string;
+
+    beforeEach((): void => {
+        root = mkdtempSync(join(tmpdir(), 'rt-send-recount-'));
+        mkdirSync(join(root, OBSERVATIONS_DIR), { recursive: true });
+        writeFileSync(join(root, 'token-file'), 'tree-token\n');
+        writeFileSync(
+            join(root, '.claude', 'rt-kit.json'),
+            JSON.stringify({ intake: 'https://intake.example.org', token: 'token-file', tree: 'one-two' })
+        );
     });
 
-    it('не уходит дальше срока хранения', () => {
-        expect(windowDays(['2026-01-01.jsonl'], '', '2026-11-07')).toEqual(['2026-11-07']);
+    afterEach((): void => {
+        rmSync(root, { recursive: true, force: true });
+    });
+
+    it('SC-AK-1632 — день, пересчитанный после последней удачи, уходит строкой дня', async () => {
+        const succeeded: Date = new Date('2026-11-06T12:00:00Z');
+        const line: (day: string) => string = (day: string): string =>
+            `${JSON.stringify({ t: `${day}T09:00:00Z`, ev: 'record-call', task: 'RT-1', sid: 's1', src: 'recount' })}\n`;
+
+        writeFileSync(join(root, OBSERVATIONS_DIR, '2026-11-02.jsonl'), line('2026-11-02'));
+        writeFileSync(join(root, OBSERVATIONS_DIR, '2026-11-01.jsonl'), line('2026-11-01'));
+        // пересчёт 2.11 лёг после удачи, 1.11 — до неё
+        utimesSync(join(root, OBSERVATIONS_DIR, '2026-11-02.jsonl'), NOW, NOW);
+        utimesSync(join(root, OBSERVATIONS_DIR, '2026-11-01.jsonl'), new Date('2026-11-05T00:00:00Z'), new Date('2026-11-05T00:00:00Z'));
+        mkdirSync(dirname(markPath(root)), { recursive: true });
+        writeFileSync(markPath(root), JSON.stringify({ day: '2026-11-06', succeeded: succeeded.getTime(), tried: succeeded.getTime() }));
+
+        const calls: ICalls = answering();
+
+        await sendMetrics(
+            { root, version: '0.35.0', assetsDir: join(__dirname, '..', '..', 'assets') },
+            { quiet: true, force: true, now: NOW, remote: REMOTE, ship: calls.ship }
+        );
+
+        const days: readonly string[] = calls.bodies.map((body: IMetricsDayCargo): string => body.day);
+
+        expect(days).toContain('2026-11-02');
+        expect(days).not.toContain('2026-11-01');
+        expect(calls.bodies.find((body: IMetricsDayCargo): boolean => body.day === '2026-11-02')?.metrics).toMatchObject({ calls: 1 });
+    });
+
+    const facts: (lines: readonly Record<string, string>[]) => void = (lines: readonly Record<string, string>[]): void =>
+        writeFileSync(
+            join(root, OBSERVATIONS_DIR, '2026-11-05.jsonl'),
+            lines.map((one: Record<string, string>): string => `${JSON.stringify(one)}\n`).join('')
+        );
+    const windowsAt: (now: Date) => Promise<IEpicWindowCargo[]> = async (now: Date): Promise<IEpicWindowCargo[]> => {
+        const calls: ICalls = answering();
+
+        await sendMetrics(
+            { root, version: '0.35.0', assetsDir: join(__dirname, '..', '..', 'assets') },
+            { quiet: true, force: true, now, remote: REMOTE, ship: calls.ship }
+        );
+
+        return calls.bodies.filter(
+            (_: unknown, at: number): boolean => calls.operations[at] === 'epic-windows'
+        ) as unknown[] as IEpicWindowCargo[];
+    };
+    const OPENED: Record<string, string> = { t: '2026-11-05T08:00:00Z', ev: 'task-merged', task: 'RT-71', opens: '1', epic: 'RT-7' };
+    const MERGED: Record<string, string> = { t: '2026-11-05T10:00:00Z', ev: 'epic-merged', task: 'RT-7', pkg: 'agent-kit' };
+
+    it('SC-AK-1631 — окно эпика уходит своей записью под признаком копии, строка дня его не несёт', async () => {
+        facts([OPENED, { ...MERGED, pkg: '' }]);
+
+        const sent: IEpicWindowCargo[] = await windowsAt(NOW);
+
+        expect(sent).toHaveLength(1);
+        expect(sent[0]).toMatchObject({
+            epic: 7,
+            from: OPENED['t'],
+            to: MERGED['t'],
+            calls: 0,
+            refusals: 0,
+            reasks: 0,
+            merged: 1,
+            released: 1,
+        });
+        expect(sent[0].origin).toMatch(/^[a-z0-9-]{6,}$/);
+    });
+
+    it('SC-AK-1635 — флаги окна пересчитываются до выпуска, после «выпущен» окно не уходит', async () => {
+        facts([OPENED, MERGED]);
+        expect(await windowsAt(NOW)).toMatchObject([{ merged: 1, released: 0 }]);
+
+        facts([OPENED, MERGED, { t: '2026-11-07T09:00:00Z', ev: 'edition', pkg: 'agent-kit', ver: '0.38.0' }]);
+        const later: Date = new Date('2026-11-07T18:00:00Z');
+
+        expect(await windowsAt(later)).toMatchObject([{ released: 1, stamp: later.getTime() }]);
+        expect(await windowsAt(new Date('2026-11-07T19:00:00Z'))).toEqual([]);
     });
 });

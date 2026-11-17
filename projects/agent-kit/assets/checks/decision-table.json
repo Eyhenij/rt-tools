@@ -759,6 +759,11 @@
             "reason": "hooks into no agent event; guards source it"
         },
         {
+            "file": "pull-merges.sh",
+            "kind": "helper",
+            "reason": "hooks into no agent event; the sending calls it to read the merges and the editions"
+        },
+        {
             "file": "push-set.sh",
             "kind": "helper",
             "reason": "hooks into no agent event; guards source it"
@@ -771,6 +776,12 @@
         {
             "file": "qa-dataid-guard.sh",
             "kind": "guard"
+        },
+        {
+            "file": "record-turn.sh",
+            "kind": "helper",
+            "reason": "hooks into Stop and SessionEnd and counts the session record; it refuses nothing",
+            "event": "Stop"
         },
         {
             "file": "rerun-guard.sh",

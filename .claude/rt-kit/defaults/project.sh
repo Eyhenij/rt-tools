@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · defaults/project.sh · 54ce026297a5 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · defaults/project.sh · 497ad2da7034 · правится надстройкой, не здесь
 # Tree profile: what checks an edit here and what counts as reinvention.
 #
 # The package default. Everything the trees of this workshop have in common lives here: the Nx
@@ -421,6 +421,11 @@ rt_pull_outcomes_default() {
         }'
     done
 }
+
+# Reading the merges and the packages — what the epic windows and the release are judged by — lives
+# in a neighbouring file: together with it the profile outgrew the length limit.
+# shellcheck disable=SC1090
+[ -f "$(dirname "${BASH_SOURCE[0]}")/merges.sh" ] && . "$(dirname "${BASH_SOURCE[0]}")/merges.sh"
 
 # What counts as reinvention in this tree. One line per "pattern<tab>replacement". The patterns are
 # narrow on purpose: the guard checks only NEW text, and a wide pattern would refuse an edit that

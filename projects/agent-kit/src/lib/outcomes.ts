@@ -211,8 +211,11 @@ const READ_FAULT: Readonly<Record<EOutcomesRead, string>> = {
     [EOutcomesRead.Failed]: 'итоги заявок: чтение оборвалось, числа ниже могут отставать',
 };
 
-/** Итоги словами. До десяти задач стоит счёт, а не доля. Главное число идёт первым в отчёте. */
-export function outcomeLines(metric: IOutcomeMetric | null, state: EOutcomesRead, corrections: number): readonly string[] {
+/**
+ * Итоги словами. До десяти задач стоит счёт, а не доля. Главное число идёт первым в отчёте. Правки
+ * владельца печатает результат работы: строка одна.
+ */
+export function outcomeLines(metric: IOutcomeMetric | null, state: EOutcomesRead): readonly string[] {
     const fault: readonly string[] = READ_FAULT[state] ? [READ_FAULT[state]] : [];
     const apart: readonly string[] = metric?.noHandover ? [`заявок без передачи: ${metric.noHandover}, в главное число они не входят`] : [];
 
@@ -221,13 +224,11 @@ export function outcomeLines(metric: IOutcomeMetric | null, state: EOutcomesRead
     }
     const counted: number = metric.accepted + metric.closed;
     const share: string = counted >= SHARE_FROM_TASKS ? ` (${Math.round((metric.firstPass / counted) * 100)}%)` : '';
-    const perTask: string = metric.accepted > 0 ? `, на задачу ${(corrections / metric.accepted).toFixed(1)}` : '';
 
     return [
         '',
         `принято с первого раза: ${metric.firstPass} из ${counted}${share}`,
         `принято задач: ${metric.accepted}, закрыто без слияния: ${metric.closed}, откатов и повторных заявок: ${metric.lost}`,
-        ...(corrections > 0 ? [`правки владельца: ${corrections}${perTask}`] : []),
         ...apart,
         ...fault,
     ];

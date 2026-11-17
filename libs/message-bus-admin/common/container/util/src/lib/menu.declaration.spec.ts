@@ -27,4 +27,12 @@ describe('объявление меню админки', (): void => {
 
         expect(new Set(rights).size).toBe(rights.length);
     });
+
+    it('SC-MB-438 — «Качество» стоит сразу после «Разборов происшествий» и ведёт на /quality', (): void => {
+        const titles: readonly string[] = ADMIN_MENU.map((item: IAdminMenuItem): string => item.title);
+        const quality: IAdminMenuItem | undefined = ADMIN_MENU.find((item: IAdminMenuItem): boolean => item.title === 'sectionQuality');
+
+        expect(titles.indexOf('sectionQuality')).toBe(titles.indexOf('sectionPostmortems') + 1);
+        expect(quality?.path).toBe('/quality');
+    });
 });
