@@ -113,6 +113,11 @@ report "SC-AK-1632 — пересчёт 13.11 по сохранённой зап
     "$(jq -r 'select(.t >= "2026-11-13T00:34:01" and .t < "2026-11-13T03:04:27") | .ev' "$WORK/recounted/2026-11-13.jsonl" | grep -cE '^record-call$'):$(jq -r 'select(.t >= "2026-11-13T00:34:01" and .t < "2026-11-13T03:04:27") | .ev' "$WORK/recounted/2026-11-13.jsonl" | grep -cE '^record-refusal$')" \
     "187:35"
 
+# --- the report of 13.11 over the recounted day ----------------------------------------------------------
+RESULT_LINES="$(node "$HERE/../assets/checks/work-result.mjs" --observations "$WORK/recounted" --until 2026-11-13 | jq -r '.lines[]')"
+report "SC-AK-1618 — отчёт за 13.11: переспросили 3" \
+    "$(printf '%s\n' "$RESULT_LINES" | grep -E '^  Переспросили: ')" "  Переспросили: 3"
+
 # --- the epic windows of 13.11 ------------------------------------------------------------------------
 # The observations the hook writes from the cut, with the merges the hosting gave that day.
 OUTCOMES="$HERE/fixtures/real-outcomes"
