@@ -11,18 +11,30 @@
  * place of any other text, so the conversation itself does not land in the tree. The home directory
  * and mail addresses are replaced in what is kept.
  */
+import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 
 import { buildModel } from '../../assets/checks/flow-model.mjs';
 import { approvingAnswer } from '../../assets/checks/flow-plan.mjs';
+import { calls, isReask, ownerWords, refusals } from '../../assets/checks/record-count.mjs';
 import { wordOf } from '../../assets/task-flow/source/owner.mjs';
 import { scrubber } from './scrub.mjs';
 
 // The placeholder reads as plain words: a reader takes a text that opens like a tag for a wrapper of
-// the harness and drops it.
+// the harness and drops it. The digest after it keeps two equal texts equal — the counter of the
+// owner's words counts a queued message and its typed repeat once — and gives nothing of the text.
 const TEXT = 'text cut';
-const KEPT_TYPES = new Set(['user', 'assistant', 'system']);
+const placeholder = (text) => `${TEXT} ${createHash('sha256').update(text.trim()).digest('hex').slice(0, 10)}`;
+const KEPT_TYPES = new Set(['user', 'assistant', 'system', 'attachment']);
+/**
+ * The opening of an error result by which the counter tells a refusal and its check: the hook error
+ * prefix with the name of the check, or the denial of the permission mode. Only the opening is kept.
+ */
+const REFUSAL_OPENING =
+    /^(?:(?:\S+ hook error: |Agent hook condition was not met: )(?:BLOCKED by [a-z0-9][a-z0-9-]*:|BLOCKED:|Refused by the rules gate|Refused: the epic is over)?|Permission for this action was denied)/;
+/** A commit in a shell command: a change of the tree for the idle time. */
+const COMMIT = /\bgit\b(?:\s+-c\s+\S+)*\s+commit\b/;
 /** Lines a reader looks for inside text: a hook refusal, the exam result, the handoff marker. */
 const KEPT_LINE = /BLOCKED by|Refused by|ЭКЗАМЕН:|EXAM:|СОВЕСТЬ:|CONSCIENCE:|handoff|передач[аи]\s+захода/;
 /**
@@ -54,9 +66,10 @@ function keptText(text) {
     const body = text.trimStart();
     const lines = body.split('\n').filter((line) => KEPT_LINE.test(line) || NUDGE.test(line));
     // The first line kept whole keeps its beginning; otherwise the matched beginning goes first.
-    const start = body.match(HOOK_START)?.[0];
-    const kept = start && lines[0] !== body.split('\n')[0] ? [start, ...lines] : lines;
-    return kept.length > 0 ? scrub(kept.join('\n')) : TEXT;
+    const first = body.split('\n')[0];
+    const start = first.match(REFUSAL_OPENING)?.[0] || body.match(HOOK_START)?.[0];
+    const kept = start && lines[0] !== first ? [start, ...lines] : lines;
+    return kept.length > 0 ? scrub(kept.join('\n')) : placeholder(body);
 }
 
 const textOf = (value) =>
@@ -72,8 +85,15 @@ function cutPart(part) {
         const input = {};
         for (const key of ['subagent_type', 'skill']) if (typeof part.input?.[key] === 'string') input[key] = part.input[key];
         if (typeof part.input?.command === 'string') {
-            const pieces = part.input.command.match(COMMAND_PIECE);
-            input.command = pieces ? pieces.join('\n') : 'command cut';
+            const pieces = part.input.command.match(COMMAND_PIECE) ?? [];
+            if (COMMIT.test(part.input.command)) pieces.push('git commit');
+            input.command = pieces.length > 0 ? pieces.join('\n') : 'command cut';
+        }
+        // A write into the analyses directory closes an epic window; only that mark of the path is kept.
+        if (typeof part.input?.file_path === 'string' && /\/postmortems\//.test(part.input.file_path)) input.file_path = 'postmortems';
+        // A menu question keeps only the sign that it asks again what the owner already answered.
+        if (Array.isArray(part.input?.questions)) {
+            input.questions = part.input.questions.map((q) => (isReask(q?.question) ? { reask: true } : {}));
         }
         // The report a role hands back: the hook of the role metrics reads its verdict from the first
         // line, and only that line is kept.
@@ -120,11 +140,33 @@ export function cutEntry(entry) {
     const out = {};
     // The marks by which a reader tells the owner's words from a meta entry, a summary and a message
     // that did not come from a person.
-    for (const key of ['type', 'subtype', 'timestamp', 'uuid', 'parentUuid', 'isSidechain', 'isMeta', 'isCompactSummary']) {
+    for (const key of [
+        'type',
+        'subtype',
+        'timestamp',
+        'uuid',
+        'parentUuid',
+        'isSidechain',
+        'isMeta',
+        'isCompactSummary',
+        'sessionId',
+        'gitBranch',
+    ]) {
         if (entry[key] !== undefined) out[key] = entry[key];
     }
     // Of the origin only its kind is read; the rest carries the text of another session.
     if (entry.origin && typeof entry.origin === 'object') out.origin = { kind: entry.origin.kind };
+    // A message queued during a turn: its type, its mode and the kind of its origin; the text becomes
+    // the placeholder with its digest.
+    if (entry.attachment && typeof entry.attachment === 'object') {
+        const a = entry.attachment;
+        out.attachment = { type: a.type };
+        if (a.commandMode !== undefined) out.attachment.commandMode = a.commandMode;
+        if (a.origin && typeof a.origin === 'object') out.attachment.origin = { kind: a.origin.kind };
+        if (a.delivery_id !== undefined) out.attachment.delivery_id = a.delivery_id;
+        if (a.timestamp !== undefined) out.attachment.timestamp = a.timestamp;
+        if (a.prompt !== undefined) out.attachment.prompt = keptText(textOf(a.prompt));
+    }
     const message = cutMessage(entry.message);
     if (message) out.message = message;
     if (entry.toolUseResult !== undefined) out.toolUseResult = cutResult(entry.toolUseResult);
@@ -146,6 +188,8 @@ export function cutRecord(text, { from = '', to = '' } = {}) {
         // The readers look at the turns and the hook summaries; the service entries of the host are
         // the bulk of a record and carry nothing a reader asks.
         if (!KEPT_TYPES.has(entry.type)) continue;
+        // Of the attachments only a message queued during a turn is read.
+        if (entry.type === 'attachment' && entry.attachment?.type !== 'queued_command') continue;
         const at = entry.timestamp ?? '';
         if ((from && at && at < from) || (to && at && at > to)) continue;
         lines.push(JSON.stringify(cutEntry(entry)));
@@ -185,6 +229,50 @@ function selfTest() {
             message: { role: 'user', content: 'Stop hook feedback:\nBLOCKED by turn-exit-guard: the stage is not over' },
         },
         { type: 'user', isMeta: true, timestamp: '2026-11-13T10:05:00Z', message: { role: 'user', content: 'private meta' } },
+        {
+            type: 'attachment',
+            sessionId: 's1',
+            timestamp: '2026-11-13T10:06:00Z',
+            attachment: {
+                type: 'queued_command',
+                commandMode: 'prompt',
+                origin: { kind: 'human' },
+                prompt: 'private queued word',
+                delivery_id: 'd1',
+            },
+        },
+        {
+            type: 'user',
+            uuid: 'u7',
+            sessionId: 's1',
+            timestamp: '2026-11-13T10:07:00Z',
+            message: { role: 'user', content: 'private queued word' },
+        },
+        {
+            type: 'user',
+            uuid: 'u8',
+            sessionId: 's1',
+            timestamp: '2026-11-13T10:08:00Z',
+            message: {
+                role: 'user',
+                content: [
+                    {
+                        type: 'tool_result',
+                        tool_use_id: 't8',
+                        is_error: true,
+                        content: 'PreToolUse:Bash hook error: Refused: the epic is over — private detail',
+                    },
+                    {
+                        type: 'tool_result',
+                        tool_use_id: 't9',
+                        is_error: true,
+                        content: 'Permission for this action was denied by the classifier. private',
+                    },
+                    { type: 'tool_result', tool_use_id: 't10', is_error: true, content: 'Exit code 1\nprivate output' },
+                ],
+            },
+        },
+        { type: 'attachment', timestamp: '2026-11-13T10:09:00Z', attachment: { type: 'file', content: 'private file' } },
     ];
     const cut = cutRecord(sample.map((entry) => JSON.stringify(entry)).join('\n'));
     const cutEntries = entriesOf(cut);
@@ -196,8 +284,15 @@ function selfTest() {
     // on the cut either, and a menu answer is the same word.
     const whose = (entries) =>
         entries.map((entry) => (wordOf(entry) === null ? 'none' : entry.toolUseResult?.answers ? wordOf(entry) : 'typed'));
-    if (whose(sample).join('|') !== whose(cutEntries).join('|'))
-        problems.push(`the owner's words differ: ${whose(sample)} / ${whose(cutEntries)}`);
+    // An attachment other than a queued message is not kept, and has no word to compare.
+    const keptSample = sample.filter((entry) => entry.type !== 'attachment' || entry.attachment?.type === 'queued_command');
+    if (whose(keptSample).join('|') !== whose(cutEntries).join('|'))
+        problems.push(`the owner's words differ: ${whose(keptSample)} / ${whose(cutEntries)}`);
+    // The counter of the record answers the same on the cut: the owner's words, the calls, the
+    // refusals with their class and check.
+    const counted = (entries) =>
+        JSON.stringify([ownerWords(entries).length, calls(entries).length, refusals(entries).map((r) => `${r.kind}:${r.check}`)]);
+    if (counted(sample) !== counted(cutEntries)) problems.push(`the counts differ: ${counted(sample)} / ${counted(cutEntries)}`);
     if (cut.includes(HOME) || /owner@example\.com|private/.test(cut)) problems.push('the cut keeps private text');
     if (problems.length > 0) {
         console.log(problems.map((problem) => `cut-record: ${problem}`).join('\n'));

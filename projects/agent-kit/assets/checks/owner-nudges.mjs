@@ -37,20 +37,10 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { buildModel } from './flow-model.mjs';
 import { readRecord } from './flow-plan.mjs';
-
-// The owner's word is read by the source of the description; it lies next to this file once laid
-// out, and one directory up in the package.
-const HERE = dirname(fileURLToPath(import.meta.url));
-const OWNER_SOURCE = [join(HERE, 'task-flow', 'source', 'owner.mjs'), join(HERE, '..', 'task-flow', 'source', 'owner.mjs')].find((p) =>
-    existsSync(p),
-);
-const { wordOf } = await import(pathToFileURL(OWNER_SOURCE).href);
+// The owner's words are read by the counter of the record, the same rule the engine reads them by.
+import { typedOf } from './record-count.mjs';
 
 const DAY = 24 * 60 * 60 * 1000;
-
-/** A typed message that is a wrapper of the harness, not words of the owner. */
-const MACHINE =
-    /^(?:<[a-z][\w-]*[\s>]|\[Request interrupted|Background \(from the session|The app was quit|This session is being continued|Caveat:|Stop hook feedback:|Another Claude session sent a message:)/;
 
 /** The mark of a refusal: at the start of a line or right after the prefix of the harness. */
 const MARK = /(?:^|\n|: )BLOCKED by ([a-z0-9][a-z0-9-]*):([^\n]*)/g;
@@ -111,13 +101,14 @@ const inWindow = (entry, window) => {
 
 const partsOf = (entry) => (Array.isArray(entry?.message?.content) ? entry.message.content : []);
 
-/** The text the owner typed in an entry, or null: a tool result, a menu answer and a wrapper are none. */
+/**
+ * The text the owner typed in an entry, before a turn or during one, or null: a tool result, a menu
+ * answer and a wrapper of the harness are none.
+ */
 export function typedText(entry) {
     if (entry?.isSidechain || entry?.toolUseResult) return null;
-    if (partsOf(entry).some((part) => part?.type === 'tool_result')) return null;
-    const word = wordOf(entry);
-    if (word === null || word.trim() === '' || MACHINE.test(word.trim())) return null;
-    return word;
+    const word = typedOf(entry);
+    return word && word.text.trim() !== '' ? word.text : null;
 }
 
 /** The ids of the tool calls in an entry of the agent. */
