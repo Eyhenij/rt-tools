@@ -6,6 +6,7 @@
  */
 import { IAdminColumn, TAdminLabelKey, TAdminText } from '@rt/message-bus-admin/common/core/util';
 import {
+    EQualityResultTile,
     EQualitySendFault,
     IPage,
     IQualityCompleteness,
@@ -17,11 +18,23 @@ import {
     IQualityTreeFault,
 } from '@rt/message-bus-common';
 
+import {
+    IQualityPairRow,
+    IQualityStateRow,
+    qualityMilestoneRows,
+    qualityPairRows,
+    qualityResultTiles,
+    qualityWindowRows,
+} from './quality-result.logic';
+
 /** Адрес операции раздела. */
 export const QUALITY_PATH: string = '/api/usage/quality';
 
 /** Ключ, под которым хранится выбор столбцов таблицы причин. */
 export const QUALITY_TABLE_ID: string = 'admin-quality-drivers';
+
+/** Ячейка без значения. */
+const NO_VALUE: string = '—';
 
 /** Сколько секунд в минуте таблицы причин. */
 const SECONDS_IN_MINUTE: number = 60;
@@ -36,6 +49,7 @@ export const QUALITY_COLUMNS: readonly IAdminColumn[] = Object.freeze([
     { key: 'afterLoad', label: 'columnAfterLoad' },
     { key: 'wastedRuns', label: 'columnWastedRuns' },
     { key: 'wastedMinutes', label: 'columnWastedMinutes' },
+    { key: 'per100', label: 'columnPer100' },
 ]);
 
 /** Три числа итога. */
@@ -47,7 +61,7 @@ export enum EQualityTile {
 
 /** Плитка числа итога, готовая к отрисовке. */
 export interface IQualityTile {
-    readonly key: EQualityTile;
+    readonly key: EQualityTile | EQualityResultTile;
     readonly label: string;
     readonly value: string;
     readonly secondary: string | null;
@@ -62,14 +76,20 @@ interface IQualityFaultLine {
 
 /** Всё, что стоит над таблицей. */
 export interface IQualitySummaryView {
+    /** Три числа итога, за ними плитки результата работы. */
     readonly tiles: readonly IQualityTile[];
     readonly completeness: string;
     readonly faults: readonly IQualityFaultLine[];
+    readonly milestones: readonly IQualityStateRow[];
+    readonly pairs: readonly IQualityPairRow[];
+    readonly windows: readonly IQualityStateRow[];
 }
 
 /** Строка таблицы с временем в минутах: секунды человек не сравнивает. */
 export interface IQualityDriverView extends IQualityDriverRow {
     readonly wastedMinutes: number;
+    /** Отказы по записи на сто вызовов словами: без вызовов — прочерк. */
+    readonly per100Shown: string;
 }
 
 const FAULT_LABELS: Readonly<Record<EQualitySendFault, TAdminLabelKey>> = Object.freeze({
@@ -88,7 +108,7 @@ function firstPassTile(first: IQualityFirstPass, text: TAdminText): IQualityTile
     return {
         key: EQualityTile.FirstPass,
         label: text('qualityFirstPass'),
-        value: first.counted === 0 ? text('qualityNoData') : counted,
+        value: counted,
         secondary: first.share === null ? noHandover : [outOf, noHandover].filter(Boolean).join(' · '),
         hint: text('qualityFirstPassHint'),
     };
@@ -149,13 +169,25 @@ export function isQualityReport(page: IPage<IQualityDriverRow>): page is IQualit
 /** Три числа, полнота и сбои отправки словами. */
 export function qualitySummaryView(report: IQualityReport, text: TAdminText): IQualitySummaryView {
     return {
-        tiles: [firstPassTile(report.firstPass, text), correctionsTile(report.corrections, text), repeatsTile(report.repeats, text)],
+        tiles: [
+            firstPassTile(report.firstPass, text),
+            correctionsTile(report.corrections, text),
+            repeatsTile(report.repeats, text),
+            ...qualityResultTiles(report.result, text),
+        ],
         completeness: completenessLine(report.completeness, text),
         faults: report.completeness.faults.map((fault: IQualityTreeFault): IQualityFaultLine => faultLine(fault, text)),
+        milestones: qualityMilestoneRows(report.milestones, text),
+        pairs: qualityPairRows(report.pairs),
+        windows: qualityWindowRows(report.epicWindows, text),
     };
 }
 
 /** Строка таблицы для показа. */
 export function qualityDriverView(row: IQualityDriverRow): IQualityDriverView {
-    return { ...row, wastedMinutes: Math.round(row.wastedSeconds / SECONDS_IN_MINUTE) };
+    return {
+        ...row,
+        wastedMinutes: Math.round(row.wastedSeconds / SECONDS_IN_MINUTE),
+        per100Shown: row.per100 === null ? NO_VALUE : row.per100.toFixed(2),
+    };
 }

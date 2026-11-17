@@ -39,6 +39,7 @@ const NO_RESULT: IQualityResult = {
     ) as Record<EQualityResultTile, IQualityResultTile>,
     takenHours: null,
     ownerWords: null,
+    refusalsOfCalls: null,
 };
 
 function report(over: Partial<IQualityReport> = {}): IQualityReport {
@@ -69,7 +70,7 @@ function tile(view: IQualitySummaryView, key: EQualityTile): IQualityTile {
 }
 
 describe('qualitySummaryView', () => {
-    it('SC-AK-1325 — строка без задач даёт «нет данных», а не нули', () => {
+    it('SC-MB-449 — строка без задач даёт «0 из 0» первой плитке и «нет данных» правкам', () => {
         const view: IQualitySummaryView = qualitySummaryView(
             report({
                 firstPass: { counted: 0, firstPass: 0, share: null, noHandover: 0 },
@@ -78,7 +79,7 @@ describe('qualitySummaryView', () => {
             TEXT
         );
 
-        expect(tile(view, EQualityTile.FirstPass)).toMatchObject({ value: 'qualityNoData', secondary: null });
+        expect(tile(view, EQualityTile.FirstPass)).toMatchObject({ value: 'qualityOutOf 0/0', secondary: null });
         expect(tile(view, EQualityTile.Corrections)).toMatchObject({ value: 'qualityNoData', secondary: null });
     });
 

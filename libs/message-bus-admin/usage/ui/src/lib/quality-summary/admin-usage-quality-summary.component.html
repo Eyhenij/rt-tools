@@ -18,6 +18,51 @@
         @for (fault of shown.faults; track fault.tree) {
             <p rtElem="fault" qa-dataid="quality-send-fault">{{ fault.tree }}: {{ fault.text }}</p>
         }
+
+        @if (tilesShown() && (shown.milestones.length > 0 || shown.pairs.length > 0)) {
+            <div rtElem="blocks">
+                @if (shown.milestones.length > 0) {
+                    <rt-card qa-dataid="quality-milestone" [header]="labels().milestone">
+                        <p rtElem="block-hint">{{ labels().milestoneHint }}</p>
+                        @for (row of shown.milestones; track row.title) {
+                            <div rtElem="row" qa-dataid="quality-milestone-row">
+                                <span rtElem="row-title">{{ row.title }}</span>
+                                <rt-tag size="sm" [severity]="row.severity" [value]="row.state" />
+                                @if (row.note) {
+                                    <span rtElem="row-note">{{ row.note }}</span>
+                                }
+                            </div>
+                        }
+                    </rt-card>
+                }
+
+                @if (shown.pairs.length > 0) {
+                    <rt-card qa-dataid="quality-pairs" [header]="labels().pairs">
+                        <p rtElem="block-hint">{{ labels().pairsHint }}</p>
+                        @for (row of shown.pairs; track row.pair) {
+                            <div rtElem="row" qa-dataid="quality-pairs-row">
+                                <span rtElem="row-title">{{ row.pair }}</span>
+                                <span rtElem="row-count">{{ row.count }}</span>
+                            </div>
+                        }
+                    </rt-card>
+                }
+            </div>
+        }
+
+        @if (tilesShown() && shown.windows.length > 0) {
+            <rt-card qa-dataid="quality-windows" [header]="labels().windows">
+                <p rtElem="block-hint">{{ labels().windowsHint }}</p>
+                @for (row of shown.windows; track $index) {
+                    <div rtElem="row" qa-dataid="quality-windows-row">
+                        <span rtElem="row-title">{{ row.title }}</span>
+                        <rt-tag size="sm" [severity]="row.severity" [value]="row.state" />
+                        <span rtElem="row-span">{{ row.span }}</span>
+                        <span rtElem="row-note">{{ row.note }}</span>
+                    </div>
+                }
+            </rt-card>
+        }
     } @else {
         <div rtElem="tiles" qa-dataid="quality-reading">
             @for (placeholder of placeholders; track placeholder) {

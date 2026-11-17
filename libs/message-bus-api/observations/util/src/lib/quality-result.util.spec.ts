@@ -58,6 +58,7 @@ describe('qualityOf — результат работы', () => {
         ];
 
         expect(report({ rows, from: '2026-11-12' }).result.tiles[EQualityResultTile.RefusalsPer100]).toEqual({ value: 4, missing: 0 });
+        expect(report({ rows, from: '2026-11-12' }).result.refusalsOfCalls).toEqual({ refusals: 40, calls: 1000 });
     });
 
     it('SC-MB-448 — слитые задачи складываются, «от взятия» — минуты на задачу со временем в часах', () => {
@@ -87,6 +88,7 @@ describe('qualityOf — результат работы', () => {
         }
         expect(shown.result.takenHours).toBeNull();
         expect(shown.result.ownerWords).toBeNull();
+        expect(shown.result.refusalsOfCalls).toBeNull();
         expect(shown.firstPass).toMatchObject({ counted: 2, firstPass: 1 });
         expect(shown.milestones).toEqual([]);
     });
@@ -106,14 +108,14 @@ describe('qualityOf — результат работы', () => {
         ];
 
         expect(report({ rows, from: '2026-11-12' }).milestones).toEqual([
-            { day: '2026-11-12', milestone: EQualityMilestone.Reached },
-            { day: '2026-11-13', milestone: EQualityMilestone.Missed },
+            { day: '2026-11-12', milestone: EQualityMilestone.Reached, per100: 4, deadEnds: 0 },
+            { day: '2026-11-13', milestone: EQualityMilestone.Missed, per100: 1, deadEnds: 1 },
         ]);
     });
 
     it('SC-MB-450 — день со слияниями и без вызовов читает «вызовов нет»', () => {
         expect(report({ rows: [line({ tasksMerged: 1 })] }).milestones).toEqual([
-            { day: '2026-11-13', milestone: EQualityMilestone.NoCalls },
+            { day: '2026-11-13', milestone: EQualityMilestone.NoCalls, per100: null, deadEnds: 0 },
         ]);
     });
 

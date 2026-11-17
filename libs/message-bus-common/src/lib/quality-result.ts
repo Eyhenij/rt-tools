@@ -31,6 +31,8 @@ export interface IQualityResult {
     readonly takenHours: number | null;
     /** Слова владельца периода для подписи «из N слов владельца». Пусто: строки их не несут. */
     readonly ownerWords: number | null;
+    /** Отказы и вызовы под плиткой «Отказов на сто вызовов». Пусто: строки не несут вызовов. */
+    readonly refusalsOfCalls: { readonly refusals: number; readonly calls: number } | null;
 }
 
 /** Веха G одного дня. */
@@ -43,6 +45,9 @@ export enum EQualityMilestone {
 export interface IQualityMilestoneDay {
     readonly day: string;
     readonly milestone: EQualityMilestone;
+    /** Отказы на сто вызовов дня, сотые. Пусто: вызовов нет. */
+    readonly per100: number | null;
+    readonly deadEnds: number;
 }
 
 /** Пара проверок, отказавших подряд. */

@@ -287,7 +287,7 @@ describe('UsageReadController — раздел «Качество»', () => {
         );
 
         expect(report.result.tiles[EQualityResultTile.Reasks]).toEqual({ value: 3, missing: 0 });
-        expect(report.milestones).toEqual([{ day: '2026-11-05', milestone: EQualityMilestone.Missed }]);
+        expect(report.milestones).toEqual([{ day: '2026-11-05', milestone: EQualityMilestone.Missed, per100: 18.72, deadEnds: 0 }]);
         expect(report.pairs).toEqual([{ first: 'grill-gate', second: 'skill-gate', count: 2 }]);
         expect(report.epicWindows).toEqual([
             expect.objectContaining({ epic: 3227, calls: 187, refusals: 35, reasks: 3, state: EQualityEpicState.NotReleased }),

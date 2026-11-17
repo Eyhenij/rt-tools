@@ -67,6 +67,11 @@
             <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-wasted-minutes'">{{ row.wastedMinutes }}</td>
         </ng-container>
 
+        <ng-container cdkColumnDef="per100">
+            <th *cdkHeaderCellDef cdk-header-cell>{{ columns()[8].label }}</th>
+            <td *cdkCellDef="let row" cdk-cell [attr.qa-dataid]="qaPrefix + '-cell-per100'">{{ row.per100Shown }}</td>
+        </ng-container>
+
         <tr *cdkHeaderRowDef="rowsTable.displayedColumns()" cdk-header-row></tr>
         <tr *cdkRowDef="let row; columns: rowsTable.displayedColumns()" cdk-row [attr.qa-dataid]="qaRow()"></tr>
     </rt-table>

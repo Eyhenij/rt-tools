@@ -72,6 +72,7 @@ function report(over: Partial<IQualityReport> = {}): IQualityReport {
             ) as Record<EQualityResultTile, IQualityResultTile>,
             takenHours: null,
             ownerWords: null,
+            refusalsOfCalls: null,
         },
         milestones: [],
         pairs: [],

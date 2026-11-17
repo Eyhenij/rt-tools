@@ -117,11 +117,13 @@ export function qualityResultOf(rows: readonly IQualityDayRow[]): IQualityResult
     }
     const timed: number = sumOf(rows, ['tasksTimed']);
     const words: readonly IQualityDayRow[] = carrying(rows, 'ownerWords');
+    const called: readonly IQualityDayRow[] = carrying(rows, 'calls');
 
     return {
         tiles: tiles as Record<EQualityResultTile, IQualityResultTile>,
         takenHours: timed > 0 ? round(sumOf(rows, ['takenMinutes']) / timed / MINUTES_PER_HOUR, 1) : null,
         ownerWords: words.length > 0 ? sumOf(words, ['ownerWords']) : null,
+        refusalsOfCalls: called.length > 0 ? { refusals: sumOf(called, REFUSAL_KEYS), calls: sumOf(called, ['calls']) } : null,
     };
 }
 
@@ -145,10 +147,11 @@ export function qualityMilestonesOf(rows: readonly IQualityDayRow[]): readonly I
         ),
     ].sort((left: string, right: string): number => left.localeCompare(right));
 
-    return days.map((day: string): IQualityMilestoneDay => ({
-        day,
-        milestone: milestoneOf(rows.filter((row: IQualityDayRow): boolean => row.day === day)),
-    }));
+    return days.map((day: string): IQualityMilestoneDay => {
+        const ofDay: readonly IQualityDayRow[] = rows.filter((row: IQualityDayRow): boolean => row.day === day);
+
+        return { day, milestone: milestoneOf(ofDay), per100: per100Of(ofDay), deadEnds: sumOf(ofDay, ['deadEnds']) };
+    });
 }
 
 /** Пары подряд по обеим половинам ключа, частые первыми. */
