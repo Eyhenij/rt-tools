@@ -47,6 +47,8 @@ const USAGE: readonly string[] = [
     '  metrics         метрики дерева: отказы, повторы, мёртвые правила, вес входа',
     '  metrics --days N  за сколько дней; без довода — за тридцать',
     '  metrics --json  то же машиночитаемо',
+    '  recount --day YYYY-MM-DD   пересчитать прошлый день по сохранённым записям разговоров дерева',
+    '  recount --days N  то же за N дней по вчерашний; повторный пересчёт заменяет прошлый',
     '  send            отправить строки дня: только числа, без разборов и предложений',
     '  send --quiet    то же молча: так зовут проверки',
     '  propose         отправить груз в приём: сводку со снимком надстроек, предложения и разборы',
@@ -364,6 +366,31 @@ async function runPropose(env: IEnvironment, argv: readonly string[]): Promise<I
     });
 }
 
+/**
+ * Пересчёт прошлых дней по сохранённым записям разговоров тем же счётчиком, что у хука конца хода.
+ * День, который хук уже сосчитал, не трогается; прошлый пересчёт дня заменяется.
+ */
+function runRecount(env: IEnvironment, argv: readonly string[]): IOutcomeOfCommand {
+    const day: string = optionOf(argv, '--day', '');
+    const days: string = optionOf(argv, '--days', '');
+    if (!day && !days) {
+        return { code: 1, lines: ['назовите день: `recount --day YYYY-MM-DD` или `recount --days N`'] };
+    }
+    const until: string = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    const args: readonly string[] = [
+        join(env.assetsDir, 'checks', 'record-recount.mjs'),
+        '--tree',
+        env.root,
+        ...(day ? ['--day', day] : ['--days', days, '--until', until]),
+    ];
+    try {
+        const out: string = execFileSync(process.execPath, args, { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
+        return { code: 0, lines: out.split('\n').filter(Boolean) };
+    } catch (error: unknown) {
+        return { code: 1, lines: [`пересчёт не прошёл: ${error instanceof Error ? error.message : String(error)}`] };
+    }
+}
+
 /** Судьба своих записей: чтение приёма по токену дерева и надстройки под ними. */
 function runFate(env: IEnvironment): Promise<IOutcomeOfCommand> {
     return fate(env, { read: httpReadOwn });
@@ -400,6 +427,7 @@ const COMMANDS: Readonly<Record<string, TCommandRun>> = {
     cost: runCost,
     stats: runStats,
     metrics: runMetrics,
+    recount: runRecount,
     send: runSend,
     propose: runPropose,
     fate: runFate,
