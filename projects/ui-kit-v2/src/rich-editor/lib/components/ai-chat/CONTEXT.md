@@ -65,16 +65,21 @@
   ответа первым в строке оценки. Состояние «скопировано» своё у каждой кнопки, приём —
   `rt-copy-value`: CDK `Clipboard`, `check` и `uiCopied` на 2000 мс. Подписи — `uiCopy`, `uiCopied`
   кита, своих `ai*` нет. Вопрос копирует `message.text` как есть. Ответ — видимый текст блоков:
-  `blocksToPlainText` склеивает `markdown` через `markdownToPlainText` кита и текст `notice`, блоки
-  чужих типов пропускает — их текст знает только отрисовщик приложения. Ход работы, вложения
-  `extra` и строка действий в буфер не попадают. `innerText` отображённого текста не взят: в jsdom
+  `blocksToPlainText` склеивает `markdown` через `markdownToPlainText` кита, текст `notice` и
+  текст `toText` отрисовщика из реестра; блок без `toText` пропускает. Ответ берёт реестр тем же
+  токеном, что и `rt-ai-chat-blocks`. Пустой текст — `canCopy` ложно, кнопки нет, оценка на месте.
+  Ход работы, вложения `extra` и строка действий в буфер не попадают. `innerText` отображённого текста не взят: в jsdom
   его нет, и проверялась бы подмена, а не настоящий путь. `copyable` выключает обе.
 - Сообщение — `UserMessage | AssistantMessage`: у вопроса строка `text`, у ответа массив `blocks`.
   Блоки рисует внутренний `rt-ai-chat-blocks` (папка `blocks/`): `markdown` — `rt-markdown-text`,
   `notice` — `rt-message`. Остальные типы рисуют отрисовщики из `RT_AI_CHAT_BLOCK_RENDERERS`;
-  приложение регистрирует их `provideRtAiChatBlock(type, component)`, компонент получает вход
-  `block`. Блок без отрисовщика — пунктирная заглушка с подписью `aiBlockUnsupported` и именем типа.
-  Выбор вида — чистая `toBlockViews`: объединение с `type: string` в шаблоне не сужается.
+  приложение регистрирует их `provideRtAiChatBlock(type, component, toText?)`, компонент получает
+  вход `block`. Блок без отрисовщика — пунктирная заглушка с подписью `aiBlockUnsupported` и именем
+  типа. Выбор вида — чистая `toBlockViews`: объединение с `type: string` в шаблоне не сужается.
+  `notice` с severity, которой нет в `NOTICE_SEVERITIES`, — тоже заглушка: `rt-message` без
+  severity теряет значок и цвет. Регистрации `markdown` и `notice` не берутся (`OWN_TYPES`).
+  Список multi-провайдера Angular между инжекторами не сливает, поэтому все регистрации — на одном
+  уровне; сборка по уровням отложена, пока она не нужна приложению.
 - `headerIconPreset="material"` ставит на `<header>` признак `data-rt-icon-preset='material'`
   (`RT_ICON_PRESET_ATTRIBUTE`): значки шапки — назад, знак ассистента в заголовке, полный экран,
   беседы, новая беседа, закрыть — рисуются материальным набором, токены набора оформления не

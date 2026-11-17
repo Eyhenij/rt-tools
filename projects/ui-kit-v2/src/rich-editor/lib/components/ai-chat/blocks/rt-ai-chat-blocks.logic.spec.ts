@@ -1,5 +1,5 @@
 import { IRtAiChat } from '../rt-ai-chat.model';
-import { blocksToPlainText, isMarkdownBlock, isNoticeBlock } from './rt-ai-chat-blocks.logic';
+import { blocksToPlainText, isMarkdownBlock, isNoticeBlock, toBlockViews } from './rt-ai-chat-blocks.logic';
 
 describe('rt-ai-chat-blocks logic', (): void => {
     it('SC-UKV-1321 — копия ответа склеивает тексты блоков по порядку, без знаков markdown', (): void => {
@@ -38,5 +38,42 @@ describe('rt-ai-chat-blocks logic', (): void => {
         expect(isNoticeBlock(notice)).toBe(true);
         expect(isMarkdownBlock({ type: 'markdown' })).toBe(false);
         expect(isNoticeBlock({ type: 'notice' })).toBe(false);
+    });
+
+    it('SC-UKV-1326 — блок из реестра попадает в копию текстом функции toText своего отрисовщика', (): void => {
+        const blocks: readonly IRtAiChat.Block[] = [
+            { type: 'markdown', text: 'До графика.' },
+            { type: 'chart', caption: 'Загрузка по неделям' },
+            { type: 'table' },
+        ];
+        const renderers: readonly IRtAiChat.BlockRenderer[] = [
+            { type: 'chart', component: Object, toText: (): string => 'старый текст' },
+            {
+                type: 'chart',
+                component: Object,
+                toText: (block: IRtAiChat.Block): string => `  ${String(Reflect.get(block, 'caption'))}  `,
+            },
+            { type: 'table', component: Object },
+            { type: 'markdown', component: Object, toText: (): string => 'не кита' },
+        ];
+
+        expect(blocksToPlainText(blocks, renderers)).toBe('До графика.\n\nЗагрузка по неделям');
+        expect(blocksToPlainText(blocks)).toBe('До графика.');
+    });
+
+    it('SC-UKV-1328 — плашка с оттенком, которого нет у rt-message, своей не считается и идёт в заглушку', (): void => {
+        const noSeverity: IRtAiChat.Block = { type: 'notice', text: 'x' };
+        const foreign: IRtAiChat.Block = { type: 'notice', severity: 'critical', text: 'x' };
+        const known: IRtAiChat.Block = { type: 'notice', severity: 'danger', text: 'x' };
+        const inherited: IRtAiChat.Block = { type: 'notice', severity: 'toString', text: 'x' };
+
+        expect(isNoticeBlock(known)).toBe(true);
+        expect(isNoticeBlock(noSeverity)).toBe(false);
+        expect(isNoticeBlock(foreign)).toBe(false);
+        expect(isNoticeBlock(inherited)).toBe(false);
+        expect(toBlockViews([known, foreign], [{ type: 'notice', component: Object }])).toEqual([
+            { kind: 'notice', severity: 'danger', text: 'x' },
+            { kind: 'unsupported', type: 'notice' },
+        ]);
     });
 });

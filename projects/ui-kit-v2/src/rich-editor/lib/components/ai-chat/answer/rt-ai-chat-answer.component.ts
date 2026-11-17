@@ -24,14 +24,16 @@ import { RT_KIT_LABELS, RtAiRunStatusComponent, RtIconButtonComponent, TRtKitLab
 
 import { RtAiChatBlocksComponent } from '../blocks/rt-ai-chat-blocks.component';
 import { blocksToPlainText } from '../blocks/rt-ai-chat-blocks.logic';
+import { RT_AI_CHAT_BLOCK_RENDERERS } from '../blocks/rt-ai-chat-blocks.providers';
 import { RtAiChatCopyComponent } from '../copy/rt-ai-chat-copy.component';
 import { IRtAiChat } from '../rt-ai-chat.model';
 
 const BEM_BLOCK: string = 'rt-ai-chat-answer';
 
 /**
- * Ответ ассистента в ленте `rt-ai-chat`: ход работы, текст в markdown, вложения приложения и строка
- * действий — копирование и оценка. Строка появляется, когда текст дописан.
+ * Ответ ассистента в ленте `rt-ai-chat`: ход работы, блоки, вложения приложения и строка действий —
+ * копирование и оценка. Строка появляется, когда у ответа есть блок и поток кончился; копирование —
+ * когда у блоков есть текст.
  */
 @Component({
     selector: 'rt-ai-chat-answer',
@@ -58,13 +60,18 @@ const BEM_BLOCK: string = 'rt-ai-chat-answer';
     },
 })
 export class RtAiChatAnswerComponent {
+    readonly #renderers: readonly IRtAiChat.BlockRenderer[] = inject(RT_AI_CHAT_BLOCK_RENDERERS, { optional: true }) ?? [];
+
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     /** Ответ дописан: есть хотя бы один блок, и поток кончился — строка действий с копированием и оценкой. */
     protected readonly isWritten: Signal<boolean> = computed((): boolean => this.message().blocks.length > 0 && !this.message().streaming);
 
     /** Что копирует кнопка: видимый текст блоков без знаков разметки — без хода работы и вложений. */
-    protected readonly plainText: Signal<string> = computed((): string => blocksToPlainText(this.message().blocks));
+    protected readonly plainText: Signal<string> = computed((): string => blocksToPlainText(this.message().blocks, this.#renderers));
+
+    /** Кнопка копирования видна, когда её не выключили и у блоков есть текст: пустая копия обманула бы. */
+    protected readonly canCopy: Signal<boolean> = computed((): boolean => this.copyable() && this.plainText().length > 0);
 
     public readonly message: InputSignal<IRtAiChat.AssistantMessage> = input.required<IRtAiChat.AssistantMessage>();
 

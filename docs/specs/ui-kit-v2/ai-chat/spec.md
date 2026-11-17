@@ -28,19 +28,19 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 ### What it is called in the interface
 
-| In the domain         | On the screen                                           |
-| --------------------- | ------------------------------------------------------- |
-| The question          | the bubble on the right with «You»                      |
-| The answer            | the blocks on the left with the run line above them     |
-| A block without a renderer | a dashed plate «The “chart” block is not supported» |
-| The rating            | the buttons «Good answer» and «Bad answer»              |
-| Copying a message     | the button «Copy», «Copied» after the press             |
-| The conversations     | the button and the page «Conversations»                 |
-| A new conversation    | the button «New conversation»                           |
-| The reference number  | «Reference» with the id on a plate and «Copy reference» |
-| Ask again             | the button «Ask again» under the error                  |
-| The suggestions       | the cards with ready questions on the empty screen      |
-| The conversation menu | the button «More actions» with «Copy ID» and «Delete»   |
+| In the domain              | On the screen                                           |
+| -------------------------- | ------------------------------------------------------- |
+| The question               | the bubble on the right with «You»                      |
+| The answer                 | the blocks on the left with the run line above them     |
+| A block without a renderer | a dashed plate «The “chart” block is not supported»     |
+| The rating                 | the buttons «Good answer» and «Bad answer»              |
+| Copying a message          | the button «Copy», «Copied» after the press             |
+| The conversations          | the button and the page «Conversations»                 |
+| A new conversation         | the button «New conversation»                           |
+| The reference number       | «Reference» with the id on a plate and «Copy reference» |
+| Ask again                  | the button «Ask again» under the error                  |
+| The suggestions            | the cards with ready questions on the empty screen      |
+| The conversation menu      | the button «More actions» with «Copy ID» and «Delete»   |
 
 ## Rules
 
@@ -54,11 +54,16 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **A block with no renderer shows a plate with its type name, and the blocks around it stay in place.**
 
+- **A markdown block without text and a notice without a severity `rt-message` knows are shown as the plate too, and a renderer registered for `markdown` or `notice` is not taken.**
 - **The run line stands above the answer blocks, and its steps open for one answer at a time.**
 
 - **The rating appears once the answer has a block and is no longer written, and pressing the chosen rating again removes it.**
 
 - **A written answer has «Copy» first in its rating row, and the press copies the visible text of its blocks without markdown signs or unknown blocks and shows «Copied» for two seconds.**
+
+- **A block drawn by a renderer goes into the copy by the text function registered with it; without one it stays out.**
+
+- **A written answer whose blocks give no text shows no «Copy», and its rating stays.**
 
 - **A question has «Copy» in a row under its bubble at the bubble's side, it copies the question text, and the consumer can turn both copy buttons off.**
 
@@ -175,11 +180,15 @@ Not applicable.
 - **The organism lives in the rich-editor entry.** It holds the message composer, which pulls the
   rich editor library; the main entry does not import it.
 - **The attachments come as a template.** The kit draws the answer blocks; what stands under them
-  is the application's, and the kit does not know it.
+  is the application's, and the kit does not know it. A part of the answer itself goes as a block
+  with a registered renderer, not through this template.
 - **Heavy blocks are drawn by registered renderers, not by a switch inside the kit.** A chart
   imported by the rich-editor entry would make its library a dependency of every consumer of the
   editor. The type of a block is an open union: the kit knows `markdown` and `notice`, the rest
   arrive by the renderer token.
+- **All renderers are registered at one level, usually the root of the application.** Angular does
+  not join a multi provider list across injectors: a registration in a route or a component hides
+  those of the root in its subtree. Merging the levels is left until a consumer needs it.
 - **A block without a renderer is shown, not skipped.** A skipped block hides a forgotten
   registration from the developer; the plate names the type.
 - **The protocol stays in the application.** The kit gets a list of messages with a run state, not
@@ -210,3 +219,4 @@ None.
 - 2026-10-28 — the task RT-2964 of the epic RT-2958: the composer of the assistant with the row of actions and the usage ring.
 - 2026-11-15 — the task RT-3348: on a phone the row sign shadow is narrower and a tap leaves no hover tint.
 - 2026-11-15 — the task RT-3334 of the epic RT-3346: the answer is a list of blocks — markdown and notice drawn by the kit, other types by registered renderers, a plate for a type without one.
+- 2026-11-17 — the task RT-3334 after review: a renderer gives the copy text of its block, an answer without text shows no «Copy», a notice of an unknown severity is a plate.

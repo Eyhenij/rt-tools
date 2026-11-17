@@ -296,7 +296,7 @@ Covered by the spec of the blocks logic.
 
 Given an answer with a block of type `chart` between two markdown blocks
 When its text is copied
-Then the clipboard holds the two markdown texts only, and an answer of unknown blocks alone copies an empty line
+Then the clipboard holds the two markdown texts only, and an answer of unknown blocks alone gives an empty text
 
 Covered by the spec of the blocks logic.
 
@@ -323,3 +323,27 @@ When it is drawn
 Then a dashed plate «The “chart” block is not supported» stands in its place, and the blocks around it are drawn
 
 Covered by the component spec of the blocks and the frame `Blocks`.
+
+### SC-UKV-1326 — a renderer gives the copy text of its block
+
+Given a renderer registered for the type `chart` with a text function, and an answer of a markdown block, a `chart` block and a `table` block whose renderer has none
+When the answer text is copied
+Then the clipboard holds the markdown text and the text the function gave for the chart, the table stays out, and of two registrations of one type the last is taken
+
+Covered by the spec of the blocks logic and the component spec of the answer.
+
+### SC-UKV-1327 — an answer without text shows no «Copy»
+
+Given a written answer whose only block is a `chart` without a text function
+When it is drawn
+Then its rating row stands without «Copy», and the rating buttons are in place
+
+Covered by the component spec of the answer.
+
+### SC-UKV-1328 — a notice of a severity `rt-message` does not know is a plate
+
+Given a notice block without a severity, one with the severity `critical` and a renderer registered for `notice`
+When it is drawn
+Then each stands as the plate with the type `notice`, the renderer is not taken, and a notice of a known severity stays a plate of `rt-message`
+
+Covered by the spec of the blocks logic.
