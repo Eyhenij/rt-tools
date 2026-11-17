@@ -1,0 +1,16 @@
+<ng-container rtBlock="rt-chart">
+    @if (empty()) {
+        <rt-empty-state rtElem="empty" qa-dataid="chart-empty" icon="chart-bar" [title]="emptyTitle()" [description]="emptyHint()" />
+    } @else if (ready()) {
+        <div
+            rtElem="plot"
+            echarts
+            qa-dataid="chart-plot"
+            [options]="baseOption"
+            [merge]="option()"
+            [theme]="chartTheme()"
+            [initOpts]="initOpts"
+            (chartInit)="onChartInit($event)"
+            (chartFinished)="onChartFinished()"></div>
+    }
+</ng-container>

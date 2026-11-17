@@ -1,0 +1,22 @@
+@layer rt-kit.components {
+    /* rt-chart — график кита (ViewEncapsulation.None): класс блока на host.
+       Ширину график берёт у контейнера, высоту — из своего свойства, которое ставит вход `height`. */
+
+    .rt-chart {
+        --rt-chart-height: 320px;
+
+        display: block;
+        width: 100%;
+        min-width: 0;
+
+        &__plot {
+            width: 100%;
+            height: var(--rt-chart-height);
+        }
+
+        &__empty {
+            min-height: var(--rt-chart-height);
+            justify-content: center;
+        }
+    }
+}
