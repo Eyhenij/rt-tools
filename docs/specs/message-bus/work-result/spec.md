@@ -1,14 +1,14 @@
 # The work result on the screen «Качество»
 
-**Status:** proposed · **Revision:** 17 November 2026 · **Scenario prefix:** `SC-MB`
-**Depends on:** `message-bus/usage` (the subdomain it merges into), `message-bus/admin-shell` (the menu), `agent-kit/metrics`
+**Status:** in force · **Revision:** 17 November 2026 · **Scenario prefix:** `SC-MB`
+**Depends on:** `message-bus/usage` (the section and the day line), `message-bus/admin-shell` (the menu), `agent-kit/work-result`
 **Laws:** `lists`, `navigation`, `access`, `entity-models`, `delivery`, `mockups`
 **Procedures:** none — the operations are declared by the controllers of the intake
 
-An agreement about the product written before the code, task RT-3270 of the epic RT-3302. It merges
-into `docs/specs/message-bus/usage/` by the last commit of the work; if the merged spec outgrows the
-length limit, it becomes a subdomain of its own next to `usage`, by the rule of the length limit. What the numbers mean and how a
-tree counts them is the package agreement `docs/specs/agent-kit/proposed/work-result-metrics/`.
+The receiver half of the work result: the intake and storage of the epic windows and the numbers of
+the result on the screen «Качество». It stands next to `usage`, which holds the section itself and
+the day line: merged into it, the spec would cross the length limit. What the numbers mean and how a
+tree counts them is the package subdomain `docs/specs/agent-kit/work-result/`.
 
 ## Why
 
@@ -18,15 +18,15 @@ metrics; the numbers of the result and the epic windows have no place there yet.
 
 ## Terminology
 
-- **A result number** — a value of a day line the package agreement names in its key table.
-- **An epic window** — the record of one window of one epic as the package agreement defines it: the
+- **A result number** — a value of a day line the package subdomain names in its key table.
+- **An epic window** — the record of one window of one epic as the package subdomain defines it: the
   tree, the copy sign, the epic number, the opening and the closing moment, calls, refusals,
   re-asks, merged, released, the minutes of the epic from taking and the stamp of its building.
 - **A moment** — a time in UTC written `YYYY-MM-DDTHH:MM:SSZ`.
 
 ### What it is called in the interface
 
-| In the agreement             | On the screen                                            |
+| In the spec                  | On the screen                                            |
 | ---------------------------- | -------------------------------------------------------- |
 | the section                  | «Качество», right after «Разборы происшествий» in the row |
 | the epic of a window         | «эпик 3227»                                              |
@@ -118,7 +118,7 @@ metrics; the numbers of the result and the epic windows have no place there yet.
 
 ## What is out of scope
 
-- How the tree counts the numbers and which windows it sends — the package agreement.
+- How the tree counts the numbers and which windows it sends — the package subdomain `agent-kit/work-result`.
 - A chart over days: the section shows tiles and lists, as now.
 - The name of the epic beyond its number: no title leaves a tree.
 - The split of verdicts by task: the task key stays in the tree.
@@ -197,3 +197,4 @@ is the owner's answer.
 ## History of changes
 
 - 17 November 2026 — proposed for task RT-3270; revised by the grill decisions after the roles.
+- 17 November 2026 — in force: a subdomain of its own next to `usage`, task RT-3270.

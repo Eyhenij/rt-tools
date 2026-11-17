@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · defaults/project.sh · 596bcd0b43bd · правится надстройкой, не здесь
+# rt-kit v0.37.0 · defaults/project.sh · 497ad2da7034 · правится надстройкой, не здесь
 # Tree profile: what checks an edit here and what counts as reinvention.
 #
 # The package default. Everything the trees of this workshop have in common lives here: the Nx
@@ -422,43 +422,10 @@ rt_pull_outcomes_default() {
     done
 }
 
-# The requests for the epic windows and the release, one JSON object per line: the requests merged
-# since a day and the open ones — an open request tells a task branch from an epic branch before the
-# epic merges. A request into the main branch carries its files: the packages of an epic are told by
-# them. The files come from the local history of the merge commit: the hosting refuses the file list
-# of a large request. The shape is named in `hooks/pull-merges.sh`; a failing exit code is a broken
-# read.
-rt_merge_facts_default() {
-    command -v gh >/dev/null 2>&1 || return 3
-    command -v jq >/dev/null 2>&1 || return 3
-    fields='number,state,headRefName,baseRefName,title,mergedAt,mergeCommit'
-    merged="$(gh pr list --state merged --limit 1000 --search "merged:>=$1" --json "$fields" 2>/dev/null)" || return 4
-    open="$(gh pr list --state open --limit 200 --json "$fields" 2>/dev/null)" || return 4
-    git fetch -q origin main 2>/dev/null
-    printf '%s\n%s' "$merged" "$open" | jq -c '.[]' | while IFS= read -r pull; do
-        commit="$(printf '%s' "$pull" | jq -r 'if .baseRefName == "main" then .mergeCommit.oid // empty else empty end')"
-        if [ -n "$commit" ]; then
-            files="$(git diff --name-only "$commit^1" "$commit" 2>/dev/null | jq -Rcs 'split("\n") | map(select(. != ""))')" || return 4
-            printf '%s' "$pull" | jq -c --argjson files "$files" 'del(.mergeCommit) + {files: $files}'
-        else
-            printf '%s' "$pull" | jq -c 'del(.mergeCommit)'
-        fi
-    done
-}
-
-# The directories of the packages the tree may publish: a package manifest not marked private.
-# Whether it is published is asked of the registry, not here.
-rt_package_dirs_default() {
-    for manifest in projects/*/package.json packages/*/package.json; do
-        [ -f "$manifest" ] || continue
-        [ "$(jq -r '.private // false' "$manifest" 2>/dev/null)" = true ] && continue
-        dirname "$manifest"
-    done
-}
-
-# The files under a package directory that are no part of the package: a code graph lies in every
-# package directory, and an epic that only rebuilt the graphs changed no package.
-rt_package_ignored_default() { printf '%s' '(^|/)graphify-out/'; }
+# Reading the merges and the packages — what the epic windows and the release are judged by — lives
+# in a neighbouring file: together with it the profile outgrew the length limit.
+# shellcheck disable=SC1090
+[ -f "$(dirname "${BASH_SOURCE[0]}")/merges.sh" ] && . "$(dirname "${BASH_SOURCE[0]}")/merges.sh"
 
 # What counts as reinvention in this tree. One line per "pattern<tab>replacement". The patterns are
 # narrow on purpose: the guard checks only NEW text, and a wide pattern would refuse an edit that
@@ -511,9 +478,6 @@ rt_lint_for() { rt_lint_for_default "$@"; }
 rt_task_branch_ok() { rt_task_branch_ok_default "$@"; }
 rt_task_branch_number() { rt_task_branch_number_default "$@"; }
 rt_pull_outcomes() { rt_pull_outcomes_default "$@"; }
-rt_merge_facts() { rt_merge_facts_default "$@"; }
-rt_package_dirs() { rt_package_dirs_default "$@"; }
-rt_package_ignored() { rt_package_ignored_default "$@"; }
 rt_reinvented_in() { rt_reinvented_in_default "$@"; }
 rt_is_app_code() { rt_is_app_code_default "$@"; }
 # The directory of the rules package sources in this tree, from the root. Empty — the tree does not
