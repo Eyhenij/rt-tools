@@ -1,6 +1,6 @@
 <ng-container rtBlock="rt-chart">
     @if (empty()) {
-        <rt-empty-state rtElem="empty" qa-dataid="chart-empty" icon="chart-bar" [title]="emptyTitle()" [description]="emptyHint()" />
+        <rt-empty-state rtElem="empty" qa-dataid="chart-empty" icon="search" [title]="emptyTitle()" [description]="emptyHint()" />
     } @else if (ready()) {
         <div
             rtElem="plot"

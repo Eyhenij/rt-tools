@@ -42,21 +42,69 @@ export function rtChartColorsKey(colors: IRtChartColors): string {
     return [...colors.series, colors.text, colors.muted, colors.line, colors.surface, colors.font].join('|');
 }
 
-/** Тема `echarts` из цветов кита: палитра серий, подписи, оси и сетка. */
+/** Кегль подписей осей и шкалы цвета по макету графика. */
+const AXIS_FONT_SIZE: number = 11;
+
+/** Кегль подписей легенды по макету графика. */
+const LEGEND_FONT_SIZE: number = 12;
+
+/** Значок легенды — круг этого диаметра. */
+const LEGEND_MARK: number = 8;
+
+/** Толщина линии серии. */
+const LINE_WIDTH: number = 2;
+
+/** Наибольшая ширина столбика. */
+const BAR_MAX_WIDTH: number = 12;
+
+/**
+ * Тема `echarts` из цветов кита: палитра серий, подписи, оси, сетка и легенда.
+ *
+ * Оси без линии и засечек: опору дают линии сетки, как в макете. Подписи осей и легенды —
+ * приглушённым цветом, легенда — слева снизу круглыми значками. Линия серии — 2 точки и без
+ * маркеров, столбик — не шире 12.
+ */
 export function rtChartTheme(colors: IRtChartColors): ThemeOption {
     const axis: ThemeOption = {
-        axisLine: { lineStyle: { color: colors.line } },
-        axisTick: { lineStyle: { color: colors.line } },
-        axisLabel: { color: colors.muted },
-        splitLine: { lineStyle: { color: [colors.line] } },
-        nameTextStyle: { color: colors.muted },
+        axisLine: { show: false, lineStyle: { color: colors.line } },
+        axisTick: { show: false },
+        axisLabel: { color: colors.muted, fontSize: AXIS_FONT_SIZE },
+        splitLine: { lineStyle: { color: [colors.line], width: 1 } },
+        nameTextStyle: { color: colors.muted, fontSize: AXIS_FONT_SIZE },
     };
 
     return {
         color: [...colors.series],
         backgroundColor: 'transparent',
         textStyle: { color: colors.text, fontFamily: colors.font },
-        legend: { textStyle: { color: colors.text } },
+        legend: {
+            left: 0,
+            bottom: 0,
+            icon: 'circle',
+            itemWidth: LEGEND_MARK,
+            itemHeight: LEGEND_MARK,
+            itemGap: 12,
+            textStyle: { color: colors.muted, fontSize: LEGEND_FONT_SIZE },
+        },
+        line: { symbol: 'none', lineStyle: { width: LINE_WIDTH } },
+        bar: { barMaxWidth: BAR_MAX_WIDTH },
+        // Швы между секторами и прямоугольниками — цвет подложки, а не белый по умолчанию: на
+        // тёмной поверхности белый шов читается как ещё одна фигура.
+        pie: {
+            itemStyle: { borderColor: colors.surface },
+            label: { color: colors.text, textBorderWidth: 0 },
+        },
+        sunburst: { itemStyle: { borderColor: colors.surface } },
+        treemap: {
+            itemStyle: { borderColor: colors.line },
+            upperLabel: { color: colors.muted },
+        },
+        // Шкала цвета — один тон, первый цвет палитры, от прозрачного к плотному: величина, не имя.
+        visualMap: {
+            color: [colors.series[0], colors.series[0]],
+            inRange: { colorAlpha: [0.15, 1] },
+            textStyle: { color: colors.muted, fontSize: AXIS_FONT_SIZE },
+        },
         tooltip: {
             backgroundColor: colors.surface,
             borderColor: colors.line,
