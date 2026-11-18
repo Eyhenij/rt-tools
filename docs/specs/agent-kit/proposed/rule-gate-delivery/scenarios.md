@@ -21,7 +21,7 @@ scenario: the plan measures it once on the record of its own session.
 Given a session that has not loaded the rule an edited file falls under, and the rule fits the host
 limit
 When the session edits the file
-Then the answer of the gate has `permissionDecision` `allow`, and its `additionalContext` holds the
+Then the answer of the gate has no `permissionDecision`, and its `additionalContext` holds the
 file `SKILL.md` of the rule byte for byte, its header included
 
 Not covered: the code is not written yet; the probe goes into `projects/agent-kit/tests/skill-gate.test.sh`.

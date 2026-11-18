@@ -120,10 +120,21 @@ gate_session_reset
 tree="$(fixture_observed_tree '')"
 mkdir -p "$tree/.claude/skills/styling-bem"
 printf 'law: frontend-application\n' > "$tree/.claude/skills/styling-bem/SKILL.md"
-CLAUDE_PROJECT_DIR="$tree" "$HOOKS/skill-gate.sh" >/dev/null 2>&1 <<< "$(input_edit "$tree/apps/site/src/card.scss" '.card { color: red; }')"
+# Отказ остался правилу длиннее предела хозяина: под пределом в один знак не влезает ничего.
+RT_GATE_CONTEXT_LIMIT=1 CLAUDE_PROJECT_DIR="$tree" "$HOOKS/skill-gate.sh" >/dev/null 2>&1 <<< "$(input_edit "$tree/apps/site/src/card.scss" '.card { color: red; }')"
 expect_note "гейт записал отбитие" "$tree" '"ev":"gate-deny".*"res":"styling-bem"'
 expect_note "гейт назвал род правки" "$tree" '"kind":"scss"'
 report "гейт не назвал пути" "$(notes_of "$tree" | grep -c 'apps/site')" "0"
+rm -rf "$tree"
+
+# Правило, которое влезает, шлюз кладёт в заход сам, и это записано доставкой, а не отбитием.
+gate_session_reset
+tree="$(fixture_observed_tree '')"
+mkdir -p "$tree/.claude/skills/styling-bem"
+printf 'law: frontend-application\n' > "$tree/.claude/skills/styling-bem/SKILL.md"
+CLAUDE_PROJECT_DIR="$tree" "$HOOKS/skill-gate.sh" >/dev/null 2>&1 <<< "$(input_edit "$tree/apps/site/src/card.scss" '.card { color: red; }')"
+expect_note "гейт записал доставку" "$tree" '"ev":"gate-deliver".*"res":"styling-bem"'
+report "доставка не записана отбитием" "$(notes_of "$tree" | grep -c '"ev":"gate-deny"')" "0"
 rm -rf "$tree"
 
 tree="$(fixture_observed_tree '')"

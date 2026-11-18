@@ -205,6 +205,10 @@ c "SC-AK-109 — упоминание команды вызовом не счи�
 
 # Запасной ход назван прямо в отказе: правило, заведённое в этой же ветке, реестру правил
 # неизвестно — он собирается на запуске сессии, а гейт читает диск.
+#
+# Отказ остался только правилу длиннее предела хозяина: правило, которое влезает, гейт кладёт в
+# заход сам. Тексты отказа ниже проверяются на пределе в один знак — под ним не влезает ничего.
+export RT_GATE_CONTEXT_LIMIT=1
 gate_session_reset
 expect_reason "отказ называет запасной ход" skill-gate.sh \
     "$(input_edit "$TREE/libs/site/x/ui/src/lib/z.component.ts")" \
@@ -325,6 +329,7 @@ expect_reason "SC-AK-734 — отказ называет следующее пр
     "$(input_cmd 'printf x > libs/site/x/ui/src/lib/a.component.scss; printf y > docs/adr/0002-x.md' Bash)" \
     'Further along this same command these will be needed'
 gate_session_reset
+unset RT_GATE_CONTEXT_LIMIT
 
 # --- отказ в пользу работы --------------------------------------------------------------
 # Сломанный гейт не имеет права остановить работу совсем: любой неразобранный вход пропускается.
@@ -384,6 +389,126 @@ c "SC-AK-1335 — задача эпика требует правило эпик
     "npm run task:new -- --epic-of 12 --title 'Дефект'" Bash epic-flow
 c "SC-AK-1335 — задача вне эпика правила эпика не требует" \
     "npm run task:new -- --title 'Дефект'" Bash PASS
+gate_session_reset
+
+# --- доставка правила вместо отказа -----------------------------------------------------------
+#
+# Правило, которое влезает в предел хозяина, шлюз кладёт в заход сам: вызов идёт дальше, а текст
+# правила приходит полем контекста того же ответа. Отказ «загрузи и повтори» почти всегда кончался
+# загрузкой и повтором и не ловил ничего.
+dc() { report "$1" "$2" "$3"; }
+# Ответ шлюза на вызов и поле контекста в нём, байт в байт: подстановка команды съедает хвостовые
+# переводы строк, метка в конце их сохраняет.
+gate_answer() { printf '%s' "$1" | "$HOOKS/skill-gate.sh" 2>/dev/null; }
+gate_context() { printf '%s' "$1" | jq -r '.hookSpecificOutput.additionalContext // empty' 2>/dev/null; printf x; }
+
+mkdir -p "$TREE/docs/constitution"
+printf '# Law on verifiability\n' > "$TREE/docs/constitution/verifiability.md"
+printf -- '---\nname: testing\nkind: rule\nlaw: verifiability\n---\n\n# Tests\n\n- **A test names its scenario.**\n\n' \
+    > "$TREE/.claude/skills/testing/SKILL.md"
+SPEC_EDIT="$(input_edit "$TREE/libs/site/x/util/src/lib/a.spec.ts")"
+
+gate_session_reset
+out="$(gate_answer "$SPEC_EDIT")"
+ctx="$(gate_context "$out")"
+body="$(cat "$TREE/.claude/skills/testing/SKILL.md"; printf x)"
+case "${ctx%x}" in *"${body%x}"*) got="правило целиком" ;; *) got="нет правила" ;; esac
+dc "SC-AK-1669 — правка новой области идёт с правилом в ответе" "$got" "правило целиком"
+dc "SC-AK-1669 — ответ доставки не отказывает" \
+    "$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision // "нет решения"')" "нет решения"
+
+first="$(printf '%s' "${ctx%x}" | head -1)"
+case "$first" in *'Passed by the rules gate'*'«testing»'*'docs/constitution/verifiability.md'*) got="есть" ;; *) got="нет" ;; esac
+dc "SC-AK-1671 — первая строка называет правило, закон и пропуск" "$got" "есть"
+case "${ctx%x}" in *'Refused by the rules gate'*) got="есть" ;; *) got="нет" ;; esac
+dc "SC-AK-1671 — в доставке нет слов отказа" "$got" "нет"
+
+grep -qx testing "${TMPDIR}claude-skill-gate/tests.loaded" 2>/dev/null && got="записано" || got="нет"
+dc "SC-AK-1674 — доставленное правило записано загруженным" "$got" "записано"
+out="$(gate_answer "$(input_edit "$TREE/libs/site/x/util/src/lib/b.spec.ts")")"
+dc "SC-AK-1674 — следующая правка области идёт молча" "${out:-молча}" "молча"
+gate_session_reset
+
+# Спутник правила приходит в том же тексте, когда влезает; не влез — назван путём. Предел
+# считается по всему тексту доставки, строка доставки и разделители входят в него.
+printf '# testing — что здесь своё\n' > "$TREE/.claude/skills/testing/implementation.md"
+ctx="$(gate_context "$(gate_answer "$SPEC_EDIT")")"
+comp="$(cat "$TREE/.claude/skills/testing/implementation.md"; printf x)"
+case "${ctx%x}" in *"${body%x}"*"${comp%x}"*) got="после правила" ;; *) got="нет" ;; esac
+dc "SC-AK-1672 — спутник приходит целиком после правила" "$got" "после правила"
+gate_session_reset
+
+BIG_COMP="$(printf '%03000d' 0 | tr 0 x)"
+printf '%s\n' "$BIG_COMP" > "$TREE/.claude/skills/testing/implementation.md"
+ctx="$(RT_GATE_CONTEXT_LIMIT=2000 gate_context "$(RT_GATE_CONTEXT_LIMIT=2000 gate_answer "$SPEC_EDIT")")"
+case "${ctx%x}" in *"${body%x}"*'testing/implementation.md — did not fit'*) got="правило и путь" ;; *) got="нет" ;; esac
+case "${ctx%x}" in *xxxxxxxxxx*) got="${got}, текст спутника" ;; esac
+dc "SC-AK-1673 — не влезший спутник назван путём" "$got" "правило и путь"
+rm -f "$TREE/.claude/skills/testing/implementation.md"
+gate_session_reset
+
+# Спутник уступает путём раньше, чем выпадет следующее правило вызова.
+printf '%s\n' "$BIG_COMP" > "$TREE/.claude/skills/angular-patterns/implementation.md"
+ENV_EDIT="$(input_edit "$TREE/libs/site/x/data-access/src/lib/env.service.ts" 'const w = globalThis.innerWidth;')"
+ctx="$(export RT_GATE_CONTEXT_LIMIT=2000; gate_context "$(gate_answer "$ENV_EDIT")")"
+got="нет"
+case "${ctx%x}" in
+    *'skills/angular-patterns/SKILL.md'*'angular-patterns/implementation.md — did not fit'*'skills/platform-access/SKILL.md'*)
+        got="оба правила и путь" ;;
+esac
+dc "SC-AK-1682 — спутник уступает путём раньше следующего правила" "$got" "оба правила и путь"
+ctx="${ctx%x}"
+len="$(printf '%s' "${ctx%$'\n'}" | wc -m | tr -d ' ')"
+[ "$len" -le 2000 ] && got="в пределе" || got="за пределом: $len"
+dc "SC-AK-1682 — весь текст доставки в пределе" "$got" "в пределе"
+rm -f "$TREE/.claude/skills/angular-patterns/implementation.md"
+gate_session_reset
+
+# Предел берётся из настройки, а без неё равен 10 000 знаков.
+{ printf -- '---\nname: testing\nkind: rule\nlaw: verifiability\n---\n\n'; printf '%09000d\n' 0 | tr 0 t; } \
+    > "$TREE/.claude/skills/testing/SKILL.md"
+got="$(RT_GATE_CONTEXT_LIMIT=500 gate_answer "$SPEC_EDIT" | jq -r '.hookSpecificOutput.permissionDecision // "нет решения"')"
+dc "SC-AK-1683 — настройка ниже правила даёт отказ" "$got" "deny"
+gate_session_reset
+ctx="$(gate_context "$(gate_answer "$SPEC_EDIT")")"
+case "$(printf '%s' "${ctx%x}" | head -1)" in *'Passed by the rules gate'*'«testing»'*) got="доставлено" ;; *) got="нет" ;; esac
+dc "SC-AK-1683 — без настройки правило в 9 000 знаков доставлено" "$got" "доставлено"
+gate_session_reset
+
+# Доставку получает всякий род вызова, который судит шлюз: команда, что пишет в дерево, браузер и
+# инструмент макетов.
+printf -- '---\nname: testing\nkind: rule\nlaw: verifiability\n---\n\n# Tests\n' > "$TREE/.claude/skills/testing/SKILL.md"
+delivered() { gate_context "$(gate_answer "$1")" | head -1 | grep -q 'Passed by the rules gate' && echo доставлено || echo нет; }
+dc "SC-AK-1670 — пишущая команда получает доставку" \
+    "$(delivered "$(input_cmd 'echo x > libs/site/x/ui/src/lib/a.component.ts' Bash "$TREE")")" доставлено
+gate_session_reset
+dc "SC-AK-1670 — браузер получает доставку" \
+    "$(delivered "$(jq -n '{session_id:"tests",tool_name:"mcp__claude-in-chrome__navigate",tool_input:{url:"http://localhost:4200"}}')")" доставлено
+gate_session_reset
+mkdir -p "$TREE/.claude/skills/mockups"
+printf -- '---\nname: mockups\nkind: rule\n---\n' > "$TREE/.claude/skills/mockups/SKILL.md"
+got="$(delivered "$(jq -n '{session_id:"tests",tool_name:"mcp__figma__use_figma",tool_input:{}}')")"
+dc "SC-AK-1670 — инструмент макетов получает доставку" "$got" доставлено
+gate_session_reset
+
+# Правке нужно правило рода файла и второй слой: она идёт с обоими, правило рода первым.
+ctx="$(gate_context "$(gate_answer "$ENV_EDIT")")"
+got="нет"
+case "${ctx%x}" in *'skills/angular-patterns/SKILL.md'*'skills/platform-access/SKILL.md'*) got="оба, род первым" ;; esac
+dc "SC-AK-1677 — правка идёт с правилом рода и вторым слоем" "$got" "оба, род первым"
+gate_session_reset
+
+# Правила, что не влезают вместе, отказаны вместе: отказ называет все, ничего не записано.
+{ printf -- '---\nname: angular-patterns\nkind: rule\n---\n\n'; printf '%01500d\n' 0 | tr 0 a; } > "$TREE/.claude/skills/angular-patterns/SKILL.md"
+{ printf -- '---\nname: platform-access\nkind: rule\n---\n\n'; printf '%01500d\n' 0 | tr 0 p; } > "$TREE/.claude/skills/platform-access/SKILL.md"
+out="$(RT_GATE_CONTEXT_LIMIT=2500 gate_answer "$ENV_EDIT")"
+reason="$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecisionReason // empty')"
+case "$reason" in *'«angular-patterns», «platform-access»'*'do not fit'*) got="оба названы" ;; *) got="нет" ;; esac
+dc "SC-AK-1681 — не влезшие вместе отказаны вместе и названы все" "$got" "оба названы"
+[ -s "${TMPDIR}claude-skill-gate/tests.loaded" ] && got="записано" || got="ничего"
+dc "SC-AK-1681 — из отказанного ничего не записано" "$got" "ничего"
+printf -- '---\nname: angular-patterns\nkind: rule\n---\n' > "$TREE/.claude/skills/angular-patterns/SKILL.md"
+printf -- '---\nname: platform-access\nkind: rule\n---\n' > "$TREE/.claude/skills/platform-access/SKILL.md"
 gate_session_reset
 
 suite_result "гейт правил"

@@ -9,8 +9,8 @@ Where the work is expected to land, as a guide for the plan, not as bindings:
 - the delivery, the packing under the limit and the remaining refusal —
   `projects/agent-kit/assets/hooks/skill-gate.sh`, the part after the choice of the unloaded rules;
   the answer form of a hook that passes with text is the one
-  `projects/agent-kit/assets/hooks/git-guard-delivery-conflict.sh` prints, with
-  `permissionDecision` `allow` added;
+  `projects/agent-kit/assets/hooks/git-guard-delivery-conflict.sh` prints, without a permission
+  decision;
 - the record of a delivered rule — the same record `projects/agent-kit/assets/hooks/skill-loaded.sh`
   writes after the tool `Skill`; a read of a rule file by the tool `Read` needs a subscription of
   its own on the event after the call;

@@ -50,6 +50,9 @@ turn, as today.
 - **The answer of a delivery allows the call and carries the delivered text in the session context
   field of the hook answer.** This is what the probe reads; that the host puts the field into the
   session is measured once by the plan, not by the suite.
+- **The answer of a delivery holds no permission decision of its own.** The call goes on to the
+  host's own permission check: a decision `allow` would also skip the question a tree asked the
+  host to put before such a call.
 - **The delivered rule is the file `SKILL.md` of the tree byte for byte, its header included.** Not
   a retelling and not the matching articles alone: the session works by the text it would have read
   itself.
