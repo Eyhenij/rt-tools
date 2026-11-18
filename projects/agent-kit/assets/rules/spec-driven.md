@@ -12,35 +12,36 @@ Rule under the law `docs/constitution/project-documentation.md`. Cold part: `pit
 
 ## How the law applies here
 
-- **Spec sections are fixed in advance; a missing one is a refusal.**
+- **Spec sections are fixed; a missing one is a refusal.**
 - **Every statement is bound to code, checked both ways.**
-- **The first column of the companion is the article text copied, not retold.**
-- **A binding does not lead into code nobody calls, and a test is not a call.** Except a harness symbol or one a package publishes.
-- **A verdict is put by substance, not by the form of the address.**
-- **A "not carried out" binding moves with its article.** A spec rule with no code place goes to its open questions.
-- **The procedure table and decorators match both ways, permission with name.**
-- **A refusal code is accepted only if the domain throws it.**
-- **A spec has one scenario prefix, taken by no other spec of the tree.** Its agreement shares it.
-- **A scenario number is issued once and never reused.** The free one comes from the companion's command; a deleted one stays empty.
-- **A scenario and the title of its test are edited by one change.** A deleted scenario takes its test along.
+- **A companion's first column copies the article text verbatim.**
+- **A binding never leads into uncalled code; a test is not a call.** Except harness or published symbols.
+- **A verdict follows substance, not the address form.**
+- **A "not carried out" binding moves with its article.** A codeless spec rule: its open questions.
+- **Procedure table and decorators match both ways, with permissions.**
+- **A refusal code counts only if the domain throws it.**
+- **A spec has one scenario prefix, taken by no other spec.** Its agreement shares it.
+- **A scenario number is issued once and never reused.** Free number: companion's command; deleted stay empty.
+- **A scenario and its test title change together.** Deleted, it takes its test.
 - **A subdomain is asked the same as a domain.**
-- **A law holds an "Articles" section and, besides it, only open questions.**
+- **A law holds "Articles" and only open questions.**
 - **A proposed law requires no rule.**
 - **A law that names a project file is a refusal.**
-- **A rule description is at most 300 characters and answers only: load it or not.**
-- **A rule declares the law it is written under.**
-- **A law name is unique across both law layers.**
-- **Where a rule and its companion diverge, the rule wins.**
-- **A companion's claim about an external service is checked by the command it names.**
-- **What is not read when deciding goes to the rule's third file.**
+- **A rule description: at most 300 characters, answering only: load it or not.** Longer: debt list, reasoned.
+- **A rule declares its law.**
+- **A law name is unique across both layers.**
+- **Where a rule and its companion diverge, the rule wins.** Named to the owner; the laggard is fixed.
+- **A companion checks an outside service by its named command.**
+- **What is not read when deciding goes to the cold part.**
+- **A compressed article keeps its statement, boundary, exception and sign.** Room: lines and bytes measured first, freed in the same edit; an argument folds to a line or goes whole to the cold part; retelling judges it; a loss returns to the article.
 - **A spec names the laws it applies, checked both ways.**
-- **Portable text names a neighbouring resource by name, and conditionally.**
-- **An article states its own applicability by a sign line at its side.**
-- **An article or a whole rule without a sign is legitimate.**
-- **A pattern is found by the `rule:` field, not by the name prefix.**
-- **A decision from a spec goes to the layer, not to the archive.**
-- **A name in an anchor is written as declared in code.**
-- **An anchor is checked against the raw file text, comments included.**
-- **Before a resource split, its name is searched across the tree's checks.**
-- **The spec of a resource is found by a command, not by walking the subdomains.**
+- **Portable text names a neighbour by name, conditionally.**
+- **An article marks its own applicability by a sign line.**
+- **An unsigned article or rule is legitimate.**
+- **A pattern is found by its `rule:` field, not its name prefix.**
+- **A spec's decision goes to the layer, not the archive.**
+- **An anchor name is written as declared in code.**
+- **An anchor matches the raw file, comments included.**
+- **Before a split, a resource's name is searched in the tree's checks.**
+- **A resource's spec is found by command, not by walking subdomains.**
   <!-- rt-when: *.md -->

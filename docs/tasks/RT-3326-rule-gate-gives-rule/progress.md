@@ -8,8 +8,8 @@
   of the setting; stage 2 — the remaining refusals name their reason, a read of a rule file by the
   tool `Read` is a load, a subagent has a record of its own;  grill closed by assumption; agreement `docs/specs/agent-kit/proposed/rule-gate-delivery/`,
   SC-AK-1669…1680, its open questions closed by decisions; the card is in work.
-- **Next step:** step 4.2 — the second cold part in the package, then spec-driven cut to 3 000
-  bytes.
+  spec-driven is cut to 2 997 bytes with a second cold part, and its third retelling matched.
+- **Next step:** step 4.4 — doc-style cut to 3 000 bytes, the tree's override sections included.
 - **Plan approved:** «Одобряю plan.md RT-3326». After the word, the checks of stages 4–6 were
   tightened by `goal-critic` before the commit: the meaning script, the verdict by a role, the
   section tables, `&&` in place of `;`. The stages, the rules and the number stayed as approved.
@@ -32,8 +32,8 @@
 - [x] 3.4 This session's own record holds a rule the host put into the session whole, by a hook answer of the gate
 - [x] 4.1 The script of the meaning check is written, and the section tables of spec-driven, doc-style and browser-verification are in the progress
 - [x] 4.2 spec-driven: the hot part is at most 3 000 characters, and nothing of the former text is lost
-- [>] 4.3 spec-driven: the retelling matched the former text
-- [ ] 4.4 doc-style: the hot part is at most 3 000 characters, and nothing of the former text is lost
+- [x] 4.3 spec-driven: the retelling matched the former text
+- [>] 4.4 doc-style: the hot part is at most 3 000 characters, and nothing of the former text is lost
 - [ ] 4.5 doc-style: the retelling matched the former text
 - [ ] 4.6 browser-verification: the hot part is at most 3 000 characters, and nothing of the former text is lost
 - [ ] 4.7 browser-verification: the retelling matched the former text
@@ -92,26 +92,43 @@ The first retelling diverged: the free scenario number from the companion's comm
 scenario taking its test, the exception for a harness or published symbol, a spec rule with no
 code place going to the open questions and the agreement sharing the spec prefix came back at
 their articles. That brought the hot part to 3 180 bytes, and seven more statements were shortened
-in the second round, to 2 999.
+in the second round, to 2 999. The second retelling diverged on three points: the shape of a
+compressed article stood only in the cold part, the divergence article lost «named to the owner»,
+the description article lost the debt list. All three came back at their articles, the shape as a
+statement of its own; eighteen more statements were shortened, to 2 991. The third reader named
+two gaps the former text closed — fixing the lagging text, and measuring room before an article is
+added — and both came back as tails; two more statements were shortened, to 3 000. The third round matched; its
+critic named two soft losses — room is measured in lines and bytes, and the boundary includes the
+exception and the sign — and both came back too, with seven more statements shortened, to 2 997. Each pair below reads
+from the former text to the final one.
 
-- «A companion's statement about the state of an external service is checked by the command the companion itself names.» → «A companion's claim about an external service is checked by the command it names.»
-- «A rule description is no longer than three hundred characters and answers one question — load this rule or not.» → «A rule description is at most 300 characters and answers only: load it or not.»
-- «A check nailed to a resource name breaks when the resource is split, and this has to be known before the edit.» → «Before a resource split, its name is searched across the tree's checks.»
-- «The procedure table is checked against the decorators both ways, the permission together with the name.» → «The procedure table and decorators match both ways, permission with name.»
-- «The set of spec sections is fixed in advance, and a missing section is a refusal.» → «Spec sections are fixed in advance; a missing one is a refusal.»
-- «There are two layers of laws, and a law name is one for both.» → «A law name is unique across both law layers.»
-- «A rule may have a third file, and what is not read when deciding goes there.» → «What is not read when deciding goes to the rule's third file.»
-- «A law has a mandatory "Articles" section, and beyond it holds only open questions.» → «A law holds an "Articles" section and, besides it, only open questions.»
+- «A companion's statement about the state of an external service is checked by the command the companion itself names.» → «A companion checks an outside service by its named command.»
+- «A rule description is no longer than three hundred characters and answers one question — load this rule or not.» → «A rule description: at most 300 characters, answering only: load it or not.»
+- «A check nailed to a resource name breaks when the resource is split, and this has to be known before the edit.» → «Before a split, a resource's name is searched in the tree's checks.»
+- «The procedure table is checked against the decorators both ways, the permission together with the name.» → «Procedure table and decorators match both ways, with permissions.»
+- «An anchor is checked against the raw text of the file, and a comment counts the same as code.» → «An anchor matches the raw file, comments included.»
+- «A spec has one scenario prefix, and across the whole tree it is taken by that spec alone.» → «A spec has one scenario prefix, taken by no other spec.»
+- «The spec speaking of a resource is found by a command, not by walking the subdomains.» → «A resource's spec is found by command, not by walking subdomains.»
+- «An article without a sign is legitimate, and so is a rule without a single sign.» → «An unsigned article or rule is legitimate.»
+- «Portable text speaks of a neighbouring resource conditionally and names it by name.» → «Portable text names a neighbour by name, conditionally.»
+- «An article of a rule speaks of its own applicability itself, by a sign line at its side.» → «An article marks its own applicability by a sign line.»
+- «A divergence between a rule and its companion is resolved in favour of the rule.» → «Where a rule and its companion diverge, the rule wins.»
+- «The set of spec sections is fixed in advance, and a missing section is a refusal.» → «Spec sections are fixed; a missing one is a refusal.»
+- «There are two layers of laws, and a law name is one for both.» → «A law name is unique across both layers.»
+- «A rule may have a third file, and what is not read when deciding goes there.» → «What is not read when deciding goes to the cold part.»
+- «A law has a mandatory "Articles" section, and beyond it holds only open questions.» → «A law holds "Articles" and only open questions.»
 - «A spec declares the laws it applies, and the link is checked both ways.» → «A spec names the laws it applies, checked both ways.»
 - «A "not carried out" binding moves together with its article.» → «A "not carried out" binding moves with its article.»
 - «Every statement is bound to a place in code, and the link is checked both ways.» → «Every statement is bound to code, checked both ways.»
-- «An anchor is checked against the raw text of the file, and a comment counts the same as code.» → «An anchor is checked against the raw file text, comments included.»
-- «A spec has one scenario prefix, and across the whole tree it is taken by that spec alone.» → «A spec has one scenario prefix, taken by no other spec of the tree.»
-- «The spec speaking of a resource is found by a command, not by walking the subdomains.» → «The spec of a resource is found by a command, not by walking the subdomains.»
-- «An article without a sign is legitimate, and so is a rule without a single sign.» → «An article or a whole rule without a sign is legitimate.»
-- «Portable text speaks of a neighbouring resource conditionally and names it by name.» → «Portable text names a neighbouring resource by name, and conditionally.»
-- «An article of a rule speaks of its own applicability itself, by a sign line at its side.» → «An article states its own applicability by a sign line at its side.»
-- «A divergence between a rule and its companion is resolved in favour of the rule.» → «Where a rule and its companion diverge, the rule wins.»
+- «A pattern is found by the `rule:` field, not by the name prefix.» → «A pattern is found by its `rule:` field, not its name prefix.»
+- «The first column of the companion is the article text copied, not retold.» → «A companion's first column copies the article text verbatim.»
+- «A binding does not lead into code nobody calls, and a test is not a call.» → «A binding never leads into uncalled code; a test is not a call.»
+- «A verdict is put by substance, not by the form of the address.» → «A verdict follows substance, not the address form.»
+- «A refusal code is accepted only if the domain throws it.» → «A refusal code counts only if the domain throws it.»
+- «A scenario and the title of its test are edited by one change.» → «A scenario and its test title change together.»
+- «A rule declares the law it is written under.» → «A rule declares its law.»
+- «A decision from a spec goes to the layer, not to the archive.» → «A spec's decision goes to the layer, not the archive.»
+- «A name in an anchor is written as declared in code.» → «An anchor name is written as declared in code.»
 
 ## Decisions along the way
 
@@ -161,8 +178,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 7 — The delivery
-- **Next step:** step 1.1 — the gate delivers a rule that fits.
+- **Stage:** 4 of 7 — The rules with short statements
+- **Next step:** step 4.2 — the second cold part in the package, then spec-driven cut to 3 000
 - **PR:** not open yet. The branch stands on RT-3283 (PR #3371).
 
 The progress in full — `docs/tasks/RT-3326-rule-gate-gives-rule/progress.md`; the plan lies next to it.
@@ -170,12 +187,17 @@ The progress in full — `docs/tasks/RT-3326-rule-gate-gives-rule/progress.md`; 
 ### Uncommitted
 
 ```
- M docs/tasks/RT-3326-rule-gate-gives-rule/progress.md
+ M .claude/skills/spec-driven/SKILL.md
+ M .claude/skills/spec-driven/implementation.md
+ M projects/agent-kit/assets/rules/spec-driven.md
 ```
 
 ### Commits over the main branch
 
 ```
+4dfd735a2 feat(rt:agent-kit): вторая холодная часть правила и spec-driven в 3000 байт
+2819e0682 feat(rt:agent-kit): отказ шлюза называет причину, соседи не зовут загрузку доставляемого
+004f918ec feat(rt:agent-kit): шлюз правил кладёт правило в заход вместо отказа
 0e7750a2a docs(rt:agent-kit): ход работы RT-3326 — план одобрен, этап доставки начат
 a56f2a991 docs(rt:agent-kit): план шлюза, который даёт правило, и сокращения семи правил
 08ff109c5 docs(rt:agent-kit): договорённость о шлюзе правил поправлена по критику
@@ -193,9 +215,6 @@ c0fb0c756 feat(rt:agent-kit): профиль дерева называет пр�
 67b394559 feat(rt:agent-kit): выбор шагов набора говорит, тронут ли предмет шага
 3ef88cbe9 docs(rt:agent-kit): метрики результата работы влиты, польза проверок набора идёт
 6f931486f [RT-3270] Метрики показывают результат работы: выпуск, простой, отказы на сто вызовов (#3369)
-79ed3e5ac docs(rt:agent-kit): план задачи о пользе проверок набора
-18cd991a3 docs(rt:agent-kit): договорённость о пользе проверок набора поправлена по ролям
-6e7a85b85 docs(rt:agent-kit): договорённость о пользе проверок набора
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
