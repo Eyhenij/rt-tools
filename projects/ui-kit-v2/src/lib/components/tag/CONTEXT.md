@@ -9,7 +9,7 @@
 | `value`            | `string`                                                                   | **обязателен**  |
 | `severity`         | `'info' \| 'success' \| 'warning' \| 'danger' \| 'secondary' \| 'neutral'` | `'neutral'`     |
 | `size`             | `'sm' \| 'md' \| 'lg'`                                                     | `'md'`          |
-| `appearance`       | `'solid' \| 'outlined'`                                                    | `'solid'`       |
+| `appearance`       | `'solid' \| 'outlined' \| 'dot'`                                           | `'solid'`       |
 | `radius`           | `TRtRadius \| null` — шаг общей шкалы                                      | `null` → `full` |
 | `icon` / `iconEnd` | `IRtIcon.Name \| null`                                                     | `null`          |
 | `closable`         | `boolean`                                                                  | `false`         |

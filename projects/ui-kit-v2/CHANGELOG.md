@@ -1,3 +1,14 @@
+# [0.48.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.47.1...rt-ui-kit-v2%400.48.0) (2026-11-18)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** цвет точки метки без необъявленной ручки ([3c3b0b6](https://github.com/Eyhenij/rt-tools/commit/3c3b0b6589be3218ff1340735969e8f154cd024d))
+
+### Features
+
+- **rt:ui-kit-v2:** вид «точка» у rt-tag ([95bb101](https://github.com/Eyhenij/rt-tools/commit/95bb1014932a34a6b7377b568e952ea6f7fa932d))
+- **rt:ui-kit-v2:** витрина точки метки и кнопки-квадрата ([de21dbb](https://github.com/Eyhenij/rt-tools/commit/de21dbb59a24267543fe766d5ef5b6fa1af69a1a))
+
 ## [0.47.1](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.47.0...rt-ui-kit-v2%400.47.1) (2026-11-16)
 
 ### Bug Fixes

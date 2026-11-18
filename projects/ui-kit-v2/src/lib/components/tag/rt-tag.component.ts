@@ -72,6 +72,9 @@ export class RtTagComponent implements OnDestroy {
 
     #resizeObserver: ResizeObserver | null = null;
 
+    /** Узел подписи, за которым смотрит наблюдатель; у точки подписи нет. */
+    #observed: HTMLElement | null = null;
+
     protected readonly textRef: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('text');
 
     /** Подписи не хватило места: она урезана многоточием, и целое значение показывает подсказка. */
@@ -84,6 +87,12 @@ export class RtTagComponent implements OnDestroy {
     protected readonly parts: Signal<ReadonlyArray<IRtMatchPart>> = computed((): ReadonlyArray<IRtMatchPart> =>
         rtMatchParts(this.value(), this.highlight())
     );
+
+    /**
+     * Вид «точка»: подписи нет, значение уходит в подсказку и в имя для читалок. Значки и крестик
+     * точка не рисует — без подписи рядом им не к чему относиться.
+     */
+    protected readonly isDot: Signal<boolean> = computed((): boolean => this.appearance() === 'dot');
 
     public readonly value: InputSignal<string> = input.required<string>();
 
@@ -124,6 +133,7 @@ export class RtTagComponent implements OnDestroy {
         afterRenderEffect((): void => {
             this.value();
             this.size();
+            this.appearance();
             this.#observeText();
             this.#measure();
         });
@@ -132,6 +142,7 @@ export class RtTagComponent implements OnDestroy {
     public ngOnDestroy(): void {
         this.#resizeObserver?.disconnect();
         this.#resizeObserver = null;
+        this.#observed = null;
     }
 
     protected onClose(event: MouseEvent): void {
@@ -145,9 +156,20 @@ export class RtTagComponent implements OnDestroy {
      * подпись, переполнившаяся позже, подсказки не получила бы вовсе.
      */
     #observeText(): void {
-        const node: HTMLElement | undefined = this.textRef()?.nativeElement;
+        const node: HTMLElement | null = this.textRef()?.nativeElement ?? null;
 
-        if (node === undefined || this.#resizeObserver !== null || typeof ResizeObserver === 'undefined') {
+        // Подпись пересоздаётся, когда вид уходит в точку и возвращается: наблюдатель за прежним
+        // узлом отвечал бы об узле, которого на странице уже нет.
+        if (node === this.#observed || typeof ResizeObserver === 'undefined') {
+            return;
+        }
+
+        this.#resizeObserver?.disconnect();
+        this.#observed = node;
+
+        if (node === null) {
+            this.#resizeObserver = null;
+
             return;
         }
 

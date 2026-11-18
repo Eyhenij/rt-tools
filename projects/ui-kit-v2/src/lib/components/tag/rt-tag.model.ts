@@ -14,6 +14,9 @@ export namespace IRtTag {
      */
     export type Size = 'sm' | 'md' | 'lg';
 
-    /** Вид заливки: solid (фон палитры) или outlined (прозрачный фон + рамка цвета палитры). */
-    export type Appearance = 'solid' | 'outlined';
+    /**
+     * Вид метки: solid (фон палитры), outlined (прозрачный фон + рамка цвета палитры) или dot —
+     * цветная точка без подписи, значение которой уходит в подсказку и в имя для читалок.
+     */
+    export type Appearance = 'solid' | 'outlined' | 'dot';
 }
