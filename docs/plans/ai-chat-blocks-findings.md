@@ -57,6 +57,10 @@ task, a line per finding, each with its address.
 - **No task of the epic says who answers a chart tool call.** If the chart is a browser tool of
   the registry, the run waits for its answer before the model goes on; the chart block only draws.
   Not checked by a run of the controller. **Address:** names of this tree — the epic plan.
+- **Main merged a change of the push set without its hook test.** #3387 stopped raising the heavy
+  steps for the workflow files, and the probe of SC-AK-569 still expects the whole set for them;
+  the hook tests are red on every branch that merges main. **Address:** names of this tree — the
+  push set of the tree and its hook test.
 
 ## Left unresolved
 
