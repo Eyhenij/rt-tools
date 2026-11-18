@@ -53,6 +53,15 @@ skill_for() {
 
                 */.claude/*) return 0 ;;
 
+                # The release of a package without a framework: the check of the built package, the
+                # check of its wiring and the publication workflows. The branch stands before the
+                # tree's checks below: `check-package-release.mjs` is one of them and would fall to
+                # the verifiability rule, which knows nothing about a registry.
+                */tools/verify-package.cjs | */tools/check-package-release.mjs | */.github/workflows/publish-*.yml)
+                    printf '%s\n' 'package-release'
+                    return 0
+                    ;;
+
                 # A spec of code without a showing. The branch stands before the general
                 # `*.spec.ts`, which gives a spec to the component check rule: the node's code has
                 # no showcases, no snapshots and no layout measurements, and out of forty-odd

@@ -436,7 +436,7 @@ Then the first stop is held and the second released, the quiet session is releas
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 
-### SC-AK-1550 — the owner's menu ends a series of stops in the forecast
+### SC-AK-1700 — the owner's menu ends a series of stops in the forecast
 
 Given a held stop whose refusal names the owner's menu, then stops with no call, then a call and a stop
 When the forecast replays the session

@@ -1,0 +1,139 @@
+{
+  "description": "A server tool: the call, its arguments in pieces, its result, then the final text.",
+  "initialMessages": [
+    {
+      "id": "u1",
+      "role": "user",
+      "content": "Show revenue by month",
+      "toolCalls": [],
+      "toolCallId": null,
+      "feedback": null,
+      "isStored": false
+    }
+  ],
+  "events": [
+    {
+      "type": "RUN_STARTED",
+      "threadId": "t1",
+      "runId": "r2"
+    },
+    {
+      "type": "CUSTOM",
+      "name": "run.reference",
+      "value": {
+        "referenceId": "ref-1"
+      }
+    },
+    {
+      "type": "STEP_STARTED",
+      "stepName": "Querying revenue"
+    },
+    {
+      "type": "TOOL_CALL_START",
+      "toolCallId": "c1",
+      "toolCallName": "query_revenue",
+      "parentMessageId": "a1"
+    },
+    {
+      "type": "TOOL_CALL_ARGS",
+      "toolCallId": "c1",
+      "delta": "{\"from\":"
+    },
+    {
+      "type": "TOOL_CALL_ARGS",
+      "toolCallId": "c1",
+      "delta": "\"2026-01\"}"
+    },
+    {
+      "type": "TOOL_CALL_END",
+      "toolCallId": "c1"
+    },
+    {
+      "type": "TOOL_CALL_RESULT",
+      "messageId": "tool-1",
+      "toolCallId": "c1",
+      "content": "{\"rows\":12}",
+      "role": "tool"
+    },
+    {
+      "type": "STEP_FINISHED",
+      "stepName": "Querying revenue"
+    },
+    {
+      "type": "TEXT_MESSAGE_START",
+      "messageId": "a2",
+      "role": "assistant"
+    },
+    {
+      "type": "TEXT_MESSAGE_CONTENT",
+      "messageId": "a2",
+      "delta": "Twelve months found."
+    },
+    {
+      "type": "TEXT_MESSAGE_END",
+      "messageId": "a2"
+    },
+    {
+      "type": "RUN_FINISHED",
+      "threadId": "t1",
+      "runId": "r2",
+      "result": {
+        "status": "succeeded"
+      }
+    }
+  ],
+  "expected": {
+    "runId": "r2",
+    "status": "idle",
+    "messages": [
+      {
+        "id": "u1",
+        "role": "user",
+        "content": "Show revenue by month",
+        "toolCalls": [],
+        "toolCallId": null,
+        "feedback": null,
+        "isStored": true
+      },
+      {
+        "id": "a1",
+        "role": "assistant",
+        "content": "",
+        "toolCalls": [
+          {
+            "id": "c1",
+            "name": "query_revenue",
+            "arguments": "{\"from\":\"2026-01\"}"
+          }
+        ],
+        "toolCallId": null,
+        "feedback": null,
+        "isStored": true
+      },
+      {
+        "id": "tool-1",
+        "role": "tool",
+        "content": "{\"rows\":12}",
+        "toolCalls": [],
+        "toolCallId": "c1",
+        "feedback": null,
+        "isStored": true
+      },
+      {
+        "id": "a2",
+        "role": "assistant",
+        "content": "Twelve months found.",
+        "toolCalls": [],
+        "toolCallId": null,
+        "feedback": null,
+        "isStored": true
+      }
+    ],
+    "step": null,
+    "referenceId": "ref-1",
+    "result": "succeeded",
+    "pendingToolCallIds": [],
+    "error": null
+  },
+  "expectedUnsent": []
+}

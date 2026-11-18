@@ -211,7 +211,7 @@ Then the edit passes, and the row names the owner's step with that quote
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-1551 — a stop with no call after a refusal names the owner's menu
+### SC-AK-1701 — a stop with no call after a refusal names the owner's menu
 
 Given a refusal of a stop that named a move, and a second stop with no call after it
 When the hook on Stop measures the session

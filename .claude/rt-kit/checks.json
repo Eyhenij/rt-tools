@@ -100,6 +100,7 @@
             "Imports against published neighbours": "node tools/check-package-imports.mjs",
             "Laid-out files hidden from the formatter": "node tools/check-format-ignore.mjs",
             "Dependencies rule": "node tools/check-dependencies.mjs",
+            "Package release wiring": "node tools/check-package-release.mjs",
             "Rule descriptions": "node tools/check-descriptions.mjs",
             "Circular imports": "node tools/check-cycles.mjs",
             "Words past the dictionary": "node tools/check-admin-texts.mjs",

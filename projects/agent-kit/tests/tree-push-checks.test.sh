@@ -126,7 +126,10 @@ ALL='кит2 образ-админки образ-приёмника сквоз�
 probe 'снимок зависимостей' 'pnpm-lock.yaml' "$ALL"
 probe 'корневая настройка' 'nx.json' "$ALL"
 probe 'общая библиотека' 'projects/core/src/probe.ts' "$ALL"
-probe 'конвейер' '.github/workflows/probe.yml' "$ALL"
+# Файл процесса и пакет, который не берёт ни одно приложение, тяжёлых шагов не поднимают: их
+# закрывают проверки затронутых проектов.
+probe 'конвейер' '.github/workflows/probe.yml' ''
+probe 'пакет без приложений-потребителей' 'projects/ai-chat-protocol/src/lib/probe.ts' ''
 probe 'путь, которого признак не знает' 'внезапно/новое.ts' "$ALL"
 probe 'незнакомое рядом с китом' 'projects/ui-kit-v2/src/a.ts внезапно/новое.ts' "$ALL"
 

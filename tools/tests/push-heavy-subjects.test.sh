@@ -74,6 +74,17 @@ touched_by() {
 report "a rebuilt code graph raises no heavy step" \
     "$(touched_by graphify-out/graph.json projects/utils/graphify-out/graph.json \
         projects/ui-kit-v2/graphify-out/graph.json apps/message-bus/graphify-out/graph.json)" ''
+# A package no application imports and the pipeline files have no heavy step of their own: the
+# checks of the touched projects cover them. Before, they fell into the general case and a branch
+# of one such file ran the end-to-end suite, both images, the frames and the entry stand.
+report "a package nothing imports raises no heavy step" \
+    "$(touched_by projects/ai-chat-protocol/src/lib/x.ts projects/cms-server/src/x.ts)" ''
+report "a pipeline file raises no heavy step" \
+    "$(touched_by .github/workflows/ci.yml)" ''
+report "the root settings still raise the whole set" \
+    "$(touched_by package.json)" 'everything'
+report "a package the applications take as sources still raises the whole set" \
+    "$(touched_by projects/utils/src/x.ts)" 'everything'
 report "the code next to a graph still raises its subject" \
     "$(touched_by projects/ui-kit-v2/graphify-out/graph.json projects/ui-kit-v2/src/x.ts)" 'kit2'
 

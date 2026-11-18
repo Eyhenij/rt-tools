@@ -1,0 +1,68 @@
+{
+  "description": "A stream that ends with no closing event: the run stays running and the half answer stays unsent-free.",
+  "initialMessages": [
+    {
+      "id": "u1",
+      "role": "user",
+      "content": "Summarise the year",
+      "toolCalls": [],
+      "toolCallId": null,
+      "feedback": null,
+      "isStored": false
+    }
+  ],
+  "events": [
+    {
+      "type": "RUN_STARTED",
+      "threadId": "t1",
+      "runId": "r6"
+    },
+    {
+      "type": "CUSTOM",
+      "name": "run.reference",
+      "value": {
+        "referenceId": "ref-1"
+      }
+    },
+    {
+      "type": "TEXT_MESSAGE_START",
+      "messageId": "a1",
+      "role": "assistant"
+    },
+    {
+      "type": "TEXT_MESSAGE_CONTENT",
+      "messageId": "a1",
+      "delta": "The year "
+    }
+  ],
+  "expected": {
+    "runId": "r6",
+    "status": "running",
+    "messages": [
+      {
+        "id": "u1",
+        "role": "user",
+        "content": "Summarise the year",
+        "toolCalls": [],
+        "toolCallId": null,
+        "feedback": null,
+        "isStored": false
+      },
+      {
+        "id": "a1",
+        "role": "assistant",
+        "content": "The year ",
+        "toolCalls": [],
+        "toolCallId": null,
+        "feedback": null,
+        "isStored": true
+      }
+    ],
+    "step": null,
+    "referenceId": "ref-1",
+    "result": null,
+    "pendingToolCallIds": [],
+    "error": null
+  },
+  "expectedUnsent": ["u1"]
+}
