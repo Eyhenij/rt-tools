@@ -55,6 +55,8 @@ export const RT_KIT_LABELS_EN = {
     aiRetry: 'Ask again',
     aiSearchThreads: 'Search conversations',
     aiShowSteps: 'Show steps',
+    aiTableCopyCsv: 'Copy CSV',
+    aiTableLabel: 'Table',
     aiThreads: 'Conversations',
     aiTitle: 'Assistant',
     aiUsageAria: 'Used {{percent}}% of the limit',

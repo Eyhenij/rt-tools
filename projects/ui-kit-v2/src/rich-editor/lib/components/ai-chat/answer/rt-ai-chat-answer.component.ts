@@ -20,7 +20,7 @@ import { BooleanInput } from '@angular/cdk/coercion';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RtAiRunStatusComponent, RtIconButtonComponent, TRtKitLabelMap } from '@rt-tools/ui-kit-v2';
+import { RT_KIT_LABELS, RT_KIT_LOCALE, RtAiRunStatusComponent, RtIconButtonComponent, TRtKitLabelMap } from '@rt-tools/ui-kit-v2';
 
 import { RtAiChatBlocksComponent } from '../blocks/rt-ai-chat-blocks.component';
 import { blocksToPlainText } from '../blocks/rt-ai-chat-blocks.logic';
@@ -61,14 +61,20 @@ const BEM_BLOCK: string = 'rt-ai-chat-answer';
 })
 export class RtAiChatAnswerComponent {
     readonly #renderers: readonly IRtAiChat.BlockRenderer[] = inject(RT_AI_CHAT_BLOCK_RENDERERS, { optional: true }) ?? [];
+    readonly #locale: Signal<string> = inject(RT_KIT_LOCALE);
 
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     /** Ответ дописан: есть хотя бы один блок, и поток кончился — строка действий с копированием и оценкой. */
     protected readonly isWritten: Signal<boolean> = computed((): boolean => this.message().blocks.length > 0 && !this.message().streaming);
 
-    /** Что копирует кнопка: видимый текст блоков без знаков разметки — без хода работы и вложений. */
-    protected readonly plainText: Signal<string> = computed((): string => blocksToPlainText(this.message().blocks, this.#renderers));
+    /**
+     * Что копирует кнопка: видимый текст блоков без знаков разметки — без хода работы и вложений.
+     * Значения таблиц записаны в языке кита на минуту копии: язык читается здесь же.
+     */
+    protected readonly plainText: Signal<string> = computed((): string =>
+        blocksToPlainText(this.message().blocks, this.#renderers, this.#locale())
+    );
 
     /** Кнопка копирования видна, когда её не выключили и у блоков есть текст: пустая копия обманула бы. */
     protected readonly canCopy: Signal<boolean> = computed((): boolean => this.copyable() && this.plainText().length > 0);

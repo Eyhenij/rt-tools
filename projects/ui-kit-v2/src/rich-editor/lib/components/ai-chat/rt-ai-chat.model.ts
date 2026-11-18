@@ -1,6 +1,6 @@
 import { Type } from '@angular/core';
 
-import { IRtAiRunStatus, IRtTag, IRtTimeline } from '@rt-tools/ui-kit-v2';
+import { ERtTableColumn, IRtAiRunStatus, IRtTableData, IRtTag, IRtTimeline, TRtTableValue } from '@rt-tools/ui-kit-v2';
 
 export namespace IRtAiChat {
     /** Кто написал сообщение. */
@@ -30,8 +30,27 @@ export namespace IRtAiChat {
         readonly text: string;
     }
 
+    /** Столбец таблицы: подпись шапки, род значения и код валюты для рода `currency`. */
+    export interface TableColumn {
+        readonly label: string;
+        readonly type: `${ERtTableColumn}`;
+        readonly currency?: string;
+    }
+
     /**
-     * Блок, который кит сам не рисует: график, таблица и другие. Его рисует отрисовщик,
+     * Таблица в ответе: столбцы, строки значений по порядку столбцов и строка итога по желанию.
+     * Кит рисует её сам; испорченная часть выпадает или пустеет, а без столбцов или строк блок
+     * показан заглушкой.
+     */
+    export interface TableBlock {
+        readonly type: 'table';
+        readonly columns: readonly TableColumn[];
+        readonly rows: readonly (readonly TRtTableValue[])[];
+        readonly total?: readonly TRtTableValue[] | null;
+    }
+
+    /**
+     * Блок, который кит сам не рисует: график и другие. Его рисует отрисовщик,
      * зарегистрированный приложением; без отрисовщика блок показан заглушкой. В текст, который
      * копирует «Копировать», такой блок попадает текстом функции `toText` своего отрисовщика.
      */
@@ -40,8 +59,8 @@ export namespace IRtAiChat {
         readonly [field: string]: unknown;
     }
 
-    /** Часть ответа. Список типов открыт: кит знает `markdown` и `notice`, остальные регистрирует приложение. */
-    export type Block = MarkdownBlock | NoticeBlock | CustomBlock;
+    /** Часть ответа. Список типов открыт: кит знает `markdown`, `notice` и `table`, остальные регистрирует приложение. */
+    export type Block = MarkdownBlock | NoticeBlock | TableBlock | CustomBlock;
 
     /**
      * Отрисовщик блока, которого кит сам не знает: компонент с обязательным входом `block` и
@@ -57,6 +76,7 @@ export namespace IRtAiChat {
     export type BlockView =
         | { readonly kind: 'markdown'; readonly text: string }
         | { readonly kind: 'notice'; readonly severity: IRtTag.Severity; readonly text: string }
+        | { readonly kind: 'table'; readonly data: IRtTableData }
         | { readonly kind: 'custom'; readonly component: Type<unknown>; readonly block: Block }
         | { readonly kind: 'unsupported'; readonly type: string };
 

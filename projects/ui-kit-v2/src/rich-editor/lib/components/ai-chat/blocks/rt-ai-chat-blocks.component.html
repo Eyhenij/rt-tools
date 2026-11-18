@@ -9,6 +9,9 @@
                     {{ view.text }}
                 </rt-message>
             }
+            @case ('table') {
+                <rt-ai-chat-table rtElem="table" qa-dataid="ai-chat-block-table" [data]="view.data" />
+            }
             @case ('custom') {
                 <ng-container *ngComponentOutlet="view.component; inputs: { block: view.block }" />
             }

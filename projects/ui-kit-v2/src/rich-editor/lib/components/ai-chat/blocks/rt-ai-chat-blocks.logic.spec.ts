@@ -1,5 +1,5 @@
 import { IRtAiChat } from '../rt-ai-chat.model';
-import { blocksToPlainText, isMarkdownBlock, isNoticeBlock, toBlockViews } from './rt-ai-chat-blocks.logic';
+import { blocksToPlainText, isMarkdownBlock, isNoticeBlock, tableBlockData, toBlockViews } from './rt-ai-chat-blocks.logic';
 
 describe('rt-ai-chat-blocks logic', (): void => {
     it('SC-UKV-1321 — копия ответа склеивает тексты блоков по порядку, без знаков markdown', (): void => {
@@ -103,5 +103,48 @@ describe('rt-ai-chat-blocks logic', (): void => {
             { kind: 'unsupported', type: 'notice' },
             { kind: 'unsupported', type: 'markdown' },
         ]);
+    });
+    describe('блок table', (): void => {
+        const TABLE: IRtAiChat.TableBlock = {
+            type: 'table',
+            columns: [
+                { label: 'Объект', type: 'text' },
+                { label: 'Выручка', type: 'currency', currency: 'EUR' },
+            ],
+            rows: [['Вилла', 4200]],
+            total: ['Итого', 4200],
+        };
+
+        it('SC-UKV-1396 — таблицу кит рисует сам, отрисовщик table из реестра не берётся', (): void => {
+            const renderer: IRtAiChat.BlockRenderer = { type: 'table', component: class {} };
+            const views: readonly IRtAiChat.BlockView[] = toBlockViews([TABLE], [renderer]);
+
+            expect(views).toEqual([{ kind: 'table', data: tableBlockData(TABLE) }]);
+        });
+
+        it('SC-UKV-1405 — таблица без столбцов или со строками не списком показана заглушкой', (): void => {
+            const broken: IRtAiChat.Block[] = [
+                { type: 'table', columns: [], rows: [] },
+                { type: 'table', columns: [{ label: 'A', type: 'text' }], rows: 'строки' },
+            ];
+
+            expect(toBlockViews(broken, [])).toEqual([
+                { kind: 'unsupported', type: 'table' },
+                { kind: 'unsupported', type: 'table' },
+            ]);
+        });
+
+        it('SC-UKV-1414 — копия ответа даёт таблицу строками через табуляцию со значениями как в таблице', (): void => {
+            const text: string = blocksToPlainText([{ type: 'markdown', text: 'Итоги **месяца**' }, TABLE], [], 'en');
+
+            expect(text).toBe('Итоги месяца\n\nОбъект\tВыручка\nВилла\t€4,200.00\nИтого\t€4,200.00');
+        });
+
+        it('SC-UKV-1423 — копия ответа пишет значения таблицы в языке, переданном на минуту копии', (): void => {
+            const table: IRtAiChat.TableBlock = { type: 'table', columns: [{ label: 'N', type: 'number' }], rows: [[1234.5]] };
+
+            expect(blocksToPlainText([table], [], 'en')).toBe('N\n1,234.5');
+            expect(blocksToPlainText([table], [], 'de')).toBe('N\n1.234,5');
+        });
     });
 });

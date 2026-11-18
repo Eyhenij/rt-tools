@@ -1,0 +1,58 @@
+<ng-container rtBlock="rt-ai-chat-table">
+    <div rtElem="scroll" qa-dataid="ai-chat-table-scroll" role="region" tabindex="0" [attr.aria-label]="label()">
+        <!-- native-ok: rt-table несёт таблицу CDK со столбцами, объявленными заранее, настройки столбцов в IndexedDB и карточки узкого экрана; блок таблицы берёт столбцы из данных ответа и только показывает их — решение владельца «Простая разметка» для таблицы данных графика, тот же вид -->
+        <table rtElem="table" qa-dataid="ai-chat-table" [rtMod]="{ content: fitsContent() }">
+            <thead>
+                <tr rtElem="row">
+                    @for (cell of head(); track $index) {
+                        <th
+                            rtElem="cell"
+                            qa-dataid="ai-chat-table-head-cell"
+                            scope="col"
+                            [rtMod]="{ head: true, end: cell.end, fill: cell.fill }">
+                            {{ cell.text }}
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @for (row of rows(); track $index) {
+                    <tr rtElem="row">
+                        @for (cell of row; track $index) {
+                            <td
+                                rtElem="cell"
+                                qa-dataid="ai-chat-table-cell"
+                                [rtMod]="{ end: cell.align === 'end', negative: cell.negative }">
+                                {{ cell.text }}
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+            @if (total(); as total) {
+                <tfoot>
+                    <tr rtElem="row" qa-dataid="ai-chat-table-total" [rtMod]="{ total: true }">
+                        @for (cell of total; track $index) {
+                            <td rtElem="cell" [rtMod]="{ end: cell.align === 'end', negative: cell.negative, total: true }">
+                                {{ cell.text }}
+                            </td>
+                        }
+                    </tr>
+                </tfoot>
+            }
+        </table>
+    </div>
+    <button
+        rtButton
+        rtElem="copy"
+        qa-dataid="ai-chat-table-copy"
+        type="button"
+        appearance="text"
+        size="sm"
+        iconPos="left"
+        [icon]="actionIcon()"
+        [label]="actionLabel()"
+        [attr.aria-label]="actionLabel()"
+        (click)="onCopy()"></button>
+    <span rtElem="status" role="status" aria-live="polite">{{ status() }}</span>
+</ng-container>
