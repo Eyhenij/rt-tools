@@ -1,4 +1,4 @@
-import { EAiChatErrorKind, EAiChatFeedback, EAiChatRole, EAiChatRunResult, EAiChatRunStatus } from './ai-chat.enum';
+import { EAiChatErrorKind, EAiChatFeedback, EAiChatRole, EAiChatRunResult, EAiChatRunStatus } from './ai-chat.enum.js';
 
 export interface IAiChatToolCall {
     id: string;
