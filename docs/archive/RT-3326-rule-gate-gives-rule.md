@@ -1,8 +1,27 @@
-# Grill
+# RT-3326 — проверка правил кладёт правило в сессию
 
-**Draft:** `docs/specs/agent-kit/proposed/rule-gate-delivery/`
+Задача RT-3326 эпика RT-3302, ветка `RT-3326-rule-gate-gives-rule` от ветки
+`RT-3283-push-set-uselessness`, 18.11.2026. Что стало правилом:
 
-## The owner request
+- проверка правил кладёт в сессию правило, которое вмещается в предел хоста, и пропускает правку
+  тем же ответом; отказ остаётся для правила длиннее предела, для правил, которые не помещаются
+  вместе, и для непрочитанного правила: `projects/agent-kit/assets/hooks/skill-gate.sh`, спека —
+  `docs/specs/agent-kit/rule-gate-delivery/`;
+- предел хоста — `RT_GATE_CONTEXT_LIMIT`, по умолчанию 10 000 знаков;
+- соседние проверки считают такое правило загруженным: `rt_fact_rule_loaded` в
+  `projects/agent-kit/assets/hooks/facts.sh`; счётчик отказов относит ход «загрузи правило» к
+  проверке правил: `projects/agent-kit/assets/checks/record-count.mjs`;
+- горячая часть правил spec-driven, doc-style, browser-verification, task-flow, git-workflow,
+  ui-component-tests и навыка agent-kit-extend — не длиннее 3 000 знаков; длинные разбиты на
+  части, доводы и образцы ушли в холодные части `pitfalls.md` и `pitfalls-2.md`;
+- как сжимают статью и чем проверяют, что смысл не потерян, — статья правила `spec-driven`
+  «A compressed article keeps its statement, boundary, exception and sign»: место меряется заранее,
+  пересказ читателем без прежнего текста и сверка критиком, потеря возвращается в статью.
+
+Пересказы по каждой части и скрипт проверки смысла жили в папке задачи и удалены вместе с ней:
+их итог — совпадение по всем частям, их место в истории ветки.
+
+## Разбор: просьба владельца
 
 Текст задачи #3326:
 
