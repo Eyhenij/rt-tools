@@ -11,7 +11,18 @@ import { IRtTag } from '../../rt-tag.model';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TTagMatrixPart =
-    'severity' | 'size' | 'overflow' | 'radius' | 'icon' | 'closable' | 'highlight' | 'handles' | 'host-rule' | 'presets' | 'themes';
+    | 'severity'
+    | 'size'
+    | 'overflow'
+    | 'radius'
+    | 'icon'
+    | 'closable'
+    | 'highlight'
+    | 'handles'
+    | 'host-rule'
+    | 'presets'
+    | 'themes'
+    | 'dot';
 
 /** Случай усечения — не значение оси, а пара «подпись и место, которое ей дали». */
 interface ITagOverflowCase {
@@ -200,6 +211,22 @@ const TAG_HANDLES: Readonly<Record<string, string>> = {
                 </app-story-presets>
             }
 
+            @case ('dot') {
+                <app-story-presets caption="Точка: палитра × ступень в обеих темах и обоих наборах">
+                    <ng-template>
+                        <app-story-themes>
+                            <ng-template>
+                                <app-story-grid [rows]="severities" [columns]="sizes">
+                                    <ng-template let-severity let-size="col">
+                                        <rt-tag appearance="dot" [value]="severity" [severity]="severity" [size]="size" />
+                                    </ng-template>
+                                </app-story-grid>
+                            </ng-template>
+                        </app-story-themes>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('themes') {
                 <app-story-presets caption="Палитра в обеих темах в обоих наборах">
                     <ng-template>
@@ -231,7 +258,7 @@ export class TestRtTagMatrixComponent {
     public part: TTagMatrixPart = 'severity';
 
     public readonly severities: readonly IRtTag.Severity[] = ['neutral', 'info', 'success', 'warning', 'danger', 'secondary'];
-    public readonly appearances: readonly IRtTag.Appearance[] = ['solid', 'outlined'];
+    public readonly appearances: readonly IRtTag.Appearance[] = ['solid', 'outlined', 'dot'];
     public readonly closables: readonly boolean[] = [false, true];
     public readonly highlights: readonly string[] = ['', 'моск', 'моск цен'];
     public readonly sizes: readonly IRtTag.Size[] = ['sm', 'md', 'lg'];

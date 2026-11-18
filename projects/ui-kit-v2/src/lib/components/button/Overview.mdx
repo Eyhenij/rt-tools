@@ -25,7 +25,10 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 ## Когда не применять
 
 - **Кнопка без подписи** — берите [`rt-icon-button`](./?path=/docs/atoms-buttons-iconbutton-overview--docs):
-  там `ariaLabel` обязателен входом, а не забывается в разметке.
+  там `ariaLabel` обязателен входом, а не забывается в разметке. Исключение — квадрат с рамкой или
+  квадрат в ряду кнопок с подписью: у `rt-icon-button` вида с рамкой нет, а `rtButton` без
+  подписи рисует квадрат со стороной высоты в любом виде и размере (стори `IconOnly` и
+  `IconOnlyStates`); `aria-label` тогда ставится в разметке.
 - **Кнопка с прикреплённым меню** — [`rt-split-button`](./?path=/docs/molecules-forms-splitbutton-overview--docs).
 - **Ссылка внутри текста** — обычный `<a>`: кнопочный вид в потоке текста читается как опечатка.
 

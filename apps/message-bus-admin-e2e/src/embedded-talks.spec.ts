@@ -101,6 +101,8 @@ test.describe('встраиваемая страница переписок', ()
         // положительная пара: до нажатия разговор живой, и действие предлагает его закрыть
         await expect(qaInside(page, 'workspace-details-action')).toHaveText('Закрыть разговор');
         await expect(rows(page).first().locator('[qa-dataid="chat-talk-state-mark"]')).toHaveText('Живой');
+        // у метки кита есть вид точки без подписи; метка строки остаётся подписанной плашкой
+        await expect(rows(page).first().locator('[qa-dataid="chat-talk-state-mark"] [role="img"]')).toHaveCount(0);
 
         await qaInside(page, 'workspace-details-action').click();
 

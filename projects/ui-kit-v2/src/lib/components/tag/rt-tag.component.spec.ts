@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
@@ -108,7 +111,7 @@ describe('RtTagComponent', (): void => {
 
             overflow(fixture, 80, 80);
 
-            expect(fixture.debugElement.query(By.directive(RtTooltipDirective))?.injector.get(RtTooltipDirective).text()).toBe('');
+            expect(qa(fixture, 'tag-text')?.injector.get(RtTooltipDirective).text()).toBe('');
         });
 
         it('SC-UKV-198 — подписи не хватило места: подсказка несёт целое значение', (): void => {
@@ -116,9 +119,7 @@ describe('RtTagComponent', (): void => {
 
             overflow(fixture, 400, 80);
 
-            expect(fixture.debugElement.query(By.directive(RtTooltipDirective))?.injector.get(RtTooltipDirective).text()).toBe(
-                fixture.componentInstance.value()
-            );
+            expect(qa(fixture, 'tag-text')?.injector.get(RtTooltipDirective).text()).toBe(fixture.componentInstance.value());
         });
     });
 
@@ -127,9 +128,12 @@ describe('RtTagComponent', (): void => {
             expect(pillClasses(setup())).toContain('rt-tag--appearance--solid');
         });
 
-        it.each<IRtTag.Appearance>(['solid', 'outlined'])('заливка %s даёт свой модификатор', (appearance: IRtTag.Appearance): void => {
-            expect(pillClasses(setup({ appearance }))).toContain(`rt-tag--appearance--${appearance}`);
-        });
+        it.each<IRtTag.Appearance>(['solid', 'outlined', 'dot'])(
+            'заливка %s даёт свой модификатор',
+            (appearance: IRtTag.Appearance): void => {
+                expect(pillClasses(setup({ appearance }))).toContain(`rt-tag--appearance--${appearance}`);
+            }
+        );
     });
 
     describe('скругление', (): void => {
@@ -215,6 +219,64 @@ describe('RtTagComponent', (): void => {
             const control: DebugElement | null = el(fixture, '[qa-dataid="tag-close"] [qa-dataid="icon-button-control"]');
 
             expect(control?.attributes['aria-label']).toBe('Delete');
+        });
+    });
+
+    describe('точка', (): void => {
+        it('SC-UKV-1378 — точка рисует круг без подписи и несёт свой модификатор', (): void => {
+            const fixture: ComponentFixture<RtTagComponent> = setup({ appearance: 'dot' });
+
+            expect(pillClasses(fixture)).toContain('rt-tag--appearance--dot');
+            expect(qa(fixture, 'tag-text')).toBeNull();
+            expect(textOf(qa(fixture, 'tag'))).toBe('');
+        });
+
+        it('SC-UKV-1379 — значение точки — её имя для читалок и подсказка, а сама она берёт фокус', (): void => {
+            const fixture: ComponentFixture<RtTagComponent> = setup({ appearance: 'dot', value: 'Опубликовано' });
+            const pill: DebugElement | null = qa(fixture, 'tag');
+            const hint: DebugElement | null = fixture.debugElement.query(By.directive(RtTooltipDirective));
+
+            expect(pill?.attributes['role']).toBe('img');
+            expect(pill?.attributes['aria-label']).toBe('Опубликовано');
+            expect(pill?.attributes['tabindex']).toBe('0');
+            expect(hint?.injector.get(RtTooltipDirective).text()).toBe('Опубликовано');
+        });
+
+        it('SC-UKV-1380 — точка не рисует ни значков, ни крестика', (): void => {
+            const fixture: ComponentFixture<RtTagComponent> = setup({
+                appearance: 'dot',
+                icon: 'ico-close',
+                iconEnd: 'ico-close',
+                closable: true,
+            });
+
+            expect(el(fixture, '.rt-tag__icon')).toBeNull();
+            expect(el(fixture, '.rt-tag__icon-end')).toBeNull();
+            expect(qa(fixture, 'tag-close')).toBeNull();
+            expect(pillClasses(fixture)).not.toContain('rt-tag--closable');
+        });
+
+        // Раскладки в тесте нет, и вычисленное скругление читать неоткуда: судится правило точки
+        // в файле стилей — оно называет полное скругление само и не читает свойство шага.
+        it('SC-UKV-1381 — точка остаётся кругом, какой бы шаг скругления ни назвали', (): void => {
+            const styles: string = readFileSync(join(__dirname, 'rt-tag.component.scss'), 'utf8');
+            const dotRule: string = styles.slice(styles.indexOf('&--appearance--dot'));
+            const dotBody: string = dotRule.slice(0, dotRule.indexOf('\n            }\n'));
+
+            expect(dotBody).toContain('border-radius: var(--rt-tag-dot-radius);');
+            expect(styles).toContain('--rt-tag-dot-radius: var(--rt-radius-full);');
+            expect(dotBody).not.toContain('--rt-tag-radius');
+            expect(setup({ appearance: 'dot', radius: 'sm' }).nativeElement.getAttribute('data-rt-radius')).toBe('sm');
+        });
+
+        it('пилюля, ставшая точкой и вернувшаяся, снова рисует подпись без подсказки', (): void => {
+            const fixture: ComponentFixture<RtTagComponent> = setup({ appearance: 'dot' });
+
+            setInputs(fixture, { appearance: 'solid' });
+            fixture.detectChanges();
+
+            expect(textOf(qa(fixture, 'tag-text'))).toBe('Активен');
+            expect(qa(fixture, 'tag')?.attributes['role']).toBeUndefined();
         });
     });
 
