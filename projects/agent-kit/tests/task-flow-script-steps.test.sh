@@ -403,6 +403,28 @@ PLAN
 got="$(cd "$TF_DIR/live-repo" && RT_FLOW_STEP_LIMIT_MS=5000 node "$TESTS/../assets/checks/task-flow-script.mjs" step --done --pr 2>&1; printf 'code=%s' "$?")"
 report "pr: SC-AK-1739 — шаг, читающий ход работы, совпал на ходе работы своего замера" "$(printf '%s' "$got" | grep -cE '^1\.1 .*· совпало|matched 2')" 2
 
+# SC-AK-1740 — перемер идёт на node, закреплённом в .nvmrc дерева
+TF_NVM="$TF_DIR/nvm"
+mkdir -p "$TF_NVM/versions/node/v99.1.0/bin" "$TF_DIR/pinned-tree"
+printf '#!/usr/bin/env bash\necho "pinned node"\nexit 1\n' > "$TF_NVM/versions/node/v99.1.0/bin/node"
+chmod +x "$TF_NVM/versions/node/v99.1.0/bin/node"
+printf 'v99.1.0\n' > "$TF_DIR/pinned-tree/.nvmrc"
+got="$(
+    unmet() { printf '%s %s\n' "$1" "$3"; }
+    rt_hooks_dir="$TESTS/../assets/hooks" root="$TF_DIR/pinned-tree" NVM_DIR="$TF_NVM"
+    . "$TESTS/../assets/hooks/git-guard-delivery-rerun.sh"
+    rt_delivery_rerun
+)"
+report "pr: SC-AK-1740 — перемер зовёт node из .nvmrc дерева" "$(printf '%s' "$got" | grep -c 'pinned node')" 1
+rm "$TF_DIR/pinned-tree/.nvmrc"
+got="$(
+    unmet() { printf '%s %s\n' "$1" "$3"; }
+    rt_hooks_dir="$TESTS/../assets/hooks" root="$TF_DIR/pinned-tree" NVM_DIR="$TF_NVM"
+    . "$TESTS/../assets/hooks/git-guard-delivery-rerun.sh"
+    rt_delivery_rerun
+)"
+report "pr: SC-AK-1740 — без .nvmrc остаётся node сессии" "$(printf '%s' "$got" | grep -c 'pinned node')" 0
+
 if [ -n "${TF_ALONE:-}" ]; then
     rm -rf "$TF_DIR"
     suite_result "сценарий task flow: шаг плана и одобрение"

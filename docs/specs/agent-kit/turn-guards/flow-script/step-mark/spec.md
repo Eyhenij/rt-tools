@@ -61,6 +61,8 @@ prints a line per fixture.
 - **The PR of a task does not open until every done step matches on the final rerun.**
 - **The refusal of the PR names every step that did not match, with its expected result and what it got.**
 - **The final rerun reads the plan and the progress from the history when the task folder is already taken apart.**
+- **The final rerun runs on the node the tree pins in `.nvmrc` when that version is installed.**
+  The session may carry another default, and a tree with an engines field refuses it.
 - **On the final rerun a check sees the progress as it stood before the first commit that marks its step done.**
   The last progress has every step done; a check that reads it would see a state it never measured.
 - **A check that changes a tracked file does not match.** A check measures; one that edits the tree

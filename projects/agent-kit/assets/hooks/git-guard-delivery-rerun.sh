@@ -17,7 +17,13 @@ rt_delivery_rerun() {
         [ -f "$candidate" ] && engine="$candidate" && break
     done
     [ -n "$engine" ] || return 0
-    out="$(cd "${root:-${CLAUDE_PROJECT_DIR:-.}}" && node "$engine" step --done --pr 2>&1)"
+    local dir="${root:-${CLAUDE_PROJECT_DIR:-.}}" pinned run_path="$PATH"
+    # The checks run on the node the tree pins in .nvmrc, as they ran when measured: the session may
+    # carry another default, and a tree with an engines field refuses it.
+    pinned="$(tr -d ' \n' < "$dir/.nvmrc" 2>/dev/null)"
+    pinned="${NVM_DIR:-$HOME/.nvm}/versions/node/v${pinned#v}/bin"
+    [ -x "$pinned/node" ] && run_path="$pinned:$PATH"
+    out="$(cd "$dir" && PATH="$run_path" node "$engine" step --done --pr 2>&1)"
     code=$?
     [ "$code" -eq 0 ] && return 0
     unmet steps_remeasured no "the done steps of the plan were measured once more before the PR, and not every one matched:

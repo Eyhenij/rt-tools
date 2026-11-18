@@ -276,6 +276,14 @@ Then the step matches: its check reads the progress before the commit that marke
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
+### SC-AK-1740 — the final rerun runs on the node the tree pins
+
+Given a tree whose `.nvmrc` names a version installed in the nvm directory, and a session on another node
+When the PR opens and the final rerun runs
+Then the engine runs on the pinned node; without `.nvmrc` it runs on the node of the session
+
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
 ### SC-AK-1736 — a step command that does not match leaves the progress as it was
 
 Given a progress whose step 1.1 is current, and a check of step 1.1 that does not match
