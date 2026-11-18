@@ -53,6 +53,7 @@
         &__subtitle {
             color: var(--rt-color-text-muted);
             font-size: var(--rt-text-xs);
+            line-height: 15px; /* как у подписей rt-chart: строка макета, шагов кита на 15 нет */
             overflow-wrap: anywhere;
         }
 

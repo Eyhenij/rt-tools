@@ -3,14 +3,14 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 4 of 5 — Showcase
+- **Stage:** 5 of 5 — Closing
 - **Done:** branch `RT-3335-ai-chat-chart-block` taken from `RT-2750-rt-chart` (a chain: PR #3386
   of RT-2750 is open into the epic branch); the task is in progress and assigned; the grill holds
   the exploration and the decisions; the body of #3335 is rewritten away from echarts; the
   agreement `docs/specs/ui-kit-v2/proposed/ai-chat-chart/` holds 17 rules and SC-UKV-1341…1359,
   its 15 open questions closed by assumption
-- **Next step:** 4.2 — write the kit-approval numbers line from the measurements of the showcase
-  against the mockup, then 4.3 — the question to the parent session.
+- **Next step:** 5.1 — merge the agreement into the ai-chat spec, removing the stale
+  `Not covered` marks; the showcase is approved: «Одобряю витрину», 22 of 22 numbers.
   The branch RT-2750 below waits for main to fix the hook test SC-AK-569 broken by #3387.
 - **Uncommitted:** no
 - **Waiting for the owner:** no; the mockup and the plan are approved: «Одобряю макет и план RT-3335»
@@ -30,9 +30,9 @@
 - [x] 3.3 Add the provider with the `toText` factory and the kit labels in eight languages
 - [x] 3.4 Cover the block with component tests by scenario id
 - [x] 4.1 Write the stories: one per kind, pending, invalid, empty, both themes, narrow feed, and an
-- [>] 4.2 Take the snapshot references and match the showcase with the mockup
-- [ ] 4.3 Ask the owner to approve the showcase through the parent session
-- [ ] 5.1 Merge the agreement into the ai-chat subdomain spec and fix the scenario index
+- [x] 4.2 Take the snapshot references and match the showcase with the mockup
+- [x] 4.3 Ask the owner to approve the showcase through the parent session
+- [>] 5.1 Merge the agreement into the ai-chat subdomain spec and fix the scenario index
 - [ ] 5.2 Bring the README and the CONTEXT of the chat up to date
 - [ ] 5.3 Run the push gate
 
@@ -71,10 +71,11 @@
   fixed width 16 covering each other and running past the right edge. The bar now takes the
   smaller of its designed width and its column; the scenario SC-UKV-1382 joins the agreement with a
   scene test, and the whole kit matched its references after the edit. Affected stage of the plan: 4.
-- **The text lines of the block take `line-height: normal`.** The kit steps gave 14 px where the
-  mockup has 15; with the font metrics 17 of 20 measured numbers match. The rest is the gap between
-  the plot and the legend of `rt-chart`, 12 against 8 in the mockup copy — a question for the owner
-  at 4.3. Affected stage of the plan: 4.
+- **The 12 px lines of the block take `line-height: 15px`, as the labels of `rt-chart` do.** No
+  kit step gives 15, and the font metrics gave 14.5. The mockup copy had the gap between the plot
+  and the legend at 8, while the approved `rt-chart` mockup and its code have 12: the copy drifted,
+  so the mockup was fixed — the plot and the legend stand in a `chart` frame with a gap of 12.
+  Match: 22 of 22 numbers on the 386 block. Affected stage of the plan: 4.
 - **The docs checker reads the components of the `ai-chat-chart` entry too.** It knew only the
   editor entry, so the overview page of the block had no table check. Affected stage of the plan: 4.
 
