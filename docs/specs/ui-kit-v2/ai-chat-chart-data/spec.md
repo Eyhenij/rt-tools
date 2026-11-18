@@ -1,12 +1,13 @@
 # The data table of the chart block
 
-**Status:** proposed · **Revision:** 2026-11-18 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-18 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the chart block of the assistant chat (its data mapping, its format)
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
 
 An addition to the subdomain `ai-chat-chart`: a switch under the chart that shows and hides the
-table of the chart data. Merged into `docs/specs/ui-kit-v2/ai-chat-chart/` when the work closes.
+table of the chart data. It stands as a subdomain of its own next to the block: together with the
+block spec it is longer than the document limit.
 
 ## Why
 
@@ -21,11 +22,11 @@ block itself can give the numbers on demand.
 
 ### What it is called in the interface
 
-| In the domain   | On the screen                                           |
-| --------------- | ------------------------------------------------------- |
-| The switch      | «View data» with a chevron down; «Hide data» with up    |
-| Head words      | «Category», «Bin», «Value», «Series», «X», «Y», «Path»  |
-| The data table  | a table with a head row, under the switch               |
+| In the domain  | On the screen                                          |
+| -------------- | ------------------------------------------------------ |
+| The switch     | «View data» with a chevron down; «Hide data» with up   |
+| Head words     | «Category», «Bin», «Value», «Series», «X», «Y», «Path» |
+| The data table | a table with a head row, under the switch              |
 
 ## Rules
 
@@ -41,16 +42,16 @@ block itself can give the numbers on demand.
 
 - **The head row per kind:**
 
-  | Kind | First column | Other columns |
-  | --- | --- | --- |
-  | `line`, `bar`, `grouped_bar`, `stacked_bar` | the `x` axis name, else «Category» | a column per series, named by the series |
-  | `histogram` | the `x` axis name, else «Bin» | the series name |
-  | `pie` | «Category» | «Value»; the axis names are ignored, as on the chart |
-  | `heatmap` | the corner: the `y` axis name, else empty | a column per `x` in the order of the chart columns |
-  | `scatter` | «Series» | the `x` axis name, else «X»; the `y` axis name, else «Y» |
-  | `treemap`, `sunburst` | «Path» | «Value» |
+    | Kind                                        | First column                              | Other columns                                            |
+    | ------------------------------------------- | ----------------------------------------- | -------------------------------------------------------- |
+    | `line`, `bar`, `grouped_bar`, `stacked_bar` | the `x` axis name, else «Category»        | a column per series, named by the series                 |
+    | `histogram`                                 | the `x` axis name, else «Bin»             | the series name                                          |
+    | `pie`                                       | «Category»                                | «Value»; the axis names are ignored, as on the chart     |
+    | `heatmap`                                   | the corner: the `y` axis name, else empty | a column per `x` in the order of the chart columns       |
+    | `scatter`                                   | «Series»                                  | the `x` axis name, else «X»; the `y` axis name, else «Y» |
+    | `treemap`, `sunburst`                       | «Path»                                    | «Value»                                                  |
 
-  A series with an empty name gives an empty head cell.
+    A series with an empty name gives an empty head cell.
 
 - **The rows per kind.** A cartesian kind gives a row per category; `stacked_bar` cells hold the value of their series, not the running sum. `histogram` gives a row per bin named `low–high` from the category bounds the chart gets, written as given and not signed by the format. `pie` gives a row per sector. `heatmap` gives a row per series named by the series, a cell per `x`. `scatter` gives a row per point, series by series in the spec order; `x` is written as given, `y` is signed by the format. There is no total row or column.
 
@@ -94,12 +95,12 @@ memory and never stored.
 
 ## Screens and states
 
-| state            | what is drawn                                                     |
-| ---------------- | ----------------------------------------------------------------- |
-| closed           | the drawn block and «View data» with a chevron down under the chart |
-| open             | «Hide data» with a chevron up and the table under it              |
-| wide             | the open table scrolls sideways inside the block                  |
-| dark theme       | the same block and table in the dark palette                      |
+| state      | what is drawn                                                       |
+| ---------- | ------------------------------------------------------------------- |
+| closed     | the drawn block and «View data» with a chevron down under the chart |
+| open       | «Hide data» with a chevron up and the table under it                |
+| wide       | the open table scrolls sideways inside the block                    |
+| dark theme | the same block and table in the dark palette                        |
 
 ## Cross-cutting requirements
 
@@ -137,3 +138,5 @@ None.
 ## History of changes
 
 - 2026-11-18 — the agreement written for RT-3336 from the grill, reviewed by spec-critic.
+- 2026-11-18 — merged as a subdomain of the kit with its bindings; the showcase found that a cell
+  broke words anywhere and that a row was 29 high, both fixed before the merge.
