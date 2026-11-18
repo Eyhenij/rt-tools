@@ -237,6 +237,31 @@ on the stand seed. Their misses, each with an address:
   **Address:** a task of this epic — the denominator is the merged tasks, or the line names why it
   is zero; «Повторы ошибок» needs the owner's word.
 
+## RT-3283 — the usefulness of the push set checks
+
+`goal-critic` judged the goal partly met, `product-strategist` judged the point partly reached: the
+report names the kit snapshots (44 false of 57, 76 044 s) and the admin e2e (17 of 28, 29 846 s),
+and the idle runs read «предмет не записан» in all 84 lines. Their misses, each with an address:
+
+- **No idle run is counted on real data yet.** The marks of this machine were written before the
+  work; the owner's own example, the hook scenarios on branches that never touched them, shows only
+  after one push with the seven-field line. **Address:** the remaining step of the PR — read
+  `metrics --days 7` on 25.11.2026.
+- **The lint, types, tests and build of `nx affected` had no subject.** Closed in the same branch:
+  the profile declares the project roots and the root settings for that step.
+- **The e2e, the snapshots and the images take the whole tree as their subject, so they never run
+  idle.** The set prints them only for a branch that touched their subject, and the report cannot
+  judge them finer. **Address:** a task of this epic — the subject by the roots of the affected
+  projects.
+- **31 of 84 lines are named by a checksum.** Three of the seven falsely refusing candidates are
+  among them, and the owner cannot act on a number. **Address:** a task of this epic — a short step
+  name in the run line, or one summary line for the commands outside the set.
+- **The list «ни разу не отказали по делу» holds 49 lines, a check of two seconds among them.**
+  **Address:** a task of this epic — a threshold of seconds, the rest as a count.
+- **The milestone of the epic is not moved by this task, and its sign does not read now.** The
+  report prints «результат работы: подсчёт оборвался». **Address:** a task of this epic, together
+  with the items of RT-3270 above.
+
 ## Left unresolved
 
 - **A session that wrote nothing releases the turn, and so do the silent hosting and a lost menu.**
