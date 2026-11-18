@@ -204,6 +204,7 @@ node tools/check-format-ignore.mjs
 node tools/check-dependencies.mjs
 node tools/check-publish-lockfile.mjs
 node tools/check-package-imports.mjs
+node tools/check-package-release.mjs
 node tools/check-kit-approval.mjs
 EOF
     # The tree's check scenarios run only the files the change reaches; the selection is there.
@@ -225,8 +226,8 @@ EOF
             "${1:+RT_SUITES_BASE=$1 }pnpm exec nx affected -t test-hooks$against"
         # The styles linter reads style files and its config only; a branch touching neither skips it.
         { [ -n "$1" ] && ! git diff --name-only "$1...HEAD" 2>/dev/null | grep -qE '\.(scss|css)$|stylelint|^package\.json$|^pnpm-lock\.yaml$'; } || printf '%s\n' 'pnpm run lint:styles'
-        # `verify` lives in the second kit and utils alone; texts, hooks, the rules package and tools reach neither.
-        { [ -n "$1" ] && ! git diff --name-only "$1...HEAD" 2>/dev/null | grep -qvE '^(docs|\.claude|projects/agent-kit|tools)/|\.md$|^\.prettierignore$'; } || printf '%s\n' "pnpm exec nx affected -t verify --parallel$against"
+        # `verify` lives in the packages built without a framework; texts, hooks, the rules package and tools reach none of them, except the loading check itself.
+        { [ -n "$1" ] && ! git diff --name-only "$1...HEAD" 2>/dev/null | grep -qvE '^(docs|\.claude|projects/agent-kit|tools)/|\.md$|^\.prettierignore$' && ! git diff --name-only "$1...HEAD" 2>/dev/null | grep -q '^tools/verify-package\.cjs$'; } || printf '%s\n' "pnpm exec nx affected -t verify --parallel$against"
     }
     printf '%s\n' 'node tools/check-push-gate.mjs'
 

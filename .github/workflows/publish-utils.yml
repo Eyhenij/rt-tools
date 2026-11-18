@@ -46,6 +46,11 @@ jobs:
                   pnpm install --frozen-lockfile
                   sudo apt-get install jq
 
+            # Сборка с проверкой загрузки идёт до подъёма версии: упавшая проверка не должна оставить в
+            # main коммит версии и тег, когда пакета в реестре нет и номер уже занят.
+            - name: Build and load utils before the version moves
+              run: pnpm run build:utils
+
             - name: Update version
               run: |
                   node update-version-utils.cjs ${{ github.event.inputs.version }}

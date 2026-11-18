@@ -49,7 +49,7 @@
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
-        "command": "node tools/verify-utils-package.cjs"
+        "command": "node tools/verify-package.cjs utils"
       }
     },
     "nx-release-publish": {
