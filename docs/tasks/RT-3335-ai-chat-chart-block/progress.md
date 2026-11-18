@@ -84,6 +84,12 @@
 - **The showcase got the story `Edges`.** Three scenarios promised frames the stories did not
   draw: six long series, nine sectors in the dark theme and a 120-character title in a narrow
   feed. Affected stage of the plan: 4.
+- **The roles review before the PR.** `product-strategist`: the point of the task is met, the
+  milestone G waits for RT-3336…3342 and the release; SC-UKV-1372 stood on a manual search, so a
+  spec now reads the imports of both neighbouring entries. `goal-critic`: «full screen» is the kit
+  dialog of the size `lg`, not the whole window; the approved mockup draws it 900 wide and the owner
+  approved the showcase with that frame, so it is named in the PR body as a narrowing, not changed.
+  Affected stage of the plan: 5.
 - **The docs checker reads the components of the `ai-chat-chart` entry too.** It knew only the
   editor entry, so the overview page of the block had no table check. Affected stage of the plan: 4.
 

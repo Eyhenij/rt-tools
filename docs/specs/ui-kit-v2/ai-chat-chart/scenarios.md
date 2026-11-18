@@ -211,10 +211,6 @@ Then the first chart is named «Revenue by month» for assistive technology, and
 Given the built kit
 When the imports of the `rich-editor`, `chart` and `ai-chat-chart` entries are read
 Then `rich-editor` imports no d3, and `chart` imports no editor
-
-Not covered: a unit test does not see the built entries — the imports are read by a search over
-the built package: the `rich-editor` bundle holds no `d3`, the `chart` bundle holds no `quill`.
-
 ### SC-UKV-1373 — one provider connects the block
 
 Given an application that registers the provider of `ai-chat-chart` at the root level, next to its other renderers
