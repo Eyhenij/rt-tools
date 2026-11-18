@@ -1,6 +1,6 @@
 {
   "name": "@rt-tools/ai-chat-protocol",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Events, run reducer, ports and error classes of the assistant chat, shared by every application that draws it",
   "author": "RT Team",
   "license": "Apache-2.0",
