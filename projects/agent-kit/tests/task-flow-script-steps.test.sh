@@ -267,6 +267,89 @@ report "plan: SC-AK-1539 — ветка до движка меряет пров�
 report "plan: SC-AK-1539 — новая ветка с правленым планом отказана" \
     "$(tf_legacy RT-5-new | grep -c 'differs from the commit of the plan: docs/tasks/RT-5-new/plan.md code=1')" 1
 
+# --- Перемер перед PR: step --done --pr ---------------------------------------------------------
+(
+    cd "$TF_DIR" || exit 1
+    git -c init.defaultBranch=main init -q pr-repo
+    cd pr-repo || exit 1
+    printf 'tracked\n' > tracked.txt
+    git add tracked.txt && "${TF_G[@]}" commit -q -m start
+    git update-ref refs/remotes/origin/main HEAD
+    git checkout -q -b RT-2-pr
+    mkdir -p docs/tasks/RT-2-pr
+    cat > docs/tasks/RT-2-pr/plan.md <<'PLAN'
+# Plan
+
+## Stages
+
+### 1. Первый
+
+- **Steps:**
+    1. Совпасть
+       Check: `cat docs/tasks/RT-2-pr/probe.txt` → `один`
+    2. Совпасть тоже
+       Check: `echo два` → `два`
+    3. Испортить файл
+       Check: `echo x >> tracked.txt; echo ок` → `ок`
+    4. Сходить в сеть
+       Check: `echo 'curl: (6) Could not resolve host: example.invalid' >&2; exit 6` → exit 0
+    5. Ждать дольше предела
+       Check: `sleep 5` → exit 0
+    6. Не запуститься
+       Check: `no-such-command-anywhere` → exit 0
+- **Readiness sign:** шаги измерены
+PLAN
+    printf 'один\n' > docs/tasks/RT-2-pr/probe.txt
+    printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [x] 1.2 Совпасть тоже\n- [ ] 1.3 Испортить файл\n' > docs/tasks/RT-2-pr/progress.md
+    git add -A && "${TF_G[@]}" commit -q -m plan
+)
+TF_PR="$TF_DIR/pr-repo"
+TF_PRP="$TF_PR/docs/tasks/RT-2-pr/progress.md"
+tf_pr() {
+    local out code
+    out="$(cd "$TF_PR" && RT_FLOW_STEP_LIMIT_MS=1500 node "$TESTS/../assets/checks/task-flow-script.mjs" step --done --pr 2>&1)"
+    code=$?
+    printf '%s code=%s' "$out" "$code"
+}
+tf_pr_progress() { printf '# Ход работы\n\n## Шаги\n\n%s\n' "$1" > "$TF_PRP"; (cd "$TF_PR" && git add -A && "${TF_G[@]}" commit -q -m "progress"); }
+
+report "pr: SC-AK-1732 — все сделанные шаги совпали — PR открывается" "$(tf_pr | grep -c 'matched 2 code=0')" 1
+
+# Метка и [x], записанные мимо движка: перемер не верит метке.
+mkdir -p "$TF_PR/.git/rt-kit/steps/RT-2-pr" && printf '{"matched":true}\n' > "$TF_PR/.git/rt-kit/steps/RT-2-pr/1.4.json"
+tf_pr_progress '- [x] 1.1 Совпасть
+- [x] 1.4 Сходить в сеть'
+got="$(tf_pr)"
+report "pr: SC-AK-1731 — [x] и метка мимо движка — PR отказан" "$(printf '%s' "$got" | grep -c 'matched 1 code=1')" 1
+report "pr: SC-AK-1725 — сеть названа причиной" "$(printf '%s' "$got" | grep -c '^1.4 .*the cause is the network')" 1
+
+tf_pr_progress '- [x] 1.5 Ждать дольше предела
+- [x] 1.6 Не запуститься'
+got="$(tf_pr)"
+report "pr: SC-AK-1704 — шаг дольше предела — PR отказан" "$(printf '%s' "$got" | grep -c '^1.5 .*ran out · не совпало')" 1
+report "pr: SC-AK-1705 — команда проверки не запускается — PR отказан" "$(printf '%s' "$got" | grep -c '^1.6 .*exit 127.*не совпало')" 1
+report "pr: SC-AK-1706 — отказ называет каждый несовпавший шаг" "$(printf '%s' "$got" | grep -cE '^1\.[56] ожидалось .* · получено .* · не совпало')" 2
+
+tf_pr_progress '- [x] 1.3 Испортить файл'
+got="$(tf_pr)"
+report "pr: SC-AK-1724 — проверка изменила файл истории — не совпало" "$(printf '%s' "$got" | grep -c 'changed tracked files.*tracked.txt')" 1
+(cd "$TF_PR" && git checkout -q -- tracked.txt)
+
+tf_pr_progress '- [x] 1.2 Совпасть тоже
+
+## Decisions along the way
+
+- **Check of step 1.2 replaced:** `echo три` → `три` · the owner'"'"'s word: «замени проверку 1.2 на три»'
+printf '%s\n' '{"type":"user","uuid":"u9","message":{"role":"user","content":"замени проверку 1.2 на три"}}' > "$TF_DIR/pr-record.jsonl"
+report "pr: SC-AK-1707 — перемер берёт заменённую проверку" \
+    "$(cd "$TF_PR" && RT_FLOW_TRANSCRIPT="$TF_DIR/pr-record.jsonl" node "$TESTS/../assets/checks/task-flow-script.mjs" step --done --pr 2>&1 | grep -c '^1.2 ожидалось `три` · получено три · совпало')" 1
+
+tf_pr_progress '- [x] 1.1 Совпасть'
+(cd "$TF_PR" && git rm -q -r docs/tasks/RT-2-pr && "${TF_G[@]}" commit -q -m "folder taken apart")
+got="$(tf_pr)"
+report "pr: SC-AK-1733 — разобранная папка поднята из истории, шаг совпал" "$(printf '%s' "$got" | grep -c 'matched 1 code=0')" 1
+report "pr: SC-AK-1733 — после перемера папки снова нет" "$(test -d "$TF_PR/docs/tasks/RT-2-pr" && echo есть || echo нет)" 'нет'
+
 if [ -n "${TF_ALONE:-}" ]; then
     rm -rf "$TF_DIR"
     suite_result "сценарий task flow: шаг плана и одобрение"
