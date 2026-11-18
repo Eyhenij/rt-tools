@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 4 of 6 — The markdown table in the block's look
+- **Stage:** 5 of 6 — The showcase
 - **Done:** the task is taken, the branch `RT-3337-ai-chat-table-block` is taken from `RT-3336-ai-chat-chart-data` (chain), the task is in progress on the board. Exploration done, the six questions closed by assumption, the mockup approved: «Одобряю макет». The agreement draft `docs/specs/ui-kit-v2/proposed/ai-chat-table/` is written and checked against the grill (`ee8c157d2`); its four open questions are closed by assumption in its Decisions.
-- **Next step:** step 4.6, the admin markup and details-panel e2e run (going in the background).
+- **Next step:** step 5.1, the stories of the block.
 - **Going now:** stage 1. The plan is approved by the owner: «Одобряю план с добавками» — the block schema (step 1.7, SC-UKV-1433) and the chart data table on the shared look (step 4.7, SC-UKV-1434). goal-critic's blocking finding is closed by `play` steps of `Wide` and `Scrolled`.
 - **Uncommitted:** no
 - **Waiting for the owner:** no
@@ -43,9 +43,9 @@ The plan is approved by the owner; the work goes by its steps.
 - [x] 4.3 Give the markdown table `th scope="col"` head cells and a scroll box with `tabindex="0"`, scrolled by the arrow keys and named by the kit label `aiTableLabel`.
 - [x] 4.4 Keep the anchors `markdown-table-scroll`, `markdown-table`, `markdown-head-cell`, `markdown-cell`: the admin panel's e2e finds the table by them.
 - [x] 4.5 Extend `rt-markdown-text.component.spec.ts`: SC-UKV-1416 and SC-UKV-1418 at the drawn level, SC-UKV-1417 for «-10» not coloured, no «Copy CSV», `th scope="col"` and the named scroll box; extend `rt-markdown-text.styles.spec.ts` for the bottom borders, `text-align: start` and `end`, no `max-height` and no `position: sticky`.
-- [>] 4.6 Run the admin panel's markup and details-panel e2e specs; a diverged frame of the postmortem panel is looked at and re-taken only if it shows the new table look.
+- [x] 4.6 Run the admin panel's markup and details-panel e2e specs; a diverged frame of the postmortem panel is looked at and re-taken only if it shows the new table look.
 - [x] 4.7 Move the chart data table of `rt-ai-chat-chart.component.scss` onto the shared mixin, keeping its format function and rows; its frames are re-taken in stage 5; SC-UKV-1434.
-- [ ] 5.1 Write the stories `Organisms/Chat/AiChatTable` in `blocks/table/stories/`: `Narrow` (four columns at 328, «Апартаменты у моря» wrapping in one row), `Wide` (twelve columns at 328, a `play` step scrolling the box sideways and asserting `scrollWidth` above `clientWidth`, `scrollLeft` above 0 and the block 328 wide), `AllNumbers` (three short `number` columns at 328), `WithTotal`, `Negatives`, `Scrolled` (a `play` step focusing the box and scrolling it down by the arrow key and asserting the head row top equals the box top), `Copied` (a `play` step pressing «Copy CSV»), `Empty`, `Invalid`, `Markdown` (the block next to a thirty-row markdown table in one answer), `Rtl` (the block and a markdown table under `dir="rtl"`), `Themes` (light and dark), `Playground`.
+- [>] 5.1 Write the stories `Organisms/Chat/AiChatTable` in `blocks/table/stories/`: `Narrow` (four columns at 328, «Апартаменты у моря» wrapping in one row), `Wide` (twelve columns at 328, a `play` step scrolling the box sideways and asserting `scrollWidth` above `clientWidth`, `scrollLeft` above 0 and the block 328 wide), `AllNumbers` (three short `number` columns at 328), `WithTotal`, `Negatives`, `Scrolled` (a `play` step focusing the box and scrolling it down by the arrow key and asserting the head row top equals the box top), `Copied` (a `play` step pressing «Copy CSV»), `Empty`, `Invalid`, `Markdown` (the block next to a thirty-row markdown table in one answer), `Rtl` (the block and a markdown table under `dir="rtl"`), `Themes` (light and dark), `Playground`.
 - [ ] 5.2 Add an aligned table with «-10» to the markdown matrix fixture `test-markdown-text-matrix.component.ts`.
 - [ ] 5.3 Write `Overview.mdx` of the block next to it; name the `table` block in the ai-chat `Overview.mdx`.
 - [ ] 5.4 Sweep the raised showcase and look at every new frame at 328, in the side panel and at 760+.
@@ -61,6 +61,11 @@ The plan is approved by the owner; the work goes by its steps.
 - [ ] 6.7 Run the push set, push, open the PR as a draft into `RT-3336-ai-chat-chart-data`.
 
 ## Decisions along the way
+
+- Step 4.6: the admin markup and details-panel specs passed, 20 of 21. One frame diverged, the
+  postmortem panel: 6295 points, all inside the markdown table, which now draws the shared look.
+  The reference is re-taken and confirmed by a second raising of the stand, 7 of 7. The local stand
+  ran on ports 55522, 3397, 4397 and 4398: 3377 and 4378 are held by another stand.
 
 - Stage 5 read the approved mockup 8215-449 before the stories and found two things the agreement
   did not have: a title above the table (14 semibold, as the chart title) and a top border of the
@@ -86,9 +91,9 @@ Put together by a hook before the compaction of the context (auto).
 
 ### Where we stand at the minute of the compaction
 
-- **State:** `разбор-закрыт`
-- **Stage:** 0 of 0 — the agreement
-- **Next step:** the product agreement by spec-writer, its review by spec-critic, then the plan and the roles before the owner.
+- **State:** `этап-идёт`
+- **Stage:** 5 of 6 — The showcase
+- **Next step:** step 5.1, the stories of the block.
 - **PR:** not open yet; the branch stands on RT-3336 (#3402), which stands on RT-3335 (#3398)
 
 The progress in full — `docs/tasks/RT-3337-ai-chat-table-block/progress.md`; the plan lies next to it.
@@ -96,14 +101,21 @@ The progress in full — `docs/tasks/RT-3337-ai-chat-table-block/progress.md`; t
 ### Uncommitted
 
 ```
- M docs/tasks/RT-3337-ai-chat-table-block/grill.md
- M docs/tasks/RT-3337-ai-chat-table-block/progress.md
-?? docs/tasks/RT-3337-ai-chat-table-block/approvals.md
+none
 ```
 
 ### Commits over the main branch
 
 ```
+d8f919696 feat(rt:ui-kit-v2): таблицы markdown и данных графика в виде блока таблицы
+a0d9eb9d4 feat(rt:ui-kit-v2): блок table в ответе rt-ai-chat
+2cf7b8d2d feat(rt:ui-kit-v2): разбор markdown читает выравнивание столбцов таблицы
+90ecec61a feat(rt:ui-kit-v2): данные, запись ячеек, CSV и схема таблицы в core
+95786fc6f docs(rt:ui-kit-v2): план RT-3337 одобрен — таблица, схема блока, общий вид
+6fff45c76 docs(rt:ui-kit-v2): договорённость о таблице закрывает находки критика
+5d49daf54 docs(rt:ui-kit-v2): ход RT-3337 — договорённость разобрана критиком
+ee8c157d2 docs(rt:ui-kit-v2): договорённость о блоке таблицы в ответе чата
+e02c1e236 docs(rt:ui-kit-v2): макет блока таблицы одобрен
 f41139b04 docs(rt:ui-kit-v2): разбор RT-3337 — что есть в дереве и решения по допущению
 c732baf28 docs(rt:ui-kit-v2): находки разбора правил по задаче RT-3336
 c0c10cf0e docs(rt:ui-kit-v2): задача RT-3337 взята, план эпика отмечает RT-3335 и RT-3336
@@ -115,15 +127,6 @@ c294f17a2 feat(rt:ui-kit-v2): кнопка «Показать данные» и 
 95463f63c docs(rt:ui-kit-v2): находки разбора правил по задаче RT-3335
 975466250 feat(rt:ui-kit-v2): строки таблицы данных из данных графика
 55d175566 docs(rt:ui-kit-v2): разбор, план и договорённость таблицы данных графика
-f87c1bebc Merge remote-tracking branch 'origin/main' into RT-3335-ai-chat-chart-block
-10340e535 fix(rt:ui-kit-v2): шаблон обёртки Playground блока графика в своём файле
-ab1a90b4d docs(rt:ui-kit-v2): папка задачи RT-3335 разобрана в архив
-0cce1a338 test(rt:ui-kit-v2): входы редактора и графика не тянут друг друга
-846f5993b docs(rt:ui-kit-v2): задача RT-2750 влита в эпик блоков ответа
-68079bf9b Merge remote-tracking branch 'origin/RT-3346-ai-chat-blocks' into RT-3335-ai-chat-chart-block
-46d233f00 [RT-2750] Во втором ките есть компонент графика rt-chart (#3386)
-317ab68bc docs(rt:ui-kit-v2): договорённость о блоке графика стала подразделом спеки
-80db7de02 fix(rt:ui-kit-v2): подписи блока графика по высоте строки макета
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
