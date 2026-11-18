@@ -21,8 +21,8 @@
 - [x] 1.2 Measure the frames and ask the owner to approve the mockup through the parent session
 - [x] 2.1 Create the entry `ai-chat-chart` and its barrel
 - [x] 2.2 Write the spec types, the exported JSON schema and the hand-written check
-- [>] 2.3 Write the mapping of the ten kinds onto `IRtChart` with the formats
-- [ ] 2.4 Add `ajv` 8.20.0, already in the lockfile, as an exact dev dependency for the schema test
+- [x] 2.3 Write the mapping of the ten kinds onto `IRtChart` with the formats
+- [>] 2.4 Add `ajv` 8.20.0, already in the lockfile, as an exact dev dependency for the schema test
 - [ ] 2.5 Cover the check, the schema and the mapping with unit tests by scenario id
 - [ ] 3.1 Write the block component: title row, subtitle, axis names, notice, placeholder, empty state
 - [ ] 3.2 Add full screen through the kit dialog and the PNG download

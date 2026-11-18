@@ -7,4 +7,5 @@
 export * from './lib/ai-chat-chart.enum';
 export * from './lib/ai-chat-chart.model';
 export * from './lib/ai-chat-chart.check';
+export * from './lib/ai-chat-chart.data';
 export * from './lib/ai-chat-chart.schema';
