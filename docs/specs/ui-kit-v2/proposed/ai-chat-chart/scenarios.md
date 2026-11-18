@@ -25,6 +25,8 @@ Given a `grouped_bar` spec with the values 40 and −25 in one category
 When the block is drawn
 Then the first bar rises from the zero line and the second goes down from it, and the value axis reaches below zero
 
+A `bar` spec with the same values is drawn the same way.
+
 Not covered: the block is not written yet.
 
 ### SC-UKV-1344 — a zero value is kept

@@ -47,7 +47,7 @@ and every copy would drift from the kit.
 
 - **The block draws the ten kinds of the spec through `rt-chart`, by the mapping of the data section.**
 
-- **`grouped_bar` bars with a negative value go below zero, from the zero line down.**
+- **`bar` and `grouped_bar` bars with a negative value go below zero, from the zero line down.**
 
 - **A zero value is a value: it is drawn at zero, stands in the hint and in the copy, and is not taken for a missing point.**
 
@@ -81,6 +81,9 @@ and every copy would drift from the kit.
   block gets a ready block.
 - A stack of negative values in `stacked_bar`: `rt-chart` does not handle it, and the block makes
   no promise about it.
+- The sign that the arguments of a call are complete. The application sets `pending` while the
+  call is open; the chat protocol package does not mark the end of a call today, and that mark is a
+  task of the protocol, not of this block.
 - The data table under «View data»: the task RT-3336.
 - The table block: the task RT-3337.
 - New drawing in `rt-chart` beyond a title row: the block uses the chart as it is.
@@ -101,7 +104,7 @@ None of its own storage. The block comes in through the input `block` of a rende
 ### The chart block
 
 - `type` — `chart`.
-- the spec — the arguments of the tool call as a JSON string.
+- the spec — the arguments of the tool call as a JSON string, or the same spec already parsed.
 - `pending` — the arguments are still coming; without it the spec is final.
 
 ### The chart spec
@@ -195,11 +198,12 @@ assumption and go to the owner as a list with the plan. A wrong one costs an edi
 - Q-3. `bar` with several series is valid and drawn side by side, like `grouped_bar`.
 - Q-4. A `histogram` point names the lower bound of its bin in `x`, a number; the last upper bound
   is the last `x` plus the last step. Fewer than two points is an invalid histogram.
-- Q-5. A negative value is accepted only by `grouped_bar`, `line`, `scatter` and `heatmap`; in any
-  other kind it makes the spec invalid. `pie` with more than one series is invalid.
+- Q-5. A negative value is accepted by `bar`, `grouped_bar`, `line`, `scatter` and `heatmap`; in
+  any other kind it makes the spec invalid. `pie` with more than one series is invalid.
 - Q-6. `stacked_bar` with a negative value is invalid, by Q-5.
-- Q-7. Equal paths sum their values; a path that ends on a node another path passes through makes
-  the spec invalid.
+- Q-7. Equal paths sum their values; a path that ends on a node another path passes through keeps
+  its value on that node, next to the values of its children. The schema cannot compare paths, so
+  no hierarchy the schema accepts is refused for its shape.
 - Q-8. `percent` reads `y` 0.25 as 25 %.
 - Q-9. `currency` without a currency code makes the spec invalid.
 - Q-10. The formats use the language of the kit labels.
