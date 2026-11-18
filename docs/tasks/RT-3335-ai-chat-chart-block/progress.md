@@ -21,6 +21,14 @@ The plan is not written yet.
 
 ## Decisions along the way
 
+- **`product-strategist` findings went into the agreement.** Negative bars are accepted by `bar`
+  too; a hierarchy path ending on a node keeps its value there, so the schema never accepts a shape
+  the block refuses; the spec may arrive parsed; the end-of-call sign is out of scope and became a
+  finding of the epic. Affected stage of the plan: none yet, the plan is not written.
+- **`spec-critic` findings 2 and 3 are decided without new drawing in `rt-chart`.** A zero bar is
+  not drawn, and the zero stands in the hint and the copy; the axis names stand above and under the
+  chart, not at the axes. The task keeps `rt-chart` as it is. Affected stage of the plan: none yet.
+
 ## Sessions
 
 ### 2026-11-18
