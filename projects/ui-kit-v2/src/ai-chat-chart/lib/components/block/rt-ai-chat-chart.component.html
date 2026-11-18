@@ -46,6 +46,46 @@
                     </div>
                 }
                 <rt-ai-chat-chart-plot rtElem="plot" qa-dataid="ai-chat-chart-plot" [spec]="spec" />
+                @if (actions()) {
+                    <button
+                        rtButton
+                        rtElem="toggle"
+                        qa-dataid="ai-chat-chart-toggle"
+                        type="button"
+                        appearance="text"
+                        size="sm"
+                        iconPos="left"
+                        [icon]="toggleIcon()"
+                        [label]="toggleLabel()"
+                        [attr.aria-label]="toggleLabel()"
+                        [attr.aria-expanded]="open()"
+                        [attr.aria-controls]="tableId"
+                        (click)="toggleData()"></button>
+                }
+                @if (table(); as table) {
+                    <div rtElem="data" qa-dataid="ai-chat-chart-data">
+                        <!-- native-ok: rt-table несёт таблицу CDK, настройки столбцов в IndexedDB и карточки узкого экрана; таблице данных графика до 60 строк только для чтения ничего из этого не нужно — решение владельца «Простая разметка» -->
+                        <table rtElem="table" [id]="tableId" [attr.aria-label]="spec.title || t().aiChartLabel">
+                            <thead>
+                                <tr>
+                                    @for (cell of table.head; track $index) {
+                                        <th rtElem="cell" scope="col" [rtMod]="{ numeric: cell.numeric, head: true }">{{ cell.text }}</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (row of table.rows; track $index) {
+                                    <tr rtElem="row">
+                                        <th rtElem="cell" scope="row" [rtMod]="{ numeric: row[0].numeric }">{{ row[0].text }}</th>
+                                        @for (cell of row.slice(1); track $index) {
+                                            <td rtElem="cell" [rtMod]="{ numeric: cell.numeric }">{{ cell.text }}</td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
             }
         }
     }

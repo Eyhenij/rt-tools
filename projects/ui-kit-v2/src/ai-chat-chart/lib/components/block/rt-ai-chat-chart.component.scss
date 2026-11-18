@@ -67,5 +67,60 @@
         &__plot {
             min-width: 0;
         }
+
+        /* Текстовая кнопка под графиком стоит по своей ширине, не во всю строку. */
+        &__toggle {
+            align-self: flex-start;
+        }
+
+        /* Широкая таблица прокручивается внутри блока и не раздвигает ленту. */
+        &__data {
+            min-width: 0;
+            overflow-x: auto;
+        }
+
+        &__table {
+            width: 100%;
+            border-top: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+            border-collapse: collapse;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-xs);
+        }
+
+        &__row {
+            vertical-align: middle;
+        }
+
+        /* Строка 28: отступ 8 у краёв таблицы и 8 между столбцами, как в макете. */
+        &__cell {
+            height: 28px;
+            padding: 0 var(--rt-space-1);
+            border-bottom: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+            font-weight: normal;
+            overflow-wrap: anywhere;
+            text-align: start;
+
+            &:first-child {
+                padding-inline-start: var(--rt-space-2);
+            }
+
+            &:last-child {
+                padding-inline-end: var(--rt-space-2);
+            }
+
+            /* Число не переносится и стоит вправо; столбец числа не уже 80, как в макете. */
+            &--numeric {
+                width: 80px;
+                min-width: 80px;
+                overflow-wrap: normal;
+                text-align: end;
+                white-space: nowrap;
+            }
+
+            &--head {
+                color: var(--rt-color-text-muted);
+                font-weight: var(--rt-font-weight-semibold);
+            }
+        }
     }
 }
