@@ -2,11 +2,11 @@
 
 ## Where we stand
 
-- **State:** `разбор-закрыт`
-- **Stage:** 0 of 0 — the agreement
-- **Done:** the task is taken, the branch `RT-3337-ai-chat-table-block` is taken from `RT-3336-ai-chat-chart-data` (chain), the task is in progress on the board. Exploration done, the six questions closed by assumption, the mockup approved: «Одобряю макет».
-- **Next step:** the product agreement by spec-writer, its review by spec-critic, then the plan and the roles before the owner.
-- **Going now:** spec-critic reviews the agreement `docs/specs/ui-kit-v2/proposed/ai-chat-table/`; the four open questions of the first draft are closed by assumption in its Decisions.
+- **State:** `задача-взята`
+- **Stage:** 0 of 0 — the plan
+- **Done:** the task is taken, the branch `RT-3337-ai-chat-table-block` is taken from `RT-3336-ai-chat-chart-data` (chain), the task is in progress on the board. Exploration done, the six questions closed by assumption, the mockup approved: «Одобряю макет». The agreement draft `docs/specs/ui-kit-v2/proposed/ai-chat-table/` is written and checked against the grill (`ee8c157d2`); its four open questions are closed by assumption in its Decisions.
+- **Next step:** the plan by project-manager; the findings of spec-critic go into the agreement before the plan is committed; then product-strategist and goal-critic, then the owner.
+- **Going now:** spec-writer closes the 18 findings of spec-critic in the agreement (4 blocking: currency code rule against SC-1399, rows of a wrong shape, widths without a first text column, fixed row height against wrapping); project-manager drafts the plan in the scratchpad.
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet; the branch stands on RT-3336 (#3402), which stands on RT-3335 (#3398)
@@ -16,6 +16,11 @@
 The plan is not written yet: the steps appear with it.
 
 ## Decisions along the way
+
+- The findings of spec-critic are closed by the executor's decisions, none against the grill. One
+  touches its reason only: the CSV goes to a file or an import, since pasted comma text is not split
+  into cells; pasting into cells is served by the tab-separated answer copy. The format stays CSV,
+  as the grill has it.
 
 - The branch is taken from `RT-3336-ai-chat-chart-data`: PRs go in a chain, and RT-3336 is not merged yet.
 
