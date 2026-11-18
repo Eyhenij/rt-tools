@@ -54,7 +54,7 @@ block itself can give the numbers on demand.
 
 - **The rows per kind.** A cartesian kind gives a row per category; `stacked_bar` cells hold the value of their series, not the running sum. `histogram` gives a row per bin named `low–high` from the category bounds the chart gets, written as given and not signed by the format. `pie` gives a row per sector. `heatmap` gives a row per series named by the series, a cell per `x`. `scatter` gives a row per point, series by series in the spec order; `x` is written as given, `y` is signed by the format. There is no total row or column.
 
-- **`treemap` and `sunburst` give a row per path that carries a value after equal paths are summed: every leaf, and an inner node whose own path was given, holding only its own value.** The path is joined by « › », and the rows follow the first appearance of the path.
+- **`treemap` and `sunburst` give a row per path that carries a value after equal paths are summed: every leaf, and an inner node whose own path was given, holding only its own value.** The path is joined by « › », and the rows follow the chart's tree: a node before its children, the children in the order their name first appears.
 
 - **A missing point is an empty cell; a zero is written as a zero.**
 

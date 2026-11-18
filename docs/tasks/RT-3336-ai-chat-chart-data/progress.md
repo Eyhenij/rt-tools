@@ -3,10 +3,10 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 из 5 — The rows
+- **Stage:** 3 из 5 — The control and the table
 - **Done:** mockup drawn and measured; the owner approved mockup and plan; the agreement is written
-  and reviewed by spec-critic.
-- **Next step:** write the pure function of the table rows over `rtAiChatChartData` and its tests.
+  and reviewed by spec-critic; `rtAiChatChartTable` builds the rows from the chart data, 9 of 9 tests.
+- **Next step:** the switch and the `<table>` in the block, then the kit labels and the block tests.
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet; the branch stands on RT-3335 (#3398)
@@ -15,9 +15,9 @@
 
 - [x] 1.1 Draw closed and open block, `line`, `grouped_bar`, `treemap`, widths 328 and 728, dark theme
 - [x] 1.2 Measure the frames and ask the owner to approve mockup and plan
-- [>] 2.1 Write a pure function that builds the table from `rtAiChatChartData(spec, locale)` —
-- [ ] 2.2 Cover it by scenario id for each kind, a negative, a zero, a missing point, a
-- [ ] 3.1 Add the text button with chevron under the chart and the `<table>` with kit tokens, marked
+- [x] 2.1 Write a pure function that builds the table from `rtAiChatChartData(spec, locale)` —
+- [x] 2.2 Cover it by scenario id for each kind, a negative, a zero, a missing point, a
+- [>] 3.1 Add the text button with chevron under the chart and the `<table>` with kit tokens, marked
 - [ ] 3.2 Add the labels «View data» and «Hide data» to `rt-kit-labels.en.ts` and the showcase
 - [ ] 3.3 Cover open, close, not remembered, no button on pending, invalid and empty
 - [ ] 4.1 Write the story `DataTable` with the open cases of the mockup, six series at 328 and a
@@ -31,3 +31,5 @@
   into the epic branch yet. Its PR goes into that branch.
 - spec-critic named seventeen gaps in the agreement; all went into its rules before the code. The
   histogram case of the plan is three equal bins: unequal bins make the spec invalid.
+- Tree rows follow the chart's tree, a node before its children: the table reads the chart data,
+  so the agreement and SC-UKV-1390 name that order instead of the first appearance of a path.

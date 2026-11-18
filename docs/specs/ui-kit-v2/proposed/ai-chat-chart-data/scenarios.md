@@ -46,7 +46,7 @@ Then `pie` gives a row per sector, `histogram` the rows «0–10», «10–20»,
 
 Given a `treemap` spec with the paths `["Центр","Апартаменты"]` 120, `["Центр","Виллы"]` 60, `["Побережье","Виллы"]` 90 and `["Центр"]` 30
 When the table is built
-Then it holds the rows «Центр › Апартаменты» 120, «Центр › Виллы» 60, «Побережье › Виллы» 90 and «Центр» 30, in that order
+Then it holds the rows «Центр» 30, «Центр › Апартаменты» 120, «Центр › Виллы» 60 and «Побережье › Виллы» 90, in that order
 
 ### SC-UKV-1391 — a wide table scrolls inside the block
 
