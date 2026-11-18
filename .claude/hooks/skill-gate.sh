@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/skill-gate.sh · 74e41fc94c56 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/skill-gate.sh · 43b16e94dc8b · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash|mcp__webstorm__create_new_file|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool|mcp__claude-in-chrome__.*|mcp__figma__use_figma
 # Requires: checks/decide.mjs, hooks/decide.sh, hooks/deny-tail.sh
 # The rules gate: it does not let a file be edited until the rule it falls under has been loaded.
@@ -174,7 +174,10 @@ esac
 # The map may name several rules: the domain rule and the one that acts as a second layer. The
 # first unloaded one is demanded, not all at once: a refusal listing three rules reads as "load
 # three", and they get loaded one after another, losing that very one-time-ness.
-loaded="${TMPDIR:-/tmp}/claude-skill-gate/${sid}.loaded"
+# A subagent has a context of its own: a rule delivered there is recorded under its id, never for
+# the parent, or the parent's edits would pass unread.
+agent="$(printf '%s' "$input" | jq -r '.agent_id // empty' 2>/dev/null)"
+loaded="${TMPDIR:-/tmp}/claude-skill-gate/${agent:-$sid}.loaded"
 root="${CLAUDE_PROJECT_DIR:-.}"
 rules_dir="${RT_RULES_DIR:-.claude/skills}"
 want=""
@@ -200,6 +203,8 @@ done
 ahead=""
 for name in $req; do
     [ "$name" = "$want" ] && continue
+    # Two writes of one command may name the same rule: it is named once.
+    case ", $ahead, " in *", $name, "*) continue ;; esac
     [ -f "$root/$rules_dir/${name}/SKILL.md" ] || continue
     if [ -f "$loaded" ] && grep -qE "^([^:]*:)?$(printf '%s' "$name" | sed 's/[][\.*^$/]/\\&/g')$" "$loaded" 2>/dev/null; then
         continue
@@ -207,12 +212,136 @@ for name in $req; do
     ahead="${ahead}${ahead:+, }${name}"
 done
 
+# The delivery. Every rule of the call not yet loaded arrives in the session by this very answer,
+# and the call goes on: a refusal "load and repeat" was followed by a load almost every time and
+# caught nothing. The text is the tree's SKILL.md byte for byte; the host puts a context field of
+# up to the limit into the session whole and cuts a longer one, so a text over the limit is not
+# delivered — the refusal below stays for it. A call without a session id has no record to write
+# into and is refused too: every call of it would deliver anew.
+gate_limit="${RT_GATE_CONTEXT_LIMIT:-10000}"
+case "$gate_limit" in '' | *[!0-9]*) gate_limit=10000 ;; esac
+# Reads a file into `gate_body` byte for byte: a command substitution strips trailing newlines,
+# so the text is read with a marker after it and the marker is cut off in place.
+rt_gate_read() {
+    gate_body=""
+    [ -r "$1" ] || return 1
+    gate_body="$(cat "$1" 2>/dev/null && printf x)" || return 1
+    gate_body="${gate_body%x}"
+}
+rt_gate_law_path() {
+    local law path
+    law="$(sed -n 's/^law:[[:space:]]*//p' "$root/$rules_dir/$1/SKILL.md" 2>/dev/null | head -1)"
+    [ -z "$law" ] && return 0
+    path="${RT_LAWS_DIR:-docs/constitution}/${law}.md"
+    [ -f "$root/$path" ] || path="${RT_LAWS_DIR:-docs/constitution}/application/${law}.md"
+    [ -f "$root/$path" ] && printf '%s' "$path"
+    return 0
+}
+need=()
+for name in $req; do
+    [ -f "$root/$rules_dir/${name}/SKILL.md" ] || continue
+    if [ -f "$loaded" ] && grep -qE "^([^:]*:)?$(printf '%s' "$name" | sed 's/[][\.*^$/]/\\&/g')$" "$loaded" 2>/dev/null; then
+        continue
+    fi
+    # Two writes of one command may name the same rule: it is delivered once.
+    case " ${need[*]} " in *" $name "*) continue ;; esac
+    need+=("$name")
+done
+gate_unread=""
+gate_why=""
+if [ "$sid" != "nosession" ] && [ "${#need[@]}" -gt 0 ]; then
+    head_line="Passed by the rules gate: the call went through, and the text of"
+    i=0
+    for name in "${need[@]}"; do
+        lp="$(rt_gate_law_path "$name")"
+        [ "$i" -gt 0 ] && head_line="${head_line},"
+        head_line="${head_line} the rule «${name}»${lp:+ (it applies the law ${lp} to this tree)}"
+        i=$((i + 1))
+    done
+    head_line="${head_line} arrived below whole, the same as a load by the tool Skill. For this area it happens once per session."
+    rules=()
+    comps=()
+    for name in "${need[@]}"; do
+        rt_gate_read "$root/$rules_dir/${name}/SKILL.md" || { gate_unread="$name"; break; }
+        rules+=("
+
+=== ${rules_dir}/${name}/SKILL.md ===
+${gate_body}")
+        comps+=("")
+    done
+    # Assembles the delivered text into `text`, in place: a substitution would cut its tail.
+    rt_gate_text() {
+        local k
+        text="$head_line"
+        for k in "${!rules[@]}"; do text="${text}${rules[$k]}${comps[$k]}"; done
+    }
+    rt_gate_text
+    if [ -z "$gate_unread" ] && [ "${#text}" -le "$gate_limit" ]; then
+        # The companions go after the rules fit: a companion falls back to its path before a rule
+        # is dropped. Each is placed whole right after its rule while the whole text still fits.
+        for k in "${!need[@]}"; do
+            comp="$rules_dir/${need[$k]}/implementation.md"
+            [ -f "$root/$comp" ] || continue
+            if rt_gate_read "$root/$comp"; then
+                comps[k]="
+
+=== ${comp} ===
+${gate_body}"
+                rt_gate_text
+                [ "${#text}" -le "$gate_limit" ] && continue
+            fi
+            comps[k]="
+
+The companion of the rule — ${comp} — did not fit here and is read as a file: the rule says what must be true, the companion — by what that is true here."
+            rt_gate_text
+            if [ "${#text}" -gt "$gate_limit" ]; then
+                comps[k]=""
+                rt_gate_text
+            fi
+        done
+        dir="${TMPDIR:-/tmp}/claude-skill-gate"
+        recorded=1
+        mkdir -p "$dir" 2>/dev/null || recorded=0
+        if [ "$recorded" = 1 ]; then
+            printf '%s\n' "${need[@]}" >> "$loaded" 2>/dev/null || recorded=0
+        fi
+        # shellcheck disable=SC1091
+        . "$rt_hooks_dir/observe.sh" 2>/dev/null
+        if command -v rt_note >/dev/null 2>&1; then
+            # An unwritten name costs one more delivery of the same rule; the note says so.
+            unrec=""
+            [ "$recorded" = 1 ] || unrec="unrecorded=yes"
+            for name in "${need[@]}"; do
+                rt_note gate-deliver "res=$name" "kind=$kind" "sid=$sid" $unrec
+            done
+        fi
+        jq -cn --arg c "$text" '{hookSpecificOutput:{hookEventName:"PreToolUse",additionalContext:$c}}'
+        exit 0
+    fi
+    # Why nothing was delivered: the refusal names it, and the week report counts by it.
+    if [ -n "$gate_unread" ]; then
+        gate_why="not-read"
+        want="$gate_unread"
+    else
+        gate_why="together"
+        for k in "${!rules[@]}"; do
+            alone="${head_line}${rules[$k]}"
+            if [ "${#alone}" -gt "$gate_limit" ]; then
+                gate_why="too-long"
+                want="${need[$k]}"
+                break
+            fi
+        done
+    fi
+fi
+
 req="$want"
 
 # A refusal is an observation: the rule that has to be demanded more often than the rest, and the
 # edit kind on which that happens, say more about the rules layer than a list of what was loaded.
 # The decider writes it when the table refuses, named by the decision: «gate-<decision>».
-RT_DECIDE_NOTE="gate res=$req kind=$kind sid=$sid"
+[ "$sid" = "nosession" ] && gate_why="no-session"
+RT_DECIDE_NOTE="gate res=$req kind=$kind sid=$sid${gate_why:+ why=$gate_why}"
 
 # The fallback move is named in the refusal itself: a rule created in this same branch is unknown
 # to the rules registry — it is assembled at session start, while the gate reads the disk. Without
@@ -256,6 +385,22 @@ fi
 # What will be needed further along this same command. The line stands after all the text
 # branches: there are three of them, and each rewrites the reason whole.
 [ -n "$ahead" ] && reason="${reason} Further along this same command these will be needed: ${ahead}."
+
+# Why the gate did not put the rule into the session itself. Rules that do not fit together are
+# refused together and named all at once: nothing was delivered, so they are loaded in one turn.
+case "$gate_why" in
+    too-long)
+        reason="${reason} The rule «${req}» is longer than the host limit of ${gate_limit} characters, so the gate does not put it into the session: read ${rules_dir}/${req}/SKILL.md by the tool Read, and the read counts as a load."
+        ;;
+    not-read)
+        reason="${reason} The gate could not read ${rules_dir}/${req}/SKILL.md, so it did not put the rule into the session."
+        ;;
+    together)
+        names=""
+        for name in "${need[@]}"; do names="${names}${names:+, }«${name}»"; done
+        reason="Refused by the rules gate: the rules ${names} of this call do not fit the host limit of ${gate_limit} characters together, so none of them arrived: load all of them by the tool Skill in one turn and repeat the action. ${fallback}"
+        ;;
+esac
 
 # The companion is called by a sentence of its own and for all kinds of refusal at once. Before,
 # it was named only as a fallback move — "if the tool does not know such a name" — and a reader

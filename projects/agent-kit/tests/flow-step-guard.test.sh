@@ -190,6 +190,8 @@ d "protect: SC-AK-1530 — план, добавленный раньше дви�
 # загружено: слово о правиле стоит перед вердиктом движка.
 mkdir -p "$R/.claude/skills/task-flow"
 printf -- '---\nname: task-flow\nkind: rule\n---\n' > "$R/.claude/skills/task-flow/SKILL.md"
+# Правило длиннее предела хозяина: гейт не кладёт его в заход сам и держит ход до загрузки.
+printf '%010000d\n' 0 >> "$R/.claude/skills/task-flow/SKILL.md"
 gate_session_reset
 CLAUDE_PROJECT_DIR="$R" expect_reason "правку хода работы держит гейт — отказ называет правило" "$GUARD" \
     "$(shell_input "printf 'x' >> docs/tasks/$B/progress.md" "$R")" 'load the rule «task-flow» by the tool Skill first. Then: the progress'

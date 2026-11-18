@@ -220,12 +220,18 @@ expect_exit() {
 
 # Какое правило гейт требует для цели. Ожидание — имя правила или PASS.
 expect_skill() {
-    local label="$1" json="$2" want="$3" out got
+    local label="$1" json="$2" want="$3" out got rec keep="" had=""
+    # A delivery records its rule as loaded. The choice checks below each ask about one call, so
+    # the record is put back after it: otherwise the answer of a check depends on the checks above.
+    rec="${TMPDIR:-/tmp}/claude-skill-gate/tests.loaded"
+    [ -f "$rec" ] && { had=1; keep="$(cat "$rec"; printf x)"; }
     out="$(printf '%s' "$json" | "$HOOKS/skill-gate.sh" 2>/dev/null)"
+    if [ -n "$had" ]; then printf '%s' "${keep%x}" > "$rec"; else rm -f "$rec"; fi
     if [ -z "$out" ]; then
         got="PASS"
     else
-        got="$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecisionReason' 2>/dev/null \
+        # A refusal names the rule in its reason, a delivery in the first line of its text.
+        got="$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecisionReason // (.hookSpecificOutput.additionalContext | split("\n")[0])' 2>/dev/null \
             | grep -oE '«[a-z-]+»' | head -1 | tr -d '«»')"
     fi
     report "$label" "$got" "$want"

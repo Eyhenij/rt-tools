@@ -10,13 +10,14 @@
  * Загрузки, отказы шлюза и неиспользованные правила берутся из готовой сводки `summarize`.
  */
 import { costOf, CostUnavailableError } from './cost.js';
-import { IConfig, readConfig } from './config.js';
+import { DEFAULT_LAYOUT, IConfig, readConfig } from './config.js';
 import { IEnvironment, IOutcomeOfCommand, noObservationLines, sweptLine } from './commands.js';
 import { dayBefore, ICount, IObservation, IReadResult, ISummary, readObservations, summarize } from './observations.js';
 import { IUsageMetric, usageCounted, usageLines, usageOf } from './metric-usage.js';
 import { byText } from './order.js';
 import { collectOutcomes, EOutcomesRead, hasMainNumber, IOutcomeMetric, outcomeLines, outcomeMetricOf } from './outcomes.js';
 import { laidOutSkills } from './snapshot.js';
+import { IPushSetUsefulness, pushSetLines, pushSetUsefulnessOf } from './push-set-usefulness.js';
 import { FIRST_PASS_NONE, IWorkResult, workResultOf } from './work-result.js';
 
 /** Отрезок отчёта, когда он не назван: столько дней наблюдения лежат на диске. */
@@ -94,6 +95,8 @@ export interface IMetricsReport {
     readonly result?: IWorkResult;
     /** Названный день отчёта: мёртвые правила за день не судятся, и строка говорит это словами. */
     readonly day?: string;
+    /** Польза проверок набора перед пушем. Нет поля: отчёт собран без команды, для отправки. */
+    readonly pushSet?: IPushSetUsefulness;
 }
 
 export interface IMetricsOptions {
@@ -349,6 +352,7 @@ export function metricsLines(report: IMetricsReport): readonly string[] {
         `отказы шлюза правил: ${report.gateRefusals}`,
         ...topLines(report.gate.map((rule: ICount): string => `  ${rule.name}: ${rule.count}`)),
         ...runLines(report.runs),
+        ...(report.pushSet ? pushSetLines(report.pushSet) : []),
         ...usageLines(report.usage, topLines),
         '',
         ...deadRuleLines(report),
@@ -413,6 +417,12 @@ export function metrics(env: IEnvironment, options: IMetricsOptions): IOutcomeOf
     const report: IMetricsReport = {
         ...counted,
         result: workResultOf(env.root, env.assetsDir, period.until, period.days, firstPass),
+        pushSet: pushSetUsefulnessOf(
+            env.root,
+            { defaults: config.layout.defaults ?? DEFAULT_LAYOUT.defaults, hooks: config.layout.hooks ?? DEFAULT_LAYOUT.hooks },
+            period.until,
+            period.days
+        ),
         ...(options.day ? { day: options.day } : {}),
     };
 

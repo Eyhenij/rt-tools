@@ -193,6 +193,8 @@ rm -f "$TREE/tools/quote.mjs"
 # Ход, названный отказом, — правка источника, и её держит гейт, пока правило текстов не загружено.
 mkdir -p "$TREE/.claude/skills/doc-style"
 printf -- '---\nname: doc-style\nkind: rule\n---\n' > "$TREE/.claude/skills/doc-style/SKILL.md"
+# Правило длиннее предела хозяина: гейт не кладёт его в заход сам и держит ход до загрузки.
+printf '%010000d\n' 0 >> "$TREE/.claude/skills/doc-style/SKILL.md"
 gate_session_reset
 report "правку источника держит гейт — отказ называет правило" \
     "$(run "$(edit_in .claude/skills/probe/SKILL.md)" | jq -r '.hookSpecificOutput.permissionDecisionReason' | grep -c 'load the rule «doc-style» by the tool Skill first')" 1

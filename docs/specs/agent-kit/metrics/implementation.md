@@ -21,7 +21,7 @@ so the pattern of the cycle carries them, and the anchor there is the word that 
 - **Guards are judged by empty refusals and by minutes.** — `projects/agent-kit/src/lib/metrics.ts:guardsOf` — the refusals, with the sign from `projects/agent-kit/assets/hooks/metric-marks.sh:rt_refusal_empty`; the minutes are `projects/agent-kit/src/lib/metrics.ts:runsOf`
 - **Roles and commands are judged by calls and verdicts.** — `projects/agent-kit/src/lib/metric-usage.ts:callsOf` — the verdict is read when a role ends by `projects/agent-kit/assets/hooks/role-calls.sh:rt_verdict_of`, and the name by `projects/agent-kit/assets/hooks/role-calls.sh:rt_called_name`
 - **A report names its own completeness.** — `libs/message-bus-api/observations/util/src/lib/quality.util.ts:completenessOf`
-- **A metric has no target until it has a baseline.** — `projects/agent-kit/assets/patterns/task-flow-cycle.md:baseline` — a task names a direction, not a target
+- **A metric has no target until it has a baseline.** — `projects/agent-kit/assets/pitfalls/task-flow-cycle.md:baseline` — a task names a direction, not a target
 
 ## What a tree records
 
@@ -61,5 +61,5 @@ so the pattern of the cycle carries them, and the anchor there is the word that 
 - **A cycle begins with the report.** — `projects/agent-kit/assets/patterns/task-flow-cycle.md:worst`
 - **One task changes one thing and names the metric it should move.** — `projects/agent-kit/assets/patterns/task-flow-cycle.md:direction`
 - **A release of the package does not start without its metric.** — `tools/release-metric.mjs:lineOf` — the required field and the call are `.github/workflows/publish-agent-kit.yml:RELEASE_METRIC`
-- **A cycle compares the same trees.** — `projects/agent-kit/assets/patterns/task-flow-cycle.md:themselves` — the same tree and version are narrowed by `libs/message-bus-api/observations/util/src/lib/quality.util.ts:narrowed`
-- **The role `goal-critic` gives the verdict from the numbers of the report.** — `projects/agent-kit/assets/patterns/task-flow-cycle.md:goal-critic`
+- **A cycle compares the same trees.** — `projects/agent-kit/assets/pitfalls/task-flow-cycle.md:themselves` — the same tree and version are narrowed by `libs/message-bus-api/observations/util/src/lib/quality.util.ts:narrowed`
+- **The role `goal-critic` gives the verdict from the numbers of the report.** — `projects/agent-kit/assets/pitfalls/task-flow-cycle.md:goal-critic`

@@ -5,6 +5,7 @@ statement: a removed statement is removed together with its line.
 
 - **A section of a state names the next move.** — `projects/agent-kit/assets/checks/check-state-next.mjs:MARKER`
 - **The line stands in every section of a state, not one per state.** — `projects/agent-kit/assets/checks/check-state-next.mjs:sectionsOf`
+- **A section of a split pattern is read in its cold part too.** — `projects/agent-kit/assets/checks/check-state-next.mjs:sectionsOf` — the hot file declares the sections, `pitfalls.md` adds lines by the same heading, `pitfalls-2.md` continues the last section; scenario SC-AK-1699
 - **The tail is its own at every line, and two lines coinciding word for word are a divergence.** — `projects/agent-kit/assets/checks/check-state-next.mjs:tails`
 - **The line is found by the opening, shared by all the sections.** — `projects/agent-kit/assets/checks/check-state-next.mjs:MIN_TAIL`
 - **The rule of the conduct of work names the transition between states among what a turn does not end with.** — `projects/agent-kit/assets/checks/check-state-next.mjs:BOUNDARY`

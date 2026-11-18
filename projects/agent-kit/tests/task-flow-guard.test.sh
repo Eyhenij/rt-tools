@@ -462,8 +462,12 @@ move_edit() {
         '{session_id:"tests",tool_name:"Edit",tool_input:{file_path:$f},cwd:$d}'
 }
 gate_session_reset
-CLAUDE_PROJECT_DIR="$MOVE_REPO" expect_reason "ход «завести задачу» держит гейт — отказ называет правило" \
+# Гейт держит ход только правилом длиннее предела хозяина: правило в пределе он кладёт сам.
+RT_GATE_CONTEXT_LIMIT=1 CLAUDE_PROJECT_DIR="$MOVE_REPO" expect_reason "ход «завести задачу» держит гейт — отказ называет правило" \
     task-flow-guard.sh "$(move_edit)" 'load the rule «git-workflow» by the tool Skill first'
+# SC-AK-1689 — правило хода в пределе: гейт положит его сам, и сторож задачи загрузку не называет.
+CLAUDE_PROJECT_DIR="$MOVE_REPO" expect_no_reason "SC-AK-1689 — доставляемое правило сторож задачи не называет" \
+    task-flow-guard.sh "$(move_edit)" 'held by the rules gate|load the rule «git-workflow»'
 gate_session_load git-workflow
 CLAUDE_PROJECT_DIR="$MOVE_REPO" expect_no_reason "правило загружено — ход назван один" \
     task-flow-guard.sh "$(move_edit)" 'held by the rules gate'

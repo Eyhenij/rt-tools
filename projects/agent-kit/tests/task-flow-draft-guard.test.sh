@@ -138,6 +138,8 @@ rm -rf "$BARE"
 printf '# Замысел\n\nбез шапки\n' > "$TASK/plan.md"
 mkdir -p "$REPO/.claude/skills/task-flow" "$REPO/.claude/rt-kit/defaults"
 printf -- '---\nname: task-flow\nkind: rule\n---\n' > "$REPO/.claude/skills/task-flow/SKILL.md"
+# Правило длиннее предела хозяина: гейт не кладёт его в заход сам и держит ход до загрузки.
+printf '%010000d\n' 0 >> "$REPO/.claude/skills/task-flow/SKILL.md"
 gate_session_reset
 expect_reason "правку замысла держит гейт — отказ называет правило" task-flow-draft-guard.sh \
     "$(edit_in "$CODE")" 'load the rule «task-flow» by the tool Skill first'

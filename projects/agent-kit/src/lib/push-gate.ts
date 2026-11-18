@@ -28,12 +28,21 @@ const PUSH_CHECKS_DEFAULT: string = `${PUSH_CHECKS}_default`;
 const TIMEOUT_MS: number = 10_000;
 
 /**
+ * Полный путь к оболочке, а не имя: имя разрешается через `PATH`, а он в чужой среде бывает
+ * записываемым — тогда «bash» указывает не туда. Ищется он тем же способом, каким ищут его хуки:
+ * в двух местах, где оболочка лежит на всякой машине.
+ */
+export function shellPath(): string {
+    return ['/bin/bash', '/usr/bin/bash'].find((one: string): boolean => existsSync(one)) ?? '/bin/bash';
+}
+
+/**
  * Строки, которые вернула названная функция профиля. Профиль собирается из тех же файлов и в том
  * же порядке, что читает сам гард: сперва разложенное умолчание пакета, поверх — надстройка
  * дерева. Судить по одной надстройке значило бы получить пустой набор у всякого дерева, которое
  * умолчаний не переписывало.
  */
-function callProfile(root: string, defaults: string, fn: string): readonly string[] | null {
+export function callProfile(root: string, defaults: string, fn: string, base: string = ''): readonly string[] | null {
     const sources: readonly string[] = [join(root, defaults, 'project.sh'), join(root, '.claude/rt-kit', 'project.sh')].filter(
         (one: string): boolean => existsSync(one)
     );
@@ -45,14 +54,10 @@ function callProfile(root: string, defaults: string, fn: string): readonly strin
     // состояния читают, чтобы увидеть набор целиком, а не тот, что выпал бы на сегодняшнюю ветку.
     const script: string =
         sources.map((one: string): string => `. ${JSON.stringify(one)} 2>/dev/null`).join('; ') +
-        `; command -v ${fn} >/dev/null 2>&1 || exit 3; ${fn} ''`;
+        `; command -v ${fn} >/dev/null 2>&1 || exit 3; ${fn} ${JSON.stringify(base)}`;
 
     try {
-        // Полный путь к оболочке, а не имя: имя разрешается через `PATH`, а он в чужой среде
-        // бывает записываемым — тогда «bash» указывает не туда. Ищется он тем же способом, каким
-        // ищут его хуки: в двух местах, где оболочка лежит на всякой машине.
-        const shell: string = ['/bin/bash', '/usr/bin/bash'].find((one: string): boolean => existsSync(one)) ?? '/bin/bash';
-        const out: string = execFileSync(shell, ['-c', script], {
+        const out: string = execFileSync(shellPath(), ['-c', script], {
             cwd: root,
             encoding: 'utf8',
             timeout: TIMEOUT_MS,

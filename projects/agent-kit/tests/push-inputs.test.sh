@@ -63,6 +63,24 @@ mv "$tree/.claude/rt-kit/push-inputs.json" "$tree/table.json"
 report "SC-AK-1354 — without a table every step runs" "$(runs "$(helper "$base")" "$texts")" yes
 mv "$tree/table.json" "$tree/.claude/rt-kit/push-inputs.json"
 
+# Whether a change touched the subject of a step: the table for its own steps, the declared paths
+# for the rest.
+hooks='RT_SUITES_BASE=<base> pnpm exec nx affected -t test-hooks --base=<base>'
+printf 'projects/agent-kit/assets\t%s\nprojects/agent-kit/tests\t%s\n' "$hooks" "$hooks" >"$tree/declared"
+mark() {
+    printf '%s\n' "$1" >"$tree/changes"
+    (cd "$tree" && printf '%s\n' "$2" | node tools/push-inputs.mjs subject base --changes changes --declared declared 2>/dev/null | cut -f1)
+}
+report "SC-AK-1661 — a step of the table the change does not reach is not run" "$(mark "$(printf 'M\tsrc/style.scss')" "$texts")" not-run
+report "SC-AK-1661 — a step of the table the change reaches is touched" "$(mark "$(printf 'M\tdocs/a.md')" "$texts")" touched
+report "SC-AK-1661 — a step that reads the history has no subject of paths" "$(mark "$(printf 'M\tdocs/a.md')" "$history")" unknown
+report "SC-AK-1662 — the hook scenarios on an edit of the library code alone are idle" \
+    "$(mark "$(printf 'M\tprojects/agent-kit/src/lib/metrics.ts')" "$hooks")" idle
+report "SC-AK-1662 — the hook scenarios on an edit of a hook are touched" \
+    "$(mark "$(printf 'M\tprojects/agent-kit/assets/hooks/x.sh')" "$hooks")" touched
+report "SC-AK-1662 — a step with no table entry and no declared paths is unknown" \
+    "$(mark "$(printf 'M\tsrc/x.md')" 'node tools/check-new.mjs')" unknown
+
 (cd "$tree" && node tools/push-inputs.mjs verify >/dev/null 2>&1)
 report "SC-AK-1355 — the table check is green while the steps read what was recorded" "$?" 0
 mkdir -p "$tree/.claude/rt-kit/observations/.marks"

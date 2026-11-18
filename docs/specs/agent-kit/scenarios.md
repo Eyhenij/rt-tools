@@ -31,6 +31,7 @@ table.
 | [What the push gate counts as a push](push-sign/scenarios.md)                   | `push-sign/`                    |
 | [The applicability sign at a rule article](rule-article/scenarios.md)           | `rule-article/`                 |
 | [The rules gate](rule-gate/scenarios.md)                                        | `rule-gate/`                    |
+| [The rules gate delivers the rule](rule-gate-delivery/scenarios.md)             | `rule-gate-delivery/`           |
 | [The length limit of a rule description](skill-description-limit/scenarios.md)  | `skill-description-limit/`      |
 | [The state boundary in the texts of work](state-boundary/scenarios.md)          | `state-boundary/`               |
 | [The entry into the specs by a resource name](specs-entry/scenarios.md)         | `specs-entry/`                  |

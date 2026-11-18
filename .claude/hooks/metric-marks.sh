@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/metric-marks.sh · e03b6627b920 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/metric-marks.sh · 8f7a73610f30 · правится надстройкой, не здесь
 # Signs of content and of calls for the package metrics. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The refusal record and the push set source it.
 #
@@ -201,14 +201,23 @@ rt_exam_note() {
     return 0
 }
 
+# The checksum a check is known by: the command without its base. The base names where the run
+# compared against, not which check ran: with it inside, one check split into a line per base, and
+# the report named most of them by a bare number.
+rt_check_id() {
+    printf '%s' "$1" | sed -E 's/ ?--base=[^ ]+//g; s/RT_SUITES_BASE=[^ ]+ ?//g' |
+        cksum 2>/dev/null | cut -d' ' -f1
+}
+
 # One run of one check: an observation with the outcome, the seconds and the kind of step. The line
 # of the check that was red on this same content last time carries the seconds of that red run: a
-# chain of reds counts every link once. The marks of the day hold the content sign, and the
-# observation holds only the answer.
+# chain of reds counts every link once. The marks of the day hold the content sign, the moment, the
+# base and whether the change touched the subject of the check — `touched`, `idle`, `unknown` or
+# `not-run`; the observation holds only the answer.
 #
-#   rt_run_note <content sign> <started, epoch seconds> <green|red|skipped> <check command>
+#   rt_run_note <content sign> <started, epoch seconds> <green|red|skipped|not-run> <check command> [<base>] [<subject mark>]
 rt_run_note() {
-    local sign="$1" started="$2" outcome="$3" check="$4" now seconds dir file id last wasted=''
+    local sign="$1" started="$2" outcome="$3" check="$4" base="${5:-}" subject="${6:-unknown}" now seconds dir file id last wasted='' based
     # Every copy writes into the main one: the heavy steps run from a second copy, and their minutes
     # are the ones the report exists for. One tree has one report, whichever copy ran the check.
     local CLAUDE_PROJECT_DIR="${CLAUDE_PROJECT_DIR:-}" main
@@ -222,12 +231,15 @@ rt_run_note() {
     if [ -n "$dir" ] && [ -n "$sign" ]; then
         rt_marks_prune "$dir"
         file="$dir/runs-$(date -u +%Y-%m-%d 2>/dev/null)"
-        id="$(printf '%s' "$check" | cksum 2>/dev/null | cut -d' ' -f1)"
+        id="$(rt_check_id "$check")"
+        based="$(printf '%s' "${base:--}" | cksum 2>/dev/null | cut -d' ' -f1)"
         last="$(grep "^$sign $id " "$file" 2>/dev/null | tail -n 1)"
-        case "$last" in *' red '*) wasted="${last##* }" ;; esac
-        printf '%s %s %s %s\n' "$sign" "$id" "$outcome" "$seconds" >> "$file" 2>/dev/null
+        case "$last" in *' red '*) wasted="$(printf '%s' "$last" | cut -d' ' -f4)" ;; esac
+        printf '%s %s %s %s %s %s %s\n' "$sign" "$id" "$outcome" "$seconds" "$now" "$based" "$subject" >> "$file" 2>/dev/null
     fi
 
+    # A step the set did not start leaves a line for the report and no observation: nothing ran.
+    [ "$outcome" = not-run ] && return 0
     command -v rt_note >/dev/null 2>&1 || return 0
     rt_note run "res=$outcome" "kind=$(rt_run_kind "$check")" "secs=$seconds" "wasted=$wasted"
     return 0

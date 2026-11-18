@@ -94,6 +94,8 @@ exit_code_of "правка по месту гарду безразлична" "$
 # загружено: отказ называет загрузку правила в том же тексте.
 mkdir -p "$TREE/.claude/skills/spec-driven"
 printf -- '---\nname: spec-driven\nkind: rule\n---\n' > "$TREE/.claude/skills/spec-driven/SKILL.md"
+# Правило длиннее предела хозяина: гейт не кладёт его в заход сам и держит ход до загрузки.
+printf '%010000d\n' 0 >> "$TREE/.claude/skills/spec-driven/SKILL.md"
 gate_session_reset
 report "правку раздела держит гейт — отказ называет правило" \
     "$(run "$(write_in .claude/rt-kit/overrides/rules/probe.md)" | jq -r '.hookSpecificOutput.permissionDecisionReason' | grep -c 'load the rule «spec-driven» by the tool Skill first')" 1

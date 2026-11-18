@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/skill-gate-rearm.sh · 3fa8383eba8d · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/skill-gate-rearm.sh · 33a5bee2fe86 · правится надстройкой, не здесь
 # rt-hook: SessionStart compact|clear
 # Re-arming the gate. SessionStart(compact|clear).
 #
@@ -28,9 +28,22 @@ record="${TMPDIR:-/tmp}/claude-skill-gate/${sid}.loaded"
 # per refusal, and a session that does not know which rules it had loaded meets them one refusal at
 # a time: one edit after a compaction went through six refusals in a row. An empty or missing record
 # gives no names, and the line stays as it was.
-loaded=""
+#
+# The gate puts a rule within the host limit into the session itself at the next edit of its area,
+# so only the rules longer than the limit are named: asking to load the rest in one turn is the
+# round the delivery removed.
+# shellcheck disable=SC1091
+. "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/facts.sh" 2>/dev/null
+over=""
 if [ -s "$record" ]; then
-    loaded="$(awk 'NF && !seen[$0]++ { printf "%s%s", (n++ ? ", " : ""), $0 }' "$record" 2>/dev/null)"
+    while IFS= read -r name; do
+        [ -z "$name" ] && continue
+        name="${name##*:}"
+        case ", $over, " in *", $name, "*) continue ;; esac
+        command -v rt_fact_rule_deliverable >/dev/null 2>&1 && rt_fact_rule_deliverable "$name" "$sid" && continue
+        [ -f "${CLAUDE_PROJECT_DIR:-.}/${RT_RULES_DIR:-.claude/skills}/$name/SKILL.md" ] || continue
+        over="${over}${over:+, }${name}"
+    done < "$record"
 fi
 
 rm -f "$record" 2>/dev/null
@@ -41,9 +54,9 @@ rm -f "$record" 2>/dev/null
 # the gate answers that they were not — and the session spends a turn finding out which of the two
 # is right. A turn was spent that way four times in one session. The line removes the contradiction:
 # the rule text is no longer in the context, which is why it is asked for again.
-context="The rules gate is armed anew: the compaction carried the text of the rules themselves out of the session, and every area will ask for its rule once more. The former loading does not count — load the rule and work on."
-if [ -n "$loaded" ]; then
-    context="${context} Loaded before the compaction: ${loaded}. Load in one turn every one of them that the current stage touches, before the first edit."
+context="The rules gate is armed anew: the compaction carried the text of the rules themselves out of the session. Every rule within the host limit comes back by itself, whole, at the next edit of its area — the gate puts it into the session."
+if [ -n "$over" ]; then
+    context="${context} Longer than the host limit, and so not delivered: ${over}. Load these by the tool Skill, or read their SKILL.md by the tool Read, before the first edit of their area."
 fi
 
 jq -n --arg c "$context" '{hookSpecificOutput:{hookEventName:"SessionStart",additionalContext:$c}}' 2>/dev/null

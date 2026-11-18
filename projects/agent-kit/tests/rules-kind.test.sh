@@ -19,8 +19,17 @@ field_of() {
 
 # Разделы правила верхнего уровня, кроме заголовка. Заголовки внутри огороженного куска не
 # считаются: образец с разделами внутри разорвал бы правило на части.
+# A section moved to the cold part counts as the rule's own: the hot part keeps the statements, the
+# cold parts next to it the rest, and the reader of either finds it.
 sections_of() {
-    awk '/^```/ { fence = !fence } !fence && /^## / { sub(/^## /, ""); print }' "$1" 2>/dev/null
+    local base
+    base="$(basename "$1" .md)"
+    # An edition `<name>.<host>` continues in `<name>.2.<host>`.
+    for file in "$1" "$ASSETS/pitfalls/$base.md" "$ASSETS/pitfalls/$base.2.md" \
+        "$ASSETS/pitfalls/${base%.*}.2.${base##*.}.md"; do
+        [ -f "$file" ] || continue
+        awk '/^```/ { fence = !fence } !fence && /^## / { sub(/^## /, ""); print }' "$file"
+    done
 }
 
 # --- SC-AK-1016 — каждое правило объявляет существующий закон ---------------------------------
@@ -121,7 +130,7 @@ silent_cold=0
 for rule in "$RULES"/*.md; do
     name="$(basename "$rule" .md)"
     [ -f "$ASSETS/pitfalls/$name.md" ] || continue
-    grep -qE '^\*\*Cold part:\*\*' "$rule" || silent_cold=$((silent_cold + 1))
+    grep -qiE 'cold part' "$rule" || silent_cold=$((silent_cold + 1))
 done
 report "SC-AK-1024 — холодная часть названа в заголовке" "$silent_cold" 0
 

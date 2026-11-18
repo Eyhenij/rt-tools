@@ -42,6 +42,9 @@ command -v rt_push_over_budget >/dev/null 2>&1 || rt_push_over_budget() { return
 command -v rt_push_set_over_budget >/dev/null 2>&1 || rt_push_set_over_budget() { return 0; }
 command -v rt_push_mark_drop >/dev/null 2>&1 || rt_push_mark_drop() { return 0; }
 command -v rt_push_select >/dev/null 2>&1 || rt_push_select() { cat; }
+command -v rt_push_subjects >/dev/null 2>&1 || rt_push_subjects() { cat >/dev/null; }
+command -v rt_push_subject_of >/dev/null 2>&1 || rt_push_subject_of() { printf unknown; }
+command -v rt_push_note_not_run >/dev/null 2>&1 || rt_push_note_not_run() { return 0; }
 # The line of a run for the metrics. No file — the checks run and record nothing.
 # shellcheck disable=SC1091
 [ -f "$rt_hooks_dir/metric-marks.sh" ] && . "$rt_hooks_dir/metric-marks.sh" 2>/dev/null
@@ -65,6 +68,10 @@ fi
 
 printf 'push ahead: base %s, tree %s\n' "${base:-none}" "$(git rev-parse --short 'HEAD^{tree}')"
 sign="$(rt_tree_sign .)"
+# Whether the change touched the subject of each step, for the run lines; a step the selection
+# drops leaves a line of its own.
+subjects="$(rt_push_checks "$base" | rt_push_subjects "$base")"
+rt_push_note_not_run "$sign" "$base" "$subjects"
 
 red=""
 marked=""
@@ -91,16 +98,16 @@ while IFS= read -r check; do
         out="$over"
     fi
     if [ "$status" -eq 0 ]; then
-        rt_run_note "$sign" "$started" green "$check"
+        rt_run_note "$sign" "$started" green "$check" "$base" "$(rt_push_subject_of "$subjects" "$check")"
         rt_push_mark_put "$check" "$base" "$key_before"
         marked="${marked}${marked:+
 }${check}"
         printf '+ green in %ss: %s\n' "$took" "$check"
     elif [ "$status" -eq "$skip_code" ]; then
-        rt_run_note "$sign" "$started" skipped "$check"
+        rt_run_note "$sign" "$started" skipped "$check" "$base" "$(rt_push_subject_of "$subjects" "$check")"
         printf '~ nothing to look at: %s\n' "$check"
     else
-        rt_run_note "$sign" "$started" red "$check"
+        rt_run_note "$sign" "$started" red "$check" "$base" "$(rt_push_subject_of "$subjects" "$check")"
         red="${red}${red:+
 }${check}"
         printf '✗ red in %ss: %s\n%s\n' "$took" "$check" "$(printf '%s' "$out" | tail -n 25)"
