@@ -1,0 +1,65 @@
+{
+  "name": "@rt-tools/ai-chat-protocol",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "projects/ai-chat-protocol/src",
+  "prefix": "lib",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["dist/ai-chat-protocol"],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": ["scope:package"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/ai-chat-protocol"],
+      "dependsOn": ["build:esm", "build:cjs"],
+      "options": {
+        "command": "node tools/finalize-utils-package.cjs ai-chat-protocol"
+      }
+    },
+    "build:esm": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{workspaceRoot}/dist/ai-chat-protocol/esm"],
+      "options": {
+        "main": "projects/ai-chat-protocol/src/index.ts",
+        "tsConfig": "projects/ai-chat-protocol/tsconfig.lib.esm.json",
+        "outputPath": "dist/ai-chat-protocol/esm",
+        "generatePackageJson": false,
+        "assets": [],
+        "rootDir": "projects/ai-chat-protocol/src"
+      }
+    },
+    "build:cjs": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{workspaceRoot}/dist/ai-chat-protocol/cjs"],
+      "options": {
+        "main": "projects/ai-chat-protocol/src/index.ts",
+        "tsConfig": "projects/ai-chat-protocol/tsconfig.lib.cjs.json",
+        "outputPath": "dist/ai-chat-protocol/cjs",
+        "generatePackageJson": false,
+        "assets": [],
+        "rootDir": "projects/ai-chat-protocol/src"
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/ai-chat-protocol"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/projects/ai-chat-protocol"],
+      "options": {
+        "jestConfig": "projects/ai-chat-protocol/jest.config.ts",
+        "tsConfig": "projects/ai-chat-protocol/tsconfig.spec.json"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}

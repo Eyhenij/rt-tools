@@ -35,6 +35,7 @@
       "@rt-tools/cms-angular/site": ["projects/cms-angular/site/src/public-api.ts"],
       "@rt-tools/auth-contract": ["projects/auth-contract/src/index.ts"],
       "@rt-tools/cms-contract": ["projects/cms-contract/src/index.ts"],
+      "@rt-tools/ai-chat-protocol": ["projects/ai-chat-protocol/src/index.ts"],
       "@rt-tools/auth-server": ["projects/auth-server/src/index.ts"],
       "@rt-tools/cms-server": ["projects/cms-server/src/index.ts"],
       "@rt-tools/ui-kit-v2": ["projects/ui-kit-v2/src/public-api.ts"],
