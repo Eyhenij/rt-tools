@@ -24,7 +24,7 @@ tf_run() {
 
 # --- Локальные выходы 1, 3, 5–9 --------------------------------------------------------------------
 tf_run <<'JS'
-import { gitDouble, treeDouble, marksDouble } from './flow-doubles.mjs';
+import { gitDouble, treeDouble, marksDouble, recordsDouble, placed } from './flow-doubles.mjs';
 import { buildModel } from '../assets/checks/flow-model.mjs';
 import { open as openSteps } from '../assets/task-flow/source/steps.mjs';
 import * as grill from '../assets/task-flow/measure/grill.mjs';
@@ -39,7 +39,7 @@ const data = { words: model.words, expect: model.expect };
 const steps = openSteps();
 const B = 'RT-1-x';
 const F = `docs/tasks/${B}`;
-const run = (cap, spec) => String(cap({ git: gitDouble({ branch: B, ...spec }), tree: treeDouble(spec.tree), marks: marksDouble({ branch: B, ...spec }), steps })(data));
+const run = (cap, spec) => String(cap({ git: gitDouble({ branch: B, ...spec }), tree: treeDouble(spec.tree), marks: marksDouble({ branch: B, ...spec }), records: recordsDouble(spec.answers, spec.approval), steps })(data));
 const out = (label, got, want) => console.log(`${label}|${got}|${want}`);
 
 const GRILL = '# Разбор\n\n## Просьба владельца\n\n> сделай сценарий\n\n## Вопросы и ответы\n\n**Как?**\nСкриптом.\n';
@@ -75,10 +75,12 @@ out('local: SC-AK-1368 — причина-заготовка не выход', r
 
 // SC-AK-1369…1372 — выход 5: метка одобрения
 const planned = { commits: [{ sha: 'p', files: { [`${F}/plan.md`]: PLAN(HEAD, ROWS) } }] };
-out('local: SC-AK-1369 — метка одобрения есть', run(plan.approved, { ...planned, approval: { answer: 'Одобряю план RT-1', plan: 'p' } }), 'true');
+out('local: SC-AK-1369 — метка одобрения есть', run(plan.approved, { ...planned, approval: placed('Одобряю план RT-1', 'p') }), 'true');
 out('local: SC-AK-1370 — метки нет — выход 5 не выполнен', run(plan.approved, planned), 'false');
-out('local: SC-AK-1372 — ответ «переделай» метку не даёт', run(plan.approved, { ...planned, approval: { answer: 'Переделай этап 2' } }), 'false');
-out('local: SC-AK-1369 — проверка неизвестной формы не одобряется', run(plan.approved, { commits: [{ sha: 'p', files: { [`${F}/plan.md`]: PLAN(HEAD, ROWS).replace('→ exit 0', '→ примерно ноль') } }], approval: { answer: 'Одобряю' } }), 'false');
+out('local: SC-AK-1372 — ответ «переделай» метку не даёт', run(plan.approved, { ...planned, approval: placed('Переделай этап 2', 'p') }), 'false');
+out('local: SC-AK-1718 — выход 5 подтверждает ответ на месте, не текст метки', run(plan.approved, { ...planned, approval: placed('Одобряю план RT-1', 'p'), answers: { a1: 'Переделай этап 1' } }), 'false');
+out('local: SC-AK-1718 — метка без места — выход 5 не выполнен', run(plan.approved, { ...planned, approval: { answer: 'Одобряю план RT-1', plan: 'p' } }), 'false');
+out('local: SC-AK-1369 — проверка неизвестной формы не одобряется', run(plan.approved, { commits: [{ sha: 'p', files: { [`${F}/plan.md`]: PLAN(HEAD, ROWS).replace('→ exit 0', '→ примерно ноль') } }], approval: placed('Одобряю план RT-1', 'p') }), 'false');
 
 // SC-AK-1373 — выход 6: ровно один [>]
 const mirror = (text) => ({ commits: [{ sha: 'p', files: { [`${F}/plan.md`]: PLAN(HEAD, ROWS), [`${F}/progress.md`]: text } }] });
@@ -293,7 +295,7 @@ JS
 
 # --- Монотонность: дерево после состояния N не меряется ниже N ------------------------------------
 tf_run <<'JS'
-import { gitDouble, treeDouble, hostDouble, ownerDouble, marksDouble } from './flow-doubles.mjs';
+import { gitDouble, treeDouble, hostDouble, ownerDouble, marksDouble, recordsDouble, placed } from './flow-doubles.mjs';
 import { buildModel } from '../assets/checks/flow-model.mjs';
 import { measureStates, openReaders } from '../assets/checks/task-flow-script.mjs';
 import { open as openSteps } from '../assets/task-flow/source/steps.mjs';
@@ -330,7 +332,8 @@ const measure = async ({ host, row = 'идёт' }) => {
         host: hostDouble(host),
         owner: ownerDouble([]),
         steps: openSteps(),
-        marks: marksDouble({ branch: B, approval: { answer: 'Одобряю план RT-12', plan: 'p' }, steps: { '1.1': { matched: true } } }),
+        marks: marksDouble({ branch: B, approval: placed('Одобряю план RT-12', 'p'), steps: { '1.1': { matched: true } } }),
+        records: recordsDouble({}, placed('Одобряю план RT-12', 'p')),
     };
     return measureStates(model, await openReaders(model, dirname(path), given));
 };

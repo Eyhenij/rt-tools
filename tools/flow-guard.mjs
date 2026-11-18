@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/flow-guard.mjs · b9eb00981527 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/flow-guard.mjs · 5e9205f61a75 · правится надстройкой, не здесь
 /**
  * The guard of the course of work — the engine command `guard`, called by the hook
  * `flow-step-guard.sh` before Edit, Write, MultiEdit and a shell command.
@@ -156,6 +156,7 @@ export function judgeCall(call, ctx) {
 
     const path = call.path ?? '';
     if (path.startsWith(`${ctx.marksDir}/`) || path === ctx.marksDir) return 'the marks of the steps and of the approval are written only by the engine `task-flow-script.mjs`';
+    if (ctx.isRecord && ctx.isRecord(path)) return 'the session records are written only by the harness: an approval and a replacement quote are read from them, and a hand write would forge both';
     if (path === progressPath) return judgeProgress(call, ctx, planPath);
     if (path.startsWith(`${ctx.plansDir}/`) && path.endsWith('.md')) return judgeDefer(call, ctx);
     if (path === ctx.overridePath) return judgeOverride(call, ctx);
@@ -167,6 +168,9 @@ function judgeShell(command, ctx, marks) {
     const engine = /task-flow-script\.mjs/.test(command);
     if (!engine && (shellWrites(command, marks) || shellWrites(command, 'rt-kit/(?:steps|approval)/'))) {
         return 'the marks of the steps and of the approval are written only by the engine `task-flow-script.mjs`, never by a shell command';
+    }
+    if (shellWrites(command, '\\.claude/projects/[^\\s;|&"\']*\\.jsonl')) {
+        return 'the session records are written only by the harness, never by a shell command: an approval and a replacement quote are read from them';
     }
     if (shellWrites(command, `${escape(ctx.tasksDir)}/[^\\s;|&]*(?:progress|plan)\\.md`) || shellWrites(command, '(?:^|[\\s/"\'])(?:progress|plan)\\.md')) {
         return 'the progress and the plan are edited by the edit tool, not by a shell command: the guard judges an edit, and a shell write passes it unseen';
@@ -235,7 +239,8 @@ function judgeOverride(call, ctx) {
 }
 
 function judgeProtected(path, ctx, planPath) {
-    const approved = ctx.legacy.includes(ctx.branch) || ctx.approved();
-    if (approved && namedBy(path, editedPaths(ctx.read(planPath)))) return null;
-    return `${path} belongs to the description of the task flow and its engine: it is edited only in a task whose approved plan names it in a footprint row marked «${EDITED_ROW}»`;
+    const fault = ctx.legacy.includes(ctx.branch) ? null : ctx.approvalFault ? ctx.approvalFault() : ctx.approved() ? null : 'there is no approval mark';
+    if (!fault && namedBy(path, editedPaths(ctx.read(planPath)))) return null;
+    const why = fault ? ` — ${fault}: ask the owner again and run \`node tools/task-flow-script.mjs plan-red\`` : '';
+    return `${path} belongs to the description of the task flow and its engine: it is edited only in a task whose approved plan names it in a footprint row marked «${EDITED_ROW}»${why}`;
 }

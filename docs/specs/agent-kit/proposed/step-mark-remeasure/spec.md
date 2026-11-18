@@ -81,6 +81,9 @@ prints a line per fixture.
   none, and a plan added again after the approval loses it.
 - **An approval mark that names no place counts as no approval outside `words.legacyBranches`.** A
   mark written before this work is one such; a branch in progress asks the owner again.
+- **`plan-red` on a plan whose approval mark names the same commit and fingerprint takes the red output from that mark.**
+  The checks of a plan in progress are green by then, and the mark already holds what they printed
+  before the work; the engine alone writes it. The new answer is confirmed at its place as usual.
 - **An answer that can no longer be found at its place is refused, and the refusal names the move: ask the owner again and run `plan-red`.**
   A record removed by the retention cleanup of the harness and an entry gone from a record are both
   such cases.

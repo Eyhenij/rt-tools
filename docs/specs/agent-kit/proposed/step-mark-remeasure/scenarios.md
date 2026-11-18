@@ -139,7 +139,7 @@ Not covered: the code is not written yet.
 
 ### SC-AK-1721 — an approval for another plan commit counts as none
 
-Given an approval mark naming plan commit A with its answer in place, and the plan removed and added again by commit B
+Given an approval mark naming plan commit A with its answer in place, and the branch rewritten so that commit B adds the plan
 When an edit of the engine is made
 Then it is refused, and the refusal names the move: ask the owner again and run `plan-red`
 
@@ -254,6 +254,16 @@ Not covered: the code is not written yet.
 Given the record directory of this working copy with its memory directory
 When Write puts a file into the memory directory
 Then the guard lets it through
+
+Not covered: the code is not written yet.
+
+### SC-AK-1738 — a plan in progress is approved again by the red output of its own mark
+
+Given a plan whose checks are green now, and an approval mark of the same commit and fingerprint with no place
+And a record where the owner chose «Одобряю plan.md RT-2» after both roles
+When `plan-red` runs
+Then it runs no check and writes the mark with the place of the new answer and the old red output
+And with a mark of another commit it runs the checks and refuses them as green
 
 Not covered: the code is not written yet.
 

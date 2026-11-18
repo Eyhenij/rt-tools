@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/flow-step-guard.sh · 6650ee3d679d · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/flow-step-guard.sh · ee34edaada8d · правится надстройкой, не здесь
 # rt-hook: PreToolUse Edit|Write|MultiEdit|Bash
 # Requires: checks/task-flow-script.mjs, checks/decide.mjs, hooks/decide.sh, hooks/facts.sh
 # PreToolUse guard of the course of work: the scenario moves by a measurement, not by a declaration.
@@ -33,7 +33,7 @@ input="${RT_HOOK_INPUT:-$(cat 2>/dev/null)}"
 # directory of the tree's own name.
 tool="$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)"
 if [ "$tool" = Bash ]; then
-    printf '%s' "$input" | grep -qE 'progress\.md|plan\.md|plans/|rt-kit|task-flow|flow-[a-z-]+\.mjs' || exit 0
+    printf '%s' "$input" | grep -qE 'progress\.md|plan\.md|plans/|rt-kit|task-flow|flow-[a-z-]+\.mjs|\.claude/projects/' || exit 0
 fi
 
 # The engine lies next to the hooks in the package and in tools/ where it is laid out.
@@ -56,7 +56,7 @@ verdict="$(cd "$dir" && printf '%s' "$input" | timeout 60 node "$engine" guard 2
 case "$verdict" in
     *"has no green mark"* | *"marked done after"* | *"marked current after"* | *"done steps go first"*) action=mark_step_done ;;
     *"is ahead of the measured one"*) action=set_state ;;
-    *"are written only by the engine"*) action=write_marks ;;
+    *"are written only by the engine"* | *"are written only by the harness"*) action=write_marks ;;
     *"is edited by the edit tool, not by a shell command"* | *"are edited by the edit tool, not by a shell command"*) action=shell_write_progress ;;
     *"override of the description is edited by the edit tool"*) action=shell_write_progress ;;
     *"belongs to the description of the task flow"*) action=edit_flow_description ;;

@@ -10,7 +10,8 @@
  *             writes the file, null removes it, an unnamed file stays as it was
  *   tree      { path: text } — the working copy
  *   main      [path] — the paths the main branch on the server holds in its history
- *   approval  the approval mark of the branch, or null
+ *   approval  the approval mark of the branch, or null; `placed(answer, plan)` writes one with a place
+ *   answers   { uuid: text } — the menu answers the owner chose, by the uuid of their entry
  *   steps     { "N.M": mark } — the marks of the steps
  *   local     [{ name, sha }] — the local branches
  *   host      what the hosting answers, see `hostDouble`
@@ -25,8 +26,16 @@ import { readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
+import { approvalFault as realFault } from '../assets/task-flow/source/records.mjs';
+
 const HERE = dirname(fileURLToPath(import.meta.url));
 const KIT = join(HERE, '..', 'assets');
+
+/** The record every placed mark names: a file that exists, so the record double confirms it. */
+export const RECORD = fileURLToPath(import.meta.url);
+
+/** An approval mark whose place is the entry `uuid` of the record double. */
+export const placed = (answer, plan, uuid = 'a1') => ({ answer, plan, place: { record: RECORD, uuid } });
 
 const inside = (path, key) => key === path || key.startsWith(`${path.replace(/\/$/, '')}/`);
 
@@ -143,6 +152,22 @@ export function marksDouble({ branch = '', approval = null, steps = {} }) {
     };
 }
 
+/**
+ * The double of `source.records`: every path is a session record of this repository, and the entry
+ * of a uuid is the owner's menu answer the case names. A placed mark answers its own text unless the
+ * case names another for its uuid.
+ */
+export function recordsDouble(answers = {}, approval = null) {
+    const own = approval?.place?.uuid ? { [approval.place.uuid]: approval.answer } : {};
+    const all = { ...own, ...answers };
+    const api = {
+        holds: (path) => (typeof path === 'string' && path.endsWith('.jsonl')) || path === RECORD,
+        entry: (_path, uuid) => (uuid in all ? { type: 'user', uuid, toolUseResult: { answers: { q: all[uuid] } } } : null),
+    };
+    api.approvalFault = (mark, planSha, task) => realFault(mark, planSha, task, api);
+    return api;
+}
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
     const [file, cap, casePath] = process.argv.slice(2);
     const spec = JSON.parse(readFileSync(casePath, 'utf8'));
@@ -153,6 +178,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
         git: gitDouble(spec),
         tree: treeDouble(spec.tree, spec.copyEpic ?? null),
         marks: marksDouble(spec),
+        records: recordsDouble(spec.answers, spec.approval),
         steps: openSteps(),
         host: hostDouble(spec.host),
         owner: ownerDouble(spec.owner),

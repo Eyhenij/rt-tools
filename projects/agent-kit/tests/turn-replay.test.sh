@@ -108,6 +108,16 @@ PLAN='# План
 progress() { printf '# Ход работы\n\n## Шаги\n\n- [%s] 1.1 Написать проверку\n- [%s] 1.2 Запустить набор\n' "$1" "$2"; }
 
 mark() { put "$1" ".git/rt-kit/$2" "$3"; }
+# Одобрение плана с местом ответа: запись в каталоге записей копии и uuid её записи.
+export RT_FLOW_RECORDS_HOME="$WORK/records"
+approve_plan() {
+    local dir="$1" rec sha
+    rec="$RT_FLOW_RECORDS_HOME/$(cd "$dir" && pwd -P | sed 's#[/.]#-#g')/session.jsonl"
+    mkdir -p "$(dirname "$rec")"
+    printf '%s\n' '{"type":"user","uuid":"a1","toolUseResult":{"answers":{"Одобряешь?":"Одобряю план RT-101"}}}' > "$rec"
+    sha="$(g "$dir" log --diff-filter=A --format=%H -- "docs/tasks/$TASK/plan.md" | tail -1)"
+    mark "$dir" "approval/$TASK.json" "{\"answer\":\"Одобряю план RT-101\",\"plan\":\"$sha\",\"place\":{\"record\":\"$rec\",\"uuid\":\"a1\"}}"
+}
 
 # Дерево задачи эпика в названном состоянии сценария. Печатает путь.
 #   request   ветка без разбора — состояние 1
@@ -155,7 +165,7 @@ build_tree() {
     put "$dir" "docs/tasks/$TASK/plan.md" "$PLAN"
     put "$dir" "docs/tasks/$TASK/progress.md" "$(progress x '>')"
     commit "$dir" 'docs: план'
-    mark "$dir" "approval/$TASK.json" '{"answer":"Одобряю план RT-101","plan":"plan.md"}'
+    approve_plan "$dir"
     [ "$1" = stage ] && { printf '%s' "$dir"; return; }
 
     put "$dir" "docs/tasks/$TASK/progress.md" "$(progress x x)"

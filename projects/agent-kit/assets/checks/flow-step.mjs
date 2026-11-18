@@ -30,7 +30,11 @@ import { compareExpected, isWriteCommand } from './flow-data.mjs';
 // The sources of the description lie next to the engine where it is laid out, one level up in the package.
 const HERE = dirname(fileURLToPath(import.meta.url));
 const RECORDS = [join(HERE, 'task-flow/source/records.mjs'), join(HERE, '../task-flow/source/records.mjs')].find((path) => existsSync(path));
-const { open: openRecords } = await import(pathToFileURL(RECORDS).href);
+const records = await import(pathToFileURL(RECORDS).href);
+
+/** The record directories of this repository and the test of an approval mark, shared by the checks. */
+export const openRecords = (root = process.cwd()) => records.openAt(root);
+export const approvalFault = records.approvalFault;
 
 /** The limit of one check, in milliseconds: past it the step does not match. */
 export const STEP_LIMIT_MS = 540_000;

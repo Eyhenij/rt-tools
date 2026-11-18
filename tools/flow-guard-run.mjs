@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/flow-guard-run.mjs · de8980472a2b · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/flow-guard-run.mjs · de8e47ff044e · правится надстройкой, не здесь
 /**
  * The reading half of the guard of the course of work: the hook input as a call, and the context the
  * decisions of `flow-guard.mjs` take. The owner's last word comes from the source «source.owner» of
@@ -7,6 +7,8 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync, realpathSync } from 'node:fs';
 import { basename, dirname, isAbsolute, join, relative } from 'node:path';
+
+import { approvalFault, openRecords } from './flow-step.mjs';
 
 /**
  * The path with its symbolic links resolved, the part that does not exist yet kept as written: a
@@ -63,7 +65,18 @@ export function guardContext({ root, model, marks, owner, measure, settings }) {
             return sha ? git(root, 'show', `${sha}:${path}`) : null;
         },
         stepMark: (number) => marks.step(branch, number),
-        approved: () => Boolean(marks.approval(branch)),
+        // The approval holds when the owner's answer stands at the place the mark names, for the plan
+        // commit the mark names; the reason when it does not.
+        approvalFault: () => {
+            const plan = `${settings.tasksDir}/${branch}/plan.md`;
+            const sha = (git(root, 'log', '--diff-filter=A', '--format=%H', 'HEAD', '--', plan) ?? '').split('\n').filter(Boolean).pop() ?? null;
+            const task = branch.match(/^([A-Z]+-\d+)-/)?.[1] ?? branch;
+            return approvalFault(marks.approval(branch), sha, task, openRecords(root));
+        },
+        approved() {
+            return this.approvalFault() === null;
+        },
+        isRecord: (path) => openRecords(root).holds(isAbsolute(path) ? path : join(realPath(root), path)),
         ownerLast: () => owner.last(),
         // The place counts from one, as the measured index does; a word outside the list is -1.
         stateIndex: (name) => (states.includes(name) ? states.indexOf(name) + 1 : -1),

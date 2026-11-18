@@ -11,6 +11,7 @@
     owner: { open: {} },
     session: { open: {} },
     steps: { open: {} },
+    records: { open: {} },
   },
 
   measure: {
@@ -24,7 +25,7 @@
     },
     agreement: { named: { git: source.git, tree: source.tree } },
     task: { taken: { git: source.git, host: source.host } },
-    plan: { approved: { git: source.git, marks: source.marks, steps: source.steps } },
+    plan: { approved: { git: source.git, marks: source.marks, steps: source.steps, records: source.records } },
     progress: {
       mirrors: { git: source.git, steps: source.steps },
       done: { git: source.git, tree: source.tree, marks: source.marks, steps: source.steps },

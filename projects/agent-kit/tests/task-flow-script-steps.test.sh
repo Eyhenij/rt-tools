@@ -185,18 +185,21 @@ PLAN
     "${TF_G[@]}" commit -q -m plan
 )
 TF_RED="$TF_DIR/red-repo"
-TF_REC="$TF_DIR/record.jsonl"
-# Запись разговора: две роли, затем ответ меню; $1 — ответ.
+# Запись разговора лежит в каталоге записей копии: другая запись одобрения не даёт.
+TF_RED_HOME="$TF_DIR/red-records"
+TF_REC="$TF_RED_HOME/$(printf '%s' "$(cd "$TF_RED" && pwd -P)" | sed 's#[/.]#-#g')/record.jsonl"
+mkdir -p "$(dirname "$TF_REC")"
+# Запись разговора: две роли, затем ответ меню с uuid a1; $1 — ответ.
 tf_record() {
     {
         printf '%s\n' '{"type":"assistant","message":{"content":[{"type":"tool_use","name":"Agent","input":{"subagent_type":"product-strategist"}}]}}'
         printf '%s\n' '{"type":"assistant","message":{"content":[{"type":"tool_use","name":"Agent","input":{"subagent_type":"goal-critic"}}]}}'
-        printf '{"type":"user","message":{"content":[{"type":"tool_result","content":"answered"}]},"toolUseResult":{"answers":{"Одобряешь план?":"%s"}}}\n' "$1"
+        printf '{"type":"user","uuid":"a1","message":{"content":[{"type":"tool_result","content":"answered"}]},"toolUseResult":{"answers":{"Одобряешь план?":"%s"}}}\n' "$1"
     } > "$TF_REC"
 }
 tf_red() {
     local out code
-    out="$(cd "$TF_RED" && RT_FLOW_TRANSCRIPT="$TF_REC" node "$TESTS/../assets/checks/task-flow-script.mjs" plan-red 2>&1)"
+    out="$(cd "$TF_RED" && RT_FLOW_RECORDS_HOME="$TF_RED_HOME" RT_FLOW_TRANSCRIPT="${1:-$TF_REC}" node "$TESTS/../assets/checks/task-flow-script.mjs" plan-red 2>&1)"
     code=$?
     printf '%s code=%s' "$out" "$code"
 }
@@ -213,8 +216,24 @@ report "plan: SC-AK-1410 — план известных форм проходи
 tf_record 'Одобряю план RT-2 (Recommended)'
 got="$(tf_red)"
 report "plan: SC-AK-1411 — обе проверки красные, метка записана" "$(printf '%s' "$got" | grep -cE '^1\.[12] red|approval mark is written.* code=0$')" 3
-report "plan: SC-AK-1411 — метка несёт ответ и красный вывод каждого шага" \
-    "$(node -e "const m=require('$TF_APPROVAL');console.log([m.answer, Object.keys(m.red).join(','), m.fingerprint.length].join(' '))" 2>&1)" 'Одобряю план RT-2 (Recommended) 1.1,1.2 16'
+report "plan: SC-AK-1411 — метка несёт ответ, место ответа и красный вывод каждого шага" \
+    "$(node -e "const m=require('$TF_APPROVAL');console.log([m.answer, Object.keys(m.red).join(','), m.fingerprint.length, m.place.uuid, m.place.record === '$TF_REC'].join(' '))" 2>&1)" 'Одобряю план RT-2 (Recommended) 1.1,1.2 16 a1 true'
+
+# SC-AK-1738 — план в работе одобряется заново по красному выводу своей метки
+printf 'готово\n' > "$TF_RED/out.txt"
+node -e "const f='$TF_APPROVAL',fs=require('fs'),m=JSON.parse(fs.readFileSync(f));delete m.place;fs.writeFileSync(f,JSON.stringify(m))"
+tf_record 'Одобряю plan.md RT-2 (Recommended)'
+got="$(tf_red)"
+report "plan: SC-AK-1738 — проверки не гоняются, метка с местом записана" \
+    "$(printf '%s' "$got" | grep -cE 'no check runs|approval mark is written.* code=0$|green before the work')" 2
+report "plan: SC-AK-1738 — красный вывод прежней метки сохранён, место новое" \
+    "$(node -e "const m=require('$TF_APPROVAL');console.log([m.red['1.1'].startsWith('exit '), m.place.uuid].join(' '))" 2>&1)" 'true a1'
+node -e "const f='$TF_APPROVAL',fs=require('fs'),m=JSON.parse(fs.readFileSync(f));m.plan='other';fs.writeFileSync(f,JSON.stringify(m))"
+report "plan: SC-AK-1738 — метка другого коммита — проверки гоняются и отказаны зелёными" \
+    "$(tf_red | grep -c 'measures nothing; no mark code=1')" 1
+rm -f "$TF_RED/out.txt"
+printf '%s\n' '{"type":"user","uuid":"a1","toolUseResult":{"answers":{"Одобряешь?":"Одобряю план RT-2"}}}' > "$TF_DIR/outside.jsonl"
+report "plan: SC-AK-1411 — запись вне каталогов записей метки не даёт" "$(tf_red "$TF_DIR/outside.jsonl" | grep -c 'not a session record of this repository.* code=1')" 1
 rm -f "$TF_APPROVAL"
 tf_record 'Переделай этап 1'
 report "plan: SC-AK-1411 — другой ответ меню метки не даёт" "$(tf_red | grep -c 'no menu answer.* code=1')" 1
