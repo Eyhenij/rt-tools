@@ -141,23 +141,62 @@ limit arrives whole, and the gate reads the signs only for a rule that does not.
 was cut to the question «load it or not». Seventeen statements were shortened by meaning, and the
 first column of the companion was edited by the same change.
 
+The first retelling diverged on one case of four: the list of layer words a text for the owner
+replaces, and the value a command about a machine is compared with, had left the hot part. Both
+came back, and so did what the critic named untested: drafts are spared only when gitignored, a
+spec splits and the limit stays, a new word joins the glossary in the same change, a number is
+recomputed and a check is run, not retold. Two more statements were shortened, to 2 999. Each pair
+below reads from the former text to the final one.
+
 - «A bare name and a directory are judged the same as a full path.» → «A bare name or directory is judged as a full path.»
 - «The description of the past is excluded from the path check entirely.» → «The archive and the task folder are outside the path check.»
-- «Portable text is excluded from the address check, like the archive.» → «Portable text is outside the address check, like the archive.»
-- «A directory index is checked against its contents from both sides.» → «A directory index is checked against its contents both ways.»
+- «Portable text is excluded from the address check, like the archive.» → «Portable text is outside the address check too.»
+- «A directory index is checked against its contents from both sides.» → «A directory index and its contents match both ways.»
 - «An index is kept for a directory people read through it, not by walking it.» → «An index is kept only for a directory read through it.»
-- «A name mentioned only to say "it is gone" is listed in the exceptions by name.» → «A name mentioned only as gone is listed in the exceptions.»
+- «A name mentioned only to say "it is gone" is listed in the exceptions by name.» → «A name kept only as gone is in the exceptions.»
 - «A file placed by the layout needs no pair.» → «A laid-out file needs no pair.»
 - «A document goes in the same commit as the change it describes.» → «A document ships in its change's commit.»
-- «A file of the tree is edited by the edit tool, not by a shell command.» → «A tree file is edited by the edit tool, not a shell command.»
+- «A file of the tree is edited by the edit tool, not by a shell command.» → «A tree file is edited by the edit tool, not shell.»
 - «A file leaving for the description of the past names its former address in its header.» → «A file moving to the archive names its former address in its header.»
 - «An override section replaces the package section of the same name entirely; it does not append to it.» → «An override section replaces the same-named package section whole.»
 - «The working glossary and the screen language are two different vocabularies.» → «The working glossary is not the screen language.»
-- «A text naming the state of a machine goes stale without a single edit in the tree.» → «Machine state is written as the command asking it.»
+- «A text naming the state of a machine goes stale without a single edit in the tree.» → «Machine state is written as a command and the answer to compare.»
 - «A record in the description of the past has an expiry, and after it the record is removed.» → «An archive record has an expiry, then is removed.»
-- «The removal by expiry travels as a commit of its own.» → «Expired records leave in a commit of their own.»
+- «The removal by expiry travels as a commit of its own.» → «Expired records leave in their own commit.»
 - «A link to a record of the past in a live text lives exactly until the record's expiry.» → «A live text names a decision in words, not an archive address.»
 - «A diagram is edited by the same change as the text it depicts.» → «A diagram changes with the text it depicts.»
+- «The glossary is edited where it is assembled, not where it is read.» → «The glossary is edited where assembled, not where read.»
+- «An index entry is named by its file name in backticks.» → «An index entry is its file name in backticks.»
+
+### Shortened statements of browser-verification, «было → стало»
+
+browser-verification was 21 407 bytes laid out and had no cold part; it is 2 996 now. Its sections,
+its pitfalls and every article whole went to its first cold part, `pitfalls/browser-verification.md`;
+the tree's section went whole to the override of that cold part, and the hot part keeps two short
+statements of it under «This tree». Twenty-one statements were shortened by meaning, and the first
+column of the companion was edited by the same change.
+
+- «A second instance of an application that is already up is not raised.» → «A running application is not raised a second time.»
+- «A browser raised by a library from inside a script is the same as launching the binary.» → «A browser a script raises counts as launching the binary.»
+- «The browser choice goes stale and needs a repeated call.» → «The browser choice goes stale; the call is repeated.»
+- «A refused profile choice ends the work with the browser; it does not start a search for a workaround.» → «A refused profile choice stops browser work.»
+- «The profile is not picked from the list and not asked from the owner.» → «A profile is neither picked from the list nor asked of the owner.»
+- «An unconfigured guard is a reason to stop, not a permission to go on.» → «An unconfigured guard is a stop, not a permission.»
+- «A screen behind sign-in is checked on a stand, not with a live account.» → «A screen behind sign-in is checked on a stand, not a live account.»
+- «A move of people into a sign-in system is checked by signing in as a moved person.» → «A move into a sign-in system is checked by signing in as a moved person.»
+- «Changing the number of elements in a container is a layout edit.» → «A container's element count change is a layout edit.»
+- «A measurement is taken on the longest value, not on the sample one.» → «A measurement takes the longest value, not the sample.»
+- «The longest value is set for every node that shares the line, not only for the edited one.» → «The longest value is set for every node sharing the line.»
+- «A ready-made kit piece taken for values of another size is measured, not looked at.» → «A kit piece reused for values of another size is measured, not looked at.»
+- «The stand proxy supplies what the application recognises the request's tenant by.» → «The stand proxy supplies the request's tenant sign.»
+- «What is shown to a person is built from the work under discussion.» → «What a person is shown is built from the work's branch.»
+- «An edit of a shared frame is checked on every screen under it.» → «A shared frame's edit is checked on every screen under it.»
+- «The work branch keeps the tip of its base merged in the whole time, not only before delivery.» → «The work branch keeps its base tip merged in all the time.»
+- «The first visit to a public screen is marked with the service-visit sign.» → «A public screen's first visit carries the service-visit sign.»
+- «A screen whose data never exists in the development database is measured with the component's real styles.» → «A screen whose data the dev database lacks is measured with the component's real styles.»
+- «A measurement that will have to be repeated is taken by an end-to-end test, not by the driver.» → «A measurement to repeat is an end-to-end test, not the driver.»
+- «A measurement is taken before the work is shown to the owner, not after their remark.» → «Measure before showing the owner, not after their remark.»
+- «Work that carries a look over from a sample is accepted by a frame of one's own screen next to the sample's frame.» → «Work carrying a sample's look is accepted by its own screen's frame beside the sample's.»
 
 ## Decisions along the way
 
