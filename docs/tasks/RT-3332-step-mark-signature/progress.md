@@ -4,33 +4,29 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `<name from the state list of rule task-flow>`
-- **Stage:** <number> of <total> — <name>
-- **Done:** <briefly>
-- **Next step:** <what is done first in the new session>
-- **Uncommitted:** <what lies in the tree outside the index>
-- **PR:** <number and state, or "not open yet">
+- **State:** `этап-идёт`
+- **Stage:** 1 of 5 — The judge of recorded turns has nothing to read the answers with
+- **Done:** the grill, the agreement after two rounds of the critic and the roles, the plan approved by the owner
+- **Next step:** 1.1 — the replay command with a judge that has no tools
+- **Uncommitted:** nothing
+- **PR:** not open yet
 
 ## Steps
 
-The steps of the plan, all of them, with a mark each. Rewritten by every turn that moves the work.
-
-- `[x]` done · `[>]` going on right now · `[ ]` not begun
-
-Exactly one step carries `[>]`. The numbers and the names are copied from the plan and not
-reworded: a check matches the two lists, and the turn exit guard counts what is not done yet.
-
-- [x] 1.1 <name of the first step of the first stage>
-- [>] 1.2 <name of the second step of the first stage>
-- [ ] 2.1 <name of the first step of the second stage>
+- [>] 1.1 The replay command builds the prompt from the hook text and the turns only, runs the judge with no tools outside the tree and compares after the answer
+- [ ] 2.1 The plan and its checks are read from the commit that added the plan, never from the working copy
+- [ ] 2.2 step N.M on a match marks the step done and the next one current, and leaves the progress as it was on a mismatch
+- [ ] 2.3 The guard refuses an edit that newly marks a step done in a plan with checks, whatever mark lies on disk
+- [ ] 2.4 The texts that tell to mark a step in the progress by hand say that step N.M marks it
+- [ ] 3.1 Opening a PR runs step --done over all done steps and refuses on any mismatch, naming the step, expected and got
+- [ ] 4.1 plan-red writes the place of the answer and the plan commit, from the record directories of this repository's copies only
+- [ ] 4.2 The guard of the description confirms the answer at its place and the plan commit, and refuses writes into the session records, not into the memory
+- [ ] 4.3 Exit 5 confirms the approval at its place as the guard does
+- [ ] 5.1 The agreement is merged into the flow-script spec, SC-AK-1411 and SC-AK-1414 rewritten with their tests
+- [ ] 5.2 Every live scenario of the agreement stands in a test
+- [ ] 5.3 The package is built and laid out
+- [ ] 5.4 The live probe: a forged mark with a hand done mark is refused, a write into the memory passes, and the measurement of the state stays under 75 seconds
 
 ## Decisions along the way
 
-- **<decision>** — <reason>. Affected stage of the plan: <number>.
-
-## Sessions
-
-### <date>
-
-- <what was done, in numbers: files, commits, what is green>
-- <what we stumbled on and what caught it>
+- **The plan was added again by a rebuilt commit, and the checks of 5.1 and 5.3 were tightened before the approval mark.** The folder commit had carried the empty template of the plan, and the engine took it for the plan commit; the branch was not on the server, so it was rebuilt with `reset --soft`. plan-red refused 5.1 and 5.3 as green before the work; their checks now also demand the merged agreement and the probe. Affected stage of the plan: 5.
