@@ -23,7 +23,17 @@ export type TButtonMatrixPart =
     | 'states'
     | 'presets'
     | 'themes'
-    | 'focus-origin';
+    | 'focus-origin'
+    | 'icon-only'
+    | 'icon-only-states';
+
+/** Состояние кнопки без подписи: взаимодействие из общего набора витрины, отключение и загрузка. */
+interface IButtonStateCase {
+    readonly name: string;
+    readonly state: string | null;
+    readonly disabled: boolean;
+    readonly loading: boolean;
+}
 
 /** Случай иконки — не значение оси, а различимая комбинация подписи и стороны. */
 interface IButtonIconCase {
@@ -187,6 +197,47 @@ interface IButtonIconCase {
                 </app-story-presets>
             }
 
+            @case ('icon-only') {
+                <app-story-presets caption="Только значок: палитра × размер у каждого вида в обоих наборах">
+                    <ng-template>
+                        @for (appearance of appearances; track appearance) {
+                            <app-story-grid [caption]="appearance" [rows]="themes" [columns]="sizes">
+                                <ng-template let-theme let-size="col">
+                                    <button
+                                        rtButton
+                                        icon="ico-plus"
+                                        aria-label="Добавить"
+                                        [appearance]="appearance"
+                                        [theme]="theme"
+                                        [size]="size"></button>
+                                </ng-template>
+                            </app-story-grid>
+                        }
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('icon-only-states') {
+                <app-story-presets caption="Только значок: вид × состояние в обоих наборах">
+                    <ng-template>
+                        <app-story-grid [rows]="appearances" [columns]="iconOnlyStates" [columnLabel]="iconOnlyStateLabel">
+                            <ng-template let-appearance let-stateCase="col">
+                                <button
+                                    rtButton
+                                    icon="ico-plus"
+                                    aria-label="Добавить"
+                                    theme="secondary"
+                                    size="sm"
+                                    [appearance]="appearance"
+                                    [disabled]="stateCase.disabled"
+                                    [loading]="stateCase.loading"
+                                    [attr.data-story-state]="stateCase.state"></button>
+                            </ng-template>
+                        </app-story-grid>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('focus-origin') {
                 <!--
                     Кнопка слева переводит фокус на соседнюю из кода — как окно, открытое кликом,
@@ -311,6 +362,20 @@ export class TestRtButtonMatrixComponent {
         { name: 'справа', label: 'Далее', icon: 'arrow-right', iconPos: 'right' },
         { name: 'без подписи', label: null, icon: 'pencil', iconPos: 'left' },
     ];
+
+    /** Кнопка без подписи во всех состояниях: квадрат обязан держать сторону и в загрузке. */
+    public readonly iconOnlyStates: readonly IButtonStateCase[] = [
+        ...STORY_STATES.map((one: IStoryState): IButtonStateCase => ({
+            name: one.name,
+            state: one.state,
+            disabled: false,
+            loading: false,
+        })),
+        { name: 'отключена', state: null, disabled: true, loading: false },
+        { name: 'загрузка', state: null, disabled: false, loading: true },
+    ];
+
+    public readonly iconOnlyStateLabel: (value: IButtonStateCase) => string = (value: IButtonStateCase): string => value.name;
 
     public readonly radiusLabel: (value: TRtRadius | null) => string = (value: TRtRadius | null): string => value ?? 'по умолчанию';
 

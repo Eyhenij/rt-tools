@@ -1,6 +1,6 @@
 # The tag of the second kit
 
-**Status:** in force · **Revision:** 2026-09-17 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-18 · **Scenario prefix:** `SC-UKV`
 **Depends on:** `docs/specs/ui-kit-v2/overflowing-text`
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
@@ -53,6 +53,25 @@ promises, so that the next pill is asked for from it rather than written beside 
 - **The outlined appearance is declared below every palette.** A palette sets a background, and an
   appearance declared above it would be overridden by that background silently — the pill would
   stay filled while the markup asks for an outline.
+- **The dot is the third value of the appearance input, not an input of its own.** It is a way to
+  draw the tag, like the filled and the outlined ones; a separate switch next to the appearance
+  would allow «outlined and a dot», which means nothing. A status on a narrow screen has no room for
+  a word, and without a dot in the kit an application draws its own circle in a colour the palette
+  does not hold.
+- **The label of a dot is still required, and it moves into the hint and the accessible name.** The
+  dot has no visible word, so the value is the only thing a reader learns: the hint carries it on
+  every dot, not only on an overflow, and the dot is an image named by the same value. The dot
+  takes the keyboard focus: the hint opens on focus, and without it a keyboard reader never
+  reaches the value.
+- **The colour of the dot is the state colour of the palette; secondary and neutral take the muted
+  text colour.** The text colour of those two is the primary text, nearly black, and a status dot of
+  the neutral meaning is grey.
+- **The size of the dot follows the size step: sm 6, md 8, lg 10 pixels.** A dot in a row of small
+  tags is not larger than they are.
+- **The dot is always a circle, whatever the rounding input says.** A square status mark reads as a
+  checkbox.
+- **The dot draws neither the icons nor the cross.** They need a label next to them; asked for on a
+  dot, they are ignored.
 - **An icon stands on either side of the label, and both sides live together.** Neither is a
   default: a tag that shows an icon nobody asked for takes room in a row of pills where every pixel
   of width is counted.
@@ -103,6 +122,10 @@ promises, so that the next pill is asked for from it rather than written beside 
   another subject, `rt-live-badge`.
 - **A colour of the consumer's own outside the palette.** It is answered by overriding the
   component's own property, and the kit does not take an input for it.
+- **An animated or pulsing dot.** That is a live state — `rt-live-badge`.
+- **The value of a dot on a touch screen.** The kit hint opens on hover and focus, and a tap closes
+  it. A screen that shows a dot to a finger names the value elsewhere — in the sheet the record
+  opens.
 
 ## Contract
 
@@ -129,6 +152,8 @@ The tag has no records of the storage of its own: everything it draws arrives by
 | the cross is asked for             | a small cross at the right edge; a press goes outward      |
 | a size is named                    | the padding, the type size and the icon move to that step  |
 | the label is longer than the place | the text is cut by an ellipsis, and a hint shows it whole  |
+| the appearance is the dot          | a circle of the palette's colour, 6, 8 or 10 pixels across |
+| a pointer or the focus on the dot  | the hint with the whole value                              |
 
 ## Cross-cutting requirements
 
@@ -165,6 +190,10 @@ objects.
 - **The size arrives as a step rather than as a type size.** The argument: the padding, the type
   size and the icon move together, and a type size named apart leaves the padding from another step.
   Rejected: an input for every one of the three — three inputs about one thing diverge silently.
+- **The dot is a value of the existing appearance input rather than a boolean.** Rejected:
+  `dot: boolean` — two inputs about one thing and a combination with no meaning.
+- **The muted text colour for the secondary and the neutral dot.** Rejected: the label colour for
+  every palette — the neutral dot would be black.
 
 ## Open questions
 
@@ -180,3 +209,5 @@ The subdomain has no open questions.
   tag alone said so.
 - 2026-09-29 — the shape and the rounding of the tag gave way to the kit's one rounding input
   (RT-2371); the scenario SC-UKV-186 about the rounding coming from the shape is removed.
+- 2026-11-18 — the dot appearance (RT-3389): a status on a narrow screen shows as a coloured dot
+  with its value in the hint and the accessible name; scenarios SC-UKV-1378…1381.
