@@ -3,13 +3,13 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 7 — The neighbours and the layout
+- **Stage:** 4 of 7 — The rules with short statements
 - **Done:** stage 1 — the gate delivers the rules that fit, with their companions, under the limit
   of the setting; stage 2 — the remaining refusals name their reason, a read of a rule file by the
   tool `Read` is a load, a subagent has a record of its own;  grill closed by assumption; agreement `docs/specs/agent-kit/proposed/rule-gate-delivery/`,
   SC-AK-1669…1680, its open questions closed by decisions; the card is in work.
-- **Next step:** step 3.4 waits for a real delivery in this session; meanwhile step 4.2 — the
-  second cold part, then spec-driven cut to 3 000 bytes.
+- **Next step:** step 4.2 — the second cold part in the package, then spec-driven cut to 3 000
+  bytes.
 - **Plan approved:** «Одобряю plan.md RT-3326». After the word, the checks of stages 4–6 were
   tightened by `goal-critic` before the commit: the meaning script, the verdict by a role, the
   section tables, `&&` in place of `;`. The stages, the rules and the number stayed as approved.
@@ -29,10 +29,10 @@
 - [x] 3.1 The fact of a loaded rule counts a rule the gate would deliver as loaded, and the task guard on the same edit names no load
 - [x] 3.2 The re-arming line names only the rules longer than the limit
 - [x] 3.3 The package is laid out into this tree
-- [>] 3.4 This session's own record holds a rule the host put into the session whole, by a hook answer of the gate
-- [ ] 4.1 The script of the meaning check is written, and the section tables of spec-driven, doc-style and browser-verification are in the progress
-- [ ] 4.2 spec-driven: the hot part is at most 3 000 characters, and nothing of the former text is lost
-- [ ] 4.3 spec-driven: the retelling matched the former text
+- [x] 3.4 This session's own record holds a rule the host put into the session whole, by a hook answer of the gate
+- [x] 4.1 The script of the meaning check is written, and the section tables of spec-driven, doc-style and browser-verification are in the progress
+- [x] 4.2 spec-driven: the hot part is at most 3 000 characters, and nothing of the former text is lost
+- [>] 4.3 spec-driven: the retelling matched the former text
 - [ ] 4.4 doc-style: the hot part is at most 3 000 characters, and nothing of the former text is lost
 - [ ] 4.5 doc-style: the retelling matched the former text
 - [ ] 4.6 browser-verification: the hot part is at most 3 000 characters, and nothing of the former text is lost
@@ -84,6 +84,35 @@ Totals by the table: spec-driven ~2 800, doc-style ~3 130 — over by the Texts 
 statements, so `Skills without a law` leaves too and Patterns keeps names only — ~2 900,
 browser-verification ~2 620.
 
+### Shortened statements of spec-driven, «было → стало»
+
+The statements alone came to 2 540 bytes, over what the 3 000 bytes leave after the frame; eleven
+were shortened by meaning, and the first column of the companion was edited by the same change.
+The first retelling diverged: the free scenario number from the companion's command, a deleted
+scenario taking its test, the exception for a harness or published symbol, a spec rule with no
+code place going to the open questions and the agreement sharing the spec prefix came back at
+their articles. That brought the hot part to 3 180 bytes, and seven more statements were shortened
+in the second round, to 2 999.
+
+- «A companion's statement about the state of an external service is checked by the command the companion itself names.» → «A companion's claim about an external service is checked by the command it names.»
+- «A rule description is no longer than three hundred characters and answers one question — load this rule or not.» → «A rule description is at most 300 characters and answers only: load it or not.»
+- «A check nailed to a resource name breaks when the resource is split, and this has to be known before the edit.» → «Before a resource split, its name is searched across the tree's checks.»
+- «The procedure table is checked against the decorators both ways, the permission together with the name.» → «The procedure table and decorators match both ways, permission with name.»
+- «The set of spec sections is fixed in advance, and a missing section is a refusal.» → «Spec sections are fixed in advance; a missing one is a refusal.»
+- «There are two layers of laws, and a law name is one for both.» → «A law name is unique across both law layers.»
+- «A rule may have a third file, and what is not read when deciding goes there.» → «What is not read when deciding goes to the rule's third file.»
+- «A law has a mandatory "Articles" section, and beyond it holds only open questions.» → «A law holds an "Articles" section and, besides it, only open questions.»
+- «A spec declares the laws it applies, and the link is checked both ways.» → «A spec names the laws it applies, checked both ways.»
+- «A "not carried out" binding moves together with its article.» → «A "not carried out" binding moves with its article.»
+- «Every statement is bound to a place in code, and the link is checked both ways.» → «Every statement is bound to code, checked both ways.»
+- «An anchor is checked against the raw text of the file, and a comment counts the same as code.» → «An anchor is checked against the raw file text, comments included.»
+- «A spec has one scenario prefix, and across the whole tree it is taken by that spec alone.» → «A spec has one scenario prefix, taken by no other spec of the tree.»
+- «The spec speaking of a resource is found by a command, not by walking the subdomains.» → «The spec of a resource is found by a command, not by walking the subdomains.»
+- «An article without a sign is legitimate, and so is a rule without a single sign.» → «An article or a whole rule without a sign is legitimate.»
+- «Portable text speaks of a neighbouring resource conditionally and names it by name.» → «Portable text names a neighbouring resource by name, and conditionally.»
+- «An article of a rule speaks of its own applicability itself, by a sign line at its side.» → «An article states its own applicability by a sign line at its side.»
+- «A divergence between a rule and its companion is resolved in favour of the rule.» → «Where a rule and its companion diverge, the rule wins.»
+
 ## Decisions along the way
 
 - **The branch stands on RT-3283, not on the epic branch.** PRs of the epic go as a cascade, each
@@ -107,7 +136,11 @@ browser-verification ~2 620.
   unchanged.
 - **The cold part of a shortened rule gets a second file, by the owner's answer.** The cold part
   of spec-driven came to 28 400 characters and 401 lines against the prose limits of 24 000 and
-  330. Asked, the owner answered «Вторая холодная часть (Recommended)». The package lays out a
+  330. The question: «Как разместить вынесенный текст?», options «Вторая холодная часть
+  (Recommended)» and «Делить правило надвое по теме»; an option that lifted the limit from the cold
+  part was held by the question check as a weakening of a check. The owner answered «Вторая
+  холодная часть (Recommended)». The grill stays as at the commit of the plan: the engine measures
+  no step while the task folder differs from it. The package lays out a
   second cold part next to `pitfalls.md`; it is done inside step 4.2, before the first rule is
   cut, and the meaning check reads both files. Affected stage of the plan: 4.
 

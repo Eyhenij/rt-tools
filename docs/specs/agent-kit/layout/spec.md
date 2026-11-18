@@ -208,8 +208,8 @@ The subdomain has no interface beyond the launch line.
 - **The cold part of a rule is a kind of resource of its own, not a name inside the kind of the rules.**
   The kind sets both the layout directory and the refusal by a list: the cold part lands as a third file
   at its rule, is removed after it and is put anew at every layout, because its text belongs to the
-  package whole. It looks for its parent by the name of the resource, not by a header field: a rule has
-  one cold part and it is called the same way it is.
+  package whole. It looks for its parent by the name of the resource, not by a header field: a cold
+  part is called the same way as its rule.
 - **"Pitfalls" is a section of the cold part, not of the rule.** In a rule it stopped being mandatory and
   became mandatory in the cold part: otherwise the move takes the section completeness check down at
   every rule that gave it away. A rule whose pitfalls went nowhere is lawful — the section is simply not

@@ -82,3 +82,17 @@ When the entry into the specs is asked by its name
 Then the exit code is zero and this spec is named
 
 Covered: `projects/agent-kit/tests/rules-kind.test.sh`.
+
+### SC-AK-1691 — a second cold part lands next to the first under its own file
+
+Given the package carries a second cold part of a rule, `<rule>.2.md` When the target path is counted
+Then it lands as `pitfalls-2.md` in the directory of the rule, next to `pitfalls.md`
+
+Covered: `projects/agent-kit/src/lib/assets.spec.ts`.
+
+### SC-AK-1692 — refusing a rule removes its second cold part too
+
+Given a rule with a second cold part When the tree refuses the rule Then the cascade removes the second
+cold part with the rule as its parent
+
+Covered: `projects/agent-kit/src/lib/catalog.spec.ts`.

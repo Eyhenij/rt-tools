@@ -202,6 +202,8 @@ done
 ahead=""
 for name in $req; do
     [ "$name" = "$want" ] && continue
+    # Two writes of one command may name the same rule: it is named once.
+    case ", $ahead, " in *", $name, "*) continue ;; esac
     [ -f "$root/$rules_dir/${name}/SKILL.md" ] || continue
     if [ -f "$loaded" ] && grep -qE "^([^:]*:)?$(printf '%s' "$name" | sed 's/[][\.*^$/]/\\&/g')$" "$loaded" 2>/dev/null; then
         continue

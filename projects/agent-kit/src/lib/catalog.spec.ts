@@ -310,6 +310,16 @@ describe('cascadeCuts', () => {
         expect(idsOf(cascadeCuts([...FULL, cold], picked([], [PRICING.id])))).toContain(cold.id);
     });
 
+    it('SC-AK-1692 — отказ от правила снимает и вторую его холодную часть', () => {
+        const second: IEntryOfCatalog = entry('pitfalls', 'pricing.2');
+
+        expect(cascadeCuts([...FULL, second], picked([], [PRICING.id]))).toContainEqual({
+            id: second.id,
+            parent: 'pricing',
+            root: 'pricing',
+        });
+    });
+
     it('SC-AK-516 — холодная часть чужого правила при этом остаётся', () => {
         const cold: IEntryOfCatalog = entry('pitfalls', 'permissions');
 

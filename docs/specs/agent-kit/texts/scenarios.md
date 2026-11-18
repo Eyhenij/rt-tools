@@ -318,3 +318,17 @@ by a person
 Not covered: there is nothing to judge these texts by — not one of them is a file of the tree.
 Checked in place: the layout put the rule and the pattern, the check came out even, the check of the
 wording over both files is clean.
+
+### SC-AK-1693 — a section of a rule standing in its cold part keeps the rule complete
+
+Given a rule without the section "Flow" When its cold part or its second cold part carries that section
+Then the suite does not name the rule; without the section in either file it names it
+
+Covered: `projects/agent-kit/tests/rules-review.test.sh`.
+
+### SC-AK-1694 — "Pitfalls" is not asked of a second cold part
+
+Given a second cold part of a rule without the section "Pitfalls" When the suite counts the sections of
+the cold parts Then the second cold part is not named
+
+Covered: `projects/agent-kit/tests/rules-review.test.sh`.

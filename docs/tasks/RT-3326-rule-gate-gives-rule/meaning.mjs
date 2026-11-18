@@ -8,7 +8,7 @@
 // «было → стало»). Every other piece of the former text — a paragraph, a code block, a table, and
 // the argument of an article after its statement — stands in the new hot part or in the cold part,
 // whitespace aside. A split rule is read as all of its parts: every `<rule>*/SKILL.md` that
-// declares `kind: rule`, and the `pitfalls.md` next to each.
+// declares `kind: rule`, and the `pitfalls.md` and `pitfalls-2.md` next to each.
 //
 // Prints the number of the missing pieces, and each of them on the error stream. Exit 0 when
 // nothing is missing, 1 when something is, 2 when the check cannot run.
@@ -43,7 +43,7 @@ const parts = readdirSync(SKILLS).filter(
     (dir) => (dir === rule || dir.startsWith(`${rule}-`)) && /^kind:\s*rule\s*$/m.test(read(join(SKILLS, dir, 'SKILL.md'))),
 );
 const hot = flat(parts.map((dir) => read(join(SKILLS, dir, 'SKILL.md'))).join('\n'));
-const cold = flat(parts.map((dir) => read(join(SKILLS, dir, 'pitfalls.md'))).join('\n'));
+const cold = flat(parts.map((dir) => read(join(SKILLS, dir, 'pitfalls.md')) + '\n' + read(join(SKILLS, dir, 'pitfalls-2.md'))).join('\n'));
 const progress = flat(read(join(HERE, 'progress.md')));
 
 // The body without the frontmatter, the layout header and the applicability signs: they carry no

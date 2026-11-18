@@ -100,6 +100,15 @@ export const COMPANION_FILE: string = 'implementation.md';
  */
 export const PITFALLS_FILE: string = 'pitfalls.md';
 
+/**
+ * The name of a further cold part: `<rule>.<number>`. A cold part that outgrew the size limit of the
+ * text goes on in a second file next to the first, and both belong to the rule named before the dot.
+ */
+export const COLD_PART: RegExp = /^(.+)\.(\d+)$/;
+
+/** The rule a cold part belongs to: its name without the number of the part. */
+export const ruleOfColdPart: (name: string) => string = (name: string): string => COLD_PART.exec(name)?.[1] ?? name;
+
 export interface IConfig {
     /** Значения дырок `{{имя}}`. */
     readonly vars: Readonly<Record<string, string>>;
