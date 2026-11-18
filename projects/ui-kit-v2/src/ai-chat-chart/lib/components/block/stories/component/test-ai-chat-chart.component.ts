@@ -16,9 +16,7 @@ const BROKEN: string = '{"kind":"line","series":[{"na';
  */
 @Component({
     selector: 'app-ai-chat-chart',
-    template: `
-        <div style="width: 386px"><rt-ai-chat-chart [block]="block" /></div>
-    `,
+    templateUrl: './test-ai-chat-chart.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
@@ -26,15 +24,13 @@ const BROKEN: string = '{"kind":"line","series":[{"na';
     ],
 })
 export class TestRtAiChatChartComponent {
+    protected readonly broken: string = BROKEN;
+
+    protected readonly samples: Readonly<Record<ERtAiChatChartKind, IRtAiChatChart.Spec>> = RT_AI_CHAT_CHART_SAMPLES;
+
     public kind: ERtAiChatChartKind = ERtAiChatChartKind.LINE;
 
     public pending: boolean = false;
 
     public invalid: boolean = false;
-
-    public get block(): IRtAiChatChart.Block {
-        const spec: unknown = this.invalid ? BROKEN : RT_AI_CHAT_CHART_SAMPLES[this.kind];
-
-        return this.pending ? { spec, type: 'chart', pending: true } : { spec, type: 'chart' };
-    }
 }
