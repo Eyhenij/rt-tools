@@ -19,7 +19,28 @@ task, a line per finding, each with its address.
   stopped with an uncaught `HTTP 422` from the deploy lag step ("this diff is taking too long to
   generate"), and none of its other lines were printed. **Address:** names of this tree — the
   board audit, the deploy lag step.
+- **The push gate cannot catch up with a main branch that moves every half hour.** On 18.11 the
+  gate took about 30 minutes, and in that time main took another package PR five times running.
+  The PR opening check then refused the green branch for a stale main, and each round cost a full
+  gate run. **Address:** rules layer — the order of merging main and opening a PR.
+- **The visual gate inside the push gate drops one story file at random.** On 18.11 three runs
+  named a different file each time as "references that have no story": stepper, toggle button
+  group with data table, page header end. The same step run alone passed 291 of 291 suites.
+  **Address:** names of this tree — the snapshot harness under load.
+- **The hook test SC-AK-1279 fails in the push gate and passes alone.** On 18.11 it reported "got
+  1, expected 0"; run alone it passed 2 of 2. It counts time by the clock. **Address:** names of
+  this tree — the hook test suite.
+- **The e2e stand takes a database port held by a neighbouring copy.** The local settings of this
+  copy name port 55462, and the stand of another copy holds it; the run passed with
+  `E2E_DB_PORT=55502`. **Address:** names of this tree — the local settings of a copy.
+- **The Docker virtual machine disk filled up twice during the gate.** The schema drift check
+  failed with "No space left on device" while the host had 190 GB free; the build cache cleanup
+  freed the space. **Address:** names of this tree — the gate's own cleanup after image builds.
+- **Main carries tests that refer to scenarios absent from the spec.** After #3383 the tests of
+  `ai-chat-protocol` refer to SC-ACP-11…23 and SC-ACP-30…33, and the spec scenarios lack them;
+  `check:specs` turns red on every branch that merges main. **Address:** names of this tree — the
+  spec of the chat protocol package.
 
 ## Left unresolved
 
-- **All three findings above** — wait for the owner's decision at the end of the epic.
+- **All findings above** — wait for the owner's decision at the end of the epic.
