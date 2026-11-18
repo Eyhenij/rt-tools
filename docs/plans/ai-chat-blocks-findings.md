@@ -40,6 +40,12 @@ task, a line per finding, each with its address.
   `ai-chat-protocol` refer to SC-ACP-11…23 and SC-ACP-30…33, and the spec scenarios lack them;
   `check:specs` turns red on every branch that merges main. **Address:** names of this tree — the
   spec of the chat protocol package.
+- **The PR opening check asks a task of an epic to merge main, where a fetch is enough.** For a
+  PR into the epic branch its first tier compares the branch with the epic branch, as it should.
+  The second tier compares the local ref of main with the remote one for every PR, and its refusal
+  says "merge origin/main". A fetch lifts that refusal, and the merge it names brings main into the
+  task branch past the epic branch. So RT-2750 merged main six times and took in the broken #3383.
+  **Address:** rules layer — the text of the second tier in the delivery check.
 
 ## Left unresolved
 
