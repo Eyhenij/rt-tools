@@ -1,5 +1,7 @@
 # Grill
 
+**Draft:** `docs/specs/agent-kit/proposed/rule-gate-delivery/`
+
 ## The owner request
 
 Текст задачи #3326:

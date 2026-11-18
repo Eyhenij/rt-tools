@@ -262,6 +262,29 @@ and the idle runs read «предмет не записан» in all 84 lines. T
   report prints «результат работы: подсчёт оборвался». **Address:** a task of this epic, together
   with the items of RT-3270 above.
 
+### The rules review of RT-3283
+
+`skill-curator` brought five findings; each waits for the owner's word.
+
+- **A value a laid-out hook computes is asked of the hook, not recomputed in the package code.**
+  The report first counted `rt_check_id` as its own checksum in TypeScript; only `no-bitwise`
+  stopped it. The article of `testing` about the declaring side is read on test paths, not where
+  the copy is written. **Address:** this tree — the pitfalls of `agent-kit-source`.
+- **A number the work's own tool will compute does not enter a sign or a scenario from a hand
+  count.** The plan wrote 45/58 and 19/30, the report gave 44/57 and 17/28, and SC-AK-1666 was
+  rewritten at the merge. **Address:** the package — the pitfalls of `task-flow`; the file is at
+  its character limit, two repeated entries about the layout header in a template copy make room.
+- **A linter that crashes at its own start is reported as a finding about every edited file.** After
+  a restart the hooks ran on node 20 against `engines.node >=22.22.3`, and the ESLint stack came
+  back on every edit. **Address:** the package — `lint-after-edit.sh` treats an output that names
+  no line of the file as a broken run, once per session with both versions.
+- **After a merge of the base, the reads table of the push set is verified.** Fixtures from the
+  merged task were not in the table, and the set turned red after a whole run. **Address:** the
+  package — `git-workflow-merge`, the checks after the resolution.
+- **Every decision of the grill becomes a step, like every rule of the agreement.** The grill named
+  the project roots as the subject of `nx affected`, no step wrote it, and `goal-critic` found it
+  after the work. **Address:** the package — the article of `task-flow` and its companion line.
+
 ## Left unresolved
 
 - **A session that wrote nothing releases the turn, and so do the silent hosting and a lost menu.**
