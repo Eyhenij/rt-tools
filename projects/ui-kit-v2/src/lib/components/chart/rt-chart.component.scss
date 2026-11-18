@@ -5,7 +5,7 @@
 
     .rt-chart {
         --rt-chart-height: 188px;
-        --rt-chart-step-radius: calc(var(--rt-radius-sm) / 2);
+        --rt-chart-step-radius: var(--rt-radius-xs);
         --rt-chart-mark-radius: var(--rt-radius-full);
         --rt-chart-tip-radius: var(--rt-radius-sm);
         --rt-chart-tip-border-width: var(--rt-border-width-thin);
