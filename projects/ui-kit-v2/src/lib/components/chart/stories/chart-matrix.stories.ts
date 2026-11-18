@@ -22,5 +22,8 @@ export const Kinds: TStory = { args: { part: 'kinds' } };
 /** Пустая опция: заглушка кита вместо осей. */
 export const Empty: TStory = { args: { part: 'empty' } };
 
+/** Те же карточки в своём наборе оформления и в материальном. */
+export const Presets: TStory = { args: { part: 'presets' } };
+
 /** Те же карточки в светлой и тёмной половине: палитра читается с узла графика. */
 export const Themes: TStory = { args: { part: 'themes' } };

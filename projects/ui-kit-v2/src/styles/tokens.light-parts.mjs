@@ -8,6 +8,10 @@
    Часть источника свойств оформления — входом остаётся `tokens.source.mjs`, он же собирает
    `light` из этой части и соседних. */
 
+/* Причина, по которой материальный набор не переписывает цвета серий графика. */
+const CHART_SERIES_SHARED = `цвет серии кодирует данные, а не роль: восемь цветов проверены на различимость
+       как один набор в обеих темах, а серия в акценте материального набора совпала бы с соседней`;
+
 export const lightParts = [
     {
         lead: `    /* Data table (rt-data-table) — заливка шапки. Своё имя, а не подложка роли: в материальном
@@ -290,12 +294,48 @@ export const lightParts = [
         name: `--rt-color-chart-series-1`,
         value: `var(--rt-brand-500)`,
         dark: `var(--rt-brand-400)`,
+        presetShared: CHART_SERIES_SHARED,
     },
-    { name: `--rt-color-chart-series-2`, value: `var(--rt-chart-orange-light)`, dark: `var(--rt-chart-orange-dark)` },
-    { name: `--rt-color-chart-series-3`, value: `var(--rt-chart-aqua-light)`, dark: `var(--rt-chart-aqua-dark)` },
-    { name: `--rt-color-chart-series-4`, value: `var(--rt-chart-yellow-light)`, dark: `var(--rt-chart-yellow-dark)` },
-    { name: `--rt-color-chart-series-5`, value: `var(--rt-chart-magenta-light)`, dark: `var(--rt-chart-magenta-dark)` },
-    { name: `--rt-color-chart-series-6`, value: `var(--rt-chart-green-light)`, dark: `var(--rt-chart-green-dark)` },
-    { name: `--rt-color-chart-series-7`, value: `var(--rt-chart-violet-light)`, dark: `var(--rt-chart-violet-dark)` },
-    { name: `--rt-color-chart-series-8`, value: `var(--rt-chart-red-light)`, dark: `var(--rt-chart-red-dark)` },
+    {
+        name: `--rt-color-chart-series-2`,
+        value: `var(--rt-chart-orange-light)`,
+        dark: `var(--rt-chart-orange-dark)`,
+        presetShared: CHART_SERIES_SHARED,
+    },
+    {
+        name: `--rt-color-chart-series-3`,
+        value: `var(--rt-chart-aqua-light)`,
+        dark: `var(--rt-chart-aqua-dark)`,
+        presetShared: CHART_SERIES_SHARED,
+    },
+    {
+        name: `--rt-color-chart-series-4`,
+        value: `var(--rt-chart-yellow-light)`,
+        dark: `var(--rt-chart-yellow-dark)`,
+        presetShared: CHART_SERIES_SHARED,
+    },
+    {
+        name: `--rt-color-chart-series-5`,
+        value: `var(--rt-chart-magenta-light)`,
+        dark: `var(--rt-chart-magenta-dark)`,
+        presetShared: CHART_SERIES_SHARED,
+    },
+    {
+        name: `--rt-color-chart-series-6`,
+        value: `var(--rt-chart-green-light)`,
+        dark: `var(--rt-chart-green-dark)`,
+        presetShared: CHART_SERIES_SHARED,
+    },
+    {
+        name: `--rt-color-chart-series-7`,
+        value: `var(--rt-chart-violet-light)`,
+        dark: `var(--rt-chart-violet-dark)`,
+        presetShared: CHART_SERIES_SHARED,
+    },
+    {
+        name: `--rt-color-chart-series-8`,
+        value: `var(--rt-chart-red-light)`,
+        dark: `var(--rt-chart-red-dark)`,
+        presetShared: CHART_SERIES_SHARED,
+    },
 ];

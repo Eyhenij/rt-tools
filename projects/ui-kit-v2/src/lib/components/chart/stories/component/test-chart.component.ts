@@ -11,11 +11,7 @@ import { CHART_CASES } from './chart.fixture';
  */
 @Component({
     selector: 'app-chart',
-    template: `
-        <div style="width: 28rem">
-            <rt-chart [data]="data" [height]="height" />
-        </div>
-    `,
+    templateUrl: './test-chart.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components
