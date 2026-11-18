@@ -1,0 +1,118 @@
+@layer rt-kit.components {
+    /* rt-chart — график кита (ViewEncapsulation.None): класс блока на host.
+       Ширину график берёт у контейнера, высоту поля — из своего свойства, которое ставит вход
+       `height`. Цвета фигур — токены, их ставит сцена прямо в разметку. */
+
+    .rt-chart {
+        --rt-chart-height: 188px;
+        --rt-chart-step-radius: var(--rt-radius-xs);
+        --rt-chart-mark-radius: var(--rt-radius-full);
+        --rt-chart-tip-radius: var(--rt-radius-sm);
+        --rt-chart-tip-border-width: var(--rt-border-width-thin);
+        --rt-chart-tip-shadow: var(--rt-shadow-md);
+
+        display: flex;
+        width: 100%;
+        min-width: 0;
+        flex-direction: column;
+        gap: calc(var(--rt-space-2) + var(--rt-space-1));
+
+        &__plot {
+            position: relative;
+            width: 100%;
+            height: var(--rt-chart-height);
+        }
+
+        &__svg {
+            display: block;
+            overflow: visible;
+            font-family: inherit;
+        }
+
+        &__tip {
+            position: absolute;
+            z-index: 1;
+            max-width: 240px;
+            padding: var(--rt-space-1) var(--rt-space-2);
+            border: var(--rt-chart-tip-border-width) solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-chart-tip-radius);
+            background: var(--rt-color-bg-surface);
+            box-shadow: var(--rt-chart-tip-shadow);
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-xs);
+            line-height: 1.4;
+            overflow-wrap: anywhere;
+            pointer-events: none;
+            white-space: pre-line;
+        }
+
+        &__legend {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 0;
+            margin: 0;
+            gap: calc(var(--rt-space-1) + var(--rt-space-0-5)) calc(var(--rt-space-2) + var(--rt-space-1));
+            list-style: none;
+
+            &:empty {
+                display: none;
+            }
+        }
+
+        /* Пункт не сжимается, а переносится в следующую строку; длиннее строки он не бывает. */
+        &__legend-item {
+            display: flex;
+            max-width: 100%;
+            flex: none;
+            align-items: center;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            gap: calc(var(--rt-space-1) + var(--rt-space-0-5));
+            line-height: 17px;
+        }
+
+        &__legend-label {
+            overflow-wrap: anywhere;
+        }
+
+        &__mark {
+            width: 8px;
+            height: 8px;
+            flex: none;
+            border-radius: var(--rt-chart-mark-radius);
+
+            &--line {
+                width: 12px;
+                height: 2px;
+            }
+        }
+
+        &__scale {
+            display: flex;
+            align-items: center;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            gap: var(--rt-space-2);
+            line-height: 17px;
+        }
+
+        &__steps {
+            display: flex;
+            gap: var(--rt-space-0-5);
+        }
+
+        &__step {
+            width: 22px;
+            height: 8px;
+            border-radius: var(--rt-chart-step-radius);
+        }
+
+        /* Заглушка стоит у верха поля, как в макете: над её отступом — отступ поля над сеткой. */
+        & &__empty {
+            --rt-empty-state-padding: calc(var(--rt-space-8) + var(--rt-space-2)) var(--rt-space-6) var(--rt-space-8);
+
+            min-height: var(--rt-chart-height);
+            justify-content: flex-start;
+        }
+    }
+}

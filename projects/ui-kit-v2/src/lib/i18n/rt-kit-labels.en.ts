@@ -51,6 +51,8 @@ export const RT_KIT_LABELS_EN = {
     breadcrumbsBack: 'Back to {{name}}',
     breadcrumbsHidden: 'Show hidden sections',
     breadcrumbsLabel: 'Breadcrumb',
+    chartEmpty: 'No data for the chart',
+    chartEmptyHint: 'Data appears once the period has records',
     chatAttachAria: 'Attach a file',
     chatAttachTooltip: 'Attach a file',
     chatAttachmentFallback: 'Attachment',

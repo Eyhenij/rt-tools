@@ -1,0 +1,34 @@
+<ng-template #cards let-items>
+    <div style="display: grid; grid-template-columns: repeat(3, 360px); gap: 16px">
+        @for (item of items; track item.name) {
+            <app-chart-card [item]="item" [attr.data-case]="item.name" />
+        }
+    </div>
+</ng-template>
+
+@switch (part) {
+    @case ('kinds') {
+        <div data-story-root style="display: inline-block">
+            <ng-container *ngTemplateOutlet="cards; context: { $implicit: all }" />
+        </div>
+    }
+    @case ('empty') {
+        <div data-story-root style="display: inline-block">
+            <ng-container *ngTemplateOutlet="cards; context: { $implicit: empty }" />
+        </div>
+    }
+    @case ('presets') {
+        <app-story-presets caption="Карточки графика в обоих наборах">
+            <ng-template>
+                <ng-container *ngTemplateOutlet="cards; context: { $implicit: all }" />
+            </ng-template>
+        </app-story-presets>
+    }
+    @case ('themes') {
+        <app-story-themes>
+            <ng-template>
+                <ng-container *ngTemplateOutlet="cards; context: { $implicit: all }" />
+            </ng-template>
+        </app-story-themes>
+    }
+}

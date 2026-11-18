@@ -1,0 +1,26 @@
+@layer rt-kit.components {
+    /* Карточка макета: рамка, отступ и подпись над графиком. */
+    .app-chart-card {
+        --rt-chart-story-card-border-width: var(--rt-border-width-thin);
+        --rt-chart-story-card-radius: var(--rt-radius-md);
+
+        display: flex;
+        width: 360px;
+        height: 306px;
+        box-sizing: border-box;
+        flex-direction: column;
+        padding: var(--rt-space-4);
+        border: var(--rt-chart-story-card-border-width) solid var(--rt-color-border-subtle);
+        border-radius: var(--rt-chart-story-card-radius);
+        background: var(--rt-color-bg-surface);
+        gap: calc(var(--rt-space-2) + var(--rt-space-1));
+
+        &__title {
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-semibold);
+            line-height: 1.35;
+        }
+    }
+}

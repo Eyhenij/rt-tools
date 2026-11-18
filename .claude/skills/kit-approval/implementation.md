@@ -9,6 +9,7 @@ The names and bindings of this tree next to the rule `SKILL.md`.
 - **the PR and the release** — `.claude/hooks/kit-approval-guard.sh` — opening a PR and starting either kit release
 - **the scenarios** — `tools/tests/check-kit-approval.test.sh`
 - **where the owner's words are looked for** — the session transcripts of this machine
+- **an epic branch** — `tools/check-kit-approval.mjs:answerersOf` — a branch without its own record is judged by its merges. A kit edit from a task PR merge, `[RT-<number>]` in the subject, is judged by that task's archive record. Main merged in is not judged. A commit made in the branch itself still needs the branch record.
 
 ## Where the articles are carried out
 

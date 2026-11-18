@@ -116,6 +116,24 @@
     --rt-info-600: #005fa5;
     --rt-info-700: #004c85;
 
+    /* Chart — цвета серий графика, по паре ступеней на тон: светлая тема и тёмная.
+       Первый тон — сама марка, его ступени здесь не повторяются. Порядок и ступени проверены
+       на различимость соседних серий при нарушениях цветового зрения в обеих темах. */
+    --rt-chart-orange-light: #eb6834;
+    --rt-chart-orange-dark: #d95926;
+    --rt-chart-aqua-light: #1baf7a;
+    --rt-chart-aqua-dark: #199e70;
+    --rt-chart-yellow-light: #eda100;
+    --rt-chart-yellow-dark: #c98500;
+    --rt-chart-magenta-light: #e87ba4;
+    --rt-chart-magenta-dark: #d55181;
+    --rt-chart-green-light: #008300;
+    --rt-chart-green-dark: #0ca30c;
+    --rt-chart-violet-light: #6250d6;
+    --rt-chart-violet-dark: #9085e9;
+    --rt-chart-red-light: #e34948;
+    --rt-chart-red-dark: #e66767;
+
     /* Spacing — ряд с шагом 4px. Промежуточных ступеней в нём нет: 6, 10, 12 и 28
        пикселей стояли ступенями под конкретные места, и выбрать из такого ряда было
        нельзя. Употребления округлены к ближайшей ступени, при равенстве — вверх. */

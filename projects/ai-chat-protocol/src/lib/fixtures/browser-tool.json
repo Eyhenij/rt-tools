@@ -1,0 +1,102 @@
+{
+  "description": "A browser tool: the run ends awaiting the answer of a call the browser makes.",
+  "initialMessages": [
+    {
+      "id": "u1",
+      "role": "user",
+      "content": "Draw the revenue",
+      "toolCalls": [],
+      "toolCallId": null,
+      "feedback": null,
+      "isStored": false
+    }
+  ],
+  "events": [
+    {
+      "type": "RUN_STARTED",
+      "threadId": "t1",
+      "runId": "r3"
+    },
+    {
+      "type": "CUSTOM",
+      "name": "run.reference",
+      "value": {
+        "referenceId": "ref-1"
+      }
+    },
+    {
+      "type": "TEXT_MESSAGE_START",
+      "messageId": "a1",
+      "role": "assistant"
+    },
+    {
+      "type": "TEXT_MESSAGE_CONTENT",
+      "messageId": "a1",
+      "delta": "Drawing it."
+    },
+    {
+      "type": "TEXT_MESSAGE_END",
+      "messageId": "a1"
+    },
+    {
+      "type": "TOOL_CALL_START",
+      "toolCallId": "c1",
+      "toolCallName": "render_chart",
+      "parentMessageId": "a1"
+    },
+    {
+      "type": "TOOL_CALL_ARGS",
+      "toolCallId": "c1",
+      "delta": "{\"title\":\"Revenue\"}"
+    },
+    {
+      "type": "TOOL_CALL_END",
+      "toolCallId": "c1"
+    },
+    {
+      "type": "RUN_FINISHED",
+      "threadId": "t1",
+      "runId": "r3",
+      "result": {
+        "status": "awaitingFrontendTools",
+        "pendingFrontendToolCallIds": ["c1"]
+      }
+    }
+  ],
+  "expected": {
+    "runId": "r3",
+    "status": "idle",
+    "messages": [
+      {
+        "id": "u1",
+        "role": "user",
+        "content": "Draw the revenue",
+        "toolCalls": [],
+        "toolCallId": null,
+        "feedback": null,
+        "isStored": true
+      },
+      {
+        "id": "a1",
+        "role": "assistant",
+        "content": "Drawing it.",
+        "toolCalls": [
+          {
+            "id": "c1",
+            "name": "render_chart",
+            "arguments": "{\"title\":\"Revenue\"}"
+          }
+        ],
+        "toolCallId": null,
+        "feedback": null,
+        "isStored": true
+      }
+    ],
+    "step": null,
+    "referenceId": "ref-1",
+    "result": "awaitingFrontendTools",
+    "pendingToolCallIds": ["c1"],
+    "error": null
+  },
+  "expectedUnsent": []
+}

@@ -204,6 +204,7 @@ node tools/check-format-ignore.mjs
 node tools/check-dependencies.mjs
 node tools/check-publish-lockfile.mjs
 node tools/check-package-imports.mjs
+node tools/check-package-release.mjs
 node tools/check-kit-approval.mjs
 EOF
     # The tree's check scenarios run only the files the change reaches; the selection is there.
@@ -225,8 +226,8 @@ EOF
             "${1:+RT_SUITES_BASE=$1 }pnpm exec nx affected -t test-hooks$against"
         # The styles linter reads style files and its config only; a branch touching neither skips it.
         { [ -n "$1" ] && ! git diff --name-only "$1...HEAD" 2>/dev/null | grep -qE '\.(scss|css)$|stylelint|^package\.json$|^pnpm-lock\.yaml$'; } || printf '%s\n' 'pnpm run lint:styles'
-        # `verify` lives in the second kit and utils alone; texts, hooks, the rules package and tools reach neither.
-        { [ -n "$1" ] && ! git diff --name-only "$1...HEAD" 2>/dev/null | grep -qvE '^(docs|\.claude|projects/agent-kit|tools)/|\.md$|^\.prettierignore$'; } || printf '%s\n' "pnpm exec nx affected -t verify --parallel$against"
+        # `verify` lives in the packages built without a framework; texts, hooks, the rules package and tools reach none of them, except the loading check itself.
+        { [ -n "$1" ] && ! git diff --name-only "$1...HEAD" 2>/dev/null | grep -qvE '^(docs|\.claude|projects/agent-kit|tools)/|\.md$|^\.prettierignore$' && ! git diff --name-only "$1...HEAD" 2>/dev/null | grep -q '^tools/verify-package\.cjs$'; } || printf '%s\n' "pnpm exec nx affected -t verify --parallel$against"
     }
     printf '%s\n' 'node tools/check-push-gate.mjs'
 
@@ -322,6 +323,11 @@ rt_push_touched() {
             # A code graph is data the session reads; above the subjects, as it lies inside a project.
             # The formatter's ignore list is read by the formatter alone, and no heavy step runs it.
             docs/*|*.md|.claude/*|projects/agent-kit/*|tools/*|graphify-out/*|*/graphify-out/*|.prettierignore) ;;
+            # Packages no application and no other package imports, and the pipeline files: no
+            # heavy step runs them. The checks of the touched projects (lint, types, tests, build,
+            # verify) and the wiring check cover them, and every other unknown path still raises
+            # the whole set. A package an application takes as sources is not here.
+            projects/ai-chat-protocol/*|projects/cms-*|.github/*) ;;
             # The kit with its showcase.
             projects/ui-kit-v2/*) _add kit2 ;;
             # The entry module: its packages, the example, its suite and the stand. The receiver and

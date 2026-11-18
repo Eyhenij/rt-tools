@@ -16,8 +16,10 @@ export default {
     },
     // @jsverse/utils — зависимость transloco — отдаёт ESM в файле с расширением .js,
     // и по умолчанию он ушёл бы в Node нетронутым: `Unexpected token 'export'` на
-    // первом же импорте transloco. Гоним его через тот же трансформ.
-    transformIgnorePatterns: ['node_modules/(?!(?:.*\\.mjs$|.*@jsverse.*))'],
+    // первом же импорте transloco. Гоним его через тот же трансформ. Модули d3, на которых
+    // стоит график кита, тоже отдают ESM в файлах .js. Их имя стоит сразу за последним
+    // `node_modules/` пути pnpm, поэтому косая черта перед ним необязательна.
+    transformIgnorePatterns: ['node_modules/(?!(?:.*\\.mjs$|.*@jsverse.*|(?:.*/)?d3-[a-z]+/))'],
     snapshotSerializers: [
         'jest-preset-angular/build/serializers/no-ng-attributes',
         'jest-preset-angular/build/serializers/ng-snapshot',
