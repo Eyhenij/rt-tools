@@ -26,6 +26,7 @@
         .rt-tag {
             --rt-tag-severity-bg: var(--rt-neutral-100);
             --rt-tag-severity-text: var(--rt-neutral-700);
+            --rt-tag-severity-dot: var(--rt-tag-severity-text);
             --rt-tag-size-padding-block: var(--rt-space-1);
             --rt-tag-size-padding-inline: var(--rt-space-2);
             --rt-tag-match-bg: var(--rt-yellow-400);
@@ -120,7 +121,7 @@
                 height: var(--rt-tag-dot-size);
                 padding: 0;
                 border-radius: var(--rt-tag-dot-radius);
-                background: var(--rt-tag-color-dot, var(--rt-tag-severity-dot, var(--rt-tag-severity-text)));
+                background: var(--rt-tag-severity-dot);
                 vertical-align: middle;
 
                 &.rt-tag--size--sm {
