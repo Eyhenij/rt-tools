@@ -511,4 +511,88 @@ printf -- '---\nname: angular-patterns\nkind: rule\n---\n' > "$TREE/.claude/skil
 printf -- '---\nname: platform-access\nkind: rule\n---\n' > "$TREE/.claude/skills/platform-access/SKILL.md"
 gate_session_reset
 
+# --- что осталось отказом, и запись ------------------------------------------------------------
+notes_now() { cat "$TREE/.claude/rt-kit/observations/"*.jsonl 2>/dev/null; }
+reason_of() { printf '%s' "$1" | jq -r '.hookSpecificOutput.permissionDecisionReason // empty' 2>/dev/null; }
+rm -rf "$TREE/.claude/rt-kit/observations"
+
+# Правило длиннее предела не доставлено и не обрезано: отказ называет его и что оно длинно.
+{ printf -- '---\nname: testing\nkind: rule\nlaw: verifiability\n---\n\n'; printf '%0600d\n' 0 | tr 0 q; } \
+    > "$TREE/.claude/skills/testing/SKILL.md"
+out="$(RT_GATE_CONTEXT_LIMIT=300 gate_answer "$SPEC_EDIT")"
+case "$(reason_of "$out")" in *'«testing»'*'longer than the host limit'*) got="длинно" ;; *) got="нет" ;; esac
+case "$out" in *qqqqqqqqqq*) got="${got}, с текстом правила" ;; esac
+dc "SC-AK-1675 — правило длиннее предела отказано, не обрезано" "$got" "длинно"
+notes_now | grep -q '"ev":"gate-deny".*"res":"testing".*"why":"too-long"' && got="есть" || got="нет"
+dc "SC-AK-1679 — отказ «длинно» записан с причиной" "$got" "есть"
+
+# Отказ назвал чтение файла правила; это чтение и есть загрузка, и правка идёт.
+case "$(reason_of "$out")" in *'read .claude/skills/testing/SKILL.md by the tool Read'*) got="назвал" ;; *) got="нет" ;; esac
+printf '%s' "$(jq -n --arg f "$TREE/.claude/skills/testing/SKILL.md" '{session_id:"tests",tool_name:"Read",tool_input:{file_path:$f}}')" \
+    | "$HOOKS/skill-loaded.sh" >/dev/null 2>&1
+grep -qx testing "${TMPDIR}claude-skill-gate/tests.loaded" 2>/dev/null && got="${got}, записано"
+out="$(RT_GATE_CONTEXT_LIMIT=300 gate_answer "$SPEC_EDIT")"
+dc "SC-AK-1684 — чтение длинного правила инструментом Read загружает его" "${got}, ${out:-молча}" "назвал, записано, молча"
+gate_session_reset
+
+# Правило, которое шлюз не прочёл, отказано.
+printf -- '---\nname: testing\nkind: rule\n---\n' > "$TREE/.claude/skills/testing/SKILL.md"
+chmod 000 "$TREE/.claude/skills/testing/SKILL.md"
+out="$(gate_answer "$SPEC_EDIT")"
+chmod 644 "$TREE/.claude/skills/testing/SKILL.md"
+case "$(reason_of "$out")" in *'«testing»'*'could not read'*) got="не прочтено" ;; *) got="нет" ;; esac
+dc "SC-AK-1676 — непрочтённое правило отказано" "$got" "не прочтено"
+notes_now | grep -q '"why":"not-read"' && got="есть" || got="нет"
+dc "SC-AK-1679 — отказ «не прочтено» записан с причиной" "$got" "есть"
+gate_session_reset
+
+# Не влезшие вместе записаны своей причиной.
+{ printf -- '---\nname: angular-patterns\nkind: rule\n---\n\n'; printf '%01500d\n' 0 | tr 0 a; } > "$TREE/.claude/skills/angular-patterns/SKILL.md"
+{ printf -- '---\nname: platform-access\nkind: rule\n---\n\n'; printf '%01500d\n' 0 | tr 0 p; } > "$TREE/.claude/skills/platform-access/SKILL.md"
+RT_GATE_CONTEXT_LIMIT=2500 gate_answer "$ENV_EDIT" >/dev/null
+notes_now | grep -q '"why":"together"' && got="есть" || got="нет"
+dc "SC-AK-1679 — отказ «не влезают вместе» записан с причиной" "$got" "есть"
+printf -- '---\nname: angular-patterns\nkind: rule\n---\n' > "$TREE/.claude/skills/angular-patterns/SKILL.md"
+printf -- '---\nname: platform-access\nkind: rule\n---\n' > "$TREE/.claude/skills/platform-access/SKILL.md"
+gate_session_reset
+
+# Первая доставка сама заводит каталог записи.
+rm -rf "${TMPDIR}claude-skill-gate"
+gate_answer "$SPEC_EDIT" >/dev/null
+grep -qx testing "${TMPDIR}claude-skill-gate/tests.loaded" 2>/dev/null && got="заведена" || got="нет"
+dc "SC-AK-1685 — первая доставка заводит каталог записи" "$got" "заведена"
+gate_session_reset
+
+# Имя не записалось — доставка всё равно идёт, и это видно в наблюдениях.
+rm -rf "${TMPDIR}claude-skill-gate"; printf 'занято\n' > "${TMPDIR}claude-skill-gate"
+out="$(gate_answer "$SPEC_EDIT")"
+rm -f "${TMPDIR}claude-skill-gate"
+got="$(gate_context "$out" | head -1 | grep -q 'Passed by the rules gate' && echo доставлено || echo нет)"
+notes_now | grep -q '"ev":"gate-deliver".*"res":"testing".*"unrecorded":"yes"' && got="${got}, unrecorded"
+dc "SC-AK-1686 — незаписанная доставка проходит и видна" "$got" "доставлено, unrecorded"
+gate_session_reset
+
+# Вызов без id сессии отказан, текста правила в ответе нет.
+out="$(gate_answer "$(jq -n --arg f "$TREE/libs/site/x/util/src/lib/a.spec.ts" '{tool_name:"Edit",tool_input:{file_path:$f,new_string:""}}')")"
+got="$(printf '%s' "$out" | jq -r '.hookSpecificOutput.permissionDecision // "нет решения"')"
+[ -n "$(printf '%s' "$out" | jq -r '.hookSpecificOutput.additionalContext // empty')" ] && got="${got}, с текстом"
+dc "SC-AK-1687 — вызов без id сессии отказан" "$got" "deny"
+
+# Доставка внутри подзахода записана за подзаходом, не за родителем.
+out="$(gate_answer "$(jq -n --arg f "$TREE/libs/site/x/util/src/lib/a.spec.ts" '{session_id:"tests",agent_id:"sub1",tool_name:"Edit",tool_input:{file_path:$f,new_string:""}}')")"
+got=""
+grep -qx testing "${TMPDIR}claude-skill-gate/sub1.loaded" 2>/dev/null && got="за подзаходом"
+grep -qx testing "${TMPDIR}claude-skill-gate/tests.loaded" 2>/dev/null && got="${got}, за родителем"
+dc "SC-AK-1688 — доставка подзахода записана за ним" "$got" "за подзаходом"
+rm -f "${TMPDIR}claude-skill-gate/sub1.loaded"
+gate_session_reset
+
+# Доставка видна доставкой: ни отказа шлюза, ни загрузки инструментом.
+rm -rf "$TREE/.claude/rt-kit/observations"
+gate_answer "$SPEC_EDIT" >/dev/null
+n="$(notes_now | grep -c '"ev":"gate-deliver".*"res":"testing".*"kind":"[a-z-]*".*"sid":"')"
+d="$(notes_now | grep -cE '"ev":"(gate-deny|skill-load)"')"
+dc "SC-AK-1678 — доставка записана доставкой" "доставок $n, иных $d" "доставок 1, иных 0"
+gate_session_reset
+
 suite_result "гейт правил"

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/decision-table.mjs · 16a92ac07948 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/decision-table.mjs · 88bc0def2331 · правится надстройкой, не здесь
 /**
  * The decision table of the package hooks: the facts of the tree and an action give «allow»,
  * «deny» or «ask». Every hook is described here by rows or by a mark, and five modes read it.
@@ -223,6 +223,10 @@ function runProbe(row, extraEnv = {}) {
         `. "${HARNESS}"`,
         // The harness drops every RT_ variable of the environment; the flipped row comes under another name.
         '[ -n "${PROBE_FLIP:-}" ] && export RT_DECISION_FLIP="$PROBE_FLIP"',
+        // A rule within the host limit the gate puts into the session itself, and the fact of a
+        // loaded rule counts it. The table speaks of the rule the session has not got: the probes
+        // run under a limit nothing fits, and the delivery is held by the suites of the gate.
+        'export RT_GATE_CONTEXT_LIMIT=1',
         'probe_err="$(mktemp)"',
         row.probe.setup ?? '',
         `json="$(${row.probe.input})"`,

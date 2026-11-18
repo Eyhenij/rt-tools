@@ -86,6 +86,22 @@ report "rt_decide со сломанной таблицей — молчание 
 
 [ "$code" = 0 ] && [ -z "$out" ] && [ "$bare_code" = 0 ] && [ -z "$bare_out" ] && [ "$broken_code" = 0 ] && echo "FAIL-OPEN ok"
 
+# SC-AK-1680 — правило, которое шлюз положит в заход тем же вызовом, загружено для соседей. Хуки
+# одного вызова идут рядом, и запись доставки может быть ещё не сделана; сосед, назвавший загрузку
+# такого правила, посылает заход в круг, который шлюз убрал.
+FT="$TMP/deliverable"
+mkdir -p "$FT/.claude/skills/git-workflow" "$FT/.tmp/claude-skill-gate"
+printf -- '---\nname: git-workflow\nkind: rule\n---\n' > "$FT/.claude/skills/git-workflow/SKILL.md"
+fact() { CLAUDE_PROJECT_DIR="$FT" TMPDIR="$FT/.tmp/" bash -c ". '$HOOKS/utf8.sh' 2>/dev/null; . '$HOOKS/facts.sh'; $1"; }
+report "SC-AK-1680 — доставляемое правило загружено" "$(fact 'rt_fact_rule_loaded git-workflow s1')" yes
+report "SC-AK-1680 — правило длиннее предела не загружено" \
+    "$(RT_GATE_CONTEXT_LIMIT=1 fact 'rt_fact_rule_loaded git-workflow s1')" no
+report "SC-AK-1680 — без id сессии доставки нет" "$(fact 'rt_fact_rule_loaded git-workflow nosession')" no
+report "SC-AK-1680 — решатель не ждёт загрузки доставляемого правила" \
+    "$(fact "rt_fact_move_gate_rule Bash '{\"command\":\"git commit -m x\"}' s1")" ""
+report "SC-AK-1680 — правило длиннее предела решатель ждёт" \
+    "$(RT_GATE_CONTEXT_LIMIT=1 fact "rt_fact_move_gate_rule Bash '{\"command\":\"git commit -m x\"}' s1")" git-workflow
+
 suite_result "решатель по таблице"
 result=$?
 echo "rows $rows, ok $ok"

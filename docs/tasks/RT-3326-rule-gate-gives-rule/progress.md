@@ -3,11 +3,13 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 7 — The remaining refusals and the record
+- **Stage:** 3 of 7 — The neighbours and the layout
 - **Done:** stage 1 — the gate delivers the rules that fit, with their companions, under the limit
-  of the setting;  grill closed by assumption; agreement `docs/specs/agent-kit/proposed/rule-gate-delivery/`,
+  of the setting; stage 2 — the remaining refusals name their reason, a read of a rule file by the
+  tool `Read` is a load, a subagent has a record of its own;  grill closed by assumption; agreement `docs/specs/agent-kit/proposed/rule-gate-delivery/`,
   SC-AK-1669…1680, its open questions closed by decisions; the card is in work.
-- **Next step:** step 2.1 — the refusals for a rule over the limit and a rule not read.
+- **Next step:** step 3.4 waits for a real delivery in this session; meanwhile step 4.2 — the
+  second cold part, then spec-driven cut to 3 000 bytes.
 - **Plan approved:** «Одобряю plan.md RT-3326». After the word, the checks of stages 4–6 were
   tightened by `goal-critic` before the commit: the meaning script, the verdict by a role, the
   section tables, `&&` in place of `;`. The stages, the rules and the number stayed as approved.
@@ -21,13 +23,13 @@
 - [x] 1.1 The gate passes a call whose rule fits the limit, puts the rule with its opening line into the hook answer and records the rule as loaded
 - [x] 1.2 The companion arrives with the rule when it fits, falls back to its path, and the limit is read from the setting
 - [x] 1.3 Every call kind gets the delivery, a call needing two rules passes with both, and rules that do not fit together are refused together
-- [>] 2.1 A rule longer than the limit and a rule not read are refused with the reason, and a read of an over-limit rule by the tool `Read` loads it
-- [ ] 2.2 The record is created when missing, an unwritable record still passes, a call without a session id is refused, and a subagent is recorded apart
-- [ ] 2.3 A delivery is observed as a delivery
-- [ ] 3.1 The fact of a loaded rule counts a rule the gate would deliver as loaded, and the task guard on the same edit names no load
-- [ ] 3.2 The re-arming line names only the rules longer than the limit
-- [ ] 3.3 The package is laid out into this tree
-- [ ] 3.4 This session's own record holds a rule the host put into the session whole, by a hook answer of the gate
+- [x] 2.1 A rule longer than the limit and a rule not read are refused with the reason, and a read of an over-limit rule by the tool `Read` loads it
+- [x] 2.2 The record is created when missing, an unwritable record still passes, a call without a session id is refused, and a subagent is recorded apart
+- [x] 2.3 A delivery is observed as a delivery
+- [x] 3.1 The fact of a loaded rule counts a rule the gate would deliver as loaded, and the task guard on the same edit names no load
+- [x] 3.2 The re-arming line names only the rules longer than the limit
+- [x] 3.3 The package is laid out into this tree
+- [>] 3.4 This session's own record holds a rule the host put into the session whole, by a hook answer of the gate
 - [ ] 4.1 The script of the meaning check is written, and the section tables of spec-driven, doc-style and browser-verification are in the progress
 - [ ] 4.2 spec-driven: the hot part is at most 3 000 characters, and nothing of the former text is lost
 - [ ] 4.3 spec-driven: the retelling matched the former text
@@ -47,6 +49,41 @@
 - [ ] 7.1 The agreement merges into the package spec as the subdomain `rule-gate-delivery` with its bindings
 - [ ] 7.2 The README of the package says the gate puts the rule into the session
 
+## Section tables of the shortened rules
+
+The outcome of every section by the form of a compressed article of `spec-driven`, and the bytes
+it comes to in the hot part. The statements of «How the law applies here» stay verbatim, each as a
+bare item; their arguments leave whole for the cold part, under the same section heading. The
+frontmatter and the layout header weigh about 450 bytes in each rule.
+
+| Rule | Section | Now, bytes | Outcome | In the hot part, bytes |
+| --- | --- | --- | --- | --- |
+| spec-driven | title, law line, cold-part line | 882 | stays; the intro paragraph leaves for the cold part | ~300 |
+| spec-driven | What it is called here | 2 896 | leaves whole for the cold part | 0 |
+| spec-driven | Where it lives | 255 | leaves whole for the cold part | 0 |
+| spec-driven | Flow | 1 062 | leaves whole for the cold part | 0 |
+| spec-driven | How the law applies here | 12 131 | 31 statements stay verbatim, arguments leave | ~2 050 |
+| spec-driven | The shape of a compressed article | 2 921 | leaves whole for the cold part | 0 |
+| spec-driven | What of the law is not here | 2 732 | leaves whole for the cold part | 0 |
+| spec-driven | Patterns | 247 | leaves whole for the cold part | 0 |
+| doc-style | title, law line, cold-part line | 939 | stays; the intro paragraph leaves for the cold part | ~300 |
+| doc-style | What it is called here, Where it lives, Flow | 2 312 | leave whole for the cold part | 0 |
+| doc-style | How the law applies here | 10 003 | 21 statements stay verbatim, arguments leave | ~1 470 |
+| doc-style | Texts for a person | 2 816 | its 4 statements join the list above, the rest leaves | ~330 |
+| doc-style | What of the law is not here | 2 403 | leaves whole for the cold part | 0 |
+| doc-style | Patterns, Skills without a law | 580 | stay | ~580 |
+| doc-style | the three sections of this tree | 2 200 | leave whole for the cold part | 0 |
+| browser-verification | title, law line | 785 | stays, a cold-part line is added; the intro leaves | ~300 |
+| browser-verification | What it is called here, Where it lives, Flow | 2 715 | leave whole for the cold part | 0 |
+| browser-verification | How the law applies here | 9 910 | 23 statements stay verbatim, arguments leave | ~1 630 |
+| browser-verification | What of the law is not here | 173 | leaves whole for the cold part | 0 |
+| browser-verification | Patterns | 243 | stays | ~243 |
+| browser-verification | Pitfalls, When this machine has no pinned profile | 7 581 | leave whole for the cold part, which the rule creates | 0 |
+
+Totals by the table: spec-driven ~2 800, doc-style ~3 130 — over by the Texts for a person
+statements, so `Skills without a law` leaves too and Patterns keeps names only — ~2 900,
+browser-verification ~2 620.
+
 ## Decisions along the way
 
 - **The branch stands on RT-3283, not on the epic branch.** PRs of the epic go as a cascade, each
@@ -61,6 +98,18 @@
 - **The refusal texts of the gate are tested under `RT_GATE_CONTEXT_LIMIT=1`.** A refusal now
   remains only for a rule over the limit; the old probes of its text run under a limit nothing
   fits. Affected stage of the plan: none.
+
+- **The neighbours' probes of a gate-held move use a rule longer than the limit.** The fact of a
+  loaded rule now counts a deliverable rule, so a probe that wants «load the rule first» needs a
+  rule the gate does not deliver: the fixture rule is padded past 10 000 characters, and the
+  conformance sweep of the decision table runs every probe under `RT_GATE_CONTEXT_LIMIT=1` — the
+  table speaks of a rule the session has not got. Affected stage of the plan: 3, the checks
+  unchanged.
+- **The cold part of a shortened rule gets a second file, by the owner's answer.** The cold part
+  of spec-driven came to 28 400 characters and 401 lines against the prose limits of 24 000 and
+  330. Asked, the owner answered «Вторая холодная часть (Recommended)». The package lays out a
+  second cold part next to `pitfalls.md`; it is done inside step 4.2, before the first rule is
+  cut, and the meaning check reads both files. Affected stage of the plan: 4.
 
 ## Sessions
 

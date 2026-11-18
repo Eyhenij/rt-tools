@@ -222,6 +222,10 @@ function runProbe(row, extraEnv = {}) {
         `. "${HARNESS}"`,
         // The harness drops every RT_ variable of the environment; the flipped row comes under another name.
         '[ -n "${PROBE_FLIP:-}" ] && export RT_DECISION_FLIP="$PROBE_FLIP"',
+        // A rule within the host limit the gate puts into the session itself, and the fact of a
+        // loaded rule counts it. The table speaks of the rule the session has not got: the probes
+        // run under a limit nothing fits, and the delivery is held by the suites of the gate.
+        'export RT_GATE_CONTEXT_LIMIT=1',
         'probe_err="$(mktemp)"',
         row.probe.setup ?? '',
         `json="$(${row.probe.input})"`,

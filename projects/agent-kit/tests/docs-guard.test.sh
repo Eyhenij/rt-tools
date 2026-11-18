@@ -149,6 +149,8 @@ g "тот же индекс без путей отбивается" 'git commit 
 # Отказ называет правку документа, и её держит гейт, пока правило файла не загружено.
 mkdir -p "$REPO/.claude/skills/spec-driven"
 printf -- '---\nname: spec-driven\nkind: rule\n---\n' > "$REPO/.claude/skills/spec-driven/SKILL.md"
+# Правило длиннее предела хозяина: гейт не кладёт его в заход сам и держит ход до загрузки.
+printf '%010000d\n' 0 >> "$REPO/.claude/skills/spec-driven/SKILL.md"
 mkdir -p "$REPO/docs/specs/x" && printf '# x\n' > "$REPO/docs/specs/x/spec.md"
 stage libs/common/proto/proto/x/v1/x.proto
 gate_session_reset
