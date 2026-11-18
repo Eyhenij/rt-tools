@@ -124,7 +124,7 @@ function chartRegistry(execute: jest.Mock): IAiChatToolRegistry {
 }
 
 describe('ai-chat run controller', () => {
-    it('SC-ACP-10 — a run waits for the browser answer, then the next run starts with it', async () => {
+    it('SC-ACP-24 — a run waits for the browser answer, then the next run starts with it', async () => {
         const execute: jest.Mock = jest.fn().mockResolvedValue('{"drawn":true}');
         const { port, requests } = harness([replay(BROWSER_TOOL), replay(PLAIN_ANSWER)]);
         const states: IAiChatRunState[] = [];

@@ -323,6 +323,11 @@ rt_push_touched() {
             # A code graph is data the session reads; above the subjects, as it lies inside a project.
             # The formatter's ignore list is read by the formatter alone, and no heavy step runs it.
             docs/*|*.md|.claude/*|projects/agent-kit/*|tools/*|graphify-out/*|*/graphify-out/*|.prettierignore) ;;
+            # Packages no application and no other package imports, and the pipeline files: no
+            # heavy step runs them. The checks of the touched projects (lint, types, tests, build,
+            # verify) and the wiring check cover them, and every other unknown path still raises
+            # the whole set. A package an application takes as sources is not here.
+            projects/ai-chat-protocol/*|projects/cms-*|.github/*) ;;
             # The kit with its showcase.
             projects/ui-kit-v2/*) _add kit2 ;;
             # The entry module: its packages, the example, its suite and the stand. The receiver and
