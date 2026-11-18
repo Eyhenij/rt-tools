@@ -5,7 +5,7 @@
 - **State:** `задача-взята`
 - **Stage:** 4 из 4 — сдача
 - **Done:** точка у `rt-tag`, стори `Dot`, `IconOnly`, `IconOnlyStates` с кадрами; сверка 121 из 121; витрина одобрена владельцем («Одобряю»)
-- **Next step:** 4.1 — договорённость в спек метки
+- **Next step:** 4.2 — папка задачи в архив, набор перед отправкой, PR задачи
 - **Uncommitted:** ход работы
 - **Waiting for the owner:** нет
 - **PR:** ещё не открыт
@@ -20,8 +20,8 @@
 - [x] 3.1 Числа Figma и витрины, `node tools/kit-match.mjs numbers`. Перечень ключей: кнопка —
 - [x] 3.2 Кадр наложения, `node tools/kit-match.mjs overlay`
 - [x] 3.3 Показ витрины владельцу, запись второго одобрения в `approvals.md` (строка макета с
-- [>] 4.1 Договорённость влита в `docs/specs/ui-kit-v2/tag/`, привязки в `implementation.md`
-- [ ] 4.2 Папка задачи разобрана в архив, набор перед отправкой, PR задачи в `RT-3390-kit-icon-tag-dot`
+- [x] 4.1 Договорённость влита в `docs/specs/ui-kit-v2/tag/`, привязки в `implementation.md`
+- [>] 4.2 Папка задачи разобрана в архив, набор перед отправкой, PR задачи в `RT-3390-kit-icon-tag-dot`
 - [ ] 4.3 Слияние PR задачи, PR эпика в main, его слияние, выпуск minor `@rt-tools/ui-kit-v2`
 
 ## Decisions along the way
