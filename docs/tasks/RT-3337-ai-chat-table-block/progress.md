@@ -6,6 +6,7 @@
 - **Stage:** 0 of 0 — the agreement
 - **Done:** the task is taken, the branch `RT-3337-ai-chat-table-block` is taken from `RT-3336-ai-chat-chart-data` (chain), the task is in progress on the board. Exploration done, the six questions closed by assumption, the mockup approved: «Одобряю макет».
 - **Next step:** the product agreement by spec-writer, its review by spec-critic, then the plan and the roles before the owner.
+- **Going now:** spec-critic reviews the agreement `docs/specs/ui-kit-v2/proposed/ai-chat-table/`; the four open questions of the first draft are closed by assumption in its Decisions.
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet; the branch stands on RT-3336 (#3402), which stands on RT-3335 (#3398)
