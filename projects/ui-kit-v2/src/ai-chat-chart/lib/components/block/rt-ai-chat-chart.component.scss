@@ -91,13 +91,18 @@
             vertical-align: middle;
         }
 
-        /* Строка 28: отступ 8 у краёв таблицы и 8 между столбцами, как в макете. */
+        /*
+         * Строка 28, как в макете: 27 содержимого и граница 1 — у ячейки таблицы граница идёт сверх
+         * высоты. Ширина 80 у числа — ширина текста без отступов, поэтому размер не включает отступы.
+         * Отступ 8 у краёв таблицы и 8 между столбцами. Имя переносится по словам: перенос в любом
+         * месте сжимал столбец до буквы, когда рядов много.
+         */
         &__cell {
-            height: 28px;
+            height: 27px;
             padding: 0 var(--rt-space-1);
             border-bottom: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
             font-weight: normal;
-            overflow-wrap: anywhere;
+            overflow-wrap: break-word;
             text-align: start;
 
             &:first-child {
@@ -117,9 +122,11 @@
                 white-space: nowrap;
             }
 
+            /* В шапке над числом стоит имя ряда: оно переносится по словам, а не растягивает таблицу. */
             &--head {
                 color: var(--rt-color-text-muted);
                 font-weight: var(--rt-font-weight-semibold);
+                white-space: normal;
             }
         }
     }

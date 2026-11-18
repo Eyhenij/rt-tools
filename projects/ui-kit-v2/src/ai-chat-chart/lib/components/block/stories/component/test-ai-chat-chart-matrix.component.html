@@ -44,6 +44,23 @@
             </ng-template>
         </app-story-presets>
     }
+    @case ('data') {
+        <app-story-themes>
+            <ng-template>
+                <ng-container *ngTemplateOutlet="cases; context: { $implicit: data }" />
+            </ng-template>
+        </app-story-themes>
+    }
+    @case ('dataWidths') {
+        <app-story-row [items]="dataWidths" [itemLabel]="caseLabel">
+            <ng-template let-c><rt-ai-chat-chart [style.width]="c.width" [block]="c.block" /></ng-template>
+        </app-story-row>
+    }
+    @case ('dataLong') {
+        <app-story-row slotWidth="386px" [items]="[dataLong]" [itemLabel]="caseLabel">
+            <ng-template let-c><rt-ai-chat-chart style="width: 386px" [block]="c.block" /></ng-template>
+        </app-story-row>
+    }
     @case ('themes') {
         <app-story-themes>
             <ng-template>

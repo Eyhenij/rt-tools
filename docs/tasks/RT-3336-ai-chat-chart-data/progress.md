@@ -5,8 +5,8 @@
 - **State:** `этап-идёт`
 - **Stage:** 4 из 5 — Showcase
 - **Done:** mockup drawn and measured; the owner approved mockup and plan; the agreement is written
-  and reviewed by spec-critic; `rtAiChatChartTable` builds the rows from the chart data, 9 of 9 tests; the switch and the table stand in the block, 20 of 20 block tests.
-- **Next step:** the story `DataTable` with the cases of the mockup, then its frames and the match.
+  and reviewed by spec-critic; `rtAiChatChartTable` builds the rows from the chart data, 9 of 9 tests; the switch and the table stand in the block, 20 of 20 block tests. The stories `DataTable`, `DataTableWidths` and `DataTableLong` are opened in the showcase and match the mockup by numbers.
+- **Next step:** snapshot references for the new stories and the changed old ones, then the owner's approval of the showcase.
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet; the branch stands on RT-3335 (#3398)
@@ -20,8 +20,8 @@
 - [x] 3.1 Add the text button with chevron under the chart and the `<table>` with kit tokens, marked
 - [x] 3.2 Add the labels «View data» and «Hide data» to `rt-kit-labels.en.ts` and the showcase
 - [x] 3.3 Cover open, close, not remembered, no button on pending, invalid and empty
-- [>] 4.1 Write the story `DataTable` with the open cases of the mockup, six series at 328 and a
-- [ ] 4.2 Match the showcase with the mockup by numbers and ask the owner to approve it
+- [x] 4.1 Write the story `DataTable` with the open cases of the mockup, six series at 328 and a
+- [>] 4.2 Match the showcase with the mockup by numbers and ask the owner to approve it
 - [ ] 5.1 Merge the agreement into the `ai-chat-chart` spec, bring the overview and README up to date
 - [ ] 5.2 Take the task folder apart and run the push gate
 
@@ -33,3 +33,11 @@
   histogram case of the plan is three equal bins: unequal bins make the spec invalid.
 - Tree rows follow the chart's tree, a node before its children: the table reads the chart data,
   so the agreement and SC-UKV-1390 name that order instead of the first appearance of a path.
+- The showcase found two defects of the table, both fixed in the styles. Six series at 328 squeezed
+  the first column to one letter per line: the cell broke words anywhere. It now breaks by words,
+  and a series name in the head wraps instead of widening the table. A row measured 29 instead of
+  28: the cell border stands outside its height, so the height is 27 plus the border.
+- After the fix the showcase matches the mockup: rows 28, tables 197 and 113, blocks 550, 502 and
+  418. The right edges of the numbers are 232/320, 290/378 and 632/720 at the widths 328, 386 and 728.
+- The closed toggle is 169 wide against 170 in the mockup: the label font renders one point
+  narrower. The height 32 and the open width 157 match.
