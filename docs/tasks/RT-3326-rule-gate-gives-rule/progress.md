@@ -2,20 +2,22 @@
 
 ## Where we stand
 
-- **State:** `задача-взята`
-- **Stage:** none yet — the plan is being written
+- **State:** `замысел-записан`
+- **Stage:** 1 of 7 — The delivery
 - **Done:** grill closed by assumption; agreement `docs/specs/agent-kit/proposed/rule-gate-delivery/`,
   SC-AK-1669…1680, its open questions closed by decisions; the card is in work.
 - **Next step:** step 1.1 — the gate delivers a rule that fits.
 - **Plan approved:** «Одобряю plan.md RT-3326». After the word, the checks of stages 4–6 were
   tightened by `goal-critic` before the commit: the meaning script, the verdict by a role, the
   section tables, `&&` in place of `;`. The stages, the rules and the number stayed as approved.
+  `plan-red` then found four checks green before the work (3.3 and the three retelling checks of
+  stage 5); they were made red in the same unpushed commit, and the approval mark was written.
 - **Uncommitted:** nothing.
 - **PR:** not open yet. The branch stands on RT-3283 (PR #3371).
 
 ## Steps
 
-- [ ] 1.1 The gate passes a call whose rule fits the limit, puts the rule with its opening line into the hook answer and records the rule as loaded
+- [>] 1.1 The gate passes a call whose rule fits the limit, puts the rule with its opening line into the hook answer and records the rule as loaded
 - [ ] 1.2 The companion arrives with the rule when it fits, falls back to its path, and the limit is read from the setting
 - [ ] 1.3 Every call kind gets the delivery, a call needing two rules passes with both, and rules that do not fit together are refused together
 - [ ] 2.1 A rule longer than the limit and a rule not read are refused with the reason, and a read of an over-limit rule by the tool `Read` loads it
