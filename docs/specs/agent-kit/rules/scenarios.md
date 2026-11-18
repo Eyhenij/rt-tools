@@ -22,7 +22,7 @@ Covered: `projects/agent-kit/tests/rules-kind.test.sh`.
 ### SC-AK-1018 — a rule names the place where the tree's own names live
 
 Given the rules of the package
-When their headings are read
+When their headings are read, the rule's and its cold parts'
 Then each carries the section naming the companion next to it
 
 Covered: `projects/agent-kit/tests/rules-kind.test.sh`.
@@ -46,7 +46,7 @@ Covered: `projects/agent-kit/tests/rules-kind.test.sh`.
 ### SC-AK-1021 — a rule says what of its law is not kept here
 
 Given the rules of the package
-When their headings are read
+When their headings are read, the rule's and its cold parts'
 Then each carries the section about what of the law is not here
 
 Covered: `projects/agent-kit/tests/rules-kind.test.sh`.

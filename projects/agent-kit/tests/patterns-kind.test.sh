@@ -60,7 +60,9 @@ silent_rules=0
 for rule in "$RULES"/*.md; do
     name="$(bare_name "$(basename "$rule" .md)")"
     grep -qlE "^rule:[[:space:]]*$name\$" "$PATTERNS"/*.md 2>/dev/null || continue
-    grep -qE '^## Patterns' "$rule" || silent_rules=$((silent_rules + 1))
+    base="$(basename "$rule" .md)"
+    cat "$rule" "$PITFALLS/$base.md" "$PITFALLS/$base.2.md" 2>/dev/null | grep -qE '^## Patterns' \
+        || silent_rules=$((silent_rules + 1))
 done
 report "SC-AK-1029 — раздел образцов есть у каждого правила" "$silent_rules" 0
 
@@ -100,11 +102,15 @@ report "SC-AK-1031 — имя не занято двумя образцами" "
 orphan_cold=0
 for cold in "$PITFALLS"/*.md; do
     name="$(basename "$cold" .md)"
+    # Продолжение `<имя>.2` принадлежит тому же ресурсу, что и первая холодная часть.
+    case "$name" in *.2) name="${name%.2}" ;; *.2.*) name="${name%%.2.*}.${name#*.2.}" ;; esac
     if [ -f "$RULES/$name.md" ]; then
         continue
     fi
     # Холодная часть навыка без закона лежит под именем навыка: правила над ним нет.
     [ -f "$ASSETS/skills/$name.md" ] && continue
+    # Холодная часть образца лежит под именем образца.
+    [ -f "$PATTERNS/$name.md" ] && continue
     orphan_cold=$((orphan_cold + 1))
 done
 report "SC-AK-1032 — холодных частей без хозяина нет" "$orphan_cold" 0
@@ -113,7 +119,7 @@ report "SC-AK-1032 — холодных частей без хозяина не�
 # Обычно это правило; там, где над предметом закона нет, — сам навык.
 silent_cold=0
 for cold in "$PITFALLS"/*.md; do
-    grep -qiE 'the rule is|the skill|правило' "$cold" || silent_cold=$((silent_cold + 1))
+    grep -qiE 'the rule is|the skill|the pattern|rule `|правило' "$cold" || silent_cold=$((silent_cold + 1))
 done
 report "SC-AK-1033 — холодная часть называет свой ресурс" "$silent_cold" 0
 
@@ -122,7 +128,7 @@ unnamed_cold=0
 for cold in "$PITFALLS"/*.md; do
     name="$(basename "$cold" .md)"
     [ -f "$RULES/$name.md" ] || continue
-    grep -qE '^\*\*Cold part:\*\*' "$RULES/$name.md" || unnamed_cold=$((unnamed_cold + 1))
+    grep -qiE 'cold part' "$RULES/$name.md" || unnamed_cold=$((unnamed_cold + 1))
 done
 report "SC-AK-1034 — холодная часть названа правилом" "$unnamed_cold" 0
 

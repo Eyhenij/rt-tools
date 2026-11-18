@@ -10,9 +10,10 @@
   SC-AK-1669…1680, its open questions closed by decisions; the card is in work.
   stage 4 — spec-driven (2 997 bytes), doc-style (2 998) and browser-verification (3 000) fit,
   nothing of their former text is lost, and their retellings matched, in the third, third and
-  second round.
-- **Next step:** step 5.1 — the section tables of task-flow, git-workflow and ui-component-tests.
-  Their statements alone weigh 4 843, 6 451 and 3 746 bytes, so each is split into parts.
+  second round. Stage 5: task-flow is four parts (2 647, 2 996, 2 767, 2 434), its seven patterns
+  are hot indexes with cold parts, and the retelling of every part matched.
+- **Next step:** step 5.4 — git-workflow into four parts with a variant per host, and its
+  patterns by the technique of the task-flow patterns.
 - **Plan approved:** «Одобряю plan.md RT-3326». After the word, the checks of stages 4–6 were
   tightened by `goal-critic` before the commit: the meaning script, the verdict by a role, the
   section tables, `&&` in place of `;`. The stages, the rules and the number stayed as approved.
@@ -41,9 +42,9 @@
 - [x] 4.6 browser-verification: the hot part is at most 3 000 characters, and nothing of the former text is lost
 - [x] 4.7 browser-verification: the retelling matched the former text
 - [x] 5.1 The section tables of task-flow, git-workflow and ui-component-tests are in the progress, with the pairs of shortened statements
-- [>] 5.2 task-flow: every part is at most 3 000 characters, and nothing of the former text is lost
-- [ ] 5.3 task-flow: the retelling of every part matched the former text
-- [ ] 5.4 git-workflow: every part is at most 3 000 characters, and nothing of the former text is lost
+- [x] 5.2 task-flow: every part is at most 3 000 characters, and nothing of the former text is lost
+- [x] 5.3 task-flow: the retelling of every part matched the former text
+- [>] 5.4 git-workflow: every part is at most 3 000 characters, and nothing of the former text is lost
 - [ ] 5.5 git-workflow: the retelling of every part matched the former text
 - [ ] 5.6 ui-component-tests: every part is at most 3 000 characters, and nothing of the former text is lost
 - [ ] 5.7 ui-component-tests: the retelling of every part matched the former text
@@ -131,6 +132,16 @@ first part is read with every second part and the room is in the plan part; the 
 the past gets no branch, since its edit is the rule `doc-style`'s and the closing is read at the
 PR. Every statement is a headline with the tail the retelling proved needed; every article whole
 stands in the cold part `pitfalls-2.md` of `task-flow`.
+
+The check of step 5.2 reads every `task-flow*` file, and the seven patterns of the rule match it
+too (3 617 to 20 191 characters). So the patterns split as well: the hot part keeps the
+description, «When to use» and every heading with its opening sentence or its bold heads, and the
+whole body moves to the pattern's own cold part (`task-flow-close` in two files). The check of the
+states reads the headings of the leading patterns, and they all stay hot. The steps 5.4 and 5.6
+read `git-workflow*` and `ui-component-tests*` the same way, so their patterns split by the same
+technique. The suites of the kind of rules and patterns learned along the way that a section may
+stand in the cold part, that a pattern owns a cold part, and that `.2` continues the first one:
+the stage 4 rules had already moved their sections there, and those suites were red since.
 - **git-workflow** — branches, the epic, the chain and history: statements 1–14, 51, 52, 59, 78,
   79. Demanded as now by branch and commit commands; the first part is a variant per host as now.
 - **git-workflow-queue** — the task key, the board and one's own PRs as a queue: statements 17–23,
