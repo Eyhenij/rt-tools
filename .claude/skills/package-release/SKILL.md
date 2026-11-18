@@ -46,6 +46,9 @@ The table in `implementation.md` next to it.
   command, which ends in `nx verify` and is run by the publication workflow itself, so it holds
   however the workflow is started. The guard of the start refuses a broken wiring earlier, by the
   command line of the agent, and saves the minutes of a run that would fail.
+- **The build with the loading check comes before the step that moves the version.** A check that
+  fails after the version commit and the tag leaves a taken number and no package in the registry.
+  The wiring check holds this order in the workflows that move the version.
 - **"Built" and "tested" are not "consumable".** A statement that a package is ready names the
   command that loaded it as a consumer would, and its output.
 
@@ -57,10 +60,11 @@ differently (a bundler with its own rules, another runtime) is the consumer's to
 first consumer's report is the only trace of that.
 
 The packages built with a framework (`core`, `store`, `ui-kit-v2`, the Angular auth and CMS
-packages) are not judged at all: the wiring check takes the projects that build twice with `tsc`.
+packages) and the packages that are not built by two `tsc` runs (`agent-kit`, `auth-import`) are not judged at all: the wiring check takes the projects that build twice with `tsc`.
 A package that depends on a neighbour of this workspace is loaded only from the installed tarball,
 which takes the neighbour from the registry, so a neighbour not yet published fails that step. The
-tarball step runs in a release and by hand, and is skipped in the pull request and push runs of the pipeline. A start of
+tarball step runs in a release and by hand, and in a pull request or a push of the pipeline only for
+a package that depends on such a neighbour; the others are loaded from the built folder there. A start of
 a publication workflow from the browser, by `gh api`, by the workflow's title or through a
 variable passes the guard of the start; the root build command is what stops it there.
 

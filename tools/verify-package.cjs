@@ -19,7 +19,7 @@ const path = require('path');
 const folder = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : 'utils';
 // The tarball step reads the registry and costs minutes: it runs where a release is made and by hand,
 // and a pull request or a push of the pipeline skips it.
-const withConsumer = !process.argv.includes('--no-consumer') && !['pull_request', 'push'].includes(process.env.GITHUB_EVENT_NAME);
+const inPipelineRun = ['pull_request', 'push'].includes(process.env.GITHUB_EVENT_NAME);
 const distDir = path.resolve(__dirname, '../dist', folder);
 const failures = [];
 
@@ -43,6 +43,18 @@ for (const format of ['esm', 'cjs']) {
 }
 
 const manifest = JSON.parse(fs.readFileSync(path.join(distDir, 'package.json'), 'utf8'));
+const dependsOnWorkspace = Object.keys(manifest.dependencies ?? {}).some((name) => name.startsWith('@rt-tools/'));
+// A package that needs a neighbour of the workspace is loaded only through the tarball, so it keeps
+// that step in a pipeline run too; the others are loaded from the built folder and skip it there.
+const withConsumer = !process.argv.includes('--no-consumer') && (!inPipelineRun || dependsOnWorkspace);
+
+// Comments are cut before the imports are read: a line of prose saying «imported from 'x'» is no import.
+function code(file) {
+    return fs
+        .readFileSync(file, 'utf8')
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/^\s*\/\/.*$/gm, '');
+}
 const jsFiles = walk(distDir).filter((file) => file.endsWith('.js') || file.endsWith('.mjs') || file.endsWith('.cjs'));
 
 // 1. No partial compilation. ng-packagr emitted 51 of these; a Node build never links them.
@@ -67,7 +79,7 @@ const undeclared = new Map();
 
 // The declaration files go with the code: a type imported from a package nobody declared is not found by the consumer either.
 for (const file of [...jsFiles, ...walk(distDir).filter((name) => name.endsWith('.d.ts'))]) {
-    for (const [, specifier] of fs.readFileSync(file, 'utf8').matchAll(BARE_IMPORT)) {
+    for (const [, specifier] of code(file).matchAll(BARE_IMPORT)) {
         if (specifier.startsWith('node:')) {
             continue;
         }
@@ -92,7 +104,7 @@ const RELATIVE_IMPORT = /(?:from\s+|import\s*\(?\s*)['"](\.{1,2}\/[^'"]*)['"]/g;
 function relativeSpecifiers(file) {
     const faults = [];
 
-    for (const [, specifier] of fs.readFileSync(file, 'utf8').matchAll(RELATIVE_IMPORT)) {
+    for (const [, specifier] of code(file).matchAll(RELATIVE_IMPORT)) {
         const target = path.resolve(path.dirname(file), specifier);
 
         if (!fs.existsSync(target) || !fs.statSync(target).isFile()) {
@@ -132,8 +144,6 @@ function loads(label, expression, cwd) {
         failures.push(`${label} entry failed to load: ${error.stderr || error.message}`);
     }
 }
-
-const dependsOnWorkspace = Object.keys(manifest.dependencies ?? {}).some((name) => name.startsWith('@rt-tools/'));
 
 if (!dependsOnWorkspace) {
     loads('CommonJS', `require(${JSON.stringify(path.join(distDir, 'cjs', 'index.js'))})`);

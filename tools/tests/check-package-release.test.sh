@@ -85,6 +85,14 @@ DIR="$(tree true "'nx build @x/pkg --verbose && nx verify @x/pkg --output-style=
 report "flags after the steps are accepted" \
     "$(run "console.log(m.packageFaults('pkg', '$DIR').length)")" 0
 
+DIR="$(tree true "'nx build @x/pkg && nx verify @x/pkg'" "'name: Update version\n          uses: EndBug/add-and-commit@v11\n          message: \"chore(rt:utils): версия\"\n          run: pnpm run build:pkg'")"
+report "a build after the step that moves the version is refused" \
+    "$(run "console.log(m.packageFaults('pkg', '$DIR').length)")" 1
+
+DIR="$(tree true "'nx build @x/pkg && nx verify @x/pkg'" "'run: pnpm run build:pkg\n          name: Update version\n          uses: EndBug/add-and-commit@v11\n          message: \"chore(rt:utils): версия\"'")"
+report "a build before the step that moves the version passes" \
+    "$(run "console.log(m.packageFaults('pkg', '$DIR').length)")" 0
+
 report "a package with a framework is passed when named leniently" \
     "$(cd "$TOOLS/.." && node tools/check-package-release.mjs --package core --lenient >/dev/null 2>&1; echo $?)" 0
 

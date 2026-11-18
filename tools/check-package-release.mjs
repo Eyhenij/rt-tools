@@ -47,9 +47,14 @@ export function discoverPackages(root = ROOT) {
                 return false;
             }
 
-            const targets = JSON.parse(readFileSync(file, 'utf8')).targets ?? {};
+            try {
+                const targets = JSON.parse(readFileSync(file, 'utf8')).targets ?? {};
 
-            return 'build:esm' in targets && 'build:cjs' in targets;
+                return 'build:esm' in targets && 'build:cjs' in targets;
+            } catch {
+                // A project file that does not parse is another check's business, not this one's.
+                return false;
+            }
         });
 }
 
@@ -115,8 +120,8 @@ export function packageFaults(folder, root = ROOT) {
     const script = rootPackage.scripts?.[`build:${folder}`] ?? '';
     const name = manifest.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const steps = script.split('&&').map((step) => step.trim());
-    const buildAt = steps.findIndex((step) => new RegExp(`^nx build ${name}(\\s|$)`).test(step));
-    const verifyAt = steps.findIndex((step) => new RegExp(`^nx verify ${name}(\\s|$)`).test(step));
+    const buildAt = steps.findIndex((step) => new RegExp(`^(?:pnpm exec )?nx build(?:\\s+--\\S+)*\\s+${name}(\\s|$)`).test(step));
+    const verifyAt = steps.findIndex((step) => new RegExp(`^(?:pnpm exec )?nx verify(?:\\s+--\\S+)*\\s+${name}(\\s|$)`).test(step));
 
     // A step after «||» or «;» may never run, so only a chain of «&&» counts.
     if (/\|\||;/.test(script) || buildAt < 0 || verifyAt < buildAt) {
@@ -138,7 +143,10 @@ export function packageFaults(folder, root = ROOT) {
         .filter((line) => !line.trim().startsWith('#'))
         .join('\n');
 
-    if (!new RegExp(`pnpm run build:${folder}(\\s|$)`, 'm').test(live)) {
+    const buildLine = live.split('\n').findIndex((line) => new RegExp(`pnpm run build:${folder}(\\s|$)`).test(line));
+    const versionLine = live.split('\n').findIndex((line) => /Update version|update-version-/.test(line));
+
+    if (buildLine < 0) {
         faults.push(`.github/workflows/publish-${folder}.yml does not build through «pnpm run build:${folder}», which runs the verify step`);
     }
 
@@ -148,6 +156,10 @@ export function packageFaults(folder, root = ROOT) {
         rules = require(join(root, 'commitlint.config.cjs')).rules ?? {};
     } catch (error) {
         faults.push(`commitlint.config.cjs cannot be read: ${error.message}`);
+    }
+
+    if (buildLine >= 0 && versionLine >= 0 && buildLine > versionLine) {
+        faults.push(`.github/workflows/publish-${folder}.yml: the build with the loading check comes after the step that moves the version, so a failed check leaves a version commit and a tag with no package`);
     }
 
     const headers = workflowHeaders(live);
