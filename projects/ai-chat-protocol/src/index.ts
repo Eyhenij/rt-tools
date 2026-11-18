@@ -6,3 +6,5 @@ export * from './lib/ai-chat-event.model.js';
 export * from './lib/ai-chat-errors.js';
 export * from './lib/ai-chat-reader.js';
 export * from './lib/ai-chat-reducer.js';
+export * from './lib/ai-chat-tool-registry.js';
+export * from './lib/ai-chat-run-controller.js';

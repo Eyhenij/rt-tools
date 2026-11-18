@@ -41,6 +41,23 @@ parsed AG-UI record to an event and returns `null` for a broken or unknown one.
 
 The request carries the new messages, the tools and the context.
 
+## Run controller
+
+`createAiChatRunController({ port, createId, registry?, contextProviders?, onState? })` runs the
+dialogue over `IAiChatRunPort`:
+
+- `send(threadId, content)` adds the user message and runs. A request that gets no event is sent
+  again (`maxAttempts`, `retryDelayMs`); once an event has arrived the request is never sent again.
+- `stop()` cuts the stream of the going run and calls `IAiChatRunPort.stop`.
+- When a run ends with `awaitingFrontendTools`, the controller runs the pending calls through the
+  registry and starts the next run with their answers, up to `maxToolRounds` times. Without a
+  registry the run ends as it is.
+
+`createAiChatToolRegistry()` keeps the browser tools by name: `register(tool)` returns a function
+that removes the tool, `definitions()` goes into the request. A failing or unknown tool gives an
+error answer instead of a throw. A context provider is a function that returns the facts the
+application knows now; it is read before every run.
+
 ## Errors
 
 `toRunErrorKind(code)` classifies the code of a `RUN_ERROR`. `toHttpErrorKind(status, code)`
