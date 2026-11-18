@@ -8,6 +8,12 @@ paths are given from the root of the tree.
 - **The palette is doubled by an attribute of the markup.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.html:data-severity`
 - **The rounding is a step of the kit's one rounding input, and the pill is fully rounded by default.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:RtRadiusDirective`. The default stands at `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:--rt-tag-radius`
 - **The outlined appearance is declared below every palette.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:appearance--outlined`
+- **The dot is the third value of the appearance input, not an input of its own.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.model.ts:Appearance`. The template reads it through `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:isDot`
+- **The label of a dot is still required, and it moves into the hint and the accessible name.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.html:aria-label`. The hint and the focus stand next to it, at `rtTooltip` and `tabindex` of the same root
+- **The colour of the dot is the state colour of the palette; secondary and neutral take the muted text colour.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:rt-tag-severity-dot`
+- **The size of the dot follows the size step: sm 6, md 8, lg 10 pixels.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:rt-tag-dot-size`
+- **The dot is always a circle, whatever the rounding input says.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:rt-tag-dot-radius`
+- **The dot draws neither the icons nor the cross.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.html:isDot`. The icons, the label and the cross stand inside the condition on it
 - **An icon stands on either side of the label, and both sides live together.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:iconEnd`. Next to it stands `icon`, and the markup draws them on their own sides
 - **The cross does not close the tag: it reports a press.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:closed`
 - **A press on the cross does not travel up.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:onClose`

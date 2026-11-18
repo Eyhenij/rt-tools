@@ -58,6 +58,15 @@ export const Presets: TStory = {
 
 export const Themes: TStory = { args: { part: 'themes' } };
 
+/** Кнопка без подписи — квадрат со стороной высоты: палитра × размер у каждого вида. */
+export const IconOnly: TStory = { args: { part: 'icon-only' } };
+
+/** Кнопка без подписи во всех состояниях; наведение, нажатие и фокус — аддоном псевдосостояний. */
+export const IconOnlyStates: TStory = {
+    args: { part: 'icon-only-states' },
+    parameters: { pseudo: STORY_PSEUDO_PARAMETERS },
+};
+
 /**
  * Фокус из кода: кнопка слева переводит его на соседнюю, как окно, открытое кликом. Кольцо
  * рисуется только при фокусе с клавиатуры — нажмите «Открыть окно» мышью, затем Tab и Enter.
