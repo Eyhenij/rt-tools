@@ -5,6 +5,16 @@ progress of the task; below is the reply of `goal-critic` verbatim, round by rou
 
 ## Round 1 — the hot part of 2 977 bytes
 
+**Cases.**
+
+Case 1. In a product agreement `docs/specs/agent-kit/proposed/rule-gate-delivery/scenarios.md` the scenario SC-AK-1669 promised `permissionDecision: allow`; the code now deliberately gives no permission decision. The test title in `skill-gate.test.sh` is «SC-AK-1669 — ответ доставки не отказывает». What do you do with the scenario, its number and the test title? Also: a neighbouring scenario SC-AK-1224 in another subdomain is now superseded by a new scenario — what happens to its number and its test?
+
+Case 2. You add to the layout subdomain spec a new statement «A cold part that outgrew the size limit goes on in a second file next to the first.» plus two scenarios. What must accompany the statement, how do you pick the scenario numbers, and what must the binding line point at (the function is called only from tests so far vs. from the layout code)?
+
+Case 3. You shorten a rule's statement by meaning (e.g. «A divergence between a rule and its companion is resolved in favour of the rule.» → «Where a rule and its companion diverge, the rule wins.»). The rule's companion holds a binding line keyed by the old statement text. Separately, the rule body grows and you want to move incident history out of it. What do you do with the companion line, and where does the incident history go — and can a requirement live only there?
+
+**The critic.**
+
 **Итог: цель выполнена частично, смысл потерян.** Сокращённая горячая часть `spec-driven` даёт иные решения, чем прежний текст, в случаях 1 и 2. Случай 3 совпал.
 
 | Слова владельца | Что показывает результат | Выполнено |
@@ -53,6 +63,16 @@ Verdict (round 1): diverged
 
 ## Round 2 — the hot part of 2 999 bytes
 
+**Cases.**
+
+Case 1. In a product agreement `docs/specs/agent-kit/proposed/rule-gate-delivery/scenarios.md` the scenario SC-AK-1669 promised `permissionDecision: allow`; the code now deliberately gives no permission decision. The test title in `skill-gate.test.sh` is «SC-AK-1669 — ответ доставки не отказывает». What do you do with the scenario, its number and the test title? Also: a neighbouring scenario SC-AK-1224 in another subdomain is now superseded by a new scenario — what happens to its number and its test?
+
+Case 2. You add to the layout subdomain spec a new statement «A cold part that outgrew the size limit goes on in a second file next to the first.» plus two scenarios. What must accompany the statement, how do you pick the scenario numbers, and what must the binding line point at (consider both: the function is called only from tests so far, and the function is exported by the published package)? What if the statement had no place in code at all?
+
+Case 3. You shorten a rule's statement by meaning («A divergence between a rule and its companion is resolved in favour of the rule.» → «Where a rule and its companion diverge, the rule wins.»). The rule's companion holds a binding line keyed by the old statement text. Separately, the rule body grows and you want to move incident history out of it. What do you do with the companion line, and where does the incident history go — and can a requirement live only there?
+
+**The critic.**
+
 Цель выполнена частично. По трём случаям решения читателя новой горячей части совпадают с решениями по прежнему тексту, расхождений нет. Но смысл потерян в местах, которые эти случаи не проверяют: ниже два таких места, и одно из них нарушает собственную статью правила.
 
 | Слова владельца | Что показывает результат | Выполнено |
@@ -95,6 +115,16 @@ Verdict (round 1): diverged
 Verdict (round 2): matched on the three cases, with three losses outside them; they came back at their articles, and round 3 tests them
 
 ## Round 3 — the hot part of 3 000 bytes
+
+**Cases.**
+
+Case 1. While working on your own task you read the companion `implementation.md` of a neighbouring rule (not the one you edit). Its line says a scenario number may be reused after the scenario is deleted, while the rule itself says numbers are never reused. Your edit needs a new scenario. Which number do you take, whom do you tell about the divergence, and do you fix anything?
+
+Case 2. A rule's hot part is at 2 990 bytes against a 3 000-byte limit, and you must add a new article to it. What do you do before writing, how do you make room, and what may and may not go to the cold part? How do you know the compressed text still means the same?
+
+Case 3. You write a new rule description of 340 characters that retells the rule's articles. A reviewer says it must be shorter. What does the description answer, what is the limit, and what if you decide to keep it longer?
+
+**The critic.**
 
 Цель достигнута в пределах трёх случаев этого раунда. Ни один случай не разошёлся с решением читателя прежнего текста. Три потери второго раунда вернулись в статьи, и читатель их применил.
 

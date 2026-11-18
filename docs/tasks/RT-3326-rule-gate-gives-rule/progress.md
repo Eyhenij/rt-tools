@@ -145,11 +145,16 @@ The first retelling diverged on one case of four: the list of layer words a text
 replaces, and the value a command about a machine is compared with, had left the hot part. Both
 came back, and so did what the critic named untested: drafts are spared only when gitignored, a
 spec splits and the limit stays, a new word joins the glossary in the same change, a number is
-recomputed and a check is run, not retold. Two more statements were shortened, to 2 999. Each pair
+recomputed and a check is run, not retold. Two more statements were shortened, to 2 999. Before the
+second critic, the second reader showed one more gap the former text closed — a rule at the
+ceiling takes a new article only by folding an argument or by a split — and it came back too, to
+2 996. The second critic diverged on two cases: the hot part no longer named its companion, where
+the glossary's address and the empty list of indexed directories stand, and a new word lost its
+other option, a plain word. Both came back, with a titled link allowed beside an index entry; 2 998. Each pair
 below reads from the former text to the final one.
 
-- «A bare name and a directory are judged the same as a full path.» → «A bare name or directory is judged as a full path.»
-- «The description of the past is excluded from the path check entirely.» → «The archive and the task folder are outside the path check.»
+- «A bare name and a directory are judged the same as a full path.» → «A bare name or directory counts as a full path.»
+- «The description of the past is excluded from the path check entirely.» → «The archive and task folder are outside the path check.»
 - «Portable text is excluded from the address check, like the archive.» → «Portable text is outside the address check too.»
 - «A directory index is checked against its contents from both sides.» → «A directory index and its contents match both ways.»
 - «An index is kept for a directory people read through it, not by walking it.» → «An index is kept only for a directory read through it.»
@@ -174,7 +179,14 @@ browser-verification was 21 407 bytes laid out and had no cold part; it is 2 996
 its pitfalls and every article whole went to its first cold part, `pitfalls/browser-verification.md`;
 the tree's section went whole to the override of that cold part, and the hot part keeps two short
 statements of it under «This tree». Twenty-one statements were shortened by meaning, and the first
-column of the companion was edited by the same change.
+column of the companion was edited by the same change. The first retelling diverged in three cases
+of four: a stand from another branch is left alone and a new one goes on a free port, the stand
+shown is a production build, the screens of a frame come from the frame and their suite runs before
+the push, every remade screen is shown to the owner, and the markup goes into the open screen under
+its scope. All five came back; two soft tails left and five statements were shortened, to 2 995.
+The second retelling matched; of the three soft losses its critic named, an instance built from
+this branch is used and the measure set is taken from the acceptance came back, and the
+substituted sign-in answer stays in the cold part; 3 000.
 
 - «A second instance of an application that is already up is not raised.» → «A running application is not raised a second time.»
 - «A browser raised by a library from inside a script is the same as launching the binary.» → «A browser a script raises counts as launching the binary.»
@@ -183,20 +195,21 @@ column of the companion was edited by the same change.
 - «The profile is not picked from the list and not asked from the owner.» → «A profile is neither picked from the list nor asked of the owner.»
 - «An unconfigured guard is a reason to stop, not a permission to go on.» → «An unconfigured guard is a stop, not a permission.»
 - «A screen behind sign-in is checked on a stand, not with a live account.» → «A screen behind sign-in is checked on a stand, not a live account.»
-- «A move of people into a sign-in system is checked by signing in as a moved person.» → «A move into a sign-in system is checked by signing in as a moved person.»
+- «A move of people into a sign-in system is checked by signing in as a moved person.» → «A move into sign-in is checked by signing in as a moved person.»
 - «Changing the number of elements in a container is a layout edit.» → «A container's element count change is a layout edit.»
 - «A measurement is taken on the longest value, not on the sample one.» → «A measurement takes the longest value, not the sample.»
 - «The longest value is set for every node that shares the line, not only for the edited one.» → «The longest value is set for every node sharing the line.»
-- «A ready-made kit piece taken for values of another size is measured, not looked at.» → «A kit piece reused for values of another size is measured, not looked at.»
+- «A ready-made kit piece taken for values of another size is measured, not looked at.» → «A kit piece reused for other-sized values is measured, not looked at.»
 - «The stand proxy supplies what the application recognises the request's tenant by.» → «The stand proxy supplies the request's tenant sign.»
 - «What is shown to a person is built from the work under discussion.» → «What a person is shown is built from the work's branch.»
 - «An edit of a shared frame is checked on every screen under it.» → «A shared frame's edit is checked on every screen under it.»
-- «The work branch keeps the tip of its base merged in the whole time, not only before delivery.» → «The work branch keeps its base tip merged in all the time.»
+- «The work branch keeps the tip of its base merged in the whole time, not only before delivery.» → «The work branch always has its base tip merged in.»
 - «The first visit to a public screen is marked with the service-visit sign.» → «A public screen's first visit carries the service-visit sign.»
-- «A screen whose data never exists in the development database is measured with the component's real styles.» → «A screen whose data the dev database lacks is measured with the component's real styles.»
+- «A screen whose data never exists in the development database is measured with the component's real styles.» → «A screen with no dev data is measured with the component's real styles.»
 - «A measurement that will have to be repeated is taken by an end-to-end test, not by the driver.» → «A measurement to repeat is an end-to-end test, not the driver.»
 - «A measurement is taken before the work is shown to the owner, not after their remark.» → «Measure before showing the owner, not after their remark.»
-- «Work that carries a look over from a sample is accepted by a frame of one's own screen next to the sample's frame.» → «Work carrying a sample's look is accepted by its own screen's frame beside the sample's.»
+- «Work that carries a look over from a sample is accepted by a frame of one's own screen next to the sample's frame.» → «A sample's look carried over is accepted by own frame beside the sample's.»
+- «The production configuration is checked only behind the real proxy.» → «Production configuration is checked only behind the real proxy.»
 
 ## Decisions along the way
 

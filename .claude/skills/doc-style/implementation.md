@@ -37,8 +37,8 @@ divergence: the rule promises what the tree does not have, or the tree holds wha
 silent about.
 
 - **A path named in a document exists.** — `tools/check-doc-paths.mjs:checkDoc`, the run — `npm run check:docs`
-- **A bare name or directory is judged as a full path.** — `tools/check-doc-paths.mjs:existsInTree`; the tree is taken from git — `tools/check-doc-paths.mjs:treeOfRepo`
-- **The archive and the task folder are outside the path check.** — `tools/check-doc-paths.mjs:isSkipped` — `docs/archive/` and the task folders under `docs/tasks/`
+- **A bare name or directory counts as a full path.** — `tools/check-doc-paths.mjs:existsInTree`; the tree is taken from git — `tools/check-doc-paths.mjs:treeOfRepo`
+- **The archive and task folder are outside the path check.** — `tools/check-doc-paths.mjs:isSkipped` — `docs/archive/` and the task folders under `docs/tasks/`
 - **Portable text is outside the address check too.** — `tools/check-doc-paths.mjs:isPortable`; the sources — `portableDirs` in `.claude/rt-kit/checks.json`, here that is `projects/agent-kit/assets`
 - **An index is kept only for a directory read through it.** — `.claude/rt-kit/checks.json:indexedDirs` — here the list is empty and overrides the package default: the description of the past has no index, and records are found by their file name.
 - **A directory index and its contents match both ways.** — `tools/check-doc-paths.mjs:checkIndex`; which directories are audited — `indexedDirs` in `.claude/rt-kit/checks.json`. Here the list is empty, so the audit runs on no directory: the article is carried out by the code and has nothing to judge in this tree.
@@ -57,7 +57,7 @@ silent about.
 - **The working glossary is not the screen language.** — **Not checked by anything.** The labels of the kit lie in its translation files, and no check searches them for the words of the glossary's left column.
 - **Machine state is written as a command and the answer to compare.** — **Not checked by anything.** The audits read the tree, while it is the machine that aged: a statement about it is written together with the way to ask it.
 - **A diagram changes with the text it depicts.** — **Not checked by anything.** The diagram is typed in words inside that same file, and its divergence from the prose can be told only by reading both.
-- **A number in a text is recomputed by command in the same change; a check is run, not retold.** — **Not checked by anything.** No check tells a fresh number from a stale one or a run check from a retold one: the author holds both.
+- **A text's number is recomputed by command in that change; a check is run, not retold.** — **Not checked by anything.** No check tells a fresh number from a stale one or a run check from a retold one: the author holds both.
 
 ## Texts for a person — what holds them
 

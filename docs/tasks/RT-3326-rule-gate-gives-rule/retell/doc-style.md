@@ -1,9 +1,21 @@
 # doc-style — the retelling
 
-The cases are kept in the progress of the task; below is the reply of `goal-critic`
-verbatim, round by round.
+Under each round stand its cases, given to a reader who saw only the hot part, and then the
+reply of `goal-critic` verbatim.
 
 ## Round 1 — the hot part of 2 994 bytes
+
+**Cases.**
+
+Case 1. You move a document `docs/plans/old-plan.md` into the archive. A live README links to it by path, and a personal draft covered by `.gitignore` also links to a file that no longer exists. Separately, a spec has grown to 340 lines against the prose limit of 330. What do you do with the moved file, the README link, the draft link and the spec?
+
+Case 2. The tree wants to add one article of its own to the laid-out doc-style rule, and also to change one word of the glossary `docs/GLOSSARY.md`, which carries a layout header. Where does each edit go, under which heading, and what happens if the tree puts its article under the package heading «How the law applies here»? Should you edit the files with `sed`?
+
+Case 3. Right after editing a spec you write the PR description and a new task in the queue for the owner. A sentence you drafted: «Работа передана, красное пролезло в прогон, договорённость слита». In which language and words do you write, and what does the task have to show? Also: you want to write in a trap of a rule «Node 20 is installed on this machine». How do you write that?
+
+Case 4. An archive record is past its expiry while you push an unrelated branch, and a live rule text links to that record by its address. What do you do with the record and with the link, and how does the PR body treat the removal?
+
+**The critic.**
 
 Цель выполнена частично. Две статьи потеряли смысл, и это изменило решения читателя в случае 3: в ответе для владельца он оставил слова слоя правил, а в ловушке написал команду без значения, с которым сверять её ответ. Случаи 1, 2 и 4 по действиям совпали с прежним текстом.
 
@@ -66,3 +78,58 @@ verbatim, round by round.
 Если «живой текст правила» в случае 4 — разложенный файл, ссылка в нём вне проверки адресов (ds-former.md:76), а правится он надстройкой, а не на месте. Оба текста оставляют это одинаково открытым. Проверить: прогнать случай 4 с явно разложенным правилом.
 
 Verdict (round 1): diverged
+
+## Round 2 — the hot part of 2 996 bytes
+
+**Cases.**
+
+Case 1. Right after editing a spec you write a task in the queue and a PR description for the owner. Your draft: «Проверка в прогоне упала, договорённость слита в спеку, набор зелёный». Rewrite it and say what the task has to show. Also: you write in a rule's trap «Node 20 is installed on this machine». How do you write that instead?
+
+Case 2. A spec file has 340 lines against a prose limit of 330. A new untracked file `docs/notes/x.md`, not yet committed and not in `.gitignore`, links to a missing path. In a README you write «the build takes 3.0 s» and «the size check passes». Also you introduce a new word «cargo-gate» in a rule. What do you do with each?
+
+Case 3. A tree's rule is near its length ceiling and you need to add a new article. What may you do, and what not?
+
+Case 4. A README names the path `docs/plans/old.md`, which was moved to the archive last week; a table row of a directory index names its entry only by a link with a title. What do you do with each?
+
+**The critic.**
+
+**Вердикт: цель выполнена частично.** Случаи 1 и 3 совпадают с решениями читателя прежнего текста. В случаях 2 и 4 есть по одному расхождению. Оба идут от одного выпавшего указания: горячая часть больше не называет `implementation.md`.
+
+| Слова владельца / случай | Что показывает результат | Выполнено |
+|---|---|---|
+| «ужимай горячую часть правил до 3000 знаков» | `wc -c .claude/skills/doc-style/SKILL.md` → 2993 | да |
+| «смысл при этом не теряется», случай 1 (текст владельцу, строка ловушки о машине) | Слова продукта; что сломалось у человека; без страдательного залога и метафор; описание PR на русском. Ловушка записана как «команда и ответ для сравнения». Всё как в прежнем тексте, стр. 172–176 и 219–243 | да |
+| то же, случай 2: спека 340 строк, `x.md`, 3.0 s, «check passes» | Спека делится, предел остаётся. Файл без игнора проверяется. Число пересчитывается командой. Проверка запускается, а не пересказывается. Совпадает | да |
+| то же, случай 2: новое слово «cargo-gate» | Читатель ответил «правлю там, где словарь собирается», но адреса не знает и сам назвал это пробелом. В прежнем тексте пробела нет: стр. 153–155 «The companion of the rule names the override address», стр. 29 «In this tree — the table in `implementation.md` next to it». Там же стр. 43: «Added to the glossary by the same change, or replaced with a plain word», и вариант «простое слово» читатель потерял | нет |
+| то же, случай 3: правило у потолка | Свернуть довод или разделить правило, предел не поднимать, знаки считаются наравне со строками. Совпадает. Потеряны «only» и «next to it», стр. 137–138 | да |
+| то же, случай 4: `docs/plans/old.md` | Решение названо словами, адреса архива нет. Совпадает со стр. 197 | да |
+| то же, случай 4: строка оглавления | Читатель заменил ссылку с заголовком на имя в обратных кавычках. Ссылку он убрал и назвал пробелом, можно ли её оставить. Прежний текст, стр. 100–101: «A link with a title is legitimate and goes in the same row next to the name». Действие другое. Хвост «A titled link may join it» добавлен уже после ответа читателя, и повторно его никто не проверил. Не хватает и того, что в этом дереве `indexedDirs` пуст и проверка оглавлений не судит ни одной папки (прежний текст, стр. 298–300; `implementation.md:44`) | нет |
+
+**Что сужено или выпало.** В горячей части по-прежнему нет следующего:
+- Ссылки на `implementation.md`. Прежний текст, стр. 29: «In this tree — the table in `implementation.md` next to it». Без неё читатель не знает ни адреса словаря, ни что `indexedDirs` пуст.
+- `.git/info/exclude` как равного `.gitignore` (стр. 61). В горячей части осталось только «Gitignored drafts».
+- «or not written at all» для числа (стр. 50) и «or replaced with a plain word» для нового слова (стр. 43).
+- «split into subdomains» (стр. 132) и «The numbers stand in the checks settings, not in the text» (стр. 137).
+- «change size» в списке слов слоя (стр. 221).
+- Весь раздел «What of the law is not here» (стр. 246–280). Код и комментарии шлюз не требует, ответ владельцу и тело коммита не читает ни одна проверка, выброшенное слово в заголовках PR держит автор.
+- «A name with a slash that is no address goes without backticks» (стр. 23).
+
+Добавленного сверх просьбы владельца нет.
+
+**Кратчайшие шаги:**
+1. В строке о холодной части горячей части назвать `implementation.md`. Например: «Here: `implementation.md`; cold: `pitfalls.md`, `pitfalls-2.md`.» Это несколько байт, в 3000 оно влезает.
+2. К статье о словаре добавить хвост «or a plain word replaces it».
+3. Заново прогнать читателя на случаях 2 (словарь) и 4 (строка оглавления) по текущей горячей части. Хвост о ссылке с заголовком пока не проверен.
+
+**Источники:**
+- `/Users/eyhenij/WebstormProjects/rt-tools/.claude/skills/doc-style/SKILL.md` (2993 байта)
+- `/private/tmp/claude-501/-Users-eyhenij-WebstormProjects-rt-tools/05592134-9b75-47c1-bc3e-50d988cba4dd/scratchpad/ds-former.md`, стр. 23, 29, 43, 50, 59–62, 97–101, 129–141, 151–157, 219–243, 246–280, 296–301
+- `/private/tmp/claude-501/-Users-eyhenij-WebstormProjects-rt-tools/05592134-9b75-47c1-bc3e-50d988cba4dd/scratchpad/ds-decisions2.md`
+- `/Users/eyhenij/WebstormProjects/rt-tools/.claude/skills/doc-style/implementation.md:43-44,55`: `indexedDirs` пуст, адрес словаря `.claude/rt-kit/overrides/docs/GLOSSARY.md`
+- `/Users/eyhenij/WebstormProjects/rt-tools/.claude/skills/doc-style/pitfalls-2.md`: выпавшие доводы лежат здесь целиком, стр. 41, 59, 99, 130, 135, 153, 292
+
+**Гипотезы для проверки:**
+- Читатель, которому назвали `implementation.md`, найдёт адрес словаря и пустой `indexedDirs`. Проверяется повторным прогоном читателя на случаях 2 и 4.
+- «Gitignored» читатель может понять и как `.git/info/exclude`. Проверяется вопросом читателю про файл из `.git/info/exclude`.
+
+Verdict (round 2): diverged
