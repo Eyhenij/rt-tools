@@ -16,7 +16,17 @@ The owner's words on the drawing tool, from RT-2750: «нам нужна лёг�
 
 ## What the tree already has
 
-<Filled in from the exploration.>
+First findings, read by hand; the full exploration adds to them.
+
+- The answer blocks of RT-3334 live in the rich editor entry of the kit:
+  `projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/blocks/rt-ai-chat-blocks.logic.ts`
+  holds `blocksToPlainText`, and the answer component reads the blocks. The chart block is
+  registered there.
+- The chat protocol package `projects/ai-chat-protocol` already has a browser tool registry
+  (`ai-chat-tool-registry.ts`): a tool is a definition plus `execute`, arguments come as a JSON
+  string. A chart tool definition with its JSON schema has a natural home next to it.
+- The kit has a `dialog` component — a candidate for "open fullscreen".
+- The last chart scenario of the kit spec is SC-UKV-1340; the block takes the next range.
 
 ## What the rules already say
 
