@@ -19,13 +19,13 @@ Rewritten by every session, not appended to.
 - [x] 2.3 The guard refuses an edit that newly marks a step done in a plan with checks, whatever mark lies on disk
 - [x] 2.4 The texts that tell to mark a step in the progress by hand say that step N.M marks it
 - [x] 3.1 Opening a PR runs step --done over all done steps and refuses on any mismatch, naming the step, expected and got
-- [>] 4.1 plan-red writes the place of the answer and the plan commit, from the record directories of this repository's copies only
-- [ ] 4.2 The guard of the description confirms the answer at its place and the plan commit, and refuses writes into the session records, not into the memory
-- [ ] 4.3 Exit 5 confirms the approval at its place as the guard does
-- [ ] 5.1 The agreement is merged into the flow-script spec, SC-AK-1411 and SC-AK-1414 rewritten with their tests
-- [ ] 5.2 Every live scenario of the agreement stands in a test
-- [ ] 5.3 The package is built and laid out
-- [ ] 5.4 The live probe: a forged mark with a hand done mark is refused, a write into the memory passes, and the measurement of the state stays under 75 seconds
+- [x] 4.1 plan-red writes the place of the answer and the plan commit, from the record directories of this repository's copies only
+- [x] 4.2 The guard of the description confirms the answer at its place and the plan commit, and refuses writes into the session records, not into the memory
+- [x] 4.3 Exit 5 confirms the approval at its place as the guard does
+- [x] 5.1 The agreement is merged into the flow-script spec, SC-AK-1411 and SC-AK-1414 rewritten with their tests
+- [x] 5.2 Every live scenario of the agreement stands in a test
+- [x] 5.3 The package is built and laid out
+- [x] 5.4 The live probe: a forged mark with a hand done mark is refused, a write into the memory passes, and the measurement of the state stays under 75 seconds
 
 ## Decisions along the way
 
