@@ -19,12 +19,14 @@ and every copy would drift from the kit.
 ## Terminology
 
 - **The chart spec** — the arguments of the chart tool call: a kind, the texts, the format and the
-  data, as a JSON string.
+  data, as a JSON string or as the same object already parsed (Q-1).
 - **The chart block** — a block of the type `chart` in an answer; it carries the spec and may say
   that the spec is still coming.
 - **The kind** — what the spec asks to draw: one of ten names listed in the data section.
-- **The invalid spec** — a spec that does not parse as JSON or breaks the schema: an unknown kind,
-  a missing field, a wrong type, a limit crossed.
+- **The invalid spec** — a spec that does not parse as JSON, breaks the schema or breaks a rule the
+  schema cannot express: an unknown kind, a missing field, a wrong type, a limit crossed.
+- **The category kinds** — `line`, `bar`, `grouped_bar`, `stacked_bar`, `pie` and `heatmap`: their
+  `x` is a name, not a number.
 - **The pending spec** — the arguments of the call are still streaming; the block says so itself.
 - **The spec schema** — the JSON schema of the chart spec, exported by the kit so that the
   application gives it to the model without a copy.
@@ -49,31 +51,67 @@ and every copy would drift from the kit.
 
 - **`bar` and `grouped_bar` bars with a negative value go below zero, from the zero line down.**
 
-- **A zero value is a value: it is drawn at zero, stands in the hint and in the copy, and is not taken for a missing point.**
+- **A zero value is a value: in the cartesian kinds, scatter and heatmap it stands at zero and in the hint; in every kind it stands in the copy and is never taken for a missing point.**
 
-- **The block parses the spec from a JSON string and checks it against the spec schema before drawing.**
+- **`x` is a string for the category kinds and a number for `scatter` and `histogram`; any other type makes the spec invalid.**
+
+- **A category is drawn as given and never signed by the format; in `scatter` the format signs only `y`.**
+
+- **The categories are the `x` in their first appearance, series by series; a series that repeats an `x` makes the spec invalid.**
+
+- **A `histogram` is one series whose `x` strictly ascend with equal steps; anything else is invalid.**
+
+- **The block parses a spec given as a JSON string, takes a parsed one as is, and checks both against the spec schema before drawing.**
 
 - **A spec that does not parse or breaks the schema shows the notice «The chart could not be drawn» in place of the chart, and the blocks around it stay in place.**
 
 - **A block marked pending shows the placeholder «Drawing the chart…», never the notice, whatever its spec string holds.**
 
-- **The title, the subtitle and the axis names of the spec stand around the chart; a missing one leaves no empty row.**
+- **A spec with no point, or with all values zero in `pie`, `treemap` or `sunburst`, shows the empty state of `rt-chart` under the title row, and that row shows neither «Download PNG» nor «Open full screen».**
+
+- **Without a title the title row holds only the two buttons at its end; without a subtitle no subtitle line is drawn.**
+
+- **`yLabel` stands above the plot at its left edge, and `xLabel` under the chart, after the legend, at the right edge.**
+
+- **`pie`, `treemap` and `sunburst` ignore both axis names; in `heatmap` `xLabel` names the columns and `yLabel` the rows.**
 
 - **The format of the spec signs every value of the chart the same way: on the value axis, in the hint, in the pie, the heatmap and the tree.**
 
 - **`percent` signs a value with the percent sign, `currency` with the currency of the spec, `number` with the grouping of digits.**
 
+- **`number` keeps up to 2 fraction digits, `percent` up to 1, `currency` the digits of its currency.**
+
+- **A currency code that is not three capital letters accepted by `Intl.NumberFormat` makes the spec invalid.**
+
+- **The formats take the locale of the kit labels: a drawn chart follows a change of that locale, and the copy reads it at the moment of the copy.**
+
+- **The category labels never overlap: the block shows every n-th label so that each fits its width.**
+
 - **The legend stands under the plot and never covers the axis labels, at any number of series and any length of category names.**
 
 - **The colours of the series are the eight series tokens of the chart, in the light and the dark theme.**
 
-- **«Open full screen» in the title row opens the same chart in the kit dialog, and «Close» or Escape returns to the feed.**
+- **Sectors and top-level tree groups take the eight tokens in turn; a ninth item repeats the first.**
 
-- **«Download PNG» saves the chart as a PNG file named by the title of the spec.**
+- **«Open full screen» opens the kit dialog whose chart fills the dialog height, with «Download PNG» there too.**
 
-- **The kit exports the spec schema from the entry, and every spec the schema accepts the block draws.**
+- **«Close» or Escape closes the full-screen dialog, and focus returns to «Open full screen».**
 
-- **The chart block goes into the copy of the answer as text: the title, then the data of every series.**
+- **«Download PNG» saves the chart as a PNG file named by the title of the spec, by the name rule of Q-12.**
+
+- **When the chart is not drawn yet, «Download PNG» is disabled.**
+
+- **The chart's accessible name is the title of the spec; without a title it is the kit label «Chart».**
+
+- **The kit exports the spec schema from the entry.**
+
+- **Every spec the block accepts, the schema accepts. The schema also accepts a spec the block refuses only when it holds more than 200 distinct leaves after equal paths are summed.**
+
+- **The copy is the title, the subtitle, then one line per series `name: x — y; x — y`.**
+
+- **In the copy the trees give one line per leaf, the path joined by « / », then « — » and the value; a histogram writes `x` as the bin `low–high`.**
+
+- **A pending or an invalid block gives nothing to the copy.**
 
 ## What is out of scope
 
@@ -84,9 +122,12 @@ and every copy would drift from the kit.
 - The sign that the arguments of a call are complete. The application sets `pending` while the
   call is open; the chat protocol package does not mark the end of a call today, and that mark is a
   task of the protocol, not of this block.
+- Clearing `pending` when a run stops or fails is the application's; the block shows the
+  placeholder for as long as `pending` is set.
 - The data table under «View data»: the task RT-3336.
 - The table block: the task RT-3337.
-- New drawing in `rt-chart` beyond a title row: the block uses the chart as it is.
+- New drawing in `rt-chart`: the title row, the subtitle and the axis names are the block's, and
+  the chart is used as it is.
 
 ## Contract
 
@@ -104,7 +145,7 @@ None of its own storage. The block comes in through the input `block` of a rende
 ### The chart block
 
 - `type` — `chart`.
-- the spec — the arguments of the tool call as a JSON string, or the same spec already parsed.
+- `spec` — the arguments of the tool call as a JSON string, or the same spec already parsed (Q-1).
 - `pending` — the arguments are still coming; without it the spec is final.
 
 ### The chart spec
@@ -118,8 +159,8 @@ None of its own storage. The block comes in through the input `block` of a rende
 - `hierarchy` — a list of `{ path, value }`, a path is a list of names from the root to the leaf;
   for `treemap` and `sunburst`.
 
-The limits: up to 6 series, up to 60 points in a series, up to 200 leaves, a path up to 4 names.
-What happens to a spec over a limit is the open question Q-2.
+The limits: up to 6 series, up to 60 points in a series, up to 200 distinct leaves after equal
+paths are summed, a path up to 4 names. A spec over a limit is refused whole, by Q-2.
 
 ### The mapping onto `rt-chart`
 
@@ -129,7 +170,7 @@ What happens to a spec over a limit is the open question Q-2.
 | `bar`         | cartesian           | a `bar` series per spec series                                                |
 | `grouped_bar` | cartesian           | `bar` series without a stack, side by side; a negative bar goes below zero    |
 | `stacked_bar` | cartesian           | `bar` series with one shared stack                                            |
-| `histogram`   | cartesian           | one `bar` series with the categories at the bin boundaries                    |
+| `histogram`   | cartesian           | one `bar` series, a category per bin `low–high`, by Q-4                       |
 | `pie`         | pie                 | one item per point: the name is `x`, the value is `y`                         |
 | `heatmap`     | heatmap             | the rows are the series, the columns are the `x`, the cells are the `y`       |
 | `scatter`     | scatter             | the points `[x, y]` of every series on two value axes                         |
@@ -144,10 +185,10 @@ zero.
 | state        | what is drawn                                                          |
 | ------------ | ---------------------------------------------------------------------- |
 | pending      | the placeholder «Drawing the chart…» in the size of the chart          |
-| drawn        | the title row with its buttons, the subtitle, the chart, the axis names |
+| drawn        | the title row with its buttons, the subtitle, `yLabel`, the chart, the legend, `xLabel` |
 | invalid      | the notice «The chart could not be drawn»                              |
-| empty        | the empty state of `rt-chart` under the title row                      |
-| full screen  | the kit dialog with the title, the chart and «Close»                   |
+| empty        | the empty state of `rt-chart` under a title row without buttons        |
+| full screen  | the kit dialog with the title, the chart, «Download PNG» and «Close»   |
 | dark theme   | the same block in the dark palette                                     |
 
 ## Cross-cutting requirements
@@ -156,7 +197,7 @@ zero.
 
 The placeholder, the notice and the button names are kit labels in the `rtKit` namespace, English
 in the package. The texts of the spec come from the model and are drawn as they are. The format of
-numbers follows a locale, see the open questions.
+numbers follows the locale of the kit labels, by Q-10.
 
 ### SEO
 
@@ -184,8 +225,21 @@ Not applicable.
   and an invalid one alike.
 - **The formats are built by the block.** `rt-chart` takes a format as a function, so `number`,
   `percent` and `currency` become functions over `Intl.NumberFormat`.
+- **The block decides that a pie or a tree is empty.** `rtChartIsEmpty` counts a sector or a leaf
+  of zero as a value, so a spec of all zeros in those kinds would draw an empty plot.
 - **A visible edit of the kit goes by the rule `kit-approval`.** The mockup of the block and its
   showcase are approved by the owner before the push.
+
+## Open questions
+
+None. Q-16 and Q-17 below are closed by assumption with the rest.
+
+- Q-16. The schema caps `hierarchy` at 400 entries; the block refuses more than 200 distinct
+  leaves after equal paths are summed, so SC-UKV-1360 can happen.
+- Q-17. A long title stays on one line and is cut with an ellipsis; the full title is its
+  tooltip, and both buttons keep their place.
+- The category labels are thinned through the `labelEvery` input `rt-chart` already has; the block
+  counts it from the width, so the rule needs no new drawing in `rt-chart`.
 
 ## Questions closed by assumption
 
@@ -194,7 +248,8 @@ assumption and go to the owner as a list with the plan. A wrong one costs an edi
 
 - Q-1. The field is `spec`: a JSON string or an already parsed object, checked the same way.
 - Q-2. A spec over a limit is refused whole with the notice; the limits stand in the schema as
-  `maxItems` and the depth check.
+  `maxItems` and the depth check, but for the distinct leaves: the schema cannot sum equal paths,
+  so the block counts them.
 - Q-3. `bar` with several series is valid and drawn side by side, like `grouped_bar`.
 - Q-4. A `histogram` point names the lower bound of its bin in `x`, a number; the last upper bound
   is the last `x` plus the last step. Fewer than two points is an invalid histogram.
@@ -202,17 +257,23 @@ assumption and go to the owner as a list with the plan. A wrong one costs an edi
   any other kind it makes the spec invalid. `pie` with more than one series is invalid.
 - Q-6. `stacked_bar` with a negative value is invalid, by Q-5.
 - Q-7. Equal paths sum their values; a path that ends on a node another path passes through keeps
-  its value on that node, next to the values of its children. The schema cannot compare paths, so
-  no hierarchy the schema accepts is refused for its shape.
+  its value on that node, next to the values of its children. No hierarchy the schema accepts is
+  refused for its shape; the one refusal the schema cannot see is the count of distinct leaves.
 - Q-8. `percent` reads `y` 0.25 as 25 %.
-- Q-9. `currency` without a currency code makes the spec invalid.
-- Q-10. The formats use the language of the kit labels.
+- Q-9. `currency` without a currency code makes the spec invalid, and so does a code that is not
+  three capital letters accepted by `Intl.NumberFormat`. `number` keeps up to 2 fraction digits,
+  `percent` up to 1, `currency` the digits of its currency.
+- Q-10. The formats use the locale of the kit labels; a drawn chart follows its change, and the
+  copy reads it at the moment of the copy.
 - Q-11. The full-screen view shows the title, the subtitle and the axis names; the PNG holds what
   `rt-chart` gives, the plot and the legend.
-- Q-12. Without a title the downloaded file is named «chart.png»; a title keeps letters, digits and dashes, spaces
-  become dashes, and the name is cut to 80 characters.
-- Q-13. The copy gives the title, the subtitle, then one line per series: its name and the pairs
-  `x — y` signed by the format. A pending or an invalid block gives nothing.
+- Q-12. The file is named by the title: Unicode letters and digits are kept, runs of other
+  characters become one dash, edge dashes are dropped, the name is cut to 80 characters. An empty
+  result, a missing title included, is «chart.png».
+- Q-13. The copy gives the title, the subtitle, then one line per series `name: x — y; x — y`
+  signed by the format. The trees give one line per leaf: the path joined by « / », then « — »
+  and the value. A histogram writes `x` as the bin `low–high`. A pending or an invalid block
+  gives nothing.
 - Q-14. Unknown fields are ignored.
 - Q-15. The export follows JSON Schema draft 2020-12.
 

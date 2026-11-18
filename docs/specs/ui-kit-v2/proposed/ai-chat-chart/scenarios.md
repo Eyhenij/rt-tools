@@ -33,7 +33,7 @@ Not covered: the block is not written yet.
 
 Given a `bar` spec with the values 12, 0 and 7
 When the block is drawn and its answer is copied
-Then the second category holds a bar of zero height, the hint over it shows 0, and the copy holds 0 for it
+Then the second category has no bar above the zero line, the hint of its column shows 0, and the copy holds 0 for it
 
 Not covered: the block is not written yet.
 
@@ -89,7 +89,9 @@ Not covered: the block is not written yet.
 
 Given a `line` spec with a title, a subtitle, `xLabel` «Month» and `yLabel` «Revenue»
 When the block is drawn
-Then the title and the subtitle stand above the chart, «Month» at the category axis and «Revenue» at the value axis
+Then the title and the subtitle stand above the chart, «Revenue» above the plot at its left edge, and «Month» under the legend at the right edge
+
+A `pie` spec with the same axis names draws neither of them; a `heatmap` spec draws «Month» over its columns and «Revenue» over its rows.
 
 Not covered: the block is not written yet.
 
@@ -129,7 +131,10 @@ Not covered: the block is not written yet.
 
 Given a drawn chart block
 When the person presses «Open full screen»
-Then the kit dialog opens with the title and the same chart, and Escape closes it back to the feed
+Then the kit dialog opens with the title, «Download PNG» and the same chart filling the dialog height
+And pressing «Close» closes it, and focus stands on «Open full screen» again
+
+Escape closes the dialog the same way.
 
 Not covered: the block is not written yet.
 
@@ -137,7 +142,9 @@ Not covered: the block is not written yet.
 
 Given a drawn chart block with the title «Revenue by month»
 When the person presses «Download PNG»
-Then a PNG file is downloaded, and its name is made from «Revenue by month»
+Then the file «Revenue-by-month.png» is downloaded
+
+A title of only punctuation gives the file «chart.png».
 
 Not covered: the block is not written yet.
 
@@ -154,5 +161,153 @@ Not covered: the block is not written yet.
 Given an answer of a markdown block and a `bar` chart block with the title «Sales» and one series
 When the answer text is copied
 Then the clipboard holds the markdown text, then «Sales» and the points of the series
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1360 — a tree over 200 distinct leaves is refused
+
+Given a `treemap` spec the schema accepts, whose hierarchy holds 201 distinct leaves after equal paths are summed
+When the block is drawn
+Then the notice «The chart could not be drawn» stands, and no `rt-chart` is created
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1361 — a later series adds its new categories at the end
+
+Given a `line` spec whose first series has the `x` «Jan», «Feb», «Mar» and the second «Feb», «Apr»
+When the block is drawn
+Then the categories stand «Jan», «Feb», «Mar», «Apr», and the first series has no value at «Apr»
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1362 — a histogram of one point is invalid
+
+Given a `histogram` spec with one series of a single point
+When the block is drawn
+Then the notice «The chart could not be drawn» stands
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1363 — a spec without values shows the empty state
+
+Given a `bar` spec with the title «Sales» and one series without points
+When the block is drawn
+Then the empty state of `rt-chart` stands under the title row with «Sales», and the row holds neither «Download PNG» nor «Open full screen»
+
+A `pie` spec whose values are all zero is drawn the same way.
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1364 — no title and no subtitle leave no empty line
+
+Given a `bar` spec without a title and without a subtitle
+When the block is drawn
+Then the title row holds only «Download PNG» and «Open full screen» at its end, and no subtitle line stands between the row and the chart
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1365 — the PNG waits for the drawing
+
+Given a valid chart block whose chart is not drawn yet
+When the title row is shown
+Then «Download PNG» is disabled, and it becomes enabled once the chart is drawn
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1366 — the copy of a tree
+
+Given a `treemap` spec with the title «Sales» and the paths «Europe / France» 3 and «Asia / Japan» 4
+When the answer text is copied
+Then the clipboard holds «Sales», then the lines «Europe / France — 3» and «Asia / Japan — 4»
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1367 — a pending block gives nothing to the copy
+
+Given an answer of a markdown block and a chart block with `pending`
+When the answer text is copied
+Then the clipboard holds the markdown text and nothing of the chart
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1368 — the category labels do not overlap
+
+Given a `bar` spec with 60 categories
+When the block is drawn in a narrow feed
+Then the category axis shows every n-th label, and no two labels overlap
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1369 — the colours in the dark theme
+
+Given a `pie` spec with nine points in the dark theme
+When the block is drawn
+Then the sectors take the eight series tokens of the dark palette in turn, and the ninth sector has the colour of the first
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1370 — the formats follow the kit locale
+
+Given a drawn `bar` spec with the format `number` and the value 1250000
+When the kit locale changes from English to German
+Then the hint and the value axis group the digits the German way, and a copy made after the change does too
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1371 — the accessible name of the chart
+
+Given a `line` spec with the title «Revenue by month» and a second one without a title
+When both blocks are drawn
+Then the first chart is named «Revenue by month» for assistive technology, and the second takes the kit label «Chart»
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1372 — the entries do not import each other
+
+Given the built kit
+When the imports of the `rich-editor`, `chart` and `ai-chat-chart` entries are read
+Then `rich-editor` imports no d3, and `chart` imports no editor
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1373 — one provider connects the block
+
+Given an application that registers the provider of `ai-chat-chart` at the root level, next to its other renderers
+When an answer with a chart block is drawn
+Then the block is drawn through `rt-chart`, and no other setup is needed
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1374 — the specs the block refuses
+
+Given a chart block for each of these specs: a series of 61 points, a `pie` with a negative value, a `stacked_bar` with a negative value
+And a `currency` spec without a code, a `currency` spec with the code «eur»
+And a `scatter` spec with a string `x`, a `line` series that repeats an `x`
+When the blocks are drawn
+Then every block shows the notice «The chart could not be drawn»
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1375 — unknown fields are ignored
+
+Given a valid `bar` spec with an extra field `theme`
+When the block is drawn
+Then the chart stands as without the field, and no notice is shown
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1376 — a narrow title row keeps both buttons
+
+Given a `line` spec with a title of 120 characters
+When the block is drawn in a narrow feed
+Then «Download PNG» and «Open full screen» both stay visible in the title row, and the title gives way to them by Q-17
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1377 — the format signs no category
+
+Given a `scatter` spec with the format `percent`, and a `bar` spec with the format `currency` and the categories «2024», «2025»
+When the blocks are drawn
+Then the scatter puts the percent sign on `y` only, and the bar categories stand «2024», «2025» without a currency sign
 
 Not covered: the block is not written yet.
