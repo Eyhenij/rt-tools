@@ -9,7 +9,8 @@
   tool `Read` is a load, a subagent has a record of its own;  grill closed by assumption; agreement `docs/specs/agent-kit/proposed/rule-gate-delivery/`,
   SC-AK-1669…1680, its open questions closed by decisions; the card is in work.
   spec-driven is cut to 2 997 bytes with a second cold part, and its third retelling matched.
-- **Next step:** step 4.4 — doc-style cut to 3 000 bytes, the tree's override sections included.
+  doc-style is cut to 2 994 bytes, its tree sections included.
+- **Next step:** step 4.5 — the retelling of doc-style.
 - **Plan approved:** «Одобряю plan.md RT-3326». After the word, the checks of stages 4–6 were
   tightened by `goal-critic` before the commit: the meaning script, the verdict by a role, the
   section tables, `&&` in place of `;`. The stages, the rules and the number stayed as approved.
@@ -33,8 +34,8 @@
 - [x] 4.1 The script of the meaning check is written, and the section tables of spec-driven, doc-style and browser-verification are in the progress
 - [x] 4.2 spec-driven: the hot part is at most 3 000 characters, and nothing of the former text is lost
 - [x] 4.3 spec-driven: the retelling matched the former text
-- [>] 4.4 doc-style: the hot part is at most 3 000 characters, and nothing of the former text is lost
-- [ ] 4.5 doc-style: the retelling matched the former text
+- [x] 4.4 doc-style: the hot part is at most 3 000 characters, and nothing of the former text is lost
+- [>] 4.5 doc-style: the retelling matched the former text
 - [ ] 4.6 browser-verification: the hot part is at most 3 000 characters, and nothing of the former text is lost
 - [ ] 4.7 browser-verification: the retelling matched the former text
 - [ ] 5.1 The section tables of task-flow, git-workflow and ui-component-tests are in the progress, with the pairs of shortened statements
@@ -129,6 +130,34 @@ from the former text to the final one.
 - «A rule declares the law it is written under.» → «A rule declares its law.»
 - «A decision from a spec goes to the layer, not to the archive.» → «A spec's decision goes to the layer, not the archive.»
 - «A name in an anchor is written as declared in code.» → «An anchor name is written as declared in code.»
+
+### Shortened statements of doc-style, «было → стало»
+
+doc-style was 21 253 bytes laid out, the tree's sections included; it is 2 994 now. Its sections
+and every article whole went to `pitfalls/doc-style.2.md`; the tree's own sections went whole to
+the override of that cold part, and the hot part keeps three short statements of them under «This
+tree». The applicability signs stay with the articles in the cold part: a rule that fits the host
+limit arrives whole, and the gate reads the signs only for a rule that does not. The description
+was cut to the question «load it or not». Seventeen statements were shortened by meaning, and the
+first column of the companion was edited by the same change.
+
+- «A bare name and a directory are judged the same as a full path.» → «A bare name or directory is judged as a full path.»
+- «The description of the past is excluded from the path check entirely.» → «The archive and the task folder are outside the path check.»
+- «Portable text is excluded from the address check, like the archive.» → «Portable text is outside the address check, like the archive.»
+- «A directory index is checked against its contents from both sides.» → «A directory index is checked against its contents both ways.»
+- «An index is kept for a directory people read through it, not by walking it.» → «An index is kept only for a directory read through it.»
+- «A name mentioned only to say "it is gone" is listed in the exceptions by name.» → «A name mentioned only as gone is listed in the exceptions.»
+- «A file placed by the layout needs no pair.» → «A laid-out file needs no pair.»
+- «A document goes in the same commit as the change it describes.» → «A document ships in its change's commit.»
+- «A file of the tree is edited by the edit tool, not by a shell command.» → «A tree file is edited by the edit tool, not a shell command.»
+- «A file leaving for the description of the past names its former address in its header.» → «A file moving to the archive names its former address in its header.»
+- «An override section replaces the package section of the same name entirely; it does not append to it.» → «An override section replaces the same-named package section whole.»
+- «The working glossary and the screen language are two different vocabularies.» → «The working glossary is not the screen language.»
+- «A text naming the state of a machine goes stale without a single edit in the tree.» → «Machine state is written as the command asking it.»
+- «A record in the description of the past has an expiry, and after it the record is removed.» → «An archive record has an expiry, then is removed.»
+- «The removal by expiry travels as a commit of its own.» → «Expired records leave in a commit of their own.»
+- «A link to a record of the past in a live text lives exactly until the record's expiry.» → «A live text names a decision in words, not an archive address.»
+- «A diagram is edited by the same change as the text it depicts.» → «A diagram changes with the text it depicts.»
 
 ## Decisions along the way
 
