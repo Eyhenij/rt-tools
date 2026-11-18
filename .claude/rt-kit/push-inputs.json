@@ -248,7 +248,7 @@
             "probes": []
         },
         "node tools/check-cycles.mjs": {
-            "seconds": 0,
+            "seconds": 1,
             "history": [],
             "untraced": [],
             "self": [
@@ -343,7 +343,7 @@
             "probes": []
         },
         "node tools/build-tokens-v2.mjs --check": {
-            "seconds": 0,
+            "seconds": 1,
             "history": [],
             "untraced": [],
             "self": [
@@ -682,7 +682,7 @@
             "probes": []
         },
         "node tools/check-showcase-links.mjs": {
-            "seconds": 0,
+            "seconds": 1,
             "history": [],
             "untraced": [],
             "self": [
@@ -742,7 +742,7 @@
             "probes": []
         },
         "node tools/check-boolean-inputs.mjs": {
-            "seconds": 0,
+            "seconds": 1,
             "history": [],
             "untraced": [],
             "self": [
@@ -1007,23 +1007,9 @@
                         "Caddyfile",
                         "LICENSE",
                         "allowlist",
-                        "applypatch-msg",
-                        "browser-device-id",
                         "commit-msg",
-                        "h",
-                        "post-applypatch",
-                        "post-checkout",
-                        "post-commit",
-                        "post-merge",
-                        "post-rewrite",
-                        "pre-applypatch",
-                        "pre-auto-gc",
                         "pre-commit",
-                        "pre-merge-commit",
-                        "pre-push",
-                        "pre-rebase",
-                        "prepare-commit-msg",
-                        "tree-name"
+                        "pre-push"
                     ]
                 }
             ],
@@ -1141,7 +1127,7 @@
             "probes": []
         },
         "node tools/check-file-size.mjs": {
-            "seconds": 0,
+            "seconds": 1,
             "history": [],
             "untraced": [],
             "self": [
@@ -1166,7 +1152,7 @@
             "probes": []
         },
         "node tools/check-styles.mjs": {
-            "seconds": 0,
+            "seconds": 1,
             "history": [],
             "untraced": [],
             "self": [
@@ -1226,7 +1212,7 @@
             "probes": []
         },
         "node tools/check-lib-layers.mjs": {
-            "seconds": 0,
+            "seconds": 1,
             "history": [],
             "untraced": [],
             "self": [
@@ -1328,8 +1314,11 @@
             "probes": []
         },
         "node tools/check-schema-drift.mjs": {
-            "seconds": 6,
-            "history": [],
+            "seconds": 14,
+            "history": [
+                "git diff",
+                "git rev-parse"
+            ],
             "untraced": [
                 "npx",
                 "prisma",
@@ -1350,7 +1339,6 @@
             ],
             "files": [
                 ".claude/rt-kit/checks.json",
-                ".env",
                 ".npmrc",
                 "package.json",
                 "prisma.config.ts",

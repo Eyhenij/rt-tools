@@ -397,6 +397,12 @@ importers:
 
   projects/agent-kit: {}
 
+  projects/ai-chat-protocol:
+    dependencies:
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+
   projects/auth-angular:
     dependencies:
       '@angular/common':

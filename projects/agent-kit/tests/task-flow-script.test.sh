@@ -438,9 +438,9 @@ out('forecast: SC-AK-1549 — отказы стража входят с --guard'
 
 const feedback = (branch) => ({ ...meta(branch), type: 'user', message: { content: 'Stop hook feedback:\nBLOCKED by turn-exit-guard: the scenario is not over' } });
 const loop = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B), feedback(B), say(B), stop(B), feedback(B), say(B), stop(B), feedback(B)]);
-out('forecast: SC-AK-1550 — меню простоя обрывает петлю остановок', `${loop.stops} ${loop.held}`, '2 2');
+out('forecast: SC-AK-1700 — меню простоя обрывает петлю остановок', `${loop.stops} ${loop.held}`, '2 2');
 const resumed = await run([owner(B, 'делай RT-7'), use(B, 'Edit', { file_path: '/t/a.md', old_string: 'a', new_string: 'b' }), say(B), stop(B), feedback(B), say(B), stop(B), feedback(B), use(B, 'Read', { file_path: '/t/a.md' }), say(B), stop(B)]);
-out('forecast: SC-AK-1550 — вызов после меню снова считает остановки', `${resumed.stops} ${resumed.held}`, '3 3');
+out('forecast: SC-AK-1700 — вызов после меню снова считает остановки', `${resumed.stops} ${resumed.held}`, '3 3');
 
 out('missed: SC-AK-1552 — конец хода с открытой работой пропущен, конец по «стоп» нет', `${held.ended} ${held.missed}`, '2 1');
 out('missed: SC-AK-1552 — остановка с отказом хука ход не кончает', `${loop.ended} ${loop.missed}`, '0 0');

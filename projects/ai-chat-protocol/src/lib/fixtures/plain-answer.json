@@ -1,0 +1,105 @@
+{
+  "description": "A plain answer: a step, then text in pieces, then the end of the run.",
+  "initialMessages": [
+    {
+      "id": "u1",
+      "role": "user",
+      "content": "What is the total today?",
+      "toolCalls": [],
+      "toolCallId": null,
+      "feedback": null,
+      "isStored": false
+    }
+  ],
+  "events": [
+    {
+      "type": "RUN_STARTED",
+      "threadId": "t1",
+      "runId": "r1"
+    },
+    {
+      "type": "CUSTOM",
+      "name": "run.reference",
+      "value": {
+        "referenceId": "ref-1"
+      }
+    },
+    {
+      "type": "CUSTOM",
+      "name": "run.warning",
+      "value": {
+        "code": "slow-source"
+      }
+    },
+    {
+      "type": "STEP_STARTED",
+      "stepName": "Reading the daily briefing"
+    },
+    {
+      "type": "STEP_FINISHED",
+      "stepName": "Reading the daily briefing"
+    },
+    {
+      "type": "TEXT_MESSAGE_START",
+      "messageId": "a1",
+      "role": "assistant"
+    },
+    {
+      "type": "TEXT_MESSAGE_CONTENT",
+      "messageId": "a1",
+      "delta": "Total "
+    },
+    {
+      "type": "TEXT_MESSAGE_CONTENT",
+      "messageId": "a1",
+      "delta": "is "
+    },
+    {
+      "type": "TEXT_MESSAGE_CONTENT",
+      "messageId": "a1",
+      "delta": "84."
+    },
+    {
+      "type": "TEXT_MESSAGE_END",
+      "messageId": "a1"
+    },
+    {
+      "type": "RUN_FINISHED",
+      "threadId": "t1",
+      "runId": "r1",
+      "result": {
+        "status": "succeeded"
+      }
+    }
+  ],
+  "expected": {
+    "runId": "r1",
+    "status": "idle",
+    "messages": [
+      {
+        "id": "u1",
+        "role": "user",
+        "content": "What is the total today?",
+        "toolCalls": [],
+        "toolCallId": null,
+        "feedback": null,
+        "isStored": true
+      },
+      {
+        "id": "a1",
+        "role": "assistant",
+        "content": "Total is 84.",
+        "toolCalls": [],
+        "toolCallId": null,
+        "feedback": null,
+        "isStored": true
+      }
+    ],
+    "step": null,
+    "referenceId": "ref-1",
+    "result": "succeeded",
+    "pendingToolCallIds": [],
+    "error": null
+  },
+  "expectedUnsent": []
+}
