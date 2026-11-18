@@ -73,3 +73,16 @@ close as decisions, and only the mockup goes to the owner.
 - **Negatives take `--rt-color-state-error-text`**, the minus sign is the locale's.
 - **«Copy CSV» is a text button under the table**, like «View data» under the chart; the answer copy
   gives the table as tab-separated lines, like a markdown table.
+- **Number columns take the width of their widest value, the first column the rest.** The first
+  draw kept the 80-wide columns of the chart table, and at 328 the name «Апартаменты» was cut; a
+  table wider than the block scrolls.
+- **The sticky head needs a scroll box of its own:** the table area has a maximum height and scrolls
+  down inside the block, the head stays on top. A head sticky to the feed would not stick: the
+  sideways scroll box stops it.
+
+## The mockup
+
+https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8215-449 — four columns with a total at
+386, 328 and 728; twelve columns scrolling sideways; the sticky head scrolled; «Скопировано»; a
+markdown table in the same look; the dark theme. The owner: «Одобряю макет», 18.11.2026, chosen
+from «Одобряю макет (Recommended)» and «Есть правки».
