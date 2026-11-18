@@ -47,6 +47,17 @@ task, a line per finding, each with its address.
   task branch past the epic branch. So RT-2750 merged main six times and took in the broken #3383.
   **Address:** rules layer — the text of the second tier in the delivery check.
 
+## RT-3335 — the chart block of the chat answer
+
+- **The chat protocol does not mark the end of a tool call.** The reducer collects the argument
+  deltas and handles the end event with nothing, and a tool call holds only its id, name and
+  arguments. An application on the protocol package cannot tell when to clear `pending` of a
+  chart block, and has to guess by an unparsable string. **Address:** names of this tree — the
+  spec of the chat protocol package.
+- **No task of the epic says who answers a chart tool call.** If the chart is a browser tool of
+  the registry, the run waits for its answer before the model goes on; the chart block only draws.
+  Not checked by a run of the controller. **Address:** names of this tree — the epic plan.
+
 ## Left unresolved
 
 - **All findings above** — wait for the owner's decision at the end of the epic.
