@@ -6,7 +6,7 @@
 - **Stage:** 0 of 0 — the plan
 - **Done:** the task is taken, the branch `RT-3337-ai-chat-table-block` is taken from `RT-3336-ai-chat-chart-data` (chain), the task is in progress on the board. Exploration done, the six questions closed by assumption, the mockup approved: «Одобряю макет». The agreement draft `docs/specs/ui-kit-v2/proposed/ai-chat-table/` is written and checked against the grill (`ee8c157d2`); its four open questions are closed by assumption in its Decisions.
 - **Next step:** the plan by project-manager; the findings of spec-critic go into the agreement before the plan is committed; then product-strategist and goal-critic, then the owner.
-- **Going now:** spec-writer closes the 18 findings of spec-critic in the agreement (4 blocking: currency code rule against SC-1399, rows of a wrong shape, widths without a first text column, fixed row height against wrapping); project-manager drafts the plan in the scratchpad.
+- **Going now:** project-manager brings the plan up to the revised agreement (scenarios SC-UKV-1422…1432); the plan is then committed and goes to product-strategist and goal-critic.
 - **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet; the branch stands on RT-3336 (#3402), which stands on RT-3335 (#3398)

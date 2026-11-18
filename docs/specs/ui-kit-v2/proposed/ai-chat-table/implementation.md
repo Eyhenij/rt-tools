@@ -7,22 +7,24 @@ is left without one.
 
 ## Where execution is foreseen
 
-| Rules of the spec                                                   | Where it is foreseen                                                                                         |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `table` is a kit type; a renderer for `table` is not taken          | `OWN_TYPES` and `toBlockViews` in `projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/blocks/rt-ai-chat-blocks.logic.ts` |
-| the block shape, the plate for a broken block                       | the model `projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/rt-ai-chat.model.ts` and a guard next to `isMarkdownBlock` |
-| unknown column type, short and long rows, empty rows                | a pure helper of the core entry next to `projects/ui-kit-v2/src/lib/util/markdown-parse.ts`                  |
-| writing a value, the currency fallback, the minus, the colour flag  | a pure cell format helper of the core entry in `projects/ui-kit-v2/src/lib/util/`                            |
-| the locale change                                                   | the block component in the ai-chat `blocks` directory, reading the kit label locale                          |
-| alignment, widths, side scroll, maximum height, sticky head, total  | the block component styles; the markup taken from the chart data table                                       |
-| the look in both themes                                             | the block styles on the kit tokens, the markdown table styles in `projects/ui-kit-v2/src/lib/components/markdown-text` |
-| the CSV, its escaping, raw numbers                                  | a pure CSV helper of the core entry in `projects/ui-kit-v2/src/lib/util/`                                    |
-| «Copy CSV», «Copied» for two seconds, a refused copy, live status   | the block component over the CDK `Clipboard`, as `rt-ai-chat-copy` does                                      |
-| the answer copy as tab-separated lines                              | `blocksToPlainText` in `rt-ai-chat-blocks.logic.ts`, the separator as in `projects/ui-kit-v2/src/lib/util/markdown-plain-text.ts` |
-| the markdown divider alignment, fitting a markdown row to the head  | `readTable` in `projects/ui-kit-v2/src/lib/util/markdown-parse.ts` and the table node in `markdown.model.ts` |
-| the markdown table detects no type, has no CSV                      | the table template of `rt-markdown-text`                                                                     |
-| table semantics, the named scroll box, the button name              | the block component template                                                                                 |
-| the kit labels «Copy CSV», «Copied», «Table»                        | `projects/ui-kit-v2/src/lib/i18n/rt-kit-labels.en.ts`                                                        |
+| Rules of the spec                                                       | Where it is foreseen                                                                                         |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `table` is a kit type; a renderer for `table` is not taken              | `OWN_TYPES` and `toBlockViews` in `projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/blocks/rt-ai-chat-blocks.logic.ts` |
+| the block shape, the plate for a broken block                           | the model `projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/rt-ai-chat.model.ts` and a guard next to `isMarkdownBlock` |
+| malformed parts, unknown column type, short and long rows, empty total  | a pure helper of the core entry next to `projects/ui-kit-v2/src/lib/util/markdown-parse.ts`                  |
+| writing a value, the locale and currency fallbacks, the zero form, the colour flag | a pure cell format helper of the core entry in `projects/ui-kit-v2/src/lib/util/`                 |
+| the locale change of a drawn table                                      | the block component in the ai-chat `blocks` directory, reading `RT_KIT_LOCALE`                               |
+| every row drawn, a new input keeps the scroll position and «Copied»     | the block component: the scroll box element and the «Copied» flag live with the instance, not the input     |
+| alignment by start and end, widths, side scroll, the 200 box, sticky head, total | the block component styles; the markup taken from the chart data table                              |
+| row metrics in both themes                                              | the block styles on the kit tokens, the markdown table styles in `projects/ui-kit-v2/src/lib/components/markdown-text` |
+| the CSV, its text fields, quoting, the apostrophe, raw numbers          | a pure CSV helper of the core entry in `projects/ui-kit-v2/src/lib/util/`                                    |
+| «Copy CSV», «Copied» for two seconds, a repeat press, a refused copy, live status | the block component over the CDK `Clipboard`, as `rt-ai-chat-copy` does                             |
+| «Copy CSV» while the answer is written                                  | the block component: the button does not read the `streaming` flag                                           |
+| the answer copy as tab-separated lines in the kit locale                | `blocksToPlainText` in `rt-ai-chat-blocks.logic.ts` takes the kit locale. The answer component `projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/answer/rt-ai-chat-answer.component.ts` reads `RT_KIT_LOCALE` inside the computed that builds its copy text. The LF and the tab are as in `projects/ui-kit-v2/src/lib/util/markdown-plain-text.ts` |
+| the markdown divider alignment, fitting a markdown row, its copy        | `readTable` in `projects/ui-kit-v2/src/lib/util/markdown-parse.ts` and the table node in `markdown.model.ts`; the copy follows the fitted node |
+| the markdown table detects no type, has no CSV, no maximum height       | the table template and styles of `rt-markdown-text`                                                          |
+| table semantics, the named scroll box, the button name                  | the block component template and the table template of `rt-markdown-text`                                   |
+| the kit labels «Copy CSV», «Copied», «Table»                            | `projects/ui-kit-v2/src/lib/i18n/rt-kit-labels.en.ts`                                                        |
 
 ## What changes in the live spec at the merge
 
