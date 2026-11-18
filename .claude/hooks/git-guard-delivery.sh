@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/git-guard-delivery.sh · 94dd71fc70f6 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/git-guard-delivery.sh · f7e84564edf4 · правится надстройкой, не здесь
 # rt-hook: PreToolUse Bash|mcp__webstorm__execute_terminal_command|mcp__webstorm__execute_tool
 # Requires: hooks/git-guard-delivery-merged.sh, hooks/git-guard-delivery-task.sh, hooks/git-guard-delivery-folder.sh,hooks/git-guard-delivery-epic.sh, hooks/git-guard-delivery-pipeline.sh, hooks/git-guard-tree-assignment.sh, hooks/git-guard-delivery-conflict.sh, hooks/git-guard-delivery-rerun.sh, hooks/profile-check.sh, hooks/deny-tail.sh, hooks/guard-note.sh
 # Delivery guard. PreToolUse on creating a branch, on the push and on opening a PR.
@@ -484,19 +484,15 @@ fi
 [ -f "$rt_hooks_dir/git-guard-delivery-body.sh" ] && . "$rt_hooks_dir/git-guard-delivery-body.sh" 2>/dev/null
 command -v rt_delivery_pull_body >/dev/null 2>&1 && rt_delivery_pull_body
 
-# The task folder is taken apart before the PR opens, not after the approval: the owner merges as
-# soon as he sees green, and no room is left for a closing commit — three times in a row the folder
-# travelled into the main branch without being taken apart. After the cleanup the progress guard
-# takes the plan from the branch history.
+# The task folder is taken apart before the PR opens: the owner merges on green, with no room left
+# for a closing commit. After the cleanup the progress guard takes the plan from the branch history.
 rt_delivery_open_folder
-
-# Every step the progress marks done is measured once more: a mark written past the engine stops here.
+# Every done step is measured once more: a mark written past the engine stops here.
 # shellcheck disable=SC1090
 [ -f "$rt_hooks_dir/git-guard-delivery-rerun.sh" ] && . "$rt_hooks_dir/git-guard-delivery-rerun.sh" 2>/dev/null
 command -v rt_delivery_rerun >/dev/null 2>&1 && rt_delivery_rerun
 
-# Everything that did not come together is named here, all at once: up to this line the conditions
-# were being collected, each of which used to refuse the call on its own.
+# Everything that did not come together is named here at once, not one condition per call.
 refuse_unmet pr_create
 command -v rt_delivery_open_handover >/dev/null 2>&1 && rt_delivery_open_handover "$cmd" "$branch"
 
