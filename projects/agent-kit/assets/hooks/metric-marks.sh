@@ -200,11 +200,11 @@ rt_exam_note() {
     return 0
 }
 
-# The checksum a check is known by: the command with its base replaced by a mark. The base names
-# where the run compared against, not which check ran: with it inside, one check split into a line
-# per base, and the report named most of them by a bare number.
+# The checksum a check is known by: the command without its base. The base names where the run
+# compared against, not which check ran: with it inside, one check split into a line per base, and
+# the report named most of them by a bare number.
 rt_check_id() {
-    printf '%s' "$1" | sed -E 's/--base=[^ ]+/--base=<base>/g; s/RT_SUITES_BASE=[^ ]+/RT_SUITES_BASE=<base>/g' |
+    printf '%s' "$1" | sed -E 's/ ?--base=[^ ]+//g; s/RT_SUITES_BASE=[^ ]+ ?//g' |
         cksum 2>/dev/null | cut -d' ' -f1
 }
 

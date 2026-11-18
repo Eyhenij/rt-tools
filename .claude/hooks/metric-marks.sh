@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/metric-marks.sh · 177153f30fd8 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/metric-marks.sh · 8f7a73610f30 · правится надстройкой, не здесь
 # Signs of content and of calls for the package metrics. NOT a guard: it has no `rt-hook:`
 # declaration and hooks into no agent event. The refusal record and the push set source it.
 #
@@ -201,11 +201,11 @@ rt_exam_note() {
     return 0
 }
 
-# The checksum a check is known by: the command with its base replaced by a mark. The base names
-# where the run compared against, not which check ran: with it inside, one check split into a line
-# per base, and the report named most of them by a bare number.
+# The checksum a check is known by: the command without its base. The base names where the run
+# compared against, not which check ran: with it inside, one check split into a line per base, and
+# the report named most of them by a bare number.
 rt_check_id() {
-    printf '%s' "$1" | sed -E 's/--base=[^ ]+/--base=<base>/g; s/RT_SUITES_BASE=[^ ]+/RT_SUITES_BASE=<base>/g' |
+    printf '%s' "$1" | sed -E 's/ ?--base=[^ ]+//g; s/RT_SUITES_BASE=[^ ]+ ?//g' |
         cksum 2>/dev/null | cut -d' ' -f1
 }
 
