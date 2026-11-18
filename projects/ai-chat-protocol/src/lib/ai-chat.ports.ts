@@ -1,6 +1,6 @@
-import { TAiChatEvent } from './ai-chat-event.model';
-import { EAiChatFeedback } from './ai-chat.enum';
-import { IAiChatMessage, IAiChatRunRequest, IAiChatThreadPage } from './ai-chat.model';
+import { TAiChatEvent } from './ai-chat-event.model.js';
+import { EAiChatFeedback } from './ai-chat.enum.js';
+import { IAiChatMessage, IAiChatRunRequest, IAiChatThreadPage } from './ai-chat.model.js';
 
 export interface IAiChatRunOptions {
     /** Aborts the read of the events; the application decides whether to also stop the run on the server. */

@@ -1,4 +1,4 @@
-import { createAiChatError, toRunErrorKind } from './ai-chat-errors';
+import { createAiChatError, toRunErrorKind } from './ai-chat-errors.js';
 import {
     AI_CHAT_EVENT_TYPE,
     IAiChatCustomEvent,
@@ -14,9 +14,9 @@ import {
     IAiChatToolCallResultEvent,
     IAiChatToolCallStartEvent,
     TAiChatEvent,
-} from './ai-chat-event.model';
-import { EAiChatRole, EAiChatRunStatus } from './ai-chat.enum';
-import { IAiChatMessage, IAiChatRunState, IAiChatToolCall } from './ai-chat.model';
+} from './ai-chat-event.model.js';
+import { EAiChatRole, EAiChatRunStatus } from './ai-chat.enum.js';
+import { IAiChatMessage, IAiChatRunState, IAiChatToolCall } from './ai-chat.model.js';
 
 export const AI_CHAT_INITIAL_RUN: Readonly<IAiChatRunState> = Object.freeze({
     runId: null,

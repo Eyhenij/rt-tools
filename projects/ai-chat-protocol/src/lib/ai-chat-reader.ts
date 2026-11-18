@@ -1,6 +1,6 @@
-import { AI_CHAT_EVENT_TYPE, IAiChatSnapshotMessage, TAiChatEvent } from './ai-chat-event.model';
-import { EAiChatRunResult } from './ai-chat.enum';
-import { IAiChatToolCall } from './ai-chat.model';
+import { AI_CHAT_EVENT_TYPE, IAiChatSnapshotMessage, TAiChatEvent } from './ai-chat-event.model.js';
+import { EAiChatRunResult } from './ai-chat.enum.js';
+import { IAiChatToolCall } from './ai-chat.model.js';
 
 type TRecord = Record<string, unknown>;
 
