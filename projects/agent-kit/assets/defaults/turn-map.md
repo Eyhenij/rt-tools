@@ -16,7 +16,7 @@ of the progress mirrors it. Until the mandatory action is done, the work stays i
 - `договорённость-записана` — create the task, the branch from the epic branch, and the folder; leads `task-flow-start`
 - `задача-взята` — write the plan; leads `task-flow-start`
 - `замысел-записан` — do the first stage; leads `task-flow-start`
-- `этап-идёт` — finish the stage and mark it in the progress; leads `task-flow-resume`
+- `этап-идёт` — finish the stage: `step N.M` measures each step and marks it done; leads `task-flow-resume`
 - `этапы-кончились` — merge the agreement, bring the texts up to date, run the suite; leads `task-flow-close`
 - `разбор-кончился` — take the folder apart by the last commit; leads `task-flow-archive`
 - `папка-разобрана` — the work queue audit, then open the PR; leads `task-flow-close`

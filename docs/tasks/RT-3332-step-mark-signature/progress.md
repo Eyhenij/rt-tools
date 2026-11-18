@@ -14,10 +14,10 @@ Rewritten by every session, not appended to.
 ## Steps
 
 - [x] 1.1 The replay command builds the prompt from the hook text and the turns only, runs the judge with no tools outside the tree and compares after the answer
-- [>] 2.1 The plan and its checks are read from the commit that added the plan, never from the working copy
-- [ ] 2.2 step N.M on a match marks the step done and the next one current, and leaves the progress as it was on a mismatch
-- [ ] 2.3 The guard refuses an edit that newly marks a step done in a plan with checks, whatever mark lies on disk
-- [ ] 2.4 The texts that tell to mark a step in the progress by hand say that step N.M marks it
+- [x] 2.1 The plan and its checks are read from the commit that added the plan, never from the working copy
+- [x] 2.2 step N.M on a match marks the step done and the next one current, and leaves the progress as it was on a mismatch
+- [x] 2.3 The guard refuses an edit that newly marks a step done in a plan with checks, whatever mark lies on disk
+- [>] 2.4 The texts that tell to mark a step in the progress by hand say that step N.M marks it
 - [ ] 3.1 Opening a PR runs step --done over all done steps and refuses on any mismatch, naming the step, expected and got
 - [ ] 4.1 plan-red writes the place of the answer and the plan commit, from the record directories of this repository's copies only
 - [ ] 4.2 The guard of the description confirms the answer at its place and the plan commit, and refuses writes into the session records, not into the memory

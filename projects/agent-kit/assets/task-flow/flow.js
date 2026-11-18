@@ -86,7 +86,7 @@
     },
     stage: {
       title: 'этап-идёт',
-      action: 'finish the stage and mark it in the progress',
+      action: 'finish the stage: `step N.M` measures each step and marks it done',
       pattern: 'task-flow-resume',
       exit: measure.progress.done,
     },

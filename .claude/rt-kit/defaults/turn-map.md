@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · defaults/turn-map.md · e604be68ff96 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · defaults/turn-map.md · 5feb1ca6c69b · правится надстройкой, не здесь -->
 # Turn map
 
 This is not the rule but its short digest: the rule explains, the map names. The full text is
@@ -17,7 +17,7 @@ of the progress mirrors it. Until the mandatory action is done, the work stays i
 - `договорённость-записана` — create the task, the branch from the epic branch, and the folder; leads `task-flow-start`
 - `задача-взята` — write the plan; leads `task-flow-start`
 - `замысел-записан` — do the first stage; leads `task-flow-start`
-- `этап-идёт` — finish the stage and mark it in the progress; leads `task-flow-resume`
+- `этап-идёт` — finish the stage: `step N.M` measures each step and marks it done; leads `task-flow-resume`
 - `этапы-кончились` — merge the agreement, bring the texts up to date, run the suite; leads `task-flow-close`
 - `разбор-кончился` — take the folder apart by the last commit; leads `task-flow-archive`
 - `папка-разобрана` — the work queue audit, then open the PR; leads `task-flow-close`
