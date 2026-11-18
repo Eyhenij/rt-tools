@@ -109,3 +109,12 @@ When the check is run
 Then both sections are found, and at each of them the next move is named
 
 Covered: `projects/agent-kit/tests/checks-state-next.test.sh`.
+
+### SC-AK-1699 — the move line of a section is found in the cold part of the pattern
+
+Given a pattern whose index keeps the state headings, while the body of a section and its move line
+stand in the cold part under the same heading, or in its continuation file
+When the check is run
+Then the move line is found there, and a section with the line in no part is refused
+
+Covered: `projects/agent-kit/tests/checks-state-next.test.sh`.
