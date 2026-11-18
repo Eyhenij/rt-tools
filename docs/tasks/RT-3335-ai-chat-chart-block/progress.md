@@ -9,8 +9,9 @@
   the exploration and the decisions; the body of #3335 is rewritten away from echarts; the
   agreement `docs/specs/ui-kit-v2/proposed/ai-chat-chart/` holds 17 rules and SC-UKV-1341…1359,
   its 15 open questions closed by assumption
-- **Next step:** apply the findings of `spec-critic` and `product-strategist` to the agreement,
-  then write the plan and run `goal-critic` on it
+- **Next step:** `spec-critic` findings are being applied to the agreement; then write the plan
+  and run `goal-critic` on it. Between the two, the branch RT-2750 below takes main with the
+  scenario fix (#3387), runs the push gate and is pushed — PR #3386 waits for that.
 - **Uncommitted:** this folder
 - **Waiting for the owner:** no
 - **PR:** not open yet; the chain base is PR #3386
