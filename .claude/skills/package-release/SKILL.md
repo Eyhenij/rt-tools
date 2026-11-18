@@ -38,7 +38,7 @@ The table in `implementation.md` next to it.
 - **Every relative import of the built ESM names a file that exists, with its extension.** Node
   never guesses a missing extension.
 - **A commit header written by a publication workflow obeys the same list as a hand-written one.**
-  The workflow writes the header at the release, long after the pull request checks, and a header
+  The workflow writes the header at the release, long after the PR checks, and a header
   the list refuses fails the release at its first commit step.
 - **A refusal of the commit check on one's own commit names a string that lives elsewhere too.** It
   is searched across the tree before the commit is fixed, not corrected only in the commit.
@@ -63,7 +63,7 @@ The packages built with a framework (`core`, `store`, `ui-kit-v2`, the Angular a
 packages) and the packages that are not built by two `tsc` runs (`agent-kit`, `auth-import`) are not judged at all: the wiring check takes the projects that build twice with `tsc`.
 A package that depends on a neighbour of this workspace is loaded only from the installed tarball,
 which takes the neighbour from the registry, so a neighbour not yet published fails that step. The
-tarball step runs in a release and by hand, and in a pull request or a push of the pipeline only for
+tarball step runs in a release and by hand, and in a PR or a push of the pipeline only for
 a package that depends on such a neighbour; the others are loaded from the built folder there. A start of
 a publication workflow from the browser, by `gh api`, by the workflow's title or through a
 variable passes the guard of the start; the root build command is what stops it there.

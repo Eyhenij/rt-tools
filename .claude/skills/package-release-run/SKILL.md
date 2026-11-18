@@ -30,7 +30,7 @@ installed into an empty folder. The root build command runs it after the build:
 
 ```bash
 pnpm run build:<package>
-node tools/verify-package.cjs <package> --no-consumer   # without the registry, the tarball step is skipped; the pull request and push runs of the pipeline skip it too
+node tools/verify-package.cjs <package> --no-consumer   # without the registry, the tarball step is skipped; the PR and push runs of the pipeline skip it too
 ```
 
 One package — the call the start guard makes, with `--lenient`, so that a package with a framework is passed and not refused. Add `--build` to also run `pnpm run build:<package>`, which loads the package:
