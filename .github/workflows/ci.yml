@@ -251,17 +251,42 @@ jobs:
               # бы вовсе.
               env:
                   DATABASE_URL: postgresql://message_bus:message_bus@localhost:55452/message_bus
+              # Ожидание ограничено: шаг без предела однажды простоял 36 минут на единственном
+              # раннере. Контейнер базы упал при создании каталога данных («No space left on
+              # device»: диск Docker на машине раннера заполнен), а запуск с `--rm` стёр и
+              # контейнер, и его лог, так что цикл ждал того, чего уже нет. Теперь контейнер
+              # остаётся до конца шага, лог печатается, а снимает его выход из шага. Имя
+              # несёт номер запуска, чтобы соседний запуск не снял чужой контейнер по имени.
+              timeout-minutes: 10
               run: |
-                  docker rm -f rt-ci-schema >/dev/null 2>&1 || true
-                  docker run -d --rm --name rt-ci-schema \
+                  name="rt-ci-schema-${GITHUB_RUN_ID}"
+                  trap 'docker rm -f "$name" >/dev/null 2>&1 || true' EXIT
+                  docker rm -f "$name" >/dev/null 2>&1 || true
+                  docker run -d --name "$name" \
                       -e POSTGRES_USER=message_bus -e POSTGRES_PASSWORD=message_bus \
                       -e POSTGRES_DB=message_bus -p 55452:5432 postgres:16-alpine >/dev/null
                   # Готовность спрашивается по TCP, а не через сокет: образ сначала поднимает сервер
                   # начальной настройки только на сокете и перезапускает его, и проверка через сокет
                   # отвечала «готов» в этот промежуток — соединение по порту ловило ECONNRESET.
-                  until docker exec rt-ci-schema pg_isready -h 127.0.0.1 -U message_bus >/dev/null 2>&1; do sleep 1; done
+                  ready=''
+                  for attempt in $(seq 1 90); do
+                      if docker exec "$name" pg_isready -h 127.0.0.1 -U message_bus >/dev/null 2>&1; then
+                          ready=1
+                          break
+                      fi
+                      if [ "$(docker inspect -f '{{.State.Running}}' "$name" 2>/dev/null)" != "true" ]; then
+                          echo "Контейнер $name остановился до готовности базы, его лог:"
+                          docker logs --tail 20 "$name" 2>&1 || true
+                          exit 1
+                      fi
+                      sleep 1
+                  done
+                  if [ -z "$ready" ]; then
+                      echo "База не ответила за 90 секунд"
+                      docker logs --tail 20 "$name" || true
+                      exit 1
+                  fi
                   node tools/check-schema-drift.mjs
-                  docker rm -f rt-ci-schema >/dev/null 2>&1 || true
 
             # Объявление гарда против того, на что ветвится его тело. Ветка, которой нет в
             # объявлении, не исполняется ни разу — под этим именем гард не зовут, — а снаружи он
