@@ -133,3 +133,60 @@ Case 4. A README names the path `docs/plans/old.md`, which was moved to the arch
 - «Gitignored» читатель может понять и как `.git/info/exclude`. Проверяется вопросом читателю про файл из `.git/info/exclude`.
 
 Verdict (round 2): diverged
+
+## Round 3 — the hot part of 2 998 bytes
+
+**Cases.**
+
+Case 1. You introduce a new word «cargo-gate» in a rule text. Where does the glossary edit go (name the file), and what is the other lawful option?
+
+Case 2. A table row of a directory index names its entry only by a link with a title. What do you do with the row? Does any index check judge that directory in this tree at all?
+
+Case 3. A personal draft listed in `.git/info/exclude` (not in `.gitignore`) links to a missing path; separately, a README says «the build takes 3.0 s», and you have no time to measure it again. What do you do with each?
+
+This round's reader could read the companion too: the rules gate delivers the two together.
+
+**The critic.**
+
+Цель достигнута: ни в одном из трёх случаев читатель горячей части с компаньоном не поступил иначе, чем поступил бы читатель прежнего текста. Горячая часть всё же потеряла две оговорки, которые прежний текст закрывал. Читатель восстановил их сам и пометил как пробелы.
+
+| Слова владельца | Что показывает результат | Выполнено |
+|---|---|---|
+| «ужимай горячую часть правил до 3000 знаков» | `wc -c .claude/skills/doc-style/SKILL.md` выдаёт 2998 | да |
+| «убедись что смысл при этом не теряется», случай 1 (новое слово «cargo-gate») | Читатель кладёт правку в `.claude/rt-kit/overrides/docs/GLOSSARY.md` под заголовком, которого нет у пакета. Второй законный вариант у него — обычное слово. В прежнем тексте то же: «Added to the glossary by the same change, or replaced with a plain word», адрес надстройки даёт тот же компаньон. Пробел про правило самого пакета прежний текст тоже оставлял открытым | да |
+| то же, случай 2 (строка указателя со ссылкой с заголовком) | Читатель дописывает имя файла в обратных кавычках и оставляет ссылку рядом. На вопрос, судит ли этот каталог проверка указателя, отвечает «нет», потому что `indexedDirs` пуст. В прежнем тексте: «A link with a title is legitimate and goes in the same row next to the name» и «`indexedDirs` in the checks config is empty». Действия совпадают | да |
+| то же, случай 3a (черновик в `.git/info/exclude` с битой ссылкой) | Читатель считает черновик игнорируемым, ссылку не трогает и черновик не коммитит. В прежнем тексте: «a personal draft covered by `.gitignore` or `.git/info/exclude` is not read by the check». Действие то же. Пробел, который назвал читатель, прежний текст закрывал, но вывод читателя верный | да, с потерей формулировки |
+| то же, случай 3b («the build takes 3.0 s», замерить некогда) | Читатель убирает число или заменяет его командой и ответом для сравнения. В прежнем тексте: «Recomputed by a command in the same change, or not written at all» и статья о состоянии машины «the command and what to compare its answer with». Совпадает. Пробелы «правка README не входит в изменение» и «дата рядом с числом из компаньона» прежний текст тоже оставлял открытыми | да, с потерей формулировки |
+
+**Что сужено, выброшено или добавлено**
+
+Ничего не добавлено.
+
+Горячая часть по-прежнему теряет три вещи. Все три стоят в холодной части `pitfalls-2.md`.
+
+1. **`.git/info/exclude`.** Прежний текст: «Only documents that go into the repository are judged: a personal draft covered by `.gitignore` or `.git/info/exclude` is not read by the check». В горячей части осталось только «Gitignored drafts aren't judged.» (`SKILL.md:16`). Читатель пришёл к верному действию через «treeOfRepo» и поведение git, но сам записал это как пробел. Другой читатель может пойти иначе.
+2. **Вариант «не писать число вовсе».** Прежний текст: «Recomputed by a command in the same change, or not written at all». В горячей части остался только пересчёт (`SKILL.md:37`). Читатель вывел удаление числа из статьи о состоянии машины и из компаньона, а не из статьи о числах.
+3. **Почему ссылка с заголовком не заменяет имя.** Прежний текст: «a row where the entry is named by a single link with a title is empty to it». В горячей части осталось «A titled link may join it» (`SKILL.md:22`). Решение читателя от этого не пострадало.
+
+**Кратчайшие шаги**
+
+Расхождений нет, поэтому обязательных шагов нет. Чтобы снять две пометки читателя:
+- `SKILL.md:16`: «Gitignored drafts aren't judged.» заменить на «Untracked drafts (.gitignore, info/exclude) aren't judged.»;
+- `SKILL.md:37`: дописать «, or not written».
+
+Обе правки укладываются в лимит, если где-то в другом месте сократить около 30 байт.
+
+**Источники**
+- `/Users/eyhenij/WebstormProjects/rt-tools/.claude/skills/doc-style/SKILL.md:16,22,29,30,32,37`, всего 2998 байт (`wc -c`)
+- `/Users/eyhenij/WebstormProjects/rt-tools/.claude/skills/doc-style/implementation.md:43-45,55,80-81`
+- `/private/tmp/claude-501/-Users-eyhenij-WebstormProjects-rt-tools/05592134-9b75-47c1-bc3e-50d988cba4dd/scratchpad/ds-former.md:43,50,59-62,90-101,151-157,172-177,299`
+- `/Users/eyhenij/WebstormProjects/rt-tools/.claude/skills/doc-style/pitfalls-2.md:41,48,59,99`: выброшенные формулировки на месте
+- `/private/tmp/claude-501/-Users-eyhenij-WebstormProjects-rt-tools/05592134-9b75-47c1-bc3e-50d988cba4dd/scratchpad/ds-decisions3.md`
+
+**Гипотезы**
+
+Проверка `tools/check-doc-paths.mjs` на самом деле пропускает файлы из `.git/info/exclude`. Я этого не запускал. Проверить так: положить черновик с битой ссылкой и записью в exclude, затем выполнить `npm run check:docs`.
+
+After this verdict both soft losses it named came back: drafts in `.git/info/exclude` are spared like ignored ones, and a number may be left unwritten instead of recomputed. The hot part is 2 998 bytes, and the meaning check finds nothing of the former text missing.
+
+Verdict: matched

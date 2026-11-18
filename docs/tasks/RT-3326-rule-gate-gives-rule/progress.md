@@ -3,14 +3,16 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 4 of 7 — The rules with short statements
+- **Stage:** 5 of 7 — The rules with long statements
 - **Done:** stage 1 — the gate delivers the rules that fit, with their companions, under the limit
   of the setting; stage 2 — the remaining refusals name their reason, a read of a rule file by the
   tool `Read` is a load, a subagent has a record of its own;  grill closed by assumption; agreement `docs/specs/agent-kit/proposed/rule-gate-delivery/`,
   SC-AK-1669…1680, its open questions closed by decisions; the card is in work.
-  spec-driven is cut to 2 997 bytes with a second cold part, and its third retelling matched.
-  doc-style is cut to 2 994 bytes, its tree sections included.
-- **Next step:** step 4.5 — the retelling of doc-style.
+  stage 4 — spec-driven (2 997 bytes), doc-style (2 998) and browser-verification (3 000) fit,
+  nothing of their former text is lost, and their retellings matched, in the third, third and
+  second round.
+- **Next step:** step 5.1 — the section tables of task-flow, git-workflow and ui-component-tests.
+  Their statements alone weigh 4 843, 6 451 and 3 746 bytes, so each is split into parts.
 - **Plan approved:** «Одобряю plan.md RT-3326». After the word, the checks of stages 4–6 were
   tightened by `goal-critic` before the commit: the meaning script, the verdict by a role, the
   section tables, `&&` in place of `;`. The stages, the rules and the number stayed as approved.
@@ -35,10 +37,10 @@
 - [x] 4.2 spec-driven: the hot part is at most 3 000 characters, and nothing of the former text is lost
 - [x] 4.3 spec-driven: the retelling matched the former text
 - [x] 4.4 doc-style: the hot part is at most 3 000 characters, and nothing of the former text is lost
-- [>] 4.5 doc-style: the retelling matched the former text
-- [ ] 4.6 browser-verification: the hot part is at most 3 000 characters, and nothing of the former text is lost
-- [ ] 4.7 browser-verification: the retelling matched the former text
-- [ ] 5.1 The section tables of task-flow, git-workflow and ui-component-tests are in the progress, with the pairs of shortened statements
+- [x] 4.5 doc-style: the retelling matched the former text
+- [x] 4.6 browser-verification: the hot part is at most 3 000 characters, and nothing of the former text is lost
+- [x] 4.7 browser-verification: the retelling matched the former text
+- [>] 5.1 The section tables of task-flow, git-workflow and ui-component-tests are in the progress, with the pairs of shortened statements
 - [ ] 5.2 task-flow: every part is at most 3 000 characters, and nothing of the former text is lost
 - [ ] 5.3 task-flow: the retelling of every part matched the former text
 - [ ] 5.4 git-workflow: every part is at most 3 000 characters, and nothing of the former text is lost

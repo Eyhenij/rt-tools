@@ -57,7 +57,7 @@ silent about.
 - **The working glossary is not the screen language.** — **Not checked by anything.** The labels of the kit lie in its translation files, and no check searches them for the words of the glossary's left column.
 - **Machine state is written as a command and the answer to compare.** — **Not checked by anything.** The audits read the tree, while it is the machine that aged: a statement about it is written together with the way to ask it.
 - **A diagram changes with the text it depicts.** — **Not checked by anything.** The diagram is typed in words inside that same file, and its divergence from the prose can be told only by reading both.
-- **A text's number is recomputed by command in that change; a check is run, not retold.** — **Not checked by anything.** No check tells a fresh number from a stale one or a run check from a retold one: the author holds both.
+- **A text's number is recomputed by command in that change, or not written; a check is run, not retold.** — **Not checked by anything.** No check tells a fresh number from a stale one or a run check from a retold one: the author holds both.
 
 ## Texts for a person — what holds them
 
