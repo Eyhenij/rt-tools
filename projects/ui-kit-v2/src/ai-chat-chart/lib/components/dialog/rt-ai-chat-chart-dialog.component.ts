@@ -20,11 +20,11 @@ import { RtAiChatChartPlotComponent } from '../plot/rt-ai-chat-chart-plot.compon
 
 const BEM_BLOCK: string = 'rt-ai-chat-chart-dialog';
 
-/** Высота поля на весь экран: окно за вычетом заголовка, подзаголовка, легенды и полей диалога. */
-const FULL_HEIGHT: string = 'calc(100dvh - 16rem)';
-
-/** Ширина диалога: почти весь экран, но не шире, чем читается график. */
-const FULL_WIDTH: string = 'min(72rem, calc(100vw - 2rem))';
+/**
+ * Высота поля на весь экран: потолок окна 90dvh за вычетом шапки, полей тела, строки с кнопкой,
+ * имён осей и легенды — около 17 rem, с запасом на подпись в две строки.
+ */
+const FULL_HEIGHT: string = 'calc(90dvh - 18rem)';
 
 /** График на весь экран: заголовок спецификации, подзаголовок, поле графика и «Скачать PNG». */
 @Component({
@@ -55,8 +55,6 @@ export class RtAiChatChartDialogComponent {
     protected readonly spec: IRtAiChatChart.Spec = inject<IRtAiChatChart.Spec>(RT_DIALOG_DATA);
 
     protected readonly FULL_HEIGHT: string = FULL_HEIGHT;
-
-    protected readonly FULL_WIDTH: string = FULL_WIDTH;
 
     protected readonly plot: Signal<RtAiChatChartPlotComponent | undefined> = viewChild(RtAiChatChartPlotComponent);
 

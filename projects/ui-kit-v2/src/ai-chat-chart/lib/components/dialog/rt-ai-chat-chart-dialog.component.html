@@ -1,5 +1,5 @@
 <ng-container rtBlock="rt-ai-chat-chart-dialog">
-    <rt-dialog size="lg" [width]="FULL_WIDTH" [ariaLabel]="title()">
+    <rt-dialog size="lg" [ariaLabel]="title()">
         <rt-dialog-header [title]="title()" />
         <rt-dialog-content rtElem="body">
             <div rtElem="bar">
@@ -11,6 +11,7 @@
                     qa-dataid="ai-chat-chart-dialog-download"
                     icon="ico-download"
                     variant="ghost"
+                    size="sm"
                     [ariaLabel]="t().aiChartDownload"
                     [tooltip]="t().aiChartDownload"
                     [disabled]="!drawn()"

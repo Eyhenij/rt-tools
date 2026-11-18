@@ -311,3 +311,9 @@ When the blocks are drawn
 Then the scatter puts the percent sign on `y` only, and the bar categories stand «2024», «2025» without a currency sign
 
 Not covered: the block is not written yet.
+
+### SC-UKV-1382 — sixty bars fit a narrow plot
+
+Given a `bar` spec with 60 categories
+When the block is drawn in a narrow feed
+Then every bar stands inside its own column: no bar covers its neighbour, the value axis labels or the right edge of the plot

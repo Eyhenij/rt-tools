@@ -9,7 +9,7 @@
         &__y-label {
             color: var(--rt-color-text-muted);
             font-size: var(--rt-text-xs);
-            line-height: var(--rt-leading-snug);
+            line-height: normal;
             overflow-wrap: anywhere;
         }
 
@@ -21,7 +21,7 @@
         &__x-label {
             color: var(--rt-color-text-muted);
             font-size: var(--rt-text-xs);
-            line-height: var(--rt-leading-snug);
+            line-height: normal;
             overflow-wrap: anywhere;
             text-align: end;
         }

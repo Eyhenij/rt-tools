@@ -190,17 +190,15 @@ function barSlots(series: readonly IRtChart.Series[], panel: number): Map<number
     return slots;
 }
 
-/** Ширина столбика: корзина гистограммы — во всю полосу, группа — узкие, одиночный и стопка — шире. */
+/** Ширина столбика: корзина — во всю полосу, группа — узкие, прочие шире; в узкой колонке — по ней. */
 function barWidth(data: IRtChart.Cartesian, columns: IColumns, groups: number, stacked: boolean): number {
     if (data.place === 'bins') {
         return columns.width - BAR_GAP;
     }
+    const fits: number = (columns.width - BAR_GAP * groups) / groups;
+    const designed: number = Math.min(BAR_WIDTH[stacked ? 'stack' : 'single'], groups > 1 ? BAR_WIDTH.group : Infinity);
 
-    if (groups > 1) {
-        return BAR_WIDTH.group;
-    }
-
-    return stacked ? BAR_WIDTH.stack : BAR_WIDTH.single;
+    return Math.max(1, Math.min(designed, fits));
 }
 
 function barPaths(

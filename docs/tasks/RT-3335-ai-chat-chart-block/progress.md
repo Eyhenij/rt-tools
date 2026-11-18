@@ -9,7 +9,8 @@
   the exploration and the decisions; the body of #3335 is rewritten away from echarts; the
   agreement `docs/specs/ui-kit-v2/proposed/ai-chat-chart/` holds 17 rules and SC-UKV-1341…1359,
   its 15 open questions closed by assumption
-- **Next step:** 4.1 — the stories of the block: one per kind, pending, invalid, empty, both themes, narrow feed.
+- **Next step:** 4.2 — write the kit-approval numbers line from the measurements of the showcase
+  against the mockup, then 4.3 — the question to the parent session.
   The branch RT-2750 below waits for main to fix the hook test SC-AK-569 broken by #3387.
 - **Uncommitted:** no
 - **Waiting for the owner:** no; the mockup and the plan are approved: «Одобряю макет и план RT-3335»
@@ -28,8 +29,8 @@
 - [x] 3.2 Add full screen through the kit dialog and the PNG download
 - [x] 3.3 Add the provider with the `toText` factory and the kit labels in eight languages
 - [x] 3.4 Cover the block with component tests by scenario id
-- [>] 4.1 Write the stories: one per kind, pending, invalid, empty, both themes, narrow feed, and an
-- [ ] 4.2 Take the snapshot references and match the showcase with the mockup
+- [x] 4.1 Write the stories: one per kind, pending, invalid, empty, both themes, narrow feed, and an
+- [>] 4.2 Take the snapshot references and match the showcase with the mockup
 - [ ] 4.3 Ask the owner to approve the showcase through the parent session
 - [ ] 5.1 Merge the agreement into the ai-chat subdomain spec and fix the scenario index
 - [ ] 5.2 Bring the README and the CONTEXT of the chat up to date
@@ -66,6 +67,16 @@
 - **The `Not covered` marks of the agreement are removed when it merges into the ai-chat spec.**
   33 of 37 scenarios are covered by 44 tests now; 1355, 1369 and 1376 wait for the snapshots of
   stage 4, and 1372 is the isolation grep over the build. Affected stage of the plan: 5.
+- **`rt-chart` caps a bar by the width of its column.** The 60-categories frame showed bars of the
+  fixed width 16 covering each other and running past the right edge. The bar now takes the
+  smaller of its designed width and its column; the scenario SC-UKV-1382 joins the agreement with a
+  scene test, and the whole kit matched its references after the edit. Affected stage of the plan: 4.
+- **The text lines of the block take `line-height: normal`.** The kit steps gave 14 px where the
+  mockup has 15; with the font metrics 17 of 20 measured numbers match. The rest is the gap between
+  the plot and the legend of `rt-chart`, 12 against 8 in the mockup copy — a question for the owner
+  at 4.3. Affected stage of the plan: 4.
+- **The docs checker reads the components of the `ai-chat-chart` entry too.** It knew only the
+  editor entry, so the overview page of the block had no table check. Affected stage of the plan: 4.
 
 ## Sessions
 
@@ -92,14 +103,31 @@ The progress in full — `docs/tasks/RT-3335-ai-chat-chart-block/progress.md`; t
 ### Uncommitted
 
 ```
-?? projects/ui-kit-v2/src/ai-chat-chart/lib/ai-chat-chart.check.spec.ts
-?? projects/ui-kit-v2/src/ai-chat-chart/lib/ai-chat-chart.data.spec.ts
-?? projects/ui-kit-v2/src/ai-chat-chart/lib/ai-chat-chart.samples.ts
+ M docs/specs/ui-kit-v2/proposed/ai-chat-chart/scenarios.md
+ M projects/ui-kit-v2/src/ai-chat-chart/lib/components/block/rt-ai-chat-chart.component.html
+ M projects/ui-kit-v2/src/ai-chat-chart/lib/components/block/rt-ai-chat-chart.component.scss
+ M projects/ui-kit-v2/src/ai-chat-chart/lib/components/dialog/rt-ai-chat-chart-dialog.component.html
+ M projects/ui-kit-v2/src/ai-chat-chart/lib/components/dialog/rt-ai-chat-chart-dialog.component.scss
+ M projects/ui-kit-v2/src/ai-chat-chart/lib/components/dialog/rt-ai-chat-chart-dialog.component.ts
+ M projects/ui-kit-v2/src/ai-chat-chart/lib/components/plot/rt-ai-chat-chart-plot.component.scss
+ M projects/ui-kit-v2/src/lib/components/chart/rt-chart.cartesian.ts
+ M projects/ui-kit-v2/src/lib/components/chart/rt-chart.scene.spec.ts
+ M tools/verify-ui-kit-v2-docs.cjs
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-chat-aichatchart--answer.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-chat-aichatchart--full-screen.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-chat-aichatchart--kinds.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-chat-aichatchart--presets.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-chat-aichatchart--states.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-chat-aichatchart--themes.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-chat-aichatchart--widths.png
+?? projects/ui-kit-v2/src/ai-chat-chart/lib/components/block/stories/
 ```
 
 ### Commits over the main branch
 
 ```
+66f6d567e feat(rt:ui-kit-v2): блок графика в ответе ассистента
+1879e5aff test(rt:ui-kit-v2): проверка, схема и перевод спецификации графика по сценариям
 7094274a1 chore(rt:ui-kit-v2): ajv 8.20.0 для теста схемы графика
 88dd1aca3 feat(rt:ui-kit-v2): спецификация графика переводится в данные rt-chart
 80a417cc3 feat(rt:ui-kit-v2): проверка спецификации графика и её JSON-схема
@@ -118,8 +146,6 @@ a4a2557ab docs(rt:ui-kit-v2): следующий шаг RT-3335 после по�
 ef231fc3e docs(rt:ui-kit-v2): договорённость о блоке графика в ответе чата
 fada9db2e docs(rt:ui-kit-v2): разбор RT-3335 закрыт допущениями
 f5c3fa184 docs(rt:ui-kit-v2): первые находки разбора RT-3335
-01682fd3f docs(rt:ui-kit-v2): папка задачи RT-3335 — блок графика в ответе чата
-7a5970758 docs(rt:ui-kit-v2): находка о проверке открытия PR задачи эпика
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
