@@ -60,7 +60,7 @@ The packages built with a framework (`core`, `store`, `ui-kit-v2`, the Angular a
 packages) are not judged at all: the wiring check takes the projects that build twice with `tsc`.
 A package that depends on a neighbour of this workspace is loaded only from the installed tarball,
 which takes the neighbour from the registry, so a neighbour not yet published fails that step. The
-tarball step runs in a release and by hand and is skipped in the pull request pipeline. A start of
+tarball step runs in a release and by hand, and is skipped in the pull request and push runs of the pipeline. A start of
 a publication workflow from the browser, by `gh api`, by the workflow's title or through a
 variable passes the guard of the start; the root build command is what stops it there.
 

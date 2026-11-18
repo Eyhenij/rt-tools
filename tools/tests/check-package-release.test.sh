@@ -73,6 +73,21 @@ DIR="$(tree true "'nx build @x/pkg && nx verify @x/pkg'" "'name: x\n          us
 report "a workflow that commits and names no header is refused" \
     "$(run "console.log(m.packageFaults('pkg', '$DIR').length)")" 1
 
+DIR="$(tree true "'nx build @x/pkg || nx verify @x/pkg'" "$WHOLE")"
+report "verify behind an or-chain is refused" \
+    "$(run "console.log(m.packageFaults('pkg', '$DIR').length)")" 1
+
+DIR="$(tree true "'nx build @x/pkg-server && nx verify @x/pkg'" "$WHOLE")"
+report "a build of a neighbour with the same prefix does not stand for this one" \
+    "$(run "console.log(m.packageFaults('pkg', '$DIR').length)")" 1
+
+DIR="$(tree true "'nx build @x/pkg --verbose && nx verify @x/pkg --output-style=static'" "$WHOLE")"
+report "flags after the steps are accepted" \
+    "$(run "console.log(m.packageFaults('pkg', '$DIR').length)")" 0
+
+report "a package with a framework is passed when named leniently" \
+    "$(cd "$TOOLS/.." && node tools/check-package-release.mjs --package core --lenient >/dev/null 2>&1; echo $?)" 0
+
 report "a package named by hand that is not judged is refused" \
     "$(cd "$TOOLS/.." && node tools/check-package-release.mjs --package no-such-package >/dev/null 2>&1; echo $?)" 1
 

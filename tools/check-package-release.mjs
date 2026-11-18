@@ -92,9 +92,15 @@ export function workflowHeaderFaults(header, rules) {
 /** The faults of one package's wiring. */
 export function packageFaults(folder, root = ROOT) {
     const faults = [];
-    const project = JSON.parse(readFileSync(join(root, 'projects', folder, 'project.json'), 'utf8'));
-    const rootPackage = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
-    const manifest = JSON.parse(readFileSync(join(root, 'projects', folder, 'package.json'), 'utf8'));
+    let project, rootPackage, manifest;
+
+    try {
+        project = JSON.parse(readFileSync(join(root, 'projects', folder, 'project.json'), 'utf8'));
+        rootPackage = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
+        manifest = JSON.parse(readFileSync(join(root, 'projects', folder, 'package.json'), 'utf8'));
+    } catch (error) {
+        return [`a file of the package «${folder}» cannot be read: ${error.message}`];
+    }
     const verifyTarget = project.targets?.verify;
     const verify = (verifyTarget?.options?.command ?? '').trim().split(/\s+/);
 
@@ -106,11 +112,14 @@ export function packageFaults(folder, root = ROOT) {
         faults.push(`the «verify» target of projects/${folder}/project.json does not depend on «build»: it would load a stale folder`);
     }
 
-    const steps = (rootPackage.scripts?.[`build:${folder}`] ?? '').split('&&').map((step) => step.trim());
-    const buildAt = steps.findIndex((step) => step.startsWith(`nx build ${manifest.name}`));
-    const verifyAt = steps.indexOf(`nx verify ${manifest.name}`);
+    const script = rootPackage.scripts?.[`build:${folder}`] ?? '';
+    const name = manifest.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const steps = script.split('&&').map((step) => step.trim());
+    const buildAt = steps.findIndex((step) => new RegExp(`^nx build ${name}(\\s|$)`).test(step));
+    const verifyAt = steps.findIndex((step) => new RegExp(`^nx verify ${name}(\\s|$)`).test(step));
 
-    if (buildAt < 0 || verifyAt < buildAt) {
+    // A step after «||» or «;» may never run, so only a chain of «&&» counts.
+    if (/\|\||;/.test(script) || buildAt < 0 || verifyAt < buildAt) {
         faults.push(`the root script «build:${folder}» does not run «nx verify ${manifest.name}»: a built package would never be loaded`);
     }
 
@@ -129,11 +138,17 @@ export function packageFaults(folder, root = ROOT) {
         .filter((line) => !line.trim().startsWith('#'))
         .join('\n');
 
-    if (!new RegExp(`pnpm run build:${folder}\\s*$`, 'm').test(live)) {
+    if (!new RegExp(`pnpm run build:${folder}(\\s|$)`, 'm').test(live)) {
         faults.push(`.github/workflows/publish-${folder}.yml does not build through «pnpm run build:${folder}», which runs the verify step`);
     }
 
-    const rules = require(join(root, 'commitlint.config.cjs')).rules ?? {};
+    let rules = {};
+
+    try {
+        rules = require(join(root, 'commitlint.config.cjs')).rules ?? {};
+    } catch (error) {
+        faults.push(`commitlint.config.cjs cannot be read: ${error.message}`);
+    }
 
     const headers = workflowHeaders(live);
 

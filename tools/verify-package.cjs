@@ -61,11 +61,12 @@ if (withNgDeclare.length > 0) {
 //    locally and only fails once someone installs the tarball on its own. `tslib` shipped
 //    undeclared in 0.1.0 exactly this way — `importHelpers` puts it in the CommonJS output, and
 //    nothing in the manifest said so.
-const BARE_IMPORT = /(?:from\s+|require\(\s*)['"]([^'".][^'"]*)['"]/g;
+const BARE_IMPORT = /(?:from\s+|require\(\s*|import\s*\(?\s*)['"]([^'".][^'"]*)['"]/g;
 const declared = new Set([...Object.keys(manifest.dependencies ?? {}), ...Object.keys(manifest.peerDependencies ?? {})]);
 const undeclared = new Map();
 
-for (const file of jsFiles) {
+// The declaration files go with the code: a type imported from a package nobody declared is not found by the consumer either.
+for (const file of [...jsFiles, ...walk(distDir).filter((name) => name.endsWith('.d.ts'))]) {
     for (const [, specifier] of fs.readFileSync(file, 'utf8').matchAll(BARE_IMPORT)) {
         if (specifier.startsWith('node:')) {
             continue;
@@ -185,5 +186,7 @@ if (failures.length > 0) {
 
 // eslint-disable-next-line no-console
 console.log(
-    `${manifest.name} verified: ${jsFiles.length} built files, no undeclared imports, relative imports resolve, entry points load${withConsumer ? ' from the packed tarball too' : ''}.`
+    `${manifest.name} verified: ${jsFiles.length} built files, no undeclared imports, relative imports resolve${
+        !dependsOnWorkspace ? ', entry points load from the built folder' : ''
+    }${withConsumer ? ', entry points load from the packed tarball' : ''}${!dependsOnWorkspace || withConsumer ? '' : ' — entry points NOT loaded here: the package needs a neighbour of the workspace and the tarball step is skipped'}.`
 );

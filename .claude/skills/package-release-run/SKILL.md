@@ -30,12 +30,13 @@ installed into an empty folder. The root build command runs it after the build:
 
 ```bash
 pnpm run build:<package>
-node tools/verify-package.cjs <package> --no-consumer   # without the registry, the tarball step is skipped
+node tools/verify-package.cjs <package> --no-consumer   # without the registry, the tarball step is skipped; the pull request and push runs of the pipeline skip it too
 ```
 
-One package with its build, the same call the start guard makes:
+One package — the call the start guard makes, with `--lenient`, so that a package with a framework is passed and not refused. Add `--build` to also run `pnpm run build:<package>`, which loads the package:
 
 ```bash
+node tools/check-package-release.mjs --package <package> --lenient
 node tools/check-package-release.mjs --package <package> --build
 ```
 
@@ -44,8 +45,7 @@ node tools/check-package-release.mjs --package <package> --build
 Three lines are copied together with the pipeline, and none is left out: the `verify` target in
 `projects/<package>/project.json` calling `tools/verify-package.cjs <package>`, `nx verify` at the
 end of `build:<package>` in the root `package.json`, and the commit area of the publication workflow
-in the list `scope-enum` of `commitlint.config.cjs`. The wiring check refuses a package missing any
-of the three.
+in the list `scope-enum` of `commitlint.config.cjs`. The wiring check refuses a package missing the first two, and the third when the workflow writes a header with that area.
 
 ## What it does not tell
 

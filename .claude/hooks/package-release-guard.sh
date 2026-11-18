@@ -34,7 +34,9 @@ packages="$(printf '%s' "$cmd" | tr '\n' ' ' | grep -oE '(^|[^a-z])gh([[:space:]
 
 out=''
 for package in $packages; do
-    one="$(cd "$root" && node "$check" --package "$package" --lenient 2>&1)" || out="$out$one "
+    one="$(cd "$root" && node "$check" --package "$package" --lenient 2>&1)"
+    # Only a refusal of the check (exit 1) stops the call; a check that itself broke passes, as the header says.
+    [ $? -eq 1 ] && out="$out$one "
 done
 [ -z "$out" ] && exit 0
 
