@@ -62,6 +62,28 @@ task, a line per finding, each with its address.
   the hook tests are red on every branch that merges main. **Address:** names of this tree — the
   push set of the tree and its hook test.
 
+## RT-3335 — the chart block of the assistant chat
+
+- **The wrapper sample of the storybook pattern holds an inline template the reuse check
+  refuses.** The section «The wrapper component» of `rt-tools-storybook-story` shows `template:`
+  inside the class, and `check-reuse` refuses it by the signal `inline-template`. The Playground
+  wrapper copied the sample, the push gate turned red, and the move to `.html` cost a second full
+  run of about 25 minutes. Proposed: the sample with `templateUrl`, and a frequent miss «a new
+  wrapper keeps its template in its own `.html`; older wrappers in `tools/reuse-allowlist.json` are
+  no sample». **Address:** names of this tree — the pattern `rt-tools-storybook-story`.
+- **A drawing carried over from an earlier task's mockup is a copy of a copy, and it keeps the
+  earlier width.** The chart drawing came from the RT-2750 mockup. Its legend gap drifted to 8
+  against 12 in code, and only the 22-number match found it; its width of 328 made the owner ask
+  for the wide frames. Proposed for the first article of the rule: «A drawing carried over from an
+  earlier task's mockup is measured the same way before it goes on the sheet; its parts are
+  stretched to the new frame, and a frame is drawn for every width the block meets.»
+  **Address:** rules layer — the rule `mockups`.
+- **The task key never opens a commit subject here.** `subject-case` of the commitlint preset
+  refused a subject that started with `RT-2750`. Proposed for the companion of `git-workflow`,
+  after the edit area: «the key `RT-<number>` never opens the subject; the subject starts with a
+  lowercase Russian word». The companion stands at 326 of 330 lines. **Address:** names of this
+  tree — the companion of `git-workflow`.
+
 ## Left unresolved
 
 - **All findings above** — wait for the owner's decision at the end of the epic.
