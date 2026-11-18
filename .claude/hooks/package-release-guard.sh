@@ -35,8 +35,9 @@ packages="$(printf '%s' "$cmd" | tr '\n' ' ' | grep -oE '(^|[^a-z])gh([[:space:]
 out=''
 for package in $packages; do
     one="$(cd "$root" && node "$check" --package "$package" --lenient 2>&1)"
+    status=$?
     # Only a refusal printed by the check itself stops the call; a check that broke with a stack passes, as the header says.
-    case "$one" in "check-package-release:"*) out="$out$one " ;; esac
+    if [ "$status" -eq 1 ]; then case "$one" in "check-package-release:"*) out="$out$one " ;; esac; fi
 done
 [ -z "$out" ] && exit 0
 

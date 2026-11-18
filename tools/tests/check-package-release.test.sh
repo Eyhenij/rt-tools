@@ -99,4 +99,14 @@ report "a package with a framework is passed when named leniently" \
 report "a package named by hand that is not judged is refused" \
     "$(cd "$TOOLS/.." && node tools/check-package-release.mjs --package no-such-package >/dev/null 2>&1; echo $?)" 1
 
+GUARD="$TOOLS/../.claude/hooks/package-release-guard.sh"
+guard() {
+    printf '{"tool_name":"Bash","tool_input":{"command":"%s"},"cwd":"%s"}' "$1" "$TOOLS/.." | CLAUDE_PROJECT_DIR="$TOOLS/.." bash "$GUARD" | wc -c | tr -d ' '
+}
+
+report "the guard lets through a start of a whole package and of a package with a framework" \
+    "$(guard 'gh workflow run publish-ai-chat-protocol.yml && gh workflow run publish-core.yml')" 0
+report "the guard is silent on a command that starts nothing" \
+    "$(guard 'git status')" 0
+
 suite_result
