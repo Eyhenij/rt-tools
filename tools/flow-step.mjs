@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/flow-step.mjs · 43f004ac91df · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/flow-step.mjs · 87ea186f592b · правится надстройкой, не здесь
 /**
  * A step of the plan measured by its check — the engine command `step`.
  *
@@ -314,7 +314,22 @@ export async function runBeforePull(sources, model) {
         const numbers = doneSteps(sources, model);
         // The suites shorten the limit; the work always runs with the step limit.
         const limit = Number(process.env.RT_FLOW_STEP_LIMIT_MS) || STEP_LIMIT_MS;
-        const results = await measureSteps(sources, model, numbers, limit);
+        // A restored folder brings the progress back as it stood at the commit each step was measured
+        // on: a check that reads the progress saw it so, while the last version has every step done.
+        const progressPath = `${plan.folder}/${PROGRESS}`;
+        const latest = restored.includes(progressPath) ? readFileSync(progressPath, 'utf8') : null;
+        const groups = new Map();
+        for (const number of numbers) {
+            const head = latest === null ? null : sources.marks.step(plan.branch, number)?.head;
+            const text = (head && sources.git.versionAt(progressPath, head)) || latest;
+            groups.set(text, [...(groups.get(text) ?? []), number]);
+        }
+        const results = [];
+        for (const [text, group] of groups) {
+            if (text !== null) writeFileSync(progressPath, text);
+            results.push(...(await measureSteps(sources, model, group, limit)));
+        }
+        results.sort((a, b) => numbers.indexOf(a.number) - numbers.indexOf(b.number));
         const changed = trackedChanges().filter((line) => !before.includes(line));
         for (const result of results) console.log(`${result.number} ${result.refused ? `step: ${result.refused}` : stepLine(result)}`);
         if (changed.length > 0) console.log(`step: the checks changed tracked files — ${changed.join(', ')}: a check measures, it does not edit`);

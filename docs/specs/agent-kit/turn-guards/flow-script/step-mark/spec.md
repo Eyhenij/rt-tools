@@ -61,6 +61,8 @@ prints a line per fixture.
 - **The PR of a task does not open until every done step matches on the final rerun.**
 - **The refusal of the PR names every step that did not match, with its expected result and what it got.**
 - **The final rerun reads the plan and the progress from the history when the task folder is already taken apart.**
+- **On the final rerun a check sees the progress as it stood at the commit its step was measured on.**
+  The last progress has every step done; a check that reads it would see a state it never measured.
 - **A check that changes a tracked file does not match.** A check measures; one that edits the tree
   could make itself green.
 - **A check that fails on the network does not match, and the refusal names the network as the cause.**

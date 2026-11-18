@@ -369,6 +369,40 @@ got="$(tf_pr)"
 report "pr: SC-AK-1733 — разобранная папка поднята из истории, шаг совпал" "$(printf '%s' "$got" | grep -c 'matched 1 code=0')" 1
 report "pr: SC-AK-1733 — после перемера папки снова нет" "$(test -d "$TF_PR/docs/tasks/RT-2-pr" && echo есть || echo нет)" 'нет'
 
+# SC-AK-1739 — проверка читает ход работы: перемер разобранной папки даёт его таким, каким он был при замере
+(
+    cd "$TF_DIR" || exit 1
+    git -c init.defaultBranch=main init -q live-repo
+    cd live-repo || exit 1
+    printf 'start\n' > start.txt
+    git add start.txt && "${TF_G[@]}" commit -q -m start
+    git update-ref refs/remotes/origin/main HEAD
+    git checkout -q -b RT-4-live
+    mkdir -p docs/tasks/RT-4-live
+    cat > docs/tasks/RT-4-live/plan.md <<'PLAN'
+# Plan
+
+## Stages
+
+### 1. Первый
+
+- **Steps:**
+    1. Найти шаг впереди
+       Check: `grep -c '^- \[ \]' docs/tasks/RT-4-live/progress.md` → = 1
+    2. Второй
+       Check: `true` → exit 0
+- **Readiness sign:** шаги измерены
+PLAN
+    printf '# Ход работы\n\n## Шаги\n\n- [>] 1.1 Найти шаг впереди\n- [ ] 1.2 Второй\n' > docs/tasks/RT-4-live/progress.md
+    git add -A && "${TF_G[@]}" commit -q -m plan
+    node "$TESTS/../assets/checks/task-flow-script.mjs" step 1.1 >/dev/null 2>&1
+    node "$TESTS/../assets/checks/task-flow-script.mjs" step 1.2 >/dev/null 2>&1
+    git add -A && "${TF_G[@]}" commit -q -m progress
+    git rm -q -r docs/tasks/RT-4-live && "${TF_G[@]}" commit -q -m "folder taken apart"
+)
+got="$(cd "$TF_DIR/live-repo" && RT_FLOW_STEP_LIMIT_MS=5000 node "$TESTS/../assets/checks/task-flow-script.mjs" step --done --pr 2>&1; printf 'code=%s' "$?")"
+report "pr: SC-AK-1739 — шаг, читающий ход работы, совпал на ходе работы своего замера" "$(printf '%s' "$got" | grep -cE '^1\.1 .*· совпало|matched 2')" 2
+
 if [ -n "${TF_ALONE:-}" ]; then
     rm -rf "$TF_DIR"
     suite_result "сценарий task flow: шаг плана и одобрение"

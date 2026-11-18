@@ -267,6 +267,15 @@ And with a mark of another commit it runs the checks and refuses them as green
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
+### SC-AK-1739 — a check that reads the progress matches on the final rerun
+
+Given a step whose check counts the steps not begun in the progress, measured while one step was not begun
+And the task folder taken apart after every step was marked done
+When the final rerun runs
+Then the step matches: its check reads the progress of the commit it was measured on
+
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
 ### SC-AK-1736 — a step command that does not match leaves the progress as it was
 
 Given a progress whose step 1.1 is current, and a check of step 1.1 that does not match
