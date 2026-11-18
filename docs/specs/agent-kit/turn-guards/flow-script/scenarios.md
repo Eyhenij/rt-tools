@@ -388,11 +388,11 @@ Then the first is refused naming the step and the text, and the second passes
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
-### SC-AK-1411 — the approval mark carries the red output
+### SC-AK-1411 — the approval mark carries the red output and the place of the answer
 
-Given a plan whose checks are red and a record with both roles called and then the menu answer «Одобряю план RT-2»
-When the approval is asked, then again with the answer «Переделай этап 1», then with no role called
-Then the first writes the mark with the answer and the red output of every step, and the other two write none
+Given a plan whose checks are red and a record of this repository with both roles called and then the menu answer «Одобряю план RT-2»
+When the approval is asked, then with a record outside the record directories, then with the answer «Переделай этап 1», then with no role called
+Then the first writes the mark with the answer, its place and the red output of every step, and the other three write none
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 

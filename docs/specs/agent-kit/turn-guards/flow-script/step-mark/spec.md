@@ -1,6 +1,6 @@
 # A mark is measured again, not believed
 
-**Status:** proposed · **Revision:** 2026-11-18 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-18 · **Scenario prefix:** `SC-AK`
 **Depends on:** `docs/specs/agent-kit/turn-guards/flow-script/spec.md`,
 `docs/specs/agent-kit/turn-guards/flow-script/guard/spec.md`,
 `docs/specs/agent-kit/turn-guards/flow-script/replay/spec.md`
@@ -24,10 +24,8 @@ is done and what is measured once more before the work leaves the machine: only 
 step done, every done step is measured again once before the PR opens, and the approval is confirmed
 in the session record, not in the mark.
 
-The rules below merge into `docs/specs/agent-kit/turn-guards/flow-script/` and its subdomains: the
-rules of the engine, of exit 5 and of the final rerun into the engine itself, the rules of the edits
-the guard refuses into `guard/`, the rules of the judge into `replay/`. All carry the prefix `SC-AK`,
-so the scenarios share one numbering.
+This subdomain of the engine holds the rules of the marks across the engine, the guard and the
+replay. They carry the prefix `SC-AK` of the domain, so the scenarios share one numbering.
 
 ## Terminology
 
@@ -107,13 +105,10 @@ prints a line per fixture.
 - **The replay runs by hand and as a plan step, not in the set before a push.** It calls a model once
   per fixture.
 
-Scenarios of the live specs that change their promise when this work lands are edited there by the
-commit that changes the code and the test titles: `SC-AK-1414` (a done mark is written by the engine,
-and an edit that writes one is refused), `SC-AK-1411` (the approval mark carries the place of the
-answer and the plan commit). `SC-AK-1726` rests on the rule of the engine already in force — a step is
-refused while a file of the task folder differs from the commit of the plan — and adds only that such
-a step stays not done in the progress. The sentence of `replay/` that hands the hook text and the fixtures to a
-subagent is replaced by the rules above.
+Two scenarios of the neighbouring specs follow these rules: `SC-AK-1414` of `guard/` (an edit that
+marks a step done is refused) and `SC-AK-1411` of the engine (the approval mark carries the place of
+the answer). `SC-AK-1726` rests on the rule of the engine that refuses a step while a file of the task
+folder differs from the commit of the plan, and adds only that such a step stays not done.
 
 ## What is out of scope
 
@@ -210,3 +205,5 @@ None.
 - 2026-11-18 — the agreement was written: the engine alone marks a step done, every done step is
   measured again before the PR opens, the approval mark is confirmed in the session records of every
   working copy, and the judge of the replay runs with no tools outside the tree.
+- 2026-11-18 — the agreement merged as the subdomain `step-mark/` of the engine; `plan-red` approves a
+  plan in progress again by the red output of its own mark.

@@ -48,8 +48,8 @@ silent.
 
 The engine, its measurers and the release cases are the subdomain one level up; the cases of the end
 of a turn one by one are in the domain of the exit check. The verdicts of the model hooks on the same
-fixtures are compared by a separate check that hands the hook text and the fixtures to a subagent: the
-suite reads the text of those hooks, not a model.
+fixtures are compared by the replay of the subdomain `step-mark/`: a judge with no tools gets the hook
+text and the turns of a fixture; the suite reads the text of those hooks, not a model.
 
 ## Contract
 
@@ -93,8 +93,8 @@ Not applicable: one turn is run at a time.
 
 ## Decisions
 
-- **The expected outcome lives in the suite, not in the fixture.** The subagent that judges a fixture
-  by the text of a model hook sees the fixture whole; an outcome written in it would tell the verdict.
+- **The expected outcome lives in the suite, not in the fixture.** The judge of a fixture gets its
+  turns by the text of a model hook; an outcome written in them would tell the verdict.
 - **The hosting is a double in the fixture tree.** The board module is read from `tools/` of the tree
   root, and the fixture tree holds a module that answers from a file next to it: the suite never
   reads the real hosting.

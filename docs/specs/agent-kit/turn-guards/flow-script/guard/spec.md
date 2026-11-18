@@ -26,7 +26,7 @@ There is no interface: the guard answers the agent with a refusal or stays silen
 
 ## Rules
 
-- **A step marked done in the progress needs the green mark the engine wrote for it.**
+- **A step of a plan with checks is marked done in the progress only by the engine, never by an edit.**
 - **Done steps go first in the progress, and the one current step right after them.**
 - **The state line of the progress is not set ahead of the state the engine measures.**
 - **The progress, the plan, the epic plan and the marks are written by no shell command, and the marks by no tool but the engine.**
