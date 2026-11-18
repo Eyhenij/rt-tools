@@ -1411,15 +1411,26 @@
                 ".claude/rt-kit/defaults/turn-map.md",
                 ".claude/skills/epic-flow-declare/SKILL.md",
                 ".claude/skills/task-flow-archive/SKILL.md",
+                ".claude/skills/task-flow-archive/pitfalls.md",
                 ".claude/skills/task-flow-close/SKILL.md",
+                ".claude/skills/task-flow-close/pitfalls-2.md",
+                ".claude/skills/task-flow-close/pitfalls.md",
                 ".claude/skills/task-flow-resume/SKILL.md",
+                ".claude/skills/task-flow-resume/pitfalls.md",
                 ".claude/skills/task-flow-start/SKILL.md",
+                ".claude/skills/task-flow-start/pitfalls.md",
                 ".claude/skills/task-flow/SKILL.md",
                 ".claude/skills/turn-conduct/SKILL.md",
                 "docs/constitution/work-conduct.md",
                 "tools/check-state-next.mjs"
             ],
-            "probes": []
+            "probes": [
+                ".claude/skills/epic-flow-declare/pitfalls-2.md",
+                ".claude/skills/epic-flow-declare/pitfalls.md",
+                ".claude/skills/task-flow-archive/pitfalls-2.md",
+                ".claude/skills/task-flow-resume/pitfalls-2.md",
+                ".claude/skills/task-flow-start/pitfalls-2.md"
+            ]
         },
         "node tools/check-turn-map.mjs": {
             "seconds": 0,
