@@ -24,8 +24,8 @@
 ## What the tree already has
 
 - `rtButton` без подписи уже рисуется квадратом: `rt-button.directive.scss:&--icon-only` ставит
-  ширину равной высоте и снимает отступы; признак `isIconOnly` в `rt-button.directive.ts`. Стори
-  кнопки-квадрата в витрине нет.
+  ширину равной высоте и снимает отступы; признак `isIconOnly` в `rt-button.directive.ts`. В
+  витрине квадрат есть одним случаем «без подписи» в стори Icon: одна тема и один размер.
 - `rt-tag`: входы `severity`, `size`, `appearance` (`solid | outlined`), подсказка через
   `rtTooltip` при переполнении. Спек `docs/specs/ui-kit-v2/tag/` говорит «метки без подписи не
   бывает».

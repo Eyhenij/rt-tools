@@ -31,6 +31,7 @@
             --rt-tag-match-bg: var(--rt-yellow-400);
             --rt-tag-match-color: var(--rt-neutral-950);
             --rt-tag-match-radius: var(--rt-radius-xs);
+            --rt-tag-dot-radius: var(--rt-radius-full);
 
             display: inline-flex;
             max-width: 100%;
@@ -96,6 +97,9 @@
             &--severity--neutral {
                 --rt-tag-severity-bg: var(--rt-color-bg-subtle);
                 --rt-tag-severity-text: var(--rt-color-text-primary);
+
+                /* Подпись этих двух почти чёрная, а нейтральный статус точкой — серый. */
+                --rt-tag-severity-dot: var(--rt-color-text-muted);
             }
 
             /* Outlined: прозрачный фон + рамка цвета палитры (currentColor = текст).
@@ -104,6 +108,28 @@
                 --rt-tag-severity-bg: transparent;
 
                 border: var(--rt-tag-border-width) solid var(--rt-tag-color-border, currentcolor);
+            }
+
+            /* Точка: круг цвета состояния без подписи. Круг всегда — шаг входа `radius` её не
+               трогает: квадратная отметка статуса читается как флажок. Сторона идёт ступенью
+               размера, чтобы точка в ряду мелких меток не была крупнее их. */
+            &--appearance--dot {
+                --rt-tag-dot-size: var(--rt-size-2);
+
+                width: var(--rt-tag-dot-size);
+                height: var(--rt-tag-dot-size);
+                padding: 0;
+                border-radius: var(--rt-tag-dot-radius);
+                background: var(--rt-tag-color-dot, var(--rt-tag-severity-dot, var(--rt-tag-severity-text)));
+                vertical-align: middle;
+
+                &.rt-tag--size--sm {
+                    --rt-tag-dot-size: 6px;
+                }
+
+                &.rt-tag--size--lg {
+                    --rt-tag-dot-size: 10px;
+                }
             }
 
             &__icon {

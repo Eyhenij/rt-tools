@@ -21,6 +21,12 @@ of the kit does not hold and says nothing to a screen reader.
 | ------- | ------------------------------------------------------------------------------ |
 | The dot | The third appearance of the tag: a circle of the palette's colour, no label    |
 
+### What it is called in the interface
+
+| In the domain | On the screen                                         |
+| ------------- | ----------------------------------------------------- |
+| The dot       | a small coloured circle next to a record, no word     |
+
 ## Rules
 
 - **The dot is the third value of the appearance input, not an input of its own.** It is a way to
@@ -28,7 +34,9 @@ of the kit does not hold and says nothing to a screen reader.
   would allow «outlined and a dot», which means nothing.
 - **The label of a dot is still required, and it moves into the hint and the accessible name.** The
   dot has no visible word, so the value is the only thing a reader learns: the hint carries it on
-  every dot, not only on an overflow, and the dot is an image named by the same value.
+  every dot, not only on an overflow, and the dot is an image named by the same value. The dot
+  takes the keyboard focus: the hint opens on focus, and without it a keyboard reader never
+  reaches the value.
 - **The colour of the dot is the state colour of the palette; secondary and neutral take the muted
   text colour.** The text colour of those two is the primary text, nearly black, and a status dot of
   the neutral meaning is grey.
@@ -43,6 +51,8 @@ of the kit does not hold and says nothing to a screen reader.
 
 - **The screen that uses the dot.** The record page header is the work of the application.
 - **An animated or pulsing dot.** That is a live state — `rt-live-badge`.
+- **The value on a touch screen.** The kit hint opens on hover and focus, and a tap closes it. A
+  screen that shows a dot to a finger names the value elsewhere — in the sheet the record opens.
 
 ## Contract
 
@@ -92,3 +102,8 @@ Not applicable.
 ## Open questions
 
 None.
+
+## History of changes
+
+- 2026-11-18 — the dot appearance was proposed (RT-3389): a record page header on a narrow screen
+  shows the status as a coloured dot.
