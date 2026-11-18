@@ -1,0 +1,22 @@
+<ng-container rtBlock="rt-ai-chat-chart-dialog">
+    <rt-dialog size="lg" [width]="FULL_WIDTH" [ariaLabel]="title()">
+        <rt-dialog-header [title]="title()" />
+        <rt-dialog-content rtElem="body">
+            <div rtElem="bar">
+                @if (spec.subtitle) {
+                    <span rtElem="subtitle" qa-dataid="ai-chat-chart-dialog-subtitle">{{ spec.subtitle }}</span>
+                }
+                <rt-icon-button
+                    rtElem="download"
+                    qa-dataid="ai-chat-chart-dialog-download"
+                    icon="ico-download"
+                    variant="ghost"
+                    [ariaLabel]="t().aiChartDownload"
+                    [tooltip]="t().aiChartDownload"
+                    [disabled]="!drawn()"
+                    (clicked)="download()" />
+            </div>
+            <rt-ai-chat-chart-plot rtElem="plot" qa-dataid="ai-chat-chart-dialog-plot" [spec]="spec" [height]="FULL_HEIGHT" />
+        </rt-dialog-content>
+    </rt-dialog>
+</ng-container>

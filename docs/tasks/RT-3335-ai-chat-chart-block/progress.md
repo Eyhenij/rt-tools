@@ -3,13 +3,13 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 5 — The block
+- **Stage:** 4 of 5 — Showcase
 - **Done:** branch `RT-3335-ai-chat-chart-block` taken from `RT-2750-rt-chart` (a chain: PR #3386
   of RT-2750 is open into the epic branch); the task is in progress and assigned; the grill holds
   the exploration and the decisions; the body of #3335 is rewritten away from echarts; the
   agreement `docs/specs/ui-kit-v2/proposed/ai-chat-chart/` holds 17 rules and SC-UKV-1341…1359,
   its 15 open questions closed by assumption
-- **Next step:** 3.1 — the block component over the checked spec and its data.
+- **Next step:** 4.1 — the stories of the block: one per kind, pending, invalid, empty, both themes, narrow feed.
   The branch RT-2750 below waits for main to fix the hook test SC-AK-569 broken by #3387.
 - **Uncommitted:** no
 - **Waiting for the owner:** no; the mockup and the plan are approved: «Одобряю макет и план RT-3335»
@@ -24,11 +24,11 @@
 - [x] 2.3 Write the mapping of the ten kinds onto `IRtChart` with the formats
 - [x] 2.4 Add `ajv` 8.20.0, already in the lockfile, as an exact dev dependency for the schema test
 - [x] 2.5 Cover the check, the schema and the mapping with unit tests by scenario id
-- [>] 3.1 Write the block component: title row, subtitle, axis names, notice, placeholder, empty state
-- [ ] 3.2 Add full screen through the kit dialog and the PNG download
-- [ ] 3.3 Add the provider with the `toText` factory and the kit labels in eight languages
-- [ ] 3.4 Cover the block with component tests by scenario id
-- [ ] 4.1 Write the stories: one per kind, pending, invalid, empty, both themes, narrow feed, and an
+- [x] 3.1 Write the block component: title row, subtitle, axis names, notice, placeholder, empty state
+- [x] 3.2 Add full screen through the kit dialog and the PNG download
+- [x] 3.3 Add the provider with the `toText` factory and the kit labels in eight languages
+- [x] 3.4 Cover the block with component tests by scenario id
+- [>] 4.1 Write the stories: one per kind, pending, invalid, empty, both themes, narrow feed, and an
 - [ ] 4.2 Take the snapshot references and match the showcase with the mockup
 - [ ] 4.3 Ask the owner to approve the showcase through the parent session
 - [ ] 5.1 Merge the agreement into the ai-chat subdomain spec and fix the scenario index
@@ -51,6 +51,22 @@
   and full screen; measured: zero gap at the right edge in every block, the chat header subtitle
   cut instead of running 42 px under the icons. Affected stage of the plan: 1.
 
+- **The kit labels of the block live in English in the package and in Russian in the showcase.**
+  Step 3.3 says eight languages, but the kit carries one dictionary, `rt-kit-labels.en.ts`, and the
+  Russian set of the showcase; the other languages come from the application's translator. Affected
+  stage of the plan: 3.
+- **The pending block shows only the placeholder, without the title row of the mockup.** The spec
+  is not parsed while the call streams, so there is no title to draw, and the rule says the
+  placeholder stands whatever the spec string holds. Affected stage of the plan: 4 — the showcase
+  shows the placeholder alone.
+- **The plot is a component of its own, shared by the block and the full-screen dialog.** The
+  y-label, `rt-chart` and the x-label are drawn once; the label thinning is counted from its width.
+  The PNG is saved by a six-line helper of the entry: the PDF viewer's helper is not exported and
+  handles byte arrays the chart does not need. Affected stage of the plan: 3.
+- **The `Not covered` marks of the agreement are removed when it merges into the ai-chat spec.**
+  33 of 37 scenarios are covered by 44 tests now; 1355, 1369 and 1376 wait for the snapshots of
+  stage 4, and 1372 is the isolation grep over the build. Affected stage of the plan: 5.
+
 ## Sessions
 
 ### 2026-11-18
@@ -67,8 +83,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 5 — The block
-- **Next step:** 3.1 — the block component over the checked spec and its data.
+- **Stage:** 4 of 5 — Showcase
+- **Next step:** 4.1 — the stories of the block: one per kind, pending, invalid, empty, both themes, narrow feed.
 - **PR:** not open yet; the chain base is PR #3386
 
 The progress in full — `docs/tasks/RT-3335-ai-chat-chart-block/progress.md`; the plan lies next to it.

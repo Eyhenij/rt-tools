@@ -13,6 +13,11 @@ import { TRtKitLabelKey } from '../src/lib/i18n';
 export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     aiBackToChat: 'Назад к беседе',
     aiBlockUnsupported: 'Блок «{{type}}» не поддерживается',
+    aiChartDownload: 'Скачать PNG',
+    aiChartFullScreen: 'Открыть на весь экран',
+    aiChartInvalid: 'Не удалось построить график',
+    aiChartLabel: 'График',
+    aiChartPending: 'Рисую график…',
     aiClose: 'Закрыть ассистента',
     aiCopyReference: 'Скопировать номер',
     aiCopyThreadId: 'Скопировать ID',

@@ -1,0 +1,50 @@
+<ng-container rtBlock="rt-ai-chat-chart">
+    @switch (state().kind) {
+        @case ('pending') {
+            <div rtElem="placeholder" qa-dataid="ai-chat-chart-placeholder" role="status">{{ t().aiChartPending }}</div>
+        }
+        @case ('invalid') {
+            <rt-message rtElem="notice" qa-dataid="ai-chat-chart-invalid" severity="danger" live="status">
+                {{ t().aiChartInvalid }}
+            </rt-message>
+        }
+        @default {
+            @if (spec(); as spec) {
+                @if (spec.title || spec.subtitle || actions()) {
+                    <div rtElem="title-row">
+                        @if (spec.title || spec.subtitle) {
+                            <div rtElem="heading">
+                                @if (spec.title) {
+                                    <span rtElem="title" qa-dataid="ai-chat-chart-title" [rtTooltip]="spec.title">{{ spec.title }}</span>
+                                }
+                                @if (spec.subtitle) {
+                                    <span rtElem="subtitle" qa-dataid="ai-chat-chart-subtitle">{{ spec.subtitle }}</span>
+                                }
+                            </div>
+                        }
+                        @if (actions()) {
+                            <div rtElem="actions">
+                                <rt-icon-button
+                                    qa-dataid="ai-chat-chart-full-screen"
+                                    icon="fullscreen"
+                                    variant="ghost"
+                                    [ariaLabel]="t().aiChartFullScreen"
+                                    [tooltip]="t().aiChartFullScreen"
+                                    (clicked)="openFullScreen()" />
+                                <rt-icon-button
+                                    qa-dataid="ai-chat-chart-download"
+                                    icon="ico-download"
+                                    variant="ghost"
+                                    [ariaLabel]="t().aiChartDownload"
+                                    [tooltip]="t().aiChartDownload"
+                                    [disabled]="!drawn()"
+                                    (clicked)="download()" />
+                            </div>
+                        }
+                    </div>
+                }
+                <rt-ai-chat-chart-plot rtElem="plot" qa-dataid="ai-chat-chart-plot" [spec]="spec" />
+            }
+        }
+    }
+</ng-container>

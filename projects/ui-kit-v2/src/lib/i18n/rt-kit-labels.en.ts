@@ -20,6 +20,11 @@ const COUNT_DAYS: string = '{{count}} days';
 export const RT_KIT_LABELS_EN = {
     aiBackToChat: 'Back to conversation',
     aiBlockUnsupported: 'The “{{type}}” block is not supported',
+    aiChartDownload: 'Download PNG',
+    aiChartFullScreen: 'Open full screen',
+    aiChartInvalid: 'The chart could not be drawn',
+    aiChartLabel: 'Chart',
+    aiChartPending: 'Drawing the chart…',
     aiClose: 'Close assistant',
     aiCopyReference: 'Copy reference',
     aiCopyThreadId: 'Copy ID',

@@ -1,0 +1,29 @@
+@layer rt-kit.components {
+    .rt-ai-chat-chart-plot {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        gap: var(--rt-space-2);
+
+        /* Имя оси значений — над полем у его левого края. */
+        &__y-label {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            line-height: var(--rt-leading-snug);
+            overflow-wrap: anywhere;
+        }
+
+        &__chart {
+            min-width: 0;
+        }
+
+        /* Имя оси категорий — под легендой у правого края. */
+        &__x-label {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            line-height: var(--rt-leading-snug);
+            overflow-wrap: anywhere;
+            text-align: end;
+        }
+    }
+}

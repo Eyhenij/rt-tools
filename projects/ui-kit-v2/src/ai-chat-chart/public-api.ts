@@ -9,3 +9,6 @@ export * from './lib/ai-chat-chart.model';
 export * from './lib/ai-chat-chart.check';
 export * from './lib/ai-chat-chart.data';
 export * from './lib/ai-chat-chart.schema';
+export * from './lib/ai-chat-chart.view';
+export * from './lib/ai-chat-chart.providers';
+export * from './lib/components/block/rt-ai-chat-chart.component';

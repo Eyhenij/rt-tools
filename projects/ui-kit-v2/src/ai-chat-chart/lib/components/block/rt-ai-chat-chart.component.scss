@@ -1,0 +1,72 @@
+@layer rt-kit.components {
+    .rt-ai-chat-chart {
+        --rt-ai-chat-chart-placeholder-radius: var(--rt-radius-md);
+
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        gap: var(--rt-space-2);
+
+        /* Заглушка в размер поля графика, пока аргументы вызова ещё идут. */
+        &__placeholder {
+            display: flex;
+            height: 188px;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--rt-ai-chat-chart-placeholder-radius);
+            background: var(--rt-color-bg-surface-subtle);
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            line-height: var(--rt-leading-snug);
+        }
+
+        &__notice {
+            min-width: 0;
+        }
+
+        /* Заголовок с подзаголовком слева, кнопки у правого края даже без заголовка. */
+        &__title-row {
+            display: flex;
+            min-width: 0;
+            align-items: flex-start;
+            gap: var(--rt-space-2);
+        }
+
+        &__heading {
+            display: flex;
+            min-width: 0;
+            flex: 1;
+            flex-direction: column;
+            gap: var(--rt-space-0-5);
+        }
+
+        /* Длинный заголовок обрезается многоточием, целиком — в подсказке. */
+        &__title {
+            overflow: hidden;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-semibold);
+            line-height: var(--rt-leading-snug);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__subtitle {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            line-height: var(--rt-leading-snug);
+            overflow-wrap: anywhere;
+        }
+
+        &__actions {
+            display: flex;
+            flex: none;
+            gap: var(--rt-space-1);
+            margin-inline-start: auto;
+        }
+
+        &__plot {
+            min-width: 0;
+        }
+    }
+}
