@@ -1,3 +1,9 @@
+## [0.2.1](https://github.com/Eyhenij/rt-tools/compare/rt-ai-chat-protocol%400.2.0...rt-ai-chat-protocol%400.2.1) (2026-11-18)
+
+### Bug Fixes
+
+- **rt:ai-chat-protocol:** относительные импорты пакета с расширением .js, чтобы собранный esm загружался в Node ([b22ac4d](https://github.com/Eyhenij/rt-tools/commit/b22ac4d9924a3bb94d1e38ce2de1a45e096fa372))
+
 # 0.2.0 (2026-11-18)
 
 ### Features
