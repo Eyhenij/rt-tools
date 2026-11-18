@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 6 — The markdown parser reads the divider alignment and fits rows
+- **Stage:** 3 of 6 — The `table` block in `rt-ai-chat`
 - **Done:** the task is taken, the branch `RT-3337-ai-chat-table-block` is taken from `RT-3336-ai-chat-chart-data` (chain), the task is in progress on the board. Exploration done, the six questions closed by assumption, the mockup approved: «Одобряю макет». The agreement draft `docs/specs/ui-kit-v2/proposed/ai-chat-table/` is written and checked against the grill (`ee8c157d2`); its four open questions are closed by assumption in its Decisions.
-- **Next step:** step 2.1, the alignment field of the markdown table node.
+- **Next step:** step 3.1, the table block type in the ai-chat model.
 - **Going now:** stage 1. The plan is approved by the owner: «Одобряю план с добавками» — the block schema (step 1.7, SC-UKV-1433) and the chart data table on the shared look (step 4.7, SC-UKV-1434). goal-critic's blocking finding is closed by `play` steps of `Wide` and `Scrolled`.
 - **Uncommitted:** no
 - **Waiting for the owner:** no
@@ -22,11 +22,11 @@ The plan is approved by the owner; the work goes by its steps.
 - [x] 1.5 Export both files from `projects/ui-kit-v2/src/lib/util/index.ts`.
 - [x] 1.6 Write `table-data.spec.ts` and `table-csv.spec.ts` next to them, test names starting with the scenario id: SC-UKV-1398, 1399, 1400, 1401, 1402, 1403, 1410, 1411, 1414, 1421, 1424, 1426, 1427, 1428 at the helper level.
 - [x] 1.7 Write `projects/ui-kit-v2/src/lib/util/table.schema.ts`: `RT_AI_CHAT_TABLE_SCHEMA`, JSON Schema 2020-12 of the table block as the chart schema is written; export it; `table.schema.spec.ts` covers SC-UKV-1433 by a hand-written check of the sample blocks against the schema's fields.
-- [>] 2.1 Add the column alignment field (`start`, `center`, `end`, one per head cell) to the table node in `projects/ui-kit-v2/src/lib/util/markdown.model.ts`; other block kinds keep it empty.
-- [ ] 2.2 Read the divider row in `readTable` of `projects/ui-kit-v2/src/lib/util/markdown-parse.ts`: `--:` end, `:-:` centre, `:--` and `---` start, a column with no divider cell start.
-- [ ] 2.3 Fit every markdown row to the head in `readTable`: a short row padded with empty cells, cells past the head dropped; the plain-text copy follows the fitted node.
-- [ ] 2.4 Add cases to `markdown-parse.spec.ts` and `markdown-plain-text.spec.ts`: SC-UKV-1416 at the parser level, SC-UKV-1418 at the parser level and for the fitted copy.
-- [ ] 3.1 Add `IRtAiChat.TableBlock` and the column type to `projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/rt-ai-chat.model.ts`, and a `table` view kind to `BlockView`.
+- [x] 2.1 Add the column alignment field (`start`, `center`, `end`, one per head cell) to the table node in `projects/ui-kit-v2/src/lib/util/markdown.model.ts`; other block kinds keep it empty.
+- [x] 2.2 Read the divider row in `readTable` of `projects/ui-kit-v2/src/lib/util/markdown-parse.ts`: `--:` end, `:-:` centre, `:--` and `---` start, a column with no divider cell start.
+- [x] 2.3 Fit every markdown row to the head in `readTable`: a short row padded with empty cells, cells past the head dropped; the plain-text copy follows the fitted node.
+- [x] 2.4 Add cases to `markdown-parse.spec.ts` and `markdown-plain-text.spec.ts`: SC-UKV-1416 at the parser level, SC-UKV-1418 at the parser level and for the fitted copy.
+- [>] 3.1 Add `IRtAiChat.TableBlock` and the column type to `projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/rt-ai-chat.model.ts`, and a `table` view kind to `BlockView`.
 - [ ] 3.2 Write `isTableBlock` next to `isMarkdownBlock` in `rt-ai-chat-blocks.logic.ts`: `columns` a non-empty list and `rows` a list, otherwise the plate with the type name; malformed parts inside a valid block go to the stage 1 helpers, not to the plate.
 - [ ] 3.3 Add `table` to `OWN_TYPES` and to `toBlockViews`, so a renderer registered for `table` is not taken.
 - [ ] 3.4 Give `blocksToPlainText` a kit locale argument and the table text by the tab-separated helper of stage 1; `rt-ai-chat-answer.component.ts` reads `RT_KIT_LOCALE` inside the `plainText` computed, so the answer copy follows a locale change.
