@@ -2,11 +2,11 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 3 of 3 — The texts
 - **Done:** grill, agreement SC-AK-1657…1668, plan approved by the owner: «Одобряю plan.md RT-3283
-  (Recommended)»; stages 1 and 2.
-- **Next step:** step 3.1 — the agreement merges into the package spec with its bindings.
+  (Recommended)»; all three stages; the agreement is the subdomain `push-set-usefulness`.
+- **Next step:** the roles on the done work, then the folder goes to the archive and the PR opens.
 - **Uncommitted:** nothing.
 - **PR:** not open yet. RT-3270 (PR #3369) is merged into the epic branch; this PR goes into the
   epic branch.
@@ -20,8 +20,8 @@
 - [x] 2.1 `push-set-usefulness.ts` counts per check the runs, the seconds, the refusals, the false and the real refusals, the idle and the not-run steps and the price of a defect, old lines included
 - [x] 2.2 `agent-kit metrics` prints the section «Проверки набора» and the two lists of candidates ordered by seconds, one line per check over its bases, narrowed by `--day`
 - [x] 2.3 The report over 11–17 November of this machine names the kit snapshots and the admin e2e as falsely refusing
-- [>] 3.1 The agreement merges into the package spec as the subdomain `push-set-usefulness` with its bindings
-- [ ] 3.2 The README of the package names the table of the push set checks
+- [x] 3.1 The agreement merges into the package spec as the subdomain `push-set-usefulness` with its bindings
+- [x] 3.2 The README of the package names the table of the push set checks
 
 ## Decisions along the way
 

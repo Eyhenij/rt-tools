@@ -2,7 +2,7 @@
  * Польза проверок набора по строкам отметок дня: ложные и настоящие отказы, лишние запуски, цена
  * дефекта, раздел отчёта и списки кандидатов.
  *
- * Сценарии `docs/specs/agent-kit/proposed/push-set-usefulness/`.
+ * Сценарии `docs/specs/agent-kit/push-set-usefulness/`.
  */
 import { join } from 'node:path';
 

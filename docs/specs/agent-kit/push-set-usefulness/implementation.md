@@ -1,0 +1,23 @@
+# Binding — the usefulness of the push set checks
+
+A statement of the spec and the place where it is carried out. The link goes by the text of the
+statement: a removed statement is removed together with its line.
+
+- **A run line carries the moment, the base and whether the change touched the subject of the check.** — `projects/agent-kit/assets/hooks/metric-marks.sh:rt_run_note` — seven fields: sign, checksum, outcome, seconds, moment, base checksum, subject mark; `projects/agent-kit/assets/hooks/push-set.sh:rt_push_set_run` — both runners pass the base and the mark; scenario `SC-AK-1657`
+- **The run line stays in the marks of the tree, not in the observation.** — `projects/agent-kit/assets/hooks/metric-marks.sh:rt_run_note` — the line goes to `runs-<day>` of the marks directory, the observation carries the outcome and the seconds only; scenario `SC-AK-1657`
+- **A line written before this work counts in the numbers it can answer.** — `projects/agent-kit/src/lib/push-set-usefulness.ts:parseRunLines` — a line of four fields reads without a subject mark; scenario `SC-AK-1658`
+- **A false refusal is a red run followed by a green run of the same command on the same content sign.** — `projects/agent-kit/src/lib/push-set-usefulness.ts:refusalsOf` — a later green run on the same sign; scenario `SC-AK-1659`
+- **A real refusal is a red run with no later green run of the same command on the same sign.** — `projects/agent-kit/src/lib/push-set-usefulness.ts:refusalsOf`; scenario `SC-AK-1660`
+- **An idle run is a run whose change touched nothing of the subject of the check.** — `projects/agent-kit/assets/checks/push-inputs.mjs:subject` — by the reads of the push inputs table and by the paths the profile declares; `projects/agent-kit/src/lib/push-set-usefulness.ts:checkOf` — the idle count; scenario `SC-AK-1663`
+- **The subject of the package hook scenarios is the hooks, the checks and the scenarios, not the package root.** — `.claude/rt-kit/project-heavy.sh:rt_push_subject` — the hooks and the scenarios of the package for the step of the hook scenarios; scenario `SC-AK-1662`
+- **A step `select` did not start is recorded as not run, and the report counts it apart from the idle runs.** — `projects/agent-kit/assets/hooks/git-guard-push-marks.sh:rt_push_note_not_run` — a line with the outcome and the mark `not-run`; `projects/agent-kit/src/lib/push-set-usefulness.ts:checkOf` — the not-run count; scenarios `SC-AK-1661`, `SC-AK-1663`
+- **A check whose subject is not recorded is printed «предмет не записан», not zero.** — `projects/agent-kit/src/lib/push-set-usefulness.ts:checkLine`; scenario `SC-AK-1658`
+- **The price of a defect is the seconds of all runs divided by the real refusals.** — `projects/agent-kit/src/lib/push-set-usefulness.ts:checkOf` — `secondsPerDefect`; scenario `SC-AK-1663`
+- **`agent-kit metrics` prints a table of the push set checks with five numbers each.** — `projects/agent-kit/src/lib/metrics.ts:metricsLines` — the section after the runs; `projects/agent-kit/src/lib/push-set-usefulness.ts:pushSetLines`; scenario `SC-AK-1664`
+- **One check on several bases is one line.** — `projects/agent-kit/assets/hooks/metric-marks.sh:rt_check_id` — the checksum of the command without its base; `projects/agent-kit/src/lib/push-set-usefulness.ts:namesOf` — old checksums with the base inside lead to the shared one; scenario `SC-AK-1667`
+- **The report takes the checksum from the hook that writes it.** — `projects/agent-kit/src/lib/push-set-usefulness.ts:hookSumsOf` — one shell over the laid-out hook, `rt_check_id` per line; scenario `SC-AK-1667`
+- **The check is named by its command from the current push set, found by its checksum.** — `projects/agent-kit/src/lib/push-set-usefulness.ts:pushSetUsefulnessOf` — the set printed by the profile without a base and with the base mark; `projects/agent-kit/src/lib/push-set-usefulness.ts:nameOf` — a command no longer in the set prints by its checksum; scenario `SC-AK-1664`
+- **The report names apart the checks that never refused for real over the period.** — `projects/agent-kit/src/lib/push-set-usefulness.ts:usefulnessOf` — `neverUseful`; scenario `SC-AK-1665`
+- **The report names apart the checks with more false refusals than real ones.** — `projects/agent-kit/src/lib/push-set-usefulness.ts:usefulnessOf` — `falseOverReal`; scenarios `SC-AK-1665`, `SC-AK-1666`
+- **Both lists are ordered by the seconds the check took.** — `projects/agent-kit/src/lib/push-set-usefulness.ts:bySeconds`; scenario `SC-AK-1668`
+- **`--day` narrows the table to one day, like the rest of the report.** — `projects/agent-kit/src/lib/metrics.ts:periodOf` — the period the section reads its days by

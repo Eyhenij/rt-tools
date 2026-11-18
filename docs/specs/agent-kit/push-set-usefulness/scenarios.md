@@ -75,7 +75,11 @@ Then the first is listed under «ни разу не отказали по дел
 Given the run marks of this tree from 11 to 17 November 2026
 When `agent-kit metrics --days 7` runs
 Then the list «ложных больше настоящих» names the snapshot step of the second kit and the admin
-end-to-end suite — 45 false refusals of 58 and 19 of 30
+end-to-end suite — 44 false refusals of 57 and 17 of 28
+
+Not covered: the run marks of this machine are outside history and live a month; the report over
+them was read by the check of step 2.3 of RT-3283, and SC-AK-1665 holds the same lists on made-up
+lines.
 
 ### SC-AK-1667 — one check on two bases is one line
 

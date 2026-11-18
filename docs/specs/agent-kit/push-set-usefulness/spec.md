@@ -1,11 +1,12 @@
 # The usefulness of the push set checks
 
-**Status:** proposed · **Revision:** 17 November 2026 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 18 November 2026 · **Scenario prefix:** `SC-AK`
 **Depends on:** `metrics`, `observations`, `hooks`, `push-gate-ahead`
 **Laws:** `observability`, `verifiability`, `delivery`
 **Procedures:** none
 
-Task RT-3283 of epic RT-3302. Merges into the package spec as a subdomain of its own.
+Which push set checks pay for their seconds: the run line every step of the set writes, and the
+section of `agent-kit metrics` that counts false refusals, idle runs and the price of a defect.
 
 ## Why
 
@@ -22,7 +23,7 @@ refusals of the conversation checks and has no line about the push set.
 - **A real refusal** — a red run after which the same command on the same content sign never went
   green.
 - **A false refusal** — a red run after which the same command on the same content sign went green.
-- **A check** — a command of the push set with its base replaced by a mark: `--base=<ветка>` and
+- **A check** — a command of the push set without its base: `--base=<ветка>` and
   `RT_SUITES_BASE=<ветка>` name the base, not the check.
 - **The subject of a check** — what it reads: the recorded reads of the push inputs table, or the
   paths the tree profile declares for a step the table does not record.
@@ -69,9 +70,12 @@ The report prints in the owner's language: «Проверки набора», «
 
 - **`agent-kit metrics` prints a table of the push set checks with five numbers each.** Runs and
   seconds, refusals, false refusals, idle runs, the price of a defect.
-- **One check on several bases is one line.** The run line holds the checksum of the command with
-  the base replaced by a mark; an old line, written with the base inside, is matched by the current
-  set over the bases of the tree's history.
+- **One check on several bases is one line.** The run line holds the checksum of the command
+  without its base, so the step the profile prints with a base and without one is one check. An
+  old line, written with the base inside, is matched by the current set over the branches the tree
+  knows.
+- **The report takes the checksum from the hook that writes it.** An own copy of the computation
+  drifts from the hook silently: one side writes under its checksum, the other looks under its own.
 - **The check is named by its command from the current push set, found by its checksum.** A
   command no longer in the set is printed by its checksum, and the report counts such lines apart.
 - **The report names apart the checks that never refused for real over the period.**
@@ -141,3 +145,5 @@ None.
 ## History of changes
 
 - 17 November 2026 — written as the agreement of RT-3283.
+- 18 November 2026 — merged into the package spec; the checksum drops the base entirely and is
+  taken from the hook.
