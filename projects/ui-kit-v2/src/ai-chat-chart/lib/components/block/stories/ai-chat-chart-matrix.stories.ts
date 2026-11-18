@@ -21,6 +21,12 @@ export const Kinds: TStory = { args: { part: 'kinds' } };
 /** Ожидание, негодная спецификация, пусто, круг из нулей, без заголовка, длинный заголовок, 60 категорий. */
 export const States: TStory = { args: { part: 'states' } };
 
+/**
+ * Узкая лента, светлая и тёмная половины: шесть длинных рядов — SC-UKV-1355, девять секторов —
+ * SC-UKV-1369, заголовок в 120 знаков с обеими кнопками — SC-UKV-1376.
+ */
+export const Edges: TStory = { args: { part: 'edges' } };
+
 /** Узкий экран, панель и широкий экран: блок занимает всю ширину ленты — SC-UKV-1376. */
 export const Widths: TStory = { args: { part: 'widths' } };
 

@@ -52,6 +52,41 @@ export const AI_CHAT_CHART_STATES: readonly IAiChatChartCase[] = [
     }),
 ];
 
+const MONTHS: readonly string[] = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+
+const CHANNELS: readonly string[] = [
+    'Бронирования с сайта',
+    'Партнёрские площадки',
+    'Звонки в отдел продаж',
+    'Корпоративные договоры',
+    'Повторные гости по почте',
+    'Туроператоры и агентства',
+];
+
+const ROOMS: readonly string[] = ['Номера', 'Виллы', 'Апартаменты', 'Люксы', 'Студии', 'Коттеджи', 'Шале', 'Хостел', 'Кемпинг'];
+
+/** Крайние случаи узкой ленты: шесть длинных рядов на двенадцать месяцев, девять секторов, заголовок в 120 знаков. */
+export const AI_CHAT_CHART_EDGES: readonly IAiChatChartCase[] = [
+    ready('six series', {
+        kind: ERtAiChatChartKind.LINE,
+        title: 'Брони по каналам',
+        series: CHANNELS.map((name: string, row: number): IRtAiChatChart.Series => ({
+            name,
+            points: MONTHS.map((x: string, index: number): IRtAiChatChart.Point => ({ x, y: 10 + row * 6 + ((index * 5 + row) % 9) })),
+        })),
+    }),
+    ready('nine sectors', {
+        kind: ERtAiChatChartKind.PIE,
+        title: 'Брони по типам',
+        series: [{ name: 'Брони', points: ROOMS.map((x: string, index: number): IRtAiChatChart.Point => ({ x, y: 20 - index * 2 })) }],
+    }),
+    ready('title 120', {
+        kind: LINE.kind,
+        title: 'Выручка, расходы и прибыль по всем подразделениям, каналам продаж и типам номеров за первое полугодие 2026 года',
+        series: LINE.series,
+    }),
+];
+
 /** Ширины ленты по макету: узкий экран 360, панель 420 и широкий экран 760 — минус поля ленты. */
 export const AI_CHAT_CHART_WIDTHS: readonly string[] = ['328px', '386px', '728px'];
 

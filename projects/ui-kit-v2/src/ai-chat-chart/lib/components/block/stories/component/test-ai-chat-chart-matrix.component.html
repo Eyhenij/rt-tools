@@ -11,6 +11,15 @@
     @case ('states') {
         <ng-container *ngTemplateOutlet="cases; context: { $implicit: states }" />
     }
+    @case ('edges') {
+        <app-story-themes>
+            <ng-template>
+                <app-story-row slotWidth="328px" [items]="edges" [itemLabel]="caseLabel">
+                    <ng-template let-c><rt-ai-chat-chart style="width: 328px" [block]="c.block" /></ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-themes>
+    }
     @case ('widths') {
         <app-story-row [items]="widths" [itemLabel]="widthLabel">
             <ng-template let-w>

@@ -1,13 +1,15 @@
 # The chart block of the assistant chat
 
-**Status:** proposed · **Revision:** 2026-11-18 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-18 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the assistant chat (the block token, the copy of an answer), the chart (`rt-chart`
 and its five data shapes), the dialog of the kit (full screen)
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
 
-The product agreement of the task RT-3335, written before the code. It merges into the assistant
-chat subdomain by the last commit of the PR, with the scenario numbers unchanged.
+A subdomain of the second kit about `rt-ai-chat-chart`: the block `chart` of an assistant answer,
+published by its own entry `@rt-tools/ui-kit-v2/ai-chat-chart`. It stands next to the assistant
+chat rather than inside its spec: together they would be longer than the length limit of a
+document.
 
 ## Why
 
@@ -279,4 +281,5 @@ assumption and go to the owner as a list with the plan. A wrong one costs an edi
 
 ## History of changes
 
-- 2026-11-18 — written by the task RT-3335 of the epic RT-3346.
+- 2026-11-18 — written by the task RT-3335 of the epic RT-3346 before the code, put in force by
+  the same task with the block written.

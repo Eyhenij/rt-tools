@@ -9,8 +9,8 @@
   the exploration and the decisions; the body of #3335 is rewritten away from echarts; the
   agreement `docs/specs/ui-kit-v2/proposed/ai-chat-chart/` holds 17 rules and SC-UKV-1341…1359,
   its 15 open questions closed by assumption
-- **Next step:** 5.1 — merge the agreement into the ai-chat spec, removing the stale
-  `Not covered` marks; the showcase is approved: «Одобряю витрину», 22 of 22 numbers.
+- **Next step:** 5.3 — the roles review, then the push gate, the folder taken apart, the push and
+  the PR into `RT-2750-rt-chart`.
   The branch RT-2750 below waits for main to fix the hook test SC-AK-569 broken by #3387.
 - **Uncommitted:** no
 - **Waiting for the owner:** no; the mockup and the plan are approved: «Одобряю макет и план RT-3335»
@@ -32,9 +32,9 @@
 - [x] 4.1 Write the stories: one per kind, pending, invalid, empty, both themes, narrow feed, and an
 - [x] 4.2 Take the snapshot references and match the showcase with the mockup
 - [x] 4.3 Ask the owner to approve the showcase through the parent session
-- [>] 5.1 Merge the agreement into the ai-chat subdomain spec and fix the scenario index
-- [ ] 5.2 Bring the README and the CONTEXT of the chat up to date
-- [ ] 5.3 Run the push gate
+- [x] 5.1 Merge the agreement into the ai-chat subdomain spec and fix the scenario index
+- [x] 5.2 Bring the README and the CONTEXT of the chat up to date
+- [>] 5.3 Run the push gate
 
 ## Decisions along the way
 
@@ -76,6 +76,14 @@
   and the legend at 8, while the approved `rt-chart` mockup and its code have 12: the copy drifted,
   so the mockup was fixed — the plot and the legend stand in a `chart` frame with a gap of 12.
   Match: 22 of 22 numbers on the 386 block. Affected stage of the plan: 4.
+- **The agreement became the subdomain `ai-chat-chart`, not a part of the `ai-chat` spec.** Step
+  5.1 says "into the ai-chat spec", but the two together are 508 lines against the limit of 500;
+  the kit keeps its subdomains side by side, so the block got its own row in both indexes. The
+  scenario SC-UKV-1382 is about `rt-chart` and moved to the chart subdomain with a rule of its own.
+  Affected stage of the plan: 5.
+- **The showcase got the story `Edges`.** Three scenarios promised frames the stories did not
+  draw: six long series, nine sectors in the dark theme and a 120-character title in a narrow
+  feed. Affected stage of the plan: 4.
 - **The docs checker reads the components of the `ai-chat-chart` entry too.** It knew only the
   editor entry, so the overview page of the block had no table check. Affected stage of the plan: 4.
 

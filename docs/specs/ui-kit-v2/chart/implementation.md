@@ -14,3 +14,4 @@ in the tree, and the scenario it is checked by.
 - **An empty chart shows the empty state of the kit with the label `chartEmpty` instead of axes.** — `projects/ui-kit-v2/src/lib/components/chart/rt-chart.empty.ts:rtChartIsEmpty`; scenario `SC-UKV-1333`
 - **The chart saves itself as a PNG file by a public method, with the background of its theme and its legend.** — `projects/ui-kit-v2/src/lib/components/chart/rt-chart.png.ts:rtChartToPng`; scenario `SC-UKV-1334`
 - **A chart in a container of zero width waits for the container to get a size and draws then.** — `projects/ui-kit-v2/src/lib/components/chart/rt-chart.component.ts:#observeSize`; scenario `SC-UKV-1335`
+- **A bar is never wider than its category column: many categories narrow the bars instead of laying them over each other.** — `projects/ui-kit-v2/src/lib/components/chart/rt-chart.cartesian.ts:barWidth`; scenario `SC-UKV-1382`

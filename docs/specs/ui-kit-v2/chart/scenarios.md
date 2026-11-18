@@ -82,3 +82,11 @@ When the value axis is laid out
 Then it stands from 0 to 100 with the step 25
 
 Covered by the scene spec.
+
+### SC-UKV-1382 — sixty bars fit a narrow plot
+
+Given cartesian data of one bar series over 60 categories
+When the chart is drawn 328 points wide
+Then every bar stands inside its own column: no bar covers its neighbour or crosses the right edge of the plot, and two categories keep the bar width of the mockup
+
+Covered by the scene spec and the frame `States` of the chart block, the case «60 categories».
