@@ -1,8 +1,8 @@
 ---
 name: task-flow-close
 kind: pattern
-rule: task-flow
-description: Pattern of rule task-flow. Load when bringing work to readiness — merging the product agreement into the domain spec, bringing the domain texts up to date with what was done, opening the PR as a draft or ready by its base and leaving draft.
+rule: task-flow-handover
+description: Pattern of rule task-flow-handover. Load when bringing work to readiness — merging the product agreement into the domain spec, bringing the domain texts up to date with what was done, opening the PR as a draft or ready by its base and leaving draft.
 ---
 
 # Closing the work

@@ -1,8 +1,8 @@
 ---
 name: task-flow-archive
 kind: pattern
-rule: task-flow
-description: Pattern of rule task-flow. Load when the texts are up to date and the task folder is taken apart by the last commit before the PR opens. The move to the archive, the work queue audit, the rules review of the closed work and what to do with the findings.
+rule: task-flow-handover
+description: Pattern of rule task-flow-handover. Load when the texts are up to date and the task folder is taken apart by the last commit before the PR opens. The move to the archive, the work queue audit, the rules review of the closed work and what to do with the findings.
 ---
 
 # Taking the task folder apart and the rules review of the work

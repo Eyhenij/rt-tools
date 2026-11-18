@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · defaults/gate-map.sh · fb6481e5cac1 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · defaults/gate-map.sh · 96403f8f21f0 · правится надстройкой, не здесь
 # Map "what is edited — which rule". The package default: real paths, not samples.
 #
 # The trees of this workshop are built alike — Nx, `apps/` and `libs/`, the same extensions and the
@@ -70,7 +70,15 @@ skill_for_default() {
                 # The project's texts. A spec holds the structure of a domain, a law holds the
                 # agreement, and both are edited differently from code.
                 */docs/specs/*) printf '%s\n' 'spec-driven' ;;
-                */docs/tasks/*) printf '%s\n' 'task-flow' ;;
+                # The work-conduct rule is split in parts by subject. The grill and a draft folder
+                # hold the owner's words; every other file of a task folder holds the plan and the
+                # progress. The states part goes with both.
+                */docs/tasks/_draft-* | */docs/tasks/*/grill.md)
+                    printf '%s\n' 'task-flow'
+                    printf '%s\n' 'task-flow-owner' ;;
+                */docs/tasks/*)
+                    printf '%s\n' 'task-flow'
+                    printf '%s\n' 'task-flow-plan' ;;
                 */docs/constitution/*) printf '%s\n' 'spec-driven' ;;
                 *.md) printf '%s\n' 'doc-style' ;;
 
@@ -217,11 +225,12 @@ skill_for_default() {
                 printf '%s\n' 'doc-style-human'
             fi
 
-            # The PR merge is the last moment when the folder of a closed task can still be taken
-            # apart by the same PR: after the merge the queue audit sees it, and there is nobody
-            # left to answer for it. Required as the SECOND layer, on top of the delivery rule.
-            rt_gate_invokes "$target" "(gh[[:space:]]+pr|glab[[:space:]]+mr)[[:space:]]+merge" \
-                && printf '%s\n' 'task-flow'
+            # Opening, readying and merging the PR close a task, and its folder must be taken apart
+            # by then: after the merge the queue audit sees it, and there is nobody left to answer
+            # for it. The part of the work-conduct rule about closing is required as the SECOND
+            # layer, on top of the delivery rule.
+            rt_gate_invokes "$target" "(gh[[:space:]]+pr|glab[[:space:]]+mr)[[:space:]]+(create|ready|merge)" \
+                && printf '%s\n' 'task-flow-handover'
 
             # Declaring an epic and creating its tasks follow the rule of the epic: the card, the
             # plan and every task at once. Required as the SECOND layer, on top of the delivery rule.

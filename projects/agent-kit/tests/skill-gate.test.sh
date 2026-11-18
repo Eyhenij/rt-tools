@@ -12,8 +12,8 @@ export CLAUDE_PROJECT_DIR="$TREE"
 # Правила, которые в этом дереве есть. Всё, что карта назовёт сверх них, гейт требовать не
 # вправе: дерево отказалось от предметного слоя списком, и загружать такое имя нечем.
 for rule in testing component-structure styling-bem typescript-conventions angular-patterns \
-    doc-style spec-driven task-flow dependencies platform-access git-workflow shared-code deploy-flow \
-    epic-flow; do
+    doc-style spec-driven task-flow task-flow-plan task-flow-owner task-flow-handover dependencies \
+    platform-access git-workflow shared-code deploy-flow epic-flow; do
     mkdir -p "$TREE/.claude/skills/$rule"
     printf -- '---\nname: %s\nkind: rule\n---\n' "$rule" > "$TREE/.claude/skills/$rule/SKILL.md"
 done
@@ -198,7 +198,7 @@ expect_skill "SC-AK-1230 — инструмент макетов требует 
 # незагруженное — отказ, перечисляющий оба, читается как «загрузи оба», и однократность теряется.
 c "SC-AK-110 — слияние PR: первым правило поставки" 'gh pr merge 12 --merge'
 gate_session_load git-workflow
-c "SC-AK-110 — слияние PR: следом ведение работы" 'gh pr merge 12 --merge' Bash task-flow
+c "SC-AK-110 — слияние PR: следом закрытие задачи" 'gh pr merge 12 --merge' Bash task-flow-handover
 # Упоминание команды в тексте вызовом не является: пока карта судила по подстроке, гейт отбивал
 # строку о коммите в теле самого коммита.
 c "SC-AK-109 — упоминание команды вызовом не считается" 'echo "потом git commit -m x" >> notes.md' Bash PASS

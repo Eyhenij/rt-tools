@@ -79,8 +79,8 @@ Covered: `projects/agent-kit/tests/defaults.test.sh`, `projects/agent-kit/tests/
 
 Given a command of merging a PR goes
 When the gate decides what to demand
-Then it names the rule of delivery and the rule of the conduct of work, and demands the first
-unloaded one
+Then it names the rule of delivery and the part of the work-conduct rule about closing a task, and
+demands the first unloaded one
 
 Covered: `projects/agent-kit/tests/defaults.test.sh`, `projects/agent-kit/tests/skill-gate.test.sh`.
 
@@ -304,3 +304,20 @@ Then it demands the rule of the epic on top of the delivery rule; a task created
 does not demand it
 
 Covered: `projects/agent-kit/tests/skill-gate.test.sh`.
+
+### SC-AK-1695 — opening and readying a PR demand the part about closing a task
+
+Given a command opens a PR or lifts its draft
+When the gate decides what to demand
+Then it names the rule of delivery and the part of the work-conduct rule about closing a task
+
+Covered: `projects/agent-kit/tests/defaults.test.sh`.
+
+### SC-AK-1696 — a task folder demands the states part and the part of its file
+
+Given a file of a task folder is edited
+When the gate decides what to demand
+Then it names the states part of the work-conduct rule, and with it the part about the owner's
+word for the grill and a draft folder, and the part about the plan for any other file
+
+Covered: `projects/agent-kit/tests/defaults.test.sh`.

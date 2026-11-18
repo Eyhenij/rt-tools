@@ -1,10 +1,10 @@
 ---
 name: task-flow-cycle
 kind: pattern
-rule: task-flow
-description: Pattern of rule task-flow. Load when an edit of a rule, a hook, a check or a role is chosen and when its result is judged. The worst driver from the report, one metric and its direction in the task, the verdict from the next report, and the plain name of an edit that moved nothing.
+rule: task-flow-owner
+description: Pattern of rule task-flow-owner. Load when an edit of a rule, a hook, a check or a role is chosen and when its result is judged. The worst driver from the report, one metric and its direction in the task, the verdict from the next report, and the plain name of an edit that moved nothing.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-cycle.md · 62d892bac895 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-cycle.md · 1fac529ed229 · правится надстройкой, не здесь -->
 
 # The improvement cycle
 

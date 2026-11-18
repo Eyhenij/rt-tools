@@ -1,10 +1,10 @@
 ---
 name: task-flow-resume
 kind: pattern
-rule: task-flow
-description: Pattern of rule task-flow. Load when returning to unfinished work in a new session. What is already in the context, what not to ask the owner, how to edit "Where we stand", how to record a decision along the way and a stage revision. Not for starting work — that is pattern task-flow-start.
+rule: task-flow-plan
+description: Pattern of rule task-flow-plan. Load when returning to unfinished work in a new session. What is already in the context, what not to ask the owner, how to edit "Where we stand", how to record a decision along the way and a stage revision. Not for starting work — that is pattern task-flow-start.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-resume.md · 9094a9e47fa4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-resume.md · 97dce1e937dd · правится надстройкой, не здесь -->
 
 # Returning to unfinished work
 

@@ -40,8 +40,8 @@
 - [x] 4.5 doc-style: the retelling matched the former text
 - [x] 4.6 browser-verification: the hot part is at most 3 000 characters, and nothing of the former text is lost
 - [x] 4.7 browser-verification: the retelling matched the former text
-- [>] 5.1 The section tables of task-flow, git-workflow and ui-component-tests are in the progress, with the pairs of shortened statements
-- [ ] 5.2 task-flow: every part is at most 3 000 characters, and nothing of the former text is lost
+- [x] 5.1 The section tables of task-flow, git-workflow and ui-component-tests are in the progress, with the pairs of shortened statements
+- [>] 5.2 task-flow: every part is at most 3 000 characters, and nothing of the former text is lost
 - [ ] 5.3 task-flow: the retelling of every part matched the former text
 - [ ] 5.4 git-workflow: every part is at most 3 000 characters, and nothing of the former text is lost
 - [ ] 5.5 git-workflow: the retelling of every part matched the former text
@@ -86,6 +86,67 @@ frontmatter and the layout header weigh about 450 bytes in each rule.
 Totals by the table: spec-driven ~2 800, doc-style ~3 130 — over by the Texts for a person
 statements, so `Skills without a law` leaves too and Patterns keeps names only — ~2 900,
 browser-verification ~2 620.
+
+### The long rules: their sections and how each is split
+
+The statements alone of these three rules are over 3 000 bytes, so each is split in parts by
+subject, as the plan says; the split is written here before it is made. A part is a rule of its
+own: the same law, a companion with the bindings of its statements, a cold part with the whole
+articles and the sections the section audit asks, at least one pattern by its `rule:` field, and
+a branch of the gate map. The first part keeps the rule's name, so every check nailed to the name
+keeps working: three checks read the state table from `.claude/skills/task-flow/SKILL.md`, and
+the hooks name `git-workflow` and `task-flow` in their requirements.
+
+| Rule | Section | Now, bytes | Outcome | In the hot part, bytes |
+| --- | --- | --- | --- | --- |
+| task-flow | title, law line, cold-part and requirements lines | 1 282 | the law line stays in every part; the requirements line goes to the part the hooks speak of; the intro leaves | ~350 a part |
+| task-flow | What it is called here, Where it lives, Flow | 3 613 | leave whole for the cold part of the first part | 0 |
+| task-flow | Work states | 3 576 | the state table stays in the first part, read by three checks; the prose around it leaves | ~1 900 |
+| task-flow | How the law applies here | 12 692 | 58 statements, split in four parts by subject, arguments leave | ~4 900 in all |
+| task-flow | What of the law is not here, Patterns | 2 319 | leave whole for the cold part | 0 |
+| git-workflow | title, law line, cold-part line | 976 | stays in every part; the intro leaves | ~300 a part |
+| git-workflow | What it is called here, Where it lives, Flow | 4 516 | leave whole for the cold part of the first part | 0 |
+| git-workflow | How the law applies here | 16 719 | 79 statements, split in four parts by subject, arguments leave | ~6 500 in all |
+| git-workflow | What of the law is not here, Patterns, The language of the record of an edit | 1 838 | leave whole for the cold part; the one statement of the last joins the commit part | ~70 |
+| ui-component-tests | title, intro, When it is taken | 1 057 | the title stays in both parts; the rest leaves | ~250 a part |
+| ui-component-tests | What answers which question | 1 355 | its three statements join the first part, the table leaves | ~150 |
+| ui-component-tests | How the law applies here | 16 060 | 44 statements, split in two parts by subject, arguments leave | ~3 750 in all |
+| ui-component-tests | The order, Commands, snapshot harness, Patterns | 2 491 | leave whole for the cold part | 0 |
+| ui-component-tests | Pitfalls | 2 201 | its ten statements stay as pitfalls in the cold part | 0 |
+
+The parts and what the gate demands them by:
+
+- **task-flow** — the states: the state table and statements 3–5 (the state line, the refusal by
+  state, the state names). Demanded with a second part by every edit in the task folder.
+- **task-flow-plan** — the guard, the task folder, the plan, the steps and the progress:
+  statements 1, 2, 6–8, 21, 22, 27, 29–40, 42, 43, 45, and the Requires line. Demanded together
+  with the first part by an edit in the task folder other than the grill.
+- **task-flow-owner** — the owner's word and the session: statements 9–20, 28, 41, 44, 46–51.
+  Demanded together with the first part by an edit of the grill and of a draft task folder.
+- **task-flow-handover** — closing: statements 23–26, 52–58. Demanded by opening, readying and
+  merging a PR.
+
+Decided along the way: the guard statements went to the plan part, not the first, because the
+first part is read with every second part and the room is in the plan part; the description of
+the past gets no branch, since its edit is the rule `doc-style`'s and the closing is read at the
+PR. Every statement is a headline with the tail the retelling proved needed; every article whole
+stands in the cold part `pitfalls-2.md` of `task-flow`.
+- **git-workflow** — branches, the epic, the chain and history: statements 1–14, 51, 52, 59, 78,
+  79. Demanded as now by branch and commit commands; the first part is a variant per host as now.
+- **git-workflow-queue** — the task key, the board and one's own PRs as a queue: statements 17–23,
+  28–39. Demanded by the task creation command and by board calls.
+- **git-workflow-push** — the push set: statements 15, 16, 24–27, 40–50, 60. Demanded by a push.
+- **git-workflow-hosting** — opening and readying a PR, its review and the machine account:
+  statements 53–58, 61–77. Demanded by the hosting client calls; a variant per host, like the
+  first part, so a tree on any host gets every part under the same name.
+- **ui-component-tests** — the showcase: statements 1–29 of the long list and the three of «What
+  answers which question». Demanded as now by stories and specs of the kit.
+- **ui-component-tests-screens** — references, application screens and the seeding: statements
+  30–44. Demanded by the end-to-end suites and their frames.
+
+The numbers count the statements of «How the law applies here» from 1, in the order of the former
+text. The pairs of shortened statements are written under each rule as its part is cut, the same
+as for the short rules.
 
 ### Shortened statements of spec-driven, «было → стало»
 
@@ -261,8 +322,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 4 of 7 — The rules with short statements
-- **Next step:** step 4.2 — the second cold part in the package, then spec-driven cut to 3 000
+- **Stage:** 5 of 7 — The rules with long statements
+- **Next step:** step 5.1 — the section tables of task-flow, git-workflow and ui-component-tests.
 - **PR:** not open yet. The branch stands on RT-3283 (PR #3371).
 
 The progress in full — `docs/tasks/RT-3326-rule-gate-gives-rule/progress.md`; the plan lies next to it.
@@ -270,14 +331,36 @@ The progress in full — `docs/tasks/RT-3326-rule-gate-gives-rule/progress.md`; 
 ### Uncommitted
 
 ```
- M .claude/skills/spec-driven/SKILL.md
- M .claude/skills/spec-driven/implementation.md
- M projects/agent-kit/assets/rules/spec-driven.md
+ M .claude/rt-kit/defaults/gate-map.sh
+ M .claude/skills/task-flow-archive/SKILL.md
+ M .claude/skills/task-flow-close/SKILL.md
+ M .claude/skills/task-flow-cycle/SKILL.md
+ M .claude/skills/task-flow-resume/SKILL.md
+ M .claude/skills/task-flow/SKILL.md
+ M .claude/skills/task-flow/implementation.md
+ M docs/specs/agent-kit/patterns/implementation.md
+ M docs/specs/agent-kit/rule-gate/scenarios.md
+ M docs/specs/agent-kit/rules/implementation.md
+ M docs/tasks/RT-3326-rule-gate-gives-rule/progress.md
+ M projects/agent-kit/assets/defaults/gate-map.sh
+ M projects/agent-kit/assets/patterns/task-flow-archive.md
+ M projects/agent-kit/assets/patterns/task-flow-close.md
+ M projects/agent-kit/assets/patterns/task-flow-cycle.md
+ M projects/agent-kit/assets/patterns/task-flow-resume.md
+ M projects/agent-kit/assets/rules/task-flow.md
+ M projects/agent-kit/tests/defaults.test.sh
+ M projects/agent-kit/tests/skill-gate.test.sh
+?? .claude/skills/task-flow-handover/
 ```
 
 ### Commits over the main branch
 
 ```
+ebc2fc541 feat(rt:agent-kit): doc-style совпал на третьем круге, этап коротких правил закрыт
+5f0cbedb5 feat(rt:agent-kit): пересказы doc-style и browser-verification, потери вернулись
+1b98424e8 feat(rt:agent-kit): browser-verification в 2 996 байтах, doc-style после пересказа
+f29e7e660 feat(rt:agent-kit): doc-style в 2 994 байтах
+402373b2d feat(rt:agent-kit): spec-driven сохраняет смысл в 2 997 байтах
 4dfd735a2 feat(rt:agent-kit): вторая холодная часть правила и spec-driven в 3000 байт
 2819e0682 feat(rt:agent-kit): отказ шлюза называет причину, соседи не зовут загрузку доставляемого
 004f918ec feat(rt:agent-kit): шлюз правил кладёт правило в заход вместо отказа
@@ -293,11 +376,6 @@ a68987b50 docs(rt:agent-kit): папка задачи о пользе прове
 cd2698050 docs(rt:agent-kit): этап отчёта о пользе проверок набора закрыт
 23f1816a4 feat(rt:agent-kit): отчёт метрик считает пользу каждой проверки набора
 8350b61f6 feat(rt:agent-kit): оба исполнителя набора пишут строку запуска из семи полей
-d1bdf0cef feat(rt:agent-kit): строка запуска шага набора несёт время, базу и предмет
-c0fb0c756 feat(rt:agent-kit): профиль дерева называет предмет сценариев хуков пакета
-67b394559 feat(rt:agent-kit): выбор шагов набора говорит, тронут ли предмет шага
-3ef88cbe9 docs(rt:agent-kit): метрики результата работы влиты, польза проверок набора идёт
-6f931486f [RT-3270] Метрики показывают результат работы: выпуск, простой, отказы на сто вызовов (#3369)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
