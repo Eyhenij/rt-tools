@@ -30,7 +30,7 @@ boundaries, as in the general case.
 - **the kit's build manifest** — `projects/ui-kit-v2/ng-package.json` — `lib.entryFile`
 - **the dependencies and version ranges** — `projects/<package>/package.json`
 - **the implicit dependencies for the build** — `projects/ui-kit-v2/project.json` — `implicitDependencies`
-- **the check of the utility package contents** — `tools/verify-utils-package.cjs`, target `verify`
+- **the check of the utility package contents** — `tools/verify-package.cjs`, target `verify`
 - **the audit of the kit's overview pages** — `tools/verify-ui-kit-v2-docs.cjs`, target `verify`
 
 ## Where the articles are carried out

@@ -204,6 +204,7 @@ node tools/check-format-ignore.mjs
 node tools/check-dependencies.mjs
 node tools/check-publish-lockfile.mjs
 node tools/check-package-imports.mjs
+node tools/check-package-release.mjs
 node tools/check-kit-approval.mjs
 EOF
     # The tree's check scenarios run only the files the change reaches; the selection is there.

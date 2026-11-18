@@ -21,6 +21,13 @@
         "command": "node tools/finalize-utils-package.cjs auth-server"
       }
     },
+    "verify": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "node tools/verify-package.cjs auth-server"
+      }
+    },
     "build:esm": {
       "executor": "@nx/js:tsc",
       "outputs": ["{workspaceRoot}/dist/auth-server/esm"],

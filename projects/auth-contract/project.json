@@ -21,6 +21,13 @@
         "command": "node tools/finalize-utils-package.cjs auth-contract"
       }
     },
+    "verify": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "node tools/verify-package.cjs auth-contract"
+      }
+    },
     "build:esm": {
       "executor": "@nx/js:tsc",
       "outputs": ["{workspaceRoot}/dist/auth-contract/esm"],
