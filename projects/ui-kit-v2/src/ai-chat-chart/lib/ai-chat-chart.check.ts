@@ -75,13 +75,23 @@ function checkHead(value: Record<string, unknown>): string | null {
     return null;
 }
 
+/** X точки на числовой оси: конечное число. */
+function isNumericX(x: unknown): x is number {
+    return typeof x === 'number' && Number.isFinite(x);
+}
+
+/** X точки на оси категорий: строка. */
+function isCategoryX(x: unknown): x is string {
+    return typeof x === 'string';
+}
+
 function checkPoint(point: unknown, kind: ERtAiChatChartKind, seen: Set<string | number>): string | null {
     if (!isRecord(point) || typeof point['y'] !== 'number' || !Number.isFinite(point['y'])) {
         return 'point';
     }
     const x: unknown = point['x'];
-    const numeric: boolean = NUMERIC_X_KINDS.has(kind);
-    if (numeric ? typeof x !== 'number' || !Number.isFinite(x) : typeof x !== 'string') {
+    const isX: (value: unknown) => value is string | number = NUMERIC_X_KINDS.has(kind) ? isNumericX : isCategoryX;
+    if (!isX(x)) {
         return 'x';
     }
     if (point['y'] < 0 && !NEGATIVE_KINDS.has(kind)) {
