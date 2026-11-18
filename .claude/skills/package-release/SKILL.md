@@ -26,10 +26,11 @@ The table in `implementation.md` next to it.
 
 ## How the law applies here
 
-- **A package built from a copy of another package's pipeline carries every step of that pipeline,
-  and the `verify` step is one of them.** The project has a `verify` target, the root command
-  `build:<package>` runs it, and the publication workflow builds through that command. The push
-  set takes only projects that have a `verify` target, so a package without one is invisible to it.
+- **A package built from a copy of another package's pipeline carries the `verify` step of that
+  pipeline.** The project has a `verify` target that depends on the build, the root command
+  `build:<package>` runs it after the build, and the publication workflow builds through that
+  command. The push set takes only projects that have a `verify` target, so a package without one
+  is invisible to it. The wiring check compares these three steps and no others.
 - **A built package is loaded the way a consumer loads it before it is published.** Both entry
   points load from the built folder, and the package packed as it will be published is installed
   into an empty folder and loaded by its name. The workspace bundler resolves what Node does not,
@@ -41,8 +42,10 @@ The table in `implementation.md` next to it.
   the list refuses fails the release at its first commit step.
 - **A refusal of the commit check on one's own commit names a string that lives elsewhere too.** It
   is searched across the tree before the commit is fixed, not corrected only in the commit.
-- **A release starts only when the check passes.** The start of a publication workflow is refused
-  while the build, the loading check or the wiring fails, and the refusal names the fault.
+- **A release does not go out unless the built package loads.** The barrier is the root build
+  command, which ends in `nx verify` and is run by the publication workflow itself, so it holds
+  however the workflow is started. The guard of the start refuses a broken wiring earlier, by the
+  command line of the agent, and saves the minutes of a run that would fail.
 - **"Built" and "tested" are not "consumable".** A statement that a package is ready names the
   command that loaded it as a consumer would, and its output.
 
@@ -53,9 +56,17 @@ Node and from an unpacked tarball, which is what the registry serves. A runtime 
 differently (a bundler with its own rules, another runtime) is the consumer's to confirm, and the
 first consumer's report is the only trace of that.
 
+The packages built with a framework (`core`, `store`, `ui-kit-v2`, the Angular auth and CMS
+packages) are not judged at all: the wiring check takes the projects that build twice with `tsc`.
+A package that depends on a neighbour of this workspace is loaded only from the installed tarball,
+which takes the neighbour from the registry, so a neighbour not yet published fails that step. The
+tarball step runs in a release and by hand and is skipped in the pull request pipeline. A start of
+a publication workflow from the browser, by `gh api`, by the workflow's title or through a
+variable passes the guard of the start; the root build command is what stops it there.
+
 ## Pitfalls
 
 - **A copy of a pipeline is judged by its steps, not by its names.** A renamed command that runs
-  fewer steps reads as the same command. The wiring check compares the steps.
+  fewer steps reads as the same command. The wiring check compares the three steps it names and no others.
 - **A new area in a commit header goes into the list of the commit check in the same change.** The
   area named by the publication workflow is not known to the header check until it is added.

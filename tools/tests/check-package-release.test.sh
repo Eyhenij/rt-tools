@@ -24,7 +24,7 @@ import { join } from 'node:path';
 const dir = mkdtempSync(join(tmpdir(), 'rt-release-'));
 mkdirSync(join(dir, 'projects/pkg'), { recursive: true });
 mkdirSync(join(dir, '.github/workflows'), { recursive: true });
-const verify = $1 ? { verify: { options: { command: 'node tools/verify-package.cjs pkg' } } } : {};
+const verify = $1 ? { verify: { dependsOn: ['build'], options: { command: 'node tools/verify-package.cjs pkg' } } } : {};
 writeFileSync(join(dir, 'projects/pkg/project.json'), JSON.stringify({ targets: { 'build:esm': {}, 'build:cjs': {}, ...verify } }));
 writeFileSync(join(dir, 'projects/pkg/package.json'), JSON.stringify({ name: '@x/pkg' }));
 writeFileSync(join(dir, 'package.json'), JSON.stringify({ scripts: { 'build:pkg': $2 } }));
@@ -44,7 +44,7 @@ report "a type off the list is refused" \
 report "a workflow expression stands for a version" \
     "$(run "console.log(m.workflowHeaders(\"          message: 'chore(rt:utils): версия \${{ inputs.version }}'\").join('|'))")" "chore(rt:utils): версия 0.0.0"
 
-WHOLE="'name: x\n          message: \"chore(rt:utils): версия поднята\"\n          run: pnpm run build:pkg'"
+WHOLE="'name: x\n          uses: EndBug/add-and-commit@v11\n          message: \"chore(rt:utils): версия поднята\"\n          run: pnpm run build:pkg'"
 DIR="$(tree true "'nx build @x/pkg && nx verify @x/pkg'" "$WHOLE")"
 report "a whole wiring has no faults" \
     "$(run "console.log(m.packageFaults('pkg', '$DIR').length)")" 0
@@ -60,5 +60,20 @@ report "a root build that never runs verify is refused" \
 DIR="$(tree true "'nx build @x/pkg && nx verify @x/pkg'" "'name: x\n          run: pnpm exec nx build @x/pkg'")"
 report "a workflow that builds past the root command is refused" \
     "$(run "console.log(m.packageFaults('pkg', '$DIR').length)")" 1
+
+DIR="$(tree true "'nx build @x/pkg && nx verify @x/pkg-server'" "$WHOLE")"
+report "verify of a neighbour package does not stand for this one" \
+    "$(run "console.log(m.packageFaults('pkg', '$DIR').length)")" 1
+
+DIR="$(tree true "'nx verify @x/pkg && nx build @x/pkg'" "$WHOLE")"
+report "verify before the build is refused" \
+    "$(run "console.log(m.packageFaults('pkg', '$DIR').length)")" 1
+
+DIR="$(tree true "'nx build @x/pkg && nx verify @x/pkg'" "'name: x\n          uses: EndBug/add-and-commit@v11\n          run: pnpm run build:pkg'")"
+report "a workflow that commits and names no header is refused" \
+    "$(run "console.log(m.packageFaults('pkg', '$DIR').length)")" 1
+
+report "a package named by hand that is not judged is refused" \
+    "$(cd "$TOOLS/.." && node tools/check-package-release.mjs --package no-such-package >/dev/null 2>&1; echo $?)" 1
 
 suite_result

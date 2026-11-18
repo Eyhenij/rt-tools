@@ -6,6 +6,8 @@
  *   node tools/check-package-release.mjs --package <folder>    — one
  *   node tools/check-package-release.mjs --package <folder> --build   — and build it, which runs
  *                                                                      its verify step
+ *   --lenient — a named folder that is not built with tsc in two formats is passed, not refused
+ *                (the guard of the start asks so: the packages with a framework are not judged here)
  *
  * The first release of `ai-chat-protocol` went out unloadable: the package was built from a copy of
  * the neighbour's pipeline that left out the neighbour's `verify` step, and the push set, which
@@ -93,15 +95,22 @@ export function packageFaults(folder, root = ROOT) {
     const project = JSON.parse(readFileSync(join(root, 'projects', folder, 'project.json'), 'utf8'));
     const rootPackage = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
     const manifest = JSON.parse(readFileSync(join(root, 'projects', folder, 'package.json'), 'utf8'));
-    const verify = project.targets?.verify?.options?.command ?? '';
+    const verifyTarget = project.targets?.verify;
+    const verify = (verifyTarget?.options?.command ?? '').trim().split(/\s+/);
 
-    if (!verify.includes('verify-package.cjs')) {
-        faults.push(`projects/${folder}/project.json has no «verify» target calling tools/verify-package.cjs`);
+    if (verify[0] !== 'node' || verify[1] !== 'tools/verify-package.cjs' || verify[2] !== folder) {
+        faults.push(`projects/${folder}/project.json has no «verify» target running «node tools/verify-package.cjs ${folder}»`);
     }
 
-    const build = rootPackage.scripts?.[`build:${folder}`] ?? '';
+    if (verifyTarget && !(verifyTarget.dependsOn ?? []).includes('build')) {
+        faults.push(`the «verify» target of projects/${folder}/project.json does not depend on «build»: it would load a stale folder`);
+    }
 
-    if (!build.includes(`nx verify ${manifest.name}`)) {
+    const steps = (rootPackage.scripts?.[`build:${folder}`] ?? '').split('&&').map((step) => step.trim());
+    const buildAt = steps.findIndex((step) => step.startsWith(`nx build ${manifest.name}`));
+    const verifyAt = steps.indexOf(`nx verify ${manifest.name}`);
+
+    if (buildAt < 0 || verifyAt < buildAt) {
         faults.push(`the root script «build:${folder}» does not run «nx verify ${manifest.name}»: a built package would never be loaded`);
     }
 
@@ -115,13 +124,24 @@ export function packageFaults(folder, root = ROOT) {
 
     const text = readFileSync(workflow, 'utf8');
 
-    if (!text.includes(`pnpm run build:${folder}`)) {
+    const live = text
+        .split('\n')
+        .filter((line) => !line.trim().startsWith('#'))
+        .join('\n');
+
+    if (!new RegExp(`pnpm run build:${folder}\\s*$`, 'm').test(live)) {
         faults.push(`.github/workflows/publish-${folder}.yml does not build through «pnpm run build:${folder}», which runs the verify step`);
     }
 
     const rules = require(join(root, 'commitlint.config.cjs')).rules ?? {};
 
-    for (const header of workflowHeaders(text)) {
+    const headers = workflowHeaders(live);
+
+    if (headers.length === 0 && live.includes('add-and-commit')) {
+        faults.push(`.github/workflows/publish-${folder}.yml: it commits, and no commit header is read from it («message:» lines): none of its headers is judged`);
+    }
+
+    for (const header of headers) {
         faults.push(...workflowHeaderFaults(header, rules).map((line) => `.github/workflows/publish-${folder}.yml: ${line}`));
     }
 
@@ -137,6 +157,10 @@ function main() {
     // A package that is not built with `tsc` in two formats is another kind of package, and its
     // release is not judged here.
     const faults = folders.flatMap((folder) => packageFaults(folder));
+
+    if (named && folders.length === 0 && !args.includes('--lenient')) {
+        faults.push(`«${named}» is not a package built with tsc in two formats (build:esm and build:cjs): nothing was judged`);
+    }
 
     if (faults.length === 0 && args.includes('--build')) {
         for (const folder of folders) {

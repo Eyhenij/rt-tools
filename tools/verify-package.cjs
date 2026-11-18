@@ -17,7 +17,9 @@ const os = require('os');
 const path = require('path');
 
 const folder = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : 'utils';
-const withConsumer = !process.argv.includes('--no-consumer');
+// The tarball step reads the registry and costs minutes: it runs where a release is made and by hand,
+// and a pull request or a push of the pipeline skips it.
+const withConsumer = !process.argv.includes('--no-consumer') && !['pull_request', 'push'].includes(process.env.GITHUB_EVENT_NAME);
 const distDir = path.resolve(__dirname, '../dist', folder);
 const failures = [];
 
@@ -32,6 +34,12 @@ if (!fs.existsSync(distDir)) {
     // eslint-disable-next-line no-console
     console.error(`dist/${folder} is missing — run the build first.`);
     process.exit(1);
+}
+
+for (const format of ['esm', 'cjs']) {
+    if (!fs.existsSync(path.join(distDir, format, 'index.js'))) {
+        failures.push(`${format}/index.js is missing from the built package`);
+    }
 }
 
 const manifest = JSON.parse(fs.readFileSync(path.join(distDir, 'package.json'), 'utf8'));
@@ -78,7 +86,7 @@ for (const [pkg, file] of undeclared) {
 // 5. Every relative import of the built ESM names a file that exists, with its extension. Node
 //    resolves nothing by guessing: `from './x'` finds no `x.js`. The workspace bundler does guess,
 //    which is why this passed every test in the tree and failed in the first consumer.
-const RELATIVE_IMPORT = /(?:from\s+|import\(\s*)['"](\.{1,2}\/[^'"]*)['"]/g;
+const RELATIVE_IMPORT = /(?:from\s+|import\s*\(?\s*)['"](\.{1,2}\/[^'"]*)['"]/g;
 
 function relativeSpecifiers(file) {
     const faults = [];
@@ -94,7 +102,9 @@ function relativeSpecifiers(file) {
     return faults;
 }
 
-for (const file of jsFiles.filter((name) => name.startsWith(path.join(distDir, 'esm')))) {
+const esmDir = path.join(distDir, 'esm') + path.sep;
+
+for (const file of walk(distDir).filter((name) => name.startsWith(esmDir) && /\.(js|mjs|d\.ts)$/.test(name))) {
     failures.push(...relativeSpecifiers(file));
 }
 
@@ -107,12 +117,15 @@ function loads(label, expression, cwd) {
     try {
         const count = execFileSync(
             process.execPath,
-            ['-e', `Promise.resolve(${expression}).then((m) => console.log(Object.keys(m).length))`],
+            ['-e', `Promise.resolve(${expression}).then((m) => console.log(String(Object.keys(m).length)))`],
             { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], cwd }
-        ).trim();
+        )
+            .trim()
+            .split('\n')
+            .pop();
 
-        if (Number(count) === 0) {
-            failures.push(`${label} entry loaded but exported nothing`);
+        if (!(Number(count) > 0)) {
+            failures.push(`${label} entry loaded but exported nothing (read: ${JSON.stringify(count)})`);
         }
     } catch (error) {
         failures.push(`${label} entry failed to load: ${error.stderr || error.message}`);
