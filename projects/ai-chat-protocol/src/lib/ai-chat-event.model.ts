@@ -1,5 +1,5 @@
-import { EAiChatRunResult } from './ai-chat.enum';
-import { IAiChatToolCall } from './ai-chat.model';
+import { EAiChatRunResult } from './ai-chat.enum.js';
+import { IAiChatToolCall } from './ai-chat.model.js';
 
 /** The AG-UI event types the package reads. The values are the wire names. */
 export const AI_CHAT_EVENT_TYPE: Readonly<{

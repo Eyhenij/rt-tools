@@ -1,4 +1,4 @@
-import { EAiChatErrorKind } from './ai-chat.enum';
+import { EAiChatErrorKind } from './ai-chat.enum.js';
 
 /** The error codes of the assistant service. A run code arrives inside the stream, the rest before it. */
 export const AI_CHAT_BACKEND_CODES: Readonly<

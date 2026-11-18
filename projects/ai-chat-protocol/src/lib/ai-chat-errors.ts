@@ -1,6 +1,6 @@
-import { AI_CHAT_BACKEND_CODES, AI_CHAT_ERROR_TEXTS } from './ai-chat.const';
-import { EAiChatErrorKind } from './ai-chat.enum';
-import { IAiChatError } from './ai-chat.model';
+import { AI_CHAT_BACKEND_CODES, AI_CHAT_ERROR_TEXTS } from './ai-chat.const.js';
+import { EAiChatErrorKind } from './ai-chat.enum.js';
+import { IAiChatError } from './ai-chat.model.js';
 
 /** The kind of an error the stream reports in `RUN_ERROR`. */
 export function toRunErrorKind(code: string | null): EAiChatErrorKind {
