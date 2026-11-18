@@ -5,16 +5,16 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 5 — The judge of recorded turns has nothing to read the answers with
-- **Done:** the grill, the agreement after two rounds of the critic and the roles, the plan approved by the owner
-- **Next step:** 1.1 — the replay command with a judge that has no tools
+- **Stage:** 2 of 5 — Only the engine marks a step done
+- **Done:** stage 1 — the judge of recorded turns runs with no tools (SC-AK-1711…1714)
+- **Next step:** 2.1 — the plan and its checks from the commit that added the plan
 - **Uncommitted:** nothing
 - **PR:** not open yet
 
 ## Steps
 
-- [>] 1.1 The replay command builds the prompt from the hook text and the turns only, runs the judge with no tools outside the tree and compares after the answer
-- [ ] 2.1 The plan and its checks are read from the commit that added the plan, never from the working copy
+- [x] 1.1 The replay command builds the prompt from the hook text and the turns only, runs the judge with no tools outside the tree and compares after the answer
+- [>] 2.1 The plan and its checks are read from the commit that added the plan, never from the working copy
 - [ ] 2.2 step N.M on a match marks the step done and the next one current, and leaves the progress as it was on a mismatch
 - [ ] 2.3 The guard refuses an edit that newly marks a step done in a plan with checks, whatever mark lies on disk
 - [ ] 2.4 The texts that tell to mark a step in the progress by hand say that step N.M marks it
@@ -30,3 +30,4 @@ Rewritten by every session, not appended to.
 ## Decisions along the way
 
 - **The plan was added again by a rebuilt commit, and the checks of 5.1 and 5.3 were tightened before the approval mark.** The folder commit had carried the empty template of the plan, and the engine took it for the plan commit; the branch was not on the server, so it was rebuilt with `reset --soft`. plan-red refused 5.1 and 5.3 as green before the work; their checks now also demand the merged agreement and the probe. Affected stage of the plan: 5.
+- **The plan was added again once more, after the owner's approval: two formal fixes, no new work.** The footprint row of the engine files got the mark «(правится)» the description guard reads — the approved plan named the same files in its code row without it, and stages 2–4 could not be edited. The counting checks got `tr -d ' '`: `wc -l` on this machine pads the number, and the form `number` did not match step 1.1. The owner is told in the next reply. Affected stages: 1–5.
