@@ -117,11 +117,11 @@ export function rtTableData(columns: unknown, rows: unknown, total: unknown): IR
 
 function numberOptions(column: IRtTableColumn): Intl.NumberFormatOptions {
     if (column.type === ERtTableColumn.Percent) {
-        return { style: 'percent', maximumFractionDigits: 1, signDisplay: 'negative' };
+        return { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1, signDisplay: 'negative' };
     }
 
     if (column.type === ERtTableColumn.Currency && column.currency !== null && CURRENCY_CODE.test(column.currency)) {
-        return { style: 'currency', currency: column.currency, signDisplay: 'negative' };
+        return { style: 'currency', currency: column.currency, signDisplay: 'negative', trailingZeroDisplay: 'stripIfInteger' };
     }
 
     return { maximumFractionDigits: 2, signDisplay: 'negative' };

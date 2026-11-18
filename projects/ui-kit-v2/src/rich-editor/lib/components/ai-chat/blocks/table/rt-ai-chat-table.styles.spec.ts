@@ -9,6 +9,7 @@ import * as sass from 'sass';
 
 const TABLE: string = join(__dirname, 'rt-ai-chat-table.component.scss');
 const STYLES: string = join(__dirname, '../../../../../../styles');
+const CHART: string = join(__dirname, '../../../../../../ai-chat-chart/lib/components/block/rt-ai-chat-chart.component.scss');
 
 /** Тело правила с таким селектором, без вложенных в него правил. */
 function ruleBody(css: string, selector: string): string {
@@ -54,6 +55,17 @@ describe('стили блока таблицы', (): void => {
     it('SC-UKV-1400 / SC-UKV-1406 — отрицательное цветом ошибки, итог под границей default', (): void => {
         expect(ruleBody(css, '.rt-ai-chat-table__cell--negative')).toContain('color: var(--rt-color-state-error-text)');
         expect(ruleBody(css, '.rt-ai-chat-table__row--total')).toContain('var(--rt-color-border-default)');
+    });
+
+    it('SC-UKV-1434 — таблица данных графика в том же виде: строка, отступы, шапка и ширина числа', (): void => {
+        const chart: string = sass.compile(CHART).css;
+        const cell: string = ruleBody(chart, '.rt-ai-chat-chart__cell');
+        const own: string = ruleBody(css, '.rt-ai-chat-table__cell');
+
+        expect(cell).toBe(own);
+        expect(ruleBody(chart, '.rt-ai-chat-chart__cell--head')).toContain('background: var(--rt-color-bg-surface)');
+        expect(ruleBody(chart, '.rt-ai-chat-chart__cell--numeric')).toContain('white-space: nowrap');
+        expect(ruleBody(chart, '.rt-ai-chat-chart__cell--numeric')).not.toContain('80px');
     });
 
     it('SC-UKV-1422 — без текстового столбца таблица по своему содержимому', (): void => {

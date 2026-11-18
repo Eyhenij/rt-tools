@@ -119,7 +119,7 @@ describe('rt-ai-chat-blocks logic', (): void => {
             const renderer: IRtAiChat.BlockRenderer = { type: 'table', component: class {} };
             const views: readonly IRtAiChat.BlockView[] = toBlockViews([TABLE], [renderer]);
 
-            expect(views).toEqual([{ kind: 'table', data: tableBlockData(TABLE) }]);
+            expect(views).toEqual([{ kind: 'table', data: tableBlockData(TABLE), title: null }]);
         });
 
         it('SC-UKV-1405 — таблица без столбцов или со строками не списком показана заглушкой', (): void => {
@@ -137,7 +137,17 @@ describe('rt-ai-chat-blocks logic', (): void => {
         it('SC-UKV-1414 — копия ответа даёт таблицу строками через табуляцию со значениями как в таблице', (): void => {
             const text: string = blocksToPlainText([{ type: 'markdown', text: 'Итоги **месяца**' }, TABLE], [], 'en');
 
-            expect(text).toBe('Итоги месяца\n\nОбъект\tВыручка\nВилла\t€4,200.00\nИтого\t€4,200.00');
+            expect(text).toBe('Итоги месяца\n\nОбъект\tВыручка\nВилла\t€4,200\nИтого\t€4,200');
+        });
+
+        it('SC-UKV-1435 — заголовок таблицы открывает её в копии ответа отдельной строкой', (): void => {
+            const titled: IRtAiChat.TableBlock = { ...TABLE, title: 'Выручка по типам номеров' };
+
+            expect(toBlockViews([titled], [])).toEqual([
+                { kind: 'table', data: tableBlockData(titled), title: 'Выручка по типам номеров' },
+            ]);
+            expect(blocksToPlainText([titled], [], 'en')).toBe('Выручка по типам номеров\nОбъект\tВыручка\nВилла\t€4,200\nИтого\t€4,200');
+            expect(toBlockViews([{ ...TABLE, title: '  ' }], [])).toEqual([{ kind: 'table', data: tableBlockData(TABLE), title: null }]);
         });
 
         it('SC-UKV-1423 — копия ответа пишет значения таблицы в языке, переданном на минуту копии', (): void => {

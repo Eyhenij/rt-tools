@@ -83,7 +83,10 @@ export class RtAiChatTableComponent {
         this.data().columns.findIndex((column: IRtTableColumn): boolean => column.type === ERtTableColumn.Text)
     );
 
-    protected readonly label: Signal<string> = rtKitLabel('aiTableLabel');
+    readonly #t_label: Signal<string> = rtKitLabel('aiTableLabel');
+
+    /** Имя окна прокрутки: заголовок таблицы, без него — подпись «Table». */
+    protected readonly label: Signal<string> = computed((): string => this.title() ?? this.#t_label());
 
     protected readonly copied: WritableSignal<boolean> = signal(false);
 
@@ -116,6 +119,9 @@ export class RtAiChatTableComponent {
 
     /** Таблица, приведённая к виду для рисования; новая таблица того же блока не сбрасывает прокрутку и «Скопировано». */
     public readonly data: InputSignal<IRtTableData> = input.required<IRtTableData>();
+
+    /** Заголовок над таблицей; `null` — заголовка нет. */
+    public readonly title: InputSignal<string | null> = input<string | null>(null);
 
     constructor() {
         inject(DestroyRef).onDestroy((): void => this.#clearTimer());

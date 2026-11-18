@@ -46,7 +46,7 @@ block with typed columns, and the markdown table takes the same look.
 
 - **`table` is a type the kit draws itself, next to `markdown` and `notice`; an application gets it without registering anything, and a renderer registered for `table` is not taken.**
 
-- **A table block has `columns`, `rows` and an optional `total`.** A column has `label`, `type` and, for a `currency` column, `currency`. A row is a list of values in the order of the columns; `total` is one row of the same shape.
+- **A table block has `columns`, `rows`, an optional `total` and an optional `title`.** A column has `label`, `type` and, for a `currency` column, `currency`. A row is a list of values in the order of the columns; `total` is one row of the same shape.
 
 - **A table block whose `columns` is not a non-empty list, or whose `rows` is not a list, is shown as the plate with its type name, like a markdown block without text.**
 
@@ -72,7 +72,7 @@ block with typed columns, and the markdown table takes the same look.
 
 ### Writing a value
 
-- **A number column writes a number value by `Intl.NumberFormat`.** `number` groups the digits and keeps up to 2 fraction digits. `percent` reads 0.25 as 25 with the percent sign as the locale writes it, and keeps up to 1. `currency` signs the currency of the column with the digits of that currency.
+- **A number column writes a number value by `Intl.NumberFormat`.** `number` groups the digits and keeps up to 2 fraction digits. `percent` reads 0.25 as 25 with the percent sign as the locale writes it, and keeps exactly 1 fraction digit, «0,0 %» as the mockup writes it. `currency` signs the currency of the column with the digits of that currency, and an integral value without its fraction, as the approved mockup writes «1 240 000 ₽».
 
 - **Values are written for the locale of the kit labels; a locale `Intl.NumberFormat` refuses writes them as `en`.**
 
@@ -105,6 +105,10 @@ block with typed columns, and the markdown table takes the same look.
 - **The scroll box is 200 high at most; a taller table scrolls down inside it, and the head row stays on the top of the box while the rows scroll under it.**
 
 - **The total row stands after the last row, semibold, with a top border of the default border colour (`--rt-color-border-default`), and scrolls with the rows.**
+
+- **A `title` given as a non-empty string stands above the table in the 14 px semibold primary text, as the chart title; it names the scroll box in place of «Table», opens the answer copy on a line of its own and stays out of the CSV.**
+
+- **The table has a top border of the subtle border colour, and every row a bottom one.**
 
 - **Rows are at least 28 high, and a row whose text wraps grows with it.** Cells have 8 of horizontal padding and a 12 px font. The head row stands on the surface background with muted semibold text, in the light and the dark theme.
 
@@ -236,7 +240,7 @@ scroll box.
   tab-separated lines split into cells and keep what the table shows.
 - **A non-number in a number column is not parsed.** A string written for another locale cannot
   be read back without guessing its separators; it is shown as given.
-- **The table block has no title of its own;** the scroll box is named by the kit label «Table».
+- **The title is optional and comes from the approved mockup,** where it stands above the table; without it the scroll box is named by the kit label «Table». The first draft had no title, and the check against the mockup found it in stage 5.
 - **The scroll box is 200 high at most,** the number of the approved mockup, frame «sticky head
   scrolled».
 - **A CSV text field starting with `=`, `+`, `-`, `@`, a tab or a CR gets an apostrophe in

@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 4 of 6 — The markdown table in the block's look
 - **Done:** the task is taken, the branch `RT-3337-ai-chat-table-block` is taken from `RT-3336-ai-chat-chart-data` (chain), the task is in progress on the board. Exploration done, the six questions closed by assumption, the mockup approved: «Одобряю макет». The agreement draft `docs/specs/ui-kit-v2/proposed/ai-chat-table/` is written and checked against the grill (`ee8c157d2`); its four open questions are closed by assumption in its Decisions.
-- **Next step:** step 4.1, the markdown table on the shared mixin.
+- **Next step:** step 4.6, the admin markup and details-panel e2e run (going in the background).
 - **Going now:** stage 1. The plan is approved by the owner: «Одобряю план с добавками» — the block schema (step 1.7, SC-UKV-1433) and the chart data table on the shared look (step 4.7, SC-UKV-1434). goal-critic's blocking finding is closed by `play` steps of `Wide` and `Scrolled`.
 - **Uncommitted:** no
 - **Waiting for the owner:** no
@@ -38,13 +38,13 @@ The plan is approved by the owner; the work goes by its steps.
 - [x] 3.10 Add the labels `aiTableCopyCsv` («Copy CSV») and `aiTableLabel` («Table») to `rt-kit-labels.en.ts`, «Copied» by the existing `uiCopied`; their Russian texts to `.storybook/showcase-labels.ru.ts` as the mockup writes them, «Скопировано» already there as `uiCopied`.
 - [x] 3.11 Put `qa-dataid` anchors on the block, the scroll box, the head cells, the cells, the total row and the button.
 - [x] 3.12 Write the component spec `rt-ai-chat-table.component.spec.ts` and extend `rt-ai-chat-blocks.logic.spec.ts`, `rt-ai-chat-blocks.component.spec.ts` and the answer spec: SC-UKV-1396, 1397, 1398, 1400, 1401, 1402, 1404, 1405, 1406, 1410, 1411, 1412, 1413, 1414, 1415, 1419, 1420, 1421, 1423, 1424, 1429, 1430, 1431, 1432 at the component level; a styles spec reading the compiled SCSS for `max-height: 200px`, `position: sticky`, `overflow-x: auto` of the box, `text-align: start` and `end`, `min-height` or `height` 28 of a row, the error colour and `--rt-color-border-default`.
-- [>] 4.1 Move the table of `rt-markdown-text.component.scss` onto the shared mixin of stage 3: bottom borders in place of full borders, the same rows, padding, font and head; the sideways scroll in its own box; no maximum height, no sticky head, column widths the browser's.
-- [ ] 4.2 Align the head cells and the cells of `rt-markdown-text.component.html` by the column alignment of stage 2, by `start`, `center` and `end`, so `dir="rtl"` mirrors them; no type detection, no formatting, no colour, no total, no «Copy CSV».
-- [ ] 4.3 Give the markdown table `th scope="col"` head cells and a scroll box with `tabindex="0"`, scrolled by the arrow keys and named by the kit label `aiTableLabel`.
-- [ ] 4.4 Keep the anchors `markdown-table-scroll`, `markdown-table`, `markdown-head-cell`, `markdown-cell`: the admin panel's e2e finds the table by them.
-- [ ] 4.5 Extend `rt-markdown-text.component.spec.ts`: SC-UKV-1416 and SC-UKV-1418 at the drawn level, SC-UKV-1417 for «-10» not coloured, no «Copy CSV», `th scope="col"` and the named scroll box; extend `rt-markdown-text.styles.spec.ts` for the bottom borders, `text-align: start` and `end`, no `max-height` and no `position: sticky`.
-- [ ] 4.6 Run the admin panel's markup and details-panel e2e specs; a diverged frame of the postmortem panel is looked at and re-taken only if it shows the new table look.
-- [ ] 4.7 Move the chart data table of `rt-ai-chat-chart.component.scss` onto the shared mixin, keeping its format function and rows; its frames are re-taken in stage 5; SC-UKV-1434.
+- [x] 4.1 Move the table of `rt-markdown-text.component.scss` onto the shared mixin of stage 3: bottom borders in place of full borders, the same rows, padding, font and head; the sideways scroll in its own box; no maximum height, no sticky head, column widths the browser's.
+- [x] 4.2 Align the head cells and the cells of `rt-markdown-text.component.html` by the column alignment of stage 2, by `start`, `center` and `end`, so `dir="rtl"` mirrors them; no type detection, no formatting, no colour, no total, no «Copy CSV».
+- [x] 4.3 Give the markdown table `th scope="col"` head cells and a scroll box with `tabindex="0"`, scrolled by the arrow keys and named by the kit label `aiTableLabel`.
+- [x] 4.4 Keep the anchors `markdown-table-scroll`, `markdown-table`, `markdown-head-cell`, `markdown-cell`: the admin panel's e2e finds the table by them.
+- [x] 4.5 Extend `rt-markdown-text.component.spec.ts`: SC-UKV-1416 and SC-UKV-1418 at the drawn level, SC-UKV-1417 for «-10» not coloured, no «Copy CSV», `th scope="col"` and the named scroll box; extend `rt-markdown-text.styles.spec.ts` for the bottom borders, `text-align: start` and `end`, no `max-height` and no `position: sticky`.
+- [>] 4.6 Run the admin panel's markup and details-panel e2e specs; a diverged frame of the postmortem panel is looked at and re-taken only if it shows the new table look.
+- [x] 4.7 Move the chart data table of `rt-ai-chat-chart.component.scss` onto the shared mixin, keeping its format function and rows; its frames are re-taken in stage 5; SC-UKV-1434.
 - [ ] 5.1 Write the stories `Organisms/Chat/AiChatTable` in `blocks/table/stories/`: `Narrow` (four columns at 328, «Апартаменты у моря» wrapping in one row), `Wide` (twelve columns at 328, a `play` step scrolling the box sideways and asserting `scrollWidth` above `clientWidth`, `scrollLeft` above 0 and the block 328 wide), `AllNumbers` (three short `number` columns at 328), `WithTotal`, `Negatives`, `Scrolled` (a `play` step focusing the box and scrolling it down by the arrow key and asserting the head row top equals the box top), `Copied` (a `play` step pressing «Copy CSV»), `Empty`, `Invalid`, `Markdown` (the block next to a thirty-row markdown table in one answer), `Rtl` (the block and a markdown table under `dir="rtl"`), `Themes` (light and dark), `Playground`.
 - [ ] 5.2 Add an aligned table with «-10» to the markdown matrix fixture `test-markdown-text-matrix.component.ts`.
 - [ ] 5.3 Write `Overview.mdx` of the block next to it; name the `table` block in the ai-chat `Overview.mdx`.
@@ -61,6 +61,14 @@ The plan is approved by the owner; the work goes by its steps.
 - [ ] 6.7 Run the push set, push, open the PR as a draft into `RT-3336-ai-chat-chart-data`.
 
 ## Decisions along the way
+
+- Stage 5 read the approved mockup 8215-449 before the stories and found two things the agreement
+  did not have: a title above the table (14 semibold, as the chart title) and a top border of the
+  table in the subtle colour. Both go in as rules of the agreement and SC-UKV-1435, and their code
+  is written in stage 5 before the stories: the mockup is approved, and the showcase must match it.
+  The same reading found two number forms: an integral currency value without kopecks
+  («1 240 000 ₽») and a percent with exactly one fraction digit («0,0 %»). The format follows the
+  mockup; SC-UKV-1398 and SC-UKV-1400 now expect «€1,200», «-10 ₽» and «-5 ₽».
 
 - The findings of spec-critic are closed by the executor's decisions, none against the grill. One
   touches its reason only: the CSV goes to a file or an import, since pasted comma text is not split

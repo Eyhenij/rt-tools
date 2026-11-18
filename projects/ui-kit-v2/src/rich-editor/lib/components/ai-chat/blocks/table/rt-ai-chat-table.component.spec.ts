@@ -90,7 +90,7 @@ describe('RtAiChatTableComponent', (): void => {
     it('SC-UKV-1398 — значения записаны по роду столбца в языке кита', (): void => {
         const { fixture } = setup();
 
-        expect(texts(fixture, 'ai-chat-table-cell')).toEqual(['Вилла', '20', '€4,200.00', 'Дом', '3', '-€150.00']);
+        expect(texts(fixture, 'ai-chat-table-cell')).toEqual(['Вилла', '20', '€4,200', 'Дом', '3', '-€150']);
     });
 
     it('SC-UKV-1397 — числовые столбцы и их шапка стоят к концу, текстовые к началу', (): void => {
@@ -135,11 +135,7 @@ describe('RtAiChatTableComponent', (): void => {
 
         expect(total.parentElement?.tagName).toBe('TFOOT');
         expect(total.classList).toContain('rt-ai-chat-table__row--total');
-        expect(Array.from(total.children).map((cell: Element): string => textOf(cell as HTMLElement))).toEqual([
-            'Итого',
-            '23',
-            '€4,050.00',
-        ]);
+        expect(Array.from(total.children).map((cell: Element): string => textOf(cell as HTMLElement))).toEqual(['Итого', '23', '€4,050']);
     });
 
     it('SC-UKV-1404 / SC-UKV-1424 — без строк и без итога рисуется одна шапка, «Copy CSV» на месте', (): void => {
@@ -269,6 +265,23 @@ describe('RtAiChatTableComponent', (): void => {
         fixture.detectChanges();
 
         expect(copyButton(fixture).getAttribute('aria-label')).toBe('Copy CSV');
+    });
+
+    it('SC-UKV-1435 — заголовок стоит над таблицей и называет окно прокрутки, в CSV его нет', (): void => {
+        const { fixture, clipboard } = setup(table([{ label: 'A', type: 'text' }], [['одна']]));
+
+        expect(qa(fixture, 'ai-chat-table-title')).toBeNull();
+        expect((qa(fixture, 'ai-chat-table-scroll')?.nativeElement as HTMLElement).getAttribute('aria-label')).toBe('Table');
+
+        fixture.componentRef.setInput('title', 'Выручка по типам номеров');
+        fixture.detectChanges();
+        copyButton(fixture).click();
+
+        expect(textOf(qa(fixture, 'ai-chat-table-title'))).toBe('Выручка по типам номеров');
+        expect((qa(fixture, 'ai-chat-table-scroll')?.nativeElement as HTMLElement).getAttribute('aria-label')).toBe(
+            'Выручка по типам номеров'
+        );
+        expect(clipboard.copied).toEqual(['A\r\nодна']);
     });
 
     it('SC-UKV-1432 — рисуется каждая строка, без предела', (): void => {

@@ -47,6 +47,8 @@ export namespace IRtAiChat {
         readonly columns: readonly TableColumn[];
         readonly rows: readonly (readonly TRtTableValue[])[];
         readonly total?: readonly TRtTableValue[] | null;
+        /** Заголовок над таблицей; без него окно прокрутки названо подписью «Table». */
+        readonly title?: string;
     }
 
     /**
@@ -76,7 +78,7 @@ export namespace IRtAiChat {
     export type BlockView =
         | { readonly kind: 'markdown'; readonly text: string }
         | { readonly kind: 'notice'; readonly severity: IRtTag.Severity; readonly text: string }
-        | { readonly kind: 'table'; readonly data: IRtTableData }
+        | { readonly kind: 'table'; readonly data: IRtTableData; readonly title: string | null }
         | { readonly kind: 'custom'; readonly component: Type<unknown>; readonly block: Block }
         | { readonly kind: 'unsupported'; readonly type: string };
 

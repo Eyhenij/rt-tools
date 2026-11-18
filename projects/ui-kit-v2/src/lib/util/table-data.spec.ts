@@ -80,7 +80,7 @@ describe('rtTableCellWriter', (): void => {
     it('SC-UKV-1398 — значение пишется по роду столбца и языку', (): void => {
         expect(write(column(ERtTableColumn.Number), 1250000.567).text).toBe('1,250,000.57');
         expect(write(column(ERtTableColumn.Percent), 0.1234).text).toBe('12.3%');
-        expect(write(column(ERtTableColumn.Currency, 'EUR'), 1200).text).toBe('€1,200.00');
+        expect(write(column(ERtTableColumn.Currency, 'EUR'), 1200).text).toBe('€1,200');
     });
 
     it('SC-UKV-1399 — валюта без кода или с кодом не из трёх заглавных латинских букв пишется числом', (): void => {
@@ -91,8 +91,8 @@ describe('rtTableCellWriter', (): void => {
     it('SC-UKV-1400 — значение ниже нуля помечено отрицательным, ноль и плюс нет', (): void => {
         const rub: IRtTableColumn = column(ERtTableColumn.Currency, 'RUB');
 
-        expect(write(rub, -10, 'ru')).toEqual({ text: `-10,00${ruCurrencySpace()}₽`, align: 'end', negative: true });
-        expect(write(rub, -5, 'ru')).toEqual({ text: `-5,00${ruCurrencySpace()}₽`, align: 'end', negative: true });
+        expect(write(rub, -10, 'ru')).toEqual({ text: `-10${ruCurrencySpace()}₽`, align: 'end', negative: true });
+        expect(write(rub, -5, 'ru')).toEqual({ text: `-5${ruCurrencySpace()}₽`, align: 'end', negative: true });
         expect(write(rub, 0, 'ru').negative).toBe(false);
         expect(write(rub, 15, 'ru').negative).toBe(false);
     });

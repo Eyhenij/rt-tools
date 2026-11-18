@@ -63,6 +63,7 @@ $radius-steps: (
 /// видом. Миксины разбиты по узлам, потому что имена элементов у трёх таблиц свои.
 @mixin chat-table {
     width: 100%;
+    border-top: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
     border-collapse: collapse;
     color: var(--rt-color-text-primary);
     font-size: var(--rt-text-xs);

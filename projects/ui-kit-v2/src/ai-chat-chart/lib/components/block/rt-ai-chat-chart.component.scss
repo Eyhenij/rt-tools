@@ -1,3 +1,5 @@
+@use '../../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     .rt-ai-chat-chart {
         --rt-ai-chat-chart-placeholder-radius: var(--rt-radius-md);
@@ -79,53 +81,29 @@
             overflow-x: auto;
         }
 
+        /* Таблица данных в том же виде, что блок таблицы ответа; формат значений остаётся свой. */
         &__table {
-            width: 100%;
-            border-top: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
-            border-collapse: collapse;
-            color: var(--rt-color-text-primary);
-            font-size: var(--rt-text-xs);
+            @include kv.chat-table;
         }
 
         &__row {
             vertical-align: middle;
         }
 
-        /*
-         * Строка 28, как в макете: 27 содержимого и граница 1 — у ячейки таблицы граница идёт сверх
-         * высоты. Ширина 80 у числа — ширина текста без отступов, поэтому размер не включает отступы.
-         * Отступ 8 у краёв таблицы и 8 между столбцами. Имя переносится по словам: перенос в любом
-         * месте сжимал столбец до буквы, когда рядов много.
-         */
         &__cell {
-            height: 27px;
-            padding: 0 var(--rt-space-1);
-            border-bottom: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
-            font-weight: normal;
-            overflow-wrap: break-word;
-            text-align: start;
+            @include kv.chat-table-cell;
 
-            &:first-child {
-                padding-inline-start: var(--rt-space-2);
-            }
-
-            &:last-child {
-                padding-inline-end: var(--rt-space-2);
-            }
-
-            /* Число не переносится и стоит вправо; столбец числа не уже 80, как в макете. */
+            /* Число не переносится и стоит к концу; столбец шириной в самое широкое значение. */
             &--numeric {
-                width: 80px;
-                min-width: 80px;
-                overflow-wrap: normal;
-                text-align: end;
-                white-space: nowrap;
+                @include kv.chat-table-cell-end;
+
+                width: 1%;
             }
 
             /* В шапке над числом стоит имя ряда: оно переносится по словам, а не растягивает таблицу. */
             &--head {
-                color: var(--rt-color-text-muted);
-                font-weight: var(--rt-font-weight-semibold);
+                @include kv.chat-table-head-cell;
+
                 white-space: normal;
             }
         }

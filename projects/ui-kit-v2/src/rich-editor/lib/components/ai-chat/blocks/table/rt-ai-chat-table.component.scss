@@ -9,6 +9,15 @@
         flex-direction: column;
         gap: var(--rt-space-2);
 
+        /* Заголовок как у графика, но переносится по словам: обрезанный заголовок таблицы не прочесть. */
+        &__title {
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-semibold);
+            overflow-wrap: break-word;
+        }
+
         /* Широкая таблица прокручивается вбок, высокая — вниз под шапкой; лента не раздвигается. */
         &__scroll {
             overflow: auto;

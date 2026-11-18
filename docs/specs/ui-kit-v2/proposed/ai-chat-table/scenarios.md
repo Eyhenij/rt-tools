@@ -24,7 +24,7 @@ Not covered: the block is not written yet.
 
 Given the columns `number`, `percent` and `currency` with `EUR`, and a row 1250000.567, 0.1234, 1200
 When the table is drawn in the `en` locale
-Then the cells read «1,250,000.57», «12.3%» and «€1,200.00»
+Then the cells read «1,250,000.57», «12.3%» and «€1,200»
 
 Not covered: the block is not written yet.
 
@@ -40,7 +40,7 @@ Not covered: the block is not written yet.
 
 Given a `currency` column with `RUB` holding the number -10, 0 and 15, and a total of the number -5
 When the table is drawn in the `ru` locale
-Then the cells read «-10,00 ₽» and «-5,00 ₽» with the space `Intl.NumberFormat` writes, and both take `--rt-color-state-error-text`
+Then the cells read «-10 ₽» and «-5 ₽» with the space `Intl.NumberFormat` writes, and both take `--rt-color-state-error-text`
 And 0 and 15 keep the text colour
 
 Not covered: the block is not written yet.
@@ -333,5 +333,14 @@ Not covered: the block is not written yet.
 Given a chart block with its data table open in a block 328 wide
 When it is drawn next to a table block
 Then both have rows at least 28 high, 8 of horizontal cell padding and the same head row, and the number columns of both are as wide as their widest value
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1435 — a title stands above the table and names it
+
+Given a table block with the title «Выручка по типам номеров» and one without a title
+When both are drawn and the answer is copied
+Then the first shows the title above the table and its scroll box is named by the title, and the second has no title and its scroll box is named «Table»
+And the answer copy opens the first table with the title on a line of its own, and its CSV holds no title
 
 Not covered: the block is not written yet.

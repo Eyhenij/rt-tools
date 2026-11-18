@@ -1,4 +1,7 @@
 <ng-container rtBlock="rt-ai-chat-table">
+    @if (title(); as title) {
+        <p rtElem="title" qa-dataid="ai-chat-table-title">{{ title }}</p>
+    }
     <div rtElem="scroll" qa-dataid="ai-chat-table-scroll" role="region" tabindex="0" [attr.aria-label]="label()">
         <!-- native-ok: rt-table несёт таблицу CDK со столбцами, объявленными заранее, настройки столбцов в IndexedDB и карточки узкого экрана; блок таблицы берёт столбцы из данных ответа и только показывает их — решение владельца «Простая разметка» для таблицы данных графика, тот же вид -->
         <table rtElem="table" qa-dataid="ai-chat-table" [rtMod]="{ content: fitsContent() }">

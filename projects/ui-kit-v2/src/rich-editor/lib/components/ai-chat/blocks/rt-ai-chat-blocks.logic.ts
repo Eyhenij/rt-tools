@@ -47,6 +47,13 @@ export function tableBlockData(block: { readonly type: string }): IRtTableData |
     return rtTableData(Reflect.get(block, 'columns'), Reflect.get(block, 'rows'), Reflect.get(block, 'total'));
 }
 
+/** Заголовок блока `table`: непустая строка, иначе его нет. */
+function tableTitle(block: { readonly type: string }): string | null {
+    const title: unknown = Reflect.get(block, 'title');
+
+    return typeof title === 'string' && title.trim().length > 0 ? title : null;
+}
+
 /**
  * Последняя регистрация каждого типа целиком: она и рисует блок, и даёт его текст. Регистрация без
  * `toText` заменяет прежнюю вместе с её текстом. Свои типы кита из реестра не берутся.
@@ -90,7 +97,10 @@ function blockText(block: IRtAiChat.Block, byType: ReadonlyMap<string, IRtAiChat
     const table: IRtTableData | null = tableBlockData(block);
 
     if (table !== null) {
-        return rtTablePlainText(table, locale);
+        const title: string | null = tableTitle(block);
+        const text: string = rtTablePlainText(table, locale);
+
+        return title === null ? text : `${title.trim()}\n${text}`;
     }
 
     return rendererText(byType.get(block.type), block);
@@ -118,7 +128,7 @@ export function toBlockViews(
         const table: IRtTableData | null = tableBlockData(block);
 
         if (table !== null) {
-            return { kind: 'table', data: table };
+            return { kind: 'table', data: table, title: tableTitle(block) };
         }
         const renderer: IRtAiChat.BlockRenderer | undefined = byType.get(block.type);
 
