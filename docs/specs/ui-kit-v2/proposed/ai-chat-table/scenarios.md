@@ -318,3 +318,20 @@ When the block is drawn
 Then the table holds five hundred rows inside the scroll box
 
 Not covered: the block is not written yet.
+
+### SC-UKV-1433 — a block the schema accepts is drawn whole
+
+Given the exported table schema and a block with four typed columns, three rows and a total that the schema accepts
+When the block data is read
+Then no column, row, value or total is dropped or emptied
+And a block with an object row is refused by the schema and still drawn without that row
+
+Not covered: the block is not written yet.
+
+### SC-UKV-1434 — the chart data table takes the block's look
+
+Given a chart block with its data table open in a block 328 wide
+When it is drawn next to a table block
+Then both have rows at least 28 high, 8 of horizontal cell padding and the same head row, and the number columns of both are as wide as their widest value
+
+Not covered: the block is not written yet.

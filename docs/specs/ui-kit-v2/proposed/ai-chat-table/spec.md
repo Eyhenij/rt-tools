@@ -66,6 +66,10 @@ block with typed columns, and the markdown table takes the same look.
 
 - **«Copy CSV» stands while the answer is written and copies the rows drawn at the moment of the press.**
 
+- **The kit exports the JSON schema of the table block (JSON Schema 2020-12), so that an application gives it to the model as the parameters of a tool.** It names the column types, the currency code as three Latin upper-case letters and the optional `total`.
+
+- **A block the schema accepts is drawn with nothing dropped or emptied.** The block is more lenient than the schema: what the schema refuses is still drawn by the rules above.
+
 ### Writing a value
 
 - **A number column writes a number value by `Intl.NumberFormat`.** `number` groups the digits and keeps up to 2 fraction digits. `percent` reads 0.25 as 25 with the percent sign as the locale writes it, and keeps up to 1. `currency` signs the currency of the column with the digits of that currency.
@@ -103,6 +107,8 @@ block with typed columns, and the markdown table takes the same look.
 - **The total row stands after the last row, semibold, with a top border of the default border colour (`--rt-color-border-default`), and scrolls with the rows.**
 
 - **Rows are at least 28 high, and a row whose text wraps grows with it.** Cells have 8 of horizontal padding and a 12 px font. The head row stands on the surface background with muted semibold text, in the light and the dark theme.
+
+- **The data table under the chart block takes the same look: rows, padding, head row and number column widths.** It keeps its own format function and its own rows.
 
 ### Copying
 
