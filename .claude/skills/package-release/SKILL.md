@@ -60,7 +60,7 @@ differently (a bundler with its own rules, another runtime) is the consumer's to
 first consumer's report is the only trace of that.
 
 The packages built with a framework (`core`, `store`, `ui-kit-v2`, the Angular auth and CMS
-packages) and the packages that are not built by two `tsc` runs (`agent-kit`, `auth-import`) are not judged at all: the wiring check takes the projects that build twice with `tsc`.
+packages) and the packages that are not built by two `tsc` runs (`agent-kit`, `auth-import`) are not judged at all, and neither are the two auth packages named in `NOT_JUDGED` of the wiring check: the wiring check takes the projects that build twice with `tsc`.
 A package that depends on a neighbour of this workspace is loaded only from the installed tarball,
 which takes the neighbour from the registry, so a neighbour not yet published fails that step. The
 tarball step runs in a release and by hand, and in a PR or a push of the pipeline only for
