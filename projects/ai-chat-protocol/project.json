@@ -21,6 +21,13 @@
         "command": "node tools/finalize-utils-package.cjs ai-chat-protocol"
       }
     },
+    "verify": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "node tools/verify-package.cjs ai-chat-protocol"
+      }
+    },
     "build:esm": {
       "executor": "@nx/js:tsc",
       "outputs": ["{workspaceRoot}/dist/ai-chat-protocol/esm"],
