@@ -40,7 +40,9 @@ const flat = (text) => text.replace(/\s+/g, ' ').trim();
 const read = (path) => (existsSync(path) ? readFileSync(path, 'utf8') : '');
 
 const parts = readdirSync(SKILLS).filter(
-    (dir) => (dir === rule || dir.startsWith(`${rule}-`)) && /^kind:\s*rule\s*$/m.test(read(join(SKILLS, dir, 'SKILL.md'))),
+    // The skill itself is always a part, a rule or a skill without a law alike; a neighbour by prefix
+    // only when it is a rule, else `agent-kit-extend` would be read as a part of `agent-kit`.
+    (dir) => dir === rule || (dir.startsWith(`${rule}-`) && /^kind:\s*rule\s*$/m.test(read(join(SKILLS, dir, 'SKILL.md')))),
 );
 const hot = flat(parts.map((dir) => read(join(SKILLS, dir, 'SKILL.md'))).join('\n'));
 const cold = flat(parts.map((dir) => read(join(SKILLS, dir, 'pitfalls.md')) + '\n' + read(join(SKILLS, dir, 'pitfalls-2.md'))).join('\n'));

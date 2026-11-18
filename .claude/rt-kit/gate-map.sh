@@ -132,7 +132,7 @@ skill_for() {
                 # all. A frame is judged by the component check rule — the same one that judges a
                 # story frame — so it stands before the branch of the suite, not after it.
                 */apps/message-bus-admin-e2e/__snapshots__/* | */apps/message-bus-admin-e2e/*/__snapshots__/*)
-                    printf '%s\n' 'ui-component-tests'
+                    printf '%s\n' 'ui-component-tests-screens'
                     return 0
                     ;;
 
@@ -268,8 +268,10 @@ skill_for() {
                 # The snapshot harness, the reference images, the runner and the story sweep: the
                 # showcase rule is about the shape of a story, not about checking a frame — here
                 # the component check rule leads.
+                # The harness carries the showcase waits and the probes of the references: both parts.
                 */.storybook/test-runner.ts | */__snapshots__/* | */tools/visual-snapshots-v2.mjs | */tools/story-sweep-v2.mjs)
                     printf '%s\n' 'ui-component-tests'
+                    printf '%s\n' 'ui-component-tests-screens'
                     return 0
                     ;;
 

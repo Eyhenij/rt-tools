@@ -154,19 +154,21 @@ report "карта: прочая надстройка судится по род
 report "карта: конфиг линтера кода" "$(skill_for edit /r/eslint.config.mjs '')" typescript-conventions
 report "карта: конфиг линтера стилей" "$(skill_for edit /r/stylelint.config.js '')" styling-bem
 report "карта: проверка повторов требует одно правило" "$(skill_for edit /r/tools/check-dupes.mjs '')" shared-code
-report "карта: правило по команде" "$(skill_for bash 'git push origin x' '')" git-workflow
+report "SC-AK-1697 — отправка тянет ветки и набор перед отправкой" \
+    "$(skill_for bash 'git push origin x' '' | tr '\n' ' ')" 'git-workflow git-workflow-push '
 report "карта: команда без правила" "$(skill_for bash 'ls -la' '')" ''
 # Упоминание команды командой не является: пока карта судила по подстроке, гейт отбивал строку о
 # коммите в теле самого коммита и поиск по истории.
 report "SC-AK-109 — упоминание команды вызовом не считается" "$(skill_for bash 'echo "потом git commit -m x"' '')" ''
-report "карта: вызов после разделителя" "$(skill_for bash 'cd /tmp && git commit -m x' '')" git-workflow
+report "карта: вызов после разделителя" "$(skill_for bash 'cd /tmp && git commit -m x' '' | tr '\n' ' ')" 'git-workflow git-workflow-push '
 report "карта: заведение ветки" "$(skill_for bash 'git checkout -b RT-9-x' '')" git-workflow
 report "карта: заведение ветки вторым именем команды" "$(skill_for bash 'git switch -c RT-9-x' '')" git-workflow
-report "карта: заведение задачи" "$(skill_for bash 'npm run task:new -- --title x' '')" git-workflow
+report "SC-AK-1697 — заведение задачи тянет ветки и очередь" \
+    "$(skill_for bash 'npm run task:new -- --title x' '' | tr '\n' ' ')" 'git-workflow git-workflow-queue '
 report "SC-AK-1695 — заведение PR тянет и закрытие задачи" \
-    "$(skill_for bash 'gh pr create --fill' '' | tr '\n' ' ')" 'git-workflow task-flow-handover '
+    "$(skill_for bash 'gh pr create --fill' '' | tr '\n' ' ')" 'git-workflow-hosting task-flow-handover '
 report "SC-AK-1695 — снятие черновика тянет и закрытие задачи" \
-    "$(skill_for bash 'gh pr ready 12' '' | tr '\n' ' ')" 'git-workflow task-flow-handover '
+    "$(skill_for bash 'gh pr ready 12' '' | tr '\n' ' ')" 'git-workflow-hosting task-flow-handover '
 report "SC-AK-1696 — план в папке задачи: состояния и план" \
     "$(skill_for edit /r/docs/tasks/RT-1-x/plan.md '' | tr '\n' ' ')" 'task-flow task-flow-plan '
 report "SC-AK-1696 — разбор в папке задачи: состояния и слово владельца" \
@@ -175,12 +177,12 @@ report "SC-AK-1696 — черновик папки: состояния и сло
     "$(skill_for edit /r/docs/tasks/_draft-x/grill.md '' | tr '\n' ' ')" 'task-flow task-flow-owner '
 # Правка тела PR ловится двумя признаками сразу: одного слова о заявке мало — оно попадает в
 # строку любой команды, которая о ней пишет.
-report "карта: правка тела PR" "$(skill_for bash 'gh api -X PATCH repos/o/r/pulls/12 -f body=x' '')" git-workflow
+report "SC-AK-1697 — правка тела PR тянет часть о заявках" "$(skill_for bash 'gh api -X PATCH repos/o/r/pulls/12 -f body=x' '')" git-workflow-hosting
 report "карта: чтение PR тем же клиентом" "$(skill_for bash 'gh api repos/o/r/pulls/12' '')" ''
 # Слияние PR требует два правила: поставку и разбор папки задачи — она разбирается тем же
 # PR, потому что после слияния отвечать за неё уже некому.
 report "SC-AK-110 — слияние PR тянет и закрытие задачи" \
-    "$(skill_for bash 'gh pr merge 12 --merge' '' | tr '\n' ' ')" 'git-workflow task-flow-handover '
+    "$(skill_for bash 'gh pr merge 12 --merge' '' | tr '\n' ' ')" 'git-workflow-hosting task-flow-handover '
 # Образы и реестр уносят чужое безвозвратно; команды чтения остаются вне гейта — ими нехватку
 # места и разбирают.
 report "карта: сборка образа" "$(skill_for bash 'docker build -t x .' '')" git-workflow
@@ -204,7 +206,8 @@ report "карта: своё правило линтера кода" "$(skill_fo
 # Модуль папок задач разложен на любом хостинге и остаётся у правила о задачах.
 report "SC-AK-1193 — модуль аудита очереди требует правила аудита" "$(skill_for edit /r/tools/board-runs.mjs '')" queue-audit
 report "SC-AK-1193 — сам аудит требует правила аудита" "$(skill_for edit /r/tools/check-board.mjs '')" queue-audit
-report "SC-AK-1193 — модуль папок задач остаётся у правила о задачах" "$(skill_for edit /r/tools/board-folders.mjs '')" git-workflow
+report "SC-AK-1193 — модуль папок задач остаётся у правила о задачах" \
+    "$(skill_for edit /r/tools/board-folders.mjs '' | tr '\n' ' ')" 'git-workflow git-workflow-queue '
 # У конвейера предмета два сразу: какие проверки идут до слияния и что попадает на прод после.
 # Карта называет оба имени, правило о выкатке первым, и гейт требует первое незагруженное.
 report "карта: файл конвейера" "$(skill_for edit /r/.github/workflows/deploy.yml '' | head -1)" deploy-flow

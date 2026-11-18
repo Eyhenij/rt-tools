@@ -1,14 +1,14 @@
 # The rules gate delivers the rule
 
-**Status:** proposed · **Revision:** 18 November 2026 · **Scenario prefix:** `SC-AK`
+**Status:** in force · **Revision:** 2026-11-18 · **Scenario prefix:** `SC-AK`
 **Depends on:** `rule-gate` (picking the rule, the record of loaded rules, the re-arming),
 `rule-article` (the matching articles of a refusal), `decision-table` (the refusal text, the fact
 `rule_loaded` and the move `load_rule`), `observations` (the refusal and load counts)
 **Laws:** `verifiability`, `work-conduct`
 **Procedures:** none
 
-The agreement of RT-3326. It merges into the subdomain `rule-gate` and changes one thing there: what
-the gate and its neighbours do when a call needs a rule the session has not loaded.
+A subdomain next to `rule-gate`. It says one thing: what the gate and its neighbours do when a call
+needs a rule the session has not loaded.
 
 ## Why
 
@@ -201,8 +201,9 @@ runs in. A tree that laid out no map gets no gate, as today.
 
 ## Decisions
 
-- **Behaviour changes only in the package hooks.** The applications are not touched; the agreement
-  is a draft of the subdomain `rule-gate`.
+- **Behaviour changes only in the package hooks.** The applications are not touched. The agreement
+  was written as a draft of `rule-gate` and merged as a subdomain of its own: the rules of choice
+  and the rules of delivery are read apart.
 - **One task.** The delivery and the refusal for "not delivered" are rolled back together.
 - **The host limit is 10 000 characters of the whole session context field.** The reference of the
   host hooks: a longer text is saved to a file, and the session gets its path and the first 2 000
@@ -226,3 +227,4 @@ None.
 ## History of changes
 
 - 18 November 2026 — written as the agreement of RT-3326.
+- 18 November 2026 — merged as the subdomain `rule-gate-delivery`, with its bindings.

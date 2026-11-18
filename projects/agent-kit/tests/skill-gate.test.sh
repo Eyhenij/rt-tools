@@ -13,7 +13,8 @@ export CLAUDE_PROJECT_DIR="$TREE"
 # вправе: дерево отказалось от предметного слоя списком, и загружать такое имя нечем.
 for rule in testing component-structure styling-bem typescript-conventions angular-patterns \
     doc-style spec-driven task-flow task-flow-plan task-flow-owner task-flow-handover dependencies \
-    platform-access git-workflow shared-code deploy-flow epic-flow; do
+    platform-access git-workflow git-workflow-queue git-workflow-push git-workflow-hosting shared-code \
+    deploy-flow epic-flow; do
     mkdir -p "$TREE/.claude/skills/$rule"
     printf -- '---\nname: %s\nkind: rule\n---\n' "$rule" > "$TREE/.claude/skills/$rule/SKILL.md"
 done
@@ -196,8 +197,8 @@ expect_skill "SC-AK-1230 — инструмент макетов требует 
 
 # Слияние PR требует два правила подряд: поставку и разбор папки задачи. Требуется первое
 # незагруженное — отказ, перечисляющий оба, читается как «загрузи оба», и однократность теряется.
-c "SC-AK-110 — слияние PR: первым правило поставки" 'gh pr merge 12 --merge'
-gate_session_load git-workflow
+c "SC-AK-110 — слияние PR: первым часть правила поставки о заявках" 'gh pr merge 12 --merge' Bash git-workflow-hosting
+gate_session_load git-workflow-hosting
 c "SC-AK-110 — слияние PR: следом закрытие задачи" 'gh pr merge 12 --merge' Bash task-flow-handover
 # Упоминание команды в тексте вызовом не является: пока карта судила по подстроке, гейт отбивал
 # строку о коммите в теле самого коммита.
@@ -226,7 +227,7 @@ exit_code_of "правка без пути пропускается" "$(jq -n '{
 # владелец прочитал семь своих задач и две заявки, прежде чем сказать о языке в них.
 gate_session_reset
 c "SC-AK-850 — заявка с телом требует правило слога" \
-    'gh pr create --title "[RT-1] Сделано" --body "что меняется"' Bash git-workflow
+    'gh pr create --title "[RT-1] Сделано" --body "что меняется"' Bash git-workflow-hosting
 c "SC-AK-850 — то же правило требуется и на заведении задачи" \
     'gh issue create --title "[RT-1] Дефект" --body-file /tmp/body.md' Bash git-workflow
 gate_session_reset
@@ -254,7 +255,7 @@ rm -f "$TREE/.claude/rt-kit/gate-map.sh"
 gate_session_reset
 
 # SC-AK-1335 — объявление эпика и заведение его задач требуют правило эпика вторым слоем.
-gate_session_load git-workflow
+gate_session_load git-workflow git-workflow-queue
 c "SC-AK-1335 — объявление эпика требует правило эпика" \
     "npm run task:new -- --epic --title 'Возможность' --slug x" Bash epic-flow
 c "SC-AK-1335 — задача эпика требует правило эпика" \

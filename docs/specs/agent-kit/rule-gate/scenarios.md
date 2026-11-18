@@ -321,3 +321,13 @@ Then it names the states part of the work-conduct rule, and with it the part abo
 word for the grill and a draft folder, and the part about the plan for any other file
 
 Covered: `projects/agent-kit/tests/defaults.test.sh`.
+
+### SC-AK-1697 — a delivery command demands the part of the delivery rule of its subject
+
+Given a command of delivery goes
+When the gate decides what to demand
+Then a request to the host names the part about requests alone, a commit and a push name the
+branch part with the part about the push set, and the creation of a task names the branch part
+with the part about the queue
+
+Covered: `projects/agent-kit/tests/defaults.test.sh`.

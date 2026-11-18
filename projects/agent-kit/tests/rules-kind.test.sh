@@ -24,7 +24,9 @@ field_of() {
 sections_of() {
     local base
     base="$(basename "$1" .md)"
-    for file in "$1" "$ASSETS/pitfalls/$base.md" "$ASSETS/pitfalls/$base.2.md"; do
+    # An edition `<name>.<host>` continues in `<name>.2.<host>`.
+    for file in "$1" "$ASSETS/pitfalls/$base.md" "$ASSETS/pitfalls/$base.2.md" \
+        "$ASSETS/pitfalls/${base%.*}.2.${base##*.}.md"; do
         [ -f "$file" ] || continue
         awk '/^```/ { fence = !fence } !fence && /^## / { sub(/^## /, ""); print }' "$file"
     done

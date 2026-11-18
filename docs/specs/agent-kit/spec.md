@@ -62,6 +62,7 @@ subdomains are the ones the rule groups had already drawn.
 | [The texts of the rules layer](texts/spec.md)                            | mandatory sections, bindings and anchors, addresses, the flow graph, the review of a family       |
 | [The edit guards](guards/spec.md)                                        | the plan behind an edit, missing profile functions, the refusal tail                              |
 | [The rules gate](rule-gate/spec.md)                                      | picking a rule by path and by layers, what counts as a write, taking a shell command apart        |
+| [The rules gate delivers the rule](rule-gate-delivery/spec.md)           | the rule put into the session, the host limit, the remaining refusal, the record                  |
 | [The exam on the rules](exam/spec.md)                                    | when it is asked, what counts as passing, what switches the role off                              |
 | [The place of an edit](edit-place/spec.md)                               | where a rules-layer text is fixed, what is refused on a laid-out copy and on an override          |
 | [The state mark of a cargo record](cargo-mark/spec.md)                   | what moves the state of a record, what is refused before the network, how the intake answers      |

@@ -61,7 +61,8 @@ for rule in "$RULES"/*.md; do
     name="$(bare_name "$(basename "$rule" .md)")"
     grep -qlE "^rule:[[:space:]]*$name\$" "$PATTERNS"/*.md 2>/dev/null || continue
     base="$(basename "$rule" .md)"
-    cat "$rule" "$PITFALLS/$base.md" "$PITFALLS/$base.2.md" 2>/dev/null | grep -qE '^## Patterns' \
+    cat "$rule" "$PITFALLS/$base.md" "$PITFALLS/$base.2.md" "$PITFALLS/${base%.*}.2.${base##*.}.md" 2>/dev/null \
+        | grep -qE '^## Patterns' \
         || silent_rules=$((silent_rules + 1))
 done
 report "SC-AK-1029 — раздел образцов есть у каждого правила" "$silent_rules" 0

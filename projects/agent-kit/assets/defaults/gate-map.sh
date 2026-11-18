@@ -111,7 +111,10 @@ skill_for_default() {
                 */check-reuse.mjs | */reuse-allowlist.json) printf '%s\n' 'reuse-first' ;;
                 # The queue audit has a rule of its own, laid out on GitHub only; the folders
                 # module is laid out on every host and stays with the rule about tasks.
-                */board-folders.mjs | */task-new.mjs | */check-schema-drift.mjs)
+                */board-folders.mjs | */task-new.mjs)
+                    printf '%s\n' 'git-workflow'
+                    printf '%s\n' 'git-workflow-queue' ;;
+                */check-schema-drift.mjs)
                     printf '%s\n' 'git-workflow' ;;
                 */check-board.mjs | */board.mjs | */board-*.mjs) printf '%s\n' 'queue-audit' ;;
                 # A tree's own code linter rule is written by the same conventions as the code under
@@ -183,14 +186,26 @@ skill_for_default() {
         bash)
             # The branches go by a call check, not by a substring match: a mention of a command is
             # not a command, and the gate refused its own text about a commit.
-            if rt_gate_invokes "$target" "git[[:space:]]+(commit|push|merge|rebase|cherry-pick)" \
+            # The delivery rule is four parts, and a command gets the part of its subject: a request
+            # to the host gets the part about requests alone, the commit and the push get the branch
+            # part with the part about the push set, the task creation the branch part with the part
+            # about the queue. Every part stays under the host limit, and two of them still fit.
+            if rt_gate_invokes "$target" "(gh|glab)[[:space:]]+(pr|mr)[[:space:]]+(create|merge|edit)" \
+                || rt_gate_invokes "$target" "gh[[:space:]]+pr[[:space:]]+ready" \
+                || rt_gate_invokes "$target" "az[[:space:]]+repos"; then
+                printf '%s\n' 'git-workflow-hosting'
+            elif rt_gate_invokes "$target" "(gh|glab)[[:space:]]+issue[[:space:]]+(create|edit)" \
+                || rt_gate_invokes "$target" "az[[:space:]]+boards" \
+                || rt_gate_invokes "$target" "[^[:space:]]*task:new"; then
+                printf '%s\n' 'git-workflow'
+                printf '%s\n' 'git-workflow-queue'
+            elif rt_gate_invokes "$target" "git[[:space:]]+(commit|push)"; then
+                printf '%s\n' 'git-workflow'
+                printf '%s\n' 'git-workflow-push'
+            elif rt_gate_invokes "$target" "git[[:space:]]+(merge|rebase|cherry-pick)" \
                 || rt_gate_invokes "$target" "git[[:space:]]+worktree[[:space:]]+(add|remove)" \
                 || rt_gate_invokes "$target" "git[[:space:]]+checkout[[:space:]]+-b" \
                 || rt_gate_invokes "$target" "git[[:space:]]+switch[[:space:]]+-c" \
-                || rt_gate_invokes "$target" "(gh|glab)[[:space:]]+(pr|mr|issue)[[:space:]]+(create|merge|edit)" \
-                || rt_gate_invokes "$target" "gh[[:space:]]+pr[[:space:]]+ready" \
-                || rt_gate_invokes "$target" "az[[:space:]]+(repos|boards)" \
-                || rt_gate_invokes "$target" "[^[:space:]]*task:new" \
                 || rt_gate_invokes "$target" "prisma[[:space:]]+(migrate|db)"; then
                 printf '%s\n' 'git-workflow'
             # An edit of the PR body through the hosting client is caught by two signs at once — the
@@ -199,7 +214,7 @@ skill_for_default() {
             # statement about the tree goes stale in it silently.
             elif rt_gate_invokes "$target" "(gh|glab)[[:space:]]+api" \
                 && printf '%s' "$target" | grep -qE '(-X|--method)[[:space:]]+(PATCH|PUT).*(pulls|merge_requests)/[0-9]+'; then
-                printf '%s\n' 'git-workflow'
+                printf '%s\n' 'git-workflow-hosting'
             # Images and the registry on the owner's machine: the owner's own stands and the work of
             # their other branches lie there too. Removal and cleanup matter more than the build —
             # they carry away someone else's for good. Read commands stay outside the gate: they are

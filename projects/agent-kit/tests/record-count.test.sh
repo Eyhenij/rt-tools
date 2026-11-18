@@ -76,6 +76,13 @@ EOF
 report "SC-AK-1645 — текст отказа даёт проверку по таблице" \
     "$(count "$WORK/checks.jsonl" refusals 'r.map((x) => x.check).join(" ")')" "skill-gate epic-over grill-gate unnamed permission"
 
+cat > "$WORK/load-move.jsonl" <<'EOF'
+{"type":"user","uuid":"m1","sessionId":"s1","timestamp":"2026-11-13T01:00:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t1","is_error":true,"content":"PreToolUse:Edit hook error: BLOCKED by task-flow-guard: the plan is missing. The named move is held by the rules gate: load the rule «task-flow» by the tool Skill first"}]}}
+{"type":"user","uuid":"m2","sessionId":"s1","timestamp":"2026-11-13T01:01:00Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t2","is_error":true,"content":"PreToolUse:Edit hook error: BLOCKED by task-flow-guard: the plan is missing"}]}}
+EOF
+report "SC-AK-1698 — отказ соседа с ходом загрузки правила считается отказом ворот правил" \
+    "$(count "$WORK/load-move.jsonl" refusals 'r.map((x) => x.check).join(" ")')" "skill-gate task-flow-guard"
+
 cat > "$WORK/stop.jsonl" <<'EOF'
 {"type":"user","uuid":"s1","sessionId":"s1","timestamp":"2026-11-13T01:00:00Z","message":{"role":"user","content":"Stop hook feedback:\nBLOCKED by turn-exit-guard: the scenario is not over"}}
 {"type":"system","uuid":"s2","subtype":"stop_hook_summary","sessionId":"s1","timestamp":"2026-11-13T01:00:01Z","hookErrors":["BLOCKED by turn-exit-guard: the scenario is not over"],"preventedContinuation":false}

@@ -218,3 +218,11 @@ Then the line names only the first rule and asks to load it, and says every othe
 itself at its next edit; with no over-limit rule in the record the line asks to load nothing
 
 Covered: `projects/agent-kit/tests/skill-gate-rearm.test.sh`.
+
+### SC-AK-1698 — a neighbour's refusal that names loading a rule counts as a gate refusal
+
+Given two refusals of a neighbouring guard, one naming the move of loading a rule and one not
+When the record count sorts the refusals by the check
+Then the first is counted as the rules gate and the second under the guard's own name
+
+Covered: `projects/agent-kit/tests/record-count.test.sh`.

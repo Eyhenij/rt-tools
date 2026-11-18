@@ -2,8 +2,8 @@
 
 ## Where we stand
 
-- **State:** `этап-идёт`
-- **Stage:** 5 of 7 — The rules with long statements
+- **State:** `этапы-кончились`
+- **Stage:** 7 of 7 — all stages done
 - **Done:** stage 1 — the gate delivers the rules that fit, with their companions, under the limit
   of the setting; stage 2 — the remaining refusals name their reason, a read of a rule file by the
   tool `Read` is a load, a subagent has a record of its own;  grill closed by assumption; agreement `docs/specs/agent-kit/proposed/rule-gate-delivery/`,
@@ -11,9 +11,15 @@
   stage 4 — spec-driven (2 997 bytes), doc-style (2 998) and browser-verification (3 000) fit,
   nothing of their former text is lost, and their retellings matched, in the third, third and
   second round. Stage 5: task-flow is four parts (2 647, 2 996, 2 767, 2 434), its seven patterns
-  are hot indexes with cold parts, and the retelling of every part matched.
-- **Next step:** step 5.4 — git-workflow into four parts with a variant per host, and its
-  patterns by the technique of the task-flow patterns.
+  are hot indexes with cold parts, and the retelling of every part matched. git-workflow is four
+  parts per host (2 823, 2 416, 1 838, 2 968), ui-component-tests two (2 989, 2 364); every
+  retelling matched. Stage 6: agent-kit-extend is a hot index of 2 999 characters with the former
+  text whole in its cold part; the retelling matched in the first round. The meaning script now
+  reads a skill without `kind: rule` as its own part.
+  Stage 7: the agreement is the subdomain `rule-gate-delivery` with 33 bindings; the week-sign
+  article had no code, so the refusal count now sorts a neighbour's load move as the gate
+  (SC-AK-1698). The package README says the gate puts the rule into the session.
+- **Next step:** the suite, the commit, the roles, the folder taken apart, the PR.
 - **Plan approved:** «Одобряю plan.md RT-3326». After the word, the checks of stages 4–6 were
   tightened by `goal-critic` before the commit: the meaning script, the verdict by a role, the
   section tables, `&&` in place of `;`. The stages, the rules and the number stayed as approved.
@@ -44,14 +50,14 @@
 - [x] 5.1 The section tables of task-flow, git-workflow and ui-component-tests are in the progress, with the pairs of shortened statements
 - [x] 5.2 task-flow: every part is at most 3 000 characters, and nothing of the former text is lost
 - [x] 5.3 task-flow: the retelling of every part matched the former text
-- [>] 5.4 git-workflow: every part is at most 3 000 characters, and nothing of the former text is lost
-- [ ] 5.5 git-workflow: the retelling of every part matched the former text
-- [ ] 5.6 ui-component-tests: every part is at most 3 000 characters, and nothing of the former text is lost
-- [ ] 5.7 ui-component-tests: the retelling of every part matched the former text
-- [ ] 6.1 agent-kit-extend: the hot part is at most 3 000 characters, and nothing of the former text is lost
-- [ ] 6.2 agent-kit-extend: the retelling matched the former text
-- [ ] 7.1 The agreement merges into the package spec as the subdomain `rule-gate-delivery` with its bindings
-- [ ] 7.2 The README of the package says the gate puts the rule into the session
+- [x] 5.4 git-workflow: every part is at most 3 000 characters, and nothing of the former text is lost
+- [x] 5.5 git-workflow: the retelling of every part matched the former text
+- [x] 5.6 ui-component-tests: every part is at most 3 000 characters, and nothing of the former text is lost
+- [x] 5.7 ui-component-tests: the retelling of every part matched the former text
+- [x] 6.1 agent-kit-extend: the hot part is at most 3 000 characters, and nothing of the former text is lost
+- [x] 6.2 agent-kit-extend: the retelling matched the former text
+- [x] 7.1 The agreement merges into the package spec as the subdomain `rule-gate-delivery` with its bindings
+- [x] 7.2 The README of the package says the gate puts the rule into the session
 
 ## Section tables of the shortened rules
 
@@ -142,6 +148,21 @@ read `git-workflow*` and `ui-component-tests*` the same way, so their patterns s
 technique. The suites of the kind of rules and patterns learned along the way that a section may
 stand in the cold part, that a pattern owns a cold part, and that `.2` continues the first one:
 the stage 4 rules had already moved their sections there, and those suites were red since.
+
+git-workflow split by subject in every host edition (GitHub 22 / 16 / 15 / 25 articles, GitLab
+and Azure DevOps by the same signs): the branch part, `-queue`, `-push`, `-hosting`. The gate
+gives a request to the host the hosting part alone, a commit and a push the branch part with the
+push part, the task creation the branch part with the queue part (SC-AK-1697). The article about
+one's own conflicting PR went to the queue part, since a turn starts there. Every article whole
+stands in `pitfalls-2.md` of `git-workflow` per host; the tree's section about the language of a
+commit stays hot as one sentence, whole in the override of that cold part. The fifteen patterns
+became hot indexes with cold parts; the GitHub PR pattern's cold part is two files like the other
+hosts', since an edition must exist for every host.
+
+ui-component-tests split in two: the showcase (24 articles and «What answers which question») and
+`-screens` (the probes of the harness, the references, the screen frames and the seeding: 20
+articles). The harness gets both parts from the gate, a suite reference the screens part; the
+pattern `ui-component-tests-visual` moved to the screens part, `-spec` stayed.
 - **git-workflow** — branches, the epic, the chain and history: statements 1–14, 51, 52, 59, 78,
   79. Demanded as now by branch and commit commands; the first part is a variant per host as now.
 - **git-workflow-queue** — the task key, the board and one's own PRs as a queue: statements 17–23,
@@ -334,7 +355,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 5 of 7 — The rules with long statements
-- **Next step:** step 5.1 — the section tables of task-flow, git-workflow and ui-component-tests.
+- **Next step:** step 5.4 — git-workflow into four parts with a variant per host, and its
 - **PR:** not open yet. The branch stands on RT-3283 (PR #3371).
 
 The progress in full — `docs/tasks/RT-3326-rule-gate-gives-rule/progress.md`; the plan lies next to it.
@@ -343,30 +364,32 @@ The progress in full — `docs/tasks/RT-3326-rule-gate-gives-rule/progress.md`; 
 
 ```
  M .claude/rt-kit/defaults/gate-map.sh
- M .claude/skills/task-flow-archive/SKILL.md
- M .claude/skills/task-flow-close/SKILL.md
- M .claude/skills/task-flow-cycle/SKILL.md
- M .claude/skills/task-flow-resume/SKILL.md
- M .claude/skills/task-flow/SKILL.md
- M .claude/skills/task-flow/implementation.md
- M docs/specs/agent-kit/patterns/implementation.md
- M docs/specs/agent-kit/rule-gate/scenarios.md
- M docs/specs/agent-kit/rules/implementation.md
- M docs/tasks/RT-3326-rule-gate-gives-rule/progress.md
- M projects/agent-kit/assets/defaults/gate-map.sh
- M projects/agent-kit/assets/patterns/task-flow-archive.md
- M projects/agent-kit/assets/patterns/task-flow-close.md
- M projects/agent-kit/assets/patterns/task-flow-cycle.md
- M projects/agent-kit/assets/patterns/task-flow-resume.md
- M projects/agent-kit/assets/rules/task-flow.md
- M projects/agent-kit/tests/defaults.test.sh
- M projects/agent-kit/tests/skill-gate.test.sh
-?? .claude/skills/task-flow-handover/
+ M .claude/rt-kit/gate-map.sh
+ D .claude/rt-kit/overrides/patterns/git-workflow-commit.github.md
+ D .claude/rt-kit/overrides/patterns/git-workflow-docker.md
+ D .claude/rt-kit/overrides/patterns/git-workflow-pr-body.github.md
+ M .claude/rt-kit/overrides/rules/git-workflow.github.md
+ M .claude/skills/git-workflow-commit/SKILL.md
+ M .claude/skills/git-workflow-docker/SKILL.md
+ M .claude/skills/git-workflow-freshness/SKILL.md
+ M .claude/skills/git-workflow-merge/SKILL.md
+ M .claude/skills/git-workflow-migration/SKILL.md
+ M .claude/skills/git-workflow-pr-body/SKILL.md
+ M .claude/skills/git-workflow-pr-ready/SKILL.md
+ M .claude/skills/git-workflow-pr/SKILL.md
+ M .claude/skills/git-workflow-restart/SKILL.md
+ M .claude/skills/git-workflow-secrets/SKILL.md
+ M .claude/skills/git-workflow-stack/SKILL.md
+ M .claude/skills/git-workflow/SKILL.md
+ M .claude/skills/git-workflow/implementation.md
+ M .claude/skills/ui-component-tests-spec/SKILL.md
 ```
 
 ### Commits over the main branch
 
 ```
+e07d31bc9 feat(rt:agent-kit): паттерны task-flow — указатель и холодная часть
+6d4cda9d4 feat(rt:agent-kit): task-flow разбито на четыре части до 3 000 байт
 ebc2fc541 feat(rt:agent-kit): doc-style совпал на третьем круге, этап коротких правил закрыт
 5f0cbedb5 feat(rt:agent-kit): пересказы doc-style и browser-verification, потери вернулись
 1b98424e8 feat(rt:agent-kit): browser-verification в 2 996 байтах, doc-style после пересказа
@@ -385,8 +408,6 @@ a68987b50 docs(rt:agent-kit): папка задачи о пользе прове
 0fcb26e72 Merge remote-tracking branch 'origin/RT-3302-checks-rework-3' into RT-3283-push-set-uselessness
 253fd7042 docs(rt:agent-kit): спек пользы проверок набора вошёл в пакет поддоменом
 cd2698050 docs(rt:agent-kit): этап отчёта о пользе проверок набора закрыт
-23f1816a4 feat(rt:agent-kit): отчёт метрик считает пользу каждой проверки набора
-8350b61f6 feat(rt:agent-kit): оба исполнителя набора пишут строку запуска из семи полей
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

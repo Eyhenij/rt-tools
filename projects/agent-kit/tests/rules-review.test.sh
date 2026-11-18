@@ -53,7 +53,7 @@ missing_sections() {
         for file in "$root/$kind"/*.md; do
             [ -e "$file" ] || continue
             # A second cold part continues the first: the sections are asked of the first.
-            [ "$kind" = pitfalls ] && case "${file##*/}" in *.[0-9].md) continue ;; esac
+            [ "$kind" = pitfalls ] && case "${file##*/}" in *.[0-9].md | *.[0-9].*.md) continue ;; esac
             grep -qxE "$want" "$file" && continue
             # A section of a rule may stand in its cold part: the rule keeps what decides an edit,
             # and the rest leaves for the file read on demand, under the same heading.
@@ -62,6 +62,10 @@ missing_sections() {
                 cold2="${cold%.md}.2.md"
                 { [ -f "$cold" ] && grep -qxE "$want" "$cold"; } && continue
                 { [ -f "$cold2" ] && grep -qxE "$want" "$cold2"; } && continue
+                # An edition `<name>.<host>` continues in `<name>.2.<host>`.
+                base="${file##*/}"; base="${base%.md}"
+                cold3="$root/pitfalls/${base%.*}.2.${base##*.}.md"
+                { [ -f "$cold3" ] && grep -qxE "$want" "$cold3"; } && continue
             fi
             printf '%s :: %s\n' "${file##*/}" "$want"
         done
