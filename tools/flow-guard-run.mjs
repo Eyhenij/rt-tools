@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/flow-guard-run.mjs · 2dba38fd8cb6 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/flow-guard-run.mjs · de8980472a2b · правится надстройкой, не здесь
 /**
  * The reading half of the guard of the course of work: the hook input as a call, and the context the
  * decisions of `flow-guard.mjs` take. The owner's last word comes from the source «source.owner» of
@@ -57,6 +57,11 @@ export function guardContext({ root, model, marks, owner, measure, settings }) {
         protectedPaths: settings.protectedPaths,
         legacy: model.words.legacyBranches ?? [],
         read: (path) => (existsSync(join(root, path)) ? readFileSync(join(root, path), 'utf8') : null),
+        committed: (path) => {
+            // The text the oldest commit of the branch that added the file wrote, or null.
+            const sha = (git(root, 'log', '--diff-filter=A', '--format=%H', 'HEAD', '--', path) ?? '').split('\n').filter(Boolean).pop();
+            return sha ? git(root, 'show', `${sha}:${path}`) : null;
+        },
         stepMark: (number) => marks.step(branch, number),
         approved: () => Boolean(marks.approval(branch)),
         ownerLast: () => owner.last(),

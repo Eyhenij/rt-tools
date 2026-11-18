@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/flow-step.mjs · 4818036988d1 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/flow-step.mjs · 70747bba8ed7 · правится надстройкой, не здесь
 /**
  * A step of the plan measured by its check — the engine command `step`.
  *
@@ -21,9 +21,17 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { availableParallelism } from 'node:os';
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+
+import { dirname, join } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { compareExpected, isWriteCommand } from './flow-data.mjs';
+
+// The sources of the description lie next to the engine where it is laid out, one level up in the package.
+const HERE = dirname(fileURLToPath(import.meta.url));
+const RECORDS = [join(HERE, 'task-flow/source/records.mjs'), join(HERE, '../task-flow/source/records.mjs')].find((path) => existsSync(path));
+const { open: openRecords } = await import(pathToFileURL(RECORDS).href);
 
 /** The limit of one check, in milliseconds: past it the step does not match. */
 export const STEP_LIMIT_MS = 540_000;
@@ -132,18 +140,44 @@ function prepareStep({ git, steps, owner }, model, number, read) {
     const planned = steps.ofPlan(plan.text).find((s) => s.number === number);
     if (!planned) throw new StepRefused(`the plan names no step ${number}`);
     const progress = `${plan.folder}/${PROGRESS}`;
-    const step = { number, ...replacedCheck(read(progress) ?? git.lastVersion(progress), number, owner, planned) };
+    // A replacement quote counts from any session record of this repository, not only the current one.
+    const anywhere = { said: (quote) => owner.said(quote) || openRecords().said(quote) };
+    const step = { number, ...replacedCheck(read(progress) ?? git.lastVersion(progress), number, anywhere, planned) };
     if (step.command === null) throw new StepRefused(`step ${number} has no check line`);
     if (isWriteCommand(step.command, model.words)) throw new StepRefused(`the check of step ${number} is a command of the work: ${step.command}`);
     if (compareExpected(model.expect, step.expected, 0, '') === null) throw new StepRefused(`the expected result of step ${number} is in no form: ${step.expected}`);
     return { plan, step };
 }
 
-/** The verdict of a run: the mark is written or dropped, and the result is returned. */
+/**
+ * The progress with step `number` marked done and, when no step is current, the first one not begun
+ * made current. A progress that names no such step comes back as it was.
+ */
+export function markedProgress(text, number) {
+    const own = new RegExp(`^(\\s*-\\s+\\[)[ >x](\\]\\s+${number.replace('.', '\\.')}\\s)`);
+    const lines = text.split('\n');
+    const at = lines.findIndex((line) => own.test(line));
+    if (at < 0) return text;
+    lines[at] = lines[at].replace(own, '$1x$2');
+    if (!lines.some((line) => /^\s*-\s+\[>\]\s+\d+\.\d+\s/.test(line))) {
+        const next = lines.findIndex((line) => /^\s*-\s+\[ \]\s+\d+\.\d+\s/.test(line));
+        if (next >= 0) lines[next] = lines[next].replace('[ ]', '[>]');
+    }
+    return lines.join('\n');
+}
+
+/** The verdict of a run: the mark is written and the step marked done, or the mark is dropped; the result is returned. */
 function settleStep({ git, marks }, model, { plan, step }, run, limitMs) {
     const verdict = run.timedOut ? { form: null, matched: false } : compareExpected(model.expect, step.expected, run.code, run.output);
     if (verdict.matched) {
         marks.writeStep(plan.branch, step.number, { branch: plan.branch, step: step.number, plan: plan.fingerprint, head: git.head(), line: lastLine(run.output), replaced: step.replaced, matched: true });
+        // Only the engine marks a step done: the guard refuses a hand mark.
+        const progress = `${plan.folder}/${PROGRESS}`;
+        const text = readFile(progress);
+        if (text !== null) {
+            const marked = markedProgress(text, step.number);
+            if (marked !== text) writeFileSync(progress, marked);
+        }
     } else marks.dropStep(plan.branch, step.number);
     return { number: step.number, expected: step.expected, got: gotOf(run, verdict.form, limitMs), matched: verdict.matched };
 }

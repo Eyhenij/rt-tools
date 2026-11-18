@@ -106,6 +106,43 @@ report "step: SC-AK-1408 — step --done меряет оба [x] и выходи
     "$(printf '%s' "$got" | tr '\n' '#')" '1.1 ожидалось `один` · получено один · совпало#1.2 ожидалось `три` · получено два · не совпало#steps re-measured 2, matched 1 code=1'
 report "step: SC-AK-1408 — метка шага 1.1 записана заново" "$(test -e "$TF_MARK/1.1.json" && echo есть || echo нет)" 'есть'
 
+# SC-AK-1702, SC-AK-1736 — шаг отмечает сам движок; несовпавший шаг ход работы не трогает
+TF_PROGRESS="$TF_STEP/docs/tasks/RT-1-x/progress.md"
+printf '# Ход работы\n\n## Шаги\n\n- [>] 1.1 Совпасть\n- [ ] 1.2 Не совпасть\n' > "$TF_PROGRESS"
+tf_step 1.1 >/dev/null
+report "step: SC-AK-1702 — совпавший шаг отмечен [x], следующий стал текущим" \
+    "$(grep -E '^- \[.\] 1\.[12]' "$TF_PROGRESS" | tr '\n' '#')" '- [x] 1.1 Совпасть#- [>] 1.2 Не совпасть#'
+report "step: SC-AK-1702 — метка шага записана" "$(test -e "$TF_MARK/1.1.json" && echo есть || echo нет)" 'есть'
+before="$(cat "$TF_PROGRESS")"
+tf_step 1.2 >/dev/null
+report "step: SC-AK-1736 — несовпавший шаг оставляет ход работы как был" "$([ "$before" = "$(cat "$TF_PROGRESS")" ] && echo тот же || echo другой)" 'тот же'
+report "step: SC-AK-1736 — метки несовпавшего шага нет" "$(test -e "$TF_MARK/1.2.json" && echo есть || echo нет)" 'нет'
+
+# SC-AK-1726 — файл папки правлен после коммита плана: step отказывает, шаг не отмечен
+printf 'два\n' > "$TF_STEP/docs/tasks/RT-1-x/probe.txt"
+printf '# Ход работы\n\n## Шаги\n\n- [>] 1.1 Совпасть\n' > "$TF_PROGRESS"
+report "step: SC-AK-1726 — папка изменена после плана — отказ" "$(tf_step 1.1 | grep -c 'differs from the commit of the plan.* code=1')" 1
+report "step: SC-AK-1726 — шаг остался неотмеченным" "$(grep -c '^- \[x\] 1.1' "$TF_PROGRESS")" 0
+printf 'один\n' > "$TF_STEP/docs/tasks/RT-1-x/probe.txt"
+
+# SC-AK-1723, SC-AK-1727 — цитата замены ищется во всех записях копий репозитория
+TF_HOME="$TF_DIR/records-home"
+TF_REC="$TF_HOME/$(printf '%s' "$(cd "$TF_STEP" && pwd -P)" | sed 's#[/.]#-#g')"
+mkdir -p "$TF_REC"
+printf '%s\n' '{"type":"user","uuid":"u1","message":{"role":"user","content":"замени проверку шага 1.2 на echo три"}}' > "$TF_REC/earlier-session.jsonl"
+printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [>] 1.2 Не совпасть\n\n## Decisions along the way\n\n- **Check of step 1.2 replaced:** `echo три` → `три` · the owner'"'"'s word: «замени проверку шага 1.2 на echo три»\n' > "$TF_PROGRESS"
+report "step: SC-AK-1723 — цитата из записи прошлой сессии найдена, замена мерится" \
+    "$(cd "$TF_STEP" && RT_FLOW_RECORDS_HOME="$TF_HOME" RT_FLOW_TRANSCRIPT=/nonexistent node "$TESTS/../assets/checks/task-flow-script.mjs" step 1.2 2>&1 | grep -c '· совпало')" 1
+sed -i '' 's/на echo три»/на echo четыре»/' "$TF_PROGRESS"
+report "step: SC-AK-1727 — цитата, которой нет ни в одной записи, отказана" \
+    "$(cd "$TF_STEP" && RT_FLOW_RECORDS_HOME="$TF_HOME" RT_FLOW_TRANSCRIPT=/nonexistent node "$TESTS/../assets/checks/task-flow-script.mjs" step 1.2 2>&1 | grep -c 'the owner never typed it')" 1
+
+# SC-AK-1729 — метки по ветке общие для копий: несовпавший перемер снимает метку для всех
+printf '{"matched":true}\n' > "$TF_MARK/1.2.json"
+printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [>] 1.2 Не совпасть\n' > "$TF_PROGRESS"
+tf_step 1.2 >/dev/null
+report "step: SC-AK-1729 — несовпавший перемер снял метку ветки" "$(test -e "$TF_MARK/1.2.json" && echo есть || echo нет)" 'нет'
+
 # SC-AK-1506 — форма ожидаемого, добавленная в описание, принимается step без правки движка
 mkdir -p "$TF_DIR/kit"
 cp -R "$TESTS/../assets/task-flow" "$TF_DIR/kit/task-flow"

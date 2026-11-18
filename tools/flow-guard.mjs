@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/flow-guard.mjs · 729b0084fe63 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/flow-guard.mjs · b9eb00981527 · правится надстройкой, не здесь
 /**
  * The guard of the course of work — the engine command `guard`, called by the hook
  * `flow-step-guard.sh` before Edit, Write, MultiEdit and a shell command.
@@ -189,12 +189,14 @@ function judgeProgress(call, ctx, planPath) {
     const order = marksOutOfOrder(after);
     if (order) return `${order}: done steps go first, and the one current step right after them`;
 
-    const plan = ctx.read(planPath);
+    // The plan as the commit that added it wrote it: a plan stripped of its checks in the working copy
+    // lifts nothing. Before that commit there is no approved plan, and the working copy is all there is.
+    const plan = (ctx.committed ? ctx.committed(planPath) : null) ?? ctx.read(planPath);
     const legacy = ctx.legacy.includes(ctx.branch) || stepsOfPlan(plan ?? '').every((step) => step.command === null);
     if (!legacy) {
-        const unmeasured = newlyDone(before, after).filter((number) => !ctx.stepMark(number));
-        if (unmeasured.length > 0) {
-            return `step ${unmeasured.join(', ')} has no green mark: run \`node tools/task-flow-script.mjs step ${unmeasured[0]}\` — a matched step writes its mark, and only then is it marked done`;
+        const marked = newlyDone(before, after);
+        if (marked.length > 0) {
+            return `step ${marked.join(', ')} is marked done after its check matched, by \`node tools/task-flow-script.mjs step ${marked[0]}\` itself: a hand mark is refused whatever mark lies on disk`;
         }
     }
 

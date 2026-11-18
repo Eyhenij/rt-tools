@@ -72,12 +72,17 @@ R="$(task_repo "$B")"
 P="$R/docs/tasks/$B/progress.md"
 progress_text 'этап-идёт' '>' ' ' > "$P"
 
-d "guard: SC-AK-1414 — [x] без метки отказан" "$(edit_input Edit "$P" '- [>] 1.1' '- [x] 1.1' "$R")" deny
+d "guard: SC-AK-1414 — [x] рукой отказан" "$(edit_input Edit "$P" '- [>] 1.1' '- [x] 1.1' "$R")" deny
 expect_reason "guard: SC-AK-1414 — отказ называет команду шага" "$GUARD" "$(edit_input Edit "$P" '- [>] 1.1' '- [x] 1.1' "$R")" 'task-flow-script.mjs step 1.1'
 green_mark "$R" "$B" 1.1
-d "guard: SC-AK-1414 — [x] с зелёной меткой проходит" "$(edit_input Edit "$P" '- [>] 1.1 Первый шаг
+d "guard: SC-AK-1703 — [x] рукой отказан и при зелёной метке на диске" "$(edit_input Edit "$P" '- [>] 1.1 Первый шаг
 - [ ] 1.2' '- [x] 1.1 Первый шаг
-- [>] 1.2' "$R")" PASS
+- [>] 1.2' "$R")" deny
+# План без проверок в рабочей копии отказа не снимает: проверки читаются из коммита плана.
+cp "$R/docs/tasks/$B/plan.md" "$R/plan.keep"
+plan_text bare > "$R/docs/tasks/$B/plan.md"
+d "guard: SC-AK-1716 — план без проверок в рабочей копии не снимает отказ" "$(edit_input Edit "$P" '- [>] 1.1' '- [x] 1.1' "$R")" deny
+mv "$R/plan.keep" "$R/docs/tasks/$B/plan.md"
 
 progress_text 'этап-идёт' ' ' ' ' > "$P"
 d "guard: SC-AK-1415 — [x] после неготового шага отказан" "$(edit_input Edit "$P" '- [ ] 1.2' '- [x] 1.2' "$R")" deny

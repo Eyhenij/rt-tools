@@ -56,6 +56,11 @@ export function guardContext({ root, model, marks, owner, measure, settings }) {
         protectedPaths: settings.protectedPaths,
         legacy: model.words.legacyBranches ?? [],
         read: (path) => (existsSync(join(root, path)) ? readFileSync(join(root, path), 'utf8') : null),
+        committed: (path) => {
+            // The text the oldest commit of the branch that added the file wrote, or null.
+            const sha = (git(root, 'log', '--diff-filter=A', '--format=%H', 'HEAD', '--', path) ?? '').split('\n').filter(Boolean).pop();
+            return sha ? git(root, 'show', `${sha}:${path}`) : null;
+        },
         stepMark: (number) => marks.step(branch, number),
         approved: () => Boolean(marks.approval(branch)),
         ownerLast: () => owner.last(),

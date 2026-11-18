@@ -188,12 +188,14 @@ function judgeProgress(call, ctx, planPath) {
     const order = marksOutOfOrder(after);
     if (order) return `${order}: done steps go first, and the one current step right after them`;
 
-    const plan = ctx.read(planPath);
+    // The plan as the commit that added it wrote it: a plan stripped of its checks in the working copy
+    // lifts nothing. Before that commit there is no approved plan, and the working copy is all there is.
+    const plan = (ctx.committed ? ctx.committed(planPath) : null) ?? ctx.read(planPath);
     const legacy = ctx.legacy.includes(ctx.branch) || stepsOfPlan(plan ?? '').every((step) => step.command === null);
     if (!legacy) {
-        const unmeasured = newlyDone(before, after).filter((number) => !ctx.stepMark(number));
-        if (unmeasured.length > 0) {
-            return `step ${unmeasured.join(', ')} has no green mark: run \`node tools/task-flow-script.mjs step ${unmeasured[0]}\` — a matched step writes its mark, and only then is it marked done`;
+        const marked = newlyDone(before, after);
+        if (marked.length > 0) {
+            return `step ${marked.join(', ')} is marked done after its check matched, by \`node tools/task-flow-script.mjs step ${marked[0]}\` itself: a hand mark is refused whatever mark lies on disk`;
         }
     }
 
