@@ -28,7 +28,17 @@ module.exports = {
         'scope-enum': [
             2,
             'always',
-            ['rt:core', 'rt:store', 'rt:utils', 'rt:ui-kit-v2', 'rt:agent-kit', 'rt:message-bus', 'rt:auth', 'rt:cms'],
+            [
+                'rt:core',
+                'rt:store',
+                'rt:utils',
+                'rt:ai-chat-protocol',
+                'rt:ui-kit-v2',
+                'rt:agent-kit',
+                'rt:message-bus',
+                'rt:auth',
+                'rt:cms',
+            ],
         ],
     },
 };

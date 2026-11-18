@@ -121,4 +121,27 @@ report "frames of different sizes are refused" \
 report "no record at all is refused" \
     "$(run "console.log(m.faultsOf('b', null).length)")" 1
 
+# A branch without its own record — an epic branch: a merged task answers for its files, main
+# brought in answers for nothing, a commit made in the branch itself still needs the branch record.
+KIT='projects/ui-kit-v2/src/lib/components/x/x.component.html'
+OTHER='projects/ui-kit-v2/src/lib/components/y/y.component.html'
+report "an epic branch whose kit edit came by a task merge is judged by that task" \
+    "$(run "const r = m.answerersOf([
+  { sha: 'a', subject: \"Merge remote-tracking branch 'origin/main' into RT-1-epic\", merge: true, files: ['$OTHER'] },
+  { sha: 'b', subject: '[RT-2] Блоки ответа (#9)', merge: true, files: ['$KIT'] },
+], ['$KIT']); console.log(r.own.length + '|' + r.tasks.map((t) => t.task).join(','))")" '0|RT-2'
+report "a kit edit made in the epic branch itself is left to the branch" \
+    "$(run "const r = m.answerersOf([
+  { sha: 'c', subject: 'fix: правка прямо в эпике', merge: false, files: ['$KIT'] },
+  { sha: 'b', subject: '[RT-2] Блоки ответа (#9)', merge: true, files: ['$KIT'] },
+], ['$KIT']); console.log(r.own.join(',') + '|' + r.tasks.length)")" "$KIT|0"
+report "main brought into the branch answers for nothing" \
+    "$(run "const r = m.answerersOf([
+  { sha: 'a', subject: \"Merge remote-tracking branch 'origin/main' into RT-1-epic\", merge: true, files: ['$KIT'] },
+], ['$KIT']); console.log(r.own.length + '|' + r.tasks.length)")" '0|0'
+report "a merge that names no task leaves its files to the branch" \
+    "$(run "const r = m.answerersOf([
+  { sha: 'd', subject: \"Merge branch 'RT-2-blocks' into RT-1-epic\", merge: true, files: ['$KIT'] },
+], ['$KIT']); console.log(r.own.join(',') + '|' + r.tasks.length)")" "$KIT|0"
+
 suite_result

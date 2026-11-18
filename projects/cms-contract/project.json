@@ -21,6 +21,13 @@
         "command": "node tools/finalize-utils-package.cjs cms-contract"
       }
     },
+    "verify": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "node tools/verify-package.cjs cms-contract"
+      }
+    },
     "build:esm": {
       "executor": "@nx/js:tsc",
       "outputs": ["{workspaceRoot}/dist/cms-contract/esm"],

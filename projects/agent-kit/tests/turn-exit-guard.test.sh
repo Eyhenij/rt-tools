@@ -137,11 +137,11 @@ out('menu: SC-AK-1442 — другая причина — не запрет', fo
 
 const refused = { kind: 'refusal', text: 'Stop hook feedback:\nBLOCKED by turn-exit-guard: x' };
 const idles = (list) => String(session.idle(events(list))(data));
-out('menu: SC-AK-1551 — остановка без вызова после отказа — простой', idles([called('Edit'), refused]), 'true');
-out('menu: SC-AK-1551 — вызов после отказа — не простой', idles([refused, called('Read')]), 'false');
-out('menu: SC-AK-1551 — первая остановка — не простой', idles([called('Edit')]), 'false');
+out('menu: SC-AK-1701 — остановка без вызова после отказа — простой', idles([called('Edit'), refused]), 'true');
+out('menu: SC-AK-1701 — вызов после отказа — не простой', idles([refused, called('Read')]), 'false');
+out('menu: SC-AK-1701 — первая остановка — не простой', idles([called('Edit')]), 'false');
 const idleMenu = holdReason(model, stage, null, { ...HOLD_MENU, cause: menuCause((name) => name === 'measure.session.idle') });
-out('menu: SC-AK-1551 — простой называет меню владельцу', String(idleMenu.includes('no call followed it') && idleMenu.includes("owner's menu")), 'true');
+out('menu: SC-AK-1701 — простой называет меню владельцу', String(idleMenu.includes('no call followed it') && idleMenu.includes("owner's menu")), 'true');
 
 out('menu: SC-AK-1443 — заблокированная задача — берётся следующая незаблокированная', String(ownerMenu.includes('takes the next unblocked task') && ownerMenu.includes('takes the next;')), 'true');
 

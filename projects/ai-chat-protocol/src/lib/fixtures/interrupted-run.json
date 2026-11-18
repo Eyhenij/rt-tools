@@ -1,0 +1,77 @@
+{
+  "description": "A run the service cut: half an answer, then the interrupted code with no text.",
+  "initialMessages": [
+    {
+      "id": "u1",
+      "role": "user",
+      "content": "Summarise the month",
+      "toolCalls": [],
+      "toolCallId": null,
+      "feedback": null,
+      "isStored": false
+    }
+  ],
+  "events": [
+    {
+      "type": "RUN_STARTED",
+      "threadId": "t1",
+      "runId": "r5"
+    },
+    {
+      "type": "CUSTOM",
+      "name": "run.reference",
+      "value": {
+        "referenceId": "ref-1"
+      }
+    },
+    {
+      "type": "TEXT_MESSAGE_START",
+      "messageId": "a1",
+      "role": "assistant"
+    },
+    {
+      "type": "TEXT_MESSAGE_CONTENT",
+      "messageId": "a1",
+      "delta": "The month was "
+    },
+    {
+      "type": "RUN_ERROR",
+      "code": "Error_AiChat_Run_Interrupted",
+      "message": ""
+    }
+  ],
+  "expected": {
+    "runId": "r5",
+    "status": "idle",
+    "messages": [
+      {
+        "id": "u1",
+        "role": "user",
+        "content": "Summarise the month",
+        "toolCalls": [],
+        "toolCallId": null,
+        "feedback": null,
+        "isStored": false
+      },
+      {
+        "id": "a1",
+        "role": "assistant",
+        "content": "The month was ",
+        "toolCalls": [],
+        "toolCallId": null,
+        "feedback": null,
+        "isStored": true
+      }
+    ],
+    "step": null,
+    "referenceId": "ref-1",
+    "result": null,
+    "pendingToolCallIds": [],
+    "error": {
+      "kind": "interrupted",
+      "message": "The assistant was interrupted. Ask again.",
+      "referenceId": "ref-1"
+    }
+  },
+  "expectedUnsent": ["u1"]
+}

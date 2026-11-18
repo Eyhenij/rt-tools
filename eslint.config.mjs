@@ -363,6 +363,7 @@ export default [
             'projects/auth-contract/**/*.ts',
             'projects/auth-import/**/*.ts',
             'projects/cms-contract/**/*.ts',
+            'projects/ai-chat-protocol/**/*.ts',
         ],
         rules: {
             'no-restricted-imports': [
@@ -372,7 +373,7 @@ export default [
                         {
                             group: ['@angular/*', '@angular/**', '@nestjs/*', '@nestjs/**', 'rxjs', 'rxjs/*'],
                             message:
-                                '@rt-tools/utils, @rt-tools/auth-contract, @rt-tools/auth-import и @rt-tools/cms-contract остаются без фреймворка — ни Angular, ни NestJS, ни RxJS у них в зависимостях нет. Код, которому фреймворк нужен, живёт в @rt-tools/core.',
+                                '@rt-tools/utils, @rt-tools/auth-contract, @rt-tools/auth-import, @rt-tools/cms-contract и @rt-tools/ai-chat-protocol остаются без фреймворка — ни Angular, ни NestJS, ни RxJS у них в зависимостях нет. Код, которому фреймворк нужен, живёт в @rt-tools/core.',
                         },
                     ],
                 },
