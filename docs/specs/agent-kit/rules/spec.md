@@ -61,6 +61,11 @@ There is no interface: a rule is loaded by the tool as a skill, and the gate nam
 - **What is not read when deciding leaves for the cold part next to the rule.** Pitfalls and
   incident analyses are needed by whoever reviews a miss, not by whoever makes an ordinary decision,
   yet they load with the rule every time and grow faster than the articles.
+- **A cold part that outgrew the size limit goes on in a second file next to the first.** The package
+  names it `<rule>.2.md` among the cold parts, and it lands as `pitfalls-2.md` in the directory of the
+  rule and follows the rule in the cascade the same way the first does. A rule cut to its statements
+  hands its arguments to the cold part, and one file under the size limit does not hold them together
+  with the pitfalls.
 - **A rule is named by its subject, and the name is one across the whole tree.** The name stands in
   the gate map, in the checks, in the probes of their suites and in the state tables: a split that
   starts without a search for the name takes down a check per run.

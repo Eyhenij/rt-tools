@@ -47,7 +47,7 @@ said="$(start tests compact | "$HOOKS/skill-gate-rearm.sh" 2>/dev/null \
 if printf '%s' "$said" | grep -qi 'gate is armed anew\|armed anew'; then got="есть"; else got="нет"; fi
 report "SC-AK-1050 — сказано, что гейт заряжен заново" "$got" "есть"
 
-if printf '%s' "$said" | grep -qi 'load the rule'; then got="есть"; else got="нет"; fi
+if printf '%s' "$said" | grep -qi 'comes back by itself'; then got="есть"; else got="нет"; fi
 report "SC-AK-1050 — сказано, что делать дальше" "$got" "есть"
 
 event="$(start tests compact | "$HOOKS/skill-gate-rearm.sh" 2>/dev/null \
@@ -70,29 +70,41 @@ report "SC-AK-1050 — без признака сессии запись цел�
 printf '' | "$HOOKS/skill-gate-rearm.sh" >/dev/null 2>&1
 report "SC-AK-1050 — пустой ввод проходит" "$?" "0"
 
-# --- SC-AK-1224. Сказано, какие правила были загружены ---------------------------------------
-
-gate_session_load agent-kit git-workflow git-workflow
-said="$(start tests compact | "$HOOKS/skill-gate-rearm.sh" 2>/dev/null \
+# --- SC-AK-1690. Названы только правила длиннее предела ---------------------------------------
+#
+# Правило в пределе хозяина шлюз кладёт в заход сам при следующей правке его области: просьба
+# загрузить его за один ход — тот самый круг, который доставка убрала.
+REARM_TREE="$(fixture_tree)"
+mkdir -p "$REARM_TREE/.claude/skills/agent-kit" "$REARM_TREE/.claude/skills/git-workflow"
+{ printf -- '---\nname: agent-kit\nkind: rule\n---\n\n'; printf '%012000d\n' 0 | tr 0 a; } > "$REARM_TREE/.claude/skills/agent-kit/SKILL.md"
+printf -- '---\nname: git-workflow\nkind: rule\n---\n' > "$REARM_TREE/.claude/skills/git-workflow/SKILL.md"
+gate_session_load agent-kit git-workflow git-workflow agent-kit
+said="$(start tests compact | CLAUDE_PROJECT_DIR="$REARM_TREE" "$HOOKS/skill-gate-rearm.sh" 2>/dev/null \
     | jq -r '.hookSpecificOutput.additionalContext // ""' 2>/dev/null)"
-if printf '%s' "$said" | grep -q 'Loaded before the compaction: agent-kit, git-workflow\.'; then got="есть"; else got="нет"; fi
-report "SC-AK-1224 — названы загруженные правила, без повторов" "$got" "есть"
-if printf '%s' "$said" | grep -qi 'in one turn'; then got="есть"; else got="нет"; fi
-report "SC-AK-1224 — сказано загрузить их за один ход" "$got" "есть"
+if printf '%s' "$said" | grep -q 'not delivered: agent-kit\. Load these'; then got="есть"; else got="нет"; fi
+report "SC-AK-1690 — названо только правило длиннее предела, без повторов" "$got" "есть"
+if printf '%s' "$said" | grep -qi 'comes back by itself'; then got="есть"; else got="нет"; fi
+report "SC-AK-1690 — сказано, что остальные вернутся сами" "$got" "есть"
+gate_session_load git-workflow
+said="$(start tests compact | CLAUDE_PROJECT_DIR="$REARM_TREE" "$HOOKS/skill-gate-rearm.sh" 2>/dev/null \
+    | jq -r '.hookSpecificOutput.additionalContext // ""' 2>/dev/null)"
+if printf '%s' "$said" | grep -qi 'Load these\|load the rule'; then got="есть"; else got="нет"; fi
+report "SC-AK-1690 — без длинного правила грузить нечего" "$got" "нет"
+rm -rf "$REARM_TREE"
 
 # Пустой записи названия брать неоткуда: строка прежняя.
 gate_session_load agent-kit
 : > "$marker"
 said="$(start tests compact | "$HOOKS/skill-gate-rearm.sh" 2>/dev/null \
     | jq -r '.hookSpecificOutput.additionalContext // ""' 2>/dev/null)"
-if printf '%s' "$said" | grep -q 'Loaded before'; then got="есть"; else got="нет"; fi
+if printf '%s' "$said" | grep -q 'not delivered'; then got="есть"; else got="нет"; fi
 report "SC-AK-1224 — пустая запись списка не даёт" "$got" "нет"
 
 # Записи нет вовсе: тоже прежняя строка, и перезарядка по-прежнему сказана.
 rm -f "$marker"
 said="$(start tests compact | "$HOOKS/skill-gate-rearm.sh" 2>/dev/null \
     | jq -r '.hookSpecificOutput.additionalContext // ""' 2>/dev/null)"
-if printf '%s' "$said" | grep -q 'Loaded before'; then got="есть"; else got="нет"; fi
+if printf '%s' "$said" | grep -q 'not delivered'; then got="есть"; else got="нет"; fi
 report "SC-AK-1224 — без записи списка нет" "$got" "нет"
 if printf '%s' "$said" | grep -qi 'armed anew'; then got="есть"; else got="нет"; fi
 report "SC-AK-1224 — без записи перезарядка сказана" "$got" "есть"

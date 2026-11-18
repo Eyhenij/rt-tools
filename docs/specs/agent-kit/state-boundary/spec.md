@@ -55,6 +55,9 @@ Not applicable: the subdomain has no interface — its reader is the executor, n
   tree, written before the translation of the layer, "Состояние `имя`" and "Следующее движение:".
   Both mean one thing, and neither of the two checks makes the tree rewrite its pattern for the sake
   of a heading.
+- **A section of a split pattern is read in its cold part too.** The index keeps every state
+  heading, and the body of the section, its line included, may stand in the cold part under the same
+  heading or in the file that continues it. The cold part adds no section of its own.
 - **The rule of the conduct of work names the transition between states among what a turn does not
   end with.** The sections speak of their move one by one, and a shared statement cannot be assembled
   from them: an executor standing in one state reads one section.

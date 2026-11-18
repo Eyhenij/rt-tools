@@ -44,6 +44,12 @@ describe('холодная часть правила', (): void => {
         );
     });
 
+    it('SC-AK-1691 — вторая холодная часть ложится рядом с первой своим файлом', (): void => {
+        expect(targetOf({ id: 'pitfalls/task-flow.2.md', kind: 'pitfalls', name: 'task-flow.2' }, DEFAULT_LAYOUT)).toBe(
+            '.claude/skills/task-flow/pitfalls-2.md'
+        );
+    });
+
     it('SC-AK-518 — холодная часть за имя файла с самим правилом не спорит', (): void => {
         const rule: string = targetOf({ id: 'rules/task-flow.md', kind: 'rules', name: 'task-flow' }, DEFAULT_LAYOUT);
         const pitfalls: string = targetOf({ id: 'pitfalls/task-flow.md', kind: 'pitfalls', name: 'task-flow' }, DEFAULT_LAYOUT);

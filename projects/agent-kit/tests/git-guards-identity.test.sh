@@ -150,6 +150,6 @@ rm -rf "$AUTHOR_PR"
 # Гарда здесь нет: вход в клиент хостинга меняет состояние машины, а не дерева. Держится статьёй
 # правила, и проба сверяет её текст.
 report "SC-AK-892 — правило говорит, что активная запись клиента выбирается на машину" \
-    "$(grep -cE 'is chosen per machine, not per tree|выбирается на машину, а не на дерево' "$ASSETS/rules/git-workflow.github.md")" 1
+    "$(grep -cE 'is chosen per machine, not per tree|выбирается на машину, а не на дерево' "$ASSETS/rules/git-workflow-hosting.github.md")" 1
 
 suite_result "личность вызова"

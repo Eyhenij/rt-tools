@@ -7,7 +7,7 @@
  */
 
 import { frontMatterOf, IEntryOfCatalog, isChosen, ISelection } from './catalog.js';
-import { TKind } from './config.js';
+import { ruleOfColdPart, TKind } from './config.js';
 import { matchesVariant } from './variants.js';
 
 /** Ресурс, снятый вслед за отвергнутым родителем. */
@@ -100,7 +100,8 @@ function pitfallsCutByRules(
     const cuts: ICascadeCut[] = [];
 
     for (const entry of chosenOfKind(catalog, selection, 'pitfalls')) {
-        const rule: string = shortNameOf(entry);
+        // A second cold part `<rule>.2` follows the same rule as the first.
+        const rule: string = ruleOfColdPart(shortNameOf(entry));
         const standing: boolean = taken.has(rule) && !rootByRule.has(rule);
 
         if (known.has(rule) && !standing) {

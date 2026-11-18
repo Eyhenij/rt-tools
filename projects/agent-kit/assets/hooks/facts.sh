@@ -140,9 +140,27 @@ rt_fact_rule_loaded() {
     [ -f "${CLAUDE_PROJECT_DIR:-.}/${RT_RULES_DIR:-.claude/skills}/${_rt_rule}/SKILL.md" ] || { printf 'yes'; return 0; }
     if [ -f "$_rt_loaded" ] && grep -qE "^([^:]*:)?${_rt_rule}$" "$_rt_loaded" 2>/dev/null; then
         printf 'yes'
+    elif rt_fact_rule_deliverable "$_rt_rule" "${2:-nosession}"; then
+        printf 'yes'
     else
         printf 'no'
     fi
+}
+
+# A rule the rules gate puts into the session by the same call: readable, and within the host limit
+# with the frame of its delivery. The hooks of one call run side by side, and the record of the
+# delivery may not be written yet when a neighbour reads it; naming the load of such a rule sends
+# the session into the round the gate removed. A call without a session id gets no delivery.
+rt_fact_rule_deliverable() {
+    [ "${2:-nosession}" != nosession ] || return 1
+    _rt_file="${CLAUDE_PROJECT_DIR:-.}/${RT_RULES_DIR:-.claude/skills}/$1/SKILL.md"
+    [ -r "$_rt_file" ] || return 1
+    _rt_limit="${RT_GATE_CONTEXT_LIMIT:-10000}"
+    case "$_rt_limit" in '' | *[!0-9]*) _rt_limit=10000 ;; esac
+    _rt_size="$(wc -m < "$_rt_file" 2>/dev/null | tr -d ' ')"
+    [ -n "$_rt_size" ] || return 1
+    # The frame of a delivery — its opening line and the file heading — weighs under 400 characters.
+    [ $((_rt_size + 400)) -le "$_rt_limit" ]
 }
 
 # The fill of the window in tokens: the last usage record of a reply — the input, the one-off write

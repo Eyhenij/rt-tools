@@ -94,6 +94,9 @@ const STOP_FEEDBACK = /^Stop hook feedback:/;
  * names itself is taken by its name; the rest are named here.
  */
 const CHECK_TABLE = [
+    // A neighbouring guard that names the load of a rule is the same round as the gate refusal,
+    // only under another hook name, so it is counted as the gate before its own name is read.
+    [/The named move is held by the rules gate/, () => 'skill-gate'],
     [/BLOCKED by ([a-z0-9][a-z0-9-]*):/, (m) => m[1]],
     [/Refused by the rules gate/, () => 'skill-gate'],
     [/Refused: the epic is over/, () => 'epic-over'],
