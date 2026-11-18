@@ -1,3 +1,9 @@
+# [0.4.0](https://github.com/Eyhenij/rt-tools/compare/rt-ai-chat-protocol%400.3.0...rt-ai-chat-protocol%400.4.0) (2026-11-18)
+
+### Features
+
+- **rt:ai-chat-protocol:** контроллер запуска чата и реестр браузерных инструментов ([7b970ba](https://github.com/Eyhenij/rt-tools/commit/7b970ba480d386d6d3135091fbd49bbb55edd777)), closes [#3382](https://github.com/Eyhenij/rt-tools/issues/3382)
+
 # [0.3.0](https://github.com/Eyhenij/rt-tools/compare/rt-ai-chat-protocol%400.2.1...rt-ai-chat-protocol%400.3.0) (2026-11-18)
 
 ### Bug Fixes
