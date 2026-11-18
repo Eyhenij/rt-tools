@@ -26,7 +26,11 @@
                                 rtElem="cell"
                                 qa-dataid="ai-chat-table-cell"
                                 [rtMod]="{ end: cell.align === 'end', negative: cell.negative }">
-                                {{ cell.text }}
+                                @if (cell.align === 'end') {
+                                    <bdi>{{ cell.text }}</bdi>
+                                } @else {
+                                    {{ cell.text }}
+                                }
                             </td>
                         }
                     </tr>
@@ -37,7 +41,11 @@
                     <tr rtElem="row" qa-dataid="ai-chat-table-total" [rtMod]="{ total: true }">
                         @for (cell of total; track $index) {
                             <td rtElem="cell" [rtMod]="{ end: cell.align === 'end', negative: cell.negative, total: true }">
-                                {{ cell.text }}
+                                @if (cell.align === 'end') {
+                                    <bdi>{{ cell.text }}</bdi>
+                                } @else {
+                                    {{ cell.text }}
+                                }
                             </td>
                         }
                     </tr>

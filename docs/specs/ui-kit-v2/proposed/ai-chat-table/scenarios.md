@@ -15,6 +15,7 @@ Given a block with a `text` column and a `number`, a `percent` and a `currency` 
 When the block is drawn, first under `dir="ltr"` and then under `dir="rtl"`
 Then under `ltr` the cells and the head cells of the three number columns are aligned right and those of the `text` column left
 And under `rtl` the sides mirror
+And under `rtl` a written value of a number column keeps its own order: «-4,2 %» does not turn into «% 4,2-»
 
 ### SC-UKV-1398 — a value is written by its column type and the locale
 

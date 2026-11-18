@@ -110,6 +110,13 @@ describe('RtAiChatTableComponent', (): void => {
         ]);
     });
 
+    it('SC-UKV-1397 — значение числового столбца изолировано и под rtl держит свой порядок, текст — нет', (): void => {
+        const { fixture } = setup();
+        const body: HTMLElement[] = cells(fixture, 'ai-chat-table-cell');
+
+        expect(body.slice(0, 3).map((cell: HTMLElement): boolean => cell.querySelector('bdi') !== null)).toEqual([false, true, true]);
+    });
+
     it('SC-UKV-1400 — значение ниже нуля и в строке итога помечено цветом ошибки, прочие нет', (): void => {
         const { fixture } = setup(table([{ label: 'N', type: 'number' }], [[-10], [0], [15]], [-5]));
         const negative: boolean[] = cells(fixture, 'ai-chat-table-cell').map((cell: HTMLElement): boolean =>

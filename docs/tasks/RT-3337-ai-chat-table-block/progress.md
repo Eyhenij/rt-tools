@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 5 of 6 — The showcase
 - **Done:** the task is taken, the branch `RT-3337-ai-chat-table-block` is taken from `RT-3336-ai-chat-chart-data` (chain), the task is in progress on the board. Exploration done, the six questions closed by assumption, the mockup approved: «Одобряю макет». The agreement draft `docs/specs/ui-kit-v2/proposed/ai-chat-table/` is written and checked against the grill (`ee8c157d2`); its four open questions are closed by assumption in its Decisions.
-- **Next step:** step 5.1, the stories of the block.
+- **Next step:** step 5.7, the showcase to the owner with the two divergences from the mockup.
 - **Going now:** stage 1. The plan is approved by the owner: «Одобряю план с добавками» — the block schema (step 1.7, SC-UKV-1433) and the chart data table on the shared look (step 4.7, SC-UKV-1434). goal-critic's blocking finding is closed by `play` steps of `Wide` and `Scrolled`.
 - **Uncommitted:** no
 - **Waiting for the owner:** no
@@ -45,15 +45,15 @@ The plan is approved by the owner; the work goes by its steps.
 - [x] 4.5 Extend `rt-markdown-text.component.spec.ts`: SC-UKV-1416 and SC-UKV-1418 at the drawn level, SC-UKV-1417 for «-10» not coloured, no «Copy CSV», `th scope="col"` and the named scroll box; extend `rt-markdown-text.styles.spec.ts` for the bottom borders, `text-align: start` and `end`, no `max-height` and no `position: sticky`.
 - [x] 4.6 Run the admin panel's markup and details-panel e2e specs; a diverged frame of the postmortem panel is looked at and re-taken only if it shows the new table look.
 - [x] 4.7 Move the chart data table of `rt-ai-chat-chart.component.scss` onto the shared mixin, keeping its format function and rows; its frames are re-taken in stage 5; SC-UKV-1434.
-- [>] 5.1 Write the stories `Organisms/Chat/AiChatTable` in `blocks/table/stories/`: `Narrow` (four columns at 328, «Апартаменты у моря» wrapping in one row), `Wide` (twelve columns at 328, a `play` step scrolling the box sideways and asserting `scrollWidth` above `clientWidth`, `scrollLeft` above 0 and the block 328 wide), `AllNumbers` (three short `number` columns at 328), `WithTotal`, `Negatives`, `Scrolled` (a `play` step focusing the box and scrolling it down by the arrow key and asserting the head row top equals the box top), `Copied` (a `play` step pressing «Copy CSV»), `Empty`, `Invalid`, `Markdown` (the block next to a thirty-row markdown table in one answer), `Rtl` (the block and a markdown table under `dir="rtl"`), `Themes` (light and dark), `Playground`.
-- [ ] 5.2 Add an aligned table with «-10» to the markdown matrix fixture `test-markdown-text-matrix.component.ts`.
-- [ ] 5.3 Write `Overview.mdx` of the block next to it; name the `table` block in the ai-chat `Overview.mdx`.
-- [ ] 5.4 Sweep the raised showcase and look at every new frame at 328, in the side panel and at 760+.
-- [ ] 5.5 Take the references of the new stories and re-take the markdown and ai-chat ones the look changed: `node tools/visual-gate.mjs ui-kit-v2 --update 'blocks/table'`, then `--update 'markdown-text'`; confirm each by a second raising before the commit.
-- [ ] 5.6 Measure the mockup node 8215-449 and the same elements of the showcase, in the light and the dark theme, into two JSON files in the scratchpad and run the numbers match; make the overlay for the owner.
-- [ ] 5.7 Write the match line into `approvals.md`, show the showcase to the owner, write the owner's answer word for word as the «Витрина» line.
+- [x] 5.1 Write the stories `Organisms/Chat/AiChatTable` in `blocks/table/stories/`: `Narrow` (four columns at 328, «Апартаменты у моря» wrapping in one row), `Wide` (twelve columns at 328, a `play` step scrolling the box sideways and asserting `scrollWidth` above `clientWidth`, `scrollLeft` above 0 and the block 328 wide), `AllNumbers` (three short `number` columns at 328), `WithTotal`, `Negatives`, `Scrolled` (a `play` step focusing the box and scrolling it down by the arrow key and asserting the head row top equals the box top), `Copied` (a `play` step pressing «Copy CSV»), `Empty`, `Invalid`, `Markdown` (the block next to a thirty-row markdown table in one answer), `Rtl` (the block and a markdown table under `dir="rtl"`), `Themes` (light and dark), `Playground`.
+- [x] 5.2 Add an aligned table with «-10» to the markdown matrix fixture `test-markdown-text-matrix.component.ts`.
+- [x] 5.3 Write `Overview.mdx` of the block next to it; name the `table` block in the ai-chat `Overview.mdx`.
+- [x] 5.4 Sweep the raised showcase and look at every new frame at 328, in the side panel and at 760+.
+- [x] 5.5 Take the references of the new stories and re-take the markdown and ai-chat ones the look changed: `node tools/visual-gate.mjs ui-kit-v2 --update 'blocks/table'`, then `--update 'markdown-text'`; confirm each by a second raising before the commit.
+- [x] 5.6 Measure the mockup node 8215-449 and the same elements of the showcase, in the light and the dark theme, into two JSON files in the scratchpad and run the numbers match; make the overlay for the owner.
+- [>] 5.7 Write the match line into `approvals.md`, show the showcase to the owner, write the owner's answer word for word as the «Витрина» line.
 - [ ] 6.1 Move the agreement into the subdomain `docs/specs/ui-kit-v2/ai-chat-table/` with the same scenario numbers; `implementation.md` gets the bindings `file:symbol` of the written code; the scenarios get their «Covered» marks, the frame-held ones (SC-UKV-1407, 1408, 1409, 1422, 1425, the look part of 1417 and the arrow-key part of 1419) «Not covered: held by the frame of the story …» or «Coverage: partial».
-- [ ] 6.2 Edit `docs/specs/ui-kit-v2/ai-chat/spec.md`: the kit's own types name `table` in the two rules, the terminology of the block and the decision about heavy blocks; the out-of-scope line about a table drawn by a registered renderer goes; the answer copy names the kit locale; the attachments line of `ai-chat/CONTEXT.md` follows.
+- [x] 6.2 Edit `docs/specs/ui-kit-v2/ai-chat/spec.md`: the kit's own types name `table` in the two rules, the terminology of the block and the decision about heavy blocks; the out-of-scope line about a table drawn by a registered renderer goes; the answer copy names the kit locale; the attachments line of `ai-chat/CONTEXT.md` follows.
 - [ ] 6.3 Remove `docs/specs/ui-kit-v2/proposed/ai-chat-table/`.
 - [ ] 6.4 Bring `CONTEXT.md` of ai-chat and of markdown-text to the new block, the alignment, the named scroll box and the shared look; re-read the footprint specs and rules for staleness.
 - [ ] 6.5 Run the roles `goal-critic` and `product-strategist` on the result against the owner's words and the points.
@@ -61,6 +61,38 @@ The plan is approved by the owner; the work goes by its steps.
 - [ ] 6.7 Run the push set, push, open the PR as a draft into `RT-3336-ai-chat-chart-data`.
 
 ## Decisions along the way
+
+- Step 6.2 is done ahead of its stage while the snapshots ran: the ai-chat spec names `table` in
+  the two rules, the block term and the decision about heavy blocks, the out-of-scope line drops
+  the table, and a new rule says the answer copy writes a table in the kit locale. The bindings
+  follow the new rule texts. `CONTEXT.md` of ai-chat has no attachments line, so nothing follows there.
+
+- Step 5.5: the table references are 11 frames, `Copied` and `Playground` have none. The markdown
+  ones: 4 re-taken, 3 matched. The second raising matched them and named three chart frames:
+  `DataTable`, `DataTableWidths` and `DataTableLong` diverged by 2.5%, 2.7% and 0.1%, all inside
+  the data table — the head on the surface background and the number columns by their content,
+  the shared look of step 4.7. They are re-taken, and a full snapshot run confirmed the set: 1159 of 1159.
+
+- Step 5.4: the sweep opened 1250 showings, 4 failed, none of this task: three chat page stories
+  and the reply kinds ask for the icon `archive.svg`, which the icon set does not have. The table
+  stories were looked at by eye at 328, at 386 and at 760; the block is 328 and 760 wide there and
+  the page does not scroll sideways.
+
+- Step 5.6 ran ahead of the sweep while it went in the background. The numbers match 35 of 35 in
+  both themes, the light and the dark block 386 against the `Playground` at 386. The overlay
+  diverges by 4.53%: the raster of the text, and two lines. The mockup draws two lines between the
+  last row and the total and none under the total; the showcase draws one line there and one under
+  the total, as the agreement says: «every row a bottom one». The mockup writes «−4,2 %» with a
+  typographic minus, `Intl` writes «-4,2 %». Both go to the owner with the showcase.
+
+- Stage 5 stories. `Wide` and `Scrolled` move the box by assigning `scrollLeft` and `scrollTop`: a
+  key event sent by a script does not scroll a box. `Copied` has no frame: «Скопировано» lives two
+  seconds, so the `play` step asserts the label change instead. Its wrapper gives a showcase
+  clipboard, since the browser refuses a copy from a click that no person made. A `Presets` story
+  joins the set, as the chart block has one.
+- The `Rtl` story showed a defect: under `dir="rtl"` a written number broke into «% 4,2-». A value
+  the kit writes into a number column now stands in `bdi`, and SC-UKV-1397 says so. A markdown cell
+  keeps the author's text as it is: the kit does not write it.
 
 - Step 4.6: the admin markup and details-panel specs passed, 20 of 21. One frame diverged, the
   postmortem panel: 6295 points, all inside the markdown table, which now draws the shared look.
@@ -93,7 +125,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 5 of 6 — The showcase
-- **Next step:** step 5.1, the stories of the block.
+- **Next step:** step 5.7, the showcase to the owner with the two divergences from the mockup.
 - **PR:** not open yet; the branch stands on RT-3336 (#3402), which stands on RT-3335 (#3398)
 
 The progress in full — `docs/tasks/RT-3337-ai-chat-table-block/progress.md`; the plan lies next to it.

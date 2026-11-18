@@ -94,7 +94,7 @@ block with typed columns, and the markdown table takes the same look.
 
 ### Layout
 
-- **Number columns are aligned to the end and `text` columns to the start; a head cell is aligned as its column, and under `dir="rtl"` both mirror.**
+- **Number columns are aligned to the end and `text` columns to the start; a head cell is aligned as its column, and under `dir="rtl"` both mirror.** A value the kit wrote into a number column is isolated and keeps its own order of sign, digits and symbol under `dir="rtl"`: only its side mirrors.
 
 - **A number column is as wide as its widest value, the head included, and a value in it never wraps.**
 
