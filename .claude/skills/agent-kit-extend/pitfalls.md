@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · pitfalls/agent-kit-extend.md · 06cba1546efa · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · pitfalls/agent-kit-extend.md · 3307bf8ca95d · правится надстройкой, не здесь -->
 # How to add your own on top of the package — cold part
 
 Every sample whole, with the reasons behind the short articles of the skill. Loaded on demand,
@@ -176,7 +176,7 @@ its place is in "Pitfalls" as prose.
 
 Checked by the spec audit — before the push.
 
-## Common misses
+## Pitfalls
 
 - **An in-place edit instead of an override.** A laid-out file is recognised by the header, not
   by the directory: the layout lands in the same `tools/` and `.claude/` where your own lies.

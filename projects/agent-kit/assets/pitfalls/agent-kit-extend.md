@@ -175,7 +175,7 @@ its place is in "Pitfalls" as prose.
 
 Checked by the spec audit — before the push.
 
-## Common misses
+## Pitfalls
 
 - **An in-place edit instead of an override.** A laid-out file is recognised by the header, not
   by the directory: the layout lands in the same `tools/` and `.claude/` where your own lies.

@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/record-count.mjs · 331cba2125d5 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/record-count.mjs · f5c28b5a9fef · правится надстройкой, не здесь
 /**
  * The counter of a session record: what the owner said and what the agent was refused, read from the
  * conversation record Claude Code keeps per session.
@@ -95,6 +95,9 @@ const STOP_FEEDBACK = /^Stop hook feedback:/;
  * names itself is taken by its name; the rest are named here.
  */
 const CHECK_TABLE = [
+    // A neighbouring guard that names the load of a rule is the same round as the gate refusal,
+    // only under another hook name, so it is counted as the gate before its own name is read.
+    [/The named move is held by the rules gate/, () => 'skill-gate'],
     [/BLOCKED by ([a-z0-9][a-z0-9-]*):/, (m) => m[1]],
     [/Refused by the rules gate/, () => 'skill-gate'],
     [/Refused: the epic is over/, () => 'epic-over'],

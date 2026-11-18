@@ -166,9 +166,9 @@ report "карта: заведение ветки вторым именем ко
 report "SC-AK-1697 — заведение задачи тянет ветки и очередь" \
     "$(skill_for bash 'npm run task:new -- --title x' '' | tr '\n' ' ')" 'git-workflow git-workflow-queue '
 report "SC-AK-1695 — заведение PR тянет и закрытие задачи" \
-    "$(skill_for bash 'gh pr create --fill' '' | tr '\n' ' ')" 'git-workflow-hosting task-flow-handover '
+    "$(skill_for bash 'gh pr create --fill' '' | tr '\n' ' ')" 'git-workflow-hosting git-workflow task-flow-handover '
 report "SC-AK-1695 — снятие черновика тянет и закрытие задачи" \
-    "$(skill_for bash 'gh pr ready 12' '' | tr '\n' ' ')" 'git-workflow-hosting task-flow-handover '
+    "$(skill_for bash 'gh pr ready 12' '' | tr '\n' ' ')" 'git-workflow-hosting git-workflow task-flow-handover '
 report "SC-AK-1696 — план в папке задачи: состояния и план" \
     "$(skill_for edit /r/docs/tasks/RT-1-x/plan.md '' | tr '\n' ' ')" 'task-flow task-flow-plan '
 report "SC-AK-1696 — разбор в папке задачи: состояния и слово владельца" \
@@ -182,7 +182,7 @@ report "карта: чтение PR тем же клиентом" "$(skill_for b
 # Слияние PR требует два правила: поставку и разбор папки задачи — она разбирается тем же
 # PR, потому что после слияния отвечать за неё уже некому.
 report "SC-AK-110 — слияние PR тянет и закрытие задачи" \
-    "$(skill_for bash 'gh pr merge 12 --merge' '' | tr '\n' ' ')" 'git-workflow-hosting task-flow-handover '
+    "$(skill_for bash 'gh pr merge 12 --merge' '' | tr '\n' ' ')" 'git-workflow-hosting git-workflow task-flow-handover '
 # Образы и реестр уносят чужое безвозвратно; команды чтения остаются вне гейта — ими нехватку
 # места и разбирают.
 report "карта: сборка образа" "$(skill_for bash 'docker build -t x .' '')" git-workflow

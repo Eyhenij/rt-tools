@@ -326,8 +326,9 @@ Covered: `projects/agent-kit/tests/defaults.test.sh`.
 
 Given a command of delivery goes
 When the gate decides what to demand
-Then a request to the host names the part about requests alone, a commit and a push name the
-branch part with the part about the push set, and the creation of a task names the branch part
-with the part about the queue
+Then a request to the host names the part about requests with the branch part, a commit and a push
+name the branch part with the part about the push set, the creation of a task names the branch part
+with the part about the queue, and an edit of a PR body by an address call names the part about
+requests alone
 
 Covered: `projects/agent-kit/tests/defaults.test.sh`.

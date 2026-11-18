@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · defaults/gate-map.sh · d2ff0570af0f · правится надстройкой, не здесь
+# rt-kit v0.37.0 · defaults/gate-map.sh · 34042ede6d06 · правится надстройкой, не здесь
 # Map "what is edited — which rule". The package default: real paths, not samples.
 #
 # The trees of this workshop are built alike — Nx, `apps/` and `libs/`, the same extensions and the
@@ -187,14 +187,16 @@ skill_for_default() {
         bash)
             # The branches go by a call check, not by a substring match: a mention of a command is
             # not a command, and the gate refused its own text about a commit.
-            # The delivery rule is four parts, and a command gets the part of its subject: a request
-            # to the host gets the part about requests alone, the commit and the push get the branch
-            # part with the part about the push set, the task creation the branch part with the part
-            # about the queue. Every part stays under the host limit, and two of them still fit.
+            # The delivery rule is four parts, and a command gets the part of its subject with the
+            # branch part: a request to the host gets the part about requests, the commit and the
+            # push the part about the push set, the task creation the part about the queue. The
+            # branch part goes with a request too: it holds the PR of an epic, the branch without a
+            # number and the merge order of a chain. Every part stays under the host limit.
             if rt_gate_invokes "$target" "(gh|glab)[[:space:]]+(pr|mr)[[:space:]]+(create|merge|edit)" \
                 || rt_gate_invokes "$target" "gh[[:space:]]+pr[[:space:]]+ready" \
                 || rt_gate_invokes "$target" "az[[:space:]]+repos"; then
                 printf '%s\n' 'git-workflow-hosting'
+                printf '%s\n' 'git-workflow'
             elif rt_gate_invokes "$target" "(gh|glab)[[:space:]]+issue[[:space:]]+(create|edit)" \
                 || rt_gate_invokes "$target" "az[[:space:]]+boards" \
                 || rt_gate_invokes "$target" "[^[:space:]]*task:new"; then

@@ -199,6 +199,8 @@ expect_skill "SC-AK-1230 — инструмент макетов требует 
 # незагруженное — отказ, перечисляющий оба, читается как «загрузи оба», и однократность теряется.
 c "SC-AK-110 — слияние PR: первым часть правила поставки о заявках" 'gh pr merge 12 --merge' Bash git-workflow-hosting
 gate_session_load git-workflow-hosting
+c "SC-AK-110 — слияние PR: следом часть о ветках" 'gh pr merge 12 --merge' Bash git-workflow
+gate_session_load git-workflow
 c "SC-AK-110 — слияние PR: следом закрытие задачи" 'gh pr merge 12 --merge' Bash task-flow-handover
 # Упоминание команды в тексте вызовом не является: пока карта судила по подстроке, гейт отбивал
 # строку о коммите в теле самого коммита.
