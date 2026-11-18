@@ -272,7 +272,7 @@ Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 Given a step whose check counts the steps not begun in the progress, measured while one step was not begun
 And the task folder taken apart after every step was marked done
 When the final rerun runs
-Then the step matches: its check reads the progress of the commit it was measured on
+Then the step matches: its check reads the progress before the commit that marked the step done
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
