@@ -43,7 +43,12 @@ question.
   row with a branch before a row without one no longer meets it. Rejected: skipping a task whose
   branch another copy leads — the tree cannot tell such a branch, and RT-3276 is led by none now.
 
+- **Exit 12 is met only when every task not deferred is marked merged in the epic plan.** The roles
+  `product-strategist` and `goal-critic` showed that the fix of exit 11 alone moves the dead end to
+  the end of the epic: once every task has a branch, exits 11 and 12 are met while tasks are not
+  merged, and state 13 demands the PR of the epic again. No delivery guard refuses that PR.
+  Rejected: an edit of exit 13 — state 13 is the last one, and its action is the PR of the epic.
+
 ## What is left unclear
 
-- Whether state 13 should also wait for every task to be merged. The delivery guard already refuses
-  the PR of an epic with open tasks; the measurer of exit 13 is not touched here.
+None.
