@@ -5,7 +5,7 @@
 - **State:** `этапы-кончились`
 - **Stage:** 3 of 3 — Витрина и тексты, все шаги сделаны; идёт первый круг ревью
 - **Done:** код панели и вкладки, тесты (панель и вкладки 242 зелёных), витрина Empty, оба макета и витрина одобрены, сверка 34 из 34, описание влито в `docs/specs/ui-kit-v2/aside-empty/`, `check-specs` зелёный
-- **Next step:** исправить подтверждённые находки первого круга (ниже), одним коммитом «… после первого круга ревью (RT-3428)»; второй круг; проверки перед push; PR черновиком в `main`
+- **Next step:** второй круг ревью идёт; затем эталоны истории Empty через `node tools/visual-gate.mjs ui-kit-v2 --update '<файл>'` (нужен Docker); проверки перед push; PR черновиком в `main`
 - **Uncommitted:** нет
 - **Waiting for the owner:** нет
 - **PR:** not open yet
@@ -79,7 +79,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этапы-кончились`
 - **Stage:** 3 of 3 — Витрина и тексты, все шаги сделаны; идёт первый круг ревью
-- **Next step:** исправить подтверждённые находки первого круга (ниже), одним коммитом «… после первого круга ревью (RT-3428)»; второй круг; проверки перед push; PR черновиком в `main`
+- **Next step:** второй круг ревью идёт; затем эталоны истории Empty через `node tools/visual-gate.mjs ui-kit-v2 --update '<файл>'` (нужен Docker); проверки перед push; PR черновиком в `main`
 - **PR:** not open yet
 
 The progress in full — `docs/tasks/RT-3428-aside-empty/progress.md`; the plan lies next to it.
