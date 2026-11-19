@@ -57,19 +57,30 @@ None. The card names the three demands and the sign.
 ## Decisions
 
 - **The command of a step puts a taken-apart folder back for the run, the way the rerun does.**
-  One function serves both. The mark of the matched run is written; the progress in the history
-  already marks the step done, so nothing is written to the tree. Спросить было некого: заход
-  автономный. Цена ошибки: одна общая функция и сценарий.
+  One function serves every form of the command. The mark of the matched run is written. Спросить
+  было некого: заход автономный. Цена ошибки: одна общая функция и сценарий.
+- **The function gives a step the progress as it stood when the step was measured.** The rerun
+  already does so: a check that reads the progress saw it before the step was marked done. The
+  role `product-strategist` showed on the repository of the suite that a bare putting back fails
+  such a step — the rerun counts it, the command of one step never would, and the dead end stays.
+- **A step the history does not mark done is refused on a taken-apart folder.** Its mark «done»
+  would be written into a folder that is removed after the run, and the state would never move.
+- **A run broken off is cleaned by the next call of the engine.** The engine writes a record
+  before it puts the folder back and removes the folder such a record names at every start. A
+  handler of a signal cannot do it: a check runs inside a call that hears no signal until it ends.
+  A folder left behind is counted by the marks of the push set and would return to the history by
+  the first «add all».
 - **Before a PR a step that did not match is run once more, and loses its mark on the second
   mismatch.** Of the two ways of the card this one needs no knowledge of which check calls a model:
-  the engine cannot tell it by the text of a command. The price: a step that is truly red runs
-  twice. Rejected: a warning in the plan — a warning does not return the mark. Цена ошибки: одно
-  число повторов.
+  the engine cannot tell it by the text of a command. The steps that did not match go as one group
+  after the first round, and a step that ran past its limit is not run again: the limit of a step
+  is 540 seconds, and the hook that waits for the rerun has 1800. Rejected: a warning in the plan —
+  a warning does not return the mark. Цена ошибки: одно число повторов.
 - **The line of an unmatched step names the command of its check and the last three lines of its
   output.** A bare number says nothing; the command says what was counted.
 
 ## What is left unclear
 
-- Whether the state falls back to «этап-идёт» through the mark alone, or the last version of the
-  progress takes part — the trouble of RT-3425. The scenario of the first stage builds the branch
-  of RT-3417 and shows it.
+- Nothing. The state falls back through the mark alone: the exit «every step is done» reads only
+  whether the mark of a step says «matched», and with both marks back it is met — measured on the
+  repository of the suite.
