@@ -4,12 +4,15 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 3 из 4 — Code and unit tests
-- **Next step:** the sheet in `rt-page-header` (the user menu, «more», the submenu — it has its
-  own narrow layout); then `rt-menu` (its own overlay), the folding `rt-toggle-button-group`, the
-  toggles field, the trailing icons. Done: the select, the multiselect with its footer, the
-  autocomplete with a search in the sheet, the dynamic selector, the split button, the speed menu,
-  the «more» panel of the tabs, the action bar, the colour palette, the thread list filters, the
-  table filter header; the kit set is 3760 tests green.
+- **Next step:** `rt-menu` (its own overlay; it also carries the «⋯» actions menu of the page
+  header and the context menu of a tab), then the folding `rt-toggle-button-group`, the toggles
+  field, the trailing icons. Done: the select, the multiselect with its footer, the autocomplete
+  with a search in the sheet, the dynamic selector, the split button, the speed menu, the «more»
+  panel of the tabs, the action bar, the colour palette, the thread list filters, the table filter
+  header, the profile menu, «more» and submenu of the page header; the kit set is 3762 tests green.
+- **Decision along the way:** the old narrow-screen behaviour of the profile menu (on the backdrop
+  of the mobile menu, SC-UKV-1080, SC-UKV-1084) now lives with the sheet switched off; those two
+  scenarios name that, and the approved mockup 8310:17301 is the phone behaviour.
 - **Decision along the way:** the rules live in a new subdomain `docs/specs/ui-kit-v2/popover-sheet/`,
   not in the select spec the plan named: the sheet belongs to the popover directive and serves the
   whole set.

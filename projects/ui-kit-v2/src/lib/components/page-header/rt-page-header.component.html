@@ -41,6 +41,8 @@
                                     [attr.aria-haspopup]="true"
                                     [attr.aria-expanded]="groupPopover.isOpen()"
                                     [rtPopover]="submenuTpl"
+                                    [rtPopoverSheet]="sheet()"
+                                    [rtPopoverSheetTitle]="section.label"
                                     (click)="groupPopover.open()">
                                     @if (section.icon) {
                                         <rt-icon rtElem="icon" size="sm" [name]="section.icon" />
@@ -201,7 +203,11 @@
                     [rtMod]="{ isOverflow: !moreShown() }"
                     [attr.aria-hidden]="!moreShown() || null"
                     [attr.inert]="!moreShown() || null">
-                    <rt-page-header-more [sections]="moreSections()" [active]="moreActive()" (itemClick)="onItemClick($event)" />
+                    <rt-page-header-more
+                        [sheet]="sheet()"
+                        [sections]="moreSections()"
+                        [active]="moreActive()"
+                        (itemClick)="onItemClick($event)" />
                 </li>
             </ul>
         </nav>
@@ -475,6 +481,7 @@
 
             @if (user(); as u) {
                 <rt-page-header-user
+                    [sheet]="sheet()"
                     [name]="u.name"
                     [avatar]="userAvatar()"
                     [menu]="userMenu()"

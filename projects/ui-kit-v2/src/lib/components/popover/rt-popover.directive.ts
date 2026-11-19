@@ -444,9 +444,13 @@ export class RtPopoverDirective implements OnDestroy {
         return extra ? [base, ...extra.split(/\s+/), ...preset] : [base, ...preset];
     }
 
-    /** Режим hover и наведение мышью, а не событие мыши, порождённое касанием или пером. */
+    /**
+     * Режим hover и наведение мышью, а не событие мыши, порождённое касанием или пером. Шторку
+     * наведение не открывает и уход курсора не закрывает: она открывается нажатием и закрывается
+     * своей подложкой, иначе курсор по дороге к шторке гасил бы её.
+     */
     #isMouseHover(): boolean {
-        return this.trigger() === 'hover' && this.#pointerType === 'mouse';
+        return this.trigger() === 'hover' && this.#pointerType === 'mouse' && !this.inSheet();
     }
 
     #scheduleHoverClose(): void {

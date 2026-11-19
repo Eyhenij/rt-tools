@@ -29,12 +29,14 @@ function windowDouble(): Window & typeof globalThis {
 /** Узкий экран: меню профиля стоит на затемнении. */
 class NarrowBreakpointsService {
     public readonly narrow: Signal<boolean> = signal(true).asReadonly();
+    public readonly viewportNarrow: Signal<boolean> = signal(true).asReadonly();
 }
 
 @Component({
     selector: 'rt-page-header-touch-host',
     template: `
-        <rt-page-header [items]="[]" [user]="user" [userMenu]="menu" />
+        <!-- Меню у имени, а не в нижней шторке: касание проверяется на прежнем поведении. -->
+        <rt-page-header [items]="[]" [user]="user" [userMenu]="menu" [sheet]="false" />
         <ng-template #menu><span qa-dataid="host-user-menu">Профиль</span></ng-template>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,

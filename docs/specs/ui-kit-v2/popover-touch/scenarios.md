@@ -17,7 +17,7 @@ Then the panel opens on the first press and stays open after the second
 
 ### SC-UKV-1084 — a tap on the user name opens the profile menu once, and a tap on the backdrop leaves no backdrop
 
-Given the page header on a narrow screen with a user and a profile menu
+Given the page header on a narrow screen with a user, a profile menu and the bottom sheet switched off
 When the user name is tapped and then the backdrop is tapped
 Then after the first tap one backdrop stands under the open menu, and after the second the menu and every backdrop are gone
 

@@ -76,6 +76,11 @@ export class RtPageHeaderMoreComponent {
         this.sections().some((section: IRtPageHeaderView.Section): boolean => section.unread)
     );
 
+    /** На телефоне меню открывается в нижней шторке кита; `false` оставляет его у кнопки. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
     /** Разделы, ушедшие из ряда, в порядке списка. */
     public readonly sections: InputSignal<ReadonlyArray<IRtPageHeaderView.Section>> = input<ReadonlyArray<IRtPageHeaderView.Section>>([]);
 

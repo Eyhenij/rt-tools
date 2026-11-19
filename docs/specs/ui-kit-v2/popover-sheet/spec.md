@@ -45,6 +45,10 @@ the same rows as before.
 - **A field that searches as it is typed opens the sheet on a tap, and the typing goes to a search at the top of the sheet.**
   The field under the sheet gives its focus away; a query shorter than the minimum keeps the sheet
   open, since the person types on in it. A choice closes the sheet.
+- **A panel that opens on hover opens in the sheet only by a press, and the pointer leaving does
+  not close the sheet.** The profile menu, the «more» panel and the submenu of the page header
+  open on hover next to their button; in the sheet a mouse passing over the button opens nothing,
+  since on its way to the sheet it would close it.
 - **A sheet closed by its backdrop, by a drag or by Escape closes the panel the same way a press
   outside it does.** The part of the kit learns of the close as before.
 - **The panel inside the sheet takes the full width of the sheet.** The width taken from the
@@ -111,3 +115,4 @@ None.
 | 2026-11-19 | The multiselect footer in the sheet, scenarios 1436…1438 (RT-3399) |
 | 2026-11-19 | The sheet in the rest of the set, scenarios 1439…1440 (RT-3399) |
 | 2026-11-19 | The autocomplete in the sheet, scenarios 1441…1443 (RT-3399) |
+| 2026-11-19 | The page header menus in the sheet, scenarios 1444…1445 (RT-3399) |

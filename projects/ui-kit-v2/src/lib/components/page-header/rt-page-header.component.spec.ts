@@ -85,6 +85,7 @@ function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture
 /** Подмена наблюдателя ширины: узкий экран, на котором шапка показывает бургер. */
 class NarrowBreakpointsService {
     public readonly narrow: Signal<boolean> = signal(true).asReadonly();
+    public readonly viewportNarrow: Signal<boolean> = signal(true).asReadonly();
 }
 
 function navItems(fixture: ComponentFixture<RtPageHeaderComponent>): HTMLElement[] {
@@ -111,13 +112,14 @@ class PageHeaderHostComponent {
 /** Подмена наблюдателя ширины: широкий экран, на котором разделы стоят в строке. */
 class WideBreakpointsService {
     public readonly narrow: Signal<boolean> = signal(false).asReadonly();
+    public readonly viewportNarrow: Signal<boolean> = signal(false).asReadonly();
 }
 
 /** Меню профиля приходит шаблоном — нужна host-обёртка. */
 @Component({
     selector: 'rt-page-header-user-host',
     template: `
-        <rt-page-header [items]="items" [user]="user" [userMenu]="menu" />
+        <rt-page-header [items]="items" [user]="user" [userMenu]="menu" [sheet]="false" />
         <ng-template #menu><span qa-dataid="host-user-menu">Профиль</span></ng-template>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,

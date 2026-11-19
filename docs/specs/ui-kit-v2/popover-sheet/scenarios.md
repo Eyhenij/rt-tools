@@ -131,3 +131,19 @@ When a suggestion is pressed
 Then the autocomplete reports that value, and the bottom sheet is closed
 
 Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet.spec.ts`.
+
+### SC-UKV-1444 — on a phone a tap on the user name opens the profile menu in the bottom sheet
+
+Given the page header on a phone with a user and a profile menu
+When the user name is tapped
+Then the profile menu is inside the bottom sheet titled with the user name, and no panel stands by the name
+
+Covered: `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header-sheet.spec.ts`.
+
+### SC-UKV-1445 — a mouse passing over the button opens no sheet, and leaving it closes none
+
+Given the page header on a narrow screen with a user and a profile menu, used with a mouse
+When the mouse comes over the user name, then the name is pressed and the mouse leaves it
+Then nothing opens on hover, the press opens the bottom sheet, and it stays open after the mouse left
+
+Covered: `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header-sheet.spec.ts`.

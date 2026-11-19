@@ -1,4 +1,4 @@
-import { ApplicationRef, Provider, signal, Type, WritableSignal } from '@angular/core';
+import { ApplicationRef, EnvironmentProviders, Provider, signal, Type, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
@@ -81,7 +81,7 @@ const PARTS: readonly ISetPart[] = [
     },
 ];
 
-function providersFor(narrow: boolean): Provider[] {
+function providersFor(narrow: boolean): Array<Provider | EnvironmentProviders> {
     const stub: BreakpointsStub = new BreakpointsStub();
     stub.viewportNarrow.set(narrow);
     stub.narrow.set(narrow);
