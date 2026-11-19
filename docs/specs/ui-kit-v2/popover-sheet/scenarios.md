@@ -147,3 +147,35 @@ When the mouse comes over the user name, then the name is pressed and the mouse 
 Then nothing opens on hover, the press opens the bottom sheet, and it stays open after the mouse left
 
 Covered: `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header-sheet.spec.ts`.
+
+### SC-UKV-1446 — on a phone the actions menu opens in the bottom sheet titled by its button
+
+Given an actions menu labelled «Действия» with two items on a phone
+When its button is pressed
+Then both items are inside the bottom sheet titled «Действия», and no panel stands by the button
+
+Covered: `projects/ui-kit-v2/src/lib/components/menu/rt-menu-sheet.spec.ts`.
+
+### SC-UKV-1447 — an item in the sheet does its action and closes the sheet
+
+Given the actions menu open in the bottom sheet
+When an item is pressed
+Then the item's action runs once, the sheet is closed, and the menu reports it opened and then closed
+
+Covered: `projects/ui-kit-v2/src/lib/components/menu/rt-menu-sheet.spec.ts`.
+
+### SC-UKV-1448 — the backdrop of the sheet closes the actions menu
+
+Given the actions menu open in the bottom sheet
+When the backdrop of the sheet is pressed
+Then the sheet is closed, and the menu reports it opened and then closed
+
+Covered: `projects/ui-kit-v2/src/lib/components/menu/rt-menu-sheet.spec.ts`.
+
+### SC-UKV-1449 — the actions menu stays by its button with the sheet off or on a wide screen
+
+Given the actions menu with the sheet switched off on a phone, then with it on on a wide screen
+When its button is pressed
+Then the panel opens by the button each time, and no bottom sheet is open
+
+Covered: `projects/ui-kit-v2/src/lib/components/menu/rt-menu-sheet.spec.ts`.

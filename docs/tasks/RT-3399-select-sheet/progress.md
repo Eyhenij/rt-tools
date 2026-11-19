@@ -4,9 +4,9 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 3 из 4 — Code and unit tests
-- **Next step:** `rt-menu` (its own overlay; it also carries the «⋯» actions menu of the page
-  header and the context menu of a tab), then the folding `rt-toggle-button-group`, the toggles
-  field, the trailing icons. Done: the select, the multiselect with its footer, the autocomplete
+- **Next step:** the folding `rt-toggle-button-group`, then the toggles field, then the trailing
+  icons. Done: `rt-menu` with the «⋯» actions of the page header and the tab context menu built
+  on it (scenarios 1446…1449, the kit set 3766 green), the select, the multiselect with its footer, the autocomplete
   with a search in the sheet, the dynamic selector, the split button, the speed menu, the «more»
   panel of the tabs, the action bar, the colour palette, the thread list filters, the table filter
   header, the profile menu, «more» and submenu of the page header; the kit set is 3762 tests green.

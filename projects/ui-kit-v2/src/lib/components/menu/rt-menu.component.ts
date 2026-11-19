@@ -1,13 +1,16 @@
 import { FocusKeyManager } from '@angular/cdk/a11y';
 import { BooleanInput } from '@angular/cdk/coercion';
-import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition, OverlayModule } from '@angular/cdk/overlay';
+import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition, Overlay, OverlayModule, OverlayRef } from '@angular/cdk/overlay';
+import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     computed,
+    DestroyRef,
     ElementRef,
     inject,
+    Injector,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -15,17 +18,23 @@ import {
     OutputEmitterRef,
     Signal,
     signal,
+    TemplateRef,
     viewChild,
+    ViewContainerRef,
     ViewEncapsulation,
     WritableSignal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+import { Observable, Subject, switchMap } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { rtKitLabel } from '@rt-tools/ui-kit-v2/core';
-import { carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
+import { BreakpointsService, carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
 import { IRtIconButton, RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
+import { IRtPopoverSheetOpened, rtOpenPopoverSheet, rtPopoverSheetDismissals } from '@rt-tools/ui-kit-v2/popover';
 import { IRtMenu } from './rt-menu.model';
 
 const BEM_BLOCK: string = 'rt-menu';
@@ -89,6 +98,7 @@ const POSITION_ABOVE_START: ConnectedPosition = {
     imports: [
         // @angular/cdk
         OverlayModule,
+        NgTemplateOutlet,
 
         // standalone components / directives
         RtIconButtonComponent,
@@ -104,6 +114,14 @@ const POSITION_ABOVE_START: ConnectedPosition = {
 export class RtMenuComponent {
     readonly #host: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
     readonly #t_uiActions: Signal<string> = rtKitLabel('uiActions');
+    readonly #overlayService: Overlay = inject(Overlay);
+    readonly #viewContainerRef: ViewContainerRef = inject(ViewContainerRef);
+    readonly #injector: Injector = inject(Injector);
+    readonly #narrow: Signal<boolean> = inject(BreakpointsService).viewportNarrow;
+    readonly #sheetOpenedSource: Subject<IRtPopoverSheetOpened> = new Subject<IRtPopoverSheetOpened>();
+
+    /** Оверлей нижней шторки, пока меню открыто в ней. */
+    #sheetOverlayRef: OverlayRef | null = null;
 
     /** Ход стрелками по пунктам открытой панели; у закрытой его нет. */
     #keyManager: FocusKeyManager<IRtMenu.Focusable> | null = null;
@@ -111,7 +129,12 @@ export class RtMenuComponent {
     protected readonly overlay: Signal<CdkConnectedOverlay> = viewChild.required(CdkConnectedOverlay);
     protected readonly trigger: Signal<CdkOverlayOrigin> = viewChild.required(CdkOverlayOrigin);
 
+    protected readonly panelTpl: Signal<TemplateRef<unknown>> = viewChild.required<TemplateRef<unknown>>('panelTpl');
+
     protected readonly isOpen: WritableSignal<boolean> = signal<boolean>(false);
+
+    /** Меню откроется (или открыто) в нижней шторке: режим включён и экран узкий. */
+    protected readonly inSheet: Signal<boolean> = computed((): boolean => this.sheet() && this.#narrow());
 
     /** Класс набора, найденный над меню при открытии: панель лежит вне контейнера с признаком. */
     protected readonly presetClasses: WritableSignal<string[]> = signal<string[]>([]);
@@ -153,6 +176,11 @@ export class RtMenuComponent {
     /** Размер панели: компактная — у меню действий строки таблицы. */
     public readonly size: InputSignal<IRtMenu.Size> = input<IRtMenu.Size>('md');
 
+    /** На телефоне меню открывается в нижней шторке кита; `false` оставляет его у кнопки. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
     /** Триггер отключён — меню не открыть. */
     public readonly disabled: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
@@ -160,6 +188,17 @@ export class RtMenuComponent {
 
     /** Панель открылась (`true`) или закрылась (`false`); повтор того же состояния не приходит. */
     public readonly openedChange: OutputEmitterRef<boolean> = output<boolean>();
+
+    constructor() {
+        // Шторка создаётся на каждое открытие: её подложка, ручка и Escape закрывают меню.
+        this.#sheetOpenedSource
+            .pipe(
+                switchMap((sheet: IRtPopoverSheetOpened): Observable<unknown> => rtPopoverSheetDismissals(sheet)),
+                takeUntilDestroyed(inject(DestroyRef))
+            )
+            .subscribe((): void => this.close());
+        inject(DestroyRef).onDestroy((): void => this.#closeSheet());
+    }
 
     protected toggle(event: MouseEvent): void {
         // Клик по триггеру не должен активировать строку таблицы под ним.
@@ -222,6 +261,25 @@ export class RtMenuComponent {
         this.#keyManager?.onKeydown(event);
     }
 
+    #openSheet(): void {
+        const sheet: IRtPopoverSheetOpened = rtOpenPopoverSheet({
+            overlay: this.#overlayService,
+            host: this.#host.nativeElement,
+            viewContainerRef: this.#viewContainerRef,
+            injector: this.#injector,
+            template: this.panelTpl(),
+            context: null,
+            title: this.ariaText(),
+        });
+        this.#sheetOverlayRef = sheet.overlayRef;
+        this.#sheetOpenedSource.next(sheet);
+    }
+
+    #closeSheet(): void {
+        this.#sheetOverlayRef?.dispose();
+        this.#sheetOverlayRef = null;
+    }
+
     #focusTrigger(): void {
         this.trigger().elementRef.nativeElement.querySelector('button')?.focus();
     }
@@ -231,11 +289,15 @@ export class RtMenuComponent {
             if (!open) {
                 this.#keyManager?.destroy();
                 this.#keyManager = null;
+                this.#closeSheet();
             }
             if (open) {
                 this.presetClasses.set(materialPresetClassesOf(this.#host.nativeElement));
             }
             this.isOpen.set(open);
+            if (open && this.inSheet()) {
+                this.#openSheet();
+            }
             this.openedChange.emit(open);
         }
     }

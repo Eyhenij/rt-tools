@@ -56,8 +56,7 @@ the same rows as before.
 
 ## What is out of scope
 
-- `rt-menu` draws its own overlay; its sheet, the folding of `rt-toggle-button-group` and the field
-  with a toggles panel are described apart.
+- The folding of `rt-toggle-button-group` and the field with a toggles panel are described apart.
 - Tooltips, the help of a field, confirmations, dialogs and asides keep opening as they do.
 - The look of the rows inside the panel does not change.
 
@@ -116,3 +115,4 @@ None.
 | 2026-11-19 | The sheet in the rest of the set, scenarios 1439…1440 (RT-3399) |
 | 2026-11-19 | The autocomplete in the sheet, scenarios 1441…1443 (RT-3399) |
 | 2026-11-19 | The page header menus in the sheet, scenarios 1444…1445 (RT-3399) |
+| 2026-11-19 | The actions menu `rt-menu` in the sheet, scenarios 1446…1449 (RT-3399) |

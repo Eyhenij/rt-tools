@@ -15,13 +15,18 @@
     cdkConnectedOverlayHasBackdrop
     cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
     [cdkConnectedOverlayOrigin]="trigger"
-    [cdkConnectedOverlayOpen]="isOpen()"
+    [cdkConnectedOverlayOpen]="isOpen() && !inSheet()"
     [cdkConnectedOverlayPositions]="overlayPositions()"
     [cdkConnectedOverlayPanelClass]="panelClasses()"
     (backdropClick)="close()"
     (attach)="onAttach()"
     (detach)="close()"
     (overlayKeydown)="onKeydown($event)">
+    <ng-container [ngTemplateOutlet]="panelTpl" />
+</ng-template>
+
+<!-- Панель одна: у кнопки на широком экране, в нижней шторке на телефоне. -->
+<ng-template #panelTpl>
     <ng-container rtBlock="rt-menu">
         <div rtElem="panel" qa-dataid="menu-panel" role="menu" [rtMod]="{ size: size() }" (rtMenuSelect)="onSelect()">
             <ng-content />
