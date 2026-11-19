@@ -156,7 +156,7 @@
             font-size: var(--rt-text-sm);
         }
 
-        /* Нижняя шторка: варианты строкой сверху с прокруткой вбок, один месяц, дни под палец.
+        /* Нижняя шторка: варианты сверху строками с переносом, один месяц, дни под палец.
            Тело шторки своих боковых отступов не даёт — панель держит отступ шапки и подвала шторки. */
         &--sheet {
             padding-inline: var(--rt-space-5);
@@ -168,14 +168,10 @@
         }
 
         &--sheet &__presets {
-            flex-direction: row;
+            flex-flow: row wrap;
             padding-right: 0;
-            padding-bottom: var(--rt-space-1);
             border-right: none;
             gap: var(--rt-space-2);
-            overflow-x: auto;
-            overscroll-behavior-x: contain;
-            scrollbar-width: none;
         }
 
         &--sheet &__preset {

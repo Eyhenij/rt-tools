@@ -112,7 +112,9 @@ edge with nothing to say the row goes on.
    onto three lines, the row 112 px tall instead of 32). The approved frame 6063:1151 itself clips
    the row at 335 px, the same cut as in the owner's screenshot. Asked the owner which. — the
    owner chose «Б — перенос»; the approval is in `approvals.md`.
-2. [ ] Do the chosen variant; a spec or a measurement at 375 holds it.
+2. [ ] Do the chosen variant; a spec or a measurement at 375 holds it. — done by the CSS: the sheet row wraps (`flex-flow: row wrap`, gap 8 px both ways), the
+   sideways scroll is gone; the date-range set 32 green. The measurement at 375 waits for the
+   showcase, stopped by the owner («стопни стенд»).
 
 ### 4. Showcase
 
