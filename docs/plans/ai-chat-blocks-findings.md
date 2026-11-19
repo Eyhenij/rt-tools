@@ -143,6 +143,11 @@ task, a line per finding, each with its address.
   `delta` in percent (12.5), and a `kpi` block in a section narrower than 328 must fall to one
   column. Proposed: a model call on «обзор месяца» and a narrow section story in RT-3342.
   **Address:** the epic plan, task RT-3342.
+- **The danger colour of a delta reads at 3.2 : 1 on a dark card.** `--rt-color-state-danger` is
+  one value in both themes by the kit's decision: rgb(220, 38, 38) on the dark surface rgb(34, 38,
+  41), a 14 px bold number, while AA asks 4.5 : 1 for text of that size. The tile had it before this
+  task; the KPI block puts more red numbers on a dark card. Proposed: a lighter dark-theme value of
+  the status colours, a task of its own. **Address:** the kit's semantic tokens.
 
 ## Left unresolved
 

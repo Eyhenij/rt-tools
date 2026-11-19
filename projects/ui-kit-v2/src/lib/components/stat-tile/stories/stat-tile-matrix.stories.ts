@@ -21,6 +21,9 @@ export const Delta: TStory = { args: { part: 'delta' } };
 
 export const Baseline: TStory = { args: { part: 'baseline' } };
 
+/** Обычный и компактный размер при 220 и 136; компактный переносит подпись базы и вторую строку — SC-UKV-1454, SC-UKV-1467, SC-UKV-1468. */
+export const Size: TStory = { args: { part: 'size' } };
+
 export const Parts: TStory = { args: { part: 'parts' } };
 
 export const Unit: TStory = { args: { part: 'unit' } };

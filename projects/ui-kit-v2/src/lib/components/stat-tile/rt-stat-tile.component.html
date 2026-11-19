@@ -7,7 +7,9 @@
     </header>
 
     <div rtElem="value-row">
-        <p rtElem="value" qa-dataid="stat-tile-value">{{ value() }}</p>
+        <p rtElem="value" qa-dataid="stat-tile-value">
+            <bdi dir="ltr">{{ value() }}</bdi>
+        </p>
 
         @if (primaryDelta(); as row) {
             <span
@@ -17,7 +19,7 @@
                 [rtMod]="{ direction: row.direction }"
                 [attr.title]="primaryTitle()">
                 <rt-icon qa-dataid="stat-tile-delta-icon" size="xs" aria-hidden="true" [name]="row.icon" />
-                <span qa-dataid="stat-tile-delta-percent">{{ row.text }}</span>
+                <bdi dir="ltr" qa-dataid="stat-tile-delta-percent">{{ row.text }}</bdi>
                 @if (primaryCaption(); as caption) {
                     <span rtElem="caption" qa-dataid="stat-tile-delta-caption">{{ caption }}</span>
                 }
@@ -31,7 +33,8 @@
                 [attr.data-direction]="row.direction"
                 [rtMod]="{ direction: row.direction }"
                 [attr.title]="row.label">
-                {{ t().uiYearOverYear }} {{ row.text }}
+                {{ t().uiYearOverYear }}
+                <bdi dir="ltr">{{ row.text }}</bdi>
             </span>
         }
     </div>

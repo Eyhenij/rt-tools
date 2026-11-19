@@ -295,6 +295,22 @@ describe('RtStatTileComponent', (): void => {
         });
     });
 
+    describe('справа налево', (): void => {
+        it('SC-UKV-1474 — значение и обе дельты изолированы слева направо и держат свой порядок', (): void => {
+            const fixture: ComponentFixture<RtStatTileComponent> = setup({
+                value: '-1,24 млн ₽',
+                deltaPrimary: delta(-4.2),
+                deltaSecondary: delta(3, { label: 'г/г' }),
+            });
+            const host: HTMLElement = fixture.nativeElement as HTMLElement;
+            const isolated: string[] = Array.from(host.querySelectorAll('bdi[dir="ltr"]')).map(
+                (node: Element): string => node.textContent?.trim() ?? ''
+            );
+
+            expect(isolated).toEqual(['-1,24 млн ₽', '-4,2' + String.fromCharCode(0xa0) + '%', '+3' + String.fromCharCode(0xa0) + '%']);
+        });
+    });
+
     describe('дополнения', (): void => {
         it('вторая строка значения рисуется, когда задана', (): void => {
             expect(textOf(qa(setup({ secondary: 'из них 300 новых' }), 'stat-tile-secondary'))).toBe('из них 300 новых');
