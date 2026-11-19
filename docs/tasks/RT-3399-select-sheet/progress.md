@@ -4,11 +4,12 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 3 из 4 — Code and unit tests
-- **Next step:** the sheet in `rt-autocomplete` (typing in the sheet), `rt-dynamic-selector`
-  (its file stands at the 500-line limit and is split first), `rt-page-header` (its own narrow
-  layout); then `rt-menu`, the folding `rt-toggle-button-group`, the toggles field, the trailing
-  icons. Done by the same input: the split button, the speed menu, the «more» panel of the tabs,
-  the action bar, the colour palette, the thread list filters, the table filter header.
+- **Next step:** the sheet in `rt-page-header` (the user menu, «more», the submenu — it has its
+  own narrow layout); then `rt-menu` (its own overlay), the folding `rt-toggle-button-group`, the
+  toggles field, the trailing icons. Done: the select, the multiselect with its footer, the
+  autocomplete with a search in the sheet, the dynamic selector, the split button, the speed menu,
+  the «more» panel of the tabs, the action bar, the colour palette, the thread list filters, the
+  table filter header; the kit set is 3760 tests green.
 - **Decision along the way:** the rules live in a new subdomain `docs/specs/ui-kit-v2/popover-sheet/`,
   not in the select spec the plan named: the sheet belongs to the popover directive and serves the
   whole set.

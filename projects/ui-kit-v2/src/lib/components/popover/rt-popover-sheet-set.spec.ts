@@ -1,10 +1,12 @@
 import { ApplicationRef, Provider, signal, Type, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
 import { RtActionBarComponent } from '../action-bar/rt-action-bar.component';
 import { RtColorPaletteComponent } from '../color-palette/rt-color-palette.component';
+import { RtDynamicSelectorComponent } from '../dynamic-selector/rt-dynamic-selector.component';
 import { RtSpeedMenuComponent } from '../speed-menu/rt-speed-menu.component';
 import { RtSplitButtonComponent } from '../split-button/rt-split-button.component';
 import { RtTableFilterHeaderComponent } from '../table/filter-header/rt-table-filter-header.component';
@@ -21,6 +23,8 @@ interface ISetPart {
     component: Type<unknown>;
     inputs: Readonly<Record<string, unknown>>;
     press: (host: HTMLElement) => HTMLElement | null;
+    /** Значение до нажатия: у части, которой без него нечего показать. */
+    value?: unknown;
 }
 
 function byAnchor(anchor: string, inner: string | null = null): (host: HTMLElement) => HTMLElement | null {
@@ -56,6 +60,20 @@ const PARTS: readonly ISetPart[] = [
         press: byAnchor('action-bar-action'),
     },
     {
+        name: 'rt-dynamic-selector',
+        component: RtDynamicSelectorComponent,
+        inputs: {
+            keyExp: 'id',
+            displayExp: 'name',
+            entities: [
+                { id: 1, name: 'Анна' },
+                { id: 2, name: 'Борис' },
+            ],
+        },
+        press: byAnchor('dynamic-selector-add'),
+        value: [1],
+    },
+    {
         name: 'rt-table-filter-header',
         component: RtTableFilterHeaderComponent,
         inputs: { propertyName: 'title', filter: { kind: 'text' } },
@@ -67,7 +85,7 @@ function providersFor(narrow: boolean): Provider[] {
     const stub: BreakpointsStub = new BreakpointsStub();
     stub.viewportNarrow.set(narrow);
     stub.narrow.set(narrow);
-    return [{ provide: BreakpointsService, useValue: stub }];
+    return [{ provide: BreakpointsService, useValue: stub }, provideRouter([])];
 }
 
 function open(part: ISetPart, narrow: boolean, sheet: boolean): void {
@@ -76,6 +94,10 @@ function open(part: ISetPart, narrow: boolean, sheet: boolean): void {
         { ...part.inputs, sheet },
         { providers: providersFor(narrow) }
     );
+    if (part.value !== undefined) {
+        const writeValue: (value: unknown) => void = Reflect.get(fixture.componentInstance as object, 'writeValue');
+        writeValue.call(fixture.componentInstance, part.value);
+    }
     fixture.detectChanges();
     const trigger: HTMLElement | null = part.press(fixture.nativeElement as HTMLElement);
     expect(trigger).not.toBeNull();
