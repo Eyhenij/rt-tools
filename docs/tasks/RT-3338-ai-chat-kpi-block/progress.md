@@ -5,10 +5,10 @@
 - **State:** `этап-идёт`
 - **Stage:** 4 of 5 — The showcase and the match with the mockup
 - **Done:** stage 3 — the `kpi` type, view, copy line and the `rt-ai-chat-kpi` component; the delta writer moved to `delta-number.ts` and serves the tile and the copy: `nx test --testFile=src/rich-editor/lib/components/ai-chat` 93 passed of 93 (logic 19), stat-tile 37, util 81, lint, stylelint, `check:tokens-styles`, `check:cascade-layer` and typecheck green. Stage 2 — the tile writes both delta rows by `RT_KIT_LOCALE`, has `size="compact"` and `deltaLabelVisible`: `nx test --testFile=src/lib/components/stat-tile` 37 passed of 37, lint, stylelint, `check:tokens-styles` and typecheck green; `node tools/visual-gate.mjs ui-kit-v2` — 1159 snapshots of 1159 matched, the tile references needed no retake. Stage 1 — `kpi-data.ts`, `kpi.schema.ts`, their specs: `nx test --testFile=src/lib/util/kpi` 13 passed of 13, the table util specs 22 of 22, typecheck green. Before it: the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3338-ai-chat-kpi-block` from `RT-3337-ai-chat-table-block` (chain), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption. The mockup is approved. The agreement holds SC-UKV-1436…1483, committed. The plan is written and reviewed by product-strategist and goal-critic; their findings are closed in the plan.
-- **Next step:** review round one on the diff against `RT-3337-ai-chat-table-block`; the owner sees the showcase after round two (step 4.6).
+- **Next step:** step 4.6 — both review rounds are fixed and the snapshot gate is green (1148 stories, 1176 snapshots of 1176); the owner looks at the showcase, including the unit that wraps under a wide value, and their word goes into `approvals.md`.
 - **Uncommitted:** no
-- **Waiting for the owner:** no; the plan is approved: «Одобряю план»
-- **PR:** not open yet; the branch stands on RT-3337 (#3407), which stands on RT-3336 (#3402) and RT-3335 (#3398)
+- **Waiting for the owner:** the word on the showcase (step 4.6)
+- **PR:** not open yet; RT-3337 (#3407), RT-3336 (#3402) and RT-3335 (#3398) are merged into the epic branch, so the PR goes into `RT-3346-ai-chat-blocks`
 
 ## Steps
 
@@ -150,6 +150,40 @@
   The gate runs the stories through `test-storybook`, which runs the play steps and fails a test on a
   thrown error.
 
+- **Review round two: qa-engineer 8 findings, product-strategist 8, goal-critic 1.** The main one
+  came from all three. The option «Округлять под карточку» promised that everything fits 131. Measured
+  at 24 px bold in the showcase: «-123 млрд ₽» is 148, «-1,24 млн ₽» 140, «-RUB 999,999» in `en` 169,
+  and «млрд ₽» alone is 94. So no rounding fits a value with its unit. What does hold: the widest
+  number the rules allow, «-99 999,99», is 129. Fixed:
+    - the ordinary space now stands on either side of the number, so `en` writes «-RUB» above
+      «999,999». Before, a currency written first broke the number;
+    - the gap rule reads the digits of any locale (`\p{Nd}`), so `ar-EG` and `fa` wrap at the unit too;
+    - the spec says what is true: the number always fits one line, the unit may go to the next one.
+      SC-UKV-1484 keeps its number and adds the `en` case;
+    - every play step that measures a block now checks that no number of a value stands on two
+      lines. Checked to fail: at a 60 px value «99 999,99» lies on 3 lines. `Long` is left out: its
+      values come as strings, which the kit puts as they came and does not write;
+    - `Short` got «-99 999,99 ₽», the widest number with a fraction;
+    - `Rtl` compares the place of «-» and «₽» instead of the text, which is the same in any order;
+    - the tile companion bound two rules to the removed `signedNumber` and `directionOf`;
+    - `TRtDeltaUnit` is derived from `ERtKpiDeltaUnit` rather than written twice.
+
+  Written off:
+    - values from 1e15 keep more than three digits («1000T»). A KPI card does not carry them;
+    - the value is isolated left-to-right in an RTL locale. The kit has no RTL locale: its labels
+      ship `en` only, and `ru` comes from the application;
+    - no play step checks 327 against 328. The styles spec reads the threshold, and `Below` and
+      `Short` measure both sides of it;
+    - «78,0 %» with a trailing zero follows the percent cell of the table block, as the agreement
+      says;
+    - the radius 12 and the gap 6 are sums of two tokens. Written into the epic findings as a kit
+      token decision;
+    - the dark row of the table «mockup / showcase» names surfaces in words. It goes to the owner
+      with the showcase.
+
+  The owner sees at step 4.6 that a wide value puts its unit on a second line, which the mockup did
+  not draw.
+
 ## Mockup / showcase
 
 Measured in the pinned Chrome by `getComputedStyle` and `getBoundingClientRect` on the story
@@ -188,7 +222,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 4 of 5 — The showcase and the match with the mockup
-- **Next step:** step 4.1 — the stories of the block by the agreement's table «Screens and states».
+- **Next step:** review round one on the diff against `RT-3337-ai-chat-table-block`; the owner sees the showcase after round two (step 4.6).
 - **PR:** not open yet; the branch stands on RT-3337 (#3407), which stands on RT-3336 (#3402) and RT-3335 (#3398)
 
 The progress in full — `docs/tasks/RT-3338-ai-chat-kpi-block/progress.md`; the plan lies next to it.
@@ -196,17 +230,23 @@ The progress in full — `docs/tasks/RT-3338-ai-chat-kpi-block/progress.md`; the
 ### Uncommitted
 
 ```
-?? projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/blocks/kpi/stories/
+none
 ```
 
 ### Commits over the main branch
 
 ```
+0f80720c7 fix(rt:ui-kit-v2): блок kpi после первого круга ревью (RT-3338)
+eea80eea0 Merge remote-tracking branch 'origin/RT-3346-ai-chat-blocks' into RT-3338-ai-chat-kpi-block
+f5037fb8c feat(rt:ui-kit-v2): витрина блока kpi и числа плитки под rtl
 c869db7e3 feat(rt:ui-kit-v2): блок kpi в ответе rt-ai-chat
 1737ba4d0 Merge remote-tracking branch 'origin/main' into RT-3338-ai-chat-kpi-block
 3d8e5d19c feat(rt:ui-kit-v2): плитка пишет дельту по языку кита, компактный размер
 bb4d79585 feat(rt:ui-kit-v2): данные, запись значения и схема блока KPI
 1b7111481 docs(rt:ui-kit-v2): план RT-3338 одобрен — данные, плитка, блок, витрина
+746b5b2e7 [RT-3335] В чате есть блок графика по спецификации из вызова инструмента (#3398)
+ddc4a2850 [RT-3336] Под графиком ответа нет таблицы его данных по запросу (#3402)
+9db10fd05 [RT-3337] В ответе чата нет блока таблицы: markdown-таблица без форматов и прокрутки (#3407)
 bef2c6fc0 docs(rt:ui-kit-v2): шаги RT-3338 в ходе задачи
 554d10dfd docs(rt:ui-kit-v2): договорённость о блоке KPI закрывает разбор spec-critic
 25faec7d0 docs(rt:ui-kit-v2): решения по разбору договорённости о блоке KPI
@@ -216,12 +256,6 @@ f304f1437 docs(rt:ui-kit-v2): договорённость о блоке KPI д�
 2bdcfda5c docs(rt:ui-kit-v2): разбор RT-3338 закрыт допущениями
 ed28d05cf docs(rt:ui-kit-v2): задача RT-3338 взята, находки разбора RT-3337
 079d87c7e docs(rt:ui-kit-v2): папка задачи RT-3337 разобрана
-0e304def5 docs(rt:ui-kit-v2): план эпика отмечает RT-3337 отданной в PR
-cdc3ae2fe docs(rt:ui-kit-v2): договорённость о блоке таблицы влита в спеку кита
-c7f64abc3 fix(rt:ui-kit-v2): пункт меню в истории страницы чата берёт иконку box
-f287c9706 feat(rt:ui-kit-v2): витрина блока таблицы и числа под rtl
-5d65c7296 test(rt:ui-kit-v2): эталон панели разбора с таблицей нового вида
-d8f919696 feat(rt:ui-kit-v2): таблицы markdown и данных графика в виде блока таблицы
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

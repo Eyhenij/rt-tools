@@ -82,6 +82,7 @@ export const AI_CHAT_KPI_SHORT_CASES: readonly IAiChatKpiCase[] = [
                 { label: 'Доля прямых', value: 0.42, format: 'percent', delta: 3, deltaUnit: 'points', base: 'vs LY' },
                 { label: 'Убыток', value: -123450000000, format: 'currency', currency: 'RUB', delta: -4.2, base: 'vs LY' },
                 { label: 'Средняя бронь', value: -999999.4, format: 'currency', currency: 'RUB', delta: 1.45, base: 'vs LY' },
+                { label: 'Возвраты', value: -99999.99, format: 'currency', currency: 'RUB' },
             ]),
         ],
     },

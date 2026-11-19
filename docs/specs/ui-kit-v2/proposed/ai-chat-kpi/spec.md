@@ -73,7 +73,8 @@ base caption and a period.
 
 - **A `number` or `currency` value of a million and more, by its absolute value, is written in the short form of the kit locale.** It keeps at most three significant digits and drops trailing zeros. 1 000 000 ₽ is «1 млн ₽», 1 240 000 ₽ is «1,24 млн ₽», 12 345 678 ₽ is «12,3 млн ₽». -123 450 000 000 ₽ is «-123 млрд ₽», 2 500 000 000 is «2,5 млрд». A value whose whole form rounds to a million, such as 999 999.99 ₽, is written short: «1 млн ₽». A `percent` value is never short.
 - **A `number` or `currency` value from 100 000 to below a million, by its absolute value, is written in full without fraction digits.** 999 999.4 ₽ is «999 999 ₽». Six digits with a fraction do not fit 131 inside a card 160 wide at 24 px and would break inside the number. The owner chose this after review round one: «Округлять под карточку».
-- **The space between a written number and its unit is an ordinary one, the spaces between digit groups stay non-breaking.** A negative value can still be wider than 131: «-123 млрд ₽» is 148. It then wraps before «млрд ₽», never inside the number.
+- **The number of a value always fits one line of a card 160 wide; the unit may not.** At 24 px bold the widest number the rules allow, «-99 999,99», is 129 of 131. A value with its unit can be wider: «-123 млрд ₽» is 148, «-1,24 млн ₽» is 140, «-RUB 999,999» in `en` is 169. No rounding fixes that, since «млрд ₽» alone is 94.
+- **The space between a written number and its unit is an ordinary one, on either side of the number and for the digits of any locale; the spaces between digit groups stay non-breaking.** A value wider than its card wraps there: «-123» stays on the first line and «млрд ₽» goes to the second, `en` writes «-RUB» above «999,999». The number never breaks inside.
 
 - **A `currency` item whose code is missing or is not three Latin upper-case letters writes its value as `number`.**
 

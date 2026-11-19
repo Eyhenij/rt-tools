@@ -20,6 +20,7 @@ const BLOCK: string = 'rt-ai-chat-kpi';
 
 /** Карточка блока. */
 const CARD: string = '[qa-dataid="ai-chat-kpi-card"]';
+const VALUE: string = '[qa-dataid="stat-tile-value"]';
 
 interface IPlayContext {
     readonly canvasElement: HTMLElement;
@@ -104,6 +105,43 @@ function textRects(card: HTMLElement): { readonly text: string; readonly rect: D
     return rects;
 }
 
+/** Левый край первого вхождения `glyph` в значении карточки: так видно, в каком порядке стоят части. */
+function leftOf(card: HTMLElement, glyph: string): number {
+    const node: Node | null | undefined = card.querySelector(VALUE)?.querySelector('bdi')?.firstChild;
+    const at: number = node?.textContent?.indexOf(glyph) ?? -1;
+
+    if (node === null || node === undefined || at < 0) {
+        return Number.NaN;
+    }
+    const range: Range = document.createRange();
+
+    range.setStart(node, at);
+    range.setEnd(node, at + glyph.length);
+
+    return range.getBoundingClientRect().left;
+}
+
+/** Число значения стоит на одной строке: перенос бывает только у единицы (SC-UKV-1484). */
+function expectWholeNumbers(block: HTMLElement, name: string): void {
+    const range: Range = document.createRange();
+
+    for (const value of Array.from(block.querySelectorAll<HTMLElement>(VALUE))) {
+        const walker: TreeWalker = document.createTreeWalker(value, NodeFilter.SHOW_TEXT);
+
+        for (let node: Node | null = walker.nextNode(); node !== null; node = walker.nextNode()) {
+            const found: RegExpExecArray | null = /\p{Nd}(?:[\p{Nd},.\s]*\p{Nd})?/u.exec(node.textContent ?? '');
+
+            if (found !== null) {
+                range.setStart(node, found.index);
+                range.setEnd(node, found.index + found[0].length);
+                const tops: Set<number> = new Set(Array.from(range.getClientRects()).map((rect: DOMRect): number => Math.round(rect.top)));
+
+                expectThat(tops.size === 1, `${name}: число «${found[0]}» разорвано на ${tops.size} строки`);
+            }
+        }
+    }
+}
+
 /** Ни один текст карточки не выходит за её край (SC-UKV-1461), блок не шире своей ячейки (SC-UKV-1479). */
 function expectContained(block: HTMLElement, name: string): void {
     const width: number = Math.round(block.getBoundingClientRect().width);
@@ -119,7 +157,15 @@ function expectContained(block: HTMLElement, name: string): void {
 }
 
 /** Меряет каждый блок истории по его ширине: сколько колонок и какой ширины карточки. */
-async function measure(root: HTMLElement, expected: Readonly<Record<number, { columns: number; card?: number }>>): Promise<void> {
+/**
+ * Меряет блоки истории. `writtenValues: false` — значения поданы строкой: строка ставится как
+ * пришла, кит её не записывает и переносит где придётся, поэтому целость числа не проверяется.
+ */
+async function measure(
+    root: HTMLElement,
+    expected: Readonly<Record<number, { columns: number; card?: number }>>,
+    writtenValues: boolean = true
+): Promise<void> {
     const blocks: HTMLElement[] = await settledAll(root, '[data-kpi-width]', Object.keys(expected).length);
 
     for (const block of blocks) {
@@ -135,6 +181,9 @@ async function measure(root: HTMLElement, expected: Readonly<Record<number, { co
         }
         expectRows(layout, String(width));
         expectContained(block, String(width));
+        if (writtenValues) {
+            expectWholeNumbers(block, String(width));
+        }
     }
 }
 
@@ -166,7 +215,8 @@ export const Deltas: TStory = { args: { part: 'deltas' } };
 
 /**
  * При 328: «1,24 млн ₽» рядом с «8 400 ₽», «2,5 млрд», дельта в пунктах, «-123 млрд ₽» с переносом
- * перед единицей и «-999 999 ₽» без дробной части — SC-UKV-1441, SC-UKV-1476, SC-UKV-1484.
+ * перед единицей, «-999 999 ₽» без дробной части и самое широкое число с дробью «-99 999,99 ₽» —
+ * SC-UKV-1441, SC-UKV-1476, SC-UKV-1484.
  */
 export const Short: TStory = {
     args: { part: 'short' },
@@ -189,7 +239,7 @@ export const Odd: TStory = {
  */
 export const Long: TStory = {
     args: { part: 'long' },
-    play: async ({ canvasElement }: IPlayContext): Promise<void> => measure(canvasElement, { 328: { columns: 2, card: 160 } }),
+    play: async ({ canvasElement }: IPlayContext): Promise<void> => measure(canvasElement, { 328: { columns: 2, card: 160 } }, false),
 };
 
 /** items не список, пустой список и все карточки выпали: на месте блока заглушка — SC-UKV-1447, SC-UKV-1482. */
@@ -210,11 +260,12 @@ export const Rtl: TStory = {
         const first: HTMLElement = cards[0];
         const number: DOMRect | undefined = first.querySelector('[qa-dataid="stat-tile-delta-percent"]')?.getBoundingClientRect();
         const arrow: DOMRect | undefined = first.querySelector('[qa-dataid="stat-tile-delta-icon"]')?.getBoundingClientRect();
-        const value: string = (first.querySelector('[qa-dataid="stat-tile-value"]')?.textContent ?? '').replace(/\s+/g, ' ').trim();
+        const value: string = (first.querySelector(VALUE)?.textContent ?? '').replace(/\s+/g, ' ').trim();
 
         expectThat(first.getBoundingClientRect().left > cards[1].getBoundingClientRect().left, 'справа налево: первая карточка не справа');
         expectThat(number !== undefined && arrow !== undefined && arrow.left >= number.right, 'справа налево: стрелка не справа от числа');
         expectThat(value === '-1,24 млн ₽', `справа налево: значение «${value}»`);
+        expectThat(leftOf(first, '-') < leftOf(first, '₽'), 'справа налево: минус значения не слева от единицы');
     },
 };
 

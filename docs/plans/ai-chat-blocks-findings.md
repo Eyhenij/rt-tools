@@ -148,6 +148,11 @@ task, a line per finding, each with its address.
   41), a 14 px bold number, while AA asks 4.5 : 1 for text of that size. The tile had it before this
   task; the KPI block puts more red numbers on a dark card. Proposed: a lighter dark-theme value of
   the status colours, a task of its own. **Address:** the kit's semantic tokens.
+- **The KPI card radius 12 and its inner gap 6 are sums of two tokens.** The radius scale has 8,
+  10 and 15, and the mockup draws 12, so the block writes `md + sm`; the gap is `space-1 +
+  space-0-5`. Under another styling preset the sum gives a number no mockup holds. Proposed: a
+  radius step of 12 or the card on step 10, the owner's choice. **Address:** the kit's radius and
+  spacing scales.
 
 ## Left unresolved
 

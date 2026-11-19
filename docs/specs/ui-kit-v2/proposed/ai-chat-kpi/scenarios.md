@@ -339,9 +339,10 @@ When it validates a block whose item has a `label` and a `value` and no `format`
 Then the first is accepted and the second refused
 And the schema names `deltaUnit` as `percent` or `points`, and its descriptions call a `percent` value a fraction and `delta` a change in percent
 
-### SC-UKV-1484 — a value fits the card: whole from 100 000, three digits in the short form
+### SC-UKV-1484 — the number of a value never breaks: whole from 100 000, three digits in the short form, a wrap at the unit
 
 Given `currency` items with `RUB` holding 99999.99, 999999.4, -999999.4, 999999.99, 12345678 and -123450000000, in the `ru` locale
 When the block is drawn
 Then they read «99 999,99 ₽», «999 999 ₽», «-999 999 ₽», «1 млн ₽», «12,3 млн ₽» and «-123 млрд ₽»
 And the only ordinary space of a value stands between the number and its unit, so a value wider than a card 160 wide wraps there and never inside the number
+And in `en` the currency written before the number is parted from it the same way: -999999.4 reads «-RUB» and «999,999»

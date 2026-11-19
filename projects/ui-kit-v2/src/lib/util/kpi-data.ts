@@ -130,14 +130,16 @@ function fullFractionDigits(currency: string | null, locale: string): number {
 }
 
 /**
- * Неразрывный пробел между числом и единицей («млн ₽», «₽»), который язык ставит в записи. Его
- * место занимает обычный: значение шире карточки переносится перед единицей, а не посреди числа.
- * Пробелы между разрядами остаются неразрывными.
+ * Неразрывный пробел между числом и единицей («млн ₽», «₽», «RUB»), который язык ставит в записи с
+ * любой стороны числа и любыми цифрами языка. Его место занимает обычный: значение шире карточки переносится у единицы, а
+ * не посреди числа. Пробелы между разрядами остаются неразрывными.
  */
-const UNIT_GAP: RegExp = new RegExp(`(\\d)[${String.fromCharCode(0xa0)}${String.fromCharCode(0x202f)}](?=[^\\d\\s])`);
+const NO_BREAK: string = `${String.fromCharCode(0xa0)}${String.fromCharCode(0x202f)}`;
+const UNIT_AFTER: RegExp = new RegExp(`(\\p{Nd})[${NO_BREAK}](?=[^\\p{Nd}\\s])`, 'u');
+const UNIT_BEFORE: RegExp = new RegExp(`([^\\p{Nd}\\s-])[${NO_BREAK}](?=\\p{Nd})`, 'u');
 
-function breakBeforeUnit(text: string): string {
-    return text.replace(UNIT_GAP, '$1 ');
+function breakAtUnit(text: string): string {
+    return text.replace(UNIT_AFTER, '$1 ').replace(UNIT_BEFORE, '$1 ');
 }
 
 /** Значение по модулю после округления до `digits` дробных знаков. */
@@ -184,9 +186,9 @@ export function rtKpiValueWriter(item: Pick<IRtKpiItem, 'format' | 'currency'>, 
             return full(value).text;
         }
         if (rounded(value, digits) < WHOLE_FROM) {
-            return breakBeforeUnit(full(value).text);
+            return breakAtUnit(full(value).text);
         }
 
-        return breakBeforeUnit(rounded(value, 0) >= SHORT_FROM ? short.format(value) : whole.format(value));
+        return breakAtUnit(rounded(value, 0) >= SHORT_FROM ? short.format(value) : whole.format(value));
     };
 }
