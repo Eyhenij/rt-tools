@@ -154,6 +154,30 @@ task, a line per finding, each with its address.
   radius step of 12 or the card on step 10, the owner's choice. **Address:** the kit's radius and
   spacing scales.
 
+The rules review after the PR (#3429):
+
+- **The menu on a divergence of the match recommended editing the frame under the code.** The
+  owner refused after seeing the showcase: «тексты выглядят зажато»; the work was redone the other
+  way. Proposed: an article in `kit-approval` — a divergence of the match is closed in the code, the
+  frame moves only by the owner's choice; and the gate map loads the rule on a call of
+  `tools/kit-match.mjs`. **Address:** names of this tree — the rule `kit-approval`, `gate-map.sh`.
+- **A raw colour of the frame (#e5e5e5) surfaced only as a divergence after the comparison.**
+  Proposed: a value off the kit's scale is read from the frame before the numbers and goes to the
+  owner with the nearest token. **Address:** names of this tree — the rule `kit-approval`; a check
+  in `kit-match.mjs` is a task of its own.
+- **The rule names the overlay but not where its showcase frame comes from;** a script browser is
+  refused by the guard. Proposed: a frame of the pinned browser or the snapshot reference of a
+  one-block story. **Address:** names of this tree — the rule `kit-approval`.
+- **The review roles ran their own browser scripts, and their replies lived only in the context.**
+  After the compaction the PR tables were recovered from the transcript. Proposed: the frame of a
+  role forbids driving a browser and reads the measurements from a file; each reply goes to disk
+  in the turn it arrives. **Address:** names of this tree — the pattern `task-delivery-loop-run`;
+  the same line in the roles `product-strategist` and `goal-critic` as a proposal to the package.
+- **Three light checks of the push set turned red only in the set:** a class without a rule, a
+  glossary word, an overstayed archive record. Proposed: the light `node tools/…` lines of the set
+  run at step 11, before the set. **Address:** names of this tree — the pattern
+  `task-delivery-loop-run`.
+
 ## Left unresolved
 
 - **All findings above** — wait for the owner's decision at the end of the epic.
