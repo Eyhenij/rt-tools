@@ -231,7 +231,7 @@ Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 
 Given the last row merged on the hosting with no mark, and a middle row merged last with no mark while the rows below are marked
 When exit 12 is measured
-Then it is met in both cases
+Then it is met in both cases, and when a chain is merged top-down with the last row unmarked
 And a row with no mark merged before another task is unmet
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
@@ -242,14 +242,15 @@ Given a row marked «влито» whose branch has an open PR, or a PR closed un
 When exit 12 is measured
 Then it is unmet
 And a marked row with no PR in view of the hosting counts
+And a chain marked ahead by its upper branch and merged in one go meets the exit
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 
 ### SC-AK-1754 — a fresh branch with no PR is no merge
 
-Given the branch of the last task taken from the epic tip, with no PR of its own
+Given the branch of the last task taken from the epic tip, with no PR of its own, its row left in work or marked «влито»
 When exit 12 is measured
-Then it is unmet
+Then it is unmet in both cases
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 

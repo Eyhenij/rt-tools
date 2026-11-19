@@ -12,9 +12,10 @@
  * before a task without one does not meet the exit: the plan still holds work nobody took.
  *
  * mergedMarked — exit 12: every task not deferred with a merged PR of its branch is marked
- * «влито», except the task merged last, whatever its row: the mark is set by the branch of the next
- * task, and that one has none. A mark on a task whose merged PR the hosting does not list counts
- * while no PR of its branch is open or closed unmerged. Until then state 13 would demand the PR of
+ * «влито», except the task merged last, whatever its row, and the task of the last row: the mark is
+ * set by the branch of the next task, and these have none. A mark on a task whose merged PR the
+ * hosting does not list counts while no branch of it is on the server and no PR of its branches is
+ * open or closed unmerged. Until then state 13 would demand the PR of
  * an epic whose tasks are not in its branch.
  *
  * finished — exit 13: the tip of the branch of every task of the epic that is not deferred lies in
@@ -72,12 +73,18 @@ export function mergedMarked({ git, host, tree }) {
             if (!mergedAt.has(task) || at > mergedAt.get(task)) mergedAt.set(task, at);
         }
         const live = plan.rows.filter((row) => !row.deferred);
-        // The task merged last has no next branch to mark it by: its merged PR counts alone.
-        const last = live.filter((row) => mergedAt.has(row.task)).reduce((a, b) => (a === null || mergedAt.get(b.task) >= mergedAt.get(a.task) ? b : a), null);
+        // The task merged last has no next branch to mark it by: its merged PR counts alone. Tasks
+        // merged in the same second are all last.
+        const lastAt = [...live].filter((row) => mergedAt.has(row.task)).reduce((at, row) => (mergedAt.get(row.task) > at ? mergedAt.get(row.task) : at), '');
+        const isLast = (row) => mergedAt.has(row.task) && mergedAt.get(row.task) === lastAt;
+        // The last row has no next task either: a chain merged top-down leaves it merged before the rest.
+        const lastRow = live.at(-1) ?? null;
         return live.every((row) => {
-            if (mergedAt.has(row.task)) return row.merged || row === last;
-            // A mark with no merged PR in view counts only while no PR of its branch is open or closed unmerged.
-            return row.merged && !openPullOrClosedUnmerged({ git, host }, row.task);
+            if (mergedAt.has(row.task)) return row.merged || isLast(row) || row === lastRow;
+            // A mark with no merged PR in view stands for a merge past the window of the hosting: the
+            // hosting removed its branch on merge, so a branch left on the server, or any PR of its
+            // branches open or closed unmerged, says the mark is ahead of the work.
+            return row.merged && !host.remoteBranches(prefix(row.task)).length && !openPullOrClosedUnmerged({ git, host }, row.task);
         });
     };
 }

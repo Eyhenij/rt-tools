@@ -29,3 +29,15 @@
   into any base (exit 13 still checks the tips); SC-AK-1754 alone proves little (kept as a guard
   against reading tips). A chain merged top-down leaves its upper task to be marked: the action of
   `влито` says bottom-up, and the ask-judge refused dropping the mark rule.
+- 19.11, review round two. Confirmed and fixed: a chain merged top-down left its upper task, the last
+  row, to be marked — the task of the last row is now exempt too; a chain merged in one go left its
+  middle tasks unmarked — the pattern lets the upper branch mark them ahead, and exit 12 holds while
+  their PRs are open; the tree rule named the merge as the owner's while the action of `влито` names
+  the merge — the rule now names no button. Live: the Stop judge of RT-3276 runs with a median of
+  37.2 s over 172 ends of a turn since 14.11. Written off: a mark with no PR in view counts (the
+  window of 300 merged PRs); the tree rule commit lies outside the plan footprint — the owner ordered
+  it on 19.11, and the PR names it. QA of round two, confirmed and fixed: the flow guard suite expected
+  the old action text (SC-AK-289); a mark on a fresh branch with no PR counted — a branch left on the
+  server now keeps it out, and SC-AK-1754 checks the marked case; the headlines left out the last
+  row; tasks merged in the same second blocked each other — all of them count as last. Written off: a
+  PR merged into any base (exit 13 checks the tips).

@@ -66,10 +66,12 @@ There is no interface: the description is read by the engine and by the executor
 - **Exit 11 is met when every unmerged, unblocked task of the epic other than the current one has a branch, and with no such task.**
   A task with a merged PR of its branch counts merged even without the mark: the hosting removes
   the branch on merge.
-- **Exit 12 is met when every task not deferred with a merged PR of its branch is marked «влито», except the task merged last, and no other task is left unmerged.**
+- **Exit 12 is met when every task not deferred with a merged PR of its branch is marked «влито», except the task merged last and the task of the last row, and no other task is left unmerged.**
   The mark is set by the branch of the next task, and the task merged last has none, whatever its
-  row: its merged PR counts alone. A mark on a task whose merged PR the hosting no longer lists
-  still counts, unless a PR of its branch is open or closed unmerged.
+  row: its merged PR counts alone, and tasks merged in the same second are all last. So does the
+  task of the last row, which a chain merged top-down leaves merged before the rest. A mark on a
+  task whose merged PR the hosting no longer lists counts only when no branch of it is left on the
+  server and no PR of its branches is open or closed unmerged.
 - **Exit 13 is met when the tip of every task not deferred lies in the epic branch or the main branch, and the PR of the epic into the main branch exists.**
 - **A branch without a task number, the epic branch among them, takes the epic of the working copy from the assignment table.**
 - **The epic of the copy merged into the main branch or with its card closed counts as absent.**

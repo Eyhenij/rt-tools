@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the owner's word and the session. Load before asking the owner, when replying to an order and at the start of a session. Pattern task-flow-cycle.
 ---
-<!-- rt-kit v0.37.0 · rules/task-flow-owner.md · 2bce76516252 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/task-flow-owner.md · 0b75886a710f · правится надстройкой, не здесь -->
 
 # Work conduct — the owner's word and the session
 
@@ -43,5 +43,5 @@ tasks and their implementation, and the owner fixes nothing of it for the agent.
   progress line «the owner writes it himself» or an epic row with the owner's step is done by the
   executor in the same work; it never becomes a menu option for the owner.
 - **The owner is asked only for decisions and approvals.** A product choice, the approval of a
-  plan, and a button a guard keeps with a person — the merge, a rollout — stay with the owner;
-  code, tasks, checks and their fixes do not.
+  plan, and a button a guard keeps with a person stay with the owner; code, tasks, checks and
+  their fixes do not.

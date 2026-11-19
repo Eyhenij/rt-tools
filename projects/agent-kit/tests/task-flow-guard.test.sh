@@ -74,7 +74,7 @@ expect_reason "SC-AK-289 — отказ называет обязательно�
 state_is 'влито'
 t "SC-AK-292 — состояние закрытой работы отбивается" "$CODE" deny
 expect_reason "SC-AK-289 — у влитой работы действие — отметка в плане эпика" task-flow-guard.sh \
-    "$(edit_in "$CODE")" 'mark the task merged in the epic plan'
+    "$(edit_in "$CODE")" 'mark the merged tasks by the branch of the next one'
 
 state_is 'папка-разобрана'
 expect_reason "SC-AK-289 — у разобранной папки действие — сверка очереди и PR" task-flow-guard.sh \
