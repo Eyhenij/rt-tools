@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/flow-guard.mjs · 5e9205f61a75 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/flow-guard.mjs · a41b5cf4c7b5 · правится надстройкой, не здесь
 /**
  * The guard of the course of work — the engine command `guard`, called by the hook
  * `flow-step-guard.sh` before Edit, Write, MultiEdit and a shell command.
@@ -15,6 +15,10 @@
  *   - an edit of the description, its measurers and sources or the engine outside a task whose
  *     approved plan names the path in a footprint row marked «(правится)».
  *
+ * Two edits it names as the owner's decision, and the decision table answers them with the window:
+ * a replacement line of the progress added or changed, and «шаг владельца» set or changed on a row of
+ * the epic plan. The engine reads no quote after that: the allowed edit is the owner's word.
+ *
  * A plan without a single check line, and the plan of a branch in `words.legacyBranches`, keep the
  * done marks of the progress as they are: their steps were never measured by the engine.
  *
@@ -26,6 +30,12 @@ import { stepsOfPlan, stepsOfProgress } from './work-steps-lib.mjs';
 
 /** The word that defers a task in the epic plan. */
 const DEFERRED = 'отложено';
+
+/** The words of an epic plan row whose task waits for the owner's step. */
+const OWNER_STEP = 'шаг владельца';
+
+/** The opening of a replacement line of the progress, with the number of the step. */
+const REPLACEMENT_START = /^-\s+\*\*(?:Проверка шага|Check of step)\s+(\d+\.\d+)\s+(?:заменена|replaced):\*\*/u;
 
 /** The mark of a footprint row the task edits. */
 const EDITED_ROW = '(правится)';
@@ -95,6 +105,32 @@ export function deferChanges(before, after, key) {
     const was = deferredTasks(before);
     const now = deferredTasks(after);
     return [...new Set([...was, ...now])].filter((task) => was.has(task) !== now.has(task));
+}
+
+/** The lines of the text after the edit that match the sign and did not stand in the text before. */
+const newLines = (before, after, sign) => {
+    const was = new Set((before ?? '').split('\n').map((line) => line.trim()));
+    return (after ?? '').split('\n').filter((line) => sign(line) && !was.has(line.trim()));
+};
+
+/**
+ * The step numbers whose replacement line the edit adds or changes. A removed line is not counted:
+ * dropping a replacement gives the check of the plan back and needs no word of the owner.
+ */
+export function replacementChanges(before, after) {
+    return [...new Set(newLines(before, after, (line) => REPLACEMENT_START.test(line)).map((line) => line.match(REPLACEMENT_START)[1]))];
+}
+
+/**
+ * The task numbers of the epic plan rows the edit sets to the owner's step or whose owner's step it
+ * changes. A row that leaves the owner's step is not counted: the task goes back to the work.
+ */
+export function ownerRowChanges(before, after, key) {
+    const tasks = new Set();
+    for (const line of newLines(before, after, (text) => text.includes(OWNER_STEP))) {
+        for (const match of line.matchAll(new RegExp(`${escape(key)}-(\\d+)`, 'g'))) tasks.add(match[1]);
+    }
+    return [...tasks];
 }
 
 /** The keys an edit of the override changes: `key:` of every line that differs. */
@@ -212,13 +248,22 @@ function judgeProgress(call, ctx, planPath) {
             return `the state \`${state}\` is ahead of the measured one: the engine measures the branch below it — \`node tools/task-flow-script.mjs measure\` names the exit that is not met`;
         }
     }
+    const replaced = replacementChanges(before, after);
+    if (replaced.length > 0) {
+        return `the replacement of the check of step ${replaced.join(', ')} is the owner's decision: the owner allows or forbids this edit in the window`;
+    }
     return null;
 }
 
 function judgeDefer(call, ctx) {
     const before = ctx.read(call.path);
-    const changed = deferChanges(before, textAfter(call, before), ctx.key);
-    if (changed.length === 0) return null;
+    const after = textAfter(call, before);
+    const changed = deferChanges(before, after, ctx.key);
+    if (changed.length === 0) {
+        const steps = ownerRowChanges(before, after, ctx.key);
+        if (steps.length === 0) return null;
+        return `«${OWNER_STEP}» for ${steps.map((task) => `${ctx.key}-${task}`).join(', ')} is the owner's decision: the owner allows or forbids this edit in the window`;
+    }
     const word = ctx.ownerLast() ?? '';
     const missing = changed.filter((task) => !new RegExp(`${escape(ctx.key)}-${task}(?!\\d)`).test(word));
     if (missing.length === 0) return null;

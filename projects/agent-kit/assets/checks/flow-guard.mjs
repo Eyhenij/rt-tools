@@ -124,7 +124,7 @@ export function replacementChanges(before, after) {
  * The task numbers of the epic plan rows the edit sets to the owner's step or whose owner's step it
  * changes. A row that leaves the owner's step is not counted: the task goes back to the work.
  */
-export function ownerStepChanges(before, after, key) {
+export function ownerRowChanges(before, after, key) {
     const tasks = new Set();
     for (const line of newLines(before, after, (text) => text.includes(OWNER_STEP))) {
         for (const match of line.matchAll(new RegExp(`${escape(key)}-(\\d+)`, 'g'))) tasks.add(match[1]);
@@ -259,7 +259,7 @@ function judgeDefer(call, ctx) {
     const after = textAfter(call, before);
     const changed = deferChanges(before, after, ctx.key);
     if (changed.length === 0) {
-        const steps = ownerStepChanges(before, after, ctx.key);
+        const steps = ownerRowChanges(before, after, ctx.key);
         if (steps.length === 0) return null;
         return `«${OWNER_STEP}» for ${steps.map((task) => `${ctx.key}-${task}`).join(', ')} is the owner's decision: the owner allows or forbids this edit in the window`;
     }

@@ -155,14 +155,6 @@ Then the journal holds one line about the eighth refusal
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-1441 — the owner's step makes the refusal name the menu
-
-Given the row of the task in the plan of the epic names the owner's step, and a measurement with no cause
-When the turn is held
-Then the first refusal names the owner's menu, and the second does not
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
 ### SC-AK-1442 — a step another check forbids makes the refusal name the menu about that check
 
 Given two refusals of calls by one guard for one reason, a write between two refusals, and two reasons

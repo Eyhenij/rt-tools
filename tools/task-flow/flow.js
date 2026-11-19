@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · task-flow/flow.js · c549227fb57f · правится надстройкой, не здесь
+// rt-kit v0.37.0 · task-flow/flow.js · c23362b532b7 · правится надстройкой, не здесь
 // The task flow as an executable scenario: the data language of `flow-syntax.mjs`, nothing here runs.
 // A state is left when its exit is measured; the first state whose exit is unmet is where the work
 // stands. A release case says when a turn may end before the scenario does. A new fact is a new
@@ -19,10 +19,9 @@
     grill: { written: { git: source.git, tree: source.tree } },
     epic: {
       declared: { git: source.git, host: source.host, tree: source.tree },
-      nextTaken: { git: source.git, host: source.host, tree: source.tree, owner: source.owner },
+      nextTaken: { git: source.git, host: source.host, tree: source.tree },
       mergedMarked: { git: source.git, host: source.host, tree: source.tree },
       finished: { git: source.git, host: source.host, tree: source.tree },
-      ownerStep: { git: source.git, host: source.host, tree: source.tree, owner: source.owner },
     },
     agreement: { named: { git: source.git, tree: source.tree } },
     task: { taken: { git: source.git, host: source.host } },
