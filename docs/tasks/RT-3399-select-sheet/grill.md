@@ -74,4 +74,12 @@ sheet of its own over it).
   different vertical lines. Read as: the date field takes its icon place from the select, and the
   trailing icon of every select and picker of the kit stands on one vertical line, measured.
 
+- **The quick ranges of the period field in the sheet join the task** — the owner's words «добавь в
+  тикет», with a screenshot of the period field's bottom sheet on a phone: the row «Сегодня ·
+  Вчера · Последние 7 дней · По…» runs past the sheet, the last chip is cut by the sheet's edge, and
+  an arrow points at the cut. The row scrolls sideways (`overflow-x: auto`, the scrollbar hidden),
+  but nothing shows that it does, so the cut reads as broken layout. Read as: in the sheet the
+  quick ranges either show that the row goes on, or all fit; the choice goes to the owner with a
+  Figma frame before code.
+
 ## What is left unclear

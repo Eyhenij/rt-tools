@@ -12,8 +12,11 @@
   over the whole set is green. Not seen live: whether «Ещё» of the tabs is measured before `play`
   clicks it, and `MoreSheet` of the page header takes a 1100 px window, since the header hides its
   nav row at 1080 px and below.
-- **Question to the owner:** the showcase on 6007 runs from the RT-3428 working copy; may it be
-  stopped and this branch's raised there for the live check? Then the live measurement of the calendar icons, which
+- **Waiting for the owner:** «стопни стенд» — the showcase of this branch on 6017 is stopped; the
+  live walk of the sheet stories stopped with it, before its first result. Measured live before
+  the stop: the calendar glyph of `rt-date-picker` and `rt-date-range` stands 17.0 px from the
+  field's right edge on every size (34, 40, 48, 56 px), the same as the select's chevron (17.0 px)
+  and the mockups. Then the live measurement of the calendar icons, which
   waits for the owner's word on the showcase at 6007 (it runs from the RT-3428 working copy).
   Done: the calendar icon of the date and period fields on the select's line (5e04df474), the
   multiselect with toggles, `look="toggles"` (scenarios
@@ -87,13 +90,24 @@ The owner added: «включи в задачу поправить дейт пи
 2. [ ] Draw the aligned date field next to the select in Figma and show it to the owner. — no
    drawing needed: the approved frames already put every trailing icon 17 px from the field's right
    edge (border 1 + padding 16) — `Select` 4645:2745, `Date Picker` 6055:603, `Date Range Picker`
-   6055:1284, `Date Time Picker` 6055:1523, `Time Picker` 6055:748. The code diverges from them.
+   6055:1284, `Date Time Picker` 6055:1523, `Time Picker` 6055:748. The code diverged from them;
+   after 5e04df474 the showcase measures 17.0 px for all three fields on every size.
 3. [ ] Move the date picker icon, and any other that diverged, onto the select's line; a spec or a
    measurement holds it. — the open button of `rt-date-picker` and `rt-date-range` is pulled out by
    its own property `--rt-<block>-open-offset` = (32 − 16) / −2 = −8 px on every field size, by the
    CSS; the live measurement waits for the showcase on 6007, which now runs from another working
    copy. The clear button keeps 24 px between its glyph and the calendar's, against 16 px at the
    select: closing it would overlap the two buttons' hit areas, so it stays and is named to the owner.
+
+### Stage revision — the quick ranges of the period field in the sheet
+
+The owner added, with a screenshot: «добавь в тикет». The row of quick ranges in the bottom sheet of
+`rt-date-range` scrolls sideways with a hidden scrollbar, and its last chip is cut by the sheet's
+edge with nothing to say the row goes on.
+
+1. [ ] Draw the fix in Figma next to `Телефон · Период` 6063:1151 — two variants: the row fades at
+   the edge that has more chips, or the chips wrap onto lines — and ask the owner which.
+2. [ ] Do the chosen variant; a spec or a measurement at 375 holds it.
 
 ### 4. Showcase
 
