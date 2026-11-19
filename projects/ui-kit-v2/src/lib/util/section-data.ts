@@ -6,8 +6,11 @@
  * каков заголовок. Сами вложенные блоки приводит лента ответа — каждый по своим правилам.
  */
 
+/** Имя типа блока секции. */
+export type TRtSectionBlockType = 'section';
+
 /** Тип блока секции. */
-export const RT_SECTION_BLOCK_TYPE: string = 'section';
+export const RT_SECTION_BLOCK_TYPE: TRtSectionBlockType = 'section';
 
 /** Сколько места в ряду сетки занимает вложенный блок. */
 export enum ERtSectionSpan {

@@ -65,7 +65,11 @@ width, two columns where they fit and one where they do not.
 
 - **The kit exports the JSON schema of the section (JSON Schema 2020-12).** It requires `blocks` with at least one item. An item requires a string `type` other than `section` and may hold `span` of `full` or `column`. `title` is optional.
 
-- **The kit exports a function that joins the schemas of the nested types into the schema of the section.** It takes the schemas by their type names and returns the section schema whose item is one of them, each with its `type` fixed to its name and with the optional `span`. An application gives the result to the model as the parameters of a tool: the bare schema names no field of a nested block.
+- **The kit exports a function that joins the schemas of the nested types into the schema of the section.** The result is the section schema whose item is one of the named schemas, each with its `type` fixed to its name and with the optional `span`. The schemas of `markdown`, `notice`, `kpi` and `table` are in the result without a word from the application. The application adds the schemas of the other types by their names, and a schema given under the name of a kit type replaces the kit's one. The result shares no node with what it was joined from. An application gives the result to the model as the parameters of a tool: the bare schema names no field of a nested block.
+
+- **The kit exports the JSON schemas of the `markdown` block and of the `notice` block.** The first requires `text`. The second requires `text` and a `severity` of the six the notice draws.
+
+- **The chart entry exports the JSON schema of the chart block.** It requires `spec` and holds the schema of the chart specification there. This schema, not the schema of the specification, is the one named `chart` when the section schema is joined: the chart block reads its specification from `spec`.
 
 - **No item the schema accepts is dropped from the list.** Whether an item is drawn or shown as the plate is decided by the rules of its own block.
 

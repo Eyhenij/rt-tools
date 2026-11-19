@@ -64,34 +64,87 @@ describe('RT_AI_CHAT_SECTION_SCHEMA', (): void => {
     });
 });
 
-describe('rtAiChatSectionSchema', (): void => {
-    it('SC-UKV-1524 — элемент blocks — одна из схем, тип закреплён за именем, span по желанию', (): void => {
-        const kpiBefore: string = JSON.stringify(RT_AI_CHAT_KPI_SCHEMA);
-        const tableBefore: string = JSON.stringify(RT_AI_CHAT_TABLE_SCHEMA);
-        const joined: TRtJsonSchema = rtAiChatSectionSchema({ kpi: RT_AI_CHAT_KPI_SCHEMA, table: RT_AI_CHAT_TABLE_SCHEMA });
-        const one: (string | number)[] = [...ITEM, 'oneOf'];
+function record(value: unknown): TRtJsonSchema {
+    return typeof value === 'object' && value !== null ? { ...value } : {};
+}
 
+function branches(schema: TRtJsonSchema): unknown[] {
+    const oneOf: unknown = field(schema, [...ITEM, 'oneOf']);
+
+    return Array.isArray(oneOf) ? oneOf : [];
+}
+
+function branch(schema: TRtJsonSchema, type: string): TRtJsonSchema {
+    return record(branches(schema).find((item: unknown): boolean => field(record(item), ['properties', 'type', 'const']) === type));
+}
+
+describe('rtAiChatSectionSchema', (): void => {
+    it('SC-UKV-1524 — свои блоки кита в схеме без слова приложения, тип закреплён, span по желанию', (): void => {
+        const joined: TRtJsonSchema = rtAiChatSectionSchema();
+
+        expect(branches(joined).map((item: unknown): unknown => field(record(item), ['properties', 'type', 'const']))).toEqual([
+            'markdown',
+            'notice',
+            'kpi',
+            'table',
+        ]);
         expect(field(joined, ['required'])).toEqual(['blocks']);
         expect(field(joined, ['properties', 'blocks', 'minItems'])).toBe(1);
         expect(field(joined, ['properties', 'title', 'type'])).toBe('string');
-        expect(field(joined, [...one, 'length'])).toBe(2);
-        expect(field(joined, [...one, 0, 'properties', 'type'])).toEqual({ const: 'kpi' });
-        expect(field(joined, [...one, 0, 'required'])).toEqual(['type', 'items']);
-        expect(field(joined, [...one, 0, 'properties', 'items'])).toEqual(field(RT_AI_CHAT_KPI_SCHEMA, ['properties', 'items']));
-        expect(field(joined, [...one, 0, 'properties', 'span', 'enum'])).toEqual(['full', 'column']);
-        expect(field(joined, [...one, 0, '$schema'])).toBeUndefined();
-        expect(field(joined, [...one, 1, 'properties', 'type'])).toEqual({ const: 'table' });
-        expect(field(joined, [...one, 1, 'properties', 'columns'])).toEqual(field(RT_AI_CHAT_TABLE_SCHEMA, ['properties', 'columns']));
+        expect(field(branch(joined, 'markdown'), ['required'])).toEqual(['type', 'text']);
+        expect(field(branch(joined, 'notice'), ['required'])).toEqual(['type', 'severity', 'text']);
+        expect(field(branch(joined, 'notice'), ['properties', 'severity', 'enum'])).toEqual([
+            'info',
+            'success',
+            'warning',
+            'danger',
+            'secondary',
+            'neutral',
+        ]);
+        expect(field(branch(joined, 'kpi'), ['required'])).toEqual(['type', 'items']);
+        expect(field(branch(joined, 'kpi'), ['properties', 'items'])).toEqual(field(RT_AI_CHAT_KPI_SCHEMA, ['properties', 'items']));
+        expect(field(branch(joined, 'kpi'), ['properties', 'span', 'enum'])).toEqual(['full', 'column']);
+        expect(field(branch(joined, 'kpi'), ['$schema'])).toBeUndefined();
+        expect(field(branch(joined, 'table'), ['properties', 'columns'])).toEqual(
+            field(RT_AI_CHAT_TABLE_SCHEMA, ['properties', 'columns'])
+        );
+    });
+
+    it('SC-UKV-1524 — схема приложения добавляется по имени, а под именем своего типа заменяет его', (): void => {
+        const map: TRtJsonSchema = { type: 'object', required: ['place'], properties: { place: { type: 'string' } } };
+        const joined: TRtJsonSchema = rtAiChatSectionSchema({
+            map,
+            markdown: { required: ['body'], properties: { body: { type: 'string' } } },
+        });
+
+        expect(field(branch(joined, 'map'), ['required'])).toEqual(['type', 'place']);
+        expect(field(branch(joined, 'map'), ['properties', 'span', 'enum'])).toEqual(['full', 'column']);
+        expect(field(branch(joined, 'markdown'), ['required'])).toEqual(['type', 'body']);
+        expect(branches(joined)).toHaveLength(5);
+    });
+
+    it('SC-UKV-1524 — результат ничего не делит с переданным и со схемой секции', (): void => {
+        const kpiBefore: string = JSON.stringify(RT_AI_CHAT_KPI_SCHEMA);
+        const sectionBefore: string = JSON.stringify(RT_AI_CHAT_SECTION_SCHEMA);
+        const joined: TRtJsonSchema = rtAiChatSectionSchema();
+        const cards: unknown = field(joined, [...ITEM, 'oneOf', 2, 'properties', 'items']);
+
+        expect(joined).not.toBe(rtAiChatSectionSchema());
+        expect(cards).toEqual(field(RT_AI_CHAT_KPI_SCHEMA, ['properties', 'items']));
+        expect(cards).not.toBe(field(RT_AI_CHAT_KPI_SCHEMA, ['properties', 'items']));
+        expect(field(joined, ['properties', 'title'])).not.toBe(field(RT_AI_CHAT_SECTION_SCHEMA, ['properties', 'title']));
+        if (typeof cards === 'object' && cards !== null) {
+            Reflect.set(cards, 'minItems', 7);
+        }
         expect(JSON.stringify(RT_AI_CHAT_KPI_SCHEMA)).toBe(kpiBefore);
-        expect(JSON.stringify(RT_AI_CHAT_TABLE_SCHEMA)).toBe(tableBefore);
+        expect(JSON.stringify(RT_AI_CHAT_SECTION_SCHEMA)).toBe(sectionBefore);
         expect(field(RT_AI_CHAT_SECTION_SCHEMA, [...ITEM, 'oneOf'])).toBeUndefined();
     });
 
-    it('SC-UKV-1524 — схема под именем section не берётся; без схем возвращается схема секции', (): void => {
-        const joined: TRtJsonSchema = rtAiChatSectionSchema({ section: RT_AI_CHAT_SECTION_SCHEMA, kpi: RT_AI_CHAT_KPI_SCHEMA });
+    it('SC-UKV-1524 — схема под именем section не берётся', (): void => {
+        const joined: TRtJsonSchema = rtAiChatSectionSchema({ section: RT_AI_CHAT_SECTION_SCHEMA });
 
-        expect(field(joined, [...ITEM, 'oneOf', 'length'])).toBe(1);
-        expect(rtAiChatSectionSchema({})).toBe(RT_AI_CHAT_SECTION_SCHEMA);
-        expect(rtAiChatSectionSchema({ section: RT_AI_CHAT_SECTION_SCHEMA })).toBe(RT_AI_CHAT_SECTION_SCHEMA);
+        expect(field(branch(joined, 'section'), ['properties'])).toBeUndefined();
+        expect(branches(joined)).toHaveLength(4);
     });
 });

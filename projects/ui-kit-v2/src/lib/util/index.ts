@@ -7,6 +7,8 @@ export * from './markdown-inline';
 export * from './markdown-parse';
 export * from './markdown-plain-text';
 export * from './markdown.model';
+export * from './markdown.schema';
+export * from './notice.schema';
 export * from './picture.model';
 export * from './quill-delta.helper';
 export * from './quill-delta.model';

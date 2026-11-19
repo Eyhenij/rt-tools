@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 4 of 4 — Two review rounds, the owner's look, the texts and the PR
 - **Done:** stages 1, 2 and 3. The feed draws a `section` block by `rt-ai-chat-section`: a heading and a grid of cells. The showcase holds 16 stories of the section with play steps and the overview page; the 16 references are taken by the image browser, 16 passed. The specs of the chat folder: 114 passed; of the schema: 6 passed.
-- **Next step:** step 4.1 — review round one by three roles.
+- **Next step:** step 4.2 — review round two by fresh readers.
 - **Uncommitted:** no
 - **Waiting for the owner:** no — the plan is approved: «Одобряю план», the threshold of 600 with it
 - **PR:** not open yet; the base is `RT-3346-ai-chat-blocks`
@@ -27,8 +27,8 @@
 - [x] 3.5 Write the `Overview.mdx` of the block with the whole `blocks` array and the note that charts in a section need `provideRtAiChatChart()`; name the block and the joining function in the chat Overview and the README.
 - [x] 3.6 Look at every story live, take the references, sweep all the stories.
 - [x] 3.7 Match the stories with the approved mockup by numbers into the table «mockup / showcase» in the progress.
-- [>] 4.1 Review round one by qa-engineer, product-strategist and goal-critic; fix the confirmed findings in one commit.
-- [ ] 4.2 Review round two by fresh readers; fix the confirmed findings in one commit; run the showcase checks of stage 3 again on the code that ships.
+- [x] 4.1 Review round one by qa-engineer, product-strategist and goal-critic; fix the confirmed findings in one commit.
+- [>] 4.2 Review round two by fresh readers; fix the confirmed findings in one commit; run the showcase checks of stage 3 again on the code that ships.
 - [ ] 4.3 Show the showcase to the owner — the two chat stories of the sign first — and write their word into `approvals.md`.
 - [ ] 4.4 Build the kit and read `dist/ui-kit-v2` for the section component and the schema export.
 - [ ] 4.5 Merge the agreement into `docs/specs/ui-kit-v2/ai-chat-section/` with its bindings; edit the chat and KPI specs and the kit spec indexes as the agreement names.
@@ -118,6 +118,40 @@
   stand in the chart entry, since the overview needs real charts, and the coverage check looks for
   a stories folder next to the component.
 
+- **Review round one: no blocker, one large finding and a set of small ones, all fixed by one
+  commit.** The three roles read the whole diff against the epic branch.
+
+  | finding | who | what was done |
+  | --- | --- | --- |
+  | the chart schema named `chart` put the specification into the root of the block, and the charts came out invalid | all three | the chart entry exports the schema of the chart block with the specification in `spec`; the README and the overview page name it |
+  | a model could not write a `markdown` or a `notice` block by the joined schema | strategist | the kit exports both schemas, and the joining function puts them into its result |
+  | the joined schema shared nodes with the given schemas and returned the constant itself | qa | the result is a new record on every call |
+  | the template of a block lost the type of its context | qa | a directive with a context check on the template |
+  | the redraw of the section was tested on the feed, the scenario speaks of the chat | goal-critic | a test on `rt-ai-chat` |
+  | the test of the feed gap carried the number of another scenario | qa | renamed to SC-UKV-1528, the scenario carries a partial-coverage mark |
+  | play steps could not fail on a block wider than its cell or on a heading past the section | qa | the block is measured by its own content width, the heading by the lines of its text |
+  | the gap of a section was measured against a text only | qa | the story of the neighbours measures a text, a section, a chart and a plate |
+  | the chat frames showed the tail of the answer | strategist | the feed is put to the start of the answer before the frame |
+  | the overview spoke of November and drew January to June | strategist | charts of its own, June to November, with the same captions |
+  | the sign of milestone G did not measure the drawing | strategist | a spec: the joined schema accepts the overview, and no block of it is a plate |
+
+- **The joining function puts all four kit types into its result, not only `markdown` and
+  `notice`.** The finding named two. The kit has the schemas of `kpi` and `table` as well, so an
+  application names only the chart and its own blocks. A schema under the name of a kit type
+  replaces the kit's one.
+
+- **Written off with a reason.** `TRtJsonSchema` stays: the signature of the joining function needs
+  it. The binding file of the agreement is rewritten at step 4.5. Whether a strict mode of a model
+  accepts `oneOf` and `not` is not checked: the tree has nothing to check it with.
+
+- **The first image run of the round was red on two chat stories, and the cause was the story
+  step.** The chat pulls its feed to the tail several times after the draw. The step now returns the
+  feed to the start until it has stood there for sixty frames. The second run: 16 passed, 14 frames
+  unchanged against the first.
+
+- **The numbers of the round.** The specs of the chat folder: 115 passed; of the chart entry: 66;
+  of `lib/util`: 90. The types and the linter are clean.
+
 ## Sessions
 
 ### 2026-11-19
@@ -134,8 +168,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 4 — The data of the section: nested views, span, copy, schema
-- **Next step:** step 1.1 — the section types and the data step in `toBlockViews`.
+- **Stage:** 4 of 4 — Two review rounds, the owner's look, the texts and the PR
+- **Next step:** step 4.1 — review round one by three roles.
 - **PR:** not open yet; the base is `RT-3346-ai-chat-blocks`
 
 The progress in full — `docs/tasks/RT-3342-ai-chat-section-grid/progress.md`; the plan lies next to it.
@@ -143,12 +177,15 @@ The progress in full — `docs/tasks/RT-3342-ai-chat-section-grid/progress.md`; 
 ### Uncommitted
 
 ```
-?? projects/ui-kit-v2/src/lib/util/section-data.ts
+none
 ```
 
 ### Commits over the main branch
 
 ```
+02f1402e5 feat(rt:ui-kit-v2): витрина блока секции — обзор месяца на четырёх ширинах и в чате
+409dca611 feat(rt:ui-kit-v2): секция в ленте ответа — заголовок и сетка в две колонки
+53ced96f8 feat(rt:ui-kit-v2): данные блока секции, его копия и схема для модели
 8754015a0 docs(rt:ui-kit-v2): план RT-3342 одобрен — данные, сетка, витрина, ревью
 149915c64 docs(rt:ui-kit-v2): договорённость о секции после ревью ролей (RT-3342)
 fe9867798 docs(rt:ui-kit-v2): договорённость о блоке секции в ответе чата (RT-3342)
@@ -166,9 +203,6 @@ a609495e8 fix(rt:ui-kit-v2): блок kpi после второго круга �
 0f80720c7 fix(rt:ui-kit-v2): блок kpi после первого круга ревью (RT-3338)
 eea80eea0 Merge remote-tracking branch 'origin/RT-3346-ai-chat-blocks' into RT-3338-ai-chat-kpi-block
 f5037fb8c feat(rt:ui-kit-v2): витрина блока kpi и числа плитки под rtl
-c869db7e3 feat(rt:ui-kit-v2): блок kpi в ответе rt-ai-chat
-1737ba4d0 Merge remote-tracking branch 'origin/main' into RT-3338-ai-chat-kpi-block
-3d8e5d19c feat(rt:ui-kit-v2): плитка пишет дельту по языку кита, компактный размер
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

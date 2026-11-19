@@ -22,6 +22,8 @@ const GRID: string = '[qa-dataid="ai-chat-section-grid"]';
 const TITLE: string = '[qa-dataid="ai-chat-section-title"]';
 const KPI_CARD: string = '[qa-dataid="ai-chat-kpi-card"]';
 const PLOT: string = 'rt-ai-chat-chart canvas, rt-ai-chat-chart svg';
+const CHART: string = '[qa-dataid="ai-chat-chart-chart"]';
+const PLATE: string = '[qa-dataid="ai-chat-block-unsupported"]';
 
 /** Шаг сетки и зазор вокруг секции в ленте. */
 const GAP: number = 16;
@@ -111,6 +113,10 @@ function expectContained(section: HTMLElement, name: string): void {
 
             expectThat(rect.width > 0 && rect.height > 0, `${name}: блок <${block.tagName.toLowerCase()}> пуст`);
             expectThat(
+                block.scrollWidth <= Math.round(rect.width) + 1,
+                `${name}: <${block.tagName.toLowerCase()}> раздвинут своим содержимым ${block.scrollWidth} > ${rect.width}`
+            );
+            expectThat(
                 rect.left >= box.left - 0.5 && rect.right <= box.right + 0.5,
                 `${name}: <${block.tagName.toLowerCase()}> за краем ячейки`
             );
@@ -118,9 +124,18 @@ function expectContained(section: HTMLElement, name: string): void {
     }
 }
 
-/** Заголовок: строка 20, 12 над сеткой, не выходит за секцию. */
+/** Строки текста узла: его собственный прямоугольник не шире хоста и переполнения не выдаёт. */
+function textRects(node: Element): DOMRect[] {
+    const range: Range = document.createRange();
+    range.selectNodeContents(node);
+
+    return Array.from(range.getClientRects());
+}
+
+/** Заголовок: строка 20, 12 над сеткой, ни одна строка его текста не выходит за секцию. */
 function expectTitle(section: HTMLElement, name: string): void {
-    const title: DOMRect | undefined = section.querySelector(TITLE)?.getBoundingClientRect();
+    const heading: Element | null = section.querySelector(TITLE);
+    const title: DOMRect | undefined = heading?.getBoundingClientRect();
     const grid: DOMRect | undefined = section.querySelector(GRID)?.getBoundingClientRect();
     const edge: DOMRect = section.getBoundingClientRect();
 
@@ -130,6 +145,21 @@ function expectTitle(section: HTMLElement, name: string): void {
     expectThat(near(title.height % 20, 0) && title.height >= 20, `${name}: заголовок ${title.height}, не кратен строке 20`);
     expectThat(near(grid.top - title.bottom, 12), `${name}: заголовок в ${grid.top - title.bottom} над сеткой, а не в 12`);
     expectThat(title.right <= edge.right + 0.5 && title.left >= edge.left - 0.5, `${name}: заголовок за краем секции`);
+    for (const line of heading === null ? [] : textRects(heading)) {
+        expectThat(line.left >= edge.left - 0.5 && line.right <= edge.right + 0.5, `${name}: текст заголовка за краем секции`);
+    }
+}
+
+/** Обзор нарисован целиком: оба графика с площадью и ни одной заглушки. */
+function expectOverviewDrawn(section: HTMLElement, name: string): void {
+    const charts: DOMRect[] = Array.from(section.querySelectorAll(CHART)).map((chart: Element): DOMRect => chart.getBoundingClientRect());
+
+    expectThat(charts.length === 2, `${name}: графиков ${charts.length}, а не 2`);
+    expectThat(
+        charts.every((rect: DOMRect): boolean => rect.width > 100 && rect.height > 100),
+        `${name}: график нарисован без площади`
+    );
+    expectThat(section.querySelectorAll(PLATE).length === 0, `${name}: в обзоре есть заглушка`);
 }
 
 /** Сколько карточек KPI стоит в первом ряду блока. */
@@ -162,6 +192,14 @@ async function measure(root: HTMLElement, expected: Readonly<Record<number, read
     }
 }
 
+/** Меряет обзор каждой ширины и требует, чтобы он был нарисован целиком. */
+async function measureOverview(root: HTMLElement, expected: Readonly<Record<number, readonly (readonly number[])[]>>): Promise<void> {
+    await measure(root, expected);
+    for (const key of Object.keys(expected)) {
+        expectOverviewDrawn(await sectionAt(root, Number(key)), key);
+    }
+}
+
 /** Обзор в одну колонку: пять блоков друг под другом. */
 function stacked(width: number): readonly (readonly number[])[] {
     return [[width], [width], [width], [width], [width]];
@@ -174,7 +212,7 @@ function stacked(width: number): readonly (readonly number[])[] {
 export const Widths: TStory = {
     args: { part: 'widths' },
     play: async ({ canvasElement }: IPlayContext): Promise<void> => {
-        await measure(canvasElement, {
+        await measureOverview(canvasElement, {
             328: stacked(328),
             386: stacked(386),
             640: [[640], [640], [312, 312], [640]],
@@ -185,11 +223,11 @@ export const Widths: TStory = {
     },
 };
 
-/** Порог двух колонок: 599 — одна, 600 — две по 292 — SC-UKV-1509. */
+/** Порог двух колонок: 599 — одна, 600 — две по 292 — SC-UKV-1510. */
 export const Threshold: TStory = {
     args: { part: 'threshold' },
     play: async ({ canvasElement }: IPlayContext): Promise<void> =>
-        measure(canvasElement, { 599: stacked(599), 600: [[600], [600], [292, 292], [600]] }),
+        measureOverview(canvasElement, { 599: stacked(599), 600: [[600], [600], [292, 292], [600]] }),
 };
 
 /** Три графика при 926: третий один во втором ряду, шириной в столбец, у начала строки — SC-UKV-1513. */
@@ -243,7 +281,7 @@ export const Plates: TStory = {
         sections.forEach((section: HTMLElement, index: number): void => {
             expectRows(section, [[455, 455]], `заглушка ${index + 1}`);
             expectContained(section, `заглушка ${index + 1}`);
-            expectThat(section.querySelectorAll('[qa-dataid="ai-chat-block-unsupported"]').length === 1, `заглушка ${index + 1}: не одна`);
+            expectThat(section.querySelectorAll(PLATE).length === 1, `заглушка ${index + 1}: не одна`);
         });
     },
 };
@@ -257,21 +295,39 @@ export const KpiInCell: TStory = {
     },
 };
 
-/** Секция, текст и секция без заголовка: соседи в 16 друг от друга, ряды внутри в 16 — SC-UKV-1528. */
+/** Имя блока ленты для сообщения проверки. */
+function blockName(block: HTMLElement): string {
+    return block.matches(SECTION) ? 'секция' : `<${block.tagName.toLowerCase()}>`;
+}
+
+/**
+ * Соседи по ленте: секция в 16 от текста, от другой секции, от графика и от заглушки; блоки без
+ * секции рядом — в обычных 8. Секция первой в ленте стоит у её верха, ряды внутри в 16 — SC-UKV-1528.
+ */
 export const TwoSections: TStory = {
     args: { part: 'two' },
     play: async ({ canvasElement }: IPlayContext): Promise<void> => {
-        const sections: HTMLElement[] = await settledAll(canvasElement, SECTION, 2);
-        const text: DOMRect | undefined = canvasElement.querySelector('[qa-dataid="ai-chat-block-markdown"]')?.getBoundingClientRect();
-        const [first, second]: DOMRect[] = sections.map((section: HTMLElement): DOMRect => section.getBoundingClientRect());
+        const sections: HTMLElement[] = await settledAll(canvasElement, SECTION, 4);
+        const feed: HTMLElement | null = canvasElement.querySelector<HTMLElement>('rt-ai-chat-blocks');
+        const blocks: HTMLElement[] = Array.from(feed?.children ?? []).filter(
+            (node: Element): node is HTMLElement => node instanceof HTMLElement
+        );
+        const rects: DOMRect[] = blocks.map((block: HTMLElement): DOMRect => block.getBoundingClientRect());
         const grid: DOMRect | undefined = sections[1].querySelector(GRID)?.getBoundingClientRect();
 
-        if (text === undefined || grid === undefined) {
-            throw new Error('две секции: текста между ними или сетки нет');
+        if (feed === null || grid === undefined) {
+            throw new Error('соседи секции: ленты или сетки нет');
         }
-        expectThat(near(text.top - first.bottom, GAP), `текст в ${text.top - first.bottom} под секцией, а не в ${GAP}`);
-        expectThat(near(second.top - text.bottom, GAP), `секция в ${second.top - text.bottom} под текстом, а не в ${GAP}`);
-        expectThat(near(grid.top, second.top), 'секция без заголовка: над сеткой есть зазор');
+        expectThat(blocks.length === 8, `соседи секции: блоков ${blocks.length}, а не 8`);
+        expectThat(near(rects[0].top, feed.getBoundingClientRect().top), 'секция первой в ленте: над ней есть зазор');
+        expectThat(near(rects[rects.length - 1].bottom, feed.getBoundingClientRect().bottom), 'последний блок ленты: под ним есть зазор');
+        blocks.slice(1).forEach((block: HTMLElement, at: number): void => {
+            const want: number = block.matches(SECTION) || blocks[at].matches(SECTION) ? GAP : GAP / 2;
+            const gap: number = rects[at + 1].top - rects[at].bottom;
+
+            expectThat(near(gap, want), `${blockName(blocks[at])} → ${blockName(block)}: зазор ${gap}, а не ${want}`);
+        });
+        expectThat(near(grid.top, sections[1].getBoundingClientRect().top), 'секция без заголовка: над сеткой есть зазор');
         expectRows(sections[1], [[386], [386]], 'вторая секция');
         expectTitle(sections[0], 'первая секция');
     },
@@ -281,7 +337,7 @@ export const TwoSections: TStory = {
 export const Rtl: TStory = {
     args: { part: 'rtl' },
     play: async ({ canvasElement }: IPlayContext): Promise<void> => {
-        await measure(canvasElement, { 926: [[926], [926], [455, 455], [926]] });
+        await measureOverview(canvasElement, { 926: [[926], [926], [455, 455], [926]] });
         const cells: HTMLElement[] = Array.from((await sectionAt(canvasElement, 926)).querySelectorAll<HTMLElement>(CELL));
 
         expectThat(cells[2].getBoundingClientRect().left > cells[3].getBoundingClientRect().left, 'справа налево: первый график не справа');
@@ -295,6 +351,31 @@ interface IChatWant {
     readonly name: string;
     /** Графики рядом на одном верхе или друг под другом. */
     readonly columns: 1 | 2;
+}
+
+function nextFrame(): Promise<void> {
+    return new Promise<void>((resolve: () => void): void => {
+        requestAnimationFrame((): void => resolve());
+    });
+}
+
+/**
+ * Ставит ленту чата на начало ответа и ждёт, пока она там устоит. Чат после отрисовки ещё
+ * несколько раз подтягивает ленту к хвосту, пока не увидит, что читатель ушёл вверх сам, поэтому
+ * одной прокрутки мало: лента возвращается на начало, пока не простоит там шестьдесят кадров.
+ */
+async function scrolledToStart(feed: HTMLElement): Promise<void> {
+    let held: number = 0;
+
+    for (let frame: number = 0; frame < 600 && held < 60; frame += 1) {
+        if (feed.scrollTop === 0) {
+            held += 1;
+        } else {
+            feed.scrollTop = 0;
+            held = 0;
+        }
+        await nextFrame();
+    }
 }
 
 /** Меряет ответ в чате: колонки графиков, блоки в ячейках, заголовок и лента, которую секция не раздвигает. */
@@ -325,6 +406,10 @@ async function measureChat(root: HTMLElement, want: IChatWant): Promise<void> {
     }
     expectContained(section, want.name);
     expectTitle(section, want.name);
+    expectOverviewDrawn(section, want.name);
+    // Кадр снимается с начала ответа: с хвоста в нём видна только таблица, а заголовок и KPI — нет.
+    await scrolledToStart(feed);
+    expectThat(feed.scrollTop === 0, `${want.name}: лента вернулась к хвосту ответа`);
 }
 
 /** Узкая панель чата: обзор в одну колонку, заголовок перенесён, лента не раздвинута — SC-UKV-1508, SC-UKV-1520. */

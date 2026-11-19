@@ -1,6 +1,6 @@
 import { IRtAiChat } from '../../../../../../rich-editor/lib/components/ai-chat/rt-ai-chat.model';
 import { ERtAiChatChartKind } from '../../../../ai-chat-chart.enum';
-import { RT_AI_CHAT_CHART_SAMPLES } from '../../../../ai-chat-chart.samples';
+import { IRtAiChatChart } from '../../../../ai-chat-chart.model';
 
 /** Случай матрицы: подпись под ячейкой, ширина ленты, блоки и направление письма. */
 export interface IAiChatSectionCase {
@@ -29,9 +29,36 @@ const KPI: IRtAiChat.NestedBlock = {
     ],
 };
 
-const REVENUE: IRtAiChat.NestedBlock = { type: 'chart', spec: RT_AI_CHAT_CHART_SAMPLES[ERtAiChatChartKind.LINE] };
+/** Полгода, которые закрывает ноябрь: оба графика обзора подписаны одинаково и стоят на одной высоте. */
+const MONTHS: readonly string[] = ['Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя'];
 
-const BOOKINGS: IRtAiChat.NestedBlock = { type: 'chart', spec: RT_AI_CHAT_CHART_SAMPLES[ERtAiChatChartKind.BAR] };
+const HALF_YEAR: string = 'Июнь — ноябрь 2026';
+
+function monthly(name: string, values: readonly number[]): IRtAiChatChart.Series {
+    return { name, points: MONTHS.map((x: string, index: number): IRtAiChatChart.Point => ({ x, y: values[index] })) };
+}
+
+const REVENUE_SPEC: IRtAiChatChart.Spec = {
+    kind: ERtAiChatChartKind.LINE,
+    title: 'Выручка по месяцам',
+    subtitle: `${HALF_YEAR}, тыс. ₽`,
+    xLabel: 'Месяц',
+    yLabel: 'тыс. ₽',
+    series: [monthly('Выручка', [880, 960, 1010, 940, 1102, 1240]), monthly('Расходы', [610, 640, 700, 660, 720, 760])],
+};
+
+const BOOKINGS_SPEC: IRtAiChatChart.Spec = {
+    kind: ERtAiChatChartKind.BAR,
+    title: 'Брони по месяцам',
+    subtitle: HALF_YEAR,
+    xLabel: 'Месяц',
+    yLabel: 'Брони',
+    series: [monthly('Брони', [118, 131, 140, 122, 137, 148])],
+};
+
+const REVENUE: IRtAiChat.NestedBlock = { type: 'chart', spec: REVENUE_SPEC };
+
+const BOOKINGS: IRtAiChat.NestedBlock = { type: 'chart', spec: BOOKINGS_SPEC };
 
 const TABLE: IRtAiChat.NestedBlock = {
     type: 'table',
@@ -102,11 +129,19 @@ export const AI_CHAT_SECTION_KPI_CASES: readonly IAiChatSectionCase[] = [
     { name: '640 — KPI в столбце', width: 640, blocks: [section([{ ...KPI, span: 'column' }, REVENUE], 'KPI в узкой ячейке')] },
 ];
 
-/** Секция, текст, секция без заголовка: соседи по ленте в 16 друг от друга. */
+/**
+ * Соседи секции по ленте: текст, другая секция, график и заглушка — каждый в 16 от секции; заглушка
+ * и текст после неё — в обычных 8. Секция стоит и первой в ленте.
+ */
 export const AI_CHAT_SECTION_TWO: readonly IRtAiChat.Block[] = [
     section([KPI], 'Итоги ноября'),
     { type: 'markdown', text: 'Ниже — как менялась выручка и брони.' },
     section([REVENUE, BOOKINGS]),
+    section([SUMMARY], 'Коротко'),
+    BOOKINGS,
+    section([SUMMARY]),
+    { type: 'map', place: 'Сочи' },
+    { type: 'markdown', text: 'Карту приложение не зарегистрировало.' },
 ];
 
 /** Обзор под `dir="rtl"`: колонки зеркалятся. */

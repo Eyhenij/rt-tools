@@ -6,6 +6,7 @@ import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RT_KIT_TRANSLATOR, RtKitLabelPipe, RtMarkdownTextComponent, RtMessageComponent, TRtKitTranslator } from '@rt-tools/ui-kit-v2';
 
 import { IRtAiChat } from '../rt-ai-chat.model';
+import { RtAiChatBlockCellDirective } from './rt-ai-chat-block-cell.directive';
 import { toBlockViews } from './rt-ai-chat-blocks.logic';
 import { RT_AI_CHAT_BLOCK_RENDERERS } from './rt-ai-chat-blocks.providers';
 import { RtAiChatKpiComponent } from './kpi/rt-ai-chat-kpi.component';
@@ -40,6 +41,7 @@ const BEM_BLOCK: string = 'rt-ai-chat-blocks';
         RtAiChatTableComponent,
         RtAiChatKpiComponent,
         RtAiChatSectionComponent,
+        RtAiChatBlockCellDirective,
 
         // pipes
         RtKitLabelPipe,

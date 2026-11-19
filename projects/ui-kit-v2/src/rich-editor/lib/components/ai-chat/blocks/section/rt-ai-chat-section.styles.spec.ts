@@ -66,7 +66,7 @@ describe('стили секции', (): void => {
         expect(title).toContain('overflow-wrap: anywhere');
     });
 
-    it('SC-UKV-1510 — лента добавляет свой шаг перед секцией и перед блоком после неё', (): void => {
+    it('SC-UKV-1528 — лента добавляет свой шаг перед секцией и перед блоком после неё', (): void => {
         const feed: string = sass.compile(BLOCKS, { loadPaths: [STYLES] }).css;
         const selector: string = '* + .rt-ai-chat-blocks__section, .rt-ai-chat-blocks__section + :not(.rt-ai-chat-blocks__section)';
 

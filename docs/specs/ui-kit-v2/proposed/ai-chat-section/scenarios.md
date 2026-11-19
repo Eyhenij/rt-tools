@@ -139,10 +139,19 @@ Then the section draws the three blocks in their order
 
 ### SC-UKV-1524 — the schemas of the nested types are joined into the schema of the section
 
-Given the schemas of the KPI block and of the table block under the names `kpi` and `table`
+Given the joining function called without a schema
+When its result is read
+Then the item of `blocks` is one of the schemas of `markdown`, `notice`, `kpi` and `table`, each with its `type` fixed to its name and the optional `span`
+
+Given the schema of the chart block under the name `chart` and the answer «обзор месяца»
+When the joining function is called with it
+Then the result accepts the section and each of its five blocks, and both charts are ready to be drawn
+And it rejects a chart whose specification lies in the root of the block
+
+Given a schema under the name of an application type and a schema under the name `markdown`
 When the joining function is called with them
-Then the item of `blocks` is one of the two schemas, each with its `type` fixed to its name and the optional `span`
-And the given schemas are not changed
+Then the first is added as one more schema and the second replaces the kit's one
+And the result shares no node with the given schemas or with the schema of the section
 
 ### SC-UKV-1525 — a nested block is drawn by the rules of the feed
 
@@ -176,8 +185,9 @@ When they are drawn
 Then the text stands 16 under the first section and 16 above the second, and the rows inside a section are 16 apart
 And the section without a title has no gap above its grid
 
-Not covered: it cannot be closed by a test with an identifier — the gaps come from the styles. Held
-by the play step of the showcase story of two sections.
+Coverage: partial — the test reads the two style rules that give the gap, not the drawn distance.
+The distance is measured by the play step of the showcase story of two sections: between a section
+and a text, another section, a chart and a plate.
 
 ### SC-UKV-1529 — the dark theme draws the overview in the dark palette
 
