@@ -53,6 +53,15 @@ skill_for() {
 
                 */.claude/*) return 0 ;;
 
+                # The task folder: the first edit of any task. The loop of a task stands on top
+                # of the course of a task, and both are demanded here — the default gives only
+                # the second.
+                */docs/tasks/*)
+                    printf '%s\n' 'task-flow'
+                    printf '%s\n' 'task-delivery-loop'
+                    return 0
+                    ;;
+
                 # The release of a package without a framework: the check of the built package, the
                 # check of its wiring and the publication workflows. The branch stands before the
                 # tree's checks below: `check-package-release.mjs` is one of them and would fall to
@@ -332,6 +341,19 @@ skill_for() {
                     return 0
                     ;;
             esac
+            ;;
+        bash)
+            # The commands that take a task, a branch and a delivery: the loop of a task is loaded
+            # before the first of them. Printed on top of the default, which adds the delivery rule.
+            if command -v rt_gate_invokes >/dev/null 2>&1; then
+                if rt_gate_invokes "$target" "[^[:space:]]*task:new" \
+                    || rt_gate_invokes "$target" "git[[:space:]]+checkout[[:space:]]+-b" \
+                    || rt_gate_invokes "$target" "git[[:space:]]+switch[[:space:]]+-c" \
+                    || rt_gate_invokes "$target" "git[[:space:]]+push" \
+                    || rt_gate_invokes "$target" "gh[[:space:]]+pr[[:space:]]+create"; then
+                    printf '%s\n' 'task-delivery-loop'
+                fi
+            fi
             ;;
     esac
 

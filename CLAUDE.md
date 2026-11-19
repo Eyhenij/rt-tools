@@ -89,8 +89,9 @@ them is called in this tree sits in `implementation.md` next to the rule; patter
 (`<rule>-<what>`) carry the ready-made code. Some rules are this tree's own, because the package
 carries only what a tree that installs it can execute: `rt-tools-storybook` for the showcase,
 `ui-component-tests` for the ready-made spec and the visual snapshot, `cargo-triage` with
-`cargo-triage-mark` for the intake of reports, and `agent-kit-source` for editing the rule
-package itself — alongside the `/agent-kit-digest` and `/rules-review` commands. What may live
+`cargo-triage-mark` for the intake of reports, `task-delivery-loop` for the loop every task goes
+through — a live check and two review rounds before the push, loaded first — and
+`agent-kit-source` for editing the rule package itself — alongside the `/agent-kit-digest` and `/rules-review` commands. What may live
 in the package and what stays here is decided by the boundary test in
 `docs/specs/agent-kit/package-boundary/`, and `npm run check:boundary` keeps it.
 

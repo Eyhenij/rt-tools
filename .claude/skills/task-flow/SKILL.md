@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the course of one task from the request to the merge. Load at the start of any work, when editing task folders and product agreements, and on return to an unfinished task. Patterns task-flow-start, -resume, -close, -archive. Epics — epic-flow, turns — turn-conduct.
 ---
-<!-- rt-kit v0.37.0 · rules/task-flow.md · b6f4cbf99772 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/task-flow.md · fa67cf481b61 · правится надстройкой, не здесь -->
 
 # Work conduct — how it works here
 
@@ -121,6 +121,7 @@ flowchart TD
 ```
 
 ## How the law applies here
+
 - **Editing application code is refused until the work has reached a state in which code is
   edited.** The guard demands three things: a task folder by branch name, a plan in it and a
   declared state. The agreement has a guard of its own on the same events.
@@ -313,3 +314,20 @@ nothing counts; it is held by reading both texts in a row on every such edit.
 - `task-flow-cycle` — an edit chosen by the report and judged by the next one.
 - `task-flow-graph` — where the tree names the trait `graph`: the freshness check, the domain inventory and
   what the graph never answers.
+
+## Every task goes through the delivery loop
+
+This section is the tree's own. The package rule leads one task from the request to the merge and
+names no review before the push. The owner's word of 19.11.2026 makes the loop of the rule
+`task-delivery-loop` the way every task of this tree is led.
+
+- **The rule `task-delivery-loop` is loaded as the first action of work on a task.** It stands on
+  top of this rule: the states and the guards stay, the loop adds the live check and the review.
+  The gate demands it on an edit of a task folder and on the delivery commands.
+- **Every change of the session passes two review rounds before the push.** Each round reads the
+  whole diff of the branch against its base, by fresh readers, and its confirmed findings are fixed
+  in the same branch. A push and a PR without both rounds are a miss, and a task closed without
+  them is reopened.
+- **The loop has no exceptions.** A task of texts, a config or a tool setting goes through it like
+  one with screens, and so does the task that opens an epic. The rule is loaded before the first
+  command of the task, before the epic is declared and before the branch is taken.
