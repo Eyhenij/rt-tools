@@ -47,6 +47,65 @@ task, a line per finding, each with its address.
   task branch past the epic branch. So RT-2750 merged main six times and took in the broken #3383.
   **Address:** rules layer — the text of the second tier in the delivery check.
 
+## RT-3335 — the chart block of the chat answer
+
+- **The chat protocol does not mark the end of a tool call.** The reducer collects the argument
+  deltas and handles the end event with nothing, and a tool call holds only its id, name and
+  arguments. An application on the protocol package cannot tell when to clear `pending` of a
+  chart block, and has to guess by an unparsable string. **Address:** names of this tree — the
+  spec of the chat protocol package.
+- **No task of the epic says who answers a chart tool call.** If the chart is a browser tool of
+  the registry, the run waits for its answer before the model goes on; the chart block only draws.
+  Not checked by a run of the controller. **Address:** names of this tree — the epic plan.
+- **Main merged a change of the push set without its hook test.** #3387 stopped raising the heavy
+  steps for the workflow files, and the probe of SC-AK-569 still expects the whole set for them;
+  the hook tests are red on every branch that merges main. **Address:** names of this tree — the
+  push set of the tree and its hook test.
+
+## RT-3335 — the chart block of the assistant chat
+
+- **The wrapper sample of the storybook pattern holds an inline template the reuse check
+  refuses.** The section «The wrapper component» of `rt-tools-storybook-story` shows `template:`
+  inside the class, and `check-reuse` refuses it by the signal `inline-template`. The Playground
+  wrapper copied the sample, the push gate turned red, and the move to `.html` cost a second full
+  run of about 25 minutes. Proposed: the sample with `templateUrl`, and a frequent miss «a new
+  wrapper keeps its template in its own `.html`; older wrappers in `tools/reuse-allowlist.json` are
+  no sample». **Address:** names of this tree — the pattern `rt-tools-storybook-story`.
+- **A drawing carried over from an earlier task's mockup is a copy of a copy, and it keeps the
+  earlier width.** The chart drawing came from the RT-2750 mockup. Its legend gap drifted to 8
+  against 12 in code, and only the 22-number match found it; its width of 328 made the owner ask
+  for the wide frames. Proposed for the first article of the rule: «A drawing carried over from an
+  earlier task's mockup is measured the same way before it goes on the sheet; its parts are
+  stretched to the new frame, and a frame is drawn for every width the block meets.»
+  **Address:** rules layer — the rule `mockups`.
+- **The task key never opens a commit subject here.** `subject-case` of the commitlint preset
+  refused a subject that started with `RT-2750`. Proposed for the companion of `git-workflow`,
+  after the edit area: «the key `RT-<number>` never opens the subject; the subject starts with a
+  lowercase Russian word». The companion stands at 326 of 330 lines. **Address:** names of this
+  tree — the companion of `git-workflow`.
+
+## RT-3336 — the data table under the chart block
+
+- **A node that hugs its text is compared by its build, not by its width; one fixed number is
+  followed by the whole measurement anew.** The closed toggle came out 169 against 170 with equal
+  padding, gap, icon, font and height; `border-box` on a cell fixed the row height and silently
+  narrowed the numeric columns. Proposed: two articles after «The 100% is a match of numbers» with
+  «Not checked by anything» lines in the companion. **Address:** names of this tree — the rule
+  `kit-approval`.
+- **The conversation guard counts its own refusal and a rules-gate refusal as a blocker.** After
+  a rules-gate refusal, a loaded rule and a look at the showcase, the approval question was refused
+  twice. Proposed: `after_refusal` skips «BLOCKED by grill-gate» and «Refused by the rules gate», and
+  a scenario for it. **Address:** rules layer — the hook `grill-gate.sh` of the package.
+- **The record of loaded rules is removed after the compaction, and a load made right after it is
+  lost.** `browser-verification` was demanded twice. Proposed: the rearm hook cuts the record by
+  time instead of removing it. Cause not proved. **Address:** rules layer — the hooks
+  `skill-gate-rearm.sh` and `skill-loaded.sh`.
+- **`overflow-wrap: anywhere` narrows an auto-sized table column to one letter; a cell's height
+  excludes its border.** Both defects were seen in the showcase, not by tests. **Address:** rules
+  layer — the cold part of `styling-bem`.
+- **One foreign PR the host cannot diff (HTTP 422) drops the whole queue audit.** Proposed: a line
+  in the rule and a fallback read per PR. **Address:** rules layer — the rule `queue-audit`.
+
 ## Left unresolved
 
 - **All findings above** — wait for the owner's decision at the end of the epic.

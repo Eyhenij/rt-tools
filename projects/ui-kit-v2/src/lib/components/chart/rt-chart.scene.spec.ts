@@ -25,7 +25,39 @@ const TREE: readonly IRtChart.Node[] = [
     { name: 'Услуги', children: [{ name: 'Спа', value: 30 }] },
 ];
 
+/** Левый край и ширина прямоугольника столбика из его пути `M x,y h w …`. */
+function barBoxes(scene: IRtChartScene): Array<{ left: number; right: number }> {
+    return scene.paths
+        .filter((path: IRtChartPath): boolean => path.key.startsWith('bar-'))
+        .map((path: IRtChartPath): { left: number; right: number } => {
+            const match: RegExpExecArray | null = /^M([-\d.]+),[-\d.]+h([-\d.]+)/.exec(path.d);
+            const left: number = Number(match?.[1] ?? 0);
+
+            return { left, right: left + Number(match?.[2] ?? 0) };
+        });
+}
+
 describe('rtChartScene', (): void => {
+    it('SC-UKV-1382 — 60 столбиков в узком поле не налезают друг на друга и не выходят за поле', (): void => {
+        const categories: string[] = Array.from({ length: 60 }, (_: unknown, index: number): string => `Н${index + 1}`);
+        const many: IRtChartScene = draw({
+            kind: 'cartesian',
+            categories,
+            series: [{ name: 'Брони', type: 'bar', values: categories.map((_: string, index: number): number => 10 + index) }],
+        });
+        const boxes: Array<{ left: number; right: number }> = barBoxes(many);
+        const few: Array<{ left: number; right: number }> = barBoxes(
+            draw({ kind: 'cartesian', categories: ['Янв', 'Фев'], series: [{ name: 'Брони', type: 'bar', values: [3, 5] }] })
+        );
+
+        expect(boxes).toHaveLength(60);
+        expect(boxes.every((box: { left: number; right: number }, i: number): boolean => i === 0 || box.left >= boxes[i - 1].right)).toBe(
+            true
+        );
+        expect(boxes[59].right).toBeLessThanOrEqual(SIZE.width);
+        expect(few[0].right - few[0].left).toBe(16);
+    });
+
     it('SC-UKV-1340 — наибольшее значение 90 даёт ось от 0 до 100 с шагом 25', (): void => {
         const axis: IRtChartAxis = rtChartAxis(0, 90, 4);
 

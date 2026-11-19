@@ -4,7 +4,7 @@ import { computed, input, ChangeDetectionStrategy, Component, InputSignal, Signa
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { parseMarkdown } from '@rt-tools/ui-kit-v2/core';
-import { ERtMarkdownBlock, ERtMarkdownInline, IRtMarkdownBlockNode } from '@rt-tools/ui-kit-v2/core';
+import { ERtMarkdownAlign, ERtMarkdownBlock, ERtMarkdownInline, IRtMarkdownBlockNode, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 
 const BEM_BLOCK: string = 'rt-markdown-text';
@@ -46,6 +46,12 @@ export class RtMarkdownTextComponent {
 
     /** Роды кусков строки в шаблоне. */
     protected readonly inlineKind: typeof ERtMarkdownInline = ERtMarkdownInline;
+
+    /** Края выравнивания столбца таблицы в шаблоне. */
+    protected readonly align: typeof ERtMarkdownAlign = ERtMarkdownAlign;
+
+    /** Имя окна прокрутки таблицы для чтения с экрана — то же, что у блока таблицы ответа. */
+    protected readonly tableLabel: Signal<string> = rtKitLabel('aiTableLabel');
 
     protected readonly blocks: Signal<readonly IRtMarkdownBlockNode[]> = computed((): readonly IRtMarkdownBlockNode[] =>
         parseMarkdown(this.text())

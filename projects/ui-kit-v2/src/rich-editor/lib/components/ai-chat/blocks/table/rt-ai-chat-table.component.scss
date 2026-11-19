@@ -1,0 +1,89 @@
+@use '../../../../../../styles/mixins' as kv;
+
+@layer rt-kit.components {
+    .rt-ai-chat-table {
+        --rt-ai-chat-table-total-border-width: var(--rt-border-width-thin);
+
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        gap: var(--rt-space-2);
+
+        /* Заголовок как у графика, но переносится по словам: обрезанный заголовок таблицы не прочесть. */
+        &__title {
+            margin: 0;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-semibold);
+            overflow-wrap: break-word;
+        }
+
+        /* Широкая таблица прокручивается вбок, высокая — вниз под шапкой; лента не раздвигается. */
+        &__scroll {
+            overflow: auto;
+            min-width: 0;
+            max-height: 200px;
+        }
+
+        &__table {
+            @include kv.chat-table;
+
+            /* Без текстового столбца забирать остаток некому: таблица по своему содержимому. */
+            &--content {
+                width: auto;
+            }
+        }
+
+        &__row {
+            vertical-align: middle;
+
+            &--total {
+                border-top: var(--rt-ai-chat-table-total-border-width) solid var(--rt-color-border-default);
+            }
+        }
+
+        &__cell {
+            @include kv.chat-table-cell;
+
+            &--end {
+                @include kv.chat-table-cell-end;
+            }
+
+            /* Первый текстовый столбец забирает остаток ширины, остальные — по содержимому. */
+            &--fill {
+                width: 100%;
+            }
+
+            /* Шапка стоит у верха окна прокрутки, строки уходят под неё. */
+            &--head {
+                @include kv.chat-table-head-cell;
+
+                position: sticky;
+                top: 0;
+            }
+
+            &--negative {
+                color: var(--rt-color-state-error-text);
+            }
+
+            &--total {
+                font-weight: var(--rt-font-weight-semibold);
+            }
+        }
+
+        /* Текстовая кнопка под таблицей стоит по своей ширине, не во всю строку. */
+        &__copy {
+            align-self: flex-start;
+        }
+
+        /* «Скопировано» для чтения с экрана: на глаз его уже показывает кнопка. */
+        &__status {
+            position: absolute;
+            overflow: hidden;
+            width: 1px;
+            height: 1px;
+            clip-path: inset(50%);
+            white-space: nowrap;
+        }
+    }
+}

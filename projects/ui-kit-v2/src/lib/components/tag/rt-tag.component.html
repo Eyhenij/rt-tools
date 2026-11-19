@@ -1,38 +1,48 @@
+<!--
+    У точки подписи нет: значение — её имя для читалок и подсказка при наведении всегда, а не только
+    при переполнении. Значки и крестик точка не рисует.
+-->
 <span
     rtBlock="rt-tag"
     qa-dataid="tag"
     [attr.data-severity]="severity()"
+    [attr.role]="isDot() ? 'img' : null"
+    [attr.aria-label]="isDot() ? value() : null"
+    [attr.tabindex]="isDot() ? 0 : null"
+    [rtTooltip]="isDot() ? value() : ''"
     [rtMod]="{
         severity: severity(),
         size: size(),
         appearance: appearance(),
-        closable: closable(),
+        closable: closable() && !isDot(),
     }">
-    @if (icon(); as iconName) {
-        <rt-icon rtElem="icon" [size]="iconSize()" [name]="iconName" />
-    }
-    <!--
-        Целое значение показывает подсказка, и только когда подписи не хватило места:
-        урезанный текст без подсказки читается как целый — узнать, где он на деле кончается,
-        человеку неоткуда. Пустой текст директиву выключает.
-    -->
-    <span rtElem="text" qa-dataid="tag-text" #text [rtTooltip]="overflowing() ? value() : ''">
-        @for (part of parts(); track $index) {
-            <span rtElem="part" [rtMod]="{ match: part.matched }">{{ part.text }}</span>
+    @if (!isDot()) {
+        @if (icon(); as iconName) {
+            <rt-icon rtElem="icon" [size]="iconSize()" [name]="iconName" />
         }
-    </span>
-    @if (iconEnd(); as iconEndName) {
-        <rt-icon rtElem="icon-end" [size]="iconSize()" [name]="iconEndName" />
-    }
-    @if (closable()) {
-        <rt-icon-button
-            rtElem="close"
-            qa-dataid="tag-close"
-            icon="ico-close"
-            variant="ghost"
-            size="sm"
-            radius="full"
-            [ariaLabel]="t().uiRemove"
-            (clicked)="onClose($event)" />
+        <!--
+            Целое значение показывает подсказка, и только когда подписи не хватило места:
+            урезанный текст без подсказки читается как целый — узнать, где он на деле кончается,
+            человеку неоткуда. Пустой текст директиву выключает.
+        -->
+        <span rtElem="text" qa-dataid="tag-text" #text [rtTooltip]="overflowing() ? value() : ''">
+            @for (part of parts(); track $index) {
+                <span rtElem="part" [rtMod]="{ match: part.matched }">{{ part.text }}</span>
+            }
+        </span>
+        @if (iconEnd(); as iconEndName) {
+            <rt-icon rtElem="icon-end" [size]="iconSize()" [name]="iconEndName" />
+        }
+        @if (closable()) {
+            <rt-icon-button
+                rtElem="close"
+                qa-dataid="tag-close"
+                icon="ico-close"
+                variant="ghost"
+                size="sm"
+                radius="full"
+                [ariaLabel]="t().uiRemove"
+                (clicked)="onClose($event)" />
+        }
     }
 </span>

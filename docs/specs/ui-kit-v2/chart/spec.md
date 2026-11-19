@@ -45,6 +45,7 @@ take it from this entry.
 - **An empty chart shows the empty state of the kit with the label `chartEmpty` instead of axes.**
 - **The chart saves itself as a PNG file by a public method, with the background of its theme and its legend.**
 - **A chart in a container of zero width waits for the container to get a size and draws then.**
+- **A bar is never wider than its category column: many categories narrow the bars instead of laying them over each other.**
 
 ## What is out of scope
 

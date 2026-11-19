@@ -1,0 +1,62 @@
+<ng-template #cases let-items>
+    <app-story-row slotWidth="328px" [items]="items" [itemLabel]="caseLabel">
+        <ng-template let-c><rt-ai-chat-blocks style="display: block; width: 328px" [blocks]="c.blocks" /></ng-template>
+    </app-story-row>
+</ng-template>
+
+@switch (part) {
+    @case ('narrow') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: widthCases }" />
+    }
+    @case ('wide') {
+        <div data-story-root style="width: 328px">
+            <rt-ai-chat-blocks style="display: block; width: 328px" [blocks]="wide" />
+        </div>
+    }
+    @case ('total') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: totalCases }" />
+    }
+    @case ('negatives') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: negativeCases }" />
+    }
+    @case ('scrolled') {
+        <div data-story-root style="width: 328px">
+            <rt-ai-chat-blocks style="display: block; width: 328px" [blocks]="tall" />
+        </div>
+    }
+    @case ('copied') {
+        <div data-story-root style="width: 328px">
+            <rt-ai-chat-blocks style="display: block; width: 328px" [blocks]="revenue" />
+        </div>
+    }
+    @case ('empty') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: emptyCases }" />
+    }
+    @case ('invalid') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: invalidCases }" />
+    }
+    @case ('markdown') {
+        <div data-story-root style="width: 386px">
+            <rt-ai-chat-blocks style="display: block; width: 386px" [blocks]="markdown" />
+        </div>
+    }
+    @case ('rtl') {
+        <div data-story-root dir="rtl" style="width: 386px">
+            <rt-ai-chat-blocks style="display: block; width: 386px" [blocks]="rtl" />
+        </div>
+    }
+    @case ('presets') {
+        <app-story-presets caption="Блок таблицы в обоих наборах">
+            <ng-template>
+                <ng-container *ngTemplateOutlet="cases; context: { $implicit: themeCases }" />
+            </ng-template>
+        </app-story-presets>
+    }
+    @case ('themes') {
+        <app-story-themes>
+            <ng-template>
+                <ng-container *ngTemplateOutlet="cases; context: { $implicit: themeCases }" />
+            </ng-template>
+        </app-story-themes>
+    }
+}

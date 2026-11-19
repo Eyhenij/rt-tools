@@ -18,11 +18,11 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **The question** — a message the person sent.
 - **The answer** — a message of the assistant: the run line, the blocks, the attachments, the rating.
-- **The block** — one part of an answer: markdown text, a notice, or a part of another type the
-  consumer draws with a renderer of its own.
+- **The block** — one part of an answer: markdown text, a notice, a table, or a part of another
+  type the consumer draws with a renderer of its own.
 - **The renderer** — a component the consumer registers for a block type the kit does not draw.
 - **The run** — the progress of one answer: running, done, stopped, failed, with optional steps.
-- **The attachments** — what the application draws under the answer blocks: a chart, a table.
+- **The attachments** — what the application draws under the answer blocks: a link, a file, a form.
 - **The conversation** — a thread of questions and answers the person can return to.
 - **The run error** — the answer broke off: the message, the reference number, whether to ask again.
 
@@ -48,13 +48,13 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **A question stands on the right in a bubble with «You», an answer on the left as its blocks.**
 
-- **The blocks of an answer stand in their order: a markdown block as text, a notice as `rt-message` of its severity.**
+- **The blocks of an answer stand in their order: a markdown block as text, a notice as `rt-message` of its severity, a table block as the kit's table.**
 
 - **A block of a type the kit does not draw is drawn by the renderer the consumer registered for that type.**
 
 - **A block with no renderer shows a plate with its type name, and the blocks around it stay in place.**
 
-- **A markdown block without text and a notice without a severity `rt-message` knows are shown as the plate too, and a renderer registered for `markdown` or `notice` is not taken.**
+- **A markdown block without text, a notice without a severity `rt-message` knows and a table block without columns or rows are shown as the plate too, and a renderer registered for `markdown`, `notice` or `table` is not taken.**
 
 - **A screen reader announces a notice in an answer politely, as a status, not as an alert.**
 
@@ -65,6 +65,8 @@ conversations. Every application repeats the same screen, and every copy drifts 
 - **A written answer has «Copy» first in its rating row, and the press copies the visible text of its blocks without markdown signs or unknown blocks and shows «Copied» for two seconds.**
 
 - **A block drawn by a renderer goes into the copy by the text function registered with it; without one it stays out.**
+
+- **A table block goes into the copy as tab-separated lines, its values written as the table shows them in the kit locale.**
 
 - **A written answer whose blocks give no text shows no «Copy», and its rating stays.**
 
@@ -129,7 +131,7 @@ conversations. Every application repeats the same screen, and every copy drifts 
 - The protocol of the model: the panel gets ready state, it does not read a stream of events.
 - Asking for confirmation before deleting a conversation: the panel reports the request, the
   application decides.
-- Drawing a chart, a table and other heavy blocks inside the rich-editor entry: their renderers are
+- Drawing a chart and other heavy blocks inside the rich-editor entry: their renderers are
   registered by the consumer, so a heavy dependency stays out of the entry.
 
 ## Contract
@@ -187,7 +189,7 @@ Not applicable.
   with a registered renderer, not through this template.
 - **Heavy blocks are drawn by registered renderers, not by a switch inside the kit.** A chart
   imported by the rich-editor entry would make its library a dependency of every consumer of the
-  editor. The type of a block is an open union: the kit knows `markdown` and `notice`, the rest
+  editor. The type of a block is an open union: the kit knows `markdown`, `notice` and `table`, the rest
   arrive by the renderer token.
 - **All renderers are registered at one level, usually the root of the application.** Angular does
   not join a multi provider list across injectors: a registration in a route or a component hides

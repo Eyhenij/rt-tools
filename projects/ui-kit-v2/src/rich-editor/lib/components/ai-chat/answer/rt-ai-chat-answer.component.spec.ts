@@ -1,7 +1,8 @@
 import { Clipboard } from '@angular/cdk/clipboard';
-import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, InputSignal, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
+import { RT_KIT_LOCALE } from '../../../../../lib/i18n/rt-kit-labels.providers';
 import { createRtFixture, qa } from '../../../../../testing/rt-kit-testing';
 import { provideRtAiChatBlock } from '../blocks/rt-ai-chat-blocks.providers';
 import { IRtAiChat } from '../rt-ai-chat.model';
@@ -63,5 +64,30 @@ describe('RtAiChatAnswerComponent', (): void => {
         (copy.querySelector('button') as HTMLButtonElement).click();
 
         expect(clipboard.copied).toEqual(['Occupancy by week']);
+    });
+    it('SC-UKV-1423 — после смены языка кита копия ответа пишет значения таблицы в новом языке', (): void => {
+        const clipboard: ClipboardDouble = new ClipboardDouble();
+        const locale: WritableSignal<string> = signal<string>('en');
+        const message: IRtAiChat.AssistantMessage = {
+            id: 'table',
+            role: 'assistant',
+            blocks: [{ type: 'table', columns: [{ label: 'N', type: 'number' }], rows: [[1234.5]] }],
+        };
+        const fixture: ComponentFixture<RtAiChatAnswerComponent> = createRtFixture(
+            RtAiChatAnswerComponent,
+            { message },
+            {
+                providers: [
+                    { provide: Clipboard, useValue: clipboard },
+                    { provide: RT_KIT_LOCALE, useValue: locale },
+                ],
+            }
+        );
+
+        locale.set('de');
+        fixture.detectChanges();
+        ((qa(fixture, 'ai-chat-copy')?.nativeElement as HTMLElement).querySelector('button') as HTMLButtonElement).click();
+
+        expect(clipboard.copied).toEqual(['N\n1.234,5']);
     });
 });

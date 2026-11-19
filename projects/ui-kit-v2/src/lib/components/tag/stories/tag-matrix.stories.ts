@@ -41,3 +41,6 @@ export const HostRule: TStory = { args: { part: 'host-rule' } };
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };
+
+/** Точка — круг цвета палитры без подписи, по ступеням и в обеих темах — SC-UKV-1378. */
+export const Dot: TStory = { args: { part: 'dot' } };
