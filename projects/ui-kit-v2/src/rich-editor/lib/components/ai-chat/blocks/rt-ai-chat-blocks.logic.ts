@@ -1,12 +1,17 @@
 import {
     ERtKpiDeltaUnit,
     IRtKpiItem,
+    IRtSectionItem,
     IRtTableData,
     IRtTag,
     markdownToPlainText,
     rtDeltaNumber,
     rtKpiItems,
     rtKpiValueWriter,
+    rtSectionItems,
+    rtSectionSpan,
+    rtSectionTitle,
+    RT_SECTION_BLOCK_TYPE,
     rtTableData,
     rtTablePlainText,
     TRtKitTranslator,
@@ -28,7 +33,7 @@ const NOTICE_SEVERITIES: Readonly<Record<IRtTag.Severity, true>> = {
 };
 
 /** Типы, которые кит рисует сам: отрисовщик из реестра их не заменяет. */
-const OWN_TYPES: ReadonlySet<string> = new Set<string>(['markdown', 'notice', 'table', 'kpi']);
+const OWN_TYPES: ReadonlySet<string> = new Set<string>(['markdown', 'notice', 'table', 'kpi', RT_SECTION_BLOCK_TYPE]);
 
 /** Блок текста в markdown: тип `markdown` и строка `text`. */
 export function isMarkdownBlock(block: { readonly type: string }): block is IRtAiChat.MarkdownBlock {
@@ -144,13 +149,20 @@ function rendererText(renderer: IRtAiChat.BlockRenderer | undefined, block: IRtA
     }
 }
 
-/** Видимый текст одного блока; таблица — строками через табуляцию, блок из реестра — текстом своей функции. */
-function blockText(
-    block: IRtAiChat.Block,
-    byType: ReadonlyMap<string, IRtAiChat.BlockRenderer>,
-    locale: string,
-    points: TRtAiChatPointsWriter
-): string {
+/** Чем пишется копия: реестр отрисовщиков, язык значений и подпись пунктов. */
+interface ICopyContext {
+    readonly byType: ReadonlyMap<string, IRtAiChat.BlockRenderer>;
+    readonly locale: string;
+    readonly points: TRtAiChatPointsWriter;
+}
+
+/**
+ * Видимый текст блока, который не секция; таблица — строками через табуляцию, блок из реестра —
+ * текстом своей функции. Секция сюда попадает только вложенной: она не рисуется и текста не даёт.
+ */
+function leafText(block: IRtAiChat.Block, context: ICopyContext): string {
+    const { byType, locale, points }: ICopyContext = context;
+
     if (isMarkdownBlock(block)) {
         return markdownToPlainText(block.text);
     }
@@ -175,10 +187,80 @@ function blockText(
 }
 
 /**
+ * Секция в копии: обрезанный заголовок и тексты вложенных блоков через пустую строку. Секция,
+ * чьи блоки не дали текста, не даёт и заголовка.
+ */
+function sectionText(block: IRtAiChat.Block, context: ICopyContext): string {
+    const texts: string[] = (rtSectionItems(Reflect.get(block, 'blocks')) ?? [])
+        .map((item: IRtSectionItem): string => leafText(item, context))
+        .filter((text: string): boolean => text.length > 0);
+
+    if (texts.length === 0) {
+        return '';
+    }
+    const title: string | null = rtSectionTitle(Reflect.get(block, 'title'));
+
+    return (title === null ? texts : [copyField(title), ...texts]).join(BLOCK_SEPARATOR);
+}
+
+/** Видимый текст одного блока ленты. */
+function blockText(block: IRtAiChat.Block, context: ICopyContext): string {
+    return block.type === RT_SECTION_BLOCK_TYPE ? sectionText(block, context) : leafText(block, context);
+}
+
+/**
+ * Что рисуется для блока, который не секция. Секция сюда попадает только вложенной: свой тип из
+ * реестра не берётся, и она уходит в заглушку с именем типа.
+ */
+function leafView(block: IRtAiChat.Block, byType: ReadonlyMap<string, IRtAiChat.BlockRenderer>): IRtAiChat.BlockView {
+    if (isMarkdownBlock(block)) {
+        return { kind: 'markdown', text: block.text };
+    }
+    if (isNoticeBlock(block)) {
+        return { kind: 'notice', severity: block.severity, text: block.text };
+    }
+    const table: IRtTableData | null = tableBlockData(block);
+
+    if (table !== null) {
+        return { kind: 'table', data: table, title: tableTitle(block) };
+    }
+    const kpi: IRtKpiItem[] | null = kpiBlockItems(block);
+
+    if (kpi !== null) {
+        return { kind: 'kpi', items: kpi };
+    }
+    const renderer: IRtAiChat.BlockRenderer | undefined = byType.get(block.type);
+
+    return renderer ? { kind: 'custom', component: renderer.component, block } : { kind: 'unsupported', type: block.type };
+}
+
+/**
+ * Секция как сетка ячеек; секция без блоков — заглушка с именем типа. Место ячейки идёт от
+ * объявленного типа блока и его `span`, а что в ней рисуется — от правил ленты.
+ */
+function sectionView(block: IRtAiChat.Block, byType: ReadonlyMap<string, IRtAiChat.BlockRenderer>): IRtAiChat.BlockView {
+    const items: IRtSectionItem[] | null = rtSectionItems(Reflect.get(block, 'blocks'));
+
+    if (items === null) {
+        return { kind: 'unsupported', type: RT_SECTION_BLOCK_TYPE };
+    }
+
+    return {
+        kind: 'section',
+        title: rtSectionTitle(Reflect.get(block, 'title')),
+        cells: items.map((item: IRtSectionItem): IRtAiChat.SectionCell => ({
+            span: rtSectionSpan(item.type, item['span']),
+            view: leafView(item, byType),
+        })),
+    };
+}
+
+/**
  * Что лента рисует для каждого блока. Свои типы кит рисует сам; чужой — отрисовщиком из реестра,
  * а без отрисовщика — заглушкой с именем типа: пропуск спрятал бы забытую регистрацию.
  * Свой тип без нужных полей тоже уходит в заглушку: отрисовщик из реестра его не подхватывает.
- * Из нескольких отрисовщиков одного типа берётся последний.
+ * Из нескольких отрисовщиков одного типа берётся последний. Секция даёт сетку ячеек, и блок в
+ * ячейке собран теми же правилами.
  */
 export function toBlockViews(
     blocks: readonly IRtAiChat.Block[],
@@ -186,33 +268,16 @@ export function toBlockViews(
 ): readonly IRtAiChat.BlockView[] {
     const byType: ReadonlyMap<string, IRtAiChat.BlockRenderer> = lastByType(renderers);
 
-    return blocks.map((block: IRtAiChat.Block): IRtAiChat.BlockView => {
-        if (isMarkdownBlock(block)) {
-            return { kind: 'markdown', text: block.text };
-        }
-        if (isNoticeBlock(block)) {
-            return { kind: 'notice', severity: block.severity, text: block.text };
-        }
-        const table: IRtTableData | null = tableBlockData(block);
-
-        if (table !== null) {
-            return { kind: 'table', data: table, title: tableTitle(block) };
-        }
-        const kpi: IRtKpiItem[] | null = kpiBlockItems(block);
-
-        if (kpi !== null) {
-            return { kind: 'kpi', items: kpi };
-        }
-        const renderer: IRtAiChat.BlockRenderer | undefined = byType.get(block.type);
-
-        return renderer ? { kind: 'custom', component: renderer.component, block } : { kind: 'unsupported', type: block.type };
-    });
+    return blocks.map((block: IRtAiChat.Block): IRtAiChat.BlockView =>
+        block.type === RT_SECTION_BLOCK_TYPE ? sectionView(block, byType) : leafView(block, byType)
+    );
 }
 
 /**
  * Текст ответа, как его видит читатель: markdown без знаков разметки, плашки — их текстом, таблицы —
  * строками через табуляцию со значениями в языке кита, KPI — строкой на карточку через табуляцию,
  * блоки из реестра — текстом функции `toText` их отрисовщика. Блок без такой функции пропущен.
+ * Секция — заголовком и текстами своих блоков.
  * Пункты дельты пишутся подписью `points`; без неё — английским умолчанием кита.
  */
 export function blocksToPlainText(
@@ -221,10 +286,10 @@ export function blocksToPlainText(
     locale: string = 'en',
     points: TRtAiChatPointsWriter = defaultPoints
 ): string {
-    const byType: ReadonlyMap<string, IRtAiChat.BlockRenderer> = lastByType(renderers);
+    const context: ICopyContext = { byType: lastByType(renderers), locale, points };
 
     return blocks
-        .map((block: IRtAiChat.Block): string => blockText(block, byType, locale, points))
+        .map((block: IRtAiChat.Block): string => blockText(block, context))
         .filter((text: string): boolean => text.length > 0)
         .join(BLOCK_SEPARATOR);
 }

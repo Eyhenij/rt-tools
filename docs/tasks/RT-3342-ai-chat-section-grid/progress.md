@@ -3,20 +3,20 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 4 — The data of the section: nested views, span, copy, schema
-- **Done:** the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3342-ai-chat-section-grid` from `RT-3346-ai-chat-blocks`, the folder from the template. The epic plan puts RT-3342 before RT-3339 by the owner's word.
-- **Next step:** step 1.1 — the section types and the data step in `toBlockViews`.
+- **Stage:** 2 of 4 — The section in the feed: the heading and the grid
+- **Done:** stage 1 — the data of the section, its copy and its schema. A `section` block gives a view with cells; a cell holds its span and the view of its nested block. A nested section and a section without a block are the plate. The specs of the blocks folder: 73 passed; of the schema: 6 passed; the type check is green.
+- **Next step:** step 2.1 — the cases of the feed in one `ng-template`.
 - **Uncommitted:** no
 - **Waiting for the owner:** no — the plan is approved: «Одобряю план», the threshold of 600 with it
 - **PR:** not open yet; the base is `RT-3346-ai-chat-blocks`
 
 ## Steps
 
-- [>] 1.1 Add the `SectionBlock` type, the nested block type with `span`, the `section` view with its cells, `section` in `OWN_TYPES` and the section data step in `toBlockViews`: the dropped items, the default span by the declared type, the `span` override, the plate for a nested section and for a section without a block.
-- [ ] 1.2 Add the copy of a section to `blockText`: the trimmed title and the texts of the nested blocks, nothing for a nested section, nothing when no block gives a text.
-- [ ] 1.3 Write the JSON schema of the section and the function that joins the schemas of the nested types in `section.schema.ts` next to `kpi.schema.ts`, and export both from the util barrel.
-- [ ] 1.4 Write the specs of the logic, the copy and the schema with the scenario numbers of the agreement: SC-UKV-1507, 1511, 1512, 1515, 1516, 1518, 1519, 1524.
-- [ ] 2.1 Move the cases of the feed into one `ng-template` of the blocks template, drawn for the feed as before.
+- [x] 1.1 Add the `SectionBlock` type, the nested block type with `span`, the `section` view with its cells, `section` in `OWN_TYPES` and the section data step in `toBlockViews`: the dropped items, the default span by the declared type, the `span` override, the plate for a nested section and for a section without a block.
+- [x] 1.2 Add the copy of a section to `blockText`: the trimmed title and the texts of the nested blocks, nothing for a nested section, nothing when no block gives a text.
+- [x] 1.3 Write the JSON schema of the section and the function that joins the schemas of the nested types in `section.schema.ts` next to `kpi.schema.ts`, and export both from the util barrel.
+- [x] 1.4 Write the specs of the logic, the copy and the schema with the scenario numbers of the agreement: SC-UKV-1507, 1511, 1512, 1515, 1516, 1518, 1519, 1524.
+- [>] 2.1 Move the cases of the feed into one `ng-template` of the blocks template, drawn for the feed as before.
 - [ ] 2.2 Write the `rt-ai-chat-section` component: a group labelled by its heading through a unique id, the heading role of the level 3, the cells that carry the span and take the cell template, the grid by a named container query — one column below 600, two from 600, the gap `--rt-space-md`, tokens only.
 - [ ] 2.3 Add the `section` case to the blocks template and the gap of 16 around a section in the feed.
 - [ ] 2.4 Write the specs of the section component, of the blocks component and the styles spec (the named container, the threshold 600, the gap, the span of a cell): SC-UKV-1510, 1514, 1517, 1523, 1525.
@@ -79,9 +79,65 @@
   section in a streamed answer — the kit does not tell a block the answer is unfinished.
 - **A failed play step does turn a run red.** `tools/visual-snapshots-v2.mjs` runs
   `test-storybook`, which runs the play steps; the plan still breaks one on purpose to see it.
+- **The data step has no recursion.** A section holds no section, so a nested block is built by
+  the function of a block that is not a section. A nested `section` falls there to the plate, as
+  an own type the registry does not take, and gives no text. The linter refuses two functions
+  that call each other.
+- **The spec of the section logic is a file of its own** next to the logic spec. The schema spec
+  holds the checks of `rtSectionItems` and `rtSectionTitle` too.
 
 ## Sessions
 
 ### 2026-11-19
 
 - RT-3339 paused after its plan was approved; RT-3342 taken.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/eyhenij/WebstormProjects/rt-tools/.claude/worktrees/ai-chat-blocks
+**Branch:** RT-3342-ai-chat-section-grid
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 1 of 4 — The data of the section: nested views, span, copy, schema
+- **Next step:** step 1.1 — the section types and the data step in `toBlockViews`.
+- **PR:** not open yet; the base is `RT-3346-ai-chat-blocks`
+
+The progress in full — `docs/tasks/RT-3342-ai-chat-section-grid/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+?? projects/ui-kit-v2/src/lib/util/section-data.ts
+```
+
+### Commits over the main branch
+
+```
+8754015a0 docs(rt:ui-kit-v2): план RT-3342 одобрен — данные, сетка, витрина, ревью
+149915c64 docs(rt:ui-kit-v2): договорённость о секции после ревью ролей (RT-3342)
+fe9867798 docs(rt:ui-kit-v2): договорённость о блоке секции в ответе чата (RT-3342)
+2e3f0327d docs(rt:ui-kit-v2): макет секции и сетки составного ответа для RT-3342
+2f6592ceb docs(rt:ui-kit-v2): задача RT-3342 взята, разбор закрыт допущениями
+9c66d15a8 [RT-3338] В ответе чата нет ряда KPI-карточек с дельтой к базе (#3429)
+e3425d045 fix(rt:ui-kit-v2): строки дельты и периода карточки kpi по 16, как в макете (RT-3338)
+0dfd86b8a fix(rt:ui-kit-v2): у элемента kpi в ленте блоков есть своё правило стилей (RT-3338)
+3849347da docs(rt:agent-kit): записи описания прошлого старше недели убраны
+8537dca81 docs(rt:ui-kit-v2): папка задачи RT-3338 разобрана в описание прошлого
+845b2900b docs(rt:ui-kit-v2): макет kpi сведён с кодом, совпадение 28 из 28 (RT-3338)
+70dc7d476 docs(rt:ui-kit-v2): договорённость о блоке kpi сведена в spec (RT-3338)
+c08c82250 feat(rt:ui-kit-v2): значение компактной плитки мельчает, когда не входит в строку
+a609495e8 fix(rt:ui-kit-v2): блок kpi после второго круга ревью (RT-3338)
+0f80720c7 fix(rt:ui-kit-v2): блок kpi после первого круга ревью (RT-3338)
+eea80eea0 Merge remote-tracking branch 'origin/RT-3346-ai-chat-blocks' into RT-3338-ai-chat-kpi-block
+f5037fb8c feat(rt:ui-kit-v2): витрина блока kpi и числа плитки под rtl
+c869db7e3 feat(rt:ui-kit-v2): блок kpi в ответе rt-ai-chat
+1737ba4d0 Merge remote-tracking branch 'origin/main' into RT-3338-ai-chat-kpi-block
+3d8e5d19c feat(rt:ui-kit-v2): плитка пишет дельту по языку кита, компактный размер
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

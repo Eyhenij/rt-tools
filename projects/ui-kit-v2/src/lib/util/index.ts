@@ -11,6 +11,8 @@ export * from './picture.model';
 export * from './quill-delta.helper';
 export * from './quill-delta.model';
 export * from './search-debounce';
+export * from './section-data';
+export * from './section.schema';
 export * from './table-csv';
 export * from './table-data';
 export * from './table.schema';
