@@ -56,11 +56,11 @@
 | `emptyIcon`                       | `IRtIcon.Name \| null`                            | `'inbox'`                        |
 | `emptyTitle` / `emptyDescription` | `string \| null`                                  | `null` → `uiEmptyTitle` / `null` |
 | `emptyTemplate`                   | `TemplateRef<unknown> \| null` — своя заглушка    | `null`                           |
-
-Заголовок заглушки по умолчанию — подпись кита `uiEmptyTitle` («No data»). Приложение на другом языке добавляет `rtKit.uiEmptyTitle` в свой словарь, иначе виден английский текст. Вкладка под `empty` не создаёт своё тело.
 | `contextMenu`                     | `TemplateRef<ContextMenuContext> \| null`         | `null`                           |
 | `closeTooltip`                    | `string` — подсказка крестика                     | `''`                             |
 | `closeTooltipPlacement`           | `IRtTooltip.Placement \| null`                    | `null`                           |
+
+Заголовок заглушки по умолчанию — подпись кита `uiEmptyTitle` («No data»). Приложение на другом языке добавляет `rtKit.uiEmptyTitle` в свой словарь, иначе виден английский текст. Вкладка под `empty` не создаёт своё тело.
 
 ## Главное, что нужно знать
 

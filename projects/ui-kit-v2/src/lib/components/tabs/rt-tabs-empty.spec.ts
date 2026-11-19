@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@ang
 import { ComponentFixture } from '@angular/core/testing';
 
 import { createRtFixture, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
+import { IRtIcon } from '../icon/rt-icon.model';
 import { RtTabDirective } from './rt-tab.directive';
 import { RtTabsComponent } from './rt-tabs.component';
 import { IRtTabs } from './rt-tabs.model';
@@ -16,6 +17,7 @@ import { IRtTabs } from './rt-tabs.model';
                 rtTab="events"
                 label="События"
                 [empty]="empty()"
+                [emptyIcon]="emptyIcon()"
                 [emptyTitle]="emptyTitle()"
                 [emptyDescription]="emptyDescription()"
                 [emptyTemplate]="ownTemplate() ? own : null">
@@ -30,6 +32,7 @@ import { IRtTabs } from './rt-tabs.model';
 class TabsEmptyHostComponent {
     public readonly active: WritableSignal<IRtTabs.Id> = signal<IRtTabs.Id>('events');
     public readonly empty: WritableSignal<boolean> = signal<boolean>(true);
+    public readonly emptyIcon: WritableSignal<IRtIcon.Name | null> = signal<IRtIcon.Name | null>('inbox');
     public readonly emptyTitle: WritableSignal<string | null> = signal<string | null>(null);
     public readonly emptyDescription: WritableSignal<string | null> = signal<string | null>(null);
     public readonly ownTemplate: WritableSignal<boolean> = signal<boolean>(false);
@@ -70,6 +73,30 @@ describe('RtTabsComponent — пустая вкладка', (): void => {
 
         expect(qa(fixture, 'events-body')).not.toBeNull();
         expect(qa(fixture, 'tabs-empty')).toBeNull();
+    });
+
+    it('SC-UKV-1387 — снятая пустота возвращает тело вкладки', (): void => {
+        const fixture: THostFixture = setup();
+
+        expect(qa(fixture, 'tabs-empty')).not.toBeNull();
+        expect(qa(fixture, 'events-body')).toBeNull();
+
+        fixture.componentInstance.empty.set(false);
+        fixture.detectChanges();
+
+        expect(qa(fixture, 'events-body')).not.toBeNull();
+        expect(qa(fixture, 'tabs-empty')).toBeNull();
+    });
+
+    it('SC-UKV-1388 — значок вкладки подменяется входом, null убирает значок', (): void => {
+        const withIcon: THostFixture = setup((host: TabsEmptyHostComponent): void => host.emptyIcon.set('search'));
+        const defaultIcon: THostFixture = setup();
+        const noIcon: THostFixture = setup((host: TabsEmptyHostComponent): void => host.emptyIcon.set(null));
+        const iconHtml: string = (qa(withIcon, 'empty-state-icon')?.nativeElement as HTMLElement).outerHTML;
+        const defaultHtml: string = (qa(defaultIcon, 'empty-state-icon')?.nativeElement as HTMLElement).outerHTML;
+
+        expect(iconHtml).not.toBe(defaultHtml);
+        expect(qa(noIcon, 'empty-state-icon')).toBeNull();
     });
 
     it('SC-UKV-1388 — входы вкладки меняют заголовок и пояснение заглушки', (): void => {

@@ -112,14 +112,13 @@ Every open panel shows its own placeholder.
   for «Нет данных», and `uiNoData` reads «Пока нет данных» under the empty bar list.
 - **Emptiness is an input given by the application, not guessed from the projected content.** A
   panel whose content is an empty list still projects the list's markup.
+- **A panel with tabs gets its placeholder from the tab, `rtTab`, not from the panel.** The owner
+  chose «Вход empty у вкладки» from three options: a tab input, a ready placeholder the screen puts
+  into a tab, leaving tabs alone.
 
 ## Open questions
 
 None.
-
-- **A panel with tabs gets its placeholder from the tab, `rtTab`, not from the panel.** The owner
-  chose «Вход empty у вкладки» from three options: a tab input, a ready placeholder the screen puts
-  into a tab, leaving tabs alone.
 
 ## History of changes
 

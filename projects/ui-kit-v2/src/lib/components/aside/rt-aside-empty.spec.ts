@@ -63,6 +63,19 @@ describe('RtAsideComponent — пустое содержимое', (): void => {
         expect(qa(fixture, 'aside-empty')).toBeNull();
     });
 
+    it('SC-UKV-1383 — снятый признак пустоты возвращает содержимое', (): void => {
+        const fixture: ComponentFixture<AsideEmptyHostComponent> = setup((host: AsideEmptyHostComponent): void => host.empty.set(true));
+
+        expect(qa(fixture, 'aside-empty')).not.toBeNull();
+        expect(qa(fixture, 'aside-body')).toBeNull();
+
+        fixture.componentInstance.empty.set(false);
+        fixture.detectChanges();
+
+        expect(qa(fixture, 'aside-body')).not.toBeNull();
+        expect(qa(fixture, 'aside-empty')).toBeNull();
+    });
+
     it('SC-UKV-1384 — шапка и подвал остаются, заглушка стоит в теле между ними', (): void => {
         const fixture: ComponentFixture<AsideEmptyHostComponent> = setup((host: AsideEmptyHostComponent): void => host.empty.set(true));
         const frame: HTMLElement = qa(fixture, 'aside')?.nativeElement as HTMLElement;

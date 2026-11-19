@@ -145,7 +145,7 @@ export class RtTabDirective {
     /** Значок заглушки пустой вкладки; `null` убирает его. */
     public readonly emptyIcon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>('inbox');
 
-    /** Заголовок заглушки; `null` и пустая строка оставляют подпись кита «Нет данных». */
+    /** Заголовок заглушки; `null` и пустая строка оставляют подпись кита `uiEmptyTitle`. */
     public readonly emptyTitle: InputSignal<string | null> = input<string | null>(null);
 
     /** Пояснение под заголовком заглушки; `null` — без него. */

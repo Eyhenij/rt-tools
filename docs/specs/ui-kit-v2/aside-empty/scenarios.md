@@ -50,11 +50,11 @@ Then the tab strip is drawn and the tab body shows the inbox icon and the `uiEmp
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-empty.spec.ts`.
 
-### SC-UKV-1388 — the tab inputs replace the title and the description
+### SC-UKV-1388 — the tab inputs replace the icon, the title and the description
 
-Given an empty tab with its own title and description
+Given an empty tab with its own icon, title and description
 When the tab is drawn
-Then the placeholder shows them instead of the defaults
+Then the placeholder shows them instead of the defaults, and a null icon removes the icon
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-empty.spec.ts`.
 
