@@ -247,7 +247,33 @@ Given a plan whose checks are green now, and an approval mark of the same commit
 And a record where the owner chose «Одобряю plan.md RT-2» after both roles
 When `plan-red` runs
 Then it runs no check and writes the mark with the place of the new answer and the old red output
-And with a mark of another commit it runs the checks and refuses them as green
+And with a mark of another commit and the work committed after the plan it runs the checks on the tree of the plan commit and writes the mark
+
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
+### SC-AK-1749 — a rebuilt plan is measured on the tree of its commit and gets the mark
+
+Given a plan whose checks are green on the branch, the work committed after the plan commit
+And a record where the owner chose «Одобряю plan.md RT-2» after both roles
+When `plan-red` runs
+Then it says the checks run on the tree of the plan commit in a temporary worktree, both checks are red, and the mark is written
+And after the run git lists no worktree but the repository and the temporary directory is empty
+
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
+### SC-AK-1750 — a worktree that cannot be made is a refusal with its reason
+
+Given the branch past its plan commit and a system temporary directory that does not exist
+When `plan-red` runs
+Then it refuses with «the tree of the plan commit could not be made» and the reason, runs no check and writes no mark
+
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
+### SC-AK-1751 — at the plan commit with a clean tree the checks run in place
+
+Given HEAD at the plan commit and no tracked file changed
+When `plan-red` runs
+Then it says the checks run in place, at the plan commit
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 

@@ -61,9 +61,9 @@ const lastLine = (output) =>
 
 const readFile = (path) => (existsSync(path) ? readFileSync(path, 'utf8') : null);
 
-/** Runs a check: its exit code and output, or the mark that the limit ran out. */
-export function runCheck(command, limitMs = STEP_LIMIT_MS) {
-    const out = spawnSync('bash', ['-c', command], { encoding: 'utf8', timeout: limitMs, killSignal: 'SIGKILL', maxBuffer: 64 * 1024 * 1024 });
+/** Runs a check: its exit code and output, or the mark that the limit ran out; `cwd` is where it runs. */
+export function runCheck(command, limitMs = STEP_LIMIT_MS, cwd = undefined) {
+    const out = spawnSync('bash', ['-c', command], { cwd, encoding: 'utf8', timeout: limitMs, killSignal: 'SIGKILL', maxBuffer: 64 * 1024 * 1024 });
     const timedOut = out.error?.code === 'ETIMEDOUT';
     return { code: timedOut ? null : out.status, output: out.stdout ?? '', errors: out.stderr ?? '', timedOut };
 }
