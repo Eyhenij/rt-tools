@@ -316,6 +316,35 @@
             font-style: italic;
         }
 
+        /* Подвал шторки на телефоне: держится у нижнего края, пока список прокручивается над ним.
+           Отступы и черта — как у подвала самой шторки. Он живёт в оверлее, вне поддерева блока,
+           поэтому своё свойство объявляет на себе. */
+        &__sheet-footer {
+            --rt-multiselect-sheet-divider-width: var(--rt-border-width-thin);
+
+            position: sticky;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            padding: var(--rt-space-4) var(--rt-space-5) calc(var(--rt-space-4) + env(safe-area-inset-bottom));
+            border-top: var(--rt-multiselect-sheet-divider-width) solid var(--rt-color-border-default);
+            background-color: var(--rt-color-bg-surface);
+            gap: var(--rt-space-2);
+        }
+
+        &__sheet-count {
+            min-width: 0;
+            flex: 1 1 auto;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-input-font-size);
+            overflow-wrap: anywhere;
+        }
+
+        &__sheet-reset,
+        &__sheet-done {
+            flex-shrink: 0;
+        }
+
         /* Свой вид пустого — разметка приложения: строка держит только место в списке, без
            отступов, цвета и курсива заглушки кита. */
         &__own-empty {

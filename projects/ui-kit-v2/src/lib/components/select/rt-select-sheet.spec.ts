@@ -73,6 +73,17 @@ function setupSelect(narrow: boolean, inputs: Readonly<Record<string, unknown>> 
     return createRtFixture(RtSelectComponent<string>, { options: OPTIONS, ...inputs }, { providers: providersFor(narrow) });
 }
 
+function setupMultiselect(chosen: ReadonlyArray<string>): ComponentFixture<RtMultiselectComponent<string>> {
+    const fixture: ComponentFixture<RtMultiselectComponent<string>> = createRtFixture(
+        RtMultiselectComponent<string>,
+        { options: OPTIONS },
+        { providers: providersFor(true) }
+    );
+    fixture.componentInstance.writeValue([...chosen]);
+    fixture.detectChanges();
+    return fixture;
+}
+
 describe('Панель выбора в нижней шторке', (): void => {
     afterEach((): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
@@ -160,6 +171,42 @@ describe('Панель выбора в нижней шторке', (): void => {
 
         expect(sheet()).toBeNull();
         expect(hostClasses(fixture)).not.toContain('rt-select--open');
+    });
+
+    it('SC-UKV-1436 — подвал шторки мультиселекта считает выбранное', (): void => {
+        const fixture: ComponentFixture<RtMultiselectComponent<string>> = setupMultiselect(['msk', 'kzn']);
+
+        press(fixture, 'multiselect-trigger');
+
+        expect(document.querySelector('[qa-dataid="multiselect-sheet-count"]')?.textContent?.trim()).toBe('Selected: 2');
+        expect(document.querySelector('[qa-dataid="multiselect-sheet-reset"]')).not.toBeNull();
+        expect(document.querySelector('[qa-dataid="multiselect-sheet-done"]')).not.toBeNull();
+    });
+
+    it('SC-UKV-1437 — сброс в подвале снимает весь выбор и оставляет шторку открытой', (): void => {
+        const fixture: ComponentFixture<RtMultiselectComponent<string>> = setupMultiselect(['msk', 'kzn']);
+        let chosen: ReadonlyArray<string> | null = null;
+        fixture.componentInstance.registerOnChange((value: ReadonlyArray<string>): void => {
+            chosen = value;
+        });
+        press(fixture, 'multiselect-trigger');
+
+        pick('multiselect-sheet-reset', 0);
+        settle(fixture);
+
+        expect(chosen).toEqual([]);
+        expect(sheetOpen()).toBe(true);
+    });
+
+    it('SC-UKV-1438 — кнопка готовности в подвале закрывает шторку', (): void => {
+        const fixture: ComponentFixture<RtMultiselectComponent<string>> = setupMultiselect(['msk']);
+        press(fixture, 'multiselect-trigger');
+
+        pick('multiselect-sheet-done', 0);
+        settle(fixture);
+
+        expect(sheet()).toBeNull();
+        expect((fixture.nativeElement as HTMLElement).querySelectorAll('[qa-dataid="multiselect-chip"]').length).toBe(1);
     });
 
     it('SC-UKV-1389 — список в шторке не берёт ширину поля', (): void => {

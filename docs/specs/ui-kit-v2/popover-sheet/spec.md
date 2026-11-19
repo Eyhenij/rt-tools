@@ -38,6 +38,10 @@ the same rows as before.
   With neither, the sheet has no title.
 - **A choice of one value closes the sheet together with the panel.**
 - **A choice of several values keeps the sheet open until the person closes it.**
+- **A choice of several values in the sheet ends with a footer: the count, a reset and a done button.**
+  The count says how many values are chosen, the reset takes them all off and keeps the sheet
+  open, the done button closes the sheet. The choice is written on every press, so the done
+  button confirms nothing — it only closes.
 - **A sheet closed by its backdrop, by a drag or by Escape closes the panel the same way a press
   outside it does.** The part of the kit learns of the close as before.
 - **The panel inside the sheet takes the full width of the sheet.** The width taken from the
@@ -101,3 +105,4 @@ None.
 | Date       | What changed                                                   |
 | ---------- | -------------------------------------------------------------- |
 | 2026-11-19 | The subdomain is written with scenarios 1382…1389 (RT-3399)    |
+| 2026-11-19 | The multiselect footer in the sheet, scenarios 1436…1438 (RT-3399) |

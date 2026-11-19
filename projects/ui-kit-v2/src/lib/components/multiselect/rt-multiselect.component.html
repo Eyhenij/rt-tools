@@ -157,6 +157,32 @@
                     }
                 }
             </ul>
+            @if (inSheet()) {
+                <!-- Подвал шторки: выбор пишется по каждому нажатию, «Готово» только закрывает шторку. -->
+                <div rtElem="sheet-footer" qa-dataid="multiselect-sheet-footer">
+                    <span rtElem="sheet-count" qa-dataid="multiselect-sheet-count">{{ selectedLabel() }}</span>
+                    <button
+                        rtButton
+                        rtElem="sheet-reset"
+                        qa-dataid="multiselect-sheet-reset"
+                        type="button"
+                        size="sm"
+                        appearance="text"
+                        [label]="t().uiReset"
+                        [attr.aria-label]="t().uiReset"
+                        [disabled]="value().length === 0"
+                        (click)="resetChoice()"></button>
+                    <button
+                        rtButton
+                        rtElem="sheet-done"
+                        qa-dataid="multiselect-sheet-done"
+                        type="button"
+                        size="sm"
+                        [label]="t().uiDone"
+                        [attr.aria-label]="t().uiDone"
+                        (click)="closeSheet()"></button>
+                </div>
+            }
         </div>
     </ng-template>
 </ng-container>

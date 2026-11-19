@@ -4,10 +4,11 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 3 из 4 — Code and unit tests
-- **Next step:** the multiselect footer «Выбрано · Сбросить · Готово» in the sheet; then the rest
-  of the set by the same `sheet` input, `rt-menu` (own overlay), the folding
-  `rt-toggle-button-group`, the field with a toggles panel; then the date picker and the trailing
-  icons (the revision at the end of stage 3).
+- **Next step:** the `sheet` input on the rest of the set — `rt-autocomplete`, `rt-split-button`,
+  `rt-speed-menu`, `rt-dynamic-selector`, `rt-color-palette`, the menus of `rt-tabs`, the action
+  menu of `rt-action-bar`, the filters of `rt-thread-list`, the panels of `rt-page-header`, the
+  operator of the table filter header; then `rt-menu`, the folding `rt-toggle-button-group`, the
+  toggles field, the trailing icons.
 - **Decision along the way:** the rules live in a new subdomain `docs/specs/ui-kit-v2/popover-sheet/`,
   not in the select spec the plan named: the sheet belongs to the popover directive and serves the
   whole set.
@@ -45,7 +46,7 @@ Stage 1 is closed: every frame of the set is approved. Stage 2 begins.
 ### 3. Code and unit tests
 
 1. [x] `rt-select`: the narrow sign, the sheet in the template, the switch-off input, the choice closes the sheet. — the sheet mode lives in `RtPopoverDirective` (`rt-popover-sheet.helper.ts` opens it), the `sheet` input on the select, the field pushes its label as the title.
-2. [ ] `rt-multiselect`: the same; the sheet stays open on a choice. — the input and the open sheet are done, the footer «Готово» is left. ← going on
+2. [x] `rt-multiselect`: the same; the sheet stays open on a choice. — plus the footer «Выбрано: N · Сбросить · Готово» by the mockup 6068:1250, scenarios SC-UKV-1436…1438, the spec 11 of 11.
 3. [x] Unit tests by the scenarios of stage 2. — `rt-select-sheet.spec.ts`, 8 of 8; the whole kit set, 3742 tests, green after the stub in `rt-filter-control` got `viewportNarrow`.
 
 ### Stage revision — the date picker and the icons
@@ -66,6 +67,10 @@ The owner added: «включи в задачу поправить дейт пи
 3. [ ] Show the showcase to the owner and write the approval into `approvals.md`.
 
 ## Decisions along the way
+
+- The mockup of the multiselect sheet shows a search field, while `rt-multiselect` has no search at
+  all, sheet or not. The sheet does not add one: a search is a feature of the multiselect of its
+  own; it is named to the owner with the showcase.
 
 - Every kit component with a drop-down panel goes into this task (grill, Decisions).
 

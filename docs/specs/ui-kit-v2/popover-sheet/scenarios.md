@@ -66,3 +66,27 @@ When it is drawn
 Then the list carries no fixed width taken from the field
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
+
+### SC-UKV-1436 — the footer of the multiselect sheet counts the chosen values
+
+Given a multiselect with two values chosen, open in the bottom sheet
+When the sheet is drawn
+Then its footer says «Selected: 2» and carries a reset and a done button
+
+Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
+
+### SC-UKV-1437 — the reset in the footer takes the whole choice off and keeps the sheet open
+
+Given a multiselect with two values chosen, open in the bottom sheet
+When the reset in the footer is pressed
+Then the choice is empty, the multiselect reports it, and the sheet stays open
+
+Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
+
+### SC-UKV-1438 — the done button in the footer closes the sheet
+
+Given a multiselect open in the bottom sheet
+When the done button in the footer is pressed
+Then the bottom sheet is closed, and the choice made stays
+
+Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.

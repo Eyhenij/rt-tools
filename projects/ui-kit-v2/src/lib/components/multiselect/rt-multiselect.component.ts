@@ -21,7 +21,8 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RT_KIT_LABELS, TRtKitLabelMap, TRtKitLabelParams, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
@@ -81,6 +82,7 @@ function nextPanelId(): number {
         NgTemplateOutlet,
 
         // standalone components / directives
+        RtButtonDirective,
         RtIconButtonComponent,
         RtIconComponent,
         RtPopoverDirective,
@@ -118,6 +120,15 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
     protected readonly placeholderText: Signal<string> = computed((): string => this.placeholder() || this.#t_uiSelectValues());
 
     protected readonly popover: Signal<RtPopoverDirective> = viewChild.required(RtPopoverDirective);
+
+    /** Список открыт в нижней шторке: под ним стоит подвал «Выбрано · Сбросить · Готово». */
+    protected readonly inSheet: Signal<boolean> = computed((): boolean => this.popover().inSheet());
+
+    /** «Выбрано: N» в подвале шторки — подпись с подстановкой, потому берётся вызовом. */
+    protected readonly selectedLabel: Signal<string> = rtKitLabel(
+        'uiSelectedCount',
+        computed((): TRtKitLabelParams => ({ count: this.value().length }))
+    );
 
     protected readonly triggerEl: Signal<ElementRef<HTMLButtonElement> | undefined> = viewChild<ElementRef<HTMLButtonElement>>('triggerEl');
 
@@ -276,6 +287,23 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
             : [...current, ...leaves.filter((leaf: TValue): boolean => !current.includes(leaf))];
         this.value.set(next);
         this.emitChange([...next]);
+    }
+
+    /**
+     * «Сбросить» в подвале шторки снимает весь выбор и оставляет шторку открытой: человек выбирает
+     * заново. Крестик поля не годится — он возвращает фокус в поле под шторкой.
+     */
+    protected resetChoice(): void {
+        if (this.isDisabled() || this.value().length === 0) {
+            return;
+        }
+        this.value.set([]);
+        this.emitChange([]);
+    }
+
+    /** «Готово» в подвале шторки: выбор уже записан по каждому нажатию, кнопка только закрывает. */
+    protected closeSheet(): void {
+        this.popover().close();
     }
 
     protected removeChip(value: TValue, event: MouseEvent): void {
