@@ -9,7 +9,7 @@
 # модели, ожидаемого не видит. Строка случая начинается с группы плана `replay:`.
 #
 # Хуки модели (`turn-judge.md`, `ask-judge.md`) модель здесь не зовёт: набор проверяет их текст, а
-# вердикты модели на тех же фикстурах сверяет отдельная проверка по подсказке `judge-prompt.mjs`.
+# вердикты модели на тех же фикстурах сверяет `judge-replay.mjs`: судья без инструментов, сверка после.
 #
 # RT_REPLAY_LAID=1 гоняет те же ходы на разложенных хуках дерева и разложенном движке.
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
@@ -108,6 +108,16 @@ PLAN='# План
 progress() { printf '# Ход работы\n\n## Шаги\n\n- [%s] 1.1 Написать проверку\n- [%s] 1.2 Запустить набор\n' "$1" "$2"; }
 
 mark() { put "$1" ".git/rt-kit/$2" "$3"; }
+# Одобрение плана с местом ответа: запись в каталоге записей копии и uuid её записи.
+export RT_FLOW_RECORDS_HOME="$WORK/records"
+approve_plan() {
+    local dir="$1" rec sha
+    rec="$RT_FLOW_RECORDS_HOME/$(cd "$dir" && pwd -P | sed 's#[/.]#-#g')/session.jsonl"
+    mkdir -p "$(dirname "$rec")"
+    printf '%s\n' '{"type":"user","uuid":"a1","toolUseResult":{"answers":{"Одобряешь?":"Одобряю план RT-101"}}}' > "$rec"
+    sha="$(g "$dir" log --diff-filter=A --format=%H -- "docs/tasks/$TASK/plan.md" | tail -1)"
+    mark "$dir" "approval/$TASK.json" "{\"answer\":\"Одобряю план RT-101\",\"plan\":\"$sha\",\"place\":{\"record\":\"$rec\",\"uuid\":\"a1\"}}"
+}
 
 # Дерево задачи эпика в названном состоянии сценария. Печатает путь.
 #   request   ветка без разбора — состояние 1
@@ -155,7 +165,7 @@ build_tree() {
     put "$dir" "docs/tasks/$TASK/plan.md" "$PLAN"
     put "$dir" "docs/tasks/$TASK/progress.md" "$(progress x '>')"
     commit "$dir" 'docs: план'
-    mark "$dir" "approval/$TASK.json" '{"answer":"Одобряю план RT-101","plan":"plan.md"}'
+    approve_plan "$dir"
     [ "$1" = stage ] && { printf '%s' "$dir"; return; }
 
     put "$dir" "docs/tasks/$TASK/progress.md" "$(progress x x)"
@@ -291,5 +301,36 @@ report "replay: SC-AK-1470 — и в меню отказа проверки вы
 hold 1470-menu-lifts-check archived "replay: SC-AK-1470 — меню задержано один раз — ход держится" 'папка-разобрана'
 report "replay: SC-AK-1470 — фикстура несёт меню отказа с таким вариантом" \
     "$(jq -r '[.turns[] | select(.menu) | .menu[] | select(test("снять проверку"))] | length' "$FIXTURES/1470-menu-lifts-check.json")" 1
+
+# --- прогон судьи: ему нечем читать ожидаемое ---------------------------------------------------------
+JUDGE="$TESTS/judge-replay.mjs"
+judge_js() { (cd "$WORK" && node --input-type=module -e "import * as j from '$JUDGE'; $1"); }
+PROMPT="$(judge_js "import {readFileSync} from 'node:fs'; console.log(j.promptOf('HOOK TEXT', JSON.parse(readFileSync('$FIXTURES/1450-answer-mid-work.json','utf8'))))")"
+leaks="$(printf '%s' "$PROMPT" | grep -cE 'SC-AK-1450|1450-answer-mid-work|"case"|"kind"|an answer to the owner in the middle')"
+report "replay: SC-AK-1711 — подсказка судьи без имени файла, case и kind" "$leaks" 0
+report "replay: SC-AK-1711 — подсказка несёт ходы фикстуры" "$(printf '%s' "$PROMPT" | grep -c '"turns"')" 1
+CMD="$(judge_js "console.log(JSON.stringify(j.judgeCommand({cwd:'/tmp/judge-x'})))")"
+report "replay: SC-AK-1711 — судья без инструментов, источников настроек и MCP" \
+    "$(printf '%s' "$CMD" | jq -r '.args as $a | [($a | index("--tools") != null), ($a[($a | index("--tools")) + 1] == ""), ($a | index("--setting-sources") != null), ($a | index("--strict-mcp-config") != null), ($a | index("--no-session-persistence") != null)] | all')" true
+report "replay: SC-AK-1711 — судья работает вне дерева" "$(printf '%s' "$CMD" | jq -r '.cwd' | grep -c "^$ROOT")" 0
+
+# Фальшивый судья отвечает словом из переменной.
+J="$WORK/judge"
+mkdir -p "$J/fixtures" "$J/hooks"
+cp "$FIXTURES/1450-answer-mid-work.json" "$J/fixtures/a.json"
+printf '%s\n' 'turn judge text' > "$J/hooks/turn-judge.md"
+printf '%s\n' 'ask judge text' > "$J/hooks/ask-judge.md"
+printf '%s\n' '{ "a.json": { "judge": "block" } }' > "$J/expected.json"
+run_replay() {
+    RT_JUDGE_RUNNER="cat > /dev/null; printf '%s' '$1'" judge_js \
+        "console.log(JSON.stringify(j.replay({root:'$J', fixtures:'$J/fixtures', hooksDir:'$J/hooks', expectedFile:'$J/expected.json'})))"
+}
+report "replay: SC-AK-1712 — совпавший вердикт засчитан" "$(run_replay block | jq -r '.[0].ok')" true
+report "replay: SC-AK-1712 — несовпавший вердикт назван" "$(run_replay allow | jq -r '.[0] | "\(.ok) \(.want) \(.got)"')" 'false block allow'
+report "replay: SC-AK-1713 — ответ с обоими словами — не вердикт" "$(run_replay 'allow or block' | jq -r '.[0] | "\(.ok) \(.got)"')" 'false null'
+report "replay: SC-AK-1713 — ответ без вердикта — не совпадение" "$(run_replay 'не знаю' | jq -r '.[0].ok')" false
+printf '%s\n' '{ "a.json": { "judge": "block" } }' > "$J/fixtures/judge-verdicts.turn-judge.json"
+report "replay: SC-AK-1714 — старый файл вердиктов не читается, считается ответ этого прогона" "$(run_replay allow | jq -r '.[0].got')" allow
+report "replay: SC-AK-1714 — в каталоге фикстур нет файлов вердиктов прошлых прогонов" "$(ls "$FIXTURES" | grep -c '^judge-verdicts')" 0
 
 suite_result "записанные ходы"

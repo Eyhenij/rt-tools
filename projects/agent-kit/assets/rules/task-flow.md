@@ -20,7 +20,7 @@ Rule under the law `docs/constitution/work-conduct.md`. Cold part: `pitfalls.md`
 | `договорённость-записана` | `measure.task.taken` | create the task, the branch from the epic branch, and the folder | `task-flow-start` |
 | `задача-взята` | `measure.plan.approved` | write the plan | `task-flow-start` |
 | `замысел-записан` | `measure.progress.mirrors` | do the first stage | `task-flow-start` |
-| `этап-идёт` | `measure.progress.done` | finish the stage and mark it in the progress | `task-flow-resume` |
+| `этап-идёт` | `measure.progress.done` | finish the stage: `step N.M` measures each step and marks it done | `task-flow-resume` |
 | `этапы-кончились` | `measure.footprint.touched` | merge the agreement, bring the texts up to date, run the suite | `task-flow-close` |
 | `разбор-кончился` | `measure.folder.archived` | take the folder apart by the last commit | `task-flow-archive` |
 | `папка-разобрана` | `measure.pr.handed` | the work queue audit, then open the PR | `task-flow-close` |

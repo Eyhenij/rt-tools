@@ -13,6 +13,9 @@
  *                                      `ожидалось … · получено … · совпало|не совпало` and writes the
  *                                      mark of a matched step; exits 0 on a match, 1 otherwise
  *   node task-flow-script.mjs step --done  the same for every step the progress marks done
+ *   node task-flow-script.mjs step --done --pr  the rerun before a PR opens: a taken-apart folder
+ *                                      comes back from the history for the run, a check that
+ *                                      changes a tracked file does not match
  *   node task-flow-script.mjs plan-check <plan.md>  names every check of the plan in no known
  *                                      form or that is a command of the work; exits 1 on any
  *   node task-flow-script.mjs plan-red  runs every check of the plan of the branch and writes the
@@ -162,7 +165,7 @@ export function measureJson(model, result) {
     return { ...result, action: state?.action ?? null, pattern: state?.pattern ?? null };
 }
 
-const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|--done | plan-check <plan.md> | plan-red | guard | verdict | forecast --days N [--until <date>] [--per-mille] [--guard]  [--flow <flow.js>]';
+const USAGE = 'usage: node task-flow-script.mjs states | measure [--json] | step <N.M>|--done [--pr] | plan-check <plan.md> | plan-red | guard | verdict | forecast --days N [--until <date>] [--per-mille] [--guard]  [--flow <flow.js>]';
 
 /**
  * What the guard guards: where the task folders and the epic plans lie, the tree override, and the
@@ -254,7 +257,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
         else if (command === 'step') {
             const source = await openSources(model, dirname(path));
             const sources = { git: source('git'), steps: source('steps'), marks: source('marks'), owner: source('owner') };
-            process.exit(await runStepCommand(sources, model, target));
+            process.exit(await runStepCommand(sources, model, target, process.argv.includes('--pr') ? '--pr' : ''));
         } else if (command === 'plan-check') {
             const source = await openSources(model, dirname(path));
             const problems = planProblems(readFileSync(target, 'utf8'), source('steps'), model);

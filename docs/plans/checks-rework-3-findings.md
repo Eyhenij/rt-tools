@@ -309,6 +309,16 @@ named rules fit without losing text. Their misses, each with an address:
   index and its cold part is read apart. **Address:** a count in the observations, after a week —
   a `skill-load` of a pattern followed by a read of its `pitfalls.md`.
 
+## RT-3332 — the marks are measured again, not believed
+
+- **`plan-red` cannot approve a plan whose commit changed after the work began.** The plan of the
+  task was added again by a rebuilt commit after the owner's approval, and `plan-red` was not run on
+  the new commit. Its checks were green by then, and the old mark named the replaced commit. The
+  mark was written by running the current engine on the tree of the plan commit in a temporary
+  working copy, the branch pointed there for the run. **Address:** rules layer — `plan-red` measures
+  the checks on the tree of the plan commit itself, so «red before the work» never depends on when
+  it runs.
+
 ## Left unresolved
 
 - **A session that wrote nothing releases the turn, and so do the silent hosting and a lost menu.**

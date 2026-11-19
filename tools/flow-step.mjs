@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/flow-step.mjs · 4818036988d1 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/flow-step.mjs · ba98770fd96c · правится надстройкой, не здесь
 /**
  * A step of the plan measured by its check — the engine command `step`.
  *
@@ -21,9 +21,21 @@
 import { spawn, spawnSync } from 'node:child_process';
 import { availableParallelism } from 'node:os';
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+
+import { dirname, join } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import { compareExpected, isWriteCommand } from './flow-data.mjs';
+
+// The sources of the description lie next to the engine where it is laid out, one level up in the package.
+const HERE = dirname(fileURLToPath(import.meta.url));
+const RECORDS = [join(HERE, 'task-flow/source/records.mjs'), join(HERE, '../task-flow/source/records.mjs')].find((path) => existsSync(path));
+const records = await import(pathToFileURL(RECORDS).href);
+
+/** The record directories of this repository and the test of an approval mark, shared by the checks. */
+export const openRecords = (root = process.cwd()) => records.openAt(root);
+export const approvalFault = records.approvalFault;
 
 /** The limit of one check, in milliseconds: past it the step does not match. */
 export const STEP_LIMIT_MS = 540_000;
@@ -55,14 +67,15 @@ const readFile = (path) => (existsSync(path) ? readFileSync(path, 'utf8') : null
 export function runCheck(command, limitMs = STEP_LIMIT_MS) {
     const out = spawnSync('bash', ['-c', command], { encoding: 'utf8', timeout: limitMs, killSignal: 'SIGKILL', maxBuffer: 64 * 1024 * 1024 });
     const timedOut = out.error?.code === 'ETIMEDOUT';
-    return { code: timedOut ? null : out.status, output: out.stdout ?? '', timedOut };
+    return { code: timedOut ? null : out.status, output: out.stdout ?? '', errors: out.stderr ?? '', timedOut };
 }
 
 /** Runs a check without blocking: the same answer as `runCheck`, so that the checks of `--done` run side by side. */
 export function runCheckAsync(command, limitMs = STEP_LIMIT_MS) {
     return new Promise((resolve) => {
-        const child = spawn('bash', ['-c', command], { stdio: ['ignore', 'pipe', 'ignore'] });
+        const child = spawn('bash', ['-c', command], { stdio: ['ignore', 'pipe', 'pipe'] });
         let output = '';
+        let errors = '';
         let timedOut = false;
         const timer = setTimeout(() => {
             timedOut = true;
@@ -70,9 +83,11 @@ export function runCheckAsync(command, limitMs = STEP_LIMIT_MS) {
         }, limitMs);
         child.stdout.setEncoding('utf8');
         child.stdout.on('data', (chunk) => (output += chunk));
+        child.stderr.setEncoding('utf8');
+        child.stderr.on('data', (chunk) => (errors += chunk));
         child.on('close', (code) => {
             clearTimeout(timer);
-            resolve({ code: timedOut ? null : code, output, timedOut });
+            resolve({ code: timedOut ? null : code, output, errors, timedOut });
         });
     });
 }
@@ -117,11 +132,15 @@ export function replacedCheck(progressText, number, owner, step) {
     return { command: step.command, expected: step.expected, replaced: false };
 }
 
+/** The signs of a failed network in what a check printed. */
+const NETWORK = /ENOTFOUND|ECONNREFUSED|ECONNRESET|EAI_AGAIN|ETIMEDOUT|getaddrinfo|Could not resolve host|network is unreachable|Failed to connect/i;
+
 /** What a run gave, in the words of the line: the code for the exit form, the last line otherwise. */
-const gotOf = (run, form, limitMs) => {
+const gotOf = (run, form, limitMs, matched = true) => {
     if (run.timedOut) return `the limit of ${limitMs / 1000} s ran out`;
-    if (form === 'exit') return `exit ${run.code}`;
-    return run.code === 0 ? lastLine(run.output) : `exit ${run.code}, ${lastLine(run.output)}`;
+    const network = !matched && NETWORK.test(`${run.output}\n${run.errors ?? ''}`) ? ' — the cause is the network' : '';
+    if (form === 'exit') return `exit ${run.code}${network}`;
+    return (run.code === 0 ? lastLine(run.output) : `exit ${run.code}, ${lastLine(run.output)}`) + network;
 };
 
 /** The step ready to run: its plan, its check and the expected result, or a refusal before anything runs. */
@@ -132,20 +151,47 @@ function prepareStep({ git, steps, owner }, model, number, read) {
     const planned = steps.ofPlan(plan.text).find((s) => s.number === number);
     if (!planned) throw new StepRefused(`the plan names no step ${number}`);
     const progress = `${plan.folder}/${PROGRESS}`;
-    const step = { number, ...replacedCheck(read(progress) ?? git.lastVersion(progress), number, owner, planned) };
+    // A replacement quote counts from any session record of this repository, not only the current one.
+    const anywhere = { said: (quote) => owner.said(quote) || openRecords().said(quote) };
+    const step = { number, ...replacedCheck(read(progress) ?? git.lastVersion(progress), number, anywhere, planned) };
     if (step.command === null) throw new StepRefused(`step ${number} has no check line`);
     if (isWriteCommand(step.command, model.words)) throw new StepRefused(`the check of step ${number} is a command of the work: ${step.command}`);
     if (compareExpected(model.expect, step.expected, 0, '') === null) throw new StepRefused(`the expected result of step ${number} is in no form: ${step.expected}`);
     return { plan, step };
 }
 
-/** The verdict of a run: the mark is written or dropped, and the result is returned. */
+/**
+ * The progress with step `number` marked done and, when no step is current, the first one not begun
+ * made current. A progress that names no such step comes back as it was.
+ */
+export function markedProgress(text, number) {
+    const own = new RegExp(`^(\\s*-\\s+\\[)[ >x](\\]\\s+${number.replace('.', '\\.')}\\s)`);
+    const lines = text.split('\n');
+    const at = lines.findIndex((line) => own.test(line));
+    // A step already done is measured again, not marked again: the progress stays as it was.
+    if (at < 0 || /^\s*-\s+\[x\]/.test(lines[at])) return text;
+    lines[at] = lines[at].replace(own, '$1x$2');
+    if (!lines.some((line) => /^\s*-\s+\[>\]\s+\d+\.\d+\s/.test(line))) {
+        const next = lines.findIndex((line) => /^\s*-\s+\[ \]\s+\d+\.\d+\s/.test(line));
+        if (next >= 0) lines[next] = lines[next].replace('[ ]', '[>]');
+    }
+    return lines.join('\n');
+}
+
+/** The verdict of a run: the mark is written and the step marked done, or the mark is dropped; the result is returned. */
 function settleStep({ git, marks }, model, { plan, step }, run, limitMs) {
     const verdict = run.timedOut ? { form: null, matched: false } : compareExpected(model.expect, step.expected, run.code, run.output);
     if (verdict.matched) {
         marks.writeStep(plan.branch, step.number, { branch: plan.branch, step: step.number, plan: plan.fingerprint, head: git.head(), line: lastLine(run.output), replaced: step.replaced, matched: true });
+        // Only the engine marks a step done: the guard refuses a hand mark.
+        const progress = `${plan.folder}/${PROGRESS}`;
+        const text = readFile(progress);
+        if (text !== null) {
+            const marked = markedProgress(text, step.number);
+            if (marked !== text) writeFileSync(progress, marked);
+        }
     } else marks.dropStep(plan.branch, step.number);
-    return { number: step.number, expected: step.expected, got: gotOf(run, verdict.form, limitMs), matched: verdict.matched };
+    return { number: step.number, expected: step.expected, got: gotOf(run, verdict.form, limitMs, verdict.matched), matched: verdict.matched };
 }
 
 /**
@@ -199,7 +245,8 @@ export const stepLine = (result) => `ожидалось ${result.expected} · п
  * by side, prefixes each line with the number of its step and ends with the line
  * `steps re-measured N, matched M`.
  */
-export async function runStepCommand(sources, model, target) {
+export async function runStepCommand(sources, model, target, mode = '') {
+    if (mode === '--pr') return runBeforePull(sources, model);
     if (target !== '--done') {
         try {
             const result = measureStep(sources, model, target);
@@ -224,4 +271,81 @@ export async function runStepCommand(sources, model, target) {
     const matched = results.filter((result) => result.matched).length;
     console.log(`steps re-measured ${results.length}, matched ${matched}`);
     return matched === results.length ? 0 : 1;
+}
+
+/** The tracked files the working copy changed, as `git status` names them. */
+const trackedChanges = () =>
+    (spawnSync('git', ['status', '--porcelain', '--untracked-files=no'], { encoding: 'utf8' }).stdout ?? '').split('\n').filter(Boolean).sort();
+
+/**
+ * The rerun before a PR opens: every step the progress marks done is measured once more, whatever
+ * mark lies on disk. A taken-apart task folder is put back from the history for the run and removed
+ * after it; a check that leaves a tracked file changed does not match. A branch with no plan, or a
+ * plan with no checks, has nothing to measure. Returns 0 when every done step matched.
+ */
+export async function runBeforePull(sources, model) {
+    let plan;
+    try {
+        plan = planOfBranch(sources.git, model.words);
+    } catch (error) {
+        if (!(error instanceof StepRefused)) throw error;
+        console.log(`step: ${error.message} — nothing to measure before the PR`);
+        return 0;
+    }
+    if (sources.steps.ofPlan(plan.text).every((s) => s.command === null)) {
+        console.log('step: the plan names no checks — nothing to measure before the PR');
+        return 0;
+    }
+    // A taken-apart folder: its last version comes back for the run and leaves after it.
+    const restored = [];
+    if (!existsSync(plan.folder)) {
+        const last = (spawnSync('git', ['log', '-1', '--format=%H', '--diff-filter=D', 'HEAD', '--', plan.folder], { encoding: 'utf8' }).stdout ?? '').trim();
+        const at = last ? `${last}^` : null;
+        for (const path of at ? sources.git.filesAt(plan.folder, at) : []) {
+            const text = sources.git.versionAt(path, at);
+            if (text === null) continue;
+            mkdirSync(dirname(path), { recursive: true });
+            writeFileSync(path, text);
+            restored.push(path);
+        }
+    }
+    const before = trackedChanges();
+    try {
+        const numbers = doneSteps(sources, model);
+        // The suites shorten the limit; the work always runs with the step limit.
+        const limit = Number(process.env.RT_FLOW_STEP_LIMIT_MS) || STEP_LIMIT_MS;
+        // A restored folder brings the progress back as it stood when each step was measured — the
+        // version before the first commit that marks the step done: a check that reads the progress
+        // saw it so, while the last version has every step done.
+        const progressPath = `${plan.folder}/${PROGRESS}`;
+        const latest = restored.includes(progressPath) ? readFileSync(progressPath, 'utf8') : null;
+        const log = latest === null ? '' : (spawnSync('git', ['log', '--reverse', '--format=%H', 'HEAD', '--', progressPath], { encoding: 'utf8' }).stdout ?? '');
+        const versions = log.split('\n').filter(Boolean).map((sha) => sources.git.versionAt(progressPath, sha));
+        const groups = new Map();
+        for (const number of numbers) {
+            const done = new RegExp(`^\\s*-\\s+\\[x\\]\\s+${number.replace('.', '\\.')}\\s`, 'm');
+            const first = versions.findIndex((text) => text !== null && done.test(text));
+            const text = (first > 0 && versions[first - 1]) || latest;
+            groups.set(text, [...(groups.get(text) ?? []), number]);
+        }
+        const results = [];
+        for (const [text, group] of groups) {
+            if (text !== null) writeFileSync(progressPath, text);
+            results.push(...(await measureSteps(sources, model, group, limit)));
+        }
+        results.sort((a, b) => numbers.indexOf(a.number) - numbers.indexOf(b.number));
+        const changed = trackedChanges().filter((line) => !before.includes(line));
+        for (const result of results) console.log(`${result.number} ${result.refused ? `step: ${result.refused}` : stepLine(result)}`);
+        if (changed.length > 0) console.log(`step: the checks changed tracked files — ${changed.join(', ')}: a check measures, it does not edit`);
+        const matched = changed.length > 0 ? 0 : results.filter((result) => result.matched).length;
+        console.log(`steps re-measured ${results.length}, matched ${matched}`);
+        return matched === results.length && changed.length === 0 ? 0 : 1;
+    } catch (error) {
+        if (!(error instanceof StepRefused)) throw error;
+        console.log(`step: ${error.message}`);
+        return 1;
+    } finally {
+        for (const path of restored) rmSync(path, { force: true });
+        if (restored.length > 0) rmSync(plan.folder, { recursive: true, force: true });
+    }
 }

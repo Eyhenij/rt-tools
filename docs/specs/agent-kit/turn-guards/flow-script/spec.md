@@ -39,7 +39,7 @@ There is no interface: the description is read by the engine and by the executor
 - **The parsing of the steps reaches a measurer through a source, by the module every reader of the steps shares.**
 - **Exit 1 is met by a grill of the branch or of a draft that holds the owner's request as a quote and an answer.**
 - **Exit 3 is met by a line of the grill or the plan naming the agreement directory found on disk or in the history, or the reason there is none.**
-- **Exit 5 is met by a plan the branch added whose every step has a check of a known form, and by an approval mark whose answer begins with «Одобряю».**
+- **Exit 5 is met by a plan the branch added whose every step has a check of a known form, and by an approval mark whose place holds the owner's answer that begins with «Одобряю».**
 - **The marks lie in the common directory of git, and a mark that does not parse reads as absent.**
 - **Exit 6 is met by a version of the progress in the commit of the plan or later that repeats its steps and marks exactly one of them as going on.**
 - **Exit 7 is met when every step is done and every done step has a green mark, and a plan without check lines is judged by the marks of the progress alone.**
@@ -55,15 +55,15 @@ There is no interface: the description is read by the engine and by the executor
 - **A check runs with a limit of 540 seconds, and past it the step does not match.**
 - **The command for the done steps measures again every step the progress marks done.**
 - **A plan may be written only when every step carries a check of a known form that is no command of the work, and a form added to the description is known at once.**
-- **The approval mark is written when every check is red before the work, both roles were called and the owner then chose an option that begins with «Одобряю» and names the plan or the task.**
+- **The approval mark is written when every check is red before the work, both roles were called and the owner then chose an option that begins with «Одобряю» and names the plan or the task; it names the place of that answer.**
 - **A check is replaced only by a decision in the progress whose quote stands in a message the owner typed.**
 - **A branch planned before the engine reads its plan from the newest commit that changed it.**
 - **The epic of the work is the one the task card names, and its plan lies in the plans directory.**
 - **Exit 2 is met by the epic branch on the server or merged into the main branch, with the epic card out of the first column or closed.**
 - **Exit 4 is met by the task card out of the first column or closed, and by the commit that added the task folder.**
 - **Exit 10 is met by the folder commit on the server, a PR of the branch with a reviewer, and the task out of the work column.**
-- **Exit 11 is met by the branch of the next unblocked task of the epic, and with no such task.**
-- **Exit 12 is met when every task of the epic with a merged PR is marked merged in the plan.**
+- **Exit 11 is met when every unmerged, unblocked task of the epic other than the current one has a branch, and with no such task.**
+- **Exit 12 is met when every task of the epic with a merged PR is marked merged in the plan, and every task not deferred is marked merged.**
 - **Exit 13 is met when the tip of every task not deferred lies in the epic branch or the main branch, and the PR of the epic into the main branch exists.**
 - **A branch without a task number, the epic branch among them, takes the epic of the working copy from the assignment table.**
 - **The epic of the copy merged into the main branch or with its card closed counts as absent.**

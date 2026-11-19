@@ -178,6 +178,10 @@
                 "push_sends_tip": [
                     "yes",
                     "no"
+                ],
+                "steps_remeasured": [
+                    "yes",
+                    "no"
                 ]
             },
             "actions": [
@@ -613,6 +617,11 @@
         },
         {
             "file": "git-guard-delivery-pipeline.sh",
+            "kind": "helper",
+            "reason": "hooks into no agent event; guards source it"
+        },
+        {
+            "file": "git-guard-delivery-rerun.sh",
             "kind": "helper",
             "reason": "hooks into no agent event; guards source it"
         },
@@ -3377,6 +3386,28 @@
                 "own_pr_conflicting": "no",
                 "branch_is_main": "no",
                 "branch_is_task_branch": "yes",
+                "task_folder_in_branch": "no",
+                "steps_remeasured": "no"
+            },
+            "action": "pr_create",
+            "decision": "deny",
+            "move": "fix_checks",
+            "says": "measured once more before the PR, and not every one matched",
+            "probe": {
+                "setup": "T=\"$(fixture_repo_branched main RT-7-probe)\"\ncd \"$T\"\nprintf \".p/\\n.tmp/\\n.claude/\\ntools/\\n\" > .gitignore\ngit add .gitignore && git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m \"chore: ignore\"\ngit update-ref refs/remotes/origin/main main\nmkdir -p .claude/rt-kit/defaults .p .tmp/claude-skill-gate\ncp \"$DEFAULTS/gate-map.sh\" .claude/rt-kit/defaults/\nfor r in git-workflow task-flow epic-flow turn-conduct; do mkdir -p .claude/skills/$r; printf -- \"---\\nname: %s\\nkind: rule\\n---\\n\" $r > .claude/skills/$r/SKILL.md; done\nprintf '%s' '{\"exists\":true,\"open\":true,\"onBoard\":true,\"assigned\":true,\"numbered\":true,\"status\":\"In progress\"}' > .p/state\ncat > .claude/rt-kit/project.sh <<'PROFILE'\nrt_task_state() { if [ -f \"$CLAUDE_PROJECT_DIR/.p/state-$1\" ]; then cat \"$CLAUDE_PROJECT_DIR/.p/state-$1\"; else cat \"$CLAUDE_PROJECT_DIR/.p/state\"; fi; }\nrt_pull_state() { cat \"$CLAUDE_PROJECT_DIR/.p/pull\" 2>/dev/null || return 1; }\nrt_conflicting_pulls() { cat \"$CLAUDE_PROJECT_DIR/.p/conflicts\" 2>/dev/null; return 0; }\nrt_pull_merged() { cat \"$CLAUDE_PROJECT_DIR/.p/merged\" 2>/dev/null; }\nrt_report_body() { :; }\nrt_push_checks() { printf \"%s\\n\" true; }\n[ -f \"$CLAUDE_PROJECT_DIR/.p/extra.sh\" ] && . \"$CLAUDE_PROJECT_DIR/.p/extra.sh\"\nPROFILE\nexport CLAUDE_PROJECT_DIR=\"$T\" TMPDIR=\"$T/.tmp/\"\nprintf '%s\\n' git-workflow task-flow epic-flow turn-conduct > .tmp/claude-skill-gate/tests.loaded\nturn() { : > .tmp/turn.jsonl; jq -cn '{type:\"assistant\",message:{content:[{type:\"tool_use\",name:\"Skill\",input:{skill:\"git-workflow\"}}]}}' >> .tmp/turn.jsonl; [ -n \"$1\" ] && jq -cn --arg t \"EXAM: passed $1 of 5\" '{type:\"user\",message:{content:[{type:\"tool_result\",content:$t}]}}' >> .tmp/turn.jsonl; return 0; }\nturn 5\nfixture_commit \"$T\" docs/tasks/RT-7-probe/plan.md \"$(printf '# Plan\\n\\n## Stages\\n\\n### 1. One\\n\\n- **Steps:**\\n    1. Fail\\n       Check: `false` → exit 0\\n')\" \"docs: plan\"\nfixture_commit \"$T\" docs/tasks/RT-7-probe/progress.md \"$(printf '# Progress\\n\\n## Steps\\n\\n- [x] 1.1 Fail\\n')\" \"docs: progress\"\nfixture_remove \"$T\" docs/tasks/RT-7-probe \"docs: folder removed\"\nfixture_commit \"$T\" docs/archive/RT-7.md a \"docs: archive\"",
+                "input": "input_cmd 'gh pr create --title \"[RT-7] Done\" --body x' Bash \"$T\" | jq --arg r \"$T/.tmp/turn.jsonl\" '. + {transcript_path: $r}'"
+            },
+            "text": "BLOCKED: the work is not ready for delivery. Everything unmet is named whole — so that it is fixed in one session, not one miss per round:\n\n{faults}",
+            "tail": true
+        },
+        {
+            "area": "delivery",
+            "hook": "git-guard-delivery.sh",
+            "when": {
+                "rule_loaded": "yes",
+                "own_pr_conflicting": "no",
+                "branch_is_main": "no",
+                "branch_is_task_branch": "yes",
                 "task_in_epic": "yes",
                 "epic_branch": "one",
                 "branch_has_epic_tip": "no"
@@ -3412,7 +3443,8 @@
                 "draft_spec_merged": "yes",
                 "epic_folders_left": "no",
                 "task_in_epic": "no",
-                "branch_has_main_tip": "yes"
+                "branch_has_main_tip": "yes",
+                "steps_remeasured": "yes"
             },
             "action": "pr_create_bad_title",
             "decision": "deny",
@@ -3986,6 +4018,30 @@
                 "own_pr_conflicting": "no",
                 "branch_is_main": "no",
                 "branch_is_task_branch": "yes",
+                "task_folder_in_branch": "no",
+                "task_in_epic": "no",
+                "branch_has_main_tip": "yes",
+                "steps_remeasured": "no"
+            },
+            "action": "pr_create_bad_title",
+            "decision": "deny",
+            "move": "fix_checks",
+            "says": "measured once more before the PR, and not every one matched",
+            "probe": {
+                "setup": "T=\"$(fixture_repo_branched main RT-7-probe)\"\ncd \"$T\"\nprintf \".p/\\n.tmp/\\n.claude/\\ntools/\\n\" > .gitignore\ngit add .gitignore && git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m \"chore: ignore\"\ngit update-ref refs/remotes/origin/main main\nmkdir -p .claude/rt-kit/defaults .p .tmp/claude-skill-gate\ncp \"$DEFAULTS/gate-map.sh\" .claude/rt-kit/defaults/\nfor r in git-workflow task-flow epic-flow turn-conduct; do mkdir -p .claude/skills/$r; printf -- \"---\\nname: %s\\nkind: rule\\n---\\n\" $r > .claude/skills/$r/SKILL.md; done\nprintf '%s' '{\"exists\":true,\"open\":true,\"onBoard\":true,\"assigned\":true,\"numbered\":true,\"status\":\"In progress\"}' > .p/state\ncat > .claude/rt-kit/project.sh <<'PROFILE'\nrt_task_state() { if [ -f \"$CLAUDE_PROJECT_DIR/.p/state-$1\" ]; then cat \"$CLAUDE_PROJECT_DIR/.p/state-$1\"; else cat \"$CLAUDE_PROJECT_DIR/.p/state\"; fi; }\nrt_pull_state() { cat \"$CLAUDE_PROJECT_DIR/.p/pull\" 2>/dev/null || return 1; }\nrt_conflicting_pulls() { cat \"$CLAUDE_PROJECT_DIR/.p/conflicts\" 2>/dev/null; return 0; }\nrt_pull_merged() { cat \"$CLAUDE_PROJECT_DIR/.p/merged\" 2>/dev/null; }\nrt_report_body() { :; }\nrt_push_checks() { printf \"%s\\n\" true; }\n[ -f \"$CLAUDE_PROJECT_DIR/.p/extra.sh\" ] && . \"$CLAUDE_PROJECT_DIR/.p/extra.sh\"\nPROFILE\nexport CLAUDE_PROJECT_DIR=\"$T\" TMPDIR=\"$T/.tmp/\"\nprintf '%s\\n' git-workflow task-flow epic-flow turn-conduct > .tmp/claude-skill-gate/tests.loaded\nturn() { : > .tmp/turn.jsonl; jq -cn '{type:\"assistant\",message:{content:[{type:\"tool_use\",name:\"Skill\",input:{skill:\"git-workflow\"}}]}}' >> .tmp/turn.jsonl; [ -n \"$1\" ] && jq -cn --arg t \"EXAM: passed $1 of 5\" '{type:\"user\",message:{content:[{type:\"tool_result\",content:$t}]}}' >> .tmp/turn.jsonl; return 0; }\nturn 5\nfixture_commit \"$T\" docs/tasks/RT-7-probe/plan.md \"$(printf '# Plan\\n\\n## Stages\\n\\n### 1. One\\n\\n- **Steps:**\\n    1. Fail\\n       Check: `false` → exit 0\\n')\" \"docs: plan\"\nfixture_commit \"$T\" docs/tasks/RT-7-probe/progress.md \"$(printf '# Progress\\n\\n## Steps\\n\\n- [x] 1.1 Fail\\n')\" \"docs: progress\"\nfixture_remove \"$T\" docs/tasks/RT-7-probe \"docs: folder removed\"\nfixture_commit \"$T\" docs/archive/RT-7.md a \"docs: archive\"",
+                "input": "input_cmd 'gh pr create --title \"Done\" --body x' Bash \"$T\" | jq --arg r \"$T/.tmp/turn.jsonl\" '. + {transcript_path: $r}'"
+            },
+            "text": "BLOCKED: the work is not ready for delivery. Everything unmet is named whole — so that it is fixed in one session, not one miss per round:\n\n{faults}",
+            "tail": true
+        },
+        {
+            "area": "delivery",
+            "hook": "git-guard-delivery.sh",
+            "when": {
+                "rule_loaded": "yes",
+                "own_pr_conflicting": "no",
+                "branch_is_main": "no",
+                "branch_is_task_branch": "yes",
                 "task_exists": "yes",
                 "task_open": "yes",
                 "task_on_board": "yes",
@@ -3998,7 +4054,8 @@
                 "draft_spec_merged": "yes",
                 "epic_folders_left": "no",
                 "task_in_epic": "no",
-                "branch_has_main_tip": "yes"
+                "branch_has_main_tip": "yes",
+                "steps_remeasured": "yes"
             },
             "action": "pr_create_wrong_number",
             "decision": "deny",
@@ -4559,6 +4616,30 @@
             "says": "merge its rules and scenarios into the domain spec",
             "probe": {
                 "setup": "T=\"$(fixture_repo_branched main RT-7-probe)\"\ncd \"$T\"\nprintf \".p/\\n.tmp/\\n.claude/\\ntools/\\n\" > .gitignore\ngit add .gitignore && git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m \"chore: ignore\"\ngit update-ref refs/remotes/origin/main main\nmkdir -p .claude/rt-kit/defaults .p .tmp/claude-skill-gate\ncp \"$DEFAULTS/gate-map.sh\" .claude/rt-kit/defaults/\nfor r in git-workflow task-flow epic-flow turn-conduct; do mkdir -p .claude/skills/$r; printf -- \"---\\nname: %s\\nkind: rule\\n---\\n\" $r > .claude/skills/$r/SKILL.md; done\nprintf '%s' '{\"exists\":true,\"open\":true,\"onBoard\":true,\"assigned\":true,\"numbered\":true,\"status\":\"In progress\"}' > .p/state\ncat > .claude/rt-kit/project.sh <<'PROFILE'\nrt_task_state() { if [ -f \"$CLAUDE_PROJECT_DIR/.p/state-$1\" ]; then cat \"$CLAUDE_PROJECT_DIR/.p/state-$1\"; else cat \"$CLAUDE_PROJECT_DIR/.p/state\"; fi; }\nrt_pull_state() { cat \"$CLAUDE_PROJECT_DIR/.p/pull\" 2>/dev/null || return 1; }\nrt_conflicting_pulls() { cat \"$CLAUDE_PROJECT_DIR/.p/conflicts\" 2>/dev/null; return 0; }\nrt_pull_merged() { cat \"$CLAUDE_PROJECT_DIR/.p/merged\" 2>/dev/null; }\nrt_report_body() { :; }\nrt_push_checks() { printf \"%s\\n\" true; }\n[ -f \"$CLAUDE_PROJECT_DIR/.p/extra.sh\" ] && . \"$CLAUDE_PROJECT_DIR/.p/extra.sh\"\nPROFILE\nexport CLAUDE_PROJECT_DIR=\"$T\" TMPDIR=\"$T/.tmp/\"\nprintf '%s\\n' git-workflow task-flow epic-flow turn-conduct > .tmp/claude-skill-gate/tests.loaded\nturn() { : > .tmp/turn.jsonl; jq -cn '{type:\"assistant\",message:{content:[{type:\"tool_use\",name:\"Skill\",input:{skill:\"git-workflow\"}}]}}' >> .tmp/turn.jsonl; [ -n \"$1\" ] && jq -cn --arg t \"EXAM: passed $1 of 5\" '{type:\"user\",message:{content:[{type:\"tool_result\",content:$t}]}}' >> .tmp/turn.jsonl; return 0; }\nturn 5\nfixture_commit \"$T\" docs/specs/x/proposed/y/spec.md s \"docs: draft\"\nfixture_commit \"$T\" docs/tasks/RT-7-probe/plan.md \"**Draft:** \\`docs/specs/x/proposed/y/\\`\" \"docs: plan\"\nfixture_remove \"$T\" docs/tasks/RT-7-probe \"docs: folder removed\"\nfixture_commit \"$T\" docs/archive/RT-7.md a \"docs: archive\"",
+                "input": "input_cmd 'gh pr create --title \"[RT-9] Done\" --body x' Bash \"$T\" | jq --arg r \"$T/.tmp/turn.jsonl\" '. + {transcript_path: $r}'"
+            },
+            "text": "BLOCKED: the work is not ready for delivery. Everything unmet is named whole — so that it is fixed in one session, not one miss per round:\n\n{faults}",
+            "tail": true
+        },
+        {
+            "area": "delivery",
+            "hook": "git-guard-delivery.sh",
+            "when": {
+                "rule_loaded": "yes",
+                "own_pr_conflicting": "no",
+                "branch_is_main": "no",
+                "branch_is_task_branch": "yes",
+                "task_folder_in_branch": "no",
+                "task_in_epic": "no",
+                "branch_has_main_tip": "yes",
+                "steps_remeasured": "no"
+            },
+            "action": "pr_create_wrong_number",
+            "decision": "deny",
+            "move": "fix_checks",
+            "says": "measured once more before the PR, and not every one matched",
+            "probe": {
+                "setup": "T=\"$(fixture_repo_branched main RT-7-probe)\"\ncd \"$T\"\nprintf \".p/\\n.tmp/\\n.claude/\\ntools/\\n\" > .gitignore\ngit add .gitignore && git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m \"chore: ignore\"\ngit update-ref refs/remotes/origin/main main\nmkdir -p .claude/rt-kit/defaults .p .tmp/claude-skill-gate\ncp \"$DEFAULTS/gate-map.sh\" .claude/rt-kit/defaults/\nfor r in git-workflow task-flow epic-flow turn-conduct; do mkdir -p .claude/skills/$r; printf -- \"---\\nname: %s\\nkind: rule\\n---\\n\" $r > .claude/skills/$r/SKILL.md; done\nprintf '%s' '{\"exists\":true,\"open\":true,\"onBoard\":true,\"assigned\":true,\"numbered\":true,\"status\":\"In progress\"}' > .p/state\ncat > .claude/rt-kit/project.sh <<'PROFILE'\nrt_task_state() { if [ -f \"$CLAUDE_PROJECT_DIR/.p/state-$1\" ]; then cat \"$CLAUDE_PROJECT_DIR/.p/state-$1\"; else cat \"$CLAUDE_PROJECT_DIR/.p/state\"; fi; }\nrt_pull_state() { cat \"$CLAUDE_PROJECT_DIR/.p/pull\" 2>/dev/null || return 1; }\nrt_conflicting_pulls() { cat \"$CLAUDE_PROJECT_DIR/.p/conflicts\" 2>/dev/null; return 0; }\nrt_pull_merged() { cat \"$CLAUDE_PROJECT_DIR/.p/merged\" 2>/dev/null; }\nrt_report_body() { :; }\nrt_push_checks() { printf \"%s\\n\" true; }\n[ -f \"$CLAUDE_PROJECT_DIR/.p/extra.sh\" ] && . \"$CLAUDE_PROJECT_DIR/.p/extra.sh\"\nPROFILE\nexport CLAUDE_PROJECT_DIR=\"$T\" TMPDIR=\"$T/.tmp/\"\nprintf '%s\\n' git-workflow task-flow epic-flow turn-conduct > .tmp/claude-skill-gate/tests.loaded\nturn() { : > .tmp/turn.jsonl; jq -cn '{type:\"assistant\",message:{content:[{type:\"tool_use\",name:\"Skill\",input:{skill:\"git-workflow\"}}]}}' >> .tmp/turn.jsonl; [ -n \"$1\" ] && jq -cn --arg t \"EXAM: passed $1 of 5\" '{type:\"user\",message:{content:[{type:\"tool_result\",content:$t}]}}' >> .tmp/turn.jsonl; return 0; }\nturn 5\nfixture_commit \"$T\" docs/tasks/RT-7-probe/plan.md \"$(printf '# Plan\\n\\n## Stages\\n\\n### 1. One\\n\\n- **Steps:**\\n    1. Fail\\n       Check: `false` → exit 0\\n')\" \"docs: plan\"\nfixture_commit \"$T\" docs/tasks/RT-7-probe/progress.md \"$(printf '# Progress\\n\\n## Steps\\n\\n- [x] 1.1 Fail\\n')\" \"docs: progress\"\nfixture_remove \"$T\" docs/tasks/RT-7-probe \"docs: folder removed\"\nfixture_commit \"$T\" docs/archive/RT-7.md a \"docs: archive\"",
                 "input": "input_cmd 'gh pr create --title \"[RT-9] Done\" --body x' Bash \"$T\" | jq --arg r \"$T/.tmp/turn.jsonl\" '. + {transcript_path: $r}'"
             },
             "text": "BLOCKED: the work is not ready for delivery. Everything unmet is named whole — so that it is fixed in one session, not one miss per round:\n\n{faults}",
@@ -5146,7 +5227,8 @@
                 "epic_folders_left": "no",
                 "task_in_epic": "yes",
                 "epic_branch": "one",
-                "branch_has_epic_tip": "yes"
+                "branch_has_epic_tip": "yes",
+                "steps_remeasured": "yes"
             },
             "action": "pr_create_wrong_base",
             "decision": "deny",
@@ -5743,6 +5825,31 @@
                 "own_pr_conflicting": "no",
                 "branch_is_main": "no",
                 "branch_is_task_branch": "yes",
+                "task_folder_in_branch": "no",
+                "task_in_epic": "yes",
+                "epic_branch": "one",
+                "branch_has_epic_tip": "yes",
+                "steps_remeasured": "no"
+            },
+            "action": "pr_create_wrong_base",
+            "decision": "deny",
+            "move": "fix_checks",
+            "says": "measured once more before the PR, and not every one matched",
+            "probe": {
+                "setup": "T=\"$(fixture_repo_branched main RT-7-probe)\"\ncd \"$T\"\nprintf \".p/\\n.tmp/\\n.claude/\\ntools/\\n\" > .gitignore\ngit add .gitignore && git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m \"chore: ignore\"\ngit update-ref refs/remotes/origin/main main\nmkdir -p .claude/rt-kit/defaults .p .tmp/claude-skill-gate\ncp \"$DEFAULTS/gate-map.sh\" .claude/rt-kit/defaults/\nfor r in git-workflow task-flow epic-flow turn-conduct; do mkdir -p .claude/skills/$r; printf -- \"---\\nname: %s\\nkind: rule\\n---\\n\" $r > .claude/skills/$r/SKILL.md; done\nprintf '%s' '{\"exists\":true,\"open\":true,\"onBoard\":true,\"assigned\":true,\"numbered\":true,\"status\":\"In progress\"}' > .p/state\ncat > .claude/rt-kit/project.sh <<'PROFILE'\nrt_task_state() { if [ -f \"$CLAUDE_PROJECT_DIR/.p/state-$1\" ]; then cat \"$CLAUDE_PROJECT_DIR/.p/state-$1\"; else cat \"$CLAUDE_PROJECT_DIR/.p/state\"; fi; }\nrt_pull_state() { cat \"$CLAUDE_PROJECT_DIR/.p/pull\" 2>/dev/null || return 1; }\nrt_conflicting_pulls() { cat \"$CLAUDE_PROJECT_DIR/.p/conflicts\" 2>/dev/null; return 0; }\nrt_pull_merged() { cat \"$CLAUDE_PROJECT_DIR/.p/merged\" 2>/dev/null; }\nrt_report_body() { :; }\nrt_push_checks() { printf \"%s\\n\" true; }\n[ -f \"$CLAUDE_PROJECT_DIR/.p/extra.sh\" ] && . \"$CLAUDE_PROJECT_DIR/.p/extra.sh\"\nPROFILE\nexport CLAUDE_PROJECT_DIR=\"$T\" TMPDIR=\"$T/.tmp/\"\nprintf '%s\\n' git-workflow task-flow epic-flow turn-conduct > .tmp/claude-skill-gate/tests.loaded\nturn() { : > .tmp/turn.jsonl; jq -cn '{type:\"assistant\",message:{content:[{type:\"tool_use\",name:\"Skill\",input:{skill:\"git-workflow\"}}]}}' >> .tmp/turn.jsonl; [ -n \"$1\" ] && jq -cn --arg t \"EXAM: passed $1 of 5\" '{type:\"user\",message:{content:[{type:\"tool_result\",content:$t}]}}' >> .tmp/turn.jsonl; return 0; }\nturn 5\nfixture_commit \"$T\" docs/tasks/RT-7-probe/plan.md \"$(printf '# Plan\\n\\n## Stages\\n\\n### 1. One\\n\\n- **Steps:**\\n    1. Fail\\n       Check: `false` → exit 0\\n')\" \"docs: plan\"\nfixture_commit \"$T\" docs/tasks/RT-7-probe/progress.md \"$(printf '# Progress\\n\\n## Steps\\n\\n- [x] 1.1 Fail\\n')\" \"docs: progress\"\nfixture_remove \"$T\" docs/tasks/RT-7-probe \"docs: folder removed\"\nfixture_commit \"$T\" docs/archive/RT-7.md a \"docs: archive\"",
+                "input": "input_cmd 'gh pr create --base main --title \"[RT-7] Done\" --body x' Bash \"$T\" | jq --arg r \"$T/.tmp/turn.jsonl\" '. + {transcript_path: $r}'"
+            },
+            "text": "BLOCKED: the work is not ready for delivery. Everything unmet is named whole — so that it is fixed in one session, not one miss per round:\n\n{faults}",
+            "tail": true
+        },
+        {
+            "area": "delivery",
+            "hook": "git-guard-delivery.sh",
+            "when": {
+                "rule_loaded": "yes",
+                "own_pr_conflicting": "no",
+                "branch_is_main": "no",
+                "branch_is_task_branch": "yes",
                 "task_exists": "yes",
                 "task_open": "yes",
                 "task_on_board": "yes",
@@ -5755,7 +5862,8 @@
                 "draft_spec_merged": "yes",
                 "epic_folders_left": "no",
                 "task_in_epic": "no",
-                "branch_has_main_tip": "yes"
+                "branch_has_main_tip": "yes",
+                "steps_remeasured": "yes"
             },
             "action": "pr_create_self_review",
             "decision": "deny",
@@ -6329,6 +6437,30 @@
                 "own_pr_conflicting": "no",
                 "branch_is_main": "no",
                 "branch_is_task_branch": "yes",
+                "task_folder_in_branch": "no",
+                "task_in_epic": "no",
+                "branch_has_main_tip": "yes",
+                "steps_remeasured": "no"
+            },
+            "action": "pr_create_self_review",
+            "decision": "deny",
+            "move": "fix_checks",
+            "says": "measured once more before the PR, and not every one matched",
+            "probe": {
+                "setup": "T=\"$(fixture_repo_branched main RT-7-probe)\"\ncd \"$T\"\nprintf \".p/\\n.tmp/\\n.claude/\\ntools/\\n\" > .gitignore\ngit add .gitignore && git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m \"chore: ignore\"\ngit update-ref refs/remotes/origin/main main\nmkdir -p .claude/rt-kit/defaults .p .tmp/claude-skill-gate\ncp \"$DEFAULTS/gate-map.sh\" .claude/rt-kit/defaults/\nfor r in git-workflow task-flow epic-flow turn-conduct; do mkdir -p .claude/skills/$r; printf -- \"---\\nname: %s\\nkind: rule\\n---\\n\" $r > .claude/skills/$r/SKILL.md; done\nprintf '%s' '{\"exists\":true,\"open\":true,\"onBoard\":true,\"assigned\":true,\"numbered\":true,\"status\":\"In progress\"}' > .p/state\ncat > .claude/rt-kit/project.sh <<'PROFILE'\nrt_task_state() { if [ -f \"$CLAUDE_PROJECT_DIR/.p/state-$1\" ]; then cat \"$CLAUDE_PROJECT_DIR/.p/state-$1\"; else cat \"$CLAUDE_PROJECT_DIR/.p/state\"; fi; }\nrt_pull_state() { cat \"$CLAUDE_PROJECT_DIR/.p/pull\" 2>/dev/null || return 1; }\nrt_conflicting_pulls() { cat \"$CLAUDE_PROJECT_DIR/.p/conflicts\" 2>/dev/null; return 0; }\nrt_pull_merged() { cat \"$CLAUDE_PROJECT_DIR/.p/merged\" 2>/dev/null; }\nrt_report_body() { :; }\nrt_push_checks() { printf \"%s\\n\" true; }\n[ -f \"$CLAUDE_PROJECT_DIR/.p/extra.sh\" ] && . \"$CLAUDE_PROJECT_DIR/.p/extra.sh\"\nPROFILE\nexport CLAUDE_PROJECT_DIR=\"$T\" TMPDIR=\"$T/.tmp/\"\nprintf '%s\\n' git-workflow task-flow epic-flow turn-conduct > .tmp/claude-skill-gate/tests.loaded\nturn() { : > .tmp/turn.jsonl; jq -cn '{type:\"assistant\",message:{content:[{type:\"tool_use\",name:\"Skill\",input:{skill:\"git-workflow\"}}]}}' >> .tmp/turn.jsonl; [ -n \"$1\" ] && jq -cn --arg t \"EXAM: passed $1 of 5\" '{type:\"user\",message:{content:[{type:\"tool_result\",content:$t}]}}' >> .tmp/turn.jsonl; return 0; }\nturn 5\nfixture_commit \"$T\" docs/tasks/RT-7-probe/plan.md \"$(printf '# Plan\\n\\n## Stages\\n\\n### 1. One\\n\\n- **Steps:**\\n    1. Fail\\n       Check: `false` → exit 0\\n')\" \"docs: plan\"\nfixture_commit \"$T\" docs/tasks/RT-7-probe/progress.md \"$(printf '# Progress\\n\\n## Steps\\n\\n- [x] 1.1 Fail\\n')\" \"docs: progress\"\nfixture_remove \"$T\" docs/tasks/RT-7-probe \"docs: folder removed\"\nfixture_commit \"$T\" docs/archive/RT-7.md a \"docs: archive\"",
+                "input": "input_cmd 'gh pr create --reviewer rev --title \"[RT-7] Done\" --body x' Bash \"$T\" | jq --arg r \"$T/.tmp/turn.jsonl\" '. + {transcript_path: $r}'"
+            },
+            "text": "BLOCKED: the work is not ready for delivery. Everything unmet is named whole — so that it is fixed in one session, not one miss per round:\n\n{faults}",
+            "tail": true
+        },
+        {
+            "area": "delivery",
+            "hook": "git-guard-delivery.sh",
+            "when": {
+                "rule_loaded": "yes",
+                "own_pr_conflicting": "no",
+                "branch_is_main": "no",
+                "branch_is_task_branch": "yes",
                 "task_exists": "yes",
                 "task_open": "yes",
                 "task_on_board": "yes",
@@ -6341,7 +6473,8 @@
                 "draft_spec_merged": "yes",
                 "epic_folders_left": "no",
                 "task_in_epic": "no",
-                "branch_has_main_tip": "yes"
+                "branch_has_main_tip": "yes",
+                "steps_remeasured": "yes"
             },
             "action": "pr_create_thin_body",
             "decision": "deny",
@@ -6902,6 +7035,30 @@
             "says": "merge its rules and scenarios into the domain spec",
             "probe": {
                 "setup": "T=\"$(fixture_repo_branched main RT-7-probe)\"\ncd \"$T\"\nprintf \".p/\\n.tmp/\\n.claude/\\ntools/\\n\" > .gitignore\ngit add .gitignore && git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m \"chore: ignore\"\ngit update-ref refs/remotes/origin/main main\nmkdir -p .claude/rt-kit/defaults .p .tmp/claude-skill-gate\ncp \"$DEFAULTS/gate-map.sh\" .claude/rt-kit/defaults/\nfor r in git-workflow task-flow epic-flow turn-conduct; do mkdir -p .claude/skills/$r; printf -- \"---\\nname: %s\\nkind: rule\\n---\\n\" $r > .claude/skills/$r/SKILL.md; done\nprintf '%s' '{\"exists\":true,\"open\":true,\"onBoard\":true,\"assigned\":true,\"numbered\":true,\"status\":\"In progress\"}' > .p/state\ncat > .claude/rt-kit/project.sh <<'PROFILE'\nrt_task_state() { if [ -f \"$CLAUDE_PROJECT_DIR/.p/state-$1\" ]; then cat \"$CLAUDE_PROJECT_DIR/.p/state-$1\"; else cat \"$CLAUDE_PROJECT_DIR/.p/state\"; fi; }\nrt_pull_state() { cat \"$CLAUDE_PROJECT_DIR/.p/pull\" 2>/dev/null || return 1; }\nrt_conflicting_pulls() { cat \"$CLAUDE_PROJECT_DIR/.p/conflicts\" 2>/dev/null; return 0; }\nrt_pull_merged() { cat \"$CLAUDE_PROJECT_DIR/.p/merged\" 2>/dev/null; }\nrt_report_body() { :; }\nrt_push_checks() { printf \"%s\\n\" true; }\n[ -f \"$CLAUDE_PROJECT_DIR/.p/extra.sh\" ] && . \"$CLAUDE_PROJECT_DIR/.p/extra.sh\"\nPROFILE\nexport CLAUDE_PROJECT_DIR=\"$T\" TMPDIR=\"$T/.tmp/\"\nprintf '%s\\n' git-workflow task-flow epic-flow turn-conduct > .tmp/claude-skill-gate/tests.loaded\nturn() { : > .tmp/turn.jsonl; jq -cn '{type:\"assistant\",message:{content:[{type:\"tool_use\",name:\"Skill\",input:{skill:\"git-workflow\"}}]}}' >> .tmp/turn.jsonl; [ -n \"$1\" ] && jq -cn --arg t \"EXAM: passed $1 of 5\" '{type:\"user\",message:{content:[{type:\"tool_result\",content:$t}]}}' >> .tmp/turn.jsonl; return 0; }\nturn 5\nprintf '%s\\n' 'RT_PULL_POINTS_SECTION=\"## Points\"' >> .p/extra.sh\nfixture_commit \"$T\" docs/specs/x/proposed/y/spec.md s \"docs: draft\"\nfixture_commit \"$T\" docs/tasks/RT-7-probe/plan.md \"**Draft:** \\`docs/specs/x/proposed/y/\\`\" \"docs: plan\"\nfixture_remove \"$T\" docs/tasks/RT-7-probe \"docs: folder removed\"\nfixture_commit \"$T\" docs/archive/RT-7.md a \"docs: archive\"",
+                "input": "input_cmd 'gh pr create --title \"[RT-7] Done\" --body x' Bash \"$T\" | jq --arg r \"$T/.tmp/turn.jsonl\" '. + {transcript_path: $r}'"
+            },
+            "text": "BLOCKED: the work is not ready for delivery. Everything unmet is named whole — so that it is fixed in one session, not one miss per round:\n\n{faults}",
+            "tail": true
+        },
+        {
+            "area": "delivery",
+            "hook": "git-guard-delivery.sh",
+            "when": {
+                "rule_loaded": "yes",
+                "own_pr_conflicting": "no",
+                "branch_is_main": "no",
+                "branch_is_task_branch": "yes",
+                "task_folder_in_branch": "no",
+                "task_in_epic": "no",
+                "branch_has_main_tip": "yes",
+                "steps_remeasured": "no"
+            },
+            "action": "pr_create_thin_body",
+            "decision": "deny",
+            "move": "fix_checks",
+            "says": "measured once more before the PR, and not every one matched",
+            "probe": {
+                "setup": "T=\"$(fixture_repo_branched main RT-7-probe)\"\ncd \"$T\"\nprintf \".p/\\n.tmp/\\n.claude/\\ntools/\\n\" > .gitignore\ngit add .gitignore && git -c user.name=probe -c user.email=probe@example.com -c commit.gpgsign=false commit -q -m \"chore: ignore\"\ngit update-ref refs/remotes/origin/main main\nmkdir -p .claude/rt-kit/defaults .p .tmp/claude-skill-gate\ncp \"$DEFAULTS/gate-map.sh\" .claude/rt-kit/defaults/\nfor r in git-workflow task-flow epic-flow turn-conduct; do mkdir -p .claude/skills/$r; printf -- \"---\\nname: %s\\nkind: rule\\n---\\n\" $r > .claude/skills/$r/SKILL.md; done\nprintf '%s' '{\"exists\":true,\"open\":true,\"onBoard\":true,\"assigned\":true,\"numbered\":true,\"status\":\"In progress\"}' > .p/state\ncat > .claude/rt-kit/project.sh <<'PROFILE'\nrt_task_state() { if [ -f \"$CLAUDE_PROJECT_DIR/.p/state-$1\" ]; then cat \"$CLAUDE_PROJECT_DIR/.p/state-$1\"; else cat \"$CLAUDE_PROJECT_DIR/.p/state\"; fi; }\nrt_pull_state() { cat \"$CLAUDE_PROJECT_DIR/.p/pull\" 2>/dev/null || return 1; }\nrt_conflicting_pulls() { cat \"$CLAUDE_PROJECT_DIR/.p/conflicts\" 2>/dev/null; return 0; }\nrt_pull_merged() { cat \"$CLAUDE_PROJECT_DIR/.p/merged\" 2>/dev/null; }\nrt_report_body() { :; }\nrt_push_checks() { printf \"%s\\n\" true; }\n[ -f \"$CLAUDE_PROJECT_DIR/.p/extra.sh\" ] && . \"$CLAUDE_PROJECT_DIR/.p/extra.sh\"\nPROFILE\nexport CLAUDE_PROJECT_DIR=\"$T\" TMPDIR=\"$T/.tmp/\"\nprintf '%s\\n' git-workflow task-flow epic-flow turn-conduct > .tmp/claude-skill-gate/tests.loaded\nturn() { : > .tmp/turn.jsonl; jq -cn '{type:\"assistant\",message:{content:[{type:\"tool_use\",name:\"Skill\",input:{skill:\"git-workflow\"}}]}}' >> .tmp/turn.jsonl; [ -n \"$1\" ] && jq -cn --arg t \"EXAM: passed $1 of 5\" '{type:\"user\",message:{content:[{type:\"tool_result\",content:$t}]}}' >> .tmp/turn.jsonl; return 0; }\nturn 5\nfixture_commit \"$T\" docs/tasks/RT-7-probe/plan.md \"$(printf '# Plan\\n\\n## Stages\\n\\n### 1. One\\n\\n- **Steps:**\\n    1. Fail\\n       Check: `false` → exit 0\\n')\" \"docs: plan\"\nfixture_commit \"$T\" docs/tasks/RT-7-probe/progress.md \"$(printf '# Progress\\n\\n## Steps\\n\\n- [x] 1.1 Fail\\n')\" \"docs: progress\"\nfixture_remove \"$T\" docs/tasks/RT-7-probe \"docs: folder removed\"\nfixture_commit \"$T\" docs/archive/RT-7.md a \"docs: archive\"",
                 "input": "input_cmd 'gh pr create --title \"[RT-7] Done\" --body x' Bash \"$T\" | jq --arg r \"$T/.tmp/turn.jsonl\" '. + {transcript_path: $r}'"
             },
             "text": "BLOCKED: the work is not ready for delivery. Everything unmet is named whole — so that it is fixed in one session, not one miss per round:\n\n{faults}",

@@ -268,8 +268,8 @@ committed, there is something to report — and the report takes the place of th
 ended with "next step — such-and-such" at a window fill of about two percent. A turn ends with the
 scenario or with the owner's stop word; a pattern read to the end is neither.
 
-**Next move:** the first stage is done in the same turn. Each of its steps is marked done after
-`task-flow-script.mjs step` has run its check and written its mark.
+**Next move:** the first stage is done in the same turn. `task-flow-script.mjs step` runs the check
+of each of its steps and marks the step done itself; a hand mark is refused.
 
 ## Common misses
 

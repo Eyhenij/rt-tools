@@ -62,7 +62,25 @@ chose() {
 
 # Зелёная метка шага: её пишет только движок, набор кладёт её как готовую.
 green_mark() { mkdir -p "$1/.git/rt-kit/steps/$2" && printf '{"matched":true}\n' > "$1/.git/rt-kit/steps/$2/$3.json"; }
-approve() { mkdir -p "$1/.git/rt-kit/approval" && printf '{"answer":"Одобряю план"}\n' > "$1/.git/rt-kit/approval/$2.json"; }
+# Каталоги записей разговоров лежат в своём доме: движок ищет одобрение только в них.
+export RT_FLOW_RECORDS_HOME="$(mktemp -d)/.claude/projects"
+mkdir -p "$RT_FLOW_RECORDS_HOME"
+TMPS+=("${RT_FLOW_RECORDS_HOME%/.claude/projects}")
+records_dir() { printf '%s/%s' "$RT_FLOW_RECORDS_HOME" "$(cd "$1" && pwd -P | sed 's#[/.]#-#g')"; }
+# Метка одобрения с местом ответа: запись в каталоге записей копии и uuid её записи. Доводы: дерево,
+# ветка, ответ на месте (по умолчанию — одобряющий), uuid в метке, путь записи.
+approve() {
+    local repo="$1" branch="$2" task="${2%%-[a-z]*}" dir rec sha
+    local said="${3:-Одобряю план $task}"
+    dir="$(records_dir "$repo")"
+    mkdir -p "$dir"
+    rec="${5:-$dir/session.jsonl}"
+    jq -cn --arg t "$said" '{type:"user",uuid:"a1",toolUseResult:{answers:{"Одобряешь?":$t}}}' > "$rec"
+    sha="$(git -C "$repo" log --diff-filter=A --format=%H -- "docs/tasks/$branch/plan.md" | tail -1)"
+    mkdir -p "$repo/.git/rt-kit/approval"
+    jq -cn --arg a "Одобряю план $task" --arg p "$sha" --arg r "$rec" --arg u "${4:-a1}" \
+        '{answer:$a,plan:$p,place:{record:$r,uuid:$u}}' > "$repo/.git/rt-kit/approval/$branch.json"
+}
 
 d() { expect_decision "$1" "$GUARD" "$2" "$3"; }
 
@@ -72,12 +90,17 @@ R="$(task_repo "$B")"
 P="$R/docs/tasks/$B/progress.md"
 progress_text 'этап-идёт' '>' ' ' > "$P"
 
-d "guard: SC-AK-1414 — [x] без метки отказан" "$(edit_input Edit "$P" '- [>] 1.1' '- [x] 1.1' "$R")" deny
+d "guard: SC-AK-1414 — [x] рукой отказан" "$(edit_input Edit "$P" '- [>] 1.1' '- [x] 1.1' "$R")" deny
 expect_reason "guard: SC-AK-1414 — отказ называет команду шага" "$GUARD" "$(edit_input Edit "$P" '- [>] 1.1' '- [x] 1.1' "$R")" 'task-flow-script.mjs step 1.1'
 green_mark "$R" "$B" 1.1
-d "guard: SC-AK-1414 — [x] с зелёной меткой проходит" "$(edit_input Edit "$P" '- [>] 1.1 Первый шаг
+d "guard: SC-AK-1703 — [x] рукой отказан и при зелёной метке на диске" "$(edit_input Edit "$P" '- [>] 1.1 Первый шаг
 - [ ] 1.2' '- [x] 1.1 Первый шаг
-- [>] 1.2' "$R")" PASS
+- [>] 1.2' "$R")" deny
+# План без проверок в рабочей копии отказа не снимает: проверки читаются из коммита плана.
+cp "$R/docs/tasks/$B/plan.md" "$R/plan.keep"
+plan_text bare > "$R/docs/tasks/$B/plan.md"
+d "guard: SC-AK-1716 — план без проверок в рабочей копии не снимает отказ" "$(edit_input Edit "$P" '- [>] 1.1' '- [x] 1.1' "$R")" deny
+mv "$R/plan.keep" "$R/docs/tasks/$B/plan.md"
 
 progress_text 'этап-идёт' ' ' ' ' > "$P"
 d "guard: SC-AK-1415 — [x] после неготового шага отказан" "$(edit_input Edit "$P" '- [ ] 1.2' '- [x] 1.2' "$R")" deny
@@ -164,6 +187,53 @@ d "protect: SC-AK-1525 — неодобренный план со строкой
 approve "$R5" "$B5"
 d "protect: SC-AK-1525 — в задаче, чей одобренный план называет путь в строке «(правится)», правка проходит" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" PASS
 d "protect: SC-AK-1526 — запись оболочкой судится теми же условиями" "$(shell_input "printf '({})' > projects/agent-kit/assets/task-flow/flow.js" "$R5")" PASS
+d "protect: SC-AK-1708 — одобрение, найденное на месте в записи, пропускает правку движка" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" PASS
+
+approve "$R5" "$B5" 'Переделай этап 1'
+d "protect: SC-AK-1709 — на месте не одобряющий ответ — отказ" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" deny
+expect_reason "protect: SC-AK-1709 — отказ называет, что на месте нет одобрения" "$GUARD" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" 'no approving answer of the owner'
+
+approve "$R5" "$B5" '' a2
+d "protect: SC-AK-1710 — запись без записи с этим uuid — отказ" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" deny
+expect_reason "protect: SC-AK-1710 — отказ называет ход: спросить заново и plan-red" "$GUARD" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" 'ask the owner again and run'
+
+approve "$R5" "$B5"
+rm -f "$(records_dir "$R5")/session.jsonl"
+d "protect: SC-AK-1730 — запись, снятая очисткой хозяина, — отказ" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" deny
+expect_reason "protect: SC-AK-1730 — отказ называет ход" "$GUARD" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" 'ask the owner again and run'
+
+OUTSIDE="$(mktemp -d)"
+TMPS+=("$OUTSIDE")
+approve "$R5" "$B5" '' a1 "$OUTSIDE/session.jsonl"
+d "protect: SC-AK-1720 — запись вне каталогов записей одобрения не даёт" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" deny
+
+# Метка без места — как до этой работы: вне закрытого списка не одобрение.
+printf '{"answer":"Одобряю план RT-9"}\n' > "$R5/.git/rt-kit/approval/$B5.json"
+d "protect: SC-AK-1728 — метка без места вне закрытого списка — отказ" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" deny
+
+# Ветка переписана: план добавляет другой коммит, метка называет прежний.
+approve "$R5" "$B5"
+git -C "$R5" -c user.name=t -c user.email=t@t commit -q --amend -m 'docs: план заново'
+d "protect: SC-AK-1721 — одобрение другого коммита плана — отказ" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" deny
+expect_reason "protect: SC-AK-1721 — отказ называет ход" "$GUARD" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" 'ask the owner again and run'
+
+# Одобрение дано в другой рабочей копии: его запись лежит в каталоге записей той копии.
+approve "$R5" "$B5"
+COPY5="$R5-copy"
+git -C "$R5" worktree add -q --detach "$COPY5" >/dev/null 2>&1
+TMPS+=("$COPY5")
+mkdir -p "$(records_dir "$COPY5")"
+mv "$(records_dir "$R5")/session.jsonl" "$(records_dir "$COPY5")/session.jsonl"
+jq -c --arg r "$(records_dir "$COPY5")/session.jsonl" '.place.record = $r' "$R5/.git/rt-kit/approval/$B5.json" > "$R5/approval.tmp"
+mv "$R5/approval.tmp" "$R5/.git/rt-kit/approval/$B5.json"
+d "protect: SC-AK-1734 — одобрение из записи другой копии пропускает правку" "$(edit_input Edit "$F5" '({})' '({ })' "$R5")" PASS
+approve "$R5" "$B5"
+
+# Записи разговоров пишет только хозяин; память рядом с ними пишется как прежде.
+REC5="$(records_dir "$R5")/session.jsonl"
+d "guard: SC-AK-1735 — дозапись оболочкой в запись разговора отказана" "$(shell_input "printf 'x' >> '$REC5'" "$R5")" deny
+d "guard: SC-AK-1735 — Write записи разговора отказан" "$(edit_input Write "$(records_dir "$R5")/other.jsonl" '' 'x' "$R5")" deny
+d "guard: SC-AK-1737 — запись в память рядом с записями проходит" "$(edit_input Write "$(records_dir "$R5")/memory/note.md" '' 'x' "$R5")" PASS
 
 # Строка следа перечисляет файлы одного каталога голыми именами: имя засчитывается по последней части пути.
 B7=RT-10-bare-name
@@ -184,6 +254,7 @@ F6="$R6/projects/agent-kit/assets/task-flow/flow.js"
 mkdir -p "$(dirname "$F6")"
 printf '({})\n' > "$F6"
 d "protect: SC-AK-1530 — план, добавленный раньше движка, со строкой «(правится)» на этот путь — правка проходит" "$(edit_input Edit "$F6" '({})' '({ })' "$R6")" PASS
+d "protect: SC-AK-1728 — ветка закрытого списка без метки с местом — правка проходит" "$(edit_input Edit "$F6" '({})' '({ })' "$R6")" PASS
 
 # --- ход, названный отказом, спрошен у соседних проверок ----------------------------------------
 # Отказ записи оболочкой называет правку хода работы, а её держит гейт, пока правило задач не

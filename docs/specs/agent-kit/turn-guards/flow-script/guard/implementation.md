@@ -3,7 +3,7 @@
 A statement of the spec and the place where it is carried out. The link goes by the text of the
 statement: a removed statement is removed together with its line.
 
-- **A step marked done in the progress needs the green mark the engine wrote for it.** — `projects/agent-kit/assets/checks/flow-guard.mjs:newlyDone` — the steps the edit marks done; `projects/agent-kit/assets/checks/flow-guard.mjs:judgeProgress` — the mark of each; scenario `SC-AK-1414`
+- **A step of a plan with checks is marked done in the progress only by the engine, never by an edit.** — `projects/agent-kit/assets/checks/flow-guard.mjs:newlyDone` — the steps the edit marks done; `projects/agent-kit/assets/checks/flow-guard.mjs:judgeProgress` — the refusal of each; scenario `SC-AK-1414`
 - **Done steps go first in the progress, and the one current step right after them.** — `projects/agent-kit/assets/checks/flow-guard.mjs:marksOutOfOrder` — the order of the marks; scenario `SC-AK-1415`
 - **The state line of the progress is not set ahead of the state the engine measures.** — `projects/agent-kit/assets/checks/flow-guard.mjs:declaredState` — the state line; `projects/agent-kit/assets/checks/task-flow-script.mjs:runGuard` — the measured state; scenario `SC-AK-1416`
 - **The progress, the plan, the epic plan and the marks are written by no shell command, and the marks by no tool but the engine.** — `projects/agent-kit/assets/checks/flow-guard.mjs:shellWrites` — the signs of a write; `projects/agent-kit/assets/checks/flow-guard.mjs:judgeCall` — the directory of the marks; scenarios `SC-AK-1417`, `SC-AK-1418`, `SC-AK-1419`, `SC-AK-1420`

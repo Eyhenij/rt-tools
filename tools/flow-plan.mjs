@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/flow-plan.mjs · c371b62aee30 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/flow-plan.mjs · 09cc4c72e2c0 · правится надстройкой, не здесь
 /**
  * The approval of a plan and the forms of its checks — the engine commands `plan-check` and
  * `plan-red`.
@@ -11,13 +11,15 @@
  * the plan, run now, does not match — a check green before the work measures nothing; the record of
  * the conversation holds calls of the roles `product-strategist` and `goal-critic`; and after the last
  * of them the owner chose in a menu an option that begins with «Одобряю» and names `plan.md` or the
- * task of the branch. Another answer to the same menu gives no mark. The mark carries the answer, the
- * commit of the plan, its fingerprint and the red output of every step.
+ * task of the branch. Another answer to the same menu gives no mark. The record counts only when it
+ * is a session record of this repository. The mark carries the answer, the place of the answer — the
+ * record and the uuid of its entry — the commit of the plan, its fingerprint and the red output of
+ * every step.
  */
 import { existsSync, readFileSync } from 'node:fs';
 
 import { compareExpected, isWriteCommand } from './flow-data.mjs';
-import { STEP_LIMIT_MS, StepRefused, planOfBranch, runCheck } from './flow-step.mjs';
+import { STEP_LIMIT_MS, StepRefused, openRecords, planOfBranch, runCheck } from './flow-step.mjs';
 
 /** The roles whose verdicts precede the approval. */
 export const ROLES = ['product-strategist', 'goal-critic'];
@@ -63,7 +65,7 @@ const menuAnswers = (entry) => (entry.type === 'user' && entry.toolUseResult?.an
  * which begins with «Одобряю» and names `plan.md` or the task — `<KEY>-<number>`. Null when there is
  * none or a role was never called.
  */
-export function approvingAnswer(entries, task) {
+export function approvingEntry(entries, task) {
     let lastRole = -1;
     const called = new Set();
     entries.forEach((entry, index) => {
@@ -78,10 +80,13 @@ export function approvingAnswer(entries, task) {
     const names = new RegExp(`plan\\.md|${task}(?!\\d)`);
     for (const entry of entries.slice(lastRole + 1)) {
         const answer = menuAnswers(entry).find((text) => APPROVE.test(text) && names.test(text));
-        if (answer) return answer;
+        if (answer) return { answer, uuid: entry.uuid ?? null };
     }
     return null;
 }
+
+/** The text of the approving answer, or null — the same test as `approvingEntry`. */
+export const approvingAnswer = (entries, task) => approvingEntry(entries, task)?.answer ?? null;
 
 /** Runs every check of the plan and writes the approval mark when the plan holds; returns the code. */
 export function runPlanRed({ git, steps, marks }, model, record, limitMs = STEP_LIMIT_MS) {
@@ -100,7 +105,16 @@ export function runPlanRed({ git, steps, marks }, model, record, limitMs = STEP_
     }
     const red = {};
     let green = false;
-    for (const step of steps.ofPlan(plan.text)) {
+    const planSteps = steps.ofPlan(plan.text);
+    // A plan in progress is approved again by the red output its own mark holds: its checks are green
+    // by now, and the mark of the same commit and fingerprint was written by the engine alone.
+    const prior = marks.approval(plan.branch);
+    const same = prior && prior.plan === plan.sha && prior.fingerprint === plan.fingerprint && prior.red;
+    if (same && planSteps.every((step) => typeof prior.red[step.number] === 'string')) {
+        for (const step of planSteps) red[step.number] = prior.red[step.number];
+        console.log('plan-red: the checks were red by the mark of this plan commit; no check runs');
+    }
+    for (const step of Object.keys(red).length > 0 ? [] : planSteps) {
         const run = runCheck(step.command, limitMs);
         const verdict = run.timedOut ? { matched: false } : compareExpected(model.expect, step.expected, run.code, run.output);
         const line = run.timedOut ? 'the limit ran out' : `exit ${run.code}, ${run.output.trim().split('\n').pop() ?? ''}`;
@@ -113,12 +127,20 @@ export function runPlanRed({ git, steps, marks }, model, record, limitMs = STEP_
         return 1;
     }
     const task = plan.branch.match(/^([A-Z]+-\d+)-/)?.[1] ?? plan.branch;
-    const answer = approvingAnswer(record, task);
-    if (answer === null) {
+    // The record counts only when it is a session record of this repository: a file a caller names
+    // anywhere else costs as much to write as the mark itself.
+    const file = process.env.RT_FLOW_TRANSCRIPT ?? '';
+    if (!openRecords().holds(file)) {
+        console.log(`plan-red: the record «${file}» is not a session record of this repository; no mark`);
+        return 1;
+    }
+    const found = approvingEntry(record, task);
+    if (found === null || !found.uuid) {
         console.log(`plan-red: no menu answer «Одобряю …» naming plan.md or ${task} after the calls of ${ROLES.join(' and ')}; no mark`);
         return 1;
     }
-    marks.writeApproval(plan.branch, { answer, plan: plan.sha, fingerprint: plan.fingerprint, red });
+    const { answer } = found;
+    marks.writeApproval(plan.branch, { answer, plan: plan.sha, fingerprint: plan.fingerprint, red, place: { record: file, uuid: found.uuid } });
     console.log(`plan-red: the approval mark is written — «${answer}»`);
     return 0;
 }

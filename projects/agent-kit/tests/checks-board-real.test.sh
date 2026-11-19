@@ -57,7 +57,11 @@ report "SC-AK-1599 — token: под машинным токеном тот же
 # The state column of the epic table — «идёт», «влито», «впереди» — is read from the local history and
 # the current branch, not from the hosting: the recorded answers do not hold it, and it moves with every
 # merge into the epic branch. Both sides are compared with it marked; the hosting column stays judged.
-state_marked() { sed -E 's/^(\| [0-9]+ \|[^|]*\|[^|]*\|)[^|]*\|/\1 <state> |/'; }
+# The rows of the epic plan grow too: a task added after the recording has no card in it and reads as
+# «не заведена», so such rows and the count of tasks are left out on both sides.
+state_marked() {
+    sed -E -e 's/^(\| [0-9]+ \|[^|]*\|[^|]*\|)[^|]*\|/\1 <state> |/' -e '/\| не заведена \|$/d' -e 's/Задач [0-9]+/Задач <n>/'
+}
 report "SC-AK-1600 — таблица эпика на настоящих ответах — как на хостинге" \
     "$(same_as "$(reader tools/epic-table.mjs 3302 | state_marked)" <(state_marked < "$REAL/.epic-table.txt"))" "same"
 report "SC-AK-1600 — последний прогон главной на настоящих ответах — как на хостинге" \

@@ -155,6 +155,7 @@ export function judgeCall(call, ctx) {
 
     const path = call.path ?? '';
     if (path.startsWith(`${ctx.marksDir}/`) || path === ctx.marksDir) return 'the marks of the steps and of the approval are written only by the engine `task-flow-script.mjs`';
+    if (ctx.isRecord && ctx.isRecord(path)) return 'the session records are written only by the harness: an approval and a replacement quote are read from them, and a hand write would forge both';
     if (path === progressPath) return judgeProgress(call, ctx, planPath);
     if (path.startsWith(`${ctx.plansDir}/`) && path.endsWith('.md')) return judgeDefer(call, ctx);
     if (path === ctx.overridePath) return judgeOverride(call, ctx);
@@ -166,6 +167,9 @@ function judgeShell(command, ctx, marks) {
     const engine = /task-flow-script\.mjs/.test(command);
     if (!engine && (shellWrites(command, marks) || shellWrites(command, 'rt-kit/(?:steps|approval)/'))) {
         return 'the marks of the steps and of the approval are written only by the engine `task-flow-script.mjs`, never by a shell command';
+    }
+    if (shellWrites(command, '\\.claude/projects/[^\\s;|&"\']*\\.jsonl')) {
+        return 'the session records are written only by the harness, never by a shell command: an approval and a replacement quote are read from them';
     }
     if (shellWrites(command, `${escape(ctx.tasksDir)}/[^\\s;|&]*(?:progress|plan)\\.md`) || shellWrites(command, '(?:^|[\\s/"\'])(?:progress|plan)\\.md')) {
         return 'the progress and the plan are edited by the edit tool, not by a shell command: the guard judges an edit, and a shell write passes it unseen';
@@ -188,12 +192,14 @@ function judgeProgress(call, ctx, planPath) {
     const order = marksOutOfOrder(after);
     if (order) return `${order}: done steps go first, and the one current step right after them`;
 
-    const plan = ctx.read(planPath);
+    // The plan as the commit that added it wrote it: a plan stripped of its checks in the working copy
+    // lifts nothing. Before that commit there is no approved plan, and the working copy is all there is.
+    const plan = (ctx.committed ? ctx.committed(planPath) : null) ?? ctx.read(planPath);
     const legacy = ctx.legacy.includes(ctx.branch) || stepsOfPlan(plan ?? '').every((step) => step.command === null);
     if (!legacy) {
-        const unmeasured = newlyDone(before, after).filter((number) => !ctx.stepMark(number));
-        if (unmeasured.length > 0) {
-            return `step ${unmeasured.join(', ')} has no green mark: run \`node tools/task-flow-script.mjs step ${unmeasured[0]}\` — a matched step writes its mark, and only then is it marked done`;
+        const marked = newlyDone(before, after);
+        if (marked.length > 0) {
+            return `step ${marked.join(', ')} is marked done after its check matched, by \`node tools/task-flow-script.mjs step ${marked[0]}\` itself: a hand mark is refused whatever mark lies on disk`;
         }
     }
 
@@ -232,7 +238,8 @@ function judgeOverride(call, ctx) {
 }
 
 function judgeProtected(path, ctx, planPath) {
-    const approved = ctx.legacy.includes(ctx.branch) || ctx.approved();
-    if (approved && namedBy(path, editedPaths(ctx.read(planPath)))) return null;
-    return `${path} belongs to the description of the task flow and its engine: it is edited only in a task whose approved plan names it in a footprint row marked «${EDITED_ROW}»`;
+    const fault = ctx.legacy.includes(ctx.branch) ? null : ctx.approvalFault ? ctx.approvalFault() : ctx.approved() ? null : 'there is no approval mark';
+    if (!fault && namedBy(path, editedPaths(ctx.read(planPath)))) return null;
+    const why = fault ? ` — ${fault}: ask the owner again and run \`node tools/task-flow-script.mjs plan-red\`` : '';
+    return `${path} belongs to the description of the task flow and its engine: it is edited only in a task whose approved plan names it in a footprint row marked «${EDITED_ROW}»${why}`;
 }

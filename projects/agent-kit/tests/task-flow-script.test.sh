@@ -24,7 +24,7 @@ tf_run() {
 
 # --- Локальные выходы 1, 3, 5–9 --------------------------------------------------------------------
 tf_run <<'JS'
-import { gitDouble, treeDouble, marksDouble } from './flow-doubles.mjs';
+import { gitDouble, treeDouble, marksDouble, recordsDouble, placed } from './flow-doubles.mjs';
 import { buildModel } from '../assets/checks/flow-model.mjs';
 import { open as openSteps } from '../assets/task-flow/source/steps.mjs';
 import * as grill from '../assets/task-flow/measure/grill.mjs';
@@ -39,7 +39,7 @@ const data = { words: model.words, expect: model.expect };
 const steps = openSteps();
 const B = 'RT-1-x';
 const F = `docs/tasks/${B}`;
-const run = (cap, spec) => String(cap({ git: gitDouble({ branch: B, ...spec }), tree: treeDouble(spec.tree), marks: marksDouble({ branch: B, ...spec }), steps })(data));
+const run = (cap, spec) => String(cap({ git: gitDouble({ branch: B, ...spec }), tree: treeDouble(spec.tree), marks: marksDouble({ branch: B, ...spec }), records: recordsDouble(spec.answers, spec.approval), steps })(data));
 const out = (label, got, want) => console.log(`${label}|${got}|${want}`);
 
 const GRILL = '# Разбор\n\n## Просьба владельца\n\n> сделай сценарий\n\n## Вопросы и ответы\n\n**Как?**\nСкриптом.\n';
@@ -75,10 +75,12 @@ out('local: SC-AK-1368 — причина-заготовка не выход', r
 
 // SC-AK-1369…1372 — выход 5: метка одобрения
 const planned = { commits: [{ sha: 'p', files: { [`${F}/plan.md`]: PLAN(HEAD, ROWS) } }] };
-out('local: SC-AK-1369 — метка одобрения есть', run(plan.approved, { ...planned, approval: { answer: 'Одобряю план RT-1', plan: 'p' } }), 'true');
+out('local: SC-AK-1369 — метка одобрения есть', run(plan.approved, { ...planned, approval: placed('Одобряю план RT-1', 'p') }), 'true');
 out('local: SC-AK-1370 — метки нет — выход 5 не выполнен', run(plan.approved, planned), 'false');
-out('local: SC-AK-1372 — ответ «переделай» метку не даёт', run(plan.approved, { ...planned, approval: { answer: 'Переделай этап 2' } }), 'false');
-out('local: SC-AK-1369 — проверка неизвестной формы не одобряется', run(plan.approved, { commits: [{ sha: 'p', files: { [`${F}/plan.md`]: PLAN(HEAD, ROWS).replace('→ exit 0', '→ примерно ноль') } }], approval: { answer: 'Одобряю' } }), 'false');
+out('local: SC-AK-1372 — ответ «переделай» метку не даёт', run(plan.approved, { ...planned, approval: placed('Переделай этап 2', 'p') }), 'false');
+out('local: SC-AK-1718 — выход 5 подтверждает ответ на месте, не текст метки', run(plan.approved, { ...planned, approval: placed('Одобряю план RT-1', 'p'), answers: { a1: 'Переделай этап 1' } }), 'false');
+out('local: SC-AK-1718 — метка без места — выход 5 не выполнен', run(plan.approved, { ...planned, approval: { answer: 'Одобряю план RT-1', plan: 'p' } }), 'false');
+out('local: SC-AK-1369 — проверка неизвестной формы не одобряется', run(plan.approved, { commits: [{ sha: 'p', files: { [`${F}/plan.md`]: PLAN(HEAD, ROWS).replace('→ exit 0', '→ примерно ноль') } }], approval: placed('Одобряю план RT-1', 'p') }), 'false');
 
 // SC-AK-1373 — выход 6: ровно один [>]
 const mirror = (text) => ({ commits: [{ sha: 'p', files: { [`${F}/plan.md`]: PLAN(HEAD, ROWS), [`${F}/progress.md`]: text } }] });
@@ -213,6 +215,10 @@ out('host: SC-AK-1389 — задача с шагом владельца проп
 out('host: SC-AK-1389 — шаг без слова владельца не пропускается', run(epic.nextTaken, { rows: ownerRows, local: [{ name: 'RT-14-more', sha: 'm' }] }), 'false');
 const deferred = [['1', 11, 'влито'], ['2', 12, 'идёт'], ['—', 13, 'отложено'], ['3', 14, 'впереди']];
 out('host: SC-AK-1390 — отложенная задача пропускается', run(epic.nextTaken, { rows: deferred, local: [{ name: 'RT-14-more', sha: 'm' }] }), 'true');
+// SC-AK-1741 — the case of 18.11: a task with a branch before tasks without one
+const takenFirst = [['1', 11, 'влито'], ['2', 12, 'идёт'], ['3', 13, 'идёт'], ['4', 14, 'впереди'], ['5', 15, 'впереди']];
+out('host: SC-AK-1741 — ветка у первой задачи впереди, у следующих нет — не выход', run(epic.nextTaken, { rows: takenFirst, host: { remote: [{ name: 'RT-13-checks', sha: 'c' }] } }), 'false');
+out('host: SC-AK-1741 — ветки у всех задач впереди — выход выполнен', run(epic.nextTaken, { rows: takenFirst, local: [{ name: 'RT-15-last', sha: 'l' }], host: { remote: [{ name: 'RT-13-checks', sha: 'c' }, { name: 'RT-14-more', sha: 'm' }] } }), 'true');
 const ownRow = [['1', 11, 'влито'], ['2', 12, 'шаг владельца «проверю сам»'], ['3', 13, 'впереди']];
 out('host: SC-AK-1441 — строка задачи называет шаг владельца — шаг владельца', run(epic.ownerStep, { rows: ownRow }), 'true');
 out('host: SC-AK-1441 — владелец сказал цитату — шаг уже не его', run(epic.ownerStep, { rows: ownRow, owner: ['проверю сам'] }), 'false');
@@ -220,8 +226,11 @@ out('host: SC-AK-1441 — обычная строка задачи — не ша
 
 // SC-AK-1391 — выход 12
 const mergedPull = (task, sha) => ({ number: task, head: `RT-${task}-x`, headRefOid: sha, base: E });
-out('host: SC-AK-1391 — влитые задачи отмечены', run(epic.mergedMarked, { host: { merged: [mergedPull(11, 's11')] } }), 'true');
-out('host: SC-AK-1391 — влитая задача не отмечена — не выход', run(epic.mergedMarked, { host: { merged: [mergedPull(11, 's11'), mergedPull(12, 's12')] } }), 'false');
+const allMerged = [['—', 10, 'отложено'], ['1', 11, 'влито'], ['2', 12, 'влито']];
+out('host: SC-AK-1391 — влитые задачи отмечены', run(epic.mergedMarked, { rows: allMerged, host: { merged: [mergedPull(11, 's11'), mergedPull(12, 's12')] } }), 'true');
+out('host: SC-AK-1391 — влитая задача не отмечена — не выход', run(epic.mergedMarked, { rows: [['1', 11, 'влито'], ['2', 12, 'идёт']], host: { merged: [mergedPull(11, 's11'), mergedPull(12, 's12')] } }), 'false');
+// SC-AK-1742 — the end of the epic: every task has a branch, one is not merged
+out('host: SC-AK-1742 — у всех задач ветки, одна не влита — не выход', run(epic.mergedMarked, { host: { merged: [mergedPull(11, 's11')] } }), 'false');
 
 // SC-AK-1392…1394, SC-AK-1466 — выход 13
 const two = [['1', 11, 'влито'], ['2', 12, 'влито']];
@@ -293,7 +302,7 @@ JS
 
 # --- Монотонность: дерево после состояния N не меряется ниже N ------------------------------------
 tf_run <<'JS'
-import { gitDouble, treeDouble, hostDouble, ownerDouble, marksDouble } from './flow-doubles.mjs';
+import { gitDouble, treeDouble, hostDouble, ownerDouble, marksDouble, recordsDouble, placed } from './flow-doubles.mjs';
 import { buildModel } from '../assets/checks/flow-model.mjs';
 import { measureStates, openReaders } from '../assets/checks/task-flow-script.mjs';
 import { open as openSteps } from '../assets/task-flow/source/steps.mjs';
@@ -330,7 +339,8 @@ const measure = async ({ host, row = 'идёт' }) => {
         host: hostDouble(host),
         owner: ownerDouble([]),
         steps: openSteps(),
-        marks: marksDouble({ branch: B, approval: { answer: 'Одобряю план RT-12', plan: 'p' }, steps: { '1.1': { matched: true } } }),
+        marks: marksDouble({ branch: B, approval: placed('Одобряю план RT-12', 'p'), steps: { '1.1': { matched: true } } }),
+        records: recordsDouble({}, placed('Одобряю план RT-12', 'p')),
     };
     return measureStates(model, await openReaders(model, dirname(path), given));
 };

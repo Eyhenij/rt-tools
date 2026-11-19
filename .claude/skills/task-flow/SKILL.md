@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the work states. Load at the start of any work, on any edit of a task folder and on return to unfinished work. Its parts: task-flow-plan, -owner, -handover. Patterns task-flow-start, -graph.
 ---
-<!-- rt-kit v0.37.0 · rules/task-flow.md · bd9fe28bc4f2 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/task-flow.md · 296e027db38f · правится надстройкой, не здесь -->
 
 # Work conduct — the states
 
@@ -21,7 +21,7 @@ Rule under the law `docs/constitution/work-conduct.md`. Cold part: `pitfalls.md`
 | `договорённость-записана` | `measure.task.taken` | create the task, the branch from the epic branch, and the folder | `task-flow-start` |
 | `задача-взята` | `measure.plan.approved` | write the plan | `task-flow-start` |
 | `замысел-записан` | `measure.progress.mirrors` | do the first stage | `task-flow-start` |
-| `этап-идёт` | `measure.progress.done` | finish the stage and mark it in the progress | `task-flow-resume` |
+| `этап-идёт` | `measure.progress.done` | finish the stage: `step N.M` measures each step and marks it done | `task-flow-resume` |
 | `этапы-кончились` | `measure.footprint.touched` | merge the agreement, bring the texts up to date, run the suite | `task-flow-close` |
 | `разбор-кончился` | `measure.folder.archived` | take the folder apart by the last commit | `task-flow-archive` |
 | `папка-разобрана` | `measure.pr.handed` | the work queue audit, then open the PR | `task-flow-close` |

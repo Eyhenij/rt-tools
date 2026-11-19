@@ -3,11 +3,11 @@
 A subdomain of the task flow as an executable scenario. Here are the scenarios of the guard that
 holds the edits moving the scenario past the measurement.
 
-### SC-AK-1414 — a done mark without a green mark is refused
+### SC-AK-1414 — a done mark set by an edit is refused
 
 Given a progress whose step 1.1 is current and no mark of that step
-When an edit marks step 1.1 done, and again after the engine wrote its green mark
-Then the first edit is refused naming the command that measures the step, and the second passes
+When an edit marks step 1.1 done
+Then it is refused naming the command that measures the step and marks it done
 
 Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 

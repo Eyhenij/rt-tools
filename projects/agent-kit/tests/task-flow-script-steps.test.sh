@@ -106,6 +106,43 @@ report "step: SC-AK-1408 — step --done меряет оба [x] и выходи
     "$(printf '%s' "$got" | tr '\n' '#')" '1.1 ожидалось `один` · получено один · совпало#1.2 ожидалось `три` · получено два · не совпало#steps re-measured 2, matched 1 code=1'
 report "step: SC-AK-1408 — метка шага 1.1 записана заново" "$(test -e "$TF_MARK/1.1.json" && echo есть || echo нет)" 'есть'
 
+# SC-AK-1702, SC-AK-1736 — шаг отмечает сам движок; несовпавший шаг ход работы не трогает
+TF_PROGRESS="$TF_STEP/docs/tasks/RT-1-x/progress.md"
+printf '# Ход работы\n\n## Шаги\n\n- [>] 1.1 Совпасть\n- [ ] 1.2 Не совпасть\n' > "$TF_PROGRESS"
+tf_step 1.1 >/dev/null
+report "step: SC-AK-1702 — совпавший шаг отмечен [x], следующий стал текущим" \
+    "$(grep -E '^- \[.\] 1\.[12]' "$TF_PROGRESS" | tr '\n' '#')" '- [x] 1.1 Совпасть#- [>] 1.2 Не совпасть#'
+report "step: SC-AK-1702 — метка шага записана" "$(test -e "$TF_MARK/1.1.json" && echo есть || echo нет)" 'есть'
+before="$(cat "$TF_PROGRESS")"
+tf_step 1.2 >/dev/null
+report "step: SC-AK-1736 — несовпавший шаг оставляет ход работы как был" "$([ "$before" = "$(cat "$TF_PROGRESS")" ] && echo тот же || echo другой)" 'тот же'
+report "step: SC-AK-1736 — метки несовпавшего шага нет" "$(test -e "$TF_MARK/1.2.json" && echo есть || echo нет)" 'нет'
+
+# SC-AK-1726 — файл папки правлен после коммита плана: step отказывает, шаг не отмечен
+printf 'два\n' > "$TF_STEP/docs/tasks/RT-1-x/probe.txt"
+printf '# Ход работы\n\n## Шаги\n\n- [>] 1.1 Совпасть\n' > "$TF_PROGRESS"
+report "step: SC-AK-1726 — папка изменена после плана — отказ" "$(tf_step 1.1 | grep -c 'differs from the commit of the plan.* code=1')" 1
+report "step: SC-AK-1726 — шаг остался неотмеченным" "$(grep -c '^- \[x\] 1.1' "$TF_PROGRESS")" 0
+printf 'один\n' > "$TF_STEP/docs/tasks/RT-1-x/probe.txt"
+
+# SC-AK-1723, SC-AK-1727 — цитата замены ищется во всех записях копий репозитория
+TF_HOME="$TF_DIR/records-home"
+TF_REC="$TF_HOME/$(printf '%s' "$(cd "$TF_STEP" && pwd -P)" | sed 's#[/.]#-#g')"
+mkdir -p "$TF_REC"
+printf '%s\n' '{"type":"user","uuid":"u1","message":{"role":"user","content":"замени проверку шага 1.2 на echo три"}}' > "$TF_REC/earlier-session.jsonl"
+printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [>] 1.2 Не совпасть\n\n## Decisions along the way\n\n- **Check of step 1.2 replaced:** `echo три` → `три` · the owner'"'"'s word: «замени проверку шага 1.2 на echo три»\n' > "$TF_PROGRESS"
+report "step: SC-AK-1723 — цитата из записи прошлой сессии найдена, замена мерится" \
+    "$(cd "$TF_STEP" && RT_FLOW_RECORDS_HOME="$TF_HOME" RT_FLOW_TRANSCRIPT=/nonexistent node "$TESTS/../assets/checks/task-flow-script.mjs" step 1.2 2>&1 | grep -c '· совпало')" 1
+sed -i '' 's/на echo три»/на echo четыре»/' "$TF_PROGRESS"
+report "step: SC-AK-1727 — цитата, которой нет ни в одной записи, отказана" \
+    "$(cd "$TF_STEP" && RT_FLOW_RECORDS_HOME="$TF_HOME" RT_FLOW_TRANSCRIPT=/nonexistent node "$TESTS/../assets/checks/task-flow-script.mjs" step 1.2 2>&1 | grep -c 'the owner never typed it')" 1
+
+# SC-AK-1729 — метки по ветке общие для копий: несовпавший перемер снимает метку для всех
+printf '{"matched":true}\n' > "$TF_MARK/1.2.json"
+printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [>] 1.2 Не совпасть\n' > "$TF_PROGRESS"
+tf_step 1.2 >/dev/null
+report "step: SC-AK-1729 — несовпавший перемер снял метку ветки" "$(test -e "$TF_MARK/1.2.json" && echo есть || echo нет)" 'нет'
+
 # SC-AK-1506 — форма ожидаемого, добавленная в описание, принимается step без правки движка
 mkdir -p "$TF_DIR/kit"
 cp -R "$TESTS/../assets/task-flow" "$TF_DIR/kit/task-flow"
@@ -148,18 +185,21 @@ PLAN
     "${TF_G[@]}" commit -q -m plan
 )
 TF_RED="$TF_DIR/red-repo"
-TF_REC="$TF_DIR/record.jsonl"
-# Запись разговора: две роли, затем ответ меню; $1 — ответ.
+# Запись разговора лежит в каталоге записей копии: другая запись одобрения не даёт.
+TF_RED_HOME="$TF_DIR/red-records"
+TF_REC="$TF_RED_HOME/$(printf '%s' "$(cd "$TF_RED" && pwd -P)" | sed 's#[/.]#-#g')/record.jsonl"
+mkdir -p "$(dirname "$TF_REC")"
+# Запись разговора: две роли, затем ответ меню с uuid a1; $1 — ответ.
 tf_record() {
     {
         printf '%s\n' '{"type":"assistant","message":{"content":[{"type":"tool_use","name":"Agent","input":{"subagent_type":"product-strategist"}}]}}'
         printf '%s\n' '{"type":"assistant","message":{"content":[{"type":"tool_use","name":"Agent","input":{"subagent_type":"goal-critic"}}]}}'
-        printf '{"type":"user","message":{"content":[{"type":"tool_result","content":"answered"}]},"toolUseResult":{"answers":{"Одобряешь план?":"%s"}}}\n' "$1"
+        printf '{"type":"user","uuid":"a1","message":{"content":[{"type":"tool_result","content":"answered"}]},"toolUseResult":{"answers":{"Одобряешь план?":"%s"}}}\n' "$1"
     } > "$TF_REC"
 }
 tf_red() {
     local out code
-    out="$(cd "$TF_RED" && RT_FLOW_TRANSCRIPT="$TF_REC" node "$TESTS/../assets/checks/task-flow-script.mjs" plan-red 2>&1)"
+    out="$(cd "$TF_RED" && RT_FLOW_RECORDS_HOME="$TF_RED_HOME" RT_FLOW_TRANSCRIPT="${1:-$TF_REC}" node "$TESTS/../assets/checks/task-flow-script.mjs" plan-red 2>&1)"
     code=$?
     printf '%s code=%s' "$out" "$code"
 }
@@ -176,8 +216,24 @@ report "plan: SC-AK-1410 — план известных форм проходи
 tf_record 'Одобряю план RT-2 (Recommended)'
 got="$(tf_red)"
 report "plan: SC-AK-1411 — обе проверки красные, метка записана" "$(printf '%s' "$got" | grep -cE '^1\.[12] red|approval mark is written.* code=0$')" 3
-report "plan: SC-AK-1411 — метка несёт ответ и красный вывод каждого шага" \
-    "$(node -e "const m=require('$TF_APPROVAL');console.log([m.answer, Object.keys(m.red).join(','), m.fingerprint.length].join(' '))" 2>&1)" 'Одобряю план RT-2 (Recommended) 1.1,1.2 16'
+report "plan: SC-AK-1411 — метка несёт ответ, место ответа и красный вывод каждого шага" \
+    "$(node -e "const m=require('$TF_APPROVAL');console.log([m.answer, Object.keys(m.red).join(','), m.fingerprint.length, m.place.uuid, m.place.record === '$TF_REC'].join(' '))" 2>&1)" 'Одобряю план RT-2 (Recommended) 1.1,1.2 16 a1 true'
+
+# SC-AK-1738 — план в работе одобряется заново по красному выводу своей метки
+printf 'готово\n' > "$TF_RED/out.txt"
+node -e "const f='$TF_APPROVAL',fs=require('fs'),m=JSON.parse(fs.readFileSync(f));delete m.place;fs.writeFileSync(f,JSON.stringify(m))"
+tf_record 'Одобряю plan.md RT-2 (Recommended)'
+got="$(tf_red)"
+report "plan: SC-AK-1738 — проверки не гоняются, метка с местом записана" \
+    "$(printf '%s' "$got" | grep -cE 'no check runs|approval mark is written.* code=0$|green before the work')" 2
+report "plan: SC-AK-1738 — красный вывод прежней метки сохранён, место новое" \
+    "$(node -e "const m=require('$TF_APPROVAL');console.log([m.red['1.1'].startsWith('exit '), m.place.uuid].join(' '))" 2>&1)" 'true a1'
+node -e "const f='$TF_APPROVAL',fs=require('fs'),m=JSON.parse(fs.readFileSync(f));m.plan='other';fs.writeFileSync(f,JSON.stringify(m))"
+report "plan: SC-AK-1738 — метка другого коммита — проверки гоняются и отказаны зелёными" \
+    "$(tf_red | grep -c 'measures nothing; no mark code=1')" 1
+rm -f "$TF_RED/out.txt"
+printf '%s\n' '{"type":"user","uuid":"a1","toolUseResult":{"answers":{"Одобряешь?":"Одобряю план RT-2"}}}' > "$TF_DIR/outside.jsonl"
+report "plan: SC-AK-1411 — запись вне каталогов записей метки не даёт" "$(tf_red "$TF_DIR/outside.jsonl" | grep -c 'not a session record of this repository.* code=1')" 1
 rm -f "$TF_APPROVAL"
 tf_record 'Переделай этап 1'
 report "plan: SC-AK-1411 — другой ответ меню метки не даёт" "$(tf_red | grep -c 'no menu answer.* code=1')" 1
@@ -229,6 +285,145 @@ report "plan: SC-AK-1539 — ветка до движка меряет пров�
     "$(tf_legacy RT-3329-task-flow-scenario)" 'ожидалось `два` · получено два · совпало code=0'
 report "plan: SC-AK-1539 — новая ветка с правленым планом отказана" \
     "$(tf_legacy RT-5-new | grep -c 'differs from the commit of the plan: docs/tasks/RT-5-new/plan.md code=1')" 1
+
+# --- Перемер перед PR: step --done --pr ---------------------------------------------------------
+(
+    cd "$TF_DIR" || exit 1
+    git -c init.defaultBranch=main init -q pr-repo
+    cd pr-repo || exit 1
+    printf 'tracked\n' > tracked.txt
+    git add tracked.txt && "${TF_G[@]}" commit -q -m start
+    git update-ref refs/remotes/origin/main HEAD
+    git checkout -q -b RT-2-pr
+    mkdir -p docs/tasks/RT-2-pr
+    cat > docs/tasks/RT-2-pr/plan.md <<'PLAN'
+# Plan
+
+## Stages
+
+### 1. Первый
+
+- **Steps:**
+    1. Совпасть
+       Check: `cat docs/tasks/RT-2-pr/probe.txt` → `один`
+    2. Совпасть тоже
+       Check: `echo два` → `два`
+    3. Испортить файл
+       Check: `echo x >> tracked.txt; echo ок` → `ок`
+    4. Сходить в сеть
+       Check: `echo 'curl: (6) Could not resolve host: example.invalid' >&2; exit 6` → exit 0
+    5. Ждать дольше предела
+       Check: `sleep 5` → exit 0
+    6. Не запуститься
+       Check: `no-such-command-anywhere` → exit 0
+- **Readiness sign:** шаги измерены
+PLAN
+    printf 'один\n' > docs/tasks/RT-2-pr/probe.txt
+    printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [x] 1.2 Совпасть тоже\n- [ ] 1.3 Испортить файл\n' > docs/tasks/RT-2-pr/progress.md
+    git add -A && "${TF_G[@]}" commit -q -m plan
+)
+TF_PR="$TF_DIR/pr-repo"
+TF_PRP="$TF_PR/docs/tasks/RT-2-pr/progress.md"
+tf_pr() {
+    local out code
+    out="$(cd "$TF_PR" && RT_FLOW_STEP_LIMIT_MS=1500 node "$TESTS/../assets/checks/task-flow-script.mjs" step --done --pr 2>&1)"
+    code=$?
+    printf '%s code=%s' "$out" "$code"
+}
+tf_pr_progress() { printf '# Ход работы\n\n## Шаги\n\n%s\n' "$1" > "$TF_PRP"; (cd "$TF_PR" && git add -A && "${TF_G[@]}" commit -q -m "progress"); }
+
+report "pr: SC-AK-1732 — все сделанные шаги совпали — PR открывается" "$(tf_pr | grep -c 'matched 2 code=0')" 1
+
+# Метка и [x], записанные мимо движка: перемер не верит метке.
+mkdir -p "$TF_PR/.git/rt-kit/steps/RT-2-pr" && printf '{"matched":true}\n' > "$TF_PR/.git/rt-kit/steps/RT-2-pr/1.4.json"
+tf_pr_progress '- [x] 1.1 Совпасть
+- [x] 1.4 Сходить в сеть'
+got="$(tf_pr)"
+report "pr: SC-AK-1731 — [x] и метка мимо движка — PR отказан" "$(printf '%s' "$got" | grep -c 'matched 1 code=1')" 1
+report "pr: SC-AK-1725 — сеть названа причиной" "$(printf '%s' "$got" | grep -c '^1.4 .*the cause is the network')" 1
+
+tf_pr_progress '- [x] 1.5 Ждать дольше предела
+- [x] 1.6 Не запуститься'
+got="$(tf_pr)"
+report "pr: SC-AK-1704 — шаг дольше предела — PR отказан" "$(printf '%s' "$got" | grep -c '^1.5 .*ran out · не совпало')" 1
+report "pr: SC-AK-1705 — команда проверки не запускается — PR отказан" "$(printf '%s' "$got" | grep -c '^1.6 .*exit 127.*не совпало')" 1
+report "pr: SC-AK-1706 — отказ называет каждый несовпавший шаг" "$(printf '%s' "$got" | grep -cE '^1\.[56] ожидалось .* · получено .* · не совпало')" 2
+
+tf_pr_progress '- [x] 1.3 Испортить файл'
+got="$(tf_pr)"
+report "pr: SC-AK-1724 — проверка изменила файл истории — не совпало" "$(printf '%s' "$got" | grep -c 'changed tracked files.*tracked.txt')" 1
+(cd "$TF_PR" && git checkout -q -- tracked.txt)
+
+tf_pr_progress '- [x] 1.2 Совпасть тоже
+
+## Decisions along the way
+
+- **Check of step 1.2 replaced:** `echo три` → `три` · the owner'"'"'s word: «замени проверку 1.2 на три»'
+printf '%s\n' '{"type":"user","uuid":"u9","message":{"role":"user","content":"замени проверку 1.2 на три"}}' > "$TF_DIR/pr-record.jsonl"
+report "pr: SC-AK-1707 — перемер берёт заменённую проверку" \
+    "$(cd "$TF_PR" && RT_FLOW_TRANSCRIPT="$TF_DIR/pr-record.jsonl" node "$TESTS/../assets/checks/task-flow-script.mjs" step --done --pr 2>&1 | grep -c '^1.2 ожидалось `три` · получено три · совпало')" 1
+
+tf_pr_progress '- [x] 1.1 Совпасть'
+(cd "$TF_PR" && git rm -q -r docs/tasks/RT-2-pr && "${TF_G[@]}" commit -q -m "folder taken apart")
+got="$(tf_pr)"
+report "pr: SC-AK-1733 — разобранная папка поднята из истории, шаг совпал" "$(printf '%s' "$got" | grep -c 'matched 1 code=0')" 1
+report "pr: SC-AK-1733 — после перемера папки снова нет" "$(test -d "$TF_PR/docs/tasks/RT-2-pr" && echo есть || echo нет)" 'нет'
+
+# SC-AK-1739 — проверка читает ход работы: перемер разобранной папки даёт его таким, каким он был при замере
+(
+    cd "$TF_DIR" || exit 1
+    git -c init.defaultBranch=main init -q live-repo
+    cd live-repo || exit 1
+    printf 'start\n' > start.txt
+    git add start.txt && "${TF_G[@]}" commit -q -m start
+    git update-ref refs/remotes/origin/main HEAD
+    git checkout -q -b RT-4-live
+    mkdir -p docs/tasks/RT-4-live
+    cat > docs/tasks/RT-4-live/plan.md <<'PLAN'
+# Plan
+
+## Stages
+
+### 1. Первый
+
+- **Steps:**
+    1. Найти шаг впереди
+       Check: `grep -c '^- \[ \]' docs/tasks/RT-4-live/progress.md` → = 1
+    2. Второй
+       Check: `true` → exit 0
+- **Readiness sign:** шаги измерены
+PLAN
+    printf '# Ход работы\n\n## Шаги\n\n- [>] 1.1 Найти шаг впереди\n- [ ] 1.2 Второй\n' > docs/tasks/RT-4-live/progress.md
+    git add -A && "${TF_G[@]}" commit -q -m plan
+    node "$TESTS/../assets/checks/task-flow-script.mjs" step 1.1 >/dev/null 2>&1
+    node "$TESTS/../assets/checks/task-flow-script.mjs" step 1.2 >/dev/null 2>&1
+    git add -A && "${TF_G[@]}" commit -q -m progress
+    git rm -q -r docs/tasks/RT-4-live && "${TF_G[@]}" commit -q -m "folder taken apart"
+)
+got="$(cd "$TF_DIR/live-repo" && RT_FLOW_STEP_LIMIT_MS=5000 node "$TESTS/../assets/checks/task-flow-script.mjs" step --done --pr 2>&1; printf 'code=%s' "$?")"
+report "pr: SC-AK-1739 — шаг, читающий ход работы, совпал на ходе работы своего замера" "$(printf '%s' "$got" | grep -cE '^1\.1 .*· совпало|matched 2')" 2
+
+# SC-AK-1740 — перемер идёт на node, закреплённом в .nvmrc дерева
+TF_NVM="$TF_DIR/nvm"
+mkdir -p "$TF_NVM/versions/node/v99.1.0/bin" "$TF_DIR/pinned-tree"
+printf '#!/usr/bin/env bash\necho "pinned node"\nexit 1\n' > "$TF_NVM/versions/node/v99.1.0/bin/node"
+chmod +x "$TF_NVM/versions/node/v99.1.0/bin/node"
+printf 'v99.1.0\n' > "$TF_DIR/pinned-tree/.nvmrc"
+got="$(
+    unmet() { printf '%s %s\n' "$1" "$3"; }
+    rt_hooks_dir="$TESTS/../assets/hooks" root="$TF_DIR/pinned-tree" NVM_DIR="$TF_NVM"
+    . "$TESTS/../assets/hooks/git-guard-delivery-rerun.sh"
+    rt_delivery_rerun
+)"
+report "pr: SC-AK-1740 — перемер зовёт node из .nvmrc дерева" "$(printf '%s' "$got" | grep -c 'pinned node')" 1
+rm "$TF_DIR/pinned-tree/.nvmrc"
+got="$(
+    unmet() { printf '%s %s\n' "$1" "$3"; }
+    rt_hooks_dir="$TESTS/../assets/hooks" root="$TF_DIR/pinned-tree" NVM_DIR="$TF_NVM"
+    . "$TESTS/../assets/hooks/git-guard-delivery-rerun.sh"
+    rt_delivery_rerun
+)"
+report "pr: SC-AK-1740 — без .nvmrc остаётся node сессии" "$(printf '%s' "$got" | grep -c 'pinned node')" 0
 
 if [ -n "${TF_ALONE:-}" ]; then
     rm -rf "$TF_DIR"
