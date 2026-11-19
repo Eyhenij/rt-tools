@@ -49,7 +49,7 @@ function setup(patch: (host: TabsEmptyHostComponent) => void = (): void => undef
 }
 
 describe('RtTabsComponent — пустая вкладка', (): void => {
-    it('SC-UKV-1387 — пустая вкладка показывает заглушку вместо тела, полоса вкладок на месте', (): void => {
+    it('SC-UKV-1395 — пустая вкладка показывает заглушку вместо тела, полоса вкладок на месте', (): void => {
         const fixture: THostFixture = setup();
 
         expect(qaAll(fixture, 'tabs-tab')).toHaveLength(2);
@@ -61,21 +61,21 @@ describe('RtTabsComponent — пустая вкладка', (): void => {
         ).toBe(true);
     });
 
-    it('SC-UKV-1387 — соседняя непустая вкладка рисует своё тело', (): void => {
+    it('SC-UKV-1395 — соседняя непустая вкладка рисует своё тело', (): void => {
         const fixture: THostFixture = setup((host: TabsEmptyHostComponent): void => host.active.set('list'));
 
         expect(qa(fixture, 'list-body')).not.toBeNull();
         expect(qa(fixture, 'tabs-empty')).toBeNull();
     });
 
-    it('SC-UKV-1387 — вкладка без пустоты рисует своё тело', (): void => {
+    it('SC-UKV-1395 — вкладка без пустоты рисует своё тело', (): void => {
         const fixture: THostFixture = setup((host: TabsEmptyHostComponent): void => host.empty.set(false));
 
         expect(qa(fixture, 'events-body')).not.toBeNull();
         expect(qa(fixture, 'tabs-empty')).toBeNull();
     });
 
-    it('SC-UKV-1387 — снятая пустота возвращает тело вкладки', (): void => {
+    it('SC-UKV-1395 — снятая пустота возвращает тело вкладки', (): void => {
         const fixture: THostFixture = setup();
 
         expect(qa(fixture, 'tabs-empty')).not.toBeNull();
@@ -88,7 +88,7 @@ describe('RtTabsComponent — пустая вкладка', (): void => {
         expect(qa(fixture, 'tabs-empty')).toBeNull();
     });
 
-    it('SC-UKV-1388 — значок вкладки подменяется входом, null убирает значок', (): void => {
+    it('SC-UKV-1396 — значок вкладки подменяется входом, null убирает значок', (): void => {
         const withIcon: THostFixture = setup((host: TabsEmptyHostComponent): void => host.emptyIcon.set('search'));
         const defaultIcon: THostFixture = setup();
         const noIcon: THostFixture = setup((host: TabsEmptyHostComponent): void => host.emptyIcon.set(null));
@@ -99,7 +99,7 @@ describe('RtTabsComponent — пустая вкладка', (): void => {
         expect(qa(noIcon, 'empty-state-icon')).toBeNull();
     });
 
-    it('SC-UKV-1388 — входы вкладки меняют заголовок и пояснение заглушки', (): void => {
+    it('SC-UKV-1396 — входы вкладки меняют заголовок и пояснение заглушки', (): void => {
         const fixture: THostFixture = setup((host: TabsEmptyHostComponent): void => {
             host.emptyTitle.set('Событий пока нет');
             host.emptyDescription.set('Они появятся после первой брони');
@@ -109,13 +109,13 @@ describe('RtTabsComponent — пустая вкладка', (): void => {
         expect(textOf(qa(fixture, 'empty-state-description'))).toBe('Они появятся после первой брони');
     });
 
-    it('SC-UKV-1388 — заголовок из одних пробелов оставляет подпись кита', (): void => {
+    it('SC-UKV-1396 — заголовок из одних пробелов оставляет подпись кита', (): void => {
         const fixture: THostFixture = setup((host: TabsEmptyHostComponent): void => host.emptyTitle.set('   '));
 
         expect(textOf(qa(fixture, 'empty-state-title'))).toBe('No data');
     });
 
-    it('SC-UKV-1389 — свой шаблон вкладки заменяет её заглушку целиком', (): void => {
+    it('SC-UKV-1397 — свой шаблон вкладки заменяет её заглушку целиком', (): void => {
         const fixture: THostFixture = setup((host: TabsEmptyHostComponent): void => host.ownTemplate.set(true));
 
         expect(textOf(qa(fixture, 'own-empty'))).toBe('Событий нет');

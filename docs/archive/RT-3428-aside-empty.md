@@ -32,7 +32,7 @@
   `ng-template[rtAsideEmpty]`. Заглушка — `rt-empty-state` кита по центру тела.
 - `rtTab`: те же четыре входа и `emptyTemplate`; заглушка в теле вкладки, полоса на месте.
 - Новый ключ подписей кита `uiEmptyTitle`: английский «No data», в витрине и словаре админки
-  «Нет данных». Сценарии SC-UKV-1382…1389, описание — `docs/specs/ui-kit-v2/aside-empty/`.
+  «Нет данных». Сценарии SC-UKV-1390…1397, описание — `docs/specs/ui-kit-v2/aside-empty/`.
 - Figma: у набора Aside варианты `State=empty` и `State=empty tab`; копия Empty State подтянута
   под код — значок 32, отступ круг→заголовок 12.
 

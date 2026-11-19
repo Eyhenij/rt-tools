@@ -46,7 +46,7 @@ function setup(patch: (host: AsideEmptyHostComponent) => void = (): void => unde
 }
 
 describe('RtAsideComponent — пустое содержимое', (): void => {
-    it('SC-UKV-1382 — пустая панель показывает заглушку по умолчанию вместо содержимого', (): void => {
+    it('SC-UKV-1390 — пустая панель показывает заглушку по умолчанию вместо содержимого', (): void => {
         const fixture: ComponentFixture<AsideEmptyHostComponent> = setup((host: AsideEmptyHostComponent): void => host.empty.set(true));
 
         expect(qa(fixture, 'aside-empty')).not.toBeNull();
@@ -56,14 +56,14 @@ describe('RtAsideComponent — пустое содержимое', (): void => {
         expect(qa(fixture, 'empty-state-description')).toBeNull();
     });
 
-    it('SC-UKV-1383 — панель без пустоты рисует содержимое и не рисует заглушку', (): void => {
+    it('SC-UKV-1391 — панель без пустоты рисует содержимое и не рисует заглушку', (): void => {
         const fixture: ComponentFixture<AsideEmptyHostComponent> = setup();
 
         expect(qa(fixture, 'aside-body')).not.toBeNull();
         expect(qa(fixture, 'aside-empty')).toBeNull();
     });
 
-    it('SC-UKV-1383 — снятый признак пустоты возвращает содержимое', (): void => {
+    it('SC-UKV-1391 — снятый признак пустоты возвращает содержимое', (): void => {
         const fixture: ComponentFixture<AsideEmptyHostComponent> = setup((host: AsideEmptyHostComponent): void => host.empty.set(true));
 
         expect(qa(fixture, 'aside-empty')).not.toBeNull();
@@ -76,7 +76,7 @@ describe('RtAsideComponent — пустое содержимое', (): void => {
         expect(qa(fixture, 'aside-empty')).toBeNull();
     });
 
-    it('SC-UKV-1384 — шапка и подвал остаются, заглушка стоит в теле между ними', (): void => {
+    it('SC-UKV-1392 — шапка и подвал остаются, заглушка стоит в теле между ними', (): void => {
         const fixture: ComponentFixture<AsideEmptyHostComponent> = setup((host: AsideEmptyHostComponent): void => host.empty.set(true));
         const frame: HTMLElement = qa(fixture, 'aside')?.nativeElement as HTMLElement;
         const body: HTMLElement = qa(fixture, 'aside-content')?.nativeElement as HTMLElement;
@@ -91,7 +91,7 @@ describe('RtAsideComponent — пустое содержимое', (): void => {
         expect(qa(fixture, 'aside-close')).not.toBeNull();
     });
 
-    it('SC-UKV-1385 — входы меняют заголовок и описание', (): void => {
+    it('SC-UKV-1393 — входы меняют заголовок и описание', (): void => {
         const fixture: ComponentFixture<AsideEmptyHostComponent> = setup((host: AsideEmptyHostComponent): void => {
             host.empty.set(true);
             host.emptyTitle.set('Событий пока нет');
@@ -102,7 +102,7 @@ describe('RtAsideComponent — пустое содержимое', (): void => {
         expect(textOf(qa(fixture, 'empty-state-description'))).toBe('Они появятся после первой брони');
     });
 
-    it('SC-UKV-1385 — иконка null убирает значок, пустой заголовок оставляет подпись кита', (): void => {
+    it('SC-UKV-1393 — иконка null убирает значок, пустой заголовок оставляет подпись кита', (): void => {
         const fixture: ComponentFixture<AsideEmptyHostComponent> = setup((host: AsideEmptyHostComponent): void => {
             host.empty.set(true);
             host.emptyIcon.set(null);
@@ -113,7 +113,7 @@ describe('RtAsideComponent — пустое содержимое', (): void => {
         expect(textOf(qa(fixture, 'empty-state-title'))).toBe('No data');
     });
 
-    it('SC-UKV-1385 — заголовок из одних пробелов оставляет подпись кита', (): void => {
+    it('SC-UKV-1393 — заголовок из одних пробелов оставляет подпись кита', (): void => {
         const fixture: ComponentFixture<AsideEmptyHostComponent> = setup((host: AsideEmptyHostComponent): void => {
             host.empty.set(true);
             host.emptyTitle.set('   ');
@@ -122,7 +122,7 @@ describe('RtAsideComponent — пустое содержимое', (): void => {
         expect(textOf(qa(fixture, 'empty-state-title'))).toBe('No data');
     });
 
-    it('SC-UKV-1386 — свой шаблон заменяет заглушку целиком', (): void => {
+    it('SC-UKV-1394 — свой шаблон заменяет заглушку целиком', (): void => {
         const fixture: ComponentFixture<AsideEmptyHostComponent> = setup((host: AsideEmptyHostComponent): void => {
             host.empty.set(true);
             host.ownTemplate.set(true);
