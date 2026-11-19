@@ -37,6 +37,37 @@ same pass looks at the 17 refusals of the menu judge and the three of the turn j
     - The push set ran in the background, and the tree must not be touched while it runs.
     - The copy stood on the epic branch between two tasks, and the state read as
       `просьба-не-разобрана`.
+- **The refusals of 14–19.11 by class.** Counted over the session records, a line per refusal: 251
+  refusals of the engine at turn ends, all in one session record. The numbers of the card — 190 of
+  195 — did not come out of the same records; where they came from is not found.
+
+  | Class | Count | What stood behind the stop |
+  | --- | --- | --- |
+  | A1 | 95 | a background agent of the session was running |
+  | A2 | 35 | a background command of the session was running |
+  | C | 39 | the push set was running, the tree must not be touched |
+  | A? | 6 | the reply says «жду», no background task in the record |
+  | E2 | 30 | the step waited for the owner's word or decision |
+  | E1 | 6 | the plan waited for approval |
+  | B2 | 16 | the engine named the wrong state |
+  | B1 | 14 | the named move could not be made |
+  | F | 5 | the turn answered a question of the owner |
+  | true | 5 | a report in the middle of work, nothing awaited |
+
+  A1, A2 and C are told by a fact of the record — 169 refusals, 67 %. The other classes are told by
+  the last text of the turn and are a judgement, not a measure.
+- **How a background task stands in the record.** The start is a call with `run_in_background`,
+  and its result carries `toolUseResult.backgroundTaskId`; for an agent — `toolUseResult.isAsync`
+  and `agentId`. The end is a record with a task notice of the same call and a status, or a call
+  that stops the task. One task stayed with no notice for 277 minutes.
+- **Two more causes found on the way.** The owner's word typed in the middle of a turn lies in an
+  attachment of the record, and the owner source reads only the typed messages: class E2 holds
+  cases where the owner had already said the phrase. The measure `wrote` reads the calls of the
+  whole record, not of the turn: after the first edit of a session an answer to a question is held,
+  class F.
+- **The judges.** The turn judge refused 31 turn ends, the menu judge 21 menus. None of the 21
+  came right after a refusal that named the owner's menu. The reasons of the menu judge: 13 —
+  an option weakens or bypasses a check, 8 — the owner has already answered.
 - **The record is read whole.** `source/session.mjs` reads the session record as one string. The
   record of this session is 278 MB; past the string limit of the runtime the read throws.
 
