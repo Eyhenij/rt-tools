@@ -32,7 +32,8 @@ all of them; it is called `OWNER` below:
 
 A record `"type":"last-prompt"` repeats an old typed message: it is never the owner's latest word.
 
-Round 1:
+Round 1 — the declaration of the hook may order it in the same message as the `Read` of this text;
+then it is done, and the next round is round 2:
 
 1. `Grep` the transcript for `^` with `output_mode: "count"` — the number of lines.
 2. `Grep` the transcript for `OWNER` with `output_mode: "count"`.
@@ -42,8 +43,10 @@ Round 2:
 3. `Grep` the transcript for `OWNER` with `output_mode: "content"`, `-n` and `offset` = the count of
    step 2 minus 5: the owner's last messages and their line numbers. The highest line is the
    owner's latest word.
-4. `Read` the transcript from `offset` = the count of step 1 minus 40: the last records of the turn,
-   its tool calls (`"type":"tool_use"`) and their results.
+4. `Read` the transcript from `offset` = the count of step 1 minus 20 with `limit: 21`: the last
+   records of the turn, its tool calls (`"type":"tool_use"`) and their results. A `Read` of the
+   transcript always names `limit`: the whole file is too large for one, and the refusal costs a
+   round. A call older than these is found by `Grep`, not by a longer read.
 
 Read nothing more unless a refusal needs a proof named below: every call costs the owner seconds at
 the end of every turn.
@@ -63,10 +66,14 @@ the end of every turn.
 - The turn ends while the owner's latest word orders work the turn has not done. The reply
   answers the question or the swearing, reports, announces or promises — «следующим ходом»,
   «сейчас запущу», «дальше возьму» — and the ordered work is not in the calls of the turn. An
-  announcement is not the action. Swearing at an agent that stands means «why did you stop»: it is
-  never a word to stop. Swearing that follows no order and names no work orders nothing. A slash
+  announcement is not the action: a reply that announces or promises its next work is refused even
+  when the turn did part of the ordered work. A turn whose calls did part of the ordered work and
+  whose reply announces nothing has the work in its calls. Swearing at an agent that stands means
+  «why did you stop»: it is never a word to stop. Swearing that follows no order and names no work orders nothing. A slash
   command that writes a handover or closes the session is cleanup: the work it does not mention
-  stays ordered.
+  stays ordered. The last records read may not hold the whole turn: before refusing because the
+  ordered work is not in the calls, `Grep` the transcript for `"type":"tool_use"` from the line of
+  the owner's latest word; a call there that does the work counts.
 - The reply asks the owner something already answered in the conversation, or asks the owner to do a
   step the agent can do itself: sign in to a stand, type a password, run a command, open a page.
 - The reply states a fact about the repository or a service — merged, pushed, green, exists, closed,
