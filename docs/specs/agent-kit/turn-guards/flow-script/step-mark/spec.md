@@ -85,6 +85,13 @@ prints a line per fixture.
 - **`plan-red` on a plan whose approval mark names the same commit and fingerprint takes the red output from that mark.**
   The checks of a plan in progress are green by then, and the mark already holds what they printed
   before the work; the engine alone writes it. The new answer is confirmed at its place as usual.
+- **`plan-red` runs the checks on the tree of the plan commit.** Red is a statement about that tree:
+  at the plan commit with no tracked file changed the checks run in place; past it, or with an
+  uncommitted edit, in a detached worktree of the plan commit under the system temporary directory,
+  with every `node_modules` of the repository linked at its place, removed after the run whatever
+  its end. A rebuilt plan whose checks are green on the branch is approved by one command.
+- **A worktree that cannot be made is a refusal with its reason, and no check runs.** A run on the
+  current tree in its place would refuse the plan as green again.
 - **An answer that can no longer be found at its place is refused, and the refusal names the move: ask the owner again and run `plan-red`.**
   A record removed by the retention cleanup of the harness and an entry gone from a record are both
   such cases.
@@ -210,3 +217,5 @@ None.
   working copy, and the judge of the replay runs with no tools outside the tree.
 - 2026-11-18 — the agreement merged as the subdomain `step-mark/` of the engine; `plan-red` approves a
   plan in progress again by the red output of its own mark.
+- 2026-11-19 — `plan-red` runs the checks on the tree of the plan commit, in a temporary worktree
+  past the plan commit: a plan commit rebuilt after the approval is approved again by one command.

@@ -14,8 +14,17 @@
  * is a session record of this repository. The mark carries the answer, the place of the answer — the
  * record and the uuid of its entry — the commit of the plan, its fingerprint and the red output of
  * every step.
+ *
+ * The checks are measured on the tree of the plan commit: red is a statement about that tree, not
+ * about the current one. At the plan commit with no tracked file changed they run in place; past it,
+ * or with an uncommitted edit, in a detached worktree of the plan commit under the system temporary
+ * directory, with every `node_modules` of the repository linked at its place. The worktree is removed
+ * after the run whatever its end; a worktree that cannot be made is a refusal, and nothing runs.
  */
-import { existsSync, readFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 import { compareExpected, isWriteCommand } from './flow-data.mjs';
 import { STEP_LIMIT_MS, StepRefused, openRecords, planOfBranch, runCheck } from './flow-step.mjs';
@@ -87,6 +96,43 @@ export function approvingEntry(entries, task) {
 /** The text of the approving answer, or null — the same test as `approvingEntry`. */
 export const approvingAnswer = (entries, task) => approvingEntry(entries, task)?.answer ?? null;
 
+const gitOut = (args, cwd) => spawnSync('git', args, { cwd, encoding: 'utf8' });
+
+/**
+ * Where the checks of the plan commit `sha` run: `{ cwd, place, remove }`. In place when HEAD is the
+ * plan commit and no tracked file differs; otherwise a detached worktree of the commit with every
+ * existing `node_modules` linked. Throws `StepRefused` when the worktree cannot be made.
+ */
+export function planTree(sha, base = tmpdir()) {
+    const root = gitOut(['rev-parse', '--show-toplevel']).stdout.trim();
+    const head = gitOut(['rev-parse', 'HEAD'], root).stdout.trim();
+    const dirty = gitOut(['status', '--porcelain', '--untracked-files=no'], root).stdout.trim();
+    if (head === sha && dirty === '') return { cwd: root, place: 'in place, at the plan commit', remove: () => {} };
+    let holder = null;
+    let tree = null;
+    const remove = () => {
+        if (tree) gitOut(['worktree', 'remove', '--force', tree], root);
+        if (holder) rmSync(holder, { recursive: true, force: true });
+        gitOut(['worktree', 'prune'], root);
+    };
+    try {
+        gitOut(['worktree', 'prune'], root);
+        holder = mkdtempSync(join(base, 'rt-plan-red-'));
+        const made = gitOut(['worktree', 'add', '--detach', '-q', join(holder, 'tree'), sha], root);
+        if (made.status !== 0) throw new Error((made.stderr || `git worktree add exited ${made.status}`).trim());
+        tree = join(holder, 'tree');
+        const dirs = gitOut(['ls-tree', '-d', '-r', '--name-only', sha], root).stdout.split('\n').filter(Boolean);
+        for (const dir of ['', ...dirs]) {
+            const own = join(root, dir, 'node_modules');
+            if (existsSync(own) && existsSync(join(tree, dir)) && !existsSync(join(tree, dir, 'node_modules'))) symlinkSync(own, join(tree, dir, 'node_modules'));
+        }
+    } catch (error) {
+        remove();
+        throw new StepRefused(`the tree of the plan commit could not be made: ${error.message}`);
+    }
+    return { cwd: tree, place: `on the tree of the plan commit ${sha.slice(0, 9)}, in a temporary worktree`, remove };
+}
+
 /** Runs every check of the plan and writes the approval mark when the plan holds; returns the code. */
 export function runPlanRed({ git, steps, marks }, model, record, limitMs = STEP_LIMIT_MS) {
     let plan;
@@ -113,13 +159,28 @@ export function runPlanRed({ git, steps, marks }, model, record, limitMs = STEP_
         for (const step of planSteps) red[step.number] = prior.red[step.number];
         console.log('plan-red: the checks were red by the mark of this plan commit; no check runs');
     }
-    for (const step of Object.keys(red).length > 0 ? [] : planSteps) {
-        const run = runCheck(step.command, limitMs);
-        const verdict = run.timedOut ? { matched: false } : compareExpected(model.expect, step.expected, run.code, run.output);
-        const line = run.timedOut ? 'the limit ran out' : `exit ${run.code}, ${run.output.trim().split('\n').pop() ?? ''}`;
-        red[step.number] = line;
-        console.log(`${step.number} ${verdict.matched ? 'green before the work' : 'red'} · ${line}`);
-        if (verdict.matched) green = true;
+    if (Object.keys(red).length === 0) {
+        let tree;
+        try {
+            tree = planTree(plan.sha);
+        } catch (error) {
+            if (!(error instanceof StepRefused)) throw error;
+            console.log(`plan-red: ${error.message}; no check runs, no mark`);
+            return 1;
+        }
+        console.log(`plan-red: the checks run ${tree.place}`);
+        try {
+            for (const step of planSteps) {
+                const run = runCheck(step.command, limitMs, tree.cwd);
+                const verdict = run.timedOut ? { matched: false } : compareExpected(model.expect, step.expected, run.code, run.output);
+                const line = run.timedOut ? 'the limit ran out' : `exit ${run.code}, ${run.output.trim().split('\n').pop() ?? ''}`;
+                red[step.number] = line;
+                console.log(`${step.number} ${verdict.matched ? 'green before the work' : 'red'} · ${line}`);
+                if (verdict.matched) green = true;
+            }
+        } finally {
+            tree.remove();
+        }
     }
     if (green) {
         console.log('plan-red: a check is green before the work and measures nothing; no mark');
