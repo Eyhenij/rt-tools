@@ -64,7 +64,10 @@ There is no interface: the description is read by the engine and by the executor
 - **Exit 4 is met by the task card out of the first column or closed, and by the commit that added the task folder.**
 - **Exit 10 is met by the folder commit on the server, a PR of the branch with a reviewer, and the task out of the work column.**
 - **Exit 11 is met when every unmerged, unblocked task of the epic other than the current one has a branch, and with no such task.**
-- **Exit 12 is met when every task of the epic with a merged PR is marked merged in the plan, and every task not deferred is marked merged.**
+- **Exit 12 is met when every task not deferred has a merged PR of its branch or the mark «влито», and no marked task has an open PR.**
+  The mark is set by the branch of the next task, and the task merged last has none, whatever its
+  row: it counts by a merged PR of its branch on the hosting. The mark still counts for a task whose
+  merged PR the hosting no longer lists.
 - **Exit 13 is met when the tip of every task not deferred lies in the epic branch or the main branch, and the PR of the epic into the main branch exists.**
 - **A branch without a task number, the epic branch among them, takes the epic of the working copy from the assignment table.**
 - **The epic of the copy merged into the main branch or with its card closed counts as absent.**

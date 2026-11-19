@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/facts-flow.sh · af5caac69315 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/facts-flow.sh · 5528238d6bb9 · правится надстройкой, не здесь
 # The facts of the course of work for one edit. NOT a guard: it has no `rt-hook:` declaration and is
 # not attached to any agent event. The work-conduct guards source it after `rt_task_flow_context`,
 # and so does a guard whose refusal names an edit of another file: it asks these facts of that edit
@@ -72,7 +72,7 @@ rt_flow_state_action() {
         задача-взята) printf '%s' 'write the plan' ;;
         замысел-записан) printf '%s' 'do the first stage' ;;
         папка-разобрана) printf '%s' 'the work queue audit, then open the PR' ;;
-        влито) printf '%s' 'mark the task merged in the epic plan by the next task branch' ;;
+        влито) printf '%s' 'merge the PRs of the chain bottom-up, mark the merged tasks by the branch of the next one' ;;
         *) printf '%s' '' ;;
     esac
 }

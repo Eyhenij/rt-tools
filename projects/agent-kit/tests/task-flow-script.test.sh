@@ -224,7 +224,14 @@ out('host: SC-AK-1741 — ветки у всех задач впереди — �
 const mergedPull = (task, sha) => ({ number: task, head: `RT-${task}-x`, headRefOid: sha, base: E });
 const allMerged = [['—', 10, 'отложено'], ['1', 11, 'влито'], ['2', 12, 'влито']];
 out('host: SC-AK-1391 — влитые задачи отмечены', run(epic.mergedMarked, { rows: allMerged, host: { merged: [mergedPull(11, 's11'), mergedPull(12, 's12')] } }), 'true');
-out('host: SC-AK-1391 — влитая задача не отмечена — не выход', run(epic.mergedMarked, { rows: [['1', 11, 'влито'], ['2', 12, 'идёт']], host: { merged: [mergedPull(11, 's11'), mergedPull(12, 's12')] } }), 'false');
+out('host: SC-AK-1391 — задача ни влита, ни отмечена — не выход', run(epic.mergedMarked, { rows: [['1', 11, 'идёт'], ['2', 12, 'влито']], host: { merged: [mergedPull(12, 's12')] } }), 'false');
+// SC-AK-1752 — the task merged last has nothing to mark it by: its merged PR counts, whatever its row
+out('host: SC-AK-1752 — последняя строка влита без отметки — выход выполнен', run(epic.mergedMarked, { rows: [['1', 11, 'влито'], ['2', 12, 'идёт']], host: { merged: [mergedPull(11, 's11'), mergedPull(12, 's12')] } }), 'true');
+out('host: SC-AK-1752 — строка из середины влита последней без отметки — выход выполнен', run(epic.mergedMarked, { rows: [['1', 11, 'идёт'], ['2', 12, 'влито'], ['3', 13, 'влито']], host: { merged: [mergedPull(11, 's11'), mergedPull(12, 's12'), mergedPull(13, 's13')] } }), 'true');
+// SC-AK-1753 — the word does not stand ahead of the hosting
+out('host: SC-AK-1753 — «влито» у задачи с открытым PR — не выход', run(epic.mergedMarked, { rows: [['1', 11, 'влито'], ['2', 12, 'влито']], local: [{ name: 'RT-12-flow', sha: 's12' }], host: { merged: [mergedPull(11, 's11')], pulls: { 'RT-12-flow': [{ number: 12, state: 'OPEN', base: E, reviewers: [] }] } } }), 'false');
+// SC-AK-1754 — a fresh branch of a task, with no PR, is no merge
+out('host: SC-AK-1754 — свежая ветка задачи без PR не влита — не выход', run(epic.mergedMarked, { rows: [['1', 11, 'влито'], ['2', 12, 'идёт']], local: [{ name: 'RT-12-flow', sha: 's11' }], host: { merged: [mergedPull(11, 's11')], landed: { [E]: ['s11'] } } }), 'false');
 // SC-AK-1742 — the end of the epic: every task has a branch, one is not merged
 out('host: SC-AK-1742 — у всех задач ветки, одна не влита — не выход', run(epic.mergedMarked, { host: { merged: [mergedPull(11, 's11')] } }), 'false');
 

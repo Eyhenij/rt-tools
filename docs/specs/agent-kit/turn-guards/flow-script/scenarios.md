@@ -221,9 +221,33 @@ Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 
 ### SC-AK-1391 — exit 12 is met when the merged tasks are marked
 
-Given a merged task marked merged, and a merged task left unmarked
+Given merged tasks marked merged, and a task neither merged nor marked
 When exit 12 is measured
 Then it is met by the first and unmet by the second
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1752 — the task merged last counts by its merged PR, whatever its row
+
+Given the last row merged on the hosting with no mark, and a middle row merged last with no mark while the rows below are marked
+When exit 12 is measured
+Then it is met in both cases
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1753 — a mark on a task with an open PR keeps exit 12 unmet
+
+Given a row marked «влито» whose branch has an open PR
+When exit 12 is measured
+Then it is unmet
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1754 — a fresh branch with no PR is no merge
+
+Given the branch of the last task taken from the epic tip, with no PR of its own
+When exit 12 is measured
+Then it is unmet
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 

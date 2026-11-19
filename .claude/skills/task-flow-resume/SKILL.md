@@ -4,7 +4,7 @@ kind: pattern
 rule: task-flow-plan
 description: Pattern of rule task-flow-plan. Load when returning to unfinished work in a new session. What is already in the context, what not to ask the owner, how to edit "Where we stand", how to record a decision along the way and a stage revision. Not for starting work — that is pattern task-flow-start.
 ---
-<!-- rt-kit v0.37.0 · patterns/task-flow-resume.md · 930673607557 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · patterns/task-flow-resume.md · e6e66dd30e05 · правится надстройкой, не здесь -->
 
 # Returning to unfinished work
 
@@ -54,7 +54,7 @@ The task is closed, the PR is open and waits for the owner — the session does 
 
 ## State `влито`: the epic plan learns of the merge
 
-A person merged the PR, and the epic plan still names the task as in work.
+A person merged the PR, and the epic plan still names the task as in work. The move: merge the PRs of the chain bottom-up, mark the merged tasks by the branch of the next one. The last task of the epic has no next branch: its merged PR counts by itself, and a mark is never put on a task whose PR is still open.
 
 ## Common misses
 

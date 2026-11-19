@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the work states. Load at the start of any work, on any edit of a task folder and on return to unfinished work. Its parts: task-flow-plan, -owner, -handover. Patterns task-flow-start, -graph.
 ---
-<!-- rt-kit v0.37.0 · rules/task-flow.md · 422e8fa7308d · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/task-flow.md · eb13bcc7171a · правится надстройкой, не здесь -->
 
 # Work conduct — the states
 
@@ -26,7 +26,7 @@ Rule under the law `docs/constitution/work-conduct.md`. Cold part: `pitfalls.md`
 | `разбор-кончился` | `measure.folder.archived` | take the folder apart by the last commit | `task-flow-archive` |
 | `папка-разобрана` | `measure.pr.handed` | the work queue audit, then open the PR | `task-flow-close` |
 | `работа-отдана` | `measure.epic.nextTaken` | send the rules review to the background, then take the next task of the epic | `task-flow-archive` |
-| `влито` | `measure.epic.mergedMarked` | mark the task merged in the epic plan by the branch of the next task | `task-flow-resume` |
+| `влито` | `measure.epic.mergedMarked` | merge the PRs of the chain bottom-up, mark the merged tasks by the branch of the next one | `task-flow-resume` |
 | `задачи-эпика-кончились` | `measure.epic.finished` | open the PR of the epic into the main branch | `task-flow-close` |
 <!-- /flow:states -->
 
