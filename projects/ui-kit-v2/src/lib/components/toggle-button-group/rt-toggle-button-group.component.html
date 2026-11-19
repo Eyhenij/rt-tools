@@ -1,4 +1,27 @@
+@if (folded()) {
+    <!-- Кнопки не помещаются: те же значения выбираются полем, на телефоне — в нижней шторке. -->
+    @if (multiple()) {
+        <rt-multiselect
+            qa-dataid="toggle-button-group-folded"
+            [options]="foldedOptions()"
+            [size]="size()"
+            [ariaLabel]="ariaLabel() ?? ''"
+            [ngModel]="chosenMany()"
+            [disabled]="isDisabled()"
+            (ngModelChange)="onFoldedPickMany($event)" />
+    } @else {
+        <rt-select
+            qa-dataid="toggle-button-group-folded"
+            [options]="foldedOptions()"
+            [size]="size()"
+            [ariaLabel]="ariaLabel() ?? ''"
+            [ngModel]="chosenOne()"
+            [disabled]="isDisabled()"
+            (ngModelChange)="onFoldedPickOne($event)" />
+    }
+}
 <div
+    #row
     rtBlock="rt-toggle-button-group"
     role="group"
     [rtMod]="{
@@ -9,8 +32,11 @@
         wrap: layout() === 'wrap',
         column: layout() === 'column',
         chips: appearance() === 'chips',
+        measure: folded(),
     }"
-    [attr.aria-label]="ariaLabel()">
+    [attr.aria-label]="ariaLabel()"
+    [attr.aria-hidden]="folded() || null"
+    [attr.inert]="folded() || null">
     @for (item of items(); track item.option.value) {
         <button
             type="button"

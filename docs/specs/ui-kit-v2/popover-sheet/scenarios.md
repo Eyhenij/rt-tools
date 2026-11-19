@@ -195,3 +195,35 @@ When its item is pressed
 Then the item's action runs for that tab, and the sheet is closed
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-context-menu-sheet.spec.ts`.
+
+### SC-UKV-1452 — a toggle group that does not fit folds into a select, and a choice there counts as a press
+
+Given a toggle group «Период» of six values that need 520 px where 343 px are free, on a phone
+When it is drawn, its field is pressed and «Месяц» is chosen in the sheet
+Then the group stands as a select, its buttons are hidden and only measured, and the group reports «Месяц»
+
+Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.
+
+### SC-UKV-1453 — a toggle group that fits stays buttons
+
+Given the same group needing 280 px where 343 px are free
+When it is drawn
+Then it stays buttons, and no field of choice stands in its place
+
+Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.
+
+### SC-UKV-1454 — a toggle group of multiple choice folds into a multiselect
+
+Given a toggle group of multiple choice that does not fit its place
+When it is drawn
+Then it stands as a multiselect
+
+Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.
+
+### SC-UKV-1455 — the folding switched off, or a wrapping layout, keeps the buttons
+
+Given a toggle group that does not fit its place, with the folding switched off, then with a wrapping layout
+When it is drawn
+Then it stays buttons each time; a group not laid out yet, or short of its place by less than half a pixel, does not fold either
+
+Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.

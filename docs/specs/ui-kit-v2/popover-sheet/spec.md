@@ -49,6 +49,10 @@ the same rows as before.
   not close the sheet.** The profile menu, the «more» panel and the submenu of the page header
   open on hover next to their button; in the sheet a mouse passing over the button opens nothing,
   since on its way to the sheet it would close it.
+- **A toggle button group whose buttons do not fit the width folds into a field of choice.** Only
+  a one-line group folds; the field takes the same values, a single choice as a select and a
+  multiple one as a multiselect, and on a phone it opens them in the sheet. A choice there counts
+  as a press on the button. One input keeps the buttons however long they are.
 - **A sheet closed by its backdrop, by a drag or by Escape closes the panel the same way a press
   outside it does.** The part of the kit learns of the close as before.
 - **The panel inside the sheet takes the full width of the sheet.** The width taken from the
@@ -56,7 +60,7 @@ the same rows as before.
 
 ## What is out of scope
 
-- The folding of `rt-toggle-button-group` and the field with a toggles panel are described apart.
+- The field with a toggles panel is described apart.
 - Tooltips, the help of a field, confirmations, dialogs and asides keep opening as they do.
 - The look of the rows inside the panel does not change.
 
@@ -117,3 +121,4 @@ None.
 | 2026-11-19 | The page header menus in the sheet, scenarios 1444…1445 (RT-3399) |
 | 2026-11-19 | The actions menu `rt-menu` in the sheet, scenarios 1446…1449 (RT-3399) |
 | 2026-11-19 | The menu of a tab in the sheet, scenarios 1450…1451 (RT-3399) |
+| 2026-11-19 | The folding toggle button group, scenarios 1452…1455 (RT-3399) |

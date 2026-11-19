@@ -4,8 +4,8 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 3 из 4 — Code and unit tests
-- **Next step:** the folding `rt-toggle-button-group`, then the toggles field, then the trailing
-  icons. Done: `rt-menu` with the «⋯» actions of the page header (scenarios 1446…1449), the menu
+- **Next step:** the field with a toggles panel, then the trailing icons. Done: the folding
+  `rt-toggle-button-group` (scenarios 1452…1455, the kit set 3772 green), `rt-menu` with the «⋯» actions of the page header (scenarios 1446…1449), the menu
   of a tab — a component of its own, not `rt-menu` as the commit cf96bb005 says (scenarios
   1450…1451, the kit set 3768 green), the select, the multiselect with its footer, the autocomplete
   with a search in the sheet, the dynamic selector, the split button, the speed menu, the «more»

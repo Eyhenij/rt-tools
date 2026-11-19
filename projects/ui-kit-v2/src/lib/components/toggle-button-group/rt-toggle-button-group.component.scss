@@ -159,6 +159,35 @@
         }
     }
 
+    /* Сворачиваемая строка не шире своего места: только так видно, что кнопкам его не хватает. */
+    rt-toggle-button-group.rt-toggle-button-group--foldable {
+        position: relative;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    /* Свёрнутая группа — поле выбора во всю ширину места; строка кнопок остаётся только для замера:
+       не видна, не нажимается и не сдвигает поле. */
+    rt-toggle-button-group.rt-toggle-button-group--folded {
+        display: flex;
+        width: 100%;
+
+        > .rt-select,
+        > .rt-multiselect {
+            min-width: 0;
+            flex: 1 1 auto;
+        }
+
+        .rt-toggle-button-group--measure {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: max-content;
+            pointer-events: none;
+            visibility: hidden;
+        }
+    }
+
     /* full-width: группа растягивается на контейнер, опции делят ширину поровну. */
     rt-toggle-button-group.rt-toggle-button-group--full-width {
         display: flex;
