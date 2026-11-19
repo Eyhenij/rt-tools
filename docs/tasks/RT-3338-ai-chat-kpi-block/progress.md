@@ -5,7 +5,7 @@
 - **State:** `разбор-закрыт`
 - **Stage:** 0 of 0 — the plan is not written yet
 - **Done:** the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3338-ai-chat-kpi-block` from `RT-3337-ai-chat-table-block` (chain), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption.
-- **Next step:** after the owner's word on the mockup — the product agreement `docs/specs/ui-kit-v2/proposed/ai-chat-kpi/`, then the plan.
+- **Next step:** spec-critic reviews the agreement `docs/specs/ui-kit-v2/proposed/ai-chat-kpi/` (SC-UKV-1436…1465, committed); its findings are closed in the agreement, then the plan is written and shown to the owner.
 - **Uncommitted:** no
 - **Waiting for the owner:** no; the mockup is approved: «Одобряю макет»
 - **PR:** not open yet; the branch stands on RT-3337 (#3407), which stands on RT-3336 (#3402) and RT-3335 (#3398)
@@ -27,6 +27,14 @@ The steps come with the plan.
   about 156 for a tile, less than the 192 of a 32 px value; the mockup decides the value size of the
   KPI card, and a tile size option, if needed, is added to the tile itself. Affected stage: the
   mockup, before the plan.
+
+- **spec-critic returned 14 findings on the agreement; all are closed by the executor's
+  decisions, none against the grill.** The costliest: the tile delta by the kit locale changes the
+  tile text for every consumer (default `en` «+12.5%», `ru` with U+00A0), so the stat-tile spec rule,
+  SC-UKV-1125 and the tile tests are rewritten at the merge; the compact size puts the delta on its
+  own line and lets the period wrap; the short form drops trailing zeros («1 млн ₽»); the card frame
+  takes tokens only; RTL isolates the numbers; full-screen narrower than 664 gives two columns and a
+  block narrower than 328 one. spec-writer edits the agreement. Affected stage: the agreement.
 
 - **The mockup is drawn:** https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8246-607 —
   four cards at 328 and 386 (two columns) and 728 (four columns) in the light theme, 328 and 728 in
