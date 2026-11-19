@@ -8,23 +8,37 @@
 
 - [x] 1.1 The gate refusals are counted by reason
 - [x] 1.2 The rules delivered with no refusal are counted and printed
-- [>] 2.1 agent-kit fits
-- [ ] 2.2 testing fits, its override included
-- [ ] 2.3 reuse-first fits
-- [ ] 2.4 deploy-flow fits, its override included
-- [ ] 2.5 typescript-conventions fits
-- [ ] 2.6 styling-bem fits
-- [ ] 2.7 write-a-skill fits
-- [ ] 2.8 lists fits, its override included
-- [ ] 3.1 rt-tools-storybook fits
-- [ ] 3.2 rt-tools-styling fits
-- [ ] 3.3 agent-kit-source fits
-- [ ] 3.4 cargo-triage fits
-- [ ] 4.1 The probe passes every area and no paragraph is lost
+- [x] 2.1 agent-kit fits
+- [x] 2.2 testing fits, its override included
+- [x] 2.3 reuse-first fits
+- [x] 2.4 deploy-flow fits, its override included
+- [x] 2.5 typescript-conventions fits
+- [x] 2.6 styling-bem fits
+- [x] 2.7 write-a-skill fits
+- [x] 2.8 lists fits, its override included
+- [x] 3.1 rt-tools-storybook fits
+- [x] 3.2 rt-tools-styling fits
+- [x] 3.3 agent-kit-source fits
+- [x] 3.4 cargo-triage fits
+- [x] 4.1 The probe passes every area and no paragraph is lost
 
 ## Decisions along the way
 
-None yet.
+- 19.11, stage 4: after the twelve rules were cut, the probe still refused 5 of 21 areas. Three
+  rules outside the list stood behind them: `angular-patterns` (6 262 characters), `component-structure`
+  (7 762 with its override) and `permissions` (7 930). The done-sign of the plan is a probe with no
+  refusal, so they were cut by the same technique: statements in the hot part, the whole text in
+  `pitfalls.md`. `reuse-first` and `rt-tools-storybook` gave their pitfall lines to the cold part:
+  together with `rt-tools-styling` and `styling-bem` they did not fit on `.storybook/preview.scss`.
+  That area now passes with 9 915 characters of 10 000.
+- The overrides of `testing`, `deploy-flow`, `lists` and `component-structure` moved whole to
+  `.claude/rt-kit/overrides/pitfalls/`; the rule keeps one short section «This tree».
+- The retelling found 128 requirements a session must follow that the cut hot parts did not state:
+  names of prefixes, tags and decorators, and what to do instead of a forbidden technique. All of
+  them returned to the hot parts, folded into the statements, within the same bounds; `styling-bem`
+  gave up its `rt-when` lines so that `.storybook/preview.scss` still fits. The probe stays at 0.
+- Shortened statements changed the first column of the companions of `testing`, `deploy-flow`,
+  `rt-tools-storybook` and `cargo-triage`: merged articles keep every binding in one line.
 
 ## Handover of the session
 
