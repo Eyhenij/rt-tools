@@ -2,27 +2,15 @@
  "args": [
   "api",
   "--paginate",
-  "repos/Eyhenij/rt-tools/issues/3302/sub_issues",
+  "repos/Eyhenij/rt-tools/issues/3412/sub_issues",
   "--jq",
   "[.[].number]"
  ],
  "token": "machine",
  "code": 0,
- "stdout": "[3272,3271,3275,3276,3277,3270,3283,3280,3326,3329,3332,3352,3355]",
+ "stdout": "[3413]",
  "stderr": "",
  "json": [
-  3272,
-  3271,
-  3275,
-  3276,
-  3277,
-  3270,
-  3283,
-  3280,
-  3326,
-  3329,
-  3332,
-  3352,
-  3355
+  3413
  ]
 }

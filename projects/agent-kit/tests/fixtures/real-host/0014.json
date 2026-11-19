@@ -1,13 +1,24 @@
 {
  "args": [
   "api",
-  "repos/Eyhenij/rt-tools/pulls/3359/reviews",
+  "repos/Eyhenij/rt-tools/compare/50eeae24c7d06172ac3917975a2384636b4016f6...main",
   "--jq",
-  "[.[] | {login: .user.login, type: .user.type}]"
+  ".ahead_by"
  ],
  "token": "machine",
- "code": 0,
- "stdout": "[]",
- "stderr": "",
- "json": []
+ "code": 1,
+ "stdout": "{\"message\":\"Server Error: Sorry, this diff is taking too long to generate.\",\"errors\":[{\"resource\":\"Comparison\",\"field\":\"diff\",\"code\":\"not_available\"}],\"documentation_url\":\"https://docs.github.com/rest/commits/commits#compare-two-commits\",\"status\":\"422\"}",
+ "stderr": "gh: Server Error: Sorry, this diff is taking too long to generate. (HTTP 422)\n",
+ "json": {
+  "message": "Server Error: Sorry, this diff is taking too long to generate.",
+  "errors": [
+   {
+    "resource": "Comparison",
+    "field": "diff",
+    "code": "not_available"
+   }
+  ],
+  "documentation_url": "https://docs.github.com/rest/commits/commits#compare-two-commits",
+  "status": "422"
+ }
 }
