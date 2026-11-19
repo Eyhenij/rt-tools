@@ -22,7 +22,14 @@ phone frame yet.
 2. [x] Draw the missing phone frames. — each on the page of its component, built from `Bottom Sheet` with a `Sheet Content / …` component swapped in: `Телефон · Menu` 8293:2474, `Телефон · Tabs, «Ещё»` 8292:1058, `Телефон · Tabs, меню вкладки` 8292:1122, `Телефон · Split Button` 8292:1522, `Телефон · Speed Menu` 8292:1756, `Телефон · Dynamic Selector` 8292:2360, `Телефон · Color Palette` 8292:2593; the new select with toggles on the Select page — `Широкий экран · Select с переключателями` 8293:3667 and `Телефон · Select с переключателями` 8293:3691, with the components `Toggle Row` and `Toggle Divider`.
 3. [x] Show them to the owner and write the approval into `approvals.md`. — «макеты ок».
 
-- **Waiting for the owner:** «есть еще компоненты которым нужен такой вид, к примеру мультибатон когда много значений? подумай поисчи» — found five more: `rt-toggle-button-group` when its values do not fit, the action menu of `rt-action-bar`, the filters panel of `rt-thread-list`, the user, «ещё» and submenu panels of `rt-page-header`, the operator choice in the table filter header; asked whether they go into the task.
+### Stage revision — five more places
+
+The owner added them: «Да, все пять».
+
+1. [x] Draw the phone frames of the five places. — `Телефон · Toggle Button Group, один` 8310:652, `…, несколько` 8310:769, `…, помещается` 8310:837; `Телефон · Action Bar` 8310:1013; `Телефон · Thread List, фильтры` 8310:2735; `Телефон · Table Filter Header, условие` 8310:3067; `Телефон · Page Header, действия` 8310:17232, `…, меню пользователя` 8310:17301, `…, подраздел` 8310:17374.
+2. [ ] Show them to the owner and write the approval into `approvals.md`. ← going on — shown, waiting for the answer.
+
+- **Waiting for the owner:** «Да, все пять» — the frames of the five places are drawn and shown; the approval is asked.
 
 ### 2. Agreement in the spec
 
