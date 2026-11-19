@@ -1,4 +1,4 @@
-<article rtBlock="rt-stat-tile" qa-dataid="stat-tile" [rtMod]="{ 'growth-worse': growthIsWorse() }">
+<article rtBlock="rt-stat-tile" qa-dataid="stat-tile" [rtMod]="{ 'growth-worse': growthIsWorse(), compact: compact() }">
     <header rtElem="head">
         <span rtElem="label" qa-dataid="stat-tile-label">{{ label() }}</span>
         @if (hint(); as hintText) {
@@ -15,9 +15,12 @@
                 qa-dataid="stat-tile-delta"
                 [attr.data-direction]="row.direction"
                 [rtMod]="{ direction: row.direction }"
-                [attr.title]="row.label">
-                <rt-icon qa-dataid="stat-tile-delta-icon" size="xs" [name]="row.icon" />
+                [attr.title]="primaryTitle()">
+                <rt-icon qa-dataid="stat-tile-delta-icon" size="xs" aria-hidden="true" [name]="row.icon" />
                 <span qa-dataid="stat-tile-delta-percent">{{ row.text }}</span>
+                @if (primaryCaption(); as caption) {
+                    <span rtElem="caption" qa-dataid="stat-tile-delta-caption">{{ caption }}</span>
+                }
             </span>
         }
 

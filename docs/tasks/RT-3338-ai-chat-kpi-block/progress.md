@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 5 — The tile: compact size, delta by the locale, visible base caption
-- **Done:** stage 1 — `kpi-data.ts`, `kpi.schema.ts`, their specs: `nx test --testFile=src/lib/util/kpi` 13 passed of 13, the table util specs 22 of 22, typecheck green. Before it: the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3338-ai-chat-kpi-block` from `RT-3337-ai-chat-table-block` (chain), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption. The mockup is approved. The agreement holds SC-UKV-1436…1483, committed. The plan is written and reviewed by product-strategist and goal-critic; their findings are closed in the plan.
-- **Next step:** step 2.1 — both delta rows of `rt-stat-tile` by the kit locale.
+- **Stage:** 3 of 5 — The block in the chat answer
+- **Done:** stage 2 — the tile writes both delta rows by `RT_KIT_LOCALE`, has `size="compact"` and `deltaLabelVisible`: `nx test --testFile=src/lib/components/stat-tile` 37 passed of 37, lint, stylelint, `check:tokens-styles` and typecheck green; `node tools/visual-gate.mjs ui-kit-v2` — 1159 snapshots of 1159 matched, the tile references needed no retake. Stage 1 — `kpi-data.ts`, `kpi.schema.ts`, their specs: `nx test --testFile=src/lib/util/kpi` 13 passed of 13, the table util specs 22 of 22, typecheck green. Before it: the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3338-ai-chat-kpi-block` from `RT-3337-ai-chat-table-block` (chain), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption. The mockup is approved. The agreement holds SC-UKV-1436…1483, committed. The plan is written and reviewed by product-strategist and goal-critic; their findings are closed in the plan.
+- **Next step:** merge the fresh `main` (the task delivery loop, by the owner's word), then step 3.1 — the `kpi` type and view.
 - **Uncommitted:** no
 - **Waiting for the owner:** no; the plan is approved: «Одобряю план»
 - **PR:** not open yet; the branch stands on RT-3337 (#3407), which stands on RT-3336 (#3402) and RT-3335 (#3398)
@@ -16,12 +16,12 @@
 - [x] 1.2 Write the value writer in `kpi-data.ts` on top of `rtTableCellWriter`: the short form from a million with 0–2 fraction digits and trailing zeros dropped, rounding to a million written short.
 - [x] 1.3 Write the JSON schema of the block in `kpi.schema.ts` next to `table.schema.ts` and export both from the util barrel.
 - [x] 1.4 Write the specs of the data function, the writer and the schema with the scenario numbers of the agreement: SC-UKV-1440–1447, 1459, 1476, 1482, 1483.
-- [>] 2.1 Write both delta rows of `rt-stat-tile` by `Intl.NumberFormat` for the kit label locale: a plus on growth, at most one fraction digit, direction by the written number, `en` for a refused locale.
-- [ ] 2.2 Add the compact size: value 24/24, delta 14, delta on its own line, inner gaps 6, wrapping secondary and base caption.
-- [ ] 2.3 Add the option that shows the primary delta label as visible text without a duplicate `title`.
-- [ ] 2.4 Name the locale in the existing tile specs and add the specs of the new scenarios: SC-UKV-1453–1456, 1466–1471.
-- [ ] 2.5 Run the tile story snapshots and take anew the references whose delta text changed.
-- [ ] 3.1 Add the `KpiBlock` type, the `kpi` view, `kpi` in `OWN_TYPES` and the data step in `toBlockViews`.
+- [x] 2.1 Write both delta rows of `rt-stat-tile` by `Intl.NumberFormat` for the kit label locale: a plus on growth, at most one fraction digit, direction by the written number, `en` for a refused locale.
+- [x] 2.2 Add the compact size: value 24/24, delta 14, delta on its own line, inner gaps 6, wrapping secondary and base caption.
+- [x] 2.3 Add the option that shows the primary delta label as visible text without a duplicate `title`.
+- [x] 2.4 Name the locale in the existing tile specs and add the specs of the new scenarios: SC-UKV-1453–1456, 1466–1471.
+- [x] 2.5 Run the tile story snapshots and take anew the references whose delta text changed.
+- [>] 3.1 Add the `KpiBlock` type, the `kpi` view, `kpi` in `OWN_TYPES` and the data step in `toBlockViews`.
 - [ ] 3.2 Write the `rt-ai-chat-kpi` component: a list of framed compact tiles, the grid by a block-local container query (one column below 328, two from 328, four from 664), tokens only.
 - [ ] 3.3 Add the `kpi` case to the blocks template and the copy line to `blockText`.
 - [ ] 3.4 Write the specs of the block component, the logic, the copy and the styles spec `rt-ai-chat-kpi.styles.spec.ts` (thresholds 328 and 664, the gap, the frame tokens): SC-UKV-1436, 1448–1452, 1457, 1458, 1462, 1463, 1475, 1477, 1478, 1480, 1481.
@@ -79,6 +79,14 @@
   `kpi-data.ts` and `kpi.schema.ts` are named; the scenarios are split by stages; the PR merges only
   after #3407, so KPI does not ride the first release; the point is narrowed to the showcase, the
   reader of an answer gets it with milestone G. Affected stage: the plan, before stage 1.
+
+- **The snapshots are taken by `node tools/visual-gate.mjs ui-kit-v2`, not by `pnpm run
+  test:visual:v2`** that the plan names in stage 4. The latter, run outside the image, refuses with
+  «only the image browser takes the showcase frames»; the gate raises the image itself. Stage 4 is
+  verified by the gate. Affected stage: 4.
+
+- **The tile delta text in `ru` changed only by the space kind** (U+00A0 instead of a plain space
+  before «%»), which draws the same pixels: no tile reference diverged. Affected step: 2.5.
 
 ## Sessions
 
