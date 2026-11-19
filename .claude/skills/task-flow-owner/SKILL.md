@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — the owner's word and the session. Load before asking the owner, when replying to an order and at the start of a session. Pattern task-flow-cycle.
 ---
-<!-- rt-kit v0.37.0 · rules/task-flow-owner.md · aef3e9d1d95e · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/task-flow-owner.md · 2bce76516252 · правится надстройкой, не здесь -->
 
 # Work conduct — the owner's word and the session
 
@@ -33,3 +33,15 @@ Rule under the law `docs/constitution/work-conduct.md`. Cold part: `pitfalls.md`
 - **Building by a sample begins with reading the sample itself, whole, by walking the directories.**
 - **Exploration of a tree that holds a code graph begins with the graph.**
 - **The path to a sample lies outside the history, the permission to work outside the epic — in the main branch.**
+
+## The agent does the work of the task here
+
+The tree's own section, by the owner's word of 19.11.2026: the agent leads all the work on code,
+tasks and their implementation, and the owner fixes nothing of it for the agent.
+
+- **Every step of a task is the executor's own, a step written as the owner's included.** A
+  progress line «the owner writes it himself» or an epic row with the owner's step is done by the
+  executor in the same work; it never becomes a menu option for the owner.
+- **The owner is asked only for decisions and approvals.** A product choice, the approval of a
+  plan, and a button a guard keeps with a person — the merge, a rollout — stay with the owner;
+  code, tasks, checks and their fixes do not.
