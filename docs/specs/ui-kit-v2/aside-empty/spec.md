@@ -1,11 +1,12 @@
 # The empty content of a side panel
 
-**Status:** proposed · **Revision:** 19 November 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 19 November 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the side panel of the second kit and its empty state `rt-empty-state`
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
 **Procedures:** none
 
-A subdomain of the second kit's spec, written before the code.
+A subdomain of the second kit's spec, written before the code by task RT-3428. It was merged with
+the scenario numbers it had as an agreement.
 
 ## Why
 
@@ -52,18 +53,8 @@ another language gives its own, the showcase reads «Нет данных».
 ## Contract
 
 Not applicable: the surface is four inputs of `rt-aside`, the same four of `rtTab` and one
-template directive.
-
-| input              | type                   | default    |
-| ------------------ | ---------------------- | ---------- |
-| `empty`            | `boolean`              | `false`    |
-| `emptyIcon`        | `IRtIcon.Name \| null` | `'inbox'`  |
-| `emptyTitle`       | `string \| null`       | `null` — the label `uiEmptyTitle` |
-| `emptyDescription` | `string \| null`       | `null`     |
-
-The tab `rtTab` of `rt-tabs` takes the same four inputs.
-
-The own placeholder: `<ng-template rtAsideEmpty>…</ng-template>` inside `rt-aside`.
+template directive; they are listed under «Screens and states». The subdomain serves no
+procedures.
 
 ### Refusal codes
 
@@ -82,6 +73,18 @@ Not applicable.
 | empty, inputs         | the same with the application's icon, title and description         |
 | empty, own template   | header, the application's template in the body, footer              |
 | empty tab             | the tab strip, the placeholder in the middle of the tab body        |
+
+### The inputs
+
+| input              | type                   | default                           |
+| ------------------ | ---------------------- | --------------------------------- |
+| `empty`            | `boolean`              | `false`                           |
+| `emptyIcon`        | `IRtIcon.Name \| null` | `'inbox'`                         |
+| `emptyTitle`       | `string \| null`       | `null` — the label `uiEmptyTitle` |
+| `emptyDescription` | `string \| null`       | `null`                            |
+
+The tab `rtTab` of `rt-tabs` takes the same four inputs. The own placeholder of a panel is
+`<ng-template rtAsideEmpty>…</ng-template>` inside `rt-aside`.
 
 ## Cross-cutting requirements
 
@@ -119,3 +122,5 @@ None.
 ## History of changes
 
 - 19 November 2026 — the agreement was written from the owner's request.
+- 19 November 2026 — the tab got the same placeholder: the owner chose the tab input.
+- 19 November 2026 — the agreement was merged into the spec of the second kit with the code.
