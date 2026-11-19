@@ -13,7 +13,7 @@ import { RtCardComponent } from '../../rt-card.component';
     template: `
         <app-story-presets fill caption="Карточка в обоих наборах">
             <ng-template>
-                <rt-card [header]="header" [ariaLabel]="ariaLabel" [clickable]="clickable" />
+                <rt-card [header]="header" [ariaLabel]="ariaLabel" [clickable]="clickable" [bordered]="bordered" />
             </ng-template>
         </app-story-presets>
     `,
@@ -30,4 +30,5 @@ export class TestRtCardComponent {
     public header: string | null = null;
     public ariaLabel: string | null = null;
     public clickable: boolean = false;
+    public bordered: boolean = false;
 }
