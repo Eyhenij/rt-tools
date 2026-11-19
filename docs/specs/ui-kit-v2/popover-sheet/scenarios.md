@@ -267,3 +267,11 @@ When its field is pressed
 Then its rows are inside the bottom sheet, and no footer «Выбрано · Сбросить · Готово» stands under them
 
 Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles.spec.ts`.
+
+### SC-UKV-1461 — tabs with the sheet switched off keep the tab menu and «more» by the tabs
+
+Given tabs with the sheet switched off on a phone, where a tab carries a menu of its own
+When the tab is long pressed
+Then the menu stands by the tab, and no bottom sheet is open; the «more» panel is told the same
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-sheet-off.spec.ts`.

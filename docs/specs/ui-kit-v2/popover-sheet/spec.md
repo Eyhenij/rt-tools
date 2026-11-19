@@ -127,3 +127,4 @@ None.
 | 2026-11-19 | The menu of a tab in the sheet, scenarios 1450…1451 (RT-3399) |
 | 2026-11-19 | The folding toggle button group, scenarios 1452…1455 (RT-3399) |
 | 2026-11-19 | The multiselect with toggles, scenarios 1456…1460 (RT-3399) |
+| 2026-11-19 | Tabs switch the sheet off for their menus, scenario 1461 (RT-3399) |

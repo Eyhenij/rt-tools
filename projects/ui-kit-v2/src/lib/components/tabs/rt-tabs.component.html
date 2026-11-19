@@ -118,7 +118,7 @@
                 }
 
                 @if (moreMode()) {
-                    <rt-tabs-more [tabs]="more.moreTabs()" (pick)="selectTab($event)" (closeTab)="onMoreClose($event)" />
+                    <rt-tabs-more [tabs]="more.moreTabs()" [sheet]="sheet()" (pick)="selectTab($event)" (closeTab)="onMoreClose($event)" />
                 }
 
                 <!-- Полоса выбранной вкладки — одна на всю полосу: так она переезжает между вкладками. -->
@@ -152,7 +152,7 @@
         }
     </div>
 
-    <rt-tabs-context-menu #contextMenu />
+    <rt-tabs-context-menu #contextMenu [sheet]="sheet()" />
 
     <!-- Уходящая панель стоит поверх: место ей задаёт замер, сделанный до смены. Сохранённые
          тела посещённых вкладок скрыты и вне таб-порядка. -->

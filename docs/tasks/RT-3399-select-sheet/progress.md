@@ -4,8 +4,11 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 3 из 4 — Code and unit tests
-- **Next step:** the trailing icons — the date field and the period field onto the select's line
-  (stage revision below). Done: the multiselect with toggles, `look="toggles"` (scenarios
+- **Next step:** stage 4 — the stories of the multiselect with toggles (a Sonnet subagent writes
+  them), then the stories of the rest of the set. Then the live measurement of the calendar icons, which
+  waits for the owner's word on the showcase at 6007 (it runs from the RT-3428 working copy).
+  Done: the calendar icon of the date and period fields on the select's line (5e04df474), the
+  multiselect with toggles, `look="toggles"` (scenarios
   1456…1460, the kit set 3777 green; code written by a Sonnet subagent by the owner's word
   «планирование и ревью опус, код пишет сонет работай так», reviewed here), the folding
   `rt-toggle-button-group` (scenarios 1452…1455, the kit set 3772 green), `rt-menu` with the «⋯» actions of the page header (scenarios 1446…1449), the menu
@@ -14,8 +17,9 @@
   with a search in the sheet, the dynamic selector, the split button, the speed menu, the «more»
   panel of the tabs, the action bar, the colour palette, the thread list filters, the table filter
   header, the profile menu, «more» and submenu of the page header; the kit set is 3762 tests green.
-- **Open:** `rt-tabs` has no input that switches the sheet off for its «more» panel and its tab
-  menu: `rt-tabs.component.ts` stands at 499 lines, and the input goes in after the file is split.
+- **Closed:** `rt-tabs` got the `sheet` input for its «more» panel and its tab menu (scenario
+  1461) after the split of `rt-tabs.component.ts`: 500 → 441 lines, the close flow went to
+  `rt-tabs.close.ts`, the scroll to the chosen tab to `rt-tabs.reveal.ts`; the tabs set 145 green.
 - **Decision along the way:** the old narrow-screen behaviour of the profile menu (on the backdrop
   of the mobile menu, SC-UKV-1080, SC-UKV-1084) now lives with the sheet switched off; those two
   scenarios name that, and the approved mockup 8310:17301 is the phone behaviour.
@@ -82,7 +86,9 @@ The owner added: «включи в задачу поправить дейт пи
 
 ### 4. Showcase
 
-1. [ ] Stories of both fields at the narrow width with the sheet open and with the sheet off.
+1. [ ] Stories of both fields at the narrow width with the sheet open and with the sheet off. —
+   begun with the multiselect with toggles: stories `Toggles` and `TogglesSheet` by the mockups
+   8293:3667 and 8293:3691.
 2. [ ] Measure the showcase against the mockup with `node tools/kit-match.mjs numbers`.
 3. [ ] Show the showcase to the owner and write the approval into `approvals.md`.
 
