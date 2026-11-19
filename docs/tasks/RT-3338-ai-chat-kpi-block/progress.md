@@ -3,11 +3,11 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 4 of 5 — The showcase and the match with the mockup
-- **Done:** stage 3 — the `kpi` type, view, copy line and the `rt-ai-chat-kpi` component; the delta writer moved to `delta-number.ts` and serves the tile and the copy: `nx test --testFile=src/rich-editor/lib/components/ai-chat` 93 passed of 93 (logic 19), stat-tile 37, util 81, lint, stylelint, `check:tokens-styles`, `check:cascade-layer` and typecheck green. Stage 2 — the tile writes both delta rows by `RT_KIT_LOCALE`, has `size="compact"` and `deltaLabelVisible`: `nx test --testFile=src/lib/components/stat-tile` 37 passed of 37, lint, stylelint, `check:tokens-styles` and typecheck green; `node tools/visual-gate.mjs ui-kit-v2` — 1159 snapshots of 1159 matched, the tile references needed no retake. Stage 1 — `kpi-data.ts`, `kpi.schema.ts`, their specs: `nx test --testFile=src/lib/util/kpi` 13 passed of 13, the table util specs 22 of 22, typecheck green. Before it: the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3338-ai-chat-kpi-block` from `RT-3337-ai-chat-table-block` (chain), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption. The mockup is approved. The agreement holds SC-UKV-1436…1483, committed. The plan is written and reviewed by product-strategist and goal-critic; their findings are closed in the plan.
-- **Next step:** step 4.6 — both review rounds are fixed and the snapshot gate is green (1148 stories, 1176 snapshots of 1176); the owner looks at the showcase, including the unit that wraps under a wide value, and their word goes into `approvals.md`.
+- **Stage:** 5 of 5 — Closing
+- **Done:** stage 5 up to 5.3 — the agreement is merged, CONTEXT is up to date, the roles' findings are fixed or named for the PR body, the mockup is aligned with the code, 28 numbers of 28. Stage 4 — the showcase approved twice, the smaller font approved. Stage 3 — the `kpi` type, view, copy line and the `rt-ai-chat-kpi` component; the delta writer moved to `delta-number.ts` and serves the tile and the copy: `nx test --testFile=src/rich-editor/lib/components/ai-chat` 93 passed of 93 (logic 19), stat-tile 37, util 81, lint, stylelint, `check:tokens-styles`, `check:cascade-layer` and typecheck green. Stage 2 — the tile writes both delta rows by `RT_KIT_LOCALE`, has `size="compact"` and `deltaLabelVisible`: `nx test --testFile=src/lib/components/stat-tile` 37 passed of 37, lint, stylelint, `check:tokens-styles` and typecheck green; `node tools/visual-gate.mjs ui-kit-v2` — 1159 snapshots of 1159 matched, the tile references needed no retake. Stage 1 — `kpi-data.ts`, `kpi.schema.ts`, their specs: `nx test --testFile=src/lib/util/kpi` 13 passed of 13, the table util specs 22 of 22, typecheck green. Before it: the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3338-ai-chat-kpi-block` from `RT-3337-ai-chat-table-block` (chain), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption. The mockup is approved. The agreement holds SC-UKV-1436…1483, committed. The plan is written and reviewed by product-strategist and goal-critic; their findings are closed in the plan.
+- **Next step:** step 5.4 — row 6 of the epic plan, the archive record, the folder taken apart.
 - **Uncommitted:** no
-- **Waiting for the owner:** the word on the showcase (step 4.6)
+- **Waiting for the owner:** nothing
 - **PR:** not open yet; RT-3337 (#3407), RT-3336 (#3402) and RT-3335 (#3398) are merged into the epic branch, so the PR goes into `RT-3346-ai-chat-blocks`
 
 ## Steps
@@ -33,8 +33,8 @@
 - [x] 4.6 Match the stories with the approved mockup by numbers into the table «mockup / showcase» in the progress, show the showcase to the owner and write their word into `approvals.md`.
 - [x] 5.1 Merge the agreement into `docs/specs/ui-kit-v2/ai-chat-kpi/` with its bindings; edit the stat-tile and chat specs and the kit spec indexes as the agreement names.
 - [x] 5.2 Bring `CONTEXT.md` of ai-chat and stat-tile up to the block and the tile edits.
-- [>] 5.3 Run the roles goal-critic and product-strategist on the result.
-- [ ] 5.4 Mark row 6 of the epic plan, write the archive record, take the task folder apart.
+- [x] 5.3 Run the roles goal-critic and product-strategist on the result.
+- [>] 5.4 Mark row 6 of the epic plan, write the archive record, take the task folder apart.
 - [ ] 5.5 Run the push set, push, open the PR into `RT-3337-ai-chat-table-block`; its body says it merges only after #3407, so the block and the tile edit do not ride the first release.
 
 ## Decisions along the way
@@ -196,6 +196,28 @@
   matched 1156 snapshots of 1156 with `long` and `short` retaken; its 2 failed tests were page-load
   timeouts in suites the branch does not touch, at a machine load of 185.
 
+- **The owner chose «Править макет под код» for the two numbers the mockup and the code differed
+  by.** The delta row of the mockup was 17 high and the period 16, so its card was 118 against
+  113.5 in the showcase; its border was #e5e5e5 against the token #e0e0e0. All 24 cards of the
+  mockup now draw the delta row at 14, the period at 14.5 and the border by the variable
+  `border/default`; the three cards of 8297-452 take the row height 113.5 the grid gives them in
+  code. `node tools/kit-match.mjs numbers` printed 28 of 28.
+
+- **Step 5.3, what the roles found and what came of it.**
+    - The room in `rt-stat-tile.fit.spec.ts` said 131; it is 134 now, the spec passes 2 of 2.
+    - The table «mockup / showcase» did not cover 8297-452; its rows are added below.
+    - The PR goes into the epic branch, not into `main`: the block and the tile delta reach a
+      release only with the epic PR, so «merge after #3407» names nothing any more and the body
+      says so instead.
+    - The epic branch lags behind `main` by RT-3408, and the PR diff carries its 16 files. The
+      body names them; merging `main` into the epic branch is the epic's step, not this task's.
+    - Four columns start at a block width of 664, so the reading column of the chat shows two; the
+      body says so.
+    - The tile writes its delta by `RT_KIT_LOCALE` for every consumer; the body says so.
+    - The reference `--long.png` was retaken in `c08c82250` after the showcase approval on
+      `a609495e8`; the hand-over names the story `Long` for the owner to look at.
+    - The dark-theme contrast of the red delta is already among the epic findings.
+
 ## Mockup / showcase
 
 Measured in the pinned Chrome by `getComputedStyle` and `getBoundingClientRect` on the story
@@ -215,6 +237,9 @@ Measured in the pinned Chrome by `getComputedStyle` and `getBoundingClientRect` 
 | period                     | 12 Regular muted                | 12 / 400, rgb(103,103,103)    |
 | one top per row            | yes                             | yes — play step `expectRows`  |
 | dark card                  | dark surface and border         | rgb(34,38,41), rgb(51,56,61)  |
+| card height, delta, period | 113.5, 66 / 14, 86 / 14.5       | 113.5, 66 / 14, 86 / 14.5     |
+| value too wide (8297-452)  | 20 px, then 18 px               | 20 px `smaller`, 18 px `smallest` |
+| delta under a 20 px value  | top 62                          | top 62                        |
 
 ## Sessions
 
@@ -234,8 +259,8 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 4 of 5 — The showcase and the match with the mockup
-- **Next step:** review round one on the diff against `RT-3337-ai-chat-table-block`; the owner sees the showcase after round two (step 4.6).
-- **PR:** not open yet; the branch stands on RT-3337 (#3407), which stands on RT-3336 (#3402) and RT-3335 (#3398)
+- **Next step:** step 5.4 — row 6 of the epic plan, the archive record, the folder taken apart.
+- **PR:** not open yet; RT-3337 (#3407), RT-3336 (#3402) and RT-3335 (#3398) are merged into the epic branch, so the PR goes into `RT-3346-ai-chat-blocks`
 
 The progress in full — `docs/tasks/RT-3338-ai-chat-kpi-block/progress.md`; the plan lies next to it.
 
@@ -248,6 +273,9 @@ none
 ### Commits over the main branch
 
 ```
+70dc7d476 docs(rt:ui-kit-v2): договорённость о блоке kpi сведена в spec (RT-3338)
+c08c82250 feat(rt:ui-kit-v2): значение компактной плитки мельчает, когда не входит в строку
+a609495e8 fix(rt:ui-kit-v2): блок kpi после второго круга ревью (RT-3338)
 0f80720c7 fix(rt:ui-kit-v2): блок kpi после первого круга ревью (RT-3338)
 eea80eea0 Merge remote-tracking branch 'origin/RT-3346-ai-chat-blocks' into RT-3338-ai-chat-kpi-block
 f5037fb8c feat(rt:ui-kit-v2): витрина блока kpi и числа плитки под rtl
@@ -265,9 +293,6 @@ bef2c6fc0 docs(rt:ui-kit-v2): шаги RT-3338 в ходе задачи
 f304f1437 docs(rt:ui-kit-v2): договорённость о блоке KPI для RT-3338
 488a9cf70 docs(rt:ui-kit-v2): макет блока KPI одобрен
 6d6174fb4 docs(rt:ui-kit-v2): замер плитки и макет блока KPI для RT-3338
-2bdcfda5c docs(rt:ui-kit-v2): разбор RT-3338 закрыт допущениями
-ed28d05cf docs(rt:ui-kit-v2): задача RT-3338 взята, находки разбора RT-3337
-079d87c7e docs(rt:ui-kit-v2): папка задачи RT-3337 разобрана
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
