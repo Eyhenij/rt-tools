@@ -61,5 +61,10 @@ sheet of its own over it).
   `rt-tabs`, `rt-split-button`, `rt-speed-menu`, `rt-dynamic-selector`, `rt-color-palette`, and the
   select with a toggles panel. Tooltips, confirm popovers, dialogs and asides stay as they are —
   they are not lists to choose from.
+- **Five more places join the set** — the owner's word «Да, все пять»: `rt-toggle-button-group`
+  folds into a field that opens the sheet when its values do not fit the width; the action menu of
+  `rt-action-bar`; the filters panel of `rt-thread-list`; the user menu, the «ещё» panel and the
+  submenu of `rt-page-header`; the operator choice in the table filter header. The help popover of
+  `rt-field` stays — it is text, not a choice.
 
 ## What is left unclear
