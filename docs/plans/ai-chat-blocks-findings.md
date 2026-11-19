@@ -106,6 +106,28 @@ task, a line per finding, each with its address.
 - **One foreign PR the host cannot diff (HTTP 422) drops the whole queue audit.** Proposed: a line
   in the rule and a fallback read per PR. **Address:** rules layer — the rule `queue-audit`.
 
+## RT-3337 — the table block of the chat answer
+
+- **An addition to the agreement is carried into everything already written from it.** The block
+  schema was written in stage 1; stage 5 added `title` to the agreement, and the schema was not
+  reread until product-strategist caught it at the closing. Proposed: a common miss in
+  `task-flow-resume` — the decision entry names the artefacts an addition reopens, and they are
+  edited in the same stage. **Address:** rules layer — the pattern `task-flow-resume`.
+- **Without `--update` the snapshot gate reads no path sample.** A confirm run with a path went
+  over the whole showcase. Proposed: a trap in `ui-component-tests-visual`; apart, a task to let a
+  plain run read the sample. **Address:** names of this tree — the pattern
+  `ui-component-tests-visual` and `tools/visual-gate.mjs`.
+- **A Figma frame without a fill exports transparent, and the overlay counts every empty pixel.**
+  The first overlay diverged by the transparency, not by the layout. Proposed: a paragraph after
+  the `overlay` command; apart, a task to let `overlay` take a background colour. **Address:** names
+  of this tree — the rule `kit-approval` and `tools/kit-match.mjs`.
+- **A story file that did not load within the timeout and left no difference frame is load, not a
+  divergence.** Two files failed so under a busy machine. Proposed: step 6 of «Sorting out a fallen
+  run». **Address:** names of this tree — the pattern `ui-component-tests-visual`.
+- **The tree has `@playwright/test` only, and a one-off script resolves it by `createRequire` from
+  the tree root.** Proposed: a line in the companion. **Address:** names of this tree — the
+  companion of `browser-verification`.
+
 ## Left unresolved
 
 - **All findings above** — wait for the owner's decision at the end of the epic.
