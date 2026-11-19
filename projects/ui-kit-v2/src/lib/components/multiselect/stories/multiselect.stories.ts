@@ -10,6 +10,8 @@ export default {
         options: { control: false },
         placeholder: { control: { type: 'text' } },
         maxChips: { control: { type: 'number' } },
+        look: { control: { type: 'inline-radio' }, options: ['list', 'toggles'] },
+        allLabel: { control: { type: 'text' } },
     },
 } as Meta<TestRtMultiselectComponent>;
 
@@ -20,5 +22,7 @@ export const Playground: TStory = {
     args: {
         placeholder: 'Выберите города',
         maxChips: 3,
+        look: 'list',
+        allLabel: '',
     },
 };

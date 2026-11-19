@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 import { IRtSelect } from '../../../select/rt-select.model';
+import { TRtMultiselectLook } from '../../rt-multiselect-toggles.logic';
 import { RtMultiselectComponent } from '../../rt-multiselect.component';
 
 /**
@@ -11,7 +12,13 @@ import { RtMultiselectComponent } from '../../rt-multiselect.component';
 @Component({
     selector: 'app-multiselect',
     template: `
-        <rt-multiselect ariaLabel="Города" [options]="options" [placeholder]="placeholder" [maxChips]="maxChips" />
+        <rt-multiselect
+            ariaLabel="Города"
+            [options]="options"
+            [placeholder]="placeholder"
+            [maxChips]="maxChips"
+            [look]="look"
+            [allLabel]="allLabel" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -33,4 +40,6 @@ export class TestRtMultiselectComponent {
     ];
     public placeholder: string = 'Выберите города';
     public maxChips: number = 3;
+    public look: TRtMultiselectLook = 'list';
+    public allLabel: string = '';
 }
