@@ -8,8 +8,9 @@
 
 The owner's word of 19.11.2026 for the night; the task is row 19 of the plan of the epic RT-3302.
 The card (issue #3420) comes from the review of RT-3276 by the role `goal-critic`. The menu of a
-refusal offers the owner the option «сделаю сам». The owner's order of 19.11 says the agent does
-all the work on code, tasks and implementation, and a person finishes nothing for it. The card
+refusal offers the owner the option «сделаю сам». The owner's order of 19.11, in their words:
+«человек не будет делать за тебя работу… всю работу по коду, тикетам и реализации ведёт агент».
+The card
 asks: the menu no longer offers the owner to take the step, and the scenarios that stand on the
 option are rewritten.
 
@@ -24,8 +25,12 @@ option are rewritten.
   `SELF_OPTION`. An edit that sets «шаг владельца» on a row of the epic plan needs the owner's
   window; when the owner's last word begins with «сделаю сам», the edit passes without the window.
 - **The row state «шаг владельца».** `measure/epic-text.mjs` reads it, and the next task of the
-  epic skips such a row. The state is reached two ways: by the shortcut above and by the owner's
-  window on the edit of the row.
+  epic skips such a row, while the end of the epic still waits for it (`measure/epic.mjs`). The
+  state is reached two ways: by the shortcut above and by the owner's window on the edit of the
+  row. `SC-AK-1389`, `SC-AK-1744` and `SC-AK-1746` hold it.
+- **The check of the generated description is red on the clean tree.** `node
+  projects/agent-kit/assets/checks/flow-sync.mjs --check` says one view of five differs, before
+  any edit of this task.
 - **The texts.** The option is named in `hooks/ask-judge.md`, `rules/turn-conduct.md` (the text
   and the diagram), `defaults/turn-map.md`, and in the description of the check: the mission, the
   flow script, its exit part and its replay part.
@@ -54,12 +59,18 @@ the work on themselves.
 - **The shortcut by the owner's word «сделаю сам» goes out of the guard.** With no option in the
   menu nothing can call it. Спросить было некого: заход автономный. Цена ошибки: одна ветка
   проверки и её сценарий возвращаются одной правкой.
-- **The row state «шаг владельца» stays.** It is still reached by the owner's window on the edit
-  of the row, and `SC-AK-1389` and `SC-AK-1746` hold it. The card speaks of the menu, not of the
-  state. Спросить было некого: заход автономный. Цена ошибки: если владелец решит убрать и
-  состояние, это правка измерителя плана эпика и двух сценариев — отдельная задача.
-- **`SC-AK-1469` is deleted with its test, its number stays empty.** `SC-AK-1445` is rewritten to
-  two options; the fixtures and the replay library lose the option from the menu text.
+- **The row state «шаг владельца» goes out of the engine too.** The card names two outcomes: the
+  agent does the step, or the owner's word puts the task off. The row is a third one. The rule
+  `task-flow-owner` of this tree says the executor does a row with the owner's step himself, and
+  the engine passes such a row over. The row is a dead end as well: the next task of the epic
+  skips it, and the end of the epic still waits for it. The role `goal-critic` showed this on the
+  first draft of the plan, which kept the state. An edit that sets the mark is refused with no
+  window; a row that carries it is read as an ordinary row. Спросить было некого: заход
+  автономный. Цена ошибки: если владелец решит оставить состояние, возвращаются одна ветка
+  проверки, одно поле измерителя плана эпика и три сценария.
+- **`SC-AK-1469`, `SC-AK-1389` and `SC-AK-1744` are deleted with their tests, their numbers stay
+  empty.** `SC-AK-1445` is rewritten to two options, `SC-AK-1443` to the text of two answers,
+  `SC-AK-1746` to the refusal; the fixtures and the replay library lose the option.
 
 ## What is left unclear
 
