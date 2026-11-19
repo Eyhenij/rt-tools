@@ -82,4 +82,10 @@ sheet of its own over it).
   quick ranges either show that the row goes on, or all fit; the choice goes to the owner with a
   Figma frame before code.
 
+- **The locked column keeps its drag handle, disabled** — the owner's words «включи в задачу не
+  прятать иконку драга а дизеблить», after a screenshot of the table's «Настроить столбцы» panel
+  where the locked row «Роль» has an empty place instead of the handle. Read as: in the column
+  settings of `rt-table` a locked row draws the same drag handle as the others, in the disabled
+  look and not draggable, instead of the empty placeholder.
+
 ## What is left unclear

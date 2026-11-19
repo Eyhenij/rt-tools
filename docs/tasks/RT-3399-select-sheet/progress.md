@@ -116,6 +116,15 @@ edge with nothing to say the row goes on.
    sideways scroll is gone; the date-range set 32 green. The measurement at 375 waits for the
    showcase, stopped by the owner («стопни стенд»).
 
+### Stage revision — the drag handle of a locked column
+
+The owner added: «включи в задачу не прятать иконку драга а дизеблить». In the column settings of
+`rt-table` a locked row draws an empty placeholder where the others have the drag handle.
+
+1. [ ] Draw the locked row with a disabled drag handle in Figma next to the table settings frame and
+   ask the owner to approve it.
+2. [ ] Draw the handle disabled in `table/settings-panel`; a spec holds it.
+
 ### 4. Showcase
 
 1. [ ] Stories of both fields at the narrow width with the sheet open and with the sheet off. —
