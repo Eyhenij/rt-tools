@@ -74,7 +74,11 @@ The owner added: «включи в задачу поправить дейт пи
    edge (border 1 + padding 16) — `Select` 4645:2745, `Date Picker` 6055:603, `Date Range Picker`
    6055:1284, `Date Time Picker` 6055:1523, `Time Picker` 6055:748. The code diverges from them.
 3. [ ] Move the date picker icon, and any other that diverged, onto the select's line; a spec or a
-   measurement holds it.
+   measurement holds it. — the open button of `rt-date-picker` and `rt-date-range` is pulled out by
+   its own property `--rt-<block>-open-offset` = (32 − 16) / −2 = −8 px on every field size, by the
+   CSS; the live measurement waits for the showcase on 6007, which now runs from another working
+   copy. The clear button keeps 24 px between its glyph and the calendar's, against 16 px at the
+   select: closing it would overlap the two buttons' hit areas, so it stays and is named to the owner.
 
 ### 4. Showcase
 
