@@ -346,3 +346,10 @@ When the block is drawn
 Then they read «99 999,99 ₽», «999 999 ₽», «-999 999 ₽», «1 млн ₽», «12,3 млн ₽» and «-123 млрд ₽»
 And the only ordinary space of a value stands between the number and its unit, so a value wider than a card 160 wide wraps there and never inside the number
 And in `en` the currency written before the number is parted from it the same way: -999999.4 reads «-RUB» and «999,999»
+
+### SC-UKV-1485 — a value wider than its row takes 20 px, then 18 px
+
+Given a block of `currency` items with `RUB` in a panel 328 wide, in the `ru` locale, holding 1240000, -123450000000 and -99999.99
+When the block is drawn
+Then «1,24 млн ₽» stands at 24 px, «-123 млрд ₽» and «-99 999,99 ₽» stand at 20 px, each on one line
+And a value that does not fit at 20 px takes 18 px, and one that does not fit at 18 px keeps 18 px and wraps at its unit

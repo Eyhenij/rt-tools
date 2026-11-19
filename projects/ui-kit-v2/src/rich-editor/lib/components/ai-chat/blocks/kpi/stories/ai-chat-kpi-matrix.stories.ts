@@ -214,13 +214,22 @@ export const Below: TStory = {
 export const Deltas: TStory = { args: { part: 'deltas' } };
 
 /**
- * При 328: «1,24 млн ₽» рядом с «8 400 ₽», «2,5 млрд», дельта в пунктах, «-123 млрд ₽» с переносом
- * перед единицей, «-999 999 ₽» без дробной части и самое широкое число с дробью «-99 999,99 ₽» —
- * SC-UKV-1441, SC-UKV-1476, SC-UKV-1484.
+ * При 328: «1,24 млн ₽» рядом с «8 400 ₽», «2,5 млрд», дельта в пунктах, «-123 млрд ₽» шрифтом 20,
+ * «-999 999 ₽» без дробной части и самое широкое число с дробью «-99 999,99 ₽» шрифтом 20 —
+ * SC-UKV-1441, SC-UKV-1476, SC-UKV-1484, SC-UKV-1485.
  */
 export const Short: TStory = {
     args: { part: 'short' },
-    play: async ({ canvasElement }: IPlayContext): Promise<void> => measure(canvasElement, { 328: { columns: 2, card: 160 } }),
+    play: async ({ canvasElement }: IPlayContext): Promise<void> => {
+        await measure(canvasElement, { 328: { columns: 2, card: 160 } });
+        const steps: string = Array.from((await firstBlock(canvasElement)).querySelectorAll<HTMLElement>(VALUE))
+            .map((value: HTMLElement): string => `${(value.textContent ?? '').replace(/\s+/g, ' ').trim()}=${value.dataset['fit']}`)
+            .join('; ');
+        const want: string =
+            '1,24 млн ₽=full; 8 400 ₽=full; 2,5 млрд=full; 42,0 %=full; -123 млрд ₽=smaller; -999 999 ₽=full; -99 999,99 ₽=smaller';
+
+        expectThat(steps === want, `шаги размера значений: ${steps}`);
+    },
 };
 
 /** Карточки без дельты, без периода, с дельтой без базы и со строкой вместо числа — SC-UKV-1443, SC-UKV-1450. */

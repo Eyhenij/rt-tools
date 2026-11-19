@@ -6,8 +6,8 @@
         }
     </header>
 
-    <div rtElem="value-row">
-        <p rtElem="value" qa-dataid="stat-tile-value">
+    <div #valueRow rtElem="value-row">
+        <p rtElem="value" qa-dataid="stat-tile-value" [attr.data-fit]="valueFit()" [rtMod]="{ fit: valueFit() }">
             <bdi dir="ltr">{{ value() }}</bdi>
         </p>
 

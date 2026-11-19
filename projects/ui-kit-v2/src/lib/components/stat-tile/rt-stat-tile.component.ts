@@ -8,8 +8,10 @@ import {
     Component,
     InputSignal,
     InputSignalWithTransform,
+    ElementRef,
     Signal,
     ViewEncapsulation,
+    viewChild,
 } from '@angular/core';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
@@ -17,6 +19,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { IRtDeltaNumber, RT_KIT_LABELS, RT_KIT_LOCALE, TRtKitLabelMap, rtDeltaNumber, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { ERtStatTileValueFit, rtStatTileValueFit } from './rt-stat-tile.fit';
 import { IRtStatTile } from './rt-stat-tile.model';
 
 const BEM_BLOCK: string = 'rt-stat-tile';
@@ -144,6 +147,16 @@ export class RtStatTileComponent {
     );
 
     protected readonly compact: Signal<boolean> = computed((): boolean => this.size() === 'compact');
+
+    /** Ряд значения: по его ширине компактная плитка выбирает размер значения. */
+    protected readonly valueRow: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('valueRow');
+
+    /** Размер значения компактной плитки: 24, затем 20, затем 18 — первый, на котором значение входит в строку. */
+    protected readonly valueFit: Signal<ERtStatTileValueFit> = rtStatTileValueFit(
+        this.valueRow,
+        (): string => this.value(),
+        (): boolean => this.compact()
+    );
 
     /**
      * База сравнения — короткой строкой «было X» и ничем больше: всё остальное

@@ -149,6 +149,16 @@
                     overflow-wrap: anywhere;
                 }
 
+                /* Значение, что не входит в строку при 24, берёт 20, затем 18; не входит и так — единица
+                   переносится. Шаг выбирает плитка по ширине ряда значения. */
+                .rt-stat-tile__value--fit--smaller {
+                    font-size: var(--rt-text-xl);
+                }
+
+                .rt-stat-tile__value--fit--smallest {
+                    font-size: var(--rt-text-lg);
+                }
+
                 .rt-stat-tile__delta {
                     flex-wrap: wrap;
                     font-size: var(--rt-text-sm);

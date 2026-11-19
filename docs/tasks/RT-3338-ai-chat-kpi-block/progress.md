@@ -184,6 +184,18 @@
   The owner sees at step 4.6 that a wide value puts its unit on a second line, which the mockup did
   not draw.
 
+- **The owner chose «Уменьшать шрифт» and approved the mockup 8297-452.** A value that does not fit its
+  row at 24 px takes 20, then 18; one that does not fit at 18 wraps at its unit. The tile measures
+  the value on a canvas at the first step's font against the width of the value row, which is 134 in
+  a card 160 (the earlier 131 was the width of «1,24 млн ₽» in the mockup, not the room). The sizes
+  come from `--rt-text-xl` and `--rt-text-lg`. New scenario SC-UKV-1485: the step choice is a pure
+  function with its spec, and the `Short` play step checks the step of every value. Checked live in
+  the pinned Chrome at 328: «-123 млрд ₽» and «-99 999,99 ₽» take 20 and stand on one line,
+  «-999 999 ₽» (133 of 134) keeps 24, the string «1 240 000 000 ₽» of `Long` takes 18 and wraps; 13
+  stories of the block and the tile finish their play steps, `Short` three runs in a row. The gate
+  matched 1156 snapshots of 1156 with `long` and `short` retaken; its 2 failed tests were page-load
+  timeouts in suites the branch does not touch, at a machine load of 185.
+
 ## Mockup / showcase
 
 Measured in the pinned Chrome by `getComputedStyle` and `getBoundingClientRect` on the story
