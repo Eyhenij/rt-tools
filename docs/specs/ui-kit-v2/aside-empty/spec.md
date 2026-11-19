@@ -42,6 +42,7 @@ another language gives its own, the showcase reads «Нет данных».
   A panel with tabs is empty per tab: the panel's own emptiness would take the strip away.
 - **The icon, the title and the description of a tab's placeholder are replaced by the tab's
   inputs.**
+- **An own template given to a tab replaces its placeholder whole.**
 
 ## What is out of scope
 
@@ -83,7 +84,8 @@ Not applicable.
 | `emptyTitle`       | `string \| null`       | `null` — the label `uiEmptyTitle` |
 | `emptyDescription` | `string \| null`       | `null`                            |
 
-The tab `rtTab` of `rt-tabs` takes the same four inputs. The own placeholder of a panel is
+The tab `rtTab` of `rt-tabs` takes the same four inputs and a fifth, `emptyTemplate`, an own
+placeholder template. The own placeholder of a panel is
 `<ng-template rtAsideEmpty>…</ng-template>` inside `rt-aside`.
 
 ## Cross-cutting requirements

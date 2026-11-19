@@ -57,3 +57,11 @@ When the tab is drawn
 Then the placeholder shows them instead of the defaults
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-empty.spec.ts`.
+
+### SC-UKV-1389 — a tab's own template replaces its placeholder
+
+Given an empty tab with its own placeholder template
+When the tab is drawn
+Then the tab body shows the template and no default placeholder
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-empty.spec.ts`.

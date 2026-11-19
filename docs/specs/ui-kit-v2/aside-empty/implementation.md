@@ -10,6 +10,7 @@ paths are given from the root of the tree.
 - **An own placeholder given by a template replaces the default placeholder whole.** — `projects/ui-kit-v2/src/lib/components/aside/rt-aside-empty.directive.ts:RtAsideEmptyDirective`
 - **Under emptiness of a tab its body shows the same default placeholder, and the tab strip stays.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs.component.html:tabs-empty`
 - **The icon, the title and the description of a tab's placeholder are replaced by the tab's inputs.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tab.directive.ts:emptyTitleText`
+- **An own template given to a tab replaces its placeholder whole.** — `projects/ui-kit-v2/src/lib/components/tabs/rt-tab.directive.ts:emptyTemplate`
 
 The scenarios of the subdomain are bound to the tests by the number in the title of a test, not by a
 table here: the bond is checked both ways by the checking of the specs.

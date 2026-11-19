@@ -151,8 +151,11 @@ export class RtTabDirective {
     /** Пояснение под заголовком заглушки; `null` — без него. */
     public readonly emptyDescription: InputSignal<string | null> = input<string | null>(null);
 
+    /** Своя заглушка пустой вкладки: шаблон заменяет `rt-empty-state` целиком. */
+    public readonly emptyTemplate: InputSignal<TemplateRef<unknown> | null> = input<TemplateRef<unknown> | null>(null);
+
     /** Заголовок заглушки: свой, а пустой или `null` — подпись кита `uiEmptyTitle`. */
-    public readonly emptyTitleText: Signal<string> = computed((): string => this.emptyTitle() || this.#t_uiEmptyTitle());
+    public readonly emptyTitleText: Signal<string> = computed((): string => this.emptyTitle()?.trim() || this.#t_uiEmptyTitle());
 
     /** Готовый текст подсказки: своя формулировка важнее умолчания. */
     public readonly invalidTitle: Signal<string> = computed((): string => this.invalidMessage() || this.#t_uiTabInvalid());

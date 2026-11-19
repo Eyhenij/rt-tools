@@ -100,6 +100,15 @@ describe('RtAsideComponent — пустое содержимое', (): void => {
         expect(textOf(qa(fixture, 'empty-state-title'))).toBe('No data');
     });
 
+    it('SC-UKV-1385 — заголовок из одних пробелов оставляет подпись кита', (): void => {
+        const fixture: ComponentFixture<AsideEmptyHostComponent> = setup((host: AsideEmptyHostComponent): void => {
+            host.empty.set(true);
+            host.emptyTitle.set('   ');
+        });
+
+        expect(textOf(qa(fixture, 'empty-state-title'))).toBe('No data');
+    });
+
     it('SC-UKV-1386 — свой шаблон заменяет заглушку целиком', (): void => {
         const fixture: ComponentFixture<AsideEmptyHostComponent> = setup((host: AsideEmptyHostComponent): void => {
             host.empty.set(true);

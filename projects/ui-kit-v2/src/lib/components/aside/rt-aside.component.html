@@ -14,7 +14,7 @@
         <rt-aside-error-box rtElem="error" [error]="requestError()" />
     }
 
-    <div rtElem="content" qa-dataid="aside-content" [rtMod]="{ empty: empty() }">
+    <div rtElem="content" qa-dataid="aside-content">
         @if (empty()) {
             <div rtElem="empty" qa-dataid="aside-empty">
                 @if (emptyTemplate(); as own) {

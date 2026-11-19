@@ -102,7 +102,7 @@ export class RtAsideComponent {
     protected readonly emptyTemplate: Signal<RtAsideEmptyDirective | undefined> = contentChild(RtAsideEmptyDirective);
 
     /** Заголовок заглушки: свой, а пустой или `null` — подпись кита `uiEmptyTitle`. */
-    protected readonly emptyTitleText: Signal<string> = computed((): string => this.emptyTitle() || this.#t_uiEmptyTitle());
+    protected readonly emptyTitleText: Signal<string> = computed((): string => this.emptyTitle()?.trim() || this.#t_uiEmptyTitle());
 
     protected readonly hasRequestError: Signal<boolean> = computed(
         (): boolean => this.requestError() !== null && this.requestError() !== undefined

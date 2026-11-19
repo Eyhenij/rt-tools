@@ -17,9 +17,11 @@ import { IRtTabs } from './rt-tabs.model';
                 label="События"
                 [empty]="empty()"
                 [emptyTitle]="emptyTitle()"
-                [emptyDescription]="emptyDescription()">
+                [emptyDescription]="emptyDescription()"
+                [emptyTemplate]="ownTemplate() ? own : null">
                 <p qa-dataid="events-body">Событие</p>
             </ng-template>
+            <ng-template #own><p qa-dataid="own-empty">Событий нет</p></ng-template>
         </rt-tabs>
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -30,6 +32,7 @@ class TabsEmptyHostComponent {
     public readonly empty: WritableSignal<boolean> = signal<boolean>(true);
     public readonly emptyTitle: WritableSignal<string | null> = signal<string | null>(null);
     public readonly emptyDescription: WritableSignal<string | null> = signal<string | null>(null);
+    public readonly ownTemplate: WritableSignal<boolean> = signal<boolean>(false);
 }
 
 type THostFixture = ComponentFixture<TabsEmptyHostComponent>;
@@ -77,5 +80,20 @@ describe('RtTabsComponent — пустая вкладка', (): void => {
 
         expect(textOf(qa(fixture, 'empty-state-title'))).toBe('Событий пока нет');
         expect(textOf(qa(fixture, 'empty-state-description'))).toBe('Они появятся после первой брони');
+    });
+
+    it('SC-UKV-1388 — заголовок из одних пробелов оставляет подпись кита', (): void => {
+        const fixture: THostFixture = setup((host: TabsEmptyHostComponent): void => host.emptyTitle.set('   '));
+
+        expect(textOf(qa(fixture, 'empty-state-title'))).toBe('No data');
+    });
+
+    it('SC-UKV-1389 — свой шаблон вкладки заменяет её заглушку целиком', (): void => {
+        const fixture: THostFixture = setup((host: TabsEmptyHostComponent): void => host.ownTemplate.set(true));
+
+        expect(textOf(qa(fixture, 'own-empty'))).toBe('Событий нет');
+        expect(qa(fixture, 'empty-state-title')).toBeNull();
+        expect(qa(fixture, 'events-body')).toBeNull();
+        expect(qa(fixture, 'tabs-empty')).not.toBeNull();
     });
 });

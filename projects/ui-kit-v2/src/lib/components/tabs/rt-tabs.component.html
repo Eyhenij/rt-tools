@@ -180,12 +180,18 @@
             (animationend)="panels.animationEnd($event)"
             (animationcancel)="panels.animationEnd($event)">
             @if (panel.tab.empty()) {
-                <rt-empty-state
-                    rtElem="empty"
-                    qa-dataid="tabs-empty"
-                    [icon]="panel.tab.emptyIcon()"
-                    [title]="panel.tab.emptyTitleText()"
-                    [description]="panel.tab.emptyDescription()" />
+                @if (panel.tab.emptyTemplate(); as ownEmpty) {
+                    <div rtElem="empty" qa-dataid="tabs-empty">
+                        <ng-container [ngTemplateOutlet]="ownEmpty" />
+                    </div>
+                } @else {
+                    <rt-empty-state
+                        rtElem="empty"
+                        qa-dataid="tabs-empty"
+                        [icon]="panel.tab.emptyIcon()"
+                        [title]="panel.tab.emptyTitleText()"
+                        [description]="panel.tab.emptyDescription()" />
+                }
             } @else {
                 <ng-container [ngTemplateOutlet]="panel.tab.templateRef" />
             }
