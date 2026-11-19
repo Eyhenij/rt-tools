@@ -23,6 +23,8 @@
 
 ## Decisions along the way
 
+- **Подпись по умолчанию — новый ключ `asideNoData`** — владелец на вопрос по макету: «текст по дефолту "Нет данных"». Ключ `uiNoData` читается «Пока нет данных» у `rt-bar-list`. Кадр поправлен. Affected stage of the plan: 1, 2.
+
 ## Sessions
 
 ### 2026-11-19

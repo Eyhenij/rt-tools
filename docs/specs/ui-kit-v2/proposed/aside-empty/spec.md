@@ -23,8 +23,8 @@ placeholder, and most drew none.
 
 ### What it is called in the interface
 
-The default label is the kit dictionary key `uiNoData` («No data yet»); an application in another
-language gives its own, the showcase reads «Пока нет данных».
+The default label is the new kit dictionary key `asideNoData` («No data»); an application in
+another language gives its own, the showcase reads «Нет данных».
 
 ## Rules
 
@@ -32,7 +32,7 @@ language gives its own, the showcase reads «Пока нет данных».
   emptiness the content is drawn as before.
 - **The header, the request error box and the footer stay in their places under emptiness.** The
   placeholder takes only the body and stands in its middle.
-- **The default placeholder is the kit's `rt-empty-state` with the `inbox` icon and the `uiNoData`
+- **The default placeholder is the kit's `rt-empty-state` with the `inbox` icon and the `asideNoData`
   label.** The panel writes no markup of its own for it.
 - **The icon, the title and the description of the default placeholder are replaced by the panel's
   inputs.** An empty title input keeps the dictionary label; `null` icon removes the icon.
@@ -53,7 +53,7 @@ Not applicable: the surface is four inputs of `rt-aside` and one template direct
 | ------------------ | ---------------------- | ---------- |
 | `empty`            | `boolean`              | `false`    |
 | `emptyIcon`        | `IRtIcon.Name \| null` | `'inbox'`  |
-| `emptyTitle`       | `string \| null`       | `null` — the label `uiNoData` |
+| `emptyTitle`       | `string \| null`       | `null` — the label `asideNoData` |
 | `emptyDescription` | `string \| null`       | `null`     |
 
 The own placeholder: `<ng-template rtAsideEmpty>…</ng-template>` inside `rt-aside`.
@@ -71,7 +71,7 @@ Not applicable.
 | State                 | What is visible                                                     |
 | --------------------- | ------------------------------------------------------------------- |
 | not empty             | the panel as before                                                 |
-| empty, default        | header, the inbox icon and «No data yet» in the middle of the body, footer |
+| empty, default        | header, the inbox icon and «No data» in the middle of the body, footer |
 | empty, inputs         | the same with the application's icon, title and description         |
 | empty, own template   | header, the application's template in the body, footer              |
 
@@ -79,7 +79,7 @@ Not applicable.
 
 ### Locales
 
-No new key: the label is the existing `uiNoData`.
+One new key of the kit dictionary, `asideNoData`. The showcase carries the Russian label «Нет данных».
 
 ### SEO
 
@@ -95,8 +95,8 @@ Every open panel shows its own placeholder.
 
 ## Decisions
 
-- **The label is the existing `uiNoData`, not a new key.** An application that already gave it
-  gets its own text without an edit.
+- **The label is a key of its own, `asideNoData`, not the existing `uiNoData`.** The owner asked
+  for «Нет данных», and `uiNoData` reads «Пока нет данных» under the empty bar list.
 - **Emptiness is an input given by the application, not guessed from the projected content.** A
   panel whose content is an empty list still projects the list's markup.
 

@@ -5,7 +5,7 @@ paths are given from the root of the tree.
 
 - **Under emptiness the panel body shows the placeholder instead of the projected content.** — `projects/ui-kit-v2/src/lib/components/aside/rt-aside.component.html:rt-aside-empty`
 - **The header, the request error box and the footer stay in their places under emptiness.** — `projects/ui-kit-v2/src/lib/components/aside/rt-aside.component.html:rt-aside-footer`
-- **The default placeholder is the kit's `rt-empty-state` with the `inbox` icon and the `uiNoData` label.** — `projects/ui-kit-v2/src/lib/components/aside/rt-aside.component.ts:emptyTitleText`
+- **The default placeholder is the kit's `rt-empty-state` with the `inbox` icon and the `asideNoData` label.** — `projects/ui-kit-v2/src/lib/components/aside/rt-aside.component.ts:emptyTitleText`
 - **The icon, the title and the description of the default placeholder are replaced by the panel's inputs.** — `projects/ui-kit-v2/src/lib/components/aside/rt-aside.component.ts:emptyIcon`
 - **An own placeholder given by a template replaces the default placeholder whole.** — `projects/ui-kit-v2/src/lib/components/aside/rt-aside-empty.directive.ts:RtAsideEmptyDirective`
 

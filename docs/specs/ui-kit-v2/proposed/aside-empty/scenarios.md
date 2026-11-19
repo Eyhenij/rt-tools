@@ -6,7 +6,7 @@ The numbers continue the numbering of the second kit and do not change after the
 
 Given a side panel with emptiness and no inputs of the placeholder
 When the panel is drawn
-Then its body shows the inbox icon and the `uiNoData` label instead of the content
+Then its body shows the inbox icon and the `asideNoData` label instead of the content
 
 Covered: `projects/ui-kit-v2/src/lib/components/aside/rt-aside-empty.spec.ts`.
 
