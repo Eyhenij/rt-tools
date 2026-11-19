@@ -6,8 +6,9 @@ Part of [SKILL.md](SKILL.md). What refuses along the loop and what to do instead
 
 - **After a context compaction the gate forgets every loaded rule.** Each rule is loaded again by
   the Skill tool, and its `implementation.md` is read as a file.
-- **The gate demands this skill on a task folder edit and on the delivery commands.** Loaded first,
-  it never refuses there.
+- **The gate demands this skill on an edit of a task folder or an epic plan and on the delivery
+  commands** — `task:new`, a branch taken by `checkout -b`, `switch -c` or `worktree add -b`, a push
+  and `gh pr create`. Loaded first, it never refuses there.
 
 ## Questions to the owner
 
@@ -32,8 +33,10 @@ Part of [SKILL.md](SKILL.md). What refuses along the loop and what to do instead
 
 ## Opening the PR
 
-- **The PR opens by `gh pr create`, never by a REST call to the pulls endpoint.** The delivery
-  guards read only that command.
+- **The PR opens by `gh pr create` typed in full, never through a variable and never by a REST
+  call to the pulls endpoint.** The delivery guards read only that command text. The one exception
+  is the query quota refusal of pattern `git-workflow-pr-body`: then REST opens the PR, and the
+  guard's list is checked by hand first.
 - **A refusal of `gh pr create` names everything unmet at once:** the folder, the merge of the
   base, the title, the card in the first column, the `Closes` line and the sections «Точки»,
   «Цель» and «Оставшийся шаг». It is fixed, never bypassed by REST.

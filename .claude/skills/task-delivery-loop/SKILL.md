@@ -49,7 +49,10 @@ The table in `implementation.md` next to it.
   (RT-N)», then «второго круга». The owner reads the rounds in history: this is the one place
   where a later commit of a branch corrects an earlier one by design.
 - **The push set runs once per branch, after round two.** The fixes are committed together, the
-  base is merged in once, and the tree is not touched between the green run and the push.
+  base is merged in once, and the tree is not touched between the green run and the push. A fix
+  for the owner's remarks after the PR is a new content and runs the set again.
+- **No guard counts the rounds.** The gate demands the loop to be loaded; that it was carried out
+  is shown by the commits named by the rounds and by the PR body, and the body says so in words.
 
 ## One task, start to hand-over
 
@@ -91,7 +94,7 @@ The table in `implementation.md` next to it.
     in-review`.
 14. **Start `skill-curator` in the background** with what was loaded and what went wrong.
 15. **Hand over in one message.** The PR link, what changed for the person, what confirmed it, and
-    the merge question.
+    what the PR waits for: the run, the owner's review, the merge.
 
 ## After the owner answers
 
@@ -108,14 +111,16 @@ The table in `implementation.md` next to it.
 
 - A push or a PR before the live check and both rounds.
 - A finding fixed unverified, or a subagent's verdict taken as the evidence.
-- A merge without the owner's word about this PR: the rule `git-workflow` keeps the button with a
-  person.
+- A merge without the owner's word: the rule `git-workflow` keeps the button with a person, and
+  the executor merges only what the owner said to merge.
 - A claim about the tree in a reply without the command that showed it.
 
 ## What of the law is not here
 
-No guard counts the review rounds: the loop is demanded by the gate, and that it was carried out is
-seen only by the commits named by the rounds and by the PR body. The owner judges both.
+No guard counts the review rounds or the live check: the loop is demanded by the gate, and that it
+was carried out is seen only by the commits named by the rounds and by the PR body. The owner
+judges both. The order "this rule, then `task-flow`" is held by the gate printing this rule first
+on a task folder edit; on a command the default rule comes along with it.
 
 ## Patterns
 

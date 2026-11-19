@@ -6,7 +6,7 @@ names no review before the push. The owner's word of 19.11.2026 makes the loop o
 
 - **The rule `task-delivery-loop` is loaded as the first action of work on a task.** It stands on
   top of this rule: the states and the guards stay, the loop adds the live check and the review.
-  The gate demands it on an edit of a task folder and on the delivery commands.
+  The gate demands it on an edit of a task folder or an epic plan and on the delivery commands.
 - **Every change of the session passes two review rounds before the push.** Each round reads the
   whole diff of the branch against its base, by fresh readers, and its confirmed findings are fixed
   in the same branch. A push and a PR without both rounds are a miss, and a task closed without

@@ -53,12 +53,12 @@ skill_for() {
 
                 */.claude/*) return 0 ;;
 
-                # The task folder: the first edit of any task. The loop of a task stands on top
-                # of the course of a task, and both are demanded here — the default gives only
-                # the second.
-                */docs/tasks/*)
-                    printf '%s\n' 'task-flow'
+                # The task folder and the epic plan: the first edits of any task and of any epic.
+                # The loop of a task is printed first and the default adds its own rule after it —
+                # the course of a task for the folder, the wording rule for the plan.
+                */docs/tasks/* | */docs/plans/*)
                     printf '%s\n' 'task-delivery-loop'
+                    command -v skill_for_default >/dev/null 2>&1 && skill_for_default "$kind" "$target" "$written"
                     return 0
                     ;;
 
@@ -345,14 +345,19 @@ skill_for() {
         bash)
             # The commands that take a task, a branch and a delivery: the loop of a task is loaded
             # before the first of them. Printed on top of the default, which adds the delivery rule.
-            if command -v rt_gate_invokes >/dev/null 2>&1; then
-                if rt_gate_invokes "$target" "[^[:space:]]*task:new" \
-                    || rt_gate_invokes "$target" "git[[:space:]]+checkout[[:space:]]+-b" \
-                    || rt_gate_invokes "$target" "git[[:space:]]+switch[[:space:]]+-c" \
-                    || rt_gate_invokes "$target" "git[[:space:]]+push" \
-                    || rt_gate_invokes "$target" "gh[[:space:]]+pr[[:space:]]+create"; then
-                    printf '%s\n' 'task-delivery-loop'
-                fi
+            #
+            # Read by a plain match over the command text, not by the call check of the default:
+            # that one misses the forms this tree types every day — a token prefix with `$(…)`,
+            # `command gh`, `git -C <dir>`, `git checkout -q -b`, `npm run -s task:new`. A mention
+            # in an `echo` demands the loop too; that costs one load, a missed call costs a task
+            # led past the loop.
+            if printf '%s' "$target" | grep -qE \
+                -e '(^|[[:space:];&|(/])task:new([[:space:]]|$)' \
+                -e '(^|[[:space:];&|(/])git([[:space:]]+-C[[:space:]]+[^[:space:]]+)?[[:space:]]+(checkout|switch|worktree[[:space:]]+add)([[:space:]]+-[^[:space:]]+)*[[:space:]]+-[bcB]([[:space:]]|$)' \
+                -e '(^|[[:space:];&|(/])git([[:space:]]+-C[[:space:]]+[^[:space:]]+)?[[:space:]]+push([[:space:]]|$)' \
+                -e '(^|[[:space:];&|(/])gh[[:space:]]+pr[[:space:]]+create([[:space:]]|$)' \
+                -e '\$\{?GH\}?[[:space:]]+pr[[:space:]]+create([[:space:]]|$)'; then
+                printf '%s\n' 'task-delivery-loop'
             fi
             ;;
     esac

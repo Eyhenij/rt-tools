@@ -43,9 +43,17 @@ npm run -s task:move -- N in-progress
 
 ```bash
 pnpm exec nx affected -t lint typecheck test --parallel --base=origin/<base>
+RT_SUITES_BASE=origin/<base> bash tools/tests/run.sh   # the check scenarios the change reaches
+```
+
+A stand of another copy may already hold the port. Who listens is asked first; a held port is
+taken by the variables of the stand, not by stopping the neighbour:
+
+```bash
+lsof -nP -iTCP:6007 -sTCP:LISTEN; lsof -nP -iTCP:3310 -sTCP:LISTEN; lsof -nP -iTCP:4310 -sTCP:LISTEN
 pnpm run storybook:ui-kit-v2     # the showcase, port 6007
-pnpm run serve:stand             # the receiver on 3310, the admin panel on 4310
-bash tools/tests/run.sh          # the tree's check scenarios over what the change reaches
+pnpm run serve:stand             # the receiver on 3310, the admin panel on 4310;
+                                 # E2E_API_PORT and E2E_ADMIN_PORT move them
 ```
 
 ## 7, 9. Review rounds
@@ -93,22 +101,29 @@ The push guard reads the marks the run ahead left; a step without a mark runs at
 
 The body goes to a file first, in the six sections of the pattern `git-workflow-pr-body`: the
 `Closes #N` line, «Что сделано», «Точки», «Цель», «Чем подтверждено» with both rounds, «Оставшийся
-шаг». A PR into `main` opens as a draft — the pipeline wakes for it; one into an epic branch opens
-ready.
+шаг».
+
+The opening call is typed as `gh pr create` itself, by its full path, never through a variable
+such as `$GH`: the delivery guards and the rules gate read the command text, and a variable hides
+the call from them — the PR then opens past every condition they hold. Reviewer, assignee and
+labels go in the same call. A PR into `main` adds `--draft`: the pipeline wakes for it. One into an
+epic branch opens ready, without `--draft`: the delivery guard refuses a draft there.
 
 ```bash
-GH=/opt/homebrew/bin/gh; export GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)"
-$GH pr create --title '[RT-N] <что сделано>' --base <base> --head RT-N-<slug> --body-file <body file> --draft
-$GH api repos/Eyhenij/rt-tools/pulls/<pr> --jq '{number, author: .user.login}'
+GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)" /opt/homebrew/bin/gh pr create --title '[RT-N] <что сделано>' \
+    --base <base> --head RT-N-<slug> --body-file <body file> \
+    --reviewer Eyhenij --assignee rt-tools-dev --label <label> --draft
 ```
 
-The author must be `rt-tools-dev`. Then labels from the task, assignee and reviewer by REST:
+The state is reread from the host right after: the author must be `rt-tools-dev`, and a reviewer,
+an assignee or a label the call did not set is added by REST:
 
 ```bash
 GH=/opt/homebrew/bin/gh; export GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)"
-for L in $($GH api repos/Eyhenij/rt-tools/issues/N --jq '.labels[].name'); do
+$GH api repos/Eyhenij/rt-tools/pulls/<pr> \
+    --jq '{author: .user.login, reviewers: [.requested_reviewers[].login], assignees: [.assignees[].login], labels: [.labels[].name]}'
+$GH api repos/Eyhenij/rt-tools/issues/N --jq '.labels[].name' | while IFS= read -r L; do
     $GH api -X POST repos/Eyhenij/rt-tools/issues/<pr>/labels -f "labels[]=$L" >/dev/null; done
-$GH api -X POST repos/Eyhenij/rt-tools/issues/<pr>/assignees -f 'assignees[]=rt-tools-dev'
 $GH api -X POST repos/Eyhenij/rt-tools/pulls/<pr>/requested_reviewers -f 'reviewers[]=Eyhenij'
 npm run -s task:move -- N in-review
 ```
