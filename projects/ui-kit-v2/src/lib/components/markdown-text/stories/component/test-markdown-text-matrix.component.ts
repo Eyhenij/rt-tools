@@ -16,6 +16,9 @@ interface IMarkdownCase {
 
 const TABLE: string = '| Что | Где |\n| --- | --- |\n| разбор | дерево |\n| груз | приём |';
 
+/** Таблица с выравниванием в строке-разделителе: число у конца, отметка по центру, минус как пришёл. */
+const ALIGNED_TABLE: string = '| Объект | Отметка | Изменение |\n| :--- | :---: | ---: |\n| Вилла | да | -10 |\n| Апартаменты | нет | 25 |';
+
 const CODE: string = '```bash\nnpm run check:all\n```';
 
 const LONG_CODE: string = '```\ndocker compose -f docker-compose.prod.yml --env-file .env.prod up -d --force-recreate\n```';
@@ -131,6 +134,7 @@ export class TestRtMarkdownTextMatrixComponent {
         { name: 'списки', text: '- первое\n- второе\n  - вложенное\n\n1. шаг\n2. другой шаг' },
         { name: 'цитата', text: '> Слово владельца о том, как показывать текст.' },
         { name: 'таблица', text: TABLE },
+        { name: 'таблица с выравниванием', text: ALIGNED_TABLE },
         { name: 'блок кода', text: CODE },
     ];
 

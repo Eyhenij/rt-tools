@@ -135,4 +135,44 @@ describe('RtMarkdownTextComponent', (): void => {
             expect(qaAll(setup('первый\n\nвторой'), 'markdown-paragraph').length).toBe(2);
         });
     });
+    describe('таблица в виде блока таблицы ответа', (): void => {
+        const TABLE: string = '| Объект | Сумма | Знак |\n| :-- | --: | :-: |\n| Вилла | -10 | + |\n| Дом |';
+
+        it('SC-UKV-1416 — столбцы выровнены по строке-разделителю', (): void => {
+            const fixture: ComponentFixture<RtMarkdownTextComponent> = setup(TABLE);
+            const head: DebugElement[] = qaAll(fixture, 'markdown-head-cell');
+
+            expect(
+                head.map((cell: DebugElement): string[] => classesOf(cell).filter((name: string): boolean => name.includes('--')))
+            ).toEqual([[], ['rt-markdown-text__head-cell--end'], ['rt-markdown-text__head-cell--center']]);
+            expect(classesOf(qaAll(fixture, 'markdown-cell')[1])).toContain('rt-markdown-text__cell--end');
+        });
+
+        it('SC-UKV-1417 — число не форматируется и не красится, «Copy CSV» нет; шапка и окно прокрутки читаются', (): void => {
+            const fixture: ComponentFixture<RtMarkdownTextComponent> = setup(TABLE);
+            const scroll: HTMLElement = qa(fixture, 'markdown-table-scroll')?.nativeElement as HTMLElement;
+
+            expect(textOf(qaAll(fixture, 'markdown-cell')[1])).toBe('-10');
+            expect(classesOf(qaAll(fixture, 'markdown-cell')[1]).some((name: string): boolean => name.includes('negative'))).toBe(false);
+            expect(qa(fixture, 'ai-chat-table-copy')).toBeNull();
+            expect(qaAll(fixture, 'markdown-head-cell').every((cell: DebugElement): boolean => cell.attributes['scope'] === 'col')).toBe(
+                true
+            );
+            expect(scroll.getAttribute('tabindex')).toBe('0');
+            expect(scroll.getAttribute('aria-label')).toBe('Table');
+        });
+
+        it('SC-UKV-1418 — строка короче шапки добирается пустыми ячейками', (): void => {
+            const fixture: ComponentFixture<RtMarkdownTextComponent> = setup(TABLE);
+
+            expect(qaAll(fixture, 'markdown-cell').map((cell: DebugElement): string => textOf(cell))).toEqual([
+                'Вилла',
+                '-10',
+                '+',
+                'Дом',
+                '',
+                '',
+            ]);
+        });
+    });
 });

@@ -127,7 +127,7 @@ and every copy would drift from the kit.
 - Clearing `pending` when a run stops or fails is the application's; the block shows the
   placeholder for as long as `pending` is set.
 - The data table under «View data»: the task RT-3336.
-- The table block: the task RT-3337.
+- The table block: the subdomain `ai-chat-table`.
 - New drawing in `rt-chart`: the title row, the subtitle and the axis names are the block's, and
   the chart is used as it is.
 

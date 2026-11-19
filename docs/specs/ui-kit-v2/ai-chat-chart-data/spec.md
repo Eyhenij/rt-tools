@@ -76,7 +76,8 @@ block itself can give the numbers on demand.
 ## What is out of scope
 
 - Sorting, filtering and copying the table.
-- The table block of the chat — RT-3337 takes the markup of this table.
+- The table block of the chat — the subdomain `ai-chat-table`; this table takes its shared look,
+  the head row on the surface background and number columns as wide as their content.
 - Making the assistant stop writing the data table in its text — the prompt of the application.
 
 ## Contract

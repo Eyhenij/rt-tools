@@ -28,6 +28,10 @@ describe('markdownToPlainText', (): void => {
         expect(markdownToPlainText('| Hotel | Rooms |\n| --- | --- |\n| North | 12 |')).toBe('Hotel\tRooms\nNorth\t12');
     });
 
+    it('SC-UKV-1418 — копия таблицы несёт строки, подогнанные под шапку', (): void => {
+        expect(markdownToPlainText('| A | B | C |\n| --- | --: | --- |\n| 1 |\n| 1 | 2 | 3 | 4 |')).toBe('A\tB\tC\n1\t\t\n1\t2\t3');
+    });
+
     it('цитата теряет знак, блок кода остаётся как есть', (): void => {
         expect(markdownToPlainText('> quoted\n\n```ts\nconst a = 1;\n```')).toBe('quoted\n\nconst a = 1;');
     });

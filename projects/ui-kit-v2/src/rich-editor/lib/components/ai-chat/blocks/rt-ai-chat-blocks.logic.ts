@@ -1,4 +1,4 @@
-import { IRtTag, markdownToPlainText } from '@rt-tools/ui-kit-v2';
+import { IRtTableData, IRtTag, markdownToPlainText, rtTableData, rtTablePlainText } from '@rt-tools/ui-kit-v2';
 
 import { IRtAiChat } from '../rt-ai-chat.model';
 
@@ -16,7 +16,7 @@ const NOTICE_SEVERITIES: Readonly<Record<IRtTag.Severity, true>> = {
 };
 
 /** Типы, которые кит рисует сам: отрисовщик из реестра их не заменяет. */
-const OWN_TYPES: ReadonlySet<string> = new Set<string>(['markdown', 'notice']);
+const OWN_TYPES: ReadonlySet<string> = new Set<string>(['markdown', 'notice', 'table']);
 
 /** Блок текста в markdown: тип `markdown` и строка `text`. */
 export function isMarkdownBlock(block: { readonly type: string }): block is IRtAiChat.MarkdownBlock {
@@ -33,6 +33,25 @@ export function isNoticeBlock(block: { readonly type: string }): block is IRtAiC
         typeof severity === 'string' &&
         Object.hasOwn(NOTICE_SEVERITIES, severity)
     );
+}
+
+/**
+ * Таблица блока `table`, приведённая к виду, который можно рисовать; `null` — блок не таблица или
+ * без столбцов и строк, и тогда он показан заглушкой.
+ */
+export function tableBlockData(block: { readonly type: string }): IRtTableData | null {
+    if (block.type !== 'table') {
+        return null;
+    }
+
+    return rtTableData(Reflect.get(block, 'columns'), Reflect.get(block, 'rows'), Reflect.get(block, 'total'));
+}
+
+/** Заголовок блока `table`: непустая строка, иначе его нет. */
+function tableTitle(block: { readonly type: string }): string | null {
+    const title: unknown = Reflect.get(block, 'title');
+
+    return typeof title === 'string' && title.trim().length > 0 ? title : null;
 }
 
 /**
@@ -67,13 +86,21 @@ function rendererText(renderer: IRtAiChat.BlockRenderer | undefined, block: IRtA
     }
 }
 
-/** Видимый текст одного блока; блок из реестра — текстом своей функции, без неё — пусто. */
-function blockText(block: IRtAiChat.Block, byType: ReadonlyMap<string, IRtAiChat.BlockRenderer>): string {
+/** Видимый текст одного блока; таблица — строками через табуляцию, блок из реестра — текстом своей функции. */
+function blockText(block: IRtAiChat.Block, byType: ReadonlyMap<string, IRtAiChat.BlockRenderer>, locale: string): string {
     if (isMarkdownBlock(block)) {
         return markdownToPlainText(block.text);
     }
     if (isNoticeBlock(block)) {
         return block.text.trim();
+    }
+    const table: IRtTableData | null = tableBlockData(block);
+
+    if (table !== null) {
+        const title: string | null = tableTitle(block);
+        const text: string = rtTablePlainText(table, locale);
+
+        return title === null ? text : `${title.trim()}\n${text}`;
     }
 
     return rendererText(byType.get(block.type), block);
@@ -98,6 +125,11 @@ export function toBlockViews(
         if (isNoticeBlock(block)) {
             return { kind: 'notice', severity: block.severity, text: block.text };
         }
+        const table: IRtTableData | null = tableBlockData(block);
+
+        if (table !== null) {
+            return { kind: 'table', data: table, title: tableTitle(block) };
+        }
         const renderer: IRtAiChat.BlockRenderer | undefined = byType.get(block.type);
 
         return renderer ? { kind: 'custom', component: renderer.component, block } : { kind: 'unsupported', type: block.type };
@@ -105,14 +137,19 @@ export function toBlockViews(
 }
 
 /**
- * Текст ответа, как его видит читатель: markdown без знаков разметки, плашки — их текстом, блоки
- * из реестра — текстом функции `toText` их отрисовщика. Блок без такой функции пропущен.
+ * Текст ответа, как его видит читатель: markdown без знаков разметки, плашки — их текстом, таблицы —
+ * строками через табуляцию со значениями в языке кита, блоки из реестра — текстом функции `toText`
+ * их отрисовщика. Блок без такой функции пропущен.
  */
-export function blocksToPlainText(blocks: readonly IRtAiChat.Block[], renderers: readonly IRtAiChat.BlockRenderer[] = []): string {
+export function blocksToPlainText(
+    blocks: readonly IRtAiChat.Block[],
+    renderers: readonly IRtAiChat.BlockRenderer[] = [],
+    locale: string = 'en'
+): string {
     const byType: ReadonlyMap<string, IRtAiChat.BlockRenderer> = lastByType(renderers);
 
     return blocks
-        .map((block: IRtAiChat.Block): string => blockText(block, byType))
+        .map((block: IRtAiChat.Block): string => blockText(block, byType, locale))
         .filter((text: string): boolean => text.length > 0)
         .join(BLOCK_SEPARATOR);
 }

@@ -33,3 +33,24 @@ describe('стили переноса в ответе', (): void => {
         expect(ruleBody(sass.compile(ANSWER).css, '.rt-ai-chat-answer')).toContain('min-width: 0');
     });
 });
+
+describe('стили таблицы markdown', (): void => {
+    const css: string = sass.compile(MARKDOWN).css;
+
+    it('SC-UKV-1417 — таблица в виде блока: нижние границы, шапка на поверхности, без предела высоты и закрепления', (): void => {
+        const cell: string = ruleBody(css, '.rt-markdown-text__head-cell, .rt-markdown-text__cell');
+
+        expect(cell).toContain('height: 27px');
+        expect(cell).toContain('border-bottom:');
+        expect(cell).not.toContain('border: ');
+        expect(ruleBody(css, '.rt-markdown-text__head-cell')).toContain('background: var(--rt-color-bg-surface)');
+        expect(ruleBody(css, '.rt-markdown-text__table-scroll')).toContain('overflow-x: auto');
+        expect(css).not.toContain('max-height');
+        expect(css).not.toContain('position: sticky');
+    });
+
+    it('SC-UKV-1416 — края столбца по разделителю логические', (): void => {
+        expect(ruleBody(css, '.rt-markdown-text__head-cell--end, .rt-markdown-text__cell--end')).toContain('text-align: end');
+        expect(ruleBody(css, '.rt-markdown-text__head-cell--center, .rt-markdown-text__cell--center')).toContain('text-align: center');
+    });
+});

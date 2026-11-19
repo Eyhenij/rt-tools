@@ -84,6 +84,28 @@ task, a line per finding, each with its address.
   lowercase Russian word». The companion stands at 326 of 330 lines. **Address:** names of this
   tree — the companion of `git-workflow`.
 
+## RT-3336 — the data table under the chart block
+
+- **A node that hugs its text is compared by its build, not by its width; one fixed number is
+  followed by the whole measurement anew.** The closed toggle came out 169 against 170 with equal
+  padding, gap, icon, font and height; `border-box` on a cell fixed the row height and silently
+  narrowed the numeric columns. Proposed: two articles after «The 100% is a match of numbers» with
+  «Not checked by anything» lines in the companion. **Address:** names of this tree — the rule
+  `kit-approval`.
+- **The conversation guard counts its own refusal and a rules-gate refusal as a blocker.** After
+  a rules-gate refusal, a loaded rule and a look at the showcase, the approval question was refused
+  twice. Proposed: `after_refusal` skips «BLOCKED by grill-gate» and «Refused by the rules gate», and
+  a scenario for it. **Address:** rules layer — the hook `grill-gate.sh` of the package.
+- **The record of loaded rules is removed after the compaction, and a load made right after it is
+  lost.** `browser-verification` was demanded twice. Proposed: the rearm hook cuts the record by
+  time instead of removing it. Cause not proved. **Address:** rules layer — the hooks
+  `skill-gate-rearm.sh` and `skill-loaded.sh`.
+- **`overflow-wrap: anywhere` narrows an auto-sized table column to one letter; a cell's height
+  excludes its border.** Both defects were seen in the showcase, not by tests. **Address:** rules
+  layer — the cold part of `styling-bem`.
+- **One foreign PR the host cannot diff (HTTP 422) drops the whole queue audit.** Proposed: a line
+  in the rule and a fallback read per PR. **Address:** rules layer — the rule `queue-audit`.
+
 ## Left unresolved
 
 - **All findings above** — wait for the owner's decision at the end of the epic.

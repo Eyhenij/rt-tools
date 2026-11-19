@@ -1,3 +1,4 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import { ChangeDetectionStrategy, Component, input, InputSignal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
@@ -65,5 +66,34 @@ describe('RtAiChatBlocksComponent', (): void => {
         expect(qaAll(fixture, 'ai-chat-block-notice').length).toBe(1);
         expect(stub.getAttribute('data-type')).toBe('chart');
         expect(textOf(qa(fixture, 'ai-chat-block-unsupported'))).toBe('The “chart” block is not supported');
+    });
+    it('SC-UKV-1396 — блок table кит рисует сам, без регистрации', (): void => {
+        const table: IRtAiChat.TableBlock = { type: 'table', columns: [{ label: 'A', type: 'text' }], rows: [['одна']] };
+        const fixture: ComponentFixture<RtAiChatBlocksComponent> = createRtFixture(RtAiChatBlocksComponent, { blocks: [table] });
+
+        expect(qa(fixture, 'ai-chat-block-table')).not.toBeNull();
+        expect(textOf(qa(fixture, 'ai-chat-table-cell'))).toBe('одна');
+        expect(qa(fixture, 'ai-chat-block-unsupported')).toBeNull();
+    });
+
+    it('SC-UKV-1420 — несколько таблиц в ответе держат своё «Copied» и своё окно прокрутки', (): void => {
+        const table: IRtAiChat.TableBlock = { type: 'table', columns: [{ label: 'A', type: 'text' }], rows: [['одна']] };
+        const fixture: ComponentFixture<RtAiChatBlocksComponent> = createRtFixture(
+            RtAiChatBlocksComponent,
+            { blocks: [table, table] },
+            { providers: [{ provide: Clipboard, useValue: { copy: (): boolean => true } }] }
+        );
+        const buttons: HTMLButtonElement[] = qaAll(fixture, 'ai-chat-table-copy').map(
+            (button: { nativeElement: unknown }): HTMLButtonElement => button.nativeElement as HTMLButtonElement
+        );
+
+        buttons[0].click();
+        fixture.detectChanges();
+
+        expect(buttons.map((button: HTMLButtonElement): string | null => button.getAttribute('aria-label'))).toEqual([
+            'Copied',
+            'Copy CSV',
+        ]);
+        expect(qaAll(fixture, 'ai-chat-table-scroll')).toHaveLength(2);
     });
 });
