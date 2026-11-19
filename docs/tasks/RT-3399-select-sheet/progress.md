@@ -106,7 +106,11 @@ The owner added, with a screenshot: «добавь в тикет». The row of q
 edge with nothing to say the row goes on.
 
 1. [ ] Draw the fix in Figma next to `Телефон · Период` 6063:1151 — two variants: the row fades at
-   the edge that has more chips, or the chips wrap onto lines — and ask the owner which.
+   the edge that has more chips, or the chips wrap onto lines — and ask the owner which. — drawn:
+   variant A 8371:978 (the row runs from the column's left edge to the sheet's right edge, the
+   next chip peeks under a 56 px fade to the sheet surface), variant B 8371:1292 (six chips wrap
+   onto three lines, the row 112 px tall instead of 32). The approved frame 6063:1151 itself clips
+   the row at 335 px, the same cut as in the owner's screenshot. Asked the owner which.
 2. [ ] Do the chosen variant; a spec or a measurement at 375 holds it.
 
 ### 4. Showcase
