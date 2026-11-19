@@ -2,11 +2,11 @@
 
 ## Where we stand
 
-- **State:** `просьба-не-разобрана`
+- **State:** `разбор-закрыт`
 - **Stage:** 0 of 0 — the plan is not written yet
-- **Done:** the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3338-ai-chat-kpi-block` from `RT-3337-ai-chat-table-block` (chain), the folder from the template. The exploration over the tree is running.
-- **Next step:** write the exploration findings and the decisions into the grill, then draw the mockup.
-- **Uncommitted:** the task folder
+- **Done:** the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3338-ai-chat-kpi-block` from `RT-3337-ai-chat-table-block` (chain), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption.
+- **Next step:** measure `rt-stat-tile` in the running showcase, then draw the mockup of the KPI row at 328, 386 and the full-screen width in the file `vyV42sJXccfKNG8yFSCpSL` and show it to the owner.
+- **Uncommitted:** no
 - **Waiting for the owner:** no
 - **PR:** not open yet; the branch stands on RT-3337 (#3407), which stands on RT-3336 (#3402) and RT-3335 (#3398)
 

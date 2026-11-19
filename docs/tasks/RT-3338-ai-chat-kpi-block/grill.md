@@ -27,7 +27,30 @@ cards with a delta to a base. The task card, verbatim:
 
 ## What the tree already has
 
-The exploration is running; its findings land here before the first decision.
+- **`rt-stat-tile`** (`projects/ui-kit-v2/src/lib/components/stat-tile/`, spec
+  `docs/specs/ui-kit-v2/stat-tile/`, SC-UKV-1125…1132). It takes `label`, an already written `value`,
+  `secondary`, `deltaPrimary` and `deltaSecondary` of the shape `{ percent, unit?, label, baseline? }`,
+  `hint` and `growthIsWorse`. Colour and arrow of a delta come from the tokens
+  `--rt-color-state-success` / `-danger`, muted when flat; `growthIsWorse` swaps the colours, the
+  arrow follows the sign. The delta number is written by `signedNumber`: a plus, an ASCII minus and a
+  comma put by hand, not by the kit locale. The delta `label` is only a `title` of the delta, not
+  visible text; `baseline` is a visible line «base: …». The tile draws no border or background.
+- **The kit's own block types** are wired in `rt-ai-chat-blocks.logic.ts` (`OWN_TYPES`, the data
+  function per type, `toBlockViews`, the copy text `blockText` and `blocksToPlainText`),
+  `rt-ai-chat.model.ts` (the block and view unions) and `rt-ai-chat-blocks.component.html` (a case
+  per kind). The closest sample is the `table` block of RT-3337: `blocks/table/`, the lenient data
+  function `lib/util/table-data.ts`, the schema `lib/util/table.schema.ts`.
+- **Writing a value by the kit locale** is ready: `rtTableCellWriter` writes number, percent (a
+  fraction) and currency by `Intl` and marks a minus. A delta needs a sign on growth too, which that
+  writer does not give.
+- **A block cannot tell the narrow panel from the full-screen mode today.** `fullScreen` of
+  `rt-ai-chat` reaches no block; a renderer gets only `block`. The width is the only signal, and a
+  block-local container query is a technique the kit already uses (`rt-pagination`, `rt-file-drop`).
+- **The epic plan** names 4 KPI cards in the milestone answer «обзор месяца»; nothing more on
+  RT-3338. The findings of the epic: a mockup draws a frame for every width the block meets; story
+  wrappers use `templateUrl`.
+- **No KPI mockup exists.** The approved mockups of the epic live in the file
+  `vyV42sJXccfKNG8yFSCpSL`: RT-3334 8061-2096, RT-3335 8165-448, RT-3336 8196-839, RT-3337 8215-449.
 
 ## What the rules already say
 
@@ -43,8 +66,43 @@ None asked: see the decisions.
 
 ## Decisions
 
-The decisions are written after the exploration returns.
+The six questions, closed by assumption:
+
+- **The task changes behaviour** — the chat answer draws a new block type. A product agreement is
+  written in `docs/specs/ui-kit-v2/proposed/ai-chat-kpi/` after the mockup is approved, as in RT-3337.
+- **No law or rule is edited** — the block follows the rules the table block followed.
+- **One task** — the block, its data function, its schema, its copy text and its stories roll back
+  together.
+- **Not part of the task** — a sparkline, a click on a card, the section and the grid of a composed
+  answer (RT-3342), the sources block (RT-3340).
+- **Closed when** — the card's sign: a row of 4 cards with a positive, a negative and a zero delta is
+  drawn in the narrow and the full-screen panel; the showcase has both widths and both themes; the
+  showcase matches the approved mockup by numbers and is approved by the owner.
+- **Sample** — the wiring of the `table` block; the look of `rt-stat-tile`.
+
+Design decisions taken by assumption:
+
+- **The card is `rt-stat-tile`, not a new drawing** — the rule `reuse-first`. What the tile lacks
+  is added to the tile itself, so every consumer of the tile gets it.
+- **The value is written by the kit locale through the table writer** — a format per item: number,
+  percent as a fraction, currency with a three-letter code; the same rule as a table cell.
+- **The delta number is written by the kit locale, with a sign on growth** — the tile's hand-made
+  comma diverges from the value next to it in any locale but Russian. The tile learns to write the
+  delta by `Intl`; in Russian its text stays as it is, which the snapshots of the tile confirm.
+- **The base caption («vs LY») is visible next to the delta, the period is the secondary line** —
+  the card asks for a caption, and a `title` is not seen on a touch screen. How it stands is drawn in
+  the mockup after measuring the tile in the showcase.
+- **«Growth is good» is the item flag `growthIsGood`, default true** — the card's words; it maps to
+  the tile's `growthIsWorse`.
+- **Two or four columns follow the block's own width by a container query** — a block does not know
+  the chat mode, and wiring `fullScreen` into every block is new reach for one layout. The narrow
+  frames 328 and 386 give two columns; the threshold is chosen in the mockup.
+- **The kit exports a JSON schema of the block** — as for the chart and the table, so an
+  application gives it to the model as tool parameters.
+- **The answer copy writes each card as one line** — label, value, delta with its base caption,
+  period; the same lenient rule: an item without a label or a value is dropped.
 
 ## What is left unclear
 
 - The mockup is the owner's step: it is drawn and shown before the code.
+- The container threshold for four columns is set by the mockup frames, not here.
