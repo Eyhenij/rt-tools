@@ -383,6 +383,26 @@ export const deadEnds = (entries) => deadEndsOf(eventsOf(entries));
 export const treeChanges = (entries) => eventsOf(entries).filter((e) => e.ev === 'change');
 export const interrupts = (entries) => eventsOf(entries).filter((e) => e.ev === 'interrupt');
 
+/** The reasons the rules gate writes into its refusal note, in the order the report names them. */
+export const GATE_REASONS = ['too-long', 'together', 'not-read'];
+
+/**
+ * The rules gate on a day, from its own notes in the observations: a refusal `gate-deny` counted by
+ * the reason it carries in `why` (a note with no reason, or a reason the list does not know, counts as
+ * `none`), and a delivery `gate-deliver` — one rule put into the session with no refusal. A note of
+ * the hook scenarios carries the version `dev` and is not counted: it judged no session of the tree.
+ */
+export function gateOf(observations, day) {
+    const refused = Object.fromEntries([...GATE_REASONS, 'none'].map((why) => [why, 0]));
+    let delivered = 0;
+    for (const o of observations) {
+        if (o.v === 'dev' || !String(o.t ?? '').startsWith(day)) continue;
+        if (o.ev === 'gate-deny') refused[GATE_REASONS.includes(o.why) ? o.why : 'none'] += 1;
+        if (o.ev === 'gate-deliver') delivered += 1;
+    }
+    return { refused, delivered };
+}
+
 /** The owner's words the set of correction patterns matches, a message queued during a turn included. */
 export function corrections(entries, patterns) {
     const pattern = new RegExp(patterns, 'iu');

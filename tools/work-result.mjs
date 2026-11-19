@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/work-result.mjs · 45c9d73f53c1 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/work-result.mjs · a0e7d767d1b4 · правится надстройкой, не здесь
 /**
  * The lines of the work result for the report, counted from the observations of the tree by the same
  * functions the hook at the end of a turn and the reading of merges use: the events of the records,
@@ -14,7 +14,7 @@
  * With `--epics` it prints `{ epics }` for the sending: the observations of every copy of the machine
  * are read together, and a window is `own` when its opening merge lies in the observations of `--own`.
  */
-import { pairsOf, idleOf, reasksOf, deadEndsOf } from './record-count.mjs';
+import { pairsOf, idleOf, reasksOf, deadEndsOf, gateOf, GATE_REASONS } from './record-count.mjs';
 import { dayMerges, dayEpics } from './merge-read.mjs';
 import { epicWindows, readObservations } from './epic-window.mjs';
 
@@ -95,6 +95,7 @@ export function dayResult(observations, events, day, firstCounted = firstCounted
         skipped: skippedOf(observations, day),
         goalNotMet: verdicts.length,
         goalNotMetByTask: count(verdicts, verdictTask),
+        gate: gateOf(observations, day),
         ...dayMerges(observations, day),
     };
     if (!kept.recorded) return { ...kept, beforeCounter: firstCounted === null || day < firstCounted };
@@ -205,11 +206,28 @@ export function linesOf(result) {
     if (recorded.length) lines.push(...recordLines(recorded, sum));
     const verdicts = {};
     for (const d of result.days) for (const [task, n] of Object.entries(d.goalNotMetByTask)) verdicts[task] = (verdicts[task] ?? 0) + n;
+    lines.push(gateLine(result.days));
     lines.push(`  Цель не достигнута: ${sum('goalNotMet')}`);
     for (const [task, n] of byCountThenName(Object.entries(verdicts))) lines.push(`    ${task}: ${n}`);
     for (const d of result.days) lines.push(result.days.length === 1 ? `  ${milestoneOf(d)}` : `  ${d.day} ${milestoneOf(d)}`);
     lines.push('  Повторы ошибок: считается в приёмнике');
     return lines;
+}
+
+/** The words of the report for the reasons of a gate refusal. */
+const GATE_WORDS = { 'too-long': 'слишком длинное', together: 'не помещаются вместе', 'not-read': 'не прочитано', none: 'без причины' };
+
+/** The rules gate over the period: its refusals by reason and the rules it delivered with no refusal. */
+export function gateLine(days) {
+    const refused = Object.fromEntries([...GATE_REASONS, 'none'].map((why) => [why, 0]));
+    let delivered = 0;
+    for (const d of days) {
+        for (const [why, n] of Object.entries(d.gate?.refused ?? {})) refused[why] = (refused[why] ?? 0) + n;
+        delivered += d.gate?.delivered ?? 0;
+    }
+    const total = Object.values(refused).reduce((a, b) => a + b, 0);
+    const parts = Object.entries(refused).filter(([, n]) => n > 0).map(([why, n]) => `${GATE_WORDS[why]} ${n}`);
+    return `  проверка правил: отказов ${total}${parts.length ? ` (${parts.join(', ')})` : ''}, правил без отказа ${delivered}`;
 }
 
 /** The lines counted from the session record, over the days that have one. */
