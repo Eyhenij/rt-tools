@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
-
 import { provideRtKitTesting, qa, textOf } from '../../../testing/rt-kit-testing';
+import { IRtIcon } from '../icon/rt-icon.model';
 import { RtAsideFooterComponent } from './footer/rt-aside-footer.component';
 import { RtAsideHeaderComponent } from './header/rt-aside-header.component';
 import { RtAsideEmptyDirective } from './rt-aside-empty.directive';

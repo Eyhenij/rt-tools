@@ -65,3 +65,47 @@
 - Сверка после правки копии: `node tools/kit-match.mjs numbers` — 34 из 34 чисел (панель и вкладка по 17).
 - Промах: ссылку на менеджер витрины отдал владельцу, не открыв её после последней правки — горячая перезагрузка выкинула матрицы панели из индекса; владелец поймал. Витрина перезапущена, ссылка открыта и проверена до повторного вопроса.
 - Первый круг ревью запущен по диффу `origin/main...HEAD` (1293 строки). `main` не сдвинулся с 6d78ddc38 — слияние базы не нужно.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools/.claude/worktrees/nostalgic-fermi-3f9207
+**Branch:** RT-3428-aside-empty
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этапы-кончились`
+- **Stage:** 3 of 3 — Витрина и тексты, все шаги сделаны; идёт первый круг ревью
+- **Next step:** исправить подтверждённые находки первого круга (ниже), одним коммитом «… после первого круга ревью (RT-3428)»; второй круг; проверки перед push; PR черновиком в `main`
+- **PR:** not open yet
+
+The progress in full — `docs/tasks/RT-3428-aside-empty/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+none
+```
+
+### Commits over the main branch
+
+```
+5149277c9 docs(rt:ui-kit-v2): находки qa в передаче пустой панели (RT-3428)
+3757b6134 docs(rt:ui-kit-v2): передача задачи пустой панели — находки первого круга ревью (RT-3428)
+efe0940bd docs(rt:ui-kit-v2): описание пустой панели влито в спецификацию кита (RT-3428)
+98eb3be55 docs(rt:ui-kit-v2): поле даты вынесено из задачи пустой панели (RT-3428)
+346b4baef docs(rt:ui-kit-v2): первый круг ревью пустой панели запущен (RT-3428)
+50e205a7f docs(rt:ui-kit-v2): одобрение витрины пустой панели записано (RT-3428)
+455f2adaf docs(rt:ui-kit-v2): сверка пустой панели с макетом 34 из 34 (RT-3428)
+c71bfe30a feat(rt:ui-kit-v2): витрина пустой панели и вкладки, интервал заголовка заглушки (RT-3428)
+ade39c147 feat(rt:ui-kit-v2): заглушка пустой вкладки rtTab, подпись uiEmptyTitle (RT-3428)
+74f4d0f7a feat(rt:ui-kit-v2): заглушка пустой панели rt-aside (RT-3428)
+5e7dfb0ec docs(rt:ui-kit-v2): одобрение макета пустой панели записано (RT-3428)
+57712b42a docs(rt:ui-kit-v2): подпись пустой панели — свой ключ asideNoData, тест заглушки (RT-3428)
+fca2f2463 docs(rt:ui-kit-v2): макет пустой панели нарисован (RT-3428)
+547cc2336 docs(rt:ui-kit-v2): заглушка пустой панели — уточнение, описание и план (RT-3428)
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.
