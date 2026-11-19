@@ -45,18 +45,26 @@ None. The card names the condition and the sign.
 
 ## Decisions
 
-- **A failed comparison is a note, not a divergence.** The audit prints that production was not
-  compared with the main branch and the words of the host, the way it already prints «production
-  was not checked» when offline. The audit could not measure the lag; it did not find one. Спросить
-  было некого: заход автономный. Цена ошибки: если владелец решит считать это расхождением,
-  меняется одна строка вызова.
-- **Only the comparison request is caught.** A failure of any other request — no rights, no
-  network — breaks the audit as before: that is a broken audit, not an unmeasured line.
-- **The lag is not counted another way.** The local history could give the same number, but the
-  replay of recorded answers would then depend on the commits the tree holds. Named in what the
-  work does not do.
-- **The recorded output is written anew from the replay.** It holds the note and the last lines of
-  the audit, and no stack; the suite no longer depends on the version of the runtime.
+- **The lag is measured, not excused.** The refusal is a consequence of the lag: production is 274
+  commits behind, and the host cannot build a diff of 1278 files. A note alone would let the audit
+  end green in the very state the line was written for. The same request with a page of one commit
+  answers with the number in 2,4 seconds — measured on 19.11 against the live host, a read. The
+  audit asks so. The role `goal-critic` showed the cause on the first draft of the plan, which
+  only printed a note.
+- **A comparison the host still refuses is a note, not a divergence.** The note carries the commit
+  and the day of the last rollout and the words of the host. Only the refusal «the host could not»
+  is caught; no rights and a commit that is gone break the audit as before, and so does a failure
+  of any other request. Спросить было некого: заход автономный. Цена ошибки: если владелец решит
+  считать заметку расхождением, меняется одна строка вызова.
+- **Two real answers are added to the recorded ones.** The record of the host broke off at the
+  fall, so it holds no answer for the request after the lag — the state of the last rollout — and
+  none for the new form of the comparison. Each is read once under the machine token and written
+  in the form of the recorder. A full new record is not made: it would wipe the 43 answers.
+- **The recorded output is written anew from the replay.** It holds the lag by its number and the
+  last lines of the audit, and no stack; the suite no longer depends on the version of the
+  runtime.
+- **The refused comparison and the failure of another request are shown on the double** of the
+  host the suite of the audit already has: the record holds one kind of answer only.
 
 ## What is left unclear
 
