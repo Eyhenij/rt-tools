@@ -104,18 +104,19 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход                  | тип                          | умолчание          |
-| --------------------- | ---------------------------- | ------------------ |
-| `items`               | `ReadonlyArray<Item>`        | `[]`               |
-| `user`                | `{ name, avatar? } \| null`  | `null`             |
-| `userTitle`           | `string`                     | `''`               |
-| `userMenu`            | `TemplateRef \| null`        | `null`             |
-| `ariaLabel`           | `string`                     | `''` → `uiMainNav` |
-| `stickyCompact`       | `boolean`                    | `false`            |
-| `compactVisibleCount` | `number`                     | `2`                |
-| `layout`              | `'horizontal' \| 'vertical'` | `'horizontal'`     |
-| `railFoot`            | `boolean`                    | `true`             |
-| `railActions`         | `ReadonlyArray<Item>`        | `[]`               |
+| вход                  | тип                          | умолчание                   |
+| --------------------- | ---------------------------- | --------------------------- |
+| `items`               | `ReadonlyArray<Item>`        | `[]`                        |
+| `user`                | `{ name, avatar? } \| null`  | `null`                      |
+| `userTitle`           | `string`                     | `''`                        |
+| `userMenu`            | `TemplateRef \| null`        | `null`                      |
+| `ariaLabel`           | `string`                     | `''` → `uiMainNav`          |
+| `stickyCompact`       | `boolean`                    | `false`                     |
+| `compactVisibleCount` | `number`                     | `2`                         |
+| `layout`              | `'horizontal' \| 'vertical'` | `'horizontal'`              |
+| `railFoot`            | `boolean`                    | `true`                      |
+| `railActions`         | `ReadonlyArray<Item>`        | `[]`                        |
+| `sheet`               | `boolean`                    | `true` → шторка на телефоне |
 
 Поле пункта `priority` (`number`, по умолчанию `0`) — очередь ухода раздела в «Ещё».
 
