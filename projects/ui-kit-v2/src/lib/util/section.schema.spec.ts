@@ -1,11 +1,13 @@
+import Ajv2020 from 'ajv/dist/2020';
+
 import { RT_AI_CHAT_KPI_SCHEMA } from './kpi.schema';
 import { ERtSectionSpan, IRtSectionItem, rtSectionItems, rtSectionSpan, rtSectionTitle } from './section-data';
 import { RT_AI_CHAT_SECTION_SCHEMA, rtAiChatSectionSchema, TRtJsonSchema } from './section.schema';
 import { RT_AI_CHAT_TABLE_SCHEMA } from './table.schema';
 
 /**
- * Схема написана рукой, и библиотеки проверки схем в дереве нет. Спека читает поля схемы и
- * сверяет с ними образцы: блок, принятый схемой, не теряет ни одного элемента списка.
+ * Схема написана рукой. Спека читает её поля и проверяет образцы настоящим валидатором: блок,
+ * принятый схемой, не теряет ни одного элемента списка.
  */
 
 function field(schema: TRtJsonSchema, path: (string | number)[]): unknown {
@@ -38,7 +40,12 @@ describe('RT_AI_CHAT_SECTION_SCHEMA', (): void => {
             { type: 'никто-не-знает', span: 'column' },
         ];
         const items: IRtSectionItem[] | null = rtSectionItems(blocks);
+        const accepts: (value: unknown) => boolean = new Ajv2020({ strict: false }).compile(RT_AI_CHAT_SECTION_SCHEMA);
 
+        expect(accepts({ blocks })).toBe(true);
+        expect(accepts({ blocks: [] })).toBe(false);
+        expect(accepts({ blocks: [{ type: 'section', blocks }] })).toBe(false);
+        expect(accepts({ blocks: [{ type: 'chart', span: 'wide' }] })).toBe(false);
         expect(items).toEqual(blocks);
         expect(items?.map((item: IRtSectionItem): ERtSectionSpan => rtSectionSpan(item.type, item['span']))).toEqual([
             ERtSectionSpan.Full,
@@ -138,6 +145,19 @@ describe('rtAiChatSectionSchema', (): void => {
         }
         expect(JSON.stringify(RT_AI_CHAT_KPI_SCHEMA)).toBe(kpiBefore);
         expect(JSON.stringify(RT_AI_CHAT_SECTION_SCHEMA)).toBe(sectionBefore);
+    });
+
+    it('SC-UKV-1524 — правка результата не доходит до схемы, которую дало приложение', (): void => {
+        const map: TRtJsonSchema = { type: 'object', required: ['place'], properties: { place: { type: 'string', enum: ['Сочи'] } } };
+        const before: string = JSON.stringify(map);
+        const place: unknown = field(branch(rtAiChatSectionSchema({ map }), 'map'), ['properties', 'place']);
+
+        expect(place).toEqual(field(map, ['properties', 'place']));
+        expect(place).not.toBe(field(map, ['properties', 'place']));
+        if (typeof place === 'object' && place !== null) {
+            Reflect.set(place, 'minLength', 7);
+        }
+        expect(JSON.stringify(map)).toBe(before);
         expect(field(RT_AI_CHAT_SECTION_SCHEMA, [...ITEM, 'oneOf'])).toBeUndefined();
     });
 

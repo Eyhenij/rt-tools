@@ -21,8 +21,9 @@ const CELL: string = '[qa-dataid="ai-chat-section-cell"]';
 const GRID: string = '[qa-dataid="ai-chat-section-grid"]';
 const TITLE: string = '[qa-dataid="ai-chat-section-title"]';
 const KPI_CARD: string = '[qa-dataid="ai-chat-kpi-card"]';
-const PLOT: string = 'rt-ai-chat-chart canvas, rt-ai-chat-chart svg';
 const CHART: string = '[qa-dataid="ai-chat-chart-chart"]';
+/** Рисунок графика: узел внутри самого графика, а не значок в его шапке. */
+const PLOT: string = `${CHART} svg, ${CHART} canvas`;
 const PLATE: string = '[qa-dataid="ai-chat-block-unsupported"]';
 
 /** Шаг сетки и зазор вокруг секции в ленте. */
@@ -281,7 +282,11 @@ export const Plates: TStory = {
         sections.forEach((section: HTMLElement, index: number): void => {
             expectRows(section, [[455, 455]], `заглушка ${index + 1}`);
             expectContained(section, `заглушка ${index + 1}`);
-            expectThat(section.querySelectorAll(PLATE).length === 1, `заглушка ${index + 1}: не одна`);
+            const plates: string[] = Array.from(section.querySelectorAll(PLATE)).map(
+                (plate: Element): string => plate.getAttribute('data-type') ?? ''
+            );
+
+            expectThat(plates.join() === ['section', 'map'][index], `заглушка ${index + 1}: типы «${plates.join()}»`);
         });
     },
 };
@@ -345,7 +350,18 @@ export const Rtl: TStory = {
 };
 
 /** Секция без blocks, с пустым списком и без блоков в списке: на её месте заглушка. */
-export const Invalid: TStory = { args: { part: 'invalid' } };
+export const Invalid: TStory = {
+    args: { part: 'invalid' },
+    play: async ({ canvasElement }: IPlayContext): Promise<void> => {
+        const plates: HTMLElement[] = await settledAll(canvasElement, PLATE, 3);
+
+        expectThat(canvasElement.querySelector(SECTION) === null, 'негодная секция нарисована сеткой');
+        expectThat(
+            plates.every((plate: HTMLElement): boolean => plate.getAttribute('data-type') === 'section'),
+            'заглушка негодной секции названа не её типом'
+        );
+    },
+};
 
 interface IChatWant {
     readonly name: string;

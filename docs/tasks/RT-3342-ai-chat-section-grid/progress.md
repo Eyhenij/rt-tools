@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 4 of 4 — Two review rounds, the owner's look, the texts and the PR
 - **Done:** stages 1, 2 and 3. The feed draws a `section` block by `rt-ai-chat-section`: a heading and a grid of cells. The showcase holds 16 stories of the section with play steps and the overview page; the 16 references are taken by the image browser, 16 passed. The specs of the chat folder: 114 passed; of the schema: 6 passed.
-- **Next step:** step 4.2 — review round two by fresh readers.
+- **Next step:** step 4.3 — show the two chat stories to the owner.
 - **Uncommitted:** no
 - **Waiting for the owner:** no — the plan is approved: «Одобряю план», the threshold of 600 with it
 - **PR:** not open yet; the base is `RT-3346-ai-chat-blocks`
@@ -28,8 +28,8 @@
 - [x] 3.6 Look at every story live, take the references, sweep all the stories.
 - [x] 3.7 Match the stories with the approved mockup by numbers into the table «mockup / showcase» in the progress.
 - [x] 4.1 Review round one by qa-engineer, product-strategist and goal-critic; fix the confirmed findings in one commit.
-- [>] 4.2 Review round two by fresh readers; fix the confirmed findings in one commit; run the showcase checks of stage 3 again on the code that ships.
-- [ ] 4.3 Show the showcase to the owner — the two chat stories of the sign first — and write their word into `approvals.md`.
+- [x] 4.2 Review round two by fresh readers; fix the confirmed findings in one commit; run the showcase checks of stage 3 again on the code that ships.
+- [>] 4.3 Show the showcase to the owner — the two chat stories of the sign first — and write their word into `approvals.md`.
 - [ ] 4.4 Build the kit and read `dist/ui-kit-v2` for the section component and the schema export.
 - [ ] 4.5 Merge the agreement into `docs/specs/ui-kit-v2/ai-chat-section/` with its bindings; edit the chat and KPI specs and the kit spec indexes as the agreement names.
 - [ ] 4.6 Bring `CONTEXT.md` of ai-chat and the comment of the block providers up to the section.
@@ -151,6 +151,33 @@
 
 - **The numbers of the round.** The specs of the chat folder: 115 passed; of the chart entry: 66;
   of `lib/util`: 90. The types and the linter are clean.
+
+- **Review round two: no blocker and no major finding; the small ones are fixed by one commit.**
+
+  | finding | who | what was done |
+  | --- | --- | --- |
+  | the checker written in the spec diverged from a real validator on words the kit schemas do not use yet | qa | the specs check by Ajv 2020, which the tree already holds |
+  | a test title promised a schema check its body did not make | qa | the samples go through the schema |
+  | the no-shared-nodes test did not cover a schema given by the application | qa | a test edits the branch of such a schema and reads the given one |
+  | the wait for a drawn chart matched an icon of its header | qa | the wait looks for the drawing inside the chart itself |
+  | the stories of the plates did not read the type name on a plate | qa | `Invalid` and `Plates` read `data-type` |
+  | a given schema with a `$ref` from the root stops resolving, its own `span` is replaced | qa | named on the overview page and in the comment of the function |
+  | the window widths of one column were counted without the scrollbar | qa | the numbers are removed, the rule is said in words |
+  | the frames with the thread column and the reading column did not show the charts | strategist, goal-critic | the chat frame is `56rem` tall, both charts stand in the frame |
+  | a strict Ajv does not compile the joined schema | strategist | the overview page names `allowUnionTypes` |
+
+- **Written off in round two.** The schema of the chart block shares nodes with the schema of the
+  specification: both are read-only, and the joined result is a deep copy. `Presets` and `Themes`
+  have no play step: their frames hold them. The type `NestedBlock` does not forbid a section: the
+  list of types is open, and the comment now says so.
+
+- **Beside the subject.** `check:unused` names three exports and two dependencies of the chart
+  from RT-3335. This branch does not touch them, and the check is not in the push set. It goes
+  into the PR body as a tail.
+
+- **The showcase checks on the code that ships.** The image run after round two: 16 passed, four
+  chat frames re-taken, twelve unchanged. Live in the pinned Chrome on the reading column: the
+  section is 629, the charts 307 and 307 on one top, the feed scrolls (1176 against 714).
 
 ## Sessions
 

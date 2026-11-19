@@ -7,12 +7,12 @@
     </app-story-row>
 </ng-template>
 
-<!-- Чат в рамке: высота 40rem ниже ответа, поэтому лента прокручивается. -->
+<!-- Чат в рамке: высота 56rem ниже ответа, поэтому лента прокручивается, а ряд графиков уже виден в кадре. -->
 <ng-template #chat let-width="width" let-column="column" let-full="full" let-list="list">
     <div
         style="
             box-sizing: border-box;
-            block-size: 40rem;
+            block-size: 56rem;
             border: 1px solid var(--rt-color-border-subtle);
             border-radius: var(--rt-radius-lg);
             overflow: hidden;

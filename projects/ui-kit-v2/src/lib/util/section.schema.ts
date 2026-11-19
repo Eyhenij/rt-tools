@@ -90,6 +90,10 @@ function nestedSchema(type: string, schema: TRtJsonSchema): TRtJsonSchema {
  * закреплена за своим именем типа и получает необязательный `span`. Приложение отдаёт результат
  * модели как параметры инструмента. Результат — каждый раз новая запись: он не делит узлов ни с
  * переданными схемами, ни со схемой секции. Схема под именем `section` не берётся.
+ *
+ * Переданная схема встаёт не в корень результата, поэтому должна быть цельной: ссылка `$ref` от
+ * корня в ней перестаёт находить свою цель. Поле `span` во вложенном блоке принадлежит секции: своё
+ * поле с этим именем в переданной схеме заменяется.
  */
 export function rtAiChatSectionSchema(nested: Readonly<Record<string, TRtJsonSchema>> = {}): TRtJsonSchema {
     const oneOf: TRtJsonSchema[] = Object.entries({ ...OWN_SCHEMAS, ...nested })
