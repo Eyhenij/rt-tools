@@ -19,6 +19,23 @@ exist yet is not written in backticks.
 | the compact size, the delta by the locale, the caption  | `projects/ui-kit-v2/src/lib/components/stat-tile/rt-stat-tile.component.ts` and its template and styles       |
 | the stories at 328 and 728 in both themes               | the stories of the chat blocks, next to the table block stories                                               |
 
+## What the merge edits besides
+
+- `docs/specs/ui-kit-v2/stat-tile/spec.md` — the rule that puts the sign and the decimal comma by
+  hand is rewritten for the kit locale; SC-UKV-1125 in `docs/specs/ui-kit-v2/stat-tile/scenarios.md`
+  is rewritten the same way, and the tile unit tests in
+  `projects/ui-kit-v2/src/lib/components/stat-tile/rt-stat-tile.component.spec.ts` name their locale.
+- `docs/specs/ui-kit-v2/ai-chat/spec.md` — the rules on the kit's own types, on the plate and on
+  the answer copy name `kpi`.
+
+## Tokens the frame and the compact size take
+
+`--rt-color-border-default` and `--rt-color-bg-surface` are declared in
+`projects/ui-kit-v2/src/styles/tokens.light-color.mjs` with their dark values; the steps
+`--rt-space-0-5`, `--rt-space-1`, `--rt-space-2`, `--rt-radius-sm` and `--rt-radius-md` in
+`projects/ui-kit-v2/src/styles/tokens.scale-metrics.mjs`. 12 is `--rt-space-2` plus `--rt-space-1`,
+6 is `--rt-space-1` plus `--rt-space-0-5`, the radius 12 is `--rt-radius-md` plus `--rt-radius-sm`.
+
 ## What is not decided yet
 
 Nothing: the field names, the unit and the fraction digits of a delta, and the copy separator are
