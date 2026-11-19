@@ -26,6 +26,7 @@ export const Playground: TStory = {
         placeholder: 'Начните вводить город',
         minLength: 1,
         openOnFocus: false,
+        sheet: true,
     },
 };
 

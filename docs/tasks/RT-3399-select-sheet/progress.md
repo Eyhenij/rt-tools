@@ -92,7 +92,10 @@ The owner added: «включи в задачу поправить дейт пи
    (67cc8a6ca); the toggle group gets `FoldedOne`, `FoldedMany`, `Fits` and `FoldedOneOpen` by the
    mockups 8310:652, 8310:769 and 8310:837; the autocomplete and `rt-menu` get `Sheet` and
    `SheetOff` by 6068:1387 and 8293:2474; the split button, the speed menu, the colour palette and
-   the action bar get the same pair by 8292:1522, 8292:1756, 8292:2593 and 8310:1013. Every story of the set takes the select's technique: a
+   the action bar get the same pair by 8292:1522, 8292:1756, 8292:2593 and 8310:1013; the dynamic
+   selector, the thread list filters and the table filter header by 8292:2360, 8310:2735 and
+   8310:3067; the page header, the tabs and the multiselect footer by 8310:17232…17374, 8292:1058,
+   8292:1122 and 6068:1250. The toggles stories are in (d6733beb0). Every story of the set takes the select's technique: a
    `BreakpointsService` stub narrow from the first render, overlay `.rt-popover-sheet`.
 2. [ ] Measure the showcase against the mockup with `node tools/kit-match.mjs numbers`.
 3. [ ] Show the showcase to the owner and write the approval into `approvals.md`.
