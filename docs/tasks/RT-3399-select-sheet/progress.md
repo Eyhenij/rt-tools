@@ -3,7 +3,18 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 из 4 — Mockup
+- **Stage:** 3 из 4 — Code and unit tests
+- **Next step:** the sheet mode in `RtPopoverDirective` (inputs `rtPopoverSheet`, `rtPopoverSheetTitle`;
+  on `BreakpointsService.viewportNarrow` it attaches a new `RtPopoverSheetComponent` — `rt-bottom-sheet`
+  with the panel template inside — to a global CDK overlay instead of the connected one); then the
+  `sheet` input (default `true`) on `rt-select` and `rt-multiselect`, the field pushing its label into
+  the control (`setFieldLabel`, the way `setReadonly` goes), the multiselect footer «Готово» in the
+  sheet; tests named by SC-UKV-1382…1389. After that the rest of the set by the same input, then
+  `rt-menu` (own overlay), the folding `rt-toggle-button-group`, the field with a toggles panel —
+  each with its own rules added to the spec.
+- **Decision along the way:** the rules live in a new subdomain `docs/specs/ui-kit-v2/popover-sheet/`,
+  not in the select spec the plan named: the sheet belongs to the popover directive and serves the
+  whole set.
 
 ### 1. Mockup
 
@@ -33,11 +44,11 @@ Stage 1 is closed: every frame of the set is approved. Stage 2 begins.
 
 ### 2. Agreement in the spec
 
-1. [ ] Write the rules and scenarios of the sheet and of the input that switches it off into the select spec.
+1. [x] Write the rules and scenarios of the sheet and of the input that switches it off into the select spec. — written into the subdomain `popover-sheet`, scenarios SC-UKV-1382…1389.
 
 ### 3. Code and unit tests
 
-1. [ ] `rt-select`: the narrow sign, the sheet in the template, the switch-off input, the choice closes the sheet.
+1. [ ] `rt-select`: the narrow sign, the sheet in the template, the switch-off input, the choice closes the sheet. ← going on
 2. [ ] `rt-multiselect`: the same; the sheet stays open on a choice.
 3. [ ] Unit tests by the scenarios of stage 2.
 

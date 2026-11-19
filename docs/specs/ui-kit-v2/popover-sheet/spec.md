@@ -1,0 +1,103 @@
+# A panel of choice in the bottom sheet on a phone
+
+**Status:** in force · **Revision:** 19 November 2026 · **Scenario prefix:** `SC-UKV`
+**Depends on:** the popover of the second kit, the bottom sheet of the second kit, the field of the
+second kit
+**Laws:** `frontend-application`, `verifiability`, `reuse-first`
+**Procedures:** none
+
+A subdomain of the second kit's spec, written by task RT-3399.
+
+## Why
+
+On a phone a select, a multiselect and the other parts of the kit that open a list next to their
+trigger draw it small and close to the field. A finger misses the rows, and a long list leaves the
+screen. The date fields and the page filters of the kit already open in the bottom sheet there; the
+rest did not. An application had to rebuild each panel in a sheet of its own.
+
+## Terminology
+
+- **A panel of choice** — the floating panel a part of the kit opens next to its trigger: the list
+  of a select, the hints of an autocomplete, the menu of a button, the filters of a list.
+- **The sheet mode** — the panel of choice is drawn inside the kit's bottom sheet instead of next
+  to its trigger.
+
+### What it is called in the interface
+
+The person sees a panel that slides up from the bottom of the screen, with a handle, a title and
+the same rows as before.
+
+## Rules
+
+- **On a narrow screen a panel of choice opens in the kit's bottom sheet, not next to its trigger.**
+  The narrow screen is the same threshold the date fields use.
+- **Every part of the kit that opens a panel of choice has the sheet switched on, and one input
+  switches it off.** Switched off, the panel opens next to its trigger on a narrow screen too.
+- **On a wide screen the panel opens next to its trigger, as before.**
+- **The sheet is titled by the label of the field, then by the accessible name of the control.**
+  With neither, the sheet has no title.
+- **A choice of one value closes the sheet together with the panel.**
+- **A choice of several values keeps the sheet open until the person closes it.**
+- **A sheet closed by its backdrop, by a drag or by Escape closes the panel the same way a press
+  outside it does.** The part of the kit learns of the close as before.
+- **The panel inside the sheet takes the full width of the sheet.** The width taken from the
+  trigger does not apply there.
+
+## What is out of scope
+
+- `rt-menu` draws its own overlay; its sheet, the folding of `rt-toggle-button-group` and the field
+  with a toggles panel are described apart.
+- Tooltips, the help of a field, confirmations, dialogs and asides keep opening as they do.
+- The look of the rows inside the panel does not change.
+
+## Contract
+
+Not applicable: no procedures.
+
+### Refusal codes
+
+Not applicable.
+
+## Data
+
+Not applicable.
+
+## Screens and states
+
+| Screen                 | Loading   | Empty     | Refusal   |
+| ---------------------- | --------- | --------- | --------- |
+| A panel in the sheet   | no change | no change | no change |
+
+## Cross-cutting requirements
+
+### Locales
+
+No new texts: the title is the label the application gives the field.
+
+### SEO
+
+Not applicable.
+
+### Mobile layout
+
+The subject of the subdomain: at width 375 a panel of choice opens in the bottom sheet.
+
+### Several objects
+
+Not applicable.
+
+## Decisions
+
+- **The sheet lives in the popover directive, not in every part of the kit.** Almost every part
+  opens its panel through it, so one mode gives the sheet to all of them, and a part only passes
+  its input through.
+
+## Open questions
+
+None.
+
+## History of changes
+
+| Date       | What changed                                                   |
+| ---------- | -------------------------------------------------------------- |
+| 2026-11-19 | The subdomain is written with scenarios 1382…1389 (RT-3399)    |
