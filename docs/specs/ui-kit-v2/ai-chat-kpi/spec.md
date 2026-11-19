@@ -218,8 +218,8 @@ Several KPI blocks in one answer and in one feed each lay out by their own width
   between them.
 - **The width decides the columns, not `fullScreen`** — a block gets only its `block` input; the
   kit already lays out by a block-local container query.
-- **The block frames the card** — the tile draws no frame by its own spec; the frame is the
-  container's job, as the mockup draws it.
+- **The block frames the card** — the tile draws no frame by its own spec; the container draws the
+  frame, as the mockup draws it.
 - **`growthIsGood` is the item flag, default `true`** — the words of the task card; it maps to the
   tile's «growth is worse».
 - **A KPI value is not coloured below zero, unlike a table cell** — in a card the delta carries the
