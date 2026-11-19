@@ -71,7 +71,7 @@ rt_flow_state_action() {
         задача-взята) printf '%s' 'write the plan' ;;
         замысел-записан) printf '%s' 'do the first stage' ;;
         папка-разобрана) printf '%s' 'the work queue audit, then open the PR' ;;
-        влито) printf '%s' 'mark the task merged in the epic plan by the next task branch' ;;
+        влито) printf '%s' 'merge the PRs of the chain bottom-up, mark the merged tasks by the branch of the next one' ;;
         *) printf '%s' '' ;;
     esac
 }

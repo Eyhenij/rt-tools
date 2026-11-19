@@ -1,27 +1,2118 @@
 {
  "args": [
-  "issue",
-  "view",
-  "3326",
+  "pr",
+  "list",
+  "--state",
+  "merged",
+  "--limit",
+  "300",
   "--json",
-  "number,title,state,body,labels"
+  "number,headRefName,headRefOid,baseRefName,mergedAt"
  ],
- "token": "machine",
+ "token": "none",
  "code": 0,
- "stdout": "{\"body\":\"## Что не так\\n\\nПеред первой правкой файла новой области агент получает отказ: «загрузи правило такое-то и повтори». За неделю 07.11–13.11 таких отказов было около 560 по стенограммам — больше, чем у всех проверок разговора вместе. Каждый отказ — лишний круг: отказ, загрузка правила, повтор правки. Владелец видит, что агент топчется на месте.\\n\\nПочти каждый отказ кончается загрузкой правила: за 14.10–14.11 в журнале 1144 отказа шлюза и 1143 загрузки правил. Отказ ничего не ловит, он только откладывает правку.\\n\\n## Что сделать\\n\\nШлюз правил не отказывает в правке, а сам кладёт нужное правило в контекст сессии и пропускает правку. Требование «правило прочитано до правки» остаётся, исчезает лишний круг.\\n\\n## Как понять, что готово\\n\\n- Правка файла новой области проходит с первого раза, а текст правила оказывается в контексте сессии.\\n- Отказов шлюза правил за неделю после выпуска почти нет: остаются только случаи, где правило не найдено.\\n\\nСлово владельца: «Задача в RT-3302».\\n\\nЗадача эпика #3302, замысел — docs/plans/checks-rework-3.md\",\"labels\":[{\"id\":\"LA_kwDOLEmP5M8AAAABfypk3A\",\"name\":\"bug\",\"description\":\"Something isn't working\",\"color\":\"d73a4a\"}],\"number\":3326,\"state\":\"OPEN\",\"title\":\"[RT-3326] Шлюз правил отказывает в правке вместо того, чтобы дать правило\"}",
+ "stdout": "[{\"baseRefName\":\"RT-3302-checks-rework-3\",\"headRefName\":\"RT-3401-plan-red-on-plan-tree\",\"headRefOid\":\"43e457b2106fbc0d3d66d6ed951e0876a8730686\",\"mergedAt\":\"2026-11-19T06:14:56Z\",\"number\":3414},{\"baseRefName\":\"RT-3302-checks-rework-3\",\"headRefName\":\"RT-3392-long-rules-fit\",\"headRefOid\":\"a8293eb2c3a2f0e874253cbfa4349d927a49d319\",\"mergedAt\":\"2026-11-19T05:13:22Z\",\"number\":3411},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3408-task-delivery-loop\",\"headRefOid\":\"db6643c8ddac15d6e0b4e0e42d28683b45d6c59e\",\"mergedAt\":\"2026-11-19T05:20:56Z\",\"number\":3409},{\"baseRefName\":\"RT-3336-ai-chat-chart-data\",\"headRefName\":\"RT-3337-ai-chat-table-block\",\"headRefOid\":\"079d87c7e3d5d5fc6a9f8727253f474a37c90cb1\",\"mergedAt\":\"2026-11-19T04:51:50Z\",\"number\":3407},{\"baseRefName\":\"RT-3302-checks-rework-3\",\"headRefName\":\"RT-3352-consent-by-prompt\",\"headRefOid\":\"fb7360b9181a4b92b11854ffa25755a7b559e5a7\",\"mergedAt\":\"2026-11-19T02:58:39Z\",\"number\":3406},{\"baseRefName\":\"RT-3332-step-mark-signature\",\"headRefName\":\"RT-3395-next-task-skips-foreign-copy\",\"headRefOid\":\"6feaa28e601c9977c1771682a7efe95467b58c39\",\"mergedAt\":\"2026-11-19T02:18:58Z\",\"number\":3405},{\"baseRefName\":\"RT-3302-checks-rework-3\",\"headRefName\":\"RT-3332-step-mark-signature\",\"headRefOid\":\"7af1a510b787978ced1f43fa35e18ccac5cc1690\",\"mergedAt\":\"2026-11-19T02:19:12Z\",\"number\":3403},{\"baseRefName\":\"RT-3335-ai-chat-chart-block\",\"headRefName\":\"RT-3336-ai-chat-chart-data\",\"headRefOid\":\"9db10fd059454993d71ac0ee0e03300d76a04753\",\"mergedAt\":\"2026-11-19T04:52:02Z\",\"number\":3402},{\"baseRefName\":\"RT-3346-ai-chat-blocks\",\"headRefName\":\"RT-3335-ai-chat-chart-block\",\"headRefOid\":\"ddc4a2850688f06fbe1e080029c679511b942065\",\"mergedAt\":\"2026-11-19T04:52:14Z\",\"number\":3398},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3390-kit-icon-tag-dot\",\"headRefOid\":\"c43425de4a14f6c85bc7e72b5fc836b0d396f1f1\",\"mergedAt\":\"2026-11-18T12:55:37Z\",\"number\":3396},{\"baseRefName\":\"RT-3390-kit-icon-tag-dot\",\"headRefName\":\"RT-3389-kit-icon-button-tag-dot\",\"headRefOid\":\"25d4870d2642d17aa8ab3da8edcb7fce5fcadc5f\",\"mergedAt\":\"2026-11-18T11:31:49Z\",\"number\":3394},{\"baseRefName\":\"RT-3283-push-set-uselessness\",\"headRefName\":\"RT-3326-rule-gate-gives-rule\",\"headRefOid\":\"e9630f5b0f10f44e3da3a3be7d848d0a9b4eaa74\",\"mergedAt\":\"2026-11-18T13:39:10Z\",\"number\":3393},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3388-probe-pipeline-no-heavy\",\"headRefOid\":\"e52109afebace2592cd17d86b460aa7602048d08\",\"mergedAt\":\"2026-11-18T09:32:55Z\",\"number\":3391},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3385-push-set-narrow-subjects\",\"headRefOid\":\"c77ba5e2613b6e92588a21dcec2c45d94ef228c8\",\"mergedAt\":\"2026-11-18T08:29:46Z\",\"number\":3387},{\"baseRefName\":\"RT-3346-ai-chat-blocks\",\"headRefName\":\"RT-2750-rt-chart\",\"headRefOid\":\"aa3cbd0fa16874eca014bedb891e4cf3bd43d003\",\"mergedAt\":\"2026-11-18T12:09:58Z\",\"number\":3386},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3382-ai-chat-run-controller\",\"headRefOid\":\"4e479dc1fd8a5f3ffa0bc78ab1206553e05f22e9\",\"mergedAt\":\"2026-11-18T07:38:36Z\",\"number\":3383},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3373-ci-schema-step-timeout\",\"headRefOid\":\"f772f450952ad61e0e2939c6ae623d903bd0418a\",\"mergedAt\":\"2026-11-18T07:22:37Z\",\"number\":3381},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3378-package-release-harness\",\"headRefOid\":\"61545115eed40aaea6fe8c8e293cf0926b361dc5\",\"mergedAt\":\"2026-11-18T06:46:57Z\",\"number\":3380},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3376-ai-chat-protocol-js-imports\",\"headRefOid\":\"f546cfddda8d7b53544c703b662c9746436f5114\",\"mergedAt\":\"2026-11-18T05:08:05Z\",\"number\":3377},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3374-commitlint-scope-ai-chat-protocol\",\"headRefOid\":\"8203432a47fd673f60559f7da0a222e68bd73faa\",\"mergedAt\":\"2026-11-18T04:20:15Z\",\"number\":3375},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3368-ai-chat-protocol\",\"headRefOid\":\"68033407a3c969d92cba2bb003829b9b85e1939a\",\"mergedAt\":\"2026-11-18T03:52:36Z\",\"number\":3372},{\"baseRefName\":\"RT-3302-checks-rework-3\",\"headRefName\":\"RT-3283-push-set-uselessness\",\"headRefOid\":\"d4256de18c26bf648e0fb345a94424ec931a0f71\",\"mergedAt\":\"2026-11-18T13:39:29Z\",\"number\":3371},{\"baseRefName\":\"RT-3302-checks-rework-3\",\"headRefName\":\"RT-3270-work-result-metrics\",\"headRefOid\":\"7e73e6699509550bd46e12e257f516b423f043da\",\"mergedAt\":\"2026-11-17T15:53:36Z\",\"number\":3369},{\"baseRefName\":\"RT-3346-ai-chat-blocks\",\"headRefName\":\"RT-3361-ai-chat-notice-alert\",\"headRefOid\":\"00b3d6b2399f1ebc6fd69d8b9d7747358bfffb79\",\"mergedAt\":\"2026-11-17T06:30:30Z\",\"number\":3365},{\"baseRefName\":\"RT-3302-checks-rework-3\",\"headRefName\":\"RT-3277-checks-real-record\",\"headRefOid\":\"7c0cdca7a535dc14a4c50ae5f41243de6f043484\",\"mergedAt\":\"2026-11-17T04:44:20Z\",\"number\":3364},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3362-kit-approval-epic-branch\",\"headRefOid\":\"0670c328ec74fc2644a2ab01db9e8682fe48d46b\",\"mergedAt\":\"2026-11-17T06:28:39Z\",\"number\":3363},{\"baseRefName\":\"RT-3302-checks-rework-3\",\"headRefName\":\"RT-3355-hooks-read-table\",\"headRefOid\":\"e8cb6b32608f9f684721c8b953c323ef352df085\",\"mergedAt\":\"2026-11-16T22:35:29Z\",\"number\":3360},{\"baseRefName\":\"RT-3346-ai-chat-blocks\",\"headRefName\":\"RT-3334-ai-chat-blocks\",\"headRefOid\":\"dfca99a2dccfbe1d3d356543384c098eb05dec84\",\"mergedAt\":\"2026-11-17T03:34:03Z\",\"number\":3359},{\"baseRefName\":\"RT-3302-checks-rework-3\",\"headRefName\":\"RT-3275-decision-table\",\"headRefOid\":\"283bd9acf89d7d0af820455b6cf0538254ba713b\",\"mergedAt\":\"2026-11-16T14:52:46Z\",\"number\":3358},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3348-thread-list-rows-touch\",\"headRefOid\":\"323eede6f3d489354f9df9033bb69ed9a99cc97b\",\"mergedAt\":\"2026-11-16T11:23:28Z\",\"number\":3357},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3350-workspace-details-single\",\"headRefOid\":\"bfbb963351cc2c4bc1e1e7ac2542f8a297acab70\",\"mergedAt\":\"2026-11-16T09:31:32Z\",\"number\":3356},{\"baseRefName\":\"RT-3302-checks-rework-3\",\"headRefName\":\"RT-3271-owner-consent-window\",\"headRefOid\":\"21abfedf418ee1f745b2969be3917f5f7ff33735\",\"mergedAt\":\"2026-11-16T01:50:15Z\",\"number\":3354},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3345-header-actions\",\"headRefOid\":\"8e5ea4b332d05419500fc08a188a6aca2bd239c9\",\"mergedAt\":\"2026-11-15T19:13:48Z\",\"number\":3353},{\"baseRefName\":\"RT-3302-checks-rework-3\",\"headRefName\":\"RT-3329-task-flow-scenario\",\"headRefOid\":\"ff8c99f72ffe12ff789b1571927f6ed7875c813b\",\"mergedAt\":\"2026-11-15T16:37:29Z\",\"number\":3351},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3347-push-inputs-env\",\"headRefOid\":\"55e983cf34e276818100130474eed3f62fc0f915\",\"mergedAt\":\"2026-11-17T03:34:36Z\",\"number\":3349},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3288-kit-error-states\",\"headRefOid\":\"61db2380bddefc24c41e10d2eb139fbeb6b04248\",\"mergedAt\":\"2026-11-15T02:37:02Z\",\"number\":3330},{\"baseRefName\":\"RT-3288-kit-error-states\",\"headRefName\":\"RT-3295-selectors-error-state\",\"headRefOid\":\"6d468b0156377227317dbe9b21eef2dd5697eccc\",\"mergedAt\":\"2026-11-14T15:49:28Z\",\"number\":3328},{\"baseRefName\":\"RT-3288-kit-error-states\",\"headRefName\":\"RT-3294-table-lists-error-state\",\"headRefOid\":\"457434113ad999306c5de23ddffd0a7367d197f3\",\"mergedAt\":\"2026-11-14T15:49:30Z\",\"number\":3327},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3315-setting-tile\",\"headRefOid\":\"3072aac8044108d5c5e3d046dbfe3e6eac313d62\",\"mergedAt\":\"2026-11-14T14:39:47Z\",\"number\":3325},{\"baseRefName\":\"RT-3288-kit-error-states\",\"headRefName\":\"RT-3292-thread-list-error-state\",\"headRefOid\":\"847f5eabc3f9a604769c7c75bc7450dc69dbf244\",\"mergedAt\":\"2026-11-14T14:40:30Z\",\"number\":3324},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3232-remove-ui-kit-v1\",\"headRefOid\":\"a740a3fade8cf6aae7ba72f4176878bf5fc3b6ce\",\"mergedAt\":\"2026-11-14T11:03:50Z\",\"number\":3316},{\"baseRefName\":\"RT-3232-remove-ui-kit-v1\",\"headRefName\":\"RT-3310-knip-findings\",\"headRefOid\":\"34394ef1eb76d67bfc665ec074d08dbb7252166f\",\"mergedAt\":\"2026-11-14T09:57:56Z\",\"number\":3314},{\"baseRefName\":\"RT-3232-remove-ui-kit-v1\",\"headRefName\":\"RT-3308-first-kit-leftovers-knip\",\"headRefOid\":\"d6dab3905d6765c5ace08dc8ebc5a10220a9f240\",\"mergedAt\":\"2026-11-14T07:57:57Z\",\"number\":3312},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3309-auth-metrika-frame-src\",\"headRefOid\":\"caa6612d7243fe83dd1980bc5e8c2767a3a58ce7\",\"mergedAt\":\"2026-11-14T07:01:28Z\",\"number\":3311},{\"baseRefName\":\"RT-3232-remove-ui-kit-v1\",\"headRefName\":\"RT-3304-remove-ui-kit-v1\",\"headRefOid\":\"3bb56b00ce99186c3e25b058661b76f8ab1419a9\",\"mergedAt\":\"2026-11-14T05:17:20Z\",\"number\":3307},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3301-auth-theme-counters\",\"headRefOid\":\"081bb1d2e28391ebb31ddf2541b7c6cc15202bde\",\"mergedAt\":\"2026-11-14T05:23:25Z\",\"number\":3305},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3299-<project>-own-branch\",\"headRefOid\":\"eb199075c8e4988c95e9169eef5cc11d8a3a8436\",\"mergedAt\":\"2026-11-14T00:55:03Z\",\"number\":3300},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3287-usage-all-trees\",\"headRefOid\":\"2fb5988fcb3b24ee50bb54423129f7f2867123c9\",\"mergedAt\":\"2026-11-14T01:10:43Z\",\"number\":3298},{\"baseRefName\":\"RT-3293-checks-rework-2\",\"headRefName\":\"RT-3296-always-run-steps\",\"headRefOid\":\"6604fdd31435e2620a6b5a8393e104047f6c243b\",\"mergedAt\":\"2026-11-14T01:10:21Z\",\"number\":3297},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3269-checks-rework\",\"headRefOid\":\"89da9b8a13df618f7b6ef2e7f57ef20b1ab37f29\",\"mergedAt\":\"2026-11-13T14:55:56Z\",\"number\":3291},{\"baseRefName\":\"RT-3269-checks-rework\",\"headRefName\":\"RT-3273-push-checks-leave-session\",\"headRefOid\":\"0ada8e46132e434169f08ccf798533ee55a14555\",\"mergedAt\":\"2026-11-13T14:36:44Z\",\"number\":3290},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3286-image-upload-remove\",\"headRefOid\":\"aaaeceecbe55fa51761cf0d9a28d92608ed9370b\",\"mergedAt\":\"2026-11-13T13:48:07Z\",\"number\":3289},{\"baseRefName\":\"RT-3269-checks-rework\",\"headRefName\":\"RT-3284-push-marks-by-what-step-reads\",\"headRefOid\":\"cae27cdb000383d9a6641cb053e163c2ac5b74b9\",\"mergedAt\":\"2026-11-13T08:27:20Z\",\"number\":3285},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3267-workspace-overlay-header\",\"headRefOid\":\"d9b06acb63e39de3e36d1b6242e6f7a58632a76c\",\"mergedAt\":\"2026-11-13T06:07:36Z\",\"number\":3281},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3227-agent-kit-revision-day1\",\"headRefOid\":\"641fef7378655a9867f1bb76df576fd0f7284d88\",\"mergedAt\":\"2026-11-13T05:48:08Z\",\"number\":3279},{\"baseRefName\":\"RT-3227-agent-kit-revision-day1\",\"headRefName\":\"RT-3268-epic-stop-consent-queue-audit\",\"headRefOid\":\"e77fcced993596478b4db543cac952c2e7ea6086\",\"mergedAt\":\"2026-11-13T04:49:28Z\",\"number\":3278},{\"baseRefName\":\"RT-3227-agent-kit-revision-day1\",\"headRefName\":\"RT-3220-deploy-cache-cleanup\",\"headRefOid\":\"48bda725823ab06668f634a81849cd460f1be92c\",\"mergedAt\":\"2026-11-13T00:34:01Z\",\"number\":3266},{\"baseRefName\":\"RT-3227-agent-kit-revision-day1\",\"headRefName\":\"RT-3219-delivery-rules-gitlab-azure\",\"headRefOid\":\"fe4031c97ae414c69577b458019048b0aeb794a7\",\"mergedAt\":\"2026-11-12T16:18:44Z\",\"number\":3263},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3180-workspace-overlay-breakpoint\",\"headRefOid\":\"3b320ece738f1ccb398a4d09e02be027dc720c57\",\"mergedAt\":\"2026-11-12T13:58:26Z\",\"number\":3257},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3231-push-base-of-pull\",\"headRefOid\":\"5fbe3ff2b3b294783c230f7b6c83442d491b0621\",\"mergedAt\":\"2026-11-12T11:27:48Z\",\"number\":3256},{\"baseRefName\":\"RT-3178-chat-deleted-own-text\",\"headRefName\":\"RT-3179-chat-translation-caption\",\"headRefOid\":\"b1c642b9d3ded0234dbc271aa353cc38c141c8af\",\"mergedAt\":\"2026-11-12T11:07:12Z\",\"number\":3255},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3178-chat-deleted-own-text\",\"headRefOid\":\"f09da2e116c8d94be12e58665e5efc95c32af505\",\"mergedAt\":\"2026-11-12T11:44:37Z\",\"number\":3230},{\"baseRefName\":\"RT-3227-agent-kit-revision-day1\",\"headRefName\":\"RT-3197-rev-autonomous-work\",\"headRefOid\":\"847348e4025edd8c592b7a99469c280c57c1c502\",\"mergedAt\":\"2026-11-13T03:56:48Z\",\"number\":3225},{\"baseRefName\":\"RT-3227-agent-kit-revision-day1\",\"headRefName\":\"RT-3196-rev-verifiability\",\"headRefOid\":\"cb5109c03af52ed3d7c6c9741912031ca73a4c65\",\"mergedAt\":\"2026-11-12T14:02:33Z\",\"number\":3224},{\"baseRefName\":\"RT-3227-agent-kit-revision-day1\",\"headRefName\":\"RT-3195-rev-project-docs\",\"headRefOid\":\"ad855980779cc92b79b3915456afc874327b80e2\",\"mergedAt\":\"2026-11-12T09:55:19Z\",\"number\":3223},{\"baseRefName\":\"RT-3227-agent-kit-revision-day1\",\"headRefName\":\"RT-3194-rev-delivery\",\"headRefOid\":\"b5b4ff8e397c16b71b764565c423a30a4e22ee78\",\"mergedAt\":\"2026-11-12T08:01:56Z\",\"number\":3222},{\"baseRefName\":\"RT-3227-agent-kit-revision-day1\",\"headRefName\":\"RT-3193-rev-work-conduct\",\"headRefOid\":\"8e8d2234cd91af3d0c963173a8a1b4b4d647809d\",\"mergedAt\":\"2026-11-12T06:11:44Z\",\"number\":3221},{\"baseRefName\":\"RT-3190-agent-kit-revision\",\"headRefName\":\"RT-3192-rules-graph\",\"headRefOid\":\"7a4ecee2265cc28145198d474f4f52c49bee73b4\",\"mergedAt\":\"2026-11-11T14:38:55Z\",\"number\":3213},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3188-stepper-any-step\",\"headRefOid\":\"9cb4f5aa5c480c8e14e6d59a5a1cc0486a605a74\",\"mergedAt\":\"2026-11-12T10:47:28Z\",\"number\":3212},{\"baseRefName\":\"RT-3190-agent-kit-revision\",\"headRefName\":\"RT-3191-code-graphs\",\"headRefOid\":\"502c6358e5dce1fd757b3c1a09887199581be629\",\"mergedAt\":\"2026-11-11T13:39:58Z\",\"number\":3211},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3186-check-root-<project>\",\"headRefOid\":\"1eb19a7a337e82b972110e6468ffdde27b1230f2\",\"mergedAt\":\"2026-11-12T11:28:25Z\",\"number\":3189},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3140-read-only-role-exit\",\"headRefOid\":\"afb21a247379ba326de0b8c31ff7f7bec02782d2\",\"mergedAt\":\"2026-11-13T03:56:29Z\",\"number\":3187},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3183-graph-exploration\",\"headRefOid\":\"6615e53ed6eaf9f96f6d72b490ec577c11410979\",\"mergedAt\":\"2026-11-11T08:30:36Z\",\"number\":3185},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3181-page-header-vertical\",\"headRefOid\":\"4df4fc357fd906cb8c26e112a2fc5dc6cdecd979\",\"mergedAt\":\"2026-11-11T10:16:46Z\",\"number\":3182},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3176-rules-findings-3\",\"headRefOid\":\"ea269769ff497d47b26f4dc895f8c0eac5ab5352\",\"mergedAt\":\"2026-11-09T06:30:06Z\",\"number\":3177},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3174-rules-findings-2\",\"headRefOid\":\"615e07a8fd404569d5c713261d56602c337b24ca\",\"mergedAt\":\"2026-11-09T04:34:11Z\",\"number\":3175},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3159-date-panel-export\",\"headRefOid\":\"e4ae5d8cecfa26b65c6393cc3a6af579715069ee\",\"mergedAt\":\"2026-11-08T16:07:56Z\",\"number\":3173},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3171-e2e-guard-kit2-reach\",\"headRefOid\":\"c16b7c0132305dccd6a94b5048002e490aa009c0\",\"mergedAt\":\"2026-11-08T15:00:42Z\",\"number\":3172},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3169-rules-findings\",\"headRefOid\":\"92811ef731e1b141fe3988171176eb0047050ef5\",\"mergedAt\":\"2026-11-08T11:35:14Z\",\"number\":3170},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3151-agent-kit-metrics\",\"headRefOid\":\"b7edb6bdf93b5794b9545aeb82a24be46ae2bdef\",\"mergedAt\":\"2026-11-08T09:13:38Z\",\"number\":3168},{\"baseRefName\":\"RT-3151-agent-kit-metrics\",\"headRefName\":\"RT-3157-cycle-rule\",\"headRefOid\":\"2be9c33810c899b934a7d14b4267a725ccf6fe45\",\"mergedAt\":\"2026-11-08T07:28:35Z\",\"number\":3167},{\"baseRefName\":\"RT-3151-agent-kit-metrics\",\"headRefName\":\"RT-3156-quality-section\",\"headRefOid\":\"13800ff23e7f6f5c5b50809b3146945eaeab5935\",\"mergedAt\":\"2026-11-08T07:27:57Z\",\"number\":3166},{\"baseRefName\":\"RT-3151-agent-kit-metrics\",\"headRefName\":\"RT-3154-metrics-send\",\"headRefOid\":\"8c497b22153b0d62ed79e8130d03dcb91c16c911\",\"mergedAt\":\"2026-11-08T07:27:15Z\",\"number\":3165},{\"baseRefName\":\"RT-3151-agent-kit-metrics\",\"headRefName\":\"RT-3155-metrics-intake\",\"headRefOid\":\"31bd90ef521643b67c59bfccb05ef86c167484a8\",\"mergedAt\":\"2026-11-08T07:26:30Z\",\"number\":3164},{\"baseRefName\":\"RT-3151-agent-kit-metrics\",\"headRefName\":\"RT-3153-metrics-events\",\"headRefOid\":\"fba69eb0f1f91944695585c5b84e147979e72bab\",\"mergedAt\":\"2026-11-08T07:25:48Z\",\"number\":3163},{\"baseRefName\":\"RT-3151-agent-kit-metrics\",\"headRefName\":\"RT-3152-metrics-catalog\",\"headRefOid\":\"871604260d3df30b53169427afd0cd1bb47f3983\",\"mergedAt\":\"2026-11-08T07:24:57Z\",\"number\":3162},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3160-epic-agreement-gate\",\"headRefOid\":\"4e329820f3b89f8f24ef2608be93ccd71c3857b9\",\"mergedAt\":\"2026-11-07T12:32:47Z\",\"number\":3161},{\"baseRefName\":\"RT-3043-cargo-2026-11-rest\",\"headRefName\":\"RT-3051-stand-own-names\",\"headRefOid\":\"51001c05a5b38f65398d924d59ad0b8dc3da6ee6\",\"mergedAt\":\"2026-11-08T10:15:37Z\",\"number\":3149},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3142-chat-schedule\",\"headRefOid\":\"cb3dcdb75658822485495bafc5326bd2f3e19e4a\",\"mergedAt\":\"2026-11-07T08:04:33Z\",\"number\":3148},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3129-pr-product-flow\",\"headRefOid\":\"ff975e5262cfbcd4f97907995d382266fe09628d\",\"mergedAt\":\"2026-11-06T14:42:45Z\",\"number\":3141},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3125-auth-theme-remarks\",\"headRefOid\":\"52ac8d3e0fc8591bd7b68b39d3ac171a9d119cca\",\"mergedAt\":\"2026-11-07T02:02:19Z\",\"number\":3139},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3128-chat-set-draft\",\"headRefOid\":\"dc89d05e7185a7f2e9c69e9cbef9ba9ef33e299b\",\"mergedAt\":\"2026-11-06T14:16:30Z\",\"number\":3138},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3135-pre-push-delete-scenario\",\"headRefOid\":\"e4855cd5b698efb517738c9ba54f07f448f406a7\",\"mergedAt\":\"2026-11-06T07:09:55Z\",\"number\":3136},{\"baseRefName\":\"RT-3129-pr-product-flow\",\"headRefName\":\"RT-3133-product-points\",\"headRefOid\":\"87174821faf0edd11f7385323abb5066db2c143f\",\"mergedAt\":\"2026-11-06T13:58:16Z\",\"number\":3134},{\"baseRefName\":\"RT-3129-pr-product-flow\",\"headRefName\":\"RT-3131-pr-review-replies\",\"headRefOid\":\"0f6381c575b7d35c75cd2ef269a32db1145a40e0\",\"mergedAt\":\"2026-11-06T07:14:54Z\",\"number\":3132},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3043-cargo-2026-11\",\"headRefOid\":\"e335daba1045247fd91a89d5da2cbd58a0c92280\",\"mergedAt\":\"2026-11-06T03:43:52Z\",\"number\":3130},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3123-detail-row-line-breaks\",\"headRefOid\":\"76bdf2567bb9c1758cd8079aa72fcf2e50fd4c5b\",\"mergedAt\":\"2026-11-06T04:55:48Z\",\"number\":3127},{\"baseRefName\":\"RT-3043-cargo-2026-11\",\"headRefName\":\"RT-3050-release-after-unchecked-merge\",\"headRefOid\":\"4e9a9e507f44480c6a2d6572fd5c5d855716938a\",\"mergedAt\":\"2026-11-06T03:13:25Z\",\"number\":3126},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3122-e2e-markup-section-wait\",\"headRefOid\":\"62e633e7a45ba28691b06b7b7e7b1cf8f2e0ebdb\",\"mergedAt\":\"2026-11-07T01:57:10Z\",\"number\":3124},{\"baseRefName\":\"RT-3043-cargo-2026-11\",\"headRefName\":\"RT-3049-audit-compares-shapes\",\"headRefOid\":\"d8000c296668925145e92258f665d233b70adbf5\",\"mergedAt\":\"2026-11-05T16:27:09Z\",\"number\":3121},{\"baseRefName\":\"RT-3043-cargo-2026-11\",\"headRefName\":\"RT-3114-main-into-epic-push-set\",\"headRefOid\":\"064eb11231bc457fb654016c2d108b5cbd10594e\",\"mergedAt\":\"2026-11-05T11:23:56Z\",\"number\":3120},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3089-glab-commands\",\"headRefOid\":\"c52aeced39b0d30f0f6ac124fe494d8fca308f70\",\"mergedAt\":\"2026-11-05T15:52:13Z\",\"number\":3119},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3091-skip-hosting-variant\",\"headRefOid\":\"06c7d54dd5bed1a31b6eb79bdabd81058f9544e0\",\"mergedAt\":\"2026-11-05T15:50:46Z\",\"number\":3117},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3095-dispatch-one-json\",\"headRefOid\":\"2560ea12839be6e9e2ed04666c767a12ce2581a0\",\"mergedAt\":\"2026-11-05T15:46:27Z\",\"number\":3116},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3096-plugin-browser-drivers\",\"headRefOid\":\"33264942ec0787977c7ab5fd340649298eba3d09\",\"mergedAt\":\"2026-11-05T15:40:19Z\",\"number\":3115},{\"baseRefName\":\"RT-3043-cargo-2026-11\",\"headRefName\":\"RT-3048-shared-frame-every-screen\",\"headRefOid\":\"52f770082cbf80b5179e47f55b2af104e7f32f63\",\"mergedAt\":\"2026-11-05T12:57:21Z\",\"number\":3113},{\"baseRefName\":\"RT-3043-cargo-2026-11\",\"headRefName\":\"RT-3047-draft-without-pipeline\",\"headRefOid\":\"d31315dba739da58c9e37afd13e851a7048c57ef\",\"mergedAt\":\"2026-11-05T05:17:22Z\",\"number\":3112},{\"baseRefName\":\"RT-3043-cargo-2026-11\",\"headRefName\":\"RT-3046-pre-push-review-fixes\",\"headRefOid\":\"a8abdca43037fb35606d754bf9b5eb2e74f0d9e2\",\"mergedAt\":\"2026-11-05T03:43:49Z\",\"number\":3111},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3090-main-branch-setting\",\"headRefOid\":\"9a9ca949982d210a5ecc75c58f2d5938bfdb22d2\",\"mergedAt\":\"2026-11-05T07:52:51Z\",\"number\":3110},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3100-shell-arrow-in-quotes\",\"headRefOid\":\"bca50a723f0f3adf70c97dbfe937336738830068\",\"mergedAt\":\"2026-11-05T07:52:02Z\",\"number\":3109},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3086-scenario-long-prefixes\",\"headRefOid\":\"d7840acf933bea25043643bdfd5616253847acef\",\"mergedAt\":\"2026-11-05T07:51:21Z\",\"number\":3108},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3087-pr-unmerged-agreement\",\"headRefOid\":\"8e74b9f6c7576b2e446c2943e236c56b62b11f87\",\"mergedAt\":\"2026-11-05T07:50:22Z\",\"number\":3107},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3088-spec-length-before-merge\",\"headRefOid\":\"edec24c04207f9e2dd8c53042666a57ab6fcba1d\",\"mergedAt\":\"2026-11-05T07:49:47Z\",\"number\":3106},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3098-push-gate-hooks-run-missing\",\"headRefOid\":\"f1354cf2cccb8365df17ef57341299f47a190f20\",\"mergedAt\":\"2026-11-05T07:49:08Z\",\"number\":3105},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3097-turn-exit-own-notification\",\"headRefOid\":\"9cc0945cd28f93e9c32150fdfe6be5ab38b584d3\",\"mergedAt\":\"2026-11-05T07:47:35Z\",\"number\":3104},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2895-calendar-year-grid\",\"headRefOid\":\"4d59923fe536f264d7c92fa5ea651e668320881a\",\"mergedAt\":\"2026-11-05T05:46:14Z\",\"number\":3103},{\"baseRefName\":\"RT-3043-cargo-2026-11\",\"headRefName\":\"RT-3046-pre-push-git-hook\",\"headRefOid\":\"a0ad5bd7e795c15c0acec7eb4eebe63f21007bef\",\"mergedAt\":\"2026-11-04T14:24:10Z\",\"number\":3101},{\"baseRefName\":\"RT-3043-cargo-2026-11\",\"headRefName\":\"RT-3045-push-path-and-review-gate\",\"headRefOid\":\"2ccb34f56e4b338229df4b846e1f3379b0616c7e\",\"mergedAt\":\"2026-11-04T09:19:58Z\",\"number\":3099},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3092-push-gate-ahead\",\"headRefOid\":\"9db2a7f555f5d313391da72819208cb4f50d1e3c\",\"mergedAt\":\"2026-11-05T05:45:41Z\",\"number\":3094},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2890-rt-input-number-stepper\",\"headRefOid\":\"facec4997e21865f556d5aa5759b5c25c0554d44\",\"mergedAt\":\"2026-11-05T07:53:52Z\",\"number\":3093},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2927-rt-stat-tile-delta-unit\",\"headRefOid\":\"0d7f58df087fcd8e03164ea276cf5b5b1e5963e2\",\"mergedAt\":\"2026-11-05T05:45:07Z\",\"number\":3085},{\"baseRefName\":\"RT-3043-cargo-2026-11\",\"headRefName\":\"RT-3044-push-guard-git-subcommand\",\"headRefOid\":\"1b68e7dfe7ca354b747153134df2ed9fb1cdb82d\",\"mergedAt\":\"2026-11-04T05:57:05Z\",\"number\":3083},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3041-branch-signature-human\",\"headRefOid\":\"59998db7b6d2d4f4ffb56da526b3fa26fb05a564\",\"mergedAt\":\"2026-11-05T05:44:34Z\",\"number\":3042},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2907-rt-table-sticky-column\",\"headRefOid\":\"a1700862ff8652658b506778ea944bab6cdd9a53\",\"mergedAt\":\"2026-11-05T05:44:07Z\",\"number\":3040},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3037-doc-paths-copy-files\",\"headRefOid\":\"6417e99d12c23bdb1c95760bd40a59e53b1f7023\",\"mergedAt\":\"2026-11-02T14:22:15Z\",\"number\":3039},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3036-pr-base-refresh\",\"headRefOid\":\"5156edf1cb9bceffe273d84edcbbee78b25f416d\",\"mergedAt\":\"2026-11-02T14:16:29Z\",\"number\":3038},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2860-ui-kit-v2-table-core\",\"headRefOid\":\"161750e211951fe79ce1ecf0d223f520cbe06a20\",\"mergedAt\":\"2026-11-02T07:42:48Z\",\"number\":3032},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3025-recaptcha-load-without-grecaptcha\",\"headRefOid\":\"3e1dc3c71fcb5419b51a2c24ae87f74de00db106\",\"mergedAt\":\"2026-10-31T07:04:07Z\",\"number\":3030},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3026-e2e-required\",\"headRefOid\":\"d5c1719845c2071533c44d63e328092daf62666d\",\"mergedAt\":\"2026-11-02T03:52:02Z\",\"number\":3029},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3027-owner-text-verbatim\",\"headRefOid\":\"9fb82497f8b590f2a2cb9fe215031df7eed32460\",\"mergedAt\":\"2026-10-31T06:35:13Z\",\"number\":3028},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3013-recaptcha-review\",\"headRefOid\":\"0729bfabe800b74fba35a3964f51a5191068b365\",\"mergedAt\":\"2026-10-31T05:07:36Z\",\"number\":3024},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3022-interface-review-skill\",\"headRefOid\":\"5dfb79818bfb44ac7d810c9567faed823809ab3b\",\"mergedAt\":\"2026-10-31T05:18:48Z\",\"number\":3023},{\"baseRefName\":\"RT-2860-ui-kit-v2-table-core\",\"headRefName\":\"RT-3015-data-table-sort-other-column\",\"headRefOid\":\"1918169d63d745c2304579c649a62e4203e2e25c\",\"mergedAt\":\"2026-10-31T01:44:09Z\",\"number\":3021},{\"baseRefName\":\"RT-2860-ui-kit-v2-table-core\",\"headRefName\":\"RT-2867-table-columns-registry-keys\",\"headRefOid\":\"f43697c841aeb3b4a24021b779fcfa0ec808fa00\",\"mergedAt\":\"2026-10-31T01:43:30Z\",\"number\":3020},{\"baseRefName\":\"RT-2860-ui-kit-v2-table-core\",\"headRefName\":\"RT-2866-table-selection-core\",\"headRefOid\":\"1c701da4b384a739efb61a350714375c2647ea08\",\"mergedAt\":\"2026-10-31T01:42:54Z\",\"number\":3019},{\"baseRefName\":\"RT-2860-ui-kit-v2-table-core\",\"headRefName\":\"RT-2865-table-filter-sort-core\",\"headRefOid\":\"aaf59edc2e1da037c6a6a51fa8bfad7d49d646a3\",\"mergedAt\":\"2026-10-31T01:42:01Z\",\"number\":3018},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3012-copilot-review-runner\",\"headRefOid\":\"5d99ce91e7531988eeaf3cdd904ec55794f1c5ed\",\"mergedAt\":\"2026-10-30T14:30:00Z\",\"number\":3017},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2994-service-block-gap\",\"headRefOid\":\"f772eaf4f57a5abd75d6d4610f6fa487c71d0ea4\",\"mergedAt\":\"2026-11-02T13:35:28Z\",\"number\":3014},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3010-kit-style-budget-mockup-measure\",\"headRefOid\":\"2a5b4ab409a7c26ae1e35577d8169f4b07fc9d5f\",\"mergedAt\":\"2026-10-31T01:41:01Z\",\"number\":3011},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2995-tab-icon-fill-clear-tabbable\",\"headRefOid\":\"11f336f5c0de9acc03a5fadc721bf09971b59acf\",\"mergedAt\":\"2026-10-31T01:55:22Z\",\"number\":3009},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3003-register-recaptcha\",\"headRefOid\":\"1fda4c04c6fe16c35c1440a6ed98eaab20c15893\",\"mergedAt\":\"2026-10-30T10:09:28Z\",\"number\":3008},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3001-list-filters-button\",\"headRefOid\":\"c37d7ad4cd8bf5e45a23cbd331b0fb1148447598\",\"mergedAt\":\"2026-10-30T11:01:09Z\",\"number\":3007},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3005-pageheadermore-shot-race\",\"headRefOid\":\"54da9c101871be06651cb36c38427701bf913a56\",\"mergedAt\":\"2026-10-30T10:10:41Z\",\"number\":3006},{\"baseRefName\":\"main\",\"headRefName\":\"RT-3000-popover-touch-hover\",\"headRefOid\":\"13ff1d376d7cc1a37a230d112250db774a4384e2\",\"mergedAt\":\"2026-10-30T11:11:31Z\",\"number\":3004},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2999-main-checks-green\",\"headRefOid\":\"46ffc7b4ee917c6d47c2647e0204dab58d86470b\",\"mergedAt\":\"2026-10-30T04:35:08Z\",\"number\":3002},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2997-user-menu-backdrop\",\"headRefOid\":\"688626239d1e2afb5787088edcfde00b27cb5e4b\",\"mergedAt\":\"2026-10-30T01:40:57Z\",\"number\":2998},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2990-kit-figma-approval-gate\",\"headRefOid\":\"fff8673e1bb596c7c6441eb515fc4d0ce8a9c543\",\"mergedAt\":\"2026-10-29T11:04:16Z\",\"number\":2993},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2988-chat-look-by-mockup\",\"headRefOid\":\"d3102301908b352004be6308e8b747e639d53a11\",\"mergedAt\":\"2026-10-29T10:59:20Z\",\"number\":2992},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2982-scenario-dupes\",\"headRefOid\":\"2458d6af3edcde8dfed08923a1a5d0519a62b3e8\",\"mergedAt\":\"2026-10-29T07:45:25Z\",\"number\":2991},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2987-header-nav-backdrop\",\"headRefOid\":\"571b3eaeaa9700515af93e0e75c800c1f4437247\",\"mergedAt\":\"2026-10-29T07:41:51Z\",\"number\":2989},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2985-chat-title-one-line\",\"headRefOid\":\"9ca583bf83cf6f457373b5381545710ac1f9e4dc\",\"mergedAt\":\"2026-10-29T03:45:07Z\",\"number\":2986},{\"baseRefName\":\"RT-2978-ai-chat-references\",\"headRefName\":\"RT-2965-dependabot-alerts\",\"headRefOid\":\"4b333875cbaa1c9be183e0eebfffaf8119a9847d\",\"mergedAt\":\"2026-10-29T01:05:58Z\",\"number\":2984},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2980-tooltip-touch\",\"headRefOid\":\"48440a8135fb73f8de76f92967be747ae8a63486\",\"mergedAt\":\"2026-10-29T01:05:53Z\",\"number\":2983},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2978-ai-chat-references\",\"headRefOid\":\"dd4f41663331fb929d81a9ef1c808b91677a0066\",\"mergedAt\":\"2026-10-29T10:04:16Z\",\"number\":2981},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2977-thread-tabs-chat-subtitle\",\"headRefOid\":\"e9d490264131bd7ce5c861c7a497092445a6927e\",\"mergedAt\":\"2026-10-29T01:05:39Z\",\"number\":2979},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2972-kit2-footer-references\",\"headRefOid\":\"d1ccf89bdcbf4f16a3a67e5d530516098520c18d\",\"mergedAt\":\"2026-10-29T07:45:48Z\",\"number\":2975},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2958-ai-chat-mobile\",\"headRefOid\":\"34e2d3c40a67246356cba9f66b5949d381fc4245\",\"mergedAt\":\"2026-10-28T14:10:53Z\",\"number\":2973},{\"baseRefName\":\"RT-2960-chat-overscroll\",\"headRefName\":\"RT-2964-ai-prompt-input\",\"headRefOid\":\"43c18fa24a01580c0e88f8e658a071c21eacc20a\",\"mergedAt\":\"2026-10-28T13:17:32Z\",\"number\":2971},{\"baseRefName\":\"RT-2960-chat-overscroll\",\"headRefName\":\"RT-2962-thread-menu-touch\",\"headRefOid\":\"3605212f7b99b4a62e7ebdaabfd90615e0a1b5eb\",\"mergedAt\":\"2026-10-28T13:17:16Z\",\"number\":2970},{\"baseRefName\":\"RT-2958-ai-chat-mobile\",\"headRefName\":\"RT-2960-chat-overscroll\",\"headRefOid\":\"75381ee52b1c9de3c829aff4d9dd95d846efa050\",\"mergedAt\":\"2026-10-28T13:17:12Z\",\"number\":2969},{\"baseRefName\":\"RT-2958-ai-chat-mobile\",\"headRefName\":\"RT-2959-answer-wrap\",\"headRefOid\":\"9b2cd95506b2e5fe8881974c8624201f93ea95cd\",\"mergedAt\":\"2026-10-28T13:16:56Z\",\"number\":2968},{\"baseRefName\":\"RT-2958-ai-chat-mobile\",\"headRefName\":\"RT-2961-markdown-autolink\",\"headRefOid\":\"f6cb26be5655fa1cb77189e88c5f7d0f3b545699\",\"mergedAt\":\"2026-10-28T13:16:49Z\",\"number\":2967},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2957-aside-footer-look\",\"headRefOid\":\"99a3125c304c6f52fb86e6cedd4d89b48ae594c7\",\"mergedAt\":\"2026-10-29T01:05:32Z\",\"number\":2966},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2957-aside-footer-look\",\"headRefOid\":\"4d5845a95cfc12c4a3957ba35b5e91e04b942bfe\",\"mergedAt\":\"2026-10-28T12:21:26Z\",\"number\":2963},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2955-form-row-wrap\",\"headRefOid\":\"5ec103ac4acd07d7c787683172378cf26e0b40a0\",\"mergedAt\":\"2026-10-28T10:15:39Z\",\"number\":2956},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2953-e2e-stand-db\",\"headRefOid\":\"4e7e0ecd8262698fe25df74b5bcad4caead9a823\",\"mergedAt\":\"2026-10-28T07:50:07Z\",\"number\":2954},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2951-icon-button-link\",\"headRefOid\":\"97a6093b7982fde37227dff47ed3114153f9c817\",\"mergedAt\":\"2026-10-28T09:20:00Z\",\"number\":2952},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2948-tooltip-escape\",\"headRefOid\":\"119cfaf0281c79330aa69f1417f5a3a221d43c75\",\"mergedAt\":\"2026-10-27T07:46:06Z\",\"number\":2949},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2946-tabs-scroll-resize\",\"headRefOid\":\"1683cb2a1bea31d2180f443bf601b4a60a9fbd95\",\"mergedAt\":\"2026-10-27T01:43:35Z\",\"number\":2947},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2940-tabs-scroll-active\",\"headRefOid\":\"02db5c7e20b201e0aa06e70708fb9761297fc089\",\"mergedAt\":\"2026-10-26T12:19:55Z\",\"number\":2945},{\"baseRefName\":\"main\",\"headRefName\":\"dependabot/npm_and_yarn/npm-security-81f61753d2\",\"headRefOid\":\"47993537bc25403b5c8e9835e69244ac72d92358\",\"mergedAt\":\"2026-10-24T12:58:49Z\",\"number\":2944},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2812-kit2-field-label-icon-actions\",\"headRefOid\":\"82247c53cd4512bcf54632e00a31c32d4d85c868\",\"mergedAt\":\"2026-10-26T10:03:24Z\",\"number\":2943},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2941-chat-undelivered-archive\",\"headRefOid\":\"dd608420ddb2c55e373530f6700fbb619f8ff1e9\",\"mergedAt\":\"2026-10-24T12:58:10Z\",\"number\":2942},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2938-chat-undelivered\",\"headRefOid\":\"aa57feadc64a01ca964621a804b4f8f9af7f8b72\",\"mergedAt\":\"2026-10-23T15:13:01Z\",\"number\":2939},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2936-thread-sign\",\"headRefOid\":\"b1943e631576f0bbe2a22094b8b565692fe6d76e\",\"mergedAt\":\"2026-10-23T10:26:56Z\",\"number\":2937},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2934-service-block\",\"headRefOid\":\"c4cdb761567d29869bcc86a8c9a39e6ade4664e4\",\"mergedAt\":\"2026-10-22T15:19:23Z\",\"number\":2935},{\"baseRefName\":\"main\",\"headRefName\":\"dependabot/npm_and_yarn/npm-security-7653112a67\",\"headRefOid\":\"1f1286582f47cbbf69393ff37b0716e91c20b052\",\"mergedAt\":\"2026-10-22T03:44:14Z\",\"number\":2933},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2922-cargo-late-october\",\"headRefOid\":\"65be36ff3a32f2b7e348edaa5ce6bb3140735d16\",\"mergedAt\":\"2026-10-22T03:05:47Z\",\"number\":2932},{\"baseRefName\":\"RT-2922-cargo-late-october\",\"headRefName\":\"RT-2929-cargo-rules\",\"headRefOid\":\"b9e892ea7f8cf0243f9e7793732543dd3112115d\",\"mergedAt\":\"2026-10-22T01:14:00Z\",\"number\":2931},{\"baseRefName\":\"RT-2922-cargo-late-october\",\"headRefName\":\"RT-2928-cargo-checks\",\"headRefOid\":\"a9e7de07311088e3bcad86a34ddc9c5b3afb24c1\",\"mergedAt\":\"2026-10-22T01:13:40Z\",\"number\":2930},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2861-ui-kit-v2-pickers\",\"headRefOid\":\"4e94bbe87fcc7b9418ad160c8c7e4196246e7b72\",\"mergedAt\":\"2026-10-21T14:22:07Z\",\"number\":2926},{\"baseRefName\":\"RT-2861-ui-kit-v2-pickers\",\"headRefName\":\"RT-2924-place-root-background\",\"headRefOid\":\"2beb36b396f443ce2b5e0b77f9846e610e468886\",\"mergedAt\":\"2026-10-21T12:51:39Z\",\"number\":2925},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2921-popover-short-panel\",\"headRefOid\":\"6554ac6301cfc027713cc603509f9ee96235e435\",\"mergedAt\":\"2026-10-21T11:15:29Z\",\"number\":2923},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2919-copy-cell-first-hover\",\"headRefOid\":\"c8895c9979ce53c1a8321fdc6debd58ed34dc3d3\",\"mergedAt\":\"2026-10-21T11:08:42Z\",\"number\":2920},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2913-kit2-place-width\",\"headRefOid\":\"0fdcb6a437bcfb550b3318b569b9591803089056\",\"mergedAt\":\"2026-10-21T09:10:45Z\",\"number\":2916},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2914-page-header-more-numbers\",\"headRefOid\":\"b0e894474e547c326a7c1636af9062330cc4104b\",\"mergedAt\":\"2026-10-21T09:09:52Z\",\"number\":2915},{\"baseRefName\":\"RT-2861-ui-kit-v2-pickers\",\"headRefName\":\"RT-2872-ui-kit-v2-dynamic-selector-parts\",\"headRefOid\":\"313309c8987d1af50cc1b6c86ddb66661000b05f\",\"mergedAt\":\"2026-10-21T01:29:03Z\",\"number\":2912},{\"baseRefName\":\"RT-2861-ui-kit-v2-pickers\",\"headRefName\":\"RT-2871-ui-kit-v2-picker-arrows\",\"headRefOid\":\"1af14e6d76766e26b8dda18d0970fd0403ce5a68\",\"mergedAt\":\"2026-10-21T01:28:34Z\",\"number\":2911},{\"baseRefName\":\"RT-2861-ui-kit-v2-pickers\",\"headRefName\":\"RT-2870-ui-kit-v2-option-list-controller\",\"headRefOid\":\"84c24b3cd40e509c7935bedd32a0d5772053a845\",\"mergedAt\":\"2026-10-21T01:28:10Z\",\"number\":2910},{\"baseRefName\":\"RT-2861-ui-kit-v2-pickers\",\"headRefName\":\"RT-2869-ui-kit-v2-one-match-rule\",\"headRefOid\":\"15a8bb81c662797d1909d166b7a855ddec7ccafc\",\"mergedAt\":\"2026-10-21T01:27:50Z\",\"number\":2909},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2903-page-header-more\",\"headRefOid\":\"92f557633d017e43c106a8fa65a66a0f261e748c\",\"mergedAt\":\"2026-10-21T01:27:25Z\",\"number\":2908},{\"baseRefName\":\"RT-2861-ui-kit-v2-pickers\",\"headRefName\":\"RT-2868-ui-kit-v2-tree-walk-module\",\"headRefOid\":\"0fcf3d8782875df30f0ee56063f3900f6682ffa1\",\"mergedAt\":\"2026-10-20T15:17:21Z\",\"number\":2906},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2904-kit2-card-media\",\"headRefOid\":\"ba2149b5a6ea9ad0530aa8d306ed86783a93bf28\",\"mergedAt\":\"2026-10-20T15:42:53Z\",\"number\":2905},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2899-kit2-service-logo\",\"headRefOid\":\"49b3d89d380b1a17dfcfd48c03f6de53465dfaea\",\"mergedAt\":\"2026-10-20T14:42:47Z\",\"number\":2902},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2896-ui-kit-v2-showcase-groups\",\"headRefOid\":\"57dd253b565881a1d720f5f3b4a4b79b760c74ce\",\"mergedAt\":\"2026-10-20T13:52:25Z\",\"number\":2901},{\"baseRefName\":\"RT-2896-ui-kit-v2-showcase-groups\",\"headRefName\":\"RT-2894-showcase-small-molecules\",\"headRefOid\":\"5035c650cacb6ac4bafc32cdc5337df3246206bf\",\"mergedAt\":\"2026-10-20T13:26:05Z\",\"number\":2900},{\"baseRefName\":\"RT-2896-ui-kit-v2-showcase-groups\",\"headRefName\":\"RT-2893-showcase-chat-molecules\",\"headRefOid\":\"3bef1e96d02091642748e49b7d06660638a64ef4\",\"mergedAt\":\"2026-10-20T12:07:49Z\",\"number\":2898},{\"baseRefName\":\"RT-2896-ui-kit-v2-showcase-groups\",\"headRefName\":\"RT-2892-showcase-forms-molecules\",\"headRefOid\":\"3970d69d7cb49b97315a16575e48a79aa85de8fc\",\"mergedAt\":\"2026-10-20T10:35:26Z\",\"number\":2897},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2888-pdf-viewer-fixes\",\"headRefOid\":\"d192aa10d59e63c6b28249ea1e557ee73c3869cd\",\"mergedAt\":\"2026-10-19T07:45:37Z\",\"number\":2889},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2884-pdf-viewer\",\"headRefOid\":\"3949c423279f78290128b8dd65b5a8f03b656b31\",\"mergedAt\":\"2026-10-19T07:05:58Z\",\"number\":2887},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2885-ai-chat-content-width\",\"headRefOid\":\"33d4f1845fcf0e07179a5353d35fb905e0f80294\",\"mergedAt\":\"2026-10-19T06:55:45Z\",\"number\":2886},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2843-cargo-october\",\"headRefOid\":\"4b8f418d5b50080190d3cc8e73d4d2138b246fae\",\"mergedAt\":\"2026-10-15T11:02:39Z\",\"number\":2859},{\"baseRefName\":\"RT-2843-cargo-october\",\"headRefName\":\"RT-2848-cargo-mockups-trait\",\"headRefOid\":\"8f56b602e109c53faf1e79e553d577df82711e76\",\"mergedAt\":\"2026-10-15T07:53:50Z\",\"number\":2858},{\"baseRefName\":\"RT-2843-cargo-october\",\"headRefName\":\"RT-2847-cargo-ceiling\",\"headRefOid\":\"41ab41913d337f4b82b739aac08415da9f599448\",\"mergedAt\":\"2026-10-15T06:38:03Z\",\"number\":2857},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2854-profile-menu-docs\",\"headRefOid\":\"d118a86320e6be37be1297398bb1db880c76a9b6\",\"mergedAt\":\"2026-10-15T05:58:05Z\",\"number\":2855},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2852-profile-menu-tokens\",\"headRefOid\":\"e61470f2ec84360b04e3cbf3aeaf44b40e2110af\",\"mergedAt\":\"2026-10-15T05:15:26Z\",\"number\":2853},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2842-profile-menu\",\"headRefOid\":\"bbe67aca123822ba36f83305af141474fd3544b3\",\"mergedAt\":\"2026-10-15T05:04:59Z\",\"number\":2851},{\"baseRefName\":\"RT-2843-cargo-october\",\"headRefName\":\"RT-2846-cargo-texts\",\"headRefOid\":\"8e7e3b5b60683a5c383c99f04d5951b16333f511\",\"mergedAt\":\"2026-10-15T04:55:22Z\",\"number\":2850},{\"baseRefName\":\"RT-2843-cargo-october\",\"headRefName\":\"RT-2845-cargo-hooks-code\",\"headRefOid\":\"c9c2c3f2b4bb1f5afe93781935a6caf1b247503d\",\"mergedAt\":\"2026-10-15T04:13:34Z\",\"number\":2849},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2841-kc-register-title-ru\",\"headRefOid\":\"2578abec24c9da2ba79d4e2da87cf38aebb98bc5\",\"mergedAt\":\"2026-10-15T03:31:00Z\",\"number\":2844},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2839-kc-theme-cache-bust\",\"headRefOid\":\"1ae349477a582eaa2cff24f4263e504ab6407da7\",\"mergedAt\":\"2026-10-14T15:28:21Z\",\"number\":2840},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2837-kc-register-page\",\"headRefOid\":\"1efe762d6312dcbdf7aa9a467c998b373bc3bd06\",\"mergedAt\":\"2026-10-14T14:13:54Z\",\"number\":2838},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2822-deps-vulns\",\"headRefOid\":\"8e4769d84dfbad849c61d213f749402c889f8b9e\",\"mergedAt\":\"2026-10-14T13:26:07Z\",\"number\":2835},{\"baseRefName\":\"RT-2822-deps-vulns\",\"headRefName\":\"RT-2825-vulns-3\",\"headRefOid\":\"2c3cc28656d0cf47e73697eb776ffad07c2934c9\",\"mergedAt\":\"2026-10-14T12:12:50Z\",\"number\":2834},{\"baseRefName\":\"RT-2822-deps-vulns\",\"headRefName\":\"RT-2831-bottom-sheet-tokens\",\"headRefOid\":\"bca22fc058ae5723a7ece6a67148f093e7e3533c\",\"mergedAt\":\"2026-10-14T10:54:47Z\",\"number\":2833},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2830-thread-list-search-width\",\"headRefOid\":\"b60105a60656c48f3f8f80cf0ec0bf4b92c2927f\",\"mergedAt\":\"2026-10-14T10:14:22Z\",\"number\":2832},{\"baseRefName\":\"RT-2822-deps-vulns\",\"headRefName\":\"RT-2824-vulns-2\",\"headRefOid\":\"8a9ae555ad8f6d4e084c3d55edbfa17e54879f52\",\"mergedAt\":\"2026-10-14T09:36:46Z\",\"number\":2829},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2827-bottom-sheet-footer\",\"headRefOid\":\"124a3008da108696110006347e69453c29e0ebd5\",\"mergedAt\":\"2026-10-14T09:19:43Z\",\"number\":2828},{\"baseRefName\":\"RT-2822-deps-vulns\",\"headRefName\":\"RT-2823-vulns-1\",\"headRefOid\":\"461f94af471469a27374c50421bedc8b6cb1e201\",\"mergedAt\":\"2026-10-14T08:53:09Z\",\"number\":2826},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2765-deps-latest\",\"headRefOid\":\"5d2fc42b9a6d391f71d5eb05e33a0641ed851323\",\"mergedAt\":\"2026-10-14T06:30:56Z\",\"number\":2818},{\"baseRefName\":\"RT-2765-deps-latest\",\"headRefName\":\"RT-2784-theme-switch-flaky\",\"headRefOid\":\"67b3c1d5d632bdd73884095e36e96f87e2a8f229\",\"mergedAt\":\"2026-10-14T05:27:43Z\",\"number\":2817},{\"baseRefName\":\"RT-2765-deps-latest\",\"headRefName\":\"RT-2793-v2-index-missing-stories\",\"headRefOid\":\"ec9d04c69543bf74e182ca0d4ba1f95ff7d2475d\",\"mergedAt\":\"2026-10-13T13:35:15Z\",\"number\":2815},{\"baseRefName\":\"RT-2765-deps-latest\",\"headRefName\":\"RT-2811-spec-types-utils\",\"headRefOid\":\"8aaa5766fe7faede72a8358cc55fbf1cd8e189be\",\"mergedAt\":\"2026-10-13T12:08:00Z\",\"number\":2814},{\"baseRefName\":\"RT-2765-deps-latest\",\"headRefName\":\"RT-2805-spec-types-servers\",\"headRefOid\":\"7b4e6f73e271919088c306d214e73669a14827c1\",\"mergedAt\":\"2026-10-13T11:36:29Z\",\"number\":2813},{\"baseRefName\":\"RT-2765-deps-latest\",\"headRefName\":\"RT-2777-deps-changelog-cli\",\"headRefOid\":\"25a7ce746b057cabfc1ff499cea952db1ce1e9ab\",\"mergedAt\":\"2026-10-13T10:05:00Z\",\"number\":2810},{\"baseRefName\":\"RT-2765-deps-latest\",\"headRefName\":\"RT-2776-deps-types-node\",\"headRefOid\":\"65d01bba4d153d910c14635c2676af1116995cb0\",\"mergedAt\":\"2026-10-13T09:07:03Z\",\"number\":2809},{\"baseRefName\":\"RT-2765-deps-latest\",\"headRefName\":\"RT-2775-deps-wds\",\"headRefOid\":\"ff8e0fcfa39e819daa063703b0d8334577197147\",\"mergedAt\":\"2026-10-13T07:44:49Z\",\"number\":2808},{\"baseRefName\":\"RT-2765-deps-latest\",\"headRefName\":\"RT-2774-deps-vitest\",\"headRefOid\":\"5c7c1e825adb1622f5aa191827817a94cc3d0010\",\"mergedAt\":\"2026-10-13T06:24:17Z\",\"number\":2807},{\"baseRefName\":\"RT-2765-deps-latest\",\"headRefName\":\"RT-2773-deps-nest\",\"headRefOid\":\"00c396863099426364210b12c735f890899d8bfd\",\"mergedAt\":\"2026-10-13T06:24:00Z\",\"number\":2806},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2542-kit2-app-parts\",\"headRefOid\":\"3895e636743c4742bce64e5ba4e60c84857467ff\",\"mergedAt\":\"2026-10-13T06:23:42Z\",\"number\":2804},{\"baseRefName\":\"RT-2765-deps-latest\",\"headRefName\":\"RT-2772-deps-theme-kit\",\"headRefOid\":\"8717e936bdfda2e79e9b3606d379fca1ed15aac7\",\"mergedAt\":\"2026-10-13T04:30:33Z\",\"number\":2803},{\"baseRefName\":\"RT-2542-kit2-app-parts\",\"headRefName\":\"RT-2764-kit2-trees-material\",\"headRefOid\":\"41a358a62bd3c591f1b98a21d0dae95fd8c3506f\",\"mergedAt\":\"2026-10-13T03:50:52Z\",\"number\":2802},{\"baseRefName\":\"RT-2542-kit2-app-parts\",\"headRefName\":\"RT-2556-kit2-carousel\",\"headRefOid\":\"15ac64db7f6f71490039e487cc2558706e2d7be1\",\"mergedAt\":\"2026-10-13T03:50:33Z\",\"number\":2801},{\"baseRefName\":\"RT-2542-kit2-app-parts\",\"headRefName\":\"RT-2555-kit2-color-palette\",\"headRefOid\":\"4d6172631ecdbc1e136c0101f075d7530148b134\",\"mergedAt\":\"2026-10-13T03:50:15Z\",\"number\":2800},{\"baseRefName\":\"RT-2542-kit2-app-parts\",\"headRefName\":\"RT-2554-kit2-speed-menu\",\"headRefOid\":\"fee378fe5aa9700323bba58c0cbc34c1abb4f2c7\",\"mergedAt\":\"2026-10-13T03:58:11Z\",\"number\":2799},{\"baseRefName\":\"RT-2542-kit2-app-parts\",\"headRefName\":\"RT-2553-kit2-inline-edit\",\"headRefOid\":\"14c6017e14685b61b632e8a80d38e939fcd1a8dd\",\"mergedAt\":\"2026-10-13T03:49:27Z\",\"number\":2798},{\"baseRefName\":\"RT-2542-kit2-app-parts\",\"headRefName\":\"RT-2552-kit2-breadcrumbs\",\"headRefOid\":\"e8adb5ff6e979804c8b187a0e8ebf2d22d988576\",\"mergedAt\":\"2026-10-12T16:16:08Z\",\"number\":2797},{\"baseRefName\":\"RT-2542-kit2-app-parts\",\"headRefName\":\"RT-2788-kit2-tooltip-keep-on-click\",\"headRefOid\":\"6de54277bab76c7d1efc6a93a037a254ff507514\",\"mergedAt\":\"2026-10-12T15:35:21Z\",\"number\":2796},{\"baseRefName\":\"RT-2765-deps-latest\",\"headRefName\":\"RT-2771-deps-icons\",\"headRefOid\":\"4ade56c168f6cd174f51373a1a80bce16cb79c4a\",\"mergedAt\":\"2026-10-12T15:34:45Z\",\"number\":2795},{\"baseRefName\":\"RT-2542-kit2-app-parts\",\"headRefName\":\"RT-2791-kit2-toolbar-select-width\",\"headRefOid\":\"36d49b8fbe32f0e120aee64b46642d9f8050a290\",\"mergedAt\":\"2026-10-12T15:34:25Z\",\"number\":2794},{\"baseRefName\":\"RT-2765-deps-latest\",\"headRefName\":\"RT-2770-deps-sass\",\"headRefOid\":\"2c79f9104c38c97e17334695caeac161461e8652\",\"mergedAt\":\"2026-10-12T14:15:09Z\",\"number\":2792},{\"baseRefName\":\"RT-2765-deps-latest\",\"headRefName\":\"RT-2769-deps-material\",\"headRefOid\":\"414a7247a7a831f87b82cac176d1022ee7fdf463\",\"mergedAt\":\"2026-10-12T14:14:57Z\",\"number\":2790},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2786-toolbar-field-width\",\"headRefOid\":\"6c5df082fb7bbbc26e349cc8223d8137fbfeef96\",\"mergedAt\":\"2026-10-12T10:57:00Z\",\"number\":2787},{\"baseRefName\":\"RT-2765-deps-latest\",\"headRefName\":\"RT-2783-usage-panel-shot\",\"headRefOid\":\"4c35968538955535e51a6c98cd499e8d4a0b8616\",\"mergedAt\":\"2026-10-12T09:50:50Z\",\"number\":2785},{\"baseRefName\":\"RT-2765-deps-latest\",\"headRefName\":\"RT-2768-deps-angular\",\"headRefOid\":\"d0d14df868aa21884e23b608a4b8c4defdc7bc14\",\"mergedAt\":\"2026-10-12T09:50:31Z\",\"number\":2782},{\"baseRefName\":\"RT-2765-deps-latest\",\"headRefName\":\"RT-2767-deps-tooling\",\"headRefOid\":\"5d919b755924b7fa82985b1d891155d9183efe7a\",\"mergedAt\":\"2026-10-12T06:49:02Z\",\"number\":2781},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2779-page-header-gutter\",\"headRefOid\":\"2d67e26a02e2efce4a824020b5a88097b010b490\",\"mergedAt\":\"2026-10-12T06:48:11Z\",\"number\":2780},{\"baseRefName\":\"RT-2765-deps-latest\",\"headRefName\":\"RT-2766-deps-rt-tools\",\"headRefOid\":\"d033292b9fc2179d4c597f8eb983a3b99da30c38\",\"mergedAt\":\"2026-10-12T05:15:45Z\",\"number\":2778},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2762-changelog-split-off-by-one\",\"headRefOid\":\"d939baf053de34929c1bc17f27c26bac8bbd6d8c\",\"mergedAt\":\"2026-10-10T07:26:43Z\",\"number\":2763},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2755-handover-read-from-host\",\"headRefOid\":\"a316aabf26d2d81f63893c47246ef03a0336da64\",\"mergedAt\":\"2026-10-10T06:04:32Z\",\"number\":2760},{\"baseRefName\":\"RT-2755-handover-read-from-host\",\"headRefName\":\"RT-2757-merge-reads-ci\",\"headRefOid\":\"81fb057e5dfa0bb024088d1c6d7a757cc2afa1aa\",\"mergedAt\":\"2026-10-10T05:24:28Z\",\"number\":2759},{\"baseRefName\":\"RT-2755-handover-read-from-host\",\"headRefName\":\"RT-2756-pr-needs-closes\",\"headRefOid\":\"8b18e677512f341106b8825372cad7b696a064c3\",\"mergedAt\":\"2026-10-10T05:24:17Z\",\"number\":2758},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2753-no-tgz-in-package\",\"headRefOid\":\"36207b014accca67333f3fc85afd1df88bd94111\",\"mergedAt\":\"2026-10-10T03:13:22Z\",\"number\":2754},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2686-cargo-layer-texts-deploy\",\"headRefOid\":\"7d810daa2fabd2fc0f2e5c4237045f33cad32f17\",\"mergedAt\":\"2026-10-10T02:32:28Z\",\"number\":2752},{\"baseRefName\":\"RT-2686-cargo-layer-texts-deploy\",\"headRefName\":\"RT-2741-cargo-package-commands\",\"headRefOid\":\"4617a88b4950c163fe5d4092d6c6480e555026cf\",\"mergedAt\":\"2026-10-09T14:55:58Z\",\"number\":2751},{\"baseRefName\":\"RT-2686-cargo-layer-texts-deploy\",\"headRefName\":\"RT-2740-cargo-hook-guards\",\"headRefOid\":\"832a10249999cfbc89200985416cfb1cf5c94435\",\"mergedAt\":\"2026-10-09T13:48:13Z\",\"number\":2749},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2742-kit2-app-rows-122-132\",\"headRefOid\":\"0381f27485df8778323f5da5521ce1d355a15c16\",\"mergedAt\":\"2026-10-09T14:55:27Z\",\"number\":2748},{\"baseRefName\":\"RT-2686-cargo-layer-texts-deploy\",\"headRefName\":\"RT-2739-cargo-human-texts\",\"headRefOid\":\"7208d02a58d85091b337e47f3f70de2a4d3430ab\",\"mergedAt\":\"2026-10-09T13:29:59Z\",\"number\":2747},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2681-cargo-tests-and-view\",\"headRefOid\":\"1786ef522a031a9e0beac44e895eec1417546235\",\"mergedAt\":\"2026-10-09T14:55:05Z\",\"number\":2746},{\"baseRefName\":\"RT-2686-cargo-layer-texts-deploy\",\"headRefName\":\"RT-2738-cargo-deploy-build\",\"headRefOid\":\"f5dfe6297756aa2eef3dd0f02d904343d0c9b38b\",\"mergedAt\":\"2026-10-09T13:00:40Z\",\"number\":2745},{\"baseRefName\":\"RT-2686-cargo-layer-texts-deploy\",\"headRefName\":\"RT-2737-cargo-rule-texts\",\"headRefOid\":\"91f5bc0c9fac5dc150ef5b5eccafe91c2fd09a78\",\"mergedAt\":\"2026-10-09T12:39:21Z\",\"number\":2744},{\"baseRefName\":\"RT-2686-cargo-layer-texts-deploy\",\"headRefName\":\"RT-2688-cargo-layer-texts\",\"headRefOid\":\"3f2e5dacaaebab8f25501de30e0ffacab72c653a\",\"mergedAt\":\"2026-10-09T12:38:59Z\",\"number\":2743},{\"baseRefName\":\"RT-2681-cargo-tests-and-view\",\"headRefName\":\"RT-2685-cargo-icon-names-bem\",\"headRefOid\":\"49dedcebf8ddb7f37b7610cb0d17a449a23f180b\",\"mergedAt\":\"2026-10-09T11:27:56Z\",\"number\":2736},{\"baseRefName\":\"RT-2681-cargo-tests-and-view\",\"headRefName\":\"RT-2684-cargo-browser-verification\",\"headRefOid\":\"aecc716bbcf3e34c2ce65b90b41e6a0b27f369d7\",\"mergedAt\":\"2026-10-09T11:25:31Z\",\"number\":2735},{\"baseRefName\":\"RT-2681-cargo-tests-and-view\",\"headRefName\":\"RT-2683-cargo-testing-unit\",\"headRefOid\":\"2064418e89b26fdbdbdfe6ca2ca4797adbd926bf\",\"mergedAt\":\"2026-10-09T11:22:37Z\",\"number\":2734},{\"baseRefName\":\"RT-2681-cargo-tests-and-view\",\"headRefName\":\"RT-2682-cargo-testing-e2e\",\"headRefOid\":\"d3d08c23829a3943cc2b3bbff194def7ca953597\",\"mergedAt\":\"2026-10-09T10:27:10Z\",\"number\":2733},{\"baseRefName\":\"RT-2681-cargo-tests-and-view\",\"headRefName\":\"RT-2730-menu-answer-forms\",\"headRefOid\":\"fe45dd69c8befe6b80ac6c62f3e513ff84f75aec\",\"mergedAt\":\"2026-10-09T10:26:53Z\",\"number\":2732},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2729-ai-chat-thread-menu\",\"headRefOid\":\"8f81042de04d87914e99d93b40239f469248a824\",\"mergedAt\":\"2026-10-09T09:31:50Z\",\"number\":2731},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2722-ai-chat-header-icons\",\"headRefOid\":\"0018dd05faefc12f632f30e7528da9d4b52e1b8b\",\"mergedAt\":\"2026-10-09T08:01:10Z\",\"number\":2728},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2720-ai-chat-copy\",\"headRefOid\":\"24545a83f46d54e246e1e33097b807b1c49032d0\",\"mergedAt\":\"2026-10-09T08:00:46Z\",\"number\":2727},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2674-cargo-delivery\",\"headRefOid\":\"0e0df445892f0f9b278cee15ab1c12dea5ca1216\",\"mergedAt\":\"2026-10-09T08:25:20Z\",\"number\":2726},{\"baseRefName\":\"RT-2674-cargo-delivery\",\"headRefName\":\"RT-2680-cargo-push-gate-runs\",\"headRefOid\":\"6fc5e0a54cef679f788650113f6440c9fc35fca7\",\"mergedAt\":\"2026-10-09T07:52:49Z\",\"number\":2725},{\"baseRefName\":\"RT-2674-cargo-delivery\",\"headRefName\":\"RT-2679-cargo-task-flow-start\",\"headRefOid\":\"930076c56eb69868369cf6d1fe286074eee78974\",\"mergedAt\":\"2026-10-09T06:26:59Z\",\"number\":2724},{\"baseRefName\":\"RT-2674-cargo-delivery\",\"headRefName\":\"RT-2678-cargo-git-commit-pitfalls\",\"headRefOid\":\"defa36e5452472ba77cd7a9414d64f108405893e\",\"mergedAt\":\"2026-10-09T06:26:38Z\",\"number\":2723},{\"baseRefName\":\"RT-2674-cargo-delivery\",\"headRefName\":\"RT-2677-cargo-git-workflow-github\",\"headRefOid\":\"348b33db6f3bc9f275815986f3e8d583312ce03f\",\"mergedAt\":\"2026-10-09T05:20:26Z\",\"number\":2721},{\"baseRefName\":\"RT-2674-cargo-delivery\",\"headRefName\":\"RT-2676-cargo-task-flow-close\",\"headRefOid\":\"e31ff34454b445d9a43dd0dc221099ea7773ea9a\",\"mergedAt\":\"2026-10-09T05:19:41Z\",\"number\":2719},{\"baseRefName\":\"RT-2674-cargo-delivery\",\"headRefName\":\"RT-2675-cargo-board-pull-closes\",\"headRefOid\":\"e86656f2321d8bf38416a834df31901fab22a3b7\",\"mergedAt\":\"2026-10-09T05:19:17Z\",\"number\":2718},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2714-thread-list-preview-icons\",\"headRefOid\":\"dba323c0ac98fc7d59f4a7eb23d8bd6baac968b2\",\"mergedAt\":\"2026-10-09T04:05:55Z\",\"number\":2717},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2665-cargo-turn-guards\",\"headRefOid\":\"353d2fc0eac55e215b8cc86cceb05598eb8b8a5b\",\"mergedAt\":\"2026-10-09T05:20:07Z\",\"number\":2716},{\"baseRefName\":\"RT-2665-cargo-turn-guards\",\"headRefName\":\"RT-2673-cargo-bypass-question-check\",\"headRefOid\":\"2be40a8a31094f00e33a8ecf992b856898f7fec9\",\"mergedAt\":\"2026-10-09T03:33:04Z\",\"number\":2715},{\"baseRefName\":\"RT-2665-cargo-turn-guards\",\"headRefName\":\"RT-2672-cargo-turn-conduct-orders\",\"headRefOid\":\"b607f1d192bc010a2dd7959566ad612a6bed0c82\",\"mergedAt\":\"2026-10-09T03:19:56Z\",\"number\":2713},{\"baseRefName\":\"RT-2665-cargo-turn-guards\",\"headRefName\":\"RT-2671-cargo-turn-exit-reasons\",\"headRefOid\":\"f5917ec3f626a93c77c3427c4df1b64ee232e794\",\"mergedAt\":\"2026-10-09T03:07:47Z\",\"number\":2712},{\"baseRefName\":\"RT-2665-cargo-turn-guards\",\"headRefName\":\"RT-2670-cargo-claim-guard-parse\",\"headRefOid\":\"6d3a5fe640d0823619c395564af1b7de8d1f207c\",\"mergedAt\":\"2026-10-09T02:36:13Z\",\"number\":2711},{\"baseRefName\":\"RT-2665-cargo-turn-guards\",\"headRefName\":\"RT-2669-cargo-done-without-answer\",\"headRefOid\":\"606c95df7f2402c178b726936361a30a7f2ab61d\",\"mergedAt\":\"2026-10-09T02:35:10Z\",\"number\":2710},{\"baseRefName\":\"RT-2665-cargo-turn-guards\",\"headRefName\":\"RT-2668-cargo-grill-path-filter\",\"headRefOid\":\"2de7dc1be72110a08b1408e50198d6fc6af15b69\",\"mergedAt\":\"2026-10-09T01:44:15Z\",\"number\":2709},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2706-auth-init-timeout\",\"headRefOid\":\"286d8bf41d04cd8a635f703ad0f634aa3e630a37\",\"mergedAt\":\"2026-10-09T01:43:52Z\",\"number\":2708},{\"baseRefName\":\"RT-2665-cargo-turn-guards\",\"headRefName\":\"RT-2667-cargo-grill-second-sign\",\"headRefOid\":\"4c0a68bb2858579ee10dc9497563a08f04bd0295\",\"mergedAt\":\"2026-10-09T01:43:23Z\",\"number\":2707},{\"baseRefName\":\"RT-2665-cargo-turn-guards\",\"headRefName\":\"RT-2666-cargo-grill-refusal-names-rules\",\"headRefOid\":\"581d20cb909e2abf89f228f1b8ee70261de4edf1\",\"mergedAt\":\"2026-10-09T01:43:02Z\",\"number\":2705},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2659-cargo-shell-edits-prose\",\"headRefOid\":\"65e5581448d8012f9c73f8783c9f54395353b6e2\",\"mergedAt\":\"2026-10-09T00:48:54Z\",\"number\":2704},{\"baseRefName\":\"RT-2659-cargo-shell-edits-prose\",\"headRefName\":\"RT-2664-cargo-pattern-binding\",\"headRefOid\":\"7adc4cb088ec3c252a82edee01cde8cd111b0922\",\"mergedAt\":\"2026-10-08T14:01:24Z\",\"number\":2703},{\"baseRefName\":\"RT-2659-cargo-shell-edits-prose\",\"headRefName\":\"RT-2701-table-spec-split\",\"headRefOid\":\"fb747959d967b06b5ff20e1f50374dd3ebfe3481\",\"mergedAt\":\"2026-10-08T13:50:14Z\",\"number\":2702},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2698-select-filter-focus\",\"headRefOid\":\"759bdabb42f9043bae749d7eaef96c06d64b5f48\",\"mergedAt\":\"2026-10-08T13:16:39Z\",\"number\":2700},{\"baseRefName\":\"RT-2659-cargo-shell-edits-prose\",\"headRefName\":\"RT-2663-cargo-shell-sed-gate-map\",\"headRefOid\":\"fbaebeb3576490b4c4e3647e474c8837ffd894c5\",\"mergedAt\":\"2026-10-08T13:04:06Z\",\"number\":2699},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2695-ai-run-status-shimmer\",\"headRefOid\":\"103c0b1857fdc4d0183e9d6981f5d9b920630f2b\",\"mergedAt\":\"2026-10-08T12:59:55Z\",\"number\":2697},{\"baseRefName\":\"RT-2659-cargo-shell-edits-prose\",\"headRefName\":\"RT-2694-story-wrappers-own-html\",\"headRefOid\":\"7525ef74208d51a623c1c4e68a7585c0846cf3a2\",\"mergedAt\":\"2026-10-08T12:40:13Z\",\"number\":2696},{\"baseRefName\":\"RT-2659-cargo-shell-edits-prose\",\"headRefName\":\"RT-2662-cargo-glossary-two-columns\",\"headRefOid\":\"8fbf879db121776ebdbdee6196dfdeb3d5386308\",\"mergedAt\":\"2026-10-08T12:39:50Z\",\"number\":2693},{\"baseRefName\":\"main\",\"headRefName\":\"RT-2649-ai-assistant-chat\",\"headRefOid\":\"1d93a7e164c426882f484dc27848d55f16c0117b\",\"mergedAt\":\"2026-10-08T12:08:20Z\",\"number\":2692},{\"baseRefName\":\"RT-2649-ai-assistant-chat\",\"headRefName\":\"RT-2654-ai-chat-organism\",\"headRefOid\":\"8f533ef1cd511ced21424d1901b304cf14dad075\",\"mergedAt\":\"2026-10-08T12:01:11Z\",\"number\":2691},{\"baseRefName\":\"RT-2659-cargo-shell-edits-prose\",\"headRefName\":\"RT-2661-cargo-doc-length-chars\",\"headRefOid\":\"6d3ee418991972d5784d5d56a7654188829db94e\",\"mergedAt\":\"2026-10-08T12:00:52Z\",\"number\":2690},{\"baseRefName\":\"RT-2659-cargo-shell-edits-prose\",\"headRefName\":\"RT-2660-cargo-edit-tool-not-shell\",\"headRefOid\":\"b083b271a0cfbef62b39b77479adfa855ba0ecaa\",\"mergedAt\":\"2026-10-08T11:39:37Z\",\"number\":2689}]",
  "stderr": "",
- "json": {
-  "body": "## Что не так\n\nПеред первой правкой файла новой области агент получает отказ: «загрузи правило такое-то и повтори». За неделю 07.11–13.11 таких отказов было около 560 по стенограммам — больше, чем у всех проверок разговора вместе. Каждый отказ — лишний круг: отказ, загрузка правила, повтор правки. Владелец видит, что агент топчется на месте.\n\nПочти каждый отказ кончается загрузкой правила: за 14.10–14.11 в журнале 1144 отказа шлюза и 1143 загрузки правил. Отказ ничего не ловит, он только откладывает правку.\n\n## Что сделать\n\nШлюз правил не отказывает в правке, а сам кладёт нужное правило в контекст сессии и пропускает правку. Требование «правило прочитано до правки» остаётся, исчезает лишний круг.\n\n## Как понять, что готово\n\n- Правка файла новой области проходит с первого раза, а текст правила оказывается в контексте сессии.\n- Отказов шлюза правил за неделю после выпуска почти нет: остаются только случаи, где правило не найдено.\n\nСлово владельца: «Задача в RT-3302».\n\nЗадача эпика #3302, замысел — docs/plans/checks-rework-3.md",
-  "labels": [
-   {
-    "id": "LA_kwDOLEmP5M8AAAABfypk3A",
-    "name": "bug",
-    "description": "Something isn't working",
-    "color": "d73a4a"
-   }
-  ],
-  "number": 3326,
-  "state": "OPEN",
-  "title": "[RT-3326] Шлюз правил отказывает в правке вместо того, чтобы дать правило"
- }
+ "json": [
+  {
+   "baseRefName": "RT-3302-checks-rework-3",
+   "headRefName": "RT-3401-plan-red-on-plan-tree",
+   "headRefOid": "43e457b2106fbc0d3d66d6ed951e0876a8730686",
+   "mergedAt": "2026-11-19T06:14:56Z",
+   "number": 3414
+  },
+  {
+   "baseRefName": "RT-3302-checks-rework-3",
+   "headRefName": "RT-3392-long-rules-fit",
+   "headRefOid": "a8293eb2c3a2f0e874253cbfa4349d927a49d319",
+   "mergedAt": "2026-11-19T05:13:22Z",
+   "number": 3411
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3408-task-delivery-loop",
+   "headRefOid": "db6643c8ddac15d6e0b4e0e42d28683b45d6c59e",
+   "mergedAt": "2026-11-19T05:20:56Z",
+   "number": 3409
+  },
+  {
+   "baseRefName": "RT-3336-ai-chat-chart-data",
+   "headRefName": "RT-3337-ai-chat-table-block",
+   "headRefOid": "079d87c7e3d5d5fc6a9f8727253f474a37c90cb1",
+   "mergedAt": "2026-11-19T04:51:50Z",
+   "number": 3407
+  },
+  {
+   "baseRefName": "RT-3302-checks-rework-3",
+   "headRefName": "RT-3352-consent-by-prompt",
+   "headRefOid": "fb7360b9181a4b92b11854ffa25755a7b559e5a7",
+   "mergedAt": "2026-11-19T02:58:39Z",
+   "number": 3406
+  },
+  {
+   "baseRefName": "RT-3332-step-mark-signature",
+   "headRefName": "RT-3395-next-task-skips-foreign-copy",
+   "headRefOid": "6feaa28e601c9977c1771682a7efe95467b58c39",
+   "mergedAt": "2026-11-19T02:18:58Z",
+   "number": 3405
+  },
+  {
+   "baseRefName": "RT-3302-checks-rework-3",
+   "headRefName": "RT-3332-step-mark-signature",
+   "headRefOid": "7af1a510b787978ced1f43fa35e18ccac5cc1690",
+   "mergedAt": "2026-11-19T02:19:12Z",
+   "number": 3403
+  },
+  {
+   "baseRefName": "RT-3335-ai-chat-chart-block",
+   "headRefName": "RT-3336-ai-chat-chart-data",
+   "headRefOid": "9db10fd059454993d71ac0ee0e03300d76a04753",
+   "mergedAt": "2026-11-19T04:52:02Z",
+   "number": 3402
+  },
+  {
+   "baseRefName": "RT-3346-ai-chat-blocks",
+   "headRefName": "RT-3335-ai-chat-chart-block",
+   "headRefOid": "ddc4a2850688f06fbe1e080029c679511b942065",
+   "mergedAt": "2026-11-19T04:52:14Z",
+   "number": 3398
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3390-kit-icon-tag-dot",
+   "headRefOid": "c43425de4a14f6c85bc7e72b5fc836b0d396f1f1",
+   "mergedAt": "2026-11-18T12:55:37Z",
+   "number": 3396
+  },
+  {
+   "baseRefName": "RT-3390-kit-icon-tag-dot",
+   "headRefName": "RT-3389-kit-icon-button-tag-dot",
+   "headRefOid": "25d4870d2642d17aa8ab3da8edcb7fce5fcadc5f",
+   "mergedAt": "2026-11-18T11:31:49Z",
+   "number": 3394
+  },
+  {
+   "baseRefName": "RT-3283-push-set-uselessness",
+   "headRefName": "RT-3326-rule-gate-gives-rule",
+   "headRefOid": "e9630f5b0f10f44e3da3a3be7d848d0a9b4eaa74",
+   "mergedAt": "2026-11-18T13:39:10Z",
+   "number": 3393
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3388-probe-pipeline-no-heavy",
+   "headRefOid": "e52109afebace2592cd17d86b460aa7602048d08",
+   "mergedAt": "2026-11-18T09:32:55Z",
+   "number": 3391
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3385-push-set-narrow-subjects",
+   "headRefOid": "c77ba5e2613b6e92588a21dcec2c45d94ef228c8",
+   "mergedAt": "2026-11-18T08:29:46Z",
+   "number": 3387
+  },
+  {
+   "baseRefName": "RT-3346-ai-chat-blocks",
+   "headRefName": "RT-2750-rt-chart",
+   "headRefOid": "aa3cbd0fa16874eca014bedb891e4cf3bd43d003",
+   "mergedAt": "2026-11-18T12:09:58Z",
+   "number": 3386
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3382-ai-chat-run-controller",
+   "headRefOid": "4e479dc1fd8a5f3ffa0bc78ab1206553e05f22e9",
+   "mergedAt": "2026-11-18T07:38:36Z",
+   "number": 3383
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3373-ci-schema-step-timeout",
+   "headRefOid": "f772f450952ad61e0e2939c6ae623d903bd0418a",
+   "mergedAt": "2026-11-18T07:22:37Z",
+   "number": 3381
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3378-package-release-harness",
+   "headRefOid": "61545115eed40aaea6fe8c8e293cf0926b361dc5",
+   "mergedAt": "2026-11-18T06:46:57Z",
+   "number": 3380
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3376-ai-chat-protocol-js-imports",
+   "headRefOid": "f546cfddda8d7b53544c703b662c9746436f5114",
+   "mergedAt": "2026-11-18T05:08:05Z",
+   "number": 3377
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3374-commitlint-scope-ai-chat-protocol",
+   "headRefOid": "8203432a47fd673f60559f7da0a222e68bd73faa",
+   "mergedAt": "2026-11-18T04:20:15Z",
+   "number": 3375
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3368-ai-chat-protocol",
+   "headRefOid": "68033407a3c969d92cba2bb003829b9b85e1939a",
+   "mergedAt": "2026-11-18T03:52:36Z",
+   "number": 3372
+  },
+  {
+   "baseRefName": "RT-3302-checks-rework-3",
+   "headRefName": "RT-3283-push-set-uselessness",
+   "headRefOid": "d4256de18c26bf648e0fb345a94424ec931a0f71",
+   "mergedAt": "2026-11-18T13:39:29Z",
+   "number": 3371
+  },
+  {
+   "baseRefName": "RT-3302-checks-rework-3",
+   "headRefName": "RT-3270-work-result-metrics",
+   "headRefOid": "7e73e6699509550bd46e12e257f516b423f043da",
+   "mergedAt": "2026-11-17T15:53:36Z",
+   "number": 3369
+  },
+  {
+   "baseRefName": "RT-3346-ai-chat-blocks",
+   "headRefName": "RT-3361-ai-chat-notice-alert",
+   "headRefOid": "00b3d6b2399f1ebc6fd69d8b9d7747358bfffb79",
+   "mergedAt": "2026-11-17T06:30:30Z",
+   "number": 3365
+  },
+  {
+   "baseRefName": "RT-3302-checks-rework-3",
+   "headRefName": "RT-3277-checks-real-record",
+   "headRefOid": "7c0cdca7a535dc14a4c50ae5f41243de6f043484",
+   "mergedAt": "2026-11-17T04:44:20Z",
+   "number": 3364
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3362-kit-approval-epic-branch",
+   "headRefOid": "0670c328ec74fc2644a2ab01db9e8682fe48d46b",
+   "mergedAt": "2026-11-17T06:28:39Z",
+   "number": 3363
+  },
+  {
+   "baseRefName": "RT-3302-checks-rework-3",
+   "headRefName": "RT-3355-hooks-read-table",
+   "headRefOid": "e8cb6b32608f9f684721c8b953c323ef352df085",
+   "mergedAt": "2026-11-16T22:35:29Z",
+   "number": 3360
+  },
+  {
+   "baseRefName": "RT-3346-ai-chat-blocks",
+   "headRefName": "RT-3334-ai-chat-blocks",
+   "headRefOid": "dfca99a2dccfbe1d3d356543384c098eb05dec84",
+   "mergedAt": "2026-11-17T03:34:03Z",
+   "number": 3359
+  },
+  {
+   "baseRefName": "RT-3302-checks-rework-3",
+   "headRefName": "RT-3275-decision-table",
+   "headRefOid": "283bd9acf89d7d0af820455b6cf0538254ba713b",
+   "mergedAt": "2026-11-16T14:52:46Z",
+   "number": 3358
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3348-thread-list-rows-touch",
+   "headRefOid": "323eede6f3d489354f9df9033bb69ed9a99cc97b",
+   "mergedAt": "2026-11-16T11:23:28Z",
+   "number": 3357
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3350-workspace-details-single",
+   "headRefOid": "bfbb963351cc2c4bc1e1e7ac2542f8a297acab70",
+   "mergedAt": "2026-11-16T09:31:32Z",
+   "number": 3356
+  },
+  {
+   "baseRefName": "RT-3302-checks-rework-3",
+   "headRefName": "RT-3271-owner-consent-window",
+   "headRefOid": "21abfedf418ee1f745b2969be3917f5f7ff33735",
+   "mergedAt": "2026-11-16T01:50:15Z",
+   "number": 3354
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3345-header-actions",
+   "headRefOid": "8e5ea4b332d05419500fc08a188a6aca2bd239c9",
+   "mergedAt": "2026-11-15T19:13:48Z",
+   "number": 3353
+  },
+  {
+   "baseRefName": "RT-3302-checks-rework-3",
+   "headRefName": "RT-3329-task-flow-scenario",
+   "headRefOid": "ff8c99f72ffe12ff789b1571927f6ed7875c813b",
+   "mergedAt": "2026-11-15T16:37:29Z",
+   "number": 3351
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3347-push-inputs-env",
+   "headRefOid": "55e983cf34e276818100130474eed3f62fc0f915",
+   "mergedAt": "2026-11-17T03:34:36Z",
+   "number": 3349
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3288-kit-error-states",
+   "headRefOid": "61db2380bddefc24c41e10d2eb139fbeb6b04248",
+   "mergedAt": "2026-11-15T02:37:02Z",
+   "number": 3330
+  },
+  {
+   "baseRefName": "RT-3288-kit-error-states",
+   "headRefName": "RT-3295-selectors-error-state",
+   "headRefOid": "6d468b0156377227317dbe9b21eef2dd5697eccc",
+   "mergedAt": "2026-11-14T15:49:28Z",
+   "number": 3328
+  },
+  {
+   "baseRefName": "RT-3288-kit-error-states",
+   "headRefName": "RT-3294-table-lists-error-state",
+   "headRefOid": "457434113ad999306c5de23ddffd0a7367d197f3",
+   "mergedAt": "2026-11-14T15:49:30Z",
+   "number": 3327
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3315-setting-tile",
+   "headRefOid": "3072aac8044108d5c5e3d046dbfe3e6eac313d62",
+   "mergedAt": "2026-11-14T14:39:47Z",
+   "number": 3325
+  },
+  {
+   "baseRefName": "RT-3288-kit-error-states",
+   "headRefName": "RT-3292-thread-list-error-state",
+   "headRefOid": "847f5eabc3f9a604769c7c75bc7450dc69dbf244",
+   "mergedAt": "2026-11-14T14:40:30Z",
+   "number": 3324
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3232-remove-ui-kit-v1",
+   "headRefOid": "a740a3fade8cf6aae7ba72f4176878bf5fc3b6ce",
+   "mergedAt": "2026-11-14T11:03:50Z",
+   "number": 3316
+  },
+  {
+   "baseRefName": "RT-3232-remove-ui-kit-v1",
+   "headRefName": "RT-3310-knip-findings",
+   "headRefOid": "34394ef1eb76d67bfc665ec074d08dbb7252166f",
+   "mergedAt": "2026-11-14T09:57:56Z",
+   "number": 3314
+  },
+  {
+   "baseRefName": "RT-3232-remove-ui-kit-v1",
+   "headRefName": "RT-3308-first-kit-leftovers-knip",
+   "headRefOid": "d6dab3905d6765c5ace08dc8ebc5a10220a9f240",
+   "mergedAt": "2026-11-14T07:57:57Z",
+   "number": 3312
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3309-auth-metrika-frame-src",
+   "headRefOid": "caa6612d7243fe83dd1980bc5e8c2767a3a58ce7",
+   "mergedAt": "2026-11-14T07:01:28Z",
+   "number": 3311
+  },
+  {
+   "baseRefName": "RT-3232-remove-ui-kit-v1",
+   "headRefName": "RT-3304-remove-ui-kit-v1",
+   "headRefOid": "3bb56b00ce99186c3e25b058661b76f8ab1419a9",
+   "mergedAt": "2026-11-14T05:17:20Z",
+   "number": 3307
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3301-auth-theme-counters",
+   "headRefOid": "081bb1d2e28391ebb31ddf2541b7c6cc15202bde",
+   "mergedAt": "2026-11-14T05:23:25Z",
+   "number": 3305
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3299-<project>-own-branch",
+   "headRefOid": "eb199075c8e4988c95e9169eef5cc11d8a3a8436",
+   "mergedAt": "2026-11-14T00:55:03Z",
+   "number": 3300
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3287-usage-all-trees",
+   "headRefOid": "2fb5988fcb3b24ee50bb54423129f7f2867123c9",
+   "mergedAt": "2026-11-14T01:10:43Z",
+   "number": 3298
+  },
+  {
+   "baseRefName": "RT-3293-checks-rework-2",
+   "headRefName": "RT-3296-always-run-steps",
+   "headRefOid": "6604fdd31435e2620a6b5a8393e104047f6c243b",
+   "mergedAt": "2026-11-14T01:10:21Z",
+   "number": 3297
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3269-checks-rework",
+   "headRefOid": "89da9b8a13df618f7b6ef2e7f57ef20b1ab37f29",
+   "mergedAt": "2026-11-13T14:55:56Z",
+   "number": 3291
+  },
+  {
+   "baseRefName": "RT-3269-checks-rework",
+   "headRefName": "RT-3273-push-checks-leave-session",
+   "headRefOid": "0ada8e46132e434169f08ccf798533ee55a14555",
+   "mergedAt": "2026-11-13T14:36:44Z",
+   "number": 3290
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3286-image-upload-remove",
+   "headRefOid": "aaaeceecbe55fa51761cf0d9a28d92608ed9370b",
+   "mergedAt": "2026-11-13T13:48:07Z",
+   "number": 3289
+  },
+  {
+   "baseRefName": "RT-3269-checks-rework",
+   "headRefName": "RT-3284-push-marks-by-what-step-reads",
+   "headRefOid": "cae27cdb000383d9a6641cb053e163c2ac5b74b9",
+   "mergedAt": "2026-11-13T08:27:20Z",
+   "number": 3285
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3267-workspace-overlay-header",
+   "headRefOid": "d9b06acb63e39de3e36d1b6242e6f7a58632a76c",
+   "mergedAt": "2026-11-13T06:07:36Z",
+   "number": 3281
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3227-agent-kit-revision-day1",
+   "headRefOid": "641fef7378655a9867f1bb76df576fd0f7284d88",
+   "mergedAt": "2026-11-13T05:48:08Z",
+   "number": 3279
+  },
+  {
+   "baseRefName": "RT-3227-agent-kit-revision-day1",
+   "headRefName": "RT-3268-epic-stop-consent-queue-audit",
+   "headRefOid": "e77fcced993596478b4db543cac952c2e7ea6086",
+   "mergedAt": "2026-11-13T04:49:28Z",
+   "number": 3278
+  },
+  {
+   "baseRefName": "RT-3227-agent-kit-revision-day1",
+   "headRefName": "RT-3220-deploy-cache-cleanup",
+   "headRefOid": "48bda725823ab06668f634a81849cd460f1be92c",
+   "mergedAt": "2026-11-13T00:34:01Z",
+   "number": 3266
+  },
+  {
+   "baseRefName": "RT-3227-agent-kit-revision-day1",
+   "headRefName": "RT-3219-delivery-rules-gitlab-azure",
+   "headRefOid": "fe4031c97ae414c69577b458019048b0aeb794a7",
+   "mergedAt": "2026-11-12T16:18:44Z",
+   "number": 3263
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3180-workspace-overlay-breakpoint",
+   "headRefOid": "3b320ece738f1ccb398a4d09e02be027dc720c57",
+   "mergedAt": "2026-11-12T13:58:26Z",
+   "number": 3257
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3231-push-base-of-pull",
+   "headRefOid": "5fbe3ff2b3b294783c230f7b6c83442d491b0621",
+   "mergedAt": "2026-11-12T11:27:48Z",
+   "number": 3256
+  },
+  {
+   "baseRefName": "RT-3178-chat-deleted-own-text",
+   "headRefName": "RT-3179-chat-translation-caption",
+   "headRefOid": "b1c642b9d3ded0234dbc271aa353cc38c141c8af",
+   "mergedAt": "2026-11-12T11:07:12Z",
+   "number": 3255
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3178-chat-deleted-own-text",
+   "headRefOid": "f09da2e116c8d94be12e58665e5efc95c32af505",
+   "mergedAt": "2026-11-12T11:44:37Z",
+   "number": 3230
+  },
+  {
+   "baseRefName": "RT-3227-agent-kit-revision-day1",
+   "headRefName": "RT-3197-rev-autonomous-work",
+   "headRefOid": "847348e4025edd8c592b7a99469c280c57c1c502",
+   "mergedAt": "2026-11-13T03:56:48Z",
+   "number": 3225
+  },
+  {
+   "baseRefName": "RT-3227-agent-kit-revision-day1",
+   "headRefName": "RT-3196-rev-verifiability",
+   "headRefOid": "cb5109c03af52ed3d7c6c9741912031ca73a4c65",
+   "mergedAt": "2026-11-12T14:02:33Z",
+   "number": 3224
+  },
+  {
+   "baseRefName": "RT-3227-agent-kit-revision-day1",
+   "headRefName": "RT-3195-rev-project-docs",
+   "headRefOid": "ad855980779cc92b79b3915456afc874327b80e2",
+   "mergedAt": "2026-11-12T09:55:19Z",
+   "number": 3223
+  },
+  {
+   "baseRefName": "RT-3227-agent-kit-revision-day1",
+   "headRefName": "RT-3194-rev-delivery",
+   "headRefOid": "b5b4ff8e397c16b71b764565c423a30a4e22ee78",
+   "mergedAt": "2026-11-12T08:01:56Z",
+   "number": 3222
+  },
+  {
+   "baseRefName": "RT-3227-agent-kit-revision-day1",
+   "headRefName": "RT-3193-rev-work-conduct",
+   "headRefOid": "8e8d2234cd91af3d0c963173a8a1b4b4d647809d",
+   "mergedAt": "2026-11-12T06:11:44Z",
+   "number": 3221
+  },
+  {
+   "baseRefName": "RT-3190-agent-kit-revision",
+   "headRefName": "RT-3192-rules-graph",
+   "headRefOid": "7a4ecee2265cc28145198d474f4f52c49bee73b4",
+   "mergedAt": "2026-11-11T14:38:55Z",
+   "number": 3213
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3188-stepper-any-step",
+   "headRefOid": "9cb4f5aa5c480c8e14e6d59a5a1cc0486a605a74",
+   "mergedAt": "2026-11-12T10:47:28Z",
+   "number": 3212
+  },
+  {
+   "baseRefName": "RT-3190-agent-kit-revision",
+   "headRefName": "RT-3191-code-graphs",
+   "headRefOid": "502c6358e5dce1fd757b3c1a09887199581be629",
+   "mergedAt": "2026-11-11T13:39:58Z",
+   "number": 3211
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3186-check-root-<project>",
+   "headRefOid": "1eb19a7a337e82b972110e6468ffdde27b1230f2",
+   "mergedAt": "2026-11-12T11:28:25Z",
+   "number": 3189
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3140-read-only-role-exit",
+   "headRefOid": "afb21a247379ba326de0b8c31ff7f7bec02782d2",
+   "mergedAt": "2026-11-13T03:56:29Z",
+   "number": 3187
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3183-graph-exploration",
+   "headRefOid": "6615e53ed6eaf9f96f6d72b490ec577c11410979",
+   "mergedAt": "2026-11-11T08:30:36Z",
+   "number": 3185
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3181-page-header-vertical",
+   "headRefOid": "4df4fc357fd906cb8c26e112a2fc5dc6cdecd979",
+   "mergedAt": "2026-11-11T10:16:46Z",
+   "number": 3182
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3176-rules-findings-3",
+   "headRefOid": "ea269769ff497d47b26f4dc895f8c0eac5ab5352",
+   "mergedAt": "2026-11-09T06:30:06Z",
+   "number": 3177
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3174-rules-findings-2",
+   "headRefOid": "615e07a8fd404569d5c713261d56602c337b24ca",
+   "mergedAt": "2026-11-09T04:34:11Z",
+   "number": 3175
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3159-date-panel-export",
+   "headRefOid": "e4ae5d8cecfa26b65c6393cc3a6af579715069ee",
+   "mergedAt": "2026-11-08T16:07:56Z",
+   "number": 3173
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3171-e2e-guard-kit2-reach",
+   "headRefOid": "c16b7c0132305dccd6a94b5048002e490aa009c0",
+   "mergedAt": "2026-11-08T15:00:42Z",
+   "number": 3172
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3169-rules-findings",
+   "headRefOid": "92811ef731e1b141fe3988171176eb0047050ef5",
+   "mergedAt": "2026-11-08T11:35:14Z",
+   "number": 3170
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3151-agent-kit-metrics",
+   "headRefOid": "b7edb6bdf93b5794b9545aeb82a24be46ae2bdef",
+   "mergedAt": "2026-11-08T09:13:38Z",
+   "number": 3168
+  },
+  {
+   "baseRefName": "RT-3151-agent-kit-metrics",
+   "headRefName": "RT-3157-cycle-rule",
+   "headRefOid": "2be9c33810c899b934a7d14b4267a725ccf6fe45",
+   "mergedAt": "2026-11-08T07:28:35Z",
+   "number": 3167
+  },
+  {
+   "baseRefName": "RT-3151-agent-kit-metrics",
+   "headRefName": "RT-3156-quality-section",
+   "headRefOid": "13800ff23e7f6f5c5b50809b3146945eaeab5935",
+   "mergedAt": "2026-11-08T07:27:57Z",
+   "number": 3166
+  },
+  {
+   "baseRefName": "RT-3151-agent-kit-metrics",
+   "headRefName": "RT-3154-metrics-send",
+   "headRefOid": "8c497b22153b0d62ed79e8130d03dcb91c16c911",
+   "mergedAt": "2026-11-08T07:27:15Z",
+   "number": 3165
+  },
+  {
+   "baseRefName": "RT-3151-agent-kit-metrics",
+   "headRefName": "RT-3155-metrics-intake",
+   "headRefOid": "31bd90ef521643b67c59bfccb05ef86c167484a8",
+   "mergedAt": "2026-11-08T07:26:30Z",
+   "number": 3164
+  },
+  {
+   "baseRefName": "RT-3151-agent-kit-metrics",
+   "headRefName": "RT-3153-metrics-events",
+   "headRefOid": "fba69eb0f1f91944695585c5b84e147979e72bab",
+   "mergedAt": "2026-11-08T07:25:48Z",
+   "number": 3163
+  },
+  {
+   "baseRefName": "RT-3151-agent-kit-metrics",
+   "headRefName": "RT-3152-metrics-catalog",
+   "headRefOid": "871604260d3df30b53169427afd0cd1bb47f3983",
+   "mergedAt": "2026-11-08T07:24:57Z",
+   "number": 3162
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3160-epic-agreement-gate",
+   "headRefOid": "4e329820f3b89f8f24ef2608be93ccd71c3857b9",
+   "mergedAt": "2026-11-07T12:32:47Z",
+   "number": 3161
+  },
+  {
+   "baseRefName": "RT-3043-cargo-2026-11-rest",
+   "headRefName": "RT-3051-stand-own-names",
+   "headRefOid": "51001c05a5b38f65398d924d59ad0b8dc3da6ee6",
+   "mergedAt": "2026-11-08T10:15:37Z",
+   "number": 3149
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3142-chat-schedule",
+   "headRefOid": "cb3dcdb75658822485495bafc5326bd2f3e19e4a",
+   "mergedAt": "2026-11-07T08:04:33Z",
+   "number": 3148
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3129-pr-product-flow",
+   "headRefOid": "ff975e5262cfbcd4f97907995d382266fe09628d",
+   "mergedAt": "2026-11-06T14:42:45Z",
+   "number": 3141
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3125-auth-theme-remarks",
+   "headRefOid": "52ac8d3e0fc8591bd7b68b39d3ac171a9d119cca",
+   "mergedAt": "2026-11-07T02:02:19Z",
+   "number": 3139
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3128-chat-set-draft",
+   "headRefOid": "dc89d05e7185a7f2e9c69e9cbef9ba9ef33e299b",
+   "mergedAt": "2026-11-06T14:16:30Z",
+   "number": 3138
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3135-pre-push-delete-scenario",
+   "headRefOid": "e4855cd5b698efb517738c9ba54f07f448f406a7",
+   "mergedAt": "2026-11-06T07:09:55Z",
+   "number": 3136
+  },
+  {
+   "baseRefName": "RT-3129-pr-product-flow",
+   "headRefName": "RT-3133-product-points",
+   "headRefOid": "87174821faf0edd11f7385323abb5066db2c143f",
+   "mergedAt": "2026-11-06T13:58:16Z",
+   "number": 3134
+  },
+  {
+   "baseRefName": "RT-3129-pr-product-flow",
+   "headRefName": "RT-3131-pr-review-replies",
+   "headRefOid": "0f6381c575b7d35c75cd2ef269a32db1145a40e0",
+   "mergedAt": "2026-11-06T07:14:54Z",
+   "number": 3132
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3043-cargo-2026-11",
+   "headRefOid": "e335daba1045247fd91a89d5da2cbd58a0c92280",
+   "mergedAt": "2026-11-06T03:43:52Z",
+   "number": 3130
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3123-detail-row-line-breaks",
+   "headRefOid": "76bdf2567bb9c1758cd8079aa72fcf2e50fd4c5b",
+   "mergedAt": "2026-11-06T04:55:48Z",
+   "number": 3127
+  },
+  {
+   "baseRefName": "RT-3043-cargo-2026-11",
+   "headRefName": "RT-3050-release-after-unchecked-merge",
+   "headRefOid": "4e9a9e507f44480c6a2d6572fd5c5d855716938a",
+   "mergedAt": "2026-11-06T03:13:25Z",
+   "number": 3126
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3122-e2e-markup-section-wait",
+   "headRefOid": "62e633e7a45ba28691b06b7b7e7b1cf8f2e0ebdb",
+   "mergedAt": "2026-11-07T01:57:10Z",
+   "number": 3124
+  },
+  {
+   "baseRefName": "RT-3043-cargo-2026-11",
+   "headRefName": "RT-3049-audit-compares-shapes",
+   "headRefOid": "d8000c296668925145e92258f665d233b70adbf5",
+   "mergedAt": "2026-11-05T16:27:09Z",
+   "number": 3121
+  },
+  {
+   "baseRefName": "RT-3043-cargo-2026-11",
+   "headRefName": "RT-3114-main-into-epic-push-set",
+   "headRefOid": "064eb11231bc457fb654016c2d108b5cbd10594e",
+   "mergedAt": "2026-11-05T11:23:56Z",
+   "number": 3120
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3089-glab-commands",
+   "headRefOid": "c52aeced39b0d30f0f6ac124fe494d8fca308f70",
+   "mergedAt": "2026-11-05T15:52:13Z",
+   "number": 3119
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3091-skip-hosting-variant",
+   "headRefOid": "06c7d54dd5bed1a31b6eb79bdabd81058f9544e0",
+   "mergedAt": "2026-11-05T15:50:46Z",
+   "number": 3117
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3095-dispatch-one-json",
+   "headRefOid": "2560ea12839be6e9e2ed04666c767a12ce2581a0",
+   "mergedAt": "2026-11-05T15:46:27Z",
+   "number": 3116
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3096-plugin-browser-drivers",
+   "headRefOid": "33264942ec0787977c7ab5fd340649298eba3d09",
+   "mergedAt": "2026-11-05T15:40:19Z",
+   "number": 3115
+  },
+  {
+   "baseRefName": "RT-3043-cargo-2026-11",
+   "headRefName": "RT-3048-shared-frame-every-screen",
+   "headRefOid": "52f770082cbf80b5179e47f55b2af104e7f32f63",
+   "mergedAt": "2026-11-05T12:57:21Z",
+   "number": 3113
+  },
+  {
+   "baseRefName": "RT-3043-cargo-2026-11",
+   "headRefName": "RT-3047-draft-without-pipeline",
+   "headRefOid": "d31315dba739da58c9e37afd13e851a7048c57ef",
+   "mergedAt": "2026-11-05T05:17:22Z",
+   "number": 3112
+  },
+  {
+   "baseRefName": "RT-3043-cargo-2026-11",
+   "headRefName": "RT-3046-pre-push-review-fixes",
+   "headRefOid": "a8abdca43037fb35606d754bf9b5eb2e74f0d9e2",
+   "mergedAt": "2026-11-05T03:43:49Z",
+   "number": 3111
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3090-main-branch-setting",
+   "headRefOid": "9a9ca949982d210a5ecc75c58f2d5938bfdb22d2",
+   "mergedAt": "2026-11-05T07:52:51Z",
+   "number": 3110
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3100-shell-arrow-in-quotes",
+   "headRefOid": "bca50a723f0f3adf70c97dbfe937336738830068",
+   "mergedAt": "2026-11-05T07:52:02Z",
+   "number": 3109
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3086-scenario-long-prefixes",
+   "headRefOid": "d7840acf933bea25043643bdfd5616253847acef",
+   "mergedAt": "2026-11-05T07:51:21Z",
+   "number": 3108
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3087-pr-unmerged-agreement",
+   "headRefOid": "8e74b9f6c7576b2e446c2943e236c56b62b11f87",
+   "mergedAt": "2026-11-05T07:50:22Z",
+   "number": 3107
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3088-spec-length-before-merge",
+   "headRefOid": "edec24c04207f9e2dd8c53042666a57ab6fcba1d",
+   "mergedAt": "2026-11-05T07:49:47Z",
+   "number": 3106
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3098-push-gate-hooks-run-missing",
+   "headRefOid": "f1354cf2cccb8365df17ef57341299f47a190f20",
+   "mergedAt": "2026-11-05T07:49:08Z",
+   "number": 3105
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3097-turn-exit-own-notification",
+   "headRefOid": "9cc0945cd28f93e9c32150fdfe6be5ab38b584d3",
+   "mergedAt": "2026-11-05T07:47:35Z",
+   "number": 3104
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2895-calendar-year-grid",
+   "headRefOid": "4d59923fe536f264d7c92fa5ea651e668320881a",
+   "mergedAt": "2026-11-05T05:46:14Z",
+   "number": 3103
+  },
+  {
+   "baseRefName": "RT-3043-cargo-2026-11",
+   "headRefName": "RT-3046-pre-push-git-hook",
+   "headRefOid": "a0ad5bd7e795c15c0acec7eb4eebe63f21007bef",
+   "mergedAt": "2026-11-04T14:24:10Z",
+   "number": 3101
+  },
+  {
+   "baseRefName": "RT-3043-cargo-2026-11",
+   "headRefName": "RT-3045-push-path-and-review-gate",
+   "headRefOid": "2ccb34f56e4b338229df4b846e1f3379b0616c7e",
+   "mergedAt": "2026-11-04T09:19:58Z",
+   "number": 3099
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3092-push-gate-ahead",
+   "headRefOid": "9db2a7f555f5d313391da72819208cb4f50d1e3c",
+   "mergedAt": "2026-11-05T05:45:41Z",
+   "number": 3094
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2890-rt-input-number-stepper",
+   "headRefOid": "facec4997e21865f556d5aa5759b5c25c0554d44",
+   "mergedAt": "2026-11-05T07:53:52Z",
+   "number": 3093
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2927-rt-stat-tile-delta-unit",
+   "headRefOid": "0d7f58df087fcd8e03164ea276cf5b5b1e5963e2",
+   "mergedAt": "2026-11-05T05:45:07Z",
+   "number": 3085
+  },
+  {
+   "baseRefName": "RT-3043-cargo-2026-11",
+   "headRefName": "RT-3044-push-guard-git-subcommand",
+   "headRefOid": "1b68e7dfe7ca354b747153134df2ed9fb1cdb82d",
+   "mergedAt": "2026-11-04T05:57:05Z",
+   "number": 3083
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3041-branch-signature-human",
+   "headRefOid": "59998db7b6d2d4f4ffb56da526b3fa26fb05a564",
+   "mergedAt": "2026-11-05T05:44:34Z",
+   "number": 3042
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2907-rt-table-sticky-column",
+   "headRefOid": "a1700862ff8652658b506778ea944bab6cdd9a53",
+   "mergedAt": "2026-11-05T05:44:07Z",
+   "number": 3040
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3037-doc-paths-copy-files",
+   "headRefOid": "6417e99d12c23bdb1c95760bd40a59e53b1f7023",
+   "mergedAt": "2026-11-02T14:22:15Z",
+   "number": 3039
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3036-pr-base-refresh",
+   "headRefOid": "5156edf1cb9bceffe273d84edcbbee78b25f416d",
+   "mergedAt": "2026-11-02T14:16:29Z",
+   "number": 3038
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2860-ui-kit-v2-table-core",
+   "headRefOid": "161750e211951fe79ce1ecf0d223f520cbe06a20",
+   "mergedAt": "2026-11-02T07:42:48Z",
+   "number": 3032
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3025-recaptcha-load-without-grecaptcha",
+   "headRefOid": "3e1dc3c71fcb5419b51a2c24ae87f74de00db106",
+   "mergedAt": "2026-10-31T07:04:07Z",
+   "number": 3030
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3026-e2e-required",
+   "headRefOid": "d5c1719845c2071533c44d63e328092daf62666d",
+   "mergedAt": "2026-11-02T03:52:02Z",
+   "number": 3029
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3027-owner-text-verbatim",
+   "headRefOid": "9fb82497f8b590f2a2cb9fe215031df7eed32460",
+   "mergedAt": "2026-10-31T06:35:13Z",
+   "number": 3028
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3013-recaptcha-review",
+   "headRefOid": "0729bfabe800b74fba35a3964f51a5191068b365",
+   "mergedAt": "2026-10-31T05:07:36Z",
+   "number": 3024
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3022-interface-review-skill",
+   "headRefOid": "5dfb79818bfb44ac7d810c9567faed823809ab3b",
+   "mergedAt": "2026-10-31T05:18:48Z",
+   "number": 3023
+  },
+  {
+   "baseRefName": "RT-2860-ui-kit-v2-table-core",
+   "headRefName": "RT-3015-data-table-sort-other-column",
+   "headRefOid": "1918169d63d745c2304579c649a62e4203e2e25c",
+   "mergedAt": "2026-10-31T01:44:09Z",
+   "number": 3021
+  },
+  {
+   "baseRefName": "RT-2860-ui-kit-v2-table-core",
+   "headRefName": "RT-2867-table-columns-registry-keys",
+   "headRefOid": "f43697c841aeb3b4a24021b779fcfa0ec808fa00",
+   "mergedAt": "2026-10-31T01:43:30Z",
+   "number": 3020
+  },
+  {
+   "baseRefName": "RT-2860-ui-kit-v2-table-core",
+   "headRefName": "RT-2866-table-selection-core",
+   "headRefOid": "1c701da4b384a739efb61a350714375c2647ea08",
+   "mergedAt": "2026-10-31T01:42:54Z",
+   "number": 3019
+  },
+  {
+   "baseRefName": "RT-2860-ui-kit-v2-table-core",
+   "headRefName": "RT-2865-table-filter-sort-core",
+   "headRefOid": "aaf59edc2e1da037c6a6a51fa8bfad7d49d646a3",
+   "mergedAt": "2026-10-31T01:42:01Z",
+   "number": 3018
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3012-copilot-review-runner",
+   "headRefOid": "5d99ce91e7531988eeaf3cdd904ec55794f1c5ed",
+   "mergedAt": "2026-10-30T14:30:00Z",
+   "number": 3017
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2994-service-block-gap",
+   "headRefOid": "f772eaf4f57a5abd75d6d4610f6fa487c71d0ea4",
+   "mergedAt": "2026-11-02T13:35:28Z",
+   "number": 3014
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3010-kit-style-budget-mockup-measure",
+   "headRefOid": "2a5b4ab409a7c26ae1e35577d8169f4b07fc9d5f",
+   "mergedAt": "2026-10-31T01:41:01Z",
+   "number": 3011
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2995-tab-icon-fill-clear-tabbable",
+   "headRefOid": "11f336f5c0de9acc03a5fadc721bf09971b59acf",
+   "mergedAt": "2026-10-31T01:55:22Z",
+   "number": 3009
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3003-register-recaptcha",
+   "headRefOid": "1fda4c04c6fe16c35c1440a6ed98eaab20c15893",
+   "mergedAt": "2026-10-30T10:09:28Z",
+   "number": 3008
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3001-list-filters-button",
+   "headRefOid": "c37d7ad4cd8bf5e45a23cbd331b0fb1148447598",
+   "mergedAt": "2026-10-30T11:01:09Z",
+   "number": 3007
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3005-pageheadermore-shot-race",
+   "headRefOid": "54da9c101871be06651cb36c38427701bf913a56",
+   "mergedAt": "2026-10-30T10:10:41Z",
+   "number": 3006
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-3000-popover-touch-hover",
+   "headRefOid": "13ff1d376d7cc1a37a230d112250db774a4384e2",
+   "mergedAt": "2026-10-30T11:11:31Z",
+   "number": 3004
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2999-main-checks-green",
+   "headRefOid": "46ffc7b4ee917c6d47c2647e0204dab58d86470b",
+   "mergedAt": "2026-10-30T04:35:08Z",
+   "number": 3002
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2997-user-menu-backdrop",
+   "headRefOid": "688626239d1e2afb5787088edcfde00b27cb5e4b",
+   "mergedAt": "2026-10-30T01:40:57Z",
+   "number": 2998
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2990-kit-figma-approval-gate",
+   "headRefOid": "fff8673e1bb596c7c6441eb515fc4d0ce8a9c543",
+   "mergedAt": "2026-10-29T11:04:16Z",
+   "number": 2993
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2988-chat-look-by-mockup",
+   "headRefOid": "d3102301908b352004be6308e8b747e639d53a11",
+   "mergedAt": "2026-10-29T10:59:20Z",
+   "number": 2992
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2982-scenario-dupes",
+   "headRefOid": "2458d6af3edcde8dfed08923a1a5d0519a62b3e8",
+   "mergedAt": "2026-10-29T07:45:25Z",
+   "number": 2991
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2987-header-nav-backdrop",
+   "headRefOid": "571b3eaeaa9700515af93e0e75c800c1f4437247",
+   "mergedAt": "2026-10-29T07:41:51Z",
+   "number": 2989
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2985-chat-title-one-line",
+   "headRefOid": "9ca583bf83cf6f457373b5381545710ac1f9e4dc",
+   "mergedAt": "2026-10-29T03:45:07Z",
+   "number": 2986
+  },
+  {
+   "baseRefName": "RT-2978-ai-chat-references",
+   "headRefName": "RT-2965-dependabot-alerts",
+   "headRefOid": "4b333875cbaa1c9be183e0eebfffaf8119a9847d",
+   "mergedAt": "2026-10-29T01:05:58Z",
+   "number": 2984
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2980-tooltip-touch",
+   "headRefOid": "48440a8135fb73f8de76f92967be747ae8a63486",
+   "mergedAt": "2026-10-29T01:05:53Z",
+   "number": 2983
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2978-ai-chat-references",
+   "headRefOid": "dd4f41663331fb929d81a9ef1c808b91677a0066",
+   "mergedAt": "2026-10-29T10:04:16Z",
+   "number": 2981
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2977-thread-tabs-chat-subtitle",
+   "headRefOid": "e9d490264131bd7ce5c861c7a497092445a6927e",
+   "mergedAt": "2026-10-29T01:05:39Z",
+   "number": 2979
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2972-kit2-footer-references",
+   "headRefOid": "d1ccf89bdcbf4f16a3a67e5d530516098520c18d",
+   "mergedAt": "2026-10-29T07:45:48Z",
+   "number": 2975
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2958-ai-chat-mobile",
+   "headRefOid": "34e2d3c40a67246356cba9f66b5949d381fc4245",
+   "mergedAt": "2026-10-28T14:10:53Z",
+   "number": 2973
+  },
+  {
+   "baseRefName": "RT-2960-chat-overscroll",
+   "headRefName": "RT-2964-ai-prompt-input",
+   "headRefOid": "43c18fa24a01580c0e88f8e658a071c21eacc20a",
+   "mergedAt": "2026-10-28T13:17:32Z",
+   "number": 2971
+  },
+  {
+   "baseRefName": "RT-2960-chat-overscroll",
+   "headRefName": "RT-2962-thread-menu-touch",
+   "headRefOid": "3605212f7b99b4a62e7ebdaabfd90615e0a1b5eb",
+   "mergedAt": "2026-10-28T13:17:16Z",
+   "number": 2970
+  },
+  {
+   "baseRefName": "RT-2958-ai-chat-mobile",
+   "headRefName": "RT-2960-chat-overscroll",
+   "headRefOid": "75381ee52b1c9de3c829aff4d9dd95d846efa050",
+   "mergedAt": "2026-10-28T13:17:12Z",
+   "number": 2969
+  },
+  {
+   "baseRefName": "RT-2958-ai-chat-mobile",
+   "headRefName": "RT-2959-answer-wrap",
+   "headRefOid": "9b2cd95506b2e5fe8881974c8624201f93ea95cd",
+   "mergedAt": "2026-10-28T13:16:56Z",
+   "number": 2968
+  },
+  {
+   "baseRefName": "RT-2958-ai-chat-mobile",
+   "headRefName": "RT-2961-markdown-autolink",
+   "headRefOid": "f6cb26be5655fa1cb77189e88c5f7d0f3b545699",
+   "mergedAt": "2026-10-28T13:16:49Z",
+   "number": 2967
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2957-aside-footer-look",
+   "headRefOid": "99a3125c304c6f52fb86e6cedd4d89b48ae594c7",
+   "mergedAt": "2026-10-29T01:05:32Z",
+   "number": 2966
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2957-aside-footer-look",
+   "headRefOid": "4d5845a95cfc12c4a3957ba35b5e91e04b942bfe",
+   "mergedAt": "2026-10-28T12:21:26Z",
+   "number": 2963
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2955-form-row-wrap",
+   "headRefOid": "5ec103ac4acd07d7c787683172378cf26e0b40a0",
+   "mergedAt": "2026-10-28T10:15:39Z",
+   "number": 2956
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2953-e2e-stand-db",
+   "headRefOid": "4e7e0ecd8262698fe25df74b5bcad4caead9a823",
+   "mergedAt": "2026-10-28T07:50:07Z",
+   "number": 2954
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2951-icon-button-link",
+   "headRefOid": "97a6093b7982fde37227dff47ed3114153f9c817",
+   "mergedAt": "2026-10-28T09:20:00Z",
+   "number": 2952
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2948-tooltip-escape",
+   "headRefOid": "119cfaf0281c79330aa69f1417f5a3a221d43c75",
+   "mergedAt": "2026-10-27T07:46:06Z",
+   "number": 2949
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2946-tabs-scroll-resize",
+   "headRefOid": "1683cb2a1bea31d2180f443bf601b4a60a9fbd95",
+   "mergedAt": "2026-10-27T01:43:35Z",
+   "number": 2947
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2940-tabs-scroll-active",
+   "headRefOid": "02db5c7e20b201e0aa06e70708fb9761297fc089",
+   "mergedAt": "2026-10-26T12:19:55Z",
+   "number": 2945
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "dependabot/npm_and_yarn/npm-security-81f61753d2",
+   "headRefOid": "47993537bc25403b5c8e9835e69244ac72d92358",
+   "mergedAt": "2026-10-24T12:58:49Z",
+   "number": 2944
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2812-kit2-field-label-icon-actions",
+   "headRefOid": "82247c53cd4512bcf54632e00a31c32d4d85c868",
+   "mergedAt": "2026-10-26T10:03:24Z",
+   "number": 2943
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2941-chat-undelivered-archive",
+   "headRefOid": "dd608420ddb2c55e373530f6700fbb619f8ff1e9",
+   "mergedAt": "2026-10-24T12:58:10Z",
+   "number": 2942
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2938-chat-undelivered",
+   "headRefOid": "aa57feadc64a01ca964621a804b4f8f9af7f8b72",
+   "mergedAt": "2026-10-23T15:13:01Z",
+   "number": 2939
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2936-thread-sign",
+   "headRefOid": "b1943e631576f0bbe2a22094b8b565692fe6d76e",
+   "mergedAt": "2026-10-23T10:26:56Z",
+   "number": 2937
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2934-service-block",
+   "headRefOid": "c4cdb761567d29869bcc86a8c9a39e6ade4664e4",
+   "mergedAt": "2026-10-22T15:19:23Z",
+   "number": 2935
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "dependabot/npm_and_yarn/npm-security-7653112a67",
+   "headRefOid": "1f1286582f47cbbf69393ff37b0716e91c20b052",
+   "mergedAt": "2026-10-22T03:44:14Z",
+   "number": 2933
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2922-cargo-late-october",
+   "headRefOid": "65be36ff3a32f2b7e348edaa5ce6bb3140735d16",
+   "mergedAt": "2026-10-22T03:05:47Z",
+   "number": 2932
+  },
+  {
+   "baseRefName": "RT-2922-cargo-late-october",
+   "headRefName": "RT-2929-cargo-rules",
+   "headRefOid": "b9e892ea7f8cf0243f9e7793732543dd3112115d",
+   "mergedAt": "2026-10-22T01:14:00Z",
+   "number": 2931
+  },
+  {
+   "baseRefName": "RT-2922-cargo-late-october",
+   "headRefName": "RT-2928-cargo-checks",
+   "headRefOid": "a9e7de07311088e3bcad86a34ddc9c5b3afb24c1",
+   "mergedAt": "2026-10-22T01:13:40Z",
+   "number": 2930
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2861-ui-kit-v2-pickers",
+   "headRefOid": "4e94bbe87fcc7b9418ad160c8c7e4196246e7b72",
+   "mergedAt": "2026-10-21T14:22:07Z",
+   "number": 2926
+  },
+  {
+   "baseRefName": "RT-2861-ui-kit-v2-pickers",
+   "headRefName": "RT-2924-place-root-background",
+   "headRefOid": "2beb36b396f443ce2b5e0b77f9846e610e468886",
+   "mergedAt": "2026-10-21T12:51:39Z",
+   "number": 2925
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2921-popover-short-panel",
+   "headRefOid": "6554ac6301cfc027713cc603509f9ee96235e435",
+   "mergedAt": "2026-10-21T11:15:29Z",
+   "number": 2923
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2919-copy-cell-first-hover",
+   "headRefOid": "c8895c9979ce53c1a8321fdc6debd58ed34dc3d3",
+   "mergedAt": "2026-10-21T11:08:42Z",
+   "number": 2920
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2913-kit2-place-width",
+   "headRefOid": "0fdcb6a437bcfb550b3318b569b9591803089056",
+   "mergedAt": "2026-10-21T09:10:45Z",
+   "number": 2916
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2914-page-header-more-numbers",
+   "headRefOid": "b0e894474e547c326a7c1636af9062330cc4104b",
+   "mergedAt": "2026-10-21T09:09:52Z",
+   "number": 2915
+  },
+  {
+   "baseRefName": "RT-2861-ui-kit-v2-pickers",
+   "headRefName": "RT-2872-ui-kit-v2-dynamic-selector-parts",
+   "headRefOid": "313309c8987d1af50cc1b6c86ddb66661000b05f",
+   "mergedAt": "2026-10-21T01:29:03Z",
+   "number": 2912
+  },
+  {
+   "baseRefName": "RT-2861-ui-kit-v2-pickers",
+   "headRefName": "RT-2871-ui-kit-v2-picker-arrows",
+   "headRefOid": "1af14e6d76766e26b8dda18d0970fd0403ce5a68",
+   "mergedAt": "2026-10-21T01:28:34Z",
+   "number": 2911
+  },
+  {
+   "baseRefName": "RT-2861-ui-kit-v2-pickers",
+   "headRefName": "RT-2870-ui-kit-v2-option-list-controller",
+   "headRefOid": "84c24b3cd40e509c7935bedd32a0d5772053a845",
+   "mergedAt": "2026-10-21T01:28:10Z",
+   "number": 2910
+  },
+  {
+   "baseRefName": "RT-2861-ui-kit-v2-pickers",
+   "headRefName": "RT-2869-ui-kit-v2-one-match-rule",
+   "headRefOid": "15a8bb81c662797d1909d166b7a855ddec7ccafc",
+   "mergedAt": "2026-10-21T01:27:50Z",
+   "number": 2909
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2903-page-header-more",
+   "headRefOid": "92f557633d017e43c106a8fa65a66a0f261e748c",
+   "mergedAt": "2026-10-21T01:27:25Z",
+   "number": 2908
+  },
+  {
+   "baseRefName": "RT-2861-ui-kit-v2-pickers",
+   "headRefName": "RT-2868-ui-kit-v2-tree-walk-module",
+   "headRefOid": "0fcf3d8782875df30f0ee56063f3900f6682ffa1",
+   "mergedAt": "2026-10-20T15:17:21Z",
+   "number": 2906
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2904-kit2-card-media",
+   "headRefOid": "ba2149b5a6ea9ad0530aa8d306ed86783a93bf28",
+   "mergedAt": "2026-10-20T15:42:53Z",
+   "number": 2905
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2899-kit2-service-logo",
+   "headRefOid": "49b3d89d380b1a17dfcfd48c03f6de53465dfaea",
+   "mergedAt": "2026-10-20T14:42:47Z",
+   "number": 2902
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2896-ui-kit-v2-showcase-groups",
+   "headRefOid": "57dd253b565881a1d720f5f3b4a4b79b760c74ce",
+   "mergedAt": "2026-10-20T13:52:25Z",
+   "number": 2901
+  },
+  {
+   "baseRefName": "RT-2896-ui-kit-v2-showcase-groups",
+   "headRefName": "RT-2894-showcase-small-molecules",
+   "headRefOid": "5035c650cacb6ac4bafc32cdc5337df3246206bf",
+   "mergedAt": "2026-10-20T13:26:05Z",
+   "number": 2900
+  },
+  {
+   "baseRefName": "RT-2896-ui-kit-v2-showcase-groups",
+   "headRefName": "RT-2893-showcase-chat-molecules",
+   "headRefOid": "3bef1e96d02091642748e49b7d06660638a64ef4",
+   "mergedAt": "2026-10-20T12:07:49Z",
+   "number": 2898
+  },
+  {
+   "baseRefName": "RT-2896-ui-kit-v2-showcase-groups",
+   "headRefName": "RT-2892-showcase-forms-molecules",
+   "headRefOid": "3970d69d7cb49b97315a16575e48a79aa85de8fc",
+   "mergedAt": "2026-10-20T10:35:26Z",
+   "number": 2897
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2888-pdf-viewer-fixes",
+   "headRefOid": "d192aa10d59e63c6b28249ea1e557ee73c3869cd",
+   "mergedAt": "2026-10-19T07:45:37Z",
+   "number": 2889
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2884-pdf-viewer",
+   "headRefOid": "3949c423279f78290128b8dd65b5a8f03b656b31",
+   "mergedAt": "2026-10-19T07:05:58Z",
+   "number": 2887
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2885-ai-chat-content-width",
+   "headRefOid": "33d4f1845fcf0e07179a5353d35fb905e0f80294",
+   "mergedAt": "2026-10-19T06:55:45Z",
+   "number": 2886
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2843-cargo-october",
+   "headRefOid": "4b8f418d5b50080190d3cc8e73d4d2138b246fae",
+   "mergedAt": "2026-10-15T11:02:39Z",
+   "number": 2859
+  },
+  {
+   "baseRefName": "RT-2843-cargo-october",
+   "headRefName": "RT-2848-cargo-mockups-trait",
+   "headRefOid": "8f56b602e109c53faf1e79e553d577df82711e76",
+   "mergedAt": "2026-10-15T07:53:50Z",
+   "number": 2858
+  },
+  {
+   "baseRefName": "RT-2843-cargo-october",
+   "headRefName": "RT-2847-cargo-ceiling",
+   "headRefOid": "41ab41913d337f4b82b739aac08415da9f599448",
+   "mergedAt": "2026-10-15T06:38:03Z",
+   "number": 2857
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2854-profile-menu-docs",
+   "headRefOid": "d118a86320e6be37be1297398bb1db880c76a9b6",
+   "mergedAt": "2026-10-15T05:58:05Z",
+   "number": 2855
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2852-profile-menu-tokens",
+   "headRefOid": "e61470f2ec84360b04e3cbf3aeaf44b40e2110af",
+   "mergedAt": "2026-10-15T05:15:26Z",
+   "number": 2853
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2842-profile-menu",
+   "headRefOid": "bbe67aca123822ba36f83305af141474fd3544b3",
+   "mergedAt": "2026-10-15T05:04:59Z",
+   "number": 2851
+  },
+  {
+   "baseRefName": "RT-2843-cargo-october",
+   "headRefName": "RT-2846-cargo-texts",
+   "headRefOid": "8e7e3b5b60683a5c383c99f04d5951b16333f511",
+   "mergedAt": "2026-10-15T04:55:22Z",
+   "number": 2850
+  },
+  {
+   "baseRefName": "RT-2843-cargo-october",
+   "headRefName": "RT-2845-cargo-hooks-code",
+   "headRefOid": "c9c2c3f2b4bb1f5afe93781935a6caf1b247503d",
+   "mergedAt": "2026-10-15T04:13:34Z",
+   "number": 2849
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2841-kc-register-title-ru",
+   "headRefOid": "2578abec24c9da2ba79d4e2da87cf38aebb98bc5",
+   "mergedAt": "2026-10-15T03:31:00Z",
+   "number": 2844
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2839-kc-theme-cache-bust",
+   "headRefOid": "1ae349477a582eaa2cff24f4263e504ab6407da7",
+   "mergedAt": "2026-10-14T15:28:21Z",
+   "number": 2840
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2837-kc-register-page",
+   "headRefOid": "1efe762d6312dcbdf7aa9a467c998b373bc3bd06",
+   "mergedAt": "2026-10-14T14:13:54Z",
+   "number": 2838
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2822-deps-vulns",
+   "headRefOid": "8e4769d84dfbad849c61d213f749402c889f8b9e",
+   "mergedAt": "2026-10-14T13:26:07Z",
+   "number": 2835
+  },
+  {
+   "baseRefName": "RT-2822-deps-vulns",
+   "headRefName": "RT-2825-vulns-3",
+   "headRefOid": "2c3cc28656d0cf47e73697eb776ffad07c2934c9",
+   "mergedAt": "2026-10-14T12:12:50Z",
+   "number": 2834
+  },
+  {
+   "baseRefName": "RT-2822-deps-vulns",
+   "headRefName": "RT-2831-bottom-sheet-tokens",
+   "headRefOid": "bca22fc058ae5723a7ece6a67148f093e7e3533c",
+   "mergedAt": "2026-10-14T10:54:47Z",
+   "number": 2833
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2830-thread-list-search-width",
+   "headRefOid": "b60105a60656c48f3f8f80cf0ec0bf4b92c2927f",
+   "mergedAt": "2026-10-14T10:14:22Z",
+   "number": 2832
+  },
+  {
+   "baseRefName": "RT-2822-deps-vulns",
+   "headRefName": "RT-2824-vulns-2",
+   "headRefOid": "8a9ae555ad8f6d4e084c3d55edbfa17e54879f52",
+   "mergedAt": "2026-10-14T09:36:46Z",
+   "number": 2829
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2827-bottom-sheet-footer",
+   "headRefOid": "124a3008da108696110006347e69453c29e0ebd5",
+   "mergedAt": "2026-10-14T09:19:43Z",
+   "number": 2828
+  },
+  {
+   "baseRefName": "RT-2822-deps-vulns",
+   "headRefName": "RT-2823-vulns-1",
+   "headRefOid": "461f94af471469a27374c50421bedc8b6cb1e201",
+   "mergedAt": "2026-10-14T08:53:09Z",
+   "number": 2826
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2765-deps-latest",
+   "headRefOid": "5d2fc42b9a6d391f71d5eb05e33a0641ed851323",
+   "mergedAt": "2026-10-14T06:30:56Z",
+   "number": 2818
+  },
+  {
+   "baseRefName": "RT-2765-deps-latest",
+   "headRefName": "RT-2784-theme-switch-flaky",
+   "headRefOid": "67b3c1d5d632bdd73884095e36e96f87e2a8f229",
+   "mergedAt": "2026-10-14T05:27:43Z",
+   "number": 2817
+  },
+  {
+   "baseRefName": "RT-2765-deps-latest",
+   "headRefName": "RT-2793-v2-index-missing-stories",
+   "headRefOid": "ec9d04c69543bf74e182ca0d4ba1f95ff7d2475d",
+   "mergedAt": "2026-10-13T13:35:15Z",
+   "number": 2815
+  },
+  {
+   "baseRefName": "RT-2765-deps-latest",
+   "headRefName": "RT-2811-spec-types-utils",
+   "headRefOid": "8aaa5766fe7faede72a8358cc55fbf1cd8e189be",
+   "mergedAt": "2026-10-13T12:08:00Z",
+   "number": 2814
+  },
+  {
+   "baseRefName": "RT-2765-deps-latest",
+   "headRefName": "RT-2805-spec-types-servers",
+   "headRefOid": "7b4e6f73e271919088c306d214e73669a14827c1",
+   "mergedAt": "2026-10-13T11:36:29Z",
+   "number": 2813
+  },
+  {
+   "baseRefName": "RT-2765-deps-latest",
+   "headRefName": "RT-2777-deps-changelog-cli",
+   "headRefOid": "25a7ce746b057cabfc1ff499cea952db1ce1e9ab",
+   "mergedAt": "2026-10-13T10:05:00Z",
+   "number": 2810
+  },
+  {
+   "baseRefName": "RT-2765-deps-latest",
+   "headRefName": "RT-2776-deps-types-node",
+   "headRefOid": "65d01bba4d153d910c14635c2676af1116995cb0",
+   "mergedAt": "2026-10-13T09:07:03Z",
+   "number": 2809
+  },
+  {
+   "baseRefName": "RT-2765-deps-latest",
+   "headRefName": "RT-2775-deps-wds",
+   "headRefOid": "ff8e0fcfa39e819daa063703b0d8334577197147",
+   "mergedAt": "2026-10-13T07:44:49Z",
+   "number": 2808
+  },
+  {
+   "baseRefName": "RT-2765-deps-latest",
+   "headRefName": "RT-2774-deps-vitest",
+   "headRefOid": "5c7c1e825adb1622f5aa191827817a94cc3d0010",
+   "mergedAt": "2026-10-13T06:24:17Z",
+   "number": 2807
+  },
+  {
+   "baseRefName": "RT-2765-deps-latest",
+   "headRefName": "RT-2773-deps-nest",
+   "headRefOid": "00c396863099426364210b12c735f890899d8bfd",
+   "mergedAt": "2026-10-13T06:24:00Z",
+   "number": 2806
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2542-kit2-app-parts",
+   "headRefOid": "3895e636743c4742bce64e5ba4e60c84857467ff",
+   "mergedAt": "2026-10-13T06:23:42Z",
+   "number": 2804
+  },
+  {
+   "baseRefName": "RT-2765-deps-latest",
+   "headRefName": "RT-2772-deps-theme-kit",
+   "headRefOid": "8717e936bdfda2e79e9b3606d379fca1ed15aac7",
+   "mergedAt": "2026-10-13T04:30:33Z",
+   "number": 2803
+  },
+  {
+   "baseRefName": "RT-2542-kit2-app-parts",
+   "headRefName": "RT-2764-kit2-trees-material",
+   "headRefOid": "41a358a62bd3c591f1b98a21d0dae95fd8c3506f",
+   "mergedAt": "2026-10-13T03:50:52Z",
+   "number": 2802
+  },
+  {
+   "baseRefName": "RT-2542-kit2-app-parts",
+   "headRefName": "RT-2556-kit2-carousel",
+   "headRefOid": "15ac64db7f6f71490039e487cc2558706e2d7be1",
+   "mergedAt": "2026-10-13T03:50:33Z",
+   "number": 2801
+  },
+  {
+   "baseRefName": "RT-2542-kit2-app-parts",
+   "headRefName": "RT-2555-kit2-color-palette",
+   "headRefOid": "4d6172631ecdbc1e136c0101f075d7530148b134",
+   "mergedAt": "2026-10-13T03:50:15Z",
+   "number": 2800
+  },
+  {
+   "baseRefName": "RT-2542-kit2-app-parts",
+   "headRefName": "RT-2554-kit2-speed-menu",
+   "headRefOid": "fee378fe5aa9700323bba58c0cbc34c1abb4f2c7",
+   "mergedAt": "2026-10-13T03:58:11Z",
+   "number": 2799
+  },
+  {
+   "baseRefName": "RT-2542-kit2-app-parts",
+   "headRefName": "RT-2553-kit2-inline-edit",
+   "headRefOid": "14c6017e14685b61b632e8a80d38e939fcd1a8dd",
+   "mergedAt": "2026-10-13T03:49:27Z",
+   "number": 2798
+  },
+  {
+   "baseRefName": "RT-2542-kit2-app-parts",
+   "headRefName": "RT-2552-kit2-breadcrumbs",
+   "headRefOid": "e8adb5ff6e979804c8b187a0e8ebf2d22d988576",
+   "mergedAt": "2026-10-12T16:16:08Z",
+   "number": 2797
+  },
+  {
+   "baseRefName": "RT-2542-kit2-app-parts",
+   "headRefName": "RT-2788-kit2-tooltip-keep-on-click",
+   "headRefOid": "6de54277bab76c7d1efc6a93a037a254ff507514",
+   "mergedAt": "2026-10-12T15:35:21Z",
+   "number": 2796
+  },
+  {
+   "baseRefName": "RT-2765-deps-latest",
+   "headRefName": "RT-2771-deps-icons",
+   "headRefOid": "4ade56c168f6cd174f51373a1a80bce16cb79c4a",
+   "mergedAt": "2026-10-12T15:34:45Z",
+   "number": 2795
+  },
+  {
+   "baseRefName": "RT-2542-kit2-app-parts",
+   "headRefName": "RT-2791-kit2-toolbar-select-width",
+   "headRefOid": "36d49b8fbe32f0e120aee64b46642d9f8050a290",
+   "mergedAt": "2026-10-12T15:34:25Z",
+   "number": 2794
+  },
+  {
+   "baseRefName": "RT-2765-deps-latest",
+   "headRefName": "RT-2770-deps-sass",
+   "headRefOid": "2c79f9104c38c97e17334695caeac161461e8652",
+   "mergedAt": "2026-10-12T14:15:09Z",
+   "number": 2792
+  },
+  {
+   "baseRefName": "RT-2765-deps-latest",
+   "headRefName": "RT-2769-deps-material",
+   "headRefOid": "414a7247a7a831f87b82cac176d1022ee7fdf463",
+   "mergedAt": "2026-10-12T14:14:57Z",
+   "number": 2790
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2786-toolbar-field-width",
+   "headRefOid": "6c5df082fb7bbbc26e349cc8223d8137fbfeef96",
+   "mergedAt": "2026-10-12T10:57:00Z",
+   "number": 2787
+  },
+  {
+   "baseRefName": "RT-2765-deps-latest",
+   "headRefName": "RT-2783-usage-panel-shot",
+   "headRefOid": "4c35968538955535e51a6c98cd499e8d4a0b8616",
+   "mergedAt": "2026-10-12T09:50:50Z",
+   "number": 2785
+  },
+  {
+   "baseRefName": "RT-2765-deps-latest",
+   "headRefName": "RT-2768-deps-angular",
+   "headRefOid": "d0d14df868aa21884e23b608a4b8c4defdc7bc14",
+   "mergedAt": "2026-10-12T09:50:31Z",
+   "number": 2782
+  },
+  {
+   "baseRefName": "RT-2765-deps-latest",
+   "headRefName": "RT-2767-deps-tooling",
+   "headRefOid": "5d919b755924b7fa82985b1d891155d9183efe7a",
+   "mergedAt": "2026-10-12T06:49:02Z",
+   "number": 2781
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2779-page-header-gutter",
+   "headRefOid": "2d67e26a02e2efce4a824020b5a88097b010b490",
+   "mergedAt": "2026-10-12T06:48:11Z",
+   "number": 2780
+  },
+  {
+   "baseRefName": "RT-2765-deps-latest",
+   "headRefName": "RT-2766-deps-rt-tools",
+   "headRefOid": "d033292b9fc2179d4c597f8eb983a3b99da30c38",
+   "mergedAt": "2026-10-12T05:15:45Z",
+   "number": 2778
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2762-changelog-split-off-by-one",
+   "headRefOid": "d939baf053de34929c1bc17f27c26bac8bbd6d8c",
+   "mergedAt": "2026-10-10T07:26:43Z",
+   "number": 2763
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2755-handover-read-from-host",
+   "headRefOid": "a316aabf26d2d81f63893c47246ef03a0336da64",
+   "mergedAt": "2026-10-10T06:04:32Z",
+   "number": 2760
+  },
+  {
+   "baseRefName": "RT-2755-handover-read-from-host",
+   "headRefName": "RT-2757-merge-reads-ci",
+   "headRefOid": "81fb057e5dfa0bb024088d1c6d7a757cc2afa1aa",
+   "mergedAt": "2026-10-10T05:24:28Z",
+   "number": 2759
+  },
+  {
+   "baseRefName": "RT-2755-handover-read-from-host",
+   "headRefName": "RT-2756-pr-needs-closes",
+   "headRefOid": "8b18e677512f341106b8825372cad7b696a064c3",
+   "mergedAt": "2026-10-10T05:24:17Z",
+   "number": 2758
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2753-no-tgz-in-package",
+   "headRefOid": "36207b014accca67333f3fc85afd1df88bd94111",
+   "mergedAt": "2026-10-10T03:13:22Z",
+   "number": 2754
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2686-cargo-layer-texts-deploy",
+   "headRefOid": "7d810daa2fabd2fc0f2e5c4237045f33cad32f17",
+   "mergedAt": "2026-10-10T02:32:28Z",
+   "number": 2752
+  },
+  {
+   "baseRefName": "RT-2686-cargo-layer-texts-deploy",
+   "headRefName": "RT-2741-cargo-package-commands",
+   "headRefOid": "4617a88b4950c163fe5d4092d6c6480e555026cf",
+   "mergedAt": "2026-10-09T14:55:58Z",
+   "number": 2751
+  },
+  {
+   "baseRefName": "RT-2686-cargo-layer-texts-deploy",
+   "headRefName": "RT-2740-cargo-hook-guards",
+   "headRefOid": "832a10249999cfbc89200985416cfb1cf5c94435",
+   "mergedAt": "2026-10-09T13:48:13Z",
+   "number": 2749
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2742-kit2-app-rows-122-132",
+   "headRefOid": "0381f27485df8778323f5da5521ce1d355a15c16",
+   "mergedAt": "2026-10-09T14:55:27Z",
+   "number": 2748
+  },
+  {
+   "baseRefName": "RT-2686-cargo-layer-texts-deploy",
+   "headRefName": "RT-2739-cargo-human-texts",
+   "headRefOid": "7208d02a58d85091b337e47f3f70de2a4d3430ab",
+   "mergedAt": "2026-10-09T13:29:59Z",
+   "number": 2747
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2681-cargo-tests-and-view",
+   "headRefOid": "1786ef522a031a9e0beac44e895eec1417546235",
+   "mergedAt": "2026-10-09T14:55:05Z",
+   "number": 2746
+  },
+  {
+   "baseRefName": "RT-2686-cargo-layer-texts-deploy",
+   "headRefName": "RT-2738-cargo-deploy-build",
+   "headRefOid": "f5dfe6297756aa2eef3dd0f02d904343d0c9b38b",
+   "mergedAt": "2026-10-09T13:00:40Z",
+   "number": 2745
+  },
+  {
+   "baseRefName": "RT-2686-cargo-layer-texts-deploy",
+   "headRefName": "RT-2737-cargo-rule-texts",
+   "headRefOid": "91f5bc0c9fac5dc150ef5b5eccafe91c2fd09a78",
+   "mergedAt": "2026-10-09T12:39:21Z",
+   "number": 2744
+  },
+  {
+   "baseRefName": "RT-2686-cargo-layer-texts-deploy",
+   "headRefName": "RT-2688-cargo-layer-texts",
+   "headRefOid": "3f2e5dacaaebab8f25501de30e0ffacab72c653a",
+   "mergedAt": "2026-10-09T12:38:59Z",
+   "number": 2743
+  },
+  {
+   "baseRefName": "RT-2681-cargo-tests-and-view",
+   "headRefName": "RT-2685-cargo-icon-names-bem",
+   "headRefOid": "49dedcebf8ddb7f37b7610cb0d17a449a23f180b",
+   "mergedAt": "2026-10-09T11:27:56Z",
+   "number": 2736
+  },
+  {
+   "baseRefName": "RT-2681-cargo-tests-and-view",
+   "headRefName": "RT-2684-cargo-browser-verification",
+   "headRefOid": "aecc716bbcf3e34c2ce65b90b41e6a0b27f369d7",
+   "mergedAt": "2026-10-09T11:25:31Z",
+   "number": 2735
+  },
+  {
+   "baseRefName": "RT-2681-cargo-tests-and-view",
+   "headRefName": "RT-2683-cargo-testing-unit",
+   "headRefOid": "2064418e89b26fdbdbdfe6ca2ca4797adbd926bf",
+   "mergedAt": "2026-10-09T11:22:37Z",
+   "number": 2734
+  },
+  {
+   "baseRefName": "RT-2681-cargo-tests-and-view",
+   "headRefName": "RT-2682-cargo-testing-e2e",
+   "headRefOid": "d3d08c23829a3943cc2b3bbff194def7ca953597",
+   "mergedAt": "2026-10-09T10:27:10Z",
+   "number": 2733
+  },
+  {
+   "baseRefName": "RT-2681-cargo-tests-and-view",
+   "headRefName": "RT-2730-menu-answer-forms",
+   "headRefOid": "fe45dd69c8befe6b80ac6c62f3e513ff84f75aec",
+   "mergedAt": "2026-10-09T10:26:53Z",
+   "number": 2732
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2729-ai-chat-thread-menu",
+   "headRefOid": "8f81042de04d87914e99d93b40239f469248a824",
+   "mergedAt": "2026-10-09T09:31:50Z",
+   "number": 2731
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2722-ai-chat-header-icons",
+   "headRefOid": "0018dd05faefc12f632f30e7528da9d4b52e1b8b",
+   "mergedAt": "2026-10-09T08:01:10Z",
+   "number": 2728
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2720-ai-chat-copy",
+   "headRefOid": "24545a83f46d54e246e1e33097b807b1c49032d0",
+   "mergedAt": "2026-10-09T08:00:46Z",
+   "number": 2727
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2674-cargo-delivery",
+   "headRefOid": "0e0df445892f0f9b278cee15ab1c12dea5ca1216",
+   "mergedAt": "2026-10-09T08:25:20Z",
+   "number": 2726
+  },
+  {
+   "baseRefName": "RT-2674-cargo-delivery",
+   "headRefName": "RT-2680-cargo-push-gate-runs",
+   "headRefOid": "6fc5e0a54cef679f788650113f6440c9fc35fca7",
+   "mergedAt": "2026-10-09T07:52:49Z",
+   "number": 2725
+  },
+  {
+   "baseRefName": "RT-2674-cargo-delivery",
+   "headRefName": "RT-2679-cargo-task-flow-start",
+   "headRefOid": "930076c56eb69868369cf6d1fe286074eee78974",
+   "mergedAt": "2026-10-09T06:26:59Z",
+   "number": 2724
+  },
+  {
+   "baseRefName": "RT-2674-cargo-delivery",
+   "headRefName": "RT-2678-cargo-git-commit-pitfalls",
+   "headRefOid": "defa36e5452472ba77cd7a9414d64f108405893e",
+   "mergedAt": "2026-10-09T06:26:38Z",
+   "number": 2723
+  },
+  {
+   "baseRefName": "RT-2674-cargo-delivery",
+   "headRefName": "RT-2677-cargo-git-workflow-github",
+   "headRefOid": "348b33db6f3bc9f275815986f3e8d583312ce03f",
+   "mergedAt": "2026-10-09T05:20:26Z",
+   "number": 2721
+  },
+  {
+   "baseRefName": "RT-2674-cargo-delivery",
+   "headRefName": "RT-2676-cargo-task-flow-close",
+   "headRefOid": "e31ff34454b445d9a43dd0dc221099ea7773ea9a",
+   "mergedAt": "2026-10-09T05:19:41Z",
+   "number": 2719
+  },
+  {
+   "baseRefName": "RT-2674-cargo-delivery",
+   "headRefName": "RT-2675-cargo-board-pull-closes",
+   "headRefOid": "e86656f2321d8bf38416a834df31901fab22a3b7",
+   "mergedAt": "2026-10-09T05:19:17Z",
+   "number": 2718
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2714-thread-list-preview-icons",
+   "headRefOid": "dba323c0ac98fc7d59f4a7eb23d8bd6baac968b2",
+   "mergedAt": "2026-10-09T04:05:55Z",
+   "number": 2717
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2665-cargo-turn-guards",
+   "headRefOid": "353d2fc0eac55e215b8cc86cceb05598eb8b8a5b",
+   "mergedAt": "2026-10-09T05:20:07Z",
+   "number": 2716
+  },
+  {
+   "baseRefName": "RT-2665-cargo-turn-guards",
+   "headRefName": "RT-2673-cargo-bypass-question-check",
+   "headRefOid": "2be40a8a31094f00e33a8ecf992b856898f7fec9",
+   "mergedAt": "2026-10-09T03:33:04Z",
+   "number": 2715
+  },
+  {
+   "baseRefName": "RT-2665-cargo-turn-guards",
+   "headRefName": "RT-2672-cargo-turn-conduct-orders",
+   "headRefOid": "b607f1d192bc010a2dd7959566ad612a6bed0c82",
+   "mergedAt": "2026-10-09T03:19:56Z",
+   "number": 2713
+  },
+  {
+   "baseRefName": "RT-2665-cargo-turn-guards",
+   "headRefName": "RT-2671-cargo-turn-exit-reasons",
+   "headRefOid": "f5917ec3f626a93c77c3427c4df1b64ee232e794",
+   "mergedAt": "2026-10-09T03:07:47Z",
+   "number": 2712
+  },
+  {
+   "baseRefName": "RT-2665-cargo-turn-guards",
+   "headRefName": "RT-2670-cargo-claim-guard-parse",
+   "headRefOid": "6d3a5fe640d0823619c395564af1b7de8d1f207c",
+   "mergedAt": "2026-10-09T02:36:13Z",
+   "number": 2711
+  },
+  {
+   "baseRefName": "RT-2665-cargo-turn-guards",
+   "headRefName": "RT-2669-cargo-done-without-answer",
+   "headRefOid": "606c95df7f2402c178b726936361a30a7f2ab61d",
+   "mergedAt": "2026-10-09T02:35:10Z",
+   "number": 2710
+  },
+  {
+   "baseRefName": "RT-2665-cargo-turn-guards",
+   "headRefName": "RT-2668-cargo-grill-path-filter",
+   "headRefOid": "2de7dc1be72110a08b1408e50198d6fc6af15b69",
+   "mergedAt": "2026-10-09T01:44:15Z",
+   "number": 2709
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2706-auth-init-timeout",
+   "headRefOid": "286d8bf41d04cd8a635f703ad0f634aa3e630a37",
+   "mergedAt": "2026-10-09T01:43:52Z",
+   "number": 2708
+  },
+  {
+   "baseRefName": "RT-2665-cargo-turn-guards",
+   "headRefName": "RT-2667-cargo-grill-second-sign",
+   "headRefOid": "4c0a68bb2858579ee10dc9497563a08f04bd0295",
+   "mergedAt": "2026-10-09T01:43:23Z",
+   "number": 2707
+  },
+  {
+   "baseRefName": "RT-2665-cargo-turn-guards",
+   "headRefName": "RT-2666-cargo-grill-refusal-names-rules",
+   "headRefOid": "581d20cb909e2abf89f228f1b8ee70261de4edf1",
+   "mergedAt": "2026-10-09T01:43:02Z",
+   "number": 2705
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2659-cargo-shell-edits-prose",
+   "headRefOid": "65e5581448d8012f9c73f8783c9f54395353b6e2",
+   "mergedAt": "2026-10-09T00:48:54Z",
+   "number": 2704
+  },
+  {
+   "baseRefName": "RT-2659-cargo-shell-edits-prose",
+   "headRefName": "RT-2664-cargo-pattern-binding",
+   "headRefOid": "7adc4cb088ec3c252a82edee01cde8cd111b0922",
+   "mergedAt": "2026-10-08T14:01:24Z",
+   "number": 2703
+  },
+  {
+   "baseRefName": "RT-2659-cargo-shell-edits-prose",
+   "headRefName": "RT-2701-table-spec-split",
+   "headRefOid": "fb747959d967b06b5ff20e1f50374dd3ebfe3481",
+   "mergedAt": "2026-10-08T13:50:14Z",
+   "number": 2702
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2698-select-filter-focus",
+   "headRefOid": "759bdabb42f9043bae749d7eaef96c06d64b5f48",
+   "mergedAt": "2026-10-08T13:16:39Z",
+   "number": 2700
+  },
+  {
+   "baseRefName": "RT-2659-cargo-shell-edits-prose",
+   "headRefName": "RT-2663-cargo-shell-sed-gate-map",
+   "headRefOid": "fbaebeb3576490b4c4e3647e474c8837ffd894c5",
+   "mergedAt": "2026-10-08T13:04:06Z",
+   "number": 2699
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2695-ai-run-status-shimmer",
+   "headRefOid": "103c0b1857fdc4d0183e9d6981f5d9b920630f2b",
+   "mergedAt": "2026-10-08T12:59:55Z",
+   "number": 2697
+  },
+  {
+   "baseRefName": "RT-2659-cargo-shell-edits-prose",
+   "headRefName": "RT-2694-story-wrappers-own-html",
+   "headRefOid": "7525ef74208d51a623c1c4e68a7585c0846cf3a2",
+   "mergedAt": "2026-10-08T12:40:13Z",
+   "number": 2696
+  },
+  {
+   "baseRefName": "RT-2659-cargo-shell-edits-prose",
+   "headRefName": "RT-2662-cargo-glossary-two-columns",
+   "headRefOid": "8fbf879db121776ebdbdee6196dfdeb3d5386308",
+   "mergedAt": "2026-10-08T12:39:50Z",
+   "number": 2693
+  },
+  {
+   "baseRefName": "main",
+   "headRefName": "RT-2649-ai-assistant-chat",
+   "headRefOid": "1d93a7e164c426882f484dc27848d55f16c0117b",
+   "mergedAt": "2026-10-08T12:08:20Z",
+   "number": 2692
+  },
+  {
+   "baseRefName": "RT-2649-ai-assistant-chat",
+   "headRefName": "RT-2654-ai-chat-organism",
+   "headRefOid": "8f533ef1cd511ced21424d1901b304cf14dad075",
+   "mergedAt": "2026-10-08T12:01:11Z",
+   "number": 2691
+  },
+  {
+   "baseRefName": "RT-2659-cargo-shell-edits-prose",
+   "headRefName": "RT-2661-cargo-doc-length-chars",
+   "headRefOid": "6d3ee418991972d5784d5d56a7654188829db94e",
+   "mergedAt": "2026-10-08T12:00:52Z",
+   "number": 2690
+  },
+  {
+   "baseRefName": "RT-2659-cargo-shell-edits-prose",
+   "headRefName": "RT-2660-cargo-edit-tool-not-shell",
+   "headRefOid": "b083b271a0cfbef62b39b77479adfa855ba0ecaa",
+   "mergedAt": "2026-10-08T11:39:37Z",
+   "number": 2689
+  }
+ ]
 }

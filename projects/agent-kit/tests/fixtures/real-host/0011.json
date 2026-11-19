@@ -1,13 +1,22 @@
 {
  "args": [
   "api",
-  "repos/Eyhenij/rt-tools/actions/runs?head_sha=674c92386cde1d0faea700582ed69f46d49e8d49&per_page=1",
+  "--paginate",
+  "repos/Eyhenij/rt-tools/issues/2862/sub_issues",
   "--jq",
-  ".total_count"
+  "[.[].number]"
  ],
  "token": "machine",
  "code": 0,
- "stdout": "0",
+ "stdout": "[2873,2874,2875,2876,2877,2878,2879]",
  "stderr": "",
- "json": 0
+ "json": [
+  2873,
+  2874,
+  2875,
+  2876,
+  2877,
+  2878,
+  2879
+ ]
 }

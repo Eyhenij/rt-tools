@@ -1,9 +1,13 @@
 {
  "args": [
-  "api",
-  "repos/Eyhenij/rt-tools/pulls/3349/reviews",
-  "--jq",
-  "[.[] | {login: .user.login, type: .user.type}]"
+  "pr",
+  "list",
+  "--state",
+  "open",
+  "--limit",
+  "200",
+  "--json",
+  "number,title,headRefName,headRefOid,isDraft,body,mergeable,baseRefName,author"
  ],
  "token": "machine",
  "code": 0,

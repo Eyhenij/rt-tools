@@ -116,7 +116,7 @@
     },
     merged: {
       title: 'влито',
-      action: 'mark the task merged in the epic plan by the branch of the next task',
+      action: 'merge the PRs of the chain bottom-up, mark the merged tasks by the branch of the next one',
       pattern: 'task-flow-resume',
       exit: measure.epic.mergedMarked,
     },

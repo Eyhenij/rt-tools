@@ -63,9 +63,6 @@ There is no interface: the description is read by the engine and by the executor
 - **Exit 2 is met by the epic branch on the server or merged into the main branch, with the epic card out of the first column or closed.**
 - **Exit 4 is met by the task card out of the first column or closed, and by the commit that added the task folder.**
 - **Exit 10 is met by the folder commit on the server, a PR of the branch with a reviewer, and the task out of the work column.**
-- **Exit 11 is met when every unmerged, unblocked task of the epic other than the current one has a branch, and with no such task.**
-- **Exit 12 is met when every task of the epic with a merged PR is marked merged in the plan, and every task not deferred is marked merged.**
-- **Exit 13 is met when the tip of every task not deferred lies in the epic branch or the main branch, and the PR of the epic into the main branch exists.**
 - **A branch without a task number, the epic branch among them, takes the epic of the working copy from the assignment table.**
 - **The epic of the copy merged into the main branch or with its card closed counts as absent.**
 - **A branch without a task number, without a live epic of the copy and without a draft is outside the scenario, and a draft keeps it in states 1–4.**
@@ -80,7 +77,9 @@ counter-conditions is the subdomain `docs/specs/agent-kit/turn-guards/flow-scrip
 recorded turns run through the hook on Stop are the subdomain
 `docs/specs/agent-kit/turn-guards/flow-script/replay/`. The guard at the end of a turn that asks
 the engine for its verdict, its release cases and the owner's menu are the subdomain
-`docs/specs/agent-kit/turn-guards/flow-script/exit/`. The guards of the end of a turn that judge the conversation are in the domain next to it. The check
+`docs/specs/agent-kit/turn-guards/flow-script/exit/`. Exits 11, 12 and 13 of the end of an epic are
+the subdomain `docs/specs/agent-kit/turn-guards/flow-script/epic/`: there exit 12 reads every task
+with a merged PR of its branch on the hosting. The guards of the end of a turn that judge the conversation are in the domain next to it. The check
 that the steps of the plan and of the progress match is the subdomain `docs/specs/agent-kit/work-steps/`.
 
 ## Contract
@@ -160,3 +159,4 @@ None.
 - 2026-11-15 — the guard of the exits of a turn moved here as the subdomain `exit/`: its verdict,
   its release cases and the owner's menu are measured by the engine.
 - 2026-11-15 — the forecast of refusals replays the session records before the hooks are laid out.
+- 2026-11-19 — exits 11, 12 and 13 moved to the subdomain `epic/`.

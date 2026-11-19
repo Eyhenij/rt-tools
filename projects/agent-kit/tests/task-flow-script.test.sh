@@ -207,6 +207,7 @@ out('host: SC-AK-1387 — PR без ревьюера не выход', run(pr.ha
 out('host: SC-AK-1387 — коммит разбора папки не на сервере — не выход', run(pr.handed, { commits: archived, host: handedHost(['owner'], []) }), 'false');
 
 // SC-AK-1388…1390 — выход 11
+const mergedPullAhead = (task) => ({ number: task, head: `RT-${task}-x`, headRefOid: `s${task}`, base: E, mergedAt: null });
 out('host: SC-AK-1388 — ветка следующей задачи есть на сервере', run(epic.nextTaken, { host: { remote: [{ name: 'RT-13-next', sha: 'n' }] } }), 'true');
 out('host: SC-AK-1388 — ветки следующей задачи нет — не выход', run(epic.nextTaken, {}), 'false');
 out('host: SC-AK-1388 — следующей задачи нет — выход выполнен', run(epic.nextTaken, { rows: [['1', 11, 'влито'], ['2', 12, 'идёт']] }), 'true');
@@ -218,13 +219,30 @@ out('host: SC-AK-1390 — отложенная задача пропускает
 // SC-AK-1741 — the case of 18.11: a task with a branch before tasks without one
 const takenFirst = [['1', 11, 'влито'], ['2', 12, 'идёт'], ['3', 13, 'идёт'], ['4', 14, 'впереди'], ['5', 15, 'впереди']];
 out('host: SC-AK-1741 — ветка у первой задачи впереди, у следующих нет — не выход', run(epic.nextTaken, { rows: takenFirst, host: { remote: [{ name: 'RT-13-checks', sha: 'c' }] } }), 'false');
+// SC-AK-1755 — the hosting removes the branch on merge: a task with a merged PR is not ahead, marked or not
+out('host: SC-AK-1755 — неотмеченная задача с влитым PR без ветки не впереди — выход выполнен', run(epic.nextTaken, { rows: [['1', 11, 'идёт'], ['2', 12, 'идёт'], ['3', 13, 'идёт']], local: [{ name: 'RT-13-next', sha: 'n' }], host: { merged: [mergedPullAhead(11)] } }), 'true');
+out('host: SC-AK-1755 — неотмеченная задача без PR и без ветки впереди — не выход', run(epic.nextTaken, { rows: [['1', 11, 'идёт'], ['2', 12, 'идёт'], ['3', 13, 'идёт']], local: [{ name: 'RT-13-next', sha: 'n' }] }), 'false');
 out('host: SC-AK-1741 — ветки у всех задач впереди — выход выполнен', run(epic.nextTaken, { rows: takenFirst, local: [{ name: 'RT-15-last', sha: 'l' }], host: { remote: [{ name: 'RT-13-checks', sha: 'c' }, { name: 'RT-14-more', sha: 'm' }] } }), 'true');
 
 // SC-AK-1391 — выход 12
-const mergedPull = (task, sha) => ({ number: task, head: `RT-${task}-x`, headRefOid: sha, base: E });
+const mergedPull = (task, sha, mergedAt = null) => ({ number: task, head: `RT-${task}-x`, headRefOid: sha, base: E, mergedAt });
 const allMerged = [['—', 10, 'отложено'], ['1', 11, 'влито'], ['2', 12, 'влито']];
 out('host: SC-AK-1391 — влитые задачи отмечены', run(epic.mergedMarked, { rows: allMerged, host: { merged: [mergedPull(11, 's11'), mergedPull(12, 's12')] } }), 'true');
-out('host: SC-AK-1391 — влитая задача не отмечена — не выход', run(epic.mergedMarked, { rows: [['1', 11, 'влито'], ['2', 12, 'идёт']], host: { merged: [mergedPull(11, 's11'), mergedPull(12, 's12')] } }), 'false');
+out('host: SC-AK-1391 — задача ни влита, ни отмечена — не выход', run(epic.mergedMarked, { rows: [['1', 11, 'идёт'], ['2', 12, 'влито']], host: { merged: [mergedPull(12, 's12')] } }), 'false');
+// SC-AK-1752 — the task merged last has nothing to mark it by: its merged PR counts, whatever its row
+out('host: SC-AK-1752 — последняя строка влита без отметки — выход выполнен', run(epic.mergedMarked, { rows: [['1', 11, 'влито'], ['2', 12, 'идёт']], host: { merged: [mergedPull(11, 's11'), mergedPull(12, 's12')] } }), 'true');
+out('host: SC-AK-1752 — строка из середины влита последней без отметки — выход выполнен', run(epic.mergedMarked, { rows: [['1', 11, 'идёт'], ['2', 12, 'влито'], ['3', 13, 'влито']], host: { merged: [mergedPull(11, 's11', '2026-11-19T09:00:00Z'), mergedPull(12, 's12', '2026-11-18T09:00:00Z'), mergedPull(13, 's13', '2026-11-19T08:00:00Z')] } }), 'true');
+out('host: SC-AK-1752 — цепочка влита сверху вниз, последняя строка без отметки — выход выполнен', run(epic.mergedMarked, { rows: [['1', 11, 'влито'], ['2', 12, 'влито'], ['3', 13, 'идёт']], host: { merged: [mergedPull(11, 's11', '2026-11-18T09:00:00Z'), mergedPull(12, 's12', '2026-11-19T09:00:30Z'), mergedPull(13, 's13', '2026-11-19T09:00:00Z')] } }), 'true');
+out('host: SC-AK-1752 — без отметки влитая раньше следующей — не выход', run(epic.mergedMarked, { rows: [['1', 11, 'идёт'], ['2', 12, 'влито'], ['3', 13, 'влито']], host: { merged: [mergedPull(11, 's11', '2026-11-18T07:00:00Z'), mergedPull(12, 's12', '2026-11-18T09:00:00Z'), mergedPull(13, 's13', '2026-11-19T08:00:00Z')] } }), 'false');
+// SC-AK-1753 — the word does not stand ahead of the hosting
+out('host: SC-AK-1753 — «влито» у задачи с открытым PR — не выход', run(epic.mergedMarked, { rows: [['1', 11, 'влито'], ['2', 12, 'влито']], local: [{ name: 'RT-12-flow', sha: 's12' }], host: { merged: [mergedPull(11, 's11')], pulls: { 'RT-12-flow': [{ number: 12, state: 'OPEN', base: E, reviewers: [] }] } } }), 'false');
+out('host: SC-AK-1753 — «влито» у задачи, чей PR закрыт без слияния, — не выход', run(epic.mergedMarked, { rows: [['1', 11, 'влито'], ['2', 12, 'влито']], local: [{ name: 'RT-12-flow', sha: 's12' }], host: { merged: [mergedPull(11, 's11')], pulls: { 'RT-12-flow': [{ number: 12, state: 'CLOSED', base: E, reviewers: [] }] } } }), 'false');
+out('host: SC-AK-1753 — цепочка отмечена заранее и влита одним заходом — выход выполнен', run(epic.mergedMarked, { rows: [['1', 11, 'влито'], ['2', 12, 'влито'], ['3', 13, 'идёт']], host: { merged: [mergedPull(11, 's11', '2026-11-19T09:00:20Z'), mergedPull(12, 's12', '2026-11-19T09:00:10Z'), mergedPull(13, 's13', '2026-11-19T09:00:00Z')] } }), 'true');
+out('host: SC-AK-1753 — «влито» без PR в окне хостинга засчитывается — выход выполнен', run(epic.mergedMarked, { rows: [['1', 11, 'влито'], ['2', 12, 'влито']], host: { merged: [mergedPull(12, 's12')] } }), 'true');
+// SC-AK-1754 — a fresh branch of a task, with no PR, is no merge
+out('host: SC-AK-1754 — свежая ветка задачи без PR не влита — не выход', run(epic.mergedMarked, { rows: [['1', 11, 'влито'], ['2', 12, 'идёт']], local: [{ name: 'RT-12-flow', sha: 's11' }], host: { merged: [mergedPull(11, 's11')], landed: { [E]: ['s11'] } } }), 'false');
+out('host: SC-AK-1754 — «влито» на свежей ветке без PR на сервере — не выход', run(epic.mergedMarked, { rows: [['1', 11, 'влито'], ['2', 12, 'влито']], host: { merged: [mergedPull(11, 's11')], remote: [{ name: 'RT-12-flow', sha: 's11' }], landed: { [E]: ['s11'] } } }), 'false');
+out('host: SC-AK-1752 — две задачи влиты в одну секунду, обе без отметки — выход выполнен', run(epic.mergedMarked, { rows: [['1', 11, 'идёт'], ['2', 12, 'идёт']], host: { merged: [mergedPull(11, 's11', '2026-11-19T09:00:00Z'), mergedPull(12, 's12', '2026-11-19T09:00:00Z')] } }), 'true');
 // SC-AK-1742 — the end of the epic: every task has a branch, one is not merged
 out('host: SC-AK-1742 — у всех задач ветки, одна не влита — не выход', run(epic.mergedMarked, { host: { merged: [mergedPull(11, 's11')] } }), 'false');
 

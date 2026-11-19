@@ -21,7 +21,7 @@ of the progress mirrors it. Until the mandatory action is done, the work stays i
 - `разбор-кончился` — take the folder apart by the last commit; leads `task-flow-archive`
 - `папка-разобрана` — the work queue audit, then open the PR; leads `task-flow-close`
 - `работа-отдана` — send the rules review to the background, then take the next task of the epic; leads `task-flow-archive`
-- `влито` — mark the task merged in the epic plan by the branch of the next task; leads `task-flow-resume`
+- `влито` — merge the PRs of the chain bottom-up, mark the merged tasks by the branch of the next one; leads `task-flow-resume`
 - `задачи-эпика-кончились` — open the PR of the epic into the main branch; leads `task-flow-close`
 <!-- /flow:map -->
 
