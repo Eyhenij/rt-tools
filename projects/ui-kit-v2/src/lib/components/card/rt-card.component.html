@@ -1,14 +1,17 @@
 <article
     rtBlock="rt-card"
     qa-dataid="card"
-    [rtMod]="{ clickable: clickable() }"
+    [rtMod]="{ clickable: clickable(), bordered: bordered() }"
     [attr.role]="clickable() ? 'button' : null"
     [attr.tabindex]="clickable() ? 0 : null"
     [attr.aria-label]="ariaLabel()"
     (click)="onClick($event)"
     (keydown.enter)="onKeyActivate($event)"
     (keydown.space)="onKeyActivate($event)">
-    <div rtElem="media" qa-dataid="card-media"><ng-content select="[rtCardMedia]" /></div>
+    <div rtElem="media" qa-dataid="card-media">
+        <ng-content select="[rtCardMedia]" />
+        <ng-content select="[rtCardHeaderEnd]" />
+    </div>
     <header rtElem="header">
         @if (header(); as h) {
             <h3 rtElem="title" qa-dataid="card-title">{{ h }}</h3>

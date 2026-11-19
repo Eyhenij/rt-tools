@@ -10,6 +10,7 @@ export default {
         header: { control: { type: 'text' } },
         ariaLabel: { control: { type: 'text' } },
         clickable: { control: { type: 'boolean' } },
+        bordered: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtCardComponent>;
 
@@ -20,5 +21,6 @@ export const Playground: TStory = {
         header: null,
         ariaLabel: null,
         clickable: false,
+        bordered: false,
     },
 };
