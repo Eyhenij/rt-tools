@@ -27,9 +27,9 @@ phone frame yet.
 The owner added them: «Да, все пять».
 
 1. [x] Draw the phone frames of the five places. — `Телефон · Toggle Button Group, один` 8310:652, `…, несколько` 8310:769, `…, помещается` 8310:837; `Телефон · Action Bar` 8310:1013; `Телефон · Thread List, фильтры` 8310:2735; `Телефон · Table Filter Header, условие` 8310:3067; `Телефон · Page Header, действия` 8310:17232, `…, меню пользователя` 8310:17301, `…, подраздел` 8310:17374.
-2. [ ] Show them to the owner and write the approval into `approvals.md`. ← going on — shown, waiting for the answer.
+2. [x] Show them to the owner and write the approval into `approvals.md`. — «Одобряю».
 
-- **Waiting for the owner:** «Да, все пять» — the frames of the five places are drawn and shown; the approval is asked.
+Stage 1 is closed: every frame of the set is approved. Stage 2 begins.
 
 ### 2. Agreement in the spec
 
