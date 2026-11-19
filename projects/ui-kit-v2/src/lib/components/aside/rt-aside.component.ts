@@ -91,7 +91,7 @@ export class RtAsideComponent {
     readonly #focusTrapFactory: FocusTrapFactory = inject(FocusTrapFactory);
     readonly #document: Document = inject(DOCUMENT);
 
-    readonly #t_asideNoData: Signal<string> = rtKitLabel('asideNoData');
+    readonly #t_uiEmptyTitle: Signal<string> = rtKitLabel('uiEmptyTitle');
 
     #focusTrap: FocusTrap | null = null;
     #restoreFocusTo: HTMLElement | null = null;
@@ -101,8 +101,8 @@ export class RtAsideComponent {
     /** Своя заглушка, если приложение дало `<ng-template rtAsideEmpty>`. */
     protected readonly emptyTemplate: Signal<RtAsideEmptyDirective | undefined> = contentChild(RtAsideEmptyDirective);
 
-    /** Заголовок заглушки: свой, а пустой или `null` — подпись кита `asideNoData`. */
-    protected readonly emptyTitleText: Signal<string> = computed((): string => this.emptyTitle() || this.#t_asideNoData());
+    /** Заголовок заглушки: свой, а пустой или `null` — подпись кита `uiEmptyTitle`. */
+    protected readonly emptyTitleText: Signal<string> = computed((): string => this.emptyTitle() || this.#t_uiEmptyTitle());
 
     protected readonly hasRequestError: Signal<boolean> = computed(
         (): boolean => this.requestError() !== null && this.requestError() !== undefined

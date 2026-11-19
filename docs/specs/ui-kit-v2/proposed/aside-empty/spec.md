@@ -23,7 +23,7 @@ placeholder, and most drew none.
 
 ### What it is called in the interface
 
-The default label is the new kit dictionary key `asideNoData` («No data»); an application in
+The default label is the new kit dictionary key `uiEmptyTitle` («No data»); an application in
 another language gives its own, the showcase reads «Нет данных».
 
 ## Rules
@@ -32,11 +32,15 @@ another language gives its own, the showcase reads «Нет данных».
   emptiness the content is drawn as before.
 - **The header, the request error box and the footer stay in their places under emptiness.** The
   placeholder takes only the body and stands in its middle.
-- **The default placeholder is the kit's `rt-empty-state` with the `inbox` icon and the `asideNoData`
+- **The default placeholder is the kit's `rt-empty-state` with the `inbox` icon and the `uiEmptyTitle`
   label.** The panel writes no markup of its own for it.
 - **The icon, the title and the description of the default placeholder are replaced by the panel's
   inputs.** An empty title input keeps the dictionary label; `null` icon removes the icon.
 - **An own placeholder given by a template replaces the default placeholder whole.**
+- **Under emptiness of a tab its body shows the same default placeholder, and the tab strip stays.**
+  A panel with tabs is empty per tab: the panel's own emptiness would take the strip away.
+- **The icon, the title and the description of a tab's placeholder are replaced by the tab's
+  inputs.**
 
 ## What is out of scope
 
@@ -47,14 +51,17 @@ another language gives its own, the showcase reads «Нет данных».
 
 ## Contract
 
-Not applicable: the surface is four inputs of `rt-aside` and one template directive.
+Not applicable: the surface is four inputs of `rt-aside`, the same four of `rtTab` and one
+template directive.
 
 | input              | type                   | default    |
 | ------------------ | ---------------------- | ---------- |
 | `empty`            | `boolean`              | `false`    |
 | `emptyIcon`        | `IRtIcon.Name \| null` | `'inbox'`  |
-| `emptyTitle`       | `string \| null`       | `null` — the label `asideNoData` |
+| `emptyTitle`       | `string \| null`       | `null` — the label `uiEmptyTitle` |
 | `emptyDescription` | `string \| null`       | `null`     |
+
+The tab `rtTab` of `rt-tabs` takes the same four inputs.
 
 The own placeholder: `<ng-template rtAsideEmpty>…</ng-template>` inside `rt-aside`.
 
@@ -74,12 +81,13 @@ Not applicable.
 | empty, default        | header, the inbox icon and «No data» in the middle of the body, footer |
 | empty, inputs         | the same with the application's icon, title and description         |
 | empty, own template   | header, the application's template in the body, footer              |
+| empty tab             | the tab strip, the placeholder in the middle of the tab body        |
 
 ## Cross-cutting requirements
 
 ### Locales
 
-One new key of the kit dictionary, `asideNoData`. The showcase carries the Russian label «Нет данных».
+One new key of the kit dictionary, `uiEmptyTitle`. The showcase carries the Russian label «Нет данных».
 
 ### SEO
 
@@ -95,7 +103,7 @@ Every open panel shows its own placeholder.
 
 ## Decisions
 
-- **The label is a key of its own, `asideNoData`, not the existing `uiNoData`.** The owner asked
+- **The label is a key of its own, `uiEmptyTitle`, not the existing `uiNoData`.** The owner asked
   for «Нет данных», and `uiNoData` reads «Пока нет данных» under the empty bar list.
 - **Emptiness is an input given by the application, not guessed from the projected content.** A
   panel whose content is an empty list still projects the list's markup.
@@ -103,6 +111,10 @@ Every open panel shows its own placeholder.
 ## Open questions
 
 None.
+
+- **A panel with tabs gets its placeholder from the tab, `rtTab`, not from the panel.** The owner
+  chose «Вход empty у вкладки» from three options: a tab input, a ready placeholder the screen puts
+  into a tab, leaving tabs alone.
 
 ## History of changes
 

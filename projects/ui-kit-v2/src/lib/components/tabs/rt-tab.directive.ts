@@ -32,6 +32,7 @@ import { IRtTabs } from './rt-tabs.model';
 export class RtTabDirective {
     readonly #t_uiTabInvalid: Signal<string> = rtKitLabel('uiTabInvalid');
     readonly #t_uiClose: Signal<string> = rtKitLabel('uiClose');
+    readonly #t_uiEmptyTitle: Signal<string> = rtKitLabel('uiEmptyTitle');
 
     /** Шаблон тела панели — рендерится в области контента при активной вкладке. */
     public readonly templateRef: TemplateRef<unknown> = inject<TemplateRef<unknown>>(TemplateRef);
@@ -132,6 +133,26 @@ export class RtTabDirective {
      * молчит, и видна только подсказка крестика.
      */
     public readonly closeHovered: WritableSignal<boolean> = signal<boolean>(false);
+
+    /**
+     * Показать во вкладке нечего: тело вкладки вместо шаблона показывает заглушку. Полоса вкладок
+     * остаётся на месте.
+     */
+    public readonly empty: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Значок заглушки пустой вкладки; `null` убирает его. */
+    public readonly emptyIcon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>('inbox');
+
+    /** Заголовок заглушки; `null` и пустая строка оставляют подпись кита «Нет данных». */
+    public readonly emptyTitle: InputSignal<string | null> = input<string | null>(null);
+
+    /** Пояснение под заголовком заглушки; `null` — без него. */
+    public readonly emptyDescription: InputSignal<string | null> = input<string | null>(null);
+
+    /** Заголовок заглушки: свой, а пустой или `null` — подпись кита `uiEmptyTitle`. */
+    public readonly emptyTitleText: Signal<string> = computed((): string => this.emptyTitle() || this.#t_uiEmptyTitle());
 
     /** Готовый текст подсказки: своя формулировка важнее умолчания. */
     public readonly invalidTitle: Signal<string> = computed((): string => this.invalidMessage() || this.#t_uiTabInvalid());

@@ -179,7 +179,16 @@
             [attr.aria-labelledby]="'rt-tab-' + panel.tab.id()"
             (animationend)="panels.animationEnd($event)"
             (animationcancel)="panels.animationEnd($event)">
-            <ng-container [ngTemplateOutlet]="panel.tab.templateRef" />
+            @if (panel.tab.empty()) {
+                <rt-empty-state
+                    rtElem="empty"
+                    qa-dataid="tabs-empty"
+                    [icon]="panel.tab.emptyIcon()"
+                    [title]="panel.tab.emptyTitleText()"
+                    [description]="panel.tab.emptyDescription()" />
+            } @else {
+                <ng-container [ngTemplateOutlet]="panel.tab.templateRef" />
+            }
         </div>
     }
 </ng-container>
