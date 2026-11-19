@@ -5,9 +5,9 @@
 - **State:** `этап-идёт`
 - **Stage:** 1 of 4 — The data of the block: the lenient function and the schema
 - **Done:** the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3339-ai-chat-link-block` from `RT-3338-ai-chat-kpi-block` (chain, PR #3429), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption.
-- **Next step:** stage 1, step 1 — the lenient data function in `link-data.ts`.
+- **Next step:** stage 1, step 1 — the lenient data function in `link-data.ts`; taken up again after RT-3342 is handed in.
 - **Uncommitted:** no
-- **Waiting for the owner:** no — the plan is approved: «Одобряю план»; the milestone: «Вторая веха G2»
+- **Waiting for the owner:** «сначала сделай RT-3342, потом вливаем» — the owner put RT-3342 before this task, so that the first release closes milestone G; the plan here is approved: «Одобряю план»
 - **PR:** not open yet; the base is `RT-3346-ai-chat-blocks` — RT-3338 is merged into it (#3429)
 
 ## Steps
