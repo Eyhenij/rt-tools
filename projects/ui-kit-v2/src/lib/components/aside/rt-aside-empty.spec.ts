@@ -22,7 +22,7 @@ import { RtAsideComponent } from './rt-aside.component';
                 </ng-template>
             }
             <rt-aside-footer>
-                <button type="button" qa-dataid="aside-close">Закрыть</button>
+                <button type="button" asideDismiss qa-dataid="aside-close">Закрыть</button>
             </rt-aside-footer>
         </rt-aside>
     `,

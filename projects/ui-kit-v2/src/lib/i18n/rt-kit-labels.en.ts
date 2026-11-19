@@ -45,6 +45,7 @@ export const RT_KIT_LABELS_EN = {
     aiUsageAria: 'Used {{percent}}% of the limit',
     aiYou: 'You',
     asideCopyErrorInfo: 'Copy error info',
+    asideNoData: 'No data',
     asideRequestError: 'Request Error',
     bottomSheetClose: 'Close',
     breadcrumbsBack: 'Back to {{name}}',

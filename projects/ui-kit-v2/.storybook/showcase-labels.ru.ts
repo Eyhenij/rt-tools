@@ -38,6 +38,7 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     aiUsageAria: 'Использовано {{percent}} % лимита',
     aiYou: 'Вы',
     asideCopyErrorInfo: 'Скопировать ошибку',
+    asideNoData: 'Нет данных',
     asideRequestError: 'Ошибка запроса',
     bottomSheetClose: 'Закрыть',
     breadcrumbsBack: 'Назад: {{name}}',

@@ -1,10 +1,11 @@
 import { FocusTrap, FocusTrapFactory } from '@angular/cdk/a11y';
 import { BooleanInput } from '@angular/cdk/coercion';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import {
     afterRenderEffect,
     booleanAttribute,
     computed,
+    contentChild,
     inject,
     input,
     untracked,
@@ -21,8 +22,11 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { IRtIcon, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
 import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
 import { RtAsideErrorBoxComponent } from './error-box/rt-aside-error-box.component';
+import { RtAsideEmptyDirective } from './rt-aside-empty.directive';
 
 const BEM_BLOCK: string = 'rt-aside';
 
@@ -70,7 +74,15 @@ export type TRtAsideContentLayout = 'default' | 'tabs';
     styleUrl: './rt-aside.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
-    imports: [BlockDirective, ElemDirective, ModDirective, RtAsideErrorBoxComponent, RtSpinnerComponent],
+    imports: [
+        NgTemplateOutlet,
+        BlockDirective,
+        ElemDirective,
+        ModDirective,
+        RtAsideErrorBoxComponent,
+        RtEmptyStateComponent,
+        RtSpinnerComponent,
+    ],
     host: {
         class: BEM_BLOCK,
     },
@@ -79,10 +91,18 @@ export class RtAsideComponent {
     readonly #focusTrapFactory: FocusTrapFactory = inject(FocusTrapFactory);
     readonly #document: Document = inject(DOCUMENT);
 
+    readonly #t_asideNoData: Signal<string> = rtKitLabel('asideNoData');
+
     #focusTrap: FocusTrap | null = null;
     #restoreFocusTo: HTMLElement | null = null;
 
     protected readonly frame: Signal<ElementRef<HTMLElement>> = viewChild.required<ElementRef<HTMLElement>>('frame');
+
+    /** Своя заглушка, если приложение дало `<ng-template rtAsideEmpty>`. */
+    protected readonly emptyTemplate: Signal<RtAsideEmptyDirective | undefined> = contentChild(RtAsideEmptyDirective);
+
+    /** Заголовок заглушки: свой, а пустой или `null` — подпись кита `asideNoData`. */
+    protected readonly emptyTitleText: Signal<string> = computed((): string => this.emptyTitle() || this.#t_asideNoData());
 
     protected readonly hasRequestError: Signal<boolean> = computed(
         (): boolean => this.requestError() !== null && this.requestError() !== undefined
@@ -116,6 +136,23 @@ export class RtAsideComponent {
     public readonly pending: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
+
+    /**
+     * Показать нечего: тело панели вместо содержимого показывает заглушку. Шапка, блок ошибки и
+     * подвал остаются на месте.
+     */
+    public readonly empty: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Значок заглушки; `null` убирает его. */
+    public readonly emptyIcon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>('inbox');
+
+    /** Заголовок заглушки; `null` и пустая строка оставляют подпись кита «Нет данных». */
+    public readonly emptyTitle: InputSignal<string | null> = input<string | null>(null);
+
+    /** Пояснение под заголовком заглушки; `null` — без него. */
+    public readonly emptyDescription: InputSignal<string | null> = input<string | null>(null);
 
     constructor() {
         // После отрисовки: до неё у рамки нет ни полей, ни кнопок, и ловить фокус не на чем.
