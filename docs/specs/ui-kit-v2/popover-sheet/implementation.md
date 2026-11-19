@@ -10,6 +10,7 @@ paths are given from the root of the tree.
 - **A choice of one value closes the sheet together with the panel.** — `projects/ui-kit-v2/src/lib/components/popover/rt-popover.directive.ts:close`
 - **A choice of several values keeps the sheet open until the person closes it.** — `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect.component.ts:sheet`
 - **A choice of several values in the sheet ends with a footer: the count, a reset and a done button.** — `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect.component.ts:resetChoice`
+- **A field that searches as it is typed opens the sheet on a tap, and the typing goes to a search at the top of the sheet.** — `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete.component.ts:onSheetQuery`
 - **A sheet closed by its backdrop, by a drag or by Escape closes the panel the same way a press outside it does.** — `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet.component.ts:openChange`
 - **The panel inside the sheet takes the full width of the sheet.** — `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet.component.ts:RtPopoverSheetComponent`
 

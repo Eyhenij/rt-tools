@@ -107,3 +107,27 @@ When its panel is opened
 Then the panel opens next to the button, and no bottom sheet is open
 
 Covered: `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet-set.spec.ts` — for the split button, the speed menu, the colour palette, the action bar and the table filter header. The «more» panel of the tabs and the filters of the thread list are not covered by a spec yet: they are checked in the showcase.
+
+### SC-UKV-1441 — a tap on the autocomplete opens the sheet with a search before any typing
+
+Given an autocomplete on a narrow screen
+When its field gets the focus
+Then the bottom sheet is open with a search at its top and the suggestions under it
+
+Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet.spec.ts`.
+
+### SC-UKV-1442 — typing in the search of the sheet asks for suggestions and keeps the sheet open
+
+Given the autocomplete open in the bottom sheet
+When «Гру» is typed in the search of the sheet, then the search is emptied
+Then the autocomplete asked for suggestions for «Гру», and the sheet stays open
+
+Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet.spec.ts`.
+
+### SC-UKV-1443 — a suggestion chosen in the sheet sets the value and closes the sheet
+
+Given the autocomplete open in the bottom sheet
+When a suggestion is pressed
+Then the autocomplete reports that value, and the bottom sheet is closed
+
+Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet.spec.ts`.

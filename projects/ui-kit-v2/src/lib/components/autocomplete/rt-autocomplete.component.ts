@@ -1,11 +1,13 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    afterNextRender,
     booleanAttribute,
     computed,
     contentChild,
     forwardRef,
     inject,
+    Injector,
     input,
     output,
     signal,
@@ -22,6 +24,8 @@ import {
     WritableSignal,
 } from '@angular/core';
 
+import { FormsModule } from '@angular/forms';
+
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
 import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
@@ -31,6 +35,7 @@ import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
+import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { RtSpinnerComponent } from '@rt-tools/ui-kit-v2/spinner';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
@@ -71,12 +76,14 @@ function nextPanelId(): number {
     imports: [
         // Angular
         NgTemplateOutlet,
+        FormsModule,
 
         // standalone components / directives
         RtButtonDirective,
         RtEmptyStateComponent,
         RtIconButtonComponent,
         RtIconComponent,
+        RtInputComponent,
         RtPopoverDirective,
         RtSpinnerComponent,
         BlockDirective,
@@ -103,6 +110,8 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     /** Длина списка, на которой конец уже сообщён: прокрутка у дна до новой страницы его не повторяет. */
     #endReportedAt: number = -1;
 
+    readonly #injector: Injector = inject(Injector);
+
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly panelId: string = `rt-autocomplete-panel-${nextPanelId()}`;
@@ -114,6 +123,12 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     protected readonly inputText: WritableSignal<string> = signal<string>('');
 
     protected readonly isOpen: Signal<boolean> = computed((): boolean => this.popover().isOpen());
+
+    /** Список открыт в нижней шторке: набор идёт в поле поиска наверху шторки, а не в поле под ней. */
+    protected readonly inSheet: Signal<boolean> = computed((): boolean => this.popover().inSheet());
+
+    /** Поле поиска в шторке — ему отдаётся фокус, когда шторка открылась. */
+    protected readonly sheetSearch: Signal<RtInputComponent | undefined> = viewChild(RtInputComponent);
 
     /** Клавиатура списка: подсветка, клавиши открытия, id для `aria-activedescendant`, прокрутка к опции. */
     protected readonly optionList: RtOptionList = new RtOptionList({
@@ -155,6 +170,11 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     );
 
     public readonly placeholder: InputSignal<string> = input<string>('');
+
+    /** На телефоне список открывается в нижней шторке с полем поиска; `false` оставляет его у поля. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
     public readonly minLength: InputSignal<number> = input<number>(1);
 
     /** Префикс-иконка слева в поле (например, `map` для поиска). */
@@ -233,22 +253,29 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     }
 
     protected onInput(event: Event): void {
-        const target: HTMLInputElement = event.target as HTMLInputElement;
-        const query: string = target.value;
-        this.inputText.set(query);
-        this.activeIndex.set(-1);
-        // Новый запрос — новый список: его первая страница той же длины, что прошлый список, снова
-        // сообщает о дне, иначе подгрузка нового запроса не началась бы вовсе.
-        this.#endReportedAt = -1;
-        if (query.length >= this.minLength()) {
-            this.complete.emit({ query, originalEvent: event });
-            this.popover().open();
-        } else {
-            this.popover().close();
+        this.#search((event.target as HTMLInputElement).value, event);
+    }
+
+    /** Набор в поле поиска шторки: тот же запрос, но шторка не закрывается от короткого текста. */
+    protected onSheetQuery(query: string): void {
+        this.#search(query, new Event('input'));
+    }
+
+    /** Шторка открылась: клавиатура уходит в поле поиска наверху, а не в поле под шторкой. */
+    protected onOpened(): void {
+        if (this.inSheet()) {
+            afterNextRender((): void => this.sheetSearch()?.focus(), { injector: this.#injector });
         }
     }
 
     protected onFocus(): void {
+        // На телефоне нажатие на поле открывает шторку сразу: набирают уже в ней.
+        if (this.inSheet()) {
+            this.fieldEl()?.nativeElement.blur();
+            this.complete.emit({ query: this.inputText(), originalEvent: new Event('focus') });
+            this.popover().open();
+            return;
+        }
         if (!this.openOnFocus()) {
             return;
         }
@@ -313,6 +340,23 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
                 event.stopPropagation();
                 this.popover().close();
                 break;
+        }
+    }
+
+    #search(query: string, originalEvent: Event): void {
+        this.inputText.set(query);
+        this.activeIndex.set(-1);
+        // Новый запрос — новый список: его первая страница той же длины, что прошлый список, снова
+        // сообщает о дне, иначе подгрузка нового запроса не началась бы вовсе.
+        this.#endReportedAt = -1;
+        if (query.length >= this.minLength()) {
+            this.complete.emit({ query, originalEvent });
+            this.popover().open();
+            return;
+        }
+        // Короткий запрос закрывает панель у поля; шторку он не закрывает — в ней набирают дальше.
+        if (!this.inSheet()) {
+            this.popover().close();
         }
     }
 
