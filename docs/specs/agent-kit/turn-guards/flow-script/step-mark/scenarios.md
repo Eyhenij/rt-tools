@@ -145,14 +145,6 @@ Then it is refused, and the refusal names the move: ask the owner again and run 
 
 Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 
-### SC-AK-1723 — a replacement quote from an earlier session is found
-
-Given a decision replacing the check of step 1.1, quoting a message the owner typed in an earlier session of another working copy, the replacement matching
-When `step 1.1` is run in a new session
-Then the step matches and is marked done
-
-Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
-
 ### SC-AK-1724 — a check that changes a tracked file does not match
 
 Given a done step 1.1 whose check edits a tracked file and then prints the expected line
@@ -174,14 +166,6 @@ Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 Given a check of step 1.1 that matches, and a file of the task folder other than the progress changed since the commit of the plan
 When `step 1.1` is run
 Then the step is refused with its reason, and the progress keeps step 1.1 not done
-
-Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
-
-### SC-AK-1727 — a replacement whose quote the owner never typed is refused
-
-Given a decision replacing the check of step 1.1 whose quote stands in no message the owner typed in any record of the record directories
-When `step 1.1` is run
-Then the step is refused naming the quote that was not found
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 

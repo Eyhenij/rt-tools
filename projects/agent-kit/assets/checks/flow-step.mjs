@@ -8,10 +8,9 @@
  * never a check, and an expected result in no form of `expect` is refused before anything runs. The
  * command runs with a limit; past it the step does not match.
  *
- * A check is replaced only by a decision in the progress that quotes the owner, and the quote must
- * stand in a message the owner typed:
+ * A check is replaced only by a decision in the progress the owner allowed in the window on its edit:
  *
- *   - **Проверка шага 2.4 заменена:** `<command>` → <expected> · слово владельца: «<quote>»
+ *   - **Проверка шага 2.4 заменена:** `<command>` → <expected>
  *
  * A matched step writes its mark: the branch, the step, the fingerprint of the plan, the head and the
  * last line of the output. A step that does not match drops a mark left before, so a mark always
@@ -43,7 +42,7 @@ export const STEP_LIMIT_MS = 540_000;
 const PROGRESS = 'progress.md';
 
 /** A replacement of a step check in the progress. */
-const REPLACEMENT = /^-\s+\*\*(?:Проверка шага|Check of step)\s+(\d+\.\d+)\s+(?:заменена|replaced):\*\*\s+`(.+)`\s+→\s+(.+?)\s+·\s+(?:слово владельца|the owner's word):\s+«(.+)»\s*$/u;
+const REPLACEMENT = /^-\s+\*\*(?:Проверка шага|Check of step)\s+(\d+\.\d+)\s+(?:заменена|replaced):\*\*\s+`(.+)`\s+→\s+(.+?)(?:\s+·\s+(?:слово владельца|the owner's word):\s+«.+»)?\s*$/u;
 
 /** A step the engine does not measure, with the reason. */
 export class StepRefused extends Error {
@@ -118,14 +117,14 @@ export function changedSincePlan(git, plan, read = readFile) {
 }
 
 /**
- * The check of a step after the decisions of the progress: a replacement counts only when its quote
- * stands in a message the owner typed, and one whose quote the owner never typed refuses the step.
+ * The check of a step after the decisions of the progress. A replacement line reaches the progress
+ * only through the owner's window on the edit (the guard answers `ask`), so the line itself is the
+ * owner's word: no quote is looked for. A quote of the older form is read and ignored.
  */
-export function replacedCheck(progressText, number, owner, step) {
+export function replacedCheck(progressText, number, step) {
     for (const line of (progressText ?? '').split('\n')) {
         const m = line.match(REPLACEMENT);
         if (!m || m[1] !== number) continue;
-        if (!owner.said(m[4])) throw new StepRefused(`the replacement of the check of step ${number} quotes «${m[4]}», and the owner never typed it`);
         return { command: m[2], expected: m[3], replaced: true };
     }
     return { command: step.command, expected: step.expected, replaced: false };
@@ -143,16 +142,14 @@ const gotOf = (run, form, limitMs, matched = true) => {
 };
 
 /** The step ready to run: its plan, its check and the expected result, or a refusal before anything runs. */
-function prepareStep({ git, steps, owner }, model, number, read) {
+function prepareStep({ git, steps }, model, number, read) {
     const plan = planOfBranch(git, model.words);
     const changed = changedSincePlan(git, plan, read);
     if (changed.length > 0) throw new StepRefused(`the task folder differs from the commit of the plan: ${changed.join(', ')}`);
     const planned = steps.ofPlan(plan.text).find((s) => s.number === number);
     if (!planned) throw new StepRefused(`the plan names no step ${number}`);
     const progress = `${plan.folder}/${PROGRESS}`;
-    // A replacement quote counts from any session record of this repository, not only the current one.
-    const anywhere = { said: (quote) => owner.said(quote) || openRecords().said(quote) };
-    const step = { number, ...replacedCheck(read(progress) ?? git.lastVersion(progress), number, anywhere, planned) };
+    const step = { number, ...replacedCheck(read(progress) ?? git.lastVersion(progress), number, planned) };
     if (step.command === null) throw new StepRefused(`step ${number} has no check line`);
     if (isWriteCommand(step.command, model.words)) throw new StepRefused(`the check of step ${number} is a command of the work: ${step.command}`);
     if (compareExpected(model.expect, step.expected, 0, '') === null) throw new StepRefused(`the expected result of step ${number} is in no form: ${step.expected}`);

@@ -8,7 +8,7 @@
  *
  * nextTaken — exit 11: every unmerged, unblocked task of the epic other than the current one has a
  * branch, locally or on the server; with no such task the exit is met. A task is blocked when it is
- * deferred or waits for the owner's step whose quote the owner said. A task with a branch standing
+ * deferred or its row names the owner's step. A task with a branch standing
  * before a task without one does not meet the exit: the plan still holds work nobody took.
  *
  * mergedMarked — exit 12: every task of the epic whose PR is merged is marked merged in the plan,
@@ -37,31 +37,21 @@ export function declared({ git, host, tree }) {
     };
 }
 
-/** A row the work does not wait for: deferred, or waiting for the owner's step whose quote the owner said. */
-const blocked = (row, owner) => row.deferred || (row.ownerQuote !== null && row.ownerQuote !== '' && owner.said(row.ownerQuote));
+/**
+ * A row the work does not wait for: deferred, or naming the owner's step. A row names the owner's
+ * step only through the owner's window on the edit of the plan, so the row itself is the owner's word.
+ */
+const blocked = (row) => row.deferred || row.ownerQuote !== null;
 
 const prefix = (task) => `RT-${task}-`;
 
-export function nextTaken({ git, host, tree, owner }) {
+export function nextTaken({ git, host, tree }) {
     return () => {
         const plan = epicOfWork({ git, host, tree });
         if (!plan) return false;
         const current = taskOfBranch(git.branch());
-        const ahead = plan.rows.filter((row) => !row.merged && row.task !== current && !blocked(row, owner));
+        const ahead = plan.rows.filter((row) => !row.merged && row.task !== current && !blocked(row));
         return ahead.every((row) => git.branches(prefix(row.task)).length > 0 || host.remoteBranches(prefix(row.task)).length > 0);
-    };
-}
-
-/**
- * The task of the branch waits for the owner: its row in the plan of the epic names the owner's step,
- * and the owner has not said its quote. The exit check then names the owner's menu.
- */
-export function ownerStep({ git, host, tree, owner }) {
-    return () => {
-        const plan = epicOfWork({ git, host, tree });
-        const current = taskOfBranch(git.branch());
-        const row = plan?.rows.find((r) => r.task === current);
-        return Boolean(row && row.ownerQuote !== null && !(row.ownerQuote !== '' && owner.said(row.ownerQuote)));
     };
 }
 

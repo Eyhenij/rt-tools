@@ -53,7 +53,6 @@ prints a line per fixture.
   The engine is the only writer of a done mark; a mark file written past it gives nothing to an edit.
 - **Whether a plan has checks, and which, is read from the commit that added the plan, never from the working copy.**
   A plan stripped of its check lines in the working copy does not lift the refusal.
-- **A replacement quote is searched in the record directories of every working copy.**
 - **The marks are kept by branch, and the latest measurement of a step in any working copy is the one that holds.**
 
 ### The final rerun

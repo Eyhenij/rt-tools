@@ -41,10 +41,9 @@ The engine asks the cases in this order, and a met case lets the turn end before
 | --- | --- |
 | `measure.grill.written` | `source.git`, `source.tree` |
 | `measure.epic.declared` | `source.git`, `source.host`, `source.tree` |
-| `measure.epic.nextTaken` | `source.git`, `source.host`, `source.tree`, `source.owner` |
+| `measure.epic.nextTaken` | `source.git`, `source.host`, `source.tree` |
 | `measure.epic.mergedMarked` | `source.git`, `source.host`, `source.tree` |
 | `measure.epic.finished` | `source.git`, `source.host`, `source.tree` |
-| `measure.epic.ownerStep` | `source.git`, `source.host`, `source.tree`, `source.owner` |
 | `measure.agreement.named` | `source.git`, `source.tree` |
 | `measure.task.taken` | `source.git`, `source.host` |
 | `measure.plan.approved` | `source.git`, `source.marks`, `source.steps` |

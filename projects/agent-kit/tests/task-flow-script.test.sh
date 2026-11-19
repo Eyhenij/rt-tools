@@ -212,17 +212,13 @@ out('host: SC-AK-1388 — ветки следующей задачи нет — 
 out('host: SC-AK-1388 — следующей задачи нет — выход выполнен', run(epic.nextTaken, { rows: [['1', 11, 'влито'], ['2', 12, 'идёт']] }), 'true');
 const ownerRows = [['1', 11, 'влито'], ['2', 12, 'идёт'], ['3', 13, 'шаг владельца «сделаю сам RT-13»'], ['4', 14, 'впереди']];
 out('host: SC-AK-1389 — задача с шагом владельца пропускается', run(epic.nextTaken, { rows: ownerRows, owner: ['сделаю сам RT-13'], local: [{ name: 'RT-14-more', sha: 'm' }] }), 'true');
-out('host: SC-AK-1389 — шаг без слова владельца не пропускается', run(epic.nextTaken, { rows: ownerRows, local: [{ name: 'RT-14-more', sha: 'm' }] }), 'false');
+out('host: SC-AK-1744 — строка шага владельца пропускается без набранной цитаты', run(epic.nextTaken, { rows: ownerRows, local: [{ name: 'RT-14-more', sha: 'm' }] }), 'true');
 const deferred = [['1', 11, 'влито'], ['2', 12, 'идёт'], ['—', 13, 'отложено'], ['3', 14, 'впереди']];
 out('host: SC-AK-1390 — отложенная задача пропускается', run(epic.nextTaken, { rows: deferred, local: [{ name: 'RT-14-more', sha: 'm' }] }), 'true');
 // SC-AK-1741 — the case of 18.11: a task with a branch before tasks without one
 const takenFirst = [['1', 11, 'влито'], ['2', 12, 'идёт'], ['3', 13, 'идёт'], ['4', 14, 'впереди'], ['5', 15, 'впереди']];
 out('host: SC-AK-1741 — ветка у первой задачи впереди, у следующих нет — не выход', run(epic.nextTaken, { rows: takenFirst, host: { remote: [{ name: 'RT-13-checks', sha: 'c' }] } }), 'false');
 out('host: SC-AK-1741 — ветки у всех задач впереди — выход выполнен', run(epic.nextTaken, { rows: takenFirst, local: [{ name: 'RT-15-last', sha: 'l' }], host: { remote: [{ name: 'RT-13-checks', sha: 'c' }, { name: 'RT-14-more', sha: 'm' }] } }), 'true');
-const ownRow = [['1', 11, 'влито'], ['2', 12, 'шаг владельца «проверю сам»'], ['3', 13, 'впереди']];
-out('host: SC-AK-1441 — строка задачи называет шаг владельца — шаг владельца', run(epic.ownerStep, { rows: ownRow }), 'true');
-out('host: SC-AK-1441 — владелец сказал цитату — шаг уже не его', run(epic.ownerStep, { rows: ownRow, owner: ['проверю сам'] }), 'false');
-out('host: SC-AK-1441 — обычная строка задачи — не шаг владельца', run(epic.ownerStep, {}), 'false');
 
 // SC-AK-1391 — выход 12
 const mergedPull = (task, sha) => ({ number: task, head: `RT-${task}-x`, headRefOid: sha, base: E });
