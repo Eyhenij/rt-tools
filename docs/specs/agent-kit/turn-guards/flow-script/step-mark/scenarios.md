@@ -97,11 +97,19 @@ Then the prompt is the one of the declaration, and its hook input names a sessio
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
+### SC-AK-1758 — the declaration orders round 1 with the pattern of the judge text
+
+Given the hook declaration of the tree that orders round 1 of the judge with a pattern of the owner's words
+When the replay suite compares it with the pattern `OWNER` of the judge text
+Then both are the same text, and a declaration that names no such pattern passes
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
+
 ### SC-AK-1757 — the live count picks the runs of the declaration on the branch
 
 Given session records with runs of the current declaration on the current branch, a run of an older prompt and a run on another branch. The runs on the branch are: one with a duration, one with no duration past the timeout, one refused by the judge with no duration, one dropped when another Stop hook refused
 When the live count runs
-Then it counts only the runs of the current declaration on the current branch and leaves out the dropped one. It times a run with no duration from the last record before its summary. The one past the timeout with no refusal of the judge counts as a timeout
+Then it counts only the runs of the current declaration on the current branch and leaves out the dropped one. It times a run with no duration from the last reply of the agent before its summary. The one past the timeout with no refusal of the judge counts as a timeout
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 

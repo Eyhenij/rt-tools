@@ -218,7 +218,9 @@ export function replayAsHook({ root, fixtures, expectedFile, model = null, pad =
             if (runner) {
                 answer = spawnSync('sh', ['-c', runner], { input: prompt, encoding: 'utf8' }).stdout ?? '';
             } else {
-                const { cmd, args } = asHookCommand({ model: model ?? hook.model ?? null, cwd: work });
+                // `default` asks for the model the CLI takes by itself, past the declaration.
+                const chosen = model === 'default' ? null : (model ?? hook.model ?? null);
+                const { cmd, args } = asHookCommand({ model: chosen, cwd: work });
                 const run = spawnSync(cmd, args, { cwd: work, input: prompt, encoding: 'utf8', timeout: (hook.timeout ?? 120) * 1000 });
                 answer = run.error ? '' : (run.stdout ?? '');
             }
@@ -319,7 +321,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url) && (process.argv.includes
         root,
         fixtures: join(HERE, 'fixtures/turn-replay'),
         expectedFile: join(HERE, 'turn-replay.expected.json'),
-        model: model === 'default' ? null : model,
+        model,
         pad: flag('--pad'),
     });
     for (const r of results)

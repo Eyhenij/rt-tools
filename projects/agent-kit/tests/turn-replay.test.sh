@@ -348,6 +348,14 @@ HCMD="$(judge_js "console.log(JSON.stringify(j.asHookCommand({cwd:'/tmp/judge-x'
 report "replay: SC-AK-1756 — у судьи инструменты агент-хука" \
     "$(printf '%s' "$HCMD" | jq -r '.args as $a | $a[($a | index("--tools")) + 1]')" 'Read,Grep,Glob'
 
+# --- объявление дерева: шаблон первого круга — тот же, что в тексте судьи -------------------------------
+DECLARED="$(jq -r '[.hooks.Stop[]?.hooks[]? | select(.type == "agent") | .prompt | select(test("turn-judge"))][0] // ""' "$ROOT/.claude/settings.json" 2>/dev/null)"
+OWNER_IN_TEXT="$(grep -A2 'it is called `OWNER` below' "$ASSETS/hooks/turn-judge.md" | sed -n '3s/^    //p')"
+OWNER_DECLARED="$(printf '%s' "$DECLARED" | grep -o '`[^`]*enqueue[^`]*`' | tr -d '`')"
+report "replay: SC-AK-1758 — шаблон первого круга в объявлении совпадает с OWNER текста" \
+    "$([ -z "$OWNER_DECLARED" ] || [ "$OWNER_DECLARED" = "$OWNER_IN_TEXT" ] && echo совпадает || echo расходится)" совпадает
+report "replay: SC-AK-1758 — шаблон OWNER в тексте найден" "$([ -n "$OWNER_IN_TEXT" ] && echo есть || echo нет)" есть
+
 # --- живой счёт: объявление, ветка, таймаут без длительности -----------------------------------------
 L="$WORK/live"
 mkdir -p "$L/tree/.claude" "$L/records"

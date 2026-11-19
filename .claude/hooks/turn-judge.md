@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · hooks/turn-judge.md · 768bf91f0f74 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · hooks/turn-judge.md · 635ee99eadbf · правится надстройкой, не здесь -->
 # Turn judge
 
 You decide whether the agent's turn may end. You are called by the Stop event as an agent hook of
@@ -68,11 +68,13 @@ the end of every turn.
   answers the question or the swearing, reports, announces or promises — «следующим ходом»,
   «сейчас запущу», «дальше возьму» — and the ordered work is not in the calls of the turn. An
   announcement is not the action: a reply that announces or promises its next work is refused even
-  when the turn did part of the ordered work. A reply that only reports the part the calls did,
-  announcing nothing, is let through: how much is left is the exit check's to measure. Swearing at an agent that stands means «why did you stop»: it is
-  never a word to stop. Swearing that follows no order and names no work orders nothing. A slash
+  when the turn did part of the ordered work. A turn whose calls did part of the ordered work and
+  whose reply announces nothing has the work in its calls. Swearing at an agent that stands means
+  «why did you stop»: it is never a word to stop. Swearing that follows no order and names no work orders nothing. A slash
   command that writes a handover or closes the session is cleanup: the work it does not mention
-  stays ordered.
+  stays ordered. The last records read may not hold the whole turn: before refusing because the
+  ordered work is not in the calls, `Grep` the transcript for `"type":"tool_use"` from the line of
+  the owner's latest word; a call there that does the work counts.
 - The reply asks the owner something already answered in the conversation, or asks the owner to do a
   step the agent can do itself: sign in to a stand, type a password, run a command, open a page.
 - The reply states a fact about the repository or a service — merged, pushed, green, exists, closed,
