@@ -42,8 +42,9 @@ false ones. Its sign: the report shows the milestone reached on at least one day
   model says it cannot check, the host takes that for «the condition is not met», and the turn is
   held — again at the next stop: 120 refusals in a row on 16.11, 26 seconds apart.
 - **The refusals of `flow-step-guard`, 15–19.11: 106; 79 read.** 40 true, 39 false, and every false
-  one is on a shell command. The guard judges a command by a file name in its text, not by whether
-  the command writes to the file.
+  one is on a shell command. The guard asks whether a command writes to a guarded file, but its
+  patterns of a write are too wide, and a file of the engine is judged by any word of the command
+  that names it.
 
   | The reason given | Read | False | What the false ones were |
   | --- | --- | --- | --- |
@@ -79,19 +80,35 @@ None. The card names the two sources and the sign.
 - **A model check that cannot find its file lets the call through.** The words of its call say so:
   no file — the answer is «pass». A check that is not installed in a copy has nothing to judge by.
   Спросить было некого: заход автономный. Цена ошибки: одна фраза в словах вызова двух проверок.
-- **Every refusal of a package check carries the name of its check.** The dispatcher knows which
-  branch refused; a refusal whose text names no check gets the name from it. The count of refusals
-  does not fall by this — 133 of them move from «no name» to their owners, and a task can then take
-  them. Rejected: a rewrite of the texts of every guard — five guards and their suites for the same
-  line of the report. Цена ошибки: одна ветка диспетчера.
+- **The counter of the report names the check by the text of a refusal.** Its table gets a line
+  per kind of text read in the records. The count of refusals does not fall by this — 131 of them
+  move from «no name» to their owners, also in the days already recorded, and a task can then take
+  them. Rejected: a name added by the dispatcher. The role `product-strategist` showed that the
+  engine reads such a name and calls two refusals of one check with one first line a dead end,
+  and the first line of the delivery guard is the same in every refusal. Rejected too: a rewrite
+  of the texts of every guard — five guards and their suites for the same line of the report.
+  Цена ошибки: несколько строк таблицы счётчика.
+- **A write whose target is not a literal path is refused when the command names a guarded
+  file.** The narrowed patterns would otherwise open a path put together inside a script, a copy
+  into a directory and a script written and run by one command; today only the wide pattern
+  catches them. Цена ошибки: три сценария и одно правило в той же функции.
+- **A model check is told where to look and what a refused read means.** The texts of the 180
+  failures name both a missing file and a refused read, and the directory of a session is not
+  always the root of the tree. The words say: look upwards to the directory with `.claude/`; no
+  file or no read — let the call through; judge nothing else.
 - **The step guard refuses a shell command only when the command writes to the guarded file.** A
   read, a run of the engine and a file name inside the text of another edit pass. The 39 commands
   refused falsely and the 11 refused truly are the cases of the scenario, word for word. Цена
   ошибки: правило «пишет ли команда в файл» уже есть в проверке одной функцией; правится она.
-- **The sign of the card is not promised.** The count shows the milestone is not reached by this
-  task alone on any measured day; the plan says by how much each edit lowers the days and leaves
-  the milestone to the forecast after the epic is merged. Цена ошибки: нет — это отказ от
-  обещания, которое счёт не держит.
+- **The sign of the card is not promised, and the owner decides whether the task closes without
+  it.** With every refusal of no name and every refusal of the step guard taken out, the true ones
+  too, the days of 14–19.11 give 5,11 to 9,12 per hundred: no day goes under five by the whole
+  scope of the card. The milestone also asks for no dead end, and the days hold 5 to 23. The plan
+  says by how much each edit lowers the days. Спросить было некого: заход автономный. Цена ошибки:
+  нет — это отказ от обещания, которое счёт не держит; решение о закрытии задачи остаётся
+  владельцу и названо первой строкой PR.
+- **The measure of the task is refusals per hundred commands, not the line «no name».** The line
+  falls by a rename alone. The role `goal-critic` showed it on the first draft of the plan.
 - **The report with no `--until` takes today.** The command of the card then prints the report.
 
 ## What is left unclear
