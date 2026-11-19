@@ -11,10 +11,12 @@ import {
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
     booleanAttribute,
+    computed,
     DestroyRef,
     Directive,
     ElementRef,
     inject,
+    Injector,
     input,
     InputSignal,
     InputSignalWithTransform,
@@ -32,7 +34,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { map, merge, Observable, Subject, switchMap } from 'rxjs';
 
-import { carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
+import { BreakpointsService, carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
+import { rtIsNestedOverlay } from './rt-popover-nested.logic';
+import { IRtPopoverSheetOpened, rtOpenPopoverSheet, rtPopoverSheetDismissals } from './rt-popover-sheet.helper';
 import { IRtPopover } from './rt-popover.model';
 
 const HOVER_CLOSE_DELAY_MS: number = 100;
@@ -81,10 +85,14 @@ export class RtPopoverDirective implements OnDestroy {
     readonly #viewContainerRef: ViewContainerRef = inject(ViewContainerRef);
     readonly #scrollStrategies: ScrollStrategyOptions = inject(ScrollStrategyOptions);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
+    readonly #injector: Injector = inject(Injector);
+    readonly #narrow: Signal<boolean> = inject(BreakpointsService).viewportNarrow;
 
     readonly #overlayCreatedSource: Subject<OverlayRef> = new Subject<OverlayRef>();
+    readonly #sheetCreatedSource: Subject<IRtPopoverSheetOpened> = new Subject<IRtPopoverSheetOpened>();
 
     #overlayRef: OverlayRef | null = null;
+    #sheetOverlayRef: OverlayRef | null = null;
     #positionStrategy: FlexibleConnectedPositionStrategy | null = null;
     #hoverCloseTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -169,6 +177,24 @@ export class RtPopoverDirective implements OnDestroy {
         alias: 'rtPopoverPositions',
     });
 
+    /**
+     * Режим шторки: на узком экране панель открывается в нижней шторке кита, а не у host'а. Выключен
+     * по умолчанию — его включают компоненты, у которых панель служит выбором (списки, меню, отборы);
+     * подсказкам и подтверждениям шторка не нужна. На широком экране вход ничего не меняет.
+     */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        alias: 'rtPopoverSheet',
+        transform: booleanAttribute,
+    });
+
+    /** Заголовок шторки — подпись поля или доступное имя контрола. Пусто — шторка без заголовка. */
+    public readonly sheetTitle: InputSignal<string | null> = input<string | null>('', {
+        alias: 'rtPopoverSheetTitle',
+    });
+
+    /** Панель откроется (или открыта) в шторке: режим включён и экран узкий. */
+    public readonly inSheet: Signal<boolean> = computed((): boolean => this.sheet() && this.#narrow());
+
     public readonly opened: OutputEmitterRef<void> = output<void>({ alias: 'rtPopoverOpened' });
 
     public readonly closed: OutputEmitterRef<void> = output<void>({ alias: 'rtPopoverClosed' });
@@ -193,7 +219,7 @@ export class RtPopoverDirective implements OnDestroy {
                                 // Клик по вложенной панели — не клик снаружи: закрытие
                                 // разрушило бы её вместе с нашей до того, как выбор
                                 // дойдёт до обработчика
-                                if (this.#isNestedOverlay(event.target)) {
+                                if (rtIsNestedOverlay(this.#overlayRef?.overlayElement, event.target)) {
                                     return;
                                 }
                                 this.close();
@@ -214,6 +240,15 @@ export class RtPopoverDirective implements OnDestroy {
                 takeUntilDestroyed(this.#destroyRef)
             )
             .subscribe((handleCloseIntent: () => void): void => handleCloseIntent());
+
+        // Шторка создаётся на каждое открытие: её подложка, ручка и Escape закрывают панель
+        // так же, как нажатие снаружи у панели рядом с триггером.
+        this.#sheetCreatedSource
+            .pipe(
+                switchMap((sheet: IRtPopoverSheetOpened): Observable<unknown> => rtPopoverSheetDismissals(sheet)),
+                takeUntilDestroyed(this.#destroyRef)
+            )
+            .subscribe((): void => this.close());
     }
 
     public ngOnDestroy(): void {
@@ -223,6 +258,10 @@ export class RtPopoverDirective implements OnDestroy {
 
     public open(): void {
         if (this.disabled() || this.isOpenState() || this.template() === null) {
+            return;
+        }
+        if (this.inSheet()) {
+            this.#openSheet();
             return;
         }
         const overlayRef: OverlayRef = this.#ensureOverlay();
@@ -254,6 +293,7 @@ export class RtPopoverDirective implements OnDestroy {
             return;
         }
         this.#overlayRef?.detach();
+        this.#closeSheet();
         this.isOpenState.set(false);
         this.closed.emit();
     }
@@ -302,7 +342,7 @@ export class RtPopoverDirective implements OnDestroy {
         if (!this.#isMouseHover()) {
             return;
         }
-        if (this.#isNestedOverlay(event.relatedTarget)) {
+        if (rtIsNestedOverlay(this.#overlayRef?.overlayElement, event.relatedTarget)) {
             return;
         }
         this.#scheduleHoverClose();
@@ -373,7 +413,7 @@ export class RtPopoverDirective implements OnDestroy {
             }
         });
         overlayRef.overlayElement.addEventListener('mouseleave', (event: MouseEvent): void => {
-            if (this.#isMouseHover() && !this.#isNestedOverlay(event.relatedTarget)) {
+            if (this.#isMouseHover() && !rtIsNestedOverlay(this.#overlayRef?.overlayElement, event.relatedTarget)) {
                 this.#scheduleHoverClose();
             }
         });
@@ -384,39 +424,6 @@ export class RtPopoverDirective implements OnDestroy {
 
         this.#overlayRef = overlayRef;
         return overlayRef;
-    }
-
-    /**
-     * Панель, открытая из нашей — список `rt-select`, календарь, вложенное меню.
-     *
-     * В DOM она лежит не внутри нашей панели, а рядом, отдельным оверлеем CDK.
-     * Поэтому и уход курсора на неё, и клик по ней выглядят как «ушёл наружу»:
-     * меню профиля закрывалось прямо под рукой, стоило потянуться к списку
-     * языков, а выбранное значение до обработчика не доходило — панель со
-     * `rt-select` разрушалась раньше.
-     *
-     * Вложенность определяется порядком в контейнере оверлеев: CDK добавляет их
-     * по мере открытия, поэтому панель, открытая из нашей, всегда следует за
-     * нашей. Соседний оверлей, открытый до нас, этой проверкой не удерживается —
-     * клик по нему закрывает попап, как и любой клик снаружи.
-     */
-    #isNestedOverlay(target: EventTarget | null): boolean {
-        const panel: HTMLElement | undefined = this.#overlayRef?.overlayElement;
-        if (!panel || !(target instanceof Element)) {
-            return false;
-        }
-
-        const nested: Element | null = target.closest('.cdk-overlay-pane');
-        const container: HTMLElement | null = panel.parentElement;
-        if (nested === null || nested === panel || container === null) {
-            return false;
-        }
-
-        // `querySelectorAll` отдаёт узлы в порядке документа — им и меряется,
-        // какая панель открыта позже
-        const panes: readonly Element[] = Array.from(container.querySelectorAll('.cdk-overlay-pane'));
-
-        return panes.indexOf(nested) > panes.indexOf(panel);
     }
 
     /**
@@ -454,9 +461,32 @@ export class RtPopoverDirective implements OnDestroy {
         }
     }
 
+    /** Открывает панель в нижней шторке — устройство шторки описано у `rtOpenPopoverSheet`. */
+    #openSheet(): void {
+        const sheet: IRtPopoverSheetOpened = rtOpenPopoverSheet({
+            overlay: this.#overlay,
+            host: this.#elementRef.nativeElement,
+            viewContainerRef: this.#viewContainerRef,
+            injector: this.#injector,
+            template: this.template() as TemplateRef<unknown>,
+            context: this.context(),
+            title: this.sheetTitle() ?? '',
+        });
+        this.#sheetCreatedSource.next(sheet);
+        this.#sheetOverlayRef = sheet.overlayRef;
+        this.isOpenState.set(true);
+        this.opened.emit();
+    }
+
+    #closeSheet(): void {
+        this.#sheetOverlayRef?.dispose();
+        this.#sheetOverlayRef = null;
+    }
+
     #disposeOverlay(): void {
         this.#overlayRef?.dispose();
         this.#overlayRef = null;
         this.#positionStrategy = null;
+        this.#closeSheet();
     }
 }

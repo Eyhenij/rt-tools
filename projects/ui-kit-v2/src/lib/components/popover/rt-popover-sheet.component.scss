@@ -1,0 +1,31 @@
+@layer rt-kit.components {
+    /* rt-popover-sheet — ViewEncapsulation.None: правила таргетируют BEM-класс блока.
+       Панель выбора приходит сюда тем же шаблоном, что рисуется у триггера карточкой
+       с рамкой и тенью. В шторке карточкой служит сама шторка, поэтому рамка, тень и
+       скругление панели снимаются, а ширина тянется по шторке. */
+
+    .rt-popover-sheet {
+        /* Длинная подпись поля переносится, а не обрезается: обрезанному заголовку
+           понадобилась бы подсказка, а у шторки на телефоне наведения нет. */
+        &__title {
+            min-width: 0;
+            overflow-wrap: anywhere;
+            text-align: center;
+        }
+
+        &__panel {
+            display: flex;
+            min-height: 0;
+            flex-direction: column;
+
+            > * {
+                width: 100%;
+                max-width: none;
+                max-height: none;
+                border: none;
+                border-radius: 0;
+                box-shadow: none;
+            }
+        }
+    }
+}

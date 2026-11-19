@@ -4,14 +4,10 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 3 из 4 — Code and unit tests
-- **Next step:** the sheet mode in `RtPopoverDirective` (inputs `rtPopoverSheet`, `rtPopoverSheetTitle`;
-  on `BreakpointsService.viewportNarrow` it attaches a new `RtPopoverSheetComponent` — `rt-bottom-sheet`
-  with the panel template inside — to a global CDK overlay instead of the connected one); then the
-  `sheet` input (default `true`) on `rt-select` and `rt-multiselect`, the field pushing its label into
-  the control (`setFieldLabel`, the way `setReadonly` goes), the multiselect footer «Готово» in the
-  sheet; tests named by SC-UKV-1382…1389. After that the rest of the set by the same input, then
-  `rt-menu` (own overlay), the folding `rt-toggle-button-group`, the field with a toggles panel —
-  each with its own rules added to the spec.
+- **Next step:** the multiselect footer «Выбрано · Сбросить · Готово» in the sheet; then the rest
+  of the set by the same `sheet` input, `rt-menu` (own overlay), the folding
+  `rt-toggle-button-group`, the field with a toggles panel; then the date picker and the trailing
+  icons (the revision at the end of stage 3).
 - **Decision along the way:** the rules live in a new subdomain `docs/specs/ui-kit-v2/popover-sheet/`,
   not in the select spec the plan named: the sheet belongs to the popover directive and serves the
   whole set.
@@ -48,9 +44,20 @@ Stage 1 is closed: every frame of the set is approved. Stage 2 begins.
 
 ### 3. Code and unit tests
 
-1. [ ] `rt-select`: the narrow sign, the sheet in the template, the switch-off input, the choice closes the sheet. ← going on
-2. [ ] `rt-multiselect`: the same; the sheet stays open on a choice.
-3. [ ] Unit tests by the scenarios of stage 2.
+1. [x] `rt-select`: the narrow sign, the sheet in the template, the switch-off input, the choice closes the sheet. — the sheet mode lives in `RtPopoverDirective` (`rt-popover-sheet.helper.ts` opens it), the `sheet` input on the select, the field pushes its label as the title.
+2. [ ] `rt-multiselect`: the same; the sheet stays open on a choice. — the input and the open sheet are done, the footer «Готово» is left. ← going on
+3. [x] Unit tests by the scenarios of stage 2. — `rt-select-sheet.spec.ts`, 8 of 8; the whole kit set, 3742 tests, green after the stub in `rt-filter-control` got `viewportNarrow`.
+
+### Stage revision — the date picker and the icons
+
+The owner added: «включи в задачу поправить дейт пикер пример селектора», «проверить у всех
+селектов и пиркеров иконки на одном и том же месте».
+
+1. [ ] Measure the trailing icon of every select and picker of the kit in the showcase: its right
+   edge against the right edge of the field, in both looks.
+2. [ ] Draw the aligned date field next to the select in Figma and show it to the owner.
+3. [ ] Move the date picker icon, and any other that diverged, onto the select's line; a spec or a
+   measurement holds it.
 
 ### 4. Showcase
 
@@ -61,3 +68,54 @@ Stage 1 is closed: every frame of the set is approved. Stage 2 begins.
 ## Decisions along the way
 
 - Every kit component with a drop-down panel goes into this task (grill, Decisions).
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/sviatoslavkhutornoy/WebstormProjects/rt-tools
+**Branch:** RT-3399-select-sheet
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 3 из 4 — Code and unit tests
+- **Next step:** the sheet mode in `RtPopoverDirective` (inputs `rtPopoverSheet`, `rtPopoverSheetTitle`;
+
+The progress in full — `docs/tasks/RT-3399-select-sheet/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M projects/ui-kit-v2/src/lib/components/field/rt-field.component.ts
+ M projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.base.ts
+ M projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect.component.html
+ M projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect.component.ts
+ M projects/ui-kit-v2/src/lib/components/popover/index.ts
+ M projects/ui-kit-v2/src/lib/components/popover/rt-popover.directive.ts
+ M projects/ui-kit-v2/src/lib/components/select/rt-select.component.html
+ M projects/ui-kit-v2/src/lib/components/select/rt-select.component.ts
+?? projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet.component.html
+?? projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet.component.scss
+?? projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet.component.ts
+?? projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts
+```
+
+### Commits over the main branch
+
+```
+00eab3c11 docs(rt:ui-kit-v2): спека шторки для панелей выбора на телефоне (RT-3399)
+df49d6ffd docs(rt:ui-kit-v2): одобрение макетов пяти добавленных мест (RT-3399)
+2175aeef9 docs(rt:ui-kit-v2): макеты шторки для пяти добавленных мест (RT-3399)
+56fc99df0 docs(rt:ui-kit-v2): ещё пять мест со шторкой в задаче RT-3399
+605ce01a6 docs(rt:ui-kit-v2): одобрение макетов шторки для остальных компонентов (RT-3399)
+24afe3d3d docs(rt:ui-kit-v2): макеты шторки для меню, вкладок и остальных компонентов (RT-3399)
+46865e19c docs(rt:ui-kit-v2): задача RT-3399 расширена на все компоненты со списком выбора
+f7d2e3b95 docs(rt:ui-kit-v2): макет шторки селектов одобрен (RT-3399)
+69146ab21 docs(rt:ui-kit-v2): одобрение макета шторки селектов (RT-3399)
+75c01c679 docs(rt:ui-kit-v2): макеты шторки селектов найдены в Figma, ждут одобрения (RT-3399)
+6d1ea092d docs(rt:ui-kit-v2): папка задачи RT-3399 и назначение копии
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.

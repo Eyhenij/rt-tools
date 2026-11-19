@@ -1,5 +1,7 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    booleanAttribute,
     computed,
     contentChild,
     forwardRef,
@@ -11,6 +13,7 @@ import {
     Component,
     ElementRef,
     InputSignal,
+    InputSignalWithTransform,
     Signal,
     ViewEncapsulation,
     WritableSignal,
@@ -202,6 +205,14 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
      * целиком. Предел высоты назначается входом `panelMaxHeight`.
      */
     public readonly panelWidth: InputSignal<IRtPopover.Width> = input<IRtPopover.Width>('trigger-min');
+
+    /**
+     * Нижняя шторка на телефоне: на узком экране список открывается в ней, а не у поля, и выбор не
+     * закрывает её. Включена по умолчанию; `false` оставляет список у поля на любой ширине.
+     */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
 
     /**
      * Предел высоты панели — длина как в стилях, например `20rem`. Пусто — предел кита

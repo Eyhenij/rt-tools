@@ -67,4 +67,11 @@ sheet of its own over it).
   submenu of `rt-page-header`; the operator choice in the table filter header. The help popover of
   `rt-field` stays — it is text, not a choice.
 
+- **The date picker and the trailing icons of every select and picker join the task** — the owner's
+  words «включи в задачу поправить дейт пикер пример селектора» and «проверить у всех селектов и
+  пиркеров иконки на одном и том же месте», with two screenshots: a date field on a phone, and a
+  select «Статус» above a date field «Выезд» where the chevron and the calendar icon stand on
+  different vertical lines. Read as: the date field takes its icon place from the select, and the
+  trailing icon of every select and picker of the kit stands on one vertical line, measured.
+
 ## What is left unclear

@@ -90,6 +90,8 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
      * этого признака её обязательное поле не получало бы ни звёздочки, ни ошибки.
      */
     readonly #requiredAssigned: WritableSignal<boolean> = signal<boolean>(false);
+    /** Подпись поля, объявленная rt-field: заголовок шторки, в которой на телефоне открывается выбор. */
+    readonly #fieldLabelAssigned: WritableSignal<string> = signal<string>('');
     /** Состояние, разосланное прежней привязкой: её контрол сигналами не читается. */
     readonly #pushedState: WritableSignal<IControlState> = signal<IControlState>(PRISTINE_STATE);
     /**
@@ -198,6 +200,12 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
     /** Обязателен ли контрол — по валидатору формы или по слову rt-field. Для авто-«*». */
     public readonly required: Signal<boolean> = computed((): boolean => this.#state().required || this.#requiredAssigned());
 
+    /**
+     * Заголовок шторки выбора на телефоне: подпись поля, а без неё — доступное имя контрола. Без
+     * обоих шторка остаётся без заголовка.
+     */
+    public readonly sheetTitle: Signal<string> = computed((): string => this.#fieldLabelAssigned() || this.ariaLabel() || '');
+
     /** Текст read-only представления. Реализуется конкретным контролом. */
     public abstract readonly displayText: Signal<string>;
 
@@ -259,6 +267,11 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
     /** Объявить контрол обязательным — вызывает родительский rt-field. */
     public setRequired(value: boolean): void {
         this.#requiredAssigned.set(value);
+    }
+
+    /** Передать подпись поля — вызывает родительский rt-field. */
+    public setFieldLabel(value: string): void {
+        this.#fieldLabelAssigned.set(value);
     }
 
     /** Очистка значения по кнопке-крестику + возврат фокуса в поле. */

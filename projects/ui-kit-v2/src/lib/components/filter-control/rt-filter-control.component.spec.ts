@@ -11,9 +11,13 @@ const OPTIONS: ReadonlyArray<IRtFilterControl.Option> = [
     { value: 'done', label: 'Завершённые' },
 ];
 
-/** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
+/**
+ * Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. Узок блок, а не окно —
+ * список открывается у поля, а не в нижней шторке: шторку проверяет своя спека селекта.
+ */
 class NarrowBreakpointsService {
     public readonly narrow: () => boolean = (): boolean => true;
+    public readonly viewportNarrow: () => boolean = (): boolean => false;
 }
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtFilterControlComponent<string>> {

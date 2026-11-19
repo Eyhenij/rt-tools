@@ -188,6 +188,9 @@ export class RtFieldComponent implements AfterContentInit {
         effect((): void => {
             this.projectedControl()?.setRequired(this.required());
         });
+        effect((): void => {
+            this.projectedControl()?.setFieldLabel(this.label());
+        });
     }
 
     public ngAfterContentInit(): void {
