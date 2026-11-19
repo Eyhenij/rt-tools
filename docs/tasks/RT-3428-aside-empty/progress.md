@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — Витрина и тексты
 - **Done:** уточнение, описание фичи, задача, ветка, план
-- **Next step:** разобрать находки первого круга ревью (qa-engineer, product-strategist, goal-critic идут), второй круг, проверки перед push, PR; пункт rt-date-picker — отдельной задачей
+- **Next step:** разобрать находки первого круга ревью (qa-engineer, product-strategist, goal-critic идут), второй круг, проверки перед push, PR
 - **Uncommitted:** нет
 - **Waiting for the owner:** нет
 - **PR:** not open yet
@@ -22,6 +22,8 @@
 - [x] 3.3 Одобрение витрины владельцем
 
 ## Decisions along the way
+
+- **Поле даты `rt-date-picker` — не в этой задаче** — слово владельца, переданное запустившей сессией: «твоя задача RT-3428 — ТОЛЬКО заглушка пустой панели rt-aside»; поле даты делает основная сессия кита. Affected stage of the plan: нет.
 
 - **Копия Empty State в Figma подтянута под код: значок 32, отступ круг→заголовок 12** — владелец выбрал «Копию Figma под код» из двух: копию под код или код под копию. Affected stage of the plan: 3.
 
