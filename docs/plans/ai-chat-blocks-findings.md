@@ -128,6 +128,22 @@ task, a line per finding, each with its address.
   the tree root.** Proposed: a line in the companion. **Address:** names of this tree — the
   companion of `browser-verification`.
 
+## RT-3338 — the KPI block of the chat answer
+
+- **A plan sign named only the story sweep, and the sweep looks for empty showings only.** Both
+  roles found it on the plan: the match with the mockup, the columns and the card widths had no
+  command behind them. Proposed: a common miss in `task-flow-start` — a layout point of a kit task
+  names the play steps and the snapshot run in «Verified by». **Address:** names of this tree — the
+  rule `kit-approval`.
+- **The task card said «four in full screen», and the plan checked the block at fixed widths
+  only.** A full-screen chat with a 40rem reading column gives the block 640, under the threshold.
+  Proposed: the plan of a chat block names a chat story in every mode the card names. **Address:**
+  names of this tree — the rule `rt-tools-storybook`.
+- **Two hypotheses the epic does not check:** a model may confuse a `percent` share (0.78) with a
+  `delta` in percent (12.5), and a `kpi` block in a section narrower than 328 must fall to one
+  column. Proposed: a model call on «обзор месяца» and a narrow section story in RT-3342.
+  **Address:** the epic plan, task RT-3342.
+
 ## Left unresolved
 
 - **All findings above** — wait for the owner's decision at the end of the epic.
