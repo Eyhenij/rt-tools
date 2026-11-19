@@ -11,7 +11,16 @@
 2. [ ] Measure the frames by the pattern `mockups-measure`.
 3. [x] Show the frames to the owner and write the approval into `approvals.md`. — «это ок».
 
-- **Waiting for the owner:** «а что с остальными компонентами куда еще нужен ботом шит» — answered with the list of components; waiting for the word on filing the menu task and the rest.
+### Stage revision — 19.11.2026
+
+The owner widened the task: «все в этом тикете делать, везде где можно прикрутить ботомшит вид на
+мобилке». The plan stays as written; each of its four stages now covers every component of the
+set named in the grill, Decisions. Stage 1 gets the steps below for the components that have no
+phone frame yet.
+
+1. [ ] Find which components of the set already have a phone frame in Figma. ← going on
+2. [ ] Draw the missing phone frames.
+3. [ ] Show them to the owner and write the approval into `approvals.md`.
 
 ### 2. Agreement in the spec
 
@@ -31,5 +40,4 @@
 
 ## Decisions along the way
 
-- The menu and the select with a toggles panel are tasks of their own (grill, Decisions); filing
-  them waits for the owner's word.
+- Every kit component with a drop-down panel goes into this task (grill, Decisions).

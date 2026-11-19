@@ -29,7 +29,8 @@ Assignee — treble3d, by the owner's word.
 ## Questions and answers
 
 **Does the menu go into RT-3399 or into a task of its own**
-Closed by the rule `task-flow` (see Decisions): a task of its own.
+First closed by the rule `task-flow` as a task of its own; the owner overruled it:
+«все в этом тикете делать, везде где можно прикрутить ботомшит вид на мобилке».
 
 **What "optional" means** — chosen from: A) the sheet by default on a narrow screen, an input
 switches it off; B) no sheet by default, an input switches it on.
@@ -53,9 +54,12 @@ sheet of its own over it).
 
 ## Decisions
 
-- **The menu and the select with a toggles panel are tasks of their own, not part of RT-3399** —
-  rule `task-flow`: what rolls back apart is split, and split before the branch. RT-3399 keeps
-  `rt-select` and `rt-multiselect`. Rejected: one ticket for all three — one revert would carry
-  away work that stands on its own.
+- **Every kit component with a drop-down panel gets the sheet in RT-3399** — the owner's word
+  «все в этом тикете делать, везде где можно прикрутить ботомшит вид на мобилке». The first
+  decision (the menu and the toggles select as tasks of their own) is withdrawn by it. The set:
+  `rt-select`, `rt-multiselect`, `rt-menu`, `rt-autocomplete`, the overflow and context menus of
+  `rt-tabs`, `rt-split-button`, `rt-speed-menu`, `rt-dynamic-selector`, `rt-color-palette`, and the
+  select with a toggles panel. Tooltips, confirm popovers, dialogs and asides stay as they are —
+  they are not lists to choose from.
 
 ## What is left unclear
