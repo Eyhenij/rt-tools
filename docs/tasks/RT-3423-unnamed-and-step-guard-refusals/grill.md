@@ -86,7 +86,7 @@ None. The card names the two sources and the sign.
   line of the report. Цена ошибки: одна ветка диспетчера.
 - **The step guard refuses a shell command only when the command writes to the guarded file.** A
   read, a run of the engine and a file name inside the text of another edit pass. The 39 commands
-  refused falsely and the 10 refused truly are the cases of the scenario, word for word. Цена
+  refused falsely and the 11 refused truly are the cases of the scenario, word for word. Цена
   ошибки: правило «пишет ли команда в файл» уже есть в проверке одной функцией; правится она.
 - **The sign of the card is not promised.** The count shows the milestone is not reached by this
   task alone on any measured day; the plan says by how much each edit lowers the days and leaves
