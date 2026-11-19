@@ -44,5 +44,35 @@ export const FullScreen: TStory = {
 
 export const Presets: TStory = { args: { part: 'presets' } };
 
+/** Открывает таблицы всех блоков истории и ждёт, пока каждая встанет в разметку. */
+async function openData({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> {
+    const toggles: HTMLButtonElement[] = Array.from(
+        canvasElement.querySelectorAll<HTMLButtonElement>('[qa-dataid="ai-chat-chart-toggle"]')
+    );
+    toggles.forEach((toggle: HTMLButtonElement): void => toggle.click());
+    await new Promise<void>((resolve: () => void): void => {
+        const ready: () => void = (): void => {
+            if (canvasElement.querySelectorAll('[qa-dataid="ai-chat-chart-data"]').length >= toggles.length) {
+                resolve();
+            } else {
+                requestAnimationFrame(ready);
+            }
+        };
+        ready();
+    });
+}
+
+/**
+ * Таблица данных под графиком, светлая и тёмная половины: линия, столбики группой с минусом и нулём,
+ * дерево по листьям — SC-UKV-1384, SC-UKV-1388, SC-UKV-1390.
+ */
+export const DataTable: TStory = { args: { part: 'data' }, play: openData };
+
+/** Таблица в лентах 328, 386 и 728 и шесть рядов в узкой ленте — SC-UKV-1391. */
+export const DataTableWidths: TStory = { args: { part: 'dataWidths' }, play: openData };
+
+/** Дерево на 200 листьев: таблица растёт в высоту вместе с блоком. */
+export const DataTableLong: TStory = { args: { part: 'dataLong' }, play: openData };
+
 /** Десять видов в светлой и тёмной половине — SC-UKV-1369. */
 export const Themes: TStory = { args: { part: 'themes' } };

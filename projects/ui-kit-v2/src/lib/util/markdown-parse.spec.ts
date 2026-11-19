@@ -1,5 +1,5 @@
 import { parseMarkdown } from './markdown-parse';
-import { ERtMarkdownBlock, ERtMarkdownInline, IRtMarkdownBlockNode, IRtMarkdownInlineNode } from './markdown.model';
+import { ERtMarkdownAlign, ERtMarkdownBlock, ERtMarkdownInline, IRtMarkdownBlockNode, IRtMarkdownInlineNode } from './markdown.model';
 
 /**
  * Разборщик — чистая функция: спека зовёт её и читает дерево узлов, никого не поднимая.
@@ -100,6 +100,27 @@ describe('parseMarkdown', (): void => {
             expect(plainText(block.head[0])).toBe('Что');
             expect(block.rows.length).toBe(2);
             expect(plainText(block.rows[1][1])).toBe('приём');
+        });
+
+        it('SC-UKV-1416 — разделитель задаёт выравнивание: --: к концу, :-: по центру, прочее к началу', (): void => {
+            const block: IRtMarkdownBlockNode = firstBlock('| A | B | C | D | E |\n| --: | :-: | :-- | --- |\n| 1 | 2 | 3 | 4 | 5 |');
+
+            expect(block.align).toEqual([
+                ERtMarkdownAlign.End,
+                ERtMarkdownAlign.Center,
+                ERtMarkdownAlign.Start,
+                ERtMarkdownAlign.Start,
+                ERtMarkdownAlign.Start,
+            ]);
+        });
+
+        it('SC-UKV-1418 — строка короче шапки добирается пустыми ячейками, лишние отбрасываются', (): void => {
+            const block: IRtMarkdownBlockNode = firstBlock('| A | B | C |\n| --- | --- | --- |\n| 1 |\n| 1 | 2 | 3 | 4 |');
+
+            expect(block.rows.map((row: readonly (readonly IRtMarkdownInlineNode[])[]): string[] => row.map(plainText))).toEqual([
+                ['1', '', ''],
+                ['1', '2', '3'],
+            ]);
         });
 
         it('блок кода несёт своё содержимое как есть и слово языка отдельно', (): void => {

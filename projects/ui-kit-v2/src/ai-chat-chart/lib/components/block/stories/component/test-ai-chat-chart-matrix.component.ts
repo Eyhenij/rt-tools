@@ -10,15 +10,20 @@ import { provideRtAiChatChart } from '../../../../ai-chat-chart.providers';
 import { RtAiChatChartComponent } from '../../rt-ai-chat-chart.component';
 import {
     AI_CHAT_CHART_ANSWER,
+    AI_CHAT_CHART_DATA,
+    AI_CHAT_CHART_DATA_LONG,
+    AI_CHAT_CHART_DATA_WIDTHS,
     AI_CHAT_CHART_EDGES,
     AI_CHAT_CHART_KINDS,
     AI_CHAT_CHART_STATES,
     AI_CHAT_CHART_WIDTHS,
     IAiChatChartCase,
+    IAiChatChartWidthCase,
 } from './ai-chat-chart.fixture';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TAiChatChartMatrixPart = 'kinds' | 'states' | 'edges' | 'widths' | 'answer' | 'fullScreen' | 'presets' | 'themes';
+export type TAiChatChartMatrixPart =
+    'kinds' | 'states' | 'edges' | 'widths' | 'answer' | 'fullScreen' | 'presets' | 'themes' | 'data' | 'dataWidths' | 'dataLong';
 
 /**
  * Матрицы блока графика для витрины: десять видов, состояния, три ширины ленты, ответ в беседе
@@ -59,6 +64,12 @@ export class TestRtAiChatChartMatrixComponent {
     public readonly line: IAiChatChartCase = AI_CHAT_CHART_KINDS[0];
 
     public readonly answer: readonly IRtAiChat.Message[] = AI_CHAT_CHART_ANSWER;
+
+    public readonly data: readonly IAiChatChartCase[] = AI_CHAT_CHART_DATA;
+
+    public readonly dataWidths: readonly IAiChatChartWidthCase[] = AI_CHAT_CHART_DATA_WIDTHS;
+
+    public readonly dataLong: IAiChatChartCase = AI_CHAT_CHART_DATA_LONG;
 
     public readonly caseLabel: (item: IAiChatChartCase) => string = (item: IAiChatChartCase): string => item.name;
 

@@ -1,3 +1,5 @@
+@use '../../../../styles/mixins' as kv;
+
 @layer rt-kit.components {
     .rt-ai-chat-chart {
         --rt-ai-chat-chart-placeholder-radius: var(--rt-radius-md);
@@ -66,6 +68,44 @@
 
         &__plot {
             min-width: 0;
+        }
+
+        /* Текстовая кнопка под графиком стоит по своей ширине, не во всю строку. */
+        &__toggle {
+            align-self: flex-start;
+        }
+
+        /* Широкая таблица прокручивается внутри блока и не раздвигает ленту. */
+        &__data {
+            min-width: 0;
+            overflow-x: auto;
+        }
+
+        /* Таблица данных в том же виде, что блок таблицы ответа; формат значений остаётся свой. */
+        &__table {
+            @include kv.chat-table;
+        }
+
+        &__row {
+            vertical-align: middle;
+        }
+
+        &__cell {
+            @include kv.chat-table-cell;
+
+            /* Число не переносится и стоит к концу; столбец шириной в самое широкое значение. */
+            &--numeric {
+                @include kv.chat-table-cell-end;
+
+                width: 1%;
+            }
+
+            /* В шапке над числом стоит имя ряда: оно переносится по словам, а не растягивает таблицу. */
+            &--head {
+                @include kv.chat-table-head-cell;
+
+                white-space: normal;
+            }
         }
     }
 }

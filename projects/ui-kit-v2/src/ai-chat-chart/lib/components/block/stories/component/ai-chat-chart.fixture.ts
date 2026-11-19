@@ -90,6 +90,37 @@ export const AI_CHAT_CHART_EDGES: readonly IAiChatChartCase[] = [
 /** Ширины ленты по макету: узкий экран 360, панель 420 и широкий экран 760 — минус поля ленты. */
 export const AI_CHAT_CHART_WIDTHS: readonly string[] = ['328px', '386px', '728px'];
 
+/** Таблица данных по макету: линия, столбики группой с минусом и нулём, дерево прямоугольников. */
+export const AI_CHAT_CHART_DATA: readonly IAiChatChartCase[] = [
+    ERtAiChatChartKind.LINE,
+    ERtAiChatChartKind.GROUPED_BAR,
+    ERtAiChatChartKind.TREEMAP,
+].map((kind: ERtAiChatChartKind): IAiChatChartCase => ready(kind, RT_AI_CHAT_CHART_SAMPLES[kind]));
+
+/** Случай ширины: блок в ленте заданной ширины. */
+export interface IAiChatChartWidthCase extends IAiChatChartCase {
+    readonly width: string;
+}
+
+/**
+ * Таблица в лентах 328, 386 и 728 и шесть рядов в узкой ленте: широкая таблица прокручивается
+ * вбок внутри блока — SC-UKV-1391.
+ */
+export const AI_CHAT_CHART_DATA_WIDTHS: readonly IAiChatChartWidthCase[] = [
+    ...AI_CHAT_CHART_WIDTHS.map((width: string): IAiChatChartWidthCase => ({ ...ready(width, LINE), width })),
+    { ...AI_CHAT_CHART_EDGES[0], name: 'six series · 328px', width: '328px' },
+];
+
+/** Дерево на 200 листьев — предел спецификации: таблица растёт в высоту вместе с блоком. */
+export const AI_CHAT_CHART_DATA_LONG: IAiChatChartCase = ready('200 leaves', {
+    kind: ERtAiChatChartKind.TREEMAP,
+    title: 'Выручка по номерам',
+    hierarchy: Array.from({ length: 200 }, (_: unknown, index: number): IRtAiChatChart.Leaf => ({
+        path: [ROOMS[index % ROOMS.length], `№ ${index + 1}`],
+        value: 10 + ((index * 13) % 90),
+    })),
+});
+
 /** Ответ ассистента: текст, плашка, текст и график — как его видит человек в беседе. */
 export const AI_CHAT_CHART_ANSWER: readonly IRtAiChat.Message[] = [
     { id: 'q1', role: 'user', text: 'Покажи выручку по месяцам', time: '14:02' },
