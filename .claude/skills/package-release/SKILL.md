@@ -26,7 +26,8 @@ The table in `implementation.md` next to it.
 
 - **A package built from a copy of another package's pipeline carries the `verify` step of that
   pipeline.** Three links: a `verify` target depending on the build, `build:<package>` running it,
-  the publication workflow building through that command.
+  the publication workflow building through that command. The push set sees only projects with a
+  `verify` target; the wiring check compares these three steps and no others.
 - **A built package is loaded the way a consumer loads it before it is published.** Both entry
   points load from `dist`; the packed tarball is installed into an empty folder and loaded by name.
 - **Every relative import of the built ESM names a file that exists, with its extension.**
@@ -35,7 +36,9 @@ The table in `implementation.md` next to it.
 - **A refusal of the commit check on one's own commit names a string that lives elsewhere too.** It
   is searched across the tree before the commit is fixed.
 - **A release does not go out unless the built package loads.** The barrier is the root build
-  command ending in `nx verify`, run by the publication workflow itself.
+  command ending in `nx verify`, run by the publication workflow itself: a start from the browser,
+  `gh api` or a variable passes the start guard and stops there. Not judged: framework packages,
+  `agent-kit`, `auth-import` and `NOT_JUDGED`.
 - **The build with the loading check comes before the step that moves the version.**
 - **"Built" and "tested" are not "consumable".** A readiness claim names the command that loaded the
   package as a consumer would, and its output.

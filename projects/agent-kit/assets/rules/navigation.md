@@ -20,6 +20,9 @@ table in `implementation.md` next to it.
 | unread sign              | a dot, comes as a predicate by the item id                                      |
 | the "no screen yet" flag | `disabled` in the declaration                                                   |
 
+Items without a screen are rolled out as unavailable, not removed. The header is drawn by the kit;
+the project only declares items.
+
 ## How the law applies here
 
 - **An item is declared once and serves as the source of both the menu and route gating.**

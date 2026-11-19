@@ -10,11 +10,12 @@ description: Rule under the lib-imports law. Load when editing project manifests
 Rule under the law `docs/constitution/lib-imports.md`. Cold part: `pitfalls.md`. Where it lives: the
 table in `implementation.md` next to it.
 
-| In the law             | Here                                                         |
-| ---------------------- | ------------------------------------------------------------ |
-| lib family             | keys `families` and `apiFamily` of the checks' settings      |
-| the right to see a lib | a tag in `eslint/boundaries/domains/<family>.config.mjs`     |
-| family base            | `<family>/core`; its tag is in `ADMIN_UNIVERSAL`             |
+| In the law | Here |
+| --- | --- |
+| lib family | keys `families` and `apiFamily` of the checks' settings |
+| layer | `api`, `data-access`, `feature`, `shell`, `ui`, `util`; a common domain lacks `shell`, the backend `ui` and `shell` |
+| the right to see a lib | a tag in `eslint/boundaries/domains/<family>.config.mjs` |
+| family base | `<family>/core`; its tag is in `ADMIN_UNIVERSAL` |
 
 ## How the law applies here
 
@@ -26,10 +27,9 @@ table in `implementation.md` next to it.
   nothing: a boundary is checked by an introduced violation.
 - **`libs/common/util` has an empty dependency list, and Angular does not get in.** A DI token shared
   by the two frontend families lives in `common/platform`.
-- **The family base sees only `util`.** Any dependency it takes is shared by every domain of the
-  family. One exception: `CORE_EXCEPTIONS` lets `admin/core` see `common/proto` and `common/connect`.
+- **The family base sees only `util`.** Its dependencies are shared by the whole family. One exception: `CORE_EXCEPTIONS` lets `admin/core` see `common/proto` and `common/connect`.
 - **Behaviour the family base cannot see comes to it by a token.** Declared in the `util` of the
-  family's common domain (not `libs/common/util`), implemented by `data-access`. The base boundaries
+  common domain, implemented by `data-access`. The base boundaries
   are never widened for one call: that opens the lib to the whole family for good.
 - **A domain is started for a subject, not for mechanics.** Shared mechanics ride into the family
   base on the frontend, into `util` on the backend.

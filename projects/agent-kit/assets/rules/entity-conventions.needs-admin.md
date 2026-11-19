@@ -12,7 +12,9 @@ table in `implementation.md` next to it.
 
 The panel inherits `RtRouteAsideComponent<T>`, the list store `BaseListStoreService`; the record
 names are `entity`, `entityId`, `isCreateMode`; saving is `runMutation` in the panel and `mutate` in
-the store; pristineness is `pristineSignal(control)`.
+the store; pristineness is `pristineSignal(control)`. The store file is `<entity>.store.ts`:
+`<entity>-store.service.ts` escapes the linter and the rule gate. Reading a record by a separate
+procedure is not set up everywhere — debt `Q-M-3`.
 
 ## How the law applies here
 

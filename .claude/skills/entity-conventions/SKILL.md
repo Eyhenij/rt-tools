@@ -4,7 +4,7 @@ kind: rule
 law: entity-editing
 description: Rule under the entity-editing law. Load when editing any admin store and any panel that creates or edits a record. Names the shared base of the aside and of the list store, and that the aside opens by a route of its own. Patterns entity-aside, entity-store.
 ---
-<!-- rt-kit v0.37.0 · rules/entity-conventions.needs-admin.md · 1d4dd7ecd4f4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/entity-conventions.needs-admin.md · 4edb9c9ae0a4 · правится надстройкой, не здесь -->
 
 # Entity editing — how it works here
 
@@ -13,7 +13,9 @@ table in `implementation.md` next to it.
 
 The panel inherits `RtRouteAsideComponent<T>`, the list store `BaseListStoreService`; the record
 names are `entity`, `entityId`, `isCreateMode`; saving is `runMutation` in the panel and `mutate` in
-the store; pristineness is `pristineSignal(control)`.
+the store; pristineness is `pristineSignal(control)`. The store file is `<entity>.store.ts`:
+`<entity>-store.service.ts` escapes the linter and the rule gate. Reading a record by a separate
+procedure is not set up everywhere — debt `Q-M-3`.
 
 ## How the law applies here
 

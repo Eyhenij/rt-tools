@@ -23,7 +23,8 @@ table in `implementation.md` next to it.
   published packages under `projects/` declare what they accept by a range.
 - **Substituted versions of foreign dependencies are gathered in one list, and it is revisited at
   every update.** A stale entry silently rolls its dependency back after the main package is raised.
-- **A fresh version waits first, and one needed before the term is written out separately.**
+- **A fresh version waits first, and one needed before the term is written out separately.** The
+  upper bound comes from dependents' peer ranges, not from the last number in the registry.
 - **Only what the linter checks the formatting of gets reformatted.** After a formatter update its
   rewrite of `.md` and `.json` is not committed: nobody checks them here, the diff is noise.
 - **A package that carries styling is raised by a task of its own.** Styling breaks silently: no
