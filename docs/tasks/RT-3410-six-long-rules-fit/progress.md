@@ -4,21 +4,21 @@
 
 - **State:** `замысел-записан`
 - **Stage:** 1 из 3 — правила пакета; план одобрен владельцем: «Одобряю plan.md RT-3410 (Recommended)»
-- **Done:** разбор, план, проба на 35 областей (31 pass, 4 отказа), сверка смысла (0 на коммите 227aa2239)
-- **Next step:** положить сжатые горячие части пяти правил и холодные части в источник пакета, перенести надстройки lib-layers и dependencies в холодные части, разложить пакет
-- **Uncommitted:** this file
+- **Done:** шесть правил сжаты и разложены (1 838 / 1 248 / 2 054 / 1 422 / 1 372 / 2 050 знаков), надстройки lib-layers и dependencies перенесены в холодные части; проба — 35 из 35 pass, сверка смысла — 0; `agent-kit:check`, `check:boundary`, `check-descriptions` — код 0
+- **Next step:** вернуть в пять правил пакета указатель «Where it lives» (`check:specs` не нашёл якорь `lives` у navigation), затем пересказ правил ролью-читателем и сравнение критиком
+- **Uncommitted:** сжатые правила, холодные части, перенос надстроек
 - **Waiting for the owner:** no
 - **PR:** not open yet
 
 ## Шаги
 
-- [x] 1.1 lib-layers fits, its override included ← сейчас
+- [x] 1.1 lib-layers fits, its override included
 - [x] 1.2 dependencies fits, its override included
 - [x] 1.3 entity-conventions fits
 - [x] 1.4 navigation fits
 - [x] 1.5 entity-models fits
 - [x] 2.1 package-release fits
-- [x] 3.1 The probe passes every area and nothing is lost
+- [>] 3.1 The probe passes every area and nothing is lost
 
 ## Решения по ходу
 
