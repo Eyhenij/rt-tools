@@ -17,4 +17,15 @@
 
 ## Decisions along the way
 
-None yet.
+- 19.11, live check: the laid-out exits read on this tree and the hosting give nextTaken, mergedMarked
+  and finished all `false`. Of 18 rows of the epic plan, 13 have a merged PR and the mark; 2 are
+  deferred; exit 12 is held by RT-3276 (no PR, another working copy leads it), RT-3404 and RT-3410.
+  The engine suite: 155 ok, 0 failures.
+- 19.11, review round one. Confirmed and fixed: the mark was required of no task, against the card —
+  now every merged task is marked except the one merged last by `mergedAt`; a mark on a PR closed
+  unmerged counted — now it does not; exit 11 held an unmarked merged task whose branch the hosting
+  removed — now a merged PR takes it out of «ahead» (SC-AK-1755). Written off: an unmarked merged
+  task with a second open PR (low; an open-PR read per row costs about a second each); a PR merged
+  into any base (exit 13 still checks the tips); SC-AK-1754 alone proves little (kept as a guard
+  against reading tips). A chain merged top-down leaves its upper task to be marked: the action of
+  `влито` says bottom-up, and the ask-judge refused dropping the mark rule.

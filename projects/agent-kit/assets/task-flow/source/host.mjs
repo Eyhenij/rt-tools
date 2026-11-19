@@ -14,7 +14,7 @@
  *   remoteBranches(prefix)   [{ name, sha }] — the branches on the server whose name begins so
  *   remoteContains(sha)      a branch on the server holds the commit
  *   pulls(head)              [{ number, state, base, reviewers, headRefOid }] — the PRs of a branch
- *   mergedPulls()            [{ number, head, headRefOid, base }] — the merged PRs of the repository
+ *   mergedPulls()            [{ number, head, headRefOid, base, mergedAt }] — the merged PRs of the repository
  *   inRemote(sha, branch)    the commit lies in `origin/<branch>`
  *   remember(key) / recalled(key)   a met exit kept for the life of the branch
  *   silent()                 a read failed twice
@@ -150,11 +150,12 @@ export function open() {
             ),
         mergedPulls: () =>
             read('merged', () =>
-                (need().ghJson(['pr', 'list', '--state', 'merged', '--limit', '300', '--json', 'number,headRefName,headRefOid,baseRefName']) ?? []).map((p) => ({
+                (need().ghJson(['pr', 'list', '--state', 'merged', '--limit', '300', '--json', 'number,headRefName,headRefOid,baseRefName,mergedAt']) ?? []).map((p) => ({
                     number: p.number,
                     head: p.headRefName,
                     headRefOid: p.headRefOid,
                     base: p.baseRefName,
+                    mergedAt: p.mergedAt ?? null,
                 })),
             ),
         inRemote: (sha, branch) => git(['merge-base', '--is-ancestor', sha, `origin/${branch}`]).status === 0,

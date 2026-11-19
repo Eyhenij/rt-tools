@@ -53,7 +53,7 @@ The task is closed, the PR is open and waits for the owner — the session does 
 
 ## State `влито`: the epic plan learns of the merge
 
-A person merged the PR, and the epic plan still names the task as in work. The move: merge the PRs of the chain bottom-up, mark the merged tasks by the branch of the next one. The last task of the epic has no next branch: its merged PR counts by itself, and a mark is never put on a task whose PR is still open.
+A person merged the PR, and the epic plan still names the task as in work. The move: merge the PRs of the chain bottom-up, mark the merged tasks by the branch of the next one. The last task of the epic to merge has no next branch: its merged PR counts by itself, and a mark is never put on a task whose PR is open or closed unmerged.
 
 ## Common misses
 

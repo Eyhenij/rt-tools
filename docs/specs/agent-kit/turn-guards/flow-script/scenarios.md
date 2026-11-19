@@ -232,14 +232,16 @@ Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 Given the last row merged on the hosting with no mark, and a middle row merged last with no mark while the rows below are marked
 When exit 12 is measured
 Then it is met in both cases
+And a row with no mark merged before another task is unmet
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 
 ### SC-AK-1753 — a mark on a task with an open PR keeps exit 12 unmet
 
-Given a row marked «влито» whose branch has an open PR
+Given a row marked «влито» whose branch has an open PR, or a PR closed unmerged
 When exit 12 is measured
 Then it is unmet
+And a marked row with no PR in view of the hosting counts
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 
@@ -256,6 +258,14 @@ Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 Given a task ahead with a branch on the server before two tasks without one, and the same tasks all with branches
 When exit 11 is measured
 Then the first is unmet and the second met
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1755 — a task with a merged PR is not ahead for exit 11
+
+Given an unmarked task with a merged PR and no branch left, and the same task with no PR
+When exit 11 is measured
+Then the first is met and the second unmet
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 
