@@ -30,4 +30,6 @@ holding the known silently again.
 The rules of the tree's own are created after the sample of the package ones: they have the same
 shape, a companion next to them and their own branch in the gate map. By the end of the epic the
 tree's own became the rule of taking the cargo apart with the pattern at it, both commands of the
-package tree and the memo about editing the source.
+package tree and the memo about editing the source. The loop of a task, `task-delivery-loop`,
+is the tree's own too: it names this tree's showcase, stands, roles and push set, which a
+consumer tree does not have.
