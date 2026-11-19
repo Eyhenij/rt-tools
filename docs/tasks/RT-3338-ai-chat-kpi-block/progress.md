@@ -2,17 +2,37 @@
 
 ## Where we stand
 
-- **State:** `разбор-закрыт`
-- **Stage:** 0 of 0 — the plan is not written yet
+- **State:** `замысел-записан`
+- **Stage:** 1 of 5 — The data of the block: item, value writer, schema (not begun: the plan waits for the roles and the owner's word)
 - **Done:** the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3338-ai-chat-kpi-block` from `RT-3337-ai-chat-table-block` (chain), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption.
-- **Next step:** spec-critic reviews the agreement `docs/specs/ui-kit-v2/proposed/ai-chat-kpi/` (SC-UKV-1436…1465, committed); its findings are closed in the agreement, then the plan is written and shown to the owner.
+- **Next step:** the plan is written (uncommitted until the owner's word); product-strategist and goal-critic review it, their findings are closed, then the plan goes to the owner for approval. The agreement holds SC-UKV-1436…1483, committed.
 - **Uncommitted:** no
 - **Waiting for the owner:** no; the mockup is approved: «Одобряю макет»
 - **PR:** not open yet; the branch stands on RT-3337 (#3407), which stands on RT-3336 (#3402) and RT-3335 (#3398)
 
 ## Steps
 
-The steps come with the plan.
+- [>] 1.1 Write the lenient data function of a KPI item and block next to `table-data.ts`: missing value and label, format, currency, delta, deltaUnit, base, period, growthIsGood.
+- [ ] 1.2 Write the value writer on top of `rtTableCellWriter`: the short form from a million with 0–2 fraction digits and trailing zeros dropped, rounding to a million written short.
+- [ ] 1.3 Write the JSON schema of the block next to `table.schema.ts` and export both from the util barrel.
+- [ ] 1.4 Write the specs of the data function, the writer and the schema with the scenario numbers of the agreement.
+- [ ] 2.1 Write both delta rows of `rt-stat-tile` by `Intl.NumberFormat` for the kit label locale: a plus on growth, at most one fraction digit, direction by the written number, `en` for a refused locale.
+- [ ] 2.2 Add the compact size: value 24/24, delta 14, delta on its own line, inner gaps 6, wrapping secondary and base caption.
+- [ ] 2.3 Add the option that shows the primary delta label as visible text without a duplicate `title`.
+- [ ] 2.4 Name the locale in the existing tile specs and add the specs of the new scenarios.
+- [ ] 3.1 Add the `KpiBlock` type, the `kpi` view, `kpi` in `OWN_TYPES` and the data step in `toBlockViews`.
+- [ ] 3.2 Write the `rt-ai-chat-kpi` component: a list of framed compact tiles, the grid by a block-local container query (one column below 328, two from 328, four from 664), tokens only.
+- [ ] 3.3 Add the `kpi` case to the blocks template and the copy line to `blockText`.
+- [ ] 3.4 Write the specs of the block component, the logic and the copy.
+- [ ] 4.1 Write the stories of the block: 328, 386, 728, below 328, right to left, empty, invalid, several blocks, presets, themes; and a compact story of the tile.
+- [ ] 4.2 Write the `Overview.mdx` of the block and name the block in the chat Overview.
+- [ ] 4.3 Look at every story live, take the references, sweep all the stories.
+- [ ] 4.4 Match the stories with the approved mockup by numbers and show the showcase to the owner.
+- [ ] 5.1 Merge the agreement into `docs/specs/ui-kit-v2/ai-chat-kpi/` with its bindings; edit the stat-tile and chat specs and the kit spec indexes as the agreement names.
+- [ ] 5.2 Bring `CONTEXT.md` of ai-chat and stat-tile up to the block and the tile edits.
+- [ ] 5.3 Run the roles goal-critic and product-strategist on the result.
+- [ ] 5.4 Mark row 6 of the epic plan, write the archive record, take the task folder apart.
+- [ ] 5.5 Run the push set, push, open the PR into `RT-3337-ai-chat-table-block`.
 
 ## Decisions along the way
 
