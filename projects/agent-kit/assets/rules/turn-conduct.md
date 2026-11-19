@@ -77,7 +77,7 @@ flowchart TD
     B -->|Another release case of the description| I
     B -->|None| D{The next move}
     D -->|The executor's step| G[Done in the same turn: a question, a refusal, a handover never end it]
-    D -->|The owner's step, or another guard refuses it| M[One menu: «отложить RT-N», «сделаю сам», «стоп»]
+    D -->|Another guard refuses it twice| M[One menu: «отложить RT-N», «сделаю сам», «стоп»]
     M --> A
     G --> A
     L --> I{The reply speaks of the tree}
@@ -195,7 +195,7 @@ flowchart TD
   refused by a guard always, with no lawful form of bypass: an assignment stands until the owner
   cancels it, and a session that must close is closed by them.
 - **A refusal of a guard never ends the turn.** It is answered by the next call: the condition met,
-  another step taken, or the menu of the owner's step put to them. A refused stop — the
+  another step taken, or the owner's menu put to them. A refused stop — the
   closing tool — is no exit either.
 - **The phrase "waiting for your word" is a stop declared by the executor.** Without the owner's stop
   word, waiting for their word is a report, not work. A decision that is theirs goes to them as a

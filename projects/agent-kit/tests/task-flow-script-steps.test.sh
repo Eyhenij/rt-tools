@@ -125,17 +125,11 @@ report "step: SC-AK-1726 — папка изменена после плана �
 report "step: SC-AK-1726 — шаг остался неотмеченным" "$(grep -c '^- \[x\] 1.1' "$TF_PROGRESS")" 0
 printf 'один\n' > "$TF_STEP/docs/tasks/RT-1-x/probe.txt"
 
-# SC-AK-1723, SC-AK-1727 — цитата замены ищется во всех записях копий репозитория
 TF_HOME="$TF_DIR/records-home"
 TF_REC="$TF_HOME/$(printf '%s' "$(cd "$TF_STEP" && pwd -P)" | sed 's#[/.]#-#g')"
 mkdir -p "$TF_REC"
-printf '%s\n' '{"type":"user","uuid":"u1","message":{"role":"user","content":"замени проверку шага 1.2 на echo три"}}' > "$TF_REC/earlier-session.jsonl"
-printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [>] 1.2 Не совпасть\n\n## Decisions along the way\n\n- **Check of step 1.2 replaced:** `echo три` → `три` · the owner'"'"'s word: «замени проверку шага 1.2 на echo три»\n' > "$TF_PROGRESS"
-report "step: SC-AK-1723 — цитата из записи прошлой сессии найдена, замена мерится" \
-    "$(cd "$TF_STEP" && RT_FLOW_RECORDS_HOME="$TF_HOME" RT_FLOW_TRANSCRIPT=/nonexistent node "$TESTS/../assets/checks/task-flow-script.mjs" step 1.2 2>&1 | grep -c '· совпало')" 1
-sed -i '' 's/на echo три»/на echo четыре»/' "$TF_PROGRESS"
-report "step: SC-AK-1727 — цитата, которой нет ни в одной записи, отказана" \
-    "$(cd "$TF_STEP" && RT_FLOW_RECORDS_HOME="$TF_HOME" RT_FLOW_TRANSCRIPT=/nonexistent node "$TESTS/../assets/checks/task-flow-script.mjs" step 1.2 2>&1 | grep -c 'the owner never typed it')" 1
+printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [>] 1.2 Не совпасть\n\n## Decisions along the way\n\n- **Check of step 1.2 replaced:** `echo три` → `три`\n' > "$TF_PROGRESS"
+(cd "$TF_STEP" && RT_FLOW_RECORDS_HOME="$TF_HOME" RT_FLOW_TRANSCRIPT=/nonexistent node "$TESTS/../assets/checks/task-flow-script.mjs" step 1.2 >/dev/null 2>&1)
 
 # SC-AK-1729 — метки по ветке общие для копий: несовпавший перемер снимает метку для всех
 printf '{"matched":true}\n' > "$TF_MARK/1.2.json"
@@ -253,10 +247,12 @@ rm -f "$TF_RED/out.txt"
 printf '# Ход работы\n\n## Шаги\n\n- [>] 1.1 Написать файл\n- [ ] 1.2 Посчитать строки\n\n## Решения по ходу\n\n- **Проверка шага 1.1 заменена:** `echo готово` → `готово` · слово владельца: «меняй проверку 1.1»\n' > "$TF_RED/docs/tasks/RT-2-red/progress.md"
 printf '%s\n' '{"type":"user","message":{"content":"меняй проверку 1.1 на echo"}}' > "$TF_REC"
 got="$(cd "$TF_RED" && RT_FLOW_TRANSCRIPT="$TF_REC" node "$TESTS/../assets/checks/task-flow-script.mjs" step 1.1 2>&1 | tr '\n' ' '; printf 'code=%s' "${PIPESTATUS[0]}")"
-report "plan: SC-AK-1413 — замена с цитатой владельца меряется" "$got" 'ожидалось `готово` · получено готово · совпало code=0'
+report "plan: SC-AK-1413 — замена старой формы с цитатой меряется" "$got" 'ожидалось `готово` · получено готово · совпало code=0'
+# SC-AK-1743 — замена без цитаты меряется: строку пропустило окно владельца на правке
+printf '# Ход работы\n\n## Шаги\n\n- [>] 1.1 Написать файл\n- [ ] 1.2 Посчитать строки\n\n## Решения по ходу\n\n- **Проверка шага 1.1 заменена:** `echo готово` → `готово`\n' > "$TF_RED/docs/tasks/RT-2-red/progress.md"
 printf '%s\n' '{"type":"user","message":{"content":"продолжай"}}' > "$TF_REC"
 got="$(cd "$TF_RED" && RT_FLOW_TRANSCRIPT="$TF_REC" node "$TESTS/../assets/checks/task-flow-script.mjs" step 1.1 2>&1 | tr '\n' ' '; printf 'code=%s' "${PIPESTATUS[0]}")"
-report "plan: SC-AK-1413 — замена без слова владельца отказана" "$(printf '%s' "$got" | grep -c 'the owner never typed it code=1')" 1
+report "plan: SC-AK-1743 — замена без цитаты меряется, записей владельца не читает" "$got" 'ожидалось `готово` · получено готово · совпало code=0'
 
 # SC-AK-1539 — ветка, спланированная до движка, читает план из последней правки
 tf_legacy() {

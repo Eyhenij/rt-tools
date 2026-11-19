@@ -120,12 +120,10 @@ out('удержанный ход до этапа называет действи
 
 // --- меню владельцу: шаг владельца или шаг, который запрещает другая проверка ---------------------
 const HOLD_MENU = { cause: null, task: '7' };
-const ownerMenu = holdReason(model, stage, null, { ...HOLD_MENU, cause: menuCause((name) => name === 'measure.epic.ownerStep') });
-out('menu: SC-AK-1441 — шаг владельца — отказ называет меню', String(ownerMenu.includes("The next step is the owner's") && ownerMenu.includes("owner's menu")), 'true');
-out('menu: SC-AK-1441 — без причины меню нет', String(holdReason(model, stage, null, { ...HOLD_MENU, cause: menuCause(() => false) }).includes("owner's menu")), 'false');
-
 const forbiddenBy = (name) => (name === 'measure.session.forbidden' ? 'git-guard-delivery' : false);
 const checkMenu = holdReason(model, stage, null, { ...HOLD_MENU, cause: menuCause(forbiddenBy) });
+const ownerMenu = checkMenu;
+out('menu: SC-AK-1744 — строка шага владельца меню не называет', String(holdReason(model, stage, null, { ...HOLD_MENU, cause: menuCause((name) => name === 'measure.epic.ownerStep') }).includes("owner's menu")), 'false');
 out('menu: SC-AK-1442 — шаг запрещает другая проверка — меню об этой проверке', String(checkMenu.includes('`git-guard-delivery` refused the same step twice') && checkMenu.includes("owner's menu")), 'true');
 const blockedBy = (by, reason) => ({ kind: 'blocked', by, reason });
 const called = (name, input = {}, blocked = false) => ({ kind: 'call', name, input, blocked });

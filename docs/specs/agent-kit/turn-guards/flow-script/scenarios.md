@@ -205,9 +205,9 @@ Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 
 ### SC-AK-1389 — a task waiting for the owner's step is passed over
 
-Given a next task waiting for the owner's step, with and without the owner's message holding its quote, and a branch of the task after it
+Given a next task waiting for the owner's step, with the owner's message holding its quote, and a branch of the task after it
 When exit 11 is measured
-Then it is met when the owner said the step and unmet when the owner did not
+Then it is met
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 
@@ -420,13 +420,45 @@ Then the step is named green before the work, and no mark is written
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
-### SC-AK-1413 — a check is replaced only with the owner's quote
+### SC-AK-1413 — a replacement of the older form is measured
 
-Given a progress that replaces the check of a step and quotes the owner
-When the step is measured with the quote in the owner's messages, and without it
-Then the replacement is measured in the first case and refused in the second
+Given a progress that replaces the check of a step and quotes the owner in the older form
+When the step is measured
+Then the replacement is measured, and the quote is not looked for
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
+### SC-AK-1743 — a replacement without a quote is measured
+
+Given a progress that replaces the check of a step with no quote, and no message of the owner about it
+When the step is measured
+Then the replacement is measured
+
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
+### SC-AK-1744 — a row naming the owner's step blocks its task
+
+Given a task ahead whose row names the owner's step, with no message of the owner holding its quote
+When exit 11 is measured, and the turn is held
+Then the task is passed over, and the refusal names no owner's menu for it
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`, `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1745 — an edit of a replacement line goes to the owner's window
+
+Given a progress edit that adds a replacement line, one that changes it, and one that removes it
+When the guard of the course of work judges each
+Then the first two get the decision `ask`, and the removal passes
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
+
+### SC-AK-1746 — an edit of «шаг владельца» goes to the owner's window
+
+Given an epic plan edit that sets «шаг владельца» on a row, and one that takes the row back to the work
+When the guard of the course of work judges each
+Then the first gets the decision `ask`, and the second passes
+
+Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 
 ### SC-AK-1506 — a form of the expected result added to the description is accepted
 
