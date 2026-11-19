@@ -38,7 +38,10 @@
 ### 1. Mockup
 
 1. [x] Draw the frames of both fields in the sheet at 375 in the kit's Figma file: single choice, multiple choice, with search. — the frames already stand in the file: `Телефон · Select` (6068:811), `Телефон · Select, дерево` (6068:895), `Телефон · Multiselect` (6068:1250), built on `Bottom Sheet` and `Sheet Content / Select…`; all 375×812, search in each, the multiselect sheet has the footer «Выбрано: N · Сбросить · Готово».
-2. [ ] Measure the frames by the pattern `mockups-measure`.
+2. [x] Measure the frames by the pattern `mockups-measure`. — all 22 frames of the task read by
+   node bounds: none overlaps another frame on its page, no node lies outside its frame, and the
+   buttons of every horizontal row share one centre. The overlaps the call found on the pages Tabs,
+   Thread List and Page Header are between frames older than this task, not named by its plan.
 3. [x] Show the frames to the owner and write the approval into `approvals.md`. — «это ок».
 
 ### Stage revision — 19.11.2026
