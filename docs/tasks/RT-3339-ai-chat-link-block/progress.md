@@ -5,9 +5,9 @@
 - **State:** `разбор-закрыт`
 - **Stage:** 0 of — — the mockup before the agreement
 - **Done:** the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3339-ai-chat-link-block` from `RT-3338-ai-chat-kpi-block` (chain, PR #3429), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption.
-- **Next step:** the owner's word on the mockup 8339-452; after it the product agreement in `docs/specs/ui-kit-v2/proposed/ai-chat-link/` and the plan.
+- **Next step:** the product agreement for the link block, written into the kit's proposed specs, then the plan and the owner's word on it.
 - **Uncommitted:** no
-- **Waiting for the owner:** the word on the mockup 8339-452
+- **Waiting for the owner:** no — the mockup 8339-452 is approved, the quote is in `approvals.md`
 - **PR:** not open yet; the base is `RT-3338-ai-chat-kpi-block` (#3429)
 
 ## Steps
