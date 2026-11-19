@@ -1,5 +1,6 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import { NgTemplateOutlet } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import {
     booleanAttribute,
     computed,
@@ -45,7 +46,9 @@ import { RtSelectTriggerDirective } from '@rt-tools/ui-kit-v2/select';
 import { RtMultiselectEmptyDirective } from './rt-multiselect-empty.directive';
 import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
 import { RtTagComponent } from '@rt-tools/ui-kit-v2/tag';
+import { RtToggleSwitchComponent } from '@rt-tools/ui-kit-v2/toggle-switch';
 import { RtMultiselectLabelPipe } from './rt-multiselect-label.pipe';
+import { IRtMultiselectSummary, TRtMultiselectLook, rtMultiselectAllValues, rtMultiselectSummary } from './rt-multiselect-toggles.logic';
 
 const BEM_BLOCK: string = 'rt-multiselect';
 
@@ -80,6 +83,7 @@ function nextPanelId(): number {
     imports: [
         // Angular
         NgTemplateOutlet,
+        FormsModule,
 
         // standalone components / directives
         RtButtonDirective,
@@ -87,6 +91,7 @@ function nextPanelId(): number {
         RtIconComponent,
         RtPopoverDirective,
         RtTagComponent,
+        RtToggleSwitchComponent,
         BlockDirective,
         ElemDirective,
         ModDirective,
@@ -108,6 +113,7 @@ function nextPanelId(): number {
         '[class.rt-multiselect--borderless]': '!bordered()',
         '[class.rt-multiselect--size--sm]': "size() === 'sm'",
         '[class.rt-multiselect--size--lg]': "size() === 'lg'",
+        '[class.rt-multiselect--toggles]': "look() === 'toggles'",
     },
 })
 export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyArray<TValue>> {
@@ -129,6 +135,33 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
         'uiSelectedCount',
         computed((): TRtKitLabelParams => ({ count: this.value().length }))
     );
+
+    /** Все значения, которые можно включить, — для «Показать все» и для сводки «N из M». */
+    protected readonly allValues: Signal<ReadonlyArray<TValue>> = computed((): ReadonlyArray<TValue> =>
+        rtMultiselectAllValues(this.options())
+    );
+
+    protected readonly summary: Signal<IRtMultiselectSummary> = computed((): IRtMultiselectSummary =>
+        rtMultiselectSummary(this.allValues(), this.value())
+    );
+
+    /** «3 из 5» в поле вида `toggles` — подпись с подстановкой, потому берётся вызовом. */
+    protected readonly countOfLabel: Signal<string> = rtKitLabel(
+        'uiCountOf',
+        computed((): TRtKitLabelParams => ({ count: this.summary().count, total: this.summary().total }))
+    );
+
+    /** Сводка в поле вида `toggles`: всё включено — `allLabel`, часть — «N из M», ничего — подсказка. */
+    protected readonly summaryText: Signal<string> = computed((): string => {
+        switch (this.summary().state) {
+            case 'all':
+                return this.allLabel() || this.t().uiAll;
+            case 'some':
+                return this.countOfLabel();
+            default:
+                return this.placeholderText();
+        }
+    });
 
     protected readonly triggerEl: Signal<ElementRef<HTMLButtonElement> | undefined> = viewChild<ElementRef<HTMLButtonElement>>('triggerEl');
 
@@ -208,6 +241,16 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
 
     /** Иконка слева в указателе — та же, что у `rt-select`: перед подсказкой или чипами. */
     public readonly iconLeft: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
+
+    /**
+     * Вид: `list` — флажки в списке и чипы в поле; `toggles` — переключатели справа в строках,
+     * строка «Показать все» и место `[rtMultiselectExtra]` для своих переключателей приложения над
+     * ними, а поле пишет сводку вместо чипов.
+     */
+    public readonly look: InputSignal<TRtMultiselectLook> = input<TRtMultiselectLook>('list');
+
+    /** Сводка поля вида `toggles`, когда включено всё. Пусто — подпись кита «Все». */
+    public readonly allLabel: InputSignal<string> = input<string>('');
 
     /**
      * Чем мерится панель. По умолчанию она не уже кнопки и дальше растёт по содержимому:
@@ -299,6 +342,22 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
         }
         this.value.set([]);
         this.emitChange([]);
+    }
+
+    /** «Показать все»: включено всё — снимает всё, иначе включает всё, что можно включить. */
+    protected toggleAll(): void {
+        if (this.isDisabled()) {
+            return;
+        }
+        const next: ReadonlyArray<TValue> = this.summary().state === 'all' ? [] : [...this.allValues()];
+        this.value.set(next);
+        this.emitChange([...next]);
+    }
+
+    /** Пробел на строке «Показать все» переключает, а не прокручивает шторку. */
+    protected onShowAllSpace(event: Event): void {
+        event.preventDefault();
+        this.toggleAll();
     }
 
     /** «Готово» в подвале шторки: выбор уже записан по каждому нажатию, кнопка только закрывает. */

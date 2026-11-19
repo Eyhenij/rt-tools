@@ -4,7 +4,10 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 3 из 4 — Code and unit tests
-- **Next step:** the field with a toggles panel, then the trailing icons. Done: the folding
+- **Next step:** the trailing icons — the date field and the period field onto the select's line
+  (stage revision below). Done: the multiselect with toggles, `look="toggles"` (scenarios
+  1456…1460, the kit set 3777 green; code written by a Sonnet subagent by the owner's word
+  «планирование и ревью опус, код пишет сонет работай так», reviewed here), the folding
   `rt-toggle-button-group` (scenarios 1452…1455, the kit set 3772 green), `rt-menu` with the «⋯» actions of the page header (scenarios 1446…1449), the menu
   of a tab — a component of its own, not `rt-menu` as the commit cf96bb005 says (scenarios
   1450…1451, the kit set 3768 green), the select, the multiselect with its footer, the autocomplete
@@ -62,8 +65,14 @@ The owner added: «включи в задачу поправить дейт пи
 селектов и пиркеров иконки на одном и том же месте».
 
 1. [ ] Measure the trailing icon of every select and picker of the kit in the showcase: its right
-   edge against the right edge of the field, in both looks.
-2. [ ] Draw the aligned date field next to the select in Figma and show it to the owner.
+   edge against the right edge of the field, in both looks. — by the code: the select and the
+   multiselect draw a bare 16 px chevron at the field padding; the date field and the period field
+   draw an `rt-icon-button` of 32 px, whose own box moves the glyph 8 px further in. The
+   autocomplete and the tree selectors have no trailing icon of their own. The live measurement is left.
+2. [ ] Draw the aligned date field next to the select in Figma and show it to the owner. — no
+   drawing needed: the approved frames already put every trailing icon 17 px from the field's right
+   edge (border 1 + padding 16) — `Select` 4645:2745, `Date Picker` 6055:603, `Date Range Picker`
+   6055:1284, `Date Time Picker` 6055:1523, `Time Picker` 6055:748. The code diverges from them.
 3. [ ] Move the date picker icon, and any other that diverged, onto the select's line; a spec or a
    measurement holds it.
 
@@ -92,30 +101,28 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 3 из 4 — Code and unit tests
-- **Next step:** the sheet mode in `RtPopoverDirective` (inputs `rtPopoverSheet`, `rtPopoverSheetTitle`;
+- **Next step:** the field with a toggles panel, then the trailing icons. Done: the folding
 
 The progress in full — `docs/tasks/RT-3399-select-sheet/progress.md`; the plan lies next to it.
 
 ### Uncommitted
 
 ```
- M projects/ui-kit-v2/src/lib/components/field/rt-field.component.ts
- M projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.base.ts
- M projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect.component.html
- M projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect.component.ts
- M projects/ui-kit-v2/src/lib/components/popover/index.ts
- M projects/ui-kit-v2/src/lib/components/popover/rt-popover.directive.ts
- M projects/ui-kit-v2/src/lib/components/select/rt-select.component.html
- M projects/ui-kit-v2/src/lib/components/select/rt-select.component.ts
-?? projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet.component.html
-?? projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet.component.scss
-?? projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet.component.ts
-?? projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts
+none
 ```
 
 ### Commits over the main branch
 
 ```
+153d11d39 feat(rt:ui-kit-v2): группа переключателей сворачивается в поле выбора, когда не помещается (RT-3399)
+98bfabd6b feat(rt:ui-kit-v2): меню вкладки на телефоне — в нижней шторке (RT-3399)
+cf96bb005 feat(rt:ui-kit-v2): меню действий rt-menu на телефоне — в нижней шторке (RT-3399)
+bb98b0b6d feat(rt:ui-kit-v2): меню шапки страницы на телефоне — в нижней шторке (RT-3399)
+857f2edf4 feat(rt:ui-kit-v2): нижняя шторка у динамического селектора (RT-3399)
+dceae8fde feat(rt:ui-kit-v2): автокомплит на телефоне ищет в нижней шторке (RT-3399)
+44c9814e8 feat(rt:ui-kit-v2): нижняя шторка у меню и панелей остального набора (RT-3399)
+0d74de272 feat(rt:ui-kit-v2): подвал «Выбрано · Сбросить · Готово» в шторке мультиселекта (RT-3399)
+ab78c8832 feat(rt:ui-kit-v2): селект и мультиселект открывают список в нижней шторке на телефоне (RT-3399)
 00eab3c11 docs(rt:ui-kit-v2): спека шторки для панелей выбора на телефоне (RT-3399)
 df49d6ffd docs(rt:ui-kit-v2): одобрение макетов пяти добавленных мест (RT-3399)
 2175aeef9 docs(rt:ui-kit-v2): макеты шторки для пяти добавленных мест (RT-3399)

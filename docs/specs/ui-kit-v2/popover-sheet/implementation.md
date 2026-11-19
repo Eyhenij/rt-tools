@@ -13,6 +13,7 @@ paths are given from the root of the tree.
 - **A field that searches as it is typed opens the sheet on a tap, and the typing goes to a search at the top of the sheet.** — `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete.component.ts:onSheetQuery`
 - **A panel that opens on hover opens in the sheet only by a press, and the pointer leaving does not close the sheet.** — `projects/ui-kit-v2/src/lib/components/popover/rt-popover.directive.ts:#isMouseHover`
 - **A toggle button group whose buttons do not fit the width folds into a field of choice.** — `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.logic.ts:rtToggleGroupFolds`
+- **A field of several values can show its choice as toggles.** — `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles.logic.ts:rtMultiselectSummary`
 - **A sheet closed by its backdrop, by a drag or by Escape closes the panel the same way a press outside it does.** — `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet.component.ts:openChange`
 - **The panel inside the sheet takes the full width of the sheet.** — `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet.component.ts:RtPopoverSheetComponent`
 

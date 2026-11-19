@@ -53,6 +53,11 @@ the same rows as before.
   a one-line group folds; the field takes the same values, a single choice as a select and a
   multiple one as a multiselect, and on a phone it opens them in the sheet. A choice there counts
   as a press on the button. One input keeps the buttons however long they are.
+- **A field of several values can show its choice as toggles.** The field then sums the choice up
+  — «All», «N of M» or its placeholder — instead of chips. The panel puts «Show all» and the
+  application's own toggles above a line, and one toggle per value under it. A toggle only shows
+  the choice: the row takes the press. In the sheet this look has no footer, since every row is
+  already a switch.
 - **A sheet closed by its backdrop, by a drag or by Escape closes the panel the same way a press
   outside it does.** The part of the kit learns of the close as before.
 - **The panel inside the sheet takes the full width of the sheet.** The width taken from the
@@ -60,7 +65,6 @@ the same rows as before.
 
 ## What is out of scope
 
-- The field with a toggles panel is described apart.
 - Tooltips, the help of a field, confirmations, dialogs and asides keep opening as they do.
 - The look of the rows inside the panel does not change.
 
@@ -122,3 +126,4 @@ None.
 | 2026-11-19 | The actions menu `rt-menu` in the sheet, scenarios 1446…1449 (RT-3399) |
 | 2026-11-19 | The menu of a tab in the sheet, scenarios 1450…1451 (RT-3399) |
 | 2026-11-19 | The folding toggle button group, scenarios 1452…1455 (RT-3399) |
+| 2026-11-19 | The multiselect with toggles, scenarios 1456…1460 (RT-3399) |
