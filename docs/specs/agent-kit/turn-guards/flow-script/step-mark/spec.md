@@ -114,6 +114,14 @@ prints a line per fixture.
   wrote for the earlier replay are removed and never read.
 - **The replay runs by hand and as a plan step, not in the set before a push.** It calls a model once
   per fixture.
+- **Run as the hook, the turn judge reads the recorded turn from disk with the tools of an agent hook.**
+  The turn is written as a session record, the prompt is the one of the hook declaration with the
+  hook input, the tools are Read, Grep and Glob, and each case prints its seconds; a real session
+  record may stand in front of the turn. The time of this run is a measure to compare, not the time
+  of the hook.
+- **The live count takes the runs of the hook declaration on the current branch after its last
+  commit.** A run is picked by the prompt of the declaration; a refusal or a timeout that carries no
+  duration is timed from the last record before its summary, and a timeout is counted apart.
 
 Two scenarios of the neighbouring specs follow these rules: `SC-AK-1414` of `guard/` (an edit that
 marks a step done is refused) and `SC-AK-1411` of the engine (the approval mark carries the place of

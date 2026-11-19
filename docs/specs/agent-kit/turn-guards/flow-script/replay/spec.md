@@ -66,7 +66,8 @@ Not applicable: a refusal comes as text naming the state and the next move.
 
 A fixture is one JSON object: `case`, `kind`, `record`, `task`, `turns` and the owner's next word
 `next`. A turn entry has `role` (`owner`, `agent`, `hook`, `harness`), `at` and one of `owner`,
-`say`, `call` with `code`, `menu` with `answer`, `stop`, `compact`. What the suite expects stands in
+`say`, `call` with `code` and an optional output `out`, `menu` with `answer`, `stop`, `compact`. A
+call that ended with code 0 and names no `out` answers `done`. What the suite expects stands in
 the suite next to the case line, not in the fixture.
 
 ## Screens and states

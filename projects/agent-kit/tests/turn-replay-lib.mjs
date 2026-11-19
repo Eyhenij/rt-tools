@@ -9,6 +9,7 @@
 //
 // Usage: node turn-replay-lib.mjs <fixture.json> <record.jsonl>
 import { readFileSync, writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 /** The synthetic text of each class label. Nothing here matches the stop words of the description. */
 const LABEL_TEXT = {
@@ -65,7 +66,8 @@ function answerOf(turn, id, at, options) {
             `PreToolUse:${turn.call} hook error: [${turn.guard}.sh]: BLOCKED by ${turn.guard}: the call is refused.`,
             true
         );
-    return result(at, id, turn.code === 0 ? 'done' : `exit ${turn.code}`, turn.code !== 0);
+    if (turn.code === 0) return result(at, id, turn.out ?? 'done', false);
+    return result(at, id, `exit ${turn.code}`, true);
 }
 
 /** The entries of the record, oldest first. */
@@ -92,7 +94,8 @@ export function recordOf(fixture) {
     return entries;
 }
 
-if (process.argv[2] && process.argv[3]) {
+// Run only when called itself: an importer's own arguments are no fixture and record.
+if (process.argv[1] === fileURLToPath(import.meta.url) && process.argv[2] && process.argv[3]) {
     const fixture = JSON.parse(readFileSync(process.argv[2], 'utf8'));
     writeFileSync(
         process.argv[3],

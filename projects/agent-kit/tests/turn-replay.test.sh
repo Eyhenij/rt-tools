@@ -333,4 +333,42 @@ printf '%s\n' '{ "a.json": { "judge": "block" } }' > "$J/fixtures/judge-verdicts
 report "replay: SC-AK-1714 — старый файл вердиктов не читается, считается ответ этого прогона" "$(run_replay allow | jq -r '.[0].got')" allow
 report "replay: SC-AK-1714 — в каталоге фикстур нет файлов вердиктов прошлых прогонов" "$(ls "$FIXTURES" | grep -c '^judge-verdicts')" 0
 
+# --- судья как хук: стенограмма на диске, инструменты агент-хука, секунды ----------------------------
+mkdir -p "$J/.claude"
+printf '%s\n' '{ "hooks": { "Stop": [ { "hooks": [ { "type": "agent", "prompt": "Follow .claude/hooks/turn-judge.md. The hook input: $ARGUMENTS", "timeout": 120 } ] } ] } }' \
+    > "$J/.claude/settings.json"
+AS_HOOK="$(RT_JUDGE_RUNNER="p=\$(cat); printf '%s' \"\$p\" > '$J/hook-prompt.txt'; t=\$(printf '%s' \"\$p\" | grep -o '\"transcript_path\":\"[^\"]*\"' | cut -d'\"' -f4); cp \"\$t\" '$J/hook-record.jsonl'; printf '%s' '{\"ok\": false}'" \
+    judge_js "console.log(JSON.stringify(j.replayAsHook({root:'$J', fixtures:'$J/fixtures', expectedFile:'$J/expected.json'})))")"
+report "replay: SC-AK-1756 — ответ {\"ok\": false} засчитан как block" "$(printf '%s' "$AS_HOOK" | jq -r '.[0] | "\(.ok) \(.got)"')" 'true block'
+report "replay: SC-AK-1756 — у случая есть секунды" "$(printf '%s' "$AS_HOOK" | jq -r '.[0].seconds | type')" number
+report "replay: SC-AK-1756 — подсказка — объявление хука с входом хука" \
+    "$(grep -c '^Follow .claude/hooks/turn-judge.md. The hook input: {' "$J/hook-prompt.txt")" 1
+report "replay: SC-AK-1756 — стенограмма на диске несёт ход" "$(grep -c '"type":"assistant"' "$J/hook-record.jsonl" | awk '{print ($1 > 0)}')" 1
+HCMD="$(judge_js "console.log(JSON.stringify(j.asHookCommand({cwd:'/tmp/judge-x'})))")"
+report "replay: SC-AK-1756 — у судьи инструменты агент-хука" \
+    "$(printf '%s' "$HCMD" | jq -r '.args as $a | $a[($a | index("--tools")) + 1]')" 'Read,Grep,Glob'
+
+# --- живой счёт: объявление, ветка, таймаут без длительности -----------------------------------------
+L="$WORK/live"
+mkdir -p "$L/tree/.claude" "$L/records"
+(cd "$L/tree" && git init -q -b live-branch && git config user.email t@t && git config user.name t \
+    && printf '%s\n' '{ "hooks": { "Stop": [ { "hooks": [ { "type": "agent", "prompt": "NEW turn-judge prompt", "timeout": 120 } ] } ] } }' > .claude/settings.json \
+    && git add -A && git -c commit.gpgsign=false commit -qm init)
+node -e "
+const t0 = Date.now() + 3600e3, at = (s) => new Date(t0 + s * 1000).toISOString();
+const run = (cmd, ms) => ms === undefined ? { command: cmd } : { command: cmd, durationMs: ms };
+const sum = (s, info, branch = 'live-branch') => ({ type: 'system', subtype: 'stop_hook_summary', timestamp: at(s), gitBranch: branch, hookInfos: [info] });
+const rows = [
+  { type: 'assistant', timestamp: at(0) }, sum(20, run('NEW turn-judge prompt', 20000)),
+  { type: 'assistant', timestamp: at(100) }, sum(225, run('NEW turn-judge prompt')),
+  { type: 'assistant', timestamp: at(300) }, sum(310, run('OLD turn-judge prompt', 9000)),
+  { type: 'assistant', timestamp: at(400) }, sum(410, run('NEW turn-judge prompt', 9000), 'other-branch'),
+];
+require('fs').writeFileSync('$L/records/s.jsonl', rows.map((r) => JSON.stringify(r)).join('\n') + '\n');
+"
+LIVE="$(judge_js "console.log(JSON.stringify(j.liveRuns('$L/tree', '$L/records')))")"
+report "replay: SC-AK-1757 — считаются только запуски объявления на ветке" "$(printf '%s' "$LIVE" | jq -r '.runs')" 2
+report "replay: SC-AK-1757 — запуск без длительности — таймаут" "$(printf '%s' "$LIVE" | jq -r '.timeouts')" 1
+report "replay: SC-AK-1757 — его время — от последней записи до сводки" "$(printf '%s' "$LIVE" | jq -r '.median')" 72.5
+
 suite_result "записанные ходы"

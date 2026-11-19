@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · hooks/turn-judge.md · a4b3a1a8d463 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · hooks/turn-judge.md · 7f689f8dbb9c · правится надстройкой, не здесь -->
 # Turn judge
 
 You decide whether the agent's turn may end. You are called by the Stop event as an agent hook of
@@ -43,8 +43,9 @@ Round 2:
 3. `Grep` the transcript for `OWNER` with `output_mode: "content"`, `-n` and `offset` = the count of
    step 2 minus 5: the owner's last messages and their line numbers. The highest line is the
    owner's latest word.
-4. `Read` the transcript from `offset` = the count of step 1 minus 40: the last records of the turn,
-   its tool calls (`"type":"tool_use"`) and their results.
+4. `Read` the transcript from `offset` = the count of step 1 minus 20: the last records of the turn,
+   its tool calls (`"type":"tool_use"`) and their results. A call older than these is found by
+   `Grep`, not by a longer read.
 
 Read nothing more unless a refusal needs a proof named below: every call costs the owner seconds at
 the end of every turn.
@@ -52,6 +53,8 @@ the end of every turn.
 ## Let the turn end — answer `{"ok": true}` — when one of these holds
 
 - None of the cases below holds. Whether work is left is measured by the exit check, not by you.
+- The reply reports work done in this turn, its calls are in the transcript, and it announces no
+  next action. Ordered work left after the report is the exit check's to hold, not yours.
 - The owner's latest word says to stop or to wait — «стоп», «хватит», «не сейчас», «потом»,
   «подожди», a refusal in an answer to the question tool — and the reply does not keep working.
 - `stop_hook_active` is true and the reason of the previous refusal is addressed, or cannot be
@@ -62,17 +65,20 @@ the end of every turn.
 ## Keep the turn going — refuse — when one of these holds
 
 - The turn ends while the owner's latest word orders work the turn has not done. The reply
-  answers the question or the swearing, reports, announces or promises — «следующим ходом»,
-  «сейчас запущу», «дальше возьму» — and the ordered work is not in the calls of the turn. An
-  announcement is not the action. Swearing at an agent that stands means «why did you stop»: it is
+  answers the question or the swearing, announces or promises — «следующим ходом», «сейчас
+  запущу», «дальше возьму», «Next I will …» — and the announced work is not in the calls of the
+  turn. An announcement is not the action, even after some ordered work was done. Swearing at an agent that stands means «why did you stop»: it is
   never a word to stop. Swearing that follows no order and names no work orders nothing. A slash
   command that writes a handover or closes the session is cleanup: the work it does not mention
   stays ordered.
 - The reply asks the owner something already answered in the conversation, or asks the owner to do a
   step the agent can do itself: sign in to a stand, type a password, run a command, open a page.
+  Asking whether to go on with the ordered work — «продолжать или остановиться?», «Should I go
+  on?» — is asking what the order already answered.
 - The reply states a fact about the repository or a service — merged, pushed, green, exists, closed,
   published — and no tool result of this turn shows it. A command output that shows the state counts,
-  whatever the command was. Each fact the reply names needs its own output: an edit of one file
+  whatever the command was; so does a successful call of the command that makes the state — a
+  commit that ended with code 0 shows the commit. Each fact the reply names needs its own output: an edit of one file
   does not show a second thing the reply says the branch holds. Before refusing for this, `Grep`
   the transcript for the command that would show it: a match after the line of the owner's latest
   word counts.

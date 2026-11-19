@@ -89,6 +89,22 @@ Then the call has no tools, settings, hooks, MCP servers or memory and runs outs
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
+### SC-AK-1756 — the judge run as the hook reads the turn from disk
+
+Given the fixture `1450-answer-mid-work.json` with the expected verdict `block` and the hook declaration of the tree
+When the replay runs the judge as the hook
+Then the prompt is the one of the declaration, and its hook input names a session record on disk that holds the turn. The call has the tools Read, Grep and Glob, the answer `{"ok": false}` counts as `block`, and the line of the case names its seconds
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
+
+### SC-AK-1757 — the live count picks the runs of the declaration on the branch
+
+Given session records with runs of the current declaration on the current branch, one of them a timeout with no duration, a run of an older prompt and a run on another branch
+When the live count runs
+Then it counts only the runs of the current declaration on the current branch. It times the one with no duration from the last record before its summary and counts it as a timeout
+
+Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
+
 ### SC-AK-1712 — a verdict different from the expected one is a mismatch
 
 Given a judge that answers `allow` on a fixture whose expected verdict is `block`

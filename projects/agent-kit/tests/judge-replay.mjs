@@ -11,14 +11,23 @@
 // The replay calls a model once per pair of a fixture and a hook, so it runs by hand and as a plan
 // step, not in the set before a push.
 //
+// The mode `--as-hook` runs the turn judge the way the Stop hook runs it, to see its time: the
+// recorded turn becomes a session record on disk, the judge gets the prompt of the hook declaration
+// with the hook input and the tools Read, Grep and Glob, and each case prints its seconds. `--pad`
+// puts a real session record in front of the turn. `--live` reads the runs of the hook from the
+// session records of the current branch after the last commit of the hook.
+//
 // Usage: node judge-replay.mjs [--root <tree>]
+//        node judge-replay.mjs --as-hook [--model <id>] [--pad <session record>] [--root <tree>]
+//        node judge-replay.mjs --live [--root <tree>]
 //   RT_JUDGE_RUNNER=<command> replaces the call of the model: the command gets the prompt on stdin
 //   and prints the answer. The suite gives it a fake judge.
-import { spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { execFileSync, spawnSync } from 'node:child_process';
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { homedir, tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { recordOf } from './turn-replay-lib.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -111,7 +120,172 @@ export function replay({ root, fixtures, hooksDir, expectedFile }) {
     return answers.map((a) => ({ ...a, want: expected[a.file][a.key], ok: a.got !== null && a.got === expected[a.file][a.key] }));
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+/** The agent hook on Stop that runs the turn judge: its prompt, model and timeout. */
+export function stopHookOf(root) {
+    const settings = JSON.parse(readFileSync(join(root, '.claude/settings.json'), 'utf8'));
+    for (const group of settings.hooks?.Stop ?? []) {
+        for (const hook of group.hooks ?? []) {
+            if (hook.type === 'agent' && /turn-judge/.test(hook.prompt ?? '')) return hook;
+        }
+    }
+    return null;
+}
+
+/** The input the host gives the Stop hook, for a session record written at `transcript`. */
+export function hookInputOf(fixture, transcript, root) {
+    const said = [...(fixture.turns ?? [])].reverse().find((turn) => turn.say);
+    return {
+        session_id: 'replay',
+        transcript_path: transcript,
+        cwd: root,
+        hook_event_name: 'Stop',
+        stop_hook_active: false,
+        last_assistant_message: said?.say ?? '',
+    };
+}
+
+/** The call of the judge as the hook: the tools of an agent hook, no settings, MCP servers or memory. */
+export function asHookCommand({ model = null, cwd }) {
+    const args = [
+        '-p',
+        '--tools',
+        'Read,Grep,Glob',
+        '--allowedTools',
+        'Read,Grep,Glob',
+        '--setting-sources',
+        '',
+        '--strict-mcp-config',
+        '--mcp-config',
+        '{"mcpServers":{}}',
+        '--disable-slash-commands',
+        '--no-session-persistence',
+    ];
+    if (model) args.push('--model', model);
+    return { cmd: 'claude', args, cwd };
+}
+
+/** The verdict of an answer of the hook: `{"ok": true}` lets the turn end, `{"ok": false}` holds it. */
+export function hookVerdictOf(answer) {
+    const found = [...String(answer).matchAll(/"ok"\s*:\s*(true|false)/g)].map((m) => m[1]);
+    if (new Set(found).size !== 1) return null;
+    return found[0] === 'true' ? 'allow' : 'block';
+}
+
+const median = (values) => {
+    const sorted = [...values].sort((a, b) => a - b);
+    const n = sorted.length;
+    return n === 0 ? 0 : (sorted[(n - 1) >> 1] + sorted[n >> 1]) / 2;
+};
+
+/** Runs the turn judge as the hook over every fixture with a `judge` verdict; seconds per case. */
+export function replayAsHook({ root, fixtures, expectedFile, model = null, pad = null }) {
+    const hook = stopHookOf(root);
+    if (!hook) throw new Error('no agent hook on Stop runs the turn judge');
+    const files = Object.entries(JSON.parse(readFileSync(expectedFile, 'utf8')))
+        .filter(([, keys]) => keys.judge)
+        .map(([file]) => file);
+    const head = pad ? readFileSync(pad, 'utf8').replace(/\n?$/, '\n') : '';
+    const answers = files.map((file) => {
+        const fixture = JSON.parse(readFileSync(join(fixtures, file), 'utf8'));
+        const work = mkdtempSync(join(tmpdir(), 'judge-hook-'));
+        try {
+            const transcript = join(work, 'transcript.jsonl');
+            writeFileSync(
+                transcript,
+                `${head}${recordOf(fixture)
+                    .map((e) => JSON.stringify(e))
+                    .join('\n')}\n`
+            );
+            const prompt = hook.prompt.replace('$ARGUMENTS', JSON.stringify(hookInputOf(fixture, transcript, root)));
+            const started = Date.now();
+            let answer;
+            const runner = process.env.RT_JUDGE_RUNNER;
+            if (runner) {
+                answer = spawnSync('sh', ['-c', runner], { input: prompt, encoding: 'utf8' }).stdout ?? '';
+            } else {
+                const { cmd, args } = asHookCommand({ model: model ?? hook.model ?? null, cwd: work });
+                const run = spawnSync(cmd, args, { cwd: work, input: prompt, encoding: 'utf8', timeout: (hook.timeout ?? 120) * 1000 });
+                answer = run.error ? '' : (run.stdout ?? '');
+            }
+            return { file, got: hookVerdictOf(answer), seconds: (Date.now() - started) / 1000 };
+        } finally {
+            rmSync(work, { recursive: true, force: true });
+        }
+    });
+    const expected = JSON.parse(readFileSync(expectedFile, 'utf8'));
+    return answers.map((a) => ({ ...a, want: expected[a.file].judge, ok: a.got !== null && a.got === expected[a.file].judge }));
+}
+
+/**
+ * The live runs of the hook: the session records of the current branch after the last commit of the
+ * hook, picked by the prompt of its declaration. A run with no duration — a refusal or a timeout — is
+ * timed from the last record before its summary; one that reached the timeout is counted apart.
+ */
+export function liveRuns(root, dir = join(homedir(), '.claude/projects', root.replace(/[/.]/g, '-'))) {
+    const hook = stopHookOf(root);
+    const since = Date.parse(
+        execFileSync('git', ['log', '-1', '--format=%cI', '--', '.claude/settings.json', 'projects/agent-kit/assets/hooks/turn-judge.md'], {
+            cwd: root,
+            encoding: 'utf8',
+        }).trim()
+    );
+    const branch = execFileSync('git', ['branch', '--show-current'], { cwd: root, encoding: 'utf8' }).trim();
+    const limit = (hook?.timeout ?? 120) * 1000;
+    const seconds = [];
+    let timeouts = 0;
+    for (const file of existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith('.jsonl')) : []) {
+        if (statSync(join(dir, file)).mtimeMs < since) continue;
+        let before = null;
+        for (const line of readFileSync(join(dir, file), 'utf8').split('\n')) {
+            if (!line) continue;
+            let record;
+            try {
+                record = JSON.parse(line);
+            } catch {
+                continue;
+            }
+            const at = Date.parse(record.timestamp ?? '');
+            if (record.subtype !== 'stop_hook_summary') {
+                if (record.type === 'assistant' && at) before = at;
+                continue;
+            }
+            if (!(at >= since) || record.gitBranch !== branch) continue;
+            const run = (record.hookInfos ?? []).find((h) => h.command === hook?.prompt);
+            if (!run) continue;
+            const ms = run.durationMs ?? (before ? at - before : null);
+            if (ms === null) continue;
+            if (!run.durationMs && ms >= limit) timeouts += 1;
+            seconds.push(ms / 1000);
+        }
+    }
+    return { runs: seconds.length, median: median(seconds), timeouts };
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url) && (process.argv.includes('--as-hook') || process.argv.includes('--live'))) {
+    const flag = (name) => {
+        const at = process.argv.indexOf(name);
+        return at > 0 ? process.argv[at + 1] : null;
+    };
+    const root = flag('--root') ?? join(HERE, '../../..');
+    if (process.argv.includes('--live')) {
+        const live = liveRuns(root);
+        console.log(`live ${live.runs} median ${live.median.toFixed(1)} timeouts ${live.timeouts}`);
+        process.exit(0);
+    }
+    const model = flag('--model') ?? stopHookOf(root)?.model ?? 'default';
+    const results = replayAsHook({
+        root,
+        fixtures: join(HERE, 'fixtures/turn-replay'),
+        expectedFile: join(HERE, 'turn-replay.expected.json'),
+        model: model === 'default' ? null : model,
+        pad: flag('--pad'),
+    });
+    for (const r of results)
+        console.log(`${r.ok ? 'ok' : 'mismatch'} ${r.file}: expected ${r.want}, got ${r.got ?? 'no verdict'}, ${r.seconds.toFixed(1)} s`);
+    const bad = results.filter((r) => !r.ok).length;
+    console.log(`as-hook ${bad} median ${median(results.map((r) => r.seconds)).toFixed(1)} model ${model}`);
+    process.exit(bad === 0 ? 0 : 1);
+} else if (process.argv[1] === fileURLToPath(import.meta.url)) {
     const at = process.argv.indexOf('--root');
     const root = at > 0 ? process.argv[at + 1] : join(HERE, '../../..');
     const laid = existsSync(join(root, '.claude/hooks/turn-judge.md'));
