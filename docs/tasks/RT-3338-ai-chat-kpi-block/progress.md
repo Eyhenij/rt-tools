@@ -6,8 +6,8 @@
 - **Stage:** 0 of 0 — the plan is not written yet
 - **Done:** the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3338-ai-chat-kpi-block` from `RT-3337-ai-chat-table-block` (chain), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption.
 - **Next step:** after the owner's word on the mockup — the product agreement `docs/specs/ui-kit-v2/proposed/ai-chat-kpi/`, then the plan.
-- **Uncommitted:** the progress with the measurement and the mockup
-- **Waiting for the owner:** the approval of the mockup node 8246-607
+- **Uncommitted:** no
+- **Waiting for the owner:** no; the mockup is approved: «Одобряю макет»
 - **PR:** not open yet; the branch stands on RT-3337 (#3407), which stands on RT-3336 (#3402) and RT-3335 (#3398)
 
 ## Steps

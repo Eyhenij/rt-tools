@@ -102,6 +102,17 @@ Design decisions taken by assumption:
 - **The answer copy writes each card as one line** — label, value, delta with its base caption,
   period; the same lenient rule: an item without a label or a value is dropped.
 
+Decisions the mockup made, after measuring the tile in the showcase:
+
+- **The KPI card value is 24/24 Bold, not the tile's 32** — two columns in a 328 block leave 160 a
+  card, and a 32 px «1 240 000 ₽» is 192 wide. The tile gets a size option for it.
+- **A value of a million and more is written short by the kit locale («1,24 млн ₽»), below a
+  million in full («8 400 ₽»)** — even at 24 px a full seven-digit sum does not fit 136 inside a card.
+- **The block frames each card (border, radius 12, padding 12)** — the tile draws no frame by its
+  own spec; the frame is the container's job.
+- **Four columns from a block width the mockup shows as 728, two below** — the threshold lies
+  between 386 and 728 and is named in the agreement.
+
 ## What is left unclear
 
 - The mockup is the owner's step: it is drawn and shown before the code.
