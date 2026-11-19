@@ -10,7 +10,7 @@
 - [x] 1.2 The article of exit 11 and its scenario say so
 - [x] 2.1 The measurer of exit 12 asks every task not deferred to be marked merged
 - [x] 2.2 The article of exit 12 and its scenario say so
-- [>] 3.1 The laid-out measurer is the package one
+- [x] 3.1 The laid-out measurer is the package one
 
 ## Decisions along the way
 
