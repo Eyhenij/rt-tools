@@ -8,13 +8,14 @@ import { RT_KIT_TRANSLATOR, RtKitLabelPipe, RtMarkdownTextComponent, RtMessageCo
 import { IRtAiChat } from '../rt-ai-chat.model';
 import { toBlockViews } from './rt-ai-chat-blocks.logic';
 import { RT_AI_CHAT_BLOCK_RENDERERS } from './rt-ai-chat-blocks.providers';
+import { RtAiChatKpiComponent } from './kpi/rt-ai-chat-kpi.component';
 import { RtAiChatTableComponent } from './table/rt-ai-chat-table.component';
 
 const BEM_BLOCK: string = 'rt-ai-chat-blocks';
 
 /**
  * Блоки ответа по порядку: `markdown` — текстом, `notice` — плашкой `rt-message`, `table` —
- * таблицей `rt-ai-chat-table`, остальные —
+ * таблицей `rt-ai-chat-table`, `kpi` — карточками `rt-ai-chat-kpi`, остальные —
  * отрисовщиками, которые приложение зарегистрировало через `provideRtAiChatBlock`. Блок без
  * отрисовщика показан заглушкой с именем типа.
  */
@@ -34,6 +35,7 @@ const BEM_BLOCK: string = 'rt-ai-chat-blocks';
         RtMarkdownTextComponent,
         RtMessageComponent,
         RtAiChatTableComponent,
+        RtAiChatKpiComponent,
 
         // pipes
         RtKitLabelPipe,

@@ -1,0 +1,16 @@
+<ng-container rtBlock="rt-ai-chat-kpi">
+    <ul rtElem="grid" qa-dataid="ai-chat-kpi">
+        @for (item of cards(); track $index) {
+            <li rtElem="card" qa-dataid="ai-chat-kpi-card">
+                <rt-stat-tile
+                    size="compact"
+                    deltaLabelVisible
+                    [label]="item.label"
+                    [value]="item.value"
+                    [secondary]="item.period"
+                    [deltaPrimary]="item.delta"
+                    [growthIsWorse]="item.growthIsWorse" />
+            </li>
+        }
+    </ul>
+</ng-container>

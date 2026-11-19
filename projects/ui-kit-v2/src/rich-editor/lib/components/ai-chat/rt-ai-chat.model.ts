@@ -1,6 +1,16 @@
 import { Type } from '@angular/core';
 
-import { ERtTableColumn, IRtAiRunStatus, IRtTableData, IRtTag, IRtTimeline, TRtTableValue } from '@rt-tools/ui-kit-v2';
+import {
+    ERtKpiDeltaUnit,
+    ERtKpiFormat,
+    ERtTableColumn,
+    IRtAiRunStatus,
+    IRtKpiItem,
+    IRtTableData,
+    IRtTag,
+    IRtTimeline,
+    TRtTableValue,
+} from '@rt-tools/ui-kit-v2';
 
 export namespace IRtAiChat {
     /** Кто написал сообщение. */
@@ -51,6 +61,32 @@ export namespace IRtAiChat {
         readonly title?: string;
     }
 
+    /** Карточка блока KPI: название, значение и по желанию дельта к базе с подписью и период. */
+    export interface KpiItem {
+        readonly label: string;
+        /** Число пишется по роду в языке кита, строка стоит как пришла. */
+        readonly value: number | string;
+        readonly format?: `${ERtKpiFormat}`;
+        readonly currency?: string;
+        /** Изменение к базе в процентах: 12.5 — «+12,5 %», не доля. */
+        readonly delta?: number;
+        readonly deltaUnit?: `${ERtKpiDeltaUnit}`;
+        /** Короткая подпись базы после дельты: «vs LY». */
+        readonly base?: string;
+        readonly period?: string;
+        /** Рост показателя хорош для читателя; по умолчанию `true`. */
+        readonly growthIsGood?: boolean;
+    }
+
+    /**
+     * Ряд карточек KPI в ответе. Кит рисует его сам; карточка без названия или значения выпадает,
+     * а без уцелевших карточек блок показан заглушкой.
+     */
+    export interface KpiBlock {
+        readonly type: 'kpi';
+        readonly items: readonly KpiItem[];
+    }
+
     /**
      * Блок, который кит сам не рисует: график и другие. Его рисует отрисовщик,
      * зарегистрированный приложением; без отрисовщика блок показан заглушкой. В текст, который
@@ -61,8 +97,8 @@ export namespace IRtAiChat {
         readonly [field: string]: unknown;
     }
 
-    /** Часть ответа. Список типов открыт: кит знает `markdown`, `notice` и `table`, остальные регистрирует приложение. */
-    export type Block = MarkdownBlock | NoticeBlock | TableBlock | CustomBlock;
+    /** Часть ответа. Список типов открыт: кит знает `markdown`, `notice`, `table` и `kpi`, остальные регистрирует приложение. */
+    export type Block = MarkdownBlock | NoticeBlock | TableBlock | KpiBlock | CustomBlock;
 
     /**
      * Отрисовщик блока, которого кит сам не знает: компонент с обязательным входом `block` и
@@ -79,6 +115,7 @@ export namespace IRtAiChat {
         | { readonly kind: 'markdown'; readonly text: string }
         | { readonly kind: 'notice'; readonly severity: IRtTag.Severity; readonly text: string }
         | { readonly kind: 'table'; readonly data: IRtTableData; readonly title: string | null }
+        | { readonly kind: 'kpi'; readonly items: readonly IRtKpiItem[] }
         | { readonly kind: 'custom'; readonly component: Type<unknown>; readonly block: Block }
         | { readonly kind: 'unsupported'; readonly type: string };
 

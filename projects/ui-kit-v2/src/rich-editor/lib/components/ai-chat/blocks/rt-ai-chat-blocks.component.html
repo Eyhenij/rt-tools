@@ -12,6 +12,9 @@
             @case ('table') {
                 <rt-ai-chat-table rtElem="table" qa-dataid="ai-chat-block-table" [data]="view.data" [title]="view.title" />
             }
+            @case ('kpi') {
+                <rt-ai-chat-kpi rtElem="kpi" qa-dataid="ai-chat-block-kpi" [items]="view.items" />
+            }
             @case ('custom') {
                 <ng-container *ngComponentOutlet="view.component; inputs: { block: view.block }" />
             }

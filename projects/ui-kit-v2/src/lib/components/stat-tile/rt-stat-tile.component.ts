@@ -14,7 +14,7 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RT_KIT_LOCALE, TRtKitLabelMap, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
+import { IRtDeltaNumber, RT_KIT_LABELS, RT_KIT_LOCALE, TRtKitLabelMap, rtDeltaNumber, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { IRtStatTile } from './rt-stat-tile.model';
@@ -38,49 +38,11 @@ const DIRECTION_ICONS: Readonly<Record<IRtStatTile.Direction, IRtIcon.Name>> = O
     unknown: 'minus',
 });
 
-/** Язык, которым пишется дельта, когда язык кита `Intl` не принимает. */
-const FALLBACK_LOCALE: string = 'en';
-
-/** Плюс на росте, минус языка на падении, без знака у записанного нуля; не больше одного дробного знака. */
-const DELTA_OPTIONS: Intl.NumberFormatOptions = { maximumFractionDigits: 1, signDisplay: 'exceptZero' };
-
-function deltaFormat(locale: string, options: Intl.NumberFormatOptions): Intl.NumberFormat {
-    try {
-        return new Intl.NumberFormat(locale, options);
-    } catch {
-        return new Intl.NumberFormat(FALLBACK_LOCALE, options);
-    }
-}
-
-/** Записанное число дельты: проценты — как язык пишет процент, пункты — числом для подписи пунктов. */
-interface IDeltaNumber {
-    readonly text: string;
-    readonly direction: IRtStatTile.Direction;
-}
-
-/**
- * Дельта по языку кита. Направление берётся из записанного числа, а не из присланного:
- * 0.04 и -0.04 записаны «0 %», и стрелка, знак и цвет у них ровные.
- */
-function deltaNumber(value: number, unit: IRtStatTile.Unit, locale: string): IDeltaNumber {
-    const parts: Intl.NumberFormatPart[] =
-        unit === 'points'
-            ? deltaFormat(locale, DELTA_OPTIONS).formatToParts(value)
-            : deltaFormat(locale, { ...DELTA_OPTIONS, style: 'percent' }).formatToParts(value / 100);
-    const text: string = parts.map((part: Intl.NumberFormatPart): string => part.value).join('');
-
-    if (parts.some((part: Intl.NumberFormatPart): boolean => part.type === 'plusSign')) {
-        return { text, direction: 'up' };
-    }
-
-    return { text, direction: parts.some((part: Intl.NumberFormatPart): boolean => part.type === 'minusSign') ? 'down' : 'flat' };
-}
-
 /**
  * Строка изменения с известной базой. Пункты пишутся переведённой подписью
  * («+10 п.п.», «+10 pp»), в которую уходит записанное число.
  */
-function deltaRow(key: string, delta: IRtStatTile.Delta, written: IDeltaNumber, pointsText: string): IDeltaRow {
+function deltaRow(key: string, delta: IRtStatTile.Delta, written: IRtDeltaNumber, pointsText: string): IDeltaRow {
     return {
         key,
         direction: written.direction,
@@ -139,9 +101,9 @@ export class RtStatTileComponent {
     /** Язык подписей кита: им пишутся обе строки дельты. */
     readonly #locale: Signal<string> = inject(RT_KIT_LOCALE);
 
-    readonly #primaryWritten: Signal<IDeltaNumber | null> = computed((): IDeltaNumber | null => this.#written(this.deltaPrimary()));
+    readonly #primaryWritten: Signal<IRtDeltaNumber | null> = computed((): IRtDeltaNumber | null => this.#written(this.deltaPrimary()));
 
-    readonly #yearWritten: Signal<IDeltaNumber | null> = computed((): IDeltaNumber | null => this.#written(this.deltaSecondary()));
+    readonly #yearWritten: Signal<IRtDeltaNumber | null> = computed((): IRtDeltaNumber | null => this.#written(this.deltaSecondary()));
 
     /** Пункты — тоже параметром подписи: порядок числа и единицы знает язык, а не кит. */
     readonly #primaryPoints: Signal<string> = rtKitLabel(
@@ -227,11 +189,11 @@ export class RtStatTileComponent {
         transform: booleanAttribute,
     });
 
-    #written(delta: IRtStatTile.Delta | null): IDeltaNumber | null {
-        return delta && delta.percent !== null ? deltaNumber(delta.percent, delta.unit ?? 'percent', this.#locale()) : null;
+    #written(delta: IRtStatTile.Delta | null): IRtDeltaNumber | null {
+        return delta && delta.percent !== null ? rtDeltaNumber(delta.percent, delta.unit ?? 'percent', this.#locale()) : null;
     }
 
-    #visibleDelta(key: string, delta: IRtStatTile.Delta | null, written: IDeltaNumber | null, pointsText: string): IDeltaRow | null {
+    #visibleDelta(key: string, delta: IRtStatTile.Delta | null, written: IRtDeltaNumber | null, pointsText: string): IDeltaRow | null {
         return delta && written ? deltaRow(key, delta, written, pointsText) : null;
     }
 }

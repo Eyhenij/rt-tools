@@ -20,10 +20,18 @@ import { BooleanInput } from '@angular/cdk/coercion';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, RT_KIT_LOCALE, RtAiRunStatusComponent, RtIconButtonComponent, TRtKitLabelMap } from '@rt-tools/ui-kit-v2';
+import {
+    RT_KIT_LABELS,
+    RT_KIT_LOCALE,
+    RT_KIT_TRANSLATOR,
+    RtAiRunStatusComponent,
+    RtIconButtonComponent,
+    TRtKitLabelMap,
+    TRtKitTranslator,
+} from '@rt-tools/ui-kit-v2';
 
 import { RtAiChatBlocksComponent } from '../blocks/rt-ai-chat-blocks.component';
-import { blocksToPlainText } from '../blocks/rt-ai-chat-blocks.logic';
+import { blocksToPlainText, rtAiChatPointsWriter } from '../blocks/rt-ai-chat-blocks.logic';
 import { RT_AI_CHAT_BLOCK_RENDERERS } from '../blocks/rt-ai-chat-blocks.providers';
 import { RtAiChatCopyComponent } from '../copy/rt-ai-chat-copy.component';
 import { IRtAiChat } from '../rt-ai-chat.model';
@@ -62,6 +70,7 @@ const BEM_BLOCK: string = 'rt-ai-chat-answer';
 export class RtAiChatAnswerComponent {
     readonly #renderers: readonly IRtAiChat.BlockRenderer[] = inject(RT_AI_CHAT_BLOCK_RENDERERS, { optional: true }) ?? [];
     readonly #locale: Signal<string> = inject(RT_KIT_LOCALE);
+    readonly #translate: Signal<TRtKitTranslator> = inject(RT_KIT_TRANSLATOR);
 
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
@@ -70,10 +79,10 @@ export class RtAiChatAnswerComponent {
 
     /**
      * Что копирует кнопка: видимый текст блоков без знаков разметки — без хода работы и вложений.
-     * Значения таблиц записаны в языке кита на минуту копии: язык читается здесь же.
+     * Значения таблиц и карточек KPI записаны в языке кита на минуту копии: язык и подписи читаются здесь же.
      */
     protected readonly plainText: Signal<string> = computed((): string =>
-        blocksToPlainText(this.message().blocks, this.#renderers, this.#locale())
+        blocksToPlainText(this.message().blocks, this.#renderers, this.#locale(), rtAiChatPointsWriter(this.#translate()))
     );
 
     /** Кнопка копирования видна, когда её не выключили и у блоков есть текст: пустая копия обманула бы. */

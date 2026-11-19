@@ -1,4 +1,16 @@
-import { IRtTableData, IRtTag, markdownToPlainText, rtTableData, rtTablePlainText } from '@rt-tools/ui-kit-v2';
+import {
+    ERtKpiDeltaUnit,
+    IRtKpiItem,
+    IRtTableData,
+    IRtTag,
+    markdownToPlainText,
+    rtDeltaNumber,
+    rtKpiItems,
+    rtKpiValueWriter,
+    rtTableData,
+    rtTablePlainText,
+    TRtKitTranslator,
+} from '@rt-tools/ui-kit-v2';
 
 import { IRtAiChat } from '../rt-ai-chat.model';
 
@@ -16,7 +28,7 @@ const NOTICE_SEVERITIES: Readonly<Record<IRtTag.Severity, true>> = {
 };
 
 /** Типы, которые кит рисует сам: отрисовщик из реестра их не заменяет. */
-const OWN_TYPES: ReadonlySet<string> = new Set<string>(['markdown', 'notice', 'table']);
+const OWN_TYPES: ReadonlySet<string> = new Set<string>(['markdown', 'notice', 'table', 'kpi']);
 
 /** Блок текста в markdown: тип `markdown` и строка `text`. */
 export function isMarkdownBlock(block: { readonly type: string }): block is IRtAiChat.MarkdownBlock {
@@ -45,6 +57,52 @@ export function tableBlockData(block: { readonly type: string }): IRtTableData |
     }
 
     return rtTableData(Reflect.get(block, 'columns'), Reflect.get(block, 'rows'), Reflect.get(block, 'total'));
+}
+
+/**
+ * Карточки блока `kpi`, приведённые к виду, который можно рисовать; `null` — блок не KPI или без
+ * уцелевших карточек, и тогда он показан заглушкой.
+ */
+export function kpiBlockItems(block: { readonly type: string }): IRtKpiItem[] | null {
+    return block.type === 'kpi' ? rtKpiItems(Reflect.get(block, 'items')) : null;
+}
+
+/** Запись пунктов дельты подписью кита: в неё уходит записанное число. */
+export type TRtAiChatPointsWriter = (value: string) => string;
+
+/** Подпись пунктов английского умолчания кита — когда подписи приложения не переданы. */
+const defaultPoints: TRtAiChatPointsWriter = (value: string): string => `${value} pp`;
+
+/** Запись пунктов переводчиком кита; пустой ответ переводчика заменяется английским умолчанием. */
+export function rtAiChatPointsWriter(translate: TRtKitTranslator): TRtAiChatPointsWriter {
+    return (value: string): string => translate('uiPercentagePoints', { value }) || defaultPoints(value);
+}
+
+/** Табуляция и перевод строки внутри текста карточки в копии становятся пробелом. */
+function copyField(text: string | null): string {
+    return text === null ? '' : text.replace(/[\t\r\n]+/g, ' ');
+}
+
+/** Дельта карточки, как её рисует плитка: число с подписью базы через пробел. */
+function kpiDelta(item: IRtKpiItem, locale: string, points: TRtAiChatPointsWriter): string {
+    if (item.delta === null) {
+        return '';
+    }
+    const written: string = rtDeltaNumber(item.delta, item.deltaUnit, locale).text;
+    const delta: string = item.deltaUnit === ERtKpiDeltaUnit.Points ? points(written) : written;
+
+    return item.base === null ? delta : `${delta} ${item.base}`;
+}
+
+/** Блок KPI в копии: строка на карточку — название, значение, дельта с базой и период через табуляцию. */
+function kpiPlainText(items: readonly IRtKpiItem[], locale: string, points: TRtAiChatPointsWriter): string {
+    return items
+        .map((item: IRtKpiItem): string =>
+            [item.label, rtKpiValueWriter(item, locale)(item.value), kpiDelta(item, locale, points), item.period]
+                .map((field: string | null): string => copyField(field))
+                .join('\t')
+        )
+        .join('\n');
 }
 
 /** Заголовок блока `table`: непустая строка, иначе его нет. */
@@ -87,7 +145,12 @@ function rendererText(renderer: IRtAiChat.BlockRenderer | undefined, block: IRtA
 }
 
 /** Видимый текст одного блока; таблица — строками через табуляцию, блок из реестра — текстом своей функции. */
-function blockText(block: IRtAiChat.Block, byType: ReadonlyMap<string, IRtAiChat.BlockRenderer>, locale: string): string {
+function blockText(
+    block: IRtAiChat.Block,
+    byType: ReadonlyMap<string, IRtAiChat.BlockRenderer>,
+    locale: string,
+    points: TRtAiChatPointsWriter
+): string {
     if (isMarkdownBlock(block)) {
         return markdownToPlainText(block.text);
     }
@@ -101,6 +164,11 @@ function blockText(block: IRtAiChat.Block, byType: ReadonlyMap<string, IRtAiChat
         const text: string = rtTablePlainText(table, locale);
 
         return title === null ? text : `${title.trim()}\n${text}`;
+    }
+    const kpi: IRtKpiItem[] | null = kpiBlockItems(block);
+
+    if (kpi !== null) {
+        return kpiPlainText(kpi, locale, points);
     }
 
     return rendererText(byType.get(block.type), block);
@@ -130,6 +198,11 @@ export function toBlockViews(
         if (table !== null) {
             return { kind: 'table', data: table, title: tableTitle(block) };
         }
+        const kpi: IRtKpiItem[] | null = kpiBlockItems(block);
+
+        if (kpi !== null) {
+            return { kind: 'kpi', items: kpi };
+        }
         const renderer: IRtAiChat.BlockRenderer | undefined = byType.get(block.type);
 
         return renderer ? { kind: 'custom', component: renderer.component, block } : { kind: 'unsupported', type: block.type };
@@ -138,18 +211,20 @@ export function toBlockViews(
 
 /**
  * Текст ответа, как его видит читатель: markdown без знаков разметки, плашки — их текстом, таблицы —
- * строками через табуляцию со значениями в языке кита, блоки из реестра — текстом функции `toText`
- * их отрисовщика. Блок без такой функции пропущен.
+ * строками через табуляцию со значениями в языке кита, KPI — строкой на карточку через табуляцию,
+ * блоки из реестра — текстом функции `toText` их отрисовщика. Блок без такой функции пропущен.
+ * Пункты дельты пишутся подписью `points`; без неё — английским умолчанием кита.
  */
 export function blocksToPlainText(
     blocks: readonly IRtAiChat.Block[],
     renderers: readonly IRtAiChat.BlockRenderer[] = [],
-    locale: string = 'en'
+    locale: string = 'en',
+    points: TRtAiChatPointsWriter = defaultPoints
 ): string {
     const byType: ReadonlyMap<string, IRtAiChat.BlockRenderer> = lastByType(renderers);
 
     return blocks
-        .map((block: IRtAiChat.Block): string => blockText(block, byType, locale))
+        .map((block: IRtAiChat.Block): string => blockText(block, byType, locale, points))
         .filter((text: string): boolean => text.length > 0)
         .join(BLOCK_SEPARATOR);
 }

@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 5 — The block in the chat answer
-- **Done:** stage 2 — the tile writes both delta rows by `RT_KIT_LOCALE`, has `size="compact"` and `deltaLabelVisible`: `nx test --testFile=src/lib/components/stat-tile` 37 passed of 37, lint, stylelint, `check:tokens-styles` and typecheck green; `node tools/visual-gate.mjs ui-kit-v2` — 1159 snapshots of 1159 matched, the tile references needed no retake. Stage 1 — `kpi-data.ts`, `kpi.schema.ts`, their specs: `nx test --testFile=src/lib/util/kpi` 13 passed of 13, the table util specs 22 of 22, typecheck green. Before it: the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3338-ai-chat-kpi-block` from `RT-3337-ai-chat-table-block` (chain), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption. The mockup is approved. The agreement holds SC-UKV-1436…1483, committed. The plan is written and reviewed by product-strategist and goal-critic; their findings are closed in the plan.
-- **Next step:** merge the fresh `main` (the task delivery loop, by the owner's word), then step 3.1 — the `kpi` type and view.
+- **Stage:** 4 of 5 — The showcase and the match with the mockup
+- **Done:** stage 3 — the `kpi` type, view, copy line and the `rt-ai-chat-kpi` component; the delta writer moved to `delta-number.ts` and serves the tile and the copy: `nx test --testFile=src/rich-editor/lib/components/ai-chat` 93 passed of 93 (logic 19), stat-tile 37, util 81, lint, stylelint, `check:tokens-styles`, `check:cascade-layer` and typecheck green. Stage 2 — the tile writes both delta rows by `RT_KIT_LOCALE`, has `size="compact"` and `deltaLabelVisible`: `nx test --testFile=src/lib/components/stat-tile` 37 passed of 37, lint, stylelint, `check:tokens-styles` and typecheck green; `node tools/visual-gate.mjs ui-kit-v2` — 1159 snapshots of 1159 matched, the tile references needed no retake. Stage 1 — `kpi-data.ts`, `kpi.schema.ts`, their specs: `nx test --testFile=src/lib/util/kpi` 13 passed of 13, the table util specs 22 of 22, typecheck green. Before it: the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3338-ai-chat-kpi-block` from `RT-3337-ai-chat-table-block` (chain), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption. The mockup is approved. The agreement holds SC-UKV-1436…1483, committed. The plan is written and reviewed by product-strategist and goal-critic; their findings are closed in the plan.
+- **Next step:** step 4.1 — the stories of the block by the agreement's table «Screens and states».
 - **Uncommitted:** no
 - **Waiting for the owner:** no; the plan is approved: «Одобряю план»
 - **PR:** not open yet; the branch stands on RT-3337 (#3407), which stands on RT-3336 (#3402) and RT-3335 (#3398)
@@ -21,11 +21,11 @@
 - [x] 2.3 Add the option that shows the primary delta label as visible text without a duplicate `title`.
 - [x] 2.4 Name the locale in the existing tile specs and add the specs of the new scenarios: SC-UKV-1453–1456, 1466–1471.
 - [x] 2.5 Run the tile story snapshots and take anew the references whose delta text changed.
-- [>] 3.1 Add the `KpiBlock` type, the `kpi` view, `kpi` in `OWN_TYPES` and the data step in `toBlockViews`.
-- [ ] 3.2 Write the `rt-ai-chat-kpi` component: a list of framed compact tiles, the grid by a block-local container query (one column below 328, two from 328, four from 664), tokens only.
-- [ ] 3.3 Add the `kpi` case to the blocks template and the copy line to `blockText`.
-- [ ] 3.4 Write the specs of the block component, the logic, the copy and the styles spec `rt-ai-chat-kpi.styles.spec.ts` (thresholds 328 and 664, the gap, the frame tokens): SC-UKV-1436, 1448–1452, 1457, 1458, 1462, 1463, 1475, 1477, 1478, 1480, 1481.
-- [ ] 4.1 Write the stories of the block by the agreement's table «Screens and states» (328, 386, 728, deltas, growth is worse, short form, no delta, odd count, below 328, right to left, invalid, dark theme), plus 663/664, long texts, empty and several blocks; and a compact story of the tile.
+- [x] 3.1 Add the `KpiBlock` type, the `kpi` view, `kpi` in `OWN_TYPES` and the data step in `toBlockViews`.
+- [x] 3.2 Write the `rt-ai-chat-kpi` component: a list of framed compact tiles, the grid by a block-local container query (one column below 328, two from 328, four from 664), tokens only.
+- [x] 3.3 Add the `kpi` case to the blocks template and the copy line to `blockText`.
+- [x] 3.4 Write the specs of the block component, the logic, the copy and the styles spec `rt-ai-chat-kpi.styles.spec.ts` (thresholds 328 and 664, the gap, the frame tokens): SC-UKV-1436, 1448–1452, 1457, 1458, 1462, 1463, 1475, 1477, 1478, 1480, 1481.
+- [>] 4.1 Write the stories of the block by the agreement's table «Screens and states» (328, 386, 728, deltas, growth is worse, short form, no delta, odd count, below 328, right to left, invalid, dark theme), plus 663/664, long texts, empty and several blocks; and a compact story of the tile.
 - [ ] 4.2 Write the chat stories with an answer of four cards (+, −, 0): the narrow panel, the full-screen mode of the default width and the full-screen mode with a 40rem reading column.
 - [ ] 4.3 Write the play steps that measure by `getBoundingClientRect` the columns, the card widths, one top per row, no text past its card and no feed widening: SC-UKV-1437–1439, 1460, 1461, 1464, 1472–1474, 1479.
 - [ ] 4.4 Write the `Overview.mdx` of the block and name the block in the chat Overview.
@@ -84,6 +84,14 @@
   test:visual:v2`** that the plan names in stage 4. The latter, run outside the image, refuses with
   «only the image browser takes the showcase frames»; the gate raises the image itself. Stage 4 is
   verified by the gate. Affected stage: 4.
+
+- **The task is led by the task delivery loop from here on** — the owner merged it into `main` and
+  said: «влил пр, подтяни свежий main и дальше работай по процессу с циклами ревью». The fresh
+  `main` is merged into this branch (`1737ba4d0`). After stage 4 (the live check in the showcase)
+  come two review rounds — `qa-engineer`, `product-strategist` and `goal-critic` in one message, the
+  fixes of each round as one commit named by the round — and only then the closing of stage 5; the
+  push set runs once, after round two. Step 5.3 of the plan becomes the second round. Affected
+  stages: 4 and 5.
 
 - **The tile delta text in `ru` changed only by the space kind** (U+00A0 instead of a plain space
   before «%»), which draws the same pixels: no tile reference diverged. Affected step: 2.5.
