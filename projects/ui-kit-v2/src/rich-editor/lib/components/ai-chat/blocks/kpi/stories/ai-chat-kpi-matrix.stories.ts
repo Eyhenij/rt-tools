@@ -18,6 +18,9 @@ type TStory = StoryObj<TestRtAiChatKpiMatrixComponent>;
 /** Хост блока: в историях чата блок один, его и меряют. */
 const BLOCK: string = 'rt-ai-chat-kpi';
 
+/** Карточка блока. */
+const CARD: string = '[qa-dataid="ai-chat-kpi-card"]';
+
 interface IPlayContext {
     readonly canvasElement: HTMLElement;
 }
@@ -61,8 +64,8 @@ function expectThat(condition: boolean, message: string): void {
 }
 
 function layoutOf(block: HTMLElement): ILayout {
-    const cards: DOMRect[] = Array.from(block.querySelectorAll<HTMLElement>('[qa-dataid="ai-chat-kpi-card"]')).map(
-        (card: HTMLElement): DOMRect => card.getBoundingClientRect()
+    const cards: DOMRect[] = Array.from(block.querySelectorAll<HTMLElement>(CARD)).map((card: HTMLElement): DOMRect =>
+        card.getBoundingClientRect()
     );
     const tops: number[] = [...new Set(cards.map((rect: DOMRect): number => Math.round(rect.top)))];
 
@@ -83,21 +86,34 @@ function expectRows(layout: ILayout, name: string): void {
     expectThat(new Set(layout.widths).size === 1, `${name}: карточки разной ширины ${layout.widths.join(', ')}`);
 }
 
+/** Прямоугольники строк каждого текстового узла: меряется сам текст, а не коробка вокруг него. */
+function textRects(card: HTMLElement): { readonly text: string; readonly rect: DOMRect }[] {
+    const walker: TreeWalker = document.createTreeWalker(card, NodeFilter.SHOW_TEXT);
+    const range: Range = document.createRange();
+    const rects: { readonly text: string; readonly rect: DOMRect }[] = [];
+
+    for (let node: Node | null = walker.nextNode(); node !== null; node = walker.nextNode()) {
+        const text: string = node.textContent?.trim() ?? '';
+
+        if (text !== '') {
+            range.selectNodeContents(node);
+            rects.push(...Array.from(range.getClientRects()).map((rect: DOMRect): { text: string; rect: DOMRect } => ({ text, rect })));
+        }
+    }
+
+    return rects;
+}
+
 /** Ни один текст карточки не выходит за её край (SC-UKV-1461), блок не шире своей ячейки (SC-UKV-1479). */
 function expectContained(block: HTMLElement, name: string): void {
     const width: number = Math.round(block.getBoundingClientRect().width);
 
     expectThat(block.scrollWidth <= width + 1, `${name}: блок раздвинут ${block.scrollWidth} > ${width}`);
-    for (const card of Array.from(block.querySelectorAll<HTMLElement>('[qa-dataid="ai-chat-kpi-card"]'))) {
+    for (const card of Array.from(block.querySelectorAll<HTMLElement>(CARD))) {
         const edge: DOMRect = card.getBoundingClientRect();
 
-        for (const text of Array.from(card.querySelectorAll<HTMLElement>('p, span'))) {
-            const rect: DOMRect = text.getBoundingClientRect();
-
-            expectThat(
-                rect.right <= edge.right + 0.5 && rect.left >= edge.left - 0.5,
-                `${name}: «${text.textContent?.trim() ?? ''}» за краем карточки`
-            );
+        for (const { text, rect } of textRects(card)) {
+            expectThat(rect.right <= edge.right + 0.5 && rect.left >= edge.left - 0.5, `${name}: «${text}» за краем карточки`);
         }
     }
 }
@@ -148,20 +164,29 @@ export const Below: TStory = {
 /** Рост, падение, ноль и записанный нулём малый рост; рост, который плох, — цветом опасности — SC-UKV-1448, SC-UKV-1449. */
 export const Deltas: TStory = { args: { part: 'deltas' } };
 
-/** «1,24 млн ₽» рядом с «8 400 ₽», «2,5 млрд» и дельта в пунктах — SC-UKV-1441, SC-UKV-1476. */
-export const Short: TStory = { args: { part: 'short' } };
+/**
+ * При 328: «1,24 млн ₽» рядом с «8 400 ₽», «2,5 млрд», дельта в пунктах, «-123 млрд ₽» с переносом
+ * перед единицей и «-999 999 ₽» без дробной части — SC-UKV-1441, SC-UKV-1476, SC-UKV-1484.
+ */
+export const Short: TStory = {
+    args: { part: 'short' },
+    play: async ({ canvasElement }: IPlayContext): Promise<void> => measure(canvasElement, { 328: { columns: 2, card: 160 } }),
+};
 
 /** Карточки без дельты, без периода, с дельтой без базы и со строкой вместо числа — SC-UKV-1443, SC-UKV-1450. */
 export const Parts: TStory = { args: { part: 'parts' } };
 
-/** Три карточки при 386 и девять при 728: короткий последний ряд держит ширину колонки — SC-UKV-1460. */
+/** Три карточки при 328 и 386, девять при 728: короткий последний ряд держит ширину колонки — SC-UKV-1460. */
 export const Odd: TStory = {
     args: { part: 'odd' },
     play: async ({ canvasElement }: IPlayContext): Promise<void> =>
-        measure(canvasElement, { 386: { columns: 2, card: 189 }, 728: { columns: 4, card: 176 } }),
+        measure(canvasElement, { 328: { columns: 2, card: 160 }, 386: { columns: 2, card: 189 }, 728: { columns: 4, card: 176 } }),
 };
 
-/** Длинные тексты при 328: подпись базы и период переносятся, длинное слово рвётся, лента не раздвигается — SC-UKV-1461, SC-UKV-1479. */
+/**
+ * Длинные тексты при 328: подпись базы и период переносятся, длинное значение и подпись одним
+ * словом рвутся, лента не раздвигается — SC-UKV-1461, SC-UKV-1479.
+ */
 export const Long: TStory = {
     args: { part: 'long' },
     play: async ({ canvasElement }: IPlayContext): Promise<void> => measure(canvasElement, { 328: { columns: 2, card: 160 } }),
@@ -173,8 +198,25 @@ export const Invalid: TStory = { args: { part: 'invalid' } };
 /** Два блока KPI в одном ответе между абзацами: каждый в своей сетке — SC-UKV-1481. */
 export const Several: TStory = { args: { part: 'several' } };
 
-/** Блок под `dir="rtl"`: сетка и строка дельты зеркалятся, числа в своём порядке — SC-UKV-1474. */
-export const Rtl: TStory = { args: { part: 'rtl' } };
+/**
+ * Блок под `dir="rtl"`: первая карточка справа, стрелка дельты справа от числа, «-1,24 млн ₽» и
+ * «-4,2 %» в своём порядке — SC-UKV-1474.
+ */
+export const Rtl: TStory = {
+    args: { part: 'rtl' },
+    play: async ({ canvasElement }: IPlayContext): Promise<void> => {
+        const block: HTMLElement = await firstBlock(canvasElement);
+        const cards: HTMLElement[] = Array.from(block.querySelectorAll<HTMLElement>(CARD));
+        const first: HTMLElement = cards[0];
+        const number: DOMRect | undefined = first.querySelector('[qa-dataid="stat-tile-delta-percent"]')?.getBoundingClientRect();
+        const arrow: DOMRect | undefined = first.querySelector('[qa-dataid="stat-tile-delta-icon"]')?.getBoundingClientRect();
+        const value: string = (first.querySelector('[qa-dataid="stat-tile-value"]')?.textContent ?? '').replace(/\s+/g, ' ').trim();
+
+        expectThat(first.getBoundingClientRect().left > cards[1].getBoundingClientRect().left, 'справа налево: первая карточка не справа');
+        expectThat(number !== undefined && arrow !== undefined && arrow.left >= number.right, 'справа налево: стрелка не справа от числа');
+        expectThat(value === '-1,24 млн ₽', `справа налево: значение «${value}»`);
+    },
+};
 
 /** Ответ из четырёх карточек в узкой панели чата: две колонки — SC-UKV-1437. */
 export const Panel: TStory = {
@@ -183,6 +225,7 @@ export const Panel: TStory = {
         const block: HTMLElement = await firstBlock(canvasElement);
 
         expectThat(layoutOf(block).columns === 2, `панель: колонок ${layoutOf(block).columns}, а не 2`);
+        expectRows(layoutOf(block), 'панель');
         expectContained(block, 'панель');
     },
 };
@@ -207,6 +250,7 @@ export const ReadingColumn: TStory = {
 
         expectThat(width < 664, `колонка чтения: блок ${width}, не уже 664`);
         expectThat(layoutOf(block).columns === 2, `колонка чтения: колонок ${layoutOf(block).columns}, а не 2`);
+        expectRows(layoutOf(block), 'колонка чтения');
     },
 };
 

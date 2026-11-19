@@ -45,6 +45,10 @@ export type TRtKpiValueWriter = (value: number | string) => string;
 const FORMATS: readonly ERtKpiFormat[] = Object.values(ERtKpiFormat);
 /** С этого значения по модулю число и сумма пишутся короткой формой. */
 const SHORT_FROM: number = 1_000_000;
+/** С этого значения по модулю полная запись теряет дробную часть: шесть цифр с дробью не входят в карточку. */
+const WHOLE_FROM: number = 100_000;
+/** Значащих цифр в короткой форме: «1,24 млн ₽», «-123 млрд ₽» — так она входит в карточку 160. */
+const SHORT_SIGNIFICANT_DIGITS: number = 3;
 /** Дробных знаков у числа в полной записи — как у числовой ячейки таблицы. */
 const NUMBER_FRACTION_DIGITS: number = 2;
 
@@ -125,18 +129,30 @@ function fullFractionDigits(currency: string | null, locale: string): number {
         : (rtTableNumberFormat(locale, { currency, style: 'currency' }).resolvedOptions().maximumFractionDigits ?? NUMBER_FRACTION_DIGITS);
 }
 
-/** Значение доходит до миллиона по модулю после округления полной записи. */
-function reachesShort(value: number, digits: number): boolean {
+/**
+ * Неразрывный пробел между числом и единицей («млн ₽», «₽»), который язык ставит в записи. Его
+ * место занимает обычный: значение шире карточки переносится перед единицей, а не посреди числа.
+ * Пробелы между разрядами остаются неразрывными.
+ */
+const UNIT_GAP: RegExp = new RegExp(`(\\d)[${String.fromCharCode(0xa0)}${String.fromCharCode(0x202f)}](?=[^\\d\\s])`);
+
+function breakBeforeUnit(text: string): string {
+    return text.replace(UNIT_GAP, '$1 ');
+}
+
+/** Значение по модулю после округления до `digits` дробных знаков. */
+function rounded(value: number, digits: number): number {
     const scale: number = 10 ** digits;
 
-    return Math.round(Math.abs(value) * scale) / scale >= SHORT_FROM;
+    return Math.round(Math.abs(value) * scale) / scale;
 }
 
 /**
  * Запись значения карточки для языка кита. Полная запись — как у числовой ячейки таблицы того же
- * рода. Число и сумма от миллиона по модулю пишутся короткой формой языка с 0–2 дробными знаками
- * без хвостовых нулей: «1,24 млн ₽». Процент коротким не бывает. Строка стоит как пришла, цвета у
- * значения нет.
+ * рода; от 100 000 по модулю — без дробной части: «999 999 ₽». Число и сумма от миллиона по модулю
+ * пишутся короткой формой языка, не длиннее трёх значащих цифр: «1,24 млн ₽», «-123 млрд ₽». Порог
+ * берётся после округления той записи, что стояла бы ниже него. Процент коротким не бывает. Строка
+ * стоит как пришла, цвета у значения нет.
  */
 export function rtKpiValueWriter(item: Pick<IRtKpiItem, 'format' | 'currency'>, locale: string): TRtKpiValueWriter {
     const column: IRtTableColumn = { label: '', type: COLUMN_OF_FORMAT[item.format], currency: item.currency };
@@ -148,15 +164,29 @@ export function rtKpiValueWriter(item: Pick<IRtKpiItem, 'format' | 'currency'>, 
 
     const currency: string | null = rtTableCurrency(column);
     const digits: number = fullFractionDigits(currency, locale);
+    const style: Intl.NumberFormatOptions = currency === null ? {} : { currency, style: 'currency' };
     const short: Intl.NumberFormat = rtTableNumberFormat(locale, {
-        ...(currency === null ? {} : { currency, style: 'currency' }),
+        ...style,
         notation: 'compact',
         compactDisplay: 'short',
+        maximumSignificantDigits: SHORT_SIGNIFICANT_DIGITS,
+        signDisplay: 'negative',
+    });
+    const whole: Intl.NumberFormat = rtTableNumberFormat(locale, {
+        ...style,
         minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
+        maximumFractionDigits: 0,
         signDisplay: 'negative',
     });
 
-    return (value: number | string): string =>
-        typeof value === 'number' && reachesShort(value, digits) ? short.format(value) : full(value).text;
+    return (value: number | string): string => {
+        if (typeof value !== 'number') {
+            return full(value).text;
+        }
+        if (rounded(value, digits) < WHOLE_FROM) {
+            return breakBeforeUnit(full(value).text);
+        }
+
+        return breakBeforeUnit(rounded(value, 0) >= SHORT_FROM ? short.format(value) : whole.format(value));
+    };
 }

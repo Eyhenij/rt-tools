@@ -31,6 +31,15 @@ function deltaFormat(locale: string, options: Intl.NumberFormatOptions): Intl.Nu
 }
 
 /**
+ * Доля из процентов без хвоста деления: 1.45 / 100 в двоичной записи чуть меньше 0.0145, и процент
+ * округлялся бы вниз («+1,4 %»), а то же число в пунктах — вверх («+1,5»). Пятнадцать значащих цифр
+ * возвращают долю, которую записали бы руками.
+ */
+function asFraction(percent: number): number {
+    return Number((percent / 100).toPrecision(15));
+}
+
+/**
  * Дельта по языку кита. Направление берётся из записанного числа, а не из присланного: 0.04 и
  * -0.04 записаны «0 %», и стрелка, знак и цвет у них ровные.
  */
@@ -38,7 +47,7 @@ export function rtDeltaNumber(value: number, unit: TRtDeltaUnit, locale: string)
     const parts: Intl.NumberFormatPart[] =
         unit === 'points'
             ? deltaFormat(locale, DELTA_OPTIONS).formatToParts(value)
-            : deltaFormat(locale, { ...DELTA_OPTIONS, style: 'percent' }).formatToParts(value / 100);
+            : deltaFormat(locale, { ...DELTA_OPTIONS, style: 'percent' }).formatToParts(asFraction(value));
     const text: string = parts.map((part: Intl.NumberFormatPart): string => part.value).join('');
 
     if (parts.some((part: Intl.NumberFormatPart): boolean => part.type === 'plusSign')) {

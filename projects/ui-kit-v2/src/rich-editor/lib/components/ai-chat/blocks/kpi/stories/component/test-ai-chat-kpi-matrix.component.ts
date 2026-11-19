@@ -13,9 +13,9 @@ import {
     AI_CHAT_KPI_INVALID_CASES,
     AI_CHAT_KPI_LONG_CASES,
     AI_CHAT_KPI_MESSAGES,
-    AI_CHAT_KPI_MONTH,
     AI_CHAT_KPI_ODD_CASES,
     AI_CHAT_KPI_PARTS_CASES,
+    AI_CHAT_KPI_RTL,
     AI_CHAT_KPI_SEVERAL,
     AI_CHAT_KPI_SHORT_CASES,
     AI_CHAT_KPI_THRESHOLD_CASES,
@@ -89,7 +89,7 @@ export class TestRtAiChatKpiMatrixComponent {
 
     public readonly several: readonly IRtAiChat.Block[] = AI_CHAT_KPI_SEVERAL;
 
-    public readonly month: readonly IRtAiChat.Block[] = [AI_CHAT_KPI_MONTH];
+    public readonly rtl: readonly IRtAiChat.Block[] = [AI_CHAT_KPI_RTL];
 
     public readonly messages: readonly IRtAiChat.Message[] = AI_CHAT_KPI_MESSAGES;
 

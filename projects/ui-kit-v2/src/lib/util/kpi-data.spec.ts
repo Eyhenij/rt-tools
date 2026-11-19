@@ -43,6 +43,27 @@ describe('rtKpiValueWriter', (): void => {
         expect(rub(1000000)).not.toContain(',00');
     });
 
+    it('SC-UKV-1484 — значение входит в карточку: целое от 100 000, три цифры в короткой форме', (): void => {
+        const rub: (value: number) => string = (value: number): string => write({ value, format: 'currency', currency: 'RUB' }, 'ru');
+        const spaces: (text: string) => string = (text: string): string => text.split(String.fromCharCode(0xa0)).join(' ');
+
+        expect([99999.99, 999999.4, -999999.4, 999999.99, 12345678, -123450000000].map(rub).map(spaces)).toEqual([
+            '99 999,99 ₽',
+            '999 999 ₽',
+            '-999 999 ₽',
+            '1 млн ₽',
+            '12,3 млн ₽',
+            '-123 млрд ₽',
+        ]);
+        // Обычный пробел — единственное место переноса, и он стоит между числом и единицей.
+        const raw: (value: number) => string = rtKpiValueWriter({ format: ERtKpiFormat.Currency, currency: 'RUB' }, 'ru');
+
+        expect(raw(-999999.4).split(' ')).toHaveLength(2);
+        expect(raw(-999999.4).split(' ')[1]).toBe('₽');
+        expect(raw(-123450000000).split(' ')).toHaveLength(2);
+        expect(raw(-123450000000).split(' ')[0]).toBe('-123');
+    });
+
     it('SC-UKV-1442 — сумма без верного кода валюты пишется числом', (): void => {
         expect(write({ value: 1200.5, format: 'currency' }, 'en')).toBe('1,200.5');
         expect(write({ value: 1200.5, format: 'currency', currency: 'rub' }, 'en')).toBe('1,200.5');

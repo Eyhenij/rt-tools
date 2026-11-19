@@ -36,12 +36,12 @@ base caption and a period.
 
 ### What it is called in the interface
 
-| In the domain  | On the screen                                                               |
-| -------------- | --------------------------------------------------------------------------- |
-| The card       | a framed tile: the label, the value, the delta line, the period             |
+| In the domain  | On the screen                                                              |
+| -------------- | -------------------------------------------------------------------------- |
+| The card       | a framed tile: the label, the value, the delta line, the period            |
 | The delta line | the arrow, the signed number and the muted base caption: «↑ +12,5 % vs LY» |
-| The period     | a muted line under the value                                                |
-| The KPI block  | a grid of cards, two or four in a row                                       |
+| The period     | a muted line under the value                                               |
+| The KPI block  | a grid of cards, two or four in a row                                      |
 
 ## Rules
 
@@ -71,7 +71,9 @@ base caption and a period.
 
 - **A number value is written by the rules of a number cell of the table block.** The format of the item stands for the column type, `currency` for its currency code, and the locale is the kit label locale. `number` groups the digits and keeps up to 2 fraction digits, `percent` reads 0.78 as «78,0 %», `currency` writes «8 400 ₽».
 
-- **A `number` or `currency` value of a million and more, by its absolute value, is written in the short form of the kit locale with 0 to 2 fraction digits, trailing zeros dropped.** 1 000 000 ₽ is «1 млн ₽», 1 240 000 ₽ is «1,24 млн ₽», 2 500 000 ₽ is «2,5 млн ₽», 2 500 000 000 is «2,5 млрд». A value whose full form rounds to a million, such as 999 999.999 ₽, is written short: «1 млн ₽». A value below that is written in full. A `percent` value is never short.
+- **A `number` or `currency` value of a million and more, by its absolute value, is written in the short form of the kit locale.** It keeps at most three significant digits and drops trailing zeros. 1 000 000 ₽ is «1 млн ₽», 1 240 000 ₽ is «1,24 млн ₽», 12 345 678 ₽ is «12,3 млн ₽». -123 450 000 000 ₽ is «-123 млрд ₽», 2 500 000 000 is «2,5 млрд». A value whose whole form rounds to a million, such as 999 999.99 ₽, is written short: «1 млн ₽». A `percent` value is never short.
+- **A `number` or `currency` value from 100 000 to below a million, by its absolute value, is written in full without fraction digits.** 999 999.4 ₽ is «999 999 ₽». Six digits with a fraction do not fit 131 inside a card 160 wide at 24 px and would break inside the number. The owner chose this after review round one: «Округлять под карточку».
+- **The space between a written number and its unit is an ordinary one, the spaces between digit groups stay non-breaking.** A negative value can still be wider than 131: «-123 млрд ₽» is 148. It then wraps before «млрд ₽», never inside the number.
 
 - **A `currency` item whose code is missing or is not three Latin upper-case letters writes its value as `number`.**
 

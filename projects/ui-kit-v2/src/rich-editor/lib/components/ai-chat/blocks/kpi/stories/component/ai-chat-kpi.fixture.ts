@@ -9,6 +9,9 @@ export interface IAiChatKpiCase {
 
 const PERIOD: string = 'ноябрь 2026';
 
+/** Неразрывный пробел: им язык разделяет разряды, и по нему строка не переносится. */
+const NBSP: string = String.fromCharCode(0xa0);
+
 /** Четыре карточки макета: рост, падение, ноль и рост показателя, где рост плох. */
 const MONTH_ITEMS: readonly IRtAiChat.KpiItem[] = [
     { label: 'Выручка', value: 1240000, format: 'currency', currency: 'RUB', delta: 12.5, base: 'vs LY', period: PERIOD },
@@ -69,14 +72,16 @@ export const AI_CHAT_KPI_DELTA_CASES: readonly IAiChatKpiCase[] = [
 /** Короткая форма от миллиона рядом с полной записью и пункты рядом с процентами. */
 export const AI_CHAT_KPI_SHORT_CASES: readonly IAiChatKpiCase[] = [
     {
-        name: 'короткая и полная запись',
-        width: 386,
+        name: 'короткая и полная запись, 328',
+        width: 328,
         blocks: [
             kpi([
                 { label: 'Выручка', value: 1240000, format: 'currency', currency: 'RUB', delta: 12.5, base: 'vs LY' },
                 { label: 'Средний чек', value: 8400, format: 'currency', currency: 'RUB', delta: -4, base: 'vs LY' },
                 { label: 'Гости за год', value: 2500000000, period: '2026' },
                 { label: 'Доля прямых', value: 0.42, format: 'percent', delta: 3, deltaUnit: 'points', base: 'vs LY' },
+                { label: 'Убыток', value: -123450000000, format: 'currency', currency: 'RUB', delta: -4.2, base: 'vs LY' },
+                { label: 'Средняя бронь', value: -999999.4, format: 'currency', currency: 'RUB', delta: 1.45, base: 'vs LY' },
             ]),
         ],
     },
@@ -107,6 +112,7 @@ const NINE: readonly IRtAiChat.KpiItem[] = Array.from({ length: 9 }, (_: unknown
 
 /** Нечётное число карточек: последний ряд короче и держит ширину колонки. */
 export const AI_CHAT_KPI_ODD_CASES: readonly IAiChatKpiCase[] = [
+    { name: 'три карточки, 328', width: 328, blocks: [kpi(MONTH_ITEMS.slice(0, 3))] },
     { name: 'три карточки, 386', width: 386, blocks: [kpi(MONTH_ITEMS.slice(0, 3))] },
     { name: 'девять карточек, 728', width: 728, blocks: [kpi(NINE)] },
 ];
@@ -127,13 +133,19 @@ export const AI_CHAT_KPI_LONG_CASES: readonly IAiChatKpiCase[] = [
                     base: 'к тому же месяцу прошлого года',
                     period: 'за период с 1 по 30 ноября 2026',
                 },
-                { label: 'Код', value: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', delta: -4, base: 'vs LY' },
+                { label: 'Нераспределённыхпоканаламзаявок', value: ['1', '240', '000', '000 ₽'].join(NBSP), delta: -4, base: 'vs LY' },
                 { label: 'Загрузка', value: 0.78, format: 'percent', delta: 0, deltaUnit: 'points', base: 'vs LM' },
                 { label: 'Отмены', value: 14, delta: 8, growthIsGood: false, base: 'vs LM' },
             ]),
         ],
     },
 ];
+
+/** Справа налево: отрицательная сумма и отрицательная дельта читаются в своём порядке — SC-UKV-1474. */
+export const AI_CHAT_KPI_RTL: IRtAiChat.KpiBlock = kpi([
+    { label: 'Выручка', value: -1240000, format: 'currency', currency: 'RUB', delta: -4.2, base: 'vs LY', period: PERIOD },
+    MONTH_ITEMS[1],
+]);
 
 /** Испорченные блоки: на их месте заглушка ленты, соседи на месте. */
 export const AI_CHAT_KPI_INVALID_CASES: readonly IAiChatKpiCase[] = [

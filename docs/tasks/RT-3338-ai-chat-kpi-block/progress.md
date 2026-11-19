@@ -117,6 +117,39 @@
   orphaned references; `node tools/verify-ui-kit-v2-docs.cjs` — 116 pages, no divergence; lint,
   stylelint and typecheck green.
 
+- **Review round one: qa-engineer 11 findings, product-strategist 7, goal-critic 4.** Each was
+  checked against the code. Fixed:
+    - a label of one 30-letter word went 122 px past its card: the compact tile now wraps the label;
+    - a value below a million with a fraction broke inside the number. The owner's choice: «Округлять
+      под карточку». The writer now drops the fraction from 100 000 and keeps three significant
+      digits in the short form. The space before the unit is an ordinary one, so «-123 млрд ₽» wraps
+      before «млрд ₽». New scenario SC-UKV-1484;
+    - a percent delta rounded below the same number in points (1.45 → «+1,4 %» against «+1,5»);
+    - the list lost its role in WebKit: `role="list"`;
+    - a NaN or infinite delta drew «NaN%»: it is drawn as no delta;
+    - the play steps measured boxes, not text: they measure the line boxes of every text node. `Odd`
+      measures three cards at 328, `Rtl` holds SC-UKV-1474 with -1 240 000 ₽ and -4.2,
+      `Panel` and `ReadingColumn` check one top per row, `Short` is measured at 328;
+    - the tile story `Size` got the play step its spec comment named;
+    - the copy line in `ru` got its test; `RT_KIT_LOCALE` names numbers and the tile delta;
+    - six scenarios held by play steps carry a «Not covered» line naming the story.
+
+  Written off:
+    - the success and danger colours under AA. A kit token decision, already in the epic findings;
+    - the remaining stories have no play steps. Their texts and colours are held by the component
+      spec and the snapshots;
+    - a 360 phone gives one column. The 315 came from a desktop scrollbar of 11 and the story's own
+      border. On a touch screen the scrollbar overlays, and the block is 328;
+    - Panel measured 375 in the pinned Chrome and 386 headless: the same scrollbar;
+    - the CHANGELOG is built from commit subjects at release, and `3d8e5d19c` names the tile delta.
+      The PR body names it too;
+    - a share sent as 78 writes «7 800 %». The schema says a share is a fraction;
+    - `Themes` holds 328 and 728, as the agreement table says; the plan sign named 386 too;
+    - the styles spec reads CSS text. The play steps measure the drawn layout.
+
+  The gate runs the stories through `test-storybook`, which runs the play steps and fails a test on a
+  thrown error.
+
 ## Mockup / showcase
 
 Measured in the pinned Chrome by `getComputedStyle` and `getBoundingClientRect` on the story

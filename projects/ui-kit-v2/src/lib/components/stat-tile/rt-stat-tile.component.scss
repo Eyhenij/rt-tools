@@ -139,6 +139,11 @@
                     gap: calc(var(--rt-space-1) + var(--rt-space-0-5));
                 }
 
+                .rt-stat-tile__label {
+                    min-width: 0;
+                    overflow-wrap: anywhere;
+                }
+
                 .rt-stat-tile__value {
                     font-size: var(--rt-text-2xl);
                     overflow-wrap: anywhere;

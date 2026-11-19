@@ -24,6 +24,10 @@ Given the same block of four cards in a block 728 wide
 When the block is drawn
 Then the four cards stand in one row, each 176 wide, on one top
 
+Not covered: it cannot be closed by a test with an identifier — the width of a card comes from a
+container query, and the styles of the component do not reach the test environment. Held by the
+play steps of the showcase stories `Widths` (728: four columns of 176, one top) and `FullScreen`.
+
 ### SC-UKV-1439 — the block switches to four columns at 664
 
 Given a block of four cards
@@ -58,7 +62,7 @@ Then the card value reads «n/a»
 
 ### SC-UKV-1444 — malformed items are dropped
 
-Given a block whose items are: a string, an item without a label, an item with the label «», an item with the label «   », and items with the value `null`, `NaN`, `Infinity`, `true`, `{}`, `[]` and `""`
+Given a block whose items are: a string, an item without a label, an item with the label «», an item with the label « », and items with the value `null`, `NaN`, `Infinity`, `true`, `{}`, `[]` and `""`
 And an item «Выручка» with the value 1200
 When the block is drawn
 Then one card «Выручка» is drawn
@@ -167,6 +171,10 @@ When both are drawn
 Then the first has nine cards in three rows, the last row holding one card at the column width
 And in the second the third card stands alone in its row, 160 wide
 
+Not covered: it cannot be closed by a test with an identifier — the rows and the column width are
+computed by the browser. Held by the play step of the showcase story `Odd`: three cards at 328 in
+columns of 160, nine at 728 in columns of 176, every card of a row on one top.
+
 ### SC-UKV-1461 — no text goes past its card
 
 Given a block 328 wide with a card whose label is six words, base caption «vs the same month last year» and period «за период с 1 по 30 ноября 2026»
@@ -175,6 +183,10 @@ When the block is drawn
 Then the label, the base caption and the period of the first card wrap between words
 And the label and the value of the second card break inside the word
 And no text of either card goes past its frame
+
+Not covered: it cannot be closed by a test with an identifier — wrapping is a computed value. Held
+by the play step of the showcase story `Long`, which measures the line boxes of every text node of
+every card against the card's frame and the block's width against its scroll width.
 
 ### SC-UKV-1462 — the block is a list for a screen reader
 
@@ -196,11 +208,18 @@ Then both frames start on the same top and are as high as the taller one
 And the period of each card stands at the bottom of its frame
 And in the dark theme the frames take `--rt-color-border-default` and `--rt-color-bg-surface` of the dark set
 
+Not covered: it cannot be closed by a test with an identifier — the height of a row is computed by
+the browser. Held by the play steps of the showcase stories `Widths`, `Panel`, `FullScreen` and
+`ReadingColumn` (one top and one height per row) and by the snapshot of the story `Themes`.
+
 ### SC-UKV-1465 — the showcase holds both widths and both themes
 
 Given the stories of the KPI block
 When the showcase snapshots are taken
 Then the block of four cards with a positive, a negative and a zero delta is shot at 328 and at 728, in the light and the dark theme
+
+Not covered: it is a statement about the showcase references, not about code. Held by the snapshot
+gate: the references `organisms-chat-aichatkpi--themes` and `--widths` are matched on every push.
 
 ### SC-UKV-1466 — a tile without a set kit locale writes the delta as `en`
 
@@ -245,6 +264,10 @@ Then the delta reads «+12.5%»
 Given the chat in the full-screen mode on a screen whose answer block is 600 wide, with a block of four cards
 When the block is drawn
 Then the cards stand in two rows of two
+
+Not covered: it cannot be closed by a test with an identifier — the width of the answer comes from
+the chat's reading column. Held by the play step of the showcase story `ReadingColumn`: the block is
+narrower than 664 and has two columns.
 
 ### SC-UKV-1473 — a block narrower than 328 has one column
 
@@ -315,3 +338,10 @@ Given the exported KPI schema
 When it validates a block whose item has a `label` and a `value` and no `format`, and a block whose item has no `value`
 Then the first is accepted and the second refused
 And the schema names `deltaUnit` as `percent` or `points`, and its descriptions call a `percent` value a fraction and `delta` a change in percent
+
+### SC-UKV-1484 — a value fits the card: whole from 100 000, three digits in the short form
+
+Given `currency` items with `RUB` holding 99999.99, 999999.4, -999999.4, 999999.99, 12345678 and -123450000000, in the `ru` locale
+When the block is drawn
+Then they read «99 999,99 ₽», «999 999 ₽», «-999 999 ₽», «1 млн ₽», «12,3 млн ₽» and «-123 млрд ₽»
+And the only ordinary space of a value stands between the number and its unit, so a value wider than a card 160 wide wraps there and never inside the number

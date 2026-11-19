@@ -215,6 +215,27 @@ describe('rt-ai-chat-blocks logic', (): void => {
             );
         });
 
+        it('SC-UKV-1457 — копия в ru: «1,24 млн ₽» и «+12,5 % vs LY»', (): void => {
+            const block: IRtAiChat.Block = {
+                type: 'kpi',
+                items: [
+                    {
+                        label: 'Выручка',
+                        value: 1240000,
+                        format: 'currency',
+                        currency: 'RUB',
+                        delta: 12.5,
+                        base: 'vs LY',
+                        period: 'ноябрь 2026',
+                    },
+                ],
+            };
+
+            expect(blocksToPlainText([block], [], 'ru').split(String.fromCharCode(0xa0)).join(' ')).toBe(
+                'Выручка\t1,24 млн ₽\t+12,5 % vs LY\tноябрь 2026'
+            );
+        });
+
         it('SC-UKV-1457 — пункты в копии пишутся подписью кита', (): void => {
             const points: TRtAiChatPointsWriter = rtAiChatPointsWriter((key: string, params?: object): string =>
                 key === 'uiPercentagePoints' ? `${String(Reflect.get(params ?? {}, 'value'))} п.п.` : ''

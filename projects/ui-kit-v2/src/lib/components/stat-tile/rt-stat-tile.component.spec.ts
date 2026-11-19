@@ -225,6 +225,20 @@ describe('RtStatTileComponent', (): void => {
             expect(deltaText(setup({ deltaPrimary: delta(-4) }))).toBe(`-4${NBSP}%`);
         });
 
+        it('SC-UKV-1469 — проценты и пункты округляют одно число одинаково', (): void => {
+            for (const value of [1.45, 0.35, 9.95]) {
+                const percent: string = deltaText(setup({ deltaPrimary: delta(value) }, 'en'));
+                const points: string = deltaText(setup({ deltaPrimary: delta(value, { unit: 'points' }) }, 'en'));
+
+                expect(percent.replace('%', '')).toBe(points.replace(' pp', ''));
+            }
+        });
+
+        it('нечисловая дельта не рисуется, как дельта, которой сравнить не с чем', (): void => {
+            expect(qa(setup({ deltaPrimary: delta(Number.NaN) }), 'stat-tile-delta')).toBeNull();
+            expect(qa(setup({ deltaPrimary: delta(Number.POSITIVE_INFINITY) }), 'stat-tile-delta')).toBeNull();
+        });
+
         it('SC-UKV-1471 — язык, который Intl не принимает, пишет дельту как en', (): void => {
             expect(deltaText(setup({ deltaPrimary: delta(12.5) }, '!!'))).toBe('+12.5%');
         });

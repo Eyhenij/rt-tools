@@ -1,5 +1,6 @@
 <ng-container rtBlock="rt-ai-chat-kpi">
-    <ul rtElem="grid" qa-dataid="ai-chat-kpi">
+    <!-- role="list": WebKit снимает роль списка с ul без маркеров, и скринридер перестаёт называть число карточек -->
+    <ul rtElem="grid" qa-dataid="ai-chat-kpi" role="list">
         @for (item of cards(); track $index) {
             <li rtElem="card" qa-dataid="ai-chat-kpi-card">
                 <rt-stat-tile

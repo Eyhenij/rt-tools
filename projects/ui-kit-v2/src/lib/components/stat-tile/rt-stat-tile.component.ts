@@ -190,7 +190,9 @@ export class RtStatTileComponent {
     });
 
     #written(delta: IRtStatTile.Delta | null): IRtDeltaNumber | null {
-        return delta && delta.percent !== null ? rtDeltaNumber(delta.percent, delta.unit ?? 'percent', this.#locale()) : null;
+        return delta && delta.percent !== null && Number.isFinite(delta.percent)
+            ? rtDeltaNumber(delta.percent, delta.unit ?? 'percent', this.#locale())
+            : null;
     }
 
     #visibleDelta(key: string, delta: IRtStatTile.Delta | null, written: IRtDeltaNumber | null, pointsText: string): IDeltaRow | null {
