@@ -4,8 +4,13 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 3 из 4 — Code and unit tests
-- **Next step:** stage 4 — the stories of the multiselect with toggles (a Sonnet subagent writes
-  them), then the stories of the rest of the set. Then the live measurement of the calendar icons, which
+- **Next step:** stage 4 — the last two story batches (dynamic selector, thread list, table filter
+  header; page header, tabs, multiselect footer) by Sonnet subagents, then `build-storybook` over
+  the set. Committed so far: select 67cc8a6ca, toggle group 72499909a, multiselect toggles
+  d6733beb0, autocomplete and menu 8a4e595eb, split button, speed menu, palette, action bar
+  db7c7e020.
+- **Question to the owner:** the showcase on 6007 runs from the RT-3428 working copy; may it be
+  stopped and this branch's raised there for the live check? Then the live measurement of the calendar icons, which
   waits for the owner's word on the showcase at 6007 (it runs from the RT-3428 working copy).
   Done: the calendar icon of the date and period fields on the select's line (5e04df474), the
   multiselect with toggles, `look="toggles"` (scenarios

@@ -7,6 +7,7 @@ export default {
     component: TestRtTableFilterHeaderComponent,
     argTypes: {
         kind: { control: { type: 'inline-radio' }, options: ['text', 'number', 'select', 'date'] },
+        sheet: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtTableFilterHeaderComponent>;
 
@@ -16,5 +17,6 @@ type TStory = StoryObj<TestRtTableFilterHeaderComponent>;
 export const Playground: TStory = {
     args: {
         kind: 'text',
+        sheet: true,
     },
 };
