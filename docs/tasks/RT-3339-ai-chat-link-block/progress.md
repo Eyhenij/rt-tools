@@ -38,6 +38,9 @@ The plan is not written yet.
 - **Measured by node bounds after round 2:** every card keeps its two buttons on one top; no frame
   overlaps another; cards are 127 high, 149 with a reason, 144 with a two-line title. The button
   labels stand on a half pixel (a 13 line in a 32 box), as the kit button draws them.
+- **The owner's remark on the mockup: a wider gap between the icon and the text of a status tag.**
+  The gap is 4 in all three tags; the kit tag `sm` draws 2, so the code is fitted to the mockup,
+  as the owner set in RT-3338.
 
 ## Sessions
 
