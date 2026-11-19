@@ -210,6 +210,9 @@ report "plan: SC-AK-1410 — план известных форм проходи
 tf_record 'Одобряю план RT-2 (Recommended)'
 got="$(tf_red)"
 report "plan: SC-AK-1411 — обе проверки красные, метка записана" "$(printf '%s' "$got" | grep -cE '^1\.[12] red|approval mark is written.* code=0$')" 3
+# SC-AK-1751 — на коммите плана с чистым деревом проверки идут на месте
+report "plan: SC-AK-1751 — HEAD на коммите плана, отслеживаемое не тронуто — проверки на месте" \
+    "$(printf '%s' "$got" | grep -c '^plan-red: the checks run in place, at the plan commit$')" 1
 report "plan: SC-AK-1411 — метка несёт ответ, место ответа и красный вывод каждого шага" \
     "$(node -e "const m=require('$TF_APPROVAL');console.log([m.answer, Object.keys(m.red).join(','), m.fingerprint.length, m.place.uuid, m.place.record === '$TF_REC'].join(' '))" 2>&1)" 'Одобряю план RT-2 (Recommended) 1.1,1.2 16 a1 true'
 
@@ -223,8 +226,24 @@ report "plan: SC-AK-1738 — проверки не гоняются, метка 
 report "plan: SC-AK-1738 — красный вывод прежней метки сохранён, место новое" \
     "$(node -e "const m=require('$TF_APPROVAL');console.log([m.red['1.1'].startsWith('exit '), m.place.uuid].join(' '))" 2>&1)" 'true a1'
 node -e "const f='$TF_APPROVAL',fs=require('fs'),m=JSON.parse(fs.readFileSync(f));m.plan='other';fs.writeFileSync(f,JSON.stringify(m))"
-report "plan: SC-AK-1738 — метка другого коммита — проверки гоняются и отказаны зелёными" \
-    "$(tf_red | grep -c 'measures nothing; no mark code=1')" 1
+# Работа ушла в коммит после плана: на текущем дереве обе проверки зелёные.
+(cd "$TF_RED" && git add out.txt && "${TF_G[@]}" commit -q -m work)
+TF_TMP="$TF_DIR/plan-tmp"
+mkdir -p "$TF_TMP"
+got="$(TMPDIR="$TF_TMP" tf_red)"
+report "plan: SC-AK-1738 — метка другого коммита — проверки гоняются на дереве коммита плана, метка записана" \
+    "$(printf '%s' "$got" | grep -cE 'approval mark is written.* code=0$')" 1
+# SC-AK-1749 — пересобранный план меряется на дереве своего коммита и получает метку
+report "plan: SC-AK-1749 — за коммитом плана проверки идут во временной копии и красные" \
+    "$(printf '%s' "$got" | grep -cE '^plan-red: the checks run on the tree of the plan commit [0-9a-f]{9}, in a temporary worktree$|^1\.[12] red')" 3
+report "plan: SC-AK-1749 — после прогона копии нет ни в git, ни на диске" \
+    "$(cd "$TF_RED" && git worktree list | wc -l | tr -d ' ')/$(find "$TF_TMP" -mindepth 1 | wc -l | tr -d ' ')" '1/0'
+# SC-AK-1750 — копию не сделать — отказ с причиной, проверки не идут
+rm -f "$TF_APPROVAL"
+got="$(TMPDIR="$TF_DIR/no-such-dir" tf_red)"
+report "plan: SC-AK-1750 — каталог для копии не создаётся — отказ с причиной, без метки" \
+    "$(printf '%s' "$got" | grep -cE 'the tree of the plan commit could not be made: .+; no check runs, no mark code=1$')/$(printf '%s' "$got" | grep -c '^1\.')/$(test -e "$TF_APPROVAL" && echo есть || echo нет)" '1/0/нет'
+(cd "$TF_RED" && git reset -q HEAD~1)
 rm -f "$TF_RED/out.txt"
 printf '%s\n' '{"type":"user","uuid":"a1","toolUseResult":{"answers":{"Одобряешь?":"Одобряю план RT-2"}}}' > "$TF_DIR/outside.jsonl"
 report "plan: SC-AK-1411 — запись вне каталогов записей метки не даёт" "$(tf_red "$TF_DIR/outside.jsonl" | grep -c 'not a session record of this repository.* code=1')" 1
