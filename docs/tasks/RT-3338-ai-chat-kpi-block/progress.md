@@ -3,20 +3,20 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 5 — The data of the block: item, value writer, schema
-- **Done:** the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3338-ai-chat-kpi-block` from `RT-3337-ai-chat-table-block` (chain), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption. The mockup is approved. The agreement holds SC-UKV-1436…1483, committed. The plan is written and reviewed by product-strategist and goal-critic; their findings are closed in the plan.
-- **Next step:** step 1.1 — the data function in `kpi-data.ts`.
+- **Stage:** 2 of 5 — The tile: compact size, delta by the locale, visible base caption
+- **Done:** stage 1 — `kpi-data.ts`, `kpi.schema.ts`, their specs: `nx test --testFile=src/lib/util/kpi` 13 passed of 13, the table util specs 22 of 22, typecheck green. Before it: the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3338-ai-chat-kpi-block` from `RT-3337-ai-chat-table-block` (chain), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption. The mockup is approved. The agreement holds SC-UKV-1436…1483, committed. The plan is written and reviewed by product-strategist and goal-critic; their findings are closed in the plan.
+- **Next step:** step 2.1 — both delta rows of `rt-stat-tile` by the kit locale.
 - **Uncommitted:** no
 - **Waiting for the owner:** no; the plan is approved: «Одобряю план»
 - **PR:** not open yet; the branch stands on RT-3337 (#3407), which stands on RT-3336 (#3402) and RT-3335 (#3398)
 
 ## Steps
 
-- [>] 1.1 Write the lenient data function of a KPI item and block in `kpi-data.ts` next to `table-data.ts`: missing value and label, format, currency, delta, deltaUnit, base, period, growthIsGood.
-- [ ] 1.2 Write the value writer in `kpi-data.ts` on top of `rtTableCellWriter`: the short form from a million with 0–2 fraction digits and trailing zeros dropped, rounding to a million written short.
-- [ ] 1.3 Write the JSON schema of the block in `kpi.schema.ts` next to `table.schema.ts` and export both from the util barrel.
-- [ ] 1.4 Write the specs of the data function, the writer and the schema with the scenario numbers of the agreement: SC-UKV-1440–1447, 1459, 1476, 1482, 1483.
-- [ ] 2.1 Write both delta rows of `rt-stat-tile` by `Intl.NumberFormat` for the kit label locale: a plus on growth, at most one fraction digit, direction by the written number, `en` for a refused locale.
+- [x] 1.1 Write the lenient data function of a KPI item and block in `kpi-data.ts` next to `table-data.ts`: missing value and label, format, currency, delta, deltaUnit, base, period, growthIsGood.
+- [x] 1.2 Write the value writer in `kpi-data.ts` on top of `rtTableCellWriter`: the short form from a million with 0–2 fraction digits and trailing zeros dropped, rounding to a million written short.
+- [x] 1.3 Write the JSON schema of the block in `kpi.schema.ts` next to `table.schema.ts` and export both from the util barrel.
+- [x] 1.4 Write the specs of the data function, the writer and the schema with the scenario numbers of the agreement: SC-UKV-1440–1447, 1459, 1476, 1482, 1483.
+- [>] 2.1 Write both delta rows of `rt-stat-tile` by `Intl.NumberFormat` for the kit label locale: a plus on growth, at most one fraction digit, direction by the written number, `en` for a refused locale.
 - [ ] 2.2 Add the compact size: value 24/24, delta 14, delta on its own line, inner gaps 6, wrapping secondary and base caption.
 - [ ] 2.3 Add the option that shows the primary delta label as visible text without a duplicate `title`.
 - [ ] 2.4 Name the locale in the existing tile specs and add the specs of the new scenarios: SC-UKV-1453–1456, 1466–1471.
