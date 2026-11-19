@@ -106,3 +106,4 @@ None.
 | ---------- | -------------------------------------------------------------- |
 | 2026-11-19 | The subdomain is written with scenarios 1382…1389 (RT-3399)    |
 | 2026-11-19 | The multiselect footer in the sheet, scenarios 1436…1438 (RT-3399) |
+| 2026-11-19 | The sheet in the rest of the set, scenarios 1439…1440 (RT-3399) |

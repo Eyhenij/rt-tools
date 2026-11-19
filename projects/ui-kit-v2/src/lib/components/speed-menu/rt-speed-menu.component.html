@@ -8,6 +8,8 @@
         rtPopoverTrigger="manual"
         rtPopoverPanelClass="rt-speed-menu-pane"
         [rtPopover]="panelTpl"
+        [rtPopoverSheet]="sheet()"
+        [rtPopoverSheetTitle]="triggerLabel()"
         [rtPopoverPositions]="positions()"
         [glyph]="isOpen() ? 'close' : icon()"
         [ariaLabel]="triggerLabel()"

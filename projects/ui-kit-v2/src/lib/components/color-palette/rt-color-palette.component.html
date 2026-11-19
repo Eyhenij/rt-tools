@@ -43,6 +43,8 @@
                 appearance="text"
                 size="sm"
                 [rtPopover]="pickerTpl"
+                [rtPopoverSheet]="sheet()"
+                [rtPopoverSheetTitle]="t().uiColorPaletteCustom"
                 [disabled]="isDisabled()">
                 {{ hasCustom() ? t().uiColorPaletteEditCustom : t().uiColorPaletteCustom }}
             </button>
