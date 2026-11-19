@@ -41,6 +41,21 @@ The plan is not written yet.
 - **The owner's remark on the mockup: a wider gap between the icon and the text of a status tag.**
   The gap is 4 in all three tags; the kit tag `sm` draws 2, so the code is fitted to the mockup,
   as the owner set in RT-3338.
+- **The owner asked why the cards were drawn without the kit atoms; they were — a miss.** The file
+  holds the kit copy: `Tag`, `Button/Outlined`, `Button/Text`, `Icon/*`. Every card is rebuilt on
+  instances: `Icon/chart-bar` in the icon box; `Tag` `sm` solid — neutral with `spinner`, success
+  with `check`, danger with `exclamation-circle`; `Button/Outlined` and `Button/Text` `sm` primary,
+  `Disabled` in `pending`, the text one with `external-link`. The card fill, border and texts are
+  bound to the colour variables `bg/surface`, `border/default`, `bg/surface-subtle`,
+  `text/primary`, `text/muted`, `state/error-text`; the columns take the modes Light and Dark
+  explicitly. The card frame stays drawn: the kit `Card` has a title and content slots, not this
+  layout. The tag gap 4 is an instance override until the kit tag `sm` takes it.
+- **The kit copy was broken and is fixed once:** in the `Tag` set the 42 variants of sizes `sm`,
+  `lg` and the dot did not wire `Value`, `Show icon`, `Icon`, `Closable` to their layers, so an
+  instance showed «Статус» whatever was set. The label is wired in all of them; the icon and the
+  close button only in `solid` and `outlined` — the dot draws neither, as in the code.
+- **Measured after the rebuild:** 16 cards, four kit instances in each, no overlaps, the buttons
+  of every card on one top.
 
 ## Sessions
 
