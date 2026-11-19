@@ -1,3 +1,13 @@
+# [0.49.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.48.0...rt-ui-kit-v2%400.49.0) (2026-11-19)
+
+### Bug Fixes
+
+- **rt:ui-kit-v2:** загрузчик pdfjs-dist собирается: типы пакета сужены переходником до типов кита (RT-3432) ([799f588](https://github.com/Eyhenij/rt-tools/commit/799f588cf62504a9ee6b365f156ad3d7bdaf199c))
+
+### Features
+
+- **rt:ui-kit-v2:** карточка получила обводку и тег справа в ряду со знаком (RT-3432) ([0051c50](https://github.com/Eyhenij/rt-tools/commit/0051c50b150389b7de090b978be65efe8d4476c5))
+
 # [0.48.0](https://github.com/Eyhenij/rt-tools/compare/rt-ui-kit-v2%400.47.1...rt-ui-kit-v2%400.48.0) (2026-11-18)
 
 ### Bug Fixes
