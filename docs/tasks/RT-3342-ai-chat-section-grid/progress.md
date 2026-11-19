@@ -2,12 +2,12 @@
 
 ## Where we stand
 
-- **State:** `разбор-закрыт`
-- **Stage:** 0 of — — the exploration and the mockup before the agreement
+- **State:** `договорённость-записана`
+- **Stage:** 0 of 4 — the agreement and the plan before the code
 - **Done:** the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3342-ai-chat-section-grid` from `RT-3346-ai-chat-blocks`, the folder from the template. The epic plan puts RT-3342 before RT-3339 by the owner's word.
-- **Next step:** the owner's word on the mockup 8375-625; after it the product agreement in the kit's proposed specs and the plan.
-- **Uncommitted:** no
-- **Waiting for the owner:** the word on the mockup, asked by menu
+- **Next step:** fold the findings of spec-critic, product-strategist and goal-critic into the agreement and the plan, then the owner's word on the plan.
+- **Uncommitted:** the plan — it is committed after the owner's word
+- **Waiting for the owner:** no — the mockup 8375-625 is approved, the quote is in `approvals.md`; the role reviews run first
 - **PR:** not open yet; the base is `RT-3346-ai-chat-blocks`
 
 ## Steps
