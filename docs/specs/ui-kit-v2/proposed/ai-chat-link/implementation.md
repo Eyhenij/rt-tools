@@ -19,14 +19,20 @@ exist yet is not written in backticks.
 | the `linkOpen` output of the chat                | `projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/rt-ai-chat.component.ts`                                                       |
 | the labels of the status and the buttons         | `projects/ui-kit-v2/src/lib/i18n/rt-kit-labels.en.ts` and `projects/ui-kit-v2/.storybook/showcase-labels.ru.ts`                           |
 | the gap of the tag `sm`                          | `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss`                                                                        |
+| the turning start icon of the tag                | `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts` and its template, passing on `spin` of `rt-icon`                          |
 | the stories of every state at 328, 386 and 640   | the stories of the chat blocks, next to the KPI block stories                                                                            |
 
 ## What the merge edits besides
 
-- `docs/specs/ui-kit-v2/tag/spec.md` and its scenarios — the gap of the size `sm`.
-- `docs/specs/ui-kit-v2/ai-chat/spec.md` — the rules on the kit's own types, on the plate, on the
-  outputs and on the answer copy name `link`; the outputs table of the chat overview names
-  `linkOpen`.
+- `docs/specs/ui-kit-v2/tag/spec.md` and its scenarios — the gap of the size `sm` for all parts,
+  the rule that the size steps move together, and the turning start icon.
+- `docs/specs/ui-kit-v2/ai-chat/spec.md` — the terminology line that lists the block types and the
+  rules on the kit's own types, on the plate, on the outputs and on the answer copy name `link`.
+- `projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/CONTEXT.md` and
+  `projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/Overview.mdx` — the outputs table
+  names `linkOpen`; `projects/ui-kit-v2/src/lib/components/tag/CONTEXT.md` names the turning icon.
+- The `Tag` component of the kit copy in Figma — its `sm` variants take the gap 4, and the
+  instance overrides of the mockup 8339-452 are lifted.
 
 ## Tokens the card takes
 

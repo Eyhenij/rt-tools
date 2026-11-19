@@ -5,10 +5,10 @@
 - **State:** `договорённость-записана`
 - **Stage:** 0 of 4 — the agreement and the plan before the code
 - **Done:** the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3339-ai-chat-link-block` from `RT-3338-ai-chat-kpi-block` (chain, PR #3429), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption.
-- **Next step:** fold the findings of spec-critic, product-strategist and goal-critic into the agreement and the plan, then the owner's word on the plan.
+- **Next step:** the owner's word on the plan and on the milestone this task serves; then stage 1.
 - **Uncommitted:** the plan — it is committed after the owner's word
-- **Waiting for the owner:** no — the role reviews of the agreement and the plan run first
-- **PR:** not open yet; the base is `RT-3338-ai-chat-kpi-block` (#3429)
+- **Waiting for the owner:** the word on the plan, asked by menu
+- **PR:** not open yet; the base is `RT-3346-ai-chat-blocks` — RT-3338 is merged into it (#3429)
 
 ## Steps
 
@@ -59,6 +59,17 @@ The plan is not written yet.
 - **The grill assumed the new labels in eight languages; the kit has one set.** The labels live in
   `rt-kit-labels.en.ts`, the showcase adds its Russian set, every other language comes from the
   application. The agreement takes English in the kit and Russian in the showcase.
+- **The agreement was reviewed by spec-critic, goal-critic and product-strategist before the
+  plan went to the owner.** Taken, each checked against the code or the mockup: no status when
+  the block has no state (the grill's «opened» would claim an opening nobody made); the schema
+  without `state` and `reason`; `aria-disabled` in `pending` so the focus stays; the synchronous
+  event for a new tab; the turning spinner as a tag option (`rt-tag` does not pass `spin` to its
+  icon); the announcement through the feed's polite region (`rt-ai-chat.component.html:79`); the
+  row numbers from the mockup (icon 20 muted, gaps 12, 6, 2, buttons 8 apart, theme primary); the
+  wrapping buttons; the dark contrast 3.2 : 1 named; the `sm` gap for all parts; the real reason
+  not to take `rt-card` (a shadow, `--rt-space-lg`, `--rt-radius-xl`); the whole loop in a chat
+  story; the Figma `Tag` `sm` variants at 4. Open for the owner: the epic milestone G holds no link
+  card.
 - **The first free scenario number is SC-UKV-1487, not 1486.** `pnpm run spec:next-id SC-UKV`
   found 1486 taken in a neighbouring branch.
 
