@@ -9,9 +9,9 @@
 
 1. [x] Draw the frames of both fields in the sheet at 375 in the kit's Figma file: single choice, multiple choice, with search. — the frames already stand in the file: `Телефон · Select` (6068:811), `Телефон · Select, дерево` (6068:895), `Телефон · Multiselect` (6068:1250), built on `Bottom Sheet` and `Sheet Content / Select…`; all 375×812, search in each, the multiselect sheet has the footer «Выбрано: N · Сбросить · Готово».
 2. [ ] Measure the frames by the pattern `mockups-measure`.
-3. [ ] Show the frames to the owner and write the approval into `approvals.md`. ← going on — the frames are shown, waiting for the answer.
+3. [x] Show the frames to the owner and write the approval into `approvals.md`. — «это ок».
 
-- **Waiting for the owner:** «1 А» — the approval of the three existing frames.
+- **Waiting for the owner:** «а что с остальными компонентами куда еще нужен ботом шит» — answered with the list of components; waiting for the word on filing the menu task and the rest.
 
 ### 2. Agreement in the spec
 
