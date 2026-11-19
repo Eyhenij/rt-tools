@@ -1,17 +1,15 @@
 # The KPI block of the assistant chat
 
-**Status:** proposed · **Revision:** 2026-11-19 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-19 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the assistant chat (the blocks of an answer, the answer copy), the stat tile of the
 kit (the card), the table block of the chat (writing a value by the kit locale)
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
 
-The agreement of task RT-3338: the `kpi` block of an answer of `rt-ai-chat`, a grid of KPI cards
-built on `rt-stat-tile`, and what the tile itself gains for it. The approved mockup is the frame
-8246-607 of the second kit file. The rules of the block merge into a subdomain of their own next to
-`ai-chat-table`; the rules under «The stat tile» merge into `docs/specs/ui-kit-v2/stat-tile/`.
-At the merge the rules of `docs/specs/ui-kit-v2/ai-chat/spec.md` on the kit's own types, on the
-plate and on the answer copy name `kpi` next to `table`.
+The `kpi` block of an answer of `rt-ai-chat`: a grid of KPI cards built on `rt-stat-tile`. The
+approved mockup is the frame 8246-607 of the second kit file. It stands as a subdomain of its own
+next to `ai-chat-table`. What the tile gained for the block — the compact size, the delta written by
+the kit locale and the visible base caption — is described in `docs/specs/ui-kit-v2/stat-tile/`.
 
 ## Why
 
@@ -120,32 +118,6 @@ base caption and a period.
 - **Under `dir="rtl"` the order of the cards in the grid and the delta line mirror, while a written value and a delta number keep their own order.** Both are isolated, as the table block isolates a number cell: «-4,2 %» does not turn into «% 4,2-».
 
 - **The block takes the width of the answer and never widens the feed.**
-
-### The stat tile
-
-The tile gains two options, the value size and the visible base caption. It also writes both its
-delta rows by the kit locale, and that changes the tile for every consumer. A tile without the
-options keeps its look; its delta text follows the rules below. At the merge the stat-tile rule
-that puts the decimal comma by hand and SC-UKV-1125 are rewritten for the locale, and the tile
-unit tests name their locale.
-
-- **The tile has a value size option: the default keeps the value at 32/32, the compact size writes it at 24/24 and the delta at 14.** The KPI card uses the compact size.
-
-- **The compact size sets the gaps of the tile to 6, `calc(var(--rt-space-1) + var(--rt-space-0-5))`, and puts the delta line on a line of its own under the value.** The gaps are those between the lines of the tile and between the value and the delta line; so the mockup draws it.
-
-- **In the compact size the secondary line and the base caption wrap between words; the default size keeps each on a single line with an ellipsis.**
-
-- **The tile writes both delta rows, the primary delta and the year chip, by `Intl.NumberFormat` for the kit label locale, with a plus on growth and no sign at zero.** A percent delta is written as the locale writes a percent. Under the default kit locale `en` it reads «+12.5%». In `ru` it reads «+12,5 %», «-4 %», «0 %», with U+00A0 before the percent sign. A delta in points passes the same written number to the points label.
-
-- **A tile delta keeps at most one fraction digit and none when it is integral: 3.75 is «+3,8 %», -4 is «-4 %».**
-
-- **A locale `Intl.NumberFormat` refuses writes the tile delta as `en`.**
-
-- **The direction, the arrow and the colour of a delta follow the written number: a delta written as zero, such as 0.04 or -0.04 written «0 %», has no sign, is flat and muted.**
-
-- **The tile can show the label of the primary delta as visible text after the delta; the option is off by default, and with it on the delta carries no `title` of the same text.**
-
-- **«Growth is worse» of the tile, its colours and its arrow do not change; the KPI card maps `growthIsGood: false` to it.**
 
 ### Copying
 
@@ -278,3 +250,5 @@ owner took the recommended option more than twice in a row in this session.
 - 2026-11-19 — the review by spec-critic: the tile delta by the locale for every consumer, both
   delta rows, the compact gaps and wrapping, the frame tokens, one column below 328, right to
   left, the missing value and label, the short form digits, the schema fields.
+- 2026-11-19 — the code of RT-3338 written and the showcase approved; the agreement became this
+  subdomain, and the rules of the tile moved into the stat tile subdomain.

@@ -30,10 +30,10 @@
 - [x] 4.3 Write the play steps that measure by `getBoundingClientRect` the columns, the card widths, one top per row, no text past its card and no feed widening: SC-UKV-1437–1439, 1460, 1461, 1464, 1472–1474, 1479.
 - [x] 4.4 Write the `Overview.mdx` of the block and name the block in the chat Overview.
 - [x] 4.5 Look at every story live, take the references, sweep all the stories.
-- [>] 4.6 Match the stories with the approved mockup by numbers into the table «mockup / showcase» in the progress, show the showcase to the owner and write their word into `approvals.md`.
-- [ ] 5.1 Merge the agreement into `docs/specs/ui-kit-v2/ai-chat-kpi/` with its bindings; edit the stat-tile and chat specs and the kit spec indexes as the agreement names.
-- [ ] 5.2 Bring `CONTEXT.md` of ai-chat and stat-tile up to the block and the tile edits.
-- [ ] 5.3 Run the roles goal-critic and product-strategist on the result.
+- [x] 4.6 Match the stories with the approved mockup by numbers into the table «mockup / showcase» in the progress, show the showcase to the owner and write their word into `approvals.md`.
+- [x] 5.1 Merge the agreement into `docs/specs/ui-kit-v2/ai-chat-kpi/` with its bindings; edit the stat-tile and chat specs and the kit spec indexes as the agreement names.
+- [x] 5.2 Bring `CONTEXT.md` of ai-chat and stat-tile up to the block and the tile edits.
+- [>] 5.3 Run the roles goal-critic and product-strategist on the result.
 - [ ] 5.4 Mark row 6 of the epic plan, write the archive record, take the task folder apart.
 - [ ] 5.5 Run the push set, push, open the PR into `RT-3337-ai-chat-table-block`; its body says it merges only after #3407, so the block and the tile edit do not ride the first release.
 
