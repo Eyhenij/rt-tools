@@ -2,12 +2,12 @@
 
 ## Where we stand
 
-- **State:** `разбор-закрыт`
-- **Stage:** 0 of — — the mockup before the agreement
+- **State:** `договорённость-записана`
+- **Stage:** 0 of 4 — the agreement and the plan before the code
 - **Done:** the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3339-ai-chat-link-block` from `RT-3338-ai-chat-kpi-block` (chain, PR #3429), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption.
-- **Next step:** the product agreement for the link block, written into the kit's proposed specs, then the plan and the owner's word on it.
-- **Uncommitted:** no
-- **Waiting for the owner:** no — the mockup 8339-452 is approved, the quote is in `approvals.md`
+- **Next step:** fold the findings of spec-critic, product-strategist and goal-critic into the agreement and the plan, then the owner's word on the plan.
+- **Uncommitted:** the plan — it is committed after the owner's word
+- **Waiting for the owner:** no — the role reviews of the agreement and the plan run first
 - **PR:** not open yet; the base is `RT-3338-ai-chat-kpi-block` (#3429)
 
 ## Steps
@@ -56,6 +56,11 @@ The plan is not written yet.
   close button only in `solid` and `outlined` — the dot draws neither, as in the code.
 - **Measured after the rebuild:** 16 cards, four kit instances in each, no overlaps, the buttons
   of every card on one top.
+- **The grill assumed the new labels in eight languages; the kit has one set.** The labels live in
+  `rt-kit-labels.en.ts`, the showcase adds its Russian set, every other language comes from the
+  application. The agreement takes English in the kit and Russian in the showcase.
+- **The first free scenario number is SC-UKV-1487, not 1486.** `pnpm run spec:next-id SC-UKV`
+  found 1486 taken in a neighbouring branch.
 
 ## Sessions
 
@@ -74,7 +79,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `разбор-закрыт`
 - **Stage:** 0 of — — the mockup before the agreement
-- **Next step:** the owner's word on the mockup 8339-452; after it the product agreement in `docs/specs/ui-kit-v2/proposed/ai-chat-link/` and the plan.
+- **Next step:** the product agreement for the link block, written into the kit's proposed specs, then the plan and the owner's word on it.
 - **PR:** not open yet; the base is `RT-3338-ai-chat-kpi-block` (#3429)
 
 The progress in full — `docs/tasks/RT-3339-ai-chat-link-block/progress.md`; the plan lies next to it.
@@ -88,6 +93,10 @@ none
 ### Commits over the main branch
 
 ```
+3a8595f82 docs(rt:ui-kit-v2): макет карточки ссылки RT-3339 одобрен
+8b1bf0276 docs(rt:ui-kit-v2): макет карточки ссылки RT-3339 на экземплярах кита
+fc4cc0136 docs(rt:ui-kit-v2): отступ значка и текста в теге статуса макета RT-3339
+fbfc58f86 docs(rt:ui-kit-v2): два круга ревью макета карточки ссылки RT-3339
 86ef3a47b docs(rt:ui-kit-v2): замер кита и макет карточки ссылки для RT-3339
 c9e3e577b docs(rt:ui-kit-v2): план эпика отмечает RT-3338 влитой (#3429)
 8c3cce2ca docs(rt:ui-kit-v2): находки разбора правил по RT-3338 у плана эпика
@@ -104,10 +113,6 @@ a609495e8 fix(rt:ui-kit-v2): блок kpi после второго круга �
 eea80eea0 Merge remote-tracking branch 'origin/RT-3346-ai-chat-blocks' into RT-3338-ai-chat-kpi-block
 f5037fb8c feat(rt:ui-kit-v2): витрина блока kpi и числа плитки под rtl
 c869db7e3 feat(rt:ui-kit-v2): блок kpi в ответе rt-ai-chat
-1737ba4d0 Merge remote-tracking branch 'origin/main' into RT-3338-ai-chat-kpi-block
-3d8e5d19c feat(rt:ui-kit-v2): плитка пишет дельту по языку кита, компактный размер
-bb4d79585 feat(rt:ui-kit-v2): данные, запись значения и схема блока KPI
-1b7111481 docs(rt:ui-kit-v2): план RT-3338 одобрен — данные, плитка, блок, витрина
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
