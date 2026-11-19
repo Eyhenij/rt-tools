@@ -116,3 +116,4 @@ None.
 | 2026-11-19 | The autocomplete in the sheet, scenarios 1441…1443 (RT-3399) |
 | 2026-11-19 | The page header menus in the sheet, scenarios 1444…1445 (RT-3399) |
 | 2026-11-19 | The actions menu `rt-menu` in the sheet, scenarios 1446…1449 (RT-3399) |
+| 2026-11-19 | The menu of a tab in the sheet, scenarios 1450…1451 (RT-3399) |

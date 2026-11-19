@@ -5,11 +5,14 @@
 - **State:** `этап-идёт`
 - **Stage:** 3 из 4 — Code and unit tests
 - **Next step:** the folding `rt-toggle-button-group`, then the toggles field, then the trailing
-  icons. Done: `rt-menu` with the «⋯» actions of the page header and the tab context menu built
-  on it (scenarios 1446…1449, the kit set 3766 green), the select, the multiselect with its footer, the autocomplete
+  icons. Done: `rt-menu` with the «⋯» actions of the page header (scenarios 1446…1449), the menu
+  of a tab — a component of its own, not `rt-menu` as the commit cf96bb005 says (scenarios
+  1450…1451, the kit set 3768 green), the select, the multiselect with its footer, the autocomplete
   with a search in the sheet, the dynamic selector, the split button, the speed menu, the «more»
   panel of the tabs, the action bar, the colour palette, the thread list filters, the table filter
   header, the profile menu, «more» and submenu of the page header; the kit set is 3762 tests green.
+- **Open:** `rt-tabs` has no input that switches the sheet off for its «more» panel and its tab
+  menu: `rt-tabs.component.ts` stands at 499 lines, and the input goes in after the file is split.
 - **Decision along the way:** the old narrow-screen behaviour of the profile menu (on the backdrop
   of the mobile menu, SC-UKV-1080, SC-UKV-1084) now lives with the sheet switched off; those two
   scenarios name that, and the approved mockup 8310:17301 is the phone behaviour.

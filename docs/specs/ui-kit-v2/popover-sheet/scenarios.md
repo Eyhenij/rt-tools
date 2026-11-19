@@ -179,3 +179,19 @@ When its button is pressed
 Then the panel opens by the button each time, and no bottom sheet is open
 
 Covered: `projects/ui-kit-v2/src/lib/components/menu/rt-menu-sheet.spec.ts`.
+
+### SC-UKV-1450 — on a phone the menu of a tab opens in the bottom sheet titled by the tab
+
+Given tabs on a phone, where the tab «Брони» carries a menu of its own
+When the tab is long pressed
+Then the menu of the tab is inside the bottom sheet titled «Брони», and no menu stands by the tab
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-context-menu-sheet.spec.ts`.
+
+### SC-UKV-1451 — an item of the tab menu in the sheet does its action and closes the sheet
+
+Given the menu of the tab «Брони» open in the bottom sheet
+When its item is pressed
+Then the item's action runs for that tab, and the sheet is closed
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-context-menu-sheet.spec.ts`.
