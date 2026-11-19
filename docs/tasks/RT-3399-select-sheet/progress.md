@@ -4,11 +4,14 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 3 из 4 — Code and unit tests
-- **Next step:** stage 4 — the last two story batches (dynamic selector, thread list, table filter
-  header; page header, tabs, multiselect footer) by Sonnet subagents, then `build-storybook` over
-  the set. Committed so far: select 67cc8a6ca, toggle group 72499909a, multiselect toggles
-  d6733beb0, autocomplete and menu 8a4e595eb, split button, speed menu, palette, action bar
-  db7c7e020.
+- **Next step:** stage 4, step 1 — look at every sheet story live on the showcase of this branch,
+  then the kit-match numbers. Every part of the set has its stories: select 67cc8a6ca, toggle
+  group 72499909a, multiselect toggles d6733beb0, autocomplete and menu 8a4e595eb, split button,
+  speed menu, palette, action bar db7c7e020, dynamic selector, thread list, table filter header
+  00196b2b5, page header, tabs and the multiselect footer in the next commit; `build-storybook`
+  over the whole set is green. Not seen live: whether «Ещё» of the tabs is measured before `play`
+  clicks it, and `MoreSheet` of the page header takes a 1100 px window, since the header hides its
+  nav row at 1080 px and below.
 - **Question to the owner:** the showcase on 6007 runs from the RT-3428 working copy; may it be
   stopped and this branch's raised there for the live check? Then the live measurement of the calendar icons, which
   waits for the owner's word on the showcase at 6007 (it runs from the RT-3428 working copy).

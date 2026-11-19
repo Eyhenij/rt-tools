@@ -12,6 +12,7 @@ export default {
         maxChips: { control: { type: 'number' } },
         look: { control: { type: 'inline-radio' }, options: ['list', 'toggles'] },
         allLabel: { control: { type: 'text' } },
+        sheet: { control: { type: 'boolean' } },
     },
 } as Meta<TestRtMultiselectComponent>;
 
@@ -24,5 +25,6 @@ export const Playground: TStory = {
         maxChips: 3,
         look: 'list',
         allLabel: '',
+        sheet: true,
     },
 };

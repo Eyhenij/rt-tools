@@ -43,6 +43,18 @@ export default {
 
 type TStory = StoryObj<TestRtMultiselectMatrixComponent>;
 
+/**
+ * Узкий экран, вид списка: выбраны «Санкт-Петербург» и «Новосибирск», шторка открыта, подвал
+ * «Выбрано: 2 · Сбросить · Готово» виден. Макет `Телефон · Multiselect` 6068:1250.
+ */
+export const Sheet: TStory = {
+    args: { part: 'sheet' },
+    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet', viewport: PHONE_WINDOW } },
+    play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
+        await openStoryOverlay(canvasElement, { key: 'ArrowDown' });
+    },
+};
+
 /** Узкий экран: «Показать все», «Скрыть пустые», черта и переключатель на каждую категорию. */
 export const TogglesSheet: TStory = {
     args: { part: 'toggles-panel' },

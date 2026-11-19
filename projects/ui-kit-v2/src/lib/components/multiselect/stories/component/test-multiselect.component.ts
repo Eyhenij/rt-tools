@@ -18,7 +18,8 @@ import { RtMultiselectComponent } from '../../rt-multiselect.component';
             [placeholder]="placeholder"
             [maxChips]="maxChips"
             [look]="look"
-            [allLabel]="allLabel" />
+            [allLabel]="allLabel"
+            [sheet]="sheet" />
     `,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -42,4 +43,5 @@ export class TestRtMultiselectComponent {
     public maxChips: number = 3;
     public look: TRtMultiselectLook = 'list';
     public allLabel: string = '';
+    public sheet: boolean = true;
 }

@@ -16,7 +16,7 @@ import { RtMultiselectComponent } from '../../rt-multiselect.component';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TMultiselectMatrixPart =
-    'size' | 'chips' | 'bordered' | 'states' | 'presets' | 'themes' | 'panel' | 'toggles' | 'toggles-panel';
+    'size' | 'chips' | 'bordered' | 'states' | 'presets' | 'themes' | 'panel' | 'toggles' | 'toggles-panel' | 'sheet';
 
 /** Что показывает открытая панель: набор вариантов или его отсутствие. */
 export type TMultiselectPanelCase = 'options' | 'empty' | 'tree';
@@ -262,6 +262,19 @@ function invalid(): FormControl<readonly string[] | null> {
                     </rt-multiselect>
                 </div>
             }
+
+            @case ('sheet') {
+                <!-- Рамка 375 даёт экран макета телефона: шторка берёт заголовок у подписи rt-field -->
+                <div style="box-sizing: border-box; inline-size: 375px; padding: 16px">
+                    <rt-field label="Города">
+                        <rt-multiselect
+                            placeholder="Выберите города"
+                            [attr.data-story-trigger]="triggerAttribute"
+                            [options]="options"
+                            [formControl]="sheetControl" />
+                    </rt-field>
+                </div>
+            }
         }
     `,
     styles: `
@@ -345,6 +358,9 @@ export class TestRtMultiselectMatrixComponent {
         { name: 'Категории · часть', control: chosen(['food', 'household', 'telecom']) },
         { name: 'Категории · открыто', control: chosen(['food', 'household', 'telecom']) },
     ];
+
+    /** Выбор шторки списка: два значения, по ним читается «Выбрано: 2» в подвале. */
+    public readonly sheetControl: FormControl<readonly string[] | null> = chosen(['spb', 'nsk']);
 
     public readonly togglesPanelControl: FormControl<readonly string[] | null> = chosen(['food', 'household', 'telecom']);
 
