@@ -139,7 +139,8 @@ export class RtAsideComponent {
 
     /**
      * Показать нечего: тело панели вместо содержимого показывает заглушку. Шапка, блок ошибки и
-     * подвал остаются на месте.
+     * подвал остаются на месте. Признак ставит приложение: по спроецированному содержимому панель
+     * пустоту не угадывает — пустой список всё равно проецирует свою разметку.
      */
     public readonly empty: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
