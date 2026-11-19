@@ -20,9 +20,9 @@ phone frame yet.
 
 1. [x] Find which components of the set already have a phone frame in Figma. — `rt-select`, `rt-multiselect`, `rt-autocomplete` have them (`Телефон · Autocomplete`, 6068:1387, and its long and empty kinds); the rest have none.
 2. [x] Draw the missing phone frames. — each on the page of its component, built from `Bottom Sheet` with a `Sheet Content / …` component swapped in: `Телефон · Menu` 8293:2474, `Телефон · Tabs, «Ещё»` 8292:1058, `Телефон · Tabs, меню вкладки` 8292:1122, `Телефон · Split Button` 8292:1522, `Телефон · Speed Menu` 8292:1756, `Телефон · Dynamic Selector` 8292:2360, `Телефон · Color Palette` 8292:2593; the new select with toggles on the Select page — `Широкий экран · Select с переключателями` 8293:3667 and `Телефон · Select с переключателями` 8293:3691, with the components `Toggle Row` and `Toggle Divider`.
-3. [ ] Show them to the owner and write the approval into `approvals.md`. ← going on — shown, waiting for the answer.
+3. [x] Show them to the owner and write the approval into `approvals.md`. — «макеты ок».
 
-- **Waiting for the owner:** «все в этом тикете делать, везде где можно прикрутить ботомшит вид на мобилке» — the new frames are drawn and shown; the approval is asked.
+- **Waiting for the owner:** «есть еще компоненты которым нужен такой вид, к примеру мультибатон когда много значений? подумай поисчи» — found five more: `rt-toggle-button-group` when its values do not fit, the action menu of `rt-action-bar`, the filters panel of `rt-thread-list`, the user, «ещё» and submenu panels of `rt-page-header`, the operator choice in the table filter header; asked whether they go into the task.
 
 ### 2. Agreement in the spec
 
