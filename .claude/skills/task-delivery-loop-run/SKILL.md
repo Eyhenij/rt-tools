@@ -8,7 +8,7 @@ description: A pattern of the rule task-delivery-loop. Take it at each step of t
 # Ready commands for the task delivery loop
 
 A pattern of the rule `task-delivery-loop`; the steps are numbered as there. `N` is the task number, `E` the epic
-card, `<base>` the epic branch or `main`. Shell variables do not live from one call to the next,
+card, `<base>` the base of the branch: the previous branch of the chain, the epic branch or `main`. Shell variables do not live from one call to the next,
 so every block sets the client and the token itself.
 
 ## 2–3. The task and its branch
@@ -91,11 +91,21 @@ prefixed to the commit only: exported, it reaches a push in the same call.
 ```bash
 git fetch -q origin && git merge --no-edit origin/<base>
 node tools/check-specs.mjs; node tools/check-doc-paths.mjs
-bash .claude/hooks/git-guard-push-ahead.sh      # in the background; the copy is clean first
-git push -u origin RT-N-<slug>
+pnpm exec nx affected -t test-hooks --base=origin/<base>    # the guard scenarios, when a hook moved
 ```
 
-The push guard reads the marks the run ahead left; a step without a mark runs at the push.
+The heavy steps run ahead by a call of their own, in the background, on a clean copy:
+
+```bash
+bash .claude/hooks/git-guard-push-ahead.sh
+```
+
+The push is a separate call after it; the push guard reads the marks the run ahead left, and a
+step without a mark runs at the push:
+
+```bash
+git push -u origin RT-N-<slug>
+```
 
 ## 13. The PR
 
@@ -126,6 +136,12 @@ $GH api repos/Eyhenij/rt-tools/issues/N --jq '.labels[].name' | while IFS= read 
     $GH api -X POST repos/Eyhenij/rt-tools/issues/<pr>/labels -f "labels[]=$L" >/dev/null; done
 $GH api -X POST repos/Eyhenij/rt-tools/pulls/<pr>/requested_reviewers -f 'reviewers[]=Eyhenij'
 npm run -s task:move -- N in-review
+```
+
+A draft into `main` is lifted on the green run of its tip, in the turn that hands it over:
+
+```bash
+GH_TOKEN="$(cat ~/.config/rt-tools-bot-token)" /opt/homebrew/bin/gh pr ready <pr>
 ```
 
 ## After the merge

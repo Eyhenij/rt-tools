@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 3 of 3 — review and delivery
 - **Done:** the rule, its pattern and companion, the task-flow section, the gate branches, the texts
-- **Next step:** review round two
+- **Next step:** take the folder apart and run the push set
 - **Uncommitted:** nothing
 - **Waiting for the owner:** no
 - **PR:** not open yet
@@ -20,8 +20,8 @@
 - [x] 2.3 Name the skill in CLAUDE.md and in the boundary companion
 - [x] 3.1 Run the gate on three paths
 - [x] 3.2 Run review round one and fix its findings
-- [>] 3.3 Run review round two and fix its findings
-- [ ] 3.4 Take the folder apart and run the push set
+- [x] 3.3 Run review round two and fix its findings
+- [>] 3.4 Take the folder apart and run the push set
 - [ ] 3.5 Push and open the PR
 
 ## Decisions along the way
@@ -49,6 +49,21 @@
   person; the step now names what the PR waits for, with no question. «No guard counts the rounds»
   — true, and said in the rule and in the PR body; a guard for it is a package edit, not this task.
 
+- **Round two, confirmed and fixed:** the gate missed the push after `-c` keys and `--no-pager`,
+  `switch -C`, `switch --create`, `checkout -bNAME`, `worktree add <path> -b`, `branch <name>`, a
+  quoted `$GH`, `${GH:-gh}`, `pr new`, `node tools/task-new.mjs` and a quoted `task:new` — read
+  now, 36 cases; the article «a finding never becomes a task» reversed the task-flow article on
+  findings beside the subject — narrowed to findings about the diff; step 3 took the branch from
+  the epic branch only, and «no answer yet» held the next task — the chain base and the state
+  `работа-отдана`; the loop said nothing of unattended work — the night rule keeps the push and the
+  PR local; step 13 still set the reviewer by REST — aligned with the pattern; the draft into
+  `main` was never lifted — the call named; the run ahead and the push stood in one block — two
+  calls; the guard scenarios were sent to the wrong runner — `nx affected -t test-hooks`; the
+  refusal list lacked the draft base and the token account; the CLAUDE.md line ran long. Affected
+  stage: 3.
+- **Round two, written off:** «no guard counts the rounds» — as in round one, said in the rule and
+  the PR body; false positives of the gate on read commands — the cost is one load, said in GUARDS.
+
 ## Sessions
 
 ### 2026-11-19
@@ -59,4 +74,5 @@
   `checkout -b`, `push`, `pr create` — `task-delivery-loop git-workflow`; `status` — silent.
 - Green: check-specs, check-descriptions (108), check-doc-paths (1135), check-boundary, check-dupes,
   check-hooks (17), check-glossary, check-work-steps, `agent-kit:check`.
+- Round two: three roles, 3 + 6 + 13 findings; gate cases 36 ok, 0 failures.
 - Round one: three roles, 6 + 5 + 8 findings; fixed 12, written off 2. Gate cases: 21 ok, 0 failures.

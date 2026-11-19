@@ -52,7 +52,23 @@ report "pr create after a token prefix demands the loop" "$(loop bash "GH_TOKEN=
 report "pr create after command demands the loop" "$(loop bash "command $H pr create --base main")" loop
 report "pr create through a variable demands the loop" "$(loop bash "GH=/opt/homebrew/bin/gh; \$GH pr create --base main")" loop
 
+report "pr create through a quoted variable demands the loop" "$(loop bash "\"\$GH\" pr create --base main")" loop
+report "pr create through a variable with a default demands the loop" "$(loop bash "\${GH:-gh} pr create --base main")" loop
+report "pr new, the alias of create, demands the loop" "$(loop bash "$H pr new --base main")" loop
+report "the task command by its script demands the loop" "$(loop bash "node tools/task-new.mjs --outside-epic x --title y")" loop
+report "task:new in quotes demands the loop" "$(loop bash "npm run \"task:new\" -- --title y")" loop
+report "push after -c keys demands the loop" "$(loop bash "$G -c user.email=x push -u origin RT-1-x")" loop
+report "push after --no-pager demands the loop" "$(loop bash "$G --no-pager push")" loop
+report "switch -C demands the loop" "$(loop bash "$G switch -C RT-1-x")" loop
+report "switch --create demands the loop" "$(loop bash "$G switch --create RT-1-x")" loop
+report "checkout -b glued to the name demands the loop" "$(loop bash "$G checkout -bRT-1-x origin/main")" loop
+report "worktree add with -b after the path demands the loop" "$(loop bash "$G worktree add ../x -b RT-1-x origin/main")" loop
+report "branch <name> demands the loop" "$(loop bash "$G branch RT-1-x origin/main")" loop
+
 report "status stays silent" "$(rules bash "$G status")" ""
+report "branch --list does not demand the loop" "$(loop bash "$G branch --list 'RT-1-*'")" none
+report "stash push does not demand the loop" "$(loop bash "$G stash push -m x")" none
+report "checkout of a file does not demand the loop" "$(loop bash "$G checkout -- README.md")" none
 report "a plain checkout of a branch does not demand the loop" "$(loop bash "$G checkout main")" none
 report "pr view does not demand the loop" "$(loop bash "$H pr view 5")" none
 

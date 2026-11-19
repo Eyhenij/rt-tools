@@ -7,8 +7,9 @@ Part of [SKILL.md](SKILL.md). What refuses along the loop and what to do instead
 - **After a context compaction the gate forgets every loaded rule.** Each rule is loaded again by
   the Skill tool, and its `implementation.md` is read as a file.
 - **The gate demands this skill on an edit of a task folder or an epic plan and on the delivery
-  commands** — `task:new`, a branch taken by `checkout -b`, `switch -c` or `worktree add -b`, a push
-  and `gh pr create`. Loaded first, it never refuses there.
+  commands** — `task:new`, a branch taken by `checkout -b`, `switch -c`, `worktree add -b` or
+  `git branch <name>`, a push and `gh pr create`. A mention of these words in a read command demands
+  it too: one load, on purpose. Loaded first, it never refuses there.
 
 ## Questions to the owner
 
@@ -38,5 +39,8 @@ Part of [SKILL.md](SKILL.md). What refuses along the loop and what to do instead
   is the query quota refusal of pattern `git-workflow-pr-body`: then REST opens the PR, and the
   guard's list is checked by hand first.
 - **A refusal of `gh pr create` names everything unmet at once:** the folder, the merge of the
-  base, the title, the card in the first column, the `Closes` line and the sections «Точки»,
-  «Цель» and «Оставшийся шаг». It is fixed, never bypassed by REST.
+  base, the title, the card in the first column, the `Closes` line, the sections «Точки», «Цель»
+  and «Оставшийся шаг», a draft into a base the pipeline does not wake for, and a token whose
+  account equals the reviewer. It is fixed, never bypassed by REST.
+- **The delivery guards read a delivery word anywhere in the command text.** A script or a probe
+  that only mentions `gh pr create` is judged as the call itself: such text goes into a file.

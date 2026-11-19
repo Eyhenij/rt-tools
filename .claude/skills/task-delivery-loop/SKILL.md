@@ -41,16 +41,20 @@ The table in `implementation.md` next to it.
   the branch against its base, by fresh readers, who get the diff and their inputs and never the
   executor's conclusions.
 - **A finding is checked against the code before it is fixed.** One that does not hold is written
-  off with its reason; a confirmed one is fixed in the same branch, even one beside the subject.
-- **A finding never becomes a task of its own and is never parked in a file.** It is fixed in the
-  branch or written off with its reason. A finding that is a product choice goes to the owner by
-  menu before the fix.
+  off with its reason; a confirmed one about the diff of the branch is fixed in the same branch.
+- **A finding about the diff is never parked in a file.** It is fixed in the branch or written off
+  with its reason. A finding beside the subject, named by no exit condition of the plan, follows
+  the rule `task-flow`: the section on what the work does not do, and a task of its own. A finding
+  that is a product choice goes to the owner by menu before the fix.
 - **The fixes of a round go as one commit named by the round.** «… после первого круга ревью
   (RT-N)», then «второго круга». The owner reads the rounds in history: this is the one place
   where a later commit of a branch corrects an earlier one by design.
 - **The push set runs once per branch, after round two.** The fixes are committed together, the
   base is merged in once, and the tree is not touched between the green run and the push. A fix
   for the owner's remarks after the PR is a new content and runs the set again.
+- **Unattended work keeps the loop and the night rule both.** By the rule `autonomous-work` the
+  show of step 10 becomes the session's own measurement, and the push and the PR wait for the
+  owner's return where that rule keeps everything local.
 - **No guard counts the rounds.** The gate demands the loop to be loaded; that it was carried out
   is shown by the commits named by the rounds and by the PR body, and the body says so in words.
 
@@ -61,8 +65,9 @@ The table in `implementation.md` next to it.
    <epic>` on a fresh epic branch; a started task goes first, by `task-flow-resume`. Outside an
    epic the task is created by `npm run task:new -- --outside-epic '<the owner's word>'`. The host
    is asked for a branch or a PR with the number before the branch is taken.
-3. **Take the branch and move the card.** From the epic branch, or from the remote ref of `main`
-   outside an epic; `npm run task:move -- N in-progress`. The working copy names itself in
+3. **Take the branch and move the card.** From the previous branch while the chain of the epic is
+   unbroken (pattern `git-workflow-stack`), from the epic branch for the chain's first work, from
+   the remote ref of `main` outside an epic; `npm run task:move -- N in-progress`. The working copy names itself in
    `.claude/rt-kit/tree-name` and has its row in `.claude/rt-kit/assignments.md`.
 4. **Run `task-flow-start` whole.** Exploration, the grill by menu, the agreement where the code
    asks for one, the plan with numbered steps, the progress.
@@ -72,7 +77,8 @@ The table in `implementation.md` next to it.
 6. **Check live.** A kit edit — in the showcase on port 6007, measured in the pinned Chrome by the
    pattern `browser-verification-measure`. The receiver and the admin panel — on the stand of
    `pnpm run serve:stand`. A rule, a hook, a check or a text — the guard or the check is run on a
-   real record and its scenarios run (`bash tools/tests/run.sh`). The numbers go into the progress.
+   real record and its scenarios run — the tree's checks by `tools/tests/run.sh`, the guards by
+   `nx affected -t test-hooks`. The numbers go into the progress.
 7. **Review round one: three subagents in one message.** `qa-engineer` reads the diff file with the
    review lens of `.claude/workflows/feature.js` and edits nothing. `product-strategist` runs the
    signs of the plan's points. `goal-critic` compares the result with the owner's words in the
@@ -90,11 +96,12 @@ The table in `implementation.md` next to it.
 12. **Run the push set and push.** The heavy steps go ahead in the background, the push reads
     their marks.
 13. **Open the PR by `gh pr create` with the machine account's token.** The body lists what each
-    round found and fixed. Labels, assignee and reviewer by REST, then `npm run task:move -- N
-    in-review`.
+    round found and fixed. Reviewer, assignee and labels go in the same call; a PR into `main` is
+    a draft, one into an epic branch opens ready. Then `npm run task:move -- N in-review`.
 14. **Start `skill-curator` in the background** with what was loaded and what went wrong.
 15. **Hand over in one message.** The PR link, what changed for the person, what confirmed it, and
-    what the PR waits for: the run, the owner's review, the merge.
+    what the PR waits for. A draft into `main` is lifted by `gh pr ready` on the green run of its
+    tip (pattern `git-workflow-pr`); then it waits for the owner's review and merge.
 
 ## After the owner answers
 
@@ -103,9 +110,10 @@ The table in `implementation.md` next to it.
   in the same turn.
 - **Remarks.** Fixed in the same branch, checked live, pushed; the PR body is reread and updated.
   Whether to answer under the remarks is asked.
-- **No answer yet.** Exploration of the next task may run; its branch, folder and card wait.
-- **Merged before the rounds ended.** Where the remaining fixes go is asked by menu: a task of its
-  own rolls back alone.
+- **No answer yet.** The next task is taken by the rule `task-flow` (state `работа-отдана`): in an
+  epic its branch stands on the branch of this PR.
+- **Merged before the rounds ended** — possible only after a miss of this loop. Where the remaining
+  fixes go is asked by menu: a task of its own rolls back alone.
 
 ## What never happens in this loop
 

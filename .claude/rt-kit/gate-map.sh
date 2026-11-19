@@ -351,12 +351,20 @@ skill_for() {
             # `command gh`, `git -C <dir>`, `git checkout -q -b`, `npm run -s task:new`. A mention
             # in an `echo` demands the loop too; that costs one load, a missed call costs a task
             # led past the loop.
+            #
+            # The options git takes before its verb (`-C <dir>`, `-c <key=value>`, `--no-pager`) are
+            # skipped; a branch is taken by `-b`, `-B`, `-c`, `-C` or `--create` anywhere in the
+            # segment, glued to its name or not, and by `git branch <name>`; the hosting client is
+            # read by its name, by a quoted name and by a variable that holds `GH` in its name.
+            gitv='(^|[[:space:];&|(/"])git([[:space:]]+(-[Cc][[:space:]]+[^[:space:]]+|--[a-z-]+(=[^[:space:]]+)?))*[[:space:]]+'
             if printf '%s' "$target" | grep -qE \
-                -e '(^|[[:space:];&|(/])task:new([[:space:]]|$)' \
-                -e '(^|[[:space:];&|(/])git([[:space:]]+-C[[:space:]]+[^[:space:]]+)?[[:space:]]+(checkout|switch|worktree[[:space:]]+add)([[:space:]]+-[^[:space:]]+)*[[:space:]]+-[bcB]([[:space:]]|$)' \
-                -e '(^|[[:space:];&|(/])git([[:space:]]+-C[[:space:]]+[^[:space:]]+)?[[:space:]]+push([[:space:]]|$)' \
-                -e '(^|[[:space:];&|(/])gh[[:space:]]+pr[[:space:]]+create([[:space:]]|$)' \
-                -e '\$\{?GH\}?[[:space:]]+pr[[:space:]]+create([[:space:]]|$)'; then
+                -e '(^|[[:space:];&|(/"'"'"'])task:new(["'"'"']|[[:space:]]|$)' \
+                -e 'tools/task-new\.mjs' \
+                -e "${gitv}"'(checkout|switch|worktree[[:space:]]+add)[^;&|]*[[:space:]](-[bBcC]|--create)' \
+                -e "${gitv}"'branch[[:space:]]+[^-[:space:]]' \
+                -e "${gitv}"'push([[:space:]]|$)' \
+                -e '(^|[[:space:];&|(/"])gh"?[[:space:]]+pr[[:space:]]+(create|new)([[:space:]]|$)' \
+                -e '\$\{?[A-Za-z_]*GH[A-Za-z_]*(:-[^}]*)?\}?"?[[:space:]]+pr[[:space:]]+(create|new)([[:space:]]|$)'; then
                 printf '%s\n' 'task-delivery-loop'
             fi
             ;;
