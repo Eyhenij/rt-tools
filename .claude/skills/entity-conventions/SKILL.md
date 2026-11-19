@@ -4,7 +4,7 @@ kind: rule
 law: entity-editing
 description: Rule under the entity-editing law. Load when editing any admin store and any panel that creates or edits a record. Names the shared base of the aside and of the list store, and that the aside opens by a route of its own. Patterns entity-aside, entity-store.
 ---
-<!-- rt-kit v0.37.0 · rules/entity-conventions.needs-admin.md · 4edb9c9ae0a4 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/entity-conventions.needs-admin.md · 8e18aac03418 · правится надстройкой, не здесь -->
 
 # Entity editing — how it works here
 
@@ -22,8 +22,10 @@ procedure is not set up everywhere — debt `Q-M-3`.
 - **The aside opens by a route in the `ro` outlet, not by a service call.** No
   `RtAsideService.open()` in the admin.
 - **Saving goes through `runMutation`, and the panel hands the base the mutation stream and the
-  keys.** The base holds busy, the error reset, the toast and closing.
-- **The mutation stream must give a value or an error.** An empty one freezes the panel.
+  keys.** The base holds busy, the error reset, the toast and closing. An action
+  with a busy state of its own (polling with its `pollingId`) does not go through the base.
+- **The mutation stream must give a value or an error.** An empty one freezes the panel; on an
+  error the panel shows the refusal and stays open.
 - **A mutation ends with a re-read list, not with a sent request.** The list is re-read inside the
   mutation, before closing; a re-read after closing shows the previous value.
 - **The store answers with a stream: success is a value, refusal is a stream error.** No boolean
@@ -32,8 +34,9 @@ procedure is not set up everywhere — debt `Q-M-3`.
   or `loadBookings`: the domain is already in the store name.
 - **The unsaved-edits guard is set by the panel itself, on all four closing paths.** The header
   button, the footer button, a press outside, Esc.
-- **Leaving the panel goes through `openRelated`, not through an own `router.navigate`.** That one
-  keeps the `ro` outlet in the address, and the router silently rejects the navigation.
+- **Leaving the panel goes through `openRelated`, not through an own `router.navigate`.** An own
+  `router.navigate` leaves the `ro` outlet in the address, and the router silently rejects the
+  navigation; `routerLink` in the panel bypasses the unsaved-edits question.
 - **The record is read by the identifier from the address as the full model, not taken from the
   list.**
 

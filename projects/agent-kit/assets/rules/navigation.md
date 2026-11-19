@@ -25,7 +25,8 @@ the project only declares items.
 
 ## How the law applies here
 
-- **An item is declared once and serves as the source of both the menu and route gating.**
+- **An item is declared once and serves as the source of both the menu and route gating.** A second
+  declaration drifts: the item is not visible, but the page opens.
 - **The declaration imports no `shell`.** It would close a cycle through `container/feature`.
 - **Gating has two layers: the user right and the section flag.** The flag marks an item with no
   screen yet: it has no rights and no address, and stays visible to everyone.

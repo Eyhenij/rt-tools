@@ -4,7 +4,7 @@ kind: rule
 law: navigation
 description: Rule under the navigation law. Load when editing the menu declaration, libs/admin/common/container/**, apps/admin/src/app/app.routes.ts and any libs/admin/**/*.routes.ts. Names the menu declaration, panel columns and groups, gating and address nesting. Ready-made code is in pattern admin-nav-item.
 ---
-<!-- rt-kit v0.37.0 · rules/navigation.md · c7e14d257a69 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/navigation.md · 0790e6d1a79e · правится надстройкой, не здесь -->
 
 # Admin navigation — how it works here
 
@@ -26,7 +26,8 @@ the project only declares items.
 
 ## How the law applies here
 
-- **An item is declared once and serves as the source of both the menu and route gating.**
+- **An item is declared once and serves as the source of both the menu and route gating.** A second
+  declaration drifts: the item is not visible, but the page opens.
 - **The declaration imports no `shell`.** It would close a cycle through `container/feature`.
 - **Gating has two layers: the user right and the section flag.** The flag marks an item with no
   screen yet: it has no rights and no address, and stays visible to everyone.

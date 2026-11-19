@@ -6,6 +6,15 @@ A rule of this tree under the law `docs/constitution/delivery.md`. It stands nex
 and `deploy-flow`: those say how an edit reaches the main branch and production; this one says what
 must be true of a package before it reaches the registry, where it cannot be taken back.
 
+## What it is called here
+
+| In the law               | Here                                                                                                  |
+| ------------------------ | ----------------------------------------------------------------------------------------------------- |
+| a package without a framework | a project under `projects/` that builds twice with `tsc`: the targets `build:esm` and `build:cjs`    |
+| the built package        | the folder `dist/<package>`, the same one that is published                                           |
+| a release                | a manual start of `.github/workflows/publish-<package>.yml`                                           |
+| the loading check        | `tools/verify-package.cjs`, the `verify` target of the project                                        |
+
 ## How the law applies here
 
 - **A package built from a copy of another package's pipeline carries the `verify` step of that

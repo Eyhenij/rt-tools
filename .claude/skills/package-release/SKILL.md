@@ -11,12 +11,15 @@ A rule of this tree under the law `docs/constitution/delivery.md`. Cold part: `p
 
 ## What it is called here
 
-| In the law               | Here                                                                                                  |
-| ------------------------ | ----------------------------------------------------------------------------------------------------- |
-| a package without a framework | a project under `projects/` that builds twice with `tsc`: the targets `build:esm` and `build:cjs`    |
-| the built package        | the folder `dist/<package>`, the same one that is published                                           |
-| a release                | a manual start of `.github/workflows/publish-<package>.yml`                                           |
-| the loading check        | `tools/verify-package.cjs`, the `verify` target of the project                                        |
+| In the law | Here |
+| --- | --- |
+| a package without a framework | a project under `projects/` that builds twice with `tsc`: the targets `build:esm` and `build:cjs` |
+| the built package | the folder `dist/<package>`, the same one that is published |
+| a release | a manual start of `.github/workflows/publish-<package>.yml` |
+| the loading check | `tools/verify-package.cjs`, the `verify` target of the project |
+
+Not judged: framework packages, `agent-kit`, `auth-import` and `NOT_JUDGED`. A consumer's own
+bundler or runtime is not checked: the check loads in Node and from the unpacked tarball.
 
 ## Where it lives
 
@@ -30,6 +33,8 @@ The table in `implementation.md` next to it.
   `verify` target; the wiring check compares these three steps and no others.
 - **A built package is loaded the way a consumer loads it before it is published.** Both entry
   points load from `dist`; the packed tarball is installed into an empty folder and loaded by name.
+  It takes a workspace neighbour from the registry, so an unpublished one fails; in a PR the
+  tarball step runs only for such a package.
 - **Every relative import of the built ESM names a file that exists, with its extension.**
 - **A commit header written by a publication workflow obeys the same list as a hand-written one.**
   The list of areas of the commit check: a missing area fails the release at its first commit step.
@@ -37,8 +42,9 @@ The table in `implementation.md` next to it.
   is searched across the tree before the commit is fixed.
 - **A release does not go out unless the built package loads.** The barrier is the root build
   command ending in `nx verify`, run by the publication workflow itself: a start from the browser,
-  `gh api` or a variable passes the start guard and stops there. Not judged: framework packages,
-  `agent-kit`, `auth-import` and `NOT_JUDGED`.
-- **The build with the loading check comes before the step that moves the version.**
+  `gh api`, the workflow's title or a variable passes the start guard and stops there. The start
+  guard refuses a broken wiring earlier, by the agent's command line.
+- **The build with the loading check comes before the step that moves the version.** The wiring
+  check holds this order in the workflows that move the version.
 - **"Built" and "tested" are not "consumable".** A readiness claim names the command that loaded the
   package as a consumer would, and its output.

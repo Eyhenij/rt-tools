@@ -20,7 +20,9 @@ table in `implementation.md` next to it.
 ## How the law applies here
 
 - **A package version is written as an exact number.** `"prettier": "3.9.6"` in the root manifest;
-  published packages under `projects/` declare what they accept by a range.
+  the published packages declare what they accept by a range. The check of this rule refuses a
+  range in the root `package.json`, in the push set and in the pipeline. Manifest and lock are
+  matched before the push only for an edit of either; otherwise in the pipeline, after the push.
 - **Substituted versions of foreign dependencies are gathered in one list, and it is revisited at
   every update.** A stale entry silently rolls its dependency back after the main package is raised.
 - **A fresh version waits first, and one needed before the term is written out separately.** The
@@ -33,4 +35,5 @@ table in `implementation.md` next to it.
 
 ## Patterns
 
-- `dependencies-upgrade` — raise a package: the term, the substitutions, the check of the snapshot.
+- `dependencies-upgrade` — raising versions, choosing the upper bound, sorting out the consequences
+  of an update.
