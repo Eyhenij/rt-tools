@@ -159,14 +159,19 @@
                     font-size: var(--rt-text-lg);
                 }
 
+                /* Строки дельты и периода по 16, текст дельты стоит по базовой линии, как в
+                   макете: строка дельты выходит 17, карточка — 118. */
                 .rt-stat-tile__delta {
                     flex-wrap: wrap;
+                    align-items: baseline;
                     font-size: var(--rt-text-sm);
+                    line-height: var(--rt-size-4);
                 }
 
                 .rt-stat-tile__baseline,
                 .rt-stat-tile__secondary {
                     overflow: visible;
+                    line-height: var(--rt-size-4);
                     overflow-wrap: anywhere;
                     white-space: normal;
                 }

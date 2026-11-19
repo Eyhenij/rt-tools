@@ -72,7 +72,7 @@ Then the value is 32/32, the delta reads «+12,5 %» with U+00A0 before the sign
 
 Given a tile with the compact value size
 When the tile is drawn
-Then the value is 24/24 Bold and the delta 14 Bold
+Then the value is 24/24 Bold and the delta 14 Bold on a line 16 high
 
 ### SC-UKV-1455 — the tile writes the delta by the kit locale
 

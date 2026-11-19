@@ -58,7 +58,7 @@ as now: «+12 %».
 
 - **A tile without the «growth is worse» sign paints its rows as now.** Growth green, a fall red.
 
-- **The tile has a value size option: the default keeps the value at 32/32, the compact size writes it at 24/24 and the delta at 14.** The KPI card of the assistant chat uses the compact size.
+- **The tile has a value size option: the default keeps the value at 32/32, the compact size writes it at 24/24, the delta at 14 on a line 16 high and the lower lines on lines 16 high.** The KPI card of the assistant chat uses the compact size.
 
 - **The compact size sets the gaps of the tile to 6, `calc(var(--rt-space-1) + var(--rt-space-0-5))`, and puts the delta line on a line of its own under the value.** The gaps are those between the lines of the tile and between the value and the delta line; so the mockup draws it.
 

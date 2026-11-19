@@ -105,7 +105,7 @@ base caption and a period.
 
 - **A card is a compact `rt-stat-tile` framed by the block, and the frame takes kit tokens only.** The border is 1 px of `--rt-color-border-default`, the background `--rt-color-bg-surface`, the panel surface. The padding is 12, `calc(var(--rt-space-2) + var(--rt-space-1))`; the radius is 12, `calc(var(--rt-radius-md) + var(--rt-radius-sm))`. The dark theme takes the same tokens in the dark set. The tile itself draws no frame, by its own spec, and the block does not style the tile from outside: the gaps inside the card are the tile's compact size.
 
-- **The card label is 14 SemiBold, the value 24/24 Bold, the delta 14 Bold, the base caption and the period 12 Regular muted.**
+- **The card label is 14 SemiBold, the value 24/24 Bold, the delta 14/16 Bold, the base caption and the period 12/16 Regular muted.**
 
 - **The cards stand in a grid with a gap of 8, `--rt-space-2`: one column while the block is narrower than 328, two from 328, four from 664.** The block follows its own width, not the mode of the chat. The narrow panel (328, 386) gives two columns. The full-screen mode gives four from 664, as the task card asks, and two when it is narrower.
 
