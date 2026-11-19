@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/flow-guard.mjs · a41b5cf4c7b5 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/flow-guard.mjs · 97af307bb847 · правится надстройкой, не здесь
 /**
  * The guard of the course of work — the engine command `guard`, called by the hook
  * `flow-step-guard.sh` before Edit, Write, MultiEdit and a shell command.
@@ -33,6 +33,9 @@ const DEFERRED = 'отложено';
 
 /** The words of an epic plan row whose task waits for the owner's step. */
 const OWNER_STEP = 'шаг владельца';
+
+/** The option of the owner's menu that marks the owner's step: chosen there, it needs no second window. */
+const SELF_OPTION = 'сделаю сам';
 
 /** The opening of a replacement line of the progress, with the number of the step. */
 const REPLACEMENT_START = /^-\s+\*\*(?:Проверка шага|Check of step)\s+(\d+\.\d+)\s+(?:заменена|replaced):\*\*/u;
@@ -192,7 +195,7 @@ export function judgeCall(call, ctx) {
 
     const path = call.path ?? '';
     if (path.startsWith(`${ctx.marksDir}/`) || path === ctx.marksDir) return 'the marks of the steps and of the approval are written only by the engine `task-flow-script.mjs`';
-    if (ctx.isRecord && ctx.isRecord(path)) return 'the session records are written only by the harness: an approval and a replacement quote are read from them, and a hand write would forge both';
+    if (ctx.isRecord && ctx.isRecord(path)) return 'the session records are written only by the harness: an approval is read from them, and a hand write would forge it';
     if (path === progressPath) return judgeProgress(call, ctx, planPath);
     if (path.startsWith(`${ctx.plansDir}/`) && path.endsWith('.md')) return judgeDefer(call, ctx);
     if (path === ctx.overridePath) return judgeOverride(call, ctx);
@@ -206,7 +209,7 @@ function judgeShell(command, ctx, marks) {
         return 'the marks of the steps and of the approval are written only by the engine `task-flow-script.mjs`, never by a shell command';
     }
     if (shellWrites(command, '\\.claude/projects/[^\\s;|&"\']*\\.jsonl')) {
-        return 'the session records are written only by the harness, never by a shell command: an approval and a replacement quote are read from them';
+        return 'the session records are written only by the harness, never by a shell command: an approval is read from them';
     }
     if (shellWrites(command, `${escape(ctx.tasksDir)}/[^\\s;|&]*(?:progress|plan)\\.md`) || shellWrites(command, '(?:^|[\\s/"\'])(?:progress|plan)\\.md')) {
         return 'the progress and the plan are edited by the edit tool, not by a shell command: the guard judges an edit, and a shell write passes it unseen';
@@ -262,6 +265,8 @@ function judgeDefer(call, ctx) {
     if (changed.length === 0) {
         const steps = ownerRowChanges(before, after, ctx.key);
         if (steps.length === 0) return null;
+        // The owner has just chosen «сделаю сам» in the menu: the row carries out that answer.
+        if ((ctx.ownerLast?.() ?? '').trim().startsWith(SELF_OPTION)) return null;
         return `«${OWNER_STEP}» for ${steps.map((task) => `${ctx.key}-${task}`).join(', ')} is the owner's decision: the owner allows or forbids this edit in the window`;
     }
     const word = ctx.ownerLast() ?? '';
