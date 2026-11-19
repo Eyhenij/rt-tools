@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · task-flow/measure/epic.mjs · 6c1f0d704a17 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · task-flow/measure/epic.mjs · 32743b82b4e9 · правится надстройкой, не здесь
 /**
  * The measurer «measure.epic» — the exits that read the epic of the work: its plan in the plans
  * directory, its branch and its card.
@@ -7,11 +7,14 @@
  * the epic, and the epic card left the first column or is closed. Kept for the life of the branch
  * once met.
  *
- * nextTaken — exit 11: the branch of the next unblocked task of the epic stands locally or on the
- * server; with no such task the exit is met. A task is blocked when it is deferred or waits for the
- * owner's step whose quote the owner said.
+ * nextTaken — exit 11: every unmerged, unblocked task of the epic other than the current one has a
+ * branch, locally or on the server; with no such task the exit is met. A task is blocked when it is
+ * deferred or waits for the owner's step whose quote the owner said. A task with a branch standing
+ * before a task without one does not meet the exit: the plan still holds work nobody took.
  *
- * mergedMarked — exit 12: every task of the epic whose PR is merged is marked merged in the plan.
+ * mergedMarked — exit 12: every task of the epic whose PR is merged is marked merged in the plan,
+ * and every task not deferred is marked merged. Until then state 13 would demand the PR of an
+ * epic whose tasks are not in its branch.
  *
  * finished — exit 13: the tip of the branch of every task of the epic that is not deferred lies in
  * the epic branch or in the main branch on the server, and the PR of the epic into the main branch
@@ -45,9 +48,8 @@ export function nextTaken({ git, host, tree, owner }) {
         const plan = epicOfWork({ git, host, tree });
         if (!plan) return false;
         const current = taskOfBranch(git.branch());
-        const next = plan.rows.find((row) => !row.merged && row.task !== current && !blocked(row, owner));
-        if (!next) return true;
-        return git.branches(prefix(next.task)).length > 0 || host.remoteBranches(prefix(next.task)).length > 0;
+        const ahead = plan.rows.filter((row) => !row.merged && row.task !== current && !blocked(row, owner));
+        return ahead.every((row) => git.branches(prefix(row.task)).length > 0 || host.remoteBranches(prefix(row.task)).length > 0);
     };
 }
 
@@ -69,7 +71,8 @@ export function mergedMarked({ git, host, tree }) {
         const plan = epicOfWork({ git, host, tree });
         if (!plan) return false;
         const merged = new Set(host.mergedPulls().map((p) => taskOfBranch(p.head)).filter((n) => n !== null));
-        return plan.rows.every((row) => !merged.has(row.task) || row.merged);
+        const open = plan.rows.filter((row) => !row.deferred && !row.merged);
+        return open.length === 0 && plan.rows.every((row) => !merged.has(row.task) || row.merged);
     };
 }
 
