@@ -53,6 +53,15 @@ skill_for() {
 
                 */.claude/*) return 0 ;;
 
+                # The task folder and the epic plan: the first edits of any task and of any epic.
+                # The loop of a task is printed first and the default adds its own rule after it —
+                # the course of a task for the folder, the wording rule for the plan.
+                */docs/tasks/* | */docs/plans/*)
+                    printf '%s\n' 'task-delivery-loop'
+                    command -v skill_for_default >/dev/null 2>&1 && skill_for_default "$kind" "$target" "$written"
+                    return 0
+                    ;;
+
                 # The release of a package without a framework: the check of the built package, the
                 # check of its wiring and the publication workflows. The branch stands before the
                 # tree's checks below: `check-package-release.mjs` is one of them and would fall to
@@ -332,6 +341,32 @@ skill_for() {
                     return 0
                     ;;
             esac
+            ;;
+        bash)
+            # The commands that take a task, a branch and a delivery: the loop of a task is loaded
+            # before the first of them. Printed on top of the default, which adds the delivery rule.
+            #
+            # Read by a plain match over the command text, not by the call check of the default:
+            # that one misses the forms this tree types every day — a token prefix with `$(…)`,
+            # `command gh`, `git -C <dir>`, `git checkout -q -b`, `npm run -s task:new`. A mention
+            # in an `echo` demands the loop too; that costs one load, a missed call costs a task
+            # led past the loop.
+            #
+            # The options git takes before its verb (`-C <dir>`, `-c <key=value>`, `--no-pager`) are
+            # skipped; a branch is taken by `-b`, `-B`, `-c`, `-C` or `--create` anywhere in the
+            # segment, glued to its name or not, and by `git branch <name>`; the hosting client is
+            # read by its name, by a quoted name and by a variable that holds `GH` in its name.
+            gitv='(^|[[:space:];&|(/"])git([[:space:]]+(-[Cc][[:space:]]+[^[:space:]]+|--[a-z-]+(=[^[:space:]]+)?))*[[:space:]]+'
+            if printf '%s' "$target" | grep -qE \
+                -e '(^|[[:space:];&|(/"'"'"'])task:new(["'"'"']|[[:space:]]|$)' \
+                -e 'tools/task-new\.mjs' \
+                -e "${gitv}"'(checkout|switch|worktree[[:space:]]+add)[^;&|]*[[:space:]](-[bBcC]|--create)' \
+                -e "${gitv}"'branch[[:space:]]+[^-[:space:]]' \
+                -e "${gitv}"'push([[:space:]]|$)' \
+                -e '(^|[[:space:];&|(/"])gh"?[[:space:]]+pr[[:space:]]+(create|new)([[:space:]]|$)' \
+                -e '\$\{?[A-Za-z_]*GH[A-Za-z_]*(:-[^}]*)?\}?"?[[:space:]]+pr[[:space:]]+(create|new)([[:space:]]|$)'; then
+                printf '%s\n' 'task-delivery-loop'
+            fi
             ;;
     esac
 

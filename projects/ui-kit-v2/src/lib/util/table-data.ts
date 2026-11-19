@@ -115,19 +115,29 @@ export function rtTableData(columns: unknown, rows: unknown, total: unknown): IR
     };
 }
 
+/** Код валюты столбца, который кит пишет знаком валюты; `null` — значение пишется как число. */
+export function rtTableCurrency(column: IRtTableColumn): string | null {
+    return column.type === ERtTableColumn.Currency && column.currency !== null && CURRENCY_CODE.test(column.currency)
+        ? column.currency
+        : null;
+}
+
 function numberOptions(column: IRtTableColumn): Intl.NumberFormatOptions {
     if (column.type === ERtTableColumn.Percent) {
         return { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1, signDisplay: 'negative' };
     }
 
-    if (column.type === ERtTableColumn.Currency && column.currency !== null && CURRENCY_CODE.test(column.currency)) {
-        return { style: 'currency', currency: column.currency, signDisplay: 'negative', trailingZeroDisplay: 'stripIfInteger' };
+    const currency: string | null = rtTableCurrency(column);
+
+    if (currency !== null) {
+        return { currency, style: 'currency', signDisplay: 'negative', trailingZeroDisplay: 'stripIfInteger' };
     }
 
     return { maximumFractionDigits: 2, signDisplay: 'negative' };
 }
 
-function numberFormat(locale: string, options: Intl.NumberFormatOptions): Intl.NumberFormat {
+/** `Intl.NumberFormat` для языка кита; язык, который `Intl` не принимает, заменяется на `en`. */
+export function rtTableNumberFormat(locale: string, options: Intl.NumberFormatOptions): Intl.NumberFormat {
     try {
         return new Intl.NumberFormat(locale, options);
     } catch {
@@ -149,7 +159,7 @@ export function rtTableCellWriter(column: IRtTableColumn, locale: string): TRtTa
         return textCell;
     }
 
-    const format: Intl.NumberFormat = numberFormat(locale, numberOptions(column));
+    const format: Intl.NumberFormat = rtTableNumberFormat(locale, numberOptions(column));
 
     return (value: TRtTableValue): IRtTableCell => {
         if (typeof value === 'string') {

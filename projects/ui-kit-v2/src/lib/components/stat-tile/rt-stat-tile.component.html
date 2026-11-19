@@ -1,4 +1,4 @@
-<article rtBlock="rt-stat-tile" qa-dataid="stat-tile" [rtMod]="{ 'growth-worse': growthIsWorse() }">
+<article rtBlock="rt-stat-tile" qa-dataid="stat-tile" [rtMod]="{ 'growth-worse': growthIsWorse(), compact: compact() }">
     <header rtElem="head">
         <span rtElem="label" qa-dataid="stat-tile-label">{{ label() }}</span>
         @if (hint(); as hintText) {
@@ -6,8 +6,10 @@
         }
     </header>
 
-    <div rtElem="value-row">
-        <p rtElem="value" qa-dataid="stat-tile-value">{{ value() }}</p>
+    <div #valueRow rtElem="value-row">
+        <p rtElem="value" qa-dataid="stat-tile-value" [attr.data-fit]="valueFit()" [rtMod]="{ fit: valueFit() }">
+            <bdi dir="ltr">{{ value() }}</bdi>
+        </p>
 
         @if (primaryDelta(); as row) {
             <span
@@ -15,9 +17,12 @@
                 qa-dataid="stat-tile-delta"
                 [attr.data-direction]="row.direction"
                 [rtMod]="{ direction: row.direction }"
-                [attr.title]="row.label">
-                <rt-icon qa-dataid="stat-tile-delta-icon" size="xs" [name]="row.icon" />
-                <span qa-dataid="stat-tile-delta-percent">{{ row.text }}</span>
+                [attr.title]="primaryTitle()">
+                <rt-icon qa-dataid="stat-tile-delta-icon" size="xs" aria-hidden="true" [name]="row.icon" />
+                <bdi dir="ltr" qa-dataid="stat-tile-delta-percent">{{ row.text }}</bdi>
+                @if (primaryCaption(); as caption) {
+                    <span rtElem="caption" qa-dataid="stat-tile-delta-caption">{{ caption }}</span>
+                }
             </span>
         }
 
@@ -28,7 +33,8 @@
                 [attr.data-direction]="row.direction"
                 [rtMod]="{ direction: row.direction }"
                 [attr.title]="row.label">
-                {{ t().uiYearOverYear }} {{ row.text }}
+                {{ t().uiYearOverYear }}
+                <bdi dir="ltr">{{ row.text }}</bdi>
             </span>
         }
     </div>

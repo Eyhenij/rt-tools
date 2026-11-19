@@ -1,0 +1,254 @@
+# The KPI block of the assistant chat
+
+**Status:** in force · **Revision:** 2026-11-19 · **Scenario prefix:** `SC-UKV`
+**Depends on:** the assistant chat (the blocks of an answer, the answer copy), the stat tile of the
+kit (the card), the table block of the chat (writing a value by the kit locale)
+**Laws:** `frontend-application`, `reuse-first`, `verifiability`
+**Procedures:** none
+
+The `kpi` block of an answer of `rt-ai-chat`: a grid of KPI cards built on `rt-stat-tile`. The
+approved mockup is the frame 8246-607 of the second kit file. It stands as a subdomain of its own
+next to `ai-chat-table`. What the tile gained for the block — the compact size, the delta written by
+the kit locale and the visible base caption — is described in `docs/specs/ui-kit-v2/stat-tile/`.
+
+## Why
+
+An overview answer («обзор месяца») shows a few key figures and how each changed against a base:
+revenue against last year, occupancy against the last month. As markdown text such figures read as
+a paragraph of numbers, without a sign of whether the change is good. The kit gets a `kpi` block:
+a row of cards, each with a label, a value written by the kit locale, a coloured delta with its
+base caption and a period.
+
+## Terminology
+
+- **The KPI block** — a block of an answer with the type `kpi`: a list of cards.
+- **A card** — one item of the block drawn as `rt-stat-tile` inside a frame the block draws.
+- **The value format** — `number`, `percent` or `currency`; it decides how the value is written.
+- **The delta** — the change of the value against the base, a number with a sign, an arrow and a
+  colour.
+- **The base caption** — the short visible text after the delta that names the base: «vs LY».
+- **The period** — the line under the value that names the period of the figure: «ноябрь 2026».
+- **Growth is good** — the item flag that says the growth of the figure is good for the reader.
+- **The short form** — a value of a million and more written by the locale's compact notation:
+  «1,24 млн ₽».
+
+### What it is called in the interface
+
+| In the domain  | On the screen                                                              |
+| -------------- | -------------------------------------------------------------------------- |
+| The card       | a framed tile: the label, the value, the delta line, the period            |
+| The delta line | the arrow, the signed number and the muted base caption: «↑ +12,5 % vs LY» |
+| The period     | a muted line under the value                                               |
+| The KPI block  | a grid of cards, two or four in a row                                      |
+
+## Rules
+
+### The block and its data
+
+- **`kpi` is a type the kit draws itself, next to `markdown`, `notice` and `table`; an application gets it without registering anything, and a renderer registered for `kpi` is not taken.**
+
+- **A KPI block has `items`, a list of cards.** An item has `label`, `value`, `format`, for a `currency` item `currency`, and the optional `delta`, `base`, `period` and `growthIsGood`. An item may also carry `deltaUnit`, `percent` by default or `points`.
+
+- **A KPI block whose `items` is not a list, or holds no card left after the rules below, is shown as the plate with its type name, like a table block without columns.**
+
+- **An item that is not an object, has no label, or has no value is dropped; the other cards stay in their order.** A label is missing when `label` is not a string or is empty after trimming. A value is missing when it is neither a finite number nor a non-empty string: absent, `null`, `NaN`, an infinity, `true`, `{}`, `[]` or `""`.
+
+- **A malformed optional part of a card is absent, not refused.** A `delta` that is not a finite number is absent, and with it the base caption. A `base` or a `period` that is not a non-empty string is absent. A `growthIsGood` that is not a boolean is `true`.
+
+- **An item of a format the kit does not know, or with no format, is written as `number`.**
+
+- **The block draws every card it is given; the kit sets no cap on the number of cards.**
+
+- **A new `block` input of the same block instance redraws the cards.**
+
+- **The kit exports the JSON schema of the KPI block (JSON Schema 2020-12), so that an application gives it to the model as the parameters of a tool.** It requires `items`, and in an item `label` and `value`; `format` and the other fields are optional. It names the formats, the currency code as three Latin upper-case letters and `deltaUnit` as `percent` or `points`. Its descriptions say that a `percent` value is a fraction (0.78) and that `delta` is in percent (12.5).
+
+- **A block the schema accepts is drawn with nothing dropped or emptied.** The block is more lenient than the schema: what the schema refuses is still drawn by the rules above.
+
+### Writing the value
+
+- **A number value is written by the rules of a number cell of the table block.** The format of the item stands for the column type, `currency` for its currency code, and the locale is the kit label locale. `number` groups the digits and keeps up to 2 fraction digits, `percent` reads 0.78 as «78,0 %», `currency` writes «8 400 ₽».
+
+- **A `number` or `currency` value of a million and more, by its absolute value, is written in the short form of the kit locale.** It keeps at most three significant digits and drops trailing zeros. 1 000 000 ₽ is «1 млн ₽», 1 240 000 ₽ is «1,24 млн ₽», 12 345 678 ₽ is «12,3 млн ₽». -123 450 000 000 ₽ is «-123 млрд ₽», 2 500 000 000 is «2,5 млрд». A value whose whole form rounds to a million, such as 999 999.99 ₽, is written short: «1 млн ₽». A `percent` value is never short.
+- **A `number` or `currency` value from 100 000 to below a million, by its absolute value, is written in full without fraction digits.** 999 999.4 ₽ is «999 999 ₽». Six digits with a fraction do not fit 131 inside a card 160 wide at 24 px and would break inside the number. The owner chose this after review round one: «Округлять под карточку».
+- **The number of a value always fits one line of a card 160 wide; the unit may not.** At 24 px bold the widest number the rules allow, «-99 999,99», is 129 of the 134 the value row has. A value with its unit can be wider: «-123 млрд ₽» is 148, «-1,24 млн ₽» is 140, «-RUB 999,999» in `en` is 169. No rounding fixes that, since «млрд ₽» alone is 94.
+- **A value wider than its row at 24 px is drawn at 20 px, and wider still at 18 px.** «-123 млрд ₽» and «-99 999,99 ₽» take 20, «-RUB 999,999» takes 18. The tile measures the value against the width of its value row, so the step follows the card, not a count of characters. The owner chose this after review round two: «Уменьшать шрифт», and approved the mockup: https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8297-452
+- **The space between a written number and its unit is an ordinary one, on either side of the number and for the digits of any locale; the spaces between digit groups stay non-breaking.** A value that does not fit even at 18 px wraps there: the number stays on the first line and the unit goes to the second, `en` writes «-RUB» above «999,999». The number never breaks inside.
+
+- **A `currency` item whose code is missing or is not three Latin upper-case letters writes its value as `number`.**
+
+- **A string value is written as given; the kit does not read a number out of a string.**
+
+- **A minus of a value is the one `Intl.NumberFormat` writes for the locale, and the value is not coloured.** A KPI value carries no colour of its own; the delta carries the meaning of the change.
+
+- **Values and deltas are written for the locale of the kit labels; a locale `Intl.NumberFormat` refuses writes them as `en`.**
+
+- **A drawn block follows a change of the kit label locale: its values and deltas are written anew.**
+
+### The delta
+
+- **`delta` is the change in percent, as the tile reads it: 12.5 is «+12,5 %», -4 is «-4 %».** It is not a fraction, unlike a `percent` value. With `deltaUnit: 'points'` the delta is a change in percentage points and is written by the tile's points label; any other `deltaUnit` counts as `percent`.
+
+- **The delta number carries a plus on growth, the locale minus on a fall and no sign at zero.** Zero is judged by the written number: 0.04 and -0.04 are written «0 %», with no sign, a flat arrow and the muted colour.
+
+- **The colour of the delta follows the theme state tokens: with `growthIsGood` true growth is the success colour and a fall the danger colour; with `growthIsGood` false the two swap; a zero delta is muted.**
+
+- **The arrow shows the sign of the delta whatever `growthIsGood` says: up on growth, down on a fall, flat at zero.**
+
+- **A card without a delta draws no delta line and no base caption; its value, label and period stay.**
+
+- **The base caption stands after the delta number in the delta line, visible, in 12 Regular muted text; a delta without a `base` stands alone.**
+
+- **The delta line of a card shows one base; the kit draws no second delta (no «YoY» chip) and no «was …» line in a KPI card.**
+
+### Layout
+
+- **A card is a compact `rt-stat-tile` framed by the block, and the frame takes kit tokens only.** The border is 1 px of `--rt-color-border-default`, the background `--rt-color-bg-surface`, the panel surface. The padding is 12, `calc(var(--rt-space-2) + var(--rt-space-1))`; the radius is 12, `calc(var(--rt-radius-md) + var(--rt-radius-sm))`. The dark theme takes the same tokens in the dark set. The tile itself draws no frame, by its own spec, and the block does not style the tile from outside: the gaps inside the card are the tile's compact size.
+
+- **The card label is 14 SemiBold, the value 24/24 Bold, the delta 14/16 Bold, the base caption and the period 12/16 Regular muted.**
+
+- **The cards stand in a grid with a gap of 8, `--rt-space-2`: one column while the block is narrower than 328, two from 328, four from 664.** The block follows its own width, not the mode of the chat. The narrow panel (328, 386) gives two columns. The full-screen mode gives four from 664, as the task card asks, and two when it is narrower.
+
+- **The columns of the grid are equal, and a last row with fewer cards keeps the column width; its cards are not stretched.**
+
+- **The frames of one row stand on one top and are as high as the tallest of the row; the period stands at the bottom of its frame.**
+
+- **No text goes past its card.** A word or a value wider than the card breaks inside it; the wrapping of the base caption and the period is the tile's compact size.
+
+- **Under `dir="rtl"` the order of the cards in the grid and the delta line mirror, while a written value and a delta number keep their own order.** Both are isolated, as the table block isolates a number cell: «-4,2 %» does not turn into «% 4,2-».
+
+- **The block takes the width of the answer and never widens the feed.**
+
+### Copying
+
+- **The answer copy gives a KPI block as one line per card, joined by LF, in the order of the cards.**
+
+- **A card line holds the label, the value, the delta with its base caption and the period, separated by a tab; an absent part is an empty field.** The parts are written as the card shows them, in the kit locale at the moment of the copy: «Выручка», «1,24 млн ₽», «+12,5 % vs LY», «ноябрь 2026».
+
+- **A dropped item gives no line, and a tab or a line break inside a text becomes a space.**
+
+### Accessibility
+
+- **The block is a list whose items are the cards, so a screen reader announces how many cards there are.**
+
+- **The arrow of the delta is hidden from a screen reader; the sign of the number tells the direction.**
+
+- **The block has no fixed text of its own and adds no kit label.**
+
+## What is out of scope
+
+- A sparkline in a card, a click on a card, a hint icon, a second delta per card.
+- The section and the grid of a composed answer (RT-3342) and the sources block (RT-3340).
+- A title of the block: a heading of a composed answer comes with RT-3342.
+- A total or a delta computed by the kit: both come as data.
+- Telling the full-screen mode to a block: the block reads its own width.
+- Telling good and bad apart other than by colour: a text for a screen reader is a tile edit of its
+  own.
+
+## Contract
+
+None: the block is a part of the layout component and serves no procedure.
+
+### Refusal codes
+
+Not applicable.
+
+## Data
+
+The block reads the fields of its own answer block and keeps no data of its own. Of a block, as
+the consumer gives it:
+
+- `type` — `kpi`;
+- `items` — the cards: `label` — the label text; `value` — a number or a string; `format` —
+  `number`, `percent` or `currency`; `currency` — the currency code of a `currency` item; `delta` —
+  the change in percent, a number; `deltaUnit` — `percent` when absent, or `points`; `base` — the
+  base caption; `period` — the period line; `growthIsGood` — a boolean, `true` when absent.
+
+## Screens and states
+
+| state           | what is drawn                                                              |
+| --------------- | -------------------------------------------------------------------------- |
+| narrow 328      | four cards in two columns, 160 a card                                      |
+| narrow 386      | four cards in two columns, 189 a card                                      |
+| full screen 728 | four cards in one row, 176 a card                                          |
+| deltas          | a positive, a negative and a zero delta in one block                       |
+| growth is worse | a growing delta of an item with `growthIsGood: false` in the danger colour |
+| short form      | «1,24 млн ₽» next to «8 400 ₽»                                             |
+| no delta        | a card with the label, the value and the period only                       |
+| odd count       | three cards: the third stands alone in its row at the column width         |
+| below 328       | the cards in one column                                                    |
+| right to left   | the grid and the delta line mirrored, the numbers in their own order       |
+| invalid         | the plate with the type name                                               |
+| dark theme      | the block at 328 and 728 in the dark palette                               |
+
+## Cross-cutting requirements
+
+### Locales
+
+Values and deltas are written for the locale of the kit labels and follow its change; the answer
+copy reads the locale at the moment of the copy. The block adds no kit label. The labels, the base
+captions and the periods come from the consumer as given.
+
+### SEO
+
+Not applicable: the kit is not indexed.
+
+### Mobile layout
+
+The narrow panel is the mobile width of the chat: at 328 two cards of 160 stand in a row, and a
+value of a million and more takes the short form so that it fits 136 inside a card.
+
+### Several objects
+
+Several KPI blocks in one answer and in one feed each lay out by their own width.
+
+## Decisions
+
+- **The card is `rt-stat-tile`, and what the tile lacks is added to the tile itself** — the law
+  `reuse-first`: every consumer of the tile gets the compact size, the delta by the locale and the
+  visible base caption.
+- **The value is written by the table cell writer** — one rule for a number in a table cell and in a
+  card, plus the short form the card needs.
+- **The short form starts at a million** — the approved mockup: a full seven-digit sum does not fit
+  136 inside a card even at 24 px, and «8 400 ₽» does.
+- **The value is 24/24, not the tile's 32** — the mockup: «1 240 000 ₽» at 32 px is 192 wide, a
+  card at 328 leaves 136.
+- **The four-column threshold is 664** — four cards of 160, the card width the mockup holds at
+  328, with three gaps of 8. The mockup shows two columns at 386 and four at 728, and 664 lies
+  between them.
+- **The width decides the columns, not `fullScreen`** — a block gets only its `block` input; the
+  kit already lays out by a block-local container query.
+- **The block frames the card** — the tile draws no frame by its own spec; the container draws the
+  frame, as the mockup draws it.
+- **`growthIsGood` is the item flag, default `true`** — the words of the task card; it maps to the
+  tile's «growth is worse».
+- **A KPI value is not coloured below zero, unlike a table cell** — in a card the delta carries the
+  meaning, and a red value next to a green delta would contradict it.
+
+- **The item fields are flat: `label`, `value`, `format`, `currency`, `delta`, `deltaUnit`, `base`,
+  `period`, `growthIsGood`** — the task card names the parts, not the fields; closed by assumption.
+- **`delta` is in percent, with `deltaUnit: 'points'` for a share whose change reads in points** —
+  the tile reads a delta in percent and already draws points; the schema description says so, since
+  a `percent` value is a fraction and a model may mix the two up. Closed by assumption.
+- **A delta keeps at most one fraction digit** — «+12,5 %» and «-4 %» keep their text. Closed by
+  assumption.
+- **A card line of the copy is tab-separated** — as the table block copies its rows, so pasted
+  lines split into cells. Closed by assumption.
+- **No cap on the number of cards, and a short last row keeps the column width** — as the table
+  block sets no cap on rows. Closed by assumption.
+- **Good and bad stay told by colour, as the tile does today** — a text for a screen reader is a
+  tile edit of its own. Closed by assumption.
+
+## Open questions
+
+None: the six questions of the draft are closed by assumption in the decisions above, because the
+owner took the recommended option more than twice in a row in this session.
+
+## History of changes
+
+- 2026-11-19 — the agreement written for RT-3338 from the grill and the approved mockup.
+- 2026-11-19 — the review by spec-critic: the tile delta by the locale for every consumer, both
+  delta rows, the compact gaps and wrapping, the frame tokens, one column below 328, right to
+  left, the missing value and label, the short form digits, the schema fields.
+- 2026-11-19 — the code of RT-3338 written and the showcase approved; the agreement became this
+  subdomain, and the rules of the tile moved into the stat tile subdomain.

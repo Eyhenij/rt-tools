@@ -1,5 +1,14 @@
 import { IRtAiChat } from '../rt-ai-chat.model';
-import { blocksToPlainText, isMarkdownBlock, isNoticeBlock, tableBlockData, toBlockViews } from './rt-ai-chat-blocks.logic';
+import {
+    blocksToPlainText,
+    isMarkdownBlock,
+    isNoticeBlock,
+    kpiBlockItems,
+    rtAiChatPointsWriter,
+    tableBlockData,
+    toBlockViews,
+    TRtAiChatPointsWriter,
+} from './rt-ai-chat-blocks.logic';
 
 describe('rt-ai-chat-blocks logic', (): void => {
     it('SC-UKV-1321 — копия ответа склеивает тексты блоков по порядку, без знаков markdown', (): void => {
@@ -155,6 +164,106 @@ describe('rt-ai-chat-blocks logic', (): void => {
 
             expect(blocksToPlainText([table], [], 'en')).toBe('N\n1,234.5');
             expect(blocksToPlainText([table], [], 'de')).toBe('N\n1.234,5');
+        });
+    });
+
+    describe('блок kpi', (): void => {
+        const KPI: IRtAiChat.KpiBlock = {
+            type: 'kpi',
+            items: [
+                {
+                    label: 'Выручка',
+                    value: 1240000,
+                    format: 'currency',
+                    currency: 'EUR',
+                    delta: 12.5,
+                    base: 'vs LY',
+                    period: 'November 2026',
+                },
+                { label: 'Загрузка', value: 0.78, format: 'percent', delta: 3, deltaUnit: 'points' },
+                { label: 'Ночи', value: 312 },
+            ],
+        };
+
+        it('SC-UKV-1436 — KPI кит рисует сам, отрисовщик kpi из реестра не берётся', (): void => {
+            const renderer: IRtAiChat.BlockRenderer = { type: 'kpi', component: class {} };
+
+            expect(toBlockViews([KPI], [renderer])).toEqual([{ kind: 'kpi', items: kpiBlockItems(KPI) }]);
+        });
+
+        it('SC-UKV-1447, SC-UKV-1482 — items не списком, пустой или без уцелевших карточек — заглушка, соседи на месте', (): void => {
+            const blocks: IRtAiChat.Block[] = [
+                { type: 'markdown', text: 'до' },
+                { type: 'kpi', items: 'карточки' },
+                { type: 'kpi', items: [] },
+                { type: 'kpi', items: [{ label: 'Без значения' }] },
+                { type: 'markdown', text: 'после' },
+            ];
+
+            expect(toBlockViews(blocks, [])).toEqual([
+                { kind: 'markdown', text: 'до' },
+                { kind: 'unsupported', type: 'kpi' },
+                { kind: 'unsupported', type: 'kpi' },
+                { kind: 'unsupported', type: 'kpi' },
+                { kind: 'markdown', text: 'после' },
+            ]);
+        });
+
+        it('SC-UKV-1457 — копия ответа даёт строку на карточку: название, значение, дельта с базой, период', (): void => {
+            expect(blocksToPlainText([KPI], [], 'en')).toBe(
+                ['Выручка\t€1.24M\t+12.5% vs LY\tNovember 2026', 'Загрузка\t78.0%\t+3 pp\t', 'Ночи\t312\t\t'].join('\n')
+            );
+        });
+
+        it('SC-UKV-1457 — копия в ru: «1,24 млн ₽» и «+12,5 % vs LY»', (): void => {
+            const block: IRtAiChat.Block = {
+                type: 'kpi',
+                items: [
+                    {
+                        label: 'Выручка',
+                        value: 1240000,
+                        format: 'currency',
+                        currency: 'RUB',
+                        delta: 12.5,
+                        base: 'vs LY',
+                        period: 'ноябрь 2026',
+                    },
+                ],
+            };
+
+            expect(blocksToPlainText([block], [], 'ru').split(String.fromCharCode(0xa0)).join(' ')).toBe(
+                'Выручка\t1,24 млн ₽\t+12,5 % vs LY\tноябрь 2026'
+            );
+        });
+
+        it('SC-UKV-1457 — пункты в копии пишутся подписью кита', (): void => {
+            const points: TRtAiChatPointsWriter = rtAiChatPointsWriter((key: string, params?: object): string =>
+                key === 'uiPercentagePoints' ? `${String(Reflect.get(params ?? {}, 'value'))} п.п.` : ''
+            );
+
+            expect(blocksToPlainText([{ type: 'kpi', items: [KPI.items[1]] }], [], 'ru', points)).toBe('Загрузка\t78,0\u00a0%\t+3 п.п.\t');
+        });
+
+        it('SC-UKV-1458 — выпавшая карточка не даёт строки', (): void => {
+            const block: IRtAiChat.Block = { type: 'kpi', items: ['строка', { label: 'Ночи', value: 312 }, { label: '', value: 1 }] };
+
+            expect(blocksToPlainText([block], [], 'en')).toBe('Ночи\t312\t\t');
+        });
+
+        it('SC-UKV-1480 — табуляция и перевод строки внутри текста становятся пробелом', (): void => {
+            const block: IRtAiChat.Block = { type: 'kpi', items: [{ label: 'Ночи\tвсего', value: 312, period: 'ноябрь\n2026' }] };
+
+            expect(blocksToPlainText([block], [], 'en')).toBe('Ночи всего\t312\t\tноябрь 2026');
+        });
+
+        it('SC-UKV-1481 — несколько блоков KPI идут в копии блок за блоком', (): void => {
+            const two: IRtAiChat.KpiBlock = { type: 'kpi', items: [KPI.items[2], KPI.items[2]] };
+
+            expect(
+                blocksToPlainText([two, KPI], [], 'en')
+                    .split('\n\n')
+                    .map((part: string): number => part.split('\n').length)
+            ).toEqual([2, 3]);
         });
     });
 });

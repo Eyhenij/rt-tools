@@ -106,6 +106,54 @@ task, a line per finding, each with its address.
 - **One foreign PR the host cannot diff (HTTP 422) drops the whole queue audit.** Proposed: a line
   in the rule and a fallback read per PR. **Address:** rules layer — the rule `queue-audit`.
 
+## RT-3337 — the table block of the chat answer
+
+- **An addition to the agreement is carried into everything already written from it.** The block
+  schema was written in stage 1; stage 5 added `title` to the agreement, and the schema was not
+  reread until product-strategist caught it at the closing. Proposed: a common miss in
+  `task-flow-resume` — the decision entry names the artefacts an addition reopens, and they are
+  edited in the same stage. **Address:** rules layer — the pattern `task-flow-resume`.
+- **Without `--update` the snapshot gate reads no path sample.** A confirm run with a path went
+  over the whole showcase. Proposed: a trap in `ui-component-tests-visual`; apart, a task to let a
+  plain run read the sample. **Address:** names of this tree — the pattern
+  `ui-component-tests-visual` and `tools/visual-gate.mjs`.
+- **A Figma frame without a fill exports transparent, and the overlay counts every empty pixel.**
+  The first overlay diverged by the transparency, not by the layout. Proposed: a paragraph after
+  the `overlay` command; apart, a task to let `overlay` take a background colour. **Address:** names
+  of this tree — the rule `kit-approval` and `tools/kit-match.mjs`.
+- **A story file that did not load within the timeout and left no difference frame is load, not a
+  divergence.** Two files failed so under a busy machine. Proposed: step 6 of «Sorting out a fallen
+  run». **Address:** names of this tree — the pattern `ui-component-tests-visual`.
+- **The tree has `@playwright/test` only, and a one-off script resolves it by `createRequire` from
+  the tree root.** Proposed: a line in the companion. **Address:** names of this tree — the
+  companion of `browser-verification`.
+
+## RT-3338 — the KPI block of the chat answer
+
+- **A plan sign named only the story sweep, and the sweep looks for empty showings only.** Both
+  roles found it on the plan: the match with the mockup, the columns and the card widths had no
+  command behind them. Proposed: a common miss in `task-flow-start` — a layout point of a kit task
+  names the play steps and the snapshot run in «Verified by». **Address:** names of this tree — the
+  rule `kit-approval`.
+- **The task card said «four in full screen», and the plan checked the block at fixed widths
+  only.** A full-screen chat with a 40rem reading column gives the block 640, under the threshold.
+  Proposed: the plan of a chat block names a chat story in every mode the card names. **Address:**
+  names of this tree — the rule `rt-tools-storybook`.
+- **Two hypotheses the epic does not check:** a model may confuse a `percent` share (0.78) with a
+  `delta` in percent (12.5), and a `kpi` block in a section narrower than 328 must fall to one
+  column. Proposed: a model call on «обзор месяца» and a narrow section story in RT-3342.
+  **Address:** the epic plan, task RT-3342.
+- **The danger colour of a delta reads at 3.2 : 1 on a dark card.** `--rt-color-state-danger` is
+  one value in both themes by the kit's decision: rgb(220, 38, 38) on the dark surface rgb(34, 38,
+  41), a 14 px bold number, while AA asks 4.5 : 1 for text of that size. The tile had it before this
+  task; the KPI block puts more red numbers on a dark card. Proposed: a lighter dark-theme value of
+  the status colours, a task of its own. **Address:** the kit's semantic tokens.
+- **The KPI card radius 12 and its inner gap 6 are sums of two tokens.** The radius scale has 8,
+  10 and 15, and the mockup draws 12, so the block writes `md + sm`; the gap is `space-1 +
+  space-0-5`. Under another styling preset the sum gives a number no mockup holds. Proposed: a
+  radius step of 12 or the card on step 10, the owner's choice. **Address:** the kit's radius and
+  spacing scales.
+
 ## Left unresolved
 
 - **All findings above** — wait for the owner's decision at the end of the epic.
