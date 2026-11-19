@@ -122,7 +122,7 @@ The owner added: «включи в задачу не прятать иконку
 `rt-table` a locked row draws an empty placeholder where the others have the drag handle.
 
 1. [ ] Draw the locked row with a disabled drag handle in Figma next to the table settings frame and
-   ask the owner to approve it.
+   ask the owner to approve it. — waits: the owner said «только добавь в задачу пока».
 2. [ ] Draw the handle disabled in `table/settings-panel`; a spec holds it.
 
 ### 4. Showcase
