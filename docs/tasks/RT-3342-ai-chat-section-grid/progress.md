@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 4 — The section in the feed: the heading and the grid
-- **Done:** stage 1 — the data of the section, its copy and its schema. A `section` block gives a view with cells; a cell holds its span and the view of its nested block. A nested section and a section without a block are the plate. The specs of the blocks folder: 73 passed; of the schema: 6 passed; the type check is green.
-- **Next step:** step 2.1 — the cases of the feed in one `ng-template`.
+- **Stage:** 3 of 4 — The showcase: the overview answer at the four widths and in the chat
+- **Done:** stages 1 and 2. A `section` block gives a view with cells, and the feed draws it by `rt-ai-chat-section`: a heading and a grid of cells. A block in a cell is drawn by the one template of the feed. The specs of the chat folder: 114 passed; of the schema: 6 passed; the type check, the linters and the three style checks are green.
+- **Next step:** step 3.1 — the overview fixture and the stories of the section.
 - **Uncommitted:** no
 - **Waiting for the owner:** no — the plan is approved: «Одобряю план», the threshold of 600 with it
 - **PR:** not open yet; the base is `RT-3346-ai-chat-blocks`
@@ -16,11 +16,11 @@
 - [x] 1.2 Add the copy of a section to `blockText`: the trimmed title and the texts of the nested blocks, nothing for a nested section, nothing when no block gives a text.
 - [x] 1.3 Write the JSON schema of the section and the function that joins the schemas of the nested types in `section.schema.ts` next to `kpi.schema.ts`, and export both from the util barrel.
 - [x] 1.4 Write the specs of the logic, the copy and the schema with the scenario numbers of the agreement: SC-UKV-1507, 1511, 1512, 1515, 1516, 1518, 1519, 1524.
-- [>] 2.1 Move the cases of the feed into one `ng-template` of the blocks template, drawn for the feed as before.
-- [ ] 2.2 Write the `rt-ai-chat-section` component: a group labelled by its heading through a unique id, the heading role of the level 3, the cells that carry the span and take the cell template, the grid by a named container query — one column below 600, two from 600, the gap `--rt-space-md`, tokens only.
-- [ ] 2.3 Add the `section` case to the blocks template and the gap of 16 around a section in the feed.
-- [ ] 2.4 Write the specs of the section component, of the blocks component and the styles spec (the named container, the threshold 600, the gap, the span of a cell): SC-UKV-1510, 1514, 1517, 1523, 1525.
-- [ ] 3.1 Write the overview fixture — one `blocks` array with one `section`: a title, a summary, 4 KPI, 2 charts, a table — and the stories of the section by the agreement's table «Screens and states»: 328, 386, 640, 926, 599 and 600, a lone column block, a span set, no title, a long title, a nested section, an unknown block, a KPI block in a narrow cell, two sections, right to left, invalid, dark at 386 and 926.
+- [x] 2.1 Move the cases of the feed into one `ng-template` of the blocks template, drawn for the feed as before.
+- [x] 2.2 Write the `rt-ai-chat-section` component: a group labelled by its heading through a unique id, the heading role of the level 3, the cells that carry the span and take the cell template, the grid by a named container query — one column below 600, two from 600, the gap `--rt-space-md`, tokens only.
+- [x] 2.3 Add the `section` case to the blocks template and the gap of 16 around a section in the feed.
+- [x] 2.4 Write the specs of the section component, of the blocks component and the styles spec (the named container, the threshold 600, the gap, the span of a cell): SC-UKV-1510, 1514, 1517, 1523, 1525.
+- [>] 3.1 Write the overview fixture — one `blocks` array with one `section`: a title, a summary, 4 KPI, 2 charts, a table — and the stories of the section by the agreement's table «Screens and states»: 328, 386, 640, 926, 599 and 600, a lone column block, a span set, no title, a long title, a nested section, an unknown block, a KPI block in a narrow cell, two sections, right to left, invalid, dark at 386 and 926.
 - [ ] 3.2 Write the chat stories with the overview answer taller than the feed: the narrow panel, the full-screen mode without the thread column, with it, and with a `40rem` reading column.
 - [ ] 3.3 Write the play steps that measure by `getBoundingClientRect` the columns, the cell widths, one top per row, the gaps, no kit block past its cell and no feed widening: SC-UKV-1508, 1509, 1513, 1520–1522, 1526–1528.
 - [ ] 3.4 Break one measurement on purpose, run `pnpm run test:visual:v2`, see it red on that story, and restore the measurement.

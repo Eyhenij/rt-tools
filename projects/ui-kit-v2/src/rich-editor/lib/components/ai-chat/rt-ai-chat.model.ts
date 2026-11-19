@@ -147,6 +147,11 @@ export namespace IRtAiChat {
         readonly view: BlockView;
     }
 
+    /** Контекст шаблона ленты, которым рисуется блок в ячейке секции. */
+    export interface CellContext {
+        readonly $implicit: BlockView;
+    }
+
     /** Вопрос человека: строка в пузыре справа. */
     export interface UserMessage {
         readonly id: string;

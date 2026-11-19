@@ -1,4 +1,4 @@
-import { NgComponentOutlet } from '@angular/common';
+import { NgComponentOutlet, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, Signal, ViewEncapsulation } from '@angular/core';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
@@ -9,15 +9,17 @@ import { IRtAiChat } from '../rt-ai-chat.model';
 import { toBlockViews } from './rt-ai-chat-blocks.logic';
 import { RT_AI_CHAT_BLOCK_RENDERERS } from './rt-ai-chat-blocks.providers';
 import { RtAiChatKpiComponent } from './kpi/rt-ai-chat-kpi.component';
+import { RtAiChatSectionComponent } from './section/rt-ai-chat-section.component';
 import { RtAiChatTableComponent } from './table/rt-ai-chat-table.component';
 
 const BEM_BLOCK: string = 'rt-ai-chat-blocks';
 
 /**
  * Блоки ответа по порядку: `markdown` — текстом, `notice` — плашкой `rt-message`, `table` —
- * таблицей `rt-ai-chat-table`, `kpi` — карточками `rt-ai-chat-kpi`, остальные —
- * отрисовщиками, которые приложение зарегистрировало через `provideRtAiChatBlock`. Блок без
- * отрисовщика показан заглушкой с именем типа.
+ * таблицей `rt-ai-chat-table`, `kpi` — карточками `rt-ai-chat-kpi`, `section` — сеткой
+ * `rt-ai-chat-section`, остальные — отрисовщиками, которые приложение зарегистрировало через
+ * `provideRtAiChatBlock`. Блок без отрисовщика показан заглушкой с именем типа. Блок в ячейке
+ * секции рисует тот же шаблон, что и блок ленты.
  */
 @Component({
     selector: 'rt-ai-chat-blocks',
@@ -28,6 +30,7 @@ const BEM_BLOCK: string = 'rt-ai-chat-blocks';
     imports: [
         // angular
         NgComponentOutlet,
+        NgTemplateOutlet,
 
         // standalone components / directives
         BlockDirective,
@@ -36,6 +39,7 @@ const BEM_BLOCK: string = 'rt-ai-chat-blocks';
         RtMessageComponent,
         RtAiChatTableComponent,
         RtAiChatKpiComponent,
+        RtAiChatSectionComponent,
 
         // pipes
         RtKitLabelPipe,
