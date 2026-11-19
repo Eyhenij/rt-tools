@@ -5,12 +5,12 @@
 Rewritten by every session, not appended to.
 
 - **State:** `<name from the state list of rule task-flow>`
-- **Stage:** <number> of <total> — <name>
-- **Done:** <briefly>
-- **Next step:** <what is done first in the new session>
-- **Uncommitted:** <what lies in the tree outside the index>
-- **Waiting for the owner:** <what exactly, or "no"; the owner's standing word about a stop is quoted in « »>
-- **PR:** <number and state, or "not open yet">
+- **Stage:** 2 of 2 — Code and showcase
+- **Done:** mockup, code, story, specs, two review rounds, owner approval of the mockup and the showcase in `approvals.md`
+- **Next step:** push set, push, PR
+- **Uncommitted:** the progress file
+- **Waiting for the owner:** no
+- **PR:** not open yet
 
 ## Steps
 
@@ -21,9 +21,10 @@ The steps of the plan, all of them, with a mark each. Rewritten by every turn th
 Exactly one step carries `[>]`. The numbers and the names are copied from the plan and not
 reworded: a check matches the two lists, and the turn exit guard counts what is not done yet.
 
-- [x] 1.1 <name of the first step of the first stage>
-- [>] 1.2 <name of the second step of the first stage>
-- [ ] 2.1 <name of the first step of the second stage>
+- [x] 1.1 Add the variant `Border` and the slots to the Card set
+- [x] 1.2 Add `Service Logo/slack` and a demo frame
+- [x] 2.1 Input `bordered` and slot `[rtCardHeaderEnd]`
+- [x] 2.2 Story `Catalog`, specs and documents
 
 ## Decisions along the way
 
