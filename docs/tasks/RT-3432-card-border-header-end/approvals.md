@@ -1,0 +1,3 @@
+- **Макет:** «Одобряю» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL/?node-id=8348-1051
+- **Совпадение:** 24 из 24 чисел
+- **Витрина:** «Одобряю»

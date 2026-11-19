@@ -6,10 +6,12 @@ import { IStoryState, STORY_STATES, storyStateLabel } from '../../../../../showc
 import { StoryThemesComponent } from '../../../../../showcase/story-themes.component';
 import { IRtServiceLogo } from '../../../service-logo/rt-service-logo.model';
 import { RtServiceLogoComponent } from '../../../service-logo/rt-service-logo.component';
+import { RtTagComponent } from '../../../tag/rt-tag.component';
 import { RtCardComponent } from '../../rt-card.component';
+import { SLACK_MARK } from './story-slack-mark';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TCardMatrixPart = 'header' | 'slots' | 'clickable' | 'states' | 'presets' | 'themes';
+export type TCardMatrixPart = 'header' | 'slots' | 'clickable' | 'states' | 'presets' | 'themes' | 'catalog';
 
 /** Случай шапки: имя для подписи ячейки и значение входа. */
 interface ICardHeaderCase {
@@ -108,6 +110,23 @@ interface ICardHeaderCase {
                 </app-story-presets>
             }
 
+            @case ('catalog') {
+                <app-story-presets caption="Карточка службы: обводка, тег справа, знак">
+                    <ng-template>
+                        <div data-story-frame="catalog" style="width: 20.125rem">
+                            <rt-card bordered header="Slack">
+                                <rt-service-logo rtCardMedia [logos]="slackLogos" />
+                                <rt-tag rtCardHeaderEnd severity="success" value="Настроено" />
+                                <p
+                                    style="margin: 0; font-size: var(--rt-text-sm); line-height: var(--rt-leading-normal); color: var(--rt-color-text-muted)">
+                                    Сотрудники пишут ассистенту в Slack, и ответ приходит им туда же
+                                </p>
+                            </rt-card>
+                        </div>
+                    </ng-template>
+                </app-story-presets>
+            }
+
             @case ('presets') {
                 <app-story-presets caption="Карточка в обоих наборах">
                     <ng-template>
@@ -144,6 +163,7 @@ interface ICardHeaderCase {
         // components
         RtCardComponent,
         RtServiceLogoComponent,
+        RtTagComponent,
 
         // showcase
         StoryPresetsComponent,
@@ -170,6 +190,9 @@ export class TestRtCardMatrixComponent {
 
     /** Знак над названием — иконка кита: чужих логотипов кит не несёт */
     public readonly mediaLogos: readonly IRtServiceLogo.Item[] = [{ icon: 'wallet', label: 'Банковский перевод' }];
+
+    /** Знак Slack в каталоге службы: настоящий логотип, как у карточки в приложении. */
+    public readonly slackLogos: readonly IRtServiceLogo.Item[] = [SLACK_MARK];
 
     public readonly clickables: readonly boolean[] = [false, true];
 
