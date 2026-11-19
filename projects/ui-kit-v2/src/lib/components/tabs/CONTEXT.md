@@ -35,26 +35,29 @@
 
 ## `[rtTab]`
 
-| вход                              | тип                                               | умолчание             |
-| --------------------------------- | ------------------------------------------------- | --------------------- |
-| `rtTab`                           | `IRtTabs.Id` — идентификатор вкладки              | `''`                  |
-| `label`                           | `string`                                          | `''`                  |
-| `titleTemplate`                   | `TemplateRef \| null`                             | `null`                |
-| `icon` / `iconColor`              | `IRtIcon.Name \| null` / `IRtTabs.TitleColor`     | `null` / `'current'`  |
-| `badge`                           | `string \| number \| null`                        | `null`                |
-| `badgeTitle`                      | `string` — подсказка при наведении на метку       | `''`                  |
-| `badgeAriaLabel`                  | `string` — подпись метки для чтения с экрана      | `''`                  |
-| `badgePosition`                   | `IRtTabs.BadgePosition` — `'overlay'` над иконкой | `'inline'`            |
-| `iconFill`                        | `boolean` — иконка залита                         | `false`               |
-| `disabled` / `hidden` / `invalid` | `boolean`                                         | `false`               |
-| `invalidMessage`                  | `string`                                          | `''` → `uiTabInvalid` |
-| `glyph`                           | `string \| null` — значок Material                | `null`                |
-| `tooltip`                         | `string` — подсказка, и у отключённой             | `''`                  |
-| `closable`                        | `boolean`                                         | `false`               |
-| `pinned`                          | `boolean`                                         | `false`               |
-| `contextMenu`                     | `TemplateRef<ContextMenuContext> \| null`         | `null`                |
-| `closeTooltip`                    | `string` — подсказка крестика                     | `''`                  |
-| `closeTooltipPlacement`           | `IRtTooltip.Placement \| null`                    | `null`                |
+| вход                              | тип                                               | умолчание                        |
+| --------------------------------- | ------------------------------------------------- | -------------------------------- |
+| `rtTab`                           | `IRtTabs.Id` — идентификатор вкладки              | `''`                             |
+| `label`                           | `string`                                          | `''`                             |
+| `titleTemplate`                   | `TemplateRef \| null`                             | `null`                           |
+| `icon` / `iconColor`              | `IRtIcon.Name \| null` / `IRtTabs.TitleColor`     | `null` / `'current'`             |
+| `badge`                           | `string \| number \| null`                        | `null`                           |
+| `badgeTitle`                      | `string` — подсказка при наведении на метку       | `''`                             |
+| `badgeAriaLabel`                  | `string` — подпись метки для чтения с экрана      | `''`                             |
+| `badgePosition`                   | `IRtTabs.BadgePosition` — `'overlay'` над иконкой | `'inline'`                       |
+| `iconFill`                        | `boolean` — иконка залита                         | `false`                          |
+| `disabled` / `hidden` / `invalid` | `boolean`                                         | `false`                          |
+| `invalidMessage`                  | `string`                                          | `''` → `uiTabInvalid`            |
+| `glyph`                           | `string \| null` — значок Material                | `null`                           |
+| `tooltip`                         | `string` — подсказка, и у отключённой             | `''`                             |
+| `closable`                        | `boolean`                                         | `false`                          |
+| `pinned`                          | `boolean`                                         | `false`                          |
+| `empty`                           | `boolean` — тело вкладки показывает заглушку      | `false`                          |
+| `emptyIcon`                       | `IRtIcon.Name \| null`                            | `'inbox'`                        |
+| `emptyTitle` / `emptyDescription` | `string \| null`                                  | `null` → `uiEmptyTitle` / `null` |
+| `contextMenu`                     | `TemplateRef<ContextMenuContext> \| null`         | `null`                           |
+| `closeTooltip`                    | `string` — подсказка крестика                     | `''`                             |
+| `closeTooltipPlacement`           | `IRtTooltip.Placement \| null`                    | `null`                           |
 
 ## Главное, что нужно знать
 
