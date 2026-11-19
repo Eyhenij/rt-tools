@@ -344,3 +344,18 @@ are apart, the foreign check stands under `own`, and the sender drops no new num
 Given refusals of two checks the package does not ship on one day
 When the day line is built
 Then they stand under `recordRefusals:own` as one sum
+
+## The rules gate
+
+### SC-AK-1747 — the refusals of the rules gate are counted by reason
+
+Given the notes of a day: two refusals «too long», one «together», one «not read», one with no
+reason, a refusal of the hook scenarios and a refusal of another day
+When the gate of that day is counted
+Then the reasons are 2, 1, 1 and 1 «без причины», and the two other refusals are not counted
+
+### SC-AK-1748 — the rules delivered with no refusal are counted
+
+Given two delivery notes of the rules gate on a day
+When the gate of that day is counted
+Then the rules delivered with no refusal are two

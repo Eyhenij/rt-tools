@@ -105,6 +105,7 @@ and no dead end over a working day — is read from the same numbers.
 | the owner's words                | «слов владельца»                     |
 | owner corrections                | «Правки владельца»                   |
 | verdicts «goal not met»          | «Цель не достигнута»                 |
+| the rules gate line              | «проверка правил: отказов N (слишком длинное a, не помещаются вместе b, не прочитано c, без причины d), правил без отказа M» |
 | a verdict with no task           | «без задачи»                         |
 | the milestone line               | «веха G: отказов X на сто (порог 5), тупиков N — достигнута» or «— не достигнута» |
 | a day not judged                 | «веха G: вызовов нет»                |
@@ -224,6 +225,14 @@ and no dead end over a working day — is read from the same numbers.
 - **Milestone G is reached on a day with fewer than five refusals per hundred calls and no dead
   end.** Exactly five is not reached. A day with no call is not judged and prints «вызовов нет». The
   report prints one milestone line per day of the period.
+
+### The rules gate
+
+- **The refusals of the rules gate are counted by the reason its note carries.** The reasons are
+  «too long», «do not fit together» and «not read»; a note with no reason or with a reason not on
+  the list counts as «без причины». A note of the hook scenarios, version `dev`, is not counted.
+- **The rules the gate delivered with no refusal are counted by its delivery notes.** One note is
+  one rule put into the session; the report prints the sum over the period next to the refusals.
 
 ### The report and the day line
 
