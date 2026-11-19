@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 4 — The showcase: the overview answer at the four widths and in the chat
-- **Done:** stages 1 and 2. A `section` block gives a view with cells, and the feed draws it by `rt-ai-chat-section`: a heading and a grid of cells. A block in a cell is drawn by the one template of the feed. The specs of the chat folder: 114 passed; of the schema: 6 passed; the type check, the linters and the three style checks are green.
-- **Next step:** step 3.1 — the overview fixture and the stories of the section.
+- **Stage:** 4 of 4 — Two review rounds, the owner's look, the texts and the PR
+- **Done:** stages 1, 2 and 3. The feed draws a `section` block by `rt-ai-chat-section`: a heading and a grid of cells. The showcase holds 16 stories of the section with play steps and the overview page; the 16 references are taken by the image browser, 16 passed. The specs of the chat folder: 114 passed; of the schema: 6 passed.
+- **Next step:** step 4.1 — review round one by three roles.
 - **Uncommitted:** no
 - **Waiting for the owner:** no — the plan is approved: «Одобряю план», the threshold of 600 with it
 - **PR:** not open yet; the base is `RT-3346-ai-chat-blocks`
@@ -20,14 +20,14 @@
 - [x] 2.2 Write the `rt-ai-chat-section` component: a group labelled by its heading through a unique id, the heading role of the level 3, the cells that carry the span and take the cell template, the grid by a named container query — one column below 600, two from 600, the gap `--rt-space-md`, tokens only.
 - [x] 2.3 Add the `section` case to the blocks template and the gap of 16 around a section in the feed.
 - [x] 2.4 Write the specs of the section component, of the blocks component and the styles spec (the named container, the threshold 600, the gap, the span of a cell): SC-UKV-1510, 1514, 1517, 1523, 1525.
-- [>] 3.1 Write the overview fixture — one `blocks` array with one `section`: a title, a summary, 4 KPI, 2 charts, a table — and the stories of the section by the agreement's table «Screens and states»: 328, 386, 640, 926, 599 and 600, a lone column block, a span set, no title, a long title, a nested section, an unknown block, a KPI block in a narrow cell, two sections, right to left, invalid, dark at 386 and 926.
-- [ ] 3.2 Write the chat stories with the overview answer taller than the feed: the narrow panel, the full-screen mode without the thread column, with it, and with a `40rem` reading column.
-- [ ] 3.3 Write the play steps that measure by `getBoundingClientRect` the columns, the cell widths, one top per row, the gaps, no kit block past its cell and no feed widening: SC-UKV-1508, 1509, 1513, 1520–1522, 1526–1528.
-- [ ] 3.4 Break one measurement on purpose, run `pnpm run test:visual:v2`, see it red on that story, and restore the measurement.
-- [ ] 3.5 Write the `Overview.mdx` of the block with the whole `blocks` array and the note that charts in a section need `provideRtAiChatChart()`; name the block and the joining function in the chat Overview and the README.
-- [ ] 3.6 Look at every story live, take the references, sweep all the stories.
-- [ ] 3.7 Match the stories with the approved mockup by numbers into the table «mockup / showcase» in the progress.
-- [ ] 4.1 Review round one by qa-engineer, product-strategist and goal-critic; fix the confirmed findings in one commit.
+- [x] 3.1 Write the overview fixture — one `blocks` array with one `section`: a title, a summary, 4 KPI, 2 charts, a table — and the stories of the section by the agreement's table «Screens and states»: 328, 386, 640, 926, 599 and 600, a lone column block, a span set, no title, a long title, a nested section, an unknown block, a KPI block in a narrow cell, two sections, right to left, invalid, dark at 386 and 926.
+- [x] 3.2 Write the chat stories with the overview answer taller than the feed: the narrow panel, the full-screen mode without the thread column, with it, and with a `40rem` reading column.
+- [x] 3.3 Write the play steps that measure by `getBoundingClientRect` the columns, the cell widths, one top per row, the gaps, no kit block past its cell and no feed widening: SC-UKV-1508, 1509, 1513, 1520–1522, 1526–1528.
+- [x] 3.4 Break one measurement on purpose, run `pnpm run test:visual:v2`, see it red on that story, and restore the measurement.
+- [x] 3.5 Write the `Overview.mdx` of the block with the whole `blocks` array and the note that charts in a section need `provideRtAiChatChart()`; name the block and the joining function in the chat Overview and the README.
+- [x] 3.6 Look at every story live, take the references, sweep all the stories.
+- [x] 3.7 Match the stories with the approved mockup by numbers into the table «mockup / showcase» in the progress.
+- [>] 4.1 Review round one by qa-engineer, product-strategist and goal-critic; fix the confirmed findings in one commit.
 - [ ] 4.2 Review round two by fresh readers; fix the confirmed findings in one commit; run the showcase checks of stage 3 again on the code that ships.
 - [ ] 4.3 Show the showcase to the owner — the two chat stories of the sign first — and write their word into `approvals.md`.
 - [ ] 4.4 Build the kit and read `dist/ui-kit-v2` for the section component and the schema export.
@@ -85,6 +85,38 @@
   that call each other.
 - **The spec of the section logic is a file of its own** next to the logic spec. The schema spec
   holds the checks of `rtSectionItems` and `rtSectionTitle` too.
+
+- **The showcase matches the approved mockup 8375-625 by numbers.** Measured in the pinned Chrome on
+  the story Widths, by `getBoundingClientRect`, against the node bounds of the mockup.
+
+    | what                               | mockup         | showcase       |
+    | ---------------------------------- | -------------- | -------------- |
+    | title, line height                 | 20             | 20             |
+    | title above the grid               | 12             | 12             |
+    | grid gap, rows and columns         | 16             | 16             |
+    | 328 and 386 — columns              | 1              | 1              |
+    | 640 — chart cells                  | 312 and 312    | 312 and 312    |
+    | 640 — top of the charts row        | 340            | 340            |
+    | 640 — KPI columns                  | 2              | 2              |
+    | 926 — chart cells                  | 455 and 455    | 455 and 455    |
+    | 926 — top of the charts row        | 198            | 198            |
+    | 926 — KPI columns                  | 4              | 4              |
+    | summary, KPI and table — whole row | at every width | at every width |
+
+- **The chat stories measured live.** The feed scrolls in all four. The section is 375 wide in the
+  narrow panel and stands in one column. It is 915 in the full-screen mode, 634 next to the thread
+  column and 629 in the `40rem` reading column: two columns in all three, the charts on one top.
+  The threshold of 640 would have given one column in the last two.
+- **A failed play step turned the image run red, and not by design.** The first taking of the
+  references ended «1 failed, 15 passed» on the story TwoSections: «текст в 8 под секцией, а не в
+  16». The story wrapper set `display: block` on the feed host, so the feed lost its own gap of 8.
+  The chat was right the whole time; the wrapper no longer overrides the display. The second run:
+  16 passed. This is the proof step 3.4 asked for, so no second break was made on purpose.
+- **A play error does not show in the development frame of a story.** The check by the body class
+  of the frame saw nothing where the image run refused. A play step is judged by the image run.
+- **The section is named in the list of components shown inside a neighbour's story.** Its stories
+  stand in the chart entry, since the overview needs real charts, and the coverage check looks for
+  a stories folder next to the component.
 
 ## Sessions
 

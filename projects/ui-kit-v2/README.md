@@ -48,6 +48,17 @@ import { provideRtAiChatChart, RT_AI_CHAT_CHART_SCHEMA } from '@rt-tools/ui-kit-
 `RT_AI_CHAT_TABLE_SCHEMA` даёт основной вход `@rt-tools/ui-kit-v2`, и приложение отдаёт её модели
 так же, как схему графика.
 
+Блок секции собирает составной ответ: заголовок и сетка блоков, в широкой ленте в два столбца. Кит
+рисует его сам. Схему секции `RT_AI_CHAT_SECTION_SCHEMA` даёт основной вход. Полей вложенных блоков
+она не называет, поэтому модели отдают схему, собранную из схем вложенных типов:
+
+```typescript
+import { RT_AI_CHAT_KPI_SCHEMA, RT_AI_CHAT_TABLE_SCHEMA, rtAiChatSectionSchema } from '@rt-tools/ui-kit-v2';
+import { RT_AI_CHAT_CHART_SCHEMA } from '@rt-tools/ui-kit-v2/ai-chat-chart';
+
+const parameters = rtAiChatSectionSchema({ kpi: RT_AI_CHAT_KPI_SCHEMA, table: RT_AI_CHAT_TABLE_SCHEMA, chart: RT_AI_CHAT_CHART_SCHEMA });
+```
+
 ### Точки входа компонентов
 
 Каждый компонент собран своей точкой входа по имени своего каталога: `@rt-tools/ui-kit-v2/table`,
