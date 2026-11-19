@@ -49,11 +49,18 @@ None. The card names the cause, the condition and the sign.
 
 ## Decisions
 
-- **The last version is read along the first line of the branch.** The walk follows the first
-  parent of every commit: the commits made on the branch and the merges into it, not the commits a
-  merge brought. The tree of a merge commit is the result the branch chose, so a file the branch
-  removed stays removed. Спросить было некого: заход автономный. Цена ошибки: один довод в вызове
-  истории и сценарий.
+- **The last version of a file the head no longer holds is read at the parent of the commit that
+  removed it.** The card names the walk along the first line of the branch. The role
+  `product-strategist` tried both on a copy of the real branch of RT-3276 and on five built
+  histories. The first line gives the right progress after a merge commit and the old one after a
+  fast-forward: a branch whose PR is merged and that then takes the base in has the line of the
+  base for its first line. The parent of the newest commit that removed the path gave the right
+  progress in all five and 15 steps done of 15 on the real branch. The sign of the card — the
+  state not below «папка-разобрана» — is kept; its way is replaced. Спросить было некого: заход
+  автономный. Цена ошибки: одна функция источника истории и три сценария.
+- **One function holds the rule.** The rerun before a PR finds the taken-apart folder by the same
+  search in its own code; it calls the function instead, so the tree does not hold two answers to
+  one question.
 - **The list of commits other measurers read stays as it is.** What a branch added and changed is
   asked of every commit; this task changes only the choice of the last version. The scenario shows
   whether another reader gives the same roll-back; if it does, it is fixed here, by the same line.
@@ -62,5 +69,6 @@ None. The card names the cause, the condition and the sign.
 
 ## What is left unclear
 
-- Whether the first measurer that rolled RT-3276 back was the progress alone, or the oldest commit
-  that added the folder took part as well. The scenario of the first stage answers it.
+- Nothing. The measure on the copy of the real branch answered the one question: the roll-back
+  came from the exit «every step is done» alone; the other six exits read from the history stayed
+  met after the merge.
