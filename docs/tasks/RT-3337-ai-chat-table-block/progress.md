@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 5 of 6 — The showcase
+- **Stage:** 6 of 6 — The agreement merged, texts brought up to date, hand-in
 - **Done:** the task is taken, the branch `RT-3337-ai-chat-table-block` is taken from `RT-3336-ai-chat-chart-data` (chain), the task is in progress on the board. Exploration done, the six questions closed by assumption, the mockup approved: «Одобряю макет». The agreement draft `docs/specs/ui-kit-v2/proposed/ai-chat-table/` is written and checked against the grill (`ee8c157d2`); its four open questions are closed by assumption in its Decisions.
-- **Next step:** step 5.7, the showcase to the owner with the two divergences from the mockup.
+- **Next step:** step 6.6, row 5 of the epic plan and the task folder taken apart.
 - **Going now:** stage 1. The plan is approved by the owner: «Одобряю план с добавками» — the block schema (step 1.7, SC-UKV-1433) and the chart data table on the shared look (step 4.7, SC-UKV-1434). goal-critic's blocking finding is closed by `play` steps of `Wide` and `Scrolled`.
 - **Uncommitted:** no
 - **Waiting for the owner:** no
@@ -51,16 +51,31 @@ The plan is approved by the owner; the work goes by its steps.
 - [x] 5.4 Sweep the raised showcase and look at every new frame at 328, in the side panel and at 760+.
 - [x] 5.5 Take the references of the new stories and re-take the markdown and ai-chat ones the look changed: `node tools/visual-gate.mjs ui-kit-v2 --update 'blocks/table'`, then `--update 'markdown-text'`; confirm each by a second raising before the commit.
 - [x] 5.6 Measure the mockup node 8215-449 and the same elements of the showcase, in the light and the dark theme, into two JSON files in the scratchpad and run the numbers match; make the overlay for the owner.
-- [>] 5.7 Write the match line into `approvals.md`, show the showcase to the owner, write the owner's answer word for word as the «Витрина» line.
-- [ ] 6.1 Move the agreement into the subdomain `docs/specs/ui-kit-v2/ai-chat-table/` with the same scenario numbers; `implementation.md` gets the bindings `file:symbol` of the written code; the scenarios get their «Covered» marks, the frame-held ones (SC-UKV-1407, 1408, 1409, 1422, 1425, the look part of 1417 and the arrow-key part of 1419) «Not covered: held by the frame of the story …» or «Coverage: partial».
+- [x] 5.7 Write the match line into `approvals.md`, show the showcase to the owner, write the owner's answer word for word as the «Витрина» line.
+- [x] 6.1 Move the agreement into the subdomain `docs/specs/ui-kit-v2/ai-chat-table/` with the same scenario numbers; `implementation.md` gets the bindings `file:symbol` of the written code; the scenarios get their «Covered» marks, the frame-held ones (SC-UKV-1407, 1408, 1409, 1422, 1425, the look part of 1417 and the arrow-key part of 1419) «Not covered: held by the frame of the story …» or «Coverage: partial».
 - [x] 6.2 Edit `docs/specs/ui-kit-v2/ai-chat/spec.md`: the kit's own types name `table` in the two rules, the terminology of the block and the decision about heavy blocks; the out-of-scope line about a table drawn by a registered renderer goes; the answer copy names the kit locale; the attachments line of `ai-chat/CONTEXT.md` follows.
-- [ ] 6.3 Remove `docs/specs/ui-kit-v2/proposed/ai-chat-table/`.
-- [ ] 6.4 Bring `CONTEXT.md` of ai-chat and of markdown-text to the new block, the alignment, the named scroll box and the shared look; re-read the footprint specs and rules for staleness.
-- [ ] 6.5 Run the roles `goal-critic` and `product-strategist` on the result against the owner's words and the points.
-- [ ] 6.6 Mark row 5 of `docs/plans/ai-chat-blocks.md`; write the archive record `docs/archive/RT-3337-ai-chat-table-block.md` with the line that the first kit release goes after the chain is merged, by the owner's word of 15.11; take the task folder apart by the last commit before the PR.
+- [x] 6.3 Remove `docs/specs/ui-kit-v2/proposed/ai-chat-table/`.
+- [x] 6.4 Bring `CONTEXT.md` of ai-chat and of markdown-text to the new block, the alignment, the named scroll box and the shared look; re-read the footprint specs and rules for staleness.
+- [x] 6.5 Run the roles `goal-critic` and `product-strategist` on the result against the owner's words and the points.
+- [>] 6.6 Mark row 5 of `docs/plans/ai-chat-blocks.md`; write the archive record `docs/archive/RT-3337-ai-chat-table-block.md` with the line that the first kit release goes after the chain is merged, by the owner's word of 15.11; take the task folder apart by the last commit before the PR.
 - [ ] 6.7 Run the push set, push, open the PR as a draft into `RT-3336-ai-chat-chart-data`.
 
 ## Decisions along the way
+
+- Steps 6.1, 6.3 and 6.4. The agreement moved by `git mv` into `docs/specs/ui-kit-v2/ai-chat-table/`,
+  status in force, with a binding per rule. The frame-held scenarios SC-UKV-1407, 1408, 1409 and
+  1422 keep no «Not covered» mark: their style specs cover them, and the spec check refuses the
+  mark on a covered scenario. SC-UKV-1425 alone is held by the frames. The kit spec lists the new
+  subdomain; the chart and chart-data specs name it in place of the task number. `CONTEXT.md` of
+  ai-chat and of markdown-text describe the block, `bdi`, the divider row and the shared look.
+
+- The owner approved the showcase: «Одобряю витрину». Both divergences from the mockup stay as the
+  showcase has them: one line above the total and one under it, and the locale's minus sign.
+- The owner asked to fix the missing chat icon in this session: «Do this task here: “Иконка
+  archive.svg для историй чата ui-kit-v2”». The chat page story gave its menu item the icon
+  `archive`, which the icon set does not have, and the kit drew an empty frame. The item takes
+  `box` now; the four stories load with no 404, and the sweep confirms it. The fix goes as a
+  commit of its own in this branch.
 
 - Step 6.2 is done ahead of its stage while the snapshots ran: the ai-chat spec names `table` in
   the two rules, the block term and the decision about heavy blocks, the out-of-scope line drops
@@ -114,6 +129,15 @@ The plan is approved by the owner; the work goes by its steps.
 
 - The branch is taken from `RT-3336-ai-chat-chart-data`: PRs go in a chain, and RT-3336 is not merged yet.
 
+- Step 6.5. goal-critic: every done sign is met; the push and the PR are step 6.7; the markdown
+  table aligns a number only by `--:` and has no negative colour or sticky head, by the grill
+  decision; the wide table inside a live `rt-ai-chat` feed is not checked. All three go into the
+  PR body. product-strategist found one miss: the block schema did not name `title`, which came
+  into the agreement in stage 5. The schema now names it, the schema spec asserts it, the schema
+  rule of the spec names it, and the kit README names the table schema next to the chart one.
+  The other points of product-strategist are hypotheses for later work, not misses: models writing
+  `---` rather than `--:`, the raw values in the CSV, `tableBlockData` not exported.
+
 ## Handover of the session
 
 Put together by a hook before the compaction of the context (auto).
@@ -124,8 +148,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 5 of 6 — The showcase
-- **Next step:** step 5.7, the showcase to the owner with the two divergences from the mockup.
+- **Stage:** 6 of 6 — The agreement merged, texts brought up to date, hand-in
+- **Next step:** step 6.5, the replies of goal-critic and product-strategist (running).
 - **PR:** not open yet; the branch stands on RT-3336 (#3402), which stands on RT-3335 (#3398)
 
 The progress in full — `docs/tasks/RT-3337-ai-chat-table-block/progress.md`; the plan lies next to it.
@@ -133,12 +157,24 @@ The progress in full — `docs/tasks/RT-3337-ai-chat-table-block/progress.md`; t
 ### Uncommitted
 
 ```
-none
+ M docs/specs/ui-kit-v2/ai-chat-chart-data/spec.md
+ M docs/specs/ui-kit-v2/ai-chat-chart/spec.md
+RM docs/specs/ui-kit-v2/proposed/ai-chat-table/implementation.md -> docs/specs/ui-kit-v2/ai-chat-table/implementation.md
+RM docs/specs/ui-kit-v2/proposed/ai-chat-table/scenarios.md -> docs/specs/ui-kit-v2/ai-chat-table/scenarios.md
+RM docs/specs/ui-kit-v2/proposed/ai-chat-table/spec.md -> docs/specs/ui-kit-v2/ai-chat-table/spec.md
+ M docs/specs/ui-kit-v2/scenarios.md
+ M docs/specs/ui-kit-v2/spec.md
+ M docs/tasks/RT-3337-ai-chat-table-block/approvals.md
+ M docs/tasks/RT-3337-ai-chat-table-block/progress.md
+ M projects/ui-kit-v2/src/rich-editor/lib/components/chat/stories/component/test-chat-page.component.html
+?? docs/archive/RT-3337-ai-chat-table-block.md
 ```
 
 ### Commits over the main branch
 
 ```
+f287c9706 feat(rt:ui-kit-v2): витрина блока таблицы и числа под rtl
+5d65c7296 test(rt:ui-kit-v2): эталон панели разбора с таблицей нового вида
 d8f919696 feat(rt:ui-kit-v2): таблицы markdown и данных графика в виде блока таблицы
 a0d9eb9d4 feat(rt:ui-kit-v2): блок table в ответе rt-ai-chat
 2cf7b8d2d feat(rt:ui-kit-v2): разбор markdown читает выравнивание столбцов таблицы
@@ -157,8 +193,6 @@ c0c10cf0e docs(rt:ui-kit-v2): задача RT-3337 взята, план эпик
 ec8883a8c feat(rt:ui-kit-v2): витрина таблицы данных графика
 c294f17a2 feat(rt:ui-kit-v2): кнопка «Показать данные» и таблица под графиком
 95463f63c docs(rt:ui-kit-v2): находки разбора правил по задаче RT-3335
-975466250 feat(rt:ui-kit-v2): строки таблицы данных из данных графика
-55d175566 docs(rt:ui-kit-v2): разбор, план и договорённость таблицы данных графика
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

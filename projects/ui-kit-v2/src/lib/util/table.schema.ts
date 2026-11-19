@@ -13,6 +13,7 @@ export const RT_AI_CHAT_TABLE_SCHEMA: Readonly<Record<string, unknown>> = {
     type: 'object',
     required: ['columns', 'rows'],
     properties: {
+        title: { type: 'string' },
         columns: {
             type: 'array',
             minItems: 1,

@@ -1,7 +1,7 @@
 # Scenarios — the table block of the assistant chat
 
-The numbers continue the numbering of the kit and do not change after the merge. A scenario with no
-test yet carries the mark «Not covered» with the reason.
+The numbers continue the numbering of the kit. A scenario with no test carries the mark «Not
+covered» with the reason.
 
 ### SC-UKV-1396 — the kit draws a table block without a registration
 
@@ -202,7 +202,7 @@ When it is drawn in the light and in the dark theme
 Then the rows are 28 high with 8 of horizontal cell padding and a 12 px font
 And the head row stands on the surface background with muted semibold text, in both themes
 
-Not covered: held by the frames of the stories in both themes; the stories come in the showcase stage.
+Not covered: held by the frames of the stories `Themes` and `Presets` at 328.
 
 ### SC-UKV-1426 — a currency writes the digits of its currency
 

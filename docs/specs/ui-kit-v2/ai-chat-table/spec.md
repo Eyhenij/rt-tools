@@ -1,14 +1,13 @@
 # The table block of the assistant chat
 
-**Status:** proposed · **Revision:** 2026-11-18 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-19 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the assistant chat (the blocks of an answer, the answer copy), the markdown text of
 the kit (its table), the data table of the chart block (the markup this table takes)
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
 
-A product agreement written before the code, task RT-3337 of the epic RT-3346. It merges into the
-kit spec as the subdomain `ai-chat-table` with the same scenario numbers: together with the
-subdomain `ai-chat` it is longer than the document limit.
+The table block of an answer of `rt-ai-chat` and the shared look of the chat tables. It stands as a
+subdomain of its own next to `ai-chat`: together with it it is longer than the document limit.
 
 ## Why
 
@@ -66,7 +65,7 @@ block with typed columns, and the markdown table takes the same look.
 
 - **«Copy CSV» stands while the answer is written and copies the rows drawn at the moment of the press.**
 
-- **The kit exports the JSON schema of the table block (JSON Schema 2020-12), so that an application gives it to the model as the parameters of a tool.** It names the column types, the currency code as three Latin upper-case letters and the optional `total`.
+- **The kit exports the JSON schema of the table block (JSON Schema 2020-12), so that an application gives it to the model as the parameters of a tool.** It names the optional `title`, the column types, the currency code as three Latin upper-case letters and the optional `total`.
 
 - **A block the schema accepts is drawn with nothing dropped or emptied.** The block is more lenient than the schema: what the schema refuses is still drawn by the rules above.
 
@@ -265,3 +264,5 @@ the owner took the recommended option in every menu of this epic.
 - 2026-11-18 — the review by spec-critic: malformed parts, an absent total, widths without a text
   column, the locale fallback, the zero form, the CSV text fields, logical alignment, the copy
   state across a new input and a locale change.
+- 2026-11-19 — the code of RT-3337 written and the showcase approved; the agreement became this
+  subdomain. The value of a number column is isolated under `dir="rtl"`.

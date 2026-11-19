@@ -14,9 +14,10 @@ function field(path: string[]): unknown {
 }
 
 describe('RT_AI_CHAT_TABLE_SCHEMA', (): void => {
-    it('SC-UKV-1433 — схема называет роды столбцов, код валюты и строки списками значений', (): void => {
+    it('SC-UKV-1433 — схема называет заголовок, роды столбцов, код валюты и строки списками значений', (): void => {
         expect(field(['$schema'])).toBe('https://json-schema.org/draft/2020-12/schema');
         expect(field(['required'])).toEqual(['columns', 'rows']);
+        expect(field(['properties', 'title', 'type'])).toBe('string');
         expect(field(['properties', 'columns', 'items', 'properties', 'type', 'enum'])).toEqual(Object.values(ERtTableColumn));
         expect(field(['properties', 'columns', 'items', 'properties', 'currency', 'pattern'])).toBe('^[A-Z]{3}$');
         expect(field(['properties', 'rows', 'items', 'type'])).toBe('array');
