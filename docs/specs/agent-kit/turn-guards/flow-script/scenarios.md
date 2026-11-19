@@ -227,6 +227,22 @@ Then it is met by the first and unmet by the second
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 
+### SC-AK-1741 — exit 11 asks a branch of every task ahead
+
+Given a task ahead with a branch on the server before two tasks without one, and the same tasks all with branches
+When exit 11 is measured
+Then the first is unmet and the second met
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
+### SC-AK-1742 — exit 12 waits for every task not deferred to be merged
+
+Given every merged task marked merged and a task not deferred left unmerged
+When exit 12 is measured
+Then it is unmet
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+
 ### SC-AK-1392 — exit 13 measures the commits of a cascade
 
 Given a task whose PR went into the branch of the previous task, with both tips in the epic branch, and with the previous one not yet there

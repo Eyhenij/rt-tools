@@ -2,15 +2,15 @@
 
 ## Где мы
 
-- **State:** `задача-взята`
+- **State:** `этап-идёт`
 
 ## Шаги
 
-- [>] 1.1 The measurer of exit 11 asks a branch of every task ahead, not of the first one
-- [ ] 1.2 The article of exit 11 and its scenario say so
-- [ ] 2.1 The measurer of exit 12 asks every task not deferred to be marked merged
-- [ ] 2.2 The article of exit 12 and its scenario say so
-- [ ] 3.1 The laid-out measurer is the package one
+- [x] 1.1 The measurer of exit 11 asks a branch of every task ahead, not of the first one
+- [x] 1.2 The article of exit 11 and its scenario say so
+- [x] 2.1 The measurer of exit 12 asks every task not deferred to be marked merged
+- [x] 2.2 The article of exit 12 and its scenario say so
+- [>] 3.1 The laid-out measurer is the package one
 
 ## Decisions along the way
 
