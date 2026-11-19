@@ -76,8 +76,12 @@ export function recordOf(fixture) {
     fixture.turns.forEach((turn, index) => {
         const at = turn.at;
         const id = `toolu_${index}`;
-        if (turn.role === 'owner') entries.push(user(at, [{ type: 'text', text: ownerText(turn.owner) }]));
-        else if (turn.role === 'hook') entries.push(user(at, stopFeedback(turn.stop, fixture.task)));
+        // A typed word lands as the host writes it: the queue record, then the user record.
+        if (turn.role === 'owner') {
+            const text = ownerText(turn.owner);
+            entries.push({ type: 'queue-operation', operation: 'enqueue', timestamp: at, content: text });
+            entries.push(user(at, text));
+        } else if (turn.role === 'hook') entries.push(user(at, stopFeedback(turn.stop, fixture.task)));
         else if (turn.role === 'harness')
             entries.push(user(at, 'This session is being continued from a previous conversation.', { isCompactSummary: true }));
         else if (turn.say) entries.push(assistant(at, [{ type: 'text', text: turn.say }]));

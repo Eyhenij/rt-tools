@@ -23,9 +23,20 @@
 //   RT_JUDGE_RUNNER=<command> replaces the call of the model: the command gets the prompt on stdin
 //   and prints the answer. The suite gives it a fake judge.
 import { execFileSync, spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import {
+    closeSync,
+    existsSync,
+    mkdtempSync,
+    openSync,
+    readdirSync,
+    readFileSync,
+    readSync,
+    rmSync,
+    statSync,
+    writeFileSync,
+} from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { recordOf } from './turn-replay-lib.mjs';
 
@@ -133,13 +144,17 @@ export function stopHookOf(root) {
 
 /** The input the host gives the Stop hook, for a session record written at `transcript`. */
 export function hookInputOf(fixture, transcript, root) {
-    const said = [...(fixture.turns ?? [])].reverse().find((turn) => turn.say);
+    const turns = fixture.turns ?? [];
+    const said = [...turns].reverse().find((turn) => turn.say);
+    // The host sets it when this stop follows a refusal of a Stop hook within the same turn.
+    const owner = turns.map((turn) => turn.role).lastIndexOf('owner');
+    const refused = turns.slice(owner + 1).some((turn) => turn.role === 'hook');
     return {
         session_id: 'replay',
         transcript_path: transcript,
         cwd: root,
         hook_event_name: 'Stop',
-        stop_hook_active: false,
+        stop_hook_active: refused,
         last_assistant_message: said?.say ?? '',
     };
 }
@@ -221,7 +236,25 @@ export function replayAsHook({ root, fixtures, expectedFile, model = null, pad =
  * hook, picked by the prompt of its declaration. A run with no duration — a refusal or a timeout — is
  * timed from the last record before its summary; one that reached the timeout is counted apart.
  */
-export function liveRuns(root, dir = join(homedir(), '.claude/projects', root.replace(/[/.]/g, '-'))) {
+/** The lines of a file read in pieces: a session record outgrows the longest string of the runtime. */
+function* linesOf(file) {
+    const fd = openSync(file, 'r');
+    const chunk = Buffer.alloc(1 << 20);
+    let rest = '';
+    try {
+        for (let read; (read = readSync(fd, chunk, 0, chunk.length, null)) > 0;) {
+            const parts = (rest + chunk.toString('utf8', 0, read)).split('\n');
+            rest = parts.pop();
+            yield* parts;
+        }
+    } finally {
+        closeSync(fd);
+    }
+    if (rest) yield rest;
+}
+
+export function liveRuns(tree, dir = join(homedir(), '.claude/projects', resolve(tree).replace(/[/.]/g, '-'))) {
+    const root = resolve(tree);
     const hook = stopHookOf(root);
     const since = Date.parse(
         execFileSync('git', ['log', '-1', '--format=%cI', '--', '.claude/settings.json', 'projects/agent-kit/assets/hooks/turn-judge.md'], {
@@ -229,6 +262,7 @@ export function liveRuns(root, dir = join(homedir(), '.claude/projects', root.re
             encoding: 'utf8',
         }).trim()
     );
+    if (Number.isNaN(since)) throw new Error(`no commit of the hook in ${root}: nothing to count from`);
     const branch = execFileSync('git', ['branch', '--show-current'], { cwd: root, encoding: 'utf8' }).trim();
     const limit = (hook?.timeout ?? 120) * 1000;
     const seconds = [];
@@ -236,7 +270,7 @@ export function liveRuns(root, dir = join(homedir(), '.claude/projects', root.re
     for (const file of existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith('.jsonl')) : []) {
         if (statSync(join(dir, file)).mtimeMs < since) continue;
         let before = null;
-        for (const line of readFileSync(join(dir, file), 'utf8').split('\n')) {
+        for (const line of linesOf(join(dir, file))) {
             if (!line) continue;
             let record;
             try {
@@ -252,9 +286,17 @@ export function liveRuns(root, dir = join(homedir(), '.claude/projects', root.re
             if (!(at >= since) || record.gitBranch !== branch) continue;
             const run = (record.hookInfos ?? []).find((h) => h.command === hook?.prompt);
             if (!run) continue;
-            const ms = run.durationMs ?? (before ? at - before : null);
+            if (run.durationMs) {
+                seconds.push(run.durationMs / 1000);
+                continue;
+            }
+            // No duration: the judge refused, timed out, or was dropped when another Stop hook
+            // refused first. Only its own refusal or a run past the timeout is timed by the records.
+            const ms = before ? at - before : null;
             if (ms === null) continue;
-            if (!run.durationMs && ms >= limit) timeouts += 1;
+            const judged = (record.hookErrors ?? []).some((e) => String(e).includes('BLOCKED by turn-judge'));
+            if (!judged && ms < limit) continue;
+            if (!judged) timeouts += 1;
             seconds.push(ms / 1000);
         }
     }

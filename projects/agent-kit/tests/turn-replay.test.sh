@@ -357,18 +357,20 @@ mkdir -p "$L/tree/.claude" "$L/records"
 node -e "
 const t0 = Date.now() + 3600e3, at = (s) => new Date(t0 + s * 1000).toISOString();
 const run = (cmd, ms) => ms === undefined ? { command: cmd } : { command: cmd, durationMs: ms };
-const sum = (s, info, branch = 'live-branch') => ({ type: 'system', subtype: 'stop_hook_summary', timestamp: at(s), gitBranch: branch, hookInfos: [info] });
+const sum = (s, info, branch = 'live-branch', errors = []) => ({ type: 'system', subtype: 'stop_hook_summary', timestamp: at(s), gitBranch: branch, hookInfos: [info], hookErrors: errors });
 const rows = [
   { type: 'assistant', timestamp: at(0) }, sum(20, run('NEW turn-judge prompt', 20000)),
   { type: 'assistant', timestamp: at(100) }, sum(225, run('NEW turn-judge prompt')),
+  { type: 'assistant', timestamp: at(500) }, sum(540, run('NEW turn-judge prompt'), 'live-branch', ['BLOCKED by turn-judge: x']),
+  { type: 'assistant', timestamp: at(600) }, sum(630, run('NEW turn-judge prompt'), 'live-branch', ['BLOCKED by turn-exit-guard: x']),
   { type: 'assistant', timestamp: at(300) }, sum(310, run('OLD turn-judge prompt', 9000)),
   { type: 'assistant', timestamp: at(400) }, sum(410, run('NEW turn-judge prompt', 9000), 'other-branch'),
 ];
 require('fs').writeFileSync('$L/records/s.jsonl', rows.map((r) => JSON.stringify(r)).join('\n') + '\n');
 "
 LIVE="$(judge_js "console.log(JSON.stringify(j.liveRuns('$L/tree', '$L/records')))")"
-report "replay: SC-AK-1757 — считаются только запуски объявления на ветке" "$(printf '%s' "$LIVE" | jq -r '.runs')" 2
-report "replay: SC-AK-1757 — запуск без длительности — таймаут" "$(printf '%s' "$LIVE" | jq -r '.timeouts')" 1
-report "replay: SC-AK-1757 — его время — от последней записи до сводки" "$(printf '%s' "$LIVE" | jq -r '.median')" 72.5
+report "replay: SC-AK-1757 — считаются только запуски объявления на ветке, снятый хостом — нет" "$(printf '%s' "$LIVE" | jq -r '.runs')" 3
+report "replay: SC-AK-1757 — запуск без длительности и без отказа дольше таймаута — таймаут" "$(printf '%s' "$LIVE" | jq -r '.timeouts')" 1
+report "replay: SC-AK-1757 — время без длительности — от последней записи до сводки" "$(printf '%s' "$LIVE" | jq -r '.median')" 40
 
 suite_result "записанные ходы"

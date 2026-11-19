@@ -99,9 +99,9 @@ Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
 ### SC-AK-1757 — the live count picks the runs of the declaration on the branch
 
-Given session records with runs of the current declaration on the current branch, one of them a timeout with no duration, a run of an older prompt and a run on another branch
+Given session records with runs of the current declaration on the current branch, a run of an older prompt and a run on another branch. The runs on the branch are: one with a duration, one with no duration past the timeout, one refused by the judge with no duration, one dropped when another Stop hook refused
 When the live count runs
-Then it counts only the runs of the current declaration on the current branch. It times the one with no duration from the last record before its summary and counts it as a timeout
+Then it counts only the runs of the current declaration on the current branch and leaves out the dropped one. It times a run with no duration from the last record before its summary. The one past the timeout with no refusal of the judge counts as a timeout
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 

@@ -121,7 +121,8 @@ prints a line per fixture.
   of the hook.
 - **The live count takes the runs of the hook declaration on the current branch after its last
   commit.** A run is picked by the prompt of the declaration; a refusal or a timeout that carries no
-  duration is timed from the last record before its summary, and a timeout is counted apart.
+  duration is timed from the last record before its summary, and a timeout is counted apart. A run
+  the host dropped when another Stop hook refused first has no time of the judge and is left out.
 
 Two scenarios of the neighbouring specs follow these rules: `SC-AK-1414` of `guard/` (an edit that
 marks a step done is refused) and `SC-AK-1411` of the engine (the approval mark carries the place of

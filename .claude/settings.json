@@ -65,7 +65,8 @@
         "hooks": [
           {
             "type": "agent",
-            "prompt": "Read the file .claude/hooks/turn-judge.md under the project root named by the field cwd of the hook input, and follow it exactly. The hook input: $ARGUMENTS",
+            "prompt": "Read the file .claude/hooks/turn-judge.md under the project root named by the field cwd of the hook input, and follow it exactly. In the same message as that Read, make its round 1: Grep the file named by transcript_path for `^` and for `\"operation\":\"enqueue\".*\"content\":\"[^<]|\"content\":\"The user answered: ` with output_mode count. The hook input: $ARGUMENTS",
+            "model": "claude-sonnet-5-5",
             "timeout": 120
           }
         ]
