@@ -2,17 +2,49 @@
 
 ## Where we stand
 
-- **State:** `договорённость-записана`
-- **Stage:** 0 of 4 — the agreement and the plan before the code
+- **State:** `этап-идёт`
+- **Stage:** 1 of 4 — The data of the block: the lenient function and the schema
 - **Done:** the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3339-ai-chat-link-block` from `RT-3338-ai-chat-kpi-block` (chain, PR #3429), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption.
-- **Next step:** the owner's word on the plan and on the milestone this task serves; then stage 1.
-- **Uncommitted:** the plan — it is committed after the owner's word
-- **Waiting for the owner:** the word on the plan, asked by menu
+- **Next step:** stage 1, step 1 — the lenient data function in `link-data.ts`.
+- **Uncommitted:** no
+- **Waiting for the owner:** no — the plan is approved: «Одобряю план»; the milestone: «Вторая веха G2»
 - **PR:** not open yet; the base is `RT-3346-ai-chat-blocks` — RT-3338 is merged into it (#3429)
 
 ## Steps
 
-The plan is not written yet.
+### 1. The data of the block: the lenient function and the schema
+
+- [ ] 1. Write the lenient data function of a link block in `link-data.ts` next to `kpi-data.ts`: title and url required and trimmed, section, icon with `link` by default, state absent when unknown, reason only in `failed`. ← now
+- [ ] 2. Write the JSON schema of the block in `link.schema.ts` next to `kpi.schema.ts` — `title`, `url`, `section`, `icon` — and export both from the util barrel.
+- [ ] 3. Write the specs of the data function and the schema with the scenario numbers of the agreement: SC-UKV-1488, 1489, 1497.
+
+### 2. The card and the event through the chat
+
+- [ ] 1. Add the `LinkBlock` type, the `link` view, the `LinkOpen` event type, `link` in `OWN_TYPES`, the data step in `toBlockViews` and the copy line in `blockText`.
+- [ ] 2. Write the `rt-ai-chat-link` component on `rt-tag`, `rtButton` and `rt-icon`: the row with the numbers of the agreement, the text column, the status, the reason, the two buttons with `aria-disabled` in `pending`, the announcement text of a state change for the feed, tokens only.
+- [ ] 3. Carry the press from the card through `rt-ai-chat-blocks` and the answer to a synchronous `linkOpen` output of `rt-ai-chat` that adds the message id.
+- [ ] 4. Add the labels «Opening», «Opened», «Failed to open», «Open», «Open in new tab» to the kit English set and the showcase Russian set.
+- [ ] 5. Set the gap of the tag `sm` to `--rt-space-1` and add the option that turns the start icon of the tag.
+- [ ] 6. Write the specs of the card, the logic, the copy, the chat output and the tag option: SC-UKV-1487, 1490–1496, 1499, 1501, 1502, 1506.
+
+### 3. The showcase and the match with the mockup
+
+- [ ] 1. Write the stories of the block by the agreement's table «Screens and states»: pending, opened, failed, failed without a reason, no state, long title, no section, long button labels, 328, 386, 640, dark at 328, right to left, invalid.
+- [ ] 2. Write a chat story of the whole loop in the narrow panel and in the full-screen mode: a press logs `linkOpen` with `{ messageId, url, newTab }`, sets `pending`, then `opened`, and on the second card `failed` with a reason; put the handler code into the block `Overview.mdx`.
+- [ ] 3. Write the play steps that measure by `getBoundingClientRect` the icon box, the row gaps, the button row on one top, the wrapped buttons, the two-line title, the mirrored order and no text past the card, and that press a button and wait for the status to change: SC-UKV-1498, 1503, 1504.
+- [ ] 4. Write the `Overview.mdx` of the block and name the block and `linkOpen` in the chat Overview.
+- [ ] 5. Set the gap 4 in the `sm` variants of the Figma `Tag` and lift the instance overrides of the mockup 8339-452.
+- [ ] 6. Look at every story live, take the references of the block and anew those of the tag whose gap changed, sweep all the stories.
+- [ ] 7. Match the stories with the approved mockup by numbers into the table «mockup / showcase» in the progress, with the contrast of the dark reason and tag, show the showcase to the owner and write their word into `approvals.md`; SC-UKV-1500 and 1505 are held by this match.
+
+### 4. Review rounds and closing
+
+- [ ] 1. Review round one by qa-engineer, product-strategist and goal-critic; fix the confirmed findings in one commit.
+- [ ] 2. Review round two by fresh readers; fix the confirmed findings in one commit.
+- [ ] 3. Merge the agreement into `docs/specs/ui-kit-v2/ai-chat-link/` with its bindings; edit the chat and tag specs and the kit spec indexes as the agreement names.
+- [ ] 4. Bring `CONTEXT.md` of ai-chat and the tag up to the block, the output and the gap.
+- [ ] 5. Mark row 7 of the epic plan, write the archive record, take the task folder apart.
+- [ ] 6. Run the push set, push, open the PR into `RT-3346-ai-chat-blocks`.
 
 ## Decisions along the way
 
