@@ -88,7 +88,11 @@ The owner added: «включи в задачу поправить дейт пи
 
 1. [ ] Stories of both fields at the narrow width with the sheet open and with the sheet off. —
    begun with the multiselect with toggles: stories `Toggles` and `TogglesSheet` by the mockups
-   8293:3667 and 8293:3691; the select gets `Sheet` and `SheetOff` at 375 by the mockup 6068:811.
+   8293:3667 and 8293:3691; the select got `Sheet` and `SheetOff` at 375 by the mockup 6068:811
+   (67cc8a6ca); the toggle group gets `FoldedOne`, `FoldedMany`, `Fits` and `FoldedOneOpen` by the
+   mockups 8310:652, 8310:769 and 8310:837; the autocomplete and `rt-menu` get `Sheet` and
+   `SheetOff` by 6068:1387 and 8293:2474. Every story of the set takes the select's technique: a
+   `BreakpointsService` stub narrow from the first render, overlay `.rt-popover-sheet`.
 2. [ ] Measure the showcase against the mockup with `node tools/kit-match.mjs numbers`.
 3. [ ] Show the showcase to the owner and write the approval into `approvals.md`.
 
