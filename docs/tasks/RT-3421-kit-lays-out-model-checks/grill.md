@@ -54,8 +54,15 @@ None. The card names the condition and the sign.
   форма строки объявления меняется одной правкой разбора шапки.
 - **The layout appends the record and never rewrites one that stands.** The same rule the
   dispatcher records follow. A record that calls the file but differs from the declaration — other
-  words, a lower limit, another model — is named by the layout and by its check. Цена ошибки: одна
-  строка отчёта.
+  words, a lower limit, another model — is named by the layout and by its check. The check refuses
+  on other words, another pattern and a lower limit; another model and a higher limit are named
+  only, so a tree with no access to the declared model can change it and stay green. A file on
+  disk with no record is refused too. Цена ошибки: одна ветка сравнения.
+- **The sign of the card is measured on a whole layout.** `init` and `sync` with the real
+  catalogue into an empty tree, then the check of the layout. The role `goal-critic` showed that
+  scenarios on made-up lines pass while a clean tree gets no record. The same role named the
+  cases the first draft left out: a tree without the dispatcher, settings that do not parse, a
+  moved directory of hooks.
 - **A tree that put the check into its `skip` list gets no record.** The record is written for a
   file that lies on disk, as with the dispatcher.
 - **The record of this tree must equal the declaration.** The words of the first round and the
