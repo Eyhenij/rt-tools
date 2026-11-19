@@ -10,17 +10,25 @@ description: Rule under the navigation law. Load when editing the menu declarati
 Rule under the law `docs/constitution/navigation.md`. Cold part: `pitfalls.md`. Where it lives: the
 table in `implementation.md` next to it.
 
-A menu item is an entry of `admin-nav.items.ts`; the second-level panel is `rt-page-header` of the
-kit, laid out in columns and groups; «no screen yet» is `disabled` in the declaration.
+## What it is called here
+
+| In the law               | Here                                                                            |
+| ------------------------ | ------------------------------------------------------------------------------- |
+| menu item                | an entry in the `admin-nav.items.ts` declaration                                |
+| section with a panel     | an item with columns; has no address of its own                                 |
+| second-level panel       | the `rt-page-header` popup from the kit package, laid out in columns and groups |
+| unread sign              | a dot, comes as a predicate by the item id                                      |
+| the "no screen yet" flag | `disabled` in the declaration                                                   |
 
 ## How the law applies here
 
 - **An item is declared once and serves as the source of both the menu and route gating.**
 - **The declaration imports no `shell`.** It would close a cycle through `container/feature`.
-- **Gating has two layers: the user right and the section flag.** An item with a flag has no
-  rights and no address.
+- **Gating has two layers: the user right and the section flag.** The flag marks an item with no
+  screen yet: it has no rights and no address, and stays visible to everyone.
 - **Domain data comes into the header by a token, not by an import.** The interface and the
-  `InjectionToken` live in `container/util`.
+  `InjectionToken` live in `container/util`; the composition root binds the token to the domain
+  implementation.
 
 ## Patterns
 
