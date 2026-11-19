@@ -2,17 +2,39 @@
 
 ## Where we stand
 
-- **State:** `договорённость-записана`
-- **Stage:** 0 of 4 — the agreement and the plan before the code
+- **State:** `этап-идёт`
+- **Stage:** 1 of 4 — The data of the section: nested views, span, copy, schema
 - **Done:** the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3342-ai-chat-section-grid` from `RT-3346-ai-chat-blocks`, the folder from the template. The epic plan puts RT-3342 before RT-3339 by the owner's word.
-- **Next step:** the owner's word on the plan; then stage 1.
-- **Uncommitted:** the plan — it is committed after the owner's word
-- **Waiting for the owner:** the word on the plan, asked by menu
+- **Next step:** step 1.1 — the section types and the data step in `toBlockViews`.
+- **Uncommitted:** no
+- **Waiting for the owner:** no — the plan is approved: «Одобряю план», the threshold of 600 with it
 - **PR:** not open yet; the base is `RT-3346-ai-chat-blocks`
 
 ## Steps
 
-The plan is not written yet.
+- [>] 1.1 Add the `SectionBlock` type, the nested block type with `span`, the `section` view with its cells, `section` in `OWN_TYPES` and the section data step in `toBlockViews`: the dropped items, the default span by the declared type, the `span` override, the plate for a nested section and for a section without a block.
+- [ ] 1.2 Add the copy of a section to `blockText`: the trimmed title and the texts of the nested blocks, nothing for a nested section, nothing when no block gives a text.
+- [ ] 1.3 Write the JSON schema of the section and the function that joins the schemas of the nested types in `section.schema.ts` next to `kpi.schema.ts`, and export both from the util barrel.
+- [ ] 1.4 Write the specs of the logic, the copy and the schema with the scenario numbers of the agreement: SC-UKV-1507, 1511, 1512, 1515, 1516, 1518, 1519, 1524.
+- [ ] 2.1 Move the cases of the feed into one `ng-template` of the blocks template, drawn for the feed as before.
+- [ ] 2.2 Write the `rt-ai-chat-section` component: a group labelled by its heading through a unique id, the heading role of the level 3, the cells that carry the span and take the cell template, the grid by a named container query — one column below 600, two from 600, the gap `--rt-space-md`, tokens only.
+- [ ] 2.3 Add the `section` case to the blocks template and the gap of 16 around a section in the feed.
+- [ ] 2.4 Write the specs of the section component, of the blocks component and the styles spec (the named container, the threshold 600, the gap, the span of a cell): SC-UKV-1510, 1514, 1517, 1523, 1525.
+- [ ] 3.1 Write the overview fixture — one `blocks` array with one `section`: a title, a summary, 4 KPI, 2 charts, a table — and the stories of the section by the agreement's table «Screens and states»: 328, 386, 640, 926, 599 and 600, a lone column block, a span set, no title, a long title, a nested section, an unknown block, a KPI block in a narrow cell, two sections, right to left, invalid, dark at 386 and 926.
+- [ ] 3.2 Write the chat stories with the overview answer taller than the feed: the narrow panel, the full-screen mode without the thread column, with it, and with a `40rem` reading column.
+- [ ] 3.3 Write the play steps that measure by `getBoundingClientRect` the columns, the cell widths, one top per row, the gaps, no kit block past its cell and no feed widening: SC-UKV-1508, 1509, 1513, 1520–1522, 1526–1528.
+- [ ] 3.4 Break one measurement on purpose, run `pnpm run test:visual:v2`, see it red on that story, and restore the measurement.
+- [ ] 3.5 Write the `Overview.mdx` of the block with the whole `blocks` array and the note that charts in a section need `provideRtAiChatChart()`; name the block and the joining function in the chat Overview and the README.
+- [ ] 3.6 Look at every story live, take the references, sweep all the stories.
+- [ ] 3.7 Match the stories with the approved mockup by numbers into the table «mockup / showcase» in the progress.
+- [ ] 4.1 Review round one by qa-engineer, product-strategist and goal-critic; fix the confirmed findings in one commit.
+- [ ] 4.2 Review round two by fresh readers; fix the confirmed findings in one commit; run the showcase checks of stage 3 again on the code that ships.
+- [ ] 4.3 Show the showcase to the owner — the two chat stories of the sign first — and write their word into `approvals.md`.
+- [ ] 4.4 Build the kit and read `dist/ui-kit-v2` for the section component and the schema export.
+- [ ] 4.5 Merge the agreement into `docs/specs/ui-kit-v2/ai-chat-section/` with its bindings; edit the chat and KPI specs and the kit spec indexes as the agreement names.
+- [ ] 4.6 Bring `CONTEXT.md` of ai-chat and the comment of the block providers up to the section.
+- [ ] 4.7 Mark the row of RT-3342 in the epic plan and write there the release steps that close G; write the archive record, take the task folder apart.
+- [ ] 4.8 Run the push set, push, open the PR into `RT-3346-ai-chat-blocks`.
 
 ## Decisions along the way
 
