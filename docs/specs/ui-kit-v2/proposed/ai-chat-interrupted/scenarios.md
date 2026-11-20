@@ -11,7 +11,7 @@ Then the block is drawn as text
 And under it stands the label «Answer interrupted»
 And under the label stands the row «Copy», the button «Ask again» with the icon `sync`, and the rating, in this order
 
-Not covered: there is no code yet.
+Covered by the component spec of the interrupted answer.
 
 ### SC-UKV-1564 — an empty interrupted answer draws only the label and the action
 
@@ -20,7 +20,7 @@ When the answer is drawn
 Then the label «Answer interrupted» is drawn, and under it a row with the button «Ask again» alone
 And no area of blocks, no plate, no «Copy» and no rating are drawn
 
-Not covered: there is no code yet.
+Covered by the component spec of the interrupted answer.
 
 ### SC-UKV-1565 — an empty interrupted answer keeps its run line and attachments
 
@@ -29,7 +29,7 @@ When the answer is drawn
 Then the run line stands first, the attachments under it, and the label and the action under them
 And nothing else is drawn between the attachments and the label
 
-Not covered: there is no code yet.
+Covered by the component spec of the interrupted answer.
 
 ### SC-UKV-1566 — an answer without the flag draws no label
 
@@ -37,7 +37,7 @@ Given three answers: without `interrupted`, with `interrupted: false`, and with 
 When they are drawn
 Then none of them draws the label «Answer interrupted» or the button «Ask again»
 
-Not covered: there is no code yet.
+Covered by the component spec of the interrupted answer.
 
 ### SC-UKV-1567 — a press on the action emits `askAgain` with the id of the answer
 
@@ -47,7 +47,7 @@ Then the chat emits `askAgain` with `"m1"` twice
 And the chat emits neither `retry` nor `send`
 And the answer keeps its label and its action
 
-Not covered: there is no code yet.
+Covered by the component spec of the interrupted answer.
 
 ### SC-UKV-1568 — the action is disabled while sending
 
@@ -57,7 +57,7 @@ Then the button is disabled natively and the chat emits no `askAgain`
 And the Tab key passes the button
 And after `sending` turns off, a press emits `askAgain` with `"m1"`
 
-Not covered: there is no code yet.
+Covered by the component spec of the interrupted answer.
 
 ### SC-UKV-1569 — a streaming answer shows no label until the stream ends
 
@@ -66,7 +66,7 @@ When it is drawn
 Then neither the label nor the action is drawn
 And after `messages` is replaced by a copy where `m1` has no `streaming`, the label and the action are drawn
 
-Not covered: there is no code yet.
+Covered by the component spec of the interrupted answer.
 
 ### SC-UKV-1570 — a partial answer keeps «Copy» and the rating
 
@@ -74,7 +74,7 @@ Given an interrupted answer `m1` with a markdown block
 When the reader presses «Good answer»
 Then the chat emits `feedbackChange` with `{ messageId: "m1", feedback: "liked" }`
 
-Not covered: there is no code yet.
+Covered by the component spec of the interrupted answer.
 
 ### SC-UKV-1571 — the copy of a partial answer leaves the label out
 
@@ -83,7 +83,7 @@ When the reader copies the answer
 Then the copy is «Продажи за ноябрь выросли на»
 And it holds neither «Answer interrupted» nor «Ask again»
 
-Not covered: there is no code yet.
+Covered by the component spec of the interrupted answer.
 
 ### SC-UKV-1572 — the run error keeps its own action
 
@@ -92,7 +92,7 @@ When the reader presses «Ask again» of the error strip, then «Ask again» of 
 Then the first press emits `retry` with no value and no `askAgain`
 And the second press emits `askAgain` with `"m1"` and no `retry`
 
-Not covered: there is no code yet.
+Covered by the component spec of the interrupted answer.
 
 ### SC-UKV-1573 — several interrupted answers name their own ids
 
@@ -101,7 +101,7 @@ When the reader presses «Ask again» of `m3`, then of `m1`
 Then the chat emits `askAgain` with `"m3"`, then with `"m1"`
 And `m2` draws no label
 
-Not covered: there is no code yet.
+Covered by the component spec of the interrupted answer.
 
 ### SC-UKV-1574 — a screen reader hears the label and the named action
 
@@ -111,8 +111,9 @@ Then the label has no live region of its own and stands inside the polite live r
 And each action is a button named «Ask again» and described by the label of its own answer
 And the two description ids differ and hold neither a space nor a slash
 And the icon of each action is hidden from the reader
+And each action carries the tooltip «Ask again», which the kit button shows on hover and on keyboard focus
 
-Not covered: there is no code yet.
+Covered by the component spec of the interrupted answer.
 
 ### SC-UKV-1575 — the labels come from the kit translator
 
@@ -120,7 +121,7 @@ Given a kit translator that gives «Ответ прерван» and «Спрос
 When an interrupted answer is drawn
 Then the label reads «Ответ прерван» and the button is named «Спросить снова»
 
-Not covered: there is no code yet.
+Covered by the component spec of the interrupted answer.
 
 ### SC-UKV-1576 — the label and the action fit a narrow panel
 
@@ -129,9 +130,8 @@ When they are drawn
 Then at each width the label stands in one line and the row of actions in one line, and neither widens the feed
 And at 240 the focus ring of the focused action is not clipped
 
-Not covered: it cannot be closed by a test with an identifier — the row and the ring come from the styles, and
-the styles of the component do not reach the test environment. Held by the play steps of the
-showcase story of the widths.
+Covered by the play step of the showcase story `Widths`: the row and the ring come from the
+styles, and the styles of the component do not reach the test environment.
 
 ### SC-UKV-1577 — right to left mirrors the label and the row
 
@@ -139,8 +139,7 @@ Given an interrupted answer under `dir="rtl"`
 When it is drawn
 Then the label starts at the right, «Copy» stands at the right of the row and the action follows it to the left
 
-Not covered: it cannot be closed by a test with an identifier — the order comes from the styles.
-Held by the play step of the showcase story right to left.
+Covered by the play step of the showcase story `Rtl`: the order comes from the styles.
 
 ### SC-UKV-1578 — the label is drawn while the run line says running
 
@@ -149,7 +148,7 @@ When it is drawn
 Then the run line shows its state as given
 And the label and the action are drawn under the block
 
-Not covered: there is no code yet.
+Covered by the component spec of the interrupted answer.
 
 ### SC-UKV-1579 — a partial answer without text or with the copy off keeps the rating alone
 
@@ -158,7 +157,7 @@ When they are drawn
 Then each shows the label, the action and the rating
 And neither shows «Copy»
 
-Not covered: there is no code yet.
+Covered by the component spec of the interrupted answer.
 
 ### SC-UKV-1580 — the showcase draws both interrupted answers
 
@@ -167,5 +166,4 @@ When its play step runs, in the light and in the dark theme
 Then the step finds the label «Answer interrupted» and the button «Ask again» under each answer
 And the dark rows draw the same row in the dark palette
 
-Not covered: there is no story yet; the scenario is held by the play step of the showcase story,
-not by a test with an identifier.
+Covered by the play step of the showcase story `Themes`.

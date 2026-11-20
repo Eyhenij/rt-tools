@@ -67,6 +67,9 @@ written below as decisions.
   owner answered «Метка плашкой», then «Посмотри как сделано в других нормальных зарнесах», then,
   from the options «Как в других чатах» and «Оставить плашку», chose «Как в других чатах
   (Recommended)». The mockup approved: «Одобряю макет (Recommended)».
+- **An empty interrupted answer keeps its run line** — the owner answered «Строка хода остаётся
+  (Recommended)»: the rule «only the label and the action» speaks of the blocks, the run line above
+  them stays as given.
 - **The plan is taken by assumption** — the owner took the recommended option twice in a row, and
   the grill guard refuses a third menu. The plan is not committed until the owner's word on it: a
   plan goes into history only after the owner approves it.

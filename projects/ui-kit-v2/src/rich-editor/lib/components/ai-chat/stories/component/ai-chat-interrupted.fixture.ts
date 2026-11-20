@@ -36,16 +36,27 @@ function empty(run?: IRtAiChat.Run): readonly IRtAiChat.Message[] {
     return [QUESTION, { id: 'a1', role: 'assistant', blocks: [], ...(run === undefined ? {} : { run }), interrupted: true }];
 }
 
-/** Частичный ответ при ширинах макета: от узкой панели до колонки чтения — SC-UKV-1576. */
-export const AI_CHAT_INTERRUPTED_WIDTH_CASES: readonly IAiChatInterruptedCase[] = [
+/** Частичный ответ при ширинах макета, с русскими подписями: от узкой панели до колонки чтения. */
+const RUSSIAN_WIDTH_CASES: readonly IAiChatInterruptedCase[] = [
     { name: '240', width: 240, messages: partial() },
     { name: '328 — узкая панель', width: 328, messages: partial() },
     { name: '386 — строка хода «пишет»', width: 386, messages: partial(RUNNING) },
     { name: '640 — колонка чтения', width: 640, messages: partial() },
 ];
 
+/** Те же ширины русскими и английскими подписями — SC-UKV-1576. */
+export const AI_CHAT_INTERRUPTED_WIDTH_CASES: readonly IAiChatInterruptedCase[] = [
+    ...RUSSIAN_WIDTH_CASES,
+    ...RUSSIAN_WIDTH_CASES.map((item: IAiChatInterruptedCase): IAiChatInterruptedCase => ({
+        ...item,
+        name: `${item.name} — английские`,
+        english: true,
+    })),
+];
+
 /** Пустой прерванный ответ: без строки хода, с ней, с ходом «не удался» и с вложениями. */
 export const AI_CHAT_INTERRUPTED_EMPTY_CASES: readonly IAiChatInterruptedCase[] = [
+    { name: '240 — без строки хода', width: 240, messages: empty() },
     { name: '328 — без строки хода', width: 328, messages: empty() },
     { name: '386 — остановлен', width: 386, messages: empty(STOPPED) },
     { name: '640 — не удался', width: 640, messages: empty({ state: 'failed', label: 'Не удалось' }) },
@@ -80,5 +91,5 @@ export const AI_CHAT_INTERRUPTED_STATE_CASES: readonly IAiChatInterruptedCase[] 
 /** Темы и наборы: частичный ответ и пустой. */
 export const AI_CHAT_INTERRUPTED_THEME_CASES: readonly IAiChatInterruptedCase[] = [
     AI_CHAT_INTERRUPTED_WIDTH_CASES[1],
-    AI_CHAT_INTERRUPTED_EMPTY_CASES[1],
+    AI_CHAT_INTERRUPTED_EMPTY_CASES[2],
 ];

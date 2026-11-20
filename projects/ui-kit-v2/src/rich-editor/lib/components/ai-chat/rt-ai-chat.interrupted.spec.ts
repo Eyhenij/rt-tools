@@ -15,6 +15,7 @@ import { ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
 import { RtIconComponent } from '../../../../lib/components/icon/rt-icon.component';
+import { RtIconButtonComponent } from '../../../../lib/components/icon-button/rt-icon-button.component';
 import { provideRtKitLabels, TRtKitLabelKey, TRtKitTranslator } from '../../../../lib/i18n';
 import { createRtFixture, qa, qaAll, textOf } from '../../../../testing/rt-kit-testing';
 import { provideRtAiChatBlock } from './blocks/rt-ai-chat-blocks.providers';
@@ -303,6 +304,12 @@ describe('RtAiChatComponent — прерванный ответ', (): void => {
         expect(
             buttons.map((button: HTMLButtonElement): string | null => button.querySelector('rt-icon')?.getAttribute('aria-hidden') ?? null)
         ).toEqual(['true', 'true']);
+        expect(
+            fixture.debugElement
+                .queryAll(By.directive(RtIconButtonComponent))
+                .filter((node: DebugElement): boolean => node.attributes['qa-dataid'] === 'ai-chat-ask-again')
+                .map((node: DebugElement): string => (node.componentInstance as RtIconButtonComponent).tooltip())
+        ).toEqual(['Ask again', 'Ask again']);
     });
 
     it('SC-UKV-1575 — подписи строки и кнопки берутся из переводчика кита', (): void => {

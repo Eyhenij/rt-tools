@@ -10,7 +10,7 @@ A product agreement written before the code, by task RT-3341. It is about one fl
 message of `rt-ai-chat`: the label under an answer that broke off, the action «Ask again» of that
 answer and the output of the chat that carries the press. It merges into the kit spec as the
 subdomain `ai-chat-interrupted`, next to `ai-chat`, with the same scenario numbers. The mockup is
-drawn and waits for the owner's approval.
+approved by the owner.
 
 ## Why
 
@@ -118,7 +118,7 @@ declared by `docs/specs/ui-kit-v2/ai-chat/` and are not declared again here.
 
 - **Under `dir="rtl"` the label starts at the right and the row of actions mirrors: «Copy» at the right, the action after it to the left; the icon `sync` is drawn as it is.**
 
-- **The drawn values are the ones of the approved mockup: the label is 16 high, the row 32 high, 8 between them; in the dark theme only the colours change.**
+- **The drawn values are the ones of the approved mockup: the label is 16 high in the mockup and 16.2 in the browser (12 × 135 %), the row 32 high, 8 between them; in the dark theme only the colours change.**
 
 ## What is out of scope
 
@@ -212,8 +212,8 @@ described by the label of its own answer, and each press names its own answer.
   «Метка плашкой» and compared with other chats. Those mark a stopped answer with a muted line or not
   at all, and put the retry as an icon among «Copy» and the rating; a coloured strip with an action
   is kept there for a real error. Drawn in
-  <https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8451-922>; the mockup waits for the
-  owner's approval.
+  <https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8451-922>, approved by the owner:
+  «Одобряю макет».
 - **The label relies on the live region of the feed** — the feed already announces politely what
   appears in it; a second region would announce the label twice.
 - **The disabled state comes from a new input `sending` of the answer, bound from the chat's
@@ -233,9 +233,7 @@ described by the label of its own answer, and each press names its own answer.
 
 ## Open questions
 
-- **Q-1.** The owner's approval of the mockup
-  <https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8451-922>; the drawn values in the
-  rules above are the ones of that mockup.
+None. Q-1, the owner's approval of the mockup, is closed by «Одобряю макет».
 
 ## History of changes
 
@@ -245,3 +243,5 @@ described by the label of its own answer, and each press names its own answer.
 - 2026-11-20 — the look redrawn as a warning strip by the owner's word «Метка плашкой», then, by
   the owner's choice after a comparison with other chats, as a quiet line with the action as an icon
   in the row of actions.
+- 2026-11-20 — the mockup approved, Q-1 closed; the scenarios marked covered by the component spec
+  and the play steps of the showcase.
