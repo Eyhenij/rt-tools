@@ -107,4 +107,20 @@ describe('Меню вкладки в нижней шторке', (): void => {
 
         expect(document.activeElement).toBe(document.querySelector('.rt-popover-sheet [qa-dataid="tab-menu-rename"]'));
     });
+
+    it('SC-UKV-1494 — фокус на первый пункт меню вкладки встаёт, когда шторка уже не inert', (): void => {
+        const fixture: ComponentFixture<TabsContextSheetHostComponent> = setup();
+        const inertAtFocus: Array<boolean | null> = [];
+        jest.spyOn(HTMLElement.prototype, 'focus').mockImplementation(function (this: HTMLElement): void {
+            if (this.getAttribute('qa-dataid') === 'tab-menu-rename') {
+                inertAtFocus.push(this.closest('rt-bottom-sheet')?.hasAttribute('inert') ?? null);
+            }
+        });
+
+        longPress(fixture);
+
+        expect(inertAtFocus.length).toBeGreaterThan(0);
+        expect(inertAtFocus).toEqual(inertAtFocus.map((): boolean => false));
+        jest.restoreAllMocks();
+    });
 });

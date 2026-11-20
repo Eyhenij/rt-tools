@@ -1,9 +1,12 @@
+import { BooleanInput } from '@angular/cdk/coercion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
     input,
     InputSignal,
+    InputSignalWithTransform,
     output,
     OutputEmitterRef,
     TemplateRef,
@@ -16,6 +19,13 @@ import { BlockDirective, ElemDirective } from '@rt-tools/core';
 import { RtBottomSheetComponent } from '@rt-tools/ui-kit-v2/bottom-sheet';
 
 const BEM_BLOCK: string = 'rt-popover-sheet';
+
+let nextTitleId: number = 0;
+
+function takeTitleId(): string {
+    nextTitleId += 1;
+    return `rt-popover-sheet-title-${nextTitleId}`;
+}
 
 /**
  * Панель выбора `[rtPopover]` в нижней шторке кита — так её открывает директива на узком экране.
@@ -45,10 +55,15 @@ const BEM_BLOCK: string = 'rt-popover-sheet';
     },
 })
 export class RtPopoverSheetComponent {
+    /** Идентификатор заголовка: на него ссылается имя диалога шторки. */
+    protected readonly titleId: string = takeTitleId();
+
     public readonly template: InputSignal<TemplateRef<unknown> | null> = input<TemplateRef<unknown> | null>(null);
     public readonly context: InputSignal<unknown> = input<unknown>(null);
     public readonly title: InputSignal<string> = input<string>('');
-    public readonly open: InputSignal<boolean> = input<boolean>(false);
+    public readonly open: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
 
     public readonly dismissed: OutputEmitterRef<void> = output<void>();
 

@@ -3,6 +3,7 @@ import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { RT_KIT_LOCALE } from '../../i18n';
+import { RT_POPOVER_SHEET } from '../popover';
 import { BreakpointsService } from '../../platform';
 import { createRtFixture, el, hostClasses, qa, textOf } from '../../../testing/rt-kit-testing';
 import { RtDatePickerComponent } from './rt-date-picker.component';
@@ -211,6 +212,26 @@ describe('RtDatePickerComponent', (): void => {
                 RtDatePickerComponent,
                 { sheet: false },
                 { providers: [RU_LOCALE, { provide: BreakpointsService, useClass: NarrowBreakpointsService }] }
+            );
+
+            openButton(fixture).click();
+            fixture.detectChanges();
+
+            expect(qa(fixture, 'date-picker-sheet')).toBeNull();
+            expect(popup()).not.toBeNull();
+        });
+
+        it('SC-UKV-1489 — токен RT_POPOVER_SHEET со значением false на телефоне оставляет поповер у поля, шторки нет', (): void => {
+            const fixture: ComponentFixture<RtDatePickerComponent> = createRtFixture(
+                RtDatePickerComponent,
+                {},
+                {
+                    providers: [
+                        RU_LOCALE,
+                        { provide: BreakpointsService, useClass: NarrowBreakpointsService },
+                        { provide: RT_POPOVER_SHEET, useValue: false },
+                    ],
+                }
             );
 
             openButton(fixture).click();

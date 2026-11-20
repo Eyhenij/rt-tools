@@ -3,6 +3,7 @@ import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { RT_KIT_LOCALE } from '../../i18n';
+import { RT_POPOVER_SHEET } from '../popover';
 import { BreakpointsService } from '../../platform';
 import { createRtFixture, el, hostClasses, qa, textOf } from '../../../testing/rt-kit-testing';
 import { RtDateRangeComponent } from './rt-date-range.component';
@@ -195,6 +196,26 @@ describe('RtDateRangeComponent', (): void => {
                 RtDateRangeComponent,
                 { sheet: false },
                 { providers: [RU_LOCALE, { provide: BreakpointsService, useClass: NarrowBreakpointsService }] }
+            );
+
+            openButton(fixture).click();
+            fixture.detectChanges();
+
+            expect(qa(fixture, 'date-range-sheet')).toBeNull();
+            expect(popup()).not.toBeNull();
+        });
+
+        it('SC-UKV-1490 — токен RT_POPOVER_SHEET со значением false на телефоне оставляет поповер у поля, шторки нет', (): void => {
+            const fixture: ComponentFixture<RtDateRangeComponent> = createRtFixture(
+                RtDateRangeComponent,
+                {},
+                {
+                    providers: [
+                        RU_LOCALE,
+                        { provide: BreakpointsService, useClass: NarrowBreakpointsService },
+                        { provide: RT_POPOVER_SHEET, useValue: false },
+                    ],
+                }
             );
 
             openButton(fixture).click();

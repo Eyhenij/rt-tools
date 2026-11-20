@@ -3,7 +3,6 @@ import { BooleanInput } from '@angular/cdk/coercion';
 import { CdkConnectedOverlay, CdkOverlayOrigin, ConnectedPosition, Overlay, OverlayModule } from '@angular/cdk/overlay';
 import { NgTemplateOutlet } from '@angular/common';
 import {
-    afterNextRender,
     booleanAttribute,
     ChangeDetectionStrategy,
     Component,
@@ -284,16 +283,16 @@ export class RtMenuComponent {
             template: this.panelTpl(),
             context: null,
             title: this.ariaText(),
+            // Пункты на месте и `inert` снят, когда шторка открылась: ход стрелками и фокус — тогда же.
+            onOpened: (): void => this.#activateKeys(this.#sheet?.overlayRef.overlayElement ?? null),
         });
         this.#sheet = sheet;
         this.#sheetOpenedSource.next(sheet);
-        // Пункты появляются в шторке после её первой отрисовки: ход стрелками собирается тогда же.
-        afterNextRender((): void => this.#activateKeys(sheet.overlayRef.overlayElement), { injector: this.#injector });
     }
 
     /** Ход стрелками по пунктам панели и фокус на первом из них — для панели у кнопки и для шторки. */
-    #activateKeys(pane: HTMLElement): void {
-        if (!this.isOpen()) {
+    #activateKeys(pane: HTMLElement | null): void {
+        if (pane === null || !this.isOpen()) {
             return;
         }
         const nodes: HTMLElement[] = Array.from(pane.querySelectorAll<HTMLElement>('[role="menuitem"]'));

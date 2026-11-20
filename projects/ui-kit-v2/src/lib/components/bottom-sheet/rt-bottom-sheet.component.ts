@@ -6,6 +6,7 @@ import {
     Component,
     inject,
     input,
+    InputSignal,
     InputSignalWithTransform,
     output,
     OutputEmitterRef,
@@ -65,6 +66,10 @@ export class RtBottomSheetComponent {
     public readonly open: InputSignalWithTransform<boolean, BooleanInput> = input.required<boolean, BooleanInput>({
         transform: booleanAttribute,
     });
+
+    /** Идентификатор узла с названием диалога: без него `role="dialog"` читается без имени. */
+    public readonly ariaLabelledby: InputSignal<string | null> = input<string | null>(null);
+
     public readonly openChange: OutputEmitterRef<boolean> = output<boolean>();
 
     protected onDragStart(event: PointerEvent): void {

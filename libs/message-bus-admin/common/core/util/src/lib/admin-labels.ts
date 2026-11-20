@@ -278,6 +278,7 @@ const RT_KIT_LABELS_RU: Partial<Record<TRtKitLabelKey, string>> = Object.freeze(
     fieldErrorRequired: 'Обязательное поле',
     themeToggleLabel: 'Сменить тему',
     uiActions: 'Действия',
+    uiAll: 'Все',
     uiBack: 'Назад',
     uiBackToList: 'К списку',
     uiCancel: 'Отмена',
@@ -291,6 +292,7 @@ const RT_KIT_LABELS_RU: Partial<Record<TRtKitLabelKey, string>> = Object.freeze(
     uiConfirm: 'Подтвердить',
     uiCopied: 'Скопировано',
     uiCopy: 'Скопировать',
+    uiCountOf: '{{count}} из {{total}}',
     uiDetails: 'Подробности',
     uiDragColumn: 'Перетащить столбец',
     uiEmptyTitle: 'Нет данных',
@@ -329,6 +331,7 @@ const RT_KIT_LABELS_RU: Partial<Record<TRtKitLabelKey, string>> = Object.freeze(
     uiShapeMonth: 'мм',
     uiShapeYear: 'гггг',
     uiShow: 'Показать',
+    uiShowAll: 'Показать все',
     uiShowColumn: 'Показать столбец',
     uiToday: 'Сегодня',
 });

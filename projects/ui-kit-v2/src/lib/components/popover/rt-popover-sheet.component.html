@@ -1,7 +1,11 @@
 <ng-container rtBlock="rt-popover-sheet">
-    <rt-bottom-sheet qa-dataid="popover-sheet" [open]="open()" (openChange)="openChange($event)">
+    <rt-bottom-sheet
+        qa-dataid="popover-sheet"
+        [open]="open()"
+        [ariaLabelledby]="title() ? titleId : null"
+        (openChange)="openChange($event)">
         @if (title()) {
-            <span sheetHeader rtElem="title" qa-dataid="popover-sheet-title">{{ title() }}</span>
+            <span sheetHeader rtElem="title" qa-dataid="popover-sheet-title" [attr.id]="titleId">{{ title() }}</span>
         }
         <div rtElem="panel" qa-dataid="popover-sheet-panel">
             <ng-container [ngTemplateOutlet]="template()" [ngTemplateOutletContext]="{ $implicit: context() }" />

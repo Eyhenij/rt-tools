@@ -118,6 +118,11 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `iconRightTooltip`  | `string \| null`                            | `null`                    |
 | `iconLeftDisabled`  | `boolean`                                   | `false`                   |
 | `iconRightDisabled` | `boolean`                                   | `false`                   |
+| `combobox`          | `IRtInput.Combobox \| null`                 | `null` — обычное поле     |
+
+**`combobox` делает поле строкой поиска над списком вариантов.** Поле получает роль `combobox`
+и связи со списком — `aria-controls`, `aria-expanded`, `aria-activedescendant`. Так поиск в шторке
+`rt-autocomplete` объявляется скринридеру так же, как его основное поле.
 
 **Кнопка-значок отключается своим входом, поле при этом остаётся доступным.** Так поиск не ищет,
 пока введено меньше трёх знаков, а подсказка кнопки объясняет почему — история

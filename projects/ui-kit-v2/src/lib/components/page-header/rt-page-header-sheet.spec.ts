@@ -44,6 +44,19 @@ class PageHeaderSheetHostComponent {
     public readonly user: IRtPageHeader.User = { name: 'Иванов И.' };
 }
 
+@Component({
+    selector: 'rt-page-header-rail-sheet-host',
+    template: `
+        <rt-page-header layout="vertical" [items]="[]" [sheet]="false" [user]="user" [userMenu]="menu" />
+        <ng-template #menu><span qa-dataid="host-user-menu">Профиль</span></ng-template>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtPageHeaderComponent],
+})
+class PageHeaderRailSheetHostComponent {
+    public readonly user: IRtPageHeader.User = { name: 'Иванов И.' };
+}
+
 function setup(): ComponentFixture<PageHeaderSheetHostComponent> {
     return createRtFixture(
         PageHeaderSheetHostComponent,
@@ -121,5 +134,28 @@ describe('RtPageHeaderComponent — нижняя шторка', (): void => {
         expect(document.querySelector('.rt-popover-sheet')).not.toBeNull();
         expect(document.querySelector('[qa-dataid="popover-sheet-title"]')?.textContent?.trim()).toBeTruthy();
         expect(document.querySelector('.rt-popover-panel')).toBeNull();
+    });
+
+    it('SC-UKV-1492: на телефоне с sheet=false меню профиля в рейке открывается у кнопки, шторки нет', (): void => {
+        const fixture: ComponentFixture<PageHeaderRailSheetHostComponent> = createRtFixture(
+            PageHeaderRailSheetHostComponent,
+            {},
+            {
+                providers: [
+                    provideRouter([]),
+                    { provide: WINDOW, useFactory: windowDouble },
+                    { provide: BreakpointsService, useClass: PhoneBreakpointsService },
+                ],
+            }
+        );
+        fixture.detectChanges();
+        TestBed.inject(ApplicationRef).tick();
+
+        (document.querySelector('[qa-dataid="page-user"]') as HTMLElement).click();
+        fixture.detectChanges();
+        TestBed.inject(ApplicationRef).tick();
+
+        expect(document.querySelector('.rt-popover-sheet')).toBeNull();
+        expect(document.querySelector('.rt-popover-panel [qa-dataid="host-user-menu"]')).not.toBeNull();
     });
 });

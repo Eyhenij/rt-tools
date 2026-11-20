@@ -3,12 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 4 из 4 — Showcase; review round two runs
-- **Next step:** fix the confirmed findings of review round two as one commit — the date fields
-  read `RT_POPOVER_SHEET` and take `sheet` by `booleanAttribute`; the `BREAKING CHANGE` names the
-  folding toggle group and `fold=false`; the select spec links the popover-sheet subdomain. Then
-  stage 4, step 2 — the kit-match numbers, and step 3 — the showcase to the owner. Stage 4 step 1
-  is done: walked live twice (below).
+- **Stage:** 4 из 4 — Showcase; both review rounds done
+- **Next step:** stage 4, step 3 — the owner looks at the showcase on 6017 (up from this branch);
+  then step 2, the kit-match numbers, closing the texts, the push set and the draft PR.
 - **Live walk on 6017 (20.11):** every `Sheet` story of the set opens the bottom sheet at 375, the
   panel 0…375 wide, no node past its edges (select, multiselect and its toggles, autocomplete,
   action bar, palette, dynamic selector, menu, speed menu, split button, tabs «Ещё» and tab menu,
@@ -195,10 +192,18 @@ flipping in a flex row, no slide after a drag, the unnamed sheet dialog, the she
 combobox roles, a search below `minLength` on tap, the footer counting unknown values, the panel
 class dropped in the sheet, the RU admin labels. Fixed here: the select spec links the subdomain,
 the spec names the three new labels (31e7abb1c), the RT-3432 row moved into the assignments table.
-To fix in the round's commit: the `BREAKING CHANGE` names the toggle group folding at any width and
-`fold=false`, and stubs without `phone`.
+Checked here after the agents: the kit set 3853 green, typecheck, lint, stylelint,
+`check-boolean-inputs`, `check-kit-coverage`, tokens, cascade layer, `check:specs` and the docs
+check green; scenarios 1489…1505 written; the toggle group re-measures after its settle pause
+(a resize inside the pause was lost). Live on 6017: focus lands on the first item of the menu and
+of the tab menu in the sheet and ArrowDown moves it, the autocomplete focuses its sheet search, the
+sheet dialogs are named by their titles; all 28 sheet and sheet-off stories pass the walk.
 
 ## Decisions along the way
+
+- 20.11: the owner withdrew «планирование и ревью опус, код пишет сонет» — a neighbouring session
+  passed the word on, and `~/.claude/CLAUDE.md` and the project memory no longer hold the rule
+  (checked). The Sonnet agent already running finishes its brief; the rest is coded here.
 
 - The mockup of the multiselect sheet shows a search field, while `rt-multiselect` has no search at
   all, sheet or not. The sheet does not add one: a search is a feature of the multiselect of its

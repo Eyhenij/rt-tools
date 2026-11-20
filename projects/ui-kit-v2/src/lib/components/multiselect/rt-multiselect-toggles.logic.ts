@@ -1,4 +1,4 @@
-import { rtTreeLeaves } from '@rt-tools/ui-kit-v2/core';
+import { rtTreeFind, rtTreeLeaves } from '@rt-tools/ui-kit-v2/core';
 import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
 
 /**
@@ -48,4 +48,12 @@ export function rtMultiselectToggleAllNext<TValue>(all: ReadonlyArray<TValue>, c
 /** Есть ли что сбрасывать: хотя бы одно значение из тех, что можно включить и выключить. */
 export function rtMultiselectCanReset<TValue>(all: ReadonlyArray<TValue>, chosen: ReadonlyArray<TValue>): boolean {
     return chosen.some((value: TValue): boolean => all.includes(value));
+}
+
+/**
+ * Сколько выбранных значений есть среди опций, отключённые опции тоже считаются: их строки на экране
+ * видны отмеченными. Значение вне списка строки не имеет и в счёт «Выбрано: N» не идёт.
+ */
+export function rtMultiselectKnownCount<TValue>(options: ReadonlyArray<IRtSelect.Option<TValue>>, chosen: ReadonlyArray<TValue>): number {
+    return chosen.filter((value: TValue): boolean => rtTreeFind(options, value) !== undefined).length;
 }

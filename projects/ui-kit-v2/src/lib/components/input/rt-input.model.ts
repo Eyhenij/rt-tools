@@ -19,4 +19,17 @@ export namespace IRtInput {
      * материального поля первого кита, `pill` — залитое поле-таблетка без черты.
      */
     export type Appearance = 'outline' | 'fill' | 'pill';
+
+    /**
+     * Поле как строка поиска над списком вариантов: `role="combobox"` и ссылки на список. Нужно подсказчику
+     * в шторке, где набирают в поле поиска, а не в поле под шторкой.
+     */
+    export interface Combobox {
+        /** Идентификатор списка вариантов (`aria-controls`). */
+        readonly controls: string;
+        /** Список открыт (`aria-expanded`). */
+        readonly expanded: boolean;
+        /** Идентификатор подсвеченного варианта (`aria-activedescendant`) или `null`. */
+        readonly activeDescendant: string | null;
+    }
 }

@@ -202,7 +202,7 @@
                     }
                 }
             </ul>
-            @if (inSheet() && look() === 'list') {
+            @if (openedInSheet() && look() === 'list') {
                 <!-- Подвал шторки: выбор пишется по каждому нажатию, «Готово» только закрывает шторку. -->
                 <div rtElem="sheet-footer" qa-dataid="multiselect-sheet-footer">
                     <span rtElem="sheet-count" qa-dataid="multiselect-sheet-count">{{ selectedLabel() }}</span>

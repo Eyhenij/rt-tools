@@ -33,10 +33,13 @@ import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { IRtSelect, RtSelectComponent } from '@rt-tools/ui-kit-v2/select';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { IRtToggleButtonGroup } from './rt-toggle-button-group.model';
-import { rtToggleGroupFolds } from './rt-toggle-button-group-fold.logic';
+import { rtToggleGroupNextFolded } from './rt-toggle-button-group-fold.logic';
 import { RtToggleButtonOptionDirective } from './rt-toggle-button-option.directive';
 
 const BEM_BLOCK: string = 'rt-toggle-button-group';
+
+/** Сколько после сворачивания не замерять размер: на это время приходится ответ наблюдателя, вызванный самим сворачиванием. */
+const FOLD_RESIZE_SETTLE_MS: number = 150;
 
 /**
  * Маппинг размера группы на размер вложенной `<rt-icon>`. rt-icon не имеет
@@ -118,6 +121,12 @@ export class RtToggleButtonGroupComponent<T = string> implements ControlValueAcc
 
     /** Группа связана с формой: нажатие тогда само переносит подсветку, без ответа хозяина. */
     #bound: boolean = false;
+
+    /** Ширина строки кнопок в минуту сворачивания: от неё считается, когда развернуть группу обратно. */
+    #naturalAtFold: number | null = null;
+
+    /** Сворачивание только что изменило размер: ближайший ответ наблюдателя размера не замеряется. */
+    #ignoreFoldResize: boolean = false;
 
     /** Значение, записанное формой или нажатием; `undefined`, пока форма ничего не писала. */
     readonly #formValue: WritableSignal<{ readonly value: IRtToggleButtonGroup.FormValue<T> } | undefined> = signal<
@@ -343,9 +352,27 @@ export class RtToggleButtonGroupComponent<T = string> implements ControlValueAcc
 
     /** Сколько нужно строке кнопок и сколько есть у группы. */
     #measure(): void {
+        // Размер, который изменило само сворачивание, не замеряется: он принадлежит другой базе флекса
+        // и тут же развернул бы группу, а развёрнутая сжалась бы и свернулась снова.
+        if (this.#ignoreFoldResize) {
+            return;
+        }
         const natural: number = this.row().nativeElement.scrollWidth;
         const place: number = this.#host.nativeElement.clientWidth;
-        this.folded.set(rtToggleGroupFolds(natural, place, this.layout(), this.fold()));
+        const next: boolean = rtToggleGroupNextFolded(natural, place, this.layout(), this.fold(), this.folded(), this.#naturalAtFold);
+        if (next === this.folded()) {
+            return;
+        }
+        this.#naturalAtFold = next ? natural : null;
+        this.folded.set(next);
+        this.#ignoreFoldResize = true;
+        // Наблюдатель размера отвечает в ближайшие кадры. После паузы группа замеряется заново: смена
+        // места, пришедшаяся на паузу, иначе пропала бы до следующего изменения размера.
+        const settle: ReturnType<typeof setTimeout> = setTimeout((): void => {
+            this.#ignoreFoldResize = false;
+            this.#measure();
+        }, FOLD_RESIZE_SETTLE_MS);
+        this.#destroyRef.onDestroy((): void => clearTimeout(settle));
     }
 
     /** Нажатие уходит в форму, если группа с ней связана; без формы подсветку ведёт хозяин входами. */

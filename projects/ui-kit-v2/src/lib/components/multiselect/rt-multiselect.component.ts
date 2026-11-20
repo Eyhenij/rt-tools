@@ -52,6 +52,7 @@ import {
     IRtMultiselectSummary,
     TRtMultiselectLook,
     rtMultiselectAllValues,
+    rtMultiselectKnownCount,
     rtMultiselectCanReset,
     rtMultiselectKept,
     rtMultiselectSummary,
@@ -135,12 +136,12 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
     protected readonly popover: Signal<RtPopoverDirective> = viewChild.required(RtPopoverDirective);
 
     /** Список открыт в нижней шторке: под ним стоит подвал «Выбрано · Сбросить · Готово». */
-    protected readonly inSheet: Signal<boolean> = computed((): boolean => this.popover().inSheet());
+    protected readonly openedInSheet: Signal<boolean> = computed((): boolean => this.popover().openedInSheet());
 
     /** «Выбрано: N» в подвале шторки — подпись с подстановкой, потому берётся вызовом. */
     protected readonly selectedLabel: Signal<string> = rtKitLabel(
         'uiSelectedCount',
-        computed((): TRtKitLabelParams => ({ count: this.value().length }))
+        computed((): TRtKitLabelParams => ({ count: rtMultiselectKnownCount(this.options(), this.value()) }))
     );
 
     /** Все значения, которые можно включить, — для «Показать все» и для сводки «N из M». */

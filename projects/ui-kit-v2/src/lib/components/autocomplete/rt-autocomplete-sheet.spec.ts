@@ -90,6 +90,10 @@ describe('Автокомплит в нижней шторке', (): void => {
 
     it('SC-UKV-1479 — крестик поля в режиме шторки очищает значение и не открывает шторку заново', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
+        let emitted: string | null | undefined;
+        fixture.componentInstance.registerOnChange((value: string | null): void => {
+            emitted = value;
+        });
         fixture.componentInstance.writeValue('Грузия');
         settle(fixture);
 
@@ -99,7 +103,7 @@ describe('Автокомплит в нижней шторке', (): void => {
         clear.click();
         settle(fixture);
 
-        expect(fixture.componentInstance.value()).toBeNull();
+        expect(emitted).toBeNull();
         expect(document.querySelector('.rt-popover-sheet')).toBeNull();
     });
 

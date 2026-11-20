@@ -31,9 +31,11 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { map, merge, Observable, Subject, switchMap } from 'rxjs';
+import { Observable, Subject, switchMap } from 'rxjs';
 
 import { BreakpointsService, carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
+import { rtPopoverCloseIntents } from './rt-popover-intents.logic';
+import { rtBindPopoverHoverBridge } from './rt-popover-hover.logic';
 import { rtIsNestedOverlay } from './rt-popover-nested.logic';
 import { rtPopoverDefaultPositions, rtPopoverSizeByWidth } from './rt-popover-position.logic';
 import { IRtPopoverSheetOpened, rtClosePopoverSheet, rtOpenPopoverSheet, rtPopoverSheetDismissals } from './rt-popover-sheet.helper';
@@ -108,6 +110,9 @@ export class RtPopoverDirective implements OnDestroy {
     #pointerType: string = 'mouse';
 
     protected readonly isOpenState: WritableSignal<boolean> = signal<boolean>(false);
+
+    /** Панель открыта в шторке: берётся в минуту открытия, и порог ширины не меняет открытую панель. */
+    protected readonly openedInSheetState: WritableSignal<boolean> = signal<boolean>(false);
 
     public readonly template: InputSignal<TemplateRef<unknown> | null> = input<TemplateRef<unknown> | null>(null, { alias: 'rtPopover' });
 
@@ -201,7 +206,17 @@ export class RtPopoverDirective implements OnDestroy {
      */
     public readonly inSheet: Signal<boolean> = computed((): boolean => this.sheet() && this.#sheetAllowed && this.#narrow());
 
+    /**
+     * Панель открыта в шторке — именно та, что открылась, а не та, что открылась бы сейчас. Читать надо
+     * его, а не `inSheet`: экран мог пересечь порог при открытой панели, и живой `inSheet` убрал бы
+     * поиск из открытой шторки или добавил второй в панель у триггера.
+     */
+    public readonly openedInSheet: Signal<boolean> = this.openedInSheetState.asReadonly();
+
     public readonly opened: OutputEmitterRef<void> = output<void>({ alias: 'rtPopoverOpened' });
+
+    /** Шторка открыта и больше не `inert`: с этой минуты в неё можно ставить фокус. Сама панель у триггера его не шлёт. */
+    public readonly sheetOpened: OutputEmitterRef<void> = output<void>({ alias: 'rtPopoverSheetOpened' });
 
     public readonly closed: OutputEmitterRef<void> = output<void>({ alias: 'rtPopoverClosed' });
 
@@ -213,39 +228,10 @@ export class RtPopoverDirective implements OnDestroy {
         // создания (ровно один раз за жизнь директивы), стрим живёт до destroy.
         this.#overlayCreatedSource
             .pipe(
-                switchMap((overlayRef: OverlayRef): Observable<() => void> =>
-                    merge(
-                        overlayRef.outsidePointerEvents().pipe(
-                            map((event: MouseEvent): (() => void) => (): void => {
-                                // Клик по host в режиме click обрабатывает onHostClick (toggle) —
-                                // не закрываем здесь, иначе двойной toggle (close + open).
-                                if (this.#elementRef.nativeElement.contains(event.target as Node)) {
-                                    return;
-                                }
-                                // Клик по вложенной панели — не клик снаружи: закрытие
-                                // разрушило бы её вместе с нашей до того, как выбор
-                                // дойдёт до обработчика
-                                if (rtIsNestedOverlay(this.#overlayRef?.overlayElement, event.target)) {
-                                    return;
-                                }
-                                this.close();
-                            })
-                        ),
-                        // Подложка ловит нажатие раньше документа: снаружи оно уже не приходит
-                        overlayRef.backdropClick().pipe(map((): (() => void) => (): void => this.close())),
-                        overlayRef.keydownEvents().pipe(
-                            map((event: KeyboardEvent): (() => void) => (): void => {
-                                if (event.key === 'Escape') {
-                                    event.preventDefault();
-                                    this.close();
-                                }
-                            })
-                        )
-                    )
-                ),
+                switchMap((overlayRef: OverlayRef): Observable<void> => rtPopoverCloseIntents(overlayRef, this.#elementRef.nativeElement)),
                 takeUntilDestroyed(this.#destroyRef)
             )
-            .subscribe((handleCloseIntent: () => void): void => handleCloseIntent());
+            .subscribe((): void => this.close());
 
         // Шторка создаётся на каждое открытие: её подложка, ручка и Escape закрывают панель
         // так же, как нажатие снаружи у панели рядом с триггером.
@@ -296,6 +282,8 @@ export class RtPopoverDirective implements OnDestroy {
         this.#closeSheet(true);
         this.isOpenState.set(false);
         this.closed.emit();
+        // После `closed`: слушатель закрытия ещё видит, в чём панель была открыта.
+        this.openedInSheetState.set(false);
     }
 
     public toggle(): void {
@@ -381,23 +369,22 @@ export class RtPopoverDirective implements OnDestroy {
         });
         const overlayRef: OverlayRef = this.#overlay.create(config);
 
-        // Hover-bridge: при переходе курсора с host'а на панель отложенный close
-        // (grace-период) гасится; уход с панели планирует его заново. Без этого
-        // hover-popover закрывался бы по таймеру, как только мышь покидает host.
-        // Listeners живут на overlay-элементе и умирают вместе с ним в dispose().
-        overlayRef.overlayElement.addEventListener('pointerenter', (event: PointerEvent): void => {
-            this.#pointerType = event.pointerType;
-            this.#clearHoverTimer();
-        });
-        overlayRef.overlayElement.addEventListener('mouseenter', (): void => {
-            if (this.#isMouseHover()) {
+        // Мост наведения: панель держится открытой, пока на неё ведёт курсор с host'а.
+        rtBindPopoverHoverBridge(overlayRef.overlayElement, {
+            pointerEntered: (pointerType: string): void => {
+                this.#pointerType = pointerType;
                 this.#clearHoverTimer();
-            }
-        });
-        overlayRef.overlayElement.addEventListener('mouseleave', (event: MouseEvent): void => {
-            if (this.#isMouseHover() && !rtIsNestedOverlay(this.#overlayRef?.overlayElement, event.relatedTarget)) {
-                this.#scheduleHoverClose();
-            }
+            },
+            mouseEntered: (): void => {
+                if (this.#isMouseHover()) {
+                    this.#clearHoverTimer();
+                }
+            },
+            mouseLeft: (relatedTarget: EventTarget | null): void => {
+                if (this.#isMouseHover() && !rtIsNestedOverlay(this.#overlayRef?.overlayElement, relatedTarget)) {
+                    this.#scheduleHoverClose();
+                }
+            },
         });
 
         // Outside-click / ESC подписки объявлены один раз в конструкторе —
@@ -457,9 +444,14 @@ export class RtPopoverDirective implements OnDestroy {
             template: this.template() as TemplateRef<unknown>,
             context: this.context(),
             title: this.sheetTitle() ?? '',
+            panelClasses: this.panelClass()
+                .split(/\s+/)
+                .filter((name: string): boolean => name !== ''),
+            onOpened: (): void => this.sheetOpened.emit(),
         });
         this.#sheetCreatedSource.next(sheet);
         this.#sheet = sheet;
+        this.openedInSheetState.set(true);
         this.isOpenState.set(true);
         this.opened.emit();
     }
@@ -482,6 +474,7 @@ export class RtPopoverDirective implements OnDestroy {
     }
 
     #disposeOverlay(): void {
+        this.openedInSheetState.set(false);
         this.#overlayRef?.dispose();
         this.#overlayRef = null;
         this.#positionStrategy = null;

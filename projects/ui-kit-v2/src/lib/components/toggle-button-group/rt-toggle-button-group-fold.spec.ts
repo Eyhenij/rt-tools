@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
-import { rtToggleGroupFolds } from './rt-toggle-button-group-fold.logic';
+import { rtToggleGroupFolds, rtToggleGroupNextFolded } from './rt-toggle-button-group-fold.logic';
 import { IRtToggleButtonGroup } from './rt-toggle-button-group.model';
 import { RtToggleButtonGroupComponent } from './rt-toggle-button-group.component';
 
@@ -135,5 +135,47 @@ describe('RtToggleButtonGroupComponent — сворачивание', (): void =
 
         expect(document.querySelector('.rt-popover-sheet')).toBeNull();
         expect(document.querySelector('[qa-dataid="select-option"]')).not.toBeNull();
+    });
+
+    it('SC-UKV-1499 — свёрнутая группа разворачивается только при запасе над шириной, замеренной до сворачивания', (): void => {
+        // Не свёрнута: решает прежний порог.
+        expect(rtToggleGroupNextFolded(520, 343, 'row', true, false, null)).toBe(true);
+        // Свёрнутая заняла всё место (600), но разворачивается лишь от 520 + запас, а не от 520.
+        expect(rtToggleGroupNextFolded(520, 524, 'row', true, true, 520)).toBe(true);
+        expect(rtToggleGroupNextFolded(520, 528, 'row', true, true, 520)).toBe(false);
+        // Берётся ширина в минуту сворачивания, а не текущая.
+        expect(rtToggleGroupNextFolded(400, 450, 'row', true, true, 520)).toBe(true);
+        // Выключенное сворачивание и другой раскладке группа разворачивается всегда.
+        expect(rtToggleGroupNextFolded(520, 400, 'row', false, true, 520)).toBe(false);
+        expect(rtToggleGroupNextFolded(520, 400, 'wrap', true, true, 520)).toBe(false);
+    });
+
+    it('SC-UKV-1499 — размер, который изменило само сворачивание, группу не разворачивает', (): void => {
+        const callbacks: Array<() => void> = [];
+        Reflect.set(
+            globalThis,
+            'ResizeObserver',
+            class {
+                constructor(callback: () => void) {
+                    callbacks.push(callback);
+                }
+
+                public observe(): void {}
+
+                public disconnect(): void {}
+            }
+        );
+        stubWidths(520, 343);
+        const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ value: 'week' });
+        callbacks.forEach((callback: () => void): void => callback());
+        settle(fixture);
+        expect(folded(fixture)).not.toBeNull();
+
+        // Свёрнутая группа заняла всё место — шире строки кнопок: без гистерезиса это развернуло бы её.
+        stubWidths(520, 640);
+        callbacks.forEach((callback: () => void): void => callback());
+        settle(fixture);
+
+        expect(folded(fixture)).not.toBeNull();
     });
 });

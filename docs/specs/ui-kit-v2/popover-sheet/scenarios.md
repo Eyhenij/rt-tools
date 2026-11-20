@@ -452,6 +452,38 @@ Then the title of the bottom sheet is «Город»
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
+### SC-UKV-1489 — the application setting keeps the date panel by the field
+
+Given an application that provides `RT_POPOVER_SHEET` as false, on a phone
+When the calendar button of a date field is pressed
+Then the panel opens next to the field, and no bottom sheet is open
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker.component.spec.ts`.
+
+### SC-UKV-1490 — the application setting keeps the period panel by the field
+
+Given an application that provides `RT_POPOVER_SHEET` as false, on a phone
+When the calendar button of a period field is pressed
+Then the panel opens next to the field, and no bottom sheet is open
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-range/rt-date-range.component.spec.ts`.
+
+### SC-UKV-1491 — the table passes the switch to its filter header
+
+Given a table with the sheet switched off, on a phone
+When the operator of a column filter is pressed
+Then its panel opens by the button, and no bottom sheet is open
+
+Covered: `projects/ui-kit-v2/src/lib/components/table/rt-table-sheet.spec.ts`.
+
+### SC-UKV-1492 — the page header passes the switch to the user menu of its rail
+
+Given a page header laid out as a rail, with the sheet switched off, on a phone
+When the user button is pressed
+Then the profile menu opens by the button, and no bottom sheet is open
+
+Covered: `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header-sheet.spec.ts`.
+
 ### SC-UKV-1484 — the select search works in the sheet
 
 Given a select with a search, open in the sheet
@@ -459,3 +491,107 @@ When a part of an option is typed in the search
 Then the search stands in the sheet and leaves only the matching options
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
+
+### SC-UKV-1493 — focus moves into the sheet once it is open
+
+Given a menu or a popover opening in the bottom sheet on a phone
+When the sheet opens
+Then focus moves into it only after the sheet stops being inert
+
+Covered: `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet-review.spec.ts`, `projects/ui-kit-v2/src/lib/components/menu/rt-menu-sheet-focus.spec.ts`.
+
+### SC-UKV-1494 — the tab menu in the sheet focuses its first item once open
+
+Given the menu of a tab opening in the bottom sheet on a phone
+When the sheet opens
+Then the first item has focus, and the sheet is not inert at that moment
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-context-menu-sheet.spec.ts`.
+
+### SC-UKV-1495 — crossing the threshold keeps the autocomplete surface as it opened
+
+Given an autocomplete open in the sheet, or open by the field
+When the window crosses the phone threshold
+Then the sheet search neither disappears from the sheet nor appears by the field
+
+Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet-review.spec.ts`.
+
+### SC-UKV-1496 — crossing the threshold keeps the multiselect footer as it opened
+
+Given a multiselect open in the sheet, or open by the field
+When the window crosses the phone threshold
+Then the footer neither disappears from the sheet nor appears by the field
+
+Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-sheet-review.spec.ts`.
+
+### SC-UKV-1497 — a sheet opened during the close of another keeps the page still
+
+Given a sheet still sliding down
+When a new sheet opens
+Then the old one leaves at once, and the page behind the new sheet does not scroll
+
+Covered: `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet-review.spec.ts`.
+
+### SC-UKV-1498 — focus returns to something that takes it
+
+Given a sheet opened from a part whose own box takes no focus
+When the sheet closes while focus is inside it
+Then focus lands on the first focusable control of that part, and the autocomplete does not search or open again for it
+
+Covered: `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet-review.spec.ts`, `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet-review.spec.ts`.
+
+### SC-UKV-1499 — the folded group unfolds only with room to spare
+
+Given a toggle group folded into a field
+When its place grows, or changes because of the fold itself
+Then it unfolds only when the place is the width of its buttons plus 8 px; the fold's own change does not unfold it
+
+Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.
+
+### SC-UKV-1500 — a sheet dismissed by a drag slides out
+
+Given a sheet dragged down past the dismissal point
+When it closes
+Then it slides out before it leaves
+
+Covered: `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet-review.spec.ts`.
+
+### SC-UKV-1501 — the sheet dialog is named by its title
+
+Given a sheet with a title
+When it opens
+Then its dialog is named by that title for a screen reader
+
+Covered: `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet-review.spec.ts`.
+
+### SC-UKV-1502 — the autocomplete search in the sheet is announced as a combobox
+
+Given an autocomplete open in the sheet
+When its search is focused
+Then the search carries the combobox role and its links to the suggestions
+
+Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet-review.spec.ts`.
+
+### SC-UKV-1503 — a tap on the autocomplete does not search below the minimum
+
+Given an autocomplete with a minimum query length, on a phone
+When the field is tapped with a shorter text
+Then the sheet opens and no search is asked of the application
+
+Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet-review.spec.ts`.
+
+### SC-UKV-1504 — the multiselect footer counts what its rows show
+
+Given a multiselect whose value holds a value not among the options
+When its sheet footer is shown
+Then the count includes only values among the options, disabled ones too
+
+Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-sheet-review.spec.ts`.
+
+### SC-UKV-1505 — the application panel class reaches the sheet
+
+Given a popover with a panel class of the application
+When it opens in the sheet
+Then the class stands on the sheet's box
+
+Covered: `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet-review.spec.ts`.

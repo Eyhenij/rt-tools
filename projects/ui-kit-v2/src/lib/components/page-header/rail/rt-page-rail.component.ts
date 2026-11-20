@@ -115,6 +115,11 @@ export class RtPageRailComponent {
 
     public readonly navLabel: InputSignal<string> = input<string>('');
 
+    /** На телефоне меню профиля открывается в нижней шторке кита; `false` оставляет его у кнопки. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
     public readonly user: InputSignal<IRtPageHeader.User | null> = input<IRtPageHeader.User | null>(null);
 
     public readonly userMenu: InputSignal<TemplateRef<unknown> | null> = input<TemplateRef<unknown> | null>(null);

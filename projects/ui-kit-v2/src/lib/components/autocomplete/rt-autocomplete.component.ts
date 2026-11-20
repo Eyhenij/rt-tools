@@ -1,13 +1,11 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import { NgTemplateOutlet } from '@angular/common';
 import {
-    afterNextRender,
     booleanAttribute,
     computed,
     contentChild,
     forwardRef,
     inject,
-    Injector,
     input,
     output,
     signal,
@@ -110,8 +108,6 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     /** Длина списка, на которой конец уже сообщён: прокрутка у дна до новой страницы его не повторяет. */
     #endReportedAt: number = -1;
 
-    readonly #injector: Injector = inject(Injector);
-
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly panelId: string = `rt-autocomplete-panel-${nextPanelId()}`;
@@ -124,8 +120,11 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
 
     protected readonly isOpen: Signal<boolean> = computed((): boolean => this.popover().isOpen());
 
-    /** Список открыт в нижней шторке: набор идёт в поле поиска наверху шторки, а не в поле под ней. */
+    /** Список откроется в нижней шторке: так решает нажатие на поле — по текущей ширине экрана. */
     protected readonly inSheet: Signal<boolean> = computed((): boolean => this.popover().inSheet());
+
+    /** Список открыт в шторке: набор идёт в поле поиска наверху шторки, а не в поле под ней. Не меняется, пока шторка открыта. */
+    protected readonly openedInSheet: Signal<boolean> = computed((): boolean => this.popover().openedInSheet());
 
     /** Поле поиска в шторке — ему отдаётся фокус, когда шторка открылась. */
     protected readonly sheetSearch: Signal<RtInputComponent | undefined> = viewChild(RtInputComponent);
@@ -265,18 +264,26 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
         this.#search(query, new Event('input'));
     }
 
-    /** Шторка открылась: клавиатура уходит в поле поиска наверху, а не в поле под шторкой. */
-    protected onOpened(): void {
-        if (this.inSheet()) {
-            afterNextRender((): void => this.sheetSearch()?.focus(), { injector: this.#injector });
-        }
+    /**
+     * Шторка открылась и больше не `inert`: клавиатура уходит в поле поиска наверху, а не в поле под
+     * шторкой. Раньше в закрытую шторку фокус не встаёт.
+     */
+    protected onSheetOpened(): void {
+        this.sheetSearch()?.focus();
     }
 
     protected onFocus(): void {
         // На телефоне нажатие на поле открывает шторку сразу: набирают уже в ней.
         if (this.inSheet()) {
             this.fieldEl()?.nativeElement.blur();
-            this.complete.emit({ query: this.inputText(), originalEvent: new Event('focus') });
+            // Закрытая шторка возвращает фокус полю — это не нажатие: запрос и открытие не повторяются.
+            if (this.isOpen()) {
+                return;
+            }
+            // Запрос уходит, только когда текст не короче `minLength`, как у набора в поле; шторка открывается всегда.
+            if (this.inputText().length >= this.minLength()) {
+                this.complete.emit({ query: this.inputText(), originalEvent: new Event('focus') });
+            }
             this.popover().open();
             return;
         }
@@ -290,7 +297,7 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     protected onBlur(): void {
         // В шторке поле теряет фокус, когда его отдают поиску шторки: это не уход человека. Касание
         // ставит закрытие шторки.
-        if (this.inSheet()) {
+        if (this.openedInSheet()) {
             return;
         }
         this.markTouched();
@@ -310,7 +317,7 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
 
     protected onClosed(): void {
         this.activeIndex.set(-1);
-        if (this.inSheet()) {
+        if (this.openedInSheet()) {
             this.markTouched();
         }
     }
@@ -367,7 +374,7 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
             return;
         }
         // Короткий запрос закрывает панель у поля; шторку он не закрывает — в ней набирают дальше.
-        if (!this.inSheet()) {
+        if (!this.openedInSheet()) {
             this.popover().close();
         }
     }

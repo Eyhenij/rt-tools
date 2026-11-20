@@ -149,6 +149,9 @@ export class RtInputComponent extends RtFormControlBase<string> {
     });
     public readonly autocomplete: InputSignal<string | null> = input<string | null>(null);
 
+    /** Поле — строка поиска над списком: ставит роль `combobox` и связи со списком. `null` — обычное поле. */
+    public readonly combobox: InputSignal<IRtInput.Combobox | null> = input<IRtInput.Combobox | null>(null);
+
     /**
      * Предел длины значения: уходит атрибутом `maxlength` на поле, и браузер не даёт набрать лишний
      * знак. `null` — предела нет. Проверку формы вход не заменяет: значение, записанное кодом,

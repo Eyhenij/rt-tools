@@ -9,7 +9,7 @@
         [rtPopover]="panelTpl"
         [rtPopoverSheet]="sheet()"
         [rtPopoverSheetTitle]="sheetTitle()"
-        (rtPopoverOpened)="onOpened()"
+        (rtPopoverSheetOpened)="onSheetOpened()"
         (rtPopoverClosed)="onClosed()">
         @if (iconLeft(); as left) {
             <rt-icon rtElem="icon-left" size="sm" color="muted" [name]="left" />
@@ -50,7 +50,7 @@
     </div>
 
     <ng-template #panelTpl>
-        @if (inSheet()) {
+        @if (openedInSheet()) {
             <!-- Поиск наверху шторки: на телефоне набирают здесь, поле под шторкой закрыто ею. -->
             <div rtElem="sheet-search" qa-dataid="autocomplete-sheet-search">
                 <rt-input
@@ -58,6 +58,7 @@
                     [clearable]="true"
                     [placeholder]="placeholder()"
                     [ariaLabel]="ariaLabel() || sheetTitle()"
+                    [combobox]="{ controls: panelId, expanded: isOpen(), activeDescendant: activeOptionId() }"
                     [ngModel]="inputText()"
                     [ngModelOptions]="{ standalone: true }"
                     (ngModelChange)="onSheetQuery($event)"
