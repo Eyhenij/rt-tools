@@ -91,17 +91,18 @@ Stage 1 is closed: every frame of the set is approved. Stage 2 begins.
 The owner added: «включи в задачу поправить дейт пикер пример селектора», «проверить у всех
 селектов и пиркеров иконки на одном и том же месте».
 
-1. [ ] Measure the trailing icon of every select and picker of the kit in the showcase: its right
+1. [x] Measure the trailing icon of every select and picker of the kit in the showcase: its right
    edge against the right edge of the field, in both looks. — by the code: the select and the
    multiselect draw a bare 16 px chevron at the field padding; the date field and the period field
    draw an `rt-icon-button` of 32 px, whose own box moves the glyph 8 px further in. The
-   autocomplete and the tree selectors have no trailing icon of their own. The live measurement is left.
-2. [ ] Draw the aligned date field next to the select in Figma and show it to the owner. — no
+   autocomplete and the tree selectors have no trailing icon of their own. Measured live on 6017:
+   17.0 px for the select, the date and the period field on every size.
+2. [x] Draw the aligned date field next to the select in Figma and show it to the owner. — no
    drawing needed: the approved frames already put every trailing icon 17 px from the field's right
    edge (border 1 + padding 16) — `Select` 4645:2745, `Date Picker` 6055:603, `Date Range Picker`
    6055:1284, `Date Time Picker` 6055:1523, `Time Picker` 6055:748. The code diverged from them;
    after 5e04df474 the showcase measures 17.0 px for all three fields on every size.
-3. [ ] Move the date picker icon, and any other that diverged, onto the select's line; a spec or a
+3. [x] Move the date picker icon, and any other that diverged, onto the select's line; a spec or a
    measurement holds it. — the open button of `rt-date-picker` and `rt-date-range` is pulled out by
    its own property `--rt-<block>-open-offset` = (32 − 16) / −2 = −8 px on every field size, by the
    CSS; the live measurement waits for the showcase on 6007, which now runs from another working
