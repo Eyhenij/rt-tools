@@ -4,8 +4,13 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 4 из 4 — Showcase; both review rounds done
-- **Next step:** stage 4, step 3 — the owner looks at the showcase on 6017 (up from this branch);
-  then step 2, the kit-match numbers, closing the texts, the push set and the draft PR.
+- **Next step:** stage 4, step 2 — the kit-match numbers. The showcase approval «Одобряю» is in
+  `approvals.md`. The select sheet against the mockup 6068:811 misses three numbers: the content
+  side padding 20 (the showcase 0, the options run edge to edge), the title line height 24 (the
+  showcase `normal`, 19.5), the panel bottom padding 24 (the showcase 0); the search field of the
+  mockup is not in `rt-select` at all and goes to the PR as named. Then the five kit remarks the
+  owner added on 20.11 (the grill, last decision): a Figma frame for each and the owner's approval
+  before code, then the closing texts, the push set and the draft PR.
 - **Live walk on 6017 (20.11):** every `Sheet` story of the set opens the bottom sheet at 375, the
   panel 0…375 wide, no node past its edges (select, multiselect and its toggles, autocomplete,
   action bar, palette, dynamic selector, menu, speed menu, split button, tabs «Ещё» and tab menu,

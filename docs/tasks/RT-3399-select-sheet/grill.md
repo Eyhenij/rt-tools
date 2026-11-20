@@ -93,4 +93,30 @@ sheet of its own over it).
   and a narrow laptop window. Read as: every panel of choice of the kit, the date fields included,
   opens in the sheet at the phone threshold of `BreakpointsService`; wider, next to its trigger.
 
+- **The kit's part of the application's interface remarks joins the task** — the owner's words
+  «посмотри что из описанных багов правится в ките и возьми в этот тикет в слаке отметь иконкой
+  глазками» (20.11), about the remarks thread of the application's issues channel. Each remark was
+  checked against the kit's code; five are the kit's and got the eyes mark:
+    1. «фильтры на странице переписок открываются без бг» — the filters panel of `rt-thread-list`
+       (`&__filters-panel`) declares no background, border or shadow, so the popover draws it
+       transparent over the list.
+    2. «стили фокуса разные на элементах» — the kit draws the focus ring in four ways: solid
+       `--rt-focus-ring-*`, dashed `--rt-nav-color-focus` (2 px and 1 px), solid
+       `--rt-color-action-primary`, and the field border. Read as: one focus ring for every
+       interactive element of the kit.
+    3. «в переписках сделать ровнымы хедеры» — the header of the thread list (search and filter)
+       and the header of the open conversation stand at different heights in `rt-workspace`. Read
+       as: both column headers share one height and one bottom line.
+    4. «убрать стрелку назад для этого темплейта, переместить i в одну строку с другими экшенами» —
+       `rt-workspace` draws its `mobile-toolbar` (back and details) above the conversation while
+       the list column is on screen. Read as: no back button while the list is visible, and the
+       details button stands in the conversation header row with its other actions.
+    5. «подвинуть панель дэйтпикера на одну линию с полем инпута дат» — the panel of the period
+       field opens offset from the field. Read as: the panel's edge lines up with the field's edge.
+  Left to the application, not marked: the notification strip, the report preview blur (the
+  screen's own overlay, not found in the kit), the month switcher in the page header, the reports
+  in the navigation menu, the missing quote in a chat message (the chat bubbles are not the kit's),
+  and the seven top-level messages of 20.11 (demo, logo, organisations, registration, address,
+  card width, save progress).
+
 ## What is left unclear
