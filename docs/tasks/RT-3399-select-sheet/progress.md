@@ -182,6 +182,22 @@ said «на мобилке»; the kit has a phone signal at ≤480 px. Named in 
 multiselect has no search (mockup 6068:1250 shows one); icon-only speed-menu actions in the sheet;
 the default switch of 20 components goes as a `BREAKING CHANGE` footer.
 
+## Review round two (20.11)
+
+Three fresh readers on the whole diff after a0292c8da. Confirmed here before the fix: typecheck
+fails on `rt-autocomplete-sheet.spec.ts:102` (protected `value`); `check-boolean-inputs` refuses
+`open` of `rt-popover-sheet`; `check-kit-coverage` refuses `rt-popover-sheet` without a story; the
+date fields ignore `RT_POPOVER_SHEET` and coerce no `sheet`; `rt-table` and `rt-page-actions` do not
+pass `sheet` down. Sent to two Sonnet agents with the rest, each checked against the code first:
+focus into an inert sheet, a live `inSheet` read by the autocomplete and the multiselect footer,
+the scroll lock lost on reopen during the close, focus returned to a non-focusable host, the fold
+flipping in a flex row, no slide after a drag, the unnamed sheet dialog, the sheet search without
+combobox roles, a search below `minLength` on tap, the footer counting unknown values, the panel
+class dropped in the sheet, the RU admin labels. Fixed here: the select spec links the subdomain,
+the spec names the three new labels (31e7abb1c), the RT-3432 row moved into the assignments table.
+To fix in the round's commit: the `BREAKING CHANGE` names the toggle group folding at any width and
+`fold=false`, and stubs without `phone`.
+
 ## Decisions along the way
 
 - The mockup of the multiselect sheet shows a search field, while `rt-multiselect` has no search at
