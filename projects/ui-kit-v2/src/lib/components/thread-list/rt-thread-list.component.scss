@@ -9,6 +9,14 @@
         --rt-thread-list-avatar-radius: var(--rt-radius-full);
         --rt-thread-list-line-radius: var(--rt-radius-full);
 
+        /* Подложка, поля и скругление действий строки и видимость узла под ними. Предок, которому
+           нужен другой вид, задаёт их правилом на этом же блоке, как чат. */
+        --rt-thread-list-row-actions-bg: var(--rt-color-bg-subtle);
+        --rt-thread-list-row-actions-bg-active: var(--rt-color-state-info-bg);
+        --rt-thread-list-row-actions-padding-inline: var(--rt-space-2) var(--rt-space-4);
+        --rt-thread-list-row-action-radius: var(--rt-radius-md);
+        --rt-thread-list-under-actions-visibility: visible;
+
         display: flex;
         flex: 1 1 auto;
         flex-direction: column;
@@ -140,18 +148,17 @@
             position: absolute;
             display: flex;
             align-items: center;
-
-            /* Фон, отступы и скругление кнопок читаются с запасным значением на месте: токены
-               ставит предок, например чат, и объявление на блоке их бы перебило. */
-            background: var(--rt-thread-list-row-actions-bg, var(--rt-color-bg-subtle));
+            background: var(--rt-thread-list-row-actions-bg);
             gap: var(--rt-space-1);
             inset-block: 0;
             inset-inline-end: 0;
-            padding-inline: var(--rt-thread-list-row-actions-padding-inline, var(--rt-space-2) var(--rt-space-4));
+            padding-inline: var(--rt-thread-list-row-actions-padding-inline);
 
             // Кнопка объявляет своё скругление на корне шаблона, поэтому его переназначают там же.
-            rt-icon-button .rt-icon-button {
-                --rt-icon-button-radius: var(--rt-thread-list-row-action-radius, var(--rt-radius-md));
+            // Хост завёрнут в `:where`: правило сильнее объявления кнопки, но слабее шага её входа
+            // `radius`, и кнопка с явным скруглением рисует его как прежде.
+            :where(rt-icon-button) .rt-icon-button {
+                --rt-icon-button-radius: var(--rt-thread-list-row-action-radius);
             }
         }
 
@@ -160,7 +167,7 @@
         // Скрытие держит место узла, чтобы строка не сдвигалась под указателем. Без наведения
         // действия видны всегда, и токен действует постоянно.
         &__row-wrap [rtThreadListUnderActions] {
-            visibility: var(--rt-thread-list-under-actions-visibility, visible);
+            visibility: var(--rt-thread-list-under-actions-visibility);
         }
 
         // Действия прячутся только там, где есть наведение. На сенсорном экране наведения нет,
@@ -194,12 +201,12 @@
             &__row-wrap:hover [rtThreadListUnderActions],
             &__row-wrap:focus-within [rtThreadListUnderActions],
             &__row-wrap:has(.rt-menu--open) [rtThreadListUnderActions] {
-                visibility: var(--rt-thread-list-under-actions-visibility, visible);
+                visibility: var(--rt-thread-list-under-actions-visibility);
             }
         }
 
         &__row--active + .rt-thread-list__row-actions {
-            background: var(--rt-thread-list-row-actions-bg-active, var(--rt-color-state-info-bg));
+            background: var(--rt-thread-list-row-actions-bg-active);
         }
 
         // Знак канала стоит слева от содержимого строки. Содержимое при знаке собрано в свою обёртку:

@@ -66,11 +66,26 @@ const namesIn = (text, regexp) => [...text.matchAll(regexp)].map((match) => matc
 
 const files = scssFiles(KIT);
 const declared = new Set();
+/** The names the kit declares itself, a showcase story's declarations left out. */
+const kitDeclared = new Set();
 const references = [];
+
+/**
+ * A showcase story sets a handle the way an application does, so its declarations are a consumer's,
+ * not the kit's. They keep a name the story declares and reads itself from reading as dead, but they
+ * do not make a handle the kit's own: counted so, every handle a story shows would read as declared
+ * by the kit, and its fallback value as a hidden miss.
+ */
+const isShowcase = (path) => path.includes('/stories/');
 
 for (const path of files) {
     const text = read(path);
-    namesIn(text, DECLARATION_RE).forEach((name) => declared.add(name));
+    for (const name of namesIn(text, DECLARATION_RE)) {
+        declared.add(name);
+        if (!isShowcase(path)) {
+            kitDeclared.add(name);
+        }
+    }
     for (const match of text.matchAll(REFERENCE_RE)) {
         references.push({ name: match[1], path, hasFallback: Boolean(match[2]) });
     }
@@ -93,7 +108,7 @@ for (const name of [...new Set(references.map((reference) => reference.name))].s
 
 /** 2. A fallback value at a name the kit declares itself. */
 for (const reference of references) {
-    if (reference.hasFallback && declared.has(reference.name)) {
+    if (reference.hasFallback && kitDeclared.has(reference.name)) {
         add(
             `a fallback value ${reference.name} @ ${reference.path}`,
             `${reference.name} in ${reference.path} — a fallback value stands at a token the kit declares itself: it hides a miss and outlives a change of theme`

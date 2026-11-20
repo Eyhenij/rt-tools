@@ -220,12 +220,12 @@
                         <span rtElem="thread-part" [rtMod]="{ match: part.matched }">{{ part.text }}</span>
                     }
                 </span>
-                <span rtElem="thread-meta" rtThreadListUnderActions>
+                <span rtElem="thread-meta">
                     @if (row.unreadCount) {
                         <span rtElem="thread-unread" qa-dataid="ai-chat-thread-unread">{{ row.unreadCount }}</span>
                     }
                     @if (row.time) {
-                        <span rtElem="thread-time">{{ row.time }}</span>
+                        <span rtElem="thread-time" rtThreadListUnderActions>{{ row.time }}</span>
                     }
                 </span>
             </ng-template>

@@ -22,7 +22,7 @@ const at: (state: string, target: string) => string = (state: string, target: st
 /** Шрифт, шапка, подсказки (и в узкой панели), подпись автора, фоны панели и поля. */
 export const Properties: TStory = { args: { part: 'properties' } };
 
-/** Поле в фокусе, «Отправить» под указателем и выбранная оценка — без токенов и в другом цвете. */
+/** Поле в фокусе, «Отправить» и «Стоп» под указателем, выбранная оценка — без токенов и в другом цвете. */
 export const Focus: TStory = {
     name: 'Properties · focus',
     args: { part: 'focus' },
@@ -34,9 +34,15 @@ export const Focus: TStory = {
     },
 };
 
-/** Беседы с показанными действиями строк: меню и кнопка удаления, без токенов и с токенами. */
+/**
+ * Беседы с показанными действиями одной строки: меню и кнопка удаления, без токенов и с токенами.
+ * Указатель стоит на кнопке третьей строки: видно её скругление под указателем, а время и счётчик
+ * остальных строк остаются на месте.
+ */
+const HOVERED_ROW: string = '.rt-thread-list__row-wrap:nth-child(3)';
+
 export const RowActions: TStory = {
     name: 'Properties · row actions',
     args: { part: 'rowActions' },
-    parameters: { pseudo: { hover: at('rows', '.rt-thread-list__row-wrap') } },
+    parameters: { pseudo: { hover: [at('rows', HOVERED_ROW), at('rows', `${HOVERED_ROW} .rt-thread-list__row-actions .rt-icon-button`)] } },
 };

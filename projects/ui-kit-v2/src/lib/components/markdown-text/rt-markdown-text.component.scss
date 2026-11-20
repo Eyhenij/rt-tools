@@ -5,16 +5,18 @@
         --rt-markdown-text-radius: var(--rt-radius-sm);
         --rt-markdown-text-border-width: var(--rt-border-width-thin);
 
+        /* Семейство и кегль основного текста. Предок, которому нужен другой вид, задаёт их правилом
+           на этом же блоке, как чат. */
+        --rt-markdown-text-font-family: var(--rt-font-family-sans);
+        --rt-markdown-text-font-size: var(--rt-text-xs);
+
         display: flex;
         min-width: 0;
         max-width: 100%;
         flex-direction: column;
         color: var(--rt-color-text-primary);
-
-        /* Семейство и кегль читаются с запасным значением на месте, а не объявляются здесь: так их
-           ставит предок — чат передаёт свои токены, и объявление на блоке их не перебьёт. */
-        font-family: var(--rt-markdown-text-font-family, var(--rt-font-family-sans));
-        font-size: var(--rt-markdown-text-font-size, var(--rt-text-xs));
+        font-family: var(--rt-markdown-text-font-family);
+        font-size: var(--rt-markdown-text-font-size);
         font-weight: var(--rt-font-weight-regular);
         gap: var(--rt-space-sm);
         letter-spacing: var(--rt-letter-spacing-wide);

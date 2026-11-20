@@ -21,6 +21,7 @@ interface IAiChatPropertiesCase {
     readonly threadMenu?: boolean;
     readonly questionAuthor?: boolean;
     readonly draft?: string;
+    readonly sending?: boolean;
 
     /** Ширина ящика панели, если она уже обычной боковой. */
     readonly width?: string;
@@ -67,7 +68,7 @@ export class TestRtAiChatPropertiesComponent {
         { name: 'шрифт и размеры', cell: 'font', messages: AI_CHAT_DONE },
         { name: 'шапка: высота и разделитель', cell: 'header', messages: AI_CHAT_DONE },
         { name: 'подсказки: ширина и скругление', cell: 'suggestions', messages: [], suggestions: AI_CHAT_SUGGESTIONS },
-        { name: 'подсказки в узкой панели', cell: 'suggestions', messages: [], suggestions: AI_CHAT_SUGGESTIONS, width: '20rem' },
+        { name: 'подсказки в узкой панели', cell: 'suggestions', messages: [], suggestions: AI_CHAT_SUGGESTIONS, width: '18rem' },
         { name: 'без подписи автора', cell: 'author', messages: AI_CHAT_DONE, questionAuthor: false },
         { name: 'фон панели и поля', cell: 'backgrounds', messages: AI_CHAT_DONE },
     ];
@@ -75,6 +76,7 @@ export class TestRtAiChatPropertiesComponent {
     public readonly focusCases: readonly IAiChatPropertiesCase[] = [
         { name: 'по умолчанию', cell: 'default', messages: AI_CHAT_RATED, draft: DRAFT, state: 'focus' },
         { name: 'основной цвет', cell: 'primary', messages: AI_CHAT_RATED, draft: DRAFT, state: 'focus' },
+        { name: 'основной цвет, «Стоп»', cell: 'primary', messages: AI_CHAT_RATED, sending: true, state: 'focus' },
     ];
 
     public readonly rowActionCases: readonly IAiChatPropertiesCase[] = [

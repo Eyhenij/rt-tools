@@ -1,40 +1,44 @@
-/* Токены ставятся так, как их ставит приложение: правилом на элементе rt-ai-chat, вне слоёв кита. */
+/* Токены ставятся так, как их ставит приложение: правилом на элементе rt-ai-chat, без селектора
+   внутреннего класса чата и его частей. Слой тот же, что у стилей кита, как у всех историй; правило
+   на элементе с атрибутом сильнее правила на классе блока. */
 
-rt-ai-chat[data-cell='font'] {
-    --rt-ai-chat-font-family: 'Georgia', 'Times New Roman', serif;
-    --rt-ai-chat-question-font-size: 1rem;
-    --rt-ai-chat-answer-font-size: 0.9375rem;
-}
+@layer rt-kit.components {
+    rt-ai-chat[data-cell='font'] {
+        --rt-ai-chat-font-family: 'Georgia', 'Times New Roman', serif;
+        --rt-ai-chat-question-font-size: 1rem;
+        --rt-ai-chat-answer-font-size: 0.9375rem;
+    }
 
-rt-ai-chat[data-cell='header'] {
-    --rt-ai-chat-header-height: 4rem;
-    --rt-ai-chat-header-border-width: 1px;
-    --rt-ai-chat-header-border-color: var(--rt-color-border-strong);
-}
+    rt-ai-chat[data-cell='header'] {
+        --rt-ai-chat-header-height: 4rem;
+        --rt-ai-chat-header-border-width: 1px;
+        --rt-ai-chat-header-border-color: var(--rt-color-border-strong);
+    }
 
-rt-ai-chat[data-cell='suggestions'] {
-    --rt-ai-chat-suggestion-width: 18rem;
-    --rt-ai-chat-suggestion-radius: 0;
-}
+    rt-ai-chat[data-cell='suggestions'] {
+        --rt-ai-chat-suggestion-width: 18rem;
+        --rt-ai-chat-suggestion-radius: 0;
+    }
 
-rt-ai-chat[data-cell='backgrounds'] {
-    --rt-ai-chat-bg: var(--rt-color-bg-surface-subtle);
-    --rt-ai-chat-prompt-bg: var(--rt-color-bg-surface);
-}
+    rt-ai-chat[data-cell='backgrounds'] {
+        --rt-ai-chat-bg: var(--rt-color-bg-page);
+        --rt-ai-chat-prompt-bg: var(--rt-color-state-info-bg);
+    }
 
-rt-ai-chat[data-cell='primary'] {
-    --rt-ai-chat-send-bg: var(--rt-color-state-success-text);
-    --rt-ai-chat-send-bg-hover: var(--rt-color-state-success-text);
-    --rt-ai-chat-focus-border-color: var(--rt-color-state-success-text);
-    --rt-ai-chat-focus-shadow: 0 0 0 3px var(--rt-color-state-success-bg);
-    --rt-ai-chat-rating-active-bg: var(--rt-color-state-success-bg);
-    --rt-ai-chat-rating-active-color: var(--rt-color-state-success-text);
-}
+    rt-ai-chat[data-cell='primary'] {
+        --rt-ai-chat-send-bg: var(--rt-color-action-success);
+        --rt-ai-chat-send-bg-hover: var(--rt-color-action-success-hover);
+        --rt-ai-chat-focus-border-color: var(--rt-color-action-success);
+        --rt-ai-chat-focus-shadow: 0 0 0 2px var(--rt-color-action-success);
+        --rt-ai-chat-rating-active-bg: var(--rt-color-state-success-bg);
+        --rt-ai-chat-rating-active-color: var(--rt-color-action-success-on-surface);
+    }
 
-rt-ai-chat[data-cell='rows'] {
-    --rt-ai-chat-thread-actions-bg: transparent;
-    --rt-ai-chat-thread-actions-bg-active: transparent;
-    --rt-ai-chat-thread-action-radius: 0;
-    --rt-ai-chat-thread-actions-padding-inline: 0 var(--rt-space-2);
-    --rt-ai-chat-thread-meta-under-actions: hidden;
+    rt-ai-chat[data-cell='rows'] {
+        --rt-ai-chat-thread-actions-bg: transparent;
+        --rt-ai-chat-thread-actions-bg-active: transparent;
+        --rt-ai-chat-thread-action-radius: 0;
+        --rt-ai-chat-thread-actions-padding-inline: 0 var(--rt-space-2);
+        --rt-ai-chat-thread-time-under-actions: hidden;
+    }
 }

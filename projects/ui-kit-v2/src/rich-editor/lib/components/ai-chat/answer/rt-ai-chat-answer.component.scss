@@ -24,15 +24,19 @@
 
             /* Выбранная оценка красится токенами чата и держит их под указателем: правило наведения
                кнопки иначе вернуло бы свою заливку и цвет. Токены читаются с запасным значением на
-               месте, поэтому ответ вне чата выглядит как прежде. Сила выше правил кнопки-значка. */
+               месте, поэтому ответ вне чата выглядит как прежде. Сила выше правил кнопки-значка.
+               Запасные значения те же, что у самой кнопки: цвет и заливка под указателем, заданные
+               приложением на теге кнопки или выше, доходят до выбранной оценки как прежде. */
             rt-icon-button .rt-icon-button.rt-icon-button--active {
-                --rt-icon-button-color: var(--rt-ai-chat-rating-active-color, var(--rt-color-text-primary));
-                --rt-icon-button-color-hover: var(--rt-icon-button-color);
-
                 background-color: var(--rt-ai-chat-rating-active-bg, var(--rt-icon-button-color-bg-hover));
+                color: var(--rt-ai-chat-rating-active-color, var(--rt-icon-button-color));
 
                 &:hover:not(:disabled, [aria-disabled='true']) {
-                    background-color: var(--rt-ai-chat-rating-active-bg, var(--rt-icon-button-color-bg-hover));
+                    background-color: var(
+                        --rt-ai-chat-rating-active-bg,
+                        var(--rt-icon-button-bg-hover, var(--rt-icon-button-color-bg-hover))
+                    );
+                    color: var(--rt-ai-chat-rating-active-color, var(--rt-icon-button-color-hover));
                 }
             }
         }
