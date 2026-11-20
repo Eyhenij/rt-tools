@@ -48,7 +48,15 @@ import { IRtSelect } from '@rt-tools/ui-kit-v2/select';
 import { RtTagComponent } from '@rt-tools/ui-kit-v2/tag';
 import { RtToggleSwitchComponent } from '@rt-tools/ui-kit-v2/toggle-switch';
 import { RtMultiselectLabelPipe } from './rt-multiselect-label.pipe';
-import { IRtMultiselectSummary, TRtMultiselectLook, rtMultiselectAllValues, rtMultiselectSummary } from './rt-multiselect-toggles.logic';
+import {
+    IRtMultiselectSummary,
+    TRtMultiselectLook,
+    rtMultiselectAllValues,
+    rtMultiselectCanReset,
+    rtMultiselectKept,
+    rtMultiselectSummary,
+    rtMultiselectToggleAllNext,
+} from './rt-multiselect-toggles.logic';
 
 const BEM_BLOCK: string = 'rt-multiselect';
 
@@ -113,7 +121,6 @@ function nextPanelId(): number {
         '[class.rt-multiselect--borderless]': '!bordered()',
         '[class.rt-multiselect--size--sm]': "size() === 'sm'",
         '[class.rt-multiselect--size--lg]': "size() === 'lg'",
-        '[class.rt-multiselect--toggles]': "look() === 'toggles'",
     },
 })
 export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyArray<TValue>> {
@@ -140,6 +147,9 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
     protected readonly allValues: Signal<ReadonlyArray<TValue>> = computed((): ReadonlyArray<TValue> =>
         rtMultiselectAllValues(this.options())
     );
+
+    /** Есть ли что сбрасывать: отключённые и неизвестные значения «Сбросить» не снимает. */
+    protected readonly canReset: Signal<boolean> = computed((): boolean => rtMultiselectCanReset(this.allValues(), this.value()));
 
     protected readonly summary: Signal<IRtMultiselectSummary> = computed((): IRtMultiselectSummary =>
         rtMultiselectSummary(this.allValues(), this.value())
@@ -181,14 +191,26 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
         this.rows().map((row: IRtSelect.Row<TValue>): IRtSelect.TBranchState => this.#checkOf(row))
     );
 
+    /**
+     * Сдвиг строк в обходе стрелками: в виде `toggles` первым пунктом стоит «Показать все», и
+     * индекс 0 — он, а строка `i` имеет индекс `i + 1`. В виде `list` сдвига нет.
+     */
+    protected readonly rowOffset: Signal<number> = computed((): number => (this.look() === 'toggles' ? 1 : 0));
+
+    /** Подсвечена ли стрелками строка «Показать все». */
+    protected readonly showAllActive: Signal<boolean> = computed((): boolean => this.rowOffset() === 1 && this.activeIndex() === 0);
+
+    /** Идентификатор строки «Показать все» — тот же, что уходит в `aria-activedescendant`. */
+    protected readonly showAllId: string = `${this.panelId}-opt-0`;
+
     protected readonly isOpen: Signal<boolean> = computed((): boolean => this.popover().isOpen());
 
     /** Клавиатура списка: подсветка, клавиши открытия, id для `aria-activedescendant`, прокрутка к опции. */
     protected readonly optionList: RtOptionList = new RtOptionList({
         panelId: (): string => this.panelId,
         isOpen: (): boolean => this.isOpen(),
-        count: (): number => this.rows().length,
-        isDisabled: (index: number): boolean => Boolean(this.rows()[index]?.option.disabled),
+        count: (): number => this.rows().length + this.rowOffset(),
+        isDisabled: (index: number): boolean => Boolean(this.rows()[index - this.rowOffset()]?.option.disabled),
         chooseKeys: new Set<string>(['Enter', ' ']),
         sideKeys: true,
         edgeKeys: true,
@@ -337,11 +359,12 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
      * заново. Крестик поля не годится — он возвращает фокус в поле под шторкой.
      */
     protected resetChoice(): void {
-        if (this.isDisabled() || this.value().length === 0) {
+        if (this.isDisabled() || !this.canReset()) {
             return;
         }
-        this.value.set([]);
-        this.emitChange([]);
+        const next: ReadonlyArray<TValue> = rtMultiselectKept(this.allValues(), this.value());
+        this.value.set(next);
+        this.emitChange([...next]);
     }
 
     /** «Показать все»: включено всё — снимает всё, иначе включает всё, что можно включить. */
@@ -349,7 +372,7 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
         if (this.isDisabled()) {
             return;
         }
-        const next: ReadonlyArray<TValue> = this.summary().state === 'all' ? [] : [...this.allValues()];
+        const next: ReadonlyArray<TValue> = rtMultiselectToggleAllNext(this.allValues(), this.value());
         this.value.set(next);
         this.emitChange([...next]);
     }
@@ -432,19 +455,27 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
     }
 
     #sideKey(key: string): void {
-        const answer: IRtSelect.SideKeyAnswer<TValue> = rtTreeSideKey(this.rows(), this.activeIndex(), key);
+        const offset: number = this.rowOffset();
+        if (this.showAllActive()) {
+            return;
+        }
+        const answer: IRtSelect.SideKeyAnswer<TValue> = rtTreeSideKey(this.rows(), this.activeIndex() - offset, key);
         const toggle: TValue | null = answer.toggle;
         if (toggle !== null) {
             this.openBranches.update((open: ReadonlySet<TValue>): ReadonlySet<TValue> => rtTreeToggle(open, toggle));
         }
-        this.activeIndex.set(answer.index);
+        this.activeIndex.set(answer.index + offset);
     }
 
     #toggleActive(): void {
         const opts: ReadonlyArray<IRtSelect.Option<TValue>> = this.rows().map(
             (row: IRtSelect.Row<TValue>): IRtSelect.Option<TValue> => row.option
         );
-        const index: number = this.activeIndex();
+        if (this.showAllActive()) {
+            this.toggleAll();
+            return;
+        }
+        const index: number = this.activeIndex() - this.rowOffset();
         if (index >= 0 && index < opts.length) {
             this.toggleOption(opts[index]);
         }

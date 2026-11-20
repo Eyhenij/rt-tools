@@ -168,7 +168,12 @@ without `viewportNarrow`; «Show all»/«Reset» dropping disabled values; «Sho
 autocomplete clear, touched and keys in the sheet; `floatingLabel` as the sheet title; two docs
 tables; two classes with no rule; four missing tests.
 
-For the owner: the threshold — the sheet opens at ≤1080 px (the date fields' threshold), the owner
+Fixed, checked here after the agents: the kit set 3829 green, lint, stylelint, tokens, cascade
+layer, `check:specs`, the docs check and `build-storybook` green. Scenarios 1462…1484 written;
+1382…1384 collided with the card from main (RT-3432) and became 1486…1488. The owner chose the
+threshold: «До 480 px» — every sheet, the date fields too, reads `BreakpointsService.phone`.
+
+Was for the owner: the threshold — the sheet opens at ≤1080 px (the date fields' threshold), the owner
 said «на мобилке»; the kit has a phone signal at ≤480 px. Named in the PR, not fixed: the
 multiselect has no search (mockup 6068:1250 shows one); icon-only speed-menu actions in the sheet;
 the default switch of 20 components goes as a `BREAKING CHANGE` footer.

@@ -3,12 +3,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
+import { RT_POPOVER_SHEET } from '../popover/rt-popover-sheet.token';
 import { RtTabDirective } from './rt-tab.directive';
 import { RtTabsComponent } from './rt-tabs.component';
 
 /** Телефон: узкое окно и узкая полоса. */
 class PhoneBreakpointsStub {
     public readonly viewportNarrow: WritableSignal<boolean> = signal<boolean>(true);
+    public readonly phone: WritableSignal<boolean> = this.viewportNarrow;
     public readonly narrow: WritableSignal<boolean> = signal<boolean>(true);
 }
 
@@ -36,8 +38,11 @@ function settle(fixture: ComponentFixture<TabsContextSheetHostComponent>): void 
     fixture.detectChanges();
 }
 
-function setup(): ComponentFixture<TabsContextSheetHostComponent> {
-    const providers: Provider[] = [{ provide: BreakpointsService, useValue: new PhoneBreakpointsStub() }];
+let lastStub: PhoneBreakpointsStub;
+
+function setup(extra: Provider[] = []): ComponentFixture<TabsContextSheetHostComponent> {
+    lastStub = new PhoneBreakpointsStub();
+    const providers: Provider[] = [{ provide: BreakpointsService, useValue: lastStub }, ...extra];
     const fixture: ComponentFixture<TabsContextSheetHostComponent> = createRtFixture(TabsContextSheetHostComponent, {}, { providers });
     settle(fixture);
     return fixture;
@@ -74,5 +79,32 @@ describe('Меню вкладки в нижней шторке', (): void => {
 
         expect(fixture.componentInstance.renamed).toBe('a');
         expect(document.querySelector('.rt-popover-sheet')).toBeNull();
+    });
+    it('SC-UKV-1471: токен RT_POPOVER_SHEET со значением false оставляет меню вкладки у точки нажатия на телефоне', (): void => {
+        const fixture: ComponentFixture<TabsContextSheetHostComponent> = setup([{ provide: RT_POPOVER_SHEET, useValue: false }]);
+
+        longPress(fixture);
+
+        expect(document.querySelector('.rt-popover-sheet')).toBeNull();
+        expect(document.querySelectorAll('[qa-dataid="tabs-context-menu"]').length).toBe(1);
+    });
+
+    it('SC-UKV-1467: порог ширины, пересечённый при открытом в шторке меню вкладки, не рисует вторую панель', (): void => {
+        const fixture: ComponentFixture<TabsContextSheetHostComponent> = setup();
+        longPress(fixture);
+
+        lastStub.viewportNarrow.set(false);
+        settle(fixture);
+
+        expect(document.querySelectorAll('[qa-dataid="tabs-context-menu"]').length).toBe(1);
+        expect(document.querySelector('.rt-popover-sheet [qa-dataid="tabs-context-menu"]')).not.toBeNull();
+    });
+
+    it('SC-UKV-1467: в шторке меню вкладки берёт фокус на первый пункт, как панель у точки нажатия', (): void => {
+        const fixture: ComponentFixture<TabsContextSheetHostComponent> = setup();
+
+        longPress(fixture);
+
+        expect(document.activeElement).toBe(document.querySelector('.rt-popover-sheet [qa-dataid="tab-menu-rename"]'));
     });
 });

@@ -30,6 +30,7 @@ class ResizeObserverDouble {
 /** Телефон: узкое окно, поле открывает список в нижней шторке. */
 class PhoneBreakpointsStub {
     public readonly viewportNarrow: WritableSignal<boolean> = signal<boolean>(true);
+    public readonly phone: WritableSignal<boolean> = signal<boolean>(true);
     public readonly narrow: WritableSignal<boolean> = signal<boolean>(true);
 }
 
@@ -122,5 +123,17 @@ describe('RtToggleButtonGroupComponent — сворачивание', (): void =
         expect(folded(setup({ layout: 'wrap' }))).toBeNull();
         expect(rtToggleGroupFolds(520, 0, 'row', true)).toBe(false);
         expect(rtToggleGroupFolds(343.4, 343, 'row', true)).toBe(false);
+    });
+
+    it('SC-UKV-1474 — sheet=false: свёрнутое поле открывает список поповером, а одиночное поле не очищается крестиком', (): void => {
+        stubWidths(520, 343);
+        const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ value: 'week', sheet: false });
+
+        expect(folded(fixture)?.querySelector('.rt-select__clear')).toBeNull();
+        (folded(fixture)?.querySelector('[qa-dataid="select-trigger"]') as HTMLElement).click();
+        settle(fixture);
+
+        expect(document.querySelector('.rt-popover-sheet')).toBeNull();
+        expect(document.querySelector('[qa-dataid="select-option"]')).not.toBeNull();
     });
 });

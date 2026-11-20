@@ -5,7 +5,6 @@ import {
     Overlay,
     OverlayConfig,
     OverlayRef,
-    OverlaySizeConfig,
     ScrollStrategyOptions,
 } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
@@ -36,7 +35,9 @@ import { map, merge, Observable, Subject, switchMap } from 'rxjs';
 
 import { BreakpointsService, carryThemeScope, materialPresetClassesOf } from '@rt-tools/ui-kit-v2/core';
 import { rtIsNestedOverlay } from './rt-popover-nested.logic';
-import { IRtPopoverSheetOpened, rtOpenPopoverSheet, rtPopoverSheetDismissals } from './rt-popover-sheet.helper';
+import { rtPopoverDefaultPositions, rtPopoverSizeByWidth } from './rt-popover-position.logic';
+import { IRtPopoverSheetOpened, rtClosePopoverSheet, rtOpenPopoverSheet, rtPopoverSheetDismissals } from './rt-popover-sheet.helper';
+import { RT_POPOVER_SHEET } from './rt-popover-sheet.token';
 import { IRtPopover } from './rt-popover.model';
 
 const HOVER_CLOSE_DELAY_MS: number = 100;
@@ -86,13 +87,14 @@ export class RtPopoverDirective implements OnDestroy {
     readonly #scrollStrategies: ScrollStrategyOptions = inject(ScrollStrategyOptions);
     readonly #destroyRef: DestroyRef = inject(DestroyRef);
     readonly #injector: Injector = inject(Injector);
-    readonly #narrow: Signal<boolean> = inject(BreakpointsService).viewportNarrow;
+    readonly #narrow: Signal<boolean> = inject(BreakpointsService).phone;
+    readonly #sheetAllowed: boolean = inject(RT_POPOVER_SHEET);
 
     readonly #overlayCreatedSource: Subject<OverlayRef> = new Subject<OverlayRef>();
     readonly #sheetCreatedSource: Subject<IRtPopoverSheetOpened> = new Subject<IRtPopoverSheetOpened>();
 
     #overlayRef: OverlayRef | null = null;
-    #sheetOverlayRef: OverlayRef | null = null;
+    #sheet: IRtPopoverSheetOpened | null = null;
     #positionStrategy: FlexibleConnectedPositionStrategy | null = null;
     #hoverCloseTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -192,8 +194,12 @@ export class RtPopoverDirective implements OnDestroy {
         alias: 'rtPopoverSheetTitle',
     });
 
-    /** Панель откроется (или открыта) в шторке: режим включён и экран узкий. */
-    public readonly inSheet: Signal<boolean> = computed((): boolean => this.sheet() && this.#narrow());
+    /**
+     * Панель откроется (или открыта) в шторке: режим включён входом и токеном `RT_POPOVER_SHEET`, а
+     * экран узкий. Открытая панель остаётся там, где открылась, даже если экран пересёк порог:
+     * `close()` убирает и шторку, и панель у триггера.
+     */
+    public readonly inSheet: Signal<boolean> = computed((): boolean => this.sheet() && this.#sheetAllowed && this.#narrow());
 
     public readonly opened: OutputEmitterRef<void> = output<void>({ alias: 'rtPopoverOpened' });
 
@@ -269,13 +275,7 @@ export class RtPopoverDirective implements OnDestroy {
         if (positions !== null) {
             this.#positionStrategy?.withPositions([...positions]);
         }
-        const hostWidth: number = this.#elementRef.nativeElement.offsetWidth;
-        const sizeByWidth: Record<IRtPopover.Width, OverlaySizeConfig> = {
-            trigger: { width: hostWidth },
-            'trigger-min': { minWidth: hostWidth },
-            auto: {},
-        };
-        overlayRef.updateSize(sizeByWidth[this.width()]);
+        overlayRef.updateSize(rtPopoverSizeByWidth(this.width(), this.#elementRef.nativeElement.offsetWidth));
         // Тема куска `rtTheme` вокруг host'а едет на коробку панели: панель лежит в конце
         // страницы, и без этого список из тёмной карточки рисовался темой страницы.
         carryThemeScope(overlayRef.overlayElement, this.#elementRef.nativeElement);
@@ -293,7 +293,7 @@ export class RtPopoverDirective implements OnDestroy {
             return;
         }
         this.#overlayRef?.detach();
-        this.#closeSheet();
+        this.#closeSheet(true);
         this.isOpenState.set(false);
         this.closed.emit();
     }
@@ -352,25 +352,7 @@ export class RtPopoverDirective implements OnDestroy {
         if (this.#overlayRef !== null) {
             return this.#overlayRef;
         }
-        const alignX: 'start' | 'end' = this.align();
-        const positions: ConnectedPosition[] = [
-            {
-                originX: alignX,
-                originY: 'bottom',
-                overlayX: alignX,
-                overlayY: 'top',
-                offsetX: this.offsetX(),
-                offsetY: this.offsetY(),
-            },
-            {
-                originX: alignX,
-                originY: 'top',
-                overlayX: alignX,
-                overlayY: 'bottom',
-                offsetX: this.offsetX(),
-                offsetY: -this.offsetY(),
-            },
-        ];
+        const positions: ConnectedPosition[] = rtPopoverDefaultPositions(this.align(), this.offsetX(), this.offsetY());
         // Сдвиг к краю экрана и ужатие по высоте включаются только по просьбе
         // потребителя: панель, которая и так помещается, обязана стоять у своего
         // триггера — меню строки таблицы, подтверждение, меню профиля.
@@ -477,14 +459,26 @@ export class RtPopoverDirective implements OnDestroy {
             title: this.sheetTitle() ?? '',
         });
         this.#sheetCreatedSource.next(sheet);
-        this.#sheetOverlayRef = sheet.overlayRef;
+        this.#sheet = sheet;
         this.isOpenState.set(true);
         this.opened.emit();
     }
 
-    #closeSheet(): void {
-        this.#sheetOverlayRef?.dispose();
-        this.#sheetOverlayRef = null;
+    /**
+     * Закрывает шторку. Закрытие по жесту уводит её вниз и возвращает фокус триггеру, если он был
+     * внутри; снос директивы снимает шторку сразу и фокус не трогает.
+     */
+    #closeSheet(byGesture: boolean = false): void {
+        const sheet: IRtPopoverSheetOpened | null = this.#sheet;
+        this.#sheet = null;
+        if (sheet === null) {
+            return;
+        }
+        if (byGesture) {
+            rtClosePopoverSheet(sheet, this.#elementRef.nativeElement);
+        } else {
+            sheet.overlayRef.dispose();
+        }
     }
 
     #disposeOverlay(): void {

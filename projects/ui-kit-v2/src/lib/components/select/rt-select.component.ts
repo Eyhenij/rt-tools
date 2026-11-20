@@ -266,6 +266,10 @@ export class RtSelectComponent<TValue> extends RtFormControlBase<TValue | null> 
         }
     }
 
+    protected override ownLabel(): string | null {
+        return this.floatingLabel();
+    }
+
     protected getEmptyValue(): TValue | null {
         return null;
     }

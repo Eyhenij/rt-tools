@@ -243,6 +243,10 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     }
 
     protected focusAfterClear(): void {
+        // В шторке фокус в поле открыл бы шторку снова: нажатие на крестик только очищает.
+        if (this.inSheet()) {
+            return;
+        }
         this.fieldEl()?.nativeElement.focus();
     }
 
@@ -284,6 +288,11 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     }
 
     protected onBlur(): void {
+        // В шторке поле теряет фокус, когда его отдают поиску шторки: это не уход человека. Касание
+        // ставит закрытие шторки.
+        if (this.inSheet()) {
+            return;
+        }
         this.markTouched();
     }
 
@@ -301,6 +310,9 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
 
     protected onClosed(): void {
         this.activeIndex.set(-1);
+        if (this.inSheet()) {
+            this.markTouched();
+        }
     }
 
     protected onSelect(item: TItem): void {

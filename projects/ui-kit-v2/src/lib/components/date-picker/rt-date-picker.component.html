@@ -43,7 +43,7 @@
             [ariaLabel]="t().uiOpenCalendar"
             [disabled]="isDisabled()"
             [rtPopover]="panelTpl"
-            [rtPopoverDisabled]="narrow() || isDisabled()"
+            [rtPopoverDisabled]="useSheet() || isDisabled()"
             (clicked)="openPanel()" />
 
         <ng-template #panelTpl>
@@ -59,7 +59,7 @@
             </div>
         </ng-template>
 
-        @if (narrow()) {
+        @if (useSheet()) {
             <rt-bottom-sheet qa-dataid="date-picker-sheet" [open]="sheetOpen()" (openChange)="sheetOpen.set($event)">
                 @if (sheetOpen()) {
                     <rt-date-panel

@@ -1,5 +1,5 @@
 import { BooleanInput } from '@angular/cdk/coercion';
-import { CdkConnectedOverlay, Overlay, OverlayRef } from '@angular/cdk/overlay';
+import { CdkConnectedOverlay, Overlay } from '@angular/cdk/overlay';
 import { NgTemplateOutlet } from '@angular/common';
 import {
     booleanAttribute,
@@ -27,7 +27,13 @@ import { Observable, Subject, switchMap } from 'rxjs';
 import { BlockDirective } from '@rt-tools/core';
 
 import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
-import { IRtPopoverSheetOpened, rtOpenPopoverSheet, rtPopoverSheetDismissals } from '@rt-tools/ui-kit-v2/popover';
+import {
+    IRtPopoverSheetOpened,
+    RT_POPOVER_SHEET,
+    rtClosePopoverSheet,
+    rtOpenPopoverSheet,
+    rtPopoverSheetDismissals,
+} from '@rt-tools/ui-kit-v2/popover';
 
 import { RtTabDirective } from './rt-tab.directive';
 import { RtTabsMenuKeysDirective } from './rt-tabs-menu-keys.directive';
@@ -60,18 +66,22 @@ export class RtTabsContextMenuComponent {
     readonly #host: ElementRef<HTMLElement> = inject<ElementRef<HTMLElement>>(ElementRef);
     readonly #viewContainerRef: ViewContainerRef = inject(ViewContainerRef);
     readonly #injector: Injector = inject(Injector);
-    readonly #narrow: Signal<boolean> = inject(BreakpointsService).viewportNarrow;
+    readonly #narrow: Signal<boolean> = inject(BreakpointsService).phone;
+    readonly #sheetAllowed: boolean = inject(RT_POPOVER_SHEET);
     readonly #sheetOpenedSource: Subject<IRtPopoverSheetOpened> = new Subject<IRtPopoverSheetOpened>();
 
-    /** Оверлей нижней шторки, пока меню открыто в ней. */
-    #sheetOverlayRef: OverlayRef | null = null;
+    /** Нижняя шторка, пока меню открыто в ней. */
+    #sheet: IRtPopoverSheetOpened | null = null;
 
     protected readonly state: WritableSignal<IRtTabsContextMenuState | null> = signal<IRtTabsContextMenuState | null>(null);
 
     protected readonly panelTpl: Signal<TemplateRef<unknown>> = viewChild.required<TemplateRef<unknown>>('panelTpl');
 
-    /** Меню откроется (или открыто) в нижней шторке: режим включён и экран узкий. */
-    protected readonly inSheet: Signal<boolean> = computed((): boolean => this.sheet() && this.#narrow());
+    /** Меню откроется (или открыто) в нижней шторке: режим включён входом и токеном, экран узкий. */
+    protected readonly inSheet: Signal<boolean> = computed((): boolean => this.sheet() && this.#sheetAllowed && this.#narrow());
+
+    /** Меню открыто в шторке: берётся в минуту открытия, чтобы порог ширины не рисовал вторую панель. */
+    protected readonly openedInSheet: WritableSignal<boolean> = signal<boolean>(false);
 
     /** На телефоне меню вкладки открывается в нижней шторке; `false` оставляет его у точки нажатия. */
     public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
@@ -100,8 +110,9 @@ export class RtTabsContextMenuComponent {
             point: RtTabsContextMenuComponent.pointOf(event),
             context: { $implicit: tab.id() },
         };
+        this.openedInSheet.set(this.inSheet());
         this.state.set(state);
-        if (this.inSheet()) {
+        if (this.openedInSheet()) {
             this.#openSheet(state, tab.label());
         }
     }
@@ -117,7 +128,8 @@ export class RtTabsContextMenuComponent {
 
     protected close(): void {
         this.state.set(null);
-        this.#closeSheet();
+        this.#closeSheet(true);
+        this.openedInSheet.set(false);
     }
 
     protected onKeydown(event: KeyboardEvent): void {
@@ -137,12 +149,24 @@ export class RtTabsContextMenuComponent {
             context: state,
             title,
         });
-        this.#sheetOverlayRef = sheet.overlayRef;
+        this.#sheet = sheet;
         this.#sheetOpenedSource.next(sheet);
     }
 
-    #closeSheet(): void {
-        this.#sheetOverlayRef?.dispose();
-        this.#sheetOverlayRef = null;
+    /**
+     * Закрытие по жесту уводит шторку вниз; фокус возвращает директива `rtTabsMenuKeys` панели —
+     * она помнит, откуда меню открыли. Снос компонента и повторное открытие снимают шторку сразу.
+     */
+    #closeSheet(byGesture: boolean = false): void {
+        const sheet: IRtPopoverSheetOpened | null = this.#sheet;
+        this.#sheet = null;
+        if (sheet === null) {
+            return;
+        }
+        if (byGesture) {
+            rtClosePopoverSheet(sheet, null);
+        } else {
+            sheet.overlayRef.dispose();
+        }
     }
 }

@@ -17,15 +17,17 @@
             display: flex;
             min-height: 0;
             flex-direction: column;
+        }
 
-            > * {
-                width: 100%;
-                max-width: none;
-                max-height: none;
-                border: none;
-                border-radius: 0;
-                box-shadow: none;
-            }
+        /* Сброс карточки панели: класс блока перед классом элемента даёт специфичность выше, чем у
+           `.rt-select__panel` и ему подобных, и порядок стилей в бандле не решает, кто победит. */
+        .rt-popover-sheet__panel > * {
+            width: 100%;
+            max-width: none;
+            max-height: none;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
         }
     }
 }

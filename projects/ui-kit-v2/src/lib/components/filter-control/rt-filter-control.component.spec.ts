@@ -16,6 +16,7 @@ const OPTIONS: ReadonlyArray<IRtFilterControl.Option> = [
  * список открывается у поля, а не в нижней шторке: шторку проверяет своя спека селекта.
  */
 class NarrowBreakpointsService {
+    public readonly phone: () => boolean = (): boolean => false;
     public readonly narrow: () => boolean = (): boolean => true;
     public readonly viewportNarrow: () => boolean = (): boolean => false;
 }

@@ -28,6 +28,7 @@ function windowDouble(): Window & typeof globalThis {
 class PhoneBreakpointsService {
     public readonly narrow: Signal<boolean> = signal(true).asReadonly();
     public readonly viewportNarrow: Signal<boolean> = signal(true).asReadonly();
+    public readonly phone: Signal<boolean> = this.viewportNarrow;
 }
 
 @Component({
@@ -109,5 +110,16 @@ describe('RtPageHeaderComponent — нижняя шторка', (): void => {
         jest.useRealTimers();
 
         expect(document.querySelector('.rt-popover-sheet [qa-dataid="host-user-menu"]')).not.toBeNull();
+    });
+    it('SC-UKV-1469: на телефоне бургер открывает навигацию в нижней шторке с заголовком меню', (): void => {
+        const fixture: ComponentFixture<PageHeaderSheetHostComponent> = setup();
+        settle(fixture);
+
+        (document.querySelector('[qa-dataid="header-nav-burger"]') as HTMLElement).click();
+        settle(fixture);
+
+        expect(document.querySelector('.rt-popover-sheet')).not.toBeNull();
+        expect(document.querySelector('[qa-dataid="popover-sheet-title"]')?.textContent?.trim()).toBeTruthy();
+        expect(document.querySelector('.rt-popover-panel')).toBeNull();
     });
 });

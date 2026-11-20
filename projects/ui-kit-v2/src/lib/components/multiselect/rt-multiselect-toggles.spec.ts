@@ -21,12 +21,14 @@ const ALL: ReadonlyArray<string> = OPTIONS.map((option: IRtSelect.Option<string>
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
 class BreakpointsStub {
     public readonly viewportNarrow: WritableSignal<boolean> = signal<boolean>(false);
+    public readonly phone: WritableSignal<boolean> = signal<boolean>(false);
     public readonly narrow: WritableSignal<boolean> = signal<boolean>(false);
 }
 
 function providersFor(narrow: boolean): Provider[] {
     const stub: BreakpointsStub = new BreakpointsStub();
     stub.viewportNarrow.set(narrow);
+    stub.phone.set(narrow);
     stub.narrow.set(narrow);
     return [{ provide: BreakpointsService, useValue: stub }];
 }

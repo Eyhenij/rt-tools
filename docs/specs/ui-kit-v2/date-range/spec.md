@@ -70,9 +70,10 @@ months, presets and a summary of the chosen days.
   and a week, PageUp and PageDown by a month, Home and End to the edges of the week; Enter picks the
   start and then the end, as a click does.
 
-- **On a narrow screen the panel opens in the kit's bottom sheet with one month.** The presets stand
-  in a row on top that scrolls sideways, the days are 44px under a finger, and the summary shows the
-  number of days. The narrow sign is the breakpoints service's, as elsewhere in the kit.
+- **On a phone the panel opens in the kit's bottom sheet with one month.** The presets stand
+  on top and wrap to lines, the days are 44px under a finger, and the summary shows the number of
+  days. The phone sign is the breakpoints service's, as elsewhere in the kit; the input `sheet`
+  switches the sheet off.
 
 - **In the period panel the month title of each calendar is a button that opens the month grid.**
   The month grid shows four months in a row with the year and paging by year in the header.

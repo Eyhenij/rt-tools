@@ -60,7 +60,8 @@
                     [ariaLabel]="ariaLabel() || sheetTitle()"
                     [ngModel]="inputText()"
                     [ngModelOptions]="{ standalone: true }"
-                    (ngModelChange)="onSheetQuery($event)" />
+                    (ngModelChange)="onSheetQuery($event)"
+                    (keydown)="onInputKeydown($event)" />
             </div>
         }
         <!--

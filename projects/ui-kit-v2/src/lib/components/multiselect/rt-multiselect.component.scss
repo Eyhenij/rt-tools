@@ -386,7 +386,8 @@
             gap: var(--rt-space-sm);
 
             &:hover,
-            &:focus-visible {
+            &:focus-visible,
+            &--active {
                 background-color: var(--rt-color-bg-hover);
             }
 

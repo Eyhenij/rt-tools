@@ -12,6 +12,7 @@ import { RtTabsMoreComponent } from './rt-tabs-more.component';
 /** Телефон: узкое окно и узкая полоса. */
 class PhoneBreakpointsStub {
     public readonly viewportNarrow: WritableSignal<boolean> = signal<boolean>(true);
+    public readonly phone: WritableSignal<boolean> = this.viewportNarrow;
     public readonly narrow: WritableSignal<boolean> = signal<boolean>(true);
 }
 

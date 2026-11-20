@@ -201,10 +201,13 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
     public readonly required: Signal<boolean> = computed((): boolean => this.#state().required || this.#requiredAssigned());
 
     /**
-     * Заголовок шторки выбора на телефоне: подпись поля, а без неё — доступное имя контрола. Без
-     * обоих шторка остаётся без заголовка.
+     * Заголовок шторки выбора на телефоне: подпись поля, затем собственная подпись контрола
+     * (`floatingLabel` там, где она есть), а без них — доступное имя. Без всех трёх шторка
+     * остаётся без заголовка.
      */
-    public readonly sheetTitle: Signal<string> = computed((): string => this.#fieldLabelAssigned() || this.ariaLabel() || '');
+    public readonly sheetTitle: Signal<string> = computed(
+        (): string => this.#fieldLabelAssigned() || this.ownLabel() || this.ariaLabel() || ''
+    );
 
     /** Текст read-only представления. Реализуется конкретным контролом. */
     public abstract readonly displayText: Signal<string>;
@@ -295,6 +298,11 @@ export abstract class RtFormControlBase<TValue> implements ControlValueAccessor,
     /** Прокидывает change наружу — для обработчиков пользовательского ввода. */
     protected emitChange(value: TValue): void {
         this.#onChange(value);
+    }
+
+    /** Собственная подпись контрола на рамке; у контрола без неё — `null`. Читается сигналами. */
+    protected ownLabel(): string | null {
+        return null;
     }
 
     /** Помечает контрол touched — для blur/close-обработчиков. */

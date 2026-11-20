@@ -1,4 +1,15 @@
-import { ApplicationRef, EnvironmentProviders, Provider, signal, Type, WritableSignal } from '@angular/core';
+import {
+    ApplicationRef,
+    ChangeDetectionStrategy,
+    Component,
+    EnvironmentProviders,
+    input,
+    InputSignal,
+    Provider,
+    signal,
+    Type,
+    WritableSignal,
+} from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
@@ -10,11 +21,29 @@ import { RtDynamicSelectorComponent } from '../dynamic-selector/rt-dynamic-selec
 import { RtSpeedMenuComponent } from '../speed-menu/rt-speed-menu.component';
 import { RtSplitButtonComponent } from '../split-button/rt-split-button.component';
 import { RtTableFilterHeaderComponent } from '../table/filter-header/rt-table-filter-header.component';
+import { RtThreadListFiltersDirective } from '../thread-list/rt-thread-list.directives';
+import { RtThreadListComponent } from '../thread-list/rt-thread-list.component';
 
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
 class BreakpointsStub {
     public readonly viewportNarrow: WritableSignal<boolean> = signal<boolean>(true);
+    public readonly phone: WritableSignal<boolean> = this.viewportNarrow;
     public readonly narrow: WritableSignal<boolean> = signal<boolean>(true);
+}
+
+/** Список обращений с отбором: шаблон отбора кладёт потребитель, поэтому части нужна обёртка. */
+@Component({
+    selector: 'rt-thread-list-filters-host',
+    template: `
+        <rt-thread-list [rows]="[]" [sheet]="sheet()">
+            <ng-template rtThreadListFilters><span qa-dataid="host-thread-filters">Отбор</span></ng-template>
+        </rt-thread-list>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtThreadListComponent, RtThreadListFiltersDirective],
+})
+class ThreadListFiltersHostComponent {
+    public readonly sheet: InputSignal<boolean> = input<boolean>(true);
 }
 
 /** Часть набора: как её поднять и что нажать, чтобы открылась её панель. */
@@ -79,6 +108,12 @@ const PARTS: readonly ISetPart[] = [
         inputs: { propertyName: 'title', filter: { kind: 'text' } },
         press: byAnchor('table-filter-operator'),
     },
+    {
+        name: 'rt-thread-list (отбор)',
+        component: ThreadListFiltersHostComponent,
+        inputs: {},
+        press: byAnchor('thread-list-filter', 'button'),
+    },
 ];
 
 function providersFor(narrow: boolean): Array<Provider | EnvironmentProviders> {
@@ -121,7 +156,7 @@ describe('Нижняя шторка у остальных частей набо�
     });
 
     describe.each(PARTS)('$name', (part: ISetPart): void => {
-        it('SC-UKV-1439 — на узком экране панель открывается в шторке', (): void => {
+        it('SC-UKV-1439 — на телефоне панель открывается в шторке', (): void => {
             open(part, true, true);
 
             expect(sheetDrawn()).toBe(true);

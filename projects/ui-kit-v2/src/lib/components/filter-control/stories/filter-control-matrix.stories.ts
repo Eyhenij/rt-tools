@@ -12,12 +12,13 @@ import { TestRtFilterControlMatrixComponent } from './component/test-filter-cont
  * ней. Подменяется поэтому источник ответа, а не окно: компонент спрашивает `narrow`, и в этой
  * истории ответ — «да».
  */
-const NARROW_ANSWERS: Pick<BreakpointsService, 'mobile' | 'tablet' | 'desktop' | 'narrow' | 'viewportNarrow'> = {
+const NARROW_ANSWERS: Pick<BreakpointsService, 'mobile' | 'tablet' | 'desktop' | 'narrow' | 'viewportNarrow' | 'phone'> = {
     mobile: signal(true),
     tablet: signal(false),
     desktop: signal(false),
     narrow: signal(true),
     viewportNarrow: signal(true),
+    phone: signal(true),
 };
 
 const NARROW_BREAKPOINTS: BreakpointsService = NARROW_ANSWERS as BreakpointsService;

@@ -24,6 +24,7 @@ class DateRangeHostComponent {
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
 class NarrowBreakpointsService {
     public readonly viewportNarrow: () => boolean = (): boolean => true;
+    public readonly phone: () => boolean = (): boolean => true;
 }
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtDateRangeComponent> {
@@ -187,6 +188,20 @@ describe('RtDateRangeComponent', (): void => {
             expect(sheet.querySelector('rt-date-range-panel')?.classList).toContain('rt-date-range-panel--sheet');
             expect(sheet.querySelectorAll('[qa-dataid="calendar-month"]').length).toBe(1);
             expect(popup()).toBeNull();
+        });
+
+        it('SC-UKV-1473 — на узком экране с sheet=false панель открывается поповером у поля, шторки нет', (): void => {
+            const fixture: ComponentFixture<RtDateRangeComponent> = createRtFixture(
+                RtDateRangeComponent,
+                { sheet: false },
+                { providers: [RU_LOCALE, { provide: BreakpointsService, useClass: NarrowBreakpointsService }] }
+            );
+
+            openButton(fixture).click();
+            fixture.detectChanges();
+
+            expect(qa(fixture, 'date-range-sheet')).toBeNull();
+            expect(popup()).not.toBeNull();
         });
     });
 });

@@ -30,6 +30,7 @@ function windowDouble(): Window & typeof globalThis {
 class NarrowBreakpointsService {
     public readonly narrow: Signal<boolean> = signal(true).asReadonly();
     public readonly viewportNarrow: Signal<boolean> = signal(true).asReadonly();
+    public readonly phone: Signal<boolean> = this.viewportNarrow;
 }
 
 @Component({

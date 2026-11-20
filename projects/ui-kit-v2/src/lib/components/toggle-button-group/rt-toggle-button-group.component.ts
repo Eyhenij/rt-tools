@@ -259,6 +259,11 @@ export class RtToggleButtonGroupComponent<T = string> implements ControlValueAcc
         transform: booleanAttribute,
     });
 
+    /** Свёрнутое поле на телефоне открывает список в нижней шторке; `false` оставляет поповер у поля. */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
+        transform: booleanAttribute,
+    });
+
     public readonly valueChange: OutputEmitterRef<T> = output<T>();
 
     /**

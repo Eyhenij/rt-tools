@@ -3,12 +3,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
+import { RT_POPOVER_SHEET } from '../popover/rt-popover-sheet.token';
 import { RtMenuItemComponent } from './rt-menu-item.component';
 import { RtMenuComponent } from './rt-menu.component';
 
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
 class BreakpointsStub {
     public readonly viewportNarrow: WritableSignal<boolean> = signal<boolean>(true);
+    public readonly phone: WritableSignal<boolean> = this.viewportNarrow;
     public readonly narrow: WritableSignal<boolean> = signal<boolean>(true);
 }
 
@@ -29,10 +31,13 @@ class MenuSheetHostComponent {
     public picked: number = 0;
 }
 
-function setup(narrow: boolean, sheet: boolean = true): ComponentFixture<MenuSheetHostComponent> {
+let lastStub: BreakpointsStub;
+
+function setup(narrow: boolean, sheet: boolean = true, extra: Provider[] = []): ComponentFixture<MenuSheetHostComponent> {
     const stub: BreakpointsStub = new BreakpointsStub();
     stub.viewportNarrow.set(narrow);
-    const providers: Provider[] = [{ provide: BreakpointsService, useValue: stub }];
+    lastStub = stub;
+    const providers: Provider[] = [{ provide: BreakpointsService, useValue: stub }, ...extra];
     const fixture: ComponentFixture<MenuSheetHostComponent> = createRtFixture(MenuSheetHostComponent, {}, { providers });
     fixture.componentInstance.sheet.set(sheet);
     fixture.detectChanges();
@@ -102,5 +107,59 @@ describe('RtMenuComponent — нижняя шторка', (): void => {
         openMenu(setup(false));
         expect(sheetPanel()).toBeNull();
         expect(document.querySelector('[qa-dataid="menu-panel"]')).not.toBeNull();
+    });
+    it('SC-UKV-1463: токен RT_POPOVER_SHEET со значением false оставляет меню у кнопки на телефоне', (): void => {
+        openMenu(setup(true, true, [{ provide: RT_POPOVER_SHEET, useValue: false }]));
+
+        expect(document.querySelector('.rt-popover-sheet')).toBeNull();
+        expect(document.querySelector('[qa-dataid="menu-panel"]')).not.toBeNull();
+    });
+
+    it('SC-UKV-1464: в шторке фокус встаёт на первый пункт, стрелки ходят по пунктам, Escape закрывает и возвращает фокус кнопке', (): void => {
+        const fixture: ComponentFixture<MenuSheetHostComponent> = setup(true);
+        openMenu(fixture);
+        const items: NodeListOf<HTMLElement> = document.querySelectorAll<HTMLElement>('.rt-popover-sheet [role="menuitem"]');
+        expect(document.activeElement).toBe(items[0]);
+
+        document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', keyCode: 40, bubbles: true }));
+        expect(document.activeElement).toBe(items[1]);
+
+        document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        settle(fixture);
+
+        expect(document.querySelector('.rt-popover-sheet')).toBeNull();
+        expect(document.activeElement).toBe((fixture.nativeElement as HTMLElement).querySelector('[qa-dataid="menu-trigger"] button'));
+    });
+
+    it('SC-UKV-1464: закрытие подложкой возвращает фокус кнопке меню', (): void => {
+        const fixture: ComponentFixture<MenuSheetHostComponent> = setup(true);
+        openMenu(fixture);
+
+        (document.querySelector('.rt-popover-sheet [qa-dataid="bottom-sheet-backdrop"]') as HTMLElement).click();
+        settle(fixture);
+
+        expect(document.activeElement).toBe((fixture.nativeElement as HTMLElement).querySelector('[qa-dataid="menu-trigger"] button'));
+    });
+
+    it('SC-UKV-1466: порог ширины, пересечённый при открытом в шторке меню, не рисует вторую панель у кнопки', (): void => {
+        const fixture: ComponentFixture<MenuSheetHostComponent> = setup(true);
+        openMenu(fixture);
+
+        lastStub.viewportNarrow.set(false);
+        settle(fixture);
+
+        expect(document.querySelectorAll('[qa-dataid="menu-panel"]').length).toBe(1);
+        expect(document.querySelector('.rt-popover-sheet [qa-dataid="menu-panel"]')).not.toBeNull();
+    });
+
+    it('SC-UKV-1466: порог ширины, пересечённый при открытом у кнопки меню, не открывает шторку поверх него', (): void => {
+        const fixture: ComponentFixture<MenuSheetHostComponent> = setup(false);
+        openMenu(fixture);
+
+        lastStub.viewportNarrow.set(true);
+        settle(fixture);
+
+        expect(document.querySelector('.rt-popover-sheet')).toBeNull();
+        expect(document.querySelectorAll('[qa-dataid="menu-panel"]').length).toBe(1);
     });
 });

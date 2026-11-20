@@ -23,6 +23,7 @@ class DatePickerHostComponent {
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
 class NarrowBreakpointsService {
     public readonly viewportNarrow: () => boolean = (): boolean => true;
+    public readonly phone: () => boolean = (): boolean => true;
 }
 
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtDatePickerComponent> {
@@ -203,6 +204,20 @@ describe('RtDatePickerComponent', (): void => {
             expect(sheet.querySelector('rt-date-panel')?.classList).toContain('rt-date-panel--sheet');
             expect(sheet.querySelector('[qa-dataid="date-panel-tabs"]')).not.toBeNull();
             expect(popup()).toBeNull();
+        });
+
+        it('SC-UKV-1472 — на узком экране с sheet=false панель открывается поповером у поля, шторки нет', (): void => {
+            const fixture: ComponentFixture<RtDatePickerComponent> = createRtFixture(
+                RtDatePickerComponent,
+                { sheet: false },
+                { providers: [RU_LOCALE, { provide: BreakpointsService, useClass: NarrowBreakpointsService }] }
+            );
+
+            openButton(fixture).click();
+            fixture.detectChanges();
+
+            expect(qa(fixture, 'date-picker-sheet')).toBeNull();
+            expect(popup()).not.toBeNull();
         });
     });
 

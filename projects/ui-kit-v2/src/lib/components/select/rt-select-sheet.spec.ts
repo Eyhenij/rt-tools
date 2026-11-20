@@ -17,6 +17,7 @@ const OPTIONS: ReadonlyArray<IRtSelect.Option<string>> = [
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
 class BreakpointsStub {
     public readonly viewportNarrow: WritableSignal<boolean> = signal<boolean>(true);
+    public readonly phone: WritableSignal<boolean> = this.viewportNarrow;
     public readonly narrow: WritableSignal<boolean> = signal<boolean>(true);
 }
 
@@ -37,6 +38,7 @@ class FieldHostComponent {
 function providersFor(narrow: boolean): Provider[] {
     const stub: BreakpointsStub = new BreakpointsStub();
     stub.viewportNarrow.set(narrow);
+    stub.phone.set(narrow);
     stub.narrow.set(narrow);
     return [{ provide: BreakpointsService, useValue: stub }];
 }
@@ -89,7 +91,7 @@ describe('Панель выбора в нижней шторке', (): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1382 — на узком экране список открывается в шторке, а у поля панели нет', (): void => {
+    it('SC-UKV-1486 — на телефоне список открывается в шторке, а у поля панели нет', (): void => {
         const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true);
 
         press(fixture, 'select-trigger');
@@ -100,7 +102,7 @@ describe('Панель выбора в нижней шторке', (): void => {
         expect(panelBySide()).toBeNull();
     });
 
-    it('SC-UKV-1383 — выключенная шторка оставляет список у поля', (): void => {
+    it('SC-UKV-1487 — выключенная шторка оставляет список у поля', (): void => {
         const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { sheet: false });
 
         press(fixture, 'select-trigger');
@@ -109,7 +111,7 @@ describe('Панель выбора в нижней шторке', (): void => {
         expect(panelBySide()).not.toBeNull();
     });
 
-    it('SC-UKV-1384 — на широком экране список открывается у поля', (): void => {
+    it('SC-UKV-1488 — шире телефона список открывается у поля', (): void => {
         const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(false);
 
         press(fixture, 'select-trigger');
@@ -124,6 +126,37 @@ describe('Панель выбора в нижней шторке', (): void => {
         press(fixture, 'select-trigger');
 
         expect(document.querySelector('[qa-dataid="popover-sheet-title"]')?.textContent?.trim()).toBe('Страна');
+    });
+
+    it('SC-UKV-1483 — заголовок шторки без подписи поля — подпись на рамке, затем доступное имя', (): void => {
+        const floating: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, {
+            floatingLabel: 'Город',
+            ariaLabel: 'Выбор города',
+        });
+        press(floating, 'select-trigger');
+        expect(document.querySelector('[qa-dataid="popover-sheet-title"]')?.textContent?.trim()).toBe('Город');
+        document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
+
+        const named: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { ariaLabel: 'Выбор города' });
+        press(named, 'select-trigger');
+        expect(document.querySelector('[qa-dataid="popover-sheet-title"]')?.textContent?.trim()).toBe('Выбор города');
+    });
+
+    it('SC-UKV-1484 — поиск селекта в шторке показан и отбирает пункты по набранному', (): void => {
+        const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true, { filter: true });
+        press(fixture, 'select-trigger');
+
+        const search: HTMLInputElement | null = document.querySelector<HTMLInputElement>('.rt-popover-sheet .rt-select__filter input');
+        expect(search).not.toBeNull();
+        expect(document.querySelectorAll('.rt-popover-sheet [qa-dataid="select-option"]').length).toBe(3);
+
+        (search as HTMLInputElement).value = 'Мин';
+        (search as HTMLInputElement).dispatchEvent(new Event('input'));
+        settle(fixture);
+
+        const left: NodeListOf<Element> = document.querySelectorAll('.rt-popover-sheet [qa-dataid="select-option"]');
+        expect(left.length).toBe(1);
+        expect(left[0].textContent?.trim()).toBe('Минск');
     });
 
     it('SC-UKV-1386 — выбор в селекте ставит значение и закрывает шторку', (): void => {
@@ -214,7 +247,8 @@ describe('Панель выбора в нижней шторке', (): void => {
 
         press(fixture, 'select-trigger');
 
-        const pane: HTMLElement | null = document.querySelector('.rt-popover-sheet-pane');
+        const pane: HTMLElement | null =
+            document.querySelector('[qa-dataid="popover-sheet"]')?.closest<HTMLElement>('.cdk-overlay-pane') ?? null;
         expect(pane).not.toBeNull();
         expect(pane?.style.width).toBe('');
     });

@@ -3,7 +3,7 @@
 The prefix `SC-UKV` is shared across the domain together with the subdomains. What a scenario is
 covered by is said under it.
 
-### SC-UKV-1382 — on a phone the panel opens in the bottom sheet
+### SC-UKV-1486 — on a phone the panel opens in the bottom sheet
 
 Given a select on a phone
 When the select is pressed
@@ -11,7 +11,7 @@ Then its list is inside the kit's bottom sheet, and no panel stands next to the 
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
-### SC-UKV-1383 — the switched-off sheet leaves the panel next to the trigger
+### SC-UKV-1487 — the switched-off sheet leaves the panel next to the trigger
 
 Given a select with the sheet switched off on a phone
 When the select is pressed
@@ -19,9 +19,9 @@ Then its list opens next to the field, and no bottom sheet is open
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
-### SC-UKV-1384 — on a wide screen the panel opens next to the trigger
+### SC-UKV-1488 — wider than a phone the panel opens next to the trigger
 
-Given a select on a wide screen
+Given a select on a tablet or a desktop
 When the select is pressed
 Then its list opens next to the field, and no bottom sheet is open
 
@@ -275,3 +275,187 @@ When the tab is long pressed
 Then the menu stands by the tab, and no bottom sheet is open; the «more» panel is told the same
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-sheet-off.spec.ts`.
+
+### SC-UKV-1462 — the application switches the sheet off for the popover by one setting
+
+Given an application that provides `RT_POPOVER_SHEET` as false, on a phone
+When a popover trigger is pressed
+Then the panel opens next to the trigger; without the setting it opens in the sheet
+
+Covered: `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet-guards.spec.ts`.
+
+### SC-UKV-1463 — the same setting keeps the actions menu by its button
+
+Given an application that provides `RT_POPOVER_SHEET` as false, on a phone
+When the button of an `rt-menu` is pressed
+Then the menu stands by the button, and no bottom sheet is open
+
+Covered: `projects/ui-kit-v2/src/lib/components/menu/rt-menu-sheet.spec.ts`.
+
+### SC-UKV-1464 — the menu in the sheet is walked by keys and gives focus back
+
+Given an `rt-menu` open in the bottom sheet
+When the arrows are pressed, then Escape or the backdrop
+Then focus stands on the first item and moves by the arrows; the close returns focus to the button
+
+Covered: `projects/ui-kit-v2/src/lib/components/menu/rt-menu-sheet.spec.ts`.
+
+### SC-UKV-1465 — the closed sheet returns focus to its trigger
+
+Given a popover open in the bottom sheet
+When the sheet closes while focus is inside it
+Then focus returns to the trigger; focus that was outside the sheet stays where it was
+
+Covered: `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet-guards.spec.ts`.
+
+### SC-UKV-1466 — crossing the threshold with the menu open draws one panel
+
+Given an `rt-menu` open in the sheet, or open by its button
+When the window crosses the phone threshold
+Then the menu keeps the surface it opened in, and no second panel appears
+
+Covered: `projects/ui-kit-v2/src/lib/components/menu/rt-menu-sheet.spec.ts`.
+
+### SC-UKV-1467 — the tab menu keeps its surface and focuses its first item
+
+Given the menu of a tab open in the sheet
+When the window crosses the phone threshold
+Then no second panel appears, and the first item of the menu has focus
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-context-menu-sheet.spec.ts`.
+
+### SC-UKV-1468 — the closed sheet slides down before it leaves
+
+Given a popover open in the bottom sheet
+When the sheet closes
+Then it slides down and leaves when its slide ends, or by a timer of the same length
+
+Covered: `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet-guards.spec.ts`.
+
+### SC-UKV-1469 — the page header menu button opens the navigation in the sheet
+
+Given the page header on a phone
+When its menu button is pressed
+Then the navigation opens in the bottom sheet titled by the menu label
+
+Covered: `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header-sheet.spec.ts`.
+
+### SC-UKV-1470 — «more» of the tabs opens in the sheet
+
+Given tabs that fold the rest into «more», on a phone
+When «more» is pressed
+Then the list of the tabs opens in the bottom sheet
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-more-sheet.spec.ts`.
+
+### SC-UKV-1471 — the setting keeps the tab menu by the press point
+
+Given an application that provides `RT_POPOVER_SHEET` as false, on a phone
+When a tab's menu is opened
+Then the menu stands by the tab, and no bottom sheet is open
+
+Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-context-menu-sheet.spec.ts`.
+
+### SC-UKV-1472 — the date field with the sheet switched off opens its panel by the field
+
+Given a date field with the sheet switched off, on a phone
+When its calendar button is pressed
+Then the panel opens next to the field, and no bottom sheet is open
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker.component.spec.ts`.
+
+### SC-UKV-1473 — the period field with the sheet switched off opens its panel by the field
+
+Given a period field with the sheet switched off, on a phone
+When its calendar button is pressed
+Then the panel opens next to the field, and no bottom sheet is open
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-range/rt-date-range.component.spec.ts`.
+
+### SC-UKV-1474 — the folded toggle group passes the switch and has no clear cross
+
+Given a toggle group folded into a field, with the sheet switched off, on a phone
+When the field is pressed
+Then the list opens next to the field, and the single choice field shows no clear cross
+
+Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.
+
+### SC-UKV-1475 — «Show all» keeps disabled and unknown values
+
+Given a field with toggles whose value holds a disabled option and a value not among the options
+When «Show all» is pressed, and pressed again
+Then both kept values stay in the value both times
+
+Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles-keys.spec.ts`.
+
+### SC-UKV-1476 — «Reset» in the sheet keeps disabled values
+
+Given a multiselect in the sheet whose value holds a disabled option
+When «Reset» is pressed
+Then the disabled value stays, and «Reset» goes inactive when nothing is left to take off
+
+Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles-keys.spec.ts`.
+
+### SC-UKV-1477 — «Show all» is reached by the arrows
+
+Given an open field with toggles
+When the arrows are pressed, then Enter
+Then «Show all» is the first highlighted row and Enter switches it; the trigger names the highlighted row
+
+Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles-keys.spec.ts`.
+
+### SC-UKV-1478 — the panel with toggles carries no name without a role
+
+Given a field with toggles and a field with a list
+When both are opened
+Then the toggles panel has no accessible name of its own, and the list keeps its name
+
+Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles-keys.spec.ts`.
+
+### SC-UKV-1479 — the clear cross in the sheet mode does not reopen the sheet
+
+Given an autocomplete with a value, on a phone
+When its clear cross is pressed
+Then the value is gone, and no bottom sheet opens
+
+Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet.spec.ts`.
+
+### SC-UKV-1480 — moving into the sheet does not mark the field touched
+
+Given a required autocomplete on a phone
+When the field is pressed and the sheet opens, then the sheet closes
+Then the field shows no error while the sheet is open and is marked touched when it closes
+
+Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet.spec.ts`.
+
+### SC-UKV-1481 — keys in the sheet search walk the suggestions
+
+Given an autocomplete open in the sheet with suggestions
+When the arrows and Enter are pressed in the sheet search
+Then the highlight moves and Enter chooses the highlighted suggestion
+
+Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet.spec.ts`.
+
+### SC-UKV-1482 — the autocomplete with the sheet switched off suggests by the field
+
+Given an autocomplete with the sheet switched off, on a phone
+When a letter is typed in it
+Then the suggestions open next to the field, and no bottom sheet is open
+
+Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet.spec.ts`.
+
+### SC-UKV-1483 — the floating label titles the sheet
+
+Given a select with a floating label «Город» and no field around it, on a phone
+When the select is pressed
+Then the title of the bottom sheet is «Город»
+
+Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
+
+### SC-UKV-1484 — the select search works in the sheet
+
+Given a select with a search, open in the sheet
+When a part of an option is typed in the search
+Then the search stands in the sheet and leaves only the matching options
+
+Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.

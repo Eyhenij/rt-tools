@@ -82,7 +82,9 @@ export class RtDateRangeComponent extends RtFormControlBase<IRtDateRange.Value |
 
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
     /** Узкий экран: панель открывается в нижней шторке, а не в поповере. */
-    protected readonly narrow: Signal<boolean> = inject(BreakpointsService).viewportNarrow;
+    protected readonly phone: Signal<boolean> = inject(BreakpointsService).phone;
+    /** Шторка включена входом `sheet` и экраном телефона (`BreakpointsService.phone`, до 480 px); иначе панель открывается поповером у поля. */
+    protected readonly useSheet: Signal<boolean> = computed((): boolean => this.phone() && this.sheet());
 
     protected readonly fieldEl: Signal<ElementRef<HTMLInputElement> | undefined> = viewChild<ElementRef<HTMLInputElement>>('fieldEl');
     protected readonly popover: Signal<RtPopoverDirective | undefined> = viewChild(RtPopoverDirective);
@@ -116,6 +118,8 @@ export class RtDateRangeComponent extends RtFormControlBase<IRtDateRange.Value |
 
     public readonly displayText: Signal<string> = computed((): string => this.#format(this.range()));
 
+    /** На узком экране панель открывается в нижней шторке; `false` оставляет поповер у поля. */
+    public readonly sheet: InputSignal<boolean> = input<boolean>(true);
     /** Первый допустимый день `YYYY-MM-DD`. */
     public readonly min: InputSignal<string | null> = input<string | null>(null);
     /** Последний допустимый день `YYYY-MM-DD`. */
@@ -157,7 +161,7 @@ export class RtDateRangeComponent extends RtFormControlBase<IRtDateRange.Value |
 
     /** Кнопка в конце поля: на узком экране открывает шторку, на широком поповер открывает сам. */
     protected openPanel(): void {
-        if (this.narrow() && !this.isDisabled()) {
+        if (this.useSheet() && !this.isDisabled()) {
             this.sheetOpen.set(true);
         }
     }

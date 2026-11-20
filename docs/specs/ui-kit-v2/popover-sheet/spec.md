@@ -34,7 +34,9 @@ the same rows as before.
   tablet and a narrow window keep the panel next to the trigger.
 - **Every part of the kit that opens a panel of choice has the sheet switched on, and one input
   switches it off.** Switched off, the panel opens next to its trigger on a phone too.
-- **On a wide screen the panel opens next to its trigger, as before.**
+- **An application switches the sheet off for every part under it by one setting.** The setting
+  covers the parts that carry a select or a menu inside and have no input of their own.
+- **Wider than a phone the panel opens next to its trigger, as before.**
 - **The sheet is titled by the label of the field, then by the accessible name of the control.**
   With neither, the sheet has no title.
 - **A choice of one value closes the sheet together with the panel.**

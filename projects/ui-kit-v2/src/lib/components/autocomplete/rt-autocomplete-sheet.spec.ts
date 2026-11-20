@@ -11,12 +11,13 @@ const CITIES: ReadonlyArray<string> = ['Грузия', 'Грузино-Имер�
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
 class BreakpointsStub {
     public readonly viewportNarrow: WritableSignal<boolean> = signal<boolean>(true);
+    public readonly phone: WritableSignal<boolean> = signal<boolean>(true);
     public readonly narrow: WritableSignal<boolean> = signal<boolean>(true);
 }
 
-function setup(): ComponentFixture<RtAutocompleteComponent<string>> {
+function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtAutocompleteComponent<string>> {
     const providers: Provider[] = [{ provide: BreakpointsService, useValue: new BreakpointsStub() }];
-    return createRtFixture(RtAutocompleteComponent<string>, { suggestions: CITIES, ariaLabel: 'Регион' }, { providers });
+    return createRtFixture(RtAutocompleteComponent<string>, { suggestions: CITIES, ariaLabel: 'Регион', ...inputs }, { providers });
 }
 
 function settle<T>(fixture: ComponentFixture<T>): void {
@@ -85,5 +86,77 @@ describe('Автокомплит в нижней шторке', (): void => {
 
         expect(chosen).toBe('Груновка');
         expect(document.querySelector('.rt-popover-sheet')).toBeNull();
+    });
+
+    it('SC-UKV-1479 — крестик поля в режиме шторки очищает значение и не открывает шторку заново', (): void => {
+        const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
+        fixture.componentInstance.writeValue('Грузия');
+        settle(fixture);
+
+        const clear: HTMLElement = (fixture.nativeElement as HTMLElement).querySelector(
+            '[qa-dataid="autocomplete-clear"] button'
+        ) as HTMLElement;
+        clear.click();
+        settle(fixture);
+
+        expect(fixture.componentInstance.value()).toBeNull();
+        expect(document.querySelector('.rt-popover-sheet')).toBeNull();
+    });
+
+    it('SC-UKV-1480 — уход фокуса в поиск шторки не помечает поле тронутым, закрытие шторки помечает', (): void => {
+        const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
+        const touched: jest.Mock = jest.fn();
+        fixture.componentInstance.registerOnTouched(touched);
+
+        tapField(fixture);
+        expect(document.querySelector('.rt-popover-sheet')).not.toBeNull();
+        expect(touched).not.toHaveBeenCalled();
+
+        (document.querySelectorAll('.rt-popover-sheet [qa-dataid="autocomplete-option"]')[0] as HTMLElement).click();
+        settle(fixture);
+
+        expect(document.querySelector('.rt-popover-sheet')).toBeNull();
+        expect(touched).toHaveBeenCalled();
+    });
+
+    it('SC-UKV-1481 — стрелки и Enter в поиске шторки двигают подсветку и выбирают подсказку', (): void => {
+        const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
+        let chosen: string | null = null;
+        fixture.componentInstance.registerOnChange((value: string | null): void => {
+            chosen = value;
+        });
+        tapField(fixture);
+        const search: HTMLInputElement = sheetSearch() as HTMLInputElement;
+
+        search.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+        search.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+        settle(fixture);
+        const options: NodeListOf<HTMLElement> = document.querySelectorAll('.rt-popover-sheet [qa-dataid="autocomplete-option"]');
+        expect(options[1].classList).toContain('rt-autocomplete__option--active');
+
+        search.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        settle(fixture);
+
+        expect(chosen).toBe('Грузино-Имеретинская обл.');
+        expect(document.querySelector('.rt-popover-sheet')).toBeNull();
+    });
+
+    it('SC-UKV-1482 — sheet=false на телефоне: набор открывает панель у поля, шторки и поиска в ней нет', (): void => {
+        const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup({ sheet: false });
+        const field: HTMLInputElement = (fixture.nativeElement as HTMLElement).querySelector(
+            '[qa-dataid="autocomplete-input"]'
+        ) as HTMLInputElement;
+
+        field.dispatchEvent(new FocusEvent('focus'));
+        settle(fixture);
+        expect(document.querySelector('[qa-dataid="autocomplete-panel"]')).toBeNull();
+
+        field.value = 'Гру';
+        field.dispatchEvent(new Event('input'));
+        settle(fixture);
+
+        expect(document.querySelector('.rt-popover-sheet')).toBeNull();
+        expect(sheetSearch()).toBeNull();
+        expect(document.querySelectorAll('[qa-dataid="autocomplete-option"]').length).toBe(3);
     });
 });

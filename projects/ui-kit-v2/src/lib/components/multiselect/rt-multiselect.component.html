@@ -103,7 +103,7 @@
             [rtMod]="{ toggles: look() === 'toggles' }"
             [attr.role]="look() === 'toggles' ? null : 'listbox'"
             [style.--rt-multiselect-panel-max-height]="panelMaxHeight()"
-            [attr.aria-label]="ariaLabel()">
+            [attr.aria-label]="look() === 'toggles' ? null : ariaLabel()">
             <!--
                 Опции выбираются мышью через (click); keyboard-nav — на trigger'е
                 (activedescendant), опции не focusable индивидуально.
@@ -120,6 +120,8 @@
                         rtElem="toggle-row"
                         qa-dataid="multiselect-show-all"
                         role="switch"
+                        [id]="showAllId"
+                        [rtMod]="{ active: showAllActive() }"
                         [attr.tabindex]="isDisabled() ? -1 : 0"
                         [attr.aria-checked]="summary().state === 'all'"
                         [attr.aria-disabled]="isDisabled()"
@@ -142,13 +144,13 @@
                         rtElem="option"
                         qa-dataid="multiselect-option"
                         role="option"
-                        [id]="panelId + '-opt-' + i"
+                        [id]="panelId + '-opt-' + (i + rowOffset())"
                         [attr.data-value]="row.option.value"
                         [attr.aria-level]="isTree() ? row.level + 1 : null"
                         [style.--rt-multiselect-tree-level]="row.level"
                         [rtMod]="{
                             selected: rowChecks()[i] === 'all',
-                            active: i === activeIndex(),
+                            active: i + rowOffset() === activeIndex(),
                             disabled: !!row.option.disabled,
                         }"
                         [attr.aria-selected]="rowChecks()[i] === 'all'"
@@ -213,7 +215,7 @@
                         appearance="text"
                         [label]="t().uiReset"
                         [attr.aria-label]="t().uiReset"
-                        [disabled]="value().length === 0"
+                        [disabled]="!canReset()"
                         (click)="resetChoice()"></button>
                     <button
                         rtButton

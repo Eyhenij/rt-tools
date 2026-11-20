@@ -8,6 +8,7 @@
             [ariaLabel]="ariaLabel() ?? ''"
             [ngModel]="chosenMany()"
             [disabled]="isDisabled()"
+            [sheet]="sheet()"
             (ngModelChange)="onFoldedPickMany($event)" />
     } @else {
         <rt-select
@@ -17,6 +18,8 @@
             [ariaLabel]="ariaLabel() ?? ''"
             [ngModel]="chosenOne()"
             [disabled]="isDisabled()"
+            [clearable]="false"
+            [sheet]="sheet()"
             (ngModelChange)="onFoldedPickOne($event)" />
     }
 }

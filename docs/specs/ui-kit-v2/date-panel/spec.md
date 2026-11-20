@@ -92,9 +92,9 @@ kit. The mockup draws a panel of its own for all three types, the same in every 
 - **The keys in the month move the day like a grid.** The arrows move by a day and a week, PageUp and
   PageDown by a month, Home and End to the edges of the week, Enter chooses, Escape closes.
 
-- **On a narrow screen the panel opens in the kit's bottom sheet, with days of 44px under a finger.**
-  For a date with time a switch «Дата | Время» shows the month or the columns. The narrow sign is
-  the breakpoints service's, as elsewhere in the kit.
+- **On a phone the panel opens in the kit's bottom sheet, with days of 44px under a finger.**
+  For a date with time a switch «Дата | Время» shows the month or the columns. The phone sign is
+  the breakpoints service's, as elsewhere in the kit; the input `sheet` switches the sheet off.
 
 - **In the bottom sheet the panel keeps the 20px side padding of the sheet header and footer.** The
   body of the sheet has no side padding of its own, and without it the days and the arrows touch

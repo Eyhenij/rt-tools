@@ -224,7 +224,9 @@
             [rtMod]="{ isOpen: mobileNavPopover.isOpen() }"
             [attr.aria-haspopup]="true"
             [attr.aria-expanded]="mobileNavPopover.isOpen()"
-            [rtPopover]="mobileNavTpl">
+            [rtPopover]="mobileNavTpl"
+            [rtPopoverSheet]="sheet()"
+            [rtPopoverSheetTitle]="t().uiNavMenu">
             <rt-icon rtElem="burger-icon" name="bars" size="md" />
         </button>
 
@@ -245,7 +247,9 @@
                     [attr.aria-label]="t().uiNavMenu"
                     [attr.aria-haspopup]="true"
                     [attr.aria-expanded]="compactNavPopover.isOpen()"
-                    [rtPopover]="mobileNavTpl">
+                    [rtPopover]="mobileNavTpl"
+                    [rtPopoverSheet]="sheet()"
+                    [rtPopoverSheetTitle]="t().uiNavMenu">
                     <rt-icon name="ellipsis-h" size="sm" />
                 </button>
                 @for (section of compactSections(); track section.id; let index = $index) {

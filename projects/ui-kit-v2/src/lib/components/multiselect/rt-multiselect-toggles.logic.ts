@@ -28,3 +28,24 @@ export function rtMultiselectSummary<TValue>(all: ReadonlyArray<TValue>, chosen:
     }
     return { count, total, state: count === total ? 'all' : 'some' };
 }
+
+/**
+ * Значения, которых «Показать все» и «Сбросить» не касаются: отключённые и не входящие в список.
+ * Человек их не выбирал в строках, и снять их тут нечем — они остаются в значении формы как были.
+ */
+export function rtMultiselectKept<TValue>(all: ReadonlyArray<TValue>, chosen: ReadonlyArray<TValue>): ReadonlyArray<TValue> {
+    return chosen.filter((value: TValue): boolean => !all.includes(value));
+}
+
+/** Значение после «Показать все»: включено всё — остаются только нетронутые, иначе к выбранному добавляется всё. */
+export function rtMultiselectToggleAllNext<TValue>(all: ReadonlyArray<TValue>, chosen: ReadonlyArray<TValue>): ReadonlyArray<TValue> {
+    if (rtMultiselectSummary(all, chosen).state === 'all') {
+        return rtMultiselectKept(all, chosen);
+    }
+    return [...chosen, ...all.filter((value: TValue): boolean => !chosen.includes(value))];
+}
+
+/** Есть ли что сбрасывать: хотя бы одно значение из тех, что можно включить и выключить. */
+export function rtMultiselectCanReset<TValue>(all: ReadonlyArray<TValue>, chosen: ReadonlyArray<TValue>): boolean {
+    return chosen.some((value: TValue): boolean => all.includes(value));
+}
