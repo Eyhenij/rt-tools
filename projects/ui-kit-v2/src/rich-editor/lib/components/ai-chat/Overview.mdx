@@ -92,6 +92,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `feedbackChange`                                          | `IRtAiChat.FeedbackChange` |
 | `controlPicked`                                           | `IRtAiPromptInput.Control` |
 | `linkOpen`                                                | `IRtAiChat.LinkOpen`       |
+| `sourceOpen`                                              | `IRtAiChat.SourceOpen`     |
 
 ## Методы
 
@@ -116,9 +117,9 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `link`     | `title`, `url`, `section?`, `icon?`   | карточка страницы с двумя кнопками — [AiChatLink](./?path=/docs/organisms-chat-aichatlink-overview--docs) |
 | `section`  | `blocks`, `title?`                    | заголовок и сетка блоков — [AiChatSection](./?path=/docs/organisms-chat-aichatsection-overview--docs)     |
 
-Блоки `table`, `kpi`, `link` и `section` кит рисует сам, даже если приложение зарегистрировало
+Блоки `table`, `kpi`, `link`, `sources` и `section` кит рисует сам, даже если приложение зарегистрировало
 отрисовщик этого типа. Карточка `link` никуда не переходит: нажатие её кнопки чат отдаёт событием
-`linkOpen` с номером сообщения, адресом и признаком новой вкладки, а страницу открывает приложение. Секция держит другие блоки и раскладывает их в один или два столбца по своей ширине.
+`linkOpen` с номером сообщения, адресом и признаком новой вкладки, а страницу открывает приложение. Блок `sources` рисуется свёрнутым списком источников; нажатие источника с адресом чат отдаёт событием `sourceOpen` с номером сообщения, адресом и названием. Секция держит другие блоки и раскладывает их в один или два столбца по своей ширине.
 
 Остальные типы рисует отрисовщик приложения: `provideRtAiChatBlock('chart', MyChartBlockComponent,
 (block) => '…')` в провайдерах корня приложения, компонент получает блок во вход `block`. Все

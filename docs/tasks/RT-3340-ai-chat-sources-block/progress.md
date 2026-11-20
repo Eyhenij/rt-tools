@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 4 из 5 — Витрина и сверка с макетом (этап 3 закрыт: компонент, событие, подписи, спеки)
 - **Done:** задача взята (исполнитель `rt-tools-dev`, карточка в «In progress», ветка `RT-3340-ai-chat-sources-block` от ветки RT-3339, цепочка, PR #3447). Разведка сделана, `grill.md` записан, договорённость написана `spec-writer` (46 правил, сценарии SC-UKV-1541…1559) и ждёт `spec-critic`, план записан.
-- **Next step:** этап 4, шаг 1 — истории блока: один и пять источников, состояния, длинные тексты, rtl, тёмная тема, с шагами play.
+- **Next step:** этап 4, шаг 4 — показать витрину владельцу и записать слово в approvals.md. Потом этап 5.
 - **Uncommitted:** нет после коммита этапа 1
 - **Waiting for the owner:** нет
 - **PR:** не открыт; база — `RT-3339-ai-chat-link-block` (PR #3447 ждёт слияния в ветку эпика)
@@ -26,10 +26,10 @@
 - [x] 3.3 Carry the press through `rt-ai-chat-blocks` and the answer to a synchronous `sourceOpen` output of `rt-ai-chat` that adds the message id.
 - [x] 3.4 Add the label «Sources» to the kit English set and the showcase Russian set.
 - [x] 3.5 Write the specs of the component, the logic, the copy and the chat output: SC-UKV-1541, 1542, 1543, 1544, 1545, 1546, 1547, 1552, 1554, 1555, 1556, 1557.
-- [>] 4.1 Write the stories of the block with one and with five sources, the states, the long texts, the right-to-left and the dark theme, with play steps that press and measure.
-- [ ] 4.2 Write the overview page of the block with the handler code of an application and the chat overview lines for `sourceOpen`.
-- [ ] 4.3 Run the stories in the showcase and measure them against the mockup by two independent readings; write the table in the progress.
-- [ ] 4.4 Show the showcase to the owner and write their word into `approvals.md`.
+- [x] 4.1 Write the stories of the block with one and with five sources, the states, the long texts, the right-to-left and the dark theme, with play steps that press and measure.
+- [x] 4.2 Write the overview page of the block with the handler code of an application and the chat overview lines for `sourceOpen`.
+- [x] 4.3 Run the stories in the showcase and measure them against the mockup by two independent readings; write the table in the progress.
+- [>] 4.4 Show the showcase to the owner and write their word into `approvals.md`.
 - [ ] 5.1 Run the first review round with three roles, check every finding against the code and fix the confirmed ones as one commit.
 - [ ] 5.2 Run the second round and fix the same way.
 - [ ] 5.3 Merge the agreement into `docs/specs/ui-kit-v2/ai-chat-sources/` with its bindings and edit the chat spec and the indexes.
