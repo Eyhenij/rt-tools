@@ -53,7 +53,7 @@ async function open({ canvasElement }: { canvasElement: HTMLElement }): Promise<
 /** Узкий экран: меню в нижней шторке с заголовком «Отправить». */
 export const Sheet: TStory = {
     args: { sheet: true },
-    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet', viewport: PHONE_WINDOW } },
+    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet .rt-bottom-sheet--open', viewport: PHONE_WINDOW } },
     play: open,
 };
 

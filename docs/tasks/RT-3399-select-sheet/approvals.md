@@ -23,3 +23,4 @@
 - **Совпадение:** 23 из 23 чисел (панель отборов, 8495:16640); 45 из 45 чисел (шторка списка, 8497:17962)
 - **Витрина:** «одобряю если матчится с макетами» — http://localhost:6017/?path=/story/molecules-navigation-pageheadervertical--narrow-filters-panel , http://localhost:6017/?path=/story/molecules-navigation-pageheadervertical--phone-filter-select
 - **Совпадение:** 14 из 14 чисел (поиск мультиселекта в шторке, 6068:1250)
+- **Витрина:** «Одобряю витрину» — http://localhost:6017/?path=/story/molecules-forms-multiselectsheet--sheet

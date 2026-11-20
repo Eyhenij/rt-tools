@@ -50,7 +50,8 @@ export default {
     ],
     parameters: {
         controls: { disable: true },
-        snapshot: { viewport: PHONE_WINDOW },
+        // Рамка 375 стоит в обёртке без помощников витрины, поэтому кадр — целая страница окна телефона.
+        snapshot: { fullPage: true, viewport: PHONE_WINDOW },
     },
 } as Meta<TestRtToggleButtonGroupFoldComponent>;
 
@@ -74,7 +75,7 @@ export const Fits: TStory = {
 /** Свёрнутое поле открыто: список стоит в нижней шторке. */
 export const FoldedOneOpen: TStory = {
     args: { options: PERIODS, multiple: false, value: 'week' },
-    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet', viewport: PHONE_WINDOW } },
+    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet .rt-bottom-sheet--open', viewport: PHONE_WINDOW } },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         // Свёрнутое поле рисует сама группа после замера, и пометить его в разметке обёртки нечем:
         // ждём, пока оно встанет, и метим по `qa-dataid`.

@@ -12,7 +12,16 @@
   multiselect specs 47/47, sheet spec 16/16, typecheck, eslint, stylelint, tokens, specs, docs
   green; kit-match 14/14 against 6068:1250. Not touched: the select's own search in the sheet keeps
   its 8 padding and divider. The `MultiselectSheet/Sheet` snapshot is to be re-taken.
-- **Waiting for the owner:** «Одобряете витрину поиска в мультиселекте?»
+- **Owner's answer (20.11):** «Одобряю витрину» — the multiselect search showcase is approved.
+- **Closing begun (20.11):** the archive record `docs/archive/RT-3399-select-sheet.md` is placed from
+  the draft and brought up to the multiselect search, the sheet stack and the page bar panel; the
+  `multiselect-sheet` snapshot re-take runs in the background.
+- **Finding (20.11): every sheet story named a zero-width node as its overlay.** The first re-take
+  failed both `MultiselectSheet` stories: «история обещала показать .rt-popover-sheet, а к моменту
+  съёмки его на странице нет». Measured live at 375×812: the `rt-popover-sheet` host is 0×812 (its
+  overlay pane is 0 wide), so Playwright's `:visible` never matches, while the open sheet
+  `.rt-popover-sheet .rt-bottom-sheet--open` is 375×812. All 17 overlay parameters in 15 sheet story
+  files now name the open sheet.
 - **Remark 3 measured (20.11):** `organisms-chat-page--page` on 6017, both halves — the bottoms of
   the thread-list head, the chat header and the aside tabs all at y=220 (head 63, chat header 53
   from top 167, tabs 69). The one difference is the line colour: the chat header's border is

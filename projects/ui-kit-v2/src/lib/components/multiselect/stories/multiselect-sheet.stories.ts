@@ -49,7 +49,7 @@ type TStory = StoryObj<TestRtMultiselectMatrixComponent>;
  */
 export const Sheet: TStory = {
     args: { part: 'sheet' },
-    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet', viewport: PHONE_WINDOW } },
+    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet .rt-bottom-sheet--open', viewport: PHONE_WINDOW } },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await openStoryOverlay(canvasElement, { key: 'ArrowDown' });
     },
@@ -58,7 +58,7 @@ export const Sheet: TStory = {
 /** Узкий экран: «Показать все», «Скрыть пустые», черта и переключатель на каждую категорию. */
 export const TogglesSheet: TStory = {
     args: { part: 'toggles-panel' },
-    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet', viewport: PHONE_WINDOW } },
+    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet .rt-bottom-sheet--open', viewport: PHONE_WINDOW } },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await openStoryOverlay(canvasElement, { key: 'ArrowDown' });
     },

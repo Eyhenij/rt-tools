@@ -48,7 +48,7 @@ type TStory = StoryObj<TestRtTabsSheetComponent>;
 /** Узкий экран: вкладки, которым не хватило 343, — в шторке «Ещё». Нажатием на «Ещё». */
 export const MoreSheet: TStory = {
     args: { part: 'more', sheet: true },
-    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet', viewport: PHONE_WINDOW } },
+    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet .rt-bottom-sheet--open', viewport: PHONE_WINDOW } },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await openStoryOverlay(canvasElement, { within: '[qa-dataid="tabs-more"]', wait: ROW_SETTLE_MS });
     },
@@ -57,7 +57,7 @@ export const MoreSheet: TStory = {
 /** Узкий экран: меню вкладки в шторке с подписью вкладки в заголовке. Долгое нажатие шлёт `contextmenu`. */
 export const TabMenuSheet: TStory = {
     args: { part: 'menu', sheet: true },
-    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet', viewport: PHONE_WINDOW } },
+    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet .rt-bottom-sheet--open', viewport: PHONE_WINDOW } },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await document.fonts.ready;
         await new Promise<void>((resolve: () => void): void => {

@@ -59,7 +59,7 @@ async function openByTyping({ canvasElement }: { canvasElement: HTMLElement }): 
 /** Узкий экран: подсказки в нижней шторке, наверху поле поиска. */
 export const Sheet: TStory = {
     args: { sheet: true },
-    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet', viewport: PHONE_WINDOW } },
+    parameters: { snapshot: { fullPage: true, overlay: '.rt-popover-sheet .rt-bottom-sheet--open', viewport: PHONE_WINDOW } },
     play: open,
 };
 

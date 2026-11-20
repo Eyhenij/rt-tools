@@ -31,7 +31,7 @@ const PHONE_WINDOW: { readonly width: number; readonly height: number } = { widt
 const MORE_WINDOW: { readonly width: number; readonly height: number } = { width: 1100, height: 812 };
 
 /** Оверлей, которого ждёт снимок: нижняя шторка. */
-const SHEET_OVERLAY: string = '.rt-popover-sheet';
+const SHEET_OVERLAY: string = '.rt-popover-sheet .rt-bottom-sheet--open';
 
 /** Кнопка с именем пользователя: она открывает меню профиля. */
 const USER_MENU_TRIGGER: string = '[qa-dataid="header-user-menu"]';
