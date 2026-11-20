@@ -7,7 +7,7 @@ Rewritten by every session, not appended to.
 - **State:** `этап-идёт`
 - **Stage:** 3 из 5 — the showcase
 - **Done:** RT-3343 выкинута владельцем (карточка закрыта, ветка и макет удалены); карточка RT-3344 в работе, ветка `RT-3344-ai-chat-theme-tokens` от ветки RT-3341, строка копии в `assignments.md` по слову «Делать RT-3344»
-- **Next step:** эталоны трёх новых историй и прогон всех историй (3.2)
+- **Next step:** первый круг ревью (4.1)
 - **Uncommitted:** нет
 - **Waiting for the owner:** нет
 - **PR:** не открыт; #3454 (RT-3341) влит в ветку RT-3340, ветка задачи взяла её (6d811c52b); база PR — `RT-3340-ai-chat-sources-block`, а после слияния #3453 — `main`
@@ -24,9 +24,9 @@ Rewritten by every session, not appended to.
 - [x] 2.2 the input `questionAuthor`
 - [x] 2.3 specs of the handles and the input
 - [x] 3.1 the three `Properties` stories
-- [>] 3.2 references of the new story and the run over all stories
-- [ ] 3.3 the live check against the agreement
-- [ ] 4.1 review round one and its fixes
+- [x] 3.2 references of the new story and the run over all stories
+- [x] 3.3 the live check against the agreement
+- [>] 4.1 review round one and its fixes
 - [ ] 4.2 review round two and its fixes
 - [ ] 4.3 the owner's word on the showcase
 - [ ] 5.1 overviews of the chat and the parts, the README exception, the epic plan
@@ -55,6 +55,24 @@ Rewritten by every session, not appended to.
   4 строках из 4, скругление кнопки действий 8px, поля 8px 16px; ячейки с токенами — время
   `hidden` на 4 из 4, скругление 0px, поля `0 8px`, фон действий прозрачный. Спеки токенов 8 из 8,
   включая SC-UKV-1597 по CSS историй.
+- Этап 3.3, живая сверка в витрине на 6007 (закреплённый Chrome), по сценариям договорённости:
+  - SC-1582/1583: ячейка «шрифт» — вопрос Georgia 16px, ответ Georgia 15px; шапка 16px, статус
+    14px, поле 16px и строка-предупреждение 12px остались Montserrat, как в ячейке по умолчанию.
+  - SC-1584/1585/1586: ячейка «основной цвет» — «Отправить» rgb(1,127,88), рамка поля в фокусе
+    зелёная с зелёным кольцом, выбранная оценка под указателем фон rgb(236,253,245), цвет зелёный;
+    ячейка по умолчанию без изменений.
+  - SC-1587: в широкой колонке шапка колонки бесед 48→64px и шапка чата 53.8→64px, разделитель
+    0→1px у обеих; в узкой панели шапка 48→64px.
+  - SC-1588: карточка подсказки 288px при 18rem, скругление 0; в панели 20rem — 286px по колонке.
+  - SC-1589/1590: без подписи автора узла нет; по умолчанию подпись на месте.
+  - SC-1591: фон панели и фон поля различаются.
+  - SC-1592/1593: см. замеры 3.1.
+  - Этап 3.2: три эталона сняты сверкой `visual-gate`, кадры просмотрены; на втором подъёме
+    витрины совпали все 1180 снимков из 1168 тестов, включая три новых. Три чужих набора
+    (`chat-matrix`, `container-matrix`, `ai-chat-table-matrix`) упали по тайм-ауту загрузки
+    страницы 30 с под нагрузкой машины — их эталоны сверка назвала «без истории»; повтор сверки
+    идёт перед пушем.
+  - SC-1598: поиск 386px при голове списка 418px (до края за вычетом полей).
 
 ## Sessions
 
