@@ -48,6 +48,14 @@ async function open({ canvasElement }: { canvasElement: HTMLElement }): Promise<
     await openStoryOverlay(canvasElement, { within: 'input', wait: 200 });
 }
 
+/**
+ * Открывает панель подсказок рядом с полем без шторки: фокус её не открывает (`openOnFocus` выключен),
+ * её открывает ввод — событие `input` с текстом длиной не меньше `minLength`.
+ */
+async function openByTyping({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> {
+    await openStoryOverlay(canvasElement, { within: 'input', text: 'М', wait: 200 });
+}
+
 /** Узкий экран: подсказки в нижней шторке, наверху поле поиска. */
 export const Sheet: TStory = {
     args: { sheet: true },
@@ -59,5 +67,5 @@ export const Sheet: TStory = {
 export const SheetOff: TStory = {
     args: { sheet: false },
     parameters: { snapshot: { fullPage: true, overlay: '[qa-dataid="autocomplete-panel"]', viewport: PHONE_WINDOW } },
-    play: open,
+    play: openByTyping,
 };

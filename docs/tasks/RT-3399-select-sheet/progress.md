@@ -12,8 +12,17 @@
   over the whole set is green. Not seen live: whether «Ещё» of the tabs is measured before `play`
   clicks it, and `MoreSheet` of the page header takes a 1100 px window, since the header hides its
   nav row at 1080 px and below.
-- **Waiting for the owner:** «стопни стенд» — the showcase of this branch on 6017 is stopped; the
-  live walk of the sheet stories stopped with it, before its first result. Measured live before
+- **Live walk on 6017 (20.11):** every `Sheet` story of the set opens the bottom sheet at 375, the
+  panel 0…375 wide, no node past its edges (select, multiselect and its toggles, autocomplete,
+  action bar, palette, dynamic selector, menu, speed menu, split button, tabs «Ещё» and tab menu,
+  page header user menu and submenu, table filter header, thread list); the page header
+  `MoreSheet` at 1100 opens the sheet 0…1100. Every `SheetOff` opens no sheet and a panel by its
+  trigger, except the autocomplete: its click opens nothing (`openOnFocus` is off), so its story
+  types «М» now — measured after: the panel 32…375 by the field, 6 rows, no sheet.
+  The quick ranges of the period sheet wrap: the row 335×112, three lines 40 px apart, the widest
+  chip ends at 393 inside the row's 396 — the mockup 8371-1292 is 335×112. The locked column's
+  handle: opacity 0.5, cursor default, disabled; the other rows 1 and grab; all handles at x 21.
+- **Earlier, «стопни стенд»:** the first walk stopped before its first result. Measured live before
   the stop: the calendar glyph of `rt-date-picker` and `rt-date-range` stands 17.0 px from the
   field's right edge on every size (34, 40, 48, 56 px), the same as the select's chevron (17.0 px)
   and the mockups. Then the live measurement of the calendar icons, which
@@ -112,7 +121,7 @@ edge with nothing to say the row goes on.
    onto three lines, the row 112 px tall instead of 32). The approved frame 6063:1151 itself clips
    the row at 335 px, the same cut as in the owner's screenshot. Asked the owner which. — the
    owner chose «Б — перенос»; the approval is in `approvals.md`.
-2. [ ] Do the chosen variant; a spec or a measurement at 375 holds it. — done by the CSS: the sheet row wraps (`flex-flow: row wrap`, gap 8 px both ways), the
+2. [x] Do the chosen variant; a spec or a measurement at 375 holds it. — measured live 20.11: row 335×112, as the mockup. — done by the CSS: the sheet row wraps (`flex-flow: row wrap`, gap 8 px both ways), the
    sideways scroll is gone; the date-range set 32 green. The measurement at 375 waits for the
    showcase, stopped by the owner («стопни стенд»).
 
