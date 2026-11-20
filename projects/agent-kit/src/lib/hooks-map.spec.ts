@@ -424,3 +424,55 @@ describe('модельные проверки', () => {
         }
     });
 });
+
+describe('объявление и стоящие записи модельных проверок', () => {
+    it('SC-AK-1768 — расхождение слов называет обе стороны и выход', (): void => {
+        const wrong: Record<string, unknown> = agentRecord({ ...JUDGE, words: 'other words' });
+        const root: string = treeWithChecks(withRecord(wrong, 'Stop'), [JUDGE]);
+        try {
+            const [drift]: readonly IAgentDrift[] = driftedAgents([JUDGE], root);
+
+            expect(drift.differs[0]).toContain('объявлено «Read the file');
+            expect(drift.differs[0]).toContain('other words');
+            expect(drift.differs[0]).toContain('удали запись и повтори sync');
+        } finally {
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+
+    it('SC-AK-1767 — запись, зовущая файл с тем же началом пути, не считается стоящей', (): void => {
+        const other: Record<string, unknown> = agentRecord({ ...JUDGE, path: `${JUDGE_PATH}.bak` });
+        const root: string = treeWithChecks(withRecord(other, 'Stop'), [JUDGE]);
+        try {
+            expect(unboundAgentChecks([JUDGE], root)).toEqual([JUDGE]);
+        } finally {
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+
+    it('SC-AK-1771 — список события не массив: настройка не правится и читается как не разбираемая', (): void => {
+        const text: string = '{\n  "hooks": { "Stop": {} }\n}\n';
+        const root: string = treeWithChecks(text, [JUDGE]);
+        try {
+            const bound: IAgentBindResult = bindAgentChecks([JUDGE], root);
+
+            expect(bound.unreadable).toBe(true);
+            expect(bound.pending).toEqual([JUDGE]);
+            expect(settingsOf(root)).toBe(text);
+        } finally {
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+
+    it('SC-AK-1773 — разбор объявления: знак равенства в словах, пустые слова, плохой предел', (): void => {
+        const make: (line: string) => readonly IAgentCheck[] = (line: string): readonly IAgentCheck[] =>
+            agentChecksOf(`# t\n${line}\n`, '.claude/hooks/t.md');
+
+        expect(make('<!-- rt-hook-agent event=Stop limit=5 words=a=b --> c -->')[0].words).toBe('a=b --> c');
+        expect(make('<!-- rt-hook-agent event=Stop limit=5 -->')[0].words).toBe('');
+        expect(make('<!-- rt-hook-agent event=Stop limit=0 -->')).toEqual([]);
+        expect(make('<!-- rt-hook-agent event=Stop limit= -->')).toEqual([]);
+        expect(make('<!-- rt-hook-agent limit=5 -->')).toEqual([]);
+        expect(make('<!-- rt-hook-agentX event=Stop limit=5 -->')).toEqual([]);
+    });
+});

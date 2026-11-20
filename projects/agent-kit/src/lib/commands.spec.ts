@@ -961,7 +961,7 @@ describe('sync — записи модельных проверок', () => {
         expect(outcome.code).toBe(1);
         expect(said(outcome)).toContain('модельные проверки разложены, но');
         expect(said(outcome)).toContain('hooks/turn-judge.md');
-        expect(said(outcome)).toContain('skip');
+        expect(said(outcome)).toContain('в `skip` конфига: hooks/ask-judge.md, hooks/turn-judge.md');
     });
 
     it('SC-AK-1771 — настройка, которая не разбирается, не правится, готовые записи печатаются', () => {

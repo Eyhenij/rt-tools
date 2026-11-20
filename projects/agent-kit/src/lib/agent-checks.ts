@@ -47,7 +47,7 @@ function declarationBody(text: string): string | null {
     const line: string | undefined = text
         .split('\n')
         .map((one: string): string => one.trim())
-        .find((one: string): boolean => one.startsWith(OPENING) && one.endsWith(CLOSING));
+        .find((one: string): boolean => one.startsWith(`${OPENING} `) && one.endsWith(CLOSING));
 
     return line === undefined ? null : line.slice(OPENING.length, line.length - CLOSING.length);
 }
@@ -72,7 +72,7 @@ export function agentChecksOf(text: string, path: string, id: string = path): re
     const fields: ReadonlyMap<string, string> = fieldsOf(cut < 0 ? body : body.slice(0, cut));
     const event: string | undefined = fields.get('event');
     const limit: number = Number(fields.get('limit'));
-    if (event === undefined || !Number.isFinite(limit)) {
+    if (event === undefined || !Number.isInteger(limit) || limit <= 0) {
         return [];
     }
 
@@ -125,7 +125,10 @@ function commandsOfRecord(record: unknown, check: IAgentCheck): readonly IStandi
         .map((command: unknown): Record<string, unknown> => (command ?? {}) as Record<string, unknown>)
         .filter(
             (command: Record<string, unknown>): boolean =>
-                command['type'] === 'agent' && String(command['prompt'] ?? '').includes(check.path)
+                command['type'] === 'agent' &&
+                String(command['prompt'] ?? '')
+                    .split(/\s/)
+                    .includes(check.path)
         )
         .map((command: Record<string, unknown>): IStanding => ({ matcher: typeof asked === 'string' ? asked.trim() : '', command }));
 }
@@ -157,7 +160,7 @@ export function unboundAgentChecks(checks: readonly IAgentCheck[], root: string)
             return false;
         }
 
-        return settings === null ? !text.includes(check.path) : standing(settings, check).length === 0;
+        return settings === null ? !text.includes(`Read the file ${check.path} `) : standing(settings, check).length === 0;
     });
 }
 
@@ -198,7 +201,10 @@ function differencesOf(one: IStanding, check: IAgentCheck): readonly IDifference
     const wordsAndMatcher: IDifference[] = [];
 
     if (one.command['prompt'] !== promptOf(check)) {
-        wordsAndMatcher.push({ line: 'слова вызова', refused: true });
+        wordsAndMatcher.push({
+            line: `слова вызова: объявлено «${promptOf(check)}», в настройке «${String(one.command['prompt'] ?? '')}»; чтобы взять объявленные, удали запись и повтори sync`,
+            refused: true,
+        });
     }
     if (one.matcher !== check.matcher) {
         wordsAndMatcher.push({
@@ -245,6 +251,26 @@ export interface IAgentBindResult {
 }
 
 /**
+ * Можно ли дописать записи, ничего не потеряв: раздел `hooks` — объект, а список события — массив.
+ * Иначе дописывание заменило бы чужое значение, и такая настройка читается как не разбираемая.
+ */
+function editable(settings: Record<string, unknown>, checks: readonly IAgentCheck[]): boolean {
+    const hooks: unknown = settings['hooks'];
+    if (hooks === undefined) {
+        return true;
+    }
+    if (hooks === null || typeof hooks !== 'object' || Array.isArray(hooks)) {
+        return false;
+    }
+
+    return checks.every((check: IAgentCheck): boolean => {
+        const records: unknown = (hooks as Record<string, unknown>)[check.event];
+
+        return records === undefined || Array.isArray(records);
+    });
+}
+
+/**
  * Запись модельных проверок в настройку дерева. Не зависит от диспетчера: проверка зовётся своей
  * записью, а не через него. Стоящая запись никогда не переписывается и не дублируется.
  */
@@ -258,6 +284,10 @@ export function bindAgentChecks(checks: readonly IAgentCheck[], root: string): I
     }
     if (!missing.length) {
         return { added: [], unreadable: false, pending: [] };
+    }
+
+    if (!editable(settings, missing)) {
+        return { added: [], unreadable: true, pending: missing };
     }
 
     const hooks: Record<string, unknown> = { ...((settings['hooks'] ?? {}) as Record<string, unknown>) };
