@@ -4,11 +4,10 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 4 из 4 — Showcase; both review rounds done
-- **Next step:** after the owner approves the showcase of `prefix` and `suffix` — review round two
-  over the whole diff, the closing texts, the push set (the sheet and workspace snapshots are
-  re-taken) and the draft PR.
-- **Waiting for the owner:** the approval of the showcase story Molecules/Forms/FieldExtras
-  `Affixes` on 6017.
+- **Next step:** review round two over the whole diff is running (three readers started 20.11 on
+  the diff after 066bd257b, while the owner looks at the showcase); then its fixes as one commit,
+  the closing texts, the push set (the sheet and workspace snapshots are re-taken) and the draft PR.
+- **The showcase of `prefix` and `suffix` approved:** «Approve showcase» (20.11).
 - **`prefix` and `suffix` of `rt-input` in code (20.11), mockup 8449:1560 approved «Одобряю
   макет»:** the prefix stands before the field, the suffix right after the typed text — a hidden
   copy of the text sizes the field, the field lies over it. Measured live on 6017, own set: the

@@ -13,3 +13,5 @@
 - **Совпадение:** 29 из 29 чисел
 - **Витрина:** «Одобряю витрину» — http://localhost:6017/?path=/story/organisms-chat-threadlistsheet--sheet-off , http://localhost:6017/?path=/story/molecules-forms-daterange--playground , http://localhost:6017/?path=/story/molecules-forms-datepicker--playground , http://localhost:6017/?path=/story/organisms-workspace-breakpoint--tablet-columns , http://localhost:6017/?path=/story/molecules-navigation-tabs--playground
 - **Макет:** «Одобряю макет» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8449-1560 (постоянный текст до и после значения в `rt-input`)
+- **Совпадение:** 23 из 23 чисел
+- **Витрина:** «Approve showcase» — http://localhost:6017/?path=/story/molecules-forms-fieldextras--affixes
