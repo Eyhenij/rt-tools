@@ -12,3 +12,4 @@ tree, or the tree holds what the spec is silent about.
 - **The state of the signal binding reaches the field whole.** — `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.base.ts:stateOf`; scenarios `SC-UKV-78`, `SC-UKV-80`, `SC-UKV-81`, `SC-UKV-82`
 - **The unfitness is shown after a touch or an edit, not at once.** — `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.base.ts:stateOf`; scenario `SC-UKV-79`
 - **The wrapper of a field takes the state from the field, not from the form.** — `projects/ui-kit-v2/src/lib/components/field/rt-field.component.ts:showError`; scenario `SC-UKV-80`
+- **A bound the form did not set is no bound, and the field takes it without a refusal.** — `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.bound.ts:rtBoundOrNull`; scenarios `SC-UKV-1582`, `SC-UKV-1583`, `SC-UKV-1584`, `SC-UKV-1585`

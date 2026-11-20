@@ -53,6 +53,41 @@ Then the field of input accepts no input
 
 Covered: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
 
+### SC-UKV-1582 — a date field without bounds takes the signal binding
+
+Given a date field bound by a signal form that set no `min` and no `max`
+When a day is entered in the field
+Then the template builds, and the day reaches the model of the form
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-picker/rt-date-picker.signal-forms.spec.ts`.
+
+### SC-UKV-1583 — a range field without bounds takes the signal binding
+
+Given a range field bound by a signal form that set no `min` and no `max`
+When a range is entered in the field
+Then the template builds, the range reaches the model of the form, and a range in place of a bound
+sets no bound
+
+Covered: `projects/ui-kit-v2/src/lib/components/date-range/rt-date-range.signal-forms.spec.ts`.
+
+### SC-UKV-1584 — a number field without bounds takes the signal binding
+
+Given a number field bound by a signal form that set no `min` and no `max`
+When a number is entered in the field
+Then the template builds, the number reaches the model of the form, and the absent bound clamps
+nothing
+
+Covered: `projects/ui-kit-v2/src/lib/components/input-number/rt-input-number.signal-forms.spec.ts`.
+
+### SC-UKV-1585 — a field with hints without a minimal length takes the signal binding
+
+Given a field with hints bound by a signal form that set no `minLength`
+When a hint is chosen in the field
+Then the template builds, the hint reaches the model of the form, and the hints open from the first
+letter as before
+
+Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete.signal-forms.spec.ts`.
+
 ### SC-UKV-83 — the former binding works as before
 
 Given a field on the former binding with an obligatory control

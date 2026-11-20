@@ -14,20 +14,20 @@
 
 Свои входы поверх общих из [`RtFormControlBase`](../form-control/CONTEXT.md):
 
-| вход               | тип                                          | умолчание                 |
-| ------------------ | -------------------------------------------- | ------------------------- |
-| `suggestions`      | `ReadonlyArray<TItem>`                       | `[]`                      |
-| `displayWith`      | `(item: TItem \| null) => string`            | `String(item ?? '')`      |
-| `placeholder`      | `string`                                     | `''`                      |
-| `minLength`        | `number`                                     | `1`                       |
-| `openOnFocus`      | `boolean`                                    | `false`                   |
-| `iconLeft`         | `IRtIcon.Name \| null`                       | `null`                    |
-| `itemTemplate`     | `TemplateRef<{ $implicit: TItem }> \| null`  | `null`                    |
-| `loading`          | `boolean`                                    | `false`                   |
-| `emptyText`        | `string \| null`                             | `null` → `uiNothingFound` |
-| `emptyTemplate`    | `TemplateRef<{ $implicit: string }> \| null` | `null`                    |
-| `error`            | `string \| null`                             | `null`                    |
-| `errorDescription` | `string`                                     | `''`                      |
+| вход               | тип                                                                     | умолчание                   |
+| ------------------ | ----------------------------------------------------------------------- | --------------------------- |
+| `suggestions`      | `ReadonlyArray<TItem>`                                                  | `[]`                        |
+| `displayWith`      | `(item: TItem \| null) => string`                                       | `String(item ?? '')`        |
+| `placeholder`      | `string`                                                                | `''`                        |
+| `minLength`        | `number \| undefined` — `undefined` пишет `[formField]` без `minLength` | `1`, и для `undefined` тоже |
+| `openOnFocus`      | `boolean`                                                               | `false`                     |
+| `iconLeft`         | `IRtIcon.Name \| null`                                                  | `null`                      |
+| `itemTemplate`     | `TemplateRef<{ $implicit: TItem }> \| null`                             | `null`                      |
+| `loading`          | `boolean`                                                               | `false`                     |
+| `emptyText`        | `string \| null`                                                        | `null` → `uiNothingFound`   |
+| `emptyTemplate`    | `TemplateRef<{ $implicit: string }> \| null`                            | `null`                      |
+| `error`            | `string \| null`                                                        | `null`                      |
+| `errorDescription` | `string`                                                                | `''`                        |
 
 | выход           | тип                        |
 | --------------- | -------------------------- |

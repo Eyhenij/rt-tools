@@ -40,6 +40,8 @@ import { IRtAutocomplete } from './rt-autocomplete.model';
 
 /** Сколько точек до дна панели уже считается концом списка. */
 const END_THRESHOLD_PX: number = 8;
+/** Со скольких букв запроса открываются подсказки, когда `minLength` не задан. */
+const RT_AUTOCOMPLETE_MIN_LENGTH: number = 1;
 
 const BEM_BLOCK: string = 'rt-autocomplete';
 
@@ -155,7 +157,14 @@ export class RtAutocompleteComponent<TItem> extends RtFormControlBase<TItem | nu
     );
 
     public readonly placeholder: InputSignal<string> = input<string>('');
-    public readonly minLength: InputSignal<number> = input<number>(1);
+    /**
+     * Со скольких букв запроса открываются подсказки. `undefined` пишет сигнальная форма, когда не
+     * задала `minLength`: тогда — с первой буквы, как по умолчанию.
+     */
+    public readonly minLength: InputSignalWithTransform<number, number | undefined> = input<number, number | undefined>(
+        RT_AUTOCOMPLETE_MIN_LENGTH,
+        { transform: (value: number | undefined): number => value ?? RT_AUTOCOMPLETE_MIN_LENGTH }
+    );
 
     /** Префикс-иконка слева в поле (например, `map` для поиска). */
     public readonly iconLeft: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
