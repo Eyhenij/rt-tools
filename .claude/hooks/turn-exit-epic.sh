@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/turn-exit-epic.sh · 313f11bbd1d0 · правится надстройкой, не здесь
+# rt-kit v0.37.1 · hooks/turn-exit-epic.sh · 313f11bbd1d0 · правится надстройкой, не здесь
 # The tiers of the open epic for the turn-exit guard. NOT a guard: it has no `rt-hook:` declaration
 # and hooks into no agent event. The guard sources it right after the root of the tree is known.
 #

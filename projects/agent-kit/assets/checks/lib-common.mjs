@@ -43,7 +43,13 @@ const COMMON_DOMAIN_LAYERS = [...FLAT_LAYERS, 'feature'].sort();
 const API_DOMAIN_LAYERS = ['api', 'data-access', 'feature', 'util'];
 /** Where libs that ended up outside the domain grid are looked for */
 const LIB_ROOTS = [...FAMILIES, ...API_FAMILIES].map((family) => `${LIBS_ROOT}/${family}`);
-const REQUIRED_FILES = ['project.json', 'tsconfig.json', 'vitest.config.mts', 'src/index.ts'];
+/**
+ * The files every lib has. The test runner is not among them: it is declared in one of two forms,
+ * and `lib-manifests.mjs` judges that on its own.
+ */
+const REQUIRED_FILES = ['project.json', 'tsconfig.json', 'src/index.ts'];
+/** The executor that runs the tests of a lib through the Angular builder */
+const ANGULAR_TEST_EXECUTOR = '@angular/build:unit-test';
 const BOUNDARIES_DIR = 'eslint/boundaries/domains';
 
 const problems = [];
@@ -188,6 +194,7 @@ export {
     API_DOMAIN_LAYERS,
     LIB_ROOTS,
     REQUIRED_FILES,
+    ANGULAR_TEST_EXECUTOR,
     BOUNDARIES_DIR,
     IGNORED_DIRS,
     allowlist,
