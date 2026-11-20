@@ -9,14 +9,18 @@
            понадобилась бы подсказка, а у шторки на телефоне наведения нет. */
         &__title {
             min-width: 0;
+            line-height: var(--rt-leading-normal);
             overflow-wrap: anywhere;
             text-align: center;
         }
 
+        /* Отступы шторки из макета: 20 по бокам, 24 снизу и вырез экрана, чтобы последний пункт
+           не уходил под полосу жестов телефона. */
         &__panel {
             display: flex;
             min-height: 0;
             flex-direction: column;
+            padding: 0 var(--rt-space-5) calc(var(--rt-space-6) + env(safe-area-inset-bottom));
         }
 
         /* Сброс карточки панели: класс блока перед классом элемента даёт специфичность выше, чем у
