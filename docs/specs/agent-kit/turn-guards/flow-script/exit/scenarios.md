@@ -167,15 +167,15 @@ Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
 Given the owner's menu
 When the refusal is read
-Then it says that a deferral and «сделаю сам» take the next unblocked task
+Then it says that a deferral takes the next unblocked task, and «стоп» ends the turn
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
-### SC-AK-1445 — the menu of a refusal carries the three options
+### SC-AK-1445 — the menu of a refusal carries the two options
 
-Given a held turn on the branch of task 7 with the owner's step, and the options without a task
+Given a held turn on the branch of task 7 refused twice by another check, and the options without a task
 When the menu is named
-Then it carries «отложить RT-7», «сделаю сам» and «стоп»; without a task the first stays «отложить RT-N»
+Then it carries «отложить RT-7» and «стоп»; without a task the first stays «отложить RT-N»
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 
@@ -192,14 +192,6 @@ Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 Given the owner chose «отложить RT-7», and a last word «ок»
 When the plan of the epic is edited to mark RT-7 «отложено»
 Then the first edit passes and the second is refused
-
-Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
-### SC-AK-1469 — the option «сделаю сам» blocks the task by the owner's step
-
-Given the owner chose «сделаю сам»
-When the row of the task is marked «шаг владельца «сделаю сам»» and the plan is read
-Then the edit passes, and the row names the owner's step with that quote
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 

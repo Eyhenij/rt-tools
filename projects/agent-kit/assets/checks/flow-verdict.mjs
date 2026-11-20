@@ -79,12 +79,12 @@ export function holdReason(model, result, step, menu = null) {
     if (menu?.cause) {
         lines.push(
             menu.cause.idle
-                ? 'The previous refusal named a move, and no call followed it: the step is not one the executor can take alone.'
+                ? 'The previous refusal named a move, and no call followed it.'
                 : `The check \`${menu.cause.by}\` refused the same step twice for the same reason.`,
         );
         const options = menuOptions(model.words, menu.task);
         lines.push(`The one move is the owner's menu: ask through the question tool with exactly these options — ${options.map((o) => `«${o}»`).join(', ')}.`);
-        lines.push('Then do what the owner chose: a deferral marks the task «отложено» in the plan of the epic and takes the next unblocked task; «сделаю сам» marks it «шаг владельца «сделаю сам»» and takes the next; «стоп» ends the turn.');
+        lines.push('Then do what the owner chose: a deferral marks the task «отложено» in the plan of the epic and takes the next unblocked task; «стоп» ends the turn.');
         return lines.join('\n');
     }
     if (step && state?.key === 'stage') {

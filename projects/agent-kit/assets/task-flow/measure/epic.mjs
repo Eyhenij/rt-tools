@@ -8,7 +8,7 @@
  *
  * nextTaken — exit 11: every unmerged, unblocked task of the epic other than the current one has a
  * branch, locally or on the server; with no such task the exit is met. A task is blocked when it is
- * deferred or its row names the owner's step. A task with a branch standing
+ * deferred. A task with a branch standing
  * before a task without one does not meet the exit: the plan still holds work nobody took.
  *
  * mergedMarked — exit 12: every task not deferred with a merged PR of its branch is marked
@@ -40,11 +40,8 @@ export function declared({ git, host, tree }) {
     };
 }
 
-/**
- * A row the work does not wait for: deferred, or naming the owner's step. A row names the owner's
- * step only through the owner's window on the edit of the plan, so the row itself is the owner's word.
- */
-const blocked = (row) => row.deferred || row.ownerQuote !== null;
+/** A row the work does not wait for: deferred by the owner's word naming the task. */
+const blocked = (row) => row.deferred;
 
 const prefix = (task) => `RT-${task}-`;
 

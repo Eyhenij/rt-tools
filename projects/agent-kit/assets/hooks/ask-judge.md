@@ -33,9 +33,9 @@ after any refusal of another check. Avoid both.
   release, a purchase, a deletion, a change of the owner's earlier decision.
 - The question follows a refusal of another check and names what was done meanwhile or why nothing
   could be done. A refusal elsewhere is never a reason to hold the question.
-- The question is the menu named by a refusal of the exit check. The step is the owner's, or
-  another check refuses it. The options are exactly three: «отложить RT-N» with the task number,
-  «сделаю сам» and «стоп». The owner's answer to it is their word, so a next step named in the
+- The question is the menu named by a refusal of the exit check. Another check
+  refused the step twice. The options are exactly two: «отложить RT-N» with the task number and
+  «стоп». The owner's answer to it is their word, so a next step named in the
   progress does not hold it.
 
 ## Hold the question — answer `{"ok": false, "reason": "BLOCKED by ask-judge: …"}` — only when

@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.37.0 · rules/turn-conduct.md · eba108652112 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/turn-conduct.md · fca08236a6ea · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 
@@ -47,8 +47,8 @@ The engine lets a turn end before the scenario does when a case is met, asked in
 
 A question to the owner, a guard's refusal, a handover and handed-in work do not end a turn. A
 question waits for its answer inside the turn, a refusal is answered by the next call, and handed-in
-work is followed by the next task. A step that belongs to the owner, or that another guard refuses,
-goes to them as one menu with the options of the description: «отложить RT-N», «сделаю сам», «стоп».
+work is followed by the next task. A step that another guard refuses twice
+goes to the owner as one menu with the options of the description: «отложить RT-N», «стоп».
 
 The queue is asked by a command in the same turn: "there are no tasks" is a statement about the
 tree, and the executor's memory does not confirm it.
@@ -79,7 +79,7 @@ flowchart TD
     B -->|Another release case of the description| I
     B -->|None| D{The next move}
     D -->|The executor's step| G[Done in the same turn: a question, a refusal, a handover never end it]
-    D -->|Another guard refuses it twice| M[One menu: «отложить RT-N», «сделаю сам», «стоп»]
+    D -->|Another guard refuses it twice| M[One menu: «отложить RT-N», «стоп»]
     M --> A
     G --> A
     L --> I{The reply speaks of the tree}

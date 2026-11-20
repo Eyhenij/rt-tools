@@ -123,8 +123,8 @@ The guards have no interface: only the agent sees them, as the text of a refusal
 - **Open work is measured, not judged.** The engine leaves no doubt about open work to decide; a
   model judges only the words of the turn, and in doubt it lets the turn end.
 - **A refusal names the next move the agent can make in the same turn.** A refusal without a lawful
-  move leaves a deadlock. A step that is the owner's, or that another guard refuses, is named as
-  one menu to the owner: «отложить RT-N», «сделаю сам», «стоп».
+  move leaves a deadlock. A step that another guard refuses twice is named as
+  one menu to the owner: «отложить RT-N», «стоп».
 
 ## What is out of scope
 

@@ -107,7 +107,7 @@ out('end: SC-AK-1505 — слово остановки, добавленное �
 out('end: SC-AK-1505 — пакетное описание этого слова не знает', stop('Шабаш, на сегодня всё'), 'false');
 
 const events = (list) => ({ session: { events: () => list } });
-const MENU = 'Ask the owner: «отложить RT-7», «сделаю сам», «стоп».';
+const MENU = 'Ask the owner: «отложить RT-7», «стоп».';
 const lost = (list) => String(session.menuLost(events(list))(data));
 out('menu: SC-AK-1444 — меню не дошло второй раз подряд', lost([{ kind: 'refusal', text: MENU }, { kind: 'menu', answered: false }, { kind: 'refusal', text: MENU }, { kind: 'menu', answered: false }]), 'true');
 out('menu: SC-AK-1444 — меню не дошло один раз — не потеряно', lost([{ kind: 'refusal', text: MENU }, { kind: 'menu', answered: false }]), 'false');
@@ -118,12 +118,11 @@ const stage = { state: 'этап-идёт', index: 7, reason: null };
 out('удержанный ход в этапе называет шаг и команду', String(holdReason(model, stage, { number: '3.6', name: 'Перевести' }).includes('task-flow-script.mjs step 3.6')), 'true');
 out('удержанный ход до этапа называет действие состояния', String(holdReason(model, held, null).includes('explore the tree')), 'true');
 
-// --- меню владельцу: шаг владельца или шаг, который запрещает другая проверка ---------------------
+// --- меню владельцу: шаг, который запрещает другая проверка, или простой -------------------------
 const HOLD_MENU = { cause: null, task: '7' };
 const forbiddenBy = (name) => (name === 'measure.session.forbidden' ? 'git-guard-delivery' : false);
 const checkMenu = holdReason(model, stage, null, { ...HOLD_MENU, cause: menuCause(forbiddenBy) });
 const ownerMenu = checkMenu;
-out('menu: SC-AK-1744 — строка шага владельца меню не называет', String(holdReason(model, stage, null, { ...HOLD_MENU, cause: menuCause((name) => name === 'measure.epic.ownerStep') }).includes("owner's menu")), 'false');
 out('menu: SC-AK-1442 — шаг запрещает другая проверка — меню об этой проверке', String(checkMenu.includes('`git-guard-delivery` refused the same step twice') && checkMenu.includes("owner's menu")), 'true');
 const blockedBy = (by, reason) => ({ kind: 'blocked', by, reason });
 const called = (name, input = {}, blocked = false) => ({ kind: 'call', name, input, blocked });
@@ -182,10 +181,10 @@ out('menu: SC-AK-1763 — ожидание меню владельцу не на
 out('end: SC-AK-1764 — в состоянии «работа-отдана» ожидание не отпускает', released({ ...WAITING, 'measure.pr.handed': true }), 'held');
 out('end: SC-AK-1764 — молчащий хостинг на вопросе о PR ожидание не держит', releaseCase(model, (name) => { if (name === 'measure.pr.handed') throw Object.assign(new Error('silent'), { name: 'HostSilent' }); return WAITING[name] ?? false; }, held)?.log ?? 'held', 'a background task of the session runs');
 
-out('menu: SC-AK-1443 — заблокированная задача — берётся следующая незаблокированная', String(ownerMenu.includes('takes the next unblocked task') && ownerMenu.includes('takes the next;')), 'true');
+out('menu: SC-AK-1443 — заблокированная задача — берётся следующая незаблокированная', String(ownerMenu.includes('takes the next unblocked task') && ownerMenu.includes('«стоп» ends the turn')), 'true');
 
-out('menu: SC-AK-1445 — меню отказа несёт «отложить RT-N», «сделаю сам» и «стоп»', String(['«отложить RT-7»', '«сделаю сам»', '«стоп»'].every((option) => ownerMenu.includes(option))), 'true');
-out('menu: SC-AK-1445 — без номера задачи вариант остаётся «отложить RT-N»', menuOptions(model.words, null).join(', '), 'отложить RT-N, сделаю сам, стоп');
+out('menu: SC-AK-1445 — меню отказа несёт «отложить RT-N» и «стоп»', String(['«отложить RT-7»', '«стоп»'].every((option) => ownerMenu.includes(option))), 'true');
+out('menu: SC-AK-1445 — без номера задачи вариант остаётся «отложить RT-N»', menuOptions(model.words, null).join(', '), 'отложить RT-N, стоп');
 
 const answered = (option) => sourceWordOf({ type: 'user', toolUseResult: { answers: { 'Что делать?': option } }, message: { content: [] } });
 out('menu: SC-AK-1467 — вариант «стоп» меню отказа — слово владельца', answered('стоп'), 'стоп');
@@ -197,9 +196,6 @@ const defer = (word) => judgeCall({ tool: 'Edit', path: 'docs/plans/epic.md', ed
 out('menu: SC-AK-1468 — вариант «отложить RT-N» ставит отметку «отложено»', String(defer(answered('отложить RT-7'))), 'null');
 out('menu: SC-AK-1468 — без варианта отметка отказана', String(defer('ок') !== null), 'true');
 
-const own = judgeCall({ tool: 'Edit', path: 'docs/plans/epic.md', edits: [{ oldString: '| RT-7 — проба | идёт |', newString: '| RT-7 — проба | шаг владельца «сделаю сам» |' }] }, { ...ctx, ownerLast: () => answered('сделаю сам') });
-out('menu: SC-AK-1469 — вариант «сделаю сам» блокирует задачу шагом владельца', String(own), 'null');
-out('menu: SC-AK-1469 — строка шага владельца — задача заблокирована', String(epicPlan(plan.replace('| идёт |', '| шаг владельца «сделаю сам» |')).rows[0].ownerQuote), 'сделаю сам');
 JS
 
 # --- сам хук на дереве фикстуры ---------------------------------------------------------------------

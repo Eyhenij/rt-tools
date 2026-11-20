@@ -11,11 +11,11 @@ Then the first and the last meet it, the second does not
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 
-### SC-AK-1389 — a task waiting for the owner's step is passed over
+### SC-AK-1793 — a row with the old mark «шаг владельца» is an ordinary row
 
-Given a next task waiting for the owner's step, with the owner's message holding its quote, and a branch of the task after it
+Given a next task whose row still carries «шаг владельца», and a branch of the task after it
 When exit 11 is measured
-Then it is met
+Then it is not met: the task with the old mark is not passed over
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 

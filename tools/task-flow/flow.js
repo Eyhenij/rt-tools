@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · task-flow/flow.js · 4281aa067337 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · task-flow/flow.js · 7633c9f3c152 · правится надстройкой, не здесь
 // The task flow as an executable scenario: the data language of `flow-syntax.mjs`, nothing here runs.
 // A state is left when its exit is measured; the first state whose exit is unmet is where the work
 // stands. A release case says when a turn may end before the scenario does. A new fact is a new
@@ -175,7 +175,7 @@
       'git commit', 'git push', 'git add', 'git merge', 'git rm', 'git mv', 'sed -i', 'perl -pi', 'gh pr', 'npm run task:new', 'pnpm run task:new', 'npm run task:move',
       'pnpm run task:move', 'npm run agent-kit:sync', 'pnpm run agent-kit:sync',
     ],
-    menu: ['отложить RT-N', 'сделаю сам', 'стоп'],
+    menu: ['отложить RT-N', 'стоп'],
     legacyBranches: ['RT-3276-conversation-checks', 'RT-3329-task-flow-scenario'],
   },
 

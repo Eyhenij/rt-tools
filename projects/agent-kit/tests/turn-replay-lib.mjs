@@ -30,8 +30,7 @@ export function ownerText(word, options = []) {
 /** The text of a refusal at the end of a turn: one move, or the menu of the owner. */
 export function stopFeedback(kind, task) {
     const head = 'Stop hook feedback:\n[turn-exit-guard.sh]: BLOCKED by turn-exit-guard: The scenario is not over.';
-    if (kind === 'menu')
-        return `${head} The step is refused by another check. Ask the owner one menu: «отложить RT-${task}», «сделаю сам», «стоп».`;
+    if (kind === 'menu') return `${head} The step is refused by another check. Ask the owner one menu: «отложить RT-${task}», «стоп».`;
     return `${head} The next move is the current step of the progress.`;
 }
 
