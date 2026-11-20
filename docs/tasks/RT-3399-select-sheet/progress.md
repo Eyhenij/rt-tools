@@ -122,7 +122,9 @@ The owner added: «включи в задачу не прятать иконку
 `rt-table` a locked row draws an empty placeholder where the others have the drag handle.
 
 1. [ ] Draw the locked row with a disabled drag handle in Figma next to the table settings frame and
-   ask the owner to approve it. — waits: the owner said «только добавь в задачу пока».
+   ask the owner to approve it. — drawn after «продолжай работу»: node 8405:752 on the Table page,
+   the row «Даты» locked, the handle and the eye at opacity 0.5 (`--rt-icon-button-disabled-opacity`);
+   no overlap with the neighbouring frames by node bounds. Waits for the owner's approval.
 2. [ ] Draw the handle disabled in `table/settings-panel`; a spec holds it.
 
 ### 4. Showcase
@@ -160,7 +162,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 3 из 4 — Code and unit tests
-- **Next step:** the field with a toggles panel, then the trailing icons. Done: the folding
+- **Next step:** stage 4, step 1 — look at every sheet story live on the showcase of this branch,
 
 The progress in full — `docs/tasks/RT-3399-select-sheet/progress.md`; the plan lies next to it.
 
@@ -173,26 +175,26 @@ none
 ### Commits over the main branch
 
 ```
+7a4027a9d docs(rt:ui-kit-v2): ручка закреплённой колонки ждёт слова владельца (RT-3399)
+eab0102a6 docs(rt:ui-kit-v2): ручка перетаскивания закреплённой колонки — в задаче RT-3399
+19092052f fix(rt:ui-kit-v2): быстрые периоды в шторке поля периода переносятся на строки (RT-3399)
+4b6db4799 docs(rt:ui-kit-v2): владелец выбрал перенос быстрых периодов в шторке периода (RT-3399)
+3c61b1e39 docs(rt:ui-kit-v2): два варианта быстрых периодов в шторке периода нарисованы (RT-3399)
+8e5da365e docs(rt:ui-kit-v2): быстрые периоды в шторке поля периода — в задаче RT-3399
+701a3b419 docs(rt:ui-kit-v2): замер телефонных макетов шторки по узлам (RT-3399)
+a96428cc5 test(rt:ui-kit-v2): истории шапки страницы, вкладок и подвала мультиселекта на телефоне (RT-3399)
+00196b2b5 test(rt:ui-kit-v2): истории динамического селектора, фильтров ленты и фильтра таблицы на телефоне (RT-3399)
+db7c7e020 test(rt:ui-kit-v2): истории кнопки с меню, быстрого меню, палитры и панели действий на телефоне (RT-3399)
+8a4e595eb test(rt:ui-kit-v2): истории автокомплита и меню действий на телефоне (RT-3399)
+d6733beb0 test(rt:ui-kit-v2): истории мультиселекта с переключателями (RT-3399)
+72499909a test(rt:ui-kit-v2): истории свёрнутой группы переключателей на телефоне (RT-3399)
+67cc8a6ca test(rt:ui-kit-v2): истории селекта на телефоне — список в шторке и шторка выключена (RT-3399)
+61d155ee1 feat(rt:ui-kit-v2): вкладки выключают шторку для «Ещё» и меню вкладки входом sheet (RT-3399)
+545a760b0 docs(rt:ui-kit-v2): входы шторки sheet и fold на страницах витрины (RT-3399)
+5e04df474 fix(rt:ui-kit-v2): значок календаря у полей даты и периода — на линии шеврона селекта (RT-3399)
+93ad24a73 feat(rt:ui-kit-v2): мультиселект с переключателями — вид look="toggles" (RT-3399)
 153d11d39 feat(rt:ui-kit-v2): группа переключателей сворачивается в поле выбора, когда не помещается (RT-3399)
 98bfabd6b feat(rt:ui-kit-v2): меню вкладки на телефоне — в нижней шторке (RT-3399)
-cf96bb005 feat(rt:ui-kit-v2): меню действий rt-menu на телефоне — в нижней шторке (RT-3399)
-bb98b0b6d feat(rt:ui-kit-v2): меню шапки страницы на телефоне — в нижней шторке (RT-3399)
-857f2edf4 feat(rt:ui-kit-v2): нижняя шторка у динамического селектора (RT-3399)
-dceae8fde feat(rt:ui-kit-v2): автокомплит на телефоне ищет в нижней шторке (RT-3399)
-44c9814e8 feat(rt:ui-kit-v2): нижняя шторка у меню и панелей остального набора (RT-3399)
-0d74de272 feat(rt:ui-kit-v2): подвал «Выбрано · Сбросить · Готово» в шторке мультиселекта (RT-3399)
-ab78c8832 feat(rt:ui-kit-v2): селект и мультиселект открывают список в нижней шторке на телефоне (RT-3399)
-00eab3c11 docs(rt:ui-kit-v2): спека шторки для панелей выбора на телефоне (RT-3399)
-df49d6ffd docs(rt:ui-kit-v2): одобрение макетов пяти добавленных мест (RT-3399)
-2175aeef9 docs(rt:ui-kit-v2): макеты шторки для пяти добавленных мест (RT-3399)
-56fc99df0 docs(rt:ui-kit-v2): ещё пять мест со шторкой в задаче RT-3399
-605ce01a6 docs(rt:ui-kit-v2): одобрение макетов шторки для остальных компонентов (RT-3399)
-24afe3d3d docs(rt:ui-kit-v2): макеты шторки для меню, вкладок и остальных компонентов (RT-3399)
-46865e19c docs(rt:ui-kit-v2): задача RT-3399 расширена на все компоненты со списком выбора
-f7d2e3b95 docs(rt:ui-kit-v2): макет шторки селектов одобрен (RT-3399)
-69146ab21 docs(rt:ui-kit-v2): одобрение макета шторки селектов (RT-3399)
-75c01c679 docs(rt:ui-kit-v2): макеты шторки селектов найдены в Figma, ждут одобрения (RT-3399)
-6d1ea092d docs(rt:ui-kit-v2): папка задачи RT-3399 и назначение копии
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
