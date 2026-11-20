@@ -27,6 +27,14 @@ Then its list opens next to the field, and no bottom sheet is open
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
+### SC-UKV-1628 — a narrow window wider than a phone keeps the panel next to the trigger
+
+Given a select in a window narrower than the kit's narrow threshold and wider than 480 px
+When the select is pressed
+Then its list opens next to the field, and no bottom sheet is open
+
+Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
+
 ### SC-UKV-1554 — the sheet carries the label of the field as its title
 
 Given a select inside a field labelled «Страна» on a phone

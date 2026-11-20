@@ -17,8 +17,15 @@ const OPTIONS: ReadonlyArray<IRtSelect.Option<string>> = [
 /** Подмена наблюдателя ширины: сам он в тестовой среде ничего не измеряет. */
 class BreakpointsStub {
     public readonly viewportNarrow: WritableSignal<boolean> = signal<boolean>(true);
-    public readonly phone: WritableSignal<boolean> = this.viewportNarrow;
+    public readonly phone: WritableSignal<boolean> = signal<boolean>(true);
     public readonly narrow: WritableSignal<boolean> = signal<boolean>(true);
+}
+
+/** Узкое окно шире телефона: узкий вид кита включён, телефона нет. */
+function narrowNotPhone(): Provider[] {
+    const stub: BreakpointsStub = new BreakpointsStub();
+    stub.phone.set(false);
+    return [{ provide: BreakpointsService, useValue: stub }];
 }
 
 @Component({
@@ -113,6 +120,19 @@ describe('Панель выбора в нижней шторке', (): void => {
 
     it('SC-UKV-1610 — шире телефона список открывается у поля', (): void => {
         const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(false);
+
+        press(fixture, 'select-trigger');
+
+        expect(sheet()).toBeNull();
+        expect(panelBySide()).not.toBeNull();
+    });
+
+    it('SC-UKV-1628 — узкое окно шире телефона оставляет список у поля', (): void => {
+        const fixture: ComponentFixture<RtSelectComponent<string>> = createRtFixture(
+            RtSelectComponent<string>,
+            { options: OPTIONS },
+            { providers: narrowNotPhone() }
+        );
 
         press(fixture, 'select-trigger');
 
