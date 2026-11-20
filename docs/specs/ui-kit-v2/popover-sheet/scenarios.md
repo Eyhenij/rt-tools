@@ -3,9 +3,9 @@
 The prefix `SC-UKV` is shared across the domain together with the subdomains. What a scenario is
 covered by is said under it.
 
-### SC-UKV-1382 — on a narrow screen the panel opens in the bottom sheet
+### SC-UKV-1382 — on a phone the panel opens in the bottom sheet
 
-Given a select on a narrow screen
+Given a select on a phone
 When the select is pressed
 Then its list is inside the kit's bottom sheet, and no panel stands next to the field
 
@@ -13,7 +13,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
 ### SC-UKV-1383 — the switched-off sheet leaves the panel next to the trigger
 
-Given a select with the sheet switched off on a narrow screen
+Given a select with the sheet switched off on a phone
 When the select is pressed
 Then its list opens next to the field, and no bottom sheet is open
 
@@ -29,7 +29,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
 ### SC-UKV-1385 — the sheet carries the label of the field as its title
 
-Given a select inside a field labelled «Страна» on a narrow screen
+Given a select inside a field labelled «Страна» on a phone
 When the select is pressed
 Then the title of the bottom sheet is «Страна»
 
@@ -91,10 +91,10 @@ Then the bottom sheet is closed, and the choice made stays
 
 Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
 
-### SC-UKV-1439 — the rest of the set opens its panel in the sheet on a narrow screen
+### SC-UKV-1439 — the rest of the set opens its panel in the sheet on a phone
 
 Given a part of the set — the split button, the speed menu, the colour palette, the action bar,
-the dynamic selector, the table filter header — on a narrow screen
+the dynamic selector, the table filter header — on a phone
 When its panel is opened
 Then the panel is inside the bottom sheet, and no panel stands next to the button
 
@@ -102,7 +102,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet-set.spe
 
 ### SC-UKV-1440 — the switched-off sheet keeps the panel of the rest of the set by its button
 
-Given the same part of the set with the sheet switched off on a narrow screen
+Given the same part of the set with the sheet switched off on a phone
 When its panel is opened
 Then the panel opens next to the button, and no bottom sheet is open
 
@@ -110,7 +110,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet-set.spe
 
 ### SC-UKV-1441 — a tap on the autocomplete opens the sheet with a search before any typing
 
-Given an autocomplete on a narrow screen
+Given an autocomplete on a phone
 When its field gets the focus
 Then the bottom sheet is open with a search at its top and the suggestions under it
 
@@ -142,7 +142,7 @@ Covered: `projects/ui-kit-v2/src/lib/components/page-header/rt-page-header-sheet
 
 ### SC-UKV-1445 — a mouse passing over the button opens no sheet, and leaving it closes none
 
-Given the page header on a narrow screen with a user and a profile menu, used with a mouse
+Given the page header on a phone with a user and a profile menu, used with a mouse
 When the mouse comes over the user name, then the name is pressed and the mouse leaves it
 Then nothing opens on hover, the press opens the bottom sheet, and it stays open after the mouse left
 

@@ -88,4 +88,9 @@ sheet of its own over it).
   settings of `rt-table` a locked row draws the same drag handle as the others, in the disabled
   look and not draggable, instead of the empty placeholder.
 
+- **The sheet opens only on a phone, ≤480 px** — the owner's words «До 480 px», asked after review
+  round one showed that the kit's narrow threshold (1080 px) gives the sheet to a landscape tablet
+  and a narrow laptop window. Read as: every panel of choice of the kit, the date fields included,
+  opens in the sheet at the phone threshold of `BreakpointsService`; wider, next to its trigger.
+
 ## What is left unclear

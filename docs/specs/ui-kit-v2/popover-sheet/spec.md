@@ -1,6 +1,6 @@
 # A panel of choice in the bottom sheet on a phone
 
-**Status:** in force · **Revision:** 19 November 2026 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 20 November 2026 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the popover of the second kit, the bottom sheet of the second kit, the field of the
 second kit
 **Laws:** `frontend-application`, `verifiability`, `reuse-first`
@@ -29,10 +29,11 @@ the same rows as before.
 
 ## Rules
 
-- **On a narrow screen a panel of choice opens in the kit's bottom sheet, not next to its trigger.**
-  The narrow screen is the same threshold the date fields use.
+- **On a phone a panel of choice opens in the kit's bottom sheet, not next to its trigger.**
+  The phone is the kit's phone threshold, 480 px; the date fields open their sheet by it too. A
+  tablet and a narrow window keep the panel next to the trigger.
 - **Every part of the kit that opens a panel of choice has the sheet switched on, and one input
-  switches it off.** Switched off, the panel opens next to its trigger on a narrow screen too.
+  switches it off.** Switched off, the panel opens next to its trigger on a phone too.
 - **On a wide screen the panel opens next to its trigger, as before.**
 - **The sheet is titled by the label of the field, then by the accessible name of the control.**
   With neither, the sheet has no title.
@@ -128,3 +129,4 @@ None.
 | 2026-11-19 | The folding toggle button group, scenarios 1452…1455 (RT-3399) |
 | 2026-11-19 | The multiselect with toggles, scenarios 1456…1460 (RT-3399) |
 | 2026-11-19 | Tabs switch the sheet off for their menus, scenario 1461 (RT-3399) |
+| 2026-11-20 | The sheet opens on a phone, ≤480 px, by the owner's word «До 480 px» (RT-3399) |

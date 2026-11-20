@@ -3,7 +3,7 @@
 The rule of the subdomain is on the left, the place where it is carried out is on the right. The
 paths are given from the root of the tree.
 
-- **On a narrow screen a panel of choice opens in the kit's bottom sheet, not next to its trigger.** — `projects/ui-kit-v2/src/lib/components/popover/rt-popover.directive.ts:sheet`
+- **On a phone a panel of choice opens in the kit's bottom sheet, not next to its trigger.** — `projects/ui-kit-v2/src/lib/components/popover/rt-popover.directive.ts:sheet`
 - **Every part of the kit that opens a panel of choice has the sheet switched on, and one input switches it off.** — `projects/ui-kit-v2/src/lib/components/select/rt-select.component.ts:sheet`
 - **On a wide screen the panel opens next to its trigger, as before.** — `projects/ui-kit-v2/src/lib/components/popover/rt-popover.directive.ts:inSheet`
 - **The sheet is titled by the label of the field, then by the accessible name of the control.** — `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.base.ts:sheetTitle`
