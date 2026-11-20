@@ -4,9 +4,10 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 4 из 4 — Showcase; both review rounds done
-- **Next step:** review round two over the whole diff is running (three readers started 20.11 on
-  the diff after 066bd257b, while the owner looks at the showcase); then its fixes as one commit,
-  the closing texts, the push set (the sheet and workspace snapshots are re-taken) and the draft PR.
+- **Next step:** a review round over the field hint change (commits after 72bbc66c2), three
+  readers on the whole diff, while the owner looks at the hint showcase; then its fixes as one
+  commit, the closing texts, the push set (the sheet and workspace snapshots are re-taken) and the
+  draft PR.
 - **The showcase of `prefix` and `suffix` approved:** «Approve showcase» (20.11).
 - **The hint at the field label joined (20.11), «проверь и добавь в текущий тикет»:** confirmed
   live on 6017 — `rt-field__help-popover` has a transparent background, padding 0 and no shadow,
