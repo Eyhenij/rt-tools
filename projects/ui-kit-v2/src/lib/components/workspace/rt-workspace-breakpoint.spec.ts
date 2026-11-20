@@ -20,6 +20,7 @@ const STYLES_ROOT: string = join(__dirname, '../../../styles');
     template: `
         <rt-workspace
             hasActive
+            [detailsInHeader]="detailsInHeader"
             [singleColumnBreakpoint]="breakpoint"
             [asideOverlayWidth]="overlayWidth"
             [asideTitle]="title()"
@@ -34,6 +35,7 @@ const STYLES_ROOT: string = join(__dirname, '../../../styles');
 })
 class WorkspaceBreakpointHostComponent {
     public breakpoint: number | null = 600;
+    public detailsInHeader: boolean = false;
     public overlayWidth: number = 540;
     public readonly title: WritableSignal<string | null> = signal<string | null>(null);
     public layout: TRtAsideContentLayout = 'default';
@@ -46,11 +48,19 @@ interface IPlace {
     readonly phone: WritableSignal<boolean>;
 }
 
-function place(width: number): IPlace {
-    return { placeWidth: signal<number | null>(width), narrow: signal<boolean>(width <= 1080), phone: signal<boolean>(false) };
+/** `null` — место страницы не объявлено: узкий вид отвечает окном, здесь — узким. */
+function place(width: number | null): IPlace {
+    return {
+        placeWidth: signal<number | null>(width),
+        narrow: signal<boolean>(width === null || width <= 1080),
+        phone: signal<boolean>(false),
+    };
 }
 
-function setup(width: number, inputs: Partial<WorkspaceBreakpointHostComponent> = {}): ComponentFixture<WorkspaceBreakpointHostComponent> {
+function setup(
+    width: number | null,
+    inputs: Partial<WorkspaceBreakpointHostComponent> = {}
+): ComponentFixture<WorkspaceBreakpointHostComponent> {
     const fixture: ComponentFixture<WorkspaceBreakpointHostComponent> = createRtFixture(
         WorkspaceBreakpointHostComponent,
         {},
@@ -253,18 +263,28 @@ describe('порог одной колонки рабочего стола', ():
 
     it.each([
         { width: 500, breakpoint: 600, inHeader: false },
+        { width: 601, breakpoint: 600, inHeader: true },
         { width: 900, breakpoint: 600, inHeader: true },
-        { width: 1300, breakpoint: 600, inHeader: false },
-        { width: 700, breakpoint: null, inHeader: false },
-        { width: 900, breakpoint: null, inHeader: true },
+        { width: 1080, breakpoint: 600, inHeader: true },
+        { width: 1081, breakpoint: 600, inHeader: false },
+        { width: 768, breakpoint: null, inHeader: false },
+        { width: 769, breakpoint: null, inHeader: true },
+        { width: null, breakpoint: null, inHeader: true },
     ])(
-        'SC-UKV-1506 — место $width, порог $breakpoint: список рядом — без полосы «назад», кнопка сведений в шапке середины ($inHeader)',
-        ({ width, breakpoint, inHeader }: { width: number; breakpoint: number | null; inHeader: boolean }): void => {
-            const fixture: ComponentFixture<WorkspaceBreakpointHostComponent> = setup(width, { breakpoint });
+        'SC-UKV-1506 — место $width, порог $breakpoint, кнопку берёт содержимое: полосы «назад» нет, кнопка в шапке середины ($inHeader)',
+        ({ width, breakpoint, inHeader }: { width: number | null; breakpoint: number | null; inHeader: boolean }): void => {
+            const fixture: ComponentFixture<WorkspaceBreakpointHostComponent> = setup(width, { breakpoint, detailsInHeader: true });
 
             expect(workspace(fixture).asideButtonInHeader()).toBe(inHeader);
             expect(qa(fixture, 'workspace-back') === null).toBe(inHeader);
             expect(qa(fixture, 'workspace-open-details') === null).toBe(inHeader);
         }
     );
+
+    it('SC-UKV-1506 — без входа detailsInHeader полоса «назад» и «Сведения» остаётся и при списке рядом', (): void => {
+        const fixture: ComponentFixture<WorkspaceBreakpointHostComponent> = setup(900);
+
+        expect(workspace(fixture).asideButtonInHeader()).toBe(false);
+        expect(qa(fixture, 'workspace-open-details')).not.toBeNull();
+    });
 });

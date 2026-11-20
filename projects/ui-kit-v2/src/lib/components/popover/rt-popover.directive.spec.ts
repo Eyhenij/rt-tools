@@ -1,4 +1,4 @@
-import { ConnectedPosition, FlexibleConnectedPositionStrategy, Overlay, OverlayConfig } from '@angular/cdk/overlay';
+import { ConnectedPosition, FlexibleConnectedPositionStrategy, Overlay, OverlayConfig, OverlayPositionBuilder } from '@angular/cdk/overlay';
 import { ChangeDetectionStrategy, Component, Signal, WritableSignal, signal, viewChild } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
@@ -32,6 +32,7 @@ function panelText(): string {
             [rtPopoverPositions]="positions()"
             [rtPopoverFitViewport]="fitViewport()"
             [rtPopoverBackdropClass]="backdropClass()"
+            [rtPopoverOrigin]="origin()"
             (rtPopoverOpened)="openedCount = openedCount + 1"
             (rtPopoverClosed)="closedCount = closedCount + 1">
             Открыть
@@ -52,6 +53,7 @@ class PopoverHostComponent {
     public readonly positions: WritableSignal<readonly ConnectedPosition[] | null> = signal<readonly ConnectedPosition[] | null>(null);
     public readonly fitViewport: WritableSignal<boolean> = signal<boolean>(false);
     public readonly backdropClass: WritableSignal<string> = signal<string>('');
+    public readonly origin: WritableSignal<HTMLElement | null> = signal<HTMLElement | null>(null);
     public openedCount: number = 0;
     public closedCount: number = 0;
 }
@@ -342,6 +344,23 @@ describe('RtPopoverDirective', (): void => {
 
             expect(pane()?.style.width).not.toBe('');
             expect(pane()?.style.minWidth).toBe('');
+        });
+
+        it('SC-UKV-1507 — с узлом места панель встаёт по нему и берёт его ширину, а не ширину host', (): void => {
+            const spy: jest.SpyInstance = jest.spyOn(OverlayPositionBuilder.prototype, 'flexibleConnectedTo');
+            const origin: HTMLElement = document.createElement('div');
+            Object.defineProperty(origin, 'offsetWidth', { value: 320 });
+            document.body.appendChild(origin);
+            const fixture: ComponentFixture<PopoverHostComponent> = setup({ width: 'trigger' });
+            fixture.componentInstance.origin.set(origin);
+            fixture.detectChanges();
+
+            clickTrigger(fixture);
+
+            expect(spy.mock.calls.at(-1)?.[0]).toBe(origin);
+            expect(pane()?.style.width).toBe('320px');
+            spy.mockRestore();
+            origin.remove();
         });
 
         it('по содержимому размер не ставится вовсе', (): void => {

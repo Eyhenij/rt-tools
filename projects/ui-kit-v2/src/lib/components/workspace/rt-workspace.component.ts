@@ -122,6 +122,11 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
         { initialValue: false }
     );
 
+    /** Список и панель сведений объявлены, список стоит рядом с серединой, а сведения спрятаны */
+    readonly #listBesideHiddenAside: Signal<boolean> = computed(
+        (): boolean => this.listSlot() !== undefined && this.asideSlot() !== undefined && this.#breakpoints.narrow() && !this.#stacked()
+    );
+
     /** Одна колонка по порогу из входа или по 768 стилей: список и середина не стоят рядом */
     readonly #stacked: Signal<boolean> = computed((): boolean => {
         const breakpoint: number = this.singleColumnBreakpoint() ?? RT_WORKSPACE_SINGLE_WIDTH;
@@ -230,6 +235,15 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
      */
     public readonly asideContentLayout: InputSignal<TRtAsideContentLayout> = input<TRtAsideContentLayout>('default');
 
+    /**
+     * Кнопку сведений ставит само содержимое — в шапку середины, по сигналу `asideButtonInHeader`.
+     * Без входа рабочий стол, как прежде, рисует свою полосу с «назад» и «Сведения»: содержимое,
+     * которое кнопку не ставит, иначе осталось бы без доступа к сведениям.
+     */
+    public readonly detailsInHeader: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
     public readonly backClicked: OutputEmitterRef<void> = output<void>();
 
     public readonly asideOverlay: Signal<boolean> = computed(
@@ -237,13 +251,12 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
     );
 
     /**
-     * Панель сведений спрятана, а список стоит рядом с серединой (место от 768 до 1080): своей
-     * полосы с «назад» и «Сведения» рабочий стол здесь не рисует, и кнопку сведений содержимое
-     * ставит в шапку середины рядом с её действиями, вызывая `openAside()`.
+     * Содержимое взяло кнопку сведений на себя (`detailsInHeader`), панель сведений объявлена и
+     * спрятана, а список стоит рядом с серединой (место от 768 до 1080): своей полосы с «назад» и
+     * «Сведения» рабочий стол здесь не рисует, и кнопку сведений содержимое ставит в шапку середины
+     * рядом с её действиями, вызывая `openAside()`.
      */
-    public readonly asideButtonInHeader: Signal<boolean> = computed(
-        (): boolean => this.listSlot() !== undefined && this.#breakpoints.narrow() && !this.#stacked()
-    );
+    public readonly asideButtonInHeader: Signal<boolean> = computed((): boolean => this.detailsInHeader() && this.#listBesideHiddenAside());
 
     public readonly listWidth: Signal<number> = computed((): number => this.#listWidthOverride() ?? this.listDefaultWidth());
 

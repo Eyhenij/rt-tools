@@ -256,6 +256,29 @@ check green; scenarios 1489…1505 written; the toggle group re-measures after i
 of the tab menu in the sheet and ArrowDown moves it, the autocomplete focuses its sheet search, the
 sheet dialogs are named by their titles; all 28 sheet and sheet-off stories pass the walk.
 
+## Review round one of the four remarks (20.11)
+
+Three fresh readers on 50570df3b. Confirmed and fixed:
+- **High — the workspace hid the strip for every consumer.** The admin chat panel and the talks
+  page put no details button in their header, so at 768–1080 the details were unreachable. Now
+  the strip leaves only with the new input `detailsInHeader`; `asideButtonInHeader` also needs a
+  declared aside. Live on 6017 at 900: the story with the input has no strip and its header «i»,
+  the story without it keeps the strip; at 500 and 1300 both as before.
+- **Two more focus looks:** the notification bell (1 px dashed `border-strong`) and the login link
+  (2 px `action-primary`), plus the showcase sort header — all on the shared ring now; the bell
+  measured live 3 px, `#155dfc` at 24 %, offset 0.
+- **Specs proved less than their titles:** the popover spec now checks that the panel is placed by
+  `rtPopoverOrigin` and takes its width (320); SC-UKV-1506 covers 768/769, 1080/1081, an
+  undeclared place and the default without the input.
+
+Written off: the soft ring is 1.43:1 against white — the owner approved this very ring for the
+whole kit, the cost is named in the PR; the 3 px night-grid ring in a 4 px gap breaks nothing;
+«768 now counts as one column without the input» does not hold — `singleColumn` is unchanged and
+the new count feeds only `asideButtonInHeader`; the header lines (remark 3) follow from the strip
+removal and line up when the application declares `detailsInHeader`. Specs 3865 of 3865,
+typecheck, eslint, stylelint, check:tokens-styles, check:cascade-layer, docs tables, check:specs
+green.
+
 ## Decisions along the way
 
 - 20.11: the owner withdrew «планирование и ревью опус, код пишет сонет» — a neighbouring session
