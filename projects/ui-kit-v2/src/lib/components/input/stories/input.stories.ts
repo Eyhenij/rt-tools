@@ -17,6 +17,8 @@ export default {
         passwordToggle: { control: { type: 'boolean' } },
         autocomplete: { control: { type: 'text' } },
         maxlength: { control: { type: 'number' } },
+        prefix: { control: { type: 'text' } },
+        suffix: { control: { type: 'text' } },
     },
 } as Meta<TestRtInputComponent>;
 
@@ -32,5 +34,7 @@ export const Playground: TStory = {
         passwordToggle: false,
         autocomplete: null,
         maxlength: null,
+        prefix: null,
+        suffix: null,
     },
 };

@@ -55,7 +55,7 @@ function nextFloatingLabelId(): string {
 @Component({
     selector: 'rt-input',
     templateUrl: './rt-input.component.html',
-    styleUrls: ['./rt-input.component.scss', './rt-input-floating-label.scss', './rt-input-icons.scss'],
+    styleUrls: ['./rt-input.component.scss', './rt-input-floating-label.scss', './rt-input-icons.scss', './rt-input-affixes.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
     imports: [
@@ -86,6 +86,8 @@ function nextFloatingLabelId(): string {
         '[class.rt-input--with-icon-right]': 'hasIconRight()',
         '[class.rt-input--floating]': '!!floatingLabel()',
         '[class.rt-input--clearable]': 'clearable()',
+        '[class.rt-input--with-prefix]': '!!prefix()',
+        '[class.rt-input--with-suffix]': '!!suffix()',
         '[style.--rt-input-notch-width]': "notchWidth() + 'px'",
         '[class.rt-input--filled]': 'hasValue()',
         '(mousedown)': 'onHostMousedown($event)',
@@ -108,6 +110,25 @@ export class RtInputComponent extends RtFormControlBase<string> {
 
     /** Id подписи на рамке: на него ссылается `aria-labelledby` поля. */
     protected readonly floatingLabelId: string = nextFloatingLabelId();
+
+    /** Id постоянного текста до и после значения: поле ссылается на них описанием. */
+    protected readonly prefixId: string = `${this.floatingLabelId}-prefix`;
+    protected readonly suffixId: string = `${this.floatingLabelId}-suffix`;
+
+    /** Описание поля — постоянный текст до и после значения, чтобы диктор прочёл адрес целиком. */
+    protected readonly affixDescribedBy: Signal<string | null> = computed((): string | null => {
+        const ids: string[] = [this.prefix() ? this.prefixId : '', this.suffix() ? this.suffixId : ''].filter(Boolean);
+        return ids.length > 0 ? ids.join(' ') : null;
+    });
+
+    /** Текст, по ширине которого поле с суффиксом растёт: набранное, а у пустого поля — подсказка. */
+    protected readonly sizingText: Signal<string> = computed((): string => this.value() || this.placeholder());
+
+    /** Значение только для чтения — целиком, с постоянным текстом; пустое — прочерк без него. */
+    protected readonly readonlyText: Signal<string> = computed((): string => {
+        const text: string = this.displayText();
+        return text ? `${this.prefix() ?? ''}${text}${this.suffix() ?? ''}` : '—';
+    });
 
     /** Подпись на рамке называет поле, только когда явного `ariaLabel` нет. */
     protected readonly labelledBy: Signal<string | null> = computed((): string | null =>
@@ -160,6 +181,18 @@ export class RtInputComponent extends RtFormControlBase<string> {
     public readonly maxlength: InputSignalWithTransform<number | null, NumberInput> = input<number | null, NumberInput>(null, {
         transform: rtMaxlength,
     });
+
+    /**
+     * Постоянный текст перед значением, например начало адреса `site.ru/team/`. В значение не
+     * входит: форма получает только набранное. `null` — текста нет.
+     */
+    public readonly prefix: InputSignal<string | null> = input<string | null>(null);
+
+    /**
+     * Постоянный текст сразу после значения, например `.site.ru`. В значение не входит. Идёт следом
+     * за набранным текстом, а не у правого края; длинное значение обрезается, суффикс остаётся целым.
+     */
+    public readonly suffix: InputSignal<string | null> = input<string | null>(null);
 
     /** Видимая подпись на рамке поля. `null` — подписи нет, поле как прежде. */
     public readonly floatingLabel: InputSignal<string | null> = input<string | null>(null);

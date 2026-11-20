@@ -4,11 +4,23 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 4 из 4 — Showcase; both review rounds done
-- **Next step:** a review round over the four remarks committed in 50570df3b, run while the owner
-  looks at the mockup of `prefix` and `suffix` (frame 8449:1560); after the owner's approval — the
-  code of both inputs, the showcase and its approval, review round two over the whole diff, the
-  closing texts, the push set (the sheet and workspace snapshots are re-taken) and the draft PR.
-- **Waiting for the owner:** the approval of frame 8449:1560 — the last remark was «текст обрезан».
+- **Next step:** after the owner approves the showcase of `prefix` and `suffix` — review round two
+  over the whole diff, the closing texts, the push set (the sheet and workspace snapshots are
+  re-taken) and the draft PR.
+- **Waiting for the owner:** the approval of the showcase story Molecules/Forms/FieldExtras
+  `Affixes` on 6017.
+- **`prefix` and `suffix` of `rt-input` in code (20.11), mockup 8449:1560 approved «Одобряю
+  макет»:** the prefix stands before the field, the suffix right after the typed text — a hidden
+  copy of the text sizes the field, the field lies over it. Measured live on 6017, own set: the
+  prefix 17…105, the value from 105 with gap 0, the suffix after the value with gap 0, height 40,
+  text top 11, colour `rgb(103,103,103)`; the narrow field 200: the prefix whole, the value cut at
+  183, the suffix ends at 183; typing one letter grows the field 64 → 72 and moves the suffix with
+  it, `scrollLeft` 0. kit-match 23 of 23. The long value in the narrow field ends with the kit's
+  ellipsis (SC-UKV-1116), so a few pixels stand between «…» and the suffix where the mockup clips.
+  Specs 3870 of 3870, typecheck, eslint, stylelint, check:tokens-styles, check:cascade-layer, the
+  docs tables and check:specs green. Scenarios SC-UKV-1541…1545; the branch's SC-UKV-1506 and
+  SC-UKV-1507 were taken on main by the tag and the chat section and became SC-UKV-1546 and
+  SC-UKV-1547.
 - **Four approved remarks in code (20.11), measured live on 6017:**
     - the filters panel of `rt-thread-list`: 254×134, background `rgb(255,255,255)`, border 1 px
       `rgb(224,224,224)`, radius 10, the select panel shadow, padding 16 (was transparent, 252×132);
@@ -302,22 +314,25 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 4 из 4 — Showcase; both review rounds done
-- **Next step:** the five kit remarks the owner added on 20.11 (the grill, last decision): a Figma
+- **Next step:** a review round over the four remarks committed in 50570df3b, run while the owner
 
 The progress in full — `docs/tasks/RT-3399-select-sheet/progress.md`; the plan lies next to it.
 
 ### Uncommitted
 
 ```
- M ../../../../../docs/tasks/RT-3399-select-sheet/approvals.md
- M ../../../../../docs/tasks/RT-3399-select-sheet/grill.md
- M popover/rt-popover.directive.ts
- M thread-list/rt-thread-list.component.scss
+none
 ```
 
 ### Commits over the main branch
 
 ```
+9f7b26a08 fix(rt:ui-kit-v2): исправления после первого круга ревью четырёх замечаний (RT-3399)
+0a78fb1ba docs(rt:ui-kit-v2): следующий шаг — ревью четырёх правок, пока макет поля у владельца (RT-3399)
+fed16f9d5 docs(rt:ui-kit-v2): в макете поля текст больше не обрезается снизу (RT-3399)
+9acdca64f docs(rt:ui-kit-v2): макет поля дорисован — текст после значения и целое кольцо фокуса (RT-3399)
+abbb4dd4f docs(rt:ui-kit-v2): макет постоянного начала адреса в поле нарисован и замерен (RT-3399)
+50570df3b feat(rt:ui-kit-v2): фон фильтров, одно кольцо фокуса, стол без «назад», панель даты по краю поля (RT-3399)
 71f819920 docs(rt:ui-kit-v2): макеты пяти замечаний приложения нарисованы и замерены (RT-3399)
 d1d5a01d5 feat(rt:ui-kit-v2): пустое поле даты и периода подсказывает маской из чёрточек (RT-3399)
 1d96f6aa6 feat(rt:ui-kit-v2): новый значок календаря calendar-2 у полей даты и периода (RT-3399)
@@ -332,12 +347,6 @@ a8ad670c2 docs(rt:ui-kit-v2): живая проверка шторок посл�
 a0292c8da fix(rt:ui-kit-v2): шторка только на телефоне и исправления после первого круга ревью (RT-3399)
 fae1258a0 docs(rt:ui-kit-v2): шторка открывается только на телефоне, до 480 px (RT-3399)
 08829070a docs(rt:ui-kit-v2): находки первого круга ревью записаны (RT-3399)
-78aca5229 Merge remote-tracking branch 'origin/main' into RT-3399-select-sheet
-99a384270 docs(rt:ui-kit-v2): иконки полей дат на линии селекта замерены вживую (RT-3399)
-0e990dc8f docs(rt:ui-kit-v2): живой обход шторок на 375 и история автодополнения без шторки открывает подсказки (RT-3399)
-79207a131 fix(rt:ui-kit-v2): закреплённая колонка показывает отключённую ручку перетаскивания (RT-3399)
-336fadc12 docs(rt:ui-kit-v2): макет отключённой ручки закреплённой колонки нарисован (RT-3399)
-7a4027a9d docs(rt:ui-kit-v2): ручка закреплённой колонки ждёт слова владельца (RT-3399)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

@@ -83,7 +83,7 @@ Then the workspace reports the panel as closed
 
 Covered: `projects/ui-kit-v2/src/lib/components/workspace/rt-workspace-breakpoint.spec.ts`.
 
-### SC-UKV-1506 — with the list beside the centre the details button moves into its header
+### SC-UKV-1546 — with the list beside the centre the details button moves into its header
 
 Given a record is open, the content declares `detailsInHeader`, a details panel is declared and the
 place is from 768 (or the threshold input) to 1080 wide

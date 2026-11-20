@@ -41,6 +41,10 @@ application itself.
 - **A value or a hint longer than the field ends with an ellipsis.** It is not cut in the middle of
   a character: the reader sees that the text goes on. The whole value stays in the field and is
   read by moving the caret.
+- **The field carries fixed text before the value and after it, and the text does not enter the
+  value.** An address whose start or end is the same for everyone shows that part, and the person
+  types only their own piece. The text after the value follows the typed text rather than the right
+  edge; a long value is cut, and the fixed text stays whole.
 
 ## What is out of scope
 
@@ -104,3 +108,5 @@ Not applicable.
   describes the surface of a component, not a check of the look.
 - 2026-11-02 — the task RT-2994: a value or a hint longer than the field ends with an ellipsis,
   scenario `SC-UKV-1116`.
+- 2026-11-20 — the task RT-3399: fixed text before the value and after it, scenarios
+  `SC-UKV-1541`…`SC-UKV-1545`.

@@ -271,7 +271,7 @@ describe('порог одной колонки рабочего стола', ():
         { width: 769, breakpoint: null, inHeader: true },
         { width: null, breakpoint: null, inHeader: true },
     ])(
-        'SC-UKV-1506 — место $width, порог $breakpoint, кнопку берёт содержимое: полосы «назад» нет, кнопка в шапке середины ($inHeader)',
+        'SC-UKV-1546 — место $width, порог $breakpoint, кнопку берёт содержимое: полосы «назад» нет, кнопка в шапке середины ($inHeader)',
         ({ width, breakpoint, inHeader }: { width: number | null; breakpoint: number | null; inHeader: boolean }): void => {
             const fixture: ComponentFixture<WorkspaceBreakpointHostComponent> = setup(width, { breakpoint, detailsInHeader: true });
 
@@ -281,7 +281,7 @@ describe('порог одной колонки рабочего стола', ():
         }
     );
 
-    it('SC-UKV-1506 — без входа detailsInHeader полоса «назад» и «Сведения» остаётся и при списке рядом', (): void => {
+    it('SC-UKV-1546 — без входа detailsInHeader полоса «назад» и «Сведения» остаётся и при списке рядом', (): void => {
         const fixture: ComponentFixture<WorkspaceBreakpointHostComponent> = setup(900);
 
         expect(workspace(fixture).asideButtonInHeader()).toBe(false);
