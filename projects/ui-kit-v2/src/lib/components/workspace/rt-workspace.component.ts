@@ -28,7 +28,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 
-import { map, mergeMap, Observable, of, Subject, switchMap } from 'rxjs';
+import { map, mergeMap, Observable, Subject, switchMap } from 'rxjs';
 
 import { StorageService } from '@rt-tools/core';
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
@@ -44,6 +44,8 @@ const BEM_BLOCK: string = 'rt-workspace';
 const STORAGE_PREFIX: string = 'rt-workspace:';
 const KEYBOARD_STEP: number = 16;
 const ASIDE_OVERLAY_PANE: string = 'rt-workspace-aside-pane';
+/** Порог одной колонки стилей без входа, пиксели места страницы: то же число стоит в `.scss` */
+const RT_WORKSPACE_SINGLE_WIDTH: number = 768;
 
 /** Что принимает вход порога: число, строка атрибута или `null` */
 type TBreakpointInput = number | string | null;
@@ -108,19 +110,25 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
     readonly #overlayOpenedSource: Subject<RtAsideRef<void>> = new Subject<RtAsideRef<void>>();
 
     /**
-     * Окно не шире порога из входа: отвечает, когда место страницы не объявлено. Вход читается
-     * через `computed`: поле стоит выше входа, и напрямую его ещё нет.
+     * Окно не шире порога одной колонки — из входа или 768 стилей: отвечает, когда место страницы
+     * не объявлено. Вход читается через `computed`: поле стоит выше входа, и напрямую его ещё нет.
      */
     readonly #viewportSingle: Signal<boolean> = toSignal(
-        toObservable(computed((): number | null => this.singleColumnBreakpoint())).pipe(
-            switchMap((breakpoint: number | null): Observable<boolean> =>
-                breakpoint === null
-                    ? of(false)
-                    : this.#observer.observe(`(max-width: ${breakpoint}px)`).pipe(map((state: BreakpointState): boolean => state.matches))
+        toObservable(computed((): number => this.singleColumnBreakpoint() ?? RT_WORKSPACE_SINGLE_WIDTH)).pipe(
+            switchMap((breakpoint: number): Observable<boolean> =>
+                this.#observer.observe(`(max-width: ${breakpoint}px)`).pipe(map((state: BreakpointState): boolean => state.matches))
             )
         ),
         { initialValue: false }
     );
+
+    /** Одна колонка по порогу из входа или по 768 стилей: список и середина не стоят рядом */
+    readonly #stacked: Signal<boolean> = computed((): boolean => {
+        const breakpoint: number = this.singleColumnBreakpoint() ?? RT_WORKSPACE_SINGLE_WIDTH;
+        const placeWidth: number | null = this.#breakpoints.placeWidth();
+
+        return placeWidth === null ? this.#viewportSingle() : placeWidth <= breakpoint;
+    });
 
     #overlayRef: RtAsideRef<void> | null = null;
 
@@ -153,15 +161,7 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
     protected readonly slotContext: IRtWorkspace.SlotContext = { $implicit: this };
 
     /** Одна колонка по порогу из входа; без входа вид держат стили, и здесь всегда `false` */
-    protected readonly singleColumn: Signal<boolean> = computed((): boolean => {
-        const breakpoint: number | null = this.singleColumnBreakpoint();
-        if (breakpoint === null) {
-            return false;
-        }
-        const placeWidth: number | null = this.#breakpoints.placeWidth();
-
-        return placeWidth === null ? this.#viewportSingle() : placeWidth <= breakpoint;
-    });
+    protected readonly singleColumn: Signal<boolean> = computed((): boolean => this.singleColumnBreakpoint() !== null && this.#stacked());
 
     public readonly storageKey: InputSignal<string | null> = input<string | null>(null);
 
@@ -234,6 +234,15 @@ export class RtWorkspaceComponent implements IRtWorkspace.PanelApi {
 
     public readonly asideOverlay: Signal<boolean> = computed(
         (): boolean => this.singleColumnBreakpoint() !== null && (this.#breakpoints.narrow() || this.singleColumn())
+    );
+
+    /**
+     * Панель сведений спрятана, а список стоит рядом с серединой (место от 768 до 1080): своей
+     * полосы с «назад» и «Сведения» рабочий стол здесь не рисует, и кнопку сведений содержимое
+     * ставит в шапку середины рядом с её действиями, вызывая `openAside()`.
+     */
+    public readonly asideButtonInHeader: Signal<boolean> = computed(
+        (): boolean => this.listSlot() !== undefined && this.#breakpoints.narrow() && !this.#stacked()
     );
 
     public readonly listWidth: Signal<number> = computed((): number => this.#listWidthOverride() ?? this.listDefaultWidth());

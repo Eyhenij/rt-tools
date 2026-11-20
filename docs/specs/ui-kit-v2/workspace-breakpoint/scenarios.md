@@ -83,6 +83,16 @@ Then the workspace reports the panel as closed
 
 Covered: `projects/ui-kit-v2/src/lib/components/workspace/rt-workspace-breakpoint.spec.ts`.
 
+### SC-UKV-1506 — with the list beside the centre the details button moves into its header
+
+Given a record is open and the place is from 768 (or the threshold input) to 1080 wide
+When the workspace lays out the list beside the centre
+Then it draws no strip with the arrow back and the details button, and `asideButtonInHeader`
+tells the content to put the details button into the centre's header; in one column and above
+1080 the strip stays as it was
+
+Covered: `projects/ui-kit-v2/src/lib/components/workspace/rt-workspace-breakpoint.spec.ts`.
+
 ### SC-UKV-1254 — in the tabs layout the strip of tabs stands right under the header
 
 Given the styles of the side panel are read

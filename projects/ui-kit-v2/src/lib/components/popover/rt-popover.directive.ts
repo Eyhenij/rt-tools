@@ -177,6 +177,13 @@ export class RtPopoverDirective implements OnDestroy {
     });
 
     /**
+     * Узел, от которого панель меряет своё место и ширину. `null` — сам host. Поле даты и периода
+     * отдаёт свой корень: панель встаёт по краю поля, а не по кнопке календаря внутри него.
+     * Читается при первом открытии.
+     */
+    public readonly origin: InputSignal<HTMLElement | null> = input<HTMLElement | null>(null, { alias: 'rtPopoverOrigin' });
+
+    /**
      * Свои места панели вокруг host'а: первое главное, остальные — запасные у края экрана. `null` —
      * прежние два: под host'ом и над ним. Заданные читаются при каждом открытии.
      */
@@ -261,7 +268,7 @@ export class RtPopoverDirective implements OnDestroy {
         if (positions !== null) {
             this.#positionStrategy?.withPositions([...positions]);
         }
-        overlayRef.updateSize(rtPopoverSizeByWidth(this.width(), this.#elementRef.nativeElement.offsetWidth));
+        overlayRef.updateSize(rtPopoverSizeByWidth(this.width(), this.#anchor().offsetWidth));
         // Тема куска `rtTheme` вокруг host'а едет на коробку панели: панель лежит в конце
         // страницы, и без этого список из тёмной карточки рисовался темой страницы.
         carryThemeScope(overlayRef.overlayElement, this.#elementRef.nativeElement);
@@ -347,7 +354,7 @@ export class RtPopoverDirective implements OnDestroy {
         const fitViewport: boolean = this.fitViewport();
         const positionStrategy: FlexibleConnectedPositionStrategy = this.#overlay
             .position()
-            .flexibleConnectedTo(this.#elementRef)
+            .flexibleConnectedTo(this.#anchor())
             .withPush(fitViewport)
             .withFlexibleDimensions(fitViewport)
             // Отступ от края экрана равен отступу от триггера: свободное место
@@ -404,6 +411,11 @@ export class RtPopoverDirective implements OnDestroy {
      */
     #releasePaneMinHeight(overlayRef: OverlayRef): void {
         overlayRef.overlayElement.style.minHeight = '';
+    }
+
+    /** Узел, по которому панель встаёт и меряет ширину: заданный `rtPopoverOrigin` или сам host. */
+    #anchor(): HTMLElement {
+        return this.origin() ?? this.#elementRef.nativeElement;
     }
 
     #resolvePanelClasses(): string[] {

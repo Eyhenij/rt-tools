@@ -14,9 +14,20 @@
                 }
             </div>
         </ng-template>
-        <ng-template rtWorkspaceCenter>
+        <ng-template rtWorkspaceCenter let-ws>
             <div style="padding-block: 1rem; display: flex; flex-direction: column; gap: 0.5rem">
-                <strong>Анна Смирнова</strong>
+                <!-- Шапка беседы: кнопка сведений встаёт к её действиям, когда своей полосы у стола нет -->
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem">
+                    <strong>Анна Смирнова</strong>
+                    @if (ws.asideButtonInHeader()) {
+                        <rt-icon-button
+                            qa-dataid="breakpoint-open-details"
+                            icon="info-circle"
+                            variant="secondary"
+                            ariaLabel="Сведения"
+                            (clicked)="ws.openAside()" />
+                    }
+                </div>
                 <span>Добрый день! Можно заехать на час раньше?</span>
             </div>
         </ng-template>

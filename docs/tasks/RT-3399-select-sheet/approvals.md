@@ -9,3 +9,6 @@
 - **Совпадение:** 21 из 21 чисел
 - **Макет:** «outline/calendar-2» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8423-1981
 - **Макет:** «Одобряю» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8423-1981 (маска `--.--.----` в пустом поле даты, периода и даты со временем)
+- **Макет:** «Одобряю все» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8437-2659 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8437-5765 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8437-9117 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8437-4466 (поверхность панели фильтров, одна рамка фокуса, рабочий стол без «назад» при видимом списке, панель даты и периода по краю поля)
+- **Совпадение:** 29 из 29 чисел
+- **Витрина:** «Одобряю витрину» — http://localhost:6017/?path=/story/organisms-chat-threadlistsheet--sheet-off , http://localhost:6017/?path=/story/molecules-forms-daterange--playground , http://localhost:6017/?path=/story/molecules-forms-datepicker--playground , http://localhost:6017/?path=/story/organisms-workspace-breakpoint--tablet-columns , http://localhost:6017/?path=/story/molecules-navigation-tabs--playground

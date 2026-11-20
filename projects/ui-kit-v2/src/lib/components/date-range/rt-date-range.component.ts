@@ -85,6 +85,8 @@ export class RtDateRangeComponent extends RtFormControlBase<IRtDateRange.Value |
     readonly #layout: Signal<IRtDatePicker.TextLayout> = computed((): IRtDatePicker.TextLayout => rtDateLayout(this.#locale()));
 
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
+    /** Корень поля: поповер встаёт по его краю, а не по кнопке календаря внутри него. */
+    protected readonly host: HTMLElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
     /** Узкий экран: панель открывается в нижней шторке, а не в поповере. */
     protected readonly phone: Signal<boolean> = inject(BreakpointsService).phone;
     /** Приложение разрешает шторку токеном `RT_POPOVER_SHEET` (по умолчанию да); `false` оставляет поповер у поля везде под ним. */

@@ -87,26 +87,27 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 
 ## Входы
 
-| вход            | тип                                    | умолчание                                    |
-| --------------- | -------------------------------------- | -------------------------------------------- |
-| `template`      | `TemplateRef \| null`                  | `null`                                       |
-| `trigger`       | `'click' \| 'hover' \| 'manual'`       | `'click'`                                    |
-| `width`         | `'trigger' \| 'auto'`                  | `'auto'`                                     |
-| `align`         | `'start' \| 'end'`                     | `'start'`                                    |
-| `fitViewport`   | `boolean`                              | `false`                                      |
-| `context`       | `unknown`                              | `null`                                       |
-| `panelClass`    | `string`                               | `''`                                         |
-| `backdropClass` | `string`                               | `''` — без подложки                          |
-| `disabled`      | `boolean`                              | `false`                                      |
-| `offsetY`       | `number`                               | `4`                                          |
-| `offsetX`       | `number`                               | `0`                                          |
-| `positions`     | `readonly ConnectedPosition[] \| null` | `null` — под host'ом, запасное место над ним |
-| `sheet`         | `boolean`                              | `false`                                      |
-| `sheetTitle`    | `string \| null`                       | `''` — без заголовка                         |
+| вход            | тип                                    | умолчание                                       |
+| --------------- | -------------------------------------- | ----------------------------------------------- |
+| `template`      | `TemplateRef \| null`                  | `null`                                          |
+| `trigger`       | `'click' \| 'hover' \| 'manual'`       | `'click'`                                       |
+| `width`         | `'trigger' \| 'auto'`                  | `'auto'`                                        |
+| `align`         | `'start' \| 'end'`                     | `'start'`                                       |
+| `fitViewport`   | `boolean`                              | `false`                                         |
+| `context`       | `unknown`                              | `null`                                          |
+| `panelClass`    | `string`                               | `''`                                            |
+| `backdropClass` | `string`                               | `''` — без подложки                             |
+| `disabled`      | `boolean`                              | `false`                                         |
+| `offsetY`       | `number`                               | `4`                                             |
+| `offsetX`       | `number`                               | `0`                                             |
+| `origin`        | `HTMLElement \| null`                  | `null` — панель встаёт и мерит ширину по host'у |
+| `positions`     | `readonly ConnectedPosition[] \| null` | `null` — под host'ом, запасное место над ним    |
+| `sheet`         | `boolean`                              | `false`                                         |
+| `sheetTitle`    | `string \| null`                       | `''` — без заголовка                            |
 
 В разметке они пишутся под алиасами: `rtPopover` (шаблон), `rtPopoverTrigger`, `rtPopoverWidth`,
 `rtPopoverAlign`, `rtPopoverFitViewport`, `rtPopoverContext`, `rtPopoverPanelClass`,
-`rtPopoverBackdropClass`, `rtPopoverDisabled`, `rtPopoverOffsetY`, `rtPopoverOffsetX`,
+`rtPopoverBackdropClass`, `rtPopoverDisabled`, `rtPopoverOffsetY`, `rtPopoverOffsetX`, `rtPopoverOrigin`,
 `rtPopoverPositions`, `rtPopoverSheet`, `rtPopoverSheetTitle`.
 
 Входы шторки `RtPopoverSheetComponent` — её директива создаёт сама, приложение их не задаёт:

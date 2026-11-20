@@ -250,4 +250,21 @@ describe('порог одной колонки рабочего стола', ():
 
         expect(workspace(fixture).asideOpen()).toBe(false);
     });
+
+    it.each([
+        { width: 500, breakpoint: 600, inHeader: false },
+        { width: 900, breakpoint: 600, inHeader: true },
+        { width: 1300, breakpoint: 600, inHeader: false },
+        { width: 700, breakpoint: null, inHeader: false },
+        { width: 900, breakpoint: null, inHeader: true },
+    ])(
+        'SC-UKV-1506 — место $width, порог $breakpoint: список рядом — без полосы «назад», кнопка сведений в шапке середины ($inHeader)',
+        ({ width, breakpoint, inHeader }: { width: number; breakpoint: number | null; inHeader: boolean }): void => {
+            const fixture: ComponentFixture<WorkspaceBreakpointHostComponent> = setup(width, { breakpoint });
+
+            expect(workspace(fixture).asideButtonInHeader()).toBe(inHeader);
+            expect(qa(fixture, 'workspace-back') === null).toBe(inHeader);
+            expect(qa(fixture, 'workspace-open-details') === null).toBe(inHeader);
+        }
+    );
 });

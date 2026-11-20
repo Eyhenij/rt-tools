@@ -123,5 +123,16 @@ sheet of its own over it).
   in the navigation menu, the missing quote in a chat message (the chat bubbles are not the kit's),
   and the seven top-level messages of 20.11 (demo, logo, organisations, registration, address,
   card width, save progress).
+- **The whole channel is read again, and its one more kit remark joins** — the owner's words
+  «глянь все замечания которые относятся к киту и включи в эту задачу» (20.11). Every thread was
+  read to its replies. One more is the kit's and got the eyes mark: the registration thread
+  («что-то не так на регистрации», «видимо пользаков смущают поля про сайт и названия») shows a
+  page address field whose fixed part `qlick.io/anatoly/` stands inside the field before the
+  editable part, and `rt-input` has no fixed text before the value. Read as: `rt-input` gets a
+  fixed text prefix, drawn on a Figma frame and approved before code. The aside placeholder of the
+  «UI issues» thread is already merged with RT-3428. The rest stays the application's: the demo
+  page, the logo on the organisation choice, the disabled organisation switch (the profile menu
+  takes the `denied` mode from the application), the domain choice by radio buttons, the settings
+  card width and the save progress.
 
 ## What is left unclear

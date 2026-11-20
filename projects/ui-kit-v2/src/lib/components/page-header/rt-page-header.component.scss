@@ -113,8 +113,8 @@
             }
 
             &:focus-visible {
-                outline: 2px dashed var(--rt-nav-color-focus);
-                outline-offset: 2px;
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
             }
 
             &--is-active {
@@ -195,8 +195,8 @@
             }
 
             &:focus-visible {
-                outline: 2px dashed var(--rt-nav-color-focus);
-                outline-offset: 2px;
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
             }
 
             &--is-open {
@@ -281,8 +281,8 @@
             }
 
             &:focus-visible {
-                outline: 2px dashed var(--rt-nav-color-focus);
-                outline-offset: 2px;
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
             }
         }
 

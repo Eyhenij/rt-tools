@@ -3,7 +3,9 @@ import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { RT_KIT_LOCALE } from '../../i18n';
-import { RT_POPOVER_SHEET } from '../popover';
+import { By } from '@angular/platform-browser';
+
+import { RT_POPOVER_SHEET, RtPopoverDirective } from '../popover';
 import { BreakpointsService } from '../../platform';
 import { createRtFixture, el, hostClasses, qa, textOf } from '../../../testing/rt-kit-testing';
 import { RtDatePickerComponent } from './rt-date-picker.component';
@@ -57,6 +59,13 @@ function type<T>(fixture: ComponentFixture<T>, text: string): void {
 describe('RtDatePickerComponent', (): void => {
     it('несёт свой BEM-блок', (): void => {
         expect(hostClasses(setup())).toContain('rt-date-picker');
+    });
+
+    it('SC-UKV-1507 — панель даты встаёт по корню поля, а не по кнопке календаря', (): void => {
+        const fixture: ComponentFixture<RtDatePickerComponent> = setup();
+        const popover: RtPopoverDirective = fixture.debugElement.query(By.directive(RtPopoverDirective)).injector.get(RtPopoverDirective);
+
+        expect(popover.origin()).toBe(fixture.nativeElement);
     });
 
     it('SC-UKV-467 — поле текстовое, подсказка показывает форму текста в порядке локали', (): void => {

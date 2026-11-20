@@ -21,7 +21,8 @@
     }
 
     <section rtElem="center" qa-dataid="workspace-center">
-        @if (hasActive()) {
+        <!-- Список рядом с серединой: «назад» вести некуда, кнопку сведений ставит шапка середины -->
+        @if (hasActive() && !asideButtonInHeader()) {
             <div rtElem="mobile-toolbar">
                 <rt-icon-button
                     qa-dataid="workspace-back"

@@ -34,8 +34,8 @@
                 }
 
                 &:focus-visible {
-                    outline: var(--rt-night-grid-outline-width) solid var(--rt-color-border-focus);
-                    outline-offset: 1px;
+                    outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                    outline-offset: var(--rt-focus-ring-offset);
                 }
 
                 &--state--primary {

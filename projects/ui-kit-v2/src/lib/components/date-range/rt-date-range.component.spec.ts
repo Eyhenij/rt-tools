@@ -3,7 +3,9 @@ import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { RT_KIT_LOCALE } from '../../i18n';
-import { RT_POPOVER_SHEET } from '../popover';
+import { By } from '@angular/platform-browser';
+
+import { RT_POPOVER_SHEET, RtPopoverDirective } from '../popover';
 import { BreakpointsService } from '../../platform';
 import { createRtFixture, el, hostClasses, qa, textOf } from '../../../testing/rt-kit-testing';
 import { RtDateRangeComponent } from './rt-date-range.component';
@@ -62,6 +64,13 @@ function popupDay(iso: string): HTMLButtonElement {
 describe('RtDateRangeComponent', (): void => {
     it('несёт свой BEM-блок', (): void => {
         expect(hostClasses(setup())).toContain('rt-date-range');
+    });
+
+    it('SC-UKV-1507 — панель периода встаёт по корню поля, а не по кнопке календаря', (): void => {
+        const fixture: ComponentFixture<RtDateRangeComponent> = setup();
+        const popover: RtPopoverDirective = fixture.debugElement.query(By.directive(RtPopoverDirective)).injector.get(RtPopoverDirective);
+
+        expect(popover.origin()).toBe(fixture.nativeElement);
     });
 
     it('SC-UKV-469 — пустое поле подсказывает форму двух дат, заполненное показывает их в порядке языка', (): void => {

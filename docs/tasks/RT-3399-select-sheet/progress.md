@@ -4,10 +4,33 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 4 из 4 — Showcase; both review rounds done
-- **Next step:** the five kit remarks the owner added on 20.11 (the grill, last decision): a Figma
-  frame for each and the owner's approval before code, then the closing texts, the push set (the
-  sheet snapshots are re-taken: the sheet content got its paddings) and the draft PR.
-- **Mockups of the five kit remarks (20.11), waiting for the owner:** the filters panel surface —
+- **Next step:** the owner's word on the showcase of the four approved remarks; the Figma frame of
+  the fixed text prefix of `rt-input` (the registration remark) and its approval before code; then
+  the closing texts, the push set (the sheet and workspace snapshots are re-taken) and the draft PR.
+- **Four approved remarks in code (20.11), measured live on 6017:**
+    - the filters panel of `rt-thread-list`: 254×134, background `rgb(255,255,255)`, border 1 px
+      `rgb(224,224,224)`, radius 10, the select panel shadow, padding 16 (was transparent, 252×132);
+    - the date and period panel: `rtPopoverOrigin` is the field root, the panel right edge 1910
+      equals the field right edge 1910 (was 1901), the top 60 stands 4 px under the field bottom 56
+      (was flush), for both fields;
+    - `rt-workspace`: at 900 the strip with back and details is gone and the story header shows the
+      details button by `asideButtonInHeader()` (top 16); at 500 and 1300 the strip is as before,
+      in the stories with the threshold input 600 and without it;
+    - one focus ring: tabs, the tab close button, the clickable table row, the sort header, the
+      night grid, the page header family (seven places) and the chat translation draw
+      `--rt-focus-ring-width` solid `--rt-focus-ring-color` — measured 3 px, `#155dfc` at 24 %,
+      offset 0 (inset −3 where the strip or the row clips); `--rt-nav-color-focus` stays published
+      but the kit no longer reads it.
+  Specs 3860 of 3860 (SC-UKV-1506 five cases, SC-UKV-1507 two), typecheck, eslint, check:specs,
+  the docs tables, check:tokens-styles, check:cascade-layer and stylelint green.
+- **Kit-match of the four remarks (20.11):** the first run gave 27 of 29 — the filters panel 252 in
+  the mockup against 254 (the copy counted the border in the height only) and the tab ring outside
+  against inside (the tab strip scrolls, 0 px room on three sides). The owner: «Поправить макет»;
+  frame 8437:2768 is 254 wide, tab 8437:5826 draws its ring inside with a caption. Second run 29 of
+  29. Not measured against the mockup: the header lines at 70 of the workspace — no story puts the
+  thread list and the conversation on one workspace; the date panel copy in Figma is 778×372 against
+  814×413 in the kit, the same in the «now» frame, outside this edit.
+- **Mockups of the five kit remarks (20.11), approved «Одобряю все»:** the filters panel surface —
   node 8437:2659 (live: the panel 252×132, background transparent, no border or shadow); one focus
   ring — node 8437:5765 (31 style files draw the soft ring, the page header family a 2 px dash,
   the tabs and the table a 2 px solid outline, the night grid and the chat translation a
@@ -248,18 +271,16 @@ The progress in full — `docs/tasks/RT-3399-select-sheet/progress.md`; the plan
 
 ```
  M ../../../../../docs/tasks/RT-3399-select-sheet/approvals.md
- M ../../../../../libs/message-bus-admin/common/core/util/src/lib/admin-labels.ts
- M ../../../.storybook/showcase-labels.ru.ts
- M date-picker/rt-date-picker.component.ts
- M date-picker/rt-date-picker.model.ts
- M date-picker/rt-date-text.logic.ts
- M date-range/rt-date-range.component.ts
- M ../i18n/rt-kit-labels.en.ts
+ M ../../../../../docs/tasks/RT-3399-select-sheet/grill.md
+ M popover/rt-popover.directive.ts
+ M thread-list/rt-thread-list.component.scss
 ```
 
 ### Commits over the main branch
 
 ```
+71f819920 docs(rt:ui-kit-v2): макеты пяти замечаний приложения нарисованы и замерены (RT-3399)
+d1d5a01d5 feat(rt:ui-kit-v2): пустое поле даты и периода подсказывает маской из чёрточек (RT-3399)
 1d96f6aa6 feat(rt:ui-kit-v2): новый значок календаря calendar-2 у полей даты и периода (RT-3399)
 488a608e4 docs(rt:ui-kit-v2): новый значок календаря у полей даты и периода — в задаче (RT-3399)
 290a06964 fix(rt:ui-kit-v2): отступы шторки по макету — 20 по бокам, 24 снизу, строка заголовка 24 (RT-3399)
@@ -278,8 +299,6 @@ fae1258a0 docs(rt:ui-kit-v2): шторка открывается только �
 79207a131 fix(rt:ui-kit-v2): закреплённая колонка показывает отключённую ручку перетаскивания (RT-3399)
 336fadc12 docs(rt:ui-kit-v2): макет отключённой ручки закреплённой колонки нарисован (RT-3399)
 7a4027a9d docs(rt:ui-kit-v2): ручка закреплённой колонки ждёт слова владельца (RT-3399)
-eab0102a6 docs(rt:ui-kit-v2): ручка перетаскивания закреплённой колонки — в задаче RT-3399
-19092052f fix(rt:ui-kit-v2): быстрые периоды в шторке поля периода переносятся на строки (RT-3399)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

@@ -99,8 +99,8 @@
             /* Круг с фокусом поднимается над соседями: иначе кольцо фокуса режется следующим. */
             &:focus-visible {
                 z-index: calc(var(--rt-nav-compact-stack-depth) + 1);
-                outline: 2px dashed var(--rt-nav-color-focus);
-                outline-offset: 2px;
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
             }
 
             &--is-active,
