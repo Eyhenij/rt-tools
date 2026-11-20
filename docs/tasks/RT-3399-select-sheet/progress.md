@@ -7,6 +7,14 @@
 - **Next step:** the five kit remarks the owner added on 20.11 (the grill, last decision): a Figma
   frame for each and the owner's approval before code, then the closing texts, the push set (the
   sheet snapshots are re-taken: the sheet content got its paddings) and the draft PR.
+- **Mockups of the five kit remarks (20.11), waiting for the owner:** the filters panel surface —
+  node 8437:2659 (live: the panel 252×132, background transparent, no border or shadow); one focus
+  ring — node 8437:5765 (31 style files draw the soft ring, the page header family a 2 px dash,
+  the tabs and the table a 2 px solid outline, the night grid and the chat translation a
+  `border-focus` outline); the workspace at 768–1080, headers and back button in one frame — node
+  8437:9117 (the toolbar row of 48 moves the conversation header line from 70 to 118 under the
+  list line at 70); the date and period panel at the field edge — node 8437:4466 (live: the panel
+  right edge 9 px inside the field, top flush with the field bottom).
 - **Empty date field mask (20.11):** the owner approved `--.--.----` (frame 8423:1981); the hint is
   now `RT_DATE_SHAPE_MASK`, one for every language, and the `uiShape*` labels left the kit. Measured
   live on 6017: date `--.--.----` (size 10), date-time `--.--.---- --:--` (16), time `--:--` (5),
