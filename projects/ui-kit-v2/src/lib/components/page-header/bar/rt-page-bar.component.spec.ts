@@ -5,6 +5,7 @@ import { WINDOW } from '@rt-tools/core';
 
 import { createRtFixture, qa, qaAll } from '../../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../../platform';
+import { RT_POPOVER_SHEET } from '../../popover/rt-popover-sheet.token';
 import { RtPageBarFilterDirective, RtPageBarSearchDirective } from './rt-page-bar-slots.directive';
 import { RtPageBarComponent } from './rt-page-bar.component';
 import { IRtPageBar } from './rt-page-bar.model';
@@ -65,7 +66,7 @@ function breakpoints(phone: boolean): Partial<BreakpointsService> {
     return { phone: signal<boolean>(phone), viewportNarrow: signal<boolean>(true), narrow: signal<boolean>(true) };
 }
 
-function setup(width: number, phone: boolean = true): ComponentFixture<PageBarHostComponent> {
+function setup(width: number, phone: boolean = true, sheetAllowed: boolean = true): ComponentFixture<PageBarHostComponent> {
     hostWidth = width;
     const fixture: ComponentFixture<PageBarHostComponent> = createRtFixture(
         PageBarHostComponent,
@@ -74,6 +75,7 @@ function setup(width: number, phone: boolean = true): ComponentFixture<PageBarHo
             providers: [
                 { provide: WINDOW, useFactory: windowDouble },
                 { provide: BreakpointsService, useValue: breakpoints(phone) },
+                { provide: RT_POPOVER_SHEET, useValue: sheetAllowed },
             ],
         }
     );
@@ -147,6 +149,17 @@ describe('rt-page-bar', (): void => {
         const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
         fixture.componentInstance.sheet.set(false);
         fixture.detectChanges();
+
+        (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+
+        expect(qa(fixture, 'page-bar-sheet')).toBeNull();
+        expect(document.querySelector('[qa-dataid="page-bar-filters-panel"]')).not.toBeNull();
+        document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
+    });
+
+    it('SC-UKV-1638 — the application setting switches the filters sheet off on a phone', (): void => {
+        const fixture: ComponentFixture<PageBarHostComponent> = setup(375, true, false);
 
         (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
         fixture.detectChanges();

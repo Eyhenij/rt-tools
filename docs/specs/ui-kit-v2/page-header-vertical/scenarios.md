@@ -246,6 +246,12 @@ Given the bar with the input `sheet` set to false on a phone
 When the filters button is pressed
 Then the filters open in the panel by the button, not in the bottom sheet
 
+### SC-UKV-1638 — the application setting switches the filters sheet off as well
+
+Given an application that provides `RT_POPOVER_SHEET` as false, on a phone
+When the filters button of the bar is pressed
+Then the filters open in the panel by the button, not in the bottom sheet
+
 ### SC-UKV-1201 — the close button only on the selected tab
 
 Given tabs with `closeOn="selected"` and several closable tabs

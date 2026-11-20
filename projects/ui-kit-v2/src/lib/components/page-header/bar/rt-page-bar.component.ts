@@ -34,7 +34,7 @@ import { RtBottomSheetComponent } from '@rt-tools/ui-kit-v2/bottom-sheet';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtMenuComponent, RtMenuItemComponent } from '@rt-tools/ui-kit-v2/menu';
-import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RT_POPOVER_SHEET, RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { RtPageBarFilterDirective, RtPageBarSearchDirective } from './rt-page-bar-slots.directive';
 import { actionsWidthOf, pageBarFit, IRtPageBarFit } from './rt-page-bar.logic';
 import { IRtPageBar } from './rt-page-bar.model';
@@ -72,6 +72,8 @@ export class RtPageBarComponent {
     readonly #window: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;
 
     readonly #phone: Signal<boolean> = inject(BreakpointsService).phone;
+    /** Приложение выключает шторку токеном `RT_POPOVER_SHEET` для всего под ним, отборы тоже. */
+    readonly #sheetAllowed: boolean = inject(RT_POPOVER_SHEET);
     readonly #injector: Injector = inject(Injector);
 
     readonly #width: WritableSignal<number> = signal<number>(0);
@@ -112,7 +114,9 @@ export class RtPageBarComponent {
     );
 
     /** Отборы узкого вида открываются шторкой только на телефоне; шире — панелью у кнопки. */
-    protected readonly filtersInSheet: Signal<boolean> = computed((): boolean => this.isNarrow() && this.sheet() && this.#phone());
+    protected readonly filtersInSheet: Signal<boolean> = computed(
+        (): boolean => this.isNarrow() && this.sheet() && this.#sheetAllowed && this.#phone()
+    );
 
     /** Шторка отборов узкого вида: смена вида её закрывает, и при возврате в узкий она не открывается сама. */
     protected readonly sheetOpen: WritableSignal<boolean> = linkedSignal<boolean, boolean>({
