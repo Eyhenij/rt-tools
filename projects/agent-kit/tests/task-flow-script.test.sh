@@ -463,7 +463,10 @@ out('session: SC-AK-1759 — отказ остановки после служе
 out('session: SC-AK-1759 — части одного ответа — один конец хода', kinds([closed, closed, { type: 'user', message: { content: 'дальше' } }]), 'ended::');
 const resumed = [call('t2', 'Agent', { description: 'd' }), result('t2', { isAsync: true, agentId: 'a2' }), notice('t2', 'a2', 'completed'), call('t9', 'SendMessage', { to: 'a2' }), result('t9', { success: true, resumedAgentId: 'a2' })];
 out('session: SC-AK-1759 — возобновлённый агент — снова начало задачи', kinds(resumed), 'background:t2:a2 backgroundEnd:t2:a2 background:t9:a2');
-out('session: SC-AK-1759 — конец возобновлённого агента находится по номеру задачи', kinds([...resumed, notice('t2', 'a2', 'completed')]).split(' ').at(-1), 'backgroundEnd:t2:a2');
+out('session: SC-AK-1759 — уведомление возобновлённого агента несёт номер вызова сообщения', kinds([...resumed, notice('t9', 'a2', 'completed')]).split(' ').at(-1), 'backgroundEnd:t9:a2');
+const several = { type: 'queue-operation', operation: 'enqueue', content: '<task-notification>\n<task-id>b1</task-id>\n<task-id>b2</task-id>\n<status>stopped</status>\n</task-notification>' };
+out('session: SC-AK-1759 — уведомление о нескольких задачах — конец каждой', kinds([several]), 'backgroundEnd::b1 backgroundEnd::b2');
+out('session: SC-AK-1759 — служебная запись хука за закрытым ходом — не конец', kinds([closed, { type: 'user', isMeta: true, message: { content: 'Goal check-in' } }, feedback]), 'refusal::');
 const goesOn = { type: 'queue-operation', operation: 'enqueue', content: '<task-notification>\n<task-id>a2</task-id>\n<status>completed</status>\n<summary>Agent "d" is waiting on its own background work</summary>\n</task-notification>' };
 out('session: SC-AK-1759 — агент ждёт свою фоновую работу — не конец задачи', kinds([call('t2', 'Agent', { description: 'd' }), result('t2', { isAsync: true, agentId: 'a2' }), goesOn]), 'background:t2:a2');
 out('session: SC-AK-1759 — запись субагента событий не даёт', kinds([{ ...call('t1', 'Bash', { command: 'x', run_in_background: true }), isSidechain: true }, { ...result('t1', { backgroundTaskId: 'b1' }), isSidechain: true }]), '');
@@ -478,7 +481,7 @@ out('session: SC-AK-1760 — кусок больше файла даёт те ж
 writeFileSync(file, `${lines.join('\n')}\n`);
 out('session: SC-AK-1760 — перевод строки в конце пустой строки не добавляет', String([...linesOf(file, 5)].length), '4');
 rmSync(dir, { recursive: true, force: true });
-out('session: SC-AK-1760 — источник записей читает запись той же функцией', String(openAt(process.cwd()).entry('/nowhere/x.jsonl', 'a')), 'null');
+out('session: SC-AK-1760 — источник записей без файла записи отвечает пусто', String(openAt(process.cwd()).entry('/nowhere/x.jsonl', 'a')), 'null');
 JS
 
 # --- Прогноз отказов по записям разговоров ---------------------------------------------------------

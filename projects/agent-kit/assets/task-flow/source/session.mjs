@@ -90,12 +90,15 @@ const resultText = (part) =>
           ? part.content.map((piece) => (piece?.type === 'text' ? piece.text : '')).join('\n')
           : '';
 
-/** The notice of a background task that is over: { id, task }, or null. */
+/** The notice of background tasks that are over: [{ id, task }], or null. */
 const taskOver = (entry) => {
     const content = entry?.type === 'queue-operation' ? entry.content : entry?.type === 'user' ? entry.message?.content : null;
     const text = typeof content === 'string' ? content : '';
     if (!text.includes('<task-notification>') || !TASK_OVER.test(text) || STILL_RUNNING.test(text)) return null;
-    return { id: text.match(/<tool-use-id>([^<]+)</)?.[1] ?? null, task: text.match(/<task-id>([^<]+)</)?.[1] ?? null };
+    const id = text.match(/<tool-use-id>([^<]+)</)?.[1] ?? null;
+    // One notice may name several tasks: the commands a previous session left unfinished.
+    const tasks = [...text.matchAll(/<task-id>([^<]+)</g)].map((match) => match[1]);
+    return tasks.length > 1 ? tasks.map((task) => ({ id: null, task })) : [{ id, task: tasks[0] ?? null }];
 };
 
 /**
@@ -128,6 +131,8 @@ export function eventsOf(entries) {
         closing = false;
     };
     for (const entry of entries) {
+        // A record of a subagent is no part of the session's own turn.
+        if (entry?.isSidechain) continue;
         if (entry?.type === 'system' && entry.subtype === 'stop_hook_summary') {
             if ((entry.hookErrors ?? []).some((error) => STOP_BLOCK.test(String(error)))) closing = false;
             else {
@@ -136,12 +141,11 @@ export function eventsOf(entries) {
             }
             continue;
         }
-        // A record of a subagent is no part of the session's own turn.
-        if (entry?.isSidechain) continue;
-        if (entry?.type === 'user' && feedbackText(entry) === null) ended();
+        // A meta entry is written by a hook, another hook of the stop among them: it ends no turn.
+        if (entry?.type === 'user' && !entry.isMeta && feedbackText(entry) === null) ended();
         const over = taskOver(entry);
         if (over) {
-            events.push({ kind: 'backgroundEnd', ...over });
+            for (const task of over) events.push({ kind: 'backgroundEnd', ...task });
             continue;
         }
         if (entry?.type === 'assistant') {
@@ -176,7 +180,7 @@ export function eventsOf(entries) {
             if (part?.type !== 'tool_result') continue;
             const menu = menus.get(part.tool_use_id);
             if (menu) menu.answered = !part.is_error && Boolean(entry.toolUseResult?.answers);
-            // A monitor is no background task: it ends by itself.
+            // A monitor is no background task: a persistent one never ends.
             const started = part.is_error || calls.get(part.tool_use_id)?.name === 'Monitor' ? null : taskStarted(entry);
             if (started !== null) events.push({ kind: 'background', id: part.tool_use_id, task: started || null, at: Date.parse(entry.timestamp ?? '') });
             const refused = part.is_error ? resultText(part).match(CALL_REFUSAL) : null;

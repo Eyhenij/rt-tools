@@ -88,9 +88,9 @@ release="$(printf '%s' "$verdict" | jq -r '.release // empty' 2>/dev/null)"
 if [ -n "$release" ]; then
     rm -f "$journal_dir/refusals-in-row" 2>/dev/null
     # A turn released on a wait is woken only by the notice of its task. The journal keeps the
-    # release, so a session that stood on a task with no end can be counted afterwards.
+    # release with the session: the records of that session then show what woke it.
     case "$release" in
-        'a background task of the session runs') journal "ход отпущен на ожидании: $release" ;;
+        'a background task of the session runs') journal "ход отпущен на ожидании: $release · сессия $sid" ;;
     esac
     exit 0
 fi

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# rt-kit v0.37.0 · hooks/turn-exit-guard.sh · 3115049ece62 · правится надстройкой, не здесь
+# rt-kit v0.37.0 · hooks/turn-exit-guard.sh · 2bf742bf11c4 · правится надстройкой, не здесь
 # rt-hook: Stop
 # rt-hook-timeout: 90
 # Requires: checks/task-flow-script.mjs, checks/decide.mjs, hooks/decide.sh, hooks/facts.sh, hooks/deny-tail.sh, hooks/turn-exit-role.sh
@@ -89,9 +89,9 @@ release="$(printf '%s' "$verdict" | jq -r '.release // empty' 2>/dev/null)"
 if [ -n "$release" ]; then
     rm -f "$journal_dir/refusals-in-row" 2>/dev/null
     # A turn released on a wait is woken only by the notice of its task. The journal keeps the
-    # release, so a session that stood on a task with no end can be counted afterwards.
+    # release with the session: the records of that session then show what woke it.
     case "$release" in
-        'a background task of the session runs') journal "ход отпущен на ожидании: $release" ;;
+        'a background task of the session runs') journal "ход отпущен на ожидании: $release · сессия $sid" ;;
     esac
     exit 0
 fi

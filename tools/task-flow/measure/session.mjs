@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · task-flow/measure/session.mjs · 03517b5ac559 · правится надстройкой, не здесь
+// rt-kit v0.37.0 · task-flow/measure/session.mjs · 2687390a1506 · правится надстройкой, не здесь
 /**
  * The measurer «measure.session» — what this session did: a write to the tree, a role it runs as, a
  * menu of a refusal that did not reach the owner, a step another check forbids, a stop after a
@@ -63,7 +63,7 @@ export function idle({ session }) {
         const events = session.events();
         let last = null;
         for (const event of events) if (event.kind === 'refusal' || event.kind === 'call' || event.kind === 'menu') last = event;
-        return last?.kind === 'refusal' && running(events, timeOf(session)).length === 0;
+        return last?.kind === 'refusal' && running(events, timeOf(session)).tasks.length === 0;
     };
 }
 
@@ -74,27 +74,48 @@ const timeOf = (session) => (typeof session.now === 'function' ? session.now() :
 
 /**
  * The background tasks of the session that have a start, no end, and are younger than the bound at
- * `now`: [{ id, task, at, spent }]. A task is spent once a turn ended while it ran, and fresh again
- * after the next call of a tool.
+ * `now`, and how many of the open tasks have released their stop: { tasks, spent }.
  */
 function running(events, now) {
     const open = new Map();
+    // The calls whose end stands in the record before their start: a command that finished at once.
+    const over = new Set();
+    // How many of the open tasks have released their stop: an ended turn takes one, the end of a
+    // task gives one back, and a call of a tool gives all back.
+    let spent = 0;
+    const close = (id) => {
+        if (!open.delete(id)) return false;
+        spent = Math.max(0, spent - 1);
+        return true;
+    };
     for (const event of events) {
-        if (event.kind === 'background') open.set(event.id, { ...event, spent: false });
-        else if (event.kind === 'backgroundEnd') {
-            for (const [id, task] of open) if (id === event.id || (event.task && task.task === event.task)) open.delete(id);
-        } else if (event.kind === 'ended') for (const task of open.values()) task.spent = true;
-        else if (event.kind === 'call') for (const task of open.values()) task.spent = false;
+        if (event.kind === 'background') {
+            if (!over.has(event.id)) open.set(event.id, event);
+        } else if (event.kind === 'backgroundEnd') {
+            // A notice that names its call ends that run alone: an agent a message resumed runs
+            // under a new call, and a late copy of the notice of its former run does not end it.
+            if (event.id) {
+                if (!close(event.id)) over.add(event.id);
+            } else for (const [id, task] of open) if (event.task && task.task === event.task) close(id);
+        } else if (event.kind === 'ended') spent = Math.min(open.size, spent + 1);
+        else if (event.kind === 'call') spent = 0;
     }
-    return [...open.values()].filter((task) => Number.isFinite(task.at) && now - task.at < BACKGROUND_BOUND * 60_000);
+    // A start stamped ahead of the clock by more than a minute is no start to wait for.
+    const age = (task) => now - task.at;
+    const tasks = [...open.values()].filter((task) => Number.isFinite(task.at) && age(task) < BACKGROUND_BOUND * 60_000 && age(task) > -60_000);
+    return { tasks, spent };
 }
 
 /**
- * The session waits for a background task of its own: a task runs, and no turn ended on it yet with
- * no call since. One task releases one stop — a chain of waits does not keep a turn released.
+ * The session waits for a background task of its own: more tasks run than turns ended on them with
+ * no call since. One task releases one stop — a chain of waits does not keep a turn released, and
+ * two tasks release two stops: the notice of the first wakes the session while the second runs.
  */
 export function waiting({ session }) {
-    return () => running(session.events(), timeOf(session)).some((task) => !task.spent);
+    return () => {
+        const { tasks, spent } = running(session.events(), timeOf(session));
+        return tasks.length > spent;
+    };
 }
 
 export function forbidden({ session }) {

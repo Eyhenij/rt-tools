@@ -166,6 +166,13 @@ out('end: SC-AK-1762 — второй конец хода на той же за�
 out('end: SC-AK-1762 — вызов после конца хода — снова ждёт', waits([BG, started('a', 5), ended, called('Read')]), 'true');
 out('end: SC-AK-1762 — отказ конца хода задачу не тратит', waits([BG, started('a', 5), refused]), 'true');
 out('end: SC-AK-1762 — без ожидания ход с записью держится', released(WROTE), 'held');
+out('end: SC-AK-1762 — две задачи отпускают два конца хода', waits([BG, started('a', 5), BG, started('b', 4), ended, ended]) + ' ' + waits([BG, started('a', 5), BG, started('b', 4), ended]), 'false true');
+out('end: SC-AK-1762 — конец одной из двух задач возвращает её конец хода', waits([BG, started('a', 5), BG, started('b', 4), ended, ended, over('a')]) + ' ' + waits([BG, started('a', 5), BG, started('b', 4), ended, over('a')]), 'false true');
+out('end: SC-AK-1762 — задача с началом из будущего — не ждёт', waits([BG, started('a', -60)]), 'false');
+out('end: SC-AK-1761 — конец записан раньше начала — задача не идёт', waits([over('a'), started('a', 1)]), 'false');
+const resumedRun = [started('a', 9), over('a'), { kind: 'background', id: 'm', task: 'task-a', at: minutesAgo(2) }];
+out('end: SC-AK-1761 — поздняя копия уведомления прежнего запуска возобновлённого агента не кончает', waits([...resumedRun, over('a')]), 'true');
+out('end: SC-AK-1761 — уведомление без номера вызова кончает задачу по её номеру', waits([...resumedRun, { kind: 'backgroundEnd', id: null, task: 'task-a' }]), 'false');
 const idlesAt = (list) => String(session.idle(timed(list))(data));
 out('menu: SC-AK-1763 — остановка после отказа при идущей задаче — не простой', idlesAt([BG, started('a', 4), refused]), 'false');
 out('menu: SC-AK-1763 — задача кончилась — простой, как раньше', idlesAt([BG, started('a', 4), over('a'), refused]), 'true');

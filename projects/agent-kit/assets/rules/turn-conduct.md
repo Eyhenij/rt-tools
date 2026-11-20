@@ -30,7 +30,7 @@ demand, not with the rule.
 
 A turn ends when the scenario is over or when the owner's last word is a stop word. The owner put it
 so: «Только твоё «стоп»». The exit guard measures the branch by the task flow description and holds
-every other turn with the one move that comes next.
+every other turn with the one move that comes next, unless a release case below is met.
 
 <!-- flow:turn-end -->
 The engine lets a turn end before the scenario does when a case is met, asked in this order:
@@ -165,7 +165,7 @@ flowchart TD
   over is held whatever stood last, unless a release case is met.
 - **Waiting for someone else's step is never the last action of a turn.** While they are waited for,
   the work stays where it stood. The last action is judged: waiting mid-turn is lawful, and so is a
-  launch in the background mid-turn. Standing last, it ends the turn only as a wait the record shows: a background task of the session with no end, younger than twenty minutes. What does not depend on it is done first.
+  launch in the background mid-turn. Standing last, it ends the turn only as a wait the record shows: a background task of the session with no end, younger than twenty minutes, once per task and not after the work is handed over. What does not depend on it is done first.
 - **The handover is written even where the branch has no name.** All of it lies in the tree and is
   reachable on a detached head; one file needs a name, and a short snapshot of the head gives it.
   Otherwise compaction comes without a handover, and the next session starts from a blank.
@@ -186,7 +186,7 @@ flowchart TD
   whatever the report says.
 - **The word about a stop the guard reads from the owner, not from the executor.** Otherwise the
   stop is declared by whoever finds it convenient, and the ban holds until the first inconvenience.
-- **Until the scenario is over a turn ends only by the owner's stop word.** A question, a refusal, a
+- **Until the scenario is over a turn ends only by the owner's stop word or by a release case.** A question, a refusal, a
   handover and a second pass are the turn going on: the exit guard returns each with the next move
   named. The other release cases of the description are not the executor's to choose.
 - **The owner's word about a stop is read from the record of the session, not from the progress.**
