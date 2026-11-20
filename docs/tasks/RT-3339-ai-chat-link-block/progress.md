@@ -109,6 +109,44 @@
 - **The first free scenario number is SC-UKV-1487, not 1486.** `pnpm run spec:next-id SC-UKV`
   found 1486 taken in a neighbouring branch.
 
+## The match «mockup / showcase»
+
+Taken on 20.11.2026 in the pinned Chrome from the story `Themes` of the showcase on 6007, the card
+`failed` at 328; the mockup numbers are read from the frames 8339:498 and 8339:703. Positions are
+counted from the corner of the card.
+
+| what                     | mockup              | showcase               |
+| ------------------------ | ------------------- | ---------------------- |
+| card `pending`, `opened` | 328 by 127          | 328 by 127             |
+| card `failed`            | 328 by 149          | 328 by 149.2           |
+| card with the long title | 328 by 144          | 328 by 143.8           |
+| between two cards        | 8                   | 8                      |
+| frame: padding, radius   | 12, 12              | 12, 12                 |
+| frame, light             | #ffffff, #e0e0e0    | #ffffff, #e0e0e0       |
+| frame, dark              | #222629, #33383d    | #222629, #33383d       |
+| icon box                 | x13 y13, 36 by 36   | x13 y13, 36 by 36      |
+| icon box: radius, icon   | 8, 20 by 20         | 8, 20 by 20            |
+| title                    | x61 y13, 14/17, 600 | x61 y13, 14/16.8, 600  |
+| section                  | y32, 12/16          | y31.8, 12/16.2         |
+| tag                      | y54, height 16      | y54, height 16         |
+| tag: gap, padding, icon  | 4, 2 and 4, 12      | 4, 2 and 4, 12         |
+| reason                   | y76, 12/16          | y76, 12/16.2           |
+| reason colour, light     | #c00111             | #c00111                |
+| reason colour, dark      | #dc2626             | #dc2626                |
+| «Open»                   | x13 y104, 89 by 32  | x13 y104.2, 88.4 by 32 |
+| «Open in new tab»        | x110, 166 by 32     | x109.4, 165.3 by 32    |
+| button: font, radius     | 13, 10              | 13, 10                 |
+
+The line heights differ by fractions of a pixel: the kit steps give 16.8 and 16.2 where the mockup
+writes 17 and 16, and the card heights follow them within 0.2.
+
+**The contrast, measured the same day.** Light: the reason 6.45, the section 5.66, the tag
+`opened` 3.58, the tag `failed` 4.41, the disabled button label 3.0. Dark: the tag `pending` 16.99,
+the tag `opened` 3.52, the tag `failed` 2.94, the reason 3.16. The dark reason and the dark tag
+`failed` stand under 4.5. Both take the colours the approved mockup draws and the kit tokens give:
+`--rt-color-state-error-text` and the tag palette `danger`. The card adds no colour of its own; the
+numbers go to the owner with the showing.
+
 ## Sessions
 
 ### 2026-11-19
