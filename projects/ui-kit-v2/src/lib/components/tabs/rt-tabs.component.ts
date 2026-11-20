@@ -30,6 +30,7 @@ import { debounceTime, fromEvent } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtTabDirective } from './rt-tab.directive';
@@ -42,7 +43,7 @@ import { RtTabsMoreComponent } from './rt-tabs-more.component';
 import { IRtTabs } from './rt-tabs.model';
 import { RT_TABS_MORE_LIMIT, RtTabsMoreRow } from './rt-tabs.more-row';
 import { RtTabsInk, RtTabsPanels } from './rt-tabs.motion';
-import { rtTabsIntoViewTarget, rtTabsRestShown, RtTabsScroller } from './rt-tabs.scroll';
+import { rtTabsRestShown, RtTabsScroller, rtTabsTabTarget } from './rt-tabs.scroll';
 
 /** Дебаунс пересчёта видимости стрелок прокрутки на resize/scroll (мс). */
 const REST_DEBOUNCE_MS: number = 50;
@@ -85,6 +86,7 @@ const BEM_BLOCK: string = 'rt-tabs';
         NgTemplateOutlet,
 
         // standalone components / directives
+        RtEmptyStateComponent,
         RtIconComponent,
         RtTabsContextMenuComponent,
         RtTabsMoreComponent,
@@ -473,16 +475,14 @@ export class RtTabsComponent {
      */
     #scrollTabIntoView(id: IRtTabs.Id): void {
         const list: HTMLElement | undefined = this.tabListRef()?.nativeElement;
-        const tab: HTMLElement | null | undefined = list?.querySelector<HTMLElement>(`[data-tabitem="${id}"]`);
+        const target: number | null | undefined =
+            list && !this.moreMode() ? rtTabsTabTarget(list, id, this.scrollArrows() === 'overlay') : undefined;
 
-        if (!list || !tab || this.moreMode()) {
+        if (target === undefined) {
             return;
         }
 
         const first: boolean = this.#scrolledId === null;
-        const rest: HTMLElement | null | undefined = list.parentElement?.querySelector<HTMLElement>('.rt-tabs__rest');
-        const inset: number = this.scrollArrows() === 'overlay' ? (rest?.offsetWidth ?? 0) : 0;
-        const target: number | null = rtTabsIntoViewTarget(list, tab, inset);
         this.#scrolledId = id;
 
         this.#scroller.place(target, first);
