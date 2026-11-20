@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub — the task key, the board and one's own open requests as a queue. Load when a task is created and the board is edited. Pattern git-workflow-freshness.
 ---
-<!-- rt-kit v0.37.0 · rules/git-workflow-queue.github.md · d0da86123fc0 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.1 · rules/git-workflow-queue.github.md · d0da86123fc0 · правится надстройкой, не здесь -->
 
 # Delivery — the task, the board and the queue
 

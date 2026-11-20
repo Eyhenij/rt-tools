@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// rt-kit v0.37.0 · checks/push-trace.mjs · 687bb44acb50 · правится надстройкой, не здесь
+// rt-kit v0.37.1 · checks/push-trace.mjs · 687bb44acb50 · правится надстройкой, не здесь
 /**
  * The read recorder of a push set step. It is loaded into a step by `--import` and writes down what
  * the step really reads: every file whose content it opens, every path whose existence it probes,

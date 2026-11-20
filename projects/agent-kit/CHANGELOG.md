@@ -1,3 +1,68 @@
+## [0.37.1](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.37.0...rt-agent-kit%400.37.1) (2026-11-20)
+
+**Метрика выпуска:** нет. Починен ложный отказ проверки библиотек
+
+### Bug Fixes
+
+- **rt:agent-kit:** аудит очереди считает отставание без отказа и называет PR без ревьюера ([ad86cea](https://github.com/Eyhenij/rt-tools/commit/ad86cea457330ae6748d401cf0eec5e75a98e533))
+- **rt:agent-kit:** аудит очереди читает ревьюеров отдельным вызовом REST — не проверено ([6ef9a76](https://github.com/Eyhenij/rt-tools/commit/6ef9a76feefecf9a5ca5f184333c5e1a55faa801))
+- **rt:agent-kit:** база набора перед push не зависит от устаревших ссылок и от сдвига веток на сервере ([aaa9299](https://github.com/Eyhenij/rt-tools/commit/aaa92994795aeb9ca51a783be12e281a6e66976d))
+- **rt:agent-kit:** база набора перед push узнаёт свою копию по имени и не считает принесённое главной веткой ([69ee295](https://github.com/Eyhenij/rt-tools/commit/69ee295e030acbd93d85b9a96e9510ae6b2c1383))
+- **rt:agent-kit:** ветка задачи сверяется со своей базой, а не с main ([938baee](https://github.com/Eyhenij/rt-tools/commit/938baeec6801143a8ec52522b59fb2479c3a6426))
+- **rt:agent-kit:** ветка и план проверки берутся из копии, где лежит файл правки ([1eb19a7](https://github.com/Eyhenij/rt-tools/commit/1eb19a7a337e82b972110e6468ffdde27b1230f2))
+- **rt:agent-kit:** граф правил читает все виды связей пакета, а отчёт не называет связанное несвязанным ([d7925c6](https://github.com/Eyhenij/rt-tools/commit/d7925c61e42dedcb4b2d8a2a3bddf65a2c381d2a))
+- **rt:agent-kit:** допуска сверх предела времени нет ([dd39a21](https://github.com/Eyhenij/rt-tools/commit/dd39a219bc79088f2f9df5948dc255907e7de1b6))
+- **rt:agent-kit:** линтер стилей не идёт на ветке без файлов стилей ([78b99c2](https://github.com/Eyhenij/rt-tools/commit/78b99c20ea82df7bb277042788d2df7db75e7bf9))
+- **rt:agent-kit:** наблюдения агента во вложенных каталогах не входят в таблицу входов набора ([3bb56b0](https://github.com/Eyhenij/rt-tools/commit/3bb56b00ce99186c3e25b058661b76f8ab1419a9)), closes [#3304](https://github.com/Eyhenij/rt-tools/issues/3304)
+- **rt:agent-kit:** наблюдения агента не входят в таблицу входов набора ([937715e](https://github.com/Eyhenij/rt-tools/commit/937715e683ae37afdbe9484e464a76a1cdde0c98)), closes [#3304](https://github.com/Eyhenij/rt-tools/issues/3304)
+- **rt:agent-kit:** набор перед push считает ветку от ближайшей ветки сервера в её истории ([0c356e1](https://github.com/Eyhenij/rt-tools/commit/0c356e1be0b6b6de407f1b78a204ba7936088366))
+- **rt:agent-kit:** набор перед отправкой не идёт на ветке без новых коммитов и без кода ([72d3fa6](https://github.com/Eyhenij/rt-tools/commit/72d3fa686ae76c485a7a9e358481422103b16fef))
+- **rt:agent-kit:** набор сверх предела не проходит повтором, сценарии пакета идут по правке ([b2c2134](https://github.com/Eyhenij/rt-tools/commit/b2c2134dcbfc32daa695dce0c646dea80faf677c))
+- **rt:agent-kit:** неотслеживаемый файл копии не отказывает пуш ([55e983c](https://github.com/Eyhenij/rt-tools/commit/55e983cf34e276818100130474eed3f62fc0f915))
+- **rt:agent-kit:** образец папки задачи читают сценарии, упавший список файлов не даёт ключа отметки ([cae27cd](https://github.com/Eyhenij/rt-tools/commit/cae27cdb000383d9a6641cb053e163c2ac5b74b9))
+- **rt:agent-kit:** отправка дольше предела всего набора валит отправку ([42667bd](https://github.com/Eyhenij/rt-tools/commit/42667bd545941105c5bdf654fd2bbe81368c7ee0))
+- **rt:agent-kit:** правка обвязки снимков и тестов кита не поднимает снимки и сквозные наборы ([3914e7e](https://github.com/Eyhenij/rt-tools/commit/3914e7eacd1d340118a1d1bcfd5835a7b0a07021))
+- **rt:agent-kit:** правка одних файлов сценариев пакета гонит только эти файлы ([5b93a19](https://github.com/Eyhenij/rt-tools/commit/5b93a19a4f141fcc4829fc2c96a48ad076b81769))
+- **rt:agent-kit:** правки второго круга ревью семьи закона о ведении работы ([53cd336](https://github.com/Eyhenij/rt-tools/commit/53cd336d081501167eb347ded1fa076052633e78))
+- **rt:agent-kit:** правки второго круга ревью семьи закона о документации ([54fcfa5](https://github.com/Eyhenij/rt-tools/commit/54fcfa5312612cfb0670dc771b67a5a7ee88ac84))
+- **rt:agent-kit:** правки второго круга ревью семьи закона о поставке ([da5ef17](https://github.com/Eyhenij/rt-tools/commit/da5ef1785932e9d79ade99de921d6e15582c56aa))
+- **rt:agent-kit:** правки второго круга ревью уборки кэша сборщика и проверки зависимостей ([8211632](https://github.com/Eyhenij/rt-tools/commit/8211632bd27f134cf088dfb4e733cbbb8cac298d))
+- **rt:agent-kit:** правки первого круга ревью семьи закона о ведении работы ([fad2278](https://github.com/Eyhenij/rt-tools/commit/fad2278c1339c9ff007d147c9a8d37f1190700cb)), closes [#3221](https://github.com/Eyhenij/rt-tools/issues/3221)
+- **rt:agent-kit:** правки первого круга ревью семьи закона о документации ([786f6a0](https://github.com/Eyhenij/rt-tools/commit/786f6a0b69cd232cfd6a2cf6416501374733bbd2))
+- **rt:agent-kit:** правки первого круга ревью семьи закона о поставке ([230dcb5](https://github.com/Eyhenij/rt-tools/commit/230dcb5ed241ead145b5e21289cbeaa4bb35214c))
+- **rt:agent-kit:** правки первого круга ревью уборки кэша сборщика и проверки зависимостей ([5868f49](https://github.com/Eyhenij/rt-tools/commit/5868f49c0b4e61b2a4eec66d5b070c53f3b20500))
+- **rt:agent-kit:** проба набора перед пушем ждёт пустой набор для конвейера и пакета без потребителей ([e52109a](https://github.com/Eyhenij/rt-tools/commit/e52109afebace2592cd17d86b460aa7602048d08)), closes [#3387](https://github.com/Eyhenij/rt-tools/issues/3387)
+- **rt:agent-kit:** проверка библиотек принимает запуск тестов сборщиком Angular (RT-3450) ([60805df](https://github.com/Eyhenij/rt-tools/commit/60805df789f5231eaaac3714466a79cbd36e62fa))
+- **rt:agent-kit:** проверка конца хода снова в пределе длины файла ([8d6da5c](https://github.com/Eyhenij/rt-tools/commit/8d6da5cf361d1c7b72f7cc8a70bfdf700593a48d))
+- **rt:agent-kit:** проверка конца эпика засчитывает согласие владельца на задачу без повтора ([0dcad0b](https://github.com/Eyhenij/rt-tools/commit/0dcad0bdaafa0ef1e406c16c9fcc72fa57e7c6e2))
+- **rt:agent-kit:** проверка плана во второй рабочей копии судит эту копию ([3aeeffc](https://github.com/Eyhenij/rt-tools/commit/3aeeffcfc2418a010b9ecb86db0e8f6dcc7193e3))
+- **rt:agent-kit:** проверки дерева не заходят в каталог графа кода ([9e4611d](https://github.com/Eyhenij/rt-tools/commit/9e4611d282f45ef06615816cbf686cec49c078ce))
+- **rt:agent-kit:** роль без инструментов правки заканчивает ход отчётом ([bd02ffa](https://github.com/Eyhenij/rt-tools/commit/bd02ffa19d1111c17fe3ba12cc5ff9539a8c722d)), closes [#3140](https://github.com/Eyhenij/rt-tools/issues/3140)
+- **rt:agent-kit:** сборка выкатки убирает кэш сборщика, у правила о зависимостях появилась проверка ([5ca2e60](https://github.com/Eyhenij/rt-tools/commit/5ca2e60cce1f7ae258a7e0aa008dfee8179b0cc2)), closes [#3220](https://github.com/Eyhenij/rt-tools/issues/3220)
+- **rt:agent-kit:** сверка очереди считает отставание задачи от её базы, привязки поставки сверены с кодом ([a4288ae](https://github.com/Eyhenij/rt-tools/commit/a4288aea16962a6691af65da3f1f65a5f0db9f2d))
+- **rt:agent-kit:** согласие владельца читается по вопросу меню, отказ — по каждой строке ([e588adb](https://github.com/Eyhenij/rt-tools/commit/e588adbeaf532f891ec956d70e329cfd03a768c7))
+- **rt:agent-kit:** согласие на задачу требует слова о её создании, а не слова «задача» ([35821ec](https://github.com/Eyhenij/rt-tools/commit/35821ec81c0cdf96f5fd252304304c082d20bf33))
+- **rt:agent-kit:** спеки не считаются текстом вне сборщика, выход «ничего нового» — только для текущей ветки ([46ce01e](https://github.com/Eyhenij/rt-tools/commit/46ce01ec035505033076e782945fb83fe11468d6))
+- **rt:agent-kit:** таблица входов набора не зависит от файлов вне истории ([7378683](https://github.com/Eyhenij/rt-tools/commit/73786836ffe7ec3917129bc9757653bcbcaa10a2))
+- **rt:agent-kit:** таблица входов не зависит от платформы и чужих настроек git ([e0a0d80](https://github.com/Eyhenij/rt-tools/commit/e0a0d8063b31311ffdc002542f7f302224ecb019))
+- **rt:agent-kit:** текстовый коммит поверх проверенного кода не гонит шаги сборщика заново ([b3c014f](https://github.com/Eyhenij/rt-tools/commit/b3c014facba58c15a726b7ab96a286726b85b103))
+- **rt:agent-kit:** файл чтения роли получил право на исполнение ([4e45259](https://github.com/Eyhenij/rt-tools/commit/4e45259d67c8c3ae3f0fa17da2504b59757bd574))
+- **rt:agent-kit:** хвосты ревизии семьи о ведении работы, найденные ролями ([858d5cc](https://github.com/Eyhenij/rt-tools/commit/858d5cc31a1962f44b5f1a3b848bd61f8126d930))
+- **rt:agent-kit:** шаг набора дольше своего замера валит отправку ([828d34a](https://github.com/Eyhenij/rt-tools/commit/828d34ad0192c0b00fe98c7173a24e825b4a5fb5))
+- **rt:agent-kit:** явный отказ в меню не читается как согласие, аудит проверен на хостинге ([d72cb21](https://github.com/Eyhenij/rt-tools/commit/d72cb21e0aeb6409c769ce2396489f14cfeb2709))
+
+### Features
+
+- **rt:agent-kit:** граф понятий и правил пакета и его отчёт ([1348d6d](https://github.com/Eyhenij/rt-tools/commit/1348d6d5d8e082936a0d015099d22ad273dce8f8))
+- **rt:agent-kit:** шаг набора идёт, только если правка задевает то, что он читает ([761fada](https://github.com/Eyhenij/rt-tools/commit/761fadaa76b333a82f2a41f06b21ad3f9b35cc82))
+
+### Performance Improvements
+
+- **rt:agent-kit:** сценарии пакета правил идут параллельно — 264 с вместо 1018 ([78b42e0](https://github.com/Eyhenij/rt-tools/commit/78b42e0bb5e0849712c3bf818748a8539e51877f))
+- **rt:agent-kit:** сценарии хуков больше не гоняются второй раз из Jest ([37728ee](https://github.com/Eyhenij/rt-tools/commit/37728ee87d1b4d6497b8f0cf63ee094209c3abdc))
+- **rt:agent-kit:** сценарий заведения эпика не ждёт доску по 30 с, .prettierignore не поднимает тяжёлые шаги ([0ada8e4](https://github.com/Eyhenij/rt-tools/commit/0ada8e46132e434169f08ccf798533ee55a14555))
+- **rt:agent-kit:** шаг nx verify не идёт на правке текстов, хуков, пакета правил и tools ([89da9b8](https://github.com/Eyhenij/rt-tools/commit/89da9b8a13df618f7b6ef2e7f57ef20b1ab37f29))
+
 # [0.37.0](https://github.com/Eyhenij/rt-tools/compare/rt-agent-kit%400.36.0...rt-agent-kit%400.37.0) (2026-11-11)
 
 **Метрика выпуска:** нет. Новая статья и паттерн для деревьев с графом кода, отчёты пакета не считают, открывал ли ход граф

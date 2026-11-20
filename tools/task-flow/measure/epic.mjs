@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · task-flow/measure/epic.mjs · acb52deef1d3 · правится надстройкой, не здесь
+// rt-kit v0.37.1 · task-flow/measure/epic.mjs · acb52deef1d3 · правится надстройкой, не здесь
 /**
  * The measurer «measure.epic» — the exits that read the epic of the work: its plan in the plans
  * directory, its branch and its card.

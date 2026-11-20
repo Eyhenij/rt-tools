@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · task-flow/source/owner.mjs · ee4a7fdb41b2 · правится надстройкой, не здесь
+// rt-kit v0.37.1 · task-flow/source/owner.mjs · ee4a7fdb41b2 · правится надстройкой, не здесь
 /**
  * The source «source.owner» of the task flow description: the words of the owner in this session,
  * read from the record of the conversation the hook names in `RT_FLOW_TRANSCRIPT`.

@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · pitfalls/task-flow-close.2.md · bd99cc98f182 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.1 · pitfalls/task-flow-close.2.md · bd99cc98f182 · правится надстройкой, не здесь -->
 # Closing the work — cold part, continued
 
 The second half of the pattern `task-flow-close`; the first is `pitfalls.md`.

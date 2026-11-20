@@ -4,7 +4,7 @@ kind: rule
 law: delivery
 description: Rule under the delivery law for a tree on GitHub — the commit and the set before a push. Load for a commit and a push. Pattern git-workflow-commit.
 ---
-<!-- rt-kit v0.37.0 · rules/git-workflow-push.github.md · 1ac5b3c23781 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.1 · rules/git-workflow-push.github.md · 1ac5b3c23781 · правится надстройкой, не здесь -->
 
 # Delivery — the commit and the push set
 

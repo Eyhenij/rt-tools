@@ -4,7 +4,7 @@ kind: rule
 law: verifiability
 description: Rule under the verifiability law. Load for browser checks and requests to a running app. Patterns browser-verification-stand, -measure.
 ---
-<!-- rt-kit v0.37.0 · rules/browser-verification.md · ff8fba7039ae · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.1 · rules/browser-verification.md · ff8fba7039ae · правится надстройкой, не здесь -->
 
 # Checking the running application
 

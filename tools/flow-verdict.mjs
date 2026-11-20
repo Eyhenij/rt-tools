@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/flow-verdict.mjs · 909aa83d9f71 · правится надстройкой, не здесь
+// rt-kit v0.37.1 · checks/flow-verdict.mjs · 909aa83d9f71 · правится надстройкой, не здесь
 /**
  * The verdict at the end of a turn — the engine command `verdict`, called by the hook on Stop.
  *
