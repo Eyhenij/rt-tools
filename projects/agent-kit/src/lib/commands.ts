@@ -491,7 +491,10 @@ const agentBoundLines: (result: ISyncResult) => string[] = (result: ISyncResult)
     }
     if (bound.unreadable) {
         return bound.pending.length
-            ? [`\`${SETTINGS_PATH}\` не разбирается как JSON — записи модельных проверок не делалось`, ...agentUnboundLines(bound.pending)]
+            ? [
+                  `\`${SETTINGS_PATH}\` не разбирается как JSON или хранит \`hooks\` не списками — записи модельных проверок не делалось`,
+                  ...agentUnboundLines(bound.pending),
+              ]
             : [];
     }
 
@@ -880,7 +883,10 @@ function syncCheck(config: IConfig, root: string, version: string, assetsDir: st
             result.agentUnbound.length +
             result.agentDrifted.filter((drift: IAgentDrift): boolean => drift.refused).length;
         if (!count) {
-            return { code: 0, lines: [`sync --check: разложенное сходится с пакетом v${version}`, ...warnings(result)] };
+            return {
+                code: 0,
+                lines: [`sync --check: разложенное сходится с пакетом v${version}`, ...agentDriftedLines(result), ...warnings(result)],
+            };
         }
 
         return { code: 1, lines: [`sync --check: расхождений ${count}`, ...describe(result)] };

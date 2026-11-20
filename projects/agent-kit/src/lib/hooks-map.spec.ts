@@ -475,4 +475,26 @@ describe('объявление и стоящие записи модельных
         expect(make('<!-- rt-hook-agent limit=5 -->')).toEqual([]);
         expect(make('<!-- rt-hook-agentX event=Stop limit=5 -->')).toEqual([]);
     });
+
+    it('SC-AK-1767 — запись, зовущая файл с корнем проекта в пути, считается стоящей', (): void => {
+        const prompt: string = `Read the file $CLAUDE_PROJECT_DIR/${JUDGE_PATH} and follow it`;
+        const root: string = treeWithChecks(withRecord({ hooks: [{ type: 'agent', prompt, timeout: 120 }] }, 'Stop'), [JUDGE]);
+        try {
+            expect(unboundAgentChecks([JUDGE], root)).toEqual([]);
+        } finally {
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+
+    it('SC-AK-1771 — раздел hooks не объект: настройка не правится и читается как не разбираемая', (): void => {
+        for (const text of ['{ "hooks": [] }\n', '{ "hooks": null }\n']) {
+            const root: string = treeWithChecks(text, [JUDGE]);
+            try {
+                expect(bindAgentChecks([JUDGE], root).unreadable).toBe(true);
+                expect(settingsOf(root)).toBe(text);
+            } finally {
+                rmSync(root, { recursive: true, force: true });
+            }
+        }
+    });
 });

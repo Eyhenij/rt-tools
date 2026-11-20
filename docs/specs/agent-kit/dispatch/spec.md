@@ -130,8 +130,10 @@ edit guards and the turn-closing guards.
 - **A file of a model check that lies on disk with no record calling it refuses the check of the
   layout, and the refusal names the `skip` id as the way out.** A tree whose host runs no hooks of
   the kind `agent` must be able to leave the file out and stay green.
-- **Settings that do not parse are not edited.** The layout names both checks and prints the ready
-  records to insert by hand; a check counts as connected when the path of its file stands in the text.
+- **Settings that do not parse are not edited.** The layout names the checks still to connect and
+  prints the ready records to insert by hand; a check counts as connected when the call `Read the
+  file <path>` of its file stands in the text. The same holds for settings whose `hooks` section is
+  not an object or whose list of an event is not an array.
 - **A refused record anywhere in the layout stops the writing of every record, the model records
   included.** A tree whose directory of hooks is moved gets the model records and no record of the
   dispatcher, and the layout names that mixed state.

@@ -996,4 +996,21 @@ describe('sync — записи модельных проверок', () => {
         expect(agentPrompts().filter((prompt: string): boolean => prompt.includes(TURN))).toHaveLength(0);
         expect(said(outcome)).toContain('скриптовые гарды при этом не подключены');
     });
+
+    it('SC-AK-1768 — проверка раскладки отказывает на других словах и молчит о другой модели', () => {
+        start();
+        sync(env, false);
+        fillCompanions();
+        const text: string = get('.claude/settings.json');
+
+        put('.claude/settings.json', text.replace('claude-sonnet-5-5', 'other-model'));
+        const named: IOutcomeOfCommand = sync(env, true);
+        expect(named.code).toBe(0);
+        expect(said(named)).toContain('только названо');
+
+        put('.claude/settings.json', text.replace('follow it exactly.', 'follow it loosely.'));
+        const refused: IOutcomeOfCommand = sync(env, true);
+        expect(refused.code).toBe(1);
+        expect(said(refused)).toContain('слова вызова: объявлено');
+    });
 });

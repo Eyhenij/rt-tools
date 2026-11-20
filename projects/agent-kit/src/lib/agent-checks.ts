@@ -108,6 +108,11 @@ export function agentRecord(check: IAgentCheck): Record<string, unknown> {
     return { ...(check.matcher ? { matcher: check.matcher } : {}), hooks: [command] };
 }
 
+/** Подсказка зовёт файл по пути как целому слову, с корнем проекта в начале или без него. */
+function callsPath(prompt: string, path: string): boolean {
+    return prompt.split(/\s/).some((word: string): boolean => word === path || word === `$CLAUDE_PROJECT_DIR/${path}`);
+}
+
 /** Стоящая команда, зовущая файл проверки, и образец записи, в которой она стоит. */
 interface IStanding {
     readonly matcher: string;
@@ -125,10 +130,7 @@ function commandsOfRecord(record: unknown, check: IAgentCheck): readonly IStandi
         .map((command: unknown): Record<string, unknown> => (command ?? {}) as Record<string, unknown>)
         .filter(
             (command: Record<string, unknown>): boolean =>
-                command['type'] === 'agent' &&
-                String(command['prompt'] ?? '')
-                    .split(/\s/)
-                    .includes(check.path)
+                command['type'] === 'agent' && callsPath(String(command['prompt'] ?? ''), check.path)
         )
         .map((command: Record<string, unknown>): IStanding => ({ matcher: typeof asked === 'string' ? asked.trim() : '', command }));
 }
