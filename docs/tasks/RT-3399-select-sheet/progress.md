@@ -43,7 +43,8 @@
   and 8. Measured by nodes: width 256, height 40, text 32, gap 6 in all three, centre offset 0 in the
   middle and dark cells, −114 at the edge, no overlap with the page frames. `kit-match` against the
   live numbers of 6017: 19 of 19.
-- **Waiting for the owner:** the approval of the redrawn frame 8477:2372, then of the showcase.
+- **The redrawn frame 8477:2372 approved:** «Одобряю макет» (20.11).
+- **Waiting for the owner:** the approval of the showcase of the hint.
 - **`prefix` and `suffix` of `rt-input` in code (20.11), mockup 8449:1560 approved «Одобряю
   макет»:** the prefix stands before the field, the suffix right after the typed text — a hidden
   copy of the text sizes the field, the field lies over it. Measured live on 6017, own set: the
