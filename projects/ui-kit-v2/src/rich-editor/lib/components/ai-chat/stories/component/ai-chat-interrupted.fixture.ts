@@ -61,6 +61,7 @@ export const AI_CHAT_INTERRUPTED_EMPTY_CASES: readonly IAiChatInterruptedCase[] 
     { name: '386 — остановлен', width: 386, messages: empty(STOPPED) },
     { name: '640 — не удался', width: 640, messages: empty({ state: 'failed', label: 'Не удалось' }) },
     { name: '386 — с вложениями приложения', width: 386, messages: empty(STOPPED), extra: true },
+    { name: '240 — английские', width: 240, messages: empty(), english: true },
 ];
 
 /** Вместе с ошибкой хода, английские подписи и пишущийся ответ без строки и кнопки. */
@@ -88,8 +89,10 @@ export const AI_CHAT_INTERRUPTED_STATE_CASES: readonly IAiChatInterruptedCase[] 
     { name: 'идёт отправка — отключено', width: 386, messages: partial(), sending: true },
 ];
 
-/** Темы и наборы: частичный ответ и пустой. */
+/** Темы и наборы: частичный ответ при 240, 328 и 640 и пустой при 386 — ширины макета. */
 export const AI_CHAT_INTERRUPTED_THEME_CASES: readonly IAiChatInterruptedCase[] = [
-    AI_CHAT_INTERRUPTED_WIDTH_CASES[1],
+    RUSSIAN_WIDTH_CASES[0],
+    RUSSIAN_WIDTH_CASES[1],
     AI_CHAT_INTERRUPTED_EMPTY_CASES[2],
+    RUSSIAN_WIDTH_CASES[3],
 ];

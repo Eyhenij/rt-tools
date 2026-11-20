@@ -6,10 +6,10 @@ Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
 - **Stage:** 3 of 4 — the showcase and the match
-- **Done:** ветка от RT-3340, карточка в работе, назначение копии переписано словом владельца «Бери RT-3341»; разведка, разбор в `grill.md` (вопросы закрыты допущением)
-- **Next step:** слово владельца о витрине (3.3), затем коммит этапа 3 и первый круг ревью
-- **Uncommitted:** `plan.md`, `approvals.md`, правки договорённости и этого файла, `docs/plans/ai-chat-blocks.md`
-- **Waiting for the owner:** одобрение плана
+- **Done:** этапы 1–3 в коммитах 97fa6dbf1 и 3655dfc2e, первый круг ревью — 9f5eab0b8, второй круг исправлен; сверка 21 из 21, наложения строки, ряда и четырёх состояний
+- **Next step:** слово владельца о витрине (3.3), о цвете иконок в макете, о стороне подсказки и о плане
+- **Uncommitted:** `plan.md` — до слова владельца
+- **Waiting for the owner:** одобрение плана и витрины
 - **PR:** not open yet; PR RT-3340 #3453 — черновик в `main`, ветка этой задачи стоит на нём
 
 ## Steps
@@ -68,6 +68,31 @@ Rewritten by every session, not appended to.
 - правило и сценарий для входа `ariaDescribedby` кнопки-иконки и привязки `implementation.md` —
   шаг 4.3, слияние договорённости в спеку домена;
 - план не закоммичен — ждёт слова владельца.
+
+Второй круг ревью — исправлено:
+- обрезанная или сжатая строка не ловилась: шаг требует высоту не ниже 15.5 и строку без обрезки;
+- отступ 8 над строкой не мерился: теперь мерится от блоков ответа или строки хода — везде 8;
+- последняя кнопка ряда проверяется внутри ответа;
+- кольцо: берётся видимый слой тени с наибольшим разбросом, прозрачность читается для любого вида
+  цвета, до фокуса кольца нет; лишняя проверка кольца английской ячейки в Widths снята;
+- справа налево иконка «спросить снова» не отражена (`transform: none` до самого ответа);
+- подсказка: States наводит курсор на «спросить снова», ждёт, пока подсказка два кадра стоит на
+  месте, и требует её по середине кнопки с зазором не меньше 4 и уход после ухода курсора. Подсказка
+  кита встаёт над кнопкой (зазор 6), в макете — под ней;
+- английская ветка матрицы получает `sending` и `error`, английская обёртка подменяет все подписи
+  кита; в Empty — пустой ответ 240 по-английски, в Themes — 240, 328, пустой 386 и 640 в обеих темах;
+- наложение состояний на образцы макета: обычное 2.09 %, наведение 2.77 %, фокус 3.05 %,
+  отключено 2.09 % — только края глифов и кольца; кадров 240 и справа налево в макете нет.
+
+Найдено по ходу: панель Interactions менеджера витрины пишет PASS и тогда, когда шаг `play` падает.
+Проверка с порогом зазора 100 прошла в панели, а прямой вызов шага бросил «зазор 6». Поэтому шаги
+этого круга проверены прямым вызовом в кадре истории: шесть из шести проходят; эталоны сняты образом,
+который гоняет те же шаги. Первый круг проверялся по той же панели — его шаги прошли прямой вызов
+теперь.
+
+Второй круг ревью — не исправлено, с причиной:
+- подсказка под кнопкой в макете и над кнопкой в ките — вопрос владельцу вместе с витриной;
+- тест входа `ariaDescribedby` и `implementation.md` — шаг 4.3.
 
 Этап 1: typecheck зелёный, спеки `ai-chat` зелёные (1 мин 17 с). У `rt-icon-button` новый вход
 `ariaDescribedby` — у кнопки-иконки не было способа сослаться на поясняющий узел; описания кнопки
@@ -129,35 +154,7 @@ Cloudscape — без отметки, повтор иконкой в групп�
 
 - Взята по слову владельца «Бери RT-3341».
 
-## Handover of the session
-
-Put together by a hook before the compaction of the context (auto).
-
-**Working tree:** /Users/eyhenij/WebstormProjects/rt-tools/.claude/worktrees/ai-chat-blocks
-**Branch:** RT-3341-ai-chat-interrupted-answer
-
-### Where we stand at the minute of the compaction
-
-- **State:** `этап-идёт`
-- **Stage:** 3 of 4 — the showcase and the match
-- **Next step:** слово владельца о плане `plan.md`, затем коммит плана и этап 1
-- **PR:** not open yet; PR RT-3340 #3453 — черновик в `main`, ветка этой задачи стоит на нём
-
-The progress in full — `docs/tasks/RT-3341-ai-chat-interrupted-answer/progress.md`; the plan lies next to it.
-
-### Uncommitted
-
-```
-?? docs/tasks/RT-3341-ai-chat-interrupted-answer/plan.md
-?? projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-interrupted-matrix.stories.ts
-?? projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/component/ai-chat-interrupted.fixture.ts
-?? projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/component/test-ai-chat-english-labels.component.html
-?? projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/component/test-ai-chat-english-labels.component.ts
-?? projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/component/test-ai-chat-interrupted-matrix.component.html
-?? projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/component/test-ai-chat-interrupted-matrix.component.ts
-```
-
-### Commits over the main branch
+## Commits over the main branch at the first compaction
 
 ```
 97fa6dbf1 feat(rt:ui-kit-v2): прерванный ответ чата — тихая строка и «спросить снова» (RT-3341)
@@ -179,6 +176,61 @@ b41af0dd8 fix(rt:ui-kit-v2): наведение и фокус строки ис�
 6eac865ce feat(rt:ui-kit-v2): данные и схема блока источников (RT-3340)
 8f15f678a docs(rt:ui-kit-v2): договорённость и план блока источников (RT-3340)
 0ba332c88 docs(rt:ui-kit-v2): разбор задачи блока источников и находки RT-3339 (RT-3340)
+```
+
+Written by a hook before the compaction of the context. Everything standing here is checked
+against the tree: a handover retells what was written and describes the minute it was put together.
+
+## Handover of the session
+
+Put together by a hook before the compaction of the context (auto).
+
+**Working tree:** /Users/eyhenij/WebstormProjects/rt-tools/.claude/worktrees/ai-chat-blocks
+**Branch:** RT-3341-ai-chat-interrupted-answer
+
+### Where we stand at the minute of the compaction
+
+- **State:** `этап-идёт`
+- **Stage:** 3 of 4 — the showcase and the match
+- **Next step:** находки второго круга ревью и их исправление одним коммитом, затем слово владельца о витрине (3.3) и о плане
+- **PR:** not open yet; PR RT-3340 #3453 — черновик в `main`, ветка этой задачи стоит на нём
+
+The progress in full — `docs/tasks/RT-3341-ai-chat-interrupted-answer/progress.md`; the plan lies next to it.
+
+### Uncommitted
+
+```
+ M docs/plans/ai-chat-blocks.md
+ M docs/tasks/RT-3341-ai-chat-interrupted-answer/progress.md
+ M projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-interrupted-matrix.stories.ts
+ M projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/component/ai-chat-interrupted.fixture.ts
+ M projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/component/test-ai-chat-english-labels.component.ts
+?? docs/tasks/RT-3341-ai-chat-interrupted-answer/plan.md
+```
+
+### Commits over the main branch
+
+```
+9f5eab0b8 test(rt:ui-kit-v2): проверки витрины прерванного ответа после первого круга ревью (RT-3341)
+3655dfc2e test(rt:ui-kit-v2): витрина прерванного ответа чата (RT-3341)
+97fa6dbf1 feat(rt:ui-kit-v2): прерванный ответ чата — тихая строка и «спросить снова» (RT-3341)
+2fc592e5e docs(rt:ui-kit-v2): разбор и договорённость о прерванном ответе чата (RT-3341)
+cbf9f498f fix(rt:ui-kit-v2): название источника из одних невидимых знаков отбрасывается (RT-3340)
+2020935fd Merge remote-tracking branch 'origin/main' into RT-3340-ai-chat-sources-block
+00239d118 test(rt:ui-kit-v2): эталоны историй блока источников и шаги без гонки (RT-3340)
+eecfaf70c fix(rt:ui-kit-v2): у элемента блока источников в ленте есть правило стиля (RT-3340)
+7dca04bd9 docs(rt:ui-kit-v2): папка задачи блока источников разобрана (RT-3340)
+60a66e818 docs(rt:ui-kit-v2): договорённость блока источников слита в спеку домена (RT-3340)
+4718dc1bc fix(rt:ui-kit-v2): блок источников после второго круга ревью (RT-3340)
+d7ae065b8 fix(rt:ui-kit-v2): блок источников после первого круга ревью (RT-3340)
+6c69632a5 docs(rt:ui-kit-v2): кадры наведения и фокуса блока источников перерисованы (RT-3340)
+1e0e34126 Merge remote-tracking branch 'origin/main' into RT-3340-ai-chat-sources-block
+b41af0dd8 fix(rt:ui-kit-v2): наведение и фокус строки источника (RT-3340)
+97477a610 feat(rt:ui-kit-v2): истории и страница обзора блока источников (RT-3340)
+6c360ea3e feat(rt:ui-kit-v2): блок источников в ответе чата и событие нажатия (RT-3340)
+658d318b1 docs(rt:ui-kit-v2): макет блока источников одобрен (RT-3340)
+6eac865ce feat(rt:ui-kit-v2): данные и схема блока источников (RT-3340)
+8f15f678a docs(rt:ui-kit-v2): договорённость и план блока источников (RT-3340)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

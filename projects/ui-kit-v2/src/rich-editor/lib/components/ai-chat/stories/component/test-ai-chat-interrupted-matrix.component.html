@@ -37,7 +37,11 @@
             <!-- Чат объявлен прямо в обёртке: шаблон через ngTemplateOutlet берёт инжектор места
                  объявления, и поставщик обёртки до него не доходит -->
             <app-ai-chat-english-labels>
-                <rt-ai-chat subtitle="Answers from the organisation's data" [messages]="c.messages" />
+                <rt-ai-chat
+                    subtitle="Answers from the organisation's data"
+                    [messages]="c.messages"
+                    [sending]="c.sending ?? false"
+                    [error]="c.error ?? null" />
             </app-ai-chat-english-labels>
         } @else {
             <ng-container *ngTemplateOutlet="chat; context: { $implicit: c }" />
