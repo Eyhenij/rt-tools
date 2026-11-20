@@ -4,9 +4,11 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 4 из 4 — Showcase; both review rounds done
-- **Next step:** the owner's word on the showcase of the four approved remarks; the Figma frame of
-  the fixed text prefix of `rt-input` (the registration remark) and its approval before code; then
-  the closing texts, the push set (the sheet and workspace snapshots are re-taken) and the draft PR.
+- **Next step:** a review round over the four remarks committed in 50570df3b, run while the owner
+  looks at the mockup of `prefix` and `suffix` (frame 8449:1560); after the owner's approval — the
+  code of both inputs, the showcase and its approval, review round two over the whole diff, the
+  closing texts, the push set (the sheet and workspace snapshots are re-taken) and the draft PR.
+- **Waiting for the owner:** the approval of frame 8449:1560 — the last remark was «текст обрезан».
 - **Four approved remarks in code (20.11), measured live on 6017:**
     - the filters panel of `rt-thread-list`: 254×134, background `rgb(255,255,255)`, border 1 px
       `rgb(224,224,224)`, radius 10, the select panel shadow, padding 16 (was transparent, 252×132);
