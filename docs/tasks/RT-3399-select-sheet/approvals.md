@@ -7,3 +7,4 @@
 - **Макет:** «Одобряю» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8405-752
 - **Витрина:** «Одобряю» — http://localhost:6017/?path=/story/molecules-forms-selectsheet--sheet , http://localhost:6017/?path=/story/molecules-forms-multiselectsheet--toggles-sheet , http://localhost:6017/?path=/story/molecules-navigation-menusheet--sheet , http://localhost:6017/?path=/story/molecules-navigation-pageheadersheet--user-menu-sheet , http://localhost:6017/?path=/story/molecules-forms-daterangepanel--sheet , http://localhost:6017/?path=/story/organisms-table-tablesettingspanel--playground
 - **Совпадение:** 21 из 21 чисел
+- **Макет:** «outline/calendar-2» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8423-1981

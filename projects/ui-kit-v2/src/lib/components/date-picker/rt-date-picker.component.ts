@@ -118,9 +118,7 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
      * (например `Date`), и поле показывает её пустой, как показывало браузерное.
      */
     protected readonly text: Signal<string> = computed((): string => this.#text(this.value()));
-    protected readonly openIcon: Signal<IRtIcon.Name> = computed((): IRtIcon.Name =>
-        this.type() === 'time' ? 'ico-time' : 'ico-calendar'
-    );
+    protected readonly openIcon: Signal<IRtIcon.Name> = computed((): IRtIcon.Name => (this.type() === 'time' ? 'ico-time' : 'calendar-2'));
 
     protected readonly hasValue: Signal<boolean> = computed((): boolean => this.value() !== '');
     /**
