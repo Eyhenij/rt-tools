@@ -77,11 +77,12 @@
         }
 
         /* Пока подпись лежит на месте подсказки, подсказка не рисуется: они легли бы друг на друга. */
-        &--floating#{$preset}:not(.rt-input--filled, :focus-within) &__field::placeholder {
+        &--floating#{$preset}:not(.rt-input--label-raised, :focus-within) &__field::placeholder {
             color: transparent;
         }
 
-        &--filled &__floating-label,
+        /* Подпись поднята значением, фокусом или постоянным текстом поля. */
+        &--label-raised &__floating-label,
         &:focus-within &__floating-label {
             top: 0;
             left: var(--rt-input-floating-label-raised-start);
@@ -116,17 +117,27 @@
             line-height: var(--rt-leading-tight);
         }
 
-        &--floating#{$preset}.rt-input--appearance--fill .rt-input__field,
-        &--floating#{$preset}.rt-input--appearance--pill .rt-input__field {
-            align-self: stretch;
-            padding: calc(var(--rt-input-height) / 2 - var(--rt-space-1) - var(--rt-input-edge)) 0
+        /* Значение опускается под поднятую подпись. Постоянный текст и копия текста у поля с
+           суффиксом берут тот же отступ и ту же строку — иначе приставка стоит выше значения, а
+           поле с суффиксом схлопывается в строку копии. */
+        &--floating#{$preset}.rt-input--appearance--fill,
+        &--floating#{$preset}.rt-input--appearance--pill {
+            --rt-input-fill-value-padding-block: calc(var(--rt-input-height) / 2 - var(--rt-space-1) - var(--rt-input-edge)) 0
                 calc(var(--rt-input-height) / 2 - var(--rt-space-5) - var(--rt-input-border-width));
+        }
+
+        &--floating#{$preset}.rt-input--appearance--fill .rt-input__field,
+        &--floating#{$preset}.rt-input--appearance--pill .rt-input__field,
+        &--floating#{$preset}.rt-input--appearance--fill :is(.rt-input__prefix, .rt-input__suffix, .rt-input__sizer),
+        &--floating#{$preset}.rt-input--appearance--pill :is(.rt-input__prefix, .rt-input__suffix, .rt-input__sizer) {
+            align-self: stretch;
+            padding: var(--rt-input-fill-value-padding-block);
             line-height: var(--rt-leading-normal);
         }
 
-        &--floating#{$preset}.rt-input--appearance--fill.rt-input--filled .rt-input__floating-label,
+        &--floating#{$preset}.rt-input--appearance--fill.rt-input--label-raised .rt-input__floating-label,
         &--floating#{$preset}.rt-input--appearance--fill:focus-within .rt-input__floating-label,
-        &--floating#{$preset}.rt-input--appearance--pill.rt-input--filled .rt-input__floating-label,
+        &--floating#{$preset}.rt-input--appearance--pill.rt-input--label-raised .rt-input__floating-label,
         &--floating#{$preset}.rt-input--appearance--pill:focus-within .rt-input__floating-label {
             top: calc(var(--rt-input-height) / 2 - var(--rt-space-5) - var(--rt-input-edge));
             left: var(--rt-input-floating-label-rest-start);
@@ -174,7 +185,7 @@
                 border-color: transparent;
             }
 
-            &.rt-input--filled:before,
+            &.rt-input--label-raised:before,
             &:focus-within:before {
                 clip-path: polygon(
                     0 0,

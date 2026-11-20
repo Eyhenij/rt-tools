@@ -290,6 +290,35 @@ removal and line up when the application declares `detailsInHeader`. Specs 3865 
 typecheck, eslint, stylelint, check:tokens-styles, check:cascade-layer, docs tables, check:specs
 green.
 
+## Review round two over the whole diff (20.11)
+
+Three fresh readers on the diff after 066bd257b. Confirmed and fixed:
+- **High — the password leaked into the copy that sizes the field.** With `type="password"` and a
+  suffix the hidden copy held the typed characters in a text node; it now holds as many dots, and
+  the width follows the drawn dots. SC-UKV-1549.
+- **Medium — the label on the border lay over the prefix.** The material set rests the label in
+  the place of the hint; a field with fixed text now keeps it raised, as a Material field does. The
+  class is its own, `rt-input--label-raised`; `--filled` keeps meaning «has a value», since an
+  application's styles may read it. SC-UKV-1548.
+- **Medium — the filled and pill material field with a label lost its value with a suffix, and
+  set the prefix off the value line.** The value padding under the raised label moved into the
+  property `--rt-input-fill-value-padding-block`, and the prefix, the suffix and the copy take it
+  too. Read in the code; no story shows this combination, so it is not measured live.
+- **Medium — an empty field with a suffix and no hint had a zero-wide field and no caret.** The
+  value box keeps the width of the border.
+- **Low — a press on the fixed text left the caret where it was.** The suffix puts it at the end,
+  the prefix at the start; a mail field has no selection and is left alone. SC-UKV-1550.
+
+Written off: «the showcase is not approved» — read before «Approve showcase» was written; «the
+caret at the end shifts the text» — measured live, `scrollLeft` 0 after typing at the end; «a long
+prefix overflows a narrow field» — the approved mockup keeps the fixed text whole, the application
+chooses its length; «the scope grew past the sheet» — the owner took the remarks into this task by
+word, they stand in the grill; the major release, the application's `detailsInHeader` step and the
+1.43:1 ring go into the PR body; «Approve showcase» is the owner's message verbatim.
+Live on 6017 after the fixes: the `Affixes` numbers are unchanged in both sets (own: prefix
+17…105, suffix after the value, height 40; material: height 56, text top 17). Input specs 107 of
+107, eslint, stylelint, prettier, check:specs green.
+
 ## Decisions along the way
 
 - 20.11: the owner withdrew «планирование и ревью опус, код пишет сонет» — a neighbouring session

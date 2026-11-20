@@ -75,6 +75,37 @@ describe('RtInputComponent — постоянный текст до и посл�
         expect(suffix.getAttribute('aria-hidden')).toBe('true');
     });
 
+    it('SC-UKV-1548 — подпись на рамке у пустого поля с постоянным текстом поднята и не ложится на него', (): void => {
+        const plain: ComponentFixture<RtInputComponent> = setup({ floatingLabel: 'Адрес' });
+        const withPrefix: ComponentFixture<RtInputComponent> = setup({ floatingLabel: 'Адрес', prefix: 'site.ru/' });
+        const withSuffix: ComponentFixture<RtInputComponent> = setup({ floatingLabel: 'Команда', suffix: '.site.ru' });
+
+        expect(hostClasses(plain)).not.toContain('rt-input--label-raised');
+        expect(hostClasses(withPrefix)).toContain('rt-input--label-raised');
+        expect(hostClasses(withSuffix)).toContain('rt-input--label-raised');
+        expect(hostClasses(withPrefix)).not.toContain('rt-input--filled');
+    });
+
+    it('SC-UKV-1549 — у скрытого пароля с суффиксом копия меряет точки, а не знаки', (): void => {
+        const fixture: ComponentFixture<RtInputComponent> = setup({ type: 'password', suffix: '!' });
+        type(fixture, 'пароль');
+
+        expect(textOf(el(fixture, '.rt-input__sizer'))).toBe('••••••');
+    });
+
+    it('SC-UKV-1550 — нажатие на суффикс ставит курсор в конец значения, на приставку — в начало', (): void => {
+        const fixture: ComponentFixture<RtInputComponent> = setup({ prefix: 'site.ru/', suffix: '.html' });
+        type(fixture, 'page');
+        const node: HTMLInputElement = field(fixture);
+        node.setSelectionRange(2, 2);
+
+        (qa(fixture, 'input-suffix')?.nativeElement as HTMLElement).dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        expect([node.selectionStart, node.selectionEnd]).toEqual([4, 4]);
+
+        (qa(fixture, 'input-prefix')?.nativeElement as HTMLElement).dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+        expect([node.selectionStart, node.selectionEnd]).toEqual([0, 0]);
+    });
+
     it('SC-UKV-1545 — только для чтения значение показано с постоянным текстом, пустое — прочерком', (): void => {
         const fixture: ComponentFixture<RtInputComponent> = setup({ prefix: 'site.ru/team/', suffix: '/' });
         type(fixture, 'my-page');

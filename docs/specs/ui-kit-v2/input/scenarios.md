@@ -66,6 +66,31 @@ Then the field is described by both texts, and the texts themselves are hidden f
 
 Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input-affixes.spec.ts`.
 
+### SC-UKV-1548 — the label on the border of an empty field with fixed text stays raised
+
+Given an empty field with a label on the border and a prefix or a suffix
+When the field is drawn without focus
+Then the label stands raised on the border rather than over the fixed text
+
+Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input-affixes.spec.ts` — the field carries
+the class the rules of the raised label read.
+
+### SC-UKV-1549 — a hidden password with a suffix is sized by its dots
+
+Given a password field with a suffix
+When the person types `пароль`
+Then the hidden copy that sizes the field holds six dots, not the typed characters
+
+Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input-affixes.spec.ts`.
+
+### SC-UKV-1550 — a press on the fixed text puts the caret next to it
+
+Given a field with a prefix, a suffix and the value `page`, the caret in the middle
+When the person presses the suffix, then the prefix
+Then the caret stands at the end of the value, then at its start
+
+Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input-affixes.spec.ts`.
+
 ### SC-UKV-1545 — a read-only field shows the value with its fixed text
 
 Given a read-only field with a prefix and a suffix
