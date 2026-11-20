@@ -97,6 +97,18 @@
             overscroll-behavior: contain;
         }
 
+        /* Пустая панель: заглушка стоит по центру тела. Отступы и вид — у самой rt-empty-state; её
+           заголовок своего межстрочного интервала не задаёт, поэтому интервал задан здесь — тот же,
+           что у пустой вкладки. */
+        &__empty {
+            display: flex;
+            flex: 1 1 auto;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: center;
+            line-height: var(--rt-leading-normal);
+        }
+
         /* Слой ожидания поверх всей панели: шапка, содержимое и футер под ним не нажимаются. Тот же
            вид, что у слоя дозагрузки таблицы. */
         &__pending {

@@ -228,6 +228,13 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `closeTooltip`          | `string`                       | `''`                        | подсказка крестика                                                                                                                                                        |
 | `closeTooltipPlacement` | `IRtTooltip.Placement \| null` | `null`                      | сторона подсказки крестика                                                                                                                                                |
 | `sheet`                 | `boolean`                      | `true` → шторка на телефоне | на телефоне панель открывается в нижней шторке кита; `false` оставляет её у триггера                                                                                      |
+| `empty`                 | `boolean`                      | `false`                     | тело вкладки показывает заглушку `rt-empty-state`; полоса вкладок на месте                                                                                                |
+| `emptyIcon`             | `IRtIcon.Name \| null`         | `'inbox'`                   | значок заглушки; `null` убирает его                                                                                                                                       |
+| `emptyTitle`            | `string \| null`               | `null`                      | заголовок заглушки; `null` — подпись кита `uiEmptyTitle`                                                                                                                  |
+| `emptyDescription`      | `string \| null`               | `null`                      | пояснение под заголовком заглушки                                                                                                                                         |
+| `emptyTemplate`         | `TemplateRef \| null`          | `null`                      | своя заглушка целиком вместо `rt-empty-state`; значок, заголовок и пояснение тогда не читаются                                                                            |
+
+Заголовок заглушки по умолчанию — подпись кита `uiEmptyTitle` («No data»). Приложение на другом языке добавляет `rtKit.uiEmptyTitle` в свой словарь, иначе виден английский текст.
 
 ## Выходы
 

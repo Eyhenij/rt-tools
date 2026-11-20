@@ -11,6 +11,7 @@
 
         .rt-card {
             --rt-card-radius: var(--rt-radius-xl);
+            --rt-card-border-width: var(--rt-border-width-thin);
             --rt-card-shadow: var(--rt-shadow-card);
             --rt-card-shadow-hover: var(--rt-shadow-lg);
             --rt-card-focus-shadow: var(--rt-shadow-focus-ring);
@@ -22,6 +23,12 @@
             background: var(--rt-color-bg-surface);
             box-shadow: var(--rt-card-shadow);
             color: var(--rt-color-text-primary);
+
+            /* Обводка включается входом `bordered`. Граница входит в размер блока: тень остаётся
+               в `box-shadow`, отступ содержимого растёт на толщину линии. */
+            &--bordered {
+                border: var(--rt-card-border-width) solid var(--rt-color-border-default);
+            }
 
             &--clickable {
                 cursor: pointer;
@@ -40,10 +47,18 @@
                 }
             }
 
-            /* Место над названием: знак, картинка или иконка. Пустое места не занимает. */
+            /* Место над названием: знак, картинка или иконка слева, тег справа по центру высоты.
+               Пустое места не занимает. */
             &__media {
                 display: flex;
+                align-items: center;
+                gap: var(--rt-space-md);
                 margin-block-end: var(--rt-space-md);
+
+                /* Тег без знака тоже прижат вправо. */
+                > [rtCardHeaderEnd] {
+                    margin-inline-start: auto;
+                }
 
                 &:empty {
                     display: none;

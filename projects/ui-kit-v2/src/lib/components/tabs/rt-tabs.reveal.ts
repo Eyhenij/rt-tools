@@ -1,6 +1,6 @@
 import { RtTabsFollow } from './rt-tabs.follow';
 import { IRtTabs } from './rt-tabs.model';
-import { rtTabsIntoViewTarget, rtTabsRestShown, RtTabsScroller } from './rt-tabs.scroll';
+import { rtTabsRestShown, RtTabsScroller, rtTabsTabTarget } from './rt-tabs.scroll';
 
 /** Что показу вкладки нужно от полосы: чтение состояния и приёмник видимости стрелок. */
 export interface IRtTabsRevealDeps {
@@ -50,16 +50,14 @@ export class RtTabsReveal {
      */
     public intoView(id: IRtTabs.Id): void {
         const list: HTMLElement | undefined = this.#deps.list();
-        const tab: HTMLElement | null | undefined = list?.querySelector<HTMLElement>(`[data-tabitem="${id}"]`);
+        const target: number | null | undefined =
+            list && !this.#deps.moreMode() ? rtTabsTabTarget(list, id, this.#deps.overlayArrows()) : undefined;
 
-        if (!list || !tab || this.#deps.moreMode()) {
+        if (target === undefined) {
             return;
         }
 
         const first: boolean = this.#scrolledId === null;
-        const rest: HTMLElement | null | undefined = list.parentElement?.querySelector<HTMLElement>('.rt-tabs__rest');
-        const inset: number = this.#deps.overlayArrows() ? (rest?.offsetWidth ?? 0) : 0;
-        const target: number | null = rtTabsIntoViewTarget(list, tab, inset);
         this.#scrolledId = id;
 
         this.#deps.scroller.place(target, first);

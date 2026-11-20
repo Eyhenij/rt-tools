@@ -30,6 +30,7 @@ import { debounceTime, fromEvent } from 'rxjs';
 
 import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 
+import { RtEmptyStateComponent } from '@rt-tools/ui-kit-v2/empty-state';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtTabDirective } from './rt-tab.directive';
@@ -88,6 +89,7 @@ const BEM_BLOCK: string = 'rt-tabs';
         NgTemplateOutlet,
 
         // standalone components / directives
+        RtEmptyStateComponent,
         RtIconComponent,
         RtTabsContextMenuComponent,
         RtTabsMoreComponent,

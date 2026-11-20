@@ -1,4 +1,5 @@
 export * from './rt-aside.component';
+export * from './rt-aside-empty.directive';
 export * from './rt-aside.service';
 export * from './rt-aside-ref';
 export * from './rt-aside.tokens';
