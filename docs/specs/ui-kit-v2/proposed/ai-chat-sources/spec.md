@@ -53,7 +53,7 @@ opens it.
 
 - **The title, the detail and the address are trimmed; the list draws, the event carries and the copy writes the trimmed text.** A `detail` or a `url` that is not a string, or is empty after trimming, is absent.
 
-- **An `icon` that is not a non-empty string, or a name the kit icon set does not hold, is the kit icon `file`; the name is compared as given, without trimming or a change of case.** The model writes the name, so the block checks it against the kit set and never asks for a drawing by a foreign name.
+- **An `icon` that is not a non-empty string, or a name the kit icon set does not hold, is the kit icon `file`; the name is trimmed like the other texts and is not changed in case.** The model writes the name, so the block checks it against the kit set and never asks for a drawing by a foreign name.
 
 - **The count in the header is the count of sources left after the dropping.**
 

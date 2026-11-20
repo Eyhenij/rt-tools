@@ -3,10 +3,10 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 из 5 — Данные блока: мягкая функция и схема
+- **Stage:** 2 из 5 — Макет и слово владельца (этап 1 закрыт: 9 тестов данных и схемы, 108 в утилитах, зелёные)
 - **Done:** задача взята (исполнитель `rt-tools-dev`, карточка в «In progress», ветка `RT-3340-ai-chat-sources-block` от ветки RT-3339, цепочка, PR #3447). Разведка сделана, `grill.md` записан, договорённость написана `spec-writer` (46 правил, сценарии SC-UKV-1541…1559) и ждёт `spec-critic`, план записан.
-- **Next step:** этап 1, шаг 1 — функция данных блока `sources-data.ts`; ответ `spec-critic` вносится в договорённость до кода.
-- **Uncommitted:** договорённость, план, прогресс
+- **Next step:** этап 2, шаг 1 — прочесть копию кита во втором файле Figma: заголовок панели раскрытия, значок, стили текста; затем нарисовать кадр блока из экземпляров.
+- **Uncommitted:** нет после коммита этапа 1
 - **Waiting for the owner:** нет
 - **PR:** не открыт; база — `RT-3339-ai-chat-link-block` (PR #3447 ждёт слияния в ветку эпика)
 
@@ -14,10 +14,10 @@
 
 - `[x]` done · `[>]` going on right now · `[ ]` not begun
 
-- [>] 1.1 Write the lenient data function of a sources block in `sources-data.ts` next to `link-data.ts`: `items` as a list, a source with a trimmed title, a detail, an icon with `file` by default and an address, a source without a title dropped.
-- [ ] 1.2 Write the JSON schema of the block in `sources.schema.ts`, export both from the util barrel and add the schema to `OWN_SCHEMAS` of the section schema.
-- [ ] 1.3 Write the specs of the data function and the schema with the scenario numbers of the agreement: SC-UKV-1548, 1549, 1550, 1551, 1553.
-- [ ] 2.1 Read the kit copy in the second file for the components the block takes: the expansion panel header, the icon, the text styles.
+- [x] 1.1 Write the lenient data function of a sources block in `sources-data.ts` next to `link-data.ts`: `items` as a list, a source with a trimmed title, a detail, an icon with `file` by default and an address, a source without a title dropped.
+- [x] 1.2 Write the JSON schema of the block in `sources.schema.ts`, export both from the util barrel and add the schema to `OWN_SCHEMAS` of the section schema.
+- [x] 1.3 Write the specs of the data function and the schema with the scenario numbers of the agreement: SC-UKV-1548, 1549, 1550, 1551, 1553.
+- [>] 2.1 Read the kit copy in the second file for the components the block takes: the expansion panel header, the icon, the text styles.
 - [ ] 2.2 Draw the frame of the sources block from kit instances: one and five sources, collapsed and expanded, a pressable and a plain source, a long title, at 328, 386 and 640, and dark at 328.
 - [ ] 2.3 Measure the frames by node coordinates and show them to the owner.
 - [ ] 2.4 Write the owner's word into `approvals.md` and add the rules of the drawn values to the agreement.
