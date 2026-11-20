@@ -77,3 +77,30 @@ RT-3399 · PR #<номер> · 20 ноября 2026
 - Четыре прежних эталона сменились по одобренным правкам: «Ещё» вкладок на телефоне — шторкой,
   кадр 768 отборов шапки — без шторки (шире телефона она закрывается, панель показывает своя
   история), рабочий стол при видимом списке — без «назад».
+
+## Одобрения владельца
+
+- **Макет:** «это ок» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=6068-811 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=6068-895 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=6068-1250
+- **Макет:** «макеты ок» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8293-2474 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8292-1058 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8292-1122 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8292-1522 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8292-1756 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8292-2360 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8292-2593 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8293-3667 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8293-3691
+- **Макет:** «Одобряю» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8310-652 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8310-769 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8310-837 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8310-1013 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8310-2735 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8310-3067 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8310-17232 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8310-17301 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8310-17374
+- **Макет:** «Б — перенос» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8371-1292
+- **Макет:** «Одобряю» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8405-752
+- **Витрина:** «Одобряю» — http://localhost:6017/?path=/story/molecules-forms-selectsheet--sheet , http://localhost:6017/?path=/story/molecules-forms-multiselectsheet--toggles-sheet , http://localhost:6017/?path=/story/molecules-navigation-menusheet--sheet , http://localhost:6017/?path=/story/molecules-navigation-pageheadersheet--user-menu-sheet , http://localhost:6017/?path=/story/molecules-forms-daterangepanel--sheet , http://localhost:6017/?path=/story/organisms-table-tablesettingspanel--playground
+- **Совпадение:** 21 из 21 чисел
+- **Макет:** «outline/calendar-2» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8423-1981
+- **Макет:** «Одобряю» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8423-1981 (маска `--.--.----` в пустом поле даты, периода и даты со временем)
+- **Макет:** «Одобряю все» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8437-2659 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8437-5765 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8437-9117 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8437-4466 (поверхность панели фильтров, одна рамка фокуса, рабочий стол без «назад» при видимом списке, панель даты и периода по краю поля)
+- **Совпадение:** 29 из 29 чисел
+- **Витрина:** «Одобряю витрину» — http://localhost:6017/?path=/story/organisms-chat-threadlistsheet--sheet-off , http://localhost:6017/?path=/story/molecules-forms-daterange--playground , http://localhost:6017/?path=/story/molecules-forms-datepicker--playground , http://localhost:6017/?path=/story/organisms-workspace-breakpoint--tablet-columns , http://localhost:6017/?path=/story/molecules-navigation-tabs--playground
+- **Макет:** «Одобряю макет» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8449-1560 (постоянный текст до и после значения в `rt-input`)
+- **Совпадение:** 23 из 23 чисел
+- **Витрина:** «Approve showcase» — http://localhost:6017/?path=/story/molecules-forms-fieldextras--affixes
+- **Макет:** «Одобряю макет» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8477-2372 (подсказка у подписи поля — подсказка кита)
+- **Макет:** «Одобряю макет» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8477-2372 (кадр поправлен под подсказку кита: ширина 256, от края окна 16)
+- **Совпадение:** 19 из 19 чисел
+- **Витрина:** «Одобряю витрину» — http://localhost:6017/?path=/story/molecules-forms-field--anatomy
+- **Макет:** «Одобряю макеты» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8497-17962 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8499-16968 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8495-16640 (шторка из шторки подменяет её и возвращает при закрытии; отборы шапки шире 480 — панелью у кнопки)
+- **Совпадение:** 23 из 23 чисел (панель отборов, 8495:16640); 45 из 45 чисел (шторка списка, 8497:17962)
+- **Витрина:** «одобряю если матчится с макетами» — http://localhost:6017/?path=/story/molecules-navigation-pageheadervertical--narrow-filters-panel , http://localhost:6017/?path=/story/molecules-navigation-pageheadervertical--phone-filter-select
+- **Совпадение:** 14 из 14 чисел (поиск мультиселекта в шторке, 6068:1250)
+- **Витрина:** «Одобряю витрину» — http://localhost:6017/?path=/story/molecules-forms-multiselectsheet--sheet
