@@ -45,12 +45,17 @@ None. The card names the condition and the sign.
 
 ## Decisions
 
-- **The lag is measured, not excused.** The refusal is a consequence of the lag: production is 274
-  commits behind, and the host cannot build a diff of 1278 files. A note alone would let the audit
-  end green in the very state the line was written for. The same request with a page of one commit
-  answers with the number in 2,4 seconds — measured on 19.11 against the live host, a read. The
-  audit asks so. The role `goal-critic` showed the cause on the first draft of the plan, which
-  only printed a note.
+- **The lag is measured, not excused.** The refusal comes from building the diff: production is
+  behind by hundreds of commits, and the host builds the diff of the whole for the REST comparison.
+  A note alone would let the audit end green in the very state the line was written for. The first
+  draft asked the REST comparison with a page of one commit; on 21.11 that request still returned
+  300 files, so it builds the same diff (both roles measured it). The GraphQL comparison
+  `ref.compare(headRef).behindBy` counts commits and builds no diff: 487 in 2,2 seconds on 21.11.
+  The audit asks so.
+- **The catch is narrow and inside the measure of the lag.** The refusal 422 arrives with the words
+  «Server Error», which the reader of the host already retries; a catch by that sign would send any
+  500 into the note. Caught are only 422 and «diff is taking too long». The state of the last
+  rollout is asked outside the catch, so its line stays.
 - **A comparison the host still refuses is a note, not a divergence.** The note carries the commit
   and the day of the last rollout and the words of the host. Only the refusal «the host could not»
   is caught; no rights and a commit that is gone break the audit as before, and so does a failure
