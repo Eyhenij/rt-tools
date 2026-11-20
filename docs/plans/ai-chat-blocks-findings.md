@@ -178,6 +178,27 @@ The rules review after the PR (#3429):
   run at step 11, before the set. **Address:** names of this tree — the pattern
   `task-delivery-loop-run`.
 
+## RT-3339 — the link block of the chat answer
+
+- **The first «308 of 308» match was not a match:** one script filled both sides. The real match
+  from two independent readings found a code defect and four frame divergences. Proposed: the
+  pattern `mockups-measure` and the rule `kit-approval` say that the frame side comes from the
+  layers of the file and the showcase side from computed styles, read apart. **Address:** names of
+  this tree — the rule `kit-approval`.
+- **Dark-theme contrast of the danger colour:** the tag reads 2.94 : 1 and the reason line 3.16 : 1.
+  The kit has one danger value for both themes. A task of the dark status colours does not exist;
+  the owner decides whether to file it.
+- **The mockup was corrected after approval:** line heights 120% and 135% by the kit steps, and the
+  colour of the tag icon. The owner accepts the corrected frame.
+- **The `Tag` set in the second kit file keeps its own icon colour, not the label colour.** A defect
+  of the copy; the card frame overrides it in its instances.
+- **The sign of the milestone G2 «on the published version» has no check before the release.**
+  Proposed: replace it by a check of the packed package — `RT_AI_CHAT_LINK_SCHEMA`, `rtLinkData`
+  and `linkOpen` stand in the types. **Address:** names of this tree — the epic plan.
+- **The free scenario number came from the local branches only.** `tools/spec-next-id.mjs` does not
+  call `git fetch`. Proposed: the tool fetches first or says how stale its answer is. **Address:**
+  names of this tree.
+
 ## Left unresolved
 
 - **All findings above** — wait for the owner's decision at the end of the epic.
