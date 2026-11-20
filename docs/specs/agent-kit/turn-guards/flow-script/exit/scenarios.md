@@ -293,3 +293,12 @@ Then the case of a background task is not met, and the turn is held
 And a hosting that does not answer about the PR does not hold the wait
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
+
+### SC-AK-1765 — the forecast lets a waiting stop go and names the longest run
+
+Given recorded sessions that wrote and stopped: with a background task running, twice on one task, with the task over, and with a task started an hour before the stop
+When the forecast replays them
+Then the first stop is released, and the second on the same task, the stop after the end and the stop past the bound are held
+And the line names the longest run of held stops in a row, which a word of the owner and a released stop break
+
+Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.

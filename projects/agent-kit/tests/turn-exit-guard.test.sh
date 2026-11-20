@@ -208,6 +208,24 @@ expect_stop "end: SC-AK-1429 — слово остановки отпускае�
 expect_stop "end: SC-AK-1432 — сессия без записи отпускает ход через хук" \
     "$(input_stop "$(transcript "$(say 'расскажи, что в ветке')" "$(reply)")")" PASS
 
+# Фоновая задача сессии: запуск с ответом, который несёт номер задачи и время записи.
+bg_run() {
+    jq -c -n '{type:"assistant",message:{content:[{type:"tool_use",id:"bg1",name:"Bash",input:{command:"pnpm test",run_in_background:true}}]}}'
+}
+bg_started() {
+    jq -c -n --arg t "$(node -e "console.log(new Date(Date.now() - $1 * 60000).toISOString())")" \
+        '{type:"user",timestamp:$t,toolUseResult:{backgroundTaskId:"b1"},message:{content:[{type:"tool_result",tool_use_id:"bg1",content:"Command running in background with ID: b1"}]}}'
+}
+bg_over() {
+    jq -c -n '{type:"queue-operation",operation:"enqueue",content:"<task-notification>\n<task-id>b1</task-id>\n<tool-use-id>bg1</tool-use-id>\n<status>completed</status>\n</task-notification>"}'
+}
+expect_stop "end: SC-AK-1761 — фоновая задача идёт — ход отпущен через хук" \
+    "$(input_stop "$(transcript "$(say 'делай')" "$(edited)" "$(bg_run)" "$(bg_started 2)")")" PASS
+expect_stop "end: SC-AK-1761 — задача кончилась — ход держится через хук" \
+    "$(input_stop "$(transcript "$(say 'делай')" "$(edited)" "$(bg_run)" "$(bg_started 2)" "$(bg_over)")")" BLOCK
+expect_stop "end: SC-AK-1762 — задача старше границы — ход держится через хук" \
+    "$(input_stop "$(transcript "$(say 'делай')" "$(edited)" "$(bg_run)" "$(bg_started 25)")")" BLOCK
+
 JOURNAL="$REPO/.git/rt-kit/turn-exit.log"
 BROKEN="$TURNS/broken-engine.mjs"
 printf 'process.exit(3);\n' > "$BROKEN"

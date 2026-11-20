@@ -44,6 +44,7 @@ not by a person.
 - **A wait releases nothing once the work is handed over: the state whose action sends work to the background goes on by itself.**
 - **A stop made while a background task of the session runs names no owner's menu.**
 - **The session record is read by pieces, so a record longer than one string of the runtime does not fail the engine.**
+- **The forecast judges a background task by the time of the stop it replays and names the longest run of held stops in a row; a released stop and a word of the owner break a run.**
 - **When another check refused the same step twice for the same reason, or the executor stopped again with no call after a refusal, the one move is the owner's menu.**
 - **The menu of a refusal carries exactly the options of the description: «отложить RT-N» with the task number, «сделаю сам» and «стоп».**
 - **The owner's choice is carried out: a deferral marks the task «отложено», «сделаю сам» marks the owner's step, and the next unblocked task is taken; «стоп» releases the turn.**
@@ -149,3 +150,4 @@ None.
   the options of git, and a stop word followed by an order of work holds the turn.
 - 2026-11-20 — a turn that waits for a background task of its own session is released, once per
   task and for twenty minutes; such a stop names no owner's menu. The record is read by pieces.
+  The forecast over 14–18.11 holds 156 stops where it held 383, and its longest run is 8.
