@@ -43,7 +43,7 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     aiLinkOpen: 'Открыть',
     aiLinkOpened: 'Открыта',
     aiLinkOpening: 'Открывается',
-    aiLinkOpenNewTab: 'Открыть в новой вкладке',
+    aiLinkOpenNewTab: 'В новой вкладке',
     aiNewThread: 'Новая беседа',
     aiNoThreads: 'Бесед пока нет',
     aiPromptEffortAria: 'Усилие',

@@ -9,7 +9,8 @@
 - **Stage 2, step 1 is done.** The block is in the chat model and in the feed logic; the copy line is written. `jest …/blocks/rt-ai-chat-blocks.link` gave 5 tests passed, the blocks folder 85 before it.
 - **Stage 2 is done on 20.11.2026.** The card `rt-ai-chat-link` is written, the press reaches the chat output `linkOpen` with the message id, the labels are in both sets. The tag has the input `iconSpin` and the gap 4 at `sm`. The link schema stands among the section's own schemas.
 - **Stage 2, the numbers.** `jest` over the chat, the tag, util and the labels gave 29 suites and 279 tests passed; the kit `typecheck` and `verify` exited 0.
-- **Next step:** stage 3, step 1 — the stories of the block.
+- **Stage 3, steps 1–4 are done.** Eleven stories of the block and its overview page are written; the chat overview names the block and `linkOpen`. In the showcase on 6007 every story passed its `play` steps. The cards at 328 measured 127, 127, 149 and 144 high with 8 between them, as the mockup draws.
+- **Next step:** stage 3, step 5 — the gap 4 in the `sm` variants of the Figma `Tag`.
 - **Uncommitted:** no
 - **PR:** not open yet; the base is `RT-3346-ai-chat-blocks` — RT-3338 is merged into it (#3429)
 
@@ -32,11 +33,11 @@
 
 ### 3. The showcase and the match with the mockup
 
-- [ ] 1. Write the stories of the block by the agreement's table «Screens and states»: pending, opened, failed, failed without a reason, no state, long title, no section, long button labels, 328, 386, 640, dark at 328, right to left, invalid. ← now
-- [ ] 2. Write a chat story of the whole loop in the narrow panel and in the full-screen mode: a press logs `linkOpen` with `{ messageId, url, newTab }`, sets `pending`, then `opened`, and on the second card `failed` with a reason; put the handler code into the block `Overview.mdx`.
-- [ ] 3. Write the play steps that measure by `getBoundingClientRect` the icon box, the row gaps, the button row on one top, the wrapped buttons, the two-line title, the mirrored order and no text past the card, and that press a button and wait for the status to change: SC-UKV-1498, 1503, 1504.
-- [ ] 4. Write the `Overview.mdx` of the block and name the block and `linkOpen` in the chat Overview.
-- [ ] 5. Set the gap 4 in the `sm` variants of the Figma `Tag` and lift the instance overrides of the mockup 8339-452.
+- [x] 1. Write the stories of the block by the agreement's table «Screens and states»: pending, opened, failed, failed without a reason, no state, long title, no section, long button labels, 328, 386, 640, dark at 328, right to left, invalid.
+- [x] 2. Write a chat story of the whole loop in the narrow panel and in the full-screen mode: a press logs `linkOpen` with `{ messageId, url, newTab }`, sets `pending`, then `opened`, and on the second card `failed` with a reason; put the handler code into the block `Overview.mdx`.
+- [x] 3. Write the play steps that measure by `getBoundingClientRect` the icon box, the row gaps, the button row on one top, the wrapped buttons, the two-line title, the mirrored order and no text past the card, and that press a button and wait for the status to change: SC-UKV-1498, 1503, 1504.
+- [x] 4. Write the `Overview.mdx` of the block and name the block and `linkOpen` in the chat Overview.
+- [ ] 5. Set the gap 4 in the `sm` variants of the Figma `Tag` and lift the instance overrides of the mockup 8339-452. ← now
 - [ ] 6. Look at every story live, take the references of the block and anew those of the tag whose gap changed, sweep all the stories.
 - [ ] 7. Match the stories with the approved mockup by numbers into the table «mockup / showcase» in the progress, with the contrast of the dark reason and tag, show the showcase to the owner and write their word into `approvals.md`; SC-UKV-1500 and 1505 are held by this match.
 
