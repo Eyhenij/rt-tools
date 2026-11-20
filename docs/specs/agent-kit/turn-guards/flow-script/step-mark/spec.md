@@ -67,7 +67,8 @@ prints a line per fixture.
 - **The replacement lines of a step come to that progress from the last one.** A replacement
   written in the commit that marks its step done would otherwise be lost: the progress before that
   commit lacks it. The replacement lines of the chosen version are swapped for those of the last
-  progress, so a replacement the owner took away stays away, and of two lines for one step the later wins.
+  progress, so a replacement the owner took away stays away. Of two lines for one step the later wins,
+  when a step is marked and when it is rerun alike.
 - **A check that changes a tracked file does not match.** A check measures; one that edits the tree
   could make itself green.
 - **A check that fails on the network does not match, and the refusal names the network as the cause.**

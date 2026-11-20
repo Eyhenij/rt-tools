@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/flow-step.mjs · 0bd6331eec4a · правится надстройкой, не здесь
+// rt-kit v0.37.0 · checks/flow-step.mjs · 0abcd0de5cb1 · правится надстройкой, не здесь
 /**
  * A step of the plan measured by its check — the engine command `step`.
  *
@@ -120,15 +120,16 @@ export function changedSincePlan(git, plan, read = readFile) {
 /**
  * The check of a step after the decisions of the progress. A replacement line reaches the progress
  * only through the owner's window on the edit (the guard answers `ask`), so the line itself is the
- * owner's word: no quote is looked for. A quote of the older form is read and ignored.
+ * owner's word: no quote is looked for. A quote of the older form is read and ignored. Of two lines
+ * for one step the later wins, here and in the rerun alike.
  */
 export function replacedCheck(progressText, number, step) {
+    let last = null;
     for (const line of (progressText ?? '').split('\n')) {
         const m = line.match(REPLACEMENT);
-        if (!m || m[1] !== number) continue;
-        return { command: m[2], expected: m[3], replaced: true };
+        if (m && m[1] === number) last = { command: m[2], expected: m[3], replaced: true };
     }
-    return { command: step.command, expected: step.expected, replaced: false };
+    return last ?? { command: step.command, expected: step.expected, replaced: false };
 }
 
 /**
@@ -338,8 +339,8 @@ export async function runBeforePull(sources, model) {
         for (const number of numbers) {
             const done = new RegExp(`^\\s*-\\s+\\[x\\]\\s+${number.replace('.', '\\.')}\\s`, 'm');
             const first = versions.findIndex((text) => text !== null && done.test(text));
-            const before = (first > 0 && versions[first - 1]) || latest;
-            const text = latest === null ? before : withReplacements(before, latest);
+            const chosen = (first > 0 && versions[first - 1]) || latest;
+            const text = latest === null || chosen === latest ? chosen : withReplacements(chosen, latest);
             groups.set(text, [...(groups.get(text) ?? []), number]);
         }
         const results = [];

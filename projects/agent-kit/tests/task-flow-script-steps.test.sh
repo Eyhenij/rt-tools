@@ -137,6 +137,12 @@ printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [>
 tf_step 1.2 >/dev/null
 report "step: SC-AK-1729 — несовпавший перемер снял метку ветки" "$(test -e "$TF_MARK/1.2.json" && echo есть || echo нет)" 'нет'
 
+# SC-AK-1794 — из двух замен одного шага при отметке побеждает поздняя
+printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [>] 1.2 Не совпасть\n\n## Decisions along the way\n\n- **Check of step 1.2 replaced:** `echo три` → `три`\n- **Check of step 1.2 replaced:** `echo два` → `три`\n' > "$TF_PROGRESS"
+tf_step 1.2 >/dev/null
+report "step: SC-AK-1794 — две замены шага — отметку решает поздняя" "$(grep -c '^- \[x\] 1.2' "$TF_PROGRESS")" 0
+printf '# Ход работы\n\n## Шаги\n\n- [x] 1.1 Совпасть\n- [>] 1.2 Не совпасть\n' > "$TF_PROGRESS"
+
 # SC-AK-1506 — форма ожидаемого, добавленная в описание, принимается step без правки движка
 mkdir -p "$TF_DIR/kit"
 cp -R "$TESTS/../assets/task-flow" "$TF_DIR/kit/task-flow"
@@ -446,6 +452,11 @@ got="$(tf_wr_run wr-gone "$(printf "$WR_HEAD$WR_ONE")" "$(printf "$WR_HEAD")")"
 report "pr: SC-AK-1794 — снятая замена не возвращается — шаг не совпал" "$(printf '%s' "$got" | tr '\n' ' ' | grep -c 'matched 0 code=1')" 1
 got="$(tf_wr_run wr-two "$(printf "$WR_HEAD- **Check of step 1.1 replaced:** \`echo 7\` → = 1\n$WR_ONE")")"
 report "pr: SC-AK-1794 — две замены одного шага — берётся поздняя" "$(printf '%s' "$got" | tr '\n' ' ' | grep -c 'matched 1 code=0')" 1
+WR_OPEN="$(printf '# Ход работы\n\n## Шаги\n\n- [>] 1.1 Шаг\n\n## Decisions along the way\n\n')"
+got="$(tf_wr_run wr-early-gone "$(printf '%s%s' "$WR_OPEN" "$(printf "$WR_ONE")")" "$(printf "$WR_HEAD")")"
+report "pr: SC-AK-1794 — замена ранней версии, снятая к отметке, не возвращается" "$(printf '%s' "$got" | tr '\n' ' ' | grep -c 'matched 0 code=1')" 1
+got="$(tf_wr_run wr-early-later "$(printf '%s- **Check of step 1.1 replaced:** `echo 7` → = 1\n' "$WR_OPEN")" "$(printf "$WR_HEAD$WR_ONE")")"
+report "pr: SC-AK-1794 — замена ранней версии заменена поздней другого коммита" "$(printf '%s' "$got" | tr '\n' ' ' | grep -c 'matched 1 code=0')" 1
 
 # SC-AK-1740 — перемер идёт на node, закреплённом в .nvmrc дерева
 TF_NVM="$TF_DIR/nvm"

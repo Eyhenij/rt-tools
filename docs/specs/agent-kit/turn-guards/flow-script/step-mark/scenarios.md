@@ -318,6 +318,8 @@ When the final rerun runs
 Then the step matches by the replaced check
 And a replacement taken away by a later commit is not brought back
 And of two replacement lines for one step the later one is taken
+And a replacement of an earlier version, taken away by the commit that marks the step, is not brought back
+And the later one of two replacement lines also decides the mark of the step
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
