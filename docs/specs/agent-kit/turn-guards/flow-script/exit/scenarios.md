@@ -250,7 +250,7 @@ And an agent a message resumed is a start again, and its notice «is waiting on 
 And an entry of a subagent gives no event, and a meta entry of a hook ends no turn
 And a notice that names several tasks ends each of them
 
-Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-script-session.test.sh`.
 
 ### SC-AK-1760 — the session record is read by pieces
 
@@ -259,7 +259,7 @@ When the lines are read by pieces of seven bytes and by one piece larger than th
 Then both give the same lines, and a line break at the end adds no line
 And the source of the records reads its entries by the same reader
 
-Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
+Covered: `projects/agent-kit/tests/task-flow-script-session.test.sh`.
 
 ### SC-AK-1761 — a stop with a background task of the session running is released
 
