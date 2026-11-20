@@ -5,11 +5,11 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 4 — the showcase and the match
-- **Done:** этапы 1–3 в коммитах 97fa6dbf1 и 3655dfc2e, первый круг ревью — 9f5eab0b8, второй круг исправлен; сверка 21 из 21, наложения строки, ряда и четырёх состояний
-- **Next step:** слово владельца о витрине (3.3), о цвете иконок в макете, о стороне подсказки и о плане
-- **Uncommitted:** `plan.md` — до слова владельца
-- **Waiting for the owner:** одобрение плана и витрины
+- **Stage:** 4 of 4 — review rounds and closing
+- **Done:** этапы 1–3 в коммитах 97fa6dbf1 и 3655dfc2e, первый круг ревью — 9f5eab0b8, второй — 52c604e3f; владелец одобрил витрину и план, цвет иконок ряда оставлен цветом текста, подсказка в макете переносится над кнопку
+- **Next step:** подсказка в макете над кнопкой, затем 4.3 — слияние договорённости в спеку `ai-chat`, привязки, тест `ariaDescribedby`, разбор папки
+- **Uncommitted:** нет
+- **Waiting for the owner:** нет
 - **PR:** not open yet; PR RT-3340 #3453 — черновик в `main`, ветка этой задачи стоит на нём
 
 ## Steps
@@ -18,7 +18,7 @@ Rewritten by every session, not appended to.
 - [x] 0.2 разбор в grill.md
 - [x] 0.3 договорённость
 - [x] 0.4 макет в Figma и слово владельца
-- [ ] 0.5 слово владельца о плане — план принят допущением, не закоммичен
+- [x] 0.5 слово владельца о плане — «Одобряю план»
 - [x] 1.1 the field `interrupted` on `IRtAiChat.AssistantMessage` and the label key in the English and the showcase Russian sets
 - [x] 1.2 the row in the answer template, the input `sending` and the output to the chat
 - [x] 1.3 the output `askAgain` of `rt-ai-chat` and the binding of `sending`
@@ -26,7 +26,11 @@ Rewritten by every session, not appended to.
 - [x] 2.2 the spec next to the chat with SC-UKV-1563…1575, 1578 and 1579 in the titles
 - [x] 3.1 the stories of a partial and an empty interrupted answer, the widths 240…640, right to left, dark, with play steps SC-UKV-1576, 1577, 1580
 - [x] 3.2 the match of the showcase with the mockup by numbers and by overlay, hover and focus included, the line «Совпадение» in `approvals.md`
-- [>] 3.3 the owner's approval of the showcase, the line «Витрина» in `approvals.md`
+- [x] 3.3 the owner's approval of the showcase, the line «Витрина» in `approvals.md`
+- [x] 4.1 review round 1 and its fixes
+- [x] 4.2 review round 2 and its fixes
+- [>] 4.3 the agreement merged into the domain spec, the texts brought up to date, the folder taken apart
+- [ ] 4.4 the push set, the push and the PR into the RT-3340 branch
 
 Этап 3: семь историй Organisms/Chat/AiChatInterrupted, шаги `play` шести из них зелёные в
 витрине (у Presets шага нет). Живая проверка нашла три промаха историй, все исправлены. Ящик 30rem
