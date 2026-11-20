@@ -130,3 +130,11 @@ When the place is squeezed to 343 px for a moment and then let go
 Then the folded field is 528 px wide, the parent grows by it, and the group stands as buttons again
 
 Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.
+
+### SC-UKV-1640 — a small group folds into a medium field
+
+Given a small, a medium and a large toggle group that do not fit
+When each folds
+Then the small and the medium one stand as a medium field, and the large one as a large field
+
+Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.

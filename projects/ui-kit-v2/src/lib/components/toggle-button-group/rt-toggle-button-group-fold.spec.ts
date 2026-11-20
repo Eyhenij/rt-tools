@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { createRtFixture } from '../../../testing/rt-kit-testing';
 import { BreakpointsService } from '../../platform';
-import { rtToggleGroupFolds, rtToggleGroupNextFolded } from './rt-toggle-button-group-fold.logic';
+import { rtToggleGroupFoldedSize, rtToggleGroupFolds, rtToggleGroupNextFolded } from './rt-toggle-button-group-fold.logic';
 import { IRtToggleButtonGroup } from './rt-toggle-button-group.model';
 import { RtToggleButtonGroupComponent } from './rt-toggle-button-group.component';
 
@@ -148,6 +148,19 @@ describe('RtToggleButtonGroupComponent — сворачивание', (): void =
         // Выключенное сворачивание и другой раскладке группа разворачивается всегда.
         expect(rtToggleGroupNextFolded(520, 400, 'row', false, true, 520)).toBe(false);
         expect(rtToggleGroupNextFolded(520, 400, 'wrap', true, true, 520)).toBe(false);
+    });
+
+    it('SC-UKV-1640 — малая группа сворачивается в среднее поле, средняя и большая держат свою высоту', (): void => {
+        expect(rtToggleGroupFoldedSize('sm')).toBe('md');
+        expect(rtToggleGroupFoldedSize('md')).toBe('md');
+        expect(rtToggleGroupFoldedSize('lg')).toBe('lg');
+
+        stubWidths(520, 343);
+        const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ value: 'week' });
+
+        // У среднего поля своего класса нет: оно — ни малое, ни большое.
+        expect(folded(fixture)?.classList).not.toContain('rt-select--size--sm');
+        expect(folded(fixture)?.classList).not.toContain('rt-select--size--lg');
     });
 
     it('SC-UKV-1621 — размер, который изменило само сворачивание, группу не разворачивает', (): void => {

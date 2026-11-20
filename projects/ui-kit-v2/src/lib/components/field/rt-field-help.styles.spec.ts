@@ -28,6 +28,8 @@ describe('значок подсказки у подписи поля', (): void 
         expect(help).toContain('align-self: stretch');
         expect(help).toContain('position: relative');
         expect(help).not.toContain('block-size');
+        // Ширина — шаг значка, а не его ручка: ручка на поле не объявлена, и кнопка выходила нулевой.
+        expect(help).toContain('inline-size: var(--rt-size-4)');
     });
 
     it('SC-UKV-1636 — значок стоит в кнопке абсолютно, по середине строки', (): void => {

@@ -9,11 +9,12 @@
 
         // Ширину задают кнопки: длинная подпись раздвигает окно, а заголовок и текст в ширину окна не
         // входят и переносятся по ней. Уже 280px окно не бывает, шире окна браузера — тоже: там кнопки
-        // встают в две строки.
+        // встают в две строки. 280 — внешняя ширина, с отступами и рамкой, как в макете: ряд кнопок 246.
         display: flex;
         width: max-content;
         min-width: 280px;
         max-width: calc(100vw - 2 * var(--rt-space-md));
+        box-sizing: border-box;
         flex-direction: column;
         padding: var(--rt-space-md);
         border: var(--rt-confirm-popover-border-width) solid var(--rt-color-border-subtle);
@@ -33,6 +34,7 @@
             color: var(--rt-color-text-primary);
             font-size: var(--rt-text-sm);
             font-weight: var(--rt-font-weight-semibold);
+            line-height: var(--rt-leading-normal);
         }
 
         &__message {

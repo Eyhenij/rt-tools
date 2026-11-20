@@ -33,7 +33,7 @@ import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { IRtSelect, RtSelectComponent } from '@rt-tools/ui-kit-v2/select';
 import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { IRtToggleButtonGroup } from './rt-toggle-button-group.model';
-import { RT_TOGGLE_GROUP_UNFOLD_MARGIN_PX, rtToggleGroupNextFolded } from './rt-toggle-button-group-fold.logic';
+import { RT_TOGGLE_GROUP_UNFOLD_MARGIN_PX, rtToggleGroupFoldedSize, rtToggleGroupNextFolded } from './rt-toggle-button-group-fold.logic';
 import { RtToggleButtonOptionDirective } from './rt-toggle-button-option.directive';
 
 const BEM_BLOCK: string = 'rt-toggle-button-group';
@@ -179,6 +179,11 @@ export class RtToggleButtonGroupComponent<T = string> implements ControlValueAcc
         const natural: number | null = this.#naturalAtFold();
         return natural === null ? null : `${natural + RT_TOGGLE_GROUP_UNFOLD_MARGIN_PX}px`;
     });
+
+    /** Размер свёрнутого поля: не ниже среднего, как поля строки отборов рядом. */
+    protected readonly foldedSize: Signal<IRtToggleButtonGroup.Size> = computed((): IRtToggleButtonGroup.Size =>
+        rtToggleGroupFoldedSize(this.size())
+    );
 
     /** Выбранное одним значением — для свёрнутого одиночного выбора. */
     protected readonly chosenOne: Signal<T | null> = computed((): T | null => this.#single() ?? null);

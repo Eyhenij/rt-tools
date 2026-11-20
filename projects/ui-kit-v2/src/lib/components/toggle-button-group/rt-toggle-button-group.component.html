@@ -4,7 +4,7 @@
         <rt-multiselect
             qa-dataid="toggle-button-group-folded"
             [options]="foldedOptions()"
-            [size]="size()"
+            [size]="foldedSize()"
             [ariaLabel]="ariaLabel() ?? ''"
             [ngModel]="chosenMany()"
             [disabled]="isDisabled()"
@@ -14,7 +14,7 @@
         <rt-select
             qa-dataid="toggle-button-group-folded"
             [options]="foldedOptions()"
-            [size]="size()"
+            [size]="foldedSize()"
             [ariaLabel]="ariaLabel() ?? ''"
             [ngModel]="chosenOne()"
             [disabled]="isDisabled()"

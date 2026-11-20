@@ -37,3 +37,12 @@ export function rtToggleGroupNextFolded(
     }
     return place < (naturalAtFold ?? natural) + RT_TOGGLE_GROUP_UNFOLD_MARGIN_PX;
 }
+
+/**
+ * Размер свёрнутого поля по размеру группы: поле той же или ближайшей высоты, но не ниже
+ * среднего. Группа `sm` в 30 px стоит в строке отборов, где поля по 40, и в макете она
+ * сворачивается в поле `md`; `md` и `lg` сохраняют свою высоту.
+ */
+export function rtToggleGroupFoldedSize(size: IRtToggleButtonGroup.Size): IRtToggleButtonGroup.Size {
+    return size === 'sm' ? 'md' : size;
+}
