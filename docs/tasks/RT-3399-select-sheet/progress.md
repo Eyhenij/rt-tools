@@ -142,7 +142,14 @@ The owner added: «включи в задачу не прятать иконку
 
 ### 4. Showcase
 
-1. [ ] Stories of both fields at the narrow width with the sheet open and with the sheet off. —
+1. [x] Stories of both fields at the narrow width with the sheet open and with the sheet off. —
+   walked live on 6017 on 20.11 (see «Live walk» above); walked again after round one (a0292c8da):
+   all 17 `Sheet` stories open the sheet over the whole visible width (360 = 375 less the desktop
+   scrollbar CDK keeps), all `SheetOff` a panel by the trigger, no node past an edge. The real
+   threshold on an unstubbed select: 375 and 480 → sheet, 481 and 768 → panel by the field.
+   Focus stays on the select's field with the sheet open and after the backdrop close; the sheet is
+   gone within 0.7 s. The locked handle: the kit look opacity 0.5; material colour at 38 % alpha
+   against the others' rgb(103,103,103). —
    begun with the multiselect with toggles: stories `Toggles` and `TogglesSheet` by the mockups
    8293:3667 and 8293:3691; the select got `Sheet` and `SheetOff` at 375 by the mockup 6068:811
    (67cc8a6ca); the toggle group gets `FoldedOne`, `FoldedMany`, `Fits` and `FoldedOneOpen` by the
