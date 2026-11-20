@@ -142,5 +142,13 @@ sheet of its own over it).
   shadow; with the icon at 1784 of a 1926 window the panel shrank to 142 and its text ran to the
   window edge. Read as: the hint takes the kit tooltip — its look, its push into the window and
   its fallback positions — drawn on a Figma frame and approved before code.
+- **The page bar filters at the 480 boundary join** — «Сделать в этой задаче» (20.11): wider than
+  a phone the filters button opens a panel by the button, a phone keeps the sheet.
+- **A select inside the filters sheet** — «внутри ботомшита с фильтрами сами селекторы должны тоже
+  открываться ботомшит на мобилке» (20.11).
+- **Sheets replace each other** — «ботомшиты не накладываются а подменяют, при закрытии верхнего
+  показывается предыдущий» (20.11).
+- **The multiselect search joins** — «Да, в этой задаче» (20.11), the answer to whether the
+  multiselect search the approved mockup 6068:1250 draws goes into this task.
 
 ## What is left unclear
