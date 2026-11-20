@@ -88,6 +88,12 @@ export const AI_CHAT_LINK_MESSAGES: readonly IRtAiChat.Message[] = [
             { type: 'markdown', text: 'Обе страницы — в разделе отчётов:' },
             link(),
             link({ title: 'Финансы за ноябрь', section: 'Отчёты · Финансы', url: AI_CHAT_LINK_REFUSES, icon: 'chart-line' }),
+            {
+                type: 'section',
+                title: 'Ещё по теме',
+                // Адрес с пробелами по краям: событие несёт его обрезанным, и исход всё равно находит карточку.
+                blocks: [link({ title: 'Остатки на складе', section: 'Склад · Остатки', url: ' /warehouse/stock ', icon: 'box' })],
+            },
         ],
         run: { state: 'done', label: 'Answered', meta: '4 s' },
     },

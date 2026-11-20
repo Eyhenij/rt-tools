@@ -15,6 +15,14 @@ describe('RT_AI_CHAT_LINK_SCHEMA', (): void => {
         expect(validate({ title: 'Продажи', url: 42 })).toBe(false);
     });
 
+    it('SC-UKV-1497 — название и адрес из одних пробелов схема отвергает, как и блок рисует их плашкой', (): void => {
+        expect(validate({ title: '   ', url: '/reports' })).toBe(false);
+        expect(validate({ title: 'Продажи', url: ' \n\t' })).toBe(false);
+        expect(validate({ title: ' Продажи ', url: ' /reports ' })).toBe(true);
+        expect(rtLinkData({ title: '   ', url: '/reports' })).toBeNull();
+        expect(rtLinkData({ title: 'Продажи', url: ' \n\t' })).toBeNull();
+    });
+
     it('SC-UKV-1497 — в схеме нет исхода открытия и причины: их дописывает приложение', (): void => {
         const properties: unknown = Reflect.get(RT_AI_CHAT_LINK_SCHEMA, 'properties');
 

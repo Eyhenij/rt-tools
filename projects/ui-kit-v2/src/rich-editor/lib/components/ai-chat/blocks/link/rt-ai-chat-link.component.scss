@@ -117,7 +117,7 @@
                 cursor: not-allowed;
             }
 
-            &.rt-btn--outlined[aria-disabled='true'] {
+            &.rt-button--outlined[aria-disabled='true'] {
                 --rt-btn-border-color: var(--rt-color-border-default);
                 --rt-btn-border-color-hover: var(--rt-color-border-default);
             }

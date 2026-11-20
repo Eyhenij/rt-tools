@@ -4,6 +4,7 @@ import { ChangeDetectionStrategy, Component, signal, WritableSignal } from '@ang
 import { StoryPresetsComponent } from '../../../../../../../../showcase/story-presets.component';
 import { StoryRowComponent } from '../../../../../../../../showcase/story-row.component';
 import { StoryThemesComponent } from '../../../../../../../../showcase/story-themes.component';
+import { rtLinkData } from '../../../../../../../../lib/util/link-data';
 import { IRtAiChat } from '../../../../rt-ai-chat.model';
 import { RtAiChatComponent } from '../../../../rt-ai-chat.component';
 import { RtAiChatBlocksComponent } from '../../../rt-ai-chat-blocks.component';
@@ -26,13 +27,29 @@ import { TestRtAiChatLinkLongLabelsComponent } from './test-ai-chat-link-long-la
 export type TAiChatLinkMatrixPart =
     'widths' | 'states' | 'parts' | 'longLabels' | 'invalid' | 'rtl' | 'panel' | 'fullScreen' | 'presets' | 'themes';
 
+/** Исход, который приложение дописывает блоку ссылки. */
+type TOutcome = Pick<IRtAiChat.LinkBlock, 'state' | 'reason'>;
+
+function isSection(block: IRtAiChat.Block): block is IRtAiChat.SectionBlock {
+    return block.type === 'section' && Array.isArray(block.blocks);
+}
+
+/**
+ * Блок с исходом, если это карточка страницы из события. Событие несёт адрес без пробелов по
+ * краям, поэтому адрес блока читается так же, как его читает карточка, — через `rtLinkData`.
+ */
+function settled(block: IRtAiChat.NestedBlock, url: string, outcome: TOutcome): IRtAiChat.NestedBlock {
+    return block.type === 'link' && rtLinkData(block)?.url === url ? { ...block, ...outcome } : block;
+}
+
 /** Сколько длится «открытие страницы» в истории чата, мс. */
 const OPENING_MS: number = 300;
 
 /**
  * Матрицы карточки ссылки для витрины. Карточка рисуется через `rt-ai-chat-blocks` — тем же путём,
  * что в ответе. Истории панели и полного экрана рисуют весь `rt-ai-chat` и ведут круг целиком:
- * нажатие приходит событием `linkOpen`, обёртка ставит `pending`, затем `opened` или `failed`.
+ * нажатие приходит событием `linkOpen`, обёртка ставит `pending`, затем `opened` или `failed` —
+ * и карточке в секции тоже.
  *
  * В пакет не уезжает: `tsconfig.lib.json` исключает папки историй.
  */
@@ -95,14 +112,21 @@ export class TestRtAiChatLinkMatrixComponent {
         }, OPENING_MS);
     }
 
-    #setState(event: IRtAiChat.LinkOpen, outcome: Pick<IRtAiChat.LinkBlock, 'state' | 'reason'>): void {
+    #setState(event: IRtAiChat.LinkOpen, outcome: TOutcome): void {
         this.messages.update((messages: readonly IRtAiChat.Message[]): readonly IRtAiChat.Message[] =>
             messages.map((message: IRtAiChat.Message): IRtAiChat.Message =>
                 message.role === 'assistant' && message.id === event.messageId
                     ? {
                           ...message,
                           blocks: message.blocks.map((block: IRtAiChat.Block): IRtAiChat.Block =>
-                              block.type === 'link' && block.url === event.url ? { ...block, ...outcome } : block
+                              isSection(block)
+                                  ? {
+                                        ...block,
+                                        blocks: block.blocks.map((nested: IRtAiChat.NestedBlock): IRtAiChat.NestedBlock =>
+                                            settled(nested, event.url, outcome)
+                                        ),
+                                    }
+                                  : settled(block, event.url, outcome)
                           ),
                       }
                     : message

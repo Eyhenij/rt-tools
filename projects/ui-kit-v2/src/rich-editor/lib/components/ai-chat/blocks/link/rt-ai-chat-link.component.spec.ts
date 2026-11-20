@@ -34,6 +34,11 @@ function element(fixture: ComponentFixture<RtAiChatLinkComponent>, id: string): 
     return found.nativeElement as HTMLElement;
 }
 
+/** Какой рисунок набора показывает значок внутри узла. */
+function iconOf(within: Element | null): string | null {
+    return within?.querySelector('use')?.getAttribute('href') ?? null;
+}
+
 function disabled(fixture: ComponentFixture<RtAiChatLinkComponent>): (string | null)[] {
     return BUTTONS.map((id: string): string | null => element(fixture, id).getAttribute('aria-disabled'));
 }
@@ -145,6 +150,60 @@ describe('RtAiChatLinkComponent', (): void => {
         fixture.detectChanges();
 
         expect(qa(fixture, 'ai-chat-link-announcement')).toBeNull();
+    });
+
+    it('SC-UKV-1495 — другая страница на месте карточки не объявляется, даже с новым исходом', (): void => {
+        const fixture: ComponentFixture<RtAiChatLinkComponent> = setup({ state: 'pending' });
+
+        setInputs(fixture, { data: data({ url: '/reports/finance', title: 'Финансы', state: 'failed', reason: 'Нет доступа' }) });
+        fixture.detectChanges();
+
+        expect(textOf(qa(fixture, 'ai-chat-link-status'))).toBe('Failed to open');
+        expect(qa(fixture, 'ai-chat-link-announcement')).toBeNull();
+
+        setInputs(fixture, { data: data({ url: '/reports/finance', title: 'Финансы', state: 'opened' }) });
+        fixture.detectChanges();
+
+        expect(textOf(qa(fixture, 'ai-chat-link-announcement'))).toBe('Финансы: Opened');
+    });
+
+    it('SC-UKV-1495 — новая причина того же отказа объявляется заново', (): void => {
+        const fixture: ComponentFixture<RtAiChatLinkComponent> = setup({ state: 'pending' });
+
+        setInputs(fixture, { data: data({ state: 'failed', reason: 'Нет доступа' }) });
+        fixture.detectChanges();
+        setInputs(fixture, { data: data({ state: 'failed', reason: 'Сервер не ответил' }) });
+        fixture.detectChanges();
+
+        expect(textOf(qa(fixture, 'ai-chat-link-reason'))).toBe('Сервер не ответил');
+        expect(textOf(qa(fixture, 'ai-chat-link-announcement'))).toBe('Продажи за ноябрь: Failed to open. Сервер не ответил');
+    });
+
+    it('SC-UKV-1492 — причина рисуется и объявляется только при отказе, что бы ни пришло во входе', (): void => {
+        const fixture: ComponentFixture<RtAiChatLinkComponent> = setup({ state: 'pending' });
+
+        setInputs(fixture, { data: { ...data({ state: 'opened' }), reason: 'Нет доступа' } });
+        fixture.detectChanges();
+
+        expect(qa(fixture, 'ai-chat-link-reason')).toBeNull();
+        expect(textOf(qa(fixture, 'ai-chat-link-announcement'))).toBe('Продажи за ноябрь: Opened');
+    });
+
+    it('SC-UKV-1490, SC-UKV-1491, SC-UKV-1492 — у каждого исхода свой значок метки', (): void => {
+        const icons: (string | null)[] = ['pending', 'opened', 'failed'].map((state: string): string | null =>
+            iconOf(element(setup({ state }), 'ai-chat-link-status'))
+        );
+
+        expect(icons).toEqual(['#rt-icon-spinner', '#rt-icon-check', '#rt-icon-exclamation-circle']);
+    });
+
+    it('SC-UKV-1489 — значок карточки берётся по имени из набора кита, имя вне набора рисуется значком link', (): void => {
+        const names: object[] = [{ icon: 'chart-bar' }, {}, { icon: '../../secret' }, { icon: 'no-such-icon' }];
+        const drawn: (string | null)[] = names.map((raw: object): string | null =>
+            iconOf((setup(raw).nativeElement as HTMLElement).querySelector('.rt-ai-chat-link__icon-box'))
+        );
+
+        expect(drawn).toEqual(['#rt-icon-chart-bar', '#rt-icon-link', '#rt-icon-link', '#rt-icon-link']);
     });
 
     it('SC-UKV-1499 — карточка — группа с именем по названию, значок скрыт от читалки', (): void => {

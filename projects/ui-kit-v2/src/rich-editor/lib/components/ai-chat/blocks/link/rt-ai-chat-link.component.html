@@ -19,8 +19,8 @@
                     [iconSpin]="shown.spin"
                     [value]="shown.label" />
             }
-            @if (data().reason; as reason) {
-                <span rtElem="reason" qa-dataid="ai-chat-link-reason">{{ reason }}</span>
+            @if (reason(); as shownReason) {
+                <span rtElem="reason" qa-dataid="ai-chat-link-reason">{{ shownReason }}</span>
             }
         </div>
     </div>

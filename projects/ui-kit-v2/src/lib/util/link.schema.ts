@@ -10,8 +10,8 @@ export const RT_AI_CHAT_LINK_SCHEMA: Readonly<Record<string, unknown>> = {
     type: 'object',
     required: ['title', 'url'],
     properties: {
-        title: { type: 'string', minLength: 1, description: 'The title of the page.' },
-        url: { type: 'string', minLength: 1, description: 'The address the application opens.' },
+        title: { type: 'string', minLength: 1, pattern: '\\S', description: 'The title of the page.' },
+        url: { type: 'string', minLength: 1, pattern: '\\S', description: 'The address the application opens.' },
         section: { type: 'string', description: 'The menu section of the page, a ready text: «Reports · Sales».' },
         icon: { type: 'string', description: 'The name of a kit icon; link by default.' },
     },

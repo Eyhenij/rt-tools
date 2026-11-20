@@ -53,7 +53,7 @@ application opens the page.
 
 - **The title, the section, the reason and the address are trimmed; the card draws, the event carries and the copy writes the trimmed text.**
 
-- **A malformed optional part is absent, not refused.** A `section` or a `reason` that is not a non-empty string is absent. An `icon` that is not a non-empty string is the kit icon `link`; a name the kit set does not hold draws an empty icon box, since the kit does not list its set at run time.
+- **A malformed optional part is absent, not refused.** A `section` or a `reason` that is not a non-empty string is absent. An `icon` that is not a non-empty string, or a name the kit set does not hold, is the kit icon `link`. The model writes the name, so the card checks it against the kit set and never asks for a drawing by a foreign name.
 
 - **A card whose `state` is not `pending`, `opened` or `failed`, or is absent, draws no status and keeps both buttons enabled.** The model writes the block and the application writes the state: a block nobody gave a state does not claim an outcome.
 
@@ -85,7 +85,7 @@ application opens the page.
 
 - **The status is an `rt-tag` of the size `sm`, solid, with an icon before its label.** `pending` is neutral with the `spinner` icon, `opened` is success with `check`, `failed` is danger with `exclamation-circle`.
 
-- **The `pending` spinner turns, as `rt-icon` turns it, and stands still under reduced motion.**
+- **The `pending` spinner turns, as `rt-icon` turns it, and under reduced motion it turns slowly.** The kit slows every turning icon there instead of stopping it: a stopped spinner reads as a plain icon.
 
 - **The status labels are kit labels: «Opening», «Opened» and «Failed to open» by default.**
 
@@ -109,7 +109,7 @@ application opens the page.
 
 - **Under `dir="rtl"` the row and the buttons mirror; the icons are drawn as they are.**
 
-- **The reason line and the danger status in the dark theme read at 3.2 : 1, below the 4.5 : 1 of AA.** The kit has one danger value for both themes; this is known in the epic findings and is fixed by a task of the dark status colours, not here.
+- **In the dark theme the danger status reads at 2.94 : 1 and the reason line at 3.16 : 1, below the 4.5 : 1 of AA.** The kit has one danger value for both themes; this is known in the epic findings and is fixed by a task of the dark status colours, not here.
 
 ### The tag
 

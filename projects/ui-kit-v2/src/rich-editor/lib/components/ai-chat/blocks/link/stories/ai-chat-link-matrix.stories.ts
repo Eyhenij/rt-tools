@@ -237,12 +237,20 @@ export const Rtl: TStory = {
 };
 
 /** Нажимает кнопку карточки и ждёт метку исхода; отдаёт строки журнала событий. */
+/** Цвет рамки кнопки «Открыть»: в ожидании она спокойная, а не прозрачная. */
+function outlineOf(card: HTMLElement): string {
+    const open: HTMLElement | null = card.querySelector<HTMLElement>(OPEN);
+
+    return open === null ? '' : getComputedStyle(open).borderTopColor;
+}
+
 async function press(root: HTMLElement, index: number, button: string, outcome: string): Promise<string> {
-    const card: HTMLElement = (await cardsOf(root, 2))[index];
+    const card: HTMLElement = (await cardsOf(root, 3))[index];
 
     card.querySelector<HTMLElement>(button)?.click();
     await until((): boolean => textOf(card, STATUS) === 'Открывается', `«Открывается» у карточки ${index + 1}`);
     expectThat(card.querySelector(OPEN)?.getAttribute('aria-disabled') === 'true', 'в ожидании кнопка доступна');
+    expectThat(outlineOf(card) !== 'rgba(0, 0, 0, 0)', 'в ожидании обводочная кнопка осталась без рамки');
     await until(
         (): boolean => textOf(root.querySelectorAll<HTMLElement>(CARD)[index], STATUS) === outcome,
         `«${outcome}» у карточки ${index + 1}`
@@ -260,7 +268,10 @@ async function loop(root: HTMLElement): Promise<void> {
         `событие первой карточки: ${first.trim()}`
     );
     const both: string = await press(root, 1, NEW_TAB, 'Не открылась');
-    const cards: HTMLElement[] = await cardsOf(root, 2);
+    const nested: string = await press(root, 2, OPEN, 'Открыта');
+    const cards: HTMLElement[] = await cardsOf(root, 3);
+
+    expectThat(nested.includes('{"messageId":"a1","url":"/warehouse/stock","newTab":false}'), `событие карточки в секции: ${nested}`);
 
     expectThat(both.includes('{"messageId":"a1","url":"/reports/finance","newTab":true}'), `событие второй карточки: ${both}`);
     expectThat(textOf(cards[1], REASON) === 'Нет доступа к разделу «Отчёты»', `причина второй карточки: ${textOf(cards[1], REASON)}`);
@@ -271,7 +282,7 @@ async function loop(root: HTMLElement): Promise<void> {
     }
 }
 
-/** Ответ с двумя карточками в узкой панели чата: нажатия, события и исходы. */
+/** Ответ с двумя карточками и третьей в секции в узкой панели чата: нажатия, события и исходы. */
 export const Panel: TStory = {
     args: { part: 'panel' },
     play: async ({ canvasElement }: IPlayContext): Promise<void> => loop(canvasElement),

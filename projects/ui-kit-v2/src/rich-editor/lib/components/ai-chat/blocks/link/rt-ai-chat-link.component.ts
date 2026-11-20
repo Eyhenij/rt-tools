@@ -20,6 +20,7 @@ import {
     IRtIcon,
     IRtLinkData,
     IRtTag,
+    isKitIconName,
     RT_KIT_LABELS,
     RtButtonDirective,
     RtIconComponent,
@@ -55,9 +56,14 @@ interface IStatus {
     readonly spin: boolean;
 }
 
-/** Что карточка объявила читалке и при каком исходе. */
+/** Значок карточки, когда имени нет в наборе кита. */
+const FALLBACK_ICON: IRtIcon.Name = 'link';
+
+/** Что карточка объявила читалке: о какой странице, при каком исходе и с какой причиной. */
 interface IAnnounced {
+    readonly url: string;
     readonly state: ERtLinkState | null;
+    readonly reason: string | null;
     readonly text: string;
 }
 
@@ -90,8 +96,20 @@ interface IAnnounced {
 export class RtAiChatLinkComponent {
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
-    /** Имя значка карточки: имени, которого в наборе кита нет, значок не рисует. */
-    protected readonly icon: Signal<IRtIcon.Name> = computed((): IRtIcon.Name => this.data().icon as IRtIcon.Name);
+    /**
+     * Имя значка карточки. Имя пишет модель, а `rt-icon` идёт за рисунком по имени: имя, которого
+     * в наборе кита нет, заменяется значком `link`, и запроса по чужому имени нет.
+     */
+    protected readonly icon: Signal<IRtIcon.Name> = computed((): IRtIcon.Name => {
+        const name: string = this.data().icon;
+
+        return isKitIconName(name) ? name : FALLBACK_ICON;
+    });
+
+    /** Причина отказа: рисуется только при отказе, что бы ни пришло во входе. */
+    protected readonly reason: Signal<string | null> = computed((): string | null =>
+        this.data().state === ERtLinkState.Failed ? this.data().reason : null
+    );
 
     /** Метка исхода; без названного исхода её нет. */
     protected readonly status: Signal<IStatus | null> = computed((): IStatus | null => {
@@ -110,16 +128,24 @@ export class RtAiChatLinkComponent {
 
     /**
      * Что объявлено читалке. Первая отрисовка ничего не объявляет: исход, с которым карточка
-     * пришла, человек читает вместе с ответом. Объявляется только смена исхода.
+     * пришла, человек читает вместе с ответом. Объявляется смена исхода или причины той же
+     * страницы. Лента держит карточки по месту, поэтому другой адрес на том же месте — другая
+     * карточка, и она начинает с молчания.
      */
     protected readonly announced: WritableSignal<IAnnounced> = linkedSignal<IRtLinkData, IAnnounced>({
         source: (): IRtLinkData => this.data(),
         computation: (data: IRtLinkData, previous?: { readonly value: IAnnounced }): IAnnounced => {
-            if (previous === undefined || previous.value.state === data.state) {
-                return { state: data.state, text: previous?.value.text ?? '' };
+            const reason: string | null = data.state === ERtLinkState.Failed ? data.reason : null;
+            const silent: IAnnounced = { reason, url: data.url, state: data.state, text: '' };
+
+            if (previous === undefined || previous.value.url !== data.url) {
+                return silent;
+            }
+            if (previous.value.state === data.state && previous.value.reason === reason) {
+                return { ...silent, text: previous.value.text };
             }
 
-            return { state: data.state, text: this.#announcement(data) };
+            return { ...silent, text: this.#announcement(data, reason) };
         },
     });
 
@@ -138,12 +164,12 @@ export class RtAiChatLinkComponent {
     }
 
     /** «Название: исход», у отказа — с причиной; карточка без исхода ничего не объявляет. */
-    #announcement(data: IRtLinkData): string {
+    #announcement(data: IRtLinkData, reason: string | null): string {
         if (data.state === null) {
             return '';
         }
         const text: string = `${data.title}: ${this.t()[STATUS_LOOK[data.state].label]}`;
 
-        return data.reason === null ? text : `${text}. ${data.reason}`;
+        return reason === null ? text : `${text}. ${reason}`;
     }
 }

@@ -3,14 +3,16 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 4 — The showcase and the match with the mockup
+- **Stage:** 4 of 4 — Review rounds and closing
 - **Done:** the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3339-ai-chat-link-block` from `RT-3338-ai-chat-kpi-block` (chain, PR #3429), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption.
 - **Stage 1 is done on 20.11.2026.** The epic branch is merged in: RT-3342 is merged (#3437), the epic PR into the main branch is open as a draft (#3438). `rtLinkData` and `RT_AI_CHAT_LINK_SCHEMA` are written and exported from the util barrel; `jest src/lib/util/link` gave 2 suites and 7 tests passed, the kit `typecheck` exited 0.
 - **Stage 2, step 1 is done.** The block is in the chat model and in the feed logic; the copy line is written. `jest …/blocks/rt-ai-chat-blocks.link` gave 5 tests passed, the blocks folder 85 before it.
 - **Stage 2 is done on 20.11.2026.** The card `rt-ai-chat-link` is written, the press reaches the chat output `linkOpen` with the message id, the labels are in both sets. The tag has the input `iconSpin` and the gap 4 at `sm`. The link schema stands among the section's own schemas.
 - **Stage 2, the numbers.** `jest` over the chat, the tag, util and the labels gave 29 suites and 279 tests passed; the kit `typecheck` and `verify` exited 0.
 - **Stage 3, steps 1–4 are done.** Eleven stories of the block and its overview page are written; the chat overview names the block and `linkOpen`. In the showcase on 6007 every story passed its `play` steps. The cards at 328 measured 127, 127, 149 and 144 high with 8 between them, as the mockup draws.
-- **Next step:** stage 3, step 5 — the gap 4 in the `sm` variants of the Figma `Tag`.
+- **Stage 3 is done on 20.11.2026.** The Figma `Tag` `sm` variants take the gap 4. The match was redone from two independent readings and gave 530 of 530 numbers.
+- **Stage 4, round one is read.** The three roles gave their findings; the confirmed ones are fixed and go as one commit.
+- **Next step:** stage 4, step 2 — review round two by fresh readers.
 - **Uncommitted:** no
 - **PR:** not open yet; the base is `RT-3346-ai-chat-blocks` — RT-3338 is merged into it (#3429)
 
@@ -37,14 +39,14 @@
 - [x] 2. Write a chat story of the whole loop in the narrow panel and in the full-screen mode: a press logs `linkOpen` with `{ messageId, url, newTab }`, sets `pending`, then `opened`, and on the second card `failed` with a reason; put the handler code into the block `Overview.mdx`.
 - [x] 3. Write the play steps that measure by `getBoundingClientRect` the icon box, the row gaps, the button row on one top, the wrapped buttons, the two-line title, the mirrored order and no text past the card, and that press a button and wait for the status to change: SC-UKV-1498, 1503, 1504.
 - [x] 4. Write the `Overview.mdx` of the block and name the block and `linkOpen` in the chat Overview.
-- [ ] 5. Set the gap 4 in the `sm` variants of the Figma `Tag` and lift the instance overrides of the mockup 8339-452. ← now
-- [ ] 6. Look at every story live, take the references of the block and anew those of the tag whose gap changed, sweep all the stories.
-- [ ] 7. Match the stories with the approved mockup by numbers into the table «mockup / showcase» in the progress, with the contrast of the dark reason and tag, show the showcase to the owner and write their word into `approvals.md`; SC-UKV-1500 and 1505 are held by this match.
+- [x] 5. Set the gap 4 in the `sm` variants of the Figma `Tag` and lift the instance overrides of the mockup 8339-452.
+- [x] 6. Look at every story live, take the references of the block and anew those of the tag whose gap changed, sweep all the stories.
+- [x] 7. Match the stories with the approved mockup by numbers into the table «mockup / showcase» in the progress, with the contrast of the dark reason and tag, show the showcase to the owner and write their word into `approvals.md`; SC-UKV-1500 and 1505 are held by this match.
 
 ### 4. Review rounds and closing
 
-- [ ] 1. Review round one by qa-engineer, product-strategist and goal-critic; fix the confirmed findings in one commit.
-- [ ] 2. Review round two by fresh readers; fix the confirmed findings in one commit.
+- [x] 1. Review round one by qa-engineer, product-strategist and goal-critic; fix the confirmed findings in one commit.
+- [ ] 2. Review round two by fresh readers; fix the confirmed findings in one commit. ← now
 - [ ] 3. Merge the agreement into `docs/specs/ui-kit-v2/ai-chat-link/` with its bindings; edit the chat and tag specs and the kit spec indexes as the agreement names.
 - [ ] 4. Bring `CONTEXT.md` of ai-chat and the tag up to the block, the output and the gap.
 - [ ] 5. Mark row 7 of the epic plan, write the archive record, take the task folder apart.
@@ -137,8 +139,36 @@ counted from the corner of the card.
 | «Open in new tab»        | x110, 166 by 32     | x109.4, 165.3 by 32    |
 | button: font, radius     | 13, 10              | 13, 10                 |
 
-The line heights differ by fractions of a pixel: the kit steps give 16.8 and 16.2 where the mockup
-writes 17 and 16, and the card heights follow them within 0.2.
+The table above was typed by hand and is kept as the first look. It is not the match.
+
+**The match was redone on 20.11.2026, and the first line «308 из 308» was not one.** That line came
+from one script that held the same typed array for both sides. It covered one width and left out
+the keys that differed. The owner approved the showcase by it.
+
+The second match reads the two sides apart. The mockup side is read from the Figma layers of the
+eight cards at 328. The showcase side is read from the computed styles of the story `Themes`. A
+card gives 65 or 69 declared values: sizes, paddings, gaps, radii, colours and type.
+`node tools/kit-match.mjs numbers` printed 500 of 530 on the first run. The thirty misses were four
+things:
+
+- **The disabled «Open» button had no border in the showcase.** The card's style named a class the
+  kit button does not carry. This was a defect of the code. It is fixed, and the chat stories now
+  assert the border in `pending`.
+- **The line heights were 17 and 16 in the mockup against the kit steps 1.2 and 1.35.** The mockup
+  texts now take 120% and 135%, as the kit declares them.
+- **The icon of a success or danger tag was drawn in the text colour in the mockup.** The kit draws
+  it in the colour of the label. The sixteen tag instances of the mockup are fixed. The Figma `Tag`
+  set still gives a swapped icon its own colour; that is a defect of the kit copy.
+- **The turning spinner measured 16.78 wide by its rotated box.** That was a miss of the
+  measurement. The icon is now measured by its layout width, 12.
+
+The second run printed 530 of 530.
+
+**What the match does not hold.** Sizes that come from the text differ by up to 0.7. Figma snaps a
+text box to whole pixels and shapes the text its own way. The buttons are 89 and 166 wide in the
+mockup against 88.35 and 165.33 in the showcase. The title is 17 high against 16.8. The cards are
+127, 149 and 144 high against 126.99, 149.19 and 143.79. Only 328 was matched; at 386 and 640 the
+card differs by its width alone.
 
 **The contrast, measured the same day.** Light: the reason 6.45, the section 5.66, the tag
 `opened` 3.58, the tag `failed` 4.41, the disabled button label 3.0. Dark: the tag `pending` 16.99,
@@ -146,6 +176,33 @@ the tag `opened` 3.52, the tag `failed` 2.94, the reason 3.16. The dark reason a
 `failed` stand under 4.5. Both take the colours the approved mockup draws and the kit tokens give:
 `--rt-color-state-error-text` and the tag palette `danger`. The card adds no colour of its own; the
 numbers go to the owner with the showing.
+
+## Round one of the review
+
+- **The icon name the model writes went to `rt-icon` unchecked.** A name outside the kit set asked
+  the server for a drawing by that name. Now the card checks the name by `isKitIconName` and draws
+  `link`. The agreement said «an empty icon box»; that rule is rewritten.
+- **The announcement was tied to the place in the feed.** A block put above the card made the card
+  announce a change nobody made. Now the key is the address: another address at the same place
+  starts silent.
+- **A changed reason of the same failure was not announced.** Now it is.
+- **The component drew any reason it was given.** Now only in `failed`.
+- **The schema took a title or an address of spaces alone.** Now it refuses them, as the card does.
+- **The agreement said the spinner stands still under reduced motion.** The kit slows every turning
+  icon there and does not stop it. The rule is rewritten to what the kit does.
+- **The handler in the overview compared the raw address and skipped sections.** The event carries
+  the trimmed address. The example and the story now read the address by `rtLinkData` and walk a
+  section. The chat stories hold a third card inside a section.
+- **The overview now says the application checks the address before it opens it.** The model
+  writes the address, and the kit neither checks nor opens it. Two cards of one message with one
+  address get one outcome.
+- **The agreement named the dark contrast 3.2 : 1.** The measured numbers are 2.94 and 3.16.
+- **Not taken.** The schema keeps accepting unknown fields, as the KPI and section schemas do. One
+  story `States` shows the four outcomes at once, by the showcase contract.
+- **The grill differs from the code in three places, each decided in the agreement.** No state
+  draws no status. The labels live in one English set. The frame is the card's own, not `rt-card`.
+- **For the owner.** The epic sign «on the published version» cannot be met before the release.
+  The epic has no task of the dark status colours.
 
 ## Sessions
 
@@ -163,8 +220,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 4 — The card and the event through the chat
-- **Next step:** stage 2, step 2 — the `rt-ai-chat-link` component.
+- **Stage:** 3 of 4 — The showcase and the match with the mockup
+- **Next step:** stage 3, step 5 — the gap 4 in the `sm` variants of the Figma `Tag`.
 - **PR:** not open yet; the base is `RT-3346-ai-chat-blocks` — RT-3338 is merged into it (#3429)
 
 The progress in full — `docs/tasks/RT-3339-ai-chat-link-block/progress.md`; the plan lies next to it.
@@ -172,24 +229,18 @@ The progress in full — `docs/tasks/RT-3339-ai-chat-link-block/progress.md`; th
 ### Uncommitted
 
 ```
- M .storybook/showcase-labels.ru.ts
- M src/lib/components/tag/rt-tag.component.html
- M src/lib/components/tag/rt-tag.component.scss
- M src/lib/components/tag/rt-tag.component.ts
- M src/lib/i18n/rt-kit-labels.en.ts
- M src/rich-editor/lib/components/ai-chat/answer/rt-ai-chat-answer.component.html
- M src/rich-editor/lib/components/ai-chat/answer/rt-ai-chat-answer.component.ts
- M src/rich-editor/lib/components/ai-chat/blocks/rt-ai-chat-blocks.component.html
- M src/rich-editor/lib/components/ai-chat/blocks/rt-ai-chat-blocks.component.ts
- M src/rich-editor/lib/components/ai-chat/rt-ai-chat.component.html
- M src/rich-editor/lib/components/ai-chat/rt-ai-chat.component.ts
-?? src/rich-editor/lib/components/ai-chat/blocks/link/
-?? src/rich-editor/lib/components/ai-chat/rt-ai-chat.link.spec.ts
+ M lib/util/link.schema.ts
+ M rich-editor/lib/components/ai-chat/blocks/link/rt-ai-chat-link.component.html
+ M rich-editor/lib/components/ai-chat/blocks/link/rt-ai-chat-link.component.ts
 ```
 
 ### Commits over the main branch
 
 ```
+bb120577e docs(rt:ui-kit-v2): одобрение витрины карточки ссылки (RT-3339)
+71571d2fd docs(rt:ui-kit-v2): сверка витрины карточки ссылки с макетом (RT-3339)
+32f03344d feat(rt:ui-kit-v2): истории и страница обзора карточки ссылки (RT-3339)
+c0864d598 feat(rt:ui-kit-v2): карточка ссылки в ответе чата и событие нажатия (RT-3339)
 212421024 feat(rt:ui-kit-v2): блок ссылки в модели чата и в логике ленты (RT-3339)
 db78420f3 feat(rt:ui-kit-v2): данные и схема блока ссылки на страницу (RT-3339)
 bc1088482 chore(rt:ui-kit-v2): ветка эпика влита в ветку задачи (RT-3339)
@@ -206,10 +257,6 @@ cc39e821e docs(rt:ui-kit-v2): договорённость о блоке сек�
 53ced96f8 feat(rt:ui-kit-v2): данные блока секции, его копия и схема для модели
 8754015a0 docs(rt:ui-kit-v2): план RT-3342 одобрен — данные, сетка, витрина, ревью
 149915c64 docs(rt:ui-kit-v2): договорённость о секции после ревью ролей (RT-3342)
-fe9867798 docs(rt:ui-kit-v2): договорённость о блоке секции в ответе чата (RT-3342)
-2e3f0327d docs(rt:ui-kit-v2): макет секции и сетки составного ответа для RT-3342
-2f6592ceb docs(rt:ui-kit-v2): задача RT-3342 взята, разбор закрыт допущениями
-98605b5ab docs(rt:ui-kit-v2): задача RT-3339 ждёт RT-3342 по слову владельца
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
