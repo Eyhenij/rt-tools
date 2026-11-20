@@ -3,15 +3,12 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 3 из 4 — Code and unit tests
-- **Next step:** stage 4, step 1 — look at every sheet story live on the showcase of this branch,
-  then the kit-match numbers. Every part of the set has its stories: select 67cc8a6ca, toggle
-  group 72499909a, multiselect toggles d6733beb0, autocomplete and menu 8a4e595eb, split button,
-  speed menu, palette, action bar db7c7e020, dynamic selector, thread list, table filter header
-  00196b2b5, page header, tabs and the multiselect footer in the next commit; `build-storybook`
-  over the whole set is green. Not seen live: whether «Ещё» of the tabs is measured before `play`
-  clicks it, and `MoreSheet` of the page header takes a 1100 px window, since the header hides its
-  nav row at 1080 px and below.
+- **Stage:** 4 из 4 — Showcase; review round two runs
+- **Next step:** fix the confirmed findings of review round two as one commit — the date fields
+  read `RT_POPOVER_SHEET` and take `sheet` by `booleanAttribute`; the `BREAKING CHANGE` names the
+  folding toggle group and `fold=false`; the select spec links the popover-sheet subdomain. Then
+  stage 4, step 2 — the kit-match numbers, and step 3 — the showcase to the owner. Stage 4 step 1
+  is done: walked live twice (below).
 - **Live walk on 6017 (20.11):** every `Sheet` story of the set opens the bottom sheet at 375, the
   panel 0…375 wide, no node past its edges (select, multiselect and its toggles, autocomplete,
   action bar, palette, dynamic selector, menu, speed menu, split button, tabs «Ещё» and tab menu,

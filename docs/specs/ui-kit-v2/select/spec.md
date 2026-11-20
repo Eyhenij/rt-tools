@@ -149,7 +149,8 @@ Not applicable: the kit is not indexed.
 
 The input changes nothing at any width. The panel is no narrower than the trigger and grows to its
 content, so on a narrow screen the window is what bounds it; the consumer's markup is theirs to lay
-out.
+out. On a phone the list opens in the kit's bottom sheet instead — the subdomain
+`docs/specs/ui-kit-v2/popover-sheet/`.
 
 ### Several objects
 

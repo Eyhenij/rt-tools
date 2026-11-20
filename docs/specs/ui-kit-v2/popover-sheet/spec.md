@@ -93,7 +93,9 @@ Not applicable.
 
 ### Locales
 
-No new texts: the title is the label the application gives the field.
+The title is the label the application gives the field. The field with toggles brings three kit
+labels: `uiAll` («All»), `uiCountOf` («{{count}} of {{total}}») and `uiShowAll` («Show all»); an
+application in another language adds them to its own dictionary under `rtKit`.
 
 ### SEO
 
