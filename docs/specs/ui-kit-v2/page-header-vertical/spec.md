@@ -127,7 +127,11 @@ height from the table, so the vertical layout comes with a compact page header.
   the rail, and an opened section as the section panel.
 - **The filters button opens the bottom sheet with search and all filters.** A dot on the button
   says filters are applied. A change of the view closes the sheet, and it does not open by itself
-  on return.
+  on return. The sheet is the phone's, 480 px and narrower; a selector inside it opens its list in
+  a sheet of its own in its place.
+- **Wider than a phone the filters button opens search and all filters in a panel by the
+  button.** The panel is the «More filters» one, 240 wide, its right edge under the button, with
+  «Apply» under the filters. The input `sheet` switched off keeps the panel on a phone too.
 - **The actions button opens the kit menu with the page's actions.** A disabled action is disabled
   there too.
 - **The phone menu is a dialog: it takes focus, gives it back to the burger and closes when the
@@ -214,3 +218,5 @@ Not applicable: one window has one rail.
 - 9 November 2026 — written by task RT-3181 after the owner approved the frames; merged into the
   kit spec by the same task, with the rules the work added: the cross on the selected tab only, the
   pin of a pinned tab, the open trigger look and the switched-on foot button.
+- 20 November 2026 — task RT-3399: the filters sheet only on a phone, wider a panel by the button,
+  and the input `sheet`, by the frames 8495:16640, 8497:17962 and 8499:16968 the owner approved.

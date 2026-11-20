@@ -26,7 +26,7 @@ import {
 
 import { BlockDirective, ElemDirective, ModDirective, WINDOW } from '@rt-tools/core';
 
-import { RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
+import { BreakpointsService, RT_KIT_LABELS, TRtKitLabelMap } from '@rt-tools/ui-kit-v2/core';
 
 import { RtBottomSheetComponent } from '@rt-tools/ui-kit-v2/bottom-sheet';
 import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
@@ -69,6 +69,8 @@ export class RtPageBarComponent {
 
     readonly #window: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;
 
+    readonly #phone: Signal<boolean> = inject(BreakpointsService).phone;
+
     readonly #width: WritableSignal<number> = signal<number>(0);
 
     readonly #titleWidth: WritableSignal<number> = signal<number>(0);
@@ -106,11 +108,16 @@ export class RtPageBarComponent {
         (): ReadonlyArray<RtPageBarFilterDirective> => this.filters().slice(this.#fit().rowFilters)
     );
 
+    /** Отборы узкого вида открываются шторкой только на телефоне; шире — панелью у кнопки. */
+    protected readonly filtersInSheet: Signal<boolean> = computed((): boolean => this.isNarrow() && this.sheet() && this.#phone());
+
     /** Шторка отборов узкого вида: смена вида её закрывает, и при возврате в узкий она не открывается сама. */
     protected readonly sheetOpen: WritableSignal<boolean> = linkedSignal<boolean, boolean>({
-        source: this.isNarrow,
+        source: this.filtersInSheet,
         computation: (): boolean => false,
     });
+
+    protected readonly filtersPopover: Signal<RtPopoverDirective | undefined> = viewChild('filtersPopover', { read: RtPopoverDirective });
 
     public readonly pageTitle: InputSignal<string> = input.required<string>();
 
@@ -118,6 +125,14 @@ export class RtPageBarComponent {
 
     /** Отборы применены: на кнопке отборов узкого вида горит точка. */
     public readonly filtersActive: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /**
+     * Нижняя шторка отборов на телефоне. Включена по умолчанию; `false` открывает отборы панелью у
+     * кнопки на любой ширине.
+     */
+    public readonly sheet: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(true, {
         transform: booleanAttribute,
     });
 
@@ -156,8 +171,16 @@ export class RtPageBarComponent {
         });
     }
 
+    /** Кнопка отборов: на телефоне открывает шторку, шире панель открывает сама подсказка-панель. */
+    protected onFiltersClick(): void {
+        if (this.filtersInSheet()) {
+            this.sheetOpen.set(true);
+        }
+    }
+
     protected onApply(): void {
         this.filtersApply.emit();
         this.sheetOpen.set(false);
+        this.filtersPopover()?.close();
     }
 }

@@ -19,3 +19,4 @@
 - **Макет:** «Одобряю макет» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8477-2372 (кадр поправлен под подсказку кита: ширина 256, от края окна 16)
 - **Совпадение:** 19 из 19 чисел
 - **Витрина:** «Одобряю витрину» — http://localhost:6017/?path=/story/molecules-forms-field--anatomy
+- **Макет:** «Одобряю макеты» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8497-17962 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8499-16968 , https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8495-16640 (шторка из шторки подменяет её и возвращает при закрытии; отборы шапки шире 480 — панелью у кнопки)

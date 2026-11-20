@@ -157,5 +157,10 @@
         background-color: var(--rt-overlay-menu-bg);
         box-shadow: var(--rt-page-bar-more-shadow);
         gap: var(--rt-space-2);
+
+        /* «Применить» в панели отборов узкого вида — во всю ширину панели, как отборы над ней. */
+        &__apply {
+            align-self: stretch;
+        }
     }
 }

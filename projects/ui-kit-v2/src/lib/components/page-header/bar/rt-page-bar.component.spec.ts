@@ -4,6 +4,7 @@ import { ComponentFixture } from '@angular/core/testing';
 import { WINDOW } from '@rt-tools/core';
 
 import { createRtFixture, qa, qaAll } from '../../../../testing/rt-kit-testing';
+import { BreakpointsService } from '../../../platform';
 import { RtPageBarFilterDirective, RtPageBarSearchDirective } from './rt-page-bar-slots.directive';
 import { RtPageBarComponent } from './rt-page-bar.component';
 import { IRtPageBar } from './rt-page-bar.model';
@@ -28,7 +29,13 @@ function windowDouble(): Window & typeof globalThis {
 @Component({
     selector: 'rt-page-bar-host',
     template: `
-        <rt-page-bar [pageTitle]="title()" [actions]="actions" [filtersActive]="active()" (actionClick)="clicked = $event">
+        <rt-page-bar
+            [pageTitle]="title()"
+            [actions]="actions"
+            [filtersActive]="active()"
+            [sheet]="sheet()"
+            (actionClick)="clicked = $event"
+            (filtersApply)="applied = true">
             <ng-template rtPageBarSearch><input qa-dataid="demo-search" /></ng-template>
             <ng-template rtPageBarFilter><span qa-dataid="demo-filter"></span></ng-template>
             <ng-template rtPageBarFilter><span qa-dataid="demo-filter"></span></ng-template>
@@ -41,7 +48,9 @@ class PageBarHostComponent {
     public actions: ReadonlyArray<IRtPageBar.Action> = [{ id: 'new', label: 'Новая', icon: 'plus-circle' }];
     public active: WritableSignal<boolean> = signal<boolean>(false);
     public title: WritableSignal<string> = signal<string>('Все брони');
+    public sheet: WritableSignal<boolean> = signal<boolean>(true);
     public clicked: string = '';
+    public applied: boolean = false;
 }
 
 /** Новая ширина шапки: наблюдатель размеров сообщает её, как в браузере. */
@@ -51,12 +60,22 @@ function resizeTo(fixture: ComponentFixture<PageBarHostComponent>, width: number
     fixture.detectChanges();
 }
 
-function setup(width: number): ComponentFixture<PageBarHostComponent> {
+/** Подмена наблюдателя ширины окна: телефон или окно шире него, узкий вид кита включён. */
+function breakpoints(phone: boolean): Partial<BreakpointsService> {
+    return { phone: signal<boolean>(phone), viewportNarrow: signal<boolean>(true), narrow: signal<boolean>(true) };
+}
+
+function setup(width: number, phone: boolean = true): ComponentFixture<PageBarHostComponent> {
     hostWidth = width;
     const fixture: ComponentFixture<PageBarHostComponent> = createRtFixture(
         PageBarHostComponent,
         {},
-        { providers: [{ provide: WINDOW, useFactory: windowDouble }] }
+        {
+            providers: [
+                { provide: WINDOW, useFactory: windowDouble },
+                { provide: BreakpointsService, useValue: breakpoints(phone) },
+            ],
+        }
     );
     const host: HTMLElement = fixture.nativeElement.querySelector('rt-page-bar');
     jest.spyOn(host, 'getBoundingClientRect').mockImplementation((): DOMRect => ({ width: hostWidth }) as DOMRect);
@@ -103,6 +122,37 @@ describe('rt-page-bar', (): void => {
         fixture.detectChanges();
 
         expect(qa(fixture, 'page-bar-sheet')).toBeNull();
+    });
+
+    it('SC-UKV-1629 — wider than a phone the filters open in a panel by the button', (): void => {
+        const fixture: ComponentFixture<PageBarHostComponent> = setup(768, false);
+
+        (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+
+        const panel: Element | null = document.querySelector('[qa-dataid="page-bar-filters-panel"]');
+        expect(qa(fixture, 'page-bar-sheet')).toBeNull();
+        expect(panel?.querySelectorAll('[qa-dataid="demo-filter"]')).toHaveLength(2);
+        expect(panel?.querySelector('[qa-dataid="demo-search"]')).not.toBeNull();
+
+        (document.querySelector('[qa-dataid="page-bar-panel-apply"]') as HTMLElement).click();
+        fixture.detectChanges();
+
+        expect(fixture.componentInstance.applied).toBe(true);
+        expect(document.querySelector('[qa-dataid="page-bar-filters-panel"]')).toBeNull();
+    });
+
+    it('SC-UKV-1630 — the sheet switched off keeps the panel on a phone', (): void => {
+        const fixture: ComponentFixture<PageBarHostComponent> = setup(375);
+        fixture.componentInstance.sheet.set(false);
+        fixture.detectChanges();
+
+        (qa(fixture, 'page-bar-filters')?.nativeElement as HTMLElement).click();
+        fixture.detectChanges();
+
+        expect(qa(fixture, 'page-bar-sheet')).toBeNull();
+        expect(document.querySelector('[qa-dataid="page-bar-filters-panel"]')).not.toBeNull();
+        document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
     it('SC-UKV-1197 — applied filters light the dot on the button', (): void => {

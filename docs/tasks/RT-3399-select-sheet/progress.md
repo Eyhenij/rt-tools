@@ -41,9 +41,33 @@
 - **Frames to match, listed from Figma (20.11):** 30 approved frames — 21 phone frames at 375,
   the wide toggles select 8293:3667, the toggle group that fits 8310:837, the locked column
   8405:752, and the remark frames 8423:1981, 8437:*, 8449:1560, 8477:2372.
-- **Next step:** the one focus ring in the three field places, the page bar at 480 with its
-  `sheet` input, the 480 boundary spec; then the `kit-match` sweep over the phone frames, the
-  workspace headers story and measure, the snapshot references and the push set.
+- **Done (20.11):** the one focus ring in the three field places — 3 px `#155dfc` at 24 %, offset
+  0, measured live on 6017 on the password eye and the own trigger (22bc96892); the 480 boundary —
+  SC-UKV-1628 and its test, 14/14 (e444139c2).
+- **The page bar waits for the owner.** Its sheet predates this branch and opens by the fit mode;
+  moving it to 480 needs a new state between 481 px and the folded view, so a mockup first. The
+  owner: «Сделать в этой задаче» — wider than 480 the filter button opens the filters in a panel by
+  the button, like «More filters», with a `sheet` input; mockup and approval before the code.
+  Mockup 8495:16640 on the sheet Page Header: the narrow view at 768, the panel 240 by the filter
+  button, its right edge under the button's, 4 below, padding 8 inside a 1 px border, search,
+  three filters and «Применить» at 32 each — the numbers of the kit's «More filters» panel.
+  The owner on it: «внутри ботомшита с фильтрами сами селекторы должны тоже открываться ботомшит на
+  мобилке». Measured live at 375: a select in the filters sheet already opens its own sheet over it
+  (panel y 698, height 114, bottom at 812). Drawn as mockup 8497:17962 — the filters sheet under
+  the select's sheet «Статус», from the approved select sheet 6068:813. The owner: «ботомшиты не
+  накладываются а подменяют, при закрытии верхнего показывается предыдущий». So the kit's sheets
+  become a stack: a sheet opened from inside a sheet replaces it, and closing it shows the previous
+  one again. Mockups redrawn: 8497:17962 (step 2, only the select's sheet) and 8499:16968 (step 3,
+  the filters sheet back with «Ожидает»). Approved: «Одобряю макеты».
+- **The stack and the page bar, written (20.11):** `RtBottomSheetStackService` and the `--covered`
+  modifier of the sheet; the page bar opens its sheet by `filtersInSheet` (narrow, `sheet`, phone)
+  and otherwise a panel by the button. Subdomain `sheet-stack` (SC-UKV-1631…1632), page header
+  rules and SC-UKV-1629…1630. Stories `NarrowFiltersPanel` and `PhoneFilterSelect`. Live: the panel
+  23 of 23 against 8495:16640 (the mockup's fields set to the kit's narrow 40 and the button text
+  to 13); the select's sheet 45 of 45 against 8497:17962 (rows 34, no selected row — the story's
+  field has no value); the return measured: the filters sheet back at y 456, 356 high, «Ожидает».
+- **Next step:** the `kit-match` sweep over the phone frames, the workspace headers story and
+  measure, the snapshot references and the push set.
 - **The showcase of `prefix` and `suffix` approved:** «Approve showcase» (20.11).
 - **The hint at the field label joined (20.11), «проверь и добавь в текущий тикет»:** confirmed
   live on 6017 — `rt-field__help-popover` has a transparent background, padding 0 and no shadow,
@@ -446,22 +470,32 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 4 из 4 — Showcase; both review rounds done
-- **Next step:** review round two over the whole diff is running (three readers started 20.11 on
+- **Next step:** the closing texts, take the folder apart, the push set (the sheet and workspace
 
 The progress in full — `docs/tasks/RT-3399-select-sheet/progress.md`; the plan lies next to it.
 
 ### Uncommitted
 
 ```
- M ../../../../../../docs/tasks/RT-3399-select-sheet/approvals.md
- M rt-field.component.html
- M rt-field.component.scss
- M rt-field.component.ts
+ M projects/ui-kit-v2/src/lib/components/input/rt-input.component.scss
+ M projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect.component.scss
+ M projects/ui-kit-v2/src/lib/components/select/rt-select.component.scss
 ```
 
 ### Commits over the main branch
 
 ```
+132df3737 docs(rt:ui-kit-v2): находки проверок перед PR записаны в ход работы (RT-3399)
+2e3db1db6 fix(rt:ui-kit-v2): длина сценариев шторки, шаблоны историй и шаги работы под набор проверок (RT-3399)
+b9a9d5b53 docs(rt:ui-kit-v2): спецификация шторки называет подсказку поля подсказкой кита (RT-3399)
+1ea28890c Merge remote-tracking branch 'origin/main' into RT-3399-select-sheet
+49009d910 docs(rt:ui-kit-v2): витрина подсказки у подписи поля одобрена (RT-3399)
+e598ceac3 fix(rt:ui-kit-v2): исправления после круга ревью подсказки у подписи поля (RT-3399)
+281da73d9 docs(rt:ui-kit-v2): начат круг ревью правки подсказки у подписи поля (RT-3399)
+f71493b64 docs(rt:ui-kit-v2): поправленный макет подсказки у подписи поля одобрен (RT-3399)
+6c9dd98bf docs(rt:ui-kit-v2): макет подсказки у подписи поля поправлен под подсказку кита (RT-3399)
+78308f3de docs(rt:ui-kit-v2): подсказка у подписи поля замерена вживую против макета (RT-3399)
+4029a4424 fix(rt:ui-kit-v2): подсказка у подписи поля открывается подсказкой кита (RT-3399)
 cf5812cc7 docs(rt:ui-kit-v2): макет подсказки у подписи поля нарисован и замерен (RT-3399)
 aa410cfe1 docs(rt:ui-kit-v2): подсказка кита замерена в обеих темах (RT-3399)
 f15f99b39 docs(rt:ui-kit-v2): подсказка у подписи поля принята в задачу и проверена вживую (RT-3399)
@@ -471,17 +505,6 @@ f15f99b39 docs(rt:ui-kit-v2): подсказка у подписи поля пр
 9f7b26a08 fix(rt:ui-kit-v2): исправления после первого круга ревью четырёх замечаний (RT-3399)
 0a78fb1ba docs(rt:ui-kit-v2): следующий шаг — ревью четырёх правок, пока макет поля у владельца (RT-3399)
 fed16f9d5 docs(rt:ui-kit-v2): в макете поля текст больше не обрезается снизу (RT-3399)
-9acdca64f docs(rt:ui-kit-v2): макет поля дорисован — текст после значения и целое кольцо фокуса (RT-3399)
-abbb4dd4f docs(rt:ui-kit-v2): макет постоянного начала адреса в поле нарисован и замерен (RT-3399)
-50570df3b feat(rt:ui-kit-v2): фон фильтров, одно кольцо фокуса, стол без «назад», панель даты по краю поля (RT-3399)
-71f819920 docs(rt:ui-kit-v2): макеты пяти замечаний приложения нарисованы и замерены (RT-3399)
-d1d5a01d5 feat(rt:ui-kit-v2): пустое поле даты и периода подсказывает маской из чёрточек (RT-3399)
-1d96f6aa6 feat(rt:ui-kit-v2): новый значок календаря calendar-2 у полей даты и периода (RT-3399)
-488a608e4 docs(rt:ui-kit-v2): новый значок календаря у полей даты и периода — в задаче (RT-3399)
-290a06964 fix(rt:ui-kit-v2): отступы шторки по макету — 20 по бокам, 24 снизу, строка заголовка 24 (RT-3399)
-1c57014b1 docs(rt:ui-kit-v2): витрина одобрена, пять замечаний приложения по киту — в задаче (RT-3399)
-1c22d6523 docs(rt:ui-kit-v2): прогресс — оба круга ревью закрыты, витрина ждёт владельца (RT-3399)
-a65f3cb28 fix(rt:ui-kit-v2): исправления после второго круга ревью (RT-3399)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

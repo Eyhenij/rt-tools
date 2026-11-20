@@ -91,6 +91,17 @@ export class TestRtPageHeaderVerticalComponent {
 
     protected readonly options: ReadonlyArray<IRtSelect.Option<string>> = [{ value: 'all', label: 'Все' }];
 
+    /** Первый отбор — статус брони: его шторка на телефоне названа «Статус», как в кадре 8497:17962. */
+    protected readonly statusLabel: string = 'Статус';
+
+    protected readonly statusOptions: ReadonlyArray<IRtSelect.Option<string>> = [
+        { value: 'all', label: 'Все' },
+        { value: 'pending', label: 'Ожидает' },
+        { value: 'confirmed', label: 'Подтверждена' },
+        { value: 'declined', label: 'Отклонена' },
+        { value: 'cancelled', label: 'Отменена' },
+    ];
+
     protected readonly assistantMessages: readonly IRtAiChat.Message[] = ASSISTANT_MESSAGES;
 
     protected readonly assistantUsage: number = ASSISTANT_USAGE;
