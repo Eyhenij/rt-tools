@@ -119,15 +119,32 @@ export function changedSincePlan(git, plan, read = readFile) {
 /**
  * The check of a step after the decisions of the progress. A replacement line reaches the progress
  * only through the owner's window on the edit (the guard answers `ask`), so the line itself is the
- * owner's word: no quote is looked for. A quote of the older form is read and ignored.
+ * owner's word: no quote is looked for. A quote of the older form is read and ignored. Of two lines
+ * for one step the later wins, here and in the rerun alike.
  */
 export function replacedCheck(progressText, number, step) {
+    let last = null;
     for (const line of (progressText ?? '').split('\n')) {
         const m = line.match(REPLACEMENT);
-        if (!m || m[1] !== number) continue;
-        return { command: m[2], expected: m[3], replaced: true };
+        if (m && m[1] === number) last = { command: m[2], expected: m[3], replaced: true };
     }
-    return { command: step.command, expected: step.expected, replaced: false };
+    return last ?? { command: step.command, expected: step.expected, replaced: false };
+}
+
+/**
+ * The progress text `text` with its replacement lines swapped for those of `latest`, the last
+ * version of the progress in the history. A replacement is the owner's decision about a check, not
+ * a part of the work the check measures: it holds on every version the rerun uses. A line the last
+ * version no longer carries stays away, and a step replaced twice keeps the later line.
+ */
+export function withReplacements(text, latest) {
+    const isReplacement = (line) => REPLACEMENT.test(line);
+    const kept = (text ?? '').split('\n').filter((line) => !isReplacement(line));
+    const lastOfStep = new Map();
+    for (const line of (latest ?? '').split('\n')) if (isReplacement(line)) lastOfStep.set(line.match(REPLACEMENT)[1], line);
+    const added = [...lastOfStep.values()];
+    if (added.length === 0) return kept.join('\n');
+    return `${kept.join('\n').replace(/\n*$/, '\n')}\n${added.join('\n')}\n`;
 }
 
 /** The signs of a failed network in what a check printed. */
@@ -321,7 +338,8 @@ export async function runBeforePull(sources, model) {
         for (const number of numbers) {
             const done = new RegExp(`^\\s*-\\s+\\[x\\]\\s+${number.replace('.', '\\.')}\\s`, 'm');
             const first = versions.findIndex((text) => text !== null && done.test(text));
-            const text = (first > 0 && versions[first - 1]) || latest;
+            const chosen = (first > 0 && versions[first - 1]) || latest;
+            const text = latest === null || chosen === latest ? chosen : withReplacements(chosen, latest);
             groups.set(text, [...(groups.get(text) ?? []), number]);
         }
         const results = [];
