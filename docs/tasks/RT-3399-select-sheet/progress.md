@@ -33,7 +33,10 @@
   14). Measured: prefix row — the prefix at 17, the value right after it with gap 0, the long value
   clipped at 183 of 200; suffix row — the value at 17, the suffix right after it with gap 0, in the
   narrow field the suffix stays whole at 137…183 and the value is clipped at its edge; everything
-  centred at 20; no overlap with the frames of the page.
+  centred at 20; no overlap with the frames of the page. The owner then found the value text cut
+  («текст обрезан»): the clipping frame was 14 high, the text line height 100 %, and the descender
+  of «y» fell outside. The value, prefix and suffix texts now take the kit line height 135 %
+  (18.9 in the showcase): text 19, clip 19, no text crosses its clipping frame in all twelve fields.
 - **Kit-match of the four remarks (20.11):** the first run gave 27 of 29 — the filters panel 252 in
   the mockup against 254 (the copy counted the border in the height only) and the tab ring outside
   against inside (the tab strip scrolls, 0 px room on three sides). The owner: «Поправить макет»;
