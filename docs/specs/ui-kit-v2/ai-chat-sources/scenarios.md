@@ -105,7 +105,7 @@ And a pressable source is a button named by its title, its detail is the descrip
 
 Given a kit translator that gives «Источники»
 When the block is drawn and copied
-Then the header and the name of the group read «Источники»
+Then the label of the header reads «Источники»
 
 ### SC-UKV-1556 — a section of a composed answer holds a sources block
 

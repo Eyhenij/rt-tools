@@ -29,10 +29,10 @@
 - [x] 4.1 Write the stories of the block with one and with five sources, the states, the long texts, the right-to-left and the dark theme, with play steps that press and measure.
 - [x] 4.2 Write the overview page of the block with the handler code of an application and the chat overview lines for `sourceOpen`.
 - [x] 4.3 Run the stories in the showcase and measure them against the mockup by two independent readings; write the table in the progress.
-- [>] 4.4 Show the showcase to the owner and write their word into `approvals.md`.
-- [ ] 5.1 Run the first review round with three roles, check every finding against the code and fix the confirmed ones as one commit.
-- [ ] 5.2 Run the second round and fix the same way.
-- [ ] 5.3 Merge the agreement into `docs/specs/ui-kit-v2/ai-chat-sources/` with its bindings and edit the chat spec and the indexes.
+- [x] 4.4 Show the showcase to the owner and write their word into `approvals.md`.
+- [x] 5.1 Run the first review round with three roles, check every finding against the code and fix the confirmed ones as one commit.
+- [x] 5.2 Run the second round and fix the same way.
+- [>] 5.3 Merge the agreement into `docs/specs/ui-kit-v2/ai-chat-sources/` with its bindings and edit the chat spec and the indexes.
 - [ ] 5.4 Bring `CONTEXT.md` of the chat up to the block and the output.
 - [ ] 5.5 Mark the row of the epic plan, write the archive record and take the task folder apart.
 - [ ] 5.6 Run the push set, push and open the PR.

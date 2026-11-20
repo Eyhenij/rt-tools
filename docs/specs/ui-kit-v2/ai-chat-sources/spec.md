@@ -1,6 +1,6 @@
 # The sources block of the assistant chat
 
-**Status:** proposed · **Revision:** 2026-11-20 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-20 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the assistant chat (the blocks of an answer, the outputs of the chat, the answer
 copy), the expansion panel of the kit (the collapsible header and body), the link block of the chat
 (the output with the message id, the icon name check), the section of a composed answer (where a
@@ -197,7 +197,7 @@ Not applicable: the kit is not indexed.
 ### Mobile layout
 
 The narrow panel is the mobile width of the chat: a long title and detail are cut by an ellipsis
-inside the block, and the block does not widen the feed. The values wait for the mockup.
+inside the block, and the block does not widen the feed. The values are the ones of the approved mockup, in the Layout rules above.
 
 ### Several objects
 
@@ -229,11 +229,12 @@ address and its own message.
 
 ## Open questions
 
-- **Q-2.** The set of icon names the model uses for the kinds of source is not closed: the kit gives
-  `chart-bar`, `table`, `file`, `file-pdf`, `database`, `folder`, `book`, `link`, and a foreign name
-  gets `file`. Does the owner want a longer set added to the kit?
-- **Q-3.** Closed: the mockup is drawn and approved, and its values stand in the rules of the layout.
+None: the mockup is approved, and the set of icon names is closed by assumption. The kit gives
+`chart-bar`, `table`, `file`, `file-pdf`, `database`, `folder`, `book` and `link`, and a foreign name
+gets `file`; a longer set is a later kit edit if the owner asks for it.
 
 ## History of changes
 
 - 2026-11-20 — the agreement written for RT-3340 from the grill; the mockup is not drawn.
+- 2026-11-20 — the mockup is drawn and approved; the hover fill and the focus ring take the whole row, the ring lies inside it.
+- 2026-11-20 — the agreement merged into the spec after two rounds of review and the match of the showcase with the mockup.
