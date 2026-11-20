@@ -58,3 +58,50 @@ $radius-steps: (
         }
     }
 }
+
+/// Таблица ответа чата: блок таблицы, таблица markdown и таблица данных графика рисуются одним
+/// видом. Миксины разбиты по узлам, потому что имена элементов у трёх таблиц свои.
+@mixin chat-table {
+    width: 100%;
+    border-top: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+    border-collapse: collapse;
+    color: var(--rt-color-text-primary);
+    font-size: var(--rt-text-xs);
+    line-height: normal;
+}
+
+/// Ячейка: строка не ниже 28 — 27 содержимого и граница 1, у ячейки таблицы граница идёт сверх
+/// высоты, а высота ячейки — нижняя граница, и строка с переносом растёт. Отступ 8 у краёв
+/// таблицы и 8 между столбцами. Текст переносится по словам: перенос в любом месте сжимает
+/// столбец до буквы.
+@mixin chat-table-cell {
+    height: 27px;
+    padding: 0 var(--rt-space-1);
+    border-bottom: var(--rt-border-width-thin) solid var(--rt-color-border-subtle);
+    font-weight: normal;
+    overflow-wrap: break-word;
+    text-align: start;
+    vertical-align: middle;
+
+    &:first-child {
+        padding-inline-start: var(--rt-space-2);
+    }
+
+    &:last-child {
+        padding-inline-end: var(--rt-space-2);
+    }
+}
+
+/// Ячейка числа: к концу строки, без переноса — столбец шириной в самое широкое значение.
+@mixin chat-table-cell-end {
+    overflow-wrap: normal;
+    text-align: end;
+    white-space: nowrap;
+}
+
+/// Ячейка шапки: на фоне поверхности, приглушённым полужирным.
+@mixin chat-table-head-cell {
+    background: var(--rt-color-bg-surface);
+    color: var(--rt-color-text-muted);
+    font-weight: var(--rt-font-weight-semibold);
+}

@@ -54,12 +54,16 @@
     </ng-template>
 
     <ng-template #tableTpl let-item>
-        <div rtElem="table-scroll" qa-dataid="markdown-table-scroll">
+        <div rtElem="table-scroll" qa-dataid="markdown-table-scroll" role="region" tabindex="0" [attr.aria-label]="tableLabel()">
             <table rtElem="table" qa-dataid="markdown-table">
                 <thead>
                     <tr>
                         @for (cell of item.head; track $index) {
-                            <th rtElem="head-cell" qa-dataid="markdown-head-cell">
+                            <th
+                                rtElem="head-cell"
+                                qa-dataid="markdown-head-cell"
+                                scope="col"
+                                [rtMod]="{ end: item.align[$index] === align.End, center: item.align[$index] === align.Center }">
                                 <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: cell }" />
                             </th>
                         }
@@ -69,7 +73,10 @@
                     @for (row of item.rows; track $index) {
                         <tr>
                             @for (cell of row; track $index) {
-                                <td rtElem="cell" qa-dataid="markdown-cell">
+                                <td
+                                    rtElem="cell"
+                                    qa-dataid="markdown-cell"
+                                    [rtMod]="{ end: item.align[$index] === align.End, center: item.align[$index] === align.Center }">
                                     <ng-container *ngTemplateOutlet="inlineTpl; context: { $implicit: cell }" />
                                 </td>
                             }

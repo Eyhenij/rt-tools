@@ -17,10 +17,10 @@ import { IRtAiChat } from './rt-ai-chat.model';
 
 const QUESTION: IRtAiChat.Message = { id: 'q1', role: 'user', text: 'How did occupancy change?', time: '14:02' };
 
-const ANSWER: IRtAiChat.Message = {
+const ANSWER: IRtAiChat.AssistantMessage = {
     id: 'a1',
     role: 'assistant',
-    text: 'Occupancy grew by **4 points**.',
+    blocks: [{ type: 'markdown', text: 'Occupancy grew by **4 points**.' }],
     run: { state: 'done', label: 'Answered', steps: [{ label: 'Queried occupancy', status: 'complete' }] },
 };
 
@@ -172,7 +172,7 @@ describe('RtAiChatComponent', (): void => {
 
         expect(textOf(qa(fixture, 'ai-chat-question'))).toContain('You');
         expect(textOf(qa(fixture, 'ai-chat-question'))).toContain('How did occupancy change?');
-        expect(textOf(qa(fixture, 'ai-chat-answer-text'))).toContain('Occupancy grew by');
+        expect(textOf(qa(fixture, 'ai-chat-block-markdown'))).toContain('Occupancy grew by');
     });
 
     it('SC-UKV-752 — строка хода работы открывает шаги своего ответа', (): void => {
@@ -234,7 +234,7 @@ describe('RtAiChatComponent', (): void => {
             withExtra: true,
             messages: [
                 { ...QUESTION, text: 'What about **bold**?' },
-                { ...ANSWER, text: '## Heading\n\nOccupancy grew by **bold** points.\n\n- North\n- South' },
+                { ...ANSWER, blocks: [{ type: 'markdown', text: '## Heading\n\nOccupancy grew by **bold** points.\n\n- North\n- South' }] },
             ],
         });
 

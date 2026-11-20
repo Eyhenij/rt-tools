@@ -1,4 +1,9 @@
-<aside rtBlock="rt-message" qa-dataid="message-alert" role="alert" [attr.data-severity]="severity()" [rtMod]="{ severity: severity() }">
+<aside
+    rtBlock="rt-message"
+    qa-dataid="message-alert"
+    [attr.role]="live()"
+    [attr.data-severity]="severity()"
+    [rtMod]="{ severity: severity() }">
     @if (effectiveIcon(); as iconName) {
         <rt-icon rtElem="icon" [name]="iconName" />
     }

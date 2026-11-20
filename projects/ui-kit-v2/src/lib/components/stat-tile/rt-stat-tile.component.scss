@@ -120,6 +120,63 @@
                 }
             }
 
+            /* Подпись базы видимым текстом после числа дельты: «+12,5 % vs LY». */
+            &__caption {
+                color: var(--rt-color-text-muted);
+                font-size: var(--rt-text-xs);
+                font-weight: var(--rt-font-weight-regular);
+            }
+
+            /* Компактный размер: значение 24/24, дельта 14 отдельной строкой под значением,
+               промежутки 6, нижние строки переносятся между словами — плитка помещается в
+               узкую карточку. */
+            &--compact {
+                gap: calc(var(--rt-space-1) + var(--rt-space-0-5));
+
+                .rt-stat-tile__value-row {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: calc(var(--rt-space-1) + var(--rt-space-0-5));
+                }
+
+                .rt-stat-tile__label {
+                    min-width: 0;
+                    overflow-wrap: anywhere;
+                }
+
+                .rt-stat-tile__value {
+                    font-size: var(--rt-text-2xl);
+                    overflow-wrap: anywhere;
+                }
+
+                /* Значение, что не входит в строку при 24, берёт 20, затем 18; не входит и так — единица
+                   переносится. Шаг выбирает плитка по ширине ряда значения. */
+                .rt-stat-tile__value--fit--smaller {
+                    font-size: var(--rt-text-xl);
+                }
+
+                .rt-stat-tile__value--fit--smallest {
+                    font-size: var(--rt-text-lg);
+                }
+
+                /* Строки дельты и периода по 16, текст дельты стоит по базовой линии, как в
+                   макете: строка дельты выходит 17, карточка — 118. */
+                .rt-stat-tile__delta {
+                    flex-wrap: wrap;
+                    align-items: baseline;
+                    font-size: var(--rt-text-sm);
+                    line-height: var(--rt-size-4);
+                }
+
+                .rt-stat-tile__baseline,
+                .rt-stat-tile__secondary {
+                    overflow: visible;
+                    line-height: var(--rt-size-4);
+                    overflow-wrap: anywhere;
+                    white-space: normal;
+                }
+            }
+
             /* Вторичная метрика прижата к низу: строки «было …» может не быть,
                и без прижатия плитки в ряду разъезжались бы по базовой линии. */
             &__secondary {

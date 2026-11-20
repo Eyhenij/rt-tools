@@ -16,8 +16,10 @@ export default {
     },
     // @jsverse/utils — зависимость transloco — отдаёт ESM в файле с расширением .js,
     // и по умолчанию он ушёл бы в Node нетронутым: `Unexpected token 'export'` на
-    // первом же импорте transloco. Гоним его через тот же трансформ.
-    transformIgnorePatterns: ['node_modules/(?!(?:.*\\.mjs$|.*@jsverse.*))'],
+    // первом же импорте transloco. Гоним его через тот же трансформ. Модули d3, на которых
+    // стоит график кита, тоже отдают ESM в файлах .js. Их имя стоит сразу за последним
+    // `node_modules/` пути pnpm, поэтому косая черта перед ним необязательна.
+    transformIgnorePatterns: ['node_modules/(?!(?:.*\\.mjs$|.*@jsverse.*|(?:.*/)?d3-[a-z]+/))'],
     snapshotSerializers: [
         'jest-preset-angular/build/serializers/no-ng-attributes',
         'jest-preset-angular/build/serializers/ng-snapshot',
@@ -35,6 +37,7 @@ export default {
         // the working tree, so the name leads to the sources, not to a built copy.
         '^@rt-tools/ui-kit-v2$': '<rootDir>/src/public-api.ts',
         '^@rt-tools/ui-kit-v2/rich-editor$': '<rootDir>/src/rich-editor/public-api.ts',
+        '^@rt-tools/ui-kit-v2/ai-chat-chart$': '<rootDir>/src/ai-chat-chart/public-api.ts',
         // Every component is an entry of its own, and the components import each other by entry
         // name: the core lies apart, the rest by the name of the component directory.
         '^@rt-tools/ui-kit-v2/core$': '<rootDir>/src/lib/core.ts',

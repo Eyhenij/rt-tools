@@ -1,0 +1,95 @@
+<ng-template #cases let-items>
+    <app-story-row [items]="items" [itemLabel]="caseLabel">
+        <ng-template let-c>
+            <rt-ai-chat-blocks style="display: block" [style.width.px]="c.width" [attr.data-kpi-width]="c.width" [blocks]="c.blocks" />
+        </ng-template>
+    </app-story-row>
+</ng-template>
+
+<ng-template #chat let-width="width" let-column="column" let-full="full">
+    <div
+        style="
+            box-sizing: border-box;
+            block-size: 40rem;
+            border: 1px solid var(--rt-color-border-subtle);
+            border-radius: var(--rt-radius-lg);
+            overflow: hidden;
+        "
+        [style.inline-size]="width">
+        <rt-ai-chat
+            subtitle="Обзор ноября"
+            [style.--rt-ai-chat-content-max-width]="column"
+            [fullScreenable]="full"
+            [fullScreen]="full"
+            [messages]="messages" />
+    </div>
+</ng-template>
+
+@switch (part) {
+    @case ('widths') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: widthCases }" />
+    }
+    @case ('threshold') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: thresholdCases }" />
+    }
+    @case ('below') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: belowCases }" />
+    }
+    @case ('deltas') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: deltaCases }" />
+    }
+    @case ('short') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: shortCases }" />
+    }
+    @case ('parts') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: partsCases }" />
+    }
+    @case ('odd') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: oddCases }" />
+    }
+    @case ('long') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: longCases }" />
+    }
+    @case ('invalid') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: invalidCases }" />
+    }
+    @case ('several') {
+        <div data-story-root style="width: 386px">
+            <rt-ai-chat-blocks style="display: block; width: 386px" [blocks]="several" />
+        </div>
+    }
+    @case ('rtl') {
+        <div data-story-root dir="rtl" style="width: 386px">
+            <rt-ai-chat-blocks style="display: block; width: 386px" [blocks]="rtl" />
+        </div>
+    }
+    @case ('panel') {
+        <div data-story-root style="width: 26.25rem">
+            <ng-container *ngTemplateOutlet="chat; context: { width: '26.25rem', column: '100%', full: false }" />
+        </div>
+    }
+    @case ('fullScreen') {
+        <div data-story-root style="width: 60rem">
+            <ng-container *ngTemplateOutlet="chat; context: { width: '60rem', column: '100%', full: true }" />
+        </div>
+    }
+    @case ('readingColumn') {
+        <div data-story-root style="width: 80rem">
+            <ng-container *ngTemplateOutlet="chat; context: { width: '80rem', column: '40rem', full: true }" />
+        </div>
+    }
+    @case ('presets') {
+        <app-story-presets caption="Блок KPI в обоих наборах">
+            <ng-template>
+                <ng-container *ngTemplateOutlet="cases; context: { $implicit: themeCases }" />
+            </ng-template>
+        </app-story-presets>
+    }
+    @case ('themes') {
+        <app-story-themes>
+            <ng-template>
+                <ng-container *ngTemplateOutlet="cases; context: { $implicit: themeCases }" />
+            </ng-template>
+        </app-story-themes>
+    }
+}

@@ -9,11 +9,13 @@ import { RtAiChatComponent } from '../../rt-ai-chat.component';
 import { RtAiChatMessageExtraDirective } from '../../rt-ai-chat.directives';
 import { IRtAiChat } from '../../rt-ai-chat.model';
 import {
+    AI_CHAT_BLOCKS,
     AI_CHAT_DONE,
     AI_CHAT_ERROR,
     AI_CHAT_FAILED,
     AI_CHAT_LONG,
     AI_CHAT_LONG_DRAFT,
+    AI_CHAT_NOTICES,
     AI_CHAT_RATED,
     AI_CHAT_STOPPED,
     AI_CHAT_STREAMING,
@@ -24,7 +26,7 @@ import {
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
 export type TAiChatMatrixPart =
-    'empty' | 'answer' | 'error' | 'threads' | 'fullScreen' | 'readingColumn' | 'long' | 'extra' | 'presets' | 'themes';
+    'empty' | 'answer' | 'blocks' | 'error' | 'threads' | 'fullScreen' | 'readingColumn' | 'long' | 'extra' | 'presets' | 'themes';
 
 /** Случай панели: подпись ячейки и то, что приходит входами. */
 interface IAiChatCase {
@@ -91,6 +93,12 @@ export class TestRtAiChatMatrixComponent {
         { name: 'Не удался', messages: AI_CHAT_FAILED },
         { name: 'Без копирования', messages: AI_CHAT_DONE, copyable: false },
         { name: 'Значки шапки Material', messages: AI_CHAT_DONE, headerIconPreset: 'material' },
+    ];
+
+    /** Ответ из блоков: markdown, notice и блок без отрисовщика; плашки всех severity. */
+    public readonly blockCases: readonly IAiChatCase[] = [
+        { name: 'Блоки и заглушка', messages: AI_CHAT_BLOCKS },
+        { name: 'Плашки всех severity', messages: AI_CHAT_NOTICES },
     ];
 
     public readonly errorCases: readonly IAiChatCase[] = [
