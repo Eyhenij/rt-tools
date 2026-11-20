@@ -113,6 +113,11 @@ sheet of its own over it).
        details button stands in the conversation header row with its other actions.
     5. «подвинуть панель дэйтпикера на одну линию с полем инпута дат» — the panel of the period
        field opens offset from the field. Read as: the panel's edge lines up with the field's edge.
+  The calendar glyph itself joins too — the owner's words «а что с дейт пикером ты сделал по
+  обрпзце селект и иконку новую?» (20.11). The remark «может стоит поменять иконку на что-то более
+  интересное» was set aside to RT-3428, and RT-3428 merged without it: the date and period fields
+  still draw `ico-calendar`. Read as: a new calendar glyph for both fields, chosen by the owner from
+  variants on a Figma frame.
   Left to the application, not marked: the notification strip, the report preview blur (the
   screen's own overlay, not found in the kit), the month switcher in the page header, the reports
   in the navigation menu, the missing quote in a chat message (the chat bubbles are not the kit's),
