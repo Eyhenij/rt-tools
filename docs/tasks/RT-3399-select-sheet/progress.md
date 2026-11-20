@@ -19,8 +19,13 @@
   понимает смену темы?» — measured live: the tooltip is the inverted pair, in the light theme
   `rgb(40,40,40)` with white text on the page `rgb(250,250,250)`, in the dark theme white with
   `rgb(40,40,40)` text on the page `rgb(27,31,34)`.
-- **Waiting for the owner:** the look of the hint — the dark kit tooltip or the white card of frame
-  6913:12721; then the mockup, its approval and the code.
+- **The look chosen:** «Подсказка кита (рекоменд.)» — the hint takes `rtTooltip`.
+- **Mockup drawn, frame 8477:2372 on the Field page:** three cells from the file's own Field and
+  Tooltip components — in the middle of the screen, at the right window edge, the dark theme.
+  Measured by nodes: the gap to the icon 6 in all three; in the middle and dark cells the tooltip
+  centre stands on the icon centre (0); at the edge its right side is the window edge (0) and it is
+  moved 90 left of the icon; width 240, text two lines 32 high; no overlap with the page frames.
+- **Waiting for the owner:** the approval of frame 8477:2372.
 - **`prefix` and `suffix` of `rt-input` in code (20.11), mockup 8449:1560 approved «Одобряю
   макет»:** the prefix stands before the field, the suffix right after the typed text — a hidden
   copy of the text sizes the field, the field lies over it. Measured live on 6017, own set: the
