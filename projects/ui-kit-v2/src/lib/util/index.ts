@@ -3,6 +3,8 @@ export * from './file-name-from-url';
 export * from './format-file-size';
 export * from './kpi-data';
 export * from './kpi.schema';
+export * from './link-data';
+export * from './link.schema';
 export * from './markdown-inline';
 export * from './markdown-parse';
 export * from './markdown-plain-text';

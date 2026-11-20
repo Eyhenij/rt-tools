@@ -154,6 +154,51 @@ task, a line per finding, each with its address.
   radius step of 12 or the card on step 10, the owner's choice. **Address:** the kit's radius and
   spacing scales.
 
+The rules review after the PR (#3429):
+
+- **The menu on a divergence of the match recommended editing the frame under the code.** The
+  owner refused after seeing the showcase: «тексты выглядят зажато»; the work was redone the other
+  way. Proposed: an article in `kit-approval` — a divergence of the match is closed in the code, the
+  frame moves only by the owner's choice; and the gate map loads the rule on a call of
+  `tools/kit-match.mjs`. **Address:** names of this tree — the rule `kit-approval`, `gate-map.sh`.
+- **A raw colour of the frame (#e5e5e5) surfaced only as a divergence after the comparison.**
+  Proposed: a value off the kit's scale is read from the frame before the numbers and goes to the
+  owner with the nearest token. **Address:** names of this tree — the rule `kit-approval`; a check
+  in `kit-match.mjs` is a task of its own.
+- **The rule names the overlay but not where its showcase frame comes from;** a script browser is
+  refused by the guard. Proposed: a frame of the pinned browser or the snapshot reference of a
+  one-block story. **Address:** names of this tree — the rule `kit-approval`.
+- **The review roles ran their own browser scripts, and their replies lived only in the context.**
+  After the compaction the PR tables were recovered from the transcript. Proposed: the frame of a
+  role forbids driving a browser and reads the measurements from a file; each reply goes to disk
+  in the turn it arrives. **Address:** names of this tree — the pattern `task-delivery-loop-run`;
+  the same line in the roles `product-strategist` and `goal-critic` as a proposal to the package.
+- **Three light checks of the push set turned red only in the set:** a class without a rule, a
+  glossary word, an overstayed archive record. Proposed: the light `node tools/…` lines of the set
+  run at step 11, before the set. **Address:** names of this tree — the pattern
+  `task-delivery-loop-run`.
+
+## RT-3339 — the link block of the chat answer
+
+- **The first «308 of 308» match was not a match:** one script filled both sides. The real match
+  from two independent readings found a code defect and four frame divergences. Proposed: the
+  pattern `mockups-measure` and the rule `kit-approval` say that the frame side comes from the
+  layers of the file and the showcase side from computed styles, read apart. **Address:** names of
+  this tree — the rule `kit-approval`.
+- **Dark-theme contrast of the danger colour:** the tag reads 2.94 : 1 and the reason line 3.16 : 1.
+  The kit has one danger value for both themes. A task of the dark status colours does not exist;
+  the owner decides whether to file it.
+- **The mockup was corrected after approval:** line heights 120% and 135% by the kit steps, and the
+  colour of the tag icon. The owner accepts the corrected frame.
+- **The `Tag` set in the second kit file keeps its own icon colour, not the label colour.** A defect
+  of the copy; the card frame overrides it in its instances.
+- **The sign of the milestone G2 «on the published version» has no check before the release.**
+  Proposed: replace it by a check of the packed package — `RT_AI_CHAT_LINK_SCHEMA`, `rtLinkData`
+  and `linkOpen` stand in the types. **Address:** names of this tree — the epic plan.
+- **The free scenario number came from the local branches only.** `tools/spec-next-id.mjs` does not
+  call `git fetch`. Proposed: the tool fetches first or says how stale its answer is. **Address:**
+  names of this tree.
+
 ## Left unresolved
 
 - **All findings above** — wait for the owner's decision at the end of the epic.

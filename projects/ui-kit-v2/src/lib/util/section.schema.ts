@@ -1,4 +1,5 @@
 import { RT_AI_CHAT_KPI_SCHEMA } from './kpi.schema';
+import { RT_AI_CHAT_LINK_SCHEMA } from './link.schema';
 import { RT_AI_CHAT_MARKDOWN_SCHEMA } from './markdown.schema';
 import { RT_AI_CHAT_NOTICE_SCHEMA } from './notice.schema';
 import { ERtSectionSpan, RT_SECTION_BLOCK_TYPE } from './section-data';
@@ -48,6 +49,7 @@ const OWN_SCHEMAS: Readonly<Record<string, TRtJsonSchema>> = {
     notice: RT_AI_CHAT_NOTICE_SCHEMA,
     kpi: RT_AI_CHAT_KPI_SCHEMA,
     table: RT_AI_CHAT_TABLE_SCHEMA,
+    link: RT_AI_CHAT_LINK_SCHEMA,
 };
 
 function record(value: unknown): TRtJsonSchema {

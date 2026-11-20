@@ -9,7 +9,11 @@
             [(expanded)]="expanded" />
     }
     @if (message().blocks.length) {
-        <rt-ai-chat-blocks rtElem="blocks" qa-dataid="ai-chat-answer-blocks" [blocks]="message().blocks" />
+        <rt-ai-chat-blocks
+            rtElem="blocks"
+            qa-dataid="ai-chat-answer-blocks"
+            [blocks]="message().blocks"
+            (linkOpen)="linkOpen.emit($event)" />
     }
     @if (extra(); as extraTemplate) {
         <ng-container [ngTemplateOutlet]="extraTemplate" [ngTemplateOutletContext]="{ $implicit: message() }" />

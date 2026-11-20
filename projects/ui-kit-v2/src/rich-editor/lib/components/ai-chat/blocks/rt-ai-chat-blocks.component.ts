@@ -1,5 +1,16 @@
 import { NgComponentOutlet, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, input, InputSignal, Signal, ViewEncapsulation } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    inject,
+    input,
+    InputSignal,
+    output,
+    OutputEmitterRef,
+    Signal,
+    ViewEncapsulation,
+} from '@angular/core';
 
 import { BlockDirective, ElemDirective } from '@rt-tools/core';
 
@@ -10,6 +21,7 @@ import { RtAiChatBlockCellDirective } from './rt-ai-chat-block-cell.directive';
 import { toBlockViews } from './rt-ai-chat-blocks.logic';
 import { RT_AI_CHAT_BLOCK_RENDERERS } from './rt-ai-chat-blocks.providers';
 import { RtAiChatKpiComponent } from './kpi/rt-ai-chat-kpi.component';
+import { RtAiChatLinkComponent } from './link/rt-ai-chat-link.component';
 import { RtAiChatSectionComponent } from './section/rt-ai-chat-section.component';
 import { RtAiChatTableComponent } from './table/rt-ai-chat-table.component';
 
@@ -17,7 +29,8 @@ const BEM_BLOCK: string = 'rt-ai-chat-blocks';
 
 /**
  * Блоки ответа по порядку: `markdown` — текстом, `notice` — плашкой `rt-message`, `table` —
- * таблицей `rt-ai-chat-table`, `kpi` — карточками `rt-ai-chat-kpi`, `section` — сеткой
+ * таблицей `rt-ai-chat-table`, `kpi` — карточками `rt-ai-chat-kpi`, `link` — карточкой страницы
+ * `rt-ai-chat-link`, `section` — сеткой
  * `rt-ai-chat-section`, остальные — отрисовщиками, которые приложение зарегистрировало через
  * `provideRtAiChatBlock`. Блок без отрисовщика показан заглушкой с именем типа. Блок в ячейке
  * секции рисует тот же шаблон, что и блок ленты.
@@ -40,6 +53,7 @@ const BEM_BLOCK: string = 'rt-ai-chat-blocks';
         RtMessageComponent,
         RtAiChatTableComponent,
         RtAiChatKpiComponent,
+        RtAiChatLinkComponent,
         RtAiChatSectionComponent,
         RtAiChatBlockCellDirective,
 
@@ -61,4 +75,7 @@ export class RtAiChatBlocksComponent {
     );
 
     public readonly blocks: InputSignal<readonly IRtAiChat.Block[]> = input<readonly IRtAiChat.Block[]>([]);
+
+    /** Нажата кнопка карточки ссылки: адрес и нужна ли новая вкладка. */
+    public readonly linkOpen: OutputEmitterRef<IRtAiChat.LinkPress> = output<IRtAiChat.LinkPress>();
 }

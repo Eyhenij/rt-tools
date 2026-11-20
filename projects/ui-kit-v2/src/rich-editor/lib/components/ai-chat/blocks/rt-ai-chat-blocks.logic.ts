@@ -1,6 +1,7 @@
 import {
     ERtKpiDeltaUnit,
     IRtKpiItem,
+    IRtLinkData,
     IRtSectionItem,
     IRtTableData,
     IRtTag,
@@ -8,6 +9,7 @@ import {
     rtDeltaNumber,
     rtKpiItems,
     rtKpiValueWriter,
+    rtLinkData,
     rtSectionItems,
     rtSectionSpan,
     rtSectionTitle,
@@ -33,7 +35,7 @@ const NOTICE_SEVERITIES: Readonly<Record<IRtTag.Severity, true>> = {
 };
 
 /** Типы, которые кит рисует сам: отрисовщик из реестра их не заменяет. */
-const OWN_TYPES: ReadonlySet<string> = new Set<string>(['markdown', 'notice', 'table', 'kpi', RT_SECTION_BLOCK_TYPE]);
+const OWN_TYPES: ReadonlySet<string> = new Set<string>(['markdown', 'notice', 'table', 'kpi', 'link', RT_SECTION_BLOCK_TYPE]);
 
 /** Блок текста в markdown: тип `markdown` и строка `text`. */
 export function isMarkdownBlock(block: { readonly type: string }): block is IRtAiChat.MarkdownBlock {
@@ -72,6 +74,14 @@ export function kpiBlockItems(block: { readonly type: string }): IRtKpiItem[] | 
     return block.type === 'kpi' ? rtKpiItems(Reflect.get(block, 'items')) : null;
 }
 
+/**
+ * Карточка блока `link`, приведённая к виду, который можно рисовать; `null` — блок не ссылка или
+ * без названия или адреса, и тогда он показан заглушкой.
+ */
+export function linkBlockData(block: { readonly type: string }): IRtLinkData | null {
+    return block.type === 'link' ? rtLinkData(block) : null;
+}
+
 /** Запись пунктов дельты подписью кита: в неё уходит записанное число. */
 export type TRtAiChatPointsWriter = (value: string) => string;
 
@@ -83,9 +93,9 @@ export function rtAiChatPointsWriter(translate: TRtKitTranslator): TRtAiChatPoin
     return (value: string): string => translate('uiPercentagePoints', { value }) || defaultPoints(value);
 }
 
-/** Табуляция и перевод строки внутри текста карточки в копии становятся пробелом. */
+/** Табуляция и любой перевод строки внутри текста карточки в копии становятся пробелом. */
 function copyField(text: string | null): string {
-    return text === null ? '' : text.replace(/[\t\r\n]+/g, ' ');
+    return text === null ? '' : text.replace(/[\t\r\n\v\f\u2028\u2029]+/g, ' ');
 }
 
 /** Дельта карточки, как её рисует плитка: число с подписью базы через пробел. */
@@ -108,6 +118,11 @@ function kpiPlainText(items: readonly IRtKpiItem[], locale: string, points: TRtA
                 .join('\t')
         )
         .join('\n');
+}
+
+/** Блок ссылки в копии: название, раздел и адрес одной строкой через табуляцию; без раздела поле пустое. */
+function linkPlainText(data: IRtLinkData): string {
+    return [data.title, data.section, data.url].map((field: string | null): string => copyField(field)).join('\t');
 }
 
 /** Заголовок блока `table`: непустая строка, иначе его нет. */
@@ -182,6 +197,11 @@ function leafText(block: IRtAiChat.Block, context: ICopyContext): string {
     if (kpi !== null) {
         return kpiPlainText(kpi, locale, points);
     }
+    const link: IRtLinkData | null = linkBlockData(block);
+
+    if (link !== null) {
+        return linkPlainText(link);
+    }
 
     return rendererText(byType.get(block.type), block);
 }
@@ -228,6 +248,11 @@ function leafView(block: IRtAiChat.Block, byType: ReadonlyMap<string, IRtAiChat.
 
     if (kpi !== null) {
         return { kind: 'kpi', items: kpi };
+    }
+    const link: IRtLinkData | null = linkBlockData(block);
+
+    if (link !== null) {
+        return { kind: 'link', data: link };
     }
     const renderer: IRtAiChat.BlockRenderer | undefined = byType.get(block.type);
 

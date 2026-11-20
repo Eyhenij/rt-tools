@@ -17,6 +17,9 @@
             @case ('kpi') {
                 <rt-ai-chat-kpi rtElem="kpi" qa-dataid="ai-chat-block-kpi" [items]="view.items" />
             }
+            @case ('link') {
+                <rt-ai-chat-link rtElem="link" qa-dataid="ai-chat-block-link" [data]="view.data" (opened)="linkOpen.emit($event)" />
+            }
             @case ('custom') {
                 <ng-container *ngComponentOutlet="view.component; inputs: { block: view.block }" />
             }

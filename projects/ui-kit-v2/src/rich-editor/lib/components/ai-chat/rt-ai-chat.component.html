@@ -120,7 +120,8 @@
                             [extra]="extraTemplate()?.templateRef ?? null"
                             [expanded]="openRuns().has(message.id)"
                             (expandedChange)="onToggleRun(message.id, $event)"
-                            (feedbackChange)="onFeedback(message, $event)" />
+                            (feedbackChange)="onFeedback(message, $event)"
+                            (linkOpen)="onLinkOpen(message, $event)" />
                     }
                 }
 
