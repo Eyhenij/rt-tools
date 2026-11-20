@@ -332,19 +332,36 @@ describe('RtFieldComponent', (): void => {
                 .query(By.directive(RtTooltipDirective))
                 .injector.get(RtTooltipDirective);
             expect(tooltip.text()).toBe('Как в документе');
-            expect(qa(fixture, 'field-help-popover')).toBeNull();
         });
 
-        it('SC-UKV-1552: подсказка пояснения открывается и нажатием', (): void => {
+        it('SC-UKV-1553: знак вопроса описан текстом пояснения для программы чтения экрана', (): void => {
             const fixture: ComponentFixture<FieldHostComponent> = setup();
 
             fixture.componentInstance.help.set('Как в документе');
             fixture.detectChanges();
 
-            const tooltip: RtTooltipDirective = fixture.debugElement
-                .query(By.directive(RtTooltipDirective))
-                .injector.get(RtTooltipDirective);
-            expect(tooltip.showOnTap()).toBe(true);
+            const id: string = (qa(fixture, 'field-help')?.nativeElement as HTMLElement).getAttribute('aria-describedby') ?? '';
+            expect(id).not.toBe('');
+            const described: HTMLElement | null = (fixture.nativeElement as HTMLElement).querySelector(`[id="${id}"]`);
+            expect(described?.textContent?.trim()).toBe('Как в документе');
+        });
+
+        it('SC-UKV-1552: нажатие по знаку вопроса открывает подсказку с пояснением', (): void => {
+            const fixture: ComponentFixture<FieldHostComponent> = setup();
+
+            fixture.componentInstance.help.set('Как в документе');
+            fixture.detectChanges();
+
+            expect(document.querySelector('rt-tooltip')).toBeNull();
+
+            // Касание: браузер шлёт вход указателя и сразу клик.
+            const help: HTMLElement = qa(fixture, 'field-help')?.nativeElement as HTMLElement;
+            help.dispatchEvent(new Event('mouseenter'));
+            help.click();
+            fixture.detectChanges();
+
+            expect(document.querySelector('rt-tooltip')?.textContent?.trim()).toBe('Как в документе');
+            document.querySelectorAll('.cdk-overlay-container').forEach((container: Element): void => container.remove());
         });
     });
 

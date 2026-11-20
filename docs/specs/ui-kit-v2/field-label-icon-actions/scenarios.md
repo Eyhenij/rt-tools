@@ -231,3 +231,11 @@ When the person taps the question mark
 Then the tooltip with the help text opens: its trigger shows on a tap, not only on hover
 
 Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field.component.spec.ts`.
+
+### SC-UKV-1553 — the question mark is described by the help text
+
+Given a field with a help text
+When a screen reader reaches the question mark
+Then the button is described by the help text: the tooltip lives in the overlay, and the text is read from a hidden node next to the button
+
+Covered: `projects/ui-kit-v2/src/lib/components/field/rt-field.component.spec.ts`.

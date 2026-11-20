@@ -90,6 +90,9 @@ export class RtFieldComponent implements AfterContentInit {
 
     readonly #autoId: string = nextAutoId();
 
+    /** id узла с текстом пояснения: им кнопка «?» описана для программы чтения экрана. */
+    protected readonly helpId: string = `${this.#autoId}-help`;
+
     /** Строка подписи: по её ширине материальный набор вырезает разрыв в рамке. `#`-поле `viewChild` не принимает. */
     protected readonly labelRow: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('labelRow');
 

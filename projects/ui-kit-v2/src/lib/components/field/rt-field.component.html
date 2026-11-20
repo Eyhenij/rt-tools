@@ -16,9 +16,13 @@
                     type="button"
                     rtTooltipShowOnTap
                     [attr.aria-label]="t().uiHint"
+                    [attr.aria-describedby]="helpId"
                     [rtTooltip]="help()">
                     <rt-icon name="ico-help" size="sm" color="muted" />
                 </button>
+                <!-- Подсказка живёт в оверлее и с кнопкой не связана: текст пояснения читается программой
+                     чтения экрана отсюда. Скрытый узел описанию не мешает. -->
+                <span hidden [id]="helpId">{{ help() }}</span>
             }
         </span>
     }

@@ -45,7 +45,19 @@
   middle and dark cells, −114 at the edge, no overlap with the page frames. `kit-match` against the
   live numbers of 6017: 19 of 19.
 - **The redrawn frame 8477:2372 approved:** «Одобряю макет» (20.11).
-- **Waiting for the owner:** the approval of the showcase of the hint.
+- **Review round over the hint change (20.11), three readers on the whole diff.** None blocks.
+  Fixed: SC-UKV-1552 now taps the «?» and finds the tooltip with the help text (it checked only
+  the input); the empty half of SC-UKV-1551 removed; the «?» is described by the help text through
+  a hidden node and `aria-describedby`, new scenario SC-UKV-1553 (the tooltip itself links nothing
+  to the button, the old popover did not either); the spec says Escape closes while the focus is on
+  the «?»; the index table re-formatted. Live on 6017: the hidden node is `display: none` in both
+  halves. Field specs 30 of 30, typecheck, eslint, `check:specs` green.
+  Written off: «the tooltip stops 8 from the edge, not 16» — measured live 16 (1910 of 1926).
+  For the PR body: `field-help-popover` and `rt-field__help-popover` are gone, the text is in
+  `rt-tooltip[role=tooltip]`. To the owner as a choice: the kit tooltip closes when the pointer
+  moves onto its text, and a click after hover closes it (the `showOnTap` toggle) — both are the
+  kit tooltip's behaviour for every consumer.
+- **Waiting for the owner:** the approval of the showcase of the hint and the choice above.
 - **`prefix` and `suffix` of `rt-input` in code (20.11), mockup 8449:1560 approved «Одобряю
   макет»:** the prefix stands before the field, the suffix right after the typed text — a hidden
   copy of the text sizes the field, the field lies over it. Measured live on 6017, own set: the

@@ -96,7 +96,8 @@ can be pressed and shows a hint, and a cross that the Tab key reaches.
 - **The help of a field opens the kit tooltip.** The question mark beside the label shows the help
   text on the theme-inverted surface of the kit tooltip, and the tooltip stays inside the window: by
   a field at the window edge it moves inward instead of running past the edge. It opens on hover,
-  on keyboard focus and on a tap, and Escape closes it.
+  on keyboard focus and on a tap, and Escape closes it while the focus is on the question mark.
+  The question mark is described by the help text, so a screen reader reads it with the button.
 
 ## What is out of scope
 
