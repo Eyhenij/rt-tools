@@ -256,9 +256,13 @@ function invalid(): FormControl<readonly string[] | null> {
                         [attr.data-story-trigger]="triggerAttribute"
                         [options]="categories"
                         [formControl]="togglesPanelControl">
-                        <div rtMultiselectExtra>
-                            <rt-toggle-switch label="Скрыть пустые" [formControl]="hideEmptyControl" />
-                        </div>
+                        <!-- Строка приложения собрана как строки кита: подпись слева, переключатель справа -->
+                        <label
+                            rtMultiselectExtra
+                            style="display: flex; min-height: var(--rt-size-10); box-sizing: border-box; align-items: center; justify-content: space-between; padding: var(--rt-space-sm) var(--rt-space-md); color: var(--rt-color-text-primary); cursor: pointer; font-size: var(--rt-input-font-size); gap: var(--rt-space-sm)">
+                            Скрыть пустые
+                            <rt-toggle-switch qa-dataid="story-hide-empty" ariaLabel="Скрыть пустые" [formControl]="hideEmptyControl" />
+                        </label>
                     </rt-multiselect>
                 </div>
             }
