@@ -219,6 +219,11 @@ export namespace IRtAiChat {
         /** Ответ ещё пишется: оценка не рисуется. */
         readonly streaming?: boolean;
         readonly feedback?: Feedback;
+        /**
+         * Ответ оборвался — связь пропала или ход отменён. Под ответом тихая строка «прерван», в строке
+         * действий — «спросить снова». Флаг ставит и снимает приложение: кит обрыв не распознаёт.
+         */
+        readonly interrupted?: boolean;
     }
 
     export type Message = UserMessage | AssistantMessage;

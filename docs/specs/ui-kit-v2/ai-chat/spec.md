@@ -24,7 +24,9 @@ conversations. Every application repeats the same screen, and every copy drifts 
 - **The run** — the progress of one answer: running, done, stopped, failed, with optional steps.
 - **The attachments** — what the application draws under the answer blocks: a link, a file, a form.
 - **The conversation** — a thread of questions and answers the person can return to.
-- **The run error** — the answer broke off: the message, the reference number, whether to ask again.
+- **The run error** — the last run failed: the message, the reference number, whether to ask again.
+- **The interrupted answer** — an answer the application marked as broken off; its label and its
+  own «Ask again» follow `docs/specs/ui-kit-v2/ai-chat-interrupted/`.
 
 ### What it is called in the interface
 
@@ -76,7 +78,7 @@ conversations. Every application repeats the same screen, and every copy drifts 
 
 - **While an answer is written, the composer offers Stop, and the suggestions and «New conversation» are off.**
 
-- **A run error shows the message, the reference number with a copy button, and «Ask again» only when the answer can be asked again.**
+- **A run error shows the message, the reference number with a copy button, and «Ask again» only when the answer can be asked again.** It describes the last run only. An interrupted answer carries an «Ask again» of its own in its row of actions, and a press on it leaves the chat as `askAgain` with the id of that answer, not as `retry`.
 
 - **The feed follows the last answer while the person stays at the bottom, and stops when they scroll up.**
 
@@ -157,6 +159,7 @@ leave through outputs.
 | writing       | the answer blocks growing under the running run line       |
 | answered      | the blocks, the done run line, «Copy» and the rating       |
 | run error     | the error message, the reference number, «Ask again»       |
+| interrupted   | the label «Answer interrupted», «Ask again» in the row     |
 | conversations | the search and the list in place of the feed               |
 | full screen   | the conversations as a column, the feed beside them        |
 
@@ -227,3 +230,4 @@ None.
 - 2026-11-17 — the task RT-3334 after review: a renderer gives the copy text of its block, an answer without text shows no «Copy», a notice of an unknown severity is a plate.
 - 2026-11-17 — the task RT-3361 of the epic RT-3346: a notice in an answer is announced as a status, not as an alert.
 - 2026-11-20 — the task RT-3340: the sources block is a type of the kit, and a press on a source leaves the chat as `sourceOpen`.
+- 2026-11-20 — the task RT-3341: an answer may be marked interrupted, its «Ask again» leaves the chat as `askAgain` with the id of the answer, and the run error term reads «the last run failed».

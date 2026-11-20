@@ -9,6 +9,15 @@
             min-width: 0;
         }
 
+        /* Тихая строка прерванного ответа: приглушённый мелкий текст, переносится, а не обрезается. */
+        &__interrupted {
+            margin: 0;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            line-height: var(--rt-leading-snug);
+            overflow-wrap: anywhere;
+        }
+
         &__feedback {
             display: flex;
             gap: var(--rt-space-xs);

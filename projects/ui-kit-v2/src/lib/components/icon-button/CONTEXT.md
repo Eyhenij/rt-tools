@@ -21,6 +21,7 @@
 | `link`                                          | `RouterLink['routerLink']` — маршрут: компонент рисует ссылку `<a>`             | `null` → кнопка                    |
 | `expanded`                                      | `boolean \| null` → `aria-expanded`                                             | `null` (атрибута нет)              |
 | `ariaHaspopup`                                  | `'menu' \| 'listbox' \| 'tree' \| 'grid' \| 'dialog' \| null` → `aria-haspopup` | `null` (атрибута нет)              |
+| `ariaDescribedby`                               | `string \| null` → `aria-describedby`                                           | `null` (атрибута нет)              |
 | `loading` / `disabled` / `active` / `indicator` | `boolean`                                                                       | `false`                            |
 
 | выход     | тип          |
