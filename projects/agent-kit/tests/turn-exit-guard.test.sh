@@ -221,6 +221,7 @@ bg_over() {
 }
 expect_stop "end: SC-AK-1761 — фоновая задача идёт — ход отпущен через хук" \
     "$(input_stop "$(transcript "$(say 'делай')" "$(edited)" "$(bg_run)" "$(bg_started 2)")")" PASS
+report "end: SC-AK-1761 — отпуск на ожидании пишется в журнал" "$(grep -c 'ход отпущен на ожидании' "$REPO/.git/rt-kit/turn-exit.log" 2>/dev/null)" "1"
 expect_stop "end: SC-AK-1761 — задача кончилась — ход держится через хук" \
     "$(input_stop "$(transcript "$(say 'делай')" "$(edited)" "$(bg_run)" "$(bg_started 2)" "$(bg_over)")")" BLOCK
 expect_stop "end: SC-AK-1762 — задача старше границы — ход держится через хук" \

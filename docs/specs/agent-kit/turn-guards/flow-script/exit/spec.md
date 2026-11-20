@@ -19,7 +19,8 @@ case of the description says it may.
 - **A release case** — an entry of the section `release` of the description: a condition over the
   measurers and its order.
 - **The journal** — the file in the common directory of git where a release nobody decided is
-  written: a failed engine and the eighth refusal in a row.
+  written: a failed engine and the eighth refusal in a row. A release on a wait is written there
+  too.
 - **A service message** — a record entry under the role of the owner that the owner did not write:
   the load of a rule, the summary of a compaction, the feedback of a guard of the stop.
 
@@ -44,7 +45,8 @@ not by a person.
 - **A turn has ended when the record holds something after the agent closed it, other than the feedback of a stop hook.**
 - **A wait releases nothing once the work is handed over: the state whose action sends work to the background goes on by itself.**
 - **A stop made while a background task of the session runs names no owner's menu.**
-- **The session record is read by pieces, so a record longer than one string of the runtime does not fail the engine.**
+- **A release on a wait is written to the journal.**
+- **The session source and the source of the records read a record by pieces and never hold it as one string.**
 - **The forecast judges a background task by the time of the stop it replays and names the longest run of held stops in a row; a released stop and a word of the owner break a run.**
 - **When another check refused the same step twice for the same reason, or the executor stopped again with no call after a refusal, the one move is the owner's menu.**
 - **The menu of a refusal carries exactly the options of the description: «отложить RT-N» with the task number, «сделаю сам» and «стоп».**
@@ -113,9 +115,18 @@ Not applicable: the guard judges one turn of one session.
 - **A wait is read from the record, not from the words of the turn.** A turn that says «the suite
   runs in the background» with no background task in the record is held as before. Over 14–19.11
   169 of 251 refusals of the engine at turn ends fell on a turn whose own background task ran.
-- **A released wait is woken only by the notice of the task.** Over 14–19.11 24 of 552 background
-  starts got no notice; after such a start the session stands until the owner writes. The bound of
-  twenty minutes is read only at a stop and wakes nothing: it covers 163 of the 165 waiting stops.
+- **A released wait is woken only by the notice of the task.** In the forecast over 14–18.11 the
+  task of 287 of 291 released waits got its notice later, half of them within four minutes. The
+  other four stood on a task that does not end by itself — a showcase, a stand — and after such a
+  start the session stands until the owner writes. The bound of twenty minutes is read only at a
+  stop and wakes nothing. Each release on a wait is written to the journal, so such a stand can
+  be counted.
+
+- **The owner source still reads the record as one string.** Its file is outside the plan of the
+  task that brought the reader by pieces, so a record past the string limit of the runtime, about
+  536 MB, still fails the engine there; a failed engine releases the turn and writes the journal.
+- **A monitor is no background task.** A persistent monitor never ends, and a turn would be
+  released on it for as long as it runs.
 
 ## Open questions
 
@@ -151,4 +162,5 @@ None.
   the options of git, and a stop word followed by an order of work holds the turn.
 - 2026-11-20 — a turn that waits for a background task of its own session is released, once per
   task and for twenty minutes; such a stop names no owner's menu. The record is read by pieces.
-  The forecast over 14–18.11 holds 184 stops where it held 383, and its longest run is 8.
+  The forecast over 14–18.11 holds 144 stops where it held 383. Three series of ten and more
+  refusals at one step stay in those days: they stood with no background task running.

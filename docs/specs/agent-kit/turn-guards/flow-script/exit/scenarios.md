@@ -244,7 +244,10 @@ When the session source reads the events of the record
 Then each start is an event with the call, the task and the time, and each end names the call or the task
 And a plain call, a refused start, a monitor and a notice with no final status are neither
 And a stop summary with no refusal is the event of an ended turn
-And a turn the agent closed is ended once the idle mark, a word of the owner or a new call follows it, and is not when the feedback of a stop hook follows or nothing does
+And a turn the agent closed is ended once a word of the owner or a new call follows it
+And it is not ended when the feedback of a stop hook follows, when only service entries of the harness do, or when nothing does
+And an agent a message resumed is a start again, and its notice «is waiting on its own background work» is no end
+And an entry of a subagent gives no event
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 
@@ -264,6 +267,7 @@ When the hook on Stop measures the session
 Then the session waits, and the turn is released by the case of a background task
 And a task that ended, by its call or by its task, is no wait; one task of two still running is
 And a stop word of the owner is asked before the case
+And the hook writes the release to the journal
 
 Covered: `projects/agent-kit/tests/turn-exit-guard.test.sh`.
 

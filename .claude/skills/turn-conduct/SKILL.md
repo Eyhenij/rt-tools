@@ -4,7 +4,7 @@ kind: rule
 law: work-conduct
 description: Rule under the work-conduct law — about one turn. Load when a turn is being ended — what it ends with, what the owner is told about a step that is theirs, what backs a statement about the tree, what the guards watch. Pattern task-flow-handoff. The whole course of work — rule task-flow.
 ---
-<!-- rt-kit v0.37.0 · rules/turn-conduct.md · bfd5acefed42 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · rules/turn-conduct.md · 58fcc3bfdfde · правится надстройкой, не здесь -->
 
 # Turn conduct — how it works here
 
@@ -163,10 +163,10 @@ flowchart TD
   action, not instead of it.
 - **The last action of a turn is only ever work.** A file edit or a changing command stands last
   among what the turn did. The exit guard does not read the last call: a turn whose scenario is not
-  over is held whatever stood last.
+  over is held whatever stood last, unless a release case is met.
 - **Waiting for someone else's step is never the last action of a turn.** While they are waited for,
   the work stays where it stood. The last action is judged: waiting mid-turn is lawful, and so is a
-  launch in the background mid-turn. Standing last, it is an announcement of intent: what does not depend on it is done while it runs.
+  launch in the background mid-turn. Standing last, it ends the turn only as a wait the record shows: a background task of the session with no end, younger than twenty minutes. What does not depend on it is done first.
 - **The handover is written even where the branch has no name.** All of it lies in the tree and is
   reachable on a detached head; one file needs a name, and a short snapshot of the head gives it.
   Otherwise compaction comes without a handover, and the next session starts from a blank.

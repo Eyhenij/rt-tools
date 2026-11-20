@@ -456,12 +456,17 @@ out('session: SC-AK-1759 — конец хода без отказа — соб�
 const closed = { type: 'assistant', message: { stop_reason: 'end_turn', content: [{ type: 'text', text: 'готово' }] } };
 const feedback = { type: 'user', message: { content: 'Stop hook feedback:\nBLOCKED by turn-exit-guard: open' } };
 out('session: SC-AK-1759 — закрытый ход последней записью — ещё не конец', kinds([closed]), '');
-out('session: SC-AK-1759 — за закрытым ходом отметка простоя — конец хода', kinds([closed, { type: 'last-prompt' }]), 'ended::');
+out('session: SC-AK-1759 — служебная запись за закрытым ходом — ещё не конец', kinds([closed, { type: 'last-prompt' }, { type: 'custom-title' }]), '');
 out('session: SC-AK-1759 — за закрытым ходом слово владельца — конец хода', kinds([closed, { type: 'user', message: { content: 'дальше' } }]), 'ended::');
 out('session: SC-AK-1759 — за закрытым ходом новый вызов — конец хода', kinds([closed, call('t7', 'Read', {})]), 'ended::');
-out('session: SC-AK-1759 — за закрытым ходом отказ остановки — не конец', kinds([closed, { type: 'queue-operation', operation: 'enqueue', content: 'x' }, feedback, { type: 'last-prompt' }]), 'refusal::');
-out('session: SC-AK-1759 — части одного ответа — один конец хода', kinds([closed, closed, { type: 'last-prompt' }, { type: 'last-prompt' }]), 'ended::');
-out('session: SC-AK-1759 — отметка простоя без закрытого хода — не конец', kinds([call('t8', 'Read', {}), { type: 'last-prompt' }]), '');
+out('session: SC-AK-1759 — отказ остановки после служебных записей — не конец', kinds([closed, { type: 'last-prompt' }, { type: 'queue-operation', operation: 'enqueue', content: 'x' }, feedback, { type: 'last-prompt' }]), 'refusal::');
+out('session: SC-AK-1759 — части одного ответа — один конец хода', kinds([closed, closed, { type: 'user', message: { content: 'дальше' } }]), 'ended::');
+const resumed = [call('t2', 'Agent', { description: 'd' }), result('t2', { isAsync: true, agentId: 'a2' }), notice('t2', 'a2', 'completed'), call('t9', 'SendMessage', { to: 'a2' }), result('t9', { success: true, resumedAgentId: 'a2' })];
+out('session: SC-AK-1759 — возобновлённый агент — снова начало задачи', kinds(resumed), 'background:t2:a2 backgroundEnd:t2:a2 background:t9:a2');
+out('session: SC-AK-1759 — конец возобновлённого агента находится по номеру задачи', kinds([...resumed, notice('t2', 'a2', 'completed')]).split(' ').at(-1), 'backgroundEnd:t2:a2');
+const goesOn = { type: 'queue-operation', operation: 'enqueue', content: '<task-notification>\n<task-id>a2</task-id>\n<status>completed</status>\n<summary>Agent "d" is waiting on its own background work</summary>\n</task-notification>' };
+out('session: SC-AK-1759 — агент ждёт свою фоновую работу — не конец задачи', kinds([call('t2', 'Agent', { description: 'd' }), result('t2', { isAsync: true, agentId: 'a2' }), goesOn]), 'background:t2:a2');
+out('session: SC-AK-1759 — запись субагента событий не даёт', kinds([{ ...call('t1', 'Bash', { command: 'x', run_in_background: true }), isSidechain: true }, { ...result('t1', { backgroundTaskId: 'b1' }), isSidechain: true }]), '');
 
 // SC-AK-1760 — the record is read by pieces
 const dir = mkdtempSync(join(tmpdir(), 'tf-lines-'));

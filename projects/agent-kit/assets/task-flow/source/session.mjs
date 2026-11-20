@@ -26,6 +26,8 @@ const CALL_REFUSAL = /hook error:[\s\S]*?BLOCKED by ([\w-]+):\s*([^\n]*)/;
 
 /** The end of a background task in its notice. */
 const TASK_OVER = /<status>(?:completed|failed|killed|stopped)<\/status>/;
+/** A notice with a final status of an agent that goes on: it stopped with background work of its own and notifies again. */
+const STILL_RUNNING = /<summary>[^<]*is waiting on its own background work<\/summary>/;
 /** A refusal of a stop hook in the summary of the stop hooks. */
 const STOP_BLOCK = /BLOCKED by |"decision"\s*:\s*"block"/;
 /** The tools whose call ends a background task. */
@@ -42,11 +44,13 @@ export function* linesOf(file, piece = 1 << 22) {
     try {
         for (let read; (read = readSync(fd, chunk, 0, chunk.length, null)) > 0; ) {
             let start = 0;
-            for (let at = 0; at < read; at += 1) {
-                if (chunk[at] !== 10) continue;
-                rest.push(Buffer.from(chunk.subarray(start, at)));
-                yield Buffer.concat(rest).toString('utf8');
-                rest = [];
+            for (let at = chunk.indexOf(10, 0); at !== -1 && at < read; at = chunk.indexOf(10, start)) {
+                if (rest.length === 0) yield chunk.toString('utf8', start, at);
+                else {
+                    rest.push(Buffer.from(chunk.subarray(start, at)));
+                    yield Buffer.concat(rest).toString('utf8');
+                    rest = [];
+                }
                 start = at + 1;
             }
             if (start < read) rest.push(Buffer.from(chunk.subarray(start, read)));
@@ -90,18 +94,20 @@ const resultText = (part) =>
 const taskOver = (entry) => {
     const content = entry?.type === 'queue-operation' ? entry.content : entry?.type === 'user' ? entry.message?.content : null;
     const text = typeof content === 'string' ? content : '';
-    if (!text.includes('<task-notification>') || !TASK_OVER.test(text)) return null;
+    if (!text.includes('<task-notification>') || !TASK_OVER.test(text) || STILL_RUNNING.test(text)) return null;
     return { id: text.match(/<tool-use-id>([^<]+)</)?.[1] ?? null, task: text.match(/<task-id>([^<]+)</)?.[1] ?? null };
 };
 
 /**
  * The start of a background task in the result of its call: a command sent to the background whose
- * result names the task, or an agent whose result is asynchronous.
+ * result names the task, an agent whose result is asynchronous, or an agent a message resumed — it
+ * runs in the background again and sends its notice again.
  */
 const taskStarted = (entry) => {
     const result = entry?.toolUseResult;
     if (!result || typeof result !== 'object') return null;
     if (result.backgroundTaskId) return String(result.backgroundTaskId);
+    if (result.resumedAgentId) return String(result.resumedAgentId);
     return result.isAsync ? String(result.agentId ?? '') : null;
 };
 
@@ -112,8 +118,10 @@ export function eventsOf(entries) {
     const events = [];
     // The agent closed its turn, and the record does not say yet whether the stop was released. A
     // refusal of the stop comes as its feedback; a released stop is seen only by what follows it —
-    // the summary of the stop hooks with no refusal, the idle mark of the harness, a new message or
-    // a new turn of the agent. The last entry of a record is therefore never an ended turn.
+    // the summary of the stop hooks with no refusal, a new message or a new turn of the agent. The
+    // last entry of a record is therefore never an ended turn. The service entries the harness
+    // flushes at any minute — the last prompt, the title, the mode — say nothing: in the records
+    // they stand between a closed turn and the feedback of its stop.
     let closing = false;
     const ended = () => {
         if (closing) events.push({ kind: 'ended' });
@@ -128,10 +136,8 @@ export function eventsOf(entries) {
             }
             continue;
         }
-        if (entry?.type === 'last-prompt') {
-            ended();
-            continue;
-        }
+        // A record of a subagent is no part of the session's own turn.
+        if (entry?.isSidechain) continue;
         if (entry?.type === 'user' && feedbackText(entry) === null) ended();
         const over = taskOver(entry);
         if (over) {
