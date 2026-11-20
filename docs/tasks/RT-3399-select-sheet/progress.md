@@ -23,6 +23,27 @@
   lines); the wrappers took `templateUrl`; the steps of the plan mirrored with marks. All three
   checks green, `check:specs`, `check:docs`, kit typecheck green. The heavy steps were held after
   the red and run on the next pass.
+- **Before-PR points review (20.11), product-strategist over the whole diff.** Confirmed and taken
+  before the PR: (1) `kit-match` numbers stand for 4 approved frames of about 30 — the rest of the
+  phone frames (8292:*, 8293:*, 8310:*, 8371:1292, 8405:752, 8423:1981) are matched now, story by
+  story at 375; (2) the even column headers of the workspace (remark 3) were never measured — a
+  story with the thread list and a conversation on one `rt-workspace` at 900 and a measure of both
+  header bottoms. For the PR body: publish as `minor` after the merge (the manual publish defaults
+  to `patch`); `detailsInHeader` is the application's step for remark 4; the search is missing in
+  the multiselect only (`rt-select` has `filter`, SC-UKV-1607).
+- **Before-PR goal review (20.11), goal-critic against the owner's words.** Checked in the code and
+  confirmed: three places still draw the focus by the field border colour, not by the one ring —
+  the password eye `rt-input.component.scss:245`, the own trigger of `rt-select` (`:131`) and of
+  `rt-multiselect` (`:90`); `rt-page-bar` opens its filters sheet by its own fit mode, not by the
+  phone threshold 480, and has no `sheet` input; no spec holds the 480 boundary (`narrow` without
+  `phone`). The even headers and the back button need `detailsInHeader`, which the application
+  sets — the PR names it. All taken before the PR.
+- **Frames to match, listed from Figma (20.11):** 30 approved frames — 21 phone frames at 375,
+  the wide toggles select 8293:3667, the toggle group that fits 8310:837, the locked column
+  8405:752, and the remark frames 8423:1981, 8437:*, 8449:1560, 8477:2372.
+- **Next step:** the one focus ring in the three field places, the page bar at 480 with its
+  `sheet` input, the 480 boundary spec; then the `kit-match` sweep over the phone frames, the
+  workspace headers story and measure, the snapshot references and the push set.
 - **The showcase of `prefix` and `suffix` approved:** «Approve showcase» (20.11).
 - **The hint at the field label joined (20.11), «проверь и добавь в текущий тикет»:** confirmed
   live on 6017 — `rt-field__help-popover` has a transparent background, padding 0 and no shadow,
