@@ -13,6 +13,7 @@ const ANSWER: string = join(__dirname, 'answer/rt-ai-chat-answer.component.scss'
 const MARKDOWN: string = join(LIB, 'markdown-text/rt-markdown-text.component.scss');
 const PROMPT: string = join(LIB, 'ai-prompt-input/rt-ai-prompt-input.component.scss');
 const THREADS: string = join(LIB, 'thread-list/rt-thread-list.component.scss');
+const STORY: string = join(__dirname, 'stories/component/test-ai-chat-properties.component.scss');
 
 /** Тело правила с таким селектором, без вложенных в него правил. */
 function ruleBody(css: string, selector: string): string {
@@ -130,5 +131,18 @@ describe('токены вида чата', (): void => {
         ]) {
             expect(ruleBody(markdown, selector)).not.toContain('--rt-markdown-text-font');
         }
+    });
+
+    it('SC-UKV-1597 — витрина ставит токены правилом на элементе чата, без внутренних классов', (): void => {
+        const css: string = compiled(STORY)
+            .replace(/\/\*[\s\S]*?\*\//g, '')
+            .replace(/@charset[^;]*;/, '');
+        const selectors: string[] = [...css.matchAll(/([^{}]+)\{/g)].map((match: RegExpMatchArray): string => match[1].trim());
+
+        expect(selectors.length).toBeGreaterThan(0);
+        for (const selector of selectors) {
+            expect(selector).toMatch(/^rt-ai-chat\[data-cell='?[a-z]+'?\]$/);
+        }
+        expect(css).not.toMatch(/\.rt-(ai-chat__|thread-list__|ai-prompt-input__|markdown-text)/);
     });
 });

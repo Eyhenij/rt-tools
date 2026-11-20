@@ -187,8 +187,14 @@
                 pointer-events: auto;
             }
 
-            &__row-wrap:not(:hover, :focus-within, :has(.rt-menu--open)) [rtThreadListUnderActions] {
+            &__row-wrap [rtThreadListUnderActions] {
                 visibility: visible;
+            }
+
+            &__row-wrap:hover [rtThreadListUnderActions],
+            &__row-wrap:focus-within [rtThreadListUnderActions],
+            &__row-wrap:has(.rt-menu--open) [rtThreadListUnderActions] {
+                visibility: var(--rt-thread-list-under-actions-visibility, visible);
             }
         }
 
