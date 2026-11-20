@@ -45,9 +45,6 @@ the same rows as before.
   The count says how many values are chosen, the reset takes them all off and keeps the sheet
   open, the done button closes the sheet. The choice is written on every press, so the done
   button confirms nothing — it only closes.
-- **A choice of several values with a search keeps the search at the top of its list.**
-  It stands next to the field and in the sheet alike, leaves only the matching values, keeps what
-  was chosen before the search and is empty again at the next opening.
 - **A field that searches as it is typed opens the sheet on a tap, and the typing goes to a search at the top of the sheet.**
   The field under the sheet gives its focus away; a query shorter than the minimum keeps the sheet
   open, since the person types on in it. A choice closes the sheet.

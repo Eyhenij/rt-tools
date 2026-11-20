@@ -102,6 +102,10 @@ a list: a field, a badge, an icon, a pill with a name.
   same input `iconLeft`, the same place before the content, the same size and colour: one input
   shape across the kit, and a form holding both families looks the same in both.
 
+- **The multiselect takes a search above its list the same way the select does.** The same input
+  `filter`, next to the field and in the phone sheet alike: it leaves only the matching values,
+  keeps what was chosen before the search and is empty again at the next opening.
+
 ## What is out of scope
 
 - The look of the consumer's trigger: the kit gives no badge, no pill and no icon trigger of its own.
@@ -177,3 +181,4 @@ None.
 - 2026-09-29 — the magnifier of the filter line and the multiselect's icon on the left; the task
   RT-2368 of the epic RT-2370.
 - 2026-10-08 — the open list highlights the chosen option; the task RT-2698 of the epic RT-2649.
+- 2026-11-20 — the multiselect search above its list; the task RT-3399.
