@@ -155,7 +155,7 @@ describe('rtAiChatChartTable', (): void => {
         expect(rowsOf(table)).toEqual([['Units', '1234.5', rtAiChatChartFormat(spec, 'ru')(0.5)]]);
     });
 
-    it('SC-UKV-1390 — trees give their valued paths, a node before its children', (): void => {
+    it('SC-UKV-1533 — trees give their valued paths, a node before its children', (): void => {
         const spec: IRtAiChatChart.Spec = {
             kind: ERtAiChatChartKind.TREEMAP,
             hierarchy: [

@@ -28,6 +28,9 @@ const BEM_BLOCK: string = 'rt-card';
  * 1. Текстом через `header="..."` input — рендерит `<h3 class="rt-card__title">`.
  * 2. Произвольный контент через attribute-selector slot `[rtCardHeader]`.
  *
+ * Над заголовком стоит ряд медиа: слева `[rtCardMedia]` (знак, картинка), справа
+ * `[rtCardHeaderEnd]` (тег состояния) по центру высоты медиа. Пустой ряд места не занимает.
+ *
  * Footer — только через slot `[rtCardFooter]`. Пустые header/footer слоты
  * визуально скрываются через `:empty` CSS-селектор.
  *
@@ -60,6 +63,11 @@ export class RtCardComponent {
 
     /** Делает карточку интерактивной: `role="button"`, `tabindex="0"`, клавиатура. */
     public readonly clickable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Обводка в 1px цвета `--rt-color-border-default`; без входа карточка рисуется как раньше. */
+    public readonly bordered: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
     });
 

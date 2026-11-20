@@ -3,6 +3,7 @@ import { Type } from '@angular/core';
 import {
     ERtKpiDeltaUnit,
     ERtKpiFormat,
+    ERtSectionSpan,
     ERtTableColumn,
     IRtAiRunStatus,
     IRtKpiItem,
@@ -97,8 +98,29 @@ export namespace IRtAiChat {
         readonly [field: string]: unknown;
     }
 
-    /** Часть ответа. Список типов открыт: кит знает `markdown`, `notice`, `table` и `kpi`, остальные регистрирует приложение. */
-    export type Block = MarkdownBlock | NoticeBlock | TableBlock | KpiBlock | CustomBlock;
+    /**
+     * Блок внутри секции: блок ответа и по желанию его место в ряду сетки. Тип секцию среди них
+     * не запрещает — список типов открыт; секция в секции показана заглушкой.
+     * Без `span` текст, плашка, KPI и таблица занимают всю строку, остальные — один столбец.
+     */
+    export type NestedBlock = Exclude<Block, SectionBlock> & { readonly span?: `${ERtSectionSpan}` };
+
+    /**
+     * Секция ответа: заголовок по желанию и блоки, разложенные сеткой — в одну колонку в узкой
+     * ленте и в две в широкой. Кит рисует её сам; секция в секции и секция без блоков показаны
+     * заглушкой.
+     */
+    export interface SectionBlock {
+        readonly type: 'section';
+        readonly title?: string;
+        readonly blocks: readonly NestedBlock[];
+    }
+
+    /**
+     * Часть ответа. Список типов открыт: кит знает `markdown`, `notice`, `table`, `kpi` и `section`,
+     * остальные регистрирует приложение.
+     */
+    export type Block = MarkdownBlock | NoticeBlock | TableBlock | KpiBlock | SectionBlock | CustomBlock;
 
     /**
      * Отрисовщик блока, которого кит сам не знает: компонент с обязательным входом `block` и
@@ -117,7 +139,19 @@ export namespace IRtAiChat {
         | { readonly kind: 'table'; readonly data: IRtTableData; readonly title: string | null }
         | { readonly kind: 'kpi'; readonly items: readonly IRtKpiItem[] }
         | { readonly kind: 'custom'; readonly component: Type<unknown>; readonly block: Block }
+        | { readonly kind: 'section'; readonly title: string | null; readonly cells: readonly SectionCell[] }
         | { readonly kind: 'unsupported'; readonly type: string };
+
+    /** Ячейка сетки секции: место в ряду и то, что в ней рисуется. */
+    export interface SectionCell {
+        readonly span: ERtSectionSpan;
+        readonly view: BlockView;
+    }
+
+    /** Контекст шаблона ленты, которым рисуется блок в ячейке секции. */
+    export interface CellContext {
+        readonly $implicit: BlockView;
+    }
 
     /** Вопрос человека: строка в пузыре справа. */
     export interface UserMessage {

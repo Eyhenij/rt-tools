@@ -104,7 +104,7 @@ export interface IAiChatChartWidthCase extends IAiChatChartCase {
 
 /**
  * Таблица в лентах 328, 386 и 728 и шесть рядов в узкой ленте: широкая таблица прокручивается
- * вбок внутри блока — SC-UKV-1391.
+ * вбок внутри блока — SC-UKV-1534.
  */
 export const AI_CHAT_CHART_DATA_WIDTHS: readonly IAiChatChartWidthCase[] = [
     ...AI_CHAT_CHART_WIDTHS.map((width: string): IAiChatChartWidthCase => ({ ...ready(width, LINE), width })),

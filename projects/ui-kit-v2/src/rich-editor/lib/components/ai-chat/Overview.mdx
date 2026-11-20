@@ -104,16 +104,18 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 ## Блоки ответа
 
 Ответ — `IRtAiChat.AssistantMessage` с массивом `blocks`, вопрос — `IRtAiChat.UserMessage` со
-строкой `text`. Кит сам рисует четыре типа блока:
+строкой `text`. Кит сам рисует пять типов блока:
 
-| тип        | поля                                  | что рисуется                                                                                  |
-| ---------- | ------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `markdown` | `text`                                | `rt-markdown-text`                                                                            |
-| `notice`   | `severity`, `text`                    | `rt-message` этой severity                                                                    |
-| `table`    | `columns`, `rows`, `total?`, `title?` | таблица с «Copy CSV» — [AiChatTable](./?path=/docs/organisms-chat-aichattable-overview--docs) |
-| `kpi`      | `items`                               | сетка карточек-плиток — [AiChatKpi](./?path=/docs/organisms-chat-aichatkpi-overview--docs)    |
+| тип        | поля                                  | что рисуется                                                                                          |
+| ---------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `markdown` | `text`                                | `rt-markdown-text`                                                                                    |
+| `notice`   | `severity`, `text`                    | `rt-message` этой severity                                                                            |
+| `table`    | `columns`, `rows`, `total?`, `title?` | таблица с «Copy CSV» — [AiChatTable](./?path=/docs/organisms-chat-aichattable-overview--docs)         |
+| `kpi`      | `items`                               | сетка карточек-плиток — [AiChatKpi](./?path=/docs/organisms-chat-aichatkpi-overview--docs)            |
+| `section`  | `blocks`, `title?`                    | заголовок и сетка блоков — [AiChatSection](./?path=/docs/organisms-chat-aichatsection-overview--docs) |
 
-Блоки `table` и `kpi` кит рисует сам, даже если приложение зарегистрировало отрисовщик этого типа.
+Блоки `table`, `kpi` и `section` кит рисует сам, даже если приложение зарегистрировало отрисовщик
+этого типа. Секция держит другие блоки и раскладывает их в один или два столбца по своей ширине.
 
 Остальные типы рисует отрисовщик приложения: `provideRtAiChatBlock('chart', MyChartBlockComponent,
 (block) => '…')` в провайдерах корня приложения, компонент получает блок во вход `block`. Все
@@ -122,8 +124,9 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 спрятал бы забытую регистрацию. Заглушкой показан и свой тип без нужных полей: `markdown` без
 `text`, `notice` без известной `rt-message` severity.
 
-Копирование ответа берёт текст `markdown`, `notice`, таблицы и карточек KPI строками через табуляцию и блоков, у отрисовщика которых есть третий
-аргумент — функция текста. Блок без неё в буфер не попадает. Если текста у блоков нет совсем,
+Копирование ответа берёт текст `markdown` и `notice`, таблицу и карточки KPI — строками через
+табуляцию. Блок из реестра идёт в копию, если у его отрисовщика есть третий аргумент — функция
+текста; блок без неё в буфер не попадает. Секция идёт в копию заголовком и текстами своих блоков. Если текста у блоков нет совсем,
 «Копировать» не рисуется, оценка остаётся.
 
 Проверки `isMarkdownBlock` и `isNoticeBlock` экспортируются: `block.type === 'markdown'` тип не

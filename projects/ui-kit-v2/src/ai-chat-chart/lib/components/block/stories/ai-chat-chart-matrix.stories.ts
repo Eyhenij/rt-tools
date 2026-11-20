@@ -64,11 +64,11 @@ async function openData({ canvasElement }: { canvasElement: HTMLElement }): Prom
 
 /**
  * Таблица данных под графиком, светлая и тёмная половины: линия, столбики группой с минусом и нулём,
- * дерево по листьям — SC-UKV-1384, SC-UKV-1388, SC-UKV-1390.
+ * дерево по листьям — SC-UKV-1532, SC-UKV-1388, SC-UKV-1533.
  */
 export const DataTable: TStory = { args: { part: 'data' }, play: openData };
 
-/** Таблица в лентах 328, 386 и 728 и шесть рядов в узкой ленте — SC-UKV-1391. */
+/** Таблица в лентах 328, 386 и 728 и шесть рядов в узкой ленте — SC-UKV-1534. */
 export const DataTableWidths: TStory = { args: { part: 'dataWidths' }, play: openData };
 
 /** Дерево на 200 листьев: таблица растёт в высоту вместе с блоком. */

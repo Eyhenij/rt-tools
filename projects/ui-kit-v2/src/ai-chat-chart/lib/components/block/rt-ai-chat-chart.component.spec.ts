@@ -248,7 +248,7 @@ describe('RtAiChatChartComponent', (): void => {
             return (fixture.nativeElement as HTMLElement).querySelector('table');
         }
 
-        it('SC-UKV-1383 — the table is hidden until the switch is pressed', async (): Promise<void> => {
+        it('SC-UKV-1531 — the table is hidden until the switch is pressed', async (): Promise<void> => {
             const fixture: ComponentFixture<RtAiChatChartComponent> = await draw(REVENUE);
             const toggle: HTMLButtonElement = toggleOf(fixture);
 
@@ -258,7 +258,7 @@ describe('RtAiChatChartComponent', (): void => {
             expect(tableOf(fixture)).toBeNull();
         });
 
-        it('SC-UKV-1384 — the switch shows and hides the table it controls', async (): Promise<void> => {
+        it('SC-UKV-1532 — the switch shows and hides the table it controls', async (): Promise<void> => {
             const fixture: ComponentFixture<RtAiChatChartComponent> = await draw(REVENUE);
 
             press(fixture);
@@ -300,7 +300,7 @@ describe('RtAiChatChartComponent', (): void => {
             expect([pendingHas, invalidHas, qa(empty, 'ai-chat-chart-toggle') !== null]).toEqual([false, false, false]);
         });
 
-        it('SC-UKV-1395 — another spec in the input closes the table, a re-render of the same one keeps it', async (): Promise<void> => {
+        it('SC-UKV-1538 — another spec in the input closes the table, a re-render of the same one keeps it', async (): Promise<void> => {
             const fixture: ComponentFixture<RtAiChatChartComponent> = await draw(REVENUE);
             press(fixture);
 
@@ -316,7 +316,7 @@ describe('RtAiChatChartComponent', (): void => {
             expect(toggleOf(fixture).getAttribute('aria-expanded')).toBe('false');
         });
 
-        it('SC-UKV-1393 — the open table follows a change of the kit locale', async (): Promise<void> => {
+        it('SC-UKV-1536 — the open table follows a change of the kit locale', async (): Promise<void> => {
             const russian: Readonly<Record<string, string>> = { aiChartHideData: 'Скрыть данные', aiChartShowData: 'Показать данные' };
             const translator: WritableSignal<TRtKitTranslator> = signal<TRtKitTranslator>((): string => '');
             const locale: WritableSignal<string> = signal<string>('en');
@@ -347,7 +347,7 @@ describe('RtAiChatChartComponent', (): void => {
             expect(textOf(toggleOf(fixture))).toBe('Скрыть данные');
         });
 
-        it('SC-UKV-1394 — the full-screen dialog has neither the switch nor the table', async (): Promise<void> => {
+        it('SC-UKV-1537 — the full-screen dialog has neither the switch nor the table', async (): Promise<void> => {
             const fixture: ComponentFixture<RtAiChatChartComponent> = await draw(REVENUE);
             const appRef: ApplicationRef = TestBed.inject(ApplicationRef);
             press(fixture);
@@ -363,7 +363,7 @@ describe('RtAiChatChartComponent', (): void => {
             expect(dialog?.querySelector('table')).toBeNull();
         });
 
-        it('SC-UKV-1392 — the copy of the answer is the same with the table open', async (): Promise<void> => {
+        it('SC-UKV-1535 — the copy of the answer is the same with the table open', async (): Promise<void> => {
             const answer: readonly IRtAiChat.Block[] = [{ type: 'chart', spec: JSON.stringify(REVENUE) }];
             const fixture: ComponentFixture<RtAiChatBlocksComponent> = createRtFixture(
                 RtAiChatBlocksComponent,

@@ -1,5 +1,7 @@
 <ng-container rtBlock="rt-ai-chat-blocks">
-    @for (view of views(); track $index) {
+    <!-- Один шаблон на блок ленты и на блок в ячейке секции: новый тип кита добавляется в одном месте.
+         Он объявлен внутри блока, чтобы rtElem в ячейке секции получил блок ленты, а не секции. -->
+    <ng-template #block rtAiChatBlockCell let-view>
         @switch (view.kind) {
             @case ('markdown') {
                 <rt-markdown-text rtElem="markdown" qa-dataid="ai-chat-block-markdown" [text]="view.text" />
@@ -23,6 +25,19 @@
                     {{ 'aiBlockUnsupported' | rtKitLabel: translate() : { type: view.type } }}
                 </div>
             }
+        }
+    </ng-template>
+
+    @for (view of views(); track $index) {
+        @if (view.kind === 'section') {
+            <rt-ai-chat-section
+                rtElem="section"
+                qa-dataid="ai-chat-block-section"
+                [title]="view.title"
+                [cells]="view.cells"
+                [cellTemplate]="block" />
+        } @else {
+            <ng-container *ngTemplateOutlet="block; context: { $implicit: view }" />
         }
     }
 </ng-container>

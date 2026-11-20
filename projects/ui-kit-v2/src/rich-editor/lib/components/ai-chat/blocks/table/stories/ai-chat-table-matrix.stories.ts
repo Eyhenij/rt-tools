@@ -130,7 +130,7 @@ export const Invalid: TStory = { args: { part: 'invalid' } };
 /** Блок рядом с таблицами разметки в одном ответе: общий вид, у разметки нет предела высоты — SC-UKV-1417. */
 export const Markdown: TStory = { args: { part: 'markdown' } };
 
-/** Блок и таблица разметки под `dir="rtl"`: края столбцов зеркалятся — SC-UKV-1397, SC-UKV-1418. */
+/** Блок и таблица разметки под `dir="rtl"`: края столбцов зеркалятся — SC-UKV-1540, SC-UKV-1418. */
 export const Rtl: TStory = { args: { part: 'rtl' } };
 
 /** Блок с итогом и блок с минусами в обоих наборах оформления. */
