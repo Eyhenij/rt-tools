@@ -310,6 +310,17 @@ Then the step matches: its check reads the progress before the commit that marke
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
+### SC-AK-1794 — the final rerun reads the replacement lines of the last progress
+
+Given a step whose check in the plan does not match
+And a replacement line of that step written in the commit that marks the step done
+When the final rerun runs
+Then the step matches by the replaced check
+And a replacement taken away by a later commit is not brought back
+And of two replacement lines for one step the later one is taken
+
+Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
+
 ### SC-AK-1740 — the final rerun runs on the node the tree pins
 
 Given a tree whose `.nvmrc` names a version installed in the nvm directory, and a session on another node

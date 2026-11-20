@@ -2,10 +2,10 @@
 
 ## Где мы
 
-- **State:** `этап-идёт`
+- **State:** `этапы-кончились`
 - **Stage:** 2 of 2 — The description and the laid-out copy
-- **Done:** этап 1: функция `withReplacements` в перемере, три случая SC-AK-1794 зелёные (без правки два красные)
-- **Next step:** шаг 2.1 — правило строк замен в спеке шага
+- **Done:** оба этапа: перемер читает замены, описание и копия в `tools/` готовы
+- **Next step:** живая проверка перемера, два круга ревью
 - **Uncommitted:** nothing
 - **PR:** not open yet
 
@@ -13,9 +13,9 @@
 
 - [x] 1.1 The rerun adds the replacement lines of the last progress to the chosen version
 - [x] 1.2 The scenario of the replacement and the marks in one commit passes
-- [>] 2.1 The description carries the rule of the replacement lines
-- [ ] 2.2 The description carries the scenario
-- [ ] 2.3 The laid-out copy carries the helper
+- [x] 2.1 The description carries the rule of the replacement lines
+- [x] 2.2 The description carries the scenario
+- [x] 2.3 The laid-out copy carries the helper
 
 ## Решения по ходу
 
