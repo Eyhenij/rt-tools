@@ -15,3 +15,4 @@
 - **Макет:** «Одобряю макет» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8449-1560 (постоянный текст до и после значения в `rt-input`)
 - **Совпадение:** 23 из 23 чисел
 - **Витрина:** «Approve showcase» — http://localhost:6017/?path=/story/molecules-forms-fieldextras--affixes
+- **Макет:** «Одобряю макет» — https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8477-2372 (подсказка у подписи поля — подсказка кита)

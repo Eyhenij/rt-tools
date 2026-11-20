@@ -80,12 +80,6 @@
             cursor: help;
         }
 
-        &__help-popover {
-            display: block;
-            max-width: 240px;
-            font-size: var(--rt-field-hint-font-size);
-        }
-
         /* Зона сообщений под контролом. С резервом (reserveHintSpace) hint и ошибка
            кладутся в одну ячейку грида: скрытый hint продолжает задавать высоту, и
            подмена сообщения не двигает форму ни вниз, ни вверх. Без hint высоту

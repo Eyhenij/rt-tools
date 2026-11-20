@@ -360,19 +360,28 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 4 из 4 — Showcase; both review rounds done
-- **Next step:** a review round over the four remarks committed in 50570df3b, run while the owner
+- **Next step:** review round two over the whole diff is running (three readers started 20.11 on
 
 The progress in full — `docs/tasks/RT-3399-select-sheet/progress.md`; the plan lies next to it.
 
 ### Uncommitted
 
 ```
-none
+ M ../../../../../../docs/tasks/RT-3399-select-sheet/approvals.md
+ M rt-field.component.html
+ M rt-field.component.scss
+ M rt-field.component.ts
 ```
 
 ### Commits over the main branch
 
 ```
+cf5812cc7 docs(rt:ui-kit-v2): макет подсказки у подписи поля нарисован и замерен (RT-3399)
+aa410cfe1 docs(rt:ui-kit-v2): подсказка кита замерена в обеих темах (RT-3399)
+f15f99b39 docs(rt:ui-kit-v2): подсказка у подписи поля принята в задачу и проверена вживую (RT-3399)
+72bbc66c2 fix(rt:ui-kit-v2): исправления после второго круга ревью постоянного текста поля (RT-3399)
+13401889a docs(rt:ui-kit-v2): витрина постоянного текста одобрена, идёт второй круг ревью (RT-3399)
+066bd257b feat(rt:ui-kit-v2): постоянный текст до и после значения в rt-input (RT-3399)
 9f7b26a08 fix(rt:ui-kit-v2): исправления после первого круга ревью четырёх замечаний (RT-3399)
 0a78fb1ba docs(rt:ui-kit-v2): следующий шаг — ревью четырёх правок, пока макет поля у владельца (RT-3399)
 fed16f9d5 docs(rt:ui-kit-v2): в макете поля текст больше не обрезается снизу (RT-3399)
@@ -387,12 +396,6 @@ d1d5a01d5 feat(rt:ui-kit-v2): пустое поле даты и периода �
 1c57014b1 docs(rt:ui-kit-v2): витрина одобрена, пять замечаний приложения по киту — в задаче (RT-3399)
 1c22d6523 docs(rt:ui-kit-v2): прогресс — оба круга ревью закрыты, витрина ждёт владельца (RT-3399)
 a65f3cb28 fix(rt:ui-kit-v2): исправления после второго круга ревью (RT-3399)
-a1651399f docs(rt:ui-kit-v2): находки второго круга ревью записаны, строка назначения в таблице (RT-3399)
-31e7abb1c docs(rt:ui-kit-v2): спека селекта ссылается на шторку, подписи вида с переключателями названы (RT-3399)
-a8ad670c2 docs(rt:ui-kit-v2): живая проверка шторок после первого круга ревью (RT-3399)
-a0292c8da fix(rt:ui-kit-v2): шторка только на телефоне и исправления после первого круга ревью (RT-3399)
-fae1258a0 docs(rt:ui-kit-v2): шторка открывается только на телефоне, до 480 px (RT-3399)
-08829070a docs(rt:ui-kit-v2): находки первого круга ревью записаны (RT-3399)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

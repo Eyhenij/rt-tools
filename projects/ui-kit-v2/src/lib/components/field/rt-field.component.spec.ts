@@ -5,6 +5,7 @@ import { By } from '@angular/platform-browser';
 
 import { createRtFixture, el, hostClasses, qa, qaAll, textOf } from '../../../testing/rt-kit-testing';
 import { RtInputComponent } from '../input/rt-input.component';
+import { RtTooltipDirective } from '../tooltip/rt-tooltip.directive';
 import { RtFieldHintDirective } from './rt-field-hint.directive';
 import { RtFieldComponent } from './rt-field.component';
 import { IRtField } from './rt-field.model';
@@ -321,13 +322,29 @@ describe('RtFieldComponent', (): void => {
             expect(qa(fixture, 'field-help')?.attributes['aria-label']).toBe('Hint');
         });
 
-        it('текст пояснения лежит в поповере и до наведения не отрисован', (): void => {
+        it('SC-UKV-1551: пояснение открывает подсказку кита, своей карточки нет', (): void => {
             const fixture: ComponentFixture<FieldHostComponent> = setup();
 
             fixture.componentInstance.help.set('Как в документе');
             fixture.detectChanges();
 
+            const tooltip: RtTooltipDirective = fixture.debugElement
+                .query(By.directive(RtTooltipDirective))
+                .injector.get(RtTooltipDirective);
+            expect(tooltip.text()).toBe('Как в документе');
             expect(qa(fixture, 'field-help-popover')).toBeNull();
+        });
+
+        it('SC-UKV-1552: подсказка пояснения открывается и нажатием', (): void => {
+            const fixture: ComponentFixture<FieldHostComponent> = setup();
+
+            fixture.componentInstance.help.set('Как в документе');
+            fixture.detectChanges();
+
+            const tooltip: RtTooltipDirective = fixture.debugElement
+                .query(By.directive(RtTooltipDirective))
+                .injector.get(RtTooltipDirective);
+            expect(tooltip.showOnTap()).toBe(true);
         });
     });
 

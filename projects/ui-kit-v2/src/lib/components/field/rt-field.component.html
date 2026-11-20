@@ -14,14 +14,11 @@
                     rtElem="help"
                     qa-dataid="field-help"
                     type="button"
-                    rtPopoverTrigger="hover"
+                    rtTooltipShowOnTap
                     [attr.aria-label]="t().uiHint"
-                    [rtPopover]="helpTpl">
+                    [rtTooltip]="help()">
                     <rt-icon name="ico-help" size="sm" color="muted" />
                 </button>
-                <ng-template #helpTpl>
-                    <span rtElem="help-popover" qa-dataid="field-help-popover">{{ help() }}</span>
-                </ng-template>
             }
         </span>
     }

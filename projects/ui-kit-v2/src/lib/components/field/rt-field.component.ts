@@ -23,7 +23,7 @@ import { BlockDirective, ElemDirective, ModDirective } from '@rt-tools/core';
 import { RT_KIT_LABELS, TRtKitLabelKey, TRtKitLabelMap, rtKitLabel } from '@rt-tools/ui-kit-v2/core';
 import { rtNotchWidth, RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
-import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
+import { RtTooltipDirective } from '@rt-tools/ui-kit-v2/tooltip';
 import { RtSkeletonWrapperComponent } from '@rt-tools/ui-kit-v2/skeleton-wrapper';
 import { RtFieldHintDirective } from './rt-field-hint.directive';
 import { RT_FIELD_DEFAULT_ERROR_KEYS, RT_FIELD_EMPTY_VALUE, IRtField } from './rt-field.model';
@@ -39,7 +39,7 @@ function nextAutoId(): string {
 }
 
 /**
- * Обёртка единой анатомии поля: label (+ опц. help-иконка с popover, + авто «*»
+ * Обёртка единой анатомии поля: label (+ опц. help-иконка с подсказкой кита, + авто «*»
  * для required) сверху, спроецированный rt-контрол посередине, hint/error снизу.
  * `required` объявляет поле обязательным там, где валидатора на контроле нет (шаблонная форма).
  * `hideRequiredMark` глушит авто-«*» — для форм, где все поля обязательны и
@@ -62,7 +62,7 @@ function nextAutoId(): string {
     imports: [
         // standalone components / directives
         RtIconComponent,
-        RtPopoverDirective,
+        RtTooltipDirective,
         RtSkeletonWrapperComponent,
         BlockDirective,
         ElemDirective,

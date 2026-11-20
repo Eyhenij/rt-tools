@@ -93,6 +93,10 @@ can be pressed and shows a hint, and a cross that the Tab key reaches.
   then refuses a character past the limit, typed or pasted. Without the limit the field carries no
   such attribute. The form's own length check stays with the application: a value set by code is
   not cut.
+- **The help of a field opens the kit tooltip.** The question mark beside the label shows the help
+  text on the theme-inverted surface of the kit tooltip, and the tooltip stays inside the window: by
+  a field at the window edge it moves inward instead of running past the edge. It opens on hover,
+  on keyboard focus and on a tap, and Escape closes it.
 
 ## What is out of scope
 
@@ -177,3 +181,5 @@ None.
 - 2026-10-23 — merged from the agreement into the subdomain, task RT-2812.
 - 2026-10-30 — the application's request: the clearing cross by Tab from the kit settings on every
   field with a cross; merged from the agreement into the subdomain, task RT-2995.
+- 2026-11-20 — the help of a field opens the kit tooltip instead of a card without a surface, task
+  RT-3399.
