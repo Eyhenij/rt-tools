@@ -1,22 +1,25 @@
-import { ChangeDetectionStrategy, Component, Provider, WritableSignal, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Provider, WritableSignal, signal, ɵINPUT_SIGNAL_BRAND_WRITE_TYPE } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { FieldTree, FormField, form } from '@angular/forms/signals';
 
 import { RT_KIT_LOCALE } from '../../i18n';
-import { TRtInputWrite, createRtFixture, qa, setInputs } from '../../../testing/rt-kit-testing';
+import { createRtFixture, qa, setInputs } from '../../../testing/rt-kit-testing';
 import { RtDatePickerComponent } from './rt-date-picker.component';
 
 /** Порядок дня в тексте зависит от локали — прибиваем её. */
 const RU_LOCALE: Provider = { provide: RT_KIT_LOCALE, useValue: signal('ru') };
 
+/** Что вход принимает на запись — тип, который проверяет шаблон потребителя; Jest шаблон не типизирует. */
+type TInputWrite<TInput> = TInput extends { [ɵINPUT_SIGNAL_BRAND_WRITE_TYPE]: infer TWrite } ? TWrite : never;
+
 /**
  * Сигнальная форма пишет в `min`, `max` `undefined`, когда границу не задала. Тип ниже не
- * соберётся, если вход перестанет это принимать.
+ * соберётся, если вход перестанет это принимать: его ловит проверка типов спек.
  */
 const BOUNDS_TAKE_UNDEFINED: [
-    undefined extends TRtInputWrite<RtDatePickerComponent['min']> ? true : false,
-    undefined extends TRtInputWrite<RtDatePickerComponent['max']> ? true : false,
+    undefined extends TInputWrite<RtDatePickerComponent['min']> ? true : false,
+    undefined extends TInputWrite<RtDatePickerComponent['max']> ? true : false,
 ] = [true, true];
 
 interface IVisit {

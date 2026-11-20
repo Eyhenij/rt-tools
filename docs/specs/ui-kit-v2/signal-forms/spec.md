@@ -61,7 +61,13 @@ component.
   value or none does not build in the template of the consumer, so the whole form on the signal
   binding stays unbuilt over one field. The absent bound reads the same as the former «no bound».
   The bound of a range field is typed by the form as the range itself; a range given there sets no
-  bound either.
+  bound either. A bound the form took off returns the field to its default bound, never to a value
+  that is not a number.
+- **A part of the state named like an input of the field reaches that input, whatever the input
+  means.** The binding writes by name, not by meaning: the `minLength` of the form reaches the
+  `minLength` of a field with hints, where it is the count of letters before the hints open. A form
+  that demands three letters therefore opens the hints from the third letter. The field says so in
+  its description; renaming the input would break every consumer that sets it.
 
 ## What is out of scope
 

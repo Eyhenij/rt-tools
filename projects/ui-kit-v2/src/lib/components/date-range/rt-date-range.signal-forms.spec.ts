@@ -1,23 +1,27 @@
-import { ChangeDetectionStrategy, Component, Provider, WritableSignal, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Provider, WritableSignal, signal, ɵINPUT_SIGNAL_BRAND_WRITE_TYPE } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { FieldTree, FormField, form } from '@angular/forms/signals';
 
 import { RT_KIT_LOCALE } from '../../i18n';
-import { TRtInputWrite, createRtFixture, qa, setInputs } from '../../../testing/rt-kit-testing';
+import { createRtFixture, qa, setInputs } from '../../../testing/rt-kit-testing';
 import { RtDateRangeComponent } from './rt-date-range.component';
 import { IRtDateRange } from './rt-date-range.model';
 
 /** Порядок дня в тексте зависит от локали — прибиваем её. */
 const RU_LOCALE: Provider = { provide: RT_KIT_LOCALE, useValue: signal('ru') };
 
+/** Что вход принимает на запись — тип, который проверяет шаблон потребителя; Jest шаблон не типизирует. */
+type TInputWrite<TInput> = TInput extends { [ɵINPUT_SIGNAL_BRAND_WRITE_TYPE]: infer TWrite } ? TWrite : never;
+
 /**
  * Сигнальная форма типизирует границу поля диапазона типом его значения и пишет `undefined`, когда
- * границу не задала. Тип ниже не соберётся, если вход перестанет принимать любое из двух.
+ * границу не задала. Тип ниже не соберётся, если вход перестанет принимать любое из двух: его ловит
+ * проверка типов спек.
  */
 const BOUNDS_TAKE_FORM_TYPES: [
-    undefined extends TRtInputWrite<RtDateRangeComponent['min']> ? true : false,
-    IRtDateRange.Value extends TRtInputWrite<RtDateRangeComponent['max']> ? true : false,
+    undefined extends TInputWrite<RtDateRangeComponent['min']> ? true : false,
+    IRtDateRange.Value extends TInputWrite<RtDateRangeComponent['max']> ? true : false,
 ] = [true, true];
 
 interface IReport {

@@ -88,6 +88,15 @@ letter as before
 
 Covered: `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete.signal-forms.spec.ts`.
 
+### SC-UKV-1597 — a counter whose bound the form took off returns to its default bound
+
+Given a counter whose `min` and `max` were set
+When the signal binding takes the bounds off and writes nothing in their place
+Then the bounds are the default ones — zero and no ceiling — and not a number that blocks both
+buttons
+
+Covered: `projects/ui-kit-v2/src/lib/components/counter/rt-counter.component.spec.ts`.
+
 ### SC-UKV-83 — the former binding works as before
 
 Given a field on the former binding with an obligatory control

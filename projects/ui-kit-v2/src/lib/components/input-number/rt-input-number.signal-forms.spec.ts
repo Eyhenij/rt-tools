@@ -1,21 +1,32 @@
-import { ChangeDetectionStrategy, Component, LOCALE_ID, Provider, WritableSignal, signal } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    LOCALE_ID,
+    Provider,
+    WritableSignal,
+    signal,
+    ɵINPUT_SIGNAL_BRAND_WRITE_TYPE,
+} from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { FieldTree, FormField, form } from '@angular/forms/signals';
 
-import { TRtInputWrite, createRtFixture, qa, setInputs } from '../../../testing/rt-kit-testing';
+import { createRtFixture, qa, setInputs } from '../../../testing/rt-kit-testing';
 import { RtInputNumberComponent } from './rt-input-number.component';
 
 /** Разбор числа зависит от локали — прибиваем её. */
 const RU_LOCALE: Provider = { provide: LOCALE_ID, useValue: 'ru' };
 
+/** Что вход принимает на запись — тип, который проверяет шаблон потребителя; Jest шаблон не типизирует. */
+type TInputWrite<TInput> = TInput extends { [ɵINPUT_SIGNAL_BRAND_WRITE_TYPE]: infer TWrite } ? TWrite : never;
+
 /**
  * Сигнальная форма пишет в `min`, `max` `undefined`, когда границу не задала. Тип ниже не
- * соберётся, если вход перестанет это принимать.
+ * соберётся, если вход перестанет это принимать: его ловит проверка типов спек.
  */
 const BOUNDS_TAKE_UNDEFINED: [
-    undefined extends TRtInputWrite<RtInputNumberComponent['min']> ? true : false,
-    undefined extends TRtInputWrite<RtInputNumberComponent['max']> ? true : false,
+    undefined extends TInputWrite<RtInputNumberComponent['min']> ? true : false,
+    undefined extends TInputWrite<RtInputNumberComponent['max']> ? true : false,
 ] = [true, true];
 
 interface IOrder {

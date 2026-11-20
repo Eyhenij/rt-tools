@@ -1,6 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { DebugElement, EnvironmentProviders, Provider, Type, ɵINPUT_SIGNAL_BRAND_WRITE_TYPE } from '@angular/core';
+import { DebugElement, EnvironmentProviders, Provider, Type } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
@@ -15,12 +15,6 @@ import { provideRtIDBStorage, provideRtStorage, provideRtUtils } from '@rt-tools
  * Спеке, проверяющей подписи приложения, а не умолчания, надо добавить свой
  * `provideRtKitLabels(...)` в `providers` — общая обвязка его не навязывает.
  */
-
-/**
- * Что вход-сигнал принимает на запись: тип, который проверяет шаблон потребителя. Jest шаблон не
- * типизирует, поэтому утверждение о входе спека пишет этим типом, и его ловит проверка типов спек.
- */
-export type TRtInputWrite<TInput> = TInput extends { [ɵINPUT_SIGNAL_BRAND_WRITE_TYPE]: infer TWrite } ? TWrite : never;
 
 /** Дополнения к TestBed поверх общей обвязки. */
 export interface IRtFixtureOptions {

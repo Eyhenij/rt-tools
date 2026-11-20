@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, DebugElement } from '@angular/core'
 import { ComponentFixture } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
-import { createRtFixture, el, hostClasses, qa, textOf } from '../../../testing/rt-kit-testing';
+import { createRtFixture, el, hostClasses, qa, setInputs, textOf } from '../../../testing/rt-kit-testing';
 import { RtCounterComponent } from './rt-counter.component';
 
 @Component({
@@ -104,6 +104,18 @@ describe('RtCounterComponent', (): void => {
             press(fixture, 'counter-increase');
 
             expect(value(fixture)).toBe('3');
+        });
+
+        it('SC-UKV-1597 — снятая граница undefined возвращает границу по умолчанию, а не NaN', (): void => {
+            // без формы значение — ноль, и потолок ноль держит плюс отключённым
+            const fixture: ComponentFixture<RtCounterComponent> = setup({ min: 0, max: 0 });
+            expect(stepButton(fixture, 'counter-increase').disabled).toBe(true);
+
+            setInputs(fixture, { min: undefined, max: undefined });
+            fixture.detectChanges();
+
+            expect([fixture.componentInstance.min(), fixture.componentInstance.max()]).toEqual([0, Number.MAX_SAFE_INTEGER]);
+            expect(stepButton(fixture, 'counter-increase').disabled).toBe(false);
         });
 
         it('без верхней границы потолка нет', (): void => {
