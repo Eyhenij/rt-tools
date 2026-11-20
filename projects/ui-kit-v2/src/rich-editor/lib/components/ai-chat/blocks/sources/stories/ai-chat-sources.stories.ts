@@ -18,7 +18,7 @@ export default {
 type TStory = StoryObj<TestRtAiChatSourcesComponent>;
 
 export const Playground: TStory = {
-    parameters: storySnapshotSkip('свёрнутый блок с двумя источниками уже стоит в ячейке «свёрнут — 5» матрицы States'),
+    parameters: storySnapshotSkip('свёрнутый блок с этими источниками уже стоит в ячейках «свёрнут — 5» и «свёрнут — 1» матрицы States'),
     args: {
         width: 386,
         title: 'Отчёт «Продажи»',

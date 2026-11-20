@@ -111,6 +111,9 @@ describe('RtAiChatSourcesComponent', (): void => {
 
         await toggle(fixture);
         const button: HTMLElement = qaAll(fixture, 'ai-chat-sources-open')[0].nativeElement as HTMLElement;
+
+        expect(button.tagName).toBe('BUTTON');
+        expect(button.classList).toContain('rt-ai-chat-sources__row--pressable');
         button.click();
         button.click();
 

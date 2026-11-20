@@ -94,6 +94,30 @@ async function openMarked(root: HTMLElement): Promise<void> {
 }
 
 /**
+ * Наведение и фокус строки с адресом: тело панели обрезает всё, что выходит за него, поэтому
+ * строка занимает его ширину целиком (подложка не срезается), а кольцо фокуса идёт внутрь строки.
+ * Фокус ставится и снимается в одном шаге, кадр его не видит.
+ */
+function expectPressState(row: HTMLElement, name: string): void {
+    if (row.tagName !== 'BUTTON') {
+        return;
+    }
+    const body: DOMRect | undefined = row.closest('[role="region"]')?.getBoundingClientRect();
+    const rect: DOMRect = row.getBoundingClientRect();
+
+    expectThat(
+        body !== undefined && near(rect.left, body.left) && near(rect.right, body.right),
+        `${name}: строка ${rect.left}–${rect.right} не занимает тело панели, подложку наведения срежет`
+    );
+    row.focus({ focusVisible: true });
+    const offset: number = parseFloat(getComputedStyle(row).outlineOffset);
+    const width: number = parseFloat(getComputedStyle(row).outlineWidth);
+
+    row.blur();
+    expectThat(width > 0 && offset <= -width, `${name}: кольцо фокуса ${width} со сдвигом ${offset} идёт наружу, тело панели его срежет`);
+}
+
+/**
  * Числа макета: заголовок 40, карточка с рамкой 1 и скруглением 12 и полями 4, значок 20 на 20,
  * 12 до текста, поле списка снизу 8. Строка с уточнением 51 высотой, без уточнения 36.
  */
@@ -133,6 +157,7 @@ function expectNumbers(block: HTMLElement, name: string): void {
             `${name} «${title}»: строка ${row.getBoundingClientRect().height}`
         );
         expectThat(rtl ? icon.right <= edge.right - 12 : icon.left >= edge.left + 12, `${name} «${title}»: значок за полем карточки`);
+        expectPressState(row, `${name} «${title}»`);
     }
 }
 
