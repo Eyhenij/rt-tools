@@ -25,7 +25,20 @@
   Measured by nodes: the gap to the icon 6 in all three; in the middle and dark cells the tooltip
   centre stands on the icon centre (0); at the edge its right side is the window edge (0) and it is
   moved 90 left of the icon; width 240, text two lines 32 high; no overlap with the page frames.
-- **Waiting for the owner:** the approval of frame 8477:2372.
+- **Frame 8477:2372 approved:** «Одобряю макет» (20.11).
+- **The hint in code (20.11):** the «?» of `rt-field` carries `rtTooltip` with `rtTooltipShowOnTap`;
+  the popover, its template and the `__help-popover` rule are gone. Rule and scenarios
+  `SC-UKV-1551`, `SC-UKV-1552` in the subdomain `field-label-icon-actions`; field specs 29 of 29,
+  typecheck, eslint, stylelint, `check:specs`, `check:tokens-styles` green.
+- **Measured live on 6017 with the mockup text:** gap 6, centre offset 0, padding 4/8, radius 4,
+  font 12, text two lines 32, light island `rgb(40,40,40)` with white text, dark island white with
+  `rgb(40,40,40)` text. Two numbers differ from the frame, and both are the kit tooltip's own
+  behaviour, not this edit: the width is 256, because `max-width: 240px` limits the content and the
+  padding 8+8 comes on top, while the frame's Tooltip copy is 240 whole; at the right window edge
+  the tooltip stops 16 from the edge (CDK push with the viewport margin 8), 8 from the left edge,
+  while the frame draws it flush.
+- **Waiting for the owner:** whether the mockup follows the code (the frame and the file's Tooltip
+  copy redrawn to 256 and 16) or the kit tooltip changes for every consumer.
 - **`prefix` and `suffix` of `rt-input` in code (20.11), mockup 8449:1560 approved «Одобряю
   макет»:** the prefix stands before the field, the suffix right after the typed text — a hidden
   copy of the text sizes the field, the field lies over it. Measured live on 6017, own set: the
