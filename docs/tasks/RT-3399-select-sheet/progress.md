@@ -121,11 +121,14 @@ edge with nothing to say the row goes on.
 The owner added: «включи в задачу не прятать иконку драга а дизеблить». In the column settings of
 `rt-table` a locked row draws an empty placeholder where the others have the drag handle.
 
-1. [ ] Draw the locked row with a disabled drag handle in Figma next to the table settings frame and
+1. [x] Draw the locked row with a disabled drag handle in Figma next to the table settings frame and
    ask the owner to approve it. — drawn after «продолжай работу»: node 8405:752 on the Table page,
    the row «Даты» locked, the handle and the eye at opacity 0.5 (`--rt-icon-button-disabled-opacity`);
-   no overlap with the neighbouring frames by node bounds. Waits for the owner's approval.
-2. [ ] Draw the handle disabled in `table/settings-panel`; a spec holds it.
+   no overlap with the neighbouring frames by node bounds. Approved: «Одобряю» (approvals.md).
+2. [x] Draw the handle disabled in `table/settings-panel`; a spec holds it. — one handle button for
+   every row, disabled with the modifier `--disabled` on a locked one (opacity from
+   `--rt-icon-button-disabled-opacity`); the panel spec 6 green, stylelint and eslint clean. The
+   look at 0.5 is measured with the showcase walk.
 
 ### 4. Showcase
 
