@@ -3,9 +3,9 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 3 из 5 — Компонент, событие и тексты (этап 2 закрыт: макет одобрен, Figma 8409:2217)
+- **Stage:** 4 из 5 — Витрина и сверка с макетом (этап 3 закрыт: компонент, событие, подписи, спеки)
 - **Done:** задача взята (исполнитель `rt-tools-dev`, карточка в «In progress», ветка `RT-3340-ai-chat-sources-block` от ветки RT-3339, цепочка, PR #3447). Разведка сделана, `grill.md` записан, договорённость написана `spec-writer` (46 правил, сценарии SC-UKV-1541…1559) и ждёт `spec-critic`, план записан.
-- **Next step:** этап 3, шаг 1 — тип SourcesBlock, вид sources, SourceOpen, OWN_TYPES, шаг данных в toBlockViews и тексты копирования в leafText.
+- **Next step:** этап 4, шаг 1 — истории блока: один и пять источников, состояния, длинные тексты, rtl, тёмная тема, с шагами play.
 - **Uncommitted:** нет после коммита этапа 1
 - **Waiting for the owner:** нет
 - **PR:** не открыт; база — `RT-3339-ai-chat-link-block` (PR #3447 ждёт слияния в ветку эпика)
@@ -21,12 +21,12 @@
 - [x] 2.2 Draw the frame of the sources block from kit instances: one and five sources, collapsed and expanded, a pressable and a plain source, a long title, at 328, 386 and 640, and dark at 328.
 - [x] 2.3 Measure the frames by node coordinates and show them to the owner.
 - [x] 2.4 Write the owner's word into `approvals.md` and add the rules of the drawn values to the agreement.
-- [>] 3.1 Add the `SourcesBlock` type, the `sources` view, the `SourceOpen` event type, `sources` in `OWN_TYPES`, the data step in `toBlockViews` and the copy lines in `leafText`.
-- [ ] 3.2 Write the `rt-ai-chat-sources` component on `rt-expansion-panel` and `rt-icon`: the header with the label and the count, the rows, the pressable rows as buttons, the numbers of the approved mockup.
-- [ ] 3.3 Carry the press through `rt-ai-chat-blocks` and the answer to a synchronous `sourceOpen` output of `rt-ai-chat` that adds the message id.
-- [ ] 3.4 Add the label «Sources» to the kit English set and the showcase Russian set.
-- [ ] 3.5 Write the specs of the component, the logic, the copy and the chat output: SC-UKV-1541, 1542, 1543, 1544, 1545, 1546, 1547, 1552, 1554, 1555, 1556, 1557.
-- [ ] 4.1 Write the stories of the block with one and with five sources, the states, the long texts, the right-to-left and the dark theme, with play steps that press and measure.
+- [x] 3.1 Add the `SourcesBlock` type, the `sources` view, the `SourceOpen` event type, `sources` in `OWN_TYPES`, the data step in `toBlockViews` and the copy lines in `leafText`.
+- [x] 3.2 Write the `rt-ai-chat-sources` component on `rt-expansion-panel` and `rt-icon`: the header with the label and the count, the rows, the pressable rows as buttons, the numbers of the approved mockup.
+- [x] 3.3 Carry the press through `rt-ai-chat-blocks` and the answer to a synchronous `sourceOpen` output of `rt-ai-chat` that adds the message id.
+- [x] 3.4 Add the label «Sources» to the kit English set and the showcase Russian set.
+- [x] 3.5 Write the specs of the component, the logic, the copy and the chat output: SC-UKV-1541, 1542, 1543, 1544, 1545, 1546, 1547, 1552, 1554, 1555, 1556, 1557.
+- [>] 4.1 Write the stories of the block with one and with five sources, the states, the long texts, the right-to-left and the dark theme, with play steps that press and measure.
 - [ ] 4.2 Write the overview page of the block with the handler code of an application and the chat overview lines for `sourceOpen`.
 - [ ] 4.3 Run the stories in the showcase and measure them against the mockup by two independent readings; write the table in the progress.
 - [ ] 4.4 Show the showcase to the owner and write their word into `approvals.md`.
@@ -59,8 +59,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 3 из 5 — Компонент, событие и тексты (этап 2 закрыт: макет одобрен, Figma 8409:2217)
-- **Next step:** этап 3, шаг 1 — тип SourcesBlock, вид sources, SourceOpen, OWN_TYPES, шаг данных в toBlockViews и тексты копирования в leafText.
+- **Stage:** 4 из 5 — Витрина и сверка с макетом (этап 3 закрыт: компонент, событие, подписи, спеки)
+- **Next step:** этап 4, шаг 1 — истории блока: один и пять источников, состояния, длинные тексты, rtl, тёмная тема, с шагами play.
 - **PR:** не открыт; база — `RT-3339-ai-chat-link-block` (PR #3447 ждёт слияния в ветку эпика)
 
 The progress in full — `docs/tasks/RT-3340-ai-chat-sources-block/progress.md`; the plan lies next to it.

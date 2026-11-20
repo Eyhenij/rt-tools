@@ -13,7 +13,8 @@
             rtElem="blocks"
             qa-dataid="ai-chat-answer-blocks"
             [blocks]="message().blocks"
-            (linkOpen)="linkOpen.emit($event)" />
+            (linkOpen)="linkOpen.emit($event)"
+            (sourceOpen)="sourceOpen.emit($event)" />
     }
     @if (extra(); as extraTemplate) {
         <ng-container [ngTemplateOutlet]="extraTemplate" [ngTemplateOutletContext]="{ $implicit: message() }" />

@@ -53,6 +53,7 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     aiRetry: 'Спросить снова',
     aiSearchThreads: 'Поиск по беседам',
     aiShowSteps: 'Показать шаги',
+    aiSources: 'Источники',
     aiTableCopyCsv: 'Копировать CSV',
     aiTableLabel: 'Таблица',
     aiThreads: 'Беседы',

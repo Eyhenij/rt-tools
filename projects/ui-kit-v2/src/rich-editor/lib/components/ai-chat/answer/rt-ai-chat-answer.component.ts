@@ -82,7 +82,13 @@ export class RtAiChatAnswerComponent {
      * Значения таблиц и карточек KPI записаны в языке кита на минуту копии: язык и подписи читаются здесь же.
      */
     protected readonly plainText: Signal<string> = computed((): string =>
-        blocksToPlainText(this.message().blocks, this.#renderers, this.#locale(), rtAiChatPointsWriter(this.#translate()))
+        blocksToPlainText(
+            this.message().blocks,
+            this.#renderers,
+            this.#locale(),
+            rtAiChatPointsWriter(this.#translate()),
+            this.t().aiSources
+        )
     );
 
     /** Кнопка копирования видна, когда её не выключили и у блоков есть текст: пустая копия обманула бы. */
@@ -108,4 +114,7 @@ export class RtAiChatAnswerComponent {
 
     /** Нажата кнопка карточки ссылки в этом ответе. */
     public readonly linkOpen: OutputEmitterRef<IRtAiChat.LinkPress> = output<IRtAiChat.LinkPress>();
+
+    /** Нажат источник с адресом в этом ответе. */
+    public readonly sourceOpen: OutputEmitterRef<IRtAiChat.SourcePress> = output<IRtAiChat.SourcePress>();
 }

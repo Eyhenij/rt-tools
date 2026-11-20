@@ -1,0 +1,42 @@
+<ng-container rtBlock="rt-ai-chat-sources">
+    <rt-expansion-panel rtElem="panel" qa-dataid="ai-chat-sources-panel" appearance="plain">
+        <span rtElem="label" qa-dataid="ai-chat-sources-label">{{ t().aiSources }}</span>
+        <span rtElem="count" qa-dataid="ai-chat-sources-count">{{ data().items.length }}</span>
+
+        <ng-template rtExpansionPanelContent>
+            <ul rtElem="list" qa-dataid="ai-chat-sources-list">
+                @for (row of rows(); track $index) {
+                    <li rtElem="item" qa-dataid="ai-chat-sources-item">
+                        @if (row.item.url !== null) {
+                            <!-- Строка с адресом — одна кнопка: значок, название и уточнение входят в неё -->
+                            <button
+                                rtElem="row"
+                                qa-dataid="ai-chat-sources-open"
+                                type="button"
+                                [rtMod]="{ pressable: true }"
+                                [attr.aria-describedby]="row.detailId"
+                                (click)="onOpen(row.item)">
+                                <ng-container *ngTemplateOutlet="content; context: { $implicit: row }" />
+                            </button>
+                        } @else {
+                            <div rtElem="row" qa-dataid="ai-chat-sources-plain">
+                                <ng-container *ngTemplateOutlet="content; context: { $implicit: row }" />
+                            </div>
+                        }
+                    </li>
+                }
+            </ul>
+        </ng-template>
+    </rt-expansion-panel>
+
+    <ng-template #content let-row>
+        <span rtElem="icon" aria-hidden="true"><rt-icon [size]="20" [name]="row.icon" /></span>
+        <span rtElem="text">
+            <!-- Целые название и уточнение остаются в разметке: многоточие рисуют стили, читалка читает текст целиком -->
+            <span rtElem="title" qa-dataid="ai-chat-sources-title">{{ row.item.title }}</span>
+            @if (row.item.detail !== null) {
+                <span rtElem="detail" qa-dataid="ai-chat-sources-detail" [id]="row.detailId">{{ row.item.detail }}</span>
+            }
+        </span>
+    </ng-template>
+</ng-container>

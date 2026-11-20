@@ -22,6 +22,7 @@ import { toBlockViews } from './rt-ai-chat-blocks.logic';
 import { RT_AI_CHAT_BLOCK_RENDERERS } from './rt-ai-chat-blocks.providers';
 import { RtAiChatKpiComponent } from './kpi/rt-ai-chat-kpi.component';
 import { RtAiChatLinkComponent } from './link/rt-ai-chat-link.component';
+import { RtAiChatSourcesComponent } from './sources/rt-ai-chat-sources.component';
 import { RtAiChatSectionComponent } from './section/rt-ai-chat-section.component';
 import { RtAiChatTableComponent } from './table/rt-ai-chat-table.component';
 
@@ -54,6 +55,7 @@ const BEM_BLOCK: string = 'rt-ai-chat-blocks';
         RtAiChatTableComponent,
         RtAiChatKpiComponent,
         RtAiChatLinkComponent,
+        RtAiChatSourcesComponent,
         RtAiChatSectionComponent,
         RtAiChatBlockCellDirective,
 
@@ -78,4 +80,7 @@ export class RtAiChatBlocksComponent {
 
     /** Нажата кнопка карточки ссылки: адрес и нужна ли новая вкладка. */
     public readonly linkOpen: OutputEmitterRef<IRtAiChat.LinkPress> = output<IRtAiChat.LinkPress>();
+
+    /** Нажат источник с адресом: что открыть и как он называется. */
+    public readonly sourceOpen: OutputEmitterRef<IRtAiChat.SourcePress> = output<IRtAiChat.SourcePress>();
 }

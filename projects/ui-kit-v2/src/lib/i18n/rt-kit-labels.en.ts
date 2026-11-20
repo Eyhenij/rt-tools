@@ -60,6 +60,7 @@ export const RT_KIT_LABELS_EN = {
     aiRetry: 'Ask again',
     aiSearchThreads: 'Search conversations',
     aiShowSteps: 'Show steps',
+    aiSources: 'Sources',
     aiTableCopyCsv: 'Copy CSV',
     aiTableLabel: 'Table',
     aiThreads: 'Conversations',
