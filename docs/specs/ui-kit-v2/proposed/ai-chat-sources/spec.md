@@ -97,11 +97,11 @@ opens it.
 
 - **Under `dir="rtl"` the row and the arrow mirror; the icons are drawn as they are.**
 
-- **The block is a card: the surface colour, a 1 px default border, a radius of 12 and side spaces of 12.** The panel inside it is the plain look of `rt-expansion-panel`, with a header 40 high, in the 14 px text of the panel.
+- **The block is a card: the surface colour, a 1 px default border, a radius of 12 and spaces of 4 on every side; the 8 before the label and the icon come from the header and the rows.** The panel inside it is the plain look of `rt-expansion-panel`, with a header 40 high, in the 14 px text of the panel.
 - **The count follows the label after the header gap, in the colour of the label.** It stays a part of the header button, so the header is one button.
 - **A row has a space of 8 above and below, a gap of 12 between the icon and the text, and a 20 px icon.** The list ends with a space of 8.
 - **The title is 14 px medium in the primary colour, the detail is 12 px regular in the muted colour with a gap of 2 under the title; each is one line.** Both end with an ellipsis; the whole text stays in the markup.
-- **A pressable row shows the hover colour and a 2 px focus ring, both with a radius of 8, on the row inset by 8 at each side.**
+- **A pressable row shows the hover colour and a 2 px focus ring, both with a radius of 8, on the whole row; the focus ring lies inside the row, because the panel body clips what lies outside it.**
 - **The values are the same at the widths 328, 386 and 640, and in the dark theme only the colours change.** Only the width of the text column differs.
 
 ### Copying

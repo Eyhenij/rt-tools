@@ -10,10 +10,18 @@
 
         display: block;
         min-width: 0;
-        padding: var(--rt-space-1) calc(var(--rt-space-2) + var(--rt-space-1));
+        padding: var(--rt-space-1);
         border: var(--rt-ai-chat-sources-border-width) solid var(--rt-color-border-default);
         border-radius: var(--rt-ai-chat-sources-radius);
         background: var(--rt-color-bg-surface);
+
+        /* Панель во всю ширину карточки без полей: подложка наведения и кольцо фокуса занимают её
+           ширину целиком, а 8 до подписи и значка дают заголовок и строки. Тело панели обрезает
+           всё, что выходит за него, поэтому подложка не может быть шире строки. */
+        &__panel.rt-expansion-panel {
+            --rt-expansion-panel-header-padding-start: var(--rt-space-2);
+            --rt-expansion-panel-header-padding-end: var(--rt-space-2);
+        }
 
         /* Заголовок панели: подпись и число стоят рядом, шеврон уходит в конец. */
         &__label {
@@ -43,21 +51,19 @@
             min-width: 0;
             box-sizing: border-box;
             align-items: flex-start;
-            padding: var(--rt-space-2) 0;
+            padding: var(--rt-space-2);
             border: 0;
+            border-radius: var(--rt-ai-chat-sources-row-radius);
             background: transparent;
             color: inherit;
             font: inherit;
             gap: calc(var(--rt-space-2) + var(--rt-space-1));
             text-align: start;
 
-            /* Подложка наведения и кольцо фокуса выходят за строку на 8 с каждой стороны, текст на месте. */
+            /* Строка с адресом: подложка наведения и кольцо фокуса — вся строка, текст стоит на месте.
+           Кольцо идёт внутрь строки: снаружи его срезает тело панели. */
             &--pressable {
-                width: calc(100% + var(--rt-space-2) * 2);
-                border-radius: var(--rt-ai-chat-sources-row-radius);
                 cursor: pointer;
-                margin-inline: calc(var(--rt-space-2) * -1);
-                padding-inline: var(--rt-space-2);
                 transition: background-color var(--rt-ai-chat-sources-duration) ease;
 
                 &:hover {
@@ -66,7 +72,7 @@
 
                 &:focus-visible {
                     outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
-                    outline-offset: 0;
+                    outline-offset: calc(-1 * var(--rt-focus-ring-width));
                 }
             }
         }
