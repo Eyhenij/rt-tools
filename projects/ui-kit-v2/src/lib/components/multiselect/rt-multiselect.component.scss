@@ -4,7 +4,6 @@
     .rt-multiselect {
         --rt-multiselect-radius: var(--rt-input-radius);
         --rt-multiselect-caret-transition-duration: var(--rt-duration-fast);
-        --rt-multiselect-own-outline-width: var(--rt-border-width-medium);
         --rt-multiselect-color-border-hover: var(--rt-color-text-primary);
 
         position: relative;
@@ -87,8 +86,8 @@
                меряется. :focus-visible, а не :focus: щелчку мышью примета не нужна, её даёт
                разметка потребителя. */
             &:focus-visible {
-                outline: var(--rt-multiselect-own-outline-width) solid var(--rt-input-color-border-focus);
-                outline-offset: var(--rt-input-focus-outline-offset);
+                outline: var(--rt-focus-ring-width) solid var(--rt-focus-ring-color);
+                outline-offset: var(--rt-focus-ring-offset);
             }
         }
 
