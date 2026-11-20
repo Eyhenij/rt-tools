@@ -196,78 +196,6 @@ Then the item's action runs for that tab, and the sheet is closed
 
 Covered: `projects/ui-kit-v2/src/lib/components/tabs/rt-tabs-context-menu-sheet.spec.ts`.
 
-### SC-UKV-1575 — a toggle group that does not fit folds into a select, and a choice there counts as a press
-
-Given a toggle group «Период» of six values that need 520 px where 343 px are free, on a phone
-When it is drawn, its field is pressed and «Месяц» is chosen in the sheet
-Then the group stands as a select, its buttons are hidden and only measured, and the group reports «Месяц»
-
-Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.
-
-### SC-UKV-1576 — a toggle group that fits stays buttons
-
-Given the same group needing 280 px where 343 px are free
-When it is drawn
-Then it stays buttons, and no field of choice stands in its place
-
-Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.
-
-### SC-UKV-1577 — a toggle group of multiple choice folds into a multiselect
-
-Given a toggle group of multiple choice that does not fit its place
-When it is drawn
-Then it stands as a multiselect
-
-Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.
-
-### SC-UKV-1578 — the folding switched off, or a wrapping layout, keeps the buttons
-
-Given a toggle group that does not fit its place, with the folding switched off, then with a wrapping layout
-When it is drawn
-Then it stays buttons each time; a group not laid out yet, or short of its place by less than half a pixel, does not fold either
-
-Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.
-
-### SC-UKV-1579 — the field with toggles sums up the choice instead of chips
-
-Given a multiselect with toggles over five categories
-When all five are on, then three, then none
-Then the field says «Все», then «3 из 5», then its placeholder, and no chip stands in it
-
-Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles.spec.ts`.
-
-### SC-UKV-1580 — a row with a toggle switches its value and keeps the panel open
-
-Given a multiselect with toggles open, «Продукты» off
-When the row «Продукты» is pressed
-Then its toggle is on, the value holds «Продукты», and the panel is still open
-
-Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles.spec.ts`.
-
-### SC-UKV-1581 — «Show all» turns every value on, and off when all are on
-
-Given a multiselect with toggles open with three of five on
-When «Показать все» is pressed twice
-Then all five are on after the first press, and none after the second
-
-Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles.spec.ts`.
-
-### SC-UKV-1582 — the application's own toggles stand above the line, the values under it
-
-Given a multiselect with toggles and the application's toggle «Скрыть пустые»
-When its panel is open
-Then «Показать все» and «Скрыть пустые» stand above the line, and the five categories under it
-
-Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles.spec.ts`.
-
-### SC-UKV-1583 — in the sheet the field with toggles has no footer
-
-Given a multiselect with toggles on a phone
-When its field is pressed
-Then its rows are inside the bottom sheet, and no footer «Выбрано · Сбросить · Готово» stands under them
-
-Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles.spec.ts`.
-
 ### SC-UKV-1584 — tabs with the sheet switched off keep the tab menu and «more» by the tabs
 
 Given tabs with the sheet switched off on a phone, where a tab carries a menu of its own
@@ -371,46 +299,6 @@ When its calendar button is pressed
 Then the panel opens next to the field, and no bottom sheet is open
 
 Covered: `projects/ui-kit-v2/src/lib/components/date-range/rt-date-range.component.spec.ts`.
-
-### SC-UKV-1597 — the folded toggle group passes the switch and has no clear cross
-
-Given a toggle group folded into a field, with the sheet switched off, on a phone
-When the field is pressed
-Then the list opens next to the field, and the single choice field shows no clear cross
-
-Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.
-
-### SC-UKV-1598 — «Show all» keeps disabled and unknown values
-
-Given a field with toggles whose value holds a disabled option and a value not among the options
-When «Show all» is pressed, and pressed again
-Then both kept values stay in the value both times
-
-Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles-keys.spec.ts`.
-
-### SC-UKV-1599 — «Reset» in the sheet keeps disabled values
-
-Given a multiselect in the sheet whose value holds a disabled option
-When «Reset» is pressed
-Then the disabled value stays, and «Reset» goes inactive when nothing is left to take off
-
-Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles-keys.spec.ts`.
-
-### SC-UKV-1600 — «Show all» is reached by the arrows
-
-Given an open field with toggles
-When the arrows are pressed, then Enter
-Then «Show all» is the first highlighted row and Enter switches it; the trigger names the highlighted row
-
-Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles-keys.spec.ts`.
-
-### SC-UKV-1601 — the panel with toggles carries no name without a role
-
-Given a field with toggles and a field with a list
-When both are opened
-Then the toggles panel has no accessible name of its own, and the list keeps its name
-
-Covered: `projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect-toggles-keys.spec.ts`.
 
 ### SC-UKV-1602 — the clear cross in the sheet mode does not reopen the sheet
 
@@ -539,14 +427,6 @@ When the sheet closes while focus is inside it
 Then focus lands on the first focusable control of that part, and the autocomplete does not search or open again for it
 
 Covered: `projects/ui-kit-v2/src/lib/components/popover/rt-popover-sheet-review.spec.ts`, `projects/ui-kit-v2/src/lib/components/autocomplete/rt-autocomplete-sheet-review.spec.ts`.
-
-### SC-UKV-1621 — the folded group unfolds only with room to spare
-
-Given a toggle group folded into a field
-When its place grows, or changes because of the fold itself
-Then it unfolds only when the place is the width of its buttons plus 8 px; the fold's own change does not unfold it
-
-Covered: `projects/ui-kit-v2/src/lib/components/toggle-button-group/rt-toggle-button-group-fold.spec.ts`.
 
 ### SC-UKV-1622 — a sheet dismissed by a drag slides out
 

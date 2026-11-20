@@ -22,28 +22,7 @@ const SECTIONS: readonly string[] = ['Главная', 'Все заявки', '�
  */
 @Component({
     selector: 'app-tabs-sheet',
-    template: `
-        <div style="box-sizing: border-box; inline-size: 375px; padding: 16px">
-            @if (part === 'more') {
-                <rt-tabs overflow="more" headerOnly activeId="Главная" [sheet]="sheet" [attr.data-story-trigger]="triggerAttribute">
-                    @for (section of sections; track section) {
-                        <ng-template [rtTab]="section" [label]="section" />
-                    }
-                </rt-tabs>
-            } @else {
-                <rt-tabs headerOnly [activeId]="menuTab" [sheet]="sheet" [attr.data-story-trigger]="triggerAttribute">
-                    <ng-template [rtTab]="menuTab" [label]="menuTab" [contextMenu]="tabMenu" />
-                    <ng-template rtTab="Гости" label="Гости" />
-                    <ng-template rtTab="Заезды" label="Заезды" />
-                </rt-tabs>
-            }
-            <ng-template #tabMenu>
-                <rt-menu-item label="Переименовать" icon="pencil" />
-                <rt-menu-item label="Закрепить" icon="pin" />
-                <rt-menu-item label="Закрыть" icon="close" />
-            </ng-template>
-        </div>
-    `,
+    templateUrl: './test-tabs-sheet.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

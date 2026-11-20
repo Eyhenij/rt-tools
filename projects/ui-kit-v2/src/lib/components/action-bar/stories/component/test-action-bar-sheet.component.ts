@@ -15,11 +15,7 @@ import { IRtActionBar } from '../../rt-action-bar.model';
  */
 @Component({
     selector: 'app-action-bar-sheet',
-    template: `
-        <div style="box-sizing: border-box; inline-size: 375px; padding: 16px">
-            <rt-action-bar [config]="config" [sheet]="sheet" [attr.data-story-trigger]="triggerAttribute" />
-        </div>
-    `,
+    templateUrl: './test-action-bar-sheet.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

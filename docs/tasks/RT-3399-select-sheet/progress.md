@@ -16,6 +16,13 @@
   d3) the kit typecheck is green and the kit's unit tests pass whole: 379 suites, 4148 tests.
 - **Closing texts begun:** the out-of-scope line of the sheet spec now names the field help as the
   kit tooltip.
+- **Push set run ahead (20.11), three red:** `check-file-size` (the sheet scenarios 598 lines of
+  500), `check-reuse` (12 sheet story wrappers with inline templates), `check-work-steps` (the
+  progress had no «Steps» section). Fixed: the toggle choice left for its own subdomain
+  `toggle-choice` with its two rules, their bindings and 15 scenarios (the sheet scenarios 477
+  lines); the wrappers took `templateUrl`; the steps of the plan mirrored with marks. All three
+  checks green, `check:specs`, `check:docs`, kit typecheck green. The heavy steps were held after
+  the red and run on the next pass.
 - **The showcase of `prefix` and `suffix` approved:** «Approve showcase» (20.11).
 - **The hint at the field label joined (20.11), «проверь и добавь в текущий тикет»:** confirmed
   live on 6017 — `rt-field__help-popover` has a transparent background, padding 0 and no shadow,
@@ -171,6 +178,19 @@
 - **Decision along the way:** the rules live in a new subdomain `docs/specs/ui-kit-v2/popover-sheet/`,
   not in the select spec the plan named: the sheet belongs to the popover directive and serves the
   whole set.
+
+## Steps
+
+- [x] 1.1 Draw the frames of both fields in the sheet at 375 in the kit's Figma file: single choice,
+- [x] 1.2 Measure the frames by the pattern `mockups-measure`.
+- [x] 1.3 Show the frames to the owner and write the approval into `approvals.md`.
+- [x] 2.1 Write the rules and scenarios of the sheet and of the input that switches it off into the
+- [x] 3.1 `rt-select`: the narrow sign, the sheet in the template, the switch-off input, the choice
+- [x] 3.2 `rt-multiselect`: the same; the sheet stays open on a choice.
+- [x] 3.3 Unit tests by the scenarios of stage 2.
+- [x] 4.1 Stories of both fields at the narrow width with the sheet open and with the sheet off.
+- [x] 4.2 Measure the showcase against the mockup with `node tools/kit-match.mjs numbers`.
+- [x] 4.3 Show the showcase to the owner and write the approval into `approvals.md`.
 
 ### 1. Mockup
 

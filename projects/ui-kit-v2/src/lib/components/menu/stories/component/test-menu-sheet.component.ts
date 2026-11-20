@@ -13,20 +13,7 @@ import { RtMenuComponent } from '../../rt-menu.component';
  */
 @Component({
     selector: 'app-menu-sheet',
-    template: `
-        <div style="box-sizing: border-box; inline-size: 375px; padding: 16px">
-            <rt-menu ariaLabel="Действия с записью" [sheet]="sheet" [attr.data-story-trigger]="triggerAttribute">
-                <rt-menu-item label="Изменить" icon="ico-edit" />
-                <rt-menu-item label="Дублировать" icon="ico-copy" />
-                <rt-menu-item
-                    label="Удалить"
-                    icon="ico-trash"
-                    confirmMessage="Удалить запись? Действие необратимо."
-                    confirmTitle="Удаление"
-                    [danger]="true" />
-            </rt-menu>
-        </div>
-    `,
+    templateUrl: './test-menu-sheet.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

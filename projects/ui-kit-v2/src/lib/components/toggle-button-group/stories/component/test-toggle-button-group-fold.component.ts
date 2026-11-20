@@ -12,17 +12,7 @@ import { IRtToggleButtonGroup } from '../../rt-toggle-button-group.model';
  */
 @Component({
     selector: 'app-toggle-button-group-fold',
-    template: `
-        <div style="box-sizing: border-box; inline-size: 375px; padding: 16px">
-            <rt-toggle-button-group
-                ariaLabel="Период"
-                [options]="options"
-                [multiple]="multiple"
-                [value]="value"
-                [values]="values"
-                [fold]="fold" />
-        </div>
-    `,
+    templateUrl: './test-toggle-button-group-fold.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

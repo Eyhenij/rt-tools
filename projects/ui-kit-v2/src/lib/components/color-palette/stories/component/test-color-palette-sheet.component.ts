@@ -16,11 +16,7 @@ const THEME_COLORS: readonly string[] = ['#1e88e5', '#43a047', '#fb8c00', '#e539
  */
 @Component({
     selector: 'app-color-palette-sheet',
-    template: `
-        <div style="box-sizing: border-box; inline-size: 375px; padding: 16px">
-            <rt-color-palette [colors]="colors" [sheet]="sheet" [formControl]="control" [attr.data-story-trigger]="triggerAttribute" />
-        </div>
-    `,
+    templateUrl: './test-color-palette-sheet.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // angular

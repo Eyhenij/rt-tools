@@ -14,16 +14,7 @@ import { SPEED_MENU_ZOOM } from './test-speed-menu.data';
  */
 @Component({
     selector: 'app-speed-menu-sheet',
-    template: `
-        <div style="box-sizing: border-box; display: flex; justify-content: flex-end; inline-size: 375px; padding: 240px 16px 16px">
-            <rt-speed-menu
-                label="Масштаб"
-                icon="zoom_in"
-                [actions]="actions"
-                [sheet]="sheet"
-                [attr.data-story-trigger]="triggerAttribute" />
-        </div>
-    `,
+    templateUrl: './test-speed-menu-sheet.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

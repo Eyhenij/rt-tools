@@ -14,13 +14,7 @@ import { IRtSelect } from '../../rt-select.model';
  */
 @Component({
     selector: 'app-select-sheet',
-    template: `
-        <div style="box-sizing: border-box; inline-size: 375px; padding: 16px">
-            <rt-field label="Страна">
-                <rt-select placeholder="Выберите страну" [options]="options" [sheet]="sheet" [attr.data-story-trigger]="triggerAttribute" />
-            </rt-field>
-        </div>
-    `,
+    templateUrl: './test-select-sheet.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

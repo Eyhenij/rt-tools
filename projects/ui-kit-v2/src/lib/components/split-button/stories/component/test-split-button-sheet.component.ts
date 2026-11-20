@@ -13,16 +13,7 @@ import { IRtSplitButton } from '../../rt-split-button.model';
  */
 @Component({
     selector: 'app-split-button-sheet',
-    template: `
-        <div style="box-sizing: border-box; inline-size: 375px; padding: 16px">
-            <rt-split-button
-                label="Отправить"
-                menuAriaLabel="Другие способы отправки"
-                [menuItems]="menuItems"
-                [sheet]="sheet"
-                [attr.data-story-trigger]="triggerAttribute" />
-        </div>
-    `,
+    templateUrl: './test-split-button-sheet.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

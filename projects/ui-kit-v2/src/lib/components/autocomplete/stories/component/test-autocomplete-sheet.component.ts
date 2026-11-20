@@ -14,19 +14,7 @@ import { RtAutocompleteComponent } from '../../rt-autocomplete.component';
  */
 @Component({
     selector: 'app-autocomplete-sheet',
-    template: `
-        <div style="box-sizing: border-box; inline-size: 375px; padding: 16px">
-            <rt-field label="Город">
-                <rt-autocomplete
-                    placeholder="Начните вводить город"
-                    [suggestions]="suggestions"
-                    [displayWith]="displayWith"
-                    [minLength]="0"
-                    [sheet]="sheet"
-                    [attr.data-story-trigger]="triggerAttribute" />
-            </rt-field>
-        </div>
-    `,
+    templateUrl: './test-autocomplete-sheet.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

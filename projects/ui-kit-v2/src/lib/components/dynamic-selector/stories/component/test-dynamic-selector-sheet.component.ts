@@ -14,18 +14,7 @@ import { IStoryPerson } from './test-dynamic-selector.component';
  */
 @Component({
     selector: 'app-dynamic-selector-sheet',
-    template: `
-        <div style="box-sizing: border-box; inline-size: 375px; padding: 16px">
-            <rt-dynamic-selector
-                keyExp="id"
-                displayExp="name"
-                ariaLabel="Команда"
-                [entities]="people"
-                [sheet]="sheet"
-                [attr.data-story-trigger]="triggerAttribute"
-                [formControl]="control" />
-        </div>
-    `,
+    templateUrl: './test-dynamic-selector-sheet.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // angular

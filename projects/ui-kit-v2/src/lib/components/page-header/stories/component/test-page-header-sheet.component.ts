@@ -19,26 +19,7 @@ export type TPageHeaderSheetPart = 'user-menu' | 'more' | 'submenu';
  */
 @Component({
     selector: 'app-page-header-sheet',
-    template: `
-        <div style="box-sizing: border-box; inline-size: 375px">
-            <rt-page-header
-                ariaLabel="Разделы"
-                [items]="part === 'more' ? moreItems : items"
-                [user]="user"
-                [userMenu]="part === 'user-menu' ? profileMenu : null"
-                [sheet]="sheet"
-                [attr.data-story-trigger]="triggerAttribute" />
-        </div>
-        <ng-template #profileMenu>
-            <rt-profile-menu
-                userName="Анна Смирнова"
-                organizationName="Вилла Лотос"
-                organizationChange="allowed"
-                passwordChange
-                locale="ru"
-                [locales]="profileLocales" />
-        </ng-template>
-    `,
+    templateUrl: './test-page-header-sheet.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         // components

@@ -52,15 +52,6 @@ the same rows as before.
   not close the sheet.** The profile menu, the «more» panel and the submenu of the page header
   open on hover next to their button; in the sheet a mouse passing over the button opens nothing,
   since on its way to the sheet it would close it.
-- **A toggle button group whose buttons do not fit the width folds into a field of choice.** Only
-  a one-line group folds; the field takes the same values, a single choice as a select and a
-  multiple one as a multiselect, and on a phone it opens them in the sheet. A choice there counts
-  as a press on the button. One input keeps the buttons however long they are.
-- **A field of several values can show its choice as toggles.** The field then sums the choice up
-  — «All», «N of M» or its placeholder — instead of chips. The panel puts «Show all» and the
-  application's own toggles above a line, and one toggle per value under it. A toggle only shows
-  the choice: the row takes the press. In the sheet this look has no footer, since every row is
-  already a switch.
 - **A sheet closed by its backdrop, by a drag or by Escape closes the panel the same way a press
   outside it does.** The part of the kit learns of the close as before.
 - **The panel inside the sheet takes the full width of the sheet.** The width taken from the
@@ -86,17 +77,16 @@ Not applicable.
 
 ## Screens and states
 
-| Screen                 | Loading   | Empty     | Refusal   |
-| ---------------------- | --------- | --------- | --------- |
-| A panel in the sheet   | no change | no change | no change |
+| Screen               | Loading   | Empty     | Refusal   |
+| -------------------- | --------- | --------- | --------- |
+| A panel in the sheet | no change | no change | no change |
 
 ## Cross-cutting requirements
 
 ### Locales
 
-The title is the label the application gives the field. The field with toggles brings three kit
-labels: `uiAll` («All»), `uiCountOf` («{{count}} of {{total}}») and `uiShowAll` («Show all»); an
-application in another language adds them to its own dictionary under `rtKit`.
+The title is the label the application gives the field. The labels of the field with toggles are
+in the subdomain `toggle-choice`.
 
 ### SEO
 
@@ -122,16 +112,17 @@ None.
 
 ## History of changes
 
-| Date       | What changed                                                   |
-| ---------- | -------------------------------------------------------------- |
-| 2026-11-19 | The subdomain is written with scenarios 1382…1389 (RT-3399)    |
-| 2026-11-19 | The multiselect footer in the sheet, scenarios 1436…1438 (RT-3399) |
-| 2026-11-19 | The sheet in the rest of the set, scenarios 1439…1440 (RT-3399) |
-| 2026-11-19 | The autocomplete in the sheet, scenarios 1441…1443 (RT-3399) |
-| 2026-11-19 | The page header menus in the sheet, scenarios 1444…1445 (RT-3399) |
-| 2026-11-19 | The actions menu `rt-menu` in the sheet, scenarios 1446…1449 (RT-3399) |
-| 2026-11-19 | The menu of a tab in the sheet, scenarios 1450…1451 (RT-3399) |
-| 2026-11-19 | The folding toggle button group, scenarios 1452…1455 (RT-3399) |
-| 2026-11-19 | The multiselect with toggles, scenarios 1456…1460 (RT-3399) |
-| 2026-11-19 | Tabs switch the sheet off for their menus, scenario 1461 (RT-3399) |
-| 2026-11-20 | The sheet opens on a phone, ≤480 px, by the owner's word «До 480 px» (RT-3399) |
+| Date       | What changed                                                                                                                                  |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-11-19 | The subdomain is written with scenarios 1382…1389 (RT-3399)                                                                                   |
+| 2026-11-19 | The multiselect footer in the sheet, scenarios 1436…1438 (RT-3399)                                                                            |
+| 2026-11-19 | The sheet in the rest of the set, scenarios 1439…1440 (RT-3399)                                                                               |
+| 2026-11-19 | The autocomplete in the sheet, scenarios 1441…1443 (RT-3399)                                                                                  |
+| 2026-11-19 | The page header menus in the sheet, scenarios 1444…1445 (RT-3399)                                                                             |
+| 2026-11-19 | The actions menu `rt-menu` in the sheet, scenarios 1446…1449 (RT-3399)                                                                        |
+| 2026-11-19 | The menu of a tab in the sheet, scenarios 1450…1451 (RT-3399)                                                                                 |
+| 2026-11-19 | The folding toggle button group, scenarios 1452…1455 (RT-3399)                                                                                |
+| 2026-11-19 | The multiselect with toggles, scenarios 1456…1460 (RT-3399)                                                                                   |
+| 2026-11-19 | Tabs switch the sheet off for their menus, scenario 1461 (RT-3399)                                                                            |
+| 2026-11-20 | The sheet opens on a phone, ≤480 px, by the owner's word «До 480 px» (RT-3399)                                                                |
+| 2026-11-20 | Scenarios renumbered to 1554…1627 after main took 1385…1389 and 1436…1505; the toggle choice left for the subdomain `toggle-choice` (RT-3399) |
