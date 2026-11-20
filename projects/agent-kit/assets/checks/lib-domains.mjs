@@ -196,7 +196,7 @@ function collectStrayLibs(knownLibs) {
  * layers by their make-up — a domain is one lib — but everything else is checked on a par with
  * the domain grid. Before the narrowing, the exception on this root took off from them the
  * make-up of the files, the tag and the alias too: a new lib was started without
- * `vitest.config.mts`, and `nx test` silently ran not a single test over it.
+ * a test runner, and `nx test` silently ran not a single test over it.
  */
 function collectFlatLibs() {
     return [...(allowlist.flatLibRoots?.keys() ?? [])]

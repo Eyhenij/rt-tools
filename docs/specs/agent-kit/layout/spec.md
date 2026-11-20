@@ -110,6 +110,11 @@ The subdomain has no interface beyond the launch line.
 - **The alias of a lib is looked for by what it points at, not by its spelling.** A lib is reachable
   by an alias or it is not; how the tree spells the alias is the tree's own business. The lib
   nothing points at is named together with the alias the formula would give it.
+- **A lib tests by its own vitest config or by the Angular builder, and the builder form counts only whole.**
+  The `test` target on the executor `@angular/build:unit-test`, an `options.tsConfig` that names an
+  existing file and the lib's own `tsconfig.spec.json` stand together or not at all: any one of
+  them alone would let a lib through whose tests the builder cannot find. The refusal names both
+  forms.
 - **The first installation demands no prose written by hand.** The drafts of the companions are created
   by a command; a person fills them, but not from a blank page and not by a sample out of their head.
 - **A requirement of a resource is named in the resource itself, it is not derived by reading.** A link
