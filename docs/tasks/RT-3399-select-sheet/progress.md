@@ -37,8 +37,13 @@
   padding 8+8 comes on top, while the frame's Tooltip copy is 240 whole; at the right window edge
   the tooltip stops 16 from the edge (CDK push with the viewport margin 8), 8 from the left edge,
   while the frame draws it flush.
-- **Waiting for the owner:** whether the mockup follows the code (the frame and the file's Tooltip
-  copy redrawn to 256 and 16) or the kit tooltip changes for every consumer.
+- **The owner chose «Поправить макет» (20.11).** The file's Tooltip copy (4647:2752) got a text
+  limit of 240 and a frame limit of 256; in frame 8477:2372 the three tooltips are 256 wide, the
+  edge cell stops 16 from the window edge, and the frame texts name 240 / 256 and the margins 16
+  and 8. Measured by nodes: width 256, height 40, text 32, gap 6 in all three, centre offset 0 in the
+  middle and dark cells, −114 at the edge, no overlap with the page frames. `kit-match` against the
+  live numbers of 6017: 19 of 19.
+- **Waiting for the owner:** the approval of the redrawn frame 8477:2372, then of the showcase.
 - **`prefix` and `suffix` of `rt-input` in code (20.11), mockup 8449:1560 approved «Одобряю
   макет»:** the prefix stands before the field, the suffix right after the typed text — a hidden
   copy of the text sizes the field, the field lies over it. Measured live on 6017, own set: the
