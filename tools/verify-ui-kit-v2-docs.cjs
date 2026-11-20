@@ -14,8 +14,8 @@ const fs = require('fs');
 const path = require('path');
 
 const componentsDir = path.resolve(__dirname, '../projects/ui-kit-v2/src/lib/components');
-/** The second entry of the package keeps its components apart. */
-const secondEntryDir = path.resolve(__dirname, '../projects/ui-kit-v2/src/rich-editor/lib/components');
+/** The entries of the package that keep their components apart from the main one. */
+const entryDirs = ['rich-editor', 'ai-chat-chart'].map((entry) => path.resolve(__dirname, `../projects/ui-kit-v2/src/${entry}/lib/components`));
 const baseSource = path.join(componentsDir, 'form-control/rt-form-control.base.ts');
 /** The heading of the section describing the inputs a field got from the base. */
 const BASE_SECTION = 'Входы от основы полей';
@@ -105,7 +105,7 @@ function walk(dir) {
     });
 }
 
-const files = [...walk(componentsDir), ...(fs.existsSync(secondEntryDir) ? walk(secondEntryDir) : [])];
+const files = [...walk(componentsDir), ...entryDirs.filter((dir) => fs.existsSync(dir)).flatMap((dir) => walk(dir))];
 const overviews = files.filter((file) => file.endsWith('.mdx'));
 
 for (const overview of overviews) {

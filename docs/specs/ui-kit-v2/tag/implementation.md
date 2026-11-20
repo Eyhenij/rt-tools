@@ -26,6 +26,8 @@ paths are given from the root of the tree.
 - **The label shrinks below its own content only with a zero lower bound of the width.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:min-width`
 - **The styles of the tag live in the cascade layer of the kit's components.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:layer`. The wrapper names the sublayer of the kit's components
 - **The rules of the block are nested inside the host.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:rt-tag`
+- **The gap between all parts of a tag of the size `sm` — the icon, the label, the end icon and the cross — is 4, `--rt-space-1`, the same as the size `md`.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.scss:gap`; scenario `SC-UKV-1500`
+- **The tag can turn its start icon.** — `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.ts:iconSpin`; `projects/ui-kit-v2/src/lib/components/tag/rt-tag.component.html:iconSpin`; scenario `SC-UKV-1506`
 
 The scenarios of the subdomain are bound to the tests by the number in the title of a test, not by a
 table here: the bond is checked both ways by the checking of the specs.

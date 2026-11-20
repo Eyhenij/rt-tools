@@ -1,0 +1,12 @@
+<ng-container rtBlock="rt-ai-chat-section">
+    @if (title(); as heading) {
+        <div rtElem="title" qa-dataid="ai-chat-section-title" role="heading" aria-level="3" [id]="titleId">{{ heading }}</div>
+    }
+    <div rtElem="grid" qa-dataid="ai-chat-section-grid">
+        @for (cell of drawn(); track $index) {
+            <div rtElem="cell" qa-dataid="ai-chat-section-cell" [rtMod]="cell.mods">
+                <ng-container *ngTemplateOutlet="cellTemplate(); context: { $implicit: cell.view }" />
+            </div>
+        }
+    </div>
+</ng-container>

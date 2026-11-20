@@ -184,6 +184,16 @@
     /* Skeleton — заглушка загрузки: покой и гребень волны. */
     --rt-color-skeleton-base: var(--rt-charcoal-950);
     --rt-color-skeleton-wave: var(--rt-charcoal-border);
+
+    /* Chart — серии на графите: свои ступени тех же тонов, светлее и контрастнее к поверхности. */
+    --rt-color-chart-series-1: var(--rt-brand-400);
+    --rt-color-chart-series-2: var(--rt-chart-orange-dark);
+    --rt-color-chart-series-3: var(--rt-chart-aqua-dark);
+    --rt-color-chart-series-4: var(--rt-chart-yellow-dark);
+    --rt-color-chart-series-5: var(--rt-chart-magenta-dark);
+    --rt-color-chart-series-6: var(--rt-chart-green-dark);
+    --rt-color-chart-series-7: var(--rt-chart-violet-dark);
+    --rt-color-chart-series-8: var(--rt-chart-red-dark);
 }
 
 :root[data-theme='dark'],

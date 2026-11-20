@@ -1,12 +1,25 @@
-import { signal, Signal } from '@angular/core';
+import { signal, Provider, Signal } from '@angular/core';
 import { ComponentFixture } from '@angular/core/testing';
 
-import { provideRtKitLabels, TRtKitLabelKey, TRtKitLabelParams, TRtKitTranslator } from '../../i18n';
+import { provideRtKitLabels, RT_KIT_LOCALE, TRtKitLabelKey, TRtKitLabelParams, TRtKitTranslator } from '../../i18n';
 import { classesOf, createRtFixture, el, qa, setInputs, textOf } from '../../../testing/rt-kit-testing';
 import { IRtStatTile } from './rt-stat-tile.model';
 import { RtStatTileComponent } from './rt-stat-tile.component';
 
-function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtStatTileComponent> {
+/** Неразрывный пробел, которым `Intl` в `ru` отделяет знак процента. */
+const NBSP: string = String.fromCharCode(0xa0);
+
+function locale(code: string): Provider {
+    return { provide: RT_KIT_LOCALE, useValue: signal(code) };
+}
+
+/** Плитка в языке кита `ru` — так пишутся привычные русские ожидания старых сценариев. */
+function setup(inputs: Readonly<Record<string, unknown>> = {}, code: string = 'ru'): ComponentFixture<RtStatTileComponent> {
+    return createRtFixture(RtStatTileComponent, { label: 'Визиты', value: '1 240', ...inputs }, { providers: [locale(code)] });
+}
+
+/** Плитка без языка кита от приложения: работает язык по умолчанию. */
+function setupWithoutLocale(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtStatTileComponent> {
     return createRtFixture(RtStatTileComponent, { label: 'Визиты', value: '1 240', ...inputs });
 }
 
@@ -16,6 +29,10 @@ function delta(percent: number | null, patch: Partial<IRtStatTile.Delta> = {}): 
 
 function deltaText(fixture: ComponentFixture<RtStatTileComponent>): string {
     return textOf(qa(fixture, 'stat-tile-delta-percent'));
+}
+
+function icon(fixture: ComponentFixture<RtStatTileComponent>): unknown {
+    return el(fixture, '[qa-dataid="stat-tile-delta-icon"] use')?.attributes['href'];
 }
 
 describe('RtStatTileComponent', (): void => {
@@ -30,7 +47,7 @@ describe('RtStatTileComponent', (): void => {
         expect((qa(setup(), 'stat-tile')?.nativeElement as HTMLElement).tagName).toBe('ARTICLE');
     });
 
-    describe('изменение', (): void => {
+    describe('изменение в языке ru', (): void => {
         it('без входа не рисуется', (): void => {
             expect(qa(setup(), 'stat-tile-delta')).toBeNull();
         });
@@ -38,21 +55,21 @@ describe('RtStatTileComponent', (): void => {
         it('рост показывается со знаком плюс и стрелкой вверх', (): void => {
             const fixture: ComponentFixture<RtStatTileComponent> = setup({ deltaPrimary: delta(12.5) });
 
-            expect(deltaText(fixture)).toBe('+12,5 %');
-            expect(el(fixture, '[qa-dataid="stat-tile-delta-icon"] use')?.attributes['href']).toBe('#rt-icon-arrow-up');
+            expect(deltaText(fixture)).toBe(`+12,5${NBSP}%`);
+            expect(icon(fixture)).toBe('#rt-icon-arrow-up');
         });
 
         it('падение показывается со своим знаком и стрелкой вниз', (): void => {
             const fixture: ComponentFixture<RtStatTileComponent> = setup({ deltaPrimary: delta(-4) });
 
-            expect(deltaText(fixture)).toBe('-4 %');
-            expect(el(fixture, '[qa-dataid="stat-tile-delta-icon"] use')?.attributes['href']).toBe('#rt-icon-arrow-down');
+            expect(deltaText(fixture)).toBe(`-4${NBSP}%`);
+            expect(icon(fixture)).toBe('#rt-icon-arrow-down');
         });
 
         it('ноль — это не рост и не падение, а ровная линия', (): void => {
             const fixture: ComponentFixture<RtStatTileComponent> = setup({ deltaPrimary: delta(0) });
 
-            expect(deltaText(fixture)).toBe('0 %');
+            expect(deltaText(fixture)).toBe(`0${NBSP}%`);
             expect(qa(fixture, 'stat-tile-delta')?.attributes['data-direction']).toBe('flat');
         });
 
@@ -62,8 +79,8 @@ describe('RtStatTileComponent', (): void => {
             expect(qa(setup({ deltaPrimary: delta(null) }), 'stat-tile-delta')).toBeNull();
         });
 
-        it('дробная часть отделяется запятой', (): void => {
-            expect(deltaText(setup({ deltaPrimary: delta(3.7) }))).toBe('+3,7 %');
+        it('дробная часть пишется разделителем языка', (): void => {
+            expect(deltaText(setup({ deltaPrimary: delta(3.7) }))).toBe(`+3,7${NBSP}%`);
         });
 
         it('направление помечает элемент модификатором и атрибутом данных', (): void => {
@@ -84,11 +101,23 @@ describe('RtStatTileComponent', (): void => {
         it('рисуется отдельной строкой с переведённой приставкой', (): void => {
             const fixture: ComponentFixture<RtStatTileComponent> = setup({ deltaSecondary: delta(8, { label: 'к прошлому году' }) });
 
-            expect(textOf(qa(fixture, 'stat-tile-year'))).toBe('YoY +8 %');
+            expect(textOf(qa(fixture, 'stat-tile-year'))).toBe(`YoY +8${NBSP}%`);
         });
 
         it('без входа не рисуется', (): void => {
             expect(qa(setup(), 'stat-tile-year')).toBeNull();
+        });
+
+        it('SC-UKV-1470 — годовой чип пишется тем же правилом', (): void => {
+            const growing: ComponentFixture<RtStatTileComponent> = setup({ deltaSecondary: delta(3.75, { label: 'г/г' }) }, 'en');
+
+            expect(textOf(qa(growing, 'stat-tile-year'))).toBe('YoY +3.8%');
+            expect(qa(growing, 'stat-tile-year')?.attributes['data-direction']).toBe('up');
+
+            const flat: ComponentFixture<RtStatTileComponent> = setup({ deltaSecondary: delta(-0.04, { label: 'г/г' }) }, 'en');
+
+            expect(textOf(qa(flat, 'stat-tile-year'))).toBe('YoY 0%');
+            expect(qa(flat, 'stat-tile-year')?.attributes['data-direction']).toBe('flat');
         });
     });
 
@@ -126,12 +155,12 @@ describe('RtStatTileComponent', (): void => {
             return createRtFixture(
                 RtStatTileComponent,
                 { label: 'Занятость', value: '78 %', ...inputs },
-                { providers: [provideRtKitLabels({ translator })] }
+                { providers: [provideRtKitLabels({ translator }), locale('ru')] }
             );
         }
 
-        it('SC-UKV-1125 — строка без единицы пишется в процентах', (): void => {
-            expect(deltaText(setup({ deltaPrimary: delta(12) }))).toBe('+12 %');
+        it('SC-UKV-1125 — строка без единицы пишется в процентах языка кита', (): void => {
+            expect(deltaText(setup({ deltaPrimary: delta(12) }))).toBe(`+12${NBSP}%`);
         });
 
         it('SC-UKV-1126 — строка в пунктах пишется подписью кита', (): void => {
@@ -155,7 +184,7 @@ describe('RtStatTileComponent', (): void => {
             });
 
             expect(deltaText(fixture)).toBe('+10 п.п.');
-            expect(textOf(qa(fixture, 'stat-tile-year'))).toContain('+4 %');
+            expect(textOf(qa(fixture, 'stat-tile-year'))).toContain(`+4${NBSP}%`);
         });
 
         it('SC-UKV-1128 — строка с неизвестной базой не рисуется в любой единице', (): void => {
@@ -170,6 +199,76 @@ describe('RtStatTileComponent', (): void => {
         });
     });
 
+    describe('язык кита', (): void => {
+        it('SC-UKV-1455 — обе единицы пишутся по языку кита: en, затем ru', (): void => {
+            expect(deltaText(setup({ deltaPrimary: delta(12.5) }, 'en'))).toBe('+12.5%');
+            expect(deltaText(setup({ deltaPrimary: delta(2.5, { unit: 'points' }) }, 'en'))).toBe('+2.5 pp');
+            expect(deltaText(setup({ deltaPrimary: delta(12.5) }, 'ru'))).toBe(`+12,5${NBSP}%`);
+        });
+
+        it('SC-UKV-1456 — дельта, записанная нулём, ровная и без знака', (): void => {
+            for (const value of [-0.04, 0.04]) {
+                const fixture: ComponentFixture<RtStatTileComponent> = setup({ deltaPrimary: delta(value) });
+
+                expect(deltaText(fixture)).toBe(`0${NBSP}%`);
+                expect(qa(fixture, 'stat-tile-delta')?.attributes['data-direction']).toBe('flat');
+                expect(icon(fixture)).toBe('#rt-icon-minus');
+            }
+        });
+
+        it('SC-UKV-1466 — без языка от приложения дельта пишется как en', (): void => {
+            expect(deltaText(setupWithoutLocale({ deltaPrimary: delta(12.5) }))).toBe('+12.5%');
+        });
+
+        it('SC-UKV-1469 — у дельты не больше одного дробного знака', (): void => {
+            expect(deltaText(setup({ deltaPrimary: delta(3.75) }))).toBe(`+3,8${NBSP}%`);
+            expect(deltaText(setup({ deltaPrimary: delta(-4) }))).toBe(`-4${NBSP}%`);
+        });
+
+        it('SC-UKV-1469 — проценты и пункты округляют одно число одинаково', (): void => {
+            for (const value of [1.45, 0.35, 9.95]) {
+                const percent: string = deltaText(setup({ deltaPrimary: delta(value) }, 'en'));
+                const points: string = deltaText(setup({ deltaPrimary: delta(value, { unit: 'points' }) }, 'en'));
+
+                expect(percent.replace('%', '')).toBe(points.replace(' pp', ''));
+            }
+        });
+
+        it('нечисловая дельта не рисуется, как дельта, которой сравнить не с чем', (): void => {
+            expect(qa(setup({ deltaPrimary: delta(Number.NaN) }), 'stat-tile-delta')).toBeNull();
+            expect(qa(setup({ deltaPrimary: delta(Number.POSITIVE_INFINITY) }), 'stat-tile-delta')).toBeNull();
+        });
+
+        it('SC-UKV-1471 — язык, который Intl не принимает, пишет дельту как en', (): void => {
+            expect(deltaText(setup({ deltaPrimary: delta(12.5) }, '!!'))).toBe('+12.5%');
+        });
+    });
+
+    describe('размер и видимая подпись', (): void => {
+        it('SC-UKV-1453 — плитка без новых входов сохраняет вид', (): void => {
+            const fixture: ComponentFixture<RtStatTileComponent> = setup({ deltaPrimary: delta(12.5) });
+
+            expect(classesOf(qa(fixture, 'stat-tile'))).not.toContain('rt-stat-tile--compact');
+            expect(qa(fixture, 'stat-tile-delta')?.attributes['title']).toBe('к прошлой неделе');
+            expect(qa(fixture, 'stat-tile-delta-caption')).toBeNull();
+        });
+
+        it('SC-UKV-1454, SC-UKV-1467, SC-UKV-1468 — компактный размер помечает плитку модификатором', (): void => {
+            // Размеры, промежутки и переносы компактной плитки меряет шаг play её истории.
+            expect(classesOf(qa(setup({ size: 'compact' }), 'stat-tile'))).toContain('rt-stat-tile--compact');
+        });
+
+        it('SC-UKV-1451 — подпись базы видна после числа, и title её не дублирует', (): void => {
+            const fixture: ComponentFixture<RtStatTileComponent> = setup({
+                deltaPrimary: delta(12.5, { label: 'vs LY' }),
+                deltaLabelVisible: true,
+            });
+
+            expect(textOf(qa(fixture, 'stat-tile-delta-caption'))).toBe('vs LY');
+            expect(qa(fixture, 'stat-tile-delta')?.attributes['title']).toBeUndefined();
+        });
+    });
+
     describe('рост хуже', (): void => {
         const worse: string = 'rt-stat-tile--growth-worse';
 
@@ -178,7 +277,7 @@ describe('RtStatTileComponent', (): void => {
 
             expect(classesOf(qa(fixture, 'stat-tile'))).toContain(worse);
             expect(qa(fixture, 'stat-tile-delta')?.attributes['data-direction']).toBe('up');
-            expect(el(fixture, '[qa-dataid="stat-tile-delta-icon"] use')?.attributes['href']).toBe('#rt-icon-arrow-up');
+            expect(icon(fixture)).toBe('#rt-icon-arrow-up');
         });
 
         it('SC-UKV-1130 — падение помечено как хорошее, стрелка вниз', (): void => {
@@ -186,7 +285,7 @@ describe('RtStatTileComponent', (): void => {
 
             expect(classesOf(qa(fixture, 'stat-tile'))).toContain(worse);
             expect(qa(fixture, 'stat-tile-delta')?.attributes['data-direction']).toBe('down');
-            expect(el(fixture, '[qa-dataid="stat-tile-delta-icon"] use')?.attributes['href']).toBe('#rt-icon-arrow-down');
+            expect(icon(fixture)).toBe('#rt-icon-arrow-down');
         });
 
         it('SC-UKV-1131 — признак стоит на всей плитке и накрывает обе строки', (): void => {
@@ -206,7 +305,23 @@ describe('RtStatTileComponent', (): void => {
 
             expect(classesOf(qa(fixture, 'stat-tile'))).not.toContain(worse);
             expect(classesOf(qa(fixture, 'stat-tile-delta'))).toContain('rt-stat-tile__delta--direction--up');
-            expect(el(fixture, '[qa-dataid="stat-tile-delta-icon"] use')?.attributes['href']).toBe('#rt-icon-arrow-up');
+            expect(icon(fixture)).toBe('#rt-icon-arrow-up');
+        });
+    });
+
+    describe('справа налево', (): void => {
+        it('SC-UKV-1474 — значение и обе дельты изолированы слева направо и держат свой порядок', (): void => {
+            const fixture: ComponentFixture<RtStatTileComponent> = setup({
+                value: '-1,24 млн ₽',
+                deltaPrimary: delta(-4.2),
+                deltaSecondary: delta(3, { label: 'г/г' }),
+            });
+            const host: HTMLElement = fixture.nativeElement as HTMLElement;
+            const isolated: string[] = Array.from(host.querySelectorAll('bdi[dir="ltr"]')).map(
+                (node: Element): string => node.textContent?.trim() ?? ''
+            );
+
+            expect(isolated).toEqual(['-1,24 млн ₽', '-4,2' + String.fromCharCode(0xa0) + '%', '+3' + String.fromCharCode(0xa0) + '%']);
         });
     });
 

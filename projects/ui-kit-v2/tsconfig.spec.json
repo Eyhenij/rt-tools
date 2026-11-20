@@ -15,6 +15,7 @@
       "@rt-tools/utils": ["../utils/src/index.ts"],
       "@rt-tools/ui-kit-v2": ["src/public-api.ts"],
       "@rt-tools/ui-kit-v2/rich-editor": ["src/rich-editor/public-api.ts"],
+      "@rt-tools/ui-kit-v2/ai-chat-chart": ["src/ai-chat-chart/public-api.ts"],
       "@rt-tools/ui-kit-v2/core": ["src/lib/core.ts"],
       "@rt-tools/ui-kit-v2/*": ["src/lib/components/*/index.ts"],
       "@angular/core/testing": ["../../node_modules/@angular/core/types/testing.d.ts"],

@@ -28,9 +28,10 @@ const BEM_BLOCK: string = 'rt-message';
 /**
  * Alert / banner для уведомлений с 6 severities и default icon mapping.
  *
- * Использует `role="alert"` на корневом `<aside>` — screen reader озвучивает
+ * По умолчанию `role="alert"` на корневом `<aside>` — screen reader озвучивает
  * содержимое сразу после маунта (полезно для inline-фидбэка форм типа
- * «Сохранено успешно» / «{{ assignError() }}»).
+ * «Сохранено успешно» / «{{ assignError() }}»). Вход `live="status"` ставит
+ * `role="status"`: так плашка в ленте не перебивает диктор.
  *
  * Severity-палитра идентична `rt-tag` (`info` / `success` / `warning` / `danger` /
  * `secondary` / `neutral`); тип `IRtTag.Severity` переиспользуется напрямую, чтобы
@@ -111,6 +112,16 @@ export class RtMessageComponent {
     /** Рендерит close-button справа (rt-icon-button ghost sm). */
     public readonly closable: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
         transform: booleanAttribute,
+    });
+
+    /**
+     * Как диктор объявляет сообщение. `alert` — сразу и с перебиванием: ошибка формы, итог
+     * сохранения. `status` — спокойно, в свою очередь: плашка в ленте, которая рисуется вместе с
+     * историей и ни о чём срочном не говорит. Любое другое значение, в том числе пустой атрибут,
+     * даёт `alert`.
+     */
+    public readonly live: InputSignalWithTransform<'alert' | 'status', string> = input<'alert' | 'status', string>('alert', {
+        transform: (value: string): 'alert' | 'status' => (value === 'status' ? 'status' : 'alert'),
     });
 
     /** Эмиттится при клике на close-button (только если `closable=true`). */

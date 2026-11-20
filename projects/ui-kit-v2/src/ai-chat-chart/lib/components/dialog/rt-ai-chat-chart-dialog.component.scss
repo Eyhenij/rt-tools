@@ -1,0 +1,38 @@
+@layer rt-kit.components {
+    .rt-ai-chat-chart-dialog {
+        display: contents;
+
+        /* Тело окна: строка с подзаголовком и кнопкой, под ней поле графика. */
+        &__body {
+            display: flex;
+            min-width: 0;
+            flex-direction: column;
+            gap: var(--rt-space-2);
+        }
+
+        /* Подзаголовок слева, «Скачать PNG» у правого края. */
+        &__bar {
+            display: flex;
+            min-width: 0;
+            align-items: center;
+            gap: var(--rt-space-2);
+        }
+
+        &__subtitle {
+            min-width: 0;
+            flex: 1;
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            line-height: 15px;
+            overflow-wrap: anywhere;
+        }
+
+        &__download {
+            margin-inline-start: auto;
+        }
+
+        &__plot {
+            min-width: 0;
+        }
+    }
+}

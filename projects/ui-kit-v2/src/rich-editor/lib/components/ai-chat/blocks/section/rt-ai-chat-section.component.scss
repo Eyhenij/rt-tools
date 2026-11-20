@@ -1,0 +1,48 @@
+@layer rt-kit.components {
+    /* rt-ai-chat-section — секция ответа чата. ViewEncapsulation.None.
+       Колонки задаёт ширина самой секции, а не режим чата: хост — именованный контейнер запросов
+       по ширине, и сетка спрашивает его по имени. Вложенный блок, который раскладывается по своей
+       ширине, сам себе контейнер, и запрос без имени секцию не читает. */
+
+    .rt-ai-chat-section {
+        display: block;
+        min-width: 0;
+        container: rt-ai-chat-section / inline-size;
+
+        /* На шаг крупнее заголовка графика и таблицы; длинное слово ломается, а не раздвигает ленту. */
+        &__title {
+            margin: 0 0 calc(var(--rt-space-2) + var(--rt-space-1));
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-md);
+            font-weight: var(--rt-font-weight-semibold);
+            line-height: calc(var(--rt-text-md) + var(--rt-space-1));
+            overflow-wrap: anywhere;
+        }
+
+        /* Блоки одного ряда стоят на одном верхе, каждый своей высоты. */
+        &__grid {
+            display: grid;
+            align-items: start;
+            gap: var(--rt-space-md);
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        /* Ячейка кладёт блок как лента: блочным, с нулевой минимальной шириной, каким бы ни был
+           display его хоста. Ячейка не обрезается: подсказка и кольцо фокуса блока видны целиком. */
+        &__cell {
+            display: grid;
+            min-width: 0;
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        @container rt-ai-chat-section (min-width: 600px) {
+            &__grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            &__cell--full {
+                grid-column: 1 / -1;
+            }
+        }
+    }
+}

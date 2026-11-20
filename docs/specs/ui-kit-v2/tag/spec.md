@@ -1,6 +1,6 @@
 # The tag of the second kit
 
-**Status:** in force · **Revision:** 2026-11-18 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-20 · **Scenario prefix:** `SC-UKV`
 **Depends on:** `docs/specs/ui-kit-v2/overflowing-text`
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
@@ -111,6 +111,8 @@ promises, so that the next pill is asked for from it rather than written beside 
 - **The rules of the block are nested inside the host.** The class of the block hangs both on the
   element and on the root of the template, so a rule written by the class alone reaches both, and
   the padding of the pill lands on its own wrapper as well.
+- **The gap between all parts of a tag of the size `sm` — the icon, the label, the end icon and the cross — is 4, `--rt-space-1`, the same as the size `md`.** The approved mockup draws 4, and the owner set in RT-3338 that the kit is fitted to the mockup. The padding and the type size keep their steps; the gap of `sm` equals that of `md`. This changes every small tag with an icon or a cross in the kit.
+- **The tag can turn its start icon.** The option is off by default and passes on to the start icon the turning of `rt-icon`.
 
 ## What is out of scope
 
@@ -211,3 +213,5 @@ The subdomain has no open questions.
   (RT-2371); the scenario SC-UKV-186 about the rounding coming from the shape is removed.
 - 2026-11-18 — the dot appearance (RT-3389): a status on a narrow screen shows as a coloured dot
   with its value in the hint and the accessible name; scenarios SC-UKV-1378…1381.
+- 2026-11-20 — the gap of the size `sm` is 4 for all parts, and the tag can turn its start icon
+  (RT-3339); scenarios SC-UKV-1500 and SC-UKV-1506.

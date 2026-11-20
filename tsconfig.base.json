@@ -40,6 +40,7 @@
       "@rt-tools/cms-server": ["projects/cms-server/src/index.ts"],
       "@rt-tools/ui-kit-v2": ["projects/ui-kit-v2/src/public-api.ts"],
       "@rt-tools/ui-kit-v2/rich-editor": ["projects/ui-kit-v2/src/rich-editor/public-api.ts"],
+      "@rt-tools/ui-kit-v2/ai-chat-chart": ["projects/ui-kit-v2/src/ai-chat-chart/public-api.ts"],
       "@rt-tools/ui-kit-v2/core": ["projects/ui-kit-v2/src/lib/core.ts"],
       "@rt-tools/ui-kit-v2/*": ["projects/ui-kit-v2/src/lib/components/*/index.ts"],
       "@rt-tools/agent-kit/cargo": ["projects/agent-kit/src/lib/cargo.ts"],

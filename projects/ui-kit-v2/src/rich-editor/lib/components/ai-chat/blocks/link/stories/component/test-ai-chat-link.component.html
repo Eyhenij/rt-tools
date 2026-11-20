@@ -1,0 +1,14 @@
+<div [style.width.px]="width">
+    <rt-ai-chat-blocks
+        [blocks]="[
+            {
+                type: 'link',
+                title: title,
+                url: '/reports/sales?month=11',
+                section: section,
+                icon: icon,
+                state: state === 'none' ? undefined : state,
+                reason: reason,
+            },
+        ]" />
+</div>

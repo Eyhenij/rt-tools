@@ -29,6 +29,20 @@ export type TRtDesignTokenName =
     | '--rt-charcoal-950'
     | '--rt-charcoal-border'
     | '--rt-charcoal-border-strong'
+    | '--rt-chart-aqua-dark'
+    | '--rt-chart-aqua-light'
+    | '--rt-chart-green-dark'
+    | '--rt-chart-green-light'
+    | '--rt-chart-magenta-dark'
+    | '--rt-chart-magenta-light'
+    | '--rt-chart-orange-dark'
+    | '--rt-chart-orange-light'
+    | '--rt-chart-red-dark'
+    | '--rt-chart-red-light'
+    | '--rt-chart-violet-dark'
+    | '--rt-chart-violet-light'
+    | '--rt-chart-yellow-dark'
+    | '--rt-chart-yellow-light'
     | '--rt-chat-bubble-date'
     | '--rt-chat-bubble-in-author'
     | '--rt-chat-bubble-in-bg'
@@ -84,6 +98,14 @@ export type TRtDesignTokenName =
     | '--rt-color-border-focus'
     | '--rt-color-border-strong'
     | '--rt-color-border-subtle'
+    | '--rt-color-chart-series-1'
+    | '--rt-color-chart-series-2'
+    | '--rt-color-chart-series-3'
+    | '--rt-color-chart-series-4'
+    | '--rt-color-chart-series-5'
+    | '--rt-color-chart-series-6'
+    | '--rt-color-chart-series-7'
+    | '--rt-color-chart-series-8'
     | '--rt-color-field-fill-underline'
     | '--rt-color-service-logo-bg'
     | '--rt-color-service-logo-mark'
@@ -854,6 +876,20 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-charcoal-950',
     '--rt-charcoal-border',
     '--rt-charcoal-border-strong',
+    '--rt-chart-aqua-dark',
+    '--rt-chart-aqua-light',
+    '--rt-chart-green-dark',
+    '--rt-chart-green-light',
+    '--rt-chart-magenta-dark',
+    '--rt-chart-magenta-light',
+    '--rt-chart-orange-dark',
+    '--rt-chart-orange-light',
+    '--rt-chart-red-dark',
+    '--rt-chart-red-light',
+    '--rt-chart-violet-dark',
+    '--rt-chart-violet-light',
+    '--rt-chart-yellow-dark',
+    '--rt-chart-yellow-light',
     '--rt-chat-bubble-date',
     '--rt-chat-bubble-in-author',
     '--rt-chat-bubble-in-bg',
@@ -909,6 +945,14 @@ export const RT_DESIGN_TOKEN_NAMES: readonly TRtDesignTokenName[] = [
     '--rt-color-border-focus',
     '--rt-color-border-strong',
     '--rt-color-border-subtle',
+    '--rt-color-chart-series-1',
+    '--rt-color-chart-series-2',
+    '--rt-color-chart-series-3',
+    '--rt-color-chart-series-4',
+    '--rt-color-chart-series-5',
+    '--rt-color-chart-series-6',
+    '--rt-color-chart-series-7',
+    '--rt-color-chart-series-8',
     '--rt-color-field-fill-underline',
     '--rt-color-service-logo-bg',
     '--rt-color-service-logo-mark',
