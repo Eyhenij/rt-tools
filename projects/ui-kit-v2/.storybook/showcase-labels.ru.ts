@@ -200,6 +200,7 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     uiDownloadFile: 'Скачать: {{name}}',
     uiDragColumn: 'Перетащить колонку',
     uiEdit: 'Изменить',
+    uiEmptyTitle: 'Нет данных',
     uiExpand: 'Развернуть',
     uiExpandAll: 'Развернуть всё',
     uiFileDropOverlay: 'Отпустите файлы, чтобы прикрепить их',
