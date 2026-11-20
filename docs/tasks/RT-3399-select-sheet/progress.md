@@ -4,10 +4,8 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 4 из 4 — Showcase; both review rounds done
-- **Next step:** a review round over the field hint change (commits after 72bbc66c2), three
-  readers on the whole diff, while the owner looks at the hint showcase; then its fixes as one
-  commit, the closing texts, the push set (the sheet and workspace snapshots are re-taken) and the
-  draft PR.
+- **Next step:** the closing — merge the base in, the closing texts, take the folder apart, the
+  push set (the sheet and workspace snapshots are re-taken) and the draft PR.
 - **The showcase of `prefix` and `suffix` approved:** «Approve showcase» (20.11).
 - **The hint at the field label joined (20.11), «проверь и добавь в текущий тикет»:** confirmed
   live on 6017 — `rt-field__help-popover` has a transparent background, padding 0 and no shadow,
@@ -57,7 +55,12 @@
   `rt-tooltip[role=tooltip]`. To the owner as a choice: the kit tooltip closes when the pointer
   moves onto its text, and a click after hover closes it (the `showOnTap` toggle) — both are the
   kit tooltip's behaviour for every consumer.
-- **Waiting for the owner:** the approval of the showcase of the hint and the choice above.
+- **Re-measured after the review fixes (20.11), on the owner's «матчится с макетами?»:** Chrome on
+  6017, Playground with the mockup text, the middle, the right window edge and the dark island;
+  `kit-match` against frame 8477:2372 — 19 of 19.
+- **The hint showcase approved:** «Одобряю витрину» (20.11). The tooltip behaviour choice, given
+  before: «Оставить, назвать в PR (рекоменд.)» — the PR body names both closings (pointer onto the
+  text, a click after hover).
 - **`prefix` and `suffix` of `rt-input` in code (20.11), mockup 8449:1560 approved «Одобряю
   макет»:** the prefix stands before the field, the suffix right after the typed text — a hidden
   copy of the text sizes the field, the field lies over it. Measured live on 6017, own set: the
