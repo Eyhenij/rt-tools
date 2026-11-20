@@ -367,8 +367,9 @@ Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 ### SC-AK-1746 — an edit of «шаг владельца» is refused
 
 Given an epic plan edit that sets «шаг владельца» on a row, and one that takes the row back to the work
+And an edit of another cell of a row that already carries the mark, and an edit that writes the phrase in prose
 When the guard of the course of work judges each
-Then the first is refused and says the step is the executor's, and the second passes
+Then the first is refused and says the step is the executor's, and the other three pass
 
 Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 

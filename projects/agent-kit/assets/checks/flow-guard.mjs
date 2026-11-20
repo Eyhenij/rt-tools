@@ -14,9 +14,9 @@
  *   - an edit of the description, its measurers and sources or the engine outside a task whose
  *     approved plan names the path in a footprint row marked «(правится)».
  *
- * Two edits it names as the owner's decision, and the decision table answers them with the window:
- * a replacement line of the progress added or changed, and «шаг владельца» set or changed on a row of
- * the epic plan. The engine reads no quote after that: the allowed edit is the owner's word.
+ * One edit it names as the owner's decision, and the decision table answers it with the window: a
+ * replacement line of the progress added or changed. The engine reads no quote after that: the
+ * allowed edit is the owner's word. «шаг владельца» set on a row of the epic plan is refused outright.
  *
  * A plan without a single check line, and the plan of a branch in `words.legacyBranches`, keep the
  * done marks of the progress as they are: their steps were never measured by the engine.
@@ -125,9 +125,13 @@ export function replacementChanges(before, after) {
  * step is the executor's. A row that leaves the mark is not counted: the task goes back to the work.
  */
 export function ownerRowChanges(before, after, key) {
+    const marked = (text) => new RegExp(`\\|\\s*${OWNER_STEP}[^|]*\\|?\\s*$`, 'u').test(text);
+    const numbers = (line) => [...line.matchAll(new RegExp(`${escape(key)}-(\\d+)`, 'g'))].map((match) => match[1]);
+    // A row that carried the mark before the edit is a legacy row: its other cells may be edited.
+    const legacy = new Set((before ?? '').split('\n').filter(marked).flatMap(numbers));
     const tasks = new Set();
-    for (const line of newLines(before, after, (text) => text.includes(OWNER_STEP))) {
-        for (const match of line.matchAll(new RegExp(`${escape(key)}-(\\d+)`, 'g'))) tasks.add(match[1]);
+    for (const line of newLines(before, after, marked)) {
+        for (const task of numbers(line)) if (!legacy.has(task)) tasks.add(task);
     }
     return [...tasks];
 }
