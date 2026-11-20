@@ -67,7 +67,9 @@ component.
   means.** The binding writes by name, not by meaning: the `minLength` of the form reaches the
   `minLength` of a field with hints, where it is the count of letters before the hints open. A form
   that demands three letters therefore opens the hints from the third letter. The field says so in
-  its description; renaming the input would break every consumer that sets it.
+  its description; renaming the input would break every consumer that sets it. The same write
+  overrides a direct binding of that input on the same field: whichever writes last wins, so a
+  bound is set either by the form or directly, not by both.
 
 ## What is out of scope
 
@@ -76,6 +78,9 @@ component.
   A work of its own, and it lifts the former road — that is, it breaks the backward compatibility.
 - The check of the value: the form declares it, and the field shows the outcome.
 - The first kit: it has a base of a field of its own.
+- A radio button bound by the signal binding: Angular reads its `checked` pair as a control of its own
+  and forbids `[value]` next to `[formField]`, so the group of radio buttons has to become the field
+  of the form. A work of its own, with a minor release.
 
 ## Contract
 

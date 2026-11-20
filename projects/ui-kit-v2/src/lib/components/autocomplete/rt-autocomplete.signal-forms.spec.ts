@@ -2,7 +2,9 @@ import { ChangeDetectionStrategy, Component, WritableSignal, signal, ɵINPUT_SIG
 import { ComponentFixture } from '@angular/core/testing';
 import { FieldTree, FormField, SchemaPathTree, form, minLength } from '@angular/forms/signals';
 
-import { createRtFixture, qa, setInputs } from '../../../testing/rt-kit-testing';
+import { By } from '@angular/platform-browser';
+
+import { createRtFixture, qa } from '../../../testing/rt-kit-testing';
 import { RtAutocompleteComponent } from './rt-autocomplete.component';
 
 /** Что вход принимает на запись — тип, который проверяет шаблон потребителя; Jest шаблон не типизирует. */
@@ -38,7 +40,7 @@ interface ICityQuery {
     city: string;
 }
 
-/** То же поле, но форма требует от значения трёх букв. */
+/** То же поле, но форма требует от значения трёх букв, пока `strict` включён, и снимает требование, когда он выключен. */
 @Component({
     selector: 'rt-autocomplete-signal-min-length-host',
     template: '<rt-autocomplete [suggestions]="cities" [formField]="delivery.city" />',
@@ -47,9 +49,10 @@ interface ICityQuery {
 })
 class AutocompleteMinLengthHostComponent {
     public readonly cities: ReadonlyArray<string> = CITIES;
+    public readonly strict: WritableSignal<boolean> = signal<boolean>(true);
     public readonly model: WritableSignal<ICityQuery> = signal<ICityQuery>({ city: '' });
     public readonly delivery: FieldTree<ICityQuery> = form(this.model, (path: SchemaPathTree<ICityQuery>): void => {
-        minLength(path.city, 3);
+        minLength(path.city, (): number | undefined => (this.strict() ? 3 : undefined));
     });
 }
 
@@ -82,15 +85,12 @@ describe('RtAutocompleteComponent под сигнальной формой', ():
         expect(fixture.componentInstance.model()).toEqual({ city: 'Минск' });
     });
 
-    it('SC-UKV-1585 — minLength undefined возвращает порог по умолчанию, число — как раньше', (): void => {
+    it('SC-UKV-1585 — число в minLength напрямую работает как раньше', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = createRtFixture(RtAutocompleteComponent<string>, {
             minLength: 3,
         });
+
         expect(fixture.componentInstance.minLength()).toBe(3);
-
-        setInputs(fixture, { minLength: undefined });
-
-        expect(fixture.componentInstance.minLength()).toBe(1);
     });
 
     it('SC-UKV-1585 — minLength формы доходит до поля: подсказки открываются с третьей буквы', (): void => {
@@ -100,6 +100,20 @@ describe('RtAutocompleteComponent под сигнальной формой', ():
         expect(suggestions().length).toBe(0);
 
         type(fixture, 'мин');
+        expect(suggestions().length).toBe(CITIES.length);
+    });
+
+    it('SC-UKV-1585 — minLength, который форма сняла, возвращает порог по умолчанию: с первой буквы', (): void => {
+        const fixture: ComponentFixture<AutocompleteMinLengthHostComponent> = createRtFixture(AutocompleteMinLengthHostComponent);
+        const field: RtAutocompleteComponent<string> = fixture.debugElement.query(By.directive(RtAutocompleteComponent))
+            .componentInstance as RtAutocompleteComponent<string>;
+        expect(field.minLength()).toBe(3);
+
+        fixture.componentInstance.strict.set(false);
+        fixture.detectChanges();
+        type(fixture, 'м');
+
+        expect(field.minLength()).toBe(1);
         expect(suggestions().length).toBe(CITIES.length);
     });
 });
