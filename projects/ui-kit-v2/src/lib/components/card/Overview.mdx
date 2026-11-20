@@ -17,6 +17,16 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 </rt-card>
 ```
 
+Карточка службы: знак слева, тег справа в одном ряду, обводка включена входом `bordered`.
+
+```html
+<rt-card bordered header="Slack">
+    <rt-service-logo rtCardMedia [logos]="logos" />
+    <rt-tag rtCardHeaderEnd severity="success" value="Настроено" />
+    Сотрудники пишут ассистенту в Slack
+</rt-card>
+```
+
 ## Когда применять
 
 - Самостоятельный кусок содержимого в списке или на панели: запись, объект, сводка.
@@ -35,6 +45,7 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | заголовок    | нет, короткий, длинный                                           | нет               |
 | наполнение   | только содержимое, заголовок входом, шапка проекцией, с подвалом | только содержимое |
 | нажимаемость | обычная, `clickable`                                             | обычная           |
+| обводка      | нет, `bordered`                                                  | нет               |
 
 Заголовок задаётся двумя способами и оба показаны: входом `header` — тогда он рисуется тегом
 `<h3>`, — и проекцией `[rtCardHeader]`, когда в шапке нужна разметка.
@@ -85,4 +96,5 @@ import { Meta, Title } from '@storybook/addon-docs/blocks';
 | `header`    | `string \| null`    | `null`        | заголовок шапки тегом `<h3>`                          |
 | `ariaLabel` | `string \| null`    | `null`        | имя для скринридера; при `clickable` обязателен       |
 | `clickable` | `boolean`           | `false`       | роль кнопки, таб-порядок, отклик на `Enter` и `Space` |
+| `bordered`  | `boolean`           | `false`       | обводка 1px цвета границы по умолчанию                |
 | `radius`    | `TRtRadius \| null` | `null` → `xl` | шаг общей шкалы для главной поверхности               |

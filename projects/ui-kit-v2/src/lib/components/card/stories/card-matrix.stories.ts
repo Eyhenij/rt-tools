@@ -36,3 +36,6 @@ export const States: TStory = {
 export const Presets: TStory = { args: { part: 'presets' } };
 
 export const Themes: TStory = { args: { part: 'themes' } };
+
+/** Карточка службы каталога: обводка, тег справа в одном ряду со знаком, знак Slack. Кадр ложится на макет. */
+export const Catalog: TStory = { args: { part: 'catalog' } };

@@ -95,3 +95,22 @@ export const RT_AI_CHAT_CHART_SCHEMA: Readonly<Record<string, unknown>> = {
         },
     ],
 };
+
+function withoutDialect(schema: Readonly<Record<string, unknown>>): Readonly<Record<string, unknown>> {
+    return Object.fromEntries(Object.entries(schema).filter(([key]: [string, unknown]): boolean => key !== '$schema'));
+}
+
+/**
+ * JSON-схема блока графика (JSON Schema 2020-12): спецификация лежит в поле `spec`, как её читает
+ * блок. Эту схему, а не схему спецификации, приложение называет под именем `chart`, когда
+ * собирает схему секции.
+ */
+export const RT_AI_CHAT_CHART_BLOCK_SCHEMA: Readonly<Record<string, unknown>> = {
+    $schema: 'https://json-schema.org/draft/2020-12/schema',
+    title: 'Chart block',
+    type: 'object',
+    required: ['spec'],
+    properties: {
+        spec: withoutDialect(RT_AI_CHAT_CHART_SCHEMA),
+    },
+};

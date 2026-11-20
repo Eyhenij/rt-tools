@@ -33,6 +33,21 @@ class CardHostComponent {}
 })
 class CardMediaHostComponent {}
 
+/** Карточка со знаком слева и тегом справа в одном ряду: слоты `[rtCardMedia]` и `[rtCardHeaderEnd]`. */
+@Component({
+    selector: 'rt-card-header-end-host',
+    template: `
+        <rt-card header="Slack">
+            <span rtCardMedia qa-dataid="host-media-slot">знак</span>
+            <span rtCardHeaderEnd qa-dataid="host-header-end-slot">Настроено</span>
+            <p>Ассистент в рабочем чате</p>
+        </rt-card>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [RtCardComponent],
+})
+class CardHeaderEndHostComponent {}
+
 function setup(inputs: Readonly<Record<string, unknown>> = {}): ComponentFixture<RtCardComponent> {
     return createRtFixture(RtCardComponent, inputs);
 }
@@ -140,6 +155,34 @@ describe('RtCardComponent', (): void => {
 
             expect(media.childNodes).toHaveLength(0);
             expect(textOf(qa(fixture, 'card-title'))).toBe('Тариф');
+        });
+    });
+
+    describe('конец шапки', (): void => {
+        it('SC-UKV-1382 — тег стоит в одном ряду со знаком, после него', (): void => {
+            const fixture: ComponentFixture<CardHeaderEndHostComponent> = createRtFixture(CardHeaderEndHostComponent);
+            const media: HTMLElement = el(fixture, '.rt-card__media [qa-dataid="host-media-slot"]')?.nativeElement as HTMLElement;
+            const end: HTMLElement = el(fixture, '.rt-card__media [qa-dataid="host-header-end-slot"]')?.nativeElement as HTMLElement;
+
+            expect(media).not.toBeNull();
+            expect(end).not.toBeNull();
+            expect(media.compareDocumentPosition(end)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+        });
+
+        it('SC-UKV-1383 — без знака и тега ряд пуст', (): void => {
+            const media: HTMLElement = qa(setup(), 'card-media')?.nativeElement as HTMLElement;
+
+            expect(media.childNodes).toHaveLength(0);
+        });
+    });
+
+    describe('обводка', (): void => {
+        it('SC-UKV-1384 — без входа обводки нет', (): void => {
+            expect(classesOf(qa(setup(), 'card')?.nativeElement as HTMLElement)).not.toContain('rt-card--bordered');
+        });
+
+        it('SC-UKV-1384 — с входом карточка получает модификатор обводки', (): void => {
+            expect(classesOf(qa(setup({ bordered: true }), 'card')?.nativeElement as HTMLElement)).toContain('rt-card--bordered');
         });
     });
 });

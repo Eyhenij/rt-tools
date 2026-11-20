@@ -18,16 +18,20 @@ ref.afterClosed().subscribe((result?: ITour): void => …);
 </rt-aside>
 ```
 
-| вход `rt-aside` | тип                    | умолчание   |
-| --------------- | ---------------------- | ----------- |
-| `size`          | `'sm' \| 'md' \| 'lg'` | `'md'`      |
-| `contentLayout` | `'default' \| 'tabs'`  | `'default'` |
-| `width`         | `string \| null`       | `null`      |
-| `ariaLabel`     | `string \| null`       | `null`      |
-| `requestError`  | `unknown`              | `null`      |
-| `trapFocus`     | `boolean`              | `false`     |
-| `modal`         | `boolean`              | `false`     |
-| `pending`       | `boolean`              | `false`     |
+| вход `rt-aside`    | тип                    | умолчание               |
+| ------------------ | ---------------------- | ----------------------- |
+| `size`             | `'sm' \| 'md' \| 'lg'` | `'md'`                  |
+| `contentLayout`    | `'default' \| 'tabs'`  | `'default'`             |
+| `width`            | `string \| null`       | `null`                  |
+| `ariaLabel`        | `string \| null`       | `null`                  |
+| `requestError`     | `unknown`              | `null`                  |
+| `trapFocus`        | `boolean`              | `false`                 |
+| `modal`            | `boolean`              | `false`                 |
+| `pending`          | `boolean`              | `false`                 |
+| `empty`            | `boolean`              | `false`                 |
+| `emptyIcon`        | `IRtIcon.Name \| null` | `'inbox'`               |
+| `emptyTitle`       | `string \| null`       | `null` → `uiEmptyTitle` |
+| `emptyDescription` | `string \| null`       | `null`                  |
 
 | настройка `open()`                       | умолчание                                 |
 | ---------------------------------------- | ----------------------------------------- |
@@ -71,6 +75,15 @@ ref.afterClosed().subscribe((result?: ITour): void => …);
 **Ошибку запроса показывает сама панель.** Вход `requestError` ставит между шапкой и содержимым
 блок `rt-aside-error-box` с кнопкой копирования ошибки; `null` и `undefined` его убирают. Своя
 разметка ошибки в содержимом панели не пишется.
+
+**Пустую панель показывает сама панель.** Вход `empty` ставит в тело `rt-empty-state` со значком
+`inbox` и подписью `uiEmptyTitle`; `emptyIcon`, `emptyTitle`, `emptyDescription` её меняют,
+`<ng-template rtAsideEmpty>` заменяет целиком. Шапка и подвал на месте. Панель с вкладками
+пуста по вкладке: вход `empty` ставится на `rtTab`. Заголовок по умолчанию — подпись кита
+`uiEmptyTitle` («No data»); приложение на другом языке добавляет `rtKit.uiEmptyTitle` в свой
+словарь, иначе виден английский текст. Под `empty` спроецированное содержимое остаётся созданным
+(Angular создаёт его в любом случае), оно только не показано; вкладка под `empty` своё тело не
+создаёт. С `contentLayout="tabs"` собственный `empty` панели не работает, работает `empty` вкладки: у тела панели тогда нет вертикальных отступов, и заглушку может обрезать.
 
 **На экране до 768 точек панель во всё окно.** Ширину держит `--rt-aside-narrow-width`, по
 умолчанию `100dvw`; размер и `width` там не действуют. Коробка, в которую панель поставлена

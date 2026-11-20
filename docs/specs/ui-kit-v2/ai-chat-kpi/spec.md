@@ -138,8 +138,9 @@ base caption and a period.
 ## What is out of scope
 
 - A sparkline in a card, a click on a card, a hint icon, a second delta per card.
-- The section and the grid of a composed answer (RT-3342) and the sources block (RT-3340).
-- A title of the block: a heading of a composed answer comes with RT-3342.
+- The section and the grid of a composed answer: they are the section block,
+  `docs/specs/ui-kit-v2/ai-chat-section/`. The sources block (RT-3340).
+- A title of the block: a heading of a composed answer is the title of the section block.
 - A total or a delta computed by the kit: both come as data.
 - Telling the full-screen mode to a block: the block reads its own width.
 - Telling good and bad apart other than by colour: a text for a screen reader is a tile edit of its

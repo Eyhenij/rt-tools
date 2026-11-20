@@ -226,6 +226,7 @@ export const RT_KIT_LABELS_EN = {
     uiDownloadFile: 'Download: {{name}}',
     uiDragColumn: 'Drag column',
     uiEdit: 'Edit',
+    uiEmptyTitle: 'No data',
     uiExpand: 'Expand',
     uiExpandAll: 'Expand all',
     uiFileDropOverlay: 'Drop the files to attach them',
