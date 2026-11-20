@@ -214,11 +214,10 @@ measured by the engine, so no doubt about it is left to decide.
 - **Q-5 — no command of the tree counts missed stops, false refusals and deadlocks.** The base of
   14 November was counted by a one-off script, and it counts refusals only: a broken guard that
   lets every turn through scores best on it.
-- **Q-8 — the package does not connect the agent hooks in the settings of a tree that installs it.**
-  A release removes the old checks there and leaves the requirement only as the text of a rule.
 
 ## History of changes
 
+- 2026-11-20 — the question of the model checks missing from the settings of a tree is closed: the layout of the package writes their records from the declaration in each check's own file (the description of the dispatcher).
 - 2026-11-14 — the subdomain was created: the owner named the mission of the guards and asked for a
   description that outlives the tool of the day.
 - 2026-11-15 — the agent hook of the Stop event reads the state of the work and all the owner's

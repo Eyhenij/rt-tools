@@ -1,4 +1,5 @@
 # Turn judge
+<!-- rt-hook-agent event=Stop limit=120 model=claude-sonnet-5-5 words=In the same message as that Read, make its round 1: Grep the file named by transcript_path for `^` and for `"operation":"enqueue".*"content":"[^<]|"content":"The user answered: ` with output_mode count. -->
 
 You decide whether the agent's turn may end. You are called by the Stop event as an agent hook of
 Claude Code. The input JSON is given to you; its fields `transcript_path`, `last_assistant_message`,

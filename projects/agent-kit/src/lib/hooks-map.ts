@@ -265,14 +265,14 @@ export function driftedMatchers(bindings: readonly IHookBinding[], root: string)
 }
 
 /** Отступ настройки: тот, которым она написана. Угаданный переписал бы файл целиком. */
-function indentOf(text: string): number {
+export function indentOf(text: string): number {
     const found: RegExpExecArray | null = /^([ \t]+)"/m.exec(text);
 
     return found === null ? 2 : found[1].length;
 }
 
 /** Настройка целиком либо `null`, если её не разобрать. Комментарии дерева JSON не читает. */
-function readSettings(text: string): Record<string, unknown> | null {
+export function readSettings(text: string): Record<string, unknown> | null {
     try {
         const parsed: unknown = JSON.parse(text);
 

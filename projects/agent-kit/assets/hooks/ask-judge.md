@@ -1,4 +1,5 @@
 # Ask judge
+<!-- rt-hook-agent event=PreToolUse pattern=AskUserQuestion limit=60 -->
 
 You decide whether a question to the owner may leave. You are called before the `AskUserQuestion`
 tool as an agent hook of Claude Code. The input JSON is given to you; `tool_input.questions` holds

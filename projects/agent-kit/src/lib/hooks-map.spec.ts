@@ -5,10 +5,20 @@
  * объявлений: гард с двумя событиями доезжал до готового куска настройки одним из них, и увидеть
  * это на разложенном дереве было нечем — файл лежал и подключённым выглядел.
  */
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
+import {
+    agentChecksOf,
+    agentRecord,
+    bindAgentChecks,
+    driftedAgents,
+    IAgentBindResult,
+    IAgentCheck,
+    IAgentDrift,
+    unboundAgentChecks,
+} from './agent-checks.js';
 import {
     bindDispatch,
     bindingsOf,
@@ -294,6 +304,121 @@ describe('bindDispatch', () => {
             bindDispatch(bindingsOf(ONE_EVENT, GUARD), root);
 
             expect(settingsOf(root)).toContain('\n    "hooks"');
+        } finally {
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+});
+
+const JUDGE_PATH: string = '.claude/hooks/judge.md';
+const JUDGE_TEXT: string = '# Judge\n<!-- rt-hook-agent event=Stop limit=120 model=model-a words=Do the round `x` first. -->\n\nText.\n';
+const MENU_TEXT: string = '# Menu\n<!-- rt-hook-agent event=PreToolUse pattern=AskUserQuestion limit=60 -->\n\nText.\n';
+const MENU_PATH: string = '.claude/hooks/menu.md';
+
+const JUDGE: IAgentCheck = agentChecksOf(JUDGE_TEXT, JUDGE_PATH, 'hooks/judge.md')[0];
+const MENU: IAgentCheck = agentChecksOf(MENU_TEXT, MENU_PATH, 'hooks/menu.md')[0];
+
+/** Дерево с настройкой и файлами проверок на диске. Диспетчера нет, если не названо иное. */
+function treeWithChecks(settings: string, checks: readonly IAgentCheck[], withDispatcher: boolean = false): string {
+    const root: string = treeWithSettings(settings, withDispatcher);
+    for (const check of checks) {
+        mkdirSync(dirname(join(root, check.path)), { recursive: true });
+        writeFileSync(join(root, check.path), '# check\n');
+    }
+
+    return root;
+}
+
+const withRecord: (record: Record<string, unknown>, event: string) => string = (record: Record<string, unknown>, event: string): string =>
+    JSON.stringify({ hooks: { [event]: [record] } }, null, 2) + '\n';
+
+describe('модельные проверки', () => {
+    it('SC-AK-1773 — записи, собранные из объявлений настоящих файлов, равны записям этого дерева', (): void => {
+        const assets: string = join(__dirname, '..', '..', 'assets', 'hooks');
+        const tree: { hooks: Record<string, unknown[]> } = JSON.parse(
+            readFileSync(join(__dirname, '..', '..', '..', '..', SETTINGS_PATH), 'utf8')
+        );
+
+        for (const name of ['turn-judge', 'ask-judge']) {
+            const [check]: readonly IAgentCheck[] = agentChecksOf(
+                readFileSync(join(assets, `${name}.md`), 'utf8'),
+                `.claude/hooks/${name}.md`
+            );
+            const standing: unknown[] = (tree.hooks[check.event] ?? []).filter((record: unknown): boolean =>
+                JSON.stringify(record).includes(check.path)
+            );
+
+            expect(standing).toHaveLength(1);
+            expect(agentRecord(check)).toEqual(standing[0]);
+        }
+    });
+
+    it('SC-AK-1767 — стоящая запись не дублируется и не переписывается', (): void => {
+        const record: Record<string, unknown> = agentRecord({ ...JUDGE, words: 'other words' });
+        const root: string = treeWithChecks(withRecord(record, 'Stop'), [JUDGE]);
+        try {
+            const before: string = settingsOf(root);
+            const bound: IAgentBindResult = bindAgentChecks([JUDGE], root);
+
+            expect(bound.added).toEqual([]);
+            expect(settingsOf(root)).toBe(before);
+            expect(unboundAgentChecks([JUDGE], root)).toEqual([]);
+        } finally {
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+
+    it('SC-AK-1768 — запись, разошедшаяся с объявлением, называется: слова, образец и малый предел отказывают', (): void => {
+        const wrong: Record<string, unknown> = {
+            matcher: 'Other',
+            hooks: [{ type: 'agent', prompt: `Read the file ${JUDGE.path} other`, model: 'model-b', timeout: 30 }],
+        };
+        const root: string = treeWithChecks(withRecord(wrong, 'Stop'), [JUDGE]);
+        try {
+            const [drift]: readonly IAgentDrift[] = driftedAgents([JUDGE], root);
+
+            expect(drift.refused).toBe(true);
+            expect(drift.differs.join('\n')).toContain('слова вызова');
+            expect(drift.differs.join('\n')).toContain('образец');
+            expect(drift.differs.join('\n')).toContain('предел: объявлено 120 с, в настройке 30');
+        } finally {
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+
+    it('SC-AK-1768 — другая модель и больший предел только называются', (): void => {
+        const record: Record<string, unknown> = agentRecord(JUDGE);
+        const command: Record<string, unknown> = (record['hooks'] as Record<string, unknown>[])[0];
+        const root: string = treeWithChecks(withRecord({ hooks: [{ ...command, model: 'model-b', timeout: 300 }] }, 'Stop'), [JUDGE]);
+        try {
+            const [drift]: readonly IAgentDrift[] = driftedAgents([JUDGE], root);
+
+            expect(drift.refused).toBe(false);
+            expect(drift.differs).toHaveLength(2);
+        } finally {
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+
+    it('SC-AK-1770 — дерево без диспетчера получает обе записи', (): void => {
+        const root: string = treeWithChecks('{\n  "hooks": {}\n}\n', [JUDGE, MENU], false);
+        try {
+            const bound: IAgentBindResult = bindAgentChecks([JUDGE, MENU], root);
+            const settings: { hooks: Record<string, { matcher?: string }[]> } = JSON.parse(settingsOf(root));
+
+            expect(bound.added.map((one: IAgentCheck): string => one.path)).toEqual([JUDGE_PATH, MENU_PATH]);
+            expect(settings.hooks['Stop']).toHaveLength(1);
+            expect(settings.hooks['PreToolUse'][0].matcher).toBe('AskUserQuestion');
+            expect(existsSync(join(root, DISPATCH_PATH))).toBe(false);
+        } finally {
+            rmSync(root, { recursive: true, force: true });
+        }
+    });
+
+    it('файл проверки, которого нет на диске, записью не зовётся', (): void => {
+        const root: string = treeWithChecks('{\n  "hooks": {}\n}\n', [], false);
+        try {
+            expect(bindAgentChecks([JUDGE], root).added).toEqual([]);
         } finally {
             rmSync(root, { recursive: true, force: true });
         }
