@@ -311,6 +311,12 @@ export class RtAiChatComponent {
 
     public readonly feedbackChange: OutputEmitterRef<IRtAiChat.FeedbackChange> = output<IRtAiChat.FeedbackChange>();
 
+    /**
+     * Нажата кнопка карточки ссылки. Событие уходит внутри обработчика нажатия: новую вкладку
+     * браузер разрешает открыть, только пока клик ещё идёт. Переход делает приложение.
+     */
+    public readonly linkOpen: OutputEmitterRef<IRtAiChat.LinkOpen> = output<IRtAiChat.LinkOpen>();
+
     /** Нажата кнопка модели, усилия или режима в ряду поля: что она открывает, решает приложение. */
     public readonly controlPicked: OutputEmitterRef<IRtAiPromptInput.Control> = output<IRtAiPromptInput.Control>();
 
@@ -375,6 +381,10 @@ export class RtAiChatComponent {
 
     protected onFeedback(message: IRtAiChat.AssistantMessage, feedback: Exclude<IRtAiChat.Feedback, null>): void {
         this.feedbackChange.emit({ messageId: message.id, feedback: message.feedback === feedback ? null : feedback });
+    }
+
+    protected onLinkOpen(message: IRtAiChat.AssistantMessage, press: IRtAiChat.LinkPress): void {
+        this.linkOpen.emit({ messageId: message.id, url: press.url, newTab: press.newTab });
     }
 
     protected onToggleThreads(): void {

@@ -1,0 +1,59 @@
+<ng-container rtBlock="rt-ai-chat-link">
+    <div rtElem="row">
+        <span rtElem="icon-box" aria-hidden="true">
+            <rt-icon [size]="20" [name]="icon()" />
+        </span>
+        <div rtElem="text">
+            <!-- Целое название и раздел остаются в разметке: многоточие рисуют стили, читалка читает текст целиком -->
+            <span rtElem="title" qa-dataid="ai-chat-link-title">{{ data().title }}</span>
+            @if (data().section; as section) {
+                <span rtElem="section" qa-dataid="ai-chat-link-section">{{ section }}</span>
+            }
+            @if (status(); as shown) {
+                <rt-tag
+                    rtElem="status"
+                    qa-dataid="ai-chat-link-status"
+                    size="sm"
+                    [severity]="shown.severity"
+                    [icon]="shown.icon"
+                    [iconSpin]="shown.spin"
+                    [value]="shown.label" />
+            }
+            @if (data().reason; as reason) {
+                <span rtElem="reason" qa-dataid="ai-chat-link-reason">{{ reason }}</span>
+            }
+        </div>
+    </div>
+    <!-- aria-disabled вместо disabled: кнопка, нажатая с клавиатуры, держит фокус, пока страница открывается -->
+    <div rtElem="actions">
+        <button
+            rtButton
+            rtElem="action"
+            qa-dataid="ai-chat-link-open"
+            type="button"
+            size="sm"
+            theme="primary"
+            appearance="outlined"
+            [label]="t().aiLinkOpen"
+            [attr.aria-label]="t().aiLinkOpen"
+            [attr.aria-disabled]="pending() ? 'true' : null"
+            (click)="onOpen(false)"></button>
+        <button
+            rtButton
+            rtElem="action"
+            qa-dataid="ai-chat-link-open-new-tab"
+            type="button"
+            size="sm"
+            theme="primary"
+            appearance="text"
+            icon="external-link"
+            [label]="t().aiLinkOpenNewTab"
+            [attr.aria-label]="t().aiLinkOpenNewTab"
+            [attr.aria-disabled]="pending() ? 'true' : null"
+            (click)="onOpen(true)"></button>
+    </div>
+    <!-- Лента чата — живая область: строка появляется при смене исхода, и читалка её зачитывает -->
+    @if (announced().text; as text) {
+        <span rtElem="announcement" qa-dataid="ai-chat-link-announcement">{{ text }}</span>
+    }
+</ng-container>

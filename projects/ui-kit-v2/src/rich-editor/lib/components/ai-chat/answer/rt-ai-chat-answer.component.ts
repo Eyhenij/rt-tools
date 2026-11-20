@@ -105,4 +105,7 @@ export class RtAiChatAnswerComponent {
 
     /** Нажата оценка; повторное нажатие той же снимает её — решает родитель. */
     public readonly feedbackChange: OutputEmitterRef<Exclude<IRtAiChat.Feedback, null>> = output<Exclude<IRtAiChat.Feedback, null>>();
+
+    /** Нажата кнопка карточки ссылки в этом ответе. */
+    public readonly linkOpen: OutputEmitterRef<IRtAiChat.LinkPress> = output<IRtAiChat.LinkPress>();
 }

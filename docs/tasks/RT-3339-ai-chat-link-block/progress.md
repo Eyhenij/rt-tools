@@ -3,11 +3,13 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 2 of 4 — The card and the event through the chat
+- **Stage:** 3 of 4 — The showcase and the match with the mockup
 - **Done:** the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3339-ai-chat-link-block` from `RT-3338-ai-chat-kpi-block` (chain, PR #3429), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption.
 - **Stage 1 is done on 20.11.2026.** The epic branch is merged in: RT-3342 is merged (#3437), the epic PR into the main branch is open as a draft (#3438). `rtLinkData` and `RT_AI_CHAT_LINK_SCHEMA` are written and exported from the util barrel; `jest src/lib/util/link` gave 2 suites and 7 tests passed, the kit `typecheck` exited 0.
 - **Stage 2, step 1 is done.** The block is in the chat model and in the feed logic; the copy line is written. `jest …/blocks/rt-ai-chat-blocks.link` gave 5 tests passed, the blocks folder 85 before it.
-- **Next step:** stage 2, step 2 — the `rt-ai-chat-link` component.
+- **Stage 2 is done on 20.11.2026.** The card `rt-ai-chat-link` is written, the press reaches the chat output `linkOpen` with the message id, the labels are in both sets. The tag has the input `iconSpin` and the gap 4 at `sm`. The link schema stands among the section's own schemas.
+- **Stage 2, the numbers.** `jest` over the chat, the tag, util and the labels gave 29 suites and 279 tests passed; the kit `typecheck` and `verify` exited 0.
+- **Next step:** stage 3, step 1 — the stories of the block.
 - **Uncommitted:** no
 - **PR:** not open yet; the base is `RT-3346-ai-chat-blocks` — RT-3338 is merged into it (#3429)
 
@@ -22,15 +24,15 @@
 ### 2. The card and the event through the chat
 
 - [x] 1. Add the `LinkBlock` type, the `link` view, the `LinkOpen` event type, `link` in `OWN_TYPES`, the data step in `toBlockViews` and the copy line in `blockText`.
-- [ ] 2. Write the `rt-ai-chat-link` component on `rt-tag`, `rtButton` and `rt-icon`: the row with the numbers of the agreement, the text column, the status, the reason, the two buttons with `aria-disabled` in `pending`, the announcement text of a state change for the feed, tokens only. ← now
-- [ ] 3. Carry the press from the card through `rt-ai-chat-blocks` and the answer to a synchronous `linkOpen` output of `rt-ai-chat` that adds the message id.
-- [ ] 4. Add the labels «Opening», «Opened», «Failed to open», «Open», «Open in new tab» to the kit English set and the showcase Russian set.
-- [ ] 5. Set the gap of the tag `sm` to `--rt-space-1` and add the option that turns the start icon of the tag.
-- [ ] 6. Write the specs of the card, the logic, the copy, the chat output and the tag option: SC-UKV-1487, 1490–1496, 1499, 1501, 1502, 1506.
+- [x] 2. Write the `rt-ai-chat-link` component on `rt-tag`, `rtButton` and `rt-icon`: the row with the numbers of the agreement, the text column, the status, the reason, the two buttons with `aria-disabled` in `pending`, the announcement text of a state change for the feed, tokens only.
+- [x] 3. Carry the press from the card through `rt-ai-chat-blocks` and the answer to a synchronous `linkOpen` output of `rt-ai-chat` that adds the message id.
+- [x] 4. Add the labels «Opening», «Opened», «Failed to open», «Open», «Open in new tab» to the kit English set and the showcase Russian set.
+- [x] 5. Set the gap of the tag `sm` to `--rt-space-1` and add the option that turns the start icon of the tag.
+- [x] 6. Write the specs of the card, the logic, the copy, the chat output and the tag option: SC-UKV-1487, 1490–1496, 1499, 1501, 1502, 1506.
 
 ### 3. The showcase and the match with the mockup
 
-- [ ] 1. Write the stories of the block by the agreement's table «Screens and states»: pending, opened, failed, failed without a reason, no state, long title, no section, long button labels, 328, 386, 640, dark at 328, right to left, invalid.
+- [ ] 1. Write the stories of the block by the agreement's table «Screens and states»: pending, opened, failed, failed without a reason, no state, long title, no section, long button labels, 328, 386, 640, dark at 328, right to left, invalid. ← now
 - [ ] 2. Write a chat story of the whole loop in the narrow panel and in the full-screen mode: a press logs `linkOpen` with `{ messageId, url, newTab }`, sets `pending`, then `opened`, and on the second card `failed` with a reason; put the handler code into the block `Overview.mdx`.
 - [ ] 3. Write the play steps that measure by `getBoundingClientRect` the icon box, the row gaps, the button row on one top, the wrapped buttons, the two-line title, the mirrored order and no text past the card, and that press a button and wait for the status to change: SC-UKV-1498, 1503, 1504.
 - [ ] 4. Write the `Overview.mdx` of the block and name the block and `linkOpen` in the chat Overview.
@@ -121,42 +123,54 @@ Put together by a hook before the compaction of the context (auto).
 
 ### Where we stand at the minute of the compaction
 
-- **State:** `разбор-закрыт`
-- **Stage:** 0 of — — the mockup before the agreement
-- **Next step:** the product agreement for the link block, written into the kit's proposed specs, then the plan and the owner's word on it.
-- **PR:** not open yet; the base is `RT-3338-ai-chat-kpi-block` (#3429)
+- **State:** `этап-идёт`
+- **Stage:** 2 of 4 — The card and the event through the chat
+- **Next step:** stage 2, step 2 — the `rt-ai-chat-link` component.
+- **PR:** not open yet; the base is `RT-3346-ai-chat-blocks` — RT-3338 is merged into it (#3429)
 
 The progress in full — `docs/tasks/RT-3339-ai-chat-link-block/progress.md`; the plan lies next to it.
 
 ### Uncommitted
 
 ```
-none
+ M .storybook/showcase-labels.ru.ts
+ M src/lib/components/tag/rt-tag.component.html
+ M src/lib/components/tag/rt-tag.component.scss
+ M src/lib/components/tag/rt-tag.component.ts
+ M src/lib/i18n/rt-kit-labels.en.ts
+ M src/rich-editor/lib/components/ai-chat/answer/rt-ai-chat-answer.component.html
+ M src/rich-editor/lib/components/ai-chat/answer/rt-ai-chat-answer.component.ts
+ M src/rich-editor/lib/components/ai-chat/blocks/rt-ai-chat-blocks.component.html
+ M src/rich-editor/lib/components/ai-chat/blocks/rt-ai-chat-blocks.component.ts
+ M src/rich-editor/lib/components/ai-chat/rt-ai-chat.component.html
+ M src/rich-editor/lib/components/ai-chat/rt-ai-chat.component.ts
+?? src/rich-editor/lib/components/ai-chat/blocks/link/
+?? src/rich-editor/lib/components/ai-chat/rt-ai-chat.link.spec.ts
 ```
 
 ### Commits over the main branch
 
 ```
-3a8595f82 docs(rt:ui-kit-v2): макет карточки ссылки RT-3339 одобрен
-8b1bf0276 docs(rt:ui-kit-v2): макет карточки ссылки RT-3339 на экземплярах кита
-fc4cc0136 docs(rt:ui-kit-v2): отступ значка и текста в теге статуса макета RT-3339
-fbfc58f86 docs(rt:ui-kit-v2): два круга ревью макета карточки ссылки RT-3339
-86ef3a47b docs(rt:ui-kit-v2): замер кита и макет карточки ссылки для RT-3339
-c9e3e577b docs(rt:ui-kit-v2): план эпика отмечает RT-3338 влитой (#3429)
-8c3cce2ca docs(rt:ui-kit-v2): находки разбора правил по RT-3338 у плана эпика
-8608dc789 docs(rt:ui-kit-v2): задача RT-3339 взята, разбор закрыт допущениями
-e3425d045 fix(rt:ui-kit-v2): строки дельты и периода карточки kpi по 16, как в макете (RT-3338)
-0dfd86b8a fix(rt:ui-kit-v2): у элемента kpi в ленте блоков есть своё правило стилей (RT-3338)
-3849347da docs(rt:agent-kit): записи описания прошлого старше недели убраны
-8537dca81 docs(rt:ui-kit-v2): папка задачи RT-3338 разобрана в описание прошлого
-845b2900b docs(rt:ui-kit-v2): макет kpi сведён с кодом, совпадение 28 из 28 (RT-3338)
-70dc7d476 docs(rt:ui-kit-v2): договорённость о блоке kpi сведена в spec (RT-3338)
-c08c82250 feat(rt:ui-kit-v2): значение компактной плитки мельчает, когда не входит в строку
-a609495e8 fix(rt:ui-kit-v2): блок kpi после второго круга ревью (RT-3338)
-0f80720c7 fix(rt:ui-kit-v2): блок kpi после первого круга ревью (RT-3338)
-eea80eea0 Merge remote-tracking branch 'origin/RT-3346-ai-chat-blocks' into RT-3338-ai-chat-kpi-block
-f5037fb8c feat(rt:ui-kit-v2): витрина блока kpi и числа плитки под rtl
-c869db7e3 feat(rt:ui-kit-v2): блок kpi в ответе rt-ai-chat
+212421024 feat(rt:ui-kit-v2): блок ссылки в модели чата и в логике ленты (RT-3339)
+db78420f3 feat(rt:ui-kit-v2): данные и схема блока ссылки на страницу (RT-3339)
+bc1088482 chore(rt:ui-kit-v2): ветка эпика влита в ветку задачи (RT-3339)
+869349424 [RT-3342] Блок секции и сетка составного ответа (#3437)
+bc0febefa chore(rt:ui-kit-v2): главная ветка влита повторно, номера сценариев разведены (RT-3342)
+2bd4be248 chore(rt:ui-kit-v2): главная ветка влита в ветку задачи (RT-3342)
+a174a2147 docs(rt:ui-kit-v2): макет секции сведён с витриной, совпадение 24 из 24 (RT-3342)
+b4223578b docs(rt:ui-kit-v2): папка задачи RT-3342 разобрана в описание прошлого
+cc39e821e docs(rt:ui-kit-v2): договорённость о блоке секции сведена в spec (RT-3342)
+4c9f02544 fix(rt:ui-kit-v2): блок секции после второго круга ревью (RT-3342)
+28a8b57e3 fix(rt:ui-kit-v2): блок секции после первого круга ревью (RT-3342)
+02f1402e5 feat(rt:ui-kit-v2): витрина блока секции — обзор месяца на четырёх ширинах и в чате
+409dca611 feat(rt:ui-kit-v2): секция в ленте ответа — заголовок и сетка в две колонки
+53ced96f8 feat(rt:ui-kit-v2): данные блока секции, его копия и схема для модели
+8754015a0 docs(rt:ui-kit-v2): план RT-3342 одобрен — данные, сетка, витрина, ревью
+149915c64 docs(rt:ui-kit-v2): договорённость о секции после ревью ролей (RT-3342)
+fe9867798 docs(rt:ui-kit-v2): договорённость о блоке секции в ответе чата (RT-3342)
+2e3f0327d docs(rt:ui-kit-v2): макет секции и сетки составного ответа для RT-3342
+2f6592ceb docs(rt:ui-kit-v2): задача RT-3342 взята, разбор закрыт допущениями
+98605b5ab docs(rt:ui-kit-v2): задача RT-3339 ждёт RT-3342 по слову владельца
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
