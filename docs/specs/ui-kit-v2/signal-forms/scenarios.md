@@ -104,3 +104,12 @@ When the control is touched and unfit
 Then the field declares itself unfit, and the wrapper shows the error and the asterisk
 
 Covered: `projects/ui-kit-v2/src/lib/components/form-control/rt-form-control.signal-forms.spec.ts`.
+
+### SC-UKV-1600 — a field on the former binding in an application takes typing and a reset in a row
+
+Given an application screen whose field of the set is bound by the former form
+When a person types a title and adds it, then types another one and adds it too
+Then each title reaches the form and becomes a record, and the field is empty after each reset of
+the form
+
+Covered: `apps/auth-example-e2e/src/former-binding.spec.ts`.
