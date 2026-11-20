@@ -15,7 +15,10 @@
   live at the right edge: background `rgb(40,40,40)`, text white 12/16.2, padding 4/8, radius 4,
   shadow md, 6 above the host, pushed back to 1911 of 1926. The design file already holds an
   example of this hint, frame 6913:12721, drawn as a white Popover card — against the report,
-  which expects the tooltip look.
+  which expects the tooltip look. The owner asked «на светлой теме темная подсказка, а тултипа
+  понимает смену темы?» — measured live: the tooltip is the inverted pair, in the light theme
+  `rgb(40,40,40)` with white text on the page `rgb(250,250,250)`, in the dark theme white with
+  `rgb(40,40,40)` text on the page `rgb(27,31,34)`.
 - **Waiting for the owner:** the look of the hint — the dark kit tooltip or the white card of frame
   6913:12721; then the mockup, its approval and the code.
 - **`prefix` and `suffix` of `rt-input` in code (20.11), mockup 8449:1560 approved «Одобряю
