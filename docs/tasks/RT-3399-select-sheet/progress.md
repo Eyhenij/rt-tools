@@ -221,8 +221,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 3 из 4 — Code and unit tests
-- **Next step:** stage 4, step 1 — look at every sheet story live on the showcase of this branch,
+- **Stage:** 4 из 4 — Showcase; both review rounds done
+- **Next step:** stage 4, step 3 — the owner looks at the showcase on 6017 (up from this branch);
 
 The progress in full — `docs/tasks/RT-3399-select-sheet/progress.md`; the plan lies next to it.
 
@@ -235,6 +235,18 @@ none
 ### Commits over the main branch
 
 ```
+a65f3cb28 fix(rt:ui-kit-v2): исправления после второго круга ревью (RT-3399)
+a1651399f docs(rt:ui-kit-v2): находки второго круга ревью записаны, строка назначения в таблице (RT-3399)
+31e7abb1c docs(rt:ui-kit-v2): спека селекта ссылается на шторку, подписи вида с переключателями названы (RT-3399)
+a8ad670c2 docs(rt:ui-kit-v2): живая проверка шторок после первого круга ревью (RT-3399)
+a0292c8da fix(rt:ui-kit-v2): шторка только на телефоне и исправления после первого круга ревью (RT-3399)
+fae1258a0 docs(rt:ui-kit-v2): шторка открывается только на телефоне, до 480 px (RT-3399)
+08829070a docs(rt:ui-kit-v2): находки первого круга ревью записаны (RT-3399)
+78aca5229 Merge remote-tracking branch 'origin/main' into RT-3399-select-sheet
+99a384270 docs(rt:ui-kit-v2): иконки полей дат на линии селекта замерены вживую (RT-3399)
+0e990dc8f docs(rt:ui-kit-v2): живой обход шторок на 375 и история автодополнения без шторки открывает подсказки (RT-3399)
+79207a131 fix(rt:ui-kit-v2): закреплённая колонка показывает отключённую ручку перетаскивания (RT-3399)
+336fadc12 docs(rt:ui-kit-v2): макет отключённой ручки закреплённой колонки нарисован (RT-3399)
 7a4027a9d docs(rt:ui-kit-v2): ручка закреплённой колонки ждёт слова владельца (RT-3399)
 eab0102a6 docs(rt:ui-kit-v2): ручка перетаскивания закреплённой колонки — в задаче RT-3399
 19092052f fix(rt:ui-kit-v2): быстрые периоды в шторке поля периода переносятся на строки (RT-3399)
@@ -243,18 +255,6 @@ eab0102a6 docs(rt:ui-kit-v2): ручка перетаскивания закре
 8e5da365e docs(rt:ui-kit-v2): быстрые периоды в шторке поля периода — в задаче RT-3399
 701a3b419 docs(rt:ui-kit-v2): замер телефонных макетов шторки по узлам (RT-3399)
 a96428cc5 test(rt:ui-kit-v2): истории шапки страницы, вкладок и подвала мультиселекта на телефоне (RT-3399)
-00196b2b5 test(rt:ui-kit-v2): истории динамического селектора, фильтров ленты и фильтра таблицы на телефоне (RT-3399)
-db7c7e020 test(rt:ui-kit-v2): истории кнопки с меню, быстрого меню, палитры и панели действий на телефоне (RT-3399)
-8a4e595eb test(rt:ui-kit-v2): истории автокомплита и меню действий на телефоне (RT-3399)
-d6733beb0 test(rt:ui-kit-v2): истории мультиселекта с переключателями (RT-3399)
-72499909a test(rt:ui-kit-v2): истории свёрнутой группы переключателей на телефоне (RT-3399)
-67cc8a6ca test(rt:ui-kit-v2): истории селекта на телефоне — список в шторке и шторка выключена (RT-3399)
-61d155ee1 feat(rt:ui-kit-v2): вкладки выключают шторку для «Ещё» и меню вкладки входом sheet (RT-3399)
-545a760b0 docs(rt:ui-kit-v2): входы шторки sheet и fold на страницах витрины (RT-3399)
-5e04df474 fix(rt:ui-kit-v2): значок календаря у полей даты и периода — на линии шеврона селекта (RT-3399)
-93ad24a73 feat(rt:ui-kit-v2): мультиселект с переключателями — вид look="toggles" (RT-3399)
-153d11d39 feat(rt:ui-kit-v2): группа переключателей сворачивается в поле выбора, когда не помещается (RT-3399)
-98bfabd6b feat(rt:ui-kit-v2): меню вкладки на телефоне — в нижней шторке (RT-3399)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
