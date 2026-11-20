@@ -82,13 +82,19 @@ async function blocksOf(root: HTMLElement, count: number = 1): Promise<HTMLEleme
 /** Раскрывает списки ячеек с отметкой `data-sources-open` и ждёт строк. */
 async function openMarked(root: HTMLElement): Promise<void> {
     for (const cell of Array.from(root.querySelectorAll<HTMLElement>('[data-sources-open="true"]'))) {
-        cell.querySelector<HTMLElement>(HEADER)?.click();
+        const header: HTMLElement | null = cell.querySelector<HTMLElement>(HEADER);
+
+        // Повторный запуск шага не сворачивает уже раскрытый список.
+        if (header?.getAttribute('aria-expanded') !== 'true') {
+            header?.click();
+        }
+
         await until((): boolean => cell.querySelector(LIST) !== null, 'список раскрытой ячейки');
     }
 }
 
 /**
- * Числа макета: заголовок 40, карточка с рамкой 1 и скруглением 12 и полями 12, значок 20 на 20,
+ * Числа макета: заголовок 40, карточка с рамкой 1 и скруглением 12 и полями 4, значок 20 на 20,
  * 12 до текста, поле списка снизу 8. Строка с уточнением 51 высотой, без уточнения 36.
  */
 function expectNumbers(block: HTMLElement, name: string): void {

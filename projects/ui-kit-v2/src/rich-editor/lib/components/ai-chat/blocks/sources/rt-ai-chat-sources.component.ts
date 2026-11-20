@@ -37,6 +37,7 @@ const FALLBACK_ICON: IRtIcon.Name = 'file';
 interface IRow {
     readonly item: IRtSourceItem;
     readonly icon: IRtIcon.Name;
+    readonly titleId: string;
     readonly detailId: string | null;
 }
 
@@ -89,6 +90,7 @@ export class RtAiChatSourcesComponent {
         this.data().items.map((item: IRtSourceItem, index: number): IRow => ({
             item,
             icon: isKitIconName(item.icon) ? item.icon : FALLBACK_ICON,
+            titleId: `${this.#idBase}-title-${index}`,
             detailId: item.detail === null ? null : `${this.#idBase}-detail-${index}`,
         }))
     );

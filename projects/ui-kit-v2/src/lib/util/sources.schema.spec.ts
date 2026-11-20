@@ -37,6 +37,16 @@ describe('RT_AI_CHAT_SOURCES_SCHEMA', (): void => {
     });
 
     it('SC-UKV-1553 — схема секции держит схему блока источников как свою', (): void => {
-        expect(JSON.stringify(rtAiChatSectionSchema())).toContain('Sources');
+        const section: Record<string, unknown> = rtAiChatSectionSchema();
+        const blocks: { items: { oneOf: Record<string, unknown>[] } } = (section['properties'] as Record<string, unknown>)['blocks'] as {
+            items: { oneOf: Record<string, unknown>[] };
+        };
+        const branch: Record<string, unknown> | undefined = blocks.items.oneOf.find((entry: Record<string, unknown>): boolean =>
+            JSON.stringify(entry).includes('"const":"sources"')
+        );
+
+        expect(branch).toBeDefined();
+        expect(JSON.stringify(branch)).toContain('"items"');
+        expect(JSON.stringify(branch)).toContain('Sources');
     });
 });

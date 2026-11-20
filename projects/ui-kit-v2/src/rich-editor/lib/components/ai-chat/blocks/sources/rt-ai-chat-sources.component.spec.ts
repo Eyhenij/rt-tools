@@ -142,8 +142,13 @@ describe('RtAiChatSourcesComponent', (): void => {
 
         await toggle(plain);
 
+        const own: ComponentFixture<RtAiChatSourcesComponent> = setup([{ title: 'Отчёт', icon: 'chart-bar' }]);
+
+        await toggle(own);
+
         expect(fallback).not.toBeNull();
         expect(fallback).toBe(iconOf(rows(plain)[0]));
+        expect(iconOf(rows(own)[0])).not.toBe(fallback);
     });
 
     it('SC-UKV-1554 — тело списка — область с именем заголовка, строки — пункты списка, значок скрыт, уточнение описывает кнопку', async (): Promise<void> => {
@@ -161,8 +166,13 @@ describe('RtAiChatSourcesComponent', (): void => {
         expect(rows(fixture).every((item: HTMLElement): boolean => item.tagName === 'LI')).toBe(true);
         expect(icons).toHaveLength(5);
         expect(icons.every((icon: Element): boolean => icon.getAttribute('aria-hidden') === 'true')).toBe(true);
+        const title: HTMLElement = qaAll(fixture, 'ai-chat-sources-title')[0].nativeElement as HTMLElement;
+
         expect(button.getAttribute('aria-describedby')).toBe(detail.id);
         expect(detail.id).not.toBe('');
+        expect(title.id).not.toBe('');
+        expect(button.getAttribute('aria-labelledby')).toBe(title.id);
+        expect(header(fixture).tagName).toBe('BUTTON');
     });
 
     it('SC-UKV-1555 — подпись заголовка идёт из переводчика кита', (): void => {
