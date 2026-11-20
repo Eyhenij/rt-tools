@@ -331,6 +331,7 @@ const RT_KIT_LABELS_RU: Partial<Record<TRtKitLabelKey, string>> = Object.freeze(
     uiCopy: 'Скопировать',
     uiDetails: 'Подробности',
     uiDragColumn: 'Перетащить столбец',
+    uiEmptyTitle: 'Нет данных',
     uiFilters: 'Отбор',
     uiForward: 'Вперёд',
     uiHide: 'Скрыть',
