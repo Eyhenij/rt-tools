@@ -24,12 +24,16 @@
   Specs 3860 of 3860 (SC-UKV-1506 five cases, SC-UKV-1507 two), typecheck, eslint, check:specs,
   the docs tables, check:tokens-styles, check:cascade-layer and stylelint green.
 - **The four remarks committed (20.11):** 50570df3b, the showcase approved «Одобряю витрину».
-- **Mockup of the fixed text prefix of `rt-input`, waiting for the owner:** frame 8449:1560 on the
-  Input page — empty, filled, focus, error, disabled and a narrow field 200 wide. The copy of the
-  field matched the showcase before drawing (40 high, padding 16, gap 8, border `#e0e0e0`, radius
-  10, Montserrat 14). Measured: the prefix starts at 17, the value follows it with gap 0, both
-  centred at 20, the long value stays on one line and is clipped at 183 of 200; no overlap with
-  the frames of the page.
+- **Mockup of the fixed text of `rt-input`, waiting for the owner:** frame 8449:1560 on the Input
+  page, two rows — `prefix` before the value and `suffix` after it (the owner's remark «нужно 2
+  варианта когда можно дописать сзади в впереди»), each empty, filled, focus, error, disabled and
+  a narrow field 200 wide. The owner also found the focus ring clipped («тень обрезана»): the cell
+  and the row clipped their content, now no ancestor of a ring clips. The copy of the field matched
+  the showcase before drawing (40 high, padding 16, gap 8, border `#e0e0e0`, radius 10, Montserrat
+  14). Measured: prefix row — the prefix at 17, the value right after it with gap 0, the long value
+  clipped at 183 of 200; suffix row — the value at 17, the suffix right after it with gap 0, in the
+  narrow field the suffix stays whole at 137…183 and the value is clipped at its edge; everything
+  centred at 20; no overlap with the frames of the page.
 - **Kit-match of the four remarks (20.11):** the first run gave 27 of 29 — the filters panel 252 in
   the mockup against 254 (the copy counted the border in the height only) and the tab ring outside
   against inside (the tab strip scrolls, 0 px room on three sides). The owner: «Поправить макет»;
