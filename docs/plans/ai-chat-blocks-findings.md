@@ -195,6 +195,23 @@ The rules review after the PR (#3429):
 - **The sign of the milestone G2 «on the published version» has no check before the release.**
   Proposed: replace it by a check of the packed package — `RT_AI_CHAT_LINK_SCHEMA`, `rtLinkData`
   and `linkOpen` stand in the types. **Address:** names of this tree — the epic plan.
+- **The two sides of the numbers are read apart; the rule `kit-approval` does not say so.** The
+  tool header says it, the rule the executor reads does not. Proposed: an article in `kit-approval`
+  and its companion line — the record names the reading that produced each file. **Address:**
+  names of this tree; one sentence for the package pattern `mockups-measure`. Check first that the
+  gate map demands `kit-approval` on a kit `*.scss` or story edit.
+- **A working copy inherits the end-to-end ports and the database port of the main copy.** The set
+  stopped at «port is already allocated» until the copy took its own five variables. Proposed: an
+  article in the override of `testing-e2e` — a copy sets its own ports before the first set run.
+  **Address:** names of this tree.
+- **Under load a showcase story fails on the page open in a random set, and orphans follow.**
+  Proposed: a line in `ui-component-tests-visual` — rerun the same files alone on a quiet machine
+  before reading the orphan list. **Address:** names of this tree.
+- **At the merge of an agreement the bindings are rewritten to live symbols, and a style sheet
+  symbol is a word that stands in the file.** Proposed: a sentence in step 4 of
+  `spec-driven-domain`. **Address:** the rules layer, as a proposal.
+- **The gate refused once per kind of edit, each time needing a reload of a rule.** Cause not
+  proven: a rearm after compaction or an unmapped second layer. Eight refusals in this task.
 - **The free scenario number came from the local branches only.** `tools/spec-next-id.mjs` does not
   call `git fetch`. Proposed: the tool fetches first or says how stale its answer is. **Address:**
   names of this tree.
