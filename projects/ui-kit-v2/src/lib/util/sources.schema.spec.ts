@@ -23,6 +23,15 @@ describe('RT_AI_CHAT_SOURCES_SCHEMA', (): void => {
         expect(rtSourcesData({ items: [{ title: '   ' }] })).toBeNull();
     });
 
+    it('SC-UKV-1553 — название из одних невидимых знаков схема отвергает, как и блок отбрасывает такой источник', (): void => {
+        const invisible: string = '\u200B\uFEFF\u2060';
+
+        expect(validate({ items: [{ title: invisible }] })).toBe(false);
+        expect(validate({ items: [{ title: `${invisible}Продажи` }] })).toBe(true);
+        expect(rtSourcesData({ items: [{ title: invisible }] })).toBeNull();
+        expect(rtSourcesData({ items: [{ title: `${invisible}Продажи` }] })?.items).toHaveLength(1);
+    });
+
     it('SC-UKV-1553 — блок, принятый схемой, рисуется целиком', (): void => {
         const block: { items: object[] } = {
             items: [{ title: 'Продажи', detail: 'Ноябрь', icon: 'chart-bar', url: '/reports' }, { title: 'Склад' }],

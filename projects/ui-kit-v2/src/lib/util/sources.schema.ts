@@ -21,7 +21,7 @@ export const RT_AI_CHAT_SOURCES_SCHEMA: Readonly<Record<string, unknown>> = {
                     title: {
                         type: 'string',
                         minLength: 1,
-                        pattern: '\\S',
+                        pattern: '[^\\s\\u200B-\\u200D\\u2060\\uFEFF]',
                         description: 'The name of the source: a report, a page, a table.',
                     },
                     detail: { type: 'string', description: 'What narrows the source: a page, a period, filters.' },

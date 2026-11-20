@@ -25,6 +25,9 @@ export interface IRtSourcesData {
 
 const DEFAULT_ICON: string = 'file';
 
+/** Пустая строка или одни невидимые знаки: пробелы, пробелы нулевой ширины, соединитель слов, метка порядка байтов. */
+const INVISIBLE_ONLY: RegExp = /^[\s\u200B-\u200D\u2060\uFEFF]*$/;
+
 function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -36,7 +39,7 @@ function text(value: unknown): string | null {
 
     const trimmed: string = value.trim();
 
-    return trimmed === '' ? null : trimmed;
+    return INVISIBLE_ONLY.test(trimmed) ? null : trimmed;
 }
 
 /** Источник из присланного. `null` — не объект или нет названия: источник отбрасывается. */
