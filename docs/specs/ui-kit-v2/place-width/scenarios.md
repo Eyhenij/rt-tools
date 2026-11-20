@@ -47,3 +47,7 @@ Given two page containers on one page
 When the first is drawn, the second is drawn and then each is removed in turn
 Then the root carries the place class from the first drawing until the last container leaves, and
 the window threshold of the styles asks no `:has()`
+
+A page without a container is checked on the entry example by
+`apps/auth-example-e2e/src/place-root.spec.ts`: the root carries no place class, and no style rule
+asks `:has()` of the container.

@@ -9,7 +9,8 @@ Given a select on a phone
 When the select is pressed
 Then its list is inside the kit's bottom sheet, and no panel stands next to the field
 
-Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`; on the admin
+panel's state filter by `apps/message-bus-admin-e2e/src/list-state-filter-sheet.narrow.spec.ts`.
 
 ### SC-UKV-1609 — the switched-off sheet leaves the panel next to the trigger
 
@@ -49,7 +50,8 @@ Given the list of a select open in the bottom sheet
 When an option is chosen
 Then the value of the select is the option, and the bottom sheet is closed
 
-Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`.
+Covered: `projects/ui-kit-v2/src/lib/components/select/rt-select-sheet.spec.ts`; on the admin
+panel's state filter by `apps/message-bus-admin-e2e/src/list-state-filter-sheet.narrow.spec.ts`.
 
 ### SC-UKV-1556 — choices in the multiselect keep the sheet open
 
