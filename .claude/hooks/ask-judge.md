@@ -1,5 +1,6 @@
-<!-- rt-kit v0.37.0 · hooks/ask-judge.md · 1a60840b7e08 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · hooks/ask-judge.md · 71a2d47b1452 · правится надстройкой, не здесь -->
 # Ask judge
+<!-- rt-hook-agent event=PreToolUse pattern=AskUserQuestion limit=60 -->
 
 You decide whether a question to the owner may leave. You are called before the `AskUserQuestion`
 tool as an agent hook of Claude Code. The input JSON is given to you; `tool_input.questions` holds

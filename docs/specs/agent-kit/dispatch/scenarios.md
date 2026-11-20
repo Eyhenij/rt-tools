@@ -196,3 +196,79 @@ When the dispatcher gives the answers out
 Then both texts go into the system message, and there is no context field
 
 Covered: `projects/agent-kit/tests/dispatch.test.sh`.
+
+### SC-AK-1766 — a layout into an empty tree leaves both records of the model checks
+
+Given a tree with no settings and the real catalogue of the package
+When `init` and `sync` run
+Then the settings hold two records of the kind `agent`, one of the event `Stop` and one of `PreToolUse`
+And the check of the layout right after ends with code 0
+
+Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
+
+### SC-AK-1767 — a standing record is neither doubled nor rewritten
+
+Given a record that calls the file of a model check, with other words than the declared ones
+When the layout runs
+Then the settings stay byte for byte as they were and no second record is added
+
+Covered: `projects/agent-kit/src/lib/hooks-map.spec.ts`.
+
+### SC-AK-1768 — a record that differs from the declaration is named
+
+Given a record with other words, another pattern and a limit below the declared one
+When the layout is checked
+Then each difference is named with both sides, and the check refuses
+And a record that differs only by the model or by a higher limit is named and not refused
+
+Covered: `projects/agent-kit/src/lib/hooks-map.spec.ts`.
+
+### SC-AK-1769 — a file with no record refuses the check and names the way out
+
+Given the file of a model check on disk and settings without a record that calls it
+When the layout is checked
+Then the check refuses, names the file and the `skip` id of the resource
+
+Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
+
+### SC-AK-1770 — a tree without the dispatcher gets both records
+
+Given a tree that did not take the dispatcher and holds the files of both model checks
+When the records are written
+Then both records stand in the settings and the dispatcher is still not on disk
+
+Covered: `projects/agent-kit/src/lib/hooks-map.spec.ts`.
+
+### SC-AK-1771 — settings that do not parse are not edited
+
+Given settings with a comment that JSON does not read
+When the layout runs
+Then the settings are unchanged
+And the layout names that no record of the model checks was written and prints the ready records
+
+Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
+
+### SC-AK-1772 — a check in the skip list gets no record
+
+Given the config puts the check of the menu into `skip`
+When the layout runs
+Then the check of the turn end gets its record and the check of the menu does not
+
+Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
+
+### SC-AK-1773 — the records built from the real declarations equal the records of this tree
+
+Given the declarations of the two real files of the package
+When the records are built from them
+Then each equals the record of this tree in the words, the model, the limit and the pattern
+
+Covered: `projects/agent-kit/src/lib/hooks-map.spec.ts`.
+
+### SC-AK-1774 — a moved directory of hooks is named in the record
+
+Given a tree whose directory of hooks is moved by the layout of the config
+When the layout runs
+Then the record names the file of the check at the moved path
+And the layout names that the script guards are not connected: the dispatcher is not on disk
+
+Covered: `projects/agent-kit/src/lib/commands.spec.ts`.

@@ -675,17 +675,20 @@ describe('doctor', () => {
         mkdirSync(join(since, 'laws'), { recursive: true });
         writeFileSync(join(since, 'laws/delivery.md'), '## Articles\n\n- **Прежняя статья.** Текст.\n');
         // Новая редакция пакета дописала в тот же раздел ещё одну статью.
-        const current: string = readFileSync(join(ASSETS, 'laws/delivery.md'), 'utf8');
-        writeFileSync(join(ASSETS, 'laws/delivery.md'), '## Articles\n\n- **Прежняя статья.** Текст.\n- **Дописанная статья.** Текст.\n');
+        // Своя копия ресурсов: общий каталог пакета читают параллельные запуски, и запись в него
+        // оставляла обломок в отслеживаемом файле.
+        const assets: string = mkdtempSync(join(tmpdir(), 'agent-kit-assets-'));
+        cpSync(ASSETS, assets, { recursive: true });
+        writeFileSync(join(assets, 'laws/delivery.md'), '## Articles\n\n- **Прежняя статья.** Текст.\n- **Дописанная статья.** Текст.\n');
 
         try {
-            const said_: string = said(doctor(env, since));
+            const said_: string = said(doctor({ root, version: VERSION, assetsDir: assets }, since));
 
             expect(said_).toContain('новая редакция дописала в замещённые разделы статей: 1');
             expect(said_).toContain('Дописанная статья.');
             expect(said_).not.toContain('Прежняя статья.');
         } finally {
-            writeFileSync(join(ASSETS, 'laws/delivery.md'), current);
+            rmSync(assets, { recursive: true, force: true });
             rmSync(since, { recursive: true, force: true });
         }
     });
@@ -922,5 +925,95 @@ describe('stats', () => {
         );
 
         expect(said(summed())).toContain('--days');
+    });
+});
+
+describe('sync — записи модельных проверок', () => {
+    const TURN: string = '.claude/hooks/turn-judge.md';
+    const MENU: string = '.claude/hooks/ask-judge.md';
+
+    /** Команды вида `agent` настройки дерева: путь файла проверки называется в подсказке. */
+    const agentPrompts: () => string[] = (): string[] =>
+        Object.values(
+            (JSON.parse(get('.claude/settings.json')).hooks ?? {}) as Record<string, { hooks: { type: string; prompt?: string }[] }[]>
+        )
+            .flat()
+            .flatMap((record: { hooks: { type: string; prompt?: string }[] }) => record.hooks)
+            .filter((command: { type: string }): boolean => command.type === 'agent')
+            .map((command: { prompt?: string }): string => command.prompt ?? '');
+
+    it('SC-AK-1766 — раскладка в пустое дерево оставляет обе записи, проверка сразу после зелёная', () => {
+        start();
+        const laid: IOutcomeOfCommand = sync(env, false);
+        fillCompanions();
+
+        expect(agentPrompts().filter((prompt: string): boolean => prompt.includes(TURN))).toHaveLength(1);
+        expect(agentPrompts().filter((prompt: string): boolean => prompt.includes(MENU))).toHaveLength(1);
+        expect(said(laid)).toContain('дописано записей модельных проверок: 2');
+        expect(sync(env, true).code).toBe(0);
+    });
+
+    it('SC-AK-1769 — файл проверки без записи называется, проверка раскладки отказывает и называет skip', () => {
+        start();
+        sync(env, false);
+        fillCompanions();
+        put('.claude/settings.json', '{}\n');
+
+        const outcome: IOutcomeOfCommand = sync(env, true);
+
+        expect(outcome.code).toBe(1);
+        expect(said(outcome)).toContain('модельные проверки разложены, но');
+        expect(said(outcome)).toContain('hooks/turn-judge.md');
+        expect(said(outcome)).toContain('в `skip` конфига: hooks/ask-judge.md, hooks/turn-judge.md');
+    });
+
+    it('SC-AK-1771 — настройка, которая не разбирается, не правится, готовые записи печатаются', () => {
+        start();
+        const text: string = '// комментарий дерева\n{ "hooks": {} }\n';
+        put('.claude/settings.json', text);
+
+        const outcome: IOutcomeOfCommand = sync(env, false);
+
+        expect(get('.claude/settings.json')).toBe(text);
+        expect(said(outcome)).toContain('записи модельных проверок не делалось');
+        expect(said(outcome)).toContain('"type": "agent"');
+        expect(said(outcome)).toContain(TURN);
+    });
+
+    it('SC-AK-1772 — проверка из списка отказа записи не получает, другая получает', () => {
+        startSkipping(['hooks/ask-judge.md']);
+        sync(env, false);
+
+        expect(agentPrompts().filter((prompt: string): boolean => prompt.includes(TURN))).toHaveLength(1);
+        expect(agentPrompts().filter((prompt: string): boolean => prompt.includes(MENU))).toHaveLength(0);
+    });
+
+    it('SC-AK-1774 — перенесённый каталог хуков назван в записи, смешанное состояние названо', () => {
+        start();
+        const config: Record<string, unknown> = JSON.parse(get(CONFIG_PATH));
+        put(CONFIG_PATH, JSON.stringify({ ...config, layout: { hooks: 'ops/hooks' } }, null, 4));
+
+        const outcome: IOutcomeOfCommand = sync(env, false);
+
+        expect(agentPrompts().filter((prompt: string): boolean => prompt.includes('ops/hooks/turn-judge.md'))).toHaveLength(1);
+        expect(agentPrompts().filter((prompt: string): boolean => prompt.includes(TURN))).toHaveLength(0);
+        expect(said(outcome)).toContain('скриптовые гарды при этом не подключены');
+    });
+
+    it('SC-AK-1768 — проверка раскладки отказывает на других словах и молчит о другой модели', () => {
+        start();
+        sync(env, false);
+        fillCompanions();
+        const text: string = get('.claude/settings.json');
+
+        put('.claude/settings.json', text.replace('claude-sonnet-5-5', 'other-model'));
+        const named: IOutcomeOfCommand = sync(env, true);
+        expect(named.code).toBe(0);
+        expect(said(named)).toContain('только названо');
+
+        put('.claude/settings.json', text.replace('follow it exactly.', 'follow it loosely.'));
+        const refused: IOutcomeOfCommand = sync(env, true);
+        expect(refused.code).toBe(1);
+        expect(said(refused)).toContain('слова вызова: объявлено');
     });
 });

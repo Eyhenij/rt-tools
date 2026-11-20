@@ -11,6 +11,15 @@ import { dirname, join, relative } from 'node:path';
 import { collectAssets, IAsset, targetOf } from './assets.js';
 import { ICascadeCut, IIdleSkip, cascadeCuts, idleSkips, namedButCut } from './cascade.js';
 import { brokenLinks, IBrokenLink, IEntryOfCatalog, IGapOfVariant, isExecutable, readCatalog, variantGaps } from './catalog.js';
+import {
+    agentChecksOf,
+    bindAgentChecks,
+    driftedAgents,
+    IAgentBindResult,
+    IAgentCheck,
+    IAgentDrift,
+    unboundAgentChecks,
+} from './agent-checks.js';
 import { ICompanion, pathOf, planCompanion } from './companion.js';
 import { ambiguousNames, IAmbiguousName } from './integrity.js';
 import { IConfig, KINDS, OVERRIDES_DIR, TKind } from './config.js';
@@ -80,6 +89,13 @@ export interface ISyncResult {
      */
     readonly drifted: readonly IMatcherDrift[];
     /**
+     * Модельные проверки, чей файл лежит, а записи, зовущей его, в настройке нет. Раскладка
+     * дописывает недостающую запись сама; список остаётся тем, что видит сверка, не пишущая на диск.
+     */
+    readonly agentUnbound: readonly IAgentCheck[];
+    /** Стоящие записи модельных проверок, разошедшиеся с объявлением проверки. */
+    readonly agentDrifted: readonly IAgentDrift[];
+    /**
      * Выбранные ресурсы, чьи требования в дерево не поехали.
      *
      * Предупреждение, а не отказ: дерево вправе закрыть требование своим средством, но обязано
@@ -127,6 +143,8 @@ export interface ISyncResult {
      * и сверка на диск не пишут вовсе.
      */
     readonly bound: IBindResult | null;
+    /** Что запись модельных проверок сделала с настройкой. `null` — раскладки не было. */
+    readonly agentBound: IAgentBindResult | null;
 }
 
 /** Шаблон черновика компаньона — тот же, что пакет кладёт проекту в шаблоны. */
@@ -256,6 +274,13 @@ function bindingsOf(config: IConfig, assetsDir: string): readonly IHookBinding[]
     return bindings;
 }
 
+/** Что о себе говорят модельные проверки, которые дерево берёт. Читается у ресурсов, как и у гардов. */
+function agentChecksIn(config: IConfig, assetsDir: string): readonly IAgentCheck[] {
+    return collectAssets(config, assetsDir)
+        .filter((asset: IAsset): boolean => asset.kind === 'hooks')
+        .flatMap((asset: IAsset): readonly IAgentCheck[] => agentChecksOf(asset.text, asset.target, asset.id));
+}
+
 /**
  * Надстройки, которым в пакете ничего не отвечает.
  *
@@ -347,6 +372,8 @@ export function planSync(config: IConfig, root: string, version: string, assetsD
         ambiguous: ambiguousNames(readCatalog(assetsDir)),
         unbound: unboundHooks(bindingsOf(config, assetsDir), root),
         drifted: driftedMatchers(bindingsOf(config, assetsDir), root),
+        agentUnbound: unboundAgentChecks(agentChecksIn(config, assetsDir), root),
+        agentDrifted: driftedAgents(agentChecksIn(config, assetsDir), root),
         broken: brokenLinks(readCatalog(assetsDir), config),
         idle: idleSkips(readCatalog(assetsDir), config),
         cutOnDisk: left.cut,
@@ -355,6 +382,7 @@ export function planSync(config: IConfig, root: string, version: string, assetsD
         strayOverrides: strayOverrides(root, assetsDir),
         written: [],
         bound: null,
+        agentBound: null,
     };
 }
 
@@ -424,8 +452,11 @@ export function runSync(config: IConfig, root: string, version: string, assetsDi
     // после того как файлы легли: запись, зовущая гард, которого на диске ещё нет, обещает
     // больше, чем стоит.
     const bound: IBindResult = bindDispatch(bindingsOf(config, assetsDir), root);
+    // Модельная проверка зовётся своей записью, а не диспетчером: дерево, не взявшее диспетчера,
+    // получает её запись всё равно.
+    const agentBound: IAgentBindResult = bindAgentChecks(agentChecksIn(config, assetsDir), root);
 
-    return { ...result, written, bound };
+    return { ...result, written, bound, agentBound };
 }
 
 export const pendingOf: (result: ISyncResult) => readonly IPlanned[] = (result: ISyncResult): readonly IPlanned[] =>
