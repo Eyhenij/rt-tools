@@ -206,6 +206,14 @@ describe('RtAiChatLinkComponent', (): void => {
         expect(drawn).toEqual(['#rt-icon-chart-bar', '#rt-icon-link', '#rt-icon-link', '#rt-icon-link']);
     });
 
+    it('SC-UKV-1487, SC-UKV-1497 — карточка рисует название и раздел, раздел без текста не рисуется', (): void => {
+        const fixture: ComponentFixture<RtAiChatLinkComponent> = setup({ section: 'Отчёты · Продажи' });
+
+        expect(textOf(qa(fixture, 'ai-chat-link-title'))).toBe('Продажи за ноябрь');
+        expect(textOf(qa(fixture, 'ai-chat-link-section'))).toBe('Отчёты · Продажи');
+        expect(qa(setup({}), 'ai-chat-link-section')).toBeNull();
+    });
+
     it('SC-UKV-1499 — карточка — группа с именем по названию, значок скрыт от читалки', (): void => {
         const fixture: ComponentFixture<RtAiChatLinkComponent> = setup({ icon: 'chart-bar' });
         const host: HTMLElement = fixture.nativeElement as HTMLElement;

@@ -1,8 +1,7 @@
 # Scenarios — the link block of the assistant chat
 
-The numbers continue the numbering of the kit and do not change after the merge. SC-UKV-1486 is
-held by a neighbouring branch, so the numbering starts at 1487. SC-UKV-1500 and SC-UKV-1506 merge
-into the scenarios of the tag.
+The numbers continue the numbering of the kit. The scenarios of the tag edits, SC-UKV-1500 and
+SC-UKV-1506, stand in the scenarios of the tag.
 
 ### SC-UKV-1487 — the kit draws a link block without a registration
 
@@ -104,15 +103,6 @@ When the block is drawn
 Then the card is a group whose accessible name is «Продажи за ноябрь»
 And the icon of the card is hidden from a screen reader
 
-### SC-UKV-1500 — the small tag keeps 4 between all its parts
-
-Given an `rt-tag` of the size `sm` with a start icon, an end icon and the cross
-When it is drawn
-Then the gap between each two neighbouring parts is 4
-
-Not covered: it cannot be closed by a test with an identifier — the gap comes from the styles of
-the tag. Held by the measurement of the showcase against the mockup and by the tag snapshots.
-
 ### SC-UKV-1501 — the labels come from the kit translator
 
 Given a kit translator that gives «Открывается», «Открыта», «Не открылась», «Открыть» and «В новой вкладке»
@@ -151,9 +141,3 @@ Then the frame, the icon box, the texts and the reason take the dark values of t
 
 Not covered: it cannot be closed by a test with an identifier — the colours come from the styles.
 Held by the dark story snapshot and the match with the dark column of the mockup.
-
-### SC-UKV-1506 — the tag turns its start icon on request
-
-Given an `rt-tag` with the `spinner` start icon and the turning option on
-When it is drawn
-Then its start icon carries the turning of `rt-icon`, and without the option it does not

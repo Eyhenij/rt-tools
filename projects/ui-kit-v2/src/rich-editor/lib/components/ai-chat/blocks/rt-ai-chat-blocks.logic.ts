@@ -93,9 +93,9 @@ export function rtAiChatPointsWriter(translate: TRtKitTranslator): TRtAiChatPoin
     return (value: string): string => translate('uiPercentagePoints', { value }) || defaultPoints(value);
 }
 
-/** Табуляция и перевод строки внутри текста карточки в копии становятся пробелом. */
+/** Табуляция и любой перевод строки внутри текста карточки в копии становятся пробелом. */
 function copyField(text: string | null): string {
-    return text === null ? '' : text.replace(/[\t\r\n]+/g, ' ');
+    return text === null ? '' : text.replace(/[\t\r\n\v\f\u2028\u2029]+/g, ' ');
 }
 
 /** Дельта карточки, как её рисует плитка: число с подписью базы через пробел. */

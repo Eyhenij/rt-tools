@@ -1,17 +1,16 @@
 # The link block of the assistant chat
 
-**Status:** proposed · **Revision:** 2026-11-19 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-20 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the assistant chat (the blocks of an answer, the outputs of the chat, the answer
 copy), the tag of the kit (the status), the button of the kit (the two actions)
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
 
-The agreement of task RT-3339: the `link` block of an answer of `rt-ai-chat`, a card of a page of
-the application with the outcome of opening it, and the new output of the chat that carries a press
-of its buttons. The approved mockup is the frame 8339-452 of the second kit file. The rules of the
-block merge into a subdomain of their own next to `ai-chat-kpi`; the rules under «The tag» merge
-into `docs/specs/ui-kit-v2/tag/`. At the merge the rules of `docs/specs/ui-kit-v2/ai-chat/spec.md`
-on the kit's own types, on the plate, on the outputs and on the answer copy name `link`.
+The `link` block of an answer of `rt-ai-chat`: a card of a page of the application with the outcome
+of opening it, and the output of the chat that carries a press of its buttons. The approved mockup
+is the frame 8339-452 of the second kit file. It stands as a subdomain of its own next to
+`ai-chat-kpi`. What the tag gained for the block — the gap of the size `sm` and the turning start
+icon — is described in `docs/specs/ui-kit-v2/tag/`.
 
 ## Why
 
@@ -99,7 +98,7 @@ application opens the page.
 
 - **The row has the icon box on the start side and the text column next to it, 12 apart.** The icon box is 36 by 36 with the radius 8 on `--rt-color-bg-surface-subtle`, stands at the top of the text column and holds the icon 20 in the muted text colour.
 
-- **The title is 14/17 SemiBold in the primary text colour, the section 12/16 Regular muted, the reason 12/16 Regular in `--rt-color-state-error-text`.**
+- **The title is 14 SemiBold in the primary text colour, the section 12 Regular muted, the reason 12 Regular in `--rt-color-state-error-text`.** The line heights are the kit steps `--rt-leading-tight` and `--rt-leading-snug`; the mockup draws them as 120% and 135%.
 
 - **The title and the section stand 2 apart; the status stands 6 under them, and the reason 6 under the status, in the text column.** At the right of the title the status wrapped the title to two lines at 328.
 
@@ -109,13 +108,7 @@ application opens the page.
 
 - **Under `dir="rtl"` the row and the buttons mirror; the icons are drawn as they are.**
 
-- **In the dark theme the danger status reads at 2.94 : 1 and the reason line at 3.16 : 1, below the 4.5 : 1 of AA.** The kit has one danger value for both themes; this is known in the epic findings and is fixed by a task of the dark status colours, not here.
-
-### The tag
-
-- **The gap between all parts of a tag of the size `sm` — the icon, the label, the end icon and the cross — is 4, `--rt-space-1`, the same as the size `md`.** The approved mockup draws 4, and the owner set in RT-3338 that the kit is fitted to the mockup. The padding and the type size keep their steps; the gap of `sm` equals that of `md`. This changes every small tag with an icon or a cross in the kit.
-
-- **The tag can turn its start icon.** The option is off by default and passes on to the start icon the turning of `rt-icon`.
+- **In the dark theme the danger status reads at 2.94 : 1 and the reason line at 3.16 : 1, below the 4.5 : 1 of AA.** The kit has one danger value for both themes; this is known in the epic findings. The card adds no colour of its own. No task of the dark status colours exists yet, and the owner decides whether to file one.
 
 ### Copying
 
@@ -138,7 +131,7 @@ application opens the page.
 - Navigation itself and a tool of the protocol that opens a page: the application does both.
 - Telling the kit the outcome of a call by the protocol: the application writes `state`.
 - A preview of the page, a breadcrumb drawn as links, a copy-the-address button.
-- The dark-theme contrast of the danger colour: a task of the dark status colours.
+- The dark-theme contrast of the danger colour: no task of the dark status colours exists yet.
 - The section and the grid of a composed answer (RT-3342) and the sources block (RT-3340).
 - Translations of the new labels beyond the kit's English set and the showcase Russian set: an
   application gives its own, as for every kit label.
@@ -249,3 +242,6 @@ approved.
   without the outcome, `aria-disabled` and kept focus, the synchronous event, the turning spinner,
   the announcement through the feed, the numbers of the row, the wrapping buttons, the dark
   contrast, the `sm` gap for all parts, the reason not to take `rt-card`.
+- 2026-11-20 — the agreement merged into the spec after two rounds of review and the match of the
+  showcase with the mockup: the rules under «The tag» went into the spec of the tag, and the
+  scenarios SC-UKV-1500 and SC-UKV-1506 into its scenarios.

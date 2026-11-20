@@ -62,6 +62,9 @@ describe('rt-ai-chat-blocks logic: блок link', (): void => {
     it('SC-UKV-1496 — без раздела между табуляциями пустое поле; табуляция и перевод строки в названии — пробел', (): void => {
         expect(blocksToPlainText([{ type: 'link', title: 'Продажи', url: '/reports' }])).toBe('Продажи\t\t/reports');
         expect(blocksToPlainText([{ type: 'link', title: 'Продажи\tза\nноябрь', url: '/reports' }])).toBe('Продажи за ноябрь\t\t/reports');
+        expect(blocksToPlainText([{ type: 'link', title: 'Продажи\u2028за\u000bноябрь', url: '/reports' }])).toBe(
+            'Продажи за ноябрь\t\t/reports'
+        );
     });
 
     it('SC-UKV-1496 — ссылка в секции попадает в копию под её заголовком', (): void => {

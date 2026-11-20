@@ -28,6 +28,16 @@ const LONG: IRtAiChat.LinkBlock = link({
     state: 'opened',
 });
 
+/**
+ * Название и раздел длиннее ряда и в колонке чтения: при 640 название не помещается в две строки,
+ * а раздел в одну при любом шрифте, поэтому многоточие видно и в контейнере снимков.
+ */
+const LONG_WIDE: IRtAiChat.LinkBlock = {
+    ...LONG,
+    title: `${LONG.title}, с итогами по каждому кварталу, сравнением с прошлым годом, прогнозом на следующий месяц`,
+    section: `${LONG.section} · Сравнение с планом · Прошлый год · Прогноз`,
+};
+
 /** Четыре карточки макета: открывается, открыта, не открылась, длинное название. */
 export const AI_CHAT_LINK_MOCKUP: readonly IRtAiChat.Block[] = [PENDING, OPENED, FAILED, LONG];
 
@@ -35,7 +45,7 @@ export const AI_CHAT_LINK_MOCKUP: readonly IRtAiChat.Block[] = [PENDING, OPENED,
 export const AI_CHAT_LINK_WIDTH_CASES: readonly IAiChatLinkCase[] = [
     { name: '328 — узкая панель', width: 328, blocks: AI_CHAT_LINK_MOCKUP },
     { name: '386 — узкая панель', width: 386, blocks: AI_CHAT_LINK_MOCKUP },
-    { name: '640 — колонка чтения', width: 640, blocks: AI_CHAT_LINK_MOCKUP },
+    { name: '640 — колонка чтения', width: 640, blocks: [PENDING, OPENED, FAILED, LONG_WIDE] },
 ];
 
 /** Каждый исход открытия и карточка без исхода — по одной в ячейке. */

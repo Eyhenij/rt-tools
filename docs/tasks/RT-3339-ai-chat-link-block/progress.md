@@ -12,7 +12,8 @@
 - **Stage 3, steps 1–4 are done.** Eleven stories of the block and its overview page are written; the chat overview names the block and `linkOpen`. In the showcase on 6007 every story passed its `play` steps. The cards at 328 measured 127, 127, 149 and 144 high with 8 between them, as the mockup draws.
 - **Stage 3 is done on 20.11.2026.** The Figma `Tag` `sm` variants take the gap 4. The match was redone from two independent readings and gave 530 of 530 numbers.
 - **Stage 4, round one is read.** The three roles gave their findings; the confirmed ones are fixed and go as one commit.
-- **Next step:** stage 4, step 2 — review round two by fresh readers.
+- **Stage 4, round two is read.** No blocker. The confirmed findings are fixed and go as one commit with the snapshot references.
+- **Next step:** stage 4, step 5 — the archive record and taking the task folder apart.
 - **Uncommitted:** no
 - **PR:** not open yet; the base is `RT-3346-ai-chat-blocks` — RT-3338 is merged into it (#3429)
 
@@ -46,9 +47,9 @@
 ### 4. Review rounds and closing
 
 - [x] 1. Review round one by qa-engineer, product-strategist and goal-critic; fix the confirmed findings in one commit.
-- [ ] 2. Review round two by fresh readers; fix the confirmed findings in one commit. ← now
-- [ ] 3. Merge the agreement into `docs/specs/ui-kit-v2/ai-chat-link/` with its bindings; edit the chat and tag specs and the kit spec indexes as the agreement names.
-- [ ] 4. Bring `CONTEXT.md` of ai-chat and the tag up to the block, the output and the gap.
+- [x] 2. Review round two by fresh readers; fix the confirmed findings in one commit.
+- [x] 3. Merge the agreement into `docs/specs/ui-kit-v2/ai-chat-link/` with its bindings; edit the chat and tag specs and the kit spec indexes as the agreement names.
+- [x] 4. Bring `CONTEXT.md` of ai-chat and the tag up to the block, the output and the gap.
 - [ ] 5. Mark row 7 of the epic plan, write the archive record, take the task folder apart.
 - [ ] 6. Run the push set, push, open the PR into `RT-3346-ai-chat-blocks`.
 
@@ -204,6 +205,46 @@ numbers go to the owner with the showing.
 - **For the owner.** The epic sign «on the published version» cannot be met before the release.
   The epic has no task of the dark status colours.
 
+## Round two of the review
+
+Fixed:
+
+- **The story `Widths` failed in the snapshot container at 640.** The long title fitted two lines
+  there, so the ellipsis check failed. The 640 feed now gets a longer title, and the check stays as
+  it was.
+- **The copy line kept the line breaks U+2028, U+2029, VT and FF.** They become a space now, with a
+  test.
+- **No spec asserted that the card draws its title and section.** One does now.
+- **The overview example opened the model's address unchecked.** It checks the address against the
+  routes of the application first, and the overview says the application strips `state` and
+  `reason` from the model's block.
+- **The agreement named a task of the dark status colours that does not exist.** It says now that
+  no such task exists. The agreement also named the title as 14/17 against the kit's 120% and 135%.
+  It names the kit steps now, and the mockup draws the same.
+- **The snapshot references of the chat were not compared after the chat template changed.** The
+  confirming run takes `ai-chat-matrix` too.
+
+Written off, each with its reason:
+
+- **The outcome is announced twice by a screen reader: by the tag text and by the hidden line.**
+  Not confirmed with a real reader. The hidden line is the only text that names the card, and it
+  is kept; a reader test belongs to the owner's own check.
+- **A card moved by a block inserted above it loses its announcement, and one false announcement
+  is possible with two cards of one address.** The feed keeps blocks by place, so the card cannot
+  tell a move from a new block. CONTEXT.md now says so.
+- **A zero-width title or address passes as non-empty.** A model that writes one gets a card with
+  an invisible title; the cost is not worth a second trim rule.
+- **The schema accepts `state` and `reason` from the model.** The overview tells the application to
+  strip them; the KPI and section schemas leave extra fields open in the same way.
+- **The match covers 328 only.** The widths 386 and 640 are held by the play steps: width, 36, 12, 8.
+
+For the owner:
+
+- The mockup 8339-452 was changed after its approval: the line heights 120% and 135%, the colour of
+  the tag icon. The code was right.
+- No task of the dark status colours exists.
+- The plan of the task names row 7 of the epic plan; the task stands in row 8.
+
 ## Sessions
 
 ### 2026-11-19
@@ -220,8 +261,8 @@ Put together by a hook before the compaction of the context (auto).
 ### Where we stand at the minute of the compaction
 
 - **State:** `этап-идёт`
-- **Stage:** 3 of 4 — The showcase and the match with the mockup
-- **Next step:** stage 3, step 5 — the gap 4 in the `sm` variants of the Figma `Tag`.
+- **Stage:** 4 of 4 — Review rounds and closing
+- **Next step:** stage 4, step 5 — the archive record and taking the task folder apart.
 - **PR:** not open yet; the base is `RT-3346-ai-chat-blocks` — RT-3338 is merged into it (#3429)
 
 The progress in full — `docs/tasks/RT-3339-ai-chat-link-block/progress.md`; the plan lies next to it.
@@ -229,14 +270,32 @@ The progress in full — `docs/tasks/RT-3339-ai-chat-link-block/progress.md`; th
 ### Uncommitted
 
 ```
- M lib/util/link.schema.ts
- M rich-editor/lib/components/ai-chat/blocks/link/rt-ai-chat-link.component.html
- M rich-editor/lib/components/ai-chat/blocks/link/rt-ai-chat-link.component.ts
+M  docs/specs/ui-kit-v2/proposed/ai-chat-link/spec.md
+M  docs/tasks/RT-3339-ai-chat-link-block/approvals.md
+M  docs/tasks/RT-3339-ai-chat-link-block/progress.md
+ M projects/ui-kit-v2/.storybook/__snapshots__/atoms-tag--size.png
+M  projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/CONTEXT.md
+M  projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/blocks/link/Overview.mdx
+M  projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/blocks/link/rt-ai-chat-link.component.spec.ts
+MM projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/blocks/link/stories/component/ai-chat-link.fixture.ts
+M  projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/blocks/rt-ai-chat-blocks.link.spec.ts
+M  projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/blocks/rt-ai-chat-blocks.logic.ts
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-chat-aichatlink--full-screen.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-chat-aichatlink--invalid.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-chat-aichatlink--long-labels.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-chat-aichatlink--panel.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-chat-aichatlink--parts.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-chat-aichatlink--presets.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-chat-aichatlink--rtl.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-chat-aichatlink--states.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-chat-aichatlink--themes.png
+?? projects/ui-kit-v2/.storybook/__snapshots__/organisms-chat-aichatlink--widths.png
 ```
 
 ### Commits over the main branch
 
 ```
+770cd83a2 fix(rt:ui-kit-v2): карточка ссылки после первого круга ревью (RT-3339)
 bb120577e docs(rt:ui-kit-v2): одобрение витрины карточки ссылки (RT-3339)
 71571d2fd docs(rt:ui-kit-v2): сверка витрины карточки ссылки с макетом (RT-3339)
 32f03344d feat(rt:ui-kit-v2): истории и страница обзора карточки ссылки (RT-3339)
@@ -256,7 +315,6 @@ cc39e821e docs(rt:ui-kit-v2): договорённость о блоке сек�
 409dca611 feat(rt:ui-kit-v2): секция в ленте ответа — заголовок и сетка в две колонки
 53ced96f8 feat(rt:ui-kit-v2): данные блока секции, его копия и схема для модели
 8754015a0 docs(rt:ui-kit-v2): план RT-3342 одобрен — данные, сетка, витрина, ревью
-149915c64 docs(rt:ui-kit-v2): договорённость о секции после ревью ролей (RT-3342)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
