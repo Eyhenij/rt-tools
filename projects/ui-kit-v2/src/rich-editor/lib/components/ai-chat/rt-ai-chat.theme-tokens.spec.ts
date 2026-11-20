@@ -198,13 +198,17 @@ describe('токены вида чата', (): void => {
     it('SC-UKV-1599 — заголовки и код ответа не читают токены семейства и кегля', (): void => {
         const markdown: string = compiled(MARKDOWN);
 
-        for (const selector of [
-            '.rt-markdown-text__heading--level--1',
-            '.rt-markdown-text__heading--level--2',
-            '.rt-markdown-text__code',
-            '.rt-markdown-text__code-inline',
-        ]) {
-            expect(ruleBody(markdown, selector)).not.toContain('--rt-markdown-text-font');
+        for (const level of [1, 2, 3, 4, 5, 6]) {
+            const body: string = ruleWith(markdown, `.rt-markdown-text__heading--level--${level}`);
+
+            expect(body).toMatch(/font-size: var\(--rt-text-(lg|md|sm)\)/);
+            expect(body).not.toContain('--rt-markdown-text-font');
+        }
+        for (const selector of ['.rt-markdown-text__code', '.rt-markdown-text__code-inline']) {
+            const body: string = ruleBody(markdown, selector);
+
+            expect(body).toContain('font-family: var(--rt-font-family-mono)');
+            expect(body).not.toContain('--rt-markdown-text-font');
         }
     });
 

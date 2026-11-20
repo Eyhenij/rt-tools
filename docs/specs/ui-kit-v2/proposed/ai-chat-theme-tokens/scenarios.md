@@ -131,11 +131,15 @@ Given a chat with conversations that have a time and an unread count
 When the row actions of a row are shown without `--rt-ai-chat-thread-time-under-actions` set
 Then the row time stays as today, covered by the actions background
 And when the handle is `hidden`, the row time of that row is not seen and keeps its place, while
-the row time of the other rows stays
+its unread badge and the row time of the other rows stay
+And on a touch screen, where the actions of every row are always shown, the handle `hidden` hides
+the time of every row
 
 Not covered: a test has no layout, and this is a style rule. It is shown by the snapshot of the
-story **Properties · row actions**: one row is hovered, its time is hidden in the cells with the
-handle, and the unread badge and the time of the other rows stay.
+story **Properties · row actions**: the row with the unread badge is hovered, its time is hidden in
+the cell with the handle while its badge stays, and the time of the other rows stays. The touch case
+is not in a frame: the showcase does not emulate a screen without a pointer. The rule that sets the
+visibility stands outside the hover media query.
 
 ### SC-UKV-1594 — the parts take their own handles outside the chat
 
@@ -176,7 +180,9 @@ When their own CSS is read
 Then every handle is set by a rule on the `rt-ai-chat` element, and no selector names
 `.rt-ai-chat__`, `.rt-thread-list__`, `.rt-ai-prompt-input__` or `.rt-markdown-text`
 
-Covered by a test that reads the CSS of those stories.
+Covered by a test that reads the CSS of those stories. The rules lie in the kit layer, as every
+story's styles must, and win by the cell attribute; an application rule outside the layers wins
+without one.
 
 ### SC-UKV-1598 — the search fills the head of the list inside the chat
 

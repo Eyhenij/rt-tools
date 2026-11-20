@@ -97,12 +97,19 @@ const handleNames = new Set(Object.keys(handles));
 const findings = [];
 const add = (key, text) => findings.push({ key, text });
 
-/** 1. A dead reference: not declared and not named a handle. */
+/**
+ * 1. A dead reference: not declared and not named a handle. A story's declaration answers only the
+ * story's own reading: a kit reference it answered would pass both this rule and the next one, and
+ * the published package, which carries no story, would hold a dead name behind a fallback value.
+ */
+const isAnswered = (reference) =>
+    handleNames.has(reference.name) || kitDeclared.has(reference.name) || (isShowcase(reference.path) && declared.has(reference.name));
 for (const name of [...new Set(references.map((reference) => reference.name))].sort()) {
-    if (declared.has(name) || handleNames.has(name)) {
+    const unanswered = references.filter((reference) => reference.name === name && !isAnswered(reference));
+    if (unanswered.length === 0) {
         continue;
     }
-    const where = [...new Set(references.filter((reference) => reference.name === name).map((reference) => reference.path))];
+    const where = [...new Set(unanswered.map((reference) => reference.path))];
     add(`a dead reference ${name}`, `${name} — declared by no layer and not named a handle: ${where.join(', ')}`);
 }
 
