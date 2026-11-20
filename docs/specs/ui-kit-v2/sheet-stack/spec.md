@@ -27,7 +27,8 @@ filters come back when the list closes.
 ## Rules
 
 - **A sheet opened while another is open replaces it.** Only the last one opened is seen; the
-  covered one goes down as if closed and leaves the order of the keyboard.
+  covered one goes down as if closed and takes no taps. It keeps the focus of the field that opened
+  the top one: the keys of that field lead the top list, and the focus goes back to it on close.
 - **Closing the top sheet shows the previous one again.** A choice in the list and a close by the
   dim, the drag or the key give the same return.
 

@@ -1,6 +1,7 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
 import {
+    afterNextRender,
     afterRenderEffect,
     booleanAttribute,
     computed,
@@ -16,6 +17,7 @@ import {
     Component,
     DestroyRef,
     ElementRef,
+    Injector,
     InputSignal,
     InputSignalWithTransform,
     OutputEmitterRef,
@@ -70,6 +72,7 @@ export class RtPageBarComponent {
     readonly #window: Window & typeof globalThis = inject(WINDOW) as Window & typeof globalThis;
 
     readonly #phone: Signal<boolean> = inject(BreakpointsService).phone;
+    readonly #injector: Injector = inject(Injector);
 
     readonly #width: WritableSignal<number> = signal<number>(0);
 
@@ -118,6 +121,8 @@ export class RtPageBarComponent {
     });
 
     protected readonly filtersPopover: Signal<RtPopoverDirective | undefined> = viewChild('filtersPopover', { read: RtPopoverDirective });
+
+    protected readonly filtersPanelBox: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('filtersPanelBox');
 
     public readonly pageTitle: InputSignal<string> = input.required<string>();
 
@@ -174,8 +179,15 @@ export class RtPageBarComponent {
     /** Кнопка отборов: на телефоне открывает шторку, шире панель открывает сама подсказка-панель. */
     protected onFiltersClick(): void {
         if (this.filtersInSheet()) {
+            // Панель, открытая на широком окне, при переходе на телефон сама не закрылась бы.
+            this.filtersPopover()?.close();
             this.sheetOpen.set(true);
         }
+    }
+
+    /** Панель стоит в перекрытии в конце страницы: фокус переходит в неё, иначе Tab уходит мимо отборов. */
+    protected onPanelOpened(): void {
+        afterNextRender((): void => this.filtersPanelBox()?.nativeElement.focus(), { injector: this.#injector });
     }
 
     protected onApply(): void {

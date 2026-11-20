@@ -134,6 +134,7 @@ describe('rt-page-bar', (): void => {
         expect(qa(fixture, 'page-bar-sheet')).toBeNull();
         expect(panel?.querySelectorAll('[qa-dataid="demo-filter"]')).toHaveLength(2);
         expect(panel?.querySelector('[qa-dataid="demo-search"]')).not.toBeNull();
+        expect(document.activeElement).toBe(panel);
 
         (document.querySelector('[qa-dataid="page-bar-panel-apply"]') as HTMLElement).click();
         fixture.detectChanges();

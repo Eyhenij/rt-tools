@@ -28,6 +28,21 @@
   a phone as a sheet, the 768 filters frame without the sheet, the workspace without «back»).
   Observation, not changed: a sheet opened on a phone stays a sheet when the window grows past 480
   (`PhoneActions--w768`); the spec speaks only of where a panel opens.
+- **Review round of the late changes (20.11)** — qa-engineer, goal-critic, product-strategist over
+  `git diff 132df3737..HEAD`. Fixed, each checked:
+  - focus lost after a list sheet opened from the filters sheet: the covered sheet was `inert`, the
+    select trigger dropped focus to `body`, its arrows died and nothing came back on close — measured
+    live (activeElement BODY). The covered sheet no longer gets `inert`; live after: arrows lead the
+    list, Enter picks «Ожидает», focus back on the select trigger.
+  - the 768 filters panel took no focus: it now focuses itself on open (no ring on the container);
+    live and in SC-UKV-1629.
+  - a panel left open from a wide window plus the phone sheet: the button closes the panel first.
+  - the empty `PhoneFilterSelect--w768` frame: the story takes no 768 frame, the reference removed.
+  Written off: focus ring contrast 1.43:1 — the owner's approved single ring (8437), named in the PR;
+  multiselect search off by default — the same as the select's `filter`; search keyboard by the
+  field — the same as the select; a branch chosen while searching takes all its leaves — the old
+  shared tree logic; a sheet staying a sheet past 480 — named in the PR; release of the package —
+  after the merge, by the release flow.
 - **Remark 3 measured (20.11):** `organisms-chat-page--page` on 6017, both halves — the bottoms of
   the thread-list head, the chat header and the aside tabs all at y=220 (head 63, chat header 53
   from top 167, tabs 69). The one difference is the line colour: the chat header's border is

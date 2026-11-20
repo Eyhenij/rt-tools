@@ -227,7 +227,8 @@ export const NarrowFiltersPanel: TStory = {
 /** Селект в шторке отборов открывает свой список шторкой вместо неё; закрытие вернёт отборы. */
 export const PhoneFilterSelect: TStory = {
     globals: PHONE,
-    parameters: openedAt('.rt-popover-sheet .rt-bottom-sheet--open', PHONE_VIEW),
+    // Кадра 768 нет: шире телефона шторки отборов нет, и шаг истории открыть было бы нечего.
+    parameters: { snapshot: { ...openedAt('.rt-popover-sheet .rt-bottom-sheet--open', PHONE_VIEW).snapshot, widths: [] } },
     args: { bar: true, tabs: 5, overlay: true },
     play: async ({ canvasElement }: { canvasElement: HTMLElement }): Promise<void> => {
         await openStoryOverlay(canvasElement, { within: FILTERS, wait: 200 });

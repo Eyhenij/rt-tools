@@ -42,7 +42,8 @@ describe('Стопка шторок', (): void => {
 
         expect(shown(sheet(fixture, 'sheet-status'))).toBe(true);
         expect(shown(sheet(fixture, 'sheet-filters'))).toBe(false);
-        expect(sheet(fixture, 'sheet-filters').hasAttribute('inert')).toBe(true);
+        // Без `inert`: в ней стоит указатель поля, открывшего верхнюю, и фокус с него не падает.
+        expect(sheet(fixture, 'sheet-filters').hasAttribute('inert')).toBe(false);
     });
 
     it('SC-UKV-1632 — закрытие верхней шторки снова показывает предыдущую', (): void => {

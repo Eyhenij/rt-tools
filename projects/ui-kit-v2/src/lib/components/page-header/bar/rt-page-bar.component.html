@@ -16,6 +16,7 @@
                             [ariaLabel]="filtersActive() ? t().uiFiltersActive : t().uiFilters"
                             [rtPopover]="filtersPanel"
                             [rtPopoverDisabled]="filtersInSheet()"
+                            (rtPopoverOpened)="onPanelOpened()"
                             (click)="onFiltersClick()" />
                         @if (filtersActive()) {
                             <span rtElem="dot" qa-dataid="page-bar-filters-dot"></span>
@@ -113,7 +114,8 @@
 
     <!-- Отборы узкого вида шире телефона: панель у кнопки, как «Ещё отборы», с поиском и «Применить». -->
     <ng-template #filtersPanel>
-        <div rtBlock="rt-page-bar-more" qa-dataid="page-bar-filters-panel">
+        <!-- Панель живёт в перекрытии в конце страницы: фокус ставится на неё саму, чтобы Tab шёл по отборам. -->
+        <div #filtersPanelBox rtBlock="rt-page-bar-more" qa-dataid="page-bar-filters-panel" tabindex="-1">
             @if (search(); as searchSlot) {
                 <ng-container [ngTemplateOutlet]="searchSlot.templateRef" />
             }
