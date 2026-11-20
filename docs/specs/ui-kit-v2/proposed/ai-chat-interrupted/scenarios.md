@@ -8,8 +8,8 @@ Until a scenario is covered, it carries the mark «Not covered» with the reason
 Given a chat with an answer `m1` with one markdown block «Продажи за ноябрь выросли на» and `interrupted: true`
 When the answer is drawn
 Then the block is drawn as text
-And under it stand the label «Answer interrupted» and the button «Ask again» with the icon `sync`
-And «Copy» and the rating stand under the label
+And under it stands the label «Answer interrupted»
+And under the label stands the row «Copy», the button «Ask again» with the icon `sync`, and the rating, in this order
 
 Not covered: there is no code yet.
 
@@ -17,7 +17,7 @@ Not covered: there is no code yet.
 
 Given a chat with an answer `m1` with `blocks: []`, no run and `interrupted: true`
 When the answer is drawn
-Then the label «Answer interrupted» and the button «Ask again» are drawn
+Then the label «Answer interrupted» is drawn, and under it a row with the button «Ask again» alone
 And no area of blocks, no plate, no «Copy» and no rating are drawn
 
 Not covered: there is no code yet.
@@ -118,26 +118,26 @@ Not covered: there is no code yet.
 
 Given a kit translator that gives «Ответ прерван» and «Спросить снова»
 When an interrupted answer is drawn
-Then the label reads «Ответ прерван» and the button reads «Спросить снова»
+Then the label reads «Ответ прерван» and the button is named «Спросить снова»
 
 Not covered: there is no code yet.
 
 ### SC-UKV-1576 — the label and the action fit a narrow panel
 
-Given a partial answer and an empty interrupted answer in a chat 328, 386 and 640 wide, with the English and with the Russian labels
+Given a partial answer and an empty interrupted answer in a chat 240, 328, 386 and 640 wide, with the English and with the Russian labels
 When they are drawn
-Then at each width the label and the action stand in one row inside the answer and do not widen the feed
-And at 328 the focus ring of the focused action is not clipped
+Then at each width the label stands in one line and the row of actions in one line, and neither widens the feed
+And at 240 the focus ring of the focused action is not clipped
 
 Not covered: it cannot be closed by a test with an identifier — the row and the ring come from the styles, and
 the styles of the component do not reach the test environment. Held by the play steps of the
 showcase story of the widths.
 
-### SC-UKV-1577 — right to left mirrors the row
+### SC-UKV-1577 — right to left mirrors the label and the row
 
 Given an interrupted answer under `dir="rtl"`
 When it is drawn
-Then the label starts at the right and the action follows it to the left
+Then the label starts at the right, «Copy» stands at the right of the row and the action follows it to the left
 
 Not covered: it cannot be closed by a test with an identifier — the order comes from the styles.
 Held by the play step of the showcase story right to left.

@@ -297,6 +297,9 @@ export class RtAiChatComponent {
 
     public readonly retry: OutputEmitterRef<void> = output<void>();
 
+    /** Нажато «спросить снова» прерванного ответа — id этого ответа. Кит сам ничего не отправляет. */
+    public readonly askAgain: OutputEmitterRef<string> = output<string>();
+
     public readonly newThread: OutputEmitterRef<void> = output<void>();
 
     public readonly closed: OutputEmitterRef<void> = output<void>();

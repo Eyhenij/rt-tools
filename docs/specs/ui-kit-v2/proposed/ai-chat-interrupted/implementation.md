@@ -17,6 +17,7 @@ places, so that the merge into the domain spec shows where to look.
 | the output `askAgain` with the id                           | `projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/rt-ai-chat.component.ts` and its template          |
 | the action disabled while sending                           | a new input `sending` of the answer component, bound in `rt-ai-chat.component.html` from the chat's `sending` |
 | the label in the live region of the feed                    | `projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/rt-ai-chat.component.html`, the `feed` element     |
+| the action as an icon button in the row of «Copy»           | `projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/answer/rt-ai-chat-answer.component.html`, the `feedback` row |
 | the run error unchanged                                     | `projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/rt-ai-chat.component.html`, the `error` row        |
 | the label «Answer interrupted»                              | `projects/ui-kit-v2/src/lib/i18n/rt-kit-labels.en.ts`, `projects/ui-kit-v2/.storybook/showcase-labels.ru.ts`  |
 | the row, hover, focus ring, right to left and the widths    | `projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/answer/rt-ai-chat-answer.component.scss`           |

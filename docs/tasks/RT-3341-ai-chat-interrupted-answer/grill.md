@@ -63,7 +63,14 @@ written below as decisions.
 - **Sample of the approach** — the chat-level error row (`aiRetry`, a text button with the icon
   `sync`) and the failed state of the link block.
 
+- **The look: a quiet line and the action as an icon in the row of «Copy» and the rating** — the
+  owner answered «Метка плашкой», then «Посмотри как сделано в других нормальных зарнесах», then,
+  from the options «Как в других чатах» and «Оставить плашку», chose «Как в других чатах
+  (Recommended)». The mockup approved: «Одобряю макет (Recommended)».
+- **The plan is taken by assumption** — the owner took the recommended option twice in a row, and
+  the grill guard refuses a third menu. The plan is not committed until the owner's word on it: a
+  plan goes into history only after the owner approves it.
+
 ## What is left unclear
 
-- The exact look of the label (notice strip or a quiet line under the answer) — decided on the
-  mockup, which the owner approves before the code.
+Nothing: the look is closed by the approved mockup.

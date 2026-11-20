@@ -45,6 +45,7 @@ export const RT_KIT_LABELS_EN = {
     aiExitFullScreen: 'Exit full screen',
     aiFullScreen: 'Full screen',
     aiHideSteps: 'Hide steps',
+    aiInterrupted: 'Answer interrupted',
     aiLike: 'Good answer',
     aiLinkFailed: 'Failed to open',
     aiLinkOpen: 'Open',

@@ -27,8 +27,8 @@ flag and handles the event.
 - **The interrupted answer** — an assistant message with `interrupted: true`.
 - **The partial answer** — an interrupted answer with at least one block.
 - **The empty interrupted answer** — an interrupted answer with no block.
-- **The interrupted label** — the text «Answer interrupted» under an interrupted answer.
-- **The action of the answer** — the button «Ask again» next to the interrupted label.
+- **The interrupted label** — the muted line «Answer interrupted» under an interrupted answer.
+- **The action of the answer** — the icon button «Ask again» in the row of «Copy» and the rating.
 - **The ask again event** — what the chat emits on a press of the action of an answer: the id of the
   answer.
 
@@ -40,9 +40,9 @@ declared by `docs/specs/ui-kit-v2/ai-chat/` and are not declared again here.
 | In the domain         | On the screen                                                            |
 | --------------------- | ------------------------------------------------------------------------ |
 | The interrupted label | the muted line «Answer interrupted» under the answer                     |
-| The action            | the text button «Ask again» with the icon `sync` after the label         |
-| The partial answer    | the blocks drawn so far, then the label and the action                   |
-| The empty interrupted | the run line and the attachments if given, then the label and the action |
+| The action            | the icon `sync` with the tooltip «Ask again» after the icon of «Copy»    |
+| The partial answer    | the blocks drawn so far, the label, then the row of actions              |
+| The empty interrupted | the run line and the attachments if given, the label, the action alone   |
 
 ## Rules
 
@@ -58,19 +58,21 @@ declared by `docs/specs/ui-kit-v2/ai-chat/` and are not declared again here.
 
 ### The label and the action
 
-- **An interrupted answer draws the interrupted label and the action «Ask again» in one row under its blocks and its attachments, above the row of «Copy» and the rating.** The answer's gap of 8 stands on each side of the row.
+- **An interrupted answer draws the interrupted label under its blocks and its attachments, and the action in the row of «Copy» and the rating under the label.** The answer's gap of 8 stands on each side of the label.
 
-- **A partial answer draws its blocks as given, and the label and the action under them.** The blocks are drawn by the rules of the chat and of their own subdomains; the flag changes none of them.
+- **A partial answer draws its blocks as given, the label under them and the action in its row of actions.** The blocks are drawn by the rules of the chat and of their own subdomains; the flag changes none of them.
 
-- **An empty interrupted answer draws the run line when it has one, then the consumer's attachments, then the label and the action.** Nothing is drawn between them and the label: no blocks container, no placeholder box.
+- **An empty interrupted answer draws the run line when it has one, then the consumer's attachments, then the label, then a row with the action alone.** Nothing is drawn between them and the label: no blocks container, no placeholder box.
 
-- **The label is a quiet line: muted 12 px text, with no icon before it, no strip and no plate.**
+- **The label is a quiet line: muted 12 px text with a line of 135%, with no icon, no strip and no plate.**
 
-- **The action is the kit text button of the primary colour, size `sm`, with the icon `sync` and the label «Ask again».** It stands 8 after the label and is the same button as the action of the run error; the kit adds no second look of the same action.
+- **The action is the kit icon button of the row of «Copy» and the rating, with the icon `sync`: the same size, colour and gap of 4.** It stands right after «Copy»; where «Copy» is not drawn, it opens the row.
 
-- **The action shows the kit hover tint and the kit focus ring of its theme, and the kit disabled text colour when disabled; the focus ring is not clipped.** The light theme gives primary at 8% and a 3 px ring of primary at 24%, the dark theme primary at 16% and a ring at 32%. The label stays muted while the action is disabled.
+- **The action shows the tooltip «Ask again» on hover and on focus from the keyboard, as the other buttons of the row show theirs.**
 
-- **The label «Answer interrupted» is a new kit label; the label of the action is the existing kit label of «Ask again».**
+- **The action shows the kit hover fill, the kit focus ring and the kit disabled look of the icon button; the focus ring is not clipped.** The label keeps its look while the action is disabled.
+
+- **The label «Answer interrupted» is a new kit label; the name and the tooltip of the action are the existing kit label of «Ask again».**
 
 ### The event
 
@@ -110,13 +112,13 @@ declared by `docs/specs/ui-kit-v2/ai-chat/` and are not declared again here.
 
 ### Layout
 
-- **The label and the action take the width of the answer and never widen the feed.**
+- **The label takes the width of the answer and never widens the feed; it wraps rather than ends with an ellipsis.**
 
-- **At the widths 328, 386 and 640 the label and the action stand in one row, with the English and with the Russian labels.** Only in a narrower answer the action goes under the label, and the label wraps rather than ends with an ellipsis.
+- **At the widths 240, 328, 386 and 640 the label stands in one line and the row of actions keeps its four buttons in one line, with the English and with the Russian labels.**
 
-- **Under `dir="rtl"` the row mirrors: the label starts at the right and the action follows it to the left; the icon `sync` is drawn as it is.**
+- **Under `dir="rtl"` the label starts at the right and the row of actions mirrors: «Copy» at the right, the action after it to the left; the icon `sync` is drawn as it is.**
 
-- **The drawn values are the ones of the approved mockup and are the same at the widths 328, 386 and 640; in the dark theme only the colours change.**
+- **The drawn values are the ones of the approved mockup: the label is 16 high, the row 32 high, 8 between them; in the dark theme only the colours change.**
 
 ## What is out of scope
 
@@ -158,14 +160,13 @@ gives the id of a conversation.
 | empty interrupted            | the label and the action, no blocks, no «Copy», no rating            |
 | empty interrupted with a run | the run line, the attachments if given, the label and the action     |
 | streaming and interrupted    | the answer as it is being written, no label, no action               |
-| hover                        | the action with the kit hover tint of its theme: primary 8% light, 16% dark |
-| focus from the keyboard      | the action with the kit ring of its theme, 3 px: primary 24% light, 32% dark, not clipped |
-| disabled, while sending      | the action in the kit disabled text colour; the label stays muted   |
+| hover                        | the action with the kit hover fill of the icon button and the tooltip «Ask again» |
+| focus from the keyboard      | the action with the kit focus ring, not clipped, and the tooltip «Ask again» |
+| disabled, while sending      | the action in the kit disabled look; the label keeps its look        |
 | with the run error           | the answer with its label and action, the error strip under the feed |
-| narrow, 328                  | the label and the action in one row                                  |
-| narrower than 328            | the action under the label                                           |
-| right to left                | the label at the right, the action after it to the left              |
-| dark theme                   | the same row in the dark palette                                     |
+| narrow, 240 and 328          | the label in one line, the row of actions in one line                |
+| right to left                | the label at the right, «Copy» at the right of the row, the action after it |
+| dark theme                   | the same label and row in the dark palette                           |
 
 The drawn values of every row are the ones of the approved mockup.
 
@@ -183,8 +184,8 @@ Not applicable: the kit is not indexed.
 
 ### Mobile layout
 
-The narrow panel is the mobile width of the chat: at 328 the label and the action still stand in one
-row, and neither widens the feed. The values are the ones of the approved mockup.
+The narrow panel is the mobile width of the chat: at 240 and 328 the label and the row of actions
+each stay in one line, and neither widens the feed. The values are the ones of the approved mockup.
 
 ### Several objects
 
@@ -201,17 +202,20 @@ described by the label of its own answer, and each press names its own answer.
   Decided in the grill.
 - **The payload is the bare id** — `selectThread` and `deleteThread` give a bare id; an object is
   kept for events that carry more than the id.
-- **The action reuses the label «Ask again» and the look of the action of the run error** — decided
-  in the grill; the sample of the approach is the row of the run error and the failed state of the
-  link block.
+- **The action reuses the label «Ask again» of the run error, not its look** — the label decided in
+  the grill; the look follows the owner's choice of the look below.
 - **The kit neither detects nor resends** — decided in the grill.
 - **A partial answer keeps «Copy» and the rating, an empty one has neither** — decided in the grill;
   the existing rule «the rating appears once the answer has a block» already gives the second half.
-- **The look is a quiet line, not a strip** — closed by the mockup
-  <https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8451-922>. The label is muted 12 px
-  text; 8 after it stands the primary text button `sm` with `sync`, 32 high with a radius of 10 —
-  160 wide with the Russian label, about 118 with the English one.
-  The mockup waits for the owner's approval.
+- **The look is a quiet line and an icon in the row of actions, as other assistant chats draw it** —
+  the owner chose «Как в других чатах (Recommended)» after a warning strip was drawn by the word
+  «Метка плашкой» and compared with other chats. Those mark a stopped answer with a muted line or not
+  at all, and put the retry as an icon among «Copy» and the rating; a coloured strip with an action
+  is kept there for a real error. Drawn in
+  <https://www.figma.com/design/vyV42sJXccfKNG8yFSCpSL?node-id=8451-922>; the mockup waits for the
+  owner's approval.
+- **The label relies on the live region of the feed** — the feed already announces politely what
+  appears in it; a second region would announce the label twice.
 - **The disabled state comes from a new input `sending` of the answer, bound from the chat's
   `sending`** — the action is disabled natively, as the action of the run error is, and leaves the
   order of the Tab key.
@@ -221,8 +225,6 @@ described by the label of its own answer, and each press names its own answer.
 - **The label stays out of the copy** — closed by assumption, the owner may reverse it.
 - **An interrupted answer and a retryable run error are both drawn, with two «Ask again»** — closed
   by assumption, the owner may reverse it; the application decides which to give.
-- **The label relies on the live region of the feed** — the feed already announces politely what
-  appears in it; a second region would announce the label twice.
 - **On the merge, the run error term of the chat spec reads «the last run failed»** — the term in
   `docs/specs/ui-kit-v2/ai-chat/spec.md` says «the answer broke off», and «broke off» belongs to the
   interrupted answer.
@@ -240,3 +242,6 @@ described by the label of its own answer, and each press names its own answer.
 - 2026-11-20 — the agreement written for RT-3341 from the grill; the mockup is not drawn.
 - 2026-11-20 — the look closed by the mockup, the disabled state and the focus decided, three
   questions closed by assumption; the label relies on the live region of the feed.
+- 2026-11-20 — the look redrawn as a warning strip by the owner's word «Метка плашкой», then, by
+  the owner's choice after a comparison with other chats, as a quiet line with the action as an icon
+  in the row of actions.

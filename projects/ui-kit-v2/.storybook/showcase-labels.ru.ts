@@ -38,6 +38,7 @@ export const RT_KIT_LABELS_RU: Readonly<Record<TRtKitLabelKey, string>> = {
     aiExitFullScreen: 'Выйти из полноэкранного режима',
     aiFullScreen: 'На весь экран',
     aiHideSteps: 'Скрыть шаги',
+    aiInterrupted: 'Ответ прерван',
     aiLike: 'Хороший ответ',
     aiLinkFailed: 'Не открылась',
     aiLinkOpen: 'Открыть',
