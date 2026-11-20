@@ -236,12 +236,12 @@ export const PhoneFilterSelect: TStory = {
 };
 
 /**
- * Меню действий и точка на кнопке отборов: отборы применены. На телефоне меню стоит в шторке, а класс
- * меню — на коробке оверлея нулевой ширины, поэтому съёмке называется открытый лист внутри неё.
+ * Меню действий и точка на кнопке отборов: отборы применены. На телефоне меню стоит в шторке, и съёмке
+ * называется её открытый лист: коробка оверлея шторки нулевой ширины.
  */
 export const PhoneActions: TStory = {
     globals: PHONE,
-    parameters: openedAt('.rt-page-bar-menu .rt-bottom-sheet--open', PHONE_VIEW),
+    parameters: openedAt('.rt-popover-sheet .rt-bottom-sheet--open', PHONE_VIEW),
     args: { bar: true, tabs: 5, filtersActive: true, overlay: true },
     play: openOn('[qa-dataid="page-bar-actions-menu"] button'),
 };
