@@ -3,10 +3,12 @@ import { Type } from '@angular/core';
 import {
     ERtKpiDeltaUnit,
     ERtKpiFormat,
+    ERtLinkState,
     ERtSectionSpan,
     ERtTableColumn,
     IRtAiRunStatus,
     IRtKpiItem,
+    IRtLinkData,
     IRtTableData,
     IRtTag,
     IRtTimeline,
@@ -89,6 +91,27 @@ export namespace IRtAiChat {
     }
 
     /**
+     * Карточка страницы приложения в ответе: название, раздел, значок и исход открытия. Блок пишет
+     * модель, `state` и `reason` дописывает приложение. Кит рисует карточку сам и никуда не
+     * переходит: нажатие кнопки чат отдаёт событием `linkOpen`. Блок без названия или адреса
+     * показан заглушкой.
+     */
+    export interface LinkBlock {
+        readonly type: 'link';
+        readonly title: string;
+        /** Адрес страницы, который открывает приложение. */
+        readonly url: string;
+        /** Раздел меню готовым текстом: «Отчёты · Продажи». */
+        readonly section?: string;
+        /** Имя значка кита; без него — `link`. */
+        readonly icon?: string;
+        /** Исход открытия; без него карточка статуса не показывает. */
+        readonly state?: `${ERtLinkState}`;
+        /** Причина отказа; рисуется только при `failed`. */
+        readonly reason?: string;
+    }
+
+    /**
      * Блок, который кит сам не рисует: график и другие. Его рисует отрисовщик,
      * зарегистрированный приложением; без отрисовщика блок показан заглушкой. В текст, который
      * копирует «Копировать», такой блок попадает текстом функции `toText` своего отрисовщика.
@@ -117,10 +140,11 @@ export namespace IRtAiChat {
     }
 
     /**
-     * Часть ответа. Список типов открыт: кит знает `markdown`, `notice`, `table`, `kpi` и `section`,
+     * Часть ответа. Список типов открыт: кит знает `markdown`, `notice`, `table`, `kpi`, `link` и
+     * `section`,
      * остальные регистрирует приложение.
      */
-    export type Block = MarkdownBlock | NoticeBlock | TableBlock | KpiBlock | SectionBlock | CustomBlock;
+    export type Block = MarkdownBlock | NoticeBlock | TableBlock | KpiBlock | LinkBlock | SectionBlock | CustomBlock;
 
     /**
      * Отрисовщик блока, которого кит сам не знает: компонент с обязательным входом `block` и
@@ -138,6 +162,7 @@ export namespace IRtAiChat {
         | { readonly kind: 'notice'; readonly severity: IRtTag.Severity; readonly text: string }
         | { readonly kind: 'table'; readonly data: IRtTableData; readonly title: string | null }
         | { readonly kind: 'kpi'; readonly items: readonly IRtKpiItem[] }
+        | { readonly kind: 'link'; readonly data: IRtLinkData }
         | { readonly kind: 'custom'; readonly component: Type<unknown>; readonly block: Block }
         | { readonly kind: 'section'; readonly title: string | null; readonly cells: readonly SectionCell[] }
         | { readonly kind: 'unsupported'; readonly type: string };
@@ -197,6 +222,17 @@ export namespace IRtAiChat {
     export interface FeedbackChange {
         readonly messageId: string;
         readonly feedback: Feedback;
+    }
+
+    /** Нажатие кнопки карточки ссылки: какой адрес открыть и в новой ли вкладке. */
+    export interface LinkPress {
+        readonly url: string;
+        readonly newTab: boolean;
+    }
+
+    /** Событие `linkOpen` чата: нажатие карточки ссылки и сообщение, в котором она стоит. */
+    export interface LinkOpen extends LinkPress {
+        readonly messageId: string;
     }
 
     /** Контекст шаблона вложений ответа. */

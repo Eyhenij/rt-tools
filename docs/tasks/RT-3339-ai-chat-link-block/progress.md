@@ -6,7 +6,8 @@
 - **Stage:** 2 of 4 — The card and the event through the chat
 - **Done:** the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3339-ai-chat-link-block` from `RT-3338-ai-chat-kpi-block` (chain, PR #3429), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption.
 - **Stage 1 is done on 20.11.2026.** The epic branch is merged in: RT-3342 is merged (#3437), the epic PR into the main branch is open as a draft (#3438). `rtLinkData` and `RT_AI_CHAT_LINK_SCHEMA` are written and exported from the util barrel; `jest src/lib/util/link` gave 2 suites and 7 tests passed, the kit `typecheck` exited 0.
-- **Next step:** stage 2, step 1 — the `LinkBlock` type, the `link` view and the copy line.
+- **Stage 2, step 1 is done.** The block is in the chat model and in the feed logic; the copy line is written. `jest …/blocks/rt-ai-chat-blocks.link` gave 5 tests passed, the blocks folder 85 before it.
+- **Next step:** stage 2, step 2 — the `rt-ai-chat-link` component.
 - **Uncommitted:** no
 - **PR:** not open yet; the base is `RT-3346-ai-chat-blocks` — RT-3338 is merged into it (#3429)
 
@@ -20,8 +21,8 @@
 
 ### 2. The card and the event through the chat
 
-- [ ] 1. Add the `LinkBlock` type, the `link` view, the `LinkOpen` event type, `link` in `OWN_TYPES`, the data step in `toBlockViews` and the copy line in `blockText`. ← now
-- [ ] 2. Write the `rt-ai-chat-link` component on `rt-tag`, `rtButton` and `rt-icon`: the row with the numbers of the agreement, the text column, the status, the reason, the two buttons with `aria-disabled` in `pending`, the announcement text of a state change for the feed, tokens only.
+- [x] 1. Add the `LinkBlock` type, the `link` view, the `LinkOpen` event type, `link` in `OWN_TYPES`, the data step in `toBlockViews` and the copy line in `blockText`.
+- [ ] 2. Write the `rt-ai-chat-link` component on `rt-tag`, `rtButton` and `rt-icon`: the row with the numbers of the agreement, the text column, the status, the reason, the two buttons with `aria-disabled` in `pending`, the announcement text of a state change for the feed, tokens only. ← now
 - [ ] 3. Carry the press from the card through `rt-ai-chat-blocks` and the answer to a synchronous `linkOpen` output of `rt-ai-chat` that adds the message id.
 - [ ] 4. Add the labels «Opening», «Opened», «Failed to open», «Open», «Open in new tab» to the kit English set and the showcase Russian set.
 - [ ] 5. Set the gap of the tag `sm` to `--rt-space-1` and add the option that turns the start icon of the tag.
