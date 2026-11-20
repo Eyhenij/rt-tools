@@ -10,7 +10,7 @@ block stands)
 
 The `sources` block of an answer of `rt-ai-chat`: a collapsed list titled «Sources» with the count
 of sources, and the output of the chat that carries a press on a source. It is written by task
-RT-3340 and stands as a subdomain of its own next to `ai-chat-link`. The mockup is not drawn yet.
+RT-3340 and stands as a subdomain of its own next to `ai-chat-link`. The mockup is approved by the owner.
 
 ## Why
 
@@ -97,7 +97,12 @@ opens it.
 
 - **Under `dir="rtl"` the row and the arrow mirror; the icons are drawn as they are.**
 
-- **The sizes, the colours, the spaces and the line counts are set by the mockup.** The rules of these values are added after the owner approves the mockup.
+- **The block is a card: the surface colour, a 1 px default border, a radius of 12 and side spaces of 12.** The panel inside it is the plain look of `rt-expansion-panel`, with a header 40 high, in the 14 px text of the panel.
+- **The count follows the label after two spaces in the muted text colour.** It is the same text node of the header, so the header button stays one button.
+- **A row has a space of 8 above and below, a gap of 12 between the icon and the text, and a 20 px icon.** The list ends with a space of 8.
+- **The title is 14 px medium in the primary colour, the detail is 12 px regular in the muted colour with a gap of 2 under the title; each is one line.** Both end with an ellipsis; the whole text stays in the markup.
+- **A pressable row shows the hover colour and a 2 px focus ring, both with a radius of 8, on the row inset by 8 at each side.**
+- **The values are the same at the widths 328, 386 and 640, and in the dark theme only the colours change.** Only the width of the text column differs.
 
 ### Copying
 
@@ -176,7 +181,7 @@ The source open event is `{ messageId, url, title }`.
 | dark theme           | the same rows in the dark palette                   |
 | invalid              | the plate with the type name                        |
 
-The drawn values of every row wait for the mockup.
+The drawn values of every row are the ones of the approved mockup.
 
 ## Cross-cutting requirements
 
@@ -227,7 +232,7 @@ address and its own message.
 - **Q-2.** The set of icon names the model uses for the kinds of source is not closed: the kit gives
   `chart-bar`, `table`, `file`, `file-pdf`, `database`, `folder`, `book`, `link`, and a foreign name
   gets `file`. Does the owner want a longer set added to the kit?
-- **Q-3.** The visual values wait for the mockup in Figma, which is not drawn.
+- **Q-3.** Closed: the mockup is drawn and approved, and its values stand in the rules of the layout.
 
 ## History of changes
 

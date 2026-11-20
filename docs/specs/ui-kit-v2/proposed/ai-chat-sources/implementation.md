@@ -18,5 +18,5 @@ that at the merge into the domain spec it is seen where to look.
 | the label «Sources»                                           | the English labels of the kit, and the Russian labels of the showcase            |
 | the group, the hidden icon, the button                        | the template of the block component                                              |
 | the cut texts and the mirroring                               | the styles of the block component                                                |
-| the numbers of the layout                                     | waits for the mockup: no place is foreseen before the owner approves it          |
+| the numbers of the layout                                     | the styles of the block component, by the approved mockup                        |
 | the showcase stories with one and with five sources           | the stories of the assistant chat in the showcase                                |
