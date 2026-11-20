@@ -156,6 +156,23 @@ The owner added: «включи в задачу не прятать иконку
 2. [ ] Measure the showcase against the mockup with `node tools/kit-match.mjs numbers`.
 3. [ ] Show the showcase to the owner and write the approval into `approvals.md`.
 
+## Review round one (20.11)
+
+Three readers on the whole diff after the merge of main (78aca5229). Confirmed by code and sent to
+two Sonnet agents (each item test-first): the material look of the disabled handle; no `sheet`
+input on the date fields and the folded toggle group, and the folded select's ✕; the page header
+burger and compact «ещё» without the sheet; a DI default `RT_POPOVER_SHEET` for nested parts; rt-menu
+keyboard and focus return in the sheet; focus return of the popover sheet; two panels after
+crossing the threshold; the sheet panel reset specificity; the close without slide-down; stubs
+without `viewportNarrow`; «Show all»/«Reset» dropping disabled values; «Show all» by keyboard;
+autocomplete clear, touched and keys in the sheet; `floatingLabel` as the sheet title; two docs
+tables; two classes with no rule; four missing tests.
+
+For the owner: the threshold — the sheet opens at ≤1080 px (the date fields' threshold), the owner
+said «на мобилке»; the kit has a phone signal at ≤480 px. Named in the PR, not fixed: the
+multiselect has no search (mockup 6068:1250 shows one); icon-only speed-menu actions in the sheet;
+the default switch of 20 components goes as a `BREAKING CHANGE` footer.
+
 ## Decisions along the way
 
 - The mockup of the multiselect sheet shows a search field, while `rt-multiselect` has no search at
