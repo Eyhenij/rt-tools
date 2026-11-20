@@ -110,17 +110,37 @@ export function eventsOf(entries) {
     const menus = new Map();
     const calls = new Map();
     const events = [];
+    // The agent closed its turn, and the record does not say yet whether the stop was released. A
+    // refusal of the stop comes as its feedback; a released stop is seen only by what follows it —
+    // the summary of the stop hooks with no refusal, the idle mark of the harness, a new message or
+    // a new turn of the agent. The last entry of a record is therefore never an ended turn.
+    let closing = false;
+    const ended = () => {
+        if (closing) events.push({ kind: 'ended' });
+        closing = false;
+    };
     for (const entry of entries) {
         if (entry?.type === 'system' && entry.subtype === 'stop_hook_summary') {
-            if (!(entry.hookErrors ?? []).some((error) => STOP_BLOCK.test(String(error)))) events.push({ kind: 'ended' });
+            if ((entry.hookErrors ?? []).some((error) => STOP_BLOCK.test(String(error)))) closing = false;
+            else {
+                closing = true;
+                ended();
+            }
             continue;
         }
+        if (entry?.type === 'last-prompt') {
+            ended();
+            continue;
+        }
+        if (entry?.type === 'user' && feedbackText(entry) === null) ended();
         const over = taskOver(entry);
         if (over) {
             events.push({ kind: 'backgroundEnd', ...over });
             continue;
         }
         if (entry?.type === 'assistant') {
+            if (entry.message?.stop_reason !== 'end_turn') ended();
+            closing = entry.message?.stop_reason === 'end_turn';
             for (const part of parts(entry)) {
                 if (part?.type !== 'tool_use') continue;
                 if (part.name === 'AskUserQuestion') {
@@ -142,6 +162,7 @@ export function eventsOf(entries) {
         if (entry?.type !== 'user') continue;
         const refusal = feedbackText(entry);
         if (refusal) {
+            closing = false;
             events.push({ kind: 'refusal', text: refusal });
             continue;
         }

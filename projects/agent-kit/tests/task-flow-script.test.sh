@@ -453,6 +453,15 @@ out('session: SC-AK-1759 — обычный вызов задачей не сч�
 out('session: SC-AK-1759 — отказанный запуск задачей не считается', kinds([call('t5', 'Bash', { command: 'x', run_in_background: true }), result('t5', { backgroundTaskId: 'b5' }, { is_error: true })]), '');
 out('session: SC-AK-1759 — монитор задачей не считается', kinds([call('t6', 'Monitor', { command: 'x' }), result('t6', { backgroundTaskId: 'm6' })]), '');
 out('session: SC-AK-1759 — конец хода без отказа — событие', kinds([{ type: 'system', subtype: 'stop_hook_summary' }, { type: 'system', subtype: 'stop_hook_summary', hookErrors: ['BLOCKED by turn-exit-guard: open'] }]), 'ended::');
+const closed = { type: 'assistant', message: { stop_reason: 'end_turn', content: [{ type: 'text', text: 'готово' }] } };
+const feedback = { type: 'user', message: { content: 'Stop hook feedback:\nBLOCKED by turn-exit-guard: open' } };
+out('session: SC-AK-1759 — закрытый ход последней записью — ещё не конец', kinds([closed]), '');
+out('session: SC-AK-1759 — за закрытым ходом отметка простоя — конец хода', kinds([closed, { type: 'last-prompt' }]), 'ended::');
+out('session: SC-AK-1759 — за закрытым ходом слово владельца — конец хода', kinds([closed, { type: 'user', message: { content: 'дальше' } }]), 'ended::');
+out('session: SC-AK-1759 — за закрытым ходом новый вызов — конец хода', kinds([closed, call('t7', 'Read', {})]), 'ended::');
+out('session: SC-AK-1759 — за закрытым ходом отказ остановки — не конец', kinds([closed, { type: 'queue-operation', operation: 'enqueue', content: 'x' }, feedback, { type: 'last-prompt' }]), 'refusal::');
+out('session: SC-AK-1759 — части одного ответа — один конец хода', kinds([closed, closed, { type: 'last-prompt' }, { type: 'last-prompt' }]), 'ended::');
+out('session: SC-AK-1759 — отметка простоя без закрытого хода — не конец', kinds([call('t8', 'Read', {}), { type: 'last-prompt' }]), '');
 
 // SC-AK-1760 — the record is read by pieces
 const dir = mkdtempSync(join(tmpdir(), 'tf-lines-'));

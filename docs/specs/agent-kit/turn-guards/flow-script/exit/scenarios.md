@@ -244,6 +244,7 @@ When the session source reads the events of the record
 Then each start is an event with the call, the task and the time, and each end names the call or the task
 And a plain call, a refused start, a monitor and a notice with no final status are neither
 And a stop summary with no refusal is the event of an ended turn
+And a turn the agent closed is ended once the idle mark, a word of the owner or a new call follows it, and is not when the feedback of a stop hook follows or nothing does
 
 Covered: `projects/agent-kit/tests/task-flow-script.test.sh`.
 

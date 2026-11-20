@@ -41,6 +41,7 @@ not by a person.
 - **The session source names the background tasks of a record: the start of a command or an agent sent to the background, and its end by a notice with a final status or by a call that stops it.**
 - **A turn that waits for a background task of its own session is released while the task has a start, no end, and is younger than twenty minutes.**
 - **One background task releases one stop: a second stop with no call of a tool between the two is held.**
+- **A turn has ended when the record holds something after the agent closed it, other than the feedback of a stop hook.**
 - **A wait releases nothing once the work is handed over: the state whose action sends work to the background goes on by itself.**
 - **A stop made while a background task of the session runs names no owner's menu.**
 - **The session record is read by pieces, so a record longer than one string of the runtime does not fail the engine.**
@@ -150,4 +151,4 @@ None.
   the options of git, and a stop word followed by an order of work holds the turn.
 - 2026-11-20 — a turn that waits for a background task of its own session is released, once per
   task and for twenty minutes; such a stop names no owner's menu. The record is read by pieces.
-  The forecast over 14–18.11 holds 156 stops where it held 383, and its longest run is 8.
+  The forecast over 14–18.11 holds 184 stops where it held 383, and its longest run is 8.
