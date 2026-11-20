@@ -1,16 +1,15 @@
 # The section block of the assistant chat
 
-**Status:** proposed · **Revision:** 2026-11-19 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-20 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the assistant chat (the blocks of an answer, the plate, the answer copy), the KPI
 block, the table block and the chart block of the chat (the blocks a section holds)
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
 
-The agreement of task RT-3342: the `section` block of an answer of `rt-ai-chat`, a title and a
-grid of nested blocks. The approved mockup is the frame 8375-625 of the second kit file. The rules
-merge into a subdomain of their own next to `ai-chat-kpi`. At the merge the rules of
-`docs/specs/ui-kit-v2/ai-chat/spec.md` on the kit's own types, on the plate and on the answer copy
-name `section`.
+The `section` block of an answer of `rt-ai-chat`: a title and a grid of nested blocks. The
+approved mockup is the frame 8375-625 of the second kit file. It stands as a subdomain of its own
+next to `ai-chat-kpi`. The rules of `docs/specs/ui-kit-v2/ai-chat/spec.md` on the kit's own types,
+on the plate and on the answer copy name `section` too.
 
 ## Why
 
@@ -65,7 +64,7 @@ width, two columns where they fit and one where they do not.
 
 - **The kit exports the JSON schema of the section (JSON Schema 2020-12).** It requires `blocks` with at least one item. An item requires a string `type` other than `section` and may hold `span` of `full` or `column`. `title` is optional.
 
-- **The kit exports a function that joins the schemas of the nested types into the schema of the section.** The result is the section schema whose item is one of the named schemas, each with its `type` fixed to its name and with the optional `span`. The schemas of `markdown`, `notice`, `kpi` and `table` are in the result without a word from the application. The application adds the schemas of the other types by their names, and a schema given under the name of a kit type replaces the kit's one. The result shares no node with what it was joined from. An application gives the result to the model as the parameters of a tool: the bare schema names no field of a nested block.
+- **The kit exports a function that joins the schemas of the nested types into the schema of the section.** The result is the section schema whose item is one of the named schemas, each with its `type` fixed to its name and with the optional `span`. The schemas of `markdown`, `notice`, `kpi` and `table` are in the result without a word from the application. The application adds the schemas of the other types by their names, and a schema given under the name of a kit type replaces the kit's one. The result shares no node with what it was joined from. A schema given under the name `section` is not taken. The `span` of a nested block belongs to the section: a field of that name in a given schema is replaced. A given schema stands below the root of the result, so a `$ref` from its root no longer resolves. An application gives the result to the model as the parameters of a tool: the bare schema names no field of a nested block.
 
 - **The kit exports the JSON schemas of the `markdown` block and of the `notice` block.** The first requires `text`. The second requires `text` and a `severity` of the six the notice draws.
 
@@ -233,3 +232,5 @@ approved.
   for the scrollbar, the cell and the named container, the default span by the declared type, the
   schema joined by a function, the gap around a section, the group and the heading, the copy of
   the title and of a nested section.
+- 2026-11-20 — the code of RT-3342 written and the showcase approved; the agreement became this
+  subdomain.

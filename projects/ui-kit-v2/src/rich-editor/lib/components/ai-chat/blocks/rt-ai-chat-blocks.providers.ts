@@ -16,7 +16,7 @@ export const RT_AI_CHAT_BLOCK_RENDERERS: InjectionToken<readonly IRtAiChat.Block
  * даёт текст блока для копии ответа. Регистрация того же типа ещё раз заменяет прежнюю — побеждает
  * последняя. Все отрисовщики регистрируются на одном уровне, обычно в корне приложения: Angular не
  * сливает такой список между уровнями, и регистрация в маршруте или компоненте скрыла бы корневые.
- * Типы `markdown` и `notice` кит рисует сам, их регистрация не действует.
+ * Типы `markdown`, `notice`, `table`, `kpi` и `section` кит рисует сам, их регистрация не действует.
  */
 export function provideRtAiChatBlock(type: string, component: Type<unknown>, toText?: IRtAiChat.BlockRenderer['toText']): Provider {
     const renderer: IRtAiChat.BlockRenderer = toText ? { type, component, toText } : { type, component };

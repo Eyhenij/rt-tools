@@ -5,7 +5,7 @@
 - **State:** `этап-идёт`
 - **Stage:** 4 of 4 — Two review rounds, the owner's look, the texts and the PR
 - **Done:** stages 1, 2 and 3. The feed draws a `section` block by `rt-ai-chat-section`: a heading and a grid of cells. The showcase holds 16 stories of the section with play steps and the overview page; the 16 references are taken by the image browser, 16 passed. The specs of the chat folder: 114 passed; of the schema: 6 passed.
-- **Next step:** step 4.3 — show the two chat stories to the owner.
+- **Next step:** step 4.7 — the epic plan row, the archive record, the task folder taken apart.
 - **Uncommitted:** no
 - **Waiting for the owner:** no — the plan is approved: «Одобряю план», the threshold of 600 with it
 - **PR:** not open yet; the base is `RT-3346-ai-chat-blocks`
@@ -29,11 +29,11 @@
 - [x] 3.7 Match the stories with the approved mockup by numbers into the table «mockup / showcase» in the progress.
 - [x] 4.1 Review round one by qa-engineer, product-strategist and goal-critic; fix the confirmed findings in one commit.
 - [x] 4.2 Review round two by fresh readers; fix the confirmed findings in one commit; run the showcase checks of stage 3 again on the code that ships.
-- [>] 4.3 Show the showcase to the owner — the two chat stories of the sign first — and write their word into `approvals.md`.
-- [ ] 4.4 Build the kit and read `dist/ui-kit-v2` for the section component and the schema export.
-- [ ] 4.5 Merge the agreement into `docs/specs/ui-kit-v2/ai-chat-section/` with its bindings; edit the chat and KPI specs and the kit spec indexes as the agreement names.
-- [ ] 4.6 Bring `CONTEXT.md` of ai-chat and the comment of the block providers up to the section.
-- [ ] 4.7 Mark the row of RT-3342 in the epic plan and write there the release steps that close G; write the archive record, take the task folder apart.
+- [x] 4.3 Show the showcase to the owner — the two chat stories of the sign first — and write their word into `approvals.md`.
+- [x] 4.4 Build the kit and read `dist/ui-kit-v2` for the section component and the schema export.
+- [x] 4.5 Merge the agreement into `docs/specs/ui-kit-v2/ai-chat-section/` with its bindings; edit the chat and KPI specs and the kit spec indexes as the agreement names.
+- [x] 4.6 Bring `CONTEXT.md` of ai-chat and the comment of the block providers up to the section.
+- [>] 4.7 Mark the row of RT-3342 in the epic plan and write there the release steps that close G; write the archive record, take the task folder apart.
 - [ ] 4.8 Run the push set, push, open the PR into `RT-3346-ai-chat-blocks`.
 
 ## Decisions along the way
