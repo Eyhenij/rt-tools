@@ -12,6 +12,7 @@
 | `appearance`       | `'solid' \| 'outlined' \| 'dot'`                                           | `'solid'`       |
 | `radius`           | `TRtRadius \| null` — шаг общей шкалы                                      | `null` → `full` |
 | `icon` / `iconEnd` | `IRtIcon.Name \| null`                                                     | `null`          |
+| `iconSpin`         | `boolean` — крутит значок `icon`                                           | `false`         |
 | `closable`         | `boolean`                                                                  | `false`         |
 
 | выход    | тип          |

@@ -80,7 +80,7 @@ describe('RtToggleButtonGroupComponent — сворачивание', (): void =
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1452 — кнопки не помещаются: группа стоит полем выбора, а выбор в шторке уходит как нажатие', (): void => {
+    it('SC-UKV-1575 — кнопки не помещаются: группа стоит полем выбора, а выбор в шторке уходит как нажатие', (): void => {
         stubWidths(520, 343);
         const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ value: 'week' });
         const picked: string[] = [];
@@ -101,7 +101,7 @@ describe('RtToggleButtonGroupComponent — сворачивание', (): void =
         expect(picked).toEqual(['month']);
     });
 
-    it('SC-UKV-1453 — кнопки помещаются: группа остаётся кнопками', (): void => {
+    it('SC-UKV-1576 — кнопки помещаются: группа остаётся кнопками', (): void => {
         stubWidths(280, 343);
         const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ value: 'week' });
 
@@ -109,14 +109,14 @@ describe('RtToggleButtonGroupComponent — сворачивание', (): void =
         expect(row(fixture).getAttribute('aria-hidden')).toBeNull();
     });
 
-    it('SC-UKV-1454 — множественный выбор сворачивается в мультиселект', (): void => {
+    it('SC-UKV-1577 — множественный выбор сворачивается в мультиселект', (): void => {
         stubWidths(520, 343);
         const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ multiple: true, values: ['day'] });
 
         expect(folded(fixture)?.tagName).toBe('RT-MULTISELECT');
     });
 
-    it('SC-UKV-1455 — выключенное сворачивание и перенос строк оставляют кнопки', (): void => {
+    it('SC-UKV-1578 — выключенное сворачивание и перенос строк оставляют кнопки', (): void => {
         stubWidths(520, 343);
 
         expect(folded(setup({ fold: false }))).toBeNull();
@@ -125,7 +125,7 @@ describe('RtToggleButtonGroupComponent — сворачивание', (): void =
         expect(rtToggleGroupFolds(343.4, 343, 'row', true)).toBe(false);
     });
 
-    it('SC-UKV-1474 — sheet=false: свёрнутое поле открывает список поповером, а одиночное поле не очищается крестиком', (): void => {
+    it('SC-UKV-1597 — sheet=false: свёрнутое поле открывает список поповером, а одиночное поле не очищается крестиком', (): void => {
         stubWidths(520, 343);
         const fixture: ComponentFixture<RtToggleButtonGroupComponent<string>> = setup({ value: 'week', sheet: false });
 
@@ -137,7 +137,7 @@ describe('RtToggleButtonGroupComponent — сворачивание', (): void =
         expect(document.querySelector('[qa-dataid="select-option"]')).not.toBeNull();
     });
 
-    it('SC-UKV-1499 — свёрнутая группа разворачивается только при запасе над шириной, замеренной до сворачивания', (): void => {
+    it('SC-UKV-1621 — свёрнутая группа разворачивается только при запасе над шириной, замеренной до сворачивания', (): void => {
         // Не свёрнута: решает прежний порог.
         expect(rtToggleGroupNextFolded(520, 343, 'row', true, false, null)).toBe(true);
         // Свёрнутая заняла всё место (600), но разворачивается лишь от 520 + запас, а не от 520.
@@ -150,7 +150,7 @@ describe('RtToggleButtonGroupComponent — сворачивание', (): void =
         expect(rtToggleGroupNextFolded(520, 400, 'wrap', true, true, 520)).toBe(false);
     });
 
-    it('SC-UKV-1499 — размер, который изменило само сворачивание, группу не разворачивает', (): void => {
+    it('SC-UKV-1621 — размер, который изменило само сворачивание, группу не разворачивает', (): void => {
         const callbacks: Array<() => void> = [];
         Reflect.set(
             globalThis,

@@ -45,7 +45,7 @@ describe('Нижняя шторка поповера — токен, фокус 
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1462: токен RT_POPOVER_SHEET со значением false оставляет панель у триггера на телефоне', (): void => {
+    it('SC-UKV-1585: токен RT_POPOVER_SHEET со значением false оставляет панель у триггера на телефоне', (): void => {
         const fixture: ComponentFixture<SheetGuardsHostComponent> = setup([{ provide: RT_POPOVER_SHEET, useValue: false }]);
 
         trigger(fixture).click();
@@ -55,7 +55,7 @@ describe('Нижняя шторка поповера — токен, фокус 
         expect(document.querySelector('[qa-dataid="guards-inner"]')).not.toBeNull();
     });
 
-    it('SC-UKV-1462: без токена на телефоне панель открывается в шторке', (): void => {
+    it('SC-UKV-1585: без токена на телефоне панель открывается в шторке', (): void => {
         const fixture: ComponentFixture<SheetGuardsHostComponent> = setup();
 
         trigger(fixture).click();
@@ -64,7 +64,7 @@ describe('Нижняя шторка поповера — токен, фокус 
         expect(document.querySelector('.rt-popover-sheet [qa-dataid="guards-inner"]')).not.toBeNull();
     });
 
-    it('SC-UKV-1465: закрытие шторки возвращает фокус триггеру, если он был внутри шторки', (): void => {
+    it('SC-UKV-1588: закрытие шторки возвращает фокус триггеру, если он был внутри шторки', (): void => {
         const fixture: ComponentFixture<SheetGuardsHostComponent> = setup();
         trigger(fixture).click();
         settle(fixture);
@@ -76,7 +76,7 @@ describe('Нижняя шторка поповера — токен, фокус 
         expect(document.activeElement).toBe(trigger(fixture));
     });
 
-    it('SC-UKV-1465: закрытие шторки не крадёт фокус, если он был в другом месте', (): void => {
+    it('SC-UKV-1588: закрытие шторки не крадёт фокус, если он был в другом месте', (): void => {
         const fixture: ComponentFixture<SheetGuardsHostComponent> = setup();
         trigger(fixture).click();
         settle(fixture);
@@ -91,7 +91,7 @@ describe('Нижняя шторка поповера — токен, фокус 
         other.remove();
     });
 
-    it('SC-UKV-1468: шторка уезжает вниз и снимается по окончании перехода', (): void => {
+    it('SC-UKV-1591: шторка уезжает вниз и снимается по окончании перехода', (): void => {
         const real: typeof getComputedStyle = window.getComputedStyle.bind(window);
         jest.spyOn(window, 'getComputedStyle').mockImplementation((element: Element): CSSStyleDeclaration => {
             const style: CSSStyleDeclaration = real(element);
@@ -121,7 +121,7 @@ describe('Нижняя шторка поповера — токен, фокус 
         expect(document.querySelector('.rt-popover-sheet')).toBeNull();
     });
 
-    it('SC-UKV-1468: без события перехода шторку снимает страховочный таймер по длительности перехода', (): void => {
+    it('SC-UKV-1591: без события перехода шторку снимает страховочный таймер по длительности перехода', (): void => {
         jest.useFakeTimers();
         const real: typeof getComputedStyle = window.getComputedStyle.bind(window);
         jest.spyOn(window, 'getComputedStyle').mockImplementation((element: Element): CSSStyleDeclaration => {

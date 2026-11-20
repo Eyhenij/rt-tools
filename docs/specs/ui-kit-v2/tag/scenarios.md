@@ -197,3 +197,20 @@ Then «Моск» and «Цен» are drawn as matched parts and the rest of the 
 empty `highlight` no part is marked
 
 Covered by the component test of `rt-tag`.
+
+## The gap of the small size and the turning icon
+
+### SC-UKV-1500 — the small tag keeps 4 between all its parts
+
+Given an `rt-tag` of the size `sm` with a start icon, an end icon and the cross
+When it is drawn
+Then the gap between each two neighbouring parts is 4
+
+Not covered: it cannot be closed by a test with an identifier — the gap comes from the styles of
+the tag. Held by the measurement of the showcase against the mockup and by the tag snapshots.
+
+### SC-UKV-1506 — the tag turns its start icon on request
+
+Given an `rt-tag` with the `spinner` start icon and the turning option on
+When it is drawn
+Then its start icon carries the turning of `rt-icon`, and without the option it does not

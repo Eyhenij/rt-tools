@@ -54,7 +54,7 @@ describe('Мультиселект в нижней шторке — замеча
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1496 — порог ширины, пересечённый при открытой шторке, не убирает из неё подвал', (): void => {
+    it('SC-UKV-1618 — порог ширины, пересечённый при открытой шторке, не убирает из неё подвал', (): void => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setup(true, ['msk']);
         openPanel(fixture);
         expect(document.querySelector('[qa-dataid="multiselect-sheet-footer"]')).not.toBeNull();
@@ -65,7 +65,7 @@ describe('Мультиселект в нижней шторке — замеча
         expect(document.querySelector('[qa-dataid="multiselect-sheet-footer"]')).not.toBeNull();
     });
 
-    it('SC-UKV-1496 — порог ширины, пересечённый при открытой панели у поля, не добавляет в неё подвал шторки', (): void => {
+    it('SC-UKV-1618 — порог ширины, пересечённый при открытой панели у поля, не добавляет в неё подвал шторки', (): void => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setup(false, ['msk']);
         openPanel(fixture);
         expect(document.querySelector('[qa-dataid="multiselect-sheet-footer"]')).toBeNull();
@@ -76,7 +76,7 @@ describe('Мультиселект в нижней шторке — замеча
         expect(document.querySelector('[qa-dataid="multiselect-sheet-footer"]')).toBeNull();
     });
 
-    it('SC-UKV-1504 — «Выбрано: N» считает только значения среди опций, отключённые тоже', (): void => {
+    it('SC-UKV-1626 — «Выбрано: N» считает только значения среди опций, отключённые тоже', (): void => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setup(true, ['msk', 'msq', 'нет-такого']);
 
         openPanel(fixture);

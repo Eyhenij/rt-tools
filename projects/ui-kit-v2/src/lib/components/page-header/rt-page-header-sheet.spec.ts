@@ -95,7 +95,7 @@ describe('RtPageHeaderComponent — нижняя шторка', (): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1444: на телефоне касание имени открывает меню профиля в нижней шторке с именем в заголовке', (): void => {
+    it('SC-UKV-1567: на телефоне касание имени открывает меню профиля в нижней шторке с именем в заголовке', (): void => {
         const fixture: ComponentFixture<PageHeaderSheetHostComponent> = setup();
 
         pointerEnter(userButton(), 'touch');
@@ -107,7 +107,7 @@ describe('RtPageHeaderComponent — нижняя шторка', (): void => {
         expect(document.querySelector('.rt-popover-panel')).toBeNull();
     });
 
-    it('SC-UKV-1445: наведение мышью шторку не открывает, а уход курсора открытую шторку не закрывает', (): void => {
+    it('SC-UKV-1568: наведение мышью шторку не открывает, а уход курсора открытую шторку не закрывает', (): void => {
         jest.useFakeTimers();
         const fixture: ComponentFixture<PageHeaderSheetHostComponent> = setup();
 
@@ -124,7 +124,7 @@ describe('RtPageHeaderComponent — нижняя шторка', (): void => {
 
         expect(document.querySelector('.rt-popover-sheet [qa-dataid="host-user-menu"]')).not.toBeNull();
     });
-    it('SC-UKV-1469: на телефоне бургер открывает навигацию в нижней шторке с заголовком меню', (): void => {
+    it('SC-UKV-1592: на телефоне бургер открывает навигацию в нижней шторке с заголовком меню', (): void => {
         const fixture: ComponentFixture<PageHeaderSheetHostComponent> = setup();
         settle(fixture);
 
@@ -136,7 +136,7 @@ describe('RtPageHeaderComponent — нижняя шторка', (): void => {
         expect(document.querySelector('.rt-popover-panel')).toBeNull();
     });
 
-    it('SC-UKV-1492: на телефоне с sheet=false меню профиля в рейке открывается у кнопки, шторки нет', (): void => {
+    it('SC-UKV-1614: на телефоне с sheet=false меню профиля в рейке открывается у кнопки, шторки нет', (): void => {
         const fixture: ComponentFixture<PageHeaderRailSheetHostComponent> = createRtFixture(
             PageHeaderRailSheetHostComponent,
             {},

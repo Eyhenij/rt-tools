@@ -122,6 +122,17 @@ and a lib nothing points at is named together with the alias the formula would g
 
 Covered: `projects/agent-kit/src/lib/commands.spec.ts`.
 
+### SC-AK-1598 — a lib runs its tests by its own vitest config or by the Angular builder
+
+Given a lib without `vitest.config.mts` When the lib audit judges it Then the lib is accepted only
+if `project.json` declares a `test` target on the executor `@angular/build:unit-test`,
+`options.tsConfig` names a file that exists on disk, and the lib has its own `tsconfig.spec.json`.
+A lib with neither form, with a target on another executor, without `options.tsConfig`, with a
+`tsConfig` that points at nothing, or without its own `tsconfig.spec.json` is named, and the refusal
+names both accepted forms. A lib that has both forms is no divergence.
+
+Covered: `projects/agent-kit/tests/checks-lib-layers.test.sh`.
+
 ### SC-AK-124 — a refusal line without a resource in the catalogue is named by the same warning
 
 Given the refusal holds a resource that is not in the set of the package at all When the layout runs

@@ -379,4 +379,16 @@ export const darkLayout = [
     {
         name: `--rt-color-skeleton-wave`,
     },
+    {
+        lead: `    /* Chart — серии на графите: свои ступени тех же тонов, светлее и контрастнее к поверхности. */`,
+        space: true,
+        name: `--rt-color-chart-series-1`,
+    },
+    { name: `--rt-color-chart-series-2` },
+    { name: `--rt-color-chart-series-3` },
+    { name: `--rt-color-chart-series-4` },
+    { name: `--rt-color-chart-series-5` },
+    { name: `--rt-color-chart-series-6` },
+    { name: `--rt-color-chart-series-7` },
+    { name: `--rt-color-chart-series-8` },
 ];

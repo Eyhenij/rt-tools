@@ -98,21 +98,27 @@
             overflow-x: auto;
         }
 
+        /* Таблица в том же виде, что блок таблицы ответа: без предела высоты и без закреплённой шапки. */
         &__table {
-            width: 100%;
-            border-collapse: collapse;
+            @include kv.chat-table;
         }
 
         &__head-cell,
         &__cell {
-            padding: var(--rt-space-2xs) var(--rt-space-sm);
-            border: var(--rt-markdown-text-border-width) solid var(--rt-color-border-default);
-            text-align: left;
+            @include kv.chat-table-cell;
+
+            /* Края по строке-разделителю: `--:` к концу, `:-:` по центру; число здесь не узнаётся. */
+            &--end {
+                text-align: end;
+            }
+
+            &--center {
+                text-align: center;
+            }
         }
 
         &__head-cell {
-            color: var(--rt-color-text-muted);
-            font-weight: var(--rt-font-weight-semibold);
+            @include kv.chat-table-head-cell;
         }
 
         &__strong {

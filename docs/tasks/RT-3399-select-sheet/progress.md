@@ -4,8 +4,15 @@
 
 - **State:** `этап-идёт`
 - **Stage:** 4 из 4 — Showcase; both review rounds done
-- **Next step:** the closing — merge the base in, the closing texts, take the folder apart, the
-  push set (the sheet and workspace snapshots are re-taken) and the draft PR.
+- **Next step:** the closing texts, take the folder apart, the push set (the sheet and workspace
+  snapshots are re-taken) and the draft PR.
+- **Main merged in (20.11), 183 commits.** Conflicts: the assignments table — main's side whole;
+  the subdomain table of `docs/specs/ui-kit-v2/spec.md` — main's table with this branch's sheet row.
+  Main had taken SC-UKV-1385…1389 and 1436…1505 for its own scenarios, so the branch's sheet block
+  (those numbers and 1486) moved in order to SC-UKV-1554…1627 — only in lines the branch added: the
+  sheet scenarios and 20 spec files' titles. The kit's scenario index got the sheet row it lacked;
+  the input scenarios name the sample addresses in « » instead of backticks. `check:specs`,
+  `check:docs`, `check:dupes`, `check:styles` green.
 - **The showcase of `prefix` and `suffix` approved:** «Approve showcase» (20.11).
 - **The hint at the field label joined (20.11), «проверь и добавь в текущий тикет»:** confirmed
   live on 6017 — `rt-field__help-popover` has a transparent background, padding 0 and no shadow,
@@ -198,7 +205,7 @@ Stage 1 is closed: every frame of the set is approved. Stage 2 begins.
 ### 3. Code and unit tests
 
 1. [x] `rt-select`: the narrow sign, the sheet in the template, the switch-off input, the choice closes the sheet. — the sheet mode lives in `RtPopoverDirective` (`rt-popover-sheet.helper.ts` opens it), the `sheet` input on the select, the field pushes its label as the title.
-2. [x] `rt-multiselect`: the same; the sheet stays open on a choice. — plus the footer «Выбрано: N · Сбросить · Готово» by the mockup 6068:1250, scenarios SC-UKV-1436…1438, the spec 11 of 11.
+2. [x] `rt-multiselect`: the same; the sheet stays open on a choice. — plus the footer «Выбрано: N · Сбросить · Готово» by the mockup 6068:1250, scenarios SC-UKV-1559…1438, the spec 11 of 11.
 3. [x] Unit tests by the scenarios of stage 2. — `rt-select-sheet.spec.ts`, 8 of 8; the whole kit set, 3742 tests, green after the stub in `rt-filter-control` got `viewportNarrow`.
 
 ### Stage revision — the date picker and the icons

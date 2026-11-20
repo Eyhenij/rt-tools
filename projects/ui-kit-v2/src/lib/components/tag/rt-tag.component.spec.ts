@@ -172,6 +172,15 @@ describe('RtTagComponent', (): void => {
             expect(el(fixture, '.rt-tag__icon')).not.toBeNull();
             expect(el(fixture, '.rt-tag__icon-end')).not.toBeNull();
         });
+
+        it('SC-UKV-1506 — префикс-иконка крутится по входу, без него стоит, суффикс не крутится', (): void => {
+            const still: ComponentFixture<RtTagComponent> = setup({ icon: 'spinner', iconEnd: 'ico-close' });
+            const turning: ComponentFixture<RtTagComponent> = setup({ icon: 'spinner', iconEnd: 'ico-close', iconSpin: true });
+
+            expect(classesOf(el(still, '.rt-tag__icon'))).not.toContain('rt-icon--spin');
+            expect(classesOf(el(turning, '.rt-tag__icon'))).toContain('rt-icon--spin');
+            expect(classesOf(el(turning, '.rt-tag__icon-end'))).not.toContain('rt-icon--spin');
+        });
     });
 
     describe('крестик', (): void => {

@@ -69,7 +69,7 @@ describe('Нижняя шторка поповера — замечания ре
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1497 — открытие шторки, пока прежняя ещё уезжает, снимает прежнюю сразу', (): void => {
+    it('SC-UKV-1619 — открытие шторки, пока прежняя ещё уезжает, снимает прежнюю сразу', (): void => {
         mockDuration((): string => '0.2s');
         const fixture: ComponentFixture<ReviewHostComponent> = setup();
         host(fixture).click();
@@ -88,7 +88,7 @@ describe('Нижняя шторка поповера — замечания ре
         expect(document.querySelectorAll('.rt-bottom-sheet--open').length).toBe(1);
     });
 
-    it('SC-UKV-1498 — фокус из закрытой шторки возвращается на первый фокусируемый узел в host без tabindex', (): void => {
+    it('SC-UKV-1620 — фокус из закрытой шторки возвращается на первый фокусируемый узел в host без tabindex', (): void => {
         const fixture: ComponentFixture<ReviewHostComponent> = setup();
         host(fixture).click();
         settle(fixture);
@@ -100,7 +100,7 @@ describe('Нижняя шторка поповера — замечания ре
         expect(document.activeElement).toBe((fixture.nativeElement as HTMLElement).querySelector('[qa-dataid="review-inner-button"]'));
     });
 
-    it('SC-UKV-1498 — цель возврата фокуса: фокусируемый host — он сам, иначе первый фокусируемый узел, иначе host', (): void => {
+    it('SC-UKV-1620 — цель возврата фокуса: фокусируемый host — он сам, иначе первый фокусируемый узел, иначе host', (): void => {
         const focusable: HTMLElement = document.createElement('button');
         const wrapper: HTMLElement = document.createElement('div');
         const inner: HTMLElement = document.createElement('input');
@@ -112,7 +112,7 @@ describe('Нижняя шторка поповера — замечания ре
         expect(rtPopoverSheetFocusTarget(empty)).toBe(empty);
     });
 
-    it('SC-UKV-1500 — шторка, закрытая сдвигом вниз, выезжает: длительность читается после снятия класса жеста', (): void => {
+    it('SC-UKV-1622 — шторка, закрытая сдвигом вниз, выезжает: длительность читается после снятия класса жеста', (): void => {
         // Пока на панели класс жеста, переход выключен и длительность нулевая — как в браузере.
         mockDuration((panel: Element): string => (panel.classList.contains('rt-bottom-sheet__panel--dragging') ? '0s' : '0.2s'));
         const fixture: ComponentFixture<ReviewHostComponent> = setup();
@@ -138,7 +138,7 @@ describe('Нижняя шторка поповера — замечания ре
         expect(document.querySelector('.rt-popover-sheet')).toBeNull();
     });
 
-    it('SC-UKV-1501 — у диалога шторки есть имя: aria-labelledby ведёт на заголовок', (): void => {
+    it('SC-UKV-1623 — у диалога шторки есть имя: aria-labelledby ведёт на заголовок', (): void => {
         const fixture: ComponentFixture<ReviewHostComponent> = setup();
         host(fixture).click();
         settle(fixture);
@@ -149,7 +149,7 @@ describe('Нижняя шторка поповера — замечания ре
         expect(document.getElementById(labelledBy as string)?.textContent?.trim()).toBe('Выбор');
     });
 
-    it('SC-UKV-1505 — классы rtPopoverPanelClass ставятся на коробку оверлея шторки', (): void => {
+    it('SC-UKV-1627 — классы rtPopoverPanelClass ставятся на коробку оверлея шторки', (): void => {
         const fixture: ComponentFixture<ReviewHostComponent> = setup();
         host(fixture).click();
         settle(fixture);
@@ -159,7 +159,7 @@ describe('Нижняя шторка поповера — замечания ре
         expect(pane?.classList).toContain('other-hook');
     });
 
-    it('SC-UKV-1493 — событие «шторка открыта» приходит, когда шторка уже не inert', (): void => {
+    it('SC-UKV-1615 — событие «шторка открыта» приходит, когда шторка уже не inert', (): void => {
         const fixture: ComponentFixture<ReviewHostComponent> = setup();
         let inertWhenOpened: boolean | null = null;
         const focus: jest.SpyInstance = jest.spyOn(HTMLElement.prototype, 'focus').mockImplementation(function (this: HTMLElement): void {

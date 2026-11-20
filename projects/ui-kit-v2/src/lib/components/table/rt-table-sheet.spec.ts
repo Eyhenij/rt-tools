@@ -69,7 +69,7 @@ describe('RtTableComponent — нижняя шторка', (): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1491 — на телефоне с sheet=false панель вида сравнения открывается у кнопки, шторки нет', (): void => {
+    it('SC-UKV-1613 — на телефоне с sheet=false панель вида сравнения открывается у кнопки, шторки нет', (): void => {
         const fixture: ComponentFixture<TableSheetHostComponent> = createRtFixture(
             TableSheetHostComponent,
             {},

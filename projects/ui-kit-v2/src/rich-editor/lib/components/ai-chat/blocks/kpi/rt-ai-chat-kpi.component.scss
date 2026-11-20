@@ -1,0 +1,51 @@
+@layer rt-kit.components {
+    /* rt-ai-chat-kpi — блок KPI ответа чата. ViewEncapsulation.None.
+       Колонки задаёт ширина самого блока, а не режим чата: хост — контейнер запросов по ширине,
+       сетка внутри него. Высота хоста идёт от карточек, поэтому запрос — только по ширине. */
+
+    .rt-ai-chat-kpi {
+        --rt-ai-chat-kpi-card-border-width: var(--rt-border-width-thin);
+        --rt-ai-chat-kpi-card-radius: calc(var(--rt-radius-md) + var(--rt-radius-sm));
+
+        display: block;
+        min-width: 0;
+        container-type: inline-size;
+
+        &__grid {
+            display: grid;
+            padding: 0;
+            margin: 0;
+            gap: var(--rt-space-2);
+            grid-template-columns: minmax(0, 1fr);
+            list-style: none;
+        }
+
+        /* Рамку рисует блок: плитка своей рамки не рисует. Ряд выравнивает карточки по высоте. */
+        &__card {
+            display: flex;
+            min-width: 0;
+            flex-direction: column;
+            padding: calc(var(--rt-space-2) + var(--rt-space-1));
+            border: var(--rt-ai-chat-kpi-card-border-width) solid var(--rt-color-border-default);
+            border-radius: var(--rt-ai-chat-kpi-card-radius);
+            background: var(--rt-color-bg-surface);
+
+            rt-stat-tile {
+                min-width: 0;
+                flex: 1 1 auto;
+            }
+        }
+
+        @container (min-width: 328px) {
+            &__grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @container (min-width: 664px) {
+            &__grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+    }
+}

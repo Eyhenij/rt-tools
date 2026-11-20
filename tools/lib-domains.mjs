@@ -1,4 +1,4 @@
-// rt-kit v0.37.0 · checks/lib-domains.mjs · 2eee8034c9a9 · правится надстройкой, не здесь
+// rt-kit v0.37.1 · checks/lib-domains.mjs · ae4533fdd80d · правится надстройкой, не здесь
 /**
  * The domain grid: which directories count as domains, which layers each of their forms is made of
  * and which libs lie in them. From here also come the libs that ended up outside the grid and the
@@ -197,7 +197,7 @@ function collectStrayLibs(knownLibs) {
  * layers by their make-up — a domain is one lib — but everything else is checked on a par with
  * the domain grid. Before the narrowing, the exception on this root took off from them the
  * make-up of the files, the tag and the alias too: a new lib was started without
- * `vitest.config.mts`, and `nx test` silently ran not a single test over it.
+ * a test runner, and `nx test` silently ran not a single test over it.
  */
 function collectFlatLibs() {
     return [...(allowlist.flatLibRoots?.keys() ?? [])]

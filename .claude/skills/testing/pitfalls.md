@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · pitfalls/testing.md · 7cc49c694034 · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.1 · pitfalls/testing.md · e8c75be98230 · правится надстройкой, не здесь -->
 # Verification — cold part
 
 Pitfalls: traps already stepped on. Loaded not with the rule but on demand — an ordinary
@@ -15,8 +15,9 @@ The rule is `testing`; the articles that hold the law stand there.
   decision was written for never fired once. The input shape is taken from the boundary where
   the decision is called — the procedure, the service, the handler — and checked against it, not
   invented next to the test.
-- **A green `nx test <project>` does not mean a single file was executed.** A lib without its own
-  `vitest.config.mts` runs nothing — that is how the tests of one domain never ran once.
+- **A green `nx test <project>` does not mean a single file was executed.** A lib with neither
+  its own `vitest.config.mts` nor a `test` target on the Angular builder runs nothing — that is
+  how the tests of one domain never ran once.
   A lib with a config but without a single `*.spec.ts` passes green because of
   `passWithNoTests: true`, which usually stands in every config of the tree, and by eye the two
   cases are indistinguishable: in both the run succeeds. The share of libs without a single test
@@ -24,7 +25,7 @@ The rule is `testing`; the articles that hold the law stand there.
   two thirds. Before an edit in an unfamiliar lib, check whether it has at least one
   `*.spec.ts`; if not, the first one is created by that same edit, not postponed: there is
   nothing to postpone from, the debt is already accumulated. The count:
-  `for d in $(find libs -name vitest.config.mts -exec dirname {} \;); do
+  `for d in $(find libs -name project.json -exec dirname {} \;); do
   [ -z "$(find "$d" -name '*.spec.ts')" ] && echo "$d"; done | wc -l`.
 - **A green coverage summary does not mean the tests pass.** The audit reads test titles and
   matches them to the spec's scenarios; whether a test executes and how it ends, it does not know

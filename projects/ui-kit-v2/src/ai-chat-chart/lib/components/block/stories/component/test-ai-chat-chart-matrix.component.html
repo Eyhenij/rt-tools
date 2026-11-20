@@ -1,0 +1,71 @@
+<ng-template #cases let-items>
+    <app-story-row slotWidth="386px" [items]="items" [itemLabel]="caseLabel">
+        <ng-template let-c><rt-ai-chat-chart style="width: 386px" [block]="c.block" /></ng-template>
+    </app-story-row>
+</ng-template>
+
+@switch (part) {
+    @case ('kinds') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: kinds }" />
+    }
+    @case ('states') {
+        <ng-container *ngTemplateOutlet="cases; context: { $implicit: states }" />
+    }
+    @case ('edges') {
+        <app-story-themes>
+            <ng-template>
+                <app-story-row slotWidth="328px" [items]="edges" [itemLabel]="caseLabel">
+                    <ng-template let-c><rt-ai-chat-chart style="width: 328px" [block]="c.block" /></ng-template>
+                </app-story-row>
+            </ng-template>
+        </app-story-themes>
+    }
+    @case ('widths') {
+        <app-story-row [items]="widths" [itemLabel]="widthLabel">
+            <ng-template let-w>
+                <rt-ai-chat-chart [style.width]="w" [block]="line.block" />
+            </ng-template>
+        </app-story-row>
+    }
+    @case ('answer') {
+        <div data-story-root style="width: 420px; height: 844px">
+            <rt-ai-chat subtitle="Отвечает по данным организации" [messages]="answer" />
+        </div>
+    }
+    @case ('fullScreen') {
+        <div data-story-root style="width: 386px">
+            <rt-ai-chat-chart data-story-trigger style="width: 386px" [block]="line.block" />
+        </div>
+    }
+    @case ('presets') {
+        <app-story-presets caption="Блок графика в обоих наборах">
+            <ng-template>
+                <ng-container *ngTemplateOutlet="cases; context: { $implicit: kinds.slice(0, 3) }" />
+            </ng-template>
+        </app-story-presets>
+    }
+    @case ('data') {
+        <app-story-themes>
+            <ng-template>
+                <ng-container *ngTemplateOutlet="cases; context: { $implicit: data }" />
+            </ng-template>
+        </app-story-themes>
+    }
+    @case ('dataWidths') {
+        <app-story-row [items]="dataWidths" [itemLabel]="caseLabel">
+            <ng-template let-c><rt-ai-chat-chart [style.width]="c.width" [block]="c.block" /></ng-template>
+        </app-story-row>
+    }
+    @case ('dataLong') {
+        <app-story-row slotWidth="386px" [items]="[dataLong]" [itemLabel]="caseLabel">
+            <ng-template let-c><rt-ai-chat-chart style="width: 386px" [block]="c.block" /></ng-template>
+        </app-story-row>
+    }
+    @case ('themes') {
+        <app-story-themes>
+            <ng-template>
+                <ng-container *ngTemplateOutlet="cases; context: { $implicit: kinds }" />
+            </ng-template>
+        </app-story-themes>
+    }
+}

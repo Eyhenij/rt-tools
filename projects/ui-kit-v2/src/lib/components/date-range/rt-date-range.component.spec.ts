@@ -200,7 +200,7 @@ describe('RtDateRangeComponent', (): void => {
             expect(popup()).toBeNull();
         });
 
-        it('SC-UKV-1473 — на узком экране с sheet=false панель открывается поповером у поля, шторки нет', (): void => {
+        it('SC-UKV-1596 — на узком экране с sheet=false панель открывается поповером у поля, шторки нет', (): void => {
             const fixture: ComponentFixture<RtDateRangeComponent> = createRtFixture(
                 RtDateRangeComponent,
                 { sheet: false },
@@ -214,7 +214,7 @@ describe('RtDateRangeComponent', (): void => {
             expect(popup()).not.toBeNull();
         });
 
-        it('SC-UKV-1490 — токен RT_POPOVER_SHEET со значением false на телефоне оставляет поповер у поля, шторки нет', (): void => {
+        it('SC-UKV-1612 — токен RT_POPOVER_SHEET со значением false на телефоне оставляет поповер у поля, шторки нет', (): void => {
             const fixture: ComponentFixture<RtDateRangeComponent> = createRtFixture(
                 RtDateRangeComponent,
                 {},

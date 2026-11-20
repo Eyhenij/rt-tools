@@ -55,7 +55,7 @@ describe('Меню «Ещё» вкладок в нижней шторке', (): 
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1470: на телефоне «Ещё» открывает перечень вкладок в нижней шторке с подписью «Ещё»', (): void => {
+    it('SC-UKV-1593: на телефоне «Ещё» открывает перечень вкладок в нижней шторке с подписью «Ещё»', (): void => {
         stubWidths();
         const providers: Provider[] = [{ provide: BreakpointsService, useValue: new PhoneBreakpointsStub() }];
         const fixture: ComponentFixture<TabsMoreSheetHostComponent> = createRtFixture(TabsMoreSheetHostComponent, {}, { providers });

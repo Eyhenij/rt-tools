@@ -97,7 +97,7 @@ describe('Мультиселект с переключателями', (): void 
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1456 — поле с переключателями пишет сводку выбора вместо чипов', (): void => {
+    it('SC-UKV-1579 — поле с переключателями пишет сводку выбора вместо чипов', (): void => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setup(false, ALL);
         expect(summaryText(fixture)).toBe('All');
         expect(qa(fixture, 'multiselect-chip')).toBeNull();
@@ -119,7 +119,7 @@ describe('Мультиселект с переключателями', (): void 
         expect(rtMultiselectSummary(ALL, ['zzz']).state).toBe('none');
     });
 
-    it('SC-UKV-1457 — строка с переключателем меняет своё значение и оставляет панель открытой', async (): Promise<void> => {
+    it('SC-UKV-1580 — строка с переключателем меняет своё значение и оставляет панель открытой', async (): Promise<void> => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setup(false, ['home']);
         let chosen: ReadonlyArray<string> = [];
         fixture.componentInstance.registerOnChange((value: ReadonlyArray<string>): void => {
@@ -138,7 +138,7 @@ describe('Мультиселект с переключателями', (): void 
         expect(document.querySelector('[qa-dataid="multiselect-panel"]')?.classList.contains('rt-multiselect__panel--toggles')).toBe(true);
     });
 
-    it('SC-UKV-1458 — «Показать все» включает всё, а при включённом всём снимает', async (): Promise<void> => {
+    it('SC-UKV-1581 — «Показать все» включает всё, а при включённом всём снимает', async (): Promise<void> => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setup(false, ['food', 'home', 'repair']);
         let chosen: ReadonlyArray<string> = [];
         fixture.componentInstance.registerOnChange((value: ReadonlyArray<string>): void => {
@@ -158,7 +158,7 @@ describe('Мультиселект с переключателями', (): void 
         expect(isOpen()).toBe(true);
     });
 
-    it('SC-UKV-1459 — свои переключатели приложения стоят над чертой, значения — под ней', (): void => {
+    it('SC-UKV-1582 — свои переключатели приложения стоят над чертой, значения — под ней', (): void => {
         const fixture: ComponentFixture<ExtraHostComponent> = createRtFixture(ExtraHostComponent, {}, { providers: providersFor(false) });
         press(fixture, 'multiselect-trigger');
 
@@ -179,7 +179,7 @@ describe('Мультиселект с переключателями', (): void 
         expect(list.querySelectorAll('[qa-dataid="multiselect-option"]').length).toBe(5);
     });
 
-    it('SC-UKV-1460 — в шторке у поля с переключателями нет подвала', (): void => {
+    it('SC-UKV-1583 — в шторке у поля с переключателями нет подвала', (): void => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setup(true, ['food']);
 
         press(fixture, 'multiselect-trigger');

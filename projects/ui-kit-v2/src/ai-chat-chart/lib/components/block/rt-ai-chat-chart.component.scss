@@ -1,0 +1,111 @@
+@use '../../../../styles/mixins' as kv;
+
+@layer rt-kit.components {
+    .rt-ai-chat-chart {
+        --rt-ai-chat-chart-placeholder-radius: var(--rt-radius-md);
+
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        gap: var(--rt-space-2);
+        line-height: normal; /* по метрикам шрифта, как в макете: шаги кита дают 14 вместо 15 */
+
+        /* Заглушка в размер поля графика, пока аргументы вызова ещё идут. */
+        &__placeholder {
+            display: flex;
+            height: 188px;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--rt-ai-chat-chart-placeholder-radius);
+            background: var(--rt-color-bg-surface-subtle);
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+        }
+
+        &__notice {
+            min-width: 0;
+        }
+
+        /* Заголовок с подзаголовком слева, кнопки у правого края даже без заголовка. */
+        &__title-row {
+            display: flex;
+            min-width: 0;
+            align-items: flex-start;
+            gap: var(--rt-space-2);
+        }
+
+        &__heading {
+            display: flex;
+            min-width: 0;
+            flex: 1;
+            flex-direction: column;
+            gap: var(--rt-space-0-5);
+        }
+
+        /* Длинный заголовок обрезается многоточием, целиком — в подсказке. */
+        &__title {
+            overflow: hidden;
+            color: var(--rt-color-text-primary);
+            font-size: var(--rt-text-sm);
+            font-weight: var(--rt-font-weight-semibold);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &__subtitle {
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            line-height: 15px; /* как у подписей rt-chart: строка макета, шагов кита на 15 нет */
+            overflow-wrap: anywhere;
+        }
+
+        &__actions {
+            display: flex;
+            flex: none;
+            gap: var(--rt-space-1);
+            margin-inline-start: auto;
+        }
+
+        &__plot {
+            min-width: 0;
+        }
+
+        /* Текстовая кнопка под графиком стоит по своей ширине, не во всю строку. */
+        &__toggle {
+            align-self: flex-start;
+        }
+
+        /* Широкая таблица прокручивается внутри блока и не раздвигает ленту. */
+        &__data {
+            min-width: 0;
+            overflow-x: auto;
+        }
+
+        /* Таблица данных в том же виде, что блок таблицы ответа; формат значений остаётся свой. */
+        &__table {
+            @include kv.chat-table;
+        }
+
+        &__row {
+            vertical-align: middle;
+        }
+
+        &__cell {
+            @include kv.chat-table-cell;
+
+            /* Число не переносится и стоит к концу; столбец шириной в самое широкое значение. */
+            &--numeric {
+                @include kv.chat-table-cell-end;
+
+                width: 1%;
+            }
+
+            /* В шапке над числом стоит имя ряда: оно переносится по словам, а не растягивает таблицу. */
+            &--head {
+                @include kv.chat-table-head-cell;
+
+                white-space: normal;
+            }
+        }
+    }
+}

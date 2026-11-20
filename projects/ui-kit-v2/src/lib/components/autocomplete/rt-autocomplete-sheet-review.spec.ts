@@ -46,7 +46,7 @@ describe('Автокомплит в нижней шторке — замечан
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1495 — порог ширины, пересечённый при открытой шторке, не убирает из неё поиск', (): void => {
+    it('SC-UKV-1617 — порог ширины, пересечённый при открытой шторке, не убирает из неё поиск', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
         tapField(fixture);
         expect(sheetSearch()).not.toBeNull();
@@ -58,7 +58,7 @@ describe('Автокомплит в нижней шторке — замечан
         expect(document.querySelectorAll('[qa-dataid="autocomplete-sheet-search"]').length).toBe(1);
     });
 
-    it('SC-UKV-1495 — порог ширины, пересечённый при открытой панели у поля, не добавляет в неё поиск', (): void => {
+    it('SC-UKV-1617 — порог ширины, пересечённый при открытой панели у поля, не добавляет в неё поиск', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
         stub.phone.set(false);
         const field: HTMLInputElement = (fixture.nativeElement as HTMLElement).querySelector(
@@ -75,7 +75,7 @@ describe('Автокомплит в нижней шторке — замечан
         expect(sheetSearch()).toBeNull();
     });
 
-    it('SC-UKV-1502 — поиск шторки несёт роль combobox и связи со списком, как основное поле', (): void => {
+    it('SC-UKV-1624 — поиск шторки несёт роль combobox и связи со списком, как основное поле', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
         tapField(fixture);
         const search: HTMLInputElement = sheetSearch() as HTMLInputElement;
@@ -93,7 +93,7 @@ describe('Автокомплит в нижней шторке — замечан
         expect(search.getAttribute('aria-activedescendant')).toBe(active.id);
     });
 
-    it('SC-UKV-1503 — нажатие на поле на телефоне просит подсказки, только если текст не короче minLength', (): void => {
+    it('SC-UKV-1625 — нажатие на поле на телефоне просит подсказки, только если текст не короче minLength', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup({ minLength: 3 });
         const queries: string[] = [];
         fixture.componentInstance.complete.subscribe((event: IRtAutocomplete.CompleteEvent): void => {
@@ -106,7 +106,7 @@ describe('Автокомплит в нижней шторке — замечан
         expect(document.querySelector('.rt-popover-sheet')).not.toBeNull();
     });
 
-    it('SC-UKV-1503 — текст не короче minLength уходит запросом при нажатии на поле', (): void => {
+    it('SC-UKV-1625 — текст не короче minLength уходит запросом при нажатии на поле', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup({ minLength: 3 });
         fixture.componentInstance.writeValue('Грузия');
         const queries: string[] = [];
@@ -119,7 +119,7 @@ describe('Автокомплит в нижней шторке — замечан
         expect(queries).toEqual(['Грузия']);
     });
 
-    it('SC-UKV-1498 — закрытая шторка возвращает фокус полю, и это не нажатие: запрос не повторяется, шторка не открывается', (): void => {
+    it('SC-UKV-1620 — закрытая шторка возвращает фокус полю, и это не нажатие: запрос не повторяется, шторка не открывается', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
         fixture.componentInstance.writeValue('Грузия');
         const queries: string[] = [];

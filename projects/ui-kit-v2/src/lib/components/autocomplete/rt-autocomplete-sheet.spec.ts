@@ -43,7 +43,7 @@ describe('Автокомплит в нижней шторке', (): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1441 — нажатие на поле открывает шторку с поиском, не дожидаясь набора', (): void => {
+    it('SC-UKV-1564 — нажатие на поле открывает шторку с поиском, не дожидаясь набора', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
 
         tapField(fixture);
@@ -53,7 +53,7 @@ describe('Автокомплит в нижней шторке', (): void => {
         expect(document.querySelectorAll('.rt-popover-sheet [qa-dataid="autocomplete-option"]').length).toBe(3);
     });
 
-    it('SC-UKV-1442 — набор в поиске шторки просит подсказки, а короткий набор шторку не закрывает', (): void => {
+    it('SC-UKV-1565 — набор в поиске шторки просит подсказки, а короткий набор шторку не закрывает', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
         const queries: string[] = [];
         fixture.componentInstance.complete.subscribe((event: IRtAutocomplete.CompleteEvent): void => {
@@ -73,7 +73,7 @@ describe('Автокомплит в нижней шторке', (): void => {
         expect(document.querySelector('.rt-popover-sheet')).not.toBeNull();
     });
 
-    it('SC-UKV-1443 — выбор подсказки в шторке ставит значение и закрывает шторку', (): void => {
+    it('SC-UKV-1566 — выбор подсказки в шторке ставит значение и закрывает шторку', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
         let chosen: string | null = null;
         fixture.componentInstance.registerOnChange((value: string | null): void => {
@@ -88,7 +88,7 @@ describe('Автокомплит в нижней шторке', (): void => {
         expect(document.querySelector('.rt-popover-sheet')).toBeNull();
     });
 
-    it('SC-UKV-1479 — крестик поля в режиме шторки очищает значение и не открывает шторку заново', (): void => {
+    it('SC-UKV-1602 — крестик поля в режиме шторки очищает значение и не открывает шторку заново', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
         let emitted: string | null | undefined;
         fixture.componentInstance.registerOnChange((value: string | null): void => {
@@ -107,7 +107,7 @@ describe('Автокомплит в нижней шторке', (): void => {
         expect(document.querySelector('.rt-popover-sheet')).toBeNull();
     });
 
-    it('SC-UKV-1480 — уход фокуса в поиск шторки не помечает поле тронутым, закрытие шторки помечает', (): void => {
+    it('SC-UKV-1603 — уход фокуса в поиск шторки не помечает поле тронутым, закрытие шторки помечает', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
         const touched: jest.Mock = jest.fn();
         fixture.componentInstance.registerOnTouched(touched);
@@ -123,7 +123,7 @@ describe('Автокомплит в нижней шторке', (): void => {
         expect(touched).toHaveBeenCalled();
     });
 
-    it('SC-UKV-1481 — стрелки и Enter в поиске шторки двигают подсветку и выбирают подсказку', (): void => {
+    it('SC-UKV-1604 — стрелки и Enter в поиске шторки двигают подсветку и выбирают подсказку', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup();
         let chosen: string | null = null;
         fixture.componentInstance.registerOnChange((value: string | null): void => {
@@ -145,7 +145,7 @@ describe('Автокомплит в нижней шторке', (): void => {
         expect(document.querySelector('.rt-popover-sheet')).toBeNull();
     });
 
-    it('SC-UKV-1482 — sheet=false на телефоне: набор открывает панель у поля, шторки и поиска в ней нет', (): void => {
+    it('SC-UKV-1605 — sheet=false на телефоне: набор открывает панель у поля, шторки и поиска в ней нет', (): void => {
         const fixture: ComponentFixture<RtAutocompleteComponent<string>> = setup({ sheet: false });
         const field: HTMLInputElement = (fixture.nativeElement as HTMLElement).querySelector(
             '[qa-dataid="autocomplete-input"]'

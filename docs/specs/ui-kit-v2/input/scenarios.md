@@ -34,7 +34,7 @@ the hints of the three key fields are longer than the fields.
 
 ### SC-UKV-1541 — the prefix stands before the value and does not enter it
 
-Given a field with the prefix `site.ru/team/`
+Given a field with the prefix «site.ru/team/»
 When the person types `my-page`
 Then the prefix stands before the typed text, and the form gets `my-page`
 
@@ -95,6 +95,6 @@ Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input-affixes.spec.ts`.
 
 Given a read-only field with a prefix and a suffix
 When it holds `my-page`, then nothing
-Then it reads `site.ru/team/my-page/`, and a dash when it is empty
+Then it reads «site.ru/team/my-page/», and a dash when it is empty
 
 Covered: `projects/ui-kit-v2/src/lib/components/input/rt-input-affixes.spec.ts`.

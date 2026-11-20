@@ -15,7 +15,7 @@ const DELTA_LABEL: string = 'к прошлой неделе';
 const YEAR_LABEL: string = 'к прошлому году';
 
 /** Какую матрицу рисовать: у каждой оси своя история, и выбирает её этот вход. */
-export type TStatTileMatrixPart = 'delta' | 'baseline' | 'parts' | 'unit' | 'growth' | 'framed' | 'presets' | 'themes';
+export type TStatTileMatrixPart = 'delta' | 'baseline' | 'size' | 'parts' | 'unit' | 'growth' | 'framed' | 'presets' | 'themes';
 
 /** Случай изменения — подпись для ряда и само значение входа. */
 interface IStatTileDeltaCase {
@@ -31,6 +31,14 @@ interface IStatTileRowsCase {
     readonly growthIsWorse: boolean;
     readonly deltaPrimary: IRtStatTile.Delta | null;
     readonly deltaSecondary: IRtStatTile.Delta | null;
+}
+
+/** Случай размера: обычная или компактная плитка, видна ли подпись базы и какой ширины ячейка. */
+interface IStatTileSizeCase {
+    readonly name: string;
+    readonly size: IRtStatTile.Size;
+    readonly captionVisible: boolean;
+    readonly width: number;
 }
 
 /** Случай состава плитки: какие из необязательных частей заполнены. */
@@ -72,6 +80,26 @@ interface IStatTilePartsCase {
                         <app-story-row [items]="baselineCases" [itemLabel]="deltaCaseLabel">
                             <ng-template let-deltaCase>
                                 <rt-stat-tile label="Визиты" value="1 240" [deltaPrimary]="deltaCase.delta" />
+                            </ng-template>
+                        </app-story-row>
+                    </ng-template>
+                </app-story-presets>
+            }
+
+            @case ('size') {
+                <app-story-presets caption="Размер плитки и видимая подпись базы в обоих наборах">
+                    <ng-template>
+                        <app-story-row [items]="sizeCases" [itemLabel]="sizeCaseLabel">
+                            <ng-template let-sizeCase>
+                                <div [style.width.px]="sizeCase.width">
+                                    <rt-stat-tile
+                                        label="Средний чек"
+                                        value="8 400 ₽"
+                                        secondary="за период с 1 по 30 ноября 2026"
+                                        [size]="sizeCase.size"
+                                        [deltaLabelVisible]="sizeCase.captionVisible"
+                                        [deltaPrimary]="sizeDelta" />
+                                </div>
                             </ng-template>
                         </app-story-row>
                     </ng-template>
@@ -218,6 +246,18 @@ export class TestRtStatTileMatrixComponent {
         { name: 'с базой', delta: { percent: 12.5, label: DELTA_LABEL, baseline: '1 100' } },
     ];
 
+    /** Изменение с базой: подпись базы длиннее ячейки 136, так видно, где она переносится, а где режется. */
+    public readonly sizeDelta: IRtStatTile.Delta = { percent: -4, label: 'к тому же месяцу прошлого года', baseline: '8 750 ₽' };
+
+    /** Обычная плитка режет нижние строки, компактная переносит — при 220 и при 136. */
+    public readonly sizeCases: readonly IStatTileSizeCase[] = [
+        { name: 'обычная, 220', size: 'default', captionVisible: false, width: 220 },
+        { name: 'компактная, 220', size: 'compact', captionVisible: false, width: 220 },
+        { name: 'компактная с подписью, 220', size: 'compact', captionVisible: true, width: 220 },
+        { name: 'обычная с подписью, 136', size: 'default', captionVisible: true, width: 136 },
+        { name: 'компактная с подписью, 136', size: 'compact', captionVisible: true, width: 136 },
+    ];
+
     public readonly partsCases: readonly IStatTilePartsCase[] = [
         { name: 'только значение', secondary: null, hint: null, deltaSecondary: null },
         { name: 'подзаголовок', secondary: 'из них 300 новых', hint: null, deltaSecondary: null },
@@ -344,4 +384,6 @@ export class TestRtStatTileMatrixComponent {
     public readonly deltaCaseLabel: (value: IStatTileDeltaCase) => string = (value: IStatTileDeltaCase): string => value.name;
 
     public readonly partsCaseLabel: (value: IStatTilePartsCase) => string = (value: IStatTilePartsCase): string => value.name;
+
+    public readonly sizeCaseLabel: (value: IStatTileSizeCase) => string = (value: IStatTileSizeCase): string => value.name;
 }

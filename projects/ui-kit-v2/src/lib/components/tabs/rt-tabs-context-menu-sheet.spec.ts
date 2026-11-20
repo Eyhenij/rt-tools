@@ -60,7 +60,7 @@ describe('Меню вкладки в нижней шторке', (): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1450 — на телефоне меню вкладки открывается в нижней шторке с названием вкладки', (): void => {
+    it('SC-UKV-1573 — на телефоне меню вкладки открывается в нижней шторке с названием вкладки', (): void => {
         const fixture: ComponentFixture<TabsContextSheetHostComponent> = setup();
 
         longPress(fixture);
@@ -70,7 +70,7 @@ describe('Меню вкладки в нижней шторке', (): void => {
         expect(document.querySelectorAll('[qa-dataid="tabs-context-menu"]').length).toBe(1);
     });
 
-    it('SC-UKV-1451 — пункт меню вкладки в шторке делает своё и закрывает шторку', (): void => {
+    it('SC-UKV-1574 — пункт меню вкладки в шторке делает своё и закрывает шторку', (): void => {
         const fixture: ComponentFixture<TabsContextSheetHostComponent> = setup();
         longPress(fixture);
 
@@ -80,7 +80,7 @@ describe('Меню вкладки в нижней шторке', (): void => {
         expect(fixture.componentInstance.renamed).toBe('a');
         expect(document.querySelector('.rt-popover-sheet')).toBeNull();
     });
-    it('SC-UKV-1471: токен RT_POPOVER_SHEET со значением false оставляет меню вкладки у точки нажатия на телефоне', (): void => {
+    it('SC-UKV-1594: токен RT_POPOVER_SHEET со значением false оставляет меню вкладки у точки нажатия на телефоне', (): void => {
         const fixture: ComponentFixture<TabsContextSheetHostComponent> = setup([{ provide: RT_POPOVER_SHEET, useValue: false }]);
 
         longPress(fixture);
@@ -89,7 +89,7 @@ describe('Меню вкладки в нижней шторке', (): void => {
         expect(document.querySelectorAll('[qa-dataid="tabs-context-menu"]').length).toBe(1);
     });
 
-    it('SC-UKV-1467: порог ширины, пересечённый при открытом в шторке меню вкладки, не рисует вторую панель', (): void => {
+    it('SC-UKV-1590: порог ширины, пересечённый при открытом в шторке меню вкладки, не рисует вторую панель', (): void => {
         const fixture: ComponentFixture<TabsContextSheetHostComponent> = setup();
         longPress(fixture);
 
@@ -100,7 +100,7 @@ describe('Меню вкладки в нижней шторке', (): void => {
         expect(document.querySelector('.rt-popover-sheet [qa-dataid="tabs-context-menu"]')).not.toBeNull();
     });
 
-    it('SC-UKV-1467: в шторке меню вкладки берёт фокус на первый пункт, как панель у точки нажатия', (): void => {
+    it('SC-UKV-1590: в шторке меню вкладки берёт фокус на первый пункт, как панель у точки нажатия', (): void => {
         const fixture: ComponentFixture<TabsContextSheetHostComponent> = setup();
 
         longPress(fixture);
@@ -108,7 +108,7 @@ describe('Меню вкладки в нижней шторке', (): void => {
         expect(document.activeElement).toBe(document.querySelector('.rt-popover-sheet [qa-dataid="tab-menu-rename"]'));
     });
 
-    it('SC-UKV-1494 — фокус на первый пункт меню вкладки встаёт, когда шторка уже не inert', (): void => {
+    it('SC-UKV-1616 — фокус на первый пункт меню вкладки встаёт, когда шторка уже не inert', (): void => {
         const fixture: ComponentFixture<TabsContextSheetHostComponent> = setup();
         const inertAtFocus: Array<boolean | null> = [];
         jest.spyOn(HTMLElement.prototype, 'focus').mockImplementation(function (this: HTMLElement): void {

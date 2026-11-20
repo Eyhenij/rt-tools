@@ -156,14 +156,14 @@ describe('Нижняя шторка у остальных частей набо�
     });
 
     describe.each(PARTS)('$name', (part: ISetPart): void => {
-        it('SC-UKV-1439 — на телефоне панель открывается в шторке', (): void => {
+        it('SC-UKV-1562 — на телефоне панель открывается в шторке', (): void => {
             open(part, true, true);
 
             expect(sheetDrawn()).toBe(true);
             expect(panelBySide()).toBe(false);
         });
 
-        it('SC-UKV-1440 — выключенная шторка оставляет панель у кнопки', (): void => {
+        it('SC-UKV-1563 — выключенная шторка оставляет панель у кнопки', (): void => {
             open(part, true, false);
 
             expect(sheetDrawn()).toBe(false);

@@ -38,7 +38,7 @@ describe('RtMenuComponent — фокус в нижней шторке', (): void
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1493 — фокус на первый пункт встаёт, когда шторка уже открыта и не inert', (): void => {
+    it('SC-UKV-1615 — фокус на первый пункт встаёт, когда шторка уже открыта и не inert', (): void => {
         const providers: Provider[] = [{ provide: BreakpointsService, useValue: new BreakpointsStub() }];
         const fixture: ComponentFixture<MenuSheetFocusHostComponent> = createRtFixture(MenuSheetFocusHostComponent, {}, { providers });
         fixture.detectChanges();

@@ -64,7 +64,7 @@ describe('Мультиселект — «Показать все», «Сброс
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1475 — «Показать все» оставляет отключённые и неизвестные значения и при включении, и при снятии', (): void => {
+    it('SC-UKV-1598 — «Показать все» оставляет отключённые и неизвестные значения и при включении, и при снятии', (): void => {
         const all: ReadonlyArray<string> = ['food', 'repair'];
 
         expect(rtMultiselectKept(all, ['home', 'zzz', 'food'])).toEqual(['home', 'zzz']);
@@ -87,7 +87,7 @@ describe('Мультиселект — «Показать все», «Сброс
         expect([...chosen()].sort()).toEqual(['home', 'zzz']);
     });
 
-    it('SC-UKV-1476 — «Сбросить» в шторке оставляет отключённые значения и гаснет, когда сбрасывать нечего', (): void => {
+    it('SC-UKV-1599 — «Сбросить» в шторке оставляет отключённые значения и гаснет, когда сбрасывать нечего', (): void => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setup('list', ['home', 'food']);
         const chosen: () => ReadonlyArray<string> = listen(fixture);
         const stub: BreakpointsStub = TestBed.inject(BreakpointsService) as unknown as BreakpointsStub;
@@ -106,7 +106,7 @@ describe('Мультиселект — «Показать все», «Сброс
         expect((document.querySelector('[qa-dataid="multiselect-sheet-reset"]') as HTMLButtonElement).disabled).toBe(true);
     });
 
-    it('SC-UKV-1477 — стрелки первым пунктом ведут на «Показать все», Enter переключает, дальше идут строки', (): void => {
+    it('SC-UKV-1600 — стрелки первым пунктом ведут на «Показать все», Enter переключает, дальше идут строки', (): void => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setup('toggles', []);
         const chosen: () => ReadonlyArray<string> = listen(fixture);
 
@@ -128,7 +128,7 @@ describe('Мультиселект — «Показать все», «Сброс
         expect(trigger(fixture).getAttribute('aria-activedescendant')).toBe(showAll.id);
     });
 
-    it('SC-UKV-1478 — панель вида с переключателями без роли не несёт aria-label, список несёт', (): void => {
+    it('SC-UKV-1601 — панель вида с переключателями без роли не несёт aria-label, список несёт', (): void => {
         const fixture: ComponentFixture<RtMultiselectComponent<string>> = setup('toggles', []);
         trigger(fixture).click();
         settle(fixture);

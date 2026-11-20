@@ -5,6 +5,10 @@
         flex-direction: column;
         gap: var(--rt-space-sm);
 
+        &__blocks {
+            min-width: 0;
+        }
+
         &__feedback {
             display: flex;
             gap: var(--rt-space-xs);

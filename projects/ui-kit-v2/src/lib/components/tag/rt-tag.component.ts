@@ -118,6 +118,11 @@ export class RtTagComponent implements OnDestroy {
     /** Префикс-иконка слева от текста. `null` (дефолт) — без иконки. */
     public readonly icon: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
 
+    /** Крутит префикс-иконку, как её крутит `rt-icon`: спиннер у метки ожидания. По умолчанию стоит. */
+    public readonly iconSpin: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
     /** Суффикс-иконка справа от текста (напр. `external-link` у тега-ссылки). */
     public readonly iconEnd: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
 

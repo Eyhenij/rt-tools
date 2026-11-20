@@ -29,6 +29,7 @@
     "[rtWorkspaceCenter]": "маркер проекции содержимого: своей разметки у него нет вовсе. В кадре виден не маркер, а то, как рабочее место разложило содержимое, и это показывает история семейства `workspace`",
     "[rtWorkspaceDesktopOnly]": "маркер, который прячет содержимое на узком экране: своей разметки у него нет. Видно его отсутствием — на узкой ширине помеченное пропадает, и это показывает история семейства `workspace` на кадрах порогов",
     "[rtWorkspaceList]": "маркер проекции содержимого: своей разметки у него нет вовсе. В кадре виден не маркер, а то, как рабочее место разложило содержимое, и это показывает история семейства `workspace`",
+    "ng-template[rtAiChatBlockCell]": "признак типа у шаблона ленты блоков: своей разметки и поведения у него нет вовсе, он только называет тип вида блока. В кадре виден не он, а блоки ленты и ячеек секции, и это показывают истории семейства `ai-chat`",
     "ng-template[rtChatMessageActions]": "маркер проекции содержимого: своей разметки у него нет вовсе. В кадре виден не маркер, а то, как лента переписки разложила содержимое, и это показывает история семейства `chat`",
     "ng-template[rtTableCard]": "маркер проекции содержимого: своей разметки у него нет вовсе. В кадре виден не маркер, а то, как таблица в карточках разложила содержимое, и это показывает история семейства `table`",
     "ng-template[rtTableRowActions]": "маркер проекции содержимого: своей разметки у него нет вовсе. В кадре виден не маркер, а то, как меню строки таблицы разложило содержимое, и это показывает история семейства `table`",
@@ -48,6 +49,7 @@
     "ng-template[rtExpansionPanelContent]": "маркер ленивого тела панели: своей разметки у него нет вовсе. В кадре виден не маркер, а тело, которое панель создала при раскрытии, — это показывают истории семейства `expansion-panel`"
   },
   "shownWithin": {
+    "rt-ai-chat-section": "projects/ui-kit-v2/src/ai-chat-chart/lib/components/block/stories/ai-chat-section-matrix.stories.ts",
     "ng-template[rtAsideEmpty]": "projects/ui-kit-v2/src/lib/components/aside/stories/aside-matrix.stories.ts",
     "ng-template[rtThreadListEmpty]": "projects/ui-kit-v2/src/lib/components/thread-list/stories/thread-list-states.stories.ts",
     "ng-template[rtThreadListError]": "projects/ui-kit-v2/src/lib/components/thread-list/stories/thread-list-states.stories.ts",
@@ -117,6 +119,7 @@
     "ng-template[rtThreadListRowActions]": "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-matrix.stories.ts",
     "rt-ai-chat-answer": "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-matrix.stories.ts",
     "rt-ai-chat-copy": "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-matrix.stories.ts",
+    "rt-ai-chat-blocks": "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-matrix.stories.ts",
     "ng-template[rtAiChatMessageExtra]": "projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-matrix.stories.ts",
     "[rtPageBarFilter]": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header-vertical.stories.ts",
     "[rtPageBarSearch]": "projects/ui-kit-v2/src/lib/components/page-header/stories/page-header-vertical.stories.ts",

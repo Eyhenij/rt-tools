@@ -64,7 +64,7 @@ describe('RtMenuComponent — нижняя шторка', (): void => {
         document.querySelectorAll('.cdk-overlay-container').forEach((node: Element): void => node.remove());
     });
 
-    it('SC-UKV-1446 — на телефоне меню открывается в нижней шторке с подписью кнопки в заголовке', (): void => {
+    it('SC-UKV-1569 — на телефоне меню открывается в нижней шторке с подписью кнопки в заголовке', (): void => {
         const fixture: ComponentFixture<MenuSheetHostComponent> = setup(true);
 
         openMenu(fixture);
@@ -75,7 +75,7 @@ describe('RtMenuComponent — нижняя шторка', (): void => {
         expect(document.querySelectorAll('[qa-dataid="menu-panel"]').length).toBe(1);
     });
 
-    it('SC-UKV-1447 — пункт в шторке делает своё и закрывает шторку', (): void => {
+    it('SC-UKV-1570 — пункт в шторке делает своё и закрывает шторку', (): void => {
         const fixture: ComponentFixture<MenuSheetHostComponent> = setup(true);
         openMenu(fixture);
 
@@ -87,7 +87,7 @@ describe('RtMenuComponent — нижняя шторка', (): void => {
         expect(fixture.componentInstance.opened).toEqual([true, false]);
     });
 
-    it('SC-UKV-1448 — подложка шторки закрывает меню', (): void => {
+    it('SC-UKV-1571 — подложка шторки закрывает меню', (): void => {
         const fixture: ComponentFixture<MenuSheetHostComponent> = setup(true);
         openMenu(fixture);
 
@@ -98,7 +98,7 @@ describe('RtMenuComponent — нижняя шторка', (): void => {
         expect(fixture.componentInstance.opened).toEqual([true, false]);
     });
 
-    it('SC-UKV-1449 — выключенная шторка и широкий экран оставляют меню у кнопки', (): void => {
+    it('SC-UKV-1572 — выключенная шторка и широкий экран оставляют меню у кнопки', (): void => {
         openMenu(setup(true, false));
         expect(sheetPanel()).toBeNull();
         expect(document.querySelector('[qa-dataid="menu-panel"]')).not.toBeNull();
@@ -108,14 +108,14 @@ describe('RtMenuComponent — нижняя шторка', (): void => {
         expect(sheetPanel()).toBeNull();
         expect(document.querySelector('[qa-dataid="menu-panel"]')).not.toBeNull();
     });
-    it('SC-UKV-1463: токен RT_POPOVER_SHEET со значением false оставляет меню у кнопки на телефоне', (): void => {
+    it('SC-UKV-1586: токен RT_POPOVER_SHEET со значением false оставляет меню у кнопки на телефоне', (): void => {
         openMenu(setup(true, true, [{ provide: RT_POPOVER_SHEET, useValue: false }]));
 
         expect(document.querySelector('.rt-popover-sheet')).toBeNull();
         expect(document.querySelector('[qa-dataid="menu-panel"]')).not.toBeNull();
     });
 
-    it('SC-UKV-1464: в шторке фокус встаёт на первый пункт, стрелки ходят по пунктам, Escape закрывает и возвращает фокус кнопке', (): void => {
+    it('SC-UKV-1587: в шторке фокус встаёт на первый пункт, стрелки ходят по пунктам, Escape закрывает и возвращает фокус кнопке', (): void => {
         const fixture: ComponentFixture<MenuSheetHostComponent> = setup(true);
         openMenu(fixture);
         const items: NodeListOf<HTMLElement> = document.querySelectorAll<HTMLElement>('.rt-popover-sheet [role="menuitem"]');
@@ -131,7 +131,7 @@ describe('RtMenuComponent — нижняя шторка', (): void => {
         expect(document.activeElement).toBe((fixture.nativeElement as HTMLElement).querySelector('[qa-dataid="menu-trigger"] button'));
     });
 
-    it('SC-UKV-1464: закрытие подложкой возвращает фокус кнопке меню', (): void => {
+    it('SC-UKV-1587: закрытие подложкой возвращает фокус кнопке меню', (): void => {
         const fixture: ComponentFixture<MenuSheetHostComponent> = setup(true);
         openMenu(fixture);
 
@@ -141,7 +141,7 @@ describe('RtMenuComponent — нижняя шторка', (): void => {
         expect(document.activeElement).toBe((fixture.nativeElement as HTMLElement).querySelector('[qa-dataid="menu-trigger"] button'));
     });
 
-    it('SC-UKV-1466: порог ширины, пересечённый при открытом в шторке меню, не рисует вторую панель у кнопки', (): void => {
+    it('SC-UKV-1589: порог ширины, пересечённый при открытом в шторке меню, не рисует вторую панель у кнопки', (): void => {
         const fixture: ComponentFixture<MenuSheetHostComponent> = setup(true);
         openMenu(fixture);
 
@@ -152,7 +152,7 @@ describe('RtMenuComponent — нижняя шторка', (): void => {
         expect(document.querySelector('.rt-popover-sheet [qa-dataid="menu-panel"]')).not.toBeNull();
     });
 
-    it('SC-UKV-1466: порог ширины, пересечённый при открытом у кнопки меню, не открывает шторку поверх него', (): void => {
+    it('SC-UKV-1589: порог ширины, пересечённый при открытом у кнопки меню, не открывает шторку поверх него', (): void => {
         const fixture: ComponentFixture<MenuSheetHostComponent> = setup(false);
         openMenu(fixture);
 

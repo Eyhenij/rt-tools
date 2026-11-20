@@ -1,0 +1,55 @@
+@layer rt-kit.components {
+    .rt-ai-chat-blocks {
+        --rt-ai-chat-blocks-unsupported-border-width: var(--rt-border-width-thin);
+        --rt-ai-chat-blocks-unsupported-radius: var(--rt-radius-md);
+
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        gap: var(--rt-space-sm);
+
+        &__markdown {
+            min-width: 0;
+        }
+
+        &__notice {
+            min-width: 0;
+        }
+
+        &__table {
+            min-width: 0;
+        }
+
+        &__kpi {
+            min-width: 0;
+        }
+
+        &__link {
+            min-width: 0;
+        }
+
+        /* Секция стоит в 16 от соседей по ленте, а не в 8: ряды внутри неё разделены теми же 16,
+           и секция в 8 от соседа читалась бы с ним как одно. К шагу ленты добавляется ещё шаг —
+           перед секцией и перед блоком после неё; между двумя секциями он добавлен один раз. */
+        &__section {
+            min-width: 0;
+        }
+
+        * + &__section,
+        &__section + :not(&__section) {
+            margin-block-start: var(--rt-space-sm);
+        }
+
+        /* Блок без отрисовщика: пунктирная рамка с именем типа, как пустое место под вложение. */
+        &__unsupported {
+            padding: var(--rt-space-2) var(--rt-space-4);
+            border: var(--rt-ai-chat-blocks-unsupported-border-width) dashed var(--rt-color-border-default);
+            border-radius: var(--rt-ai-chat-blocks-unsupported-radius);
+            background: var(--rt-color-bg-surface-subtle);
+            color: var(--rt-color-text-muted);
+            font-size: var(--rt-text-xs);
+            line-height: var(--rt-leading-snug);
+            overflow-wrap: anywhere;
+        }
+    }
+}

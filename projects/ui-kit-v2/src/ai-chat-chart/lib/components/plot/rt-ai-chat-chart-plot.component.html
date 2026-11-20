@@ -1,0 +1,9 @@
+<ng-container rtBlock="rt-ai-chat-chart-plot">
+    @if (axisNames() && spec().yLabel) {
+        <span rtElem="y-label" qa-dataid="ai-chat-chart-y-label">{{ spec().yLabel }}</span>
+    }
+    <rt-chart rtElem="chart" qa-dataid="ai-chat-chart-chart" [data]="data()" [height]="height()" [label]="label()" />
+    @if (axisNames() && spec().xLabel) {
+        <span rtElem="x-label" qa-dataid="ai-chat-chart-x-label">{{ spec().xLabel }}</span>
+    }
+</ng-container>
