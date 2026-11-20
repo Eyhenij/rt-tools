@@ -7,7 +7,7 @@ Rewritten by every session, not appended to.
 - **State:** `этап-идёт`
 - **Stage:** 3 of 4 — the showcase and the match
 - **Done:** ветка от RT-3340, карточка в работе, назначение копии переписано словом владельца «Бери RT-3341»; разведка, разбор в `grill.md` (вопросы закрыты допущением)
-- **Next step:** слово владельца о плане `plan.md`, затем коммит плана и этап 1
+- **Next step:** слово владельца о витрине (3.3), затем коммит этапа 3 и первый круг ревью
 - **Uncommitted:** `plan.md`, `approvals.md`, правки договорённости и этого файла, `docs/plans/ai-chat-blocks.md`
 - **Waiting for the owner:** одобрение плана
 - **PR:** not open yet; PR RT-3340 #3453 — черновик в `main`, ветка этой задачи стоит на нём
@@ -24,7 +24,26 @@ Rewritten by every session, not appended to.
 - [x] 1.3 the output `askAgain` of `rt-ai-chat` and the binding of `sending`
 - [x] 2.1 the row styles: gap, wrap, the focus ring not clipped, right to left
 - [x] 2.2 the spec next to the chat with SC-UKV-1563…1575, 1578 and 1579 in the titles
-- [>] 3.1 the stories of a partial and an empty interrupted answer, the widths 240…640, right to left, dark, with play steps SC-UKV-1576, 1577, 1580
+- [x] 3.1 the stories of a partial and an empty interrupted answer, the widths 240…640, right to left, dark, with play steps SC-UKV-1576, 1577, 1580
+- [x] 3.2 the match of the showcase with the mockup by numbers and by overlay, hover and focus included, the line «Совпадение» in `approvals.md`
+- [>] 3.3 the owner's approval of the showcase, the line «Витрина» in `approvals.md`
+
+Этап 3: семь историй Organisms/Chat/AiChatInterrupted, шаги `play` шести из них зелёные в
+витрине (у Presets шага нет). Живая проверка нашла три промаха историй, все исправлены. Ящик 30rem
+давал прокрутку ленты при 240, 328 и при ошибке хода, и полоса отнимала 11 px у ответа: ящик
+теперь 40rem, как у соседней матрицы чата. «Копировать» искался по всей ячейке и находил кнопку
+вопроса. Английская ячейка рисовала русские подписи: шаблон через `ngTemplateOutlet` берёт
+инжектор места объявления, поэтому чат поставлен прямо в обёртку. Замер при 240/328/386/640: ответ
+шириной ячейки, строка 12 px высотой 16.2, от строки до ряда 8, ряд 32, «спросить снова» второй с
+отступом 36, лента не раздвинута.
+Сверка с макетом — 21 из 21 числа ячейки «386 · пишет»: строка, ряд, кнопка, наведение (подложка
+0,0,0/0.04), кольцо фокуса 3 px primary 24 %, отключено 0.5, тёмная тема. Сверка нашла расхождение
+копии в Figma: все 77 кнопок рядов кадра стояли на `Icon color = muted` (103), а кит и до этой
+задачи рисует ряд цветом текста (40, в тёмной теме 250). Копия переключена на `current`, кит не
+тронут. Строка хода в копии макета 21 высотой, в витрине 22.9: компонент вне задачи, в сверку не
+взят. Наложение строки и ряда (386×56, кадр витрины снят при 2x и сведён к 1x): разошлось 2.31 %
+пикселей, только по краям букв и иконок, без сдвига. Владелец на вопрос о витрине ответил: «Прогони
+2 цикла ревью сам и сравни с макетами наложением» — наложение снято, круги ревью идут.
 
 Этап 1: typecheck зелёный, спеки `ai-chat` зелёные (1 мин 17 с). У `rt-icon-button` новый вход
 `ariaDescribedby` — у кнопки-иконки не было способа сослаться на поясняющий узел; описания кнопки
@@ -95,9 +114,9 @@ Put together by a hook before the compaction of the context (auto).
 
 ### Where we stand at the minute of the compaction
 
-- **State:** `разбор-закрыт`
-- **Stage:** 0 of 0 — договорённость и макет
-- **Next step:** договорённость `docs/specs/ui-kit-v2/proposed/ai-chat-interrupted/` (пишет spec-writer), макет в Figma
+- **State:** `этап-идёт`
+- **Stage:** 3 of 4 — the showcase and the match
+- **Next step:** слово владельца о плане `plan.md`, затем коммит плана и этап 1
 - **PR:** not open yet; PR RT-3340 #3453 — черновик в `main`, ветка этой задачи стоит на нём
 
 The progress in full — `docs/tasks/RT-3341-ai-chat-interrupted-answer/progress.md`; the plan lies next to it.
@@ -105,15 +124,19 @@ The progress in full — `docs/tasks/RT-3341-ai-chat-interrupted-answer/progress
 ### Uncommitted
 
 ```
- M docs/plans/ai-chat-blocks.md
- M docs/specs/ui-kit-v2/proposed/ai-chat-interrupted/spec.md
- M docs/tasks/RT-3341-ai-chat-interrupted-answer/progress.md
 ?? docs/tasks/RT-3341-ai-chat-interrupted-answer/plan.md
+?? projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/ai-chat-interrupted-matrix.stories.ts
+?? projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/component/ai-chat-interrupted.fixture.ts
+?? projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/component/test-ai-chat-english-labels.component.html
+?? projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/component/test-ai-chat-english-labels.component.ts
+?? projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/component/test-ai-chat-interrupted-matrix.component.html
+?? projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/stories/component/test-ai-chat-interrupted-matrix.component.ts
 ```
 
 ### Commits over the main branch
 
 ```
+97fa6dbf1 feat(rt:ui-kit-v2): прерванный ответ чата — тихая строка и «спросить снова» (RT-3341)
 2fc592e5e docs(rt:ui-kit-v2): разбор и договорённость о прерванном ответе чата (RT-3341)
 cbf9f498f fix(rt:ui-kit-v2): название источника из одних невидимых знаков отбрасывается (RT-3340)
 2020935fd Merge remote-tracking branch 'origin/main' into RT-3340-ai-chat-sources-block
