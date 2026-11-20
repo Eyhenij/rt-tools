@@ -93,7 +93,7 @@ describe('RtAiChatTableComponent', (): void => {
         expect(texts(fixture, 'ai-chat-table-cell')).toEqual(['Вилла', '20', '€4,200', 'Дом', '3', '-€150']);
     });
 
-    it('SC-UKV-1397 — числовые столбцы и их шапка стоят к концу, текстовые к началу', (): void => {
+    it('SC-UKV-1540 — числовые столбцы и их шапка стоят к концу, текстовые к началу', (): void => {
         const { fixture } = setup();
         const head: HTMLElement[] = cells(fixture, 'ai-chat-table-head-cell');
         const body: HTMLElement[] = cells(fixture, 'ai-chat-table-cell');
@@ -110,7 +110,7 @@ describe('RtAiChatTableComponent', (): void => {
         ]);
     });
 
-    it('SC-UKV-1397 — значение числового столбца изолировано и под rtl держит свой порядок, текст — нет', (): void => {
+    it('SC-UKV-1540 — значение числового столбца изолировано и под rtl держит свой порядок, текст — нет', (): void => {
         const { fixture } = setup();
         const body: HTMLElement[] = cells(fixture, 'ai-chat-table-cell');
 

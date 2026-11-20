@@ -67,7 +67,7 @@ describe('RtAiChatBlocksComponent', (): void => {
         expect(stub.getAttribute('data-type')).toBe('chart');
         expect(textOf(qa(fixture, 'ai-chat-block-unsupported'))).toBe('The “chart” block is not supported');
     });
-    it('SC-UKV-1396 — блок table кит рисует сам, без регистрации', (): void => {
+    it('SC-UKV-1539 — блок table кит рисует сам, без регистрации', (): void => {
         const table: IRtAiChat.TableBlock = { type: 'table', columns: [{ label: 'A', type: 'text' }], rows: [['одна']] };
         const fixture: ComponentFixture<RtAiChatBlocksComponent> = createRtFixture(RtAiChatBlocksComponent, { blocks: [table] });
 

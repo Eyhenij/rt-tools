@@ -124,7 +124,7 @@ describe('rt-ai-chat-blocks logic', (): void => {
             total: ['Итого', 4200],
         };
 
-        it('SC-UKV-1396 — таблицу кит рисует сам, отрисовщик table из реестра не берётся', (): void => {
+        it('SC-UKV-1539 — таблицу кит рисует сам, отрисовщик table из реестра не берётся', (): void => {
             const renderer: IRtAiChat.BlockRenderer = { type: 'table', component: class {} };
             const views: readonly IRtAiChat.BlockView[] = toBlockViews([TABLE], [renderer]);
 

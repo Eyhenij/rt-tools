@@ -38,7 +38,7 @@ function barBoxes(scene: IRtChartScene): Array<{ left: number; right: number }> 
 }
 
 describe('rtChartScene', (): void => {
-    it('SC-UKV-1382 — 60 столбиков в узком поле не налезают друг на друга и не выходят за поле', (): void => {
+    it('SC-UKV-1530 — 60 столбиков в узком поле не налезают друг на друга и не выходят за поле', (): void => {
         const categories: string[] = Array.from({ length: 60 }, (_: unknown, index: number): string => `Н${index + 1}`);
         const many: IRtChartScene = draw({
             kind: 'cartesian',

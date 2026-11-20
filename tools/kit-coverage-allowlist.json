@@ -49,6 +49,7 @@
   },
   "shownWithin": {
     "rt-ai-chat-section": "projects/ui-kit-v2/src/ai-chat-chart/lib/components/block/stories/ai-chat-section-matrix.stories.ts",
+    "ng-template[rtAsideEmpty]": "projects/ui-kit-v2/src/lib/components/aside/stories/aside-matrix.stories.ts",
     "ng-template[rtThreadListEmpty]": "projects/ui-kit-v2/src/lib/components/thread-list/stories/thread-list-states.stories.ts",
     "ng-template[rtThreadListError]": "projects/ui-kit-v2/src/lib/components/thread-list/stories/thread-list-states.stories.ts",
     "ng-template[rtWorkspaceDetailsError]": "projects/ui-kit-v2/src/lib/components/workspace-details/stories/workspace-details-states.stories.ts",

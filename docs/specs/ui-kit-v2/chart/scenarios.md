@@ -83,7 +83,7 @@ Then it stands from 0 to 100 with the step 25
 
 Covered by the scene spec.
 
-### SC-UKV-1382 — sixty bars fit a narrow plot
+### SC-UKV-1530 — sixty bars fit a narrow plot
 
 Given cartesian data of one bar series over 60 categories
 When the chart is drawn 328 points wide

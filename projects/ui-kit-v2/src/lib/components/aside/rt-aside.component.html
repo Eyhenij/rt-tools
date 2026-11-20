@@ -15,7 +15,17 @@
     }
 
     <div rtElem="content" qa-dataid="aside-content">
-        <ng-content />
+        @if (empty()) {
+            <div rtElem="empty" qa-dataid="aside-empty">
+                @if (emptyTemplate(); as own) {
+                    <ng-container [ngTemplateOutlet]="own.templateRef" />
+                } @else {
+                    <rt-empty-state [icon]="emptyIcon()" [title]="emptyTitleText()" [description]="emptyDescription()" />
+                }
+            </div>
+        } @else {
+            <ng-content />
+        }
     </div>
 
     <ng-content select="rt-aside-footer" />

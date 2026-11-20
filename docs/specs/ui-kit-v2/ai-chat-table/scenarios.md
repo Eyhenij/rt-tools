@@ -3,13 +3,13 @@
 The numbers continue the numbering of the kit. A scenario with no test carries the mark «Not
 covered» with the reason.
 
-### SC-UKV-1396 — the kit draws a table block without a registration
+### SC-UKV-1539 — the kit draws a table block without a registration
 
 Given an answer with a `table` block and an application that registered a renderer for `table`
 When the answer is drawn
 Then the block is drawn by the kit as a table, and the registered renderer is not used
 
-### SC-UKV-1397 — number columns stand at the end, text columns at the start
+### SC-UKV-1540 — number columns stand at the end, text columns at the start
 
 Given a block with a `text` column and a `number`, a `percent` and a `currency` column
 When the block is drawn, first under `dir="ltr"` and then under `dir="rtl"`

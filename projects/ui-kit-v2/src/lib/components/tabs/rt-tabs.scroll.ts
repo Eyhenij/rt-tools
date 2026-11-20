@@ -105,6 +105,21 @@ export function rtTabsIntoViewTarget(list: HTMLElement, tab: HTMLElement, inset:
 }
 
 /**
+ * Куда прокрутить полосу к вкладке `id`: `undefined` — такой вкладки в полосе нет, `null` — она уже
+ * видна целиком. Стрелки поверх полосы (`overlayArrows`) закрывают её края, поэтому вкладка
+ * отступает от края на ширину стрелки.
+ */
+export function rtTabsTabTarget(list: HTMLElement, id: IRtTabs.Id, overlayArrows: boolean): number | null | undefined {
+    const tab: HTMLElement | null = list.querySelector<HTMLElement>(`[data-tabitem="${id}"]`);
+    if (!tab) {
+        return undefined;
+    }
+    const rest: HTMLElement | null | undefined = list.parentElement?.querySelector<HTMLElement>('.rt-tabs__rest');
+
+    return rtTabsIntoViewTarget(list, tab, overlayArrows ? (rest?.offsetWidth ?? 0) : 0);
+}
+
+/**
  * Плавная прокрутка полосы вкладок. Двигается сама прокрутка, а не сдвиг содержимого: колесо,
  * касание и полоса прокрутки остаются у браузера. Длительность и кривая — свойства хоста
  * `--rt-tabs-scroll-duration` и `--rt-tabs-scroll-easing`; ноль или `prefers-reduced-motion` —

@@ -41,7 +41,7 @@ describe('стили блока таблицы', (): void => {
         expect(body).toContain('background: var(--rt-color-bg-surface)');
     });
 
-    it('SC-UKV-1397 / SC-UKV-1409 — текст к началу, число к концу без переноса, строка не ниже 28', (): void => {
+    it('SC-UKV-1540 / SC-UKV-1409 — текст к началу, число к концу без переноса, строка не ниже 28', (): void => {
         const cell: string = ruleBody(css, '.rt-ai-chat-table__cell');
         const end: string = ruleBody(css, '.rt-ai-chat-table__cell--end');
 
