@@ -675,17 +675,20 @@ describe('doctor', () => {
         mkdirSync(join(since, 'laws'), { recursive: true });
         writeFileSync(join(since, 'laws/delivery.md'), '## Articles\n\n- **Прежняя статья.** Текст.\n');
         // Новая редакция пакета дописала в тот же раздел ещё одну статью.
-        const current: string = readFileSync(join(ASSETS, 'laws/delivery.md'), 'utf8');
-        writeFileSync(join(ASSETS, 'laws/delivery.md'), '## Articles\n\n- **Прежняя статья.** Текст.\n- **Дописанная статья.** Текст.\n');
+        // Своя копия ресурсов: общий каталог пакета читают параллельные запуски, и запись в него
+        // оставляла обломок в отслеживаемом файле.
+        const assets: string = mkdtempSync(join(tmpdir(), 'agent-kit-assets-'));
+        cpSync(ASSETS, assets, { recursive: true });
+        writeFileSync(join(assets, 'laws/delivery.md'), '## Articles\n\n- **Прежняя статья.** Текст.\n- **Дописанная статья.** Текст.\n');
 
         try {
-            const said_: string = said(doctor(env, since));
+            const said_: string = said(doctor({ root, version: VERSION, assetsDir: assets }, since));
 
             expect(said_).toContain('новая редакция дописала в замещённые разделы статей: 1');
             expect(said_).toContain('Дописанная статья.');
             expect(said_).not.toContain('Прежняя статья.');
         } finally {
-            writeFileSync(join(ASSETS, 'laws/delivery.md'), current);
+            rmSync(assets, { recursive: true, force: true });
             rmSync(since, { recursive: true, force: true });
         }
     });
