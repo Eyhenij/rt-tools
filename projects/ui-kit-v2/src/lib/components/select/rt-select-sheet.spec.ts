@@ -215,6 +215,57 @@ describe('Панель выбора в нижней шторке', (): void => {
         expect(sheetOpen()).toBe(true);
     });
 
+    it('SC-UKV-1633 — поиск мультиселекта в шторке отбирает пункты, выбранное до поиска остаётся', (): void => {
+        const fixture: ComponentFixture<RtMultiselectComponent<string>> = createRtFixture(
+            RtMultiselectComponent<string>,
+            { options: OPTIONS, filter: true },
+            { providers: providersFor(true) }
+        );
+        let chosen: ReadonlyArray<string> = [];
+        fixture.componentInstance.registerOnChange((value: ReadonlyArray<string>): void => {
+            chosen = value;
+        });
+        press(fixture, 'multiselect-trigger');
+        pick('multiselect-option', 0);
+        settle(fixture);
+
+        const search: HTMLInputElement | null = document.querySelector<HTMLInputElement>('.rt-popover-sheet .rt-multiselect__filter input');
+        expect(search).not.toBeNull();
+        (search as HTMLInputElement).value = 'Каз';
+        (search as HTMLInputElement).dispatchEvent(new Event('input'));
+        settle(fixture);
+
+        const left: NodeListOf<Element> = document.querySelectorAll('.rt-popover-sheet [qa-dataid="multiselect-option"]');
+        expect(left.length).toBe(1);
+        expect(left[0].textContent?.trim()).toBe('Казань');
+        pick('multiselect-option', 0);
+        settle(fixture);
+
+        expect(chosen).toEqual(['msk', 'kzn']);
+    });
+
+    it('SC-UKV-1634 — поиск мультиселекта у поля показан по входу и пуст после повторного открытия', (): void => {
+        const fixture: ComponentFixture<RtMultiselectComponent<string>> = createRtFixture(
+            RtMultiselectComponent<string>,
+            { options: OPTIONS, filter: true },
+            { providers: providersFor(false) }
+        );
+        press(fixture, 'multiselect-trigger');
+        const search: HTMLInputElement | null = document.querySelector<HTMLInputElement>(
+            '.rt-multiselect__panel .rt-multiselect__filter input'
+        );
+        expect(sheet()).toBeNull();
+        expect(search).not.toBeNull();
+        (search as HTMLInputElement).value = 'Мин';
+        (search as HTMLInputElement).dispatchEvent(new Event('input'));
+        settle(fixture);
+        expect(document.querySelectorAll('[qa-dataid="multiselect-option"]').length).toBe(1);
+
+        press(fixture, 'multiselect-trigger');
+        press(fixture, 'multiselect-trigger');
+        expect(document.querySelectorAll('[qa-dataid="multiselect-option"]').length).toBe(3);
+    });
+
     it('SC-UKV-1557 — подложка шторки закрывает список', (): void => {
         const fixture: ComponentFixture<RtSelectComponent<string>> = setupSelect(true);
         press(fixture, 'select-trigger');

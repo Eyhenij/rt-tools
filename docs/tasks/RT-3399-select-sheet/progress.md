@@ -3,6 +3,20 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
+- **Owner's answer (20.11):** «Да, в этой задаче» — the multiselect search goes into this branch:
+  a search field over the list when the field turns it on, on the panel and in the phone sheet,
+  as on the approved mockup 6068:1250.
+- **Multiselect search done (20.11):** inputs `filter` and `filterPlaceholder` like the select's,
+  rows filtered by `rtTreeRows`, the term cleared on close; in the sheet the search stands on the
+  content edge without a divider (`rt-multiselect__panel--sheet`). SC-UKV-1633, SC-UKV-1634;
+  multiselect specs 47/47, sheet spec 16/16, typecheck, eslint, stylelint, tokens, specs, docs
+  green; kit-match 14/14 against 6068:1250. Not touched: the select's own search in the sheet keeps
+  its 8 padding and divider. The `MultiselectSheet/Sheet` snapshot is to be re-taken.
+- **Waiting for the owner:** «Одобряете витрину поиска в мультиселекте?»
+- **Remark 3 measured (20.11):** `organisms-chat-page--page` on 6017, both halves — the bottoms of
+  the thread-list head, the chat header and the aside tabs all at y=220 (head 63, chat header 53
+  from top 167, tabs 69). The one difference is the line colour: the chat header's border is
+  rgb(224,224,224), the list head and the tabs rgb(174,174,174) in light.
 - **Stage:** 4 из 4 — Showcase; both review rounds done
 - **Next step:** the closing texts, take the folder apart, the push set (the sheet and workspace
   snapshots are re-taken) and the draft PR.
@@ -477,14 +491,16 @@ The progress in full — `docs/tasks/RT-3399-select-sheet/progress.md`; the plan
 ### Uncommitted
 
 ```
- M projects/ui-kit-v2/src/lib/components/input/rt-input.component.scss
- M projects/ui-kit-v2/src/lib/components/multiselect/rt-multiselect.component.scss
- M projects/ui-kit-v2/src/lib/components/select/rt-select.component.scss
+none
 ```
 
 ### Commits over the main branch
 
 ```
+6098fd2be docs(rt:ui-kit-v2): витрина стопки шторок и панели отборов шапки одобрена (RT-3399)
+4ce58daa4 feat(rt:ui-kit-v2): шторка из шторки подменяет её, отборы шапки шире телефона открываются панелью у кнопки (RT-3399)
+e444139c2 test(rt:ui-kit-v2): узкое окно шире телефона оставляет список выбора у поля (RT-3399)
+22bc96892 fix(rt:ui-kit-v2): глаз пароля и свой триггер выбора берут общую рамку фокуса кита (RT-3399)
 132df3737 docs(rt:ui-kit-v2): находки проверок перед PR записаны в ход работы (RT-3399)
 2e3db1db6 fix(rt:ui-kit-v2): длина сценариев шторки, шаблоны историй и шаги работы под набор проверок (RT-3399)
 b9a9d5b53 docs(rt:ui-kit-v2): спецификация шторки называет подсказку поля подсказкой кита (RT-3399)
@@ -501,10 +517,6 @@ aa410cfe1 docs(rt:ui-kit-v2): подсказка кита замерена в о
 f15f99b39 docs(rt:ui-kit-v2): подсказка у подписи поля принята в задачу и проверена вживую (RT-3399)
 72bbc66c2 fix(rt:ui-kit-v2): исправления после второго круга ревью постоянного текста поля (RT-3399)
 13401889a docs(rt:ui-kit-v2): витрина постоянного текста одобрена, идёт второй круг ревью (RT-3399)
-066bd257b feat(rt:ui-kit-v2): постоянный текст до и после значения в rt-input (RT-3399)
-9f7b26a08 fix(rt:ui-kit-v2): исправления после первого круга ревью четырёх замечаний (RT-3399)
-0a78fb1ba docs(rt:ui-kit-v2): следующий шаг — ревью четырёх правок, пока макет поля у владельца (RT-3399)
-fed16f9d5 docs(rt:ui-kit-v2): в макете поля текст больше не обрезается снизу (RT-3399)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

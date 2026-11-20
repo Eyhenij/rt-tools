@@ -27,6 +27,7 @@ import { RtButtonDirective } from '@rt-tools/ui-kit-v2/button';
 import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
 import { RtIconComponent } from '@rt-tools/ui-kit-v2/icon';
+import { RtInputComponent } from '@rt-tools/ui-kit-v2/input';
 import { IRtIcon } from '@rt-tools/ui-kit-v2/core';
 import { RtPopoverDirective } from '@rt-tools/ui-kit-v2/popover';
 import { IRtPopover } from '@rt-tools/ui-kit-v2/popover';
@@ -61,8 +62,6 @@ import {
 
 const BEM_BLOCK: string = 'rt-multiselect';
 
-/** Клавиши, открывающие закрытый dropdown с фокуса на trigger'е. */
-
 let panelIdSeed: number = 0;
 
 function nextPanelId(): number {
@@ -73,15 +72,9 @@ function nextPanelId(): number {
 /**
  * Multi-select с chip-rendering выбранных значений в trigger.
  *
- * Panel рендерится через CDK Overlay (`[rtPopover]`) — не обрезается overflow,
- * авто-flip. Панель НЕ закрывается после выбора (multi vs single). CVA через
- * общий `RtFormControlBase`. Reuses `IRtSelect.Option<TValue>` (type-import).
- * Чипы закрываются поштучно; крестик (`clearable`) слева от шеврона очищает весь
- * выбор.
- *
- * Keyboard-nav (activedescendant): фокус на trigger'е, ArrowUp/Down — highlight,
- * Enter — toggle опции (panel остаётся открытой), Escape — закрыть. Home/End —
- * deferred.
+ * Панель — в CDK Overlay (`[rtPopover]`), после выбора не закрывается; CVA — общий
+ * `RtFormControlBase`. Чипы закрываются поштучно, крестик (`clearable`) очищает всё.
+ * Клавиши (activedescendant) — на trigger'е: стрелки, Home/End, Enter, Escape.
  */
 @Component({
     selector: 'rt-multiselect',
@@ -98,6 +91,7 @@ function nextPanelId(): number {
         RtButtonDirective,
         RtIconButtonComponent,
         RtIconComponent,
+        RtInputComponent,
         RtPopoverDirective,
         RtTagComponent,
         RtToggleSwitchComponent,
@@ -126,12 +120,18 @@ function nextPanelId(): number {
 })
 export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyArray<TValue>> {
     readonly #t_uiSelectValues: Signal<string> = rtKitLabel('uiSelectValues');
+    readonly #t_uiSearch: Signal<string> = rtKitLabel('uiSearch');
 
     protected readonly t: Signal<TRtKitLabelMap> = inject(RT_KIT_LABELS);
 
     protected readonly panelId: string = `rt-multiselect-panel-${nextPanelId()}`;
 
     protected readonly placeholderText: Signal<string> = computed((): string => this.placeholder() || this.#t_uiSelectValues());
+
+    protected readonly filterPlaceholderText: Signal<string> = computed((): string => this.filterPlaceholder() || this.#t_uiSearch());
+
+    /** Строка поиска над списком; живёт, пока открыта панель. */
+    protected readonly filterTerm: WritableSignal<string> = signal<string>('');
 
     protected readonly popover: Signal<RtPopoverDirective> = viewChild.required(RtPopoverDirective);
 
@@ -182,9 +182,9 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
     /** Дерево ли список: тогда у строк есть место под стрелку и отступ по уровню. */
     protected readonly isTree: Signal<boolean> = computed((): boolean => rtTreeIsTree(this.options()));
 
-    /** Видимые строки: плоский список — как прежде, дерево — по раскрытым веткам. */
+    /** Видимые строки: плоский список — как прежде, дерево — по раскрытым веткам; поиск оставляет совпавшие. */
     protected readonly rows: Signal<ReadonlyArray<IRtSelect.Row<TValue>>> = computed((): ReadonlyArray<IRtSelect.Row<TValue>> =>
-        rtTreeRows(this.options(), this.openBranches())
+        rtTreeRows(this.options(), this.openBranches(), this.filterTerm())
     );
 
     /** Флажок каждой строки: у листа — выбран ли он, у ветки — выведен из её включённых листьев. */
@@ -262,6 +262,14 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
     public readonly placeholder: InputSignal<string> = input<string>('');
     public readonly maxChips: InputSignal<number> = input<number>(3);
 
+    /** Поле поиска над списком — у поля, в шторке и в обоих видах. */
+    public readonly filter: InputSignalWithTransform<boolean, BooleanInput> = input<boolean, BooleanInput>(false, {
+        transform: booleanAttribute,
+    });
+
+    /** Пусто — берётся переведённая подпись по умолчанию */
+    public readonly filterPlaceholder: InputSignal<string> = input<string>('');
+
     /** Иконка слева в указателе — та же, что у `rt-select`: перед подсказкой или чипами. */
     public readonly iconLeft: InputSignal<IRtIcon.Name | null> = input<IRtIcon.Name | null>(null);
 
@@ -333,8 +341,14 @@ export class RtMultiselectComponent<TValue> extends RtFormControlBase<ReadonlyAr
     }
 
     protected onClosed(): void {
+        this.filterTerm.set('');
         this.activeIndex.set(-1);
         this.markTouched();
+    }
+
+    protected setFilter(term: string): void {
+        this.filterTerm.set(term);
+        this.activeIndex.set(-1);
     }
 
     /**

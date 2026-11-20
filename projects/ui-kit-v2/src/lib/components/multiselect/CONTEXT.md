@@ -14,6 +14,8 @@
 | `placeholder` | `string`                                                                                | `''` → `uiSelectValues` |
 | `maxChips`    | `number`                                                                                | `3`                     |
 | `iconLeft`    | `IRtIcon.Name \| null` (тот же вход, что у `rt-select`)                                 | `null`                  |
+| `filter`      | `boolean` — поиск над списком, у поля и в шторке (тот же вход, что у `rt-select`)        | `false`                 |
+| `filterPlaceholder` | `string`                                                                          | `''` → `uiSearch`       |
 
 Значение — `ReadonlyArray<TValue>`. Отдельного выхода выбора нет: значение едет только формой.
 

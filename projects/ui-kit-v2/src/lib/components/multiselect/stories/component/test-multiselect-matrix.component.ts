@@ -267,8 +267,10 @@ function invalid(): FormControl<readonly string[] | null> {
                 <!-- Рамка 375 даёт экран макета телефона: шторка берёт заголовок у подписи rt-field -->
                 <div style="box-sizing: border-box; inline-size: 375px; padding: 16px">
                     <rt-field label="Города">
+                        <!-- Поиск над списком — как в макете 6068:1250. -->
                         <rt-multiselect
                             placeholder="Выберите города"
+                            filter
                             [attr.data-story-trigger]="triggerAttribute"
                             [options]="options"
                             [formControl]="sheetControl" />

@@ -240,6 +240,11 @@
             overflow-y: auto;
         }
 
+        &__filter {
+            padding: var(--rt-space-sm);
+            border-block-end: var(--rt-input-border-width) solid var(--rt-color-border-subtle);
+        }
+
         &__list {
             padding: var(--rt-space-2xs) 0;
             margin: 0;
@@ -363,6 +368,13 @@
            она несёт собственный модификатор. */
         &__panel--toggles {
             padding: var(--rt-space-2xs) 0;
+        }
+
+        /* В шторке поиск стоит по краю её содержимого, без черты: так в макете 6068:1250. Отступ
+           снизу доводит первый пункт до 20 под полем. */
+        &__panel--sheet &__filter {
+            padding: 0 0 calc(var(--rt-space-sm) + var(--rt-space-2xs));
+            border-block-end: none;
         }
 
         &__panel--toggles &__list {

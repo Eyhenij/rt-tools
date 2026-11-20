@@ -100,7 +100,7 @@
         <div
             rtElem="panel"
             qa-dataid="multiselect-panel"
-            [rtMod]="{ toggles: look() === 'toggles' }"
+            [rtMod]="{ toggles: look() === 'toggles', sheet: openedInSheet() }"
             [attr.role]="look() === 'toggles' ? null : 'listbox'"
             [style.--rt-multiselect-panel-max-height]="panelMaxHeight()"
             [attr.aria-label]="look() === 'toggles' ? null : ariaLabel()">
@@ -109,6 +109,17 @@
                 (activedescendant), опции не focusable индивидуально.
             -->
             <!-- eslint-disable @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+            @if (filter()) {
+                <div rtElem="filter">
+                    <rt-input
+                        qa-dataid="multiselect-filter"
+                        iconLeft="ico-search"
+                        [placeholder]="filterPlaceholderText()"
+                        [ngModel]="filterTerm()"
+                        [ngModelOptions]="{ standalone: true }"
+                        (ngModelChange)="setFilter($event)" />
+                </div>
+            }
             @if (look() === 'toggles') {
                 <!-- «Показать все» и свои переключатели приложения стоят над чертой, значения — под ней. -->
                 <div rtElem="toggles-head" qa-dataid="multiselect-toggles-head">
