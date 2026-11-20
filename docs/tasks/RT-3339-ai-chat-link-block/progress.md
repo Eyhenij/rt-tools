@@ -3,24 +3,24 @@
 ## Where we stand
 
 - **State:** `этап-идёт`
-- **Stage:** 1 of 4 — The data of the block: the lenient function and the schema
+- **Stage:** 2 of 4 — The card and the event through the chat
 - **Done:** the task is taken: assignee rt-tools-dev, the board column «In progress», the branch `RT-3339-ai-chat-link-block` from `RT-3338-ai-chat-kpi-block` (chain, PR #3429), the folder from the template. The exploration is written into the grill; the six questions and the design decisions are closed by assumption.
-- **Next step:** stage 1, step 1 — the lenient data function in `link-data.ts`; taken up again after RT-3342 is handed in.
+- **Stage 1 is done on 20.11.2026.** The epic branch is merged in: RT-3342 is merged (#3437), the epic PR into the main branch is open as a draft (#3438). `rtLinkData` and `RT_AI_CHAT_LINK_SCHEMA` are written and exported from the util barrel; `jest src/lib/util/link` gave 2 suites and 7 tests passed, the kit `typecheck` exited 0.
+- **Next step:** stage 2, step 1 — the `LinkBlock` type, the `link` view and the copy line.
 - **Uncommitted:** no
-- **Waiting for the owner:** «сначала сделай RT-3342, потом вливаем» — the owner put RT-3342 before this task, so that the first release closes milestone G; the plan here is approved: «Одобряю план»
 - **PR:** not open yet; the base is `RT-3346-ai-chat-blocks` — RT-3338 is merged into it (#3429)
 
 ## Steps
 
 ### 1. The data of the block: the lenient function and the schema
 
-- [ ] 1. Write the lenient data function of a link block in `link-data.ts` next to `kpi-data.ts`: title and url required and trimmed, section, icon with `link` by default, state absent when unknown, reason only in `failed`. ← now
-- [ ] 2. Write the JSON schema of the block in `link.schema.ts` next to `kpi.schema.ts` — `title`, `url`, `section`, `icon` — and export both from the util barrel.
-- [ ] 3. Write the specs of the data function and the schema with the scenario numbers of the agreement: SC-UKV-1488, 1489, 1497.
+- [x] 1. Write the lenient data function of a link block in `link-data.ts` next to `kpi-data.ts`: title and url required and trimmed, section, icon with `link` by default, state absent when unknown, reason only in `failed`.
+- [x] 2. Write the JSON schema of the block in `link.schema.ts` next to `kpi.schema.ts` — `title`, `url`, `section`, `icon` — and export both from the util barrel.
+- [x] 3. Write the specs of the data function and the schema with the scenario numbers of the agreement: SC-UKV-1488, 1489, 1497.
 
 ### 2. The card and the event through the chat
 
-- [ ] 1. Add the `LinkBlock` type, the `link` view, the `LinkOpen` event type, `link` in `OWN_TYPES`, the data step in `toBlockViews` and the copy line in `blockText`.
+- [ ] 1. Add the `LinkBlock` type, the `link` view, the `LinkOpen` event type, `link` in `OWN_TYPES`, the data step in `toBlockViews` and the copy line in `blockText`. ← now
 - [ ] 2. Write the `rt-ai-chat-link` component on `rt-tag`, `rtButton` and `rt-icon`: the row with the numbers of the agreement, the text column, the status, the reason, the two buttons with `aria-disabled` in `pending`, the announcement text of a state change for the feed, tokens only.
 - [ ] 3. Carry the press from the card through `rt-ai-chat-blocks` and the answer to a synchronous `linkOpen` output of `rt-ai-chat` that adds the message id.
 - [ ] 4. Add the labels «Opening», «Opened», «Failed to open», «Open», «Open in new tab» to the kit English set and the showcase Russian set.
