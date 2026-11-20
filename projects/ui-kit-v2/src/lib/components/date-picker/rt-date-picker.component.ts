@@ -32,7 +32,7 @@ import { RtRadiusDirective } from '@rt-tools/ui-kit-v2/radius';
 import { RtDatePanelComponent } from './panel/rt-date-panel.component';
 import { rtDateInBounds } from './rt-date-panel.logic';
 import { IRtDatePicker } from './rt-date-picker.model';
-import { rtDateLayout, rtDateParse, rtDateShape, rtDateText } from './rt-date-text.logic';
+import { RT_DATE_SHAPE_MASK, rtDateLayout, rtDateParse, rtDateShape, rtDateText } from './rt-date-text.logic';
 
 type TBooleanInput = boolean | string;
 
@@ -102,17 +102,8 @@ export class RtDatePickerComponent extends RtFormControlBase<string> {
     /** Набранный текст не читается как значение в границах: поле помечено ошибкой. */
     protected readonly textInvalid: WritableSignal<boolean> = signal(false);
     protected readonly sheetOpen: WritableSignal<boolean> = signal(false);
-    /** Подсказка формы текста буквами кита: `дд.мм.гггг` под русскими метками. */
-    protected readonly shape: Signal<string> = computed((): string => {
-        const labels: TRtKitLabelMap = this.t();
-        return rtDateShape(this.type(), this.#layout(), {
-            day: labels.uiShapeDay,
-            month: labels.uiShapeMonth,
-            year: labels.uiShapeYear,
-            hour: labels.uiShapeHour,
-            minute: labels.uiShapeMinute,
-        });
-    });
+    /** Подсказка формы текста маской из чёрточек: `--.--.----` в порядке языка интерфейса. */
+    protected readonly shape: Signal<string> = computed((): string => rtDateShape(this.type(), this.#layout(), RT_DATE_SHAPE_MASK));
     /**
      * Текст в поле — значение в порядке языка интерфейса. Не строку форма кладёт мимо контракта
      * (например `Date`), и поле показывает её пустой, как показывало браузерное.

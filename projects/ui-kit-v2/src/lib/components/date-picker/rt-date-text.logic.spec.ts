@@ -1,9 +1,8 @@
 import { IRtDatePicker } from './rt-date-picker.model';
-import { rtDateLayout, rtDateParse, rtDateShape, rtDateText } from './rt-date-text.logic';
+import { RT_DATE_SHAPE_MASK, rtDateLayout, rtDateParse, rtDateShape, rtDateText } from './rt-date-text.logic';
 
 const RU: IRtDatePicker.TextLayout = rtDateLayout('ru');
 const US: IRtDatePicker.TextLayout = rtDateLayout('en-US');
-const RU_LETTERS: IRtDatePicker.ShapeLetters = { day: 'дд', month: 'мм', year: 'гггг', hour: 'чч', minute: 'мм' };
 
 describe('rt-date-text.logic', (): void => {
     it('SC-UKV-467 — порядок частей и знак между ними берутся из локали', (): void => {
@@ -24,10 +23,11 @@ describe('rt-date-text.logic', (): void => {
         expect(rtDateText('завтра', 'datetime-local', RU)).toBe('завтра');
     });
 
-    it('SC-UKV-467 — подсказка показывает форму текста буквами кита', (): void => {
-        expect(rtDateShape('date', RU, RU_LETTERS)).toBe('дд.мм.гггг');
-        expect(rtDateShape('time', RU, RU_LETTERS)).toBe('чч:мм');
-        expect(rtDateShape('datetime-local', RU, RU_LETTERS)).toBe('дд.мм.гггг чч:мм');
+    it('SC-UKV-467 — подсказка показывает форму текста маской из чёрточек', (): void => {
+        expect(rtDateShape('date', RU, RT_DATE_SHAPE_MASK)).toBe('--.--.----');
+        expect(rtDateShape('time', RU, RT_DATE_SHAPE_MASK)).toBe('--:--');
+        expect(rtDateShape('datetime-local', RU, RT_DATE_SHAPE_MASK)).toBe('--.--.---- --:--');
+        expect(rtDateShape('date', US, RT_DATE_SHAPE_MASK)).toBe('--/--/----');
     });
 
     it('SC-UKV-467 — набранный текст читается в порядке локали', (): void => {

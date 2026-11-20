@@ -66,8 +66,8 @@ describe('RtDateRangeComponent', (): void => {
 
     it('SC-UKV-469 — пустое поле подсказывает форму двух дат, заполненное показывает их в порядке языка', (): void => {
         const fixture: ComponentFixture<DateRangeHostComponent> = setupHost();
-        expect(field(fixture).getAttribute('placeholder')).toBe('dd.mm.yyyy — dd.mm.yyyy');
-        expect(field(fixture).getAttribute('title')).toBe('dd.mm.yyyy — dd.mm.yyyy');
+        expect(field(fixture).getAttribute('placeholder')).toBe('--.--.---- — --.--.----');
+        expect(field(fixture).getAttribute('title')).toBe('--.--.---- — --.--.----');
         expect(field(fixture).getAttribute('size')).toBe('23');
 
         fixture.componentInstance.control.setValue({ start: '2026-10-12', end: '2026-10-15' });

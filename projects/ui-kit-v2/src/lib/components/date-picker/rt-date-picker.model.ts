@@ -12,7 +12,7 @@ export namespace IRtDatePicker {
         separator: string;
     }
 
-    /** Буквы подсказки формы текста: `дд`, `мм`, `гггг`, `чч`, `мм` под русскими метками. */
+    /** Части подсказки формы текста: `--`, `--`, `----`, `--`, `--` у маски пустого поля. */
     export interface ShapeLetters {
         day: string;
         month: string;

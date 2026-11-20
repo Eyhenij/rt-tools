@@ -7,6 +7,11 @@
 - **Next step:** the five kit remarks the owner added on 20.11 (the grill, last decision): a Figma
   frame for each and the owner's approval before code, then the closing texts, the push set (the
   sheet snapshots are re-taken: the sheet content got its paddings) and the draft PR.
+- **Empty date field mask (20.11):** the owner approved `--.--.----` (frame 8423:1981); the hint is
+  now `RT_DATE_SHAPE_MASK`, one for every language, and the `uiShape*` labels left the kit. Measured
+  live on 6017: date `--.--.----` (size 10), date-time `--.--.---- --:--` (16), time `--:--` (5),
+  range `--.--.---- — --.--.----`, the empty range field 286 wide with no clipping (scrollWidth equal
+  to clientWidth). Specs 3853 of 3853, typecheck green.
 - **Kit-match (20.11):** the select sheet against the mockup 6068:811 missed three numbers — the
   content side padding 20 (was 0), the title line height 24 (was `normal`, 19.5), the panel bottom
   padding 24 (was 0). Fixed in `rt-popover-sheet`; measured live at 375: 21 of 21. The mockup's
@@ -227,19 +232,31 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 4 из 4 — Showcase; both review rounds done
-- **Next step:** stage 4, step 3 — the owner looks at the showcase on 6017 (up from this branch);
+- **Next step:** the five kit remarks the owner added on 20.11 (the grill, last decision): a Figma
 
 The progress in full — `docs/tasks/RT-3399-select-sheet/progress.md`; the plan lies next to it.
 
 ### Uncommitted
 
 ```
-none
+ M ../../../../../docs/tasks/RT-3399-select-sheet/approvals.md
+ M ../../../../../libs/message-bus-admin/common/core/util/src/lib/admin-labels.ts
+ M ../../../.storybook/showcase-labels.ru.ts
+ M date-picker/rt-date-picker.component.ts
+ M date-picker/rt-date-picker.model.ts
+ M date-picker/rt-date-text.logic.ts
+ M date-range/rt-date-range.component.ts
+ M ../i18n/rt-kit-labels.en.ts
 ```
 
 ### Commits over the main branch
 
 ```
+1d96f6aa6 feat(rt:ui-kit-v2): новый значок календаря calendar-2 у полей даты и периода (RT-3399)
+488a608e4 docs(rt:ui-kit-v2): новый значок календаря у полей даты и периода — в задаче (RT-3399)
+290a06964 fix(rt:ui-kit-v2): отступы шторки по макету — 20 по бокам, 24 снизу, строка заголовка 24 (RT-3399)
+1c57014b1 docs(rt:ui-kit-v2): витрина одобрена, пять замечаний приложения по киту — в задаче (RT-3399)
+1c22d6523 docs(rt:ui-kit-v2): прогресс — оба круга ревью закрыты, витрина ждёт владельца (RT-3399)
 a65f3cb28 fix(rt:ui-kit-v2): исправления после второго круга ревью (RT-3399)
 a1651399f docs(rt:ui-kit-v2): находки второго круга ревью записаны, строка назначения в таблице (RT-3399)
 31e7abb1c docs(rt:ui-kit-v2): спека селекта ссылается на шторку, подписи вида с переключателями названы (RT-3399)
@@ -255,11 +272,6 @@ fae1258a0 docs(rt:ui-kit-v2): шторка открывается только �
 7a4027a9d docs(rt:ui-kit-v2): ручка закреплённой колонки ждёт слова владельца (RT-3399)
 eab0102a6 docs(rt:ui-kit-v2): ручка перетаскивания закреплённой колонки — в задаче RT-3399
 19092052f fix(rt:ui-kit-v2): быстрые периоды в шторке поля периода переносятся на строки (RT-3399)
-4b6db4799 docs(rt:ui-kit-v2): владелец выбрал перенос быстрых периодов в шторке периода (RT-3399)
-3c61b1e39 docs(rt:ui-kit-v2): два варианта быстрых периодов в шторке периода нарисованы (RT-3399)
-8e5da365e docs(rt:ui-kit-v2): быстрые периоды в шторке поля периода — в задаче RT-3399
-701a3b419 docs(rt:ui-kit-v2): замер телефонных макетов шторки по узлам (RT-3399)
-a96428cc5 test(rt:ui-kit-v2): истории шапки страницы, вкладок и подвала мультиселекта на телефоне (RT-3399)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked

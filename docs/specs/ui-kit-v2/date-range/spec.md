@@ -114,7 +114,7 @@ None of its own. The draft lives while the panel is open and is dropped when it 
 
 | state                       | what is drawn                                                     |
 | --------------------------- | ----------------------------------------------------------------- |
-| the field empty             | the hint `дд.мм.гггг — дд.мм.гггг` and the calendar button        |
+| the field empty             | the hint `--.--.---- — --.--.----` and the calendar button        |
 | the field filled            | the two dates, the clear button and the calendar button           |
 | the field invalid, disabled | the error border; the pale field that does not open               |
 | the panel, a range picked   | two months with the range, the summary, «Применить» on            |

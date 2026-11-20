@@ -22,7 +22,7 @@ import { RT_KIT_LABELS, RT_KIT_LOCALE, TRtKitLabelMap } from '@rt-tools/ui-kit-v
 import { BreakpointsService } from '@rt-tools/ui-kit-v2/core';
 import { RtBottomSheetComponent } from '@rt-tools/ui-kit-v2/bottom-sheet';
 import { IRtDatePicker } from '@rt-tools/ui-kit-v2/date-picker';
-import { rtDateLayout } from '@rt-tools/ui-kit-v2/date-picker';
+import { RT_DATE_SHAPE_MASK, rtDateLayout } from '@rt-tools/ui-kit-v2/date-picker';
 import { RtFormControlBase } from '@rt-tools/ui-kit-v2/form-control';
 import { IRtInput } from '@rt-tools/ui-kit-v2/core';
 import { RtIconButtonComponent } from '@rt-tools/ui-kit-v2/icon-button';
@@ -98,17 +98,8 @@ export class RtDateRangeComponent extends RtFormControlBase<IRtDateRange.Value |
     /** Набранный текст не читается как диапазон в границах: поле помечено ошибкой. */
     protected readonly textInvalid: WritableSignal<boolean> = signal(false);
     protected readonly sheetOpen: WritableSignal<boolean> = signal(false);
-    /** Подсказка формы текста буквами кита: `дд.мм.гггг — дд.мм.гггг` под русскими метками. */
-    protected readonly shape: Signal<string> = computed((): string => {
-        const labels: TRtKitLabelMap = this.t();
-        return rtRangeShape(this.#layout(), {
-            day: labels.uiShapeDay,
-            month: labels.uiShapeMonth,
-            year: labels.uiShapeYear,
-            hour: labels.uiShapeHour,
-            minute: labels.uiShapeMinute,
-        });
-    });
+    /** Подсказка формы текста маской из чёрточек: `--.--.---- — --.--.----` в порядке языка интерфейса. */
+    protected readonly shape: Signal<string> = computed((): string => rtRangeShape(this.#layout(), RT_DATE_SHAPE_MASK));
     /** Значение, прочитанное из формы: не пара дней по порядку поле показывает пустой. */
     protected readonly range: Signal<IRtDateRange.Value | null> = computed((): IRtDateRange.Value | null => rtRangeRead(this.value()));
     protected readonly text: Signal<string> = computed((): string => rtRangeText(this.range(), this.#layout()));

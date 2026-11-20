@@ -61,9 +61,9 @@ describe('RtDatePickerComponent', (): void => {
 
     it('SC-UKV-467 — поле текстовое, подсказка показывает форму текста в порядке локали', (): void => {
         expect(field(setup()).getAttribute('type')).toBe('text');
-        expect(field(setup()).getAttribute('placeholder')).toBe('dd.mm.yyyy');
-        expect(field(setup({ type: 'time' })).getAttribute('placeholder')).toBe('hh:mm');
-        expect(field(setup({ type: 'datetime-local' })).getAttribute('placeholder')).toBe('dd.mm.yyyy hh:mm');
+        expect(field(setup()).getAttribute('placeholder')).toBe('--.--.----');
+        expect(field(setup({ type: 'time' })).getAttribute('placeholder')).toBe('--:--');
+        expect(field(setup({ type: 'datetime-local' })).getAttribute('placeholder')).toBe('--.--.---- --:--');
     });
 
     it('ширина поля в знаках равна длине формы значения', (): void => {
@@ -75,7 +75,7 @@ describe('RtDatePickerComponent', (): void => {
     it('пустое поле показывает форму значения при наведении, заполненное — нет', (): void => {
         const fixture: ComponentFixture<DatePickerHostComponent> = setupHost();
 
-        expect(field(fixture).getAttribute('title')).toBe('dd.mm.yyyy');
+        expect(field(fixture).getAttribute('title')).toBe('--.--.----');
 
         fixture.componentInstance.control.setValue('2026-03-15');
         fixture.detectChanges();

@@ -110,7 +110,7 @@ Covered by the spec of the date logic module.
 
 Given the application's locale `ru` and a date field with the value `2026-08-01`
 When the field is drawn, and then the person types `15.08.2026`
-Then the text reads `01.08.2026`, the empty field hints `дд.мм.гггг` under the Russian labels, and
+Then the text reads `01.08.2026`, the empty field hints `--.--.----`, and
 the typed text becomes the value `2026-08-15`
 
 Covered by the spec of the date text module and the component spec of the field.
