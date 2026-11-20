@@ -110,3 +110,5 @@ RT-3399 · PR #<номер> · 20 ноября 2026
 - **Витрина:** «одобряю если матчится с макетами» — http://localhost:6017/?path=/story/molecules-navigation-pageheadervertical--narrow-filters-panel , http://localhost:6017/?path=/story/molecules-navigation-pageheadervertical--phone-filter-select
 - **Совпадение:** 14 из 14 чисел (поиск мультиселекта в шторке, 6068:1250)
 - **Витрина:** «Одобряю витрину» — http://localhost:6017/?path=/story/molecules-forms-multiselectsheet--sheet
+- **Витрина:** «Я видел макеты стои матчатся с ними тогда ок» — http://localhost:6017/?path=/story/molecules-dialog-confirmpopover--playground , http://localhost:6017/?path=/story/molecules-forms-field--anatomy , http://localhost:6017/?path=/story/molecules-forms-togglebuttongroupfold--folded-one (окно подтверждения, «?» у подписи поля, свёрнутая группа переключателей)
+- **Совпадение:** 12 из 12 чисел (окно подтверждения; «Отмена» 103 против 102 — от кнопки кита); строка подписи 14, значок и кнопка «?» 16 по центру; свёрнутое поле 343 × 40 от края 16. Зазор подписи и «?» 4 против 2 в макете — токен `--rt-field-label-help-gap`, в задаче не менялся
