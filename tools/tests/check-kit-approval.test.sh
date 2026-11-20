@@ -80,6 +80,12 @@ report "a match below 100% is refused" \
 report "a record without the match line is refused" \
     "$(run "console.log(m.faultsOf('b', { path: 'r', text: \`$RECORD\`.replace(/^- \*\*Совпадение.*$/m, '') }, () => true).length)")" 1
 
+INVISIBLE='- **Без вида:** «Да, макет одобряю»'
+report "a no-look line said by the owner passes without the mockup, the match and the showcase" \
+    "$(run "console.log(m.faultsOf('b', { path: 'r', text: \`$INVISIBLE\` }, (q) => q.startsWith('Да')).length)")" 0
+report "a no-look line the owner never wrote is refused" \
+    "$(run "console.log(m.faultsOf('b', { path: 'r', text: \`$INVISIBLE\` }, () => false).length)")" 1
+
 MATCH="$TOOLS/kit-match.mjs"
 match() {
     local body="$1"

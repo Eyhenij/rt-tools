@@ -21,4 +21,5 @@ The names and bindings of this tree next to the rule `SKILL.md`.
 - **The whole block of components is compared at once, not one component by one.** — **Not checked by anything.** The overlay is made by the executor; the check sees only the approval it ends with.
 - **A redrawn page is built in the showcase whole and compared by overlay with its mockup.** — **Not checked by anything.** The page story is held by the rule `rt-tools-storybook`, the overlay by the executor.
 - **The showcase is shown to the owner and approved by a second answer.** — `tools/check-kit-approval.mjs:faultsOf` — the showcase line is demanded apart from the mockup line.
+- **A kit file edited without a change of look goes by the owner's word that nothing visible changed.** — `tools/check-kit-approval.mjs:faultsOf` — the no-look line, said by the owner, stands in for the mockup, the match and the showcase lines.
 - **The push, the PR and the release go only after both approvals.** — `tools/check-kit-approval.mjs:isVisibleKitFile` — what counts as a visible edit; the calls are held by `.claude/rt-kit/project.sh:rt_push_checks` and `.claude/hooks/kit-approval-guard.sh`.

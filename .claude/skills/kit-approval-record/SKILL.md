@@ -30,6 +30,14 @@ An approval goes into the task folder's approvals.md word for word, between « a
 - **Витрина:** «одобряю витрину»
 ```
 
+An edit with no change of look — the type an input takes, say — is asked about once, in the
+question window: what changes and that nothing visible does. The owner's answer goes into one
+line instead of the three:
+
+```markdown
+- **Без вида:** «<the owner's words>»
+```
+
 ## The match before the showcase question
 
 1. The values of every layer of the block are read from Figma into a JSON file, one key per value:

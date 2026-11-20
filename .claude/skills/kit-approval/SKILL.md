@@ -48,6 +48,11 @@ The table in `implementation.md` next to it.
   is laid over the Figma frame of the page, and the overlay goes to the owner with the showcase.
 - **The showcase is shown to the owner and approved by a second answer.** The first approval was of
   a picture; the second is of the component a consumer will get.
+- **A kit file edited without a change of look goes by the owner's word that nothing visible
+  changed.** The check judges by the file, and a component class holds more than its look: the
+  type an input takes is edited there too. Such an edit has no frame to draw and nothing to
+  measure, so the owner is asked whether the edit is invisible, and their answer replaces all three
+  lines of the record. Whether it is invisible is the owner's call, not the executor's.
 - **The push, the PR and the release go only after both approvals.** The check refuses all three
   while the record lacks either quote. A release is judged by every merge since the last version
   bump of that kit.
@@ -58,6 +63,12 @@ The table in `implementation.md` next to it.
 - **Макет:** «<the owner's words>» — https://www.figma.com/design/<file>?node-id=<node>
 - **Совпадение:** <N> из <N> чисел
 - **Витрина:** «<the owner's words>»
+```
+
+An edit the owner called invisible carries one line instead of the three:
+
+```markdown
+- **Без вида:** «<the owner's words>»
 ```
 
 The match line is printed by `node tools/kit-match.mjs numbers <figma.json> <showcase.json>`; the
