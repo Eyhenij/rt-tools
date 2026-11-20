@@ -235,10 +235,13 @@ export const PhoneFilterSelect: TStory = {
     },
 };
 
-/** Меню действий и точка на кнопке отборов: отборы применены. */
+/**
+ * Меню действий и точка на кнопке отборов: отборы применены. На телефоне меню стоит в шторке, а класс
+ * меню — на коробке оверлея нулевой ширины, поэтому съёмке называется открытый лист внутри неё.
+ */
 export const PhoneActions: TStory = {
     globals: PHONE,
-    parameters: openedAt('.rt-page-bar-menu', PHONE_VIEW),
+    parameters: openedAt('.rt-page-bar-menu .rt-bottom-sheet--open', PHONE_VIEW),
     args: { bar: true, tabs: 5, filtersActive: true, overlay: true },
     play: openOn('[qa-dataid="page-bar-actions-menu"] button'),
 };
