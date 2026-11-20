@@ -15,10 +15,11 @@
  * `RT_FLOW_TRANSCRIPT` counts only when it lies in one of them.
  */
 import { spawnSync } from 'node:child_process';
-import { existsSync, readdirSync, readFileSync, realpathSync } from 'node:fs';
+import { existsSync, readdirSync, realpathSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { basename, dirname, join, resolve } from 'node:path';
 import { wordOf } from './owner.mjs';
+import { linesOf } from './session.mjs';
 
 /** The approving answer: a menu option or a message that begins so. */
 const APPROVE = /^\s*Одобряю/u;
@@ -66,7 +67,8 @@ const copies = (root) => {
 
 const parse = (file) => {
     const entries = [];
-    for (const line of readFileSync(file, 'utf8').split('\n')) {
+    // By pieces: a record longer than one string of the runtime is never held whole.
+    for (const line of linesOf(file)) {
         if (!line.trim()) continue;
         try {
             entries.push(JSON.parse(line));

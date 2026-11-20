@@ -2,7 +2,7 @@
 
 ## Где мы
 
-- **State:** `замысел-записан`
+- **State:** `этап-идёт`
 - **Stage:** 1 из 3 — The engine sees the background tasks of a session
 - **Done:** разбор отказов 14–19.11 по классам; план одобрен владельцем 20.11
 - **Next step:** сценарии SC-AK-1759 и SC-AK-1760, затем источник сессии
@@ -11,9 +11,9 @@
 
 ## Шаги
 
-- [>] 1.1 The session source names the start and the end of a background task
-- [ ] 1.2 The session record is read by pieces
-- [ ] 2.1 A stop with a background task of the session running is released
+- [x] 1.1 The session source names the start and the end of a background task
+- [x] 1.2 The session record is read by pieces
+- [>] 2.1 A stop with a background task of the session running is released
 - [ ] 2.2 A background task past the bound releases nothing
 - [ ] 2.3 A waiting stop after a refusal names no owner's menu
 - [ ] 2.4 A stop in the state that sends work to the background is held

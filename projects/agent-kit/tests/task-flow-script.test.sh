@@ -426,6 +426,47 @@ report "local: SC-AK-1371 — метка не JSON читается отсутс
 # --- Шаг плана и одобрение плана — в подключаемом файле -----------------------------------------
 . "$TESTS/task-flow-script-steps.test.sh"
 
+# --- Фоновые задачи сессии и чтение записи кусками -------------------------------------------------
+tf_run <<'JS'
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { eventsOf, linesOf } from '../assets/task-flow/source/session.mjs';
+import { openAt } from '../assets/task-flow/source/records.mjs';
+
+const out = (label, got, want) => console.log(`${label}|${got}|${want}`);
+const T = '2026-11-19T10:00:00Z';
+const call = (id, name, input) => ({ type: 'assistant', timestamp: T, message: { content: [{ type: 'tool_use', id, name, input }] } });
+const result = (id, toolUseResult, extra = {}) => ({ type: 'user', timestamp: T, toolUseResult, message: { content: [{ type: 'tool_result', tool_use_id: id, content: 'ok', ...extra }] } });
+const notice = (id, task, status) => ({ type: 'queue-operation', operation: 'enqueue', content: `<task-notification>\n<task-id>${task}</task-id>\n<tool-use-id>${id}</tool-use-id>\n<status>${status}</status>\n</task-notification>` });
+const kinds = (entries) => eventsOf(entries).filter((e) => e.kind !== 'call').map((e) => `${e.kind}:${e.id ?? ''}:${e.task ?? ''}`).join(' ');
+
+// SC-AK-1759 — the start and the end of a background task
+const shell = [call('t1', 'Bash', { command: 'sleep 9', run_in_background: true }), result('t1', { backgroundTaskId: 'b1' })];
+out('session: SC-AK-1759 — команда в фоне — начало задачи', kinds(shell), 'background:t1:b1');
+out('session: SC-AK-1759 — начало несёт время записи', String(eventsOf(shell).at(-1).at === Date.parse(T)), 'true');
+out('session: SC-AK-1759 — асинхронный агент — начало задачи', kinds([call('t2', 'Agent', { description: 'd' }), result('t2', { isAsync: true, agentId: 'a2' })]), 'background:t2:a2');
+out('session: SC-AK-1759 — уведомление со статусом — конец задачи', kinds([...shell, notice('t1', 'b1', 'completed')]), 'background:t1:b1 backgroundEnd:t1:b1');
+out('session: SC-AK-1759 — уведомление без конечного статуса концом не считается', kinds([...shell, notice('t1', 'b1', 'running')]), 'background:t1:b1');
+out('session: SC-AK-1759 — вызов остановки — конец задачи', kinds([...shell, call('t3', 'TaskStop', { task_id: 'b1' })]), 'background:t1:b1 backgroundEnd::b1');
+out('session: SC-AK-1759 — обычный вызов задачей не считается', kinds([call('t4', 'Bash', { command: 'ls' }), result('t4', { stdout: '' })]), '');
+out('session: SC-AK-1759 — отказанный запуск задачей не считается', kinds([call('t5', 'Bash', { command: 'x', run_in_background: true }), result('t5', { backgroundTaskId: 'b5' }, { is_error: true })]), '');
+out('session: SC-AK-1759 — монитор задачей не считается', kinds([call('t6', 'Monitor', { command: 'x' }), result('t6', { backgroundTaskId: 'm6' })]), '');
+out('session: SC-AK-1759 — конец хода без отказа — событие', kinds([{ type: 'system', subtype: 'stop_hook_summary' }, { type: 'system', subtype: 'stop_hook_summary', hookErrors: ['BLOCKED by turn-exit-guard: open'] }]), 'ended::');
+
+// SC-AK-1760 — the record is read by pieces
+const dir = mkdtempSync(join(tmpdir(), 'tf-lines-'));
+const file = join(dir, 'r.jsonl');
+const lines = ['{"uuid":"a","n":"первая строка"}', '', '{"uuid":"b","n":"вторая, длиннее куска"}', '{"uuid":"c"}'];
+writeFileSync(file, lines.join('\n'));
+out('session: SC-AK-1760 — строка через край куска собирается целой', [...linesOf(file, 7)].join(' ~ '), lines.join(' ~ '));
+out('session: SC-AK-1760 — кусок больше файла даёт те же строки', [...linesOf(file)].join(' ~ '), lines.join(' ~ '));
+writeFileSync(file, `${lines.join('\n')}\n`);
+out('session: SC-AK-1760 — перевод строки в конце пустой строки не добавляет', String([...linesOf(file, 5)].length), '4');
+rmSync(dir, { recursive: true, force: true });
+out('session: SC-AK-1760 — источник записей читает запись той же функцией', String(openAt(process.cwd()).entry('/nowhere/x.jsonl', 'a')), 'null');
+JS
+
 # --- Прогноз отказов по записям разговоров ---------------------------------------------------------
 tf_run <<'JS'
 import { dirname } from 'node:path';
