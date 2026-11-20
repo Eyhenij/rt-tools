@@ -150,7 +150,7 @@ task, a line per finding, each with its address.
   the status colours, a task of its own. **Address:** the kit's semantic tokens.
 - **The KPI card radius 12 and its inner gap 6 are sums of two tokens.** The radius scale has 8,
   10 and 15, and the mockup draws 12, so the block writes `md + sm`; the gap is `space-1 +
-  space-0-5`. Under another styling preset the sum gives a number no mockup holds. Proposed: a
+space-0-5`. Under another styling preset the sum gives a number no mockup holds. Proposed: a
   radius step of 12 or the card on step 10, the owner's choice. **Address:** the kit's radius and
   spacing scales.
 
@@ -215,6 +215,32 @@ The rules review after the PR (#3429):
 - **The free scenario number came from the local branches only.** `tools/spec-next-id.mjs` does not
   call `git fetch`. Proposed: the tool fetches first or says how stale its answer is. **Address:**
   names of this tree.
+
+## RT-3340 — the sources block of the chat answer
+
+- **The match with the mockup measures states at rest, and nobody measures hover and focus.** The
+  61 numbers matched, and the owner saw the hover fill and the focus ring cut off by the panel body
+  (`overflow: hidden`) twice. The mockup frames for the two states also moved the text by 8, which
+  the code never did. Proposed: an article in `kit-approval` and a line in `mockups-measure` — a
+  state that draws outside the row is measured by forcing it (focus the node, read the computed
+  outline, compare the node with the box that clips it), and its frame is drawn without moving the
+  text. **Address:** names of this tree — the rule `kit-approval`; one sentence for the package
+  pattern `mockups-measure`.
+- **A mockup approved with the hover and focus frames drawn from the first guess had to be redrawn
+  after the showcase.** The overlay of the showcase on the mockup (4.90%) is the check that closed
+  it. Proposed: the overlay of one block frame is part of the step that shows the showcase, not a
+  reaction to the owner's remark. **Address:** names of this tree — the pattern
+  `task-delivery-loop-run`.
+- **The commit guard names the machine email with the numeric id, and a commit made with the short
+  address was refused only by the next commit.** The refusal is right; the pattern shows the full
+  address, and the miss was the executor's. The history was rewritten before the push. **Address:**
+  none, the pattern is right.
+- **The epic PR merged into main in the middle of the last tasks.** The task branch had to take
+  main and open its PR into main, not into the epic branch. The plan of the epic does not say what
+  the tasks left do when the epic PR goes first. **Address:** names of this tree — the epic plan.
+- **After a compaction the rules gate asked for the same rules again, one refusal per kind of
+  edit.** Seven refusals in this task, the same as in RT-3339. **Address:** rules layer — the
+  hooks `skill-gate-rearm.sh` and `skill-loaded.sh`.
 
 ## Left unresolved
 
