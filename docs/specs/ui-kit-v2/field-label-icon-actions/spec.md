@@ -98,6 +98,10 @@ can be pressed and shows a hint, and a cross that the Tab key reaches.
   a field at the window edge it moves inward instead of running past the edge. It opens on hover,
   on keyboard focus and on a tap, and Escape closes it while the focus is on the question mark.
   The question mark is described by the help text, so a screen reader reads it with the button.
+- **The question mark gives the label row no height of its own.** The icon is 16 points high and
+  the label line 14, under the material preset 12: the row grew with it, and a field with help stood
+  2 points lower than its neighbour. The icon stands in the middle of the label line and overhangs
+  it evenly.
 
 ## What is out of scope
 
@@ -183,4 +187,6 @@ None.
 - 2026-10-30 — the application's request: the clearing cross by Tab from the kit settings on every
   field with a cross; merged from the agreement into the subdomain, task RT-2995.
 - 2026-11-20 — the help of a field opens the kit tooltip instead of a card without a surface, task
+  RT-3399.
+- 2026-11-20 — the question mark no longer raises the label row; the application's remark, task
   RT-3399.

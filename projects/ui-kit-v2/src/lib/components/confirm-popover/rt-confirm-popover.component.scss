@@ -7,9 +7,13 @@
         --rt-confirm-popover-border-width: var(--rt-border-width-thin);
         --rt-confirm-popover-shadow: var(--rt-shadow-lg);
 
+        // Ширину задают кнопки: длинная подпись раздвигает окно, а заголовок и текст в ширину окна не
+        // входят и переносятся по ней. Уже 280px окно не бывает, шире окна браузера — тоже: там кнопки
+        // встают в две строки.
         display: flex;
-        width: 280px;
-        max-width: 280px;
+        width: max-content;
+        min-width: 280px;
+        max-width: calc(100vw - 2 * var(--rt-space-md));
         flex-direction: column;
         padding: var(--rt-space-md);
         border: var(--rt-confirm-popover-border-width) solid var(--rt-color-border-subtle);
@@ -17,6 +21,12 @@
         background: var(--rt-color-bg-surface);
         box-shadow: var(--rt-confirm-popover-shadow);
         gap: var(--rt-space-sm);
+
+        &__title,
+        &__message {
+            inline-size: 0;
+            min-inline-size: 100%;
+        }
 
         &__title {
             margin: 0;
@@ -34,9 +44,24 @@
 
         &__actions {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             gap: var(--rt-space-sm);
             margin-block-start: var(--rt-space-xs);
+
+            // Подпись длиннее окна телефона переносится внутри кнопки, а не уходит за край: кнопка
+            // не уже своей строки и растёт в высоту только тогда.
+            .rt-button {
+                height: auto;
+                line-height: var(--rt-leading-tight);
+                max-inline-size: 100%;
+                text-align: center;
+                white-space: normal;
+            }
+
+            .rt-button__label {
+                white-space: normal;
+            }
         }
     }
 }
