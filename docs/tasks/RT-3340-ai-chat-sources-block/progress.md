@@ -6,9 +6,9 @@
 - **Stage:** 4 из 5 — Витрина и сверка с макетом (этап 3 закрыт: компонент, событие, подписи, спеки)
 - **Done:** задача взята (исполнитель `rt-tools-dev`, карточка в «In progress», ветка `RT-3340-ai-chat-sources-block` от ветки RT-3339, цепочка, PR #3447). Разведка сделана, `grill.md` записан, договорённость написана `spec-writer` (46 правил, сценарии SC-UKV-1541…1559) и ждёт `spec-critic`, план записан.
 - **Next step:** этап 4, шаг 4 — показать витрину владельцу и записать слово в approvals.md. Потом этап 5.
-- **Uncommitted:** нет после коммита этапа 1
-- **Waiting for the owner:** нет
-- **PR:** не открыт; база — `RT-3339-ai-chat-link-block` (PR #3447 ждёт слияния в ветку эпика)
+- **Uncommitted:** строки договорённости и этого файла
+- **Waiting for the owner:** слово «Одобряю витрину»; ховер и фокус переделаны по его замечанию (подложка на всю строку, кольцо внутрь), кадры макета перерисованы, наложение 4,90%
+- **PR:** не открыт; PR эпика #3438 влит в main 20.11.2026, main слит в ветку, база PR — `main`
 
 ## Steps
 
@@ -60,7 +60,7 @@ Put together by a hook before the compaction of the context (auto).
 
 - **State:** `этап-идёт`
 - **Stage:** 4 из 5 — Витрина и сверка с макетом (этап 3 закрыт: компонент, событие, подписи, спеки)
-- **Next step:** этап 4, шаг 1 — истории блока: один и пять источников, состояния, длинные тексты, rtl, тёмная тема, с шагами play.
+- **Next step:** этап 4, шаг 4 — показать витрину владельцу и записать слово в approvals.md. Потом этап 5.
 - **PR:** не открыт; база — `RT-3339-ai-chat-link-block` (PR #3447 ждёт слияния в ветку эпика)
 
 The progress in full — `docs/tasks/RT-3340-ai-chat-sources-block/progress.md`; the plan lies next to it.
@@ -68,12 +68,15 @@ The progress in full — `docs/tasks/RT-3340-ai-chat-sources-block/progress.md`;
 ### Uncommitted
 
 ```
-none
+ M projects/ui-kit-v2/src/rich-editor/lib/components/ai-chat/blocks/sources/rt-ai-chat-sources.component.scss
 ```
 
 ### Commits over the main branch
 
 ```
+97477a610 feat(rt:ui-kit-v2): истории и страница обзора блока источников (RT-3340)
+6c360ea3e feat(rt:ui-kit-v2): блок источников в ответе чата и событие нажатия (RT-3340)
+658d318b1 docs(rt:ui-kit-v2): макет блока источников одобрен (RT-3340)
 6eac865ce feat(rt:ui-kit-v2): данные и схема блока источников (RT-3340)
 8f15f678a docs(rt:ui-kit-v2): договорённость и план блока источников (RT-3340)
 0ba332c88 docs(rt:ui-kit-v2): разбор задачи блока источников и находки RT-3339 (RT-3340)
@@ -91,9 +94,6 @@ bc1088482 chore(rt:ui-kit-v2): ветка эпика влита в ветку з
 bc0febefa chore(rt:ui-kit-v2): главная ветка влита повторно, номера сценариев разведены (RT-3342)
 2bd4be248 chore(rt:ui-kit-v2): главная ветка влита в ветку задачи (RT-3342)
 a174a2147 docs(rt:ui-kit-v2): макет секции сведён с витриной, совпадение 24 из 24 (RT-3342)
-b4223578b docs(rt:ui-kit-v2): папка задачи RT-3342 разобрана в описание прошлого
-cc39e821e docs(rt:ui-kit-v2): договорённость о блоке секции сведена в spec (RT-3342)
-4c9f02544 fix(rt:ui-kit-v2): блок секции после второго круга ревью (RT-3342)
 ```
 
 Written by a hook before the compaction of the context. Everything standing here is checked
