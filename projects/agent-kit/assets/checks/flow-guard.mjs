@@ -30,11 +30,8 @@ import { stepsOfPlan, stepsOfProgress } from './work-steps-lib.mjs';
 /** The word that defers a task in the epic plan. */
 const DEFERRED = 'отложено';
 
-/** The words of an epic plan row whose task waits for the owner's step. */
+/** The words an epic plan row carried for a task handed to the owner: a row is no longer marked so. */
 const OWNER_STEP = 'шаг владельца';
-
-/** The option of the owner's menu that marks the owner's step: chosen there, it needs no second window. */
-const SELF_OPTION = 'сделаю сам';
 
 /** The opening of a replacement line of the progress, with the number of the step. */
 const REPLACEMENT_START = /^-\s+\*\*(?:Проверка шага|Check of step)\s+(\d+\.\d+)\s+(?:заменена|replaced):\*\*/u;
@@ -124,8 +121,8 @@ export function replacementChanges(before, after) {
 }
 
 /**
- * The task numbers of the epic plan rows the edit sets to the owner's step or whose owner's step it
- * changes. A row that leaves the owner's step is not counted: the task goes back to the work.
+ * The task numbers of the epic plan rows the edit marks «шаг владельца». The mark is refused: the
+ * step is the executor's. A row that leaves the mark is not counted: the task goes back to the work.
  */
 export function ownerRowChanges(before, after, key) {
     const tasks = new Set();
@@ -264,9 +261,7 @@ function judgeDefer(call, ctx) {
     if (changed.length === 0) {
         const steps = ownerRowChanges(before, after, ctx.key);
         if (steps.length === 0) return null;
-        // The owner has just chosen «сделаю сам» in the menu: the row carries out that answer.
-        if ((ctx.ownerLast?.() ?? '').trim().startsWith(SELF_OPTION)) return null;
-        return `«${OWNER_STEP}» for ${steps.map((task) => `${ctx.key}-${task}`).join(', ')} is the owner's decision: the owner allows or forbids this edit in the window`;
+        return `«${OWNER_STEP}» for ${steps.map((task) => `${ctx.key}-${task}`).join(', ')} is not written into a row: the step is the executor's, and only the owner's word naming the task puts it off as «${DEFERRED}»`;
     }
     const word = ctx.ownerLast() ?? '';
     const missing = changed.filter((task) => !new RegExp(`${escape(ctx.key)}-${task}(?!\\d)`).test(word));

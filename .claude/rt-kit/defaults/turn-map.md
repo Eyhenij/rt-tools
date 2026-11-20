@@ -1,4 +1,4 @@
-<!-- rt-kit v0.37.0 · defaults/turn-map.md · 3e159b0d38fb · правится надстройкой, не здесь -->
+<!-- rt-kit v0.37.0 · defaults/turn-map.md · 2c8a7ab698ee · правится надстройкой, не здесь -->
 # Turn map
 
 This is not the rule but its short digest: the rule explains, the map names. The full text is
@@ -38,9 +38,8 @@ The exit guard holds every other turn and names the one next move. The task flow
 release cases that are not the executor's choice: no write to the tree, a branch outside the
 scenario, a role session, a silent host, a menu that did not reach the owner twice.
 
-A question, a guard's refusal, a handover and handed-in work do not end a turn. A step that is the
-owner's, or that another guard refuses, goes to them as one menu: «отложить RT-N», «сделаю сам»,
-«стоп». The menu waits for the answer inside the turn.
+A question, a guard's refusal, a handover and handed-in work do not end a turn. A step that
+another guard refuses twice goes to the owner as one menu: «отложить RT-N», «стоп». The menu waits for the answer inside the turn.
 
 Where the tree has set the compaction threshold below the stop threshold, a filled window does
 not end the turn: the context is compacted, the handover arrives as the entry, and the work goes

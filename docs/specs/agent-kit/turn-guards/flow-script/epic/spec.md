@@ -42,8 +42,8 @@ There is no interface: the engine prints the measured state and the exits read.
 ## What is out of scope
 
 The epic of the work, the epic of the copy and exit 2 are in the domain
-`docs/specs/agent-kit/turn-guards/flow-script/`. A row of the epic plan that names the owner's step
-is a rule of the same domain; exit 11 only passes such a row over.
+`docs/specs/agent-kit/turn-guards/flow-script/`. The rule that a row of the epic plan is never marked «шаг владельца»
+is of the same domain; exit 11 reads a row with the old mark as an ordinary row.
 
 ## Contract
 

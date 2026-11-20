@@ -356,14 +356,6 @@ Then the replacement is measured
 
 Covered: `projects/agent-kit/tests/task-flow-script-steps.test.sh`.
 
-### SC-AK-1744 — a row naming the owner's step blocks its task
-
-Given a task ahead whose row names the owner's step, with no message of the owner holding its quote
-When exit 11 is measured, and the turn is held
-Then the task is passed over, and the refusal names no owner's menu for it
-
-Covered: `projects/agent-kit/tests/task-flow-script.test.sh`, `projects/agent-kit/tests/turn-exit-guard.test.sh`.
-
 ### SC-AK-1745 — an edit of a replacement line goes to the owner's window
 
 Given a progress edit that adds a replacement line, one that changes it, and one that removes it
@@ -372,11 +364,11 @@ Then the first two get the decision `ask`, and the removal passes
 
 Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 
-### SC-AK-1746 — an edit of «шаг владельца» goes to the owner's window
+### SC-AK-1746 — an edit of «шаг владельца» is refused
 
 Given an epic plan edit that sets «шаг владельца» on a row, and one that takes the row back to the work
 When the guard of the course of work judges each
-Then the first gets the decision `ask`, and the second passes
+Then the first is refused and says the step is the executor's, and the second passes
 
 Covered: `projects/agent-kit/tests/flow-step-guard.test.sh`.
 
