@@ -56,6 +56,8 @@ none of them looks and behaves as before.
   leaves the Tab order, and its click goes no further, as the button does.
 - **An icon button names the panel it opens.** The kind of the panel goes to `aria-haspopup`; without
   it the attribute is absent.
+- **An icon button points to the node that describes it.** The id of that node goes to
+  `aria-describedby` of the button or of the link; without it the attribute is absent.
 - **The application focuses the icon button and the field by a method of the component.** It reaches
   the inner element through the component, not through the markup of the kit.
 
@@ -124,3 +126,5 @@ None.
 - 2026-10-27 — Escape closes an open tooltip, task RT-2948.
 - 2026-10-27 — the icon button as a link, its `aria-haspopup` and the focus methods of the icon
   button and the field, task RT-2951.
+- 2026-11-20 — the `aria-describedby` of the icon button, task RT-3341: the action «Ask again» of
+  an interrupted chat answer points to the line «Answer interrupted».

@@ -1,16 +1,15 @@
 # The interrupted answer of the assistant chat
 
-**Status:** proposed · **Revision:** 2026-11-20 · **Scenario prefix:** `SC-UKV`
+**Status:** in force · **Revision:** 2026-11-20 · **Scenario prefix:** `SC-UKV`
 **Depends on:** the assistant chat (the answer, its copy and rating, the outputs of the chat, the
 run error with «Ask again»), the run status of the kit (the run line above an answer)
 **Laws:** `frontend-application`, `reuse-first`, `verifiability`
 **Procedures:** none
 
-A product agreement written before the code, by task RT-3341. It is about one flag of an assistant
-message of `rt-ai-chat`: the label under an answer that broke off, the action «Ask again» of that
-answer and the output of the chat that carries the press. It merges into the kit spec as the
-subdomain `ai-chat-interrupted`, next to `ai-chat`, with the same scenario numbers. The mockup is
-approved by the owner.
+One flag of an assistant message of `rt-ai-chat`: the label under an answer that broke off, the
+action «Ask again» of that answer and the output of the chat that carries the press. It is written
+by task RT-3341 and stands as a subdomain of its own next to `ai-chat`. The mockup and the showcase
+are approved by the owner.
 
 ## Why
 
@@ -68,7 +67,7 @@ declared by `docs/specs/ui-kit-v2/ai-chat/` and are not declared again here.
 
 - **The action is the kit icon button of the row of «Copy» and the rating, with the icon `sync`: the same size, colour and gap of 4.** It stands right after «Copy»; where «Copy» is not drawn, it opens the row.
 
-- **The action shows the tooltip «Ask again» on hover and on focus from the keyboard, as the other buttons of the row show theirs.**
+- **The action shows the tooltip «Ask again» on hover and on focus from the keyboard, as the other buttons of the row show theirs.** The tooltip stands above the button, and below it only where there is no room above, as the kit tooltip does.
 
 - **The action shows the kit hover fill, the kit focus ring and the kit disabled look of the icon button; the focus ring is not clipped.** The label keeps its look while the action is disabled.
 
@@ -118,7 +117,7 @@ declared by `docs/specs/ui-kit-v2/ai-chat/` and are not declared again here.
 
 - **Under `dir="rtl"` the label starts at the right and the row of actions mirrors: «Copy» at the right, the action after it to the left; the icon `sync` is drawn as it is.**
 
-- **The drawn values are the ones of the approved mockup: the label is 16 high in the mockup and 16.2 in the browser (12 × 135 %), the row 32 high, 8 between them; in the dark theme only the colours change.**
+- **The drawn values are the ones of the approved mockup, and in the dark theme only the colours change.** The label is 16 high in the mockup and 16.2 in the browser (12 × 135 %), the row is 32 high, and 8 stands between them.
 
 ## What is out of scope
 
@@ -225,9 +224,9 @@ described by the label of its own answer, and each press names its own answer.
 - **The label stays out of the copy** — closed by assumption, the owner may reverse it.
 - **An interrupted answer and a retryable run error are both drawn, with two «Ask again»** — closed
   by assumption, the owner may reverse it; the application decides which to give.
-- **On the merge, the run error term of the chat spec reads «the last run failed»** — the term in
-  `docs/specs/ui-kit-v2/ai-chat/spec.md` says «the answer broke off», and «broke off» belongs to the
-  interrupted answer.
+- **The run error term of the chat spec reads «the last run failed»** — it said «the answer broke
+  off», and «broke off» belongs to the interrupted answer. Changed in
+  `docs/specs/ui-kit-v2/ai-chat/spec.md` on the merge.
 - **The mockup comes before the code** — the rule of a visible kit edit; the owner approves the
   mockup and the showcase.
 
@@ -245,3 +244,5 @@ None. Q-1, the owner's approval of the mockup, is closed by «Одобряю м�
   in the row of actions.
 - 2026-11-20 — the mockup approved, Q-1 closed; the scenarios marked covered by the component spec
   and the play steps of the showcase.
+- 2026-11-20 — the showcase approved, the tooltip «Ask again» stands above the button as the kit
+  tooltip does; the agreement merged into the spec after two rounds of review.

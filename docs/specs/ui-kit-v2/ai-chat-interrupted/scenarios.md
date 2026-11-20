@@ -1,7 +1,6 @@
 # Scenarios — the interrupted answer of the assistant chat
 
-The numbers continue the numbering of the kit, from SC-UKV-1563, and do not change after the merge.
-Until a scenario is covered, it carries the mark «Not covered» with the reason.
+The numbers continue the numbering of the kit, from SC-UKV-1563.
 
 ### SC-UKV-1563 — a partial answer draws its text, the label and the action
 
@@ -130,8 +129,9 @@ When they are drawn
 Then at each width the label stands in one line and the row of actions in one line, and neither widens the feed
 And at 240 the focus ring of the focused action is not clipped
 
-Covered by the play step of the showcase story `Widths`: the row and the ring come from the
-styles, and the styles of the component do not reach the test environment.
+Not covered: it cannot be closed by a test with an identifier — the row and the ring come from the
+styles, and the styles of the component do not reach the test environment. Held by the play step of
+the showcase story of the widths.
 
 ### SC-UKV-1577 — right to left mirrors the label and the row
 
@@ -139,7 +139,8 @@ Given an interrupted answer under `dir="rtl"`
 When it is drawn
 Then the label starts at the right, «Copy» stands at the right of the row and the action follows it to the left
 
-Covered by the play step of the showcase story `Rtl`: the order comes from the styles.
+Not covered: it cannot be closed by a test with an identifier — the order comes from the styles.
+Held by the play step of the showcase story right to left.
 
 ### SC-UKV-1578 — the label is drawn while the run line says running
 
@@ -166,4 +167,6 @@ When its play step runs, in the light and in the dark theme
 Then the step finds the label «Answer interrupted» and the button «Ask again» under each answer
 And the dark rows draw the same row in the dark palette
 
-Covered by the play step of the showcase story `Themes`.
+Not covered: it cannot be closed by a test with an identifier — the palette comes from the styles,
+and the styles of the component do not reach the test environment. Held by the play step of the
+showcase story of the themes.
