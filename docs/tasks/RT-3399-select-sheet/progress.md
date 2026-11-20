@@ -22,6 +22,12 @@
   overlay pane is 0 wide), so Playwright's `:visible` never matches, while the open sheet
   `.rt-popover-sheet .rt-bottom-sheet--open` is 375×812. All 17 overlay parameters in 15 sheet story
   files now name the open sheet.
+- **Snapshots taken (20.11):** 30 sheet stories, 3 fold stories, the page bar panel and the filter
+  select in the filters sheet, `PhoneActions` — each taken twice on two showcase raisings, same
+  hashes, looked at before commit. Four former references moved by approved edits (tabs «more» on
+  a phone as a sheet, the 768 filters frame without the sheet, the workspace without «back»).
+  Observation, not changed: a sheet opened on a phone stays a sheet when the window grows past 480
+  (`PhoneActions--w768`); the spec speaks only of where a panel opens.
 - **Remark 3 measured (20.11):** `organisms-chat-page--page` on 6017, both halves — the bottoms of
   the thread-list head, the chat header and the aside tabs all at y=220 (head 63, chat header 53
   from top 167, tabs 69). The one difference is the line colour: the chat header's border is
