@@ -8,6 +8,16 @@
   the diff after 066bd257b, while the owner looks at the showcase); then its fixes as one commit,
   the closing texts, the push set (the sheet and workspace snapshots are re-taken) and the draft PR.
 - **The showcase of `prefix` and `suffix` approved:** «Approve showcase» (20.11).
+- **The hint at the field label joined (20.11), «проверь и добавь в текущий тикет»:** confirmed
+  live on 6017 — `rt-field__help-popover` has a transparent background, padding 0 and no shadow,
+  and with the icon at 1784 of a 1926 window the panel shrank to 142 and ran to the edge; the cause
+  is `rtPopover` with positions only from the icon's start and no push. The kit tooltip measured
+  live at the right edge: background `rgb(40,40,40)`, text white 12/16.2, padding 4/8, radius 4,
+  shadow md, 6 above the host, pushed back to 1911 of 1926. The design file already holds an
+  example of this hint, frame 6913:12721, drawn as a white Popover card — against the report,
+  which expects the tooltip look.
+- **Waiting for the owner:** the look of the hint — the dark kit tooltip or the white card of frame
+  6913:12721; then the mockup, its approval and the code.
 - **`prefix` and `suffix` of `rt-input` in code (20.11), mockup 8449:1560 approved «Одобряю
   макет»:** the prefix stands before the field, the suffix right after the typed text — a hidden
   copy of the text sizes the field, the field lies over it. Measured live on 6017, own set: the

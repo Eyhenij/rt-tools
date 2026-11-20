@@ -134,5 +134,13 @@ sheet of its own over it).
   page, the logo on the organisation choice, the disabled organisation switch (the profile menu
   takes the `denied` mode from the application), the domain choice by radio buttons, the settings
   card width and the save progress.
+- **The hint at the field label joins** — the owner's words «проверь и добавь в текущий тикет»
+  (20.11) under a pasted report: the `rt-field` hint (input `help`) «рисуется без фона и выходит
+  за край окна»; expected «вид как у rtTooltip кита» and «окно должно стоять в окне браузера
+  целиком: сдвиг к центру (withPush) или запасные положения с выравниванием по правому краю
+  значка». Checked live on 6017: the hint panel has a transparent background, no padding and no
+  shadow; with the icon at 1784 of a 1926 window the panel shrank to 142 and its text ran to the
+  window edge. Read as: the hint takes the kit tooltip — its look, its push into the window and
+  its fallback positions — drawn on a Figma frame and approved before code.
 
 ## What is left unclear
