@@ -4,20 +4,20 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `разбор-закрыт`
-- **Stage:** 0 — the agreement
+- **State:** `этап-идёт`
+- **Stage:** 1 из 5 — handles of the parts
 - **Done:** RT-3343 выкинута владельцем (карточка закрыта, ветка и макет удалены); карточка RT-3344 в работе, ветка `RT-3344-ai-chat-theme-tokens` от ветки RT-3341, строка копии в `assignments.md` по слову «Делать RT-3344»
-- **Next step:** по слову владельца — коммит плана и этап 1 (токены частей)
-- **Uncommitted:** `plan.md` — ждёт слова владельца
-- **Waiting for the owner:** одобрение плана и ответ, входит ли задача в следующий выпуск кита
+- **Next step:** этап 1 — токены `rt-markdown-text`, `rt-ai-prompt-input`, `rt-thread-list`
+- **Uncommitted:** нет
+- **Waiting for the owner:** нет
 - **PR:** не открыт; #3454 (RT-3341) влит в ветку RT-3340, ветка задачи взяла её (6d811c52b); база PR — `RT-3340-ai-chat-sources-block`, а после слияния #3453 — `main`
 
 ## Steps
 
 - [x] 0.1 the exploration and the grill
 - [x] 0.2 the agreement
-- [>] 0.3 the plan and the owner's word
-- [ ] 1.1 handles of `rt-markdown-text`
+- [x] 0.3 the plan and the owner's word
+- [>] 1.1 handles of `rt-markdown-text`
 - [ ] 1.2 handles of `rt-ai-prompt-input`
 - [ ] 1.3 handles of `rt-thread-list`
 - [ ] 2.1 chat root handles and the pass-down to the parts
@@ -34,6 +34,12 @@ Rewritten by every session, not appended to.
 - [ ] 5.3 the push set and the PR into the branch of RT-3340
 
 ## Decisions along the way
+
+- **План одобрен владельцем:** «Одобряю план (Recommended)». **Выпуск:** «Да, в следующий выпуск
+  (Recommended)» — RT-3344 входит в следующий выпуск кита вместе с источниками и прерванным ответом.
+- **Договорённость после критики:** части читают свои токены с запасным значением на месте, чат
+  ставит их на своём корне; время строки под действиями прячется только по токену приложения.
+  Affected stage: 1–3.
 
 ## Sessions
 
