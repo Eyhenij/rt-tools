@@ -79,7 +79,7 @@ Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 
 Given the folder taken apart and the push refused by another check, then the menus of a refusal held by the menu hook
 When the hook on Stop reads the turn with the refused push, and the turn whose menu was held twice in a row
-Then the first refusal names the menu «отложить RT-101», «сделаю сам», «стоп», the second turn is released as a menu that did not reach the owner, and the menu hook lets that menu leave
+Then the first refusal names the menu «отложить RT-101», «стоп», the second turn is released as a menu that did not reach the owner, and the menu hook lets that menu leave
 
 Covered: `projects/agent-kit/tests/turn-replay.test.sh`.
 

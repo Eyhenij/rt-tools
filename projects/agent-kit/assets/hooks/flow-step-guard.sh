@@ -60,7 +60,7 @@ case "$verdict" in
     *"override of the description is edited by the edit tool"*) action=shell_write_progress ;;
     *"belongs to the description of the task flow"*) action=edit_flow_description ;;
     *"the replacement of the check of step"*"is the owner's decision"*) action=replace_step_check ;;
-    *"шаг владельца"*"is the owner's decision"*) action=owner_step_row ;;
+    *"шаг владельца"*"is not written into a row"*) action=owner_step_row ;;
     *) action=defer_task ;;
 esac
 

@@ -211,9 +211,8 @@ const mergedPullAhead = (task) => ({ number: task, head: `RT-${task}-x`, headRef
 out('host: SC-AK-1388 — ветка следующей задачи есть на сервере', run(epic.nextTaken, { host: { remote: [{ name: 'RT-13-next', sha: 'n' }] } }), 'true');
 out('host: SC-AK-1388 — ветки следующей задачи нет — не выход', run(epic.nextTaken, {}), 'false');
 out('host: SC-AK-1388 — следующей задачи нет — выход выполнен', run(epic.nextTaken, { rows: [['1', 11, 'влито'], ['2', 12, 'идёт']] }), 'true');
-const ownerRows = [['1', 11, 'влито'], ['2', 12, 'идёт'], ['3', 13, 'шаг владельца «сделаю сам RT-13»'], ['4', 14, 'впереди']];
-out('host: SC-AK-1389 — задача с шагом владельца пропускается', run(epic.nextTaken, { rows: ownerRows, owner: ['сделаю сам RT-13'], local: [{ name: 'RT-14-more', sha: 'm' }] }), 'true');
-out('host: SC-AK-1744 — строка шага владельца пропускается без набранной цитаты', run(epic.nextTaken, { rows: ownerRows, local: [{ name: 'RT-14-more', sha: 'm' }] }), 'true');
+const ownerRows = [['1', 11, 'влито'], ['2', 12, 'идёт'], ['3', 13, 'шаг владельца'], ['4', 14, 'впереди']];
+out('host: SC-AK-1793 — строка со старой пометкой «шаг владельца» не пропускается', run(epic.nextTaken, { rows: ownerRows, local: [{ name: 'RT-14-more', sha: 'm' }] }), 'false');
 const deferred = [['1', 11, 'влито'], ['2', 12, 'идёт'], ['—', 13, 'отложено'], ['3', 14, 'впереди']];
 out('host: SC-AK-1390 — отложенная задача пропускается', run(epic.nextTaken, { rows: deferred, local: [{ name: 'RT-14-more', sha: 'm' }] }), 'true');
 // SC-AK-1741 — the case of 18.11: a task with a branch before tasks without one

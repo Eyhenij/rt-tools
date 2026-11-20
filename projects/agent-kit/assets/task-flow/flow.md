@@ -87,7 +87,7 @@ The engine asks the cases in this order, and a met case lets the turn end before
 | `holdAfter` | стоять, останавлива, ждать |
 | `nudge` | `(?<![\p{L}])(?<!не )(продолжай\|доделывай\|работай\|делай дальше\|работаешь)(?![\p{L}])\|почему (ты )?(стоишь\|встал\|остановил)\|что дальше\|дальше\?\|^(ну )?(и )?что там\|^ну и\s*[?!.]\|какого .*останов` |
 | `write` | git commit, git push, git add, git merge, git rm, git mv, sed -i, perl -pi, gh pr, npm run task:new, pnpm run task:new, npm run task:move, pnpm run task:move, npm run agent-kit:sync, pnpm run agent-kit:sync |
-| `menu` | отложить RT-N, сделаю сам, стоп |
+| `menu` | отложить RT-N, стоп |
 | `legacyBranches` | RT-3276-conversation-checks, RT-3329-task-flow-scenario |
 
 ## Expected forms

@@ -50,8 +50,8 @@ not by a person.
 - **The session source and the source of the records read a record by pieces and never hold it as one string.**
 - **The forecast judges a background task by the time of the stop it replays and names the longest run of held stops in a row; a released stop and a word of the owner break a run.**
 - **When another check refused the same step twice for the same reason, or the executor stopped again with no call after a refusal, the one move is the owner's menu.**
-- **The menu of a refusal carries exactly the options of the description: «отложить RT-N» with the task number, «сделаю сам» and «стоп».**
-- **The owner's choice is carried out: a deferral marks the task «отложено», «сделаю сам» marks the owner's step, and the next unblocked task is taken; «стоп» releases the turn.**
+- **The menu of a refusal carries exactly the options of the description: «отложить RT-N» with the task number and «стоп».**
+- **The owner's choice is carried out: a deferral marks the task «отложено» and the next unblocked task is taken; «стоп» releases the turn.**
 - **An engine that fails, runs past its limit or cannot be called releases the turn and writes «движок упал» to the journal.**
 - **The eighth refusal in a row is written to the journal.**
 - **A service message is no word of the owner.**

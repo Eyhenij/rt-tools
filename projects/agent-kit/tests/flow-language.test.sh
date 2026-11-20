@@ -359,8 +359,8 @@ d="$(fl_data "{ write: ['git status', ''] }")"
 report "data: SC-AK-1517 — пустая команда отказана" "$(fl_model_refused_with "$d" 'words.write: a list of non-empty strings')" 'да'
 
 # --- SC-AK-1518 — варианты меню отказа берутся из `words` ---------------------------------------
-d="$(fl_data "{ menu: ['отложить RT-N', 'сделаю сам', 'стоп'], nudge: '(продолжай|что дальше)' }")"
-report "data: SC-AK-1518 — меню из words" "$(fl_model_field "$d" 'JSON.stringify(m.words.menu)')" '["отложить RT-N","сделаю сам","стоп"]'
+d="$(fl_data "{ menu: ['отложить RT-N', 'стоп'], nudge: '(продолжай|что дальше)' }")"
+report "data: SC-AK-1518 — меню из words" "$(fl_model_field "$d" 'JSON.stringify(m.words.menu)')" '["отложить RT-N","стоп"]'
 report "data: SC-AK-1518 — образец подталкивания из words" "$(fl_data_call "$d" "new RegExp(m.words.nudge, 'iu').test('Что дальше?')")" 'true'
 d="$(fl_data "{ menu: ['стоп', 3] }")"
 report "data: SC-AK-1518 — вариант меню не строка отказан" "$(fl_model_refused_with "$d" 'words.menu: a list of non-empty strings')" 'да'
