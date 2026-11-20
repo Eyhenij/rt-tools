@@ -91,6 +91,11 @@ async function openMarked(root: HTMLElement): Promise<void> {
 
         await until((): boolean => cell.querySelector(LIST) !== null, 'список раскрытой ячейки');
     }
+    // Тело панели раскрывается переходом: размеры берут после его конца, а не посреди.
+    await until(
+        (): boolean => root.getAnimations({ subtree: true }).every((item: Animation): boolean => item.playState !== 'running'),
+        'конец раскрытия списков'
+    );
 }
 
 /**
@@ -274,6 +279,7 @@ export const Panel: TStory = {
         }
         await until((): boolean => canvasElement.querySelectorAll(OPEN).length >= 2, 'кнопки источников с адресом');
         Array.from(canvasElement.querySelectorAll<HTMLElement>(OPEN)).forEach((button: HTMLElement): void => button.click());
+        await until((): boolean => (canvasElement.querySelector(LOG)?.textContent ?? '').includes('/bookings'), 'строка событий нажатий');
         const log: string = canvasElement.querySelector(LOG)?.textContent ?? '';
 
         expectThat(
