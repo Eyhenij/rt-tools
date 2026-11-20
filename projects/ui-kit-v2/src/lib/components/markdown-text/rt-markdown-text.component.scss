@@ -10,8 +10,11 @@
         max-width: 100%;
         flex-direction: column;
         color: var(--rt-color-text-primary);
-        font-family: var(--rt-font-family-sans);
-        font-size: var(--rt-text-xs);
+
+        /* Семейство и кегль читаются с запасным значением на месте, а не объявляются здесь: так их
+           ставит предок — чат передаёт свои токены, и объявление на блоке их не перебьёт. */
+        font-family: var(--rt-markdown-text-font-family, var(--rt-font-family-sans));
+        font-size: var(--rt-markdown-text-font-size, var(--rt-text-xs));
         font-weight: var(--rt-font-weight-regular);
         gap: var(--rt-space-sm);
         letter-spacing: var(--rt-letter-spacing-wide);

@@ -16,14 +16,17 @@
             flex-direction: column;
             border: var(--rt-ai-prompt-input-border-width) solid var(--rt-input-color-border);
             border-radius: var(--rt-ai-prompt-input-radius);
-            background: var(--rt-color-bg-surface);
+
+            /* Фон и фокус читаются с запасным значением на месте: токен ставит предок, например
+               чат, и объявление на блоке его бы перебило. */
+            background: var(--rt-ai-prompt-input-bg, var(--rt-color-bg-surface));
             box-shadow: var(--rt-ai-prompt-input-shadow);
             padding-block-start: var(--rt-space-1);
 
             // Фокус — как у полей кита: рамка фокуса и кольцо.
             &:focus-within {
-                border-color: var(--rt-input-color-border-focus);
-                box-shadow: var(--rt-input-focus-shadow);
+                border-color: var(--rt-ai-prompt-input-focus-border-color, var(--rt-input-color-border-focus));
+                box-shadow: var(--rt-ai-prompt-input-focus-shadow, var(--rt-input-focus-shadow));
             }
 
             &--disabled {
@@ -100,6 +103,20 @@
 
             &--muted.rt-button {
                 --rt-btn-color: var(--rt-color-text-muted);
+            }
+        }
+
+        /* Заливка «Отправить» и «Стоп» меняется через вариант кнопки, а не через её ручку
+           `--rt-icon-button-bg`: ручка, заданная предком, по-прежнему побеждает, как сейчас.
+           Кнопки приложения в слотах поля этот элемент не получают. */
+        &__send .rt-icon-button--primary {
+            --rt-icon-button-bg-variant: var(--rt-ai-prompt-input-send-bg, var(--rt-color-action-primary));
+
+            &:hover:not(:disabled, [aria-disabled='true']) {
+                background-color: var(
+                    --rt-icon-button-bg-hover,
+                    var(--rt-ai-prompt-input-send-bg-hover, var(--rt-color-action-primary-hover))
+                );
             }
         }
 

@@ -57,8 +57,9 @@ When the answer is drawn and the pointer rests on the like button
 Then the like button draws that fill and that icon colour, at rest and under the pointer, and the
 dislike button keeps its look
 
-Not covered: a test has no layout, and this is a style rule. It is shown by the snapshot of the
-story **Properties · focus**.
+Covered by a test of the compiled CSS of the answer: the chosen button reads both handles with
+today's values as the fallback, at rest and under the pointer. The look is shown by the snapshot of
+the story **Properties · focus**.
 
 ### SC-UKV-1587 — the header and the column head take one height and divider
 

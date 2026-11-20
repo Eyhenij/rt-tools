@@ -140,11 +140,27 @@
             position: absolute;
             display: flex;
             align-items: center;
-            background: var(--rt-color-bg-subtle);
+
+            /* Фон, отступы и скругление кнопок читаются с запасным значением на месте: токены
+               ставит предок, например чат, и объявление на блоке их бы перебило. */
+            background: var(--rt-thread-list-row-actions-bg, var(--rt-color-bg-subtle));
             gap: var(--rt-space-1);
             inset-block: 0;
             inset-inline-end: 0;
-            padding-inline: var(--rt-space-2) var(--rt-space-4);
+            padding-inline: var(--rt-thread-list-row-actions-padding-inline, var(--rt-space-2) var(--rt-space-4));
+
+            // Кнопка объявляет своё скругление на корне шаблона, поэтому его переназначают там же.
+            rt-icon-button .rt-icon-button {
+                --rt-icon-button-radius: var(--rt-thread-list-row-action-radius, var(--rt-radius-md));
+            }
+        }
+
+        // Узел шаблона строки с меткой `rtThreadListUnderActions` скрывается под показанными
+        // действиями, только если приложение задало токен: по умолчанию он виден, как прежде.
+        // Скрытие держит место узла, чтобы строка не сдвигалась под указателем. Без наведения
+        // действия видны всегда, и токен действует постоянно.
+        &__row-wrap [rtThreadListUnderActions] {
+            visibility: var(--rt-thread-list-under-actions-visibility, visible);
         }
 
         // Действия прячутся только там, где есть наведение. На сенсорном экране наведения нет,
@@ -170,10 +186,14 @@
                 opacity: 1;
                 pointer-events: auto;
             }
+
+            &__row-wrap:not(:hover, :focus-within, :has(.rt-menu--open)) [rtThreadListUnderActions] {
+                visibility: visible;
+            }
         }
 
         &__row--active + .rt-thread-list__row-actions {
-            background: var(--rt-color-state-info-bg);
+            background: var(--rt-thread-list-row-actions-bg-active, var(--rt-color-state-info-bg));
         }
 
         // Знак канала стоит слева от содержимого строки. Содержимое при знаке собрано в свою обёртку:

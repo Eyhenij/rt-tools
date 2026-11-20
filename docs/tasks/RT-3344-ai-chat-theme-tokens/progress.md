@@ -5,9 +5,9 @@
 Rewritten by every session, not appended to.
 
 - **State:** `этап-идёт`
-- **Stage:** 1 из 5 — handles of the parts
+- **Stage:** 3 из 5 — the showcase
 - **Done:** RT-3343 выкинута владельцем (карточка закрыта, ветка и макет удалены); карточка RT-3344 в работе, ветка `RT-3344-ai-chat-theme-tokens` от ветки RT-3341, строка копии в `assignments.md` по слову «Делать RT-3344»
-- **Next step:** этап 1 — токены `rt-markdown-text`, `rt-ai-prompt-input`, `rt-thread-list`
+- **Next step:** три истории `Properties` витрины чата, затем эталоны и живая сверка
 - **Uncommitted:** нет
 - **Waiting for the owner:** нет
 - **PR:** не открыт; #3454 (RT-3341) влит в ветку RT-3340, ветка задачи взяла её (6d811c52b); база PR — `RT-3340-ai-chat-sources-block`, а после слияния #3453 — `main`
@@ -17,13 +17,13 @@ Rewritten by every session, not appended to.
 - [x] 0.1 the exploration and the grill
 - [x] 0.2 the agreement
 - [x] 0.3 the plan and the owner's word
-- [>] 1.1 handles of `rt-markdown-text`
-- [ ] 1.2 handles of `rt-ai-prompt-input`
-- [ ] 1.3 handles of `rt-thread-list`
-- [ ] 2.1 chat root handles and the pass-down to the parts
-- [ ] 2.2 the input `questionAuthor`
-- [ ] 2.3 specs of the handles and the input
-- [ ] 3.1 the three `Properties` stories
+- [x] 1.1 handles of `rt-markdown-text`
+- [x] 1.2 handles of `rt-ai-prompt-input`
+- [x] 1.3 handles of `rt-thread-list`
+- [x] 2.1 chat root handles and the pass-down to the parts
+- [x] 2.2 the input `questionAuthor`
+- [x] 2.3 specs of the handles and the input
+- [>] 3.1 the three `Properties` stories
 - [ ] 3.2 references of the new story and the run over all stories
 - [ ] 3.3 the live check against the agreement
 - [ ] 4.1 review round one and its fixes
@@ -40,6 +40,13 @@ Rewritten by every session, not appended to.
 - **Договорённость после критики:** части читают свои токены с запасным значением на месте, чат
   ставит их на своём корне; время строки под действиями прячется только по токену приложения.
   Affected stage: 1–3.
+- **Скругление карточки подсказки передаётся селектором чата на кнопке карточки**, а не запасным
+  значением в самой карточке: её токен объявлен на кнопке шаблона, и запасное значение со ступенью
+  скругления в её стилях спорило бы с проверкой токенов. Карточка не меняется. Affected stage: 2.
+- **Подпись автора выведена заготовкой `authorLabel`**, а не веткой `@if` в пузыре: ветка подняла
+  сложность шаблона чата до 26 при пределе 25. Affected stage: 2.
+- Этапы 1–2: типы кита без ошибок, весь набор кита 4077 тестов зелёный, новые спеки 7 + 2 зелёные,
+  линтер стилей и проверка токенов без новых находок.
 
 ## Sessions
 

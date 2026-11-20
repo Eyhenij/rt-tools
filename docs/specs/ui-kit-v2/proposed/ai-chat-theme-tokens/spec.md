@@ -94,10 +94,9 @@ A person sees the same chat; the handles are invisible to them. The author label
 | `rt-thread-list`     | `--rt-thread-list-row-action-radius`          | `var(--rt-radius-md)`                  |
 | `rt-thread-list`     | `--rt-thread-list-row-actions-padding-inline` | `var(--rt-space-2) var(--rt-space-4)`  |
 | `rt-thread-list`     | `--rt-thread-list-under-actions-visibility`   | `visible`                              |
-| `rt-prompt-suggestion` | `--rt-prompt-suggestion-radius`, existing   | `var(--rt-radius-lg)`                  |
 
-The suggestion card declares its existing radius handle today; it moves to the fallback in place,
-so the chat's pass-down reaches it.
+The suggestion card keeps its existing radius handle as it is, declared on its template root. The
+chat sets that handle on the same node inside its suggestions, so the card itself does not change.
 
 The answer of the chat reads `--rt-ai-chat-rating-active-bg` and `--rt-ai-chat-rating-active-color`
 with the fallback in place as well, so an answer drawn outside the chat keeps its look.
