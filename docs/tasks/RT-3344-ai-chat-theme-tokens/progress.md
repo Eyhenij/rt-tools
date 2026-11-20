@@ -4,8 +4,8 @@
 
 Rewritten by every session, not appended to.
 
-- **State:** `просьба-не-разобрана`
-- **Stage:** 0 — the exploration and the grill
+- **State:** `разбор-закрыт`
+- **Stage:** 0 — the agreement
 - **Done:** RT-3343 выкинута владельцем (карточка закрыта, ветка и макет удалены); карточка RT-3344 в работе, ветка `RT-3344-ai-chat-theme-tokens` от ветки RT-3341, строка копии в `assignments.md` по слову «Делать RT-3344»
 - **Next step:** итог разведки по восьми пунктам карточки в `grill.md`, решения разбора, затем договорённость в `docs/specs/ui-kit-v2/proposed/`
 - **Uncommitted:** нет
@@ -14,8 +14,8 @@ Rewritten by every session, not appended to.
 
 ## Steps
 
-- [>] 0.1 разведка и разбор
-- [ ] 0.2 договорённость
+- [x] 0.1 разведка и разбор
+- [>] 0.2 договорённость
 - [ ] 0.3 план и слово владельца
 
 ## Decisions along the way
